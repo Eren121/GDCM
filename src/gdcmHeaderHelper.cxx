@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.14 2003/10/27 14:01:12 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.15 2003/11/03 10:49:31 jpr Exp $
 
 #include "gdcmHeaderHelper.h"
 
@@ -79,6 +79,12 @@ gdcmHeaderHelper::gdcmHeaderHelper(const char *InFilename,
  *
  */
 int gdcmHeaderHelper::GetPixelSize() {
+
+     // 0028 0100 US IMG Bits Allocated
+     // (in order no to be messed up by old RGB images)
+   if (gdcmHeader::GetPubElValByNumber(0x0028,0x0100) == "24")
+      return 3;
+	 
    std::string PixelType = GetPixelType();
    if (PixelType == "8U"  || PixelType == "8S")
       return 1;
@@ -93,29 +99,65 @@ int gdcmHeaderHelper::GetPixelSize() {
 //----------------------------------------------------------------------------
 /**
   * \ingroup gdcmHeaderHelper
-  * \brief gets the info from 0028,0004 : Photometric Interp
-  * \           else 1.
-  * @return 1 if Gray level, 3 if Color
+  * \brief This function is intended to user who doesn't whan 
+  * \ to have to manage a LUT and expects to get an RBG Pixel image
+  * \ (or a monochrome one ...) 
+  * \warning to be used with GetImagePixels()
+  * @return 1 if Gray level, 3 if Color (RGB, YBR or PALETTE COLOR)
   */
 int gdcmHeaderHelper::GetNumberOfScalarComponents() {
-      std::string PhotometricInterpretation = 
+
+   if (GetSamplesPerPixel() ==3)
+      return 3;
+      
+     // 0028 0100 US IMG Bits Allocated
+     // (in order no to be messed up by old RGB images)
+   if (gdcmHeader::GetPubElValByNumber(0x0028,0x0100) == "24")
+      return 3;
+       
+   std::string PhotometricInterpretation = 
                   gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
 
-
-// The compiler will optimze, if it feels like !
-
-      //beware of trailing space at end of string
-      if (PhotometricInterpretation.find(GDCM_UNFOUND) < PhotometricInterpretation.length() || 
-          PhotometricInterpretation.find("MONOCHROME1") < PhotometricInterpretation.length() || 
-          PhotometricInterpretation.find("MONOCHROME2") < PhotometricInterpretation.length() ) return 1;
-
-            // WARNING : quick and dirty trick to produce a single plane Grey image
-	    // See also  gdcmFile::GetImageDataIntoVector()
-           // if(GetPubElValVoidAreaByNumber(0x0028,0x1201)==NULL) return 1; // Lut Red
-            // end of dirty trick
-
+   if ( ( PhotometricInterpretation == "PALETTE COLOR ") ) {
+      if (HasLUT())   // PALETTE COLOR is NOT enough
+         return 3;
+      else
+         return 1;	 
+   }   
+		  
+      //beware of trailing space at end of string		        		        
+   if (PhotometricInterpretation.find(GDCM_UNFOUND) < 
+                           PhotometricInterpretation.length() || 
+       PhotometricInterpretation.find("MONOCHROME1") < 
+                           PhotometricInterpretation.length() || 
+       PhotometricInterpretation.find("MONOCHROME2") < 
+                           PhotometricInterpretation.length() ) 
+       return 1;
+    else
+    // we assume that *all* kinds of YBR are dealt with
       return 3;
 }
+
+//----------------------------------------------------------------------------
+/**
+  * \ingroup gdcmHeaderHelper
+  * \brief This function is intended to user that DOESN'T want 
+  * \to get RGB pixels image when it's stored as a PALETTE COLOR image
+  * \ - the (vtk) user is supposed to know how deal with LUTs - 
+  * \warning to be used with GetImagePixelsRaw()
+  * @return 1 if Gray level, 3 if Color (RGB or YBR - NOT 'PALETTE COLOR' -)
+  */
+int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
+      
+     // 0028 0100 US IMG Bits Allocated
+     // (in order no to be messed up by old RGB images)
+   if (gdcmHeader::GetPubElValByNumber(0x0028,0x0100) == "24")
+      return 3;
+
+    // we assume that *all* kinds of YBR are dealt with
+      return GetSamplesPerPixel();
+}
+
 //----------------------------------------------------------------------------
 /**
  * \ingroup gdcmHeaderHelper
@@ -128,6 +170,7 @@ int gdcmHeaderHelper::GetNumberOfScalarComponents() {
  *          - 32U unsigned 32 bit,
  *          - 32S   signed 32 bit,
  * \warning 12 bit images appear as 16 bit.
+ * \        24 bit images appear as 8 bit
  * @return  
  */
 std::string gdcmHeaderHelper::GetPixelType() {
@@ -137,9 +180,11 @@ std::string gdcmHeaderHelper::GetPixelType() {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
       BitsAlloc = std::string("16");
    }
-   if (BitsAlloc == "12")
+   if (BitsAlloc == "12")           // It will be unpacked
       BitsAlloc = std::string("16");
-
+   else if (BitsAlloc == "24")      // (in order no to be messed up
+      BitsAlloc = std::string("8"); // by old RGB images)
+      
    std::string Signed;
    Signed = GetElValByName("Pixel Representation");
    if (Signed == GDCM_UNFOUND) {

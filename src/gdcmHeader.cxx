@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.106 2003/10/31 11:29:59 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.107 2003/11/03 10:49:31 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -2011,7 +2011,7 @@ int gdcmHeader::GetBitsAllocated(void) {
 /**
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of Samples Per Pixel
- *          (1 : gray level, 3 : RGB)
+ *          (1 : gray level, 3 : RGB -1 or 3 Planes-)
  * 
  * @return  The encountered number of Samples Per Pixel, 1 by default.
  */
@@ -2065,6 +2065,7 @@ int gdcmHeader::GetPixelSize(void) {
  *          - 32U unsigned 32 bit,
  *          - 32S   signed 32 bit,
  * \warning 12 bit images appear as 16 bit.
+ * \        24 bit images appear as 8 bit
  * @return  
  */
 std::string gdcmHeader::GetPixelType(void) {
@@ -2074,9 +2075,11 @@ std::string gdcmHeader::GetPixelType(void) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
       BitsAlloc = std::string("16");
    }
-   if (BitsAlloc == "12")
+   if (BitsAlloc == "12")            // It will be unpacked
       BitsAlloc = std::string("16");
-
+   else if (BitsAlloc == "24")       // (in order no to be messed up
+      BitsAlloc = std::string("8");  // by old RGB images)
+     
    std::string Signed;
    Signed = GetElValByName("Pixel Representation");
    if (Signed == GDCM_UNFOUND) {
@@ -2086,6 +2089,8 @@ std::string gdcmHeader::GetPixelType(void) {
    if (Signed == "0")
       Signed = std::string("U");
    else
+
+std::cout << "GetPixelType : " << BitsAlloc + Signed << std::endl;
       Signed = std::string("S");
 
    return( BitsAlloc + Signed);
@@ -2115,12 +2120,15 @@ std::string gdcmHeader::GetTransferSyntaxName(void) {
 /**
   * \ingroup gdcmHeader
   * \brief tells us if LUT are used
+  * \warning Right now, Segmented xxx Palette Color Lookup Table Data
+  * \        are NOT considered as LUT, since nobody knows
+  *\         how to deal with them
   * @return int acts as a Boolean 
   */
   
 int gdcmHeader::HasLUT(void) {
 
-   // Just hope checking the presence of the LUT Descriptors is enough 
+   // Check the presence of the LUT Descriptors 
    if (GetPubElValByNumber(0x0028,0x1101) == GDCM_UNFOUND)
       return 0;
    // LutDescriptorGreen 
@@ -2128,7 +2136,15 @@ int gdcmHeader::HasLUT(void) {
       return 0;
    // LutDescriptorBlue 
    if (GetPubElValByNumber(0x0028,0x1103) == GDCM_UNFOUND)
+      return 0;
+   //  It is not enough
+   // we check also 
+   if (GetPubElValByNumber(0x0028,0x1201) == GDCM_UNFOUND)
       return 0;  
+   if (GetPubElValByNumber(0x0028,0x1202) == GDCM_UNFOUND)
+      return 0;
+   if (GetPubElValByNumber(0x0028,0x1203) == GDCM_UNFOUND)
+      return 0;   
    return 1;
 }
 
@@ -2269,7 +2285,8 @@ void * gdcmHeader::GetLUTRGBA(void) {
             // if it works, we shall have to check the 3 Palettes
             // to see which byte is ==0 (first one, or second one)
 	    // and fix the code
-	    // We give up the checking to avoid some overhead    
+	    // We give up the checking to avoid some overhead 
+	    
   char *a;      
   int i;
   a= LUTRGBA+0;
@@ -2292,9 +2309,10 @@ void * gdcmHeader::GetLUTRGBA(void) {
      *a = 1; // Alpha component
      a+=4; 
   } 
-    
-// WHY does it seg fault ?!?
-//free(LutR); free(LutB); free(LutG); printf ("libere\n");
+      
+//How to free the now useless LUTs?
+//
+//free(LutR); free(LutB); free(LutG);
 
   return(LUTRGBA);   
 } 

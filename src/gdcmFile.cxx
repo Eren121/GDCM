@@ -356,10 +356,8 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          //       from Lut R + Lut G + Lut B
          
    unsigned char * newDest = (unsigned char *)malloc(lgrTotale);
-   unsigned char * a       = (unsigned char *)destination;
-	 
+   unsigned char * a       = (unsigned char *)destination;	 
    unsigned char * lutRGBA = (unsigned char *)GetLUTRGBA();
-   
    if (lutRGBA) { 	    
       int l = lgrTotale/3;
       memmove(newDest, destination, l);// move Gray pixels to temp area	    
@@ -371,6 +369,19 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          *a++ = lutRGBA[j+2];
       }
       free(newDest);
+    
+   // now, it's an RGB image
+   // Lets's write it in the Header
+
+         // CreateOrReplaceIfExist ?
+	 
+   std::string spp = "3";        // Samples Per Pixel
+   gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002);
+   std::string rgb= "RGB ";      // Photometric Interpretation
+   gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
+   std::string planConfig = "0"; // Planar Configuration
+   gdcmHeader::SetPubElValByNumber(planConfig,0x0028,0x0006);
+       
                
    } else { 
 	     // need to make RGB Pixels (?)
@@ -384,20 +395,12 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
                    // No idea how to manage it 
 		   // It seems that *no Dicom Viewer* has any idea :-(
 		   // Segmented xxx Palette Color are *more* than 65535 long ?!?
+		   
+      std::string rgb= "MONOCHROME1 ";      // Photometric Interpretation
+      gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);		   
+		   
    }   
-    
-   // now, it's an RGB image
-   // Lets's write it in the Header
-
-         // CreateOrReplaceIfExist ?
-	 
-   std::string spp = "3";        // Samples Per Pixel
-   gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002);
-   std::string rgb="RGB ";       // Photometric Interpretation
-   gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
-   std::string planConfig = "0"; // Planar Configuration
-   gdcmHeader::SetPubElValByNumber(planConfig,0x0028,0x0006);
-	 
+    	 
 	 // TODO : Drop Palette Color out of the Header? 
 	     
    return lgrTotale; 

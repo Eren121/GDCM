@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.4 2003/10/03 14:26:11 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.5 2003/11/03 10:49:31 jpr Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
@@ -78,6 +78,7 @@ public:
    float GetZSpacing();
 
    int GetNumberOfScalarComponents();
+   int GetNumberOfScalarComponentsRaw();
 
    std::string GetStudyUID();
    std::string GetSeriesUID();
