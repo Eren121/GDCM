@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/24 11:39:21 $
-  Version:   $Revision: 1.129 $
+  Date:      $Date: 2004/09/24 12:28:40 $
+  Version:   $Revision: 1.130 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -665,14 +665,15 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
          return 0;
       }
    }
-// DO NOT remove this code commented out.
-// Nobody knows what's expecting you ...
-// Just to 'see' what was actually read on disk :-(
-
-//   FILE*  f2;
-//   f2 = fopen("SpuriousFile.RAW","wb");
-//   fwrite(destination,ImageDataSize,1,f2);
-//   fclose(f2);
+/// \todo
+/// DO NOT remove this code commented out.
+/// Nobody knows what's expecting you ...
+/// Just to 'see' what was actually read on disk :-(
+///
+///   FILE*  f2;
+///   f2 = fopen("SpuriousFile.RAW","wb");
+///   fwrite(destination,ImageDataSize,1,f2);
+///   fclose(f2);
 
    // Deal with the color
    // -------------------
