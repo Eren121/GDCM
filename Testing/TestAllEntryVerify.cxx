@@ -541,7 +541,7 @@ bool ReferenceFileParser::SecondPassReferenceFile()
 
    while ( !from.eof() )
    {
-      getline( from, line );
+      std::getline( from, line );
       lineNumber++;
 
       CleanUpLine( line );
