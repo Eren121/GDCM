@@ -33,6 +33,11 @@ MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 EXPORT_LIBRARY_DEPENDENCIES(${GDCM_BINARY_DIR}/GDCMLibraryDepends.cmake)
 
+# Save the compiler settings so another project can import them.
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
+CMAKE_EXPORT_BUILD_SETTINGS(${GDCM_BINARY_DIR}/GDCMBuildSettings.cmake)
+#INSTALL_FILES(/lib/gdcm .cmake GDCMBuildSettings)
+
 # For GDCM from build tree:
 SET(GDCM_USE_FILE ${GDCM_SOURCE_DIR}/GDCMUse.cmake)
 SET(GDCM_INCLUDE_DIRS
