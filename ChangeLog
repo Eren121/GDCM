@@ -1,4 +1,9 @@
 2003-02-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * python/setup.py now works on Un*x. (harder than I thougth)
+      * python/distutilsSwigCPlusPlus.py can now have include files
+        among the list of sources.
+      
+2003-02-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx : bug fix - opening dicom file in binary !!!
       * modifications in MSVC projects
 

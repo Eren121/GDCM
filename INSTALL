@@ -1,6 +1,7 @@
 * For compiling the library and C++ test programs:
 
-./configure
+./autogen.sh
+./configure (optional if just after autogen.sh)
 make
 make install
 
