@@ -1,3 +1,6 @@
+2004-03-29  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+     * src/gdcmParser.cxx: removal of all TAB character. Indentation fixed.
+
 2004-03-27  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
      * src/gdcmUtil.[cxx|h] split in two. Additional file gdcmGlobal.[cxx|h]
        now contains all the gdcmGlobal related code.
