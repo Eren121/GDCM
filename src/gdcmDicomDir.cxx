@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:26:12 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2005/01/07 19:20:38 $
+  Version:   $Revision: 1.94 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,9 +90,9 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    // if user passed a root directory, sure we didn't get anything
    if ( TagHT.begin() == TagHT.end() ) // when user passed a Directory to parse
    {
-      Debug::Verbose(0, "DicomDir::DicomDir : entry HT empty");
+      gdcmVerboseMacro("DicomDir::DicomDir : entry HT empty");
 
-      if ( fileName.size() == 1 && fileName[0] == '.' )
+      if ( fileName == "." )
       {
          // user passed '.' as Name
          // we get current directory name
@@ -105,8 +105,8 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       {
          MetaElems = NewMeta();
 
-         Debug::Verbose(0, "DicomDir::DicomDir : Parse directory"
-                        " and create the DicomDir");
+         gdcmVerboseMacro("DicomDir::DicomDir : Parse directory" 
+                     " and create the DicomDir");
          ParseDirectory();
       }
       else
@@ -122,7 +122,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       DocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
       if ( !e )
       {
-         Debug::Verbose(0, "DicomDir::DicomDir : NO Directory record"
+         gdcmVerboseMacro("DicomDir::DicomDir : NO Directory record"
                         " sequence (0x0004,0x1220)");
          /// \todo FIXME : what do we do when the parsed file IS NOT a
          ///       DICOMDIR file ?         
@@ -358,7 +358,7 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
                                          std::ios::out | std::ios::binary);
    if( !fp ) 
    {
-      Debug::Verbose(2, "Failed to open(write) File: ", fileName.c_str());
+      gdcmVerboseMacro("Failed to open(write) File: " << fileName.c_str());
       return false;
    }
 
@@ -425,9 +425,8 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
       header = new Header( it->c_str() );
       if( !header )
       {
-         Debug::Verbose( 1,
-                      "DicomDir::CreateDicomDirChainedList: "
-                      "failure in new Header ",
+         gdcmVerboseMacro( "DicomDir::CreateDicomDirChainedList: " <<
+                      "failure in new Header " <<
                       it->c_str() );
          continue;
       }
@@ -436,8 +435,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
       {
          // Add the file header to the chained list:
          list.push_back(header);
-         Debug::Verbose( 1,
-                      "DicomDir::CreateDicomDirChainedList: readable ",
+         gdcmVerboseMacro( "DicomDir::CreateDicomDirChainedList: readable " <<
                       it->c_str() );
        }
        else
@@ -552,7 +550,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirImage();
          if( !AddDicomDirImageToEnd(static_cast<DicomDirImage *>(si)) )
          {
-            Debug::Verbose(0,"DicomDir::SetElement:",
+            gdcmVerboseMacro("DicomDir::SetElement:"
                         "Add DicomDirImageToEnd failed");
          }
          break;
@@ -561,7 +559,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirSerie();
          if( !AddDicomDirSerieToEnd(static_cast<DicomDirSerie *>(si)) )
          {
-            Debug::Verbose(0,"DicomDir::SetElement:",
+            gdcmVerboseMacro("DicomDir::SetElement:"
                         "Add DicomDirSerieToEnd failed");
          }
          break;
@@ -570,7 +568,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirStudy();
          if( !AddDicomDirStudyToEnd(static_cast<DicomDirStudy *>(si)) )
          {
-            Debug::Verbose(0,"DicomDir::SetElement:",
+            gdcmVerboseMacro("DicomDir::SetElement:"
                         "Add DicomDirStudyToEnd failed");
          }
          break;
@@ -579,7 +577,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirPatient();
          if( !AddDicomDirPatientToEnd(static_cast<DicomDirPatient *>(si)) )
          {
-            Debug::Verbose(0,"DicomDir::SetElement:",
+            gdcmVerboseMacro("DicomDir::SetElement:"
                         "Add DicomDirPatientToEnd failed");
          }
          break;
@@ -588,7 +586,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirMeta();
          if( MetaElems )
          {
-            Debug::Verbose(0,"DicomDir::SetElement:",
+            gdcmVerboseMacro("DicomDir::SetElement:"
                         "MetaElements already exist, they will be destroyed");
             delete MetaElems;
          }
@@ -639,8 +637,8 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          {
             if( header->GetFileName().substr(0, path.length()) != path )
             {
-               Debug::Verbose(0, "DicomDir::SetElement : the base path"
-                              " of file name is incorrect");
+               gdcmVerboseMacro("DicomDir::SetElement : the base path"
+                           " of file name is incorrect");
                val = header->GetFileName();
             }
             else
@@ -731,8 +729,8 @@ void DicomDir::CreateDicomDir()
    DocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
    if ( !e )
    {
-      Debug::Verbose(0, "DicomDir::DicomDir : NO Directory record"
-                     " sequence (0x0004,0x1220)");
+      gdcmVerboseMacro("DicomDir::DicomDir : NO Directory record"
+                  " sequence (0x0004,0x1220)");
       /// \todo FIXME: what to do when the parsed file IS NOT a DICOMDIR file ? 
       return;         
    }
@@ -740,7 +738,7 @@ void DicomDir::CreateDicomDir()
    SeqEntry *s = dynamic_cast<SeqEntry *>(e);
    if ( !s )
    {
-      Debug::Verbose(0, "DicomDir::CreateDicomDir: no SeqEntry present");
+      gdcmVerboseMacro("DicomDir::CreateDicomDir: no SeqEntry present");
       // useless : (0x0004,0x1220) IS a Sequence !
       return;
    }
@@ -763,7 +761,7 @@ void DicomDir::CreateDicomDir()
       }
       else
       {
-         Debug::Verbose(0, "DicomDir::CreateDicomDir: not a ValEntry.");
+         gdcmVerboseMacro("DicomDir::CreateDicomDir: not a ValEntry.");
          continue;
       }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:26:12 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/07 19:20:38 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,7 @@ ValEntry *DocEntrySet::NewValEntryByNumber(uint16_t group,uint16_t elem,
    ValEntry *newEntry = new ValEntry(dictEntry);
    if (!newEntry) 
    {
-      Debug::Verbose(1, "Document::NewValEntryByNumber",
+      gdcmVerboseMacro("Document::NewValEntryByNumber"
                   "failed to allocate ValEntry");
       return 0;
    }
@@ -96,7 +96,7 @@ BinEntry *DocEntrySet::NewBinEntryByNumber(uint16_t group,uint16_t elem,
    BinEntry *newEntry = new BinEntry(dictEntry);
    if (!newEntry) 
    {
-      Debug::Verbose(1, "Document::NewBinEntryByNumber",
+      gdcmVerboseMacro("Document::NewBinEntryByNumber"
                   "failed to allocate BinEntry");
       return 0;
    }
@@ -118,7 +118,7 @@ SeqEntry* DocEntrySet::NewSeqEntryByNumber(uint16_t group,uint16_t elem)
    SeqEntry *newEntry = new SeqEntry( dictEntry );
    if (!newEntry)
    {
-      Debug::Verbose(1, "Document::NewSeqEntryByNumber",
+      gdcmVerboseMacro("Document::NewSeqEntryByNumber"
                   "failed to allocate SeqEntry");
       return 0;
    }
@@ -140,8 +140,8 @@ DictEntry *DocEntrySet::GetDictEntryByNumber(uint16_t group,uint16_t elem)
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
    if (!pubDict) 
    {
-      Debug::Verbose(0, "Document::GetDictEntry",
-                     "we SHOULD have a default dictionary");
+      gdcmVerboseMacro("Document::GetDictEntry"
+                  "we SHOULD have a default dictionary");
    }
    else
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:45:51 $
-  Version:   $Revision: 1.164 $
+  Date:      $Date: 2005/01/07 19:20:38 $
+  Version:   $Revision: 1.165 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,7 +106,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
       return;
    }
 
-   Debug::Verbose(0, "Document::Document: starting parsing of file: ",
+   gdcmVerboseMacro("Document::Document: starting parsing of file: " <<
                   Filename.c_str());
    Fp->seekg( 0,  std::ios::beg);
    
@@ -283,14 +283,14 @@ bool Document::IsReadable()
 {
    if( Filetype == Unknown)
    {
-      Debug::Verbose(0, "Document::IsReadable: wrong filetype");
+      gdcmVerboseMacro("Document::IsReadable: wrong filetype");
       return false;
    }
 
    if( TagHT.empty() )
    {
-      Debug::Verbose(0, "Document::IsReadable: no tags in internal"
-                     " hash table.");
+      gdcmVerboseMacro("Document::IsReadable: no tags in internal"
+                  " hash table.");
       return false;
    }
 
@@ -424,16 +424,14 @@ std::ifstream *Document::OpenFile()
 
    if(Fp)
    {
-      Debug::Verbose( 0,
-                   "Document::OpenFile is already opened when opening: ",
+      gdcmVerboseMacro( "Document::OpenFile is already opened when opening: " <<
                    Filename.c_str());
    }
 
    Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
    if( ! *Fp )
    {
-      Debug::Verbose( 0,
-                   "Document::OpenFile cannot open file: ",
+      gdcmVerboseMacro( "Document::OpenFile cannot open file: " <<
                    Filename.c_str());
       delete Fp;
       Fp = 0;
@@ -473,8 +471,7 @@ std::ifstream *Document::OpenFile()
    }
  
    CloseFile();
-   Debug::Verbose( 0,
-                "Document::OpenFile not DICOM/ACR (missing preamble)",
+   gdcmVerboseMacro( "Document::OpenFile not DICOM/ACR (missing preamble)" <<
                 Filename.c_str());
  
    return 0;
@@ -566,8 +563,8 @@ ValEntry *Document::ReplaceOrCreateByNumber(std::string const &value,
       {
          if (!RemoveEntry(currentEntry))
          {
-            Debug::Verbose(0, "Document::ReplaceOrCreateByNumber: removal"
-                           " of previous DocEntry failed.");
+            gdcmVerboseMacro("Document::ReplaceOrCreateByNumber: removal"
+                        " of previous DocEntry failed.");
 
             return NULL;
          }
@@ -581,8 +578,8 @@ ValEntry *Document::ReplaceOrCreateByNumber(std::string const &value,
 
       if ( !AddEntry(valEntry))
       {
-         Debug::Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
-                        " failed allthough this is a creation.");
+         gdcmVerboseMacro("Document::ReplaceOrCreateByNumber: AddEntry"
+                     " failed allthough this is a creation.");
 
          delete valEntry;
          return NULL;
@@ -629,8 +626,8 @@ BinEntry *Document::ReplaceOrCreateByNumber(uint8_t *binArea,
       {
          if (!RemoveEntry(currentEntry))
          {
-            Debug::Verbose(0, "Document::ReplaceOrCreateByNumber: removal"
-                           " of previous DocEntry failed.");
+            gdcmVerboseMacro("Document::ReplaceOrCreateByNumber: removal"
+                        " of previous DocEntry failed.");
 
             return NULL;
          }
@@ -644,8 +641,8 @@ BinEntry *Document::ReplaceOrCreateByNumber(uint8_t *binArea,
 
       if ( !AddEntry(binEntry))
       {
-         Debug::Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
-                        " failed allthough this is a creation.");
+         gdcmVerboseMacro("Document::ReplaceOrCreateByNumber: AddEntry"
+                     " failed allthough this is a creation.");
 
          delete binEntry;
          return NULL;
@@ -702,8 +699,8 @@ SeqEntry *Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
       {
          if (!RemoveEntry(currentEntry))
          {
-            Debug::Verbose(0, "Document::ReplaceOrCreateByNumber: removal"
-                           " of previous DocEntry failed.");
+            gdcmVerboseMacro("Document::ReplaceOrCreateByNumber: removal"
+                        " of previous DocEntry failed.");
 
             return NULL;
          }
@@ -717,7 +714,7 @@ SeqEntry *Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
 
       if ( !AddEntry(seqEntry))
       {
-         Debug::Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
+         gdcmVerboseMacro("Document::ReplaceOrCreateByNumber: AddEntry"
                         " failed allthough this is a creation.");
 
          delete seqEntry;
@@ -841,7 +838,7 @@ bool Document::SetEntryByNumber(std::string const& content,
    ValEntry *entry = GetValEntryByNumber(group, element);
    if (!entry )
    {
-      Debug::Verbose(0, "Document::SetEntryByNumber: no corresponding",
+      gdcmVerboseMacro("Document::SetEntryByNumber: no corresponding"
                      " ValEntry (try promotion first).");
       return false;
    }
@@ -863,7 +860,7 @@ bool Document::SetEntryByNumber(uint8_t*content, int lgth,
    BinEntry *entry = GetBinEntryByNumber(group, element);
    if (!entry )
    {
-      Debug::Verbose(0, "Document::SetEntryByNumber: no corresponding",
+      gdcmVerboseMacro( "Document::SetEntryByNumber: no corresponding"
                      " ValEntry (try promotion first).");
       return false;
    }
@@ -925,7 +922,7 @@ void *Document::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem)
    DocEntry *entry = GetDocEntryByNumber(group, elem);
    if (!entry) 
    {
-      Debug::Verbose(1, "Document::GetDocEntryByNumber: no entry");
+      gdcmVerboseMacro("Document::GetDocEntryByNumber: no entry");
       return 0;
    }
    if ( BinEntry *binEntry = dynamic_cast<BinEntry*>(entry) )
@@ -977,7 +974,7 @@ void Document::LoadEntryBinArea(BinEntry *element)
    uint8_t *a = new uint8_t[l];
    if( !a )
    {
-      Debug::Verbose(0, "Document::LoadEntryBinArea cannot allocate a");
+      gdcmVerboseMacro("Document::LoadEntryBinArea cannot allocate a");
       return;
    }
 
@@ -1057,7 +1054,7 @@ ValEntry *Document::GetValEntryByNumber(uint16_t group, uint16_t element)
    {
       return entry;
    }
-   Debug::Verbose(0, "Document::GetValEntryByNumber: unfound ValEntry.");
+   gdcmVerboseMacro("Document::GetValEntryByNumber: unfound ValEntry.");
 
    return 0;
 }
@@ -1079,7 +1076,7 @@ BinEntry *Document::GetBinEntryByNumber(uint16_t group, uint16_t element)
    {
       return entry;
    }
-   Debug::Verbose(0, "Document::GetBinEntryByNumber: unfound BinEntry.");
+   gdcmVerboseMacro("Document::GetBinEntryByNumber: unfound BinEntry.");
 
    return 0;
 }
@@ -1126,7 +1123,7 @@ uint32_t Document::SwapLong(uint32_t a)
          break;
       default :
          //std::cout << "swapCode= " << SwapCode << std::endl;
-         Debug::Error(" Document::SwapLong : unset swap code");
+         gdcmErrorMacro(" Document::SwapLong : unset swap code");
          a = 0;
    }
    return a;
@@ -1207,7 +1204,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if ( ! Global::GetVR()->IsVROfBinaryRepresentable(vr) )
             { 
                 ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
-                Debug::Verbose(0, "Document::ParseDES: neither Valentry, "
+                gdcmVerboseMacro("Document::ParseDES: neither Valentry, "
                                "nor BinEntry. Probably unknown VR.");
             }
 
@@ -1555,8 +1552,8 @@ void Document::LoadDocEntry(DocEntry *entry)
    if( length % 2 )
    {
       newValue = Util::DicomString(str, length+1);
-      //Debug::Verbose(0, "Warning: bad length: ", length );
-      Debug::Verbose(0, "For string :",  newValue.c_str()); 
+      gdcmVerboseMacro("Warning: bad length: " << length );
+      gdcmVerboseMacro("For string :" <<  newValue.c_str()); 
       // Since we change the length of string update it length
       //entry->SetReadLength(length+1);
    }
@@ -1570,7 +1567,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    {
       if ( Fp->fail() || Fp->eof())//Fp->gcount() == 1
       {
-         Debug::Verbose(1, "Document::LoadDocEntry",
+         gdcmVerboseMacro("Document::LoadDocEntry"
                         "unread element value");
          valEntry->SetValue(GDCM_UNREAD);
          return;
@@ -1588,7 +1585,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    }
    else
    {
-      Debug::Error(true, "Document::LoadDocEntry"
+      gdcmErrorMacro("Document::LoadDocEntry"
                       "Should have a ValEntry, here !");
    }
 }
@@ -1956,13 +1953,13 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
       s << "Warning : Tag with uneven length "
         << foundLength 
         <<  " in x(" << std::hex << gr << "," << elem <<")" << std::dec;
-      Debug::Verbose(0, s.str().c_str());
+      gdcmVerboseMacro(s.str().c_str());
    }
       
    //////// Fix for some naughty General Electric images.
    // Allthough not recent many such GE corrupted images are still present
    // on Creatis hard disks. Hence this fix shall remain when such images
-   // are no longer in user (we are talking a few years, here)...
+   // are no longer in use (we are talking a few years, here)...
    // Note: XMedCom probably uses such a trick since it is able to read
    //       those pesky GE images ...
    if ( foundLength == 13)
@@ -2044,7 +2041,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
            << std::hex << group << " , " << element 
            << ") -before- position x(" << filePosition << ")"
            << "lgt : " << length;
-         Debug::Verbose(0, "Document::IsDocEntryAnInteger", s.str().c_str() );
+         gdcmVerboseMacro("Document::IsDocEntryAnInteger" << s.str().c_str() );
       }
    }
 
@@ -2089,7 +2086,7 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
      
       if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
       {
-         Debug::Verbose(1, "Document::FindDocEntryLengthOBOrOW: neither an Item "
+         gdcmVerboseMacro("Document::FindDocEntryLengthOBOrOW: neither an Item "
                         "tag nor a Sequence delimiter tag."); 
          Fp->seekg(positionOnEntry, std::ios::beg);
          throw FormatUnexpected("Document::FindDocEntryLengthOBOrOW()",
@@ -2224,7 +2221,7 @@ bool Document::CheckSwap()
    char *entCur = deb + 128;
    if( memcmp(entCur, "DICM", (size_t)4) == 0 )
    {
-      Debug::Verbose(1, "Document::CheckSwap:", "looks like DICOM Version3");
+      gdcmVerboseMacro("Document::CheckSwap:" "looks like DICOM Version3");
       
       // Next, determine the value representation (VR). Let's skip to the
       // first element (0002, 0000) and check there if we find "UL" 
@@ -2258,26 +2255,26 @@ bool Document::CheckSwap()
       // instead of just checking for UL, OB and UI !? group 0000 
       {
          Filetype = ExplicitVR;
-         Debug::Verbose(1, "Document::CheckSwap:",
+         gdcmVerboseMacro( "Document::CheckSwap:"
                      "explicit Value Representation");
       } 
       else 
       {
          Filetype = ImplicitVR;
-         Debug::Verbose(1, "Document::CheckSwap:",
+         gdcmVerboseMacro("Document::CheckSwap:"
                      "not an explicit Value Representation");
       }
       
       if ( net2host )
       {
          SwapCode = 4321;
-         Debug::Verbose(1, "Document::CheckSwap:",
+         gdcmVerboseMacro("Document::CheckSwap:"
                         "HostByteOrder != NetworkByteOrder");
       }
       else 
       {
          SwapCode = 0;
-         Debug::Verbose(1, "Document::CheckSwap:",
+         gdcmVerboseMacro("Document::CheckSwap:"
                         "HostByteOrder = NetworkByteOrder");
       }
       
@@ -2291,7 +2288,7 @@ bool Document::CheckSwap()
    // Alas, this is not a DicomV3 file and whatever happens there is no file
    // preamble. We can reset the file position indicator to where the data
    // is (i.e. the beginning of the file).
-   Debug::Verbose(1, "Document::CheckSwap:", "not a DICOM Version3 file");
+   gdcmVerboseMacro("Document::CheckSwap:" "not a DICOM Version3 file");
    Fp->seekg(0, std::ios::beg);
 
    // Our next best chance would be to be considering a 'clean' ACR/NEMA file.
@@ -2366,7 +2363,7 @@ bool Document::CheckSwap()
                Filetype = ACR;
                return true;
             default :
-               Debug::Verbose(0, "Document::CheckSwap:",
+               gdcmVerboseMacro( "Document::CheckSwap:"
                      "ACR/NEMA unfound swap info (Really hopeless !)");
                Filetype = Unknown;
                return false;
@@ -2388,7 +2385,7 @@ bool Document::CheckSwap()
  */
 void Document::SwitchSwapToBigEndian() 
 {
-   Debug::Verbose(1, "Document::SwitchSwapToBigEndian",
+   gdcmVerboseMacro("Document::SwitchSwapToBigEndian"
                   "Switching to BigEndian mode.");
    if ( SwapCode == 0    ) 
    {
@@ -2530,7 +2527,7 @@ DocEntry *Document::ReadNextDocEntry()
          std::string msg;
          msg = Util::Format("Falsely explicit vr file (%04x,%04x)\n", 
                        newEntry->GetGroup(), newEntry->GetElement());
-         Debug::Verbose(1, "Document::FindVR: ", msg.c_str());
+         gdcmVerboseMacro("Document::FindVR: " << msg.c_str());
       }
       newEntry->SetImplicitVR();
    }
@@ -2613,8 +2610,8 @@ bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
       s << std::hex << itemTagGroup << "," << itemTagElement << ")"
         << std::endl;
       s << "  at address: " << (unsigned)currentPosition << std::endl;
-      Debug::Verbose(0, "Document::ReadItemTagLength: wrong Item Tag found:");
-      Debug::Verbose(0, s.str().c_str());
+      gdcmVerboseMacro("Document::ReadItemTagLength: wrong Item Tag found:"
+      << s.str().c_str());
       Fp->seekg(positionOnEntry, std::ios::beg);
 
       return false;
@@ -2654,7 +2651,7 @@ uint32_t Document::ReadTagLength(uint16_t testGroup, uint16_t testElement)
       s << "Basic Item Length is: "
         << itemLength << std::endl;
       s << "  at address: " << (unsigned)currentPosition << std::endl;
-      Debug::Verbose(0, "Document::ReadItemTagLength: ", s.str().c_str());
+      gdcmVerboseMacro("Document::ReadItemTagLength: " << s.str().c_str());
    }
    return itemLength;
 }
@@ -2687,7 +2684,7 @@ void Document::ReadAndSkipEncapsulatedBasicOffsetTable()
          std::ostringstream s;
          s << "   Read one length: ";
          s << std::hex << individualLength << std::endl;
-         Debug::Verbose(0,
+         gdcmVerboseMacro(0,
                      "Document::ReadAndSkipEncapsulatedBasicOffsetTable: ",
                      s.str().c_str());
       }
@@ -2746,7 +2743,7 @@ void Document::ComputeRLEInfo()
       if ( nbRleSegments > 16 )
       {
          // There should be at most 15 segments (refer to RLEFrame class)
-         Debug::Verbose(0, "Document::ComputeRLEInfo: too many segments.");
+         gdcmVerboseMacro("Document::ComputeRLEInfo: too many segments.");
       }
  
       uint32_t rleSegmentOffsetTable[16];
@@ -2789,8 +2786,8 @@ void Document::ComputeRLEInfo()
    // Delimiter Item':
    if ( !ReadTag(0xfffe, 0xe0dd) )
    {
-      Debug::Verbose(0, "Document::ComputeRLEInfo: no sequence delimiter ");
-      Debug::Verbose(0, "    item at end of RLE item sequence");
+      gdcmVerboseMacro("Document::ComputeRLEInfo: no sequence delimiter "
+       "    item at end of RLE item sequence");
    }
 }
 
@@ -2830,8 +2827,8 @@ void Document::ComputeJPEGFragmentInfo()
    // Delimiter Item':
    if ( !ReadTag(0xfffe, 0xe0dd) )
    {
-      Debug::Verbose(0, "Document::ComputeRLEInfo: no sequence delimiter ");
-      Debug::Verbose(0, "    item at end of JPEG item sequence");
+      gdcmVerboseMacro("Document::ComputeRLEInfo: no sequence delimiter "
+       "    item at end of JPEG item sequence");
    }
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:26:13 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/07 19:20:39 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ VR::VR()
    std::ifstream from(filename.c_str());
    if(!from)
    {
-      Debug::Verbose(2, "VR::VR: can't open dictionary", filename.c_str());
+      gdcmVerboseMacro("VR::VR: can't open dictionary" << filename.c_str());
       FillDefaultVRDict(vr);
    }
    else

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:26:13 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/07 19:20:38 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -259,7 +259,7 @@ bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t *subRaw,
                                                                                 
       if ( numberOfReadBytes > fragmentSize )
       {
-         Debug::Verbose(0, "PixelReadConvert::ReadAndDecompressRLEFragment: we "
+         gdcmVerboseMacro("PixelReadConvert::ReadAndDecompressRLEFragment: we "
                         "read more bytes than the segment size.");
          return false;
       }
@@ -332,7 +332,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            Debug::Verbose( 0, "PixelReadConvert::ConvertSwapZone: SwapCode value "
+            gdcmVerboseMacro( "PixelReadConvert::ConvertSwapZone: SwapCode value "
                             "(16 bits) not allowed." );
       }
    }
@@ -379,7 +379,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            Debug::Verbose( 0, "PixelReadConvert::ConvertSwapZone: SwapCode value "
+            gdcmVerboseMacro( "PixelReadConvert::ConvertSwapZone: SwapCode value "
                             "(32 bits) not allowed." );
       }
    }
@@ -460,7 +460,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream *fp )
       else
       {
          // other JPEG lossy not supported
-         Debug::Error("PixelReadConvert::ReadAndDecompressJPEGFile: unknown "
+         gdcmErrorMacro("PixelReadConvert::ReadAndDecompressJPEGFile: unknown "
                    "jpeg lossy compression ");
          return false;
       }
@@ -520,7 +520,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
       if ( ! gdcm_read_JPEG_memory8( buffer, totalLength, Raw,
                                      &howManyRead, &howManyWritten ) ) 
       {
-         Debug::Error(
+         gdcmErrorMacro(
             "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg8 "
             );
          delete [] buffer;
@@ -532,7 +532,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
       if ( ! gdcm_read_JPEG_memory12( buffer, totalLength, Raw,
                                       &howManyRead, &howManyWritten ) ) 
       {
-         Debug::Error(
+         gdcmErrorMacro(
             "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg12 "
             );
             delete [] buffer;
@@ -545,7 +545,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
       if ( ! gdcm_read_JPEG_memory16( buffer, totalLength, Raw,
                                       &howManyRead, &howManyWritten ) ) 
       {
-         Debug::Error(
+         gdcmErrorMacro(
             "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg16 "
             );
          delete [] buffer;
@@ -555,7 +555,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
    else
    {
       // other JPEG lossy not supported
-      Debug::Error("PixelConvert::ReadAndDecompressJPEGFile: unknown "
+      gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: unknown "
                 "jpeg lossy compression ");
       delete [] buffer;
       return false;
@@ -622,7 +622,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
                                      Raw+howManyWritten,
                                      &howManyRead, &howManyWritten ) ) 
           {
-            Debug::Error("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg8 ");
+            gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg8 ");
             delete [] buffer;
             return false;
           }
@@ -634,7 +634,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
                                       Raw+howManyWritten,
                                       &howManyRead, &howManyWritten ) ) 
           {
-            Debug::Error("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg12 ");
+            gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg12 ");
             delete [] buffer;
             return false;
          }
@@ -646,7 +646,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
                                       Raw+howManyWritten,
                                       &howManyRead, &howManyWritten ) ) 
           {
-            Debug::Error("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg16 ");
+            gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg16 ");
             delete [] buffer;
             return false;
           }
@@ -654,7 +654,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
       else
       {
          // other JPEG lossy not supported
-         Debug::Error("PixelConvert::ReadAndDecompressJPEGFile: unknown "
+         gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: unknown "
                    "jpeg lossy compression ");
          delete [] buffer;
          return false;
@@ -738,7 +738,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       }
       else
       {
-         Debug::Verbose(0, "PixelReadConvert::ConvertReArrangeBits: weird image");
+         gdcmVerboseMacro("PixelReadConvert::ConvertReArrangeBits: weird image");
          throw FormatError( "PixelReadConvert::ConvertReArrangeBits()",
                                 "weird image !?" );
       }
@@ -836,7 +836,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    //// First stage: get our hands on the Pixel Data.
    if ( !fp )
    {
-      Debug::Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
+      gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
                       "unavailable file pointer." );
       return false;
    }
@@ -844,7 +844,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    fp->seekg( PixelOffset, std::ios::beg );
    if( fp->fail() || fp->eof()) //Fp->gcount() == 1
    {
-      Debug::Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
+      gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
                       "unable to find PixelOffset in file." );
       return false;
    }
@@ -865,7 +865,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // variable). But RawSize is the right size of the image !
       if( PixelDataLength != RawSize)
       {
-         Debug::Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
+         gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
                       "Mismatch between PixelReadConvert and RawSize." );
       }
       if( PixelDataLength > RawSize)
@@ -879,7 +879,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
 
       if ( fp->fail() || fp->eof())//Fp->gcount() == 1
       {
-         Debug::Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
+         gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
                          "reading of Raw pixel data failed." );
          return false;
       }
@@ -888,7 +888,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    {
       if ( ! ReadAndDecompressRLEFile( fp ) )
       {
-         Debug::Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
+         gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
                          "RLE decompressor failed." );
          return false;
       }
@@ -898,7 +898,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // Default case concerns JPEG family
       if ( ! ReadAndDecompressJPEGFile( fp ) )
       {
-         Debug::Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
+         gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
                          "JPEG decompressor failed." );
          return false;
       }
@@ -1104,7 +1104,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutRedData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
-         Debug::Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
+         gdcmVerboseMacro("PixelReadConvert::GrabInformationsFromHeader: "
                          "unable to read red LUT data" );
       }
 
@@ -1113,7 +1113,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutGreenData = (uint8_t*)header->GetEntryBinAreaByNumber(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
-         Debug::Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
+         gdcmVerboseMacro("PixelReadConvert::GrabInformationsFromHeader: "
                         "unable to read green LUT data" );
       }
 
@@ -1122,7 +1122,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutBlueData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
-         Debug::Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
+         gdcmVerboseMacro("PixelReadConvert::GrabInformationsFromHeader: "
                         "unable to read blue LUT data" );
       }
    }
@@ -1176,7 +1176,7 @@ void PixelReadConvert::BuildLUTRGBA()
                         &lengthR, &debR, &nbitsR );
    if( nbRead != 3 )
    {
-      Debug::Verbose(0, "PixelReadConvert::BuildLUTRGBA: wrong red LUT descriptor");
+      gdcmVerboseMacro("PixelReadConvert::BuildLUTRGBA: wrong red LUT descriptor");
    }
                                                                                 
    int lengthG;  // Green LUT length in Bytes
@@ -1187,7 +1187,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthG, &debG, &nbitsG );
    if( nbRead != 3 )
    {
-      Debug::Verbose(0, "PixelReadConvert::BuildLUTRGBA: wrong green LUT descriptor");
+      gdcmVerboseMacro("PixelReadConvert::BuildLUTRGBA: wrong green LUT descriptor");
    }
                                                                                 
    int lengthB;  // Blue LUT length in Bytes
@@ -1198,7 +1198,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthB, &debB, &nbitsB );
    if( nbRead != 3 )
    {
-      Debug::Verbose(0, "PixelReadConvert::BuildLUTRGBA: wrong blue LUT descriptor");
+      gdcmVerboseMacro("PixelReadConvert::BuildLUTRGBA: wrong blue LUT descriptor");
    }
                                                                                 
    ////////////////////////////////////////////////////////
@@ -1336,7 +1336,7 @@ void PixelReadConvert::Print( std::string indent, std::ostream &os )
       }
       else
       {
-         Debug::Verbose(0, "PixelReadConvert::Print: set as RLE file "
+         gdcmVerboseMacro("PixelReadConvert::Print: set as RLE file "
                         "but NO RLEinfo present.");
       }
    }
@@ -1349,7 +1349,7 @@ void PixelReadConvert::Print( std::string indent, std::ostream &os )
       }
       else
       {
-         Debug::Verbose(0, "PixelReadConvert::Print: set as JPEG file "
+         gdcmVerboseMacro("PixelReadConvert::Print: set as JPEG file "
                         "but NO JPEGinfo present.");
       }
    }

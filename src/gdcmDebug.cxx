@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:26:12 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/07 19:20:38 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,90 +23,26 @@ namespace gdcm
 {
 
 /// warning message level to be displayed
-static int DebugLevel = -1;
+static int DebugFlag = 0;
 //-----------------------------------------------------------------------------
 /**
  * \brief   Accessor
  * @param   level Set the debug level
  */ 
-void Debug::SetDebugLevel (int level) 
+void Debug::SetDebugFlag (int flag) 
 {
-   DebugLevel = level;
+   DebugFlag = flag;
 }
 
 /**
- * \brief   Verbose 
- * @param level level
- * @param msg1 first message part
- * @param msg2 second message part 
- */
-void Debug::Verbose(int level, const char *msg1, const char *msg2) 
+ * \brief   Accessor
+ * @param   level Get the debug level
+ */ 
+int Debug::GetDebugFlag ()
 {
-   if (level > DebugLevel)
-   {
-      return ;
-   }
-   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << std::endl;
-}
-
-/**
- * \brief   Error 
- * @param test test
- * @param msg1 first message part
- * @param msg2 second message part 
- */
-void Debug::Error(bool test, const char *msg1, const char *msg2) 
-{
-   if (!test)
-   {
-      return;
-   }
-   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << std::endl;
-   Exit(1);
-}
-
-/**
- * \brief   Error 
- * @param msg1 first message part
- * @param msg2 second message part
- * @param msg3 Third message part  
- */
-void Debug::Error(const char *msg1, const char *msg2,
-                  const char *msg3) 
-{
-   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << ' ' << msg3
-             << std::endl;
-   Exit(1);
-}
-
-/**
- * \brief   Assert 
- * @param level level 
- * @param test test
- * @param msg1 first message part
- * @param msg2 second message part
- */
-void Debug::Assert(int level, bool test, const char *msg1, 
-                   const char *msg2) 
-{
-   if (level > DebugLevel)
-   {
-      return ;
-   }
-   if (!test)
-   {
-      std::cerr << "gdcm::" <<  msg1 << ' ' << msg2
-                << std::endl;
-   }
-}
-
-/**
- * \brief   Exit 
- * @param a return code 
- */
-void Debug::Exit(int a) 
-{
-   exit(a);    // Found in #include <stdlib.h>
+   return DebugFlag;
 }
 
 } // end namespace gdcm
+
+
