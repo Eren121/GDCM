@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 07:49:36 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2004/09/17 08:54:26 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,18 +99,27 @@ private:
    
    // For JPEG 8 Bits, body in file gdcmJpeg.cxx
    bool gdcm_read_JPEG_file     (FILE *fp, void * image_buffer); 
-   static int gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
-                                     long uncompressedSegmentSize, FILE *fp);
+   bool gdcm_write_JPEG_file    (FILE *fp, void * image_buffer, 
+                                 int image_width, int image_heigh,
+                                 int quality);
 
    // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
    bool gdcm_read_JPEG_file12   (FILE *fp, void* image_buffer);
+   bool gdcm_write_JPEG_file12  (FILE *fp, void* image_buffer, 
+                                 int image_width, int image_height,
+                                 int quality);
 
    // For JPEG 2000, body in file gdcmJpeg2000.cxx
    bool gdcm_read_JPEG2000_file (FILE *fp, void* image_buffer);
 
    // For Run Length Encoding
-   bool gdcm_read_RLE_file      (FILE *fp, void* image_buffer); 
-
+   bool gdcm_read_RLE_file      (FILE *fp, void* image_buffer);
+// FIXME : *sure* it's NOT static (C++)
+// (would be static in C, or embedded in ADA)
+// It's NOT a method, but a not user intended fonction.
+// How do we write that in C++ ?)
+   static int gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
+                                     long uncompressedSegmentSize, FILE *fp);
 // members variables:
 
    /// \brief Header to use to load the file

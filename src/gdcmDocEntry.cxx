@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 12:10:53 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/09/17 08:54:26 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ void gdcmDocEntry::Print(std::ostream & os)
        
    if (PrintLevel >= 2)
    {
-      s << "lg : ";
+      s << " lg : ";
       lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
       if (lgth == 0xffffffff)
       {

@@ -92,6 +92,16 @@ extern "C" {
 #include "jpeg/libijg12/jpeglib12.h"
 #include <setjmp.h>
 }
+/******************** JPEG COMPRESSION SAMPLE INTERFACE *******************/
+
+//
+//  TODO
+//
+
+bool gdcm_write_JPEG_file12 (FILE *fp, void * im_buff, 
+                             int image_width, int image_heigh, int quality)
+{
+}
 
 /******************** JPEG DECOMPRESSION SAMPLE INTERFACE *******************/
 

@@ -1,7 +1,7 @@
 // vtkGdcmReader.cxx
 //-----------------------------------------------------------------------------
 // //////////////////////////////////////////////////////////////
-// WARNING TODO CLENAME 
+// WARNING TODO CLEANME 
 // Actual limitations of this code:
 //
 // /////// Redundant and unnecessary header parsing
@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.49 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.50 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------

@@ -32,7 +32,7 @@ IF (GDCM_DATA_ROOT)
       ${GDCM_SOURCE_DIR}/vtk/
       )
     SET(TEST_SOURCES ${TEST_SOURCES}
-      ShowDicom.cxx    
+      #ShowDicom.cxx    
       )
   ENDIF(GDCM_VTK)
 ENDIF (GDCM_DATA_ROOT)
