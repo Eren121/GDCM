@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 16:44:43 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/01/11 22:40:32 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -319,11 +319,8 @@ void PixelReadConvert::ConvertSwapZone()
       uint16_t *im16 = (uint16_t*)Raw;
       switch( SwapCode )
       {
-         case 0:
-         case 12:
          case 1234:
             break;
-         case 21:
          case 3412:
          case 2143:
          case 4321:
@@ -344,7 +341,6 @@ void PixelReadConvert::ConvertSwapZone()
       uint32_t* im32 = (uint32_t*)Raw;
       switch ( SwapCode )
       {
-         case 0:
          case 1234:
             break;
          case 4321:

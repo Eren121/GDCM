@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 22:05:22 $
-  Version:   $Revision: 1.177 $
+  Date:      $Date: 2005/01/11 22:40:31 $
+  Version:   $Revision: 1.178 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -160,7 +160,7 @@ Document::Document() : ElementSet(-1)
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
-   SwapCode = 0;
+   SwapCode = 1234;
    Filetype = ExplicitVR;
    Group0002Parsed = false;
 }
@@ -1010,7 +1010,7 @@ uint32_t Document::SwapLong(uint32_t a)
 {
    switch (SwapCode)
    {
-      case    0 :
+      case 1234 :
          break;
       case 4321 :
          a=( ((a<<24) & 0xff000000) | ((a<<8)  & 0x00ff0000) | 
@@ -2164,7 +2164,7 @@ bool Document::CheckSwap()
       }
       else 
       {
-         SwapCode = 0;
+         SwapCode = 1234;
          gdcmVerboseMacro( "HostByteOrder = NetworkByteOrder");
       }
       
@@ -2207,7 +2207,7 @@ bool Document::CheckSwap()
          Filetype = ACR;
          return true;
       case 0x00000004 :
-         SwapCode = 0;
+         SwapCode = 1234;
          Filetype = ACR;
          return true;
       default :
@@ -2238,7 +2238,7 @@ bool Document::CheckSwap()
             case 0x0006 :
             case 0x0007 :
             case 0x0008 :
-               SwapCode = 0;
+               SwapCode = 1234;
                Filetype = ACR;
                return true;
             case 0x0100 :
@@ -2259,7 +2259,7 @@ bool Document::CheckSwap()
          }
          // Then the only info we have is the net2host one.
          //if (! net2host )
-         //   SwapCode = 0;
+         //   SwapCode = 1234;
          //else
          //  SwapCode = 4321;
          //return;
@@ -2274,13 +2274,13 @@ bool Document::CheckSwap()
 void Document::SwitchByteSwapCode() 
 {
    gdcmVerboseMacro( "Switching Byte Swap code.");
-   if ( SwapCode == 0    ) 
+   if ( SwapCode == 1234 ) 
    {
       SwapCode = 4321;
    }
    else if ( SwapCode == 4321 ) 
    {
-      SwapCode = 0;
+      SwapCode = 1234;
    }
    else if ( SwapCode == 3412 ) 
    {
