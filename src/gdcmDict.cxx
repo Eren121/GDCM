@@ -2,10 +2,9 @@
 #include "gdcm.h"
 #include "gdcmUtil.h"
 
-gdcmDict::gdcmDict(char * FileName) {
+gdcmDict::gdcmDict(const char* FileName) {
 	std::ifstream from(FileName);
-	dbg.Error(!from, "gdcmDictSet::gdcmDictSet:",
-	          "can't open dictionary");
+	dbg.Error(!from, "gdcmDict::gdcmDict: can't open dictionary", FileName);
 	guint16 group, element;
 	// CLEANME : use defines for all those constants
 	char buff[1024];
@@ -40,6 +39,10 @@ void gdcmDict::Print(ostream& os) {
 
 gdcmDictEntry * gdcmDict::GetTag(guint32 group, guint32 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-	TagHT::iterator found = entries.find(key);
-	return found->second;
+	if ( ! entries.count(key))
+		return (gdcmDictEntry*)0; 
+	if (entries.count(key) > 1)
+		dbg.Verbose(0, "gdcmDict::GetTag", 
+		            "multiple entries for this key (FIXME) !");
+	return entries.find(key)->second;
 }

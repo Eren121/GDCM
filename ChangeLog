@@ -1,3 +1,12 @@
+2002-11-6 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * Python wrapping process moved away from src/Makefile to
+        newly created python/Makefile (as well as gdcm.i)
+      * python/demo/test.py (that mirrors Test/test.cxx) is effective.
+      * src/gdcmHeader::FindLength only looks for current vr when necessary.
+      * src/gdcmDictSet.cxx: the dictionnaries directory path is now imported
+        from the environement variable GDCM_DICT_PATH (when existing).
+      * src/gdcmDict::GetTag bug fix.
+
 2002-10-31 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Straightforward temporary fixes for swig to build the python wrappers.
         src/Makefile now has a python working entry [by working we mean

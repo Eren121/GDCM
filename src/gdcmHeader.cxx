@@ -302,11 +302,10 @@ void gdcmHeader::FindLength( ElValue * ElVal) {
 	guint32 length32;
 	guint16 length16;
 	
-	string vr = ElVal->GetVR();
-	
-	if ( (filetype == ExplicitVR) && (vr != "Implicit") ) {
-		if (   ( vr == "OB" ) || ( vr == "OW" )
-			 || ( vr == "SQ" ) || ( vr == "UN" ) ) {
+	if (filetype == ExplicitVR) {
+		string vr = ElVal->GetVR();
+		if (   (vr != "Implicit")
+			 && ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) ) {
 			
 			// The following two bytes are reserved, so we skip them,
 			// and we proceed on reading the length on 4 bytes.
@@ -624,7 +623,7 @@ void gdcmHeader::LoadElements(void) {
 		LoadElementValue(tag->second);
 }
 
-void gdcmHeader::PrintPubElVal(ostream & os) {
+void gdcmHeader::PrintPubElVal(ostream & os = std::cout) {
 	PubElVals.Print(os);
 }
 

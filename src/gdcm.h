@@ -92,7 +92,7 @@ class gdcmDict {
 	string filename;
 	TagHT entries;
 public:
-	gdcmDict(char *FileName);   // Read Dict from disk
+	gdcmDict(const char* FileName);   // Read Dict from disk
 	// TODO Swig int AppendEntry(gdcmDictEntry* NewEntry);
 	gdcmDictEntry * GetTag(guint32 group, guint32 element);
 	void Print(ostream&);
@@ -102,15 +102,15 @@ public:
 // should avoid :
 // * reloading an allready loaded dictionary.
 // * having many in memory representations of the same dictionary.
-#define PUBDICTNAME     "DicomV3Dict"
-#define PUBDICTFILENAME "../Dicts/dicomV3.dic"
 typedef string DictKey;
 typedef map<DictKey, gdcmDict*> DictSetHT;
 class gdcmDictSet {
 private:
+	string DictPath;      // Directory path to dictionaries
 	DictSetHT dicts;
 	int AppendDict(gdcmDict* NewDict);
-	int LoadDictFromFile(char* filename, DictKey);
+	int LoadDictFromFile(string filename, DictKey);
+	void SetDictPath(void);
 public:
 	gdcmDictSet(void);    // loads THE DICOM v3 dictionary
 	// TODO Swig int LoadDictFromFile(string filename);
@@ -262,7 +262,7 @@ public:
 	// of C/C++ vs Python).
 	// TODO Swig string GetPubElValRepByName(string TagName);
 	// TODO Swig string GetPubElValRepByNumber(guint16 group, guint16 element);
-	void   PrintPubElVal(ostream &);
+	void   PrintPubElVal(ostream & os = std::cout);
 	void   PrintPubDict(ostream &);
 	  
 	// Same thing with the shadow :
