@@ -52,23 +52,30 @@ size_t gdcmFile::GetImageDataSize(void) {
 	// Nombre de Colonnes	
 	nbCol   =atoi(gdcmHeader::GetPubElValByNumber(0x0028,0x0011).c_str());
 
+printf("nbCol %d\n",nbCol);
+printf("nbLig %d\n",nbLignes);
+
+
 	// Nombre de Frames	
 	str_nbFrames=gdcmHeader::GetPubElValByNumber(0x0028,0x0008);
 	
-	if (str_nbFrames == "UNFOUND" ) {
+	if (str_nbFrames == "gdcm::Unfound" ) {
 		nbFrames = 1;
 	} else {
 		nbFrames = atoi(str_nbFrames.c_str() );
 	}
+printf("nbFrames %d\n",nbFrames);
 	
 	// Nombre de Bits Alloues pour le stockage d'un Pixel	
 	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
 
-	if (str_nb == "UNFOUND" ) {
+	if (str_nb == "gdcm::Unfound" ) {
 		nb = 16;
 	} else {
 		nb = atoi(str_nb.c_str() );
 	}
+
+printf("nb %d\n",nb);
 
 	size_t lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
 	return (lgrTotale);
@@ -105,7 +112,7 @@ void * gdcmFile::GetImageData (void) {
 	str_nbFrames=GetPubElValByNumber(0x0028,0x0008);
 
 	
-	if (str_nbFrames == "UNFOUND" ) {
+	if (str_nbFrames == "gdcm::Unfound" ) {
 		nbFrames = 1;
 	} else {
 		nbFrames = atoi(str_nbFrames.c_str() );
@@ -114,7 +121,7 @@ void * gdcmFile::GetImageData (void) {
 	// Nombre de Bits Alloues	
 	str_nb=GetPubElValByNumber(0x0028,0x0100);
 
-	if (str_nb == "UNFOUND" ) {
+	if (str_nb == "gdcm::Unfound" ) {
 		nb = 16;
 	} else {
 		nb = atoi(str_nb.c_str() );
@@ -123,7 +130,7 @@ void * gdcmFile::GetImageData (void) {
 	// Nombre de Bits Utilises	
 	str_nbu=GetPubElValByNumber(0x0028,0x0101);
 
-	if (str_nbu == "UNFOUND" ) {
+	if (str_nbu == "gdcm::Unfound" ) {
 		nbu = nb;
 	} else {
 		nbu = atoi(str_nbu.c_str() );
@@ -132,7 +139,7 @@ void * gdcmFile::GetImageData (void) {
 	// Position du Bit de Poids Fort	
 	str_highBit=GetPubElValByNumber(0x0028,0x0102);
 
-	if (str_highBit == "UNFOUND" ) {
+	if (str_highBit == "gdcm::Unfound" ) {
 		highBit = nb - 1;
 	} else {
 		highBit = atoi(str_highBit.c_str() );
@@ -141,7 +148,7 @@ void * gdcmFile::GetImageData (void) {
 	// Signe des Pixels 0 : Unsigned
 	str_signe=GetPubElValByNumber(0x0028,0x0103);
 
-	if (str_signe == "UNFOUND" ) {
+	if (str_signe == "gdcm::Unfound" ) {
 		signe = 1;
 	} else {
 		signe = atoi(str_signe.c_str() );
@@ -220,7 +227,7 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 	str_nbFrames=GetPubElValByNumber(0x0028,0x0008);
 
 	
-	if (str_nbFrames == "UNFOUND" ) {
+	if (str_nbFrames == "gdcm::Unfound" ) {
 		nbFrames = 1;
 	} else {
 		nbFrames = atoi(str_nbFrames.c_str() );
@@ -229,7 +236,7 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 	// Nombre de Bits Alloues	
 	str_nb=GetPubElValByNumber(0x0028,0x0100);
 
-	if (str_nb == "UNFOUND" ) {
+	if (str_nb == "gdcm::Unfound" ) {
 		nb = 16;
 	} else {
 		nb = atoi(str_nb.c_str() );
@@ -238,7 +245,7 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 	// Nombre de Bits Utilises	
 	str_nbu=GetPubElValByNumber(0x0028,0x0101);
 
-	if (str_nbu == "UNFOUND" ) {
+	if (str_nbu == "gdcm::Unfound" ) {
 		nbu = nb;
 	} else {
 		nbu = atoi(str_nbu.c_str() );
@@ -247,7 +254,7 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 	// Position du Bit de Poids Fort	
 	str_highBit=GetPubElValByNumber(0x0028,0x0102);
 
-	if (str_highBit == "UNFOUND" ) {
+	if (str_highBit == "gdcm::Unfound" ) {
 		highBit = nb - 1;
 	} else {
 		highBit = atoi(str_highBit.c_str() );
@@ -256,7 +263,7 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 	// Signe des Pixels 
 	str_signe=GetPubElValByNumber(0x0028,0x0103);
 
-	if (str_signe == "UNFOUND" ) {
+	if (str_signe == "gdcm::Unfound" ) {
 		signe = 1;
 	} else {
 		signe = atoi(str_signe.c_str() );
