@@ -1,5 +1,21 @@
-// gdcmValEntry.h
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmValEntry.h,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:48 $
+  Version:   $Revision: 1.10 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #ifndef GDCMValEntry_H
 #define GDCMValEntry_H
 
@@ -19,7 +35,7 @@ class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry {
 public:
 
    gdcmValEntry(gdcmDictEntry* e);
-	gdcmValEntry(gdcmDocEntry* d); 
+   gdcmValEntry(gdcmDocEntry* d); 
    ~gdcmValEntry(void);
 
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
@@ -35,7 +51,7 @@ public:
 protected:
 
    /// \brief for 'non string' values. Will be move to gdcmBinEntry, later
-	void* voidArea;  // clean it out later
+   void* voidArea;  // clean it out later
    
 private:
 

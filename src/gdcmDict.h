@@ -1,5 +1,21 @@
-// gdcmDict.h
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmDict.h,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:47 $
+  Version:   $Revision: 1.15 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #ifndef GDCMDICT_H
 #define GDCMDICT_H
 
@@ -28,22 +44,22 @@ typedef std::map<TagName, gdcmDictEntry*> TagNameHT;
 class GDCM_EXPORT gdcmDict {
 public:
    gdcmDict(std::string & FileName);
-	~gdcmDict();
+   ~gdcmDict();
 
 // Print
-	void Print(std::ostream &os = std::cout);
-	void PrintByKey(std::ostream &os = std::cout);
-	void PrintByName(std::ostream &os = std::cout);	
+   void Print(std::ostream &os = std::cout);
+   void PrintByKey(std::ostream &os = std::cout);
+   void PrintByName(std::ostream &os = std::cout);
 
 // Entries
    bool AddNewEntry (gdcmDictEntry *NewEntry);
-	bool ReplaceEntry(gdcmDictEntry *NewEntry);
-	bool RemoveEntry (TagKey key);
-	bool RemoveEntry (guint16 group, guint16 element);
-
+   bool ReplaceEntry(gdcmDictEntry *NewEntry);
+   bool RemoveEntry (TagKey key);
+   bool RemoveEntry (guint16 group, guint16 element);
+   
 // Tag
-	gdcmDictEntry *GetDictEntryByName(TagName name);
-	gdcmDictEntry *GetDictEntryByNumber(guint16 group, guint16 element);
+   gdcmDictEntry *GetDictEntryByName(TagName name);
+   gdcmDictEntry *GetDictEntryByNumber(guint16 group, guint16 element);
 
    std::list<std::string> *GetDictEntryNames(void);
    std::map<std::string, std::list<std::string> > *
@@ -67,9 +83,9 @@ private:
    /// ASCII file holding the Dictionnary
    std::string filename;
    /// Access through TagKey (see alternate access with NameHt)
-	TagKeyHT  KeyHt;
+   TagKeyHT  KeyHt;
    /// Access through TagName (see alternate access with KeyHt)
-	TagNameHT NameHt;
+   TagNameHT NameHt;
 };
 
 //-----------------------------------------------------------------------------

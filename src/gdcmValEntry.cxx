@@ -1,6 +1,21 @@
-// gdcmValEntry.cxx
-//-----------------------------------------------------------------------------
-//
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmValEntry.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:48 $
+  Version:   $Revision: 1.7 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #include "gdcmValEntry.h"
 #include "gdcmTS.h"
 #include "gdcmGlobal.h"
@@ -27,12 +42,12 @@ gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e) {
  */
 gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry()){
    this->UsableLength = e->GetLength();
-	this->ReadLength   = e->GetReadLength();	
-	this->ImplicitVR   = e->IsImplicitVR();
-	this->Offset       = e->GetOffset();	
-	this->printLevel   = e->GetPrintLevel();	
-	this->SQDepthLevel = e->GetDepthLevel();	
-	
+   this->ReadLength   = e->GetReadLength();
+   this->ImplicitVR   = e->IsImplicitVR();
+   this->Offset       = e->GetOffset();
+   this->printLevel   = e->GetPrintLevel();
+   this->SQDepthLevel = e->GetDepthLevel();
+
    this->voidArea = NULL; // will be in BinEntry ?
 }
 

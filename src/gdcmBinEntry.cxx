@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/19 23:51:03 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/06/20 18:08:47 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,12 +36,12 @@ gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e) {
  */
 gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry()){
    this->UsableLength = e->GetLength();
-	this->ReadLength   = e->GetReadLength();	
-	this->ImplicitVR   = e->IsImplicitVR();
-	this->Offset       = e->GetOffset();	
-	this->printLevel   = e->GetPrintLevel();	
-	this->SQDepthLevel = e->GetDepthLevel();	
-	
+   this->ReadLength   = e->GetReadLength();
+   this->ImplicitVR   = e->IsImplicitVR();
+   this->Offset       = e->GetOffset();
+   this->printLevel   = e->GetPrintLevel();
+   this->SQDepthLevel = e->GetDepthLevel();
+
    this->voidArea = NULL; // let's be carefull !
 }
 

@@ -1,5 +1,21 @@
-// gdcmDicomDirElement.h
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmDicomDirElement.h,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:47 $
+  Version:   $Revision: 1.8 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #ifndef GDCMDICOMDIRELEMENT_H
 #define GDCMDICOMDIRELEMENT_H
 
@@ -11,11 +27,11 @@
 typedef struct
 {
    /// DicomGroup number
-   	unsigned short int group;
+   unsigned short int group;
    /// DicomElement number
-	unsigned short int elem;
-   /// value (coded as a std::string) of the Element	
-	std::string value;
+   unsigned short int elem;
+   /// value (coded as a std::string) of the Element
+   std::string value;
 } gdcmElement;
 
 typedef std::list<gdcmElement> ListDicomDirMetaElem;
@@ -28,7 +44,7 @@ typedef std::list<gdcmElement> ListDicomDirImageElem;
 /**
  * \ingroup gdcmDicomDirElement
  * \brief    gdcmDicomDirElement represents elements contained in a dicom dir
- *
+ *           Class for the chained lists from the file 'Dicts/DicomDir.dic'
  */
 class GDCM_EXPORT gdcmDicomDirElement
 {
@@ -37,7 +53,6 @@ public:
    ~gdcmDicomDirElement(void);
 
   /**
-    * \ingroup gdcmParser
     * \brief   canonical Printer 
     * \sa    SetPrintLevel
   */ 

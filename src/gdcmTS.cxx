@@ -1,5 +1,21 @@
-// gdcmTS.cxx
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmTS.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:48 $
+  Version:   $Revision: 1.18 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #include <fstream>
 #include <string>
 #include <iostream>
@@ -25,6 +41,7 @@ gdcmTS::gdcmTS(void)
 
    while (!from.eof()) {
       from >> key;
+      eatwhite(from);
       getline(from, name);    /// MEMORY LEAK
 
       if(key!="") 

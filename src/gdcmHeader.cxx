@@ -1,5 +1,21 @@
-// gdcmHeader.cxx
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmHeader.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:47 $
+  Version:   $Revision: 1.165 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #include "gdcmHeader.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
@@ -85,12 +101,11 @@ gdcmHeader::~gdcmHeader (void) {
 // Public
 
 /**
- * \ingroup gdcmHeader
  * \brief  This predicate, based on hopefully reasonable heuristics,
- *         decides whether or not the current gdcmParser was properly parsed
+ *         decides whether or not the current gdcmHeader was properly parsed
  *         and contains the mandatory information for being considered as
  *         a well formed and usable Dicom/Acr File.
- * @return true when gdcmParser is the one of a reasonable Dicom/Acr file,
+ * @return true when gdcmHeader is the one of a reasonable Dicom/Acr file,
  *         false otherwise. 
  */
 bool gdcmHeader::IsReadable(void) {

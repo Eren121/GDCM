@@ -1,5 +1,21 @@
-// gdcmBinEntry.h
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmBinEntry.h,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:47 $
+  Version:   $Revision: 1.8 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #ifndef GDCMBinEntry_H
 #define GDCMBinEntry_H
 
@@ -20,7 +36,7 @@ class GDCM_EXPORT gdcmBinEntry  : public gdcmValEntry {
 public:
 
    gdcmBinEntry(gdcmDictEntry* e);
-   gdcmBinEntry(gdcmDocEntry* d);	 
+   gdcmBinEntry(gdcmDocEntry* d);
    ~gdcmBinEntry(void);
    
    void Print(std::ostream &os = std::cout);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/19 23:51:04 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/06/20 18:08:48 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,10 +50,10 @@ public:
     
    std::string GetEntryByNumber(guint16 group, guint16 element);
    std::string GetEntryByName(TagName name);
-	
+
    inline int GetSQItemNumber() { return SQItemNumber;};
 
-   inline void SetSQItemNumber(int itemNumber) { SQItemNumber=itemNumber;};		     
+   inline void SetSQItemNumber(int itemNumber) { SQItemNumber=itemNumber;};
 protected:
 
 // DocEntry related utilities 

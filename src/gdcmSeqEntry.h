@@ -1,4 +1,20 @@
-// gdcmSeqEntry.h
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmSeqEntry.h,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:48 $
+  Version:   $Revision: 1.10 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
 
 #ifndef GDCMSQDOCENTRY_H
 #define GDCMSQDOCENTRY_H
@@ -29,8 +45,8 @@ public:
    /// \brief Sets the Sequence Delimitation Item
    inline void SetSequenceDelimitationItem(gdcmDocEntry * e) { seq_term = e;}
        
-   void AddEntry(gdcmSQItem *it, int itemNumber); 	
-   gdcmSQItem *GetSQItemByOrdinalNumber(int itemNumber);	
+   void AddEntry(gdcmSQItem *it, int itemNumber);
+   gdcmSQItem *GetSQItemByOrdinalNumber(int itemNumber);
 
    void SetDepthLevel(int depth);
          

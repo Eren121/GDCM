@@ -29,6 +29,13 @@
        of 2004-06-18 in Changelog file for the call to valgrind).
      - on segfaults: ctest now passes all the tests but one (no more
        segfaults).
+    * Erroneous leading white fix:
+     - src/gdcmDict.cxx: getline(from,xxx) doesn't remove the leading
+       white[s] (as opposed to from >> xxx, that removes it [them].
+     - src/gdcmTS.cxx: ditto.
+     - gdcmPython/testSuite.py: dirty related kludge removed.
+    * src/*: remaining references to gdcmParser removed.
+    * src/*[cxx|h]: added copy[way]left header.
 
 2004-06-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * In order to fix writing of dicom files:

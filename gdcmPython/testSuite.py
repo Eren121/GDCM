@@ -545,9 +545,7 @@ class gdcmTestCase(unittest.TestCase):
 
          valDict = reader.GetEntry()
          for subEntry in entry[1]:
-            #### BUG FIXME TODO: an odd space was introduced ! Previously
-            ####                 it worked with element = subEntry[0]
-            element = " " + subEntry[0]
+            element = subEntry[0]
             value   = subEntry[1]
             self.assertEqual(valDict[element], value,
                              ("Wrong %s for file %s (got %s, shoud be %s)"

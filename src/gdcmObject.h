@@ -1,5 +1,21 @@
-// gdcmObject.h
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmObject.h,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:48 $
+  Version:   $Revision: 1.17 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #ifndef GDCMOBJECT_H
 #define GDCMOBJECT_H
 
@@ -7,7 +23,6 @@
 #include <list>
 #include "gdcmCommon.h"
 #include "gdcmDocEntry.h"
-//#include "gdcmParser.h"
 #include "gdcmDocument.h"
 #include "gdcmDicomDirElement.h"
 #include "gdcmSQItem.h"
@@ -26,7 +41,6 @@ class GDCM_EXPORT gdcmObject : public gdcmSQItem
 public:
 
    /**
-    * \ingroup gdcmParser
     * \brief   Sets the print level for the Dicom Header 
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
@@ -38,13 +52,13 @@ public:
 
 protected:
 
- // constructor and destructor are protected to avoid end user to instanciate this class.
+   // Constructor and destructor are protected to avoid end user to
+   // instanciate from this class.
    gdcmObject(TagDocEntryHT *ptagHT, int depth = 0);
    virtual ~gdcmObject(void);
 
-// variables :
-
-///\brief detail level to be printed 
+// Members :
+   ///\brief detail level to be printed 
    int printLevel;
 
 private:

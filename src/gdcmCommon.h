@@ -1,5 +1,21 @@
-//gdcmCommon.h
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmCommon.h,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:47 $
+  Version:   $Revision: 1.27 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #ifndef GDCMCOMMON_H
 #define GDCMCOMMON_H
 
@@ -40,7 +56,7 @@
 typedef  unsigned short guint16;
 typedef  unsigned int   guint32;
 typedef  short          gint16;
-typedef  int   	        gint32;
+typedef  int            gint32;
 #define UINT32_MAX    (4294967295U)
 #endif //HAVE_NO_STDINT_H
 #endif
@@ -48,7 +64,7 @@ typedef  int   	        gint32;
 #ifdef _MSC_VER 
 typedef  unsigned short guint16;
 typedef  unsigned int   guint32;
-typedef  short 	        gint16;
+typedef  short          gint16;
 typedef  int            gint32;
 #define UINT32_MAX    (4294967295U)
 #endif

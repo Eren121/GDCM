@@ -1,3 +1,21 @@
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmDebug.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/06/20 18:08:47 $
+  Version:   $Revision: 1.2 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #include <iostream>
 #include "gdcmDebug.h"
 
@@ -8,7 +26,6 @@
 gdcmDebug dbg;
 
 /**
- * \ingroup gdcmDebug
  * \brief   constructor
  * @param level debug level
  */ 
@@ -17,7 +34,6 @@ gdcmDebug::gdcmDebug(int level) {
 }
 
 /**
- * \ingroup gdcmDebug
  * \brief   Accessor
  * @param   level Set the debug level
  */ 
@@ -26,7 +42,6 @@ void gdcmDebug::SetDebug(int level) {
 }
 
 /**
- * \ingroup gdcmDebug
  * \brief   Verbose 
  * @param Level level
  * @param Msg1 first message part
@@ -39,7 +54,6 @@ void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) {
 }
 
 /**
- * \ingroup gdcmDebug
  * \brief   Error 
  * @param Test test
  * @param Msg1 first message part
@@ -53,7 +67,6 @@ void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {
 }
 
 /**
- * \ingroup gdcmDebug
  * \brief   Error 
  * @param Msg1 first message part
  * @param Msg2 second message part
@@ -66,7 +79,6 @@ void gdcmDebug::Error(const char* Msg1, const char* Msg2,
 }
 
 /**
- * \ingroup gdcmDebug
  * \brief   Assert 
  * @param Level level 
  * @param Test test
@@ -82,7 +94,6 @@ void gdcmDebug::Error(const char* Msg1, const char* Msg2,
 }
 
 /**
- * \ingroup gdcmDebug
  * \brief   Exit 
  * @param a return code 
  */
