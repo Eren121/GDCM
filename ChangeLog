@@ -1,4 +1,15 @@
 2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocument.[h|cxx] : set the Transfert Syntax values to the header
+     file, to be accessed by other files (like gdcmFile). Remove commented
+     code. Move the change of the header to the gdcmFile, using the 
+     DocEntryArchive
+   * src/gdcmHeader.[h|cxx] : the write is completely made in the Header.
+     To be sure of that (and simplify calls), the Write of the header now
+     gets a file name and not a file pointer (std::ifstream).
+   * src/gdcmFile.[h|cxx] : apply the write file type to the header, using the
+     DocEntryArchive. Remove all open of the written file
+
+2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * vtk/vtkGdcmReader.cxx : compilation bug fix for the vtk part
 
 2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:34 $
-  Version:   $Revision: 1.138 $
+  Date:      $Date: 2004/11/25 13:12:02 $
+  Version:   $Revision: 1.139 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,41 +36,6 @@
 
 namespace gdcm 
 {
-static const char *TransferSyntaxStrings[] =  {
-  // Implicit VR Little Endian
-  "1.2.840.10008.1.2",
-  // Implicit VR Little Endian DLX G.E?
-  "1.2.840.113619.5.2",
-  // Explicit VR Little Endian
-  "1.2.840.10008.1.2.1",
-  // Deflated Explicit VR Little Endian
-  "1.2.840.10008.1.2.1.99",
-  // Explicit VR Big Endian
-  "1.2.840.10008.1.2.2",
-  // JPEG Baseline (Process 1)
-  "1.2.840.10008.1.2.4.50",
-  // JPEG Extended (Process 2 & 4)
-  "1.2.840.10008.1.2.4.51",
-  // JPEG Extended (Process 3 & 5)
-  "1.2.840.10008.1.2.4.52",
-  // JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8)
-  "1.2.840.10008.1.2.4.53",
-  // JPEG Full Progression, Non-Hierarchical (Process 10 & 12)
-  "1.2.840.10008.1.2.4.55",
-  // JPEG Lossless, Non-Hierarchical (Process 14)
-  "1.2.840.10008.1.2.4.57",
-  // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14, [Selection Value 1])
-  "1.2.840.10008.1.2.4.70",
-  // JPEG 2000 Lossless
-  "1.2.840.10008.1.2.4.90",
-  // JPEG 2000
-  "1.2.840.10008.1.2.4.91",
-  // RLE Lossless
-  "1.2.840.10008.1.2.5",
-  // Unknown
-  "Unknown Transfer Syntax"
-};
-
 //-----------------------------------------------------------------------------
 // Refer to Document::CheckSwap()
 const unsigned int Document::HEADER_LENGTH_TO_READ = 256;
@@ -497,34 +462,6 @@ void Document::Write(std::ofstream* fp, FileType filetype)
       fp->write("DICM", 4);
    }
 
-   if (filetype == ImplicitVR) 
-   {
-      std::string ts = 
-         Util::DicomString( TransferSyntaxStrings[ImplicitVRLittleEndian] );
-      ReplaceOrCreateByNumber(ts, 0x0002, 0x0010);
-      
-      /// \todo Refer to standards on page 21, chapter 6.2
-      ///       "Value representation": values with a VR of UI shall be
-      ///       padded with a single trailing null
-      ///       in the following case we have to padd manually with a 0
-      
-      SetEntryLengthByNumber(18, 0x0002, 0x0010);
-   } 
-
-   if (filetype == ExplicitVR)
-   {
-      std::string ts = 
-         Util::DicomString( TransferSyntaxStrings[ExplicitVRLittleEndian] );
-      ReplaceOrCreateByNumber(ts, 0x0002, 0x0010); //LEAK
-      
-      /// \todo Refer to standards on page 21, chapter 6.2
-      ///       "Value representation": values with a VR of UI shall be
-      ///       padded with a single trailing null
-      ///       Dans le cas suivant on doit pader manuellement avec un 0
-      
-      SetEntryLengthByNumber(20, 0x0002, 0x0010);
-   }
-  
 /**
  * \todo rewrite later, if really usefull
  *       - 'Group Length' element is optional in DICOM
@@ -538,7 +475,6 @@ void Document::Write(std::ofstream* fp, FileType filetype)
  */
  
    ElementSet::Write(fp, filetype); // This one is recursive
-
 }
 
 /**
@@ -1437,9 +1373,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
 
          //////////////////// BinEntry or UNKOWN VR:
-/*            BinEntry* newBinEntry =
-               new BinEntry( newDocEntry->GetDictEntry() );  //LEAK
-            newBinEntry->Copy( newDocEntry );*/
             BinEntry* newBinEntry = new BinEntry( newDocEntry );  //LEAK
 
             // When "this" is a Document the Key is simply of the
@@ -2569,7 +2502,7 @@ bool Document::CheckSwap()
    // representation of a 32 bits integer. Hence the following dirty
    // trick :
    s32 = *((uint32_t *)(entCur));
-      
+
    switch( s32 )
    {
       case 0x00040000 :

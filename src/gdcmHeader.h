@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 05:03:35 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2004/11/25 13:12:02 $
+  Version:   $Revision: 1.94 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -172,7 +172,7 @@ public:
    /// Read (used in File)
    void SetImageDataSize(size_t expectedSize);
 
-   void Write(std::ofstream* fp, FileType filetype);
+   bool Write(std::string fileName, FileType filetype);
 
    /// Initialize DICOM header when none
    void InitializeDefaultHeader();

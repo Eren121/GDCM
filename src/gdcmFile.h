@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:34 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2004/11/25 13:12:02 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,6 +111,12 @@ protected:
    void SetWriteToRGB();
    void RestoreWrite();
 
+   void SetWriteFileTypeToACR();
+   void SetWriteFileTypeToACRLibido();
+   void SetWriteFileTypeToExplicitVR();
+   void SetWriteFileTypeToImplicitVR();
+   void RestoreWriteFileType();
+
    void SetWriteToLibido();
    void RestoreWriteFromLibido();
 
@@ -126,7 +132,6 @@ private:
    void SetPixelData(uint8_t* data);
 
 private:
-
 // members variables:
 
    /// Header to use to load the file

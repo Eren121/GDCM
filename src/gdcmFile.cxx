@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:34 $
-  Version:   $Revision: 1.163 $
+  Date:      $Date: 2004/11/25 13:12:02 $
+  Version:   $Revision: 1.164 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,7 @@
 =========================================================================*/
 
 #include "gdcmFile.h"
+#include "gdcmDocument.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 #include "gdcmBinEntry.h"
@@ -396,14 +397,22 @@ uint8_t* File::GetLutRGBA()
  */
 bool File::WriteBase (std::string const & fileName, FileType type)
 {
-   std::ofstream* fp1 = new std::ofstream(fileName.c_str(), 
-                              std::ios::out | std::ios::binary);
-   if (fp1 == NULL)
+   switch(type)
    {
-      dbg.Verbose(2, "Failed to open (write) File: " , fileName.c_str());
-      return false;
+      case ImplicitVR:
+         SetWriteFileTypeToImplicitVR();
+         break;
+      case ExplicitVR:
+         SetWriteFileTypeToExplicitVR();
+         break;
+      case ACR:
+         SetWriteFileTypeToACR();
+         break;
+      case ACR_LIBIDO:
+         SetWriteFileTypeToACRLibido();
+         break;
    }
-
+  
    switch(WriteMode)
    {
       case WMODE_NATIVE :
@@ -431,10 +440,10 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    }*/
    // ----------------- End of Special Patch ----------------
 
-   bool check=CheckWriteIntegrity();
+   bool check = CheckWriteIntegrity();
    if(check)
    {
-      HeaderInternal->Write(fp1,type);
+      check = HeaderInternal->Write(fileName,type);
    }
 
    // --------------------------------------------------------------
@@ -449,9 +458,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    // ----------------- End of Special Patch ----------------
 
    RestoreWrite();
-
-   fp1->close();
-   delete fp1;
+   RestoreWriteFileType();
 
    return check;
 }
@@ -468,21 +475,38 @@ bool File::CheckWriteIntegrity()
 {
    if(Pixel_Data)
    {
+      int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
+      if ( numberBitsAllocated == 0 || numberBitsAllocated == 12 )
+      {
+         numberBitsAllocated = 16;
+      }
+
+      int decSize = HeaderInternal->GetXSize()
+                    * HeaderInternal->GetYSize() 
+                    * HeaderInternal->GetZSize()
+                    * ( numberBitsAllocated / 8 )
+                    * HeaderInternal->GetSamplesPerPixel();
+      int rgbSize = decSize;
+      if( HeaderInternal->HasLUT() )
+         rgbSize = decSize * 3;
+
       switch(WriteMode)
       {
          case WMODE_NATIVE :
             break;
          case WMODE_DECOMPRESSED :
-            if(GetImageDataRawSize()!=ImageDataSize)
+            if( decSize!=ImageDataSize )
             {
-               std::cerr<<"RAW : "<<GetImageDataRawSize()<<" / "<<ImageDataSize<<std::endl;
+               dbg.Verbose(0, "File::CheckWriteIntegrity: Data size is incorrect");
+               //std::cerr<<"Dec : "<<decSize<<" | "<<ImageDataSize<<std::endl;
                return false;
             }
             break;
          case WMODE_RGB :
-            if(GetImageDataSize()!=ImageDataSize)
+            if( rgbSize!=ImageDataSize )
             {
-               std::cerr<<"RGB : "<<GetImageDataSize()<<" / "<<ImageDataSize<<std::endl;
+               dbg.Verbose(0, "File::CheckWriteIntegrity: Data size is incorrect");
+               //std::cerr<<"RGB : "<<decSize<<" | "<<ImageDataSize<<std::endl;
                return false;
             }
             break;
@@ -639,6 +663,43 @@ void File::RestoreWrite()
    Archive->Restore(0x0028,0x1201);
    Archive->Restore(0x0028,0x1202);
    Archive->Restore(0x0028,0x1203);
+}
+
+void File::SetWriteFileTypeToACR()
+{
+   Archive->Push(0x0002,0x0010);
+}
+
+void File::SetWriteFileTypeToACRLibido()
+{
+   SetWriteFileTypeToACR();
+}
+
+void File::SetWriteFileTypeToExplicitVR()
+{
+   std::string ts = 
+      Util::DicomString( TransferSyntaxStrings[ExplicitVRLittleEndian] );
+
+   ValEntry* tss = CopyValEntry(0x0002,0x0010);
+   tss->SetValue(ts);
+   tss->SetLength(ts.length());
+
+   Archive->Push(tss);
+}
+
+void File::SetWriteFileTypeToImplicitVR()
+{
+   std::string ts = 
+      Util::DicomString( TransferSyntaxStrings[ImplicitVRLittleEndian] );
+
+   ValEntry* tss = CopyValEntry(0x0002,0x0010);
+   tss->SetValue(ts);
+   tss->SetLength(ts.length());
+}
+
+void File::RestoreWriteFileType()
+{
+   Archive->Restore(0x0002,0x0010);
 }
 
 void File::SetWriteToLibido()

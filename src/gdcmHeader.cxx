@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/23 17:12:25 $
-  Version:   $Revision: 1.205 $
+  Date:      $Date: 2004/11/25 13:12:02 $
+  Version:   $Revision: 1.206 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,8 +102,16 @@ Header::~Header ()
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
-void Header::Write(std::ofstream* fp,FileType filetype)
+bool Header::Write(std::string fileName,FileType filetype)
 {
+   std::ofstream* fp = new std::ofstream(fileName.c_str(), 
+                                         std::ios::out | std::ios::binary);
+   if (fp == NULL)
+   {
+      dbg.Verbose(2, "Failed to open (write) File: " , fileName.c_str());
+      return false;
+   }
+
    // Bits Allocated
    if ( GetEntryByNumber(0x0028,0x0100) ==  "12")
    {
@@ -164,6 +172,11 @@ void Header::Write(std::ofstream* fp,FileType filetype)
       }
    }
    Document::Write(fp,filetype);
+
+   fp->close();
+   delete fp;
+
+   return true;
 }
 
 //-----------------------------------------------------------------------------
