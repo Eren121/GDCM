@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 13:02:36 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/06/24 18:03:14 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,10 @@ public:
     
    /// Sets the value (string) of the current Dicom Document Entry
    inline void SetValue(std::string val)  { value = val;  };
-   
+	
+   /// Sets the value (void *) of the current Dicom Document Entry
+   inline void SetVoidArea(void * val)  { voidArea = val;  };
+	   
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);
 protected:
@@ -59,7 +62,7 @@ private:
 // Members :
   
    /// \brief Document Entry value, internaly represented as a std::string
-   ///        The Value Representation (\ref gdcmVR) is indenpendently used
+   ///        The Value Representation (\ref gdcmVR) is independently used
    ///        in order to interpret (decode) this field.
    std::string  value;
 };

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 15:01:57 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/06/24 18:03:14 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,6 +66,7 @@ void gdcmBinEntry::Print(std::ostream &os)
 {
    gdcmDocEntry::Print(os);
    std::ostringstream s;
+   void *voidArea = GetVoidArea();	
    if (voidArea != NULL)
    {
       s << " [gdcm::Binary data loaded with length is "
@@ -73,7 +74,13 @@ void gdcmBinEntry::Print(std::ostream &os)
    }
    else
    {
-      s << " [gdcm::Binary data NOT loaded]";
+      if ( GetLength() == 0 )
+         s << " []";
+      else 
+      {
+         s << " [gdcm::Binary data NOT loaded]";
+      }
+         
    }
    os << s.str();
 }

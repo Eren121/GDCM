@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 15:01:57 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/06/24 18:03:14 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,6 @@ gdcmSeqEntry::~gdcmSeqEntry() {
    for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
    {
       delete *cc;
-     std::cout << "delete SQItem" <<std:: endl;
    }
    if (!seq_term)
       delete seq_term;
@@ -79,6 +78,7 @@ void gdcmSeqEntry::Print(std::ostream &os){
          os << std::endl;
       } 
       else 
+         // fusible
          os << "      -------------- should have a sequence terminator item";
    }                    
 }
@@ -88,13 +88,29 @@ void gdcmSeqEntry::Print(std::ostream &os){
  */
 void gdcmSeqEntry::Write(FILE *fp, FileType filetype)
 {
+   guint16 seq_term_gr = 0xfffe;
+   guint16 seq_term_el = 0xe0dd;
+   guint32 seq_term_lg = 0x00000000;
+
+   guint16 item_term_gr = 0xfffe;
+   guint16 item_term_el = 0xe00d;
+
    gdcmDocEntry::Write(fp, filetype);
    for(ListSQItem::iterator cc  = GetSQItems().begin();
                             cc != GetSQItems().end();
                           ++cc)
    {
-      (*cc)->Write(fp, filetype);   
-   }  
+      (*cc)->Write(fp, filetype);
+
+   fwrite ( &item_term_gr,(size_t)2 ,(size_t)1 ,fp);
+   fwrite ( &item_term_el,(size_t)2 ,(size_t)1 ,fp);   
+   fwrite ( &seq_term_lg,(size_t)4 ,(size_t)1 ,fp); 
+   }
+    //we force the writting of a Sequence Delimitaion item
+    // because we wrote the Sequence as a 'no Length' sequence
+   fwrite ( &seq_term_gr,(size_t)2 ,(size_t)1 ,fp);
+   fwrite ( &seq_term_el,(size_t)2 ,(size_t)1 ,fp);
+   fwrite ( &seq_term_lg,(size_t)4 ,(size_t)1 ,fp); 
 }
 
 //-----------------------------------------------------------------------------

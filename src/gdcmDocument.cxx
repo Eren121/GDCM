@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 16:34:36 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/06/24 18:03:14 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,9 +74,9 @@
 const unsigned int gdcmDocument::HEADER_LENGTH_TO_READ = 256;
 
 // Refer to gdcmDocument::SetMaxSizeLoadEntry()
-const unsigned int gdcmDocument::MAX_SIZE_LOAD_ELEMENT_VALUE = 4096;
+const unsigned int gdcmDocument::MAX_SIZE_LOAD_ELEMENT_VALUE = 0x7fffffff;// 4096;
 
-const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
+const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;//64;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -126,8 +126,8 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
    
    long l=ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
    (void)l; //is l used anywhere ?
-	
-	rewind(fp); 
+
+   rewind(fp); 
    
    // Load 'non string' values
       
@@ -144,7 +144,7 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
    } 
    //FIXME later : how to use it?
    LoadEntryVoidArea(0x0028,0x3006);  //LUT Data (CTX dependent) 
-	   	
+
    CloseFile(); 
   
    // --------------------------------------------------------------
@@ -571,10 +571,9 @@ bool gdcmDocument::WriteF(FileType filetype) {
  * if ( filetype == ACR)
  *    UpdateGroupLength(true,ACR);
  */
- 	
-	gdcmElementSet::Write(fp,filetype);
+ 
+   gdcmElementSet::Write(fp,filetype);
 
-   /// WriteEntries(fp,type); // old stuff
    return true;
 }
 
@@ -968,7 +967,31 @@ void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem)
       delete[] a;
       return NULL;
    }
-
+   return a;  
+}
+/**
+ * \brief         Loads (from disk) the element content 
+ *                when a string is not suitable
+ * @param Element  Entry whose voidArea is going to be loaded
+ */
+void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *Element) 
+{
+   size_t o =(size_t)Element->GetOffset();
+   fseek(fp, o, SEEK_SET);
+   size_t l = Element->GetLength();
+   char* a = new char[l];
+   if(!a) {
+      dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
+      return NULL;
+   }
+   Element->SetVoidArea((void *)a);
+   /// \todo check the result 
+   size_t l2 = fread(a, 1, l ,fp);
+   if(l != l2) 
+   {
+      delete[] a;
+      return NULL;
+   }
    return a;  
 }
 
@@ -1066,7 +1089,7 @@ void gdcmDocument::UpdateShaEntries(void) {
  */
 gdcmDocEntry* gdcmDocument::GetDocEntryByNumber(guint16 group, guint16 element) 
 {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);   
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return NULL;
    return tagHT.find(key)->second;
@@ -1364,11 +1387,11 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    // The elements whose length is bigger than the specified upper bound
    // are not loaded. Instead we leave a short notice of the offset of
    // the element content and it's length.
-	
+
+   std::ostringstream s;
    if (length > MaxSizeLoadEntry) {
       if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) )
-      {
-         std::ostringstream s;
+      {         
          s << "gdcm::NotLoaded (BinEntry)";
          s << " Address:" << (long)Entry->GetOffset();
          s << " Length:"  << Entry->GetLength();
@@ -1377,17 +1400,16 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
       }
       // to be sure we are at the end of the value ...
       fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);      
-      return;		
-       // Be carefull : a BinEntry IS_A ValEntry ...  	
+      return;
+       // Be carefull : a BinEntry IS_A ValEntry ... 
       if (gdcmValEntry* ValEntryPtr = dynamic_cast< gdcmValEntry* >(Entry) )
       {
-         std::ostringstream s;
          s << "gdcm::NotLoaded. (ValEntry)";
          s << " Address:" << (long)Entry->GetOffset();
          s << " Length:"  << Entry->GetLength();
          s << " x(" << std::hex << Entry->GetLength() << ")";
          ValEntryPtr->SetValue(s.str());
-      }		
+      }
       // to be sure we are at the end of the value ...
       fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);      
       return;
@@ -1395,9 +1417,12 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
 
    // When we find a BinEntry not very much can be done :
    if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) ) {
-      LoadEntryVoidArea (BinEntryPtr->GetGroup(),BinEntryPtr->GetElement());
-		return;	
-	}
+	
+      LoadEntryVoidArea(BinEntryPtr);
+      s << "gdcm::Loaded (BinEntry)";		
+      BinEntryPtr->SetValue(s.str());
+      return;
+   }
  
     
    // Any compacter code suggested (?)
@@ -1448,7 +1473,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    // We need an additional byte for storing \0 that is not on disk
    std::string NewValue(length,0);
    item_read = fread(&(NewValue[0]), (size_t)length, (size_t)1, fp);
-	if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) ) {  
+   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) ) {  
       if ( item_read != 1 ) {
          dbg.Verbose(1, "gdcmDocument::LoadElementValue","unread element value");
          ValEntry->SetValue("gdcm::UnRead");
@@ -1460,9 +1485,9 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
       else
          ValEntry->SetValue(NewValue);
    } else {
-	// fusible
-	std::cout << "Should have a ValEntry, here !" << std::endl;
-	}
+   // fusible
+      std::cout << "Should have a ValEntry, here !" << std::endl;
+   }
 
 }
 

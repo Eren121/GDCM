@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 13:02:36 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/06/24 18:03:14 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -107,6 +107,7 @@ void gdcmDocEntry::Print(std::ostream & os) {
  */
 void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
 
+   guint32 FFFF = 0xffffffff;
    guint16 group  = GetGroup();
    VRKey   vr     = GetVR();
    guint16 el     = GetElement();
@@ -151,13 +152,18 @@ void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
          fwrite ( &z,  (size_t)2 ,(size_t)1 ,fp);
       } else {
          fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,fp); 
-
-// TODO : better we set SQ length to ffffffff
-//      and write a Sequence Delimitor Item at the end of the Sequence!                    
+                  
          if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") )
          {
             fwrite ( &z,  (size_t)2 ,(size_t)1 ,fp);
-            fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+            if (vr == "SQ") {
+            // we set SQ length to ffffffff
+            // and  we shall write a Sequence Delimitor Item 
+            // at the end of the Sequence! 
+               fwrite ( &FFFF,(size_t)4 ,(size_t)1 ,fp);
+            } else {
+               fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+            }
          } else {
             fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,fp);
          }
@@ -165,7 +171,11 @@ void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
    } 
    else // IMPLICIT VR 
    { 
-      fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+      if (vr == "SQ") {
+          fwrite ( &FFFF,(size_t)4 ,(size_t)1 ,fp);
+       } else {
+          fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+       }
    }
 }
 
@@ -205,7 +215,8 @@ void gdcmDocEntry::Copy (gdcmDocEntry* e) {
 
 /**
  * \ingroup gdcmDocEntry
- * \brief   tells us if entry is the first one of a Sequence Item (fffe,e00d) 
+ * \brief   tells us if entry is the last one of a 'no length' SequenceItem 
+ *          (fffe,e00d) 
  */
 bool gdcmDocEntry::isItemDelimitor() {
    if ( (GetGroup() == 0xfffe) && (GetElement() == 0xe00d) )
@@ -215,7 +226,8 @@ bool gdcmDocEntry::isItemDelimitor() {
 }
 /**
  * \ingroup gdcmDocEntry
- * \brief   tells us if entry is the last one of a 'no length' Sequence fffe,e0dd) 
+ * \brief   tells us if entry is the last one of a 'no length' Sequence 
+ *          (fffe,e0dd) 
  */
 bool gdcmDocEntry::isSequenceDelimitor() {
    if (GetGroup() == 0xfffe && GetElement() == 0xe0dd)
