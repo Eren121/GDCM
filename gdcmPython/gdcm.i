@@ -13,11 +13,11 @@
 #include "gdcmObject.h"
 #include "gdcmDicomDir.h"
 #include "gdcmDicomDirElement.h"
-#include "gdcmMeta.h"
-#include "gdcmPatient.h"
-#include "gdcmStudy.h"
-#include "gdcmSerie.h"
-#include "gdcmImage.h"
+#include "gdcmDicomDirMeta.h"
+#include "gdcmDicomDirPatient.h"
+#include "gdcmDicomDirStudy.h"
+#include "gdcmDicomDirSerie.h"
+#include "gdcmDicomDirImage.h"
 
 using namespace std;
 
@@ -170,13 +170,13 @@ extern gdcmGlobal gdcmGlob;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-%typemap(out) ListPatient & {
+%typemap(out) ListDicomDirPatient & {
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (list<gdcmPatient *>::iterator New = ($1)->begin();
+	for (list<gdcmDicomDirPatient *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmPatient,1);
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirPatient,1);
 		PyList_Append($result, NewItem);
 	}
 }
@@ -185,9 +185,9 @@ extern gdcmGlobal gdcmGlob;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (list<gdcmStudy *>::iterator New = ($1)->begin();
+	for (list<gdcmDicomDirStudy *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmStudy,1);
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirStudy,1);
 		PyList_Append($result, NewItem);
 	}
 }
@@ -196,20 +196,20 @@ extern gdcmGlobal gdcmGlob;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (list<gdcmSerie *>::iterator New = ($1)->begin();
+	for (list<gdcmDicomDirSerie *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmSerie,1);
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirSerie,1);
 		PyList_Append($result, NewItem);
 	}
 }
 
-%typemap(out) ListImage & {
+%typemap(out) ListDicomDirImage & {
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (list<gdcmImage *>::iterator New = ($1)->begin();
+	for (list<gdcmDicomDirImage *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmImage,1);
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirImage,1);
 		PyList_Append($result, NewItem);
 	}
 }
@@ -258,8 +258,8 @@ extern gdcmGlobal gdcmGlob;
 %include "gdcmObject.h"
 %include "gdcmDicomDir.h"
 %include "gdcmDicomDirElement.h"
-%include "gdcmMeta.h"
-%include "gdcmPatient.h"
-%include "gdcmStudy.h"
-%include "gdcmSerie.h"
-%include "gdcmImage.h"
+%include "gdcmDicomDirMeta.h"
+%include "gdcmDicomDirPatient.h"
+%include "gdcmDicomDirStudy.h"
+%include "gdcmDicomDirSerie.h"
+%include "gdcmDicomDirImage.h"

@@ -17,28 +17,128 @@ class gdcmHeader;
 class GDCM_EXPORT gdcmHeaderEntry {
 public:
    gdcmHeaderEntry(gdcmDictEntry*);
-   
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the Dicom Group number of the current Dicom Header Entry
+    * @return 
+    */    
    inline guint16      GetGroup(void)     { return entry->GetGroup();  };
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the Dicom Element number of the current Dicom Header Entry
+    * @return 
+    */ 
    inline guint16      GetElement(void)   { return entry->GetElement();};
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the 'key' of the current Dicom Header Entry
+    * @return 
+    */
    inline std::string  GetKey(void)       { return entry->GetKey();    };
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the 'Name' '(e.g. "Patient's Name")
+    *          found in the Dicom Dictionnary
+    *          of the current Dicom Header Entry
+    * @return
+    */ 
    inline std::string  GetName(void)      { return entry->GetName();   };
+
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the 'Value Representation' 
+    *          (e.g. "PN" : Person Name, "SL" : Signed Long),
+    *          found in the Dicom Header or in the Dicom Dictionnary,
+    *          of the current Dicom Header Entry
+    * @return
+    */
    inline std::string  GetVR(void)        { return entry->GetVR();     };
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the 'Value' (e.g. "Dupond Marcel")
+    *          converted into a 'string', if it's stored as an integer
+    *          in the Dicom Header
+    *          of the current Dicom Header Entry
+    * @return
+    */ 
    inline std::string  GetValue(void)     { return value;              };
-
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the area value of the current Dicom Header Entry
+    *          when it's not string-translatable
+    *          (e.g : a LUT table)         
+    * @return
+    */    
    inline void *       GetVoidArea(void)  { return voidArea;           };
-   inline size_t       GetOffset(void)    { return Offset;             };   
-   inline guint32      GetLength(void)    { return UsableLength;       };   
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns offset (since the beginning of the file,
+    *          including the File Pramble, if any)
+    *          of the value of the current Dicom Header Entry
+    * \warning : offset of the *value*, not of the Dicom Header Entry
+    *  
+    * @return
+    */    
+   inline size_t       GetOffset(void)    { return Offset;             };
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the actual value length of the current Dicom Header Entry
+    * \warning this value is not *allways* the one stored in the Dicom Header
+    *          in case on well knowned buggs
+    * @return
+    */        
+   inline guint32      GetLength(void)    { return UsableLength;       };
+    
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   returns the 'read length' of the current Dicom Header Entry
+    * \warning this value is the one stored in the Dicom Header
+    *          but not mandatoryly the one thats's used
+    *          (in case on SQ, or delimiters, the usable length is set to zero)
+    * @return
+    */     
+   inline guint32      GetReadLength(void) { return ReadLength;};
 
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets the 'Value Representation' of the current Dicom Header Entry
+    */   
    inline void         SetVR(std::string v)      { entry->SetVR(v);          };    
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets both 'Read Length' and 'Usable Length'
+    *          of the current Dicom Header Entry
+    */ 
    inline void         SetLength(guint32 l)      { ReadLength=UsableLength=l;};
       
    // The following 3 members, for internal use only ! 
-   inline void         SetReadLength(guint32 l)  { ReadLength   = l; };  	
-   inline void         SetUsableLength(guint32 l){ UsableLength = l; };  	
-   inline guint32      GetReadLength(void)       { return ReadLength;};
- 	
+   
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets only 'Read Length' (*not* 'Usable Length')
+    *          of the current Dicom Header Entry
+    */ 
+   inline void         SetReadLength(guint32 l)  { ReadLength   = l; };
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets only 'Usable Length' (*not* 'Read Length')
+    *          of the current Dicom Header Entry
+    */      	
+   inline void         SetUsableLength(guint32 l){ UsableLength = l; }; 
+    	
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets the value (string)
+    *          of the current Dicom Header Entry
+    */  	
    inline void         SetValue(std::string val) { value = val;      };
-   inline void         SetVoidArea(void * area)  { voidArea = area;  };
+
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets the value (non string)
+    *          of the current Dicom Header Entry
+    */ 
+    inline void         SetVoidArea(void * area)  { voidArea = area;  };
    
    /**
     * \ingroup gdcmHeaderEntry
@@ -100,8 +200,8 @@ private:
 // Variables
    gdcmDictEntry *entry;
    guint32 UsableLength;  // Updated from ReadLength, by FixFoungLentgh()
-                          // for fixing a bug in the header or helping
-                          // the parser going on 
+                          // for fixing a bug in the header 
+                          // or helping the parser going on 
 			  
    guint32 ReadLength;    // Length actually read on disk
                           // (before FixFoundLength)

@@ -209,7 +209,11 @@ void vtkGdcmReader::ExecuteInformation()
       vtkDebugMacro("32 bits signed image");
       this->SetDataScalarTypeToInt();
    }
-
+   else if ( ImageType == "FD" )
+   {
+      vtkDebugMacro("64 bits Double image");
+      this->SetDataScalarTypeToDouble();
+   }
    //Set number of scalar components:
    this->SetNumberOfScalarComponents(this->NumComponents);
 
