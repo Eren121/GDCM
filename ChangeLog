@@ -1,3 +1,11 @@
+2005-01-10 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Hopefully fix the bug on MacOSX and static global initialization. 
+   This is the only -minor- patch I found that both please MacOSX and VS6. 
+   Other patch would be to declare a const std::string & GDCM_UNFOUND() instead, 
+   but this would require a lot of change. Another approach wqould be that Global 
+   create those string and GDCM_UNFOUND becomes a pointer to a string (which 
+   gdcm::Global would destroy at exit).
+
 2005-01-08 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Fix bug on MacOSX with static initialization in a multui threaded
 	 environement. static const string in a header file used to be ill
