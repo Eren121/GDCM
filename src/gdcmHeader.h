@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 03:10:58 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2004/11/16 05:03:35 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -160,6 +160,7 @@ public:
    bool   HasLUT();
    int    GetLUTNbits();
 
+   /// Return the Transfer Syntax as a string
    std::string GetTransfertSyntaxName();
 
    /// Accessor to \ref Header::GrPixel
@@ -172,9 +173,16 @@ public:
    void SetImageDataSize(size_t expectedSize);
 
    void Write(std::ofstream* fp, FileType filetype);
+
+   /// Initialize DICOM header when none
+   void InitializeDefaultHeader();
  
 protected:
+   /// Replace patient's specific information by 'anonymous'
    bool AnonymizeHeader();
+
+   /// Helper function needed to organize DICOM files based on 
+   /// their x,y,z position
    void GetImageOrientationPatient( float iop[6] );
 
 private:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 02:54:35 $
-  Version:   $Revision: 1.155 $
+  Date:      $Date: 2004/11/16 05:03:35 $
+  Version:   $Revision: 1.156 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
+#include "gdcmUtil.h"
 #include <fstream>
 
 namespace gdcm 
@@ -346,7 +347,7 @@ uint8_t* File::GetImageData()
       if ( HeaderInternal->HasLUT() )
       {
          // The LUT interpretation failed
-         std::string photometricInterpretation = "MONOCHROME1 ";
+         std::string photometricInterpretation = Util::DicomString("MONOCHROME1");
          HeaderInternal->SetEntryByNumber( photometricInterpretation,
                                            0x0028, 0x0004 );
          PixelRead = 0; // no PixelRaw
