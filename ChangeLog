@@ -1,3 +1,11 @@
+2004-06-29 Jean-Pierre Roux
+   FIX : - remove Frog's beautified, but never checked 'Parse7FE0' code,
+         - replace by uggly but working old code :-(
+		A lot of things should be OK again.
+	It's really urgent to have a test suite that *tests*, 
+	to prevent Frog's beautifying sessions to break all the stuff
+	(twice, withing a fortnigh ...) 	
+
 2004-06-28 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * Test/TestWriteRead.cxx and TestReadWrite.cxx merged (because of
      redundancy) to added Test/TestReadWriteReadCompare.cxx
