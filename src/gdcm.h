@@ -339,7 +339,7 @@ private:
 	string filename;            // refering underlying file
 	FILE * fp;
 	// The tag Image Location ((0028,0200) containing the address of
-	// the pixels) is not allways present. When we store this information
+	// the pixels) is not allways present. Then we store this information
 	// FIXME
 	// outside of the elements:
 	guint16 grPixel;
@@ -348,7 +348,7 @@ private:
 	// du 'groupe des pixels' dans l'entete?
 	// (voir pb du DICOMDIR)
 	
-	// Swap code (little, big, big-bad endian): this code is not fixed
+	// Swap code (little, big, bad-big, bad-little endian): this code is not fixed
 	// during parsing.FIXME sw should be an enum e.g.
 	//enum EndianType {
 		//LittleEndian, 
@@ -357,7 +357,7 @@ private:
 		//BadBigEndian};
 	int sw;
 
-	// Only the elements whose size are below this bound shall be loaded.
+	// Only the elements whose size is below this bound will be loaded.
 	// By default, this upper bound is limited to 1024 (which looks reasonable
 	// when one considers the definition of the various VR contents).
 	guint32 MaxSizeLoadElementValue;
@@ -392,9 +392,7 @@ private:
 // Il y en a encore DIX-SEPT, comme ça.
 // Il faudrait trouver qq chose + rusé ...
 //	
-	
-	
-	
+		
 	void SetMaxSizeLoadElementValue(long);
 	ElValue       * ReadNextElement(void);
 	gdcmDictEntry * IsInDicts(guint32, guint32);
@@ -420,14 +418,14 @@ public:
 	int    GetSwapCode(void) { return sw; }
 
 	// TODO Swig int SetPubDict(string filename);
-	// When some proprietary shadow groups are disclosed, we can set
-	// up an additional specific dictionary to access extra information.
+	// When some proprietary shadow groups are disclosed, we can set up
+	// an additional specific dictionary to access extra information.
 	// TODO Swig int SetShaDict(string filename);
 
 	// Retrieve all potentially available tag [tag = (group, element)] names
 	// from the standard (or public) dictionary. Typical usage: enable the
 	// user of a GUI based interface to select his favorite fields for sorting
-	// or selection.
+	// or selecting.
 	list<string> * GetPubTagNames(void);
 	map<string, list<string> > * GetPubTagNamesByCategory(void);
 	// Get the element values themselves:
@@ -436,8 +434,8 @@ public:
 	string GetPubElValByNumber(guint16 group, guint16 element);
 
 	// Getting the element value representation (VR) might be needed by caller
-	// to convert the string typed content to caller's native type (think
-	// of C/C++ vs Python).
+	// to convert the string typed content to caller's native type 
+	// (think of C/C++ vs Python).
 
 	string GetPubElValRepByName(string TagName);
 	string GetPubElValRepByNumber(guint16 group, guint16 element);
@@ -511,7 +509,7 @@ public:
 
 	// On writing purposes. When instance was created through
 	// gdcmFile(string filename) then the filename argument MUST be different
-	// from the constructor's one (no overwriting aloud).
+	// from the constructor's one (no overwriting allowed).
 	// TODO Swig int SetFileName(string filename);
 
 	// Allocates necessary memory, copies the data (image[s]/volume[s]) to
@@ -533,7 +531,12 @@ public:
 	// pointed data to it.
 	// TODO Swig int SetImageData(void * Data, size_t ExpectedSize);
 	// Push to disk.
+	// A NE PAS OUBLIER : que fait-on en cas de Transfert Syntax (dans l'entete)
+	// incohérente avec l'ordre des octets en mémoire  
 	// TODO Swig int Write();
+	
+	// A FAIRE
+	// int WriteRawData (string nomFichier);
 };
 
 //
