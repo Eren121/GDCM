@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 17:09:49 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2005/01/10 22:54:34 $
+  Version:   $Revision: 1.88 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,51 @@
    #include <netdb.h>   // for gethostbyname
 #endif
 #endif
+
+// For GetMACAddress
+#include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+#include <snmp.h>
+#include <conio.h>
+#else
+#include <strings.h> //for bzero on unix
+#endif
+
+#ifdef __linux__
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <linux/if.h>
+#endif
+
+#ifdef __FreeBSD__
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <ifaddrs.h>
+#include <net/if_dl.h>
+#endif
+
+#ifdef __HP_aCC
+#include <netio.h>
+#endif
+
+#ifdef _AIX
+#include <sys/ndd_var.h>
+#include <sys/kinfo.h>
+#endif
+
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#include <IOKit/IOKitLib.h>
+#include <IOKit/network/IOEthernetInterface.h>
+#include <IOKit/network/IONetworkInterface.h>
+#include <IOKit/network/IOEthernetController.h>
+#endif //__APPLE__
+// End For GetMACAddress
 
 namespace gdcm 
 {
@@ -313,13 +358,8 @@ bool Util::IsCurrentProcessorBigEndian()
 }
 
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
 
 #ifdef _WIN32
-#include <snmp.h>
-#include <conio.h>
 typedef BOOL(WINAPI * pSnmpExtensionInit) (
         IN DWORD dwTimeZeroReference,
         OUT HANDLE * hPollForTrapEvent,
@@ -340,44 +380,10 @@ typedef BOOL(WINAPI * pSnmpExtensionQuery) (
 
 typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
         OUT AsnObjectIdentifier * supportedView);
-#else
-#include <strings.h> //for bzero on unix
 #endif //_WIN32
 
-#ifdef __linux__
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <linux/if.h>
-#endif
-
-#ifdef __FreeBSD__
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <ifaddrs.h>
-#include <net/if_dl.h>
-#endif
-
-#ifdef __HP_aCC
-#include <netio.h>
-#endif
-
-#ifdef _AIX
-#include <sys/ndd_var.h>
-#include <sys/kinfo.h>
-#endif
 
 #ifdef __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#include <IOKit/IOKitLib.h>
-#include <IOKit/network/IOEthernetInterface.h>
-#include <IOKit/network/IONetworkInterface.h>
-#include <IOKit/network/IOEthernetController.h>
-
-//static kern_return_t FindEthernetInterfaces(io_iterator_t *matchingServices);
-//static kern_return_t GetMACAddress(io_iterator_t intfIterator, UInt8 *MACAddress);
-
 // Returns an iterator containing the primary (built-in) Ethernet interface. The caller is responsible for
 // releasing the iterator after the caller is done with it.
 static kern_return_t FindEthernetInterfaces(io_iterator_t *matchingServices)
