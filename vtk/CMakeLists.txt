@@ -59,18 +59,6 @@ TARGET_LINK_LIBRARIES(vtkWriteDicom
 )
 
 #-----------------------------------------------------------------------------
-SET(GdcmToBaseline_SOURCES
-  GdcmToBaseline.cxx
-)
-ADD_EXECUTABLE(GdcmToBaseline ${GdcmToBaseline_SOURCES})
-TARGET_LINK_LIBRARIES(GdcmToBaseline
-  vtkgdcm
-  vtkIO
-  vtkImaging
-  vtkRendering
-)
-
-#-----------------------------------------------------------------------------
 # Install vtk header
 INSTALL_FILES(/include FILES vtkGdcmReader.h)
 INSTALL_FILES(/include FILES vtkGdcmWriter.h)
