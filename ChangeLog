@@ -1,3 +1,14 @@
+2005-01-18 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * ENH for DicomDir, DicomDirPatient, DicomDirStudy, 
+	          DicomDirSerie, DicomDirImage
+	          Dict, DictSet classes :
+         -add method GetFirstEntry to replace call to InitTraversal+GetNextEntry
+         -remove InitTraversal method.
+	* UPD Test programs + Example programs
+
+2005-01-18 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   remove useless and never updated keyword \ingroup	      
+
 2005-01-17 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmUtil.cxx : bug fix to find the Windows MAC address. Now, there
      is no memory access violation
@@ -30,7 +41,7 @@
 
 2005-01-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Removed the Print/indent/default parameter mess. There is absolutely no
-	 reason to have to methods, moreover with the second takeing the ostream as
+	 reason to have to methods, moreover with the second taking the ostream as
 	 *SECOND* parameter. This was clearly a bad hack to get things compile.
 
 2005-01-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
@@ -39,7 +50,7 @@
 	 Unfortunately the main code does not work on SunOS, thus provide a specific
 	 code for this platform only (and Win32 of course). Since this seems to be
 	 working, change CreateUniqueUID to use GetMACAddress instead of the
-	 problematic getIPAddress
+	 problematic GctestetIPAddress
 
 2005-01-14 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Unfortunately to be able to test gdcmDirList I had to break the API
@@ -57,11 +68,11 @@
 			- Move equivalent stuff to BinEntry::WriteContent
 			When necessary, 16 Bits Pixels are swapped in a small buffer
 			and then written. This avoid allocating a huge buffer, in
-			PixelWriteConveror, and avoid modifying the Pixel Area.
+			PixelWriteConvertor, and avoid modifying the Pixel Area.
 			Note :
 	      Probabely, the same operation will have to be done when we want 
 	      to write image with Big Endian Transfert Syntax, 
-	      and we are working onj Little Endian Processor
+	      and we are working on Little Endian Processor
 						
 2005-01-14 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocument.[h|cxx] : comment all methods concerning a flat hash
@@ -1791,7 +1802,7 @@
 2004-02-11 Benoit Regrain
      * FIX : memory leaks and the set of ArgDelete methods in gdcmDicomDir
              when using from python
-
+				 
 2004-02-10 Benoit Regrain
      * FIX : bug fix in the gdcmDirList for the recursivity in directories
      * FIX : in gdcmDicomDir when the directory is empty
@@ -2759,7 +2770,7 @@
 
 2003-03-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/__init__.py doesn't crash anymore when running in
-        in InstallMode or PreInstallMode but with an environement given
+        in InstallMode or PreInstallMode but with an environment given
         value of GDCM_DICT_PATH.
       * src/gdcmDictSet.[cxx/h] coding style.
 
