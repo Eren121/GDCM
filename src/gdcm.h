@@ -69,13 +69,6 @@ typedef  unsigned int   guint32;
 #define GDCM_EXPORT
 #endif
 
-//
-// ---------------------------------------------------- gdcmDictEntry
-//
-//	c'est une ligne du Dictionnaire Dicom
-//
-
-
 ////////////////////////////////////////////////////////////////////////////
 // Tag based hash tables.
 // We shall use as keys the strings (as the C++ type) obtained by
@@ -87,6 +80,7 @@ typedef  unsigned int   guint32;
 // gdcmDictEntry::TranslateToKey for this conversion function.
 
 typedef string TagKey;
+typedef string TagName;
 
 class GDCM_EXPORT gdcmDictEntry {
 private:
@@ -114,74 +108,53 @@ private:
 	//         DcmDictRangeRestriction elementRestriction;
 	//       };
 public:
-	
-	// fabrique une ligne de Dictionnaire Dicom à partir des parametres en entrée
-
 	gdcmDictEntry(guint16 group, 
-			  guint16 element,
+	              guint16 element,
 	              string vr     = "Unknown",
 	              string fourth = "Unknown",
 	              string name   = "Unknown");
-					  
 	// fabrique une 'clé' par concaténation du numGroupe et du numElement
-
 	static TagKey TranslateToKey(guint16 group, guint16 element);
 	
 	guint16 GetGroup(void)  { return group; };
 	guint16 GetElement(void){return element;};
 	string  GetVR(void)     {return vr;     };
 	void    SetVR(string);
-	void	SetKey(string k){ key = k;		}
+	void    SetKey(string k){ key = k;     }
 	bool    IsVrUnknown(void);
 	string  GetFourth(void) {return fourth;};
 	string  GetName(void)   {return name;  };
 	string  GetKey(void)    {return key;   };
 };
   
-//
-// ---------------------------------------------------- gdcmDict
-// 
-//	c'est le Dictionnaire Dicom
-//
- 
 ////////////////////////////////////////////////////////////////////////////
 // A single DICOM dictionary i.e. a container for a collection of dictionary
 // entries. There should be a single public dictionary (THE dictionary of
 // the actual DICOM v3) but as many shadow dictionaries as imagers 
 // combined with all software versions...
 
-typedef map<TagKey, gdcmDictEntry*> TagHT;
-	// Table de Hachage : (group,Elem) --> pointeur vers une ligne du Dictionnaire Dicom
+typedef map<TagKey,  gdcmDictEntry*> TagKeyHT;
+typedef map<TagName, gdcmDictEntry*> TagNameHT;
 
 class GDCM_EXPORT gdcmDict {
 	string name;
 	string filename;
-	TagHT entries;
+	TagKeyHT  KeyHt;                // Both accesses with a TagKey or with a
+	TagNameHT NameHt;               // TagName are required.
 public:
-	// rempli le Dictionnaire Dicom à partir d'un fichier texte
-	gdcmDict(const char* FileName);   // Read Dict from disk
-	
+	gdcmDict(const char* FileName);   // Reads Dict from ascii file
 	int AddNewEntry (gdcmDictEntry* NewEntry);
 	int ReplaceEntry(gdcmDictEntry* NewEntry);
-	int RemoveEntry (TagKey k);
+	int RemoveEntry (TagKey key);
 	int RemoveEntry (guint16 group, guint16 element);
-	
-	// renvoie une ligne de Dictionnaire Dicom à partir de (numGroup, numElement)
-	gdcmDictEntry * GetTag(guint32 group, guint32 element);
-	
+	gdcmDictEntry * GetTagByKey(guint16 group, guint16 element);
+	gdcmDictEntry * GetTagByName(TagName name);
 	void Print(ostream&);
-	TagHT & GetEntries(void) { return entries; }
+	void PrintByKey(ostream&);
+	void PrintByName(ostream&);
+	TagKeyHT & GetEntries(void) { return KeyHt; }
 };
 
-
-//
-// ---------------------------------------------------- gdcmDictSet
-//
-//	Ensemble de Dictionnaires Dicom (le public + 'des' privés)
-//	Au cas ou l'on traiterait un jour les 'dictionnaires privés'
-//	 - pratiquement un par constructeur, par machine, et par version du logiciel -
-//
-//
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for managing a set of loaded dictionaries. Sharing dictionaries
@@ -219,25 +192,9 @@ public:
 	gdcmDict* GetDefaultPublicDict(void);
 };
 
-
-//
-// ---------------------------------------------------- ElValue
-//
-//	C'est un Element Dicom
-// 	(ce qu'on a trouve dans l'entete de l'image
-// 	+ ce qu'on est allé chercher dans le Dictionnaire Dicom)
-//
-
-// QUESTION:
-//
-// Ne faudrait-il pas trouver un autre nom, qui preterait moins à confusion?
-// ElValue n'EST PAS la 'valeur d'un Element', mais la reunion d'infos
-// trouvees dans l'Entete du fichier ET dans le Dictionnaire DICOM
-//
-
+///////////////////////////////////////////////////////////////////////////
 // The dicom header of a Dicom file contains a set of such ELement VALUES
 // (when successfuly parsed against a given Dicom dictionary)
-
 class GDCM_EXPORT ElValue {
 private:
 	gdcmDictEntry *entry;
@@ -246,54 +203,39 @@ private:
 	                       // elements happen to be implicit. Flag them here
 	                       // since we can't use the entry->vr without breaking
 	                       // the underlying dictionary.
-	// Might prove of some interest (see _ID_DCM_ELEM)
-	// int Swap;
 public:
-	string  value;     // used to be char * valeurElem
+	string  value;
 	size_t Offset;     // Offset from the begining of file for direct user access
 	
 	ElValue(gdcmDictEntry*);
 	void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };
 	bool   IsVrUnknown(void) { return entry->IsVrUnknown(); };
-	void SetImplicitVr(void) { ImplicitVr = true; 			};
-	bool  IsImplicitVr(void) { return ImplicitVr; 			};
-
-	guint16 GetGroup(void)   { return entry->GetGroup();   	};	
-	guint16 GetElement(void) { return entry->GetElement(); 	};
-	string  GetKey(void)     { return entry->GetKey();     	};
-	string  GetName(void)    { return entry->GetName();    	};
+	void SetImplicitVr(void) { ImplicitVr = true; };
+	bool  IsImplicitVr(void) { return ImplicitVr; };
 	
-	string  GetVR(void)		 { return entry->GetVR(); 		};
-	void    SetVR(string v)	 { entry->SetVR(v);       		}; 
-		
-	// Question :
-	// Un champ privé, accessible en consultation et en modif (sans restriction)
-	// interet par rapport à un champ public ? 
-	// --> pouvoir en changer la définition sans toucher à l'API
-
-	void SetLength(guint32 l){ LgrElem = l;		};
-	guint32 GetLength(void)  { return LgrElem;	};
+	guint16 GetGroup(void)   { return entry->GetGroup();  };
+	guint16 GetElement(void) { return entry->GetElement();};
+	string  GetKey(void)     { return entry->GetKey();    };
+	string  GetName(void)    { return entry->GetName();   };
+	string  GetVR(void)      { return entry->GetVR();     };
+	void    SetVR(string v)  { entry->SetVR(v);           }; 
+	void SetLength(guint32 l){ LgrElem = l;               };
+	guint32 GetLength(void)  { return LgrElem;            };
 	
 	// Question : SetLength est public 
 	// (sinon, on ne pourrait pas l'appeler dans ElValSet)
 	// alors que *personne* ne devrait s'en servir !
 	// c'est *forcément* la lgr de la string 'value', non?
 
-	void SetValue(string val){ value = val; 	};
-	string  GetValue(void)   { return value;	};
+	void SetValue(string val){ value = val; };
+	string  GetValue(void)   { return value;};
 
-	void SetOffset(size_t of){ Offset = of;		};
-	size_t  GetOffset(void)  { return Offset;	};
+	void SetOffset(size_t of){ Offset = of; };
+	size_t  GetOffset(void)  { return Offset;};
 	// Question : SetOffset est public ...
 	// Quel utilisateur serait ammené à modifier l'Offset ?
 };
 
-
-//
-// ---------------------------------------------------- ElValSet
-//
-//	... un ensemble d'Elements Dicom 
-//	... le résultat de l'analyse d'une entete d'image, par exemple
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for a set of successfully parsed ElValues.
@@ -301,10 +243,8 @@ typedef map<TagKey, ElValue*> TagElValueHT;
 typedef map<string, ElValue*> TagElValueNameHT;
 
 class GDCM_EXPORT ElValSet {
-		// We need both accesses with a TagKey and the Dictentry.Name
-
-	TagElValueHT tagHt;
-	TagElValueNameHT NameHt;
+	TagElValueHT tagHt;             // Both accesses with a TagKey or with a
+	TagElValueNameHT NameHt;        // the DictEntry.Name are required.
 public:	
 	void Add(ElValue*);		
 	void Print(ostream &);
@@ -321,16 +261,11 @@ public:
 	int SetElValueByName(string content, string TagName);
 };
 
-
-//
-// ---------------------------------------------------- gdcmHeader
-//
-//	C'est le Dicom Header d'une image donnée
-//	(tous les elements Dicom qui la composent
-//	+ des info 'de service')
-//
-
 ////////////////////////////////////////////////////////////////////////////
+// The purpous of an instance of gdcmHeader is to act as a container of
+// all the elements and their corresponding values (and additionaly the
+// corresponding DICOM dictionary entry) of the header of a DICOM file.
+//
 // The typical usage of instances of class gdcmHeader is to classify a set of
 // dicom files according to header information e.g. to create a file hierarchy
 // reflecting the Patient/Study/Serie informations, or extracting a given
@@ -341,12 +276,10 @@ public:
 //   be managed within a dictionary which is shared by all gdcmHeader instances
 // * the gdcmHeader::Set*Tag* family members cannot be defined as protected
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
- 
 
 typedef string VRKey;
 typedef string VRAtr;
 typedef map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
-
 
 class GDCM_EXPORT gdcmHeader {
 	void SkipBytes(guint32);
@@ -362,16 +295,6 @@ private:
 	ElValSet ShaElVals;         // parsed with Shadow Dictionary
 	string filename;            // refering underlying file
 	FILE * fp;
-	// The tag Image Location (0028,0200) - containing the address of
-	// the pixels - is not allways present. Then we store this information
-	// il etait facultatif en ACR-NEMA, il n'existe plus en DICOM 3
-	// FIXME
-	
-	// Question :
-	// Qu'y a-t-il a corriger ?
-	//
-	// outside of the elements:
-	
 	guint16 grPixel;
 	guint16 numPixel;
 	// Ne faudrait-il pas une indication sur la presence ou non
@@ -396,16 +319,26 @@ private:
 	guint32 ReadInt32(void);
 	guint16 SwapShort(guint16);
 	guint32 SwapLong(guint32);
+	guint32 FindLengthOB(void);
 	void Initialise(void);
 	void CheckSwap(void);
+	void InitVRDict(void);
+	void SwitchSwapToBigEndian(void);
+	void AddAndDefaultElements(void);
+	void SetMaxSizeLoadElementValue(long);
+
+	gdcmDictEntry * GetDictEntryByKey(guint16, guint16);
+	gdcmDictEntry * GetDictEntryByName(string name);
+
+	// ElValue related utilities
+	ElValue * ReadNextElement(void);
+	ElValue * NewElValueByKey(guint16 group, guint16 element);
+	ElValue * NewElValueByName(string name);
 	void FindLength(ElValue *);
-	guint32 FindLengthOB(void);
 	void FindVR(ElValue *);
 	void LoadElementValue(ElValue *);
 	void LoadElementValueSafe(ElValue *);
 	void SkipElementValue(ElValue *);
-	void InitVRDict(void);
-	void SwitchSwapToBigEndian(void);
 	void FixFoundLength(ElValue*, guint32);
 	bool IsAnInteger(ElValue *);
 	
@@ -417,15 +350,7 @@ private:
 	bool IsJPEGExtendedProcess2_4TransferSyntax(void);	
 	bool IsJPEGExtendedProcess3_5TransferSyntax(void);
 	bool IsJPEGSpectralSelectionProcess6_8TransferSyntax(void);	
-//
-// Euhhhhhhh
-// Il y en a encore DIX-SEPT, comme ça.
-// Il faudrait trouver qq chose + rusé ...
-//	
 		
-	void SetMaxSizeLoadElementValue(long);
-	ElValue       * ReadNextElement(void);
-	gdcmDictEntry * IsInDicts(guint32, guint32);
 protected:
 	enum FileType {
 		Unknown = 0,

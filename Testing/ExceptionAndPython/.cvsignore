@@ -4,3 +4,4 @@ foo.cxx
 main
 *.o
 *.so
+*.pyc

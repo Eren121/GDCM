@@ -1,4 +1,6 @@
 Sources for dicom public dictionaries:
+ * the official source is the part 6 of the dicom standard (see
+   http://www.dclunie.com/dicom-status/status.html#BaseStandard2001).
  * http://www.fpimage.com/Manuals/Imp/dicomdic.html
    an html group based presentation.
  * ftp://rsbweb.nih.gov/pub/nih-image/documents/dicom-dict.txt

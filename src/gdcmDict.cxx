@@ -10,7 +10,10 @@ gdcmDict::gdcmDict(const char* FileName) {
 	guint16 group, element;
 	// CLEANME : use defines for all those constants
 	char buff[1024];
-	TagKey key, vr, fourth, name;
+	TagKey key;
+	TagName vr;
+	TagName fourth;
+	TagName name;
 	while (!from.eof()) {
 		from >> hex >> group >> element;
 		eatwhite(from);
@@ -23,37 +26,85 @@ gdcmDict::gdcmDict(const char* FileName) {
 		name = buff;
 		gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,
 		                                         vr, fourth, name);
-		entries[gdcmDictEntry::TranslateToKey(group, element)] = newEntry;
+		NameHt[name] = newEntry;
+		KeyHt[gdcmDictEntry::TranslateToKey(group, element)] = newEntry;
 	}
-   from.close();
+	from.close();
 }
 
 void gdcmDict::Print(ostream& os) {
-	for (TagHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
-       os << "Tag : ";
-       os << "(" << hex << tag->second->GetGroup() << ',';
-       os << hex << tag->second->GetElement() << ") = " << dec;
-       os << tag->second->GetVR() << ", ";
-       os << tag->second->GetFourth() << ", ";
-       os << tag->second->GetName() << "."  << endl;
-    }
+	PrintByKey(os);
 }
 
-// renvoie une ligne de Dictionnaire Dicom à partir de (numGroup, numElement)
+/**
+ * \ingroup gdcmHeader
+ * \brief   Print all the dictionary entries contained in this dictionary.
+ *          Entries will be sorted by tag i.e. the couple (group, element).
+ * @param   os The output stream to be written to.
+ */
+void gdcmDict::PrintByKey(ostream& os) {
+	for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag){
+		os << "Tag : ";
+		os << "(" << hex << tag->second->GetGroup() << ',';
+		os << hex << tag->second->GetElement() << ") = " << dec;
+		os << tag->second->GetVR() << ", ";
+		os << tag->second->GetFourth() << ", ";
+		os << tag->second->GetName() << "."  << endl;
+	}
+}
 
-gdcmDictEntry * gdcmDict::GetTag(guint32 group, guint32 element) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   Print all the dictionary entries contained in this dictionary.
+ *          Entries will be sorted by the name of the dictionary entries.
+ * @param   os The output stream to be written to.
+ */
+void gdcmDict::PrintByName(ostream& os) {
+	for (TagNameHT::iterator tag = NameHt.begin(); tag != NameHt.end(); ++tag){
+		os << "Tag : ";
+		os << tag->second->GetName() << ",";
+		os << tag->second->GetVR() << ", ";
+		os << tag->second->GetFourth() << ", ";
+		os << "(" << hex << tag->second->GetGroup() << ',';
+		os << hex << tag->second->GetElement() << ") = " << dec << endl;
+	}
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Get the dictionnary entry identified by a given tag (group,element)
+ * @param   group   group of the entry to be found
+ * @param   element element of the entry to be found
+ * @return  the corresponding dictionnary entry when existing, NULL otherwise
+ */
+gdcmDictEntry * gdcmDict::GetTagByKey(guint16 group, guint16 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-	if ( ! entries.count(key))
+	if ( ! KeyHt.count(key))
 		return (gdcmDictEntry*)0; 
-	if (entries.count(key) > 1)
-		dbg.Verbose(0, "gdcmDict::GetTag", 
+	if (KeyHt.count(key) > 1)
+		dbg.Verbose(0, "gdcmDict::GetTagByName", 
 		            "multiple entries for this key (FIXME) !");
-	return entries.find(key)->second;
+	return KeyHt.find(key)->second;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Get the dictionnary entry identified by it's name.
+ * @param   name element of the ElVal to modify
+ * @return  the corresponding dictionnary entry when existing, NULL otherwise
+ */
+gdcmDictEntry * gdcmDict::GetTagByName(TagName name) {
+	if ( ! NameHt.count(name))
+		return (gdcmDictEntry*)0; 
+	if (NameHt.count(name) > 1)
+		dbg.Verbose(0, "gdcmDict::GetTagByName", 
+		            "multiple entries for this key (FIXME) !");
+	return NameHt.find(name)->second;
 }
 
 
 int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
-
+	//JPRCLEAN
 	// au cas ou la NewEntry serait incomplete
 	// Question : cela peut-il se produire ?
 	//
@@ -66,10 +117,11 @@ int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
 	//			);
 	//}
 	
-	entries.erase (NewEntry->gdcmDictEntry::GetKey());
-	entries[ NewEntry->GetKey()] = NewEntry;
+	KeyHt.erase (NewEntry->gdcmDictEntry::GetKey());
+	KeyHt[ NewEntry->GetKey()] = NewEntry;
 	return (1);
-	// Question : Dans quel cas ça peut planter ?
+	// Question(jpr): Dans quel cas ça peut planter ?
+	// Reponse(frog): dans les mauvais cas...
 }
  
 
@@ -78,19 +130,19 @@ int gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
 	TagKey key;
 	key = NewEntry->GetKey();
 	
-	if(entries.count(key) >= 1) {
+	if(KeyHt.count(key) >= 1) {
 		printf("gdcmDict::AddNewEntry %s deja present\n", key.c_str());
 		return(0);
 	} else {
-		entries[NewEntry->GetKey()] = NewEntry;
+		KeyHt[NewEntry->GetKey()] = NewEntry;
 		return(1);
 	}
 	}
 
 
 int gdcmDict::RemoveEntry(TagKey key) {	
-	if(entries.count(key) == 1) {
-		entries.erase(key);
+	if(KeyHt.count(key) == 1) {
+		KeyHt.erase(key);
 		return (1);
 	} else {
 		printf("gdcmDict::RemoveEntry %s non trouve\n", key.c_str());

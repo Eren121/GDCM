@@ -44,6 +44,7 @@ gdcmHeader::gdcmHeader (const char* InFilename) {
 	fp=fopen(InFilename,"rw");
 	dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", InFilename);
 	ParseHeader();
+	AddAndDefaultElements();
 }
 
 gdcmHeader::~gdcmHeader (void) {
@@ -600,7 +601,7 @@ void gdcmHeader::FindLength(ElValue * ElVal) {
 			// and the dictionary entry depending on them.
 			guint16 CorrectGroup   = SwapShort(ElVal->GetGroup());
 			guint16 CorrectElem    = SwapShort(ElVal->GetElement());
-			gdcmDictEntry * NewTag = IsInDicts(CorrectGroup, CorrectElem);
+			gdcmDictEntry * NewTag = GetDictEntryByKey(CorrectGroup, CorrectElem);
 			if (!NewTag) {
 				// This correct tag is not in the dictionary. Create a new one.
 				NewTag = new gdcmDictEntry(CorrectGroup, CorrectElem);
@@ -842,6 +843,52 @@ guint32 gdcmHeader::ReadInt32(void) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief   Build a new Element Value from all the low level arguments. 
+ *          Check for existence of dictionary entry, and build
+ *          a default one when absent.
+ * @param   Group group   of the underlying DictEntry
+ * @param   Elem  element of the underlying DictEntry
+ */
+ElValue* gdcmHeader::NewElValueByKey(guint16 Group, guint16 Elem) {
+	// Find out if the tag we encountered is in the dictionaries:
+	gdcmDictEntry * NewTag = GetDictEntryByKey(Group, Elem);
+	if (!NewTag)
+		NewTag = new gdcmDictEntry(Group, Elem);
+
+	ElValue* NewElVal = new ElValue(NewTag);
+	if (!NewElVal) {
+		dbg.Verbose(1, "gdcmHeader::NewElValueByKey",
+		            "failed to allocate ElValue");
+		return (ElValue*)0;
+	}
+   return NewElVal;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Build a new Element Value from all the low level arguments. 
+ *          Check for existence of dictionary entry, and build
+ *          a default one when absent.
+ * @param   Name    Name of the underlying DictEntry
+ */
+ElValue* gdcmHeader::NewElValueByName(string Name) {
+
+   gdcmDictEntry * NewTag = GetDictEntryByName(Name);
+   if (!NewTag)
+      NewTag = new gdcmDictEntry(0xffff, 0xffff, "LO", "Unknown", Name);
+
+   ElValue* NewElVal = new ElValue(NewTag);
+   if (!NewElVal) {
+      dbg.Verbose(1, "gdcmHeader::ObtainElValueByName",
+                  "failed to allocate ElValue");
+      return (ElValue*)0;
+   }
+   return NewElVal;
+}  
+
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Read the next tag without loading it's value
  * @return  On succes the newly created ElValue, NULL on failure.      
  */
@@ -857,18 +904,8 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 		// We reached the EOF (or an error occured) and header parsing
 		// has to be considered as finished.
 		return (ElValue *)0;
-
-	// Find out if the tag we encountered is in the dictionaries:
-	gdcmDictEntry * NewTag = IsInDicts(g, n);
-	if (!NewTag)
-		NewTag = new gdcmDictEntry(g, n);
-
-	NewElVal = new ElValue(NewTag);
-	if (!NewElVal) {
-		dbg.Verbose(1, "ReadNextElement: failed to allocate ElValue");
-		return (ElValue*)0;
-	}
-
+	
+	NewElVal = NewElValueByKey(g, n);
 	FindVR(NewElVal);
 	FindLength(NewElVal);
 	if (errno == 1)
@@ -908,25 +945,9 @@ bool gdcmHeader::IsAnInteger(ElValue * ElVal) {
 		return true;
 	
 	if ( (group == 0x0028) && (element == 0x0005) )
-		// This tag is retained from ACR/NEMA
-		// CHECKME Why should "Image Dimensions" be a single integer ?
-		//
-		// "Image Dimensions", c'est en fait le 'nombre de dimensions'
-		// de l'objet ACR-NEMA stocké
-		// 1 : Signal
-		// 2 : Image
-		// 3 : Volume
-		// 4 : Sequence
-		//
-		// DICOM V3 ne retient pas cette information
-		// Par defaut, tout est 'Image',
-		// C'est a l'utilisateur d'explorer l'ensemble des entetes
-		// pour savoir à quoi il a a faire
-		//
-		// Le Dicom Multiframe peut etre utilise pour stocker,
-		// dans un seul fichier, une serie temporelle (cardio vasculaire GE, p.ex)
-		// ou un volume (medecine Nucleaire, p.ex)
-		//
+		// The "Image Dimensions" tag is retained from ACR/NEMA and contains
+		// the number of dimensions of the contained object (1 for Signal,
+		// 2 for Image, 3 for Volume, 4 for Sequence).
 		return true;
 	
 	if ( (group == 0x0028) && (element == 0x0200) )
@@ -969,23 +990,56 @@ size_t gdcmHeader::GetPixelOffset(void) {
 		return 0;
 }
 
-gdcmDictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
-	//
-	// Y a-t-il une raison de lui passer des guint32
-	// alors que group et element sont des guint16?
-	//
+/**
+ * \ingroup gdcmHeader
+ * \brief   Searches both the public and the shadow dictionary (when they
+ *          exist) for the presence of the DictEntry with given
+ *          group and element. The public dictionary has precedence on the
+ *          shadow one.
+ * @param   group   group of the searched DictEntry
+ * @earam   element element of the searched DictEntry
+ * @return  Corresponding DictEntry when it exists, NULL otherwise.
+ */
+gdcmDictEntry * gdcmHeader::GetDictEntryByKey(guint16 group, guint16 element) {
 	gdcmDictEntry * found = (gdcmDictEntry*)0;
 	if (!RefPubDict && !RefShaDict) {
-		//FIXME build a default dictionary !
-		printf("FIXME in gdcmHeader::IsInDicts\n");
+		dbg.Verbose(0, "FIXME in gdcmHeader::GetDictEntry",
+                     "we SHOULD have a default dictionary");
 	}
 	if (RefPubDict) {
-		found = RefPubDict->GetTag(group, element);
+		found = RefPubDict->GetTagByKey(group, element);
 		if (found)
 			return found;
 	}
 	if (RefShaDict) {
-		found = RefShaDict->GetTag(group, element);
+		found = RefShaDict->GetTagByKey(group, element);
+		if (found)
+			return found;
+	}
+	return found;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Searches both the public and the shadow dictionary (when they
+ *          exist) for the presence of the DictEntry with given name.
+ *          The public dictionary has precedence on the shadow one.
+ * @earam   Name name of the searched DictEntry
+ * @return  Corresponding DictEntry when it exists, NULL otherwise.
+ */
+gdcmDictEntry * gdcmHeader::GetDictEntryByName(string Name) {
+	gdcmDictEntry * found = (gdcmDictEntry*)0;
+	if (!RefPubDict && !RefShaDict) {
+		dbg.Verbose(0, "FIXME in gdcmHeader::GetDictEntry",
+                     "we SHOULD have a default dictionary");
+	}
+	if (RefPubDict) {
+		found = RefPubDict->GetTagByName(Name);
+		if (found)
+			return found;
+	}
+	if (RefShaDict) {
+		found = RefShaDict->GetTagByName(Name);
 		if (found)
 			return found;
 	}
@@ -994,9 +1048,9 @@ gdcmDictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
 
 list<string> * gdcmHeader::GetPubTagNames(void) {
 	list<string> * Result = new list<string>;
-	TagHT entries = RefPubDict->GetEntries();
+	TagKeyHT entries = RefPubDict->GetEntries();
 
-	for (TagHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
+	for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
       Result->push_back( tag->second->GetName() );
 	}
 	return Result;
@@ -1004,9 +1058,9 @@ list<string> * gdcmHeader::GetPubTagNames(void) {
 
 map<string, list<string> > * gdcmHeader::GetPubTagNamesByCategory(void) {
 	map<string, list<string> > * Result = new map<string, list<string> >;
-	TagHT entries = RefPubDict->GetEntries();
+	TagKeyHT entries = RefPubDict->GetEntries();
 
-	for (TagHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
+	for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
 		(*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
 	}
 	return Result;
@@ -1056,7 +1110,6 @@ string gdcmHeader::GetShaElValRepByName(string TagName) {
 	return elem->GetVR();
 }
 
-
 string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
 	string pub = GetPubElValByNumber(group, element);
 	if (pub.length())
@@ -1087,57 +1140,63 @@ string gdcmHeader::GetElValRepByName(string TagName) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Modifie la valeur d'un ElValue déja existant
- * \	dans le PubElVals du gdcmHeader,
- * \	accédé par ses numero de groupe et d'element.
+ * \brief   Accesses an existing ElValue in the PubElVals of this instance
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value to substitute with
+ * @param   group   group of the ElVal to modify
+ * @param   element element of the ElVal to modify
  */
-int gdcmHeader::SetPubElValByNumber(string content, guint16 group, guint16 element) {
-	//TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-	//PubElVals.tagHt[key]->SetValue(content);
-	
+int gdcmHeader::SetPubElValByNumber(string content, guint16 group,
+                                    guint16 element)
+{
+	//CLEANME TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+	//CLEANME PubElVals.tagHt[key]->SetValue(content);
 	return (  PubElVals.SetElValueByNumber (content, group, element) );
 }
 
-
 /**
  * \ingroup gdcmHeader
- * \brief   Modifie la valeur d'un ElValue déja existant
- * \	dans le PubElVals du gdcmHeader,
- * \	accédé par son nom
+ * \brief   Accesses an existing ElValue in the PubElVals of this instance
+ *          through tag name and modifies it's content with the given value.
+ * @param   content new value to substitute with
+ * @param   TagName name of the tag to be modified
  */
 int gdcmHeader::SetPubElValByName(string content, string TagName) {
-	//TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-	//PubElVals.tagHt[key]->SetValue(content);
-	
+	//CLEANME TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+	//CLEANME PubElVals.tagHt[key]->SetValue(content);
 	return (  PubElVals.SetElValueByName (content, TagName) );
 }
 
-
 /**
  * \ingroup gdcmHeader
- * \brief   Modifie la valeur d'un ElValue déja existant
- * \	dans le ShaElVals du gdcmHeader,
- * \	accédé par ses numero de groupe et d'element.
+ * \brief   Accesses an existing ElValue in the ShaElVals of this instance
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value to substitute with
+ * @param   group   group of the ElVal to modify
+ * @param   element element of the ElVal to modify
  */
-int gdcmHeader::SetShaElValByNumber(string content, guint16 group, guint16 element) {
-	
+int gdcmHeader::SetShaElValByNumber(string content,
+                                    guint16 group, guint16 element)
+{
 	return (  ShaElVals.SetElValueByNumber (content, group, element) );
 }
 
+/**
+ * \ingroup gdcmHeader
+ * \brief   Accesses an existing ElValue in the ShaElVals of this instance
+ *          through tag name and modifies it's content with the given value.
+ * @param   content new value to substitute with
+ * @param   TagName name of the tag to be modified
+ */
+int gdcmHeader::SetShaElValByName(string content, string TagName) {
+	return (  ShaElVals.SetElValueByName (content, TagName) );
+}
 
 /**
  * \ingroup gdcmHeader
- * \brief   Modifie la valeur d'un ElValue déja existant
- * \	dans le ShaElVals du gdcmHeader,
- * \	accédé par son nom
- */
-int gdcmHeader::SetShaElValByName(string content, string TagName) {
-	
-	return (  ShaElVals.SetElValueByName (content, TagName) );
-}
-/**
- * \ingroup gdcmHeader
- * \brief   Parses the header of the file but does NOT load element values.
+ * \brief   Parses the header of the file but WITHOUT loading element values.
  */
 void gdcmHeader::ParseHeader(void) {
 	ElValue * newElValue = (ElValue *)0;
@@ -1152,15 +1211,40 @@ void gdcmHeader::ParseHeader(void) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief   Once the header is parsed add some gdcm convenience/helper elements
+ *          in the ElValSet. For example add:
+ *          - gdcmImageType which is an entry containing a short for the
+ *            type of image and whose value ranges in 
+ *               I8   (unsigned 8 bit image)
+ *               I16  (unsigned 8 bit image)
+ *               IS16 (signed 8 bit image)
+ *          - gdcmXsize, gdcmYsize, gdcmZsize whose values are respectively
+ *            the ones of the official DICOM fields Rows, Columns and Planes.
+ */
+void gdcmHeader::AddAndDefaultElements(void) {
+	ElValue* NewEntry = (ElValue*)0;
+
+	NewEntry = NewElValueByName("gdcmXSize");
+	NewEntry->SetValue(GetElValByName("Rows"));
+	PubElVals.Add(NewEntry);
+
+	NewEntry = NewElValueByName("gdcmYSize");
+	NewEntry->SetValue(GetElValByName("Columns"));
+	PubElVals.Add(NewEntry);
+
+	NewEntry = NewElValueByName("gdcmZSize");
+	NewEntry->SetValue(GetElValByName("Planes"));
+	PubElVals.Add(NewEntry);
+}
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Loads the element values of all the elements present in the
  *          public tag based hash table.
  */
 void gdcmHeader::LoadElements(void) {
-
 	rewind(fp);   
-
 	TagElValueHT ht = PubElVals.GetTagHt();
-	
 	for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
 		LoadElementValue(tag->second);
 		}

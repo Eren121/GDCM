@@ -82,10 +82,8 @@ int ElValSet::SetElValueByNumber(string content, guint32 group, guint32 element)
 		return (0); 
 	}		                       
 	tagHt[key]->SetValue(content);
-	// Question : m à j LgrElem ?
-	tagHt[key]->SetLength(strlen(content.c_str()));	 
-				// Ou trouver les fonctions d'une classe donnée?
-				// lgr d'une string, p.ex 
+	// FIXME should we really update the element length ?
+	tagHt[key]->SetLength(content.length());	 
 	return(1);		
 }
 
