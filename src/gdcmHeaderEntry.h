@@ -195,6 +195,7 @@ public:
 private:
    // FIXME: In fact we should be more specific and use :
    // friend gdcmHeaderEntry * gdcmHeader::ReadNextElement(void);
+   
    friend class gdcmHeader;
 
 // Variables
@@ -213,18 +214,18 @@ private:
    /// *for internal* use only
    guint32 ReadLength;
 
- /// Even when reading explicit vr files, some
- /// elements happen to be implicit. Flag them here
- /// since we can't use the entry->vr without breaking
- /// the underlying dictionary.	
+   /// Even when reading explicit vr files, some
+   /// elements happen to be implicit. Flag them here
+   /// since we can't use the entry->vr without breaking
+   /// the underlying dictionary.	
    bool ImplicitVR;
 			  
    std::string  value;
 
-  /// unsecure memory area to hold 'non string' values 
-  /// (ie : Lookup Tables, overlays)   
+   /// unsecure memory area to hold 'non string' values 
+   /// (ie : Lookup Tables, overlays)   
    void *voidArea;
-  /// Offset from the begining of file for direct user access		     
+   /// Offset from the begining of file for direct user access		     
    size_t Offset; 
       
    int printLevel;

@@ -105,8 +105,8 @@ public:
 // Write (used in gdcmFile, gdcmDicomDir)
    virtual bool Write(FILE *, FileType);
 
-   bool ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem);
-   bool ReplaceOrCreateByNumber(     char  *Value, guint16 Group, guint16 Elem);
+   gdcmHeaderEntry * ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem);
+   gdcmHeaderEntry * ReplaceOrCreateByNumber(     char  *Value, guint16 Group, guint16 Elem);
    bool ReplaceIfExistByNumber (     char  *Value, guint16 Group, guint16 Elem);
 
 // System access
@@ -257,8 +257,7 @@ private:
    gdcmHeaderEntry *NewHeaderEntryByNumber(guint16 group, 
                                            guint16 element);
    gdcmHeaderEntry *NewHeaderEntryByName  (std::string Name);
-
-
+   
    // Deprecated (Not used) --> commented out
    //gdcmHeaderEntry *NewManualHeaderEntryToPubDict(std::string NewTagName,
    //                                                  std::string VR);
@@ -296,15 +295,15 @@ private:
    */
    int sw;
    /**
-   * \brief Size treshold above which an element value will NOT be loaded in 
+   * \brief Size threshold above which an element value will NOT be loaded in 
    *       memory (to avoid loading the image/volume itself). By default,
    *       this upper bound is fixed to 1024 bytes (which might look reasonable
-   * when one considers the definition of the various VR contents).
+   *       when one considers the definition of the various VR contents).
    */
    guint32 MaxSizeLoadEntry;
    
    /**
-   * \brief Size treshold above which an element value will NOT be *printed* in
+   * \brief Size threshold above which an element value will NOT be *printed* in
    *        order no to polute the screen output. 
    *        By default, this upper bound is fixed to 64 bytes.
    */   

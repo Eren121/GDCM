@@ -106,7 +106,7 @@ private:
   /// ==0  if GetImageData    was used
   /// ==-1 if ImageData never read                       
    int PixelRead;     
-                       .
+
    /// weather already parsed 
    int Parsed;
    

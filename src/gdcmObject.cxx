@@ -89,25 +89,57 @@ std::string gdcmObject::GetEntryByName(TagName name)  {
  * \ingroup gdcmParser
  * \brief   Sets Entry (Dicom Element) value of an element,
  *          specified by it's tag (Group, Number) 
- *          and the length, too ...       
+ *          and the length, too ...
+ *          If the Element is not found, it's just created !
+ * \warning we suppose, right now, the element belongs to a Public Group
+ *          (NOT a shadow one)       
  * @param   val string value to set
  * @param   group Group of the searched tag.
  * @param   element Element of the searched tag.
- * @return  true if element was found, else false
+ * @return  true if element was found or created successfully
  */
  bool gdcmObject::SetEntryByNumber(std::string val,guint16 group, 
- 						   guint16 element) {
-						   
-   //for(ListTag::iterator i=beginObj;i!=endObj;++i) // JPR
-   for(ListTag::iterator i=beginObj;;++i) {  
-      if ( (*i)->GetGroup()==group && (*i)->GetElement()==element) {
+						   guint16 element) {
+
+   gdcmHeaderEntry *a;
+   for(ListTag::iterator i=beginObj;;++i) { 
+      if ( (*i)->GetGroup() == 0xfffe && (*i)->GetElement() == 0xe000 ) 
+         continue;
+      if ( group   < (*i)->GetGroup() || 
+           (group == (*i)->GetGroup() && element < (*i)->GetElement()) ){
+	 // instead of ReplaceOrCreateByNumber 
+	 // that is a method of gdcmParser :-( 
+         gdcmHeaderEntry *Entry;
+         TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+         if ( ! ptagHT->count(key)) {
+	   // we assume the element is a belongs to a Public Group (not a shadow one)
+	   // we assume a Public Dictionnary *is* loaded
+           gdcmDict *PubDict         = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+           // we assume the invoqued (group,elem) exists
+	   // inside the Public Dictionary
+           gdcmDictEntry *DictEntry  = PubDict->GetDictEntryByNumber(group, element); 
+           // we assume the constuctor didn't fail
+           Entry = new gdcmHeaderEntry(DictEntry);
+	   // ----
+	   // TODO
+	   // ----
+	   // better we don't assume too much !
+	   // in the next release, gdcmObject will be used 
+	   // to describe any Header Entry ...
+         } else {
+            Entry = ptagHT->find(key)->second;
+         }
+         Entry->SetValue(val); 
+         Entry->SetLength(val.length());
+         plistEntries->insert(i,Entry); 
+	 return true;
+      }	   
+      if (group == (*i)->GetGroup() && element == (*i)->GetElement() ) {
          (*i)->SetValue(val);
-	 (*i)->SetLength(val.length()+1);
-         return true;
-      }
-      if (i == endObj) break;      
-   }
-   return false;   						    
+         (*i)->SetLength(val.length()); 
+         return true;    
+      }   
+   }						    
 }
 /**
  * \ingroup gdcmObject

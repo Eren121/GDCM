@@ -453,22 +453,28 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
  * \ingroup gdcmParser
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          if it exists; Creates it with the given value if it doesn't
+ * \warning : adds the Header Entry to the HTable, NOT to the chained List
  * @param   Value passed as a std::string
- * @param   Group
- * @param   Elem
- * \return  false only if new element creation fails
+ * @param Group   group of the Entry 
+ * @param Elem element of the Entry
+ * \return  pointer to the created Header Entry
+ *          NULL if creation failed
  */
-bool gdcmParser::ReplaceOrCreateByNumber(std::string Value, 
+gdcmHeaderEntry * gdcmParser::ReplaceOrCreateByNumber(
+                                         std::string Value, 
                                          guint16 Group, 
-					 guint16 Elem ){
-   if (CheckIfEntryExistByNumber(Group, Elem) == 0) {
+					 guint16 Elem ){					 
+   gdcmHeaderEntry* a;
+   a = GetHeaderEntryByNumber( Group, Elem); 					 
+   if (a == NULL) {
       gdcmHeaderEntry *a =NewHeaderEntryByNumber(Group, Elem);
       if (a == NULL) 
-         return false;
+         return NULL;
       AddHeaderEntry(a);
    }   
-   SetEntryByNumber(Value, Group, Elem);
-   return(true);
+   //SetEntryByNumber(Value, Group, Elem);
+   a->SetValue(Value);
+   return(a);
 }   
 
 /**
@@ -478,20 +484,24 @@ bool gdcmParser::ReplaceOrCreateByNumber(std::string Value,
  * @param   Value passed as a char*
  * @param Group   group of the Entry 
  * @param Elem element of the Entry
- * \return  boolean 
+ * \return  pointer to the created Header Entry
+ *          NULL if creation failed 
  * 
  */
-bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
+gdcmHeaderEntry *  gdcmParser::ReplaceOrCreateByNumber(
+                                     char* Value, 
+                                     guint16 Group, 
+                                     guint16 Elem ) {
    gdcmHeaderEntry* nvHeaderEntry=NewHeaderEntryByNumber(Group, Elem);
 
    if(!nvHeaderEntry)
-      return(false);
+      return(NULL);
 
    AddHeaderEntry(nvHeaderEntry);
 
    std::string v = Value;	
    SetEntryByNumber(v, Group, Elem);
-   return(true);
+   return(nvHeaderEntry);
 }  
 
 /**
