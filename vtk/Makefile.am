@@ -23,9 +23,9 @@ LDADD =              \
    $(LIBS_X11)
 
 if BUILD_VTK
-noinst_PROGRAMS = vtkgdcmdemo gdcmViewer
+noinst_PROGRAMS = vtkgdcmdemo vtkgdcmViewer
 vtkgdcmdemo_SOURCES = testvtkGdcmReader.cxx  vtkGdcmReader.cxx 
-gdcmViewer_SOURCES = gdcmViewer.cxx  vtkGdcmReader.cxx 
+gdcmViewer_SOURCES = vtkgdcmViewer.cxx  vtkGdcmReader.cxx 
 vtkgdcmdemo_LDADD = $(LDADD)
 lib_LTLIBRARIES = libvtkgdcm.la
 libvtkgdcm_la_SOURCES = vtkGdcmReader.cxx
