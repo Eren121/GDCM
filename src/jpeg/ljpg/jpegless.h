@@ -18,7 +18,7 @@
  * parts are stolen from the IJG code
  */
 /*
- * $Id: jpegless.h,v 1.1 2003/10/21 12:08:54 jpr Exp $
+ * $Id: jpegless.h,v 1.2 2003/10/29 18:24:40 malaterre Exp $
  */
 #include "jpeg.h"
 
@@ -46,7 +46,7 @@ int  verbose;         /* the verbose flag                            */
 /*
  * read a JPEG lossless (8 or 16 bit) image in a file and decode it
  */
-short JPEGLosslessDecodeImage (StreamIN inFile, unsigned short * image16, int depth, int length);
+GLOBAL(short) JPEGLosslessDecodeImage (StreamIN inFile, unsigned short * image16, int depth, int length);
 
 
 #if defined(__cplusplus)

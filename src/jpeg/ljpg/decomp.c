@@ -7,7 +7,7 @@
  * from the Cornell lossless JPEG code
  */
 /*
- * $Id: decomp.c,v 1.1 2003/10/21 12:08:53 jpr Exp $
+ * $Id: decomp.c,v 1.2 2003/10/29 18:24:40 malaterre Exp $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,7 +54,7 @@ int ReadJpegData (Uchar *buffer, int numBytes)
 }
 
 
-short JPEGLosslessDecodeImage (StreamIN inFile, unsigned short *image16, int depth, int length)
+GLOBAL(short) JPEGLosslessDecodeImage (StreamIN inFile, unsigned short *image16, int depth, int length)
 { 
     /* Initialization */
     JpegInFile = inFile;

@@ -4,10 +4,17 @@
  * Basic jpeg data structure definitions.
  */
 /*
- * $Id: jpeg.h,v 1.1 2003/10/21 12:08:54 jpr Exp $
+ * $Id: jpeg.h,v 1.2 2003/10/29 18:24:40 malaterre Exp $
  */
 #ifndef _JPEG
 #define _JPEG
+
+/* a function referenced thru EXTERNs: */
+#ifdef WIN32
+  #define GLOBAL(type)		__declspec( dllexport ) type
+#else
+  #define GLOBAL(type)		type
+#endif
 
 typedef unsigned char   Uchar;
 typedef unsigned short  Ushort;
