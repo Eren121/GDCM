@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 08:38:54 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2004/10/09 03:36:56 $
+  Version:   $Revision: 1.99 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
    #include <netinet/in.h>
 #endif
 
-#  include <iomanip>
+#include <iomanip>
 
 // Implicit VR Little Endian
 #define UI1_2_840_10008_1_2      "1.2.840.10008.1.2"
@@ -1951,7 +1951,7 @@ void gdcmDocument::FindDocEntryVR( gdcmDocEntry *entry )
 */
 bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *entry, gdcmVRKey vr)
 {
-   char msg[100]; // for sprintf
+   std::string msg;
    bool realExplicit = true;
 
    // Assume we are reading a falsely explicit VR file i.e. we reached
@@ -1979,9 +1979,9 @@ bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *entry, gdcmVRKey vr)
    {
       // We thought this was explicit VR, but we end up with an
       // implicit VR tag. Let's backtrack.   
-      sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", 
-                   entry->GetGroup(), entry->GetElement());
-      dbg.Verbose(1, "gdcmDocument::FindVR: ",msg);
+      msg = Format("Falsely explicit vr file (%04x,%04x)\n", 
+                    entry->GetGroup(), entry->GetElement());
+      dbg.Verbose(1, "gdcmDocument::FindVR: ", msg.c_str());
 
       if( entry->GetGroup() % 2 && entry->GetElement() == 0x0000)
       {
