@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.11 2003/06/12 16:58:31 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.12 2003/06/17 08:07:23 regrain Exp $
 //CLEANME#include <vtkByteSwap.h>
 #include <stdio.h>
 #include <vtkObjectFactory.h>
@@ -224,11 +224,11 @@ int vtkGdcmReader::CheckFileCoherence()
    ///////// The files we CANNOT load are flaged. On debugging purposes
    // count the loadable number of files and display thir number:
    int NumberCoherentFiles = 0;
-   for (std::list<std::string>::iterator FileName  = FileNameList.begin();
-                                        FileName != FileNameList.end();
-                                      ++FileName)
+   for (std::list<std::string>::iterator Filename  = FileNameList.begin();
+                                        Filename != FileNameList.end();
+                                      ++Filename)
      {
-     if (*FileName != "GDCM_UNREADABLE")
+     if (*Filename != "GDCM_UNREADABLE")
         NumberCoherentFiles++;    
      }
    vtkDebugMacro("Number of coherent files: " << NumberCoherentFiles);
