@@ -1,7 +1,10 @@
 2004-02-06 Jean-Pierre Roux
-     * ENH : now gdcmDicomDir::CreateDicomDir() returns also the meta elements
-             GDCM_META added to gdcmDicomDirType
-	     class gdcmMeta created
+     * ENH : - now gdcmDicomDir::CreateDicomDir() returns also the meta elements
+             - GDCM_META added to gdcmDicomDirType
+	     - class gdcmMeta created
+     * ENH : - A brief summary is now displayed at the beginning of 'testDicomDir'
+	     to help disaster magnitude estimation
+     * REM  : Now useless Test/explDICOMDIR.cxx
 
 2004-02-05 Benoit Regrain
      * ENH : add methods in gdcmObject to get the hash table or the list of
@@ -13,7 +16,7 @@
      * FIX : even length for some strings when writting the dicom dir
      * FIX : sort the images in the dicom dir
      * FIX : Bug fix for python use of dicom dir
-     * Add a python demo
+     * ADD : a python demo
 
 2004-02-04 Jean-Pierre Roux
      * FIX : Final solution (?) for icone embedded images

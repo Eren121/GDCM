@@ -47,10 +47,9 @@ int main(int argc, char* argv[])
    }
 
 // Exemples exploitation de la structure
-
 // DON'T REMOVE neither the folowing code, nor the commented out lines
 
-
+/*
   cout << std::endl << std::endl  
 	     << " = Liste des PATIENT ==========================================" 
 	     << std::endl<< std::endl;	
@@ -61,9 +60,9 @@ int main(int argc, char* argv[])
       std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0010) << std::endl; // Patient's Name   
       itPatient ++;    
    }
+*/
 
-/*   
-     
+/*        
    cout << std::endl << std::endl  
         << " = Liste des PATIENT/STUDY ==========================================" 
         << std::endl<< std::endl;	
@@ -77,8 +76,7 @@ int main(int argc, char* argv[])
          ++itStudy;		
       }
       itPatient ++;    
-   }
-   
+   }   
  */
  
    cout << std::endl << std::endl  
@@ -87,13 +85,21 @@ int main(int argc, char* argv[])
  
    itPatient = e1->GetPatients().begin();	
    while ( itPatient != e1->GetPatients().end() ) {  // on degouline la liste de PATIENT
-      std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0010) << std::endl; // Patient's Name 
+       // Patient's Name, Patient ID 
+      std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0010) ;
+      std::cout << " ID : ";
+      std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0020) << std::endl;
       itStudy = ((*itPatient)->GetStudies()).begin();	
       while (itStudy != (*itPatient)->GetStudies().end() ) { // on degouline les STUDY de ce patient	
-         std::cout << "--- "<< (*itStudy)->GetEntryByNumber(0x0008, 0x1030) << std::endl; // Study Description 
+         std::cout << "--- "    << (*itStudy)->GetEntryByNumber(0x0008, 0x1030);              // Study Description 
+         std::cout << " Stud ID: ["<< (*itStudy)->GetEntryByNumber(0x0020, 0x0010);  // Study ID
+	 std::cout << "]" << std::endl;
          itSerie = ((*itStudy)->GetSeries()).begin();
          while (itSerie != (*itStudy)->GetSeries().end() ) { // on degouline les SERIES de cette study	   
-            std::cout << "--- ---  "<< (*itSerie)->GetEntryByNumber(0x0008, 0x103e) << std::endl; // Serie Description
+            std::cout << "--- ---  "<< (*itSerie)->GetEntryByNumber(0x0008, 0x103e);                  // Serie Description
+            std::cout << " Ser nb: [" <<   (*itSerie)->GetEntryByNumber(0x0020, 0x0011)             ; // Serie number
+            std::cout << "] Mod : "    <<   (*itSerie)->GetEntryByNumber(0x0008, 0x0060) << std::endl; // Modality
+	    
             ++itSerie;   
          }
          ++itStudy;		
@@ -126,8 +132,7 @@ int main(int argc, char* argv[])
          ++itStudy;		
       }  
       itPatient ++;    
-   }
-   
+   }   
  */  
 
    cout << std::endl << std::endl  
