@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:00:06 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/02/05 01:25:45 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,8 +19,6 @@
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
 #include <iostream>
-
-typedef std::list<gdcm::File* > GdcmFileList;
 
 int TestSerieHelper(int argc, char *argv[])
 {  
@@ -50,7 +48,7 @@ int TestSerieHelper(int argc, char *argv[])
 
    int nbFiles;
    // For all the Coherent Files lists of the gdcm::Serie
-   GdcmFileList *l = s->GetFirstCoherentFileList();
+   gdcm::GdcmFileList *l = s->GetFirstCoherentFileList();
    while (l)
    { 
       nbFiles = l->size() ;
