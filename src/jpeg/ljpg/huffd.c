@@ -5,7 +5,7 @@
  * software
  */
 /*
- * $Id: huffd.c,v 1.3 2004/08/18 02:26:08 malaterre Exp $
+ * $Id: huffd.c,v 1.4 2004/09/12 02:08:10 malaterre Exp $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,11 +16,10 @@
 #include "proto.h"
 #include "predict.h"
 
-
 #define RST0    0xD0                /* RST0 marker code */
 
 static long getBuffer;              /* current bit-extraction buffer */
-static int  bitsLeft;               /* # of unused bits in it */
+static unsigned int  bitsLeft;               /* # of unused bits in it */
 
 /*
  * The following variables keep track of the input buffer
@@ -111,7 +110,7 @@ static int bmask[] = {0x0000,
 }
 
 #define get_bits(nbits,rv) {                                            \
-        if (bitsLeft < nbits) FillBitBuffer(nbits);                     \
+        if (bitsLeft < (unsigned)nbits) FillBitBuffer(nbits);                     \
         rv = ((getBuffer >> (bitsLeft -= (nbits)))) & bmask[nbits];     \
 }
 
