@@ -6,6 +6,7 @@
 #include "gdcmCommon.h"
 #include <map>
 #include <string>
+#include <iostream>
 
 //-----------------------------------------------------------------------------
 typedef std::string TSKey;
@@ -21,6 +22,9 @@ class GDCM_EXPORT gdcmTS {
 public:
    gdcmTS(void);
    ~gdcmTS();
+
+   void Print(std::ostream &os = std::cout);
+
    int Count(TSKey key);
    std::string GetValue(TSKey key);
 

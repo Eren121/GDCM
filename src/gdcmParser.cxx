@@ -17,6 +17,7 @@
 # else
 #  include <sstream>
 #endif
+#  include <iomanip>
 
 //-----------------------------------------------------------------------------
 // Refer to gdcmParser::CheckSwap()
@@ -93,7 +94,7 @@ gdcmParser::~gdcmParser (void)
   *          both from the H Table and the chained list
   * @return
   */ 
-void gdcmParser::PrintPubEntry(std::ostream & os) 
+void gdcmParser::PrintEntry(std::ostream & os) 
 {
    std::ostringstream s;   
 	   
@@ -324,7 +325,6 @@ FILE *gdcmParser::OpenFile(bool exception_on_error)
     dbg.Verbose(0, "gdcmParser::gdcmParser not DICOM/ACR", filename.c_str());
   }
   else {
-    std::cerr<<filename.c_str()<<std::endl;
     dbg.Verbose(0, "gdcmParser::gdcmParser cannot open file", filename.c_str());
   }
   return(NULL);
@@ -760,9 +760,6 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,guint16 group, guint16 ele
  */
 void gdcmParser::UpdateShaEntries(void)
 {
-   if(!RefShaDict)
-      return;
-
    gdcmDictEntry *entry;
    std::string vr;
 
@@ -771,16 +768,33 @@ void gdcmParser::UpdateShaEntries(void)
        ++it)
    {
       // Odd group => from public dictionary
-      if((*it)->GetGroup()%1==0)
+      if((*it)->GetGroup()%2==0)
          continue;
 
       // Peer group => search the corresponding dict entry
-      entry=RefShaDict->GetDictEntryByNumber((*it)->GetGroup(),(*it)->GetElement());
+      if(RefShaDict)
+         entry=RefShaDict->GetDictEntryByNumber((*it)->GetGroup(),(*it)->GetElement());
+      else
+         entry=NULL;
+
+      if((*it)->IsImplicitVR())
+         vr="Implicit";
+      else
+         vr=(*it)->GetVR();
+
       if(entry)
       {
+         // Set the new entry and the new value
          (*it)->SetDictEntry(entry);
-         vr=(*it)->GetVR();
          CheckHeaderEntryVR(*it,vr);
+
+         (*it)->SetValue(GetHeaderEntryValue(*it));
+      }
+      else
+      {
+         // Remove precedent value transformation
+         (*it)->SetValue(GetHeaderEntryUnvalue(*it));
+         (*it)->SetDictEntry(NewVirtualDictEntry((*it)->GetGroup(),(*it)->GetElement(),vr));
       }
    }
 }
@@ -1088,6 +1102,17 @@ guint32 gdcmParser::SwapLong(guint32 a)
 
 /**
  * \ingroup gdcmParser
+ * \brief   Unswaps back the bytes of 4-byte long integer accordingly to
+ *          processor order.
+ * @return  The properly unswaped 32 bits integer.
+ */
+guint32 gdcmParser::UnswapLong(guint32 a) 
+{
+   return (SwapLong(a));
+}
+
+/**
+ * \ingroup gdcmParser
  * \brief   Swaps the bytes so they agree with the processor order
  * @return  The properly swaped 16 bits integer.
  */
@@ -1096,6 +1121,16 @@ guint16 gdcmParser::SwapShort(guint16 a)
    if ( (sw==4321)  || (sw==2143) )
       a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
    return (a);
+}
+
+/**
+ * \ingroup gdcmParser
+ * \brief   Unswaps the bytes so they agree with the processor order
+ * @return  The properly unswaped 16 bits integer.
+ */
+guint16 gdcmParser::UnswapShort(guint16 a) 
+{
+   return (SwapShort(a));
 }
 
 //-----------------------------------------------------------------------------
@@ -1129,8 +1164,8 @@ void gdcmParser::LoadHeaderEntries(void)
       i != GetListEntry().end();
       ++i)
    {
-         LoadHeaderEntry(*i);
-   }   
+      LoadHeaderEntry(*i);
+   }
             
    rewind(fp);
 
@@ -1238,7 +1273,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
       guint32 NewInt;
       std::ostringstream s;
       int nbInt;
-      if (vr == "US" || vr == "SS") 
+      if (vr == "US" || vr == "SS")
       {
          nbInt = length / 2;
          NewInt = ReadInt16();
@@ -1253,7 +1288,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
             }
          }
 			
-      } 
+      }
       else if (vr == "UL" || vr == "SL") 
       {
          nbInt = length / 4;
@@ -1268,7 +1303,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
                s << NewInt;
             }
          }
-      }					
+      }
 #ifdef GDCM_NO_ANSI_STRING_STREAM
       s << std::ends; // to avoid oddities on Solaris
 #endif //GDCM_NO_ANSI_STRING_STREAM
@@ -1306,7 +1341,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
  * \        when position to be taken care of     
  * @param   newHeaderEntry
  */
-void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry) 
+void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) 
 {
    tagHT.insert( PairHT( newHeaderEntry->GetKey(),newHeaderEntry) );
    listEntries.push_back(newHeaderEntry); 
@@ -1320,7 +1355,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
 
  * @return 
  */
- void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry * Entry) 
+ void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry *Entry) 
  {
    guint16 element = Entry->GetElement();
    guint16 group   = Entry->GetGroup();
@@ -1333,7 +1368,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
                      "we reached 7fe0 0010");
    }   
    
-   if ( (filetype == ExplicitVR) && ! Entry->IsImplicitVr() ) 
+   if ( (filetype == ExplicitVR) && (! Entry->IsImplicitVR()) ) 
    {
       if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) 
       {
@@ -1421,15 +1456,17 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
       FixHeaderEntryFoundLength(Entry, (guint32)length16);
       return;
    }
-
-   // Either implicit VR or a non DICOM conformal (see not below) explicit
-   // VR that ommited the VR of (at least) this element. Farts happen.
-   // [Note: according to the part 5, PS 3.5-2001, section 7.1 p25
-   // on Data elements "Implicit and Explicit VR Data Elements shall
-   // not coexist in a Data Set and Data Sets nested within it".]
-   // Length is on 4 bytes.
-   FixHeaderEntryFoundLength(Entry, ReadInt32());
-   return;
+   else
+   {
+      // Either implicit VR or a non DICOM conformal (see not below) explicit
+      // VR that ommited the VR of (at least) this element. Farts happen.
+      // [Note: according to the part 5, PS 3.5-2001, section 7.1 p25
+      // on Data elements "Implicit and Explicit VR Data Elements shall
+      // not coexist in a Data Set and Data Sets nested within it".]
+      // Length is on 4 bytes.
+      FixHeaderEntryFoundLength(Entry, ReadInt32());
+      return;
+   }
 }
 
 /**
@@ -1466,7 +1503,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
       // avoid  .
       if ( Entry->IsVRUnknown() )
          Entry->SetVR("Implicit");
-      Entry->SetImplicitVr();
+      Entry->SetImplicitVR();
    }
 }
 
@@ -1480,7 +1517,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true
 */
-bool gdcmParser::CheckHeaderEntryVR   (gdcmHeaderEntry *Entry, VRKey vr)
+bool gdcmParser::CheckHeaderEntryVR(gdcmHeaderEntry *Entry, VRKey vr)
 {
    char msg[100]; // for sprintf
    bool RealExplicit = true;
@@ -1525,22 +1562,131 @@ bool gdcmParser::CheckHeaderEntryVR   (gdcmHeaderEntry *Entry, VRKey vr)
       // be unwise to overwrite the VR of a dictionary (since it would
       // compromise it's next user), we need to clone the actual DictEntry
       // and change the VR for the read one.
-      gdcmDictEntry* NewTag = NewVirtualDictEntry(Entry->GetGroup(),
-                                 Entry->GetElement(),
-                                 vr,
-                                 "FIXME",
-                                 Entry->GetName());
-      Entry->SetDictEntry(NewTag);
+      gdcmDictEntry* NewEntry = NewVirtualDictEntry(
+                                 Entry->GetGroup(),Entry->GetElement(),
+                                 vr,"FIXME",Entry->GetName());
+      Entry->SetDictEntry(NewEntry);
    }
    return(true); 
 }
 
 /**
  * \ingroup gdcmParser
- * \brief  Skip a given Header Entry 
+ * \brief   Get the transformed value of the header entry. The VR value 
+ *          is used to define the transformation to operate on the value
  * \warning NOT end user intended method !
- * @param entry 
- * @return 
+ * @param   Entry 
+ * @return  Transformed entry value
+ */
+std::string gdcmParser::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
+{
+   if ( (IsHeaderEntryAnInteger(Entry)) && (Entry->IsImplicitVR()) )
+   {
+      std::string val=Entry->GetValue();
+      std::string vr=Entry->GetVR();
+      guint32 length = Entry->GetLength();
+      std::ostringstream s;
+      int nbInt;
+
+      if (vr == "US" || vr == "SS")
+      {
+         guint16 NewInt16;
+
+         nbInt = length / 2;
+         for (int i=0; i < nbInt; i++) 
+         {
+            if(i!=0)
+               s << '\\';
+            NewInt16 = (val[2*i+0]&0xFF)+((val[2*i+1]&0xFF)<<8);
+            NewInt16 = SwapShort(NewInt16);
+            s << NewInt16;
+         }
+      }
+
+      else if (vr == "UL" || vr == "SL")
+      {
+         guint32 NewInt32;
+
+         nbInt = length / 4;
+         for (int i=0; i < nbInt; i++) 
+         {
+            if(i!=0)
+               s << '\\';
+            NewInt32=(val[4*i+0]&0xFF)+((val[4*i+1]&0xFF)<<8)+((val[4*i+2]&0xFF)<<16)+((val[4*i+3]&0xFF)<<24);
+            NewInt32=SwapLong(NewInt32);
+            s << NewInt32;
+         }
+      }
+
+#ifdef GDCM_NO_ANSI_STRING_STREAM
+      s << std::ends; // to avoid oddities on Solaris
+#endif //GDCM_NO_ANSI_STRING_STREAM
+      return(s.str());
+   }
+
+   return(Entry->GetValue());
+}
+
+/**
+ * \ingroup gdcmParser
+ * \brief   Get the reverse transformed value of the header entry. The VR 
+ *          value is used to define the reverse transformation to operate on
+ *          the value
+ * \warning NOT end user intended method !
+ * @param   Entry 
+ * @return  Reverse transformed entry value
+ */
+std::string gdcmParser::GetHeaderEntryUnvalue(gdcmHeaderEntry *Entry)
+{
+   if ( (IsHeaderEntryAnInteger(Entry)) && (Entry->IsImplicitVR()) )
+   {
+      std::string vr=Entry->GetVR();
+      std::ostringstream s;
+      std::vector<std::string> tokens;
+      unsigned char *ptr;
+
+      if (vr == "US" || vr == "SS") 
+      {
+         guint16 NewInt16;
+
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize (Entry->GetValue(), tokens, "\\");
+         for (unsigned int i=0; i<tokens.size();i++) 
+         {
+            NewInt16 = atoi(tokens[i].c_str());
+            s<<(NewInt16&0xFF)<<((NewInt16>>8)&0xFF);
+         }
+         tokens.clear();
+      }
+      if (vr == "UL" || vr == "SL") 
+      {
+         guint32 NewInt32;
+
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize (Entry->GetValue(), tokens, "\\");
+         for (unsigned int i=0; i<tokens.size();i++) 
+         {
+            NewInt32 = atoi(tokens[i].c_str());
+            s<<(char)(NewInt32&0xFF)<<(char)((NewInt32>>8)&0xFF)
+               <<(char)((NewInt32>>16)&0xFF)<<(char)((NewInt32>>24)&0xFF);
+         }
+         tokens.clear();
+      }
+
+#ifdef GDCM_NO_ANSI_STRING_STREAM
+      s << std::ends; // to avoid oddities on Solaris
+#endif //GDCM_NO_ANSI_STRING_STREAM
+      return(s.str());
+   }
+
+   return(Entry->GetValue());
+}
+
+/**
+ * \ingroup gdcmParser
+ * \brief   Skip a given Header Entry 
+ * \warning NOT end user intended method !
+ * @param   entry 
  */
 void gdcmParser::SkipHeaderEntry(gdcmHeaderEntry *entry) 
 {
@@ -2145,11 +2291,11 @@ gdcmDictEntry *gdcmParser::NewVirtualDictEntry(guint16 group, guint16 element,
 gdcmHeaderEntry *gdcmParser::NewHeaderEntryByNumber(guint16 Group, guint16 Elem) 
 {
    // Find out if the tag we encountered is in the dictionaries:
-   gdcmDictEntry *NewTag = GetDictEntryByNumber(Group, Elem);
-   if (!NewTag)
-      NewTag = NewVirtualDictEntry(Group, Elem);
+   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
+   if (!DictEntry)
+      DictEntry = NewVirtualDictEntry(Group, Elem);
 
-   gdcmHeaderEntry* NewEntry = new gdcmHeaderEntry(NewTag);
+   gdcmHeaderEntry *NewEntry = new gdcmHeaderEntry(DictEntry);
    if (!NewEntry) 
    {
       dbg.Verbose(1, "gdcmParser::NewHeaderEntryByNumber",

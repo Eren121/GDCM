@@ -37,7 +37,7 @@ public:
    std::map<std::string, std::list<std::string> > *
        GetPubDictEntryNamesByCategory(void);
 
-   void LoadDictFromFile(std::string FileName, DictKey Name);
+   gdcmDict *LoadDictFromFile(std::string FileName, DictKey Name);
 
    gdcmDict *GetDict(DictKey DictName);
    gdcmDict *GetDefaultPubDict(void);

@@ -9,9 +9,18 @@
 #endif
 #define DICT_VR "dicomVR.dic"
 
+#include <iostream>
+#ifdef GDCM_NO_ANSI_STRING_STREAM
+#  include <strstream>
+#  define  ostringstream ostrstream
+# else
+#  include <sstream>
+#endif
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-gdcmVR::gdcmVR(void) {
+gdcmVR::gdcmVR(void) 
+{
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_VR);
    std::ifstream from(filename.c_str());
    dbg.Error(!from, "gdcmVR::gdcmVR: can't open dictionary",filename.c_str());
@@ -20,7 +29,8 @@ gdcmVR::gdcmVR(void) {
    std::string key;
    std::string name;
 
-   while (!from.eof()) {
+   while (!from.eof()) 
+   {
       eatwhite(from);
       from.getline(buff, 1024, ' ');
       key = buff;
@@ -45,10 +55,31 @@ gdcmVR::~gdcmVR() {
 
 //-----------------------------------------------------------------------------
 // Print
+/**
+ * \ingroup gdcmVR
+ * \brief   Print all 
+ * @param   os The output stream to be written to.
+ */
+void gdcmVR::Print(std::ostream &os) 
+{
+   std::ostringstream s;
+
+   for (VRHT::iterator it = vr.begin(); it != vr.end(); ++it)
+   {
+      s << "VR : "<<it->first<<" = "<<it->second<<std::endl;
+   }
+   os << s.str();
+}
 
 //-----------------------------------------------------------------------------
 // Public
-int gdcmVR::Count(VRKey key) {
+/**
+ * \ingroup gdcmVR
+ * \brief   Get the count for an element
+ * @param   Key key to count
+ */
+int gdcmVR::Count(VRKey key) 
+{
    return vr.count(key);
 }
 

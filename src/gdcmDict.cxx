@@ -2,7 +2,11 @@
 //-----------------------------------------------------------------------------
 #include "gdcmDict.h"
 #include "gdcmUtil.h"
+
 #include <fstream>
+#include <iostream>
+#include <iomanip>
+
 #ifdef GDCM_NO_ANSI_STRING_STREAM
 #  include <strstream>
 #  define  ostringstream ostrstream
@@ -18,16 +22,15 @@
  * @param   FileName from which to build the dictionary.
  */
 gdcmDict::gdcmDict(std::string & FileName) {
-   std::ifstream from(FileName.c_str());
-   dbg.Error(!from, "gdcmDict::gdcmDict: can't open dictionary",
-                    FileName.c_str());
    guint16 group, element;
-	// CLEANME : use defines for all those constants
    char buff[1024];
-   TagKey key;
    TagName vr;
    TagName fourth;
    TagName name;
+
+   std::ifstream from(FileName.c_str());
+   dbg.Error(!from, "gdcmDict::gdcmDict: can't open dictionary",
+                    FileName.c_str());
 
    while (!from.eof()) {
       from >> std::hex >> group >> element;
@@ -39,13 +42,14 @@ gdcmDict::gdcmDict(std::string & FileName) {
       fourth = buff;
       from.getline(buff, 256, '\n');
       name = buff;
+
       gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,
 		                                   vr, fourth, name);
-      // FIXME: use AddNewEntry
-      NameHt[name] = newEntry;
-      KeyHt[gdcmDictEntry::TranslateToKey(group, element)] = newEntry;
+      AddNewEntry(newEntry);
    }
    from.close();
+
+   filename=FileName;
 }
 
 /**
@@ -74,6 +78,7 @@ gdcmDict::~gdcmDict() {
  * @param   os The output stream to be written to.
  */
 void gdcmDict::Print(std::ostream &os) {
+   os<<"Dict file name : "<<filename<<std::endl;
    PrintByKey(os);
 }
 
@@ -87,9 +92,9 @@ void gdcmDict::PrintByKey(std::ostream &os) {
    std::ostringstream s;
 
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag){
-      s << "Tag : ";
-      s << "(" << std::hex << tag->second->GetGroup() << ',';
-      s << std::hex << tag->second->GetElement() << ") = " << std::dec;
+      s << "Entry : ";
+      s << "(" << std::hex << std::setw(4) << tag->second->GetGroup() << ',';
+      s << std::hex << std::setw(4) << tag->second->GetElement() << ") = " << std::dec;
       s << tag->second->GetVR() << ", ";
       s << tag->second->GetFourth() << ", ";
       s << tag->second->GetName() << "."  << std::endl;
@@ -109,12 +114,13 @@ void gdcmDict::PrintByName(std::ostream& os) {
    std::ostringstream s;
 
    for (TagNameHT::iterator tag = NameHt.begin(); tag != NameHt.end(); ++tag){
-      s << "Tag : ";
+      s << "Entry : ";
       s << tag->second->GetName() << ",";
       s << tag->second->GetVR() << ", ";
       s << tag->second->GetFourth() << ", ";
-      s << "(" << std::hex << tag->second->GetGroup() << ',';
-      s << std::hex << tag->second->GetElement() << ") = " << std::dec << std::endl;
+      s << "(" << std::hex << std::setw(4) << tag->second->GetGroup() << ',';
+      s << std::hex << std::setw(4) << tag->second->GetElement() << ") = ";
+      s << std::dec << std::endl;
    }
    os << s.str();
 }

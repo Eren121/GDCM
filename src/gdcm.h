@@ -28,5 +28,7 @@
 #include "gdcmHeaderHelper.h"
 #include "gdcmFile.h"
 
+#include "gdcmUtil.h"
+
 //-----------------------------------------------------------------------------
 #endif // #ifndef GDCM_H

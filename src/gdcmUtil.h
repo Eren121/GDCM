@@ -42,14 +42,14 @@ private:
  * This class contains all globals elements that might be
  * instanciated only one time
  */
-class gdcmGlobal {
+class GDCM_EXPORT gdcmGlobal {
 public:
    gdcmGlobal(void);
    ~gdcmGlobal();
 
-   static gdcmVR * GetVR(void);
-   static gdcmTS * GetTS(void);
-   static gdcmDictSet * GetDicts(void);
+   static gdcmVR *GetVR(void);
+   static gdcmTS *GetTS(void);
+   static gdcmDictSet *GetDicts(void);
 
 private:
    static gdcmVR *VR;
@@ -66,7 +66,7 @@ void Tokenize (const std::string& str,
 
 extern gdcmDebug dbg;
 
-char * _cleanString(char *v);
+char *_cleanString(char *v);
 std::string _CreateCleanString(std::string s);
 
 //-----------------------------------------------------------------------------

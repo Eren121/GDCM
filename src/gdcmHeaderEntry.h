@@ -52,27 +52,21 @@ public:
     * \ingroup gdcmHeaderEntry
     * \brief   Sets to TRUE the ImplicitVr flag of the current Dicom Element
     */
-   inline void gdcmHeaderEntry::SetImplicitVr(void) { 
-      ImplicitVr = true; 
-   };
+   inline void gdcmHeaderEntry::SetImplicitVR(void) { ImplicitVR = true; };
  
    /**
     * \ingroup gdcmHeaderEntry
     * \brief   tells us if the current Dicom Element was checked as ImplicitVr
     * @return true if the current Dicom Element was checked as ImplicitVr
     */ 
-   inline bool  gdcmHeaderEntry::IsImplicitVr(void) { 
-       return ImplicitVr; 
-    };
+   inline bool  gdcmHeaderEntry::IsImplicitVR(void) { return ImplicitVR; };
 
    /**
     * \ingroup gdcmHeaderEntry
     * \brief   tells us if the VR of the current Dicom Element is Unkonwn
     * @return true if the VR is unkonwn
     */ 
-   inline bool   gdcmHeaderEntry::IsVRUnknown(void) { 
-      return entry->IsVRUnknown(); 
-   };
+   inline bool   gdcmHeaderEntry::IsVRUnknown(void) { return entry->IsVRUnknown(); };
 
    /**
     * \ingroup gdcmHeaderEntry
@@ -88,17 +82,15 @@ public:
     * \brief   Gets the DicEntry of the current Dicom Element
     * @return  the DicEntry of the current Dicom Element
     */
-   gdcmDictEntry * gdcmHeaderEntry::GetDictEntry(void) { 
-      return entry;    
-   }; 
+   gdcmDictEntry * gdcmHeaderEntry::GetDictEntry(void) { return entry; }; 
 
    /**
     * \ingroup gdcmHeaderEntry
     * \brief   Sets the print level for the Dicom Header Elements
     * \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
-   void  SetPrintLevel(int level) { printLevel = level; };
-   void                Print (std::ostream & os = std::cout); 
+   void SetPrintLevel(int level) { printLevel = level; };
+   void Print (std::ostream & os = std::cout); 
 
 private:
    // FIXME: In fact we should be more specific and use :
@@ -119,7 +111,7 @@ private:
                           // going on.
                           // *for internal* use only
 	
-   bool ImplicitVr;       // Even when reading explicit vr files, some
+   bool ImplicitVR;       // Even when reading explicit vr files, some
 	                  // elements happen to be implicit. Flag them here
 	                  // since we can't use the entry->vr without breaking
 	                  // the underlying dictionary.

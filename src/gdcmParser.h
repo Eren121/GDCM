@@ -48,7 +48,7 @@ public:
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
    void SetPrintLevel(int level) { printLevel = level; };
-   virtual void PrintPubEntry(std::ostream &os = std::cout);
+   virtual void PrintEntry(std::ostream &os = std::cout);
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
 
@@ -98,7 +98,9 @@ public:
 // System access
    inline int GetSwapCode(void) { return sw; }
    guint16 SwapShort(guint16); // needed by gdcmFile
-   guint32 SwapLong(guint32);  // for JPEG Files
+   guint32 SwapLong(guint32);  // needed by gdcmFile
+   guint16 UnswapShort(guint16); // needed by gdcmFile
+   guint32 UnswapLong(guint32);  // needed by gdcmFile
 
 protected:
 // Entry
@@ -123,7 +125,7 @@ protected:
    gdcmHeaderEntry *GetHeaderEntryByName  (std::string Name);
    gdcmHeaderEntry *GetHeaderEntryByNumber(guint16 group, guint16 element); 
 
-   void LoadHeaderEntrySafe  (gdcmHeaderEntry *);
+   void LoadHeaderEntrySafe(gdcmHeaderEntry *);
 
    void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);
    void WriteEntries(FileType type, FILE *);
@@ -145,6 +147,9 @@ private:
    void FindHeaderEntryLength(gdcmHeaderEntry *);
    void FindHeaderEntryVR    (gdcmHeaderEntry *);
    bool CheckHeaderEntryVR   (gdcmHeaderEntry *, VRKey);
+
+   std::string GetHeaderEntryValue  (gdcmHeaderEntry *);
+   std::string GetHeaderEntryUnvalue(gdcmHeaderEntry *);
 
    void SkipHeaderEntry          (gdcmHeaderEntry *);
    void FixHeaderEntryFoundLength(gdcmHeaderEntry *, guint32);
@@ -173,6 +178,7 @@ private:
                                       std::string vr = "Unknown",
                                       std::string fourth = "Unknown",
                                       std::string name   = "Unknown");
+   gdcmDictEntry *NewVirtualDictEntry(gdcmHeaderEntry *);
 
    // Deprecated (Not used)
    gdcmHeaderEntry *NewManualHeaderEntryToPubDict(std::string NewTagName,

@@ -121,10 +121,11 @@ std::map<std::string, std::list<std::string> > *gdcmDictSet::GetPubDictEntryName
  * @param   Name Symbolic name that be used as identifier of the newly 
  *          created dictionary.
  */
-void gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) 
+gdcmDict *gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) 
 {
    gdcmDict *NewDict = new gdcmDict(FileName);
    AppendDict(NewDict,Name);
+   return(NewDict);
 }
 
 /**
@@ -163,7 +164,7 @@ gdcmDictEntry *gdcmDictSet::NewVirtualDictEntry(guint16 group, guint16 element,
                                                 std::string name)
 {
    gdcmDictEntry *entry;
-   std::string tag=gdcmDictEntry::TranslateToKey(group,element)+vr;
+   std::string tag=gdcmDictEntry::TranslateToKey(group,element)+"#"+vr+"#"+fourth+"#"+name;
    std::map<std::string,gdcmDictEntry *>::iterator it;
    
    it=virtualEntry.find(tag);

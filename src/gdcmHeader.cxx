@@ -4,20 +4,7 @@
 
 #include <stdio.h>
 #include <cerrno>
-/*// For nthos:
-#ifdef _MSC_VER
-   #include <winsock.h>
-#else
-   #include <netinet/in.h>
-#endif*/
 #include <cctype>    // for isalpha
-
-/*#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif*/
 
 #include "gdcmUtil.h"
 #include "gdcmTS.h"

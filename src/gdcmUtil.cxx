@@ -52,9 +52,9 @@ void gdcmDebug::Exit(int a) {
 }
 
 //-----------------------------------------------------------------------------
-gdcmVR      * gdcmGlobal::VR    = (gdcmVR*)0;
-gdcmTS      * gdcmGlobal::TS    = (gdcmTS*)0;
-gdcmDictSet * gdcmGlobal::Dicts = (gdcmDictSet*)0;
+gdcmVR      *gdcmGlobal::VR    = (gdcmVR *)0;
+gdcmTS      *gdcmGlobal::TS    = (gdcmTS *)0;
+gdcmDictSet *gdcmGlobal::Dicts = (gdcmDictSet *)0;
 gdcmGlobal gdcmGlob;
 
 gdcmGlobal::gdcmGlobal(void) {
@@ -71,15 +71,15 @@ gdcmGlobal::~gdcmGlobal() {
    delete Dicts;
 }
 
-gdcmVR * gdcmGlobal::GetVR(void) {
+gdcmVR *gdcmGlobal::GetVR(void) {
    return VR;
 }
 
-gdcmTS * gdcmGlobal::GetTS(void) {
+gdcmTS *gdcmGlobal::GetTS(void) {
    return TS;
 }
 
-gdcmDictSet * gdcmGlobal::GetDicts(void) {
+gdcmDictSet *gdcmGlobal::GetDicts(void) {
    return Dicts;
 }
 
@@ -113,7 +113,7 @@ void Tokenize (const std::string& str,
 
 ///////////////////////////////////////////////////////////////////////////
 // to prevent a flashing screen when non-printable character
-char * _cleanString(char *v) {
+char *_cleanString(char *v) {
    char *d;
    int i, l;
    l = strlen(v);

@@ -57,7 +57,6 @@ public:
    inline TagKeyHT & gdcmDict::GetEntries(void)  { return KeyHt; }
  
 private:
-   std::string name;
    std::string filename;
 
    /// Access through TagKey (see alternate access with NameHt)
