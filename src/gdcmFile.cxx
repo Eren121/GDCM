@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.198 $
+  Date:      $Date: 2005/01/24 16:44:54 $
+  Version:   $Revision: 1.199 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -151,7 +151,7 @@ bool File::Write(std::string fileName, FileType filetype)
       // no (GrPixel, NumPixel) element
       std::string s_lgPix = Util::Format("%d", i_lgPix+12);
       s_lgPix = Util::DicomString( s_lgPix.c_str() );
-      ReplaceOrCreate(s_lgPix,GrPixel, 0x0000);
+      Insert(s_lgPix,GrPixel, 0x0000);
    }
 
    // FIXME : should be nice if we could move it to File
@@ -1220,11 +1220,11 @@ bool File::AnonymizeFile()
       std::string studyInstanceUID =  GetEntryValue (0x0020, 0x000d);
       if ( studyInstanceUID != GDCM_UNFOUND )
       {
-         ReplaceOrCreate(studyInstanceUID, 0x0010, 0x0010);
+         Insert(studyInstanceUID, 0x0010, 0x0010);
       }
       else
       {
-         ReplaceOrCreate("anonymised", 0x0010, 0x0010);
+         Insert("anonymised", 0x0010, 0x0010);
       }
    }
 
@@ -1380,14 +1380,14 @@ void File::InitializeDefaultFile()
    // Special case this is the image (not a string)
    GrPixel = 0x7fe0;
    NumPixel = 0x0010;
-   ReplaceOrCreate(0, 0, GrPixel, NumPixel);
+   Insert(0, 0, GrPixel, NumPixel);
 
    // All remaining strings:
    unsigned int i = 0;
    DICOM_DEFAULT_VALUE current = defaultvalue[i];
    while( current.value )
    {
-      ReplaceOrCreate(current.value, current.group, current.elem);
+      Insert(current.value, current.group, current.elem);
       current = defaultvalue[++i];
    }
 }

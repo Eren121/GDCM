@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:49 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/24 16:44:53 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,12 +41,12 @@ int main(int argc, char* argv[])
  
    std::string nbFrames = f2->GetFile()->GetEntryValue(0x0028, 0x0008);
    if(nbFrames != "gdcm::Unfound") {
-       f1->GetFile()->ReplaceOrCreate( nbFrames, 0x0028, 0x0008);
+       f1->GetFile()->Insert( nbFrames, 0x0028, 0x0008);
    }
           
-   f1->GetFile()->ReplaceOrCreate(
+   f1->GetFile()->Insert(
      f2->GetFile()->GetEntryValue(0x0028, 0x0010), 0x0028, 0x0010); // nbLig
-   f1->GetFile()->ReplaceOrCreate( 
+   f1->GetFile()->Insert( 
      f2->GetFile()->GetEntryValue(0x0028, 0x0011), 0x0028, 0x0011); // nbCol
  
    // Some other tags should be updated:

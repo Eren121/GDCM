@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:49 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/24 16:44:53 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     if(matrix != "gdcm::Unfound")
     {
        std::cerr << "Aquisition Matrix:" << matrix << std::endl;
-       f1->GetFile()->ReplaceOrCreate( matrix, 0x0018, 0x1310);
+       f1->GetFile()->Insert( matrix, 0x0018, 0x1310);
     }
 
     f1->GetImageData();

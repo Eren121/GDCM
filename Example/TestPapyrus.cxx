@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:49 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/24 16:44:53 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -231,23 +231,23 @@ int main(int argc, char* argv[])
    gdcm::File *n = new gdcm::File();
    n->InitializeDefaultFile();
 
-   n->ReplaceOrCreate(MediaStSOPinstUID,  0x0002,0x0002);
+   n->Insert(MediaStSOPinstUID,  0x0002,0x0002);
   // Whe keep default gdcm Transfer Syntax (Explicit VR Little Endian)
   // since using Papyrus one (Implicit VR Little Endian) is a mess
-   //n->ReplaceOrCreate(TransferSyntax,     0x0002,0x0010);
-   n->ReplaceOrCreate(StudyDate,          0x0008,0x0020);
-   n->ReplaceOrCreate(StudyTime,          0x0008,0x0030);
-   n->ReplaceOrCreate(Modality,           0x0008,0x0060);
-   n->ReplaceOrCreate(PatientName,        0x0010,0x0010);
+   //n->Insert(TransferSyntax,     0x0002,0x0010);
+   n->Insert(StudyDate,          0x0008,0x0020);
+   n->Insert(StudyTime,          0x0008,0x0030);
+   n->Insert(Modality,           0x0008,0x0060);
+   n->Insert(PatientName,        0x0010,0x0010);
 
-   n->ReplaceOrCreate(SamplesPerPixel,    0x0028,0x0002);
-   n->ReplaceOrCreate(NumberOfFrames,     0x0028,0x0008);
-   n->ReplaceOrCreate(Rows,               0x0028,0x0010);
-   n->ReplaceOrCreate(Columns,            0x0028,0x0011);
-   n->ReplaceOrCreate(BitsAllocated,      0x0028,0x0100);
-   n->ReplaceOrCreate(BitsStored,         0x0028,0x0101);
-   n->ReplaceOrCreate(HighBit,            0x0028,0x0102);
-   n->ReplaceOrCreate(PixelRepresentation,0x0028,0x0102);
+   n->Insert(SamplesPerPixel,    0x0028,0x0002);
+   n->Insert(NumberOfFrames,     0x0028,0x0008);
+   n->Insert(Rows,               0x0028,0x0010);
+   n->Insert(Columns,            0x0028,0x0011);
+   n->Insert(BitsAllocated,      0x0028,0x0100);
+   n->Insert(BitsStored,         0x0028,0x0101);
+   n->Insert(HighBit,            0x0028,0x0102);
+   n->Insert(PixelRepresentation,0x0028,0x0102);
 
    // create the file
    gdcm::FileHelper *file = new gdcm::FileHelper(n);

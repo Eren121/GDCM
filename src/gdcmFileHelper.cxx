@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/24 16:44:54 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -527,7 +527,7 @@ bool FileHelper::Write(std::string const &fileName)
  *          through it's (group, element) and modifies it's content with
  *          the given value.
  * @param   content new value (string) to substitute with
- * @param   group     group number of the Dicom Element to modify
+ * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
 bool FileHelper::SetEntryValue(std::string const &content,
@@ -547,7 +547,7 @@ bool FileHelper::SetEntryValue(std::string const &content,
  * @param   elem element number of the Dicom Element to modify
  */
 bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
-                    uint16_t group, uint16_t elem)
+                                 uint16_t group, uint16_t elem)
 {
    return FileInternal->SetEntryBinArea(content,lgth,group,elem);
 }
@@ -561,10 +561,10 @@ bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
  * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */ 
-bool FileHelper::ReplaceOrCreate(std::string const &content,
-                           uint16_t group, uint16_t elem)
+bool FileHelper::Insert(std::string const &content,
+                        uint16_t group, uint16_t elem)
 {
-   return FileInternal->ReplaceOrCreate(content,group,elem) != NULL;
+   return FileInternal->Insert(content,group,elem) != NULL;
 }
 
 /*
@@ -577,10 +577,10 @@ bool FileHelper::ReplaceOrCreate(std::string const &content,
  * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */
-bool FileHelper::ReplaceOrCreate(uint8_t *binArea, int lgth,
-                           uint16_t group, uint16_t elem)
+bool FileHelper::Insert(uint8_t *binArea, int lgth,
+                        uint16_t group, uint16_t elem)
 {
-   return FileInternal->ReplaceOrCreate(binArea,lgth,group,elem) != NULL;
+   return FileInternal->Insert(binArea,lgth,group,elem) != NULL;
 }
 
 /**

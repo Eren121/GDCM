@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.99 $
+  Date:      $Date: 2005/01/24 16:44:54 $
+  Version:   $Revision: 1.100 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,13 +104,13 @@ public:
    virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
 
-   ValEntry *ReplaceOrCreate(std::string const &value,
-                             uint16_t group, uint16_t elem,
-                             TagName const &vr = GDCM_UNKNOWN);
-   BinEntry *ReplaceOrCreate(uint8_t *binArea, int lgth,
-                             uint16_t group, uint16_t elem,
-                             TagName const &vr = GDCM_UNKNOWN);
-   SeqEntry *ReplaceOrCreate(uint16_t group, uint16_t elem);
+   ValEntry *Insert(std::string const &value,
+                    uint16_t group, uint16_t elem,
+                    TagName const &vr = GDCM_UNKNOWN);
+   BinEntry *Insert(uint8_t *binArea, int lgth,
+                    uint16_t group, uint16_t elem,
+                    TagName const &vr = GDCM_UNKNOWN);
+   SeqEntry *Insert(uint16_t group, uint16_t elem);
 
    bool ReplaceIfExist(std::string const &value,
                        uint16_t group, uint16_t elem );

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:54 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/24 16:44:54 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,41 +77,41 @@ int WriteSimple(Image &img)
    // Set the image size
    str.str("");
    str << img.sizeX;
-   header->ReplaceOrCreate(str.str(),0x0028,0x0011); // Columns
+   header->Insert(str.str(),0x0028,0x0011); // Columns
 
    str.str("");
    str << img.sizeY;
-   header->ReplaceOrCreate(str.str(),0x0028,0x0010); // Rows
+   header->Insert(str.str(),0x0028,0x0010); // Rows
 
    if(img.sizeZ>1)
    {
       str.str("");
       str << img.sizeZ;
-      header->ReplaceOrCreate(str.str(),0x0028,0x0008); // Number of Frames
+      header->Insert(str.str(),0x0028,0x0008); // Number of Frames
    }
 
    // Set the pixel type
    str.str("");
    str << img.componentSize;
-   header->ReplaceOrCreate(str.str(),0x0028,0x0100); // Bits Allocated
+   header->Insert(str.str(),0x0028,0x0100); // Bits Allocated
 
    str.str("");
    str << img.componentUse;
-   header->ReplaceOrCreate(str.str(),0x0028,0x0101); // Bits Stored
+   header->Insert(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << img.componentSize - 1;
-   header->ReplaceOrCreate(str.str(),0x0028,0x0102); // High Bit
+   header->Insert(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << img.sign;
-   header->ReplaceOrCreate(str.str(),0x0028,0x0103); // Pixel Representation
+   header->Insert(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Set the samples per pixel
    str.str("");
    str << img.components;
-   header->ReplaceOrCreate(str.str(),0x0028,0x0002); // Samples per Pixel
+   header->Insert(str.str(),0x0028,0x0002); // Samples per Pixel
 
    if( !header->IsReadable() )
    {

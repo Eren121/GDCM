@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:50 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/24 16:44:53 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@ int TestChangeHeader(int argc, char* argv[])
    std::string nbFrames = f2->GetHeader()->GetEntryValue(0x0028, 0x0008);
    if(nbFrames != "gdcm::Unfound")
    {
-      f1->GetHeader()->ReplaceOrCreate( nbFrames, 0x0028, 0x0008);
+      f1->GetHeader()->Insert( nbFrames, 0x0028, 0x0008);
    }
 
 
@@ -57,17 +57,17 @@ int TestChangeHeader(int argc, char* argv[])
 // It was not designed as a 'Test' program, but as a utility
 // provided to 'transform' an image 'Siemens MRI New version' into an image 'Siemens MRI old version'
          
-   f1->GetHeader()->ReplaceOrCreate(
+   f1->GetHeader()->Insert(
       f2->GetHeader()->GetEntryValue(0x0028, 0x0010), 0x0028, 0x0010);// nbLig
-   f1->GetHeader()->ReplaceOrCreate( 
+   f1->GetHeader()->Insert( 
       f2->GetHeader()->GetEntryValue(0x0028, 0x0011), 0x0028, 0x0011);// nbCol
-   f1->GetHeader()->ReplaceOrCreate( 
+   f1->GetHeader()->Insert( 
       f2->GetHeader()->GetEntryValue(0x0028, 0x0100), 0x0028, 0x0100);// BitsAllocated
-   f1->GetHeader()->ReplaceOrCreate( 
+   f1->GetHeader()->Insert( 
       f2->GetHeader()->GetEntryValue(0x0028, 0x0101), 0x0028, 0x0101);// BitsStored
-   f1->GetHeader()->ReplaceOrCreate( 
+   f1->GetHeader()->Insert( 
       f2->GetHeader()->GetEntryValue(0x0028, 0x0102), 0x0028, 0x0102);// HighBit
-   f1->GetHeader()->ReplaceOrCreate( 
+   f1->GetHeader()->Insert( 
       f2->GetHeader()->GetEntryValue(0x0028, 0x0103), 0x0028, 0x0103);// Pixel Representation
 // Probabely some more to update (?)
 

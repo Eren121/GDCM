@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:53 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/01/24 16:44:54 $
+  Version:   $Revision: 1.58 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -184,8 +184,7 @@ bool SQItem::SetEntryValue(std::string const &val, uint16_t group,
       if (  ( group  < (*i)->GetGroup() )
           ||( group == (*i)->GetGroup() && elem < (*i)->GetElement()) )
       {
-         // instead of ReplaceOrCreate 
-         // that is a method of Document :-( 
+         // instead of Insert, that is a method of Document :-( 
          ValEntry* entry = 0;
          TagKey key = DictEntry::TranslateToKey(group, elem);
 
