@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 18:35:30 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/02/11 11:22:59 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -675,7 +675,7 @@ void FileHelper::SetWriteToRaw()
       }
       else
       {
-         photInt->SetValue("MONOCHROME1 ");
+         photInt->SetValue("MONOCHROME2 ");
       }
 
       PixelWriteConverter->SetReadData(PixelReadConverter->GetRaw(),
@@ -934,10 +934,12 @@ ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
  *          when it exists. Create it with the given value when unexistant.
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
+ * @param   vr  Value Representation of the Entry
  * \return  pointer to the modified/created Bin Entry (NULL when creation
  *          failed).
  */ 
-BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem,const std::string &vr)
+BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem,
+                                   const std::string &vr)
 {
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    BinEntry *newE;
