@@ -1,9 +1,20 @@
+2005-01-25 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   In ordrer to avoid missbehaviour :
+   . gdcm::DocEntry is now specialized in
+     - gdcm::SeqEntry (Dicom Sequence) as opposed to :
+     - gdcm::ContentEntry (Dicom entry with a 'content')
+   . gdcm::ContentEntry is specialized in
+     - gdcm::ValEntry (Dicom entry with a std::string representable value, i.e.
+       characters value, or integers)
+     - gdcm::BinEntry (Dicom entry with a non strig representable value
+   (user hasn't any longer to thing about the precedence of his dynamic_casts)
+
 2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/VTKTest*.cxx : bug fix under linux
 
 2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/ : rename some methods on Entry (SetXxx, InsertXxx) to have a better
-     use with python. Some methods ard moved from Document to ElementSet or
+     use with python. Some methods are moved from Document to ElementSet or
      DocEntrySet. The equivalent methods to ElementSet have been added to 
      SQItem and are virtual in DocEntrySet. Methods that may have the same code
      in SQItem and ElementSet is directly placed in DocEntrySet
@@ -19,10 +30,29 @@
      Add ClearXxx methods to remove all the content of the list or map
    * gdcmDocEntrySet.h : add GetFirst/NextEntry in pure virtual
 
+2005-01-25 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * methods ReplaceOrCreate renamed as Insert
+     (nobody will be any longer confused by 'CreateOrReplace')
+	  
 2005-01-24 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Grealty simplify the JPEg decompression, no need to differenciate based on 
      the JPEG possible type (with/without fragment, with/without multiple frame). 
      Everything is done throught the JPEG IO Suspension mechanism in IJG
+
+2005-01-24 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * Stage 3 of normalization :
+     in order to avoid any missunderstanding while reading method names :
+     - All the methods xxxEntry now deal with dicom Entries
+     - Methods GetEntry splitted into
+        GetEntryValue
+        GetEntryBinArea
+     - Method SetEntry renamed as SetEntryValue
+     - Method SetEntryBinArea let as it was
+
+2005-01-24 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+    - Add empty nutshell for JPEG-LS (JPG-LS in NOT jpeg 'lossless')
+    - Position correctly the entry points for JPEG2000 and JPEG-LS
+	   (Now Fragments info is get from the file, even for JPEG2000 and JPEG-LS)
 
 2005-01-22 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDicomDirElement.h, gdcmDict.h : rename AddNewXxx methods to AddXxx.
@@ -42,10 +72,25 @@
    * bug fix for compilation on MSVC6
    * gdcmPython/gdcm.i : rename of classes missed
 
+2005-01-21 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * Stage 2 of names normalization :
+     - A gdcm::Document is now either a gdcm::DicomDir or a gdcm::File
+       (easy to understand ...)
+     - gdcm::FileHelper replaces old class gdcm::File
+
 2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * gdcmDicomDirElement.[h|cxx] : change the AddEntry method. Now, it gets a
      type and not a string. So, there remove problems on the format of the
      string.
+
+2005-01-20 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * Add Example/TestPapyrus.cxx
+     - reads a Papyrus file (gdcm::Header compliant),
+     - gets the pixels of all the images, using low level iterators
+     - writes an multiframes Dicom image.
+   (Just to show it's *possible* to do that)
+    Uses SQItems accessors (we could use it as a 'Test' program, to improve test
+    coverage ...)
 
 2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDicomDirObject.h : set the FillObject method in protected.
@@ -82,6 +127,14 @@
    * gdcmPython/demo/*.py.in : Change the InitTraversal/GetNextEntry use to
      GetFirstEntry/GetNextEntry use
 
+2005-01-18 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * In SerieHeader::ImagePositionPatientOrdering()
+     // a Dicom 'Serie' may contain scout views
+     // and images may have differents directions.
+     // -> More than one may have the same 'pos'
+     // Sorting has then NO meaning !
+     Thx to Eduardo Davila for reporting bug.
+
 2005-01-18 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/ShowDicom.cxx, ShowDicomSeq.cxx, TestWriteWithVTK.cxx : change the
      test. Now it's on image content and not on the resulting visualisation...
@@ -96,7 +149,14 @@
    * UPD Test programs + Example programs
 
 2005-01-18 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
-   remove useless and never updated keyword \ingroup         
+   * remove useless and never updated keyword \ingroup         
+   * Solve pb when structure (list, map, ...) is empty.
+     Thx to Benoit for reporting bug
+
+2005-01-18 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * Taking into account of 'Transfer Syntax' value
+       (for 'true' Dicom V3 files, the 'ACR-NEMA' heuristics sometimes gives
+		  unaccurate result)
 
 2005-01-17 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmUtil.cxx : bug fix to find the Windows MAC address. Now, there
