@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 01:14:32 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/17 03:05:55 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,37 +74,40 @@ void JPEGFragment::Print( std::ostream &os, std::string indent )
  */
 void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits)
 {
-      if ( nBits == 8)
+   // First thing need to reset file to proper position:
+   fp->seekg( Offset, std::ios::beg);
+
+   if ( nBits == 8 )
+   {
+      // JPEG Lossy : call to IJG 6b
+      if ( ! gdcm_read_JPEG_file8( fp, buffer) )
       {
-         // JPEG Lossy : call to IJG 6b
-         if ( ! gdcm_read_JPEG_file8( fp, buffer) )
-         {
-            //return false;
-         }
-      }
-      else if ( nBits <= 12)
-      {
-         // Reading Fragment pixels
-         if ( ! gdcm_read_JPEG_file12 ( fp, buffer) )
-         {
-            //return false;
-         }
-      }
-      else if ( nBits <= 16)
-      {
-         // Reading Fragment pixels
-         if ( ! gdcm_read_JPEG_file16 ( fp, buffer) )
-         {
-            //return false;
-         }
-         //gdcmAssertMacro( IsJPEGLossless );
-      }
-      else
-      {
-         // other JPEG lossy not supported
-         gdcmErrorMacro( "Unknown jpeg lossy compression ");
          //return false;
       }
+   }
+   else if ( nBits <= 12 )
+   {
+      // Reading Fragment pixels
+      if ( ! gdcm_read_JPEG_file12 ( fp, buffer) )
+      {
+         //return false;
+      }
+   }
+   else if ( nBits <= 16 )
+   {
+      // Reading Fragment pixels
+      if ( ! gdcm_read_JPEG_file16 ( fp, buffer) )
+      {
+         //return false;
+      }
+      //gdcmAssertMacro( IsJPEGLossless );
+   }
+   else
+   {
+      // other JPEG lossy not supported
+      gdcmErrorMacro( "Unknown jpeg lossy compression ");
+      //return false;
+   }
 
 }
 
@@ -156,49 +159,48 @@ void JPEGFragment::DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer, si
 
 void JPEGFragment::DecompressJPEGFragmentedFramesFromFile(JOCTET *buffer, uint8_t* raw, int nBits, size_t &howManyRead, size_t &howManyWritten, size_t totalLength)
 {
-     if ( nBits == 8)
-      {
-        if ( ! gdcm_read_JPEG_memory8( buffer+howManyRead, totalLength-howManyRead,
-                                     raw+howManyWritten,
-                                     &howManyRead, &howManyWritten ) ) 
-          {
-            gdcmErrorMacro( "Failed to read jpeg8");
-            //delete [] buffer;
-            //return false;
-          }
-      }
-      else if ( nBits <= 12)
-      {
-      
-        if ( ! gdcm_read_JPEG_memory12( buffer+howManyRead, totalLength-howManyRead,
-                                      raw+howManyWritten,
-                                      &howManyRead, &howManyWritten ) ) 
-          {
-            gdcmErrorMacro( "Failed to read jpeg12");
-            //delete [] buffer;
-            //return false;
-         }
-      }
-      else if ( nBits <= 16)
-      {
-      
-        if ( ! gdcm_read_JPEG_memory16( buffer+howManyRead, totalLength-howManyRead,
-                                      raw+howManyWritten,
-                                      &howManyRead, &howManyWritten ) ) 
-          {
-            gdcmErrorMacro( "Failed to read jpeg16 ");
-            //delete [] buffer;
-            //return false;
-          }
-      }
-      else
-      {
-         // other JPEG lossy not supported
-         gdcmErrorMacro( "Unsupported jpeg lossy compression ");
+   if ( nBits == 8 )
+   {
+     if ( ! gdcm_read_JPEG_memory8( buffer+howManyRead, totalLength-howManyRead,
+                                  raw+howManyWritten,
+                                  &howManyRead, &howManyWritten ) ) 
+       {
+         gdcmErrorMacro( "Failed to read jpeg8");
+         //delete [] buffer;
+         //return false;
+       }
+   }
+   else if ( nBits <= 12 )
+   {
+   
+     if ( ! gdcm_read_JPEG_memory12( buffer+howManyRead, totalLength-howManyRead,
+                                   raw+howManyWritten,
+                                   &howManyRead, &howManyWritten ) ) 
+       {
+         gdcmErrorMacro( "Failed to read jpeg12");
          //delete [] buffer;
          //return false;
       }
-
+   }
+   else if ( nBits <= 16 )
+   {
+   
+     if ( ! gdcm_read_JPEG_memory16( buffer+howManyRead, totalLength-howManyRead,
+                                   raw+howManyWritten,
+                                   &howManyRead, &howManyWritten ) ) 
+       {
+         gdcmErrorMacro( "Failed to read jpeg16 ");
+         //delete [] buffer;
+         //return false;
+       }
+   }
+   else
+   {
+      // other JPEG lossy not supported
+      gdcmErrorMacro( "Unsupported jpeg lossy compression ");
+      //delete [] buffer;
+      //return false;
+   }
 }
 
 } // end namespace gdcm

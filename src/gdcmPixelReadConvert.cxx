@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 01:14:33 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/17 03:05:55 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -367,9 +367,9 @@ void PixelReadConvert::ConvertReorderEndianity()
    }
 
    // Special kludge in order to deal with xmedcon broken images:
-   if (  ( BitsAllocated == 16 )
-       && ( BitsStored < BitsAllocated )
-       && ( ! PixelSign ) )
+   if ( BitsAllocated == 16
+     && BitsStored < BitsAllocated
+     && !PixelSign )
    {
       int l = (int)( RawSize / ( BitsAllocated / 8 ) );
       uint16_t *deb = (uint16_t *)Raw;
@@ -394,21 +394,23 @@ void PixelReadConvert::ConvertReorderEndianity()
  */
 bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream *fp )
 {
+   // Pointer to the Raw image
    uint8_t *localRaw = Raw;
+
+   // Precompute the offset localRaw will be shifted with
+   int length = XSize * YSize * SamplesPerPixel;
+   int numberBytes = BitsAllocated / 8;
+
    // Loop on the fragment[s]
    for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
         it  = JPEGInfo->Fragments.begin();
         it != JPEGInfo->Fragments.end();
       ++it )
    {
-      fp->seekg( (*it)->Offset, std::ios::beg);
-
       (*it)->DecompressJPEGFramesFromFile(fp, localRaw, BitsStored );
 
       // Advance to next free location in Raw 
       // for next fragment decompression (if any)
-      int length = XSize * YSize * SamplesPerPixel;
-      int numberBytes = BitsAllocated / 8;
 
       localRaw += length * numberBytes;
    }
@@ -428,30 +430,15 @@ bool PixelReadConvert::
 ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
 {
    // Loop on the fragment[s] to get total length
-   size_t totalLength = 0;
-   JPEGFragmentsInfo::JPEGFragmentsList::iterator it;
-   for( it  = JPEGInfo->Fragments.begin();
-        it != JPEGInfo->Fragments.end();
-        ++it )
-   {
-      totalLength += (*it)->Length;
-   }
+   size_t totalLength = JPEGInfo->GetFragmentsLength();
 
    // Concatenate the jpeg fragments into a local buffer
    JOCTET *buffer = new JOCTET [totalLength];
-   JOCTET *p = buffer;
+   // Fill in the buffer:
+   JPEGInfo->ReadAllFragments(fp, buffer);
 
-   // Loop on the fragment[s]
-   for( it  = JPEGInfo->Fragments.begin();
-        it != JPEGInfo->Fragments.end();
-        ++it )
-   {
-      fp->seekg( (*it)->Offset, std::ios::beg);
-      size_t len = (*it)->Length;
-      fp->read((char *)p,len);
-      p += len;
-   }
-
+   // kludge: // FIXME
+   JPEGFragmentsInfo::JPEGFragmentsList::const_iterator it = JPEGInfo->Fragments.begin();
    (*it)->DecompressJPEGSingleFrameFragmentsFromFile(buffer, totalLength, Raw, BitsStored);
 
    // free local buffer
@@ -473,34 +460,18 @@ bool PixelReadConvert::
 ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
 {
    // Loop on the fragment[s] to get total length
-   size_t totalLength = 0;
-   JPEGFragmentsInfo::JPEGFragmentsList::iterator it;
-   for( it  = JPEGInfo->Fragments.begin();
-        it != JPEGInfo->Fragments.end();
-        ++it )
-   {
-      totalLength += (*it)->Length;
-   }
+   size_t totalLength = JPEGInfo->GetFragmentsLength();
 
    // Concatenate the jpeg fragments into a local buffer
    JOCTET *buffer = new JOCTET [totalLength];
-   JOCTET *p = buffer;
-
-   // Loop on the fragment[s]
-   for( it  = JPEGInfo->Fragments.begin();
-        it != JPEGInfo->Fragments.end();
-        ++it )
-   {
-      fp->seekg( (*it)->Offset, std::ios::beg);
-      size_t len = (*it)->Length;
-      fp->read((char *)p,len);
-      p+=len;
-   }
+   // Fill in the buffer:
+   JPEGInfo->ReadAllFragments(fp, buffer);
 
    size_t howManyRead = 0;
    size_t howManyWritten = 0;
    size_t fragmentLength = 0;
    
+   JPEGFragmentsInfo::JPEGFragmentsList::const_iterator it;
    for( it  = JPEGInfo->Fragments.begin() ;
         (it != JPEGInfo->Fragments.end()) && (howManyRead < totalLength);
         ++it )
@@ -533,7 +504,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
    {
       fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios::beg);
 //      if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
-//         return false;
+         return false;
    }
 
    if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )
