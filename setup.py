@@ -7,6 +7,7 @@ from WrapVTK import *
 ThisModule='gdcmPython'
 gdcmPythonSrcDir=ThisModule
 gdcmSrcDir      ="src"
+gdcmJpeg8SrcDir  =os.path.join('src', 'jpeg', 'libijg8')
 gdcmvtkSrcDir   ="vtk"
 gdcmDictsDir    ="Dicts"
 gdcmTestDir     ="Test"
@@ -36,25 +37,39 @@ else:
 
 targetDir=os.path.join(targetDir, ThisModule)
 
-# For the Swig compilation
+### Sources section: determination of sources for the extensions:
+# Sources 1a/ The kernel of gdcm itself (which wrapped with Swig)
+#             defines the first extension
 Sources = []
 Sources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
-#Sources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.h")))
 Sources.append(os.path.join(gdcmPythonSrcDir,"gdcm.i"))
+# Sources 1b/ The kernel of gdcm depends on a jpeg library whose sources are
+#             contained in subdir gdcmJpeg8SrcDir. But within this subdir
+#             some of the C files should not be compiled (refer to
+#             gdcmJpeg8SrcDir/Makefile.am) !
+Jpeg8Sources = glob.glob(os.path.join(gdcmJpeg8SrcDir,"j*.c"))
+Jpeg8SourcesToRemove = ['jmemansi.c', 'jmemname.c', 'jmemdos.c', 'jmemmac.c']
+for Remove in Jpeg8SourcesToRemove:
+   ### Because setup.py is a multiple pass process we need to trap
+   ### the case were the files were allready wed out on a previous pass.
+   try:
+      Jpeg8Sources.remove(os.path.join(gdcmJpeg8SrcDir, Remove))
+   except ValueError:
+      continue
+Sources.extend(Jpeg8Sources)
 
-# For the VTK compilation
+# Sources 2/ The second extension contains the VTK classes (which we wrap
+#            with the vtk wrappers):
 VTK_INCLUDE_DIR=os.path.join(VTK_PATH,"include","vtk")
 VTK_LIB_DIR=os.path.join(VTK_PATH,"lib","vtk")
-
 vtkSources = []
 vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
 vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
-#vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.h")))
-
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",
               "vtkFiltering","vtkFilteringPython"]
 
+##### 
 setup(name=ThisModule,
       version="0.2",
       description="...",

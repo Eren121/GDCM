@@ -1,3 +1,10 @@
+2003-07-02  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * setup.py is again effective on un*x (takes into account the
+        addon of the jpeg library)
+      * Doc/DoxyDevelInstal.txt added (developper's raw documentation)
+      * Doc/Doxy* updated (includes above enhancements)
+      * INSTALL now points to web documentation
+
 2003-07-01  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.h doesn't make unnecessary reference to
         gdcmUtil.h anymore.

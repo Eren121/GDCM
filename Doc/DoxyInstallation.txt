@@ -24,18 +24,25 @@
  *     .
  *  .
  * 
- * \section DoxyInstallLinux Linux
+ * \section DoxyInstallLinux Un*x
  * \subsection DoxyInstallLinuxCvs Starting from cvs sources.
- *     - Retrieve the sources through cvs
+ *     - Retrieve the
+         <A HREF="http://www.creatis.insa-lyon.fr/Public/Gdcm/cvs.html">
+         sources through cvs</A>,
  *     - <TT>cd gdcm</TT>
  *     - <TT>./autogen.sh --help</TT> in order to select your preferences
  *     - <TT>./autogen.sh</TT> to launch the usual automake/autoconf
  *       process e.g.
  *       -# <TT>./autogen.sh --prefix=/where/ever/you/want</TT>
- *           to configure the script to force installation in a specified
- *            place.
+ *              to configure the script to force installation in a specified
+ *              place.
  *       -# <TT>./autogen.sh --enable-python</TT> to generate the
- *              python wrappers.
+ *              python wrappers (a.k.a. gdcmPython)
+ *       -# <TT>./autogen.sh --enable-vtk</TT> to generate the
+ *              vtk clases that shallow wrap gdcm,
+ *       -# <TT>./autogen.sh --enable-doxygen</TT> to generate the
+ *              <A HREF="http://www.doxygen.org/">doxygen</A>
+ *              based documentation
  *        .
  *     - <TT>make</TT> (or <TT>make 'CFLAGS=-g</TT>...)
  *     - <TT>make instal</TT>

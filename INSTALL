@@ -1,31 +1,17 @@
-* For compiling the library and C++ test programs:
+###################################################
+For the impatient:
+ * cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public login
+   answer anonymous
+ * cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public co gdcm
+ * cd gdcm
+ * ./autogen.sh (--enable-python --enable-vtk --enable-doc)
+ * make
+ * make instal
 
-./autogen.sh
-./configure (optional if just after autogen.sh)
-make
-make instal
+###################################################
+The full documentation for installation is available at
+   http://www.creatis.insa-lyon.fr/Public/Gdcm/html.developper/DoxyInstallation.html
 
-You can use the --prefix option of the configure script to force installation
-in some place (default is /usr/local/DCMlib):
-
-./configure --prefix=/where/ever/you/want
-
-
-* For testing in C++:
-./Test/test ../Data/CR-MONO1-10-chest.dcm (or any other file in there)
-
-
-* For testing in Python:
-cd python/gdcmPython
-make  (requires SWIG Version 1.3.16u i.e. the contemporary devel version)
-python testSuite.py (test suite written in unittest, you should use python2)
-
-
-* For manual test in python:
-cd python/demo
-python test.py ../../Data/CR-MONO1-10-chest.dcm (or any other file)
-
-
------------------------------------------------------------------------------
-Documentation can be found in the Doc sub-directory. Please refer to 
+###################################################
+The documentation can also be found in the Doc sub-directory. Please refer to 
 README file within Doc.

@@ -4,6 +4,7 @@
  * - \ref DoxyIntroduction
  * - \ref DoxyInstallation
  * - \ref DoxyPythonComplete
+ * - \ref DoxyDevelInstal
  * - <A HREF="namespace.html">Namespace List</A>
  * - <A HREF="hierarchy.html">Class Hierarchy</A>
  * - <A HREF="classes.html">Alphabetical List</A>
