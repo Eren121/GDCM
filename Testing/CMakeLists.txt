@@ -35,6 +35,7 @@ ENDIF (GDCM_DATA_ROOT)
 # include stuff
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src/
+  ${GDCM_BINARY_DIR}/
 )
 
 # Loop over files and create executables

@@ -1,4 +1,7 @@
 2004-04-25  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     * ENH: Adding a GDCM_DATA_ROOT for testing
+
+2004-04-25  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * ENH: Adding automatic testing
        1. Need a DartConfig.cmake to submit to public
        2. Add a test driver gdcmTest.cxx

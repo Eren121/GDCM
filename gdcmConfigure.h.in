@@ -1,0 +1,1 @@
+#define GDCM_DATA_ROOT "@GDCM_DATA_ROOT@"

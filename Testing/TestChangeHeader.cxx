@@ -69,6 +69,7 @@ int testChangeEntete(int argc, char* argv[]) {
 
 	sprintf(resultat, "%s.vol", deuxieme.c_str());
 	printf ("WriteDCM\n");
+  //f1->WriteDcmExplVR("itk-gdcm-ex.dcm");
 	//f1->WriteDcmImplVR(resultat);	
 	f1->WriteAcr(resultat);	
 

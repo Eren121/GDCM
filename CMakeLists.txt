@@ -20,20 +20,13 @@ MARK_AS_ADVANCED(GDCM_DATA_DIR)
 OPTION(BUILD_SHARED_LIBS "Build GDCM with shared libraries." ON)
 SET(GDCM_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
-SET(CMAKE_CONFIGURATION_TYPES
-  Debug
-  Release
-)
-SET(CMAKE_BUILD_TYPE_INIT Debug)
-
-# Deals with problem on SunOS:
-# ostrstream vs. ostringstream
-
-#SET(GDCM_NO_ANSI_STRING_STREAM
-#  ${CMAKE_NO_ANSI_STRING_STREAM}
+#-----------------------------------------------------------------------------
+# Does not work as of 2004/04/05
+#SET(CMAKE_CONFIGURATION_TYPES
+#  Debug
+#  Release
 #)
-#CONFIGURE_FILE(${GDCM_SOURCE_DIR}/src/gdcmCommon.h.in
-#               ${GDCM_BINARY_DIR}/src/gdcmCommon.h @ONLY IMMEDIATE)
+#SET(CMAKE_BUILD_TYPE_INIT Debug)
 
 #-----------------------------------------------------------------------------
 # Output directories.
@@ -65,6 +58,16 @@ FIND_PATH(GDCM_DATA_ROOT gdcm-ACR-LibIDO.acr
 	$ENV{GDCM_DATA}
 	$ENV{PUB_DICT_PATH}/../../gdcmData
 )
+
+#-----------------------------------------------------------------------------
+# Deals with problem on SunOS:
+# ostrstream vs. ostringstream
+
+#SET(GDCM_NO_ANSI_STRING_STREAM
+#  ${CMAKE_NO_ANSI_STRING_STREAM}
+#)
+CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
+               ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE)
 
 #-----------------------------------------------------------------------------
 # Add the testing directories
