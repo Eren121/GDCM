@@ -1,4 +1,14 @@
-2004-04-02  Jean-Pierre Roux
+2004-19-02  Jean-Pierre Roux
+     * ADD gdcmData/Wrist.pap (PAPYRUS 3.0 -single frame-) for checking purpose
+     * ENH add parameters :
+               bool  exception_on_error = false, 
+               bool  enable_sequences   = false,
+	       bool  ignore_shadow      = false
+           to the gdcmFile constructors to be full gdcmParser compliant
+     * FIX vtk/vtkGdcmReader.cxx now uses  enable_sequences = true in gdcmFile
+           to allow reading of PAPYRUS 3.0 files 
+	      
+2004-06-02  Jean-Pierre Roux
      * ADD gdcmData/E00001S03I0015.dcm for SQ checking purpose
      
 2004-04-02  Jean-Pierre Roux

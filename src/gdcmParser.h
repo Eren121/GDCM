@@ -105,7 +105,10 @@ public:
    /// Canonical Printing method (see also gdcmParser::SetPrintLevel)
    virtual void Print        (std::ostream &os = std::cout) 
       {PrintEntry(os);};
-   virtual void PrintEntry   (std::ostream &os = std::cout);
+   virtual void PrintEntry      (std::ostream &os = std::cout);
+   virtual void PrintEntryNoSQ  (std::ostream &os = std::cout);
+   virtual void PrintEntryNiceSQ(std::ostream &os = std::cout);
+
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
 

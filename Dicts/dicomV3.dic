@@ -1153,6 +1153,7 @@
 0040 db0c UI PRC Template Extension Organization UID (RET)
 0040 db0d UI PRC Template Extension Creator UID (RET)
 0040 db73 UL PRC Referenced Content Item Identifier
+0041 1050 SQ ??? Special PAPYRUS 3.0 (?)
 0050 0000 UL DEV Group Length
 0050 0004 CS DEV Calibration Image
 0050 0010 SQ DEV Device Sequence

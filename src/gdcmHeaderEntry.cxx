@@ -134,6 +134,23 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
 //-----------------------------------------------------------------------------
 // Public
 
+/**
+ * \ingroup gdcmHeaderEntry
+ * \brief   Gets the full length of the HeaderEntry (not only value length)
+ */
+guint32 gdcmHeaderEntry::GetFullLength(void) {
+   guint32 l;
+   l = GetLength();
+   if ( IsImplicitVR() ) 
+      l = l + 8;  // 2 (gr) + 2 (el) + 4 (lgth) 
+   else    
+      if ( GetVR()=="OB" || GetVR()=="OW" || GetVR()=="SQ" )
+         l = l + 12; // 2 (gr) + 2 (el) + 2 (vr) + 2 (unused) + 4 (lgth)
+      else
+         l = l + 8;  // 2 (gr) + 2 (el) + 2 (vr) + 2 (lgth)
+   return(l);
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 

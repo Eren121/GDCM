@@ -44,8 +44,14 @@ gdcmFile::gdcmFile(gdcmHeader *header) {
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
  */
-gdcmFile::gdcmFile(std::string & filename) {
-   Header=new gdcmHeader(filename.c_str());
+gdcmFile::gdcmFile(std::string & filename, 
+                   bool exception_on_error,
+                   bool enable_sequences, 
+                   bool ignore_shadow) {
+   Header=new gdcmHeader(filename.c_str(),
+                         exception_on_error,
+                         enable_sequences,
+                         ignore_shadow);
    SelfHeader=true;
    PixelRead=-1; // no ImageData read yet.
 
@@ -66,8 +72,14 @@ gdcmFile::gdcmFile(std::string & filename) {
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
  */
- gdcmFile::gdcmFile(const char * filename) {
-   Header=new gdcmHeader(filename);
+ gdcmFile::gdcmFile(const char * filename, 
+                   bool exception_on_error,
+                   bool enable_sequences, 
+                   bool ignore_shadow) {
+   Header=new gdcmHeader(filename,
+                         exception_on_error,
+                         enable_sequences,
+                         ignore_shadow);
    SelfHeader=true;
    PixelRead=-1; // no ImageData read yet.
 

@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     for(int i=1; i< argc; i++)
       reader->AddFileName( argv[i] );
 
-  //reader->DebugOn();
+  reader->DebugOn();
   reader->Update();
   
   //print debug info:

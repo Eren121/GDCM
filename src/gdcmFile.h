@@ -16,8 +16,16 @@ class GDCM_EXPORT gdcmFile
 {
 public:
    gdcmFile(gdcmHeader *header);
-   gdcmFile(std::string & filename);
-   gdcmFile(const char * filename);
+   gdcmFile(std::string & filename, 
+              bool  exception_on_error = false, 
+              bool  enable_sequences   = false,
+              bool  skip_shadow        = false);
+ 
+   gdcmFile(const char * filename, 
+              bool  exception_on_error = false, 
+              bool  enable_sequences   = false,
+              bool  skip_shadow        = false);
+ 
    virtual ~gdcmFile(void);
 	
    gdcmHeader *GetHeader(void);

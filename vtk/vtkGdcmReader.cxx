@@ -421,9 +421,11 @@ int vtkGdcmReader::CheckFileCoherence()
          continue;
       }
       fclose(fp);
-   
+
+      cout << " Try to gdcmHeader ... " << endl;   
       // Stage 1.2: check for Gdcm parsability
-      gdcmHeaderHelper GdcmHeader(FileName->c_str());
+      gdcmHeaderHelper GdcmHeader(FileName->c_str(), false, true);
+      //                             true : for enableSequences
       if (!GdcmHeader.IsReadable())
       {
          vtkErrorMacro("Gdcm cannot parse file " << FileName->c_str());
@@ -587,8 +589,9 @@ size_t vtkGdcmReader::LoadImageInMemory(
              const unsigned long UpdateProgressTarget,
              unsigned long & UpdateProgressCount)
 {
-   vtkDebugMacro("Copying to memory image" << FileName.c_str());
-   gdcmFile GdcmFile(FileName.c_str());
+   vtkDebugMacro("Copying to memory image [" << FileName.c_str() << "]");
+   gdcmFile GdcmFile(FileName.c_str(),false,true);
+   // true : to enable SeQuences
    size_t size;
 
    // If the data structure of vtk for image/volume representation

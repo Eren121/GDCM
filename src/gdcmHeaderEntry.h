@@ -192,7 +192,9 @@ public:
     */
    void SetPrintLevel(int level) { printLevel = level; };
    void Print (std::ostream & os = std::cout); 
-
+   
+   guint32 GetFullLength(void);
+   
 private:
    // FIXME: In fact we should be more specific and use :
    // friend gdcmHeaderEntry * gdcmHeader::ReadNextElement(void);

@@ -70,7 +70,7 @@ gdcmParser::gdcmParser(const char *inFilename,
       return;
    if (ParseHeader()) {
      LoadHeaderEntries();
-   }
+   }   
    CloseFile();
 
    wasUpdated = 0;  // will be set to 1 if user adds an entry
@@ -106,11 +106,10 @@ gdcmParser::~gdcmParser (void) {
 /**
   * \ingroup gdcmParser
   * \brief   Prints the Header Entries (Dicom Elements)
-  *          both from the H Table and the chained list
+  *          from the chained list
   * @return
   */ 
 void gdcmParser::PrintEntry(std::ostream & os) {
-   std::ostringstream s;   
 
    for (ListTag::iterator i = listEntries.begin();  
         i != listEntries.end();
@@ -119,11 +118,75 @@ void gdcmParser::PrintEntry(std::ostream & os) {
       (*i)->SetPrintLevel(printLevel);
       (*i)->Print(os);   
    } 
-   os<<s.str();
 }
 
 /**
-  * \brief   Prints The Dict Entries of THE public Dicom Dictionnry
+  * \ingroup gdcmParser
+  * \brief   Prints the Header Entries (Dicom Elements)
+  *          from the chained list
+  *          and skips the elements belonging to a SeQuence
+  * @return
+  */ 
+void gdcmParser::PrintEntryNoSQ(std::ostream & os) {
+   int countSQ = 0;
+   for (ListTag::iterator i = listEntries.begin();  
+        i != listEntries.end();
+        ++i)
+   {
+       if ( (*i)->GetVR() == "SQ"){
+          countSQ ++;
+       }
+
+       if ( (*i)->GetGroup() == 0xfffe  && (*i)->GetElement() == 0xe0dd){
+          countSQ --;
+          continue;
+       }
+              
+       if (countSQ == 0) { 
+         (*i)->SetPrintLevel(printLevel);
+         (*i)->Print(os);
+       }   
+   } 
+}
+
+/**
+  * \ingroup gdcmParser
+  * \brief   Prints the Header Entries (Dicom Elements)
+  *          from the chained list
+  *          and indents the elements belonging to a SeQuence
+  * @return
+  */ 
+void gdcmParser::PrintEntryNiceSQ(std::ostream & os) {
+   int countSQ = 0;
+   std::ostringstream tab; 
+   tab << "   ";
+   for (ListTag::iterator i = listEntries.begin();  
+        i != listEntries.end();
+        ++i)
+   {
+       // we ignore '0 length' SeQuences
+       if ( (*i)->GetVR() == "SQ" && (*i)->GetReadLength()!=0){
+          countSQ ++;
+       }
+       // a SeQuence is over when a Sequence Delimiter Item is found
+       // pb : 'actual length' Sequence have NO Sequence Delimiter
+       // --> They 'never' finish : check the global length !
+       if ( (*i)->GetGroup() == 0xfffe  && (*i)->GetElement() == 0xe0dd){
+          countSQ --;
+          continue;
+       } 
+
+                    
+       if (countSQ != 0) { 
+          for (int i=0;i<countSQ;i++)
+	     os << tab.str();
+       } 
+       (*i)->SetPrintLevel(printLevel);
+       (*i)->Print(os);         
+   } 
+}
+/**
+  * \brief   Prints The Dict Entries of THE public Dicom Dictionary
   * @return
   */  
 void gdcmParser::PrintPubDict(std::ostream & os) {
@@ -131,7 +194,7 @@ void gdcmParser::PrintPubDict(std::ostream & os) {
 }
 
 /**
-  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionnary
+  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionary
   * @return
   */
 void gdcmParser::PrintShaDict(std::ostream & os) {
@@ -878,7 +941,7 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
       // since it's at the end of the Hash Table
       // (fffe,e0dd) 
        
-      // pas SEQUENCE en ACR-NEMA
+      // there is SEQUENCE in ACR-NEMA
       // WARNING : 
       // --> la descente a l'interieur' des SQ 
       // devrait etre faite avec une liste chainee, pas avec une HTable...
