@@ -34,7 +34,7 @@ SET(libgdcm_la_SOURCES
    gdcmDocument.cxx
    gdcmElementSet.cxx
    gdcmException.cxx
-   gdcmFile.cxx
+   gdcmFileHelper.cxx
    gdcmGlobal.cxx
    gdcmHeader.cxx
    gdcmJPEGFragment.cxx

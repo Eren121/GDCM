@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 14:45:40 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/20 16:16:59 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "vtkGdcmReader.h"
 #include "vtkImageViewer.h"
 #include "vtkImageData.h"
@@ -52,7 +52,7 @@ int VTKReadTest(vtkTesting *t,vtkImageViewer *viewer,
    // Instead of directly reading the dicom let's write it down to another file
    // do a scope to be sure everything gets cleanup
    {
-      gdcm::File file( filename );
+      gdcm::FileHelper file( filename );
       file.GetImageData();
       file.SetWriteModeToRaw();
       file.WriteDcmExplVR( "TestWrite.dcm" );

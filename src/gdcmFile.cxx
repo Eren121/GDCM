@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.193 $
+  Date:      $Date: 2005/01/20 16:17:00 $
+  Version:   $Revision: 1.194 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "gdcmGlobal.h"
 #include "gdcmTS.h"
 #include "gdcmDocument.h"
@@ -49,7 +49,7 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
  */
-File::File( )
+FileHelper::FileHelper( )
 {
    HeaderInternal = new Header( );
    SelfHeader = true;
@@ -70,7 +70,7 @@ File::File( )
  *        seen as a side effect).   
  * @param header already built Header
  */
-File::File(Header *header)
+FileHelper::FileHelper(Header *header)
 {
    HeaderInternal = header;
    SelfHeader = false;
@@ -91,7 +91,7 @@ File::File(Header *header)
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
  */
-File::File(std::string const & filename )
+FileHelper::FileHelper(std::string const & filename )
 {
    HeaderInternal = new Header( filename );
    SelfHeader = true;
@@ -100,10 +100,10 @@ File::File(std::string const & filename )
 
 /**
  * \brief canonical destructor
- * \note  If the Header was created by the File constructor,
- *        it is destroyed by the File
+ * \note  If the header (gdcm::File) was created by the FileHelper constructor,
+ *        it is destroyed by the FileHelper
  */
-File::~File()
+FileHelper::~FileHelper()
 { 
    if( PixelReadConverter )
    {
@@ -127,7 +127,7 @@ File::~File()
 
 //-----------------------------------------------------------------------------
 // Print
-void File::Print(std::ostream &os, std::string const &)
+void FileHelper::Print(std::ostream &os, std::string const &)
 {
    HeaderInternal->SetPrintLevel(PrintLevel);
    HeaderInternal->Print(os);
@@ -146,7 +146,7 @@ void File::Print(std::ostream &os, std::string const &)
  *          the size of the pixels)
  * @return  The image size
  */
-size_t File::GetImageDataSize()
+size_t FileHelper::GetImageDataSize()
 {
    if ( PixelWriteConverter->GetUserData() )
    {
@@ -163,7 +163,7 @@ size_t File::GetImageDataSize()
  *          (use GetImageDataSize if you wish)
  * @return  The raw image size
  */
-size_t File::GetImageDataRawSize()
+size_t FileHelper::GetImageDataRawSize()
 {
    if ( PixelWriteConverter->GetUserData() )
    {
@@ -183,7 +183,7 @@ size_t File::GetImageDataRawSize()
  * @return  Pointer to newly allocated pixel data.
  *          NULL if alloc fails 
  */
-uint8_t *File::GetImageData()
+uint8_t *FileHelper::GetImageData()
 {
    if ( PixelWriteConverter->GetUserData() )
    {
@@ -216,7 +216,7 @@ uint8_t *File::GetImageData()
  * @return  Pointer to newly allocated pixel data.
  * \        NULL if alloc fails 
  */
-uint8_t *File::GetImageDataRaw ()
+uint8_t *FileHelper::GetImageDataRaw ()
 {
    return GetRaw();
 }
@@ -246,7 +246,7 @@ uint8_t *File::GetImageDataRaw ()
  * @return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
-size_t File::GetImageDataIntoVector (void *destination, size_t maxSize)
+size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
 {
    if ( ! GetRaw() )
    {
@@ -292,7 +292,7 @@ size_t File::GetImageDataIntoVector (void *destination, size_t maxSize)
  *
  * @return boolean
  */
-void File::SetImageData(uint8_t *inData, size_t expectedSize)
+void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
 {
    SetUserData(inData,expectedSize);
 }
@@ -301,7 +301,7 @@ void File::SetImageData(uint8_t *inData, size_t expectedSize)
  * \brief   Set the image datas defined by the user
  * \warning When writting the file, this datas are get as default datas to write
  */
-void File::SetUserData(uint8_t *data, size_t expectedSize)
+void FileHelper::SetUserData(uint8_t *data, size_t expectedSize)
 {
    PixelWriteConverter->SetUserData(data,expectedSize);
 }
@@ -310,7 +310,7 @@ void File::SetUserData(uint8_t *data, size_t expectedSize)
  * \brief   Get the image datas defined by the user
  * \warning When writting the file, this datas are get as default data to write
  */
-uint8_t *File::GetUserData()
+uint8_t *FileHelper::GetUserData()
 {
    return PixelWriteConverter->GetUserData();
 }
@@ -319,7 +319,7 @@ uint8_t *File::GetUserData()
  * \brief   Get the image data size defined by the user
  * \warning When writting the file, this datas are get as default data to write
  */
-size_t File::GetUserDataSize()
+size_t FileHelper::GetUserDataSize()
 {
    return PixelWriteConverter->GetUserDataSize();
 }
@@ -328,7 +328,7 @@ size_t File::GetUserDataSize()
  * \brief   Get the image datas from the file.
  *          If a LUT is found, the data are expanded to be RGB
  */
-uint8_t *File::GetRGBData()
+uint8_t *FileHelper::GetRGBData()
 {
    return PixelReadConverter->GetRGB();
 }
@@ -337,7 +337,7 @@ uint8_t *File::GetRGBData()
  * \brief   Get the image data size from the file.
  *          If a LUT is found, the data are expanded to be RGB
  */
-size_t File::GetRGBDataSize()
+size_t FileHelper::GetRGBDataSize()
 {
    return PixelReadConverter->GetRGBSize();
 }
@@ -346,7 +346,7 @@ size_t File::GetRGBDataSize()
  * \brief   Get the image datas from the file.
  *          If a LUT is found, the datas are not expanded !
  */
-uint8_t *File::GetRawData()
+uint8_t *FileHelper::GetRawData()
 {
    return PixelReadConverter->GetRaw();
 }
@@ -355,7 +355,7 @@ uint8_t *File::GetRawData()
  * \brief   Get the image data size from the file.
  *          If a LUT is found, the data are not expanded !
  */
-size_t File::GetRawDataSize()
+size_t FileHelper::GetRawDataSize()
 {
    return PixelReadConverter->GetRawSize();
 }
@@ -369,7 +369,7 @@ size_t File::GetRawDataSize()
  * @return false if write fails
  */
 
-bool File::WriteRawData(std::string const &fileName)
+bool FileHelper::WriteRawData(std::string const &fileName)
 {
   std::ofstream fp1(fileName.c_str(), std::ios::out | std::ios::binary );
    if (!fp1)
@@ -412,7 +412,7 @@ bool File::WriteRawData(std::string const &fileName)
  * @return false if write fails
  */
 
-bool File::WriteDcmImplVR (std::string const &fileName)
+bool FileHelper::WriteDcmImplVR (std::string const &fileName)
 {
    SetWriteTypeToDcmImplVR();
    return Write(fileName);
@@ -427,7 +427,7 @@ bool File::WriteDcmImplVR (std::string const &fileName)
  * @return false if write fails
  */
 
-bool File::WriteDcmExplVR (std::string const &fileName)
+bool FileHelper::WriteDcmExplVR (std::string const &fileName)
 {
    SetWriteTypeToDcmExplVR();
    return Write(fileName);
@@ -447,7 +447,7 @@ bool File::WriteDcmExplVR (std::string const &fileName)
  * @return false if write fails
  */
 
-bool File::WriteAcr (std::string const &fileName)
+bool FileHelper::WriteAcr (std::string const &fileName)
 {
    SetWriteTypeToAcr();
    return Write(fileName);
@@ -459,7 +459,7 @@ bool File::WriteAcr (std::string const &fileName)
  *                 (any already existing file is overwritten)
  * @return false if write fails
  */
-bool File::Write(std::string const &fileName)
+bool FileHelper::Write(std::string const &fileName)
 {
    switch(WriteType)
    {
@@ -533,7 +533,7 @@ bool File::Write(std::string const &fileName)
  * @param   group     group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool File::SetEntry(std::string const &content,
+bool FileHelper::SetEntry(std::string const &content,
                     uint16_t group, uint16_t elem)
 { 
    return HeaderInternal->SetEntry(content,group,elem);
@@ -549,7 +549,7 @@ bool File::SetEntry(std::string const &content,
  * @param   group     group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool File::SetEntry(uint8_t *content, int lgth,
+bool FileHelper::SetEntry(uint8_t *content, int lgth,
                     uint16_t group, uint16_t elem)
 {
    return HeaderInternal->SetEntry(content,lgth,group,elem);
@@ -564,7 +564,7 @@ bool File::SetEntry(uint8_t *content, int lgth,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
-bool File::ReplaceOrCreate(std::string const &content,
+bool FileHelper::ReplaceOrCreate(std::string const &content,
                            uint16_t group, uint16_t elem)
 {
    return HeaderInternal->ReplaceOrCreate(content,group,elem) != NULL;
@@ -580,7 +580,7 @@ bool File::ReplaceOrCreate(std::string const &content,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-bool File::ReplaceOrCreate(uint8_t *binArea, int lgth,
+bool FileHelper::ReplaceOrCreate(uint8_t *binArea, int lgth,
                            uint16_t group, uint16_t elem)
 {
    return HeaderInternal->ReplaceOrCreate(binArea,lgth,group,elem) != NULL;
@@ -589,7 +589,7 @@ bool File::ReplaceOrCreate(uint8_t *binArea, int lgth,
 /**
  * \brief Access to the underlying \ref PixelReadConverter RGBA LUT
  */
-uint8_t* File::GetLutRGBA()
+uint8_t* FileHelper::GetLutRGBA()
 {
    return PixelReadConverter->GetLutRGBA();
 }
@@ -605,7 +605,7 @@ uint8_t* File::GetLutRGBA()
  *    when the user set an image data
  * @return true if the check successfulls
  */
-bool File::CheckWriteIntegrity()
+bool FileHelper::CheckWriteIntegrity()
 {
    if(PixelWriteConverter->GetUserData())
    {
@@ -648,7 +648,10 @@ bool File::CheckWriteIntegrity()
    return true;
 }
 
-void File::SetWriteToRaw()
+/**
+ * \brief   
+ */ 
+void FileHelper::SetWriteToRaw()
 {
    if( HeaderInternal->GetNumberOfScalarComponents() == 3 
     && !HeaderInternal->HasLUT())
@@ -681,7 +684,11 @@ void File::SetWriteToRaw()
    }
 }
 
-void File::SetWriteToRGB()
+
+/**
+ * \brief   
+ */ 
+void FileHelper::SetWriteToRGB()
 {
    if(HeaderInternal->GetNumberOfScalarComponents()==3)
    {
@@ -751,7 +758,10 @@ void File::SetWriteToRGB()
    }
 }
 
-void File::RestoreWrite()
+/**
+ * \brief   
+ */ 
+void FileHelper::RestoreWrite()
 {
    Archive->Restore(0x0028,0x0002);
    Archive->Restore(0x0028,0x0004);
@@ -772,12 +782,18 @@ void File::RestoreWrite()
    Archive->Restore(0x0028,0x1203);
 }
 
-void File::SetWriteFileTypeToACR()
+/**
+ * \brief   
+ */ 
+void FileHelper::SetWriteFileTypeToACR()
 {
    Archive->Push(0x0002,0x0010);
 }
 
-void File::SetWriteFileTypeToExplicitVR()
+/**
+ * \brief   
+ */ 
+void FileHelper::SetWriteFileTypeToExplicitVR()
 {
    std::string ts = Util::DicomString( 
       Global::GetTS()->GetSpecialTransferSyntax(TS::ExplicitVRLittleEndian) );
@@ -788,7 +804,10 @@ void File::SetWriteFileTypeToExplicitVR()
    Archive->Push(tss);
 }
 
-void File::SetWriteFileTypeToImplicitVR()
+/**
+ * \brief   
+ */ 
+void FileHelper::SetWriteFileTypeToImplicitVR()
 {
    std::string ts = Util::DicomString(
       Global::GetTS()->GetSpecialTransferSyntax(TS::ImplicitVRLittleEndian) );
@@ -799,12 +818,16 @@ void File::SetWriteFileTypeToImplicitVR()
    Archive->Push(tss);
 }
 
-void File::RestoreWriteFileType()
+
+/**
+ * \brief   
+ */ 
+void FileHelper::RestoreWriteFileType()
 {
    Archive->Restore(0x0002,0x0010);
 }
 
-void File::SetWriteToLibido()
+void FileHelper::SetWriteToLibido()
 {
    ValEntry *oldRow = dynamic_cast<ValEntry *>
                 (HeaderInternal->GetDocEntry(0x0028, 0x0010));
@@ -833,7 +856,10 @@ void File::SetWriteToLibido()
    Archive->Push(libidoCode);
 }
 
-void File::SetWriteToNoLibido()
+/**
+ * \brief   
+ */ 
+void FileHelper::SetWriteToNoLibido()
 {
    ValEntry *recCode = dynamic_cast<ValEntry *>
                 (HeaderInternal->GetDocEntry(0x0008,0x0010));
@@ -848,14 +874,17 @@ void File::SetWriteToNoLibido()
    }
 }
 
-void File::RestoreWriteOfLibido()
+/**
+ * \brief   
+ */ 
+void FileHelper::RestoreWriteOfLibido()
 {
    Archive->Restore(0x0028,0x0010);
    Archive->Restore(0x0028,0x0011);
    Archive->Restore(0x0008,0x0010);
 }
 
-ValEntry *File::CopyValEntry(uint16_t group,uint16_t elem)
+ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
 {
    DocEntry *oldE = HeaderInternal->GetDocEntry(group, elem);
    ValEntry *newE;
@@ -873,7 +902,16 @@ ValEntry *File::CopyValEntry(uint16_t group,uint16_t elem)
    return newE;
 }
 
-BinEntry *File::CopyBinEntry(uint16_t group,uint16_t elem)
+/**
+ * \brief   Modifies the value of a given Bin Entry (Dicom Element)
+ *          when it exists. Create it with the given value when unexistant.
+ * @param   content (string) Value to be set
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * \return  pointer to the modified/created Bin Entry (NULL when creation
+ *          failed).
+ */ 
+BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem)
 {
    DocEntry *oldE = HeaderInternal->GetDocEntry(group, elem);
    BinEntry *newE;
@@ -896,7 +934,7 @@ BinEntry *File::CopyBinEntry(uint16_t group,uint16_t elem)
 /**
  * \brief Factorization for various forms of constructors.
  */
-void File::Initialise()
+void FileHelper::Initialise()
 {
    WriteMode = WMODE_RAW;
    WriteType = ExplicitVR;
@@ -911,7 +949,10 @@ void File::Initialise()
    }
 }
 
-uint8_t *File::GetRaw()
+/**
+ * \brief   
+ */ 
+uint8_t *FileHelper::GetRaw()
 {
    uint8_t *raw = PixelReadConverter->GetRaw();
    if ( ! raw )

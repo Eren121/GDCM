@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 23:18:30 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
  * 
  */
 #include "gdcmHeader.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 
 #include <iostream>
 #include <sstream>
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
    }
 
 // Step 3 : Create the file of the image
-   gdcm::File *file = new gdcm::File(header);
+   gdcm::FileHelper *file = new gdcm::FileHelper(header);
    file->SetImageData(imageData,size);
 
 // Step 4 : Set the writting mode and write the image

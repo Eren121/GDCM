@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:39:49 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/01/20 16:17:00 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ typedef std::string BaseTagKey;
  */
 class GDCM_EXPORT DocEntrySet : public Base
 {
-friend class File;
+friend class FileHelper;
 public:
    DocEntrySet() {};
    virtual ~DocEntrySet() {};

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:37:37 $
-  Version:   $Revision: 1.94 $
+  Date:      $Date: 2005/01/20 16:17:00 $
+  Version:   $Revision: 1.95 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,10 +65,10 @@ public:
    /// 'Swap code' accessor (see \ref SwapCode )
    int GetSwapCode() { return SwapCode; }
    // System access (meaning endian related !?)
-   uint16_t SwapShort(uint16_t);   // needed by File
-   uint32_t SwapLong(uint32_t);    // needed by File
-   uint16_t UnswapShort(uint16_t); // needed by File
-   uint32_t UnswapLong(uint32_t);  // needed by File
+   uint16_t SwapShort(uint16_t);   // needed by Document
+   uint32_t SwapLong(uint32_t);    // needed by Document
+   uint16_t UnswapShort(uint16_t); // needed by Document
+   uint32_t UnswapLong(uint32_t);  // needed by Document
    
 // Ordering of Documents
    bool operator<(Document &document);
@@ -254,7 +254,7 @@ private:
    uint32_t MaxSizePrintEntry;   
 
 private:
-   friend class File;
+   friend class FileHelper;
 };
 } // end namespace gdcm
 

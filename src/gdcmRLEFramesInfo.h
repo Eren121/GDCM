@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/20 16:17:00 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ class GDCM_EXPORT RLEFramesInfo
 {
    typedef std::list< RLEFrame* > RLEFrameList;
 friend class Document;
-friend class File;
+friend class FileHelper;
 friend class PixelReadConvert;
    RLEFrameList Frames;
 public:

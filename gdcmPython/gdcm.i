@@ -16,7 +16,7 @@
 #include "gdcmDocEntrySet.h"
 #include "gdcmDocument.h"
 #include "gdcmElementSet.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "gdcmGlobal.h"
 #include "gdcmHeader.h"
 #include "gdcmSerieHeader.h"

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:18 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmHeader.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 
       //////////////// Step 2:
 
-      gdcm::File*  file = new gdcm::File( header );
+      gdcm::FileHelper *file = new gdcm::FileHelper( header );
       int dataSize    = file->GetImageDataSize();
       uint8_t* imageData = file->GetImageData(); //EXTREMELY IMPORTANT
              // Sure, it is : It's up to the user to decide if he wants to
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
     
       //////////////// Step 3:
 
-      gdcm::File* reread = new gdcm::File( "TestReadWriteReadCompare.dcm" );
+      gdcm::FileHelper *reread = new gdcm::FileHelper( "TestReadWriteReadCompare.dcm" );
       if( !reread->GetHeader()->IsReadable() )
       {
         std::cerr << "Test::TestReadWriteReadCompare: Could not reread image "
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
       std::cout << "3...";
       // For the next step:
       int    dataSizeWritten = reread->GetImageDataSize();
-      uint8_t* imageDataWritten = reread->GetImageData();
+      uint8_t *imageDataWritten = reread->GetImageData();
 
       //////////////// Step 4:
  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:57 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmHeader.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 
 // This examples read two images (could be the same). Try to modify
 // Acquisition Matrix and then write the image again
@@ -32,8 +32,8 @@ int main(int argc, char* argv[])
     }
 
     gdcm::Header *h1 = new gdcm::Header( argv[1] );
-    gdcm::File  *f1 = new gdcm::File( h1 );
-    gdcm::File  *f2 = new gdcm::File( argv[2] );
+    gdcm::FileHelper  *f1 = new gdcm::FileHelper( h1 );
+    gdcm::FileHelper  *f2 = new gdcm::FileHelper( argv[2] );
 
     // 0018 1310 US ACQ Acquisition Matrix
     gdcm::DictEntry *dictEntry =

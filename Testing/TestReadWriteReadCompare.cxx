@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 14:17:52 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/20 16:16:59 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
 
    //////////////// Step 2:
 
-   gdcm::File*  file = new gdcm::File( header );
+   gdcm::FileHelper*  file = new gdcm::FileHelper( header );
    int dataSize    = file->GetImageDataSize();
    uint8_t* imageData = file->GetImageData(); //EXTREMELY IMPORTANT
           // Sure, it is : It's up to the user to decide if he wants to
@@ -70,7 +70,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
  
    //////////////// Step 3:
 
-   gdcm::File* reread = new gdcm::File( output );
+   gdcm::FileHelper* reread = new gdcm::FileHelper( output );
    if( !reread->GetHeader()->IsReadable() )
    {
      std::cerr << "Failed" << std::endl

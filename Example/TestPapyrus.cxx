@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 13:28:23 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmHeader.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "gdcmDocument.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
          return 1;
       }
    }
-   gdcm::File *original = new gdcm::File( filename );
+   gdcm::FileHelper *original = new gdcm::FileHelper( filename );
    gdcm::Header *h = original->GetHeader();
 
    // Look for private Papyrus Sequence
@@ -246,7 +246,7 @@ int main(int argc, char* argv[])
    n->ReplaceOrCreate(PixelRepresentation,0x0028,0x0102);
 
    // create the file
-   gdcm::File *file = new gdcm::File(n);
+   gdcm::FileHelper *file = new gdcm::FileHelper(n);
 
    file->SetImageData(PixelArea,lgrImage*nbImages);
    file->SetWriteTypeToDcmExplVR();

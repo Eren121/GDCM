@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/06 11:37:37 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.4 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 #include "gdcmHeader.h"
 #include "gdcmDocEntry.h"
 #include "gdcmBinEntry.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "gdcmUtil.h"
 
 #define USAGE "USAGE: Input3DImage OutputDirectory"
@@ -122,7 +122,7 @@ int main( int argc, char * argv[] )
     ////////////////////////////////////////////////////////////
     // Create a new dicom file object from the header         //
     ////////////////////////////////////////////////////////////
-    gdcm::File  *f1 = new gdcm::File(h1);
+    gdcm::FileHelper  *f1 = new gdcm::FileHelper(h1);
     uint8_t *myData = f1->GetImageData(); // Get an Image pointer
     f1->SetImageData( myData, sliceSize); // This callback ensures that the internal
                                           // Pixel_Data of f1 is set correctly

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FindTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:57 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "gdcmHeader.h"
 #include "gdcmUtil.h"
 
@@ -26,14 +26,14 @@ int main(int argc, char* argv[])
 {
    std::string toto, titi;
 
-   gdcm::File  * f1;
+   gdcm::FileHelper *f1;
 
    if(argc > 1 )
-      f1 = new gdcm::File(argv[1]);
+      f1 = new gdcm::FileHelper(argv[1]);
    else  {
       toto = GDCM_DATA_ROOT;
       toto += "/test.acr";
-      f1 = new gdcm::File(toto);
+      f1 = new gdcm::FileHelper(toto);
    }
 
    std::string ManufacturerName="SIEMENS ";

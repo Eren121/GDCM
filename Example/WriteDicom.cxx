@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:57 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmHeader.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 
 // Writting of a DICOM file based on a correct dicom header
 // and data pixel of another image
@@ -32,10 +32,10 @@ int main(int argc, char* argv[])
      }
  
    const char *first = argv[1];
-   gdcm::File *f1 = new gdcm::File( first );
+   gdcm::FileHelper *f1 = new gdcm::FileHelper( first );
  
    const char *second = argv[2];
-   gdcm::File *f2 = new gdcm::File( second );
+   gdcm::FileHelper *f2 = new gdcm::FileHelper( second );
  
    // We assume that DICOM fields of second file actually exists :
  

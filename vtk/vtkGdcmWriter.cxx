@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 18:24:07 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/20 16:17:01 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.10 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.11 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ size_t ReverseData(vtkImageData *image,unsigned char **data)
 /**
  * Set the datas informations in the file
  */
-void SetImageInformation(gdcm::File *file,vtkImageData *image)
+void SetImageInformation(gdcm::FileHelper *file,vtkImageData *image)
 {
    std::ostringstream str;
 
@@ -312,7 +312,7 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
 void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)
 {
    // From here, the write of the file begins
-   gdcm::File *dcmFile = new gdcm::File();
+   gdcm::FileHelper *dcmFile = new gdcm::FileHelper();
 
    // Set the image informations
    SetImageInformation(dcmFile,image);

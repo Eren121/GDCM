@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDcm2Acr.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:55 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,23 +25,23 @@ int main(int argc, char* argv[])
    std::string toto;
    std::string zozo;
 
-   gdcm::File  * f1;
+   gdcm::FileHelper  * f1;
 
-   std::cout << " Before gdcmFile()" << std::endl;
+   std::cout << " Before gdcmFileHelper()" << std::endl;
    std::cout << "\n\n---------------------------------------" << std::endl;
 
    if (argc > 1)
    {
       toto = argv[1];
-      f1 = new gdcm::File(toto);
+      f1 = new gdcm::FileHelper(toto);
    }
    else
    {
       std::string filename = GDCM_DATA_ROOT;
       filename += "/test.acr";
-      f1 = new gdcm::File(filename);
+      f1 = new gdcm::FileHelper(filename);
    }
-   std::cout << " Sortie gdcmFile()" << std::endl;
+   std::cout << " Sortie gdcmFileHelper()" << std::endl;
 
    //e1.PrintPubDict(std::cout);
    f1->GetHeader()->Print();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:58:36 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/01/20 16:16:59 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmHeader.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 
 #include <iostream>
 #include <fstream>
@@ -31,7 +31,7 @@ int InternalTest(std::string const & filename,
 
       ////// Step 1:
       std::cout << "      1...";
-      gdcm::File* tested = new gdcm::File( filename );
+      gdcm::FileHelper* tested = new gdcm::FileHelper( filename );
       if( !tested->GetHeader()->IsReadable() )
       {
         std::cout << " Failed" << std::endl
@@ -65,7 +65,7 @@ int InternalTest(std::string const & filename,
       ////// When reference file is not gdcm readable test is failed:
       std::cout << "3a...";
 
-      gdcm::File* reference = new gdcm::File( referenceFileName );
+      gdcm::FileHelper* reference = new gdcm::FileHelper( referenceFileName );
       if( !reference->GetHeader()->IsReadable() )
       {
          std::cout << " Failed" << std::endl

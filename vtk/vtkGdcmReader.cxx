@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/09 10:59:59 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/01/20 16:17:01 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,7 @@
 // time...
 // //////////////////////////////////////////////////////////////
 
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "gdcmHeader.h"
 #include "vtkGdcmReader.h"
 
@@ -75,7 +75,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.64 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.65 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -629,7 +629,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
              unsigned long & updateProgressCount)
 {
    vtkDebugMacro(<< "Copying to memory image [" << fileName.c_str() << "]");
-   gdcm::File file( fileName.c_str() );
+   gdcm::FileHelper file( fileName.c_str() );
    size_t size;
 
    // If the data structure of vtk for image/volume representation

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:56:21 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/20 16:16:59 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmHeader.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
 
@@ -85,8 +85,8 @@ int CopyRescaleDicom(std::string const & filename,
       d=originalH->GetNextEntry();
    }
 
-   gdcm::File *original = new gdcm::File( originalH );
-   gdcm::File *copy     = new gdcm::File( copyH );
+   gdcm::FileHelper *original = new gdcm::FileHelper( originalH );
+   gdcm::FileHelper *copy     = new gdcm::FileHelper( copyH );
 
    size_t dataSize = original->GetImageDataSize();
 
@@ -144,7 +144,7 @@ int CopyRescaleDicom(std::string const & filename,
 
    //////////////// Step 4:
    std::cout << "4...";
-   copy = new gdcm::File( output );
+   copy = new gdcm::FileHelper( output );
 
    //Is the file written still gdcm parsable ?
    if ( !copy->GetHeader()->IsReadable() )

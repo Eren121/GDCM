@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 15:26:42 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,14 +17,14 @@
 =========================================================================*/
 #include "gdcmHeader.h"
 #include "gdcmDebug.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
    gdcm::Header *e1;
-   gdcm::File   *f1;
+   gdcm::FileHelper   *f1;
    std::string fileName;   
    if (argc != 2) 
    {
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
       gdcm::Debug::SetDebugOn();
    
    e1= new gdcm::Header( fileName.c_str() );
-   f1 = new gdcm::File(e1);
+   f1 = new gdcm::FileHelper(e1);
 
    if (argc > 2) 
    {

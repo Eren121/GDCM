@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:56 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/20 16:16:58 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
    std::string zozo;
 
    gdcm::Header* e1, *e2;
-   gdcm::File  * f1, *f2;
+   gdcm::FileHelper  * f1, *f2;
 
    uint8_t* imageData, *imageData2;
    int dataSize, dataSize2;
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
        return 0;
    }
    
-   f1 = new gdcm::File(e1);
+   f1 = new gdcm::FileHelper(e1);
    imageData= f1->GetImageData();
    dataSize = f1->GetImageDataSize();
 
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
                  <<std::endl;
        return 0;
    }
-   f2 = new gdcm::File(e2);
+   f2 = new gdcm::FileHelper(e2);
    imageData2= f2->GetImageData();
    dataSize2 = f2->GetImageDataSize();
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 23:18:31 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/20 16:16:59 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
  * 
  */
 #include "gdcmHeader.h"
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 
 #include <iostream>
 #include <sstream>
@@ -155,7 +155,7 @@ int WriteSimple(Image &img)
 
 // Step 3 : Create the file of the image
    std::cout << "3...";
-   gdcm::File *file = new gdcm::File(header);
+   gdcm::FileHelper *file = new gdcm::FileHelper(header);
    file->SetImageData(imageData,size);
 
 // Step 4 : Set the writting mode and write the image
@@ -199,7 +199,7 @@ int WriteSimple(Image &img)
 
 // Step 5 : Read the written image
    std::cout << "5...";
-   gdcm::File* reread = new gdcm::File( fileName );
+   gdcm::FileHelper* reread = new gdcm::FileHelper( fileName );
    if( !reread->GetHeader()->IsReadable() )
    {
      std::cerr << "Failed" << std::endl

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:39:49 $
-  Version:   $Revision: 1.95 $
+  Date:      $Date: 2005/01/20 16:17:00 $
+  Version:   $Revision: 1.96 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ class DocEntryArchive;
  * for accessing the image/volume content. One can also use it to
  * write Dicom/ACR-NEMA/RAW files.
  */
-class GDCM_EXPORT File : public Base
+class GDCM_EXPORT FileHelper : public Base
 {
 public:
    enum FileMode
@@ -46,11 +46,11 @@ public:
    };
      
 public:
-   File( );
-   File( Header *header );
-   File( std::string const &filename );
+   FileHelper( );
+   FileHelper( Header *header );
+   FileHelper( std::string const &filename );
  
-   virtual ~File();
+   virtual ~FileHelper();
 
    void Print(std::ostream &os = std::cout, std::string const & indent = ""); 
 
