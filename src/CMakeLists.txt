@@ -4,7 +4,7 @@ SUBDIRS(jpeg)
 
 # "jpeglib.h" is defined here:
 INCLUDE_DIRECTORIES(
-  ${GDCM_SOURCE_DIR}/
+  ${GDCM_SOURCE_DIR}/src
   ${GDCM_BINARY_DIR}/ #for gdcmConfigure.h
 )
 
@@ -47,6 +47,7 @@ SET(libgdcm_la_SOURCES
    gdcmUtil.cxx
    gdcmValEntry.cxx   
    gdcmVR.cxx
+   ${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx
    )
 
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )

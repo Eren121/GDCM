@@ -30,8 +30,8 @@ MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 #-----------------------------------------------------------------------------
 # Build directory on which many applications depend
 SUBDIRS(
-  src
   Dicts
+  src
 )
 #-----------------------------------------------------------------------------
 # Example subdir:

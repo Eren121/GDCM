@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 19:53:28 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2004/11/03 18:08:56 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 
 namespace gdcm 
 {
-
+void FillDefaultDataDict(Dict *d);
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -42,25 +42,31 @@ Dict::Dict(std::string const & filename)
    TagName name;
 
    std::ifstream from( filename.c_str() );
-   dbg.Error(!from, "Dict::Dict: can't open dictionary",
-                    filename.c_str());
-
-   while (!from.eof())
+   if( !from )
    {
-      from >> std::hex;
-      from >> group;
-      from >> element;
-      from >> vr;
-      from >> fourth;
-      from >> std::ws;  //remove white space
-      std::getline(from, name);
-
-      DictEntry newEntry(group, element, vr, fourth, name);
-      AddNewEntry(newEntry);
+      dbg.Verbose(2,"Dict::Dict: can't open dictionary", filename.c_str());
+      // Using default embeded one:
+      FillDefaultDataDict( this );
    }
-   from.close();
+   else
+   {
+      while (!from.eof())
+      {
+         from >> std::hex;
+         from >> group;
+         from >> element;
+         from >> vr;
+         from >> fourth;
+         from >> std::ws;  //remove white space
+         std::getline(from, name);
+   
+         const DictEntry newEntry(group, element, vr, fourth, name);
+         AddNewEntry(newEntry);
+      }
+      from.close();
 
-   Filename = filename;
+      Filename = filename;
+   }
 }
 
 /**

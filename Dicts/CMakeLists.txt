@@ -13,41 +13,68 @@ INSTALL_FILES(${GDCM_DATA_DIR} FILES
 # Since CONFIGURE_FILE do a 'copy if different'
 # We have to write the file here since is contains 'DICOM_DICTIONARY'
 # Which is a variable afterward...
-#FILE(WRITE "/tmp/output.h.in" "@DICOM_DICTIONARY@" )
 
-# Following code contributing by Andy Cedilnik
-SET(INFILE "dicomV3.dic")
-
-FILE(READ "${INFILE}" ENT)
-
+# Following code contributing by Andy Cedilnik (Kitware)
+FILE(READ "dicomV3.dic" ENT)
 STRING(REGEX REPLACE "\n" ";" ENT "${ENT}")
-SET(DICOM_DICTIONARY
-  "void FillDefault()\n{"
-)
+SET(DICOM_DATA_DICTIONARY "")
 
 FOREACH(line ${ENT})
   STRING(REGEX REPLACE
-#    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([A-Z]+) (.*)([ \(RET\)]*)$"
-   # FIXME ? is not properly used, just luck
     "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([A-Z?]+) (.*)$"
-#    "   { \\1, \\2, \"\\3\" , \"\\4\" , \"\\5\", \"\\6\"}," nline "${line}")
-#    "   { \\1, \\2, \"\\3\" , \"\\4\" , \"\\5\"}," nline "${line}")
-    "  AddNewEntry( DictEntry ( 0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\"));" nline "${line}")
-  SET(DICOM_DICTIONARY "${DICOM_DICTIONARY}\n${nline}")
+    "   0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\", " nline "${line}")
+  SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
 
-SET(DICOM_DICTIONARY "${DICOM_DICTIONARY} \n }")
+SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY} \n 0,0,0,0,0")
+
+FILE(READ "dicomTS.dic" ENT_TS)
+STRING(REGEX REPLACE "\n" ";" ENT_TS "${ENT_TS}")
+SET(DICOM_TS_DICTIONARY "")
+
+FOREACH(line ${ENT_TS})
+  STRING(REGEX REPLACE
+    "^([0-9.]+) +(.*)$"
+    "  ts[\"\\1\"] = \"\\2\"; " nline "${line}")
+  SET(DICOM_TS_DICTIONARY "${DICOM_TS_DICTIONARY}\n${nline}")
+ENDFOREACH(line)
+
+FILE(READ "dicomVR.dic" ENT_VR)
+STRING(REGEX REPLACE ";" "/" ENT_VR "${ENT_VR}") # CMake doesn't like ';'
+STRING(REGEX REPLACE "\n" ";" ENT_VR "${ENT_VR}")
+SET(DICOM_VR_DICTIONARY "")
+
+FOREACH(line ${ENT_VR})
+  STRING(REGEX REPLACE
+    "^([A-Z][A-Z]) (.*)/ +//.*$"
+    "  vr[\"\\1\"] = \"\\2\"; " nline "${line}")
+  SET(DICOM_VR_DICTIONARY "${DICOM_VR_DICTIONARY}\n${nline}")
+ENDFOREACH(line)
+
+FILE(READ "DicomDir.dic" ENT_DIR)
+STRING(REGEX REPLACE "\\\\" "\\\\\\\\" ENT_DIR "${ENT_DIR}")
+STRING(REGEX REPLACE ";" "/" ENT_DIR "${ENT_DIR}") # CMake doesn't like ';'
+STRING(REGEX REPLACE "\n" ";" ENT_DIR "${ENT_DIR}")
+SET(DICOM_DIR_DICTIONARY "")
+
+FOREACH(line ${ENT_DIR})
+  STRING(REGEX REPLACE
+    "^(metaElem|patientElem|studyElem|serieElem|imageElem) *([a-f0-9]+) ([a-f0-9]+) [\"](.*)[\"](.*)$"
+    "  \"\\1\" , 0x\\2 , 0x\\3 , \"\\4\", \\5" nline "${line}")
+  SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY}\n${nline}")
+ENDFOREACH(line)
+
+SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY} \n 0,0,0,0")
 
 # See above
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/gdcmDefaultDict.h.in" "${GDCM_BINARY_DIR}/gdcmDefaultDict.h")
+CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in" "${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx" IMMEDIATE)
 
-#MESSAGE("${DICOM_DICTIONARY}")
 
-FILE(READ "dicomV3VM2004.dic" ENT)
-STRING(REGEX REPLACE "\n" ";" ENT "${ENT}")
+FILE(READ "dicomV3VM2004.dic" ENT2)
+STRING(REGEX REPLACE "\n" ";" ENT2 "${ENT2}")
 SET(DICOM_DICTIONARY2 "")
 
-FOREACH(line ${ENT})
+FOREACH(line ${ENT2})
   STRING(REGEX REPLACE
 #    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([A-Z]+) (.*)([ \(RET\)]*)$"
     "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([0-9]|[1]-[0-9n]|[2]-[2][n]|[3]-[3][n]) (.*)$"
@@ -56,5 +83,28 @@ FOREACH(line ${ENT})
   SET(DICOM_DICTIONARY2 "${DICOM_DICTIONARY2}\n${nline}")
 ENDFOREACH(line)
 
-#MESSAGE("${DICOM_DICTIONARY2}")
 
+
+#FILE(READ "04_06PU.txt" ENT3)
+FILE(READ "extract.txt" ENT3)
+
+STRING(REGEX REPLACE "\n" ";" ENT3 "${ENT3}")
+SET(DICOM_DICTIONARY3 "")
+
+FOREACH(line ${ENT3})
+  STRING(REGEX REPLACE
+#    "^[(]([0-9a-fA-F]+),([0-9a-fA-F]+)[)] (.*) ([A-ZA-Z]*) ([[0-3][-][1-3n]*|[1-]*[0-9]+]*) ?([RET|Retired]*)$"
+    "^[(]([0-9a-fA-F]+),([0-9a-fA-F]+)[)]  +(.*)  +([A-ZA-Z   [[0-3][-][1-3n]*|[1-]*[0-9]+]]*)([ RET]*)$"
+    "   { \\1 , \\2, \\3, \\4, \\5  }," nline "${line}")
+  STRING(COMPARE NOTEQUAL "${line}" "${nline}" add)
+  IF(add)
+    #SET(DICOM_DICTIONARY3 "${DICOM_DICTIONARY3}\n${nline}")
+    MESSAGE("${nline}")
+  ELSE(add)
+    MESSAGE("WRONG:${nline}")
+  ENDIF(add)
+ENDFOREACH(line)
+
+
+# Txt generation:
+# ~/Software/xpdf-3.00-linux/pdftotext -f 9 -l 81 -raw -nopgbrk 04_06PU.PDF 04_06PU-3.txt

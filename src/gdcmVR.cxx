@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:31:12 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/11/03 18:08:56 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 
 namespace gdcm 
 {
+void FillDefaultVRDict(VRHT & vr);
 //-----------------------------------------------------------------------------
 /**
  * \brief Constructor
@@ -34,30 +35,36 @@ VR::VR()
 {
    std::string filename = DictSet::BuildDictPath() + DICT_VR;
    std::ifstream from(filename.c_str());
-   dbg.Error(!from, "VR::VR: can't open dictionary", filename.c_str());
-
-   char buff[1024];
-   VRKey key;
-   VRAtr name;
-
-   while (!from.eof()) 
+   if(!from)
    {
-      from >> std::ws;
-      from.getline(buff, 1024, ' ');
-      key = buff;
-      from >> std::ws;
-      from.getline(buff, 1024, ';');
-      name = buff;
-
-      from >> std::ws;
-      from.getline(buff, 1024, '\n');
-
-      if(key != "")
-      {
-         vr[key] = name;
-      }
+      dbg.Verbose(2, "VR::VR: can't open dictionary", filename.c_str());
+      FillDefaultVRDict(vr);
    }
-   from.close();
+   else
+   {
+      char buff[1024];
+      VRKey key;
+      VRAtr name;
+   
+      while (!from.eof()) 
+      {
+         from >> std::ws;
+         from.getline(buff, 1024, ' ');
+         key = buff;
+         from >> std::ws;
+         from.getline(buff, 1024, ';');
+         name = buff;
+   
+         from >> std::ws;
+         from.getline(buff, 1024, '\n');
+   
+         if(key != "")
+         {
+            vr[key] = name;
+         }
+      }
+      from.close();
+   }
 }
 
 //-----------------------------------------------------------------------------

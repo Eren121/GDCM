@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 01:32:15 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/11/03 18:08:56 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,29 +27,36 @@
 
 namespace gdcm 
 {
+void FillDefaultTSDict(TSHT & ts);
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 TS::TS() 
 {
    std::string filename = DictSet::BuildDictPath() + DICT_TS;
    std::ifstream from(filename.c_str());
-   dbg.Error(!from, "TS::TS: can't open dictionary", filename.c_str());
-
-   TSKey key;
-   TSAtr name;
-
-   while (!from.eof())
+   if( !from )
    {
-      from >> key;
-      from >> std::ws;
-      std::getline(from, name);
-
-      if(key != "")
-      {
-         TsMap[key] = name;
-      }
+      dbg.Verbose(2, "TS::TS: can't open dictionary", filename.c_str());
+      FillDefaultTSDict( TsMap );
    }
-   from.close();
+   else
+   {
+      TSKey key;
+      TSAtr name;
+   
+      while (!from.eof())
+      {
+         from >> key;
+         from >> std::ws;
+         std::getline(from, name);
+   
+         if(key != "")
+         {
+            TsMap[key] = name;
+         }
+      }
+      from.close();
+   }
 }
 
 //-----------------------------------------------------------------------------

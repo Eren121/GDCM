@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:44 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/11/03 18:08:56 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,9 +23,10 @@
 
 #include <fstream>
 #include <iostream>
+
 namespace gdcm 
 {
-
+void FillDefaultDIRDict(DicomDirElement *dde);
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 
@@ -35,57 +36,51 @@ namespace gdcm
  */
 DicomDirElement::DicomDirElement()
 {
-   std::string filename = DictSet::BuildDictPath() + std::string(DICT_ELEM);
+   std::string filename = DictSet::BuildDictPath() + DICT_ELEM;
    std::ifstream from(filename.c_str());
-   dbg.Error(!from, "DicomDirElement::DicomDirElement: can't open dictionary",
-              filename.c_str());
-
-   char buff[1024];
-   std::string type;
-   Element elem;
-
-   while (!from.eof())
+   if(!from)
    {
-      from >> std::ws;
-      from.getline(buff, 1024, ' ');
-      type = buff;
-
-      if( (type=="metaElem")  || (type=="patientElem") || 
-          (type=="studyElem") || (type=="serieElem")   || 
-          (type=="imageElem") )
-      {
-         from >> std::hex >> elem.Group >> elem.Elem;
-
-         from >> std::ws;
-         from.getline(buff, 1024, '"');
-         from >> std::ws;
-         from.getline(buff, 1024, '"');
-         elem.Value = buff;
-
-         if( type == "metaElem" )
-         {
-            DicomDirMetaList.push_back(elem);
-         }
-         else if( type == "patientElem" )
-         {
-            DicomDirPatientList.push_back(elem);
-         }
-         else if( type == "studyElem" )
-         {
-            DicomDirStudyList.push_back(elem);
-         }
-         else if( type == "serieElem" )
-         {
-            DicomDirSerieList.push_back(elem);
-         }
-         else if( type == "imageElem" )
-         {
-            DicomDirImageList.push_back(elem);
-         }
-      }
-      from.getline(buff, 1024, '\n');
+      dbg.Verbose(2, 
+         "DicomDirElement::DicomDirElement: can't open dictionary", 
+            filename.c_str());
+      FillDefaultDIRDict( this );
    }
+   else
+   {
+      char buff[1024];
+      std::string type;
+      Element elem;
+
+      while (!from.eof())
+      {
+         from >> std::ws;
+         from.getline(buff, 1024, ' ');
+         type = buff;
+
+         if( (type=="metaElem")  || (type=="patientElem") || 
+             (type=="studyElem") || (type=="serieElem")   || 
+             (type=="imageElem") )
+         {
+            from >> std::hex >> elem.Group >> elem.Elem;
+
+            from >> std::ws;
+            from.getline(buff, 1024, '"');
+            from >> std::ws;
+            from.getline(buff, 1024, '"');
+            elem.Value = buff;
+         
+            AddNewEntry(type, elem);
+         }
+         else
+         {
+            dbg.Error("DicomDirElement::DicomDirElement: Error parsing file",
+                      filename.c_str());
+            dbg.Error("Type", type.c_str(), " is not registered as valid" );
+         }
+         from.getline(buff, 1024, '\n');
+      }
    from.close();
+   }
 }
 
 /**
@@ -157,6 +152,35 @@ void DicomDirElement::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 
+bool DicomDirElement::AddNewEntry(std::string const & type, 
+                                  Element const & elem)
+{
+   if( type == "metaElem" )
+   {
+      DicomDirMetaList.push_back(elem);
+   }
+   else if( type == "patientElem" )
+   {
+      DicomDirPatientList.push_back(elem);
+   }
+   else if( type == "studyElem" )
+   {
+      DicomDirStudyList.push_back(elem);
+   }
+   else if( type == "serieElem" )
+   {
+      DicomDirSerieList.push_back(elem);
+   }
+   else if( type == "imageElem" )
+   {
+      DicomDirImageList.push_back(elem);
+   }
+   else
+   {
+     return false;
+   }
+   return true;
+}
 //-----------------------------------------------------------------------------
 // Protected
 

@@ -1,0 +1,114 @@
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmDefaultDicts.cxx.in,v $
+  Language:  C++
+  Date:      $Date: 2004/11/03 18:08:56 $
+  Version:   $Revision: 1.1 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
+#ifndef GDCMDEFAULTDICTS_H
+#define GDCMDEFAULTDICTS_H
+
+#include "gdcmDict.h"
+#include "gdcmDictEntry.h"
+#include "gdcmTS.h"
+#include "gdcmVR.h"
+#include "gdcmDicomDirElement.h"
+
+namespace gdcm
+{
+
+typedef struct
+{
+  uint16_t group;
+  uint16_t element;
+  char *vr;
+  char *fourth;
+  char *name;
+} DICT_ENTRY;
+
+static DICT_ENTRY datadir[] = {
+@DICOM_DATA_DICTIONARY@
+};
+
+void FillDefaultDataDict(Dict *d)
+{
+  unsigned int i = 0;
+  DICT_ENTRY n = datadir[i];
+  while( n.name != 0 )
+    {
+    const DictEntry e( n.group, n.element, n.vr, n.fourth, n.name);
+    d->AddNewEntry( e );
+    n = datadir[++i];
+    }
+}
+
+void FillDefaultTSDict(TSHT & ts)
+{
+@DICOM_TS_DICTIONARY@
+}
+
+void FillDefaultVRDict(VRHT & vr)
+{
+@DICOM_VR_DICTIONARY@
+}
+
+typedef struct
+{
+  char *type;
+  unsigned short group;
+  unsigned short element;
+  char *value;
+} ELEMENT;
+
+static ELEMENT dataelement[] = {
+@DICOM_DIR_DICTIONARY@
+};
+
+void FillDefaultDIRDict(DicomDirElement *dde)
+{
+  unsigned int i = 0;
+  ELEMENT e = dataelement[i];
+  Element elem;
+  while( e.type != 0 )
+    {
+    elem.Group = e.group;
+    elem.Elem  = e.element;
+    elem.Value = e.value;
+    if( strcmp(e.type, "metaElem" ) == 0 )
+      {
+      dde->GetDicomDirMetaElements().push_back(elem);
+      }
+    else if( strcmp(e.type, "patientElem" ) == 0 )
+      {
+      dde->GetDicomDirPatientElements().push_back(elem);
+      }
+    else if( strcmp(e.type, "studyElem" ) == 0 )
+      {
+      dde->GetDicomDirStudyElements().push_back(elem);
+      }
+    else if( strcmp(e.type, "serieElem" ) == 0 )
+      {
+      dde->GetDicomDirSerieElements().push_back(elem);
+      }
+    else if( strcmp(e.type, "imageElem" ) == 0 )
+      {
+      dde->GetDicomDirImageElements().push_back(elem);
+      }
+    e = dataelement[++i];
+    }
+}
+
+} //end gdcm namespace
+#endif
+
