@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/14 15:52:39 $
-  Version:   $Revision: 1.143 $
+  Date:      $Date: 2005/02/14 16:04:02 $
+  Version:   $Revision: 1.144 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -927,7 +927,6 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
          binArea16++;
       }
       os.write ( (char*)buffer, BUFFER_SIZE );
-      binArea16 += BUFFER_SIZE/2;
    }
    if ( remainingSize > 0)
    {
