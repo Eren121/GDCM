@@ -1,4 +1,10 @@
 2004-11-30 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/ShowDicom.cxx : Change the test to only open one vtkImageViewer.
+     Otherwise, under linux (Graphic card : NVidia / SE : FedoraCore 1) the
+     X session is killed (for my computer... it seems to not be identic on
+     all linux)
+
+2004-11-30 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/ShowDicom.cxx : now can be used with an off-screen rendering to
      avoid problems (otherwise, the difference test between the visible image
      and the reference is incorrect. If the reference is greater than the
