@@ -38,14 +38,20 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
 ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
-  ADD_LIBRARY(pygdcm gdcm_wrap.cxx)
-
   # As of 09/10/2003 there was no FindSWIG.cmake
   # later we should use SWIG instead of swig
+  FIND_PROGRAM(SWIG_EXECUTABLE
+    NAMES swig-1.3 swig
+  )
+  
+  IF(NOT SWIG_EXECUTABLE)
+    MESSAGE(FATAL_ERROR "Swig could not be found wrapping is impossible")
+  ENDIF(NOT SWIG_EXECUTABLE)
+  
   # Build our custom command :
   ADD_CUSTOM_COMMAND(
     TARGET    pygdcm
-    COMMAND   swig
+    COMMAND   ${SWIG_EXECUTABLE}
     ARGS      -python -c++ -I${GDCM_SOURCE_DIR}/src -o 
               ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx 
               ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
@@ -58,12 +64,13 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   # Since the file gdcm_wrap.cxx does not exist, mark it as GENERATED:
   SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
 
+  ADD_LIBRARY(pygdcm gdcm_wrap.cxx)
   TARGET_LINK_LIBRARIES(pygdcm
     ${PYTHON_LIBRARY}
     gdcm
   )
   # http://www.cmake.org/pipermail/cmake/2003-August/004190.html
-  # SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
+  SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
 
 ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
@@ -89,7 +96,7 @@ IF(GDCM_VTK)
     ADD_LIBRARY(vtkgdcmPython SHARED ${gdcmfoo})
     # set the libraries to link against
     TARGET_LINK_LIBRARIES (vtkgdcmPython
-                           pygdcm
+                           #_pygdcm
                            vtkgdcm
                            vtkCommonPython
                            vtkIOPython)
