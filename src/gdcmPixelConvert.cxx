@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/10 16:13:18 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/11/10 16:22:02 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -609,6 +609,10 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    }
    else if ( IsDecompressed )
    {
+      // This problem can be found when some obvious informations are found
+      // after the field containing the image datas. In this case, these
+      // bad datas are added to the size of the image (in the PixelDataLength
+      // variable). But DecompressedSize is the right size of the image !
       if( PixelDataLength != DecompressedSize)
       {
          dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
