@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:43:36 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/11 15:58:36 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,6 +77,8 @@ int InternalTest(std::string const & filename,
          return 1;
       }
 
+      std::string PixelType = reference->GetHeader()->GetPixelType();
+
       ////// Step 3b:
       std::cout << "3b...";
       int testedDataSize    = tested->GetImageDataSize();
@@ -107,7 +109,9 @@ int InternalTest(std::string const & filename,
       if (testedDataSize != referenceDataSize)
       {
          std::cout << " Failed" << std::endl
-                   << "        pixel areas lengths differ: "
+                   << "        pixel ("
+                   << PixelType
+                   <<") areas lengths differ: "
                    << testedDataSize << " # " << referenceDataSize
                    << std::endl;
          delete tested;
@@ -121,7 +125,9 @@ int InternalTest(std::string const & filename,
       {
          (void)res;
          std::cout << " Failed" << std::endl
-                   << "        pixel differ (as expanded in memory)."
+                   << "        pixel (" 
+                   << PixelType
+                   << ") differ (as expanded in memory)."
                    << std::endl;
          delete tested;
          delete reference;
