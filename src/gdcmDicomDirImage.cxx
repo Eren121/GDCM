@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 02:39:09 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/08/31 15:39:48 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 /**
  * \ingroup gdcmDicomDirImage
  * \brief  Constructor 
- * @param  s  SQ Item holdoing the elements
+ * @param  s  SQ Item holding the elements
  * @param ptagHT pointer to the HTable (gdcmObject needs it 
  *               to build the gdcmDocEntries)
  */
@@ -34,6 +34,12 @@ gdcmDicomDirImage::gdcmDicomDirImage(gdcmSQItem *s, TagDocEntryHT *ptagHT):
    docEntries = s->GetDocEntries();
 }
 
+/**
+ * \ingroup gdcmDicomDirImage
+ * \brief  Constructor 
+ * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ *               to build the gdcmDocEntries)
+ */
 gdcmDicomDirImage::gdcmDicomDirImage(TagDocEntryHT *ptagHT):
    gdcmObject(ptagHT)
 {

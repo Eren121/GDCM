@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:22 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/08/31 15:39:48 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,8 +55,9 @@ public:
     
    virtual std::string GetEntryByNumber(uint16_t group, uint16_t element);
 
+   /// \brief   returns the ordinal position of a given SQItem
    int GetSQItemNumber() { return SQItemNumber; };
-
+   /// \brief   Sets the ordinal position of a given SQItem
    void SetSQItemNumber(int itemNumber) { SQItemNumber = itemNumber; };
 
 protected:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/08/31 15:39:48 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -216,7 +216,10 @@ gdcmDocEntry* gdcmDocEntrySet::NewDocEntryByNumber(uint16_t group,
    return newEntry;
 }
 
-/// \brief 
+/* \brief
+ * Probabely move, as is, to gdcmDocEntrySet, as a non virtual method
+ * an remove gdcmDocument::NewDocEntryByName
+ */
 gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string const & name)
 {
   gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
