@@ -1,3 +1,8 @@
+2005-01-16 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>			 
+	 * FIX 'Dictionnary' is now spelt 'Dictionary'
+	       'wether' is now spelt 'whether'
+			 'archieve' is now spelt 'archive'   ;-)
+
 2005-01-15 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
     * ADD DicomDir, DicomDirPatient, DicomDirStudy, DicomDirSerie, DicomDirImage
 	       related methods, in order not to expose internal mechanisms
