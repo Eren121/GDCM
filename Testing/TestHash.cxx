@@ -3,8 +3,8 @@
 #include <iostream>
 #include <stdio.h>
 
-int main()
-{
+int main() {
+
   typedef map<string, char*> dict;
   
   dict tb1;

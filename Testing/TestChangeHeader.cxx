@@ -9,8 +9,7 @@
 	// et des pixels d'une autre image
 	
 	
-int main(int argc, char* argv[])
-{  
+int main(int argc, char* argv[]) {  
 	string premier, deuxieme;
 	char resultat[200];
 	
@@ -55,7 +54,11 @@ int main(int argc, char* argv[])
 	printf ("dataSize %d\n",dataSize);
 	imageData= f2->GetImageData();
 			
+	// TODO : ne devrait-on pas fusionner ces 2 fonctions ?
 	f1->SetImageData(imageData,dataSize);
+	f1->SetImageDataSize(dataSize);
+	
+	f1->PrintPubElVal();
 	
 	// ou, plus joli:
 	//f1->SetImageData(f2->GetImageData(),f2->GetImageDataSize());
@@ -64,11 +67,6 @@ int main(int argc, char* argv[])
 	string s10=f2->GetPubElValByNumber(0x7fe0, 0x0010);
 	printf("lgr 7fe0, 0000 %s\n",s0.c_str());
 	printf("lgr 7fe0, 0010 %s\n",s10.c_str());	
-	
-	f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x7fe0, 0x0000),
-	  0x7fe0, 0x0000);
-	//f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x7fe0, 0x0010),
-	//  0x7fe0, 0x0010);
 
 	sprintf(resultat, "%s.vol", deuxieme.c_str());
 	printf ("WriteDCM\n");
