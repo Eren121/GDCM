@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:43:27 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/03/11 11:08:31 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,9 +29,7 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-#define MAX_SIZE_PRINT_ELEMENT_VALUE 64
 
-//-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
  * \brief   Constructor from a given DictEntry
