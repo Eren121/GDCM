@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/09/03 14:04:02 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,8 +123,26 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *newEntry)
 }
 
 /**
- * \brief   Clear the hash table from given entry.
+ * \brief   Clear the hash table from given entry BUT keep the entry.
  * @param   entryToRemove Entry to remove.
+ */
+bool gdcmElementSet::RemoveEntryNoDestroy( gdcmDocEntry *entryToRemove)
+{
+   gdcmTagKey key = entryToRemove->GetKey();
+   if( TagHT.count(key) == 1 )
+   {
+      TagHT.erase(key);
+      dbg.Verbose(0, "gdcmElementSet::RemoveEntry: one element erased.");
+      return true;
+   }
+
+   dbg.Verbose(0, "gdcmElementSet::RemoveEntry: key not present: ");
+   return false ;
+}
+
+/**
+ * \brief   Clear the hash table from given entry AND delete the entry.
+ * @param   entryToRemove Entry to remove AND delete.
  */
 bool gdcmElementSet::RemoveEntry( gdcmDocEntry *entryToRemove)
 {
@@ -133,6 +151,7 @@ bool gdcmElementSet::RemoveEntry( gdcmDocEntry *entryToRemove)
    {
       TagHT.erase(key);
       dbg.Verbose(0, "gdcmElementSet::RemoveEntry: one element erased.");
+      delete entryToRemove;
       return true;
    }
 
