@@ -1,8 +1,8 @@
+#include "gdcmHeader.h"
 #include <map>
 #include <list>
 #include <fstream>
 #include <iostream>
-#include "gdcmHeader.h"
 
 //Generated file:
 #include "gdcmDataImages.h"

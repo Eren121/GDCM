@@ -1,8 +1,8 @@
-#include <iostream>
 #include "gdcm.h"
 #include "gdcmDocEntry.h"
 #include "gdcmDicomDir.h"
 
+#include <iostream>
 #include <fstream>
 
 int TestDicomDir(int argc, char* argv[])
