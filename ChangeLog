@@ -1,3 +1,10 @@
+2005-01-22 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Finish the CreateUniqueUID stuff. Seems to compiled/runs on every
+	 plateforms ITK support. Had some troubles with uint64_t on Win32, go to 
+	 http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclang/html/_langref_data_type_ranges.asp
+	 for more info. Basically you can not used 'unsigned' __int8 in an ostream.
+	 So can't you use __int64 in ostream at all.
+
 2005-01-22 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * bug fix for compilation on MSVC6
    * gdcmPython/gdcm.i : rename of classes missed
