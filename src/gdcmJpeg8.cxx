@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg8.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:55 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/10/10 16:44:00 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -359,7 +359,6 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  */
  
  /**
- * \ingroup gdcmFile
  * \brief   routine for JPEG decompression 
  * @param fp pointer to an already open file descriptor 
  *                      8 significant bits per pixel
@@ -367,7 +366,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @return 1 on success, 0 on error
  */
  
-bool gdcmFile::gdcm_read_JPEG_file (FILE* fp, void* image_buffer)
+bool gdcm_read_JPEG_file ( FILE* fp, void* image_buffer )
 {
    char* pimage;
 

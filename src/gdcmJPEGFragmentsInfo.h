@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
+  Module:    $RCSfile: gdcmJPEGFragmentsInfo.h,v $
   Language:  C++
   Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.4 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,35 +17,32 @@
 =========================================================================*/
 
 
-#ifndef GDCMRLEFRAMESINFO_H
-#define GDCMRLEFRAMESINFO_H
+#ifndef GDCMJPEGFRAGMENTSINFO_H
+#define GDCMJPEGFRAGMENTSINFO_H
 
-#include "gdcmRLEFrame.h"
+#include "gdcmJPEGFragment.h"
 #include <list>
 
 /**
  * \brief Utility class for gathering the informations of the collection
- *        of RLE frame[s] (see \ref gdcmRLEFrame)  when handling
- *        "Encapsulated RLE Compressed Images" (see PS 3.5-2003 annex G). 
- *        Note: a classical image can be considered as the degenerated case
- *              of a multiframe image. In this case the collection is limited
- *              to a single individual frame.
+ *        of JPEG fragment[s] (see \ref gdcmJPEGFragment)  when handling
+ *        "Encapsulated JPEG Compressed Images". 
  *        The informations on each frame are obtained during the parsing
  *        of a gdcmDocument (refer to
- *          \ref gdcmDocument::ComputeRLEInfo() ).
- *        They shall be used when (if necessary) decoding the frames.
+ *         \ref gdcmDocument::ComputeJPEGFragmentInfo() ).
+ *        They shall be used when (if necessary) decoding the fragments.
  *
- *        This class is simply a stl list<> of \ref gdcmRLEFrame.
+ *        This class is simply a stl list<> of \ref gdcmJPEGFragment.
  */
-class GDCM_EXPORT gdcmRLEFramesInfo
+class GDCM_EXPORT gdcmJPEGFragmentsInfo
 {
-   typedef std::list< gdcmRLEFrame* > RLEFrameList;
+   typedef std::list< gdcmJPEGFragment* > JPEGFragmentsList;
 friend class gdcmDocument;
 friend class gdcmFile;
 friend class gdcmPixelConvert;
-   RLEFrameList Frames;
+   JPEGFragmentsList Fragments;
 public:
-   ~gdcmRLEFramesInfo();
+   ~gdcmJPEGFragmentsInfo();
 };
 
 //-----------------------------------------------------------------------------

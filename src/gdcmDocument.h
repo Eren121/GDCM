@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:36:57 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2004/10/10 16:44:00 $
+  Version:   $Revision: 1.49 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 #include "gdcmDictSet.h"
 #include "gdcmDocEntry.h"
 #include "gdcmRLEFramesInfo.h"
+#include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmDocEntrySet.h"
 #include "gdcmElementSet.h"
 
@@ -94,6 +95,9 @@ protected:
    /// Store the RLE frames info obtained during parsing of pixels.
    gdcmRLEFramesInfo RLEInfo;
 
+   /// Store the JPEG fragments info obtained during parsing of pixels.
+   gdcmJPEGFragmentsInfo JPEGInfo;
+
    /// \brief Amount of printed details for each Header Entry (Dicom Element):
    /// 0 : stands for the least detail level.
    int PrintLevel;
@@ -116,13 +120,14 @@ public:
    bool IsExplicitVRLittleEndianTransferSyntax();
    bool IsDeflatedExplicitVRLittleEndianTransferSyntax();
    bool IsExplicitVRBigEndianTransferSyntax();
+   bool IsRLELossLessTransferSyntax();
    bool IsJPEGBaseLineProcess1TransferSyntax();
    bool IsJPEGExtendedProcess2_4TransferSyntax();
    bool IsJPEGExtendedProcess3_5TransferSyntax();
    bool IsJPEGSpectralSelectionProcess6_8TransferSyntax();
-   bool IsRLELossLessTransferSyntax();
    bool IsJPEGLossless();
    bool IsJPEG2000();
+   bool IsJPEGTransferSyntax();
    bool IsEncapsulateTransferSyntax();
    bool IsDicomV3();
 
@@ -164,7 +169,9 @@ protected:
    gdcmDocument( std::string const & filename );
    virtual ~gdcmDocument();
    
+   void ReadAndSkipEncapsulatedBasicOffsetTable();
    void ComputeRLEInfo();
+   void ComputeJPEGFragmentInfo();
    // Entry
    bool CheckIfEntryExistByNumber(uint16_t group, uint16_t elem );
 public:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 17:24:54 $
-  Version:   $Revision: 1.137 $
+  Date:      $Date: 2004/10/10 16:44:00 $
+  Version:   $Revision: 1.138 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,6 @@
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
 #include "gdcmPixelConvert.h"
-#include "jpeg/ljpg/jpegless.h"
 
 typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
 
@@ -521,14 +520,15 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    bool signedPixel = Header->IsSignedPixelData();
 
    gdcmPixelConvert::ConvertReorderEndianity(
-                            (uint8_t*) destination,
-                            ImageDataSize,
-                            numberBitsStored,
-                            numberBitsAllocated,
-                            Header->GetSwapCode(),
-                            signedPixel );
+                         (uint8_t*) destination,
+                         ImageDataSize,
+                         numberBitsStored,
+                         numberBitsAllocated,
+                         Header->GetSwapCode(),
+                         signedPixel );
 
-   ConvertReArrangeBits( (uint8_t*) destination,
+   gdcmPixelConvert::ConvertReArrangeBits(
+                         (uint8_t*) destination,
                          ImageDataSize,
                          numberBitsStored,
                          numberBitsAllocated,
@@ -612,50 +612,6 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
  
    return ImageDataSize; 
-}
-
-/**
- * \brief   Re-arrange the bits within the bytes.
- */
-void gdcmFile::ConvertReArrangeBits( uint8_t* pixelZone,
-                                     size_t imageDataSize,
-                                     int numberBitsStored,
-                                     int numberBitsAllocated,
-                                     int highBitPosition)
-     throw ( gdcmFormatError )
-{
-   if ( numberBitsStored != numberBitsAllocated )
-   {
-      int l = (int)(imageDataSize / (numberBitsAllocated/8));
-      if ( numberBitsAllocated == 16 )
-      {
-         uint16_t mask = 0xffff;
-         mask = mask >> ( numberBitsAllocated - numberBitsStored );
-         uint16_t* deb = (uint16_t*)pixelZone;
-         for(int i = 0; i<l; i++)
-         {
-            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
-            deb++;
-         }
-      }
-      else if ( numberBitsAllocated == 32 )
-      {
-         uint32_t mask = 0xffffffff;
-         mask = mask >> ( numberBitsAllocated - numberBitsStored );
-         uint32_t* deb = (uint32_t*)pixelZone;
-         for(int i = 0; i<l; i++)
-         {
-            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
-            deb++;
-         }
-      }
-      else
-      {
-         dbg.Verbose(0, "gdcmFile::ConvertReArrangeBits: weird image");
-         throw gdcmFormatError( "gdcmFile::ConvertReArrangeBits()",
-                                "weird image !?" );
-      }
-   }
 }
 
 /**
@@ -971,7 +927,8 @@ bool gdcmFile::ReadPixelData(void* destination)
    // ---------------------- Run Length Encoding
    if ( Header->IsRLELossLessTransferSyntax() )
    {
-      bool res = gdcmPixelConvert::gdcm_read_RLE_file ( destination,
+      bool res = gdcmPixelConvert::ReadAndDecompressRLEFile(
+                                      destination,
                                       Header->GetXSize(),
                                       Header->GetYSize(),
                                       Header->GetZSize(),
@@ -989,122 +946,18 @@ bool gdcmFile::ReadPixelData(void* destination)
       numberBitsAllocated = 16;
    }
 
-   int nBytes= numberBitsAllocated/8;
-   int taille = Header->GetXSize() * Header->GetYSize()  
-                * Header->GetSamplesPerPixel();
-   long fragmentBegining; // for ftell, fseek
-
-   bool jpg2000     = Header->IsJPEG2000();
-   bool jpgLossless = Header->IsJPEGLossless();
-
-   bool res = true;
-   uint16_t ItemTagGr, ItemTagEl;
-   int ln;  
-   
-   //  Position on begining of Jpeg Pixels
-   
-   fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-   fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-   if(Header->GetSwapCode())
-   {
-      ItemTagGr = Header->SwapShort(ItemTagGr);
-      ItemTagEl = Header->SwapShort(ItemTagEl);
-   }
-
-   fread(&ln,4,1,fp);
-   if( Header->GetSwapCode() )
-   {
-      ln = Header->SwapLong( ln );    // Basic Offset Table Item length
-   }
-
-   if ( ln != 0 )
-   {
-      // What is it used for ?!?
-      uint8_t* BasicOffsetTableItemValue = new uint8_t[ln+1];
-      fread(BasicOffsetTableItemValue,ln,1,fp);
-      //delete[] BasicOffsetTableItemValue;
-   }
-
-   // first Fragment initialisation
-   fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-   fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-   if( Header->GetSwapCode() )
-   {
-      ItemTagGr = Header->SwapShort( ItemTagGr );
-      ItemTagEl = Header->SwapShort( ItemTagEl );
-   }
-
-   // parsing fragments until Sequence Delim. Tag found
-   while ( ItemTagGr == 0xfffe && ItemTagEl != 0xe0dd )
-   {
-      // --- for each Fragment
-      fread(&ln,4,1,fp);
-      if( Header->GetSwapCode() )
-      {
-         ln = Header->SwapLong(ln);    // Fragment Item length
-      }
-      fragmentBegining = ftell( fp );
-
-      if ( jpg2000 )
-      {
-      // JPEG 2000 :    call to ???
-      res = gdcm_read_JPEG2000_file (fp,destination);  // Not Yet written 
-      // ------------------------------------- endif (JPEG2000)
-      }
-      else if (jpgLossless)
-      {
-         // JPEG LossLess : call to xmedcom Lossless JPEG
-         // Reading Fragment pixels
-         JPEGLosslessDecodeImage (fp, (uint16_t*)destination,
-               Header->GetPixelSize() * 8 * Header->GetSamplesPerPixel(), ln);
-         res = 1; // in order not to break the loop
-  
-      } // ------------------------------------- endif (JPEGLossless)
-      else
-      {
-         // JPEG Lossy : call to IJG 6b
-         if ( Header->GetBitsStored() == 8)
-         {
-            // Reading Fragment pixels
-            res = gdcm_read_JPEG_file (fp,destination);
-         }
-         else if ( Header->GetBitsStored() == 12)
-         {
-            // Reading Fragment pixels
-            res = gdcm_read_JPEG_file12 (fp,destination);
-         }
-         else
-         {
-            // other JPEG lossy not supported
-            dbg.Error(" gdcmFile::ReadPixelData : unknown jpeg lossy compression");
-            return 0;
-         }
-         // ------------------------------------- endif (JPEGLossy)
-      }
-
-      if ( !res )
-      {
-         break;
-      }
-               
-      // location in user's memory 
-      // for next fragment (if any) 
-      destination = (uint8_t*)destination + taille * nBytes;
-
-      fseek(fp,fragmentBegining, SEEK_SET); // To be sure we start 
-      fseek(fp,ln,SEEK_CUR);                // at the begining of next fragment
-      
-      ItemTagGr = ItemTagEl = 0;
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if( Header->GetSwapCode() )
-      {
-         ItemTagGr = Header->SwapShort( ItemTagGr );
-         ItemTagEl = Header->SwapShort( ItemTagEl );
-      }
-   }
-   // endWhile parsing fragments until Sequence Delim. Tag found    
-
+   bool res = gdcmPixelConvert::ReadAndDecompressJPEGFile(
+                                   (uint8_t*)destination,
+                                   Header->GetXSize(),
+                                   Header->GetYSize(),
+                                   Header->GetBitsAllocated(),
+                                   Header->GetBitsStored(),
+                                   Header->GetSamplesPerPixel(),
+                                   Header->GetPixelSize(),
+                                   Header->IsJPEG2000(),
+                                   Header->IsJPEGLossless(),
+                                   &(Header->JPEGInfo),
+                                   fp );
    Header->CloseFile();
    return res;
 }

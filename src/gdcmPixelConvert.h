@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 17:02:53 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/10/10 16:44:00 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 
 #include "gdcmCommon.h"
 #include "gdcmRLEFramesInfo.h"
+#include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmException.h"
 
 /*
@@ -53,15 +54,6 @@ public:
    void Squeeze();
 //////////////////////////////////////////////////////////
 // In progress
-bool ReadAndUncompress12Bits( FILE* filePointer,
-                              size_t uncompressedSize,
-                              size_t PixelNumber );
-bool ReadUncompressed( FILE* filePointer,
-                       size_t uncompressedSize,
-                       size_t expectedSize );
-bool ConvertGrayAndLutToRGB( uint8_t *lutRGBA );
-bool ReadAndUncompressRLE8Bits(FILE* fp, size_t uncompressedSize );
-
    static bool UncompressRLE16BitsFromRLE8Bits(
                   int XSize,
                   int YSize,
@@ -72,7 +64,7 @@ bool ReadAndUncompressRLE8Bits(FILE* fp, size_t uncompressedSize );
                   long fragmentSize,
                   long uncompressedSegmentSize,
                   FILE* fp );
-   static bool gdcm_read_RLE_file(
+   static bool ReadAndDecompressRLEFile(
                   void* image_buffer,
                   int XSize,
                   int YSize,
@@ -93,6 +85,26 @@ bool ReadAndUncompressRLE8Bits(FILE* fp, size_t uncompressedSize );
                   int numberBitsAllocated,
                   int swapCode,
                   bool signedPixel );
+   static bool ReadAndDecompressJPEGFile(
+                  uint8_t* destination,
+                  int XSize,
+                  int YSize,
+                  int BitsAllocated,
+                  int BitsStored,
+                  int SamplesPerPixel,
+                  int PixelSize,
+                  bool isJPEG2000,
+                  bool isJPEGLossless,
+                  gdcmJPEGFragmentsInfo* JPEGInfo,
+                  FILE* fp );
+   static bool gdcmPixelConvert::ConvertReArrangeBits(
+                  uint8_t* pixelZone,
+                  size_t imageDataSize,
+                  int numberBitsStored,
+                  int numberBitsAllocated,
+                  int highBitPosition ) throw ( gdcmFormatError );
+
+
 };
 
 //-----------------------------------------------------------------------------

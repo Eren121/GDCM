@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg12.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:55 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/10/10 16:44:00 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -134,7 +134,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo)
  * @return 1 on success, 0 on error
  */
  
-bool gdcmFile::gdcm_read_JPEG_file12 (FILE* fp,void* image_buffer)
+bool gdcm_read_JPEG_file12 ( FILE* fp,void* image_buffer )
 {
    char *pimage;
 

@@ -1,3 +1,18 @@
+2004-10-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * CLEANUP_ROUND (10) for gdcmPixelConvert (Xanax is my friend stage)
+    The JPEG fragments are now parsed at the same stage than the RLE
+    information. All code related to JPEG is now in gdcmPixelConvert:
+    - src/gdcmJPEGFragment.h and gdcmJPEGFragmentsInfo.[h|cxx] added 
+    - src/gdcmJpeg12.cxx, gdcmJpeg2000.cxx and gdcmJpeg8.cxx no longer
+      export a gdcmFile:: method. This are simply global functions
+      (for the time being this is better than having them attach to
+       either gdcmFile:: or gdcmPixelConvert::).
+    - src/gdcmDocument.[cxx|h], gdcmDocument:: now parser the JPEG fragments
+      and stores the result in a gdcmJPEGFragmentsInfo.
+    - src/gdcmFile.[cxx|h] and gdcmPixelConvert.[cxx|h]: all JPEG related
+      code (among other stuff) moved away from gdcmFile:; to 
+      gdcmPixelConvert::
+
 2004-10-08 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmCommon.h now declares int8_t for non stdint.h plateforms.
   * CLEANUP_ROUND (7) for gdcmPixelConvert (lost at sea)
@@ -12,7 +27,6 @@
     - src/gdcmFile.[cxx|h} gdcmPixelConvert.[cxx|h], SwapZone(),
       ConvertReorderEndianity(), ConvertDecmpres12BitsTo16Bits() moved
       away from gdcmFile:: to gdcmPixelConvert::.
-      
 
 2004-10-07 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND (5) for gdcmPixelConvert (Upshit creek without a paddle)

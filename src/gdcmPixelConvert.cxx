@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 03:03:10 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/10/10 16:44:00 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,10 +19,29 @@
 //////////////////   TEMPORARY NOT
 // look for "fixMem" and convert that to a member of this class
 // Removing the prefix fixMem and dealing with allocations should do the trick
+//
+// grep PIXELCONVERT everywhere and clean up !
+
+
 #define str2num(str, typeNum) *((typeNum *)(str))
 
 #include "gdcmDebug.h"
 #include "gdcmPixelConvert.h"
+
+// External JPEG decompression
+
+// for JPEGLosslessDecodeImage
+#include "jpeg/ljpg/jpegless.h"
+
+// For JPEG 2000, body in file gdcmJpeg2000.cxx
+bool gdcm_read_JPEG2000_file (FILE* fp, void* image_buffer);
+
+// For JPEG 8 Bits, body in file gdcmJpeg8.cxx
+bool gdcm_read_JPEG_file     (FILE* fp, void* image_buffer);
+
+// For JPEG 12 Bits, body in file gdcmJpeg12.cxx
+bool gdcm_read_JPEG_file12   (FILE* fp, void* image_buffer);
+
 
 
 //-----------------------------------------------------------------------------
@@ -120,54 +139,9 @@ void gdcmPixelConvert::ConvertDecompress12BitsTo16Bits(
 }
 
 /**
- * \brief Read from file an uncompressed image.
- */
-bool gdcmPixelConvert::ReadUncompressed( FILE* filePointer,
-                                         size_t uncompressedSize,
-                                         size_t expectedSize )
-{
-   if ( expectedSize > uncompressedSize )
-   {
-      dbg.Verbose(0, "gdcmPixelConvert::ReadUncompressed: expectedSize"
-                     "is bigger than it should");
-      return false;
-   }
-   SetUncompressedSize( uncompressedSize );
-   AllocateUncompressed();
-   size_t ItemRead = fread( (void*)Uncompressed, expectedSize, 1, filePointer);
-   if ( ItemRead != 1 )
-   {
-      return false;
-   }
-   return true;
-}
-
-/**
- * \brief  Convert a Gray plane and ( Lut R, Lut G, Lut B ) into an
- *         RGB plane.
- * @return True on success.
- */
-bool gdcmPixelConvert::ConvertGrayAndLutToRGB( uint8_t *lutRGBA )
-
-{
-   (void)lutRGBA;
-   /// We assume Uncompressed contains the decompressed gray plane
-   /// and build the RGB image.
-   SetRGBSize( UncompressedSize );
-   AllocateRGB();
-
-//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-//COPY HERE THE CODE OF GetImageDataIntoVector
-      
-   /// \todo check that operator new []didn't fail, and sometimes return false
-   return true;
-}
-
-/**
  * \brief     Try to deal with RLE 16 Bits. 
  *            We assume the RLE has allready been parsed and loaded in
- *            Uncompressed (through \ref ReadAndUncompressRLE8Bits ).
+ *            Uncompressed (through \ref ReadAndDecompressJPEGFile ).
  *            We here need to make 16 Bits Pixels from Low Byte and
  *            High Byte 'Planes'...(for what it may mean)
  * @return    Boolean
@@ -271,7 +245,7 @@ bool gdcmPixelConvert::ReadAndUncompressRLEFragment( uint8_t* decodedZone,
  *            at which the pixel data should be copied
  * @return    Boolean
  */
-bool gdcmPixelConvert::gdcm_read_RLE_file( void* image_buffer,
+bool gdcmPixelConvert::ReadAndDecompressRLEFile( void* image_buffer,
                                    int XSize,
                                    int YSize,
                                    int ZSize,
@@ -290,9 +264,9 @@ bool gdcmPixelConvert::gdcm_read_RLE_file( void* image_buffer,
       ++it )
    {
       // Loop on the fragments
-      for( int k = 1; k <= (*it)->NumberFragments; k++ )
+      for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
       {
-         fseek( fp, (*it)->Offset[k] ,SEEK_SET);
+         fseek( fp, (*it)->Offset[k] ,SEEK_SET );
          (void)gdcmPixelConvert::ReadAndUncompressRLEFragment(
                                  (uint8_t*) im, (*it)->Length[k],
                                  uncompressedSegmentSize, fp );
@@ -427,6 +401,131 @@ void gdcmPixelConvert::ConvertReorderEndianity( uint8_t* pixelZone,
            *deb = 0;
          }
          deb++;
+      }
+   }
+}
+
+/**
+ * \brief     Reads from disk the Pixel Data of JPEG Dicom encapsulated
+ &            file and uncompress it.
+ * @param     fp already open File Pointer
+ * @param     destination Where decompressed fragments should end up
+ * @return    Boolean
+ */
+bool gdcmPixelConvert::ReadAndDecompressJPEGFile( uint8_t* destination,
+                                   int XSize,
+                                   int YSize,
+                                   int BitsAllocated,
+                                   int BitsStored,
+                                   int SamplesPerPixel,
+                                   int PixelSize,
+                                   bool isJPEG2000,
+                                   bool isJPEGLossless,
+                                   gdcmJPEGFragmentsInfo* JPEGInfo,
+                                   FILE* fp )
+{
+   // Loop on the fragment[s]
+   for( gdcmJPEGFragmentsInfo::JPEGFragmentsList::iterator
+        it  = JPEGInfo->Fragments.begin();
+        it != JPEGInfo->Fragments.end();
+      ++it )
+   {
+      fseek( fp, (*it)->Offset, SEEK_SET );
+                                                                                
+      if ( isJPEG2000 )
+      {
+         if ( ! gdcm_read_JPEG2000_file( fp, destination ) )
+         {
+            return false;
+         }
+      }
+      else if ( isJPEGLossless )
+      {
+         // JPEG LossLess : call to xmedcom Lossless JPEG
+         JPEGLosslessDecodeImage( fp,
+                                  (uint16_t*)destination,
+                                  PixelSize * 8 * SamplesPerPixel,
+                                  (*it)->Length );
+      }
+      else if ( BitsStored == 8)
+      {
+         // JPEG Lossy : call to IJG 6b
+         if ( ! gdcm_read_JPEG_file ( fp, destination ) )
+         {
+            return false;
+         }
+      }
+      else if ( BitsStored == 12)
+      {
+         // Reading Fragment pixels
+         if ( ! gdcm_read_JPEG_file12 ( fp, destination ) )
+         {
+            return false;
+         }
+      }
+      else
+      {
+         // other JPEG lossy not supported
+         dbg.Error(" gdcmFile::ReadPixelData : unknown jpeg lossy "
+                   " compression ");
+         return false;
+      }
+                                                                                
+      // Advance to next free location in destination 
+      // for next fragment decompression (if any)
+      int length = XSize * YSize * SamplesPerPixel;
+      int numberBytes = BitsAllocated / 8;
+                                                                                
+      destination = (uint8_t*)destination + length * numberBytes;
+                                                                                
+   }
+   return true;
+}
+
+/**
+ * \brief  Re-arrange the bits within the bytes.
+ * @param  fp already open File Pointer
+ * @param  destination Where decompressed fragments should end up
+ * @return Boolean
+ */
+bool gdcmPixelConvert::ConvertReArrangeBits(
+                          uint8_t* pixelZone,
+                          size_t imageDataSize,
+                          int numberBitsStored,
+                          int numberBitsAllocated,
+                          int highBitPosition )
+     throw ( gdcmFormatError )
+{
+   if ( numberBitsStored != numberBitsAllocated )
+   {
+      int l = (int)(imageDataSize / (numberBitsAllocated/8));
+      if ( numberBitsAllocated == 16 )
+      {
+         uint16_t mask = 0xffff;
+         mask = mask >> ( numberBitsAllocated - numberBitsStored );
+         uint16_t* deb = (uint16_t*)pixelZone;
+         for(int i = 0; i<l; i++)
+         {
+            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
+            deb++;
+         }
+      }
+      else if ( numberBitsAllocated == 32 )
+      {
+         uint32_t mask = 0xffffffff;
+         mask = mask >> ( numberBitsAllocated - numberBitsStored );
+         uint32_t* deb = (uint32_t*)pixelZone;
+         for(int i = 0; i<l; i++)
+         {
+            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
+            deb++;
+         }
+      }
+      else
+      {
+         dbg.Verbose(0, "gdcmPixelConvert::ConvertReArrangeBits: weird image");
+         throw gdcmFormatError( "gdcmFile::ConvertReArrangeBits()",
+                                "weird image !?" );
       }
    }
 }

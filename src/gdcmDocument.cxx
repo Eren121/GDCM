@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 03:03:10 $
-  Version:   $Revision: 1.101 $
+  Date:      $Date: 2004/10/10 16:43:59 $
+  Version:   $Revision: 1.102 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -450,19 +450,30 @@ bool gdcmDocument::IsJPEG2000()
 }
 
 /**
+ * \brief   Determines if the Transfer Syntax corresponds to any form
+ *          of Jpeg encoded Pixel data.
+ * @return  True when any form of JPEG found. False otherwise.
+ */
+bool gdcmDocument::IsJPEGTransferSyntax()
+{
+   return (   IsJPEGBaseLineProcess1TransferSyntax()
+           || IsJPEGExtendedProcess2_4TransferSyntax()
+           || IsJPEGExtendedProcess3_5TransferSyntax()
+           || IsJPEGSpectralSelectionProcess6_8TransferSyntax()
+           || IsJPEGLossless()
+           || IsJPEG2000() );
+}
+
+
+/**
  * \brief   Determines if the Transfer Syntax corresponds to encapsulated
  *          of encoded Pixel Data (as opposed to native).
  * @return  True when encapsulated. False when native.
  */
 bool gdcmDocument::IsEncapsulateTransferSyntax()
 {
-   return (   IsJPEGBaseLineProcess1TransferSyntax()
-           || IsJPEGExtendedProcess2_4TransferSyntax()
-           || IsJPEGExtendedProcess3_5TransferSyntax()
-           || IsJPEGSpectralSelectionProcess6_8TransferSyntax()
-           || IsRLELossLessTransferSyntax()
-           || IsJPEGLossless()
-           || IsJPEG2000() );
+   return (   IsJPEGTransferSyntax()
+           || IsRLELossLessTransferSyntax() );
 }
 
 /**
@@ -981,12 +992,14 @@ bool gdcmDocument::SetEntryByNumber(std::string const& content,
       gdcmVRKey vr = valEntry->GetVR();
       if( vr == "US" || vr == "SS" )
       {
-         c = gdcmUtil::CountSubstring(content, "\\") + 1; // for multivaluated items
+         // for multivaluated items
+         c = gdcmUtil::CountSubstring(content, "\\") + 1;
          l = c*2;
       }
       else if( vr == "UL" || vr == "SL" )
       {
-         c = gdcmUtil::CountSubstring(content, "\\") + 1; // for multivaluated items
+         // for multivaluated items
+         c = gdcmUtil::CountSubstring(content, "\\") + 1;
          l = c*4;;
       }
    }
@@ -1468,26 +1481,28 @@ void gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             LoadDocEntry( newBinEntry );
          }
 
-         if (newDocEntry->GetGroup()   == 0x7fe0 && 
-             newDocEntry->GetElement() == 0x0010 )
+         if (    ( newDocEntry->GetGroup()   == 0x7fe0 )
+              && ( newDocEntry->GetElement() == 0x0010 ) )
          {
              if ( IsRLELossLessTransferSyntax() ) 
              {
                 long PositionOnEntry = ftell(Fp);
-                fseek(Fp, newDocEntry->GetOffset(), SEEK_SET);
+                fseek( Fp, newDocEntry->GetOffset(), SEEK_SET );
                 ComputeRLEInfo();
-                fseek(Fp, PositionOnEntry, SEEK_SET);
+                fseek( Fp, PositionOnEntry, SEEK_SET );
              }
-             else
+             else 
+             if ( IsJPEGTransferSyntax() )
              {
-                SkipToNextDocEntry(newDocEntry);
+                long PositionOnEntry = ftell(Fp);
+                fseek( Fp, newDocEntry->GetOffset(), SEEK_SET );
+                ComputeJPEGFragmentInfo();
+                fseek( Fp, PositionOnEntry, SEEK_SET );
              }
          }
-         else
-         {
-             // to be sure we are at the beginning 
-             SkipToNextDocEntry(newDocEntry);
-         }
+    
+         // Just to make sure we are at the beginning of next entry.
+         SkipToNextDocEntry(newDocEntry);
       }
       else
       {
@@ -2828,30 +2843,11 @@ uint32_t gdcmDocument::ReadTagLength(uint16_t testGroup, uint16_t testElement)
 }
 
 /**
- * \brief Parse pixel data from disk of [multi-]fragment RLE encoding.
- *        Compute the RLE extra information and store it in \ref RLEInfo
- *        for later pixel retrieval usage.
+ * \brief When parsing the Pixel Data of an encapsulated file, read
+ *        the basic offset table (when present, and BTW dump it).
  */
-void gdcmDocument::ComputeRLEInfo()
+void gdcmDocument::ReadAndSkipEncapsulatedBasicOffsetTable()
 {
-   if ( ! IsRLELossLessTransferSyntax() )
-   {
-      return;
-   }
-   // Encoded pixel data: for the time being we are only concerned with
-   // Jpeg or RLE Pixel data encodings.
-   // As stated in PS 3.5-2003, section 8.2 p44:
-   // "If sent in Encapsulated Format (i.e. other than the Native Format) the
-   //  value representation OB is used".
-   // Hence we expect an OB value representation. Concerning OB VR,
-   // the section PS 3.5-2003, section A.4.c p 58-59, states:
-   // "For the Value Representations OB and OW, the encoding shall meet the
-   //   following specifications depending on the Data element tag:"
-   //   [...snip...]
-   //    - the first item in the sequence of items before the encoded pixel
-   //      data stream shall be basic offset table item. The basic offset table
-   //      item value, however, is not required to be present"
-
    //// Read the Basic Offset Table Item Tag length...
    uint32_t itemLength = ReadTagLength(0xfffe, 0xe000);
 
@@ -2866,6 +2862,7 @@ void gdcmDocument::ComputeRLEInfo()
       char* basicOffsetTableItemValue = new char[itemLength + 1];
       fread(basicOffsetTableItemValue, itemLength, 1, Fp);
 
+#ifdef GDCM_DEBUG
       for (unsigned int i=0; i < itemLength; i += 4 )
       {
          uint32_t individualLength = str2num( &basicOffsetTableItemValue[i],
@@ -2873,22 +2870,52 @@ void gdcmDocument::ComputeRLEInfo()
          std::ostringstream s;
          s << "   Read one length: ";
          s << std::hex << individualLength << std::endl;
-         dbg.Verbose(0, "gdcmDocument::ComputeRLEInfo: ", s.str().c_str());
+         dbg.Verbose(0,
+                     "gdcmDocument::ReadAndSkipEncapsulatedBasicOffsetTable: ",
+                     s.str().c_str());
       }
+#endif //GDCM_DEBUG
+
       delete[] basicOffsetTableItemValue;
    }
+}
+
+/**
+ * \brief Parse pixel data from disk of [multi-]fragment RLE encoding.
+ *        Compute the RLE extra information and store it in \ref RLEInfo
+ *        for later pixel retrieval usage.
+ */
+void gdcmDocument::ComputeRLEInfo()
+{
+   if ( ! IsRLELossLessTransferSyntax() )
+   {
+      return;
+   }
+
+   // Encoded pixel data: for the time being we are only concerned with
+   // Jpeg or RLE Pixel data encodings.
+   // As stated in PS 3.5-2003, section 8.2 p44:
+   // "If sent in Encapsulated Format (i.e. other than the Native Format) the
+   //  value representation OB is used".
+   // Hence we expect an OB value representation. Concerning OB VR,
+   // the section PS 3.5-2003, section A.4.c p 58-59, states:
+   // "For the Value Representations OB and OW, the encoding shall meet the
+   //   following specifications depending on the Data element tag:"
+   //   [...snip...]
+   //    - the first item in the sequence of items before the encoded pixel
+   //      data stream shall be basic offset table item. The basic offset table
+   //      item value, however, is not required to be present"
+
+   ReadAndSkipEncapsulatedBasicOffsetTable();
 
    // Encapsulated RLE Compressed Images (see PS 3.5-2003, Annex G)
-   // Loop on the frame[s] and store the parsed information in a
-   // gdcmRLEFramesInfo.
-   long frameLength;
-
    // Loop on the individual frame[s] and store the information
    // on the RLE fragments in a gdcmRLEFramesInfo.
    // Note: - when only a single frame is present, this is a
    //         classical image.
    //       - when more than one frame are present, then we are in 
    //         the case of a multi-frame image.
+   long frameLength;
    while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) )
    { 
       // Parse the RLE Header and store the corresponding RLE Segment
@@ -2941,6 +2968,47 @@ void gdcmDocument::ComputeRLEInfo()
    {
       dbg.Verbose(0, "gdcmDocument::ComputeRLEInfo: no sequence delimiter ");
       dbg.Verbose(0, "    item at end of RLE item sequence");
+   }
+}
+
+/**
+ * \brief Parse pixel data from disk of [multi-]fragment Jpeg encoding.
+ *        Compute the jpeg extra information (fragment[s] offset[s] and
+ *        length) and store it[them] in \ref JPEGInfo for later pixel
+ *        retrieval usage.
+ */
+void gdcmDocument::ComputeJPEGFragmentInfo()
+{
+   // If you need to, look for comments of ComputeRLEInfo().
+   if ( ! IsJPEGTransferSyntax() )
+   {
+      return;
+   }
+
+   ReadAndSkipEncapsulatedBasicOffsetTable();
+
+   // Loop on the fragments[s] and store the parsed information in a
+   // gdcmJPEGInfo.
+   long fragmentLength;
+   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) )
+   { 
+      long fragmentOffset = ftell(Fp);
+
+       // Store the collected info
+       gdcmJPEGFragment* newFragment = new gdcmJPEGFragment;
+       newFragment->Offset = fragmentOffset;
+       newFragment->Length = fragmentLength;
+       JPEGInfo.Fragments.push_back( newFragment );
+
+       SkipBytes( fragmentLength );
+   }
+
+   // Make sure that at the end of the item we encounter a 'Sequence
+   // Delimiter Item':
+   if ( !ReadTag(0xfffe, 0xe0dd) )
+   {
+      dbg.Verbose(0, "gdcmDocument::ComputeRLEInfo: no sequence delimiter ");
+      dbg.Verbose(0, "    item at end of JPEG item sequence");
    }
 }
 

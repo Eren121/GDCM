@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmJpeg2000.cxx,v $
+  Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
   Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.11 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,25 +15,16 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-//-----------------------------------------------------------------------------
-#include "gdcmFile.h"
 
-//-----------------------------------------------------------------------------
- /**
- * \brief   routine for JPEG decompression 
- * @param fp pointer to an already open file descriptor 
- *                      JPEG2000 encoded image
- * @param image_buffer to receive uncompressed pixels
- * @return 1 on success, 0 on error
- * @warning : not yet made
- */
+#include "gdcmJPEGFragmentsInfo.h"
 
-bool gdcm_read_JPEG2000_file (FILE* fp,void* image_buffer) {
-   (void)fp;                  //FIXME
-   (void)image_buffer;        //FIXME
-   std::cout << "Sorry JPEG 2000 File not yet taken into account" << std::endl;
-   return false;
+gdcmJPEGFragmentsInfo::~gdcmJPEGFragmentsInfo()
+{
+   for(JPEGFragmentsList::iterator it  = Fragments.begin();
+                                   it != Fragments.end();
+                                 ++it )
+   {
+      delete (*it);
+   }
+   Fragments.clear();
 }
-
-//-----------------------------------------------------------------------------
-

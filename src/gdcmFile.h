@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 17:02:53 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2004/10/10 16:44:00 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,12 +43,6 @@ public:
 
    void ConvertRGBPlanesToRGBPixels( uint8_t* source, uint8_t* destination );
    void ConvertYcBcRPlanesToRGBPixels( uint8_t* source, uint8_t* destination );
-   void ConvertReArrangeBits(
-           uint8_t* pixelZone,
-           size_t imageDataSize,
-           int numberBitsStored,
-           int numberBitsAllocated,
-           int highBitPosition ) throw ( gdcmFormatError );
    
    /// Accessor to \ref ImageDataSize
    size_t GetImageDataSize(){ return ImageDataSize; };
@@ -95,19 +89,14 @@ private:
    bool ReadPixelData(void* destination);
    
    // For JPEG 8 Bits, body in file gdcmJpeg.cxx
-   bool gdcm_read_JPEG_file     (FILE* fp, void* image_buffer); 
    bool gdcm_write_JPEG_file    (FILE* fp, void* image_buffer, 
                                  int image_width, int image_heigh,
                                  int quality);
 
    // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
-   bool gdcm_read_JPEG_file12   (FILE* fp, void* image_buffer);
    bool gdcm_write_JPEG_file12  (FILE* fp, void* image_buffer, 
                                  int image_width, int image_height,
                                  int quality);
-
-   // For JPEG 2000, body in file gdcmJpeg2000.cxx
-   bool gdcm_read_JPEG2000_file (FILE* fp, void* image_buffer);
 
    void SaveInitialValues();    // will belong to the future gdcmPixelData class
    void RestoreInitialValues(); // will belong to the future gdcmPixelData class
