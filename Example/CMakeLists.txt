@@ -10,3 +10,6 @@ INCLUDE_DIRECTORIES(
 
 ADD_EXECUTABLE(WriteDicom WriteDicom.cxx)
 TARGET_LINK_LIBRARIES(WriteDicom gdcm)
+
+ADD_EXECUTABLE(PrintDocument PrintDocument.cxx)
+TARGET_LINK_LIBRARIES(PrintDocument gdcm)

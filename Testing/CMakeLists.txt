@@ -19,7 +19,7 @@ SET(TEST_SOURCES
 IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}     
     #PrintHeader.cxx       #require test.acr
-    PrintDocument.cxx     #require test.acr
+    PrintAllDocument.cxx     #require test.acr
     PrintDicomDir.cxx
     TestFindTags.cxx
     TestChangeHeader.cxx
