@@ -1,21 +1,25 @@
+2004-05-04 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+     * src/gdcmFile.cxx, gdcmHeader.cxx : bug fix for the msvc compilation
+     * Test/ShowDicom.cxx : bug fix for msvc compilation
+     * vtk/vtkgdcmViewer.cxx : bug fix for msvc compilation
 
 2004-05-04 Jean-Pierre Roux
-   * ADD Taking into account the 'Dicom Sequences' leads up to introduce 
-         new concepts (and new classes) :
-         a 'gdcmDocument' is composed of a set of Doc Entries, that are
-          - elementary gdcmDocEntries (former gdcmHeaderEntries)
-          - Sequence Doc Entries (gdcmSeqEntries)
-         a Sequence is composed of Items.
-         Each item is a set of Doc Entries (this is recursive)    
-         The non uniqueness of the 'Dicom tag' is due to this recursivity
-         (never taken into account)
-         Our unability to add a new 'entry' in the header 
-         at the proper location (neither in the H-Table (map or multimap), 
-	 nor in the Chained List is also due to this recursivity.
-         Don't try, right now, to use/modify/compile these new sources : 
-	 nothing is finished.
-         We just commit all the stuff, 'as is', in order not to loose it.
-	 	 
+     * ADD Taking into account the 'Dicom Sequences' leads up to introduce
+       new concepts (and new classes) :
+       a 'gdcmDocument' is composed of a set of Doc Entries, that are
+        - elementary gdcmDocEntries (former gdcmHeaderEntries)
+        - Sequence Doc Entries (gdcmSeqEntries)
+       a Sequence is composed of Items.
+       Each item is a set of Doc Entries (this is recursive)
+       The non uniqueness of the 'Dicom tag' is due to this recursivity
+       (never taken into account)
+       Our unability to add a new 'entry' in the header
+       at the proper location (neither in the H-Table (map or multimap),
+       nor in the Chained List is also due to this recursivity.
+       Don't try, right now, to use/modify/compile these new sources :
+       nothing is finished.
+       We just commit all the stuff, 'as is', in order not to loose it.
+
 2004-05-04 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
      * vtk/vtkGdcmReader.cxx : bug fix in the setting of file name
      

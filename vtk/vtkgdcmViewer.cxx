@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
   reader->Update();
   
   //print debug info:
-  reader->GetOutput()->Print( std::cout );
+  reader->GetOutput()->Print( cout );
         
   vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
 

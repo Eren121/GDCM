@@ -92,7 +92,7 @@ gdcmFile::gdcmFile(std::string & filename,
  *          with a FALSE value for the 'enable_sequence' param.
  *          ('public elements' may be embedded in 'shadow Sequences')
  */
- gdcmFile::gdcmFile(const char * filename, 
+ gdcmFile::gdcmFile(const char *filename, 
                    bool exception_on_error,
                    bool enable_sequences, 
                    bool ignore_shadow) {
@@ -261,9 +261,9 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
       return lgrTotale; 
                             
    // from Lut R + Lut G + Lut B
-   unsigned char * newDest = new (unsigned char)[lgrTotale];
-   unsigned char * a       = (unsigned char *)destination;	 
-   unsigned char * lutRGBA =                  Header->GetLUTRGBA();
+   unsigned char *newDest = new unsigned char[lgrTotale];
+   unsigned char *a       = (unsigned char *)destination;	 
+   unsigned char *lutRGBA =                  Header->GetLUTRGBA();
    if (lutRGBA) { 	    
       int l = lgrTotaleRaw;
       memmove(newDest, destination, l);// move Gray pixels to temp area	    
@@ -352,7 +352,7 @@ void * gdcmFile::GetImageDataRaw (void) {
  * @return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
-size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
+size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
 
    int nb, nbu, highBit, signe;
    std::string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
@@ -492,11 +492,11 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
             int l = Header->GetXSize()*Header->GetYSize();
             int nbFrames = Header->GetZSize();
 
-            unsigned char * newDest = new (unsigned char)[lgrTotale];
-            unsigned char *x  = newDest;
-            unsigned char * a = (unsigned char *)destination;
-            unsigned char * b = a + l;
-            unsigned char * c = b + l;
+            unsigned char *newDest = new unsigned char[lgrTotale];
+            unsigned char *x = newDest;
+            unsigned char *a = (unsigned char *)destination;
+            unsigned char *b = a + l;
+            unsigned char *c = b + l;
             double R,G,B;
 
             /// \todo : Replace by the 'well known' integer computation
@@ -533,11 +533,11 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 
             int l = Header->GetXSize()*Header->GetYSize()*Header->GetZSize();
 
-            char * newDest = new char[lgrTotale];
-            char * x = newDest;
-            char * a = (char *)destination;
-            char * b = a + l;
-            char * c = b + l;
+            char *newDest = new char[lgrTotale];
+            char *x = newDest;
+            char *a = (char *)destination;
+            char *b = a + l;
+            char *c = b + l;
 
             for (int j=0;j<l; j++) {
                *(x++) = *(a++);
@@ -583,7 +583,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
  *
  * @return boolean	
  */
-bool gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
+bool gdcmFile::SetImageData(void *inData, size_t ExpectedSize) {
    Header->SetImageDataSize(ExpectedSize);
    PixelData = inData;
    lgrTotale = ExpectedSize;
@@ -601,7 +601,7 @@ bool gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
  */
 
 bool gdcmFile::WriteRawData (std::string fileName) {
-   FILE * fp1;
+   FILE *fp1;
    fp1 = fopen(fileName.c_str(),"wb");
    if (fp1 == NULL) {
       printf("Fail to open (write) file [%s] \n",fileName.c_str());
@@ -635,7 +635,7 @@ bool gdcmFile::WriteDcmImplVR (std::string fileName) {
  * @return false if write fails	
  */
  
-bool gdcmFile::WriteDcmImplVR (const char* fileName) {
+bool gdcmFile::WriteDcmImplVR (const char *fileName) {
    return WriteDcmImplVR (std::string (fileName));
 }
 	
@@ -684,7 +684,7 @@ bool gdcmFile::WriteAcr (std::string fileName) {
  */
 bool gdcmFile::WriteBase (std::string fileName, FileType type) {
 
-   FILE * fp1;
+   FILE *fp1;
    
    if (PixelRead==-1 && type != ExplicitVR) {
       return false;		   
@@ -697,7 +697,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    }
 
    if ( (type == ImplicitVR) || (type == ExplicitVR) ) {
-      char * filePreamble;
+      char *filePreamble;
       // writing Dicom File Preamble
       filePreamble=new char[128];
       memset(filePreamble,0,128);
@@ -735,7 +735,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
           
    TagKey key = gdcmDictEntry::TranslateToKey(grPixel, numPixel); 
    TagHeaderEntryHT::iterator p2;
-   gdcmHeaderEntry * PixelElement;
+   gdcmHeaderEntry *PixelElement;
    
    IterHT it= Header->GetEntry().equal_range(key); // get a pair of iterators first-last synonym   
 
@@ -785,7 +785,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
  * @param   lgr Area Length
  * @param   nb Pixels Bit number 
  */
-void gdcmFile::SwapZone(void* im, int swap, int lgr, int nb) {
+void gdcmFile::SwapZone(void *im, int swap, int lgr, int nb) {
 guint32 s32;
 guint16 fort,faible;
 int i;
@@ -803,8 +803,8 @@ if(nb == 16)
       case 4321:
 
          for(i=0;i<lgr/2;i++) {
-            ((unsigned short int*)im)[i]= ((((unsigned short int*)im)[i])>>8)
-                                        | ((((unsigned short int*)im)[i])<<8);
+            ((unsigned short int *)im)[i]= ((((unsigned short int *)im)[i])>>8)
+                                        | ((((unsigned short int *)im)[i])<<8);
 	}
          break;
  			
@@ -820,32 +820,32 @@ if( nb == 32 )
 
       case 4321:
          for(i=0;i<lgr/4;i++) {
-            faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 4321 */
-            fort  =((unsigned long int*)im)[i]>>16;
+            faible=  ((unsigned long int *)im)[i]&0x0000ffff;    /* 4321 */
+            fort  =((unsigned long int *)im)[i]>>16;
             fort=  (fort>>8)   | (fort<<8);
             faible=(faible>>8) | (faible<<8);
             s32=faible;
-            ((unsigned long int*)im)[i]=(s32<<16)|fort;
+            ((unsigned long int *)im)[i]=(s32<<16)|fort;
          }
          break;
 
       case 2143:
          for(i=0;i<lgr/4;i++) {
-            faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 2143 */
-            fort=((unsigned long int*)im)[i]>>16;
+            faible=  ((unsigned long int *)im)[i]&0x0000ffff;    /* 2143 */
+            fort=((unsigned long int *)im)[i]>>16;
             fort=  (fort>>8)   | (fort<<8);
             faible=(faible>>8) | (faible<<8);
             s32=fort; 
-            ((unsigned long int*)im)[i]=(s32<<16)|faible;
+            ((unsigned long int *)im)[i]=(s32<<16)|faible;
          }
          break;
   
       case 3412:
          for(i=0;i<lgr/4;i++) {
-            faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 3412 */
-            fort=((unsigned long int*)im)[i]>>16;                  
+            faible=  ((unsigned long int *)im)[i]&0x0000ffff;    /* 3412 */
+            fort=((unsigned long int *)im)[i]>>16;                  
             s32=faible; 
-            ((unsigned long int*)im)[i]=(s32<<16)|fort;
+            ((unsigned long int *)im)[i]=(s32<<16)|fort;
          }                 
          break; 
     			        
@@ -862,7 +862,7 @@ return;
  * @param   destination where the pixel data should be stored.
  *
  */
-bool gdcmFile::ReadPixelData(void* destination) {
+bool gdcmFile::ReadPixelData(void *destination) {
 
    FILE *fp;
 
@@ -881,7 +881,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
       int nbPixels = Header->GetXSize() * Header->GetYSize();
       unsigned char b0, b1, b2;
       
-      unsigned short int* pdestination = (unsigned short int*)destination;    
+      unsigned short int *pdestination = (unsigned short int*)destination;    
       for(int p=0;p<nbPixels;p+=2) {
          fread(&b0,1,1,fp);
          fread(&b1,1,1,fp);
@@ -992,7 +992,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
 		   
          JPEGLosslessDecodeImage (fp,  // Reading Fragment pixels
 				     (unsigned short *)destination,
-				     Header->GetPixelSize()*8* Header->GetSamplesPerPixel(),
+				     Header->GetPixelSize() * 8 * Header->GetSamplesPerPixel(),
                                      ln);						 	   
          res=1; // in order not to break the loop
   
