@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.7 2003/12/22 12:46:19 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.8 2004/01/15 10:25:11 regrain Exp $
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -94,15 +94,15 @@ int main( int argc, char *argv[] )
    renwin->Render();
    iren->Start();
 
-  reader->Delete();
-  VTKtable->Delete();
-  VTKtexture->Delete();
-  VTKplane->Delete();
-  VTKplaneMapper->Delete();
-  VTKplaneActor->Delete();
-  ren->Delete();
-  renwin->Delete();
-  iren->Delete();
+   reader->Delete();
+   VTKtable->Delete();
+   VTKtexture->Delete();
+   VTKplane->Delete();
+   VTKplaneMapper->Delete();
+   VTKplaneActor->Delete();
+   ren->Delete();
+   renwin->Delete();
+   iren->Delete();
 
    return(0);
 }
