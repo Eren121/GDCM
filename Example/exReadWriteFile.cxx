@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 14:00:41 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/02/10 20:41:19 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,9 +78,6 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
              << std::endl;
 
    gdcm::ValEntry *valEntry;
-   uint16_t group;
-   uint16_t elem;
-   int offset;
    std::string value;
    std::string vr;   // value representation
    std::string vm;   // value multiplicity
@@ -109,13 +106,10 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
             continue;
 
          value  = valEntry->GetValue();
-         group  = valEntry->GetGroup();
-         elem   = valEntry->GetElement();
          vr     = valEntry->GetVR();
          // user wants really to know everything about entry!
          vm     = valEntry->GetVM();
          name   = valEntry->GetName();
-         offset = valEntry->GetOffset();
 
          std::cout //<< std::hex << group << "," << elem 
           << valEntry->GetKey()
