@@ -94,7 +94,7 @@ ENDIF(DOXYGEN)
 #	README \
 #	TODO \
 #	gdcm.spec \
-#  gdcm.dsw
+#       gdcm.dsw
 
 #release:
 #	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)

@@ -1,6 +1,6 @@
 import unittest
 import os
-from gdcmPython import *
+from vtkgdcmPython import *
 
 class gdcmTestCase(unittest.TestCase):
    # The files whose name starts with a modality (e.g. CR-MONO1-10-chest.dcm)
@@ -478,6 +478,14 @@ class gdcmTestCase(unittest.TestCase):
          # and (\f °, ¶ 016) is NOT an OB item TAG which is required to be
          # present (at least there should be a sequence delimiter), refer to
          # PS 3.5-2001 page 50. 
+	 #
+	 # That's right :
+	 # at 9ec : ItemTag : fffe,e000
+         # at 9f0 : Basic Offset Table Item Lentgh (??) 0 x(00000000)
+         # at 9f4 : ItemTag : fffe,e000
+         #         at 9f8 : fragment length 212866 x(00033f82)
+         # at 3497e : ItemTag  b00c,0eb6 (should be fffe,e000 or fffe,e0dd):
+ 
       ["gdcm-JPEG-LossLess3b.dcm",
          # Interest: - Jpeg compression [Lossless, hierar., first-order
          #             pred. 14, Select. Val. 1]

@@ -9,7 +9,7 @@ LIBS_VTK_PYTHON= $(LIBS_VTK) \
 INCLUDE_VTK=-I/usr/include/vtk
 
 LIBS_X11= -L/usr/X11R6/lib -lX11 -lXt -lSM -lICE -lXext -lGL
-#LIBS_X11= $(x_ldflags) $(x_libs)      
+#LIBS_X11= $(x_ldflags) $(x_libs)    
 
 INCLUDES =             \
    -I.                 \
@@ -23,7 +23,7 @@ LDADD =              \
    $(LIBS_X11)
 
 if BUILD_VTK
-noinst_PROGRAMS = vtkgdcmdemo vtkgdcmViewer
+noinst_PROGRAMS = vtkgdcmdemo vtkgdcmViewer #testvtkGdcmReader
 vtkgdcmdemo_SOURCES = testvtkGdcmReader.cxx  vtkGdcmReader.cxx 
 vtkgdcmViewer_SOURCES = vtkgdcmViewer.cxx  vtkGdcmReader.cxx 
 vtkgdcmdemo_LDADD = $(LDADD)

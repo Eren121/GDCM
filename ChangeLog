@@ -1,17 +1,129 @@
+2003-10-30 Jean-Pierre Roux
+     * FIX a VC++ intended synatx modif broke the 12/12 Bytes expanding
+
+2003-10-29 Jean-Pierre Roux
+      * adding  gdcmHeader::GetLUTRGBA
+               returns a 4 * 256 Bytes Reg/Green/Blue/Alpha vtk compliant LUT
+	       --> Mathieu, le modif u're waiting for is not yet committed
+      * removal of now useless GetLUTRed,GetLUTGreen,GetLUTBlue,GetLUTRGB                                    
+
+2003-10-23 Jean-Pierre Roux
+      * gdcm now deals with 16 Bits Run Length Encoded images
+        (they are compressed as 2 planes images, 
+         one for the high Bytes, the other for low Bytes)
+
+2003-10-22 Jean-Pierre Roux
+     * Now CheckRead takes into account the bugged 'Leonardo' Siemens images
+        and XA images, sent thru the burning station
+
+2003-10-22 Jean-Pierre Roux
+      * in gdcmData adding a bugged 'Leonardo' Siemens image 
+        (wrong lengths in header)
+        OK with gdcm, KO with the other viewers :-)
+      * add a GE dlx XA image, thru the VEPRO burning station
+        (breaks DicomWorks)
+
+2003-10-21 Jean-Pierre Roux
+      * in gdcmData add the checkvtkgdcmViewer.sh shell script 
+        for a brutal checking of vtkgdcmViewer compliance
+
+2003-10-21 Jean-Pierre Roux
+      * add the files for 'xmedcon' Jpeg Lossless library
+      * call of 'xmedcom' Jpeg Lossles libray (instead of the old LibIDO one)
+
+2003-10-21 Jean-Pierre Roux
+      * 'Compacted Files' (12 Bits Allocate, 12 Bits Stored) are now dealt with
+     
+2003-10-21 Jean-Pierre Roux
+      * garbage Siemens 'Leonardo' images dealt with
+        (the patch is easy to remove)
+      * cosmetic changes to avoid warnings
+
+2003-10-21  Jean-Pierre Roux
+      * upgrade of checkRead.sh checkWrite.sh according 
+        to new Jpeg Lossless decompressor
+
+2003-10-15  Jean-Pierre Roux
+      * general anonymisation in gdcmData
+      * adding the 'color files' from
+         http://www.leadtools.com/SDK/Medical/DICOM/ltdc19.htm
+      * adding some well knowed bugged-header images
+      * adding checkRead.sk, checkReadColor.sh, checkWrite.sh,
+         waiting for their inclusion in Python testsuite
+
+2003-10-15  Jean-Pierre Roux
+    * gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error)
+      no longer seg faults when file is not found
+
+2003-10-14  Jean-Pierre Roux
+     * Emprovement of reading for Dicom encapsulated Jpeg LossLess MultiFrame images
+
+2003-10-14  Jean-Pierre Roux
+     * Some supposed-to-be Dicom Images have no preamble.
+        OpenFile takes it into account
+     * Jpeg LossLess 24 Bits images doesn-t break any longer gdcm
+
+     * Missing elements added in dicomV3.dic
+      (just to be affraid : have a look at
+       ftp://medical.nema.org/medical/dicom/2003/01v03dif/01v03_06.pdf
+       and do it again next year ;->
+
+2003-10-13  Jean-Pierre Roux
+     * According to PS 3.3-2003 C.11.1.1.2 p 619, when each pixel of a PLATTE COLOR
+       is stored on 2 Bytes, theese 2 Bytes must be equal.
+       But there are NOT. It's fixed !
+
+2003-10-10  Jean-Pierre Roux
+     * ENH : OpenFile closes the file if it *really* doesn't look like
+        an ACR-NEMA / DICOM one.
+     * testWrite no longer writes an empty file if the source file 
+        is not gdcm Readable
+
 2003-10-09  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * CMake-ification of gdcm, we have now two build system
+
+2003-10-03 Jean-Pierre Roux
+      * Odd length strings are padded with '\0' (not with spaces, 
+        to remain compliant with already defined strings, 
+        like Transfert Syntax UID and others)
+
 2003-10-03  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * vtkGdcmReader is now able to read rgb dicom file.
       * src/gdcmHeaderHelper : GetNumberOfScalarComponents()
+
+2003-10-03 Jean-Pierre Roux
+      * A few nasty patches to allow the reading of a lot of nasty images
+        ( e.g : well known GE images with a wrong elem length,
+              : Philips MRI Images with a wrong Huffman table)
+      * still to be done : allow the reading of bugged LEONARDO Siemens images
+
+2003-10-03 Jean-Pierre Roux
+      * One more JPEG LossLess type "JPEG Baseline (Process 14)" is now decoded.
+
+2003-10-03 Jean-Pierre Roux
+      * gdcmHeaderHelper::GetNumberOfScalarComponents() added, 
+        to allow displaying RGB images (not only by affim ;-)
+
+2003-10-03 Jean-Pierre Roux
+      * gdcmFile::GetImageDataIntoVector now
+         - deals with MultiFrames MultiFragments Run Length Encoded files
+         - deals with YcBcR (YBR_FULL) files
+         - deals with YBR_YBR_FULL_422 files (they work as RBG files ?!?)
+          WARNING : nothing was checked for YBR_PARTIAL_422, YBR_ICT, YBR_RCT files.
+          (no sample found :-(
+
 2003-10-02  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * src/*.cxx removed pragma thingies to src/gdcmCommon.h
         Two reasons: - clear things
                      - third parties acces gdcm through header files, so won't
                      suffer anymore VC++ complains
+2003-09-24 Jean-Pierre Roux
+      * The lines are now eigthy characters long.for 
+        gdcmHeader.cxx gdcmHeaderHelper.cxx gdcmParse.cxx 
 
 2003-09-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmUtil.[cxx|h] : change the _CreateCleanString return value from
-        char* to std::string. Thus, the use of strdup becoomes useless. (see
+        char* to std::string. Thus, the use of strdup becomes useless. (see
         previous commis of Malaterre)
       * src/gdcmElValSet.cxx : reuse commented call to _CreateCleanString like
         before the last Malaterre's commit.

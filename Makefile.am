@@ -2,7 +2,6 @@
 
 SUBDIRS = src vtk gdcmPython Test Dicts Doc
 
-
 EXTRA_DIST = \
 	AUTHORS	\
 	ChangeLog \

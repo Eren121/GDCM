@@ -24,7 +24,7 @@ Here is the checklist when freezing a version of gdcm:
         its produced packages through the test suite, in all following cases
        - Direct installation:
          cd $GDCMHOME
-         python setup.py install --prefix=/tmp/
+         python setup.py install --prefix=/tmp
          cd /tmp/lib/python2.2/site-packages/
          ln -s $GDCMHOME/gdcmData .
          export PYTHONPATH=`pwd`

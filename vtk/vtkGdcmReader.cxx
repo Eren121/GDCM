@@ -1,15 +1,15 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.21 2003/10/24 15:38:56 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.22 2003/10/30 17:06:02 jpr Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
 //
 // /////// Redundant and unnecessary header parsing
 // In it's current state this code actually parses three times the Dicom
-// header of a file before the corrersponding image gets loaded in the
+// header of a file before the corresponding image gets loaded in the
 // ad-hoc vtkData !
 // Here is the process:
 //  1/ First loading happens in ExecuteInformation which in order to
-//     positionate the vtk extents calls CheckFileCoherence. The purpous
+//     positionate the vtk extents calls CheckFileCoherence. The purpose
 //     of CheckFileCoherence is to make sure all the images in the future
 //     stack are "homogenous" (same size, same representation...). This
 //     can only be achieved by parsing all the Dicom headers...
@@ -18,17 +18,17 @@
 //      (indirectely call) ExecuteInformation which ends up in a second
 //      header parsing
 //  2b/ the core of ExecuteData then needs gdcmFile (which in turns
-//      initialiszes gdcmHeader in the constructor) in order to access
+//      initialises gdcmHeader in the constructor) in order to access
 //      the data-image.
 //
 // Possible solution:
 // maintain a list of gdcmFiles (created by say ExecuteInformation) created
 // once and for all accross the life of vtkGdcmHeader (it would only load
 // new gdcmFile if the user changes the list). ExecuteData would then use 
-// those gdcmFile and hence avoid calling the consctutor:
+// those gdcmFile and hence avoid calling the construtor:
 //  - advantage: the header of the files would only be parser once.
 //  - drawback: once execute information is called (i.e. on creation of
-//              a vtkGdcmHeader) the gdcmFile sctructue is loaded in memory.
+//              a vtkGdcmHeader) the gdcmFile structure is loaded in memory.
 //              The average size of a gdcmHeader being of 100Ko, is one
 //              loads 10 stacks of images with say 200 images each, you
 //              end-up with a loss of 200Mo...
@@ -37,7 +37,7 @@
 // ExecuteData allocates space for the pixel data [which will get pointed
 // by the vtkPointData() through the call
 // data->GetPointData()->GetScalars()->SetVoidArray(mem, StackNumPixels, 0);]
-// This data is never "freed" neither in the desctutor nor when the
+// This data is never "freed" neither in the destructor nor when the
 // filename list is extended, ExecuteData is called a second (or third)
 // time...
 // //////////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
 // (i.e. an image represents one plane, but a volume represents many planes)
 int vtkGdcmReader::CheckFileCoherence()
 {
-	int ReturnedTotalNumberOfPlanes = 0;   // The returned value.
+   int ReturnedTotalNumberOfPlanes = 0;   // The returned value.
 
    this->BuildFileListFromPattern();
    if (this->InternalFileNameList.empty())
@@ -190,14 +190,14 @@ int vtkGdcmReader::CheckFileCoherence()
    int  ReferenceNZ = 0;
 
    // Loop on the filenames:
-   // - check for their existence and gdcm "parasability"
+   // - check for their existence and gdcm "parsability"
    // - get the coherence check done:
    for (std::list<std::string>::iterator FileName  = InternalFileNameList.begin();
                                         FileName != InternalFileNameList.end();
                                       ++FileName)
      {
      // The file is always added in the number of planes
-     //  - If file doesn't exist, it will be replaced by a black place in the 
+     //  - If file doesn't exist, it will be replaced by a black plane in the 
      //    ExecuteData method
      //  - If file has more than 1 plane, other planes will be added later to
      //    to the ReturnedTotalNumberOfPlanes variable counter
@@ -323,7 +323,7 @@ int vtkGdcmReader::CheckFileCoherence()
      } // End of loop on FileName
 
    ///////// The files we CANNOT load are flaged. On debugging purposes
-   // count the loadable number of files and display thir number:
+   // count the loadable number of files and display their number:
    int NumberCoherentFiles = 0;
    for (std::list<std::string>::iterator Filename  = InternalFileNameList.begin();
                                         Filename != InternalFileNameList.end();
@@ -454,9 +454,9 @@ size_t vtkGdcmReader::LoadImageInMemory(
   // If the data structure of vtk for image/volume representation
   // were straigthforwards the following would suffice:
   //    GdcmFile.GetImageDataIntoVector((void*)Dest, size);
-  // But vtk chose to invert the lines of an image, that is the last
+  // But vtk chooses to invert the lines of an image, that is the last
   // line comes first (for some axis related reasons?). Hence we need
-  // to load the image line by line, starting from the end:
+  // to load the image line by line, starting from the end.
   int NumColumns = GdcmFile.GetXSize();
   int NumLines   = GdcmFile.GetYSize();
   int NumPlanes  = GdcmFile.GetZSize();

@@ -775,8 +775,8 @@
 0020 9157 UL REL Dimension Index Values
 0020 9158 LT REL Frame Comments
 0020 9161 UI REL Concatenation UID
-0020 9162 US REL In-Concatenation Number
-0020 9163 US REL In-Concatenation Total Number
+0020 9162 US REL In-concatenation Number
+0020 9163 US REL In-concatenation Total Number
 0020 9164 UI REL Dimension Organization UID
 0020 9165 AT REL Dimension Index Pointer
 0020 9167 AT REL Functional Group Pointer
@@ -786,7 +786,7 @@
 0020 9228 UL REL Concatenation Frame Offset Number
 0020 9238 LO REL Functional Group Private Creator
 0028 0000 UL IMG Group Length
-0028 0002 US IMG Samples Per Pixel
+0028 0002 US IMG Samples per Pixel
 0028 0004 CS IMG Photometric Interpretation
 0028 0005 US IMG Image Dimensions (RET)
 0028 0006 US IMG Planar Configuration
@@ -813,8 +813,8 @@
 0028 0101 US IMG Bits Stored
 0028 0102 US IMG High Bit
 0028 0103 US IMG Pixel Representation
-0028 0104 US IMG Smallest Pixel Value (RET)
-0028 0105 US IMG Largest Pixel Value (RET)
+0028 0104 US IMG Smallest Valid Pixel Value (RET)
+0028 0105 US IMG Largest Valid Pixel Value (RET)
 0028 0106 US IMG Smallest Image Pixel Value
 0028 0107 US IMG Largest Image Pixel Value
 0028 0108 US IMG Smallest Pixel Value in Series
@@ -826,6 +826,7 @@
 0028 0199 US IMG LibIDO code (RET)
 0028 0200 US IMG Image Location (RET)
 0028 1040 CS IMG Pixel Intensity Relationship
+0028 1041 CS IMG Pixel Intensity Relationship Sign
 0028 1050 DS IMG Window Center
 0028 1051 DS IMG Window Width
 0028 1052 DS IMG Rescale Intercept
@@ -834,7 +835,7 @@
 0028 1055 LO IMG Window Center & Width Explanation
 0028 1080 SH IMG Gray Scale (RET)
 0028 1090 CS IMG Recommended Viewing Mode
-0028 1100 US IMG Gray Palette Color Lookup Table Descriptor (RET)
+0028 1100 US IMG Gray Lookup Table Descriptor (RET)
 0028 1101 US IMG Red Palette Color Lookup Table Descriptor
 0028 1102 US IMG Green Palette Color Lookup Table Descriptor
 0028 1103 US IMG Blue Palette Color Lookup Table Descriptor
@@ -878,7 +879,7 @@
 0028 9003 CS IMG Signal Domain Columns
 0028 9099 US IMG Largest Monochrome Pixel Value
 0028 9108 CS IMG Data Representation
-0028 9110 SQ IMG Pixel Measure Sequence
+0028 9110 SQ IMG Pixel Measures Sequence
 0028 9132 SQ IMG Frame VOI LUT Sequence
 0028 9145 SQ IMG Pixel Value Transformation Sequence
 0028 9235 CS IMG Signal Domain Rows
@@ -1012,9 +1013,9 @@
 0040 0314 DS PRC Half Value Layer
 0040 0316 DS PRC Organ Dose
 0040 0318 CS PRC Organ Exposed
-0040 0320 SQ PRC Biling Procedure Step Sequence
+0040 0320 SQ PRC Billing Procedure Step Sequence
 0040 0321 SQ PRC Film Consumption Sequence
-0040 0324 SQ PRC Biling Supplies and Devices Sequence
+0040 0324 SQ PRC Billing Supplies and Devices Sequence
 0040 0330 SQ PRC Referenced Procedure Step Sequence (RET)
 0040 0340 SQ PRC Performed Series Sequence
 0040 0400 LT PRC Comments on the Scheduled Procedure Step
@@ -1048,9 +1049,9 @@
 0040 1011 SQ PRC Intended Recipients of Results Identification Sequence 
 0040 1101 SQ PRC Person Identification Code Sequence
 0040 1102 ST PRC Person's Adress
-0040 1103 LO PRC Person's Telephone Number
+0040 1103 LO PRC Person's Telephone Numbers
 0040 1400 LT PRC Requested Procedure Comments 
-0040 2001 LO PRC Reason for teh Imaging Service Request
+0040 2001 LO PRC Reason for the Imaging Service Request
 0040 2004 DA PRC Issue Date of Imaging Service Request
 0040 2005 TM PRC Issue Time of Imaging Service Request
 0040 2006 SH PRC Placer Order Number/Imaging Service Request (RET)
@@ -1068,7 +1069,7 @@
 0040 4004 SQ PRC Scheduled Processing Applications Code Sequence
 0040 4005 DT PRC Scheduled Procedure Step Start Date and Time
 0040 4006 CS PRC Multiple Copies Flag
-0040 4007 SQ PRC Performed Processing Applications Sequence
+0040 4007 SQ PRC Performed Processing Applications Code Sequence
 0040 4009 SQ PRC Human Performer Code Sequence
 0040 4011 DT PRC Expected Completion Date and Time
 0040 4015 SQ PRC Resulting General Purpose Performed Procedure Steps Sequence
@@ -1088,6 +1089,7 @@
 0040 4031 SQ PRC Requested Subsequent Workitem Code Sequence
 0040 4032 SQ PRC Non-DICOM Output Code Sequence
 0040 4033 SQ PRC Output Information Sequence
+0040 4034 SQ PRC Scheduled Human Performers Sequence
 0040 4035 SQ PRC Actual Human Performers Sequence
 0040 4036 LO PRC Human Performer's Organization
 0040 4037 PN PRC Human Performer's Name
@@ -1101,10 +1103,10 @@
 0040 9225 FD PRC Real World Value Slope
 0040 a010 CS PRC Relationship Type
 0040 a027 LO PRC Verifying Organization
-0040 a030 DT PRC Verification DateTime
-0040 a032 DT PRC Observation DateTime
+0040 a030 DT PRC Verification Date Time
+0040 a032 DT PRC Observation Date Time
 0040 a040 CS PRC Value Type
-0040 a043 SQ PRC Concept-name Code Sequence
+0040 a043 SQ PRC Concept Name Code Sequence
 0040 a050 CS PRC Continuity of Content
 0040 a073 SQ PRC Verifying Observer Sequence
 0040 a075 PN PRC Verifying Observer Name
@@ -1120,18 +1122,19 @@
 0040 a136 US PRC Referenced Frame Numbers
 0040 a138 DS PRC Referenced Time Offsets
 0040 a13a DT PRC Referenced Datetime
+0040 a160 UT PRC Text Value
 0040 a168 SQ PRC Concept Code Sequence
 0040 a16a ST PRC Bibliographics Citation
 0040 a170 SQ PRC Purpose of Reference Code Sequence
 0040 a180 US PRC Annotation Group Number
-0040 a195 SQ PRC Concept-name Code Sequence Modifier
+0040 a195 SQ PRC Modifier Code Sequence Modifier
 0040 a300 SQ PRC Measured Value Sequence
 0040 a301 SQ PRC Numeric Value Qualifier Code Sequence
 0040 a30a DS PRC Numeric Value
 0040 a353 ST PRC Address
 0040 a354 LO PRC Telephone Number
-0040 a360 SQ PRC Precessor Document Sequence
-0040 a370 SS PRC Referenced Requested Sequence
+0040 a360 SQ PRC Predecessor Documents Sequence
+0040 a370 SS PRC Referenced Request Sequence
 0040 a372 SQ PRC Performed Procedure Code Sequence
 0040 a375 SQ PRC Current Requested Procedure Evidence Sequence
 0040 a385 SQ PRC Pertinent Other Evidence Sequence
@@ -1199,10 +1202,10 @@
 0054 0210 IS NMI Trigger Vector
 0054 0211 US NMI Number of Triggers in Phase
 0054 0220 SQ NMI View Code Sequence
-0054 0222 SQ NMI View Angulation Modifer Code Sequence
+0054 0222 SQ NMI View Modifer Code Sequence
 0054 0300 SQ NMI Radionuclide Code Sequence
-0054 0302 SQ NMI Radiopharmaceutical Route Code Sequence
-0054 0304 SQ NMI Radiopahrmaceutical Code Sequence
+0054 0302 SQ NMI Administration Route Code Sequence
+0054 0304 SQ NMI Radiopharmaceutical Code Sequence
 0054 0306 SQ NMI Calibration Data Sequence
 0054 0308 US NMI Energy Window Number
 0054 0400 SH NMI Image ID
@@ -1327,11 +1330,11 @@
 2000 00a2 SQ BFS Media Installed Sequence
 2000 00a4 SQ BFS Other Media Available Sequence
 2000 00a8 SQ BFS Supported Image Display Formats Sequence
-2000 0500 SQ BFS Referenced Film Box Sequences
-2000 0510 SQ BFS Referenced Stored Print Sequences
+2000 0500 SQ BFS Referenced Film Box Sequence
+2000 0510 SQ BFS Referenced Stored Print Sequence
 2010 0000 UL BFB Group Length
 2010 0010 ST BFB Image Display Format
-2010 0030 CS BFB Annotation Display Format
+2010 0030 CS BFB Annotation Display Format ID
 2010 0040 CS BFB Film Orientation
 2010 0050 CS BFB Film Size ID
 2010 0052 CS BFB Printer Resolution ID
@@ -1343,7 +1346,7 @@
 2010 00a8 CS BFB Default Smoothing Type
 2010 00a9 CS BFB Other Smoothing Types Available
 2010 0100 CS BFB Border Density
-2010 0110 CS BFB Emty Image Density
+2010 0110 CS BFB Empty Image Density
 2010 0120 US BFB Min Density
 2010 0130 US BFB Max Density
 2010 0140 CS BFB Trim
@@ -1354,17 +1357,18 @@
 2010 0160 US BFB Reflected Ambiant Light
 2010 0367 UD BFB Printer Pixel Spacing
 2010 0500 SQ BFB Referenced Film Session Sequence
-2010 0510 SQ BFB Referenced Image Box SOP Sequence
-2010 0520 SQ BFB Referenced Basic Annotation Box SOP Sequence
+2010 0510 SQ BFB Referenced Image Box Sequence
+2010 0520 SQ BFB Referenced Basic Annotation Box Sequence
 2020 0000 UL BIB Group Length
 2020 0010 US BIB Image Position
 2020 0020 CS BIB Polarity
 2020 0030 DS BIB Requested Image Size
 2020 0040 CS BIB Requested Decimate/Crop Behaviour
 2020 0050 CS BIB Requested Resolution ID
-2020 00a0 CS BIB Decimate/Crop Result
-2020 0110 SQ BIB Basic Greyscale Image Sequence
-2020 0111 SQ BIB Basic Color Image Sequencee
+2020 00a0 CS BIB Requested Image Size Flag
+2020 00a2 CS BIB Decimate/Crop Result
+2020 0110 SQ BIB Basic Grayscale Image Sequence
+2020 0111 SQ BIB Basic Color Image Sequence
 2020 0130 SQ BIB Referenced Image Overlay Box Sequence (RET)
 2020 0140 SQ BIB Referenced VOI LUT Box Sequence (RET)
 2030 0000 UL BAB Group Length
@@ -1418,6 +1422,7 @@
 3002 0004 ST RT RT Image Description
 3002 000a CS RT Reported Values Origin
 3002 000c CS RT RT Image Plane
+3002 000d DS RT X-Ray Image Receptor Translation
 3002 000e DS RT X-Ray Image Receptor Angle
 3002 0010 DS RT RT mage Orientation
 3002 0011 DS RT Image Plane Pixel Spacing
@@ -1444,7 +1449,7 @@
 3004 0012 DS DVH Dose Value
 3004 0040 DS DVH DVH Normalization Point
 3004 0042 DS DVH DVH Normalization Dose Value
-3004 0050 SQ DVH DCH Sequence
+3004 0050 SQ DVH DVH Sequence
 3004 0052 DS DVH DVH Dose Scaling
 3004 0054 CS DVH DVH Volume Units
 3004 0056 IS DVH DVH Number of Bins
@@ -1481,6 +1486,7 @@
 3006 0044 DS SSET Contour Slab Thickness
 3006 0045 DS SSET Contour Offset Vector
 3006 0046 IS SSET Number of Contour Points
+3006 0048 IS SSET Contour Number
 3006 0050 DS SSET Contour Data
 3006 0080 SQ SSET RT ROI Observations Sequence
 3006 0082 IS SSET Observation Number
@@ -1546,7 +1552,7 @@
 3008 00D0 SQ ??? Recorded Block Sequence
 3008 00E0 SQ ??? Treatment Summary Measured Dose Reference Sequence
 3008 0100 SQ ??? Recorded Source Sequence
-3008 0105 LO ??? Source Serial Numbe
+3008 0105 LO ??? Source Serial Number
 3008 0110 SQ ??? Treatment Session Application Setup Sequence
 3008 0116 CS ??? Application Setup Check 
 3008 0120 SQ ??? Recorded Brachy Accessory Device Sequence
@@ -1582,7 +1588,7 @@
 300a 0004 ST RT  RT Plan Description
 300a 0006 DA RT  RT Plan Date
 300a 0007 TM RT  RT Plan Time
-300a 0009 LO RT  RT Treatment Protocols
+300a 0009 LO RT  Treatment Protocols
 300a 000a CS RT  Treatment Intent
 300a 000b LO RT  Treatment Sites
 300a 000c CS RT  RT Plan Geometry
@@ -1590,6 +1596,7 @@
 300a 0010 SQ RT  Dose Reference Sequence
 300a 0012 IS RT  Dose Reference Number
 300a 0014 CS RT  Dose Reference Structure Type
+300a 0015 CS RT  Nominal Beam Energy Unit
 300a 0016 LO RT  Dose Reference Description
 300a 0018 DS RT  Dose Reference Point Coordinates
 300a 001a DS RT  Nominal Prior Dose
@@ -1645,6 +1652,7 @@
 300a 00c3 ST RT  Beam Description
 300a 00c4 CS RT  Beam Type
 300a 00c6 CS RT  Radiation Type
+300a 00c7 CS RT  High-Dose Technique Type
 300a 00c8 IS RT  Reference Image Number
 300a 00ca SQ RT  Planned Verification Image Sequence
 300a 00cc LO RT  Imaging Device-Specific Acquisition Parameters
@@ -1787,7 +1795,7 @@
 300a 0296 DS RT  Source Applicator Length
 300a 0298 LO RT  Source Applicator Manufacturer
 300a 029c DS RT  Source Applicator Wall Nominal Thickness
-300a 029e DS RT  Src Applicator Wall Nominal Transmission
+300a 029e DS RT  Source Applicator Wall Nominal Transmission
 300a 02a0 DS RT  Source Applicator Step Size
 300a 02a2 IS RT  Transfer Tube Number
 300a 02a4 DS RT  Transfer Tube Length
@@ -1812,7 +1820,7 @@
 300c 0007 IS RT  Referenced Reference Image Number
 300c 0008 DS RT  Start Cumulative Meterset Weight
 300c 0009 DS RT  End Cumulative Meterset Weight
-300c 000a SQ RT  Referenced Brachy Application Setup Seq
+300c 000a SQ RT  Referenced Brachy Application Setup Sequence
 300c 000c IS RT  Referenced Brachy Application Setup Number
 300c 000e IS RT  Referenced Source Number
 300c 0020 SQ RT  Referenced Fraction Group Sequence
@@ -1820,7 +1828,7 @@
 300c 0040 SQ RT  Referenced Verification Image Sequence
 300c 0042 SQ RT  Referenced Reference Image Sequence
 300c 0050 SQ RT  Referenced Dose Reference Sequence
-300c 0051 IS RT  Referenced Dose Reference Numer
+300c 0051 IS RT  Referenced Dose Reference Number
 300c 0055 SQ RT  Brachy Referenced Dose Reference Sequence
 300c 0060 SQ RT  Referenced Structure Set Sequence
 300c 006a IS RT  Referenced Patient Setup Number
@@ -1863,7 +1871,7 @@
 4008 0210 CS RES Interpretation Type ID
 4008 0212 CS RES Interpretation Status ID
 4008 0300 ST RES Impressions
-4008 4000 ST RES Comments
+4008 4000 ST RES Results Comments
 4ffe 0001 SQ ??? MAC Parameters Sequence
 5000 0000 UL CRV Group Length
 5000 0005 US CRV Curve Dimensions
@@ -1908,9 +1916,9 @@
 6000 0012 US OLY Planes
 6000 0015 IS OLY Number of Frames in Overlay
 6000 0022 LO OLY Overlay Description
-6000 0040 CS OLY Type
-6000 0045 LO OLY Subtype
-6000 0050 SS OLY Origin
+6000 0040 CS OLY Overlay Type
+6000 0045 LO OLY Overlay Subtype
+6000 0050 SS OLY Overlay Origin
 6000 0051 US OLY Image Frame Origin
 6000 0052 US OLY Overlay Plane Origin
 6000 0060 LO OLY Compression Code (RET)
@@ -1931,7 +1939,7 @@
 6000 1302 DS OLY ROI Mean
 6000 1303 DS OLY ROI Standard Deviation
 6000 1500 LO OLY Overlay Label
-6000 3000 OW OLY Data
+6000 3000 OW OLY Overlay Data
 6000 4000 LO OLY Comments (RET)
 7fe0 0000 UL PXL Group Length
 7fe0 0010 OB PXL Pixel Data

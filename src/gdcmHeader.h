@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.40 2003/10/21 12:19:43 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.41 2003/10/30 17:06:00 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -139,6 +139,8 @@ public:
    std::string GetFileName(void) {return filename;}
    
    size_t GetPixelOffset(void);
+   size_t GetPixelAreaLength(void);
+
    int    GetSwapCode(void) { return sw; }
 
    // TODO Swig int SetPubDict(std::string filename);
@@ -199,12 +201,9 @@ public:
    std::string GetPixelType(void);  
    
    std::string GetTransferSyntaxName(void);
-   int    GetLUTLength(void);
+   int    HasLUT(void);
    int    GetLUTNbits(void);
-   void * GetLUTRed(void);
-   void * GetLUTGreen(void);
-   void * GetLUTBlue(void);
-   void * GetLUTRGB(void);
+   void * GetLUTRGBA(void);
            
 
 };

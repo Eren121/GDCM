@@ -9,6 +9,7 @@ gdcmPythonSrcDir=ThisModule
 gdcmSrcDir      ="src"
 gdcmJpeg8SrcDir =os.path.join('src', 'jpeg', 'libijg8')
 gdcmJpeg12SrcDir=os.path.join('src', 'jpeg', 'libijg12')
+gdcmJpgSrcDir=os.path.join('src', 'jpeg', 'ljpg')
 gdcmvtkSrcDir   ="vtk"
 gdcmDictsDir    ="Dicts"
 gdcmTestDir     ="Test"
@@ -53,7 +54,7 @@ Jpeg8Sources = glob.glob(os.path.join(gdcmJpeg8SrcDir,"j*.c"))
 Jpeg8SourcesToRemove = ['jmemansi.c', 'jmemname.c', 'jmemdos.c', 'jmemmac.c']
 for Remove in Jpeg8SourcesToRemove:
    ### Because setup.py is a multiple pass process we need to trap
-   ### the case were the files were allready wed out on a previous pass.
+   ### the case where the files were allready wed out on a previous pass.
    try:
       Jpeg8Sources.remove(os.path.join(gdcmJpeg8SrcDir, Remove))
    except ValueError:
@@ -64,12 +65,16 @@ Jpeg12Sources = glob.glob(os.path.join(gdcmJpeg12SrcDir,"j*.c"))
 Jpeg12SourcesToRemove = ['jmemansi12.c', 'jmemname12.c', 'jmemdos12.c', 'jmemmac12.c']
 for Remove in Jpeg12SourcesToRemove:
    ### Because setup.py is a multiple pass process we need to trap
-   ### the case were the files were allready wed out on a previous pass.
+   ### the case where the files were allready wed out on a previous pass.
    try:
       Jpeg12Sources.remove(os.path.join(gdcmJpeg12SrcDir, Remove))
    except ValueError:
       continue
 Sources.extend(Jpeg12Sources)
+
+#For 'xmedcon' Jpeg Lossless
+JpgSources =glob.glob(os.path.join(gdcmJpgSrcDir,"*.c"))
+Sources.extend(JpgSources)  
 
 # Sources 2/ The second extension contains the VTK classes (which we wrap
 #            with the vtk wrappers):
@@ -80,6 +85,8 @@ vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
 vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
 vtkSources.extend(Jpeg8Sources)
 vtkSources.extend(Jpeg12Sources)
+vtkSources.extend(JpgSources)
+
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",
               "vtkFiltering","vtkFilteringPython"]
@@ -98,7 +105,8 @@ setup(name=ThisModule,
       ext_modules=[SwigExtension(name='_gdcm',
                                  sources=Sources,
                                  include_dirs=[gdcmSrcDir,gdcmJpeg8SrcDir,
-                                               gdcmSrcDir,gdcmJpeg12SrcDir],
+                                               gdcmSrcDir,gdcmJpeg12SrcDir,
+					       gdcmSrcDir,gdcmJpgSrcDir],
                                  libraries=libraries,
                                  define_macros=macros,
                                  swig_cpp=1,
