@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 16:28:41 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/16 16:41:00 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,10 +96,11 @@ public:
 
    // Write mode
 
-   /// \brief Tells the writer we want to write a Raw File (no header)
+   /// \brief Tells the writer we want to keep 'Grey pixels + Palettes color'
+   ///        when possible (as opposed to convert 'Palettes color' to RGB)
   void SetWriteModeToRaw()           { SetWriteMode(WMODE_RAW);  };
    /// \brief Tells the writer we want to write RGB image when possible
-   ///        (as opposite to 'Grey pixels + Palettes color')
+   ///        (as opposed to 'Grey pixels + Palettes color')
    void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  };
    /// \brief Sets the Write Mode ( )
    void SetWriteMode(FileMode mode)   { WriteMode = mode;         };
