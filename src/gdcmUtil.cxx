@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:07:41 $
-  Version:   $Revision: 1.130 $
+  Date:      $Date: 2005/02/02 18:13:57 $
+  Version:   $Revision: 1.131 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -829,7 +829,7 @@ std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
    uint16_t swap;
-   swap = ((( val << 8 ) & 0x0ff00 ) | (( val >> 8 ) & 0x00ff ) );
+   swap = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
    return os.write(reinterpret_cast<const char*>(&swap), 2);
 #else
    return os.write(reinterpret_cast<const char*>(&val), 2);

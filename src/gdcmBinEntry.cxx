@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 17:47:56 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/02/02 18:13:57 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,7 +103,9 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
          {
             for (int i = 0; i < BUFFER_SIZE/2; i++)
             {
-               buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
+               //buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
+               uint16_t val = binArea16[i];
+               buffer[i] = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
             }
             fp->write ( (char*)buffer, BUFFER_SIZE );
             binArea16 += BUFFER_SIZE/2;

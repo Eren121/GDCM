@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.220 $
+  Date:      $Date: 2005/02/02 18:13:57 $
+  Version:   $Revision: 1.221 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -352,7 +352,7 @@ uint16_t Document::SwapShort(uint16_t a)
 {
    if ( SwapCode == 4321 || SwapCode == 2143 )
    {
-      a = ((( a << 8 ) & 0x0ff00 ) | (( a >> 8 ) & 0x00ff ) );
+      a = ((( a << 8 ) & 0xff00 ) | (( a >> 8 ) & 0x00ff ) );
    }
    return a;
 }
