@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.6 2003/09/24 11:37:10 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.7 2003/09/24 14:01:04 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -21,7 +21,7 @@
 //cygwin ???? -> _WIN32 ??
 #ifdef _MSC_VER 
 #include <windows.h> 
-int GetDir(string dPath, list<string> &filenames)
+int GetDir(std::string dPath, std::list<std::string> &filenames)
 {
   //For now dPath should have an ending "\"
   WIN32_FIND_DATA FileData; 
@@ -46,7 +46,7 @@ int GetDir(string dPath, list<string> &filenames)
 #else
 #include <dirent.h>
 
-int GetDir(string dPath, list<string> &filenames)
+int GetDir(std::string dPath, std::list<std::string> &filenames)
 {
  DIR *dir = opendir( dPath.c_str() );
  struct dirent *entry;
@@ -89,7 +89,7 @@ gdcmHeaderHelper::gdcmHeaderHelper(const char *InFilename,
  *
  */
 int gdcmHeaderHelper::GetPixelSize() {
-   string PixelType = GetPixelType();
+   std::string PixelType = GetPixelType();
    if (PixelType == "8U"  || PixelType == "8S")
       return 1;
    if (PixelType == "16U" || PixelType == "16S")
@@ -113,26 +113,26 @@ int gdcmHeaderHelper::GetPixelSize() {
  * \warning 12 bit images appear as 16 bit.
  * @return  
  */
-string gdcmHeaderHelper::GetPixelType() {
-   string BitsAlloc;
+std::string gdcmHeaderHelper::GetPixelType() {
+   std::string BitsAlloc;
    BitsAlloc = GetElValByName("Bits Allocated");
    if (BitsAlloc == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
-      BitsAlloc = string("16");
+      BitsAlloc = std::string("16");
    }
    if (BitsAlloc == "12")
-      BitsAlloc = string("16");
+      BitsAlloc = std::string("16");
 
-   string Signed;
+   std::string Signed;
    Signed = GetElValByName("Pixel Representation");
    if (Signed == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
-      BitsAlloc = string("0");
+      BitsAlloc = std::string("0");
    }
    if (Signed == "0")
-      Signed = string("U");
+      Signed = std::string("U");
    else
-      Signed = string("S");
+      Signed = std::string("S");
 
    return( BitsAlloc + Signed);
 }
@@ -145,7 +145,7 @@ string gdcmHeaderHelper::GetPixelType() {
   */
 float gdcmHeaderHelper::GetXSpacing() {
     float xspacing, yspacing;
-    string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
+    std::string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
 
     if (StrSpacing == GDCM_UNFOUND) {
        dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing (0028,0030)");
@@ -165,7 +165,7 @@ float gdcmHeaderHelper::GetXSpacing() {
   */
 float gdcmHeaderHelper::GetYSpacing() {
    float xspacing, yspacing;
-   string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
+   std::string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
   
    if (StrSpacing == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetYSpacing: unfound Pixel Spacing (0028,0030)");
@@ -201,11 +201,11 @@ float gdcmHeaderHelper::GetZSpacing() {
    //   Si le Spacing Between Slices est absent, 
    //   on suppose que les coupes sont jointives
    
-   string StrSpacingBSlices = GetPubElValByNumber(0x0018,0x0088);
+   std::string StrSpacingBSlices = GetPubElValByNumber(0x0018,0x0088);
 
    if (StrSpacingBSlices == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetZSpacing: unfound StrSpacingBSlices");
-      string StrSliceThickness = GetPubElValByNumber(0x0018,0x0050);       
+      std::string StrSliceThickness = GetPubElValByNumber(0x0018,0x0050);       
       if (StrSliceThickness == GDCM_UNFOUND)
          return 1.;
       else
@@ -240,7 +240,7 @@ float gdcmHeaderHelper::GetZSpacing() {
   */
 float gdcmHeaderHelper::GetXOrigin() {
     float xImPos, yImPos, zImPos;  
-    string StrImPos = GetPubElValByNumber(0x0020,0x0032);
+    std::string StrImPos = GetPubElValByNumber(0x0020,0x0032);
 
     if (StrImPos == GDCM_UNFOUND) {
        dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position Patient (0020,0032)");
@@ -265,7 +265,7 @@ float gdcmHeaderHelper::GetXOrigin() {
   */
 float gdcmHeaderHelper::GetYOrigin() {
     float xImPos, yImPos, zImPos;
-    string StrImPos = GetPubElValByNumber(0x0020,0x0032);
+    std::string StrImPos = GetPubElValByNumber(0x0020,0x0032);
 
     if (StrImPos == GDCM_UNFOUND) {
        dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position Patient (0020,0032)");
@@ -292,7 +292,7 @@ float gdcmHeaderHelper::GetYOrigin() {
   */
 float gdcmHeaderHelper::GetZOrigin() {
    float xImPos, yImPos, zImPos; 
-   string StrImPos = GetPubElValByNumber(0x0020,0x0032);
+   std::string StrImPos = GetPubElValByNumber(0x0020,0x0032);
    if (StrImPos != GDCM_UNFOUND) {
       if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3) {
          dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image Position Patient (0020,0032)");
@@ -310,7 +310,7 @@ float gdcmHeaderHelper::GetZOrigin() {
          return zImPos;
       }    
    }                
-   string StrSliceLocation = GetPubElValByNumber(0x0020,0x1041);// for *very* old ACR-NEMA images
+   std::string StrSliceLocation = GetPubElValByNumber(0x0020,0x1041);// for *very* old ACR-NEMA images
    if (StrSliceLocation != GDCM_UNFOUND) {
       if( sscanf( StrSliceLocation.c_str(), "%f", &zImPos) !=1) {
          dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Slice Location (0020,1041)");
@@ -320,7 +320,7 @@ float gdcmHeaderHelper::GetZOrigin() {
       }
    }   
    dbg.Verbose(0, "gdcmHeader::GetZImagePosition: unfound Slice Location (0020,1041)");
-   string StrLocation = GetPubElValByNumber(0x0020,0x0050);
+   std::string StrLocation = GetPubElValByNumber(0x0020,0x0050);
    if (StrLocation != GDCM_UNFOUND) {
       if( sscanf( StrLocation.c_str(), "%f", &zImPos) !=1) {
          dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Location (0020,0050)");
@@ -345,7 +345,7 @@ int gdcmHeaderHelper::GetImageNumber() {
   //binary conversion rules. This may be preferable to sscanf() since atoi() is a much smaller,
   // simpler and faster function. sscanf() can do all possible conversions whereas atoi() can 
   //only do single decimal integer conversions.
-  string StrImNumber = GetPubElValByNumber(0x0020,0x0013); //0020 0013 IS REL Image Number
+  std::string StrImNumber = GetPubElValByNumber(0x0020,0x0013); //0020 0013 IS REL Image Number
   if (StrImNumber != GDCM_UNFOUND) {
     return atoi( StrImNumber.c_str() );
   }
@@ -358,7 +358,7 @@ int gdcmHeaderHelper::GetImageNumber() {
   * @return ModalityType
   */
 ModalityType gdcmHeaderHelper::GetModality(void) {
-  string StrModality = GetPubElValByNumber(0x0008,0x0060); //0008 0060 CS ID Modality
+  std::string StrModality = GetPubElValByNumber(0x0008,0x0060); //0008 0060 CS ID Modality
   if (StrModality != GDCM_UNFOUND) {
          if ( StrModality.find("AU") < StrModality.length()) return AU;
     else if ( StrModality.find("AS") < StrModality.length()) return AS;
@@ -412,22 +412,22 @@ ModalityType gdcmHeaderHelper::GetModality(void) {
 }
 
 //----------------------------------------------------------------------------
-string gdcmHeaderHelper::GetStudyUID()
+std::string gdcmHeaderHelper::GetStudyUID()
 {
   return GetPubElValByNumber(0x0020,0x000d); //!0020 000d UI REL Study Instance UID
 }
 //----------------------------------------------------------------------------
-string gdcmHeaderHelper::GetSeriesUID()
+std::string gdcmHeaderHelper::GetSeriesUID()
 {
   return GetPubElValByNumber(0x0020,0x000e); //!0020 000e UI REL Series Instance UID
 }
 //----------------------------------------------------------------------------
-string gdcmHeaderHelper::GetClassUID()
+std::string gdcmHeaderHelper::GetClassUID()
 {
   return GetPubElValByNumber(0x0008,0x0016); //!0008 0016 UI ID SOP Class UID
 }
 //----------------------------------------------------------------------------
-string gdcmHeaderHelper::GetInstanceUID()
+std::string gdcmHeaderHelper::GetInstanceUID()
 {
   return GetPubElValByNumber(0x0008,0x0018); //!0008 0018 UI ID SOP Instance UID
 }
@@ -443,7 +443,7 @@ string gdcmHeaderHelper::GetInstanceUID()
 gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper()
 {
   //! \todo
-  for (list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
+  for (std::list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
         it != CoherentGdcmFileList.end(); it++)
   {
     delete *it;
@@ -461,7 +461,7 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
   //iop is supposed to be float[6]
   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0;
   
-  string StrImOriPat = GetPubElValByNumber(0x0020,0x0037); // 0020 0037 DS REL Image Orientation (Patient)
+  std::string StrImOriPat = GetPubElValByNumber(0x0020,0x0037); // 0020 0037 DS REL Image Orientation (Patient)
   if (StrImOriPat != GDCM_UNFOUND) {
     if( sscanf( StrImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
             &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6) {
@@ -490,7 +490,7 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
   * \ingroup gdcmHeaderHelper
   * \brief add a gdcmFile to the list based on file name
   */
-void gdcmSerieHeaderHelper::AddFileName(string filename)
+void gdcmSerieHeaderHelper::AddFileName(std::string filename)
 {
   gdcmHeaderHelper *GdcmFile = new gdcmHeaderHelper( filename.c_str() );
   this->CoherentGdcmFileList.push_back( GdcmFile );
@@ -509,12 +509,12 @@ void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file)
   * \ingroup gdcmHeaderHelper
   * \brief \todo
   */
-void gdcmSerieHeaderHelper::SetDirectory(string dir)
+void gdcmSerieHeaderHelper::SetDirectory(std::string dir)
 {
-  list<string> filenames_list;
+  std::list<std::string> filenames_list;
   GetDir(dir, filenames_list);  //OS specific
   
-  for(list<string>::iterator it = filenames_list.begin(); it !=
+  for(std::list<std::string>::iterator it = filenames_list.begin(); it !=
   filenames_list.end(); it++)
   {
     gdcmHeaderHelper *file = new gdcmHeaderHelper( it->c_str() );
@@ -560,10 +560,10 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
   float min, max;
   bool first = true;
   int n=0;
-  vector<float> distlist;
+  std::vector<float> distlist;
 
   //!\todo rewrite this for loop.
-  for (list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
+  for (std::list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
         it != CoherentGdcmFileList.end(); it++)
   {
     if(first) {
@@ -622,7 +622,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
     //Then I order the slices according to the value "dist". Finally, once
     //I've read in all the slices, I calculate the z-spacing as the difference
     //between the "dist" values for the first two slices.
-    vector<gdcmHeaderHelper*> CoherentGdcmFileVector(n);
+    std::vector<gdcmHeaderHelper*> CoherentGdcmFileVector(n);
     //CoherentGdcmFileVector.reserve( n );
     CoherentGdcmFileVector.resize( n );
     //assert( CoherentGdcmFileVector.capacity() >= n );
@@ -632,7 +632,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
     n = 0;
     
     //VC++ don't understand what scope is !! it -> it2
-    for (list<gdcmHeaderHelper*>::iterator it2  = CoherentGdcmFileList.begin();
+    for (std::list<gdcmHeaderHelper*>::iterator it2  = CoherentGdcmFileList.begin();
         it2 != CoherentGdcmFileList.end(); it2++, n++)
     {
       //2*n sort algo !!
@@ -645,7 +645,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
   CoherentGdcmFileList.clear();  //this doesn't delete list's element, node only
   
   //VC++ don't understand what scope is !! it -> it3
-  for (vector<gdcmHeaderHelper*>::iterator it3  = CoherentGdcmFileVector.begin();
+  for (std::vector<gdcmHeaderHelper*>::iterator it3  = CoherentGdcmFileVector.begin();
         it3 != CoherentGdcmFileVector.end(); it3++)
   {
     CoherentGdcmFileList.push_back( *it3 );
@@ -665,7 +665,7 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering()
   int n = 0;//CoherentGdcmFileList.size(); //O(N) operation !!
   unsigned char *partition;
   
-  list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
+  std::list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
   min = max = (*it)->GetImageNumber();
 
   for (; it != CoherentGdcmFileList.end(); it++, n++)
@@ -680,10 +680,10 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering()
   partition = new unsigned char[n];
   memset(partition, 0, n);
 
-  vector<gdcmHeaderHelper*> CoherentGdcmFileVector(n);
+  std::vector<gdcmHeaderHelper*> CoherentGdcmFileVector(n);
 
   //VC++ don't understand what scope is !! it -> it2
-  for (list<gdcmHeaderHelper*>::iterator it2  = CoherentGdcmFileList.begin();
+  for (std::list<gdcmHeaderHelper*>::iterator it2  = CoherentGdcmFileList.begin();
         it2 != CoherentGdcmFileList.end(); it2++)
   {
     pos = (*it2)->GetImageNumber();
@@ -699,7 +699,7 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering()
 
   //VC++ don't understand what scope is !! it -> it3
   CoherentGdcmFileList.clear();  //this doesn't delete list's element, node only
-  for (vector<gdcmHeaderHelper*>::iterator it3  = CoherentGdcmFileVector.begin();
+  for (std::vector<gdcmHeaderHelper*>::iterator it3  = CoherentGdcmFileVector.begin();
         it3 != CoherentGdcmFileVector.end(); it3++)
   {
     CoherentGdcmFileList.push_back( *it3 );
@@ -717,7 +717,7 @@ bool gdcmSerieHeaderHelper::FileNameOrdering()
   return true;
 }
 //----------------------------------------------------------------------------
-list<gdcmHeaderHelper*> &gdcmSerieHeaderHelper::GetGdcmFileList()
+std::list<gdcmHeaderHelper*> &gdcmSerieHeaderHelper::GetGdcmFileList()
 {
   return CoherentGdcmFileList;
 }
