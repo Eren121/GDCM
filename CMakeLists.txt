@@ -31,8 +31,14 @@ MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 SUBDIRS(
   src
   Dicts
-  Example
 )
+#-----------------------------------------------------------------------------
+# Example subdir:
+
+OPTION(BUILD_EXAMPLES "Build GDCM examples." ON)
+IF(BUILD_EXAMPLES)
+  SUBDIRS(Example)
+ENDIF(BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
 # Adding GDCM_DATA_ROOT
