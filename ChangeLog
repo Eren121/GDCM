@@ -1,3 +1,11 @@
+2004-11-23 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocEntryArchive.cxx : complete the print function, that prints
+     all replaced DocEntry's
+   * src/gdcmFile.[h|cxx] : remove all changes of the header when getting datas.
+     Now, each needed DocEntry to modify is duplicated, modified and inserted
+     to the header using DocEntryArchive. Thus, after save, we can restore the
+     header initial state.
+
 2004-11-22 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFile.h : fix compilation errors on zorglub linuc computer
 

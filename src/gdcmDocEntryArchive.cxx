@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/19 18:49:39 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/11/23 11:14:13 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,6 +49,14 @@ DocEntryArchive::~DocEntryArchive()
  */
 void DocEntryArchive::Print(std::ostream &os) 
 {
+   os << "Elements in archives :" << std::endl;
+   for(TagDocEntryHT::iterator it = Archive.begin();
+       it!=Archive.end();
+       ++it)
+   {
+      if(it->second)
+         it->second->Print(os);
+   }
 }
 
 //-----------------------------------------------------------------------------

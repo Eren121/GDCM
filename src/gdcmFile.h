@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/23 09:13:26 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2004/11/23 11:14:13 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,12 +108,16 @@ public:
 protected:
    bool WriteBase(std::string const& fileName, FileType type);
 
-   void SetToRAW();
-   void SetToRGB();
-   void Restore();
+   void SetWriteToNative();
+   void SetWriteToDecompressed();
+   void SetWriteToRGB();
+   void RestoreWrite();
 
-   void SetToLibido();
-   void RestoreFromLibido();
+   void SetWriteToLibido();
+   void RestoreWriteFromLibido();
+
+   ValEntry* CopyValEntry(uint16_t group,uint16_t element);
+   BinEntry* CopyBinEntry(uint16_t group,uint16_t element);
 
 private:
    void Initialise();
@@ -139,7 +143,7 @@ private:
    
    /// Wether already parsed or not
    bool Parsed;
-      
+
    /// Utility pixel converter
    PixelConvert* PixelConverter;
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/19 18:49:39 $
-  Version:   $Revision: 1.158 $
+  Date:      $Date: 2004/11/23 11:14:13 $
+  Version:   $Revision: 1.159 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,7 @@ File::File(std::string const & filename )
  */
 void File::Initialise()
 {
-   WriteMode = WMODE_NATIVE;
+   WriteMode = WMODE_DECOMPRESSED;
    WriteType = WTYPE_IMPL_VR;
    PixelConverter = NULL; //just in case
    Archive = NULL;
@@ -336,7 +336,7 @@ uint8_t* File::GetImageData()
       pixelData = PixelConverter->GetDecompressed();
    }
 
-// PIXELCONVERT CLEANME
+/*// PIXELCONVERT CLEANME
    // Restore the header in a disk-consistent state
    // (if user asks twice to get the pixels from disk)
    if ( PixelRead != -1 ) // File was "read" before
@@ -391,7 +391,7 @@ uint8_t* File::GetImageData()
 
    // We say the value *is* loaded.
    SetPixelData(pixelData);
-// END PIXELCONVERT CLEANME
+// END PIXELCONVERT CLEANME*/
 
    return pixelData;
 }
@@ -473,7 +473,7 @@ uint8_t* File::GetImageDataRaw ()
       return 0;
    }
 
-// PIXELCONVERT CLEANME
+/*// PIXELCONVERT CLEANME
    // Restore the header in a disk-consistent state
    // (if user asks twice to get the pixels from disk)
    if ( PixelRead != -1 ) // File was "read" before
@@ -503,7 +503,7 @@ uint8_t* File::GetImageDataRaw ()
    SetPixelData(decompressed);
  
    PixelRead = 1; // PixelRaw
-// END PIXELCONVERT CLEANME
+// END PIXELCONVERT CLEANME*/
 
    return decompressed;
 }
@@ -673,6 +673,19 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       fp1->write("DICM", 4);
    }
 
+   switch(WriteMode)
+   {
+      case WMODE_NATIVE :
+         SetWriteToNative();
+         break;
+      case WMODE_DECOMPRESSED :
+         SetWriteToDecompressed();
+         break;
+      case WMODE_RGB :
+         SetWriteToRGB();
+         break;
+   }
+
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
    //
@@ -686,12 +699,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    std::string rows, columns; 
    if ( HeaderInternal->GetFileType() == ACR_LIBIDO)
    {
-      SetToLibido();
-      //rows    = HeaderInternal->GetEntryByNumber(0x0028, 0x0010);
-      //columns = HeaderInternal->GetEntryByNumber(0x0028, 0x0011);
-
-      //HeaderInternal->SetEntryByNumber(columns,  0x0028, 0x0010);
-      //HeaderInternal->SetEntryByNumber(rows   ,  0x0028, 0x0011);
+      SetWriteToLibido();
    }
    // ----------------- End of Special Patch ----------------
       
@@ -722,11 +730,13 @@ bool File::WriteBase (std::string const & fileName, FileType type)
 
    if ( HeaderInternal->GetFileType() == ACR_LIBIDO )
    {
-      RestoreFromLibido();
-      //HeaderInternal->SetEntryByNumber(rows   , 0x0028, 0x0010);
-      //HeaderInternal->SetEntryByNumber(columns, 0x0028, 0x0011);
+      RestoreWriteFromLibido();
    }
    // ----------------- End of Special Patch ----------------
+
+   RestoreWrite();
+
+
    fp1->close ();
    delete fp1;
 
@@ -761,23 +771,82 @@ void File::SetPixelData(uint8_t* data)
    }
 }
 
-void File::SetToRAW()
+void File::SetWriteToNative()
 {
+// Nothing to do
 }
 
-void File::SetToRGB()
+void File::SetWriteToDecompressed()
 {
+//   if (( !HeaderInternal->HasLUT() ) || (!PixelConverter->BuildRGBImage()))
+   if(HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage())
+   {
+      SetWriteToRGB();
+   } 
+   else
+   {
+      ValEntry* photInt = CopyValEntry(0x0028,0x0004);
+      photInt->SetValue("MONOCHROME1 ");
+      photInt->SetLength(12);
+
+      BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+      pixel->SetValue(GDCM_BINLOADED);
+      pixel->SetBinArea(PixelConverter->GetDecompressed(),false);
+      pixel->SetLength(PixelConverter->GetDecompressedSize());
+
+      Archive->Push(photInt);
+      Archive->Push(pixel);
+   }
+/*   else 
+   {
+      SetWriteToRGB();
+   } */
 }
 
-void File::Restore()
+void File::SetWriteToRGB()
 {
+   if(PixelConverter->BuildRGBImage())
+   {
+      ValEntry* spp = CopyValEntry(0x0028,0x0002);
+      spp->SetValue("3 ");
+      spp->SetLength(2);
+
+      ValEntry* photInt = CopyValEntry(0x0028,0x0004);
+      photInt->SetValue("RGB ");
+      photInt->SetLength(4);
+
+      ValEntry* planConfig = CopyValEntry(0x0028,0x0006);
+      planConfig->SetValue("0 ");
+      planConfig->SetLength(2);
+
+      BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+      pixel->SetValue(GDCM_BINLOADED);
+      pixel->SetBinArea(PixelConverter->GetRGB(),false);
+      pixel->SetLength(PixelConverter->GetRGBSize());
+
+      Archive->Push(spp);
+      Archive->Push(photInt);
+      Archive->Push(planConfig);
+      Archive->Push(pixel);
+   }
+   else
+   {
+      SetWriteToDecompressed();
+   }
 }
 
-void File::SetToLibido()
+void File::RestoreWrite()
+{
+   Archive->Restore(0x0028,0x0002);
+   Archive->Restore(0x0028,0x0004);
+   Archive->Restore(0x0028,0x0006);
+   Archive->Restore(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+}
+
+void File::SetWriteToLibido()
 {
    ValEntry *oldRow = dynamic_cast<ValEntry *>(HeaderInternal->GetDocEntryByNumber(0x0028, 0x0010));
    ValEntry *oldCol = dynamic_cast<ValEntry *>(HeaderInternal->GetDocEntryByNumber(0x0028, 0x0011));
-
    
    if( oldRow && oldCol )
    {
@@ -797,10 +866,47 @@ void File::SetToLibido()
    }
 }
 
-void File::RestoreFromLibido()
+void File::RestoreWriteFromLibido()
 {
-   Archive->Restore(0x0028, 0x0010);
-   Archive->Restore(0x0028, 0x0011);
+   Archive->Restore(0x0028,0x0010);
+   Archive->Restore(0x0028,0x0011);
+}
+
+ValEntry* File::CopyValEntry(uint16_t group,uint16_t element)
+{
+   DocEntry* oldE = HeaderInternal->GetDocEntryByNumber(group, element);
+   ValEntry* newE;
+
+   if(oldE)
+   {
+      newE = new ValEntry(oldE->GetDictEntry());
+      newE->Copy(oldE);
+   }
+   else
+   {
+      newE = GetHeader()->NewValEntryByNumber(group,element);
+   }
+
+   return(newE);
+}
+
+BinEntry* File::CopyBinEntry(uint16_t group,uint16_t element)
+{
+   DocEntry* oldE = HeaderInternal->GetDocEntryByNumber(group, element);
+   BinEntry* newE;
+
+   if(oldE)
+   {
+      newE = new BinEntry(oldE->GetDictEntry());
+      newE->Copy(oldE);
+   }
+   else
+   {
+      newE = GetHeader()->NewBinEntryByNumber(group,element);
+   }
+
+
+   return(newE);
 }
 
 //-----------------------------------------------------------------------------
