@@ -75,7 +75,7 @@ PostBuild_Cmds=copy           ..\..\lib\gdcmdll.dll           ..\..\gdcmPython\ 
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /w /W0 /Gm /GX /ZI /Od /I "$(CREATIS)\glib-1.3\src\glib" /I "..\jpeg\libijg8" /I "..\jpeg\libijg12" "..\jpeg\ljpg" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /w /W0 /Gm /GX /ZI /Od /I "$(CREATIS)\glib-1.3\src\glib" /I "..\jpeg\libijg8" /I "..\jpeg\libijg12" /I "..\jpeg\ljpg" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
