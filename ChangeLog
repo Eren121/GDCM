@@ -1,3 +1,7 @@
+2004-01-09 Benoit Regrain
+     * gdcmPython/gdcmVersion.py : add a gdcmVERSION variable information
+     * setup.py : use a reference to gdcmVERSION
+
 2004-01-07 Benoit Regrain
      * Modification to compile with the distutils.
      * Bug fix in code

@@ -3,6 +3,7 @@ import glob, os, sys, shutil
 from distutilsWrapping import *
 from WrapSwig import *
 from WrapVTK import *
+from gdcmPython.gdcmVersion import *
 
 ThisModule='gdcmPython'
 gdcmPythonSrcDir=ThisModule
@@ -94,7 +95,7 @@ vtkLibraries=["vtkCommon","vtkCommonPython",
 
 ##### 
 setup(name=ThisModule,
-      version="0.3",
+      version=gdcmVERSION,
       description="...",
       author="frog",
       author_email="frog@creatis.insa-lyon.fr",
