@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 	f1->SetImageData(imageData,dataSize);
 	f1->GetHeader()->SetImageDataSize(dataSize);
 	
-	f1->GetHeader()->PrintPubEntry();
+	f1->GetHeader()->PrintEntry();
 	
 	std::string s0 =f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0000);
 	std::string s10=f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0010);
