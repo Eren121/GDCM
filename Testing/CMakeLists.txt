@@ -105,22 +105,38 @@ ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 SET(BLACK_LIST
   # serial killer (also segfaults vtkgdcmViewer, but NOT PrintFile)
   "gdcm-JPEG-LossLessThoravision.dcm"
+  
   #temporarily remove as it kills my gnome session (but not kde)
+  # + breaks TestReadWriteReadCompare : Pixel differ (as expanded in memory)  
   "KODAK-12-MONO1-Odd_Terminated_Sequence.dcm"
-  #png looks ugly
+  
+  #png looks ugly 
   "emptyImage.dcm"
-  #png looks ugly
-  "PHILIPS_Gyroscan-8-MONO2-Odd_Sequence.dcm"
+  
+  #png looks ugly. so What ? ctest compliant --> un-black listed
+  #"PHILIPS_Gyroscan-8-MONO2-Odd_Sequence.dcm"
+  
   #png looks ugly
   "mriThruVPRO.dcm"
-  #segfaults TestReadWriteReadCompare (same pb as below) 
+  
+  #segfaults TestReadWriteReadCompare (same pb as below) --> Fixed
+  #segfaults ShowDicom
   "gdcm-MR-SIEMENS-16-1.acr"
+  
   # see comments in gdcmData ref file TestAllEntryVerifyReference.txt
-  "SIEMENS_GBS_III-16-ACR_NEMA_1.acr"
+  # doesn't break TestReadWriteReadCompare
+  #"SIEMENS_GBS_III-16-ACR_NEMA_1.acr"
+  
   #segfaults TestReadWriteReadCompare (pixels not parsed properly):
-  "I9000001.dcm"
-  "PICKER-16-MONO2-Nested_icon.dcm"
-  "SIEMENS_Sonata-16-MONO2-Value_Multiplicity.dcm"
+  # doesn't break TestReadWriteReadCompare
+  #"I9000001.dcm"
+
+  # doesn't break TestReadWriteReadCompare  
+  #"PICKER-16-MONO2-Nested_icon.dcm"
+
+  # doesn't break TestReadWriteReadCompare  
+  #"SIEMENS_Sonata-16-MONO2-Value_Multiplicity.dcm"
+  
   # Fails on TestAllReadCompareDicom at the RE-reading stage with message:
   #    Big trouble : Pixel Element (7fe0,10) NOT found
   # The temporary file GDCMDATAHOME/BaselineDicom/SIEMENS_Sonata-12-MONO2-SQ.dcm
@@ -130,12 +146,18 @@ SET(BLACK_LIST
   # and effectively the pixels are missing (as well as all the entries
   # after tag 0029|1010)
   # Note: this file was previously known as E00001S03I0015.dcm
-  "SIEMENS_Sonata-12-MONO2-SQ.dcm"
+  # doesn't break TestReadWriteReadCompare 
+  #"SIEMENS_Sonata-12-MONO2-SQ.dcm"
+  
   # As of 14/09 this image creates a crash:
   #Program received signal SIGSEGV, Segmentation fault.
   #0x4032bc4b in gdcmHeader::GetLUTRGBA (this=0x8149228) at /home/malaterre/Creatis/gdcm/src/gdcmHeader.cxx:1170
   #1170          *a = lutR[i*mult+1];
-  "OT-PAL-8-face.dcm"
+  # doesn't break TestReadWriteReadCompare  
+  #"OT-PAL-8-face.dcm"
+  
+  #Break ShowDicom 
+  "TestReadWriteReadCompare.dcm"
   )
 
 #   gdcm-ACR-LibIDO seems to be cut
