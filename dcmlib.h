@@ -1,13 +1,22 @@
-// Terminology : 
-// * in DCMlib     tag = (group, element, name, value representation) e.g.
-//   (0x0010, 0x0010, "Patient_Name",    _ID_Patient_Name
-//   group   = 16 bit integer
-//   element = 16 bit integer
-//   name    = char * ("Patient_Name")
-//   value representation  (e.g. "AE" = "Application Entity",
-//         "FD", "Floating Point Double")
-// * in DCMTK  tag = (group, element) but they are many more fields in
-//   the implementation (see below). What are the relevant ones ?
+// Open questions:
+// * End user API are prefixed with GDL (Gnu Dicom Librrary) ???
+// * should RefPubDict be a key in a hashtable (implementation and not API)
+//   or a pointer to a dictionary ?
+
+
+// DCMlib general notes:  
+// * Formats:DCMlib should be able to read ACR-NEMA v1 and v2, Dicom v3 (as
+//   stated in part10). [cf dcmtk/dcmdata/docs/datadict.txt]
+// * Targeted plateforms: Un*xes and Win32/VC++6.0 (and hopefully Win32/Cygwin)
+
+#include <string>
+#include <stddef.h>    // For size_t
+// Dummy declaration for the time being
+typedef int guint16;    // We shall need glib.h !
+
+// Notes on the implemenation of the dictionary entry in DCMTK : 
+//   They are many fields in this implementation (see below). What are the
+//   relevant ones for us ?
 //      struct DBI_SimpleEntry {
 //         Uint16 group;
 //         Uint16 element;
@@ -26,79 +35,122 @@
 //           { 0x0000, 0x0000, 0x0000, 0x0000,
 //             EVR_UL, "CommandGroupLength", 1, 1, "dicom98",
 //             DcmDictRange_Unspecified, DcmDictRange_Unspecified },...}
+class DictEntry {
+private:
+	guint16 group;		// e.g. 0x0010
+	guint16 element;	// e.g. 0x0010
+	string  name;		// e.g. "Patient_Name"
+	string  ValRep;	// Value Representation i.e. some clue about the nature
+							// of the data represented e.g. "FD" short for
+							// "Floating Point Double"
+public:
+	DictEntry();
+	DictEntry(guint16 group, guint16 element, string  name, string  VR);
+};
 
-//
-// Open questions:
-// * in libido a dictionary entry goes :
-//   {0x0018,0x1251,"SH","ACQ","Transmitting Coil"}. What does the fourth
-//   entry refer to ? 
-// * what type of Dicom files can this library read ? ACR/NEMA/Dicom v2
-//   or v3 part10 ? dcmtk/dcmdata/docs/datadict.txt mentions :all
-//   standard DICOM tags (including those found in supplements 1, 2, 3, 4, 5,
-//   6, 7, 8, 9, 10), obsolete ACR/NEMA version 2 tags, obsolete SPI tags, and
-//   the tags used by Papyrus version 3...
-//   Note en DCMTK the dictionary contains a standard version entry, like
-//   "dicom98", dicom99", "ACR/NEMA2"
-// * the convertion from VR to native types depends on native types of
-//   target language (Python, Tcl a priori don't share the same native
-//   representations). Where should this go ?
-// * the dcmHeader::Set*Tag* family members cannot be defined as protected
-//   (Swig limitations for as Has_a dependency between dcmFile and dcmHeader)
-//   
-// Plateforms: Un*xes and Win32/VC++6.0 or Win32/Cygwin
+// A single DICOM dictionary i.e. a container for a collection of dictionary
+// entries. There should be a single public dictionary (THE dictionary of
+// the actual DICOM v3) but as many shadow dictionaries as imagers 
+// combined with all software versions...
+class Dict {
+	string name;
+	string filename;
+	DictEntry* entries;
+public:
+	Dict();
+	Dict(string filename);	// Read Dict from disk
+	int AppendEntry(DictEntry* NewEntry);
+};
 
+// Container for managing a set of loaded dictionaries. Sharing dictionaries
+// should avoid :
+// * reloading an allready loaded dictionary.
+// * having many in memory representations of the same dictionary.
+class DictSet {
+private:
+	Dict* dicts;
+	int AppendDict(Dict* NewDict);
+public:
+	DictSet();		// Default constructor loads THE DICOM v3 dictionary
+	int LoadDictFromFile(string filename);
+	int LoadDictFromName(string filename);
+	int LoadAllDictFromDirectory(string directorynanme);
+	string* GetAllDictNames();
+	Dict* GetDict(string DictName);
+};
 
-#include <stddef.h>    // For size_t
-// Dummy declaration for the time being
-typedef int Dict;
-typedef int gint16;    // We shall need glib.h !
+// The dicom header of a Dicom file contains a set of such ELement VALUES
+// (when successfuly parsed against a given Dicom dictionary)
+class ElValue {
+	guint16 group;		// e.g. 0x0010
+	guint16 element;	// e.g. 0x0010
+	string  value;
+};
+
+// Container for a set of succefully parsed ElValues.
+class ElValSet {
+	ElValue* values;
+};
 
 // The typical usage of objects of this class is to classify a set of
 // dicom files according to header information e.g. to create a file hierachy
 // reflecting the Patient/Study/Serie informations, or extracting a given
 // SerieId. Accesing the content (image[s] or volume[s]) is beyond the
 // functionality of this class (see dmcFile below).
+// Notes:
+// * the dcmHeader::Set*Tag* family members cannot be defined as protected
+//   (Swig limitations for as Has_a dependency between dcmFile and dcmHeader)
 class dcmHeader {
 private:
-	Dict* PubDict;		// Public Dictionary
-	Dict* ShaDict;    // Shadow Dictionary (optional)
+	static DictSet* Dicts;	// Global dictionary container
+	Dict* RefPubDict;			// Public Dictionary
+	Dict* RefShaDict;			// Shadow Dictionary (optional)
 	int swapcode;
+	ElValSet PubElVals;		// Element Values parsed with Public Dictionary
+	ElValSet ShaElVals;		// Element Values parsed with Shadow Dictionary
 public:
 	dcmHeader();
-	dcmHeader(char* filename);
+	dcmHeader(string filename);
 	~dcmHeader();
+
+	int SetPubDict(string filename);
+	// When some proprietary shadow groups are disclosed, whe can set
+	// up an additional specific dictionary to access extra information.
+	int SetShaDict(string filename);
 
 	// Retrieve all potentially available tag [tag = (group, element)] names
 	// from the standard (or public) dictionary (hence static). Typical usage:
 	// enable the user of a GUI based interface to select his favorite fields
 	// for sorting or selection.
-	static char ** GetDcmTagNames();
-	char*   GetDcmTag(char* TagName);
-	// Value Representation (VR) might be needed by caller to convert the
-	// string typed content to caller's native type (think of C/C++ vs
-	// Python).
-	char*   GetDcmTagValRep(char* TagName);
+	string* GetPubTagNames();
+	// Get the element values themselves:
+	string GetPubElValByName(string TagName);
+	string GetPubElValByNumber(guint16 group, guint16 element);
+	// Get the element value representation: (VR) might be needed by caller
+	// to convert the string typed content to caller's native type (think
+	// of C/C++ vs Python).
+	string GetPubElValRepByName(string TagName);
+	string GetPubElValRepByNumber(guint16 group, guint16 element);
+	  
+	// Same thing with the shadow :
+	string* GetShaTagNames(); 
+	string GetShaElValByName(string TagName);
+	string GetShaElValByNumber(guint16 group, guint16 element);
+	string GetShaElValRepByName(string TagName);
+	string GetShaElValRepByNumber(guint16 group, guint16 element);
 
-	// When some proprietary shadow groups are disclosed, whe can set
-	// up an additional specific dictionary to access extra information.
-	int SetShadowDict(char* filename);
-	int SetShadowDict(char** dictionary);  //????????
-	int AddShadowDict(char* filename);     //????????              
-	int DelShadowDict();
+	// Wrappers of the above (both public and shadow) to avoid bugging the
+	// caller with knowing if ElVal is from the public or shadow dictionary.
+	string GetElValByName(string TagName);
+	string GetElValByNumber(guint16 group, guint16 element);
+	string GetElValRepByName(string TagName);
+	string GetElValRepByNumber(guint16 group, guint16 element);
 
-	// Retrieve all potentially available shadowed tag names
-	char** GetShadowTagNames(); 
-	char*  GetShadowTag(char* TagName);
+	int SetPubElValByName(string content, string TagName);
+	int SetPubElValByNumber(string content, guint16 group, guint16 element);
+	int SetShaElValByName(string content, string ShadowTagName);
+	int SetShaElValByNumber(string content, guint16 group, guint16 element);
 
-	int SetTag(char* content, gint16 group, gint16 element);
-	int SetTagByName(char* content, char* TagName);
-	int SetShadowTag(char* content, gint16 group, gint16 element);
-	int SetShadowTagByName(char* content, char* ShadowTagName);
-
-	// Enable caller's low-level manual access to shadowed info
-	char*   GetDcmTagByNumber(gint16 group, gint16 element);
-	// Does this make ANY sense ?
-	char*   GetDcmTagByNumberValRep(char* TagName);
 	int GetSwapCode();
 };
 
@@ -110,8 +162,8 @@ class dcmFile
 private:
 	dcmHeader* Header;
 	void* Data;
-	int Parsed;            // weather allready parsed
-	char* OrigalFileName;  // To avoid file overwrite
+	int Parsed;				// weather allready parsed
+	string OrigFileName;	// To avoid file overwrite
 public:
 	// Constructor dedicated to writing a new DICOMV3 part10 compliant
 	// file (see SetFileName, SetDcmTag and Write)
@@ -123,15 +175,15 @@ public:
 	//    This avoid a double parsing of public part of the header when
 	//    one sets an a posteriori shadow dictionary (efficiency can be
 	//    seen a a side effect).
-	dcmFile(char* filename);
+	dcmFile(string filename);
 	// For promotion (performs a deepcopy of pointed header object)
 	dcmFile(dcmHeader* header);
 	~dcmFile();
 
 	// On writing purposes. When instance was created through
-	// dcmFile(char* filename) then the filename argument MUST be different
+	// dcmFile(string filename) then the filename argument MUST be different
 	// from the constructor's one (no overwriting aloud).
-	int SetFileName(char* filename);
+	int SetFileName(string filename);
 
 	// Allocates necessary memory, copies the data (image[s]/volume[s]) to
 	// newly allocated zone and return a pointer to it:

@@ -18,6 +18,8 @@ CXXFLAGS=$(PYTHON_INCLUDES)
 
 all: dcm_wrap.o
 
+test: test.o
+
 clean:
 	rm -f *_wrap* *.so *.o *.pyc
 
