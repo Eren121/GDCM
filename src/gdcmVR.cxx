@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 13:35:38 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/01/06 17:16:16 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -112,7 +112,7 @@ int VR::Count(VRKey const & key)
  *          \ref VR::IsVROfGdcmStringRepresentable .
  * @param   tested value representation to check for.
  */
-bool VR::IsVROfGdcmBinaryRepresentable(VRKey const & tested)
+bool VR::IsVROfBinaryRepresentable(VRKey const & tested)
 {
    //std::cout << "VR::IsVROfGdcmBinaryRepresentable===================="
    //   << tested << std::endl;
@@ -120,59 +120,51 @@ bool VR::IsVROfGdcmBinaryRepresentable(VRKey const & tested)
    if ( tested == GDCM_UNKNOWN)
       return true;
 
-   if ( ! IsValidVR(tested) )
-   {
-      dbg.Verbose(0, "VR::IsVROfGdcmBinaryRepresentable: tested not a VR!");
+   if ( IsVROfStringRepresentable(tested) )
       return false;
-   }
 
-   if ( IsVROfGdcmStringRepresentable(tested) )
-   {
-      dbg.Verbose(0, "VR::IsVROfGdcmBinaryRepresentable: binary VR !");
+   if ( IsVROfSequence(tested) )
       return false;
-   }
 
    return true;
 }
 
-//-----------------------------------------------------------------------------
 /**
  * \brief   Simple predicate that checks wether the given argument
  *          corresponds to the Value Representation of a \ref ValEntry
  *          but NOT a \ref BinEntry.
  * @param   tested value representation to check for.
  */
-bool VR::IsVROfGdcmStringRepresentable(VRKey const & tested)
+bool VR::IsVROfStringRepresentable(VRKey const & tested)
 {
+   return tested == "AE" ||
+          tested == "AS" ||
+          tested == "CS" ||
+          tested == "DA" ||
+          tested == "DS" ||
+          tested == "IS" || 
+          tested == "LO" ||
+          tested == "LT" ||
+          tested == "PN" ||
+          tested == "SH" ||
+          tested == "SL" ||
+          tested == "SS" ||
+          tested == "ST" ||
+          tested == "TM" ||
+          tested == "UI" ||
+          tested == "UL" ||
+          tested == "UN" ||
+          tested == "US";
+}
 
-   if ( ! IsValidVR(tested) )
-   {
-      dbg.Verbose(0, "VR::IsVROfGdcmStringRepresentable: tested not a VR!");
-      return false;
-   }
-
-   if ( tested == "AE" ||
-        tested == "AS" ||
-        tested == "CS" ||
-        tested == "DA" ||
-        tested == "DS" ||
-        tested == "IS" || 
-        tested == "LO" ||
-        tested == "LT" ||
-        tested == "PN" ||
-        tested == "SH" ||
-        tested == "SL" ||
-        tested == "SS" ||
-        tested == "ST" ||
-        tested == "TM" ||
-        tested == "UI" ||
-        tested == "UL" ||
-        tested == "UN" ||
-        tested == "US" )
-   {
-      return true;
-   }
-   return false;
+/**
+ * \brief   Simple predicate that checks wether the given argument
+ *          corresponds to the Value Representation of a \ref SeqEntry
+ * @param   tested value representation to check for.
+ */
+bool VR::IsVROfSequence(VRKey const & tested)
+{
+   return tested == "SQ";
 }
 
 bool VR::IsValidVR(VRKey const & key)

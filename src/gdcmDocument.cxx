@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:33:54 $
-  Version:   $Revision: 1.159 $
+  Date:      $Date: 2005/01/06 17:16:15 $
+  Version:   $Revision: 1.160 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@ static const char *TransferSyntaxStrings[] =  {
   // Unknown
   "Unknown Transfer Syntax"
 };
-                                                                                
+
 //-----------------------------------------------------------------------------
 // Refer to Document::CheckSwap()
 //const unsigned int Document::HEADER_LENGTH_TO_READ = 256;
@@ -1256,6 +1256,12 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                         long l_max, bool delim_mode)
 {
    DocEntry *newDocEntry = 0;
+   ValEntry* newValEntry;
+   BinEntry* newBinEntry;
+   SeqEntry* newSeqEntry;
+   VRKey vr;
+   bool used=false;
+   long offsetEntry,readEntry;
 
    while (true)
    {
@@ -1263,23 +1269,61 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       {
          break;
       }
+
+      used=true;
       newDocEntry = ReadNextDocEntry( );
       if ( !newDocEntry )
       {
          break;
       }
 
-      VRKey vr = newDocEntry->GetVR();
-      if ( vr != "SQ" )
+      vr = newDocEntry->GetVR();
+      newValEntry = dynamic_cast<ValEntry*>(newDocEntry);
+      newBinEntry = dynamic_cast<BinEntry*>(newDocEntry);
+      newSeqEntry = dynamic_cast<SeqEntry*>(newDocEntry);
+
+      if ( newValEntry || newBinEntry )
       {
+         offsetEntry=newDocEntry->GetOffset();
+         readEntry=newDocEntry->GetReadLength();
                
-         if ( Global::GetVR()->IsVROfGdcmStringRepresentable(vr) )
+         if ( newBinEntry )
+         {
+            if ( ! Global::GetVR()->IsVROfBinaryRepresentable(vr) )
+            { 
+                ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
+                dbg.Verbose(0, "Document::ParseDES: neither Valentry, "
+                               "nor BinEntry. Probably unknown VR.");
+            }
+
+         //////////////////// BinEntry or UNKOWN VR:
+            // When "this" is a Document the Key is simply of the
+            // form ( group, elem )...
+            if (Document* dummy = dynamic_cast< Document* > ( set ) )
+            {
+               (void)dummy;
+               newBinEntry->SetKey( newBinEntry->GetKey() );
+            }
+            // but when "this" is a SQItem, we are inserting this new
+            // valEntry in a sequence item, and the kay has the
+            // generalized form (refer to \ref BaseTagKey):
+            if (SQItem* parentSQItem = dynamic_cast< SQItem* > ( set ) )
+            {
+               newBinEntry->SetKey(  parentSQItem->GetBaseTagKey()
+                                   + newBinEntry->GetKey() );
+            }
+
+            LoadDocEntry( newBinEntry );
+            if( !set->AddEntry( newBinEntry ) )
+            {
+              //Expect big troubles if here
+              //delete newBinEntry;
+              used=false;
+            }
+         }
+         else
          {
          /////////////////////// ValEntry
-            ValEntry* newValEntry =
-               new ValEntry( newDocEntry->GetDictEntry() ); //LEAK
-            newValEntry->Copy( newDocEntry );
-             
             // When "set" is a Document, then we are at the top of the
             // hierarchy and the Key is simply of the form ( group, elem )...
             if (Document* dummy = dynamic_cast< Document* > ( set ) )
@@ -1301,53 +1345,21 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if( !set->AddEntry( newValEntry ) )
             {
               // If here expect big troubles
-              delete newValEntry; //otherwise mem leak
+              //delete newValEntry; //otherwise mem leak
+              used=false;
             }
 
             if (delimitor)
             {
-               delete newDocEntry;
+               if(!used)
+                  delete newDocEntry;
                break;
             }
             if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
             {
-               delete newDocEntry;
+               if(!used)
+                  delete newDocEntry;
                break;
-            }
-         }
-         else
-         {
-            if ( ! Global::GetVR()->IsVROfGdcmBinaryRepresentable(vr) )
-            { 
-                ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
-                dbg.Verbose(0, "Document::ParseDES: neither Valentry, "
-                               "nor BinEntry. Probably unknown VR.");
-            }
-
-         //////////////////// BinEntry or UNKOWN VR:
-            BinEntry* newBinEntry = new BinEntry( newDocEntry );  //LEAK
-
-            // When "this" is a Document the Key is simply of the
-            // form ( group, elem )...
-            if (Document* dummy = dynamic_cast< Document* > ( set ) )
-            {
-               (void)dummy;
-               newBinEntry->SetKey( newBinEntry->GetKey() );
-            }
-            // but when "this" is a SQItem, we are inserting this new
-            // valEntry in a sequence item, and the kay has the
-            // generalized form (refer to \ref BaseTagKey):
-            if (SQItem* parentSQItem = dynamic_cast< SQItem* > ( set ) )
-            {
-               newBinEntry->SetKey(  parentSQItem->GetBaseTagKey()
-                                   + newBinEntry->GetKey() );
-            }
-
-            LoadDocEntry( newBinEntry );
-            if( !set->AddEntry( newBinEntry ) )
-            {
-              //Expect big troubles if here
-              delete newBinEntry;
             }
          }
 
@@ -1357,23 +1369,22 @@ void Document::ParseDES(DocEntrySet *set, long offset,
              TransferSyntaxType ts = GetTransferSyntax();
              if ( ts == RLELossless ) 
              {
-                long PositionOnEntry = Fp->tellg();
+                long positionOnEntry = Fp->tellg();
                 Fp->seekg( newDocEntry->GetOffset(), std::ios::beg );
                 ComputeRLEInfo();
-                Fp->seekg( PositionOnEntry, std::ios::beg );
+                Fp->seekg( positionOnEntry, std::ios::beg );
              }
              else if ( IsJPEG() )
              {
-                long PositionOnEntry = Fp->tellg();
+                long positionOnEntry = Fp->tellg();
                 Fp->seekg( newDocEntry->GetOffset(), std::ios::beg );
                 ComputeJPEGFragmentInfo();
-                Fp->seekg( PositionOnEntry, std::ios::beg );
+                Fp->seekg( positionOnEntry, std::ios::beg );
              }
          }
     
          // Just to make sure we are at the beginning of next entry.
-         SkipToNextDocEntry(newDocEntry);
-         //delete newDocEntry;
+         SkipToNextDocEntry(offsetEntry,readEntry);
       }
       else
       {
@@ -1391,9 +1402,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
          }
          // no other way to create it ...
-         SeqEntry* newSeqEntry =
-            new SeqEntry( newDocEntry->GetDictEntry() );
-         newSeqEntry->Copy( newDocEntry );
          newSeqEntry->SetDelimitorMode( delim_mode );
 
          // At the top of the hierarchy, stands a Document. When "set"
@@ -1425,11 +1433,12 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          set->AddEntry( newSeqEntry );
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
-            delete newDocEntry;
             break;
          }
       }
-      delete newDocEntry;
+
+      if(!used)
+         delete newDocEntry;
    }
 }
 
@@ -1996,10 +2005,10 @@ void Document::SkipDocEntry(DocEntry *entry)
  * \warning NOT end user intended method !
  * @param   entry entry to skip
  */
-void Document::SkipToNextDocEntry(DocEntry *entry) 
+void Document::SkipToNextDocEntry(long offset,long readLgth) 
 {
-   Fp->seekg((long)(entry->GetOffset()),     std::ios::beg);
-   Fp->seekg( (long)(entry->GetReadLength()), std::ios::cur);
+   Fp->seekg((long)(offset),    std::ios::beg);
+   Fp->seekg( (long)(readLgth), std::ios::cur);
 }
 
 /**
@@ -2578,9 +2587,24 @@ DocEntry* Document::ReadNextDocEntry()
    }
 
    HandleBrokenEndian(group, elem);
-   std::string vr=FindDocEntryVR();
+   std::string vr = FindDocEntryVR();
+   std::string realVR = vr;
 
-   DocEntry *newEntry = NewDocEntryByNumber(group, elem, vr);
+   if( vr == GDCM_UNKNOWN)
+   {
+      DictEntry *dictEntry = GetDictEntryByNumber(group,elem);
+      if( dictEntry )
+         realVR = dictEntry->GetVR();
+   }
+
+   DocEntry *newEntry;
+   if( Global::GetVR()->IsVROfSequence(realVR) )
+      newEntry = NewSeqEntryByNumber(group, elem);
+   else if( Global::GetVR()->IsVROfStringRepresentable(realVR) )
+      newEntry = NewValEntryByNumber(group, elem,vr);
+   else
+      newEntry = NewBinEntryByNumber(group, elem,vr);
+
    if( vr == GDCM_UNKNOWN )
    {
       if( Filetype == ExplicitVR )

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 15:36:48 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/01/06 17:16:16 $
+  Version:   $Revision: 1.74 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,7 +219,7 @@ private:
    std::string GetDocEntryUnvalue(DocEntry *);
 
    void SkipDocEntry          (DocEntry *);
-   void SkipToNextDocEntry    (DocEntry *);
+   void SkipToNextDocEntry    (long offset,long readLgth);
 
    void FixDocEntryFoundLength(DocEntry *, uint32_t);
    bool IsDocEntryAnInteger   (DocEntry *);

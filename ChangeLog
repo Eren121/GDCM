@@ -1,4 +1,7 @@
 2005-01-06 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocument.[h|cxx] : remove all copy of DocEntry when parsing a file
+
+2005-01-06 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocEntrySet.[h|cxx], gdcmDocument.[h|cxx] : amelioration of
      ValEntry, BinEntry, SeqEntry creation or replace
 
