@@ -1016,7 +1016,6 @@ void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    if (group == 0xfffe)
       // Delimiters have no associated value:
       return;
-
       
    void *voidArea;
    voidArea = tag->GetVoidArea();
@@ -1028,6 +1027,9 @@ void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
       
    if (vr == "US" || vr == "SS") 
    {
+      // some 'Short integer' fields may be mulivaluated
+      // each single value is separated from the next one by \
+      // we split the string and write each value as a short int
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
       Tokenize (tag->GetValue(), tokens, "\\");
@@ -1040,7 +1042,9 @@ void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
       tokens.clear();
       return;
    }
-
+      // some 'Integer' fields may be mulivaluated
+      // each single value is separated from the next one by \
+      // we split the string and write each value as an int
    if (vr == "UL" || vr == "SL") 
    {
       std::vector<std::string> tokens;
@@ -1054,8 +1058,7 @@ void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
       }
       tokens.clear();
       return;
-   } 
-          
+   }           
    fwrite (tag->GetValue().c_str(), (size_t)lgr ,(size_t)1, _fp); // Elem value
 }
 
@@ -1352,18 +1355,16 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
       Entry->SetValue(s.str());
       return;
    }
-   
-   // When integer(s) are expected, read and convert the following 
-   // n *(two or four bytes)
-   // properly i.e. as integers as opposed to strings.
-   // Elements with Value Multiplicity > 1
-   // contain a set of integers (not a single one) 
     
    // Any compacter code suggested (?)
    if ( IsHeaderEntryAnInteger(Entry) ) {   
       guint32 NewInt;
       std::ostringstream s;
       int nbInt;
+   // When short integer(s) are expected, read and convert the following 
+   // n *two characters properly i.e. as short integers as opposed to strings.
+   // Elements with Value Multiplicity > 1
+   // contain a set of integers (not a single one)       
       if (vr == "US" || vr == "SS") {
          nbInt = length / 2;
          NewInt = ReadInt16();
@@ -1376,6 +1377,10 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
             }
          }
       }
+   // When integer(s) are expected, read and convert the following 
+   // n * four characters properly i.e. as integers as opposed to strings.
+   // Elements with Value Multiplicity > 1
+   // contain a set of integers (not a single one)           
       else if (vr == "UL" || vr == "SL") {
          nbInt = length / 4;
          NewInt = ReadInt32();
@@ -1666,6 +1671,13 @@ std::string gdcmParser::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
       std::ostringstream s;
       int nbInt;
 
+   // When short integer(s) are expected, read and convert the following 
+   // n * 2 bytes properly i.e. as a multivaluated strings
+   // (each single value is separated fromthe next one by \
+   // as usual for standard multivaluated filels
+   // Elements with Value Multiplicity > 1
+   // contain a set of short integers (not a single one) 
+   
       if (vr == "US" || vr == "SS")
       {
          guint16 NewInt16;
@@ -1681,6 +1693,12 @@ std::string gdcmParser::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
          }
       }
 
+   // When integer(s) are expected, read and convert the following 
+   // n * 4 bytes properly i.e. as a multivaluated strings
+   // (each single value is separated fromthe next one by \
+   // as usual for standard multivaluated filels
+   // Elements with Value Multiplicity > 1
+   // contain a set of integers (not a single one) 
       else if (vr == "UL" || vr == "SL")
       {
          guint32 NewInt32;
