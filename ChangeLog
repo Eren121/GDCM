@@ -1,4 +1,10 @@
 2002-10-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * hashtest.cxx removed (since allready in Test)
+      * src/gdcmlib.h renamed to src/gdcm.h
+      * src/dcm.i renamed to src/gdcm.i
+      * src/Makefile prepared for python wrapping
+
+2002-10-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx :
         - Parsing of header is now separated from loading of element values
           (see gdcmHeader::LoadElements).

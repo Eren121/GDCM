@@ -18,7 +18,9 @@ LDFLAGS=`glib-config --libs` -g
 %_wrap.cxx : %.i
 	$(SWIG) $(SWIGFLAGS) $(PYTHON_INCLUDES) -o $@ $<
 
-all: gdcmUtil.o    \
+all: gdcmlib.so
+
+gdcmlib.so: gdcmUtil.o    \
 	gdcmHeader.o    \
 	gdcmElValue.o   \
 	gdcmDictEntry.o \
@@ -28,7 +30,8 @@ all: gdcmUtil.o    \
 	gdcmHeaderIdo.o
 	g++ -shared -o gdcmlib.so $^ $(LDFLAGS)
 
-test: gdcmHeader.o
+python: gdcmlib.so dcm_wrap.o
+	g++ -shared $^ -o gdcmc.so
 
 clean:
 	rm -f *_wrap* *.so *.o *.pyc
