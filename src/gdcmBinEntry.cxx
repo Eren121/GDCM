@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 03:12:28 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/02/05 04:28:38 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,7 +73,6 @@ BinEntry::~BinEntry()
 */
 void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
 { 
-   const int BUFFER_SIZE = 4096;
    DocEntry::WriteContent(fp, filetype);
    void* binArea = GetBinArea();
    int lgr = GetLength();
@@ -86,6 +85,7 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    //   and we are working on Little Endian Processor
 
 #ifdef GDCM_WORDS_BIGENDIAN
+      const int BUFFER_SIZE = 4096;
       // TODO FIXME Right now, we only care of Pixels element
 
       // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
