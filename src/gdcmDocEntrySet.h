@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 10:30:51 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/20 11:39:49 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,37 +72,37 @@ public:
    virtual bool RemoveEntry(DocEntry *EntryToRemove)=0;
 
    /// \brief Removes any type of entry out of the entry set, DOESN'T destroy it
-   virtual bool RemoveEntryNoDestroy(DocEntry *EntryToRemove)=0;
+   virtual bool RemoveEntryNoDestroy(DocEntry *EntryToRemove)= 0;
 
    /// \brief write any type of entry to the entry set
    virtual void WriteContent (std::ofstream *fp, 
                               FileType filetype) = 0;
 
-   /// \brief Gets any type of DocEntry, identified by its (group,element)
+   /// \brief Gets any type of DocEntry, identified by its (group,elem)
    virtual DocEntry *GetDocEntry(uint16_t group,
                                  uint16_t elem) = 0;
 
-   /// \brief Gets a ValEntry, identified by its (group,element)
+   /// \brief Gets a ValEntry, identified by its (group,elem)
    virtual ValEntry *GetValEntry(uint16_t group,
                                  uint16_t elem) = 0;
-   /// \brief Gets a BinEntry, identified by its (group,element)
+   /// \brief Gets a BinEntry, identified by its (group,elem)
    virtual BinEntry *GetBinEntry(uint16_t group,
                                  uint16_t elem) = 0;
 
-   /// \brief Gets a SeqEntry, identified by its (group,element)
+   /// \brief Gets a SeqEntry, identified by its (group,elem)
    virtual SeqEntry *GetSeqEntry(uint16_t group,
                                  uint16_t elem) = 0;
 
    /// \brief Gets the 'string value' of a ValEntry
-   ///        identified by its (group,element) - Sorry for the name !...-
+   ///        identified by its (group,elem) - Sorry for the name !...-
    virtual std::string GetEntry(uint16_t group, uint16_t elem) = 0;
 
    DictEntry *NewVirtualDictEntry(uint16_t group, 
-                                  uint16_t element,
+                                  uint16_t elem,
                                   TagName const &vr     = GDCM_UNKNOWN,
                                   TagName const &vm     = GDCM_UNKNOWN,
                                   TagName const &name   = GDCM_UNKNOWN );
-  
+
 protected:
 // DocEntry  related utilities 
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 15:58:00 $
-  Version:   $Revision: 1.235 $
+  Date:      $Date: 2005/01/20 11:39:49 $
+  Version:   $Revision: 1.236 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1330,7 +1330,7 @@ void Header::InitializeDefaultHeader()
 
    std::string date = Util::GetCurrentDate();
    std::string time = Util::GetCurrentTime();
-   std::string uid = Util::CreateUniqueUID();
+   std::string uid  = Util::CreateUniqueUID();
    std::string uidMedia = uid;
    std::string uidClass = uid + ".1";
    std::string uidInst  = uid + ".10";
@@ -1341,6 +1341,7 @@ void Header::InitializeDefaultHeader()
     { "146 ",                      0x0002, 0x0000}, // Meta Element Group Length // FIXME: how to recompute ?
     { "1.2.840.10008.5.1.4.1.1.2", 0x0002, 0x0002}, // Media Storage SOP Class UID (CT Image Storage)
     { uidClass.c_str(),            0x0002, 0x0003}, // Media Storage SOP Instance UID
+    { "1.2.840.10008.1.2.1 ",      0x0002, 0x0010}, // Transfer Syntax UID (Explicit VR Little Endian)
     { uidClass.c_str(),            0x0002, 0x0012}, // META Implementation Class UID
     { "GDCM",                      0x0002, 0x0016}, // Source Application Entity Title
 

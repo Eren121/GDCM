@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/20 11:39:49 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ class GDCM_EXPORT DictEntry : public Base
 {
 public:
    DictEntry(uint16_t group, 
-             uint16_t element,
+             uint16_t elem,
              TagName const &vr     = GDCM_UNKNOWN,
              TagName const &vm     = GDCM_UNKNOWN,
              TagName const &name   = GDCM_UNKNOWN);
@@ -50,7 +50,7 @@ public:
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
 // Key creation
-   static TagKey TranslateToKey(uint16_t group, uint16_t element);
+   static TagKey TranslateToKey(uint16_t group, uint16_t elem);
 
 // Content of DictEntry
    void SetVR(TagName const &vr);
@@ -96,9 +96,9 @@ public:
 
 private:
    /// \todo FIXME 
-   ///        where are the group and element used except from building up
+   ///        where are the group and elem used except from building up
    ///        a TagKey. If the answer is nowhere then there is no need
-   ///        to store the group and element independently.
+   ///        to store the group and elem independently.
    ///
    ///        --> EVERYWHERE ! The alternate question would be :
    ///                         What's TagKey used for ?
@@ -168,7 +168,7 @@ private:
    /// e.g. "Patient's Name"                    
    TagName Name;      
 
-   /// Redundant with (group, element) but we add it for efficiency purpose.
+   /// Redundant with (group, elem) but we add it for efficiency purpose.
    TagKey  Key;
 };
 } // end namespace gdcm

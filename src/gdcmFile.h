@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.94 $
+  Date:      $Date: 2005/01/20 11:39:49 $
+  Version:   $Revision: 1.95 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,13 +87,13 @@ public:
    bool Write         (std::string const &fileName);
 
    bool SetEntry(std::string const &content,
-                 uint16_t group, uint16_t element);
+                 uint16_t group, uint16_t elem);
    bool SetEntry(uint8_t *content, int lgth,
-                 uint16_t group, uint16_t element);
+                 uint16_t group, uint16_t elem);
    bool ReplaceOrCreate(std::string const &content,
-                        uint16_t group, uint16_t element);
+                        uint16_t group, uint16_t elem);
    bool ReplaceOrCreate(uint8_t *binArea, int lgth,
-                        uint16_t group, uint16_t element);
+                        uint16_t group, uint16_t elem);
 
    uint8_t* GetLutRGBA();
 
@@ -127,8 +127,8 @@ protected:
    void SetWriteToNoLibido();
    void RestoreWriteOfLibido();
 
-   ValEntry *CopyValEntry(uint16_t group,uint16_t element);
-   BinEntry *CopyBinEntry(uint16_t group,uint16_t element);
+   ValEntry *CopyValEntry(uint16_t group,uint16_t elem);
+   BinEntry *CopyBinEntry(uint16_t group,uint16_t elem);
 
 private:
    void Initialise();

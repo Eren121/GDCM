@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 20:24:02 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/01/20 11:39:49 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,15 +90,15 @@ GDCM_EXPORT extern const std::string GDCM_UNREAD;
 
 /// \brief TagKey is made to hold an "universal" (as in URL, Universal
 ///        Ressource Locator)  key to a DocEntry i.e. a dicom tag.
-///        A dicom tag always has a group and an element, but a set of tags
+///        A dicom tag always has a group and an elem, but a set of tags
 ///        embeded in various (optionally nested) sequences and sharing
-///        the same group and element all share the same (group, element)
-///        "identifier". Hence the (group, element) cannot be used as an
+///        the same group and elem all share the same (group, elem)
+///        "identifier". Hence the (group, elem) cannot be used as an
 ///        identifier (in gdcm we shall refer to a "TagKey") of a tag.
 ///        In order to construct a proper tag identifier (i.e. a key) we
 ///        consider the following definition of a TagKey:
 ///        - let Group, Element be the string representation of the
-///          group and element dicom tag members,
+///          group and elem dicom tag members,
 ///        - let ItemNumber be the string representation of the integer
 ///          index of the considered item number of a sequence,
 ///        Let the key of a tag embeded in a sequence, noted SeqTag, be

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/01/20 11:39:49 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,8 +121,8 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group,uint16_t elem)
 }
 
 /**
- * \brief   Searches both the public and the shadow dictionary (when they
- *          exist) for the presence of the DictEntry with given
+ * \brief   Searches [both] the public [and the shadow dictionary (when they
+ *          exist)] for the presence of the DictEntry with given
  *          group and element. The public dictionary has precedence on the
  *          shadow one.
  * @param   group   group number of the searched DictEntry
@@ -144,6 +144,16 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
    return found;
 }
 
+
+/**
+ * \brief   Searches both the public and the shadow dictionary (when they
+ *          exist) for the presence of the DictEntry with given
+ *          group and element, and create a new virtual DictEntry if necessary
+ * @param   group   group number of the searched DictEntry
+ * @param   elem element number of the searched DictEntry
+ * @param   vr Value Representation to use, if necessary 
+ * @return  Corresponding DictEntry when it exists, NULL otherwise.
+ */
 DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
                                              TagName const & vr)
 {
