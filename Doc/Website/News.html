@@ -17,30 +17,26 @@
    <B>Current Version</B></A>
       <B></B></A>
 </H2>
+
 <UL>
    <LI>State of the art
    <UL>    
-      <LI> Final check of the jpeg sub-library: all 'classical' jpeg
-        compressed Dicom files can be read<br>
-      <LI>All the previously gdcm-breaker images are now readable<br>
-      <LI> A huge number of memory leaks removed
-      <LI> Improvement of write process   
+      <LI>
+         <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a> current version.
+
+      <LI>
    </UL>
-   <LI> New Features
-<UL>
-   <LI>
-   <LI>
-</UL>
- 
-   <LI> A.P.I. breaking modifications (since previous version)
+
+   <LI> New Features / Bug fixes
    <UL>
-      <LI> Use of <TT> namespace</TT> : all the methods formerly called
-          <TT>className::gdcmXxx()</TT> are now called <TT>className::Xxx()</TT>
-      <LI> Removal of accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
-           and <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT> 
-           replaced by <TT>GetXxx</TT>, <TT>SetXxx</TT>
-      <LI> a <TT>gdcm::Document</TT> is now specialized 
-           in <TT>gdcm::DicomDir</TT> and <TT>gdcm::File</TT>
+      <LI>
+      <LI>
+   </UL>
+
+   <LI> A.P.I. breaking modifications (since previous version)
+   <UL>    
+      <LI>
+      <LI>
    </UL>
 
    <LI> Missing features
@@ -59,6 +55,7 @@
            <TT> PATIENT</TT>/<TT>STUDY</TT>/<TT>SERIE</TT>/<TT>IMAGE</TT>)
       <LI> Allow user to add an Entry to the default entry list, for
            making a <TT>DICOMDIR</TT> from a root directory
+      <LI> <TT>DICOMDIR</TT> anonymiser (<TT>Load</TT> and <TT>Noload</TT> mode)
       <LI> 16-bits-LUT full Management
       <LI> User friendly management of <TT>Rescale Slope</TT> and
            <TT>Rescale Intercept</TT>
@@ -66,6 +63,7 @@
            Private Dicom Dictionary (pfff!...)
       <LI> An accurate <TT>SerieHelper</TT>
    </UL>
+
 
    <LI> Known bugs
    <UL>
@@ -75,7 +73,48 @@
       <LI> Writing a 'True Dicom' image after reading an ACR-NEMA image requests
            from the user to build up 'manually' the Meta Elements group (0002) 
       <LI> Management, on Big Endian Processors, of unloaded BinEntries
-   </UL> 
+   </UL>
+</UL>
+
+
+<!#######################################################################>
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
+<H2>
+   <A CLASS="anchor" NAME="NewsVersion1_0">
+      <B>Version 1.0 (Feb 14 2005)</B></A>
+</H2>
+
+<!#######################################################################>
+
+
+
+<UL>
+   <LI>State of the art
+   <UL>
+   <LI>
+      <a href="Doc1.0/uml-gdcm.pdf">gdcm 1.0 UML Class Diagram</a> version.
+   <LI> <a href= "Doc1.0/html.user/index.html">User Documentation"</a>
+   <LI> <a href= "Doc1.0/html.developper/index.html">Developper
+Documentation"</a>
+      <LI> Final check of the jpeg sub-library: all 'classical' jpeg
+        compressed Dicom files can be read<br>
+      <LI>All the previously gdcm-breaker images are now readable<br>
+      <LI> A huge number of memory leaks removed
+      <LI> Improvement of write process   
+   </UL>
+
+ 
+   <LI> A.P.I. breaking modifications (since previous version)
+   <UL>
+      <LI> Use of <TT> namespace</TT> : all the methods formerly called
+          <TT>className::gdcmXxx()</TT> are now called <TT>className::Xxx()</TT>
+      <LI> Removal of accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
+           and <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT> 
+           replaced by <TT>GetXxx</TT>, <TT>SetXxx</TT>
+      <LI> a <TT>gdcm::Document</TT> is now specialized 
+           in <TT>gdcm::DicomDir</TT> and <TT>gdcm::File</TT>
+   </UL>
+
 </UL>
 
 
@@ -107,8 +146,6 @@ We consider now that :
      - gdcmSerie
      - gdcmImage
 </pre>
-You can see <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a>
-
 
 
 
@@ -120,8 +157,11 @@ You can see <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a>
 </H2>
 <UL>
    This version will be used by Insight Tool Kit 
-   (<a href="http://www.itk.org">ITK</a> 1.10) at the beginning of 2005.<br>
+   (<a href="http://www.itk.org">ITK</a> 2.0) at the beginning of 2005.<br>
     It's not yet packaged ...<br><br>
+   <LI><a href="Doc0.6/uml-gdcm.pdf">gdcm 0.6 UML Class Diagram</a> version.    
+   <LI> <a href= "Doc0.6/html.user/index.html">User Documentation"</a>
+   <LI> <a href= "Doc0.6/html.developper/index.html">Developper Documentation"</a>  
    <LI> The new <TT>gdcmDocument</TT> class is a parent class of 
        <TT>gdcmHeader</TT> class and <TT>gdcmDicomDir</TT> class.
    <LI> Massive modifications in the Class Diagram :
@@ -151,6 +191,11 @@ You can see <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a>
       <B>Version 0.4 (February 6 2004)</B></A>
 </H2>
 <UL>
+
+   <LI><a href="Doc0.4/uml-gdcm.pdf">gdcm 0.4 UML Class Diagram</a>.
+   <LI> <a href= "Doc0.6/html.user/index.html">User Documentation"</a>
+   <LI> <a href= "Doc0.6/html.developper/index.html">Developper  Documentation </a>
+
    <LI> Introduction of a jpeg sub-library: some very simple jpeg-lossy
         compressed Dicom files might be working (check-it out).
    <LI> And also, fewer memory leaks, cleaned-up stl usage (should work
