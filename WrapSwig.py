@@ -66,7 +66,8 @@ class SwigWrapper(Wrapper):
 			if extWrap.swig_cpp:
 				# Generate the full pathname of the shadow classes file
 				import string
-				swig_shadow=string.split(os.path.basename(source),".")[0]
+# 				swig_shadow=string.split(os.path.basename(source),".")[0]
+				swig_shadow=os.path.splitext(source)[0]
 				swig_shadow=swig_shadow + '.py'
 				# On win32 swig places the shadow classes in the directory
 				# where it was invoked. This is to be opposed to posix where
@@ -78,7 +79,8 @@ class SwigWrapper(Wrapper):
 					infile=swig_shadow
 				if os.path.isfile(infile):
 					outfile=[distutil.build_lib,distutil.distribution.get_name()]
-					outfile.append(swig_shadow)
+# 					outfile.append(swig_shadow)
+					outfile.append(os.path.basename(swig_shadow))
 					outfile=apply(os.path.join,outfile)
 					distutil.copy_file(infile,outfile,preserve_mode=0)
 				else:
