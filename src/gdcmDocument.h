@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 20:14:07 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2004/09/24 01:14:31 $
+  Version:   $Revision: 1.43 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -194,7 +194,7 @@ public:
    gdcmDocEntry* GetDocEntryByName  (std::string const & tagName);
 
    gdcmValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
-   gdcmBinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element) { /*what the hell!*/ }; 
+   //gdcmBinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
 
    void LoadDocEntrySafe(gdcmDocEntry* entry);
    TagDocEntryHT* BuildFlatHashTable();
