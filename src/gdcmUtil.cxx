@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 13:55:26 $
-  Version:   $Revision: 1.100 $
+  Date:      $Date: 2005/01/17 14:20:30 $
+  Version:   $Revision: 1.101 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,45 +40,45 @@
 
 // For GetMACAddress
 #ifdef _WIN32
-#include <snmp.h>
-#include <conio.h>
+   #include <snmp.h>
+   #include <conio.h>
 #else
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
+   #include <unistd.h>
+   #include <stdlib.h>
+   #include <string.h>
+   #include <sys/types.h>
 #endif
 
 // How do I do that in CMake ?
 #ifdef __APPLE__
-#define HAVE_SA_LEN
-#define CMAKE_HAVE_NET_IF_DL_H
-#define CMAKE_HAVE_NETINET_IN_H
-#define CMAKE_HAVE_NET_IF_H
+   #define HAVE_SA_LEN
+   #define CMAKE_HAVE_NET_IF_DL_H
+   #define CMAKE_HAVE_NETINET_IN_H
+   #define CMAKE_HAVE_NET_IF_H
 #endif //APPLE
 
 #ifdef CMAKE_HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>  // For SIOCGIFCONF on Linux
+   #include <sys/ioctl.h>  // For SIOCGIFCONF on Linux
 #endif
 #ifdef CMAKE_HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+   #include <sys/socket.h>
 #endif
 #ifdef CMAKE_HAVE_SYS_SOCKIO_H
-#include <sys/sockio.h>  // For SIOCGIFCONF on SunOS
+   #include <sys/sockio.h>  // For SIOCGIFCONF on SunOS
 #endif
 #ifdef CMAKE_HAVE_NET_IF_H
-#include <net/if.h>
+   #include <net/if.h>
 #endif
 #ifdef CMAKE_HAVE_NETINET_IN_H
-#include <netinet/in.h>   //For IPPROTO_IP
+   #include <netinet/in.h>   //For IPPROTO_IP
 #endif
 #ifdef CMAKE_HAVE_NET_IF_DL_H
-#include <net/if_dl.h>
+   #include <net/if_dl.h>
 #endif
 #ifdef __sun
-//#if defined(CMAKE_HAVE_NET_IF_ARP_H) && defined(__sun)
-// This is absolutely necesseray on SunOS
-#include <net/if_arp.h>
+   //#if defined(CMAKE_HAVE_NET_IF_ARP_H) && defined(__sun)
+   // This is absolutely necesseray on SunOS
+   #include <net/if_arp.h>
 #endif
 
 namespace gdcm 
@@ -516,6 +516,24 @@ int GetMacAddrSys ( unsigned char *addr )
    // Free the bindings
    SNMP_FreeVarBind(&varBind[0]);
    SNMP_FreeVarBind(&varBind[1]);
+
+
+
+/*   IP_ADAPTER_INFO AdapterInfo[2]; 
+    DWORD dwBufSize = sizeof(AdapterInfo); 
+
+    DWORD dwStatus = GetAdaptersInfo(AdapterInfo, &dwBufSize); 
+
+    PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo; 
+    do 
+    { 
+         unsigned char *MAC=pAdapterInfo->Address;
+         printf("Your MAC Address Is: %02X-%02X-%02X-%02X-%02X-%02X", MAC[0], MAC[1], MAC[2], MAC[3], MAC[4], MAC[5]);
+        pAdapterInfo = pAdapterInfo->Next; 
+    } 
+    while(pAdapterInfo); */
+
+
    return 0;
 #endif //Win32 version
 

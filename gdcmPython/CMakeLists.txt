@@ -150,6 +150,7 @@ IF(GDCM_VTK)
 
   SET(vtkgdcmPython_la_SOURCES
       ${GDCM_SOURCE_DIR}/vtk/vtkGdcmReader.cxx
+      ${GDCM_SOURCE_DIR}/vtk/vtkGdcmWriter.cxx
   )
   SET_SOURCE_FILES_PROPERTIES(vtkGdcmReaderPython.cxx GENERATED)
   

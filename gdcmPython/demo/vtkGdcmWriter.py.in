@@ -1,0 +1,52 @@
+import sys
+import os
+
+sys.path.append('${GDCM_BINARY_DIR}')
+if os.name == 'posix':
+   sys.path.append('${GDCM_BINARY_DIR}/bin')
+else:
+   sys.path.append('${GDCM_BINARY_DIR}/bin/Release')
+   sys.path.append('${GDCM_BINARY_DIR}/bin/Debug')
+
+from gdcmPython.vtk import *
+from vtkpython import *
+
+# Get the file names
+try:
+   fileName = sys.argv[1]
+except IndexError:
+   fileName = os.path.join(GDCM_DATA_PATH, "test.acr")
+
+# read the image
+reader = vtkGdcmReader()
+reader.SetFileName(fileName)
+
+# write the image
+writer = vtkGdcmWriter()
+writer.SetInput(reader.GetOutput())
+writer.SetFileName("outputPy.dcm")
+writer.Write()
+
+# re-read the image
+reader2 = vtkGdcmReader()
+reader2.SetFileName("outputPy.dcm")
+reader2.Update()
+
+# show the image
+viewer = vtkImageViewer()
+viewer.SetInput(reader2.GetOutput())
+rng = reader.GetOutput().GetScalarRange()
+viewer.SetColorWindow(rng[1] - rng[0])
+viewer.SetColorLevel(0.5 * (rng[1] + rng[0]))
+
+dim = reader.GetOutput().GetDimensions()
+viewer.SetSize(dim[0],dim[1])
+if(dim[2] != 1):
+   # For multifame dicom, take a snapshot of the center slice (+/- 1)
+   viewer.SetZSlice(dim[2] / 2)
+else:
+   viewer.SetZSlice(0)
+viewer.Render()
+
+# sys.stdin.read(1)
+

@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------
 # DOH! python is not found by default
 FIND_PROGRAM(PYTHON_EXECUTABLE
-    NAMES python2.4 python2.3 python2.2 python2.1 python2.0 python1.6 python1.5 python
+    NAMES python python2.4 python2.3 python2.2 python2.1 python2.0 python1.6 python1.5
     PATHS
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.3\\InstallPath]
@@ -47,3 +47,26 @@ CONFIGURE_FILE(
     ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintDict.py.in
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDict.py
 )
+
+#-----------------------------------------------------------------------------
+# Same but for VTK
+IF(GDCM_VTK)
+  IF(PYTHON_EXECUTABLE)
+    ADD_TEST(Python-VTK-Reader ${PYTHON_EXECUTABLE}
+        ${GDCM_BINARY_DIR}/gdcmPython/demo/vtkGdcmReader.py
+    )
+    ADD_TEST(Python-VTK-Writer ${PYTHON_EXECUTABLE}
+        ${GDCM_BINARY_DIR}/gdcmPython/demo/vtkGdcmWriter.py
+    )
+  ENDIF(PYTHON_EXECUTABLE)
+
+  CONFIGURE_FILE(
+      ${GDCM_SOURCE_DIR}/gdcmPython/demo/vtkGdcmReader.py.in
+      ${GDCM_BINARY_DIR}/gdcmPython/demo/vtkGdcmReader.py
+  )
+
+  CONFIGURE_FILE(
+      ${GDCM_SOURCE_DIR}/gdcmPython/demo/vtkGdcmWriter.py.in
+      ${GDCM_BINARY_DIR}/gdcmPython/demo/vtkGdcmWriter.py
+  )
+ENDIF(GDCM_VTK)

@@ -1,4 +1,9 @@
-2005-01-16 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>			 
+2005-01-17 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmUtil.cxx : bug fix to find the Windows MAC address. Now, there
+     is no memory access violation
+   * gdcmPython/demo : add python demos using VTK
+
+2005-01-16 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
 	 * FIX 'Dictionnary' is now spelt 'Dictionary'
 	       'wether' is now spelt 'whether'
 			 'archieve' is now spelt 'archive'   ;-)
@@ -7,7 +12,7 @@
     * ADD DicomDir, DicomDirPatient, DicomDirStudy, DicomDirSerie, DicomDirImage
 	       related methods, in order not to expose internal mechanisms
         InitTraversal();
-        GetNextEntry();			     	 
+        GetNextEntry();
 	 * REM methods that exposed internal mechanisms :
         DicomDir::GetDicomDirPatients()
         DicomDirPatient::GetDicomDirStudies()
