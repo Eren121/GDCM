@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/10/11 03:47:50 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -528,5 +528,6 @@ bool gdcmPixelConvert::ConvertReArrangeBits(
                                 "weird image !?" );
       }
    }
+   return true; //???
 }
 
