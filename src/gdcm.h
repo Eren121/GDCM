@@ -38,8 +38,8 @@ using namespace std;  // string type lives in the std namespace on VC++
                       //    which should be around 4500 entries which is the
                       //    average dictionary size (said JPR)
                       //
-                      // En fait, je disais que dans LE Directory Dicom (dans son etat 2002)
-                      // il y a 1600 entrees.
+                      // En fait, je disais que dans LE Directory Dicom (dans son etat 2001)
+                      // il y a +/- 1600 entrees.
                       // Une valeur raisonable pour un  majorant du nombre d'entrees
                       // dans une entete DICOM d'une image semble semble etre 300
                       // Si on 'decortique' les elements SQ (ce qui ne semble pas etre fait pour le moment)
@@ -258,7 +258,11 @@ public:
 	TagElValueHT & GetTagHt(void);	
 	
 	int SetElValueByNumber(string content, guint32 group, guint32 element);
-	int SetElValueByName(string content, string TagName);
+	int SetElValueByName  (string content, string TagName);
+	
+	int SetElValueLengthByNumber(guint32 l, guint32 group, guint32 element);
+	int SetElValueLengthByName  (guint32 l, string TagName);
+
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -491,11 +495,11 @@ public:
 	// Copies (at most MaxSize bytes) of data to caller's memory space.
 	// Returns an error code on failure (if MaxSize is not big enough)
 	
-	int PutImageDataHere(void* destination, size_t MaxSize );
+	int GetImageDataIntoVector(void* destination, size_t MaxSize );
 	
 	// Question :
 	//
-	//	GetImageData et PutImageDataHere
+	//	GetImageData et GetImageDataIntoVector
 	// Get et Put pour 2 fonctions qui font presque la meme chose :-(
 	//
 	
@@ -518,7 +522,7 @@ public:
 	// Ca sera à l'utilisateur d'appeler son Reader correctement
 		
 	int WriteRawData (string nomFichier);
-	int WriteDcm (string nomFichier);
+	int WriteDcm     (string nomFichier);
 };
 
 //

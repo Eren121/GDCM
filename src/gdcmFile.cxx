@@ -83,6 +83,7 @@ size_t gdcmFile::GetImageDataSize(void) {
  * @return	Pointeur sur la zone mémoire contenant les Pixels lus
  */
 
+/*
 void * gdcmFile::GetImageData (void) {
 	
 	char* _Pixels;
@@ -169,6 +170,37 @@ void * gdcmFile::GetImageData (void) {
 	return (_Pixels);		
 }
 
+*/
+
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief amene en mémoire les Pixels d'une image NON COMPRESSEE
+ * \Aucun test n'est fait pour le moment sur le caractere compresse ou non de l'image
+ *
+ * @param rien
+ *
+ * @return	Pointeur sur la zone mémoire contenant les Pixels lus
+ */
+
+void * gdcmFile::GetImageData (void) {
+	char * _Pixels;
+	// Longueur en Octets des Pixels a lire
+	size_t taille = GetImageDataSize();// ne faudrait-il pas la stocker?
+	_Pixels = (char *) malloc(taille);	
+	GetImageDataIntoVector(_Pixels, taille);
+	
+		// On l'affecte à un champ du dcmFile	
+	Pixels =    _Pixels;
+	lgrTotale = taille;
+	
+	// et on le retourne
+	// ca fait double emploi, il faudra nettoyer ça
+	
+	return(_Pixels);
+}
+
+
 
 /////////////////////////////////////////////////////////////////
 /**
@@ -182,7 +214,7 @@ void * gdcmFile::GetImageData (void) {
  * @return	
  */
 
-int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
+int gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
 // Question :
 //	dans quel cas la Maxize sert-elle a quelque chose?
@@ -200,14 +232,13 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 	// Longueur en Octets des Pixels a lire
 	size_t _lgrTotale = GetImageDataSize();	// ne faudrait-il pas la stocker?
 	
-	// si lgrTotale < MaxSize ==> Gros pb . A VOIR
+	// si lgrTotale < MaxSize ==> Gros pb 
+	// -> on résoud à la goret
 	
-	lgrTotale = MaxSize;					// pour garder le code identique avec GetImageData
-	//Pixels = (char *) malloc(lgrTotale);	// pour garder le code identique avec GetImageData
+	if ( _lgrTotale < MaxSize ) MaxSize = _lgrTotale;
 	
-	GetPixels(lgrTotale, Pixels);
-		
-		
+	GetPixels(MaxSize, destination);
+			
 	// Nombre de Bits Alloues pour le stockage d'un Pixel	
 	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
 
@@ -244,12 +275,11 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 		signe = atoi(str_signe.c_str() );
 	}
 
-
 	// On remet les Octets dans le bon ordre si besoin est
 	if (nb != 8) {
 		int _sw = GetSwapCode();
 
-		_Swap (Pixels, _sw, lgrTotale, nb);
+		_Swap (destination, _sw, _lgrTotale, nb);
 	}
 	
 	// On remet les Bits des Octets dans le bon ordre si besoin est
@@ -260,7 +290,7 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 	// 			--> ne marchera pas dans ce cas 
 	if (nbu!=nb){
 		mask = mask >> (nb-nbu);
-		int l=(int)lgrTotale/(nb/8);
+		int l=(int)MaxSize/(nb/8);
 		unsigned short *deb = (unsigned short *)Pixels;
 		for(int i=0;i<l;i++) {
 				*deb = (*deb >> (nbu-highBit-1)) & mask;
@@ -270,9 +300,9 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 			
 	// VOIR s'il ne faudrait pas l'affecter à un champ du dcmHeader
 	
-	//return (Pixels);				// pour garder le code identique avec GetImageData	
 	return 1; 
 }
+
 
 //
 // Je laisse le code integral, au cas ça puisse etre reutilise ailleurs
@@ -355,7 +385,7 @@ return;
  * \brief Ecrit sur disque les pixels d'UNE image
  * \Aucun test n'est fait sur l'"Endiannerie" du processeur.
  * \Ca sera à l'utilisateur d'appeler son Reader correctement
- * \ Equivalent a IdImaWriteRawFile) 
+ * \ (Equivalent a IdImaWriteRawFile) 
  *
  * @param 
  *
@@ -383,7 +413,7 @@ int gdcmFile::WriteRawData (string nomFichier) {
  * \ingroup   gdcmFile
  * \brief Ecrit sur disque UNE image Dicom
  * \Aucun test n'est fait sur l'"Endiannerie" du processeur.
- * \Ca sera à l'utilisateur d'appeler son Reader correctement.
+ * \Ca fonctionnera correctement (?) sur processeur Intel
  * \ (Equivalent a IdDcmWrite) 
  *
  * @param 
@@ -392,7 +422,6 @@ int gdcmFile::WriteRawData (string nomFichier) {
  */
 
 int gdcmFile::WriteDcm (string nomFichier) {
-
 
 // ATTENTION : fonction non terminée (commitée a titre de precaution)
 

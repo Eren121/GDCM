@@ -82,17 +82,21 @@ int ElValSet::SetElValueByNumber(string content, guint32 group, guint32 element)
 		return (0); 
 	}		                       
 	tagHt[key]->SetValue(content);
+
+	// Question : m à j LgrElem ?
+	tagHt[key]->SetLength(strlen(content.c_str()));	 
+
 	// FIXME should we really update the element length ?
 	tagHt[key]->SetLength(content.length());	 
+
 	return(1);		
 }
-
 
 int ElValSet::SetElValueByName(string content, string TagName) {
 	if ( ! NameHt.count(TagName))
 		return 0;
 	if (NameHt.count(TagName) > 1) {
-		dbg.Verbose(0, "ElValSet::SetElValue",
+		dbg.Verbose(0, "ElValSet::SetElValueByName",
 		            "multipe entries for this key (FIXME) !");
 		return 0;
 	}
@@ -101,6 +105,33 @@ int ElValSet::SetElValueByName(string content, string TagName) {
 	return(1);		
 }
 
+
+int ElValSet::SetElValueLengthByNumber(guint32 l, guint32 group, guint32 element) {
+	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+	if ( ! tagHt.count(key))
+		return 0;
+	if (tagHt.count(key) > 1) {
+		dbg.Verbose(0, "ElValSet::SetElValueLengthByNumber",
+		            "multiple entries for this key (FIXME) !");
+		return (0); 
+	}		                       
+	// m à j LgrElem 
+	tagHt[key]->SetLength(l);	 
+	return(1);		
+}
+
+
+int ElValSet::SetElValueLengthByName(guint32 l, string TagName) {
+	if ( ! NameHt.count(TagName))
+		return 0;
+	if (NameHt.count(TagName) > 1) {
+		dbg.Verbose(0, "ElValSet::SetElValueByName",
+		            "multipe entries for this key (FIXME) !");
+		return 0;
+	}
+	NameHt.find(TagName)->second->SetLength(l);	 
+	return(1);		
+}
 
 
 int ElValSet::Write(FILE * _fp) {
@@ -114,19 +145,18 @@ int ElValSet::Write(FILE * _fp) {
 	guint32 val_int32;
 	guint16 val_int16;
 	void *ptr;
+	char str_lgrCalcGroupe[10];
 	
 	string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
 	
-/*	// Utilisées pour le calcul Group Length
+	// Utilisées pour le calcul Group Length
 	int deja = 0;
-	guint32 lgrCalcGroupe;
-	ElValue * elemZ, *elemZPrec;
+	guint32 lgrCalcGroupe=0;
+	ElValue *elem, *elemZ, *elemZPrec;
 	guint16 grCourant = 0;
 	
-*/
-
 	// Question :
-	// Comment pourrait-on tester si on est TRueDicom ou non ,
+	// Comment pourrait-on tester si on est TrueDicom ou non ,
 	// (FileType est un champ de gdcmHeader ...)
 	//
 
@@ -134,64 +164,60 @@ int ElValSet::Write(FILE * _fp) {
 	// au cas ou un tag ai été ajouté par rapport à ce qui a été lu
 	// dans l'image native
 	//
-	// cf : code IdDcmWriteFile
-
-/*
-		// Pas le temps de finir 
-		// voir libido/src/dcmwrite.c
-		//
-		// mais avant ... voir si le 'group length', lorsqu'il est present
-		// sert encore a qq chose
-		// patcher une image DICOM, mettre une lgr erronnée
-		// et voir si e-film la reconnait ...
-		
+	// cf : code IdDcmWriteFile dans libido/src/dcmwrite.c
 		
 	for (TagElValueHT::iterator tag = tagHt.begin();
 		  tag != tagHt.end();
 		  ++tag){
-		  
-		elemZ = tag->second;
+
+		elem = tag->second;
+		printf("gr %04x el %04x lgr %d\n",elem->GetGroup(), elem->GetElement(), elem->GetLength());
 	
-		if ( (elemZ->GetGroup() != grCourant) &&	  
-			 (elemZ->GetGroup() != 0xfffe)	) { 	// On arrive sur un nv Groupe
+		if ( (elem->GetGroup() != grCourant) &&	  
+			 (elem->GetGroup() != 0xfffe)	) { 	// On arrive sur un nv Groupe
 			 
-			if(elemZ->GetNum != 0x0000) { 	// pas d'element 'Lgr groupe'
-				// On le crée
-			 	gdcmDictEntry * tagZ = IsInDicts(tag->second->GetGroup(), 0);
-				elemZ = new (ElValue(tagZ)); // on le cree
-				elemZ.SetLength(4);
+		printf("Nouv Groupegr %04x el %04x \n",elem->GetGroup(), elem->GetElement());
+
+			elemZ = elem; 
+			 
+			if(elemZ->GetElement() != 0x0000) { 	// pas d'element 'Lgr groupe'
+				// On crée
+			 	gdcmDictEntry * tagZ = new gdcmDictEntry(grCourant, 0x0000, "UL");
+				elemZ = new ElValue(tagZ); // on le cree
+				elemZ->SetLength(4);
 				Add(elemZ);	 				 // On l'accroche à sa place	
 			}	
 			
 			if (deja) {
-			
-			// A FINIR
+				sprintf(str_lgrCalcGroupe,"%d",lgrCalcGroupe);
+				elemZPrec->SetValue(str_lgrCalcGroupe);
+				lgrCalcGroupe = 0;
 			}
 			deja = 1;
+			
+			lgrCalcGroupe =  12; //2 + 2 + 4 + 4; // Gr + Num + Lgr + LgrGroupe
+			printf ("lgrCalcGroupe %d\n",lgrCalcGroupe);
+			
 			elemZPrec = elemZ;
-	 		grCourant = elemZ->GetGroup();
-			lgrCalcGroupe =  12; //2 + 2 + 4 + 4; // lgr (Gr + Num + LgrElem + LgrGroupe)
+	 		grCourant = elem->GetGroup();
 							
 		} else {		// On n'EST PAS sur un nv Groupe
 		
-			lgrCalcGroupe += 2 + 2;  // lgr (Gr + Num )
-		
-			if (IsVrUnknowkn()) {
-			
-			// A FINIR
-			
-			}
-			
-			// A FINIR	  
-	}
+			printf ("lgrCalcGroupe avant : %d LgrElem %d\n",lgrCalcGroupe,elem->GetLength());
 
-*/
+			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem 
+			
+			printf ("lgrCalcGroupe apres %d\n",lgrCalcGroupe);
+
+		}		
+	}
 	
-	// Si on fait de l'implicit VR littele Endian 
+	// Si on fait de l'implicit VR little Endian 
 	// (pour moins se fairche sur processeur INTEL)
-	// penser a forcer le SYNTAX TRANSFERT UID
+	// penser a forcer le TRANSFERT SYNTAX UID
 				
 	SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);	
+	SetElValueLengthByNumber(18, 0x0002, 0x0010);  // Le 0 de fin de chaine doit etre stocké, dans ce cas	
 		
 	// restent à tester les echecs en écriture (apres chaque fwrite)
 	
