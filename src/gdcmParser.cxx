@@ -755,6 +755,9 @@ void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem)
    	free(a);
    	return NULL;
    }
+   cout << hex << Group << " " << Elem << "loaded" <<endl;
+   Element->SetPrintLevel(2);
+   Element->Print();
    return a;  
 }
 
@@ -1012,6 +1015,7 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
    guint32 val_uint32;
    guint16 val_uint16;
    guint16 valZero =0;
+   void *voidArea;
    std::vector<std::string> tokens;
    
    // TODO : function CheckHeaderCoherence to be written
@@ -1035,6 +1039,8 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
       lgr = (*tag2)->GetReadLength();
       val = (*tag2)->GetValue().c_str();
       vr =  (*tag2)->GetVR();
+      voidArea = (*tag2)->GetVoidArea();
+      
       if ( type == ACR ) 
       { 
          if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
@@ -1090,6 +1096,11 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
       //     -------------------
       if (vr == "SQ")  continue; // no "value" to write for the SEQuences
       if (gr == 0xfffe)continue;
+      
+      if (voidArea != NULL) { // there is a 'non string' LUT, overlay, etc
+         fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
+	 continue;            
+      }
       
       if (vr == "US" || vr == "SS") 
       {
@@ -1240,7 +1251,9 @@ void gdcmParser::LoadHeaderEntries(void) {
       LoadEntryVoidArea(0x0028,0x1221);  // Segmented Red   Palette Color LUT Data
       LoadEntryVoidArea(0x0028,0x1222);  // Segmented Green Palette Color LUT Data
       LoadEntryVoidArea(0x0028,0x1223);  // Segmented Blue  Palette Color LUT Data
-   }   
+   } 
+   //FIXME : how to use it?
+   LoadEntryVoidArea(0x0028,0x3006);  //LUT Data (CTX dependent)     
    
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to read ACR-LibIDO formated images
@@ -2022,24 +2035,21 @@ bool gdcmParser::CheckSwap() {
       // * the 4 bytes of the first tag (0002, 0000),or (0002, 0001)
       // i.e. a total of  136 bytes.
       entCur = deb + 136;
-      // FIXME
-      // Use gdcmParser::dicom_vr to test all the possibilities
-      // instead of just checking for UL, OB and UI !?
-      
+     
       // FIXME : FIXME:
       // Sometimes (see : gdcmData/icone.dcm) group 0x0002 *is* Explicit VR,
       // but elem 0002,0010 (Transfert Syntax) tells us the file is *Implicit* VR.
       // -and it is !- 
-      
-      // The following test is *absolutely useless*, since everything *goes right*
-      // with a *100 % wrong* assumption !!!
       
       if( (memcmp(entCur, "UL", (size_t)2) == 0) ||
       	  (memcmp(entCur, "OB", (size_t)2) == 0) ||
       	  (memcmp(entCur, "UI", (size_t)2) == 0) ||	  
       	  (memcmp(entCur, "CS", (size_t)2) == 0) )  // CS, to remove later
 	                                            // when Write DCM *adds*
-						    // group 0000  
+      // FIXME
+      // Use gdcmParser::dicom_vr to test all the possibilities
+      // instead of just checking for UL, OB and UI !?						    // group 0000 
+						     
       {
          filetype = ExplicitVR;
          dbg.Verbose(1, "gdcmParser::CheckSwap:",

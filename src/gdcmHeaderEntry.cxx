@@ -25,6 +25,7 @@
  */
 gdcmHeaderEntry::gdcmHeaderEntry(gdcmDictEntry* in) {
 	ImplicitVR = false;
+	voidArea = NULL; // unsecure memory area to hold 'non string' values
 	entry = in;
 }
 
@@ -83,15 +84,20 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
     
    s << "[" << GetName()<< "]";
 
-     
-           
-   if( (GetLength()<MAX_SIZE_PRINT_ELEMENT_VALUE) || 
-       (printLevel>=3)  || 
-       (d2.find("gdcm::NotLoaded.") < d2.length()) )
-      s << " [" << d2 << "]";
-   else 
-      s << " [ gdcm::too long for print (" << GetLength() << ") ]";
-
+   if (voidArea != NULL) {
+       s << " [gdcm::Non String Data Loaded in Unsecure Area (" 
+         << GetLength() << ") ]";
+   } 
+   
+   else {             
+      if( (GetLength()<MAX_SIZE_PRINT_ELEMENT_VALUE) || 
+          (printLevel>=3)  || 
+          (d2.find("gdcm::NotLoaded.") < d2.length()) )
+         s << " [" << d2 << "]";
+      else 
+         s << " [gdcm::too long for print (" << GetLength() << ") ]";
+   }
+   
    // Display the UID value (instead of displaying the rough code)  
    if (g == 0x0002) {  // Any more to be displayed ?
       if ( (e == 0x0010) || (e == 0x0002) )

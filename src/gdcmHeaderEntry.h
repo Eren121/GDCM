@@ -118,7 +118,7 @@ private:
 			  
 
    std::string  value;
-   void *voidArea;  // unsecure memory area to hold 'non string' values 
+   void *voidArea;   // unsecure memory area to hold 'non string' values 
                      // (ie : Lookup Tables, overlays)
    size_t Offset;    // Offset from the begining of file for direct user access
    int printLevel;

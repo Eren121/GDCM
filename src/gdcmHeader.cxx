@@ -96,9 +96,9 @@ gdcmHeader::~gdcmHeader (void) {
  *         false otherwise. 
  */
 bool gdcmHeader::IsReadable(void) {
-   if(!gdcmParser::IsReadable())
+   if(!gdcmParser::IsReadable()) {
       return(false);
-
+   }
    std::string res = GetEntryByNumber(0x0028, 0x0005);
    if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) 
       return false; // Image Dimensions
