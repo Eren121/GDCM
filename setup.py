@@ -3,26 +3,25 @@ import glob, os, sys, shutil
 from distutilsWrapping import *
 from WrapSwig import *
 from WrapVTK import *
-from gdcmVersion import *
 
-ThisModule='gdcmPython'
+ThisModule      ="gdcmPython"
 gdcmPythonSrcDir=ThisModule
 gdcmSrcDir      ="src"
 gdcmJpeg8SrcDir =os.path.join('src', 'jpeg', 'libijg8')
 gdcmJpeg12SrcDir=os.path.join('src', 'jpeg', 'libijg12')
-gdcmJpgSrcDir=os.path.join('src', 'jpeg', 'ljpg')
+gdcmJpgSrcDir   =os.path.join('src', 'jpeg', 'ljpg')
 gdcmvtkSrcDir   ="vtk"
 gdcmDictsDir    ="Dicts"
 gdcmTestDir     ="Test"
 
-# Due to a disutil oddity on Unices : see
+# Due to a distutils oddity on Unices : see
 # http://aspn.activestate.com/ASPN/Mail/Message/distutils-sig/588325
 if(os.name=='posix'):
 	targetDir=os.path.join('lib','python'+sys.version[:3],'site-packages')
 	libraries=["stdc++"]
 	macros   =[('__STDC_LIMIT_MACROS', '1')]
 
-	VTKPATH="/usr"
+	VTKPATH="/home/malaterre"
 	vtkWrapper="vtkWrapPython"
 else:
 	targetDir=os.path.join('lib','site-packages')
@@ -35,7 +34,7 @@ else:
 		err=str(e)
 		print "Environment variable",err[err.rfind(':')+1:],'not defined, '\
 		       'please fix it!'
-		VTKPATH="c:\\Creatis\\vtkDistrib"
+		VTKPATH="/home/malaterre"
 	vtkWrapper=os.path.join(VTKPATH,"bin","vtkWrapPython")
 
 targetDir=os.path.join(targetDir, ThisModule)
@@ -55,7 +54,7 @@ Jpeg8Sources = glob.glob(os.path.join(gdcmJpeg8SrcDir,"j*.c"))
 Jpeg8SourcesToRemove = ['jmemansi.c', 'jmemname.c', 'jmemdos.c', 'jmemmac.c']
 for Remove in Jpeg8SourcesToRemove:
    ### Because setup.py is a multiple pass process we need to trap
-   ### the case where the files were allready wed out on a previous pass.
+   ### the case where the files were already wed out on a previous pass.
    try:
       Jpeg8Sources.remove(os.path.join(gdcmJpeg8SrcDir, Remove))
    except ValueError:
@@ -63,11 +62,10 @@ for Remove in Jpeg8SourcesToRemove:
 Sources.extend(Jpeg8Sources)
 
 Jpeg12Sources = glob.glob(os.path.join(gdcmJpeg12SrcDir,"j*.c"))
-Jpeg12SourcesToRemove = ['jmemansi12.c', 'jmemname12.c', 'jmemdos12.c', 
-                         'jmemmac12.c']
+Jpeg12SourcesToRemove = ['jmemansi12.c', 'jmemname12.c', 'jmemdos12.c', 'jmemmac12.c']
 for Remove in Jpeg12SourcesToRemove:
    ### Because setup.py is a multiple pass process we need to trap
-   ### the case where the files were allready wed out on a previous pass.
+   ### the case where the files were already wed out on a previous pass.
    try:
       Jpeg12Sources.remove(os.path.join(gdcmJpeg12SrcDir, Remove))
    except ValueError:
@@ -83,15 +81,11 @@ Sources.extend(JpgSources)
 VTK_INCLUDE_DIR=os.path.join(VTKPATH,"include","vtk")
 VTK_LIB_DIR=os.path.join(VTKPATH,"lib","vtk")
 vtkSources = []
-vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
-vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
+vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,'vtk*.cxx')))
+vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,'*.cxx')))
 vtkSources.extend(Jpeg8Sources)
 vtkSources.extend(Jpeg12Sources)
 vtkSources.extend(JpgSources)
-try:
-	vtkSources.remove(os.path.join(gdcmvtkSrcDir,"vtkgdcmViewer.cxx"))
-except:
-	pass
 
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",
@@ -99,11 +93,11 @@ vtkLibraries=["vtkCommon","vtkCommonPython",
 
 ##### 
 setup(name=ThisModule,
-      version=gdcmVERSION,
+      version="0.4",
       description="...",
       author="frog",
       author_email="frog@creatis.insa-lyon.fr",
-      url="http://www.creatis.insa-lyon.fr/",
+      url="http://www.creatis.insa-lyon.fr/Public/Gdcm/",
       packages=[ '.',
                  gdcmPythonSrcDir,
                  gdcmPythonSrcDir + '.demo' ],
@@ -117,7 +111,7 @@ setup(name=ThisModule,
                                  swig_cpp=1,
                                  swig_include=[gdcmSrcDir]
                                 ),
-                   VTKExtension(name='gdcmPython.vtkgdcmPython',
+                                VTKExtension(name='gdcmPython.vtkgdcmPython',
                                 sources=vtkSources,
                                 include_dirs=[gdcmSrcDir,gdcmvtkSrcDir,
                                               VTK_INCLUDE_DIR],
@@ -129,13 +123,7 @@ setup(name=ThisModule,
 						],
       data_files=[(os.path.join(targetDir,gdcmTestDir),
                    glob.glob(os.path.join(gdcmTestDir,"*.acr"))),
-                  (targetDir,
-                   glob.glob(os.path.join(gdcmSrcDir,"*.py"))),
                   (os.path.join(targetDir,"Dicts"),
                    glob.glob(os.path.join(gdcmDictsDir,"*.*"))),
-                  (targetDir,
-                   glob.glob(os.path.join(gdcmSrcDir,"..","gdcmVersion.py"))),
-                  (os.path.join(targetDir,".."),
-                   glob.glob(os.path.join(gdcmSrcDir,"..","gdcmVersion.py"))),
                 ]
      )

@@ -54,9 +54,9 @@ SUBDIRS(
 #-----------------------------------------------------------------------------
 # Adding GDCM_DATA_ROOT
 FIND_PATH(GDCM_DATA_ROOT gdcm-ACR-LibIDO.acr
-	${GDCM_SOURCE_DIR}/../gdcmData 
-	$ENV{GDCM_DATA}
-	$ENV{PUB_DICT_PATH}/../../gdcmData
+  ${GDCM_SOURCE_DIR}/../gdcmData 
+  $ENV{GDCM_DATA}
+  $ENV{PUB_DICT_PATH}/../../gdcmData
 )
 
 #-----------------------------------------------------------------------------
@@ -89,9 +89,6 @@ IF(NOT CMAKE_HAVE_STDINT_H)
   SET(GDCM_HAVE_NO_STDINT_H 1)
 ENDIF(NOT CMAKE_HAVE_STDINT_H)
 
-#SET(GDCM_NO_ANSI_STRING_STREAM
-#  ${CMAKE_NO_ANSI_STRING_STREAM}
-#)
 CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
                ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE)
 
@@ -152,7 +149,7 @@ CONFIGURE_FILE(
   ${GDCM_BINARY_DIR}/gdcmConfig.cmake @ONLY IMMEDIATE
   )
 
-# Export uor build settings and library
+# Export our build settings and library
 # dependencies for the use by the user projects.
 INCLUDE(
   ${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
@@ -173,22 +170,3 @@ INSTALL_FILES(/lin/gdcm FILES
   ${GDCM_BINARY_DIR}/gdcmLibraryDepends.cmake
   )
 
-#-----------------------------------------------------------------------------
-# Copy / paste from old m4 script:
-
-# EXTRA_DIST = \
-#	AUTHORS	\
-#	ChangeLog \
-#	COPYING \
-#	INSTALL \
-#	NEWS \
-#	README \
-#	TODO \
-#	gdcm.spec \
-#       gdcm.dsw
-
-#release:
-#	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)
-
-#snapshot:
-#	$(MAKE) dist distdir=$(PACKAGE)`date +"%y%m%d"`

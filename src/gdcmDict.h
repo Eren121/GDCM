@@ -54,7 +54,14 @@ public:
     * \brief   returns a ref to the Dicom Dictionary H table (map)
     * return the Dicom Dictionary H table
     */
-   inline TagKeyHT & gdcmDict::GetEntries(void)  { return KeyHt; }
+   inline TagKeyHT & GetEntriesByKey(void)  { return KeyHt; }
+
+   /**
+    * \ingroup gdcmDict
+    * \brief   returns a ref to the Dicom Dictionary H table (map)
+    * return the Dicom Dictionary H table
+    */
+   inline TagNameHT & GetEntriesByName(void)  { return NameHt; }
  
 private:
    /// ASCII file holding the Dictionnary

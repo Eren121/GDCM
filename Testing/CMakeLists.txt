@@ -23,13 +23,14 @@ SET(TEST_SOURCES
   testDicomDir.cxx
   testWrite.cxx
 )
+
+# add tests that require data
 IF (GDCM_DATA_ROOT)
-	# add tests that require data
-	SET(TEST_SOURCES ${TEST_SOURCES}     
-	  PrintDicomDir.cxx
-    pourFindTaggs.cxx
-    testChangeEntete.cxx
-  )
+SET(TEST_SOURCES ${TEST_SOURCES}     
+  PrintDicomDir.cxx
+  pourFindTaggs.cxx
+  testChangeEntete.cxx
+)
 ENDIF (GDCM_DATA_ROOT)
 
 # include stuff
@@ -38,21 +39,29 @@ INCLUDE_DIRECTORIES(
   ${GDCM_BINARY_DIR}/
 )
 
+CREATE_TEST_SOURCELIST(Tests gdcmCxxTests.cxx ${TEST_SOURCES})
+ADD_EXECUTABLE(gdcmCxxTests ${Tests})
+TARGET_LINK_LIBRARIES(gdcmCxxTests gdcm)
+SET (TestsToRun ${Tests})
+REMOVE (TestsToRun gdcmCxxTests.cxx)
+
+#ADD_EXECUTABLE(gdcmTests gdcmTests.cxx ${TEST_SOURCES})
+#TARGET_LINK_LIBRARIES(gdcmTests gdcm)
+
 # Loop over files and create executables
 FOREACH(file ${TEST_SOURCES})
-  #Doh ! I need to specify each time the compile flags !
-  IF(GDCM_TEST_COMPILE_FLAGS)
-  SET_SOURCE_FILES_PROPERTIES(${file}
-    PROPERTIES
-    COMPILE_FLAGS ${GDCM_TEST_COMPILE_FLAGS}
-  )
-  ENDIF(GDCM_TEST_COMPILE_FLAGS)
   GET_FILENAME_COMPONENT(name ${file} NAME_WE)
-  ADD_TEST(${name} ${GDCM_TESTS} ${name})
+#  IF (GDCM_DATA_ROOT)
+#    ADD_TEST(${TName} ${CXX_TEST_PATH}/gdcmCxxTests ${TName}
+#        -D ${VTK_DATA_ROOT}
+#        -T ${VTK_BINARY_DIR}/Testing/Temporary
+#        -V Baseline/gdcm/${TName}.png)
+#  ELSE (GDCM_DATA_ROOT)
+    ADD_TEST(${name} ${GDCM_TESTS} ${name})
+    #ADD_TEST(${TName} ${CXX_TEST_PATH}/gdcmCxxTests ${TName}) 
+#  ENDIF (GDCM_DATA_ROOT)
 ENDFOREACH(file ${TEST_SOURCES})
 
 
-ADD_EXECUTABLE(gdcmTests gdcmTests.cxx ${TEST_SOURCES})
-TARGET_LINK_LIBRARIES(gdcmTests gdcm)
 
 
