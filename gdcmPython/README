@@ -1,0 +1,10 @@
+Variables that should be set in order to work with gdcmPython:
+GDCM_DICT_PATH path to the dictionary GDCM_SOURCE/Dicts/
+GDCM_DATA_PATH path to gdcmData
+PYTHONPATH path to both GDCM_BIN and GDCM_BIN/bin
+
+e.g.
+
+export GDCM_DICT_PATH=~/cvs/gdcm/Dicts/
+export GDCM_DATA_PATH=~/cvs/gdcmData/
+export PYTHONPATH=~/cvs/gdcmbin/bin:~/cvs/gdcmbin/

@@ -21,7 +21,8 @@ except IndexError:
 #s = raw_input("Hit any key in this window to exit")
 
 ### Build the header element list
-toRead = gdcmHeader(FileName)
+print FileName, type(FileName)
+toRead = gdcm.Header(FileName)
 if not toRead.IsReadable():
    print "The ", FileName, " file is not readable with gdcm. Sorry."
    sys.exit()
