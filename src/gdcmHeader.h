@@ -38,6 +38,7 @@ public:
    virtual ~gdcmHeader();
 
 // Standard values and informations contained in the header
+   virtual bool IsReadable(void);
    bool IsJPEGBaseLineProcess1TransferSyntax(void);
    bool IsJPEGExtendedProcess2_4TransferSyntax(void); 
    bool IsJPEGExtendedProcess3_5TransferSyntax(void);

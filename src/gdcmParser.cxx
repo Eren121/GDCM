@@ -187,19 +187,13 @@ bool gdcmParser::SetShaDict(DictKey dictName)
  */
 bool gdcmParser::IsReadable(void) 
 {
-   std::string res = GetEntryByNumber(0x0028, 0x0005);
-   if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) 
-      return false; // Image Dimensions
+   if(filetype==Unknown)
+      return(false);
 
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0100) )
-      return false; // "Bits Allocated"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0101) )
-      return false; // "Bits Stored"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0102) )
-      return false; // "High Bit"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0103) )
-      return false; // "Pixel Representation"
-   return true;
+   if(listEntries.size()<=0)
+      return(false);
+
+   return(true);
 }
 
 /**

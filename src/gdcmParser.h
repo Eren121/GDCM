@@ -62,7 +62,7 @@ public:
    bool SetShaDict(DictKey dictName);
 
 // Informations contained in the parser
-   bool IsReadable(void);
+   virtual bool IsReadable(void);
    bool IsImplicitVRLittleEndianTransferSyntax(void);
    bool IsExplicitVRLittleEndianTransferSyntax(void);
    bool IsDeflatedExplicitVRLittleEndianTransferSyntax(void);

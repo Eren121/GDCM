@@ -35,12 +35,6 @@ gdcmTS::gdcmTS(void)
       from.getline(buff, 1024, ' ');
       key = buff;
 
-      if(key.size()%2==1)
-      {
-      	key.resize(key.size()+1);
-         key[key.size()-1]=0;
-      }
-	
       eatwhite(from);
       from.getline(buff, 1024, '\n');
       name = buff;

@@ -1,6 +1,8 @@
 2004-01-23 Benoit Regrain
      * Bug fix on field having a VR = 'UI'. Assume that is a string field
      * Bug fix on test suite after remove the strip made on not string fields
+     * Split the IsReadable method between gdcmParser which test that the file
+       is dicom and gdcmHeader which test that it's an image file
 
 2004-01-22 Benoit Regrain
      * DicomDir : clean code, add methods, set variables in protected or private

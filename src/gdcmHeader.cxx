@@ -61,6 +61,35 @@ gdcmHeader::~gdcmHeader (void) {
 // Public
 /**
  * \ingroup gdcmHeader
+ * \brief  This predicate, based on hopefully reasonable heuristics,
+ *         decides whether or not the current gdcmParser was properly parsed
+ *         and contains the mandatory information for being considered as
+ *         a well formed and usable Dicom/Acr File.
+ * @return true when gdcmParser is the one of a reasonable Dicom/Acr file,
+ *         false otherwise. 
+ */
+bool gdcmHeader::IsReadable(void) 
+{
+   if(!gdcmParser::IsReadable())
+      return(false);
+
+   std::string res = GetEntryByNumber(0x0028, 0x0005);
+   if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) 
+      return false; // Image Dimensions
+
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0100) )
+      return false; // "Bits Allocated"
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0101) )
+      return false; // "Bits Stored"
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0102) )
+      return false; // "High Bit"
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0103) )
+      return false; // "Pixel Representation"
+   return true;
+}
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGBaseLineProcess1 one.
  *

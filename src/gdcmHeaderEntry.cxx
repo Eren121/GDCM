@@ -27,7 +27,6 @@ gdcmHeaderEntry::gdcmHeaderEntry(gdcmDictEntry* in) {
 
 //-----------------------------------------------------------------------------
 // Print
-
 void gdcmHeaderEntry::Print(std::ostream & os) {
    size_t o;
    unsigned short int g, e;
@@ -81,16 +80,17 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
      
    s << "[" << GetName()<< "]";       
    s << " [" << d2 << "]";
-    // Display the UID value (instead of displaying the rough code)  
+
+   // Display the UID value (instead of displaying the rough code)  
    if (g == 0x0002) {  // Any more to be displayed ?
-      if ( (e == 0x0010) || (e == 0x0002) ) 	   
-         s << "  ==>\t[" << ts->GetValue(v) << "]";   
+      if ( (e == 0x0010) || (e == 0x0002) )
+         s << "  ==>\t[" << ts->GetValue(v) << "]";
    } else {
       if (g == 0x0008) {
-         if ( (e == 0x0016) || (e == 0x1150)  ) 	   
-            s << "  ==>\t[" << ts->GetValue(v) << "]"; 
+         if ( (e == 0x0016) || (e == 0x1150)  )
+            s << "  ==>\t[" << ts->GetValue(v) << "]";
       }
-   } 
+   }
    if (e == 0x0000) {        // elem 0x0000 --> group length 
       if (v == "4294967295") // to avoid troubles in convertion 
          sprintf (st," x(ffffffff)");
