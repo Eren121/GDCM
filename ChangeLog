@@ -1,5 +1,7 @@
 2004-01-13 Benoit Regrain
      * gdcmPython/testSuite.py : test the readable flag of file for tests
+     * src/gdcmDict.cxx, gdcmElValSet.cxx : bug fix under windows for prints.
+       It's lied to the stl compilation by MSVC (windows, always windows...)
 
 2004-01-12 Benoit Regrain
      * src/*.h : add comments

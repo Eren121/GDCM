@@ -3,6 +3,12 @@
 #include "gdcmDict.h"
 #include "gdcmUtil.h"
 #include <fstream>
+#ifdef GDCM_NO_ANSI_STRING_STREAM
+#  include <strstream>
+#  define  ostringstream ostrstream
+# else
+#  include <sstream>
+#endif
 
 /**
  * \ingroup gdcmDict
@@ -73,14 +79,17 @@ void gdcmDict::Print(std::ostream& os) {
  * @param   os The output stream to be written to.
  */
 void gdcmDict::PrintByKey(std::ostream& os) {
+   std::ostringstream s;
+
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag){
-      os << "Tag : ";
-      os << "(" << std::hex << tag->second->GetGroup() << ',';
-      os << std::hex << tag->second->GetElement() << ") = " << std::dec;
-      os << tag->second->GetVR() << ", ";
-      os << tag->second->GetFourth() << ", ";
-      os << tag->second->GetName() << "."  << std::endl;
+      s << "Tag : ";
+      s << "(" << std::hex << tag->second->GetGroup() << ',';
+      s << std::hex << tag->second->GetElement() << ") = " << std::dec;
+      s << tag->second->GetVR() << ", ";
+      s << tag->second->GetFourth() << ", ";
+      s << tag->second->GetName() << "."  << std::endl;
    }
+   os << s.str();
 }
 
 /**
@@ -90,14 +99,17 @@ void gdcmDict::PrintByKey(std::ostream& os) {
  * @param   os The output stream to be written to.
  */
 void gdcmDict::PrintByName(std::ostream& os) {
+   std::ostringstream s;
+
    for (TagNameHT::iterator tag = NameHt.begin(); tag != NameHt.end(); ++tag){
-      os << "Tag : ";
-      os << tag->second->GetName() << ",";
-      os << tag->second->GetVR() << ", ";
-      os << tag->second->GetFourth() << ", ";
-      os << "(" << std::hex << tag->second->GetGroup() << ',';
-      os << std::hex << tag->second->GetElement() << ") = " << std::dec << std::endl;
+      s << "Tag : ";
+      s << tag->second->GetName() << ",";
+      s << tag->second->GetVR() << ", ";
+      s << tag->second->GetFourth() << ", ";
+      s << "(" << std::hex << tag->second->GetGroup() << ',';
+      s << std::hex << tag->second->GetElement() << ") = " << std::dec << std::endl;
    }
+   os << s.str();
 }
 
 /**

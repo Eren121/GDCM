@@ -58,7 +58,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy             ..\..\lib\gdcmdll.dll             ..\..\gdcmPython\         	copy             ..\..\lib\gdcmdll.dll             ..\..\test\         	copy          Release\gdcmdll.lib          ..\..\lib\ 
+PostBuild_Cmds=copy              ..\..\lib\gdcmdll.dll              ..\..\gdcmPython\          	copy              ..\..\lib\gdcmdll.dll              ..\..\test\          	copy           Release\gdcmdll.lib           ..\..\lib\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmdll - Win32 Debug"
@@ -90,7 +90,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy             ..\..\lib\gdcmdll.dll             ..\..\gdcmPython\         	copy             ..\..\lib\gdcmdll.dll             ..\..\test\         	copy          Debug\gdcmdll.lib          ..\..\lib\ 
+PostBuild_Cmds=copy              ..\..\lib\gdcmdll.dll              ..\..\gdcmPython\          	copy              ..\..\lib\gdcmdll.dll              ..\..\test\          	copy           Debug\gdcmdll.lib           ..\..\lib\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -178,6 +178,66 @@ SOURCE=..\gdcmVR.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\gdcm.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmCommon.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDict.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDictEntry.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDictSet.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmElValSet.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmElValue.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmException.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmHeader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmHeaderHelper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmIdo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmTS.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmUtil.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmVR.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 

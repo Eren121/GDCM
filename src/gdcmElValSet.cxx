@@ -16,7 +16,9 @@ gdcmElValSet::~gdcmElValSet() {
       gdcmElValue* EntryToDelete = tag->second;
       if ( EntryToDelete )
          delete EntryToDelete;
+      tag->second=NULL;
    }
+
    tagHt.clear();
    // Since Add() adds symetrical in both tagHt and NameHt we can
    // assume all the pointed gdcmElValues are already cleaned-up when
@@ -64,6 +66,7 @@ void gdcmElValSet::Print(std::ostream & os) {
    TSKey v;
    std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
+   std::ostringstream s;
    
    for (TagElValueHT::iterator tag = tagHt.begin();
 	   tag != tagHt.end();
@@ -73,27 +76,28 @@ void gdcmElValSet::Print(std::ostream & os) {
       v = tag->second->GetValue();
       o = tag->second->GetOffset();
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
-		 
-      os << tag->first << ": ";
-      os << " lgr : " << tag->second->GetLength();
-      os << ", Offset : " << o;
-      os << " x(" << std::hex << o << std::dec << ") ";
-      os << "\t[" << tag->second->GetVR()    << "]";
-      os << "\t[" << tag->second->GetName()  << "]";       
-      os << "\t[" << d2 << "]";
-      
+
+      s << tag->first << ": ";
+      s << " lgr : " <<tag->second->GetLength();
+      s << ",\t Offset : " << o;
+      s << " x(" << std::hex << o << std::dec << ") ";
+      s << "\t[" << tag->second->GetVR()    << "]";
+      s << "\t[" << tag->second->GetName()  << "]";       
+      s << "\t[" << d2 << "]";
+
       // Display the UID value (instead of displaying the rough code)  
       if (g == 0x0002) {  // Some more to be displayed ?
          if ( (e == 0x0010) || (e == 0x0002) ) 	   
-            os << "  ==>\t[" << ts->GetValue(v) << "]";   
+            s << "  ==>\t[" << ts->GetValue(v) << "]";   
       } else {
          if (g == 0x0008) {
             if ( (e == 0x0016) || (e == 0x1150)  ) 	   
-               os << "  ==>\t[" << ts->GetValue(v) << "]"; 
+               s << "  ==>\t[" << ts->GetValue(v) << "]"; 
          }
       }              
-      os << std::endl;
+      s << std::endl;
    }
+
    
    guint32 lgth;
    char greltag[10];  //group element tag
@@ -107,30 +111,31 @@ void gdcmElValSet::Print(std::ostream & os) {
       o = (*i)->GetOffset();
       sprintf(greltag,"%04x|%04x",g,e);           
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
-      os << greltag << ": lgth : ";
+      s << greltag << ": lgth : ";
       lgth = (*i)->GetReadLength();
       if ( lgth == 0xffffffff) 
-         os << std::hex << lgth << std::dec ;
+         s << std::hex << lgth << std::dec ;
       else
-         os << lgth;
-      os << ", Offset : " << o;
-      os << " x(" << std::hex << o << std::dec << ") ";
-      os << "\t[" << (*i)->GetVR()    << "]";
-      os << "\t[" << (*i)->GetName()  << "]";       
-      os << "\t[" << d2 << "]";
+         s << lgth;
+      s << ",\t Offset : " << o;
+      s << " x(" << std::hex << o << std::dec << ") ";
+      s << "\t[" << (*i)->GetVR()    << "]";
+      s << "\t[" << (*i)->GetName()  << "]";       
+      s << "\t[" << d2 << "]";
       
       // Display the UID value (instead of displaying the rough code)  
       if (g == 0x0002) {  // Any more to be displayed ?
          if ( (e == 0x0010) || (e == 0x0002) ) 	   
-            os << "  ==>\t[" << ts->GetValue(v) << "]";   
+            s << "  ==>\t[" << ts->GetValue(v) << "]";   
       } else {
          if (g == 0x0008) {
             if ( (e == 0x0016) || (e == 0x1150)  ) 	   
-               os << "  ==>\t[" << ts->GetValue(v) << "]"; 
+               s << "  ==>\t[" << ts->GetValue(v) << "]"; 
          }
       }              
-      os << std::endl;
-   }	   
+      s << std::endl;
+   }
+   os<<s.str();
 } 
 
 /**

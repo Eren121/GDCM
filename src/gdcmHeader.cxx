@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.121 2003/12/22 12:46:16 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.122 2004/01/13 11:13:08 regrain Exp $
 
 #include "gdcmHeader.h"
 
@@ -25,7 +25,6 @@
 // Refer to gdcmHeader::CheckSwap()
 #define HEADER_LENGTH_TO_READ       256
 // Refer to gdcmHeader::SetMaxSizeLoadElementValue()
-//#define _MaxSizeLoadElementValue_   1024
 #define _MaxSizeLoadElementValue_   4096
 /**
  * \ingroup gdcmHeader
@@ -133,6 +132,8 @@ gdcmHeader::~gdcmHeader (void) {
   Dicts    =   (gdcmDictSet*)0;
   RefPubDict = (gdcmDict*)0;
   RefShaDict = (gdcmDict*)0;
+
+
   return;
 }
 

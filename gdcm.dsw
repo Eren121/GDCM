@@ -24,6 +24,21 @@ Package=<4>
 
 ###############################################################################
 
+Project: "gdcmTest"=.\TEST\WIN32\gdcmTest.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name gdcmdll
+    End Project Dependency
+}}}
+
+###############################################################################
+
 Project: "gdcmdll"=.\src\win32\gdcmdll.dsp - Package Owner=<4>
 
 Package=<5>
@@ -61,21 +76,6 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name libgdcmijpeg12
-    End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "gdcmtest"=.\TEST\WIN32\gdcmtest\gdcmtest.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name gdcmdll
     End Project Dependency
 }}}
 
