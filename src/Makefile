@@ -1,7 +1,7 @@
 
 ###CC   = gcc
 ###LINK = gcc -shared -o ptinpoly.so
-SWIG = ~/Local/bin/swig
+SWIG = swig
 SWIGFLAGS= -python -c++
 
 PYTHON=python
@@ -13,10 +13,12 @@ CXXFLAGS=`glib-config --cflags`
 CPPFLAGS=-g -Wall -Wunused-variable
 LDFLAGS=`glib-config --libs` -g
 
-%.o : %.cxx
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+%_wrap.o : %_wrap.cxx
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(PYTHON_INCLUDES) $< -o $@
 %_wrap.cxx : %.i
 	$(SWIG) $(SWIGFLAGS) $(PYTHON_INCLUDES) -o $@ $<
+%.o : %.cxx
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 all: gdcmlib.so
 
@@ -27,13 +29,14 @@ gdcmlib.so: gdcmUtil.o    \
 	gdcmDict.o      \
 	gdcmDictSet.o   \
 	gdcmElValSet.o  \
-	gdcmHeaderIdo.o
+	gdcmHeaderIdo.o \
+	gdcmFile.o
 	g++ -shared -o gdcmlib.so $^ $(LDFLAGS)
 
-python: gdcmlib.so dcm_wrap.o
-	g++ -shared $^ -o gdcmc.so
+python: gdcmlib.so gdcm_wrap.o
+	g++ -shared $^ -o _gdcm.so
 
 clean:
-	rm -f *_wrap* *.so *.o *.pyc
+	rm -f *_wrap* *.so *.o *.pyc gdcm.py
 
 .SECONDARY: dcm_wrap.cxx

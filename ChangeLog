@@ -1,3 +1,8 @@
+2002-10-31 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * Straightforward temporary fixes for swig to build the python wrappers.
+        src/Makefile now has a python working entry [by working we mean
+        that we can import de shadow classes without errors].
+
 2002-10-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * hashtest.cxx removed (since allready in Test)
       * src/gdcmlib.h renamed to src/gdcm.h

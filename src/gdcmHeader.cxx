@@ -1,4 +1,4 @@
-#include "gdcmlib.h"
+#include "gdcm.h"
 extern "C" {
 #include "glib.h"
 }
@@ -39,7 +39,7 @@ void gdcmHeader::Initialise(void) {
 	RefShaDict = (gdcmDict*)0;
 }
 
-gdcmHeader::gdcmHeader (char* InFilename) {
+gdcmHeader::gdcmHeader (const char* InFilename) {
 	filename = InFilename;
 	Initialise();
 	fp=fopen(InFilename,"rw");

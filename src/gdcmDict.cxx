@@ -1,5 +1,5 @@
 #include <fstream>
-#include "gdcmlib.h"
+#include "gdcm.h"
 #include "gdcmUtil.h"
 
 gdcmDict::gdcmDict(char * FileName) {

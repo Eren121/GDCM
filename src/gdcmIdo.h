@@ -1,4 +1,4 @@
-#include "gdcmlib.h"
+#include "gdcm.h"
 
 class gdcmHeaderIdo: protected gdcmHeader {
 private:

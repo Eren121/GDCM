@@ -7,6 +7,13 @@
 // * Formats: this lib should be able to read ACR-NEMA v1 and v2, Dicom v3 (as
 //   stated in part10). [cf dcmtk/dcmdata/docs/datadict.txt]
 // * Targeted plateforms: Un*xes and Win32/VC++6.0
+//
+//
+// TODO
+// The declarations commented out and starting with "TODO Swig" needed
+// to be temporarily removed for swig to proceed correctly (in fact
+// problems appears at loading of _gdcm.[so/dll]). So, simply uncomment
+// the declaration once you provided the definition of the method...
 
 #include <string>
 #include <stddef.h>    // For size_t
@@ -85,9 +92,8 @@ class gdcmDict {
 	string filename;
 	TagHT entries;
 public:
-	gdcmDict();
 	gdcmDict(char *FileName);   // Read Dict from disk
-	int AppendEntry(gdcmDictEntry* NewEntry);
+	// TODO Swig int AppendEntry(gdcmDictEntry* NewEntry);
 	gdcmDictEntry * GetTag(guint32 group, guint32 element);
 	void Print(ostream&);
 };
@@ -104,17 +110,17 @@ class gdcmDictSet {
 private:
 	DictSetHT dicts;
 	int AppendDict(gdcmDict* NewDict);
+	int LoadDictFromFile(char* filename, DictKey);
 public:
 	gdcmDictSet(void);    // loads THE DICOM v3 dictionary
-	int LoadDictFromFile(string filename);
+	// TODO Swig int LoadDictFromFile(string filename);
 ///// QUESTION: the following function might not be thread safe !? Maybe
 /////           we need some mutex here, to avoid concurent creation of
 /////           the same dictionary !?!?!
-	int LoadDictFromName(string filename);
-	int LoadDictFromFile(char*, DictKey);
-	int LoadAllDictFromDirectory(string DirectoryName);
+	// TODO Swig int LoadDictFromName(string filename);
+	// TODO Swig int LoadAllDictFromDirectory(string DirectoryName);
+	// TODO Swig string* GetAllDictNames();
 	int LoadDicomV3Dict(void);
-	string* GetAllDictNames();
 	void Print(ostream&);
 	gdcmDict* GetDict(DictKey DictName);
 	gdcmDict* GetDefaultPublicDict(void);
@@ -235,50 +241,50 @@ protected:
 public:
 	void LoadElements(void);
 	virtual void ParseHeader(void);
-	gdcmHeader(char* filename);
+	gdcmHeader(const char* filename);
 	virtual ~gdcmHeader();
 
-	int SetPubDict(string filename);
+	// TODO Swig int SetPubDict(string filename);
 	// When some proprietary shadow groups are disclosed, whe can set
 	// up an additional specific dictionary to access extra information.
-	int SetShaDict(string filename);
+	// TODO Swig int SetShaDict(string filename);
 
 	// Retrieve all potentially available tag [tag = (group, element)] names
 	// from the standard (or public) dictionary (hence static). Typical usage:
 	// enable the user of a GUI based interface to select his favorite fields
 	// for sorting or selection.
-	string* GetPubTagNames();
+	// TODO Swig string* GetPubTagNames();
 	// Get the element values themselves:
 	string GetPubElValByName(string TagName);
 	string GetPubElValByNumber(guint16 group, guint16 element);
 	// Get the element value representation: (VR) might be needed by caller
 	// to convert the string typed content to caller's native type (think
 	// of C/C++ vs Python).
-	string GetPubElValRepByName(string TagName);
-	string GetPubElValRepByNumber(guint16 group, guint16 element);
+	// TODO Swig string GetPubElValRepByName(string TagName);
+	// TODO Swig string GetPubElValRepByNumber(guint16 group, guint16 element);
 	void   PrintPubElVal(ostream &);
 	void   PrintPubDict(ostream &);
 	  
 	// Same thing with the shadow :
-	string* GetShaTagNames(); 
-	string GetShaElValByName(string TagName);
-	string GetShaElValByNumber(guint16 group, guint16 element);
-	string GetShaElValRepByName(string TagName);
-	string GetShaElValRepByNumber(guint16 group, guint16 element);
+	// TODO Swig string* GetShaTagNames(); 
+	// TODO Swig string GetShaElValByName(string TagName);
+	// TODO Swig string GetShaElValByNumber(guint16 group, guint16 element);
+	// TODO Swig string GetShaElValRepByName(string TagName);
+	// TODO Swig string GetShaElValRepByNumber(guint16 group, guint16 element);
 
 	// Wrappers of the above (both public and shadow) to avoid bugging the
 	// caller with knowing if ElVal is from the public or shadow dictionary.
-	string GetElValByName(string TagName);
-	string GetElValByNumber(guint16 group, guint16 element);
-	string GetElValRepByName(string TagName);
-	string GetElValRepByNumber(guint16 group, guint16 element);
+	// TODO Swig string GetElValByName(string TagName);
+	// TODO Swig string GetElValByNumber(guint16 group, guint16 element);
+	// TODO Swig string GetElValRepByName(string TagName);
+	// TODO Swig string GetElValRepByNumber(guint16 group, guint16 element);
 
-	int SetPubElValByName(string content, string TagName);
-	int SetPubElValByNumber(string content, guint16 group, guint16 element);
-	int SetShaElValByName(string content, string ShadowTagName);
-	int SetShaElValByNumber(string content, guint16 group, guint16 element);
+	// TODO Swig int SetPubElValByName(string content, string TagName);
+	// TODO Swig int SetPubElValByNumber(string content, guint16 group, guint16 element);
+	// TODO Swig int SetShaElValByName(string content, string ShadowTagName);
+	// TODO Swig int SetShaElValByNumber(string content, guint16 group, guint16 element);
 
-	int GetSwapCode();
+	// TODO Swig int GetSwapCode();
 };
 
 // In addition to Dicom header exploration, this class is designed
@@ -296,7 +302,7 @@ private:
 public:
 	// Constructor dedicated to writing a new DICOMV3 part10 compliant
 	// file (see SetFileName, SetDcmTag and Write)
-	gdcmFile();
+	// TODO Swig gdcmFile();
 	// Opens (in read only and when possible) an existing file and checks
 	// for DICOM compliance. Returns NULL on failure.
 	// Note: the in-memory representation of all available tags found in
@@ -306,28 +312,28 @@ public:
 	//    seen a a side effect).
 	gdcmFile(string & filename);
 	// For promotion (performs a deepcopy of pointed header object)
-	gdcmFile(gdcmHeader* header);
-	~gdcmFile();
+	// TODO Swig gdcmFile(gdcmHeader* header);
+	// TODO Swig ~gdcmFile();
 
 	// On writing purposes. When instance was created through
 	// gdcmFile(string filename) then the filename argument MUST be different
 	// from the constructor's one (no overwriting aloud).
-	int SetFileName(string filename);
+	// TODO Swig int SetFileName(string filename);
 
 	// Allocates necessary memory, copies the data (image[s]/volume[s]) to
 	// newly allocated zone and return a pointer to it:
-	void * GetImageData();
+	// TODO Swig void * GetImageData();
 	// Returns size (in bytes) of required memory to contain data
 	// represented in this file.
-	size_t GetImageDataSize();
+	// TODO Swig size_t GetImageDataSize();
 	// Copies (at most MaxSize bytes) of data to caller's memory space.
 	// Returns an error code on failure (if MaxSize is not big enough)
-	int PutImageDataHere(void* destination, size_t MaxSize );
+	// TODO Swig int PutImageDataHere(void* destination, size_t MaxSize );
 	// Allocates ExpectedSize bytes of memory at this->Data and copies the
 	// pointed data to it.
-	int SetImageData(void * Data, size_t ExpectedSize);
+	// TODO Swig int SetImageData(void * Data, size_t ExpectedSize);
 	// Push to disk.
-	int Write();
+	// TODO Swig int Write();
 };
 
 //class gdcmSerie : gdcmFile;

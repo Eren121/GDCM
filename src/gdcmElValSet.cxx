@@ -1,4 +1,4 @@
-#include "gdcmlib.h"
+#include "gdcm.h"
 #include "gdcmUtil.h"
 
 TagElValueHT & ElValSet::GetTagHt(void) {

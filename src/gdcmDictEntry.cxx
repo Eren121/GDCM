@@ -1,4 +1,4 @@
-#include "gdcmlib.h"
+#include "gdcm.h"
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
                              string  InVr, string InFourth, string InName) 

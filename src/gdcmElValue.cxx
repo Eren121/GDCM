@@ -1,4 +1,4 @@
-#include "gdcmlib.h"
+#include "gdcm.h"
 
 void   ElValue::SetVR(string ValRep) { entry->SetVR(ValRep); }
 string ElValue::GetVR(void)   { return entry->GetVR(); }

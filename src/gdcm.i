@@ -1,7 +1,7 @@
-%module dcm
+%module gdcm
 %{
-#include "dcmlib.h"
+#include "gdcm.h"
 %}
 %rename(new_dcmHeader_c) dcmHeader::dcmHeader(char*);
 
-%include dcmlib.h
+%include gdcm.h
