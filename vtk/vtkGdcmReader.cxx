@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.8 2003/06/02 07:42:17 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.9 2003/06/03 10:26:07 frog Exp $
 //CLEANME#include <vtkByteSwap.h>
 #include <stdio.h>
 #include <vtkObjectFactory.h>
@@ -109,7 +109,8 @@ bool vtkGdcmReader::CheckFileCoherence()
      if (!fp)
        {
        vtkErrorMacro("Unable to open file " << *FileName->c_str());
-       vtkErrorMacro("Removing this file from readed files " << *FileName->c_str());
+       vtkErrorMacro("Removing this file from readed files "
+                     << *FileName->c_str());
        FileNameList.remove(*FileName);
        continue;
        }
@@ -120,7 +121,20 @@ bool vtkGdcmReader::CheckFileCoherence()
      if (!GdcmHeader.IsReadable())
        {
        vtkErrorMacro("Gdcm cannot parse file " << *FileName->c_str());
-       vtkErrorMacro("Removing this file from readed files " << *FileName->c_str());
+       vtkErrorMacro("Removing this file from readed files "
+                     << *FileName->c_str());
+       FileNameList.remove(*FileName);
+       continue;
+       }
+
+     // We don't know how to handle multiple images in one file yet:
+     int NZ = GdcmHeader.GetZSize();
+     if (NZ > 1)
+       {
+       vtkErrorMacro("This file contains multiple planes (images)"
+                     << *FileName->c_str());
+       vtkErrorMacro("Removing this file from readed files " 
+                     << *FileName->c_str());
        FileNameList.remove(*FileName);
        continue;
        }
@@ -128,7 +142,6 @@ bool vtkGdcmReader::CheckFileCoherence()
      // Coherence stage:
      int NX = GdcmHeader.GetXSize();
      int NY = GdcmHeader.GetYSize();
-     int NZ = GdcmHeader.GetZSize();
      std::string type = GdcmHeader.GetPixelType();
      if (FoundReferenceFile) 
        {
@@ -139,11 +152,13 @@ bool vtkGdcmReader::CheckFileCoherence()
          {
             vtkErrorMacro("This file is not coherent with previous ones"
                           << *FileName->c_str());
-            vtkErrorMacro("Removing this file from readed files " << *FileName->c_str());
+            vtkErrorMacro("Removing this file from readed files "
+                          << *FileName->c_str());
             FileNameList.remove(*FileName);
             continue;
          } else {
-            vtkDebugMacro("File is coherent with previous ones" << *FileName->c_str());
+            vtkDebugMacro("File is coherent with previous ones"
+                          << *FileName->c_str());
          }
        } else {
          // This file shall be the reference:
@@ -152,7 +167,8 @@ bool vtkGdcmReader::CheckFileCoherence()
          ReferenceNY = NY;
          ReferenceNZ = NZ;
          ReferenceType = type;
-         vtkDebugMacro("This file taken as coherence reference:" << *FileName->c_str());
+         vtkDebugMacro("This file taken as coherence reference:"
+                       << *FileName->c_str());
        }
      } // End of loop on FileName
 
@@ -197,8 +213,6 @@ void vtkGdcmReader::ExecuteInformation()
   vtkDebugMacro("Image dimension as read from Gdcm:" <<
                 NX << " " << NY << " " << NZ);
 
-  if(NZ>1) this->SetFileDimensionality(3);
-
   // When the user has set the VOI, check it's coherence with the file content.
   if (this->DataVOI[0] || this->DataVOI[1] || 
       this->DataVOI[2] || this->DataVOI[3] ||
@@ -209,7 +223,7 @@ void vtkGdcmReader::ExecuteInformation()
         (this->DataVOI[2] < 0) ||
         (this->DataVOI[3] >= NY) ||
         (this->DataVOI[4] < 0) ||
-        (this->DataVOI[5] >= NZ))
+        (this->DataVOI[5] >= this->FileNameList.size()))
       {
       vtkWarningMacro("The requested VOI is larger than the file's ("
                       << ReferenceFile.c_str() << ") extent ");
@@ -218,7 +232,7 @@ void vtkGdcmReader::ExecuteInformation()
       this->DataVOI[2] = 0;
       this->DataVOI[3] = NY - 1;
       this->DataVOI[4] = 0;
-      this->DataVOI[5] = NZ - 1;
+      this->DataVOI[5] = this->FileNameList.size() - 1;
       }
     }
 
@@ -227,11 +241,12 @@ void vtkGdcmReader::ExecuteInformation()
   this->DataExtent[1] = NX - 1;
   this->DataExtent[2] = 0;
   this->DataExtent[3] = NY - 1;
-  if(this->GetFileDimensionality()==3)
+  if(this->FileNameList.size() > 1)
     {
-      this->DataExtent[4] = 0;
-      this->DataExtent[5] = NZ - 1;
+    this->DataExtent[4] = 0;
+    this->DataExtent[5] = this->FileNameList.size() - 1;
     }
+
   
   // We don't need to positionate the Endian related stuff (by using
   // this->SetDataByteOrderToBigEndian() or SetDataByteOrderToLittleEndian()
@@ -345,7 +360,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
   gdcmFile GdcmFile(ReferenceFile.c_str());
   int NumColumns = this->DataExtent[1] - this->DataExtent[0] + 1;
   int NumLines   = this->DataExtent[3] - this->DataExtent[2] + 1;
-  int NumPlanes  = this->DataExtent[5] - this->DataExtent[4] + 1;
+  int NumPlanes  = 1;   // This has been checked in CheckFileCoherence
   size_t size = NumColumns * NumLines * NumPlanes * GdcmFile.GetPixelSize();
   if ( size != GdcmFile.GetImageDataSize() )
     {
@@ -369,13 +384,11 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
        Dest += size;
     }
 
-
   // The "size" of the vtkScalars data is expressed in number of points,
   // and is not the memory size representing those points:
   stack_size = stack_size / GdcmFile.GetPixelSize();
   data->GetPointData()->GetScalars()->SetVoidArray(mem, stack_size, 0);
   this->Modified();
-
 }
 
 //----------------------------------------------------------------------------
