@@ -46,6 +46,11 @@ TARGET_LINK_LIBRARIES(vtkgdcmViewer
   vtkgdcm
   vtkRendering
 )
+ADD_EXECUTABLE(vtkgdcmViewer2 vtkgdcmViewer2.cxx)
+TARGET_LINK_LIBRARIES(vtkgdcmViewer2
+  vtkgdcm
+  vtkRendering
+)
 
 #-----------------------------------------------------------------------------
 SET(vtkWriteDicom_SOURCES

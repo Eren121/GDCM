@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: vtkgdcmViewer.cxx,v $
+  Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
   Date:      $Date: 2005/02/02 20:10:50 $
-  Version:   $Revision: 1.24 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@
 // 
 //----------------------------------------------------------------------------
 #include <vtkRenderWindowInteractor.h>
-#include <vtkImageViewer.h>
+#include <vtkImageViewer2.h>
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsWriter.h>
 #include <vtkCommand.h>
@@ -75,7 +75,7 @@ public:
          }
       }
    }
-   vtkImageViewer *ImageViewer;
+   vtkImageViewer2 *ImageViewer;
 };
 
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
    vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
 
-   vtkImageViewer *viewer = vtkImageViewer::New();
+   vtkImageViewer2 *viewer = vtkImageViewer2::New();
 
    if( reader->GetLookupTable() )
    {
