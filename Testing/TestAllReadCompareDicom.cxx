@@ -8,7 +8,7 @@ int InternalTest(std::string const & filename, std::string const & referenceFile
 {
       std::cout << "   Testing: " << filename << std::endl;
 
-      gdcmFile* tested = new gdcmFile( filename, false );
+      gdcmFile* tested = new gdcmFile( filename );
       if( !tested->GetHeader()->IsReadable() )
       {
         std::cout << "      Image not gdcm compatible:"
@@ -44,7 +44,7 @@ int InternalTest(std::string const & filename, std::string const & referenceFile
 
       ////// When reference file is not gdcm readable test is failed:
   
-      gdcmFile* reference = new gdcmFile( referenceFileName.c_str(), false );
+      gdcmFile* reference = new gdcmFile( referenceFileName.c_str() );
       if( !reference->GetHeader()->IsReadable() )
       {
          std::cout << "      Reference image " << std::endl

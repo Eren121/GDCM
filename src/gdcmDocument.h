@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 14:06:58 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/08/02 16:42:14 $
+  Version:   $Revision: 1.30 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -131,7 +131,7 @@ public:
 
    FileType GetFileType();
 
-   FILE* OpenFile(bool exception_on_error = false) throw( gdcmFileError );
+   FILE* OpenFile();
    bool CloseFile();
 
    void Write(FILE* fp, FileType type);
@@ -141,12 +141,14 @@ public:
 
    gdcmBinEntry* ReplaceOrCreateByNumber(void *voidArea, int lgth,
                                          uint16_t group, uint16_t elem);
-   bool ReplaceIfExistByNumber (std::string const & value, uint16_t group, uint16_t elem);
+   bool ReplaceIfExistByNumber ( std::string const & value,
+                                 uint16_t group,
+                                 uint16_t elem );
    
    virtual void* LoadEntryVoidArea(uint16_t group, uint16_t elem);
    virtual void* LoadEntryVoidArea(gdcmBinEntry* entry);
       
-   // System access
+   // System access (meaning endian related !?)
    uint16_t SwapShort(uint16_t);   // needed by gdcmFile
    uint32_t SwapLong(uint32_t);    // needed by gdcmFile
    uint16_t UnswapShort(uint16_t); // needed by gdcmFile
@@ -156,9 +158,8 @@ protected:
    // Constructor and destructor are protected to forbid end user 
    // to instanciate from this class gdcmDocument (only gdcmHeader and
    // gdcmDicomDir are meaningfull).
-   gdcmDocument(bool exception_on_error  = false);
-   gdcmDocument(std::string const & filename, 
-                bool  exception_on_error = false);
+   gdcmDocument();
+   gdcmDocument( std::string const & filename );
    virtual ~gdcmDocument();
    
    void Parse7FE0 ();   

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 14:06:57 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2004/08/02 16:42:14 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,17 +82,15 @@ const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
 /**
  * \brief   constructor  
  * @param   inFilename file to be opened for parsing
- * @param   exception_on_error whether we throw an exception or not
  */
-gdcmDocument::gdcmDocument( std::string const & filename, 
-                            bool exception_on_error) 
+gdcmDocument::gdcmDocument( std::string const & filename ) 
               : gdcmElementSet(-1)
 {
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = filename;
    Initialise();
 
-   if ( !OpenFile(exception_on_error))
+   if ( !OpenFile() )
    {
       return;
    }
@@ -136,7 +134,11 @@ gdcmDocument::gdcmDocument( std::string const & filename,
    CloseFile(); 
   
    // --------------------------------------------------------------
-   // Special Patch to allow gdcm to read ACR-LibIDO formated images
+   // Specific code to allow gdcm to read ACR-LibIDO formated images
+   // Note: ACR-LibIDO is an extension of the ACR standard that was
+   //       used at CREATIS. For the time being (say a couple years)
+   //       we keep this kludge to allow a smooth move to gdcm for
+   //       CREATIS developpers (sorry folks).
    //
    // if recognition code tells us we deal with a LibIDO image
    // we switch lineNumber and columnNumber
@@ -153,23 +155,20 @@ gdcmDocument::gdcmDocument( std::string const & filename,
          SetEntryByNumber(columns, 0x0028, 0x0010);
          SetEntryByNumber(rows   , 0x0028, 0x0011);
    }
-   // ----------------- End of Special Patch ---------------- 
+   // ----------------- End of ACR-LibIDO kludge ------------------ 
 
    PrintLevel = 1;  // 'Medium' print level by default
 }
 
 /**
- * \brief  constructor 
- * @param   exception_on_error
+ * \brief This default constructor doesn't parse the file. You should
+ *        then invoke \ref gdcmDocument::SetFileName and then the parsing.
  */
-gdcmDocument::gdcmDocument(bool exception_on_error) 
+gdcmDocument::gdcmDocument() 
              :gdcmElementSet(-1)
 {
-   (void)exception_on_error;
-
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
-
    PrintLevel = 1;  // 'Medium' print level by default
 }
 
@@ -462,58 +461,46 @@ FileType gdcmDocument::GetFileType()
 }
 
 /**
- * \brief   opens the file
- * @param   exception_on_error
- * @return  
+ * \brief  Tries to open the file \ref gdcmDocument::Filename and
+ *         checks the preamble when existing.
+ * @return The FILE pointer on success. 
  */
-FILE *gdcmDocument::OpenFile(bool exception_on_error)
-  throw(gdcmFileError) 
+FILE* gdcmDocument::OpenFile()
 {
-  Fp = fopen(Filename.c_str(),"rb");
+   Fp = fopen(Filename.c_str(),"rb");
 
-  if(!Fp)
-  {
-     if(exception_on_error)
-     {
-        throw gdcmFileError("gdcmDocument::gdcmDocument(const char *, bool)");
-     }
-     else
-     {
-        dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file: ",
-                    Filename.c_str());
-        return NULL;
-     }
-  }
-
-  if ( Fp )
-  {
-     uint16_t zero;
-     fread(&zero,  (size_t)2, (size_t)1, Fp);
-
-    //ACR -- or DICOM with no Preamble --
-    if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200 )
-    {
-       return Fp;
-    }
-
-    //DICOM
-    fseek(Fp, 126L, SEEK_CUR);
-    char dicm[4];
-    fread(dicm,  (size_t)4, (size_t)1, Fp);
-    if( memcmp(dicm, "DICM", 4) == 0 )
-    {
-       return Fp;
-    }
-
-    fclose(Fp);
-    dbg.Verbose(0, "gdcmDocument::OpenFile not DICOM/ACR", Filename.c_str());
-  }
-  else
-  {
-    dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file", Filename.c_str());
-  }
-
-  return 0;
+   if(!Fp)
+   {
+      dbg.Verbose( 0,
+                   "gdcmDocument::OpenFile cannot open file: ",
+                   Filename.c_str());
+      return 0;
+   }
+ 
+   uint16_t zero;
+   fread(&zero,  (size_t)2, (size_t)1, Fp);
+ 
+   //ACR -- or DICOM with no Preamble --
+   if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200 )
+   {
+      return Fp;
+   }
+ 
+   //DICOM
+   fseek(Fp, 126L, SEEK_CUR);
+   char dicm[4];
+   fread(dicm,  (size_t)4, (size_t)1, Fp);
+   if( memcmp(dicm, "DICM", 4) == 0 )
+   {
+      return Fp;
+   }
+ 
+   fclose(Fp);
+   dbg.Verbose( 0,
+                "gdcmDocument::OpenFile not DICOM/ACR (missing preamble)",
+                Filename.c_str());
+ 
+   return 0;
 }
 
 /**

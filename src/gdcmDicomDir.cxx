@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 02:39:09 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2004/08/02 16:42:14 $
+  Version:   $Revision: 1.63 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,10 +48,9 @@
 /**
  * \ingroup gdcmDicomDir
  * \brief   Constructor : creates an empty gdcmDicomDir
- * @param   exception_on_error whether we want to throw an exception or not
  */
-gdcmDicomDir::gdcmDicomDir(bool exception_on_error):                           
-   gdcmDocument( exception_on_error )
+gdcmDicomDir::gdcmDicomDir()
+   :gdcmDocument( )
 { 
    Initialize();
 
@@ -71,11 +70,9 @@ gdcmDicomDir::gdcmDicomDir(bool exception_on_error):
  *                        and wants to explore recursively the directories
  *                      - false if user passed an already built DICOMDIR file
  *                        and wants to use it 
- * @param exception_on_error whether we want to throw an exception or not
  */
-gdcmDicomDir::gdcmDicomDir(std::string const & fileName, bool parseDir,
-                           bool exception_on_error):
-   gdcmDocument( fileName, exception_on_error)
+gdcmDicomDir::gdcmDicomDir(std::string const & fileName, bool parseDir ):
+   gdcmDocument( fileName )
 {
    // que l'on ai passe un root directory ou un DICOMDIR
    // et quelle que soit la valeur de parseDir,
@@ -449,7 +446,7 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
          break;
       }
 
-      header = new gdcmHeader( it->c_str(),false );
+      header = new gdcmHeader( it->c_str() );
       if( !header )
       {
          dbg.Verbose( 1,

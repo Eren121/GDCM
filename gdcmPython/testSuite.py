@@ -12,37 +12,8 @@ class gdcmTestCase(unittest.TestCase):
    # http://www.barre.nom.fr/medical/samples/index.html
    BarreFiles = [
       ####################################
-      # CR modality examples:
-      ####################################
-      ["CR-MONO1-10-chest.dcm",
-         [ ["Modality", "CR"],
-           #"Transfer Syntax UID" is absent.
-           ["Rows", "440"],
-           ["Columns", "440"],
-           ["Bits Stored", "10"],
-           ["Bits Allocated", "16"],
-           ["High Bit", "9"],
-           ["Pixel Representation", "0"],
-           ["Manufacturer", "FUJI PHOTO FILM CO. LTD."],
-           ["Manufacturer's Model Name", "9000"],
-           ["Pixel Data", "gdcm::NotLoaded. Address:776 Length:387200 x(5e880)"]
-         ] ],
-      ####################################
       # CT modality examples:
       ####################################
-      ["CT-MONO2-16-brain.dcm",
-         [ ["Transfer Syntax UID", "1.2.840.10008.1.2.1"],  # Explicit VR, LE
-           ["Modality", "CT"],
-           ["Rows", "512"],
-           ["Columns", "512"],
-           ["Bits Stored", "16"],
-           ["Bits Allocated", "16"],
-           ["High Bit", "15"],
-           ["Pixel Representation", "1"],
-           ["Manufacturer", "Picker International, Inc."],
-           ["Manufacturer's Model Name", "PQ5000"],
-           ["Pixel Data", "gdcm::NotLoaded. Address:1680 Length:524288 x(80000)"]
-         ] ],
       ["CT-MONO2-16-ort.dcm",
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2"],  # Implicit VR, LE
            ["Modality", "CT"],

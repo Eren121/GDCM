@@ -6,6 +6,14 @@
   * src/gdcmException.h: introduced new gdcmFormatUnexpected class
     (gdcmFormatError now inherits from gdcmFormatUnexpected).
   * TODO updated
+  * gdcmPython/testSuite.py checks on CR-MONO1-10-chest.dcm moved to
+    gdcmData/TestAllEntryVerifyReference.txt
+  * Test/TestAllEntryVerify.cxx is now effective (used allways return true)
+  * src/gdcmDocument.[cxx|h]: constructors no longer use the bool
+    exception_on_error parameter.
+    - src/gdcmFile.[cxx|h], src/gdcmHeader.[cxx|h] changed accordingly,
+    - vtk/vtkGdcmReader.cxx changed accordingly,
+    - Example/*.cxx and Test/*.cxx changed accordingly.
 
 2004-07-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmDicomDir.cxx, gdcmDocEntrySet.cxx: removed inclusion of errno.h

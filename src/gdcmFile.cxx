@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/31 23:30:04 $
-  Version:   $Revision: 1.119 $
+  Date:      $Date: 2004/08/02 16:42:14 $
+  Version:   $Revision: 1.120 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,12 +62,10 @@ gdcmFile::gdcmFile(gdcmHeader *header)
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
- * @param   exception_on_error whether we throw an exception or not
  */
-gdcmFile::gdcmFile(std::string const & filename, 
-                   bool exception_on_error )
+gdcmFile::gdcmFile(std::string const & filename )
 {
-   Header = new gdcmHeader( filename, exception_on_error );
+   Header = new gdcmHeader( filename );
    SelfHeader = true;
    PixelRead  = -1; // no ImageData read yet.
 

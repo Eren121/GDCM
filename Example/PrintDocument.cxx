@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
    
-   e1= new gdcmHeader( fileName.c_str(), false );
+   e1= new gdcmHeader( fileName.c_str() );
 
    e1->SetPrintLevel(2);
    

@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
    
-   gdcmFile *e2 = new gdcmFile( fileName.c_str(), false );
+   gdcmFile *e2 = new gdcmFile( fileName.c_str() );
    gdcmHeader *e1 = e2->GetHeader();  
         
    if (argc > 2) {

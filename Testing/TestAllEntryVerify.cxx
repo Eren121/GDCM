@@ -163,7 +163,7 @@ bool ReferenceFileParser::Check()
    {
       string fileName = DataPath + i->first;
       cout << Indent << "FileName: " << fileName << endl;
-      gdcmHeader* tested = new gdcmHeader( fileName.c_str(), false );
+      gdcmHeader* tested = new gdcmHeader( fileName.c_str() );
       if( !tested->IsReadable() )
       {
         cerr << Indent << "Image not gdcm compatible:"
@@ -205,7 +205,7 @@ bool ReferenceFileParser::Check()
       cout << Indent << "  OK" << endl;
    }
    cout << Indent << endl;
-   return true; //???
+   return true;
 }
 
 istream& ReferenceFileParser::eatwhite( istream& is )
@@ -612,30 +612,7 @@ int TestAllEntryVerify(int argc, char* argv[])
    Parser.Open(referenceFilename);
    Parser.SetDataPath(referenceDir);
    // Parser.Print();
-   Parser.Check();
-/*
-   int i = 0;
-   while( gdcmDataImages[i] != 0 )
-   {
-      string filename = GDCM_DATA_ROOT;
-      filename += "/";  //doh!
-      filename += gdcmDataImages[i++];
-   
-      cout << "   Testing: " << filename << endl;
-
-      gdcmHeader* tested = new gdcmHeader( filename.c_str(), false, true );
-      if( !tested->GetHeader()->IsReadable() )
-      {
-        cout << "      Image not gdcm compatible:"
-                  << filename << endl;
-        delete tested;
-        return 1;
-      }
-
-      //////////////// Clean up:
-      delete tested;
-   }
-*/
-
-   return 0;
+   if ( Parser.Check() )
+      return 0;
+   return 1;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/31 23:30:04 $
-  Version:   $Revision: 1.181 $
+  Date:      $Date: 2004/08/02 16:42:14 $
+  Version:   $Revision: 1.182 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,12 +30,9 @@
 /**
  * \brief  Constructor 
  * @param  filename name of the file whose header we want to analyze
- * @param  exception_on_error whether we want to throw an exception or not
  */
-gdcmHeader::gdcmHeader( std::string const & filename, 
-                        bool exception_on_error ):
-            gdcmDocument( filename,
-                          exception_on_error )
+gdcmHeader::gdcmHeader( std::string const & filename ):
+            gdcmDocument( filename )
 {    
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
@@ -80,10 +77,9 @@ gdcmHeader::gdcmHeader( std::string const & filename,
 
 /**
  * \brief Constructor  
- * @param exception_on_error whether we want to throw an exception or not
  */
-gdcmHeader::gdcmHeader(bool exception_on_error) :
-            gdcmDocument( exception_on_error )
+gdcmHeader::gdcmHeader()
+           :gdcmDocument()
 {
 }
 
