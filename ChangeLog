@@ -1,8 +1,18 @@
-2005-01-11 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+
+2005-01-12 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * FIX : Old quick and dirty 'optimistic' heuristic to deal with
+	        Big Endian Transfer Syntax supposed the group following 0002
+			  begins always by element 0000 (element 0000 is *optional*)
+			  To avoid further troubles, let's be pessimistic, and use
+			  Document::HandleOutOfGroup0002() method 
+	 * FIX : comparison between GDCM_NOTLOADED and Transfer Syntax
+              (related pb not yet solved)
+
+2005-01-12 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Bug fix for the python part use
    * Now, PrintHeader.py pass... but outside the ctest use. shit !
 
-2005-01-11 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+2005-01-12 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * gdcmPython/gdcm.i : bug fix when compiling with MSCV
 
 2005-01-11 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
