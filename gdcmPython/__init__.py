@@ -1,5 +1,10 @@
 import os, sys
 
+try:
+	from gdcmVersion import *
+except:
+	print "gdcmVersion not imported"
+
 def BuildInstallOrPreinstallPath(DirName, FileName = None):
    # Builds a path to the DirName directory. This should work both when:
    # - the package is properly installed in which case DirName is a subdir
