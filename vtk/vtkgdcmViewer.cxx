@@ -39,9 +39,17 @@ class vtkgdcmObserver : public vtkCommand
 
 int main(int argc, char *argv[])
 {
-
+  if( argc < 2 )
+    return 0;
+  
   vtkGdcmReader *reader = vtkGdcmReader::New();
-  reader->SetFileName( argv[1] );
+
+  if( argc == 2 )
+    reader->SetFileName( argv[1] );
+  else
+    for(int i=1; i< argc; i++)
+      reader->AddFileName( argv[i] );
+
   reader->DebugOn();
   reader->Update();
   
