@@ -4,7 +4,7 @@
 
 #include "gdcm.h"
 
-int PrintBug(int argc, char* argv[])
+int TestBug(int argc, char* argv[])
 {  
    gdcmHeader* e1;
 	
