@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmContentEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:21:20 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/01/25 16:32:45 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,6 +39,7 @@ namespace gdcm
  */
 ContentEntry::ContentEntry(DictEntry *e) : DocEntry(e)
 {
+   Value = GDCM_UNFOUND;
 }
 
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:21:20 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/01/25 16:32:45 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -192,13 +192,13 @@ void ValEntry::SetValue(std::string const &val)
       {
          // for multivaluated items
          l = (Util::CountSubstring(val, "\\") + 1) * 2;
-         SetValueOnly(val);
+         ContentEntry::SetValue(val);
       }
       else if( vr == "UL" || vr == "SL" )
       {
          // for multivaluated items
          l = (Util::CountSubstring(val, "\\") + 1) * 4;;
-         SetValueOnly(val);
+         ContentEntry::SetValue(val);
       }
       else
       {
@@ -206,7 +206,7 @@ void ValEntry::SetValue(std::string const &val)
          gdcmAssertMacro( !(finalVal.size() % 2) );
 
          l = finalVal.length();
-         SetValueOnly(finalVal);
+         ContentEntry::SetValue(finalVal);
       }
    }
    else
@@ -215,7 +215,7 @@ void ValEntry::SetValue(std::string const &val)
       gdcmAssertMacro( !(finalVal.size() % 2) );
 
       l = finalVal.length();
-      SetValueOnly(finalVal);
+      ContentEntry::SetValue(finalVal);
    }
 
    SetLength(l);

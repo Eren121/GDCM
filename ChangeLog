@@ -1,3 +1,7 @@
+2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocEntrySet.cxx : Bug fix when getting the value
+   * src/gdcmContentEntry.[h|cxx], gdcmValEntry.cxx : amelioration of code
+
 2005-01-25 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    In ordrer to avoid missbehaviour :
    . gdcm::DocEntry is now specialized in

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:23 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/01/25 16:32:45 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ namespace gdcm
  */
 std::string DocEntrySet::GetEntryValue(uint16_t group, uint16_t elem)
 {
-   ValEntry *entry = GetValEntry(group,elem);
+   ContentEntry *entry = dynamic_cast<ContentEntry *>(GetDocEntry(group,elem));
    if( entry )
       return entry->GetValue();
    return GDCM_UNFOUND;
