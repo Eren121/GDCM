@@ -7,54 +7,6 @@
 #include <math.h>
 #include <algorithm>
 
-/*#ifdef _MSC_VER 
-   #include <windows.h> 
-
-   int GetDir(std::string dPath, std::list<std::string> &filenames)
-   {
-     //For now dPath should have an ending "\"
-     WIN32_FIND_DATA FileData; 
-     HANDLE hFile; 
-     hFile = FindFirstFile((dPath+"*").c_str(), &FileData); 
-     if ( hFile == INVALID_HANDLE_VALUE ) 
-     { 
-       //No files !
-       return false; 
-     } 
-  
-     if( strncmp(FileData.cFileName, ".", 1) != 0 )
-       filenames.push_back( dPath+FileData.cFileName );
-     while( FindNextFile(hFile, &FileData ) != 0)
-     { 
-       if( strncmp(FileData.cFileName, ".", 1) != 0 )
-         filenames.push_back( dPath+FileData.cFileName );
-     }
-     return true;
-   }
-
-#else
-   #include <dirent.h>
-
-   int GetDir(std::string dPath, std::list<std::string> &filenames)
-   {
-    DIR *dir = opendir( dPath.c_str() );
-    if (dir == NULL)
-       return false;
-    struct dirent *entry;
-    while((entry = readdir(dir)) != NULL)
-    {
-   //   if( strncmp(entry->d_name, ".", 1) != 0 && strncmp(entry->d_name, "..", 2) != 0)
-      if( strncmp(entry->d_name, ".", 1) != 0 )
-      {
-         filenames.push_back( dPath + "/" + entry->d_name );
-      }
-    }
-    closedir(dir);
-    return true;
-   }
-
-#endif*/
-
 //-----------------------------------------------------------------------------
 // gdcmHeaderHelper
 //-----------------------------------------------------------------------------
@@ -170,7 +122,7 @@ std::string gdcmHeaderHelper::GetPixelType() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0028,0030 : Pixel Spacing
-  * \           else 1.
+  *             else 1.
   * @return X dimension of a pixel
   */
 float gdcmHeaderHelper::GetXSpacing() {
@@ -194,7 +146,7 @@ float gdcmHeaderHelper::GetXSpacing() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0028,0030 : Pixel Spacing
-  * \           else 1.
+  *             else 1.
   * @return Y dimension of a pixel
   */
 float gdcmHeaderHelper::GetYSpacing() {
@@ -218,8 +170,8 @@ float gdcmHeaderHelper::GetYSpacing() {
 /**
   *\ingroup gdcmHeaderHelper
   *\brief gets the info from 0018,0088 : Space Between Slices
-  *\               else from 0018,0050 : Slice Thickness
-  *\               else 1.
+  *                else from 0018,0050 : Slice Thickness
+  *                else 1.
   * @return Z dimension of a voxel-to be
   */
 float gdcmHeaderHelper::GetZSpacing() {
@@ -288,8 +240,8 @@ float gdcmHeaderHelper::GetRescaleIntercept() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief This function is intended to user who doesn't want 
-  * \ to have to manage a LUT and expects to get an RBG Pixel image
-  * \ (or a monochrome one ...) 
+  *   to have to manage a LUT and expects to get an RBG Pixel image
+  *   (or a monochrome one ...) 
   * \warning to be used with GetImagePixels()
   * @return 1 if Gray level, 3 if Color (RGB, YBR or PALETTE COLOR)
   */
@@ -402,8 +354,8 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
-  *\                else from 0020,0030 : Image Position (RET)
-  *\                else 0.
+  *                 else from 0020,0030 : Image Position (RET)
+  *                 else 0.
   * @return up-left image corner X position
   */
     
@@ -428,8 +380,8 @@ float gdcmHeaderHelper::GetXOrigin() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
-  * \               else from 0020,0030 : Image Position (RET)
-  * \               else 0.
+  *                 else from 0020,0030 : Image Position (RET)
+  *                 else 0.
   * @return up-left image corner Y position
   */
 float gdcmHeaderHelper::GetYOrigin() {

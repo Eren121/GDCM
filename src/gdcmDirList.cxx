@@ -29,7 +29,7 @@ const std::string gdcmDirList::SEPARATOR = "/";
 // Constructor / Destructor
 /*
  * \ingroup gdcmDirList
- * \brief   
+ * \brief Constructor  
  * @param   
  */
 gdcmDirList::gdcmDirList(std::string dirName,bool recursive)
@@ -42,7 +42,7 @@ gdcmDirList::gdcmDirList(std::string dirName,bool recursive)
 
 /*
  * \ingroup gdcmDirList
- * \brief   
+ * \brief  Destructor
  * @param   
  */
 gdcmDirList::~gdcmDirList(void)

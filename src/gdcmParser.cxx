@@ -238,7 +238,6 @@ bool gdcmParser::IsReadable(void) {
  * \ingroup gdcmParser
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a ImplicitVRLittleEndian one.
- *
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) {
@@ -257,7 +256,6 @@ bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) {
  * \ingroup gdcmParser
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a ExplicitVRLittleEndian one.
- *
  * @return  True when ExplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmParser::IsExplicitVRLittleEndianTransferSyntax(void) {
@@ -276,7 +274,6 @@ bool gdcmParser::IsExplicitVRLittleEndianTransferSyntax(void) {
  * \ingroup gdcmParser
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a DeflatedExplicitVRLittleEndian one.
- *
  * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmParser::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
@@ -295,7 +292,6 @@ bool gdcmParser::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
  * \ingroup gdcmParser
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a Explicit VR Big Endian one.
- *
  * @return  True when big endian found. False in all other cases.
  */
 bool gdcmParser::IsExplicitVRBigEndianTransferSyntax(void) {
@@ -314,7 +310,7 @@ bool gdcmParser::IsExplicitVRBigEndianTransferSyntax(void) {
  * \ingroup gdcmParser
  * \brief  returns the File Type 
  *         (ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown)
- * @return 
+ * @return the FileType code
  */
 FileType gdcmParser::GetFileType(void) {
    return(filetype);
@@ -445,7 +441,7 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
  * @param   Value passed as a std::string
  * @param   Group
  * @param   Elem
- * \return  boolean
+ * \return  false only if new element creation fails
  */
 bool gdcmParser::ReplaceOrCreateByNumber(std::string Value, 
                                          guint16 Group, 
@@ -465,8 +461,8 @@ bool gdcmParser::ReplaceOrCreateByNumber(std::string Value,
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          if it exists; Creates it with the given value if it doesn't
  * @param   Value passed as a char*
- * @param   Group
- * @param   Elem
+ * @param Group   group of the Entry 
+ * @param Elem element of the Entry
  * \return  boolean 
  * 
  */
@@ -487,9 +483,9 @@ bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Ele
  * \ingroup gdcmParser
  * \brief   Set a new value if the invoked element exists
  *          Seems to be useless !!!
- * @param   Value
- * @param   Group
- * @param   Elem
+ * @param Value new element value
+ * @param Group   group of the Entry 
+ * @param Elem element of the Entry
  * \return  boolean 
  */
 bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) 
@@ -501,10 +497,11 @@ bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem
 
 //-----------------------------------------------------------------------------
 // Protected
+
 /**
  * \ingroup gdcmParser
  * \brief   Checks if a given Dicom Element exists
- * \        within the H table
+ *          within the H table
  * @param   group Group   number of the searched Dicom Element 
  * @param   element  Element number of the searched Dicom Element 
  * @return  number of occurences
@@ -629,7 +626,7 @@ bool gdcmParser::SetEntryByNumber(std::string content,
    if ( ! tagHT.count(key))
       return false;
    int l = content.length();
-   if(l%2) // Odd length are padded with a space (020H).
+   if(l%2) // Non even length are padded with a space (020H).
    {  
       l++;
       content = content + '\0';
@@ -669,20 +666,20 @@ bool gdcmParser::SetEntryByNumber(std::string content,
  *          through it's (group, element) and modifies it's length with
  *          the given value.
  * \warning Use with extreme caution.
- * @param   length new length to substitute with
- * @param   group   group of the entry to modify
- * @param   element element of the Entry to modify
+ * @param l new length to substitute with
+ * @param group   group of the Entry to modify
+ * @param element element of the Entry to modify
  * @return  1 on success, 0 otherwise.
  */
-bool gdcmParser::SetEntryLengthByNumber(guint32 length, 
+bool gdcmParser::SetEntryLengthByNumber(guint32 l, 
                                         guint16 group, 
 					guint16 element) 
 {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
-   if (length%2) length++; // length must be even
-   ( ((tagHT.equal_range(key)).first)->second )->SetLength(length);	 
+   if (l%2) l++; // length must be even
+   ( ((tagHT.equal_range(key)).first)->second )->SetLength(l);	 
 	 
    return true ;		
 }
@@ -690,9 +687,9 @@ bool gdcmParser::SetEntryLengthByNumber(guint32 length,
 /**
  * \ingroup gdcmParser
  * \brief   Gets (from Header) the offset  of a 'non string' element value 
- * \        (LoadElementValues has already be executed)
- * @param   Group
- * @param   Elem
+ *          (LoadElementValues has already be executed)
+ * @param Group   group of the Entry 
+ * @param Elem element of the Entry
  * @return File Offset of the Element Value 
  */
 size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) 
@@ -710,9 +707,9 @@ size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem)
 /**
  * \ingroup gdcmParser
  * \brief   Gets (from Header) a 'non string' element value 
- * \        (LoadElementValues has already be executed)  
- * @param   Group
- * @param   Elem
+ *          (LoadElementValues has already be executed)  
+ * @param Group   group of the Entry 
+ * @param Elem element of the Entry
  * @return Pointer to the 'non string' area
  */
 void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) 
@@ -731,8 +728,8 @@ void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem)
  * \ingroup       gdcmParser
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
- * @param   Group
- * @param   Elem
+ * @param Group   group of the Entry 
+ * @param Elem element of the Entry
  */
 void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem) 
 {
@@ -779,8 +776,8 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,
 
 /**
  * \ingroup gdcmParser
- * \brief   Update the entries with the shadow dictionary. Only odd entries are
- *          analized
+ * \brief   Update the entries with the shadow dictionary. 
+ *          Only non even entries are  analyzed       
  */
 void gdcmParser::UpdateShaEntries(void) {
    gdcmDictEntry *entry;
@@ -840,7 +837,7 @@ void gdcmParser::UpdateShaEntries(void) {
 /**
  * \ingroup gdcmParser
  * \brief  retrieves a Dicom Element (the first one) using (group, element)
- * \ warning (group, element) IS NOT an identifier inside the Dicom Header
+ * \warning (group, element) IS NOT an identifier inside the Dicom Header
  *           if you think it's NOT UNIQUE, check the count number
  *           and use iterators to retrieve ALL the Dicoms Elements within
  *           a given couple (group, element)
@@ -993,12 +990,12 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
 /**
  * \ingroup gdcmParser
  * \brief   writes on disc according to the requested format
- * \        (ACR-NEMA, ExplicitVR, ImplicitVR) the image
- * \ warning does NOT add the missing elements in the header :
- * \         it's up to the user doing it !
- * \         (function CheckHeaderCoherence to be written)
- * \ warning DON'T try, right now, to write a DICOM image
- * \         from an ACR Header (meta elements will be missing!)
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image
+ * \warning does NOT add the missing elements in the header :
+ *           it's up to the user doing it !
+ *           (function CheckHeaderCoherence to be written)
+ * \warning DON'T try, right now, to write a DICOM image
+ *           from an ACR Header (meta elements will be missing!)
  * @param   type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
@@ -1399,8 +1396,9 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
  * \brief   add a new Dicom Element pointer to 
  *          the H Table and to the chained List
  * \warning push_bash in listEntries ONLY during ParseHeader
- * \TODO    something to allow further Elements addition,
- * \        when position to be taken care of     
+ * \todo    something to allow further Elements addition,
+ *          (at their right place in the chained list)
+ *          when position to be taken care of     
  * @param   newHeaderEntry
  */
 void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
@@ -1413,7 +1411,6 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
  * \ingroup gdcmParser
  * \brief   
  * @param   Entry Header Entry whose length of the value shall be loaded. 
-
  * @return 
  */
  void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry *Entry) {
@@ -1571,8 +1568,8 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
  * \brief     Check the correspondance between the VR of the header entry
  *            and the taken VR. If they are different, the header entry is 
  *            updated with the new VR.
- * @param     Entry
- * @param     vr
+ * @param     Entry Header Entry to check
+ * @param     vr    Dicom Value Representation
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true
 */
@@ -1881,7 +1878,7 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
 /**
  * \ingroup gdcmParser
  * \brief   
- *
+ * \warning NOT end user intended method !
  * @return 
  */
  guint32 gdcmParser::FindHeaderEntryLengthOB(void)  {
@@ -1932,8 +1929,7 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
 /**
  * \ingroup gdcmParser
  * \brief Reads a supposed to be 16 Bits integer
- * \     (swaps it depending on processor endianity) 
- *
+ *       (swaps it depending on processor endianity) 
  * @return read value
  */
 guint16 gdcmParser::ReadInt16(void) {
@@ -1954,8 +1950,7 @@ guint16 gdcmParser::ReadInt16(void) {
 /**
  * \ingroup gdcmParser
  * \brief  Reads a supposed to be 32 Bits integer
- * \       (swaps it depending on processor endianity)  
- *
+ *         (swaps it depending on processor endianity)  
  * @return read value
  */
 guint32 gdcmParser::ReadInt32(void) {
@@ -1976,7 +1971,7 @@ guint32 gdcmParser::ReadInt32(void) {
 /**
  * \ingroup gdcmParser
  * \brief   
- *
+ * \warning NOT end user intended method !
  * @return 
  */
 void gdcmParser::SkipBytes(guint32 NBytes) {
@@ -2208,7 +2203,7 @@ void gdcmParser::SwitchSwapToBigEndian(void)
 
 /**
  * \ingroup gdcmParser
- * \brief   
+ * \brief  during parsing, Header Elements too long are not loaded in memory 
  * @param NewSize
  */
 void gdcmParser::SetMaxSizeLoadEntry(long NewSize) 
@@ -2226,8 +2221,9 @@ void gdcmParser::SetMaxSizeLoadEntry(long NewSize)
 
 /**
  * \ingroup gdcmParser
- * \brief
- * \warning TODO : not yet usable 
+ * \brief Header Elements too long will not be printed
+ * \warning 
+ * \todo : not yet usable 
  *          (see MAX_SIZE_PRINT_ELEMENT_VALUE 
  *           in gdcmHeaderEntry gdcmLoadEntry)
  *             
@@ -2373,7 +2369,7 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
  * \ingroup gdcmParser
  * \brief   Request a new virtual dict entry to the dict set
  * @param   group  group   of the underlying DictEntry
- * @param   elem   element of the underlying DictEntry
+ * @param   element  element of the underlying DictEntry
  * @param   vr     VR of the underlying DictEntry
  * @param   fourth owner group
  * @param   name   english name

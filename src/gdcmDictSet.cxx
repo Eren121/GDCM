@@ -75,7 +75,7 @@ void gdcmDictSet::Print(std::ostream& os)
  * \ingroup gdcmDictSet
  * \brief   Consider all the entries of the public dicom dictionnary. 
  *          Build all list of all the tag names of all those entries.
- * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
+ * \sa gdcmDictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
 std::list<std::string> *gdcmDictSet::GetPubDictEntryNames(void) 
@@ -85,23 +85,24 @@ std::list<std::string> *gdcmDictSet::GetPubDictEntryNames(void)
 
 /** 
  * \ingroup gdcmDictSet
- * \brief   Consider all the entries of the public dicom dictionnary.
- *          Build an hashtable whose keys are the names of the groups
- *          (fourth field in each line of dictionary) and whose corresponding
- *          values are lists of all the dictionnary entries among that
- *          group. Note that apparently the Dicom standard doesn't explicitely
- *          define a name (as a string) for each group.
- *          A typical usage of this method would be to enable a dynamic
- *          configuration of a Dicom file browser: the admin/user can
- *          select in the interface which Dicom tags should be displayed.
- * \warning Dicom *doesn't* define any name for any 'categorie'
+ * \brief   - Consider all the entries of the public dicom dictionnary.
+ *           Build an hashtable whose keys are the names of the groups
+ *           (fourth field in each line of dictionary) and whose corresponding
+ *           values are lists of all the dictionnary entries among that
+ *           group. Note that apparently the Dicom standard doesn't explicitely
+ *           define a name (as a string) for each group.
+ *          - A typical usage of this method would be to enable a dynamic
+ *           configuration of a Dicom file browser: the admin/user can
+ *           select in the interface which Dicom tags should be displayed.
+ * \warning 
+ *          - Dicom *doesn't* define any name for any 'categorie'
  *          (the dictionnary fourth field was formerly NIH defined
- *           - and no longer he is-
+ *           -and no longer he is-
  *           and will be removed when Dicom provides us a text file
  *           with the 'official' Dictionnary, that would be more friendly
  *           than asking us to perform a line by line check of the dictionnary
  *           at the beginning of each year to -try to- guess the changes)
- *           Therefore : please NEVER use that fourth field :-(
+ *          - Therefore : please NEVER use that fourth field :-(
  * *
  * @return  An hashtable: whose keys are the names of the groups and whose
  *          corresponding values are lists of all the dictionnary entries

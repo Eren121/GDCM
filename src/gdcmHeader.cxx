@@ -14,7 +14,7 @@
 // Constructor / Destructor
 /**
  * \ingroup gdcmHeader
- * \brief   
+ * \brief  Constructor 
  * @param   InFilename
  * @param   exception_on_error
  * @param   enable_sequences = true to allow the header 
@@ -401,7 +401,7 @@ int gdcmHeader::GetPixelSize(void) {
  *          - 32S   signed 32 bit,
  *          - FD floating double 64 bits (Not kosher DICOM, but so usefull!)
  * \warning 12 bit images appear as 16 bit.
- * \        24 bit images appear as 8 bit
+ *          24 bit images appear as 8 bit
  * @return  0S if nothing found. NOT USABLE file. The caller has to check
  */
 std::string gdcmHeader::GetPixelType(void) { 
@@ -434,7 +434,7 @@ std::string gdcmHeader::GetPixelType(void) {
 /**
  * \ingroup gdcmHeader
  * \brief   Recover the offset (from the beginning of the file) 
- * \        of *image* pixels (not *icone image* pixels, if any !)
+ *          of *image* pixels (not *icone image* pixels, if any !)
  * @return Pixel Offset
  */
 size_t gdcmHeader::GetPixelOffset(void) { 
@@ -470,7 +470,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
  * \brief   Recover the pixel area length (in Bytes)
  * @return Pixel Element Length, as stored in the header
  *         (NOT the memory space necessary to hold the Pixels 
- *          - in case of embeded compressed image-)
+ *          -in case of embeded compressed image-)
  *         0 : NOT USABLE file. The caller has to check.
  */
 size_t gdcmHeader::GetPixelAreaLength(void) { 
@@ -498,9 +498,9 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
   * \ingroup gdcmHeader
   * \brief tells us if LUT are used
   * \warning Right now, 'Segmented xxx Palette Color Lookup Table Data'
-  * \        are NOT considered as LUT, since nobody knows
-  * \        how to deal with them
-  * \        Please warn me if you know sbdy that *does* know ... jprx
+  *          are NOT considered as LUT, since nobody knows
+  *          how to deal with them
+  *          Please warn me if you know sbdy that *does* know ... jprx
   * @return true if LUT Descriptors and LUT Tables were found 
   */
 bool gdcmHeader::HasLUT(void) {
@@ -530,9 +530,9 @@ bool gdcmHeader::HasLUT(void) {
 /**
   * \ingroup gdcmHeader
   * \brief gets the info from 0028,1101 : Lookup Table Desc-Red
-  * \           else 0
+  *             else 0
   * @return Lookup Table number of Bits , 0 by default
-  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
+  *          when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
   * @ return bit number of each LUT item 
   */
 int gdcmHeader::GetLUTNbits(void) {
@@ -557,17 +557,17 @@ int gdcmHeader::GetLUTNbits(void) {
 /**
   * \ingroup gdcmHeader
   * \brief builts Red/Green/Blue/Alpha LUT from Header
-  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
-  * \        and (0028,1101),(0028,1102),(0028,1102)  
-  * \          - xxx Palette Color Lookup Table Descriptor - are found
-  * \        and (0028,1201),(0028,1202),(0028,1202) 
-  * \          - xxx Palette Color Lookup Table Data - are found 
+  *         when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
+  *          and (0028,1101),(0028,1102),(0028,1102)  
+  *            - xxx Palette Color Lookup Table Descriptor - are found
+  *          and (0028,1201),(0028,1202),(0028,1202) 
+  *            - xxx Palette Color Lookup Table Data - are found 
   * \warning does NOT deal with :
-  * \ 0028 1100 Gray Lookup Table Descriptor (Retired)
-  * \ 0028 1221 Segmented Red Palette Color Lookup Table Data
-  * \ 0028 1222 Segmented Green Palette Color Lookup Table Data
-  * \ 0028 1223 Segmented Blue Palette Color Lookup Table Data 
-  * \ no known Dicom reader deals with them :-(
+  *   0028 1100 Gray Lookup Table Descriptor (Retired)
+  *   0028 1221 Segmented Red Palette Color Lookup Table Data
+  *   0028 1222 Segmented Green Palette Color Lookup Table Data
+  *   0028 1223 Segmented Blue Palette Color Lookup Table Data 
+  *   no known Dicom reader deals with them :-(
   * @return a RGBA Lookup Table 
   */ 
 unsigned char * gdcmHeader::GetLUTRGBA(void) {
@@ -689,7 +689,7 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
 /**
  * \ingroup gdcmHeader
  * \brief gets the info from 0002,0010 : Transfert Syntax
- * \      else 1.
+ *        else 1.
  * @return Transfert Syntax Name (as oposite to Transfert Syntax UID)
  */
 std::string gdcmHeader::GetTransfertSyntaxName(void) { 

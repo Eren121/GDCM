@@ -14,14 +14,12 @@ typedef std::pair<TagHeaderEntryHT::iterator,TagHeaderEntryHT::iterator> IterHT;
  *        file (see SetFileName, SetDcmTag and Write)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
- * \Note  the in-memory representation of all available tags found in
+ * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
- *
  * @param header file to be opened for reading datas
- *
  * @return	
  */
  
@@ -40,13 +38,12 @@ gdcmFile::gdcmFile(gdcmHeader *header) {
  *        file (see SetFileName, SetDcmTag and Write)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
- * \Note  the in-memory representation of all available tags found in
+ * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
- * @return	
  */
 gdcmFile::gdcmFile(std::string & filename) {
    Header=new gdcmHeader(filename.c_str());
@@ -57,7 +54,20 @@ gdcmFile::gdcmFile(std::string & filename) {
       SetPixelDataSizeFromHeader();
 }
 
-gdcmFile::gdcmFile(const char * filename) {
+/**
+ * \ingroup   gdcmFile
+ * \brief Constructor dedicated to writing a new DICOMV3 part10 compliant
+ *        file (see SetFileName, SetDcmTag and Write)
+ *        Opens (in read only and when possible) an existing file and checks
+ *        for DICOM compliance. Returns NULL on failure.
+ * \note  the in-memory representation of all available tags found in
+ *        the DICOM header is post-poned to first header information access.
+ *        This avoid a double parsing of public part of the header when
+ *        one sets an a posteriori shadow dictionary (efficiency can be
+ *        seen as a side effect).   
+ * @param filename file to be opened for parsing
+ */
+ gdcmFile::gdcmFile(const char * filename) {
    Header=new gdcmHeader(filename);
    SelfHeader=true;
    PixelRead=-1; // no ImageData read yet.
@@ -162,9 +172,9 @@ size_t gdcmFile::GetImageDataSize(void) {
 /**
  * \ingroup   gdcmFile
  * \brief     Returns the size (in bytes) of required memory to hold
- * \          the pixel data represented in this file, when user DOESN'T want 
- * \          to get RGB pixels image when it's stored as a PALETTE COLOR image
- * \          - the (vtk) user is supposed to know how deal with LUTs - 
+ *            the pixel data represented in this file, when user DOESN'T want 
+ *            to get RGB pixels image when it's stored as a PALETTE COLOR image
+ *            -the (vtk) user is supposed to know how deal with LUTs- 
  * \warning   to be used with GetImagePixelsRaw()
  * @return    The size of pixel data in bytes.
  */
@@ -180,7 +190,7 @@ size_t gdcmFile::GetImageDataSizeRaw(void) {
  *          Transforms 3 planes R, G, B into a single RGB Plane
  *          Transforms single Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
- * \        NULL if alloc fails 
+ *          NULL if alloc fails 
  */
 void * gdcmFile::GetImageData (void) {
    PixelData = (void *) malloc(lgrTotale);
@@ -533,7 +543,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
  * \ingroup   gdcmFile
  * \brief TODO JPR
  * \warning doit-etre etre publique ?  
- * TODO : y a-t-il un inconvenient à fusioner ces 2 fonctions
+ * \toto : y a-t-il un inconvenient à fusioner ces 2 fonctions
  *
  * @param inData 
  * @param ExpectedSize 
@@ -551,9 +561,7 @@ bool gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
  * \ingroup   gdcmFile
  * \brief Writes on disk A SINGLE Dicom file
  *        NO test is performed on  processor "Endiannity".
- *        Ca sera à l'utilisateur d'appeler son Reader correctement
- *        (Equivalent a IdImaWriteRawFile) 
- *
+ *        It's up to the user to call his Reader properly
  * @param fileName name of the file to be created
  *                 (any already existing file is over written)
  * @return false if write fails	
@@ -575,7 +583,6 @@ bool gdcmFile::WriteRawData (std::string fileName) {
  * \ingroup   gdcmFile
  * \brief Writes on disk A SINGLE Dicom file
  *        NO test is performed on  processor "Endiannity".
- *
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
  * @return false if write fails	
@@ -634,7 +641,7 @@ bool gdcmFile::WriteAcr (std::string fileName) {
 /**
  * \ingroup   gdcmFile
  *
-* @param fileName name of the file to be created
+ * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
  * @param  type file type (ExplicitVR, ImplicitVR, ...)
  * @return false if write fails		

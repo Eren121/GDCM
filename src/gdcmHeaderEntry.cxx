@@ -31,6 +31,10 @@ gdcmHeaderEntry::gdcmHeaderEntry(gdcmDictEntry* in) {
 
 //-----------------------------------------------------------------------------
 // Print
+/**
+ * \ingroup gdcmHeaderEntry
+ * \brief   canonical Printer
+ */
 void gdcmHeaderEntry::Print(std::ostream & os) {
    size_t o;
    unsigned short int g, e;

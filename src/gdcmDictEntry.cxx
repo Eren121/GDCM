@@ -13,7 +13,7 @@
  * @param   InGroup    DICOM-Group Number
  * @param   InElement  DICOM-Element Number
  * @param   InVr       Value Representatiion
- * @param   InFourth  // DO NOT use any longer
+ * @param   InFourth  // DO NOT use any longer; 
  *                       NOT part of the Dicom Standard
  * @param   InName    description of the element
 */

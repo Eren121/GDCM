@@ -106,7 +106,7 @@ void gdcmDict::PrintByKey(std::ostream &os) {
  * \ingroup gdcmDict
  * \brief   Print all the dictionary entries contained in this dictionary.
  *          Entries will be sorted by the name of the dictionary entries.
- * \warning AVOID USING IT : the name IS NOT an identifier
+ * \warning AVOID USING IT : the name IS NOT an identifier; 
  *                           unpredictable result
  * @param   os The output stream to be written to.
  */
@@ -130,7 +130,7 @@ void gdcmDict::PrintByName(std::ostream& os) {
 /**
  * \ingroup gdcmDict
  * \brief  adds a new Dicom Dictionary Entry 
- * @param   NewEntry 
+ * @param   NewEntry entry to add 
  * @return  false if Dicom Element already existed
  */
 bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry) 
@@ -154,7 +154,7 @@ bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry)
 /**
  * \ingroup gdcmDict
  * \brief  replaces an already existing Dicom Element by a new one
- * @param   NewEntry
+ * @param   NewEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
 bool gdcmDict::ReplaceEntry(gdcmDictEntry *NewEntry) {
@@ -198,8 +198,7 @@ bool gdcmDict::RemoveEntry(TagKey key)
 /**
  * \ingroup gdcmDict
  * \brief  removes an already existing Dicom Dictionary Entry, 
- *          identified by its group,element
- number
+ *          identified by its group,element number
  * @param   group   Dicom group number of the Dicom Element
  * @param   element Dicom element number of the Dicom Element
  * @return  false if Dicom Dictionary Entry doesn't exist
@@ -273,7 +272,7 @@ std::list<std::string> *gdcmDict::GetDictEntryNames(void)
  *           than asking us to perform a line by line check of the dictionnary
  *           at the beginning of each year to -try to- guess the changes)
  *           Therefore : please NEVER use that fourth field :-(
- * *
+ *
  * @return  An hashtable: whose keys are the names of the groups and whose
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.

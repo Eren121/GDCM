@@ -17,7 +17,7 @@
 // Constructor / Destructor
 /*
  * \ingroup gdcmDicomDir
- * \brief   
+ * \brief   Constructor
  * @param   Filename
  * @param   exception_on_error
  */
@@ -66,6 +66,10 @@ gdcmDicomDir::~gdcmDicomDir()
 
 //-----------------------------------------------------------------------------
 // Print
+/*
+ * \ingroup gdcmDicomDir
+ * \brief  Canonical Printer 
+ */
 void gdcmDicomDir::Print(std::ostream &os)
 {
    for(ListPatient::iterator cc=patients.begin();cc!=patients.end();++cc)
@@ -81,9 +85,9 @@ void gdcmDicomDir::Print(std::ostream &os)
  * \ingroup gdcmDicomDir
  * \brief   writes on disc a DICOMDIR
  * \ warning does NOT add the missing elements in the header :
- * \         it's up to the user doing it !
+ *           it's up to the user doing it !
  * @param  fileName file to be written to 
- * @return
+ * @return false only when fail to open
  */
 bool gdcmDicomDir::Write(std::string fileName) 
 {
@@ -109,6 +113,10 @@ bool gdcmDicomDir::Write(std::string fileName)
    return true;
 }
 
+/*
+ * \ingroup gdcmDicomDir
+ * \brief  fills whole the structure
+ */
 void gdcmDicomDir::ParseDirectory(void)
 {
    NewDicomDir(GetPath());
@@ -120,7 +128,7 @@ void gdcmDicomDir::ParseDirectory(void)
 /*
  * \ingroup gdcmDicomDir
  * \brief   
- * @param   
+ * @param path entry point of the stree-like structure
  */
 void gdcmDicomDir::NewDicomDir(std::string path)
 {
@@ -233,7 +241,9 @@ void gdcmDicomDir::CreateDicomDir()
 /*
  * \ingroup gdcmDicomDir
  * \brief   
- * @param   
+ * @param   type
+ * @param   begin
+ * @param   end
  */
 void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,ListTag::iterator end)
 {
@@ -260,8 +270,9 @@ void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,
 /*
  * \ingroup gdcmDicomDir
  * \brief   
- * @param   
- */
+ * @param   begin
+ * @param   end
+*/
 void gdcmDicomDir::AddPatientToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
    patients.push_back(new gdcmPatient(begin,end));
@@ -270,7 +281,8 @@ void gdcmDicomDir::AddPatientToEnd(ListTag::iterator begin,ListTag::iterator end
 /*
  * \ingroup gdcmDicomDir
  * \brief   
- * @param   
+ * @param   begin
+ * @param   end
  */
  void gdcmDicomDir::AddStudyToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
@@ -284,7 +296,8 @@ void gdcmDicomDir::AddPatientToEnd(ListTag::iterator begin,ListTag::iterator end
 /*
  * \ingroup gdcmDicomDir
  * \brief   
- * @param   
+ * @param   begin
+ * @param   end
  */
 void gdcmDicomDir::AddSerieToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
@@ -304,7 +317,8 @@ void gdcmDicomDir::AddSerieToEnd(ListTag::iterator begin,ListTag::iterator end)
 
 /*
  * \ingroup gdcmDicomDir
- * \brief   
+ * @param   begin
+ * @param   end
  * @param   
  */
  void gdcmDicomDir::AddImageToEnd(ListTag::iterator begin,ListTag::iterator end)
@@ -332,7 +346,8 @@ void gdcmDicomDir::AddSerieToEnd(ListTag::iterator begin,ListTag::iterator end)
 /*
  * \ingroup gdcmDicomDir
  * \brief   
- * @param   
+ * @param   path
+ * @param   list
  */
 void gdcmDicomDir::SetElements(std::string &path,ListHeader &list)
 {
@@ -385,7 +400,9 @@ void gdcmDicomDir::SetElements(std::string &path,ListHeader &list)
 /*
  * \ingroup gdcmDicomDir
  * \brief   
- * @param   
+ * @param   path
+ * @param   type
+ * @param   header
  */
 void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader *header)
 {

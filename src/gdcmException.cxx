@@ -7,6 +7,12 @@
 
 //-----------------------------------------------------------------------------
 // gdcmException
+
+/*
+ * \ingroup gdcmException
+ * \brief 
+ * @param   
+ */
 gdcmException::gdcmException(const std::string &f, const std::string& msg) throw()
 #ifdef __GNUC__
   try
@@ -20,7 +26,12 @@ catch(...) {
 #endif
 
 
-void gdcmException::fatal(const char *from) throw() {
+/*
+ * \ingroup gdcmException
+ * \brief 
+ * @param   
+ */
+ void gdcmException::fatal(const char *from) throw() {
   try {
     std::cerr << "Fatal: exception received in " << from 
 	 << " while handling exception." << std::endl;
@@ -38,7 +49,12 @@ void gdcmException::fatal(const char *from) throw() {
   }  
 }
 
-std::string gdcmException::getName() const throw() {
+/*
+ * \ingroup gdcmException
+ * \brief 
+ * @param   
+ */
+ std::string gdcmException::getName() const throw() {
   try {
 #ifdef __GNUC__   // GNU C++ compiler class name demangling
       unsigned int nested = 1, i, nb, offset;
@@ -69,12 +85,22 @@ std::string gdcmException::getName() const throw() {
   }
 }
 
-gdcmException::operator const char *() const throw() {
+/*
+ * \ingroup gdcmException
+ * \brief 
+ * @param   
+ */
+ gdcmException::operator const char *() const throw() {
   return getName().c_str();
 }
 
 //-----------------------------------------------------------------------------
-std::ostream& operator<<(std::ostream &os, const gdcmException &e) {
+/*
+ * \ingroup gdcmException
+ * \brief 
+ * @param   
+ */
+ std::ostream& operator<<(std::ostream &os, const gdcmException &e) {
   try {  
     os << "Exception " << e.getName() << " thrown: " << e.getError() << std::endl;
   }

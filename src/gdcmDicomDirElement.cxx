@@ -21,7 +21,12 @@
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-gdcmDicomDirElement::gdcmDicomDirElement(void) 
+
+/**
+ * \ingroup gdcmDicomDirElement
+ * \brief   constructor 
+ */
+ gdcmDicomDirElement::gdcmDicomDirElement(void) 
 {
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_ELEM);
    std::ifstream from(filename.c_str());
@@ -65,7 +70,11 @@ gdcmDicomDirElement::gdcmDicomDirElement(void)
    from.close();
 }
 
-gdcmDicomDirElement::~gdcmDicomDirElement() 
+/**
+ * \ingroup gdcmDicomDirElement
+ * \brief   destructor 
+ */
+ gdcmDicomDirElement::~gdcmDicomDirElement() 
 {
    MetaList.clear();
    PatientList.clear();
@@ -77,8 +86,9 @@ gdcmDicomDirElement::~gdcmDicomDirElement()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmVR
- * \brief   Print all 
+ * \ingroup gdcmDicomDirElement
+ * \brief   Print all
+ * \todo add a 'Print Level' check 
  * @param   os The output stream to be written to.
  */
 void gdcmDicomDirElement::Print(std::ostream &os) 
