@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:45:52 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/07 22:19:48 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #include "gdcmTS.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 #include <fstream>
 
@@ -199,7 +200,7 @@ void ValEntry::SetValue(std::string const &val)
       else
       {
          std::string finalVal = Util::DicomString( val.c_str() );
-         assert( !(finalVal.size() % 2) );
+         gdcmAssertMacro( !(finalVal.size() % 2) );
 
          l = finalVal.length();
          SetValueOnly(finalVal);
@@ -208,7 +209,7 @@ void ValEntry::SetValue(std::string const &val)
    else
    {
       std::string finalVal = Util::DicomString( val.c_str() );
-      assert( !(finalVal.size() % 2) );
+      gdcmAssertMacro( !(finalVal.size() % 2) );
 
       l = finalVal.length();
       SetValueOnly(finalVal);
@@ -266,7 +267,7 @@ void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
       return;
    } 
 
-   assert( lgr == GetValue().length() );
+   gdcmAssertMacro( lgr == GetValue().length() );
    binary_write(*fp, GetValue());
 } 
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/07 22:19:48 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,8 +26,6 @@
 #include "gdcmSeqEntry.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
-
-#include <assert.h>
 
 namespace gdcm 
 {
@@ -66,7 +64,7 @@ ValEntry *DocEntrySet::NewValEntryByNumber(uint16_t group,uint16_t elem,
                                            TagName const & vr) 
 {
    DictEntry *dictEntry = GetDictEntryByNumber(group, elem, vr);
-   assert(dictEntry);
+   gdcmAssertMacro(dictEntry);
 
    ValEntry *newEntry = new ValEntry(dictEntry);
    if (!newEntry) 
@@ -90,7 +88,7 @@ BinEntry *DocEntrySet::NewBinEntryByNumber(uint16_t group,uint16_t elem,
                                            TagName const & vr) 
 {
    DictEntry *dictEntry = GetDictEntryByNumber(group, elem, vr);
-   assert(dictEntry);
+   gdcmAssertMacro(dictEntry);
 
    BinEntry *newEntry = new BinEntry(dictEntry);
    if (!newEntry) 
@@ -111,7 +109,7 @@ BinEntry *DocEntrySet::NewBinEntryByNumber(uint16_t group,uint16_t elem,
 SeqEntry* DocEntrySet::NewSeqEntryByNumber(uint16_t group,uint16_t elem) 
 {
    DictEntry *dictEntry = GetDictEntryByNumber(group, elem, "SQ");
-   assert(dictEntry);
+   gdcmAssertMacro(dictEntry);
 
    SeqEntry *newEntry = new SeqEntry( dictEntry );
    if (!newEntry)

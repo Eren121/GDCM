@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/07 22:19:48 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -213,7 +213,7 @@ bool SerieHeader::ImagePositionPatientOrdering()
    GdcmHeaderVector CoherentGdcmFileVector(n);
    // CoherentGdcmFileVector.reserve( n );
    CoherentGdcmFileVector.resize( n );
-   // assert( CoherentGdcmFileVector.capacity() >= n );
+   // gdcmAssertMacro( CoherentGdcmFileVector.capacity() >= n );
 
    float step = (max - min)/(n - 1);
    int pos;

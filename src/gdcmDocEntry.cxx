@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:45:51 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/01/07 22:19:48 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #include "gdcmVR.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 #include <iomanip> // for std::ios::left, ...
 #include <fstream>
@@ -175,7 +176,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       else
       {
          binary_write(*fp, vr);
-         assert( vr.size() == 2 );
+         gdcmAssertMacro( vr.size() == 2 );
                   
          if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || (vr == "UN") )
          {

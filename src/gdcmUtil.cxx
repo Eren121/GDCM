@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2005/01/07 22:19:48 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
+#include <iostream>
 
 // For GetCurrentDate, GetCurrentTime
 #include <time.h>
@@ -243,7 +244,7 @@ std::string Util::GetCurrentTime()
 std::string Util::DicomString(const char *s, size_t l)
 {
    std::string r(s, s+l);
-   assert( !(r.size() % 2) ); // == basically 'l' is even
+   gdcmAssertMacro( !(r.size() % 2) ); // == basically 'l' is even
    return r;
 }
 
@@ -267,7 +268,7 @@ std::string Util::DicomString(const char *s)
       l++;
    }
    std::string r(s, s+l);
-   assert( !(r.size() % 2) );
+   gdcmAssertMacro( !(r.size() % 2) );
    return r;
 }
 
@@ -316,7 +317,6 @@ bool Util::IsCurrentProcessorBigEndian()
 #ifdef _WIN32
 #include <snmp.h>
 #include <conio.h>
-#include <stdio.h>
 typedef BOOL(WINAPI * pSnmpExtensionInit) (
         IN DWORD dwTimeZeroReference,
         OUT HANDLE * hPollForTrapEvent,
