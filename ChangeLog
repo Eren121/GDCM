@@ -7,13 +7,32 @@
       * python/testSuite.py changed accordingly.
 
 2002-12-6 Christophe Odet + Hugues Benoit-Cattin + Eric.Boix
-      * wrapping python correct with standalone wrapped dll (don't use separate
+      * VC++ has some strong limitations when working with the STL, as stated
+        in http://support.microsoft.com/support/kb/articles/Q168/9/58.ASP :
+             "Also note that some STL containers (map, set, queue, list, deque)
+              cannot be exported. [...]
+              Some STL classes contain nested classes. These classes can not
+              be exported. [...]
+              This is caused by a designed limitation that once a template
+              class is instantiated, it can not be re-instantiated and
+              exported."
+        Since our usage of map<> is ubiquitous in gdcm, this "designed
+        limitation" of VC++ is a pitfall.
+        Hence the Python wrappers of gdcm cannot be incrementally linked 
+        against the c++ dynamic library. The dirty but only workaround is
+        to forget about incremental link of dynamic libraries and to generate
+        the Python wrappers library with the inclusions of the underlying C++
+        library. 
+        The following modifications concern this matter on Win32/VC++:
+      - wrapping python correct with standalone wrapped dll (don't use separate
          dll under windows !!!!)
+      - python21_d debug mode enabled (ask Frog how to use it :-)
+      - NO problem with having an STL member of class for example string in C++
+        WITH THE RESTRICTION OF FORGETING ABOUT INCREMENTAL LINK.
+      - Python test of dcmlib in Python is ok under windows on a large set 
+        (one) of image(s).
       * removed glib references
       * typedef's inserted in gdcm.i for correct swig type management
-      * python21_d MODE DEBUG enabled (ask Frog how to use it)
-      * NO problem with having an STL member of class for example string in C++
-      * PYTHON TEST OF DCMLIB OK UNDER WINDOWS ON A LARGE SET (one) of IMAGE(s).
 
 2002-11-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/demo/*.py load.py extracted from test.py. Added explore.py
