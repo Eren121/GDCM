@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/28 21:10:07 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2004/07/28 21:13:03 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2706,7 +2706,8 @@ void gdcmDocument::Parse7FE0 ()
          s << "   Read one length: ";
          s << std::hex << individualLength << std::endl;
          dbg.Verbose(0, "gdcmDocument::Parse7FE0: ", s.str().c_str());
-      }              
+      }
+      delete[] basicOffsetTableItemValue;
    }
 
    if ( ! IsRLELossLessTransferSyntax() )
