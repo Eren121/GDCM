@@ -197,3 +197,6 @@
 1.2.840.10008.5.1.4.37.1          General Relevant Patient Information Query
 1.2.840.10008.5.1.4.37.2          Breast Imaging Relevant Patient Information Query
 1.2.840.10008.5.1.4.37.3          Cardiac Relevant Patient Information Query
+
+1.2.840.113619.5.2                Implicit VR Big Endian DLX (G.E Private)
+
