@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/13 16:35:37 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@ public:
    DictSet();
    ~DictSet();
 
-   void Print(std::ostream &os);
+   void Print(std::ostream &os = std::cout);
 
    // Probabely useless !
    //EntryNamesList *GetPubDictEntryNames();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 17:17:52 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/13 16:35:37 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,9 @@
 #include "gdcmDictEntry.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
+
+#include <iomanip> // for std::ios::left, ...
+#include <fstream>
 
 namespace gdcm 
 {
@@ -49,6 +52,27 @@ DictEntry::DictEntry(uint16_t group, uint16_t element,
 
 //-----------------------------------------------------------------------------
 // Print
+void DictEntry::Print(std::ostream &os)
+{
+   std::string vr;
+   std::ostringstream s;
+
+   vr = GetVR();
+   if(vr==GDCM_UNKNOWN)
+      vr="  ";
+
+   s << DictEntry::TranslateToKey(GetGroup(),GetElement()); 
+   s << " [" << vr  << "] ";
+
+   if (PrintLevel >= 1)
+   {
+      s.setf(std::ios::left);
+      s << std::setw(66-GetName().length()) << " ";
+   }
+
+   s << "[" << GetName()<< "]";
+   os << s.str();
+}
 
 //-----------------------------------------------------------------------------
 // Public

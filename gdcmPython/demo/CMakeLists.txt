@@ -16,6 +16,9 @@ FIND_PROGRAM(PYTHON_EXECUTABLE
 MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
 
 IF(PYTHON_EXECUTABLE)
+  ADD_TEST(Python-PrintDict ${PYTHON_EXECUTABLE}
+    ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDict.py
+    )
   ADD_TEST(Python-PrintHeader ${PYTHON_EXECUTABLE}
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintHeader.py
     )
@@ -40,3 +43,7 @@ CONFIGURE_FILE(
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDicomDir.py
 )
 
+CONFIGURE_FILE(
+    ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintDict.py.in
+    ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDict.py
+)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/13 16:35:37 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,8 +46,13 @@ public:
              TagName const &vm     = GDCM_UNKNOWN,
              TagName const &name   = GDCM_UNKNOWN);
 
+// Print
+   void Print(std::ostream &os = std::cout);
+
+// Key creation
    static TagKey TranslateToKey(uint16_t group, uint16_t element);
 
+// Content of DictEntry
    void SetVR(TagName const &vr);
    void SetVM(TagName const &vm);
 
