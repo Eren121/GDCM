@@ -1,3 +1,23 @@
+2004-01-27 Jean-Pierre Roux
+     * gdcmParser constructor has a new boolean param,'ignore_shadow', 
+             to allow skipping the shadow elements, to save memory space.
+	     The TRUE value for this param has to be used 
+	     with a FALSE value for the 'enable_sequence' param.
+	     ('public elements' may be embedded in 'shadow Sequences')
+     * gdcmHeader methods now deal with 'embedded icones images' in the header
+             (even when an 'icone image sequence' is announced by the 
+	     element (0x0088,0x0200), but there is NO icone at all ...
+	     
+     * gdcmHeader sometimes Image Location value doesn't follow  
+             the supposed processor endianity (see gdcmData/cr172241.dcm).
+	     Fixed
+	     	     
+     * gdcmHeader add the method
+             IterHT  GetHeaderEntrySameNumber(grPixel,numPixel);
+	     to get *all* the Header Entries with the same tag.
+	     GetHeaderEntrySameName is probabely *useless* 
+	     (no meaning : Name is *not* an identifier within the Dictionnary)
+
 2004-01-26 Benoit Regrain
      * Bug fix in the print of hexadecimal representations. Remove long fields 
        in the print and add a third level of print to print them
@@ -8,6 +28,7 @@
      * Split the IsReadable method between gdcmParser which test that the file
        is dicom and gdcmHeader which test that it's an image file
 
+>>>>>>> 1.146
 2004-01-22 Benoit Regrain
      * DicomDir : clean code, add methods, set variables in protected or private
      * gdcmUtil : bug fix for the clean string method
