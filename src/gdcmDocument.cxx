@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/21 11:17:42 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2004/09/22 01:01:36 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1397,6 +1397,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             // hierarchy and the Key is simply of the form ( group, elem )...
             if (gdcmDocument* dummy = dynamic_cast< gdcmDocument* > ( set ) )
             {
+               (void)dummy;
                newValEntry->SetKey( newValEntry->GetKey() );
             }
             // ...but when "set" is a gdcmSQItem, we are inserting this new
@@ -1437,6 +1438,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             // form ( group, elem )...
             if (gdcmDocument* dummy = dynamic_cast< gdcmDocument* > ( set ) )
             {
+               (void)dummy;
                newBinEntry->SetKey( newBinEntry->GetKey() );
             }
             // but when "this" is a SQItem, we are inserting this new
@@ -1501,6 +1503,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
          // level of one:
          if (gdcmDocument* dummy = dynamic_cast< gdcmDocument* > ( set ) )
          {
+            (void)dummy;
             newSeqEntry->SetDepthLevel( 1 );
             newSeqEntry->SetKey( newSeqEntry->GetKey() );
          }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/17 13:11:16 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/09/22 01:01:36 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,6 +32,7 @@
 gdcmElementSet::gdcmElementSet(int depthLevel) 
               : gdcmDocEntrySet()
 {
+  (void)depthLevel;
 }
 
 /**
@@ -71,6 +72,7 @@ void gdcmElementSet::Print(std::ostream & os)
       entry->Print(os);   
       if ( gdcmSeqEntry* seqEntry = dynamic_cast<gdcmSeqEntry*>(entry) )
       {
+         (void)seqEntry;
          // Avoid the newline for a sequence:
          continue;
       }
