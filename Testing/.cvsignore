@@ -1,1 +1,9 @@
 test
+.deps
+.libs
+Makefile.in
+Makefile
+hashtest
+image.dcm
+image.raw
+
