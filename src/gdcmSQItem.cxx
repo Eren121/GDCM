@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:33 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.43 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,7 +80,7 @@ void SQItem::Print(std::ostream& os)
       bool PrintEndLine = true;
 
       os << s.str();
-      Entry->SetPrintLevel(2);
+      Entry->SetPrintLevel(PrintLevel);
       Entry->Print(os); 
       if ( SeqEntry* seqEntry = dynamic_cast<SeqEntry*>(Entry) )
       {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 11:37:03 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.89 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #define GDCMFILE_H
 
 #include <iostream>
-#include "gdcmCommon.h"
+#include "gdcmBase.h"
 
 namespace gdcm 
 {
@@ -36,7 +36,7 @@ class DocEntryArchive;
  * for accessing the image/volume content. One can also use it to
  * write Dicom/ACR-NEMA/RAW files.
  */
-class GDCM_EXPORT File
+class GDCM_EXPORT File : public Base
 {
 public:
    enum FileMode
@@ -53,8 +53,6 @@ public:
    virtual ~File();
 
    void Print(std::ostream &os = std::cout); 
-   /// Accessor to \ref PrintLevel
-   void SetPrintLevel(int level) { PrintLevel = level; }
 
    /// Accessor to \ref Header
    Header* GetHeader() { return HeaderInternal; }
@@ -132,10 +130,6 @@ protected:
 
    ValEntry* CopyValEntry(uint16_t group,uint16_t element);
    BinEntry* CopyBinEntry(uint16_t group,uint16_t element);
-
-   /// \brief Amount of printed details for each Header Entry (Dicom Element):
-   /// 0 : stands for the least detail level.
-   int PrintLevel;
 
 private:
    void Initialise();

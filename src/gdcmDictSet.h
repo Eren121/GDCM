@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #ifndef GDCMDICTSET_H
 #define GDCMDICTSET_H
 
+#include "gdcmBase.h"
 #include "gdcmDict.h"
 
 #include <map>
@@ -37,7 +38,7 @@ typedef std::map<DictKey, Dict*> DictSetHT;
  * \par    having many in memory representations of the same dictionary
  *        (saving memory).
  */
-class GDCM_EXPORT DictSet
+class GDCM_EXPORT DictSet : public Base
 {
 public:
    DictSet();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/02 15:14:18 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,8 +84,6 @@ SeqEntry::~SeqEntry()
 void SeqEntry::Print( std::ostream &os )
 {
    // First, Print the Dicom Element itself.
-   SetPrintLevel(2);   
-
    os << "S ";
    DocEntry::Print(os);
    os << std::endl;
@@ -96,6 +94,7 @@ void SeqEntry::Print( std::ostream &os )
    // Then, Print each SQ Item   
    for(ListSQItem::iterator cc = Items.begin(); cc != Items.end(); ++cc)
    {
+      (*cc)->SetPrintLevel(PrintLevel);
       (*cc)->Print(os);   
    }
 
@@ -108,6 +107,7 @@ void SeqEntry::Print( std::ostream &os )
       }
       if (SeqTerm != NULL)
       {
+         SeqTerm->SetPrintLevel(PrintLevel);
          SeqTerm->Print(os);
          os << std::endl;
       } 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 09:32:24 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #define GDCMPIXELWRITECONVERT_H
 
 #include "gdcmCommon.h"
+#include "gdcmBase.h"
 
 namespace gdcm
 {
@@ -28,7 +29,7 @@ namespace gdcm
  * \brief Utility container for gathering the various forms the pixel data
  *        migth take during the user demanded processes.
  */
-class GDCM_EXPORT PixelWriteConvert
+class GDCM_EXPORT PixelWriteConvert : public Base
 {
 public:
    PixelWriteConvert();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 13:49:07 $
-  Version:   $Revision: 1.150 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.151 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -182,8 +182,6 @@ Document::Document( std::string const & filename ) : ElementSet(-1)
          SetEntryByNumber(rows   , 0x0028, 0x0011);
    }
    // ----------------- End of ACR-LibIDO kludge ------------------ 
-
-   PrintLevel = 1;  // 'Medium' print level by default
 }
 
 /**
@@ -198,7 +196,6 @@ Document::Document() : ElementSet(-1)
    Initialise();
    SwapCode = 0;
    Filetype = ExplicitVR;
-   PrintLevel = 1;  // 'Medium' print level by default
 }
 
 /**
@@ -222,6 +219,7 @@ Document::~Document ()
   */  
 void Document::PrintPubDict(std::ostream & os)
 {
+   RefPubDict->SetPrintLevel(PrintLevel);
    RefPubDict->Print(os);
 }
 
@@ -231,6 +229,7 @@ void Document::PrintPubDict(std::ostream & os)
   */
 void Document::PrintShaDict(std::ostream & os)
 {
+   RefShaDict->SetPrintLevel(PrintLevel);
    RefShaDict->Print(os);
 }
 

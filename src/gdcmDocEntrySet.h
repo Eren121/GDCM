@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 11:37:02 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #ifndef GDCMDOCENTRYSET_H
 #define GDCMDOCENTRYSET_H
 
+#include "gdcmBase.h"
 #include "gdcmException.h"
 #include <fstream>
 
@@ -54,17 +55,12 @@ typedef std::string BaseTagKey;
  *       members to this class since this class is designed as an adapter 
  *       in the form of an abstract base class.
  */
-class GDCM_EXPORT DocEntrySet
+class GDCM_EXPORT DocEntrySet : public Base
 {
 friend class File;
 public:
    DocEntrySet() {};
    virtual ~DocEntrySet() {};
-
-   /// \brief prints any type of entry to the entry set (pure vitual)
-   virtual void Print (std::ostream & os = std::cout) = 0;// pure virtual
-   /// Accessor to \ref PrintLevel
-   void SetPrintLevel(int level) { PrintLevel = level; }
 
    /// \brief adds any type of entry to the entry set (pure vitual)
    virtual bool AddEntry(DocEntry *Entry) = 0; // pure virtual
@@ -103,10 +99,6 @@ protected:
 // DictEntry  related utilities
    DictEntry *GetDictEntryByName  (TagName const & name);
    DictEntry *GetDictEntryByNumber(uint16_t, uint16_t);
-
-   /// \brief Amount of printed details for each Header Entry (Dicom Element):
-   /// 0 : stands for the least detail level.
-   int PrintLevel;
 };
 
 } // end namespace gdcm

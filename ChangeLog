@@ -1,4 +1,9 @@
 2004-12-16 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmBase.[h|cxx] : new base class. Contains the PrintLevel and an
+     empty Print Method
+   * Set the gdcm::Base class to some Printable classes
+
+2004-12-16 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFile.[h|cxx] : add the Print method
    * src/gdcmPixelReadConvert.[h|cxx] : add the generalized Print method
    * src/gdcmDocEntrySet.h : generalize the Print with the PrintLevel

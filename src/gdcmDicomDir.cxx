@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 17:28:50 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2004/12/16 13:46:36 $
+  Version:   $Revision: 1.90 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -169,8 +169,8 @@ void DicomDir::Print(std::ostream &os)
                                      cc != Patients.end();
                                    ++cc)
    {
-     (*cc)->SetPrintLevel( PrintLevel );
-     (*cc)->Print( os );
+     (*cc)->SetPrintLevel(PrintLevel);
+     (*cc)->Print(os);
    }
 }
 

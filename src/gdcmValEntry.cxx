@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 17:28:50 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/12/16 13:46:38 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,7 +51,6 @@ ValEntry::ValEntry(DocEntry* e)
    ReadLength   = e->GetReadLength();
    ImplicitVR   = e->IsImplicitVR();
    Offset       = e->GetOffset();
-   PrintLevel   = e->GetPrintLevel();
 }
 
 

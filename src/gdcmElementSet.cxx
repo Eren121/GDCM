@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 11:37:02 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,7 +66,10 @@ void ElementSet::Print(std::ostream& os)
    for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
       DocEntry* entry = i->second;
+
+      entry->SetPrintLevel(PrintLevel);
       entry->Print(os);   
+
       if ( SeqEntry* seqEntry = dynamic_cast<SeqEntry*>(entry) )
       {
          (void)seqEntry;

@@ -1,10 +1,10 @@
-/*=========================================================================
+  /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmDicomDirObject.h,v $
+  Module:    $RCSfile: gdcmBase.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/12/16 13:46:38 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,40 +16,48 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMDICOMDIROBJECT_H
-#define GDCMDICOMDIROBJECT_H
-
-#include "gdcmSQItem.h"
-#include "gdcmDicomDirElement.h"
-
-#include <string>
-#include <list>
+#include "gdcmBase.h"
 
 namespace gdcm 
 {
-//-----------------------------------------------------------------------------
-class DicomDirObject;
-
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+// Constructor / Destructor
 /**
- * \ingroup DicomDirObject
- * \brief   Base object
+ * \brief canonical constructor
  */
-class GDCM_EXPORT DicomDirObject : public SQItem
+Base::Base( )
 {
-typedef std::list<DicomDirObject *> ListContent;
-public:
-   TagDocEntryHT GetEntry();
-   void FillObject(ListDicomDirMetaElem const & elemList);
+   PrintLevel = 0;
+}
 
-protected:
-   // Constructor and destructor are protected to avoid end user to
-   // instanciate from this class. 
-   // NO ! DicomDir needs to instanciate it!
-   DicomDirObject(int depth = 1);
-   ~DicomDirObject();
-};
+/**
+ * \brief canonical destructor
+ * \note  If the Header was created by the File constructor,
+ *        it is destroyed by the File
+ */
+Base::~Base()
+{ 
+}
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Print all the object
+ * @param   os The output stream to be written to.
+ */
+void Base::Print(std::ostream &os)
+{
+}
+
+//-----------------------------------------------------------------------------
+// Public
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
 
-//-----------------------------------------------------------------------------
-#endif

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:35:35 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMDICTENTRY_H
 #define GDCMDICTENTRY_H
 
-#include "gdcmCommon.h"
+#include "gdcmBase.h"
 
 namespace gdcm 
 {
@@ -35,7 +35,7 @@ namespace gdcm
  *  - the owner group
  *  - etc.
  */
-class GDCM_EXPORT DictEntry 
+class GDCM_EXPORT DictEntry : public Base
 {
 public:
    DictEntry(uint16_t group, 

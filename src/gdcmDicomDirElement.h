@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 18:08:56 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/12/16 13:46:36 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,6 @@ public:
 
   /**
     * \brief   canonical Printer 
-    * \sa    SetPrintLevel
     */ 
    void Print(std::ostream &os);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #ifndef GDCMDOCENTRY_H
 #define GDCMDOCENTRY_H
 
+#include "gdcmBase.h"
 #include "gdcmDictEntry.h"
 
 #include <iostream>
@@ -36,7 +37,7 @@ class SeqEntry;
  * \brief   The dicom header of a Dicom file contains a set of such entries
  *          (when successfuly parsed against a given Dicom dictionary)
  */
-class GDCM_EXPORT DocEntry
+class GDCM_EXPORT DocEntry : public Base
 {
 public:
    DocEntry(DictEntry*);
@@ -119,15 +120,7 @@ public:
    /// \brief  Gets the DicEntry of the current Dicom Element
    /// @return The DicEntry of the current Dicom Element
    DictEntry * GetDictEntry() { return DicomDict; }; 
-
-   /// \brief Sets the print level for the Dicom Header Elements
-   /// \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
-   void SetPrintLevel(int level) { PrintLevel = level; };
-
-   /// \brief Gets the print level for the Dicom Header Elements
-   int GetPrintLevel() { return PrintLevel; };
    
-   virtual void Print (std::ostream & os = std::cout); 
    virtual void WriteContent(std::ofstream *fp, FileType filetype);
    
    uint32_t GetFullLength();
@@ -136,6 +129,8 @@ public:
 
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   
+
+   virtual void Print (std::ostream & os = std::cout); 
 
 private:
    // FIXME: In fact we should be more specific and use :
@@ -164,9 +159,6 @@ protected:
 
    /// Offset from the begining of file for direct user access
    size_t Offset; 
-
-   /// How many details are to be printed (value : 0,1,2)      
-   int PrintLevel;
 
    /// \brief Generalized key of this DocEntry (for details on
    ///        the generalized key refer to \ref TagKey documentation).

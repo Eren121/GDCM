@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmDicomDirObject.h,v $
+  Module:    $RCSfile: gdcmBase.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/12/16 13:46:38 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,38 +16,41 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMDICOMDIROBJECT_H
-#define GDCMDICOMDIROBJECT_H
+#ifndef GDCMBASE_H
+#define GDCMBASE_H
 
-#include "gdcmSQItem.h"
-#include "gdcmDicomDirElement.h"
-
-#include <string>
-#include <list>
+#include "gdcmCommon.h"
+#include <iostream>
 
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-class DicomDirObject;
-
-//-----------------------------------------------------------------------------
-/**
- * \ingroup DicomDirObject
- * \brief   Base object
+/*
+ * \brief Base class of all gdcm classes
+ *
+ * Contains all to correctly print
+ *  - Print method
+ *  - SetPrintLevel method
  */
-class GDCM_EXPORT DicomDirObject : public SQItem
+class GDCM_EXPORT Base
 {
-typedef std::list<DicomDirObject *> ListContent;
 public:
-   TagDocEntryHT GetEntry();
-   void FillObject(ListDicomDirMetaElem const & elemList);
+   Base( );
+   virtual ~Base();
+
+   virtual void Print(std::ostream &os = std::cout); 
+
+   /// \brief Sets the print level for the Dicom Header Elements
+   /// \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
+   void SetPrintLevel(int level) { PrintLevel = level; };
+
+   /// \brief Gets the print level for the Dicom Header Elements
+   int GetPrintLevel() { return PrintLevel; };
 
 protected:
-   // Constructor and destructor are protected to avoid end user to
-   // instanciate from this class. 
-   // NO ! DicomDir needs to instanciate it!
-   DicomDirObject(int depth = 1);
-   ~DicomDirObject();
+   /// \brief Amount of printed details for each Header Entry (Dicom Element):
+   /// 0 : stands for the least detail level.
+   int PrintLevel;
 };
 } // end namespace gdcm
 

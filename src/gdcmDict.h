@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #ifndef GDCMDICT_H
 #define GDCMDICT_H
 
+#include "gdcmBase.h"
 #include "gdcmDictEntry.h"
 
 #include <iostream>
@@ -46,7 +47,7 @@ typedef std::map<std::string,
  *           combined with all software versions...
  * \see DictSet
  */
-class GDCM_EXPORT Dict
+class GDCM_EXPORT Dict : public Base
 {
 public:
    Dict(std::string const & filename);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/12/16 13:46:37 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,6 @@ DocEntry::DocEntry(DictEntry* in)
    // init some variables
    ReadLength = 0;
    UsableLength = 0;
-   PrintLevel = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -60,8 +59,6 @@ DocEntry::DocEntry(DictEntry* in)
  */
 void DocEntry::Print(std::ostream& os)
 {
-   PrintLevel = 2; // FIXME
-   
    size_t o;
    std::string st;
    TSKey v;
@@ -252,7 +249,6 @@ void DocEntry::Copy (DocEntry* e)
    ReadLength   = e->ReadLength;
    ImplicitVR   = e->ImplicitVR;
    Offset       = e->Offset;
-   PrintLevel   = e->PrintLevel;
    // TODO : remove DocEntry SQDepth
 }
 
