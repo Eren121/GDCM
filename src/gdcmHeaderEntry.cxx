@@ -123,11 +123,12 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") ) {
       if (v == "4294967295") // to avoid troubles in convertion 
          sprintf (st," x(ffffffff)");
-      else
-				{
-         //sprintf(st," x(%x)",(unsigned long)atof(v.c_str()));
-         sprintf(st," x(%x)", atoi(v.c_str()));//FIXME
-				 }
+      else {
+         if ( GetLength() !=0 )        
+            sprintf(st," x(%x)", atoi(v.c_str()));//FIXME
+	 else
+	  sprintf(st," "); 
+      }
       s << st;
    }
    s << std::endl;
