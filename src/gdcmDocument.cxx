@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 15:22:23 $
-  Version:   $Revision: 1.183 $
+  Date:      $Date: 2005/01/12 17:10:15 $
+  Version:   $Revision: 1.184 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2131,7 +2131,7 @@ bool Document::CheckSwap()
       gdcmVerboseMacro( "Looks like DICOM Version3 (preamble + DCM)" );
       
       // Group 0002 should always be VR, and the first element 0000
-      // Let's be carefull (so many wrong hedaers ...)
+      // Let's be carefull (so many wrong headers ...)
       // and determine the value representation (VR) : 
       // Let's skip to the first element (0002,0000) and check there if we find
       // "UL"  - or "OB" if the 1st one is (0002,0001) -,
@@ -2147,7 +2147,7 @@ bool Document::CheckSwap()
       entCur = deb + 136;
      
       // group 0x0002 *is always* Explicit VR Sometimes ,
-      // even elem 0002,0010 (Transfer Syntax) tells us the file is
+      // even if elem 0002,0010 (Transfer Syntax) tells us the file is
       // *Implicit* VR  (see former 'gdcmData/icone.dcm')
       
       if( memcmp(entCur, "UL", (size_t)2) == 0 ||
@@ -2377,7 +2377,7 @@ std::string Document::GetTransferSyntaxName()
    // use the TS (TS : Transfer Syntax)
    std::string transferSyntax = GetEntry(0x0002,0x0010);
 
-   if ( transferSyntax == GDCM_NOTLOADED )
+   if ( (transferSyntax.find(GDCM_NOTLOADED) < transferSyntax.length()) )
    {
       gdcmErrorMacro( "Transfer Syntax not loaded. " << std::endl
                << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE" );

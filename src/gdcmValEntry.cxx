@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:19:48 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/12 17:10:15 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,6 @@ void ValEntry::Print(std::ostream &os)
    v  = GetValue();  // not applicable for SQ ...     
    d2 = Util::CreateCleanString(v);  // replace non printable characters by '.'            
    if( (GetLength()<=MAX_SIZE_PRINT_ELEMENT_VALUE) || 
-       //(PrintLevel>=3)  || (d2.find("gdcm::NotLoaded.") < d2.length()) )
        (PrintLevel>=3)  || (d2.find(GDCM_NOTLOADED) < d2.length()) )
    {
       s << " [" << d2 << "]";
