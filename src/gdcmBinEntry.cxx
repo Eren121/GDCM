@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/09/09 17:49:24 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@ gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
    PrintLevel   = e->GetPrintLevel();
    SQDepthLevel = e->GetDepthLevel();
 
-   VoidArea = NULL; // let's be carefull !
+   VoidArea = 0; // let's be carefull !
 }
 
 /**
@@ -55,7 +55,7 @@ gdcmBinEntry::~gdcmBinEntry()
    if (VoidArea)
    {
       free (VoidArea);
-      VoidArea = NULL; // let's be carefull !
+      VoidArea = 0; // let's be carefull !
    }
 }
 
@@ -73,8 +73,9 @@ void gdcmBinEntry::Print(std::ostream &os)
    void *voidArea = GetVoidArea();
    if (voidArea)
    {
-      s << " [gdcm::Binary data loaded with length is "
-        << GetLength() << "]";
+      //s << " [" << GDCM_BINLOADED 
+      s << " [" << GetValue()
+        << "; length = " << GetLength() << "]";
    }
    else
    {
@@ -84,7 +85,8 @@ void gdcmBinEntry::Print(std::ostream &os)
       }
       else 
       {
-         s << " [gdcm::Binary data NOT loaded]";
+         //s << " [gdcm::Binary data NOT loaded]";
+         s << " [" <<GetValue() << "]";
       }
          
    }
@@ -105,6 +107,11 @@ void gdcmBinEntry::Write(FILE *fp, FileType filetype)
    {
       // there is a 'non string' LUT, overlay, etc
       fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,fp); // Elem value
+   }
+   else
+   {
+    // nothing was loaded, but we need to skip space on disc
+      fseek(fp,(size_t)lgr,SEEK_CUR); 
    }
 }
 //-----------------------------------------------------------------------------

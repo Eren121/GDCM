@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/01 16:23:59 $
-  Version:   $Revision: 1.183 $
+  Date:      $Date: 2004/09/09 17:49:25 $
+  Version:   $Revision: 1.184 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1194,7 +1194,6 @@ uint8_t* gdcmHeader::GetLUTRGBA()
       *a = 1; // Alpha component
       a += 4;
    }
-
    return LUTRGBA;
 } 
 
@@ -1208,6 +1207,12 @@ std::string gdcmHeader::GetTransfertSyntaxName()
    // use the gdcmTS (TS : Transfert Syntax)
    std::string transfertSyntax = GetEntryByNumber(0x0002,0x0010);
 
+   if ( transfertSyntax == GDCM_NOTLOADED ) { // fusible
+      std::cout << "Transfert Syntax not loaded. " << std::endl
+               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
+               << std::endl;
+      return "Uncompressed ACR-NEMA";
+   }
    if ( transfertSyntax == GDCM_UNFOUND )
    {
       dbg.Verbose(0, "gdcmHeader::GetTransfertSyntaxName:"

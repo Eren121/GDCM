@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 11:51:26 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/09/09 17:49:24 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,7 +91,10 @@ typedef  unsigned int   uint32_t;
 
 #include <string>
 
-const std::string GDCM_UNFOUND = "gdcm::Unfound";   /// MEMORY LEAK
+const std::string GDCM_UNFOUND   = "gdcm::Unfound";   /// MEMORY LEAK
+const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
+const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
+const std::string GDCM_UNREAD    = "gdcm::UnRead";
 
 typedef std::string gdcmTagKey;
 typedef std::string TagName;

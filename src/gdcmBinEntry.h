@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/03 20:27:44 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/09/09 17:49:24 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ public:
    ~gdcmBinEntry();
    
    void Print(std::ostream &os = std::cout);
-   virtual void Write(FILE*, FileType);
+   void Write(FILE*, FileType);
 
    /// \brief Returns the area value of the current Dicom Header Entry
    ///  when it's not string-translatable (e.g : a LUT table)         

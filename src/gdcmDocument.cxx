@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/07 13:57:04 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2004/09/09 17:49:24 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1504,34 +1504,33 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
    if (length > MaxSizeLoadEntry)
    {
       if (gdcmBinEntry* binEntryPtr = dynamic_cast< gdcmBinEntry* >(entry) )
-      {         
-         s << "gdcm::NotLoaded (BinEntry)";
+      {  
+         //s << "gdcm::NotLoaded (BinEntry)";
+         s << GDCM_NOTLOADED;
          s << " Address:" << (long)entry->GetOffset();
          s << " Length:"  << entry->GetLength();
          s << " x(" << std::hex << entry->GetLength() << ")";
          binEntryPtr->SetValue(s.str());
       }
-      // to be sure we are at the end of the value ...
-      fseek(Fp, (long)entry->GetOffset()+(long)entry->GetLength(), SEEK_SET);      
-      // Following return introduced by JPR on version 1.25. Since the 
-      // treatement of a ValEntry is never executed (doh!) this means
-      // we were lucky up to now because we NEVER encountered a ValEntry
-      // whose length was bigger thant MaxSizeLoadEntry !? I can't believe
-      // this could ever work...
-      return;  //FIXME FIXME FIXME FIXME JPR ????
-
        // Be carefull : a BinEntry IS_A ValEntry ... 
-      if (gdcmValEntry* valEntryPtr = dynamic_cast< gdcmValEntry* >(entry) )
+      else if (gdcmValEntry* valEntryPtr = dynamic_cast< gdcmValEntry* >(entry) )
       {
-         s << "gdcm::NotLoaded. (ValEntry)";
+        // s << "gdcm::NotLoaded. (ValEntry)";
+         s << GDCM_NOTLOADED;  
          s << " Address:" << (long)entry->GetOffset();
          s << " Length:"  << entry->GetLength();
          s << " x(" << std::hex << entry->GetLength() << ")";
          valEntryPtr->SetValue(s.str());
       }
+      else
+      {
+         // fusible
+         std::cout<< "MaxSizeLoadEntry exceeded, neither a BinEntry "
+                  << "nor a ValEntry ?! Should never print that !" << std::endl;
+      }
+
       // to be sure we are at the end of the value ...
       fseek(Fp,(long)entry->GetOffset()+(long)entry->GetLength(),SEEK_SET);      
-
       return;
    }
 
@@ -1610,7 +1609,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
       {
          dbg.Verbose(1, "gdcmDocument::LoadDocEntry",
                         "unread element value");
-         valEntry->SetValue("gdcm::UnRead");
+         valEntry->SetValue(GDCM_UNREAD);
          return;
       }
 
