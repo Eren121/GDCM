@@ -24,6 +24,8 @@ IF(GDCM_DOCUMENTATION)
   )
   SET(GDCM_DOCUMENTATION_EXCLUDE_COMMON
     "${GDCM_SOURCE_DIR}/src/gdcmJpeg.cxx"
+    "${GDCM_SOURCE_DIR}/src/jdatasrc.cxx"
+    "${GDCM_SOURCE_DIR}/src/jdatadst.cxx"
   )
   
   IF(GDCM_VTK)
