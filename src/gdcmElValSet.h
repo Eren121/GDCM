@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.5 2003/03/24 13:11:28 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.6 2003/04/01 14:07:40 jpr Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -18,11 +18,14 @@ class GDCM_EXPORT gdcmElValSet {
 	TagElValueNameHT NameHt;        // the DictEntry.Name are required.
 public:	
 	void Add(gdcmElValue*);	
-	void ReplaceOrCreate(gdcmElValue*);		
+	// TODO
+	//void ReplaceOrCreate(gdcmElValue*);		
 	void Print(ostream &);
 	void PrintByName(ostream &);
 	int  Write(FILE *fp);
 	int  WriteAcr(FILE *fp);
+	int  WriteExplVR(FILE *fp);
+
 	gdcmElValue* GetElementByNumber(guint32 group, guint32 element);
 	gdcmElValue* GetElementByName  (string);
 	string   GetElValueByNumber(guint32 group, guint32 element);
@@ -35,6 +38,7 @@ public:
 	
 	int SetElValueLengthByNumber(guint32 l, guint32 group, guint32 element);
 	int SetElValueLengthByName  (guint32 l, string TagName);
+	
    guint32 GenerateFreeTagKeyInGroup(guint32 group);
 
 };

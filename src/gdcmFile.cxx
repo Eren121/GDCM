@@ -314,6 +314,8 @@ void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
  	string content2;
  	char car[20];
  	
+ 	// suppose que le ElValue (0x7fe0, 0x0010) existe ...
+ 	
  	sprintf(car,"%d",ImageDataSize);
  	content2=car;
  	SetPubElValByNumber(content2, 0x7fe0, 0x0010);
@@ -388,7 +390,47 @@ int gdcmFile::WriteDcm (string nomFichier) {
 	// pourtant le gdcmElValSet contenu dans le gdcmHeader 
 	// ne devrait pas être visible par l'utilisateur final (?)
 	
-	GetPubElVals().Write(fp1);
+	GetPubElValSet().Write(fp1);
+		
+	fwrite(Pixels, lgrTotale, 1, fp1);
+
+	fclose (fp1);
+	return(1);
+}
+	
+	
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \ TODO
+ *
+ * @param 
+ *
+ * @return	
+ */
+
+int gdcmFile::WriteDcmExplVR (string nomFichier) {
+
+// ATTENTION : fonction non terminée (commitée a titre de precaution)
+
+	FILE * fp1;
+	char* filePreamble;
+	fp1 = fopen(nomFichier.c_str(),"wb");
+	if (fp1 == NULL) {
+		printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
+		return (0);
+	} 
+	
+	//	Ecriture Dicom File Preamble
+	filePreamble=(char*)calloc(128,1);
+	fwrite(filePreamble,128,1,fp1);
+	fwrite("DICM",4,1,fp1);
+
+	// un accesseur de + est obligatoire ???
+	// pourtant le gdcmElValSet contenu dans le gdcmHeader 
+	// ne devrait pas être visible par l'utilisateur final (?)
+	
+	GetPubElValSet().WriteExplVR(fp1);
 		
 	fwrite(Pixels, lgrTotale, 1, fp1);
 
@@ -428,7 +470,7 @@ int gdcmFile::WriteAcr (string nomFichier) {
 	// pourtant le gdcmElValSet contenu dans le gdcmHeader 
 	// ne devrait pas être visible par l'utilisateur final (?)
 	
-	GetPubElVals().WriteAcr(fp1);
+	GetPubElValSet().WriteAcr(fp1);
 		
 	fwrite(Pixels, lgrTotale, 1, fp1);
 

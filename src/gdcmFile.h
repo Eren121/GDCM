@@ -88,9 +88,10 @@ public:
 	// Aucun test n'est fait sur l'"Endiannerie" du processeur.
 	// Ca sera à l'utilisateur d'appeler son Reader correctement
 		
-	int WriteRawData (string nomFichier);
-	int WriteDcm     (string nomFichier);
-	int WriteAcr     (string nomFichier);
+	int WriteRawData 	(string nomFichier);
+	int WriteDcm     	(string nomFichier);
+	int WriteDcmExplVR	(string nomFichier);
+	int WriteAcr     	(string nomFichier);
 };
 
 #endif

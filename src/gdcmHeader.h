@@ -47,9 +47,9 @@ private:
    gdcmDict* RefShaDict;
 
    /// ELement VALueS parsed with the PUBlic dictionary.
-   gdcmElValSet PubElVals;
+   gdcmElValSet PubElValSet;
    /// ELement VALueS parsed with the SHAdow dictionary.
-   gdcmElValSet ShaElVals;
+   gdcmElValSet ShaElValSet;
    /// Refering underlying filename.
    string filename; 
    FILE * fp;
@@ -144,9 +144,9 @@ public:
    string GetPubElValRepByName(string TagName);
    string GetPubElValRepByNumber(guint16 group, guint16 element);
 
-   TagElValueHT & GetPubElVal(void) { return PubElVals.GetTagHt(); };
+   TagElValueHT & GetPubElVal(void) { return PubElValSet.GetTagHt(); };
    void   PrintPubElVal(ostream & os = cout);
-   void   PrintPubDict(ostream & os = cout);
+   void   PrintPubDict (ostream & os = cout);
      
    // TODO Swig string* GetShaTagNames(); 
    string GetShaElValByName(string TagName);
@@ -164,9 +164,10 @@ public:
    int SetShaElValByName(string content, string ShadowTagName);
    int SetShaElValByNumber(string content, guint16 group, guint16 element);
    
-   int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);
+   int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   
+   int ReplaceOrCreateByNumber(guint16 Group, guint16 Elem, string Value);                                
 
-   gdcmElValSet GetPubElVals() { return(PubElVals); }
+   gdcmElValSet GetPubElValSet() { return(PubElValSet); }
 };
 
 #endif

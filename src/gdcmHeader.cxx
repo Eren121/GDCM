@@ -344,7 +344,7 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmHeader::IsImplicitVRLittleEndianTransferSyntax(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -362,7 +362,7 @@ bool gdcmHeader::IsImplicitVRLittleEndianTransferSyntax(void) {
  * @return  True when ExplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmHeader::IsExplicitVRLittleEndianTransferSyntax(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -380,7 +380,7 @@ bool gdcmHeader::IsExplicitVRLittleEndianTransferSyntax(void) {
  * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmHeader::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -398,7 +398,7 @@ bool gdcmHeader::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
  * @return  True when big endian found. False in all other cases.
  */
 bool gdcmHeader::IsExplicitVRBigEndianTransferSyntax(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -416,7 +416,7 @@ bool gdcmHeader::IsExplicitVRBigEndianTransferSyntax(void) {
  * @return  True when JPEGBaseLineProcess1found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -429,7 +429,7 @@ bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
 // faire qq chose d'intelligent a la place de ça
 
 bool gdcmHeader::IsJPEGLossless(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -448,7 +448,7 @@ bool gdcmHeader::IsJPEGLossless(void) {
  * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -466,7 +466,7 @@ bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
  * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -485,7 +485,7 @@ bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
  *          other cases.
  */
 bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
-   gdcmElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
@@ -882,6 +882,20 @@ gdcmElValue* gdcmHeader::NewElValueByKey(guint16 Group, guint16 Elem) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief   TODO
+ * @param   
+ */
+int gdcmHeader::ReplaceOrCreateByNumber(guint16 Group, guint16 Elem, string Value) {
+
+	gdcmElValue* nvElValue=NewElValueByKey(Group, Elem);
+	PubElValSet.Add(nvElValue);	
+	PubElValSet.SetElValueByNumber(Value, Group, Elem);
+	return(1);
+}   
+
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Build a new Element Value from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
@@ -908,8 +922,8 @@ gdcmElValue* gdcmHeader::NewElValueByName(string Name) {
  * @return  On succes the newly created ElValue, NULL on failure.      
  */
 gdcmElValue * gdcmHeader::ReadNextElement(void) {
-   guint16 g;
-   guint16 n;
+  
+   guint16 g,n;
    gdcmElValue * NewElVal;
    
    g = ReadInt16();
@@ -1019,7 +1033,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
       numPixel = 0x1010;
    else
       numPixel = 0x0010;
-   gdcmElValue* PixelElement = PubElVals.GetElementByNumber(grPixel, numPixel);
+   gdcmElValue* PixelElement = PubElValSet.GetElementByNumber(grPixel, numPixel);
    if (PixelElement)
       return PixelElement->GetOffset();
    else
@@ -1092,7 +1106,7 @@ gdcmDictEntry * gdcmHeader::GetDictEntryByName(string Name) {
  *          "gdcm::Unfound" otherwise.
  */
 string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
-   return PubElVals.GetElValueByNumber(group, element);
+   return PubElValSet.GetElValueByNumber(group, element);
 }
 
 /**
@@ -1110,7 +1124,7 @@ string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
  *          and the string "gdcm::Unfound" otherwise.
  */
 string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
-   gdcmElValue* elem =  PubElVals.GetElementByNumber(group, element);
+   gdcmElValue* elem =  PubElValSet.GetElementByNumber(group, element);
    if ( !elem )
       return "gdcm::Unfound";
    return elem->GetVR();
@@ -1125,7 +1139,7 @@ string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
  *          "gdcm::Unfound" otherwise.
  */
 string gdcmHeader::GetPubElValByName(string TagName) {
-   return PubElVals.GetElValueByName(TagName);
+   return PubElValSet.GetElValueByName(TagName);
 }
 
 /**
@@ -1142,7 +1156,7 @@ string gdcmHeader::GetPubElValByName(string TagName) {
  *          and the string "gdcm::Unfound" otherwise.
  */
 string gdcmHeader::GetPubElValRepByName(string TagName) {
-   gdcmElValue* elem =  PubElVals.GetElementByName(TagName);
+   gdcmElValue* elem =  PubElValSet.GetElementByName(TagName);
    if ( !elem )
       return "gdcm::Unfound";
    return elem->GetVR();
@@ -1158,7 +1172,7 @@ string gdcmHeader::GetPubElValRepByName(string TagName) {
  *          and the string "gdcm::Unfound" otherwise.
  */
 string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
-   return ShaElVals.GetElValueByNumber(group, element);
+   return ShaElValSet.GetElValueByNumber(group, element);
 }
 
 /**
@@ -1176,7 +1190,7 @@ string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
  *          and the string "gdcm::Unfound" otherwise.
  */
 string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
-   gdcmElValue* elem =  ShaElVals.GetElementByNumber(group, element);
+   gdcmElValue* elem =  ShaElValSet.GetElementByNumber(group, element);
    if ( !elem )
       return "gdcm::Unfound";
    return elem->GetVR();
@@ -1191,7 +1205,7 @@ string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
  *          "gdcm::Unfound" otherwise.
  */
 string gdcmHeader::GetShaElValByName(string TagName) {
-   return ShaElVals.GetElValueByName(TagName);
+   return ShaElValSet.GetElValueByName(TagName);
 }
 
 /**
@@ -1208,7 +1222,7 @@ string gdcmHeader::GetShaElValByName(string TagName) {
  *          and the string "gdcm::Unfound" otherwise.
  */
 string gdcmHeader::GetShaElValRepByName(string TagName) {
-   gdcmElValue* elem =  ShaElVals.GetElementByName(TagName);
+   gdcmElValue* elem =  ShaElValSet.GetElementByName(TagName);
    if ( !elem )
       return "gdcm::Unfound";
    return elem->GetVR();
@@ -1292,7 +1306,7 @@ string gdcmHeader::GetElValRepByName(string TagName) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmElValue in the PubElVals of this instance
+ * \brief   Accesses an existing gdcmElValue in the PubElValSet of this instance
  *          through it's (group, element) and modifies it's content with
  *          the given value.
  * @param   content new value to substitute with
@@ -1302,23 +1316,23 @@ string gdcmHeader::GetElValRepByName(string TagName) {
 int gdcmHeader::SetPubElValByNumber(string content, guint16 group,
                                     guint16 element)
 {
-   return (  PubElVals.SetElValueByNumber (content, group, element) );
+   return (  PubElValSet.SetElValueByNumber (content, group, element) );
 }
 
 /**
  * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmElValue in the PubElVals of this instance
+ * \brief   Accesses an existing gdcmElValue in the PubElValSet of this instance
  *          through tag name and modifies it's content with the given value.
  * @param   content new value to substitute with
  * @param   TagName name of the tag to be modified
  */
 int gdcmHeader::SetPubElValByName(string content, string TagName) {
-   return (  PubElVals.SetElValueByName (content, TagName) );
+   return (  PubElValSet.SetElValueByName (content, TagName) );
 }
 
 /**
  * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmElValue in the PubElVals of this instance
+ * \brief   Accesses an existing gdcmElValue in the PubElValSet of this instance
  *          through it's (group, element) and modifies it's length with
  *          the given value.
  * \warning Use with extreme caution.
@@ -1327,15 +1341,15 @@ int gdcmHeader::SetPubElValByName(string content, string TagName) {
  * @param   element element of the ElVal to modify
  * @return  1 on success, 0 otherwise.
  */
+
 int gdcmHeader::SetPubElValLengthByNumber(guint32 length, guint16 group,
-                                    guint16 element)
-{
-	return (  PubElVals.SetElValueLengthByNumber (length, group, element) );
+                                    guint16 element) {
+	return (  PubElValSet.SetElValueLengthByNumber (length, group, element) );
 }
 
 /**
  * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmElValue in the ShaElVals of this instance
+ * \brief   Accesses an existing gdcmElValue in the ShaElValSet of this instance
  *          through it's (group, element) and modifies it's content with
  *          the given value.
  * @param   content new value to substitute with
@@ -1344,20 +1358,19 @@ int gdcmHeader::SetPubElValLengthByNumber(guint32 length, guint16 group,
  * @return  1 on success, 0 otherwise.
  */
 int gdcmHeader::SetShaElValByNumber(string content,
-                                    guint16 group, guint16 element)
-{
-   return (  ShaElVals.SetElValueByNumber (content, group, element) );
+                                    guint16 group, guint16 element) {
+   return (  ShaElValSet.SetElValueByNumber (content, group, element) );
 }
 
 /**
  * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmElValue in the ShaElVals of this instance
+ * \brief   Accesses an existing gdcmElValue in the ShaElValSet of this instance
  *          through tag name and modifies it's content with the given value.
  * @param   content new value to substitute with
  * @param   TagName name of the tag to be modified
  */
 int gdcmHeader::SetShaElValByName(string content, string TagName) {
-   return (  ShaElVals.SetElValueByName (content, TagName) );
+   return (  ShaElValSet.SetElValueByName (content, TagName) );
 }
 
 /**
@@ -1371,7 +1384,7 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
    CheckSwap();
    while ( (newElValue = ReadNextElement()) ) {
       SkipElementValue(newElValue);
-      PubElVals.Add(newElValue);
+      PubElValSet.Add(newElValue);
    }
 }
 
@@ -1398,7 +1411,6 @@ void gdcmHeader::AddAndDefaultElements(void) {
       NewElVal->SetValue(NewVal);
    else 
       NewElVal->SetValue("0");
-
 
    NewElVal = NewManualElValToPubDict("gdcmYSize", "US");
    if (!NewElVal) return;
@@ -1461,7 +1473,7 @@ gdcmElValue* gdcmHeader::NewManualElValToPubDict(string NewTagName, string VR) {
    guint32 FreeElem = 0;
    gdcmDictEntry* NewEntry = (gdcmDictEntry*)0;
 
-   FreeElem = PubElVals.GenerateFreeTagKeyInGroup(StuffGroup);
+   FreeElem = PubElValSet.GenerateFreeTagKeyInGroup(StuffGroup);
    if (FreeElem == UINT32_MAX) {
       dbg.Verbose(1, "gdcmHeader::NewManualElValToPubDict",
                      "Group 0xffff in Public Dict is full");
@@ -1470,8 +1482,9 @@ gdcmElValue* gdcmHeader::NewManualElValToPubDict(string NewTagName, string VR) {
    NewEntry = new gdcmDictEntry(StuffGroup, FreeElem,
                                 VR, "GDCM", NewTagName);
    NewElVal = new gdcmElValue(NewEntry);
-   PubElVals.Add(NewElVal);
+   PubElValSet.Add(NewElVal);
    return NewElVal;
+
 }
 
 /**
@@ -1481,14 +1494,14 @@ gdcmElValue* gdcmHeader::NewManualElValToPubDict(string NewTagName, string VR) {
  */
 void gdcmHeader::LoadElements(void) {
    rewind(fp);   
-   TagElValueHT ht = PubElVals.GetTagHt();
+   TagElValueHT ht = PubElValSet.GetTagHt();
    for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
       LoadElementValue(tag->second);
       }
 }
 
 void gdcmHeader::PrintPubElVal(ostream & os) {
-   PubElVals.Print(os);
+   PubElValSet.Print(os);
 }
 
 void gdcmHeader::PrintPubDict(ostream & os) {
