@@ -147,6 +147,11 @@ SET(BLACK_LIST
   "D_CLUNIE_CT1_JLSL.dcm"
   "D_CLUNIE_CT1_J2KR.dcm"
   "D_CLUNIE_CT1_J2KI.dcm"
+  #Not a Dicom Image, but a RT Object
+  "RS2.16.124.113534.2.3.5.0.120040728.21342.353.12747_anonimized.dcm" 
+  #Temporary black list LibIDO rectangular images
+  "LIBIDO-24-ACR_NEMA-Rectangle.dcm"
+  "gdcm-ACR-LibIDO.acr"
   )
 
 # Add a special test that requires dciodvfy from dicom3tools
