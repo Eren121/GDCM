@@ -1909,6 +1909,34 @@
 5000 2600 SQ CRV Referenced Overlay Sequence
 5000 2610 US CRV Referenced Overlay Group
 5000 3000 OW CRV Curve Data
+
+5004 0000 UL CRV Group Length
+5004 0005 US CRV Curve Dimensions
+5004 0010 US CRV Number of Points
+5004 0020 CS CRV Type of Data
+5004 0022 LO CRV Curve Description
+5004 0030 SH CRV Axis Units
+5004 0040 SH CRV Axis Labels
+5004 0103 US CRV Data Value Representation
+5004 0104 US CRV Minimum Coordinate Value
+5004 0105 US CRV Maximum Coordinate Value
+5004 0106 SH CRV Curve Range
+5004 0110 US CRV Data Descriptor
+5004 0112 US CRV Coordinate Start Value
+5004 0114 US CRV Coordinate Step Value
+5004 2000 US CRV Audio Type
+5004 2002 US CRV Audio Sample Format
+5004 2004 US CRV Number of Channels
+5004 2006 UL CRV Number of Samples
+5004 2008 UL CRV Sample Rate
+5004 200a UL CRV Total Time
+5004 200c OW CRV Audio Sample Data
+5004 200e LT CRV Audio Comments
+5004 2500 LO CRV Curve Label
+5004 2600 SQ CRV Referenced Overlay Sequence
+5004 2610 US CRV Referenced Overlay Group
+5004 3000 OW CRV Curve Data
+
 5200 0000 UL ??? Group Length
 5200 9229 SQ ??? Shared Functional Groups Sequence
 5200 9230 SQ ??? Pre-frame Functional Groups Sequence
