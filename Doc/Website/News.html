@@ -41,19 +41,25 @@ We consider now that :
       - a gdcm::File,     if it contains pixel data,
       - a gdcm::DicomDir, if it contains only informations 
                           on the files in a given directory
+
 - in a gdcm::Document, there are gdcm::DocEntry, that can be :
-     - gdcm::ValEntry (whose value is std::string representable 
-                       i.e. character values, or integers),
-     - gdcm::BinEntry (whose value is not std::string representable 
-                       i.e. color palettes, overlays, icons , ...)
+     - gdcm::ContentEntry (any entry that has an actual value,
+                           *not* an embedded set of other gdcm::DocEntry)
+                           a gdcm::ContentEntry can be :
+          - gdcm::ValEntry (whose value is std::string representable 
+                            e.g. character values, or integers),
+          - gdcm::BinEntry (whose value is not std::string representable 
+                            e.g. color palettes, overlays, icons , ...)
      - gdcm::Sequence (no proper 'value', but a set of gdcm::SQItems, 
                        composed of a set of gdc::DocEntry, recursively)
-- in a gdcm::DicomDir, we only deal, hierachically, with :
+ 
+- in a gdcm::DicomDir, we only deal, hierarchically, with :
      - gdcmPatient
      - gdcmStudy
      - gdcmSerie
      - gdcmImage
 </pre>
+You can see <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a>
 
 
 
