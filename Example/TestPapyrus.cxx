@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 09:49:53 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/26 15:40:18 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -218,7 +218,6 @@ int main(int argc, char* argv[])
    std::string NumberOfFrames = gdcm::Util::Format("%d", nbImages); 
 
    gdcm::File *n = new gdcm::File();
-   n->InitializeDefaultFile();
 
    n->InsertValEntry(MediaStSOPinstUID,  0x0002,0x0002);
   // Whe keep default gdcm Transfer Syntax (Explicit VR Little Endian)
