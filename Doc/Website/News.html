@@ -9,32 +9,76 @@
 
 <!#######################################################################>
 <H1>Gdcm News</a></H1>
-<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
 
 <!#######################################################################>
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
+<H2>
+   <A CLASS="anchor" NAME="NewsCurrentVersion">
+   <B>Current Version</B></A>
+      <B></B></A>
+</H2>
+<UL>
+   <LI> Final check of the jpeg sub-library: all kinds of jpeg
+        compressed Dicom files (but jpeg2000) can be read
+   <LI> Use of <TT> namespace</TT> : all the methods formerly called
+       <TT>className::gdcmXxx()</TT> are now called <TT>className::Xxx()</TT>
+   <LI> Removal of accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
+        and <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT> 
+        replaced by <TT>GetXxx</TT>, <TT>SetXxx</TT> 
+   <LI> A huge number of memory leaks removed
+   <LI> All the previously gdcm-breaker images are now readable
+   <LI> Improvement of write process  
+</UL>
+
+
+
+<!#######################################################################>
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
+<H2>
+   <A CLASS="anchor" NAME="NewsVersion0_6">
+      <B>Version 0.6 (June 8 2004)</B></A>
+</H2>
+<UL>
+   This version will be used by Insight Tool Kit 
+   (<a href="http://www.itk.org">ITK</a> 2.0) at the beginning of 2005.<br>
+    It's not yet packaged ...<br><br>
+   <LI> The new <TT>gdcmDocument</TT> class is a parent class of 
+       <TT>gdcmHeader</TT> class and <TT>gdcmDicomDir</TT> class.
+   <LI> Massive modifications in the Class Diagram :
+   <UL>
+      <LI> Entries (<TT>gdcmEntry</TT>) are now separated into 
+          <TT>ValEntry</TT> and <TT>SeqEntry</TT> (whose VR =
+          <TT>SQ</TT>)
+      <LI> a <TT>gdcmDocument</TT> is_a <TT>gdcmElementSet</TT>,
+         composed of a set of <TT>gdcmValEntry</TT> 
+         and <TT>gdcmSeqEntry</TT>
+      <LI> a <TT>gdcmSeqEntry</TT> is considered as a set 
+          of <TT>gdcmSQItem</TT>
+      <LI> Dicom Sequences (VR = <TT>SQ</TT>) are now dealt as tree-like 
+          structures within <TT>gdcmSQItem</TT> class.<br>
+          they are considered as a set of <TT>gdcmSQItem</TT>s
+      <LI> a <TT>gdcmSQItem</TT> is_a <TT>gdcmElementSet</TT> 
+  </UL>
+  <LI> Improvement of the jpeg sub-library: jpeg
+        compressed Dicom files (lossless and lossy) 
+  might be read (check-it out)
+</UL>
+
+<!#######################################################################>
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
 <H2>
    <A CLASS="anchor" NAME="NewsVersion0_4">
       <B>Version 0.4 (February 6 2004)</B></A>
 </H2>
 <UL>
-   <LI> <TT>gdcmFile</TT> class now enables acces to the data
-       i.e. the image[s] content. Previously only parsing of the
-       Dicom header was available through usage of <TT>gdcmHeader</TT>
-       class.
-   <LI> a <A HREF="http://public.kitware.com/VTK/">VTK</A> plugin
-       of gdcm is now available through the <TT>vtkGdcmReader</TT>
-       vtk class (see it as a vtk wrapper of gdcm), which enables
-       <UL>
-         <LI> Loading of a single image,
-         <LI> Loading of a stack of images from multiple Dicom files,
-         <LI> this class is wrapped for vtkPython (by using native vtk
-              wrappers).
-       </UL>
-   <LI> Introduction of a jpeg sub-library: some very simple jpeg
+   <LI> Introduction of a jpeg sub-library: some very simple jpeg-lossy
         compressed Dicom files might be working (check-it out).
    <LI> And also, fewer memory leaks, cleaned-up stl usage (should work
         with gcc-3.x), python disutil installer (see file setup.py)
         supporting both Swig and vtk wrapping.
+   <LI> Introduction of a RLE (Run-Time Encoding) library
+   <LI> Color images (RGB or Palette Color) are dealt with
+ 
 </UL>
 
 <!#######################################################################>
@@ -57,11 +101,10 @@
          <LI> this class is wrapped for vtkPython (by using native vtk
               wrappers).
        </UL>
-   <LI> Introduction of a jpeg sub-library: some very simple jpeg
-        compressed Dicom files might be working (check-it out).
-   <LI> And also, fewer memory leaks, cleaned-up stl usage (should work
-        with gcc-3.x), python disutil installer (see file setup.py)
-        supporting both Swig and vtk wrapping.
+   <LI> Introduction of a jpeg sub-library: lossless-jpeg
+        compressed Dicom files work.
+<LI> <TT>vtkgdcmViewer</TT> allows easy displaying of single/multiframe 
+     GreyLevel/RGB/PaletteColor images
 </UL>
 
 <!#######################################################################>

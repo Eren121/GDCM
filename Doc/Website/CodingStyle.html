@@ -147,12 +147,12 @@
 * Special layout:
  - Avoid code mixed with comments on a single line. Instead, prepend the
    logical blocks of code with the concerned comments.
- - Use parantheses around conditions e.g. with an if statement:
+ - Use parentheses around conditions e.g. with an if statement:
       if ( someLocalVariable == 2 ) { ... }
  - Add spaces around parentheses, or braces. Use
-      if ( someLocalVariable == 2 ) { ClassMenber += 1; }
+      if ( someLocalVariable == 2 ) { ClassMember += 1; }
    and not
-      if (someLocalVariable == 2) {ClassMenber += 1;}
+      if (someLocalVariable == 2) {ClassMember += 1;}
  - Add spaces around each side of the assignement operator, and
    around binary operators used in boolean expression. Use
       someLocalVariable = ClassMember * 2;
@@ -168,7 +168,7 @@
    use C style comments ("/* ... */").
  - The last line of a file should terminate with "\n".
  - Returned arguments of methods and functions should not be wrapped with
-   parantheses. Use
+   parentheses. Use
       return iter->second;
    but do not use
       return ( iter->second );
@@ -226,7 +226,7 @@
        * \brief  Within the Dicom Elements (parsed with the public and private
        *         dictionaries), look for the element value representation of
        *         a given tag.
-       * @param  group Group number of the searched tag.
+       * @param  group  Group number of the searched tag.
        * @param  elem Element number of the searched tag.
        * @return Corresponding element value representation when it exists,
        *         and the string "gdcm::Unfound" otherwise.
@@ -255,18 +255,20 @@
       T *foo = 0;
    and not
       T* foo = 0;
+   nor
+      T * foo;
  - Assume T is a given type. When declaring or defining with the
    "reference to T" notation, the & character must be adjacent to
-   the variable and not the type. That is use
+   the variable and not the type. That is use :
       T &foo = 0;
    and not
       T& foo = 0;
-   This is the common notation, not a 'gdcm special' notation.
-   (doxygen will not have any longer to correct)
+
+   (Doxygen will not have any longer to correct)
 
  - Always define a typedef for a new type and be consistent in usage.
    Use
-      typedef Header* HeaderPointer;
+      typedef Header *HeaderPointer;
       HeaderPointer MyHeaderPointer;
  - One notorious counter example for non using C style inclusion concerns
    exact-width integers (since there seem to be no equivalent for C++).

@@ -18,7 +18,7 @@ Gdcm is yet another C++ library dedicated to reading/parsing and writing
 <B>D</B>i<B>C</B>o<B>M</B>. 
 
 <!###################################>
-<H2>What gdcm IS</H2>
+<H2>What gdcm <font color=#00ff00>IS</font></H2>
 <UL>
 <LI>gdcm implements the
    <A HREF="http://www.dclunie.com/dicom-status/status.html">
@@ -32,6 +32,8 @@ Gdcm is yet another C++ library dedicated to reading/parsing and writing
        Please refer to
        <A HREF="ConformanceSummary.html">gdcm conformance summary</A>
        for more details.
+   <LI>Papyrus V2 and V3 file headers are readable; the user will have to use low level
+accessors if he wants to get the image pixels -sorry-
    </LI>
    </UL>
 </LI>
@@ -59,7 +61,7 @@ Gdcm is yet another C++ library dedicated to reading/parsing and writing
 </UL>
 
 <!###################################>
-<H2>What gdcm is NOT</H2>
+<H2>What gdcm is <font color=#ff0000>NOT</font></H2>
 
 Except for
 <A HREF="http://www.dclunie.com/dicom-status/status.html">
@@ -67,7 +69,7 @@ Except for
 gdcm does NOT implement any other part of the Dicom base standard
 (as opposed to other C++ based with open license libraries like
 <A HREF="http://www.offis.de/projekte/ig/dicom/soft-docs/soft01_d.html">
-        DCMTK </A>.
+        DCMTK</A>&nbsp;
 or
 <A HREF="http://www.erl.wustl.edu/DICOM/ctn.html">CTN</A>).
 <BR>
@@ -75,7 +77,8 @@ In particular <B>gdcm is not aware</B> of:
 <UL>
 <LI>the Dicom network file exchange protocol (Query/Retrieve),
 </LI>
-<LI>the Dicom media storage formats,
+<LI>the Dicom media storage formats (well ... it knows about the DICOMDIR
+-reading and writing- and its parts PATIENT, STUDY, SERIES, IMAGE)
 </LI>
 <LI>Print, Verification
 </LI>
@@ -92,10 +95,13 @@ Among all the features of the
 gdcm doesn't implement (yet?)
 <UL>
   <LI>the integration of (optional) overlays on image.
-  </LI>
-  <LI>a more complete supports of the 
-     <A HREF="ConformanceSummary.html">various Jpeg encodings</A>
-  </LI>
+  </li>
+  <LI>a support to write files according to the 
+     <A HREF="ConformanceSummary.html">various classical Jpeg encodings</A>
+             (only read methods are provided)
+  </li>
+  <LI>a support to deal with JPEG 2000 encodings</A>
+  </li>
 </UL>
 Gdcm also still needs
 <UL>
