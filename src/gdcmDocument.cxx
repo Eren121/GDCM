@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:03:28 $
-  Version:   $Revision: 1.192 $
+  Date:      $Date: 2005/01/17 17:27:03 $
+  Version:   $Revision: 1.193 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -412,7 +412,7 @@ bool Document::CloseFile()
 
 /**
  * \brief Writes in a file all the Header Entries (Dicom Elements) 
- * @param fp file pointer on an already open file
+ * @param fp file pointer on an already open file (actually: Output File Stream)
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * \return Always true.
@@ -587,8 +587,8 @@ BinEntry *Document::ReplaceOrCreate(uint8_t *binArea,
 /*
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Create it when unexistant.
- * @param   Group   Group number of the Entry 
- * @param   Elem  Element number of the Entry
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
  * \return  pointer to the modified/created SeqEntry (NULL when creation
  *          failed).
  */
@@ -657,13 +657,13 @@ bool Document::ReplaceIfExist(std::string const &value,
 
 /**
  * \brief   Checks if a given Dicom Element exists within the H table
- * @param   group      Group number of the searched Dicom Element 
- * @param   element  Element number of the searched Dicom Element 
+ * @param   group   Group number of the searched Dicom Element 
+ * @param   elem  Element number of the searched Dicom Element 
  * @return true is found
  */
-bool Document::CheckIfEntryExist(uint16_t group, uint16_t element )
+bool Document::CheckIfEntryExist(uint16_t group, uint16_t elem )
 {
-   const std::string &key = DictEntry::TranslateToKey(group, element );
+   const std::string &key = DictEntry::TranslateToKey(group, elem );
    return TagHT.count(key) != 0;
 }
 
@@ -672,14 +672,14 @@ bool Document::CheckIfEntryExist(uint16_t group, uint16_t element )
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag.
- * @param   group Group number of the searched tag.
- * @param   element Element number of the searched tag.
+ * @param   group  Group number of the searched tag.
+ * @param   elem Element number of the searched tag.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string Document::GetEntry(uint16_t group, uint16_t element)
+std::string Document::GetEntry(uint16_t group, uint16_t elem)
 {
-   TagKey key = DictEntry::TranslateToKey(group, element);
+   TagKey key = DictEntry::TranslateToKey(group, elem);
    if ( !TagHT.count(key))
    {
       return GDCM_UNFOUND;
@@ -692,19 +692,18 @@ std::string Document::GetEntry(uint16_t group, uint16_t element)
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag..
- *
  *          Obtaining the VR (Value Representation) might be needed by caller
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   group     Group number of the searched tag.
- * @param   element Element number of the searched tag.
+ * @param   group  Group number of the searched tag.
+ * @param   elem Element number of the searched tag.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string Document::GetEntryVR(uint16_t group, uint16_t element)
+std::string Document::GetEntryVR(uint16_t group, uint16_t elem)
 {
-   DocEntry *elem = GetDocEntry(group, element);
+   DocEntry *elem = GetDocEntry(group, elem);
    if ( !elem )
    {
       return GDCM_UNFOUND;
@@ -716,13 +715,13 @@ std::string Document::GetEntryVR(uint16_t group, uint16_t element)
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the value length of a given tag..
- * @param   group     Group number of the searched tag.
- * @param   element Element number of the searched tag.
+ * @param   group  Group number of the searched tag.
+ * @param   elem Element number of the searched tag.
  * @return  Corresponding element length; -2 if not found
  */
-int Document::GetEntryLength(uint16_t group, uint16_t element)
+int Document::GetEntryLength(uint16_t group, uint16_t elem)
 {
-   DocEntry *elem =  GetDocEntry(group, element);
+   DocEntry *elem =  GetDocEntry(group, elem);
    if ( !elem )
    {
       return -2;  //magic number
@@ -735,13 +734,13 @@ int Document::GetEntryLength(uint16_t group, uint16_t element)
  *          through it's (group, element) and modifies it's content with
  *          the given value.
  * @param   content new value (string) to substitute with
- * @param   group     group number of the Dicom Element to modify
- * @param   element element number of the Dicom Element to modify
+ * @param   group  group number of the Dicom Element to modify
+ * @param   elem element number of the Dicom Element to modify
  */
 bool Document::SetEntry(std::string const& content, 
-                        uint16_t group, uint16_t element) 
+                        uint16_t group, uint16_t elem) 
 {
-   ValEntry *entry = GetValEntry(group, element);
+   ValEntry *entry = GetValEntry(group, elem);
    if (!entry )
    {
       gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
@@ -756,13 +755,13 @@ bool Document::SetEntry(std::string const& content,
  *          the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param   lgth new value length
- * @param   group     group number of the Dicom Element to modify
- * @param   element element number of the Dicom Element to modify
+ * @param   group  group number of the Dicom Element to modify
+ * @param   elem element number of the Dicom Element to modify
  */
 bool Document::SetEntry(uint8_t*content, int lgth, 
-                        uint16_t group, uint16_t element) 
+                        uint16_t group, uint16_t elem) 
 {
-   BinEntry *entry = GetBinEntry(group, element);
+   BinEntry *entry = GetBinEntry(group, elem);
    if (!entry )
    {
       gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
@@ -793,7 +792,7 @@ bool Document::SetEntry(std::string const &content,ValEntry *entry)
  *          and modifies it's content with the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param  entry Entry to be modified 
- * @param   lgth new value length
+ * @param  lgth new value length
  */
 bool Document::SetEntry(uint8_t *content, int lgth, BinEntry *entry)
 {
@@ -860,21 +859,21 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
 /**
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
- * @param element  Entry whose binArea is going to be loaded
+ * @param elem  Entry whose binArea is going to be loaded
  */
-void Document::LoadEntryBinArea(BinEntry *element) 
+void Document::LoadEntryBinArea(BinEntry *elem) 
 {
-   if(element->GetBinArea())
+   if(elem->GetBinArea())
       return;
 
    bool openFile = !Fp;
    if(openFile)
       OpenFile();
 
-   size_t o =(size_t)element->GetOffset();
+   size_t o =(size_t)elem->GetOffset();
    Fp->seekg(o, std::ios::beg);
 
-   size_t l = element->GetLength();
+   size_t l = elem->GetLength();
    uint8_t *a = new uint8_t[l];
    if( !a )
    {
@@ -890,7 +889,7 @@ void Document::LoadEntryBinArea(BinEntry *element)
       return;
    }
 
-   element->SetBinArea(a);
+   elem->SetBinArea(a);
 
    if(openFile)
       CloseFile();
@@ -899,14 +898,14 @@ void Document::LoadEntryBinArea(BinEntry *element)
 /**
  * \brief   Sets a 'non string' value to a given Dicom Element
  * @param   area area containing the 'non string' value
- * @param   group     Group number of the searched Dicom Element 
- * @param   element Element number of the searched Dicom Element 
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element 
  * @return  
  */
 /*bool Document::SetEntryBinArea(uint8_t *area,
-                                 uint16_t group, uint16_t element) 
+                                 uint16_t group, uint16_t elem) 
 {
-   DocEntry *currentEntry = GetDocEntry(group, element);
+   DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
    {
       return false;
@@ -927,13 +926,13 @@ void Document::LoadEntryBinArea(BinEntry *element)
  *           if you think it's NOT UNIQUE, check the count number
  *           and use iterators to retrieve ALL the Dicoms Elements within
  *           a given couple (group, element)
- * @param   group Group number of the searched Dicom Element 
- * @param   element Element number of the searched Dicom Element 
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element 
  * @return  
  */
-DocEntry *Document::GetDocEntry(uint16_t group, uint16_t element) 
+DocEntry *Document::GetDocEntry(uint16_t group, uint16_t elem) 
 {
-   TagKey key = DictEntry::TranslateToKey(group, element);
+   TagKey key = DictEntry::TranslateToKey(group, elem);
    if ( !TagHT.count(key))
    {
       return NULL;
@@ -945,11 +944,13 @@ DocEntry *Document::GetDocEntry(uint16_t group, uint16_t element)
  * \brief  Same as \ref Document::GetDocEntry except it only
  *         returns a result when the corresponding entry is of type
  *         ValEntry.
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element  
  * @return When present, the corresponding ValEntry. 
  */
-ValEntry *Document::GetValEntry(uint16_t group, uint16_t element)
+ValEntry *Document::GetValEntry(uint16_t group, uint16_t elem)
 {
-   DocEntry *currentEntry = GetDocEntry(group, element);
+   DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
    {
       return 0;
@@ -967,11 +968,13 @@ ValEntry *Document::GetValEntry(uint16_t group, uint16_t element)
  * \brief  Same as \ref Document::GetDocEntry except it only
  *         returns a result when the corresponding entry is of type
  *         BinEntry.
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element  
  * @return When present, the corresponding BinEntry. 
  */
-BinEntry *Document::GetBinEntry(uint16_t group, uint16_t element)
+BinEntry *Document::GetBinEntry(uint16_t group, uint16_t elem)
 {
-   DocEntry *currentEntry = GetDocEntry(group, element);
+   DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
    {
       return 0;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/01/17 17:27:03 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,23 +31,23 @@ namespace gdcm
 /**
  * \brief   Constructor
  * @param   group      DICOM-Group Number
- * @param   element    DICOM-Element Number
+ * @param   elem       DICOM-Element Number
  * @param   vr         Value Representation
  * @param   vm         Value Mutlplicity 
  * @param   name      description of the element
 */
 
-DictEntry::DictEntry(uint16_t group, uint16_t element,
+DictEntry::DictEntry(uint16_t group, uint16_t elem,
                      TagName const &vr, 
                      TagName const &vm,
                      TagName const &name)
 {
    Group   = group;
-   Element = element;
+   Element = elem;
    VR      = vr;
    VM      = vm;
    Name    = name;
-   Key     = TranslateToKey(group, element);
+   Key     = TranslateToKey(group, elem);
 }
 
 //-----------------------------------------------------------------------------
@@ -80,12 +80,12 @@ void DictEntry::Print(std::ostream &os, std::string const & )
  * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
  *                                              and a Dicom element number)
  * @param  group the Dicom group number used to build the tag
- * @param  element the Dicom element number used to build the tag
+ * @param  elem the Dicom element number used to build the tag
  * @return the built tag
  */
-TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t element)
+TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t elem)
 {
-   return Util::Format("%04x|%04x", group, element);
+   return Util::Format("%04x|%04x", group, elem);
 }
 
 //-----------------------------------------------------------------------------
