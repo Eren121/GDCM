@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 00:24:44 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2005/01/15 00:52:36 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -381,145 +381,173 @@ typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
 
 
 #ifdef __APPLE__
-// Returns an iterator containing the primary (built-in) Ethernet interface. The caller is responsible for
-// releasing the iterator after the caller is done with it.
+// Returns an iterator containing the primary (built-in) Ethernet interface. 
+// The caller is responsible for releasing the iterator after the caller is 
+// done with it.
 static kern_return_t FindEthernetInterfaces(io_iterator_t *matchingServices)
 {
-    kern_return_t   kernResult; 
-    mach_port_t     masterPort;
-    CFMutableDictionaryRef  matchingDict;
-    CFMutableDictionaryRef  propertyMatchDict;
-    
-    // Retrieve the Mach port used to initiate communication with I/O Kit
-    kernResult = IOMasterPort(MACH_PORT_NULL, &masterPort);
-    if (KERN_SUCCESS != kernResult)
-    {
-        printf("IOMasterPort returned %d\n", kernResult);
-        return kernResult;
-    }
-    
-    // Ethernet interfaces are instances of class kIOEthernetInterfaceClass. 
-    // IOServiceMatching is a convenience function to create a dictionary with the key kIOProviderClassKey and 
-    // the specified value.
-    matchingDict = IOServiceMatching(kIOEthernetInterfaceClass);
+   kern_return_t   kernResult; 
+   mach_port_t     masterPort;
+   CFMutableDictionaryRef  matchingDict;
+   CFMutableDictionaryRef  propertyMatchDict;
+   
+   // Retrieve the Mach port used to initiate communication with I/O Kit
+   kernResult = IOMasterPort(MACH_PORT_NULL, &masterPort);
+   if (KERN_SUCCESS != kernResult)
+   {
+       printf("IOMasterPort returned %d\n", kernResult);
+       return kernResult;
+   }
+   
+   // Ethernet interfaces are instances of class kIOEthernetInterfaceClass. 
+   // IOServiceMatching is a convenience function to create a dictionary 
+   // with the key kIOProviderClassKey and 
+   // the specified value.
+   matchingDict = IOServiceMatching(kIOEthernetInterfaceClass);
 
-    // Note that another option here would be:
-    // matchingDict = IOBSDMatching("en0");
-        
-    if (NULL == matchingDict)
-    {
-        printf("IOServiceMatching returned a NULL dictionary.\n");
-    }
-    else {
-        // Each IONetworkInterface object has a Boolean property with the key kIOPrimaryInterface. Only the
-        // primary (built-in) interface has this property set to TRUE.
-        
-        // IOServiceGetMatchingServices uses the default matching criteria defined by IOService. This considers
-        // only the following properties plus any family-specific matching in this order of precedence 
-        // (see IOService::passiveMatch):
-        //
-        // kIOProviderClassKey (IOServiceMatching)
-        // kIONameMatchKey (IOServiceNameMatching)
-        // kIOPropertyMatchKey
-        // kIOPathMatchKey
-        // kIOMatchedServiceCountKey
-        // family-specific matching
-        // kIOBSDNameKey (IOBSDNameMatching)
-        // kIOLocationMatchKey
-        
-        // The IONetworkingFamily does not define any family-specific matching. This means that in            
-        // order to have IOServiceGetMatchingServices consider the kIOPrimaryInterface property, we must
-        // add that property to a separate dictionary and then add that to our matching dictionary
-        // specifying kIOPropertyMatchKey.
-            
-        propertyMatchDict = CFDictionaryCreateMutable( kCFAllocatorDefault, 0,
-                                                       &kCFTypeDictionaryKeyCallBacks,
-                                                       &kCFTypeDictionaryValueCallBacks);
-    
-        if (NULL == propertyMatchDict)
-        {
-            printf("CFDictionaryCreateMutable returned a NULL dictionary.\n");
-        }
-        else {
-            // Set the value in the dictionary of the property with the given key, or add the key 
-            // to the dictionary if it doesn't exist. This call retains the value object passed in.
-            CFDictionarySetValue(propertyMatchDict, CFSTR(kIOPrimaryInterface), kCFBooleanTrue); 
-            
-            // Now add the dictionary containing the matching value for kIOPrimaryInterface to our main
-            // matching dictionary. This call will retain propertyMatchDict, so we can release our reference 
-            // on propertyMatchDict after adding it to matchingDict.
-            CFDictionarySetValue(matchingDict, CFSTR(kIOPropertyMatchKey), propertyMatchDict);
-            CFRelease(propertyMatchDict);
-        }
-    }
-    
-    // IOServiceGetMatchingServices retains the returned iterator, so release the iterator when we're done with it.
-    // IOServiceGetMatchingServices also consumes a reference on the matching dictionary so we don't need to release
-    // the dictionary explicitly.
-    kernResult = IOServiceGetMatchingServices(masterPort, matchingDict, matchingServices);    
-    if (KERN_SUCCESS != kernResult)
-    {
-        printf("IOServiceGetMatchingServices returned %d\n", kernResult);
-    }
-        
-    return kernResult;
+   // Note that another option here would be:
+   // matchingDict = IOBSDMatching("en0");
+       
+   if (NULL == matchingDict)
+   {
+       printf("IOServiceMatching returned a NULL dictionary.\n");
+   }
+   else 
+   {
+      // Each IONetworkInterface object has a Boolean property with the 
+      // key kIOPrimaryInterface. Only the
+      // primary (built-in) interface has this property set to TRUE.
+      
+      // IOServiceGetMatchingServices uses the default matching criteria 
+      // defined by IOService. This considers
+      // only the following properties plus any family-specific matching 
+      // in this order of precedence 
+      // (see IOService::passiveMatch):
+      //
+      // kIOProviderClassKey (IOServiceMatching)
+      // kIONameMatchKey (IOServiceNameMatching)
+      // kIOPropertyMatchKey
+      // kIOPathMatchKey
+      // kIOMatchedServiceCountKey
+      // family-specific matching
+      // kIOBSDNameKey (IOBSDNameMatching)
+      // kIOLocationMatchKey
+      
+      // The IONetworkingFamily does not define any family-specific 
+      // matching. This means that in order to have 
+      // IOServiceGetMatchingServices consider the kIOPrimaryInterface 
+      // property, we must add that property to a separate dictionary and 
+      // then add that to our matching dictionary specifying 
+      // kIOPropertyMatchKey.
+          
+      propertyMatchDict = 
+         CFDictionaryCreateMutable( kCFAllocatorDefault, 0,
+                                    &kCFTypeDictionaryKeyCallBacks,
+                                    &kCFTypeDictionaryValueCallBacks);
+   
+      if (NULL == propertyMatchDict)
+      {
+          printf("CFDictionaryCreateMutable returned a NULL dictionary.\n");
+      }
+      else 
+      {
+         // Set the value in the dictionary of the property with the given 
+         // key, or add the key to the dictionary if it doesn't exist. 
+         // This call retains the value object passed in.
+         CFDictionarySetValue(propertyMatchDict, CFSTR(kIOPrimaryInterface), 
+                              kCFBooleanTrue); 
+         
+         // Now add the dictionary containing the matching value for 
+         // kIOPrimaryInterface to our main matching dictionary. This call 
+         // will retain propertyMatchDict, so we can release our reference 
+         // on propertyMatchDict after adding it to matchingDict.
+         CFDictionarySetValue(matchingDict, CFSTR(kIOPropertyMatchKey), 
+                              propertyMatchDict);
+         CFRelease(propertyMatchDict);
+      }
+   }
+
+   // IOServiceGetMatchingServices retains the returned iterator, so release
+   // the iterator when we're done with it.
+   // IOServiceGetMatchingServices also consumes a reference on the matching
+   // dictionary so we don't need to release the dictionary explicitly.
+   kernResult = 
+     IOServiceGetMatchingServices(masterPort, matchingDict, matchingServices);
+   if (KERN_SUCCESS != kernResult)
+   {
+       printf("IOServiceGetMatchingServices returned %d\n", kernResult);
+   }
+
+   return kernResult;
 }
     
-// Given an iterator across a set of Ethernet interfaces, return the MAC address of the last one.
+// Given an iterator across a set of Ethernet interfaces, return the MAC 
+// address of the last one.
 // If no interfaces are found the MAC address is set to an empty string.
 // In this sample the iterator should contain just the primary interface.
-static kern_return_t GetMACAddress_MAC(io_iterator_t intfIterator, UInt8 *MACAddress)
+static kern_return_t GetMACAddress_MAC(io_iterator_t intfIterator, 
+                                       UInt8 *MACAddress)
 {
-    io_object_t   intfService;
-    io_object_t   controllerService;
-    kern_return_t kernResult = KERN_FAILURE;
-    
-    // Initialize the returned address
-    bzero(MACAddress, kIOEthernetAddressSize);
-    
-    // IOIteratorNext retains the returned object, so release it when we're done with it.
-    while ( (intfService = IOIteratorNext(intfIterator)))
-    {
-        CFTypeRef MACAddressAsCFData;        
+   io_object_t   intfService;
+   io_object_t   controllerService;
+   kern_return_t kernResult = KERN_FAILURE;
+   
+   // Initialize the returned address
+   bzero(MACAddress, kIOEthernetAddressSize);
+   
+   // IOIteratorNext retains the returned object, so release it when we're 
+   // done with it.
+   while ( (intfService = IOIteratorNext(intfIterator)))
+   {
+      CFTypeRef MACAddressAsCFData;        
 
-        // IONetworkControllers can't be found directly by the IOServiceGetMatchingServices call, 
-        // since they are hardware nubs and do not participate in driver matching. In other words,
-        // registerService() is never called on them. So we've found the IONetworkInterface and will 
-        // get its parent controller by asking for it specifically.
-        
-        // IORegistryEntryGetParentEntry retains the returned object, so release it when we're done with it.
-        kernResult = IORegistryEntryGetParentEntry( intfService,
-                                                    kIOServicePlane,
-                                                    &controllerService );
+      // IONetworkControllers can't be found directly by the 
+      // IOServiceGetMatchingServices call, since they are hardware nubs 
+      // and do not participate in driver matching. In other words,
+      // registerService() is never called on them. So we've found the 
+      // IONetworkInterface and will 
+      // get its parent controller by asking for it specifically.
+      
+      // IORegistryEntryGetParentEntry retains the returned object, so 
+      // release it when we're done with it.
+      kernResult = IORegistryEntryGetParentEntry( intfService,
+                                                  kIOServicePlane,
+                                                  &controllerService );
 
-        if (KERN_SUCCESS != kernResult)
-        {
-            printf("IORegistryEntryGetParentEntry returned 0x%08x\n", kernResult);
-        }
-        else {
-            // Retrieve the MAC address property from the I/O Registry in the form of a CFData
-            MACAddressAsCFData = IORegistryEntryCreateCFProperty( controllerService,
-                                                                  CFSTR(kIOMACAddress),
-                                                                  kCFAllocatorDefault,
-                                                                  0);
-            if (MACAddressAsCFData)
-            {
-                CFShow(MACAddressAsCFData); // for display purposes only; output goes to stderr
-                
-                // Get the raw bytes of the MAC address from the CFData
-                CFDataGetBytes(MACAddressAsCFData, CFRangeMake(0, kIOEthernetAddressSize), MACAddress);
-                CFRelease(MACAddressAsCFData);
-            }
-                
-            // Done with the parent Ethernet controller object so we release it.
-            (void) IOObjectRelease(controllerService);
-        }
-        
-        // Done with the Ethernet interface object so we release it.
-        (void) IOObjectRelease(intfService);
-    }
-        
-    return kernResult;
+      if (KERN_SUCCESS != kernResult)
+      {
+         printf("IORegistryEntryGetParentEntry returned 0x%08x\n", kernResult);
+      }
+      else
+      {
+         // Retrieve the MAC address property from the I/O Registry in the 
+         // form of a CFData
+         MACAddressAsCFData = 
+            IORegistryEntryCreateCFProperty( controllerService,
+                                             CFSTR(kIOMACAddress),
+                                             kCFAllocatorDefault,
+                                             0);
+         if (MACAddressAsCFData)
+         {
+            // for display purposes only; output goes to stderr
+            //CFShow(MACAddressAsCFData);
+            
+            // Get the raw bytes of the MAC address from the CFData
+            CFDataGetBytes(MACAddressAsCFData, 
+                           CFRangeMake(0, kIOEthernetAddressSize), 
+                           MACAddress);
+            CFRelease(MACAddressAsCFData);
+         }
+
+         // Done with the parent Ethernet controller object so we release it.
+         (void) IOObjectRelease(controllerService);
+      }
+
+      // Done with the Ethernet interface object so we release it.
+      (void) IOObjectRelease(intfService);
+   }
+
+   return kernResult;
 }
 #endif
 
@@ -527,67 +555,47 @@ long GetMacAddrSys ( u_char *addr)
 {
 #ifdef _WIN32
    WSADATA WinsockData;
-   if (WSAStartup(MAKEWORD(2, 0), &WinsockData) != 0) {
-       fprintf(stderr, "This program requires Winsock 2.x!\n");
-       return -1;
+   if (WSAStartup(MAKEWORD(2, 0), &WinsockData) != 0) 
+   {
+      std::cerr << "This program requires Winsock 2.x!" << std::endl;
+      return -1;
    }
 
-   HINSTANCE m_hInst;
-   pSnmpExtensionInit m_Init;
-   pSnmpExtensionInitEx m_InitEx;
-   pSnmpExtensionQuery m_Query;
-   pSnmpExtensionTrap m_Trap;
    HANDLE PollForTrapEvent;
    AsnObjectIdentifier SupportedView;
-   UINT OID_ifEntryType[] = {
-       1, 3, 6, 1, 2, 1, 2, 2, 1, 3
-   };
-   UINT OID_ifEntryNum[] = {
-       1, 3, 6, 1, 2, 1, 2, 1
-   };
-   UINT OID_ipMACEntAddr[] = {
-       1, 3, 6, 1, 2, 1, 2, 2, 1, 6
-   };                          //, 1 ,6 };
-   AsnObjectIdentifier MIB_ifMACEntAddr =
-       { sizeof(OID_ipMACEntAddr) / sizeof(UINT), OID_ipMACEntAddr };
+   UINT OID_ifEntryType[] = { 1, 3, 6, 1, 2, 1, 2, 2, 1, 3 };
+   UINT OID_ifEntryNum[] = { 1, 3, 6, 1, 2, 1, 2, 1 };
+   UINT OID_ipMACEntAddr[] = { 1, 3, 6, 1, 2, 1, 2, 2, 1, 6 };
+   AsnObjectIdentifier MIB_ifMACEntAddr = {
+       sizeof(OID_ipMACEntAddr) / sizeof(UINT), OID_ipMACEntAddr };
    AsnObjectIdentifier MIB_ifEntryType = {
-       sizeof(OID_ifEntryType) / sizeof(UINT), OID_ifEntryType
-   };
+       sizeof(OID_ifEntryType) / sizeof(UINT), OID_ifEntryType };
    AsnObjectIdentifier MIB_ifEntryNum = {
-       sizeof(OID_ifEntryNum) / sizeof(UINT), OID_ifEntryNum
-   };
+       sizeof(OID_ifEntryNum) / sizeof(UINT), OID_ifEntryNum };
    RFC1157VarBindList varBindList;
    RFC1157VarBind varBind[2];
    AsnInteger errorStatus;
    AsnInteger errorIndex;
-   AsnObjectIdentifier MIB_NULL = {
-       0, 0
-   };
+   AsnObjectIdentifier MIB_NULL = { 0, 0 };
    int ret;
    int dtmp;
    int i = 0, j = 0;
    BOOL found = FALSE;
-   m_Init = NULL;
-   m_InitEx = NULL;
-   m_Query = NULL;
-   m_Trap = NULL;
 
-   /* Load the SNMP dll and get the addresses of the functions
-      necessary */
-   m_hInst = LoadLibrary("inetmib1.dll");
-   if (m_hInst < (HINSTANCE) HINSTANCE_ERROR) {
-       m_hInst = NULL;
-       return -1;
+   // Load the SNMP dll and get the addresses of the functions necessary
+   HINSTANCE m_hInst = LoadLibrary("inetmib1.dll");
+   if (m_hInst < (HINSTANCE) HINSTANCE_ERROR)
+   {
+      m_hInst = NULL;
+      return -1;
    }
-   m_Init =
+   pSnmpExtensionInit m_Init =
        (pSnmpExtensionInit) GetProcAddress(m_hInst, "SnmpExtensionInit");
-   m_InitEx =
-       (pSnmpExtensionInitEx) GetProcAddress(m_hInst,
-                                             "SnmpExtensionInitEx");
-   m_Query =
-       (pSnmpExtensionQuery) GetProcAddress(m_hInst,
-                                            "SnmpExtensionQuery");
-   m_Trap =
+   pSnmpExtensionInitEx m_InitEx =
+       (pSnmpExtensionInitEx) GetProcAddress(m_hInst, "SnmpExtensionInitEx");
+   pSnmpExtensionQuery m_Query =
+       (pSnmpExtensionQuery) GetProcAddress(m_hInst, "SnmpExtensionQuery");
+   pSnmpExtensionTrap m_Trap =
        (pSnmpExtensionTrap) GetProcAddress(m_hInst, "SnmpExtensionTrap");
    m_Init(GetTickCount(), &PollForTrapEvent, &SupportedView);
 
@@ -596,108 +604,87 @@ long GetMacAddrSys ( u_char *addr)
    varBind[0].name = MIB_NULL;
    varBind[1].name = MIB_NULL;
 
-   /* Copy in the OID to find the number of entries in the
-      Inteface table */
-   varBindList.len = 1;        /* Only retrieving one item */
+   // Copy in the OID to find the number of entries in the
+   // Inteface table
+   varBindList.len = 1;        // Only retrieving one item
    SNMP_oidcpy(&varBind[0].name, &MIB_ifEntryNum);
-   ret =
-       m_Query(ASN_RFC1157_GETNEXTREQUEST, &varBindList, &errorStatus,
-               &errorIndex);
-   printf("# of adapters in this system : %i\n",
-          varBind[0].value.asnValue.number); varBindList.len = 2;
+   ret = m_Query(ASN_RFC1157_GETNEXTREQUEST, &varBindList, &errorStatus,
+                 &errorIndex);
+//   printf("# of adapters in this system : %i\n",
+//          varBind[0].value.asnValue.number); varBindList.len = 2;
 
-   /* Copy in the OID of ifType, the type of interface */
+   // Copy in the OID of ifType, the type of interface
    SNMP_oidcpy(&varBind[0].name, &MIB_ifEntryType);
 
-   /* Copy in the OID of ifPhysAddress, the address */
+   // Copy in the OID of ifPhysAddress, the address
    SNMP_oidcpy(&varBind[1].name, &MIB_ifMACEntAddr);
 
-   do {
+   do
+   {
+      // Submit the query.  Responses will be loaded into varBindList.
+      // We can expect this call to succeed a # of times corresponding
+      // to the # of adapters reported to be in the system
+      ret = m_Query(ASN_RFC1157_GETNEXTREQUEST, &varBindList, &errorStatus,
+                    &errorIndex); 
+      if (!ret)
+      {
+         ret = 1;
+      }
+      else
+      {
+         // Confirm that the proper type has been returned
+         ret = SNMP_oidncmp(&varBind[0].name, &MIB_ifEntryType,
+                            MIB_ifEntryType.idLength);
+      }
+      if (!ret)
+      {
+         j++;
+         dtmp = varBind[0].value.asnValue.number;
+         printf("Interface #%i type : %i\n", j, dtmp);
 
-       /* Submit the query.  Responses will be loaded into varBindList.
-          We can expect this call to succeed a # of times corresponding
-          to the # of adapters reported to be in the system */
-       ret =
-           m_Query(ASN_RFC1157_GETNEXTREQUEST, &varBindList, &errorStatus,
-                   &errorIndex); if (!ret) ret = 1;
+         // Type 6 describes ethernet interfaces
+         if (dtmp == 6)
+         {
+            // Confirm that we have an address here
+            ret = SNMP_oidncmp(&varBind[1].name, &MIB_ifMACEntAddr,
+                               MIB_ifMACEntAddr.idLength);
+            if ( !ret && varBind[1].value.asnValue.address.stream != NULL )
+            {
+               if ( (varBind[1].value.asnValue.address.stream[0] == 0x44)
+                 && (varBind[1].value.asnValue.address.stream[1] == 0x45)
+                 && (varBind[1].value.asnValue.address.stream[2] == 0x53)
+                 && (varBind[1].value.asnValue.address.stream[3] == 0x54)
+                 && (varBind[1].value.asnValue.address.stream[4] == 0x00) )
+               {
+                   // Ignore all dial-up networking adapters
+                   printf("Interface #%i is a DUN adapter\n", j);
+                   continue;
+               }
+               if ( (varBind[1].value.asnValue.address.stream[0] == 0x00)
+                 && (varBind[1].value.asnValue.address.stream[1] == 0x00)
+                 && (varBind[1].value.asnValue.address.stream[2] == 0x00)
+                 && (varBind[1].value.asnValue.address.stream[3] == 0x00)
+                 && (varBind[1].value.asnValue.address.stream[4] == 0x00)
+                 && (varBind[1].value.asnValue.address.stream[5] == 0x00) )
+               {
+                  // Ignore NULL addresses returned by other network
+                  // interfaces
+                  printf("Interface #%i is a NULL address\n", j);
+                  continue;
+               }
+               memcpy( addr, varBind[1].value.asnValue.address.stream, 6);
+            }
+         }
+      }
+   } while (!ret);
 
-       else
-           /* Confirm that the proper type has been returned */
-           ret =
-               SNMP_oidncmp(&varBind[0].name, &MIB_ifEntryType,
-                            MIB_ifEntryType.idLength); if (!ret) {
-           j++;
-           dtmp = varBind[0].value.asnValue.number;
-           printf("Interface #%i type : %i\n", j, dtmp);
-
-           /* Type 6 describes ethernet interfaces */
-           if (dtmp == 6) {
-
-               /* Confirm that we have an address here */
-               ret =
-                   SNMP_oidncmp(&varBind[1].name, &MIB_ifMACEntAddr,
-                                MIB_ifMACEntAddr.idLength);
-               if ((!ret)
-                   && (varBind[1].value.asnValue.address.stream != NULL)) {
-                   if (
-                       (varBind[1].value.asnValue.address.stream[0] ==
-                        0x44)
-                       && (varBind[1].value.asnValue.address.stream[1] ==
-                           0x45)
-                       && (varBind[1].value.asnValue.address.stream[2] ==
-                           0x53)
-                       && (varBind[1].value.asnValue.address.stream[3] ==
-                           0x54)
-                       && (varBind[1].value.asnValue.address.stream[4] ==
-                           0x00)) {
-
-                       /* Ignore all dial-up networking adapters */
-                       printf("Interface #%i is a DUN adapter\n", j);
-                       continue;
-                   }
-                   if (
-                       (varBind[1].value.asnValue.address.stream[0] ==
-                        0x00)
-                       && (varBind[1].value.asnValue.address.stream[1] ==
-                           0x00)
-                       && (varBind[1].value.asnValue.address.stream[2] ==
-                           0x00)
-                       && (varBind[1].value.asnValue.address.stream[3] ==
-                           0x00)
-                       && (varBind[1].value.asnValue.address.stream[4] ==
-                           0x00)
-                       && (varBind[1].value.asnValue.address.stream[5] ==
-                           0x00)) {
-
-                       /* Ignore NULL addresses returned by other network
-                          interfaces */
-                       printf("Interface #%i is a NULL address\n", j);
-                       continue;
-                   }
-                   //sprintf((char*)addr, "%02x%02x%02x%02x%02x%02x",
-                   //        varBind[1].value.asnValue.address.stream[0],
-                   //        varBind[1].value.asnValue.address.stream[1],
-                   //        varBind[1].value.asnValue.address.stream[2],
-                   //        varBind[1].value.asnValue.address.stream[3],
-                   //        varBind[1].value.asnValue.address.stream[4],
-                   //        varBind[1].value.asnValue.address.stream[5]);
-                   memcpy( addr, varBind[1].value.asnValue.address.stream, 6);
-                   //printf("MAC Address of interface #%i: %s\n", j, addr);
-              }
-           }
-       }
-   } while (!ret);         /* Stop only on an error.  An error will occur
-                              when we go exhaust the list of interfaces to
-                              be examined */
-   //getch();
-
-   /* Free the bindings */
+   // Free the bindings
    SNMP_FreeVarBind(&varBind[0]);
    SNMP_FreeVarBind(&varBind[1]);
    return 0;
 #endif //_WIN32
 
-/* implementation for Linux */
+// implementation for Linux
 #ifdef __linux__
    struct ifreq ifr;
    struct ifreq *IFR;
@@ -707,7 +694,8 @@ long GetMacAddrSys ( u_char *addr)
    int ok = 0;
 
    s = socket(AF_INET, SOCK_DGRAM, 0);
-   if (s==-1) {
+   if (s == -1)
+   {
        return -1;
    }
 
@@ -716,30 +704,35 @@ long GetMacAddrSys ( u_char *addr)
    ioctl(s, SIOCGIFCONF, &ifc);
  
    IFR = ifc.ifc_req;
-   for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++) {
-
-       strcpy(ifr.ifr_name, IFR->ifr_name);
-       if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0) {
-           if (! (ifr.ifr_flags & IFF_LOOPBACK)) {
-               if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0) {
-                   ok = 1;
-                   break;
-               }
-           }
-       }
+   for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++)
+   {
+      strcpy(ifr.ifr_name, IFR->ifr_name);
+      if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0)
+      {
+         if (! (ifr.ifr_flags & IFF_LOOPBACK))
+         {
+            if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0)
+            {
+               ok = 1;
+               break;
+            }
+         }
+      }
    }
 
    close(s);
-   if (ok) {
-       bcopy( ifr.ifr_hwaddr.sa_data, addr, 6);
+   if (ok)
+   {
+      bcopy( ifr.ifr_hwaddr.sa_data, addr, 6);
    }
-   else {
-       return -1;
+   else
+   {
+      return -1;
    }
    return 0;
 #endif
 
-/* implementation for FreeBSD */
+// implementation for FreeBSD
 #ifdef __FreeBSD__
    struct ifaddrs *ifap, *ifaphead;
    int rtnerr;
@@ -748,29 +741,32 @@ long GetMacAddrSys ( u_char *addr)
    int alen;
  
    rtnerr = getifaddrs(&ifaphead);
-   if (rtnerr) {
+   if (rtnerr)
+   {
      //perror(NULL);
      return -1;
    }
  
-   for (ifap = ifaphead; ifap; ifap = ifap->ifa_next) {
+   for (ifap = ifaphead; ifap; ifap = ifap->ifa_next)
+   {
+      if (ifap->ifa_addr->sa_family == AF_LINK)
+      {
+         sdl = (const struct sockaddr_dl *) ifap->ifa_addr;
+         ap = ((caddr_t)((sdl)->sdl_data + (sdl)->sdl_nlen));
+         alen = sdl->sdl_alen;
+         if (ap && alen > 0) 
+         {
+            //int i;
  
-     if (ifap->ifa_addr->sa_family == AF_LINK) {
-       sdl = (const struct sockaddr_dl *) ifap->ifa_addr;
-       ap = ((caddr_t)((sdl)->sdl_data + (sdl)->sdl_nlen));
-       alen = sdl->sdl_alen;
-       if (ap && alen > 0) {
-         int i;
- 
-         //printf ("%s:", ifap->ifa_name);
-         //for (i = 0; i < alen; i++, ap++)
-           {
-           //printf("%c%02x", i > 0 ? ':' : ' ', 0xff&*ap);
-           }
-         bcopy( ap, addr, 6);
-         //putchar('\n');
-       }
-     }
+            //printf ("%s:", ifap->ifa_name);
+            //for (i = 0; i < alen; i++, ap++)
+              {
+              //printf("%c%02x", i > 0 ? ':' : ' ', 0xff&*ap);
+              }
+            bcopy( ap, addr, 6);
+            //putchar('\n');
+         }
+      }
    }
    //putchar('\n');
  
@@ -778,98 +774,89 @@ long GetMacAddrSys ( u_char *addr)
    return 0;
 #endif //FreeBSD
 
-/* implementation for HP-UX */
+// implementation for HP-UX
 #ifdef __HP_aCC
+   const char LAN_DEV0[] = "/dev/lan0";
 
-#define LAN_DEV0 "/dev/lan0"
+   int fd;
+   struct fis iocnt_block;
+   char net_buf[sizeof(LAN_DEV0)+1];
 
-    int fd;
-    struct fis iocnt_block;
-    int i;
-    char net_buf[sizeof(LAN_DEV0)+1];
-    char *p;
+   (void)sprintf(net_buf, "%s", LAN_DEV0);
+   char *p = net_buf + strlen(net_buf) - 1;
 
-    (void)sprintf(net_buf, "%s", LAN_DEV0);
-    p = net_buf + strlen(net_buf) - 1;
+   // 
+   // Get 802.3 address from card by opening the driver and interrogating it.
+   //
+   for (int i = 0; i < 10; i++, (*p)++)
+   {
+      if ((fd = open (net_buf, O_RDONLY)) != -1) 
+      {
+         iocnt_block.reqtype = LOCAL_ADDRESS;
+         ioctl (fd, NETSTAT, &iocnt_block);
+         close (fd);
 
-    /* 
-     * Get 802.3 address from card by opening the driver and interrogating it.
-     */
-    for (i = 0; i < 10; i++, (*p)++) {
-        if ((fd = open (net_buf, O_RDONLY)) != -1) {
-      iocnt_block.reqtype = LOCAL_ADDRESS;
-      ioctl (fd, NETSTAT, &iocnt_block);
-      close (fd);
+         if (iocnt_block.vtype == 6) break;
+      }
+   }
 
-            if (iocnt_block.vtype == 6)
-                break;
-        }
-    }
+   if (fd == -1 || iocnt_block.vtype != 6)
+   {
+      return -1;
+   }
 
-    if (fd == -1 || iocnt_block.vtype != 6) {
-        return -1;
-    }
-
-  bcopy( &iocnt_block.value.s[0], addr, 6);
-  return 0;
-
-#endif /* HPUX */
+   bcopy( &iocnt_block.value.s[0], addr, 6);
+   return 0;
+#endif // HP-UX
 
 /* implementation for AIX */
 #ifdef _AIX
+   int size = getkerninfo(KINFO_NDD, 0, 0, 0);
+   if (size <= 0)
+   {
+      return -1;
+   }
+   struct kinfo_ndd *nddp = (struct kinfo_ndd *)malloc(size);
+         
+   if (!nddp)
+   {
+      return -1;
+   }
+   if (getkerninfo(KINFO_NDD, nddp, &size, 0) < 0)
+   {
+      free(nddp);
+      return -1;
+   }
+   bcopy(nddp->ndd_addr, addr, 6);
+   free(nddp);
 
-    int size;
-    struct kinfo_ndd *nddp;
-
-    size = getkerninfo(KINFO_NDD, 0, 0, 0);
-    if (size <= 0) {
-        return -1;
-    }
-    nddp = (struct kinfo_ndd *)malloc(size);
-          
-    if (!nddp) {
-        return -1;
-    }
-    if (getkerninfo(KINFO_NDD, nddp, &size, 0) < 0) {
-        free(nddp);
-        return -1;
-    }
-    bcopy(nddp->ndd_addr, addr, 6);
-    free(nddp);
-    return 0;
+   return 0;
 #endif //_AIX
 
 #ifdef __APPLE__
-    kern_return_t kernResult = KERN_SUCCESS; // on PowerPC this is an int (4 bytes)
-/*
- *  error number layout as follows (see mach/error.h and IOKit/IOReturn.h):
- *
- *  hi             lo
- * | system(6) | subsystem(12) | code(14) |
- */
-
-    io_iterator_t intfIterator;
-    UInt8 MACAddress[ kIOEthernetAddressSize ];
+   io_iterator_t intfIterator;
+   UInt8 MACAddress[ kIOEthernetAddressSize ];
  
-    kernResult = FindEthernetInterfaces(&intfIterator);
-    
-    if (KERN_SUCCESS != kernResult)
-    {
-        printf("FindEthernetInterfaces returned 0x%08x\n", kernResult);
-    }
-    else {
-        kernResult = GetMACAddress_MAC(intfIterator, MACAddress);
-        
-        if (KERN_SUCCESS != kernResult)
-        {
-            printf("GetMACAddress returned 0x%08x\n", kernResult);
-        }
-    }
-    
-    (void) IOObjectRelease(intfIterator); // Release the iterator.
-        
-    memcpy(addr, MACAddress, kIOEthernetAddressSize);
-    return kernResult;
+   kern_return_t kernResult = FindEthernetInterfaces(&intfIterator);
+   
+   if (KERN_SUCCESS != kernResult)
+   {
+       printf("FindEthernetInterfaces returned 0x%08x\n", kernResult);
+   }
+   else
+   {
+      kernResult = GetMACAddress_MAC(intfIterator, MACAddress);
+
+      if (KERN_SUCCESS != kernResult)
+      {
+          printf("GetMACAddress returned 0x%08x\n", kernResult);
+      }
+   }
+
+   (void) IOObjectRelease(intfIterator); // Release the iterator.
+       
+   memcpy(addr, MACAddress, kIOEthernetAddressSize);
+   return kernResult;
 #endif //APPLE
 
 /* Not implemented platforms */
@@ -883,20 +870,19 @@ std::string Util::GetMACAddress()
    // and http://tangentsoft.net/wskfaq/examples/src/snmpmac.cpp for windows version
    // and http://groups-beta.google.com/group/sol.lists.freebsd.hackers/msg/0d0f862e05fce6c0 for the FreeBSD version
    // and http://developer.apple.com/samplecode/GetPrimaryMACAddress/GetPrimaryMACAddress.html for MacOSX version
-   long stat;
    u_char addr[6];
    std::string macaddr;
  
-   stat = GetMacAddrSys( addr);
+   long stat = GetMacAddrSys(addr);
    if (0 == stat)
    {
       //printf( "MAC address = ");
-        for (int i=0; i<6; ++i) 
-        {
-            //printf("%2.2x", addr[i]);
-            macaddr += Format("%2.2x", addr[i]);
-        }
-       // printf( "\n");
+      for (int i=0; i<6; ++i) 
+      {
+         //printf("%2.2x", addr[i]);
+         macaddr += Format("%2.2x", addr[i]);
+      }
+      // printf( "\n");
       return macaddr;
    }
    else
@@ -912,7 +898,8 @@ std::string Util::GetMACAddress()
  */
 std::string Util::GetIPAddress()
 {
-  // This is a rip from http://www.codeguru.com/Cpp/I-N/internet/network/article.php/c3445/
+  // This is a rip from 
+  // http://www.codeguru.com/Cpp/I-N/internet/network/article.php/c3445/
 #ifndef HOST_NAME_MAX
   // SUSv2 guarantees that `Host names are limited to 255 bytes'.
   // POSIX 1003.1-2001 guarantees that `Host names (not including the
@@ -925,9 +912,10 @@ std::string Util::GetIPAddress()
   WORD wVersionRequested = MAKEWORD(1,0);
   WSADATA WSAData;
   int err = WSAStartup(wVersionRequested,&WSAData);
-  if (err != 0) {
-      /* Tell the user that we could not find a usable */
-      /* WinSock DLL.                                  */
+  if (err != 0)
+  {
+      // Tell the user that we could not find a usable
+      // WinSock DLL.
       WSACleanup();
       return "127.0.0.1";
   }
