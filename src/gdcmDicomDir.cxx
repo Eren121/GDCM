@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.112 $
+  Date:      $Date: 2005/01/21 15:28:18 $
+  Version:   $Revision: 1.113 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,7 +89,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    Initialize();  // sets all private fields to NULL
 
    // if user passed a root directory, sure we didn't get anything
-   if ( TagHT.begin() == TagHT.end() ) // when user passed a Directory to parse
+   if ( GetFirstEntry() != 0 ) // when user passed a Directory to parse
    {
       if (!parseDir)
          gdcmVerboseMacro( "Entry HT empty for file: "<<fileName);
@@ -466,13 +466,17 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
  * \brief   adds *the* Meta to a partially created DICOMDIR
  */
   
-DicomDirMeta * DicomDir::NewMeta()
+DicomDirMeta *DicomDir::NewMeta()
 {
    if( MetaElems )
       delete MetaElems;
 
-  
-   if ( TagHT.begin() != TagHT.end() ) // after Document Parsing
+ // friend hunting : we miss GetLastEntry and GetPreviousEntry
+ //                  to be able to remove any direct reference to TagHT
+
+   DocEntry *e = GetFirstEntry();
+   if (e)
+   //if ( TagHT.begin() != TagHT.end() ) // after Document Parsing
    { 
       MetaElems = new DicomDirMeta(true);
 
@@ -812,6 +816,7 @@ void DicomDir::CreateDicomDir()
 
       tmpSI=s->GetNextSQItem();
    }
+// friend hunting : this one will be difficult to remove !
    TagHT.clear();
 }
 
