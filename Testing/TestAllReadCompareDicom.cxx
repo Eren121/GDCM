@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 14:48:19 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/11/17 10:20:06 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,6 +45,8 @@ int InternalTest(std::string const & filename,
       {
       ////// Step 3a:
          uint8_t* testedImageData = tested->GetImageData(); // Kludge
+         (void)testedImageData;
+
          tested->WriteDcmExplVR( referenceFileName );
          std::cerr << "      Creating reference baseline file :" << std::endl
                    << "      " << referenceFileName 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/17 03:20:05 $
-  Version:   $Revision: 1.132 $
+  Date:      $Date: 2004/11/17 10:20:07 $
+  Version:   $Revision: 1.133 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -619,6 +619,7 @@ ValEntry* Document::ReplaceOrCreateByNumber(
 /*
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
+ *          A copy of the binArea is made to be kept in the Document.
  * @param   binArea (binary) value to be set
  * @param   Group   Group number of the Entry 
  * @param   Elem  Element number of the Entry
@@ -690,7 +691,23 @@ BinEntry* Document::ReplaceOrCreateByNumber(
       }
    }
 
-   SetEntryByNumber(binArea, lgth, group, elem);
+   uint8_t *tmpArea;
+   if (lgth>0 && binArea)
+   {
+      tmpArea = new uint8_t[lgth];
+      memcpy(tmpArea,binArea,lgth);
+   }
+   else
+   {
+      tmpArea = 0;
+   }
+   if (!SetEntryByNumber(tmpArea, lgth, group, elem))
+   {
+      if (tmpArea)
+      {
+         delete[] tmpArea;
+      }
+   }
 
    return binEntry;
 }  

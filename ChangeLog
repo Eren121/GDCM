@@ -1,4 +1,12 @@
 2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocument.cxx : now, when using the ReplaceOrCreateByNumber to
+     set a BinEntry, the binArea is copied (like to set a ValEntry, the string
+     is copied).
+   * Test/TestCopyDicom.cxx, Example/TestCopyDicom.cxx : the image data isn't 
+     set because already copied when copying the BinEntry's of the header
+   * Test/TestAllReadCompareDicom.cxx : remove warnings
+
+2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * FIX : now, the DocEntries are all deleted in the gdcmElementSet.
      Two problems appear when doing it :
       - with the gdcmFile : when the GetImageData method is called, the pixels

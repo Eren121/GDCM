@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:18 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/11/17 10:20:06 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
 
 
       //copy->GetImageData();
-      copy->SetImageData(imageData, dataSize);
+      //copy->SetImageData(imageData, dataSize);
 
       std::cout << "--- Copy ----------------------" << std::endl;
       std::cout <<std::endl << "DO NOT care about Offset"  <<std::endl<<std::endl;; 

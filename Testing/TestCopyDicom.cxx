@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/11/17 10:20:06 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,7 +104,7 @@ int TestCopyDicom(int , char* [])
       {
          d = tag->second;
          if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
-         {              
+         {
             copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  b->GetBinArea(),
                                  b->GetLength(),
@@ -130,7 +130,9 @@ int TestCopyDicom(int , char* [])
          }
       }
 
-      copy->SetImageData(imageData, dataSize);
+      // Useless to set the image datas, because it's already made when
+      // copying the corresponding BinEntry that contains the pixel datas
+      //copy->SetImageData(imageData, dataSize);
       original->GetHeader()->SetImageDataSize(dataSize);
 
       copy->WriteDcmExplVR( output );
