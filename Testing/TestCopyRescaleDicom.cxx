@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 16:55:56 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/12/07 18:16:40 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,15 +59,29 @@ int CopyRescaleDicom(std::string const & filename,
    originalH->Initialize();
    gdcm::DocEntry* d = originalH->GetNextEntry();
 
+   // Copy of the header content
    while(d)
    {
-      if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
+      if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
+      {
+         copyH->ReplaceOrCreateByNumber( 
+                              b->GetBinArea(),
+                              b->GetLength(),
+                              b->GetGroup(), 
+                              b->GetElement(),
+                              b->GetVR() );
+      }
+      else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
           copyH->ReplaceOrCreateByNumber( 
                               v->GetValue(),
                               v->GetGroup(), 
                               v->GetElement(),
                               v->GetVR() ); 
+      }
+      else
+      {
+       // We skip pb of SQ recursive exploration
       }
 
       d=originalH->GetNextEntry();
@@ -79,42 +93,37 @@ int CopyRescaleDicom(std::string const & filename,
    size_t dataSize = original->GetImageDataSize();
    uint8_t* imageData = original->GetImageData();
 
-   size_t rescaleSize = dataSize / 2;
-#ifdef VERSION_1
-   uint8_t *rescaleImage = new uint8_t[dataSize];
-#endif
-
-   //2 case now, if 16 bits input then try to downscale to 8bits just for
-   //fun:
+   size_t rescaleSize;
+   uint8_t *rescaleImage;
 
    const std::string & bitsStored    = originalH->GetEntryByNumber(0x0028,0x0101);
-//   std::cout << "BitsStored:    " << bitsStored << std::endl;
-
    if( bitsStored == "16" )
    {
-      uint16_t* imageData16 = (uint16_t*)original->GetImageData();
+      std::cout << "Rescale...";
       copyH->ReplaceOrCreateByNumber( "8", 0x0028, 0x0100); // BitsAllocated
       copyH->ReplaceOrCreateByNumber( "8", 0x0028, 0x0101); // BitsStored
       copyH->ReplaceOrCreateByNumber( "7", 0x0028, 0x0102); // HighBit
       copyH->ReplaceOrCreateByNumber( "0", 0x0028, 0x0103); //Pixel Representation
  
       // We assume the value were from 0 to uint16_t max
+      rescaleSize = dataSize / 2;
+      rescaleImage = new uint8_t[dataSize];
+
+      uint16_t* imageData16 = (uint16_t*)original->GetImageData();
       for(unsigned int i=0; i<rescaleSize; i++)
       {
-#ifdef VERSION_1
          rescaleImage[i] = imageData16[i]/256;
-#else
-         imageData[i]  = imageData16[i]/256;
-#endif
       }
-#ifdef VERSION_1
-      copy->SetImageData(rescaleImage, rescaleSize);
-#endif 
    }
    else
    {
-      copy->SetImageData(imageData, dataSize);
+      std::cout << "Same...";
+      rescaleSize = dataSize;
+      rescaleImage = new uint8_t[dataSize];
+      memcpy(rescaleImage,original->GetImageData(),dataSize);
    }
+
+   copy->SetImageData(rescaleImage, rescaleSize);
 
    //////////////// Step 3:
    std::cout << "3...";
@@ -128,6 +137,7 @@ int CopyRescaleDicom(std::string const & filename,
       delete copy;
       delete originalH;
       delete copyH;
+      delete[] rescaleImage;
 
       return 1;
    }
@@ -147,6 +157,7 @@ int CopyRescaleDicom(std::string const & filename,
 
       delete original;
       delete originalH;
+      delete[] rescaleImage;
 
       return 1;
    }
@@ -156,7 +167,27 @@ int CopyRescaleDicom(std::string const & filename,
    size_t    dataSizeWritten = copy->GetImageDataSize();
    uint8_t* imageDataWritten = copy->GetImageData();
 
-   if (dataSize != dataSizeWritten)
+   if (originalH->GetXSize() != copy->GetHeader()->GetXSize() ||
+       originalH->GetYSize() != copy->GetHeader()->GetYSize() ||
+       originalH->GetZSize() != copy->GetHeader()->GetZSize())
+   {
+      std::cout << "Failed" << std::endl
+         << "        X Size differs: "
+         << "X: " << originalH->GetXSize() << " # " 
+                  << copy->GetHeader()->GetXSize() << " | "
+         << "Y: " << originalH->GetYSize() << " # " 
+                  << copy->GetHeader()->GetYSize() << " | "
+         << "Z: " << originalH->GetZSize() << " # " 
+                  << copy->GetHeader()->GetZSize() << std::endl;
+      delete original;
+      delete copy;
+      delete originalH;
+      delete[] rescaleImage;
+
+      return 1;
+   }
+
+   if (rescaleSize != dataSizeWritten)
    {
       std::cout << " Failed" << std::endl
                 << "        Pixel areas lengths differ: "
@@ -165,11 +196,12 @@ int CopyRescaleDicom(std::string const & filename,
       delete original;
       delete copy;
       delete originalH;
+      delete[] rescaleImage;
 
       return 1;
    }
 
-   if (int res = memcmp(imageData, imageDataWritten, dataSize) !=0)
+   if (int res = memcmp(rescaleImage, imageDataWritten, rescaleSize) !=0)
    {
       (void)res;
       std::cout << " Failed" << std::endl
@@ -178,6 +210,7 @@ int CopyRescaleDicom(std::string const & filename,
       delete original;
       delete copy;
       delete originalH;
+      delete[] rescaleImage;
 
       return 1;
    }
@@ -186,9 +219,7 @@ int CopyRescaleDicom(std::string const & filename,
    delete original;
    delete copy;
    delete originalH;
-#ifdef VERSION_1
    delete[] rescaleImage;
-#endif
 
    return 0;
 }

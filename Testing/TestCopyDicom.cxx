@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:56 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/12/07 18:16:39 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,10 +110,6 @@ int CopyDicom(std::string const & filename,
          else
          {
           // We skip pb of SQ recursive exploration
-          //std::cout << "Skipped Sequence " 
-          //          << "------------- " << d->GetVR() << " "<< std::hex
-          //          << d->GetGroup() << " " << d->GetElement()
-          //  << std::endl;    
          }
 
          d=originalH->GetNextEntry();

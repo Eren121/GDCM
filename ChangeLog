@@ -1,4 +1,12 @@
 2004-12-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/ShowDicom.cxx, TestWriteWithVTK.cxx : bug fix, now this test pass
+     not at all time
+   * Test/TestCopyRescaleDicom.cxx : rearrange the test to correctly pass...
+     Some fields in BinEntry must be copied to not seg fault when making the :
+              gdcm::File *copy     = new gdcm::File( copyH );
+     and tests are now made on good variables
+
+2004-12-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * vtk/vtkGdcmWriter.[h|cxx] : add a first version of vtkGdcmWriter
    * src/gdcmValEntry.cxx : bug fix when setting the value. Problems of odd
      length
