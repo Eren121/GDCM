@@ -27,7 +27,6 @@ private:
 
 	int AppendDict(gdcmDict* NewDict);
 	void LoadDictFromFile(std::string FileName, DictKey Name);
-   std::string BuildDictPath(void);
 
 public:
    std::list<std::string> * GetPubDictTagNames(void);
@@ -47,6 +46,8 @@ public:
 
 	gdcmDict* GetDict(DictKey DictName);
 	gdcmDict* GetDefaultPubDict(void);
+
+   static std::string BuildDictPath(void);
 };
 
 #endif

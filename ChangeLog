@@ -1,6 +1,11 @@
 2004-01-12 Benoit Regrain
      * src/*.h : add comments
-     
+     * src/gdcmDictSet.h : set the method BuildDictPath in public
+     * src/gdcmTS.cxx, gdcmVR.cxx : use now a dictionnary file other than to be
+       directly setted in the source code
+     * Dicts/dicomTS.dic, dicomVR.dic : 2 new dictionnary files loaded by
+       gdcmTS and gdcmVR
+
 2004-01-09 Benoit Regrain
      * gdcmPython/gdcmVersion.py : add a gdcmVERSION variable information
      * setup.py : use a reference to gdcmVERSION

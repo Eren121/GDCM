@@ -20,6 +20,7 @@ gdcmDict::gdcmDict(std::string & FileName) {
    TagName vr;
    TagName fourth;
    TagName name;
+
    while (!from.eof()) {
       from >> std::hex >> group >> element;
       eatwhite(from);
