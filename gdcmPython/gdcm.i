@@ -28,6 +28,41 @@ void EatLeadingAndTrailingSpaces(string & s) {
 	while ( s.length() && (s[s.length()-1] == ' ') )
 		s.erase(s.length()-1, 1);
 }
+
+void vtkPythonVoidFunc(void *arg)
+{
+  PyObject *arglist, *result;
+  PyObject *func = (PyObject *)arg;
+
+  arglist = Py_BuildValue("()");
+
+  result = PyEval_CallObject(func, arglist);
+  Py_DECREF(arglist);
+
+  if (result)
+    {
+    Py_XDECREF(result);
+    }
+  else
+    {
+    if (PyErr_ExceptionMatches(PyExc_KeyboardInterrupt))
+      {
+      cerr << "Caught a Ctrl-C within python, exiting program.\n";
+      Py_Exit(1);
+      }
+    PyErr_Print();
+    }
+}
+
+void vtkPythonVoidFuncArgDelete(void *arg)
+{
+  PyObject *func = (PyObject *)arg;
+  if (func)
+    {
+    Py_DECREF(func);
+    }
+}
+
 %}
 typedef  unsigned short guint16;
 typedef  unsigned int guint32;
@@ -179,6 +214,13 @@ extern gdcmGlobal gdcmGlob;
 }
 
 ////////////////////////////////////////////////////////////////////////////
+// Deals with function returning a C++ string.
+%typemap(python, in) (gdcmMethod *method,void *arg) {
+    Py_INCREF($input);
+    $1=vtkPythonVoidFunc;
+	$2=$input;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////
 // Deals with function returning a C++ string.

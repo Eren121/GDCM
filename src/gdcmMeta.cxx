@@ -32,7 +32,7 @@ gdcmMeta::~gdcmMeta()
  */ 
 void gdcmMeta::Print(std::ostream &os)
 {
-   os<<"META :"<<std::endl;
+   os<<"META"<<std::endl;
    gdcmObject::Print(os);
 }
 

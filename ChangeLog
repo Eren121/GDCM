@@ -1,6 +1,8 @@
 2004-02-10 Benoit Regrain
      * FIX : bug fix in the gdcmDirList for the recursivity in directories
      * FIX : in gdcmDicomDir when the directory is empty
+     * ENH : add callback and methods to get the progression of dicomDir
+       directory parsing
 
 2004-02-06 Jean-Pierre Roux
      * ENH : - now gdcmDicomDir::CreateDicomDir() returns also the meta elements

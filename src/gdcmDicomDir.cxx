@@ -12,6 +12,17 @@
 
 #include <sys/types.h>
 #include <errno.h>
+
+void StartMethod(void * = NULL)
+{
+   std::cout<<"Start parsing"<<std::endl;
+}
+
+void EndMethod(void * = NULL)
+{
+   std::cout<<"End parsing"<<std::endl;
+}
+
 //-----------------------------------------------------------------------------
 //  For full DICOMDIR description, see:
 //  PS 3.3-2003, pages 731-750
@@ -27,6 +38,16 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
                            bool exception_on_error):
    gdcmParser(FileName,exception_on_error,true)
 {
+   startMethod=StartMethod;
+   progressMethod=NULL;
+   endMethod=EndMethod;
+   startArg=NULL;
+   progressArg=NULL;
+   endArg=NULL;
+
+   progress=NULL;
+   abort=false;
+
    metaElems=NULL;
 
    if( GetListEntry().begin()==GetListEntry().end() ) 
@@ -81,6 +102,37 @@ void gdcmDicomDir::Print(std::ostream &os)
 
 //-----------------------------------------------------------------------------
 // Public
+/*
+ * \ingroup gdcmDicomDir
+ * \brief  This predicate, based on hopefully reasonable heuristics,
+ *         decides whether or not the current gdcmParser was properly parsed
+ *         and contains the mandatory information for being considered as
+ *         a well formed and usable DicomDir.
+ * @return true when gdcmParser is the one of a reasonable DicomDir,
+ *         false otherwise. 
+ */
+bool gdcmDicomDir::IsReadable(void)
+{
+   if(!gdcmParser::IsReadable())
+      return(false);
+   if(!metaElems)
+      return(false);
+   if(patients.size()<=0)
+      return(false);
+
+   return(true);
+}
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief  fills whole the structure
+ */
+void gdcmDicomDir::ParseDirectory(void)
+{
+   NewDicomDir(GetPath());
+   CreateDicomDir();
+}
+
 /**
  * \ingroup gdcmDicomDir
  * \brief   writes on disc a DICOMDIR
@@ -113,16 +165,6 @@ bool gdcmDicomDir::Write(std::string fileName)
    return true;
 }
 
-/*
- * \ingroup gdcmDicomDir
- * \brief  fills whole the structure
- */
-void gdcmDicomDir::ParseDirectory(void)
-{
-   NewDicomDir(GetPath());
-   CreateDicomDir();
-}
-
 //-----------------------------------------------------------------------------
 // Protected
 /*
@@ -132,7 +174,10 @@ void gdcmDicomDir::ParseDirectory(void)
  */
 void gdcmDicomDir::NewDicomDir(std::string path)
 {
+   CallStartMethod();
+
    gdcmDirList fileList(path,1);
+   unsigned int count=0;
    ListHeader list;
    gdcmHeader *header;
 
@@ -142,17 +187,26 @@ void gdcmDicomDir::NewDicomDir(std::string path)
    for(gdcmDirList::iterator it=fileList.begin(); 
        it!=fileList.end(); ++it) 
    {
+      progress=(float)(count+1)/(float)fileList.size();
+      CallProgressMethod();
+      if(abort)
+         break;
+
       header=new gdcmHeader(it->c_str());
       if(header->IsReadable())
          list.push_back(header);
       else
          delete header;
+
+      count++;
    }
 
    std::sort(list.begin(),list.end(),gdcmDicomDir::HeaderLessThan);
 
    std::string tmp=fileList.GetDirName();
    SetElements(tmp,list);
+
+   CallEndMethod();
 }
 
 /*
@@ -172,6 +226,27 @@ std::string gdcmDicomDir::GetPath(void)
       path.resize(pos2);
 
    return(path);
+}
+
+void gdcmDicomDir::CallStartMethod(void)
+{
+   progress=0.0f;
+   abort=false;
+   if(startMethod)
+      startMethod(startArg);
+}
+
+void gdcmDicomDir::CallProgressMethod(void)
+{
+   if(progressMethod)
+      progressMethod(progressArg);
+}
+
+void gdcmDicomDir::CallEndMethod(void)
+{
+   progress=1.0f;
+   if(endMethod)
+      endMethod(endArg);
 }
 
 //-----------------------------------------------------------------------------

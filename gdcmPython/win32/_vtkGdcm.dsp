@@ -118,6 +118,10 @@ SOURCE=..\..\src\gdcmJpeg2000.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmMeta.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmObject.cxx
 # End Source File
 # Begin Source File
@@ -192,7 +196,7 @@ InputPath=.\init.h
 
 SOURCE=..\..\vtk\vtkGdcmReader.h
 # Begin Custom Build - Performing Custom Build Step on $(VTKPATH)\bin\vtkwrappython "$(InputDir)\$(InputName).h" $(VTKPATH)\Examples\Build\vtkMy\Wrapping\hints 1  $(ProjDir)\..\$(InputName)Python.cxx
-InputDir=\Projects\gdcm\VTK
+InputDir=\Projects\gdcm\vtk
 ProjDir=.
 InputPath=..\..\vtk\vtkGdcmReader.h
 InputName=vtkGdcmReader

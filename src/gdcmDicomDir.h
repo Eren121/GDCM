@@ -16,6 +16,7 @@
 typedef std::list<gdcmPatient *>   ListPatient;
 typedef std::vector<gdcmHeader *>  ListHeader;
 
+typedef GDCM_EXPORT void( gdcmMethod)(void * =NULL);
 //-----------------------------------------------------------------------------
 /*
  * \defgroup gdcmDicomDir
@@ -35,12 +36,25 @@ public:
    void SetPrintLevel(int level) { printLevel = level; };
    virtual void Print(std::ostream &os = std::cout);
 
+// Informations contained in the parser
+   virtual bool IsReadable(void);
    inline gdcmMeta   *GetMeta()      {return metaElems;};
    inline ListPatient &GetPatients() {return patients;};
 
+// Parsing
+   void ParseDirectory(void);
+
+   inline void SetStartMethod(gdcmMethod *method,void *arg=NULL)    {startMethod=method;startArg=arg;};
+   inline void SetProgressMethod(gdcmMethod *method,void *arg=NULL) {progressMethod=method;progressArg=arg;};
+   inline void SetEndMethod(gdcmMethod *method,void *arg=NULL)      {endMethod=method;endArg=arg;};
+
+   inline float GetProgress(void)                   {return(progress);};
+
+   inline void AbortProgress(void)                  {abort=true;};
+   inline bool IsAborted(void)                      {return(abort);};
+
 // Write
    bool Write(std::string fileName);
-   void ParseDirectory(void);
 
 // Types
    typedef enum
@@ -56,6 +70,10 @@ public:
 protected:
    void NewDicomDir(std::string path);
    std::string GetPath(void);
+
+   void CallStartMethod(void);
+   void CallProgressMethod(void);
+   void CallEndMethod(void);
 
 private:
    void CreateDicomDir(void);
@@ -74,6 +92,16 @@ private:
 
    gdcmMeta *metaElems;
    ListPatient patients;
+
+   gdcmMethod *startMethod;
+   gdcmMethod *progressMethod;
+   gdcmMethod *endMethod;
+   void *startArg;
+   void *progressArg;
+   void *endArg;
+
+   float progress;
+   bool abort;
 };
 
 //-----------------------------------------------------------------------------
