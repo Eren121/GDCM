@@ -782,6 +782,7 @@ void gdcmParser::UpdateShaEntries(void)
       else
          vr=(*it)->GetVR();
 
+      (*it)->SetValue(GetHeaderEntryUnvalue(*it));
       if(entry)
       {
          // Set the new entry and the new value
@@ -793,7 +794,6 @@ void gdcmParser::UpdateShaEntries(void)
       else
       {
          // Remove precedent value transformation
-         (*it)->SetValue(GetHeaderEntryUnvalue(*it));
          (*it)->SetDictEntry(NewVirtualDictEntry((*it)->GetGroup(),(*it)->GetElement(),vr));
       }
    }
@@ -1312,24 +1312,15 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
    }
    
    // We need an additional byte for storing \0 that is not on disk
-   char* NewValue = (char*)malloc(length+1);
-   if( !NewValue) 
-   {
-      dbg.Verbose(1, "LoadElementValue: Failed to allocate NewValue");
-      return;
-   }
-   NewValue[length]= 0;
-   
-   item_read = fread(NewValue, (size_t)length, (size_t)1, fp);
+   std::string NewValue(length,0);
+   item_read = fread(&(NewValue[0]), (size_t)length, (size_t)1, fp);
    if ( item_read != 1 ) 
    {
-      free(NewValue);
       dbg.Verbose(1, "gdcmParser::LoadElementValue","unread element value");
       Entry->SetValue("gdcm::UnRead");
       return;
    }
    Entry->SetValue(NewValue);
-   free(NewValue);
 }
 
 /**

@@ -1,4 +1,8 @@
 2004-01-19 Benoit Regrain
+     * Add the use of shadow dictionaries
+     * bug fix and coding style
+
+2004-01-19 Benoit Regrain
      * src/gdcmFile.cxx : bug fix concerning the close of file
      * src/gdcmParser.[h|cxx] : remove obvious Pub informations
      * Add the update of header entries using the shadow library
