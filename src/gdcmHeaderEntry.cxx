@@ -1,19 +1,19 @@
-// gdcmElValue.cxx
+// gdcmHeaderEntry.cxx
 //-----------------------------------------------------------------------------
 // TODO
-// A 'gdcmElValue' is actually a 'Dicom Element'.
+// A 'gdcmHeaderEntry' is actually a 'Dicom Element'.
 // WHY such a confusing name???
 //
-#include "gdcmElValue.h"
+#include "gdcmHeaderEntry.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmElValue
+ * \ingroup gdcmHeaderEntry
  * \brief   Constructor from a given gdcmDictEntry
  * @param   in Pointer to existing dictionary entry
  */
-gdcmElValue::gdcmElValue(gdcmDictEntry* in) {
+gdcmHeaderEntry::gdcmHeaderEntry(gdcmDictEntry* in) {
 	ImplicitVr = false;
 	entry = in;
 }

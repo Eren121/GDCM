@@ -51,7 +51,7 @@ bool gdcmFile::ParsePixelData(void) {
    }        
 
    int nb;
-   std::string str_nb=Header->GetPubElValByNumber(0x0028,0x0100);
+   std::string str_nb=Header->GetPubEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {

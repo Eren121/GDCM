@@ -58,7 +58,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy               ..\..\lib\gdcmdll.dll               ..\..\gdcmPython\           	copy               ..\..\lib\gdcmdll.dll               ..\..\test\           	copy            Release\gdcmdll.lib            ..\..\lib\ 
+PostBuild_Cmds=copy                ..\..\lib\gdcmdll.dll                ..\..\gdcmPython\            	copy                ..\..\lib\gdcmdll.dll                ..\..\test\            	copy             Release\gdcmdll.lib             ..\..\lib\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmdll - Win32 Debug"
@@ -90,7 +90,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy               ..\..\lib\gdcmdll.dll               ..\..\gdcmPython\           	copy               ..\..\lib\gdcmdll.dll               ..\..\test\           	copy            Debug\gdcmdll.lib            ..\..\lib\ 
+PostBuild_Cmds=copy                ..\..\lib\gdcmdll.dll                ..\..\gdcmPython\            	copy                ..\..\lib\gdcmdll.dll                ..\..\test\            	copy             Debug\gdcmdll.lib             ..\..\lib\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -116,14 +116,6 @@ SOURCE=..\gdcmDictSet.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\gdcmElValSet.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmElValue.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\gdcmException.cxx
 # End Source File
 # Begin Source File
@@ -133,6 +125,14 @@ SOURCE=..\gdcmFile.cxx
 # Begin Source File
 
 SOURCE=..\gdcmHeader.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmHeaderEntry.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmHeaderEntrySet.cxx
 # End Source File
 # Begin Source File
 
@@ -196,14 +196,6 @@ SOURCE=..\gdcmDictSet.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\gdcmElValSet.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmElValue.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\gdcmException.h
 # End Source File
 # Begin Source File
@@ -213,6 +205,14 @@ SOURCE=..\gdcmFile.h
 # Begin Source File
 
 SOURCE=..\gdcmHeader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmHeaderEntry.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmHeaderEntrySet.h
 # End Source File
 # Begin Source File
 

@@ -540,7 +540,7 @@ class gdcmTestCase(unittest.TestCase):
          assert reader.IsReadable(),\
                 "File '%s' is not readable by gdcmHeader" % fileName
 
-         valDict = reader.GetPubElVal()
+         valDict = reader.GetPubEntry()
          for subEntry in entry[1]:
             element = subEntry[0]
             value   = subEntry[1]

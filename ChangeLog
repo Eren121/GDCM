@@ -1,3 +1,8 @@
+2004-01-14 Benoit Regrain
+     * src/gdcmHeaderEntry.[h|cxx] : gdcmElValue -> gdcmHeaderEntry
+     * src/gdcmHeaderEntrySet.[h|cxx] : gdcmElValSet -> gdcmHeaderEntrySet
+     * src/*.[h|cxx] : make changes due to class name changes
+
 2004-01-13 Benoit Regrain
      * src/*.[h|cxx] : coding style
      * vtk/*.[h|cxx] : coding style

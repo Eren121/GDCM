@@ -1,7 +1,7 @@
-// gdcmElValue.h
+// gdcmHeaderEntry.h
 //-----------------------------------------------------------------------------
-#ifndef GDCMELVALUE_H
-#define GDCMELVALUE_H
+#ifndef GDCMHeaderEntry_H
+#define GDCMHeaderEntry_H
 
 #include "gdcmDictEntry.h"
 class gdcmHeader;
@@ -10,12 +10,12 @@ class gdcmHeader;
 
 //-----------------------------------------------------------------------------
 /*
- * The dicom header of a Dicom file contains a set of such ELement VALUES
+ * The dicom header of a Dicom file contains a set of such entries
  * (when successfuly parsed against a given Dicom dictionary)
  */
-class GDCM_EXPORT gdcmElValue {
+class GDCM_EXPORT gdcmHeaderEntry {
 public:
-   gdcmElValue(gdcmDictEntry*);
+   gdcmHeaderEntry(gdcmDictEntry*);
    
    inline guint16      GetGroup(void)     { return entry->GetGroup();  };
    inline guint16      GetElement(void)   { return entry->GetElement();};
@@ -38,60 +38,60 @@ public:
    inline void         SetVoidArea(void * area)  { voidArea = area;  };
    
    /**
-    * \ingroup gdcmElValue
+    * \ingroup gdcmHeaderEntry
     * \brief   Sets the offset of the Dicom Element
     * \warning : use with caution !
     * @param   of offset to be set
     */
-   inline void gdcmElValue::SetOffset(size_t of) { Offset = of; };
+   inline void gdcmHeaderEntry::SetOffset(size_t of) { Offset = of; };
 
    /**
-    * \ingroup gdcmElValue
+    * \ingroup gdcmHeaderEntry
     * \brief   Sets the DicEntry of the current Dicom Element
     * @param   NewEntry pointer to the DictEntry
     */ 
-   inline void gdcmElValue::SetDictEntry(gdcmDictEntry *NewEntry) { 
+   inline void gdcmHeaderEntry::SetDictEntry(gdcmDictEntry *NewEntry) { 
       entry = NewEntry; 
    };
 
    /**
-    * \ingroup gdcmElValue
+    * \ingroup gdcmHeaderEntry
     * \brief   Sets to TRUE the ImplicitVr flag of the current Dicom Element
     */
-   inline void gdcmElValue::SetImplicitVr(void) { 
+   inline void gdcmHeaderEntry::SetImplicitVr(void) { 
       ImplicitVr = true; 
    };
  
    /**
-    * \ingroup gdcmElValue
+    * \ingroup gdcmHeaderEntry
     * \brief   tells us if the current Dicom Element was checked as ImplicitVr
     * @return true if the current Dicom Element was checked as ImplicitVr
     */ 
-   inline bool  gdcmElValue::IsImplicitVr(void) { 
+   inline bool  gdcmHeaderEntry::IsImplicitVr(void) { 
        return ImplicitVr; 
     };
 
    /**
-    * \ingroup gdcmElValue
+    * \ingroup gdcmHeaderEntry
     * \brief   Gets the DicEntry of the current Dicom Element
     * @return  the DicEntry of the current Dicom Element
     */
-   gdcmDictEntry * gdcmElValue::GetDictEntry(void) { 
+   gdcmDictEntry * gdcmHeaderEntry::GetDictEntry(void) { 
       return entry;    
    }; 
 
    /**
-    * \ingroup gdcmElValue
+    * \ingroup gdcmHeaderEntry
     * \brief   tells us if the VR of the current Dicom Element is Unkonwn
     * @return true if the VR is unkonwn
     */ 
-   inline bool   gdcmElValue::IsVRUnknown(void) { 
+   inline bool   gdcmHeaderEntry::IsVRUnknown(void) { 
       return entry->IsVRUnknown(); 
    };
 
 private:
    // FIXME: In fact we should be more specific and use :
-   // friend gdcmElValue * gdcmHeader::ReadNextElement(void);
+   // friend gdcmHeaderEntry * gdcmHeader::ReadNextElement(void);
    friend class gdcmHeader;
 
 // Variables

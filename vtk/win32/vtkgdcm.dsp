@@ -112,14 +112,6 @@ SOURCE=..\..\src\gdcmDictSet.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdcmElValSet.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\gdcmElValue.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\gdcmException.cxx
 # End Source File
 # Begin Source File
@@ -129,6 +121,14 @@ SOURCE=..\..\src\gdcmFile.cxx
 # Begin Source File
 
 SOURCE=..\..\src\gdcmHeader.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmHeaderEntry.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmHeaderEntrySet.cxx
 # End Source File
 # Begin Source File
 

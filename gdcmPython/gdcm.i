@@ -4,12 +4,12 @@
 #include "gdcmDictEntry.h"
 #include "gdcmDict.h"
 #include "gdcmDictSet.h"
-#include "gdcmElValue.h"
-#include "gdcmElValSet.h"
-#include "gdcmUtil.h"
+#include "gdcmHeaderEntry.h"
+#include "gdcmHeaderEntrySet.h"
 #include "gdcmHeader.h"
 #include "gdcmHeaderHelper.h"
 #include "gdcmFile.h"
+#include "gdcmUtil.h"
 using namespace std;
 
 // Utility functions on strings for removing leading and trailing spaces
@@ -68,14 +68,14 @@ extern gdcmGlobal gdcmGlob;
 
 ////////////////////////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
-%typemap(out) TagElValueHT & {
+%typemap(out) TagHeaderEntryHT & {
 	PyObject* NewDict = PyDict_New(); // The result of this typemap
 	string RawName;                   // Element name as gotten from gdcm
 	PyObject* NewKey = (PyObject*)0;  // Associated name as python object
 	string RawValue;                  // Element value as gotten from gdcm
 	PyObject* NewVal = (PyObject*)0;  // Associated value as python object
 
-	for (TagElValueHT::iterator tag = $1->begin(); tag != $1->end(); ++tag) {
+	for (TagHeaderEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag) {
 
 		// The element name shall be the key:
 		RawName = tag->second->GetName();
@@ -110,9 +110,9 @@ extern gdcmGlobal gdcmGlob;
 %include "gdcmDictEntry.h"
 %include "gdcmDict.h"
 %include "gdcmDictSet.h"
-%include "gdcmElValue.h"
-%include "gdcmElValSet.h"
-%include "gdcmUtil.h"
+%include "gdcmHeaderEntry.h"
+%include "gdcmHeaderEntrySet.h"
 %include "gdcmHeader.h"
 %include "gdcmHeaderHelper.h"
 %include "gdcmFile.h"
+%include "gdcmUtil.h"

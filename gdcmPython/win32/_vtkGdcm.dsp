@@ -70,14 +70,6 @@ SOURCE=..\..\src\gdcmDictSet.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdcmElValSet.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\gdcmElValue.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\gdcmException.cxx
 # End Source File
 # Begin Source File
@@ -87,6 +79,14 @@ SOURCE=..\..\src\gdcmFile.cxx
 # Begin Source File
 
 SOURCE=..\..\src\gdcmHeader.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmHeaderEntry.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmHeaderEntrySet.cxx
 # End Source File
 # Begin Source File
 
@@ -156,7 +156,7 @@ InputPath=.\init.h
 
 SOURCE=..\..\vtk\vtkGdcmReader.h
 # Begin Custom Build - Performing Custom Build Step on $(VTKPATH)\bin\vtkwrappython "$(InputDir)\$(InputName).h" $(VTKPATH)\Examples\Build\vtkMy\Wrapping\hints 1  $(ProjDir)\..\$(InputName)Python.cxx
-InputDir=\Projects\gdcm\vtk
+InputDir=\Projects\gdcm\VTK
 ProjDir=.
 InputPath=..\..\vtk\vtkGdcmReader.h
 InputName=vtkGdcmReader

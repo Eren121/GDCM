@@ -14,11 +14,11 @@ SET(libgdcm_la_SOURCES
 	gdcmUtil.cxx
 	gdcmHeader.cxx
 	gdcmHeaderHelper.cxx
-	gdcmElValue.cxx
+	gdcmHeaderEntry.cxx
+	gdcmHeaderEntrySet.cxx
 	gdcmDictEntry.cxx
 	gdcmDict.cxx
 	gdcmDictSet.cxx
-	gdcmElValSet.cxx
 	gdcmFile.cxx
 	gdcmVR.cxx
 	gdcmTS.cxx
