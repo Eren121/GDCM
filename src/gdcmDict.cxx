@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/01/07 09:03:52 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,11 +74,9 @@ Dict::Dict(std::string const &filename)
  */
 Dict::~Dict()
 {
-   // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
-   // assume all the pointed DictEntries are already cleaned-up when
-   // we cleaned KeyHt.
+   // we assume all the pointed DictEntries are already cleaned-up
+   // when we clean KeyHt.
    KeyHt.clear();
-   NameHt.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -116,30 +114,6 @@ void Dict::PrintByKey(std::ostream &os)
    os << s.str();
 }
 
-/**
- * \brief   Print all the dictionary entries contained in this dictionary.
- *          Entries will be sorted by the name of the dictionary entries.
- * \warning AVOID USING IT : the name IS NOT an identifier; 
- *                           unpredictable result
- * @param   os The output stream to be written to.
- */
-void Dict::PrintByName(std::ostream &os)
-{
-   std::ostringstream s;
-
-   for (TagNameHT::iterator tag = NameHt.begin(); tag != NameHt.end(); ++tag)
-   {
-      s << "Entry : ";
-      s << tag->second.GetName() << ",";
-      s << tag->second.GetVR() << ", ";
-      s << tag->second.GetFourth() << ", ";
-      s << "(" << std::hex << std::setw(4) << tag->second.GetGroup() << ',';
-      s << std::hex << std::setw(4) << tag->second.GetElement() << ") = ";
-      s << std::dec << std::endl;
-   }
-   os << s.str();
-}
-
 //-----------------------------------------------------------------------------
 // Public
 /**
@@ -160,7 +134,6 @@ bool Dict::AddNewEntry(DictEntry const &newEntry)
    else 
    {
       KeyHt.insert( TagKeyHT::value_type(newEntry.GetKey(), newEntry));
-      NameHt.insert( TagNameHT::value_type(newEntry.GetName(), newEntry ));
       return true;
    }
 }
@@ -176,7 +149,6 @@ bool Dict::ReplaceEntry(DictEntry const &newEntry)
    if ( RemoveEntry(newEntry.GetKey()) )
    {
        KeyHt.insert( TagKeyHT::value_type(newEntry.GetKey(), newEntry));
-       NameHt.insert( TagNameHT::value_type(newEntry.GetName(), newEntry ));
        return true;
    } 
    return false;
@@ -195,7 +167,6 @@ bool Dict::RemoveEntry (TagKey const &key)
    if(it != KeyHt.end()) 
    {
       const DictEntry& entryToDelete = it->second;
-      NameHt.erase(entryToDelete.GetName());
       KeyHt.erase(key);
 
       return true;
@@ -217,24 +188,6 @@ bool Dict::RemoveEntry (TagKey const &key)
 bool Dict::RemoveEntry (uint16_t group, uint16_t elem)
 {
    return RemoveEntry(DictEntry::TranslateToKey(group, elem));
-}
-
-/**
- * \brief   Get the dictionnary entry identified by it's name.
- * @param   name element of the ElVal to modify
- * \warning : NEVER use it !
- *            the 'name' IS NOT an identifier within the Dicom Dictionary
- *            the name MAY CHANGE between two versions !
- * @return  the corresponding dictionnary entry when existing, NULL otherwise
- */
-DictEntry *Dict::GetDictEntryByName(TagName const &name)
-{
-   TagNameHT::iterator it = NameHt.find(name);
-   if ( it == NameHt.end() )
-   {
-      return 0;
-   }
-   return &(it->second);
 }
 
 /**
