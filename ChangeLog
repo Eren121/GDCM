@@ -1,5 +1,5 @@
 2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
-   * merging of Test/PrintDicomDir and Test/TestDimoDir
+   * merging of Test/PrintDicomDir and Test/TestDicomDir
 	* removal of now redundant Test/PrintDicomDir
 	* enhancement of Example/PrintDicomDir
 
