@@ -151,7 +151,7 @@ SET(BLACK_LIST
   #    0x4032bc4b in gdcmHeader::GetLUTRGBA (this=0x8149228)
   #    at /home/malaterre/Creatis/gdcm/src/gdcmHeader.cxx:1170
   #    1170          *a = lutR[i*mult+1];
-  #"OT-PAL-8-face.dcm"
+  "OT-PAL-8-face.dcm"
   
   # Files which won't break the test suite but whose png dump looks ugly.
   # JPR: png looks ugly. so What ? ctest compliant --> un-black listed
