@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.7 2003/09/24 14:01:04 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.8 2003/09/24 16:46:38 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -389,10 +389,10 @@ ModalityType gdcmHeaderHelper::GetModality(void) {
     else if ( StrModality.find("PT") < StrModality.length()) return PT;
     else if ( StrModality.find("RF") < StrModality.length()) return RF;
     else if ( StrModality.find("RG") < StrModality.length()) return RG;
-    else if ( StrModality.find("RTDOSE")   < StrModality.length()) return RTDOSE;
-    else if ( StrModality.find("RTIMAGE")  < StrModality.length()) return RTIMAGE;
-    else if ( StrModality.find("RTPLAN")   < StrModality.length()) return RTPLAN;
-    else if ( StrModality.find("RTSTRUCT") < StrModality.length()) return RTSTRUCT;
+    else if ( StrModality.find("RTDOSE")  < StrModality.length()) return RTDOSE;
+    else if ( StrModality.find("RTIMAGE") < StrModality.length()) return RTIMAGE;
+    else if ( StrModality.find("RTPLAN")  < StrModality.length()) return RTPLAN;
+    else if ( StrModality.find("RTSTRUCT")< StrModality.length()) return RTSTRUCT;
     else if ( StrModality.find("SM") < StrModality.length()) return SM;
     else if ( StrModality.find("ST") < StrModality.length()) return ST;
     else if ( StrModality.find("TG") < StrModality.length()) return TG;
@@ -414,22 +414,22 @@ ModalityType gdcmHeaderHelper::GetModality(void) {
 //----------------------------------------------------------------------------
 std::string gdcmHeaderHelper::GetStudyUID()
 {
-  return GetPubElValByNumber(0x0020,0x000d); //!0020 000d UI REL Study Instance UID
+  return GetPubElValByNumber(0x0020,0x000d); //0020 000d UI REL Study Instance UID
 }
 //----------------------------------------------------------------------------
 std::string gdcmHeaderHelper::GetSeriesUID()
 {
-  return GetPubElValByNumber(0x0020,0x000e); //!0020 000e UI REL Series Instance UID
+  return GetPubElValByNumber(0x0020,0x000e); //0020 000e UI REL Series Instance UID
 }
 //----------------------------------------------------------------------------
 std::string gdcmHeaderHelper::GetClassUID()
 {
-  return GetPubElValByNumber(0x0008,0x0016); //!0008 0016 UI ID SOP Class UID
+  return GetPubElValByNumber(0x0008,0x0016); //0008 0016 UI ID SOP Class UID
 }
 //----------------------------------------------------------------------------
 std::string gdcmHeaderHelper::GetInstanceUID()
 {
-  return GetPubElValByNumber(0x0008,0x0018); //!0008 0018 UI ID SOP Instance UID
+  return GetPubElValByNumber(0x0008,0x0018); //0008 0018 UI ID SOP Instance UID
 }
 
 
@@ -524,7 +524,7 @@ void gdcmSerieHeaderHelper::SetDirectory(std::string dir)
 //----------------------------------------------------------------------------
 //This could be implemented in a 'Strategy Pattern' approach
 //But as I don't know how to do it, I leave it this way
-//BTW, this is also a Strategy, I don't know this is the best approcah :)
+//BTW, this is also a Strategy, I don't know this is the best approach :)
 void gdcmSerieHeaderHelper::OrderGdcmFileList()
 {
   if( ImagePositionPatientOrdering() )

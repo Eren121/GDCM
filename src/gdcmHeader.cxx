@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.90 2003/09/24 16:18:32 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.91 2003/09/24 16:46:38 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -38,7 +38,7 @@
 void gdcmHeader::Initialise(void) {
    dicom_vr = gdcmGlobal::GetVR();
    dicom_ts = gdcmGlobal::GetTS();
-   Dicts =    gdcmGlobal::GetDicts();
+   Dicts    = gdcmGlobal::GetDicts();
    RefPubDict = Dicts->GetDefaultPubDict();
    RefShaDict = (gdcmDict*)0;
 }
@@ -55,10 +55,7 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
    Initialise();
    if ( !OpenFile(exception_on_error))
       return;
-printf ("avant ParseHeader\n");
    ParseHeader();
-printf ("avant LoadElements\n");
-
    LoadElements();
    CloseFile();
 }
@@ -118,6 +115,13 @@ gdcmHeader::~gdcmHeader (void) {
 }
 
 // Fourth semantics:
+//
+// ---> Warning : This fourth fiels is NOT part 
+//                of the 'official' Dicom Dictionnary
+//                and should NOT be used.
+//                (Not defined for all the groups
+//                 may be removed in a future release)
+//
 // CMD      Command        
 // META     Meta Information 
 // DIR      Directory
@@ -378,7 +382,8 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
    // We thought this was explicit VR, but we end up with an
    // implicit VR tag. Let's backtrack.   
    
-      sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", ElVal->GetGroup(),ElVal->GetElement());
+      sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", 
+                   ElVal->GetGroup(),ElVal->GetElement());
       dbg.Verbose(1, "gdcmHeader::FindVR: ",msg);
    
    fseek(fp, PositionOnEntry, SEEK_SET);
@@ -656,7 +661,8 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
          FoundSequenceDelimiter = true;
       else if ( n != 0xe000 ){
          char msg[100];  // for sprintf. Sorry
-         sprintf(msg,"wrong element (%04x) for an item sequence (%04x,%04x)\n",n, g,n);
+         sprintf(msg,"wrong element (%04x) for an item sequence (%04x,%04x)\n",
+                      n, g,n);
 	 dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",msg);
          errno = 1;
          return 0;
@@ -680,12 +686,12 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
  void gdcmHeader::FindLength (gdcmElValue * ElVal) {
    guint16 element = ElVal->GetElement();
    guint16 group   = ElVal->GetGroup();
-   std::string  vr      = ElVal->GetVR();
+   std::string  vr = ElVal->GetVR();
    guint16 length16;
    if( (element == 0x0010) && (group == 0x7fe0) ) {
       dbg.SetDebug(0);
       dbg.Verbose(2, "gdcmHeader::FindLength: ",
-                     "on est sur 7fe0 0010");
+                     "we reached 7fe0 0010");
    }   
    
    if ( (filetype == ExplicitVR) && ! ElVal->IsImplicitVr() ) {
@@ -864,7 +870,7 @@ guint16 gdcmHeader::SwapShort(guint16 a) {
 void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    size_t item_read;
    guint16 group  = ElVal->GetGroup();
-   std::string  vr     = ElVal->GetVR();
+   std::string  vr= ElVal->GetVR();
    guint32 length = ElVal->GetLength();
    bool SkipLoad  = false;
 
@@ -1086,7 +1092,8 @@ gdcmElValue* gdcmHeader::NewElValueByNumber(guint16 Group, guint16 Elem) {
  * @param   Elem
  * \return integer acts as a boolean
  */
-int gdcmHeader::ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem ) {
+int gdcmHeader::ReplaceOrCreateByNumber(std::string Value, 
+                                        guint16 Group, guint16 Elem ) {
 
 	// TODO : FIXME JPRx
 	// curieux, non ?
@@ -1104,7 +1111,7 @@ int gdcmHeader::ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint1
 
 /**
  * \ingroup gdcmHeader
- * \brief   Modify or (Creates if not found) an element
+ * \brief   Modify (or Creates if not found) an element
  * @param   Value new value
  * @param   Group
  * @param   Elem
@@ -1185,9 +1192,7 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    
    g = ReadInt16();
    n = ReadInt16();
-   
-   //if ( (g==0x7fe0) && (n==0x0010) ) 
-   
+      
    if (errno == 1)
       // We reached the EOF (or an error occured) and header parsing
       // has to be considered as finished.
@@ -1546,7 +1551,8 @@ std::string gdcmHeader::GetElValRepByName(std::string TagName) {
 int gdcmHeader::SetPubElValByNumber(std::string content, guint16 group,
                                     guint16 element)
                                     
-//TODO  : homogeneiser les noms : SetPubElValByNumber   qui appelle PubElValSet.SetElValueByNumber 
+//TODO  : homogeneiser les noms : SetPubElValByNumber   
+//                    qui appelle PubElValSet.SetElValueByNumber 
 //        pourquoi pas            SetPubElValueByNumber ??
 {
 
@@ -1657,7 +1663,8 @@ bool gdcmHeader::IsReadable(void) {
  * @param   VR The Value Representation to be given to this new tag.
  * @ return The newly hand crafted Element Value.
  */
-gdcmElValue* gdcmHeader::NewManualElValToPubDict(std::string NewTagName, std::string VR) {
+gdcmElValue* gdcmHeader::NewManualElValToPubDict(std::string NewTagName, 
+                                                 std::string VR) {
    gdcmElValue* NewElVal = (gdcmElValue*)0;
    guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
    guint32 FreeElem = 0;
@@ -1767,7 +1774,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    void * a = malloc(l);
    if(!a) {
    	std::cout << "Big Broblem (LoadElementVoidArea, malloc) " 
-   	     << std::hex << Group << " " << Elem << std::endl;
+   	          << std::hex << Group << " " << Elem << std::endl;
    	return NULL;
    }  
    int res = PubElValSet.SetVoidAreaByNumber(a, Group, Elem);
@@ -1775,7 +1782,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) {
    	std::cout << "Big Broblem (LoadElementVoidArea, fread) " 
-   	     << std::hex << Group << " " << Elem << std::endl;
+   	          << std::hex << Group << " " << Elem << std::endl;
    	free(a);
    	return NULL;
    }  
@@ -1793,7 +1800,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);	 
    if (!elValue) {
       dbg.Verbose(1, "gdcmHeader::GetElValueByNumber",
-                  "failed to Locate gdcmElValue");
+                      "failed to Locate gdcmElValue");
       return (size_t)0;
    }
    return elValue->GetOffset();
@@ -2056,7 +2063,7 @@ int gdcmHeader::GetLUTNbits(void) {
    //int LutLength;
    //int LutDepth;
    int LutNbits;
-   // Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
+   //Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
    // Consistency already checked in GetLUTLength
    std::string LutDescription = GetPubElValByNumber(0x0028,0x1101);
    if (LutDescription == GDCM_UNFOUND)
@@ -2132,6 +2139,7 @@ void * gdcmHeader::GetLUTRGB(void) {
    if(l==0) 
      return (NULL);     
    int nBits=GetLUTNbits();
+
   // a virer quand on aura trouve UNE image 
   // qui correspond VRAIMENT à la definition !
     std::cout << "l " << l << " nBits " << nBits;
@@ -2170,7 +2178,8 @@ void * gdcmHeader::GetLUTRGB(void) {
       unsigned char * g = (unsigned char *)LutG;
       unsigned char * b = (unsigned char *)LutB;
       for(int i=0;i<l;i++) {
-      //std::cout << "lut16 " << i << " : " << *r << " " << *g << " " << *b << std::endl;
+      //std::cout << "lut16 " << i << " : " << *r << " " << *g << " " << *b 
+      //          << std::endl;
       printf("lut 8 %d : %d %d %d \n",i,*r,*g,*b);
          *rgb++ = *r++;
          *rgb++ = *g++;
