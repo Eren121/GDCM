@@ -10,7 +10,6 @@
  * optimizations.  Most users will not need to touch this file.
  */
 
-
 /*
  * Define BITS_IN_JSAMPLE as either
  *   8   for 8-bit sample values (the usual setting)
@@ -20,8 +19,8 @@
  * We do not support run-time selection of data precision, sorry.
  */
 
-#define BITS_IN_JSAMPLE  12	/* use 8 or 12 */
-
+//#define BITS_IN_JSAMPLE  8	/* use 8 or 12 */
+#include "jBitsInJsample.h" 
 
 /*
  * Maximum number of components (color channels) allowed in JPEG image.

@@ -50,7 +50,8 @@ libgdcmijpeg8_la_SOURCES=		\
 	jutils.c \
 	jerror.c \
 	jmemmgr.c \
-	jmemnobs.c
+	jmemnobs.c \
+	rdrle.c
 
 libgdcmijpeg8includedir = $(includedir)
 libgdcmijpeg8include_HEADERS = \
@@ -64,7 +65,7 @@ libgdcmijpeg8include_HEADERS = \
 	jmorecfg.h  \
 	jpegint.h  \
 	jpeglib.h  \
-	jversion.h
+	jversion.h 
 
 EXTRA_DIST = \
    jconfig.linux \
