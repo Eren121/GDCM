@@ -1,5 +1,5 @@
 
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.76 2003/07/02 16:47:22 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.77 2003/07/03 11:29:34 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -383,7 +383,7 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was allready encountered
+ * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a ImplicitVRLittleEndian one.
  *
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
@@ -401,7 +401,7 @@ bool gdcmHeader::IsImplicitVRLittleEndianTransferSyntax(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was allready encountered
+ * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a ExplicitVRLittleEndian one.
  *
  * @return  True when ExplicitVRLittleEndian found. False in all other cases.
@@ -419,7 +419,7 @@ bool gdcmHeader::IsExplicitVRLittleEndianTransferSyntax(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was allready encountered
+ * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a DeflatedExplicitVRLittleEndian one.
  *
  * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
@@ -437,7 +437,7 @@ bool gdcmHeader::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was allready encountered
+ * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a Explicit VR Big Endian one.
  *
  * @return  True when big endian found. False in all other cases.
@@ -455,7 +455,7 @@ bool gdcmHeader::IsExplicitVRBigEndianTransferSyntax(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was allready encountered
+ * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGBaseLineProcess1 one.
  *
  * @return  True when JPEGBaseLineProcess1found. False in all other cases.
@@ -492,7 +492,7 @@ bool gdcmHeader::IsJPEGLossless(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was allready encountered
+ * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGExtendedProcess2-4 one.
  *
  * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
@@ -510,7 +510,7 @@ bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was allready encountered
+ * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGExtendeProcess3-5 one.
  *
  * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
@@ -528,7 +528,7 @@ bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was allready encountered
+ * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGSpectralSelectionProcess6-8 one.
  *
  * @return  True when JPEGSpectralSelectionProcess6-8 found. False in all
@@ -588,31 +588,26 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
       g = ReadInt16();
       n = ReadInt16();
       
- if (DEBUG) printf ("dans FindLengthOB (%04x,%04x)\n",g,n);
- long l = ftell(fp);
- if (DEBUG) printf("en  %d o(%o) x(%x)\n",l,l,l); 
+      long l = ftell(fp);
 
       if (errno == 1)
          return 0;
       TotalLength += 4;  // We even have to decount the group and element 
      
-      if ( g != 0xfffe           && g!=0xb00c ) /*for bogus headerJPR */ {
+      if ( g != 0xfffe           && g!=0xb00c ) /*for bogus header */ {
          char msg[100]; // for sprintf. Sorry
          sprintf(msg,"wrong group (%04x) for an item sequence (%04x,%04x)\n",g, g,n);
          dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",msg); 
          long l = ftell(fp);
-         if (DEBUG) printf("en  %d o(%o) x(%x)\n",l,l,l); 
          errno = 1;
          return 0;
       }
- 
-      if ( n == 0xe0dd       || ( g==0xb00c && n==0x0eb6 ) ) /* for bogus header JPR */ 
+      if ( n == 0xe0dd       || ( g==0xb00c && n==0x0eb6 ) ) /* for bogus header  */ 
          FoundSequenceDelimiter = true;
       else if ( n != 0xe000 ){
          char msg[100];  // for sprintf. Sorry
          sprintf(msg,"wrong element (%04x) for an item sequence (%04x,%04x)\n",n, g,n);
 	 dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",msg);
-         if (DEBUG) printf("wrong element (%04x) for an item sequence (%04x,%04x)\n",n, g,n);	 
          errno = 1;
          return 0;
       }
@@ -620,7 +615,6 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
       TotalLength += ItemLength + 4;  // We add 4 bytes since we just read
                                       // the ItemLength with ReadInt32
                                       
-      if (DEBUG) printf("TotalLength %d\n",TotalLength);
       SkipBytes(ItemLength);
    }
    fseek(fp, PositionOnEntry, SEEK_SET);
@@ -635,13 +629,12 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
  */
  void gdcmHeader::FindLength (gdcmElValue * ElVal) {
    guint16 element = ElVal->GetElement();
-   guint16 group = ElVal->GetGroup(); // JPR a virer
+   guint16 group   = ElVal->GetGroup();
    string  vr      = ElVal->GetVR();
    guint16 length16;
-   if( (element == 0x0010) && (group == 0x7fe0) ) {// JPR
- 
-      dbg.SetDebug(10);
-      dbg.Verbose(2, "gdcmHeader::FindLength: ", // JPR
+   if( (element == 0x0010) && (group == 0x7fe0) ) {
+      dbg.SetDebug(0);
+      dbg.Verbose(2, "gdcmHeader::FindLength: ",
                      "on est sur 7fe0 0010");
    }   
    
@@ -687,7 +680,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
       // We shall use this second strategy. In order to make sure that we
       // can interpret the presence of an apparently big endian encoded
       // length of a "Group Length" without committing a big mistake, we
-      // add an additional check: we look in the allready parsed elements
+      // add an additional check: we look in the already parsed elements
       // for the presence of a "Transfer Syntax" whose value has to be "big
       // endian encoding". When this is the case, chances are we have got our
       // hands on a big endian encoded file: we switch the swap code to
@@ -951,10 +944,10 @@ guint16 gdcmHeader::ReadInt16(void) {
    size_t item_read;
    item_read = fread (&g, (size_t)2,(size_t)1, fp);
    if ( item_read != 1 ) {
-      dbg.Verbose(0, "gdcmHeader::ReadInt16", " Failed to read :");
-      if(feof(fp)) 
-         dbg.Verbose(0, "gdcmHeader::ReadInt16", " End of File encountered");
-     if(ferror(fp)) 
+      // dbg.Verbose(0, "gdcmHeader::ReadInt16", " Failed to read :");
+      // if(feof(fp)) 
+      //    dbg.Verbose(0, "gdcmHeader::ReadInt16", " End of File encountered");
+      if(ferror(fp)) 
          dbg.Verbose(0, "gdcmHeader::ReadInt16", " File Error");
       errno = 1;
       return 0;
@@ -974,11 +967,10 @@ guint32 gdcmHeader::ReadInt32(void) {
    guint32 g;
    size_t item_read;
    item_read = fread (&g, (size_t)4,(size_t)1, fp);
-   if ( item_read != 1 ) {
-   
-      dbg.Verbose(0, "gdcmHeader::ReadInt32", " Failed to read :");
-      if(feof(fp)) 
-         dbg.Verbose(0, "gdcmHeader::ReadInt32", " End of File encountered");
+   if ( item_read != 1 ) { 
+      //dbg.Verbose(0, "gdcmHeader::ReadInt32", " Failed to read :");
+      //if(feof(fp)) 
+      //   dbg.Verbose(0, "gdcmHeader::ReadInt32", " End of File encountered");
      if(ferror(fp)) 
          dbg.Verbose(0, "gdcmHeader::ReadInt32", " File Error");   
       errno = 1;

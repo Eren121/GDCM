@@ -315,7 +315,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    // if (GetPlanarConfiguration() == 1) {
    // after unfreeze
    
-   if  (PlanarConfiguration == 1) { // need to make RGB Pixels
+   if (PlanarConfiguration == 1) { // need to make RGB Pixels
       int l = lgrTotale/3 ;
 
       char * a = (char *)destination;
