@@ -50,12 +50,21 @@ std::list<std::string> * gdcmDictSet::GetPubDictTagNames(void) {
  *          A typical usage of this method would be to enable a dynamic
  *          configuration of a Dicom file browser: the admin/user can
  *          select in the interface which Dicom tags should be displayed.
+ * \warning Dicom *doesn't* define any name for any 'categorie'
+ *          (the dictionnary fourth field was formerly NIH defined
+ *           - and no longer he is-
+ *           and will be removed when Dicom provides us a text file
+ *           with the 'official' Dictionnary, that would be more friendly
+ *           than asking us to perform a line by line check od thhe dictionnary
+ *           at the beginning of each year to -try to- guess the changes)
+ *           Therefore : please NEVER use that fourth field :-(
+ *
  * @return  An hashtable: whose keys are the names of the groups and whose
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
 std::map<std::string, std::list<std::string> > * gdcmDictSet::GetPubDictTagNamesByCategory(void) {
-   std::map<std::string, std::list<std::string> > * Result = new map<std::string, std::list<std::string> >;
+   std::map<std::string, std::list<std::string> > * Result = new std::map<std::string, std::list<std::string> >;
    TagKeyHT entries = GetDefaultPubDict()->GetEntries();
 
    for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
@@ -126,9 +135,9 @@ void gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) {
  *          contained is this gdcmDictSet, along with their respective content.
  * @param   os Output stream used for printing.
  */
-void gdcmDictSet::Print(ostream& os) {
+void gdcmDictSet::Print(std::ostream& os) {
    for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict){
-      os << "Printing dictionary " << dict->first << " \n";
+      std::os << "Printing dictionary " << dict->first << std::endl;
       dict->second->Print(os);
    }
 }
