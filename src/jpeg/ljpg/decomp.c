@@ -7,7 +7,7 @@
  * from the Cornell lossless JPEG code
  */
 /*
- * $Id: decomp.c,v 1.2 2003/10/29 18:24:40 malaterre Exp $
+ * $Id: decomp.c,v 1.3 2004/08/18 02:26:08 malaterre Exp $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,8 +17,8 @@
 #include "mcu.h"
 #include "proto.h"
 
-DecompressInfo  dcInfo;
-StreamIN        JpegInFile;     
+static DecompressInfo  dcInfo;
+static StreamIN        JpegInFile;     
 
 /*
  *--------------------------------------------------------------

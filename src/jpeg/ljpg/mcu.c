@@ -5,7 +5,7 @@
  *
  */
 /*
- * $Id: mcu.c,v 1.1 2003/10/21 12:08:54 jpr Exp $
+ * $Id: mcu.c,v 1.2 2004/08/18 02:26:08 malaterre Exp $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,12 +14,12 @@
 #include "mcu.h"
 #include "proto.h"
 
-MCU *mcuTable;          /* the global mcu table that buffers the source image */
+MCU *mcuTable=NULL;     /* the global mcu table that buffers the source image */
 
 MCU *mcuROW1=NULL;      /* point to two rows of MCU in encoding & decoding */
 MCU *mcuROW2=NULL;
 
-int numMCU;             /* number of MCUs in mcuTable */
+int numMCU=0;           /* number of MCUs in mcuTable */
 
 /*
  *--------------------------------------------------------------

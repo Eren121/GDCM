@@ -5,7 +5,7 @@
  * from the IJG software
  */
 /*
- * $Id: read.c,v 1.1 2003/10/21 12:08:54 jpr Exp $
+ * $Id: read.c,v 1.2 2004/08/18 02:26:08 malaterre Exp $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +21,7 @@
  * Huffman tables once here, then pointers set later as needed
  */
 
-HuffmanTable HuffmanTableMemory[4];
+static HuffmanTable HuffmanTableMemory[4];
 
 /* 
  * Enumerate all the JPEG marker codes

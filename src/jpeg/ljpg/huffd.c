@@ -5,7 +5,7 @@
  * software
  */
 /*
- * $Id: huffd.c,v 1.2 2004/01/07 10:07:28 regrain Exp $
+ * $Id: huffd.c,v 1.3 2004/08/18 02:26:08 malaterre Exp $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +26,7 @@ static int  bitsLeft;               /* # of unused bits in it */
  * The following variables keep track of the input buffer
  * for the JPEG data, which is read by ReadJpegData.
  */
-Uchar *inputBuffer;               /* Input buffer for JPEG data */
+Uchar *inputBuffer = 0;           /* Input buffer for JPEG data */
 int inputBufferOffset = 0;        /* Offset of current byte */
 
 /*
@@ -646,7 +646,7 @@ void DecodeImage (DecompressInfo *dcPtr, unsigned short **image, int depth)
 
         /* The upper neighbors are predictors for the first column. */
         for (curComp = 0; curComp < compsInScan; curComp++) 
-                {		
+                {
             ci = dcPtr->MCUmembership[curComp];
             compptr = dcPtr->curCompInfo[ci];
             dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];
@@ -661,7 +661,7 @@ void DecodeImage (DecompressInfo *dcPtr, unsigned short **image, int depth)
         for (col=1; col < numCOL; col++) 
                 {
             for (curComp = 0; curComp < compsInScan; curComp++) 
-                        {			
+                        {
                 ci = dcPtr->MCUmembership[curComp];
                 compptr = dcPtr->curCompInfo[ci];
                 dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];

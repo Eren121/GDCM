@@ -5,7 +5,7 @@
  * are stolen from the IJG code
  */
 /*
- * $Id: jpegutil.c,v 1.1 2003/10/21 12:08:54 jpr Exp $
+ * $Id: jpegutil.c,v 1.2 2004/08/18 02:26:08 malaterre Exp $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,10 +19,10 @@
  * Enough memory is reserved to accomodate up to 1024-wide images
  * with up to 4 components.
  */
-char mcuROW1Memory[1024 * sizeof(MCU)];
-char mcuROW2Memory[1024 * sizeof(MCU)];
-char buf1Memory[1024 * 4 * sizeof(ComponentType)];
-char buf2Memory[1024 * 4 * sizeof(ComponentType)];
+static char mcuROW1Memory[1024 * sizeof(MCU)];
+static char mcuROW2Memory[1024 * sizeof(MCU)];
+static char buf1Memory[1024 * 4 * sizeof(ComponentType)];
+static char buf2Memory[1024 * 4 * sizeof(ComponentType)];
 
 
 unsigned int bitMask[] = {  0xffffffff, 0x7fffffff, 0x3fffffff, 0x1fffffff,
