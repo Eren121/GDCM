@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.168 $
+  Date:      $Date: 2005/01/10 03:09:07 $
+  Version:   $Revision: 1.169 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -449,6 +449,9 @@ std::ifstream *Document::OpenFile()
        zero == 0x0005 || zero == 0x0500 || zero == 0x0006 || zero == 0x0600 ||
        zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 )
    {
+      std::string msg 
+         = Util::Format("ACR/DICOM with no preamble: (%04x)\n", zero);
+      gdcmVerboseMacro( msg.c_str() );
       return Fp;
    }
  
@@ -2437,7 +2440,7 @@ void Document::HandleBrokenEndian(uint16_t group, uint16_t elem)
      group = 0xfffe;
      elem = 0xe000;
    } 
-   else if ((group == 0xfffe) && (elem == 0xe00d) && reversedEndian) 
+   else if (group == 0xfffe && elem == 0xe00d && reversedEndian) 
    {
      // end of reversed endian group
      reversedEndian--;
@@ -2579,7 +2582,7 @@ bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
        << std::hex << testGroup << "," << testElement << ")" << std::endl
        << "   but instead we encountered tag ("
        << std::hex << itemTagGroup << "," << itemTagElement << ")"
-       << std::endl
+       << std::dec
        << "  at address: " << (unsigned int)currentPosition );
       Fp->seekg(positionOnEntry, std::ios::beg);
 
