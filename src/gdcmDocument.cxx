@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 22:31:31 $
-  Version:   $Revision: 1.96 $
+  Date:      $Date: 2004/10/07 04:17:58 $
+  Version:   $Revision: 1.97 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2926,10 +2926,10 @@ void gdcmDocument::ComputeRLEInfo()
        // Store the collected info
        gdcmRLEFrame* newFrameInfo = new gdcmRLEFrame;
        newFrameInfo->NumberFragments = nbRleSegments;
-       for( unsigned int k = 1; k <= nbRleSegments; k++ )
+       for( unsigned int uk = 1; uk <= nbRleSegments; uk++ )
        {
-          newFrameInfo->Offset[k] = frameOffset + rleSegmentOffsetTable[k];
-          newFrameInfo->Length[k] = rleSegmentLength[k];
+          newFrameInfo->Offset[uk] = frameOffset + rleSegmentOffsetTable[uk];
+          newFrameInfo->Length[uk] = rleSegmentLength[uk];
        }
        RLEInfo.Frames.push_back( newFrameInfo );
    }
