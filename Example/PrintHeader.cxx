@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:13 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/12 11:40:50 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
    if (argc == 1)
    {
-      std::cout << argv[0] << " fileName printLevel" << std::endl;
+      std::cout << argv[0] << " fileName printLevel debug" << std::endl;
    }
 
    if (argc > 1)
@@ -63,7 +63,9 @@ int main(int argc, char* argv[])
    }
 
    std::string transferSyntaxName = e1->GetTransferSyntaxName();
-   std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
+   std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]"
+             << std::endl;
+   std::cout << " SwapCode= " << e1->GetSwapCode() << std::endl;
 
    if(e1->IsReadable())
       std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;

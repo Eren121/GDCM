@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:13 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/01/12 11:40:50 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,8 @@ int main(int argc, char* argv[])
    std::string fileName;   
    if (argc != 2) 
    {
-      std::cout << " usage : PrintDocument fileName" << std::endl;
+      std::cout << " usage : PrintDocument fileName printLevel debug" 
+                << std::endl;
    }
 
    if (argc > 1) 
@@ -52,6 +53,8 @@ int main(int argc, char* argv[])
       int level = atoi(argv[2]);   
       e1->SetPrintLevel(level);
    }
+
+   e1->Print();   
 
    std::cout << "\n\n" << std::endl; 
 
@@ -94,6 +97,7 @@ int main(int argc, char* argv[])
   
    std::string transferSyntaxName = e1->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
+   std::cout << " SwapCode= " << e1->GetSwapCode() << std::endl;
    
    if(e1->IsReadable())
       std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
