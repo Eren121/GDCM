@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 20:04:08 $
-  Version:   $Revision: 1.229 $
+  Date:      $Date: 2005/02/14 10:45:04 $
+  Version:   $Revision: 1.230 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -343,7 +343,9 @@ uint16_t Document::SwapShort(uint16_t a)
 {
    if ( SwapCode == 4321 || SwapCode == 2143 )
    {
-      a = ((( a << 8 ) & 0xff00 ) | (( a >> 8 ) & 0x00ff ) );
+      //a = ((( a << 8 ) & 0xff00 ) | (( a >> 8 ) & 0x00ff ) );
+      // Save CPU time
+      a = ( a << 8 ) | ( a >> 8 );
    }
    return a;
 }
@@ -360,11 +362,15 @@ uint32_t Document::SwapLong(uint32_t a)
       case 1234 :
          break;
       case 4321 :
-         a=( ((a<<24) & 0xff000000) | ((a<<8)  & 0x00ff0000) | 
-             ((a>>8)  & 0x0000ff00) | ((a>>24) & 0x000000ff) );
+//         a=( ((a<<24) & 0xff000000) | ((a<<8)  & 0x00ff0000) | 
+//             ((a>>8)  & 0x0000ff00) | ((a>>24) & 0x000000ff) );
+// save CPU time
+         a=( ( a<<24)               | ((a<<8)  & 0x00ff0000) | 
+             ((a>>8)  & 0x0000ff00) |  (a>>24)                );
          break;   
       case 3412 :
-         a=( ((a<<16) & 0xffff0000) | ((a>>16) & 0x0000ffff) );
+//       a=( ((a<<16) & 0xffff0000) | ((a>>16) & 0x0000ffff) );
+         a=( (a<<16)                | (a>>16)  );
          break;  
       case 2143 :
          a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
