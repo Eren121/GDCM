@@ -43,7 +43,6 @@ gdcmDirList::gdcmDirList(std::string dirName,bool recursive)
 /*
  * \ingroup gdcmDirList
  * \brief  Destructor
- * @param   
  */
 gdcmDirList::~gdcmDirList(void)
 {

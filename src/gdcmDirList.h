@@ -1,4 +1,4 @@
-// gdcmDir.h
+// gdcmDirList.h
 //-----------------------------------------------------------------------------
 #ifndef GDCMDIRLIST_H
 #define GDCMDIRLIST_H

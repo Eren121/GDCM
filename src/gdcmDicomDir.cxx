@@ -58,6 +58,8 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
  */
 gdcmDicomDir::~gdcmDicomDir() 
 {
+   delete metaelems;
+   
    for(ListPatient::iterator cc=patients.begin();cc!=patients.end();++cc)
    {
       delete *cc;
@@ -72,6 +74,9 @@ gdcmDicomDir::~gdcmDicomDir()
  */
 void gdcmDicomDir::Print(std::ostream &os)
 {
+   (*metaelems).SetPrintLevel(printLevel);
+   (*metaelems).Print(os);   
+   
    for(ListPatient::iterator cc=patients.begin();cc!=patients.end();++cc)
    {
      (*cc)->SetPrintLevel(printLevel);
@@ -127,7 +132,7 @@ void gdcmDicomDir::ParseDirectory(void)
 // Protected
 /*
  * \ingroup gdcmDicomDir
- * \brief   
+ * \brief create a gdcmDicomDir from a root Directory 
  * @param path entry point of the stree-like structure
  */
 void gdcmDicomDir::NewDicomDir(std::string path)
@@ -157,7 +162,7 @@ void gdcmDicomDir::NewDicomDir(std::string path)
 
 /*
  * \ingroup gdcmDicomDir
- * \brief   Get the dicom dir path
+ * \brief   Get the DicomDir path
  * @param   
  */
 std::string gdcmDicomDir::GetPath(void)
@@ -178,8 +183,7 @@ std::string gdcmDicomDir::GetPath(void)
 // Private
 /*
  * \ingroup gdcmDicomDir
- * \brief   
- * @param   
+ * \brief create a 'gdcmDicomDir' from a DICOMDIR gdcmHeader 
  */
 void gdcmDicomDir::CreateDicomDir()
 {
@@ -193,10 +197,22 @@ void gdcmDicomDir::CreateDicomDir()
    gdcmDicomDirType type=gdcmDicomDir::GDCM_NONE;
    ListTag::iterator begin;
    ListTag::iterator end;
+   ListTag::iterator k;
 
    begin=listEntries.begin();
    end=begin;
-   for(ListTag::iterator i=listEntries.begin();i !=listEntries.end();++i) 
+   
+   for(ListTag::iterator j=listEntries.begin();j !=listEntries.end();++j) 
+   {
+      if((*j)->GetValue()=="PATIENT ") {
+         k = j; 
+         break;
+      }
+      AddObjectToEnd(gdcmDicomDir::GDCM_META,begin,j);       
+   }   
+    
+//   for(ListTag::iterator i=listEntries.begin();i !=listEntries.end();++i) 
+   for(ListTag::iterator i=k;i !=listEntries.end();++i) 
    {
       std::string v=(*i)->GetValue();
       if(v=="PATIENT ") 
@@ -253,6 +269,9 @@ void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,
 
    switch(type)
    {
+      case gdcmDicomDir::GDCM_META:
+         AddMetaToEnd(begin,end);
+         break;      
       case gdcmDicomDir::GDCM_PATIENT:
          AddPatientToEnd(begin,end);
          break;
@@ -266,6 +285,18 @@ void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,
          AddImageToEnd(begin,end);
          break;
    }
+}
+
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief Well ... Not realy to end, there is only one occurence  
+ * @param   begin
+ * @param   end
+*/
+void gdcmDicomDir::AddMetaToEnd(ListTag::iterator begin,ListTag::iterator end)
+{
+   metaelems = new gdcmMeta(begin,end);
 }
 
 /*
@@ -382,9 +413,7 @@ void gdcmDicomDir::SetElements(std::string &path,ListHeader &list)
 
       // if new Serie Deal with 'SERIE' Elements   
       if(serCurInstanceUID!=serPrevInstanceUID || serCurID!=serPrevID) 
-      {
          SetElement(path,GDCM_SERIE,*it);
-      } 
       
       // Always Deal with 'IMAGE' Elements  
       SetElement(path,GDCM_IMAGE,*it);

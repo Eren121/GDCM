@@ -28,11 +28,13 @@ public:
 
    TagHeaderEntryHT GetEntry(void);
    ListTag GetListEntry(void);
-
+   ListTag::iterator debut(void) { return(beginObj);}
+   ListTag::iterator fin  (void) { return(endObj);  }
+   
 protected:
+   
    ListTag::iterator beginObj;
    ListTag::iterator endObj;
-
    int printLevel;
 
 private:

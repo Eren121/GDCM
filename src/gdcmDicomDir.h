@@ -6,13 +6,14 @@
 #include "gdcmHeader.h"
 #include "gdcmCommon.h"
 #include "gdcmPatient.h"
+#include "gdcmMeta.h"
 #include "gdcmDicomDirElement.h"
 
 #include <list>
 #include <vector>
 
 //-----------------------------------------------------------------------------
-typedef std::list<gdcmPatient *> ListPatient;
+typedef std::list<gdcmPatient *>   ListPatient;
 typedef std::vector<gdcmHeader *>  ListHeader;
 
 //-----------------------------------------------------------------------------
@@ -24,8 +25,9 @@ typedef std::vector<gdcmHeader *>  ListHeader;
 class GDCM_EXPORT gdcmDicomDir: public gdcmParser
 {
 public:
-//   gdcmDicomDir(ListTag *l,          bool exception_on_error = false);
-   gdcmDicomDir(const char *FileName, bool parseDir = false,
+//   gdcmDicomDir(ListTag *l,         bool exception_on_error = false);
+   gdcmDicomDir(const char *FileName, 
+                bool parseDir = false,
                 bool exception_on_error = false);
    
    ~gdcmDicomDir(void);
@@ -33,6 +35,7 @@ public:
    void SetPrintLevel(int level) { printLevel = level; };
    virtual void Print(std::ostream &os = std::cout);
 
+   inline gdcmMeta   *GetMeta()      {return metaelems;};
    inline ListPatient &GetPatients() {return patients;};
 
 // Write
@@ -43,6 +46,7 @@ public:
    typedef enum
    {
       GDCM_NONE,
+      GDCM_META,
       GDCM_PATIENT,
       GDCM_STUDY,
       GDCM_SERIE,
@@ -55,17 +59,20 @@ protected:
 
 private:
    void CreateDicomDir(void);
-   void AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,ListTag::iterator end);
+   void AddObjectToEnd(gdcmDicomDirType type,
+                        ListTag::iterator begin,ListTag::iterator end);
+   void AddMetaToEnd   (ListTag::iterator begin,ListTag::iterator end);
    void AddPatientToEnd(ListTag::iterator begin,ListTag::iterator end);
-   void AddStudyToEnd(ListTag::iterator begin,ListTag::iterator end);
-   void AddSerieToEnd(ListTag::iterator begin,ListTag::iterator end);
-   void AddImageToEnd(ListTag::iterator begin,ListTag::iterator end);
+   void AddStudyToEnd  (ListTag::iterator begin,ListTag::iterator end);
+   void AddSerieToEnd  (ListTag::iterator begin,ListTag::iterator end);
+   void AddImageToEnd  (ListTag::iterator begin,ListTag::iterator end);
 
    void SetElements(std::string &path,ListHeader &list);
-   void SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader *header);
+   void SetElement (std::string &path,gdcmDicomDirType type,gdcmHeader *header);
 
    static bool HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2);
 
+   gdcmMeta *metaelems;
    ListPatient patients;
 };
 

@@ -1,4 +1,4 @@
-SUBDIRS = jpeg
+&SUBDIRS = jpeg
 
 LTVERSION = 0:1:0
 
@@ -25,6 +25,7 @@ libgdcm_la_SOURCES=                \
    gdcmHeaderEntry.cxx             \
    gdcmHeaderHelper.cxx            \
    gdcmImage.cxx                   \
+   gdcmMeta.cxx                    \
    gdcmJpeg12.cxx                  \
    gdcmJpeg2000.cxx                \
    gdcmJpeg.cxx                    \
@@ -37,14 +38,14 @@ libgdcm_la_SOURCES=                \
    gdcmStudy.cxx                   \
    gdcmTS.cxx                      \
    gdcmUtil.cxx                    \
-   gdcmVR.cxx 
+   gdcmVR.cxx
 
 
 libgdcmincludedir = $(includedir)
-libgdcminclude_HEADERS =           \
+libgdcminclude_HEADERS =                \
 	gdcmCommon.h                    \
 	gdcmDicomDir.h                  \
-   gdcmDicomDirElement.h           \
+        gdcmDicomDirElement.h           \
 	gdcmDictEntry.h                 \
 	gdcmDict.h                      \
 	gdcmDictSet.h                   \
@@ -56,13 +57,14 @@ libgdcminclude_HEADERS =           \
 	gdcmHeader.h                    \
 	gdcmHeaderHelper.h              \
 	gdcmImage.h                     \
+        gdcmMeta.h                      \
 	gdcmObject.h                    \
 	gdcmParser.h                    \
 	gdcmPatient.h                   \
 	gdcmSerie.h                     \
 	gdcmStudy.h                     \
 	gdcmVR.h                        \
-	gdcmTS.h                      
+	gdcmTS.h
 
 
 EXTRA_DIST =   \

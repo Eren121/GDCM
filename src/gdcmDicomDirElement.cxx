@@ -26,8 +26,7 @@
  * \ingroup gdcmDicomDirElement
  * \brief   constructor 
  */
- gdcmDicomDirElement::gdcmDicomDirElement(void) 
-{
+ gdcmDicomDirElement::gdcmDicomDirElement(void) {
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_ELEM);
    std::ifstream from(filename.c_str());
    dbg.Error(!from, "gdcmDicomDirElement::gdcmDicomDirElement: can't open dictionary",filename.c_str());
@@ -41,8 +40,8 @@
       from.getline(buff, 1024, ' ');
       type = buff;
 
-      if( (type=="metaElem") || (type=="patientElem") || 
-          (type=="studyElem") || (type=="serieElem") || 
+      if( (type=="metaElem")  || (type=="patientElem") || 
+          (type=="studyElem") || (type=="serieElem")   || 
           (type=="imageElem") )
       {
          from >> std::hex >> elem.group >> elem.elem;
@@ -74,8 +73,7 @@
  * \ingroup gdcmDicomDirElement
  * \brief   destructor 
  */
- gdcmDicomDirElement::~gdcmDicomDirElement() 
-{
+ gdcmDicomDirElement::~gdcmDicomDirElement() {
    MetaList.clear();
    PatientList.clear();
    StudyList.clear();
@@ -91,8 +89,7 @@
  * \todo add a 'Print Level' check 
  * @param   os The output stream to be written to.
  */
-void gdcmDicomDirElement::Print(std::ostream &os) 
-{
+void gdcmDicomDirElement::Print(std::ostream &os) {
    std::ostringstream s;
    std::list<gdcmElement>::iterator it;
    char greltag[10];  //group element tag
