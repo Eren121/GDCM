@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2004/06/22 14:03:30 $
+  Version:   $Revision: 1.50 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -556,7 +556,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
    }
 
    for(it=elemList.begin();it!=elemList.end();++it) {
-      cout << "it " << endl;
+      std::cout << "it " << std::endl;
       tmpGr=it->group;
       tmpEl=it->elem;
       dictEntry=GetPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);

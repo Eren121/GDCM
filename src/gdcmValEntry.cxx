@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/06/22 14:03:30 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -138,7 +138,7 @@ void gdcmValEntry::Print(std::ostream & os)
  * \brief   canonical Writer
  */
 void gdcmValEntry::Write(FILE *fp, FileType filetype) {
-      string vr=GetVR();
+      std::string vr=GetVR();
       int lgr=GetLength();
       if (vr == "US" || vr == "SS") {
          // some 'Short integer' fields may be mulivaluated

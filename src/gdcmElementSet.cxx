@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/06/22 14:03:30 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,7 +83,7 @@ void gdcmElementSet::Write(FILE *fp, FileType filetype) {
    {
       e=i->second;	
 	   e->WriteCommonPart(fp, filetype);
-		std::cout<<e->GetKey() << " " << hex << e->GetVR() << " " 
+		std::cout<<e->GetKey() << " " << std::hex << e->GetVR() << " " 
 		         << e->GetName()
 		         << std::endl;
 					
