@@ -274,7 +274,7 @@
 0018 0037 CS 1 Therapy Type (RET)
 0018 0038 CS 1 Intervention Status
 0018 0039 CS 1 Therapy Description (RET)
-0018 003A ST 1 Intervention Description
+0018 003a ST 1 Intervention Description
 0018 0040 IS 1 Cine Rate
 0018 0050 DS 1 Slice Thickness
 0018 0060 DS 1 KVP
@@ -860,11 +860,11 @@
 0022 0007 FL 1 Spherical Lens Power        
 0022 0008 FL 1 Cylinder Lens Power 
 0022 0009 FL 1 Cylinder Axis
-0022 000A FL 1 Emmetropic Magnification 
-0022 000B FL 1 Intra Ocular Pressure
-0022 000C FL 1 Horizontal Field of View 
-0022 000D CS 1 Pupil Dilated   
-0022 000E FL 1 Degree of Dilation              
+0022 000a FL 1 Emmetropic Magnification 
+0022 000b FL 1 Intra Ocular Pressure
+0022 000c FL 1 Horizontal Field of View 
+0022 000d CS 1 Pupil Dilated   
+0022 000e FL 1 Degree of Dilation              
 0022 0010 FL 1 Stereo Baseline Angle  
 0022 0011 FL 1 Stereo Baseline Displacement 
 0022 0012 FL 1 Stereo Horizontal Pixel Offset 
@@ -875,10 +875,10 @@
 0022 0017 SQ 1 Light Path Filter Type Stack Code Sequence
 0022 0018 SQ 1 Image Path Filter Type Stack Code Sequence
 0022 0019 SQ 1 Lenses Code Sequence 
-0022 001A SQ 1 Channel Description Code Sequence 
-0022 001B SQ 1 Refractive State Sequence 
-0022 001C SQ 1 Mydriatic Agent Code Sequence 
-0022 001D SQ 1 Relative Image Position Code Sequence 
+0022 001a SQ 1 Channel Description Code Sequence 
+0022 001b SQ 1 Refractive State Sequence 
+0022 001c SQ 1 Mydriatic Agent Code Sequence 
+0022 001d SQ 1 Relative Image Position Code Sequence 
 0022 0020 SQ 1 Stereo Pairs Sequence 
 0022 0021 SQ 1 Left Image Sequence
 0022 0022 SQ 1 Right Image Sequence
@@ -1406,18 +1406,18 @@
 0070 0306 CS 1 Shape Type
 0070 0308 SQ 1 Registration Sequence                         
 0070 0309 SQ 1 Matrix Registration Sequence                  
-0070 030A SQ 1 Matrix Sequence                               
-0070 030C CS 1 Frame of Reference Transformation Matrix Type
-0070 030D SQ 1 Registration Type Code Sequence               
-0070 030F ST 1 Fiducial Description 
+0070 030a SQ 1 Matrix Sequence                               
+0070 030c CS 1 Frame of Reference Transformation Matrix Type
+0070 030d SQ 1 Registration Type Code Sequence               
+0070 030f ST 1 Fiducial Description 
 0070 0310 SH 1 Fiducial Identifier                           
 0070 0311 SQ 1 Fiducial Identifier Code Sequence             
 0070 0312 FD 1 Contour Uncertainty Radius                    
 0070 0314 SQ 1 Used Fiducials Sequence                 
 0070 0318 SQ 1 Graphic Coordinates Data Sequence
-0070 031A UI 1 Fiducial UID                                  
-0070 031C SQ 1 Fiducial Set Sequence 
-0070 031E SQ 1 Fiducial Sequence
+0070 031a UI 1 Fiducial UID                                  
+0070 031c SQ 1 Fiducial Set Sequence 
+0070 031e SQ 1 Fiducial Sequence
 
 0088 0000 UL 1 Storage Media Group Length
 0088 0130 SH 1 Storage Media File-set ID
@@ -1578,12 +1578,12 @@
 2200 0007 CS 1 Allow Media Splitting                          
 2200 0008 CS 1 Include Non-DICOM Objects                       
 2200 0009 CS 1 Include Display Application           
-2200 000A CS 1 Preserve Composite Instances After Media Creation
-2200 000B US 1 Total Number of Pieces of Media Created          
-2200 000C LO 1 Requested Media Application Profile              
-2200 000D SQ 1Referenced Storage Media Sequence                
-2200 000E AT 1-n Failure Attributes                               
-2200 000F CS 1 Allow Lossy Compression                          
+2200 000a CS 1 Preserve Composite Instances After Media Creation
+2200 000b US 1 Total Number of Pieces of Media Created          
+2200 000c LO 1 Requested Media Application Profile              
+2200 000d SQ 1 Referenced Storage Media Sequence                
+2200 000e AT 1-n Failure Attributes                               
+2200 000f CS 1 Allow Lossy Compression                          
 2200 0020 CS 1 Request Priority
 
 3002 0000 UL 1 Group Length
@@ -1693,16 +1693,16 @@
 3008 0022 IS 1 Current Fraction Number
 3008 0024 DA 1 Treatment Control Point Date
 3008 0025 TM 1 Treatment Control Point Time
-3008 002A CS 1 Treatment Termination Status
-3008 002B SH 1 Treatment Termination Code
-3008 002C CS 1 Treatment Verification Status
+3008 002a CS 1 Treatment Termination Status
+3008 002b SH 1 Treatment Termination Code
+3008 002c CS 1 Treatment Verification Status
 3008 0030 SQ 1 Referenced Treatment Record Sequence
 3008 0032 DS 1 Specified Primary Meterset
 3008 0033 DS 1 Specified Secondary Meterset
 3008 0036 DS 1 Delivered Primary Meterset
 3008 0037 DS 1 Delivered Secondary Meterset
-3008 003A DS 1 Specified Treatment Time
-3008 003B DS 1 Delivered Treatment Time
+3008 003a DS 1 Specified Treatment Time
+3008 003b DS 1 Delivered Treatment Time
 3008 0040 SQ 1 Control Point Delivery Sequence
 3008 0042 DS 1 Specified Meterset
 3008 0044 DS 1 Delivered Meterset
@@ -1711,7 +1711,7 @@
 3008 0052 DS 1 Cumulative Dose to Dose Reference
 3008 0054 DA 1 First Treatment Date
 3008 0056 DA 1 Most Recent Treatment Date
-3008 005A IS 1 Number of Fractions Delivered
+3008 005a IS 1 Number of Fractions Delivered
 3008 0060 SQ 1 Override Sequence
 3008 0062 AT 1 Override Parameter Pointer
 3008 0064 IS 1 Measured Dose Reference Number
@@ -1721,16 +1721,16 @@
 3008 0074 ST 1 Calculated Dose Reference Description
 3008 0076 DS 1 Calculated Dose Reference Dose Value
 3008 0078 DS 1 Start Meterset
-3008 007A DS 1 End Meterset
+3008 007a DS 1 End Meterset
 3008 0080 SQ 1 Referenced Measured Dose Reference Sequence
 3008 0082 IS 1 Referenced Measured Dose Reference Number
 3008 0090 SQ 1 Referenced Calculated Dose Reference Sequence
 3008 0092 IS 1 Referenced Calculated Dose Reference Number
-3008 00A0 SQ 1 Beam Limiting Device Leaf Pairs Sequence
-3008 00B0 SQ 1 Recorded Wedge Sequence
-3008 00C0 SQ 1 Recorded Compensator Sequence
-3008 00D0 SQ 1 Recorded Block Sequence
-3008 00E0 SQ 1 Treatment Summary Measured Dose Reference Sequence
+3008 00a0 SQ 1 Beam Limiting Device Leaf Pairs Sequence
+3008 00b0 SQ 1 Recorded Wedge Sequence
+3008 00c0 SQ 1 Recorded Compensator Sequence
+3008 00d0 SQ 1 Recorded Block Sequence
+3008 00e0 SQ 1 Treatment Summary Measured Dose Reference Sequence
 3008 0100 SQ 1 Recorded Source Sequence
 3008 0105 LO 1 Source Serial Number
 3008 0110 SQ 1 Treatment Session Application Setup Sequence
@@ -1742,8 +1742,8 @@
 3008 0134 DS 1 Delivered Channel Total Time
 3008 0136 IS 1 Specified Number of Pulses
 3008 0138 IS 1 Delivered Number of Pulses
-3008 013A DS 1 Specified Pulse Repetition Interval
-3008 013C DS 1 Delivered Pulse Repetition Interval
+3008 013a DS 1 Specified Pulse Repetition Interval
+3008 013c DS 1 Delivered Pulse Repetition Interval
 3008 0140 SQ 1 Recorded Source Applicator Sequence
 3008 0142 IS 1 Referenced Source Applicator Number
 3008 0150 SQ 1 Recorded Channel Shield Sequence
