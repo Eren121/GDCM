@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.20 2003/10/03 14:48:31 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.21 2003/10/24 15:38:56 malaterre Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -141,12 +141,23 @@ void vtkGdcmReader::BuildFileListFromPattern()
      }
 
    this->RemoveAllInternalFileName();
-   for (int idx = this->DataExtent[4]; idx <= this->DataExtent[5]; ++idx)
+   if( this->FileNameList.empty() )
      {
-     this->ComputeInternalFileName(idx);
+     //Multiframe case:
+     this->ComputeInternalFileName(this->DataExtent[4]);
      vtkDebugMacro("Adding file " << this->InternalFileName);
      this->AddInternalFileName(this->InternalFileName);
      }
+   else
+     {
+     //stack of 2D dicom case:
+     for (int idx = this->DataExtent[4]; idx <= this->DataExtent[5]; ++idx)
+       {
+       this->ComputeInternalFileName(idx);
+       vtkDebugMacro("Adding file " << this->InternalFileName);
+       this->AddInternalFileName(this->InternalFileName);
+       }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -381,11 +392,8 @@ void vtkGdcmReader::ExecuteInformation()
   this->DataExtent[1] = this->NumColumns - 1;
   this->DataExtent[2] = 0;
   this->DataExtent[3] = this->NumLines - 1;
-  if(this->InternalFileNameList.size() > 1)
-    {
-    this->DataExtent[4] = 0;
-    this->DataExtent[5] = this->TotalNumberOfPlanes - 1;
-    }
+  this->DataExtent[4] = 0;
+  this->DataExtent[5] = this->TotalNumberOfPlanes - 1;
   
   // We don't need to positionate the Endian related stuff (by using
   // this->SetDataByteOrderToBigEndian() or SetDataByteOrderToLittleEndian()
@@ -556,7 +564,8 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
     // The "size" of the vtkScalars data is expressed in number of points,
     // and is not the memory size representing those points:
     data->GetPointData()->GetScalars()->SetVoidArray(mem, StackNumPixels, 0);
-    this->Modified();
+    //don't know why it's here, it's calling one more time ExecuteInformation:
+    //this->Modified();
     }
 }
 

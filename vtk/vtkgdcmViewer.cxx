@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
   vtkStructuredPointsWriter *writer = vtkStructuredPointsWriter::New();
   writer->SetInput( reader->GetOutput());
   writer->SetFileName( "foo.vtk" );
-  //writer->SetFileTypeToBinary();
+  writer->SetFileTypeToBinary();
   writer->Write();
 
   reader->Delete();
