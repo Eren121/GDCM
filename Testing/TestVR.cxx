@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/27 10:43:19 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/28 09:31:51 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,5 +42,6 @@ int TestVR(int , char *[])
 
    vr->IsVROfSequence( "" );
 
+   delete vr;
    return 0;
 }

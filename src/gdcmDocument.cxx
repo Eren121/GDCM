@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 17:17:31 $
-  Version:   $Revision: 1.214 $
+  Date:      $Date: 2005/01/28 09:31:51 $
+  Version:   $Revision: 1.215 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -346,7 +346,6 @@ FileType Document::GetFileType()
  */
 std::ifstream *Document::OpenFile()
 {
-
    HasDCMPreamble = false;
    if (Filename.length() == 0) 
    {

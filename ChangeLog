@@ -1,3 +1,6 @@
+2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/TestVR.cxx : fix memory leaks
+
 2005-01-27 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Rewrite the base 256 to base 10 conversion, using string operation only.
 	 This allos us to get rid of the problematic 64bits integer type (does not
