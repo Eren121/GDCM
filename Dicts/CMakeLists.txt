@@ -16,12 +16,12 @@ INSTALL_FILES(${GDCM_DATA_DIR} .dic
 
 # Following code contributing by Andy Cedilnik (Kitware)
 FILE(READ "dicomV3.dic" ENT)
-STRING(REGEX REPLACE "\n" ";" ENT "${ENT}")
+STRING(REGEX REPLACE "\r?\n" ";" ENT "${ENT}")
 SET(DICOM_DATA_DICTIONARY "")
 
 FOREACH(line ${ENT})
   STRING(REGEX REPLACE
-    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([1-9n-]+) ([A-Za-z0-9()'/, ?.&-]*).*$"
+    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([1-9n-]+) (.*)$"
     "   {0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\"}, " nline "${line}")
   SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
@@ -29,7 +29,7 @@ ENDFOREACH(line)
 SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY} \n {0,0,0,0,0}")
 
 FILE(READ "dicomTS.dic" ENT_TS)
-STRING(REGEX REPLACE "\n" ";" ENT_TS "${ENT_TS}")
+STRING(REGEX REPLACE "\r?\n" ";" ENT_TS "${ENT_TS}")
 SET(DICOM_TS_DICTIONARY "")
 
 FOREACH(line ${ENT_TS})
@@ -41,7 +41,7 @@ ENDFOREACH(line)
 
 FILE(READ "dicomVR.dic" ENT_VR)
 STRING(REGEX REPLACE ";" "/" ENT_VR "${ENT_VR}") # CMake doesn't like ';'
-STRING(REGEX REPLACE "\n" ";" ENT_VR "${ENT_VR}")
+STRING(REGEX REPLACE "\r?\n" ";" ENT_VR "${ENT_VR}")
 SET(DICOM_VR_DICTIONARY "")
 
 FOREACH(line ${ENT_VR})
@@ -54,12 +54,12 @@ ENDFOREACH(line)
 FILE(READ "DicomDir.dic" ENT_DIR)
 STRING(REGEX REPLACE "\\\\" "\\\\\\\\" ENT_DIR "${ENT_DIR}")
 STRING(REGEX REPLACE ";" "/" ENT_DIR "${ENT_DIR}") # CMake doesn't like ';'
-STRING(REGEX REPLACE "\n" ";" ENT_DIR "${ENT_DIR}")
+STRING(REGEX REPLACE "\r?\n" ";" ENT_DIR "${ENT_DIR}")
 SET(DICOM_DIR_DICTIONARY "")
 
 FOREACH(line ${ENT_DIR})
   STRING(REGEX REPLACE
-    "^(metaElem|patientElem|studyElem|serieElem|imageElem) *([a-f0-9]+) ([a-f0-9]+) [\"](.*)[\"]([A-Za-z0-9()?._'/ !=:-]*).*$"
+    "^(metaElem|patientElem|studyElem|serieElem|imageElem) *([a-f0-9]+) ([a-f0-9]+) [\"](.*)[\"](.*)$"
     "  {\"\\1\" , 0x\\2 , 0x\\3 , \"\\4\"}, \\5" nline "${line}")
   SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
