@@ -75,6 +75,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "libgdcmijpeg12"=.\SRC\WIN32\libgdcmijpeg12.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "vtkGdcmTest"=.\VTK\WIN32\vtkGdcmTest.dsp - Package Owner=<4>
 
 Package=<5>
