@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/24 11:34:21 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/09/24 13:55:53 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ void gdcmDocEntry::Print(std::ostream& os)
    
    size_t o;
    unsigned short int g, e;
-   char st[20],st2[10];
+   char st[20];
    TSKey v;
    std::string d2, vr;
    std::ostringstream s;
@@ -65,8 +65,8 @@ void gdcmDocEntry::Print(std::ostream& os)
    o  = GetOffset();
    vr = GetVR();
 
-   sprintf(st2,"%04x|%04x", GetGroup(),GetElement());
-   s << st2;       
+   s << gdcmDictEntry::TranslateToKey(GetGroup(),GetElement()); 
+
    if (PrintLevel >= 2)
    {
       s << " lg : ";
@@ -78,13 +78,13 @@ void gdcmDocEntry::Print(std::ostream& os)
          s << std::setw(10-strlen(st)) << " ";  
          s << st << " ";
          s.setf(std::ios::left);
-         s << std::setw(8) << "-1";      
+         s << std::setw(8) << "-1"; 
       }
       else
       {
          sprintf(st,"x(%x)",lgth);
          s.setf(std::ios::left);
-         s << std::setw(10-strlen(st)) << " ";  
+         s << std::setw(10-strlen(st)) << " ";
          s << st << " ";
          s.setf(std::ios::left);
          s << std::setw(8) << lgth; 
