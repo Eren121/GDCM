@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/14 16:46:15 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/17 11:14:56 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,18 +24,81 @@
 
 int TestUtil(int , char *[])
 {
+   unsigned int i;
+
+   // Seeing at a glance HOW int16, int32, float, double, 
+   // are implanted in memory
+   uint16_t u16 = 0x0102;
+   uint32_t u32 = 0x01020304;
+   float flt= 1.0;
+   double dbl=1.0;
+
+   std::cout << "---------- uint16 : " << std::dec <<u16 << " = 0x" 
+             << std::hex << u16 << std::endl;
+   for (i=0;i<sizeof(uint16_t);i++) 
+   {
+      std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&u16)[i] << "] " ;
+     // printf("[%0x]\n",((uint8_t*)&u16)[i]);
+   }
+   std::cout << std::endl;
+
+   std::cout << "---------- unit32 : "<< std::dec << u32 << " = 0x" 
+             << std::hex << u32 << std::endl;
+   for (i=0;i<sizeof(uint32_t);i++) 
+   {
+      std::cout << std::hex <<"[" <<(uint32_t)((uint8_t*)&u32)[i] << "] " ;
+   }
+   std::cout << std::endl;
+
+   std::cout << "---------- float : " <<flt << " = 0x" 
+             << std::hex << flt << std::endl;
+   for (i=0;i<sizeof(float);i++) 
+   {
+      std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&flt)[i] << "] " ;
+   }
+   std::cout << std::endl;
+
+   flt= 2.0;
+   std::cout << "---------- float : " <<flt << " = 0x" 
+             << std::hex << flt << std::endl;
+   for (i=0;i<sizeof(float);i++) 
+   {
+      std::cout << std::hex <<"[" <<(uint16_t) ((uint8_t*)&flt)[i] << "] " ;
+   }
+   std::cout << std::endl;
+
+   std::cout << "---------- double : " << std::dec <<dbl << " = 0x" 
+             << std::hex << dbl << std::endl;
+   for (i=0;i<sizeof(double);i++) 
+   {
+      std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&dbl)[i] << "] " ;
+   }
+   std::cout << std::endl;
+
+   dbl=2.0;
+   std::cout << "---------- double : " << std::dec <<dbl << " = 0x" 
+             << std::hex << dbl << std::endl;
+   for (i=0;i<sizeof(double);i++) 
+   {
+      std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&dbl)[i] << "] " ;
+   }
+   std::cout << std::endl;
+
    // CreateCleanString
    std::string x = "a#@-bc\tdef";
    std::string y = gdcm::Util::CreateCleanString(x);
-   std::cout << "[" << x <<"] --> [" << y <<"]" << std::endl;
+   std::cout << "Clean : [" << x <<"] --> [" << y <<"]" << std::endl;
+
 
    // CountSubstring : substring id "#@-"
    x = "abcd#@-wyz*@-lmn#@-uvw-#@ijk";
-   std::cout << "count '#@-' in [" << x << "] : " 
+   std::cout << "in [" << x << "] " << std::endl; 
+   std::cout << " - count '#@-' : " 
              << gdcm::Util::CountSubstring(x, "#@-") << std::endl;
 
    // Tokenize : tokens are '#', '@', '-'
    std::vector<std::string> tokens;
+   std::cout << " - use tokens '#@-' :" << std::endl;
    gdcm::Util::Tokenize (x, tokens, "#@-");
    for (unsigned int ui=0; ui<tokens.size();ui++)
    {
@@ -56,7 +119,7 @@ int TestUtil(int , char *[])
 
    // Unique UID test
    std::string gdcmUid;
-   for (int i=0; i<10; i++)
+   for (i=0; i<10; i++)
    {
       gdcmUid = gdcm::Util::CreateUniqueUID();
       std::cout << "Current UID for gdcm " <<  gdcmUid << std::endl;
