@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 14:32:04 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2004/09/10 18:54:38 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1034,7 +1034,7 @@ void *gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
       delete[] a;
       return NULL;
    }
-   /// \todo Drop any already existing void area! JPR
+   /// \TODO Drop any already existing void area! JPR
    SetEntryVoidAreaByNumber(a, group, elem);
 
    return a;
@@ -1539,10 +1539,9 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
    // When we find a BinEntry not very much can be done :
    if (gdcmBinEntry* binEntryPtr = dynamic_cast< gdcmBinEntry* >(entry) )
    {
-
-      LoadEntryVoidArea(binEntryPtr);
       s << "gdcm::Loaded (BinEntry)";
       binEntryPtr->SetValue(s.str());
+      LoadEntryVoidArea(binEntryPtr); // last one, not to erase length !
       return;
    }
     

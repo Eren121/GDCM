@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/09 17:49:25 $
-  Version:   $Revision: 1.123 $
+  Date:      $Date: 2004/09/10 18:54:38 $
+  Version:   $Revision: 1.124 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,26 +38,12 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
  *        user sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
  * @param header already built gdcmHeader
- * @return
  */
 gdcmFile::gdcmFile(gdcmHeader *header)
 {
    Header     = header;
    SelfHeader = false;
-   
-   PixelRead  = -1; // no ImageData read yet.
-   LastAllocatedPixelDataLength = 0;
-   PixelData = NULL;
-   
-   InitialSpp = "";     
-   InitialPhotInt = "";
-   InitialPlanConfig = "";
-   InitialBitsAllocated = "";
-       
-   if (Header->IsReadable())
-   {
-      SetPixelDataSizeFromHeader();
-   }
+   SetInitialValues();
 }
 
 /**
@@ -79,19 +65,65 @@ gdcmFile::gdcmFile(std::string const & filename )
 {
    Header = new gdcmHeader( filename );
    SelfHeader = true;
-   
+   SetInitialValues();
+}
+
+/**
+ * \ingroup   gdcmFile
+ * \brief Sets some initial for the Constructor
+ */
+void gdcmFile::SetInitialValues()
+{   
    PixelRead  = -1; // no ImageData read yet.
    LastAllocatedPixelDataLength = 0;
-   PixelData = NULL;
+   Pixel_Data = 0;
 
    InitialSpp = "";     
    InitialPhotInt = "";
    InitialPlanConfig = "";
    InitialBitsAllocated = "";
-           
+  
+   InitialRedLUTDescr   = 0;
+   InitialGreenLUTDescr = 0;
+   InitialBlueLUTDescr  = 0;
+   InitialRedLUTData    = 0;
+   InitialGreenLUTData  = 0;
+   InitialBlueLUTData   = 0; 
+                
    if ( Header->IsReadable() )
    {
       SetPixelDataSizeFromHeader();
+      
+      // the following values *may* be modified 
+      // by gdcmFile::GetImageDataIntoVectorRaw
+      // we save their initial value.
+      InitialSpp           = Header->GetEntryByNumber(0x0028,0x0002);
+      InitialPhotInt       = Header->GetEntryByNumber(0x0028,0x0004);
+      InitialPlanConfig    = Header->GetEntryByNumber(0x0028,0x0006);
+      InitialBitsAllocated = Header->GetEntryByNumber(0x0028,0x0100);
+               
+      // the following entries *may* be removed
+      // by gdcmFile::GetImageDataIntoVectorRaw  
+      // we save them.
+
+     // we SHALL save them !
+     // (some troubles, now)
+     /*
+      InitialRedLUTDescr   = Header->GetDocEntryByNumber(0x0028,0x1101);
+      InitialGreenLUTDescr = Header->GetDocEntryByNumber(0x0028,0x1102);
+      InitialBlueLUTDescr  = Header->GetDocEntryByNumber(0x0028,0x1103);
+      InitialRedLUTData    = Header->GetDocEntryByNumber(0x0028,0x1201);
+      InitialGreenLUTData  = Header->GetDocEntryByNumber(0x0028,0x1202);
+      InitialBlueLUTData   = Header->GetDocEntryByNumber(0x0028,0x1203); 
+      
+      if (InitialRedLUTData == NULL)
+         std::cout << "echec InitialRedLUTData " << std::endl;
+      else  
+      { 
+         printf("%p\n",InitialRedLUTData);
+         InitialRedLUTData->Print(); std::cout <<std::endl;
+      }
+     */        
    }
 }
 
@@ -102,12 +134,33 @@ gdcmFile::gdcmFile(std::string const & filename )
  *        it is destroyed by the gdcmFile
  */
 gdcmFile::~gdcmFile()
-{
+{ 
    if( SelfHeader )
    {
       delete Header;
    }
    Header = 0;
+
+   if ( InitialRedLUTDescr )           
+      delete InitialRedLUTDescr;
+     
+   if ( InitialGreenLUTDescr )
+      delete InitialGreenLUTDescr;
+      
+   if ( InitialBlueLUTDescr )      
+      delete InitialBlueLUTDescr; 
+          
+/* LATER ...
+       
+   if ( InitialRedLUTData )      
+      delete InitialRedLUTData;
+   
+   if ( InitialGreenLUTData != NULL)
+      delete InitialGreenLUTData;
+      
+   if ( InitialBlueLUTData != NULL)      
+      delete InitialBlueLUTData;      
+*/  
 }
 
 //-----------------------------------------------------------------------------
@@ -122,6 +175,7 @@ gdcmFile::~gdcmFile()
  *            image(s) pixels (multiframes taken into account) 
  * \warning : it is NOT the group 7FE0 length
  *          (no interest for compressed images).
+ * \warning : not end user intended ?
  */
 void gdcmFile::SetPixelDataSizeFromHeader()
 {
@@ -167,7 +221,8 @@ void gdcmFile::SetPixelDataSizeFromHeader()
          nb =16;
       }
    }
-   ImageDataSize =  ImageDataSizeRaw = Header->GetXSize() * Header->GetYSize() 
+   ImageDataSize =
+   ImageDataSizeRaw = Header->GetXSize() * Header->GetYSize() 
                 * Header->GetZSize() * (nb/8) * Header->GetSamplesPerPixel();
    std::string str_PhotometricInterpretation = 
                              Header->GetEntryByNumber(0x0028,0x0004);
@@ -179,21 +234,6 @@ void gdcmFile::SetPixelDataSizeFromHeader()
    {
       ImageDataSize *= 3;
    }
-}
-
-
-/**
- * \ingroup   gdcmFile
- * \brief     Returns the size (in bytes) of required memory to hold
- *            the pixel data represented in this file, if user DOESN'T want 
- *            to get RGB pixels image when it's stored as a PALETTE COLOR image
- *            -the (vtk) user is supposed to know how to deal with LUTs-  
- * \warning   to be used with GetImagePixelsRaw()
- * @return    The size of pixel data in bytes.
- */
-size_t gdcmFile::GetImageDataSizeRaw()
-{
-   return ImageDataSizeRaw;
 }
 
 /**
@@ -210,27 +250,32 @@ size_t gdcmFile::GetImageDataSizeRaw()
 void *gdcmFile::GetImageData()
 {
    // FIXME (Mathieu)
-   // I need to deallocate PixelData before doing any allocation:
+   // I need to deallocate Pixel_Data before doing any allocation:
    
-   if ( PixelData )
-      if ( LastAllocatedPixelDataLength != ImageDataSize)
-         free (PixelData);
-   PixelData = new uint8_t[ImageDataSize];
-   if ( PixelData )
+   if ( Pixel_Data )
+     if ( LastAllocatedPixelDataLength != ImageDataSize ) 
+        free(Pixel_Data);
+   if ( !Pixel_Data )
+      Pixel_Data = new uint8_t[ImageDataSize];
+    
+   if ( Pixel_Data )
    {
       LastAllocatedPixelDataLength = ImageDataSize;
-         
-      GetImageDataIntoVector(PixelData, ImageDataSize);
-      // Will be 7fe0, 0010 in standard case
-      GetHeader()->SetEntryVoidAreaByNumber( PixelData, 
-         GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
-      // Now, the value is loaded.
+
+      // we load the pixels (and transform grey level + LUT into RGB)
+      GetImageDataIntoVector(Pixel_Data, ImageDataSize);
+
+      // We say the value *is* loaded.
       GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
          GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+
+      // Will be 7fe0, 0010 in standard case
+      GetHeader()->SetEntryVoidAreaByNumber( Pixel_Data, 
+         GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel()); 
    }      
    PixelRead = 0; // no PixelRaw
 
-   return PixelData;
+   return Pixel_Data;
 }
 
 /**
@@ -337,27 +382,32 @@ void * gdcmFile::GetImageDataRaw ()
       imgDataSize = ImageDataSize;
     
    // FIXME (Mathieu)
-   // I need to deallocate PixelData before doing any allocation:
+   // I need to deallocate Pixel_Data before doing any allocation:
    
-   if ( PixelData )
-      if ( LastAllocatedPixelDataLength != imgDataSize)
-         free (PixelData);
-   PixelData = new uint8_t[imgDataSize];
-   if ( PixelData )
+   if ( Pixel_Data )
+      if ( LastAllocatedPixelDataLength != imgDataSize )
+         free(Pixel_Data);
+   if ( !Pixel_Data ) 
+      Pixel_Data = new uint8_t[imgDataSize];
+
+   if ( Pixel_Data )
    {
       LastAllocatedPixelDataLength = imgDataSize;
       
-      GetImageDataIntoVectorRaw(PixelData, imgDataSize);
-      // will be 7fe0, 0010 in standard cases
-      GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
-         GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel()); 
-      // Now, the value is loaded.
+      // we load the pixels ( grey level or RGB, but NO transformation)
+       GetImageDataIntoVectorRaw(Pixel_Data, imgDataSize);
+
+      // We say the value *is* loaded.
       GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
+         GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+ 
+      // will be 7fe0, 0010 in standard cases
+      GetHeader()->SetEntryVoidAreaByNumber(Pixel_Data, 
          GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
    } 
    PixelRead = 1; // PixelRaw
 
-   return PixelData;
+   return Pixel_Data;
 }
 
 /**
@@ -679,7 +729,7 @@ bool gdcmFile::SetImageData(void *inData, size_t expectedSize)
 {
    Header->SetImageDataSize( expectedSize );
 // FIXME : if already allocated, memory leak !
-   PixelData     = inData;
+   Pixel_Data     = inData;
    ImageDataSize = ImageDataSizeRaw = expectedSize;
    PixelRead     = 1;
 // FIXME : 7fe0, 0010 IS NOT set ...
@@ -704,7 +754,7 @@ bool gdcmFile::WriteRawData(std::string const & fileName)
       printf("Fail to open (write) file [%s] \n", fileName.c_str());
       return false;
    }
-   fwrite (PixelData, ImageDataSize, 1, fp1);
+   fwrite (Pixel_Data, ImageDataSize, 1, fp1);
    fclose (fp1);
 
    return true;
@@ -848,7 +898,7 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
    }
    // ----------------- End of Special Patch ----------------
    
-   // fwrite(PixelData, ImageDataSize, 1, fp1);  // should be useless, now
+   // fwrite(Pixel_Data, ImageDataSize, 1, fp1);  // should be useless, now
    fclose (fp1);
 
    return true;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/09/10 18:54:39 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,10 +99,16 @@ int gdcmVR::Count(gdcmVRKey key)
  *          corresponds to the Value Representation of a \ref gdcmBinEntry .
  *          This predicate is the negation of
  *          \ref gdcmVR::IsVROfGdcmStringRepresentable .
- * @param   tested value represenation to check for.
+ * @param   tested value representation to check for.
  */
 bool gdcmVR::IsVROfGdcmBinaryRepresentable(gdcmVRKey tested)
 {
+   //std::cout << "gdcmVR::IsVROfGdcmBinaryRepresentable===================="
+   //   << tested << std::endl;
+
+   if ( tested == "unkn")
+      return true;
+
    if ( ! Count(tested) )
    {
       dbg.Verbose(0, "gdcmVR::IsVROfGdcmBinaryRepresentable: tested not a VR!");
@@ -122,10 +128,11 @@ bool gdcmVR::IsVROfGdcmBinaryRepresentable(gdcmVRKey tested)
  * \brief   Simple predicate that checks wether the given argument
  *          corresponds to the Value Representation of a \ref gdcmValEntry
  *          but NOT a \ref gdcmBinEntry.
- * @param   tested value represenation to check for.
+ * @param   tested value representation to check for.
  */
 bool gdcmVR::IsVROfGdcmStringRepresentable(gdcmVRKey tested)
 {
+
    if ( ! Count(tested) )
    {
       dbg.Verbose(0, "gdcmVR::IsVROfGdcmStringRepresentable: tested not a VR!");

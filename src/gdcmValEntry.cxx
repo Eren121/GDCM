@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/09 17:49:25 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/09/10 18:54:39 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -182,6 +182,8 @@ void gdcmValEntry::Print(std::ostream & os)
 void gdcmValEntry::Write(FILE *fp, FileType filetype)
 {
    gdcmDocEntry::Write(fp, filetype);
+
+   //std::cout << "=====================================" << GetVR() << std::endl;
       
    if ( GetGroup() == 0xfffe ) 
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/09 17:49:25 $
-  Version:   $Revision: 1.184 $
+  Date:      $Date: 2004/09/10 18:54:39 $
+  Version:   $Revision: 1.185 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,10 +108,7 @@ void gdcmHeader::Write(FILE* fp,FileType filetype)
       SetEntryByNumber("16", 0x0028,0x0100);
    }
 
-  // correct Pixel group Length if necessary
-
-   // TODO : create a gdcmHeader::Write method and move this part.
-   //        (only gdcmHeader knows GrPixel, NumPixel)
+  // TODO : correct 'Pixel group' Length if necessary
 
    int i_lgPix = GetEntryLengthByNumber(GrPixel, NumPixel);
    if (i_lgPix != -2)

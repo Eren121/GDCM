@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/03 07:57:10 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2004/09/10 18:54:39 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,12 @@ public:
 ///            the pixel data represented in this file.
    size_t GetImageDataSize(){ return ImageDataSize; };
 
-   size_t GetImageDataSizeRaw();
+   
+/// \brief     Returns the size (in bytes) of required memory to hold
+///            the pixel data represented in this file, if user DOESN'T want 
+///            to get RGB pixels image when it's stored as a PALETTE COLOR image
+///            -the (vtk) user is supposed to know how to deal with LUTs-     
+   size_t GetImageDataSizeRaw(){ return ImageDataSizeRaw; };
 
    void * GetImageData();
    size_t GetImageDataIntoVector(void* destination, size_t maxSize);
@@ -89,7 +94,7 @@ protected:
 
 private:
    void SwapZone(void* im, int swap, int lgr, int nb);
-   
+   void gdcmFile::SetInitialValues();  
    bool ReadPixelData(void * destination);
    
    // For JPEG 8 Bits, body in file gdcmJpeg.cxx
@@ -117,7 +122,7 @@ private:
    bool SelfHeader;
 
    /// \brief to hold the Pixels (when read)
-   void* PixelData;
+   void* Pixel_Data;  // (was PixelData; should be removed)
    
    /// \brief Area length to receive the pixels
    size_t ImageDataSizeRaw;
@@ -137,7 +142,10 @@ private:
   /// \brief length of the last allocated area devoided to receive Pixels
   ///        ( to allow us not to (free + new) if un necessary )     
    size_t LastAllocatedPixelDataLength; 
-   
+
+  // Initial values of some fields that can be modified during reading process
+  // if user asked to transform gray level + LUT image into RGB image
+     
   /// \brief Samples Per Pixel           (0x0028,0x0002), as found on disk
    std::string InitialSpp;
   /// \brief Photometric Interpretation  (0x0028,0x0004), as found on disk
@@ -147,6 +155,22 @@ private:
   /// \brief Bits Allocated              (0x0028,0x0100), as found on disk
    std::string InitialBitsAllocated;
    
+  // some DocEntry that can be moved ou of the H table during reading process
+  // if user asked to transform gray level + LUT image into RGB image
+   
+  /// \brief Red Palette Color Lookup Table Descriptor   0028 1101 as read
+  gdcmDocEntry* InitialRedLUTDescr;  
+  /// \brief Green Palette Color Lookup Table Descriptor 0028 1102 as read
+  gdcmDocEntry* InitialGreenLUTDescr;
+  /// \brief Blue Palette Color Lookup Table Descriptor  0028 1103 as read
+  gdcmDocEntry* InitialBlueLUTDescr;
+  
+  /// \brief Red Palette Color Lookup Table Data         0028 1201 as read
+  gdcmDocEntry* InitialRedLUTData;  
+  /// \brief Green Palette Color Lookup Table Data       0028 1202 as read
+  gdcmDocEntry* InitialGreenLUTData;
+  /// \brief Blue Palette Color Lookup Table Data        0028 1203 as read
+  gdcmDocEntry* InitialBlueLUTData;
 
 };
 
