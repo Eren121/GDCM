@@ -1,7 +1,30 @@
+2005-01-07 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * Removal of useless and dangerous methods :
+         GetEntryByName, GetEntryVRByName, GetDocEntryByName, SetEntryByName
+         GetDocEntryByName, GetEntryByName, GetDictEntryByName
+	* Removal of usless methods :
+         Dict::PrintByName, Dict::GetDictEntryByName
+   * Commenting out of probabely useless methods :
+         Dict::GetDictEntryNames()
+         Dict::GetDictEntryNamesByCategory()
+         DictSet::GetPubDictEntryNames()
+         DictSet::GetPubDictEntryNamesByCategory()			
+	* ENH : New Dicom Dictionnary (with Value Multiplicity) is now used 	
+	* ENH : Use dicomTS.dic as described in 2004 version	
+	* ENH : Removal out of the Dicom Dictionary of non dicom 'fourth' field
+           Add         to the Dicom Dictionary of Dicom 'Value Multiplicity' field
+			  Add Accessors on VM (Value Multiplicity), and VM related methods			  
+   * ADD : Add a list of 'Dicom Attribute types', as found in
+           http://medical.nema.org/dicom/2004/04_15PU.PDF
+			             Unused till now...			  
+	* ADD : Add dicomGroupNameAbbreviations.dic
+           should be used to write a method to replace the former
+           Dict::GetDictEntryNamesByCategory()
+
 2005-01-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * src/gdcmDocEntry.[h|cxx] : now the ReadLength is the length of the datas
+   * src/gdcmDocEntry.[h|cxx] : now the ReadLength is the length of the data
      to read in the file... and only it ! Length is the efective length of the
-     datas in the DocEntry structure
+     data in the DocEntry structure
 
 2005-01-07 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Change the gdcmDebug approach. Remov the global static debug 'dbg'.
@@ -28,7 +51,7 @@
    * src/gdcmVR.[h|cxx] : add usefull method to test the validity of a VR
    * src/gdcmDocEntry.cxx : amelioration of print
 
-2005-01-05 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr
+2005-01-05 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * ADD : Add the method Util::IsCurrentProcessorBigEndian
           (we'll need it for 'Explicit VR Big Endian' Transfert Syntax)
 	* ADD  Method Document::ComputeGroupLength
