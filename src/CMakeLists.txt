@@ -7,7 +7,6 @@ INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/jpeg/libijg8
   #${GDCM_SOURCE_DIR}/jpeg/libijg12 #all files have been renamed, appending 12
   #${GDCM_SOURCE_DIR}/jpeg/ljpg     # JPEG lib from xmedcom 
-                                    #
 )
 
 SET(libgdcm_la_SOURCES
@@ -57,7 +56,7 @@ ELSE(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
     gdcmijpeg8 
     gdcmijpeg12
-    gdcmjpeg 
+    gdcmjpeg
     Wsock32.lib   #doesn't exist on cygwin
   )
 ENDIF(UNIX)
