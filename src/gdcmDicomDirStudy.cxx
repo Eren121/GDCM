@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ void DicomDirStudy::Print(std::ostream& os)
  * \brief   Writes the Object
  * @return
  */ 
-void DicomDirStudy::Write(FILE* fp, FileType t)
+void DicomDirStudy::Write(std::ofstream* fp, FileType t)
 {
    DicomDirObject::Write(fp, t);
 

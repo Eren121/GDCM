@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:48 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/10/22 03:05:42 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,8 @@
 #include "gdcmTS.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
+
+#include <fstream>
 
 namespace gdcm 
 {
@@ -174,7 +176,7 @@ void ValEntry::Print(std::ostream & os)
 /*
  * \brief   canonical Writer
  */
-void ValEntry::Write(FILE* fp, FileType filetype)
+void ValEntry::Write(std::ofstream* fp, FileType filetype)
 {
    DocEntry::Write(fp, filetype);
 
@@ -199,7 +201,7 @@ void ValEntry::Write(FILE* fp, FileType filetype)
       {
          uint16_t val_uint16 = atoi(tokens[i].c_str());
          void* ptr = &val_uint16;
-         fwrite ( ptr,(size_t)2 ,(size_t)1 ,fp);
+         fp->write ( (char*)ptr,(size_t)2);
       }
       tokens.clear();
       return;
@@ -217,13 +219,13 @@ void ValEntry::Write(FILE* fp, FileType filetype)
       {
          uint32_t val_uint32 = atoi(tokens[i].c_str());
          void* ptr = &val_uint32;
-         fwrite ( ptr,(size_t)4 ,(size_t)1 ,fp);
+         fp->write ( (char*)ptr,(size_t)4 );
       }
       tokens.clear();
       return;
    } 
           
-   fwrite (GetValue().c_str(), (size_t)lgr ,(size_t)1, fp); // Elem value
+   fp->write (GetValue().c_str(), (size_t)lgr ); // Elem value
 } 
 
 //-----------------------------------------------------------------------------

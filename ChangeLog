@@ -1,3 +1,8 @@
+2004-10-21 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Removed all FILE* ref and replace by ifstream/ofstream. For now I use a temp 
+    solution with the two files jdatadst.cxx and jdatasrc.cxx, this need to be 
+    discussed (plus I didn't like having a 2000 lines patch not commited)
+
 2004-10-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmDocument.cxx: wrong type on return fixed (thanks dashboard)
   * CLEANUP_ROUND (14) for gdcmPixelConvert

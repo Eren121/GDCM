@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 12:49:22 $
-  Version:   $Revision: 1.194 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.195 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,7 +102,7 @@ Header::~Header ()
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
-void Header::Write(FILE* fp,FileType filetype)
+void Header::Write(std::ofstream* fp,FileType filetype)
 {
    // Bits Allocated
    if ( GetEntryByNumber(0x0028,0x0100) ==  "12")

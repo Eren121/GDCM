@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:29 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ public:
    ~DicomDirSerie();
 
    virtual void Print( std::ostream& os = std::cout );
-   virtual void Write( FILE* fp, FileType t );
+   virtual void Write( std::ofstream* fp, FileType t );
 /**
  * \ingroup DicomDirSerie
  * \brief   returns the IMAGE chained List for this SERIE.

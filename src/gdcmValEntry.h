@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:48 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/10/22 03:05:42 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ public:
    void SetValue(std::string const & val) { Value = val; };
 
    virtual void Print(std::ostream &os = std::cout); 
-   virtual void Write(FILE *fp, FileType filetype);
+   virtual void Write(std::ofstream *fp, FileType filetype);
 
 protected:
    

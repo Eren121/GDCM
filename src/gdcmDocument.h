@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 12:49:22 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.53 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,6 +36,8 @@ class SeqEntry;
 
 #include <map>
 #include <list>
+#include <fstream>
+
 namespace gdcm 
 {
 
@@ -75,7 +77,7 @@ protected:
    int SwapCode;
 
    /// File Pointer, opened during Header parsing.
-   FILE* Fp;
+   std::ifstream* Fp;
 
    /// ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
    FileType Filetype;  
@@ -135,10 +137,10 @@ public:
 
    FileType GetFileType();
 
-   FILE* OpenFile();
+   std::ifstream * OpenFile();
    bool CloseFile();
 
-   void Write( FILE* fp, FileType type );
+   void Write( std::ofstream* fp, FileType type );
 
    ValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                          uint16_t group, uint16_t elem,
@@ -267,7 +269,7 @@ public:
    int GetSwapCode() { return SwapCode; }
    
    /// File pointer
-   FILE * GetFP() { return Fp; }
+   std::ifstream * GetFP() { return Fp; }
 
    bool operator<(Document &document);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/10/22 03:05:42 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@ namespace gdcm
  * @warning : not yet made
  */
 
-bool gdcm_read_JPEG2000_file (FILE* fp,void* image_buffer) {
+bool gdcm_read_JPEG2000_file (std::ifstream* fp,void* image_buffer) {
    (void)fp;                  //FIXME
    (void)image_buffer;        //FIXME
    std::cout << "Sorry JPEG 2000 File not yet taken into account" << std::endl;

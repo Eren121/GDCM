@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 22:31:52 $
-  Version:   $Revision: 1.147 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.148 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
+#include <fstream>
 
 namespace gdcm 
 {
@@ -362,6 +363,7 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
       return ImageDataSize;
    }
                             
+   std::ifstream* fp = HeaderInternal->OpenFile();
    if ( PixelConverter->BuildRGBImage() )
    {
       memmove( destination,
@@ -414,7 +416,7 @@ uint8_t* File::GetImageDataRaw ()
    if ( ! decompressed )
    {
       // The decompressed image migth not be loaded yet:
-      FILE* fp = HeaderInternal->OpenFile();
+     std::ifstream* fp = HeaderInternal->OpenFile();
       PixelConverter->ReadAndDecompressPixelData( fp );
       HeaderInternal->CloseFile();
       if ( ! decompressed )
@@ -508,7 +510,7 @@ void File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
       return;
    }
 
-   FILE* fp = HeaderInternal->OpenFile();
+   std::ifstream* fp = HeaderInternal->OpenFile();
    PixelConverter->ReadAndDecompressPixelData( fp );
    HeaderInternal->CloseFile();
    memmove( destination,
@@ -578,14 +580,14 @@ bool File::SetImageData(uint8_t* inData, size_t expectedSize)
 
 bool File::WriteRawData(std::string const & fileName)
 {
-   FILE* fp1 = fopen(fileName.c_str(), "wb");
-   if (fp1 == NULL)
+  std::ofstream fp1(fileName.c_str(), std::ios::out | std::ios::binary );
+   if (!fp1)
    {
       printf("Fail to open (write) file [%s] \n", fileName.c_str());
       return false;
    }
-   fwrite (Pixel_Data, ImageDataSize, 1, fp1);
-   fclose (fp1);
+   fp1.write((char*)Pixel_Data, ImageDataSize);
+   fp1.close();
 
    return true;
 }
@@ -653,7 +655,8 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       return false;
    }
 
-   FILE* fp1 = fopen(fileName.c_str(), "wb");
+   std::ofstream* fp1 = new std::ofstream(fileName.c_str(), 
+                              std::ios::out | std::ios::binary);
    if (fp1 == NULL)
    {
       printf("Failed to open (write) File [%s] \n", fileName.c_str());
@@ -665,8 +668,8 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       // writing Dicom File Preamble
       uint8_t* filePreamble = new uint8_t[128];
       memset(filePreamble, 0, 128);
-      fwrite(filePreamble, 128, 1, fp1);
-      fwrite("DICM", 4, 1, fp1);
+      fp1->write((char*)filePreamble, 128);
+      fp1->write("DICM", 4);
 
       delete[] filePreamble;
    }
@@ -723,9 +726,8 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       HeaderInternal->SetEntryByNumber(columns, 0x0028, 0x0011);
    }
    // ----------------- End of Special Patch ----------------
-   
-   // fwrite(Pixel_Data, ImageDataSize, 1, fp1);  // should be useless, now
-   fclose (fp1);
+ 
+   fp1->close ();
 
    return true;
 }

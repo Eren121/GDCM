@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 22:31:52 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/10/22 03:05:42 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ public:
 
 // In progress
    void GrabInformationsFromHeader( Header* header );
-   bool ReadAndDecompressPixelData( FILE* fp );
+   bool ReadAndDecompressPixelData( std::ifstream* fp );
    void Squeeze();
    bool BuildRGBImage();
 
@@ -62,10 +62,11 @@ private:
                   uint8_t* subDecompressed,
                   long fragmentSize,
                   long decompressedSegmentSize,
-                  FILE* fp );
-   void ReadAndDecompress12BitsTo16Bits( FILE* fp ) throw ( FormatError );
-   bool ReadAndDecompressRLEFile( FILE* fp );
-   bool ReadAndDecompressJPEGFile( FILE* fp );
+                  std::ifstream* fp );
+   void ReadAndDecompress12BitsTo16Bits( std::ifstream* fp ) throw ( FormatError );
+   bool ReadAndDecompressRLEFile( std::ifstream* fp );
+   bool ReadAndDecompressJPEGFile( std::ifstream* fp );
+   void BuildLUTRGBA( std::ifstream* fp );
 
    // In place (within Decompressed and with no fp access) decompression
    // or convertion:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:48 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/10/22 03:05:42 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 namespace gdcm 
 {
@@ -114,7 +115,7 @@ void SeqEntry::Print( std::ostream &os )
 /*
  * \brief   canonical Writer
  */
-void SeqEntry::Write(FILE* fp, FileType filetype)
+void SeqEntry::Write(std::ofstream* fp, FileType filetype)
 {
    uint16_t seq_term_gr = 0xfffe;
    uint16_t seq_term_el = 0xe0dd;
@@ -133,9 +134,9 @@ void SeqEntry::Write(FILE* fp, FileType filetype)
    
    // we force the writting of a Sequence Delimitation item
    // because we wrote the Sequence as a 'no Length' sequence
-   fwrite ( &seq_term_gr,(size_t)2 ,(size_t)1 ,fp);
-   fwrite ( &seq_term_el,(size_t)2 ,(size_t)1 ,fp);
-   fwrite ( &seq_term_lg,(size_t)4 ,(size_t)1 ,fp); 
+   fp->write ( (char*)&seq_term_gr,(size_t)2 );
+   fp->write ( (char*)&seq_term_el,(size_t)2 );
+   fp->write ( (char*)&seq_term_lg,(size_t)4 );
 }
 
 //-----------------------------------------------------------------------------

@@ -16,11 +16,11 @@ jcomapi.c jutils.c jerror.c jmemmgr.c
 
 # compression library object files
 SET(compression_SRCS
-jcapimin.c jcapistd.c jctrans.c jcparam.c jdatadst.c jcinit.c
+jcapimin.c jcapistd.c jctrans.c jcparam.c  jcinit.c
 jcmaster.c jcmarker.c jcmainct.c jcprepct.c jccoefct.c jccolor.c
 jcsample.c jchuff.c jcphuff.c jcdctmgr.c jfdctfst.c jfdctflt.c
 )
-
+#jdatadst.c
 # Lossy (DCT) codec:
 SET(comp_lossy_SRCS
 jfdctint.c
@@ -40,10 +40,11 @@ jcdiffct.c
 
 # decompression library object files
 SET(decompression_SRCS
-jdapimin.c jdapistd.c jdtrans.c jdatasrc.c jdmaster.c
+jdapimin.c jdapistd.c jdtrans.c  jdmaster.c
 jdinput.c jdmarker.c jdhuff.c jdphuff.c jdmainct.c jdcoefct.c
 jdpostct.c jddctmgr.c jidctfst.c jidctflt.c jidctint.c jidctred.c
-jdsample.c jdcolor.c jquant1.c jquant2.c jdmerge.c)
+jdsample.c jdcolor.c jquant1.c jquant2.c jdmerge.c
+) #jdatasrc.c
 
 SET(decomp_lossy_SRCS
  jdlossls.c jdlossy.c

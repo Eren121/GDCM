@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:17:07 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/10/22 03:05:42 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,10 +85,12 @@ of the uncompressed pixel data from which the compressed data is derived
  */
 
 #include <setjmp.h>
+#include <fstream>
+#include "jdatasrc.cxx"
+#include "jdatadst.cxx"
 
 namespace gdcm 
 {
-
 /******************** JPEG COMPRESSION SAMPLE INTERFACE *******************/
 
 /* This half of the example shows how to feed data into the JPEG compressor.
@@ -136,7 +138,7 @@ namespace gdcm
  * @return 1 on success, 0 on error
  */
  
-bool gdcm_write_JPEG_file (FILE* fp, void*  im_buf, 
+bool gdcm_write_JPEG_file (std::ofstream* fp, void*  im_buf, 
                            int image_width, int image_height, int quality)
 {
 
@@ -362,7 +364,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @return 1 on success, 0 on error
  */
  
-bool gdcm_read_JPEG_file ( FILE* fp, void* image_buffer )
+bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
 {
    char* pimage;
 
@@ -503,7 +505,7 @@ bool gdcm_read_JPEG_file ( FILE* fp, void* image_buffer )
     */ 
 
    /* JSAMPLEs per row in output buffer */
-   row_stride = cinfo.output_width * cinfo.output_components;
+   row_stride = cinfo.output_width * cinfo.output_components*2;
   
 #ifdef GDCM_JPG_DEBUG
   printf ("cinfo.output_width %d cinfo.output_components %d  row_stride %d\n",

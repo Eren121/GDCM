@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:44 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/10/22 03:05:40 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmBinEntry.h"
 #include "gdcmDebug.h"
+#include <fstream>
 
 namespace gdcm 
 {
@@ -101,7 +102,7 @@ void BinEntry::Print(std::ostream &os)
  * @param fp already open file pointer
  * @param filetype type of the file to be written
 */
-void BinEntry::Write(FILE* fp, FileType filetype)
+void BinEntry::Write(std::ofstream* fp, FileType filetype)
 {
    DocEntry::Write(fp, filetype);
    void* binArea = GetBinArea();
@@ -109,12 +110,13 @@ void BinEntry::Write(FILE* fp, FileType filetype)
    if (binArea)
    {
       // there is a 'non string' LUT, overlay, etc
-      fwrite ( binArea,(size_t)lgr ,(size_t)1 ,fp); // Elem value
+      fp->write ( (char*)binArea, lgr ); // Elem value
+
    }
    else
    {
     // nothing was loaded, but we need to skip space on disc
-      fseek(fp,(size_t)lgr,SEEK_CUR); 
+      fp->seekp(lgr, std::ios_base::cur);
    }
 }
 //-----------------------------------------------------------------------------

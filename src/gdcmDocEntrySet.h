@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,7 +66,7 @@ public:
    virtual void Print (std::ostream & os = std::cout) = 0;// pure virtual
 
    /// \brief write any type of entry to the entry set
-   virtual void Write (FILE *fp, FileType filetype) = 0;// pure virtual
+   virtual void Write (std::ofstream *fp, FileType filetype) = 0;// pure virtual
 
    virtual DocEntry* GetDocEntryByNumber(uint16_t group,
                                              uint16_t element) = 0;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,8 @@
 #include "gdcmUtil.h"
 
 #include <iomanip> // for std::ios::left, ...
+#include <fstream>
+
 namespace gdcm 
 {
 
@@ -116,7 +118,7 @@ void DocEntry::Print(std::ostream& os)
  * @param fp already open file pointer
  * @param filetype type of the file to be written
  */
-void DocEntry::Write(FILE* fp, FileType filetype)
+void DocEntry::Write(std::ofstream* fp, FileType filetype)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
@@ -135,8 +137,8 @@ void DocEntry::Write(FILE* fp, FileType filetype)
    //
    // ----------- Writes the common part
    //
-   fwrite ( &group,(size_t)2 ,(size_t)1 ,fp);  //group
-   fwrite ( &el,   (size_t)2 ,(size_t)1 ,fp);  //element
+   fp->write ((char*) &group,(size_t)2 );  //group
+   fp->write ( (char*)&el,   (size_t)2 );  //element
       
    if ( filetype == ExplicitVR )
    {
@@ -154,7 +156,7 @@ void DocEntry::Write(FILE* fp, FileType filetype)
          // TODO : verify if the Sequence Delimitor Item was forced during Parsing 
 
          int ff = 0xffffffff;
-         fwrite (&ff,(size_t)4 ,(size_t)1 ,fp);
+         fp->write ((char*)&ff,(size_t)4 );
          return;
       }
 
@@ -165,31 +167,32 @@ void DocEntry::Write(FILE* fp, FileType filetype)
       {
          // Unknown was 'written'
          // deal with Little Endian            
-         fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,fp);
-         fwrite ( &z,       (size_t)2 ,(size_t)1 ,fp);
+         fp->write ( (char*)&shortLgr,(size_t)2 );
+         fp->write ( (char*)&z,       (size_t)2 );
       }
       else
       {
-         fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,fp); 
+         fp->write (vr.c_str(),(size_t)2 ); 
+
                   
          if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || (vr == "UN") )
          {
-            fwrite ( &z,  (size_t)2 ,(size_t)1 ,fp);
+            fp->write ( (char*)&z,  (size_t)2 );
             if (vr == "SQ")
             {
                // we set SQ length to ffffffff
                // and  we shall write a Sequence Delimitor Item 
                // at the end of the Sequence! 
-               fwrite ( &ffff,(size_t)4 ,(size_t)1 ,fp);
+               fp->write ( (char*)&ffff,(size_t)4 );
             }
             else
             {
-               fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+               fp->write ( (char*)&lgr,(size_t)4 );
             }
          }
          else
          {
-            fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,fp);
+            fp->write ( (char*)&shortLgr,(size_t)2 );
          }
       }
    } 
@@ -197,11 +200,11 @@ void DocEntry::Write(FILE* fp, FileType filetype)
    { 
       if (vr == "SQ")
       {
-         fwrite ( &ffff,(size_t)4 ,(size_t)1 ,fp);
+         fp->write ( (char*)&ffff,(size_t)4 );
       }
       else
       {
-         fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+         fp->write ( (char*)&lgr,(size_t)4 );
       }
    }
 }

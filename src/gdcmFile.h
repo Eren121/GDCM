@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 14:30:40 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,16 +86,6 @@ protected:
 
 private:
    void Initialise();
-
-   // For JPEG 8 Bits, body in file gdcmJpeg.cxx
-   bool gdcm_write_JPEG_file    (FILE* fp, void* image_buffer, 
-                                 int image_width, int image_heigh,
-                                 int quality);
-
-   // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
-   bool gdcm_write_JPEG_file12  (FILE* fp, void* image_buffer, 
-                                 int image_width, int image_height,
-                                 int quality);
 
    void SaveInitialValues();    // will belong to the future PixelData class
    void RestoreInitialValues(); // will belong to the future PixelData class

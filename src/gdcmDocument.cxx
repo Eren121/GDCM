@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 22:31:52 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2004/10/22 03:05:41 $
+  Version:   $Revision: 1.108 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,6 +25,7 @@
 #include "gdcmDebug.h"
 
 #include <vector>
+#include <iomanip>
 
 // For nthos:
 #ifdef _MSC_VER
@@ -32,8 +33,6 @@
 #else
    #include <netinet/in.h>
 #endif
-
-#include <iomanip>
 
 namespace gdcm 
 {
@@ -99,19 +98,19 @@ Document::Document( std::string const & filename )
 
    dbg.Verbose(0, "Document::Document: starting parsing of file: ",
                   Filename.c_str());
-   rewind(Fp);
+   Fp->seekg( 0,  std::ios_base::beg);
    
-   fseek(Fp,0L,SEEK_END);
-   long lgt = ftell(Fp);    
+   Fp->seekg(0,  std::ios_base::end);
+   long lgt = Fp->tellg();
            
-   rewind(Fp);
+   Fp->seekg( 0,  std::ios_base::beg);
    CheckSwap();
-   long beg = ftell(Fp);
+   long beg = Fp->tellg();
    lgt -= beg;
    
    ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
 
-   rewind(Fp);
+   Fp->seekg( 0,  std::ios_base::beg);
    
    // Load 'non string' values
       
@@ -507,9 +506,9 @@ FileType Document::GetFileType()
  *         checks the preamble when existing.
  * @return The FILE pointer on success. 
  */
-FILE* Document::OpenFile()
+std::ifstream* Document::OpenFile()
 {
-   Fp = fopen(Filename.c_str(),"rb");
+   Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
 
    if(!Fp)
    {
@@ -520,7 +519,7 @@ FILE* Document::OpenFile()
    }
  
    uint16_t zero;
-   fread(&zero,  (size_t)2, (size_t)1, Fp);
+   Fp->read((char*)&zero,  (size_t)2 );
  
    //ACR -- or DICOM with no Preamble --
    if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200 )
@@ -529,15 +528,15 @@ FILE* Document::OpenFile()
    }
  
    //DICOM
-   fseek(Fp, 126L, SEEK_CUR);
+   Fp->seekg(126L, std::ios_base::cur);
    char dicm[4];
-   fread(dicm,  (size_t)4, (size_t)1, Fp);
+   Fp->read(dicm,  (size_t)4);
    if( memcmp(dicm, "DICM", 4) == 0 )
    {
       return Fp;
    }
  
-   fclose(Fp);
+   Fp->close();
    dbg.Verbose( 0,
                 "Document::OpenFile not DICOM/ACR (missing preamble)",
                 Filename.c_str());
@@ -551,17 +550,11 @@ FILE* Document::OpenFile()
  */
 bool Document::CloseFile()
 {
-  int closed = fclose(Fp);
+  Fp->close();
+  delete Fp;
   Fp = 0;
 
-  if ( ! closed )
-  {
-     return false;
-  }
-  else
-  {
-     return true;
-  }
+  return true; //FIXME how do we detect a non-close ifstream ?
 }
 
 /**
@@ -571,7 +564,7 @@ bool Document::CloseFile()
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * \return Always true.
  */
-void Document::Write(FILE* fp,FileType filetype)
+void Document::Write(std::ofstream* fp, FileType filetype)
 {
    /// \todo move the following lines (and a lot of others, to be written)
    /// to a future function CheckAndCorrectHeader  
@@ -1027,9 +1020,9 @@ bool Document::SetEntryByNumber(std::string const& content,
  * @param   element element number of the Dicom Element to modify
  */
 bool Document::SetEntryByNumber(uint8_t*content,
-                                    int lgth, 
-                                    uint16_t group,
-                                    uint16_t element) 
+                                int lgth, 
+                                uint16_t group,
+                                uint16_t element) 
 {
    (void)lgth;  //not used
    TagKey key = DictEntry::TranslateToKey(group, element);
@@ -1065,8 +1058,8 @@ bool Document::SetEntryByNumber(uint8_t*content,
  * @return  true on success, false otherwise.
  */
 bool Document::SetEntryLengthByNumber(uint32_t l, 
-                                          uint16_t group, 
-                                          uint16_t element) 
+                                      uint16_t group, 
+                                      uint16_t element) 
 {
    /// \todo use map methods, instead of multimap JPR
    TagKey key = DictEntry::TranslateToKey(group, element);
@@ -1138,7 +1131,7 @@ void* Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
       return NULL;
    }
    size_t o =(size_t)docElement->GetOffset();
-   fseek(Fp, o, SEEK_SET);
+   Fp->seekg( o, std::ios_base::beg);
    size_t l = docElement->GetLength();
    uint8_t* a = new uint8_t[l];
    if(!a)
@@ -1146,13 +1139,13 @@ void* Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
       dbg.Verbose(0, "Document::LoadEntryBinArea cannot allocate a");
       return NULL;
    }
-   size_t l2 = fread(a, 1, l , Fp);
-   if( l != l2 )
+   Fp->read((char*)a, l);
+   if( Fp->fail() || Fp->eof() )//Fp->gcount() == 1
    {
       delete[] a;
       return NULL;
    }
-   /// \todo Drop any already existing void area! JPR
+  /// \todo Drop any already existing void area! JPR
    if( !SetEntryBinAreaByNumber( a, group, elem ) )
    {
       dbg.Verbose(0, "Document::LoadEntryBinArea setting failed.");
@@ -1167,7 +1160,7 @@ void* Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
 void* Document::LoadEntryBinArea(BinEntry* element) 
 {
    size_t o =(size_t)element->GetOffset();
-   fseek(Fp, o, SEEK_SET);
+   Fp->seekg(o, std::ios_base::beg);
    size_t l = element->GetLength();
    uint8_t* a = new uint8_t[l];
    if( !a )
@@ -1177,8 +1170,8 @@ void* Document::LoadEntryBinArea(BinEntry* element)
    }
    element->SetBinArea((uint8_t*)a);
    /// \todo check the result 
-   size_t l2 = fread(a, 1, l , Fp);
-   if( l != l2 )
+   Fp->read((char*)a, l);
+   if( Fp->fail() || Fp->eof()) //Fp->gcount() == 1
    {
       delete[] a;
       return NULL;
@@ -1330,9 +1323,9 @@ ValEntry* Document::GetValEntryByNumber(uint16_t group,
  */
 void Document::LoadDocEntrySafe(DocEntry * entry)
 {
-   long PositionOnEntry = ftell(Fp);
+   long PositionOnEntry = Fp->tellg();
    LoadDocEntry(entry);
-   fseek(Fp, PositionOnEntry, SEEK_SET);
+   Fp->seekg(PositionOnEntry, std::ios_base::beg);
 }
 
 /**
@@ -1406,15 +1399,15 @@ uint16_t Document::UnswapShort(uint16_t a)
  * @return  length of the parsed set. 
  */ 
 void Document::ParseDES(DocEntrySet *set,
-                            long offset,
-                            long l_max,
-                            bool delim_mode)
+                        long offset,
+                        long l_max,
+                        bool delim_mode)
 {
    DocEntry *newDocEntry = 0;
    
    while (true)
    { 
-      if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
+      if ( !delim_mode && (Fp->tellg()-offset) >= l_max)
       {
          break;
       }
@@ -1457,7 +1450,7 @@ void Document::ParseDES(DocEntrySet *set,
             {
                break;
             }
-            if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
+            if ( !delim_mode && (Fp->tellg()-offset) >= l_max)
             {
                break;
             }
@@ -1501,18 +1494,18 @@ void Document::ParseDES(DocEntrySet *set,
          {
              if ( IsRLELossLessTransferSyntax() ) 
              {
-                long PositionOnEntry = ftell(Fp);
-                fseek( Fp, newDocEntry->GetOffset(), SEEK_SET );
+                long PositionOnEntry = Fp->tellg();
+                Fp->seekg( newDocEntry->GetOffset(), std::ios_base::beg );
                 ComputeRLEInfo();
-                fseek( Fp, PositionOnEntry, SEEK_SET );
+                Fp->seekg( PositionOnEntry, std::ios_base::beg );
              }
              else 
              if ( IsJPEGTransferSyntax() )
              {
-                long PositionOnEntry = ftell(Fp);
-                fseek( Fp, newDocEntry->GetOffset(), SEEK_SET );
+                long PositionOnEntry = Fp->tellg();
+                Fp->seekg( newDocEntry->GetOffset(), std::ios_base::beg );
                 ComputeJPEGFragmentInfo();
-                fseek( Fp, PositionOnEntry, SEEK_SET );
+                Fp->seekg( PositionOnEntry, std::ios_base::beg );
              }
          }
     
@@ -1567,7 +1560,7 @@ void Document::ParseDES(DocEntrySet *set,
                      l, delim_mode);
          }
          set->AddEntry( newSeqEntry );
-         if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
+         if ( !delim_mode && (Fp->tellg()-offset) >= l_max)
          {
             break;
          }
@@ -1602,7 +1595,7 @@ void Document::ParseSQ( SeqEntry* seqEntry,
             break;
          }
       }
-      if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
+      if ( !delim_mode && (Fp->tellg()-offset) >= l_max)
       {
           break;
       }
@@ -1629,7 +1622,7 @@ void Document::ParseSQ( SeqEntry* seqEntry,
       
       seqEntry->AddEntry( itemSQ, SQItemNumber ); 
       SQItemNumber++;
-      if ( !delim_mode && ( ftell(Fp) - offset ) >= l_max )
+      if ( !delim_mode && ( Fp->tellg() - offset ) >= l_max )
       {
          break;
       }
@@ -1643,12 +1636,11 @@ void Document::ParseSQ( SeqEntry* seqEntry,
  */
 void Document::LoadDocEntry(DocEntry* entry)
 {
-   size_t item_read;
    uint16_t group  = entry->GetGroup();
    std::string  vr = entry->GetVR();
    uint32_t length = entry->GetLength();
 
-   fseek(Fp, (long)entry->GetOffset(), SEEK_SET);
+   Fp->seekg((long)entry->GetOffset(), std::ios_base::beg);
 
    // A SeQuence "contains" a set of Elements.  
    //          (fffe e000) tells us an Element is beginning
@@ -1701,7 +1693,7 @@ void Document::LoadDocEntry(DocEntry* entry)
       }
 
       // to be sure we are at the end of the value ...
-      fseek(Fp,(long)entry->GetOffset()+(long)entry->GetLength(),SEEK_SET);      
+      Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),std::ios_base::beg);
       return;
    }
 
@@ -1764,17 +1756,15 @@ void Document::LoadDocEntry(DocEntry* entry)
    }
    
    // We need an additional byte for storing \0 that is not on disk
-   //std::string newValue(length,0);
-   //item_read = fread(&(newValue[0]), (size_t)length, (size_t)1, Fp);  
-   //rah !! I can't believe it could work, normally this is a const char* !!!
    char *str = new char[length+1];
-   item_read = fread(str, (size_t)length, (size_t)1, Fp);
+   Fp->read(str, (size_t)length);
    str[length] = '\0';
    std::string newValue = str;
    delete[] str;
+
    if ( ValEntry* valEntry = dynamic_cast<ValEntry* >(entry) )
    {  
-      if ( item_read != 1 )
+      if ( Fp->fail() || Fp->eof())//Fp->gcount() == 1
       {
          dbg.Verbose(1, "Document::LoadDocEntry",
                         "unread element value");
@@ -1818,7 +1808,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // The following reserved two bytes (see PS 3.5-2003, section
          // "7.1.2 Data element structure with explicit vr", p 27) must be
          // skipped before proceeding on reading the length on 4 bytes.
-         fseek(Fp, 2L, SEEK_CUR);
+         Fp->seekg( 2L, std::ios_base::cur);
          uint32_t length32 = ReadInt32();
 
          if ( (vr == "OB" || vr == "OW") && length32 == 0xffffffff ) 
@@ -1837,10 +1827,10 @@ void Document::FindDocEntryLength( DocEntry *entry )
                // chance to get the pixels by deciding the element goes
                // until the end of the file. Hence we artificially fix the
                // the length and proceed.
-               long currentPosition = ftell(Fp);
-               fseek(Fp,0L,SEEK_END);
-               long lengthUntilEOF = ftell(Fp) - currentPosition;
-               fseek(Fp, currentPosition, SEEK_SET);
+               long currentPosition = Fp->tellg();
+               Fp->seekg(0L,std::ios_base::end);
+               long lengthUntilEOF = Fp->tellg() - currentPosition;
+               Fp->seekg(currentPosition, std::ios_base::beg);
                entry->SetLength(lengthUntilEOF);
                return;
             }
@@ -1943,7 +1933,7 @@ void Document::FindDocEntryVR( DocEntry *entry )
 
    char vr[3];
 
-   long positionOnEntry = ftell(Fp);
+   long positionOnEntry = Fp->tellg();
    // Warning: we believe this is explicit VR (Value Representation) because
    // we used a heuristic that found "UL" in the first tag. Alas this
    // doesn't guarantee that all the tags will be in explicit VR. In some
@@ -1952,12 +1942,12 @@ void Document::FindDocEntryVR( DocEntry *entry )
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
    
-   fread (vr, (size_t)2,(size_t)1, Fp);
+   Fp->read (vr, (size_t)2);
    vr[2] = 0;
 
    if( !CheckDocEntryVR(entry, vr) )
    {
-      fseek(Fp, positionOnEntry, SEEK_SET);
+      Fp->seekg(positionOnEntry, std::ios_base::beg);
       // When this element is known in the dictionary we shall use, e.g. for
       // the semantics (see the usage of IsAnInteger), the VR proposed by the
       // dictionary entry. Still we have to flag the element as implicit since
@@ -2202,8 +2192,8 @@ void Document::SkipDocEntry(DocEntry *entry)
  */
 void Document::SkipToNextDocEntry(DocEntry *entry) 
 {
-   fseek(Fp, (long)(entry->GetOffset()),     SEEK_SET);
-   fseek(Fp, (long)(entry->GetReadLength()), SEEK_CUR);
+   Fp->seekg((long)(entry->GetOffset()),     std::ios_base::beg);
+   Fp->seekg( (long)(entry->GetReadLength()), std::ios_base::cur);
 }
 
 /**
@@ -2318,7 +2308,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
          // encounter such an ill-formed image, we simply display a warning
          // message and proceed on parsing (while crossing fingers).
          std::ostringstream s;
-         long filePosition = ftell(Fp);
+         long filePosition = Fp->tellg();
          s << "Erroneous Group Length element length  on : (" \
            << std::hex << group << " , " << element 
            << ") -before- position x(" << filePosition << ")"
@@ -2345,7 +2335,7 @@ uint32_t Document::FindDocEntryLengthOB()
    throw( FormatUnexpected )
 {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
-   long positionOnEntry = ftell(Fp);
+   long positionOnEntry = Fp->tellg();
    bool foundSequenceDelimiter = false;
    uint32_t totalLength = 0;
 
@@ -2371,7 +2361,7 @@ uint32_t Document::FindDocEntryLengthOB()
       {
          dbg.Verbose(1, "Document::FindDocEntryLengthOB: neither an Item "
                         "tag nor a Sequence delimiter tag."); 
-         fseek(Fp, positionOnEntry, SEEK_SET);
+         Fp->seekg(positionOnEntry, std::ios_base::beg);
          throw FormatUnexpected("Document::FindDocEntryLengthOB()",
                                 "Neither an Item tag nor a Sequence "
                                 "delimiter tag.");
@@ -2392,7 +2382,7 @@ uint32_t Document::FindDocEntryLengthOB()
          break;
       }
    }
-   fseek(Fp, positionOnEntry, SEEK_SET);
+   Fp->seekg( positionOnEntry, std::ios_base::beg);
    return totalLength;
 }
 
@@ -2405,13 +2395,13 @@ uint16_t Document::ReadInt16()
    throw( FormatError )
 {
    uint16_t g;
-   size_t item_read = fread (&g, (size_t)2,(size_t)1, Fp);
-   if ( item_read != 1 )
+   Fp->read ((char*)&g, (size_t)2);
+   if ( Fp->fail() )
    {
-      if( ferror(Fp) )
-      {
-         throw FormatError( "Document::ReadInt16()", " file error." );
-      }
+          throw FormatError( "Document::ReadInt16()", " file error." );
+   }
+   if( Fp->eof() )
+   {
       throw FormatError( "Document::ReadInt16()", "EOF." );
    }
    g = SwapShort(g); 
@@ -2427,13 +2417,13 @@ uint32_t Document::ReadInt32()
    throw( FormatError )
 {
    uint32_t g;
-   size_t item_read = fread (&g, (size_t)4,(size_t)1, Fp);
-   if ( item_read != 1 )
+   Fp->read ((char*)&g, (size_t)4);
+   if ( Fp->fail() )
    {
-      if( ferror(Fp) )
-      {
-         throw FormatError( "Document::ReadInt16()", " file error." );
-      }
+      throw FormatError( "Document::ReadInt32()", " file error." );
+   }
+   if( Fp->eof() )
+   {
       throw FormatError( "Document::ReadInt32()", "EOF." );
    }
    g = SwapLong(g);
@@ -2448,7 +2438,7 @@ uint32_t Document::ReadInt32()
 void Document::SkipBytes(uint32_t nBytes)
 {
    //FIXME don't dump the returned value
-   (void)fseek(Fp, (long)nBytes, SEEK_CUR);
+   Fp->seekg((long)nBytes, std::ios_base::cur);
 }
 
 /**
@@ -2498,8 +2488,7 @@ bool Document::CheckSwap()
          
    // The easiest case is the one of a DICOM header, since it possesses a
    // file preamble where it suffice to look for the string "DICM".
-   int lgrLue = fread(deb, 1, HEADER_LENGTH_TO_READ, Fp);
-   (void)lgrLue;  //FIXME not used
+   Fp->read(deb, HEADER_LENGTH_TO_READ);
    
    char *entCur = deb + 128;
    if( memcmp(entCur, "DICM", (size_t)4) == 0 )
@@ -2563,8 +2552,8 @@ bool Document::CheckSwap()
       
       // Position the file position indicator at first tag (i.e.
       // after the file preamble and the "DICM" string).
-      rewind(Fp);
-      fseek (Fp, 132L, SEEK_SET);
+      Fp->seekg(0, std::ios_base::beg);
+      Fp->seekg ( 132L, std::ios_base::beg);
       return true;
    } // End of DicomV3
 
@@ -2572,7 +2561,7 @@ bool Document::CheckSwap()
    // preamble. We can reset the file position indicator to where the data
    // is (i.e. the beginning of the file).
    dbg.Verbose(1, "Document::CheckSwap:", "not a DICOM Version3 file");
-   rewind(Fp);
+   Fp->seekg(0, std::ios_base::beg);
 
    // Our next best chance would be to be considering a 'clean' ACR/NEMA file.
    // By clean we mean that the length of the first tag is written down.
@@ -2757,7 +2746,7 @@ DocEntry* Document::ReadNextDocEntry()
       return 0;
    }
 
-   newEntry->SetOffset(ftell(Fp));  
+   newEntry->SetOffset(Fp->tellg());  
 
    return newEntry;
 }
@@ -2797,8 +2786,8 @@ uint32_t Document::GenerateFreeTagKeyInGroup(uint16_t group)
  */
 bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
 {
-   long positionOnEntry = ftell(Fp);
-   long currentPosition = ftell(Fp);          // On debugging purposes
+   long positionOnEntry = Fp->tellg();
+   long currentPosition = Fp->tellg();          // On debugging purposes
 
    //// Read the Item Tag group and element, and make
    // sure they are what we expected:
@@ -2815,7 +2804,7 @@ bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
       s << "  at address: " << (unsigned)currentPosition << std::endl;
       dbg.Verbose(0, "Document::ReadItemTagLength: wrong Item Tag found:");
       dbg.Verbose(0, s.str().c_str());
-      fseek(Fp, positionOnEntry, SEEK_SET);
+      Fp->seekg(positionOnEntry, std::ios_base::beg);
 
       return false;
    }
@@ -2838,7 +2827,7 @@ bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
  */
 uint32_t Document::ReadTagLength(uint16_t testGroup, uint16_t testElement)
 {
-   long positionOnEntry = ftell(Fp);
+   long positionOnEntry = Fp->tellg();
    (void)positionOnEntry;
 
    if ( !ReadTag(testGroup, testElement) )
@@ -2847,7 +2836,7 @@ uint32_t Document::ReadTagLength(uint16_t testGroup, uint16_t testElement)
    }
                                                                                 
    //// Then read the associated Item Length
-   long currentPosition = ftell(Fp);
+   long currentPosition = Fp->tellg();
    uint32_t itemLength  = ReadInt32();
    {
       std::ostringstream s;
@@ -2877,7 +2866,7 @@ void Document::ReadAndSkipEncapsulatedBasicOffsetTable()
    if ( itemLength != 0 )
    {
       char* basicOffsetTableItemValue = new char[itemLength + 1];
-      fread(basicOffsetTableItemValue, itemLength, 1, Fp);
+      Fp->read(basicOffsetTableItemValue, itemLength);
 
 #ifdef GDCM_DEBUG
       for (unsigned int i=0; i < itemLength; i += 4 )
@@ -2939,7 +2928,7 @@ void Document::ComputeRLEInfo()
       // Offset Table information on fragments of this current Frame.
       // Note that the fragment pixels themselves are not loaded
       // (but just skipped).
-      long frameOffset = ftell(Fp);
+      long frameOffset = Fp->tellg();
 
       uint32_t nbRleSegments = ReadInt32();
  
@@ -3009,7 +2998,7 @@ void Document::ComputeJPEGFragmentInfo()
    long fragmentLength;
    while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) )
    { 
-      long fragmentOffset = ftell(Fp);
+      long fragmentOffset = Fp->tellg();
 
        // Store the collected info
        JPEGFragment* newFragment = new JPEGFragment;
