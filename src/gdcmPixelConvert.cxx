@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 04:05:04 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/10/13 14:15:30 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,7 +91,7 @@ void PixelConvert::AllocateDecompressed()
  * \brief Read from file a 12 bits per pixel image and uncompress it
  *        into a 16 bits per pixel image.
  */
-void PixelConvert::Decompress12BitsTo16Bits(
+void PixelConvert::ReadAndDecompress12BitsTo16Bits(
                   uint8_t* pixelZone,
                   FILE* filePtr)
                throw ( FormatError )
@@ -107,21 +107,21 @@ void PixelConvert::Decompress12BitsTo16Bits(
       ItemRead = fread( &b0, 1, 1, filePtr);
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::Decompress12BitsTo16Bits()",
+         throw FormatError( "File::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound first block" );
       }
                                                                                 
       ItemRead = fread( &b1, 1, 1, filePtr);
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::Decompress12BitsTo16Bits()",
+         throw FormatError( "File::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
       }
                                                                                 
       ItemRead = fread( &b2, 1, 1, filePtr);
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::Decompress12BitsTo16Bits()",
+         throw FormatError( "File::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
       }
                                                                                 
@@ -457,8 +457,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
 
 /**
  * \brief  Re-arrange the bits within the bytes.
- * @param  fp already open File Pointer
- * @param  destination Where decompressed fragments should end up
+ * @param  pixelZone zone
  * @return Boolean
  */
 bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
@@ -503,12 +502,10 @@ bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
  * \brief   Convert (Y plane, cB plane, cR plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
-void PixelConvert::ConvertYcBcRPlanesToRGBPixels(
-                           uint8_t* destination,
-                           size_t imageDataSize )
+void PixelConvert::ConvertYcBcRPlanesToRGBPixels( uint8_t* destination )
 {
-   uint8_t* oldPixelZone = new uint8_t[ imageDataSize ];
-   memmove( oldPixelZone, destination, imageDataSize );
+   uint8_t* oldPixelZone = new uint8_t[ DecompressedSize ];
+   memmove( oldPixelZone, destination, DecompressedSize );
                                                                                 
    // to see the tricks about YBR_FULL, YBR_FULL_422,
    // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
@@ -558,12 +555,10 @@ void PixelConvert::ConvertYcBcRPlanesToRGBPixels(
  * \brief   Convert (Red plane, Green plane, Blue plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
-void PixelConvert::ConvertRGBPlanesToRGBPixels(
-                          uint8_t* destination,
-                          size_t imageDataSize )
+void PixelConvert::ConvertRGBPlanesToRGBPixels( uint8_t* destination )
 {
-   uint8_t* oldPixelZone = new uint8_t[ imageDataSize ];
-   memmove( oldPixelZone, destination, imageDataSize );
+   uint8_t* oldPixelZone = new uint8_t[ DecompressedSize ];
+   memmove( oldPixelZone, destination, DecompressedSize );
                                                                                 
    int l = XSize * YSize * ZSize;
                                                                                 
@@ -582,44 +577,129 @@ void PixelConvert::ConvertRGBPlanesToRGBPixels(
 
 bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
 {
+   //////////////////////////////////////////////////
+   //// First stage: get our hands on the Pixel Data.
    if ( !fp )
    {
+     dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+                     "unavailable file pointer." );
       return false;
    }
                                                                                 
    if ( fseek(fp, PixelOffset, SEEK_SET) == -1 )
    {
+     dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+                     "unable to find PixelOffset in file." );
       return false;
    }
                                                                                 
+   //////////////////////////////////////////////////
+   //// Second stage: read from disk dans uncompress.
    if ( BitsAllocated == 12 )
    {
-      Decompress12BitsTo16Bits( (uint8_t*)destination, fp);
-      return true;
+      ReadAndDecompress12BitsTo16Bits( (uint8_t*)destination, fp);
    }
-                                                                                
-   //////////// Decompressed File
-   if ( IsUncompressed )
+   else if ( IsUncompressed )
    {
       size_t ItemRead = fread( destination, PixelDataLength, 1, fp);
       if ( ItemRead != 1 )
       {
+         dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+                         "reading of uncompressed pixel data failed." );
          return false;
+      }
+   } 
+   else if ( IsRLELossless )
+   {
+      if ( ! ReadAndDecompressRLEFile( destination, fp ) )
+      {
+         dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+                         "RLE decompressor failed." );
+         return false;
+      }
+   }
+   else
+   {
+      // Default case concerns JPEG family
+      if ( ! ReadAndDecompressJPEGFile( (uint8_t*)destination, fp ) )
+      {
+         dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+                         "JPEG decompressor failed." );
+         return false;
+      }
+   }
+
+   ////////////////////////////////////////////
+   //// Third stage: twigle the bytes and bits.
+   ReorderEndianity( (uint8_t*) destination );
+   ReArrangeBits( (uint8_t*) destination );
+
+}
+
+bool PixelConvert::HandleColor( uint8_t* destination )
+{
+   //////////////////////////////////
+   // Deal with the color decoding i.e. handle:
+   //   - R, G, B planes (as opposed to RGB pixels)
+   //   - YBR (various) encodings.
+   //   - LUT[s] (or "PALETTE COLOR").
+   //
+   // The classification in the color decoding schema is based on the blending
+   // of two Dicom tags values:
+   // * "Photometric Interpretation" for which we have the cases:
+   //  - [Photo A] MONOCHROME[1|2] pictures,
+   //  - [Photo B] RGB or YBR_FULL_422 (which acts as RGB),
+   //  - [Photo C] YBR_* (with the above exception of YBR_FULL_422)
+   //  - [Photo D] "PALETTE COLOR" which indicates the presence of LUT[s].
+   // * "Planar Configuration" for which we have the cases:
+   //  - [Planar 0] 0 then Pixels are already RGB
+   //  - [Planar 1] 1 then we have 3 planes : R, G, B,
+   //  - [Planar 2] 2 then we have 1 gray Plane and 3 LUTs
+   //
+   // Now in theory, one could expect some coherence when blending the above
+   // cases. For example we should not encounter files belonging at the
+   // time to case [Planar 0] and case [Photo D].
+   // Alas, this was only theory ! Because in practice some odd (read ill
+   // formated Dicom) files (e.g. gdcmData/US-PAL-8-10x-echo.dcm) we encounter:
+   //     - "Planar Configuration" = 0,
+   //     - "Photometric Interpretation" = "PALETTE COLOR".
+   // Hence gdcm shall use the folowing "heuristic" in order to be tolerant
+   // towards Dicom-non-conformance files:
+   //   << whatever the "Planar Configuration" value might be, a
+   //      "Photometric Interpretation" set to "PALETTE COLOR" forces
+   //      a LUT intervention >>
+   //
+   // Now we are left with the following handling of the cases:
+   // - [Planar 0] OR  [Photo A] no color decoding (since respectively
+   //       Pixels are already RGB and monochrome pictures have no color :),
+   // - [Planar 1] AND [Photo B] handled with ConvertRGBPlanesToRGBPixels()
+   // - [Planar 1] AND [Photo C] handled with ConvertYcBcRPlanesToRGBPixels()
+   // - [Planar 2] OR  [Photo D] requires LUT intervention.
+
+   if (   IsMonochrome
+       || ( PlanarConfiguration == 2 )
+       || IsPaletteColor )
+   {
+      // [Planar 2] OR  [Photo D]: LUT intervention done outside
+      return false;
+   }
+                                                                                
+   if ( PlanarConfiguration == 1 )
+   {
+      if ( IsYBRFull )
+      {
+         // [Planar 1] AND [Photo C] (remember YBR_FULL_422 acts as RGB)
+         ConvertYcBcRPlanesToRGBPixels( (uint8_t*)destination );
       }
       else
       {
-         return true;
+         // [Planar 1] AND [Photo C]
+         ConvertRGBPlanesToRGBPixels( (uint8_t*)destination );
       }
    }
                                                                                 
-   ///////////// Run Length Encoding
-   if ( IsRLELossless )
-   {
-      return ReadAndDecompressRLEFile( destination, fp );
-   }
-                                                                                
-   ///////////// SingleFrame/Multiframe JPEG Lossless/Lossy/2000
-   return ReadAndDecompressJPEGFile( (uint8_t*)destination, fp );
+   // When planarConf is 0, pixels are allready in RGB
+   return true;
 }
 
 void PixelConvert::ComputeDecompressedImageDataSize()
@@ -627,7 +707,7 @@ void PixelConvert::ComputeDecompressedImageDataSize()
    int bitsAllocated;
    // Number of "Bits Allocated" is fixed to 16 when it's 12, since
    // in this case we will expand the image to 16 bits (see
-   //    \ref Decompress12BitsTo16Bits() )
+   //    \ref ReadAndDecompress12BitsTo16Bits() )
    if (  BitsAllocated == 12 )
    {
       bitsAllocated = 16;
@@ -639,3 +719,13 @@ void PixelConvert::ComputeDecompressedImageDataSize()
 }
 
 } // end namespace gdcm
+
+// NOTES on File internal calls
+// User
+// ---> GetImageData
+//     ---> GetImageDataIntoVector
+//        |---> GetImageDataIntoVectorRaw
+//        | lut intervention
+// User
+// ---> GetImageDataRaw
+//     ---> GetImageDataIntoVectorRaw

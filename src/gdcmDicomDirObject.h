@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/10/13 14:15:29 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ public:
    void SetPrintLevel(int level) { PrintLevel = level; };
    
    TagDocEntryHT GetEntry();
-   void FillObject(std::list<Element> elemList);
+   void FillObject(ListDicomDirMetaElem elemList);
 
 protected:
 

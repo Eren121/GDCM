@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 09:59:45 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2004/10/13 14:15:30 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ namespace gdcm
 class GDCM_EXPORT File
 {
 public:
-   File( Header *header );
+   File( Header* header );
    File( std::string const& filename );
  
    virtual ~File();
@@ -54,7 +54,7 @@ public:
    uint8_t* GetImageData();
    size_t GetImageDataIntoVector(void* destination, size_t maxSize);
    uint8_t* GetImageDataRaw();
-   size_t GetImageDataIntoVectorRaw(void* destination, size_t maxSize);
+   void GetImageDataIntoVectorRaw(void* destination, size_t maxSize);
 
    // see also Header::SetImageDataSize ?!?         
    bool SetImageData (uint8_t* data, size_t expectedSize);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/10/13 14:15:29 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,18 +31,18 @@ typedef std::list<DicomDirImage *> ListDicomDirImage;
 class GDCM_EXPORT DicomDirSerie : public DicomDirObject 
 {
 public:
-   DicomDirSerie(SQItem *s, TagDocEntryHT *ptagHT); 
-   DicomDirSerie(TagDocEntryHT *ptagHT); 
+   DicomDirSerie( SQItem* s, TagDocEntryHT* ptagHT ); 
+   DicomDirSerie( TagDocEntryHT* ptagHT ); 
 
    ~DicomDirSerie();
 
-   virtual void Print(std::ostream &os = std::cout);
-   virtual void Write(FILE *fp, FileType t);
+   virtual void Print( std::ostream& os = std::cout );
+   virtual void Write( FILE* fp, FileType t );
 /**
  * \ingroup DicomDirSerie
  * \brief   returns the IMAGE chained List for this SERIE.
  */
-   ListDicomDirImage &GetDicomDirImages() { return images; };
+   ListDicomDirImage& GetDicomDirImages() { return images; };
 /**
  * \ingroup DicomDirSerie
  * \brief   adds the passed IMAGE to the IMAGE chained List for this SERIE.

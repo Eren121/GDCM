@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/10/13 14:15:29 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,7 +79,7 @@ TagDocEntryHT DicomDirObject::GetEntry()
  * \brief   add the 'Object' related Dicom Elements to the listEntries
  *          of a partially created DICOMDIR
  */
-void DicomDirObject::FillObject(std::list<Element> elemList)
+void DicomDirObject::FillObject(ListDicomDirMetaElem elemList)
 {
   // FillObject rempli le SQItem qui sera accroche au bon endroit
 

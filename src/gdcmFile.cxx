@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 04:05:04 $
-  Version:   $Revision: 1.141 $
+  Date:      $Date: 2004/10/13 14:15:29 $
+  Version:   $Revision: 1.142 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -139,6 +139,12 @@ void File::Initialise()
       PixelConverter.SetRLEInfo( &(HeaderInternal->RLEInfo) );
       PixelConverter.SetJPEGInfo( &(HeaderInternal->JPEGInfo) );
       PixelConverter.SetDecompressedSize( ImageDataSize );
+
+      PixelConverter.SetPlanarConfiguration(
+          HeaderInternal->GetPlanarConfiguration() );
+      PixelConverter.SetIsMonochrome( HeaderInternal->IsMonochrome() );
+      PixelConverter.SetIsPaletteColor( HeaderInternal->IsPaletteColor() );
+      PixelConverter.SetIsYBRFull( HeaderInternal->IsYBRFull() );
                                                                                 
       HeaderInternal->CloseFile();
 
@@ -537,7 +543,7 @@ uint8_t* File::GetImageDataRaw ()
  * @return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
-size_t File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
+void File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 {
   // we save the initial values of the following
   // in order to be able to restore the header in a disk-consistent state
@@ -554,74 +560,16 @@ size_t File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    {
       dbg.Verbose(0, "File::GetImageDataIntoVector: pixel data bigger"
                      "than caller's expected MaxSize");
-      return (size_t)0;
+      return;
    }
 
    FILE* fp = HeaderInternal->OpenFile();
    PixelConverter.ReadAndDecompressPixelData( destination, fp );
    HeaderInternal->CloseFile();
                                                                                 
-   PixelConverter.ReorderEndianity( (uint8_t*) destination );
-                                                                                
-   PixelConverter.ReArrangeBits( (uint8_t*) destination );
-
-#ifdef GDCM_DEBUG
-   FILE*  DebugFile;
-   DebugFile = fopen( "SpuriousFile.RAW", "wb" );
-   fwrite( PixelConvertor.GetUncompressed(),
-           PixelConvertor.GetUncompressedsSize(),
-           1, DebugFile );
-   fclose( DebugFile );
-#endif //GDCM_DEBUG
-
-// SPLIT ME
-//////////////////////////////////
-// Deal with the color
-   
-   // Monochrome pictures don't require color intervention
-   if ( HeaderInternal->IsMonochrome() )
+   if ( ! PixelConverter.HandleColor( (uint8_t*)destination ) )
    {
-      return ImageDataSize; 
-   }
-      
-   // Planar configuration = 0 : Pixels are already RGB
-   // Planar configuration = 1 : 3 planes : R, G, B
-   // Planar configuration = 2 : 1 gray Plane + 3 LUT
-
-   // Well ... supposed to be !
-   // See US-PAL-8-10x-echo.dcm: PlanarConfiguration=0,
-   //                            PhotometricInterpretation=PALETTE COLOR
-   // and heuristic has to be found :-( 
-
-   int planConf = HeaderInternal->GetPlanarConfiguration();
-
-   // Planar configuration = 2 ==> 1 gray Plane + 3 LUT
-   //   ...and...
-   // whatever the Planar Configuration might be, "PALETTE COLOR "
-   // implies that we deal with the palette. 
-   if ( ( planConf == 2 ) || HeaderInternal->IsPaletteColor() )
-   {
-      return ImageDataSize;
-   }
-
-   // When planConf is 0, pixels are allready in RGB
-
-   if ( planConf == 1 )
-   {
-      // Warning : YBR_FULL_422 acts as RGB
-      if ( HeaderInternal->IsYBRFull() )
-      {
-         PixelConverter.ConvertYcBcRPlanesToRGBPixels(
-                              (uint8_t*)destination,
-                              ImageDataSize );
-      }
-      else
-      {
-         PixelConverter.ConvertRGBPlanesToRGBPixels(
-                              (uint8_t*)destination,
-                              ImageDataSize );
-      }
-
+      return;
    }
 
 ///////////////////////////////////////////////////
@@ -644,7 +592,7 @@ size_t File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    HeaderInternal->SetEntryByNumber(photInt,0x0028,0x0004);
    HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
  
-   return ImageDataSize; 
+   return; 
 }
 
 /**

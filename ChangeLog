@@ -1,3 +1,14 @@
+2004-10-13 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * Doc/Website/MailingList.html added (Sidebar.html changed accordingly).
+  * gdcmPython/gdcm.i: fix for compilation of wrappers (Note: %include order
+    matters, as stated in warning note at begining of %include section).
+  * src/gdcmDicomDir*.[cxx|h]: coding style
+  * src/gdcmDocument.h: doxygen \ref seems uncompatible with \todo.
+  * src/gdcmJpeg8.cxx: doxygen fix.
+  * CLEANUP_ROUND (12) for gdcmPixelConvert (seing the ligth stage)
+    src/gdcmFile.[cxx|h] and gdcmPixelConvert.[cxx|h]: color handling moved
+    from File:: to PixelConvert::.
+
 2004-10-12 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND (11) for gdcmPixelConvert (cafeine is my friend stage)
     src/gdcmFile.[cxx|h] and gdcmPixelConvert.[cxx|h]:

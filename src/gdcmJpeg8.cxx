@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg8.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/10/13 14:15:30 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -135,7 +135,7 @@ namespace gdcm
  * \brief   routine for JPEG decompression 
  * @param fp pointer to an already open file descriptor 
  *                      8 significant bits per pixel
- * @param image_buffer Points to array (of R,G,B-order) data to compress
+ * @param im_buf Points to array (of R,G,B-order) data to compress
  * @param quality compression quality
  * @param image_height Number of rows in image 
  * @param image_width Number of columns in image

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2004/10/13 14:15:29 $
+  Version:   $Revision: 1.51 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,8 +90,8 @@ protected:
    /// \brief Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
    /// are NOT printed.
    /// \todo Currently not used since collides with #define in
-   ///       \ref DocEntry.cxx. See also
-   ///       \ref Document::SetMaxSizePrintEntry()
+   ///       class DocEntry . See also
+   ///       method ref Document::SetMaxSizePrintEntry()
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// Store the RLE frames info obtained during parsing of pixels.

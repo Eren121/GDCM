@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 09:59:45 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/10/13 14:15:30 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,13 +54,21 @@ friend class File;
    int PixelSize;
    bool PixelSign;
    int SwapCode;
+
    bool IsUncompressed;
    bool IsJPEG2000;
    bool IsJPEGLossless;
    bool IsRLELossless;
+
    RLEFramesInfo* RLEInfo;
    JPEGFragmentsInfo* JPEGInfo;
-   
+
+   // For handling color stage
+   int PlanarConfiguration;
+   bool IsMonochrome;
+   bool IsPaletteColor;
+   bool IsYBRFull;
+
 private:
    bool ReadAndUncompressRLEFragment(
                   uint8_t* decodedZone,
@@ -98,6 +106,13 @@ public:
    void SetJPEGInfo( JPEGFragmentsInfo* inJPEGFragmentsInfo )
            { JPEGInfo = inJPEGFragmentsInfo; }
 
+   void SetPlanarConfiguration( size_t planarConfiguration )
+           { PlanarConfiguration = planarConfiguration; }
+   void SetIsMonochrome( bool isMonochrome ) { IsMonochrome = isMonochrome; }
+   void SetIsPaletteColor( bool isPaletteColor )
+           { IsPaletteColor = isPaletteColor; }
+   void SetIsYBRFull( bool isYBRFull ) { IsYBRFull = isYBRFull; }
+
    uint8_t* GetRGB() { return RGB; }
    void     SetRGBSize( size_t size ) { RGBSize = size; }
    size_t   GetRGBSize() { return RGBSize; }
@@ -115,22 +130,19 @@ private:
                   int NumberOfFrames,
                   uint8_t* fixMemUncompressed );
    void ComputeDecompressedImageDataSize();
-   void Decompress12BitsTo16Bits(
+   void ReadAndDecompress12BitsTo16Bits(
                   uint8_t* pixelZone,
                   FILE* filePtr) throw ( FormatError );
    bool ReadAndDecompressRLEFile( void* image_buffer, FILE* fp );
    bool ReadAndDecompressJPEGFile( uint8_t* destination, FILE* fp );
    void SwapZone( uint8_t* im );
-public:
    void ReorderEndianity( uint8_t* pixelZone );
    bool ReArrangeBits( uint8_t* pixelZone ) throw ( FormatError );
-         void ConvertRGBPlanesToRGBPixels(
-                  uint8_t* destination,
-                  size_t imageDataSize );
-          void ConvertYcBcRPlanesToRGBPixels(
-                  uint8_t* destination,
-                  size_t imageDataSize );
-          bool ReadAndDecompressPixelData( void* destination, FILE* fp );
+   void ConvertRGBPlanesToRGBPixels( uint8_t* destination );
+   void ConvertYcBcRPlanesToRGBPixels( uint8_t* destination );
+public:
+   bool ReadAndDecompressPixelData( void* destination, FILE* fp );
+   bool HandleColor( uint8_t* destination );
    void Squeeze();
 };
 } // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:44 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/10/13 14:15:29 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,7 @@ void Debug::Verbose(int level, const char * msg1, const char * msg2)
    {
       return ;
    }
-   std::cerr << msg1 << ' ' << msg2 << std::endl;
+   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << std::endl;
 }
 
 /**
@@ -68,7 +68,7 @@ void Debug::Error(bool test, const char * msg1, const char * msg2)
    {
       return;
    }
-   std::cerr << msg1 << ' ' << msg2 << std::endl;
+   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << std::endl;
    Exit(1);
 }
 
@@ -81,7 +81,7 @@ void Debug::Error(bool test, const char * msg1, const char * msg2)
 void Debug::Error(const char* msg1, const char* msg2,
                       const char* msg3) 
 {
-   std::cerr << msg1 << ' ' << msg2 << ' ' << msg3 << std::endl;
+   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << ' ' << msg3 << std::endl;
    Exit(1);
 }
 
@@ -101,7 +101,7 @@ void Debug::Assert(int level, bool test, const char * msg1,
    }
    if (!test)
    {
-      std::cerr << msg1 << ' ' << msg2 << std::endl;
+      std::cerr << "gdcm::" <<  msg1 << ' ' << msg2 << std::endl;
    }
 }
 
