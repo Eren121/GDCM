@@ -1,4 +1,11 @@
 2004-01-15 Benoit Regrain
+     * src/gdcmDicSet.[h|cxx] : add virtual entries to have a reference of
+       entries created while parsing the header. Thus, they will be destroyed
+       when the gdcmDictSet will be destroyed
+     * src/gdcmHeader.cxx, gdcmHeaderEntrySet.cxx : uses virtual entries of
+       gdcmDictSet
+
+2004-01-15 Benoit Regrain
      * vtk/vtkGdcmReader.cxx : bug fix : before, with python only, the program
        made a fatal error because of the memory release at the end of program.
        The problem was in vtkGdcmReader::ExecuteData where we were allocate

@@ -18,7 +18,8 @@
  * \brief   The Dictionnary Set obtained with this constructor simply
  *          contains the Default Public dictionnary.
  */
-gdcmDictSet::gdcmDictSet(void) {
+gdcmDictSet::gdcmDictSet(void) 
+{
    DictPath = BuildDictPath();
    std::string PubDictFile = DictPath + PUB_DICT_FILENAME;
    Dicts[PUB_DICT_NAME] = new gdcmDict(PubDictFile);
@@ -28,13 +29,27 @@ gdcmDictSet::gdcmDictSet(void) {
  * \ingroup gdcmDictSet
  * \brief  Destructor 
  */
-gdcmDictSet::~gdcmDictSet() {
-   for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) {
-      gdcmDict* EntryToDelete = tag->second;
+gdcmDictSet::~gdcmDictSet() 
+{
+   // Remove dictionnaries
+   for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) 
+   {
+      gdcmDict *EntryToDelete = tag->second;
       if ( EntryToDelete )
          delete EntryToDelete;
+      tag->second=NULL;
    }
    Dicts.clear();
+
+   // Remove virtual dictionnary entries
+   std::map<std::string,gdcmDictEntry *>::iterator it;
+   for(it=virtualEntry.begin(); it!=virtualEntry.end(); ++it)
+   {
+      gdcmDictEntry *Entry = it->second;
+      if ( Entry )
+         delete Entry;
+      it->second=NULL;
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -45,8 +60,10 @@ gdcmDictSet::~gdcmDictSet() {
  *          contained is this gdcmDictSet, along with their respective content.
  * @param   os Output stream used for printing.
  */
-void gdcmDictSet::Print(std::ostream& os) {
-   for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict){
+void gdcmDictSet::Print(std::ostream& os) 
+{
+   for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict)
+   {
       os << "Printing dictionary " << dict->first << std::endl;
       dict->second->Print(os);
    }
@@ -61,11 +78,13 @@ void gdcmDictSet::Print(std::ostream& os) {
  * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string> * gdcmDictSet::GetPubDictTagNames(void) {
-   std::list<std::string> * Result = new std::list<std::string>;
+std::list<std::string> *gdcmDictSet::GetPubDictTagNames(void) 
+{
+   std::list<std::string> *Result = new std::list<std::string>;
    TagKeyHT entries = GetDefaultPubDict()->GetEntries();
    
-   for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
+   for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag)
+   {
       Result->push_back( tag->second->GetName() );
    }
    return Result;
@@ -95,11 +114,13 @@ std::list<std::string> * gdcmDictSet::GetPubDictTagNames(void) {
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-std::map<std::string, std::list<std::string> > * gdcmDictSet::GetPubDictTagNamesByCategory(void) {
-   std::map<std::string, std::list<std::string> > * Result = new std::map<std::string, std::list<std::string> >;
+std::map<std::string, std::list<std::string> > *gdcmDictSet::GetPubDictTagNamesByCategory(void) 
+{
+   std::map<std::string, std::list<std::string> > *Result = new std::map<std::string, std::list<std::string> >;
    TagKeyHT entries = GetDefaultPubDict()->GetEntries();
 
-   for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
+   for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag)
+   {
       (*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
    }
    return Result;
@@ -114,7 +135,8 @@ std::map<std::string, std::list<std::string> > * gdcmDictSet::GetPubDictTagNames
  * @param   Name Symbolic name that be used as identifier of the newly 
  *          created dictionary.
  */
-void gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) {
+void gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) 
+{
    gdcmDict *NewDict = new gdcmDict(FileName);
    AppendDict(NewDict,Name);
 }
@@ -126,9 +148,12 @@ void gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) {
  * @param   DictName The symbolic name of the searched dictionary.
  * \result  The retrieved dictionary.
  */
-gdcmDict * gdcmDictSet::GetDict(DictKey DictName) {
+gdcmDict *gdcmDictSet::GetDict(DictKey DictName) 
+{
    DictSetHT::iterator dict = Dicts.find(DictName);
-   return dict->second;
+   if(dict!=Dicts.end())
+      return dict->second;
+   return NULL;
 }
 
 /**
@@ -136,8 +161,36 @@ gdcmDict * gdcmDictSet::GetDict(DictKey DictName) {
  * \brief   Retrieve the default reference DICOM V3 public dictionary.
  * \result  The retrieved default dictionary.
  */
-gdcmDict * gdcmDictSet::GetDefaultPubDict() {
+gdcmDict *gdcmDictSet::GetDefaultPubDict() 
+{
    return GetDict(PUB_DICT_NAME);
+}
+
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Create a gdcmDictEntry which will be reference 
+ *          in no dictionnary
+ * @return  virtual entry
+ */
+gdcmDictEntry *gdcmDictSet::NewVirtualDictEntry(guint16 group, guint16 element,
+                                                std::string vr,std::string fourth,
+                                                std::string name)
+{
+   gdcmDictEntry *entry;
+   std::string tag=gdcmDictEntry::TranslateToKey(group,element)+vr;
+   std::map<std::string,gdcmDictEntry *>::iterator it;
+   
+   it=virtualEntry.find(tag);
+   if(it!=virtualEntry.end())
+   {
+      entry=it->second;
+   }
+   else
+   {
+      entry=new gdcmDictEntry(group,element,vr,fourth,name);
+      virtualEntry[tag]=entry;
+   }
+   return(entry);
 }
 
 /**
@@ -146,26 +199,29 @@ gdcmDict * gdcmDictSet::GetDefaultPubDict() {
  *          path to directory containing the dictionnaries. When
  *          the environnement variable is absent the path is defaulted
  *          to "../Dicts/".
- * @return path to directory containing the dictionnaries
+ * @return  path to directory containing the dictionnaries
  */
-std::string gdcmDictSet::BuildDictPath(void) {
+std::string gdcmDictSet::BuildDictPath(void) 
+{
    std::string ResultPath;
-   const char* EnvPath = (char*)0;
+   const char *EnvPath = (char*)0;
    EnvPath = getenv("GDCM_DICT_PATH");
-   if (EnvPath && (strlen(EnvPath) != 0)) {
+   if (EnvPath && (strlen(EnvPath) != 0)) 
+   {
       ResultPath = EnvPath;
       if (ResultPath[ResultPath.length() -1] != '/' )
          ResultPath += '/';
       dbg.Verbose(1, "gdcmDictSet::BuildDictPath:",
                      "Dictionary path set from environnement");
-   } else
+   } 
+   else
       ResultPath = PUB_DICT_PATH;
    return ResultPath;
 }
 
 //-----------------------------------------------------------------------------
 // Protected
-bool gdcmDictSet::AppendDict(gdcmDict* NewDict,DictKey Name)
+bool gdcmDictSet::AppendDict(gdcmDict *NewDict,DictKey Name)
 {
    Dicts[Name] = NewDict;
    return(true);

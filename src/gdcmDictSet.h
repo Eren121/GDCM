@@ -39,19 +39,26 @@ public:
 
    void LoadDictFromFile(std::string FileName, DictKey Name);
 
-   gdcmDict* GetDict(DictKey DictName);
-   gdcmDict* GetDefaultPubDict(void);
+   gdcmDict *GetDict(DictKey DictName);
+   gdcmDict *GetDefaultPubDict(void);
+
+   gdcmDictEntry *NewVirtualDictEntry(guint16 group, guint16 element,
+                                      std::string vr = "Unknown",
+                                      std::string fourth = "Unknown",
+                                      std::string name   = "Unknown");
 
    static std::string BuildDictPath(void);
 
 protected:
-   bool AppendDict(gdcmDict* NewDict,DictKey Name);
+   bool AppendDict(gdcmDict *NewDict,DictKey Name);
 
 private:
    /// Hash table of all dictionaries contained in this gdcmDictSet
    DictSetHT Dicts;
    /// Directory path to dictionaries
    std::string DictPath;
+
+   std::map<std::string,gdcmDictEntry *> virtualEntry;
 };
 
 //-----------------------------------------------------------------------------

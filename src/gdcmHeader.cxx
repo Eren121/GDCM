@@ -1662,7 +1662,7 @@ void gdcmHeader::LoadHeaderEntrySafe(gdcmHeaderEntry * entry) {
                                                        CorrectElem);
          if (!NewTag) {
             // This correct tag is not in the dictionary. Create a new one.
-            NewTag = new gdcmDictEntry(CorrectGroup, CorrectElem);
+            NewTag = Dicts->NewVirtualDictEntry(CorrectGroup, CorrectElem);
          }
          // FIXME this can create a memory leaks on the old entry that be
          // left unreferenced.
@@ -1752,7 +1752,7 @@ void gdcmHeader::FindHeaderEntryVR( gdcmHeaderEntry *ElVal) {
       // be unwise to overwrite the VR of a dictionary (since it would
       // compromise it's next user), we need to clone the actual DictEntry
       // and change the VR for the read one.
-      gdcmDictEntry* NewTag = new gdcmDictEntry(ElVal->GetGroup(),
+      gdcmDictEntry* NewTag = Dicts->NewVirtualDictEntry(ElVal->GetGroup(),
                                  ElVal->GetElement(),
                                  vr,
                                  "FIXME",
@@ -2316,7 +2316,7 @@ gdcmHeaderEntry* gdcmHeader::NewHeaderEntryByName(std::string Name) {
 
    gdcmDictEntry * NewTag = GetDictEntryByName(Name);
    if (!NewTag)
-      NewTag = new gdcmDictEntry(0xffff, 0xffff, "LO", "Unknown", Name);
+      NewTag = Dicts->NewVirtualDictEntry(0xffff, 0xffff, "LO", "Unknown", Name);
 
    gdcmHeaderEntry* NewElVal = new gdcmHeaderEntry(NewTag);
    if (!NewElVal) {
@@ -2339,7 +2339,7 @@ gdcmHeaderEntry* gdcmHeader::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
    // Find out if the tag we encountered is in the dictionaries:
    gdcmDictEntry * NewTag = GetDictEntryByNumber(Group, Elem);
    if (!NewTag)
-      NewTag = new gdcmDictEntry(Group, Elem);
+      NewTag = Dicts->NewVirtualDictEntry(Group, Elem);
 
    gdcmHeaderEntry* NewElVal = new gdcmHeaderEntry(NewTag);
    if (!NewElVal) {
@@ -2373,7 +2373,7 @@ gdcmHeaderEntry* gdcmHeader::NewManualHeaderEntryToPubDict(std::string NewTagNam
                      "Group 0xffff in Public Dict is full");
       return (gdcmHeaderEntry*)0;
    }
-   NewEntry = new gdcmDictEntry(StuffGroup, FreeElem,
+   NewEntry = Dicts->NewVirtualDictEntry(StuffGroup, FreeElem,
                                 VR, "GDCM", NewTagName);
    NewElVal = new gdcmHeaderEntry(NewEntry);
    PubEntrySet.Add(NewElVal);

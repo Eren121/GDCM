@@ -428,7 +428,7 @@ void gdcmHeaderEntrySet::UpdateGroupLength(bool SkipSequence, FileType type) {
       tk = g->first + "|0000";			// generate the element full tag
                      
       if ( tagHT.count(tk) == 0) { 		// if element 0x0000 not found
-         gdcmDictEntry * tagZ = new gdcmDictEntry(gr_bid, 0x0000, "UL");       
+         gdcmDictEntry * tagZ = gdcmGlobal::GetDicts()->NewVirtualDictEntry(gr_bid, 0x0000, "UL");
          elemZ = new gdcmHeaderEntry(tagZ);
          elemZ->SetLength(4);
          Add(elemZ);				// create it
