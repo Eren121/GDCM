@@ -1,3 +1,10 @@
+2003-07-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * src/jpeg/libijg12/.cvsignore, jconfig.* : ommited files while last
+        commit of JPR (before his hollidays to facilitate our work).
+      * setup.py : bug fix in code. Modifications made while the last commit
+        of JPR. The code hasn't been tested before the commit... it's so
+        useless to make that (for best programmer that is JPR) !!!
+
 2003-07-08  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * tagged the current version as Version0_3 (i.e. version 0.3)
 

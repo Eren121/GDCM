@@ -8,6 +8,7 @@ ThisModule='gdcmPython'
 gdcmPythonSrcDir=ThisModule
 gdcmSrcDir      ="src"
 gdcmJpeg8SrcDir  =os.path.join('src', 'jpeg', 'libijg8')
+gdcmJpeg12SrcDir  =os.path.join('src', 'jpeg', 'libijg12')
 gdcmvtkSrcDir   ="vtk"
 gdcmDictsDir    ="Dicts"
 gdcmTestDir     ="Test"
@@ -19,7 +20,7 @@ if(os.name=='posix'):
 	libraries=["stdc++"]
 	macros   =[('__STDC_LIMIT_MACROS', '1')]
 
-	VTKPATH="/usr"
+	VTKPATH="/usr/local"
 	vtkWrapper="vtkWrapPython"
 else:
 	targetDir=os.path.join('lib','site-packages')
@@ -78,7 +79,7 @@ vtkSources = []
 vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
 vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
 vtkSources.extend(Jpeg8Sources)
-vtkSources.extend(Jpeg12ources)
+vtkSources.extend(Jpeg12Sources)
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",
               "vtkFiltering","vtkFilteringPython"]
@@ -96,7 +97,8 @@ setup(name=ThisModule,
       cmdclass={'build_ext':build_extWrap}, # redirects default build_ext
       ext_modules=[SwigExtension(name='_gdcm',
                                  sources=Sources,
-                                 include_dirs=[gdcmSrcDir,gdcmJpeg8SrcDir],[gdcmSrcDir,gdcmJpeg12SrcDir],
+                                 include_dirs=[gdcmSrcDir,gdcmJpeg8SrcDir,
+                                               gdcmSrcDir,gdcmJpeg12SrcDir],
                                  libraries=libraries,
                                  define_macros=macros,
                                  swig_cpp=1,
