@@ -100,6 +100,21 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
 /**
  * \ingroup   gdcmFile
  * \brief     Returns the size (in bytes) of required memory to hold
+ * \          the pixel data represented in this file, when user DOESN'T want 
+ * \          to get RGB pixels image when it's stored as a PALETTE COLOR image
+ * \          - the (vtk) user is supposed to know how deal with LUTs - 
+ * \          warning to be used with GetImagePixelsRaw()
+ * @return    The size of pixel data in bytes.
+ */
+
+size_t gdcmFile::GetImageDataSizeRaw(void) {
+   return (lgrTotaleRaw);
+}
+
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief     Returns the size (in bytes) of required memory to hold
  *            the pixel data represented in this file.
  * @return    The size of pixel data in bytes.
  */

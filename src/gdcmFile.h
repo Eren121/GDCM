@@ -50,6 +50,7 @@ public:
 
    void   SetPixelDataSizeFromHeader(void);
    size_t GetImageDataSize();
+   size_t GetImageDataSizeRaw();
    void * GetImageData();
    size_t GetImageDataIntoVector(void* destination, size_t MaxSize);
    void * GetImageDataRaw();
