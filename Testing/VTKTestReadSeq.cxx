@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestReadSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 10:49:47 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/19 13:50:11 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,6 +110,7 @@ int VTKReadSeqTest(vtkTesting *t,vtkImageViewer *viewer,
       vtkImageClip *clip=vtkImageClip::New();
       clip->SetInput(image);
       clip->SetOutputWholeExtent(ext[0],ext[1],ext[2],ext[3],j,j);
+      clip->ClipDataOn();
       vtkImageTranslateExtent *translat=vtkImageTranslateExtent::New();
       translat->SetInput(clip->GetOutput());
       translat->SetTranslation(0,0,-j);
@@ -215,7 +216,8 @@ int VTKTestReadSeq(int argc, char *argv[])
    {
       ret = VTKReadSeqTest(t,viewer,argv[1+show],argv[2+show],show);
       t->Delete();
-      viewer->Delete();
+      if( viewer )
+         viewer->Delete();
 
       return ret;
    }
@@ -238,7 +240,7 @@ int VTKTestReadSeq(int argc, char *argv[])
       ret += VTKReadSeqTest(t,viewer,filename,pngfile,show);
    }
    t->Delete();
-   if(viewer)
+   if( viewer )
       viewer->Delete();
 
    return ret;
