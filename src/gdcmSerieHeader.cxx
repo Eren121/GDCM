@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:53 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/28 16:56:49 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,11 +93,12 @@ void SerieHeader::AddFileName(std::string const &filename)
 /**
  * \brief Sets the Directory
  * @param   dir Name of the directory to deal with
+ * @param recursive whether we want explore recursively the Directory
  */
-void SerieHeader::SetDirectory(std::string const &dir)
+void SerieHeader::SetDirectory(std::string const &dir, bool recursive)
 {
-   CurrentSerieUID = ""; //Reset previous Serie Instance UID
-   DirList dirList(dir);  //OS specific
+   CurrentSerieUID = ""; // Reset previous Serie Instance UID
+   DirList dirList(dir, recursive); // OS specific
   
    DirListType filenames_list = dirList.GetFilenames();
    for( DirListType::const_iterator it = filenames_list.begin(); 
