@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/22 22:51:40 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/25 11:25:32 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,11 +36,9 @@
 
 int VTKReadTest(vtkTesting *t,vtkImageViewer *viewer,
                 std::string const & filename, 
-                std::string const & referenceFileName,
-                bool show )
+                std::string const & referenceFileName)
 {
    int retVal = 0;  //by default this is an error
-   (void)show;
 
    t->CleanArguments();
    t->AddArgument("-D");
@@ -209,7 +207,7 @@ int VTKTestRead(int argc, char *argv[])
    }
    else
    {
-      ret = VTKReadTest(t,viewer,argv[1+show],argv[2+show],show);
+      ret = VTKReadTest(t,viewer,argv[1+show],argv[2+show]);
       t->Delete();
       if( viewer )
          viewer->Delete();
@@ -235,7 +233,7 @@ int VTKTestRead(int argc, char *argv[])
       pngfile.insert( 0, "Baseline/");
       //std::cerr << "PNG file: " << pngfile << std::endl;
 
-      ret += VTKReadTest(t,viewer,filename,pngfile,show);
+      ret += VTKReadTest(t,viewer,filename,pngfile);
    }
    t->Delete();
    if( viewer )

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestReadSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:42 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/25 11:25:32 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,7 @@
 
 int VTKReadSeqTest(vtkTesting *t,vtkImageViewer *viewer,
                    std::string const & filename, 
-                   std::string const & referenceFileName,
-                   bool show )
+                   std::string const & referenceFileName)
 {
    int retVal = 0;  //by default this is an error
 
@@ -67,7 +66,7 @@ int VTKReadSeqTest(vtkTesting *t,vtkImageViewer *viewer,
    double *range = reader->GetOutput()->GetScalarRange();
 
    // Show
-   if( show )
+   if( viewer )
    {
       viewer->SetInput ( reader->GetOutput() );
       viewer->OffScreenRenderingOff();
@@ -215,7 +214,7 @@ int VTKTestReadSeq(int argc, char *argv[])
    }
    else
    {
-      ret = VTKReadSeqTest(t,viewer,argv[1+show],argv[2+show],show);
+      ret = VTKReadSeqTest(t,viewer,argv[1+show],argv[2+show]);
       t->Delete();
       if( viewer )
          viewer->Delete();
@@ -238,7 +237,7 @@ int VTKTestReadSeq(int argc, char *argv[])
       pngfile = pngfile.substr(0, dot_pos).append( ".png" );
       pngfile.insert( 0, "Baseline/");
       
-      ret += VTKReadSeqTest(t,viewer,filename,pngfile,show);
+      ret += VTKReadSeqTest(t,viewer,filename,pngfile);
    }
    t->Delete();
    if( viewer )

@@ -1,4 +1,8 @@
 2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/VTKTest*.cxx : remove the show variable in each test method because 
+     it's useless (the viewer variable replace this variable)
+
+2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocument.cxx : bug fix on potential memory leak
    * src/gdcmSQItem.cxx : initialize the SQItemNumber value in the constructor
    * src/gdcmSQItem.[h|cxx], gdcmElementSet.[h|cxx], gdcmDicomDir*.[h|cxx] : 
