@@ -72,6 +72,8 @@ int main(int argc, char* argv[]) {
 	printf ("WriteDCM\n");
 	//f1->WriteDcmImplVR(resultat);	
 	f1->WriteAcr(resultat);	
+
+  return 0;
 }
 
 

@@ -10,6 +10,8 @@ int main(int argc, char* argv[])
 	else
 		e1 = new gdcmHeader("test.acr");
 	e1->PrintPubDict();
+
+  return 0;
 }
 
 
