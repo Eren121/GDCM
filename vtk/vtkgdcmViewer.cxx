@@ -11,6 +11,10 @@
 
 #include "vtkGdcmReader.h"
 
+#ifndef vtkFloatingPointType
+#define vtkFloatingPointType float
+#endif
+
 //----------------------------------------------------------------------------
 // Callback for the interaction
 class vtkgdcmObserver : public vtkCommand
