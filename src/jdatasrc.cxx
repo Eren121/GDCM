@@ -1,5 +1,5 @@
 /*
- * jdatasrc.c
+ * jdatasrc.cxx
  *
  * Copyright (C) 1994-1996, Thomas G. Lane.
  * This file is part of the Independent JPEG Group's software.
@@ -19,7 +19,7 @@
 /* Expanded data source object for stdio input */
 
 extern "C" {
-  typedef  int(*int_jpeg_decompress_struct)(jpeg_decompress_struct*);
+  typedef  unsigned char(*uc_jpeg_decompress_struct)(jpeg_decompress_struct*);
   typedef  void(*void_jpeg_decompress_struct)(jpeg_decompress_struct*);
   typedef  void(*void_jpeg_decompress_struct_long)(jpeg_decompress_struct*,long);
 }
@@ -221,7 +221,7 @@ jpeg_stdio_src (j_decompress_ptr cinfo, std::ifstream * infile, gdcm::JPEGFragme
 
   src = (my_src_ptr) cinfo->src;
   src->pub.init_source = reinterpret_cast<void_jpeg_decompress_struct>(init_source);
-  src->pub.fill_input_buffer = reinterpret_cast<int_jpeg_decompress_struct>(fill_input_buffer);
+  src->pub.fill_input_buffer = reinterpret_cast<uc_jpeg_decompress_struct>(fill_input_buffer);
   src->pub.skip_input_data = reinterpret_cast<void_jpeg_decompress_struct_long>(skip_input_data);
   src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
   src->pub.term_source = reinterpret_cast<void_jpeg_decompress_struct>(term_source);
