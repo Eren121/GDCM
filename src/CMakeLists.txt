@@ -11,41 +11,42 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(libgdcm_la_SOURCES
-   gdcmDirList.cxx
+   gdcmBinEntry.cxx
    gdcmDebug.cxx
+   gdcmDicomDir.cxx
+   gdcmDicomDirElement.cxx
+   gdcmDicomDirImage.cxx
+   gdcmDicomDirMeta.cxx
+   gdcmDicomDirObject.cxx
+   gdcmDicomDirPatient.cxx
+   gdcmDicomDirSerie.cxx
+   gdcmDicomDirStudy.cxx
    gdcmDict.cxx
    gdcmDictEntry.cxx
    gdcmDictSet.cxx
+   gdcmDirList.cxx
+   gdcmDocEntry.cxx
+   gdcmDocEntrySet.cxx
+   gdcmDocument.cxx
+   gdcmElementSet.cxx
    gdcmException.cxx
+   gdcmFile.cxx
    gdcmGlobal.cxx
+   gdcmHeader.cxx
+   gdcmHeaderHelper.cxx
    gdcmJpeg12.cxx
    gdcmJpeg2000.cxx
    gdcmJpeg.cxx
-   gdcmTS.cxx
-   gdcmUtil.cxx
-   gdcmVR.cxx
-   gdcmFile.cxx
-   gdcmHeader.cxx
-   gdcmHeaderHelper.cxx
    gdcmParsePixels.cxx
+   gdcmPixelConvert.cxx
    gdcmRLE.cxx
-   gdcmDocEntry.cxx
-   gdcmDocEntrySet.cxx
-   gdcmBinEntry.cxx
+   gdcmRLEFramesInfo.cxx
    gdcmSeqEntry.cxx
    gdcmSQItem.cxx
-   gdcmElementSet.cxx
+   gdcmTS.cxx
+   gdcmUtil.cxx
    gdcmValEntry.cxx   
-   gdcmDicomDirElement.cxx
-   gdcmDocument.cxx
-   gdcmDicomDir.cxx
-   gdcmDicomDirMeta.cxx
-   gdcmDicomDirPatient.cxx
-   gdcmDicomDirStudy.cxx
-   gdcmDicomDirSerie.cxx
-   gdcmDicomDirImage.cxx
-   gdcmDicomDirObject.cxx
-   gdcmPixelConvert.cxx
+   gdcmVR.cxx
    )
 
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )

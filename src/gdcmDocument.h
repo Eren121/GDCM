@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2004/10/06 09:58:08 $
+  Version:   $Revision: 1.45 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,6 +25,7 @@
 #include "gdcmException.h"
 #include "gdcmDictSet.h"
 #include "gdcmDocEntry.h"
+#include "gdcmRLEFramesInfo.h"
 
 class gdcmValEntry;
 class gdcmBinEntry;
@@ -91,8 +92,8 @@ protected:
    ///       \ref gdcmDocument::SetMaxSizePrintEntry()
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
-   /// Will be set 1 if user asks to 'go inside' the 'sequences' (VR = "SQ")
-   int EnableSequences;
+   /// Store the RLE frames info obtained during parsing of pixels.
+   gdcmRLEFramesInfo RLEInfo;
 
    /// \brief Amount of printed details for each Header Entry (Dicom Element):
    /// 0 : stands for the least detail level.

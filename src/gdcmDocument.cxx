@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2004/10/06 09:58:08 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,6 @@
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
-
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
@@ -1458,7 +1457,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
          if (newDocEntry->GetGroup()   == 0x7fe0 && 
              newDocEntry->GetElement() == 0x0010 )
          {
-             if (newDocEntry->GetReadLength()==0xffffffff)
+             if ( newDocEntry->GetReadLength()==0xffffffff ) 
              {
                 // Broken US.3405.1.dcm
                 Parse7FE0(); // to skip the pixels 
@@ -2838,22 +2837,38 @@ void gdcmDocument::Parse7FE0 ()
       return;
    }
 
-   // ---------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
+   // Encoded pixel data: for the time being we are only concerned with
+   // Jpeg or RLE Pixel data encodings.
+   // As stated in ps-3.3, 8.2:
+   // "If sent in Encapsulated Format (i.e. other than the Narive Format) the
+   //  value representation OB is used".
+   // Hence we expect an OB value representation. Concerning OB VR,
+   // the section PS3.3, A.4.c (p58 and p59), states:
+   // "For the Value Representations OB and OW, the encoding shall meet the
+   //   following specifications depending on the Data element tag:"
+   //   [...snip...]
+   //    - the first item in the sequence of items before the encoded pixel
+   //      data stream shall be basic offset table item. The basic offset table
+   //      item value, however, is not required to be present"
 
    //// Read the Basic Offset Table Item Tag length...
    uint32_t itemLength = ReadTagLength(0xfffe, 0xe000);
 
-   //// ... and then read length[s] itself[themselves]. We don't use
-   // the values read (BTW  what is the purpous of those lengths ?)
+   // When present, read the basic offset table itself.
+   // Notes: - since the presence of this basic offset table is optional
+   //          we can't rely on it for the implementation, and we will simply
+   //          trash it's content (when present).
+   //        - still, when present, we could add some further checks on the
+   //          lengths, but not bother with such fuses for the time being.
    if ( itemLength != 0 )
    {
-      // BTW, what is the purpous of those length anyhow !? 
       char* basicOffsetTableItemValue = new char[itemLength + 1];
       fread(basicOffsetTableItemValue, itemLength, 1, Fp);
 
       for (unsigned int i=0; i < itemLength; i += 4 )
       {
-         uint32_t individualLength = str2num(&basicOffsetTableItemValue[i],uint32_t);
+         uint32_t individualLength = str2num( &basicOffsetTableItemValue[i],
+                                              uint32_t);
          std::ostringstream s;
          s << "   Read one length: ";
          s << std::hex << individualLength << std::endl;
@@ -2874,25 +2889,37 @@ void gdcmDocument::Parse7FE0 ()
    }
    else
    {
-      // RLE Image
-      long ftellRes;
-      long rleSegmentLength[15], fragmentLength;
+      // Encapsulated RLE Compressed Images (see PS-3.3, Annex G).
+      // Loop on the frame[s] and store the parsed information in a
+      // gdcmRLEFramesInfo.
+      long frameLength;
 
-      // While we find some items:
-      while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) )
+      // Loop on the individual frame[s] and store the information
+      // on the RLE fragments in a gdcmRLEFramesInfo.
+      // Note: - when only a single frame is present, this is a
+      //         classical image.
+      //       - when more than one frame are present, then we are in 
+      //         the case of a multi-frame image.
+      while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) )
       { 
-         // Parse fragments of the current Fragment (Frame)    
-         //------------------ scanning (not reading) fragment pixels
+         // Parse the RLE Header and store the corresponding RLE Segment
+         // Offset Table information on fragments of this current Frame.
+         // Note that the fragment pixels themselves are not loaded
+         // (but just skipped).
          uint32_t nbRleSegments = ReadInt32();
  
-         //// Reading RLE Segments Offset Table
          uint32_t rleSegmentOffsetTable[15];
-         for(int k=1; k<=15; k++)
+         long ftellRes;
+         for( int k = 1; k <= 15; k++ )
          {
             ftellRes = ftell(Fp);
             rleSegmentOffsetTable[k] = ReadInt32();
          }
 
+         // Deduce from both the RLE Header and the frameLength the
+         // fragment length, and again store this infor in a
+         // gdcmRLEFramesInfo.
+         long rleSegmentLength[15];
          // skipping (not reading) RLE Segments
          if ( nbRleSegments > 1)
          {
@@ -2905,10 +2932,20 @@ void gdcmDocument::Parse7FE0 ()
              }
           }
 
-          rleSegmentLength[nbRleSegments] = fragmentLength 
-                                          - rleSegmentOffsetTable[nbRleSegments];
+          rleSegmentLength[nbRleSegments] = frameLength 
+                                         - rleSegmentOffsetTable[nbRleSegments];
           ftellRes = ftell(Fp);
           SkipBytes(rleSegmentLength[nbRleSegments]);
+
+          // Store the collected info
+          gdcmRLEFrame* newFrameInfo = new gdcmRLEFrame;
+          newFrameInfo->NumberFragments = nbRleSegments;
+          for( unsigned int k = 1; k <= nbRleSegments; k++ )
+          {
+             newFrameInfo->Offset[k] = rleSegmentOffsetTable[k];
+             newFrameInfo->Length[k] = rleSegmentLength[k];
+          }
+          RLEInfo.Frames.push_back( newFrameInfo );
       }
 
       // Make sure that at the end of the item we encounter a 'Sequence
