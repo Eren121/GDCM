@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 14:23:18 $
-  Version:   $Revision: 1.222 $
+  Date:      $Date: 2005/02/10 20:53:23 $
+  Version:   $Revision: 1.223 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1168,7 +1168,7 @@ void File::AnonymizeNoLoad()
    gdcm::DocEntry *d;
    uint32_t offset;
    uint32_t lgth;
-   uint32_t valLgth;
+   uint32_t valLgth = 0;
    std::string *spaces;
    for (ListElements::iterator it = AnonymizeList.begin();  
                                it != AnonymizeList.end();
