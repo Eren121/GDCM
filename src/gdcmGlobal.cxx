@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/09 00:13:26 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/10 19:23:31 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,18 +27,6 @@
 namespace gdcm 
 {
 
-// Those global string that are return by reference everywhere in gdcm code
-// used to be in gdcmCommon.h but due to a 'bug' in gcc/MacOSX
-// you cannot have static initialization in a multithreaded environment
-// since there is a lazy construction everything got skrew up somehow
-// Therefore the actual initiliazation is done in a cxx file (avoid
-// duplicated symbol), and an extern is used in gdcmCommon.h
-const std::string GDCM_UNKNOWN   = "gdcm::Unknown";
-const std::string GDCM_UNFOUND   = "gdcm::Unfound";
-const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
-const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
-const std::string GDCM_UNREAD    = "gdcm::UnRead";
-  
 /**
  * \ingroup Globals
  * \brief Pointer to a container, holding _all_ the Dicom Dictionaries.
