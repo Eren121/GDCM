@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:51:02 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/06/28 11:01:18 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -821,11 +821,10 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
                      " ValEntry (try promotion first).");
       return false;
    }
-
    // Non even content must be padded with a space (020H).
-   if((content.length())%2)
+   if((content.length())%2) {
       content = content + '\0';
-      
+   }      
    ValEntry->SetValue(content);
    
    // Integers have a special treatement for their length:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:51:02 $
-  Version:   $Revision: 1.171 $
+  Date:      $Date: 2004/06/28 11:01:18 $
+  Version:   $Revision: 1.172 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,11 +88,12 @@ gdcmHeader::~gdcmHeader () {
 
 
 /**
- * \brief Writes in a file all the Header Entries (Dicom Elements) 
+ * \brief Performs some consistency checking on various 'File related' 
+ *       (as opposed to 'DicomDir related') entries 
+ *       then writes in a file all the (Dicom Elements) included the Pixels 
  * @param fp file pointer on an already open file
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
- * \return Always true.
  */
 void gdcmHeader::Write(FILE* fp,FileType filetype) {
    
@@ -102,9 +103,6 @@ void gdcmHeader::Write(FILE* fp,FileType filetype) {
    }
 
   // correct Pixel group Length if necessary
-
-   //guint16 GrPixel  = 0x7fe0;
-   //guint16 NumPixel = 0x0010;
 
    // TODO : create a gdcmHeader::Write method and move this part.
    //        (only gdcmHeader knows GrPixel, NumPixel)
@@ -120,11 +118,7 @@ void gdcmHeader::Write(FILE* fp,FileType filetype) {
 
    // Drop Palette Color, if necessary
    
-   // FIXME : Why is it always false ???
-
-   // std::cout << "entry 0x0028,0x0002 " << GetEntryByNumber(0x0028,0x0002).c_str() << std::endl;
-
- /*  if ( GetEntryByNumber(0x0028,0x0002).c_str() == "3" ) */{
+   if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' ) {
     
     // Drop 0028|1101, 0028|1102, 0028|1103
     // Drop 0028|1201, 0028|1202, 0028|1203
@@ -152,7 +146,6 @@ void gdcmHeader::Write(FILE* fp,FileType filetype) {
    }
    gdcmDocument::Write(fp,filetype);
 }
-// ----------- end move to gdcmHeader::Write -----------------
 
 //-----------------------------------------------------------------------------
 // Print
