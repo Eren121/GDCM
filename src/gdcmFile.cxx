@@ -16,8 +16,6 @@
 #include "gdcmUtil.h"
 #include "iddcmjpeg.h" // for the 'LibIDO' Jpeg LossLess
 
-#define str2num(str, typeNum) *((typeNum *)(str))
-
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
@@ -53,7 +51,7 @@ gdcmFile::gdcmFile(const char * filename)
  * \brief     calcule la longueur (in bytes) A ALLOUER pour recevoir les
  *        	pixels de l'image
  *  		ou DES images dans le cas d'un multiframe
- *  		ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels	
+ *  		ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels
  *  		(dans le cas d'images compressees, elle n'a pas de sens).
  *
  * @return	longueur a allouer 
@@ -76,12 +74,39 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
        || str_PhotometricInterpretation == "YBR_FULL") {   // --> some more to be added !!
       lgrTotale*=3;
    }
-   
-   // remaining to check :
-   //   str_PhotometricInterpretation == "YBR_FULL"
-   //   str_PhotometricInterpretation == "YBR_FULL_422" (no LUT, no Palette)
-   // -->and some more !!
 }
+   // see PS 3.3-2003 : C.7.6.3.2.1  
+   // 
+   //   MONOCHROME1
+   //   MONOCHROME2
+   //   PALETTE COLOR
+   //   RGB
+   //   HSV  (Retired)
+   //   ARGB (Retired)
+   //   CMYK (Retired)
+   //   YBR_FULL
+   //   YBR_FULL_422 (no LUT, no Palette)
+   //   YBR_PARTIAL_422
+   //   YBR_ICT
+   //   YBR_RCT
+
+  // LUT's
+  // ex : gdcm-US-ALOKA-16.dcm
+  // 0028|1221 [OW]   [Segmented Red Palette Color Lookup Table Data]
+  // 0028|1222 [OW]   [Segmented Green Palette Color Lookup Table Data]  
+  // 0028|1223 [OW]   [Segmented Blue Palette Color Lookup Table Data]
+
+  // ex : US-PAL-8-10x-echo.dcm, 8BitsRunLengthColor.dcm
+  // 0028|1201 [OW]   [Red Palette Color Lookup Table Data]
+  // 0028|1202 [OW]   [Green Palette Color Lookup Table Data]
+  // 0028|1203 [OW]   [Blue Palette Color Lookup Table Data]
+
+  // ex  : OT-PAL-8-face.dcm
+  // 0028|1201 [US]   [Red Palette Color Lookup Table Data]
+  // 0028|1202 [US]   [Green Palette Color Lookup Table Data]
+  // 0028|1203 [US]   [Blue Palette Color Lookup Table Data]
+
+
 
 /////////////////////////////////////////////////////////////////
 /**
@@ -90,240 +115,11 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
  *            the pixel data represented in this file.
  * @return    The size of pixel data in bytes.
  */
+
 size_t gdcmFile::GetImageDataSize(void) {
    return (lgrTotale);
 }
 
-
-/////////////////////////////////////////////////////////////////
-/**
- * \ingroup gdcmFile
- * \brief   Parse pixel data from disk and *prints* the result
- * \        For multi-fragment Jpeg/Rle files checking purpose *only*
- * \        Allows to 'see' if the file *does* conform
- * \       (some of them do not)
- * \        with Dicom Part 3, Annex A (PS 3.5-2003, page 58, page 85)
- *
- */
-bool gdcmFile::ParsePixelData(void) {
-
-   if ( !OpenFile())
-      return false;
-      
-    if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
-      CloseFile();
-      return false;
-   } 
-   
-   if ( !IsDicomV3()                             ||
-        IsImplicitVRLittleEndianTransferSyntax() ||
-        IsExplicitVRLittleEndianTransferSyntax() ||
-        IsExplicitVRBigEndianTransferSyntax()    ||
-        IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
-        
-        printf ("gdcmFile::ParsePixelData : non JPEG/RLE File\n");
-        return 0;       
-   }        
-
-   int nb;
-   std::string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-   if (str_nb == GDCM_UNFOUND ) {
-      nb = 16;
-   } else {
-      nb = atoi(str_nb.c_str() );
-      if (nb == 12) nb =16;
-   }
-   int nBytes= nb/8;
-      
-    //int taille = GetXSize() *  GetYSize() * GetZSize() * GetSamplesPerPixel();
-   int taille = GetXSize() *  GetYSize()  * GetSamplesPerPixel(); 
-         
-   printf ("Checking the Dicom-Jpeg/RLE Pixels\n");
-      
-   guint16 ItemTagGr,ItemTagEl; 
-   int ln;
-   long ftellRes;
-   char * destination = NULL;
-
-  // ------------------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
-
-   if( !IsRLELossLessTransferSyntax()) {
-
-      // JPEG Image
-
-      std::cout << "JPEG image" << std::endl;
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Basic Offset Table Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Basic Offset Table Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }
-      printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
-                ftellRes,ItemTagGr,ItemTagEl );
-      ftellRes=ftell(fp);
-      fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item Lentgh
-      printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
-            ftellRes,ln,ln);
-      if (ln != 0) {
-         // What is it used for ??
-         char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
-         fread(BasicOffsetTableItemValue,ln,1,fp); 
-         guint32 a;
-         for (int i=0;i<ln;i+=4){
-            a=str2num(&BasicOffsetTableItemValue[i],guint32);
-            printf("      x(%08x)  %d\n",a,a);
-         }              
-      }
-      
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }  
-      printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-            ftellRes,ItemTagGr,ItemTagEl );
-      
-      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { // Parse fragments
-      
-         ftellRes=ftell(fp);
-         fread(&ln,4,1,fp); 
-         if(GetSwapCode()) 
-            ln=SwapLong(ln);    // length
-         printf("      at %x : fragment length %d x(%08x)\n",
-                ftellRes, ln,ln);
-
-        // destination += taille * nBytes; // location in user's memory        
-        //printf ("      Destination will be x(%x) = %d \n",
-        //     destination,destination );
-
-         // ------------------------                                     
-         fseek(fp,ln,SEEK_CUR); // skipping (not reading) fragment pixels    
-         // ------------------------              
-     
-         ftellRes=ftell(fp);
-         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
-         }
-         printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-               ftellRes,ItemTagGr,ItemTagEl );
-      } 
-
-   } else {
-
-      // RLE Image
-
-      std::cout << "RLE image" << std::endl;
-      long RleSegmentLength[15],fragmentLength;
-      guint32 nbRleSegments;
-      guint32 RleSegmentOffsetTable[15];
-      ftellRes=ftell(fp);
-      // Basic Offset Table with Item Value
-         // Item Tag
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe):Basic Offset Table Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000):Basic Offset Table Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }
-      printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
-                ftellRes,ItemTagGr,ItemTagEl );
-         // Item Length
-      ftellRes=ftell(fp);
-      fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item Lentgh
-      printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
-            ftellRes,ln,ln);
-      if (ln != 0) {
-         // What is it used for ??
-         char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
-         fread(BasicOffsetTableItemValue,ln,1,fp); 
-         guint32 a;
-         for (int i=0;i<ln;i+=4){
-            a=str2num(&BasicOffsetTableItemValue[i],guint32);
-            printf("      x(%08x)  %d\n",a,a);
-         }              
-      }
-
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }  
-      printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-            ftellRes,ItemTagGr,ItemTagEl );
-
-      // while 'Sequence Delimiter Item' (fffe,e0dd) not found
-      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
-      // Parse fragments of the current Fragment (Frame)    
-         ftellRes=ftell(fp);
-         fread(&fragmentLength,4,1,fp); 
-         if(GetSwapCode()) 
-            fragmentLength=SwapLong(fragmentLength);    // length
-         printf("      at %x : 'fragment' length %d x(%08x)\n",
-                ftellRes, fragmentLength,fragmentLength);
-
-//         destination += taille * nBytes; // location in user's memory                 
-//         printf ("      Destination will be x(%x) = %d \n",
-//               destination,destination );
-                        
-          //------------------ scanning (not reading) fragment pixels
- 
-         fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments           
-         if(GetSwapCode()) 
-            nbRleSegments=SwapLong(nbRleSegments);
-            printf("         Nb of RLE Segments : %d\n",nbRleSegments);
- 
-         for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
-            ftellRes=ftell(fp);
-            fread(&RleSegmentOffsetTable[k],4,1,fp);
-            if(GetSwapCode())
-               RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
-            printf("        at : %x Offset Segment %d : %d (%x)\n",
-                      ftellRes,k,RleSegmentOffsetTable[k],RleSegmentOffsetTable[k]);
-         }
-          if (nbRleSegments>1) { 
-             for(int k=1; k<=nbRleSegments-1; k++) { // skipping (not reading) RLE Segments
-                RleSegmentLength[k]=RleSegmentOffsetTable[k+1]-RleSegmentOffsetTable[k];
-                ftellRes=ftell(fp);
-                printf ("        Segment %d : Length = %d Start at %x\n",
-                                 k,RleSegmentLength[k], ftellRes);         
-                fseek(fp,RleSegmentLength[k],SEEK_CUR);    
-             }
-          }
-          RleSegmentLength[nbRleSegments] = fragmentLength - RleSegmentOffsetTable[nbRleSegments] ; 
-                                              // TODO : Check the value
-          ftellRes=ftell(fp);
-          printf ("        Segment %d : Length = %d Start at %x\n",
-                           nbRleSegments,RleSegmentLength[nbRleSegments],ftellRes);
-
-          fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR); 
-            
-         // ------------------ end of scanning fragment pixels        
-      
-         ftellRes=ftell(fp);
-         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
-         }
-         printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-               ftellRes,ItemTagGr,ItemTagEl );
-      } 
-   }
-   return 1;            
-}
 
 /////////////////////////////////////////////////////////////////
 /**
@@ -373,7 +169,6 @@ bool gdcmFile::ReadPixelData(void* destination) {
       }
       int nBytes= nb/8;
       
-       //int taille = GetXSize() *  GetYSize() * GetZSize() * GetSamplesPerPixel();
       int taille = GetXSize() *  GetYSize()  * GetSamplesPerPixel(); 
           
                 
@@ -478,10 +273,11 @@ bool gdcmFile::ReadPixelData(void* destination) {
          if (b)
             res = (bool)gdcm_read_JPEG2000_file (destination);  // Reading Fragment pixels 
             
-         else if (IsJPEGLossless()) {  // ------------- call to LibIDO Jpeg for each Frame/fragment
+         else if (IsJPEGLossless()) {  
+                  // ------------- call to LibIDO Jpeg for each Frame/fragment
                   
-                                       // Warning : Works only if there is one fragment per frame
-                                       //           (Or a single fragment for the multiframe file)
+                  // Warning : Works only if there is one fragment per frame
+                  //           (Or a single fragment for the multiframe file)
             ClbJpeg* jpg = _IdDcmJpegRead(fp); // TODO : find a 'full' one.
                                                // (We use the LibIDO one :-(
             if(jpg == NULL) {
@@ -645,7 +441,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
       }
    }  
    
-   // Try to deal with the color
+   // *Try* to deal with the color
    // --------------------------
      
    std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
@@ -655,12 +451,16 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
      || (str_PhotometricInterpretation == "RGB")) {
       return lgrTotale; 
    }
+   int planConf=GetPlanarConfiguration();
+
+   if( str_PhotometricInterpretation!="PALETTE COLOR" && planConf == 0) 
+      planConf=2;  // Sorry, this is an heuristic
      
-   switch ( GetPlanarConfiguration() ) {
+   switch ( planConf) {
    case 0:                              
       //       Pixels are already RGB
       break;
-   
+    
    case 1:
       //       need to make RGB Pixels from Planes R,G,B
       {

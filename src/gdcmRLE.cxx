@@ -20,6 +20,9 @@ static int _gdcm_read_RLE_fragment (char ** image_buffer,
                                     FILE* fp);
 // static because nothing but gdcm_read_RLE_file may call it
 
+#define DEBUG 0
+// Will be removed
+
 // ----------------------------------------------------------------------------
 /**
  * \ingroup   gdcmFile
@@ -36,8 +39,9 @@ static int _gdcm_read_RLE_fragment (char ** image_buffer,
 
 int
 gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
+   long fragmentBegining; // for ftell, fseek
    char * im = (char *)image_buffer;
-   std::cout << "RLE image" << std::endl;
+   if (DEBUG)std::cout << "RLE image" << std::endl;
 
    long RleSegmentLength[15],fragmentLength,uncompressedSegmentSize;;
    long ftellRes, ln;
@@ -45,7 +49,7 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
    guint32 RleSegmentOffsetTable[15];
    guint16 ItemTagGr,ItemTagEl;
    uncompressedSegmentSize=GetXSize()*GetYSize();
-   printf("uncompressedSegmentSize %d\n",uncompressedSegmentSize);
+   if (DEBUG)printf("uncompressedSegmentSize %d\n",uncompressedSegmentSize);
    ftellRes=ftell(fp);
    // Basic Offset Table with Item Value
       // Item Tag
@@ -55,14 +59,14 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
       ItemTagGr=SwapShort(ItemTagGr); 
       ItemTagEl=SwapShort(ItemTagEl);      
    }
-   printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
+   if (DEBUG)printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
           ftellRes,ItemTagGr,ItemTagEl );
       // Item Length
    ftellRes=ftell(fp);
    fread(&ln,4,1,fp); 
    if(GetSwapCode()) 
       ln=SwapLong(ln);    // Basic Offset Table Item Lentgh
-   printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
+   if (DEBUG)printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
          ftellRes,ln,ln);
    if (ln != 0) {
       // What is it used for ??
@@ -71,7 +75,7 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
       guint32 a;
       for (int i=0;i<ln;i+=4){
          a=str2num(&BasicOffsetTableItemValue[i],guint32);
-         printf("      x(%08x)  %d\n",a,a);
+        if (DEBUG)printf("      x(%08x)  %d\n",a,a);
       }        
    }
 
@@ -82,7 +86,7 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
       ItemTagGr=SwapShort(ItemTagGr); 
       ItemTagEl=SwapShort(ItemTagEl);      
    }  
-   printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
+   if (DEBUG)printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
          ftellRes,ItemTagGr,ItemTagEl );
 
    // while 'Sequence Delimiter Item' (fffe,e0dd) not found
@@ -92,47 +96,49 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
       fread(&fragmentLength,4,1,fp); 
       if(GetSwapCode()) 
          fragmentLength=SwapLong(fragmentLength);    // length
-      printf("      at %x : fragment length %d x(%08x)\n",
+      if (DEBUG)printf("      at %x : fragment length %d x(%08x)\n",
              ftellRes, fragmentLength,fragmentLength);
 
-       // scanning fragment pixels
+          //------------------ scanning (not reading) fragment pixels
  
       fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments        
       if(GetSwapCode()) 
          nbRleSegments=SwapLong(nbRleSegments);
-         printf("         Nb of RLE Segments : %d\n",nbRleSegments);
+         if (DEBUG)printf("         Nb of RLE Segments : %d\n",nbRleSegments);
  
       for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
          ftellRes=ftell(fp);
          fread(&RleSegmentOffsetTable[k],4,1,fp);
          if(GetSwapCode())
             RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
-         printf("        at : %x Offset Segment %d : %d (%x)\n",
-                   ftellRes,k,RleSegmentOffsetTable[k],RleSegmentOffsetTable[k]);
+         if (DEBUG)printf("        at : %x Offset Segment %d : %d (%x)\n",
+                 ftellRes,k,RleSegmentOffsetTable[k],RleSegmentOffsetTable[k]);
       }
 
-       if (nbRleSegments>1) { 
-          for(int k=1; k<=nbRleSegments-1; k++) { // reading RLE Segments
-             RleSegmentLength[k]=RleSegmentOffsetTable[k+1]-RleSegmentOffsetTable[k];
-                ftellRes=ftell(fp);
-                printf ("        Segment %d : Length = %d Start at %x\n",
-                                 k,RleSegmentLength[k], ftellRes);    
-             _gdcm_read_RLE_fragment (&im, RleSegmentLength[k],uncompressedSegmentSize,fp);
-              //fseek(fp,RleSegmentLength[k],SEEK_CUR);    
-     
-          }
-       }
-       RleSegmentLength[nbRleSegments] = fragmentLength - RleSegmentOffsetTable[nbRleSegments]; // + 4;
-            // 4 : bytes for number of RLE Segments (WHY ???);
-                                           // TODO : Check the value
-          ftellRes=ftell(fp);
-          printf ("        Segment %d : Length = %d Start at %x\n",
-                           nbRleSegments,RleSegmentLength[nbRleSegments],ftellRes);
-       _gdcm_read_RLE_fragment (&im, RleSegmentLength[nbRleSegments],uncompressedSegmentSize, fp);
-        //fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR);    
-  
-       
-      // end of scanning fragment pixels     
+      if (nbRleSegments>1) { 
+         for(int k=1; k<=nbRleSegments-1; k++) { // reading RLE Segments
+            RleSegmentLength[k]=RleSegmentOffsetTable[k+1]-RleSegmentOffsetTable[k];
+            ftellRes=ftell(fp);
+            if (DEBUG)printf ("       (in) Segment %d : Length = %d  x(%x) Start at %x\n",
+                                 k,RleSegmentLength[k],RleSegmentLength[k], ftellRes);
+            fragmentBegining=ftell(fp);   
+            _gdcm_read_RLE_fragment (&im, RleSegmentLength[k],uncompressedSegmentSize,fp);
+            fseek(fp,fragmentBegining,SEEK_SET);  
+            fseek(fp,RleSegmentLength[k],SEEK_CUR);        
+         }
+      }
+      RleSegmentLength[nbRleSegments] = fragmentLength - RleSegmentOffsetTable[nbRleSegments];
+      ftellRes=ftell(fp);
+      if (DEBUG)printf ("        (out)Segment %d : Length = %d  x(%x) Start at %x\n",
+                       nbRleSegments,
+                       RleSegmentLength[nbRleSegments],RleSegmentLength[nbRleSegments],
+                       ftellRes);
+      fragmentBegining=ftell(fp);
+      _gdcm_read_RLE_fragment (&im, RleSegmentLength[nbRleSegments],uncompressedSegmentSize, fp);
+      fseek(fp,fragmentBegining,SEEK_SET);  
+      fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR);    
+      
+      // end of scanning fragment pixels       
    
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
@@ -141,7 +147,7 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
          ItemTagGr=SwapShort(ItemTagGr); 
          ItemTagEl=SwapShort(ItemTagEl);      
       }
-      printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
+      if (DEBUG)printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
             ftellRes,ItemTagGr,ItemTagEl );
    } 
    return (1);
@@ -167,14 +173,12 @@ _gdcm_read_RLE_fragment (char ** areaToRead,
    long numberOfOutputBytes=0;
    char n, car;
    ftellRes =ftell(fp);
-   printf ("Fragment begin : %x lengthToDecode %d\n",ftellRes,lengthToDecode);
 
    while(numberOfOutputBytes<uncompressedSegmentSize) {
 
       ftellRes =ftell(fp);
       fread(&n,sizeof(char),1,fp);
       count=n;
-     //printf ("   Piece begin : %x count : %d x(%x)\n",ftellRes, count, count);
       if (count >= 0 && count <= 127) {
          fread(*areaToRead,(count+1)*sizeof(char),1,fp);
          *areaToRead+=count+1;

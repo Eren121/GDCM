@@ -30,25 +30,26 @@ libgdcm_la_SOURCES=		\
 	gdcmJpeg12.cxx	 \
 	gdcmJpeg2000.cxx \
 	gdcmRLE.cxx      \
+        gdcmParse.cxx    \
 	gdcmJpegIdo.cxx
 
 libgdcmincludedir = $(includedir)
-libgdcminclude_HEADERS = \
-	gdcmException.h	\
-	gdcmHeader.h	\
-	gdcmHeaderHelper.h	\
-	gdcmCommon.h	\
-	gdcm.h  	\
-	gdcmDictSet.h	\
-	gdcmDict.h	\
-	gdcmDictEntry.h	\
-	gdcmElValue.h	\
-	gdcmElValSet.h	\
-	gdcmVR.h	\
-	gdcmTS.h	\
+libgdcminclude_HEADERS =   \
+	gdcmException.h	   \
+	gdcmHeader.h	   \
+	gdcmHeaderHelper.h \
+	gdcmCommon.h       \
+	gdcm.h             \
+	gdcmDictSet.h      \
+	gdcmDict.h         \
+	gdcmDictEntry.h    \
+	gdcmElValue.h      \
+	gdcmElValSet.h     \
+	gdcmVR.h           \
+	gdcmTS.h           \
 	gdcmFile.h
 
-EXTRA_DIST = \
-	gdcmUtil.h	\
-	gdcmIdo.h  	\
+EXTRA_DIST =            \
+	gdcmUtil.h      \
+	gdcmIdo.h       \
 	iddcmjpeg.h

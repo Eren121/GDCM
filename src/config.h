@@ -1,84 +1,43 @@
 /* src/config.h.  Generated automatically by configure.  */
-/* src/config.h.in.  Generated from configure.in by autoheader.  */
+/* src/config.h.in.  Generated automatically from configure.in by autoheader.  */
 
-/* Define to 1 if you have the <dlfcn.h> header file. */
+/* Define to empty if the keyword does not work.  */
+/* #undef const */
+
+/* Define to `unsigned' if <sys/types.h> doesn't define.  */
+/* #undef size_t */
+
+/* Define if you have the ANSI C header files.  */
+#define STDC_HEADERS 1
+
+/* Define if your <sys/time.h> declares struct tm.  */
+/* #undef TM_IN_SYS_TIME */
+
+/* Define if your processor stores words with the most significant
+   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
+/* #undef WORDS_BIGENDIAN */
+
+/* The number of bytes in a char.  */
+#define SIZEOF_CHAR 1
+
+/* The number of bytes in a int.  */
+#define SIZEOF_INT 4
+
+/* The number of bytes in a long.  */
+#define SIZEOF_LONG 4
+
+/* The number of bytes in a long long.  */
+#define SIZEOF_LONG_LONG 8
+
+/* The number of bytes in a short.  */
+#define SIZEOF_SHORT 2
+
+/* Define if you have the <dlfcn.h> header file.  */
 #define HAVE_DLFCN_H 1
-
-/* Define to 1 if you have the <inttypes.h> header file. */
-/* #undef HAVE_INTTYPES_H */
-
-/* Define to 1 if you have the <memory.h> header file. */
-/* #undef HAVE_MEMORY_H */
-
-/* Define to 1 if you have the <stdint.h> header file. */
-/* #undef HAVE_STDINT_H */
-
-/* Define to 1 if you have the <stdlib.h> header file. */
-/* #undef HAVE_STDLIB_H */
-
-/* Define to 1 if you have the <strings.h> header file. */
-/* #undef HAVE_STRINGS_H */
-
-/* Define to 1 if you have the <string.h> header file. */
-/* #undef HAVE_STRING_H */
-
-/* Define to 1 if you have the <sys/stat.h> header file. */
-/* #undef HAVE_SYS_STAT_H */
-
-/* Define to 1 if you have the <sys/types.h> header file. */
-/* #undef HAVE_SYS_TYPES_H */
-
-/* Define to 1 if you have the <unistd.h> header file. */
-/* #undef HAVE_UNISTD_H */
 
 /* Name of package */
 #define PACKAGE "gdcm"
 
-/* Define to the address where bug reports for this package should be sent. */
-/* #undef PACKAGE_BUGREPORT */
-
-/* Define to the full name of this package. */
-/* #undef PACKAGE_NAME */
-
-/* Define to the full name and version of this package. */
-/* #undef PACKAGE_STRING */
-
-/* Define to the one symbol short name of this package. */
-/* #undef PACKAGE_TARNAME */
-
-/* Define to the version of this package. */
-/* #undef PACKAGE_VERSION */
-
-/* The size of a `char', as computed by sizeof. */
-#define SIZEOF_CHAR 1
-
-/* The size of a `int', as computed by sizeof. */
-#define SIZEOF_INT 4
-
-/* The size of a `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
-
-/* The size of a `long long', as computed by sizeof. */
-#define SIZEOF_LONG_LONG 8
-
-/* The size of a `short', as computed by sizeof. */
-#define SIZEOF_SHORT 2
-
-/* Define to 1 if you have the ANSI C header files. */
-#define STDC_HEADERS 1
-
-/* Define to 1 if your <sys/time.h> declares `struct tm'. */
-/* #undef TM_IN_SYS_TIME */
-
 /* Version number of package */
 #define VERSION "0.3.0"
 
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
-/* #undef WORDS_BIGENDIAN */
-
-/* Define to empty if `const' does not conform to ANSI C. */
-/* #undef const */
-
-/* Define to `unsigned' if <sys/types.h> does not define. */
-/* #undef size_t */
