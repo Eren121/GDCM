@@ -1,3 +1,16 @@
+2002-11-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcm.h and gdcmHeader.cxx gdcm no longer loads all the elements
+        values, but limits itself to values which are below a user specified
+        size (by default 1024 bytes).
+      * python/gdcm.i : elements not loaded (because their size is above the
+        user specified treshold) are exported with their TagKey as key of the
+        python dictionary. This enables the testsuite to make some checks
+        on the unloaded elements (since we have their offset and size).
+      * python/testSuite.py
+        - now tests for the existence and proper value of the pixel data
+        - two new examples added.
+      * Data/gdcm-MR-SIEMENS-16.acr[12] added.
+
 2002-11-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h and gdcmHeader.cxx are now "Big Endian transfer syntax"
         aware. See the strategy comments in gdcmHeader::FindeLength().

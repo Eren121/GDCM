@@ -38,6 +38,7 @@ void gdcmHeader::Initialise(void) {
 }
 
 gdcmHeader::gdcmHeader (const char* InFilename) {
+	SetMaxSizeLoadElementValue(1024);
 	filename = InFilename;
 	Initialise();
 	fp=fopen(InFilename,"rw");
@@ -56,32 +57,32 @@ void gdcmHeader::InitVRDict (void) {
 		return;
 	}
 	VRHT *vr = new VRHT;
-	(*vr)["AE"] = "Application Entity";       // 16 car max
-	(*vr)["AS"] = "Age String";               // 4 car fixe
-	(*vr)["AT"] = "Attribute Tag";            // 2 unsigned short int
-	(*vr)["CS"] = "Code String";              // 16 car max
-	(*vr)["DA"] = "Date";                     // 8 car fixe
-	(*vr)["DS"] = "Decimal String";           // Decimal codé Binaire 16 max
-	(*vr)["DT"] = "Date Time";                // 26 car max
-	(*vr)["FL"] = "Floating Point Single";    // 4 octets IEEE 754:1985
-	(*vr)["FD"] = "Floating Point Double";    // 8 octets IEEE 754:1985
-	(*vr)["IS"] = "Integer String";           // en format externe 12 max
-	(*vr)["LO"] = "Long String";              // 64 octets max
-	(*vr)["LT"] = "Long Text";                // 10240 max
-	(*vr)["OB"] = "Other Byte String";
-	(*vr)["OW"] = "Other Word String";
-	(*vr)["PN"] = "Person Name";
-	(*vr)["SH"] = "Short String";             // 16 car max
-	(*vr)["SL"] = "Signed Long";
+	(*vr)["AE"] = "Application Entity";       // At most 16 bytes
+	(*vr)["AS"] = "Age String";               // Exactly 4 bytes
+	(*vr)["AT"] = "Attribute Tag";            // 2 16-bit unsigned short integers
+	(*vr)["CS"] = "Code String";              // At most 16 bytes
+	(*vr)["DA"] = "Date";                     // Exactly 8 bytes
+	(*vr)["DS"] = "Decimal String";           // At most 16 bytes
+	(*vr)["DT"] = "Date Time";                // At most 26 bytes
+	(*vr)["FL"] = "Floating Point Single";    // 32-bit IEEE 754:1985 float
+	(*vr)["FD"] = "Floating Point Double";    // 64-bit IEEE 754:1985 double
+	(*vr)["IS"] = "Integer String";           // At most 12 bytes
+	(*vr)["LO"] = "Long String";              // At most 64 chars
+	(*vr)["LT"] = "Long Text";                // At most 10240 chars
+	(*vr)["OB"] = "Other Byte String";        // String of bytes (vr independant)
+	(*vr)["OW"] = "Other Word String";        // String of 16-bit words (vr dep)
+	(*vr)["PN"] = "Person Name";              // At most 64 chars
+	(*vr)["SH"] = "Short String";             // At most 16 chars
+	(*vr)["SL"] = "Signed Long";              // Exactly 4 bytes
 	(*vr)["SQ"] = "Sequence of Items";        // Not Applicable
-	(*vr)["SS"] = "Signed Short";             // 2 octets
-	(*vr)["ST"] = "Short Text";               // 1024 car max
-	(*vr)["TM"] = "Time";                     // 16 car max
-	(*vr)["UI"] = "Unique Identifier";        // 64 car max
-	(*vr)["UN"] = "Unknown";
-	(*vr)["UT"] = "Unlimited Text";           //  2 puissance 32 -1 car max
-	(*vr)["UL"] = "Unsigned Long ";           // 4 octets fixe
-	(*vr)["US"] = "Unsigned Short ";          // 2 octets fixe
+	(*vr)["SS"] = "Signed Short";             // Exactly 2 bytes
+	(*vr)["ST"] = "Short Text";               // At most 1024 chars
+	(*vr)["TM"] = "Time";                     // At most 16 bytes
+	(*vr)["UI"] = "Unique Identifier";        // At most 64 bytes
+	(*vr)["UL"] = "Unsigned Long ";           // Exactly 4 bytes
+	(*vr)["UN"] = "Unknown";                  // Any length of bytes
+	(*vr)["US"] = "Unsigned Short ";          // Exactly 2 bytes
+	(*vr)["UT"] = "Unlimited Text";           // At most 2^32 -1 chars
    dicom_vr = vr;	
 }
 
@@ -225,7 +226,7 @@ void gdcmHeader::CheckSwap()
 }
 
 void gdcmHeader::SwitchSwapToBigEndian(void) {
-	dbg.Verbose(0, "gdcmHeader::FindLength", "Switching to BigEndian mode.");
+	dbg.Verbose(1, "gdcmHeader::FindLength", "Switching to BigEndian mode.");
 	if ( sw == 0    ) {
 		sw = 4321;
 		return;
@@ -370,11 +371,12 @@ void gdcmHeader::FindLength( ElValue * ElVal) {
 	guint16 length16;
 	
 	if ( (filetype == ExplicitVR) && ! ElVal->IsImplicitVr() ) {
+
 		if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) {
-			
-			// The following two bytes are reserved, so we skip them,
-			// and we proceed on reading the length on 4 bytes.
-			fseek(fp, 2L,SEEK_CUR);
+			// The following reserved two bytes (see PS 3.5-2001, section
+			// 7.1.2 Data element structure with explicit vr p27) must be
+			// skipped before proceeding on reading the length on 4 bytes.
+			fseek(fp, 2L, SEEK_CUR);
 			FixFoundLength(ElVal, ReadInt32());
 			return;
 		}
@@ -438,11 +440,14 @@ void gdcmHeader::FindLength( ElValue * ElVal) {
 		return;
 	}
 
-	// Either implicit VR or an explicit VR that (at least for this
-	// element) lied a little bit. Length is on 4 bytes.
+	// Either implicit VR or a non DICOM conformal (see not below) explicit
+	// VR that ommited the VR of (at least) this element. Farts happen.
+	// [Note: according to the part 5, PS 3.5-2001, section 7.1 p25
+	// on Data elements "Implicit and Explicit VR Data Elements shall
+	// not coexist in a Data Set and Data Sets nested within it".]
+	// Length is on 4 bytes.
 	FixFoundLength(ElVal, ReadInt32());
 }
-
 
 /**
  * \ingroup gdcmHeader
@@ -491,6 +496,16 @@ void gdcmHeader::SkipElementValue(ElValue * ElVal) {
 	(void)fseek(fp, (long)ElVal->GetLength(), SEEK_CUR);
 }
 
+void gdcmHeader::SetMaxSizeLoadElementValue(long NewSize) {
+	if (NewSize < 0)
+		return;
+	if ((guint32)NewSize >= (guint32)0xffffffff) {
+		MaxSizeLoadElementValue = 0xffffffff;
+		return;
+	}
+	MaxSizeLoadElementValue = NewSize;
+}
+
 /**
  * \ingroup       gdcmHeader
  * \brief         Loads the element if it's size is not to big.
@@ -526,6 +541,7 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
  		SkipLoad = true;
 
 	if ( SkipLoad ) {
+			  // FIXME the following skip is not necessary
 		SkipElementValue(ElVal);
 		ElVal->SetLength(0);
 		ElVal->SetValue("gdcm::Skipped");
@@ -535,6 +551,17 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	// When the length is zero things are easy:
 	if ( length == 0 ) {
 		ElVal->SetValue("");
+		return;
+	}
+
+	// Values bigger than specified are not loaded.
+	if (length > MaxSizeLoadElementValue) {
+		ostringstream s;
+		s << "gdcm::NotLoaded.";
+		s << " Address:" << (long)ElVal->GetOffset();
+		s << " Length:"  << ElVal->GetLength();
+		//mesg += " Length:"  + ElVal->GetLength();
+		ElVal->SetValue(s.str());
 		return;
 	}
 	
@@ -564,8 +591,6 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	}
 	NewValue[length]= 0;
 	
-	// FIXME les elements trop long (seuil a fixer a la main) ne devraient
-	// pas etre charge's !!!! Voir TODO.
 	item_read = fread(NewValue, (size_t)length, (size_t)1, fp);
 	if ( item_read != 1 ) {
 		g_free(NewValue);

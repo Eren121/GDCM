@@ -221,13 +221,15 @@ class GDCM_EXPORT gdcmHeader {
 		//BigEndian, 
 		//BadBigEndian};
 private:
-  	// All instances share the same value representation dictionary
+  	// All instances share the same Value Representation dictionary
 	static VRHT *dicom_vr;
+	// Dictionaries of data elements:
 	static gdcmDictSet* Dicts;  // Global dictionary container
 	gdcmDict* RefPubDict;       // Public Dictionary
 	gdcmDict* RefShaDict;       // Shadow Dictionary (optional)
-	ElValSet PubElVals;     // Element Values parsed with Public Dictionary
-	ElValSet ShaElVals;     // Element Values parsed with Shadow Dictionary
+	// Parsed element values:
+	ElValSet PubElVals;         // parsed with Public Dictionary
+	ElValSet ShaElVals;         // parsed with Shadow Dictionary
 	// In order to inspect/navigate through the file
 	string filename;
 	FILE * fp;
@@ -237,7 +239,13 @@ private:
 	// outside of the elements:
 	guint16 grPixel;
 	guint16 numPixel;
+	// Swap code (little, big, big-bad endian): this code is not fixed
+	// during parsing.
 	int sw;
+	// Only the elements whose size are below this bound shall be loaded.
+	// By default, this upper bound is limited to 1024 (which looks reasonable
+	// when one considers the definition of the various VR contents).
+	guint32 MaxSizeLoadElementValue;
 
 	guint16 ReadInt16(void);
 	guint32 ReadInt32(void);
@@ -255,7 +263,8 @@ private:
 	void FixFoundLength(ElValue*, guint32);
 	bool IsAnInteger(ElValue *);
 	bool IsBigEndianTransferSyntax(void);
-	ElValue * ReadNextElement(void);
+	void SetMaxSizeLoadElementValue(long);
+	ElValue       * ReadNextElement(void);
 	gdcmDictEntry * IsInDicts(guint32, guint32);
 	size_t GetPixelOffset(void);
 protected:
