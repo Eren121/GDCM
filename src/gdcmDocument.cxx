@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/22 11:29:37 $
-  Version:   $Revision: 1.233 $
+  Date:      $Date: 2005/04/05 10:20:53 $
+  Version:   $Revision: 1.234 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,8 +47,7 @@ const unsigned int Document::MAX_SIZE_LOAD_ELEMENT_VALUE = 0xfff; // 4096
 
 /**
  * \brief This default constructor neither loads nor parses the file. 
- *        You should then invoke \ref Document::SetFileName 
- *        and \ref Document::Load.
+ *        You should then invoke \ref Document::Load.
  *         
  */
 Document::Document() 
@@ -61,7 +60,7 @@ Document::Document()
    SwapCode = 1234;
    Filetype = ExplicitVR;
    Group0002Parsed = false;
-   LoadMode = 0x00000000; // Load everything
+   LoadMode = 0x00000000; // default : load everything, later
 }
 
 /**
@@ -943,7 +942,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
               delim_mode = false;
             }
          }
-
+ 
          if ( (LoadMode & NO_SEQ) && ! delim_mode ) // User asked to skip SQ
          {
             Fp->seekg( l, std::ios::cur);
