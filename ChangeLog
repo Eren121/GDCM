@@ -1,3 +1,31 @@
+2004-06-09 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+    * src/gdcmValEntry.h: member voidArea type changed from char* to void*.
+    * src/gdcmBinEntry.h: member voidArea commented out, since it potentially
+      conflicts with gdcmValEntry::voidArea.
+    * src/gdcmValEntry.cxx: unmatching comment wiped out.
+    * src/gdcmVR.[h|cxx]: added two predicates that partition the possible
+      Value representation between StringRepresentable and BinaryRepresentable.
+    * src/gdcmDocument.cxx: 
+      - method ParseDES: proper indentation restored and usage of
+        gdcmVR::IsVROfGdcmStringRepresentable wired in.
+      - method LoadDocEntry: the fingerprint left in the SetValue() of
+        unloaded entries (length > MaxSizeLoadEntry) had curiously been
+        removed. Reverting to previous code segment with the proper
+        dynamic_cast< gdcmValEntry* >.
+        Note: this was (partially) breaking the python test suite
+              (gdcmPython/testSuite.py) that made usage of the above
+              fingerprint to check presence of "Pixel Data".
+    * src/gdcmDocEntry.h: coding style.
+    * gdcmPython/__init__.py: environement variable GDCM_DATA_PATH is
+      now taken into account.
+    * gdcmPython/gdcm.i: adaptation to the new internal representation
+      of gdcm (exit gdcmParser, hello gdcmDocument).
+    * gdcmPython/testSuite.py: quick and dirty fix for loading vtkgdcmPython
+      on posix.
+    * gdcmPython/demo/PrintHeader.py: doesn't use the gdcmDocument::Print()
+      anymore, but instead prints the loaded Python dictionary.
+    * .... alas, the python testSuite is still broken.
+
 2004-05-18 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
     * gdcmPython/gdcm.i : remove useless lines concerning the gdcmGlobal 
       gdcmGlob

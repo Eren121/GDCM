@@ -115,13 +115,13 @@ public:
    bool isItemDelimitor();
    bool isSequenceDelimitor();   
 
-   /// \brief Gets the depth level of a Dicom header entry embedded in a SeQuence
-   inline int GetDepthLevel(void) 
-      {return(SQDepthLevel);}
+   /// \brief Gets the depth level of a Dicom header entry embedded in
+   ///        a SeQuence
+   inline int GetDepthLevel(void) {return(SQDepthLevel);}
 		
-   /// \brief Sets the depth level of a Dicom header entry embedded in a SeQuence
-   inline void SetDepthLevel(int depth) 
-      {SQDepthLevel = depth;}
+   /// \brief Sets the depth level of a Dicom header entry embedded in
+   ///        a SeQuence
+   inline void SetDepthLevel(int depth) {SQDepthLevel = depth;}
             
 private:
    // FIXME: In fact we should be more specific and use :

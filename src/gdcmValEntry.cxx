@@ -31,8 +31,6 @@ gdcmValEntry::~gdcmValEntry (void) {
 
 //-----------------------------------------------------------------------------
 // Print
-/*
-
 /**
  * \ingroup gdcmValEntry
  * \brief   canonical Printer

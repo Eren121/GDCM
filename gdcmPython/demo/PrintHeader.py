@@ -29,10 +29,10 @@ print "##############################################################"
 print "### Display all the elements and their respective values"
 print "## found in the ", FileName, " file."
 print "##############################################################"
-toRead.SetPrintLevel(printLevel)
-toRead.Print()
+###toRead.SetPrintLevel(printLevel)
+###toRead.Print()
 
-# ValDict = toRead.GetEntry()
-# for key in ValDict.keys():
-# 	print "[%s] = [%s]" %(key, ValDict[key])
+ValDict = toRead.GetEntry()
+for key in ValDict.keys():
+ 	print "[%s] = [%s]" %(key, ValDict[key])
 

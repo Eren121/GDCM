@@ -56,7 +56,11 @@ except KeyError:
 GDCM_DICT_PATH = os.environ["GDCM_DICT_PATH"]
 
 ### Set up the path to the data images for the demos.
-GDCM_DATA_PATH = BuildInstallOrPreinstallPath("Test", "test.acr")
+if os.environ["GDCM_DATA_PATH"]:
+   GDCM_DATA_PATH = BuildInstallOrPreinstallPath(os.environ["GDCM_DATA_PATH"],
+                                                 "test.acr")
+else:
+   GDCM_DATA_PATH = BuildInstallOrPreinstallPath("Test", "test.acr")
 if not GDCM_DATA_PATH:
    print "GDCM_DATA_PATH is not setup properly: unfound Test directory"
 

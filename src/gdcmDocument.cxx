@@ -1112,7 +1112,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
    gdcmValEntry *vl;
    gdcmBinEntry *bn;   
    gdcmSeqEntry *sq;
-   std::string vr;
+   VRKey vr;
    long l;
    int depth; 
    
@@ -1125,55 +1125,55 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
       NewDocEntry = ReadNextDocEntry( );
       if (!NewDocEntry)
          break;
-	       
-      vr = NewDocEntry->GetVR();   	 
+
+      vr = NewDocEntry->GetVR();
       if (vr!="SQ") {
                
-         if (vr == "AE" || vr == "AS" || vr == "DA" || vr == "PN" || 
-             vr == "UI" || vr == "TM" || vr == "SH" || vr == "LO" ||
-             vr == "CS" || vr == "IS" || vr == "LO" || vr == "LT" ||
-             vr == "SH" || vr == "ST" || vr == "DS" || 		  
-             vr == "SL" || vr == "SS" || vr == "UL" || vr == "US"
-		                                                  ) {
-      // --- ValEntry 		        	 
+         if ( gdcmGlobal::GetVR()->IsVROfGdcmStringRepresentable(vr) )
+         {
+            /////// ValEntry
             vl= new gdcmValEntry(NewDocEntry->GetDictEntry());
-            vl->Copy(NewDocEntry);	    
-	    vl->SetDepthLevel(depth),
-            set->AddEntry(vl);	    
-	    LoadDocEntry(vl);
+            vl->Copy(NewDocEntry);
+            vl->SetDepthLevel(depth);
+            set->AddEntry(vl);
+            LoadDocEntry(vl);
             if (/*!delim_mode && */vl->isItemDelimitor())
                break;
-            if ( !delim_mode && ftell(fp)-offset >= l_max) {
+            if ( !delim_mode && ftell(fp)-offset >= l_max)
+            {
                break;
-	    }	     
-	 } else { // BinEntry
-	 
-        // Hope the following VR *do* correspond to a BinEntry 
-		
-        //AT Attribute Tag;         // 2 16-bit unsigned short integers
-        //FL Floating Point Single; // 32-bit IEEE 754:1985 float
-        //FD Floating Point Double; // 64-bit IEEE 754:1985 double
-        //UN Unknown;               // Any length of bytes
-        //UT Unlimited Text;        // At most 2^32 -1 chars
-	//OB Other Byte String;     // String of bytes (VR independant)
-        //OW Other Word String;     // String of 16-bit words (VR dependant)
-	 	 
+            }
+         }
+         else
+         {
+            if ( ! gdcmGlobal::GetVR()->IsVROfGdcmBinaryRepresentable(vr) )
+            { 
+                ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
+                dbg.Verbose(0, "gdcmDocument::ParseDES: neither Valentry, "
+                               "nor BinEntry. Probably unknown VR.");
+            }
+
+            ////// BinEntry or UNKOWN VR:
             bn = new gdcmBinEntry(NewDocEntry->GetDictEntry());
-	    bn->Copy(NewDocEntry);
-	    set->AddEntry(bn);
-	    LoadDocEntry(bn);
-         }      
-          if (NewDocEntry->GetGroup()   == 0x7fe0 && 
-	      NewDocEntry->GetElement() == 0x0010 ) {
-             if (NewDocEntry->GetLength()==0xffffffff)	      
-	      // Broke US.3405.1.dcm
-	      
+            bn->Copy(NewDocEntry);
+            set->AddEntry(bn);
+            LoadDocEntry(bn);
+         }
+
+         if (NewDocEntry->GetGroup()   == 0x7fe0 && 
+             NewDocEntry->GetElement() == 0x0010 )
+         {
+             if (NewDocEntry->GetLength()==0xffffffff)
+                // Broken US.3405.1.dcm
                 Parse7FE0(); // to skip the pixels 
-	                     // (multipart JPEG/RLE are trouble makers)	      
-          } else {
-             SkipToNextDocEntry(NewDocEntry); // to be sure we are at the beginning 
-	     l = NewDocEntry->GetFullLength(); 
-          }	    
+                             // (multipart JPEG/RLE are trouble makers)
+         }
+         else
+         {
+             // to be sure we are at the beginning 
+             SkipToNextDocEntry(NewDocEntry);
+             l = NewDocEntry->GetFullLength(); 
+         }
       } else {   // VR = "SQ"
       
          l=NewDocEntry->GetReadLength();            
@@ -1182,24 +1182,26 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
               delim_mode = true;
             else
               delim_mode = false;
-	 // no other way to create it ...
-         sq = new gdcmSeqEntry(NewDocEntry->GetDictEntry(),set->GetDepthLevel());
+         // no other way to create it ...
+         sq = new gdcmSeqEntry(NewDocEntry->GetDictEntry(),
+                               set->GetDepthLevel());
          sq->Copy(NewDocEntry);
-	 sq->SetDelimitorMode(delim_mode);
-	 sq->SetDepthLevel(depth);
+         sq->SetDelimitorMode(delim_mode);
+         sq->SetDepthLevel(depth);
 
-	 if (l != 0) {  // Don't try to parse zero-length sequences
-	 	 	 
+         if (l != 0)
+         {  // Don't try to parse zero-length sequences
             long lgt = ParseSQ( sq, 
                                 NewDocEntry->GetOffset(),
                                 l, delim_mode);
-	 } 	 
-	 // FIXME : on en fait quoi, de lgt ?
+         }
+         // FIXME : on en fait quoi, de lgt ?
          set->AddEntry(sq);
-         if ( !delim_mode && ftell(fp)-offset >= l_max) {   	 
+         if ( !delim_mode && ftell(fp)-offset >= l_max)
+         {
             break;
-	 }
-      } 
+         }
+      }
    }
    delete NewDocEntry;   
    return l; // ?? 
@@ -1285,8 +1287,15 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)  {
    // are not loaded. Instead we leave a short notice of the offset of
    // the element content and it's length.
    if (length > MaxSizeLoadEntry) {
-      std::ostringstream s;
-      ((gdcmValEntry *)Entry)->SetValue(s.str());
+      if (gdcmValEntry* ValEntryPtr = dynamic_cast< gdcmValEntry* >(Entry) )
+      {
+         std::ostringstream s;
+         s << "gdcm::NotLoaded.";
+         s << " Address:" << (long)Entry->GetOffset();
+         s << " Length:"  << Entry->GetLength();
+         s << " x(" << std::hex << Entry->GetLength() << ")";
+         ValEntryPtr->SetValue(s.str());
+      }
       // to be sure we are at the end of the value ...
       fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);
       

@@ -53,7 +53,6 @@ gdcmVR::~gdcmVR() {
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmVR
  * \brief   Print all 
  * @param   os The output stream to be written to.
  */
@@ -71,13 +70,61 @@ void gdcmVR::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmVR
  * \brief   Get the count for an element
  * @param   key key to count
  */
 int gdcmVR::Count(VRKey key) 
 {
    return vr.count(key);
+}
+
+/**
+ * \brief   Simple predicate that checks wether the given argument
+ *          corresponds to the Value Representation of a \ref gdcmBinEntry .
+ *          This predicate is the negation of
+ *          \ref gdcmVR::IsVROfGdcmStringRepresentable .
+ * @param   tested value represenation to check for.
+ */
+bool gdcmVR::IsVROfGdcmBinaryRepresentable(VRKey tested)
+{
+   if ( ! Count(tested) )
+   {
+      dbg.Verbose(0, "gdcmVR::IsVROfGdcmBinaryRepresentable: tested not a VR!");
+      return false;
+   }
+
+   if ( IsVROfGdcmStringRepresentable(tested) )
+   {
+      dbg.Verbose(0, "gdcmVR::IsVROfGdcmBinaryRepresentable: binary VR !");
+      return false;
+   }
+
+   return true;
+}
+
+/**
+ * \brief   Simple predicate that checks wether the given argument
+ *          corresponds to the Value Representation of a \ref gdcmValEntry
+ *          but NOT a \ref gdcmBinEntry.
+ * @param   tested value represenation to check for.
+ */
+bool gdcmVR::IsVROfGdcmStringRepresentable(VRKey tested)
+{
+   if ( ! Count(tested) )
+   {
+      dbg.Verbose(0, "gdcmVR::IsVROfGdcmStringRepresentable: tested not a VR!");
+      return false;
+   }
+
+   if (tested == "AE" || tested == "AS" || tested == "DA" || tested == "PN" ||
+       tested == "UI" || tested == "TM" || tested == "SH" || tested == "LO" ||
+       tested == "CS" || tested == "IS" || tested == "LO" || tested == "LT" ||
+       tested == "SH" || tested == "ST" || tested == "DS" || tested == "SL" ||
+       tested == "SS" || tested == "UL" || tested == "US" )
+   {
+      return true;
+   }
+   return false;
 }
 
 //-----------------------------------------------------------------------------

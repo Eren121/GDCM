@@ -25,8 +25,9 @@ public:
    ~gdcmVR();
 
    void Print(std::ostream &os = std::cout);
-
    int Count(VRKey key);
+   bool IsVROfGdcmBinaryRepresentable(VRKey);
+   bool IsVROfGdcmStringRepresentable(VRKey);
 
 private:
    VRHT vr;

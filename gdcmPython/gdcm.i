@@ -4,8 +4,10 @@
 #include "gdcmDictEntry.h"
 #include "gdcmDict.h"
 #include "gdcmDictSet.h"
-#include "gdcmParser.h"
-#include "gdcmHeaderEntry.h"
+#include "gdcmDocEntrySet.h"
+#include "gdcmSQItem.h"
+#include "gdcmDocument.h"
+#include "gdcmElementSet.h"
 #include "gdcmHeader.h"
 #include "gdcmHeaderHelper.h"
 #include "gdcmFile.h"
@@ -19,6 +21,7 @@
 #include "gdcmDicomDirStudy.h"
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirImage.h"
+#include "gdcmValEntry.h"
 
 ////////////////////////////////////////////////////////////////////////////
 // Utility functions on strings for removing leading and trailing spaces
@@ -106,14 +109,14 @@ typedef  unsigned int guint32;
 
 ////////////////////////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
-%typemap(out) TagHeaderEntryHT & {
+%typemap(out) TagDocEntryHT & {
 	PyObject* NewDict = PyDict_New(); // The result of this typemap
 	std::string RawName;                   // Element name as gotten from gdcm
 	PyObject* NewKey = (PyObject*)0;  // Associated name as python object
 	std::string RawValue;                  // Element value as gotten from gdcm
 	PyObject* NewVal = (PyObject*)0;  // Associated value as python object
 
-	for (TagHeaderEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag) {
+	for (TagDocEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag) {
 
 		// The element name shall be the key:
 		RawName = tag->second->GetName();
@@ -124,24 +127,33 @@ typedef  unsigned int guint32;
 			RawName = tag->second->GetKey();
 		NewKey = PyString_FromString(RawName.c_str());
 
-		// Element values are striped from leading/trailing spaces
-		RawValue = tag->second->GetValue();
-		EatLeadingAndTrailingSpaces(RawValue);
-		NewVal = PyString_FromString(RawValue.c_str());
+      // Element values are striped from leading/trailing spaces
+      // Element values are striped from leading/trailing spaces
+      if (gdcmValEntry* ValEntryPtr =
+                dynamic_cast< gdcmValEntry* >(tag->second) )
+      {
+         RawValue = ValEntryPtr->GetValue();
+      }
+      else
+        continue; 
+      EatLeadingAndTrailingSpaces(RawValue);
+      NewVal = PyString_FromString(RawValue.c_str());
 
-		PyDict_SetItem( NewDict, NewKey, NewVal);
-    }
-	$result = NewDict;
+      PyDict_SetItem( NewDict, NewKey, NewVal);
+   }
+   $result = NewDict;
 }
 
-%typemap(out) TagHeaderEntryHT {
+/*
+CLEAN ME FIXME CLEANME TODO
+%typemap(out) TagDocEntryHT {
 	PyObject* NewDict = PyDict_New(); // The result of this typemap
-	std::string RawName;                   // Element name as gotten from gdcm
+	std::string RawName;              // Element name as gotten from gdcm
 	PyObject* NewKey = (PyObject*)0;  // Associated name as python object
-	std::string RawValue;                  // Element value as gotten from gdcm
+	std::string RawValue;             // Element value as gotten from gdcm
 	PyObject* NewVal = (PyObject*)0;  // Associated value as python object
 
-	for (TagHeaderEntryHT::iterator tag = $1.begin(); tag != $1.end(); ++tag) {
+	for (TagDocEntryHT::iterator tag = $1.begin(); tag != $1.end(); ++tag) {
 
 		// The element name shall be the key:
 		RawName = tag->second->GetName();
@@ -152,8 +164,14 @@ typedef  unsigned int guint32;
 			RawName = tag->second->GetKey();
 		NewKey = PyString_FromString(RawName.c_str());
 
-		// Element values are striped from leading/trailing spaces
-		RawValue = tag->second->GetValue();
+      // Element values are striped from leading/trailing spaces
+      if (gdcmValEntry* ValEntryPtr =
+                dynamic_cast< gdcmValEntry* >(tag->second) )
+      {
+         RawValue = ValEntryPtr->GetValue();
+      } 
+      else
+        continue;
 		EatLeadingAndTrailingSpaces(RawValue);
 		NewVal = PyString_FromString(RawValue.c_str());
 
@@ -161,6 +179,7 @@ typedef  unsigned int guint32;
     }
 	$result = NewDict;
 }
+*/
 
 ////////////////////////////////////////////////////////////////////////////
 %typemap(out) ListDicomDirPatient & {
@@ -238,12 +257,15 @@ typedef  unsigned int guint32;
 }
 
 ////////////////////////////////////////////////////////////////////////////
+// Warning: Order matters !
 %include "gdcmCommon.h"
 %include "gdcmDictEntry.h"
 %include "gdcmDict.h"
 %include "gdcmDictSet.h"
-%include "gdcmParser.h"
-%include "gdcmHeaderEntry.h"
+%include "gdcmDocEntrySet.h"
+%include "gdcmElementSet.h"
+%include "gdcmDocument.h"
+%include "gdcmSQItem.h"
 %include "gdcmHeader.h"
 %include "gdcmHeaderHelper.h"
 %include "gdcmFile.h"
