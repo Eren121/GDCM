@@ -62,7 +62,7 @@ AC_ARG_ENABLE(python,
 dnl AC_MSG_RESULT($enable_python)
 build_python=no
 if test "yes" = "$enable_python"; then
-    AM_PATH_PYTHON(2.0)
+    AM_PATH_PYTHON(2.0.0)
     if test -n "$PYTHON"; then
         AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
         build_python=yes;
