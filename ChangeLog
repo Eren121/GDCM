@@ -1,4 +1,17 @@
 2004-11-30 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/ShowDicom.cxx : now can be used with an off-screen rendering to
+     avoid problems (otherwise, the difference test between the visible image
+     and the reference is incorrect. If the reference is greater than the
+     screen resolution, it's produce errors).
+     Can be used for only one image. Can be used with a visible flag.
+   * vtk/vtkGdcmReader.cxx : remove commented codes.
+   * vtk/vtkGdcmReader.h : add the gdcmCommon.h include file to avoid warnings
+     under windows at compilation
+   * vtk/vtkgdcmViewer.cxx : reformat the file. Apply a default window/level
+     for grayscale images
+   * vtk/GdcmToBaseline.cxx : new program to easy create the reference image
+
+2004-11-30 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFile.[h|cxx] : bug fix for ACR-LIBIDO files when writting the file
    * Test/TestAllReadCompareDicom.cxx, TestReadWriteReadCompare.cxx : add
      tests on the image size X, Y, Z

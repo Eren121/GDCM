@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.56 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.57 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -278,7 +278,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
       unsigned long UpdateProgressCount = 0;
 
       // Feeling the allocated memory space with each image/volume:
-      unsigned char *Dest = (unsigned char *)data->GetPointData()->GetScalars()->GetVoidPointer(0);
+      unsigned char *Dest = (unsigned char *)data->GetScalarPointer();
       for (std::list<std::string>::iterator filename  = InternalFileNameList.begin();
            filename != InternalFileNameList.end();
            ++filename)
@@ -688,14 +688,6 @@ size_t vtkGdcmReader::LoadImageInMemory(
 //   fwrite(Dest,size,1,f2);
 //   fclose(f2); 
    
-   //GetImageData allocate a (void*)malloc, remove it:
-
-   // CLEANME
-   // Now, the delete on values keep from GetImageData is useless (made in
-   // the PixelConvert class)
-
-//   unsigned char * pSource     = source; //pointer for later deletion
-//   delete[] pSource;
    return size;
 }
 

@@ -3,6 +3,8 @@
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
 
+#include "gdcmCommon.h" // To avoid warnings concerning the std
+
 #include <vtkImageReader.h>
 #include <list>
 #include <string>
