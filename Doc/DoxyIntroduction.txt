@@ -12,8 +12,7 @@
  *    Hence gdcm supports the following formats:
  *    -# ACR-NEMA version 1 and 2
  *    -# Dicom version 3.
- *  - gdcm is distributed with 
- *    <A HREF="http://www.gnu.org/copyleft/lesser.html">LPGL</A>
+ *  - gdcm is distributed with Berkeley-like license
  *    for the license.
  *  - gdcm targets both GNU/Un*ces and Windows/VC++ (see \ref
  *    DoxyRequirements).
