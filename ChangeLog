@@ -5,7 +5,11 @@
 
 2004-02-03 Jean-Pierre Roux
      * ENH gdcmParser : allows "DICM" files, with NO group '0002'
-
+     * FIX handling 'non string elements' unsecure area (LUT, overlays, etc)
+     * FIX Dicts/dicomV3.dic : Add a few missing 'group length' Elements 
+     * FIX gdcmParser.cxx : 'group length' elements are now considered 
+           as integers, even for shadow groups, when file is Implicit VR
+        
 2004-02-02 Jean-Pierre Roux
      * FIX : gdcmWrite : equal_range() for multimap doesn't return a 'second' 
 	          iterator on last
