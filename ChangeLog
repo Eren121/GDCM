@@ -1,4 +1,8 @@
 2005-01-06 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocEntrySet.[h|cxx], gdcmDocument.[h|cxx] : amelioration of
+     ValEntry, BinEntry, SeqEntry creation or replace
+
+2005-01-06 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDictEntry.h : now, the IsVRUnknown is correct
    * src/gdcmDocument.[h|cxx] : simplify the search of VR value when parsing
      a file

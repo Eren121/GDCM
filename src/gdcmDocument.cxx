@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 14:49:16 $
-  Version:   $Revision: 1.156 $
+  Date:      $Date: 2005/01/06 15:36:48 $
+  Version:   $Revision: 1.157 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -544,79 +544,53 @@ void Document::WriteContent(std::ofstream* fp, FileType filetype)
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
-ValEntry* Document::ReplaceOrCreateByNumber(
-                                         std::string const & value, 
-                                         uint16_t group, 
-                                         uint16_t elem,
-                                         TagName const & vr )
+ValEntry* Document::ReplaceOrCreateByNumber(std::string const & value, 
+                                            uint16_t group, 
+                                            uint16_t elem,
+                                            TagName const & vr )
 {
    ValEntry* valEntry = 0;
    DocEntry* currentEntry = GetDocEntryByNumber( group, elem);
    
-   if (!currentEntry)
+   if (currentEntry)
    {
-      // check if (group,element) DictEntry exists
-      // if it doesn't, create an entry in DictSet::VirtualEntry
-      // and use it
+      valEntry = dynamic_cast< ValEntry* >(currentEntry);
 
-   // Find out if the tag we received is in the dictionaries:
-      Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
-      DictEntry* dictEntry = pubDict->GetDictEntryByNumber(group, elem);
-      if (!dictEntry)
-      {
-         currentEntry = NewDocEntryByNumber(group, elem, vr);
-      }
-      else
-      {
-         currentEntry = NewDocEntryByNumber(group, elem);
-      }
+      // Verify the VR
+      if( valEntry )
+         if( valEntry->GetVR()!=vr )
+            valEntry=NULL;
 
-      if (!currentEntry)
+      // if currentEntry doesn't correspond to the requested valEntry
+      if( !valEntry)
       {
-         dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: call to"
-                        " NewDocEntryByNumber failed.");
-         return NULL;
-      }
+         if (!RemoveEntry(currentEntry))
+         {
+            dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: removal"
+                           " of previous DocEntry failed.");
 
-      valEntry = new ValEntry(currentEntry);
-      delete currentEntry;
+            return NULL;
+         }
+      }
+   }
+
+   // Create a new valEntry if necessary
+   if (!valEntry)
+   {
+      valEntry = NewValEntryByNumber(group, elem, vr);
 
       if ( !AddEntry(valEntry))
       {
-         delete valEntry;
          dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
                         " failed allthough this is a creation.");
+
+         delete valEntry;
          return NULL;
       }
    }
-   else
-   {
-      valEntry = dynamic_cast< ValEntry* >(currentEntry);
-      if ( !valEntry ) // Euuuuh? It wasn't a ValEntry
-                       // then we change it to a ValEntry ?
-                       // Shouldn't it be considered as an error ?
-      {
-         // We need to promote the DocEntry to a ValEntry:
-         valEntry = new ValEntry(currentEntry);
-         if (!RemoveEntry(currentEntry))
-         {
-            delete valEntry;
-            dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: removal"
-                           " of previous DocEntry failed.");
-            return NULL;
-         }
-         if ( !AddEntry(valEntry))
-         {
-            delete valEntry;
-            dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: adding"
-                           " promoted ValEntry failed.");
-            return NULL;
-         }
-      }
-   }
 
-   SetEntryByNumber(value, group, elem);
-
+   // Set the binEntry value
+   SetEntry(value, valEntry);
    return valEntry;
 }   
 
@@ -631,72 +605,54 @@ ValEntry* Document::ReplaceOrCreateByNumber(
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-BinEntry* Document::ReplaceOrCreateByNumber(
-                                         uint8_t* binArea,
-                                         int lgth, 
-                                         uint16_t group, 
-                                         uint16_t elem,
-                                         TagName const & vr )
+BinEntry* Document::ReplaceOrCreateByNumber(uint8_t* binArea,
+                                            int lgth, 
+                                            uint16_t group, 
+                                            uint16_t elem,
+                                            TagName const & vr )
 {
    BinEntry* binEntry = 0;
    DocEntry* currentEntry = GetDocEntryByNumber( group, elem);
-   if (!currentEntry)
-   {
 
-      // check if (group,element) DictEntry exists
-      // if it doesn't, create an entry in DictSet::VirtualEntry
-      // and use it
-
-   // Find out if the tag we received is in the dictionaries:
-      Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
-      DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, elem);
-
-      if (!dictEntry)
-      {
-         currentEntry = NewDocEntryByNumber(group, elem, vr);
-      }
-      else
-      {
-         currentEntry = NewDocEntryByNumber(group, elem);
-      }
-      if (!currentEntry)
-      {
-         dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: call to"
-                        " NewDocEntryByNumber failed.");
-         return NULL;
-      }
-      binEntry = new BinEntry(currentEntry);
-      if ( !AddEntry(binEntry))
-      {
-         dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
-                        " failed allthough this is a creation.");
-      }
-      delete currentEntry;
-   }
-   else
+   // Verify the currentEntry
+   if (currentEntry)
    {
       binEntry = dynamic_cast< BinEntry* >(currentEntry);
-      if ( !binEntry ) // Euuuuh? It wasn't a BinEntry
-                       // then we change it to a BinEntry ?
-                       // Shouldn't it be considered as an error ?
+
+      // Verify the VR
+      if( binEntry )
+         if( binEntry->GetVR()!=vr )
+            binEntry=NULL;
+
+      // if currentEntry doesn't correspond to the requested valEntry
+      if( !binEntry)
       {
-         // We need to promote the DocEntry to a BinEntry:
-         binEntry = new BinEntry(currentEntry);
          if (!RemoveEntry(currentEntry))
          {
             dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: removal"
                            " of previous DocEntry failed.");
-            return NULL;
-         }
-         if ( !AddEntry(binEntry))
-         {
-            dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: adding"
-                           " promoted BinEntry failed.");
+
             return NULL;
          }
       }
    }
 
+   // Create a new binEntry if necessary
+   if (!binEntry)
+   {
+      binEntry = NewBinEntryByNumber(group, elem, vr);
+
+      if ( !AddEntry(binEntry))
+      {
+         dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
+                        " failed allthough this is a creation.");
+
+         delete binEntry;
+         return NULL;
+      }
+   }
+
+   // Set the binEntry value
    uint8_t *tmpArea;
    if (lgth>0 && binArea)
    {
@@ -707,7 +663,7 @@ BinEntry* Document::ReplaceOrCreateByNumber(
    {
       tmpArea = 0;
    }
-   if (!SetEntryByNumber(tmpArea, lgth, group, elem))
+   if (!SetEntry(tmpArea,lgth,binEntry))
    {
       if (tmpArea)
       {
@@ -717,7 +673,6 @@ BinEntry* Document::ReplaceOrCreateByNumber(
 
    return binEntry;
 }  
-
 
 /*
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
@@ -729,20 +684,48 @@ BinEntry* Document::ReplaceOrCreateByNumber(
  */
 SeqEntry* Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
 {
-   SeqEntry* b = 0;
-   DocEntry* a = GetDocEntryByNumber( group, elem);
-   if (!a)
-   {
-      a = NewSeqEntryByNumber(group, elem);
-      if (!a)
-      {
-         return 0;
-      }
+   SeqEntry* seqEntry = 0;
+   DocEntry* currentEntry = GetDocEntryByNumber( group, elem);
 
-      b = new SeqEntry(a, 1); // FIXME : 1 (Depth)
-      AddEntry(b);
-   }   
-   return b;
+   // Verify the currentEntry
+   if (currentEntry)
+   {
+      seqEntry = dynamic_cast< SeqEntry* >(currentEntry);
+
+      // Verify the VR
+      if( seqEntry )
+         if( seqEntry->GetVR()!="SQ" )
+            seqEntry=NULL;
+
+      // if currentEntry doesn't correspond to the requested valEntry
+      if( !seqEntry)
+      {
+         if (!RemoveEntry(currentEntry))
+         {
+            dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: removal"
+                           " of previous DocEntry failed.");
+
+            return NULL;
+         }
+      }
+   }
+
+   // Create a new seqEntry if necessary
+   if (!seqEntry)
+   {
+      seqEntry = NewSeqEntryByNumber(group, elem);
+
+      if ( !AddEntry(seqEntry))
+      {
+         dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
+                        " failed allthough this is a creation.");
+
+         delete seqEntry;
+         return NULL;
+      }
+   }
+
+   return seqEntry;
 } 
  
 /**
@@ -918,16 +901,14 @@ bool Document::SetEntryByName( std::string const & content,
 bool Document::SetEntryByNumber(std::string const& content, 
                                 uint16_t group, uint16_t element) 
 {
-   ValEntry* valEntry = GetValEntryByNumber(group, element);
-   if (!valEntry )
+   ValEntry* entry = GetValEntryByNumber(group, element);
+   if (!entry )
    {
       dbg.Verbose(0, "Document::SetEntryByNumber: no corresponding",
                      " ValEntry (try promotion first).");
       return false;
    }
-   // Non even content must be padded with a space (020H)...
-   valEntry->SetValue(content);
-   return true;
+   return SetEntry(content,entry);
 } 
 
 /**
@@ -942,27 +923,56 @@ bool Document::SetEntryByNumber(std::string const& content,
 bool Document::SetEntryByNumber(uint8_t*content, int lgth, 
                                 uint16_t group, uint16_t element) 
 {
-   (void)lgth;  //not used
-   TagKey key = DictEntry::TranslateToKey(group, element);
-   if ( !TagHT.count(key))
+   BinEntry* entry = GetBinEntryByNumber(group, element);
+   if (!entry )
    {
+      dbg.Verbose(0, "Document::SetEntryByNumber: no corresponding",
+                     " ValEntry (try promotion first).");
       return false;
    }
 
-/* Hope Binary field length is *never* wrong    
-   if(lgth%2) // Non even length are padded with a space (020H).
-   {  
-      lgth++;
-      //content = content + '\0'; // fing a trick to enlarge a binary field?
-   }
-*/      
-   BinEntry* entry = (BinEntry *)TagHT[key];           
-   entry->SetBinArea(content);  
-   entry->SetLength(lgth);
-   entry->SetValue(GDCM_BINLOADED);
-
-   return true;
+   return SetEntry(content,lgth,entry);
 } 
+
+/**
+ * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
+ *          and modifies it's content with the given value.
+ * @param   content new value (string) to substitute with
+ */
+bool Document::SetEntry(std::string const & content,ValEntry* entry)
+{
+   if(entry)
+   {
+      entry->SetValue(content);
+      return true;
+   }
+   return false;
+}
+
+/**
+ * \brief   Accesses an existing BinEntry (i.e. a Dicom Element)
+ *          and modifies it's content with the given value.
+ * @param   content new value (void*  -> uint8_t*) to substitute with
+ * @param   lgth new value length
+ */
+bool Document::SetEntry(uint8_t* content, int lgth,BinEntry* entry)
+{
+   if(entry)
+   {
+      // Hope Binary field length is *never* wrong    
+      /*if(lgth%2) // Non even length are padded with a space (020H).
+      {  
+         lgth++;
+         //content = content + '\0'; // fing a trick to enlarge a binary field?
+      }*/
+      
+      entry->SetBinArea(content);  
+      entry->SetLength(lgth);
+      entry->SetValue(GDCM_BINLOADED);
+      return true;
+   }
+   return false;
+}
 
 /**
  * \brief   Gets (from Header) a 'non string' element value 
@@ -1122,11 +1132,33 @@ ValEntry* Document::GetValEntryByNumber(uint16_t group, uint16_t element)
    {
       return 0;
    }
-   if ( ValEntry* valEntry = dynamic_cast<ValEntry*>(currentEntry) )
+   if ( ValEntry* entry = dynamic_cast<ValEntry*>(currentEntry) )
    {
-      return valEntry;
+      return entry;
    }
    dbg.Verbose(0, "Document::GetValEntryByNumber: unfound ValEntry.");
+
+   return 0;
+}
+
+/**
+ * \brief  Same as \ref Document::GetDocEntryByNumber except it only
+ *         returns a result when the corresponding entry is of type
+ *         BinEntry.
+ * @return When present, the corresponding BinEntry. 
+ */
+BinEntry* Document::GetBinEntryByNumber(uint16_t group, uint16_t element)
+{
+   DocEntry* currentEntry = GetDocEntryByNumber(group, element);
+   if ( !currentEntry )
+   {
+      return 0;
+   }
+   if ( BinEntry* entry = dynamic_cast<BinEntry*>(currentEntry) )
+   {
+      return entry;
+   }
+   dbg.Verbose(0, "Document::GetBinEntryByNumber: unfound BinEntry.");
 
    return 0;
 }

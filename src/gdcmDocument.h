@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 13:35:38 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2005/01/06 15:36:48 $
+  Version:   $Revision: 1.73 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,6 +116,9 @@ public:
                                  uint16_t group, uint16_t element);
    virtual bool SetEntryByNumber(uint8_t* content, int lgth,
                                  uint16_t group, uint16_t element);
+   virtual bool SetEntry(std::string const & content,ValEntry* entry);
+   virtual bool SetEntry(uint8_t* content, int lgth,BinEntry* entry);
+
    virtual void* GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
 
    virtual std::string GetEntryByName    (TagName const & tagName);
@@ -127,7 +130,7 @@ public:
    DocEntry* GetDocEntryByNumber(uint16_t group, uint16_t element); 
    DocEntry* GetDocEntryByName  (TagName const & tagName);
    ValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
-   //BinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
+   BinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
 
    ValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                      uint16_t group, uint16_t elem,
