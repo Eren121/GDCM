@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 09:51:03 $
-  Version:   $Revision: 1.214 $
+  Date:      $Date: 2005/02/07 12:28:40 $
+  Version:   $Revision: 1.215 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1101,7 +1101,7 @@ int File::GetNumberOfScalarComponentsRaw()
  */
 size_t File::GetPixelOffset()
 {
-   DocEntry* pxlElement = GetDocEntry(GrPixel,NumPixel);
+   DocEntry *pxlElement = GetDocEntry(GrPixel, NumPixel);
    if ( pxlElement )
    {
       return pxlElement->GetOffset();
@@ -1123,7 +1123,7 @@ size_t File::GetPixelOffset()
  */
 size_t File::GetPixelAreaLength()
 {
-   DocEntry* pxlElement = GetDocEntry(GrPixel,NumPixel);
+   DocEntry *pxlElement = GetDocEntry(GrPixel, NumPixel);
    if ( pxlElement )
    {
       return pxlElement->GetLength();
@@ -1136,13 +1136,12 @@ size_t File::GetPixelAreaLength()
    }
 }
 
-
 /**
  * \brief Adds the characteristics of a new element we want to anonymize
  *
  */
 void File::AddAnonymizeElement (uint16_t group, uint16_t elem, 
-                          std::string const &value) 
+                                std::string const &value) 
 
 { 
    Element el;
@@ -1196,9 +1195,9 @@ void File::AnonymizeNoLoad()
          fp->write( (char *)(*it).Value.c_str(), lgtToWrite );
 
       }
-      fp->close();
-      delete fp;
    }
+   fp->close();
+   delete fp;
 }
 
 /**
@@ -1669,7 +1668,7 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElement)
    long positionOnEntry = Fp->tellg();
    long currentPosition = Fp->tellg();          // On debugging purposes
 
-   //// Read the Item Tag group and element, and make
+   // Read the Item Tag group and element, and make
    // sure they are what we expected:
    uint16_t itemTagGroup;
    uint16_t itemTagElement;
