@@ -1,5 +1,10 @@
 # JPEG 8 bits project
 
+PROJECT(GDCMJPEG)
+INCLUDE_REGULAR_EXPRESSION("^(jchuff|jconfig|jdct|jdhuff|jerror|jinclude|jmemsys|jmorecfg|jpegint|jpeglib|jversion|jpeg|gdcm).*$")
+INCLUDE_DIRECTORIES(${GDCMJPEG_SOURCE_DIR})
+
+
 # memmgr back ends: compile only one of these into a working library
 # (For now, let's use the mode that requires the image fit into memory.
 # This is the recommended mode for Win32 anyway.)
@@ -30,3 +35,21 @@ ADD_LIBRARY(gdcmijpeg8 ${systemdependent_SRCS} ${common_SRCS} ${compression_SRCS
 
 INSTALL_TARGETS(/lib/ gdcmijpeg8)
 INSTALL_FILES(/include .h jconfig.linux jconfig.vc)
+
+# Attempt to generate two libraries: jpeg 8bits and 12 bits using only one
+# source directory
+
+# For now disable it
+
+#extremly dangerous as there could be a /usr/include/jconfig.h from regular jpeg lib
+#INCLUDE_DIRECTORIES(${GDCMJPEG_BINARY_DIR})
+
+SET(BITS_TYPE_JPEG_MANGLE_NAME gdcm_mangle_8bits.h)
+CONFIGURE_FILE(${GDCMJPEG_SOURCE_DIR}/jconfig.h.in
+               ${GDCMJPEG_BINARY_DIR}/jconfig.h @ONLY)
+#ADD_LIBRARY(gdcmijpeg8 ${systemdependent_SRCS} ${common_SRCS} ${compression_SRCS} ${decompression_SRCS})
+
+SET(BITS_TYPE_JPEG_MANGLE_NAME gdcm_mangle_12bits.h)
+CONFIGURE_FILE(${GDCMJPEG_SOURCE_DIR}/jconfig.h.in
+               ${GDCMJPEG_BINARY_DIR}/jconfig.h @ONLY)
+#ADD_LIBRARY(gdcmijpeg12 ${systemdependent_SRCS} ${common_SRCS} ${compression_SRCS} ${decompression_SRCS})
