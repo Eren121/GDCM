@@ -47,6 +47,7 @@ Sources.append(os.path.join(gdcmPythonSrcDir,"gdcm.i"))
 #             contained in subdir gdcmJpeg8SrcDir. But within this subdir
 #             some of the C files should not be compiled (refer to
 #             gdcmJpeg8SrcDir/Makefile.am) !
+
 Jpeg8Sources = glob.glob(os.path.join(gdcmJpeg8SrcDir,"j*.c"))
 Jpeg8SourcesToRemove = ['jmemansi.c', 'jmemname.c', 'jmemdos.c', 'jmemmac.c']
 for Remove in Jpeg8SourcesToRemove:
@@ -58,6 +59,17 @@ for Remove in Jpeg8SourcesToRemove:
       continue
 Sources.extend(Jpeg8Sources)
 
+Jpeg12Sources = glob.glob(os.path.join(gdcmJpeg12SrcDir,"j*.c"))
+Jpeg12SourcesToRemove = ['jmemansi12.c', 'jmemname12.c', 'jmemdos12.c', 'jmemmac12.c']
+for Remove in Jpeg12SourcesToRemove:
+   ### Because setup.py is a multiple pass process we need to trap
+   ### the case were the files were allready wed out on a previous pass.
+   try:
+      Jpeg12Sources.remove(os.path.join(gdcmJpeg12SrcDir, Remove))
+   except ValueError:
+      continue
+Sources.extend(Jpeg12Sources)
+
 # Sources 2/ The second extension contains the VTK classes (which we wrap
 #            with the vtk wrappers):
 VTK_INCLUDE_DIR=os.path.join(VTKPATH,"include","vtk")
@@ -66,6 +78,7 @@ vtkSources = []
 vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
 vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
 vtkSources.extend(Jpeg8Sources)
+vtkSources.extend(Jpeg12ources)
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",
               "vtkFiltering","vtkFilteringPython"]
@@ -83,7 +96,7 @@ setup(name=ThisModule,
       cmdclass={'build_ext':build_extWrap}, # redirects default build_ext
       ext_modules=[SwigExtension(name='_gdcm',
                                  sources=Sources,
-                                 include_dirs=[gdcmSrcDir,gdcmJpeg8SrcDir],
+                                 include_dirs=[gdcmSrcDir,gdcmJpeg8SrcDir],[gdcmSrcDir,gdcmJpeg12SrcDir],
                                  libraries=libraries,
                                  define_macros=macros,
                                  swig_cpp=1,
