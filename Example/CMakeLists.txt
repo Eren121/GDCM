@@ -18,6 +18,7 @@ SET(EXAMPLE_SOURCES
   TestFromScratch
   TestReadWriteReadCompare
   TestDcm2Acr
+  TestPapyrus
   TestWrite
   TestWriteSimple
   Volume2Dicom
