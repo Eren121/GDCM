@@ -41,11 +41,11 @@ except KeyError:
 ### Set up the path to the data images (for the test suite and the demo
 #   examples). As for GDCM_DICT_PATH we offer both proper python package
 #   installation scheme and the pre-install mode (see above).
-InstallModePath = os.path.join(__path__[0], "Data")
+InstallModePath = os.path.join(__path__[0], "gdcmData")
 if os.path.isfile(os.path.join(InstallModePath, "test.acr")):
    GDCM_DATA_PATH = InstallModePath
 else:
-   PreInstallModePath = os.path.join(__path__[0], "..", "Data")
+   PreInstallModePath = os.path.join(__path__[0], "..", "gdcmData")
    if os.path.isfile(os.path.join(PreInstallModePath, "test.acr")):
       GDCM_DATA_PATH = PreInstallModePath
    else:
