@@ -104,6 +104,7 @@ public:
 
 // Informations contained in the parser
    virtual bool IsReadable(void);
+   bool IsGivenTransferSyntax(const std::string & SyntaxToCheck);
    bool IsImplicitVRLittleEndianTransferSyntax(void);
    bool IsExplicitVRLittleEndianTransferSyntax(void);
    bool IsDeflatedExplicitVRLittleEndianTransferSyntax(void);
@@ -215,6 +216,9 @@ private:
    guint16 ReadInt16(void);
    guint32 ReadInt32(void);
    void    SkipBytes(guint32);
+   guint32 ReadTagLength(guint16, guint16);
+   guint32 ReadItemTagLength(void);
+   guint32 ReadSequenceDelimiterTagLength(void);
 
    void Initialise(void);
    bool CheckSwap(void);

@@ -22,11 +22,35 @@
 
 #  include <iomanip>
 
+// Implicit VR Little Endian
 #define UI1_2_840_10008_1_2      "1.2.840.10008.1.2"
+// Explicit VR Little Endian
 #define UI1_2_840_10008_1_2_1    "1.2.840.10008.1.2.1"
-#define UI1_2_840_10008_1_2_2    "1.2.840.10008.1.2.2"
+// Deflated Explicit VR Little Endian
 #define UI1_2_840_10008_1_2_1_99 "1.2.840.10008.1.2.1.99"
-#define UI1_1_2_840_10008_1_2_5  "1.2.840.10008.1.2.5"
+// Explicit VR Big Endian
+#define UI1_2_840_10008_1_2_2    "1.2.840.10008.1.2.2"
+// JPEG Baseline (Process 1)
+#define UI1_2_840_10008_1_2_4_50 "1.2.840.10008.1.2.4.50"
+// JPEG Extended (Process 2 & 4)
+#define UI1_2_840_10008_1_2_4_51 "1.2.840.10008.1.2.4.51"
+// JPEG Extended (Process 3 & 5)
+#define UI1_2_840_10008_1_2_4_52 "1.2.840.10008.1.2.4.52"
+// JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8)
+#define UI1_2_840_10008_1_2_4_53 "1.2.840.10008.1.2.4.53"
+// JPEG Full Progression, Non-Hierarchical (Process 10 & 12)
+#define UI1_2_840_10008_1_2_4_55 "1.2.840.10008.1.2.4.55"
+// JPEG Lossless, Non-Hierarchical (Process 14)
+#define UI1_2_840_10008_1_2_4_57 "1.2.840.10008.1.2.4.57"
+// JPEG Lossless, Hierarchical, First-Order Prediction (Process 14,
+// [Selection Value 1])
+#define UI1_2_840_10008_1_2_4_70 "1.2.840.10008.1.2.4.70"
+// JPEG 2000 Lossless
+#define UI1_2_840_10008_1_2_4_90 "1.2.840.10008.1.2.4.90"
+// JPEG 2000
+#define UI1_2_840_10008_1_2_4_91 "1.2.840.10008.1.2.4.91"
+// RLE Lossless
+#define UI1_2_840_10008_1_2_5    "1.2.840.10008.1.2.5"
 
 #define str2num(str, typeNum) *((typeNum *)(str))
 
@@ -213,20 +237,48 @@ bool gdcmDocument::IsReadable(void) {
 }
 
 /**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a ImplicitVRLittleEndian one.
+ * \brief   Internal function that checks whether the Transfer Syntax given
+ *          as argument is the one present in the current document.
+ * @param   SyntaxToCheck The transfert syntax we need to check against.
+ * @return  True when SyntaxToCheck corresponds to the Transfer Syntax of
+ *          the current document. False either when the document contains
+ *          no Transfer Syntax, or when the Tranfer Syntaxes don't match.
+ */
+bool gdcmDocument::IsGivenTransferSyntax(const std::string & SyntaxToCheck)
+{
+   gdcmDocEntry *Entry = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !Entry )
+      return false;
+
+   // The entry might be present but not loaded (parsing and loading
+   // happen at differente stages): try loading and proceed with check...
+   LoadDocEntrySafe(Entry);
+   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) )
+   {
+      std::string Transfer = ValEntry->GetValue();
+      // The actual transfer (as read from disk) might be padded. We
+      // first need to remove the potential padding. We can make the
+      // weak assumption that padding was not executed with digits...
+      while ( ! isdigit(Transfer[Transfer.length()-1]) )
+      {
+         Transfer.erase(Transfer.length()-1, 1);
+      }
+      if ( Transfer == SyntaxToCheck )
+         return true;
+   }
+   return false;
+}
+
+/**
+ * \brief   Determines if the Transfer Syntax of the present document
+ *          corresponds to a Implicit Value Representation of 
+ *          Little Endian.
+ * \sa      \ref gdcmDocument::IsGivenTransferSyntax.
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmDocument::IsImplicitVRLittleEndianTransferSyntax(void) {
-   gdcmDocEntry *Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == UI1_2_840_10008_1_2 )
-      return true;
-   return false;
+bool gdcmDocument::IsImplicitVRLittleEndianTransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2);
 }
 
 /**
@@ -234,16 +286,9 @@ bool gdcmDocument::IsImplicitVRLittleEndianTransferSyntax(void) {
  *          and if it corresponds to a ExplicitVRLittleEndian one.
  * @return  True when ExplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmDocument::IsExplicitVRLittleEndianTransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == UI1_2_840_10008_1_2_1 )
-      return true;
-   return false;
+bool gdcmDocument::IsExplicitVRLittleEndianTransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_1);
 }
 
 /**
@@ -251,16 +296,9 @@ bool gdcmDocument::IsExplicitVRLittleEndianTransferSyntax(void) {
  *          and if it corresponds to a DeflatedExplicitVRLittleEndian one.
  * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmDocument::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == UI1_2_840_10008_1_2_1_99 )
-      return true;
-   return false;
+bool gdcmDocument::IsDeflatedExplicitVRLittleEndianTransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_1_99);
 }
 
 /**
@@ -268,16 +306,9 @@ bool gdcmDocument::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
  *          and if it corresponds to a Explicit VR Big Endian one.
  * @return  True when big endian found. False in all other cases.
  */
-bool gdcmDocument::IsExplicitVRBigEndianTransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == UI1_2_840_10008_1_2_2 )  //1.2.2 ??? A verifier !
-      return true;
-   return false;
+bool gdcmDocument::IsExplicitVRBigEndianTransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_2);
 }
 
 /**
@@ -285,16 +316,9 @@ bool gdcmDocument::IsExplicitVRBigEndianTransferSyntax(void) {
  *          and if it corresponds to a JPEGBaseLineProcess1 one.
  * @return  True when JPEGBaseLineProcess1found. False in all other cases.
  */
-bool gdcmDocument::IsJPEGBaseLineProcess1TransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-                                                                                
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.4.50" )
-      return true;
-   return false;
+bool gdcmDocument::IsJPEGBaseLineProcess1TransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_50);
 }
                                                                                 
 /**
@@ -302,29 +326,19 @@ bool gdcmDocument::IsJPEGBaseLineProcess1TransferSyntax(void) {
  *          and if it corresponds to a JPEGExtendedProcess2-4 one.
  * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
  */
-bool gdcmDocument::IsJPEGExtendedProcess2_4TransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-   return ( ((gdcmValEntry *)Element)->GetValue() == "1.2.840.10008.1.2.4.51"
-);}
+bool gdcmDocument::IsJPEGExtendedProcess2_4TransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_51);
+}
                                                                                 
 /**
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGExtendeProcess3-5 one.
  * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
  */
-bool gdcmDocument::IsJPEGExtendedProcess3_5TransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-                                                                                
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.4.52" )
-      return true;
-   return false;
+bool gdcmDocument::IsJPEGExtendedProcess3_5TransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_52);
 }
 
 /**
@@ -333,35 +347,20 @@ bool gdcmDocument::IsJPEGExtendedProcess3_5TransferSyntax(void) {
  * @return  True when JPEGSpectralSelectionProcess6-8 found. False in all
  *          other cases.
  */
-bool gdcmDocument::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-                                                                                
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.4.53" )
-      return true;
-   return false;
+bool gdcmDocument::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_53);
 }
-                                                                                
+
 /**
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a RLE Lossless one.
  * @return  True when RLE Lossless found. False in all
  *          other cases.
  */
-bool gdcmDocument::IsRLELossLessTransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-                                                                                
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.5" ) {
-      return true;
-    }
-   return false;
+bool gdcmDocument::IsRLELossLessTransferSyntax(void)
+{
+   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_5);
 }
 
 /**
@@ -370,22 +369,11 @@ bool gdcmDocument::IsRLELossLessTransferSyntax(void) {
  * @return  True when RLE Lossless found. False in all
  *          other cases.
  */
-bool gdcmDocument::IsJPEGLossless(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-    // faire qq chose d'intelligent a la place de ça
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-                                                                                
-   const char * Transfert = ((gdcmValEntry *)Element)->GetValue().c_str();
-                                                                                
-   if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
-   if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
-                                                                                
-   if (((gdcmValEntry *)Element)->GetValue() == "1.2.840.10008.1.2.4.57")
-return true;
-                                                                                
-   return false;
+bool gdcmDocument::IsJPEGLossless(void)
+{
+   return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_55)
+           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_57)
+           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_90) );
 }
                                                                                 
 /**
@@ -394,17 +382,10 @@ return true;
  * @return  True when JPEG2000 (Lossly or LossLess) found. False in all
  *          other cases.
  */
-bool gdcmDocument::IsJPEG2000(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-                                                                                
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if (    (Transfer == "1.2.840.10008.1.2.4.90")
-        || (Transfer == "1.2.840.10008.1.2.4.91") )
-      return true;
-   return false;
+bool gdcmDocument::IsJPEG2000(void)
+{
+   return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_70)
+           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_90) );
 }
 
 /**
@@ -952,7 +933,7 @@ void gdcmDocument::UpdateShaEntries(void) {
    gdcmDictEntry *entry;
    std::string vr;
    
-   // TODO : if still any use (?) explore recursively the whole structure
+   /// \todo TODO : still any use to explore recursively the whole structure?
 /*
    for(ListTag::iterator it=listEntries.begin();
        it!=listEntries.end();
@@ -980,7 +961,7 @@ void gdcmDocument::UpdateShaEntries(void) {
          CheckDocEntryVR(*it,vr);
 
          (*it)->SetValue(GetDocEntryValue(*it));    // to go on compiling
-	 
+ 
       }
       else
       {
@@ -1108,8 +1089,7 @@ void gdcmDocument::WriteEntryTagVRLength(gdcmDocEntry *tag,
  * @param type type of the File to be written
  */
  
- // TODO : to be re -written recursively !
- 
+// \todo TODO : to be re -written recursively !
 void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
    (void)type;
@@ -1130,17 +1110,17 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
 		//
 		// -------------------------------
 		
-//   if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) ) {			
+// if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) ) {
       void *voidArea;
       gdcmBinEntry *BinEntry= (gdcmBinEntry *)tag;;
-      voidArea = BinEntry->GetVoidArea();	
+      voidArea = BinEntry->GetVoidArea();
       if (voidArea != NULL) 
       { // there is a 'non string' LUT, overlay, etc
          fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
          return;            
       }
-//   } 
-	    
+// } 
+
    if (vr == "US" || vr == "SS") 
    {
       // some 'Short integer' fields may be mulivaluated
@@ -1158,11 +1138,12 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
       tokens.clear();
       return;
    }
-      // some 'Integer' fields may be mulivaluated
-      // each single value is separated from the next one by '\'
-      // we split the string and write each value as an int
    if (vr == "UL" || vr == "SL") 
    {
+      // Some 'Integer' fields may be multivaluated (multiple instances 
+      // of integers). But each single integer value is separated from the
+      // next one by '\' (backslash character). Hence we split the string
+      // along the '\' and write each value as an int:
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
       Tokenize (((gdcmValEntry *)tag)->GetValue(), tokens, "\\");
@@ -1175,7 +1156,8 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
       tokens.clear();
       return;
    }           
-   fwrite (((gdcmValEntry *)tag)->GetValue().c_str(), (size_t)lgr ,(size_t)1, _fp); // Elem value
+   fwrite (((gdcmValEntry *)tag)->GetValue().c_str(),
+           (size_t)lgr ,(size_t)1, _fp); // Elem value
 }
 
 /**
@@ -1189,36 +1171,38 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
 
 bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
-   guint32 length = tag->GetLength();	
+   guint32 length = tag->GetLength();
 
-   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(tag) )	{
-   // The value of a tag MUST (see the DICOM norm) be an odd number of
-   // bytes. When this is not the case, pad with an additional byte:	
-      if(length%2==1) { 
+   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(tag) )
+   {
+      // The value of a tag MUST (see the DICOM norm) be an odd number of
+      // bytes. When this is not the case, pad with an additional byte:
+      if(length%2==1) {
          ValEntry->SetValue(ValEntry->GetValue()+"\0");
          ValEntry->SetLength(ValEntry->GetReadLength()+1);
       }
-   WriteEntryTagVRLength(ValEntry, _fp, type);
-   WriteEntryValue(ValEntry, _fp, type);
-   return true;	
-	}
-	
-   if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) )	{
-	//
-	// FIXME : when voidArea belong to gdcmBinEntry only, fix voidArea length
-	//
-   // The value of a tag MUST (see the DICOM norm) be an odd number of
-   // bytes. When this is not the case, pad with an additional byte:	
-	/*
+      WriteEntryTagVRLength(ValEntry, _fp, type);
+      WriteEntryValue(ValEntry, _fp, type);
+      return true;
+   }
+
+   if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) )
+   {
+      /// \todo FIXME : when voidArea belong to gdcmBinEntry only, fix
+      /// voidArea length
+      //
+      // The value of a tag MUST (see the DICOM norm) be an odd number of
+      // bytes. When this is not the case, pad with an additional byte:
+/*
       if(length%2==1) { 
          tag->SetValue(tag->GetValue()+"\0");
          tag->SetLength(tag->GetReadLength()+1);
       }
 */
-   WriteEntryTagVRLength(tag, _fp, type);
-   WriteEntryValue(tag, _fp, type);
-   return true;	
-	}
+      WriteEntryTagVRLength(tag, _fp, type);
+      WriteEntryValue(tag, _fp, type);
+      return true;
+   }
 }
 
 /**
@@ -1237,35 +1221,29 @@ bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
 
 bool gdcmDocument::WriteEntries(FILE *_fp,FileType type)
 { 
-
-// FIXME : explore recursively the whole structure...
-  
+   /// \todo FIXME : explore recursively the whole structure...
    /// \todo (?) check write failures (after *each* fwrite)
  
- std::cout << "--------------------- gdcmDocument::WriteEntries " << std::endl;   
-   for (TagDocEntryHT::iterator tag2=tagHT.begin();
-                                tag2 != tagHT.end();
-                              ++tag2)
+   dbg.Verbose(0, "gdcmDocument::WriteEntries: entering.");
+   for (TagDocEntryHT::iterator it = tagHT.begin(); it != tagHT.end(); ++it )
    {
-	
-	(*tag2).second->Print();
-	
+      gdcmDocEntry * entry = it->second;
+      entry->Print();
+
       if ( type == gdcmACR ){ 
-         if ((*tag2).second->GetGroup() < 0x0008)
+         if (entry->GetGroup() < 0x0008)
             // Ignore pure DICOM V3 groups
             continue;
-         if ((*tag2).second->GetGroup() %2)
+         if (entry->GetGroup() %2)
             // Ignore the "shadow" groups
             continue;
-         if ((*tag2).second->GetVR() == "SQ" ) // ignore Sequences
+         if (entry->GetVR() == "SQ" ) // ignore Sequences
             continue;    
       } 
-      if (! WriteEntry((*tag2).second,_fp,type) ) {
-		   std::cout << "Write Failure " << std::endl;
+      if (! WriteEntry(entry, _fp, type) ) {
+         dbg.Verbose(0, "gdcmDocument::WriteEntries: write failure.");
          return false;
-		} else {
-				
-		}
+      }
    }
    return true;
 }   
@@ -1440,7 +1418,9 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
  * \brief   Parses a Sequence ( SeqEntry after SeqEntry)
  * @return  parsed length for this level
  */ 
-long gdcmDocument::ParseSQ(gdcmSeqEntry *set, long offset, long l_max, bool delim_mode) {
+long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
+                           long offset, long l_max, bool delim_mode)
+{
    int SQItemNumber = 0;
 		
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
@@ -1448,24 +1428,27 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set, long offset, long l_max, bool deli
    bool dlm_mod;
    int lgr, l, lgth;
    int depth = set->GetDepthLevel();
+
    while (true) {
-      
       NewDocEntry = ReadNextDocEntry();   
       if(delim_mode) {   
-          if (NewDocEntry->isSequenceDelimitor()) {
-	  //add the Sequence Delimitor  // TODO : find the trick to put it properly !
-	     set->SetSequenceDelimitationItem(NewDocEntry);
-	     break;
-          }	     
-      }	     
-      if (!delim_mode && (ftell(fp)-offset) >= l_max) {
-             break;
+         if (NewDocEntry->isSequenceDelimitor()) {
+            /// \todo add the Sequence Delimitor
+            /// \todo find the trick to put it properly !
+            set->SetSequenceDelimitationItem(NewDocEntry);
+            break;
+          }
       }
+      if (!delim_mode && (ftell(fp)-offset) >= l_max) {
+          break;
+      }
+
       itemSQ = new gdcmSQItem(set->GetDepthLevel());
-      itemSQ->AddEntry(NewDocEntry); // no value, no voidArea. Think of it while printing !
+      itemSQ->AddEntry(NewDocEntry);
+      /// \todo  no value, no voidArea. Think of it while printing !
       l= NewDocEntry->GetReadLength();
       
-      if (l ==0xffffffff)
+      if (l == 0xffffffff)
          dlm_mod = true;
       else
          dlm_mod=false;
@@ -1476,7 +1459,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set, long offset, long l_max, bool deli
       SQItemNumber ++;
       if (!delim_mode && (ftell(fp)-offset) >= l_max) {
          break;
-      }       
+      }
    }
    lgth = ftell(fp) - offset;
    return(lgth);
@@ -1968,9 +1951,10 @@ void gdcmDocument::LoadVLEntry(gdcmDocEntry *entry)
 /**
  * \brief   When the length of an element value is obviously wrong (because
  *          the parser went Jabberwocky) one can hope improving things by
- *          applying this heuristic.
+ *          applying some heuristics.
  */
-void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry, guint32 FoundLength) 
+void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry,
+                                          guint32 FoundLength)
 {
    Entry->SetReadLength(FoundLength); // will be updated only if a bug is found        
    if ( FoundLength == 0xffffffff) {
@@ -1982,48 +1966,61 @@ void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry, guint32 FoundLeng
      
    if (FoundLength%2) {
       std::ostringstream s;
-      s << "Warning : Tag with uneven length " << FoundLength 
-         <<  " in x(" << std::hex << gr << "," << el <<")" << std::dec;
-      dbg.Verbose(0,s.str().c_str());
+      s << "Warning : Tag with uneven length "
+        << FoundLength 
+        <<  " in x(" << std::hex << gr << "," << el <<")" << std::dec;
+      dbg.Verbose(0, s.str().c_str());
    }
       
-   // Sorry for the patch!  
-   // XMedCom did the trick to read some naughty GE images ...
-   if (FoundLength == 13) {
-      // The following 'if' will be removed when there is no more
-      // images on Creatis HDs with a 13 length for Manufacturer...
-      if ( (Entry->GetGroup() != 0x0008) ||  
-           ( (Entry->GetElement() != 0x0070) && (Entry->GetElement() != 0x0080) ) ){
-      // end of remove area
-         FoundLength =10;
-         Entry->SetReadLength(10); // a bug is to be fixed
+   //////// Fix for some naughty General Electric images.
+   // Allthough not recent many such GE corrupted images are still present
+   // on Creatis hard disks. Hence this fix shall remain when such images
+   // are no longer in user (we are talking a few years, here)...
+   // Note: XMedCom probably uses such a trick since it is able to read
+   //       those pesky GE images ...
+   if (FoundLength == 13) {  // Only happens for this length !
+      if (   (Entry->GetGroup() != 0x0008)
+          || (   (Entry->GetElement() != 0x0070)
+              && (Entry->GetElement() != 0x0080) ) )
+      {
+         FoundLength = 10;
+         Entry->SetReadLength(10); /// \todo a bug is to be fixed !?
       }
    }
 
-   // to fix some garbage 'Leonardo' Siemens images
-   // May be commented out to avoid overhead
-   else if ( (Entry->GetGroup() == 0x0009) &&
-       ( (Entry->GetElement() == 0x1113) || (Entry->GetElement() == 0x1114) ) ){
-      FoundLength =4;
-      Entry->SetReadLength(4); // a bug is to be fixed 
+   //////// Fix for some brain-dead 'Leonardo' Siemens images.
+   // Occurence of such images is quite low (unless one leaves close to a
+   // 'Leonardo' source. Hence, one might consider commenting out the
+   // following fix on efficiency reasons.
+   else
+   if (   (Entry->GetGroup() == 0x0009)
+       && (   (Entry->GetElement() == 0x1113)
+           || (Entry->GetElement() == 0x1114) ) )
+   {
+      FoundLength = 4;
+      Entry->SetReadLength(4); /// \todo a bug is to be fixed !?
    } 
-   // end of fix
  
-   // to try to 'go inside' SeQuences (with length), and not to skip them        
-   else if ( Entry->GetVR() == "SQ") 
-   { 
-      if (enableSequences)    // only if the user does want to !
-         FoundLength =0;      // ReadLength is unchanged 
+   //////// Deal with sequences, but only on users request:
+   else
+   if ( ( Entry->GetVR() == "SQ") && enableSequences)
+   {
+         FoundLength = 0;      // ReadLength is unchanged 
    } 
     
-   // we found a 'delimiter' element                                         
-   // fffe|xxxx is just a marker, we don't take its length into account                                                   
-   else if(Entry->GetGroup() == 0xfffe)
+   //////// We encountered a 'delimiter' element i.e. a tag of the form 
+   // "fffe|xxxx" which is just a marker. Delimiters length should not be
+   // taken into account.
+   else
+   if(Entry->GetGroup() == 0xfffe)
    {    
-                                         // *normally, fffe|0000 doesn't exist ! 
-     if( Entry->GetElement() != 0x0000 ) // gdcm-MR-PHILIPS-16-Multi-Seq.dcm
-                                         // causes extra troubles :-(                                                              	
-        FoundLength =0;
+     // According to the norm, fffe|0000 shouldn't exist. BUT the Philips
+     // image gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm happens to
+     // causes extra troubles...
+     if( Entry->GetElement() != 0x0000 )
+     {
+        FoundLength = 0;
+     }
    } 
            
    Entry->SetUsableLength(FoundLength);
@@ -2040,6 +2037,7 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
    guint16 group   = Entry->GetGroup();
    std::string  vr = Entry->GetVR();
    guint32 length  = Entry->GetLength();
+
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
    // able to swap it's element value properly.
@@ -2049,29 +2047,29 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
          return true;
       else 
       {
+         // Allthough this should never happen, still some images have a
+         // corrupted group length [e.g. have a glance at offset x(8336) of
+         // gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm].
+         // Since for dicom compliant and well behaved headers, the present
+         // test is useless (and might even look a bit paranoid), when we
+         // encounter such an ill-formed image, we simply display a warning
+         // message and proceed on parsing (while crossing fingers).
          std::ostringstream s;
          int filePosition = ftell(fp);
          s << "Erroneous Group Length element length  on : (" \
            << std::hex << group << " , " << element 
            << ") -before- position x(" << filePosition << ")"
            << "lgt : " << length;
-         // These 2 lines commented out : a *very dirty* patch
-         // to go on PrintHeader'ing gdcm-MR-PHILIPS-16-Multi-Seq.dcm.
-         // have a glance at offset  x(8336) ...
-         // For *regular* headers, the test is useless..
-         // lets's print a warning message and go on, 
-         // instead of giving up with an error message
-
-         //std::cout << s.str().c_str() << std::endl;
-         // dbg.Error("gdcmDocument::IsDocEntryAnInteger",
-         //           s.str().c_str());     
+         dbg.Verbose(0, "gdcmDocument::IsDocEntryAnInteger", s.str().c_str() );
       }
    }
+
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
       return true;
    
    return false;
 }
+
 /**
  * \brief  Find the Length till the next sequence delimiter
  * \warning NOT end user intended method !
@@ -2661,208 +2659,179 @@ gdcmDictEntry *gdcmDocument::GetDictEntryByNumber(guint16 group,guint16 element)
    return found;
 }
 
+/**
+ * \brief   Assuming the internal file pointer \ref gdcmDocument::fp 
+ *          is placed at the beginning of a tag (TestGroup, TestElement),
+ *          read the length associated to the Tag.
+ * \warning On success the internal file pointer \ref gdcmDocument::fp
+ *          is modified to point after the tag and it's length.
+ *          On failure (i.e. when the tag wasn't the expected tag
+ *          (TestGroup, TestElement) the internal file pointer
+ *          \ref gdcmDocument::fp is restored to it's original position.
+ * @param   TestGroup   The expected group of the tag.
+ * @param   TestElement The expected Element of the tag.
+ * @return  On success returns the length associated to the tag. On failure
+ *          returns 0.
+ */
+guint32 gdcmDocument::ReadTagLength(guint16 TestGroup, guint16 TestElement)
+{
+   guint16 ItemTagGroup;
+   guint16 ItemTagElement; 
+   long PositionOnEntry = ftell(fp);
+   long CurrentPosition = ftell(fp);          // On debugging purposes
+
+   //// Read the Item Tag group and element, and make
+   // sure they are respectively 0xfffe and 0xe000:
+   ItemTagGroup   = ReadInt16();
+   ItemTagElement = ReadInt16();
+   if ( (ItemTagGroup != TestGroup) || (ItemTagElement != TestElement ) )
+   {
+      std::ostringstream s;
+      s << "   We should have found tag (";
+      s << std::hex << TestGroup << "," << TestElement << ")" << std::endl;
+      s << "   but instead we encountered tag (";
+      s << std::hex << ItemTagGroup << "," << ItemTagElement << ")"
+        << std::endl;
+      s << "  at address: " << (unsigned)CurrentPosition << std::endl;
+      dbg.Verbose(0, "gdcmDocument::ReadItemTagLength: wrong Item Tag found:");
+      dbg.Verbose(0, s.str().c_str());
+      fseek(fp, PositionOnEntry, SEEK_SET);
+      return 0;
+   }
+                                                                                
+   //// Then read the associated Item Length
+   CurrentPosition=ftell(fp);
+   guint32 ItemLength;
+   ItemLength = ReadInt32();
+   {
+      std::ostringstream s;
+      s << "Basic Item Length is: "
+        << ItemLength << std::endl;
+      s << "  at address: " << (unsigned)CurrentPosition << std::endl;
+      dbg.Verbose(0, "gdcmDocument::ReadItemTagLength: ", s.str().c_str());
+   }
+   return ItemLength;
+}
 
 /**
- * \ingroup gdcmDocument
+ * \brief   Read the length of an exptected Item tag i.e. (0xfffe, 0xe000).
+ * \sa      \ref gdcmDocument::ReadTagLength
+ * \warning See warning of \ref gdcmDocument::ReadTagLength
+ * @return  On success returns the length associated to the item tag.
+ *          On failure returns 0.
+ */ 
+guint32 gdcmDocument::ReadItemTagLength(void)
+{
+   return ReadTagLength(0xfffe, 0xe000);
+}
+
+/**
+ * \brief   Read the length of an exptected Sequence Delimiter tag i.e.
+ *          (0xfffe, 0xe0dd).
+ * \sa      \ref gdcmDocument::ReadTagLength
+ * \warning See warning of \ref gdcmDocument::ReadTagLength
+ * @return  On success returns the length associated to the Sequence
+ *          Delimiter tag. On failure returns 0.
+ */
+guint32 gdcmDocument::ReadSequenceDelimiterTagLength(void)
+{
+   return ReadTagLength(0xfffe, 0xe0dd);
+}
+
+
+/**
  * \brief   Parse pixel data from disk for multi-fragment Jpeg/Rle files
- * \        No other way so 'skip' the Data
+ *          No other way so 'skip' the Data
  *
  */
-void gdcmDocument::Parse7FE0 (void) {
-
+void gdcmDocument::Parse7FE0 (void)
+{
    gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return;
       
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if (Transfer == UI1_2_840_10008_1_2 )
-      return;  
-   if ( Transfer == UI1_2_840_10008_1_2_1 )
-      return;
-   if ( Transfer == UI1_2_840_10008_1_2_2 )  //1.2.2 ??? A verifier !
-      return;         
-   if ( Transfer == UI1_2_840_10008_1_2_1_99 )
+   if (   IsImplicitVRLittleEndianTransferSyntax()
+       || IsExplicitVRLittleEndianTransferSyntax()
+       || IsExplicitVRBigEndianTransferSyntax() /// \todo 1.2.2 ??? A verifier !
+       || IsDeflatedExplicitVRLittleEndianTransferSyntax() )
       return;
       
-   int nb;
-   std::string str_nb=GetEntryByNumber(0x0028,0x0100);
-   if (str_nb == GDCM_UNFOUND ) {
-      nb = 16;
-   } else {
-      nb = atoi(str_nb.c_str() );
-      if (nb == 12) nb =16;
+   // ---------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
+
+   //// Read the Basic Offset Table Item Tag length...
+   guint32 ItemLength = ReadItemTagLength();
+
+   //// ... and then read length[s] itself[themselves]. We don't use
+   // the values read (BTW  what is the purpous of those lengths ?)
+   if (ItemLength != 0) {
+      // BTW, what is the purpous of those length anyhow !? 
+      char * BasicOffsetTableItemValue = new char[ItemLength + 1];
+      fread(BasicOffsetTableItemValue, ItemLength, 1, fp); 
+      for (int i=0; i < ItemLength; i += 4){
+         guint32 IndividualLength;
+         IndividualLength = str2num(&BasicOffsetTableItemValue[i],guint32);
+         std::ostringstream s;
+         s << "   Read one length: ";
+         s << std::hex << IndividualLength << std::endl;
+         dbg.Verbose(0, "gdcmDocument::Parse7FE0: ", s.str().c_str());
+      }              
    }
-      
-   guint16 ItemTagGr,ItemTagEl; 
-   int ln;
-   long ftellRes;
 
-  // -------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
-
-   if ( Transfer != UI1_1_2_840_10008_1_2_5 ) { // !RLELossLessTransferSyntax 
+   if ( ! IsRLELossLessTransferSyntax() )
+   {
       // JPEG Image
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }
-      printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
-                (unsigned)ftellRes,ItemTagGr,ItemTagEl );
-      ftellRes=ftell(fp);
-      fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item Length
-      printf("at %x : Basic Offset Table Item Length (\?\?) %d x(%08x)\n",
-            (unsigned)ftellRes,ln,ln);
-      if (ln != 0) {
-         // What is it used for ??
-         char * BasicOffsetTableItemValue= new char[ln+1];
-         fread(BasicOffsetTableItemValue,ln,1,fp); 
-         guint32 a;
-         for (int i=0;i<ln;i+=4){
-            a=str2num(&BasicOffsetTableItemValue[i],guint32);
-            printf("      x(%08x)  %d\n",a,a);
-         }              
-      }
       
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }  
-      printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-            (unsigned)ftellRes,ItemTagGr,ItemTagEl );
-      
-      while ( ( ItemTagGr==0xfffe) && (ItemTagEl!=0xe0dd) ) { // Parse fragments
-      
-         ftellRes=ftell(fp);
-         fread(&ln,4,1,fp); 
-         if(GetSwapCode()) 
-            ln=SwapLong(ln);    // length
-         printf("      at %x : fragment length %d x(%08x)\n",
-                (unsigned)ftellRes, ln,ln);
-
-         // ------------------------                                     
-         fseek(fp,ln,SEEK_CUR); // skipping (not reading) fragment pixels    
-         // ------------------------              
-     
-         ftellRes=ftell(fp);
-         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
-         }
-         printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-               (unsigned)ftellRes,ItemTagGr,ItemTagEl );
+      //// We then skip (not reading them) all the fragments of images:
+      while ( ItemLength = ReadItemTagLength() )
+      {
+         SkipBytes(ItemLength);
       } 
 
-   } else {
-
+   }
+   else
+   {
       // RLE Image
-      long RleSegmentLength[15],fragmentLength;
-      guint32 nbRleSegments;
-      guint32 RleSegmentOffsetTable[15];
-      ftellRes=ftell(fp);
-      // Basic Offset Table with Item Value
-         // Item Tag
-      fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }
-      printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
-                (unsigned)ftellRes,ItemTagGr,ItemTagEl );
-         // Item Length
-      ftellRes=ftell(fp);
-      fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item Length
-      printf("at %x : Basic Offset Table Item Length (\?\?) %d x(%08x)\n",
-            (unsigned)ftellRes,ln,ln);
-      if (ln != 0) {
-         // What is it used for ??
-         char * BasicOffsetTableItemValue= new char[ln+1];
-         fread(BasicOffsetTableItemValue,ln,1,fp); 
-         guint32 a;
-         for (int i=0;i<ln;i+=4){
-            a=str2num(&BasicOffsetTableItemValue[i],guint32);
-            printf("      x(%08x)  %d\n",a,a);
-         }              
-      }
-
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }  
-      printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-            (unsigned)ftellRes,ItemTagGr,ItemTagEl );
+      long ftellRes;
+      long RleSegmentLength[15], fragmentLength;
 
       // while 'Sequence Delimiter Item' (fffe,e0dd) not found
-      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
-      // Parse fragments of the current Fragment (Frame)    
-         ftellRes=ftell(fp);
-         fread(&fragmentLength,4,1,fp); 
-         if(GetSwapCode()) 
-            fragmentLength=SwapLong(fragmentLength);    // length
-         printf("      at %x : 'fragment' length %d x(%08x)\n",
-                (unsigned)ftellRes, (unsigned)fragmentLength,(unsigned)fragmentLength);
-                       
-          //------------------ scanning (not reading) fragment pixels
+      while ( fragmentLength = ReadSequenceDelimiterTagLength() )
+      { 
+         // Parse fragments of the current Fragment (Frame)    
+         //------------------ scanning (not reading) fragment pixels
+         guint32 nbRleSegments = ReadInt32();
+         printf("   Nb of RLE Segments : %d\n",nbRleSegments);
  
-         fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments
-         if(GetSwapCode()) 
-            nbRleSegments=SwapLong(nbRleSegments);
-            printf("   Nb of RLE Segments : %d\n",nbRleSegments);
- 
-         for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
+         //// Reading RLE Segments Offset Table
+         guint32 RleSegmentOffsetTable[15];
+         for(int k=1; k<=15; k++) {
             ftellRes=ftell(fp);
-            fread(&RleSegmentOffsetTable[k],4,1,fp);
-            if(GetSwapCode())
-               RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
+            RleSegmentOffsetTable[k] = ReadInt32();
             printf("        at : %x Offset Segment %d : %d (%x)\n",
                     (unsigned)ftellRes,k,RleSegmentOffsetTable[k],
                     RleSegmentOffsetTable[k]);
          }
 
-          if (nbRleSegments>1) { // skipping (not reading) RLE Segments
-             for(unsigned int k=1; k<=nbRleSegments-1; k++) { 
+         // skipping (not reading) RLE Segments
+         if (nbRleSegments>1) {
+            for(unsigned int k=1; k<=nbRleSegments-1; k++) { 
                 RleSegmentLength[k]=   RleSegmentOffsetTable[k+1]
                                      - RleSegmentOffsetTable[k];
                 ftellRes=ftell(fp);
                 printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
-                           k,(unsigned)RleSegmentLength[k],(unsigned)RleSegmentLength[k], (unsigned)ftellRes);
-                fseek(fp,RleSegmentLength[k],SEEK_CUR);    
+                        k,(unsigned)RleSegmentLength[k],
+                       (unsigned)RleSegmentLength[k], (unsigned)ftellRes);
+                SkipBytes(RleSegmentLength[k]);    
              }
           }
+
           RleSegmentLength[nbRleSegments]= fragmentLength 
                                          - RleSegmentOffsetTable[nbRleSegments];
           ftellRes=ftell(fp);
           printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
-                           nbRleSegments,(unsigned)RleSegmentLength[nbRleSegments],
-                           (unsigned)RleSegmentLength[nbRleSegments],(unsigned)ftellRes);
-
-          fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR); 
-            
-         // ------------------ end of scanning fragment pixels        
-      
-         ftellRes=ftell(fp);
-         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
-         }
-         printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-               (unsigned)ftellRes,ItemTagGr,ItemTagEl );
+                  nbRleSegments,(unsigned)RleSegmentLength[nbRleSegments],
+                  (unsigned)RleSegmentLength[nbRleSegments],(unsigned)ftellRes);
+          SkipBytes(RleSegmentLength[nbRleSegments]); 
       } 
    }
    return;            

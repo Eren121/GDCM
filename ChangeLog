@@ -1,3 +1,12 @@
+2004-06-15 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+    * src/gdcmDocument.[h|cxx]:
+      - Clean up of the Transfer related predicates. They are now all based
+        on new method isGivenTransferSyntax, that (should) handle properly
+        the padding problem.
+      - general clean up, simplification, and coding style.
+      - Specific clean up of Parse7FE0() (umproperly named actually).
+    * gdcmPython/testSuite.py: an odd temporary kludge introduced.
+
 2004-06-14 Jean-Pierre Roux		
    *  gdcmSeqEntry.cxx
 	   - fix the display of Sequence Delimitor (SQDepthLevel pb)
@@ -27,7 +36,6 @@
    * gdcmValEntry.cxx 
       - adding a constructor taking a gdcmDocEntry as an input param	
 
-	
 2004-06-14 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * Memory leak hunt with the following command:
       valgrind --leak-check=yes --leak-resolution=high --num-callers=40
