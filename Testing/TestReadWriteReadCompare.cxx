@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 10:23:46 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/11/24 16:39:18 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,8 +40,8 @@ int CompareInternal(std::string const & filename, std::string const & output)
    //////////////// Step 2:
 
    gdcm::File*  file = new gdcm::File( header );
-   int dataSize    = file->GetImageDataSize();
-   uint8_t* imageData = file->GetImageData(); //EXTREMELY IMPORTANT
+   int dataSize    = file->GetImageDataSizeRaw();
+   uint8_t* imageData = file->GetImageDataRaw(); //EXTREMELY IMPORTANT
           // Sure, it is : It's up to the user to decide if he wants to
           // GetImageData or if he wants to GetImageDataRaw
           // (even if we do it by setting a flag, he will have to decide) 
@@ -83,8 +83,8 @@ int CompareInternal(std::string const & filename, std::string const & output)
    }
    std::cout << "3...";
    // For the next step:
-   int    dataSizeWritten = reread->GetImageDataSize();
-   uint8_t* imageDataWritten = reread->GetImageData();
+   int    dataSizeWritten = reread->GetImageDataSizeRaw();
+   uint8_t* imageDataWritten = reread->GetImageDataRaw();
 
    //////////////// Step 4:
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 10:23:46 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/11/24 16:39:18 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,59 +27,58 @@ int InternalTest(std::string const & filename,
 {
       std::cout << "   Testing: " << filename << std::endl;
 
+      ////// Step 1:
+      std::cout << "      1...";
       gdcm::File* tested = new gdcm::File( filename );
       if( !tested->GetHeader()->IsReadable() )
       {
-        std::cout << "      Image not gdcm compatible:"
+        std::cout << " Failed" << std::endl
+                   << "      Image not gdcm compatible:"
                   << filename << std::endl;
         delete tested;
         return 1;
       }
 
       ////// Step 2:
-
       ////// Check for existence of reference baseline dicom file:
+      std::cout << "2...";
 
       FILE* testFILE = fopen( referenceFileName.c_str(), "r" );
       if (! testFILE )
       {
-      ////// Step 3a:
-         uint8_t* testedImageData = tested->GetImageData(); // Kludge
+         uint8_t* testedImageData = tested->GetImageDataRaw(); // Kludge
          (void)testedImageData;
 
          tested->WriteDcmExplVR( referenceFileName );
-         std::cerr << "      Creating reference baseline file :" << std::endl
-                   << "      " << referenceFileName 
-                   << std::endl;
-         delete tested;
-         //delete (char*)testedImageData;
-         return 0;
       }
       else
       {
          fclose( testFILE );
       }
 
+      ////// Step 3a:
       ////// When reference file is not gdcm readable test is failed:
-  
+      std::cout << "3a...";
+
       gdcm::File* reference = new gdcm::File( referenceFileName );
       if( !reference->GetHeader()->IsReadable() )
       {
-         std::cout << "      Failed: reference image " << std::endl
-                   << "              " << referenceFileName <<std::endl
-                   << "              is not gdcm compatible." << std::endl;
+         std::cout << " Failed" << std::endl
+                   << "              reference image " 
+                   << referenceFileName 
+                   << " is not gdcm compatible." << std::endl;
          delete tested;
          delete reference;
          return 1;
       }
 
       ////// Step 3b:
-
-      int testedDataSize    = tested->GetImageDataSize();
-      uint8_t* testedImageData = tested->GetImageData();
+      std::cout << "3b...";
+      int testedDataSize    = tested->GetImageDataSizeRaw();
+      uint8_t* testedImageData = tested->GetImageDataRaw();
     
-      int    referenceDataSize = reference->GetImageDataSize();
-      uint8_t* referenceImageData = reference->GetImageData();
+      int    referenceDataSize = reference->GetImageDataSizeRaw();
+      uint8_t* referenceImageData = reference->GetImageDataRaw();
 
       if (testedDataSize != referenceDataSize)
       {
@@ -108,7 +107,7 @@ int InternalTest(std::string const & filename,
       delete tested;
       delete reference;
 
-      std::cout << "      Passed..." << std::endl;
+      std::cout << "OK." << std::endl;
       
       return 0;
 }

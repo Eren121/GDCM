@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 10:23:47 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2004/11/24 16:39:18 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,10 +59,9 @@ public:
    Header* GetHeader() { return HeaderInternal; }
 
    /// Accessor to \ref ImageDataSize
-   size_t GetImageDataSize() { return ImageDataSize; };
-
+   size_t GetImageDataSize();
    /// Accessor to \ref ImageDataSizeRaw
-   size_t GetImageDataSizeRaw() { return ImageDataSizeRaw; };
+   size_t GetImageDataSizeRaw();
 
    /// Accessor to \ref PixelConverter
    PixelConvert* GetPixelConverter() { return PixelConverter; };

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 11:17:47 $
-  Version:   $Revision: 1.136 $
+  Date:      $Date: 2004/11/24 16:39:18 $
+  Version:   $Revision: 1.137 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -487,6 +487,15 @@ void Document::Write(std::ofstream* fp, FileType filetype)
    /// to a future function CheckAndCorrectHeader  
    /// (necessary if user wants to write a DICOM V3 file
    /// starting from an  ACR-NEMA (V2)  Header
+
+   if ( filetype == ImplicitVR || filetype == ExplicitVR )
+   {
+      // writing Dicom File Preamble
+      char filePreamble[128];
+      memset(filePreamble, 0, 128);
+      fp->write(filePreamble, 128);
+      fp->write("DICM", 4);
+   }
 
    if (filetype == ImplicitVR) 
    {
@@ -1103,6 +1112,9 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
  */
 void Document::LoadEntryBinArea(BinEntry* element) 
 {
+   if(element->GetBinArea())
+      return;
+
    bool openFile = !Fp;
    if(openFile)
       OpenFile();

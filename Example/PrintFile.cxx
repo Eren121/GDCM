@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 10:23:46 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/11/24 16:39:17 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,9 @@ int main(int argc, char* argv[])
    std::cout << "\n\n" << std::endl; 
 
    int dataSize = f1->GetImageDataSize();
-   std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
+   std::cout <<std::endl;
+   std::cout <<" dataSize " << dataSize << std::endl;
+   std::cout <<" dataSizeRaw " << f1->GetImageDataSizeRaw() << std::endl;
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType;
    nX=e1->GetXSize();

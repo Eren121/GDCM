@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/10 18:27:23 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/11/24 16:39:19 $
+  Version:   $Revision: 1.37 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,6 +60,7 @@ SQItem::~SQItem()
  */
  void SQItem::Print(std::ostream& os)
  {
+   os << "S ";
    std::ostringstream s;
 
    if (SQDepthLevel > 0)

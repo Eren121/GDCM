@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 11:17:47 $
-  Version:   $Revision: 1.161 $
+  Date:      $Date: 2004/11/24 16:39:18 $
+  Version:   $Revision: 1.162 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,7 @@ File::File(std::string const & filename )
  */
 void File::Initialise()
 {
-   WriteMode = WMODE_RGB;
+   WriteMode = WMODE_DECOMPRESSED;
    WriteType = WTYPE_IMPL_VR;
 
    PixelConverter = new PixelConvert;
@@ -191,6 +191,37 @@ int File::ComputeDecompressedPixelDataSizeFromHeader()
    return DecompressedSize;
 }
 
+/// Accessor to \ref ImageDataSize
+size_t File::GetImageDataSize()
+{
+   if ( ! GetDecompressed() )
+   {
+      // If the decompression failed nothing can be done.
+      return 0;
+   }
+                                                                                
+   if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
+   {
+      return PixelConverter->GetRGBSize();
+   }
+   else
+   {
+      // When no LUT or LUT conversion fails, return the decompressed
+      return PixelConverter->GetDecompressedSize();
+   }
+}
+
+/// Accessor to \ref ImageDataSizeRaw
+size_t File::GetImageDataSizeRaw()
+{
+   if ( ! GetDecompressed() )
+   {
+      // If the decompression failed nothing can be done.
+      return 0;
+   }
+   return PixelConverter->GetDecompressedSize();
+}
+
 /**
  * \brief   - Allocates necessary memory, 
  *          - Reads the pixels from disk (uncompress if necessary),
@@ -218,82 +249,6 @@ uint8_t* File::GetImageData()
       // When no LUT or LUT conversion fails, return the decompressed
       return PixelConverter->GetDecompressed();
    }
-   
-/*   if ( ! GetDecompressed() )
-   {
-      // If the decompression failed nothing can be done.
-      return 0;
-   }
-                                                                                
-   uint8_t* pixelData;
-   if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
-   {
-      pixelData = PixelConverter->GetRGB();
-   }
-   else
-   {
-      // When no LUT or LUT conversion fails, return the decompressed
-      pixelData = PixelConverter->GetDecompressed();
-   }
-
-// PIXELCONVERT CLEANME
-   // Restore the header in a disk-consistent state
-   // (if user asks twice to get the pixels from disk)
-   if ( PixelRead != -1 ) // File was "read" before
-   {
-      RestoreInitialValues();
-   }
-   if ( PixelConverter->GetRGB() )
-   {
-      // now, it's an RGB image
-      // Lets's write it in the Header
-      std::string spp = "3";        // Samples Per Pixel
-      HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
-      std::string rgb = "RGB ";     // Photometric Interpretation
-      HeaderInternal->SetEntryByNumber(rgb,0x0028,0x0004);
-      std::string planConfig = "0"; // Planar Configuration
-      HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
-      PixelRead = 0; // no PixelRaw
-   }
-   else
-   {
-      if ( HeaderInternal->HasLUT() )
-      {
-         // The LUT interpretation failed
-         std::string photometricInterpretation = Util::DicomString("MONOCHROME1");
-         HeaderInternal->SetEntryByNumber( photometricInterpretation,
-                                           0x0028, 0x0004 );
-         PixelRead = 0; // no PixelRaw
-      }
-      else
-      {
-         if ( PixelConverter->IsDecompressedRGB() )
-         {
-            ///////////////////////////////////////////////////
-            // now, it's an RGB image
-            // Lets's write it in the Header
-            // Droping Palette Color out of the Header
-            // has been moved to the Write process.
-            // TODO : move 'values' modification to the write process
-            //      : save also (in order to be able to restore)
-            //      : 'high bit' -when not equal to 'bits stored' + 1
-            //      : 'bits allocated', when it's equal to 12 ?!
-            std::string spp = "3";            // Samples Per Pixel
-            std::string photInt = "RGB ";     // Photometric Interpretation
-            std::string planConfig = "0";     // Planar Configuration
-            HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
-            HeaderInternal->SetEntryByNumber(photInt,0x0028,0x0004);
-            HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
-         }
-         PixelRead = 1; // PixelRaw
-      } 
-   }
-
-   // We say the value *is* loaded.
-   SetPixelData(pixelData);
-// END PIXELCONVERT CLEANME
-
-   return pixelData;*/
 }
 
 /**
@@ -368,45 +323,6 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
 uint8_t* File::GetImageDataRaw ()
 {
    return GetDecompressed();
-/*   uint8_t* decompressed = GetDecompressed();
-   if ( ! decompressed )
-   {
-      return 0;
-   }
-
-// PIXELCONVERT CLEANME
-   // Restore the header in a disk-consistent state
-   // (if user asks twice to get the pixels from disk)
-   if ( PixelRead != -1 ) // File was "read" before
-   {
-      RestoreInitialValues();
-   }
-   if ( PixelConverter->IsDecompressedRGB() )
-   {
-      ///////////////////////////////////////////////////
-      // now, it's an RGB image
-      // Lets's write it in the Header
-      // Droping Palette Color out of the Header
-      // has been moved to the Write process.
-      // TODO : move 'values' modification to the write process
-      //      : save also (in order to be able to restore)
-      //      : 'high bit' -when not equal to 'bits stored' + 1
-      //      : 'bits allocated', when it's equal to 12 ?!
-      std::string spp = "3";            // Samples Per Pixel
-      std::string photInt = "RGB ";     // Photometric Interpretation
-      std::string planConfig = "0";     // Planar Configuration
-      HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
-      HeaderInternal->SetEntryByNumber(photInt,0x0028,0x0004);
-      HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
-   }
-
-   // We say the value *is* loaded.
-   SetPixelData(decompressed);
- 
-   PixelRead = 1; // PixelRaw
-// END PIXELCONVERT CLEANME
-
-   return decompressed;*/
 }
 
 uint8_t* File::GetDecompressed()
@@ -565,15 +481,6 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       return false;
    }
 
-   if ( type == ImplicitVR || type == ExplicitVR )
-   {
-      // writing Dicom File Preamble
-      char filePreamble[128];
-      memset(filePreamble, 0, 128);
-      fp1->write(filePreamble, 128);
-      fp1->write("DICM", 4);
-   }
-
    switch(WriteMode)
    {
       case WMODE_NATIVE :
@@ -593,33 +500,13 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    // if recognition code tells us we dealt with a LibIDO image
    // we reproduce on disk the switch between lineNumber and columnNumber
    // just before writting ...
-   
    /// \todo the best trick would be *change* the recognition code
    ///       but pb expected if user deals with, e.g. COMPLEX images
-
-   std::string rows, columns; 
-   if ( HeaderInternal->GetFileType() == ACR_LIBIDO)
+/*   if ( HeaderInternal->GetFileType() == ACR_LIBIDO)
    {
       SetWriteToLibido();
-   }
-   // ----------------- End of Special Patch ----------------
-      
-/*   uint16_t grPixel  = HeaderInternal->GetGrPixel();
-   uint16_t numPixel = HeaderInternal->GetNumPixel();;
-          
-   DocEntry* PixelElement = 
-      GetHeader()->GetDocEntryByNumber(grPixel, numPixel);  
- 
-   if ( PixelRead == 1 )
-   {
-      // we read pixel 'as is' (no tranformation LUT -> RGB)
-      PixelElement->SetLength( ImageDataSizeRaw );
-   }
-   else if ( PixelRead == 0 )
-   {
-      // we tranformed GrayLevel pixels + LUT into RGB Pixel
-      PixelElement->SetLength( ImageDataSize );
    }*/
+   // ----------------- End of Special Patch ----------------
  
    HeaderInternal->Write(fp1, type);
 
@@ -628,11 +515,10 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    // 
    // ...and we restore the Header to be Dicom Compliant again 
    // just after writting
-
-   if ( HeaderInternal->GetFileType() == ACR_LIBIDO )
+/*   if ( HeaderInternal->GetFileType() == ACR_LIBIDO )
    {
       RestoreWriteFromLibido();
-   }
+   }*/
    // ----------------- End of Special Patch ----------------
 
    RestoreWrite();
@@ -679,56 +565,104 @@ void File::SetWriteToNative()
 
 void File::SetWriteToDecompressed()
 {
-//   if (( !HeaderInternal->HasLUT() ) || (!PixelConverter->BuildRGBImage()))
-   if(HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage())
+   if(HeaderInternal->GetNumberOfScalarComponents()==3 && !HeaderInternal->HasLUT())
    {
       SetWriteToRGB();
    } 
    else
    {
       ValEntry* photInt = CopyValEntry(0x0028,0x0004);
-      photInt->SetValue("MONOCHROME1 ");
-      photInt->SetLength(12);
+      if(HeaderInternal->HasLUT())
+      {
+         photInt->SetValue("PALETTE COLOR ");
+         photInt->SetLength(14);
+      }
+      else
+      {
+         photInt->SetValue("MONOCHROME1 ");
+         photInt->SetLength(12);
+      }
 
       BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
-      pixel->SetBinArea(PixelConverter->GetDecompressed(),false);
-      pixel->SetLength(PixelConverter->GetDecompressedSize());
+      if(Pixel_Data)
+      {
+         pixel->SetBinArea(Pixel_Data,false);
+         pixel->SetLength(ImageDataSize);
+      }
+      else
+      {
+         pixel->SetBinArea(PixelConverter->GetDecompressed(),false);
+         pixel->SetLength(PixelConverter->GetDecompressedSize());
+      }
 
       Archive->Push(photInt);
       Archive->Push(pixel);
    }
-/*   else 
-   {
-      SetWriteToRGB();
-   } */
 }
 
 void File::SetWriteToRGB()
 {
-   if(PixelConverter->BuildRGBImage())
+   if(HeaderInternal->GetNumberOfScalarComponents()==3 && !HeaderInternal->HasLUT())
    {
+      PixelConverter->BuildRGBImage();
+      
       ValEntry* spp = CopyValEntry(0x0028,0x0002);
       spp->SetValue("3 ");
       spp->SetLength(2);
-
-      ValEntry* photInt = CopyValEntry(0x0028,0x0004);
-      photInt->SetValue("RGB ");
-      photInt->SetLength(4);
 
       ValEntry* planConfig = CopyValEntry(0x0028,0x0006);
       planConfig->SetValue("0 ");
       planConfig->SetLength(2);
 
+      ValEntry* photInt = CopyValEntry(0x0028,0x0004);
+      photInt->SetValue("RGB ");
+      photInt->SetLength(4);
+
       BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
-      pixel->SetBinArea(PixelConverter->GetRGB(),false);
-      pixel->SetLength(PixelConverter->GetRGBSize());
+      if(Pixel_Data)
+      {
+         pixel->SetBinArea(Pixel_Data,false);
+         pixel->SetLength(ImageDataSize);
+      }
+      else if(PixelConverter->GetRGB())
+      {
+         pixel->SetBinArea(PixelConverter->GetRGB(),false);
+         pixel->SetLength(PixelConverter->GetRGBSize());
+      }
+      else // Decompressed data
+      {
+         pixel->SetBinArea(PixelConverter->GetDecompressed(),false);
+         pixel->SetLength(PixelConverter->GetDecompressedSize());
+      }
 
       Archive->Push(spp);
-      Archive->Push(photInt);
       Archive->Push(planConfig);
+      Archive->Push(photInt);
       Archive->Push(pixel);
+
+      // For old ACR-NEMA
+      // Thus, we have a RGB image and the bits allocated = 24 and 
+      // samples per pixels = 1 (in the read file)
+      if(HeaderInternal->GetBitsAllocated()==24) 
+      {
+         ValEntry* bitsAlloc = CopyValEntry(0x0028,0x0100);
+         bitsAlloc->SetValue("8 ");
+         bitsAlloc->SetLength(2);
+
+         ValEntry* bitsStored = CopyValEntry(0x0028,0x0101);
+         bitsStored->SetValue("8 ");
+         bitsStored->SetLength(2);
+
+         ValEntry* highBit = CopyValEntry(0x0028,0x0102);
+         highBit->SetValue("7 ");
+         highBit->SetLength(2);
+
+         Archive->Push(bitsAlloc);
+         Archive->Push(bitsStored);
+         Archive->Push(highBit);
+      }
    }
    else
    {
@@ -742,6 +676,11 @@ void File::RestoreWrite()
    Archive->Restore(0x0028,0x0004);
    Archive->Restore(0x0028,0x0006);
    Archive->Restore(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+
+   // For old ACR-NEMA (24 bits problem)
+   Archive->Restore(0x0028,0x0100);
+   Archive->Restore(0x0028,0x0101);
+   Archive->Restore(0x0028,0x0102);
 }
 
 void File::SetWriteToLibido()

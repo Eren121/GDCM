@@ -1,4 +1,15 @@
 2004-11-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmBinEntry.cxx, gdcmSeqEntry.cxx, gdcmSQItem.cxx, gdcmValEntry.cxx :
+     Add a print information of the type of the entry
+   * src/gdcmDocument.cxx : add the write of the preambule of a Dicom file.
+     It was in the gdcmFile, and all write have been regrouped
+   * src/gdcmFile.[h|cxx] : add methods to get the Raw data elements and size.
+     Write correctly all dicom files (in decompressed mode only at this time)
+   * Test/ : test on files are now made using Raw datas and not color datas if
+     any.
+   * Example/PrintFile.cxx : add more printings
+
+2004-11-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Amelioration of code, remove some code copy. For the loading of
      BinEntry (in gdcmDocument), add the test to verify if the file is already
      opened or not.

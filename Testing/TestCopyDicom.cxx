@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 10:23:46 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/11/24 16:39:18 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,8 +76,8 @@ int CopyDicom(std::string const & filename,
       gdcm::File *original = new gdcm::File( filename );
       gdcm::File *copy = new gdcm::File( output );
 
-      size_t dataSize = original->GetImageDataSize();
-      uint8_t* imageData = original->GetImageData();
+      size_t dataSize = original->GetImageDataSizeRaw();
+      uint8_t* imageData = original->GetImageDataRaw();
       (void)dataSize;  // To use the variable and not have warnings at compil.
       (void)imageData; // To use the variable and not have warnings at compil.
 
@@ -152,8 +152,8 @@ int CopyDicom(std::string const & filename,
 
       //////////////// Step 5:
       std::cout << "5...";
-      int    dataSizeWritten = copy->GetImageDataSize();
-      uint8_t* imageDataWritten = copy->GetImageData();
+      int    dataSizeWritten = copy->GetImageDataSizeRaw();
+      uint8_t* imageDataWritten = copy->GetImageDataRaw();
 
       if (dataSize != dataSizeWritten)
       {

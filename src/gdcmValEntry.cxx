@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 16:49:01 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/11/24 16:39:19 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,6 +76,7 @@ void ValEntry::Print(std::ostream & os)
    TSKey v;
    std::string d2;
      
+   os << "V ";
    DocEntry::Print(os); 
 
    if (g == 0xfffe)
