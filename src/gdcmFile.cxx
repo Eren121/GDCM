@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:14:01 $
-  Version:   $Revision: 1.106 $
+  Date:      $Date: 2004/06/23 03:36:24 $
+  Version:   $Revision: 1.107 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,7 +91,7 @@ gdcmFile::gdcmFile(std::string const & filename,
  * \note  If the gdcmHeader is created by the gdcmFile, it is destroyed
  *        by the gdcmFile
  */
-gdcmFile::~gdcmFile(void) {
+gdcmFile::~gdcmFile() {
    if(SelfHeader)
       delete Header;
    Header=NULL;
@@ -111,7 +111,7 @@ gdcmFile::~gdcmFile(void) {
  *          (no interest for compressed images).
  * @return length to allocate
  */
-void gdcmFile::SetPixelDataSizeFromHeader(void) {
+void gdcmFile::SetPixelDataSizeFromHeader() {
    // see PS 3.3-2003 : C.7.6.3.2.1  
    // 
    //   MONOCHROME1
@@ -166,8 +166,8 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
  *            the pixel data represented in this file.
  * @return    The size of pixel data in bytes.
  */
-size_t gdcmFile::GetImageDataSize(void) {
-   return (lgrTotale);
+size_t gdcmFile::GetImageDataSize() {
+   return lgrTotale;
 }
 
 /**
@@ -179,8 +179,8 @@ size_t gdcmFile::GetImageDataSize(void) {
  * \warning   to be used with GetImagePixelsRaw()
  * @return    The size of pixel data in bytes.
  */
-size_t gdcmFile::GetImageDataSizeRaw(void) {
-   return (lgrTotaleRaw);
+size_t gdcmFile::GetImageDataSizeRaw() {
+   return lgrTotaleRaw;
 }
 
 /**
@@ -193,8 +193,8 @@ size_t gdcmFile::GetImageDataSizeRaw(void) {
  * @return  Pointer to newly allocated pixel data.
  *          NULL if alloc fails 
  */
-void * gdcmFile::GetImageData (void) {
-   PixelData = new char[lgrTotale];
+void * gdcmFile::GetImageData () {
+   PixelData = new unsigned char[lgrTotale];  //consistant with GetImageDataIntoVector
    if (PixelData) {
       GetImageDataIntoVector(PixelData, lgrTotale);
       GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
@@ -203,7 +203,7 @@ void * gdcmFile::GetImageData (void) {
    }      
    PixelRead=0; // no PixelRaw
 
-   return(PixelData);
+   return PixelData;
 }
 
 /**
@@ -290,12 +290,12 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
  * @return  Pointer to newly allocated pixel data.
  * \        NULL if alloc fails 
  */
-void * gdcmFile::GetImageDataRaw (void) {
+void * gdcmFile::GetImageDataRaw () {
    if (Header->HasLUT())
       /// \todo Let gdcmHeadar user a chance to get the right value
 		/// Create a member lgrTotaleRaw ???
       lgrTotale /= 3;
-   PixelData = new char[lgrTotale];
+   PixelData = new unsigned char[lgrTotale];
 	
    if (PixelData) {
       GetImageDataIntoVectorRaw(PixelData, lgrTotale);
@@ -304,7 +304,8 @@ void * gdcmFile::GetImageDataRaw (void) {
                       GetHeader()->GetNumPixel()); 
    } 				
    PixelRead=1; // PixelRaw
-   return(PixelData);
+
+   return PixelData;
 }
 
 /**
@@ -343,7 +344,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
       return (size_t)0; 
    }
 	
-   (void)ReadPixelData(destination);
+   ReadPixelData(destination);
    	
 	// Number of Bits Allocated for storing a Pixel
    str_nb = Header->GetEntryByNumber(0x0028,0x0100);
@@ -410,8 +411,8 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
             deb ++;
          }
       } else {
-         dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: wierd image");
-         return (size_t)0; 
+         dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: weird image");
+         return 0;
       }
    } 
 // DO NOT remove this commented out code .
@@ -567,7 +568,8 @@ bool gdcmFile::SetImageData(void *inData, size_t ExpectedSize) {
    PixelData = inData;
    lgrTotale = ExpectedSize;
    PixelRead = 1;
-   return(true);
+
+   return true;
 }
 
 /**
@@ -580,16 +582,17 @@ bool gdcmFile::SetImageData(void *inData, size_t ExpectedSize) {
  * @return false if write fails	
  */
 
-bool gdcmFile::WriteRawData (std::string fileName) {
+bool gdcmFile::WriteRawData (std::string const & fileName) {
    FILE *fp1;
    fp1 = fopen(fileName.c_str(),"wb");
    if (fp1 == NULL) {
       printf("Fail to open (write) file [%s] \n",fileName.c_str());
-      return (false);
+      return false;
    } 	
    fwrite (PixelData,lgrTotale, 1, fp1);
    fclose (fp1);
-   return(true);
+
+   return true;
 }
 
 /**
@@ -602,23 +605,10 @@ bool gdcmFile::WriteRawData (std::string fileName) {
  * @return false if write fails	
  */
 
-bool gdcmFile::WriteDcmImplVR (std::string fileName) {
+bool gdcmFile::WriteDcmImplVR (std::string const & fileName) {
    return WriteBase(fileName, gdcmImplicitVR);
 }
 
-/**
- * \ingroup   gdcmFile
- * \brief Writes on disk A SINGLE Dicom file, 
- *        using the Implicit Value Representation convention
- *        NO test is performed on  processor "Endiannity". * @param fileName name of the file to be created
- *                 (any already existing file is overwritten)
- * @return false if write fails	
- */
- 
-bool gdcmFile::WriteDcmImplVR (const char *fileName) {
-   return WriteDcmImplVR (std::string (fileName));
-}
-	
 /**
  * \ingroup   gdcmFile
 * \brief Writes on disk A SINGLE Dicom file, 
@@ -628,7 +618,7 @@ bool gdcmFile::WriteDcmImplVR (const char *fileName) {
  * @return false if write fails	
  */
 
-bool gdcmFile::WriteDcmExplVR (std::string fileName) {
+bool gdcmFile::WriteDcmExplVR (std::string const & fileName) {
    return WriteBase(fileName, gdcmExplicitVR);
 }
 	
@@ -647,7 +637,7 @@ bool gdcmFile::WriteDcmExplVR (std::string fileName) {
  * @return false if write fails		
  */
 
-bool gdcmFile::WriteAcr (std::string fileName) {
+bool gdcmFile::WriteAcr (std::string const & fileName) {
    return WriteBase(fileName, gdcmACR);
 }
 
@@ -662,7 +652,7 @@ bool gdcmFile::WriteAcr (std::string fileName) {
  * @param  type file type (ExplicitVR, ImplicitVR, ...)
  * @return false if write fails		
  */
-bool gdcmFile::WriteBase (std::string fileName, FileType type) {
+bool gdcmFile::WriteBase (std::string const & fileName, FileType type) {
 
    FILE *fp1;
    
@@ -751,7 +741,8 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    
   // fwrite(PixelData, lgrTotale, 1, fp1);  // should be useless, now
    fclose (fp1);
-   return(true);
+
+   return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -766,12 +757,12 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
  * @param   nb Pixels Bit number 
  */
 void gdcmFile::SwapZone(void *im, int swap, int lgr, int nb) {
-guint32 s32;
-guint16 fort,faible;
-int i;
+  guint32 s32;
+  guint16 fort,faible;
+  int i;
 
-if(nb == 16)  
-   switch(swap) {
+  if(nb == 16)  
+     switch(swap) {
       case 0:
       case 12:
       case 1234:
@@ -792,8 +783,8 @@ if(nb == 16)
          printf("SWAP value (16 bits) not allowed : %d\n", swap);
    } 
  
-if( nb == 32 )
-   switch (swap) {
+  if( nb == 32 )
+     switch (swap) {
       case 0:
       case 1234:
          break;
@@ -830,9 +821,8 @@ if( nb == 32 )
          break; 
     			        
       default:
-         printf("SWAP value (32 bits) not allowed : %d\n", swap);
+         std::cout << "SWAP value (32 bits) not allowed : " << swap << std::endl;
    } 
-return;
 }
 
 /**
@@ -876,7 +866,7 @@ bool gdcmFile::ReadPixelData(void *destination) {
       }
 
       Header->CloseFile();
-      return(true);
+      return true;
    }        
 
    // ----------------------  Uncompressed File

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLE.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/06/23 03:36:24 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -145,7 +145,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
       delete[] newDest;
    }
       
-   return(true);
+   return true;
 }
 
 

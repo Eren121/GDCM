@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/06/23 03:36:24 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
  * \brief   constructor : populates the chained lists 
  *          from the file 'Dicts/DicomDir.dic'
  */
- gdcmDicomDirElement::gdcmDicomDirElement(void) {
+gdcmDicomDirElement::gdcmDicomDirElement() {
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_ELEM);
    std::ifstream from(filename.c_str());
    dbg.Error(!from, "gdcmDicomDirElement::gdcmDicomDirElement: can't open dictionary",filename.c_str());
@@ -79,7 +79,7 @@
  * \ingroup gdcmDicomDirElement
  * \brief   canonical destructor 
  */
- gdcmDicomDirElement::~gdcmDicomDirElement() {
+gdcmDicomDirElement::~gdcmDicomDirElement() {
    DicomDirMetaList.clear();
    DicomDirPatientList.clear();
    DicomDirStudyList.clear();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 02:13:14 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/06/23 03:36:24 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,14 +33,14 @@ class GDCM_EXPORT gdcmFile
 public:
    gdcmFile(gdcmHeader *header);
    gdcmFile(std::string const & filename, 
-              bool  exception_on_error = false, 
-              bool  enable_sequences   = false,
-              bool  skip_shadow        = false);
+            bool  exception_on_error = false, 
+            bool  enable_sequences   = false,
+            bool  skip_shadow        = false);
  
-   virtual ~gdcmFile(void);
+   virtual ~gdcmFile();
 	
  /// \brief returns the gdcmHeader *Header
-   inline gdcmHeader *GetHeader(void) {return(Header);};
+   inline gdcmHeader *GetHeader() { return Header;};
 
    // For promotion (performs a deepcopy of pointed header object)
    // TODO Swig gdcmFile(gdcmHeader* header);
@@ -51,7 +51,7 @@ public:
         // different from the constructor's one (no overwriting allowed).
    // TODO Swig int SetFileName(std::string filename);
 
-   void   SetPixelDataSizeFromHeader(void);
+   void   SetPixelDataSizeFromHeader();
    size_t GetImageDataSize();
    size_t GetImageDataSizeRaw();
 
@@ -77,16 +77,15 @@ public:
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianity"
    // The user must call his reader correctly
-   bool WriteRawData  (std::string fileName);
-   bool WriteDcmImplVR(std::string fileName);
-   bool WriteDcmImplVR(const char * fileName);
-   bool WriteDcmExplVR(std::string fileName);
-   bool WriteAcr      (std::string fileName);
+   bool WriteRawData  (std::string const & fileName);
+   bool WriteDcmImplVR(std::string const & fileName);
+   bool WriteDcmExplVR(std::string const & fileName);
+   bool WriteAcr      (std::string const & fileName);
 
    // Body in file gdcmParse.cxx
-   bool ParsePixelData(void);
+   bool ParsePixelData();
 
-   inline virtual bool SetEntryByNumber(std::string content,
+   inline virtual bool SetEntryByNumber(std::string const & content,
                                         guint16 group, guint16 element)
       { GetHeader()->SetEntryByNumber(content,group,element); 
         return true;  //default behavior ?
@@ -94,7 +93,7 @@ public:
 
      
 protected:
-   bool WriteBase(std::string FileName, FileType type);
+   bool WriteBase(std::string const & FileName, FileType type);
 
 private:
    void SwapZone(void* im, int swap, int lgr, int nb);
@@ -138,7 +137,7 @@ private:
   ///        ==-1 if ImageData never read                       
    int PixelRead;     
 
-   /// weather already parsed 
+   /// wether already parsed 
    int Parsed;
    
    /// To avoid file overwrite              

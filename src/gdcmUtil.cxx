@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2004/06/23 03:36:24 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,7 @@ std::string CreateCleanString(std::string s) {
          if(s[str.size()-1]==0)
             str[str.size()-1]=' ';
 
-   return(str);
+   return str;
 }
 
 /**
@@ -108,7 +108,7 @@ std::string GetPath(std::string &fullName)
       fullName.resize(pos1);
    else
       fullName.resize(pos2);
-   return(fullName);
+   return fullName;
 }
 
 /**
@@ -134,5 +134,5 @@ std::string GetName(std::string &fullName)
   for (int j=deb;j<fin+1;j++)
     lastName=lastName+fullName.c_str()[j];
 
-  return(lastName);
+  return lastName;
 } 

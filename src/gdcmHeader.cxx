@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:18:49 $
-  Version:   $Revision: 1.167 $
+  Date:      $Date: 2004/06/23 03:36:24 $
+  Version:   $Revision: 1.168 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,7 @@ gdcmHeader::gdcmHeader(bool exception_on_error) :
  * \ingroup gdcmHeader
  * \brief   Canonical destructor.
  */
-gdcmHeader::~gdcmHeader (void) {
+gdcmHeader::~gdcmHeader () {
 }
 
 //-----------------------------------------------------------------------------
@@ -108,7 +108,7 @@ gdcmHeader::~gdcmHeader (void) {
  * @return true when gdcmHeader is the one of a reasonable Dicom/Acr file,
  *         false otherwise. 
  */
-bool gdcmHeader::IsReadable(void) {
+bool gdcmHeader::IsReadable() {
    if(!gdcmDocument::IsReadable()) {
       return false;
    }
@@ -131,7 +131,7 @@ bool gdcmHeader::IsReadable(void) {
  * @return  The encountered size when found, 0 by default.
  *          0 means the file is NOT USABLE. The caller will have to check
  */
-int gdcmHeader::GetXSize(void) {
+int gdcmHeader::GetXSize() {
    std::string StrSize;
    StrSize = GetEntryByNumber(0x0028,0x0011);
    if (StrSize == GDCM_UNFOUND)
@@ -146,7 +146,7 @@ int gdcmHeader::GetXSize(void) {
  * @return  The encountered size when found, 1 by default 
  *          (The ACR-MEMA file contains a Signal, not an Image).
  */
-int gdcmHeader::GetYSize(void) {
+int gdcmHeader::GetYSize() {
    std::string StrSize = GetEntryByNumber(0x0028,0x0010);
    if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
@@ -167,7 +167,7 @@ int gdcmHeader::GetYSize(void) {
  *          being the ACR-NEMA "Planes" tag content.
  * @return  The encountered size when found, 1 by default (single image).
  */
-int gdcmHeader::GetZSize(void) {
+int gdcmHeader::GetZSize() {
    // Both  DicomV3 and ACR/Nema consider the "Number of Frames"
    // as the third dimension.
    std::string StrSize = GetEntryByNumber(0x0028,0x0008);
@@ -532,7 +532,7 @@ int gdcmHeader::GetImageNumber() {
   * \brief gets the info from 0008,0060 : Modality
   * @return Modality Type
   */
-ModalityType gdcmHeader::GetModality(void) {
+ModalityType gdcmHeader::GetModality() {
   // 0008 0060 CS ID Modality
   std::string StrModality = GetEntryByNumber(0x0008,0x0060);
   if (StrModality != GDCM_UNFOUND) {
@@ -609,7 +609,7 @@ int gdcmHeader::GetBitsStored() {
  * @return  The encountered number of Bits Allocated, 0 by default.
  *          0 means the file is NOT USABLE. The caller has to check it !
  */
-int gdcmHeader::GetBitsAllocated(void) {
+int gdcmHeader::GetBitsAllocated() {
    std::string StrSize = GetEntryByNumber(0x0028,0x0100);
    if (StrSize == GDCM_UNFOUND)
       return 0; // It's supposed to be mandatory
@@ -624,7 +624,7 @@ int gdcmHeader::GetBitsAllocated(void) {
  * @return  The encountered number of Samples Per Pixel, 1 by default.
  *          (Gray level Pixels)
  */
-int gdcmHeader::GetSamplesPerPixel(void) {
+int gdcmHeader::GetSamplesPerPixel() {
    std::string StrSize = GetEntryByNumber(0x0028,0x0002);
    if (StrSize == GDCM_UNFOUND)
       return 1; // Well, it's supposed to be mandatory ...
@@ -638,7 +638,7 @@ int gdcmHeader::GetSamplesPerPixel(void) {
  *          (0 : RGB Pixels , 1 : R Plane + G Plane + B Plane)
  * @return  The encountered Planar Configuration, 0 by default.
  */
-int gdcmHeader::GetPlanarConfiguration(void) {
+int gdcmHeader::GetPlanarConfiguration() {
    std::string StrSize = GetEntryByNumber(0x0028,0x0006);
    if (StrSize == GDCM_UNFOUND)
       return 0;
@@ -718,7 +718,7 @@ std::string gdcmHeader::GetPixelType() {
  *          of *image* pixels (not *icone image* pixels, if any !)
  * @return Pixel Offset
  */
-size_t gdcmHeader::GetPixelOffset(void) { 
+size_t gdcmHeader::GetPixelOffset() { 
       
    gdcmDocEntry* PixelElement = GetDocEntryByNumber(GrPixel,NumPixel);
  
@@ -742,7 +742,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
  *          -in case of embeded compressed image-)
  *         0 : NOT USABLE file. The caller has to check.
  */
-size_t gdcmHeader::GetPixelAreaLength(void) { 
+size_t gdcmHeader::GetPixelAreaLength() { 
           
    gdcmDocEntry* PixelElement = GetDocEntryByNumber(GrPixel,NumPixel);
 
@@ -801,7 +801,7 @@ bool gdcmHeader::HasLUT() {
   *          when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
   * @ return bit number of each LUT item 
   */
-int gdcmHeader::GetLUTNbits(void) {
+int gdcmHeader::GetLUTNbits() {
    std::vector<std::string> tokens;
    //int LutLength;
    //int LutDepth;
@@ -836,7 +836,7 @@ int gdcmHeader::GetLUTNbits(void) {
   *   no known Dicom reader deals with them :-(
   * @return a RGBA Lookup Table 
   */ 
-unsigned char * gdcmHeader::GetLUTRGBA(void) {
+unsigned char * gdcmHeader::GetLUTRGBA() {
 // Not so easy : see 
 // http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
 
@@ -957,7 +957,7 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
  *        else 1.
  * @return The full Transfert Syntax Name (as opposed to Transfert Syntax UID)
  */
-std::string gdcmHeader::GetTransfertSyntaxName(void) { 
+std::string gdcmHeader::GetTransfertSyntaxName() { 
    // use the gdcmTS (TS : Transfert Syntax)
    std::string TransfertSyntax = GetEntryByNumber(0x0002,0x0010);
    if (TransfertSyntax == GDCM_UNFOUND) {

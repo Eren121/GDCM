@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/06/23 03:36:24 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ int gdcmTS::Count(TSKey key)
 std::string gdcmTS::GetValue(TSKey key) 
 {
    if (ts.count(key) == 0) 
-      return (GDCM_UNFOUND);
+      return GDCM_UNFOUND;
    return ts[key];
 }
 
