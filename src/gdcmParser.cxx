@@ -1060,19 +1060,19 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
       {
          // EXPLICIT VR
          guint16 z=0, shortLgr;
-	 if (vr == "Unknown") { // Unknown was 'written'	 
+	 if (vr == "unkn") { // Unknown was 'written'	 
             shortLgr=lgr;
             fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
             fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
 	 } else {	 
             if (gr != 0xfffe) { // NO value for 'delimiters'
-	      if (vr == "Unknown") // Unknown was 'written'
+	      if (vr == "unkn") // Unknown was 'written'
 	         fwrite(&z,(size_t)2 ,(size_t)1 ,_fp);
 	      else  	 
                  fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
             }
 	 
-            if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || gr == 0xfffe) // JPR
+            if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || gr == 0xfffe)
             {
                if (gr != 0xfffe)
 	          fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
@@ -1530,7 +1530,6 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
       return;
 
    char VR[3];
-   int lgrLue;
 
    long PositionOnEntry = ftell(fp);
    // Warning: we believe this is explicit VR (Value Representation) because
@@ -1541,7 +1540,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
    
-   lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
+   int lgrLue=fread (&VR, (size_t)2,(size_t)1, fp); // lgrLue not used
    VR[2]=0;
    if(!CheckHeaderEntryVR(Entry,VR))
    {
@@ -1596,14 +1595,23 @@ bool gdcmParser::CheckHeaderEntryVR(gdcmHeaderEntry *Entry, VRKey vr)
       sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", 
                    Entry->GetGroup(),Entry->GetElement());
       dbg.Verbose(1, "gdcmParser::FindVR: ",msg);
-
+      if (Entry->GetGroup()%2 && Entry->GetElement() == 0x0000) { // Group length is UL !
+         gdcmDictEntry* NewEntry = NewVirtualDictEntry(
+                                   Entry->GetGroup(),Entry->GetElement(),
+                                   "UL","FIXME","Group Length");
+         Entry->SetDictEntry(NewEntry);			      			      			      
+      }
       return(false);
    }
 
    if ( Entry->IsVRUnknown() ) 
    {
       // When not a dictionary entry, we can safely overwrite the VR.
-      Entry->SetVR(vr);
+      if (Entry->GetElement() == 0x0000) { // Group length is UL !
+         Entry->SetVR("UL");
+      } else {
+         Entry->SetVR(vr);
+      }
    }
    else if ( Entry->GetVR() != vr ) 
    {
@@ -1668,7 +1676,6 @@ std::string gdcmParser::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
             s << NewInt32;
          }
       }
-
 #ifdef GDCM_NO_ANSI_STRING_STREAM
       s << std::ends; // to avoid oddities on Solaris
 #endif //GDCM_NO_ANSI_STRING_STREAM
@@ -2341,7 +2348,7 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
 {
    gdcmDictEntry *NewTag = GetDictEntryByName(Name);
    if (!NewTag)
-      NewTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "Unknown", Name);
+      NewTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "unkn", Name);
 
    gdcmHeaderEntry* NewEntry = new gdcmHeaderEntry(NewTag);
    if (!NewEntry) 

@@ -98,7 +98,7 @@ public:
 
 // System access
    inline int GetSwapCode(void) { return sw; }
-   guint16 GetGrPixel(void) {return GrPixel;}
+   guint16 GetGrPixel(void)  {return GrPixel;}
    guint16 GetNumPixel(void) {return NumPixel;}
    
    guint16 SwapShort(guint16);   // needed by gdcmFile
@@ -193,9 +193,9 @@ private:
    gdcmDictEntry *GetDictEntryByNumber(guint16, guint16);
    gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
                                       guint16 element,
-                                      std::string vr     = "Unknown",
-                                      std::string fourth = "Unknown",
-                                      std::string name   = "Unknown");
+                                      std::string vr     = "unkn",
+                                      std::string fourth = "unkn",
+                                      std::string name   = "unkn");
    gdcmDictEntry *NewVirtualDictEntry(gdcmHeaderEntry *);
    
    // HeaderEntry related utilities
