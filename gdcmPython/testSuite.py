@@ -531,6 +531,7 @@ class gdcmTestCase(unittest.TestCase):
       self.assertEqual(ComputeSign, Sign,
           ("Wrong signature for file %s (got %s, shoud be %s)"
            % (SourceFileName, ComputeSign, Sign)) )
+      os.unlink(TargetFileName)
 
 if __name__ == '__main__':
    unittest.main()

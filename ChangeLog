@@ -23,6 +23,8 @@
         Apparently vtk does not avoid this pitfall: when using both
         gdcm and vtk (as in vtk/vtkGdcmReader.cxx) this ended up in a
         collision of various stl members (principally cout...).
+      * gdcmPython/testSuite.py now cleanly removes temprory generated 
+        file.
 
 2003-05-12  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * src/gdcmHeader>[h/cxx] added gdcmHeader::GetPixelSize()

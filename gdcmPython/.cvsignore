@@ -3,6 +3,9 @@ gdcm.py
 gdcm_wrap.cpp
 gdcm_wrap.cxx
 gdcm_wrap.doc
+vtkGdcmReaderPython.cxx
+vtkWrapPythonInit
+vtkGdcmInit.cxx
 Makefile
 Makefile.in
 *.lo
