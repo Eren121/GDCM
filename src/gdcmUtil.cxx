@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 23:00:25 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2005/01/16 00:30:09 $
+  Version:   $Revision: 1.99 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -657,18 +657,17 @@ std::string Util::GetMACAddress()
    int stat = GetMacAddrSys(addr);
    if (0 == stat)
    {
-      //printf( "MAC address = ");
       for (int i=0; i<6; ++i) 
       {
-         //printf("%2.2x", addr[i]);
-         macaddr += Format("%2.2x", addr[i]);
+         //macaddr += Format("%2.2x", addr[i]);
+         if(i) macaddr += ".";
+         macaddr += Format("%i", (int)addr[i]);
       }
-       //printf( "\n");
       return macaddr;
    }
    else
    {
-      //printf( "No MAC address !\n" );
+      gdcmVerboseMacro("Problem in finding the MAC Address");
       return "";
    }
 }
@@ -679,60 +678,60 @@ std::string Util::GetMACAddress()
  */
 std::string Util::GetIPAddress()
 {
-  // This is a rip from 
-  // http://www.codeguru.com/Cpp/I-N/internet/network/article.php/c3445/
+   // This is a rip from 
+   // http://www.codeguru.com/Cpp/I-N/internet/network/article.php/c3445/
 #ifndef HOST_NAME_MAX
-  // SUSv2 guarantees that `Host names are limited to 255 bytes'.
-  // POSIX 1003.1-2001 guarantees that `Host names (not including the
-  // terminating NUL) are limited to HOST_NAME_MAX bytes'.
+   // SUSv2 guarantees that `Host names are limited to 255 bytes'.
+   // POSIX 1003.1-2001 guarantees that `Host names (not including the
+   // terminating NUL) are limited to HOST_NAME_MAX bytes'.
 #  define HOST_NAME_MAX 255
-  // In this case we should maybe check the string was not truncated.
-  // But I don't known how to check that...
+   // In this case we should maybe check the string was not truncated.
+   // But I don't known how to check that...
 #if defined(_MSC_VER) || defined(__BORLANDC__)
-  // with WinSock DLL we need to initialise the WinSock before using gethostname
-  WORD wVersionRequested = MAKEWORD(1,0);
-  WSADATA WSAData;
-  int err = WSAStartup(wVersionRequested,&WSAData);
-  if (err != 0)
-  {
+   // with WinSock DLL we need to initialise the WinSock before using gethostname
+   WORD wVersionRequested = MAKEWORD(1,0);
+   WSADATA WSAData;
+   int err = WSAStartup(wVersionRequested,&WSAData);
+   if (err != 0)
+   {
       // Tell the user that we could not find a usable
       // WinSock DLL.
       WSACleanup();
       return "127.0.0.1";
-  }
+   }
 #endif
   
 #endif //HOST_NAME_MAX
 
-  std::string str;
-  char szHostName[HOST_NAME_MAX+1];
-  int r = gethostname(szHostName, HOST_NAME_MAX);
-
-  if( r == 0 )
-  {
-    // Get host adresses
-    struct hostent *pHost = gethostbyname(szHostName);
-
-    for( int i = 0; pHost!= NULL && pHost->h_addr_list[i]!= NULL; i++ )
-    {
-      for( int j = 0; j<pHost->h_length; j++ )
+   std::string str;
+   char szHostName[HOST_NAME_MAX+1];
+   int r = gethostname(szHostName, HOST_NAME_MAX);
+ 
+   if( r == 0 )
+   {
+      // Get host adresses
+      struct hostent *pHost = gethostbyname(szHostName);
+ 
+      for( int i = 0; pHost!= NULL && pHost->h_addr_list[i]!= NULL; i++ )
       {
-        if( j > 0 ) str += ".";
-
-        str += Util::Format("%u", 
-            (unsigned int)((unsigned char*)pHost->h_addr_list[i])[j]);
-      }
-      // str now contains one local IP address 
-
+         for( int j = 0; j<pHost->h_length; j++ )
+         {
+            if( j > 0 ) str += ".";
+ 
+            str += Util::Format("%u", 
+                (unsigned int)((unsigned char*)pHost->h_addr_list[i])[j]);
+         }
+         // str now contains one local IP address 
+ 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
-  WSACleanup();
+   WSACleanup();
 #endif
-  
-    }
-  }
-  // If an error occur r == -1
-  // Most of the time it will return 127.0.0.1...
-  return str;
+
+      }
+   }
+   // If an error occur r == -1
+   // Most of the time it will return 127.0.0.1...
+   return str;
 }
 
 /**
@@ -743,66 +742,62 @@ std::string Util::GetIPAddress()
  */
 std::string Util::CreateUniqueUID(const std::string &root)
 {
-  // The code works as follow:
-  // echo "gdcm" | od -b
-  // 0000000 147 144 143 155 012
-  // Therefore we return
-  // radical + 147.144.143.155 + IP + time()
-  std::string radical = root;
-  if( !root.size() ) //anything better ?
-  {
-    radical = "0.0."; // Is this really usefull ?
-  }
-  // else
-  // A root was specified use it to forge our new UID:
-  radical += "147.144.143.155"; // gdcm
-  radical += ".";
-  radical += Util::GetIPAddress();
-  radical += ".";
-  radical += Util::GetCurrentDate();
-  radical += ".";
-  radical += Util::GetCurrentTime();
+   std::string radical = root;
+   if( !root.size() )
+   {
+      // No root was specified use "GDCM" then
+      // echo "gdcm" | od -b
+      // 0000000 147 144 143 155 012
+      radical = "147.144.143.155"; // special easter egg 
+   }
+   // else
+   // A root was specified use it to forge our new UID:
+   radical += Util::GetMACAddress();
+   radical += ".";
+   radical += Util::GetCurrentDate();
+   radical += ".";
+   radical += Util::GetCurrentTime();
 
-  return radical;
+   return radical;
 }
 
 template <class T>
 std::ostream &binary_write(std::ostream &os, const T &val)
 {
-    return os.write(reinterpret_cast<const char*>(&val), sizeof val);
+   return os.write(reinterpret_cast<const char*>(&val), sizeof val);
 }
 
 std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
-    uint16_t swap;
-    swap = ((( val << 8 ) & 0x0ff00 ) | (( val >> 8 ) & 0x00ff ) );
-    return os.write(reinterpret_cast<const char*>(&swap), 2);
+   uint16_t swap;
+   swap = ((( val << 8 ) & 0x0ff00 ) | (( val >> 8 ) & 0x00ff ) );
+   return os.write(reinterpret_cast<const char*>(&swap), 2);
 #else
-    return os.write(reinterpret_cast<const char*>(&val), 2);
+   return os.write(reinterpret_cast<const char*>(&val), 2);
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
 std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
-    uint32_t swap;
-    swap = ( ((val<<24) & 0xff000000) | ((val<<8)  & 0x00ff0000) | 
-             ((val>>8)  & 0x0000ff00) | ((val>>24) & 0x000000ff) );
-    return os.write(reinterpret_cast<const char*>(&swap), 4);
+   uint32_t swap;
+   swap = ( ((val<<24) & 0xff000000) | ((val<<8)  & 0x00ff0000) | 
+            ((val>>8)  & 0x0000ff00) | ((val>>24) & 0x000000ff) );
+   return os.write(reinterpret_cast<const char*>(&swap), 4);
 #else
-    return os.write(reinterpret_cast<const char*>(&val), 4);
+   return os.write(reinterpret_cast<const char*>(&val), 4);
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
 std::ostream &binary_write(std::ostream &os, const char *val)
 {
-    return os.write(val, strlen(val));
+   return os.write(val, strlen(val));
 }
 
 std::ostream &binary_write(std::ostream &os, std::string const &val)
 {
-    return os.write(val.c_str(), val.size());
+   return os.write(val.c_str(), val.size());
 }
 
 } // end namespace gdcm
