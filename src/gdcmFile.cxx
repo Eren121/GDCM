@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 14:12:03 $
-  Version:   $Revision: 1.112 $
+  Date:      $Date: 2004/06/28 14:29:52 $
+  Version:   $Revision: 1.113 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -781,45 +781,25 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
       Header->SetEntryByNumber(rows   ,  0x0028, 0x0011);
    }
    // ----------------- End of Special Patch ----------------
-   
-   /// \todo get the grPixel, numPixel values (for some ACR-NEMA images only)
-   
+      
    uint16_t grPixel  = Header->GetGrPixel();
    uint16_t numPixel = Header->GetNumPixel();;
-    
-   // Update Pixel Data Length
-   // the *last* of the (GrPixel, NumPixel), if many.
           
-   TagKey key = gdcmDictEntry::TranslateToKey(grPixel, numPixel); 
-   TagDocEntryHT::iterator p2;
    gdcmDocEntry* PixelElement;
-   
-   IterHT it = Header->GetEntry().equal_range(key); // get a pair of iterators first-last synonym   
 
-   if ( Header->GetEntry().count(key) == 1 ) // only the first is significant
-   {
-      p2 = it.first; // iterator on the first (unique) synonym
-   }
-   else
-   {
-      p2 = it.second;// iterator on the last synonym
-   }
-   
-   PixelElement = p2->second;        // H Table target column (2-nd col)
-  // PixelElement->SetPrintLevel(2);
-  // PixelElement->Print();      
+   PixelElement = GetHeader()->GetDocEntryByNumber(grPixel, numPixel);  
  
    if ( PixelRead == 1 )
    {
+      // we read pixel 'as is' (no tranformation LUT -> RGB)
       PixelElement->SetLength( ImageDataSizeRaw );
    }
    else if ( PixelRead == 0 )
    {
+      // we tranformed GrayLevel pixels + LUT into RGB Pixel
       PixelElement->SetLength( ImageDataSize );
    }
-   
-   //PixelElement->SetPrintLevel(2);
-   //PixelElement->Print();    
+ 
    Header->Write(fp1, type);
 
    // --------------------------------------------------------------

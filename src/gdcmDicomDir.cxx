@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:30:58 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2004/06/28 14:29:52 $
+  Version:   $Revision: 1.54 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,7 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
 {
    // que l'on ai passe un root directory ou un DICOMDIR
    // et quelle que soit la valeur de parseDir,
-   // on a lance gdcmDocument 
+   // on a deja lance gdcmDocument 
    Initialize();
 
    // gdcmDocument already executed
@@ -118,7 +118,7 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
       if (e==NULL) {
          dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : NO Directory record"
                         " sequence (0x0004,0x1220)");
-         /// \todo FIXME : what to do when the parsed file IS NOT a
+         /// \todo FIXME : what do we do when the parsed file IS NOT a
          ///       DICOMDIR file ?         
       }      
       CreateDicomDir();
@@ -417,20 +417,18 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
                              it!=fileList.end(); 
                              ++it) 
    {
-      std::cout << "nom fichier " << it->c_str() << std::endl; //JPR
-
       progress=(float)(count+1)/(float)fileList.size();
       CallProgressMethod();
       if(abort)
           break;
 
-      header=new gdcmHeader(it->c_str());
+      header=new gdcmHeader(it->c_str(),false,true);
       if(!header) {
          std::cout << "echec new Header " << it->c_str() << std::endl; // JPR
       }
       if(header->IsReadable()) {
          list.push_back(header);  // adds the file header to the chained list
-         std::cout << "readable : " <<it->c_str() << std::endl;
+         std::cout << "readable : " <<it->c_str() << std::endl; // JPR
        }
       else
          delete header;

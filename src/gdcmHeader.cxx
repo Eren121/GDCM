@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 11:01:18 $
-  Version:   $Revision: 1.172 $
+  Date:      $Date: 2004/06/28 14:29:52 $
+  Version:   $Revision: 1.173 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -119,7 +119,7 @@ void gdcmHeader::Write(FILE* fp,FileType filetype) {
    // Drop Palette Color, if necessary
    
    if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' ) {
-    
+    // if SamplesPerPixel = 3, sure we don't need any LUT !   
     // Drop 0028|1101, 0028|1102, 0028|1103
     // Drop 0028|1201, 0028|1202, 0028|1203
 
@@ -164,7 +164,6 @@ void gdcmHeader::Write(FILE* fp,FileType filetype) {
  */
 bool gdcmHeader::IsReadable() {
    if(!gdcmDocument::IsReadable()) {
-      //std::cout << "doc non Readable " << std::endl; //JPR
       return false;
    }
    std::string res = GetEntryByNumber(0x0028, 0x0005);

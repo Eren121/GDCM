@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 11:01:18 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/06/28 14:29:52 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,9 +99,9 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
                            bool enable_sequences,
                            bool ignore_shadow) 
               : gdcmElementSet(-1)   {
-   enableSequences=enable_sequences;
    IgnoreShadow   =ignore_shadow;
-   
+   //enableSequences=enable_sequences;
+   enableSequences=true; // JPR // TODO : remove params out of the constructor
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = inFilename;
    Initialise();
@@ -176,7 +176,7 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
 gdcmDocument::gdcmDocument(bool exception_on_error) 
              :gdcmElementSet(-1)    {
    (void)exception_on_error;
-   enableSequences=0;
+   //enableSequences=0; // ?!? JPR
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
@@ -261,12 +261,14 @@ bool gdcmDocument::SetShaDict(DictKey dictName){
  *         false otherwise. 
  */
 bool gdcmDocument::IsReadable(void) { 
+
    if(Filetype==gdcmUnknown) {
-      //std::cout << " gdcmDocument::IsReadable: Filetype " << Filetype
-      //         << " " << "gdcmUnknown " << gdcmUnknown << std::endl; //JPR
+      std::cout << " gdcmDocument::IsReadable: Filetype " << Filetype
+               << " " << "gdcmUnknown " << gdcmUnknown << std::endl; //JPR
       dbg.Verbose(0, "gdcmDocument::IsReadable: wrong filetype");
       return false;
    }
+
    if(tagHT.empty()) { 
       dbg.Verbose(0, "gdcmDocument::IsReadable: no tags in internal"
                      " hash table.");
