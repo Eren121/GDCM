@@ -59,6 +59,14 @@ SUBDIRS(
 )
 
 #-----------------------------------------------------------------------------
+# Adding GDCM_DATA_ROOT
+FIND_PATH(GDCM_DATA_ROOT gdcm-ACR-LibIDO.acr
+	${GDCM_SOURCE_DIR}/../gdcmData 
+	$ENV{GDCM_DATA}
+	$ENV{PUB_DICT_PATH}/../../gdcmData
+)
+
+#-----------------------------------------------------------------------------
 # Add the testing directories
 OPTION(GDCM_BUILD_TESTING "Test the project" ON)
 IF(GDCM_BUILD_TESTING)

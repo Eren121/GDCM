@@ -32,7 +32,7 @@ int hashtest( int, char * [] ) {
 	// Voir :
 	//http://www.developer.com/net/cplus/article.php/10919_2119781_3
 	//
-	// domage que ca ne marche pas ...
+	// dommage que ca ne marche pas ...
 
   return 0;
 }

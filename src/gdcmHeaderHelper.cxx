@@ -151,7 +151,7 @@ float gdcmHeaderHelper::GetXSpacing() {
   * @return Y dimension of a pixel
   */
 float gdcmHeaderHelper::GetYSpacing() {
-   float xspacing, yspacing;
+   float yspacing;
    std::string StrSpacing = GetEntryByNumber(0x0028,0x0030);
   
    if (StrSpacing == GDCM_UNFOUND) {

@@ -15,17 +15,22 @@ ENDIF(NOT CMAKE_HAVE_STDINT_H)
 
 
 SET(TEST_SOURCES
-  PrintHeader.cxx
-  testWrite.cxx
-  testChangeEntete.cxx
+  PrintHeader.cxx #require test.acr
+  bug1.cxx        #require test.acr
+  dcm2acr.cxx     #require test.acr
   hashtest.cxx
-  bug1.cxx
-  pourFindTaggs.cxx
-  dcm2acr.cxx
-  PrintDicomDir.cxx
   makeDicomDir.cxx
   testDicomDir.cxx
+  testWrite.cxx
 )
+IF (GDCM_DATA_ROOT)
+	# add tests that require data
+	SET(TEST_SOURCES ${TEST_SOURCES}     
+	  PrintDicomDir.cxx
+    pourFindTaggs.cxx
+    testChangeEntete.cxx
+  )
+ENDIF (GDCM_DATA_ROOT)
 
 # include stuff
 INCLUDE_DIRECTORIES(

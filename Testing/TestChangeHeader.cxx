@@ -19,8 +19,9 @@ int testChangeEntete(int argc, char* argv[]) {
 	int dataSize;
 		
 	if (argc < 3) {
-		printf ("usage :\n testChangeEntete nomFichierPourEntete nomFichierPourDonnées \n");
-		exit(0);	
+		std::cerr << "usage :" << std::endl << 
+      argv[0] << " nomFichierPourEntete nomFichierPourDonnées" << std::endl;
+		return 0;	
 	}
 
 	premier = argv[1];
