@@ -301,12 +301,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT  = @GDCM_SOURCE_DIR@/src                      \
-         @GDCM_SOURCE_DIR@/Doc/DoxyPython.txt       \
-         @GDCM_SOURCE_DIR@/Doc/DoxyMainPage.txt     \
-         @GDCM_SOURCE_DIR@/Doc/DoxyInstallation.txt \
-         @GDCM_SOURCE_DIR@/Doc/DoxyDevelInstal.txt  \
-         @GDCM_SOURCE_DIR@/Doc/DoxyIntroduction.txt 
+INPUT  = @GDCM_DOXYGEN_INPUT@
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -327,8 +322,7 @@ RECURSIVE              = NO
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = @GDCM_SOURCE_DIR@/src/iddcmjpeg.h      \
-                         @GDCM_SOURCE_DIR@/src/src/gdcmJpeg.cxx
+EXCLUDE                = @GDCM_DOXYGEN_EXCLUDE@
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or directories 
 # that are symbolic links (a Unix filesystem feature) are excluded from the input.
@@ -444,7 +438,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = html.developper
+HTML_OUTPUT            = @GDCM_HTML_OUTPUT@
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for 
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank 

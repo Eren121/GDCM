@@ -18,8 +18,6 @@ SET(TARGET_DIR
 #  DoxyInstallation.txt \
 #  DoxyMainPage.txt
 
-#all-local: html.developper/index.html
-
 IF(GDCM_DOXYGEN)
 
 #  ADD_CUSTOM_COMMAND(
@@ -31,15 +29,60 @@ IF(GDCM_DOXYGEN)
 #)
 
 # http://www.cmake.org/pipermail/cmake/2003-April/003673.html
-CONFIGURE_FILE(
-    ${GDCM_SOURCE_DIR}/Doc/doxygen.config.in
-    ${GDCM_BINARY_DIR}/Doc/DoxyfileDeveloppers
+# Too bad CMake doesn't support multiline ""
+SET(GDCM_DOXYGEN_INPUT_COMMON
+  "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt   ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyInstallation.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyIntroduction.txt"
+)
+SET(GDCM_DOXYGEN_EXCLUDE_COMMON
 )
 
-  ADD_CUSTOM_TARGET(doc
+#Should rewrote this thing with FOREACH:
+#-----------------------------------------------------------------------------
+# Build the documentation for developpers
+
+  SET(GDCM_HTML_OUTPUT
+    html.developper
+  )
+  SET(GDCM_DOXYGEN_INPUT
+    "${GDCM_DOXYGEN_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyDevelInstal.txt"
+  )
+  SET(GDCM_DOXYGEN_EXCLUDE
+    "${GDCM_DOXYGEN_EXCLUDE_COMMON}  ${GDCM_SOURCE_DIR@/src/iddcmjpeg.h     ${GDCM_SOURCE_DIR@/src/src/gdcmJpeg.cxx"
+  )
+  CONFIGURE_FILE(
+      ${GDCM_SOURCE_DIR}/Doc/doxygen.config.in
+      ${GDCM_BINARY_DIR}/Doc/DoxyfileDeveloppers
+      IMMEDIATE
+  )
+
+  ADD_CUSTOM_TARGET(doc-developer
    ALL
    ${DOXYGEN}
    ${GDCM_BINARY_DIR}/Doc/DoxyfileDeveloppers)
+
+#-----------------------------------------------------------------------------
+# Build the documentation for user
+
+  SET(GDCM_HTML_OUTPUT
+    html.user
+  )
+  SET(GDCM_DOXYGEN_INPUT
+    "${GDCM_DOXYGEN_INPUT_COMMON}"
+  )
+  SET(GDCM_DOXYGEN_EXCLUDE
+    "${GDCM_DOXYGEN_EXCLUDE_COMMON}"
+  )
+  CONFIGURE_FILE(
+      ${GDCM_SOURCE_DIR}/Doc/doxygen.config.in
+      ${GDCM_BINARY_DIR}/Doc/DoxyfileUsers
+      IMMEDIATE
+  )
+
+  ADD_CUSTOM_TARGET(doc-user
+   ALL
+   ${DOXYGEN}
+   ${GDCM_BINARY_DIR}/Doc/DoxyfileUsers)
+
 
   INSTALL_FILES(${HTML_DIR} "\\.css$")
   INSTALL_FILES(${HTML_DIR} "\\.gif$")
@@ -48,28 +91,8 @@ CONFIGURE_FILE(
   #INSTALL_FILES(${HTML_DIR} "\\.stop$")
 ENDIF(GDCM_DOXYGEN)
 
-#if ENABLE_DOXYGEN
-#html.developper/index.html: DoxyfileDeveloppers
-#	doxygen DoxyfileDeveloppers
-#else
-#html.developper/index.html:
-#endif
-
-#clean-local:
-#	rm -f *~ *.bak
-#	rm -rf man latex html.developper rtf
-
-#install-data-local: html.developper
-#	$(mkinstalldirs) $(DESTDIR)$(TARGET_DIR)
-#	(installfiles=`echo html.developper/*`; \
-#        if test "$$installfiles" = 'html.developper/*'; \
-#        then echo '-- Nothing to install' ; \
-#        else \
-#          for i in $$installfiles; do \
-#            echo '-- Installing '$$i ; \
-#            $(INSTALL_DATA) $$i $(DESTDIR)$(TARGET_DIR); \
-#          done; \
-#        fi)
+#-----------------------------------------------------------------------------
+# m4 that hasn't been translated
 
 #dist-hook:
 #	rm -rf $(distdir)/html.developper
