@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/03 11:03:41 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/03/09 09:45:33 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -269,6 +269,21 @@ int WriteSimple(Image &img)
    size_t dataSizeWritten = reread->GetImageDataSize();
    uint8_t *imageDataWritten = reread->GetImageData();
 
+   // Test the image write mode
+   if (reread->GetFile()->GetFileType() != file->GetWriteType())
+   {
+      std::cout << "Failed" << std::endl
+         << "        File type differ: "
+         << file->GetWriteType() << " # " 
+         << reread->GetFile()->GetFileType() << std::endl;
+      delete fileToBuild;
+      delete file;
+      delete reread;
+      delete[] imageData;
+
+      return 1;
+   }
+
    // Test the image size
    if (fileToBuild->GetXSize() != reread->GetFile()->GetXSize() ||
        fileToBuild->GetYSize() != reread->GetFile()->GetYSize() ||
@@ -337,13 +352,13 @@ int TestWriteSimple(int argc, char *argv[])
       return 1;
    }
 
-  // gdcm::Debug::DebugOn();
+   //gdcm::Debug::DebugOn();
        
    int ret=0;
    int i=0;
    while( Images[i].sizeX>0 && Images[i].sizeY>0 )
    {
-      std::cout << std::endl << "Test n :" << i << std::endl;
+      std::cout << "Test n :" << i; 
       ret += WriteSimple(Images[i] );
       i++;
    }

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/03/07 18:48:02 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/03/09 09:45:33 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -660,6 +660,7 @@ bool FileHelper::Write(std::string const &fileName)
 
    RestoreWrite();
    RestoreWriteFileType();
+   RestoreWriteMandatory();
 
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
@@ -943,17 +944,6 @@ void FileHelper::SetWriteFileTypeToImplicitVR()
  */ 
 void FileHelper::RestoreWriteFileType()
 {
-   // group 0002 may be pushed out for ACR-NEMA writting purposes 
-   Archive->Restore(0x0002,0x0000);
-   Archive->Restore(0x0002,0x0001);
-   Archive->Restore(0x0002,0x0002);
-   Archive->Restore(0x0002,0x0003);
-   Archive->Restore(0x0002,0x0010);
-   Archive->Restore(0x0002,0x0012);
-   Archive->Restore(0x0002,0x0013);
-   Archive->Restore(0x0002,0x0016);
-   Archive->Restore(0x0002,0x0100);
-   Archive->Restore(0x0002,0x0102);
 }
 
 /**
@@ -1054,16 +1044,10 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group, uint16_t elem,
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    BinEntry *newE;
 
-   if( oldE )  // The pb stands for Pixels Element, 
-               // when File is created ex-nihilo
+   if( oldE ) 
       if( oldE->GetVR()!=vr )
-      {
-         gdcmWarningMacro( " Unconsistent VR for Bin Entry : [" << oldE->GetVR() 
-                           << "] vs [" << vr << "] for " <<
-                           std::hex << group << "|" << elem);
-         FileInternal->RemoveEntry( oldE );
          oldE = NULL;
-      } 
+
    if( oldE )
    {
       newE = new BinEntry(oldE->GetDictEntry());
@@ -1121,7 +1105,6 @@ void FileHelper::CheckMandatoryElements()
    // Create them if not found
    // Always modify the value
    // Push the entries to the archive.
-
    ValEntry *e_0002_0000 = CopyValEntry(0x0002,0x0000);
       e_0002_0000->SetValue("0"); // for the moment
       Archive->Push(e_0002_0000);
@@ -1130,6 +1113,7 @@ void FileHelper::CheckMandatoryElements()
       e_0002_0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(),
                                false);
       e_0002_0001->SetLength(2);
+      Archive->Push(e_0002_0001);
 
    ValEntry *e_0002_0002 = CopyValEntry(0x0002,0x0002);
       // [Secondary Capture Image Storage]
@@ -1141,11 +1125,6 @@ void FileHelper::CheckMandatoryElements()
       e_0002_0003->SetValue(Util::CreateUniqueUID());
       Archive->Push(e_0002_0003); 
 
-   ValEntry *e_0002_0010 = CopyValEntry(0x0002,0x0010);
-      //[Explicit VR - Little Endian] 
-      e_0002_0010->SetValue("1.2.840.10008.1.2.1"); 
-      Archive->Push(e_0002_0010);
- 
    // 'Implementation Class UID'
    ValEntry *e_0002_0012 = CopyValEntry(0x0002,0x0012);
       e_0002_0012->SetValue(Util::CreateUniqueUID());
@@ -1366,6 +1345,23 @@ void FileHelper::CheckMandatoryElements()
    }
 } 
  
+/**
+ * \brief Restore in the File the initial group 0002
+ */
+void FileHelper::RestoreWriteMandatory()
+{
+   // group 0002 may be pushed out for ACR-NEMA writting purposes 
+   Archive->Restore(0x0002,0x0000);
+   Archive->Restore(0x0002,0x0001);
+   Archive->Restore(0x0002,0x0002);
+   Archive->Restore(0x0002,0x0003);
+   Archive->Restore(0x0002,0x0012);
+   Archive->Restore(0x0002,0x0013);
+   Archive->Restore(0x0002,0x0016);
+   Archive->Restore(0x0002,0x0100);
+   Archive->Restore(0x0002,0x0102);
+}
+
 //-----------------------------------------------------------------------------
 // Private
 /**
