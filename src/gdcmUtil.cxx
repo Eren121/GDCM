@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 19:10:07 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2005/01/06 19:20:23 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -312,7 +312,6 @@ bool Util::IsCurrentProcessorBigEndian()
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h> //for bzero
 #include <unistd.h>
 
 #ifdef _WIN32
@@ -339,6 +338,8 @@ typedef BOOL(WINAPI * pSnmpExtensionQuery) (
 
 typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
         OUT AsnObjectIdentifier * supportedView);
+#else
+#include <strings.h> //for bzero on unix
 #endif //_WIN32
 
 #ifdef __linux__
