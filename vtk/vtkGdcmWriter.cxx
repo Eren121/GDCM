@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:25 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/28 10:07:35 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDebug.h"
+#include "gdcmUtil.h"
 #include "vtkGdcmWriter.h"
 
 #include <vtkObjectFactory.h>
@@ -26,7 +27,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.15 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.16 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -36,6 +37,11 @@ vtkGdcmWriter::vtkGdcmWriter()
    this->LookupTable = NULL;
    this->FileDimensionality = 3;
    this->WriteType = VTK_GDCM_WRITE_TYPE_EXPLICIT_VR;
+
+   UIDPrefix = "";
+   StudyInstanceUID = "";
+   SeriesInstanceUID = "";
+   FrameOfReferenceInstanceUID = "";
 }
 
 vtkGdcmWriter::~vtkGdcmWriter()
@@ -68,6 +74,31 @@ const char *vtkGdcmWriter::GetWriteTypeAsString()
       default :
          return "Unknow type";
    }
+}
+
+void vtkGdcmWriter::SetUIDPrefix(const char *prefix)
+{
+   UIDPrefix = prefix;
+}
+
+const char *vtkGdcmWriter::GetUIDPrefix()
+{
+   return UIDPrefix.c_str();
+}
+
+void vtkGdcmWriter::NewStudyInstanceUID()
+{
+   StudyInstanceUID = "";
+}
+
+void vtkGdcmWriter::NewSeriesInstanceUID()
+{
+   SeriesInstanceUID = "";
+}
+
+void vtkGdcmWriter::NewFrameOfReferenceInstanceUID()
+{
+   FrameOfReferenceInstanceUID = "";
 }
 
 //-----------------------------------------------------------------------------
@@ -313,6 +344,21 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)
 {
    // From here, the write of the file begins
    gdcm::FileHelper *dcmFile = new gdcm::FileHelper();
+
+   // Set the image UID
+   if( StudyInstanceUID.empty() )
+      StudyInstanceUID = gdcm::Util::CreateUniqueUID( UIDPrefix );
+   if( SeriesInstanceUID.empty() )
+      SeriesInstanceUID = gdcm::Util::CreateUniqueUID( UIDPrefix );
+   if( FrameOfReferenceInstanceUID.empty() )
+      FrameOfReferenceInstanceUID = gdcm::Util::CreateUniqueUID( UIDPrefix );
+   std::string uid = gdcm::Util::CreateUniqueUID( UIDPrefix );
+
+   dcmFile->InsertValEntry(uid,0x0008,0x0018); //[SOP Instance UID]
+   dcmFile->InsertValEntry(uid,0x0002,0x0003); //[Media Stored SOP Instance UID]
+   dcmFile->InsertValEntry(StudyInstanceUID,0x0020,0x000d); //[Study Instance UID]
+   dcmFile->InsertValEntry(SeriesInstanceUID,0x0020,0x000e); //[Series Instance UID]
+   dcmFile->InsertValEntry(FrameOfReferenceInstanceUID,0x0020, 0x0052); //[Frame of Reference UID] 
 
    // Set the image informations
    SetImageInformation(dcmFile,image);

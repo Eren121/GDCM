@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 13:49:08 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/28 10:07:35 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,6 @@
 
 #include <vtkImageWriter.h>
 #include <vtkLookupTable.h>
-#include <list>
 #include <string>
 
 //-----------------------------------------------------------------------------
@@ -52,6 +51,13 @@ public:
    vtkGetMacro(WriteType,int);
    const char *GetWriteTypeAsString();
 
+   void SetUIDPrefix(const char *prefix);
+   const char *GetUIDPrefix();
+
+   void NewStudyInstanceUID();
+   void NewSeriesInstanceUID();
+   void NewFrameOfReferenceInstanceUID();
+
 protected:
    vtkGdcmWriter();
    ~vtkGdcmWriter();
@@ -65,8 +71,14 @@ private:
 // Variables
    vtkLookupTable *LookupTable;
    int WriteType;
+
+   //BTX
+   std::string UIDPrefix;
+   std::string StudyInstanceUID;
+   std::string SeriesInstanceUID;
+   std::string FrameOfReferenceInstanceUID;
+   //ETX
 };
 
 //-----------------------------------------------------------------------------
 #endif
-

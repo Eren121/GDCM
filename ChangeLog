@@ -1,4 +1,7 @@
 2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * vtk/vtkGdcmWriter.[h|cxx] : add the gestion of UID
+
+2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmUtil.cxx : compilation fix on Win32
    * src/gdcmUtil.[h|cxx] : Set the default GDCM UID in a static constant
      variable, to be easy found. Add methods to change the default UID.
