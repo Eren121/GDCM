@@ -102,14 +102,14 @@ ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
-  # serial killer
+  # serial killer (also segfaults vtkgdcmViewer, but NOT PrintFile)
   "gdcm-JPEG-LossLessThoravision.dcm"
   #temporarily remove as it kills my gnome session (but not kde)
-  "cr172241.dcm"
+  "KODAK-12-MONO1-Odd_Terminated_Sequence.dcm"
   #png looks ugly
   "emptyImage.dcm"
   #png looks ugly
-  "irmPhlipsNew1.dcm"
+  "PHILIPS_Gyroscan-8-MONO2-Odd_Sequence.dcm"
   #png looks ugly
   "mriThruVPRO.dcm"
   #segfaults TestReadWriteReadCompare (same pb as below) 
@@ -118,8 +118,8 @@ SET(BLACK_LIST
   "SIEMENS_GBS_III-16-ACR_NEMA_1.acr"
   #segfaults TestReadWriteReadCompare (pixels not parsed properly):
   "I9000001.dcm"
-  "icone.dcm"
-  "sonataMonaco.dcm"
+  "PICKER-16-MONO2-Nested_icon.dcm"
+  "SIEMENS_Sonata-16-MONO2-Value_Multiplicity.dcm"
   # Fails on TestAllReadCompareDicom at the RE-reading stage with message:
   #    Big trouble : Pixel Element (7fe0,10) NOT found
   # The temporary file GDCMDATAHOME/BaselineDicom/SIEMENS_Sonata-12-MONO2-SQ.dcm

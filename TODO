@@ -29,11 +29,6 @@ Convert the C-like IO to C++ IO:
   gdcmElValSet::GetElValueByNumber except for the returned code.
   gdcmHeader::SetPubElValLengthByNumber (which is based on 
   gdcmElValSet::SetElValueLengthByNumber) is used nowhere...
-* The declarations commented out and starting with "TODO Swig" (try
-  grep "TODO Swig" *.h) needed to be temporarily removed for swig to
-  proceed correctly (in fact problems appears at loading of _gdcm.[so/dll]).
-  So, simply uncomment the declaration once you provided the definition of
-  the method...
 * Fix the bug in Test/bug1.cxx (see first comment line): Win32 only.
 * All (or at least many of) the methods of gdcmHeader whose only arguments
   are an ElValue* (e.g.  FindLength, FindVR, LoadElementValue...) can

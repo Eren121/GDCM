@@ -1,3 +1,9 @@
+2004-08-03 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * gdcmPython/testSuite.py: all the test suite in python is now moved
+    to it's C++ version (see gdcmData/TestAllEntryVerifyReference.txt)
+  * Test/CMakeLists.txt adapted to renaming of files in gdcmData
+  * gdcm/TODO and src/gdcmDictSet.h cleaned up frow the "TODO Swig" oldies
+
 2004-08-02 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * gdcmPython/CMakeLists.txt: SWIG_FLAGS doesn't declare includeall
     to avoid inclusion recursion until STL is reached.
