@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 gdi32.lib kernel32.lib /nologo /dll /machine:I386 /nodefaultlib /out:"..\..\lib\libgdcmijpeg12.dll"
+# ADD LINK32 kernel32.lib msvcrt.lib /nologo /dll /machine:I386 /nodefaultlib /out:"..\..\lib\libgdcmijpeg12.dll"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=copy     Release__libgdcmijpeg12\libgdcmijpeg12.lib     ..\..\lib\    	copy     ..\..\lib\libgdcmijpeg12.dll     ..\..\gdcmPython\    	copy     ..\..\lib\libgdcmijpeg12.dll     ..\..\vtk\ 	copy  ..\..\lib\libgdcmijpeg12.dll            ..\..\test\ 
