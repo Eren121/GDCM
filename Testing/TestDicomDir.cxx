@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 03:22:24 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/31 12:36:59 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -173,7 +173,6 @@ int TestDicomDir(int argc, char* argv[])
              << std::endl<< std::endl;
   // Read what we wrote  
    gdcm::DicomDir *d2 = new gdcm::DicomDir("NewDICOMDIR");
-
    if (!d2)
    {
       std::cout << std::endl << std::endl  
@@ -196,6 +195,8 @@ int TestDicomDir(int argc, char* argv[])
    if (!d2)
    {
       std::cout << "NewDICOMDIR contains no Patient ?!?" << std::endl;
+      delete dicomdir;
+      delete d2;
       return 1;
    }
    
@@ -203,7 +204,11 @@ int TestDicomDir(int argc, char* argv[])
    {  // we process all the PATIENT of this DICOMDIR
 
       if ( CompareSQItem(pa2,pa1) == 1 )
-        return 1;
+      {
+         delete dicomdir;
+         delete d2;
+         return 1;
+      }
   
       // just to allow human reader to be sure ...
       std::cout << pa2->GetEntryValue(0x0010, 0x0010) 
@@ -215,7 +220,11 @@ int TestDicomDir(int argc, char* argv[])
       while ( st1 && st2 )   
       {
          if ( CompareSQItem(st2,st1) == 1 )
-           return 1;
+         {
+            delete dicomdir;
+            delete d2;
+            return 1;
+         }
 
          // just to allow human reader to be sure ...
          std::cout << "--- "<< st2->GetEntryValue(0x0008, 0x1030);
@@ -240,7 +249,11 @@ int TestDicomDir(int argc, char* argv[])
             while ( im1 && im2 ) // we process all the IMAGE of this serie
             {
                if ( CompareSQItem(im2,im1) == 1 )
+               {
+                  delete dicomdir;
+                  delete d2;
                   return 1; 
+               }
 
                im1 = se1->GetNextImage();   
                im2 = se2->GetNextImage();   
@@ -257,6 +270,7 @@ int TestDicomDir(int argc, char* argv[])
    
    std::cout << std::flush;
    delete dicomdir;
+   delete d2;
 
    return 0;
 }
