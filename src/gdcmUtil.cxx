@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.20 2003/09/24 13:00:59 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.21 2003/09/24 13:21:46 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -91,7 +91,7 @@ gdcmDictSet * gdcmGlobal::GetDicts(void) {
 
 ///////////////////////////////////////////////////////////////////////////
 // Because is not yet available in g++2.96
-istream& eatwhite(istream& is) {
+std::istream& eatwhite(std::istream& is) {
    char c;
    while (is.get(c)) {
       if (!isspace(c)) {
@@ -105,9 +105,9 @@ istream& eatwhite(istream& is) {
 ///////////////////////////////////////////////////////////////////////////
 // Because is not  available in C++ (?)
 
-void Tokenize (const string& str,
-               vector<string>& tokens,
-               const string& delimiters) {
+void Tokenize (const std::string& str,
+               std::vector<std::string>& tokens,
+               const std::string& delimiters) {
    string::size_type lastPos = str.find_first_not_of(delimiters,0);
    string::size_type pos     = str.find_first_of    (delimiters,lastPos);
    while (string::npos != pos || string::npos != lastPos) {
