@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:12 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/13 11:05:26 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,18 +38,19 @@ int main(int argc, char* argv[])
    //gdcm::ListDicomDirImage::const_iterator    itImage;
    gdcm::TSKey v;
     
-   std::string file; 
+   std::string fileName; 
    if (argc > 1) 
-      file = argv[1];    
-   else {
-      file += GDCM_DATA_ROOT;
-      file += "/DICOMDIR";
+      fileName = argv[1];    
+   else 
+   {
+      fileName = GDCM_DATA_ROOT;
+      fileName += "/DICOMDIR";
    }
 
    if (argc > 3)
       gdcm::Debug::SetDebugOn();
 
-   e1 = new gdcm::DicomDir( file );
+   e1 = new gdcm::DicomDir( fileName );
 
    if (argc > 2) {
       int level = atoi(argv[2]);   
@@ -158,6 +159,10 @@ int main(int argc, char* argv[])
 //        << std::endl<< std::endl;
 //   e1->Print();
 
+   if(e1->IsReadable())
+      std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
+   else
+      std::cout <<std::endl<<fileName<<" is NOT Readable"<<std::endl;
    std::cout<<std::flush;
    delete e1;
 
