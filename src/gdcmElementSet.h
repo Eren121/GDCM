@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/10/07 18:09:11 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,10 +19,10 @@
 #ifndef GDCMELEMENTSET_H
 #define GDCMELEMENTSET_H
 
-#include <map>
-#include <iostream>
 #include "gdcmCommon.h"
 #include "gdcmDocEntrySet.h"
+#include <map>
+#include <iostream>
 
 class gdcmValEntry;
 class gdcmBinEntry;
