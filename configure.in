@@ -37,8 +37,10 @@ AM_CONDITIONAL(HAVE_DOXYGEN, $DOXYGEN)
 AC_SUBST(HAVE_DOXYGEN)
 
 dnl Let people disable the doxygen stuff.
-AC_ARG_ENABLE(docygen, [  --enable-doxygen         Use doxygen to build documentation (default=auto)], enable_doxygen="$enableval",
-enable_doxygen=auto)
+AC_ARG_ENABLE(docygen,
+  [  --enable-doxygen        Use doxygen to build documentation (default=auto)],
+  [enable_doxygen="$enableval"],
+  [enable_doxygen=auto])
 
 if test x$enable_doxygen = xauto ; then
   if test x$DOXYGEN = xtrue ; then
@@ -54,8 +56,9 @@ AM_CONDITIONAL(ENABLE_DOXYGEN, test x$enable_doxygen = xyes)
 
 dnl Checks for Python
 AC_ARG_ENABLE(python,
-        [  --enable-python      Enable Python language support (default=no).],,
-        [enable_python="no"])
+     [  --enable-python         Enable Python language support (default=no).],
+     ,
+     [enable_python="no"])
 dnl AC_MSG_RESULT($enable_python)
 build_python=no
 if test "yes" = "$enable_python"; then
@@ -70,8 +73,9 @@ AM_CONDITIONAL(BUILD_PYTHON, test x$build_python = xyes)
 
 dnl Checks for vtk
 AC_ARG_ENABLE(vtk,
-        [  --enable-vtk      Enable vtk extensions support (default=no).],,
-        [enable_vtk="no"])
+    [  --enable-vtk            Enable vtk extensions support (default=no).],
+    ,
+    [enable_vtk="no"])
 AM_CONDITIONAL(BUILD_VTK, test x$enable_vtk = xyes)
 
 dnl produce Makefile.in files

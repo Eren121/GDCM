@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.2 2003/05/12 14:32:43 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.3 2003/05/21 08:21:17 frog Exp $
 #include "vtkGdcmReader.h"
 #include "vtkByteSwap.h"
 #include <stdio.h>
@@ -190,7 +190,9 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
     Source      += LineSize;
     Destination -= LineSize;
     }
-
+  // The "size" of the vtkScalars data is expressed in number of points,
+  // and is not the memory size representing those points:
+  size = size / GdcmFile.GetPixelSize();
   data->GetPointData()->GetScalars()->SetVoidArray(mem, size, 0);
   this->Modified();
 

@@ -1,3 +1,23 @@
+2003-05-21  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
+      * Added python wrappers of vtkGdcmReader vtk class (see the
+        source in vtk/vtkGdcmReader.cxx) :
+        - vtk/Makefile.am now builds a library
+        - gdcmPython/Makefile.am now builds vtkgdcmPython a second import
+          python library (as opposed to _gdcm.so wich are the python
+          wrappers of gdcm). vtkgdcmPython.so uses the vtk python wrappers
+          (vtkWrapPython and vtkWrapPythonInit utility) to build vtkgdcmPython
+          import library.
+        - configure.in has an additional flag --enable-vtk that needs
+          to be set to enable compilation of vtk related code, that is:
+          + vtk/vtkGdcmReader.so and
+          + vtk/testvtkGdcmReader C++ demo of vtk wrappers of gdcm)
+          + gdcmPython/vtkgdcmPython.so (see above)
+        - gdcmPython/demo/vtkGdcmDemo.py corrected (some images cannot
+          be read when compressed or when HighBit + 1 != BitsStored),
+        - gdcmPython/demo/vtkGdcmReader.py added. This demo illustrates
+          the usage of the python wrapper of vtkGdcmReader vtk class.
+      * vtk/vtkGdcmReader.cxx: bug fixed (thanks to Benoit Regrain).  
+
 2003-05-12  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * src/gdcmHeader>[h/cxx] added gdcmHeader::GetPixelSize()
       * vtk/vtkGdcmReader.cxx now properly inports the image in the

@@ -1,4 +1,11 @@
-## A small demo that displays with VTK an image parsed with gdcm.
+## A small demo that displays with VTK a dicom image parsed with gdcm.
+## Warning: the parsing of header of the dicom file is done with gdcm
+##          but the process of in-memory loading of the image is performed
+##          by vtkImageReader (classical vtk operator). Since vtkImageReader
+##          has no special knowledge of Dicom file format, this demo
+##          will only work for a restrained sub-set of Dicom files (basically
+##          non compressed and with "HighBit + 1 != BitsStored").
+##          When those conditions are not met try using vtkgdcmReader.py...
 import sys
 import vtk
 from gdcmPython import gdcmHeader
@@ -174,8 +181,8 @@ if not check.IsReadable():
    sys.exit()
 check = check.GetPubElVal()
 try:
-   BitsAlloc = check["Bits Allocated"]
-   if len(BitsAlloc) == 0 or BitsAlloc == "gdcm::Unfound":
+   HighBit = check["High Bit"]
+   if len(HighBit) == 0 or HighBit == "gdcm::Unfound":
       raise KeyError
 except KeyError:
    print "Gdcm couldn't find the Bits Allocated Dicom tag in file ", FileName
@@ -187,9 +194,12 @@ try:
 except KeyError:
    print "Gdcm couldn't find the Bits Stored Dicom tag in file ", FileName
    sys.exit()
-if BitsAlloc != BitsStored:
+if int(HighBit) + 1 != int(BitsStored):
    print "vtkImageReader cannot read the file ", FileName
-   print "  because the Bits Allocated and the Bits stored don't match."
+   print "  because the High Bit is offseted from the BitsStored."
+   print "  You should consider using vtkGdcmReader as opposed to the"
+   print "  vtkImageReader python class present in this demo. Please"
+   print "  see gdcmPython/demo/vtkGdcmReader.py for a demo."
    sys.exit()
 
 ### Display in a vtk RenderWindow

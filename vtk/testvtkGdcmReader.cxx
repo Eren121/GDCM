@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.2 2003/05/12 14:32:43 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.3 2003/05/21 08:21:17 frog Exp $
 
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
@@ -49,7 +49,8 @@ int main( int argc, char *argv[] )
    vtkImageData *ima = reader->GetOutput();
    taille=ima->GetDimensions();
    x = taille[0];  y = taille[1];
-   cout << "Taille de l'image en X=" << x << " et en Y=" << y << endl;
+   cout << "Dimensions of the picture as read with gdcm: "
+        << x << " x " << y << endl;
 
    vtkLookupTable *VTKtable = vtkLookupTable::New();
    VTKtable->SetNumberOfColors(1000);
