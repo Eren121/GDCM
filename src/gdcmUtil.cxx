@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:19:48 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2005/01/07 23:43:59 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -510,14 +510,15 @@ long GetMacAddrSys ( u_char *addr)
                        printf("Interface #%i is a NULL address\n", j);
                        continue;
                    }
-                   sprintf((char*)addr, "%02x%02x%02x%02x%02x%02x",
-                           varBind[1].value.asnValue.address.stream[0],
-                           varBind[1].value.asnValue.address.stream[1],
-                           varBind[1].value.asnValue.address.stream[2],
-                           varBind[1].value.asnValue.address.stream[3],
-                           varBind[1].value.asnValue.address.stream[4],
-                           varBind[1].value.asnValue.address.stream[5]);
-                   printf("MAC Address of interface #%i: %s\n", j, TempEthernet);
+                   //sprintf((char*)addr, "%02x%02x%02x%02x%02x%02x",
+                   //        varBind[1].value.asnValue.address.stream[0],
+                   //        varBind[1].value.asnValue.address.stream[1],
+                   //        varBind[1].value.asnValue.address.stream[2],
+                   //        varBind[1].value.asnValue.address.stream[3],
+                   //        varBind[1].value.asnValue.address.stream[4],
+                   //        varBind[1].value.asnValue.address.stream[5]);
+                   memcpy( addr, *varBind[1].value.asnValue.address.stream, 6);
+                   //printf("MAC Address of interface #%i: %s\n", j, addr);
               }
            }
        }
