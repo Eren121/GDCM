@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/15 18:12:35 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/02/16 10:19:19 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -656,40 +656,68 @@ void PixelReadConvert::ConvertFixGreyLevels()
       return;
 
    int i; // to please M$VC6
-   if ( BitsAllocated == 8 )
+
+   if (!PixelSign)
    {
-      uint8_t *deb = (uint8_t *)Raw;
-      for (i=0; i<RawSize; i++)      
+      if ( BitsAllocated == 8 )
       {
-         *deb = 255 - *deb;
-         deb++;
+         uint8_t *deb = (uint8_t *)Raw;
+         for (i=0; i<RawSize; i++)      
+         {
+            *deb = 255 - *deb;
+            deb++;
+         }
+         return;
       }
-      return;
+
+      if ( BitsAllocated == 16 )
+      {
+         uint16_t mask =1;
+         int bitStored = 12;   
+         for (i=0; i<BitsStored-1; i++)
+         {
+            mask = (mask << 1) +1; // will be fff when BitsStored=12
+         }
+
+         uint16_t *deb = (uint16_t *)Raw;
+         for (i=0; i<RawSize/2; i++)      
+         {
+            *deb = mask - *deb;
+            deb++;
+         }
+         return;
+       }
    }
-
-   if ( BitsAllocated == 16 )
+   else
    {
-      uint16_t mask =1;
-      int bitStored = 12;   
-      for (i=0; i<BitsStored-1; i++)
+      if ( BitsAllocated == 8 )
       {
-         mask = (mask << 1) +1; // will be fff when BitStored=12
+         int8_t smask8 = 255;
+         int8_t *deb = (int8_t *)Raw;
+         for (i=0; i<RawSize; i++)      
+         {
+            *deb = smask8 - *deb;
+            deb++;
+         }
+         return;
       }
-
-      uint16_t *deb = (uint16_t *)Raw;
-      for (i=0; i<RawSize/2; i++)      
+      if ( BitsAllocated == 16 )
       {
-         *deb = mask - *deb;
-         deb++;
+         int16_t smask16 = 65535;
+         int16_t *deb = (int16_t *)Raw;
+         for (i=0; i<RawSize/2; i++)      
+         {
+            *deb = smask16 - *deb;
+            deb++;
+         }
+         return;
       }
-      return;
    }
 }
 
-
 /**
  * \brief  Re-arrange the bits within the bytes.
- * @return Boolean
+ * @return Boolean always true
  */
 bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
 {
