@@ -12,11 +12,11 @@ if not os.path.isfile(FileName):
 
 toRead = gdcmHeader(FileName)
 ValDict = toRead.GetPubEntry()
-ExploreElements = ["Patient Name", "Patient ID",
-						 "Study Date", "Study Time", "Study ID",
-						 "Study Instance UID",
-						 "Series Number",
-						 "Modality"]
+ExploreElements = ["Patient's Name", "Patient ID",
+                   "Study Date", "Study Time", "Study ID",
+                   "Study Instance UID",
+                   "Series Number",
+                   "Modality"]
 
 for elem in ExploreElements:
 	print "[%s] = " % elem,

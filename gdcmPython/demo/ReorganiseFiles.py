@@ -1,4 +1,4 @@
-# Rename the dcm extension files of a given drectory according
+# Rename the dcm extension files of a given directory according
 # to series and image number information extracted in each respective header.
 
 from gdcmPython import *
