@@ -1,3 +1,26 @@
+2002-12-11 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcm.h, gdcmHeader.cxx:
+        - historic references to glib's g_malloc and g_free (#defined)
+          were definitively removed.
+        - gdcm.h: cosmetic changes (part of comments moved to Doc/requirements)
+      * src/gdcmElValSet.cxx:
+        - GetElement(guint32, guint32) renamed to GetElementByNumber.
+        - GetElValue(guint32, guint32) renamed to GetElValueByNumber.
+        - GetElValue(string) renamed to GetElValueByName.
+        - Added GetElementByName(string).
+      * src/gdcmHeader.cxx: added
+        - GetPubElValRepByNumber(guint16, guint16)
+        - GetPubElValRepByName(string)
+        - GetShaElValRepByNumber(guint16, guint16)
+        - GetShaElValRepByName(string)
+        - GetShaElValByNumber(guint16, guint16)
+        - GetShaElValRepByName(string)
+        - GetElValRepByNumber(guint16, guint16)
+        - GetElValRepByName(string)
+        - GetElValByNumber(guint16, guint16)
+        - GetElValRepByName(string)
+      * Doc/requirements.txt added.
+
 2002-12-9 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Test/Makefile building now depends on the one of libgdcm.so
       * src/gdcmHeader.cxx and gdcm.h are now OB (undefined length encoded

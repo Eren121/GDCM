@@ -32,29 +32,38 @@ void ElValSet::PrintByName(ostream & os) {
 	}
 }
 
-ElValue* ElValSet::GetElement(guint32 group, guint32 element) {
+ElValue* ElValSet::GetElementByNumber(guint32 group, guint32 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! tagHt.count(key))
 		return (ElValue*)0;
 	if (tagHt.count(key) > 1)
-		dbg.Verbose(0, "ElValSet::GetElValue",
+		dbg.Verbose(0, "ElValSet::GetElementByNumber",
 		            "multiple entries for this key (FIXME) !");
 	return tagHt.find(key)->second;
 }
 
-string ElValSet::GetElValue(guint32 group, guint32 element) {
+ElValue* ElValSet::GetElementByName(string TagName) {
+   if ( ! NameHt.count(TagName))
+      return (ElValue*)0;
+   if (NameHt.count(TagName) > 1)
+      dbg.Verbose(0, "ElValSet::GetElement",
+                  "multipe entries for this key (FIXME) !");
+   return NameHt.find(TagName)->second;
+}
+
+string ElValSet::GetElValueByNumber(guint32 group, guint32 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! tagHt.count(key))
-		return "UNFOUND";
+		return "gdcm::Unfound";
 	if (tagHt.count(key) > 1)
-		dbg.Verbose(0, "ElValSet::GetElValue",
+		dbg.Verbose(0, "ElValSet::GetElValueByNumber",
 		            "multiple entries for this key (FIXME) !");
 	return tagHt.find(key)->second->GetValue();
 }
 
-string ElValSet::GetElValue(string TagName) {
+string ElValSet::GetElValueByName(string TagName) {
 	if ( ! NameHt.count(TagName))
-		return "UNFOUND";
+		return "gdcm::Unfound";
 	if (NameHt.count(TagName) > 1)
 		dbg.Verbose(0, "ElValSet::GetElValue",
 		            "multipe entries for this key (FIXME) !");

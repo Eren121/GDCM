@@ -1,0 +1,31 @@
+Design notes:
+  * STL hash table ("#include <map>") requirements:
+    1/ iterator: first(), ++, (i.e. iterate or next).
+    2/ should be sortable (i.e. sorted by TagKey). This condition shall be
+       droped since the Win32/VC++6.0 implementation doesn't look like
+       providing this facility.
+    3/ has a setup some default size value (in number of items), which should
+       be around 4500 entries which appears to be the average dictionary size
+       (said JPR).
+
+
+Examples:
+ * gdcmFile WriteDicom;
+   WriteDicom.SetFileName("MyDicomFile.dcm");
+   string * AllTags = gdcmHeader.GetDcmTagNames();
+   WriteDicom.SetDcmTag(AllTags[5], "253");
+   WriteDicom.SetDcmTag("Patient Name", "bozo");
+   WriteDicom.SetDcmTag("Patient Name", "bozo");
+   WriteDicom.SetImageData(Image);
+   WriteDicom.Write();
+
+
+   Anonymize(ostream& output) {
+      a = gdcmFile("toto1");
+      a.SetPubValueByName("Patient Name", "");
+      a.SetPubValueByName("Date", "");
+      a.SetPubValueByName("Study Date", "");
+      a.write(output);
+   }
+
+

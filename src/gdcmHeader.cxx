@@ -88,24 +88,15 @@ void gdcmHeader::InitVRDict (void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   La seule maniere sure que l'on aie pour determiner 
- *          si on est en   LITTLE_ENDIAN,       BIG-ENDIAN, 
- *          BAD-LITTLE-ENDIAN, BAD-BIG-ENDIAN
- *          est de trouver l'element qui donne la longueur d'un 'GROUP'
- *          (on sait que la longueur de cet element vaut 0x00000004)
- *          et de regarder comment cette longueur est codee en memoire  
- *          
- *          Le probleme vient de ce que parfois, il n'y en a pas ...
- *          
- *          On fait alors le pari qu'on a a faire a du LITTLE_ENDIAN propre.
- *          (Ce qui est la norme -pas respectee- depuis ACR-NEMA)
- *          Si ce n'est pas le cas, on ne peut rien faire.
- *
- *          (il faudrait avoir des fonctions auxquelles 
- *          on passe le code Swap en parametre, pour faire des essais 'manuels')
+ * \brief   Discover what the swap code is (among little endian, big endian, 
+ *          bad little endian, bad big endian).
  */
 void gdcmHeader::CheckSwap()
 {
+	// The only guaranted way of finding the swap code is to find a
+	// group tag since we know it's length has to be of four bytes i.e.
+	// 0x00000004. Finding the swap code in then straigthforward. Trouble
+	// occurs when we can't find such group...
 	guint32  s;
 	guint32  x=4;  // x : pour ntohs
 	bool net2host; // true when HostByteOrder is the same as NetworkByteOrder
@@ -216,8 +207,6 @@ void gdcmHeader::CheckSwap()
 	// It is time for despaired wild guesses. So, let's assume this file
 	// happens to be 'dirty' ACR/NEMA, i.e. the length of the group is
 	// not present. Then the only info we have is the net2host one.
-	//FIXME  Si c'est du RAW, ca degagera + tard
-	
 	if (! net2host )
 		sw = 0;
 	else
@@ -246,34 +235,7 @@ void gdcmHeader::SwitchSwapToBigEndian(void) {
 
 /**
  * \ingroup   gdcmHeader
- * \brief     recupere la longueur d'un champ DICOM.
- *            Preconditions:
- *            1/ le fichier doit deja avoir ete ouvert,
- *            2/ CheckSwap() doit avoir ete appele
- *            3/ la  partie 'group'  ainsi que la  partie 'elem' 
- *               de l'acr_element doivent avoir ete lues.
- *
- *            ACR-NEMA : we allways get
- *                 GroupNumber   (2 Octets) 
- *                 ElementNumber (2 Octets) 
- *                 ElementSize   (4 Octets)
- *            DICOM en implicit Value Representation :
- *                 GroupNumber   (2 Octets) 
- *                 ElementNumber (2 Octets) 
- *                 ElementSize   (4 Octets)
- *
- *            DICOM en explicit Value Representation :
- *                 GroupNumber         (2 Octets) 
- *                 ElementNumber       (2 Octets) 
- *                 ValueRepresentation (2 Octets) 
- *                 ElementSize         (2 Octets)
- *
- *            ATTENTION : dans le cas ou ValueRepresentation = OB, OW, SQ, UN
- *                 GroupNumber         (2 Octets) 
- *                 ElementNumber       (2 Octets) 
- *                 ValueRepresentation (2 Octets)
- *                 zone reservee       (2 Octets) 
- *                 ElementSize         (4 Octets)
+ * \brief     Find the value representation of the current tag.
  *
  * @param sw  code swap
  * @param skippedLength  pointeur sur nombre d'octets que l'on a saute qd
@@ -367,7 +329,7 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
  * @return  True when big endian found. False in all other cases.
  */
 bool gdcmHeader::IsBigEndianTransferSyntax(void) {
-	ElValue* Element = PubElVals.GetElement(0x0002, 0x0010);
+	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
 	if ( !Element )
 		return false;
 	LoadElementValueSafe(Element);
@@ -646,7 +608,7 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	}
 	
 	// FIXME The exact size should be length if we move to strings or whatever
-	char* NewValue = (char*)g_malloc(length+1);
+	char* NewValue = (char*)malloc(length+1);
 	if( !NewValue) {
 		dbg.Verbose(1, "LoadElementValue: Failed to allocate NewValue");
 		return;
@@ -655,7 +617,7 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	
 	item_read = fread(NewValue, (size_t)length, (size_t)1, fp);
 	if ( item_read != 1 ) {
-		g_free(NewValue);
+		free(NewValue);
 		Error::FileReadError(fp, "gdcmHeader::LoadElementValue");
 		ElVal->SetValue("gdcm::UnRead");
 		return;
@@ -796,7 +758,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
 	guint16 numPixel;
 	string ImageLocation = GetPubElValByName("Image Location");
 	if ( ImageLocation == "UNFOUND" ) {
-		grPixel = 0x7FE0;
+		grPixel = 0x7fe0;
 	} else {
 		grPixel = (guint16) atoi( ImageLocation.c_str() );
 	}
@@ -806,7 +768,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
 		numPixel = 0x1010;
 	else
 		numPixel = 0x0010;
-	ElValue* PixelElement = PubElVals.GetElement(grPixel, numPixel);
+	ElValue* PixelElement = PubElVals.GetElementByNumber(grPixel, numPixel);
 	if (PixelElement)
 		return PixelElement->GetOffset();
 	else
@@ -833,11 +795,76 @@ gdcmDictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
 }
 
 string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
-	return PubElVals.GetElValue(group, element);
+	return PubElVals.GetElValueByNumber(group, element);
+}
+
+string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
+	ElValue* elem =  PubElVals.GetElementByNumber(group, element);
+	if ( !elem )
+		return "gdcm::Unfound";
+	return elem->GetVR();
 }
 
 string gdcmHeader::GetPubElValByName(string TagName) {
-	return PubElVals.GetElValue(TagName);
+	return PubElVals.GetElValueByName(TagName);
+}
+
+string gdcmHeader::GetPubElValRepByName(string TagName) {
+	ElValue* elem =  PubElVals.GetElementByName(TagName);
+	if ( !elem )
+		return "gdcm::Unfound";
+	return elem->GetVR();
+}
+
+string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
+	return ShaElVals.GetElValueByNumber(group, element);
+}
+
+string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
+	ElValue* elem =  ShaElVals.GetElementByNumber(group, element);
+	if ( !elem )
+		return "gdcm::Unfound";
+	return elem->GetVR();
+}
+
+string gdcmHeader::GetShaElValByName(string TagName) {
+	return ShaElVals.GetElValueByName(TagName);
+}
+
+string gdcmHeader::GetShaElValRepByName(string TagName) {
+	ElValue* elem =  ShaElVals.GetElementByName(TagName);
+	if ( !elem )
+		return "gdcm::Unfound";
+	return elem->GetVR();
+}
+
+
+string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
+	string pub = GetPubElValByNumber(group, element);
+	if (pub.length())
+		return pub;
+	return GetShaElValByNumber(group, element);
+}
+
+string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
+	string pub = GetPubElValRepByNumber(group, element);
+	if (pub.length())
+		return pub;
+	return GetShaElValRepByNumber(group, element);
+}
+
+string gdcmHeader::GetElValByName(string TagName) {
+	string pub = GetPubElValByName(TagName);
+	if (pub.length())
+		return pub;
+	return GetShaElValByName(TagName);
+}
+
+string gdcmHeader::GetElValRepByName(string TagName) {
+	string pub = GetPubElValRepByName(TagName);
+	if (pub.length())
+		return pub;
+	return GetShaElValRepByName(TagName);
 }
 
 /**

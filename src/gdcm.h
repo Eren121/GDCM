@@ -16,42 +16,33 @@
 // the declaration once you provided the definition of the method...
 
 #include <string>
+#ifdef _MSC_VER
+using namespace std;  // string type lives in the std namespace on VC++
+#endif
+
 #include <iostream>
 #include <stddef.h>   // For size_t
 #include <stdio.h>    // FIXME For FILE on GCC only
-#include <map>        // The requirement for the hash table (or map) that
-                      // we shall use:
-                      // 1/ First, next, last (iterators)
-                      // 2/ should be sortable (i.e. sorted by TagKey). This
-                      //    condition shall be droped since the Win32/VC++
-                      //    implementation doesn't look a sorted one. Pffff....
-                      // 3/ Make sure we can setup some default size value,
-                      //    which should be around 4500 entries which is the
-                      //    average dictionary size (said JPR)
-
-#define g_malloc malloc
-#define g_free   free
+#include <map>
 
 #ifdef __GNUC__
 #include <stdint.h>
 #define guint16 uint16_t
 #define guint32 uint32_t
 #endif
+
 #ifdef _MSC_VER 
 typedef  unsigned short guint16;
 typedef  unsigned int guint32;
-
 #endif
 
-#ifdef _MSC_VER
-	using namespace std;  // string type lives in the std namespace on VC++
-#endif
 #ifdef _MSC_VER
 #define GDCM_EXPORT __declspec( dllexport )
 #else
 #define GDCM_EXPORT
 #endif
 
+////////////////////////////////////////////////////////////////////////////
 // Tag based hash tables.
 // We shall use as keys the strings (as the C++ type) obtained by
 // concatenating the group value and the element value (both of type
@@ -69,16 +60,14 @@ private:
 	string  vr;       // Value Representation i.e. some clue about the nature
 	                  // of the data represented e.g. "FD" short for
 	                  // "Floating Point Double"
-	// CLEAN ME: find the official dicom name for this field !
+	// CLEANME: find the official dicom name for this field !
 	string  fourth;   // Fourth field containing some semantics.
 	string  name;     // e.g. "Patient_Name"
-	TagKey  key;      // This is redundant zith (group, element) but we add
+	TagKey  key;      // Redundant with (group, element) but we add it
 	                  // on efficiency purposes.
 	// DCMTK has many fields for handling a DictEntry (see below). What are the
 	// relevant ones for gdcmlib ?
 	//      struct DBI_SimpleEntry {
-	//         Uint16 group;
-	//         Uint16 element;
 	//         Uint16 upperGroup;
 	//         Uint16 upperElement;
 	//         DcmEVR evr;
@@ -90,11 +79,10 @@ private:
 	//         DcmDictRangeRestriction elementRestriction;
 	//       };
 public:
-	//CLEANME gdcmDictEntry();
 	gdcmDictEntry(guint16 group, guint16 element,
 	              string vr     = "Unknown",
-					  string fourth = "Unknown",
-					  string name   = "Unknown");
+	              string fourth = "Unknown",
+	              string name   = "Unknown");
 	static TagKey TranslateToKey(guint16 group, guint16 element);
 	guint16 GetGroup(void)  { return group;};
 	guint16 GetElement(void){return element;};
@@ -106,12 +94,13 @@ public:
 	string  GetKey(void)    {return key;};
 };
   
-typedef map<TagKey, gdcmDictEntry*> TagHT;
-
+////////////////////////////////////////////////////////////////////////////
 // A single DICOM dictionary i.e. a container for a collection of dictionary
 // entries. There should be a single public dictionary (THE dictionary of
 // the actual DICOM v3) but as many shadow dictionaries as imagers 
 // combined with all software versions...
+typedef map<TagKey, gdcmDictEntry*> TagHT;
+
 class GDCM_EXPORT gdcmDict {
 	string name;
 	string filename;
@@ -123,12 +112,14 @@ public:
 	void Print(ostream&);
 };
 
+////////////////////////////////////////////////////////////////////////////
 // Container for managing a set of loaded dictionaries. Sharing dictionaries
 // should avoid :
-// * reloading an allready loaded dictionary.
+// * reloading an allready loaded dictionary,
 // * having many in memory representations of the same dictionary.
 typedef string DictKey;
 typedef map<DictKey, gdcmDict*> DictSetHT;
+
 class GDCM_EXPORT gdcmDictSet {
 private:
 	string DictPath;      // Directory path to dictionaries
@@ -139,9 +130,9 @@ private:
 public:
 	gdcmDictSet(void);    // loads THE DICOM v3 dictionary
 	// TODO Swig int LoadDictFromFile(string filename);
-///// QUESTION: the following function might not be thread safe !? Maybe
-/////           we need some mutex here, to avoid concurent creation of
-/////           the same dictionary !?!?!
+   // QUESTION: the following function might not be thread safe !? Maybe
+   //           we need some mutex here, to avoid concurent creation of
+   //           the same dictionary !?!?!
 	// TODO Swig int LoadDictFromName(string filename);
 	// TODO Swig int LoadAllDictFromDirectory(string DirectoryName);
 	// TODO Swig string* GetAllDictNames();
@@ -151,6 +142,7 @@ public:
 	gdcmDict* GetDefaultPublicDict(void);
 };
 
+////////////////////////////////////////////////////////////////////////////
 // The dicom header of a Dicom file contains a set of such ELement VALUES
 // (when successfuly parsed against a given Dicom dictionary)
 class GDCM_EXPORT ElValue {
@@ -186,66 +178,68 @@ public:
 	string  GetName(void)    { return entry->GetName();};
 };
 
-typedef map<TagKey, ElValue*> TagElValueHT;
-typedef map<string, ElValue*> TagElValueNameHT;
+////////////////////////////////////////////////////////////////////////////
 // Container for a set of succefully parsed ElValues.
+typedef map<TagKey, ElValue*> TagElValueHT;
+	typedef map<string, ElValue*> TagElValueNameHT;
+
 class GDCM_EXPORT ElValSet {
-	// We need both accesses with a TagKey and the Dictentry.Name
+		// We need both accesses with a TagKey and the Dictentry.Name
 	TagElValueHT tagHt;
 	TagElValueNameHT NameHt;
 public:
 	void Add(ElValue*);
 	void Print(ostream &);
 	void PrintByName(ostream &);
-	ElValue* GetElement(guint32 group, guint32 element);
-	string GetElValue(guint32 group, guint32 element);
-	string GetElValue(string);
+	ElValue* GetElementByNumber(guint32 group, guint32 element);
+	ElValue* GetElementByName(string);
+	string GetElValueByNumber(guint32 group, guint32 element);
+	string GetElValueByName(string);
 	TagElValueHT & GetTagHt(void);
 };
 
-// The various entries of the explicit value representation (VR) shall
-// be managed within a dictionary. 
+////////////////////////////////////////////////////////////////////////////
+// The typical usage of instances of class gdcmHeader is to classify a set of
+// dicom files according to header information e.g. to create a file hierachy
+// reflecting the Patient/Study/Serie informations, or extracting a given
+// SerieId. Accesing the content (image[s] or volume[s]) is beyond the
+// functionality of this class and belong to gdmcFile (see below).
+// Notes:
+// * the various entries of the explicit value representation (VR) shall
+//   be managed within a dictionary which is shared by all gdcmHeader instances
+// * the gdcmHeader::Set*Tag* family members cannot be defined as protected
+//   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
+ 
 typedef string VRKey;
 typedef string VRAtr;
 typedef map<TagKey, VRAtr> VRHT;    // Value Representation Hash Table
 
-// The typical usage of objects of this class is to classify a set of
-// dicom files according to header information e.g. to create a file hierachy
-// reflecting the Patient/Study/Serie informations, or extracting a given
-// SerieId. Accesing the content (image[s] or volume[s]) is beyond the
-// functionality of this class (see dmcFile below).
-// Notes:
-// * the gdcmHeader::Set*Tag* family members cannot be defined as protected
-//   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
 class GDCM_EXPORT gdcmHeader {
-//FIXME sw should be qn EndianType !!!
-	//enum EndianType {
-		//LittleEndian, 
-		//BadLittleEndian,
-		//BigEndian, 
-		//BadBigEndian};
 	void SkipBytes(guint32);
 private:
-  	// All instances share the same Value Representation dictionary
 	static VRHT *dicom_vr;
 	// Dictionaries of data elements:
-	static gdcmDictSet* Dicts;  // Global dictionary container
-	gdcmDict* RefPubDict;       // Public Dictionary
-	gdcmDict* RefShaDict;       // Shadow Dictionary (optional)
+	static gdcmDictSet* Dicts;  // global dictionary container
+	gdcmDict* RefPubDict;       // public dictionary
+	gdcmDict* RefShaDict;       // shadow dictionary (optional)
 	// Parsed element values:
 	ElValSet PubElVals;         // parsed with Public Dictionary
 	ElValSet ShaElVals;         // parsed with Shadow Dictionary
-	// In order to inspect/navigate through the file
-	string filename;
+	string filename;            // refering underlying file
 	FILE * fp;
-	// The tag Image Location ((0028,0200) containing the adress of
+	// The tag Image Location ((0028,0200) containing the address of
 	// the pixels) is not allways present. When we store this information
 	// FIXME
 	// outside of the elements:
 	guint16 grPixel;
 	guint16 numPixel;
 	// Swap code (little, big, big-bad endian): this code is not fixed
-	// during parsing.
+	// during parsing.FIXME sw should be an enum e.g.
+	//enum EndianType {
+		//LittleEndian, 
+		//BadLittleEndian,
+		//BigEndian, 
+		//BadBigEndian};
 	int sw;
 	// Only the elements whose size are below this bound shall be loaded.
 	// By default, this upper bound is limited to 1024 (which looks reasonable
@@ -280,13 +274,10 @@ protected:
 		ExplicitVR,
 		ImplicitVR,
 		ACR,
-		ACR_LIBIDO};
+		ACR_LIBIDO};  // CLEANME
 	FileType filetype;
-///// QUESTION: Maybe Print is a better name than write !?
 	int write(ostream&);   
-///// QUESTION: Maybe anonymize should be a friend function !?!?
-/////           See below for an example of how anonymize might be implemented.
-	int anonymize(ostream&);
+	int anonymize(ostream&);  // FIXME : anonymize should be a friend ?
 public:
 	void LoadElements(void);
 	virtual void ParseHeader(void);
@@ -299,35 +290,36 @@ public:
 	// TODO Swig int SetShaDict(string filename);
 
 	// Retrieve all potentially available tag [tag = (group, element)] names
-	// from the standard (or public) dictionary (hence static). Typical usage:
-	// enable the user of a GUI based interface to select his favorite fields
-	// for sorting or selection.
+	// from the standard (or public) dictionary. Typical usage: enable the
+	// user of a GUI based interface to select his favorite fields for sorting
+	// or selection.
 	// TODO Swig string* GetPubTagNames();
 	// Get the element values themselves:
 	string GetPubElValByName(string TagName);
 	string GetPubElValByNumber(guint16 group, guint16 element);
-	// Get the element value representation: (VR) might be needed by caller
+	// Getting the element value representation (VR) might be needed by caller
 	// to convert the string typed content to caller's native type (think
 	// of C/C++ vs Python).
-	// TODO Swig string GetPubElValRepByName(string TagName);
-	// TODO Swig string GetPubElValRepByNumber(guint16 group, guint16 element);
+	string GetPubElValRepByName(string TagName);
+	string GetPubElValRepByNumber(guint16 group, guint16 element);
 	TagElValueHT & GetPubElVal(void) { return PubElVals.GetTagHt(); };
 	void   PrintPubElVal(ostream & os = cout);
 	void   PrintPubDict(ostream &);
 	  
 	// Same thing with the shadow :
 	// TODO Swig string* GetShaTagNames(); 
-	// TODO Swig string GetShaElValByName(string TagName);
-	// TODO Swig string GetShaElValByNumber(guint16 group, guint16 element);
-	// TODO Swig string GetShaElValRepByName(string TagName);
-	// TODO Swig string GetShaElValRepByNumber(guint16 group, guint16 element);
+	string GetShaElValByName(string TagName);
+	string GetShaElValByNumber(guint16 group, guint16 element);
+	string GetShaElValRepByName(string TagName);
+	string GetShaElValRepByNumber(guint16 group, guint16 element);
 
-	// Wrappers of the above (both public and shadow) to avoid bugging the
-	// caller with knowing if ElVal is from the public or shadow dictionary.
-	// TODO Swig string GetElValByName(string TagName);
-	// TODO Swig string GetElValByNumber(guint16 group, guint16 element);
-	// TODO Swig string GetElValRepByName(string TagName);
-	// TODO Swig string GetElValRepByNumber(guint16 group, guint16 element);
+	// Wrappers of the above (public is privileged over shadow) to avoid
+	// bugging the caller with knowing if ElVal is from the public or shadow
+	// dictionary.
+	string GetElValByName(string TagName);
+	string GetElValByNumber(guint16 group, guint16 element);
+	string GetElValRepByName(string TagName);
+	string GetElValRepByNumber(guint16 group, guint16 element);
 
 	// TODO Swig int SetPubElValByName(string content, string TagName);
 	// TODO Swig int SetPubElValByNumber(string content, guint16 group, guint16 element);
@@ -337,6 +329,7 @@ public:
 	// TODO Swig int GetSwapCode();
 };
 
+////////////////////////////////////////////////////////////////////////////
 // In addition to Dicom header exploration, this class is designed
 // for accessing the image/volume content. One can also use it to
 // write Dicom files.
@@ -347,8 +340,8 @@ class GDCM_EXPORT gdcmFile: gdcmHeader
 {
 private:
 	void* Data;
-	int Parsed;				// weather allready parsed
-	string OrigFileName;	// To avoid file overwrite
+	int Parsed;          // weather allready parsed
+	string OrigFileName; // To avoid file overwrite
 public:
 	// Constructor dedicated to writing a new DICOMV3 part10 compliant
 	// file (see SetFileName, SetDcmTag and Write)
@@ -388,23 +381,3 @@ public:
 
 //class gdcmSerie : gdcmFile;
 //class gdcmMultiFrame : gdcmFile;
-
-//
-//Examples:
-// * gdcmFile WriteDicom;
-//   WriteDicom.SetFileName("MyDicomFile.dcm");
-//	string * AllTags = gdcmHeader.GetDcmTagNames();
-//   WriteDicom.SetDcmTag(AllTags[5], "253");
-//   WriteDicom.SetDcmTag("Patient Name", "bozo");
-//   WriteDicom.SetDcmTag("Patient Name", "bozo");
-//	WriteDicom.SetImageData(Image);
-//   WriteDicom.Write();
-//
-//
-//   Anonymize(ostream& output) {
-//   a = gdcmFile("toto1");
-//   a.SetPubValueByName("Patient Name", "");
-//   a.SetPubValueByName("Date", "");
-//   a.SetPubValueByName("Study Date", "");
-//   a.write(output);
-//   }
