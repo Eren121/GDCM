@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/26 04:09:33 $
-  Version:   $Revision: 1.111 $
+  Date:      $Date: 2004/06/28 14:12:03 $
+  Version:   $Revision: 1.112 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -326,7 +326,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
  */
 void * gdcmFile::GetImageDataRaw ()
 {
-   size_t imgDataSize;
+   size_t imgDataSize = ImageDataSize;
    if ( Header->HasLUT() )
    {
       /// \todo Let gdcmHeader user a chance to get the right value
