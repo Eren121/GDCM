@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:55 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/12/07 09:08:45 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
    gdcm::ListDicomDirPatient::const_iterator  itPatient;
    gdcm::ListDicomDirStudy::const_iterator    itStudy;
    gdcm::ListDicomDirSerie::const_iterator    itSerie;
-   gdcm::ListDicomDirImage::const_iterator    itImage;
+   //gdcm::ListDicomDirImage::const_iterator    itImage;
    gdcm::TSKey v;
     
    std::string file; 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:56 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/12/07 09:08:45 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ int TestDicomDir(int argc, char* argv[])
    gdcm::ListDicomDirPatient::const_iterator  itPatient;
    gdcm::ListDicomDirStudy::const_iterator    itStudy;
    gdcm::ListDicomDirSerie::const_iterator    itSerie;
-   gdcm::ListDicomDirImage::const_iterator    itImage;
+   //gdcm::ListDicomDirImage::const_iterator    itImage;
    gdcm::TSKey v;
     
    std::string file; 
