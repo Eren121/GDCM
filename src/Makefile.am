@@ -29,7 +29,13 @@ libgdcm_la_SOURCES=                     \
    gdcmJpeg12.cxx                  \
    gdcmJpeg2000.cxx                \
    gdcmRLE.cxx                     \
-   gdcmParse.cxx
+   gdcmParse.cxx                   \
+   gdcmDICOMDIR.cxx                  \
+   gdcmPatient.cxx                   \
+   gdcmStudy.cxx                     \
+   gdcmSequence.cxx                     \
+   gdcmImage.cxx
+
 
 libgdcmincludedir = $(includedir)
 libgdcminclude_HEADERS =                \
@@ -44,7 +50,14 @@ libgdcminclude_HEADERS =                \
 	gdcmHeaderEntry.h               \
 	gdcmVR.h                        \
 	gdcmTS.h                        \
-	gdcmFile.h
+	gdcmFile.h                      \
+	gdcmDICOMDIR.h                  \
+	gdcmObject.h                    \
+	gdcmPatient.h                   \
+	gdcmStudy.h                     \
+	gdcmSequence.h                     \
+	gdcmImage.h
+
 
 EXTRA_DIST =   \
 	gdcmUtil.h      
