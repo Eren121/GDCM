@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 11:33:39 $
-  Version:   $Revision: 1.182 $
+  Date:      $Date: 2005/01/12 15:22:23 $
+  Version:   $Revision: 1.183 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,6 +80,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
    long lgt = Fp->tellg();
            
    Fp->seekg( 0,  std::ios::beg);
+
    CheckSwap();
    long beg = Fp->tellg();
    lgt -= beg;
@@ -101,7 +102,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
       /// lines state that the corresponding tag contents are in fact
       /// the ones of a BinEntry.
       /// In order to fix things "Quick and Dirty" the dictionnary was
-      /// altered on PURPOUS but now contains a WRONG value.
+      /// altered on PURPOSE but now contains a WRONG value.
       /// In order to fix things and restore the dictionary to its
       /// correct value, one needs to decided of the semantics by deciding
       /// wether the following tags are either:
@@ -1104,7 +1105,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if ( ! Global::GetVR()->IsVROfBinaryRepresentable(vr) )
             { 
                 ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
-                gdcmVerboseMacro( "Neither Valentry, nor BinEntry." 
+                gdcmVerboseMacro( std::hex << newDocEntry->GetGroup() 
+                                  << "|" << newDocEntry->GetElement()
+                                  << " : Neither Valentry, nor BinEntry." 
                                   "Probably unknown VR.");
             }
 
@@ -1226,7 +1229,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             newSeqEntry->SetDepthLevel( 1 );
             newSeqEntry->SetKey( newSeqEntry->GetKey() );
          }
-         // But when "set" is allready a SQItem, we are building a nested
+         // But when "set" is already a SQItem, we are building a nested
          // sequence, and hence the depth level of the new SeqEntry
          // we are building, is one level deeper:
          if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
@@ -1544,6 +1547,14 @@ void Document::FindDocEntryLength( DocEntry *entry )
 
       // Length is encoded on 2 bytes.
       length16 = ReadInt16();
+
+      // FIXME : This heuristic supposes that the first group following
+      //         group 0002 *has* and element 0000.
+      // BUT ... Element 0000 is optionnal :-(
+
+
+   // Fixed using : HandleOutOfGroup0002()
+   //              (first hereafter strategy ...)
       
       // We can tell the current file is encoded in big endian (like
       // Data/US-RGB-8-epicard) when we find the "Transfer Syntax" tag
@@ -1564,6 +1575,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
       //   ones with zero as element number) has to be of 4 (0x0004). When we
       //   encounter 1024 (0x0400) chances are the encoding changed and we
       //   found a group with big endian encoding.
+      //---> Unfortunately, element 0000 is optional.
+      //---> This will not work when missing!
       // We shall use this second strategy. In order to make sure that we
       // can interpret the presence of an apparently big endian encoded
       // length of a "Group Length" without committing a big mistake, we
@@ -1572,38 +1585,40 @@ void Document::FindDocEntryLength( DocEntry *entry )
       // endian encoding". When this is the case, chances are we have got our
       // hands on a big endian encoded file: we switch the swap code to
       // big endian and proceed...
-      if ( element  == 0x0000 && length16 == 0x0400 ) 
-      {
-         std::string ts = GetTransferSyntax();
-         if ( Global::GetTS()->GetSpecialTransferSyntax(ts) 
-                != TS::ExplicitVRBigEndian ) 
-         {
-            throw FormatError( "Document::FindDocEntryLength()",
-                               " not explicit VR." );
-            return;
-         }
-         length16 = 4;
-         SwitchByteSwapCode();
+
+ //
+ //     if ( element  == 0x0000 && length16 == 0x0400 ) 
+ //     {
+ //        std::string ts = GetTransferSyntax();
+ //        if ( Global::GetTS()->GetSpecialTransferSyntax(ts) 
+ //               != TS::ExplicitVRBigEndian ) 
+ //        {
+ //           throw FormatError( "Document::FindDocEntryLength()",
+ //                              " not explicit VR." );
+ //          return;
+ //       }
+ //       length16 = 4;
+ //       SwitchByteSwapCode();
 
          // Restore the unproperly loaded values i.e. the group, the element
          // and the dictionary entry depending on them.
-         uint16_t correctGroup = SwapShort( entry->GetGroup() );
-         uint16_t correctElem  = SwapShort( entry->GetElement() );
-         DictEntry *newTag = GetDictEntry( correctGroup, correctElem );
-         if ( !newTag )
-         {
+//        uint16_t correctGroup = SwapShort( entry->GetGroup() );
+//         uint16_t correctElem  = SwapShort( entry->GetElement() );
+//         DictEntry *newTag = GetDictEntry( correctGroup, correctElem );         if ( !newTag )
+//         {
             // This correct tag is not in the dictionary. Create a new one.
-            newTag = NewVirtualDictEntry(correctGroup, correctElem);
-         }
+//            newTag = NewVirtualDictEntry(correctGroup, correctElem);
+//         }
          // FIXME this can create a memory leaks on the old entry that be
          // left unreferenced.
-         entry->SetDictEntry( newTag );
-      }
-       
-      // Heuristic: well, some files are really ill-formed.
+//         entry->SetDictEntry( newTag );
+//      }
+
+  
+      // 0xffff means that we deal with 'No Length' Sequence 
+      //        or 'No Length' SQItem
       if ( length16 == 0xffff) 
-      {
-         // 0xffff means that we deal with 'Unknown Length' Sequence  
+      {           
          length16 = 0;
       }
       FixDocEntryFoundLength( entry, (uint32_t)length16 );
@@ -2106,25 +2121,24 @@ bool Document::CheckSwap()
       net2host = false;
    }
          
-   // The easiest case is the one of a DICOM header, since it possesses a
-   // file preamble where it suffice to look for the string "DICM".
+   // The easiest case is the one of a 'true' DICOM header, we just have
+   // to look for the string "DICM" inside the file preamble.
    Fp->read(deb, 256);
    
    char *entCur = deb + 128;
    if( memcmp(entCur, "DICM", (size_t)4) == 0 )
    {
-      gdcmVerboseMacro( "Looks like DICOM Version3" );
+      gdcmVerboseMacro( "Looks like DICOM Version3 (preamble + DCM)" );
       
-      // Next, determine the value representation (VR). Let's skip to the
-      // first element (0002, 0000) and check there if we find "UL" 
-      // - or "OB" if the 1st one is (0002,0001) -,
+      // Group 0002 should always be VR, and the first element 0000
+      // Let's be carefull (so many wrong hedaers ...)
+      // and determine the value representation (VR) : 
+      // Let's skip to the first element (0002,0000) and check there if we find
+      // "UL"  - or "OB" if the 1st one is (0002,0001) -,
       // in which case we (almost) know it is explicit VR.
       // WARNING: if it happens to be implicit VR then what we will read
       // is the length of the group. If this ascii representation of this
       // length happens to be "UL" then we shall believe it is explicit VR.
-      // FIXME: in order to fix the above warning, we could read the next
-      // element value (or a couple of elements values) in order to make
-      // sure we are not commiting a big mistake.
       // We need to skip :
       // * the 128 bytes of File Preamble (often padded with zeroes),
       // * the 4 bytes of "DICM" string,
@@ -2132,27 +2146,27 @@ bool Document::CheckSwap()
       // i.e. a total of  136 bytes.
       entCur = deb + 136;
      
-      // FIXME : FIXME:
-      // Sometimes (see : gdcmData/icone.dcm) group 0x0002 *is* Explicit VR,
-      // but elem 0002,0010 (Transfer Syntax) tells us the file is
-      // *Implicit* VR.  -and it is !- 
+      // group 0x0002 *is always* Explicit VR Sometimes ,
+      // even elem 0002,0010 (Transfer Syntax) tells us the file is
+      // *Implicit* VR  (see former 'gdcmData/icone.dcm')
       
       if( memcmp(entCur, "UL", (size_t)2) == 0 ||
           memcmp(entCur, "OB", (size_t)2) == 0 ||
           memcmp(entCur, "UI", (size_t)2) == 0 ||
           memcmp(entCur, "CS", (size_t)2) == 0 )  // CS, to remove later
-                                                    // when Write DCM *adds*
+                                                  // when Write DCM *adds*
       // FIXME
       // Use Document::dicom_vr to test all the possibilities
       // instead of just checking for UL, OB and UI !? group 0000 
       {
          Filetype = ExplicitVR;
-         gdcmVerboseMacro( "Explicit Value Representation");
+         gdcmVerboseMacro( "Group 0002 : Explicit Value Representation");
       } 
       else 
       {
          Filetype = ImplicitVR;
-         gdcmVerboseMacro( "Not an explicit Value Representation");
+         gdcmVerboseMacro( "Group 0002 :Not an explicit Value Representation;"
+                        << "Looks like a bugged Header!");
       }
       
       if ( net2host )
@@ -2166,8 +2180,8 @@ bool Document::CheckSwap()
          gdcmVerboseMacro( "HostByteOrder = NetworkByteOrder");
       }
       
-      // Position the file position indicator at first tag (i.e.
-      // after the file preamble and the "DICM" string).
+      // Position the file position indicator at first tag 
+      // (i.e. after the file preamble and the "DICM" string).
       Fp->seekg(0, std::ios::beg);
       Fp->seekg ( 132L, std::ios::beg);
       return true;
@@ -2265,7 +2279,7 @@ bool Document::CheckSwap()
  */
 void Document::SwitchByteSwapCode() 
 {
-   gdcmVerboseMacro( "Switching Byte Swap code.");
+   gdcmVerboseMacro( "Switching Byte Swap code from "<< SwapCode);
    if ( SwapCode == 1234 ) 
    {
       SwapCode = 4321;
@@ -2396,7 +2410,7 @@ void Document::HandleOutOfGroup0002(uint16_t group)
       // we just came out of group 0002
       // if Transfer syntax is Big Endian we have to change CheckSwap
 
-      std::string ts = GetTransferSyntaxName();
+      std::string ts = GetTransferSyntax();
       if ( !Global::GetTS()->IsTransferSyntax(ts) )
       {
          gdcmVerboseMacro("True DICOM File, with NO Tansfer Syntax: " << ts );
@@ -2407,7 +2421,8 @@ void Document::HandleOutOfGroup0002(uint16_t group)
       //'Implicit VR Transfer Syntax (GE Private)
       if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian )
       {
-         gdcmVerboseMacro("Tansfer Syntax = Explicit VR - Big Endian");
+         gdcmVerboseMacro("Transfer Syntax Name = [" 
+                        << GetTransferSyntaxName() << "]" );
          SwitchByteSwapCode();
       }
    }
@@ -2441,7 +2456,7 @@ DocEntry *Document::ReadNextDocEntry()
    // Sometimes file contains groups of tags with reversed endianess.
    HandleBrokenEndian(group, elem);
 
-// In 'true DICOM' files Group 0002 is allways little endian
+// In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
       HandleOutOfGroup0002(group);
  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 23:49:01 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/12 15:22:23 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -169,7 +169,7 @@ void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream *fp )
 
 /**
  * \brief     Try to deal with RLE 16 Bits. 
- *            We assume the RLE has allready been parsed and loaded in
+ *            We assume the RLE has already been parsed and loaded in
  *            Raw (through \ref ReadAndDecompressJPEGFile ).
  *            We here need to make 16 Bits Pixels from Low Byte and
  *            High Byte 'Planes'...(for what it may mean)
