@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/06/22 13:59:48 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ gdcmSeqEntry::~gdcmSeqEntry() {
    for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
    {
       delete *cc;
-		cout << "delete SQItem" << endl;
+     std::cout << "delete SQItem" <<std:: endl;
    }
    if (!seq_term)
       delete seq_term;
@@ -69,8 +69,8 @@ void gdcmSeqEntry::Print(std::ostream &os){
    os << s.str();   
 
     if (GetReadLength() == 0)
-	    return;
-		  
+       return;
+
     // Then, Print each SQ Item   
      for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
    {

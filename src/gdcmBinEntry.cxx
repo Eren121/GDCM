@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/06/22 13:56:08 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,8 +65,8 @@ gdcmBinEntry::~gdcmBinEntry(){
 void gdcmBinEntry::Print(std::ostream &os)
 {
    //gdcmValEntry::Print(os);  // replaced by PrintCommonPart 
-	                            // to avoid bugging the display	
-	PrintCommonPart(os);
+                               // to avoid bugging the display
+   PrintCommonPart(os);
    std::ostringstream s;
    if (voidArea != NULL)
    {
