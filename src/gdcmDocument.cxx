@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 17:27:03 $
-  Version:   $Revision: 1.193 $
+  Date:      $Date: 2005/01/17 17:31:01 $
+  Version:   $Revision: 1.194 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -703,12 +703,12 @@ std::string Document::GetEntry(uint16_t group, uint16_t elem)
  */
 std::string Document::GetEntryVR(uint16_t group, uint16_t elem)
 {
-   DocEntry *elem = GetDocEntry(group, elem);
-   if ( !elem )
+   DocEntry *element = GetDocEntry(group, elem);
+   if ( !element )
    {
       return GDCM_UNFOUND;
    }
-   return elem->GetVR();
+   return element->GetVR();
 }
 
 /**
@@ -721,12 +721,12 @@ std::string Document::GetEntryVR(uint16_t group, uint16_t elem)
  */
 int Document::GetEntryLength(uint16_t group, uint16_t elem)
 {
-   DocEntry *elem =  GetDocEntry(group, elem);
-   if ( !elem )
+   DocEntry *element =  GetDocEntry(group, elem);
+   if ( !element )
    {
       return -2;  //magic number
    }
-   return elem->GetLength();
+   return element->GetLength();
 }
 
 /**
