@@ -84,7 +84,7 @@ gdcmException::operator const char *() const throw() {
 }
 
 
-ostream& operator<<(ostream &os, const gdcmException &e) {
+std::ostream& operator<<(std::ostream &os, const gdcmException &e) {
   try {  
     os << "Exception " << e.getName() << " thrown: " << e.getError() << std::endl;
   }
