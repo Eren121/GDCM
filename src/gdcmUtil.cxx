@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/22 01:40:41 $
-  Version:   $Revision: 1.118 $
+  Date:      $Date: 2005/01/22 22:50:12 $
+  Version:   $Revision: 1.119 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -295,7 +295,7 @@ std::string Util::GetCurrentDateTime()
 #else
    struct timeval tv;
    gettimeofday (&tv, NULL);
-   timep = &tv.tv_sec;
+   timep = (time_t*)(&tv.tv_sec);
    // Compute milliseconds from microseconds.
    milliseconds = tv.tv_usec / 1000;
 #endif
