@@ -3,6 +3,10 @@
 #include "gdcmDocument.h"
 #include "gdcmValEntry.h"
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
 // return true if the file exists
 bool FileExists(const char* filename)
 {
