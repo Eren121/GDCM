@@ -38,7 +38,7 @@ SET (LIBRARY_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin CACHE PATH "Single output direct
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 #-----------------------------------------------------------------------------
-# Test if compiler defines __FUNCTION__
+# Test if compiler defines the pseudo-macro __FUNCTION__
 IF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
   MESSAGE(STATUS "Checking support for __FUNCTION__ in compiler")
   TRY_COMPILE(GDCM_COMPILER_HAS_FUNCTION
