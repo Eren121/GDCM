@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 15:58:00 $
-  Version:   $Revision: 1.200 $
+  Date:      $Date: 2005/01/20 11:07:07 $
+  Version:   $Revision: 1.201 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,9 +63,12 @@ const unsigned int Document::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
  */
 Document::Document( std::string const &filename ) : ElementSet(-1)
 {
+   RLEInfo = NULL;
+   JPEGInfo = NULL;
+
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = filename;
-   Initialise();
+   Initialize();
 
    Fp = 0;
    if ( !OpenFile() )
@@ -159,10 +162,13 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
  */
 Document::Document() : ElementSet(-1)
 {
+   RLEInfo = NULL;
+   JPEGInfo = NULL;
+
    Fp = 0;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
-   Initialise();
+   Initialize();
    SwapCode = 1234;
    Filetype = ExplicitVR;
    Group0002Parsed = false;
@@ -176,8 +182,10 @@ Document::~Document ()
    RefPubDict = NULL;
    RefShaDict = NULL;
 
-   delete RLEInfo;
-   delete JPEGInfo;
+   if( RLEInfo )
+      delete RLEInfo;
+   if( JPEGInfo )
+      delete JPEGInfo;
 }
 
 //-----------------------------------------------------------------------------
@@ -2119,7 +2127,7 @@ void Document::SkipBytes(uint32_t nBytes)
  * \brief Loads all the needed Dictionaries
  * \warning NOT end user intended method !   
  */
-void Document::Initialise() 
+void Document::Initialize() 
 {
    RefPubDict = Global::GetDicts()->GetDefaultPubDict();
    RefShaDict = NULL;

@@ -1,5 +1,10 @@
+2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDebug.h : remove the Debug test in the gdcmErrorMacro
+   * src/gdcmDocument.[h|cxx] : rename the Initialise method to Initialize, to
+     be complient with all the gdcm source code
+
 2005-01-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * src/gdcmDocEntry.h : DocEntry is now secure. User can't change the 
+   * src/gdcmDocEntry.h : DocEntry is now secure. User can't change the
      DictEntry or the VR.
 
 2005-01-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 22:39:15 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/01/20 11:07:07 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,7 +121,9 @@ public:
  * @param msg message part
  */
 #ifdef NDEBUG
-#define gdcmVerboseMacro(msg)
+#define gdcmVerboseMacro(msg)                               \
+{                                                           \
+}
 #else
 #define gdcmVerboseMacro(msg)                               \
 {                                                           \
@@ -148,8 +150,6 @@ public:
 #else
 #define gdcmErrorMacro(msg)                                 \
 {                                                           \
-   if( Debug::GetDebugFlag() )                              \
-   {                                                        \
    std::ostringstream osmacro;                              \
    osmacro << "Error: In " __FILE__ ", line " << __LINE__   \
            << ", function " << GDCM_FUNCTION << '\n'        \
@@ -158,8 +158,6 @@ public:
       Debug::GetDebugFile() << osmacro.str() << std::endl;  \
    else                                                     \
       std::cerr << osmacro.str() << std::endl;              \
-   exit(1);                                                 \
-   }                                                        \
 }
 #endif //NDEBUG
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 08:57:14 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2005/01/20 11:07:07 $
+  Version:   $Revision: 1.93 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,7 +219,7 @@ private:
    bool     ReadTag(uint16_t, uint16_t);
    uint32_t ReadTagLength(uint16_t, uint16_t);
 
-   void Initialise();
+   void Initialize();
    bool CheckSwap();
    void SwitchByteSwapCode();
    void SetMaxSizeLoadEntry(long);
