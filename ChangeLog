@@ -1,4 +1,9 @@
 2003-02-13 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * python/setup.py : bug fix concerning install under windows
+        ExtraPath reused :-P
+      * gdcm.dsw : bug fix concerning path for libraries for python !!!
+
+2003-02-13 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * Dicts/dicomV3.dic : remove double spaces !!!
       * src/gdcmElValSet.cxx : bug fix concerning windows compiler
       * python/gdcmPython/win32/gdcmpycomplet.dsp : bug fix concerning paths
