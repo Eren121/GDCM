@@ -68,12 +68,6 @@ typedef  unsigned short guint16;
 typedef  unsigned int guint32;
 
 ////////////////////////////////////////////////////////////////////////////
-// Global variables get exported to cvar in Python
-%immutable;
-extern gdcmGlobal gdcmGlob;
-%mutable;
-
-////////////////////////////////////////////////////////////////////////////
 %typemap(out) std::list<std::string> * {
 	PyObject* NewItem = (PyObject*)0;
 	PyObject* NewList = PyList_New(0); // The result of this typemap

@@ -85,7 +85,7 @@ gdcmDicomDirSerie   = gdcm.gdcmDicomDirSerie
 gdcmDicomDirImage   = gdcm.gdcmDicomDirImage
 
 def GetPubDictEntryNames():
-   return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictEntryNames()
+   return gdcmGlobal.GetDicts().GetPubDictEntryNames()
 
 def GetPubDictEntryNamesByCategory():
-   return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictEntryNamesByCategory()
+   return gdcmGlobal.GetDicts().GetPubDictEntryNamesByCategory()

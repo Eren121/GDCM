@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include "gdcmCommon.h"
+
 /**
  * \defgroup Globals Utility functions
  * \brief    Here are some utility functions, belonging to NO class,
@@ -14,15 +16,15 @@
  */
 
 //-----------------------------------------------------------------------------
-std::istream & eatwhite(std::istream & is);
+GDCM_EXPORT std::istream & eatwhite(std::istream & is);
 
-void Tokenize (const std::string& str,
+GDCM_EXPORT void Tokenize (const std::string& str,
                std::vector<std::string>& tokens,
                const std::string& delimiters = " ");
 
-std::string CreateCleanString(std::string s);
-void        NormalizePath(std::string &name);
-std::string GetPath(std::string &fullName);
-std::string GetName(std::string &fullName);
+GDCM_EXPORT std::string CreateCleanString(std::string s);
+GDCM_EXPORT void        NormalizePath(std::string &name);
+GDCM_EXPORT std::string GetPath(std::string &fullName);
+GDCM_EXPORT std::string GetName(std::string &fullName);
 //-----------------------------------------------------------------------------
 #endif
