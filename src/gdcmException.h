@@ -16,6 +16,10 @@
 #define GDCM_EXCEPTION_H
 
 #include <string>
+#ifdef _MSC_VER
+using namespace std;  // string type lives in the std namespace on VC++
+#endif
+
 #include <iostream>
 #include <exception>
 using namespace std;
