@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.2 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -84,6 +84,41 @@ void vtkGdcmWriter::PrintSelf(ostream& os, vtkIndent indent)
 
 //-----------------------------------------------------------------------------
 // Protected
+/**
+ * Copy the image and reverse the Y axis
+ */
+// The output datas must be deleted by the user of the method !!!
+size_t ReverseData(vtkImageData *img,unsigned char **data)
+{
+   int *dim = img->GetDimensions();
+   size_t lineSize = dim[0] * img->GetScalarSize()
+                   * img->GetNumberOfScalarComponents();
+   size_t planeSize = dim[1] * lineSize;
+   size_t size = dim[2] * planeSize;
+
+   *data = new unsigned char[size];
+
+   unsigned char *src = (unsigned char *)img->GetScalarPointer();
+   unsigned char *dst = *data + planeSize - lineSize;
+   for (int plane = 0; plane < dim[2]; plane++)
+   {
+      for (int line = 0; line < dim[1]; line++)
+      {
+         // Copy one line at proper destination:
+         memcpy((void*)dst, (void*)src, lineSize);
+
+         src += lineSize;
+         dst -= lineSize;
+      }
+      dst += 2 * planeSize;
+   }
+
+   return size;
+}
+
+/**
+ * Set the datas informations in the file
+ */
 void SetImageInformation(gdcm::File *file,vtkImageData *image)
 {
    std::ostringstream str;
@@ -166,13 +201,16 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x1050);
 
    // Pixels
-   size_t size = dim[0] * dim[1] * dim[2] 
-               * image->GetScalarSize()
-               * image->GetNumberOfScalarComponents();
-   file->SetImageData((unsigned char *)image->GetScalarPointer(),size);
+   unsigned char *data;
+   size_t size = ReverseData(image,&data);
+   file->SetImageData(data,size);
 }
 
-void vtkGdcmWriter::RecursiveWrite(int dim, vtkImageData *region, ofstream *file)
+/**
+ * Write of the files
+ * The call to this method is recursive if there is some files to write
+ */ 
+void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, ofstream *file)
 {
    if(file)
    {
@@ -180,24 +218,28 @@ void vtkGdcmWriter::RecursiveWrite(int dim, vtkImageData *region, ofstream *file
       return;
    }
 
-   if( region->GetScalarType() == VTK_FLOAT 
-     || region->GetScalarType() == VTK_DOUBLE )
+   if( image->GetScalarType() == VTK_FLOAT || 
+       image->GetScalarType() == VTK_DOUBLE )
    {
       vtkErrorMacro(<< "Bad input type. Scalar type musn't be of type "
                     << "VTK_FLOAT or VTKDOUBLE (found:"
-                    << region->GetScalarTypeAsString());
+                    << image->GetScalarTypeAsString());
       return;
    }
 
+   WriteFile(this->FileName,image);
+}
+
+void vtkGdcmWriter::WriteFile(char *fileName,vtkImageData *image)
+{
+   // From here, the write of the file begins
    gdcm::File *dcmFile = new gdcm::File();
 
-   ///////////////////////////////////////////////////////////////////////////
    // Set the image informations
-   SetImageInformation(dcmFile,region);
+   SetImageInformation(dcmFile,image);
 
-   ///////////////////////////////////////////////////////////////////////////
    // Write the image
-   if(!dcmFile->Write(this->FileName))
+   if(!dcmFile->Write(FileName))
    {
       vtkErrorMacro(<< "File " << this->FileName << "couldn't be written by "
                     << " the gdcm library");

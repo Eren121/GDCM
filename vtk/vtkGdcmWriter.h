@@ -26,7 +26,8 @@ protected:
    vtkGdcmWriter();
    ~vtkGdcmWriter();
 
-  virtual void RecursiveWrite(int dim, vtkImageData *region, ofstream *file);
+  virtual void RecursiveWrite(int axis, vtkImageData *image, ofstream *file);
+  void WriteFile(char *fileName,vtkImageData *image);
 
 private:
 // Variables

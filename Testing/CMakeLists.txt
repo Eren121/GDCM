@@ -41,6 +41,7 @@ IF (GDCM_DATA_ROOT)
       )
     SET(TEST_SOURCES ${TEST_SOURCES}
       ShowDicom.cxx
+      ShowDicomSeq.cxx
       TestWriteWithVTK.cxx
       )
   ENDIF(GDCM_VTK)
@@ -90,6 +91,12 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
     "${GDCM_DATA_ROOT}/*.nema"
     "${GDCM_DATA_ROOT}/*.ima"
     )
+  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB
+    "${GDCM_DATA_ROOT}/*FileSeq0.acr"
+    "${GDCM_DATA_ROOT}/*FileSeq0.dcm"
+    "${GDCM_DATA_ROOT}/*FileSeq0.nema"
+    "${GDCM_DATA_ROOT}/*FileSeq0.ima"
+    )
 ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
   # Since there is a bug in cmake 1.8.3, I'll have to do two separate globs
   FILE(GLOB GDCM_DATA_IMAGES_GLOB_ACR
@@ -107,7 +114,22 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   SET(GDCM_DATA_IMAGES_GLOB 
     ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR}
     ${GDCM_DATA_IMAGES_GLOB_NEMA} ${GDCM_DATA_IMAGES_GLOB_IMA})
-  #SET(GDCM_DATA_IMAGES_GLOB  ${GDCM_DATA_IMAGES_GLOB_ACR})
+
+  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB_ACR
+    "${GDCM_DATA_ROOT}/*FileSeq0.acr"
+    )
+  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB_DCM
+    "${GDCM_DATA_ROOT}/*FileSeq0.dcm"
+    )
+  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB_NEMA
+    "${GDCM_DATA_ROOT}/*FileSeq0.nema"
+    )
+  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB_IMA
+    "${GDCM_DATA_ROOT}/*FileSeq0.ima"
+    )
+  SET(GDCM_DATA_SEQ_IMAGES_GLOB 
+    ${GDCM_DATA_SEQ_IMAGES_GLOB_DCM} ${GDCM_DATA_SEQ_IMAGES_GLOB_ACR}
+    ${GDCM_DATA_SEQ_IMAGES_GLOB_NEMA} ${GDCM_DATA_SEQ_IMAGES_GLOB_IMA})
 ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
@@ -138,7 +160,23 @@ FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
   ENDIF(NOT bad_dicom)
 ENDFOREACH(filename)
 
+SET(GDCM_DATA_SEQ_IMAGES)
+FOREACH(filename ${GDCM_DATA_SEQ_IMAGES_GLOB})
+  GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
+  STRING(REGEX MATCH ${filename_temp} bad_dicom ${BLACK_LIST})
+  IF(NOT bad_dicom)
+    STRING(REGEX REPLACE "(.*)FileSeq0(.*)" "\\1FileSeq%d\\2" filename_temp2 ${filename_temp})
+
+    SET(GDCM_DATA_SEQ_IMAGES "${GDCM_DATA_SEQ_IMAGES}\n\"${filename_temp2}\",")
+  ENDIF(NOT bad_dicom)
+ENDFOREACH(filename)
+
 # Populate GDCM_DATA_IMAGES:
 FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataImages.h"
   "const char * const gdcmDataImages[] = { ${GDCM_DATA_IMAGES}\n0 };\n" 
+  )
+
+# Populate GDCM_DATA_SEQ_IMAGES:
+FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataSeqImages.h"
+  "const char * const gdcmDataSeqImages[] = { ${GDCM_DATA_SEQ_IMAGES}\n0 };\n" 
   )

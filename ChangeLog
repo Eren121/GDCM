@@ -1,3 +1,13 @@
+2004-12-08 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * vtk/vtkGdcmReader.[h|cxx] : bug fix. Plane order isn't inverted
+   * vtk/vtkGdcmWriter.[h|cxx] : correctly write images (the Y axis is inverted)
+   * Test/ShowDicomSeq.cxx : new test to verify the use of AddFileName method
+   * Test/ShowDicom.cxx, TestWriteWithVTK.cxx : set the threshold of regression
+     test to 0.0
+   * Test/TestCopyRescaleDicom.cxx : remove unused variable
+   * Test/CMakeLists.txt : add the creation of the gdcmDataSeqImages.h file
+     containing found sequences
+
 2004-12-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/ShowDicom.cxx, TestWriteWithVTK.cxx : bug fix, now this test pass
      not at all time

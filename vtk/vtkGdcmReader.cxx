@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.62 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.63 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -607,7 +607,7 @@ void vtkGdcmReader::AddInternalFileName(const char* name)
  */
 size_t vtkGdcmReader::LoadImageInMemory(
              std::string fileName, 
-             unsigned char * dest,
+             unsigned char *dest,
              const unsigned long updateProgressTarget,
              unsigned long & updateProgressCount)
 {
@@ -626,13 +626,14 @@ size_t vtkGdcmReader::LoadImageInMemory(
    int numLines   = file.GetHeader()->GetYSize();
    int numPlanes  = file.GetHeader()->GetZSize();
    int lineSize   = NumComponents * numColumns * file.GetHeader()->GetPixelSize();
+   int planeSize  = lineSize * numLines;
 
-   unsigned char * source;
+   unsigned char *src;
    
    if( file.GetHeader()->HasLUT() && AllowLookupTable )
    {
       size               = file.GetImageDataSize();
-      source             = (unsigned char*) file.GetImageDataRaw();
+      src                = (unsigned char*) file.GetImageDataRaw();
       unsigned char *lut = (unsigned char*) file.GetLutRGBA();
 
       if(!this->LookupTable)
@@ -656,20 +657,19 @@ size_t vtkGdcmReader::LoadImageInMemory(
    }
    else
    {
-      size        = file.GetImageDataSize();
-      source      = (unsigned char*)file.GetImageData();
+      size = file.GetImageDataSize();
+      src  = (unsigned char*)file.GetImageData();
    } 
-   
-   unsigned char * destination = dest + size - lineSize;
 
+   unsigned char *dst = dest + planeSize - lineSize;
    for (int plane = 0; plane < numPlanes; plane++)
    {
       for (int line = 0; line < numLines; line++)
       {
          // Copy one line at proper destination:
-         memcpy((void*)destination, (void*)source, lineSize);
-         source      += lineSize;
-         destination -= lineSize;
+         memcpy((void*)dst, (void*)src, lineSize);
+         src += lineSize;
+         dst -= lineSize;
          // Update progress related:
          if (!(updateProgressCount%updateProgressTarget))
          {
@@ -677,16 +677,8 @@ size_t vtkGdcmReader::LoadImageInMemory(
          }
          updateProgressCount++;
       }
+      dst += 2 * planeSize;
    }
-   
-// DO NOT remove this commented out code .
-// Nobody knows what's expecting you ...
-// Just to 'see' what was actually read on disk :-(
-
-//   FILE * f2;
-//   f2 = fopen("SpuriousFile.RAW","wb");
-//   fwrite(Dest,size,1,f2);
-//   fclose(f2); 
    
    return size;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 18:16:40 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/12/08 11:37:15 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,7 +91,6 @@ int CopyRescaleDicom(std::string const & filename,
    gdcm::File *copy     = new gdcm::File( copyH );
 
    size_t dataSize = original->GetImageDataSize();
-   uint8_t* imageData = original->GetImageData();
 
    size_t rescaleSize;
    uint8_t *rescaleImage;
