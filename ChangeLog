@@ -1,9 +1,16 @@
+2005-01-22 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDicomDirElement.h, gdcmDict.h : rename AddNewXxx methods to AddXxx.
+   * src/gdcmDict.h : rename GetDictEntry moethod to GetEntry, to be coherent 
+     with other method names
+   * gdcmPython/gdcm.i : bug fix. Add the typemaps for the TagName type
+   * Test/TestDicomDirElement.cxx : add new test
+
 2005-01-22 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Finish the CreateUniqueUID stuff. Seems to compiled/runs on every
-	 plateforms ITK support. Had some troubles with uint64_t on Win32, go to 
-	 http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclang/html/_langref_data_type_ranges.asp
-	 for more info. Basically you can not used 'unsigned' __int8 in an ostream.
-	 So can't you use __int64 in ostream at all.
+     plateforms ITK support. Had some troubles with uint64_t on Win32, go to
+     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclang/html/_langref_data_type_ranges.asp
+     for more info. Basically you can not used 'unsigned' __int8 in an ostream.
+     So can't you use __int64 in ostream at all.
 
 2005-01-22 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * bug fix for compilation on MSVC6
@@ -56,14 +63,14 @@
 
 2005-01-18 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * ENH for DicomDir, DicomDirPatient, DicomDirStudy, 
-	          DicomDirSerie, DicomDirImage
-	          Dict, DictSet classes :
+             DicomDirSerie, DicomDirImage
+             Dict, DictSet classes :
          -add method GetFirstEntry to replace call to InitTraversal+GetNextEntry
          -remove InitTraversal method.
-	* UPD Test programs + Example programs
+   * UPD Test programs + Example programs
 
 2005-01-18 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
-   remove useless and never updated keyword \ingroup	      
+   remove useless and never updated keyword \ingroup         
 
 2005-01-17 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmUtil.cxx : bug fix to find the Windows MAC address. Now, there
@@ -71,42 +78,42 @@
    * gdcmPython/demo : add python demos using VTK
 
 2005-01-16 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
-	 * FIX 'Dictionnary' is now spelt 'Dictionary'
-	       'wether' is now spelt 'whether'
-			 'archieve' is now spelt 'archive'   ;-)
+    * FIX 'Dictionnary' is now spelt 'Dictionary'
+          'wether' is now spelt 'whether'
+          'archieve' is now spelt 'archive'   ;-)
 
 2005-01-15 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
     * ADD DicomDir, DicomDirPatient, DicomDirStudy, DicomDirSerie, DicomDirImage
-	       related methods, in order not to expose internal mechanisms
+          related methods, in order not to expose internal mechanisms
         InitTraversal();
         GetNextEntry();
-	 * REM methods that exposed internal mechanisms :
+    * REM methods that exposed internal mechanisms :
         DicomDir::GetDicomDirPatients()
         DicomDirPatient::GetDicomDirStudies()
         DicomDirStudy::GetDicomDirSeries()
         DicomDirSerie::GetDicomDirImages()
-	 * UPD Test programs :
-	     makeDicomDir.cxx
-	     BuildUpDicomDir.cxx
-	     TestDicomDir.cxx
-	  * UPD Example program
-	     PrintDicomDir.cxx
+    * UPD Test programs :
+        makeDicomDir.cxx
+        BuildUpDicomDir.cxx
+        TestDicomDir.cxx
+     * UPD Example program
+        PrintDicomDir.cxx
     * ADD DictSet methods
         InitTraversal()
         GetNextEntry()
 
 2005-01-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Removed the Print/indent/default parameter mess. There is absolutely no
-	 reason to have to methods, moreover with the second taking the ostream as
-	 *SECOND* parameter. This was clearly a bad hack to get things compile.
+    reason to have to methods, moreover with the second taking the ostream as
+    *SECOND* parameter. This was clearly a bad hack to get things compile.
 
 2005-01-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Complete rewrite of the GetMacAddress code. Now the code is *much*
-	 smaller (no more MacOSX specific crap). A lot more POSIX oriented.
-	 Unfortunately the main code does not work on SunOS, thus provide a specific
-	 code for this platform only (and Win32 of course). Since this seems to be
-	 working, change CreateUniqueUID to use GetMACAddress instead of the
-	 problematic GctestetIPAddress
+    smaller (no more MacOSX specific crap). A lot more POSIX oriented.
+    Unfortunately the main code does not work on SunOS, thus provide a specific
+    code for this platform only (and Win32 of course). Since this seems to be
+    working, change CreateUniqueUID to use GetMACAddress instead of the
+    problematic GctestetIPAddress
 
 2005-01-14 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Unfortunately to be able to test gdcmDirList I had to break the API
@@ -120,16 +127,16 @@
 
 2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * ENH - Comment out Mathieu's (dangerous) Super Hack
-	      for dealing with BIGENDIAN processors
-			- Move equivalent stuff to BinEntry::WriteContent
-			When necessary, 16 Bits Pixels are swapped in a small buffer
-			and then written. This avoid allocating a huge buffer, in
-			PixelWriteConvertor, and avoid modifying the Pixel Area.
-			Note :
-	      Probabely, the same operation will have to be done when we want 
-	      to write image with Big Endian Transfert Syntax, 
-	      and we are working on Little Endian Processor
-						
+         for dealing with BIGENDIAN processors
+         - Move equivalent stuff to BinEntry::WriteContent
+         When necessary, 16 Bits Pixels are swapped in a small buffer
+         and then written. This avoid allocating a huge buffer, in
+         PixelWriteConvertor, and avoid modifying the Pixel Area.
+         Note :
+         Probabely, the same operation will have to be done when we want 
+         to write image with Big Endian Transfert Syntax, 
+         and we are working on Little Endian Processor
+                  
 2005-01-14 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocument.[h|cxx] : comment all methods concerning a flat hash
      table.
@@ -151,8 +158,8 @@
 
 2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * merging of Test/PrintDicomDir and Test/TestDicomDir
-	* removal of now redundant Test/PrintDicomDir
-	* enhancement of Example/PrintDicomDir
+   * removal of now redundant Test/PrintDicomDir
+   * enhancement of Example/PrintDicomDir
 
 2005-01-13 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Now, python test might work on systems
@@ -160,16 +167,16 @@
 
 2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * FIX : First entry following group 0002 was lost for
-	        Explicit Big Endian Transfer Syntax files
+           Explicit Big Endian Transfer Syntax files
           (group and elem not swaped)
-	
+   
 2005-01-12 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * FIX : Old quick and dirty 'optimistic' heuristic to deal with
-	        Big Endian Transfer Syntax supposed the group following 0002
-			  begins always by element 0000 (element 0000 is *optional*)
-			  To avoid further troubles, let's be pessimistic, and use
-			  Document::HandleOutOfGroup0002() method 
-	 * FIX : comparison between GDCM_NOTLOADED and Transfer Syntax
+           Big Endian Transfer Syntax supposed the group following 0002
+           begins always by element 0000 (element 0000 is *optional*)
+           To avoid further troubles, let's be pessimistic, and use
+           Document::HandleOutOfGroup0002() method 
+    * FIX : comparison between GDCM_NOTLOADED and Transfer Syntax
               (related pb not yet solved)
 
 2005-01-12 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
@@ -187,11 +194,11 @@
 2005-01-11 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * Replace confusing name SwitchSwapToBigEndian name by SwitchByteSwapCode
    * Add the Document::HandleOutOfGroup0002(uint16_t group) method
-	    to swap the Swap Code, at parsing time, when we come out of group 0002
-		 and Transfer Syntax is Big Endian
-		 We should be able to read now 'true DICOM" Big Endian coded images
-	 * Add optional run time SetDebugOn (last param) for PrintHeader, PrintFile
-	 * Replace the french 'Transfert Syntax' by the english 'Transfer Syntax'
+       to swap the Swap Code, at parsing time, when we come out of group 0002
+       and Transfer Syntax is Big Endian
+       We should be able to read now 'true DICOM" Big Endian coded images
+    * Add optional run time SetDebugOn (last param) for PrintHeader, PrintFile
+    * Replace the french 'Transfert Syntax' by the english 'Transfer Syntax'
 
 2005-01-10 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Hopefully fix the bug on MacOSX and static global initialization.
@@ -203,9 +210,9 @@
 
 2005-01-08 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Fix bug on MacOSX with static initialization in a multy threaded
-	 environment. static const string in a header file used to be ill
-	 initialized provoquing the freeze of any tests. patch should solve this
-	 issue.
+    environment. static const string in a header file used to be ill
+    initialized provoquing the freeze of any tests. patch should solve this
+    issue.
 
 2005-01-08 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * According to Benoit's suggestion, and without any objection from anybody
@@ -226,22 +233,22 @@
    * Removal of useless and dangerous methods :
          GetEntryByName, GetEntryVRByName, GetDocEntryByName, SetEntryByName
          GetDocEntryByName, GetEntryByName, GetDictEntryByName
-	* Removal of usless methods :
+   * Removal of usless methods :
          Dict::PrintByName, Dict::GetDictEntryByName
    * Commenting out of probabely useless methods :
          Dict::GetDictEntryNames()
          Dict::GetDictEntryNamesByCategory()
          DictSet::GetPubDictEntryNames()
-         DictSet::GetPubDictEntryNamesByCategory()			
-	* ENH : New Dicom Dictionary (with Value Multiplicity) is now used 	
-	* ENH : Use dicomTS.dic as described in 2004 version	
-	* ENH : Removal out of the Dicom Dictionary of non dicom 'fourth' field
+         DictSet::GetPubDictEntryNamesByCategory()         
+   * ENH : New Dicom Dictionary (with Value Multiplicity) is now used    
+   * ENH : Use dicomTS.dic as described in 2004 version   
+   * ENH : Removal out of the Dicom Dictionary of non dicom 'fourth' field
            Add         to the Dicom Dictionary of Dicom 'Value Multiplicity' field
-			  Add Accessors on VM (Value Multiplicity), and VM related methods			  
+           Add Accessors on VM (Value Multiplicity), and VM related methods           
    * ADD : Add a list of 'Dicom Attribute types', as found in
            http://medical.nema.org/dicom/2004/04_15PU.PDF
-			             Unused till now...			  
-	* ADD : Add dicomGroupNameAbbreviations.dic
+                      Unused till now...           
+   * ADD : Add dicomGroupNameAbbreviations.dic
            should be used to write a method to replace the former
            Dict::GetDictEntryNamesByCategory()
 
@@ -278,11 +285,11 @@
 2005-01-05 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * ADD : Add the method Util::IsCurrentProcessorBigEndian
           (we'll need it for 'Explicit VR Big Endian' Transfert Syntax)
-	* ADD  Method Document::ComputeGroupLength
-	* ENH : now  parsing creates a Vitual DictEntry for Pixels Element,
+   * ADD  Method Document::ComputeGroupLength
+   * ENH : now  parsing creates a Vitual DictEntry for Pixels Element,
            in order to allow further VR modification by user
-   * REM : removal of once-called method File::WriteBase	
-	        integration of its code in formerly one-line method File::Write
+   * REM : removal of once-called method File::WriteBase   
+           integration of its code in formerly one-line method File::Write
 
 2005-01-05 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmCommon.h : add the GDCM_UNKNOWN constant. This constant is to
@@ -1234,7 +1241,7 @@
    A lot of things should be OK again.
    It's really urgent to have a test suite that *tests*, 
    to prevent Frog's beautifying sessions to break all the stuff
-   (twice, withing a fortnigh ...) 	
+   (twice, withing a fortnigh ...)    
 
 2004-06-28 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * Test/TestWriteRead.cxx and TestReadWrite.cxx merged (because of
@@ -1331,7 +1338,7 @@
      ADD virtual gdcmDocEntry *GetDocEntryByNumber(guint16 group,guint16 element) = 0;
      ADD gdcmDocEntry *GetDocEntryByName(std::string name);
      ADD virtual std::string GetEntryByNumber(guint16 group,guint16 element) = 0;
-     ADD std::string GetEntryByName(TagName name);	         
+     ADD std::string GetEntryByName(TagName name);            
      ADD gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
                                             guint16 element,
                                             std::string vr     = "unkn",
@@ -1369,22 +1376,22 @@
      REM gdcmDocEntry *NewDocEntryByName  (std::string Name);
      REM gdcmValEntry *NewValEntryByNumber(guint16 group, guint16 element); 
      REM gdcmBinEntry *NewBinEntryByNumber(guint16 group, guint16 element); 
-	  													 
-	- gdcmElementSet
-	  ADD virtual void Write(FILE *fp, FileType filetype);
-	  
+                                             
+   - gdcmElementSet
+     ADD virtual void Write(FILE *fp, FileType filetype);
+     
    - gdcmSeqEntry
-	  ADD virtual void Write(FILE *fp,FileType filetype);
+     ADD virtual void Write(FILE *fp,FileType filetype);
  
    - gdcmSQItem
      ADD virtual void Write(FILE *fp, FileType filetype);
-     ADD virtual std::string GetEntryByNumber(guint16 group, guint16 element);	      
+     ADD virtual std::string GetEntryByNumber(guint16 group, guint16 element);         
      REM std::string GetEntryByNumber(guint16 group, guint16 element);
      REM std::string GetEntryByName(TagName name);
 
    - gdcmValEntry
-	 ADD virtual void gdcmValEntry::Write(FILE *fp, FileType filetype); 
-				  
+    ADD virtual void gdcmValEntry::Write(FILE *fp, FileType filetype); 
+              
 2004-06-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * Test/TestWriteSimple.cxx: fix to gdcmHeader-gdcmHeaderHelper revamping.
       The default constructor invoked by the line
@@ -1494,23 +1501,23 @@
       - Specific clean up of Parse7FE0() (umproperly named actually).
     * gdcmPython/testSuite.py: an odd temporary kludge introduced.
 
-2004-06-14 Jean-Pierre Roux		
+2004-06-14 Jean-Pierre Roux      
    *  gdcmSeqEntry.cxx
-	   - fix the display of Sequence Delimitor (SQDepthLevel pb)
-		- fix the display of SQItem ordinal number
+      - fix the display of Sequence Delimitor (SQDepthLevel pb)
+      - fix the display of SQItem ordinal number
       - add the GetSQItemByOrdinalNumber method
-		- remove some useless never written private methods	
-		
+      - remove some useless never written private methods   
+      
 2004-06-14 Jean-Pierre Roux
    * gdcmBinEntry.cxx 
       - adding a constructor taking a gdcmDocEntry as an input param
-	   - ReplaceOrCreateByNumber now returns :
-	      a gdcmBinEntry * if a Binary (void *) value is passed as a param
-		   a gdcmValEntry * if a string value is passed as a param
+      - ReplaceOrCreateByNumber now returns :
+         a gdcmBinEntry * if a Binary (void *) value is passed as a param
+         a gdcmValEntry * if a string value is passed as a param
    * dcmDocument.cxx
       - SetEntryByNumber now allows setting gdcmValEntry or gdcmBinEntry, 
-	      according to the param type (no longer sets a gdcmDocEntry)
-	   - GetValEntryByNumber, GetBinEntryByNumber added
+         according to the param type (no longer sets a gdcmDocEntry)
+      - GetValEntryByNumber, GetBinEntryByNumber added
       - NewValEntryByNumber and NewBinEntryByNumber added
    * gdcmFile.cxx
       - Pixel Data are now linked to the (7fe0,0010) elements, after reading
@@ -1518,10 +1525,10 @@
       - GetSQItemNumber and SetSQItemNumber added, to provide 
             a (relative) Item identier inside a given Sequence
             \warning : some pb remaining around this number
-				will be solved asap
-      - AddEntry now takes the Item Number as a param 	
+            will be solved asap
+      - AddEntry now takes the Item Number as a param    
    * gdcmValEntry.cxx 
-      - adding a constructor taking a gdcmDocEntry as an input param	
+      - adding a constructor taking a gdcmDocEntry as an input param   
 
 2004-06-14 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * Memory leak hunt with the following command:
@@ -1698,7 +1705,7 @@
            SeQuence indented printing of Dicom Header.
      * ENH merge methods gdcmParser::Parse and gdcmParser::LoadHeaderEntries
            into the single gdcmParser::LoadHeaderEntries for efficiency purpose.
-	   Computation of SQDepthLevel is now part of gdcmHeader constructor
+      Computation of SQDepthLevel is now part of gdcmHeader constructor
      * ENH add self defined param 'new' to PrintHeader to 'show' the SeQuence
            tree-like structure of a Dicom Header.
      * FIX Test code cleaning     
@@ -1719,9 +1726,9 @@
      * ENH Minor changes to the Print() methods.
      * ADD gdcmParser::PrintEntryNiceSQ() to allow SQ-indented
            Header printing. Example given with :
-	   > PrintHeader fileName  2 new
+      > PrintHeader fileName  2 new
           (SQ based tree-like structure still to be done for the Header ...)
-	   
+      
 2004-04-22  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * ENH: Some cosmetic clean up for compilation with -W -Wall -Werror
          1. I have added some unsigned where needed
@@ -1742,17 +1749,17 @@
      * FIX gdcmHeaderHelper::GetXSpacing
            when a single value is found (bug ?), xpacing is now 
            defaulted to yspacing
-	   
+      
 2004-04-19  Jean-Pierre Roux
      * ADD gdcmData/Wrist.pap (PAPYRUS 3.0 -single frame-) for checking purpose
      * ENH add parameters :
                bool  exception_on_error = false, 
                bool  enable_sequences   = false,
-	       bool  ignore_shadow      = false
+          bool  ignore_shadow      = false
            to the gdcmFile constructors to be full gdcmParser compliant
      * FIX vtk/vtkGdcmReader.cxx now uses  enable_sequences = true in gdcmFile
            to allow reading of PAPYRUS 3.0 files 
-	      
+         
 2004-04-06  Jean-Pierre Roux
      * ADD gdcmData/E00001S03I0015.dcm for SQ checking purpose
      
@@ -1760,7 +1767,7 @@
      * ADD : Test/checksequence.sh, for a general recap on SQ pb
      * FIX : gdcmParser::WriteEntryTagVRLength emprovement of special treatement
              for Philips spurious Tag fffe|0000 while rewritting Dicom files
-	     
+        
 2004-03-30  Jean-Pierre Roux
      * FIX gdcmParser::ReplaceOrCreateByNumber shouldn't seg fault any more 
          for ACR file, written out as DICOM files (hope so...)
@@ -1786,7 +1793,7 @@
              from gdcmParser::WriteEntry to gdcmParser::WriteEntries
      * FIX : gdcmObject::ResetBoundaries now stops properly
              when end-of-list is reached
-	   : gdcmVersion modified (as Benoit Regrain asked)
+      : gdcmVersion modified (as Benoit Regrain asked)
 
 2004-03-29  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
      * src/gdcmParser.cxx: removal of all TAB character. Indentation fixed.
@@ -1851,14 +1858,14 @@
            add gdcmDicomDirPatient:NewStudy
            add gdcmDicomDirStudy:NewSerie
            add gdcmDicomDirSerie:NewImage
-	   to allow making gdcDicomDir object.
+      to allow making gdcDicomDir object.
      * ADD PrintDicomDir executable that uses gdcmDicomDir tree-like structure
           (as opposite to the gdcmHeader chained list)
 
 2004-02-11 Benoit Regrain
      * FIX : memory leaks and the set of ArgDelete methods in gdcmDicomDir
              when using from python
-				 
+             
 2004-02-10 Benoit Regrain
      * FIX : bug fix in the gdcmDirList for the recursivity in directories
      * FIX : in gdcmDicomDir when the directory is empty
@@ -2077,19 +2084,19 @@
              not longer on the TagElValueHT tagHt member
       * ENH : PrintPubElVal shows (temporarily) both results,
              with the tagHt member and the listElem member.
-	     (it's easier to 'see' the problems when using Printheader)
+        (it's easier to 'see' the problems when using Printheader)
 
       * FIX : old private member LgrElem is now splitted into
              ReadLength   : Length actually found on disk (updated only
-	                    if bug fixing is necessary), for internal
-			    use only
-	     UsableLength : Updated by FixFoundLength, to fix a bug
-	                    or to allow Parser going on.
-	     Will allow to re-write a kosher header when a SeQuence
-	     with a length (not 0000) is found
+                       if bug fixing is necessary), for internal
+             use only
+        UsableLength : Updated by FixFoundLength, to fix a bug
+                       or to allow Parser going on.
+        Will allow to re-write a kosher header when a SeQuence
+        with a length (not 0000) is found
       Warning : gdcmFile::Write still uses the TagHt (not ListElem)
-	        because gdcmElValSet::Add does not update ListElem
-		(to be written)
+           because gdcmElValSet::Add does not update ListElem
+      (to be written)
 
 2003-11-07 Jean-Pierre Roux
      * FIX misstyping in Transfert Syntax name table
@@ -2149,7 +2156,7 @@
              
 2003-10-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * ENH: Can be used like this '$vtkgdcmViewer *.dcm' with *.dcm 
-	   being coherents dicom files.
+      being coherents dicom files.
      
 2003-10-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * FIX: DOH ! Forgot about windo$e users, they couldn't read lossless jpeg,
@@ -2354,7 +2361,7 @@
          - deals with YcBcR (YBR_FULL) files
          - deals with YBR_YBR_FULL_422 files (they work as RBG files ?!?)
           WARNING : nothing was checked for YBR_PARTIAL_422, YBR_ICT, 
-	                                    YBR_RCT files.
+                                       YBR_RCT files.
           (no sample found :-(
 
 2003-10-02  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>

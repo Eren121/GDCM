@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 17:15:54 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/24 14:14:10 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,7 @@ DicomDirElement::DicomDirElement()
             from.getline(buff, 1024, '"');
             elem.Value = buff;
 
-            AddNewEntry(type, elem);
+            AddEntry(type, elem);
          }
          from.getline(buff, 1024, '\n');
       }
@@ -159,12 +159,11 @@ void DicomDirElement::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief AddNewEntry 
+ * \brief Add an entry 
  * @param type type
  * @param elem elem
  */
-bool DicomDirElement::AddNewEntry(DicomDirType type, 
-                                  Element const &elem)
+bool DicomDirElement::AddEntry(DicomDirType type, Element const &elem)
 {
    switch( type )
    {

@@ -21,10 +21,10 @@ try:
 except IndexError:
    printLevel = 1
 
-### Build the header element list
+### Build the file element list
 print fileName, type(fileName)
-header = gdcm.Header(fileName)
-if not header.IsReadable():
+file = gdcm.File(fileName)
+if not file.IsReadable():
    raise RuntimeError,"The '%s' file is not readable with gdcm." % fileName
 
 print "##############################################################"
@@ -32,10 +32,10 @@ print "### Display all the elements and their respective values"
 print "## found in the ", fileName, " file."
 print "##############################################################"
 
-val=header.GetFirstEntry()
+val=file.GetFirstEntry()
 while(val):
-	val.Print()
-	print ""
-	val=header.GetNextEntry()
+   val.Print()
+   print ""
+   val=file.GetNextEntry()
 val=None
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:33 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/24 14:14:11 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,6 @@
 #include "gdcmCommon.h"
 #include "gdcmDictSet.h"
 #include "gdcmGlobal.h"
-#include "gdcmException.h"
 #include "gdcmDocEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmValEntry.h"
@@ -139,7 +138,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
    }
    else
    {
-      found = pubDict->GetDictEntry(group, elem);  
+      found = pubDict->GetEntry(group, elem);  
    }
    return found;
 }

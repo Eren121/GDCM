@@ -12,6 +12,7 @@ SET(TEST_SOURCES
   TestHash.cxx
   TestTS.cxx
   TestVR.cxx
+  TestDicomDirElement.cxx
   TestUtil.cxx
   TestDicomString.cxx
   TestDict.cxx

@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcm.h,v $
+  Module:    $RCSfile: TestDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:10 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/01/24 14:14:09 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,24 +15,14 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
+#include "gdcmDicomDirElement.h"
 
-#ifndef GDCM_H
-#define GDCM_H
+#include <iostream>
 
-// General purpose include file. This file should be included by
-// external users of gdcm. It exposes the necessary API.
+int TestDicomDirElement(int , char *[])
+{
+   gdcm::DicomDirElement ddElt;
+   ddElt.Print( std::cout );
 
-#include "gdcmCommon.h"
-
-#include "gdcmDictEntry.h"
-#include "gdcmDict.h"
-#include "gdcmDictSet.h"
-
-#include "gdcmDocument.h"
-#include "gdcmFile.h"
-#include "gdcmFileHelper.h"
-#include "gdcmSerieHeader.h"
-
-#include "gdcmUtil.h"
-
-#endif
+   return 0;
+}

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 17:15:54 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/01/24 14:14:11 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,7 +102,7 @@ public:
       { return DicomDirImageList; };
 
    // Public method to add an element
-   bool AddNewEntry(DicomDirType type, Element const &elem);
+   bool AddEntry(DicomDirType type, Element const &elem);
 
 private:
    /// Elements chained list, related to the MetaElements of DICOMDIR

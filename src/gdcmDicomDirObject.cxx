@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:42 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/24 14:14:11 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,7 @@ void DicomDirObject::FillObject(ListDicomDirMetaElem const &elemList)
    {
       tmpGr = it->Group;
       tmpEl = it->Elem;
-      dictEntry = Global::GetDicts()->GetDefaultPubDict()->GetDictEntry(tmpGr,tmpEl);
+      dictEntry = Global::GetDicts()->GetDefaultPubDict()->GetEntry(tmpGr,tmpEl);
       entry = new ValEntry(dictEntry);
       entry->SetOffset(0); // just to avoid further missprinting
       entry->SetValue(it->Value);

@@ -21,7 +21,7 @@ try:
 except IndexError:
    printLevel = 1
 
-### Build the header element list
+### Build the DicomDir element list
 dicomdir = gdcm.DicomDir(fileName)
 if not dicomdir.IsReadable():
    print

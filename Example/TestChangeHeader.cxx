@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:52 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/24 14:14:08 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
     // 0018 1310 US ACQ Acquisition Matrix
     gdcm::DictEntry *dictEntry =
-       f2->GetFile()->GetPubDict()->GetDictEntry( 0x0018, 1310 );
+       f2->GetFile()->GetPubDict()->GetEntry( 0x0018, 1310 );
     std::cerr << std::hex << dictEntry->GetGroup() << "," << dictEntry->GetElement() << std::endl;
 
     std::string matrix = f2->GetFile()->GetEntry(0x0018, 0x1310);
