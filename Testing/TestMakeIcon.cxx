@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 12:14:26 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/02/11 12:18:52 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,7 +104,7 @@ int TestMakeIcon (int , char )
       return 1;
 
    delete fh1;
-   delete F1;
+   delete f1;
 
    return 0;
 }
