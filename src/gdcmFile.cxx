@@ -374,7 +374,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    unsigned char * a       = (unsigned char *)destination;	 
    unsigned char * lutRGBA = (unsigned char *)GetLUTRGBA();
    if (lutRGBA) { 	    
-      int l = lgrTotale/3;
+      int l = lgrTotaleRaw;
       memmove(newDest, destination, l);// move Gray pixels to temp area	    
       int j;	 
       for (int i=0;i<l; i++) {         // Build RGB Pixels
@@ -416,8 +416,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 		   
    }   
     	 
-	 // TODO : Drop Palette Color out of the Header? 
-	     
+   // TODO : Drop Palette Color out of the Header? 	     
    return lgrTotale; 
 }
 
@@ -579,10 +578,15 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
          if (str_PhotometricInterpretation == "YBR_FULL") { 
 	 
 	 // Warning : YBR_FULL_422 acts as RGB
-         //       need to make RGB Pixels from Planes Y,cB,cR
+         //         : we need to make RGB Pixels from Planes Y,cB,cR
          // see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
          // for code optimisation
-
+	 
+	 // to see the tricks about YBR_FULL, YBR_FULL_422, 
+         // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
+	 //   ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
+	 // and be *very* affraid
+	 //
             int l = GetXSize()*GetYSize();
             int nbFrames = GetZSize();
 

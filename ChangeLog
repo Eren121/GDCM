@@ -1,3 +1,27 @@
+2003-11-07 Jean-Pierre Roux
+     *FIX misstyping in Transfert Syntax name table
+     *ENH gdcmHeader::FixFoundLength now allow to 'go inside' tge SeQuences
+          when they have an actual length (not 0000 nor FFFFF)
+	  (Nobody should care of it, but DICOMDIR explorers)
+
+2003-11-06  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     *ENH: vtkgdcmViewer now works with LUT dicom (OT-PAL-face ...)
+
+2003-11-05  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     *ENH: vtkGdcmReader now supports LUT ! 
+          (vtkgdcmViewer for now is not able to use them though)
+           
+2003-11-05 Jean-Pierre Roux
+     * in testSuite.py : new files names for checking the package
+     * Fix : Forgot to commit gdcmFile::GetImageDataSizeRaw();
+             that returns the pixel area size to the *aware* (vtk) user
+             that DOESN'T want to turn the PALETTE COLOR image into an RGB image
+     
+2003-11-05 Benoit Regrain
+     * in testSuite.py : Modify the rules for checking the paths
+                       : Explicit error messages
+     * in __init__.py  : Related modif
+
 2003-11-03 Jean-Pierre Roux
      * add gdcmHeaderHelper::GetNumberOfScalarComponentsRaw()
            to be used by aware (vtk) users that want to manage
