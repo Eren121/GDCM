@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 23:14:05 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/01/11 17:54:10 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,6 +63,9 @@ public:
 #ifdef GDCM_COMPILER_HAS_FUNCTION
 // Handle particular case for GNU C++ which also defines __PRETTY_FUNCTION__
 // which is a lot nice in C++
+#ifdef __BORLANDC__
+#  define __FUNCTION__ __FUNC__
+#endif
 #ifdef __GNUC__
 #  define GDCM_FUNCTION __PRETTY_FUNCTION__
 #else

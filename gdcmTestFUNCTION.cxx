@@ -3,6 +3,11 @@
 
 int TestFUNCTION()
 {
+#ifdef __BORLANDC__
+  #ifndef __FUNCTION__
+    #define __FUNCTION__ __FUNCT__;
+  #endif
+#endif
   const char *f = __FUNCTION__;
   int r = strcmp( "TestFUNCTION", f);
   return r;
