@@ -18,9 +18,9 @@ public:
    vtkTypeMacro(vtkGdcmReader, vtkImageReader);
    void PrintSelf(ostream& os, vtkIndent indent);
 
-   void RemoveAllFileName(void);
-   void AddFileName(const char* name);
-   void SetFileName(const char *name);
+   virtual void RemoveAllFileName(void);
+   virtual void AddFileName(const char* name);
+   virtual void SetFileName(const char *name);
    vtkGetObjectMacro(LookupTable,vtkLookupTable);
 
 protected:
@@ -28,9 +28,9 @@ protected:
    ~vtkGdcmReader();
 
    virtual void ExecuteInformation();
-   void ExecuteData(vtkDataObject *output);
-   void BuildFileListFromPattern();
-   int CheckFileCoherence();
+   virtual void ExecuteData(vtkDataObject *output);
+   virtual void BuildFileListFromPattern();
+   virtual int CheckFileCoherence();
 
 private:
    void RemoveAllInternalFileName(void);
@@ -44,6 +44,7 @@ private:
 
 // Variables
    vtkLookupTable *LookupTable;
+   vtkTimeStamp fileTime;
 
    //BTX
    // Number of columns of the image/volume to be loaded

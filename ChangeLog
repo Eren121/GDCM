@@ -1,14 +1,19 @@
+2004-03-30 Benoit Regrain
+     * vtk/vtkGdcmReader.[h|cxx] : fix the read of 3 gdcmHeader when making an
+       upate of the object's instance. It's passed to 2 in the unfavorable
+       case : one in the ExecuteInformation, one in the ExecuteData
+
 2004-03-29  Jean-Pierre Roux
-     * ENH : Check on file type to be written moved 
+     * ENH : Check on file type to be written moved
              from gdcmParser::WriteEntry to gdcmParser::WriteEntries
-     * FIX : gdcmObject::ResetBoundaries now stops properly 
+     * FIX : gdcmObject::ResetBoundaries now stops properly
              when end-of-list is reached
 	   : gdcmVersion modified (as Benoit Regrain asked)
 
 2004-03-29  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
      * src/gdcmParser.cxx: removal of all TAB character. Indentation fixed.
-     * src/gdcmUtil.cxx: added forgotten iostream include.  
-     * src/gdcmCommon.h: FileType enum entry DICOMDIR removed (since 
+     * src/gdcmUtil.cxx: added forgotten iostream include.
+     * src/gdcmCommon.h: FileType enum entry DICOMDIR removed (since
        equivalent to ExplicitVR in existing code).
 
 2004-03-27  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
@@ -25,16 +30,16 @@
      * src/gdcmUtil.[cxx|h] _CreateCleanString renamed to CreateCleanString
      * Doc/DoxyMainPageUser.txt added.
      * Doc/Doc/DoxyfileUsers updated to version 1.3.4 of Doxygen.
-     * src/gdcmCommon.h now defines getcwd for Win32 (moved away from 
+     * src/gdcmCommon.h now defines getcwd for Win32 (moved away from
        src/gdcmDirList.cxx)
 
 2004-03-24  Jean-Pierre Roux
      * FIX a lot of little surface modifications to be doxygen 1.3.6 compliant
 
 2004-03-23  Jean-Pierre Roux
-     * FIX Now gdcmFile::SwapZone doesn't seg faults any longer for 
+     * FIX Now gdcmFile::SwapZone doesn't seg faults any longer for
            big endian made volumes
-     * ENH Now gdcmParser constructor and destructor are protected to forbid 
+     * ENH Now gdcmParser constructor and destructor are protected to forbid
            end user to instanciate class gdcmParser
           (only gdcmHeader and gdcmDicomDir are meaningfull)
 

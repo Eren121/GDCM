@@ -18,6 +18,11 @@
 //  2a/ ExecuteData calls AllocateOutputData that in turn seems to 
 //      (indirectely call) ExecuteInformation which ends up in a second
 //      header parsing
+//      This is fixed by adding a test at the beginning of ExecuteInformation
+//      on the modification of the object instance. If a modification have been
+//      made (method Modified() ), the MTime value is increased. The fileTime
+//      is compared to this new value to find a modification in the class
+//      parameters
 //  2b/ the core of ExecuteData then needs gdcmFile (which in turns
 //      initialises gdcmHeader in the constructor) in order to access
 //      the data-image.
@@ -91,6 +96,7 @@ void vtkGdcmReader::PrintSelf(ostream& os, vtkIndent indent)
 void vtkGdcmReader::RemoveAllFileName(void)
 {
    this->FileNameList.clear();
+   this->Modified();
 }
 
 /*
@@ -103,8 +109,8 @@ void vtkGdcmReader::AddFileName(const char* name)
    char * LocalName = new char[strlen(name) + 1];
    strcpy(LocalName, name);
    this->FileNameList.push_back(LocalName);
-   this->Modified();
    delete[] LocalName;
+   this->Modified();
 }
 
 /*
@@ -127,95 +133,100 @@ void vtkGdcmReader::SetFileName(const char *name)
  */
 void vtkGdcmReader::ExecuteInformation()
 {
-   this->TotalNumberOfPlanes = this->CheckFileCoherence();
-   if ( this->TotalNumberOfPlanes == 0)
+   if(this->MTime>this->fileTime)
    {
-      vtkErrorMacro("File set is not coherent. Exiting...");
-      return;
-   }
-      
-   // if the user has not set the extent, but has set the VOI
-   // set the z axis extent to the VOI z axis
-   if (this->DataExtent[4]==0 && this->DataExtent[5] == 0 &&
-   (this->DataVOI[4] || this->DataVOI[5]))
-   {
-      this->DataExtent[4] = this->DataVOI[4];
-      this->DataExtent[5] = this->DataVOI[5];
-   }
-
-   // When the user has set the VOI, check it's coherence with the file content.
-   if (this->DataVOI[0] || this->DataVOI[1] || 
-   this->DataVOI[2] || this->DataVOI[3] ||
-   this->DataVOI[4] || this->DataVOI[5])
-   { 
-      if ((this->DataVOI[0] < 0) ||
-          (this->DataVOI[1] >= this->NumColumns) ||
-          (this->DataVOI[2] < 0) ||
-          (this->DataVOI[3] >= this->NumLines) ||
-          (this->DataVOI[4] < 0) ||
-          (this->DataVOI[5] >= this->TotalNumberOfPlanes ))
+      this->TotalNumberOfPlanes = this->CheckFileCoherence();
+      if ( this->TotalNumberOfPlanes == 0)
       {
-         vtkWarningMacro("The requested VOI is larger than expected extent.");
-         this->DataVOI[0] = 0;
-         this->DataVOI[1] = this->NumColumns - 1;
-         this->DataVOI[2] = 0;
-         this->DataVOI[3] = this->NumLines - 1;
-         this->DataVOI[4] = 0;
-         this->DataVOI[5] = this->TotalNumberOfPlanes - 1;
+         vtkErrorMacro("File set is not coherent. Exiting...");
+         return;
       }
-   }
+      
+      // if the user has not set the extent, but has set the VOI
+      // set the z axis extent to the VOI z axis
+      if (this->DataExtent[4]==0 && this->DataExtent[5] == 0 &&
+      (this->DataVOI[4] || this->DataVOI[5]))
+      {
+         this->DataExtent[4] = this->DataVOI[4];
+         this->DataExtent[5] = this->DataVOI[5];
+      }
 
-   // Positionate the Extent.
-   this->DataExtent[0] = 0;
-   this->DataExtent[1] = this->NumColumns - 1;
-   this->DataExtent[2] = 0;
-   this->DataExtent[3] = this->NumLines - 1;
-   this->DataExtent[4] = 0;
-   this->DataExtent[5] = this->TotalNumberOfPlanes - 1;
+      // When the user has set the VOI, check it's coherence with the file content.
+      if (this->DataVOI[0] || this->DataVOI[1] || 
+      this->DataVOI[2] || this->DataVOI[3] ||
+      this->DataVOI[4] || this->DataVOI[5])
+      { 
+         if ((this->DataVOI[0] < 0) ||
+             (this->DataVOI[1] >= this->NumColumns) ||
+             (this->DataVOI[2] < 0) ||
+             (this->DataVOI[3] >= this->NumLines) ||
+             (this->DataVOI[4] < 0) ||
+             (this->DataVOI[5] >= this->TotalNumberOfPlanes ))
+         {
+            vtkWarningMacro("The requested VOI is larger than expected extent.");
+            this->DataVOI[0] = 0;
+            this->DataVOI[1] = this->NumColumns - 1;
+            this->DataVOI[2] = 0;
+            this->DataVOI[3] = this->NumLines - 1;
+            this->DataVOI[4] = 0;
+            this->DataVOI[5] = this->TotalNumberOfPlanes - 1;
+         }
+      }
+
+      // Positionate the Extent.
+      this->DataExtent[0] = 0;
+      this->DataExtent[1] = this->NumColumns - 1;
+      this->DataExtent[2] = 0;
+      this->DataExtent[3] = this->NumLines - 1;
+      this->DataExtent[4] = 0;
+      this->DataExtent[5] = this->TotalNumberOfPlanes - 1;
   
-   // We don't need to positionate the Endian related stuff (by using
-   // this->SetDataByteOrderToBigEndian() or SetDataByteOrderToLittleEndian()
-   // since the reading of the file is done by gdcm.
-   // But we do need to set up the data type for downstream filters:
-   if      ( ImageType == "8U" )
-   {
-      vtkDebugMacro("8 bits unsigned image");
-      this->SetDataScalarTypeToUnsignedChar(); 
+      // We don't need to positionate the Endian related stuff (by using
+      // this->SetDataByteOrderToBigEndian() or SetDataByteOrderToLittleEndian()
+      // since the reading of the file is done by gdcm.
+      // But we do need to set up the data type for downstream filters:
+      if      ( ImageType == "8U" )
+      {
+         vtkDebugMacro("8 bits unsigned image");
+         this->SetDataScalarTypeToUnsignedChar(); 
+      }
+      else if ( ImageType == "8S" )
+      {
+         vtkErrorMacro("Cannot handle 8 bit signed files");
+         return;
+      }
+      else if ( ImageType == "16U" )
+      {
+         vtkDebugMacro("16 bits unsigned image");
+         this->SetDataScalarTypeToUnsignedShort();
+      }
+      else if ( ImageType == "16S" )
+      {
+         vtkDebugMacro("16 bits signed image");
+         this->SetDataScalarTypeToShort();
+         //vtkErrorMacro("Cannot handle 16 bit signed files");
+      }
+      else if ( ImageType == "32U" )
+      {
+         vtkDebugMacro("32 bits unsigned image");
+         vtkDebugMacro("WARNING: forced to signed int !");
+         this->SetDataScalarTypeToInt();
+      }
+      else if ( ImageType == "32S" )
+      {
+         vtkDebugMacro("32 bits signed image");
+         this->SetDataScalarTypeToInt();
+      }
+      else if ( ImageType == "FD" )
+      {
+         vtkDebugMacro("64 bits Double image");
+         this->SetDataScalarTypeToDouble();
+      }
+      //Set number of scalar components:
+      this->SetNumberOfScalarComponents(this->NumComponents);
+
+      this->fileTime=this->MTime;
    }
-   else if ( ImageType == "8S" )
-   {
-      vtkErrorMacro("Cannot handle 8 bit signed files");
-      return;
-   }
-   else if ( ImageType == "16U" )
-   {
-      vtkDebugMacro("16 bits unsigned image");
-      this->SetDataScalarTypeToUnsignedShort();
-   }
-   else if ( ImageType == "16S" )
-   {
-      vtkDebugMacro("16 bits signed image");
-      this->SetDataScalarTypeToShort();
-      //vtkErrorMacro("Cannot handle 16 bit signed files");
-   }
-   else if ( ImageType == "32U" )
-   {
-      vtkDebugMacro("32 bits unsigned image");
-      vtkDebugMacro("WARNING: forced to signed int !");
-      this->SetDataScalarTypeToInt();
-   }
-   else if ( ImageType == "32S" )
-   {
-      vtkDebugMacro("32 bits signed image");
-      this->SetDataScalarTypeToInt();
-   }
-   else if ( ImageType == "FD" )
-   {
-      vtkDebugMacro("64 bits Double image");
-      this->SetDataScalarTypeToDouble();
-   }
-   //Set number of scalar components:
-   this->SetNumberOfScalarComponents(this->NumComponents);
 
    this->Superclass::ExecuteInformation();
 }
