@@ -1,6 +1,7 @@
 %module gdcm
 %{
 #include "gdcmCommon.h"
+#include "gdcmBase.h"
 #include "gdcmDict.h"
 #include "gdcmDictEntry.h"
 #include "gdcmDictSet.h"
@@ -273,6 +274,7 @@ using namespace gdcm;
 ////////////////////////////////////////////////////////////////////////////
 // Warning: Order matters !
 %include "gdcmCommon.h"
+%include "gdcmBase.h"
 %include "gdcmDictEntry.h"
 %include "gdcmDict.h"
 %include "gdcmDocEntrySet.h"
