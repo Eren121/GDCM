@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 08:48:18 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/02/10 11:20:34 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,26 +88,26 @@ public:
    /// \brief Gets any type of DocEntry, identified by its (group,elem)
    virtual DocEntry *GetDocEntry(uint16_t group, uint16_t elem) = 0;
    /// \brief Gets a ValEntry, identified by its (group, elem)
-   virtual ValEntry *GetValEntry(uint16_t group, uint16_t elem);
+   ValEntry *GetValEntry(uint16_t group, uint16_t elem);
    /// \brief Gets a BinEntry, identified by its (group,elem)
-   virtual BinEntry *GetBinEntry(uint16_t group, uint16_t elem);
+   BinEntry *GetBinEntry(uint16_t group, uint16_t elem);
    /// \brief Gets a SeqEntry, identified by its (group,elem)
-   virtual SeqEntry *GetSeqEntry(uint16_t group, uint16_t elem);
+   SeqEntry *GetSeqEntry(uint16_t group, uint16_t elem);
 
-   virtual bool SetValEntry(std::string const &content,
+   bool SetValEntry(std::string const &content,
                             uint16_t group, uint16_t elem);
-   virtual bool SetBinEntry(uint8_t *content, int lgth,
+   bool SetBinEntry(uint8_t *content, int lgth,
                             uint16_t group, uint16_t elem);
-   virtual bool SetValEntry(std::string const &content, ValEntry *entry);
-   virtual bool SetBinEntry(uint8_t *content, int lgth, BinEntry *entry);
+   bool SetValEntry(std::string const &content, ValEntry *entry);
+   bool SetBinEntry(uint8_t *content, int lgth, BinEntry *entry);
 
-   virtual ValEntry *InsertValEntry(std::string const &value,
+   ValEntry *InsertValEntry(std::string const &value,
                                     uint16_t group, uint16_t elem,
                                     TagName const &vr = GDCM_UNKNOWN);
-   virtual BinEntry *InsertBinEntry(uint8_t *binArea, int lgth,
+   BinEntry *InsertBinEntry(uint8_t *binArea, int lgth,
                                     uint16_t group, uint16_t elem,
                                     TagName const &vr = GDCM_UNKNOWN);
-   virtual SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
+   SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
    /// tells us if the set contains no entry
    virtual bool IsEmpty() = 0;
    virtual bool CheckIfEntryExist(uint16_t group, uint16_t elem);
