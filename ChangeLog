@@ -1,4 +1,7 @@
 2004-04-02  Jean-Pierre Roux
+     * ADD gdcmData/E00001S03I0015.dcm for SQ checking purpose
+     
+2004-04-02  Jean-Pierre Roux
      * ADD : Test/checksequence.sh, for a general recap on SQ pb
      * FIX : gdcmParser::WriteEntryTagVRLength emprovement of special treatement
              for Philips spurious Tag fffe|0000 while rewritting Dicom files
