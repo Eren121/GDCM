@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/22 01:01:36 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2004/09/22 10:34:53 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -694,7 +694,7 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
 
       if (!dictEntry)
       {
-         currentEntry = NewDocEntryByNumber(group, elem,VR);
+         currentEntry = NewDocEntryByNumber(group, elem, VR);
       }
       else
       {
@@ -1010,6 +1010,7 @@ bool gdcmDocument::SetEntryByNumber(void *content,
    gdcmBinEntry* a = (gdcmBinEntry *)TagHT[key];           
    a->SetVoidArea(content);  
    a->SetLength(lgth);
+   a->SetValue(GDCM_BINLOADED);
 
    return true;
 } 
@@ -1669,7 +1670,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
    // When we find a BinEntry not very much can be done :
    if (gdcmBinEntry* binEntryPtr = dynamic_cast< gdcmBinEntry* >(entry) )
    {
-      s << "gdcm::Loaded (BinEntry)";
+      s << GDCM_BINLOADED;
       binEntryPtr->SetValue(s.str());
       LoadEntryVoidArea(binEntryPtr); // last one, not to erase length !
       return;
