@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:05:06 $
-  Version:   $Revision: 1.158 $
+  Date:      $Date: 2005/01/06 16:33:54 $
+  Version:   $Revision: 1.159 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -937,7 +937,8 @@ bool Document::SetEntryByNumber(uint8_t*content, int lgth,
 /**
  * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
  *          and modifies it's content with the given value.
- * @param   content new value (string) to substitute with
+ * @param  content new value (string) to substitute with
+ * @param  entry Entry to be modified
  */
 bool Document::SetEntry(std::string const & content,ValEntry* entry)
 {
@@ -953,9 +954,10 @@ bool Document::SetEntry(std::string const & content,ValEntry* entry)
  * \brief   Accesses an existing BinEntry (i.e. a Dicom Element)
  *          and modifies it's content with the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
+ * @param  entry Entry to be modified 
  * @param   lgth new value length
  */
-bool Document::SetEntry(uint8_t* content, int lgth,BinEntry* entry)
+bool Document::SetEntry(uint8_t* content, int lgth, BinEntry* entry)
 {
    if(entry)
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 15:36:48 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/06 16:29:22 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,7 @@ std::string DocEntrySet::GetEntryByName(TagName const & name)
 /**
  * \brief   Request a new virtual dict entry to the dict set
  * @param   group     group  number of the underlying DictEntry
- * @param   element  element number of the underlying DictEntry
+ * @param   elem  element number of the underlying DictEntry
  * @param   vr     VR of the underlying DictEntry
  * @param   fourth owner group
  * @param   name   english name
@@ -93,8 +93,9 @@ DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,uint16_t elem,
  * \brief   Build a new Val Entry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
- * @param   group group   number of the underlying DictEntry
- * @param   elem  element number of the underlying DictEntry
+ * @param   group group   number of the new Entry
+ * @param   elem  element number of the new Entry
+ * @param   vr     VR of the new Entry 
  */
 ValEntry *DocEntrySet::NewValEntryByNumber(uint16_t group,uint16_t elem,
                                            TagName const & vr) 
@@ -117,8 +118,9 @@ ValEntry *DocEntrySet::NewValEntryByNumber(uint16_t group,uint16_t elem,
  * \brief   Build a new Bin Entry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
- * @param   group group   number of the underlying DictEntry
- * @param   elem  element number of the underlying DictEntry
+ * @param   group group   number of the new Entry
+ * @param   elem  element number of the new Entry
+ * @param   vr     VR of the new Entry 
  */
 BinEntry *DocEntrySet::NewBinEntryByNumber(uint16_t group,uint16_t elem,
                                            TagName const & vr) 
@@ -140,8 +142,8 @@ BinEntry *DocEntrySet::NewBinEntryByNumber(uint16_t group,uint16_t elem,
  * \brief   Build a new Seq Entry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
- * @param   Group group   number of the underlying DictEntry
- * @param   Elem  element number of the underlying DictEntry
+ * @param   group group   number of the new Entry
+ * @param   elem  element number of the new Entry
  */
 SeqEntry* DocEntrySet::NewSeqEntryByNumber(uint16_t group,uint16_t elem) 
 {
@@ -210,7 +212,7 @@ DictEntry *DocEntrySet::GetDictEntryByName(TagName const & name)
  *          group and element. The public dictionary has precedence on the
  *          shadow one.
  * @param   group   group number of the searched DictEntry
- * @param   element element number of the searched DictEntry
+ * @param   elem element number of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
 DictEntry *DocEntrySet::GetDictEntryByNumber(uint16_t group,uint16_t elem) 
