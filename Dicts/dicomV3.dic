@@ -503,7 +503,7 @@
 0028 0000 UL IMG Group Length
 0028 0002 US IMG Samples Per Pixel
 0028 0004 CS IMG Photometric Interpretation
-0028 0005 RET IMG Image Dimensions
+0028 0005 US IMG Image Dimensions
 0028 0006 US IMG Planar Configuration
 0028 0008 IS IMG Number of Frames
 0028 0009 AT IMG Frame Increment Pointer
@@ -539,7 +539,7 @@
 0028 0120 CTX IMG Pixel Padding Value
 0028 0122 CTX IMG Waveform Padding Value
 0028 0199 US IMG LibIDO code
-0028 0200 RET IMG Image Location
+0028 0200 US IMG Image Location
 0028 1040 CS IMG Pixel Intensity Relationship
 0028 1050 DS IMG Window Center
 0028 1051 DS IMG Window Width
