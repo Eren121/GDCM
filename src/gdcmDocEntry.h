@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:08:20 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/11/16 14:48:19 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -166,8 +166,8 @@ protected:
    /// How many details are to be printed (value : 0,1,2)      
    int PrintLevel;
 
-   /// \brief Generalized key (i.e. a BaseTagKey prepending a TagKey)
-   ///        of this DocEntry
+   /// \brief Generalized key of this DocEntry (for details on
+   ///        the generalized key refer to \ref TagKey documentation).
    TagKey Key;
 };
 } // end namespace gdcm

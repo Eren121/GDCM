@@ -8,8 +8,12 @@
    * src/gdcmDocument.cxx : fix memory leaks. Fix possible bugs : use an object
      after it have been deleted
 
-2004-11-09 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+2004-11-16 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * FIX: src/* fix the doxygen warnings.
+   * src/gdcmVR.cxx: removed some redundant tests (e.g. LO)
+   * src/gdcmDocument.cxx: FIX ::ComputeRLEInfo() rleSegmentOffsetTable[]
+     was erroneously defined with a size of 15 instead of 16. [many thanks
+     to Jean Michel Rouet for pointing out this bug].
 
 2004-11-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
     1. Finish merging JMR patch for writting DICOM from scratch

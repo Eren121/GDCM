@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/11/16 14:48:19 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,9 +63,9 @@ int InternalTest(std::string const & filename,
       gdcm::File* reference = new gdcm::File( referenceFileName );
       if( !reference->GetHeader()->IsReadable() )
       {
-         std::cout << "      Reference image " << std::endl
-                   << "      " << referenceFileName <<std::endl
-                   << "      is not gdcm compatible." << std::endl;
+         std::cout << "      Failed: reference image " << std::endl
+                   << "              " << referenceFileName <<std::endl
+                   << "              is not gdcm compatible." << std::endl;
          delete tested;
          delete reference;
          return 1;
@@ -81,7 +81,7 @@ int InternalTest(std::string const & filename,
 
       if (testedDataSize != referenceDataSize)
       {
-         std::cout << "        Pixel areas lengths differ: "
+         std::cout << "      Failed: pixel areas lengths differ: "
                    << testedDataSize << " # " << referenceDataSize
                    << std::endl;
          delete tested;
@@ -93,18 +93,18 @@ int InternalTest(std::string const & filename,
                            testedDataSize) != 0 )
       {
          (void)res;
-         std::cout << "        Pixel differ (as expanded in memory)."
+         std::cout << "      Failed: pixel differ (as expanded in memory)."
                    << std::endl;
          delete tested;
          delete reference;
          return 1;
       }
-      std::cout << "      Passed..." << std::endl;
 
       //////////////// Clean up:
       delete tested;
       delete reference;
-      std::cout << "      Passed clean up." << std::endl ;
+
+      std::cout << "      Passed..." << std::endl;
       
       return 0;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 18:08:56 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/16 14:48:19 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -151,11 +151,24 @@ bool VR::IsVROfGdcmStringRepresentable(VRKey const & tested)
       return false;
    }
 
-   if (tested == "AE" || tested == "AS" || tested == "DA" || tested == "PN" ||
-       tested == "UI" || tested == "TM" || tested == "SH" || tested == "LO" ||
-       tested == "CS" || tested == "IS" || tested == "LO" || tested == "LT" ||
-       tested == "SH" || tested == "ST" || tested == "DS" || tested == "SL" ||
-       tested == "SS" || tested == "UL" || tested == "US" || tested == "UN")
+   if ( tested == "AE" ||
+        tested == "AS" ||
+        tested == "CS" ||
+        tested == "DA" ||
+        tested == "DS" ||
+        tested == "IS" || 
+        tested == "LO" ||
+        tested == "LT" ||
+        tested == "PN" ||
+        tested == "SH" ||
+        tested == "SL" ||
+        tested == "SS" ||
+        tested == "ST" ||
+        tested == "TM" ||
+        tested == "UI" ||
+        tested == "UL" ||
+        tested == "UN" ||
+        tested == "US" )
    {
       return true;
    }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 11:19:05 $
-  Version:   $Revision: 1.127 $
+  Date:      $Date: 2004/11/16 14:48:19 $
+  Version:   $Revision: 1.128 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2916,7 +2916,7 @@ void Document::ComputeRLEInfo()
          dbg.Verbose(0, "Document::ComputeRLEInfo: too many segments.");
       }
  
-      uint32_t rleSegmentOffsetTable[15];
+      uint32_t rleSegmentOffsetTable[16];
       for( int k = 1; k <= 15; k++ )
       {
          rleSegmentOffsetTable[k] = ReadInt32();
