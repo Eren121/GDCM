@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/07/17 22:36:55 $
+  Version:   $Revision: 1.24 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,12 +43,12 @@ typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
 class GDCM_EXPORT gdcmDicomDir: public gdcmDocument
 {
 public:
-   gdcmDicomDir(const char *FileName, 
+   gdcmDicomDir(std::string const & fileName, 
                 bool parseDir = false,
                 bool exception_on_error = false);
    gdcmDicomDir(bool exception_on_error = false); 
                    
-   ~gdcmDicomDir(void);
+   ~gdcmDicomDir();
 
    /// \brief Sets the print level for the Dicom Header 
    /// \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
@@ -60,7 +60,7 @@ public:
    virtual void Print(std::ostream &os = std::cout);
 
 // Informations contained in the parser
-   virtual bool IsReadable(void);
+   virtual bool IsReadable();
 
    /// Returns a pointer to the gdcmDicomDirMeta for this DICOMDIR. 
    gdcmDicomDirMeta* GetDicomDirMeta() { return metaElems; };
@@ -69,7 +69,7 @@ public:
    ListDicomDirPatient &GetDicomDirPatients() { return patients; };
 
 // Parsing
-   void ParseDirectory(void);
+   void ParseDirectory();
    
    void SetStartMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
    void SetStartMethodArgDelete(gdcmMethod *);
@@ -79,21 +79,21 @@ public:
    void SetEndMethodArgDelete(gdcmMethod *);
 
    /// GetProgress GetProgress
-   float GetProgress(void)  { return(progress); };
+   float GetProgress()  { return progress; };
 
    /// AbortProgress AbortProgress
-   void  AbortProgress(void) {abort=true; };
+   void  AbortProgress() {abort = true; };
 
    /// IsAborted IsAborted
-   bool  IsAborted(void) {return(abort); };
+   bool  IsAborted() { return abort; };
    
 // Adding
-   gdcmDicomDirMeta*    NewMeta(void);
-   gdcmDicomDirPatient* NewPatient(void);
+   gdcmDicomDirMeta*    NewMeta();
+   gdcmDicomDirPatient* NewPatient();
 
 // Write
    void WriteEntries(FILE *_fp);   
-   bool Write(std::string fileName);
+   bool Write(std::string const & fileName);
 
    /// Types of the gdcmObject within the gdcmDicomDir
    typedef enum
@@ -107,15 +107,15 @@ public:
    } gdcmDicomDirType;
    
 protected:
-   void CreateDicomDirChainedList(std::string path);
-   void CallStartMethod(void);
-   void CallProgressMethod(void);
-   void CallEndMethod(void);
+   void CreateDicomDirChainedList(std::string const & path);
+   void CallStartMethod();
+   void CallProgressMethod();
+   void CallEndMethod();
 
 private:
-   void Initialize(void);
-   void CreateDicomDir(void);
-   void AddDicomDirMeta   ();
+   void Initialize();
+   void CreateDicomDir();
+   void AddDicomDirMeta();
    void AddDicomDirPatientToEnd(gdcmSQItem *s);
    void AddDicomDirStudyToEnd  (gdcmSQItem *s);
    void AddDicomDirSerieToEnd  (gdcmSQItem *s);
@@ -125,7 +125,7 @@ private:
    void SetElement (std::string &path,gdcmDicomDirType type,
                     gdcmDocument *header);
    
-   void UpdateDirectoryRecordSequenceLength(void);
+   void UpdateDirectoryRecordSequenceLength();
 
    static bool HeaderLessThan(gdcmDocument *header1,gdcmDocument *header2);
    
@@ -141,7 +141,7 @@ private:
    gdcmMethod *startMethod;
 /// pointer to the incrementation method for any progress bar
     gdcmMethod *progressMethod;
-/// pointer to the tremination method for any progress bar
+/// pointer to the termination method for any progress bar
    gdcmMethod *endMethod;
 /// pointer to the ??? method for any progress bar   
    gdcmMethod *startMethodArgDelete;
