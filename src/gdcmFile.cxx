@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/01 12:40:57 $
-  Version:   $Revision: 1.134 $
+  Date:      $Date: 2004/10/08 16:27:20 $
+  Version:   $Revision: 1.135 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
+#include "gdcmPixelConvert.h"
 #include "jpeg/ljpg/jpegless.h"
 
 typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
@@ -1083,7 +1084,13 @@ bool gdcmFile::ReadPixelData(void* destination)
    // ---------------------- Run Length Encoding
    if ( Header->IsRLELossLessTransferSyntax() )
    {
-      bool res = gdcm_read_RLE_file (fp,destination);
+      bool res = gdcmPixelConvert::gdcm_read_RLE_file ( destination,
+                                      Header->GetXSize(),
+                                      Header->GetYSize(),
+                                      Header->GetZSize(),
+                                      Header->GetBitsAllocated(),
+                                      &(Header->RLEInfo),
+                                      fp );
       Header->CloseFile();
       return res; 
    }  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 08:56:48 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2004/10/08 16:27:20 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,16 +120,6 @@ private:
 
    // For JPEG 2000, body in file gdcmJpeg2000.cxx
    bool gdcm_read_JPEG2000_file (FILE* fp, void* image_buffer);
-
-   // For Run Length Encoding
-   bool gdcm_read_RLE_file      (FILE* fp, void* image_buffer);
-// FIXME : *sure* it's NOT static (C++)
-// (would be static in C, or embedded in ADA)
-// It's NOT a method, but a not user intended fonction.
-// How do we write that in C++ ?)
-   static bool gdcm_read_RLE_fragment( uint8_t** decodedZone,
-                                       long fragmentSize, 
-                                       long uncompressedSegmentSize, FILE* fp);
 
    void SaveInitialValues();    // will belong to the future gdcmPixelData class
    void RestoreInitialValues(); // will belong to the future gdcmPixelData class

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 08:56:48 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/10/08 16:27:20 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,7 +164,7 @@ bool gdcmPixelConvert::ConvertGrayAndLutToRGB( uint8_t *lutRGBA )
  *            High Byte 'Planes'...(for what it may mean)
  * @return    Boolean
  */
-uint8_t* gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
+bool gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
                        int XSize,
                        int YSize,
                        int NumberOfFrames,
@@ -175,24 +175,13 @@ uint8_t* gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
 
    // We assumed Uncompressed contains the decoded RLE pixels but as
    // 8 bits per pixel. In order to convert those pixels to 16 bits
-   // per pixel we cannot work in place within Uncompressed.
-   // Here is how we handle things:
-   // - First  stage: copy Uncompressed in a safe place, say OldUncompressed
-   // - Second stage: reallocate Uncompressed with the needed space
-   // - Third  stage: expand from OldUncompressed to Uncompressed
-   // - Fourth stage: clean up OldUncompressed
+   // per pixel we cannot work in place within Uncompressed and hence
+   // we copy Uncompressed in a safe place, say OldUncompressed.
 
-   /// First stage:
    uint8_t* OldUncompressed = new uint8_t[ fixMemUncompressedSize * 2 ];
    memmove( OldUncompressed, fixMemUncompressed, fixMemUncompressedSize * 2);
 
-   /// Second stage:
-   //fixMem SetUncompressedSize( 2 * UncompressedSize );
-   //fixMem AllocateUncompressed();
-   uint8_t* fixMemNewUncompressed = new uint8_t[fixMemUncompressedSize * 2];
-
-   /// Third stage:
-   uint8_t* x = fixMemNewUncompressed;
+   uint8_t* x = fixMemUncompressed;
    uint8_t* a = OldUncompressed;
    uint8_t* b = a + PixelNumber;
 
@@ -205,9 +194,114 @@ uint8_t* gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
       }
    }
 
-   // Fourth stage:
    delete[] OldUncompressed;
       
    /// \todo check that operator new []didn't fail, and sometimes return false
-   return fixMemNewUncompressed;
+   return true;
 }
+
+/**
+ * \brief Implementation of the RLE decoding algorithm for uncompressing
+ *        a RLE fragment. [refer to PS 3.5-2003, section G.3.2 p 86]
+ */
+bool gdcmPixelConvert::ReadAndUncompressRLEFragment( uint8_t* decodedZone,
+                                               long fragmentSize,
+                                               long uncompressedSegmentSize,
+                                               FILE* fp )
+{
+   int8_t count;
+   long numberOfOutputBytes = 0;
+   long numberOfReadBytes = 0;
+                                                                                
+   while( numberOfOutputBytes < uncompressedSegmentSize )
+   {
+      fread( &count, 1, 1, fp );
+      numberOfReadBytes += 1;
+      if ( count >= 0 )
+      // Note: count <= 127 comparison is always true due to limited range
+      //       of data type int8_t [since the maximum of an exact width
+      //       signed integer of width N is 2^(N-1) - 1, which for int8_t
+      //       is 127].
+      {
+         fread( decodedZone, count + 1, 1, fp);
+         numberOfReadBytes += count + 1;
+         decodedZone         += count + 1;
+         numberOfOutputBytes += count + 1;
+      }
+      else
+      {
+         if ( ( count <= -1 ) && ( count >= -127 ) )
+         {
+            int8_t newByte;
+            fread( &newByte, 1, 1, fp);
+            numberOfReadBytes += 1;
+            for( int i = 0; i < -count + 1; i++ )
+            {
+               decodedZone[i] = newByte;
+            }
+            decodedZone         += -count + 1;
+            numberOfOutputBytes += -count + 1;
+         }
+      }
+      // if count = 128 output nothing
+                                                                                
+      if ( numberOfReadBytes > fragmentSize )
+      {
+         dbg.Verbose(0, "gdcmFile::gdcm_read_RLE_fragment: we read more "
+                        "bytes than the segment size.");
+         return false;
+      }
+   }
+   return true;
+}
+
+/**
+ * \brief     Reads from disk the Pixel Data of 'Run Length Encoded'
+ *            Dicom encapsulated file and uncompress it.
+ * @param     fp already open File Pointer
+ * @param     image_buffer destination Address (in caller's memory space)
+ *            at which the pixel data should be copied
+ * @return    Boolean
+ */
+bool gdcmPixelConvert::gdcm_read_RLE_file( void* image_buffer,
+                                   int XSize,
+                                   int YSize,
+                                   int ZSize,
+                                   int BitsAllocated,
+                                   gdcmRLEFramesInfo* RLEInfo,
+                                   FILE* fp )
+{
+   uint8_t* im = (uint8_t*)image_buffer;
+   long uncompressedSegmentSize = XSize * YSize;
+                                                                                
+                                                                                
+   // Loop on the frame[s]
+   for( gdcmRLEFramesInfo::RLEFrameList::iterator
+        it  = RLEInfo->Frames.begin();
+        it != RLEInfo->Frames.end();
+      ++it )
+   {
+      // Loop on the fragments
+      for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
+      {
+         fseek( fp, (*it)->Offset[k] ,SEEK_SET);
+         (void)gdcmPixelConvert::ReadAndUncompressRLEFragment(
+                                 (uint8_t*) im, (*it)->Length[k],
+                                 uncompressedSegmentSize, fp );
+         im += uncompressedSegmentSize;
+      }
+   }
+                                                                                
+   if ( BitsAllocated == 16 )
+   {
+      // Try to deal with RLE 16 Bits
+      (void)gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
+                                             XSize,
+                                             YSize,
+                                             ZSize,
+                                             (uint8_t*) image_buffer);
+   }
+                                                                                
+   return true;
+}
+

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 08:42:11 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/08 16:27:20 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,6 +42,7 @@ class GDCM_EXPORT gdcmRLEFrame
 {
 friend class gdcmDocument;
 friend class gdcmFile;
+friend class gdcmPixelConvert;
    int     NumberFragments;
    long    Offset[15];
    long    Length[15];

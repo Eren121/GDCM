@@ -39,7 +39,6 @@ SET(libgdcm_la_SOURCES
    gdcmJpeg2000.cxx
    gdcmParsePixels.cxx
    gdcmPixelConvert.cxx
-   gdcmRLE.cxx
    gdcmRLEFramesInfo.cxx
    gdcmSeqEntry.cxx
    gdcmSQItem.cxx
