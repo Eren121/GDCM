@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.61 2003/05/05 14:13:59 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.62 2003/05/06 15:52:13 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -863,6 +863,18 @@ guint32 gdcmHeader::ReadInt32(void) {
    return g;
 }
 
+
+gdcmElValue* gdcmHeader::GetElValueByNumber(guint16 Group, guint16 Elem) {
+
+   gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);	 
+   if (!elValue) {
+      dbg.Verbose(1, "gdcmHeader::GetElValueByNumber",
+                  "failed to Locate gdcmElValue");
+      return (gdcmElValue*)0;
+   }
+   return elValue;
+}
+
 /**
  * \ingroup gdcmHeader
  * \brief   Build a new Element Value from all the low level arguments. 
@@ -1292,7 +1304,11 @@ string gdcmHeader::GetElValRepByName(string TagName) {
  */
 int gdcmHeader::SetPubElValByNumber(string content, guint16 group,
                                     guint16 element)
+                                    
+//TODO  : homogeneiser les noms : SetPubElValByNumber   qui appelle PubElValSet.SetElValueByNumber 
+//        pourquoi pas            SetPubElValueByNumber ??
 {
+
    return (  PubElValSet.SetElValueByNumber (content, group, element) );
 }
 

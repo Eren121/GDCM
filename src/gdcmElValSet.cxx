@@ -90,9 +90,8 @@ int gdcmElValSet::SetElValueByNumber(string content,
 	   lgr = 2;
 	else if( (vr == "UL") || (vr == "SL") )
 	   lgr = 4;
-	else 
-	   lgr = content.length();
-	   
+	else
+	   lgr = content.length();	   
 	tagHt[key]->SetLength(lgr); 
 	return 1;
 }
@@ -107,9 +106,13 @@ int gdcmElValSet::SetElValueByName(string content, string TagName) {
 	if( (vr == "US") || (vr == "SS") ) 
 	   lgr = 2;
 	else if( (vr == "UL") || (vr == "SL") )
-	   lgr = 4;
+	   lgr = 4;	   
 	else 
 	   lgr = content.length();
+	   
+// TODO : WARNING: le cas de l'element des pixels (7fe0,0010) n'est pas traite
+// par SetElValueByName
+// il faudra utiliser SetElValueByNumber
 	   
 	NameHt[TagName]->SetLength(lgr);
 	return 1;		

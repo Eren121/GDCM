@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.21 2003/05/05 14:13:59 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.22 2003/05/06 15:52:13 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -86,6 +86,7 @@ private:
    gdcmElValue * ReadNextElement(void);
    gdcmElValue * NewElValueByNumber(guint16 group, guint16 element);
    gdcmElValue * NewElValueByName(string name);
+
    void FindLength(gdcmElValue *);
    void FindVR(gdcmElValue *);
    void LoadElementValue(gdcmElValue *);
@@ -98,6 +99,8 @@ private:
 protected:
    FILE * fp;
    FileType filetype;
+   
+   gdcmElValue * GetElValueByNumber(guint16 group, guint16 element);
 
    guint16 SwapShort(guint16); // needed by gdcmFile
    guint32 SwapLong(guint32);  // for JPEG Files :-(

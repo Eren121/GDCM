@@ -91,15 +91,15 @@ bool gdcmFile::ReadPixelData(void* destination) {
         IsExplicitVRLittleEndianTransferSyntax() ||
         IsExplicitVRBigEndianTransferSyntax()    ||
         IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
-             
-         size_t ItemRead = fread(destination, lgrTotale, 1, fp);
-         if ( ItemRead != 1 ) {
-            CloseFile();
-            return false;
-         } else {
-            CloseFile();
-            return true;
-         }
+                    
+      size_t ItemRead = fread(destination, lgrTotale, 1, fp);
+      if ( ItemRead != 1 ) {
+         CloseFile();
+         return false;
+      } else {
+         CloseFile();
+         return true;
+      }
    }
          
    if (IsJPEGLossless()) {
@@ -127,8 +127,8 @@ bool gdcmFile::ReadPixelData(void* destination) {
       _IdDcmJpegFree (jpg);
       CloseFile();
       return true;
-   }     
-
+   }
+   
     printf ("Sorry, TransfertSyntax not yet taken into account ...\n");
     CloseFile();
     return false;
@@ -317,6 +317,7 @@ return;
  * \ingroup   gdcmFile
  * \brief TODO JPR
  * \warning doit-etre etre publique ?  FIXME JPR
+ * TODO : y a-t-il un inconvenient à fusioner ces 2 fonctions
  *
  * @param inData TODO JPR
  * @param ExpectedSize TODO JPR
@@ -327,6 +328,8 @@ int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
    SetImageDataSize(ExpectedSize);
    PixelData = inData;
    lgrTotale = ExpectedSize;
+   
+   
    return(1);
 }
 
@@ -337,6 +340,7 @@ int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
  * \brief TODO JPR
  * \
  * \warning WARNING doit-etre etre publique ? FIXME JPR
+ * TODO : y aurait il un inconvenient à fusionner ces 2 fonctions
  *
  * @param ImageDataSize TODO JPR
  *
@@ -345,15 +349,15 @@ int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
 void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
 
  	string content1;
- 	string content2;
  	char car[20];
  	
  	// suppose que le ElValue (0x7fe0, 0x0010) existe ...
  	
  	sprintf(car,"%d",ImageDataSize);
- 	content2=car;
- 	SetPubElValByNumber(content2, 0x7fe0, 0x0010);
- 	
+ 
+ 	gdcmElValue*a = GetElValueByNumber(0x7fe0, 0x0010);
+ 	a->SetLength(ImageDataSize);
+ 		
  	ImageDataSize+=8;
  	sprintf(car,"%d",ImageDataSize);
  	content1=car;	
