@@ -16,11 +16,12 @@ int TestWriteSimple(int argc, char* argv[])
   const char *header = argv[1];
   const char *output = argv[2];
 
-  dbg.SetDebug(4);
   gdcmHeader *f1 = new gdcmHeader( header );
   gdcmFile   *f2 = new gdcmFile( f1 );
 	
-  f2->GetImageData(); //EXTREMELY IMPORTANT
+  // If the following call is important, then the API sucks. Why is it
+  // required to allocate PixelData when we are not using it !?
+  void* PixelData = f2->GetImageData(); //EXTREMELY IMPORTANT
   //Otherwise ReadPixel == -1 -> the dicom writing fails completely
   
   int dataSize    = f2->GetImageDataSize();
@@ -33,6 +34,9 @@ int TestWriteSimple(int argc, char* argv[])
   f2->WriteDcmExplVR( output );
   
   delete[] imageData;
+  delete f1;
+  delete f2;
+  delete PixelData;
 
   return 0;
 }

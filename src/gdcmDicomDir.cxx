@@ -1,5 +1,21 @@
-// gdcmDicomDir.cxx
-//-----------------------------------------------------------------------------
+/*=========================================================================
+  
+  Program:   gdcm
+  Module:    $RCSfile: gdcmDicomDir.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/06/19 23:51:03 $
+  Version:   $Revision: 1.48 $
+  
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+  
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+  
+=========================================================================*/
+
 #include <string>
 #include <algorithm>
 #include <sys/types.h>
@@ -28,9 +44,26 @@
 //  For full DICOMDIR description, see:
 //  PS 3.3-2003, pages 731-750
 //-----------------------------------------------------------------------------
-
-
 // Constructor / Destructor
+
+void gdcmDicomDir::Initialize(void)
+{
+   startMethod             = NULL;
+   progressMethod          = NULL;
+   endMethod               = NULL;
+   startMethodArgDelete    = NULL;
+   progressMethodArgDelete = NULL;
+   endMethodArgDelete      = NULL;
+   startArg                = NULL;
+   progressArg             = NULL;
+   endArg                  = NULL;
+
+   progress = 0.0;
+   abort = false;
+
+   metaElems = (gdcmDicomDirMeta *)0;   
+}
+
 
 /**
  * \brief Constructor Parses recursively the directory and creates the DicomDir
@@ -49,24 +82,10 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
                            bool exception_on_error):
    gdcmDocument(FileName,exception_on_error,true) // true : enable SeQuences
 {
- // que l'on ai passe un root directory ou un DICOMDIR
- // et quelle que soit la valeur de parseDir,
- // on a lance gdcmDocument 
-      
-   startMethod=            NULL;
-   progressMethod=         NULL;
-   endMethod=              NULL;
-   startMethodArgDelete=   NULL;
-   progressMethodArgDelete=NULL;
-   endMethodArgDelete=     NULL;
-   startArg=               NULL;
-   progressArg=            NULL;
-   endArg=                 NULL;
-
-   progress=0.0;
-   abort=false;
-
-   metaElems=NULL;   
+   // que l'on ai passe un root directory ou un DICOMDIR
+   // et quelle que soit la valeur de parseDir,
+   // on a lance gdcmDocument 
+   Initialize();
 
    // gdcmDocument already executed
    // if user passed a root directory, sure we didn't get anything
@@ -114,25 +133,13 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
 gdcmDicomDir::gdcmDicomDir(bool exception_on_error):                           
    gdcmDocument(exception_on_error)
 { 
-   startMethod=            NULL;
-   progressMethod=         NULL;
-   endMethod=              NULL;
-   startMethodArgDelete=   NULL;
-   progressMethodArgDelete=NULL;
-   endMethodArgDelete=     NULL;
-   startArg=               NULL;
-   progressArg=            NULL;
-   endArg=                 NULL;
-   progress=0.0;
-   abort=false;
+   Initialize();
    std::string pathBidon = "Bidon"; // Sorry, NULL not allowed ...
    SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
    AddDicomDirMeta();
 }
 
-
 /**
- * \ingroup gdcmDicomDir
  * \brief  Canonical destructor 
  */
 gdcmDicomDir::~gdcmDicomDir() 
@@ -144,7 +151,9 @@ gdcmDicomDir::~gdcmDicomDir()
    if(metaElems)
       delete metaElems;
    
-   for(ListDicomDirPatient::iterator cc=patients.begin();cc!=patients.end();++cc)
+   for(ListDicomDirPatient::iterator cc = patients.begin();
+                                     cc!= patients.end();
+                                   ++cc)
    {
       delete *cc;
    }
@@ -153,7 +162,6 @@ gdcmDicomDir::~gdcmDicomDir()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmDicomDir
  * \brief  Canonical Printer 
  */
 void gdcmDicomDir::Print(std::ostream &os)
@@ -163,7 +171,9 @@ void gdcmDicomDir::Print(std::ostream &os)
       metaElems->SetPrintLevel(printLevel);
       metaElems->Print(os);   
    }   
-   for(ListDicomDirPatient::iterator cc=patients.begin();cc!=patients.end();++cc)
+   for(ListDicomDirPatient::iterator cc  = patients.begin();
+                                     cc != patients.end();
+                                   ++cc)
    {
      (*cc)->SetPrintLevel(printLevel);
      (*cc)->Print(os);     
@@ -173,7 +183,6 @@ void gdcmDicomDir::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmDicomDir
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current header was properly parsed
  *         and contains the mandatory information for being considered as

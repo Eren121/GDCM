@@ -1,9 +1,24 @@
-// gdcmDicomDir.h
-//-----------------------------------------------------------------------------
+/*=========================================================================
+  
+  Program:   gdcm
+  Module:    $RCSfile: gdcmDicomDir.h,v $
+  Language:  C++
+  Date:      $Date: 2004/06/19 23:51:03 $
+  Version:   $Revision: 1.22 $
+  
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+  
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+  
+=========================================================================*/
+
 #ifndef GDCMDICOMDIR_H
 #define GDCMDICOMDIR_H
 
-//#include "gdcmHeader.h"
 #include "gdcmCommon.h"
 #include "gdcmDocument.h"
 #include "gdcmDicomDirPatient.h"
@@ -111,6 +126,7 @@ protected:
    void CallEndMethod(void);
 
 private:
+   void Initialize(void);
    void CreateDicomDir(void);
 //   void AddObjectToEnd(gdcmDicomDirType type, gdcmSQItem *s);
    void AddDicomDirMeta   ();

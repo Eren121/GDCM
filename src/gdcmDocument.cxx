@@ -160,16 +160,7 @@ gdcmDocument::~gdcmDocument (void) {
    // Recursive clean up of sequences
    for (TagDocEntryHT::iterator it = tagHT.begin(); it != tagHT.end(); ++it )
    {
-      gdcmDocEntry * entry = it->second;
-      if ( gdcmSeqEntry* SeqEntry = dynamic_cast<gdcmSeqEntry*>(entry) )
-      {
-         delete SeqEntry;
-         RemoveEntry(SeqEntry);
-      }
-      else
-      {
-         RemoveEntry(entry);
-      }
+      delete (it->second);
    }
    tagHT.clear();
 }
@@ -626,13 +617,12 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
- 
-
 gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          void *voidArea,
                                          int lgth, 
                                          guint16 Group, 
-                                         guint16 Elem ){
+                                         guint16 Elem)
+{
    gdcmDocEntry* a;
    gdcmBinEntry* b;	
    a = GetDocEntryByNumber( Group, Elem);
@@ -1376,7 +1366,7 @@ guint16 gdcmDocument::UnswapShort(guint16 a) {
 long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
 
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
-   gdcmValEntry *vl;
+   gdcmValEntry *NewValEntry = (gdcmValEntry *)0;
    gdcmBinEntry *bn;   
    gdcmSeqEntry *sq;
    VRKey vr;
@@ -1394,17 +1384,18 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
          break;
 
       vr = NewDocEntry->GetVR();
-      if (vr!="SQ") {
+      if (vr!="SQ")
+      {
                
          if ( gdcmGlobal::GetVR()->IsVROfGdcmStringRepresentable(vr) )
          {
             /////// ValEntry
-            vl= new gdcmValEntry(NewDocEntry->GetDictEntry());
-            vl->Copy(NewDocEntry);
-            vl->SetDepthLevel(depth);
-            set->AddEntry(vl);
-            LoadDocEntry(vl);
-            if (/*!delim_mode && */vl->isItemDelimitor())
+            NewValEntry = new gdcmValEntry(NewDocEntry->GetDictEntry());
+            NewValEntry->Copy(NewDocEntry);
+            NewValEntry->SetDepthLevel(depth);
+            set->AddEntry(NewValEntry);
+            LoadDocEntry(NewValEntry);
+            if (/*!delim_mode && */NewValEntry->isItemDelimitor())
                break;
             if ( !delim_mode && ftell(fp)-offset >= l_max)
             {
@@ -1441,7 +1432,9 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
              SkipToNextDocEntry(NewDocEntry);
              l = NewDocEntry->GetFullLength(); 
          }
-      } else {   // VR = "SQ"
+      }
+      else
+      {   // VR = "SQ"
       
          l=NewDocEntry->GetReadLength();            
          if (l != 0) // don't mess the delim_mode for zero-length sequence
@@ -1469,8 +1462,8 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
             break;
          }
       }
+      delete NewDocEntry;
    }
-   delete NewDocEntry;   
    return l; // ?? 
 }
 
@@ -1530,7 +1523,8 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
  *                the value specified with gdcmDocument::SetMaxSizeLoadEntry()
  * @param         Entry Header Entry (Dicom Element) to be dealt with
  */
-void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)  {
+void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
+{
    size_t item_read;
    guint16 group  = Entry->GetGroup();
    std::string  vr= Entry->GetVR();
@@ -2505,15 +2499,6 @@ gdcmDocEntry *gdcmDocument::ReadNextDocEntry(void) {
       // header parsing has to be considered as finished.
       return (gdcmDocEntry *)0;
 
-// Pb : how to propagate the element length (used in SkipDocEntry)
-//       direct call to SkipBytes ?
-   
-//   if (ignoreShadow == 1 && g%2 ==1)
-      // if user wants to skip shadow groups
-      // and current element *is* a shadow element
-      // we don't create anything
-//      return (gdcmDocEntry *)1; // to tell caller it's NOT finished
-  
    NewEntry = NewDocEntryByNumber(g, n);
    FindDocEntryVR(NewEntry);
    FindDocEntryLength(NewEntry);
@@ -2572,7 +2557,7 @@ gdcmDictEntry *gdcmDocument::NewVirtualDictEntry(guint16 group, guint16 element,
  * @param   Group group   number of the underlying DictEntry
  * @param   Elem  element number of the underlying DictEntry
  */
-gdcmDocEntry *gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem) 
+gdcmDocEntry* gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem) 
 {
    // Find out if the tag we encountered is in the dictionaries:
    gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
@@ -2584,7 +2569,7 @@ gdcmDocEntry *gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem)
    {
       dbg.Verbose(1, "gdcmDocument::NewDocEntryByNumber",
                   "failed to allocate gdcmDocEntry");
-      return NULL;
+      return (gdcmDocEntry*)0;
    }
    return NewEntry;
 }

@@ -8,7 +8,6 @@
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmDictEntry
  * \brief   Constructor
  * @param   InGroup    DICOM-Group Number
  * @param   InElement  DICOM-Element Number
@@ -20,13 +19,14 @@
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
                              std::string  InVr, std::string InFourth,
-                             std::string  InName) {
-	group 	= InGroup;
-	element = InElement;
-	vr      = InVr;
-	fourth 	= InFourth;
-	name    = InName;
-	key     = TranslateToKey(group, element);
+                             std::string  InName)
+{
+   group   = InGroup;
+   element = InElement;
+   vr      = InVr;
+   fourth  = InFourth;
+   name    = InName;
+   key     = TranslateToKey(group, element); /// \todo Frog MEMORY LEAK.
 }
 
 //-----------------------------------------------------------------------------
@@ -35,15 +35,14 @@ gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmDictEntry
  * \brief   concatenates 2 guint16 (supposed to be a Dicom group number 
  *                                             and a Dicom element number)
  * @param  group the Dicom group   number used to build the tag
  * @param  element the Dicom element number used to build the tag
  * @return the built tag
  */
-
-TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
+TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element)
+{
 	char trash[10];
 	TagKey key;
 	// CLEANME: better call the iostream<< with the hex manipulator on.
@@ -55,7 +54,6 @@ TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
 }
 
 /**
- * \ingroup     gdcmDictEntry
  * \brief       If-and only if-the V(alue) R(epresentation)
  * \            is unset then overwrite it.
  * @param NewVr New V(alue) R(epresentation) to be set.

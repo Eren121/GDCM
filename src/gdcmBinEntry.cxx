@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/18 12:26:54 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/06/19 23:51:03 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
  * \brief   Constructor from a given gdcmBinEntry
  */
 gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e) {
-
+   this->voidArea = NULL;
 }
 
 /**
@@ -49,7 +49,8 @@ gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry()){
  * \brief   Canonical destructor.
  */
 gdcmBinEntry::~gdcmBinEntry(){
-   free (voidArea);
+   if (voidArea)
+      free (voidArea);
 }
 
 

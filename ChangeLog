@@ -1,3 +1,35 @@
+2004-06-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+    * In order to fix memory leaks:
+     - Test/TestWriteSimple.cxx: added cleaning of free store through
+       some delete calls.
+     - src/gdcmBinEntry.cxx: fix to avoid SegFault.
+     - src/gdcmDicomDir.[cxx|h]: fixed initialisation in constructor
+       gdcmDicomDir::gdcmDicomDir(bool) [either the constructor itself
+       (through the call to ::AddDicomDirMeta()) or the destructor
+       would crash when deleting uninitialized ::metaElems].
+     - src/gdcmDictEntry.cxx: annotation of ununderstood memory leak.
+     - src/gdcmDocument.cxx:
+       -- ::~gdcmDocument() destructor now cleans up all dictionary entries
+          from dynamic stores.
+       -- ::ParseDES() misplaced deletion of temporary NewDocEntry
+          was causing memory leaks.
+     - src/gdcmSQItem.cxx:
+       -- ::~gdcmSQItem() dummy code cleaned (learned that deletion is
+          cleanly handled with polymophism: sorry but my milage is low).
+       -- ::SetEntryByNumber(string, guint16, guint16) now cleanly allocates
+          a gdcmValENtry, and makes no assumption on type (gdcmDocEntry,
+          gdcmSeqEntry vs gdcmValEntry) of existing entry (when present).
+          This avoids SegFaulting.
+     - src/gdcmSQItem.h: coding style.
+    * Conclusion:
+     - Test/TestWriteSimple still severely sucks. The output image content
+       (when $(GDCMDATA_HOME)/012345.002.050.dcm in input) is brain
+       damaged when displayed with vtkgdcmViewer.
+     - on memory leaks: TestWriteSimple leaks really less (see entry
+       of 2004-06-18 in Changelog file for the call to valgrind).
+     - on segfaults: ctest now passes all the tests but one (no more
+       segfaults).
+
 2004-06-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * In order to fix writing of dicom files:
      - Test/TestWriteSimple.cxx: a simpler example of writing.

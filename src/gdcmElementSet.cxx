@@ -91,7 +91,7 @@ bool gdcmElementSet::RemoveEntry( gdcmDocEntry *EntryToRemove)
    if(tagHT.count(key) == 1)
    {
       tagHT.erase(key);
-      dbg.Verbose(1, "gdcmElementSet::RemoveEntry: one element erased.");
+      dbg.Verbose(0, "gdcmElementSet::RemoveEntry: one element erased.");
       return true;
    }
 
