@@ -1,3 +1,5 @@
+// gdcmDictEntry
+
 #include <fstream>
 #include <stdlib.h>  // For getenv
 #include "gdcm.h"

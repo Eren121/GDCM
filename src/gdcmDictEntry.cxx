@@ -1,3 +1,5 @@
+// gdcmDict.cxx
+
 #include "gdcm.h"
 #include "gdcmUtil.h"
 

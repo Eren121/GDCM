@@ -1,9 +1,11 @@
+// gdcm.h
+
 // gdcmlib Intro:  
 // * gdcmlib is a library dedicated to reading and writing dicom files.
 // * LGPL for the license
 // * lightweigth as opposed to CTN or DCMTK wich come bundled which try
 //   to implement the full DICOM standard (networking...). gdcmlib concentrates
-//   on reading and 
+//   on reading and writing
 // * Formats: this lib should be able to read ACR-NEMA v1 and v2, Dicom v3 (as
 //   stated in part10). [cf dcmtk/dcmdata/docs/datadict.txt]
 // * Targeted plateforms: Un*xes and Win32/VC++6.0
@@ -26,6 +28,31 @@ using namespace std;  // string type lives in the std namespace on VC++
 #include <list>
 #include <map>
 
+		      // The requirement for the hash table (or map) that
+                      // we shall use:
+                      // 1/ First, next, last (iterators)
+                      // 2/ should be sortable (i.e. sorted by TagKey). This
+                      //    condition shall be droped since the Win32/VC++
+                      //    implementation doesn't look a sorted one. Pffff....
+                      // 3/ Make sure we can setup some default size value,
+                      //    which should be around 4500 entries which is the
+                      //    average dictionary size (said JPR)
+                      //
+                      // En fait, je disais que dans LE Directory Dicom (dans son etat 2002)
+                      // il y a 1600 entrees.
+                      // Une valeur raisonable pour un  majorant du nombre d'entrees
+                      // dans une entete DICOM d'une image semble semble etre 300
+                      // Si on 'decortique' les elements SQ (ce qui ne semble pas etre fait pour le moment)
+                      // on risque en fait de depasser ... un nombre non previsible dans le cas d'une entree SQ
+                      // contenant lui même un tres grand nombre d'entrees ?!?)
+                      // Quant au nombre d'entrees dans un DICOMDIR, c'est encore pire : il n'est limité
+                      // que par la taille d'un CD-ROM (les DVD-ROM ne sont pas encore pris en compte)
+                      // On peut s'attendre a 30 entrees par fichier dicom présent sur le CD-ROM
+                      // Remarque : il faudra se pencher sur le pb de la creation du DICOMDIR lorsqu'on voudra 
+                      // exporter des images lisibles par les consoles cliniques 
+                      // et pas seulement importables dans e-film. 
+
+
 #ifdef __GNUC__
 #include <stdint.h>
 #define guint16 uint16_t
@@ -43,6 +70,14 @@ typedef  unsigned int guint32;
 #define GDCM_EXPORT
 #endif
 
+
+//
+// ---------------------------------------------------- gdcmDictEntry
+//
+//	c'est une ligne du Dictionnaire Dicom
+//
+
+
 ////////////////////////////////////////////////////////////////////////////
 // Tag based hash tables.
 // We shall use as keys the strings (as the C++ type) obtained by
@@ -52,12 +87,13 @@ typedef  unsigned int guint32;
 // Then the corresponding TagKey shall be the string 0010|0010 (where
 // the | (pipe symbol) acts as a separator). Refer to 
 // gdcmDictEntry::TranslateToKey for this conversion function.
+
 typedef string TagKey;
 
 class GDCM_EXPORT gdcmDictEntry {
 private:
 	guint16 group;    // e.g. 0x0010
-	guint16 element;  // e.g. 0x0010
+	guint16 element;  // e.g. 0x0103
 	string  vr;       // Value Representation i.e. some clue about the nature
 	                  // of the data represented e.g. "FD" short for
 	                  // "Floating Point Double"
@@ -80,11 +116,19 @@ private:
 	//         DcmDictRangeRestriction elementRestriction;
 	//       };
 public:
+	
+	// fabrique une ligne de Dictionnaire Dicom à partir des parametres en entrée
+
+
 	gdcmDictEntry(guint16 group, guint16 element,
 	              string vr     = "Unknown",
 	              string fourth = "Unknown",
 	              string name   = "Unknown");
+					  
+	// fabrique une 'clé' par concaténation du numGroupe et du numElement
+
 	static TagKey TranslateToKey(guint16 group, guint16 element);
+	
 	guint16 GetGroup(void)  { return group;};
 	guint16 GetElement(void){return element;};
 	string  GetVR(void)     {return vr; };
@@ -95,11 +139,22 @@ public:
 	string  GetKey(void)    {return key;};
 };
   
+//
+// ---------------------------------------------------- gdcmDict
+// 
+//	c'est le Dictionnaire Dicom
+//
+
+  
 ////////////////////////////////////////////////////////////////////////////
 // A single DICOM dictionary i.e. a container for a collection of dictionary
 // entries. There should be a single public dictionary (THE dictionary of
 // the actual DICOM v3) but as many shadow dictionaries as imagers 
 // combined with all software versions...
+
+typedef map<TagKey, gdcmDictEntry*> TagHT;
+	// Table de Hachage  (group,Elem) --> ligne du Dictionnaire Dicom
+
 typedef map<TagKey, gdcmDictEntry*> TagHT;
 
 class GDCM_EXPORT gdcmDict {
@@ -107,18 +162,33 @@ class GDCM_EXPORT gdcmDict {
 	string filename;
 	TagHT entries;
 public:
+	// rempli le Dictionnaire Dicom à partir d'un fichier texte
 	gdcmDict(const char* FileName);   // Read Dict from disk
+	
 	// TODO Swig int AppendEntry(gdcmDictEntry* NewEntry);
+	
+	// renvoie une ligne de Dictionnaire Dicom à partir de (numGroup, numElement)
 	gdcmDictEntry * GetTag(guint32 group, guint32 element);
 	void Print(ostream&);
 	TagHT & GetEntries(void) { return entries; }
 };
+
+
+//
+// ---------------------------------------------------- gdcmDictSet
+//
+//	Ensemble de Dictionnaires Dicom (le public + 'des' privés)
+//	Au cas ou l'on traiterait un jour les 'dictionnaires privés'
+//	 - pratiquement un par constructeur, par machine, et par version du logiciel -
+//
+//
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for managing a set of loaded dictionaries. Sharing dictionaries
 // should avoid :
 // * reloading an allready loaded dictionary,
 // * having many in memory representations of the same dictionary.
+
 typedef string DictKey;
 typedef map<DictKey, gdcmDict*> DictSetHT;
 
@@ -138,15 +208,29 @@ public:
 	// TODO Swig int LoadDictFromName(string filename);
 	// TODO Swig int LoadAllDictFromDirectory(string DirectoryName);
 	// TODO Swig string* GetAllDictNames();
+	//
+	// Question : ne faudra-t-il pas mettre LE dictionnaire DICOM dans un Directory
+	// et les eventuels 'dictionnaires prives' dans un autre?
+	//
 	int LoadDicomV3Dict(void);
 	void Print(ostream&);
 	gdcmDict* GetDict(DictKey DictName);
 	gdcmDict* GetDefaultPublicDict(void);
 };
 
-////////////////////////////////////////////////////////////////////////////
+
+//
+// ---------------------------------------------------- ElValue
+//
+//	C'est un Element Dicom
+// 	(ce qu'on a trouve dans l'entete de l'image
+// 	+ ce qu'on est allé chercher dans le Dictionnaire Dicom)
+//
+
+
 // The dicom header of a Dicom file contains a set of such ELement VALUES
 // (when successfuly parsed against a given Dicom dictionary)
+
 class GDCM_EXPORT ElValue {
 private:
 	gdcmDictEntry *entry;
@@ -164,7 +248,7 @@ public:
 	void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };
 
 	bool   IsVrUnknown(void) { return entry->IsVrUnknown(); };
-	void SetLength(guint32 l){LgrElem = l; };
+	void SetLength(guint32 l){ LgrElem = l; };
 	void SetValue(string val){ value = val; };
 	void SetOffset(size_t of){ Offset = of; };
 	void SetImplicitVr(void) { ImplicitVr = true; };
@@ -179,6 +263,13 @@ public:
 	string  GetKey(void)     { return entry->GetKey(); };
 	string  GetName(void)    { return entry->GetName();};
 };
+
+
+//
+// ---------------------------------------------------- ElValSet
+//
+//	... un ensemble d'Elements Dicom 
+//
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for a set of succefully parsed ElValues.
@@ -200,9 +291,18 @@ public:
 	TagElValueHT & GetTagHt(void);
 };
 
+
+//
+// ---------------------------------------------------- gdcmHeader
+//
+//	C'est le Dicom Header d'une image donnée
+//	(tous les elements Dicom qui la composent
+//	+ des info 'de service')
+//
+
 ////////////////////////////////////////////////////////////////////////////
 // The typical usage of instances of class gdcmHeader is to classify a set of
-// dicom files according to header information e.g. to create a file hierachy
+// dicom files according to header information e.g. to create a file hierarchy
 // reflecting the Patient/Study/Serie informations, or extracting a given
 // SerieId. Accesing the content (image[s] or volume[s]) is beyond the
 // functionality of this class and belong to gdmcFile (see below).
@@ -212,9 +312,12 @@ public:
 // * the gdcmHeader::Set*Tag* family members cannot be defined as protected
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
  
+
 typedef string VRKey;
 typedef string VRAtr;
 typedef map<TagKey, VRAtr> VRHT;    // Value Representation Hash Table
+		// Cette Table de Hachage ne devrait servir qu'a determiner
+		// si deux caractères correspondent à une VR existante ?	
 
 class GDCM_EXPORT gdcmHeader {
 	void SkipBytes(guint32);
@@ -235,6 +338,7 @@ private:
 	// outside of the elements:
 	guint16 grPixel;
 	guint16 numPixel;
+	
 	// Swap code (little, big, big-bad endian): this code is not fixed
 	// during parsing.FIXME sw should be an enum e.g.
 	//enum EndianType {
@@ -243,6 +347,7 @@ private:
 		//BigEndian, 
 		//BadBigEndian};
 	int sw;
+
 	// Only the elements whose size are below this bound shall be loaded.
 	// By default, this upper bound is limited to 1024 (which looks reasonable
 	// when one considers the definition of the various VR contents).
@@ -268,7 +373,6 @@ private:
 	void SetMaxSizeLoadElementValue(long);
 	ElValue       * ReadNextElement(void);
 	gdcmDictEntry * IsInDicts(guint32, guint32);
-	size_t GetPixelOffset(void);
 protected:
 	enum FileType {
 		Unknown = 0,
@@ -285,9 +389,13 @@ public:
 	virtual void ParseHeader(void);
 	gdcmHeader(const char* filename);
 	virtual ~gdcmHeader();
+	
+	size_t GetPixelOffset(void);
+	void   GetPixels(size_t, void *);
+	int    GetSwapCode(void) { return sw; }
 
 	// TODO Swig int SetPubDict(string filename);
-	// When some proprietary shadow groups are disclosed, whe can set
+	// When some proprietary shadow groups are disclosed, we can set
 	// up an additional specific dictionary to access extra information.
 	// TODO Swig int SetShaDict(string filename);
 
@@ -298,13 +406,17 @@ public:
 	list<string> * GetPubTagNames(void);
 	map<string, list<string> > * GetPubTagNamesByCategory(void);
 	// Get the element values themselves:
+	
 	string GetPubElValByName(string TagName);
 	string GetPubElValByNumber(guint16 group, guint16 element);
+
 	// Getting the element value representation (VR) might be needed by caller
 	// to convert the string typed content to caller's native type (think
 	// of C/C++ vs Python).
+
 	string GetPubElValRepByName(string TagName);
 	string GetPubElValRepByNumber(guint16 group, guint16 element);
+
 	TagElValueHT & GetPubElVal(void) { return PubElVals.GetTagHt(); };
 	void   PrintPubElVal(ostream & os = cout);
 	void   PrintPubDict(ostream &);
@@ -332,6 +444,14 @@ public:
 	// TODO Swig int GetSwapCode();
 };
 
+//
+// ---------------------------------------------------- gdcmFile
+//
+//	un fichier EST_UNE entete, ou A_UNE entete ?
+//
+//
+
+
 ////////////////////////////////////////////////////////////////////////////
 // In addition to Dicom header exploration, this class is designed
 // for accessing the image/volume content. One can also use it to
@@ -339,6 +459,7 @@ public:
 ////// QUESTION: this looks still like an open question wether the
 //////           relationship between a gdcmFile and gdcmHeader is of
 //////           type IS_A or HAS_A !
+
 class GDCM_EXPORT gdcmFile: gdcmHeader
 {
 private:
@@ -355,8 +476,10 @@ public:
 	//    the DICOM header is post-poned to first header information access.
 	//    This avoid a double parsing of public part of the header when
 	//    one sets an a posteriori shadow dictionary (efficiency can be
-	//    seen a a side effect).
+	//    seen as a side effect).
+	
 	gdcmFile(string & filename);
+	
 	// For promotion (performs a deepcopy of pointed header object)
 	// TODO Swig gdcmFile(gdcmHeader* header);
 	// TODO Swig ~gdcmFile();
@@ -369,12 +492,15 @@ public:
 	// Allocates necessary memory, copies the data (image[s]/volume[s]) to
 	// newly allocated zone and return a pointer to it:
 	// TODO Swig void * GetImageData();
+	
 	// Returns size (in bytes) of required memory to contain data
 	// represented in this file.
 	// TODO Swig size_t GetImageDataSize();
+	
 	// Copies (at most MaxSize bytes) of data to caller's memory space.
 	// Returns an error code on failure (if MaxSize is not big enough)
 	// TODO Swig int PutImageDataHere(void* destination, size_t MaxSize );
+	
 	// Allocates ExpectedSize bytes of memory at this->Data and copies the
 	// pointed data to it.
 	// TODO Swig int SetImageData(void * Data, size_t ExpectedSize);
@@ -382,5 +508,22 @@ public:
 	// TODO Swig int Write();
 };
 
+//
+// ---------------------------------------------------- gdcmSerie
+//
+//	une serie EST_UN fichier ????
+//
+//
+
 //class gdcmSerie : gdcmFile;
+
+//
+// ---------------------------------------------------- gdcmMultiFrame
+//
+//	un fichierMultiFrame EST_UN fichier 
+//
+//
+
 //class gdcmMultiFrame : gdcmFile;
+
+

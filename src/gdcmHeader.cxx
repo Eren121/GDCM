@@ -1,3 +1,5 @@
+// gdcmHeader.cxx
+
 #include "gdcm.h"
 #include <stdio.h>
 // For nthos:
@@ -11,7 +13,7 @@
 #include <sstream>
 #include "gdcmUtil.h"
 
-#define HEADER_LENGHT_TO_READ 256 // on ne lit plus que le debut
+#define HEADER_LENGTH_TO_READ 256 // on ne lit plus que le debut
 
 namespace Error {
 	struct FileReadError {
@@ -88,8 +90,9 @@ void gdcmHeader::InitVRDict (void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Discover what the swap code is (among little endian, big endian, 
+ * \brief   Discover what the swap code is (among little endian, big endian,
  *          bad little endian, bad big endian).
+ *
  */
 void gdcmHeader::CheckSwap()
 {
@@ -103,7 +106,7 @@ void gdcmHeader::CheckSwap()
 	 
 	int lgrLue;
 	char * entCur;
-	char deb[HEADER_LENGHT_TO_READ];
+	char deb[HEADER_LENGTH_TO_READ];
 	 
 	// First, compare HostByteOrder and NetworkByteOrder in order to
 	// determine if we shall need to swap bytes (i.e. the Endian type).
@@ -114,7 +117,7 @@ void gdcmHeader::CheckSwap()
 	
 	// The easiest case is the one of a DICOM header, since it possesses a
 	// file preamble where it suffice to look for the sting "DICM".
-	lgrLue = fread(deb, 1, HEADER_LENGHT_TO_READ, fp);
+	lgrLue = fread(deb, 1, HEADER_LENGTH_TO_READ, fp);
 	
 	entCur = deb + 128;
 	if(memcmp(entCur, "DICM", (size_t)4) == 0) {
@@ -200,7 +203,7 @@ void gdcmHeader::CheckSwap()
 		return;
 	default :
 		dbg.Verbose(0, "gdcmHeader::CheckSwap:",
-		               "ACE/NEMA unfound swap info (time to raise bets)");
+		               "ACR/NEMA unfound swap info (time to raise bets)");
 	}
 
 	// We are out of luck. It is not a DicomV3 nor a 'clean' ACR/NEMA file.
@@ -231,6 +234,13 @@ void gdcmHeader::SwitchSwapToBigEndian(void) {
 	}
 	if ( sw == 2143 )
 		sw = 3412;
+}
+
+void gdcmHeader::GetPixels(size_t lgrTotale, void* Pixels) {
+	size_t pixelsOffset; 
+	pixelsOffset = GetPixelOffset();
+	fseek(fp, pixelsOffset, SEEK_SET);
+	fread(Pixels, 1, lgrTotale, fp);
 }
 
 /**
@@ -270,7 +280,7 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
 	// a tag where we expect reading a VR but are in fact we read the
 	// first to bytes of the length. Then we will interogate (through find)
 	// the dicom_vr dictionary with oddities like "\004\0" which crashes
-	// both GCC and VC++ implentations of the STL map. Hence when the
+	// both GCC and VC++ implementations of the STL map. Hence when the
 	// expected VR read happens to be non-ascii characters we consider
 	// we hit falsely explicit VR tag.
 
@@ -431,7 +441,7 @@ void gdcmHeader::FindLength(ElValue * ElVal) {
 		// endian encoding". When this is the case, chances are we got our
 		// hands on a big endian encoded file: we switch the swap code to
 		// big endian and proceed...
-		if ( (element  == 0) && (length16 == 1024) ) {
+		if ( (element  == 0x000) && (length16 == 0x0400) ) {
 			if ( ! IsBigEndianTransferSyntax() )
 				throw Error::FileReadError(fp, "gdcmHeader::FindLength");
 			length16 = 4;
@@ -550,6 +560,12 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	fseek(fp, (long)ElVal->GetOffset(), SEEK_SET);
 	
 	// Sequences not treated yet !
+	//
+	// Ne faudrait-il pas au contraire trouver immediatement
+	// une maniere 'propre' de traiter les sequences (vr = SQ)
+	// car commencer par les ignorer risque de conduire a qq chose
+	// qui pourrait ne pas etre generalisable
+	//
 	if( vr == "SQ" )
 		SkipLoad = true;
 
@@ -579,6 +595,10 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	}
 
 	// Values bigger than specified are not loaded.
+	//
+	// En fait, c'est les elements dont la longueur est superieure 
+	// a celle fixee qui ne sont pas charges
+	//
 	if (length > MaxSizeLoadElementValue) {
 		ostringstream s;
 		s << "gdcm::NotLoaded.";
@@ -733,6 +753,23 @@ bool gdcmHeader::IsAnInteger(ElValue * ElVal) {
 	if ( (group == 0x0028) && (element == 0x0005) )
 		// This tag is retained from ACR/NEMA
 		// CHECKME Why should "Image Dimensions" be a single integer ?
+		//
+		// "Image Dimensions", c'est en fait le 'nombre de dimensions'
+		// de l'objet ACR-NEMA stocké
+		// 1 : Signal
+		// 2 : Image
+		// 3 : Volume
+		// 4 : Sequence
+		//
+		// DICOM V3 ne retient pas cette information
+		// Par defaut, tout est 'Image',
+		// C'est a l'utilisateur d'explorer l'ensemble des entetes
+		// pour savoir à quoi il a a faire
+		//
+		// Le Dicom Multiframe peut etre utilise pour stocker,
+		// dans un seul fichier, une serie temporelle (cardio vasculaire GE, p.ex)
+		// ou un volume (medecine Nucleaire, p.ex)
+		//
 		return true;
 	
 	if ( (group == 0x0028) && (element == 0x0200) )
@@ -776,6 +813,10 @@ size_t gdcmHeader::GetPixelOffset(void) {
 }
 
 gdcmDictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
+	//
+	// Y a-t-il une raison de lui passer des guint32
+	// alors que group et element sont des guint16?
+	//
 	gdcmDictEntry * found = (gdcmDictEntry*)0;
 	if (!RefPubDict && !RefShaDict) {
 		//FIXME build a default dictionary !

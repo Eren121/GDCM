@@ -1,3 +1,5 @@
+// gdcmDict.cxx
+
 #include <fstream>
 #include "gdcm.h"
 #include "gdcmUtil.h"
@@ -36,6 +38,8 @@ void gdcmDict::Print(ostream& os) {
        os << tag->second->GetName() << "."  << endl;
     }
 }
+
+// renvoie une ligne de Dictionnaire Dicom à partir de (numGroup, numElement)
 
 gdcmDictEntry * gdcmDict::GetTag(guint32 group, guint32 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
