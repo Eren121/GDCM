@@ -1,3 +1,8 @@
+2005-01-18 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/ShowDicom.cxx, ShowDicomSeq.cxx, TestWriteWithVTK.cxx : change the
+     test. Now it's on image content and not on the resulting visualisation...
+     might solve the problem on linux when using the OpenGL drivers
+
 2005-01-18 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * ENH for DicomDir, DicomDirPatient, DicomDirStudy, 
 	          DicomDirSerie, DicomDirImage
@@ -63,7 +68,7 @@
      sort DICOM files
 
 2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
-   * ENH - Comment out Mathieu's (dangerous) Super Hack 
+   * ENH - Comment out Mathieu's (dangerous) Super Hack
 	      for dealing with BIGENDIAN processors
 			- Move equivalent stuff to BinEntry::WriteContent
 			When necessary, 16 Bits Pixels are swapped in a small buffer
