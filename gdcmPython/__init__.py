@@ -76,8 +76,8 @@ gdcmHeader       = gdcm.gdcmHeader
 gdcmHeaderHelper = gdcm.gdcmHeaderHelper
 gdcmFile         = gdcm.gdcmFile
 
-def GetPubDictTagNames():
-   return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictTagNames()
+def GetPubDictEntryNames():
+   return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictEntryNames()
 
-def GetPubDictTagNamesByCategory():
-   return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictTagNamesByCategory()
+def GetPubDictEntryNamesByCategory():
+   return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictEntryNamesByCategory()
