@@ -97,7 +97,6 @@ gdcmParser::gdcmParser(const char *InFilename,
 		       bool ignore_shadow) {
    enableSequences=enable_sequences;
    ignoreShadow   =ignore_shadow;
-   cout << "chou" << endl;
    
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    filename = InFilename;
@@ -121,7 +120,6 @@ gdcmParser::gdcmParser(const char *InFilename,
  */
 gdcmParser::gdcmParser(bool exception_on_error) {
    enableSequences=0;
-   cout << "chou" << endl;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
