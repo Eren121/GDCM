@@ -14,11 +14,13 @@ INCLUDE_DIRECTORIES(
 
 IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
+  # We need to pass that to swig to be sure all modules are generated in the proper dir
+  SET(CMAKE_SWIG_FLAGS "-outdir ${GDCM_BINARY_DIR}/bin")
+  # Looks like a bug to me in cmake 2.0.x:
+  SEPARATE_ARGUMENTS(CMAKE_SWIG_FLAGS)
+
   FIND_PACKAGE(SWIG REQUIRED)
   INCLUDE(${SWIG_USE_FILE})
-
-  #INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-  #SET(CMAKE_SWIG_FLAGS "")
 
   #SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES PYTHON ON)
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
@@ -35,22 +37,6 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   SWIG_ADD_MODULE(gdcm python gdcm.i)  #gdcm_wrap.cxx
   SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
   
-  #SWIG_GET_EXTRA_OUTPUT_FILES(python foobar "/usr/" "gdcm" )
-  #MESSAGE(FATAL_ERROR ${swig_generated_file_fullname})
-  #MESSAGE(FATAL_ERROR ${swig_source_file_fullname})
-
-  # Swig creates a gdcm.py file put it in the right place, if only cmake
-  # was able to do stuff properly ...
-  ADD_CUSTOM_TARGET( CMAKE_S____ ALL)
-  ADD_CUSTOM_COMMAND(
-    TARGET CMAKE_S____
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy 
-      ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py
-      ${GDCM_BINARY_DIR}/bin/gdcm.py
-  )
-
 ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
   # As of 09/10/2003 there was no FindSWIG.cmake
