@@ -405,7 +405,7 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
       val = tag2->second->GetValue().c_str();
       vr =  tag2->second->GetVR();
       
-     // cout << "Tag "<< std::hex << gr << " " << el << std::endl;
+     // std::cout << "Tag "<< std::hex << gr << " " << el << std::endl;
 
       if ( type == ACR ) { 
          if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups

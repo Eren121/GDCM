@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.88 2003/09/24 13:45:11 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.89 2003/09/24 13:52:46 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -1763,7 +1763,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    int l=Element->GetLength();
    void * a = malloc(l);
    if(!a) {
-   	cout << "Big Broblem (LoadElementVoidArea, malloc) " 
+   	std::cout << "Big Broblem (LoadElementVoidArea, malloc) " 
    	     << std::hex << Group << " " << Elem << std::endl;
    	return NULL;
    }  
@@ -1771,7 +1771,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    // TODO check the result 
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) {
-   	cout << "Big Broblem (LoadElementVoidArea, fread) " 
+   	std::cout << "Big Broblem (LoadElementVoidArea, fread) " 
    	     << std::hex << Group << " " << Elem << std::endl;
    	free(a);
    	return NULL;
@@ -2030,7 +2030,7 @@ int gdcmHeader::GetLUTLength(void) {
       dbg.Verbose(0, "gdcmHeader::GetLUTLength: The CLUT R,G,B are not equal");
       return 0;   
    } 
-   cout << "Lut Description " << LutDescriptionR <<std::endl;
+   std::cout << "Lut Description " << LutDescriptionR <<std::endl;
    tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
    Tokenize (LutDescriptionR, tokens, "\\");
    LutLength=atoi(tokens[0].c_str());
@@ -2131,7 +2131,7 @@ void * gdcmHeader::GetLUTRGB(void) {
    int nBits=GetLUTNbits();
   // a virer quand on aura trouve UNE image 
   // qui correspond VRAIMENT à la definition !
-    cout << "l " << l << " nBits " << nBits;
+    std::cout << "l " << l << " nBits " << nBits;
    
    l= l/(nBits/8);
     
@@ -2167,7 +2167,7 @@ void * gdcmHeader::GetLUTRGB(void) {
       unsigned char * g = (unsigned char *)LutG;
       unsigned char * b = (unsigned char *)LutB;
       for(int i=0;i<l;i++) {
-      //cout << "lut16 " << i << " : " << *r << " " << *g << " " << *b << std::endl;
+      //std::cout << "lut16 " << i << " : " << *r << " " << *g << " " << *b << std::endl;
       printf("lut 8 %d : %d %d %d \n",i,*r,*g,*b);
          *rgb++ = *r++;
          *rgb++ = *g++;
