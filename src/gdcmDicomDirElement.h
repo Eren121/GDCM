@@ -42,8 +42,6 @@ public:
     * \sa    SetPrintLevel
   */ 
    void Print(std::ostream &os);
-
-
 /**
  * \ingroup gdcmDicomDirElement
  * \brief   returns a reference to the chained List 

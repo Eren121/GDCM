@@ -21,7 +21,13 @@ public:
               TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
    ~gdcmObject(void);
 
-   void SetPrintLevel(int level) { printLevel = level; };
+   /**
+    * \ingroup gdcmParser
+    * \brief   Sets the print level for the Dicom Header 
+    * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
+    */
+   void SetPrintLevel(int level) 
+      { printLevel = level; };
    virtual void Print(std::ostream &os = std::cout);
 
    std::string GetEntryByNumber(guint16 group, guint16 element);

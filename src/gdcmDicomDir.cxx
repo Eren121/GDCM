@@ -64,7 +64,7 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
 
       if(strlen(Name)==1 && Name[0]=='.') { // user passed '.' as Name
                                             // we get current directory name
-         char*dummy=(char*) malloc(1000);   // TODO : check with Windoze
+         char*dummy=(char*) malloc(1000);   // TODO : check with Windoze // JPR
          getcwd(dummy,(size_t)1000);
          SetFileName(dummy); // will be converted into a string
          free(dummy);        // no longer needed   
@@ -78,9 +78,10 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
    }
    else {
       CreateDicomDir();
-      CheckBoundaries(); // JPR 
-   }   
- 
+      CheckBoundaries(); // to maintain consistency between 
+                         // home-made gdcmDicomDir 
+			 // and the ones comming from a DICOMDIR file
+   } 
 }
 
 /*
@@ -297,7 +298,7 @@ bool gdcmDicomDir::Write(std::string fileName)
    fwrite(filePreamble,128,1,fp1);
    fwrite("DICM",4,1,fp1);
    free(filePreamble);        
-   //UpdateDirectoryRecordSequenceLength(); // a reecrire en utilisant 
+   //UpdateDirectoryRecordSequenceLength(); // a reecrire en utilisant   JPR
                                             // la structure arborescente JPR
    WriteDicomDirEntries(fp1);
 

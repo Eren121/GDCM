@@ -1474,7 +1474,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
    }
 
    if( (vr == "UI") ) // Because of correspondance with the VR dic
-      Entry->SetValue(NewValue.c_str()); // ??? JPR ???
+      Entry->SetValue(NewValue.c_str());
    else
       Entry->SetValue(NewValue);
 }
@@ -2407,7 +2407,7 @@ gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void) {
 /*  Pb : how to propagate the element length (used in SkipHeaderEntry)
 //       direct call to SkipBytes ?
    
-   if (ignoreShadow == 1 && g%2 ==1)  //JPR
+   if (ignoreShadow == 1 && g%2 ==1)
       // if user wants to skip shadow groups
       // and current element *is* a shadow element
       // we don't create anything

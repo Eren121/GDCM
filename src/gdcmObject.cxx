@@ -44,7 +44,6 @@ gdcmObject::~gdcmObject(void) {
 void gdcmObject::Print(std::ostream &os) {
    if(printLevel>=0) {
       ListTag::iterator i;
-      //for(ListTag::iterator i=beginObj;i!=endObj;++i) // JPR
       for(i=beginObj;;++i) {
          (*i)->SetPrintLevel(printLevel);
          (*i)->Print(os);
@@ -61,7 +60,6 @@ void gdcmObject::Print(std::ostream &os) {
  * @return
  */ 
 std::string gdcmObject::GetEntryByNumber(guint16 group, guint16 element) {
-   //for(ListTag::iterator i=beginObj;i!=endObj;++i) // JPR
    for(ListTag::iterator i=beginObj;;++i) {
       if ( (*i)->GetGroup()==group && (*i)->GetElement()==element)
          return (*i)->GetValue();
@@ -180,7 +178,6 @@ void gdcmObject::ResetBoundaries(int flag) {
  */ 
 TagHeaderEntryHT gdcmObject::GetEntry(void) {
    TagHeaderEntryHT HT;
-   //for(ListTag::iterator i=beginObj;i!=endObj;++i) // JPR
    for(ListTag::iterator i=beginObj;;++i) {
       HT.insert( PairHT( (*i)->GetKey(),(*i)) );
       if (i == endObj) break;      
@@ -197,7 +194,6 @@ TagHeaderEntryHT gdcmObject::GetEntry(void) {
  */ 
 ListTag gdcmObject::GetListEntry(void) {
    ListTag list;
-   //for(ListTag::iterator i=beginObj;i!=endObj;++i) // JPR
    for(ListTag::iterator i=beginObj;;++i) {
       list.push_back(*i);
       if (i == endObj) break;      
@@ -229,7 +225,7 @@ void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
       tmpEl=it->elem;
       dictEntry=gdcmGlobal::GetDicts()->GetDefaultPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
       entry=new gdcmHeaderEntry(dictEntry);
-      entry->SetOffset(0); // just to avoid missprinting //JPR
+      entry->SetOffset(0); // just to avoid further missprinting
       entry->SetValue(it->value);
 
       if(dictEntry->GetGroup()==0xfffe) 
@@ -253,7 +249,7 @@ void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
             entry->SetLength(entry->GetValue().length());	 
          }                                
       ptagHT->insert( PairHT(entry->GetKey(),entry) ); // add in the (multimap) H Table
-      plistEntries->insert(debInsertion ,entry);       // en tete de liste des Patients
+      plistEntries->insert(debInsertion ,entry);       // add at the begining of the Patient list
       ++finInsertion;				           
    }
      

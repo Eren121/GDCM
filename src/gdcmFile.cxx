@@ -95,7 +95,7 @@ gdcmFile::~gdcmFile(void) {
 // Public
 /**
  * \ingroup   gdcmFile
- * \brief     
+ * \brief returns the gdcmHeader *Header   
  * @return	
  */
 gdcmHeader *gdcmFile::GetHeader(void) {
@@ -403,7 +403,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
          return (size_t)0; 
       }
    } 
-// DO NOT remove this code commented out.
+// DO NOT remove this commented out code .
 // Nobody knows what's expecting you ...
 // Just to 'see' what was actually read on disk :-(
 
