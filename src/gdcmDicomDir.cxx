@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 03:34:11 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2004/07/21 14:02:10 $
+  Version:   $Revision: 1.58 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,24 +46,20 @@
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 
-void gdcmDicomDir::Initialize()
-{
-   startMethod             = NULL;
-   progressMethod          = NULL;
-   endMethod               = NULL;
-   startMethodArgDelete    = NULL;
-   progressMethodArgDelete = NULL;
-   endMethodArgDelete      = NULL;
-   startArg                = NULL;
-   progressArg             = NULL;
-   endArg                  = NULL;
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   Constructor : creates an empty gdcmDicomDir
+ * @param   exception_on_error whether we want to throw an exception or not
+ */
+gdcmDicomDir::gdcmDicomDir(bool exception_on_error):                           
+   gdcmDocument( exception_on_error )
+{ 
+   Initialize();
 
-   progress = 0.0;
-   abort = false;
-
-   metaElems = (gdcmDicomDirMeta *)0;   
+   std::string pathBidon = "Bidon"; // Sorry, NULL not allowed ...
+   SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
+   AddDicomDirMeta();
 }
-
 
 /**
  * \brief Constructor Parses recursively the directory and creates the DicomDir
@@ -90,21 +86,22 @@ gdcmDicomDir::gdcmDicomDir(std::string const & fileName, bool parseDir,
    // gdcmDocument already executed
    // if user passed a root directory, sure we didn't get anything
 
-   if( TagHT.begin() == TagHT.end() ) 
+   if ( TagHT.begin() == TagHT.end() ) 
    {
       dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry HT empty");
 
-      if( fileName.size() == 1 && fileName[0] == '.' )
+      if ( fileName.size() == 1 && fileName[0] == '.' )
       {
          // user passed '.' as Name
          // we get current directory name
          char* dummy = new char[1000];
          getcwd(dummy, (size_t)1000);
+         std::cout << "Directory to parse : [" << dummy << "]" << std::endl;
          SetFileName( dummy ); // will be converted into a string
-         delete[] dummy;     // no longer needed   
+         delete[] dummy;       // no longer needed   
       }
 
-      if( parseDir )
+      if ( parseDir )
       {
          dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : Parse directory"
                         " and create the DicomDir");
@@ -113,6 +110,8 @@ gdcmDicomDir::gdcmDicomDir(std::string const & fileName, bool parseDir,
       else
       {
          /// \todo if parseDir == false, it should be tagged as an error
+         // NON ! il suffit d'appeler ParseDirectory() 
+         // apres le constructeur
       }
    }
    else
@@ -131,21 +130,6 @@ gdcmDicomDir::gdcmDicomDir(std::string const & fileName, bool parseDir,
 }
 
 /**
- * \ingroup gdcmDicomDir
- * \brief   Constructor : creates an empty gdcmDicomDir
- * @param   exception_on_error whether we want to throw an exception or not
- */
-gdcmDicomDir::gdcmDicomDir(bool exception_on_error):                           
-   gdcmDocument( exception_on_error )
-{ 
-   Initialize();
-
-   std::string pathBidon = "Bidon"; // Sorry, NULL not allowed ...
-   SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
-   AddDicomDirMeta();
-}
-
-/**
  * \brief  Canonical destructor 
  */
 gdcmDicomDir::~gdcmDicomDir() 
@@ -154,7 +138,7 @@ gdcmDicomDir::~gdcmDicomDir()
    SetProgressMethod(NULL);
    SetEndMethod(NULL);
 
-   if( metaElems )
+   if ( metaElems )
    {
       delete metaElems;
    }
@@ -215,6 +199,29 @@ bool gdcmDicomDir::IsReadable()
 
    return true;
 }
+
+/**
+ * \brief Sets all fields to NULL
+ */
+
+void gdcmDicomDir::Initialize()
+{
+   startMethod             = NULL;
+   progressMethod          = NULL;
+   endMethod               = NULL;
+   startMethodArgDelete    = NULL;
+   progressMethodArgDelete = NULL;
+   endMethodArgDelete      = NULL;
+   startArg                = NULL;
+   progressArg             = NULL;
+   endArg                  = NULL;
+
+   progress = 0.0;
+   abort = false;
+
+   metaElems = (gdcmDicomDirMeta *)0;   
+}
+
 
 /**
  * \ingroup gdcmDicomDir
@@ -447,7 +454,7 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
 
       header = new gdcmHeader(it->c_str(),false,true);
       if(!header) {
-         std::cout << "echec new Header " << it->c_str() << std::endl; // JPR
+         std::cout << "failure in new Header " << it->c_str() << std::endl; // JPR
       }
       if(header->IsReadable()) {
          list.push_back(header);  // adds the file header to the chained list
@@ -500,16 +507,19 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient()
    uint16_t tmpGr,tmpEl;
    gdcmDictEntry *dictEntry;
    gdcmValEntry *entry;
-   
-   gdcmSQItem *s = new gdcmSQItem(0);
-   
-   std::list<gdcmElement> elemList = 
-         gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();  
-   
-   /// \todo TODO : use FillObject !!!
 
-   // for all the DicomDirPatient Elements 
-     
+   std::list<gdcmElement> elemList;   
+   elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements(); 
+// Looks nice, but gdcmDicomDir IS NOT a gdcmObject ... 
+//   gdcmDicomDirPatient *p = new gdcmDicomDirPatient(ptagHT);
+//   FillObject(elemList);
+//   patients.push_front( p );
+//   return p;    
+/// \todo TODO : find a trick to use FillObject !!!
+
+   gdcmSQItem *s = new gdcmSQItem(0);
+
+   // for all the DicomDirPatient Elements      
    for( it = elemList.begin(); it != elemList.end(); ++it ) 
    {
       tmpGr     = it->group;
@@ -567,24 +577,29 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
    gdcmDictEntry *dictEntry;
    gdcmValEntry *entry;
    std::string val;
-
+   gdcmObject *o;
    switch( type )
    {
-      case GDCM_DICOMDIR_PATIENT:
-         elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();
-         break;
-      case GDCM_DICOMDIR_STUDY:
-         elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirStudyElements();
-         break;
-      case GDCM_DICOMDIR_SERIE:
-         elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();
-         break;
       case GDCM_DICOMDIR_IMAGE:
          elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirImageElements();
          break;
+
+      case GDCM_DICOMDIR_SERIE:
+         elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();
+         break;
+
+      case GDCM_DICOMDIR_STUDY:
+         elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirStudyElements();
+         break;
+
+      case GDCM_DICOMDIR_PATIENT:
+         elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();
+         break;
+  
       case GDCM_DICOMDIR_META:
          elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirMetaElements();
          break;
+
       default:
          return;
    }
@@ -598,7 +613,8 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
 
       entry->SetOffset(0); // just to avoid further missprinting
 
-      if( header )
+      if( header ) // NULL when we Build Up (ex nihilo) a DICOMDIR
+                   //   or when we add the META elems
       {
          val = header->GetEntryByNumber(tmpGr, tmpEl);
       }
@@ -646,7 +662,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
       {
          if( dictEntry->GetGroup() == 0xfffe )
          {
-            entry->SetLength( entry->GetValue().length() );
+            entry->SetLength( entry->GetValue().length() ); // FIXME 
          }
          else if( dictEntry->GetVR() == "UL" || dictEntry->GetVR() == "SL" )
          {
@@ -665,8 +681,12 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
             entry->SetLength( entry->GetValue().length() );
          }
       }
-      //AddDocEntry(entry); // both in H Table and in chained list
-      TagHT[entry->GetKey()] = entry;          // FIXME : use a SEQUENCE !
+      std::cout << " was TagHT[entry->GetKey()] = entry " << std::endl;
+      if ( type == GDCM_DICOMDIR_META ) {
+         std::cout << " special Treatment for GDCM_DICOMDIR_META" << std::endl;
+         
+      }
+      //TagHT[entry->GetKey()] = entry;          // FIXME : use a SEQUENCE !
    }
 }
 
@@ -724,8 +744,6 @@ void gdcmDicomDir::CreateDicomDir()
    //       + we create the object for the precedent tag
    //       + loop to 1 -
 
-   gdcmDicomDirType type = gdcmDicomDir::GDCM_DICOMDIR_META;
-   
    // Directory record sequence
    gdcmDocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
    if ( !e )
@@ -740,12 +758,14 @@ void gdcmDicomDir::CreateDicomDir()
    if ( !s )
    {
       dbg.Verbose(0, "gdcmDicomDir::CreateDicomDir: no SeqEntry present");
+      // useless : (0x0004,0x1220) IS a Sequence !
       return;
    }
 
+   gdcmDicomDirType type = gdcmDicomDir::GDCM_DICOMDIR_META;
+   metaElems = NewMeta();
+
    ListSQItem listItems = s->GetSQItems();
-   gdcmDicomDirMeta *m  = new gdcmDicomDirMeta(&TagHT);
-   (void)m; //??
    
    gdcmDocEntry * d;
    std::string v;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/17 22:47:01 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/07/21 14:02:10 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
  *          
  * @param ptagHT pointer to the HTable (gdcmObject needs it 
  *               to build the gdcmDocEntries)
- * @param depth Seaquence depth level
+ * @param depth Sequence depth level
  */
   
 gdcmObject::gdcmObject(TagDocEntryHT *ptagHT, int depth) 
@@ -80,9 +80,7 @@ void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
    uint16_t tmpGr,tmpEl;
    gdcmDictEntry *dictEntry;
    gdcmValEntry *entry;
-   
-   //gdcmSQItem *s = new gdcmSQItem;
-   
+      
    // for all the Elements found in they own part of the DicomDir dict.     
    for(it=elemList.begin();it!=elemList.end();++it)
    {

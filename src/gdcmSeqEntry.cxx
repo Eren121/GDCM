@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/07/21 14:02:11 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,7 +104,7 @@ void gdcmSeqEntry::Write(FILE *fp, FileType filetype)
 
    fwrite ( &item_term_gr,(size_t)2 ,(size_t)1 ,fp);
    fwrite ( &item_term_el,(size_t)2 ,(size_t)1 ,fp);   
-   fwrite ( &seq_term_lg,(size_t)4 ,(size_t)1 ,fp); 
+   fwrite ( &seq_term_lg, (size_t)4 ,(size_t)1 ,fp); // Heu .....
    }
     //we force the writting of a Sequence Delimitaion item
     // because we wrote the Sequence as a 'no Length' sequence

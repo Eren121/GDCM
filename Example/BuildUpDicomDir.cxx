@@ -54,6 +54,9 @@ int main(int argc, char* argv[])
    dcmdir=new gdcmDicomDir();
    printf( "BuildUpDicomDir: exiting new DicomDir\n");
 
+   printf( "\n------- BuildUpDicomDir: Test Print Meta only -----\n");
+   ((gdcmDocument *)dcmdir)->Print();
+
    gdcmDicomDirPatient *p1=dcmdir->NewPatient();
    p1->SetEntryByNumber("patientONE",0x0010, 0x0010);
 

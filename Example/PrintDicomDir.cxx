@@ -129,12 +129,12 @@ int main(int argc, char* argv[])
    }   
  */  
 
-/*
+
    cout << std::endl << std::endl  
         << " = DICOMDIR full content ==========================================" 
         << std::endl<< std::endl;
    e1->Print();
-*/   
+  
    std::cout<<std::flush;
    delete e1;
 

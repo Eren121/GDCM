@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/07/21 14:02:10 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,7 @@ void gdcmDicomDirSerie::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   adds a new Image to a partially created DICOMDIR
+ * \brief   adds a new Image (with the basic elements) to a partially created DICOMDIR
  */
 gdcmDicomDirImage * gdcmDicomDirSerie::NewImage(void) {
    std::list<gdcmElement> elemList;   

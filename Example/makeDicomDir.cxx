@@ -61,12 +61,17 @@ int main(int argc, char* argv[]) {
       dirName = GDCM_DATA_ROOT;
 
    dcmdir=new gdcmDicomDir(dirName);
-      
+   std::cout << "---after constructor; Print as a gdcmDocument ------" << std::endl;
+   ((gdcmDocument *)dcmdir)->Print();
+   std::cout << "---after constructor; Print as a DICOMDIR     ------" << std::endl;
+   dcmdir->Print();
+
    dcmdir->SetStartMethod(StartMethod, (void *) NULL);
    dcmdir->SetEndMethod(EndMethod);
+
     std::cout << "---before ParseDirectory------------------" << std::endl;   
    dcmdir->ParseDirectory();   
-   std::cout << "---after ParseDirectory------------------" << std::endl;
+   std::cout << "---after   ParseDirectory------------------" << std::endl;
    
    ListDicomDirPatient lp = dcmdir->GetDicomDirPatients();
    if (! lp.size() ) 
