@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,12 +65,13 @@ gdcmDicomDirPatient::~gdcmDicomDirPatient()
  */ 
 void gdcmDicomDirPatient::Print(std::ostream &os)
 {
-   os<<"PATIENT"<<std::endl;
+   os << "PATIENT" << std::endl;
    gdcmObject::Print(os);
 
-   for(ListDicomDirStudy::iterator cc = studies.begin();cc!=studies.end();++cc)
+   for(ListDicomDirStudy::iterator cc = studies.begin();
+                                   cc != studies.end(); ++cc)
    {
-      (*cc)->SetPrintLevel(printLevel);
+      (*cc)->SetPrintLevel(PrintLevel);
       (*cc)->Print(os);
    }
 }
@@ -83,17 +84,16 @@ void gdcmDicomDirPatient::Print(std::ostream &os)
  * \brief   adds a new Patient at the begining of the PatientList
  *          of a partially created DICOMDIR
  */
-gdcmDicomDirStudy * gdcmDicomDirPatient::NewStudy(void) {
-   std::list<gdcmElement> elemList;   
-   elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirStudyElements();
+gdcmDicomDirStudy * gdcmDicomDirPatient::NewStudy()
+{
+   std::list<gdcmElement> elemList = 
+      gdcmGlobal::GetDicomDirElements()->GetDicomDirStudyElements();
       
-   gdcmDicomDirStudy *st = new gdcmDicomDirStudy( ptagHT);
+   gdcmDicomDirStudy *st = new gdcmDicomDirStudy( PtagHT );
    st->FillObject(elemList);
 
    studies.push_front(st);
    return st; 
-
-  
 }   
 
 //-----------------------------------------------------------------------------

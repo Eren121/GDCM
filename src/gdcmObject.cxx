@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/21 14:02:10 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,8 +32,9 @@
  */
   
 gdcmObject::gdcmObject(TagDocEntryHT *ptagHT, int depth) 
-          : gdcmSQItem (depth) {
-   this->ptagHT = ptagHT;
+          : gdcmSQItem (depth)
+{
+   PtagHT = ptagHT;
 }
 
 
@@ -41,7 +42,8 @@ gdcmObject::gdcmObject(TagDocEntryHT *ptagHT, int depth)
  * \ingroup gdcmObject
  * \brief   Canonical destructor.
  */
-gdcmObject::~gdcmObject(void) {
+gdcmObject::~gdcmObject()
+{
 }
 
 
@@ -57,13 +59,16 @@ gdcmObject::~gdcmObject(void) {
  *          related to this 'object'
  * @return
  */ 
-TagDocEntryHT gdcmObject::GetEntry(void) {
+TagDocEntryHT gdcmObject::GetEntry()
+{
    TagDocEntryHT HT;
    docEntries=GetDocEntries();   
-   for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i) {
+   for(ListDocEntry::iterator i = docEntries.begin(); 
+                              i != docEntries.end(); ++i)
+   {
       HT[(*i)->GetKey()]=*i;
    }
-   return(HT);
+   return HT;
 }
 
 //-----------------------------------------------------------------------------
@@ -72,8 +77,8 @@ TagDocEntryHT gdcmObject::GetEntry(void) {
  * \brief   add the 'Object' related Dicom Elements to the listEntries
  *          of a partially created DICOMDIR
  */
-void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
-
+void gdcmObject::FillObject(std::list<gdcmElement> elemList)
+{
   // FillObject rempli le SQItem qui sera accroche au bon endroit
 
    std::list<gdcmElement>::iterator it;
@@ -82,12 +87,12 @@ void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
    gdcmValEntry *entry;
       
    // for all the Elements found in they own part of the DicomDir dict.     
-   for(it=elemList.begin();it!=elemList.end();++it)
+   for(it = elemList.begin(); it != elemList.end(); ++it)
    {
-      tmpGr=it->group;
-      tmpEl=it->elem;
-      dictEntry=gdcmGlobal::GetDicts()->GetDefaultPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
-      entry=new gdcmValEntry(dictEntry);
+      tmpGr = it->group;
+      tmpEl = it->elem;
+      dictEntry = gdcmGlobal::GetDicts()->GetDefaultPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
+      entry = new gdcmValEntry(dictEntry);
       entry->SetOffset(0); // just to avoid further missprinting
       entry->SetValue(it->value);
 
@@ -97,15 +102,15 @@ void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
       {
          entry->SetLength(entry->GetValue().length());
       }
-      else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
+      else if( dictEntry->GetVR() == "UL" || dictEntry->GetVR() == "SL" ) 
       {
          entry->SetLength(4);
       } 
-      else if( (dictEntry->GetVR()=="US") || (dictEntry->GetVR()=="SS") ) 
+      else if( dictEntry->GetVR() == "US" || dictEntry->GetVR() == "SS" ) 
       {
          entry->SetLength(2); 
       } 
-      else if(dictEntry->GetVR()=="SQ") 
+      else if( dictEntry->GetVR() == "SQ" )
       {
          entry->SetLength(0xffffffff);
       }

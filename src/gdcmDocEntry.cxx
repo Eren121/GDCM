@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,8 @@
  * \brief   Constructor from a given gdcmDictEntry
  * @param   in Pointer to existing dictionary entry
  */
-gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in) {
+gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in)
+{
    ImplicitVR = false;
    entry = in;
 }
@@ -45,8 +46,8 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in) {
  * \brief   Prints the common part of gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
  * @param   os ostream we want to print in
  */
-void gdcmDocEntry::Print(std::ostream & os) {
-
+void gdcmDocEntry::Print(std::ostream & os)
+{
    printLevel=2; // FIXME
    
    size_t o;
@@ -65,17 +66,21 @@ void gdcmDocEntry::Print(std::ostream & os) {
    sprintf(greltag,"%04x|%04x ",g,e);           
    s << greltag ;
        
-   if (printLevel>=2) { 
+   if (printLevel>=2)
+   {
       s << "lg : ";
       lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
-      if (lgth == 0xffffffff) {
+      if (lgth == 0xffffffff)
+      {
          sprintf(st,"x(ffff)");  // I said : "x(ffff)" !
          s.setf(std::ios::left);
          s << std::setw(10-strlen(st)) << " ";  
          s << st << " ";
          s.setf(std::ios::left);
          s << std::setw(8) << "-1";      
-      } else {
+      }
+      else
+      {
          sprintf(st,"x(%x)",lgth);
          s.setf(std::ios::left);
          s << std::setw(10-strlen(st)) << " ";  
@@ -92,7 +97,8 @@ void gdcmDocEntry::Print(std::ostream & os) {
 
    s << "[" << vr  << "] ";
 
-   if (printLevel>=1) {      
+   if (printLevel >= 1)
+   {
       s.setf(std::ios::left);
       s << std::setw(66-GetName().length()) << " ";
    }
@@ -105,19 +111,21 @@ void gdcmDocEntry::Print(std::ostream & os) {
  * \ingroup gdcmDocEntry
  * \brief   Writes the common part of any gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
  */
-void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
-
+void gdcmDocEntry::Write(FILE *fp, FileType filetype)
+{
    uint32_t FFFF  = 0xffffffff;
    uint16_t group = GetGroup();
    gdcmVRKey vr   = GetVR();
    uint16_t el    = GetElement();
    uint32_t lgr   = GetReadLength();
 
-   if ( (group == 0xfffe) && (el == 0x0000) ) 
+   if ( (group == 0xfffe) && (el == 0x0000) )
+   {
      // Fix in order to make some MR PHILIPS images e-film readable
      // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
      // we just *always* ignore spurious fffe|0000 tag !   
-      return; 
+      return;
+   }
 
 //
 // ----------- Writes the common part
@@ -125,10 +133,11 @@ void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
    fwrite ( &group,(size_t)2 ,(size_t)1 ,fp);  //group
    fwrite ( &el,   (size_t)2 ,(size_t)1 ,fp);  //element
       
-   if ( filetype == gdcmExplicitVR ) {
-
+   if ( filetype == gdcmExplicitVR )
+   {
       // Special case of delimiters:
-      if (group == 0xfffe) {
+      if (group == 0xfffe)
+      {
          // Delimiters have NO Value Representation
          // Hence we skip writing the VR.
          // In order to avoid further troubles, we choose to write them
@@ -139,44 +148,56 @@ void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
 
        // TODO : verify if the Sequence Delimitor Item was forced during Parsing 
 
-         int ff=0xffffffff;
+         int ff = 0xffffffff;
          fwrite (&ff,(size_t)4 ,(size_t)1 ,fp);
          return;
       }
 
-      uint16_t z=0;
+      uint16_t z = 0;
       uint16_t shortLgr = lgr;
 
-      if (vr == "unkn") {     // Unknown was 'written'
+      if (vr == "unkn")
+      {
+         // Unknown was 'written'
          // deal with Little Endian            
          fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,fp);
          fwrite ( &z,  (size_t)2 ,(size_t)1 ,fp);
-      } else {
+      }
+      else
+      {
          fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,fp); 
                   
          if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || (vr == "UN") )
          {
             fwrite ( &z,  (size_t)2 ,(size_t)1 ,fp);
-            if (vr == "SQ") {
-            // we set SQ length to ffffffff
-            // and  we shall write a Sequence Delimitor Item 
-            // at the end of the Sequence! 
+            if (vr == "SQ")
+            {
+               // we set SQ length to ffffffff
+               // and  we shall write a Sequence Delimitor Item 
+               // at the end of the Sequence! 
                fwrite ( &FFFF,(size_t)4 ,(size_t)1 ,fp);
-            } else {
+            }
+            else
+            {
                fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
             }
-         } else {
+         }
+         else
+         {
             fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,fp);
          }
       }
    } 
    else // IMPLICIT VR 
    { 
-      if (vr == "SQ") {
-          fwrite ( &FFFF,(size_t)4 ,(size_t)1 ,fp);
-       } else {
-          fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
-       }
+      if (vr == "SQ")
+      {
+         fwrite ( &FFFF,(size_t)4 ,(size_t)1 ,fp);
+      }
+      else
+      {
+         fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+      }
    }
 }
 
@@ -187,30 +208,39 @@ void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
  * \ingroup gdcmDocEntry
  * \brief   Gets the full length of the elementary DocEntry (not only value length)
  */
-uint32_t gdcmDocEntry::GetFullLength(void) {
-   uint32_t l;
-   l = GetReadLength();
-   if ( IsImplicitVR() ) 
+uint32_t gdcmDocEntry::GetFullLength()
+{
+   uint32_t l = GetReadLength();
+   if ( IsImplicitVR() )
+   {
       l = l + 8;  // 2 (gr) + 2 (el) + 4 (lgth) 
-   else    
+   }
+   else
+   {
       if ( GetVR()=="OB" || GetVR()=="OW" || GetVR()=="SQ" )
+      {
          l = l + 12; // 2 (gr) + 2 (el) + 2 (vr) + 2 (unused) + 4 (lgth)
+      }
       else
+      {
          l = l + 8;  // 2 (gr) + 2 (el) + 2 (vr) + 2 (lgth)
-   return(l);
+      }
+   }
+   return l;
 }
 
 /**
  * \ingroup gdcmDocEntry
  * \brief   Copies all the attributes from an other DocEntry 
  */
-void gdcmDocEntry::Copy (gdcmDocEntry* e) {
-   this->entry        = e->entry;
-   this->UsableLength = e->UsableLength;
-   this->ReadLength   = e->ReadLength;
-   this->ImplicitVR   = e->ImplicitVR;
-   this->Offset       = e->Offset;
-   this->printLevel   = e->printLevel;
+void gdcmDocEntry::Copy (gdcmDocEntry* e)
+{
+   entry        = e->entry;
+   UsableLength = e->UsableLength;
+   ReadLength   = e->ReadLength;
+   ImplicitVR   = e->ImplicitVR;
+   Offset       = e->Offset;
+   printLevel   = e->printLevel;
    // TODO : remove gdcmDocEntry SQDepth
 }
 
@@ -219,22 +249,18 @@ void gdcmDocEntry::Copy (gdcmDocEntry* e) {
  * \brief   tells us if entry is the last one of a 'no length' SequenceItem 
  *          (fffe,e00d) 
  */
-bool gdcmDocEntry::isItemDelimitor() {
-   if ( (GetGroup() == 0xfffe) && (GetElement() == 0xe00d) )
-      return true;
-   else
-      return false;      
+bool gdcmDocEntry::isItemDelimitor()
+{
+   return (GetGroup() == 0xfffe && GetElement() == 0xe00d);
 }
 /**
  * \ingroup gdcmDocEntry
  * \brief   tells us if entry is the last one of a 'no length' Sequence 
  *          (fffe,e0dd) 
  */
-bool gdcmDocEntry::isSequenceDelimitor() {
-   if (GetGroup() == 0xfffe && GetElement() == 0xe0dd)
-      return true;
-   else
-      return false; 
+bool gdcmDocEntry::isSequenceDelimitor()
+{
+   return (GetGroup() == 0xfffe && GetElement() == 0xe0dd);
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/26 19:36:56 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -107,7 +107,7 @@ int gdcmDirList::Explore(std::string dirName, bool recursive)
       }
       else
       {
-         this->push_back(dirName+fileName);
+         push_back(dirName+fileName);
          numberOfFiles++;
       }
 
@@ -137,7 +137,7 @@ int gdcmDirList::Explore(std::string dirName, bool recursive)
       stat(fileName.c_str(), &buf); //really discard output ?
       if( S_ISREG(buf.st_mode) ) //is it a regular file?
       {
-         this->push_back( fileName );
+         push_back( fileName );
          numberOfFiles++;
       }
       else if( S_ISDIR(buf.st_mode) ) //directory?

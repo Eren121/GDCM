@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/20 08:29:13 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/08/01 00:59:22 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,26 +41,28 @@ gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e)
  */
 gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry())
 {
-   this->UsableLength = e->GetLength();
-   this->ReadLength   = e->GetReadLength();
-   this->ImplicitVR   = e->IsImplicitVR();
-   this->Offset       = e->GetOffset();
-   this->printLevel   = e->GetPrintLevel();
-   this->SQDepthLevel = e->GetDepthLevel();
+   UsableLength = e->GetLength();
+   ReadLength   = e->GetReadLength();
+   ImplicitVR   = e->IsImplicitVR();
+   Offset       = e->GetOffset();
+   printLevel   = e->GetPrintLevel();
+   SQDepthLevel = e->GetDepthLevel();
 
-   this->voidArea = NULL; // will be in BinEntry ?
+   voidArea = NULL; // will be in BinEntry ?
 }
 
 
 /**
  * \brief   Canonical destructor.
  */
-gdcmValEntry::~gdcmValEntry (void)
+gdcmValEntry::~gdcmValEntry ()
 {
    if (!voidArea)  // will be in BinEntry
+   {
       free(voidArea);
+      voidArea = NULL; // let's be carefull !
+   }
 }
-
 
 //-----------------------------------------------------------------------------
 // Print
@@ -101,27 +103,50 @@ void gdcmValEntry::Print(std::ostream & os)
    
    // Display the UID value (instead of displaying only the rough code)
    // First 'clean' trailing character (space or zero) 
-   if (g == 0x0002) {  // Any more to be displayed ?
-      if ( (e == 0x0010) || (e == 0x0002) ) {
+   if (g == 0x0002)
+   {
+      // Any more to be displayed ?
+      if ( (e == 0x0010) || (e == 0x0002) )
+      {
          if ( v.length() != 0 )  // for brain damaged headers
+         {
             if ( ! isdigit(v[v.length()-1]) )
+            {
                v.erase(v.length()-1, 1);
+            }
+         }
          s << "  ==>\t[" << ts->GetValue(v) << "]";
       }
-   } else {
-      if (g == 0x0008) {
-         if ( (e == 0x0016) || (e == 0x1150)  ) {
+   }
+   else
+   {
+      if (g == 0x0008)
+      {
+         if ( e == 0x0016 || e == 0x1150 )
+         {
             if ( v.length() != 0 )  // for brain damaged headers
+            {
                if ( ! isdigit(v[v.length()-1]) )
+               {
                   v.erase(v.length()-1, 1);
+               }
+            }
             s << "  ==>\t[" << ts->GetValue(v) << "]";
          }
-      } else {
-         if (g == 0x0004) {
-           if ( (e == 0x1510) || (e == 0x1512)  ) {
-              if ( v.length() != 0 )  // for brain damaged headers  
-                 if ( ! isdigit(v[v.length()-1]) )
-                    v.erase(v.length()-1, 1);  
+      }
+      else
+      {
+         if (g == 0x0004)
+         {
+            if ( (e == 0x1510) || (e == 0x1512)  )
+            {
+               if ( v.length() != 0 )  // for brain damaged headers  
+               {
+                  if ( ! isdigit(v[v.length()-1]) )
+                  {
+                     v.erase(v.length()-1, 1);  
+                  }
+               }
               s << "  ==>\t[" << ts->GetValue(v) << "]";
             }
          }     
@@ -131,12 +156,19 @@ void gdcmValEntry::Print(std::ostream & os)
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
    {
       if (v == "4294967295") // to avoid troubles in convertion 
+      {
          sprintf (st," x(ffffffff)");
-      else {
-         if ( GetLength() !=0 )        
+      }
+      else
+      {
+         if ( GetLength() !=0 )
+         {
             sprintf(st," x(%x)", atoi(v.c_str()));//FIXME
-        else
-            sprintf(st," "); 
+         }
+         else
+         {
+            sprintf(st," ");
+         }
       }
       s << st;
    }
@@ -149,8 +181,8 @@ void gdcmValEntry::Print(std::ostream & os)
 void gdcmValEntry::Write(FILE *fp, FileType filetype)
 {
    gdcmDocEntry::Write(fp, filetype);
-   std::string vr=GetVR();
-   int lgr=GetReadLength();
+   std::string vr = GetVR();
+   int lgr = GetReadLength();
    if (vr == "US" || vr == "SS")
    {
       // some 'Short integer' fields may be mulivaluated
@@ -159,7 +191,8 @@ void gdcmValEntry::Write(FILE *fp, FileType filetype)
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
       Tokenize (GetValue(), tokens, "\\");
-      for (unsigned int i=0; i<tokens.size();i++) {
+      for (unsigned int i=0; i<tokens.size();i++)
+      {
          uint16_t val_uint16 = atoi(tokens[i].c_str());
          void *ptr = &val_uint16;
          fwrite ( ptr,(size_t)2 ,(size_t)1 ,fp);
@@ -176,7 +209,8 @@ void gdcmValEntry::Write(FILE *fp, FileType filetype)
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
       Tokenize (GetValue(), tokens, "\\");
-      for (unsigned int i=0; i<tokens.size();i++){
+      for (unsigned int i=0; i<tokens.size();i++)
+      {
          uint32_t val_uint32 = atoi(tokens[i].c_str());
          void *ptr = &val_uint32;
          fwrite ( ptr,(size_t)4 ,(size_t)1 ,fp);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,9 +68,11 @@ void gdcmDicomDirStudy::Print(std::ostream &os)
    os<<"STUDY"<<std::endl;
    gdcmObject::Print(os);
 
-   for(ListDicomDirSerie::iterator cc = series.begin();cc != series.end();++cc)
+   for(ListDicomDirSerie::iterator cc = series.begin();
+                                   cc != series.end();
+                                   ++cc)
    {
-      (*cc)->SetPrintLevel(printLevel);
+      (*cc)->SetPrintLevel(PrintLevel);
       (*cc)->Print(os);
    }
 }
@@ -83,14 +85,15 @@ void gdcmDicomDirStudy::Print(std::ostream &os)
  * \brief   adds a new Serie at the begining of the SerieList
  *          of a partially created DICOMDIR
  */
-gdcmDicomDirSerie * gdcmDicomDirStudy::NewSerie(void) {
-  
-   std::list<gdcmElement> elemList;
-   elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();   
+gdcmDicomDirSerie * gdcmDicomDirStudy::NewSerie()
+{
+   std::list<gdcmElement> elemList = 
+      gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();   
 
-   gdcmDicomDirSerie *st = new gdcmDicomDirSerie(ptagHT);
+   gdcmDicomDirSerie *st = new gdcmDicomDirSerie(PtagHT);
    FillObject(elemList);
    series.push_front(st);
+
    return st;  
 }   
 //-----------------------------------------------------------------------------

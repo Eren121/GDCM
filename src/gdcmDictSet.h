@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,8 @@ typedef std::map<DictKey, gdcmDict*> DictSetHT;
  * \par    having many in memory representations of the same dictionary
  *        (saving memory).
  */
-class GDCM_EXPORT gdcmDictSet {
+class GDCM_EXPORT gdcmDictSet
+{
 public:
    // TODO Swig int LoadDictFromFile(std::string filename);
    // QUESTION: the following function might not be thread safe !? Maybe
@@ -44,26 +45,26 @@ public:
    // TODO Swig int LoadDictFromName(std::string filename);
    // TODO Swig int LoadAllDictFromDirectory(std::string DirectoryName);
    // TODO Swig std::string* GetAllDictNames();
-   gdcmDictSet(void);
-   ~gdcmDictSet(void);
+   gdcmDictSet();
+   ~gdcmDictSet();
 
    void Print(std::ostream& os);
 
-   std::list<std::string> *GetPubDictEntryNames(void);
+   std::list<std::string> *GetPubDictEntryNames();
    std::map<std::string, std::list<std::string> > *
-       GetPubDictEntryNamesByCategory(void);
+       GetPubDictEntryNamesByCategory();
 
    gdcmDict *LoadDictFromFile(std::string FileName, DictKey Name);
 
    gdcmDict *GetDict(DictKey DictName);
-   gdcmDict *GetDefaultPubDict(void);
+   gdcmDict *GetDefaultPubDict();
 
    gdcmDictEntry *NewVirtualDictEntry(uint16_t group, uint16_t element,
                                       std::string vr     = "Unknown",
                                       std::string fourth = "Unknown",
                                       std::string name   = "Unknown");
 
-   static std::string BuildDictPath(void);
+   static std::string BuildDictPath();
 
 protected:
    bool AppendDict(gdcmDict *NewDict,DictKey Name);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/21 14:02:10 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,9 @@ gdcmDicomDirSerie::gdcmDicomDirSerie(TagDocEntryHT *ptagHT):
  */
 gdcmDicomDirSerie::~gdcmDicomDirSerie() 
 {
-   for(ListDicomDirImage::iterator cc = images.begin();cc != images.end();++cc)
+   for(ListDicomDirImage::iterator cc = images.begin();
+                                   cc != images.end();
+                                   ++cc)
    {
       delete *cc;
    }
@@ -62,12 +64,14 @@ gdcmDicomDirSerie::~gdcmDicomDirSerie()
  */ 
 void gdcmDicomDirSerie::Print(std::ostream &os)
 {
-   os<<"SERIE"<<std::endl;
+   os << "SERIE" << std::endl;
    gdcmObject::Print(os);
 
-   for(ListDicomDirImage::iterator cc = images.begin();cc != images.end();++cc)
+   for(ListDicomDirImage::iterator cc = images.begin();
+                                   cc != images.end();
+                                   ++cc)
    {
-      (*cc)->SetPrintLevel(printLevel);
+      (*cc)->SetPrintLevel(PrintLevel);
       (*cc)->Print(os);
    }
 }
@@ -77,13 +81,15 @@ void gdcmDicomDirSerie::Print(std::ostream &os)
 /**
  * \brief   adds a new Image (with the basic elements) to a partially created DICOMDIR
  */
-gdcmDicomDirImage * gdcmDicomDirSerie::NewImage(void) {
-   std::list<gdcmElement> elemList;   
-   elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirImageElements();
-      
-   gdcmDicomDirImage *st = new gdcmDicomDirImage(ptagHT);
+gdcmDicomDirImage * gdcmDicomDirSerie::NewImage()
+{
+   std::list<gdcmElement> elemList = 
+      gdcmGlobal::GetDicomDirElements()->GetDicomDirImageElements();
+
+   gdcmDicomDirImage *st = new gdcmDicomDirImage(PtagHT);
    FillObject(elemList);
    images.push_front(st);
+
    return st;   
 } 
 //-----------------------------------------------------------------------------

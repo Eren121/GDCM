@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/08/01 00:59:22 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,12 +30,10 @@
  * \brief   The dicom header of a Dicom file contains a set of such entries
  *          (when successfuly parsed against a given Dicom dictionary)
  */
-class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry {
-
+class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry
+{
 public:
-
    gdcmValEntry(gdcmDictEntry* e);
-
    gdcmValEntry(gdcmDocEntry* d); 
    virtual ~gdcmValEntry();
 
@@ -45,20 +43,19 @@ public:
    std::string GetValue() { return value; };
     
    /// Sets the value (string) of the current Dicom Document Entry
-   void SetValue(std::string val) { value = val; };
+   void SetValue(std::string const & val) { value = val; };
 
    /// Sets the value (void *) of the current Dicom Document Entry
    void SetVoidArea(void * val) { voidArea = val; };
 
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);
-protected:
 
+protected:
    /// \brief for 'non string' values. Will be move to gdcmBinEntry, later
    void* voidArea;  // clean it out later
    
 private:
-
 // Members :
   
    /// \brief Document Entry value, internaly represented as a std::string

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 20:48:25 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ gdcmSerieHeader::~gdcmSerieHeader()
 void gdcmSerieHeader::AddFileName(std::string const & filename)
 {
    gdcmHeader *header = new gdcmHeader( filename );
-   this->CoherentGdcmFileList.push_back( header );
+   CoherentGdcmFileList.push_back( header );
 }
 
 /**
@@ -64,7 +64,7 @@ void gdcmSerieHeader::AddFileName(std::string const & filename)
  */
 void gdcmSerieHeader::AddGdcmFile(gdcmHeader *file)
 {
-   this->CoherentGdcmFileList.push_back( file );
+   CoherentGdcmFileList.push_back( file );
 }
 
 /**
@@ -80,7 +80,7 @@ void gdcmSerieHeader::SetDirectory(std::string const & dir)
    {
       //use string and not const char*:
       gdcmHeader *header = new gdcmHeader( *it ); 
-      this->CoherentGdcmFileList.push_back( header );
+      CoherentGdcmFileList.push_back( header );
    }
 }
 

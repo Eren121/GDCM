@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/31 18:43:43 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ class GDCM_EXPORT gdcmDocEntry
 {
 public:
    gdcmDocEntry(gdcmDictEntry*);
-     
+
    /// Returns the Dicom Group number of the current Dicom Header Entry
    uint16_t      GetGroup()     { return entry->GetGroup();  };
 
@@ -120,7 +120,7 @@ public:
    void SetPrintLevel(int level) { printLevel = level; };
 
    /// \brief Gets the print level for the Dicom Header Elements
-   int GetPrintLevel() { return(printLevel); };
+   int GetPrintLevel() { return printLevel; };
    
    virtual void Print (std::ostream & os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);

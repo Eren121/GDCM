@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/31 23:30:04 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2763,7 +2763,7 @@ void gdcmDocument::Parse7FE0 ()
 bool gdcmDocument::operator<(gdcmDocument &document)
 {
    // Patient Name
-   std::string s1 = this->GetEntryByNumber(0x0010,0x0010);
+   std::string s1 = GetEntryByNumber(0x0010,0x0010);
    std::string s2 = document.GetEntryByNumber(0x0010,0x0010);
    if(s1 < s2)
    {
@@ -2776,7 +2776,7 @@ bool gdcmDocument::operator<(gdcmDocument &document)
    else
    {
       // Patient ID
-      s1 = this->GetEntryByNumber(0x0010,0x0020);
+      s1 = GetEntryByNumber(0x0010,0x0020);
       s2 = document.GetEntryByNumber(0x0010,0x0020);
       if ( s1 < s2 )
       {
@@ -2789,7 +2789,7 @@ bool gdcmDocument::operator<(gdcmDocument &document)
       else
       {
          // Study Instance UID
-         s1 = this->GetEntryByNumber(0x0020,0x000d);
+         s1 = GetEntryByNumber(0x0020,0x000d);
          s2 = document.GetEntryByNumber(0x0020,0x000d);
          if ( s1 < s2 )
          {
@@ -2802,7 +2802,7 @@ bool gdcmDocument::operator<(gdcmDocument &document)
          else
          {
             // Serie Instance UID
-            s1 = this->GetEntryByNumber(0x0020,0x000e);
+            s1 = GetEntryByNumber(0x0020,0x000e);
             s2 = document.GetEntryByNumber(0x0020,0x000e);
             if ( s1 < s2 )
             {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 11:51:26 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/08/01 00:59:22 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ class GDCM_EXPORT gdcmSQItem : public gdcmDocEntrySet
 {
 public:
    gdcmSQItem(int);
-   ~gdcmSQItem(void);
+   ~gdcmSQItem();
 
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);
@@ -57,7 +57,7 @@ public:
 
    int GetSQItemNumber() { return SQItemNumber; };
 
-   void SetSQItemNumber(int itemNumber) { SQItemNumber=itemNumber; };
+   void SetSQItemNumber(int itemNumber) { SQItemNumber = itemNumber; };
 
 protected:
 
@@ -71,7 +71,7 @@ protected:
 
    ///\brief pointer to the HTable of the gdcmDocument,
    ///       (because we don't know it within any gdcmObject nor any gdcmSQItem)
-   TagDocEntryHT *ptagHT;
+   TagDocEntryHT *PtagHT;
        
 private:
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 12:58:24 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
  */
 gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e)
 {
-   this->voidArea = NULL;
+   voidArea = NULL;
 }
 
 /**
@@ -37,22 +37,26 @@ gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e)
  */
 gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
 {
-   this->UsableLength = e->GetLength();
-   this->ReadLength   = e->GetReadLength();
-   this->ImplicitVR   = e->IsImplicitVR();
-   this->Offset       = e->GetOffset();
-   this->printLevel   = e->GetPrintLevel();
-   this->SQDepthLevel = e->GetDepthLevel();
+   UsableLength = e->GetLength();
+   ReadLength   = e->GetReadLength();
+   ImplicitVR   = e->IsImplicitVR();
+   Offset       = e->GetOffset();
+   printLevel   = e->GetPrintLevel();
+   SQDepthLevel = e->GetDepthLevel();
 
-   this->voidArea = NULL; // let's be carefull !
+   voidArea = NULL; // let's be carefull !
 }
 
 /**
  * \brief   Canonical destructor.
  */
-gdcmBinEntry::~gdcmBinEntry(){
+gdcmBinEntry::~gdcmBinEntry()
+{
    if (voidArea)
+   {
       free (voidArea);
+      voidArea = NULL; // let's be carefull !
+   }
 }
 
 
@@ -67,7 +71,7 @@ void gdcmBinEntry::Print(std::ostream &os)
    gdcmDocEntry::Print(os);
    std::ostringstream s;
    void *voidArea = GetVoidArea();
-   if (voidArea != NULL)
+   if (voidArea)
    {
       s << " [gdcm::Binary data loaded with length is "
         << GetLength() << "]";
@@ -75,7 +79,9 @@ void gdcmBinEntry::Print(std::ostream &os)
    else
    {
       if ( GetLength() == 0 )
+      {
          s << " []";
+      }
       else 
       {
          s << " [gdcm::Binary data NOT loaded]";
@@ -88,15 +94,16 @@ void gdcmBinEntry::Print(std::ostream &os)
 /*
  * \brief   canonical Writer
  */
-void gdcmBinEntry::Write(FILE *fp, FileType filetype) {
+void gdcmBinEntry::Write(FILE *fp, FileType filetype)
+{
    gdcmDocEntry::Write(fp, filetype);
    void *voidArea = GetVoidArea();
-   int lgr=GetLength();
-   if (voidArea != NULL) 
-   { // there is a 'non string' LUT, overlay, etc
+   int lgr = GetLength();
+   if (voidArea)
+   {
+      // there is a 'non string' LUT, overlay, etc
       fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,fp); // Elem value
-      return;            
-   } 
+   }
 }
 //-----------------------------------------------------------------------------
 // Public

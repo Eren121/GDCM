@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
  * \brief   The Dictionnary Set obtained with this constructor simply
  *          contains the Default Public dictionnary.
  */
-gdcmDictSet::gdcmDictSet(void) 
+gdcmDictSet::gdcmDictSet() 
 {
    DictPath = BuildDictPath();
    std::string PubDictFile(DictPath);

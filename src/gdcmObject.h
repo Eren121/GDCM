@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmObject.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/08/01 00:59:21 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,15 +39,13 @@ typedef std::list<gdcmObject *> ListContent;
 class GDCM_EXPORT gdcmObject : public gdcmSQItem
 {
 public:
-
    /**
     * \brief   Sets the print level for the Dicom Header 
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
-   void SetPrintLevel(int level) 
-      { printLevel = level; };
+   void SetPrintLevel(int level) { PrintLevel = level; };
    
-   TagDocEntryHT GetEntry(void);
+   TagDocEntryHT GetEntry();
    void FillObject(std::list<gdcmElement> elemList);
 
 protected:
@@ -55,13 +53,11 @@ protected:
    // Constructor and destructor are protected to avoid end user to
    // instanciate from this class.
    gdcmObject(TagDocEntryHT *ptagHT, int depth = 0);
-   virtual ~gdcmObject(void);
+   virtual ~gdcmObject();
 
 // Members :
    ///\brief detail level to be printed 
-   int printLevel;
-
-private:
+   int PrintLevel;
 };
 
 //-----------------------------------------------------------------------------
