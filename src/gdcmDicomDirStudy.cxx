@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,27 +24,14 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
-/**
- * \ingroup DicomDirStudy
- * \brief constructor  
- * @param  s SQ Item holding the elements related to this "STUDY" part
- * @param ptagHT pointer to the HTable (DicomDirObject needs it 
- *               to build the HeaderEntries)
- */
-DicomDirStudy::DicomDirStudy(SQItem* s, TagDocEntryHT* ptagHT):
-   DicomDirObject(ptagHT)
-{
-   DocEntries = s->GetDocEntries();
-}
 /**
  * \ingroup DicomDirStudy
  * \brief constructor  
  * @param ptagHT pointer to the HTable (DicomDirObject needs it 
  *               to build the HeaderEntries)
  */
-DicomDirStudy::DicomDirStudy(TagDocEntryHT* ptagHT):
-   DicomDirObject(ptagHT)
+DicomDirStudy::DicomDirStudy():
+   DicomDirObject()
 {
 }
 /**
@@ -111,7 +98,7 @@ DicomDirSerie* DicomDirStudy::NewSerie()
    ListDicomDirSerieElem const & elemList = 
       Global::GetDicomDirElements()->GetDicomDirSerieElements();   
 
-   DicomDirSerie* st = new DicomDirSerie(PtagHT);
+   DicomDirSerie* st = new DicomDirSerie();
    FillObject(elemList);
    Series.push_front(st);
 

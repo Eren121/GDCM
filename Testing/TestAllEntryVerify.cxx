@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/12/03 17:13:17 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,6 +49,15 @@ std::string ParserException::Indent = "      ";
 
 class ReferenceFileParser
 {
+public:
+   ReferenceFileParser();
+   bool Open( std::string& referenceFileName );
+   void Print();
+   void SetDataPath(std::string&);
+   bool Check();
+   bool Check( std::string fileName );
+
+private:
    bool AddKeyValuePairToMap( std::string& key, std::string& value );
 
    std::istream& eatwhite(std::istream& is);
@@ -56,6 +65,7 @@ class ReferenceFileParser
    std::string ExtractFirstString(std::string& toSplit);
    void CleanUpLine( std::string& line );
 
+   bool Check( MapFileValuesType::iterator &fileIt );
    std::string ExtractValue(std::string& toSplit)  throw ( ParserException );
    void ParseRegularLine( std::string& line ) throw ( ParserException );
    void FirstPassReferenceFile()         throw ( ParserException );
@@ -64,12 +74,6 @@ class ReferenceFileParser
    void HandleKey( std::string& line )        throw ( ParserException );
    bool HandleValue( std::string& line )      throw ( ParserException );
    static uint16_t axtoi( char* );
-public:
-   ReferenceFileParser();
-   bool Open( std::string& referenceFileName );
-   void Print();
-   void SetDataPath(std::string&);
-   bool Check();
 private:
    /// The directory containing the images to check:
    std::string DataPath;
@@ -138,7 +142,8 @@ void ReferenceFileParser::SetDataPath( std::string& inDataPath )
    DataPath = inDataPath;
 }
 
-bool ReferenceFileParser::AddKeyValuePairToMap( std::string& key, std::string& value )
+bool ReferenceFileParser::AddKeyValuePairToMap( std::string& key, 
+                                                std::string& value )
 {
    if ( !CurrentMapEntryValuesPtr )
       return false;
@@ -173,63 +178,79 @@ void ReferenceFileParser::Print()
 
 bool ReferenceFileParser::Check()
 {
+   int ret = true;
    for (MapFileValuesType::iterator i  = ProducedMap.begin();
                                     i != ProducedMap.end();
                                     ++i)
    {
-      std::string fileName = DataPath + i->first;
-      std::cout << Indent << "FileName: " << fileName << std::endl;
-      gdcm::Header* tested = new gdcm::Header( fileName.c_str() );
-      if( !tested->IsReadable() )
-      {
-        std::cerr << Indent << "Image not gdcm compatible:"
-             << fileName << std::endl;
-        delete tested;
-        return false;
-      }
-
-      MapEntryValuesPtr KeyValues = i->second;
-      for (MapEntryValues::iterator j  = KeyValues->begin();
-                                    j != KeyValues->end();
-                                    ++j)
-      {
-         std::string key = j->first;
-
-         std::string groupString  = key.substr( 0, 4 );
-         char* groupCharPtr;
-         groupCharPtr = new char(groupString.length() + 1);
-         strcpy( groupCharPtr, groupString.c_str() ); 
-
-         std::string groupElement = key.substr( key.find_first_of( "|" ) + 1, 4 );
-         char* groupElementPtr;
-         groupElementPtr = new char(groupElement.length() + 1);
-         strcpy( groupElementPtr, groupElement.c_str() ); 
-
-         uint16_t group   = axtoi( groupCharPtr );
-         uint16_t element = axtoi( groupElementPtr );
-
-         std::string testedValue = tested->GetEntryByNumber(group, element);
-         if ( testedValue != j->second )
-         {
-            // Oops make sure this is only the \0 that differ
-            if( testedValue[j->second.size()] != '\0' ||
-                strncmp(testedValue.c_str(), 
-                        j->second.c_str(), j->second.size()) != 0)
-            {
-               std::cout << Indent << "Uncorrect value for key " 
-                         << key << std::endl
-                         << Indent << "   read value      [" 
-                         << testedValue << "]" << std::endl
-                         << Indent << "   reference value [" 
-                         << j->second << "]" << std::endl;
-            return false;
-            }
-         }
-      }
-      delete tested;
-      std::cout << Indent << "  OK" << std::endl;
+      ret &= Check(i);
    }
    std::cout << Indent << std::endl;
+   return ret;
+}
+
+bool ReferenceFileParser::Check( std::string fileName )
+{
+   MapFileValuesType::iterator it = ProducedMap.find(fileName);
+   if( it != ProducedMap.end() )
+   {
+      return Check(it);
+   }
+   std::cerr << Indent << "Failed\n"
+             << Indent << "Image not found :"
+             << fileName << std::endl;
+   return false;
+}
+
+bool ReferenceFileParser::Check( MapFileValuesType::iterator &fileIt )
+{
+   std::string fileName = DataPath + fileIt->first;
+   std::cout << Indent << "FileName: " << fileName << std::endl;
+   gdcm::Header* tested = new gdcm::Header( fileName.c_str() );
+   if( !tested->IsReadable() )
+   {
+     std::cerr << Indent << "Failed\n"
+               << Indent << "Image not gdcm compatible:"
+               << fileName << std::endl;
+     delete tested;
+     return false;
+   }
+
+   MapEntryValuesPtr KeyValues = fileIt->second;
+   for (MapEntryValues::iterator j  = KeyValues->begin();
+                                 j != KeyValues->end();
+                                 ++j)
+   {
+      std::string key = j->first;
+
+      std::string groupString  = key.substr( 0, 4 );
+      std::string groupElement = key.substr( key.find_first_of( "|" ) + 1, 4 );
+
+      uint16_t group   = axtoi( &(groupString[0]) );
+      uint16_t element = axtoi( &(groupElement[0]) );
+
+      std::string testedValue = tested->GetEntryByNumber(group, element);
+      if ( testedValue != j->second )
+      {
+         // Oops make sure this is only the \0 that differ
+         if( testedValue[j->second.size()] != '\0' ||
+             strncmp(testedValue.c_str(), 
+                     j->second.c_str(), j->second.size()) != 0)
+         {
+            std::cout << Indent << "Failed\n"
+                      << Indent << "Uncorrect value for key " 
+                      << key << std::endl
+                      << Indent << "   read value      [" 
+                      << testedValue << "]" << std::endl
+                      << Indent << "   reference value [" 
+                      << j->second << "]" << std::endl;
+            return false;
+         }
+      }
+   }
+   delete tested;
+   std::cout << Indent << "  OK" << std::endl;
+
    return true;
 }
 
@@ -274,8 +295,10 @@ std::string ReferenceFileParser::ExtractValue( std::string& toSplit )
    std::string::size_type   endPos = toSplit.find_last_of( '"' );
 
    // Make sure we have at most two " in toSplit:
-   std::string noQuotes = toSplit.substr( beginPos + 1, endPos - beginPos - 1);
-   if ( noQuotes.find_first_of( '"' ) != std::string::npos )
+   //std::string noQuotes = toSplit.substr( beginPos + 1, endPos - beginPos - 1);
+   //if ( noQuotes.find_first_of( '"' ) != std::string::npos )
+   //   throw ParserException( "more than two quote character" );
+   if ( toSplit.find_first_of( '"',beginPos+1 ) != endPos )
       throw ParserException( "more than two quote character" );
 
    // No leading quote means this is not a value:
@@ -610,10 +633,10 @@ bool ReferenceFileParser::SecondPassReferenceFile()
 
 int TestAllEntryVerify(int argc, char* argv[]) 
 {
-   if ( argc > 1 )
+   if ( argc > 2 )
    {
       std::cerr << "   Usage: " << argv[0]
-                << " (no arguments needed)." << std::endl;
+                << " fileName" << std::endl;
       return 1;
    }
 
@@ -629,7 +652,8 @@ int TestAllEntryVerify(int argc, char* argv[])
    std::cout << "   apply the following tests : "<< std::endl;
    std::cout << "   step 1: parse the image and call IsReadable(). "  << std::endl;
    std::cout << "   step 2: look for the entry corresponding to the image" << std::endl;
-   std::cout << "           in the reference file: " << referenceFilename << std::endl;
+   std::cout << "           in the reference file: \n" 
+             << "           " << referenceFilename << std::endl;
    std::cout << "   step 3: check that each reference tag value listed for this"
         << std::endl;
    std::cout << "           entry matches the tag encountered at parsing step 1."
@@ -638,13 +662,24 @@ int TestAllEntryVerify(int argc, char* argv[])
    ReferenceFileParser Parser;
    if ( !Parser.Open(referenceFilename) )
    {
-      std::cout << "   Corrupted reference file name: "
-           << referenceFilename << std::endl;
+      std::cout << "   failed"
+                << "   Corrupted reference file name: "
+                << referenceFilename << std::endl;
       return 1;
    }
    Parser.SetDataPath(referenceDir);
    // Parser.Print();
-   if ( Parser.Check() )
-      return 0;
-   return 1;
+   std::cout << "Reference fil loaded -->\n"
+             << "Check files : \n";
+
+   int ret;
+   if ( argc >= 2 )
+   {
+      ret = Parser.Check( argv[1] );
+   }
+   else
+   {
+      ret = Parser.Check(); 
+   }
+   return !ret;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 10:25:53 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.40 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -119,15 +119,17 @@ protected:
 private:
    void Initialize();
    void CreateDicomDir();
-   void AddDicomDirMeta();
-   void AddDicomDirPatientToEnd(SQItem* s);
-   void AddDicomDirStudyToEnd  (SQItem* s);
-   void AddDicomDirSerieToEnd  (SQItem* s);
-   void AddDicomDirImageToEnd  (SQItem* s);
+
+   bool AddDicomDirMeta();
+   bool AddDicomDirPatientToEnd(DicomDirPatient* dd);
+   bool AddDicomDirStudyToEnd  (DicomDirStudy* dd);
+   bool AddDicomDirSerieToEnd  (DicomDirSerie* dd);
+   bool AddDicomDirImageToEnd  (DicomDirImage* dd);
 
    void SetElements(std::string const & path, VectDocument const &list);
    void SetElement (std::string const & path, DicomDirType type,
                     Document* header);
+   void MoveSQItem(SQItem* dst,SQItem *src);
 
    static bool HeaderLessThan(Document* header1, Document* header2);
    

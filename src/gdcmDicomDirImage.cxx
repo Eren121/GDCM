@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:19 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,28 +23,14 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
-/**
- * \ingroup DicomDirImage
- * \brief  Constructor 
- * @param  s  SQ Item holding the elements
- * @param ptagHT pointer to the HTable (DicomDirObject needs it 
- *               to build the DocEntries)
- */
-DicomDirImage::DicomDirImage(SQItem *s, TagDocEntryHT *ptagHT):
-   DicomDirObject(ptagHT)
-{
-   DocEntries = s->GetDocEntries();
-}
-
 /**
  * \ingroup DicomDirImage
  * \brief  Constructor 
  * @param ptagHT pointer to the HTable (DicomDirObject needs it 
  *               to build the DocEntries)
  */
-DicomDirImage::DicomDirImage(TagDocEntryHT *ptagHT):
-   DicomDirObject(ptagHT)
+DicomDirImage::DicomDirImage():
+   DicomDirObject()
 {
 }
 /**

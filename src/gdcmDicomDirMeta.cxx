@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:10 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,8 +29,8 @@ namespace gdcm
  * \ingroup DicomDirMeta
  * \brief  Constructor
  */ 
-DicomDirMeta::DicomDirMeta(TagDocEntryHT* ptagHT):
-   DicomDirObject(ptagHT)
+DicomDirMeta::DicomDirMeta():
+   DicomDirObject()
 {
 
 }

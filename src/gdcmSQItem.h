@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 16:24:31 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,9 @@ public:
    /// this SQ Item.      
    void AddDocEntry(DocEntry *e) { DocEntries.push_back(e); };
 
-   virtual bool AddEntry(DocEntry *Entry); // add to the List
+   bool AddEntry(DocEntry *Entry); // add to the List
+   bool RemoveEntry(DocEntry *EntryToRemove);
+   bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
   
    DocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element);
    // FIXME method to write
@@ -76,12 +78,16 @@ public:
    /// Accessor on \ref BaseTagKey.
    BaseTagKey const & GetBaseTagKey() const { return BaseTagKeyNested; }
 
+   void Initialize();
+   DocEntry *GetNextEntry();
 
 protected:
 // Variables that need to be access in subclasses
 
-   /// \brief chained list of (Elementary) Doc Entries
+   /// \brief Chained list of (Elementary) Doc Entries
    ListDocEntry DocEntries;
+   /// Chained list iterator, used to visit the TagHT variable
+   ListDocEntry::iterator ItDocEntries;
    
    ///\brief pointer to the HTable of the Document,
    ///       (because we don't know it within any DicomDirObject nor any SQItem)

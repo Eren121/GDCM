@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,24 +126,6 @@ bool ElementSet::AddEntry(DocEntry* newEntry)
 }
 
 /**
- * \brief   Clear the hash table from given entry BUT keep the entry.
- * @param   entryToRemove Entry to remove.
- */
-bool ElementSet::RemoveEntryNoDestroy(DocEntry* entryToRemove)
-{
-   const TagKey& key = entryToRemove->GetKey();
-   if( TagHT.count(key) == 1 )
-   {
-      TagHT.erase(key);
-      dbg.Verbose(0, "ElementSet::RemoveEntry: one element erased.");
-      return true;
-   }
-
-   dbg.Verbose(0, "ElementSet::RemoveEntry: key not present: ");
-   return false ;
-}
-
-/**
  * \brief   Clear the hash table from given entry AND delete the entry.
  * @param   entryToRemove Entry to remove AND delete.
  * \warning Some problems when using under Windows... prefer the use of
@@ -160,7 +142,25 @@ bool ElementSet::RemoveEntry( DocEntry* entryToRemove)
       return true;
    }
 
-   dbg.Verbose(0, "ElementSet::RemoveEntry: key not present: ");
+   dbg.Verbose(0, "ElementSet::RemoveEntry: key not present");
+   return false ;
+}
+
+/**
+ * \brief   Clear the hash table from given entry BUT keep the entry.
+ * @param   entryToRemove Entry to remove.
+ */
+bool ElementSet::RemoveEntryNoDestroy(DocEntry* entryToRemove)
+{
+   const TagKey& key = entryToRemove->GetKey();
+   if( TagHT.count(key) == 1 )
+   {
+      TagHT.erase(key);
+      dbg.Verbose(0, "ElementSet::RemoveEntry: one element erased.");
+      return true;
+   }
+
+   dbg.Verbose(0, "ElementSet::RemoveEntry: key not present");
    return false ;
 }
 

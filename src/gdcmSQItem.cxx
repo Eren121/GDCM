@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.39 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -237,10 +237,83 @@ bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group,
    }
    return false;
 }
+
+/**
+ * \brief   Clear the hash table from given entry AND delete the entry.
+ * @param   entryToRemove Entry to remove AND delete.
+ * \warning Some problems when using under Windows... prefer the use of
+ *          Initialize / GetNext methods
+ */
+bool SQItem::RemoveEntry( DocEntry* entryToRemove)
+{
+   for(ListDocEntry::iterator it = DocEntries.begin();
+       it != DocEntries.end();
+       ++it)
+   {
+      if( *it == entryToRemove)
+      {
+         DocEntries.erase(it);
+         dbg.Verbose(0, "SQItem::RemoveEntry: one element erased.");
+         delete entryToRemove;
+         return true;
+      }
+   }
+                                                                                
+   dbg.Verbose(0, "SQItem::RemoveEntry: value not present ");
+   return false ;
+}
+                                                                                
+/**
+ * \brief   Clear the hash table from given entry BUT keep the entry.
+ * @param   entryToRemove Entry to remove.
+ */
+bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
+{
+   for(ListDocEntry::iterator it = DocEntries.begin();
+       it != DocEntries.end();
+       ++it)
+   {
+      if( *it == entryToRemove)
+      {
+         DocEntries.erase(it);
+         dbg.Verbose(0, "SQItem::RemoveEntry: one element erased.");
+         return true;
+      }
+   }
+                                                                                
+   dbg.Verbose(0, "SQItem::RemoveEntry: value not present ");
+   return false ;
+}
+                                                                                
+/**
+ * \brief   Initialise the visit of the chained list
+ */
+void SQItem::Initialize()
+{
+   ItDocEntries = DocEntries.begin();
+}
+                                                                                
+/**
+ * \brief   Get the next entry whil visiting the chained list
+ * \return  The next DocEntry if found, otherwhise NULL
+ */
+DocEntry *SQItem::GetNextEntry()
+{
+   if (ItDocEntries != DocEntries.end())
+   {
+      DocEntry *tmp = *ItDocEntries;
+      ++ItDocEntries;
+                                                                                
+      return(tmp);
+   }
+   else
+   {
+      return(NULL);
+   }
+}
+
 //-----------------------------------------------------------------------------
 // Protected
-
-
 /**
  * \brief   Gets a Dicom Element inside a SQ Item Entry, by number
  * @return

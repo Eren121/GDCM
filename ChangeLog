@@ -1,4 +1,9 @@
 2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Remove memory leaks on the DicomDir
+   * Remove some useless datas in DicomDirObject
+   * Add usefull methods in SQItem, to be complient withe the ElementSet
+
+2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFile.[h|cxx] : now use FileType instead of TWriteType.
 
 2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

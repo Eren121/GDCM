@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,23 +27,11 @@ namespace gdcm
 // Constructor / Destructor
 /**
  * \brief  Constructor 
- * @param  s  SQ Item holding the elements related to this "SERIE" part
  * @param ptagHT pointer to the HTable (DicomDirObject needs it 
  *               to build the DocEntries)
  */
-DicomDirSerie::DicomDirSerie(SQItem* s, TagDocEntryHT* ptagHT) :
-   DicomDirObject(ptagHT)
-{
-   DocEntries = s->GetDocEntries();
-}
-
-/**
- * \brief  Constructor 
- * @param ptagHT pointer to the HTable (DicomDirObject needs it 
- *               to build the DocEntries)
- */
-DicomDirSerie::DicomDirSerie(TagDocEntryHT* ptagHT):
-   DicomDirObject(ptagHT)
+DicomDirSerie::DicomDirSerie():
+   DicomDirObject()
 {
 }
 /**
@@ -106,7 +94,7 @@ DicomDirImage* DicomDirSerie::NewImage()
    ListDicomDirImageElem const & elemList = 
       Global::GetDicomDirElements()->GetDicomDirImageElements();
 
-   DicomDirImage* st = new DicomDirImage(PtagHT);
+   DicomDirImage* st = new DicomDirImage();
    FillObject(elemList);
    Images.push_front(st);
 

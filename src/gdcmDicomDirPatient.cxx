@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,22 +26,11 @@ namespace gdcm
 // Constructor / Destructor
 /**
  * \brief   Constructor
- * @param  s SQ Item holding the elements related to this "PATIENT" part
  * @param ptagHT pointer to the HTable (DicomDirObject needs it 
  *               to build the HeaderEntries)
  */
-DicomDirPatient::DicomDirPatient(SQItem *s, TagDocEntryHT *ptagHT) :
-   DicomDirObject(ptagHT)
-{
-   DocEntries = s->GetDocEntries();
-}
-/**
- * \brief   Constructor
- * @param ptagHT pointer to the HTable (DicomDirObject needs it 
- *               to build the HeaderEntries)
- */
-DicomDirPatient::DicomDirPatient(TagDocEntryHT* ptagHT):
-   DicomDirObject(ptagHT)
+DicomDirPatient::DicomDirPatient():
+   DicomDirObject()
 {
 }
 /**
@@ -104,7 +93,7 @@ DicomDirStudy* DicomDirPatient::NewStudy()
    ListDicomDirStudyElem const & elemList = 
       Global::GetDicomDirElements()->GetDicomDirStudyElements();
       
-   DicomDirStudy* st = new DicomDirStudy( PtagHT );
+   DicomDirStudy* st = new DicomDirStudy();
    st->FillObject(elemList);
 
    Studies.push_front(st);

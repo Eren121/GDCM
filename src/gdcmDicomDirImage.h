@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:19 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,9 +27,7 @@ namespace gdcm
 class GDCM_EXPORT DicomDirImage : public DicomDirObject
 {
 public:
-   DicomDirImage(SQItem *s, TagDocEntryHT *ptagHT); 
-   DicomDirImage(TagDocEntryHT *ptagHT); 
-
+   DicomDirImage(); 
    ~DicomDirImage();
 
    void Print(std::ostream &os = std::cout);

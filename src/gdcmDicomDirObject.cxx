@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:08:20 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/12/03 17:13:18 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,10 +33,9 @@ namespace gdcm
  * @param depth Sequence depth level
  */
   
-DicomDirObject::DicomDirObject(TagDocEntryHT *ptagHT, int depth) 
+DicomDirObject::DicomDirObject(int depth) 
           : SQItem (depth)
 {
-   PtagHT = ptagHT;
 }
 
 
