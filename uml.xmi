@@ -1,0 +1,998 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMI xmlns:UML="org.omg/standards/UML" verified="false" timestamp="" xmi.version="1.2" >
+ <XMI.header>
+  <XMI.documentation>
+   <XMI.exporter>umbrello uml modeller http://uml.sf.net</XMI.exporter>
+   <XMI.exporterVersion>1.1.5</XMI.exporterVersion>
+  </XMI.documentation>
+  <XMI.model xmi.name="uml" href="/home/kyron/devel/gdcm/uml.xmi" />
+  <XMI.metamodel xmi.name="UML" href="UML.xml" xmi.version="1.3" />
+ </XMI.header>
+ <XMI.content>
+  <docsettings viewid="400" documentation="" uniqueid="405" />
+  <umlobjects>
+   <UML:Class stereotype="class" package="" xmi.id="3" abstract="0" documentation="" name="gdcmHeaderIdo" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="4" type="void" abstract="0" documentation="" name="BuildHeader" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="7" type="void" abstract="0" documentation="" name="setAcrLibido" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="5" type="" abstract="0" documentation="" name="gdcmHeaderIdo" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="6" value="" type="char *" abstract="0" documentation="" name="filename" static="0" scope="200" />
+    </UML:Operation>
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="8" abstract="0" documentation="" name="gdcmGlobal" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="13" type="" abstract="0" documentation="" name="gdcmGlobal" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="14" type="" abstract="0" documentation="" name="~gdcmGlobal" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="12" type="gdcmVR *" abstract="0" documentation="" name="GetVR" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="11" type="gdcmDictSet *" abstract="0" documentation="" name="GetDicts" static="0" scope="200" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="15" abstract="0" documentation="" name="gdcmVR" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="19" type="" abstract="0" documentation="" name="gdcmVR" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="20" type="" abstract="0" documentation="" name="~gdcmVR" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="17" type="int" abstract="0" documentation="" name="Count" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="18" value="" type="VRKey" abstract="0" documentation="" name="key" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Attribute stereotype="" package="" xmi.id="16" value="" type="VRHT" abstract="0" documentation="" name="vr" static="0" scope="201" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="21" abstract="0" documentation="" name="gdcmHeader" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="147" type="void" abstract="0" documentation="" name="SkipBytes" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="148" value="" type="guint32" abstract="0" documentation="" name="NBytes" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="120" type="guint16" abstract="0" documentation="" name="ReadInt16" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="121" type="guint32" abstract="0" documentation="" name="ReadInt32" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="153" type="guint16" abstract="0" documentation="" name="SwapShort" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="154" value="" type="guint16" abstract="0" documentation="" name="a" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="151" type="guint32" abstract="0" documentation="" name="SwapLong" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="152" value="" type="guint32" abstract="0" documentation="" name="a" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="37" type="guint32" abstract="0" documentation="" name="FindLengthOB" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="85" type="void" abstract="0" documentation="" name="Initialise" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="33" type="void" abstract="0" documentation="" name="CheckSwap" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="155" type="void" abstract="0" documentation="" name="SwitchSwapToBigEndian" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="109" type="gdcmElValue *" abstract="0" documentation="" name="NewManualElValToPubDict" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="110" value="" type="string" abstract="0" documentation="" name="NewTagName" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="111" value="" type="string" abstract="0" documentation="" name="VR" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="127" type="void" abstract="0" documentation="" name="SetMaxSizeLoadElementValue" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="128" value="" type="long" abstract="0" documentation="" name="NewSize" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="45" type="gdcmDictEntry *" abstract="0" documentation="" name="GetDictEntryByNumber" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="46" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="47" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="43" type="gdcmDictEntry *" abstract="0" documentation="" name="GetDictEntryByName" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="44" value="" type="string" abstract="0" documentation="" name="name" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="122" type="gdcmElValue *" abstract="0" documentation="" name="ReadNextElement" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="106" type="gdcmElValue *" abstract="0" documentation="" name="NewElValueByNumber" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="107" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="108" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="104" type="gdcmElValue *" abstract="0" documentation="" name="NewElValueByName" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="105" value="" type="string" abstract="0" documentation="" name="name" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="35" type="void" abstract="0" documentation="" name="FindLength" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="36" value="" type="gdcmElValue *" abstract="0" documentation="" name="ElVal" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="38" type="void" abstract="0" documentation="" name="FindVR" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="39" value="" type="gdcmElValue *" abstract="0" documentation="" name="ElVal" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="99" type="void" abstract="0" documentation="" name="LoadElementValue" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="100" value="" type="gdcmElValue *" abstract="0" documentation="" name="ElVal" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="101" type="void" abstract="0" documentation="" name="LoadElementValueSafe" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="102" value="" type="gdcmElValue *" abstract="0" documentation="" name="ElVal" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="149" type="void" abstract="0" documentation="" name="SkipElementValue" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="150" value="" type="gdcmElValue *" abstract="0" documentation="" name="ElVal" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="40" type="void" abstract="0" documentation="" name="FixFoundLength" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="41" value="" type="gdcmElValue *" abstract="0" documentation="" name="ElVal" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="42" value="" type="guint32" abstract="0" documentation="" name="FoundLength" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="86" type="bool" abstract="0" documentation="" name="IsAnInteger" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="87" value="" type="gdcmElValue *" abstract="0" documentation="" name="ElVal" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="103" type="void" abstract="0" documentation="" name="LoadElements" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="112" type="bool" abstract="0" documentation="" name="OpenFile" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="113" value="" type="bool" abstract="0" documentation="" name="exception_on_error" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="34" type="bool" abstract="0" documentation="" name="CloseFile" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="164" type="int" abstract="0" documentation="" name="write" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="165" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="159" type="int" abstract="0" documentation="" name="anonymize" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="160" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="98" type="bool" abstract="0" documentation="" name="IsReadable" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="92" type="bool" abstract="0" documentation="" name="IsImplicitVRLittleEndianTransferSyntax" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="91" type="bool" abstract="0" documentation="" name="IsExplicitVRLittleEndianTransferSyntax" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="88" type="bool" abstract="0" documentation="" name="IsDeflatedExplicitVRLittleEndianTransferSyntax" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="90" type="bool" abstract="0" documentation="" name="IsExplicitVRBigEndianTransferSyntax" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="93" type="bool" abstract="0" documentation="" name="IsJPEGBaseLineProcess1TransferSyntax" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="94" type="bool" abstract="0" documentation="" name="IsJPEGExtendedProcess2_4TransferSyntax" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="95" type="bool" abstract="0" documentation="" name="IsJPEGExtendedProcess3_5TransferSyntax" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="97" type="bool" abstract="0" documentation="" name="IsJPEGSpectralSelectionProcess6_8TransferSyntax" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="96" type="bool" abstract="0" documentation="" name="IsJPEGLossless" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="89" type="bool" abstract="0" documentation="" name="IsDicomV3" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="114" type="virtual void" abstract="0" documentation="" name="ParseHeader" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="115" value="" type="bool" abstract="0" documentation="" name="exception_on_error" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="161" type="" abstract="0" documentation="" name="gdcmHeader" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="162" value="" type="const char *" abstract="0" documentation="" name="filename" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="163" value="" type="bool" abstract="0" documentation="" name="exception_on_error" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="166" type="virtual " abstract="0" documentation="" name="~gdcmHeader" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="58" type="size_t" abstract="0" documentation="" name="GetPixelOffset" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="81" type="int" abstract="0" documentation="" name="GetSwapCode" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="61" type="string" abstract="0" documentation="" name="GetPubElValByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="62" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="63" type="string" abstract="0" documentation="" name="GetPubElValByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="64" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="65" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="66" type="string" abstract="0" documentation="" name="GetPubElValRepByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="67" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="68" type="string" abstract="0" documentation="" name="GetPubElValRepByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="69" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="70" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="60" type="TagElValueHT &amp;" abstract="0" documentation="" name="GetPubElVal" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="118" type="void" abstract="0" documentation="" name="PrintPubElVal" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="119" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="116" type="void" abstract="0" documentation="" name="PrintPubDict" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="117" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="71" type="string" abstract="0" documentation="" name="GetShaElValByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="72" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="73" type="string" abstract="0" documentation="" name="GetShaElValByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="74" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="75" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="76" type="string" abstract="0" documentation="" name="GetShaElValRepByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="77" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="78" type="string" abstract="0" documentation="" name="GetShaElValRepByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="79" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="80" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="48" type="string" abstract="0" documentation="" name="GetElValByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="49" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="50" type="string" abstract="0" documentation="" name="GetElValByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="51" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="52" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="53" type="string" abstract="0" documentation="" name="GetElValRepByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="54" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="55" type="string" abstract="0" documentation="" name="GetElValRepByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="56" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="57" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="129" type="int" abstract="0" documentation="" name="SetPubElValByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="130" value="" type="string" abstract="0" documentation="" name="content" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="131" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="132" type="int" abstract="0" documentation="" name="SetPubElValByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="133" value="" type="string" abstract="0" documentation="" name="content" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="134" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="135" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="140" type="int" abstract="0" documentation="" name="SetShaElValByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="141" value="" type="string" abstract="0" documentation="" name="content" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="142" value="" type="string" abstract="0" documentation="" name="ShadowTagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="143" type="int" abstract="0" documentation="" name="SetShaElValByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="144" value="" type="string" abstract="0" documentation="" name="content" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="145" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="146" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="136" type="int" abstract="0" documentation="" name="SetPubElValLengthByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="137" value="" type="guint32" abstract="0" documentation="" name="lgr" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="138" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="139" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="123" type="int" abstract="0" documentation="" name="ReplaceOrCreateByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="124" value="" type="string" abstract="0" documentation="" name="Value" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="125" value="" type="guint16" abstract="0" documentation="" name="Group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="126" value="" type="guint16" abstract="0" documentation="" name="Elem" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="82" type="int" abstract="0" documentation="" name="GetXSize" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="83" type="int" abstract="0" documentation="" name="GetYSize" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="84" type="int" abstract="0" documentation="" name="GetZSize" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="59" type="string" abstract="0" documentation="" name="GetPixelType" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="156" type="int" abstract="0" documentation="" name="Write" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="157" value="" type="FILE *" abstract="0" documentation="" name="fp" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="158" value="" type="FileType" abstract="0" documentation="" name="type" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Attribute stereotype="" package="" xmi.id="29" value="" type="string" abstract="0" documentation="" name="filename" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="32" value="" type="int" abstract="0" documentation="" name="sw" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="23" value="" type="guint32" abstract="0" documentation="" name="MaxSizeLoadElementValue" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="31" value="" type="FILE *" abstract="0" documentation="" name="fp" static="0" scope="202" />
+    <UML:Attribute stereotype="" package="" xmi.id="30" value="" type="FileType" abstract="0" documentation="" name="filetype" static="0" scope="202" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="167" abstract="0" documentation="" name="gdcmFormatError" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="168" type="explicit" abstract="0" documentation="" name="gdcmFormatError" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="169" value="" type="const string &amp;" abstract="0" documentation="" name="from" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="170" value="" type="const string &amp;" abstract="0" documentation="" name="error" static="0" scope="200" />
+    </UML:Operation>
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="171" abstract="0" documentation="" name="gdcmElValSet" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="216" type="" abstract="0" documentation="" name="~gdcmElValSet" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="174" type="void" abstract="0" documentation="" name="Add" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="175" value="" type="gdcmElValue *" abstract="0" documentation="" name="newElValue" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="189" type="void" abstract="0" documentation="" name="Print" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="190" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="191" type="void" abstract="0" documentation="" name="PrintByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="192" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="210" type="int" abstract="0" documentation="" name="Write" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="211" value="" type="FILE *" abstract="0" documentation="" name="fp" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="212" value="" type="FileType" abstract="0" documentation="" name="type" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="185" type="gdcmElValue *" abstract="0" documentation="" name="GetElementByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="186" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="187" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="183" type="gdcmElValue *" abstract="0" documentation="" name="GetElementByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="184" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="180" type="string" abstract="0" documentation="" name="GetElValueByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="181" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="182" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="178" type="string" abstract="0" documentation="" name="GetElValueByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="179" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="188" type="TagElValueHT &amp;" abstract="0" documentation="" name="GetTagHt" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="196" type="int" abstract="0" documentation="" name="SetElValueByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="197" value="" type="string" abstract="0" documentation="" name="content" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="198" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="199" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="193" type="int" abstract="0" documentation="" name="SetElValueByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="194" value="" type="string" abstract="0" documentation="" name="content" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="195" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="203" type="int" abstract="0" documentation="" name="SetElValueLengthByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="204" value="" type="guint32" abstract="0" documentation="" name="l" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="205" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="206" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="200" type="int" abstract="0" documentation="" name="SetElValueLengthByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="201" value="" type="guint32" abstract="0" documentation="" name="l" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="202" value="" type="string" abstract="0" documentation="" name="TagName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="176" type="guint32" abstract="0" documentation="" name="GenerateFreeTagKeyInGroup" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="177" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="207" type="void" abstract="0" documentation="" name="UpdateGroupLength" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="208" value="" type="bool" abstract="0" documentation="" name="SkipSequence" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="209" value="" type="FileType" abstract="0" documentation="" name="type" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="213" type="void" abstract="0" documentation="" name="WriteElements" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="214" value="" type="FileType" abstract="0" documentation="" name="type" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="215" value="" type="FILE *" abstract="0" documentation="" name="fp" static="0" scope="200" />
+    </UML:Operation>
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="217" abstract="0" documentation="" name="gdcmFileError" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="218" type="explicit" abstract="0" documentation="" name="gdcmFileError" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="219" value="" type="const string &amp;" abstract="0" documentation="" name="from" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="220" value="" type="const string &amp;" abstract="0" documentation="" name="error" static="0" scope="200" />
+    </UML:Operation>
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="221" abstract="0" documentation="" name="gdcmException" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="230" type="explicit" abstract="0" documentation="" name="gdcmException" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="231" value="" type="const string &amp;" abstract="0" documentation="" name="from" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="232" value="" type="const string &amp;" abstract="0" documentation="" name="error" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="236" type="" abstract="1" documentation="" name="~gdcmException" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="233" type="const string &amp;" abstract="0" documentation="" name="getError" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="224" type="" abstract="0" documentation="" name="operator const char*" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="235" type="const char *" abstract="1" documentation="" name="what" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="228" type="void" abstract="0" documentation="" name="fatal" static="1" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="229" value="" type="const char *" abstract="0" documentation="" name="from" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="234" type="string" abstract="1" documentation="" name="getName" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="225" type="ostream &amp;" abstract="0" documentation="" name="operator&lt;&lt;" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="226" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="227" value="" type="const gdcmException &amp;" abstract="0" documentation="" name="e" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Attribute stereotype="" package="" xmi.id="222" value="" type="string" abstract="0" documentation="" name="error" static="0" scope="202" />
+    <UML:Attribute stereotype="" package="" xmi.id="223" value="" type="string" abstract="0" documentation="" name="from" static="0" scope="202" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="237" abstract="0" documentation="" name="gdcmFile" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="255" type="void" abstract="0" documentation="" name="SwapZone" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="256" value="" type="void *" abstract="0" documentation="" name="im" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="257" value="" type="int" abstract="0" documentation="" name="swap" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="258" value="" type="int" abstract="0" documentation="" name="lgr" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="259" value="" type="int" abstract="0" documentation="" name="nb" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="247" type="bool" abstract="0" documentation="" name="ReadPixelData" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="248" value="" type="void *" abstract="0" documentation="" name="destination" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="262" type="int" abstract="0" documentation="" name="WriteBase" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="263" value="" type="string" abstract="0" documentation="" name="FileName" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="264" value="" type="FileType" abstract="0" documentation="" name="type" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="275" type="" abstract="0" documentation="" name="gdcmFile" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="276" value="" type="string &amp;" abstract="0" documentation="" name="filename" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="273" type="" abstract="0" documentation="" name="gdcmFile" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="274" value="" type="const char *" abstract="0" documentation="" name="filename" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="254" type="void" abstract="0" documentation="" name="SetPixelDataSizeFromHeader" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="246" type="size_t" abstract="0" documentation="" name="GetImageDataSize" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="242" type="void *" abstract="0" documentation="" name="GetImageData" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="243" type="size_t" abstract="0" documentation="" name="GetImageDataIntoVector" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="244" value="" type="void *" abstract="0" documentation="" name="destination" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="245" value="" type="size_t" abstract="0" documentation="" name="MaxSize" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="249" type="int" abstract="0" documentation="" name="SetImageData" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="250" value="" type="void *" abstract="0" documentation="" name="Data" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="251" value="" type="size_t" abstract="0" documentation="" name="ExpectedSize" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="252" type="void" abstract="0" documentation="" name="SetImageDataSize" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="253" value="" type="size_t" abstract="0" documentation="" name="ExpectedSize" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="271" type="int" abstract="0" documentation="" name="WriteRawData" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="272" value="" type="string" abstract="0" documentation="" name="nomFichier" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="269" type="int" abstract="0" documentation="" name="WriteDcmImplVR" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="270" value="" type="string" abstract="0" documentation="" name="nomFichier" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="267" type="int" abstract="0" documentation="" name="WriteDcmImplVR" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="268" value="" type="const char *" abstract="0" documentation="" name="nomFichier" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="265" type="int" abstract="0" documentation="" name="WriteDcmExplVR" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="266" value="" type="string" abstract="0" documentation="" name="nomFichier" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="260" type="int" abstract="0" documentation="" name="WriteAcr" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="261" value="" type="string" abstract="0" documentation="" name="nomFichier" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Attribute stereotype="" package="" xmi.id="240" value="" type="void *" abstract="0" documentation="" name="PixelData" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="241" value="" type="size_t" abstract="0" documentation="" name="lgrTotale" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="239" value="" type="int" abstract="0" documentation="" name="Parsed" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="238" value="" type="string" abstract="0" documentation="" name="OrigFileName" static="0" scope="201" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="277" abstract="0" documentation="" name="gdcmElValue" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="305" type="" abstract="0" documentation="" name="gdcmElValue" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="306" value="" type="gdcmDictEntry *" abstract="0" documentation="" name="in" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="294" type="void" abstract="0" documentation="" name="SetDictEntry" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="295" value="" type="gdcmDictEntry *" abstract="0" documentation="" name="NewEntry" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="293" type="bool" abstract="0" documentation="" name="IsVrUnknown" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="296" type="void" abstract="0" documentation="" name="SetImplicitVr" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="292" type="bool" abstract="0" documentation="" name="IsImplicitVr" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="283" type="gdcmDictEntry *" abstract="0" documentation="" name="GetDictEntry" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="285" type="guint16" abstract="0" documentation="" name="GetGroup" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="284" type="guint16" abstract="0" documentation="" name="GetElement" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="286" type="string" abstract="0" documentation="" name="GetKey" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="288" type="string" abstract="0" documentation="" name="GetName" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="290" type="string" abstract="0" documentation="" name="GetVR" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="301" type="void" abstract="0" documentation="" name="SetVR" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="302" value="" type="string" abstract="0" documentation="" name="v" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="297" type="void" abstract="0" documentation="" name="SetLength" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="298" value="" type="guint32" abstract="0" documentation="" name="l" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="287" type="guint32" abstract="0" documentation="" name="GetLength" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="303" type="void" abstract="0" documentation="" name="SetValue" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="304" value="" type="string" abstract="0" documentation="" name="val" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="291" type="string" abstract="0" documentation="" name="GetValue" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="289" type="size_t" abstract="0" documentation="" name="GetOffset" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="299" type="void" abstract="0" documentation="" name="SetOffset" static="0" scope="201" >
+     <UML:Parameter stereotype="" package="" xmi.id="300" value="" type="size_t" abstract="0" documentation="" name="of" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Attribute stereotype="" package="" xmi.id="279" value="" type="guint32" abstract="0" documentation="" name="LgrElem" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="278" value="" type="bool" abstract="0" documentation="" name="ImplicitVr" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="282" value="" type="string" abstract="0" documentation="" name="value" static="0" scope="200" />
+    <UML:Attribute stereotype="" package="" xmi.id="280" value="" type="size_t" abstract="0" documentation="" name="Offset" static="0" scope="200" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="307" abstract="0" documentation="" name="gdcmDictEntry" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="328" type="" abstract="0" documentation="" name="gdcmDictEntry" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="329" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="330" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="331" value="" type="string" abstract="0" documentation="" name="vr" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="332" value="" type="string" abstract="0" documentation="" name="fourth" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="333" value="" type="string" abstract="0" documentation="" name="name" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="325" type="TagKey" abstract="0" documentation="" name="TranslateToKey" static="1" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="326" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="327" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="316" type="guint16" abstract="0" documentation="" name="GetGroup" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="314" type="guint16" abstract="0" documentation="" name="GetElement" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="319" type="string" abstract="0" documentation="" name="GetVR" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="323" type="void" abstract="0" documentation="" name="SetVR" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="324" value="" type="string" abstract="0" documentation="" name="NewVr" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="321" type="void" abstract="0" documentation="" name="SetKey" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="322" value="" type="string" abstract="0" documentation="" name="k" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="320" type="bool" abstract="0" documentation="" name="IsVrUnknown" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="315" type="string" abstract="0" documentation="" name="GetFourth" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="318" type="string" abstract="0" documentation="" name="GetName" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="317" type="string" abstract="0" documentation="" name="GetKey" static="0" scope="200" />
+    <UML:Attribute stereotype="" package="" xmi.id="310" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="308" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="313" value="" type="string" abstract="0" documentation="" name="vr" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="309" value="" type="string" abstract="0" documentation="" name="fourth" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="312" value="" type="string" abstract="0" documentation="" name="name" static="0" scope="201" />
+    <UML:Attribute stereotype="" package="" xmi.id="311" value="" type="TagKey" abstract="0" documentation="" name="key" static="0" scope="201" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="334" abstract="0" documentation="" name="gdcmDict" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="356" type="" abstract="0" documentation="" name="gdcmDict" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="357" value="" type="string &amp;" abstract="0" documentation="" name="FileName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="358" type="" abstract="0" documentation="" name="~gdcmDict" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="335" type="int" abstract="0" documentation="" name="AddNewEntry" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="336" value="" type="gdcmDictEntry *" abstract="0" documentation="" name="NewEntry" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="354" type="int" abstract="0" documentation="" name="ReplaceEntry" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="355" value="" type="gdcmDictEntry *" abstract="0" documentation="" name="NewEntry" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="349" type="int" abstract="0" documentation="" name="RemoveEntry" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="350" value="" type="TagKey" abstract="0" documentation="" name="key" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="351" type="int" abstract="0" documentation="" name="RemoveEntry" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="352" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="353" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="340" type="gdcmDictEntry *" abstract="0" documentation="" name="GetTagByNumber" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="341" value="" type="guint16" abstract="0" documentation="" name="group" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="342" value="" type="guint16" abstract="0" documentation="" name="element" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="338" type="gdcmDictEntry *" abstract="0" documentation="" name="GetTagByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="339" value="" type="TagName" abstract="0" documentation="" name="name" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="343" type="void" abstract="0" documentation="" name="Print" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="344" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="345" type="void" abstract="0" documentation="" name="PrintByKey" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="347" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="347" type="void" abstract="0" documentation="" name="PrintByName" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="348" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="337" type="TagKeyHT &amp;" abstract="0" documentation="" name="GetEntries" static="0" scope="200" />
+    <UML:Attribute stereotype="" package="" xmi.id="404" value="" type="string" abstract="0" documentation="" name="name" static="0" scope="200" />
+    <UML:Attribute stereotype="" package="" xmi.id="405" value="" type="string" abstract="0" documentation="" name="filename" static="0" scope="200" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="359" abstract="0" documentation="" name="gdcmDebug" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="361" type="void" abstract="0" documentation="" name="Assert" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="362" value="" type="int" abstract="0" documentation="" name="Level" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="363" value="" type="bool" abstract="0" documentation="" name="Test" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="364" value="" type="const char *" abstract="0" documentation="" name="Msg1" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="365" value="" type="const char *" abstract="0" documentation="" name="Msg2" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="366" type="void" abstract="0" documentation="" name="Error" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="367" value="" type="bool" abstract="0" documentation="" name="Test" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="368" value="" type="const char *" abstract="0" documentation="" name="Msg1" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="369" value="" type="const char *" abstract="0" documentation="" name="Msg2" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="370" type="void" abstract="0" documentation="" name="Error" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="371" value="" type="const char *" abstract="0" documentation="" name="Msg1" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="372" value="" type="const char *" abstract="0" documentation="" name="Msg2" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="373" value="" type="const char *" abstract="0" documentation="" name="Msg3" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="374" type="void" abstract="0" documentation="" name="Exit" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="375" value="" type="int" abstract="0" documentation="" name="a" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="376" type="void" abstract="0" documentation="" name="Verbose" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="377" value="" type="int" abstract="0" documentation="" name="Level" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="378" value="" type="const char *" abstract="0" documentation="" name="Msg1" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="379" value="" type="const char *" abstract="0" documentation="" name="Msg2" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="380" type="" abstract="0" documentation="" name="gdcmDebug" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="381" value="" type="int" abstract="0" documentation="" name="level" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Attribute stereotype="" package="" xmi.id="360" value="" type="int" abstract="0" documentation="" name="DebugLevel" static="0" scope="201" />
+   </UML:Class>
+   <UML:Class stereotype="class" package="" xmi.id="382" abstract="0" documentation="" name="gdcmDictSet" static="0" scope="200" >
+    <UML:Operation stereotype="" package="" xmi.id="385" type="int" abstract="0" documentation="" name="AppendDict" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="386" value="" type="gdcmDict *" abstract="0" documentation="" name="NewDict" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="393" type="void" abstract="0" documentation="" name="LoadDictFromFile" static="0" scope="202" >
+     <UML:Parameter stereotype="" package="" xmi.id="394" value="" type="string" abstract="0" documentation="" name="filename" static="0" scope="200" />
+     <UML:Parameter stereotype="" package="" xmi.id="395" value="" type="DictKey" abstract="0" documentation="" name="" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="387" type="string" abstract="0" documentation="" name="BuildDictPath" static="0" scope="202" />
+    <UML:Operation stereotype="" package="" xmi.id="391" type="list *" abstract="0" documentation="" name="GetPubDictTagNames" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="392" type="map *" abstract="0" documentation="" name="GetPubDictTagNamesByCategory" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="398" type="" abstract="0" documentation="" name="gdcmDictSet" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="399" type="" abstract="0" documentation="" name="~gdcmDictSet" static="0" scope="200" />
+    <UML:Operation stereotype="" package="" xmi.id="396" type="void" abstract="0" documentation="" name="Print" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="397" value="" type="ostream &amp;" abstract="0" documentation="" name="os" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="389" type="gdcmDict *" abstract="0" documentation="" name="GetDict" static="0" scope="200" >
+     <UML:Parameter stereotype="" package="" xmi.id="390" value="" type="DictKey" abstract="0" documentation="" name="DictName" static="0" scope="200" />
+    </UML:Operation>
+    <UML:Operation stereotype="" package="" xmi.id="388" type="gdcmDict *" abstract="0" documentation="" name="GetDefaultPubDict" static="0" scope="200" />
+    <UML:Attribute stereotype="" package="" xmi.id="383" value="" type="string" abstract="0" documentation="" name="DictPath" static="0" scope="201" />
+   </UML:Class>
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="500" rolea="217" roleb="221" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="500" rolea="167" roleb="221" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="" />
+   <UML:Association nameb="entry" stereotype="" visibilitya="200" visibilityb="200" assoctype="503" rolea="277" roleb="307" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="501" rolea="277" roleb="171" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="tagHt" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="277" roleb="171" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="NameHt" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="501" rolea="307" roleb="334" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="KeryHt" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="307" roleb="334" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="NameHt" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="334" roleb="382" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="Dicts" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="15" roleb="21" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="dicom_vr" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="382" roleb="21" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="Dicts" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="334" roleb="21" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="RefShaDict" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="334" roleb="21" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="RefPubDict" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="171" roleb="21" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="ShaElValSet" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="510" rolea="171" roleb="21" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="PubElValSet" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="500" rolea="3" roleb="21" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="500" rolea="237" roleb="21" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="501" rolea="15" roleb="8" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="VR" />
+   <UML:Association nameb="" stereotype="" visibilitya="200" visibilityb="200" assoctype="501" rolea="382" roleb="8" multia="" doca="" multib="" docb="" package="" xmi.id="-1" abstract="0" documentation="" name="" static="0" scope="200" changeabilitya="900" changeabilityb="900" namea="Dicts" />
+  </umlobjects>
+  <diagrams>
+   <diagram snapgrid="0" showattsig="1" fillcolor="#ffffc0" zoom="100" showgrid="0" showopsig="1" usefillcolor="1" snapx="10" canvaswidth="780" snapy="10" showatts="1" xmi.id="2" documentation="" type="402" showops="1" showpackage="0" name="Class diagram" localid="30000" showstereotype="0" showscope="1" snapcsgrid="0" font="helvetica,-1,12,0,50,0,0,0,0,0" linecolor="#ff0000" canvasheight="770" >
+    <widgets/>
+    <messages/>
+    <associations/>
+   </diagram>
+   <diagram snapgrid="0" showattsig="1" fillcolor="#ffffc0" zoom="100" showgrid="0" showopsig="1" usefillcolor="1" snapx="10" canvaswidth="899" snapy="10" showatts="1" xmi.id="400" documentation="" type="402" showops="0" showpackage="0" name="gdcm" localid="30000" showstereotype="0" showscope="1" snapcsgrid="0" font="helvetica,-1,12,0,50,0,0,0,0,0" linecolor="#ff0000" canvasheight="864" >
+    <widgets>
+     <UML:ClassWidget usesdiagramfillcolour="0" width="83" showattsigs="601" usesdiagramusefillcolour="0" x="709" linecolour="#000000" y="266" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="359" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="80" showattsigs="601" usesdiagramusefillcolour="0" x="335" linecolour="#000000" y="115" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="334" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="102" showattsigs="601" usesdiagramusefillcolour="0" x="287" linecolour="#000000" y="30" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="307" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="90" showattsigs="601" usesdiagramusefillcolour="0" x="332" linecolour="#000000" y="326" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="382" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="95" showattsigs="601" usesdiagramusefillcolour="0" x="35" linecolour="#000000" y="127" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="171" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="89" showattsigs="601" usesdiagramusefillcolour="0" x="33" linecolour="#000000" y="30" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="277" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="104" showattsigs="601" usesdiagramusefillcolour="0" x="586" linecolour="#000000" y="197" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="221" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="80" showattsigs="601" usesdiagramusefillcolour="0" x="21" linecolour="#000000" y="246" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="237" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="96" showattsigs="601" usesdiagramusefillcolour="0" x="500" linecolour="#000000" y="67" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="217" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="117" showattsigs="601" usesdiagramusefillcolour="0" x="678" linecolour="#000000" y="77" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="167" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="81" showattsigs="601" usesdiagramusefillcolour="0" x="285" linecolour="#000000" y="457" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="24" usefillcolor="1" showattributes="1" isinstance="0" xmi.id="8" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="88" showattsigs="601" usesdiagramusefillcolour="0" x="195" linecolour="#000000" y="246" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="21" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="107" showattsigs="601" usesdiagramusefillcolour="0" x="45" linecolour="#000000" y="332" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="3" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+     <UML:ClassWidget usesdiagramfillcolour="0" width="80" showattsigs="601" usesdiagramusefillcolour="0" x="202" linecolour="#000000" y="352" showopsigs="601" instancename="" usesdiagramlinecolour="0" fillcolour="#ffc6c6" height="26" usefillcolor="1" showattributes="0" isinstance="0" xmi.id="15" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+    </widgets>
+    <messages/>
+    <associations>
+     <UML:AssocWidget totalcounta="2" indexa="1" visibilityB="200" totalcountb="3" indexb="1" widgetbid="221" roleBdoc="" widgetaid="217" roleAdoc="" documentation="" type="500" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <linepath>
+       <startpoint startx="548" starty="93" />
+       <endpoint endx="620" endy="197" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="2" indexa="1" visibilityB="200" totalcountb="3" indexb="2" widgetbid="221" roleBdoc="" widgetaid="167" roleAdoc="" documentation="" type="500" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <linepath>
+       <startpoint startx="736" starty="103" />
+       <endpoint endx="655" endy="197" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="2" indexa="1" visibilityB="200" totalcountb="2" indexb="1" widgetbid="307" roleBdoc="" widgetaid="277" roleAdoc="" documentation="" type="503" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="204" linecolour="none" y="43" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="124" linecolour="none" y="21" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="281" linecolour="none" y="21" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="124" linecolour="none" y="45" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="242" linecolour="none" y="45" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="entry" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="122" starty="43" />
+       <endpoint endx="287" endy="43" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="3" indexa="1" visibilityB="200" totalcountb="3" indexb="1" widgetbid="171" roleBdoc="" widgetaid="277" roleAdoc="" documentation="" type="501" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="64" linecolour="none" y="91" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="52" linecolour="none" y="58" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="68" linecolour="none" y="105" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="64" linecolour="none" y="58" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="tagHt" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="49" linecolour="none" y="105" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="62" starty="56" />
+       <endpoint endx="66" endy="127" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="3" indexa="2" visibilityB="200" totalcountb="3" indexb="2" widgetbid="171" roleBdoc="" widgetaid="277" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="95" linecolour="none" y="91" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="82" linecolour="none" y="58" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="100" linecolour="none" y="105" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="94" linecolour="none" y="58" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="NameHt" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="81" linecolour="none" y="105" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="92" starty="56" />
+       <endpoint endx="98" endy="127" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="3" indexa="1" visibilityB="200" totalcountb="3" indexb="1" widgetbid="334" roleBdoc="" widgetaid="307" roleAdoc="" documentation="" type="501" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="341" linecolour="none" y="85" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="311" linecolour="none" y="58" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="363" linecolour="none" y="93" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="323" linecolour="none" y="58" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="KeryHt" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="344" linecolour="none" y="93" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="321" starty="56" />
+       <endpoint endx="361" endy="115" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="3" indexa="2" visibilityB="200" totalcountb="3" indexb="2" widgetbid="334" roleBdoc="" widgetaid="307" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="371" linecolour="none" y="85" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="345" linecolour="none" y="58" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="390" linecolour="none" y="93" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="357" linecolour="none" y="58" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="NameHt" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="371" linecolour="none" y="93" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="355" starty="56" />
+       <endpoint endx="388" endy="115" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="4" indexa="3" visibilityB="200" totalcountb="3" indexb="2" widgetbid="382" roleBdoc="" widgetaid="334" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="393" linecolour="none" y="233" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="397" linecolour="none" y="143" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="386" linecolour="none" y="304" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="350" linecolour="none" y="143" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="Dicts" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="394" linecolour="none" y="304" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="395" starty="141" />
+       <endpoint endx="392" endy="326" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="2" indexa="1" visibilityB="200" totalcountb="4" indexb="2" widgetbid="21" roleBdoc="" widgetaid="15" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="230" linecolour="none" y="595" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="232" linecolour="none" y="330" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="241" linecolour="none" y="274" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="244" linecolour="none" y="330" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="dicom_vr" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="222" linecolour="none" y="274" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="242" starty="352" />
+       <endpoint endx="239" endy="272" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="3" indexa="1" visibilityB="200" totalcountb="4" indexb="3" widgetbid="21" roleBdoc="" widgetaid="382" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="311" linecolour="none" y="299" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="352" linecolour="none" y="328" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="263" linecolour="none" y="250" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="317" linecolour="none" y="304" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="Dicts" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="263" linecolour="none" y="274" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="362" starty="326" />
+       <endpoint endx="261" endy="272" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="4" indexa="1" visibilityB="200" totalcountb="5" indexb="3" widgetbid="21" roleBdoc="" widgetaid="334" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="276" linecolour="none" y="143" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="RefShaDict" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="355" starty="141" />
+       <endpoint endx="247" endy="246" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="4" indexa="2" visibilityB="200" totalcountb="5" indexb="4" widgetbid="21" roleBdoc="" widgetaid="334" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="296" linecolour="none" y="143" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="RefPubDict" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="375" starty="141" />
+       <endpoint endx="265" endy="246" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="3" indexa="1" visibilityB="200" totalcountb="5" indexb="1" widgetbid="21" roleBdoc="" widgetaid="171" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="208" linecolour="none" y="501" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="68" linecolour="none" y="131" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="206" linecolour="none" y="244" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="68" linecolour="none" y="155" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="ShaElValSet" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="195" linecolour="none" y="224" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="66" starty="153" />
+       <endpoint endx="212" endy="246" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="3" indexa="2" visibilityB="200" totalcountb="5" indexb="2" widgetbid="21" roleBdoc="" widgetaid="171" roleAdoc="" documentation="" type="510" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="164" linecolour="none" y="199" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="100" linecolour="none" y="131" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="224" linecolour="none" y="244" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="100" linecolour="none" y="155" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="PubElValSet" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="213" linecolour="none" y="224" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="98" starty="153" />
+       <endpoint endx="230" endy="246" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="2" indexa="1" visibilityB="200" totalcountb="4" indexb="1" widgetbid="21" roleBdoc="" widgetaid="3" roleAdoc="" documentation="" type="500" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="-141" linecolour="none" y="34" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="1" linecolour="none" y="-23" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="-141" linecolour="none" y="10" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="-37" linecolour="none" y="1" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="98" starty="332" />
+       <endpoint endx="217" endy="272" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="2" indexa="1" visibilityB="200" totalcountb="2" indexb="1" widgetbid="21" roleBdoc="" widgetaid="237" roleAdoc="" documentation="" type="500" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="-270" linecolour="none" y="-92" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="-73" linecolour="none" y="-12" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="-282" linecolour="none" y="-44" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="-103" linecolour="none" y="-12" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="101" starty="259" />
+       <endpoint endx="195" endy="259" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="2" indexa="1" visibilityB="200" totalcountb="3" indexb="1" widgetbid="8" roleBdoc="" widgetaid="15" roleAdoc="" documentation="" type="501" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="354" linecolour="none" y="730" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="232" linecolour="none" y="380" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="314" linecolour="none" y="435" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="244" linecolour="none" y="380" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="VR" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="295" linecolour="none" y="435" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="242" starty="378" />
+       <endpoint endx="312" endy="457" />
+      </linepath>
+     </UML:AssocWidget>
+     <UML:AssocWidget totalcounta="2" indexa="1" visibilityB="200" totalcountb="3" indexb="2" widgetbid="8" roleBdoc="" widgetaid="382" roleAdoc="" documentation="" type="501" changeabilityA="900" changeabilityB="900" visibilityA="200" >
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="409" linecolour="none" y="681" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="703" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="379" linecolour="none" y="354" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="701" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="333" linecolour="none" y="435" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="702" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="332" linecolour="none" y="354" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="709" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="Dicts" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <UML:FloatingTextWidget usesdiagramfillcolour="1" width="0" usesdiagramusefillcolour="1" x="341" linecolour="none" y="435" operation="" instancename="" posttext="" usesdiagramlinecolour="1" role="710" fillcolour="none" height="0" usefillcolor="1" seqnum="" pretext="+" isinstance="0" xmi.id="-1" text="" font="helvetica,-1,12,0,50,0,0,0,0,0" />
+      <linepath>
+       <startpoint startx="377" starty="352" />
+       <endpoint endx="339" endy="457" />
+      </linepath>
+     </UML:AssocWidget>
+    </associations>
+   </diagram>
+  </diagrams>
+  <listview>
+   <listitem open="1" type="800" id="-1" label="Views" >
+    <listitem open="1" type="821" id="-1" label="Component View" />
+    <listitem open="1" type="827" id="-1" label="Deployment View" />
+    <listitem open="0" type="823" id="-1" label="Diagrams" />
+    <listitem open="1" type="801" id="-1" label="Logical View" >
+     <listitem open="1" type="807" id="2" label="Class diagram" />
+     <listitem open="1" type="803" id="-1" label="gdcm" >
+      <listitem open="0" type="807" id="400" label="gdcm" />
+      <listitem open="0" type="813" id="359" label="gdcmDebug" >
+       <listitem open="0" type="815" id="361" label="Assert" />
+       <listitem open="0" type="814" id="360" label="DebugLevel" />
+       <listitem open="0" type="815" id="366" label="Error" />
+       <listitem open="0" type="815" id="370" label="Error" />
+       <listitem open="0" type="815" id="374" label="Exit" />
+       <listitem open="0" type="815" id="376" label="Verbose" />
+       <listitem open="0" type="815" id="380" label="gdcmDebug" />
+      </listitem>
+      <listitem open="0" type="813" id="334" label="gdcmDict" >
+       <listitem open="0" type="815" id="335" label="AddNewEntry" />
+       <listitem open="0" type="815" id="337" label="GetEntries" />
+       <listitem open="0" type="815" id="338" label="GetTagByName" />
+       <listitem open="0" type="815" id="340" label="GetTagByNumber" />
+       <listitem open="0" type="815" id="343" label="Print" />
+       <listitem open="0" type="815" id="345" label="PrintByKey" />
+       <listitem open="0" type="815" id="347" label="PrintByName" />
+       <listitem open="0" type="815" id="351" label="RemoveEntry" />
+       <listitem open="0" type="815" id="349" label="RemoveEntry" />
+       <listitem open="0" type="815" id="354" label="ReplaceEntry" />
+       <listitem open="0" type="814" id="405" label="filename" />
+       <listitem open="1" type="814" id="405" label="filename" />
+       <listitem open="0" type="815" id="356" label="gdcmDict" />
+       <listitem open="1" type="814" id="404" label="name" />
+       <listitem open="0" type="814" id="404" label="name" />
+       <listitem open="0" type="815" id="358" label="~gdcmDict" />
+      </listitem>
+      <listitem open="0" type="813" id="307" label="gdcmDictEntry" >
+       <listitem open="0" type="815" id="314" label="GetElement" />
+       <listitem open="0" type="815" id="315" label="GetFourth" />
+       <listitem open="0" type="815" id="316" label="GetGroup" />
+       <listitem open="0" type="815" id="317" label="GetKey" />
+       <listitem open="0" type="815" id="318" label="GetName" />
+       <listitem open="0" type="815" id="319" label="GetVR" />
+       <listitem open="0" type="815" id="320" label="IsVrUnknown" />
+       <listitem open="0" type="815" id="321" label="SetKey" />
+       <listitem open="0" type="815" id="323" label="SetVR" />
+       <listitem open="0" type="815" id="325" label="TranslateToKey" />
+       <listitem open="0" type="814" id="308" label="element" />
+       <listitem open="0" type="814" id="309" label="fourth" />
+       <listitem open="0" type="815" id="328" label="gdcmDictEntry" />
+       <listitem open="0" type="814" id="310" label="group" />
+       <listitem open="0" type="814" id="311" label="key" />
+       <listitem open="0" type="814" id="312" label="name" />
+       <listitem open="0" type="814" id="313" label="vr" />
+      </listitem>
+      <listitem open="0" type="813" id="382" label="gdcmDictSet" >
+       <listitem open="0" type="815" id="385" label="AppendDict" />
+       <listitem open="0" type="815" id="387" label="BuildDictPath" />
+       <listitem open="0" type="814" id="383" label="DictPath" />
+       <listitem open="0" type="815" id="388" label="GetDefaultPubDict" />
+       <listitem open="0" type="815" id="389" label="GetDict" />
+       <listitem open="0" type="815" id="391" label="GetPubDictTagNames" />
+       <listitem open="0" type="815" id="392" label="GetPubDictTagNamesByCategory" />
+       <listitem open="0" type="815" id="393" label="LoadDictFromFile" />
+       <listitem open="0" type="815" id="396" label="Print" />
+       <listitem open="0" type="815" id="398" label="gdcmDictSet" />
+       <listitem open="0" type="815" id="399" label="~gdcmDictSet" />
+      </listitem>
+      <listitem open="0" type="813" id="171" label="gdcmElValSet" >
+       <listitem open="0" type="815" id="174" label="Add" />
+       <listitem open="0" type="815" id="176" label="GenerateFreeTagKeyInGroup" />
+       <listitem open="0" type="815" id="178" label="GetElValueByName" />
+       <listitem open="0" type="815" id="180" label="GetElValueByNumber" />
+       <listitem open="0" type="815" id="183" label="GetElementByName" />
+       <listitem open="0" type="815" id="185" label="GetElementByNumber" />
+       <listitem open="0" type="815" id="188" label="GetTagHt" />
+       <listitem open="0" type="815" id="189" label="Print" />
+       <listitem open="0" type="815" id="191" label="PrintByName" />
+       <listitem open="0" type="815" id="193" label="SetElValueByName" />
+       <listitem open="0" type="815" id="196" label="SetElValueByNumber" />
+       <listitem open="0" type="815" id="200" label="SetElValueLengthByName" />
+       <listitem open="0" type="815" id="203" label="SetElValueLengthByNumber" />
+       <listitem open="0" type="815" id="207" label="UpdateGroupLength" />
+       <listitem open="0" type="815" id="210" label="Write" />
+       <listitem open="0" type="815" id="213" label="WriteElements" />
+       <listitem open="0" type="815" id="216" label="~gdcmElValSet" />
+      </listitem>
+      <listitem open="0" type="813" id="277" label="gdcmElValue" >
+       <listitem open="0" type="815" id="283" label="GetDictEntry" />
+       <listitem open="0" type="815" id="284" label="GetElement" />
+       <listitem open="0" type="815" id="285" label="GetGroup" />
+       <listitem open="0" type="815" id="286" label="GetKey" />
+       <listitem open="0" type="815" id="287" label="GetLength" />
+       <listitem open="0" type="815" id="288" label="GetName" />
+       <listitem open="0" type="815" id="289" label="GetOffset" />
+       <listitem open="0" type="815" id="290" label="GetVR" />
+       <listitem open="0" type="815" id="291" label="GetValue" />
+       <listitem open="0" type="814" id="278" label="ImplicitVr" />
+       <listitem open="0" type="815" id="292" label="IsImplicitVr" />
+       <listitem open="0" type="815" id="293" label="IsVrUnknown" />
+       <listitem open="0" type="814" id="279" label="LgrElem" />
+       <listitem open="0" type="814" id="280" label="Offset" />
+       <listitem open="0" type="815" id="294" label="SetDictEntry" />
+       <listitem open="0" type="815" id="296" label="SetImplicitVr" />
+       <listitem open="0" type="815" id="297" label="SetLength" />
+       <listitem open="0" type="815" id="299" label="SetOffset" />
+       <listitem open="0" type="815" id="301" label="SetVR" />
+       <listitem open="0" type="815" id="303" label="SetValue" />
+       <listitem open="0" type="815" id="305" label="gdcmElValue" />
+       <listitem open="0" type="814" id="282" label="value" />
+      </listitem>
+      <listitem open="0" type="813" id="221" label="gdcmException" >
+       <listitem open="0" type="815" id="224" label="*" />
+       <listitem open="0" type="815" id="225" label="&lt;&lt;" />
+       <listitem open="0" type="814" id="222" label="error" />
+       <listitem open="0" type="815" id="228" label="fatal" />
+       <listitem open="0" type="814" id="223" label="from" />
+       <listitem open="0" type="815" id="230" label="gdcmException" />
+       <listitem open="0" type="815" id="233" label="getError" />
+       <listitem open="0" type="815" id="234" label="getName" />
+       <listitem open="0" type="815" id="235" label="what" />
+       <listitem open="0" type="815" id="236" label="~gdcmException" />
+      </listitem>
+      <listitem open="0" type="813" id="237" label="gdcmFile" >
+       <listitem open="0" type="815" id="242" label="GetImageData" />
+       <listitem open="0" type="815" id="243" label="GetImageDataIntoVector" />
+       <listitem open="0" type="815" id="246" label="GetImageDataSize" />
+       <listitem open="0" type="814" id="238" label="OrigFileName" />
+       <listitem open="0" type="814" id="239" label="Parsed" />
+       <listitem open="0" type="814" id="240" label="PixelData" />
+       <listitem open="0" type="815" id="247" label="ReadPixelData" />
+       <listitem open="0" type="815" id="249" label="SetImageData" />
+       <listitem open="0" type="815" id="252" label="SetImageDataSize" />
+       <listitem open="0" type="815" id="254" label="SetPixelDataSizeFromHeader" />
+       <listitem open="0" type="815" id="255" label="SwapZone" />
+       <listitem open="0" type="815" id="260" label="WriteAcr" />
+       <listitem open="0" type="815" id="262" label="WriteBase" />
+       <listitem open="0" type="815" id="265" label="WriteDcmExplVR" />
+       <listitem open="0" type="815" id="269" label="WriteDcmImplVR" />
+       <listitem open="0" type="815" id="267" label="WriteDcmImplVR" />
+       <listitem open="0" type="815" id="271" label="WriteRawData" />
+       <listitem open="0" type="815" id="275" label="gdcmFile" />
+       <listitem open="0" type="815" id="273" label="gdcmFile" />
+       <listitem open="0" type="814" id="241" label="lgrTotale" />
+      </listitem>
+      <listitem open="0" type="813" id="217" label="gdcmFileError" >
+       <listitem open="0" type="815" id="218" label="gdcmFileError" />
+      </listitem>
+      <listitem open="0" type="813" id="167" label="gdcmFormatError" >
+       <listitem open="0" type="815" id="168" label="gdcmFormatError" />
+      </listitem>
+      <listitem open="0" type="813" id="8" label="gdcmGlobal" >
+       <listitem open="0" type="815" id="11" label="GetDicts" />
+       <listitem open="0" type="815" id="12" label="GetVR" />
+       <listitem open="0" type="815" id="13" label="gdcmGlobal" />
+       <listitem open="0" type="815" id="14" label="~gdcmGlobal" />
+      </listitem>
+      <listitem open="0" type="813" id="21" label="gdcmHeader" >
+       <listitem open="0" type="815" id="33" label="CheckSwap" />
+       <listitem open="0" type="815" id="34" label="CloseFile" />
+       <listitem open="0" type="815" id="35" label="FindLength" />
+       <listitem open="0" type="815" id="37" label="FindLengthOB" />
+       <listitem open="0" type="815" id="38" label="FindVR" />
+       <listitem open="0" type="815" id="40" label="FixFoundLength" />
+       <listitem open="0" type="815" id="43" label="GetDictEntryByName" />
+       <listitem open="0" type="815" id="45" label="GetDictEntryByNumber" />
+       <listitem open="0" type="815" id="48" label="GetElValByName" />
+       <listitem open="0" type="815" id="50" label="GetElValByNumber" />
+       <listitem open="0" type="815" id="53" label="GetElValRepByName" />
+       <listitem open="0" type="815" id="55" label="GetElValRepByNumber" />
+       <listitem open="0" type="815" id="58" label="GetPixelOffset" />
+       <listitem open="0" type="815" id="59" label="GetPixelType" />
+       <listitem open="0" type="815" id="60" label="GetPubElVal" />
+       <listitem open="0" type="815" id="61" label="GetPubElValByName" />
+       <listitem open="0" type="815" id="63" label="GetPubElValByNumber" />
+       <listitem open="0" type="815" id="66" label="GetPubElValRepByName" />
+       <listitem open="0" type="815" id="68" label="GetPubElValRepByNumber" />
+       <listitem open="0" type="815" id="71" label="GetShaElValByName" />
+       <listitem open="0" type="815" id="73" label="GetShaElValByNumber" />
+       <listitem open="0" type="815" id="76" label="GetShaElValRepByName" />
+       <listitem open="0" type="815" id="78" label="GetShaElValRepByNumber" />
+       <listitem open="0" type="815" id="81" label="GetSwapCode" />
+       <listitem open="0" type="815" id="82" label="GetXSize" />
+       <listitem open="0" type="815" id="83" label="GetYSize" />
+       <listitem open="0" type="815" id="84" label="GetZSize" />
+       <listitem open="0" type="815" id="85" label="Initialise" />
+       <listitem open="0" type="815" id="86" label="IsAnInteger" />
+       <listitem open="0" type="815" id="88" label="IsDeflatedExplicitVRLittleEndianTransferSyntax" />
+       <listitem open="0" type="815" id="89" label="IsDicomV3" />
+       <listitem open="0" type="815" id="90" label="IsExplicitVRBigEndianTransferSyntax" />
+       <listitem open="0" type="815" id="91" label="IsExplicitVRLittleEndianTransferSyntax" />
+       <listitem open="0" type="815" id="92" label="IsImplicitVRLittleEndianTransferSyntax" />
+       <listitem open="0" type="815" id="93" label="IsJPEGBaseLineProcess1TransferSyntax" />
+       <listitem open="0" type="815" id="94" label="IsJPEGExtendedProcess2_4TransferSyntax" />
+       <listitem open="0" type="815" id="95" label="IsJPEGExtendedProcess3_5TransferSyntax" />
+       <listitem open="0" type="815" id="96" label="IsJPEGLossless" />
+       <listitem open="0" type="815" id="97" label="IsJPEGSpectralSelectionProcess6_8TransferSyntax" />
+       <listitem open="0" type="815" id="98" label="IsReadable" />
+       <listitem open="0" type="815" id="99" label="LoadElementValue" />
+       <listitem open="0" type="815" id="101" label="LoadElementValueSafe" />
+       <listitem open="0" type="815" id="103" label="LoadElements" />
+       <listitem open="0" type="814" id="23" label="MaxSizeLoadElementValue" />
+       <listitem open="0" type="815" id="104" label="NewElValueByName" />
+       <listitem open="0" type="815" id="106" label="NewElValueByNumber" />
+       <listitem open="0" type="815" id="109" label="NewManualElValToPubDict" />
+       <listitem open="0" type="815" id="112" label="OpenFile" />
+       <listitem open="0" type="815" id="114" label="ParseHeader" />
+       <listitem open="0" type="815" id="116" label="PrintPubDict" />
+       <listitem open="0" type="815" id="118" label="PrintPubElVal" />
+       <listitem open="0" type="815" id="120" label="ReadInt16" />
+       <listitem open="0" type="815" id="121" label="ReadInt32" />
+       <listitem open="0" type="815" id="122" label="ReadNextElement" />
+       <listitem open="0" type="815" id="123" label="ReplaceOrCreateByNumber" />
+       <listitem open="0" type="815" id="127" label="SetMaxSizeLoadElementValue" />
+       <listitem open="0" type="815" id="129" label="SetPubElValByName" />
+       <listitem open="0" type="815" id="132" label="SetPubElValByNumber" />
+       <listitem open="0" type="815" id="136" label="SetPubElValLengthByNumber" />
+       <listitem open="0" type="815" id="140" label="SetShaElValByName" />
+       <listitem open="0" type="815" id="143" label="SetShaElValByNumber" />
+       <listitem open="0" type="815" id="147" label="SkipBytes" />
+       <listitem open="0" type="815" id="149" label="SkipElementValue" />
+       <listitem open="0" type="815" id="151" label="SwapLong" />
+       <listitem open="0" type="815" id="153" label="SwapShort" />
+       <listitem open="0" type="815" id="155" label="SwitchSwapToBigEndian" />
+       <listitem open="0" type="815" id="156" label="Write" />
+       <listitem open="0" type="815" id="159" label="anonymize" />
+       <listitem open="0" type="814" id="29" label="filename" />
+       <listitem open="0" type="814" id="30" label="filetype" />
+       <listitem open="0" type="814" id="31" label="fp" />
+       <listitem open="0" type="815" id="161" label="gdcmHeader" />
+       <listitem open="0" type="814" id="32" label="sw" />
+       <listitem open="0" type="815" id="164" label="write" />
+       <listitem open="0" type="815" id="166" label="~gdcmHeader" />
+      </listitem>
+      <listitem open="0" type="813" id="3" label="gdcmHeaderIdo" >
+       <listitem open="0" type="815" id="4" label="BuildHeader" />
+       <listitem open="0" type="815" id="5" label="gdcmHeaderIdo" />
+       <listitem open="0" type="815" id="7" label="setAcrLibido" />
+      </listitem>
+      <listitem open="0" type="813" id="15" label="gdcmVR" >
+       <listitem open="0" type="815" id="17" label="Count" />
+       <listitem open="0" type="815" id="19" label="gdcmVR" />
+       <listitem open="0" type="814" id="16" label="vr" />
+       <listitem open="0" type="815" id="20" label="~gdcmVR" />
+      </listitem>
+     </listitem>
+    </listitem>
+    <listitem open="1" type="802" id="-1" label="Use Case View" />
+   </listitem>
+  </listview>
+ </XMI.content>
+</XMI>
