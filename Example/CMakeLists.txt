@@ -15,6 +15,7 @@ SET(EXAMPLE_SOURCES
   PrintDicomDir
   TestCopyDicom
   TestChangeHeader
+  TestFromScratch
   TestReadWriteReadCompare
   TestDcm2Acr
   TestWrite
