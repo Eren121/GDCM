@@ -27,6 +27,8 @@ typedef  int   		gint32;
 
 #include <string>
 
+const std::string GDCM_UNFOUND = "gdcm::Unfound";
+
 typedef std::string TagKey;
 typedef std::string TagName;
 

@@ -1,9 +1,14 @@
+2003-09-16  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * "gdcm::Unfound" string changed to a constant variable (GDCM_UNFOUND)
+        located in the gdcmCommon.h file. All use of reference of tha has been
+        changed to now use the variable GDCM_UNFOUND.
+
 2003-09-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * Cosmetic changes:
         - gdcmPython/testSuite.py adapted to the JPR updated Dicts/dicomV3.dic
           Dicom dictionary. The test suite can now be run again. Note:
           I'm note very happy with the " (RET)" changes. I believe this
-          RETAINED comment should be dropped when parsing the dictionary. 
+          RETAINED comment should be dropped when parsing the dictionary.
         - PACKAGER corrected
         - DEVELOPPER added.
         - AUTHORS updated and now in alphabetical order

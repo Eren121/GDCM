@@ -185,6 +185,6 @@ int gdcmTS::Count(TSKey key) {
 
 std::string gdcmTS::GetValue(TSKey key) {
    if (ts.count(key) == 0) 
-      return ("gdcm::Unfound");
+      return (GDCM_UNFOUND);
    return ts[key];
 }

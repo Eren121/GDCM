@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.83 2003/09/11 11:12:59 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.84 2003/09/18 09:32:15 regrain Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -112,11 +112,11 @@ bool gdcmHeader::CloseFile(void) {
  * \brief   Canonical destructor.
  */
 gdcmHeader::~gdcmHeader (void) {
-   dicom_vr =   (gdcmVR*)0; 
-   Dicts    =   (gdcmDictSet*)0;
-   RefPubDict = (gdcmDict*)0;
-   RefShaDict = (gdcmDict*)0;
-   return;
+  dicom_vr =   (gdcmVR*)0; 
+  Dicts    =   (gdcmDictSet*)0;
+  RefPubDict = (gdcmDict*)0;
+  RefShaDict = (gdcmDict*)0;
+  return;
 }
 
 // Fourth semantics:
@@ -1260,7 +1260,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
    guint16 grPixel;
    guint16 numPixel;
    string ImageLocation = GetPubElValByName("Image Location");
-   if ( ImageLocation == "gdcm::Unfound" ) {
+   if ( ImageLocation == GDCM_UNFOUND ) {
       grPixel = 0x7fe0;
    } else {
       grPixel = (guint16) atoi( ImageLocation.c_str() );
@@ -1343,7 +1343,7 @@ gdcmDictEntry * gdcmHeader::GetDictEntryByName(string Name) {
  * @param   group Group of the researched tag.
  * @param   element Element of the researched tag.
  * @return  Corresponding element value when it exists, and the string
- *          "gdcm::Unfound" otherwise.
+ *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
    return PubElValSet.GetElValueByNumber(group, element);
@@ -1361,12 +1361,12 @@ string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
  * @param   group Group of the researched tag.
  * @param   element Element of the researched tag.
  * @return  Corresponding element value representation when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
    gdcmElValue* elem =  PubElValSet.GetElementByNumber(group, element);
    if ( !elem )
-      return "gdcm::Unfound";
+      return GDCM_UNFOUND;
    return elem->GetVR();
 }
 
@@ -1376,7 +1376,7 @@ string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
  *          a given tag.
  * @param   TagName name of the researched element.
  * @return  Corresponding element value when it exists, and the string
- *          "gdcm::Unfound" otherwise.
+ *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetPubElValByName(string TagName) {
    return PubElValSet.GetElValueByName(TagName);
@@ -1393,12 +1393,12 @@ string gdcmHeader::GetPubElValByName(string TagName) {
  *          of semantics than just the native C++ type.
  * @param   TagName name of the researched element.
  * @return  Corresponding element value representation when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetPubElValRepByName(string TagName) {
    gdcmElValue* elem =  PubElValSet.GetElementByName(TagName);
    if ( !elem )
-      return "gdcm::Unfound";
+      return GDCM_UNFOUND;
    return elem->GetVR();
 }
 
@@ -1409,7 +1409,7 @@ string gdcmHeader::GetPubElValRepByName(string TagName) {
  * @param   group Group of the researched tag.
  * @param   element Element of the researched tag.
  * @return  Corresponding element value representation when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
    return ShaElValSet.GetElValueByNumber(group, element);
@@ -1427,12 +1427,12 @@ string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
  * @param   group Group of the researched tag.
  * @param   element Element of the researched tag.
  * @return  Corresponding element value representation when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
    gdcmElValue* elem =  ShaElValSet.GetElementByNumber(group, element);
    if ( !elem )
-      return "gdcm::Unfound";
+      return GDCM_UNFOUND;
    return elem->GetVR();
 }
 
@@ -1442,7 +1442,7 @@ string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
  *          for an element value of given tag.
  * @param   TagName name of the researched element.
  * @return  Corresponding element value when it exists, and the string
- *          "gdcm::Unfound" otherwise.
+ *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetShaElValByName(string TagName) {
    return ShaElValSet.GetElValueByName(TagName);
@@ -1459,12 +1459,12 @@ string gdcmHeader::GetShaElValByName(string TagName) {
  *          of semantics than just the native C++ type.
  * @param   TagName name of the researched element.
  * @return  Corresponding element value representation when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetShaElValRepByName(string TagName) {
    gdcmElValue* elem =  ShaElValSet.GetElementByName(TagName);
    if ( !elem )
-      return "gdcm::Unfound";
+      return GDCM_UNFOUND;
    return elem->GetVR();
 }
 
@@ -1476,7 +1476,7 @@ string gdcmHeader::GetShaElValRepByName(string TagName) {
  * @param   group Group of the researched tag.
  * @param   element Element of the researched tag.
  * @return  Corresponding element value representation when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
    string pub = GetPubElValByNumber(group, element);
@@ -1498,7 +1498,7 @@ string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
  * @param   group Group of the researched tag.
  * @param   element Element of the researched tag.
  * @return  Corresponding element value representation when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
    string pub = GetPubElValRepByNumber(group, element);
@@ -1514,7 +1514,7 @@ string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
  *          for the element value of a given tag.
  * @param   TagName name of the researched element.
  * @return  Corresponding element value when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetElValByName(string TagName) {
    string pub = GetPubElValByName(TagName);
@@ -1535,7 +1535,7 @@ string gdcmHeader::GetElValByName(string TagName) {
  *          of semantics than just the native C++ type.
  * @param   TagName name of the researched element.
  * @return  Corresponding element value representation when it exists,
- *          and the string "gdcm::Unfound" otherwise.
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 string gdcmHeader::GetElValRepByName(string TagName) {
    string pub = GetPubElValRepByName(TagName);
@@ -1642,17 +1642,17 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
  *         false otherwise. 
  */
 bool gdcmHeader::IsReadable(void) {
-   if (   GetElValByName("Image Dimensions") != "gdcm::Unfound"
+   if (   GetElValByName("Image Dimensions") != GDCM_UNFOUND
       && atoi(GetElValByName("Image Dimensions").c_str()) > 4 ) {
       return false;
    }
-   if ( GetElValByName("Bits Allocated")       == "gdcm::Unfound" )
+   if ( GetElValByName("Bits Allocated")       == GDCM_UNFOUND )
       return false;
-   if ( GetElValByName("Bits Stored")          == "gdcm::Unfound" )
+   if ( GetElValByName("Bits Stored")          == GDCM_UNFOUND )
       return false;
-   if ( GetElValByName("High Bit")             == "gdcm::Unfound" )
+   if ( GetElValByName("High Bit")             == GDCM_UNFOUND )
       return false;
-   if ( GetElValByName("Pixel Representation") == "gdcm::Unfound" )
+   if ( GetElValByName("Pixel Representation") == GDCM_UNFOUND )
       return false;
    return true;
 }
@@ -1847,7 +1847,7 @@ int gdcmHeader::GetXSize(void) {
    // We cannot check for "Columns" because the "Columns" tag is present
    // both in IMG (0028,0011) and OLY (6000,0011) sections of the dictionary.
    string StrSize = GetPubElValByNumber(0x0028,0x0011);
-   if (StrSize == "gdcm::Unfound")
+   if (StrSize == GDCM_UNFOUND)
       return 0;
    return atoi(StrSize.c_str());
 }
@@ -1862,7 +1862,7 @@ int gdcmHeader::GetYSize(void) {
    // We cannot check for "Rows" because the "Rows" tag is present
    // both in IMG (0028,0010) and OLY (6000,0010) sections of the dictionary.
    string StrSize = GetPubElValByNumber(0x0028,0x0010);
-   if (StrSize != "gdcm::Unfound")
+   if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
    if ( IsDicomV3() )
       return 0;
@@ -1885,14 +1885,14 @@ int gdcmHeader::GetZSize(void) {
    // Both in DicomV3 and ACR/Nema the consider the "Number of Frames"
    // as the third dimension.
    string StrSize = GetPubElValByNumber(0x0028,0x0008);
-   if (StrSize != "gdcm::Unfound")
+   if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
 
    // We then consider the "Planes" entry as the third dimension [we
    // cannot retrieve by name since "Planes tag is present both in
    // IMG (0028,0012) and OLY (6000,0012) sections of the dictionary]. 
    StrSize = GetPubElValByNumber(0x0028,0x0012);
-   if (StrSize != "gdcm::Unfound")
+   if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
    return 1;
 }
@@ -1906,7 +1906,7 @@ int gdcmHeader::GetZSize(void) {
  */
 int gdcmHeader::GetBitsStored(void) { 
    string StrSize = GetPubElValByNumber(0x0028,0x0101);
-   if (StrSize == "gdcm::Unfound")
+   if (StrSize == GDCM_UNFOUND)
       return 1;
    return atoi(StrSize.c_str());
 }
@@ -1921,7 +1921,7 @@ int gdcmHeader::GetBitsStored(void) {
  */
 int gdcmHeader::GetSamplesPerPixel(void) { 
    string StrSize = GetPubElValByNumber(0x0028,0x0002);
-   if (StrSize == "gdcm::Unfound")
+   if (StrSize == GDCM_UNFOUND)
       return 1; // Well, it's supposed to be mandatory ...
    return atoi(StrSize.c_str());
 }
@@ -1935,7 +1935,7 @@ int gdcmHeader::GetSamplesPerPixel(void) {
  */
 int gdcmHeader::GetPlanarConfiguration(void) { 
    string StrSize = GetPubElValByNumber(0x0028,0x0006);
-   if (StrSize == "gdcm::Unfound")
+   if (StrSize == GDCM_UNFOUND)
       return 0;
    return atoi(StrSize.c_str());
 }
@@ -1974,7 +1974,7 @@ int gdcmHeader::GetPixelSize(void) {
 string gdcmHeader::GetPixelType(void) {
    string BitsAlloc;
    BitsAlloc = GetElValByName("Bits Allocated");
-   if (BitsAlloc == "gdcm::Unfound") {
+   if (BitsAlloc == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
       BitsAlloc = string("16");
    }
@@ -1983,7 +1983,7 @@ string gdcmHeader::GetPixelType(void) {
 
    string Signed;
    Signed = GetElValByName("Pixel Representation");
-   if (Signed == "gdcm::Unfound") {
+   if (Signed == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
       BitsAlloc = string("0");
    }
@@ -2003,7 +2003,7 @@ string gdcmHeader::GetPixelType(void) {
   */
 string gdcmHeader::GetTransferSyntaxName(void) { 
    string TransfertSyntax = GetPubElValByNumber(0x0002,0x0010);
-   if (TransfertSyntax == "gdcm::Unfound") {
+   if (TransfertSyntax == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetTransferSyntaxName: unfound Transfert Syntax (0002,0010)");
       return "Uncompressed ACR-NEMA";
    }
@@ -2031,13 +2031,13 @@ int gdcmHeader::GetLUTLength(void) {
    //int LutNbits;
    // Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
    string LutDescriptionR = GetPubElValByNumber(0x0028,0x1101);
-   if (LutDescriptionR == "gdcm::Unfound")
+   if (LutDescriptionR == GDCM_UNFOUND)
       return 0;
    string LutDescriptionG = GetPubElValByNumber(0x0028,0x1102);
-   if (LutDescriptionG == "gdcm::Unfound")
+   if (LutDescriptionG == GDCM_UNFOUND)
       return 0;
    string LutDescriptionB = GetPubElValByNumber(0x0028,0x1103);
-   if (LutDescriptionB == "gdcm::Unfound")
+   if (LutDescriptionB == GDCM_UNFOUND)
       return 0;
    if( (LutDescriptionR != LutDescriptionG) || (LutDescriptionR != LutDescriptionB) ) {
       dbg.Verbose(0, "gdcmHeader::GetLUTLength: The CLUT R,G,B are not equal");
@@ -2069,7 +2069,7 @@ int gdcmHeader::GetLUTNbits(void) {
    // Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
    // Consistency already checked in GetLUTLength
    string LutDescription = GetPubElValByNumber(0x0028,0x1101);
-   if (LutDescription == "gdcm::Unfound")
+   if (LutDescription == GDCM_UNFOUND)
       return 0;
    tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
    Tokenize (LutDescription, tokens, "\\");
@@ -2127,7 +2127,7 @@ void * gdcmHeader::GetLUTRGB(void) {
 // http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
 // and  OT-PAL-8-face.dcm
 
-   if (GetPubElValByNumber(0x0028,0x0004) == "gdcm::Unfound") {
+   if (GetPubElValByNumber(0x0028,0x0004) == GDCM_UNFOUND) {
    dbg.Verbose(0, "gdcmHeader::GetLUTRGB: unfound Photometric Interpretation");
    	return NULL;
    }  

@@ -152,7 +152,7 @@ gdcmElValue* gdcmElValSet::GetElementByName(string TagName) {
 string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHt.count(key))
-      return "gdcm::Unfound";
+      return GDCM_UNFOUND;
    return tagHt.find(key)->second->GetValue();
 }
 
@@ -163,7 +163,7 @@ string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
  */
 string gdcmElValSet::GetElValueByName(string TagName) {
    if ( ! NameHt.count(TagName))
-      return "gdcm::Unfound";
+      return GDCM_UNFOUND;
    return NameHt.find(TagName)->second->GetValue();
 }
 

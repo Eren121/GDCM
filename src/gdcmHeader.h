@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.37 2003/09/10 16:31:24 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.38 2003/09/18 09:32:15 regrain Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -40,12 +40,12 @@ private:
    /// the VR of the DICOM version3 public dictionary. 
    gdcmVR *dicom_vr;     // Not a class member for thread-safety reasons
    /// Pointer to global dictionary container
-   gdcmDictSet* Dicts;   // Not a class member for thread-safety reasons
+   gdcmDictSet *Dicts;   // Not a class member for thread-safety reasons
    /// Public dictionary used to parse this header
-   gdcmDict* RefPubDict;
+   gdcmDict *RefPubDict;
    /// Optional "shadow dictionary" (private elements) used to parse this
    /// header
-   gdcmDict* RefShaDict;
+   gdcmDict *RefShaDict;
    /// Pointer to the Transfert Syntax Hash Table which contains all
    /// the TS of the DICOM version3 public dictionary. 
    gdcmTS *dicom_ts;     // Not a class member for thread-safety reasons

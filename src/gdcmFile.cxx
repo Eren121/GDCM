@@ -64,7 +64,7 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
    string str_nb;
 
    str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-   if (str_nb == "gdcm::Unfound" ) {
+   if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
       nb = atoi(str_nb.c_str() );
@@ -127,7 +127,7 @@ bool gdcmFile::ParsePixelData(void) {
 
    int nb;
    string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-   if (str_nb == "gdcm::Unfound" ) {
+   if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
       nb = atoi(str_nb.c_str() );
@@ -252,7 +252,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
        
       int nb;
       string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-      if (str_nb == "gdcm::Unfound" ) {
+      if (str_nb == GDCM_UNFOUND ) {
          nb = 16;
       } else {
          nb = atoi(str_nb.c_str() );
@@ -472,7 +472,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 			
 	// Nombre de Bits Alloues pour le stockage d'un Pixel
    str_nb = GetPubElValByNumber(0x0028,0x0100);
-   if (str_nb == "gdcm::Unfound" ) {
+   if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
       nb = atoi(str_nb.c_str() );
@@ -480,7 +480,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 	
 	// Nombre de Bits Utilises
    str_nbu=GetPubElValByNumber(0x0028,0x0101);
-   if (str_nbu == "gdcm::Unfound" ) {
+   if (str_nbu == GDCM_UNFOUND ) {
       nbu = nb;
    } else {
       nbu = atoi(str_nbu.c_str() );
@@ -488,7 +488,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 	
 	// Position du Bit de Poids Fort
    str_highBit=GetPubElValByNumber(0x0028,0x0102);
-   if (str_highBit == "gdcm::Unfound" ) {
+   if (str_highBit == GDCM_UNFOUND ) {
       highBit = nb - 1;
    } else {
       highBit = atoi(str_highBit.c_str() );
@@ -496,7 +496,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 		
 	// Signe des Pixels 
    str_signe=GetPubElValByNumber(0x0028,0x0103);
-   if (str_signe == "gdcm::Unfound" ) {
+   if (str_signe == GDCM_UNFOUND ) {
       signe = 1;
    } else {
       signe = atoi(str_signe.c_str() );
