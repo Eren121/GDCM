@@ -10,8 +10,19 @@ Details:
 Comments:
 -------------
 
-
------------------------------------------------------------------------------
+----------------------------------------------------------------------------
+Description: Need to fix cygwin + wrong path (passing UNIX path when windows patch expected)
+Date: 2004 Nov 16
+Attributed: Mathieu
+Details:
+Comments:
+----------------------------------------------------------------------------
+Description: Need a test for gdcmHeaderHelper (iterating over gdcmData) for instance
+Date: 2004 Nov 16
+Attributed: Mathieu
+Details:
+Comments: It used to seg fault when a README file was found
+----------------------------------------------------------------------------
 Description:  gdcmJpeg8 is strictly a copy/paste of gdcmJpeg12.cxx.
 Date: 2004 Oct 13
 Attributed: 
