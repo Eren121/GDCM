@@ -58,7 +58,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy                   ..\..\lib\gdcmdll.dll                   ..\..\gdcmPython\               	copy                   ..\..\lib\gdcmdll.dll                   ..\..\test\               	copy                Release\gdcmdll.lib                ..\..\lib\ 
+PostBuild_Cmds=copy                    ..\..\lib\gdcmdll.dll                    ..\..\gdcmPython\                	copy                    ..\..\lib\gdcmdll.dll                    ..\..\test\                	copy                 Release\gdcmdll.lib                 ..\..\lib\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmdll - Win32 Debug"
@@ -90,7 +90,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy                   ..\..\lib\gdcmdll.dll                   ..\..\gdcmPython\               	copy                   ..\..\lib\gdcmdll.dll                   ..\..\test\               	copy                Debug\gdcmdll.lib                ..\..\lib\ 
+PostBuild_Cmds=copy                    ..\..\lib\gdcmdll.dll                    ..\..\gdcmPython\                	copy                    ..\..\lib\gdcmdll.dll                    ..\..\test\                	copy                 Debug\gdcmdll.lib                 ..\..\lib\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -117,6 +117,10 @@ SOURCE=..\gdcmDictEntry.cxx
 # Begin Source File
 
 SOURCE=..\gdcmDictSet.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDirList.cxx
 # End Source File
 # Begin Source File
 
@@ -221,6 +225,10 @@ SOURCE=..\gdcmDictEntry.h
 # Begin Source File
 
 SOURCE=..\gdcmDictSet.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDirList.h
 # End Source File
 # Begin Source File
 

@@ -353,10 +353,10 @@ FILE *gdcmParser::OpenFile(bool exception_on_error)
        return(fp);
 
     fclose(fp);
-    dbg.Verbose(0, "gdcmParser::gdcmParser not DICOM/ACR", filename.c_str());
+    dbg.Verbose(0, "gdcmParser::OpenFile not DICOM/ACR", filename.c_str());
   }
   else {
-    dbg.Verbose(0, "gdcmParser::gdcmParser cannot open file", filename.c_str());
+    dbg.Verbose(0, "gdcmParser::OpenFile cannot open file", filename.c_str());
   }
   return(NULL);
 }
@@ -755,9 +755,7 @@ void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem)
    	free(a);
    	return NULL;
    }
-   cout << hex << Group << " " << Elem << "loaded" <<endl;
-   Element->SetPrintLevel(2);
-   Element->Print();
+
    return a;  
 }
 

@@ -1,12 +1,13 @@
 // gdcmHeaderHelper.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmHeaderHelper.h"
+#include "gdcmDirList.h"
 
 #include "gdcmUtil.h" //for debug
 #include <math.h>
 #include <algorithm>
 
-#ifdef _MSC_VER 
+/*#ifdef _MSC_VER 
    #include <windows.h> 
 
    int GetDir(std::string dPath, std::list<std::string> &filenames)
@@ -52,7 +53,7 @@
     return true;
    }
 
-#endif
+#endif*/
 
 //-----------------------------------------------------------------------------
 // gdcmHeaderHelper
@@ -617,11 +618,10 @@ void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file){
  * \brief \todo
  */
 void gdcmSerieHeaderHelper::SetDirectory(std::string dir){
-  std::list<std::string> filenames_list;
-  GetDir(dir, filenames_list);  //OS specific
+  gdcmDirList filenames_list(dir);  //OS specific
   
-  for(std::list<std::string>::iterator it = filenames_list.begin(); it !=
-  filenames_list.end(); it++)
+  for(gdcmDirList::iterator it = filenames_list.begin(); 
+      it !=filenames_list.end(); it++)
   {
     gdcmHeaderHelper *file = new gdcmHeaderHelper( it->c_str() );
     this->CoherentGdcmFileList.push_back( file );

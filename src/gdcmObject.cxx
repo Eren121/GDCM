@@ -22,10 +22,13 @@ gdcmObject::~gdcmObject(void)
 // Print
 void gdcmObject::Print(std::ostream &os)
 {
-   for(ListTag::iterator i=beginObj;i!=endObj;++i)
+   if(printLevel>=0)
    {
-      (*i)->SetPrintLevel(printLevel);
-      (*i)->Print(os);
+      for(ListTag::iterator i=beginObj;i!=endObj;++i)
+      {
+         (*i)->SetPrintLevel(printLevel);
+         (*i)->Print(os);
+      }
    }
 }
 

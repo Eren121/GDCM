@@ -106,6 +106,8 @@ public:
 // Read (used in gdcmFile)
    void SetImageDataSize(size_t ExpectedSize);
 
+   bool operator<(gdcmHeader &header);
+
 protected:
    int write(std::ostream&);   
    int anonymize(std::ostream&);  // FIXME : anonymize should be a friend ?

@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
    else	
       file = "../gdcmData/DICOMDIR";
       
-   e1 = new gdcmDicomDir(file);
+   e1 = new gdcmDicomDir(file.c_str());
 	if (argc > 2) {
 	   int level = atoi(argv[2]);   
 	   e1->SetPrintLevel(level);

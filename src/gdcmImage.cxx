@@ -17,7 +17,14 @@ gdcmImage::~gdcmImage()
 // Print
 void gdcmImage::Print(std::ostream &os)
 {
-   os<<"IMAGE"<<std::endl;
+   os<<"IMAGE : ";
+   for(ListTag::iterator i=beginObj;i!=endObj;++i)
+   {
+      if( ((*i)->GetGroup()==0x0004) && ((*i)->GetElement()==0x1500) )
+         os<<(*i)->GetValue();
+   }
+   os<<std::endl;
+
    gdcmObject::Print(os);
 }
 

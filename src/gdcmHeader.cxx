@@ -792,6 +792,50 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    SetEntryByNumber(content1, GrPixel, NumPixel);
 }
 
+bool gdcmHeader::operator<(gdcmHeader &header)
+{
+   std::string s1,s2;
+
+   // Patient Name
+   s1=this->GetEntryByNumber(0x0010,0x0010);
+   s2=header.GetEntryByNumber(0x0010,0x0010);
+   if(s1 < s2)
+	   return(true);
+   else if(s1 > s2)
+	   return(false);
+   else
+   {
+      // Patient ID
+      s1=this->GetEntryByNumber(0x0010,0x0020);
+      s2=header.GetEntryByNumber(0x0010,0x0020);
+      if (s1 < s2)
+	      return(true);
+      else if (s1 > s2)
+         return(1);
+      else
+      {
+	      // Study Instance UID
+         s1=this->GetEntryByNumber(0x0020,0x000d);
+         s2=header.GetEntryByNumber(0x0020,0x000d);
+         if (s1 < s2)
+	         return(true);
+         else if(s1 > s2)
+	         return(false);
+         else
+         {
+	         // Serie Instance UID		
+            s1=this->GetEntryByNumber(0x0020,0x000e);
+            s2=header.GetEntryByNumber(0x0020,0x000e);
+            if (s1 < s2)
+               return(true);
+            else if(s1 > s2)
+               return(false);
+         }
+      }
+   }
+   return(false);
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 
