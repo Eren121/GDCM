@@ -71,10 +71,11 @@ void gdcmSeqEntry::Print(std::ostream &os){
       os << s2.str();
       if (seq_term != NULL) {
          seq_term->Print(os);
-      }	 
+      } 
       else 
-         std::cout << "      -------------- should have a sequence terminator item"
-	           << std::endl;      
+         std::cout
+             << "      -------------- should have a sequence terminator item"
+             << std::endl;      
    }                    
  }
 
@@ -104,15 +105,15 @@ void gdcmSeqEntry::SetDepthLevel(int depth) {
 gdcmDocEntry *gdcmSeqEntry::NewDocEntryByNumber(guint16 group,
                                                 guint16 element) {
 // TODO
-   std::cout << "TODO : gdcmSeqEntry::NewDocEntryByNumber " << endl;				  
+   std::cout << "TODO : gdcmSeqEntry::NewDocEntryByNumber " << std::endl;
    gdcmDocEntry *a;   
-   return a;				  
+   return a;
 }
 
 /// \brief to be written, if really usefull
 gdcmDocEntry *gdcmSeqEntry::NewDocEntryByName  (std::string Name) {
-// TODO	: 			  
-   std::cout << "TODO : gdcmSeqEntry::NewDocEntryByName " << endl;				  
+// TODO
+   std::cout << "TODO : gdcmSeqEntry::NewDocEntryByName " << std::endl;
    gdcmDocEntry *a;   
    return a;   
 }
@@ -120,9 +121,9 @@ gdcmDocEntry *gdcmSeqEntry::NewDocEntryByName  (std::string Name) {
 /// \brief to be written, if really usefull
 gdcmDocEntry *gdcmSeqEntry::GetDocEntryByNumber(guint16 group,
                                                 guint16 element) {
-// TODO				  
-   std::cout << "TODO : gdcmSeqEntry::GetDocEntryByNumber " << endl;				  
+// TODO
+   std::cout << "TODO : gdcmSeqEntry::GetDocEntryByNumber " << std::endl;
    gdcmDocEntry *a;   
-   return a;				  
-}	
+   return a;
+}
 //-----------------------------------------------------------------------------

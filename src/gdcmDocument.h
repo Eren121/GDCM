@@ -4,7 +4,6 @@
 #define GDCMDOCUMENT_H
 
 #include "gdcmCommon.h"
-
 #include "gdcmVR.h"
 #include "gdcmTS.h"
 #include "gdcmException.h"
@@ -260,7 +259,7 @@ public:
    /// Accessor to \ref filename
    inline void SetFileName(char* fileName) {filename = fileName;}
 
-   /// Accessor to \ref gdcmDocument::tagHT
+   /// Accessor to \ref gdcmElementSet::tagHT
    inline TagDocEntryHT &GetEntry(void) { return tagHT; };
 
    /// Accessor to \ref gdcmDocument::listEntries

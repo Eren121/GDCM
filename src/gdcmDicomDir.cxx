@@ -119,18 +119,11 @@ gdcmDicomDir::gdcmDicomDir(bool exception_on_error):
    startArg=               NULL;
    progressArg=            NULL;
    endArg=                 NULL;
-cout << "gdcmDicomDir::gdcmDicomDir(bool exception_on_error) sortie gdcmDocument
-"
-<< endl;
    progress=0.0;
    abort=false;
    std::string pathBidon = ""; // Sorry, NULL not allowed ...
    SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
-
-cout << "gdcmDicomDir::gdcmDicomDir apres  SetElement " << endl;  
    AddDicomDirMeta();
-	cout << "gdcmDicomDir::gdcmDicomDir apres  AddDicomDirMeta " << endl;  
-
 }
 
 

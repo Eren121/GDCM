@@ -3,17 +3,16 @@
 #ifndef GDCMELEMENTSET_H
 #define GDCMELEMENTSET_H
 
-#include "gdcmDocEntrySet.h"
-#include "gdcmDocEntry.h"
-
 #include <map>
-typedef std::string TagKey;
-typedef std::map<TagKey, gdcmDocEntry *> TagDocEntryHT;
+#include <iostream>
+#include "gdcmCommon.h"
+#include "gdcmDocEntrySet.h"
 
+typedef std::map<TagKey, gdcmDocEntry *> TagDocEntryHT;
 
 //-----------------------------------------------------------------------------
 
-class GDCM_EXPORT gdcmElementSet : public gdcmDocEntrySet 
+class GDCM_EXPORT gdcmElementSet : public gdcmDocEntrySet
 {
 public:
    gdcmElementSet(int);
