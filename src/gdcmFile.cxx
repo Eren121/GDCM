@@ -142,11 +142,11 @@ bool gdcmFile::ReadPixelData(void* destination) {
          fread(&b0,1,1,fp);
          fread(&b1,1,1,fp);
          fread(&b2,1,1,fp);      
-         *((unsigned short int*)destination)++ = 
-	            ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
+         //Two steps is necessary to please VC++:
+         unsigned short int* pdestination = (unsigned short int*)destination;
+         *pdestination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
                        /* A */          /* B */            /* D */
-         *((unsigned short int*)destination)++ = 
-	            ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
+         *pdestination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
                        /* F */          /* C */            /* E */
 		  
 	// Troubles expected on Big-Endian processors ?	      
