@@ -3,6 +3,9 @@
     - src/gdcmRLEFramesInfo.[cxx|h], gdcmRLEFrame.h added
     - src/gdcmDocument.[cxx|h] ::Parse7FE0 now sets up the RLEInfo.
     - src/CMakeLists.txt: alphabetic order reodering + new entries.
+  * CLEANUP_ROUND (4) for gdcmPixelConvert
+    - src/gdcmDocument.[cxx|h] ::ParseDES and ::ParseSQ no longer bother
+      to return an unused length.
 
 2004-10-01 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Added documentation of vtkgdcmReader on Website:

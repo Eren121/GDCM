@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 09:58:08 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2004/10/06 13:12:42 $
+  Version:   $Revision: 1.46 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,6 +124,7 @@ public:
    bool IsRLELossLessTransferSyntax();
    bool IsJPEGLossless();
    bool IsJPEG2000();
+   bool IsEncapsulateTransferSyntax();
    bool IsDicomV3();
 
    FileType GetFileType();
@@ -164,7 +165,7 @@ protected:
    gdcmDocument( std::string const & filename );
    virtual ~gdcmDocument();
    
-   void Parse7FE0 ();   
+   void Parse7FE0();
    // Entry
    bool CheckIfEntryExistByNumber(uint16_t group, uint16_t elem );
 public:
@@ -202,9 +203,9 @@ public:
 
 private:
    // Read
-   long ParseDES(gdcmDocEntrySet *set,long offset, long l_max, bool delim_mode);
-   long ParseSQ (gdcmSeqEntry *seq,   long offset, long l_max, bool delim_mode); 
-   
+   void ParseDES(gdcmDocEntrySet *set,long offset, long l_max, bool delim_mode);
+   void ParseSQ (gdcmSeqEntry *seq,   long offset, long l_max, bool delim_mode);
+
    void LoadDocEntry      (gdcmDocEntry *);
    void FindDocEntryLength(gdcmDocEntry *) throw ( gdcmFormatError );
    void FindDocEntryVR    (gdcmDocEntry *);

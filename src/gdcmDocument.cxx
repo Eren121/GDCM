@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 09:58:08 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2004/10/06 13:12:42 $
+  Version:   $Revision: 1.94 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,7 +106,7 @@ gdcmDocument::gdcmDocument( std::string const & filename )
    long beg = ftell(Fp);
    lgt -= beg;
    
-   (void)ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
+   ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
 
    rewind(Fp);
    
@@ -447,6 +447,22 @@ bool gdcmDocument::IsJPEG2000()
 {
    return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_90)
            || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_91) );
+}
+
+/**
+ * \brief   Determines if the Transfer Syntax corresponds to encapsulated
+ *          of encoded Pixel Data (as opposed to native).
+ * @return  True when encapsulated. False when native.
+ */
+bool gdcmDocument::IsEncapsulateTransferSyntax()
+{
+   return (   IsJPEGBaseLineProcess1TransferSyntax()
+           || IsJPEGExtendedProcess2_4TransferSyntax()
+           || IsJPEGExtendedProcess3_5TransferSyntax()
+           || IsJPEGSpectralSelectionProcess6_8TransferSyntax()
+           || IsRLELossLessTransferSyntax()
+           || IsJPEGLossless()
+           || IsJPEG2000() );
 }
 
 /**
@@ -1361,14 +1377,12 @@ uint16_t gdcmDocument::UnswapShort(uint16_t a)
  * \brief   Parses a DocEntrySet (Zero-level DocEntries or SQ Item DocEntries)
  * @return  length of the parsed set. 
  */ 
-
-long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
+void gdcmDocument::ParseDES(gdcmDocEntrySet *set,
                             long offset,
                             long l_max,
                             bool delim_mode)
 {
    gdcmDocEntry *newDocEntry = 0;
-   unsigned long l = 0;
    
    while (true)
    { 
@@ -1466,20 +1480,18 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
              else
              {
                 SkipToNextDocEntry(newDocEntry);
-                l = newDocEntry->GetFullLength(); 
              }
          }
          else
          {
              // to be sure we are at the beginning 
              SkipToNextDocEntry(newDocEntry);
-             l = newDocEntry->GetFullLength(); 
          }
       }
       else
       {
          // VR = "SQ"
-         l = newDocEntry->GetReadLength();            
+         unsigned long l = newDocEntry->GetReadLength();            
          if ( l != 0 ) // don't mess the delim_mode for zero-length sequence
          {
             if ( l == 0xffffffff )
@@ -1519,9 +1531,9 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
 
          if ( l != 0 )
          {  // Don't try to parse zero-length sequences
-            (void)ParseSQ( newSeqEntry, 
-                           newDocEntry->GetOffset(),
-                           l, delim_mode);
+            ParseSQ( newSeqEntry, 
+                     newDocEntry->GetOffset(),
+                     l, delim_mode);
          }
          set->AddEntry( newSeqEntry );
          if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
@@ -1531,14 +1543,13 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
       }
       delete newDocEntry;
    }
-   return l; // Probably useless 
 }
 
 /**
  * \brief   Parses a Sequence ( SeqEntry after SeqEntry)
  * @return  parsed length for this level
  */ 
-long gdcmDocument::ParseSQ( gdcmSeqEntry* seqEntry,
+void gdcmDocument::ParseSQ( gdcmSeqEntry* seqEntry,
                             long offset, long l_max, bool delim_mode)
 {
    int SQItemNumber = 0;
@@ -1583,7 +1594,7 @@ long gdcmDocument::ParseSQ( gdcmSeqEntry* seqEntry,
          dlm_mod = false;
       }
    
-      (void)ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
+      ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
       
       seqEntry->AddEntry( itemSQ, SQItemNumber ); 
       SQItemNumber++;
@@ -1592,9 +1603,6 @@ long gdcmDocument::ParseSQ( gdcmSeqEntry* seqEntry,
          break;
       }
    }
-
-   int lgth = ftell(Fp) - offset;
-   return lgth;
 }
 
 /**
@@ -2829,14 +2837,6 @@ void gdcmDocument::Parse7FE0 ()
       return;
    }
       
-   if (   IsImplicitVRLittleEndianTransferSyntax()
-       || IsExplicitVRLittleEndianTransferSyntax()
-       || IsExplicitVRBigEndianTransferSyntax() /// \todo 1.2.2 ??? A verifier !
-       || IsDeflatedExplicitVRLittleEndianTransferSyntax() )
-   {
-      return;
-   }
-
    // Encoded pixel data: for the time being we are only concerned with
    // Jpeg or RLE Pixel data encodings.
    // As stated in ps-3.3, 8.2:

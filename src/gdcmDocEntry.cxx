@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/10/06 13:12:42 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -209,7 +209,8 @@ void gdcmDocEntry::Write(FILE* fp, FileType filetype)
 
 /**
  * \ingroup gdcmDocEntry
- * \brief   Gets the full length of the elementary DocEntry (not only value length)
+ * \brief   Gets the full length of the elementary DocEntry (not only value
+ *          length) depending on the VR.
  */
 uint32_t gdcmDocEntry::GetFullLength()
 {
