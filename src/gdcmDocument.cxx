@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 17:10:15 $
-  Version:   $Revision: 1.184 $
+  Date:      $Date: 2005/01/12 19:49:34 $
+  Version:   $Revision: 1.185 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1499,7 +1499,6 @@ void Document::LoadDocEntry(DocEntry *entry)
 void Document::FindDocEntryLength( DocEntry *entry )
    throw ( FormatError )
 {
-   uint16_t element = entry->GetElement();
    std::string  vr  = entry->GetVR();
    uint16_t length16;       
    
