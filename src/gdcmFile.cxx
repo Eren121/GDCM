@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 12:54:00 $
-  Version:   $Revision: 1.216 $
+  Date:      $Date: 2005/02/07 15:07:42 $
+  Version:   $Revision: 1.217 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1385,39 +1385,7 @@ bool File::Write(std::string fileName, FileType filetype)
       }
    }
 
-
-#ifdef GDCM_WORDS_BIGENDIAN
-   // Super Super hack that will make gdcm a BOMB ! but should
-   // Fix temporarily the dashboard
-   BinEntry *b = GetBinEntry(GrPixel,NumPixel);
-   if ( GetPixelSize() ==  16 )
-   {
-      uint16_t *im16 = (uint16_t *)b->GetBinArea();
-      int lgth = b->GetLength();
-      for( int i = 0; i < lgth / 2; i++ )
-      {
-         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
-      }
-   }
-#endif //GDCM_WORDS_BIGENDIAN
-
-
    Document::WriteContent(fp, filetype);
-
-
-#ifdef GDCM_WORDS_BIGENDIAN
-   // Flip back the pixel ... I told you this is a hack
-   if ( GetPixelSize() ==  16 )
-   {
-      uint16_t *im16 = (uint16_t*)b->GetBinArea();
-      int lgth = b->GetLength();
-      for( int i = 0; i < lgth / 2; i++ )
-      {
-         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
-      }
-   }
-#endif //GDCM_WORDS_BIGENDIAN
-
 
    fp->close();
    delete fp;
