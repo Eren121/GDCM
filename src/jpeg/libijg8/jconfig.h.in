@@ -58,3 +58,8 @@ typedef unsigned char boolean;
 #undef PROGRESS_REPORT
 
 #endif /* JPEG_CJPEG_DJPEG */
+
+
+/* GDCM stuff */
+
+#include "@BITS_TYPE_JPEG_MANGLE_NAME@"
