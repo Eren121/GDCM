@@ -12,6 +12,43 @@ Comments:
 
 
 -----------------------------------------------------------------------------
+Description: Add kwsys as a subdir somewhere in gdcm
+Date: 2004 Oct 8
+Attributed: Mathieu
+Details:
+Comments:
+-----------------------------------------------------------------------------
+Description: ljpeg
+Date: 2004 Oct 8
+Attributed: Mathieu
+Details:
+Comments: ljpeg was rip from medcon and not the official one. medcon tried to
+optimised function using MACRO (doh!), so it make its very unreadable and very
+hard to fix warnings. Should go back to official source, copy proper copyright
+and fix warnings on dashboard
+-----------------------------------------------------------------------------
+Description: Extent reading support
+Date: 2004 Oct 8
+Attributed: Mathieu
+Details:
+Comments: All ITK/VTK readers support selecting extent. gdcm should support selecting
+extent before being inserted into ITK
+-----------------------------------------------------------------------------
+Description: Generate new UID each time we write DICOM
+Date: 2004 Oct 8
+Attributed: Mathieu
+Details:
+Comments: According to DICOM ref a new UID should be created each we write a
+DICOM images. I guess it should be an option so that we can still use md5sum to
+check dicom file. The proposed way was:
+http://www.creatis.insa-lyon.fr/pipermail/dcmlib/2004-September/000611.html
+
+Bah, comme Win32 pose encore pb:
+  echo "gdcm" | od -b
+  0000000 147 144 143 155 012
+et si on prenait:
+ radical + 147.144.143.155 + IP + time()
+
 -----------------------------------------------------------------------------
 Description: vtk/vtkGdcmReader doesn't positionate the normal to the image
 Date: 2004 Oct 1
@@ -83,13 +120,15 @@ Description: fix definitively the memory leaks problems.
 Date: 2004 Sep 24
 Attributed:
 Details:
-Comments:
+Comments: There is a nightly dashboard that run valgrind every night
+(zorglub | GDCM-Linux-g++)
 -----------------------------------------------------------------------------
 Description: test gdcm on a big endian OS.
 Date: 2004 Sep 24
 Attributed:
 Details:
-Comments:
+Comments: There is a nightly dashboard that run on MacOSX each nite
+(midworld.kitwarein | GDCM-DarwinG5-g++ )
 -----------------------------------------------------------------------------
 Description: More tests !
 Date: 2004 Sep 24
@@ -103,10 +142,14 @@ Comments:
 Description: revoir la gestion des resources, win32 permet d'inclure des
    fichiers texte (=dicomV3.dic) dans une dll ou quelquechose du genre.
 Date: 2004 Sep 24
-Attributed:
+Attributed: Mathieu
 Details:
 Comments:
  * Frog: no comprendo !? De plus est-ce portable ?
+ * To improve load time it could be usefull to have the dictionary directly in
+ 'c++' code or in a more binary format.
+ * This will also solve some issues where /dummy/ user did nor set
+ GDCM_DICT_PATH properly neither 'make install'
 -----------------------------------------------------------------------------
 Description: Convert the C-like IO to C++ IO:
 Date: 2004 Jul 30
@@ -121,6 +164,9 @@ Comments:
    build or pass the proper FILE* to jpeg libs ?
  * Binary IO references are available at
    http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
+ * The internal API should be rewritten so that gdcm speaking to jpeg lib is
+   done with stream/string and not directly opened FILE*
+ * No stdio.h anymore anywhere tolerated !
 -----------------------------------------------------------------------------
 Description: generate methods based on VM.
 Date: 2004 Jul 30
@@ -142,6 +188,7 @@ Comments:
      two tags=(group, element) can share the same name].
      What should the wrapper do in such a case !?
  * Frog: what does VM stand for ?
+ * VM = Value Multiplicity
 -----------------------------------------------------------------------------
 Description: Add information on supported imagers (constructor/model)
 Date: 2004 9 7
@@ -226,14 +273,4 @@ Comments:
       a.SetPubValueByName("Study Date", "");
       a.write(output);
    }
------------------------------------------------------------------------------
-* Add kwsys as a subdir somewhere in gdcm ( assigned to: Mathieu ).
------------------------------------------------------------------------------
-* ljpeg: ljpeg was rip from medcon and not the official one. medcon tried to
-optimised function using MACRO (doh!), so it make its very unreadable and very
-hard to fix warnings. Should go back to official source, copy proper copyright
-and fix warnings on dashboard ( assigned to: Mathieu ).
------------------------------------------------------------------------------
-* All ITK/VTK readers support selecting extent. gdcm should support selecting
-extent before being inserted into ITK ( assigned to: Mathieu ).
 -----------------------------------------------------------------------------
