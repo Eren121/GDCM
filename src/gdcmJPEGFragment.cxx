@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:03:58 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/25 15:37:51 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,6 +82,7 @@ void JPEGFragment::Print( std::ostream &os, std::string indent )
  * @param fp ifstream to write to
  * @param buffer     output (data decompress)
  * @param nBits      8/12 or 16 bits jpeg
+ * @param statesuspension state suspension
  */
 void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
                                                 uint8_t *buffer, int nBits, 
