@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 10:51:39 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/02/10 14:23:18 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -181,7 +181,7 @@ int WriteSimple(Image &img)
                {
                   *(tmp+1) = j/256;
                }
-               tmp += img.components/8;
+               tmp += img.componentSize/8;
             }
          }
       }
@@ -286,9 +286,8 @@ int WriteSimple(Image &img)
    }
 
    // Test the data's content
-   if (int res = memcmp(imageData, imageDataWritten, size) !=0)
+   if ( memcmp(imageData, imageDataWritten, size) !=0 )
    {
-      (void)res;
       std::cout << "Failed" << std::endl
                 << "        Pixel differ (as expanded in memory)." << std::endl;
       delete fileToBuild;

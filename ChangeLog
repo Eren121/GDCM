@@ -1,3 +1,6 @@
+2005-02-10 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Testing/TestWriteSimple.cxx, TestSequence.cxx : fix memroy leaks
+
 2005-02-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFileHelper.[h|cxx] : now correctly set the VR of the datas when 
      writting the file

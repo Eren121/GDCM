@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSequence.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 12:53:59 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/02/10 14:23:18 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -173,6 +173,7 @@ gdcm::File *WriteImage(gdcm::File *file,const std::string &fileName)
 
    size_t size = 256 * 256 * 1;
    unsigned char *imageData = new unsigned char[size];
+   memset(imageData,0,size);
 
 // Write the image
    gdcm::FileHelper *hlp = new gdcm::FileHelper(file);
@@ -321,7 +322,7 @@ int TestSequence(int argc, char *argv[])
    }
    ClearList(fileList);
 
-   std::cout<<"3...OK";
+   std::cout<<"3...OK\n";
 
    return 0;
 }

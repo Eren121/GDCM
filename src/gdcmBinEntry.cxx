@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 04:28:38 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/02/10 14:23:18 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ BinEntry::BinEntry(DocEntry *e)
 {
    Copy(e);
 
-   BinArea = 0; // let's be carefull !
+   BinArea = 0;
    SelfArea = true;
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 10:55:26 $
-  Version:   $Revision: 1.221 $
+  Date:      $Date: 2005/02/10 14:23:18 $
+  Version:   $Revision: 1.222 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -367,7 +367,8 @@ int File::GetZSize()
   */
 float File::GetXSpacing()
 {
-   float xspacing, yspacing;
+   float xspacing = 1.0;
+   float yspacing = 1.0;
    const std::string &strSpacing = GetEntryValue(0x0028,0x0030);
 
    if( strSpacing == GDCM_UNFOUND )
