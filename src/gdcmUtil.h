@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 19:00:39 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/02/11 20:04:08 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,8 +71,6 @@ private:
    static const std::string GDCM_UID;
 };
 
-template <class T> 
-GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const T &val);
 GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint16_t &val);
 GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint32_t &val);
 GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const char *val);

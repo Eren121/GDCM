@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 19:00:39 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/02/11 20:04:08 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -337,7 +337,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
         return true;
         }
 // The ijg has no notion of big endian, therefore always swap the jpeg stream
-#if defined(GDCM_WORDS_BIGENDIAN) && (CMAKE_BITS_IN_JSAMPLE != 8)
+#if (defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)) && (CMAKE_BITS_IN_JSAMPLE != 8)
       uint16_t *buffer16 = (uint16_t*)*buffer;
       uint16_t *pimage16 = (uint16_t*)pImage;
       for(unsigned int i=0;i<rowsize/2;i++)

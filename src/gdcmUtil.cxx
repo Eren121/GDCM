@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 19:12:40 $
-  Version:   $Revision: 1.137 $
+  Date:      $Date: 2005/02/11 20:04:08 $
+  Version:   $Revision: 1.138 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -351,7 +351,7 @@ unsigned int Util::GetCurrentProcessID()
  */
 bool Util::IsCurrentProcessorBigEndian()
 {
-#ifdef GDCM_WORDS_BIGENDIAN
+#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    return true;
 #else
    return false;
@@ -810,24 +810,13 @@ const std::string &Util::GetRootUID()
 
 //-------------------------------------------------------------------------
 /**
- * \brief class for binary write
- * @param os ostream to write to
- * @param val val
- */ 
-template <class T>
-std::ostream &binary_write(std::ostream &os, const T &val)
-{
-   return os.write(reinterpret_cast<const char*>(&val), sizeof val);
-}
-
-/**
  * \brief binary_write binary_write
  * @param os ostream to write to 
  * @param val val
  */ 
 std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 {
-#ifdef GDCM_WORDS_BIGENDIAN
+#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    uint16_t swap;
    swap = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
    return os.write(reinterpret_cast<const char*>(&swap), 2);
@@ -843,7 +832,7 @@ std::ostream &binary_write(std::ostream &os, const uint16_t &val)
  */ 
 std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 {
-#ifdef GDCM_WORDS_BIGENDIAN
+#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    uint32_t swap;
    swap = ( ((val<<24) & 0xff000000) | ((val<<8)  & 0x00ff0000) | 
             ((val>>8)  & 0x0000ff00) | ((val>>24) & 0x000000ff) );
@@ -894,7 +883,7 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
 // This is tricky since we are writting two bytes buffer. Be carefull with little endian
 // vs big endian. Also this other trick is to allocate a small (efficient) buffer that store
 // intermidiate result before writting it.
-#ifdef GDCM_WORDS_BIGENDIAN
+#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    const int BUFFER_SIZE = 4096;
    uint16_t *buffer = new uint16_t[BUFFER_SIZE/2];
    uint16_t *binArea16 = (uint16_t*)val;

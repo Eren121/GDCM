@@ -1,16 +1,6 @@
 PROJECT(GDCM)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
 
-#MESSAGE("MATHIEU: ${CMAKE_VERSION_RELEASE}")
-#MESSAGE("MATHIEU: ${CMAKE_VERSION}")
-#MESSAGE("MATHIEU: ${CMAKE_CACHE_RELEASE_VERSION}")
-#IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} EQUAL 2.0)
-#  IF(${CMAKE_CACHE_RELEASE_VERSION} EQUAL "patch 5")
-#    MESSAGE("MAHTIEU FOO")
-#  ENDIF(${CMAKE_CACHE_RELEASE_VERSION} EQUAL "patch 5")
-#ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} EQUAL 2.0)
-
-
 #-----------------------------------------------------------------------------
 # GDCM version number, usefull for packaging and doxygen doc:
 SET(GDCM_MAJOR_VERSION 0)
@@ -151,6 +141,10 @@ CHECK_INCLUDE_FILE_CONCAT("net/if.h"       CMAKE_HAVE_NET_IF_H)
 CHECK_INCLUDE_FILE_CONCAT("netinet/in.h"   CMAKE_HAVE_NETINET_IN_H)
 CHECK_INCLUDE_FILE_CONCAT("net/if_dl.h"    CMAKE_HAVE_NET_IF_DL_H)
 CHECK_INCLUDE_FILE_CONCAT("net/if_arp.h"   CMAKE_HAVE_NET_IF_ARP_H)
+
+#-----------------------------------------------------------------------------
+# Force Big Endian emulation on little endian:
+OPTION(GDCM_FORCE_BIGENDIAN_EMULATION "Force Big Endian Emulation." OFF)
 
 CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
                ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE)

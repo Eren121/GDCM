@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 19:19:05 $
-  Version:   $Revision: 1.228 $
+  Date:      $Date: 2005/02/11 20:04:08 $
+  Version:   $Revision: 1.229 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,15 +31,6 @@
 #include <vector>
 #include <iomanip>
 #include <fstream>
-
-// For nthos:
-#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__) 
-   #include <winsock.h>
-#endif
-
-#ifdef CMAKE_HAVE_NETINET_IN_H
-   #include <netinet/in.h>
-#endif
 
 namespace gdcm 
 {
@@ -1728,9 +1719,7 @@ bool Document::CheckSwap()
     
    // First, compare HostByteOrder and NetworkByteOrder in order to
    // determine if we shall need to swap bytes (i.e. the Endian type).
-
-   uint32_t  x = 4;  // x : for ntohs
-   bool net2host = (x == ntohs(x));// true when HostByteOrder is the same as NetworkByteOrder
+   bool net2host = Util::IsCurrentProcessorBigEndian();
          
    // The easiest case is the one of a 'true' DICOM header, we just have
    // to look for the string "DICM" inside the file preamble.

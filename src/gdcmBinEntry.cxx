@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 19:00:39 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/02/11 20:04:07 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,7 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    ///        to write image with Big Endian Transfert Syntax, 
    ///        and we are working on Little Endian Processor
 
-#ifdef GDCM_WORDS_BIGENDIAN
+#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
       /// \todo FIXME Right now, we only care of Pixels element
       ///       we should deal with *all* the BinEntries
       ///       well not really since we are not interpreting values read...
