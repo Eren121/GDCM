@@ -1279,6 +1279,22 @@ int gdcmHeader::SetPubElValByName(string content, string TagName) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief   Accesses an existing ElValue in the PubElVals of this instance
+ *          through it's (group, element) and modifies it's length with
+ *          the given value.
+ *		NOT FOR BOZOs !
+ * @param   contents new length to substitute with
+ * @param   group   group of the ElVal to modify
+ * @param   element element of the ElVal to modify
+ */
+int gdcmHeader::SetPubElValLengthByNumber(guint32 lgr, guint16 group,
+                                    guint16 element)
+{
+	return (  PubElVals.SetElValueLengthByNumber (lgr, group, element) );
+}
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Accesses an existing ElValue in the ShaElVals of this instance
  *          through it's (group, element) and modifies it's content with
  *          the given value.
@@ -1291,6 +1307,9 @@ int gdcmHeader::SetShaElValByNumber(string content,
 {
    return (  ShaElVals.SetElValueByNumber (content, group, element) );
 }
+
+
+
 
 /**
  * \ingroup gdcmHeader

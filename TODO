@@ -23,7 +23,7 @@
 * GetPubElValByNumber doit faire la difference entre chaine vide 
   et chaine pas touve''. Eventuellement raiser une exception ?
 * gdcmHeader::LoadElements only loads the element whose length is
-  below the specified size. When accessing the value of such a element
+  below the specified size. When accessing the value of such an element
   the content is unfound ! Find a decent way of loading the value on
   explicit demand.
 * fournir une method qui ne fait que lire les elements passes en arguments

@@ -159,6 +159,9 @@ public:
    int SetPubElValByNumber(string content, guint16 group, guint16 element);
    int SetShaElValByName(string content, string ShadowTagName);
    int SetShaElValByNumber(string content, guint16 group, guint16 element);
+   
+   int gdcmHeader::SetPubElValLengthByNumber(guint32 lgr, guint16 group,
+                                    guint16 element);
 
    ElValSet GetPubElVals() { return(PubElVals); }
 };
