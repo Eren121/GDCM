@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 22:40:23 $
-  Version:   $Revision: 1.96 $
+  Date:      $Date: 2005/01/15 22:44:11 $
+  Version:   $Revision: 1.97 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,8 @@
 #ifdef CMAKE_HAVE_NET_IF_DL_H
 #include <net/if_dl.h>
 #endif
-#if defined(CMAKE_HAVE_NET_IF_ARP_H) && defined(__sun)
+#ifdef __sun
+//#if defined(CMAKE_HAVE_NET_IF_ARP_H) && defined(__sun)
 // This is absolutely necesseray on SunOS
 #include <net/if_arp.h>
 #endif
