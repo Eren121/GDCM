@@ -1,3 +1,6 @@
+2004-05-04 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+     * vtk/vtkGdcmReader.cxx : bug fix in the setting of file name
+     
 2004-05-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
      * vtk/vtkGdcmReader.cxx : bug fix when loading a list of files using the
        file prefix (SetFilePrefix)

@@ -123,7 +123,6 @@ void vtkGdcmReader::SetFileName(const char *name)
    // (see vtkGdcmReader::AddFileName), we additionaly need to purge
    // this list when we manually positionate the filename.
    vtkDebugMacro("Clearing all files given with AddFileName");
-   this->SetFilePattern("");
    this->FileNameList.clear();
    this->Modified();
 }
