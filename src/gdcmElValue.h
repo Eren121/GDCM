@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.7 2003/07/23 08:43:03 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.8 2003/10/09 13:22:54 jpr Exp $
 
 #ifndef GDCMELVALUE_H
 #define GDCMELVALUE_H
@@ -26,8 +26,8 @@ private:
 public:
    std::string  value;
    void * voidArea;  // unsecure memory area to hold 'non string' values 
-                      // (ie : Lookup Tables, overlays)
-   size_t Offset;     // Offset from the begining of file for direct user access
+                     // (ie : Lookup Tables, overlays)
+   size_t Offset;    // Offset from the begining of file for direct user access
 	
    gdcmElValue(gdcmDictEntry*);
    void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.95 2003/10/06 13:37:25 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.96 2003/10/09 13:22:54 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -614,8 +614,12 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
       FoundLength = 0;
       // Sorry for the patch!  
       // XMedCom did the trick to read some nasty GE images ...
-    if (FoundLength == 13) 
-      FoundLength =10;
+    if (FoundLength == 13)
+      // The following 'if' will be removed when there is no more
+      // images on Creatis HD with a 13 length for Manufacturer...
+      if ( (ElVal->GetGroup() != 0x0008) || (ElVal->GetElem() )
+      // end of remove area
+         FoundLength =10;
 
    ElVal->SetLength(FoundLength);
 }
@@ -1101,9 +1105,12 @@ int gdcmHeader::ReplaceOrCreateByNumber(std::string Value,
 	// on l'ajoute au ElValSet
 	// on affecte une valeur a cette ElValue a l'interieur du ElValSet
 	// --> devrait pouvoir etre fait + simplement ???
-	
-   gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
-   PubElValSet.Add(nvElValue);	
+   if (CheckIfExistByNumber(Group, Elem) == 0) {
+      gdcmElValue* a =NewElValueByNumber(Group, Elem);
+      if (a == NULL) 
+         return 0;
+      PubElValSet.Add(a);
+   }   
    PubElValSet.SetElValueByNumber(Value, Group, Elem);
    return(1);
 }   
@@ -1752,6 +1759,33 @@ void gdcmHeader::PrintPubDict(std::ostream & os) {
   * @return
   */ 
 int gdcmHeader::Write(FILE * fp, FileType type) {
+
+
+   // TODO : move the following lines (and a lot of others)
+   // to a future function CheckAndCorrectHeader
+
+   if (type == ImplicitVR) {
+      std::string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
+      ReplaceOrCreateByNumber(implicitVRTransfertSyntax,0x0002, 0x0010);
+      
+      //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
+      //      values with a VR of UI shall be padded with a single trailing null
+      //      Dans le cas suivant on doit pader manuellement avec un 0
+      
+      PubElValSet.SetElValueLengthByNumber(18, 0x0002, 0x0010);
+   } 
+
+   if (type == ExplicitVR) {
+      std::string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
+      ReplaceOrCreateByNumber(explicitVRTransfertSyntax,0x0002, 0x0010);
+      
+      //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
+      //      values with a VR of UI shall be padded with a single trailing null
+      //      Dans le cas suivant on doit pader manuellement avec un 0
+      
+      PubElValSet.SetElValueLengthByNumber(20, 0x0002, 0x0010);
+   }
+
    return PubElValSet.Write(fp, type);
 }
 

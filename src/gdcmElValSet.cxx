@@ -167,7 +167,13 @@ int gdcmElValSet::SetElValueByNumber(std::string content,
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHt.count(key))
       return 0;
-   tagHt[key]->SetValue(content);	
+   int l = content.length();
+   if(l%2) {  // Odd length are padded with a space (020H).
+      l++;
+      content = content + '\0';
+   }
+   tagHt[key]->SetValue(content);
+
    std::string vr = tagHt[key]->GetVR();
    guint32 lgr;
 
@@ -176,8 +182,11 @@ int gdcmElValSet::SetElValueByNumber(std::string content,
    else if( (vr == "UL") || (vr == "SL") )
       lgr = 4;
    else
-      lgr = content.length();	   
+      lgr = l;	   
    tagHt[key]->SetLength(lgr); 
+
+	
+
    return 1;
 }
 
@@ -191,7 +200,16 @@ int gdcmElValSet::SetElValueByNumber(std::string content,
 int gdcmElValSet::SetElValueByName(std::string content, std::string TagName) {
    if ( ! NameHt.count(TagName))
       return 0;
+   int l = content.length();
+   if(l%2) {  // Odd length are padded with a space (020H).
+      l++;
+      // Well. I know that '/0' is NOT a space
+      // but it doesn't work with a space. 
+      // Use hexedit and see 0002|0010 value (Transfer Syntax UID)
+      content = content + '\0';
+   }
    NameHt[TagName]->SetValue(content);
+
    std::string vr = NameHt[TagName]->GetVR();
    guint32 lgr;
 
@@ -256,6 +274,7 @@ int gdcmElValSet::SetElValueLengthByNumber(guint32 length,
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHt.count(key))
       return 0;
+   if (length%2) length++; // length must be even
    tagHt[key]->SetLength(length);	 
    return 1 ;		
 }
@@ -269,6 +288,7 @@ int gdcmElValSet::SetElValueLengthByNumber(guint32 length,
 int gdcmElValSet::SetElValueLengthByName(guint32 length, std::string TagName) {
    if ( ! NameHt.count(TagName))
       return 0;
+   if (length%2) length++; // length must be even
    NameHt.find(TagName)->second->SetLength(length);	 
    return 1 ;		
 }
@@ -384,7 +404,7 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    void *ptr;
 
    // Tout ceci ne marche QUE parce qu'on est sur un proc Little Endian 
-   // restent à tester les echecs en écriture (apres chaque fwrite)
+   // restent a tester les echecs en ecriture (apres chaque fwrite)
 
    for (TagElValueHT::iterator tag2=tagHt.begin();
         tag2 != tagHt.end();
@@ -463,28 +483,13 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
  */
 int gdcmElValSet::Write(FILE * _fp, FileType type) {
 
-   if (type == ImplicitVR) {
-      std::string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
-      SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);
-      
-      //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
-      //      values with a VR of UI shall be padded with a single trailing null
-      //      Dans le cas suivant on doit pader manuellement avec un 0
-      
-      SetElValueLengthByNumber(18, 0x0002, 0x0010);
-   }  
    	// Question :
-	// Comment pourrait-on savoir si le DcmHeader vient d'un fichier DicomV3 ou non ,
+	// Comment pourrait-on savoir si le DcmHeader vient d'un fichier DicomV3 ou non
 	// (FileType est un champ de gdcmHeader ...)
 	// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
-	// no way
-	
-   if (type == ExplicitVR) {
-      std::string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
-      SetElValueByNumber(explicitVRTransfertSyntax, 0x0002, 0x0010);
-      // See above comment 
-      SetElValueLengthByNumber(20, 0x0002, 0x0010);
-   }
+	// no way 
+        // a moins de se livrer a un tres complique ajout des champs manquants.
+        // faire un CheckAndCorrectHeader (?)
 
    if ( (type == ImplicitVR) || (type == ExplicitVR) )
       UpdateGroupLength(false,type);
