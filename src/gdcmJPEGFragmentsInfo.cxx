@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 03:22:25 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/31 04:00:04 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,27 +85,6 @@ size_t JPEGFragmentsInfo::GetFragmentsLength()
       totalLength += (*it)->GetLength();
    }
    return totalLength;
-}
-
-/**
- * \brief Read the all the JPEG Fragment into the input buffer
- */
-void JPEGFragmentsInfo::ReadAllFragments(std::ifstream *fp, JOCTET *buffer )
-{
-   JOCTET *p = buffer;
-
-   // Loop on the fragment[s]
-   JPEGFragmentsList::const_iterator it;
-   for( it  = Fragments.begin();
-        it != Fragments.end();
-        ++it )
-   {
-      fp->seekg( (*it)->GetOffset(), std::ios::beg);
-      size_t len = (*it)->GetLength();
-      fp->read((char *)p,len);
-      p += len;
-   }
-
 }
 
 // to avoid warnings

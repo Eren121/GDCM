@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 03:22:25 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/31 04:00:04 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -204,10 +204,11 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @param fp pointer to an already open file descriptor 
  *                      8 significant bits per pixel
  * @param image_buffer to receive uncompressed pixels
+ * @param statesuspension Suspension State basically it should be 3 otherwise more complex to handle
  * @return 1 on success, 0 on error
  */
 void *SampBuffer; 
-bool JPEGFragment::gdcm_read_JPEG_file (std::ifstream* fp, void* image_buffer , int& statesuspension)
+bool JPEGFragment::ReadJPEGFile (std::ifstream* fp, void* image_buffer , int& statesuspension)
 {
    pImage = (uint8_t*)image_buffer;
    // This struct contains the JPEG decompression parameters and pointers to

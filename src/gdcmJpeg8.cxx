@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg8.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 03:22:26 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/31 04:00:05 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@ extern "C" {
 }
 
 #define gdcm_write_JPEG_file  gdcm_write_JPEG_file8
-#define gdcm_read_JPEG_file   gdcm_read_JPEG_file8
+#define ReadJPEGFile   ReadJPEGFile8
 #define SampBuffer SampBuffer8
 
 #include "gdcmJpeg.cxx"

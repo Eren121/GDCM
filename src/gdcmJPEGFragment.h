@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 03:22:25 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/31 04:00:04 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,8 +27,6 @@
 
 namespace gdcm 
 {
-#define JOCTET uint8_t
-
 /**
  * \brief Utility class for summerizing the informations of a JPEG
  *        fragment of an "Encapsulated JPEG Compressed Image".
@@ -47,9 +45,9 @@ public:
    void Print( std::ostream &os = std::cout, std::string indent = "" );
    void DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int & statesuspension);
 
-   bool gdcm_read_JPEG_file8 (std::ifstream* fp, void* image_buffer, int & statesuspension );
-   bool gdcm_read_JPEG_file12 (std::ifstream* fp, void* image_buffer, int & statesuspension );
-   bool gdcm_read_JPEG_file16 (std::ifstream* fp, void* image_buffer, int & statesuspension );
+   bool ReadJPEGFile8 (std::ifstream* fp, void* image_buffer, int & statesuspension );
+   bool ReadJPEGFile12 (std::ifstream* fp, void* image_buffer, int & statesuspension );
+   bool ReadJPEGFile16 (std::ifstream* fp, void* image_buffer, int & statesuspension );
 
    void SetLength(uint32_t length) { Length = length; };
    uint32_t GetLength() { return Length;};

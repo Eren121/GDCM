@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 03:22:26 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/31 04:00:05 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,21 +96,21 @@ void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream *fp )
       uint8_t b0, b1, b2;
 
       fp->read( (char*)&b0, 1);
-      if ( fp->fail() || fp->eof() )//Fp->gcount() == 1
+      if ( fp->fail() || fp->eof() )
       {
          throw FormatError( "PixelReadConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound first block" );
       }
 
       fp->read( (char*)&b1, 1 );
-      if ( fp->fail() || fp->eof())//Fp->gcount() == 1
+      if ( fp->fail() || fp->eof())
       {
          throw FormatError( "PixelReadConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
       }
 
       fp->read( (char*)&b2, 1 );
-      if ( fp->fail() || fp->eof())//Fp->gcount() == 1
+      if ( fp->fail() || fp->eof())
       {
          throw FormatError( "PixelReadConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
