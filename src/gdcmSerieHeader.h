@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 16:56:49 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/30 17:22:55 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,44 +19,54 @@
 #ifndef GDCMSERIEHEADER_H
 #define GDCMSERIEHEADER_H
 
-#include "gdcmCommon.h"
+#include "gdcmCommon.h" 
 #include <list>
-
+#include <map>
 namespace gdcm 
 {
 class File;
+
 //-----------------------------------------------------------------------------
 /**
  * \brief  
  * - This class should be used for a stack of 2D dicom images.
+ *   It allows to explore (recursively or not) a directory and 
+ *   makes a set of 'Coherent Files' list (coherent : same Serie UID)
+ *   It allows to sort any of the Coherent File list on the image postion
  */
 class GDCM_EXPORT SerieHeader 
 {
 public:
    typedef std::list<File* > GdcmFileList;
+   typedef std::map<std::string, GdcmFileList *> CoherentFileListmap;
 
     SerieHeader();
     ~SerieHeader();
+ void Print();
 
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
    void SetDirectory(std::string const &dir, bool recursive=false);
-   void OrderGdcmFileList();
+   void OrderGdcmFileList(GdcmFileList *CoherentGdcmFileList);
    
-   /// \brief Gets the *coherent* File List
-   /// @return the *coherent* File List
-   /// Caller must call OrderGdcmFileList first
-   const GdcmFileList &GetGdcmFileList() { return CoherentGdcmFileList; }
+   /// \brief Gets the FIRST *coherent* File List.
+   ///        Deprecated; kept not to break the API
+   /// \note Caller must call OrderGdcmFileList first
+   /// @return the (first) *coherent* File List
+   const GdcmFileList &GetGdcmFileList() { return
+                       *CoherentGdcmFileListHT.begin()->second; }
+  
+   GdcmFileList *GetFirstCoherentFileList();
+   GdcmFileList *GetNextCoherentFileList();
+   GdcmFileList *GetCoherentFileList(std::string SerieUID);
 
 private:
-   bool ImagePositionPatientOrdering();
-   bool ImageNumberOrdering();
-   bool FileNameOrdering();
+   bool ImagePositionPatientOrdering(GdcmFileList *CoherentGdcmFileList);
+   bool ImageNumberOrdering(GdcmFileList *CoherentGdcmFileList);
+   bool FileNameOrdering(GdcmFileList *CoherentGdcmFileList);
    
-   GdcmFileList CoherentGdcmFileList;
-   /// Ref to the current Serie Instance UID to avoid mixing two series
-   /// within the same directory
-   std::string    CurrentSerieUID;
+   CoherentFileListmap CoherentGdcmFileListHT;
+   CoherentFileListmap::iterator ItListHt;
 };
 
 } // end namespace gdcm
