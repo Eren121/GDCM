@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:39:49 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/01/20 17:15:53 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,6 +124,15 @@ enum FileType {
    ImplicitVR,
    ACR,
    ACR_LIBIDO
+};
+
+enum DicomDirType {
+   DD_UNKNOWN = 0,
+   DD_META,
+   DD_PATIENT,
+   DD_STUDY,
+   DD_SERIE,
+   DD_IMAGE
 };
 } //namespace gdcm
 //-----------------------------------------------------------------------------

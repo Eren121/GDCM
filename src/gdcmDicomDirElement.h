@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:40:14 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/01/20 17:15:54 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@ namespace gdcm
 {
 
 //-----------------------------------------------------------------------------
-typedef struct
+GDCM_EXPORT typedef struct
 {
    /// DicomGroup number
    unsigned short int Group;
@@ -102,7 +102,7 @@ public:
       { return DicomDirImageList; };
 
    // Public method to add an element
-   bool AddNewEntry(std::string const &type, Element const &elem);
+   bool AddNewEntry(DicomDirType type, Element const &elem);
 
 private:
    /// Elements chained list, related to the MetaElements of DICOMDIR

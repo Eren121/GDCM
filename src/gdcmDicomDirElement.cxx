@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:40:14 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/20 17:15:54 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,18 +47,34 @@ DicomDirElement::DicomDirElement()
    else
    {
       char buff[1024];
-      std::string type;
+      std::string strType;
       Element elem;
+      DicomDirType type;
 
       while (!from.eof())
       {
          from >> std::ws;
          from.getline(buff, 1024, ' ');
-         type = buff;
+         strType = buff;
 
-         if( type == "metaElem"  || type == "patientElem" || 
-             type == "studyElem" || type == "serieElem"   || 
-             type == "imageElem" )
+         if( strType == "metaElem" )
+            type = DD_META;
+         else if( strType == "patientElem" )
+            type = DD_PATIENT;
+         else if( strType == "studyElem" )
+            type = DD_STUDY;
+         else if( strType == "serieElem" )
+            type = DD_SERIE;
+         else if( strType == "imageElem" )
+            type = DD_IMAGE;
+         else
+         {
+            gdcmVerboseMacro("Unknown type found in the file : "
+                             <<filename.c_str());
+            type = DD_UNKNOWN;
+         }
+
+         if( type!=DD_UNKNOWN )
          {
             from >> std::hex >> elem.Group >> elem.Elem;
 
@@ -147,32 +163,28 @@ void DicomDirElement::Print(std::ostream &os)
  * @param type type
  * @param elem elem
  */
-bool DicomDirElement::AddNewEntry(std::string const &type, 
+bool DicomDirElement::AddNewEntry(DicomDirType type, 
                                   Element const &elem)
 {
-   if( type == "metaElem" )
+   switch( type )
    {
-      DicomDirMetaList.push_back(elem);
-   }
-   else if( type == "patientElem" )
-   {
-      DicomDirPatientList.push_back(elem);
-   }
-   else if( type == "studyElem" )
-   {
-      DicomDirStudyList.push_back(elem);
-   }
-   else if( type == "serieElem" )
-   {
-      DicomDirSerieList.push_back(elem);
-   }
-   else if( type == "imageElem" )
-   {
-      DicomDirImageList.push_back(elem);
-   }
-   else
-   {
-     return false;
+      case DD_META :
+         DicomDirMetaList.push_back(elem);
+         break;
+      case DD_PATIENT :
+         DicomDirPatientList.push_back(elem);
+         break;
+      case DD_STUDY :
+         DicomDirStudyList.push_back(elem);
+         break;
+      case DD_SERIE :
+         DicomDirSerieList.push_back(elem);
+         break;
+      case DD_IMAGE :
+         DicomDirImageList.push_back(elem);
+         break;
+      default :
+         return false;
    }
    return true;
 }
