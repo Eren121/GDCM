@@ -15,6 +15,7 @@ SET(TEST_SOURCES
   TestUtil.cxx
   TestDicomString.cxx
   TestDict.cxx
+  TestDirList.cxx
 )
 
 # add tests that require data

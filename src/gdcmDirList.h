@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 22:09:55 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/14 21:52:06 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,8 @@
 #include "gdcmCommon.h"
 
 #include <string>
-#include <list>
+#include <vector>
+#include <iostream>
 
 namespace gdcm 
 {
@@ -36,13 +37,15 @@ namespace gdcm
 // NOTE: Due to a VC6 'feature' we can not export a std::list in a dll, 
 // so GDCM_EXPORT keyword was removed for this class only
 
-class DirList: public std::list<std::string>
+class DirList : public std::vector<std::string>
 {
 public :
    DirList(std::string const &dirName, bool recursive=false);
    virtual ~DirList();
 
    std::string const &GetDirName() const;
+
+   void Print(std::ostream &os = std::cout);
 
    /// Character '\' 
    static const char SEPARATOR_X;

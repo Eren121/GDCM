@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 22:09:55 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/14 21:52:06 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #include "gdcmDirList.h"
 #include "gdcmUtil.h"
 
-#include <iostream>
+#include <iterator>
 
 #ifdef _MSC_VER
    #include <windows.h> 
@@ -42,8 +42,7 @@ namespace gdcm
 DirList::DirList(std::string const &dirName, bool recursive)
 {
    DirName = dirName;
-   Util::NormalizePath(DirName);
-   Explore(DirName, recursive);
+   Explore(dirName, recursive);
 }
 
 /**
@@ -67,6 +66,11 @@ DirList::~DirList()
 std::string const &DirList::GetDirName() const
 {
    return DirName;
+}
+
+void DirList::Print(std::ostream &os)
+{
+   copy(begin(), end(), std::ostream_iterator<std::string>(os, "\n"));
 }
 
 //-----------------------------------------------------------------------------
