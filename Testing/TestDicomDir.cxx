@@ -1,7 +1,7 @@
 #include <iostream>
 #include "gdcm.h"
 #include "gdcmHeaderEntry.h"
-#include "gdcmDICOMDIR.h"
+#include "gdcmDicomDir.h"
 
 #include <fstream>
 #ifdef GDCM_NO_ANSI_STRING_STREAM
