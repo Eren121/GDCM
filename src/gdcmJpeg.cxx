@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 23:30:21 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/02/04 23:36:26 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -173,10 +173,6 @@ bool gdcm_write_JPEG_file (std::ofstream *fp, void *im_buf,
   return true; //???
 }
 
-extern "C" {
-  typedef void(*void_jpeg_common_struct)(jpeg_common_struct*);
-}
-
 //-----------------------------------------------------------------------------
 struct my_error_mgr {
    struct jpeg_error_mgr pub; /* "public" fields */
@@ -188,6 +184,7 @@ typedef struct my_error_mgr* my_error_ptr;
 /*
  * Here's the routine that will replace the standard error_exit method:
  */
+extern "C" {
 METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
    /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
    my_error_ptr myerr = (my_error_ptr) cinfo->err;
@@ -199,7 +196,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
    /* Return control to the setjmp point */
    longjmp(myerr->setjmp_buffer, 1);
 }
-
+}
 //-----------------------------------------------------------------------------
  
  /**
@@ -246,7 +243,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
   // We set up the normal JPEG error routines, then override error_exit.
   
   cinfo.err = jpeg_std_error(&jerr.pub);
-  jerr.pub.error_exit = reinterpret_cast<void_jpeg_common_struct>(my_error_exit);
+  jerr.pub.error_exit = my_error_exit;
   
   // Establish the setjmp return context for my_error_exit to use.
   if (setjmp(jerr.setjmp_buffer))
