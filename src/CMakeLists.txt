@@ -69,14 +69,10 @@ IF(WIN32)
   ENDIF(NOT BORLAND)
 ENDIF(WIN32)
 
-#Need additional library for the MacAddress code in gdcmUtil.cxx
-IF(APPLE)
-  TARGET_LINK_LIBRARIES(gdcm "-framework IOKit" "-framework CoreFoundation")
-ENDIF(APPLE)
-
-# Need nsl to resolve gethostbyname on SunOS-5.8 CC
+# Need nsl to resolve gethostbyname on SunOS-5.8
+# and socket also
 IF(CMAKE_SYSTEM MATCHES "SunOS.*")
-  TARGET_LINK_LIBRARIES(gdcm nsl)
+  TARGET_LINK_LIBRARIES(gdcm socket nsl)
 ENDIF(CMAKE_SYSTEM MATCHES "SunOS.*")
 
 INSTALL_FILES(/include "\\.h$")
