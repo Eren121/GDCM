@@ -1,3 +1,36 @@
+2004-06-14 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+    * Memory leak hunt with the following command:
+      valgrind --leak-check=yes --leak-resolution=high --num-callers=40
+               --show-reachable=yes gdcmTests PrintDocument
+      It looks like many (all?) leaks are due to the STL (or a bad usage
+      of the STL. The lines producing the leaks now have a comment with
+      a "MEMORY LEAK" tag: you can retrieve them with 
+          grep "MEMORY LEAK" src/*
+      Here are two typical examples which I can't help fixing:
+      -----
+          #include <string>
+          int main() {
+             std::string name;
+             char * test = "babo";
+             name = test;    //// <--- valgrind detects 960 bytes lost in
+                             ////   call to std::string::operator=(char const*)
+             name.clear();   //// Doesn't help !
+             return 0;
+          }
+      -----
+          #include <string>
+          #include <iostream>
+          int main() {
+             std::string line;
+             std::cout << "Type a bunch of characters followed by RETURN: ";
+             getline(std::cin, line);   //// <--- valgrind dectects a loss
+                                        //// of 1320 bytes in call to
+                                        /// std::basic_istream<>& std::getline<>
+            return 0;
+          }
+      -----
+
+
 2004-06-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * src/gdcmHeader.[cxx|h]:
       - Predicates on the Transfer syntax (of the form Is[JPEF|RLE]*)

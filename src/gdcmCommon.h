@@ -81,7 +81,7 @@ typedef  int            gint32;
 
 #include <string>
 
-const std::string GDCM_UNFOUND = "gdcm::Unfound";
+const std::string GDCM_UNFOUND = "gdcm::Unfound";   /// MEMORY LEAK
 
 typedef std::string TagKey;
 typedef std::string TagName;

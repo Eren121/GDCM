@@ -72,62 +72,68 @@ typedef  unsigned int guint32;
 
 ////////////////////////////////////////////////////////////////////////////
 %typemap(out) std::list<std::string> * {
-	PyObject* NewItem = (PyObject*)0;
-	PyObject* NewList = PyList_New(0); // The result of this typemap
-	for (std::list<std::string>::iterator NewString = ($1)->begin();
-	     NewString != ($1)->end(); ++NewString) {
-		NewItem = PyString_FromString(NewString->c_str());
-		PyList_Append( NewList, NewItem);
-	}
-	$result = NewList;
+   PyObject* NewItem = (PyObject*)0;
+   PyObject* NewList = PyList_New(0); // The result of this typemap
+
+   for (std::list<std::string>::iterator NewString = ($1)->begin();
+        NewString != ($1)->end();
+        ++NewString)
+   {
+      NewItem = PyString_FromString(NewString->c_str());
+      PyList_Append( NewList, NewItem);
+   }
+   $result = NewList;
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
 %typemap(out) std::map<std::string, std::list<std::string> > * {
-	PyObject* NewDict = PyDict_New(); // The result of this typemap
-	PyObject* NewKey = (PyObject*)0;
-	PyObject* NewVal = (PyObject*)0;
+   PyObject* NewDict = PyDict_New(); // The result of this typemap
+   PyObject* NewKey = (PyObject*)0;
+   PyObject* NewVal = (PyObject*)0;
 
-	for (std::map<std::string, std::list<std::string> >::iterator tag = ($1)->begin();
-	     tag != ($1)->end(); ++tag) {
+   for (std::map<std::string,
+        std::list<std::string> >::iterator tag = ($1)->begin();
+        tag != ($1)->end(); ++tag)
+   {
       std::string first = tag->first;
       // Do not publish entries whose keys is made of spaces
       if (first.length() == 0)
          continue;
-		NewKey = PyString_FromString(first.c_str());
-		PyObject* NewList = PyList_New(0);
-		for (std::list<std::string>::iterator Item = tag->second.begin();
-		     Item != tag->second.end(); ++Item) {
-			NewVal = PyString_FromString(Item->c_str());
-			PyList_Append( NewList, NewVal);
-		}
-		PyDict_SetItem( NewDict, NewKey, NewList);
-	}
-	$result = NewDict;
+      NewKey = PyString_FromString(first.c_str());
+      PyObject* NewList = PyList_New(0);
+      for (std::list<std::string>::iterator Item = tag->second.begin();
+           Item != tag->second.end();
+           ++Item)
+      {
+         NewVal = PyString_FromString(Item->c_str());
+         PyList_Append( NewList, NewVal);
+      }
+      PyDict_SetItem( NewDict, NewKey, NewList);
+   }
+   $result = NewDict;
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
 %typemap(out) TagDocEntryHT & {
-	PyObject* NewDict = PyDict_New(); // The result of this typemap
-	std::string RawName;                   // Element name as gotten from gdcm
-	PyObject* NewKey = (PyObject*)0;  // Associated name as python object
-	std::string RawValue;                  // Element value as gotten from gdcm
-	PyObject* NewVal = (PyObject*)0;  // Associated value as python object
+   PyObject* NewDict = PyDict_New(); // The result of this typemap
+   std::string RawName;              // Element name as gotten from gdcm
+   PyObject* NewKey = (PyObject*)0;  // Associated name as python object
+   std::string RawValue;             // Element value as gotten from gdcm
+   PyObject* NewVal = (PyObject*)0;  // Associated value as python object
 
-	for (TagDocEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag) {
+   for (TagDocEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag)
+   {
+      // The element name shall be the key:
+      RawName = tag->second->GetName();
+      // gdcm unrecognized (including not loaded because their size exceeds
+      // the user specified treshold) elements are exported with their
+      // TagKey as key.
+      if (RawName == "Unknown")
+         RawName = tag->second->GetKey();
+      NewKey = PyString_FromString(RawName.c_str());
 
-		// The element name shall be the key:
-		RawName = tag->second->GetName();
-		// gdcm unrecognized (including not loaded because their size exceeds
-		// the user specified treshold) elements are exported with their
-		// TagKey as key.
-		if (RawName == "Unknown")
-			RawName = tag->second->GetKey();
-		NewKey = PyString_FromString(RawName.c_str());
-
-      // Element values are striped from leading/trailing spaces
       // Element values are striped from leading/trailing spaces
       if (gdcmValEntry* ValEntryPtr =
                 dynamic_cast< gdcmValEntry* >(tag->second) )
@@ -138,48 +144,10 @@ typedef  unsigned int guint32;
         continue; 
       EatLeadingAndTrailingSpaces(RawValue);
       NewVal = PyString_FromString(RawValue.c_str());
-
       PyDict_SetItem( NewDict, NewKey, NewVal);
    }
    $result = NewDict;
 }
-
-/*
-CLEAN ME FIXME CLEANME TODO
-%typemap(out) TagDocEntryHT {
-	PyObject* NewDict = PyDict_New(); // The result of this typemap
-	std::string RawName;              // Element name as gotten from gdcm
-	PyObject* NewKey = (PyObject*)0;  // Associated name as python object
-	std::string RawValue;             // Element value as gotten from gdcm
-	PyObject* NewVal = (PyObject*)0;  // Associated value as python object
-
-	for (TagDocEntryHT::iterator tag = $1.begin(); tag != $1.end(); ++tag) {
-
-		// The element name shall be the key:
-		RawName = tag->second->GetName();
-		// gdcm unrecognized (including not loaded because their size exceeds
-		// the user specified treshold) elements are exported with their
-		// TagKey as key.
-		if (RawName == "Unknown")
-			RawName = tag->second->GetKey();
-		NewKey = PyString_FromString(RawName.c_str());
-
-      // Element values are striped from leading/trailing spaces
-      if (gdcmValEntry* ValEntryPtr =
-                dynamic_cast< gdcmValEntry* >(tag->second) )
-      {
-         RawValue = ValEntryPtr->GetValue();
-      } 
-      else
-        continue;
-		EatLeadingAndTrailingSpaces(RawValue);
-		NewVal = PyString_FromString(RawValue.c_str());
-
-		PyDict_SetItem( NewDict, NewKey, NewVal);
-    }
-	$result = NewDict;
-}
-*/
 
 ////////////////////////////////////////////////////////////////////////////
 %typemap(out) ListDicomDirPatient & {

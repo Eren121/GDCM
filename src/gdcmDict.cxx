@@ -26,15 +26,12 @@ gdcmDict::gdcmDict(std::string & FileName) {
                     FileName.c_str());
 
    while (!from.eof()) {
-      from >> std::hex >> group >> element;
-      eatwhite(from);
-      from.getline(buff, 256, ' ');
-      vr = buff;
-      eatwhite(from);
-      from.getline(buff, 256, ' ');
-      fourth = buff;
-      from.getline(buff, 256, '\n');
-      name = buff;
+      from >> std::hex;
+      from >> group;          /// MEMORY LEAK in std::istream::operator>>
+      from >> element;
+      from >> vr;
+      from >> fourth;
+      getline(from, name);    /// MEMORY LEAK in std::getline<>
 
       gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,
                                                    vr, fourth, name);
@@ -135,7 +132,8 @@ bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry)
    else 
    {
       KeyHt[NewEntry->GetKey()] = NewEntry;
-      NameHt[NewEntry->GetName()] = NewEntry;
+      NameHt[NewEntry->GetName()] = NewEntry;  /// MEMORY LEAK in
+                                               /// std::map<>::operator[]
       return(true);
    }
 }

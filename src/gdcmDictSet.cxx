@@ -15,7 +15,8 @@
 gdcmDictSet::gdcmDictSet(void) 
 {
    DictPath = BuildDictPath();
-   std::string PubDictFile = DictPath + PUB_DICT_FILENAME;
+   std::string PubDictFile(DictPath);
+   PubDictFile += PUB_DICT_FILENAME;  /// MEMORY LEAK std::string::operator+=
    Dicts[PUB_DICT_NAME] = new gdcmDict(PubDictFile);
 }
 

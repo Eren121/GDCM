@@ -24,13 +24,8 @@ gdcmTS::gdcmTS(void)
    std::string name;
 
    while (!from.eof()) {
-      eatwhite(from);
-      from.getline(buff, 1024, ' ');
-      key = buff;
-
-      eatwhite(from);
-      from.getline(buff, 1024, '\n');
-      name = buff;
+      from >> key;
+      getline(from, name);    /// MEMORY LEAK
 
       if(key!="") 
       {

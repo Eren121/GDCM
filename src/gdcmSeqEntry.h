@@ -20,22 +20,19 @@ public:
    
    virtual void Print(std::ostream &os = std::cout); 
 
- /// \brief   returns the SQITEM chained List for this SeQuence.
-   inline ListSQItem &GetSQItems() 
-      {return items;};
+   /// \brief   returns the SQITEM chained List for this SeQuence.
+   inline ListSQItem &GetSQItems() {return items;};
       
- /// \brief Sets the delimitor mode
-    inline void SetDelimitorMode(bool dm) 
-       { delimitor_mode = dm;}
+   /// \brief Sets the delimitor mode
+   inline void SetDelimitorMode(bool dm) { delimitor_mode = dm;}
 
- /// \brief Sets the Sequence Delimitation Item
-    inline void SetSequenceDelimitationItem(gdcmDocEntry * e) 
-       { seq_term = e;}
+   /// \brief Sets the Sequence Delimitation Item
+   inline void SetSequenceDelimitationItem(gdcmDocEntry * e) { seq_term = e;}
        
-    void AddEntry(gdcmSQItem *it); 
+   void AddEntry(gdcmSQItem *it); 
 
- /// \brief   creates a new SQITEM for this SeQuence.
-    gdcmSQItem * NewItem(void);
+   /// \brief creates a new SQITEM for this SeQuence.
+   gdcmSQItem * NewItem(void);
     
    gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element);    
    gdcmDocEntry *NewDocEntryByName  (std::string Name); 
@@ -46,20 +43,17 @@ public:
 protected:
 
 private:
-
 // Variables
 
-/// \brief If this Sequence is in delimitor mode (length =0xffffffff) or not
+   /// \brief If this Sequence is in delimitor mode (length =0xffffffff) or not
    bool delimitor_mode;
    
-/// \brief chained list of SQ Items
+   /// \brief Chained list of SQ Items
    ListSQItem items;
    
-/// \brief sequence terminator item 
+   /// \brief sequence terminator item 
    gdcmDocEntry *seq_term;
-
 };
-
 
 //-----------------------------------------------------------------------------
 #endif
