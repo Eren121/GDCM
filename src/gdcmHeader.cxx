@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:14 $
-  Version:   $Revision: 1.229 $
+  Date:      $Date: 2005/01/11 20:49:44 $
+  Version:   $Revision: 1.230 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmDebug.h"
 #include "gdcmTS.h"
 #include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
 #include <stdio.h> //sscanf
 
 #include <vector>
@@ -194,7 +195,36 @@ bool Header::Write(std::string fileName, FileType filetype)
           RemoveEntryNoDestroy(e);
       }
    }
+
+#ifdef GDCM_WORDS_BIGENDIAN
+   // Super Duper hack that will make gdcm a BOMB ! but should
+   // Fix temporarily the dashboard
+   BinEntry *b = GetBinEntry(0x7fe0,0x0010);
+   if ( GetEntry(0x0028,0x0100) ==  "16")
+   {
+      uint16_t *im16 = (uint16_t*)b->GetBinArea();
+      int lgr = b->GetLength();
+      for( int i = 0; i < lgr / 2; i++ )
+      {
+         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
+      }
+   }
+#endif //GDCM_WORDS_BIGENDIAN
+
    Document::WriteContent(fp,filetype);
+
+#ifdef GDCM_WORDS_BIGENDIAN
+   // Flip back the pixel ... I told you this is a hack
+   if ( GetEntry(0x0028,0x0100) ==  "16")
+   {
+      uint16_t *im16 = (uint16_t*)b->GetBinArea();
+      int lgr = b->GetLength();
+      for( int i = 0; i < lgr / 2; i++ )
+      {
+         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
+      }
+   }
+#endif //GDCM_WORDS_BIGENDIAN
 
    fp->close();
    delete fp;
