@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:11:49 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/02/02 14:52:25 $
+  Version:   $Revision: 1.53 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,16 +56,26 @@ public:
                    
    ~DicomDir();
 
-   /// \brief   canonical Printer 
    void Print(std::ostream &os = std::cout, std::string const & indent = "" );
 
-   
-   /// Informations contained in the parser
+   // Informations contained in the parser
    virtual bool IsReadable();
 
-   /// Parsing
+   // Meta
+   DicomDirMeta    *NewMeta();
+   /// Returns a pointer to the DicomDirMeta for this DICOMDIR. 
+   DicomDirMeta* GetMeta() { return MetaElems; };
+
+   // Patients
+   DicomDirPatient *NewPatient();
+   void ClearPatient();
+
+   DicomDirPatient *GetFirstPatient();
+   DicomDirPatient *GetNextPatient();
+
+   // Parsing
    void ParseDirectory();
-   
+
    // Note: the DicomDir:: namespace prefix is needed by Swig in the 
    //       following method declarations. Refer to gdcmPython/gdcm.i
    //       for the reasons of this unecessary notation at C++ level.
@@ -81,6 +91,7 @@ public:
    void SetStartMethodArgDelete( DicomDir::Method *m );
    void SetProgressMethodArgDelete( DicomDir::Method *m );
    void SetEndMethodArgDelete( DicomDir::Method *m );
+
    /// GetProgress GetProgress
    float GetProgress()  { return Progress; };
    /// AbortProgress AbortProgress
@@ -88,21 +99,7 @@ public:
    /// IsAborted IsAborted
    bool  IsAborted() { return Abort; };
 
-   /// Returns a pointer to the DicomDirMeta for this DICOMDIR. 
-   DicomDirMeta* GetMeta() { return MetaElems; };
-
-   // should avoid exposing internal mechanism
-   DicomDirPatient *GetFirstPatient();
-   DicomDirPatient *GetNextPatient();
-
-   /// Adding
-   DicomDirMeta    *NewMeta();
-   DicomDirPatient *NewPatient();
-
-   /// Removing
-   void ClearPatient();
-
-   /// Write  
+   // Write
    bool WriteDicomDir(std::string const &fileName);
 
    /// Types of the DicomDirObject within the DicomDir

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:16 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/02/02 14:52:22 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,10 +39,6 @@ Debug::~Debug()
   if ( DebugFile.is_open() )
       DebugFile.close();     
 }
-
-//-----------------------------------------------------------------------------
-// Print
-
 
 //-----------------------------------------------------------------------------
 // Public
@@ -112,6 +108,7 @@ std::ofstream &Debug::GetDebugFile ()
 // Private
    
 //-----------------------------------------------------------------------------
+// Print
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
-
-

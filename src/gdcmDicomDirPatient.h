@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:11:58 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/02/02 14:52:25 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,17 +42,15 @@ public:
    void Print(std::ostream &os = std::cout, std::string const & indent = "" );
    void WriteContent(std::ofstream *fp, FileType t);
   
-   // should avoid exposing internal mechanism
+   // Patient methods
+   void AddStudy(DicomDirStudy *obj) { Studies.push_back(obj); };
+   DicomDirStudy *NewStudy(); 
+   void ClearStudy();
+
    DicomDirStudy *GetFirstStudy();
    DicomDirStudy *GetNextStudy();
    DicomDirStudy *GetLastStudy();
 
-   /// adds the passed STUDY to the STUDY chained List for this PATIENT.
-   void AddStudy(DicomDirStudy *obj) { Studies.push_back(obj); };
-   DicomDirStudy *NewStudy(); 
-
-   void ClearStudy();
-         
 private:
 
    /// chained list of DicomDirStudy  (to be exploited recursively)

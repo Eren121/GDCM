@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:11:58 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/02/02 14:52:26 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,16 +41,14 @@ public:
    void Print(std::ostream &os = std::cout, std::string const & indent = "" );
    void WriteContent(std::ofstream *fp, FileType t);
 
-   // should avoid exposing internal mechanism
+   // Serie methods
+   DicomDirSerie* NewSerie();
+   void AddSerie(DicomDirSerie *obj) { Series.push_back(obj); };
+   void ClearSerie();
+
    DicomDirSerie *GetFirstSerie();
    DicomDirSerie *GetNextSerie();
    DicomDirSerie *GetLastSerie();
-
-   /// adds the passed SERIE to the SERIE chained List for this STUDY.
-   void AddSerie(DicomDirSerie *obj) { Series.push_back(obj); };
-   DicomDirSerie* NewSerie();
-
-   void ClearSerie();
     
 private:
 

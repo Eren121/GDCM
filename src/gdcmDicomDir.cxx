@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:16 $
-  Version:   $Revision: 1.126 $
+  Date:      $Date: 2005/02/02 14:52:24 $
+  Version:   $Revision: 1.127 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -184,6 +184,91 @@ bool DicomDir::IsReadable()
 }
 
 /**
+ * \brief   adds *the* Meta to a partially created DICOMDIR
+ */  
+DicomDirMeta *DicomDir::NewMeta()
+{
+   if( MetaElems )
+      delete MetaElems;
+
+   DocEntry *entry = GetFirstEntry();
+   if( entry )
+   { 
+      MetaElems = new DicomDirMeta(true);
+
+      entry = GetFirstEntry();
+      while( entry )
+      {
+         if( dynamic_cast<SeqEntry *>(entry) )
+            break;
+
+         RemoveEntryNoDestroy(entry);
+         MetaElems->AddEntry(entry);
+
+         entry = GetFirstEntry();
+      }
+   }
+   else  // after root directory parsing
+   {
+      MetaElems = new DicomDirMeta(false);
+   }
+   MetaElems->SetSQItemNumber(0); // To avoid further missprinting
+   return MetaElems;  
+}
+
+/**
+ * \brief   adds a new Patient (with the basic elements) to a partially created
+ *          DICOMDIR
+ */
+DicomDirPatient *DicomDir::NewPatient()
+{
+   DicomDirPatient *p = new DicomDirPatient();
+   AddPatientToEnd( p );
+   return p;
+}
+
+/**
+ * \brief   Remove all Patients
+ */
+void DicomDir::ClearPatient()
+{
+   for(ListDicomDirPatient::iterator cc = Patients.begin();
+                                     cc!= Patients.end();
+                                   ++cc)
+   {
+      delete *cc;
+   }
+   Patients.clear();
+}
+
+/**
+ * \brief   Get the first entry while visiting the DicomDirPatients
+ * \return  The first DicomDirPatient if found, otherwhise NULL
+ */ 
+DicomDirPatient *DicomDir::GetFirstPatient()
+{
+   ItPatient = Patients.begin();
+   if ( ItPatient != Patients.end() )
+      return *ItPatient;
+   return NULL;
+}
+
+/**
+ * \brief   Get the next entry while visiting the DicomDirPatients
+ * \note : meaningfull only if GetFirstEntry already called
+ * \return  The next DicomDirPatient if found, otherwhise NULL
+ */
+DicomDirPatient *DicomDir::GetNextPatient()
+{
+   gdcmAssertMacro (ItPatient != Patients.end());
+
+   ++ItPatient;
+   if ( ItPatient != Patients.end() )
+      return *ItPatient;
+   return NULL;
+}
+
+/**
  * \brief  fills the whole structure, starting from a root Directory
  */
 void DicomDir::ParseDirectory()
@@ -214,17 +299,6 @@ void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg,
 }
 
 /**
- * \brief   Set the method to delete the argument
- *          The argument is destroyed when the method is changed or when the
- *          class is destroyed
- * @param   method Method to call to delete the argument
- */
-void DicomDir::SetStartMethodArgDelete( DicomDir::Method *method ) 
-{
-   StartMethodArgDelete = method;
-}
-
-/**
  * \brief   Set the progress method to call when the parsing of the
  *          directory progress
  * @param   method Method to call
@@ -243,17 +317,6 @@ void DicomDir::SetProgressMethod( DicomDir::Method *method, void *arg,
    ProgressMethod          = method;
    ProgressArg             = arg;
    ProgressMethodArgDelete = argDelete;
-}
-
-/**
- * \brief   Set the method to delete the argument
- *          The argument is destroyed when the method is changed or when the 
- *          class is destroyed          
- * @param   method Method to call to delete the argument
- */
-void DicomDir::SetProgressMethodArgDelete( DicomDir::Method *method )
-{
-   ProgressMethodArgDelete = method;
 }
 
 /**
@@ -278,6 +341,28 @@ void DicomDir::SetEndMethod( DicomDir::Method *method, void *arg,
 
 /**
  * \brief   Set the method to delete the argument
+ *          The argument is destroyed when the method is changed or when the
+ *          class is destroyed
+ * @param   method Method to call to delete the argument
+ */
+void DicomDir::SetStartMethodArgDelete( DicomDir::Method *method ) 
+{
+   StartMethodArgDelete = method;
+}
+
+/**
+ * \brief   Set the method to delete the argument
+ *          The argument is destroyed when the method is changed or when the 
+ *          class is destroyed          
+ * @param   method Method to call to delete the argument
+ */
+void DicomDir::SetProgressMethodArgDelete( DicomDir::Method *method )
+{
+   ProgressMethodArgDelete = method;
+}
+
+/**
+ * \brief   Set the method to delete the argument
  *          The argument is destroyed when the method is changed or when
  *          the class is destroyed
  * @param   method Method to call to delete the argument
@@ -285,33 +370,6 @@ void DicomDir::SetEndMethod( DicomDir::Method *method, void *arg,
 void DicomDir::SetEndMethodArgDelete( DicomDir::Method *method )
 {
    EndMethodArgDelete = method;
-}
-
-/**
- * \brief   Get the first entry while visiting the DicomDirPatients
- * \return  The first DicomDirPatient if found, otherwhise NULL
- */ 
-DicomDirPatient *DicomDir::GetFirstPatient()
-{
-   ItPatient = Patients.begin();
-   if ( ItPatient != Patients.end() )
-      return *ItPatient;
-   return NULL;
-}
-
-/**
- * \brief   Get the next entry while visiting the DicomDirPatients
- * \note : meaningfull only if GetFirstEntry already called
- * \return  The next DicomDirPatient if found, otherwhise NULL
- */
-DicomDirPatient *DicomDir::GetNextPatient()
-{
-   gdcmAssertMacro (ItPatient != Patients.end());
-
-   ++ItPatient;
-   if ( ItPatient != Patients.end() )
-      return *ItPatient;
-   return NULL;
 }
 
 /**
@@ -431,206 +489,6 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
        ++itDoc)
    {
       delete dynamic_cast<File *>(*itDoc);
-   }
-}
-
-/**
- * \brief   adds *the* Meta to a partially created DICOMDIR
- */  
-DicomDirMeta *DicomDir::NewMeta()
-{
-   if( MetaElems )
-      delete MetaElems;
-
-   DocEntry *entry = GetFirstEntry();
-   if( entry )
-   { 
-      MetaElems = new DicomDirMeta(true);
-
-      entry = GetFirstEntry();
-      while( entry )
-      {
-         if( dynamic_cast<SeqEntry *>(entry) )
-            break;
-
-         RemoveEntryNoDestroy(entry);
-         MetaElems->AddEntry(entry);
-
-         entry = GetFirstEntry();
-      }
-   }
-   else  // after root directory parsing
-   {
-      MetaElems = new DicomDirMeta(false);
-   }
-   MetaElems->SetSQItemNumber(0); // To avoid further missprinting
-   return MetaElems;  
-}
-
-/**
- * \brief   adds a new Patient (with the basic elements) to a partially created
- *          DICOMDIR
- */
-DicomDirPatient *DicomDir::NewPatient()
-{
-   DicomDirPatient *p = new DicomDirPatient();
-   AddPatientToEnd( p );
-   return p;
-}
-
-/**
- * \brief   Remove all Patients
- */
-void DicomDir::ClearPatient()
-{
-   for(ListDicomDirPatient::iterator cc = Patients.begin();
-                                     cc!= Patients.end();
-                                   ++cc)
-   {
-      delete *cc;
-   }
-   Patients.clear();
-}
-
-/**
- * \brief   adds to the HTable 
- *          the Entries (Dicom Elements) corresponding to the given type
- * @param   path full path file name (only used when type = GDCM_DICOMDIR_IMAGE
- * @param   type DicomDirObject type to create (GDCM_DICOMDIR_PATIENT,
- *          GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
- * @param   header Header of the current file
- */
-void DicomDir::SetElement(std::string const &path, DicomDirType type,
-                          Document *header)
-{
-   ListDicomDirElem elemList; //FIXME this is going to be a by copy operation
-   ListDicomDirElem::const_iterator it;
-   uint16_t tmpGr, tmpEl;
-   DictEntry *dictEntry;
-   ValEntry *entry;
-   std::string val;
-   SQItem *si;
-
-   switch( type )
-   {
-      case GDCM_DICOMDIR_IMAGE:
-         elemList = Global::GetDicomDirElements()->GetDicomDirImageElements();
-         si = new DicomDirImage(true);
-         if( !AddImageToEnd(static_cast<DicomDirImage *>(si)) )
-         {
-            delete si;
-            gdcmErrorMacro( "Add ImageToEnd failed");
-         }
-         break;
-      case GDCM_DICOMDIR_SERIE:
-         elemList = Global::GetDicomDirElements()->GetDicomDirSerieElements();
-         si = new DicomDirSerie(true);
-         if( !AddSerieToEnd(static_cast<DicomDirSerie *>(si)) )
-         {
-            delete si;
-            gdcmErrorMacro( "Add SerieToEnd failed");
-         }
-         break;
-      case GDCM_DICOMDIR_STUDY:
-         elemList = Global::GetDicomDirElements()->GetDicomDirStudyElements();
-         si = new DicomDirStudy(true);
-         if( !AddStudyToEnd(static_cast<DicomDirStudy *>(si)) )
-         {
-            delete si;
-            gdcmErrorMacro( "Add StudyToEnd failed");
-         }
-         break;
-      case GDCM_DICOMDIR_PATIENT:
-         elemList = Global::GetDicomDirElements()->GetDicomDirPatientElements();
-         si = new DicomDirPatient(true);
-         if( !AddPatientToEnd(static_cast<DicomDirPatient *>(si)) )
-         {
-            delete si;
-            gdcmErrorMacro( "Add PatientToEnd failed");
-         }
-         break;
-      case GDCM_DICOMDIR_META:
-         elemList = Global::GetDicomDirElements()->GetDicomDirMetaElements();
-         si = new DicomDirMeta(true);
-         if( MetaElems )
-         {
-            delete MetaElems;
-            gdcmErrorMacro( "MetaElements already exist, they will be destroyed");
-         }
-         MetaElems = static_cast<DicomDirMeta *>(si);
-         break;
-      default:
-         return;
-   }
-   // removed all the seems-to-be-useless stuff about Referenced Image Sequence
-   // to avoid further troubles
-   // imageElem 0008 1140 "" // Referenced Image Sequence
-   // imageElem fffe e000 "" // 'no length' item : length to be set to 0xffffffff later
-   // imageElem 0008 1150 "" // Referenced SOP Class UID    : to be set/forged later
-   // imageElem 0008 1155 "" // Referenced SOP Instance UID : to be set/forged later
-   // imageElem fffe e00d "" // Item delimitation : length to be set to ZERO later
-   // for all the relevant elements found in their own spot of the DicomDir.dic
-
-   // FIXME : troubles found when it's a SeqEntry
-
-   for( it = elemList.begin(); it != elemList.end(); ++it)
-   {
-      tmpGr     = it->Group;
-      tmpEl     = it->Elem;
-      dictEntry = GetPubDict()->GetEntry(tmpGr, tmpEl);
-
-      entry     = new ValEntry( dictEntry ); // Be sure it's never a BinEntry !
-
-      entry->SetOffset(0); // just to avoid further missprinting
-
-      if( header )
-      {
-         // NULL when we Build Up (ex nihilo) a DICOMDIR
-         //   or when we add the META elems
-         val = header->GetEntryValue(tmpGr, tmpEl);
-      }
-      else
-      {
-         val = GDCM_UNFOUND;
-      }
-
-      if( val == GDCM_UNFOUND) 
-      {
-         if( tmpGr == 0x0004 && tmpEl == 0x1130 ) // File-set ID
-         {
-           // force to the *end* File Name
-           val = Util::GetName( path );
-         }
-         else if( tmpGr == 0x0004 && tmpEl == 0x1500 ) // Only used for image
-         {
-            if( header->GetFileName().substr(0, path.length()) != path )
-            {
-               gdcmVerboseMacro( "The base path of file name is incorrect");
-               val = header->GetFileName();
-            }
-            else
-            {
-               val = &(header->GetFileName().c_str()[path.length()]);
-            }
-         }
-         else
-         {
-            val = it->Value;
-         }
-      }
-      else
-      {
-         if ( header->GetEntryLength(tmpGr,tmpEl) == 0 )
-            val = it->Value;
-      }
-
-      entry->SetValue( val ); // troubles expected when vr=SQ ...
-
-      if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
-      {
-         gdcmVerboseMacro("GDCM_DICOMDIR_META ?!? should never print that");
-      }
-      si->AddEntry(entry);
    }
 }
 
@@ -931,6 +789,148 @@ void DicomDir::SetElements(std::string const & path, VectDocument const &list)
       serPrevInstanceUID  = serCurInstanceUID;
       serPrevID           = serCurID;
       first = false;
+   }
+}
+
+/**
+ * \brief   adds to the HTable 
+ *          the Entries (Dicom Elements) corresponding to the given type
+ * @param   path full path file name (only used when type = GDCM_DICOMDIR_IMAGE
+ * @param   type DicomDirObject type to create (GDCM_DICOMDIR_PATIENT,
+ *          GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
+ * @param   header Header of the current file
+ */
+void DicomDir::SetElement(std::string const &path, DicomDirType type,
+                          Document *header)
+{
+   ListDicomDirElem elemList; //FIXME this is going to be a by copy operation
+   ListDicomDirElem::const_iterator it;
+   uint16_t tmpGr, tmpEl;
+   DictEntry *dictEntry;
+   ValEntry *entry;
+   std::string val;
+   SQItem *si;
+
+   switch( type )
+   {
+      case GDCM_DICOMDIR_IMAGE:
+         elemList = Global::GetDicomDirElements()->GetDicomDirImageElements();
+         si = new DicomDirImage(true);
+         if( !AddImageToEnd(static_cast<DicomDirImage *>(si)) )
+         {
+            delete si;
+            gdcmErrorMacro( "Add ImageToEnd failed");
+         }
+         break;
+      case GDCM_DICOMDIR_SERIE:
+         elemList = Global::GetDicomDirElements()->GetDicomDirSerieElements();
+         si = new DicomDirSerie(true);
+         if( !AddSerieToEnd(static_cast<DicomDirSerie *>(si)) )
+         {
+            delete si;
+            gdcmErrorMacro( "Add SerieToEnd failed");
+         }
+         break;
+      case GDCM_DICOMDIR_STUDY:
+         elemList = Global::GetDicomDirElements()->GetDicomDirStudyElements();
+         si = new DicomDirStudy(true);
+         if( !AddStudyToEnd(static_cast<DicomDirStudy *>(si)) )
+         {
+            delete si;
+            gdcmErrorMacro( "Add StudyToEnd failed");
+         }
+         break;
+      case GDCM_DICOMDIR_PATIENT:
+         elemList = Global::GetDicomDirElements()->GetDicomDirPatientElements();
+         si = new DicomDirPatient(true);
+         if( !AddPatientToEnd(static_cast<DicomDirPatient *>(si)) )
+         {
+            delete si;
+            gdcmErrorMacro( "Add PatientToEnd failed");
+         }
+         break;
+      case GDCM_DICOMDIR_META:
+         elemList = Global::GetDicomDirElements()->GetDicomDirMetaElements();
+         si = new DicomDirMeta(true);
+         if( MetaElems )
+         {
+            delete MetaElems;
+            gdcmErrorMacro( "MetaElements already exist, they will be destroyed");
+         }
+         MetaElems = static_cast<DicomDirMeta *>(si);
+         break;
+      default:
+         return;
+   }
+   // removed all the seems-to-be-useless stuff about Referenced Image Sequence
+   // to avoid further troubles
+   // imageElem 0008 1140 "" // Referenced Image Sequence
+   // imageElem fffe e000 "" // 'no length' item : length to be set to 0xffffffff later
+   // imageElem 0008 1150 "" // Referenced SOP Class UID    : to be set/forged later
+   // imageElem 0008 1155 "" // Referenced SOP Instance UID : to be set/forged later
+   // imageElem fffe e00d "" // Item delimitation : length to be set to ZERO later
+   // for all the relevant elements found in their own spot of the DicomDir.dic
+
+   // FIXME : troubles found when it's a SeqEntry
+
+   for( it = elemList.begin(); it != elemList.end(); ++it)
+   {
+      tmpGr     = it->Group;
+      tmpEl     = it->Elem;
+      dictEntry = GetPubDict()->GetEntry(tmpGr, tmpEl);
+
+      entry     = new ValEntry( dictEntry ); // Be sure it's never a BinEntry !
+
+      entry->SetOffset(0); // just to avoid further missprinting
+
+      if( header )
+      {
+         // NULL when we Build Up (ex nihilo) a DICOMDIR
+         //   or when we add the META elems
+         val = header->GetEntryValue(tmpGr, tmpEl);
+      }
+      else
+      {
+         val = GDCM_UNFOUND;
+      }
+
+      if( val == GDCM_UNFOUND) 
+      {
+         if( tmpGr == 0x0004 && tmpEl == 0x1130 ) // File-set ID
+         {
+           // force to the *end* File Name
+           val = Util::GetName( path );
+         }
+         else if( tmpGr == 0x0004 && tmpEl == 0x1500 ) // Only used for image
+         {
+            if( header->GetFileName().substr(0, path.length()) != path )
+            {
+               gdcmVerboseMacro( "The base path of file name is incorrect");
+               val = header->GetFileName();
+            }
+            else
+            {
+               val = &(header->GetFileName().c_str()[path.length()]);
+            }
+         }
+         else
+         {
+            val = it->Value;
+         }
+      }
+      else
+      {
+         if ( header->GetEntryLength(tmpGr,tmpEl) == 0 )
+            val = it->Value;
+      }
+
+      entry->SetValue( val ); // troubles expected when vr=SQ ...
+
+      if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
+      {
+         gdcmVerboseMacro("GDCM_DICOMDIR_META ?!? should never print that");
+      }
+      si->AddEntry(entry);
    }
 }
 
