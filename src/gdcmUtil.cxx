@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 20:48:49 $
-  Version:   $Revision: 1.139 $
+  Date:      $Date: 2005/02/14 10:43:53 $
+  Version:   $Revision: 1.140 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,7 +98,8 @@ std::string Util::RootUID        = GDCM_UID;
 /**
  * \brief Provide a better 'c++' approach for sprintf
  * For example c code is:
- * sprintf(trash, "%04x|%04x", group , elem);
+ * char result[200]; // hope 200 is enough
+ * sprintf(result, "%04x|%04x", group , elem);
  *
  * c++ code is 
  * std::ostringstream buf;
@@ -108,7 +109,8 @@ std::string Util::RootUID        = GDCM_UID;
  * buf.str();
  *
  * gdcm style code is
- * Format("%04x|%04x", group , elem);
+ * string result;
+ * result = gdcm::Util::Format("%04x|%04x", group , elem);
  */
 std::string Util::Format(const char *format, ...)
 {
@@ -125,6 +127,10 @@ std::string Util::Format(const char *format, ...)
 
 /**
  * \brief Because not available in C++ (?)
+ * @param str string to check
+ * @param tokens std::vector to receive the tokenized substrings
+ * @param delimiters string containing the character delimitors
+ 
  */
 void Util::Tokenize (const std::string &str,
                      std::vector<std::string> &tokens,
@@ -143,24 +149,26 @@ void Util::Tokenize (const std::string &str,
 /**
  * \brief Because not available in C++ (?)
  *        Counts the number of occurences of a substring within a string
+ * @param str string to check
+ * @param subStr substring to count
  */
  
 int Util::CountSubstring (const std::string &str,
                           const std::string &subStr)
 {
-   int count = 0;   // counts how many times it appears
-   std::string::size_type x = 0;       // The index position in the string
+   int count = 0;                 // counts how many times it appears
+   std::string::size_type x = 0;  // The index position in the string
 
    do
    {
-      x = str.find(subStr,x);       // Find the substring
-      if (x != std::string::npos)   // If present
+      x = str.find(subStr,x);     // Find the substring
+      if (x != std::string::npos) // If present
       {
-         count++;                  // increase the count
-         x += subStr.length();     // Skip this word
+         count++;                 // increase the count
+         x += subStr.length();    // Skip this word
       }
    }
-   while (x != std::string::npos);  // Carry on until not present
+   while (x != std::string::npos);// Carry on until not present
 
    return count;
 }
@@ -741,7 +749,8 @@ std::string Util::GetMACAddress()
       {
          res = getlastdigit(addr);
          sres.insert(sres.begin(), '0' + res);
-         zero = (addr[0] == 0) && (addr[1] == 0) && (addr[2] == 0) && (addr[3] == 0) && (addr[4] == 0) && (addr[5] == 0);
+         zero = (addr[0] == 0) && (addr[1] == 0) && (addr[2] == 0) 
+             && (addr[3] == 0) && (addr[4] == 0) && (addr[5] == 0);
       }
 
       return sres;
@@ -818,7 +827,10 @@ std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 {
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    uint16_t swap;
-   swap = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
+   //swap = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
+   //save CPU time
+   swap = ( val << 8 |  val >> 8  );
+
    return os.write(reinterpret_cast<const char*>(&swap), 2);
 #else
    return os.write(reinterpret_cast<const char*>(&val), 2);
@@ -834,8 +846,11 @@ std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 {
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    uint32_t swap;
-   swap = ( ((val<<24) & 0xff000000) | ((val<<8)  & 0x00ff0000) | 
-            ((val>>8)  & 0x0000ff00) | ((val>>24) & 0x000000ff) );
+//   swap = ( ((val<<24) & 0xff000000) | ((val<<8)  & 0x00ff0000) | 
+//            ((val>>8)  & 0x0000ff00) | ((val>>24) & 0x000000ff) );
+// save CPU time
+   swap = (  (val<<24)               | ((val<<8)  & 0x00ff0000) | 
+            ((val>>8)  & 0x0000ff00) |  (val>>24)               );
    return os.write(reinterpret_cast<const char*>(&swap), 4);
 #else
    return os.write(reinterpret_cast<const char*>(&val), 4);
@@ -880,13 +895,15 @@ std::ostream &binary_write(std::ostream &os, const uint8_t *val, size_t len)
  */ 
 std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
 {
-// This is tricky since we are writting two bytes buffer. Be carefull with little endian
-// vs big endian. Also this other trick is to allocate a small (efficient) buffer that store
-// intermidiate result before writting it.
+// This is tricky since we are writting two bytes buffer. 
+// Be carefull with little endian vs big endian. 
+// Also this other trick is to allocate a small (efficient) buffer that store
+// intermediate result before writting it.
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    const int BUFFER_SIZE = 4096;
-   uint16_t *buffer = new uint16_t[BUFFER_SIZE/2];
    uint16_t *binArea16 = (uint16_t*)val;
+   uint16_t *buffer    = new uint16_t[BUFFER_SIZE/2];
+   uint16_t *pbuffer   = buffer;
  
    // how many BUFFER_SIZE long pieces in binArea ?
    int nbPieces = len/BUFFER_SIZE; //(16 bits = 2 Bytes)
@@ -894,11 +911,18 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
 
    for (int j=0;j<nbPieces;j++)
    {
+
       for (int i = 0; i < BUFFER_SIZE/2; i++)
       {
-         //buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
-         uint16_t val16 = binArea16[i];
-         buffer[i] = ((( val16 << 8 ) & 0xff00 ) | (( val16 >> 8 ) & 0x00ff ) );
+        //uint16_t val16 = binArea16[i];
+        //buffer[i] = ((( val16 << 8 ) & 0xff00 ) | (( val16 >> 8 ) & 0x00ff ) );
+        // save CPU time :
+        //   1) Save 1 affectation and 2 AND operations
+        //       buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
+        //   2) Replace * operations by + operations using pointers
+         *pbuffer = *binArea16 >> 8 | *binArea16 >> 8;
+         pbuffer++;
+         binArea16++;
       }
       os.write ( (char*)buffer, BUFFER_SIZE );
       binArea16 += BUFFER_SIZE/2;
@@ -907,9 +931,11 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
    {
       for (int i = 0; i < remainingSize/2; i++)
       {
-         //buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
-         uint16_t val16 = binArea16[i];
-         buffer[i] = ((( val16 << 8 ) & 0xff00 ) | (( val16 >> 8 ) & 0x00ff ) );
+         //uint16_t val16 = binArea16[i];
+         //buffer[i] = ((( val16 << 8 ) & 0xff00 ) | (( val16 >> 8 ) & 0x00ff) );
+         *pbuffer = *binArea16 >> 8 | *binArea16 >> 8;
+         pbuffer++;
+         binArea16++;
       }
       os.write ( (char*)buffer, remainingSize );
    }
