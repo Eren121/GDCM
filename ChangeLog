@@ -1,4 +1,9 @@
 2004-06-23 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * DEVELOPPER: added a proposition of coding style.
+   * src/gdcmDocEntry.h: removed every inline declaration (for test of 
+     coding style).
+
+2004-06-23 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * gdcmDocEntry::PrintCommonPart() and ::WriteCommonPart() removed.
      Use the gdcmDocEntry::Print() and Write() instead.
    * src/gdcmDocument.cxx: bug fix.
