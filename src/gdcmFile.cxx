@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/21 17:47:19 $
-  Version:   $Revision: 1.227 $
+  Date:      $Date: 2005/03/02 17:18:32 $
+  Version:   $Revision: 1.228 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1419,6 +1419,10 @@ bool File::Write(std::string fileName, FileType writetype)
 void File::InitializeDefaultFile()
 {
 
+/*
+  // CurrentTime will be set just before Writting
+  // whatever the source image is
+
    std::string date = Util::GetCurrentDate();
    std::string time = Util::GetCurrentTime();
    std::string uid  = Util::CreateUniqueUID();
@@ -1428,6 +1432,8 @@ void File::InitializeDefaultFile()
    std::string uidStudy = Util::CreateUniqueUID();
    std::string uidSerie = Util::CreateUniqueUID();
 
+ // Meta Elements are set just before writting
+ 
    // Meta Element Group Length
    InsertValEntry("146 ",                      0x0002, 0x0000);
    // Media Storage SOP Class UID (Secondary Capture Image Storage)
@@ -1440,9 +1446,18 @@ void File::InitializeDefaultFile()
    InsertValEntry(uidClass.c_str(),            0x0002, 0x0012);
    // Source Application Entity Title
    InsertValEntry("GDCM",                      0x0002, 0x0016);
+*/
+
+// Just to avoid further trouble if user asks to write the dile ACR-NEMA mode
+   InsertValEntry("", 0x0008, 0x0010); // Recognition Code (RET)
+
+/*
+// Dicom related entries must be set by the user
+// If they are missing, they are defaulted just bedfore writting
 
    // Instance Creation Date
    InsertValEntry(date.c_str(),                0x0008, 0x0012);
+
    // Instance Creation Time
    InsertValEntry(time.c_str(),                0x0008, 0x0013);
    // SOP Class UID
@@ -1457,7 +1472,9 @@ void File::InitializeDefaultFile()
    InsertValEntry("GDCM",                      0x0008, 0x0080);
    // Institution Address
    InsertValEntry("http://www-creatis.insa-lyon.fr/Public/Gdcm", 0x0008, 0x0081);
+*/
 
+/*
    // Patient's Name
    InsertValEntry("GDCM^patient",              0x0010, 0x0010);
    // Patient ID
@@ -1469,8 +1486,13 @@ void File::InitializeDefaultFile()
    InsertValEntry(uidSerie.c_str(),            0x0020, 0x000e);
    // StudyID
    InsertValEntry("1",                         0x0020, 0x0010);
+
+  // Is 'Series number' mandatory ?
    // SeriesNumber
    InsertValEntry("1",                         0x0020, 0x0011);
+
+// None of these default value is meaningfull !
+// It *must be* up to the user to initialize them.
 
    // Samples per pixel 1 or 3
    InsertValEntry("1",                         0x0028, 0x0002);
@@ -1489,11 +1511,17 @@ void File::InitializeDefaultFile()
    // Pixel Representation 0(unsigned) or 1(signed)
    InsertValEntry("0",                         0x0028, 0x0103);
 
+*/
+
+   // It should be up to the user to do that!
+
    // default value
    // Special case this is the image (not a string)
+
    GrPixel = 0x7fe0;
    NumPixel = 0x0010;
    InsertBinEntry(0, 0, GrPixel, NumPixel);
+
 }
 
 //-----------------------------------------------------------------------------
