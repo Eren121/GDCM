@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exAnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/08 18:02:03 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/03/09 19:16:33 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,12 +37,11 @@ int main(int argc, char *argv[])
    if( argc < 3 )
     {
     std::cerr << "Usage " << argv[0] << " Source image.dcm  " 
-              << " Output image.dcm " << std::endl;
+              << std::endl;
     return 1;
     }
 
    std::string fileName       = argv[1];
-   std::string outputFileName = argv[2];
 
 // ============================================================
 //   Read the input image.

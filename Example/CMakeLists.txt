@@ -10,7 +10,7 @@ SET(EXAMPLE_SOURCES
   exReadPapyrus
   exReadWriteFile
   exAnonymize
-  exAnonymizeNoLoad
+  exAnonymizeNoLoad  # without loading the Pixel Data
   exColorToRGB
   exGC
   exImageLighten
@@ -22,10 +22,12 @@ SET(EXAMPLE_SOURCES
   PrintHeader
   FindTags
   MakeDicomDir
+  AnonymizeDicomDir # without loading it as a gdcm::DicomDir
 
 #the following will be transformed into 'examples', or 'utilities'
 #              or will be removed
-
+ 
+  #test
   FlatHashTablePrint
   TestCopyDicom
   TestChangeHeader
