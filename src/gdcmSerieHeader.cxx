@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 21:03:54 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/14 21:30:53 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,7 @@ typedef std::vector<Header* > GdcmHeaderVector;
 SerieHeader::SerieHeader()
 {
    CoherentGdcmFileList.clear();
-   // Later will contains: 0020 000e UI REL Series Instance UID
+   // Later will contain: 0020 000e UI REL Series Instance UID
    CurrentSerieUID = "";
 }
 
@@ -89,27 +89,12 @@ void SerieHeader::AddFileName(std::string const &filename)
 }
 
 /**
- * \brief add a File to the list
- * @param   file Header to add
- */
-void SerieHeader::AddGdcmFile(Header *file)
-{
-   if( file->IsReadable() )
-   {
-      CoherentGdcmFileList.push_back( file );
-   }
-   else
-   {
-      gdcmVerboseMacro("Could not add file: " << file->GetFileName() );
-   }
-}
-
-/**
  * \brief Sets the Directory
  * @param   dir Name of the directory to deal with
  */
 void SerieHeader::SetDirectory(std::string const &dir)
 {
+   CurrentSerieUID = ""; //Reset previous Serie Instance UID
    DirList filenames_list(dir);  //OS specific
   
    for( DirList::const_iterator it = filenames_list.begin(); 

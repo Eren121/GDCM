@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 21:03:55 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/14 21:30:53 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,16 +42,12 @@ public:
 
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
-   void AddGdcmFile(Header *file);
    void SetDirectory(std::string const &dir);
    void OrderGdcmFileList();
    
-   /// \warning Assumes all elements in the list have the same global infos.
-   ///          Assumes the list is not empty.
-   Header *GetGdcmHeader() { return CoherentGdcmFileList.front(); }
-
    /// \brief Gets the *coherent* File List
    /// @return the *coherent* File List
+   /// Caller must call OrderGdcmFileList first
    const GdcmHeaderList &GetGdcmFileList() { return CoherentGdcmFileList; }
 
 private:
