@@ -1,3 +1,8 @@
+2004-11-30 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.[h|cxx] : bug fix for ACR-LIBIDO files when writting the file
+   * Test/TestAllReadCompareDicom.cxx, TestReadWriteReadCompare.cxx : add
+     tests on the image size X, Y, Z
+
 2004-11-26 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Remove some useless methods in gdcm::Document, gdcm::Header and gdcm::File
    * Rename gdcmHeaderHelper.[h|cxx] to gdcmSerieHeader.[h|cxx] to be coherent

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:34 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/11/30 14:17:52 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,7 +87,26 @@ int CompareInternal(std::string const & filename, std::string const & output)
    uint8_t* imageDataWritten = reread->GetImageData();
 
    //////////////// Step 4:
+   // Test the image size
+   if (header->GetXSize() != reread->GetHeader()->GetXSize() ||
+       header->GetYSize() != reread->GetHeader()->GetYSize() ||
+       header->GetZSize() != reread->GetHeader()->GetZSize())
+   {
+      std::cout << "Failed" << std::endl
+         << "        X Size differs: "
+         << "X: " << header->GetXSize() << " # " 
+                  << reread->GetHeader()->GetXSize() << " | "
+         << "Y: " << header->GetYSize() << " # " 
+                  << reread->GetHeader()->GetYSize() << " | "
+         << "Z: " << header->GetZSize() << " # " 
+                  << reread->GetHeader()->GetZSize() << std::endl;
+      delete header;
+      delete file;
+      delete reread;
+      return 1;
+   }
 
+   // Test the data size
    if (dataSize != dataSizeWritten)
    {
       std::cout << "Failed" << std::endl
@@ -99,6 +118,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
       return 1;
    }
 
+   // Test the data's content
    if (int res = memcmp(imageData, imageDataWritten, dataSize) !=0)
    {
       (void)res;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/26 10:55:04 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2004/11/30 14:17:52 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,13 +111,13 @@ protected:
    void RestoreWrite();
 
    void SetWriteFileTypeToACR();
-   void SetWriteFileTypeToACRLibido();
    void SetWriteFileTypeToExplicitVR();
    void SetWriteFileTypeToImplicitVR();
    void RestoreWriteFileType();
 
    void SetWriteToLibido();
-   void RestoreWriteFromLibido();
+   void SetWriteToNoLibido();
+   void RestoreWriteOfLibido();
 
    ValEntry* CopyValEntry(uint16_t group,uint16_t element);
    BinEntry* CopyBinEntry(uint16_t group,uint16_t element);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/26 10:55:04 $
-  Version:   $Revision: 1.166 $
+  Date:      $Date: 2004/11/30 14:17:52 $
+  Version:   $Revision: 1.167 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -406,13 +406,20 @@ bool File::WriteBase (std::string const & fileName, FileType type)
          SetWriteFileTypeToExplicitVR();
          break;
       case ACR:
-         SetWriteFileTypeToACR();
-         break;
       case ACR_LIBIDO:
-         SetWriteFileTypeToACRLibido();
+         SetWriteFileTypeToACR();
          break;
       default:
          SetWriteFileTypeToExplicitVR();
+   }
+
+   if( type == ACR_LIBIDO )
+   {
+      SetWriteToLibido();
+   }
+   else
+   {
+      SetWriteToNoLibido();
    }
   
    switch(WriteMode)
@@ -461,6 +468,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
 
    RestoreWrite();
    RestoreWriteFileType();
+   RestoreWriteOfLibido();
 
    return check;
 }
@@ -672,11 +680,6 @@ void File::SetWriteFileTypeToACR()
    Archive->Push(0x0002,0x0010);
 }
 
-void File::SetWriteFileTypeToACRLibido()
-{
-   SetWriteFileTypeToACR();
-}
-
 void File::SetWriteFileTypeToExplicitVR()
 {
    std::string ts = Util::DicomString( 
@@ -725,12 +728,33 @@ void File::SetWriteToLibido()
       Archive->Push(newRow);
       Archive->Push(newCol);
    }
+
+   ValEntry *libidoCode = CopyValEntry(0x0008,0x0010);
+   libidoCode->SetValue("ACRNEMA_LIBIDO_1.1");
+   libidoCode->SetLength(10);
+   Archive->Push(libidoCode);
 }
 
-void File::RestoreWriteFromLibido()
+void File::SetWriteToNoLibido()
+{
+   ValEntry *recCode = dynamic_cast<ValEntry *>(HeaderInternal->GetDocEntryByNumber(0x0008,0x0010));
+   if( recCode )
+   {
+      if( recCode->GetValue() == "ACRNEMA_LIBIDO_1.1" )
+      {
+         ValEntry *libidoCode = CopyValEntry(0x0008,0x0010);
+         libidoCode->SetValue("");
+         libidoCode->SetLength(0);
+         Archive->Push(libidoCode);
+      }
+   }
+}
+
+void File::RestoreWriteOfLibido()
 {
    Archive->Restore(0x0028,0x0010);
    Archive->Restore(0x0028,0x0011);
+   Archive->Restore(0x0008,0x0010);
 }
 
 ValEntry* File::CopyValEntry(uint16_t group,uint16_t element)

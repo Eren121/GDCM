@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:33 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/11/30 14:17:52 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,6 +81,25 @@ int InternalTest(std::string const & filename,
       int    referenceDataSize = reference->GetImageDataSize();
       uint8_t* referenceImageData = reference->GetImageData();
 
+      // Test the image size
+      if (tested->GetHeader()->GetXSize() != reference->GetHeader()->GetXSize() ||
+          tested->GetHeader()->GetYSize() != reference->GetHeader()->GetYSize() ||
+          tested->GetHeader()->GetZSize() != reference->GetHeader()->GetZSize())
+      {
+         std::cout << "Failed" << std::endl
+            << "        Size differs: "
+            << "X: " << tested->GetHeader()->GetXSize() << " # " 
+                     << reference->GetHeader()->GetXSize() << " | "
+            << "Y: " << tested->GetHeader()->GetYSize() << " # " 
+                     << reference->GetHeader()->GetYSize() << " | "
+            << "Z: " << tested->GetHeader()->GetZSize() << " # " 
+                     << reference->GetHeader()->GetZSize() << std::endl;
+         delete reference;
+         delete tested;
+         return 1;
+      }
+
+      // Test the data size
       if (testedDataSize != referenceDataSize)
       {
          std::cout << " Failed" << std::endl
@@ -92,6 +111,7 @@ int InternalTest(std::string const & filename,
          return 1;
       }
 
+      // Test the data content
       if (int res = memcmp(testedImageData, referenceImageData,
                            testedDataSize) != 0 )
       {
