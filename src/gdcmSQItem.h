@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/07 08:46:18 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,8 +50,6 @@ public:
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
   
    DocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element);
-   // FIXME method to write
-   //DocEntry *GetDocEntryByName(std::string Name);
    
    bool SetEntryByNumber(std::string const &val, uint16_t group, 
                                                  uint16_t element);

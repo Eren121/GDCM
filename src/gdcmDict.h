@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/01/07 08:46:17 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,8 +40,8 @@ typedef std::map<std::string,
 /*
  * \defgroup Dict
  * \brief    Dict acts a memory representation of a dicom dictionary i.e.
- *           it is a container for a collection of dictionary entries. The
- *           dictionary is loaded from in an ascii file.
+ *           it is a container for a collection of dictionary entries.
+ *           The dictionary is loaded from in an ascii file.
  *           There should be a single public dictionary (THE dictionary of
  *           the actual DICOM v3) but as many shadow dictionaries as imagers 
  *           combined with all software versions...

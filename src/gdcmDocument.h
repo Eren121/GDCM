@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/01/07 08:46:18 $
+  Version:   $Revision: 1.76 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,8 +110,7 @@ public:
    void WriteContent( std::ofstream *fp, FileType type );
 
 // Content entries
-   virtual bool SetEntryByName  (std::string const &content, 
-                                 TagName const &tagName );
+
    virtual bool SetEntryByNumber(std::string const &content,
                                  uint16_t group, uint16_t element);
    virtual bool SetEntryByNumber(uint8_t *content, int lgth,
@@ -121,14 +120,11 @@ public:
 
    virtual void *GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
 
-   virtual std::string GetEntryByName    (TagName const &tagName);
-   virtual std::string GetEntryVRByName  (TagName const &tagName);
    virtual std::string GetEntryByNumber  (uint16_t group, uint16_t elem);
    virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
    virtual int GetEntryLengthByNumber(uint16_t group, uint16_t elem);
 
    DocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element); 
-   DocEntry *GetDocEntryByName  (TagName const &tagName);
    ValEntry *GetValEntryByNumber(uint16_t group, uint16_t element); 
    BinEntry *GetBinEntryByNumber(uint16_t group, uint16_t element); 
 

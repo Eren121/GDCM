@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.161 $
+  Date:      $Date: 2005/01/07 08:46:18 $
+  Version:   $Revision: 1.162 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -764,51 +764,6 @@ bool Document::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
    return TagHT.count(key) != 0;
 }
 
-/**
- * \brief   Searches within Header Entries (Dicom Elements) parsed with 
- *          the public and private dictionaries 
- *          for the element value of a given tag.
- * \warning Don't use any longer : use GetPubEntryByName
- * @param   tagName name of the searched element.
- * @return  Corresponding element value when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string Document::GetEntryByName(TagName const &tagName)
-{
-   DictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
-   if( !dictEntry )
-   {
-      return GDCM_UNFOUND;
-   }
-
-   return GetEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement());
-}
-
-/**
- * \brief   Searches within Header Entries (Dicom Elements) parsed with 
- *          the public and private dictionaries 
- *          for the element value representation of a given tag.
- *
- *          Obtaining the VR (Value Representation) might be needed by caller
- *          to convert the string typed content to caller's native type 
- *          (think of C++ vs Python). The VR is actually of a higher level
- *          of semantics than just the native C++ type.
- * @param   tagName name of the searched element.
- * @return  Corresponding element value representation when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string Document::GetEntryVRByName(TagName const& tagName)
-{
-   DictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
-   if( dictEntry == NULL)
-   {
-      return GDCM_UNFOUND;
-   }
-
-   DocEntry *elem = GetDocEntryByNumber(dictEntry->GetGroup(),
-                                        dictEntry->GetElement());
-   return elem->GetVR();
-}
 
 /**
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
@@ -870,24 +825,6 @@ int Document::GetEntryLengthByNumber(uint16_t group, uint16_t element)
       return -2;  //magic number
    }
    return elem->GetLength();
-}
-/**
- * \brief   Sets the value (string) of the Header Entry (Dicom Element)
- * @param   content string value of the Dicom Element
- * @param   tagName name of the searched Dicom Element.
- * @return  true when found
- */
-bool Document::SetEntryByName( std::string const &content,
-                               TagName const &tagName)
-{
-   DictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
-   if( !dictEntry )
-   {
-      return false;
-   }
-
-   return SetEntryByNumber(content,dictEntry->GetGroup(),
-                                   dictEntry->GetElement());
 }
 
 /**
@@ -1082,24 +1019,6 @@ void Document::LoadEntryBinArea(BinEntry *element)
 
    return false;
 }*/
-
-/**
- * \brief   Searches within the Header Entries for a Dicom Element of
- *          a given tag.
- * @param   tagName name of the searched Dicom Element.
- * @return  Corresponding Dicom Element when it exists, and NULL
- *          otherwise.
- */
-DocEntry *Document::GetDocEntryByName(TagName const &tagName)
-{
-   DictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
-   if( !dictEntry )
-   {
-      return NULL;
-   }
-
-  return GetDocEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement());
-}
 
 /**
  * \brief  retrieves a Dicom Element (the first one) using (group, element)
