@@ -18,19 +18,61 @@
       <B></B></A>
 </H2>
 <UL>
-   <LI> Final check of the jpeg sub-library: all 'classical' jpeg
+   <LI>State of the art
+   <UL>    
+      <LI> Final check of the jpeg sub-library: all 'classical' jpeg
         compressed Dicom files can be read<br>
-        All the previously gdcm-breaker images are now readable<br>
-        gdcm doesn't read yet JPEG-LS and JPEG2000 encoded files.
-   <LI> Use of <TT> namespace</TT> : all the methods formerly called
-       <TT>className::gdcmXxx()</TT> are now called <TT>className::Xxx()</TT>
-   <LI> Removal of accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
-        and <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT> 
-        replaced by <TT>GetXxx</TT>, <TT>SetXxx</TT>
-   <LI> a gdcm::Document is now specialized in gdcm::DicomDir and gdcm::File
-   <LI> A huge number of memory leaks removed
-   <LI> Improvement of write process  
+      <LI>All the previously gdcm-breaker images are now readable<br>
+      <LI> A huge number of memory leaks removed
+      <LI> Improvement of write process   
+   </UL>
+   <LI> New Features
+<UL>
+   <LI>
+   <LI>
 </UL>
+ 
+   <LI> A.P.I. breaking modifications (since previous version)
+   <UL>
+      <LI> Use of <TT> namespace</TT> : all the methods formerly called
+          <TT>className::gdcmXxx()</TT> are now called <TT>className::Xxx()</TT>
+      <LI> Removal of accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
+           and <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT> 
+           replaced by <TT>GetXxx</TT>, <TT>SetXxx</TT>
+      <LI> a <TT>gdcm::Document</TT> is now specialized 
+           in <TT>gdcm::DicomDir</TT> and <TT>gdcm::File</TT>
+   </UL>
+
+   <LI> Missing features
+   <UL>
+      <LI> gdcm doesn't read yet JPEG-LS and JPEG2000 encoded files.
+      <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he doesn't 
+           want to deal with <TT>SeqEntry</TT (every time it's possible)
+      <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he doesn't 
+           want to deal with Shadow groups 
+      <LI> Allow user to tell the Writer he doesn't want to write down
+           <TT>SeqEntry</TT> (if any) 
+      <LI> Allow user to tell the Writer he doesn't want to write down
+           Shadow groups (if any)
+      <LI> <TT>Icon Image</TT> management (Read and Write) 
+      <LI> <TT>DICOMDIR</TT> full management (not limited to
+           <TT> PATIENT</TT>/<TT>STUDY</TT>/<TT>SERIE</TT>/<TT>IMAGE</TT>)
+      <LI> Allow user to add an Entry to the default entry list, for
+           making a <TT>DICOMDIR</TT> from a root directory
+      <LI> 16-bits-LUT Management
+      <LI> Allow parsing the Shadow groups against a user supplied 
+           Private Dicom Dictionary (pfff!...)
+      <LI> An accurate <TT>SerieHelper</TT>
+   </UL>
+
+   <LI> Known bugs
+   <UL>
+      <LI> <TT>DocEntrySet::InsertSeqEntry</TT> never used, never checked ...
+      <LI> 
+   </UL> 
+</UL>
+
+
 <br>
 <pre>
 For people who get this new release :
