@@ -1,5 +1,5 @@
 
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.79 2003/07/23 08:43:03 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.80 2003/07/28 12:21:09 malaterre Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -2075,8 +2075,8 @@ float gdcmHeader::GetXImagePosition(void) {
        if (StrImPos == "gdcm::Unfound") {
           dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position (RET) (0020,0030)");
           // How to tell the caller nothing was found ?
+          return 0.;
        }  
-       return 0.;
      }
    if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
      return 0.;
@@ -2099,8 +2099,9 @@ float gdcmHeader::GetYImagePosition(void) {
        StrImPos = GetPubElValByNumber(0x0020,0x0030); // For ACR-NEMA images
        if (StrImPos == "gdcm::Unfound") {
           dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position (RET) (0020,0030)");
+          // How to tell the caller nothing was found ?
+          return 0.;
        }  
-       return 0.;
      }
    if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
      return 0.;
