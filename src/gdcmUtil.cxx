@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 10:25:53 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2004/11/16 10:37:54 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,12 +27,16 @@
 #include <stdarg.h>  //only included in implementation file
 #include <stdio.h>   //only included in implementation file
 
-#include <unistd.h>  // for gethostname
-#include <netdb.h>   // for gethostbyname
+#if defined _MSC_VER || defined(__BORLANDC__)
+   #include <winsock.h>  // for gethostname & gethostbyname
+   #undef GetCurrentTime
+#else
+   #include <unistd.h>  // for gethostname
+   #include <netdb.h>   // for gethostbyname
+#endif
 
 namespace gdcm 
 {
-
 /**
  * \ingroup Globals
  * \brief Provide a better 'c++' approach for sprintf

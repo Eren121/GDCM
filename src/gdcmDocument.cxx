@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 10:25:53 $
-  Version:   $Revision: 1.125 $
+  Date:      $Date: 2004/11/16 10:37:54 $
+  Version:   $Revision: 1.126 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -576,16 +576,17 @@ ValEntry* Document::ReplaceOrCreateByNumber(
                         " NewDocEntryByNumber failed.");
          return NULL;
       }
+
       valEntry = new ValEntry(currentEntry);
+      delete currentEntry;
+
       if ( !AddEntry(valEntry))
       {
          delete valEntry;
          dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
                         " failed allthough this is a creation.");
+         return NULL;
       }
-      // This is the reason why NewDocEntryByNumber are a real
-      // bad habit !!! FIXME
-      delete currentEntry;
    }
    else
    {
@@ -1362,13 +1363,15 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                    + newValEntry->GetKey() );
             }
              
+            LoadDocEntry( newValEntry );
+            bool delimitor=newValEntry->IsItemDelimitor();
             if( !set->AddEntry( newValEntry ) )
             {
               // If here expect big troubles
               delete newValEntry; //otherwise mem leak
             }
-            LoadDocEntry( newValEntry );
-            if (newValEntry->IsItemDelimitor())
+
+            if (delimitor)
             {
                break;
             }
@@ -1387,9 +1390,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
 
          //////////////////// BinEntry or UNKOWN VR:
-            BinEntry* newBinEntry =
+/*            BinEntry* newBinEntry =
                new BinEntry( newDocEntry->GetDictEntry() );  //LEAK
-            newBinEntry->Copy( newDocEntry );
+            newBinEntry->Copy( newDocEntry );*/
+            BinEntry* newBinEntry = new BinEntry( newDocEntry );  //LEAK
 
             // When "this" is a Document the Key is simply of the
             // form ( group, elem )...
@@ -1407,12 +1411,12 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                    + newBinEntry->GetKey() );
             }
 
+            LoadDocEntry( newBinEntry );
             if( !set->AddEntry( newBinEntry ) )
             {
               //Expect big troubles if here
               delete newBinEntry;
             }
-            LoadDocEntry( newBinEntry );
          }
 
          if (    ( newDocEntry->GetGroup()   == 0x7fe0 )

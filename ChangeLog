@@ -1,3 +1,8 @@
+2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * FIX: src/gdcmUtil.cxx : to compile with MSVC6
+   * src/gdcmDocument.cxx : fix memory leaks. Fix possible bugs : use an object
+     after it have been deleted
+
 2004-11-09 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * FIX: src/* fix the doxygen warnings.
 
