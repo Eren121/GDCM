@@ -15,7 +15,6 @@ SET(TEST_SOURCES
   TestUtil.cxx
   TestDicomString.cxx
   TestDict.cxx
-  TestDirList.cxx
 )
 
 # add tests that require data
@@ -32,6 +31,7 @@ IF (GDCM_DATA_ROOT)
     TestDicomDir.cxx                 # require DICOMDIR
     BuildUpDicomDir.cxx              # writes a file named "NewDICOMDIR"
     makeDicomDir.cxx                 # writes a file named "NewDICOMDIR"
+    TestDirList.cxx
   )
   # add test that require VTK:
   IF(GDCM_VTK)
