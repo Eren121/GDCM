@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:47:43 $
-  Version:   $Revision: 1.114 $
+  Date:      $Date: 2004/11/03 18:14:52 $
+  Version:   $Revision: 1.115 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -729,7 +729,7 @@ bool Document::ReplaceIfExistByNumber(std::string const & value,
 bool Document::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
 {
    const std::string &key = DictEntry::TranslateToKey(group, element );
-   return TagHT.count(key);
+   return TagHT.count(key) != 0;
 }
 
 /**
