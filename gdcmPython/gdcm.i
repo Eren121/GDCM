@@ -18,7 +18,7 @@
 #include "gdcmElementSet.h"
 #include "gdcmFileHelper.h"
 #include "gdcmGlobal.h"
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmSerieHeader.h"
 #include "gdcmRLEFramesInfo.h"
 #include "gdcmJPEGFragmentsInfo.h"
@@ -288,13 +288,13 @@ using namespace gdcm;
 ////////////////////////////////////////////////////////////////////////////
 // Because overloading and %rename don't work together (see below Note 1)
 // we need to ignore some methods (e.g. the overloaded default constructor).
-// The gdcm::Header class doesn't have any SetFilename method anyhow, and
+// The gdcm::File class doesn't have any SetFilename method anyhow, and
 // this constructor is only used internaly (not from the API) so this is
 // not a big loss.
 %ignore gdcm::binary_write(std::ostream &,uint32_t const &);
 %ignore gdcm::binary_write(std::ostream &,uint16_t const &);
 
-%ignore gdcm::Header::Header();
+%ignore gdcm::File::File();
 %ignore gdcm::DicomDir::DicomDir();
 
 // Ignore all placed in gdcmCommon.h
@@ -322,7 +322,7 @@ using namespace gdcm;
 %include "gdcmDicomDirPatient.h"
 %include "gdcmDicomDirMeta.h"
 %include "gdcmDocument.h"
-%include "gdcmHeader.h"
+%include "gdcmFile.h"
 %include "gdcmSerieHeader.h"
 %include "gdcmFile.h"
 %include "gdcmUtil.h"

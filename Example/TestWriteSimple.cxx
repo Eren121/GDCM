@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:53 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/22 12:39:11 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,39 +20,38 @@
 
 int main(int argc, char* argv[])
 {
+   if (argc < 3) 
+   {
+      std::cerr << "Usage :" << std::endl << argv[0]
+                << " InputFile OutputDicom" << std::endl;
+      return 0;
+   }
 
-  if (argc < 3) 
-    {
-    std::cerr << "Usage :" << std::endl << argv[0] << 
-      " InputFile OutputDicom" << std::endl;
-    return 0;
-    }
+   std::string header = argv[1];
+   const char *output = argv[2];
 
-  std::string header = argv[1];
-  const char *output = argv[2];
+   gdcm::File       *f1 = new gdcm::File( header );
+   gdcm::FileHelper   *f2 = new gdcm::FileHelper( f1 );
 
-  gdcm::File       *f1 = new gdcm::File( header );
-  gdcm::FileHelper   *f2 = new gdcm::FileHelper( f1 );
+   // If the following call is important, then the API sucks. Why is it
+   // required to allocate PixelData when we are not using it !?
+   uint8_t* PixelData = f2->GetImageData(); //EXTREMELY IMPORTANT
+   //Otherwise ReadPixel == -1 -> the dicom writing fails completely
 
-  // If the following call is important, then the API sucks. Why is it
-  // required to allocate PixelData when we are not using it !?
-  uint8_t* PixelData = f2->GetImageData(); //EXTREMELY IMPORTANT
-  //Otherwise ReadPixel == -1 -> the dicom writing fails completely
-  
-  int dataSize    = f2->GetImageDataSize();
-  // unsigned char cast is necessary to be able to delete the buffer
-  // since deleting a void* is not allowed in c++
-  uint8_t *imageData = (uint8_t *)f2->GetImageData();
+   int dataSize    = f2->GetImageDataSize();
+   // unsigned char cast is necessary to be able to delete the buffer
+   // since deleting a void* is not allowed in c++
+   uint8_t *imageData = (uint8_t *)f2->GetImageData();
 
-  f2->SetImageData( imageData, dataSize );
+   f2->SetImageData( imageData, dataSize );
 
-  f2->WriteDcmExplVR( output );
-  
-  delete f1;
-  delete f2;
-  //delete PixelData; //Does GetImageData return the same pointer ?
-  (void)PixelData;
+   f2->WriteDcmExplVR( output );
 
-  return 0;
+   delete f1;
+   delete f2;
+   //delete PixelData; //Does GetImageData return the same pointer ?
+   (void)PixelData;
+
+   return 0;
 }
 

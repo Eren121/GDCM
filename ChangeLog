@@ -1,3 +1,7 @@
+2005-01-22 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * bug fix for compilation on MSVC6
+   * gdcmPython/gdcm.i : rename of classes missed
+
 2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * gdcmDicomDirElement.[h|cxx] : change the AddEntry method. Now, it gets a
      type and not a string. So, there remove problems on the format of the
