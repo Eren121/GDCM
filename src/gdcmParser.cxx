@@ -187,9 +187,9 @@ void gdcmParser::PrintEntryNiceSQ(std::ostream & os) {
                std::cout << "Kaie ! Kaie! SQ stack overflow" << std::endl;
 	       return;
             }
-	 if (DEBUG) cout << "\n >>>>> empile niveau " << top 
+	 if (DEBUG) std::cout << "\n >>>>> empile niveau " << top 
 	                 << "; Lgr SeQ: " << (*i)->GetReadLength() 
-                         << "\n" <<endl;
+                         << "\n" <<std::endl;
 	      	 
 	 pile[top].totalSQlength = (*i)->GetReadLength();
 	 pile[top].alreadyParsedlength = 0; 
@@ -221,11 +221,11 @@ void gdcmParser::PrintEntryNiceSQ(std::ostream & os) {
                                << std::endl; 
                } else {
 	          if (DEBUG) 
-                       cout << "alrdyPseLgt:"
+                       std::cout << "alrdyPseLgt:"
 		       << pile[top].alreadyParsedlength << " totSeQlgt: " 
 		       << pile[top].totalSQlength << " curPseLgt: " 
 		       << currentParsedlength
-		       << endl;
+		       << std::endl;
                   while (pile[top].alreadyParsedlength==pile[top].totalSQlength) {
 		  
 		     if (DEBUG) 

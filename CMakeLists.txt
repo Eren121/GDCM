@@ -59,6 +59,16 @@ SUBDIRS(
 )
 
 #-----------------------------------------------------------------------------
+# Add the testing directories
+OPTION(GDCM_BUILD_TESTING "Test the project" ON)
+IF(GDCM_BUILD_TESTING)
+  ENABLE_TESTING()
+  INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
+  SUBDIRS(Test)
+ENDIF(GDCM_BUILD_TESTING)
+
+
+#-----------------------------------------------------------------------------
 OPTION(GDCM_VTK "Build VTK-GDCM Lib." OFF)
 IF(GDCM_VTK)
   # Search VTK
@@ -116,7 +126,7 @@ EXPORT_LIBRARY_DEPENDENCIES(
   ${GDCM_BINARY_DIR}/gdcmLibraryDepends.cmake
   )
 
-# Intall the âckaging files for use by FIND_PACKAGE(GDCM) in user projects.
+# Intall the packaging files for use by FIND_PACKAGE(GDCM) in user projects.
 INSTALL_FILES(/lin/gdcm FILES
   ${GDCM_SOURCE_DIR}/gdcmUse.cmake
   ${GDCM_BINARY_DIR}/gdcmConfig.cmake

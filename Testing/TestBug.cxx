@@ -1,7 +1,7 @@
 // The following crashes on Win32
 #include "gdcm.h"
 
-int main(int argc, char* argv[])
+int bug1(int argc, char* argv[])
 {  
 	gdcmHeader* e1;
 	

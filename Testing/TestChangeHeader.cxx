@@ -9,7 +9,7 @@
 	// et des pixels d'une autre image
 	
 	
-int main(int argc, char* argv[]) {  
+int testChangeEntete(int argc, char* argv[]) {  
 	std::string premier, deuxieme;
 	char resultat[200];
 	

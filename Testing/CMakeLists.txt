@@ -2,6 +2,10 @@
 # http://www.cmake.org/pipermail/cmake/2001-November/002491.html
 # So that dll is copied to each subdir where needed
 
+SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
+
+SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
+
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 CHECK_INCLUDE_FILE("stdint.h"    CMAKE_HAVE_STDINT_H)
 
@@ -18,6 +22,9 @@ SET(TEST_SOURCES
   bug1.cxx
   pourFindTaggs.cxx
   dcm2acr.cxx
+  PrintDicomDir.cxx
+  makeDicomDir.cxx
+  testDicomDir.cxx
 )
 
 # include stuff
@@ -35,6 +42,11 @@ FOREACH(file ${TEST_SOURCES})
   )
   ENDIF(GDCM_TEST_COMPILE_FLAGS)
   GET_FILENAME_COMPONENT(name ${file} NAME_WE)
-  ADD_EXECUTABLE(${name} ${file})
-  TARGET_LINK_LIBRARIES(${name} gdcm)
+  ADD_TEST(${name} ${GDCM_TESTS} ${name})
 ENDFOREACH(file ${TEST_SOURCES})
+
+
+ADD_EXECUTABLE(gdcmTests gdcmTests.cxx ${TEST_SOURCES})
+TARGET_LINK_LIBRARIES(gdcmTests gdcm)
+
+

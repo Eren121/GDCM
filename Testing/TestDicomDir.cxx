@@ -16,9 +16,8 @@
 #define  ostringstream ostrstream
 //extern "C"
 
-using namespace std;
 
-int main(int argc, char* argv[])
+int testDicomDir(int argc, char* argv[])
 {  
    gdcmDicomDir *e1;
    ListTag::iterator deb , fin;
@@ -80,7 +79,7 @@ int main(int argc, char* argv[])
    }   
  */
  
-   cout << std::endl << std::endl  
+   std::cout << std::endl << std::endl  
 	     << " = Liste des PATIENT/STUDY/SERIE ==========================================" 
 	     << std::endl<< std::endl;	
  
@@ -136,7 +135,7 @@ int main(int argc, char* argv[])
    }   
  */  
 
-   cout << std::endl << std::endl  
+   std::cout << std::endl << std::endl  
         << " = Contenu Complet du DICOMDIR ==========================================" 
         << std::endl<< std::endl;	
    e1->Print();
