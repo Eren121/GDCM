@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.31 2003/07/01 15:14:36 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.32 2003/07/02 16:47:22 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -178,6 +178,11 @@ public:
    int GetZSize(void);
    int GetBitsStored(void);
    int GetSamplesPerPixel(void);
+   
+/* ================ COMMENT OUT after unfreeze
+   int GetPlanarConfiguration(void);
+   ======================================= */
+
    int GetPixelSize(void);       
    std::string GetPixelType(void);  
    

@@ -187,10 +187,14 @@ class gdcmTestCase(unittest.TestCase):
            ["Manufacturer", "Acme Products"],
          # FIXME: 92160 / (120*256) = 3 bytes per pixel NOT 1. Maybe
          # it has something to do with [Samples Per Pixel] = [3] ???
+         # You said it, puffy (tu l'as dit, bouffi, in french language)
+         # RGB is 3 bytes per pixel
+         # + Planar configuration (0028,0006) = 0 --> Pixels RGB       
            ["Pixel Data", "gdcm::NotLoaded. Address:904 Length:92160"] ] ],
       ["US-RGB-8-epicard.dcm",
          # Interest: Big endian transfert syntax
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.2"],  # Big endian
+         # But ... group 0000 is LE .
            ["Modality", "US"],
            ["Photometric Interpretation", "RGB"],
            ["Rows", "480"],
@@ -201,8 +205,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "G.E. Medical Systems"],
            ["Manufacturer Model Name", "LOGIQ 700"],
-         # FIXME: 921600/(480*640) = 3 bytes per pixel NOT 1. Maybe
-         # it has something to do with [Samples Per Pixel] = [3] ???
+         # + Planar configuration (0028,0006) = 1 --> Plane R, Plane G, Plane B  
            ["Implementation Version Name", "OFFIS-DCMTK-311"],
            ["Pixel Data", "gdcm::NotLoaded. Address:1012 Length:921600"] ] ],
    ]

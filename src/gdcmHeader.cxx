@@ -1,5 +1,5 @@
 
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.75 2003/07/01 17:22:44 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.76 2003/07/02 16:47:22 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -42,15 +42,15 @@ void gdcmHeader::Initialise(void) {
  * @param   InFilename
  * @param   exception_on_error
  */
- gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
-  SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
-  filename = InFilename;
-  Initialise();
-  if ( !OpenFile(exception_on_error))
-     return;
-  ParseHeader();
-  LoadElements();
-  CloseFile();
+gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
+   SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
+   filename = InFilename;
+   Initialise();
+   if ( !OpenFile(exception_on_error))
+      return;
+   ParseHeader();
+   LoadElements();
+   CloseFile();
 }
 
 /**
@@ -194,8 +194,8 @@ void gdcmHeader::CheckSwap()
       // instead of just checking for UL, OB and UI !?
       if(  (memcmp(entCur, "UL", (size_t)2) == 0) ||
       	   (memcmp(entCur, "OB", (size_t)2) == 0) ||
-      	   (memcmp(entCur, "UI", (size_t)2) == 0) )
-      	{
+      	   (memcmp(entCur, "UI", (size_t)2) == 0) )   
+      {
          filetype = ExplicitVR;
          dbg.Verbose(1, "gdcmHeader::CheckSwap:",
                      "explicit Value Representation");
@@ -204,7 +204,6 @@ void gdcmHeader::CheckSwap()
          dbg.Verbose(1, "gdcmHeader::CheckSwap:",
                      "not an explicit Value Representation");
       }
-
       if (net2host) {
          sw = 4321;
          dbg.Verbose(1, "gdcmHeader::CheckSwap:",
@@ -952,11 +951,11 @@ guint16 gdcmHeader::ReadInt16(void) {
    size_t item_read;
    item_read = fread (&g, (size_t)2,(size_t)1, fp);
    if ( item_read != 1 ) {
-      dbg.Verbose(1, "gdcmHeader::ReadInt16", " Failed to read :");
+      dbg.Verbose(0, "gdcmHeader::ReadInt16", " Failed to read :");
       if(feof(fp)) 
-         dbg.Verbose(1, "gdcmHeader::ReadInt16", " End of File encountered");
+         dbg.Verbose(0, "gdcmHeader::ReadInt16", " End of File encountered");
      if(ferror(fp)) 
-         dbg.Verbose(1, "gdcmHeader::ReadInt16", " File Error");
+         dbg.Verbose(0, "gdcmHeader::ReadInt16", " File Error");
       errno = 1;
       return 0;
    }
@@ -977,11 +976,11 @@ guint32 gdcmHeader::ReadInt32(void) {
    item_read = fread (&g, (size_t)4,(size_t)1, fp);
    if ( item_read != 1 ) {
    
-      dbg.Verbose(1, "gdcmHeader::ReadInt32", " Failed to read :");
+      dbg.Verbose(0, "gdcmHeader::ReadInt32", " Failed to read :");
       if(feof(fp)) 
-         dbg.Verbose(1, "gdcmHeader::ReadInt32", " End of File encountered");
+         dbg.Verbose(0, "gdcmHeader::ReadInt32", " End of File encountered");
      if(ferror(fp)) 
-         dbg.Verbose(1, "gdcmHeader::ReadInt32", " File Error");   
+         dbg.Verbose(0, "gdcmHeader::ReadInt32", " File Error");   
       errno = 1;
       return 0;
    }
@@ -1647,6 +1646,7 @@ int gdcmHeader::GetBitsStored(void) {
    return atoi(StrSize.c_str());
 }
 
+
 /**
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of Samples Per Pixel
@@ -1660,6 +1660,24 @@ int gdcmHeader::GetSamplesPerPixel(void) {
       return 1; // Well, it's supposed to be mandatory ...
    return atoi(StrSize.c_str());
 }
+
+
+/* ================ COMMENT OUT after unfreeze
+**
+ * \ingroup gdcmHeader
+ * \brief   Retrieve the Planar Configuration for RGB images
+ *          (0 : RGB Pixels , 1 : R Plane + G Plane + B Plane)
+ * 
+ * @return  The encountered Planar Configuration, 0 by default.
+ *
+int gdcmHeader::GetPlanarConfiguration(void) { 
+   string StrSize = GetPubElValByNumber(0x0028,0x0006);
+   if (StrSize == "gdcm::Unfound")
+      return 0;
+   return atoi(StrSize.c_str());
+}
+
+ ======================================= */
 
 /**
  * \ingroup gdcmHeader

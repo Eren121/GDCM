@@ -82,7 +82,7 @@ size_t gdcmFile::GetImageDataSize(void) {
  * \ingroup gdcmFile
  * \brief   Read pixel data from disk (optionaly decompressing) into the
  *          caller specified memory location.
- * @param   destination Where the pixel data should be stored.
+ * @param   destination where the pixel data should be stored.
  *
  */
 bool gdcmFile::ReadPixelData(void* destination) {
@@ -300,6 +300,43 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          return (size_t)0; 
       }
    }
+   
+ // ---
+   string str_PlanarConfiguration = GetPubElValByNumber(0x0028,0x0006);
+   int PlanarConfiguration;
+   if (str_PlanarConfiguration == "gdcm::Unfound" ) {
+      PlanarConfiguration = 0;
+   } else {
+      PlanarConfiguration = atoi(str_PlanarConfiguration.c_str() );
+   }   
+ // ---
+ 
+   // TODO : replace by	 	 	 
+   // if (GetPlanarConfiguration() == 1) {
+   // after unfreeze
+   
+   if  (PlanarConfiguration == 1) { // need to make RGB Pixels
+      int l = lgrTotale/3 ;
+
+      char * a = (char *)destination;
+      char * b = a + l;
+      char * c = b + l;
+      char * newDest = (char*) malloc(lgrTotale);
+      // TODO :
+      // any trick not to have to allocate temporary buffer is welcome ...
+      char *x = newDest;
+      for (int i=0;i<l; i++) {
+         *(x++) = *(a++);
+         *(x++) = *(b++);
+         *(x++) = *(c++);  
+      }
+      a = (char *)destination;
+      x = newDest;
+      for (int i=0;i<lgrTotale; i++) {
+         *(a++) = *(x++);
+      }
+      free(newDest);
+   }
    return lgrTotale; 
 }
 
@@ -320,18 +357,18 @@ if(nb == 16)
       case 1234:
          break;
 		
-         case 21:
-         case 3412:
-         case 2143:
-         case 4321:
+      case 21:
+      case 3412:
+      case 2143:
+      case 4321:
 
-            for(i=0;i<lgr;i++)
-               ((unsigned short int*)im)[i]= ((((unsigned short int*)im)[i])>>8)
-                                           | ((((unsigned short int*)im)[i])<<8);
-               break;
+         for(i=0;i<lgr;i++)
+            ((unsigned short int*)im)[i]= ((((unsigned short int*)im)[i])>>8)
+                                        | ((((unsigned short int*)im)[i])<<8);
+         break;
  			
-         default:
-            printf("valeur de SWAP (16 bits) non autorisee : %d\n", swap);
+      default:
+         printf("valeur de SWAP (16 bits) non autorisee : %d\n", swap);
    } 
  
 if( nb == 32 )
@@ -351,28 +388,28 @@ if( nb == 32 )
          }
          break;
 
-         case 2143:
-            for(i=0;i<lgr;i++) {
-               faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 2143 */
-               fort=((unsigned long int*)im)[i]>>16;
-               fort=  (fort>>8)   | (fort<<8);
-               faible=(faible>>8) | (faible<<8);
-               s32=fort; 
-               ((unsigned long int*)im)[i]=(s32<<16)|faible;
-            }
-            break;
+      case 2143:
+         for(i=0;i<lgr;i++) {
+            faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 2143 */
+            fort=((unsigned long int*)im)[i]>>16;
+            fort=  (fort>>8)   | (fort<<8);
+            faible=(faible>>8) | (faible<<8);
+            s32=fort; 
+            ((unsigned long int*)im)[i]=(s32<<16)|faible;
+         }
+         break;
   
-         case 3412:
-            for(i=0;i<lgr;i++) {
-               faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 3412 */
-               fort=((unsigned long int*)im)[i]>>16;                  
-               s32=faible; 
-               ((unsigned long int*)im)[i]=(s32<<16)|fort;
-            }                 
-            break; 
+      case 3412:
+         for(i=0;i<lgr;i++) {
+            faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 3412 */
+            fort=((unsigned long int*)im)[i]>>16;                  
+            s32=faible; 
+            ((unsigned long int*)im)[i]=(s32<<16)|fort;
+         }                 
+         break; 
     			        
-         default:
-            printf("valeur de SWAP (32 bits) non autorisee : %d\n", swap);
+      default:
+         printf("valeur de SWAP (32 bits) non autorisee : %d\n", swap);
    } 
 return;
 }
@@ -393,8 +430,6 @@ int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
    SetImageDataSize(ExpectedSize);
    PixelData = inData;
    lgrTotale = ExpectedSize;
-   
-   
    return(1);
 }
 
