@@ -8,7 +8,7 @@ Summary: Dicom library
 Name: gdcm
 Version: %ver
 Release: %rel
-License: GPL
+License: LGPL
 Group: Development/Tools
 URL: http://www.creatis.insa-lyon.fr/Public/Gdcm
 Source0: http://www.creatis.insa-lyon.fr/Public/Gdcm/gdcm-%{version}.tar.gz
