@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 17:57:58 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2005/01/13 09:46:54 $
+  Version:   $Revision: 1.99 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,16 +82,21 @@ DicomDir::DicomDir()
 DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    Document( fileName )
 {
-   // Whatever user passed (a root directory or a DICOMDIR)
-   // and whatever the value of parseDir was,
-   // Document is already executed
+   // At this step, Document constructor is already executed,
+   // whatever user passed (a root directory or a DICOMDIR)
+   // and whatever the value of parseDir was.
+   // (nothing is cheked in Document constructor, to avoid overhead)
+
    Initialize();  // sets all private fields to NULL
 
    // if user passed a root directory, sure we didn't get anything
    if ( TagHT.begin() == TagHT.end() ) // when user passed a Directory to parse
    {
-      gdcmVerboseMacro( "Entry HT empty");
+      if (!parseDir)
+         gdcmVerboseMacro( "Entry HT empty for file: "<<fileName);
 
+   // Only if user passed a root directory
+   // ------------------------------------
       if ( fileName == "." )
       {
          // user passed '.' as Name
@@ -111,17 +116,19 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       else
       {
          /// \todo if parseDir == false, it should be tagged as an error
-         // NON ! il suffit d'appeler ParseDirectory() 
-         // apres le constructeur
+         // NO ! user may just call ParseDirectory() *after* constructor
       }
    }
-   else // Only if user passed a DICOMDIR
+   // Only if user passed a DICOMDIR
+   // ------------------------------
+   else 
    {
       // Directory record sequence
       DocEntry *e = GetDocEntry(0x0004, 0x1220);
       if ( !e )
       {
-         gdcmVerboseMacro( "NO Directory record sequence (0x0004,0x1220)");
+         gdcmVerboseMacro( "NO 'Directory record sequence' (0x0004,0x1220)"
+                          << " in file " << fileName);
          /// \todo FIXME : what do we do when the parsed file IS NOT a
          ///       DICOMDIR file ?         
       }
