@@ -15,7 +15,7 @@ typedef std::list<gdcmSQItem *> ListSQItem;
 class GDCM_EXPORT gdcmSeqEntry : public gdcmDocEntry 
 {
 public:
-   gdcmSeqEntry(void);
+   gdcmSeqEntry(gdcmDictEntry* e);
    ~gdcmSeqEntry(void);
    
    virtual void Print(std::ostream &os = std::cout); 
@@ -24,13 +24,14 @@ public:
    inline ListSQItem &GetSQItems() 
       {return items;};
 
- /// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.      
-   inline void AddSQItem(gdcmSQItem *it) 
-      {items.push_back(it);};   
+    void AddEntry(gdcmSQItem *it); 
 
  /// \brief   creates a new SQITEM for this SeQuence.
     gdcmSQItem * NewItem(void);
-      
+    
+   gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element);    
+   gdcmDocEntry *NewDocEntryByName  (std::string Name); 
+     
 protected:
 
 private:

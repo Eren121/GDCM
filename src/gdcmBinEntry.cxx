@@ -10,7 +10,7 @@
 /**
  * \brief   Constructor from a given gdcmBinEntry
  */
-gdcmBinEntry::gdcmBinEntry() : gdcmValEntry() {
+gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e) {
 
 }
 

@@ -18,7 +18,7 @@ class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry {
 
 public:
 
-   gdcmValEntry(void); 
+   gdcmValEntry(gdcmDictEntry* e); 
    ~gdcmValEntry(void);
 
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
@@ -35,14 +35,9 @@ private:
 
 // Variables
   
-   /// \brief Header Entry value, stores as a std::string (VR will be used,
+   /// \brief Header Entry value, stored as a std::string (VR will be used,
    /// later, to decode)
    std::string  value;
-
-
-
-
-
 
 
 };

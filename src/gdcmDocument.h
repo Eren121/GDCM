@@ -10,6 +10,7 @@
 #include "gdcmException.h"
 #include "gdcmDictSet.h"
 #include "gdcmDocEntry.h"
+#include "gdcmDocEntrySet.h"
 
 #include <map>
 #include <list>
@@ -21,7 +22,7 @@ typedef std::string VRKey;
 typedef std::string VRAtr;
 typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
-typedef std::multimap<TagKey, gdcmDocEntry *> TagDocEntryHT;
+typedef std::map<TagKey, gdcmDocEntry *> TagDocEntryHT;
 typedef std::pair<TagKey, gdcmDocEntry *> PairHT;
 typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT; 
 /// for linking together the Elements
@@ -34,7 +35,7 @@ typedef std::map<GroupKey, int> GroupHT;
 /**
  * \brief used by both gdcmHeader and gdcmDicomDir
  */
-class GDCM_EXPORT gdcmDocument : public gdcmElementSet
+class GDCM_EXPORT gdcmDocument
 {
 private:
    /// Public dictionary used to parse this header
@@ -43,9 +44,6 @@ private:
    /// \brief Optional "shadow dictionary" (private elements) used to parse
    /// this header
    gdcmDict *RefShaDict;
-
-   /// Equals 1 if a gdcmDocEntry was added post parsing 
-   int wasUpdated;
    
    /// \brief Equals =1 if user wants to skip shadow groups while parsing
    /// (to save space)
@@ -64,7 +62,7 @@ private:
 
 protected:
    /// Refering underlying filename.
-   std::string filename; 
+   std::string filename;
 
    /// \brief SWap code (e.g. Big Endian, Little Endian, Bad Big Endian,
    /// Bad Little Endian) according to the processor Endianity and
@@ -86,6 +84,9 @@ protected:
 
    /// \brief Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
    /// are NOT printed.
+   /// \todo Currently not used since collides with #define in
+   ///       \ref gdcmDocEntry.cxx. See also
+   ///       \ref gdcmDocument::SetMaxSizePrintEntry()
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// Hash Table (multimap), to provide fast access
@@ -144,7 +145,9 @@ public:
    gdcmDocEntry * ReplaceOrCreateByNumber(std::string Value,
                                              guint16 Group, guint16 Elem);
    bool ReplaceIfExistByNumber (char *Value, guint16 Group, guint16 Elem);
-
+   
+   virtual void  *LoadEntryVoidArea       (guint16 Group, guint16 Element);
+   
 // System access
    guint16 SwapShort(guint16);   // needed by gdcmFile
    guint32 SwapLong(guint32);    // needed by gdcmFile
@@ -177,7 +180,6 @@ protected:
 
    virtual size_t GetEntryOffsetByNumber  (guint16 Group, guint16 Elem);
    virtual void  *GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem);   
-   virtual void  *LoadEntryVoidArea       (guint16 Group, guint16 Element);
    virtual bool   SetEntryVoidAreaByNumber(void *a, guint16 Group, guint16 Elem);
 
    virtual void UpdateShaEntries(void);
@@ -185,21 +187,28 @@ protected:
 // Header entry
    gdcmDocEntry *GetDocEntryByNumber  (guint16 group, guint16 element); 
    gdcmDocEntry *GetDocEntryByName    (std::string Name);
-   IterHT        GetDocEntrySameNumber(guint16 group, guint16 element); 
-// IterHT        GetDocEntrySameName  (std::string Name); 
+   IterHT           GetDocEntrySameNumber(guint16 group, guint16 element); 
+// IterHT           GetDocEntrySameName  (std::string Name); 
 
    void LoadDocEntrySafe(gdcmDocEntry *);
 
-   void UpdateGroupLength(bool SkipSequence = false,
-                          FileType type = ImplicitVR);
+   // Probabely useless
+   //void UpdateGroupLength(bool SkipSequence = false,
+   //                       FileType type = ImplicitVR);
 
    void AddDocEntry       (gdcmDocEntry *);
    
       
 private:
    // Read
-   bool LoadDocEntries(bool exception_on_error = false) throw(gdcmFormatError);
-
+ //bool LoadHeaderEntries(bool exception_on_error = false) throw(gdcmFormatError);
+   // remplacé par ParseES.
+   // What about exception_on_error ?
+   
+   long ParseES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
+   long ParseSQ(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
+   
+   
    void LoadDocEntry      (gdcmDocEntry *);
    void FindDocEntryLength(gdcmDocEntry *);
    void FindDocEntryVR    (gdcmDocEntry *);
@@ -238,12 +247,12 @@ private:
    
    gdcmDocEntry *ReadNextDocEntry   (void);
    gdcmDocEntry *NewDocEntryByNumber(guint16 group, 
-                                     guint16 element);
+                                           guint16 element);
    gdcmDocEntry *NewDocEntryByName  (std::string Name);
    
    // Deprecated (Not used) --> commented out
    //gdcmDocEntry *NewManualDocEntryToPubDict(std::string NewTagName,
-   //                                         std::string VR);
+   //                                               std::string VR);
    
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 
@@ -266,6 +275,10 @@ public:
 
    /// 'Swap code' accessor (see \ref sw )
    inline int GetSwapCode(void) { return sw; }
+   
+   /// File pointer
+   inline FILE * GetFP(void) { return fp; }
+
 };
 
 //-----------------------------------------------------------------------------

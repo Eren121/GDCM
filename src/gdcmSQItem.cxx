@@ -12,9 +12,8 @@
  * \ingroup gdcmSQItem
  * \brief   Constructor from a given gdcmSQItem
  */
-gdcmSQItem::gdcmSQItem() : gdcmDocEntry( ) {
-
-
+gdcmSQItem::gdcmSQItem( ) 
+          : gdcmDocEntrySet() {
 }
 
 /**
@@ -37,15 +36,43 @@ gdcmSQItem::~gdcmSQItem()
  * \ingroup gdcmSQItem
  * \brief   canonical Printer
  */
- 
+ void gdcmSQItem::Print(std::ostream & os) {
+
+   for (ListDocEntry::iterator i = docEntries.begin();  
+        i != docEntries.end();
+        ++i)
+   {
+      //(*i)->SetPrintLevel(printLevel); //self->GetPrintLevel() ?
+      (*i)->Print(os);   
+   } 
+}
 
 //-----------------------------------------------------------------------------
 // Public
 
+bool gdcmSQItem::AddEntry(gdcmDocEntry *entry) {
+   docEntries.push_back(entry);
+   //TODO : check if it worked
+   return true;
+}   
+				  
 //-----------------------------------------------------------------------------
 // Protected
 
 //-----------------------------------------------------------------------------
 // Private
 
+// end-user intended : the guy *wants* to create his own SeQuence ?!?
+gdcmDocEntry *gdcmSQItem::NewDocEntryByNumber(guint16 group,
+                                              guint16 element) {
+// TODO				  
+   gdcmDocEntry *a;   
+   return a;				  
+}
+
+gdcmDocEntry *gdcmSQItem::NewDocEntryByName  (std::string Name) {
+// TODO	: 			  
+   gdcmDocEntry *a;   
+   return a;				  
+}
 //-----------------------------------------------------------------------------

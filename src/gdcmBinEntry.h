@@ -19,7 +19,7 @@ class GDCM_EXPORT gdcmBinEntry  : public gdcmValEntry {
 
 public:
 
-   gdcmBinEntry(void); 
+   gdcmBinEntry(gdcmDictEntry* e); 
    ~gdcmBinEntry(void);
 
 

@@ -1,6 +1,7 @@
 // gdcmDocEntry.cxx
 //-----------------------------------------------------------------------------
 //
+
 #include "gdcmDocEntry.h"
 #include "gdcmTS.h"
 #include "gdcmGlobal.h"
@@ -169,8 +170,23 @@ void gdcmDocEntry::Copy (gdcmDocEntry* e) {
    this->SQDepthLevel = e->SQDepthLevel;      
 }
 
+bool gdcmDocEntry::isItemDelimitor() {
+   if ( (GetGroup() == 0xfffe) && (GetElement() == 0xe00d) )
+      return true;
+   else
+      return false;      
+}
+
+bool gdcmDocEntry::isSequenceDelimitor() {
+   if (GetGroup() == 0xfffe && GetElement() == 0xe0dd)
+      return true;
+   else
+      return false; 
+}
+
 //-----------------------------------------------------------------------------
 // Protected
+
 
 //-----------------------------------------------------------------------------
 // Private

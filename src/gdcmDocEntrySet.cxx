@@ -1,13 +1,21 @@
 // gdcmDocEntrySet.cxx
 //-----------------------------------------------------------------------------
 //
+#include <errno.h>
+#include "gdcmDebug.h"
+#include "gdcmCommon.h"
+#include "gdcmGlobal.h"
 #include "gdcmDocEntrySet.h"
 #include "gdcmException.h"
+#include "gdcmDocEntry.h"
+#include "gdcmSeqEntry.h"
+#include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmDocEntrySEt
+ * \ingroup gdcmDocEntrySet
  * \brief   Constructor from a given gdcmDocEntrySet
  */
 gdcmDocEntrySet::gdcmDocEntrySet() {
@@ -27,10 +35,12 @@ gdcmDocEntrySet::~gdcmDocEntrySet(){
 
 //-----------------------------------------------------------------------------
 // Public
-
+//bool gdcmDocEntrySet::AddEntry(gdcmDocEntry *Entry){return true;}
 
 //-----------------------------------------------------------------------------
 // Protected
+
+
 
 //-----------------------------------------------------------------------------
 // Private
@@ -40,6 +50,9 @@ gdcmDocEntrySet::~gdcmDocEntrySet(){
  * \       and load element values (a voir !)
  * @return  false anything wrong happens 
  */
+ 
+ /* just to keep the code
+ 
 bool gdcmDocEntrySet::LoadDocEntrySet(bool exception_on_error) 
                    throw(gdcmFormatError) {
    (void)exception_on_error;
@@ -48,18 +61,18 @@ bool gdcmDocEntrySet::LoadDocEntrySet(bool exception_on_error)
    gdcmValEntry  *newValEntry = (gdcmValEntry *)0; 
    gdcmBinEntry  *newBinEntry = (gdcmBinEntry *)0; 
    gdcmSeqEntry  *newSeqEntry = (gdcmSeqEntry *)0;  
-   //gdcmDictEntry *NewTag      = (gdcmDictEntry *)0;
-
-   while (newDocEntry = ReadNextDocEntry())) { 
+   
+   string vr;
+   while (newDocEntry = ReadNextDocEntry()) { 
    // TODO (?) : liberation du DocEntry ainsi cree, 
    // apres copie dans un ValEntry, SeqEntry, BinEntry   
-      vr = newDocEntry->getVR();
+      vr = newDocEntry->GetVR();
          
       if (vr == "SQ" ) {
       // --- SeqEntry
       
-         newSeqEntry = (gdcmSeqEntry *)0;
-	 if (!NewSeqEntry) {
+         newSeqEntry = new gdcmSeqEntry((gdcmDictEntry*)NULL);
+	 if (!newSeqEntry) {
             dbg.Verbose(1, "gdcmDocEntrySet::LoadDocEntrySet",
                            "failed to allocate gdcmSeqEntry");
             return false;			   	 
@@ -70,43 +83,62 @@ bool gdcmDocEntrySet::LoadDocEntrySet(bool exception_on_error)
       //           (ensemble d' ITEMs, en fait, 
       //            chaque ITEM etant chargé avec LoadDocEntrySet)
             
-         SkipDocEntry(newSeqEntry); // voir ce qu'on fait pour une SeQuence
-         AddDocEntry(newSeqEntry); 
+         //SkipDocEntry(newSeqEntry); // voir ce qu'on fait pour une SeQuence
+         AddEntry(newSeqEntry); // on appele la fonction generique, 
+	                        // ou une fonction spécialisée ?
 	 
       } else  if (vr == "AE" || vr == "AS" || vr == "DA" || vr == "PN" || 
-                  vr == "UI" || vr == "TM" ) {
+                  vr == "UI" || vr == "TM" || vr == "SH" || vr == "LO" ||
+		  vr == "CS" || vr == "IS" || vr == "LO" || vr == "LT" ||
+		  vr == "SH" || vr == "ST" || 		  
+		  vr == "SL" || vr == "SS" || vr == "UL" || vr == "US"
+		                                                        ) {
       // --- ValEntry 		  
 		  
-         newValEntry = (gdcmValEntry *)0;
-	 if (!NewValEntry) {
+         newValEntry = new gdcmValEntry((gdcmDictEntry*)NULL);
+	 if (!newValEntry) {
             dbg.Verbose(1, "gdcmDocEntrySet::LoadDocEntrySet",
                            "failed to allocate gdcmValEntry");
             return false;			   	 
          }	 
          newValEntry->Copy(newDocEntry);
-         SkipDocEntry(newValEntry); 
-         AddDocEntry(newValEntry); 
-	 	 		  		  
-      }	else {
+         //SkipDocEntry(newValEntry); //le skip devrait etre fait dans le Read 
+         AddEntry(newValEntry); // on appele la fonction generique, 
+	                        // ou une fonction spécialisée ? 
+
+        // Maybe the following VR do correspond to a BinEntry 
+		
+        //AT Attribute Tag; // OK        // 2 16-bit unsigned short integers
+        //FL Floating Point Single; // 32-bit IEEE 754:1985 float
+        //FD Floating Point Double; // 64-bit IEEE 754:1985 double
+        //UN Unknown;               // Any length of bytes
+        //UT Unlimited Text;        // At most 2^32 -1 chars
+	//OB Other Byte String;     // String of bytes (VR independant)
+        //OW Other Word String;     // String of 16-bit words (VR dependant) 	 	 		  		  
+      }	else { 
       // --- BinEntry
       
-         NewBinEntry = new gdcmBinEntry(DictEntry);     
-	 if (!NewValEntry) {
+         newBinEntry = new gdcmBinEntry((gdcmDictEntry*)NULL);     
+	 if (!newBinEntry) {
             dbg.Verbose(1, "gdcmDocEntrySet::LoadDocEntrySet",
                            "failed to allocate gdcmBinEntry");
             return false;			   	 
          }      
          newBinEntry->Copy(newDocEntry);
-         SkipDocEntry(newBinEntry); 
-         AddDocEntry(newBinEntry);	      
+        // SkipDocEntry(newBinEntry); //le skip devrait etre fait dans le Read 
+         AddEntry(newBinEntry); // on appele la fonction generique, 
+	                        // ou une fonction spécialisée ?	      
       }	                     
    }   
-   rewind(fp);
+
 
 
    // TODO : il n'y a plus de Chained List qui contient toutes les Entries 
    //        Le chargement des valeurs devra se faire à la volée  
    // Be carefull : merging this two loops may cause troubles ...
+   
+/* 
+   rewind(fp);  
    for (ListTag::iterator i = GetListEntry().begin();                           
         i != GetListEntry().end();                                                
         ++i)                                                                      
@@ -114,7 +146,11 @@ bool gdcmDocEntrySet::LoadDocEntrySet(bool exception_on_error)
       LoadDocEntry(*i);                                                      
    }                                                                            
    rewind(fp);
-    
+   
+   */
+ 
+ /* TO DO : deporter den fin de parsing du DOCUMENT (pas du EntrySet) 
+  
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to read ACR-LibIDO formated images
    //
@@ -133,88 +169,14 @@ bool gdcmDocEntrySet::LoadDocEntrySet(bool exception_on_error)
          SetEntryByNumber(columns, 0x0028, 0x0010);
          SetEntryByNumber(rows   , 0x0028, 0x0011);
    }
-   // ----------------- End of Special Patch ----------------   
+   // ----------------- End of Special Patch ---------------- 
+   */ 
+   
+   /* 
    return true;
 }
 
-
-
-/**
- * \brief     Check the correspondance between the VR of the header entry
- *            and the taken VR. If they are different, the header entry is 
- *            updated with the new VR.
- * @param     Entry Header Entry to check
- * @param     vr    Dicom Value Representation
- * @return    false if the VR is incorrect of if the VR isn't referenced
- *            otherwise, it returns true
 */
-
-// NE MARCHE PAS EN L'ETAT :
-// On a besoin de VR pour 'fabriquer', au choix ValEntry, BinEntry, ou SeqEntry.
-//
-
-bool gdcmDocEntrySet::CheckEntryVR(gdcmHeaderEntry *Entry, VRKey vr)
-{
-   char msg[100]; // for sprintf
-   bool RealExplicit = true;
-
-   // Assume we are reading a falsely explicit VR file i.e. we reached
-   // a tag where we expect reading a VR but are in fact we read the
-   // first to bytes of the length. Then we will interogate (through find)
-   // the dicom_vr dictionary with oddities like "\004\0" which crashes
-   // both GCC and VC++ implementations of the STL map. Hence when the
-   // expected VR read happens to be non-ascii characters we consider
-   // we hit falsely explicit VR tag.
-
-   if ( (!isalpha(vr[0])) && (!isalpha(vr[1])) )
-      RealExplicit = false;
-
-   // CLEANME searching the dicom_vr at each occurence is expensive.
-   // PostPone this test in an optional integrity check at the end
-   // of parsing or only in debug mode.
-   if ( RealExplicit && !gdcmGlobal::GetVR()->Count(vr) )
-      RealExplicit= false;
-
-   if ( !RealExplicit ) 
-   {
-      // We thought this was explicit VR, but we end up with an
-      // implicit VR tag. Let's backtrack.   
-      sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", 
-                   Entry->GetGroup(),Entry->GetElement());
-      dbg.Verbose(1, "gdcmParser::FindVR: ",msg);
-      if (Entry->GetGroup()%2 && Entry->GetElement() == 0x0000) { // Group length is UL !
-         gdcmDictEntry* NewEntry = NewVirtualDictEntry(
-                                   Entry->GetGroup(),Entry->GetElement(),
-                                   "UL","FIXME","Group Length");
-         Entry->SetDictEntry(NewEntry);     
-      }
-      return(false);
-   }
-
-   if ( Entry->IsVRUnknown() ) 
-   {
-      // When not a dictionary entry, we can safely overwrite the VR.
-      if (Entry->GetElement() == 0x0000) { // Group length is UL !
-         Entry->SetVR("UL");
-      } else {
-         Entry->SetVR(vr);
-      }
-   }
-   else if ( Entry->GetVR() != vr ) 
-   {
-      // The VR present in the file and the dictionary disagree. We assume
-      // the file writer knew best and use the VR of the file. Since it would
-      // be unwise to overwrite the VR of a dictionary (since it would
-      // compromise it's next user), we need to clone the actual DictEntry
-      // and change the VR for the read one.
-      gdcmDictEntry* NewEntry = NewVirtualDictEntry(
-                                 Entry->GetGroup(),Entry->GetElement(),
-                                 vr,"FIXME",Entry->GetName());
-      Entry->SetDictEntry(NewEntry);
-   }
-   return(true); 
-}
-
 
 
 

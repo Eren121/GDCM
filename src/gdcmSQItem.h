@@ -26,11 +26,19 @@ public:
  /// \brief   adds the passed DocEntry to the DocEntry chained List for this SQ Item.      
    inline void AddDocEntry(gdcmDocEntry *e) 
       {docEntries.push_back(e);};         
-            
+
+   virtual bool AddEntry(gdcmDocEntry *Entry); // add to the List
+               
 protected:
 
 private:
 
+   // DocEntry related utilities 
+   
+      
+   virtual gdcmDocEntry *NewDocEntryByNumber(guint16 group,
+                                             guint16 element);
+   virtual gdcmDocEntry *NewDocEntryByName  (std::string Name); 
 
 // Variables
 

@@ -2,6 +2,10 @@
 //-----------------------------------------------------------------------------
 
 #include "gdcmDocument.h"
+#include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
+#include "gdcmSeqEntry.h"
+
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
@@ -68,13 +72,11 @@ gdcmDocument::gdcmDocument(const char *inFilename,
    if ( !OpenFile(exception_on_error))
       return;
 
-   rewind(fp); 
-   if (!CheckSwap()) 
-      return NULL; // Du menage à faire avant de sortir ?
-   LoadDocEntries();   
+   //LoadHeaderEntries();
+   long l=ParseES( (gdcmDocEntrySet *)this, 120L, 0x7fffffff, false);
+   // TODO : find the right values    
    CloseFile();
 
-   wasUpdated = 0;  // will be set to 1 if user adds an entry
    printLevel = 1;  // 'Medium' print level by default
 }
 
@@ -89,7 +91,6 @@ gdcmDocument::gdcmDocument(bool exception_on_error) {
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
 
-   wasUpdated = 0;  // will be set to 1 if user adds an entry
    printLevel = 1;  // 'Medium' print level by default
 }
 
@@ -104,7 +105,7 @@ gdcmDocument::~gdcmDocument (void) {
 //-----------------------------------------------------------------------------
 // Print
 /**
-  * \brief   Prints the Doc Entries (Dicom Elements)
+  * \brief   Prints the Header Entries (Dicom Elements)
   *          from the chained list
   * @return
   */ 
@@ -195,10 +196,10 @@ bool gdcmDocument::IsReadable(void) {
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmDocument::IsImplicitVRLittleEndianTransferSyntax(void) {
-   gdcmHeaderEntry *Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry *Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
    if ( Transfer == UI1_2_840_10008_1_2 )
@@ -212,10 +213,10 @@ bool gdcmDocument::IsImplicitVRLittleEndianTransferSyntax(void) {
  * @return  True when ExplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmDocument::IsExplicitVRLittleEndianTransferSyntax(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
    if ( Transfer == UI1_2_840_10008_1_2_1 )
@@ -229,10 +230,10 @@ bool gdcmDocument::IsExplicitVRLittleEndianTransferSyntax(void) {
  * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
  */
 bool gdcmDocument::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
    if ( Transfer == UI1_2_840_10008_1_2_1_99 )
@@ -246,10 +247,10 @@ bool gdcmDocument::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
  * @return  True when big endian found. False in all other cases.
  */
 bool gdcmDocument::IsExplicitVRBigEndianTransferSyntax(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
    if ( Transfer == UI1_2_840_10008_1_2_2 )  //1.2.2 ??? A verifier !
@@ -319,7 +320,7 @@ bool gdcmDocument::CloseFile(void) {
 }
 
 /**
- * \brief Writes in a file all the Doc Entries (Dicom Elements) 
+ * \brief Writes in a file all the Header Entries (Dicom Elements) 
  *        of the Chained List
  * @param fp file pointer on an already open file
  * @param type Type of the File to be written 
@@ -400,20 +401,22 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-gdcmHeaderEntry * gdcmDocument::ReplaceOrCreateByNumber(
+ 
+ 
+gdcmDocEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          std::string Value, 
                                          guint16 Group, 
                                          guint16 Elem ){
-   gdcmHeaderEntry* a;
-   a = GetHeaderEntryByNumber( Group, Elem);
+   gdcmDocEntry* a;
+   a = GetDocEntryByNumber( Group, Elem);
    if (a == NULL) {
-      a =NewHeaderEntryByNumber(Group, Elem);
+      a =NewDocEntryByNumber(Group, Elem);
       if (a == NULL) 
          return NULL;
-      AddHeaderEntry(a);
+      AddDocEntry(a);
    }   
-   //CLEANME SetEntryByNumber(Value, Group, Elem);
-   a->SetValue(Value);
+   SetEntryByNumber(Value, Group, Elem);
+   //a->SetValue(Value);
    return(a);
 }   
 
@@ -448,7 +451,7 @@ int gdcmDocument::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
 }
 
 /**
- * \brief   Searches within Doc Entries (Dicom Elements) parsed with 
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value of a given tag.
  * \warning Don't use any longer : use GetPubEntryByName
@@ -465,7 +468,7 @@ std::string gdcmDocument::GetEntryByName(std::string tagName) {
 }
 
 /**
- * \brief   Searches within Doc Entries (Dicom Elements) parsed with 
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag.
  *
@@ -482,14 +485,14 @@ std::string gdcmDocument::GetEntryVRByName(std::string tagName) {
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
 
-   gdcmHeaderEntry* elem =  GetHeaderEntryByNumber(dictEntry->GetGroup(),
+   gdcmDocEntry* elem =  GetDocEntryByNumber(dictEntry->GetGroup(),
                                                    dictEntry->GetElement());
    return elem->GetVR();
 }
 
 
 /**
- * \brief   Searches within Doc Entries (Dicom Elements) parsed with 
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag.
  * @param   group Group of the searched tag.
@@ -505,7 +508,7 @@ std::string gdcmDocument::GetEntryByNumber(guint16 group, guint16 element){
 }
 
 /**
- * \brief   Searches within Doc Entries (Dicom Elements) parsed with 
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag..
  *
@@ -519,14 +522,14 @@ std::string gdcmDocument::GetEntryByNumber(guint16 group, guint16 element){
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 std::string gdcmDocument::GetEntryVRByNumber(guint16 group, guint16 element) {
-   gdcmHeaderEntry* elem =  GetHeaderEntryByNumber(group, element);
+   gdcmDocEntry* elem =  GetDocEntryByNumber(group, element);
    if ( !elem )
       return GDCM_UNFOUND;
    return elem->GetVR();
 }
 
 /**
- * \brief   Searches within Doc Entries (Dicom Elements) parsed with 
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the value length of a given tag..
  * @param   group Group of the searched tag.
@@ -534,7 +537,7 @@ std::string gdcmDocument::GetEntryVRByNumber(guint16 group, guint16 element) {
  * @return  Corresponding element length; -2 if not found
  */
 int gdcmDocument::GetEntryLengthByNumber(guint16 group, guint16 element) {
-   gdcmHeaderEntry* elem =  GetHeaderEntryByNumber(group, element);
+   gdcmDocEntry* elem =  GetDocEntryByNumber(group, element);
    if ( !elem )
       return -2;
    return elem->GetLength();
@@ -555,10 +558,9 @@ bool gdcmDocument::SetEntryByName(std::string content,std::string tagName) {
 }
 
 /**
- * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
+ * \brief   Accesses an existing gdcmDocEntry (i.e. a Dicom Element)
  *          through it's (group, element) and modifies it's content with
  *          the given value.
- * \warning Don't use any longer : use SetPubEntryByNumber
  * @param   content new value to substitute with
  * @param   group   group of the Dicom Element to modify
  * @param   element element of the Dicom Element to modify
@@ -577,18 +579,20 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
       content = content + '\0';
    }
       
-   gdcmHeaderEntry * a;
+   gdcmDocEntry * a;
    IterHT p;
-   TagHeaderEntryHT::iterator p2;
+   TagDocEntryHT::iterator p2;
    // DO NOT remove the following lines : they explain the stuff   
    //p= tagHT.equal_range(key); // get a pair of iterators first-last synonym
    //p2=p.first;                // iterator on the first synonym 
    //a=p2->second;              // H Table target column (2-nd col)
     
    // or, easier :
+   
+   // Oops ! this was for multimap, right ?
    a = ((tagHT.equal_range(key)).first)->second; 
        
-   a-> SetValue(content); 
+   ((gdcmValEntry*)a)->SetValue(content);
    
    std::string vr = a->GetVR();
    
@@ -605,8 +609,8 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
 }  
 
 /**
- * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
- *          in the PubHeaderEntrySet of this instance
+ * \brief   Accesses an existing gdcmDocEntry (i.e. a Dicom Element)
+ *          in the PubDocEntrySet of this instance
  *          through it's (group, element) and modifies it's length with
  *          the given value.
  * \warning Use with extreme caution.
@@ -637,11 +641,11 @@ bool gdcmDocument::SetEntryLengthByNumber(guint32 l,
  */
 size_t gdcmDocument::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) 
 {
-   gdcmHeaderEntry* Entry = GetHeaderEntryByNumber(Group, Elem);
+   gdcmDocEntry* Entry = GetDocEntryByNumber(Group, Elem);
    if (!Entry) 
    {
-      dbg.Verbose(1, "gdcmDocument::GetHeaderEntryByNumber",
-                      "failed to Locate gdcmHeaderEntry");
+      dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber",
+                      "failed to Locate gdcmDocEntry");
       return (size_t)0;
    }
    return Entry->GetOffset();
@@ -656,14 +660,14 @@ size_t gdcmDocument::GetEntryOffsetByNumber(guint16 Group, guint16 Elem)
  */
 void * gdcmDocument::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) 
 {
-   gdcmHeaderEntry* Entry = GetHeaderEntryByNumber(Group, Elem);
+   gdcmDocEntry* Entry = GetDocEntryByNumber(Group, Elem);
    if (!Entry) 
    {
-      dbg.Verbose(1, "gdcmDocument::GetHeaderEntryByNumber",
-                  "failed to Locate gdcmHeaderEntry");
+      dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber",
+                  "failed to Locate gdcmDocEntry");
       return (NULL);
    }
-   return Entry->GetVoidArea();
+   return ((gdcmBinEntry *)Entry)->GetVoidArea();
 }
 
 /**
@@ -674,7 +678,7 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem)
  */
 void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem) 
 {
-   gdcmHeaderEntry * Element= GetHeaderEntryByNumber(Group, Elem);
+   gdcmDocEntry * Element= GetDocEntryByNumber(Group, Elem);
    if ( !Element )
       return NULL;
    size_t o =(size_t)Element->GetOffset();
@@ -710,7 +714,9 @@ bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
-   ( ((tagHT.equal_range(key)).first)->second )->SetVoidArea(area); 
+      // This was for multimap ?
+    (( gdcmBinEntry *)( ((tagHT.equal_range(key)).first)->second ))->SetVoidArea(area);
+      
    return true;
 }
 
@@ -741,13 +747,16 @@ void gdcmDocument::UpdateShaEntries(void) {
       else
          vr=(*it)->GetVR();
 
-      (*it)->SetValue(GetHeaderEntryUnvalue(*it));
+      //(*it)->SetValue(GetDocEntryUnvalue(*it));
+      // to go on compiling
       if(entry){
          // Set the new entry and the new value
          (*it)->SetDictEntry(entry);
-         CheckHeaderEntryVR(*it,vr);
+         CheckDocEntryVR(*it,vr);
 
-         (*it)->SetValue(GetHeaderEntryValue(*it));
+         //(*it)->SetValue(GetDocEntryValue(*it));
+        // to go on compiling
+	 
       }
       else
       {
@@ -758,18 +767,18 @@ void gdcmDocument::UpdateShaEntries(void) {
 }
 
 /**
- * \brief   Searches within the Doc Entries for a Dicom Element of
+ * \brief   Searches within the Header Entries for a Dicom Element of
  *          a given tag.
  * @param   tagName name of the searched Dicom Element.
  * @return  Corresponding Dicom Element when it exists, and NULL
  *          otherwise.
  */
- gdcmHeaderEntry *gdcmDocument::GetHeaderEntryByName(std::string tagName) {
+ gdcmDocEntry *gdcmDocument::GetDocEntryByName(std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return NULL;
 
-  return(GetHeaderEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement()));
+  return(GetDocEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement()));
 }
 
 /**
@@ -782,7 +791,7 @@ void gdcmDocument::UpdateShaEntries(void) {
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-gdcmHeaderEntry* gdcmDocument::GetHeaderEntryByNumber(guint16 group, guint16 element) 
+gdcmDocEntry* gdcmDocument::GetDocEntryByNumber(guint16 group, guint16 element) 
 {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);   
    if ( ! tagHT.count(key))
@@ -797,7 +806,7 @@ gdcmHeaderEntry* gdcmDocument::GetHeaderEntryByNumber(guint16 group, guint16 ele
  * @return  a range (i.e.pair<,>) containing all elements whose key is group|element) 
  */
  
-IterHT gdcmDocument::GetHeaderEntrySameNumber(guint16 group, guint16 element){
+IterHT gdcmDocument::GetDocEntrySameNumber(guint16 group, guint16 element){
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    return (tagHT.equal_range(key));
 }
@@ -805,13 +814,13 @@ IterHT gdcmDocument::GetHeaderEntrySameNumber(guint16 group, guint16 element){
 /**
  * \brief         Loads the element while preserving the current
  *                underlying file position indicator as opposed to
- *                to LoadHeaderEntry that modifies it.
+ *                to LoadDocEntry that modifies it.
  * @param entry   Header Entry whose value shall be loaded. 
  * @return  
  */
-void gdcmDocument::LoadHeaderEntrySafe(gdcmHeaderEntry * entry) {
+void gdcmDocument::LoadDocEntrySafe(gdcmDocEntry * entry) {
    long PositionOnEntry = ftell(fp);
-   LoadHeaderEntry(entry);
+   LoadDocEntry(entry);
    fseek(fp, PositionOnEntry, SEEK_SET);
 }
 
@@ -823,11 +832,14 @@ void gdcmDocument::LoadHeaderEntrySafe(gdcmHeaderEntry * entry) {
  * @param   SkipSequence TRUE if we don't want to write Sequences (ACR-NEMA Files)
  * @param   type Type of the File (ExplicitVR,ImplicitVR, ACR, ...) 
  */
+ 
+ /* Probabely useless, now !
+ 
 void gdcmDocument::UpdateGroupLength(bool SkipSequence, FileType type) {
    guint16 gr, el;
    std::string vr;
    
-   gdcmHeaderEntry *elem;
+   gdcmDocEntry *elem;
    char trash[10];
    std::string str_trash;
    
@@ -837,11 +849,11 @@ void gdcmDocument::UpdateGroupLength(bool SkipSequence, FileType type) {
    // remember :
    // typedef std::map<GroupKey, int> GroupHT;
    
-   gdcmHeaderEntry *elemZ;
+   gdcmDocEntry *elemZ;
   
    // for each Tag in the DCM Header
    
-   for (TagHeaderEntryHT::iterator tag2 = tagHT.begin(); 
+   for (TagDocEntryHT::iterator tag2 = tagHT.begin(); 
         tag2 != tagHT.end();
         ++tag2)
    {
@@ -907,29 +919,31 @@ void gdcmDocument::UpdateGroupLength(bool SkipSequence, FileType type) {
       if ( tagHT.count(tk) == 0) // if element 0x0000 not found
       {
          gdcmDictEntry * tagZ = new gdcmDictEntry(gr_bid, 0x0000, "UL");       
-         elemZ = new gdcmHeaderEntry(tagZ);
+         elemZ = new gdcmDocEntry(tagZ);
          elemZ->SetLength(4);
-         AddHeaderEntry(elemZ);   // create it
+         AddDocEntry(elemZ);   // create it
       } 
       else 
       {
-         elemZ=GetHeaderEntryByNumber(gr_bid, 0x0000);
+         elemZ=GetDocEntryByNumber(gr_bid, 0x0000);
       }     
       sprintf(trash ,"%d",g->second);
       str_trash=trash;
-      elemZ->SetValue(str_trash);
+      //elemZ->SetValue(str_trash); // to go on compiling
    }   
 }
+
+*/
 
 /**
  * \brief Writes in a file (according to the requested format)
  *        the group, the element, the value representation and the length
- *        of a single gdcmHeaderEntry passed as argument.
- * @param tag  pointer on the gdcmHeaderEntry to be written
+ *        of a single gdcmDocEntry passed as argument.
+ * @param tag  pointer on the gdcmDocEntry to be written
  * @param _fp  already open file pointer
  * @param type type of the File to be written 
  */
-void gdcmDocument::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
+void gdcmDocument::WriteEntryTagVRLength(gdcmDocEntry *tag,
                                        FILE *_fp,
                                        FileType type)
 {
@@ -985,12 +999,15 @@ void gdcmDocument::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
       
 /**
  * \brief Writes in a file (according to the requested format)
- *        the value of a single gdcmHeaderEntry passed as argument.
- * @param tag  Pointer on the gdcmHeaderEntry to be written
+ *        the value of a single gdcmDocEntry passed as argument.
+ * @param tag  Pointer on the gdcmDocEntry to be written
  * @param _fp  Already open file pointer
  * @param type type of the File to be written
  */
-void gdcmDocument::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
+ 
+ // TODO : to be re -written recursively !
+ 
+void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
    (void)type;
    guint16 group  = tag->GetGroup();
@@ -1005,7 +1022,8 @@ void gdcmDocument::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type
       return;
       
    void *voidArea;
-   voidArea = tag->GetVoidArea();
+  // voidArea = tag->GetVoidArea();
+  // to go on compiling
    if (voidArea != NULL) 
    { // there is a 'non string' LUT, overlay, etc
       fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
@@ -1051,14 +1069,14 @@ void gdcmDocument::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type
 
 /**
  * \brief Writes in a file (according to the requested format)
- *        a single gdcmHeaderEntry passed as argument.
+ *        a single gdcmDocEntry passed as argument.
  * \sa    WriteEntryValue, WriteEntryTagVRLength.
- * @param tag  Pointer on the gdcmHeaderEntry to be written
+ * @param tag  Pointer on the gdcmDocEntry to be written
  * @param _fp  Already open file pointer
  * @param type type of the File to be written
  */
 
-bool gdcmDocument::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
+bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
    guint32 length = tag->GetLength();
 
@@ -1066,7 +1084,8 @@ bool gdcmDocument::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    // bytes. When this is not the case, pad with an additional byte:
    if(length%2==1)
    { 
-      tag->SetValue(tag->GetValue()+"\0");
+//      tag->SetValue(tag->GetValue()+"\0");
+// to go on compiling
       tag->SetLength(tag->GetReadLength()+1);
    }
 
@@ -1136,7 +1155,7 @@ void gdcmDocument::WriteEntriesDeprecated(FILE *_fp,FileType type) {
 
    // restent a tester les echecs en ecriture (apres chaque fwrite)
 
-   for (TagHeaderEntryHT::iterator tag2=tagHT.begin();
+   for (TagDocEntryHT::iterator tag2=tagHT.begin();
         tag2 != tagHT.end();
         ++tag2){
       if ( type == ACR ){ 
@@ -1208,12 +1227,150 @@ guint16 gdcmDocument::UnswapShort(guint16 a) {
 //-----------------------------------------------------------------------------
 // Private
 
+
+
+/**
+ * \brief   Parses a DocEntrySet (Zero-level DocEntries or SQ Item DocEntries)
+ * @return  false if file is not ACR-NEMA / PAPYRUS / DICOM 
+ */ 
+
+long gdcmDocument::ParseES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
+
+   gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
+   gdcmValEntry *vl;
+   gdcmSeqEntry *sq;
+   long l;         
+   while (true) { 
+      NewDocEntry = ReadNextDocEntry( );
+      if (!NewDocEntry)
+         break;
+   if (NewDocEntry->GetVR() !="SQ") {	 
+      vl= new gdcmValEntry(NewDocEntry->GetDictEntry());
+      vl->Copy(NewDocEntry);
+      delete NewDocEntry;
+      set->AddEntry(vl);
+      if (!delim_mode && vl->isItemDelimitor())
+         break;      
+      
+   } else {   // VR = "SQ"
+      l=NewDocEntry->GetReadLength(); 
+      if (l == 0xffffffff)
+        delim_mode = true;
+      else
+        delim_mode = false;
+      sq = new gdcmSeqEntry(NewDocEntry->GetDictEntry());
+      sq->Copy(NewDocEntry);
+      long lgt = ParseSQ((gdcmDocEntrySet *)sq, offset, l, delim_mode);
+      set->AddEntry(sq);
+      if ( !delim_mode && ftell(fp)-offset >= l_max)
+         break;
+      } 
+   } 
+   return l; // ?? 
+}
+
+
+
+
+long gdcmDocument::ParseSQ(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
+
+   gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
+   gdcmSQItem *itemSQ;
+   bool dlm_mod;
+   int lgr, l, lgth;
+   
+   while (true) {
+      if(delim_mode) {   
+          NewDocEntry = ReadNextDocEntry();
+          if (NewDocEntry->isSequenceDelimitor())
+	  // =====> ATTENTION : il faudra tout de meme ajouter 
+	  //                    le Sequence Delimiter  ?!?
+	  //set.Add(???);
+	     break;
+      }	     
+      if (!delim_mode && (ftell(fp)-offset) >= l_max){	     
+             break;
+      }	        
+      itemSQ = new gdcmSQItem();
+      
+      l= NewDocEntry->GetLength();
+      if (l ==0xffffffff)
+         dlm_mod = true;
+      else
+         dlm_mod=false;
+      
+      lgr=ParseES(itemSQ, offset, l, dlm_mod);
+      ((gdcmSeqEntry *)set)->AddEntry(itemSQ);	 
+   }
+   //Update(lgth); // TODO // to go on compiling
+   return(lgth);
+}
+
+
+/**
+ * \brief   Parses the header of the file and load element values.
+ * @return  false if file is not ACR-NEMA / PAPYRUS / DICOM 
+ */
+
+/* =======================================================================
+// Replaced by ParseSQ
+  
+bool gdcmDocument::LoadHeaderEntries(bool exception_on_error) throw(gdcmFormatError) {
+   (void)exception_on_error;
+   rewind(fp);
+   if (!CheckSwap())
+      return false;
+      
+   gdcmDocEntry *newDocEntry = (gdcmDocEntry *)0;   
+   while ( (newDocEntry = ReadNextDocEntry()) ) {
+     SkipDocEntry(newDocEntry);
+     if ( (ignoreShadow==0) || (newDocEntry->GetGroup()%2) == 0) { 
+        AddDocEntry(newDocEntry); 
+     }     
+   }   
+   rewind(fp);
+   // Be carefull : merging this two loops may cause troubles ...
+   for (ListTag::iterator i = GetListEntry().begin();                           
+        i != GetListEntry().end();                                                
+        ++i)                                                                      
+   {                                                                            
+      LoadDocEntry(*i);                                                      
+   }                                                                            
+   rewind(fp);                                                                     
+   
+   // Load 'non string' values
+ 
+   
+   // --------------------------------------------------------------
+   // Special Patch to allow gdcm to read ACR-LibIDO formated images
+   //
+   // if recognition code tells us we deal with a LibIDO image
+   // we switch lineNumber and columnNumber
+   //
+   std::string RecCode;
+   RecCode = GetEntryByNumber(0x0008, 0x0010); // recognition code
+   if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
+       RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
+                                          // with "little-endian strings"
+   {
+         filetype = ACR_LIBIDO; 
+         std::string rows    = GetEntryByNumber(0x0028, 0x0010);
+         std::string columns = GetEntryByNumber(0x0028, 0x0011);
+         SetEntryByNumber(columns, 0x0028, 0x0010);
+         SetEntryByNumber(rows   , 0x0028, 0x0011);
+   }
+   // ----------------- End of Special Patch ----------------   
+   return true;
+}
+======================================================================= */
+
+
 /**
  * \brief         Loads the element content if its length doesn't exceed
  *                the value specified with gdcmDocument::SetMaxSizeLoadEntry()
  * @param         Entry Header Entry (Dicom Element) to be dealt with
  */
-void gdcmDocument::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
+void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)  {
    size_t item_read;
    guint16 group  = Entry->GetGroup();
    std::string  vr= Entry->GetVR();
@@ -1226,13 +1383,16 @@ void gdcmDocument::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
    //          (fffe e00d) tells us an Element just ended
    //          (fffe e0dd) tells us the current SeQuence just ended
    if( group == 0xfffe ) {
-      Entry->SetValue("gdcm::Skipped");
+      // NO more value field for SQ !
+      //Entry->SetValue("gdcm::Skipped");
+      // appel recursif de Load Value
+      // (meme pb que pour le parsing)
       return;
    }
 
    // When the length is zero things are easy:
    if ( length == 0 ) {
-      Entry->SetValue("");
+      ((gdcmValEntry *)Entry)->SetValue("");
       return;
    }
 
@@ -1245,12 +1405,12 @@ void gdcmDocument::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
       s << " Address:" << (long)Entry->GetOffset();
       s << " Length:"  << Entry->GetLength();
       s << " x(" << std::hex << Entry->GetLength() << ")";
-      Entry->SetValue(s.str());
+      ((gdcmValEntry *)Entry)->SetValue(s.str());
       return;
    }
     
    // Any compacter code suggested (?)
-   if ( IsHeaderEntryAnInteger(Entry) ) {   
+   if ( IsDocEntryAnInteger(Entry) ) {   
       guint32 NewInt;
       std::ostringstream s;
       int nbInt;
@@ -1290,7 +1450,7 @@ void gdcmDocument::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
       s << std::ends; // to avoid oddities on Solaris
 #endif //GDCM_NO_ANSI_STRING_STREAM
 
-      Entry->SetValue(s.str());
+      ((gdcmValEntry *)Entry)->SetValue(s.str());
       return;
    }
    
@@ -1299,14 +1459,14 @@ void gdcmDocument::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
    item_read = fread(&(NewValue[0]), (size_t)length, (size_t)1, fp);
    if ( item_read != 1 ) {
       dbg.Verbose(1, "gdcmDocument::LoadElementValue","unread element value");
-      Entry->SetValue("gdcm::UnRead");
+      ((gdcmValEntry *)Entry)->SetValue("gdcm::UnRead");
       return;
    }
 
    if( (vr == "UI") ) // Because of correspondance with the VR dic
-      Entry->SetValue(NewValue.c_str());
+      ((gdcmValEntry *)Entry)->SetValue(NewValue.c_str());
    else
-      Entry->SetValue(NewValue);
+      ((gdcmValEntry *)Entry)->SetValue(NewValue);
 }
 
 /**
@@ -1316,19 +1476,18 @@ void gdcmDocument::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
  * \todo    something to allow further Elements addition,
  *          (at their right place in the chained list)
  *          when position to be taken care of     
- * @param   newHeaderEntry
+ * @param   newDocEntry
  */
-void gdcmDocument::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
-   tagHT.insert( PairHT( newHeaderEntry->GetKey(),newHeaderEntry) );
-   listEntries.push_back(newHeaderEntry); 
-   wasUpdated = 1;
+void gdcmDocument::AddDocEntry(gdcmDocEntry *newDocEntry) {
+   tagHT.insert( PairHT( newDocEntry->GetKey(),newDocEntry) );
+   listEntries.push_back(newDocEntry); 
 }
 
 /**
  * \brief  Find the value Length of the passed Header Entry
  * @param  Entry Header Entry whose length of the value shall be loaded. 
  */
- void gdcmDocument::FindHeaderEntryLength (gdcmHeaderEntry *Entry) {
+ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry) {
    guint16 element = Entry->GetElement();
    //guint16 group   = Entry->GetGroup(); //FIXME
    std::string  vr = Entry->GetVR();
@@ -1347,10 +1506,10 @@ void gdcmDocument::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
 
          if ( (vr == "OB") && (length32 == 0xffffffff) ) 
          {
-            Entry->SetLength(FindHeaderEntryLengthOB());
+            Entry->SetLength(FindDocEntryLengthOB());
             return;
          }
-         FixHeaderEntryFoundLength(Entry, length32); 
+         FixDocEntryFoundLength(Entry, length32); 
          return;
       }
 
@@ -1419,7 +1578,7 @@ void gdcmDocument::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
          // Actually, length= 0xffff means that we deal with
          // Unknown Sequence Length 
       }
-      FixHeaderEntryFoundLength(Entry, (guint32)length16);
+      FixDocEntryFoundLength(Entry, (guint32)length16);
       return;
    }
    else
@@ -1431,7 +1590,7 @@ void gdcmDocument::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
       // not coexist in a Data Set and Data Sets nested within it".]
       // Length is on 4 bytes.
       
-      FixHeaderEntryFoundLength(Entry, ReadInt32());
+      FixDocEntryFoundLength(Entry, ReadInt32());
       return;
    }
 }
@@ -1440,7 +1599,7 @@ void gdcmDocument::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
  * \brief     Find the Value Representation of the current Dicom Element.
  * @param     Entry
  */
-void gdcmDocument::FindHeaderEntryVR( gdcmHeaderEntry *Entry) 
+void gdcmDocument::FindDocEntryVR( gdcmDocEntry *Entry) 
 {
    if (filetype != ExplicitVR)
       return;
@@ -1458,7 +1617,7 @@ void gdcmDocument::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
    
    (void)fread (&VR, (size_t)2,(size_t)1, fp);
    VR[2]=0;
-   if(!CheckHeaderEntryVR(Entry,VR))
+   if(!CheckDocEntryVR(Entry,VR))
    {
       fseek(fp, PositionOnEntry, SEEK_SET);
       // When this element is known in the dictionary we shall use, e.g. for
@@ -1481,7 +1640,7 @@ void gdcmDocument::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true
 */
-bool gdcmDocument::CheckHeaderEntryVR(gdcmHeaderEntry *Entry, VRKey vr)
+bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *Entry, VRKey vr)
 {
    char msg[100]; // for sprintf
    bool RealExplicit = true;
@@ -1550,9 +1709,9 @@ bool gdcmDocument::CheckHeaderEntryVR(gdcmHeaderEntry *Entry, VRKey vr)
  * @param   Entry 
  * @return  Transformed entry value
  */
-std::string gdcmDocument::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
+std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *Entry)
 {
-   if ( (IsHeaderEntryAnInteger(Entry)) && (Entry->IsImplicitVR()) )
+   if ( (IsDocEntryAnInteger(Entry)) && (Entry->IsImplicitVR()) )
    {
       std::string val=Entry->GetValue();
       std::string vr=Entry->GetVR();
@@ -1620,9 +1779,9 @@ std::string gdcmDocument::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
  * @param   Entry 
  * @return  Reverse transformed entry value
  */
-std::string gdcmDocument::GetHeaderEntryUnvalue(gdcmHeaderEntry *Entry)
+std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry *Entry)
 {
-   if ( (IsHeaderEntryAnInteger(Entry)) && (Entry->IsImplicitVR()) )
+   if ( (IsDocEntryAnInteger(Entry)) && (Entry->IsImplicitVR()) )
    {
       std::string vr=Entry->GetVR();
       std::ostringstream s;
@@ -1670,7 +1829,7 @@ std::string gdcmDocument::GetHeaderEntryUnvalue(gdcmHeaderEntry *Entry)
  * \warning NOT end user intended method !
  * @param   entry 
  */
-void gdcmDocument::SkipHeaderEntry(gdcmHeaderEntry *entry) 
+void gdcmDocument::SkipDocEntry(gdcmDocEntry *entry) 
 {
     SkipBytes(entry->GetLength());
 }
@@ -1680,7 +1839,7 @@ void gdcmDocument::SkipHeaderEntry(gdcmHeaderEntry *entry)
  *          the parser went Jabberwocky) one can hope improving things by
  *          applying this heuristic.
  */
-void gdcmDocument::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 FoundLength) 
+void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry, guint32 FoundLength) 
 {
    Entry->SetReadLength(FoundLength); // will be updated only if a bug is found        
    if ( FoundLength == 0xffffffff) {
@@ -1745,7 +1904,7 @@ void gdcmDocument::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Fou
  * @param   Entry The element value on which to apply the predicate.
  * @return  The result of the heuristical predicate.
  */
-bool gdcmDocument::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
+bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
    guint16 element = Entry->GetElement();
    guint16 group   = Entry->GetGroup();
    std::string  vr = Entry->GetVR();
@@ -1773,7 +1932,7 @@ bool gdcmDocument::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
          // instead of giving up with an error message
 
          //std::cout << s.str().c_str() << std::endl;
-         // dbg.Error("gdcmDocument::IsHeaderEntryAnInteger",
+         // dbg.Error("gdcmDocument::IsDocEntryAnInteger",
          //           s.str().c_str());     
       }
    }
@@ -1788,7 +1947,7 @@ bool gdcmDocument::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
  * @return 
  */
 
- guint32 gdcmDocument::FindHeaderEntryLengthOB(void)  {
+ guint32 gdcmDocument::FindDocEntryLengthOB(void)  {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
    guint16 g;
    guint16 n; 
@@ -2201,31 +2360,31 @@ gdcmDictEntry *gdcmDocument::GetDictEntryByNumber(guint16 group,guint16 element)
 
 /**
  * \brief   Read the next tag but WITHOUT loading it's value
- * @return  On succes the newly created HeaderEntry, NULL on failure.      
+ * @return  On succes the newly created DocEntry, NULL on failure.      
  */
-gdcmHeaderEntry *gdcmDocument::ReadNextHeaderEntry(void) {
+gdcmDocEntry *gdcmDocument::ReadNextDocEntry(void) {
    guint16 g,n;
-   gdcmHeaderEntry *NewEntry;
+   gdcmDocEntry *NewEntry;
    g = ReadInt16();
    n = ReadInt16();
       
    if (errno == 1)
       // We reached the EOF (or an error occured) therefore 
       // header parsing has to be considered as finished.
-      return (gdcmHeaderEntry *)0;
+      return (gdcmDocEntry *)0;
 
-// Pb : how to propagate the element length (used in SkipHeaderEntry)
+// Pb : how to propagate the element length (used in SkipDocEntry)
 //       direct call to SkipBytes ?
    
 //   if (ignoreShadow == 1 && g%2 ==1)
       // if user wants to skip shadow groups
       // and current element *is* a shadow element
       // we don't create anything
-//      return (gdcmHeaderEntry *)1; // to tell caller it's NOT finished
+//      return (gdcmDocEntry *)1; // to tell caller it's NOT finished
   
-   NewEntry = NewHeaderEntryByNumber(g, n);
-   FindHeaderEntryVR(NewEntry);
-   FindHeaderEntryLength(NewEntry);
+   NewEntry = NewDocEntryByNumber(g, n);
+   FindDocEntryVR(NewEntry);
+   FindDocEntryLength(NewEntry);
 
    if (errno == 1) {
       // Call it quits
@@ -2241,18 +2400,18 @@ gdcmHeaderEntry *gdcmDocument::ReadNextHeaderEntry(void) {
  *          a default one when absent.
  * @param   Name    Name of the underlying DictEntry
  */
-gdcmHeaderEntry *gdcmDocument::NewHeaderEntryByName(std::string Name) 
+gdcmDocEntry *gdcmDocument::NewDocEntryByName(std::string Name) 
 {
    gdcmDictEntry *NewTag = GetDictEntryByName(Name);
    if (!NewTag)
       NewTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "unkn", Name);
 
-   gdcmHeaderEntry* NewEntry = new gdcmHeaderEntry(NewTag);
+   gdcmDocEntry* NewEntry = new gdcmDocEntry(NewTag);
    if (!NewEntry) 
    {
-      dbg.Verbose(1, "gdcmDocument::ObtainHeaderEntryByName",
-                  "failed to allocate gdcmHeaderEntry");
-      return (gdcmHeaderEntry *)0;
+      dbg.Verbose(1, "gdcmDocument::ObtainDocEntryByName",
+                  "failed to allocate gdcmDocEntry");
+      return (gdcmDocEntry *)0;
    }
    return NewEntry;
 }  
@@ -2280,18 +2439,18 @@ gdcmDictEntry *gdcmDocument::NewVirtualDictEntry(guint16 group, guint16 element,
  * @param   Group group   of the underlying DictEntry
  * @param   Elem  element of the underlying DictEntry
  */
-gdcmHeaderEntry *gdcmDocument::NewHeaderEntryByNumber(guint16 Group, guint16 Elem) 
+gdcmDocEntry *gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem) 
 {
    // Find out if the tag we encountered is in the dictionaries:
    gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
    if (!DictEntry)
       DictEntry = NewVirtualDictEntry(Group, Elem);
 
-   gdcmHeaderEntry *NewEntry = new gdcmHeaderEntry(DictEntry);
+   gdcmDocEntry *NewEntry = new gdcmDocEntry(DictEntry);
    if (!NewEntry) 
    {
-      dbg.Verbose(1, "gdcmDocument::NewHeaderEntryByNumber",
-                  "failed to allocate gdcmHeaderEntry");
+      dbg.Verbose(1, "gdcmDocument::NewDocEntryByNumber",
+                  "failed to allocate gdcmDocEntry");
       return NULL;
    }
    return NewEntry;
@@ -2300,17 +2459,17 @@ gdcmHeaderEntry *gdcmDocument::NewHeaderEntryByNumber(guint16 Group, guint16 Ele
 /// \todo Never used; commented out, waiting for removal.
 /**
  * \brief   Small utility function that creates a new manually crafted
- *          (as opposed as read from the file) gdcmHeaderEntry with user
+ *          (as opposed as read from the file) gdcmDocEntry with user
  *          specified name and adds it to the public tag hash table.
  * \note    A fake TagKey is generated so the PubDict can keep it's coherence.
  * @param   NewTagName The name to be given to this new tag.
  * @param   VR The Value Representation to be given to this new tag.
  * @return  The newly hand crafted Element Value.
  */
-//gdcmHeaderEntry *gdcmDocument::NewManualHeaderEntryToPubDict(std::string NewTagName, 
+//gdcmDocEntry *gdcmDocument::NewManualDocEntryToPubDict(std::string NewTagName, 
 //                                                           std::string VR) 
 //{
-//   gdcmHeaderEntry *NewEntry = NULL;
+//   gdcmDocEntry *NewEntry = NULL;
 //   guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
 //   guint32 FreeElem = 0;
 //   gdcmDictEntry *DictEntry = NULL;
@@ -2318,15 +2477,15 @@ gdcmHeaderEntry *gdcmDocument::NewHeaderEntryByNumber(guint16 Group, guint16 Ele
 //   FreeElem = GenerateFreeTagKeyInGroup(StuffGroup);
 //   if (FreeElem == UINT32_MAX) 
 //   {
-//      dbg.Verbose(1, "gdcmHeader::NewManualHeaderEntryToPubDict",
+//      dbg.Verbose(1, "gdcmHeader::NewManualDocEntryToPubDict",
 //                     "Group 0xffff in Public Dict is full");
 //      return NULL;
 //   }
 //
 //   DictEntry = NewVirtualDictEntry(StuffGroup, FreeElem,
 //                                VR, "GDCM", NewTagName);
-//   NewEntry = new gdcmHeaderEntry(DictEntry);
-//   AddHeaderEntry(NewEntry);
+//   NewEntry = new gdcmDocEntry(DictEntry);
+//   AddDocEntry(NewEntry);
 //   return NewEntry;
 //}
 

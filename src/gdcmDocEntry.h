@@ -19,6 +19,14 @@ class GDCM_EXPORT gdcmDocEntry {
 public:
    gdcmDocEntry(gdcmDictEntry*);
 
+   /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
+   /// 'string', if it's stored as an integer in the Dicom Header of the
+   /// current Dicom Header Entry 
+   /// TODO virtual?  
+   //inline std::string  GetValue(void)     { return value; };
+   // Pour continuer a compiler :-(
+   inline std::string  GetValue(void)     { return "value"; };
+      
    /// Returns the Dicom Group number of the current Dicom Header Entry
    inline guint16      GetGroup(void)     { return entry->GetGroup();  };
 
@@ -82,7 +90,7 @@ public:
    /// @return true if the current Dicom Element was checked as ImplicitVr
    inline bool gdcmDocEntry::IsImplicitVR(void) { return ImplicitVR; };
 
-   /// \brief Tells us if the VR of the current Dicom Element is Unkonwn
+   /// \brief Tells us if the VR of the current Dicom Element is Unknown
    /// @return true if the VR is unkonwn
    inline bool gdcmDocEntry::IsVRUnknown(void)
                { return entry->IsVRUnknown(); };
@@ -100,6 +108,9 @@ public:
    /// \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
    void SetPrintLevel(int level) { printLevel = level; };
 
+   /// \brief Gets the print level for the Dicom Header Elements
+   int GetPrintLevel(void) { return(printLevel); };
+   
    void Print (std::ostream & os = std::cout); 
     
    /// Gets the depth level of a Dicom Header Entry embedded in a SeQuence
@@ -108,7 +119,10 @@ public:
    guint32 GetFullLength(void);
    
    void Copy(gdcmDocEntry *doc);
-     
+
+   bool isItemDelimitor();
+   bool isSequenceDelimitor();   
+      
 private:
    // FIXME: In fact we should be more specific and use :
    // friend gdcmDocEntry * gdcmHeader::ReadNextElement(void);
@@ -118,8 +132,9 @@ private:
    inline void SetSQDepthLevel(int depthLevel) { SQDepthLevel = depthLevel; };
       
 // Variables
-   gdcmDictEntry *entry;
 
+   gdcmDictEntry *entry;
+   
    /// \brief Updated from ReadLength, by FixFoungLentgh() for fixing a bug
    /// in the header or helping the parser going on    
    guint32 UsableLength; 

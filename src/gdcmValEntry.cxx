@@ -14,12 +14,17 @@
  * \brief   Constructor from a given gdcmDictEntry
  * @param   in Pointer to existing dictionary entry
  */
-gdcmValEntry::gdcmValEntry() : gdcmDocEntry( ) {
+gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e) {
 
 
 }
 
+/**
+ * \brief   Canonical destructor.
+ */
+gdcmValEntry::~gdcmValEntry (void) {
 
+}
 
 
 //-----------------------------------------------------------------------------
