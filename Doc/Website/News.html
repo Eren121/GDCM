@@ -59,7 +59,9 @@
            <TT> PATIENT</TT>/<TT>STUDY</TT>/<TT>SERIE</TT>/<TT>IMAGE</TT>)
       <LI> Allow user to add an Entry to the default entry list, for
            making a <TT>DICOMDIR</TT> from a root directory
-      <LI> 16-bits-LUT Management
+      <LI> 16-bits-LUT full Management
+      <LI> User friendly management of <TT>Rescale Slope</TT> and
+           <TT>Rescale Intercept</TT>
       <LI> Allow parsing the Shadow groups against a user supplied 
            Private Dicom Dictionary (pfff!...)
       <LI> An accurate <TT>SerieHelper</TT>
@@ -68,7 +70,11 @@
    <LI> Known bugs
    <UL>
       <LI> <TT>DocEntrySet::InsertSeqEntry</TT> never used, never checked ...
-      <LI> 
+      <LI> The difference between <TT>MONOCHROME1</TT> and <TT>MONOCHROME2</TT>
+           is not taken into account. It's up to the user to change the pixels
+           value
+      <LI> Writing a 'True Dicom' image after reading an ACR-NEMA image resquest
+           from the user to build up 'manually' the Meta Elements group (0002) 
    </UL> 
 </UL>
 

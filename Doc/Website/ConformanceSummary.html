@@ -25,8 +25,8 @@ Gdcm <B>does not contain or support any of the DICOM services</B>
 such as Storage, Query/Retrieve, Print, Verification...
 
 <!##############################################>
-<H2>Supported transfer syntaxes</H2>
-The Transfer Syntax UID is in the file's DICOM Tag field (0002,0010).
+<H2>Supported transfer syntaxes (Reading)</H2>
+The Transfer Syntax UID is in the file DICOM Tag field (0002,0010).
 
 <TABLE WIDTH="800" BORDER="0" CELLSPACING="1" CELLPADDING="10"
        BGCOLOR="#ffffff">
@@ -92,7 +92,27 @@ The Transfer Syntax UID is in the file's DICOM Tag field (0002,0010).
 </TABLE>
 
 <!##############################################>
-<H2>Supported "Photometric Interpretation" pixel format</H2>
+<H2>Supported transfer syntaxes (Writing)</H2>
+The Transfer Syntax UID is in the file DICOM Tag field (0002,0010).
+
+<TABLE WIDTH="800" BORDER="0" CELLSPACING="1" CELLPADDING="10"
+       BGCOLOR="#ffffff">
+<!####### Uncompressed #########>
+<TR BGCOLOR="#99ccff">
+   <TH> Uncompressed Transfer Syntax </TH>
+   <TH> Description </TH>
+</TR>
+<TR>
+   <TD> 1.2.840.10008.1.2 </TD>
+   <TD> Implicit VR - Little Endian</TD>
+</TR>
+<TR>
+   <TD> 1.2.840.10008.1.2.1 </TD>
+   <TD> Explicit VR - Little Endian</TD>
+</TR>
+</TABLE>
+<!##############################################>
+<H2>Supported "Photometric Interpretation" pixel format (Reading)</H2>
 The Photometric Interpretation UID is in the file DICOM Tag field (0028,0004).
 
 <TABLE WIDTH="800" BORDER="0" CELLSPACING="1" CELLPADDING="10"
@@ -103,11 +123,11 @@ The Photometric Interpretation UID is in the file DICOM Tag field (0028,0004).
 </TR>
 <TR>
    <TD> MONOCHROME1 </TD>
-   <TD> grey level image description</TD>
+   <TD> grey level image description (high values=dark, low values=bright)</TD>
 </TR>
 <TR>
    <TD> MONOCHROME2 </TD>
-   <TD> grey level image description</TD>
+   <TD> grey level image description (high values=bright, low values=dark)</TD>
 </TR>
 <TR>
    <TD> PALETTE COLOR </TD>
@@ -124,6 +144,65 @@ The Photometric Interpretation UID is in the file DICOM Tag field (0028,0004).
 <TR>
    <TD> YBR_FULL_422 </TD>
    <TD> true color image description</TD>
+</TR>
+</TABLE>
+
+</TABLE>
+<!##############################################>
+<H2>Supported "Photometric Interpretation" pixel format (Writing)</H2>
+The Photometric Interpretation UID is in the file DICOM Tag field (0028,0004).
+
+<TABLE WIDTH="800" BORDER="0" CELLSPACING="1" CELLPADDING="10"
+       BGCOLOR="#ffffff">
+<TR BGCOLOR="#99ccff">
+   <TH> Photometric Interpretation" pixel format </TH>
+   <TH> Description </TH>
+</TR>
+<TR>
+   <TD> MONOCHROME2 </TD>
+   <TD> grey level image description (high values=bright, low values=dark)</TD>
+</TR>
+<TR>
+   <TD> PALETTE COLOR </TD>
+   <TD> pseudo color image description</TD>
+</TR>
+<TR>
+   <TD> RGB </TD>
+   <TD> true color image description</TD>
+</TR>
+
+</TABLE>
+
+
+<!##############################################>
+<H2>Supported 'Bits Allocated' values (Reading)</H2>
+The Bits Allocated value is in the file DICOM Tag field (0020,0100).
+
+<TABLE WIDTH="800" BORDER="0" CELLSPACING="1" CELLPADDING="10"
+       BGCOLOR="#ffffff">
+<!####### Uncompressed #########>
+<TR BGCOLOR="#99ccff">
+   <TH> Classical values </TH>
+   <TH> Description </TH>
+</TR>
+<TR>
+   <TD> 8, 12, 16 </TD>
+   <TD> 12 means that 4 pixels are stored in 3 'short int'</TD>
+</TR>
+<TR BGCOLOR="#99ccff">
+   <TH> Unusual values </TH>
+   <TH> Description </TH></TR>
+<TR>
+   <TD> 24 </TD>
+   <TD> Some ACR-NEMA RGB files came with 'Bits Allocated' = 24
+     and 'Samples Per Pixel' = 1, or with no 'Samples Per Pixel' 
+     at all  </TD>
+</TR>
+<TR>  
+   <TD> 32 </TD>
+   <TD> Some ACR-NEMA files, from CT,  came with 'Bits Allocated' = 32
+      (probabely 65535 grey levels was not enough for them ...) 
+   </TD>
 </TR>
 </TABLE>
 
@@ -168,18 +247,18 @@ the mandatory two, gdcm will suppose both values are equal.
 
 
 <!##############################################>
-<H2>Note on retired and private data elements</H2>
+<H2>Note on retired data elements</H2>
 
 Certain data elements are no longer supported under the v3.0 of the DICOM
-standard but persist as retired element. Gdcm will consider those
-elements as standard data element, except that the tag name will be postfixed
-with the "(RET)" string.
+standard but persist as retired element. Gdcm maintain them in its Dicom
+Dictionary, postfix their names with the "(RET)" string, and goes on dealing
+with them as standard data elements.
 
 
 <!#######################################################################>
 <HR size="1"><ADDRESS style="align: right;"></ADDRESS>
 <H2><B>UN</B>Supported transfer syntaxes</H2>
-The Transfer Syntax UID is in the file's DICOM Tag field (0002,0010).
+The Transfer Syntax UID is in the file DICOM Tag field (0002,0010).
                                                                                 
 <TABLE WIDTH="800" BORDER="0" CELLSPACING="1" CELLPADDING="10"
        BGCOLOR="#ffffff">
