@@ -11,6 +11,12 @@ Comments:
 -------------
 
 ----------------------------------------------------------------------------
+Description: Rewrite gdcmDebug so that it works
+Date: 2004 Dec 07
+Attributed: Mathieu
+Details:
+Comments:
+----------------------------------------------------------------------------
 Description: Need to fix cygwin + wrong path (passing UNIX path when windows patch expected)
 Date: 2004 Nov 16
 Attributed: Mathieu
