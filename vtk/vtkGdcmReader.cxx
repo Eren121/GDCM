@@ -123,6 +123,7 @@ void vtkGdcmReader::SetFileName(const char *name)
    // (see vtkGdcmReader::AddFileName), we additionaly need to purge
    // this list when we manually positionate the filename.
    vtkDebugMacro("Clearing all files given with AddFileName");
+   this->SetFilePattern("");
    this->FileNameList.clear();
    this->Modified();
 }
@@ -329,16 +330,16 @@ void vtkGdcmReader::BuildFileListFromPattern()
       return;
    }
 
-   if ((! this->FileNameList.empty()) && this->FilePattern )
+   if ((! this->FileNameList.empty()) && this->FilePrefix )
    {
-      vtkErrorMacro("Both AddFileName and SetFilePattern schemes were used");
+      vtkErrorMacro("Both AddFileName and SetFilePrefix schemes were used");
       vtkErrorMacro("No images loaded ! ");
       return;
    }
 
-   if (this->FileName && this->FilePattern)
+   if (this->FileName && this->FilePrefix)
    {
-      vtkErrorMacro("Both SetFileName and SetFilePattern schemes were used");
+      vtkErrorMacro("Both SetFileName and SetFilePrefix schemes were used");
       vtkErrorMacro("No images loaded ! ");
       return;
    }
@@ -350,10 +351,10 @@ void vtkGdcmReader::BuildFileListFromPattern()
       return;
    }
 
-   if (!this->FileName && !this->FilePattern)
+   if (!this->FileName && !this->FilePrefix)
    {
       vtkErrorMacro("FileNames are not set. Either use AddFileName() or");
-      vtkErrorMacro("specify a FileName or FilePattern.");
+      vtkErrorMacro("specify a FileName or FilePrefix.");
       return;
    }
 

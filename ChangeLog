@@ -1,6 +1,6 @@
 2004-05-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
      * vtk/vtkGdcmReader.cxx : bug fix when loading a list of files using the
-       file pattern (SetFilePattern)
+       file prefix (SetFilePrefix)
 
 2004-05-02  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * Add a new test: ShowDicom, for now this is just the c++ version of
