@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 16:41:18 $
-  Version:   $Revision: 1.103 $
+  Date:      $Date: 2005/01/17 16:44:57 $
+  Version:   $Revision: 1.104 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -437,8 +437,9 @@ int GetMacAddrSys ( unsigned char *addr )
    SNMP_oidcpy(&varBind[0].name, &MIB_ifEntryNum);
    ret = m_Query(ASN_RFC1157_GETNEXTREQUEST, &varBindList, &errorStatus,
                  &errorIndex);
-   printf("# of adapters in this system : %i\n",
-          varBind[0].value.asnValue.number); varBindList.len = 2;
+//   printf("# of adapters in this system : %i\n",
+//          varBind[0].value.asnValue.number);
+   varBindList.len = 2;
 
    // Copy in the OID of ifType, the type of interface
    SNMP_oidcpy(&varBind[0].name, &MIB_ifEntryType);
