@@ -194,11 +194,19 @@ bool ReferenceFileParser::Check()
          std::string testedValue = tested->GetEntryByNumber(group, element);
          if ( testedValue != j->second )
          {
-            std::cout << Indent << "Uncorrect value for key " << key << std::endl
-                 << Indent << "   read value [" << testedValue << "]" << std::endl
-                 << Indent << "   reference value [" << j->second << "]"
-                           << std::endl;
+            // Oops make sure this is only the \0 that differ
+            if( testedValue[j->second.size()] != '\0' ||
+                strncmp(testedValue.c_str(), 
+                        j->second.c_str(), j->second.size()) != 0)
+            {
+               std::cout << Indent << "Uncorrect value for key " 
+                         << key << std::endl
+                         << Indent << "   read value      [" 
+                         << testedValue << "]" << std::endl
+                         << Indent << "   reference value [" 
+                         << j->second << "]" << std::endl;
             return false;
+            }
          }
       }
       delete tested;

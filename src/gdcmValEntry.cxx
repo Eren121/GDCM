@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:13 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/11/05 20:23:14 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -222,10 +222,10 @@ void ValEntry::Write(std::ofstream* fp, FileType filetype)
       tokens.clear();
       return;
    } 
-          
-   fp->write (GetValue().c_str(), (size_t)lgr ); // Elem value
-//   assert( lgr == GetValue().size() ); // FIXME ?????
-//   dbg.Assert(2, lgr == strlen(GetValue().c_str()), "Should be equal" );
+
+   //Due to seriously broken Theralys images I cannot put that here.
+   //assert( lgr == GetValue().size() ); 
+   binary_write(*fp, GetValue());
 } 
 
 //-----------------------------------------------------------------------------

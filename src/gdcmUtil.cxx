@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:13 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2004/11/05 20:23:14 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -168,7 +168,7 @@ std::string Util::GetPath(std::string const & fullName)
 }
 
 /**
- * \ingroup Globals
+ * \ingroup Util
  * \brief   Get the (last) name of a full path file name
  * @param   fullName file/directory name to extract end name from
  */
@@ -189,6 +189,39 @@ std::string Util::GetName(std::string const & fullName)
     }
 } 
 
+/**
+ * \ingroup Util
+ * \brief Create a /DICOM/ string:
+ * It should a of even lenght (no odd length ever)
+ * It can contains as many \0 as you want.
+ * This function is similar to DicomString(const char*), 
+ * except it doesn't take a lenght. 
+ * It only pad with a null character if length is odd
+ */
+std::string Util::DicomString(const char* s)
+{
+   size_t l = strlen(s);
+   if( l%2 )
+   {
+      l++;
+   }
+   std::string r(s, s+l);
+   assert( !(r.size() % 2) );
+   return r;
+}
+
+/**
+ * \ingroup Util
+ * \brief Create a /DICOM/ string:
+ * It should a of even length (no odd length ever)
+ * It can contains as many \0 as you want.
+ */
+std::string Util::DicomString(const char* s, size_t l)
+{
+   std::string r(s, s+l);
+   assert( !(r.size() % 2) );
+   return r;
+}
 
 template <class T>
 std::ostream& binary_write(std::ostream& os, const T& val)

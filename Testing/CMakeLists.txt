@@ -12,6 +12,7 @@ SET(TEST_SOURCES
   TestHash.cxx
   TestTS.cxx
   TestVR.cxx
+  TestDicomString.cxx
 )
 
 # add tests that require data

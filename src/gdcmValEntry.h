@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 03:10:58 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/11/05 20:23:14 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ public:
    std::string const & GetValue() const { return Value; };
     
    /// Sets the value (string) of the current Dicom Document Entry
-   void SetValue(std::string const & val) { Value = val; };
+   void SetValue(std::string const & val) { Value = val; }; 
 
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(std::ofstream *fp, FileType filetype);

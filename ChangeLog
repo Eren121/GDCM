@@ -1,3 +1,10 @@
+2004-11-05 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Improve string manipulation. I now inforce the notion of 'DicomString'
+    A DicomString can contain as many \0 as they want
+    and it is *always* of even length.
+    We only support odd length for very rare case. 
+    And in the near future this should be removed.
+
 2004-11-03 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * /binary_write/ gdcm source. Now even on big endian we are writting
     little endian. This should -heopfully- fix some tests

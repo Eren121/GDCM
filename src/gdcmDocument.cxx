@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/04 18:14:34 $
-  Version:   $Revision: 1.116 $
+  Date:      $Date: 2004/11/05 20:23:14 $
+  Version:   $Revision: 1.117 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -476,7 +476,8 @@ void Document::Write(std::ofstream* fp, FileType filetype)
 
    if (filetype == ImplicitVR) 
    {
-      std::string ts = TransferSyntaxStrings[ImplicitVRLittleEndian];
+      std::string ts = 
+         Util::DicomString( TransferSyntaxStrings[ImplicitVRLittleEndian] );
       ReplaceOrCreateByNumber(ts, 0x0002, 0x0010);
       
       /// \todo Refer to standards on page 21, chapter 6.2
@@ -489,7 +490,8 @@ void Document::Write(std::ofstream* fp, FileType filetype)
 
    if (filetype == ExplicitVR)
    {
-      std::string ts = TransferSyntaxStrings[ExplicitVRLittleEndian];
+      std::string ts = 
+         Util::DicomString( TransferSyntaxStrings[ExplicitVRLittleEndian] );
       ReplaceOrCreateByNumber(ts, 0x0002, 0x0010);
       
       /// \todo Refer to standards on page 21, chapter 6.2
@@ -881,13 +883,10 @@ bool Document::SetEntryByNumber(std::string const& content,
       return false;
    }
    // Non even content must be padded with a space (020H)...
-   std::string finalContent = content;
-   if( finalContent.length() % 2 )
-   {
-      finalContent += '\0';  // ... therefore we padd with (000H) .!?!
-   }      
+   std::string finalContent = Util::DicomString( content.c_str() );
+   assert( !(finalContent.size() % 2) );
    valEntry->SetValue(finalContent);
-   
+
    // Integers have a special treatement for their length:
 
    l = finalContent.length();
@@ -1586,7 +1585,8 @@ void Document::LoadDocEntry(DocEntry* entry)
       }
 
       // to be sure we are at the end of the value ...
-      Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),std::ios_base::beg);
+      Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),
+                std::ios_base::beg);
       return;
    }
 
@@ -1648,15 +1648,28 @@ void Document::LoadDocEntry(DocEntry* entry)
       return;
    }
    
-   // We need an additional byte for storing \0 that is not on disk
+  // FIXME: We need an additional byte for storing \0 that is not on disk
    char *str = new char[length+1];
    Fp->read(str, (size_t)length);
-   str[length] = '\0';
-   std::string newValue = str;
+   str[length] = '\0'; //this is only useful when length is odd
+   // Special DicomString call to properly handle \0 and even length
+   std::string newValue;
+   if( length % 2 )
+   {
+      newValue = Util::DicomString(str, length+1);
+      //dbg.Verbose(0, "Warning: bad length: ", length );
+      dbg.Verbose(0, "For string :",  newValue.c_str()); 
+      // Since we change the length of string update it length
+      entry->SetReadLength(length+1);
+   }
+   else
+   {
+      newValue = Util::DicomString(str, length);
+   }
    delete[] str;
 
    if ( ValEntry* valEntry = dynamic_cast<ValEntry* >(entry) )
-   {  
+   {
       if ( Fp->fail() || Fp->eof())//Fp->gcount() == 1
       {
          dbg.Verbose(1, "Document::LoadDocEntry",
@@ -2180,7 +2193,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
 {
    uint16_t element = entry->GetElement();
    uint16_t group   = entry->GetGroup();
-   std::string  vr  = entry->GetVR();
+   const std::string & vr  = entry->GetVR();
    uint32_t length  = entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we

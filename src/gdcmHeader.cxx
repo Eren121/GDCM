@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/04 15:59:37 $
-  Version:   $Revision: 1.197 $
+  Date:      $Date: 2004/11/05 20:23:14 $
+  Version:   $Revision: 1.198 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,8 +115,8 @@ void Header::Write(std::ofstream* fp,FileType filetype)
    if (i_lgPix != -2)
    {
       // no (GrPixel, NumPixel) element
-      std::string s_lgPix;
-      s_lgPix = Util::Format("%d", i_lgPix+12);
+      std::string s_lgPix = Util::Format("%d", i_lgPix+12);
+      s_lgPix = Util::DicomString( s_lgPix.c_str() );
       ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
    }
 
@@ -1178,6 +1178,7 @@ void Header::SetImageDataSize(size_t ImageDataSize)
 
    ImageDataSize += 8;
    car = Util::Format("%d", ImageDataSize);
+   car = Util::DicomString( car.c_str() );
 
    SetEntryByNumber(car, GrPixel, NumPixel);
 }

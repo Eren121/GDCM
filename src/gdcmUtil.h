@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:13 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/11/05 20:23:14 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,10 @@ public:
    static std::string GetPath(std::string const &fullName);
    static std::string GetName(std::string const &fullName);
 
+   static std::string DicomString(const char* s, size_t l);
+   static std::string DicomString(const char* s);
 };
+
    template <class T>
    std::ostream& binary_write(std::ostream& os, const T& val);
    std::ostream& binary_write(std::ostream& os, const uint16_t& val);
