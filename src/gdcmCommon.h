@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:44 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/11/02 03:10:32 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,6 +80,10 @@ typedef  unsigned int   uint32_t;
 #  include <sstream>
 #endif
 
+#include <string>
+
+namespace gdcm
+{
 
 // Centralize information about the gdcm dictionary in only one file:
 #ifndef PUB_DICT_PATH
@@ -91,9 +95,7 @@ typedef  unsigned int   uint32_t;
 #define DICT_TS           "dicomTS.dic"
 #define DICT_VR           "dicomVR.dic"
 
-#include <string>
-
-const std::string GDCM_UNFOUND   = "gdcm::Unfound";   /// MEMORY LEAK
+const std::string GDCM_UNFOUND   = "gdcm::Unfound";
 const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
 const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
 const std::string GDCM_UNREAD    = "gdcm::UnRead";
@@ -135,6 +137,6 @@ enum FileType {
       ACR,
       ACR_LIBIDO
 };
-
+} //namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

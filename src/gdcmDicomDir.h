@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:47:43 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/11/02 03:10:32 $
+  Version:   $Revision: 1.36 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,7 @@ namespace gdcm
 typedef std::list<DicomDirPatient*>   ListDicomDirPatient;
 typedef std::vector<Document*>  VectDocument;
 
-typedef GDCM_EXPORT void(Method)(void* = NULL);
+typedef GDCM_EXPORT void(Method)(void*);
 //-----------------------------------------------------------------------------
 
 /**
