@@ -82,8 +82,18 @@ int gdcmElValSet::SetElValueByNumber(string content,
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! tagHt.count(key))
 		return 0;
-	tagHt[key]->SetValue(content);
-	tagHt[key]->SetLength(content.length());	 
+	tagHt[key]->SetValue(content);	
+	string vr = tagHt[key]->GetVR();
+	guint32 lgr;
+
+	if( (vr == "US") || (vr == "SS") ) 
+	   lgr = 2;
+	else if( (vr == "UL") || (vr == "SL") )
+	   lgr = 4;
+	else 
+	   lgr = content.length();
+	   
+	tagHt[key]->SetLength(lgr); 
 	return 1;
 }
 
@@ -91,7 +101,17 @@ int gdcmElValSet::SetElValueByName(string content, string TagName) {
 	if ( ! NameHt.count(TagName))
 		return 0;
 	NameHt[TagName]->SetValue(content);
-	NameHt[TagName]->SetLength(content.length());
+	string vr = NameHt[TagName]->GetVR();
+	guint32 lgr;
+
+	if( (vr == "US") || (vr == "SS") ) 
+	   lgr = 2;
+	else if( (vr == "UL") || (vr == "SL") )
+	   lgr = 4;
+	else 
+	   lgr = content.length();
+	   
+	NameHt[TagName]->SetLength(lgr);
 	return 1;		
 }
 

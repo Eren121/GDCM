@@ -968,10 +968,11 @@ bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
       if (length == 4)
          return true;
       else {
-         printf("Erroneous Group Length element length %d\n",length);
+         printf("Erroneous Group Length element length (%04x , %04x) : %d\n",
+            group, element,length);
                     
          dbg.Error("gdcmHeader::IsAnInteger",
-                   "Erroneous Group Length element length.");     
+            "Erroneous Group Length element length.");     
       }
    }
  
