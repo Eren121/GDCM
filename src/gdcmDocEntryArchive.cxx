@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/06 16:05:06 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,7 +102,8 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
 /**
  * \brief   Replace in the Header a DocEntry by the new DocEntry. The last
  *          DocEntry is kept in archieve
- * @param   newEntry New entry to substitute to an other entry of the Header
+ * @param   group   Group number of the Entry 
+ * @param   element  Element number of the Entry
  * @return  FALSE when an other DocEntry is already archieved with the same
  *          generalized key, TRUE otherwise
  */
@@ -128,7 +129,8 @@ bool DocEntryArchive::Push(uint16_t group,uint16_t element)
 /**
  * \brief   Restore in the Header the DocEntry that have the generalized key. 
  *          The old entry is destroyed.
- * @param   key Key of the DocEntry to restore
+ * @param   group   Group number of the Entry 
+ * @param   element  Element number of the Entry
  * @return  FALSE when the generalized key isn't in the archieve, 
  *          TRUE otherwise
  */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 15:36:48 $
-  Version:   $Revision: 1.157 $
+  Date:      $Date: 2005/01/06 16:05:06 $
+  Version:   $Revision: 1.158 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ namespace gdcm
 static const char *TransferSyntaxStrings[] =  {
   // Implicit VR Little Endian
   "1.2.840.10008.1.2",
-  // Implicit VR Little Endian DLX G.E?
+  // Implicit VR Big Endian DLX G.E?
   "1.2.840.113619.5.2",
   // Explicit VR Little Endian
   "1.2.840.10008.1.2.1",
@@ -1801,7 +1801,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
 
 /**
  * \brief     Find the Value Representation of the current Dicom Element.
- * @param     entry
+ * @return    Value Representation of the current Entry
  */
 std::string Document::FindDocEntryVR()
 {
@@ -1833,7 +1833,6 @@ std::string Document::FindDocEntryVR()
  * \brief     Check the correspondance between the VR of the header entry
  *            and the taken VR. If they are different, the header entry is 
  *            updated with the new VR.
- * @param     entry Header Entry to check
  * @param     vr    Dicom Value Representation
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true

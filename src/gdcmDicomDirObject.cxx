@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:33 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/06 16:05:06 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,11 +27,8 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DicomDirObject
  * \brief  Constructor 
  *          
- * @param ptagHT pointer to the HTable (DicomDirObject needs it 
- *               to build the DocEntries)
  * @param depth Sequence depth level
  */
   
@@ -42,7 +39,6 @@ DicomDirObject::DicomDirObject(int depth)
 
 
 /**
- * \ingroup DicomDirObject
  * \brief   Canonical destructor.
  */
 DicomDirObject::~DicomDirObject()
@@ -50,13 +46,11 @@ DicomDirObject::~DicomDirObject()
 }
 
 
-
 //-----------------------------------------------------------------------------
 // Public
 
 
 /**
- * \ingroup DicomDirObject
  * \brief   Builds a hash table (multimap) containing 
  *          pointers to all Header Entries (i.e Dicom Element)
  *          related to this 'object'
@@ -79,6 +73,7 @@ TagDocEntryHT DicomDirObject::GetEntry()
 /**
  * \brief   add the 'Object' related Dicom Elements to the listEntries
  *          of a partially created DICOMDIR
+ * @param elemList Element List to add at the right place
  */
 void DicomDirObject::FillObject(ListDicomDirMetaElem const & elemList)
 {

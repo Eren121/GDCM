@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/01/06 16:05:06 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,8 +29,6 @@ namespace gdcm
 // Constructor / Destructor
 /**
  * \brief   Constructor
- * @param ptagHT pointer to the HTable (DicomDirObject needs it 
- *               to build the HeaderEntries)
  */
 DicomDirPatient::DicomDirPatient():
    DicomDirObject()
@@ -53,7 +51,7 @@ DicomDirPatient::~DicomDirPatient()
 // Print
 /**
  * \brief   Prints the Object
- * @return
+ * @param os ostream to write to 
  */ 
 void DicomDirPatient::Print(std::ostream& os)
 {
@@ -71,7 +69,8 @@ void DicomDirPatient::Print(std::ostream& os)
 
 /**
  * \brief   Writes the Object
- * @return
+ * @param fp ofstream to write to
+ * @param t Type of the File (explicit VR, implicitVR, ...) 
  */ 
 void DicomDirPatient::WriteContent(std::ofstream* fp, FileType t)
 {

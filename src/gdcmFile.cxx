@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 14:49:16 $
-  Version:   $Revision: 1.181 $
+  Date:      $Date: 2005/01/06 16:05:06 $
+  Version:   $Revision: 1.182 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -544,9 +544,9 @@ bool File::SetEntryByNumber(uint8_t* content, int lgth,
 /**
  * \brief   Modifies the value of a given Doc Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
- * @param   value (string) Value to be set
+ * @param   content (string) Value to be set
  * @param   group   Group number of the Entry 
- * @param   elem  Element number of the Entry
+ * @param   element  Element number of the Entry
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
@@ -561,8 +561,8 @@ bool File::ReplaceOrCreateByNumber(std::string const& content,
  *          when it exists. Create it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
  * @param   binArea (binary) value to be set
- * @param   Group   Group number of the Entry 
- * @param   Elem  Element number of the Entry
+ * @param   group   Group number of the Entry 
+ * @param   element  Element number of the Entry
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */

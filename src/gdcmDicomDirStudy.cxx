@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/01/06 16:05:06 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,10 +26,7 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup DicomDirStudy
- * \brief constructor  
- * @param ptagHT pointer to the HTable (DicomDirObject needs it 
- *               to build the HeaderEntries)
+ * \brief  Constructor 
  */
 DicomDirStudy::DicomDirStudy():
    DicomDirObject()
@@ -52,8 +49,8 @@ DicomDirStudy::~DicomDirStudy()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup DicomDirStudy
  * \brief   Prints the Object
+ * @param os ostream to write to 
  * @return
  */ 
 void DicomDirStudy::Print(std::ostream& os)
@@ -75,6 +72,8 @@ void DicomDirStudy::Print(std::ostream& os)
 
 /**
  * \brief   Writes the Object
+ * @param fp ofstream to write to
+ * @param t Type of the File (explicit VR, implicitVR, ...) 
  * @return
  */ 
 void DicomDirStudy::WriteContent(std::ofstream* fp, FileType t)
@@ -90,7 +89,6 @@ void DicomDirStudy::WriteContent(std::ofstream* fp, FileType t)
 }
 
 /**
- * \ingroup DicomDirStudy
  * \brief   adds a new Serie at the begining of the SerieList
  *          of a partially created DICOMDIR
  */

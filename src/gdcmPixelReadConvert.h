@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/06 16:07:34 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,11 +93,11 @@ private:
 // Variables
    /// Pixel data represented as RGB after LUT color interpretation.
    uint8_t* RGB;
-   /// Size of \ref RGB image.
+   /// Size of RGB image.
    size_t   RGBSize;
    /// Pixel data after decompression and bit/byte rearrangement.
    uint8_t* Raw;
-   /// Size of \ref Decompressed image.
+   /// Size of Decompressed image.
    size_t   RawSize;
    /// \brief Red/Green/Blue/Alpha LookUpTable build out of the
    ///        Red/Green/Blue LUT descriptors (see \ref BuildLUTRGBA ).

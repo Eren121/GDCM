@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 15:36:48 $
-  Version:   $Revision: 1.220 $
+  Date:      $Date: 2005/01/06 16:05:06 $
+  Version:   $Revision: 1.221 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,7 +121,7 @@ Header::~Header ()
  * \brief Performs some consistency checking on various 'File related' 
  *       (as opposed to 'DicomDir related') entries 
  *       then writes in a file all the (Dicom Elements) included the Pixels 
- * @param fp file pointer on an already open file
+ * @param fileName file name to write to
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
