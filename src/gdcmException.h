@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 14:06:58 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/08/16 04:25:18 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,8 @@
 /*
  * Any exception thrown in the gdcm library
  */
-class GDCM_EXPORT gdcmException : public std::exception {
+class GDCM_EXPORT gdcmException : public std::exception
+{
 public:
    /*
     * Builds an exception with minimal information: name of the thrower
@@ -38,20 +39,19 @@ public:
     * @param error error description string
     */
    explicit gdcmException(const std::string &from, const std::string &error = "")
-    throw();
+      throw();
 
    /**
     * \brief virtual destructor makes this class dynamic
     */
-   virtual ~gdcmException() throw() {
-   }
+   virtual ~gdcmException() throw() {};
 
    /// exception caught within exception class: print error message and die
    static void fatal(const char *from) throw();
 
    /// returns error message
-   const std::string &getError(void) const throw() {
-    return error;
+   const std::string &getError() const throw() {
+      return Error;
    }
 
    /// try to discover this (dynamic) class name
@@ -59,7 +59,7 @@ public:
 
    /// returns exception name string (overloads std::exception::what)
    virtual const char *what() const throw() {
-    return (const char *) *this;
+      return (const char *) *this;
    }
 
    /// returns exception name string
@@ -69,9 +69,9 @@ public:
 
 protected:
    /// error message part 1
-   std::string from;
+   std::string From;
    /// error message part 2
-   std::string error;
+   std::string Error;
 };
 
 
@@ -79,7 +79,8 @@ protected:
 /*
  * File error exception thrown in the gdcm library
  */
-class GDCM_EXPORT gdcmFileError : public gdcmException {
+class GDCM_EXPORT gdcmFileError : public gdcmException
+{
 public:
    /**
     * \brief Builds an file-related exception with minimal information: name of
@@ -89,8 +90,7 @@ public:
     */
    explicit gdcmFileError(const std::string &from,
                           const std::string &error = "File error")
-      throw() : gdcmException(from, error) {
-   }
+      throw() : gdcmException(from, error) { }
 };
 
 
@@ -98,7 +98,8 @@ public:
 /**
  * \brief Unexpected file format exception
  */
-class GDCM_EXPORT gdcmFormatUnexpected : public gdcmException {
+class GDCM_EXPORT gdcmFormatUnexpected : public gdcmException
+{
 public:
    /// \brief Builds a file-related exception with minimal information:
    /// name of the thrower method and error message
@@ -113,7 +114,8 @@ public:
 /**
  * \brief Invalid file format exception
  */
-class GDCM_EXPORT gdcmFormatError : public gdcmFormatUnexpected {
+class GDCM_EXPORT gdcmFormatError : public gdcmFormatUnexpected
+{
 public:
    /// \brief Builds a file-related exception with minimal information:
    /// name of the thrower method and error message

@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.48 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.49 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -81,14 +81,14 @@ vtkGdcmReader::~vtkGdcmReader()
 // Print
 void vtkGdcmReader::PrintSelf(ostream& os, vtkIndent indent)
 {
-   vtkImageReader::PrintSelf(os,indent);
+   this->Superclass::PrintSelf(os,indent);
    os << indent << "Filenames  : " << endl;
    vtkIndent nextIndent = indent.GetNextIndent();
-   for (std::list<std::string>::iterator FileName  = FileNameList.begin();
-        FileName != FileNameList.end();
-        ++FileName)
+   for (std::list<std::string>::iterator it = FileNameList.begin();
+        it != FileNameList.end();
+        ++it)
    {
-      os << nextIndent << FileName->c_str() << endl ;
+      os << nextIndent << it->c_str() << endl ;
    }
 }
 
@@ -279,17 +279,17 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 
       // Feeling the allocated memory space with each image/volume:
       unsigned char *Dest = (unsigned char *)data->GetPointData()->GetScalars()->GetVoidPointer(0);
-      for (std::list<std::string>::iterator FileName  = InternalFileNameList.begin();
-           FileName != InternalFileNameList.end();
-           ++FileName)
+      for (std::list<std::string>::iterator filename  = InternalFileNameList.begin();
+           filename != InternalFileNameList.end();
+           ++filename)
       { 
          // Images that were tagged as unreadable in CheckFileCoherence()
          // are substituted with a black image to let the caller visually
          // notice something wrong is going on:
-         if (*FileName != "GDCM_UNREADABLE")
+         if (*filename != "GDCM_UNREADABLE")
          {
             // Update progress related for good files is made in LoadImageInMemory
-            Dest += this->LoadImageInMemory(*FileName, Dest,
+            Dest += this->LoadImageInMemory(*filename, Dest,
                                             UpdateProgressTarget,
                                             UpdateProgressCount);
          } 
@@ -414,9 +414,9 @@ int vtkGdcmReader::CheckFileCoherence()
    // Loop on the filenames:
    // - check for their existence and gdcm "parsability"
    // - get the coherence check done:
-   for (std::list<std::string>::iterator FileName = InternalFileNameList.begin();
-        FileName != InternalFileNameList.end();
-        ++FileName)
+   for (std::list<std::string>::iterator filename = InternalFileNameList.begin();
+        filename != InternalFileNameList.end();
+        ++filename)
    {
       // The file is always added in the number of planes
       //  - If file doesn't exist, it will be replaced by a black plane in the 
@@ -426,45 +426,45 @@ int vtkGdcmReader::CheckFileCoherence()
       ReturnedTotalNumberOfPlanes += 1;
 
       /////// Stage 0: check for file name:
-      if(*FileName==std::string("GDCM_UNREADABLE"))
+      if(*filename == std::string("GDCM_UNREADABLE"))
          continue;
 
       /////// Stage 1: check for file readability:
       // Stage 1.1: check for file existence.
       FILE *fp;
-      fp = fopen(FileName->c_str(),"rb");
+      fp = fopen(filename->c_str(),"rb");
       if (!fp)
       {
-         vtkErrorMacro("Unable to open file " << FileName->c_str());
+         vtkErrorMacro("Unable to open file " << filename->c_str());
          vtkErrorMacro("Removing this file from readed files "
-                     << FileName->c_str());
-         *FileName = "GDCM_UNREADABLE";
+                     << filename->c_str());
+         *filename = "GDCM_UNREADABLE";
          continue;
       }
       fclose(fp);
 
       // Stage 1.2: check for Gdcm parsability
-      gdcmHeader GdcmHeader(FileName->c_str() );
+      gdcmHeader GdcmHeader(filename->c_str() );
       if (!GdcmHeader.IsReadable())
       {
-         vtkErrorMacro("Gdcm cannot parse file " << FileName->c_str());
+         vtkErrorMacro("Gdcm cannot parse file " << filename->c_str());
          vtkErrorMacro("Removing this file from readed files "
-                        << FileName->c_str());
-         *FileName = "GDCM_UNREADABLE";
+                        << filename->c_str());
+         *filename = "GDCM_UNREADABLE";
          continue;
       }
 
       // Stage 1.3: further gdcm compatibility on PixelType
       std::string type = GdcmHeader.GetPixelType();
       if (   (type !=  "8U") && (type !=  "8S")
-      && (type != "16U") && (type != "16S")
-      && (type != "32U") && (type != "32S") )
+          && (type != "16U") && (type != "16S")
+          && (type != "32U") && (type != "32S") )
       {
-         vtkErrorMacro("Bad File Type for file" << FileName->c_str());
+         vtkErrorMacro("Bad File Type for file" << filename->c_str());
          vtkErrorMacro("                      " << type.c_str());
          vtkErrorMacro("Removing this file from readed files "
-                        << FileName->c_str());
-         *FileName = "GDCM_UNREADABLE";
+                        << filename->c_str());
+         *filename = "GDCM_UNREADABLE";
          continue;
       }
 
@@ -476,14 +476,14 @@ int vtkGdcmReader::CheckFileCoherence()
       {
          // Stage 2.1: mandatory coherence stage:
          if (   ( NX   != this->NumColumns )
-         || ( NY   != this->NumLines )
-         || ( type != this->ImageType ) ) 
+             || ( NY   != this->NumLines )
+             || ( type != this->ImageType ) ) 
          {
             vtkErrorMacro("This file is not coherent with previous ones"
-                           << FileName->c_str());
+                           << filename->c_str());
             vtkErrorMacro("Removing this file from readed files "
-                           << FileName->c_str());
-            *FileName = "GDCM_UNREADABLE";
+                           << filename->c_str());
+            *filename = "GDCM_UNREADABLE";
             continue;
          }
 
@@ -491,12 +491,12 @@ int vtkGdcmReader::CheckFileCoherence()
          if ( NZ != ReferenceNZ )
          {
             vtkErrorMacro("File is not coherent in Z with previous ones"
-                           << FileName->c_str());
+                           << filename->c_str());
          }
          else
          {
             vtkDebugMacro("File is coherent with previous ones"
-                           << FileName->c_str());
+                           << filename->c_str());
          }
 
          // Stage 2.3: when the file contains a volume (as opposed to an image),
@@ -504,7 +504,7 @@ int vtkGdcmReader::CheckFileCoherence()
          if (NZ > 1)
          {
             vtkErrorMacro("This file contains multiple planes (images)"
-                           << FileName->c_str());
+                           << filename->c_str());
          }
 
          // Eventually, this file can be added on the stack. Update the
@@ -520,7 +520,7 @@ int vtkGdcmReader::CheckFileCoherence()
          // as the reference.
          FoundReferenceFile = true;
          vtkDebugMacro("This file taken as coherence reference:"
-                        << FileName->c_str());
+                        << filename->c_str());
          vtkDebugMacro("Image dimension of reference file as read from Gdcm:" 
                         << NX << " " << NY << " " << NZ);
          vtkDebugMacro("Number of planes added to the stack: " << NZ);
@@ -553,17 +553,19 @@ int vtkGdcmReader::CheckFileCoherence()
          this->DataOrigin[2] = GdcmHeader.GetZOrigin();
 
       }
-   } // End of loop on FileName
+   } // End of loop on filename
 
    ///////// The files we CANNOT load are flaged. On debugging purposes
    // count the loadable number of files and display their number:
    int NumberCoherentFiles = 0;
-   for (std::list<std::string>::iterator Filename = InternalFileNameList.begin();
-        Filename != InternalFileNameList.end();
-        ++Filename)
+   for (std::list<std::string>::iterator it = InternalFileNameList.begin();
+        it != InternalFileNameList.end();
+        ++it)
    {
-     if (*Filename != "GDCM_UNREADABLE")
-        NumberCoherentFiles++;    
+      if (*it != "GDCM_UNREADABLE")
+      {
+         NumberCoherentFiles++;
+      }
    }
    vtkDebugMacro("Number of coherent files: " << NumberCoherentFiles);
 
@@ -604,13 +606,13 @@ void vtkGdcmReader::AddInternalFileName(const char* name)
  * the Dest memory address. Returns the size of the data loaded.
  */
 size_t vtkGdcmReader::LoadImageInMemory(
-             std::string FileName, 
-             unsigned char * Dest,
-             const unsigned long UpdateProgressTarget,
-             unsigned long & UpdateProgressCount)
+             std::string fileName, 
+             unsigned char * dest,
+             const unsigned long updateProgressTarget,
+             unsigned long & updateProgressCount)
 {
-   vtkDebugMacro("Copying to memory image [" << FileName.c_str() << "]");
-   gdcmFile GdcmFile( FileName.c_str() );
+   vtkDebugMacro("Copying to memory image [" << fileName.c_str() << "]");
+   gdcmFile file( fileName.c_str() );
    size_t size;
 
    // If the data structure of vtk for image/volume representation
@@ -620,59 +622,61 @@ size_t vtkGdcmReader::LoadImageInMemory(
    // line comes first (for some axis related reasons?). Hence we need
    // to load the image line by line, starting from the end.
 
-   int NumColumns = GdcmFile.GetHeader()->GetXSize();
-   int NumLines   = GdcmFile.GetHeader()->GetYSize();
-   int NumPlanes  = GdcmFile.GetHeader()->GetZSize();
-   int LineSize   = NumComponents * NumColumns * GdcmFile.GetHeader()->GetPixelSize();
+   int numColumns = file.GetHeader()->GetXSize();
+   int numLines   = file.GetHeader()->GetYSize();
+   int numPlanes  = file.GetHeader()->GetZSize();
+   int lineSize   = NumComponents * numColumns * file.GetHeader()->GetPixelSize();
 
-   unsigned char * Source;
+   unsigned char * source;
    
-   if( GdcmFile.GetHeader()->HasLUT() && this->AllowLookupTable )
+   if( file.GetHeader()->HasLUT() && AllowLookupTable )
    {
-      size               = GdcmFile.GetImageDataSizeRaw();
-      Source             = (unsigned char*) GdcmFile.GetImageDataRaw();
-      unsigned char *Lut =                  GdcmFile.GetHeader()->GetLUTRGBA();
+      size               = file.GetImageDataSizeRaw();
+      source             = (unsigned char*) file.GetImageDataRaw();
+      unsigned char *lut =                  file.GetHeader()->GetLUTRGBA();
 
-      if(!this->LookupTable) 
+      if(!this->LookupTable)
+      {
          this->LookupTable = vtkLookupTable::New();
+      }
 
       this->LookupTable->SetNumberOfTableValues(256);
       for (int tmp=0; tmp<256; tmp++)
       {
          this->LookupTable->SetTableValue(tmp,
-         (float)Lut[4*tmp+0]/255.0,
-         (float)Lut[4*tmp+1]/255.0,
-         (float)Lut[4*tmp+2]/255.0,
+         (float)lut[4*tmp+0]/255.0,
+         (float)lut[4*tmp+1]/255.0,
+         (float)lut[4*tmp+2]/255.0,
          1);
       }
       this->LookupTable->SetRange(0,255);
-      vtkDataSetAttributes *a=this->GetOutput()->GetPointData();
+      vtkDataSetAttributes *a = this->GetOutput()->GetPointData();
       a->GetScalars()->SetLookupTable(this->LookupTable);
-      free(Lut);
+      free(lut);
    }
    else
    {
-      size        = GdcmFile.GetImageDataSize();
-      Source      = (unsigned char*)GdcmFile.GetImageData();
+      size        = file.GetImageDataSize();
+      source      = (unsigned char*)file.GetImageData();
    } 
    
-   unsigned char * pSource     = Source; //pointer for later deletion
-   unsigned char * Destination = Dest + size - LineSize;
+   unsigned char * pSource     = source; //pointer for later deletion
+   unsigned char * destination = dest + size - lineSize;
 
-   for (int plane = 0; plane < NumPlanes; plane++)
+   for (int plane = 0; plane < numPlanes; plane++)
    {
-      for (int line = 0; line < NumLines; line++)
+      for (int line = 0; line < numLines; line++)
       {
          // Copy one line at proper destination:
-         memcpy((void*)Destination, (void*)Source, LineSize);
-         Source      += LineSize;
-         Destination -= LineSize;
+         memcpy((void*)destination, (void*)source, lineSize);
+         source      += lineSize;
+         destination -= lineSize;
          // Update progress related:
-         if (!(UpdateProgressCount%UpdateProgressTarget))
+         if (!(updateProgressCount%updateProgressTarget))
          {
-            this->UpdateProgress(UpdateProgressCount/(50.0*UpdateProgressTarget));
+            this->UpdateProgress(updateProgressCount/(50.0*updateProgressTarget));
          }
-         UpdateProgressCount++;
+         updateProgressCount++;
       }
    }
    

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 16:42:14 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2004/08/16 04:25:18 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2537,7 +2537,7 @@ gdcmDocEntry* gdcmDocument::ReadNextDocEntry()
    {
       // We reached the EOF (or an error occured) therefore 
       // header parsing has to be considered as finished.
-      std::cout << e;
+      //std::cout << e;
       return 0;
    }
 
@@ -2551,7 +2551,7 @@ gdcmDocEntry* gdcmDocument::ReadNextDocEntry()
    catch ( gdcmFormatError e )
    {
       // Call it quits
-      std::cout << e;
+      //std::cout << e;
       delete newEntry;
       return 0;
    }
