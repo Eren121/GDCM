@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/19 15:58:00 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,9 +69,6 @@ public:
    /// of the current Dicom Header Entry
    std::string const &GetVM() const { return DicomDict->GetVM(); };
 
-   /// Sets the 'Value Representation' of the current Dicom Header Entry
-   void SetVR( TagName const &v) { DicomDict->SetVR(v); };
-
    /// Sets the 'Value Multiplicity' of the current Dicom Header Entry
    void SetVM( TagName const &v) { DicomDict->SetVM(v); }; 
 
@@ -123,10 +120,6 @@ public:
    /// @return true if the VM is unknown
    bool IsVMUnknown() { return DicomDict->IsVMUnknown(); };
 
-   /// \brief   Sets the DicEntry of the current Dicom Element
-   /// @param   newEntry pointer to the DictEntry
-   void SetDictEntry(DictEntry *newEntry) { DicomDict = newEntry; };
-
    /// \brief  Gets the DicEntry of the current Dicom Element
    /// @return The DicEntry of the current Dicom Element
    DictEntry * GetDictEntry() { return DicomDict; }; 
@@ -143,8 +136,13 @@ public:
    virtual void Print (std::ostream &os = std::cout, std::string const & indent = ""); 
 
 protected:
-// Variables
+   /// \brief   Sets the DicEntry of the current Dicom Element
+   /// \remarks Used only by the Header !!! (possible because of a friend 
+   ///          link between them)
+   /// @param   newEntry pointer to the DictEntry
+   void SetDictEntry(DictEntry *newEntry) { DicomDict = newEntry; };
 
+// Variables
    /// \brief pointer to the underlying Dicom dictionary element
    DictEntry *DicomDict;
    

@@ -1,4 +1,8 @@
 2005-01-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocEntry.h : DocEntry is now secure. User can't change the 
+     DictEntry or the VR.
+
+2005-01-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * gdcmPython/ : change GDCM_DATA_PATH to GDCM_DATA_ROOT to be complient with
      all in gdcm
 

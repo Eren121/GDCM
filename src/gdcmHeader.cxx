@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 16:23:52 $
-  Version:   $Revision: 1.234 $
+  Date:      $Date: 2005/01/19 15:58:00 $
+  Version:   $Revision: 1.235 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,6 @@ Header::Header( std::string const &filename ):
    // Now, we know GrPixel and NumPixel.
    // Let's create a VirtualDictEntry to allow a further VR modification
    // and force VR to match with BitsAllocated.
-
    DocEntry *entry = GetDocEntry(GrPixel, NumPixel); 
    if ( entry != 0 )
    {
@@ -99,7 +98,7 @@ Header::Header( std::string const &filename ):
                              PixelVR, "PXL", "Pixel Data");
  
       entry->SetDictEntry( newEntry );
-   } 
+   }
 }
 
 /**

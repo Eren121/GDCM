@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 10:30:51 $
-  Version:   $Revision: 1.199 $
+  Date:      $Date: 2005/01/19 15:58:00 $
+  Version:   $Revision: 1.200 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1623,34 +1623,33 @@ void Document::FindDocEntryLength( DocEntry *entry )
       // hands on a big endian encoded file: we switch the swap code to
       // big endian and proceed...
 
- //
- //     if ( element  == 0x0000 && length16 == 0x0400 ) 
- //     {
- //        std::string ts = GetTransferSyntax();
- //        if ( Global::GetTS()->GetSpecialTransferSyntax(ts) 
- //               != TS::ExplicitVRBigEndian ) 
- //        {
- //           throw FormatError( "Document::FindDocEntryLength()",
- //                              " not explicit VR." );
- //          return;
- //       }
- //       length16 = 4;
- //       SwitchByteSwapCode();
-
-         // Restore the unproperly loaded values i.e. the group, the element
-         // and the dictionary entry depending on them.
-//        uint16_t correctGroup = SwapShort( entry->GetGroup() );
-//         uint16_t correctElem  = SwapShort( entry->GetElement() );
-//         DictEntry *newTag = GetDictEntry( correctGroup, correctElem );         if ( !newTag )
+//      if ( element  == 0x0000 && length16 == 0x0400 ) 
+//      {
+//         std::string ts = GetTransferSyntax();
+//         if ( Global::GetTS()->GetSpecialTransferSyntax(ts) 
+//                != TS::ExplicitVRBigEndian ) 
 //         {
-            // This correct tag is not in the dictionary. Create a new one.
+//            throw FormatError( "Document::FindDocEntryLength()",
+//                               " not explicit VR." );
+//           return;
+//        }
+//        length16 = 4;
+//        SwitchByteSwapCode();
+//
+//         // Restore the unproperly loaded values i.e. the group, the element
+//         // and the dictionary entry depending on them.
+//         uint16_t correctGroup = SwapShort( entry->GetGroup() );
+//         uint16_t correctElem  = SwapShort( entry->GetElement() );
+//         DictEntry *newTag = GetDictEntry( correctGroup, correctElem );
+//         if ( !newTag )
+//         {
+//            // This correct tag is not in the dictionary. Create a new one.
 //            newTag = NewVirtualDictEntry(correctGroup, correctElem);
 //         }
-         // FIXME this can create a memory leaks on the old entry that be
-         // left unreferenced.
+//         // FIXME this can create a memory leaks on the old entry that be
+//         // left unreferenced.
 //         entry->SetDictEntry( newTag );
 //      }
-
   
       // 0xffff means that we deal with 'No Length' Sequence 
       //        or 'No Length' SQItem

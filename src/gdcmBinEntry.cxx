@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/01/19 15:58:00 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,10 +45,6 @@ BinEntry::BinEntry(DictEntry *e) : ValEntry(e)
 BinEntry::BinEntry(DocEntry *e) : ValEntry(e->GetDictEntry())
 {
    Copy(e);
-/*   Length     = e->GetLength();
-   ReadLength = e->GetReadLength();
-   ImplicitVR = e->IsImplicitVR();
-   Offset     = e->GetOffset();*/
 
    //FIXME
    //SQDepthLevel = e->GetDepthLevel();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/19 15:58:00 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -242,7 +242,7 @@ uint32_t DocEntry::GetFullLength()
  * \brief   Copies all the attributes from an other DocEntry 
  * @param e entry to copy from
  */
-void DocEntry::Copy (DocEntry *e)
+void DocEntry::Copy(DocEntry *e)
 {
    Length     = e->Length;
    ReadLength = e->ReadLength;

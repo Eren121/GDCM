@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 01:14:33 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/01/19 15:58:01 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,10 +49,6 @@ ValEntry::ValEntry(DocEntry *e)
              : DocEntry(e->GetDictEntry())
 {
    Copy(e);
-/*   Length     = e->GetLength();
-   ReadLength = e->GetReadLength();
-   ImplicitVR = e->IsImplicitVR();
-   Offset     = e->GetOffset();*/
 }
 
 
