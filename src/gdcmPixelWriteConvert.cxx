@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 16:51:36 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/02/16 11:20:51 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,8 +46,9 @@ PixelWriteConvert::~PixelWriteConvert()
 // Public
 /**
  * \brief   SetReadData
- * @param   data data
- * @param   size size
+ * @param   data data (uint8_t is for prototyping. if your data is not uint8_t
+ *                     just cast the pointer for calling the method)
+ * @param   size size in bytes
  */
 void PixelWriteConvert::SetReadData(uint8_t *data, size_t size)
 {
@@ -57,8 +58,9 @@ void PixelWriteConvert::SetReadData(uint8_t *data, size_t size)
 
 /**
  * \brief   Sets User Data
- * @param   data data
- * @param   size size
+ * @param   data data (uint8_t is for prototyping. if your data is not uint8_t
+ *                     just cast the pointer for calling the method)
+ * @param   size size in bytes
  */
 void PixelWriteConvert::SetUserData(uint8_t *data, size_t size)
 {
@@ -68,7 +70,8 @@ void PixelWriteConvert::SetUserData(uint8_t *data, size_t size)
 
 /**
  * \brief   Get Data (UserData or ReadData)
- * @return  data data
+ * @return  data data data (uint8_t is for prototyping. if your data is not uint8_t
+ *                     just cast the returned pointer)
  */
 uint8_t *PixelWriteConvert::GetData()
 {
@@ -84,7 +87,7 @@ uint8_t *PixelWriteConvert::GetData()
 
 /**
  * \brief   Get Data Size (UserData or ReadData)
- * @return  size size
+ * @return  size size in bytes
  */
 size_t PixelWriteConvert::GetDataSize()
 {
