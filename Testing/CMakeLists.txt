@@ -83,20 +83,18 @@ FILE(GLOB GDCM_DATA_IMAGES_GLOB_DCM
   "${GDCM_DATA_ROOT}/*.dcm"
   )
 
+SET(GDCM_DATA_IMAGES_GLOB ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR})
+  
 # Black list of images know to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
   "gdcm-JPEG-LossLessThoravision.dcm"
   )
 
-SET(GDCM_DATA_IMAGES_GLOB ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR})
-  
 # This is a GLOB expression, change it into a list separated with a comma and \n
 SET(GDCM_DATA_IMAGES)
 FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
   GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
-  #MESSAGE(STATUS ${filename_temp})
-  STRING(COMPARE EQUAL ${BLACK_LIST} ${filename_temp} bad_dicom)
-  #MESSAGE(STATUS ${bad_dicom})
+  STRING(REGEX MATCH ${filename_temp} bad_dicom ${BLACK_LIST})
   IF(NOT bad_dicom)
     SET(GDCM_DATA_IMAGES "${GDCM_DATA_IMAGES}\n\"${filename}\",")
   ENDIF(NOT bad_dicom)
