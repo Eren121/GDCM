@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/14 22:35:02 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/10/15 10:43:28 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,37 +90,35 @@ void PixelConvert::AllocateDecompressed()
  * \brief Read from file a 12 bits per pixel image and uncompress it
  *        into a 16 bits per pixel image.
  */
-void PixelConvert::ReadAndDecompress12BitsTo16Bits(
-                  uint8_t* pixelZone,
-                  FILE* filePtr)
+void PixelConvert::ReadAndDecompress12BitsTo16Bits( FILE* fp )
                throw ( FormatError )
 {
    int nbPixels = XSize * YSize;
-   uint16_t* destination = (uint16_t*)pixelZone;
+   uint16_t* localDecompres = (uint16_t*)Decompressed;
                                                                                 
    for( int p = 0; p < nbPixels; p += 2 )
    {
       uint8_t b0, b1, b2;
       size_t ItemRead;
                                                                                 
-      ItemRead = fread( &b0, 1, 1, filePtr);
+      ItemRead = fread( &b0, 1, 1, fp );
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::ReadAndDecompress12BitsTo16Bits()",
+         throw FormatError( "PixelConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound first block" );
       }
                                                                                 
-      ItemRead = fread( &b1, 1, 1, filePtr);
+      ItemRead = fread( &b1, 1, 1, fp );
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::ReadAndDecompress12BitsTo16Bits()",
+         throw FormatError( "PixelConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
       }
                                                                                 
-      ItemRead = fread( &b2, 1, 1, filePtr);
+      ItemRead = fread( &b2, 1, 1, fp );
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::ReadAndDecompress12BitsTo16Bits()",
+         throw FormatError( "PixelConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
       }
                                                                                 
@@ -128,10 +126,10 @@ void PixelConvert::ReadAndDecompress12BitsTo16Bits(
       //
       // 2 pixels 12bit =     [0xABCDEF]
       // 2 pixels 16bit = [0x0ABD] + [0x0FCE]
-      //                     A                     B                 D
-      *destination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
-      //                     F                     C                 E
-      *destination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
+      //                        A                     B                 D
+      *localDecompres++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
+      //                        F                     C                 E
+      *localDecompres++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
                                                                                 
       /// \todo JPR Troubles expected on Big-Endian processors ?
    }
@@ -140,28 +138,26 @@ void PixelConvert::ReadAndDecompress12BitsTo16Bits(
 /**
  * \brief     Try to deal with RLE 16 Bits. 
  *            We assume the RLE has allready been parsed and loaded in
- *            Uncompressed (through \ref ReadAndDecompressJPEGFile ).
+ *            Decompressed (through \ref ReadAndDecompressJPEGFile ).
  *            We here need to make 16 Bits Pixels from Low Byte and
  *            High Byte 'Planes'...(for what it may mean)
  * @return    Boolean
  */
-bool PixelConvert::UncompressRLE16BitsFromRLE8Bits(
-                       int NumberOfFrames,
-                       uint8_t* fixMemUncompressed )
+bool PixelConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
 {
    size_t PixelNumber = XSize * YSize;
-   size_t fixMemUncompressedSize = XSize * YSize * NumberOfFrames;
+   size_t uncompressedSize = XSize * YSize * NumberOfFrames;
 
-   // We assumed Uncompressed contains the decoded RLE pixels but as
+   // We assumed Decompressed contains the decoded RLE pixels but as
    // 8 bits per pixel. In order to convert those pixels to 16 bits
-   // per pixel we cannot work in place within Uncompressed and hence
-   // we copy Uncompressed in a safe place, say OldUncompressed.
+   // per pixel we cannot work in place within Decompressed and hence
+   // we copy it in a safe place, say copyDecompressed.
 
-   uint8_t* OldUncompressed = new uint8_t[ fixMemUncompressedSize * 2 ];
-   memmove( OldUncompressed, fixMemUncompressed, fixMemUncompressedSize * 2);
+   uint8_t* copyDecompressed = new uint8_t[ uncompressedSize * 2 ];
+   memmove( copyDecompressed, Decompressed, uncompressedSize * 2 );
 
-   uint8_t* x = fixMemUncompressed;
-   uint8_t* a = OldUncompressed;
+   uint8_t* x = Decompressed;
+   uint8_t* a = copyDecompressed;
    uint8_t* b = a + PixelNumber;
 
    for ( int i = 0; i < NumberOfFrames; i++ )
@@ -173,7 +169,7 @@ bool PixelConvert::UncompressRLE16BitsFromRLE8Bits(
       }
    }
 
-   delete[] OldUncompressed;
+   delete[] copyDecompressed;
       
    /// \todo check that operator new []didn't fail, and sometimes return false
    return true;
@@ -182,11 +178,18 @@ bool PixelConvert::UncompressRLE16BitsFromRLE8Bits(
 /**
  * \brief Implementation of the RLE decoding algorithm for uncompressing
  *        a RLE fragment. [refer to PS 3.5-2003, section G.3.2 p 86]
+ * @param subDecompressed Sub region of \ref Decompressed where the de
+ *        decoded fragment should be placed.
+ * @param fragmentSize The length of the binary fragment as found on the disk.
+ * @param uncompressedSegmentSize The expected length of the fragment ONCE
+ *        decompressed.
+ * @param fp File Pointer: on entry the position should be the one of
+ *        the fragment to be decoded.
  */
-bool PixelConvert::ReadAndUncompressRLEFragment( uint8_t* decodedZone,
-                                               long fragmentSize,
-                                               long uncompressedSegmentSize,
-                                               FILE* fp )
+bool PixelConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
+                                                 long fragmentSize,
+                                                 long uncompressedSegmentSize,
+                                                 FILE* fp )
 {
    int8_t count;
    long numberOfOutputBytes = 0;
@@ -202,9 +205,9 @@ bool PixelConvert::ReadAndUncompressRLEFragment( uint8_t* decodedZone,
       //       signed integer of width N is 2^(N-1) - 1, which for int8_t
       //       is 127].
       {
-         fread( decodedZone, count + 1, 1, fp);
-         numberOfReadBytes += count + 1;
-         decodedZone         += count + 1;
+         fread( subDecompressed, count + 1, 1, fp);
+         numberOfReadBytes   += count + 1;
+         subDecompressed     += count + 1;
          numberOfOutputBytes += count + 1;
       }
       else
@@ -216,9 +219,9 @@ bool PixelConvert::ReadAndUncompressRLEFragment( uint8_t* decodedZone,
             numberOfReadBytes += 1;
             for( int i = 0; i < -count + 1; i++ )
             {
-               decodedZone[i] = newByte;
+               subDecompressed[i] = newByte;
             }
-            decodedZone         += -count + 1;
+            subDecompressed     += -count + 1;
             numberOfOutputBytes += -count + 1;
          }
       }
@@ -226,8 +229,8 @@ bool PixelConvert::ReadAndUncompressRLEFragment( uint8_t* decodedZone,
                                                                                 
       if ( numberOfReadBytes > fragmentSize )
       {
-         dbg.Verbose(0, "File::gdcm_read_RLE_fragment: we read more "
-                        "bytes than the segment size.");
+         dbg.Verbose(0, "PixelConvert::ReadAndDecompressRLEFragment: we "
+                        "read more bytes than the segment size.");
          return false;
       }
    }
@@ -238,16 +241,13 @@ bool PixelConvert::ReadAndUncompressRLEFragment( uint8_t* decodedZone,
  * \brief     Reads from disk the Pixel Data of 'Run Length Encoded'
  *            Dicom encapsulated file and uncompress it.
  * @param     fp already open File Pointer
- * @param     image_buffer destination Address (in caller's memory space)
  *            at which the pixel data should be copied
  * @return    Boolean
  */
-bool PixelConvert::ReadAndDecompressRLEFile(
-                          void* image_buffer,
-                          FILE* fp )
+bool PixelConvert::ReadAndDecompressRLEFile( FILE* fp )
 {
-   uint8_t* im = (uint8_t*)image_buffer;
-   long uncompressedSegmentSize = XSize * YSize;
+   uint8_t* subDecompressed = Decompressed;
+   long decompressedSegmentSize = XSize * YSize;
 
    // Loop on the frame[s]
    for( RLEFramesInfo::RLEFrameList::iterator
@@ -259,35 +259,33 @@ bool PixelConvert::ReadAndDecompressRLEFile(
       for( int k = 1; k <= (*it)->NumberFragments; k++ )
       {
          fseek( fp, (*it)->Offset[k] ,SEEK_SET );
-         (void)PixelConvert::ReadAndUncompressRLEFragment(
-                                 (uint8_t*) im, (*it)->Length[k],
-                                 uncompressedSegmentSize, fp );
-         im += uncompressedSegmentSize;
+         (void)ReadAndDecompressRLEFragment( subDecompressed,
+                                             (*it)->Length[k],
+                                             decompressedSegmentSize, 
+                                             fp );
+         subDecompressed += decompressedSegmentSize;
       }
    }
                                                                                 
    if ( BitsAllocated == 16 )
    {
       // Try to deal with RLE 16 Bits
-      (void)UncompressRLE16BitsFromRLE8Bits( ZSize,
-                                             (uint8_t*) image_buffer);
+      (void)DecompressRLE16BitsFromRLE8Bits( ZSize );
    }
                                                                                 
    return true;
 }
 
 /**
- * \brief   Swap the bytes, according to swap code.
- * \warning not end user intended
- * @param   im area to deal with
+ * \brief Swap the bytes, according to \ref SwapCode.
  */
-void PixelConvert::SwapZone( uint8_t* im )
+void PixelConvert::ConvertSwapZone()
 {
    unsigned int i;
                                                                                 
    if( BitsAllocated == 16 )
    {
-      uint16_t* im16 = (uint16_t*)im;
+      uint16_t* im16 = (uint16_t*)Decompressed;
       switch( SwapCode )
       {
          case 0:
@@ -304,15 +302,16 @@ void PixelConvert::SwapZone( uint8_t* im )
             }
             break;
          default:
-            dbg.Verbose( 0, "PixelConvert::SwapZone: SwapCode value "
+            dbg.Verbose( 0, "PixelConvert::ConvertSwapZone: SwapCode value "
                             "(16 bits) not allowed." );
       }
    }
    else if( BitsAllocated == 32 )
    {
       uint32_t s32;
-      uint16_t fort, faible;
-      uint32_t* im32 = (uint32_t*)im;
+      uint16_t high;
+      uint16_t low;
+      uint32_t* im32 = (uint32_t*)Decompressed;
       switch ( SwapCode )
       {
          case 0:
@@ -321,36 +320,36 @@ void PixelConvert::SwapZone( uint8_t* im )
          case 4321:
             for( i = 0; i < DecompressedSize / 4; i++ )
             {
-               faible  = im32[i] & 0x0000ffff;  // 4321
-               fort    = im32[i] >> 16;
-               fort    = ( fort >> 8   ) | ( fort << 8 );
-               faible  = ( faible >> 8 ) | ( faible << 8);
-               s32     = faible;
-               im32[i] = ( s32 << 16 ) | fort;
+               low     = im32[i] & 0x0000ffff;  // 4321
+               high    = im32[i] >> 16;
+               high    = ( high >> 8 ) | ( high << 8 );
+               low     = ( low  >> 8 ) | ( low  << 8 );
+               s32     = low;
+               im32[i] = ( s32 << 16 ) | high;
             }
             break;
          case 2143:
             for( i = 0; i < DecompressedSize / 4; i++ )
             {
-               faible  = im32[i] & 0x0000ffff;   // 2143
-               fort    = im32[i] >> 16;
-               fort    = ( fort >> 8 ) | ( fort << 8 );
-               faible  = ( faible >> 8) | ( faible << 8);
-               s32     = fort;
-               im32[i] = ( s32 << 16 ) | faible;
+               low     = im32[i] & 0x0000ffff;   // 2143
+               high    = im32[i] >> 16;
+               high    = ( high >> 8 ) | ( high << 8 );
+               low     = ( low  >> 8 ) | ( low  << 8 );
+               s32     = high;
+               im32[i] = ( s32 << 16 ) | low;
             }
             break;
          case 3412:
             for( i = 0; i < DecompressedSize / 4; i++ )
             {
-               faible  = im32[i] & 0x0000ffff; // 3412
-               fort    = im32[i] >> 16;
-               s32     = faible;
-               im32[i] = ( s32 << 16 ) | fort;
+               low     = im32[i] & 0x0000ffff; // 3412
+               high    = im32[i] >> 16;
+               s32     = low;
+               im32[i] = ( s32 << 16 ) | high;
             }
             break;
          default:
-            dbg.Verbose( 0, "PixelConvert::SwapZone: SwapCode value "
+            dbg.Verbose( 0, "PixelConvert::ConvertSwapZone: SwapCode value "
                             "(32 bits) not allowed." );
       }
    }
@@ -359,11 +358,11 @@ void PixelConvert::SwapZone( uint8_t* im )
 /**
  * \brief Deal with endianity i.e. re-arange bytes inside the integer
  */
-void PixelConvert::ReorderEndianity( uint8_t* pixelZone )
+void PixelConvert::ConvertReorderEndianity()
 {
    if ( BitsAllocated != 8 )
    {
-      SwapZone( pixelZone );
+      ConvertSwapZone();
    }
 
    // Special kludge in order to deal with xmedcon broken images:
@@ -372,7 +371,7 @@ void PixelConvert::ReorderEndianity( uint8_t* pixelZone )
        && ( ! PixelSign ) )
    {
       int l = (int)( DecompressedSize / ( BitsAllocated / 8 ) );
-      uint16_t *deb = (uint16_t *)pixelZone;
+      uint16_t *deb = (uint16_t *)Decompressed;
       for(int i = 0; i<l; i++)
       {
          if( *deb == 0xffff )
@@ -387,14 +386,12 @@ void PixelConvert::ReorderEndianity( uint8_t* pixelZone )
 /**
  * \brief     Reads from disk the Pixel Data of JPEG Dicom encapsulated
  &            file and uncompress it.
- * @param     fp already open File Pointer
- * @param     destination Where decompressed fragments should end up
+ * @param     fp File Pointer
  * @return    Boolean
  */
-bool PixelConvert::ReadAndDecompressJPEGFile(
-                          uint8_t* destination,
-                          FILE* fp )
+bool PixelConvert::ReadAndDecompressJPEGFile( FILE* fp )
 {
+   uint8_t* localDecompressed = Decompressed;
    // Loop on the fragment[s]
    for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
         it  = JPEGInfo->Fragments.begin();
@@ -405,7 +402,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
 
       if ( IsJPEG2000 )
       {
-         if ( ! gdcm_read_JPEG2000_file( fp, destination ) )
+         if ( ! gdcm_read_JPEG2000_file( fp,localDecompressed ) )
          {
             return false;
          }
@@ -413,7 +410,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
       else if ( BitsStored == 8)
       {
          // JPEG Lossy : call to IJG 6b
-         if ( ! gdcm_read_JPEG_file8( fp, destination ) )
+         if ( ! gdcm_read_JPEG_file8( fp, localDecompressed ) )
          {
             return false;
          }
@@ -421,7 +418,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
       else if ( BitsStored == 12)
       {
          // Reading Fragment pixels
-         if ( ! gdcm_read_JPEG_file12 ( fp, destination ) )
+         if ( ! gdcm_read_JPEG_file12 ( fp, localDecompressed ) )
          {
             return false;
          }
@@ -429,7 +426,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
       else if ( BitsStored == 16)
       {
          // Reading Fragment pixels
-         if ( ! gdcm_read_JPEG_file16 ( fp, destination ) )
+         if ( ! gdcm_read_JPEG_file16 ( fp, localDecompressed ) )
          {
             return false;
          }
@@ -438,28 +435,26 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
       else
       {
          // other JPEG lossy not supported
-         dbg.Error(" File::ReadAndDecompressJPEGFile: unknown jpeg lossy "
-                   " compression ");
+         dbg.Error("PixelConvert::ReadAndDecompressJPEGFile: unknown "
+                   "jpeg lossy compression ");
          return false;
       }
                                                                                 
-      // Advance to next free location in destination 
+      // Advance to next free location in Decompressed 
       // for next fragment decompression (if any)
       int length = XSize * YSize * SamplesPerPixel;
       int numberBytes = BitsAllocated / 8;
-
-      destination += length * numberBytes;
+                                                                                
+      localDecompressed += length * numberBytes;
    }
    return true;
 }
 
 /**
  * \brief  Re-arrange the bits within the bytes.
- * @param  pixelZone zone
  * @return Boolean
  */
-bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
-     throw ( FormatError )
+bool PixelConvert::ConvertReArrangeBits() throw ( FormatError )
 {
    if ( BitsStored != BitsAllocated )
    {
@@ -468,7 +463,7 @@ bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
       {
          uint16_t mask = 0xffff;
          mask = mask >> ( BitsAllocated - BitsStored );
-         uint16_t* deb = (uint16_t*)pixelZone;
+         uint16_t* deb = (uint16_t*)Decompressed;
          for(int i = 0; i<l; i++)
          {
             *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
@@ -479,7 +474,7 @@ bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
       {
          uint32_t mask = 0xffffffff;
          mask = mask >> ( BitsAllocated - BitsStored );
-         uint32_t* deb = (uint32_t*)pixelZone;
+         uint32_t* deb = (uint32_t*)Decompressed;
          for(int i = 0; i<l; i++)
          {
             *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
@@ -488,8 +483,8 @@ bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
       }
       else
       {
-         dbg.Verbose(0, "PixelConvert::ReArrangeBits: weird image");
-         throw FormatError( "File::ReArrangeBits()",
+         dbg.Verbose(0, "PixelConvert::ConvertReArrangeBits: weird image");
+         throw FormatError( "PixelConvert::ConvertReArrangeBits()",
                                 "weird image !?" );
       }
    }
@@ -500,10 +495,11 @@ bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
  * \brief   Convert (Y plane, cB plane, cR plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
-void PixelConvert::ConvertYcBcRPlanesToRGBPixels( uint8_t* destination )
+void PixelConvert::ConvertYcBcRPlanesToRGBPixels()
 {
-   uint8_t* oldPixelZone = new uint8_t[ DecompressedSize ];
-   memmove( oldPixelZone, destination, DecompressedSize );
+   uint8_t* localDecompressed = Decompressed;
+   uint8_t* copyDecompressed = new uint8_t[ DecompressedSize ];
+   memmove( copyDecompressed, localDecompressed, DecompressedSize );
                                                                                 
    // to see the tricks about YBR_FULL, YBR_FULL_422,
    // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
@@ -513,9 +509,9 @@ void PixelConvert::ConvertYcBcRPlanesToRGBPixels( uint8_t* destination )
    int l        = XSize * YSize;
    int nbFrames = ZSize;
                                                                                 
-   uint8_t* a = oldPixelZone;
-   uint8_t* b = oldPixelZone + l;
-   uint8_t* c = oldPixelZone + l + l;
+   uint8_t* a = copyDecompressed;
+   uint8_t* b = copyDecompressed + l;
+   uint8_t* c = copyDecompressed + l + l;
    double R, G, B;
                                                                                 
    /// \todo : Replace by the 'well known' integer computation
@@ -538,43 +534,48 @@ void PixelConvert::ConvertYcBcRPlanesToRGBPixels( uint8_t* destination )
          if (G > 255.0) G = 255.0;
          if (B > 255.0) B = 255.0;
                                                                                 
-         *(destination++) = (uint8_t)R;
-         *(destination++) = (uint8_t)G;
-         *(destination++) = (uint8_t)B;
+         *(localDecompressed++) = (uint8_t)R;
+         *(localDecompressed++) = (uint8_t)G;
+         *(localDecompressed++) = (uint8_t)B;
          a++;
          b++;
          c++;
       }
    }
-   delete[] oldPixelZone;
+   delete[] copyDecompressed;
 }
 
 /**
  * \brief   Convert (Red plane, Green plane, Blue plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
-void PixelConvert::ConvertRGBPlanesToRGBPixels( uint8_t* destination )
+void PixelConvert::ConvertRGBPlanesToRGBPixels()
 {
-   uint8_t* oldPixelZone = new uint8_t[ DecompressedSize ];
-   memmove( oldPixelZone, destination, DecompressedSize );
+   uint8_t* localDecompressed = Decompressed;
+   uint8_t* copyDecompressed = new uint8_t[ DecompressedSize ];
+   memmove( copyDecompressed, localDecompressed, DecompressedSize );
                                                                                 
    int l = XSize * YSize * ZSize;
                                                                                 
-   uint8_t* a = oldPixelZone;
-   uint8_t* b = oldPixelZone + l;
-   uint8_t* c = oldPixelZone + l + l;
+   uint8_t* a = copyDecompressed;
+   uint8_t* b = copyDecompressed + l;
+   uint8_t* c = copyDecompressed + l + l;
                                                                                 
    for (int j = 0; j < l; j++)
    {
-      *(destination++) = *(a++);
-      *(destination++) = *(b++);
-      *(destination++) = *(c++);
+      *(localDecompressed++) = *(a++);
+      *(localDecompressed++) = *(b++);
+      *(localDecompressed++) = *(c++);
    }
-   delete[] oldPixelZone;
+   delete[] copyDecompressed;
 }
 
-bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
+bool PixelConvert::ReadAndDecompressPixelData( FILE* fp )
 {
+   ComputeDecompressedImageDataSize();
+   if ( HasLUT )
+      DecompressedSize *= 3;
+   AllocateDecompressed();
    //////////////////////////////////////////////////
    //// First stage: get our hands on the Pixel Data.
    if ( !fp )
@@ -584,7 +585,7 @@ bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
       return false;
    }
                                                                                 
-   if ( fseek(fp, PixelOffset, SEEK_SET) == -1 )
+   if ( fseek( fp, PixelOffset, SEEK_SET ) == -1 )
    {
      dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
                      "unable to find PixelOffset in file." );
@@ -595,11 +596,11 @@ bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
    //// Second stage: read from disk dans uncompress.
    if ( BitsAllocated == 12 )
    {
-      ReadAndDecompress12BitsTo16Bits( (uint8_t*)destination, fp);
+      ReadAndDecompress12BitsTo16Bits( fp);
    }
    else if ( IsUncompressed )
    {
-      size_t ItemRead = fread( destination, PixelDataLength, 1, fp);
+      size_t ItemRead = fread( Decompressed, PixelDataLength, 1, fp );
       if ( ItemRead != 1 )
       {
          dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
@@ -609,7 +610,7 @@ bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
    } 
    else if ( IsRLELossless )
    {
-      if ( ! ReadAndDecompressRLEFile( destination, fp ) )
+      if ( ! ReadAndDecompressRLEFile( fp ) )
       {
          dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
                          "RLE decompressor failed." );
@@ -619,7 +620,7 @@ bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
    else
    {
       // Default case concerns JPEG family
-      if ( ! ReadAndDecompressJPEGFile( (uint8_t*)destination, fp ) )
+      if ( ! ReadAndDecompressJPEGFile( fp ) )
       {
          dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
                          "JPEG decompressor failed." );
@@ -629,13 +630,14 @@ bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
 
    ////////////////////////////////////////////
    //// Third stage: twigle the bytes and bits.
-   ReorderEndianity( (uint8_t*) destination );
-   ReArrangeBits( (uint8_t*) destination );
+   ConvertReorderEndianity();
+   ConvertReArrangeBits();
+   ConvertHandleColor();
 
    return true;
 }
 
-bool PixelConvert::HandleColor( uint8_t* destination )
+void PixelConvert::ConvertHandleColor()
 {
    //////////////////////////////////
    // Deal with the color decoding i.e. handle:
@@ -675,12 +677,10 @@ bool PixelConvert::HandleColor( uint8_t* destination )
    // - [Planar 1] AND [Photo C] handled with ConvertYcBcRPlanesToRGBPixels()
    // - [Planar 2] OR  [Photo D] requires LUT intervention.
 
-   if (   IsMonochrome
-       || ( PlanarConfiguration == 2 )
-       || IsPaletteColor )
+   if ( ! IsDecompressedRGB() )
    {
       // [Planar 2] OR  [Photo D]: LUT intervention done outside
-      return false;
+      return;
    }
                                                                                 
    if ( PlanarConfiguration == 1 )
@@ -688,22 +688,36 @@ bool PixelConvert::HandleColor( uint8_t* destination )
       if ( IsYBRFull )
       {
          // [Planar 1] AND [Photo C] (remember YBR_FULL_422 acts as RGB)
-         ConvertYcBcRPlanesToRGBPixels( (uint8_t*)destination );
+         ConvertYcBcRPlanesToRGBPixels();
       }
       else
       {
          // [Planar 1] AND [Photo C]
-         ConvertRGBPlanesToRGBPixels( (uint8_t*)destination );
+         ConvertRGBPlanesToRGBPixels();
       }
    }
                                                                                 
    // When planarConf is 0, pixels are allready in RGB
+}
+
+/**
+ * \brief Predicate to know wether the image[s] (once decompressed) is RGB.
+ * \note See comments of \ref HandleColor
+ */
+bool PixelConvert::IsDecompressedRGB()
+{
+   if (   IsMonochrome
+       || ( PlanarConfiguration == 2 )
+       || IsPaletteColor )
+   {
+      return false;
+   }
    return true;
 }
 
 void PixelConvert::ComputeDecompressedImageDataSize()
 {
-   int bitsAllocated;
+   int bitsAllocated = BitsAllocated;
    // Number of "Bits Allocated" is fixed to 16 when it's 12, since
    // in this case we will expand the image to 16 bits (see
    //    \ref ReadAndDecompress12BitsTo16Bits() )

@@ -67,6 +67,45 @@ et si on prenait:
  radical + 147.144.143.155 + IP + time()
 
 -----------------------------------------------------------------------------
+Description: [BUG] Better handling of unfound Dicom dictionary.
+             When gdcm doesn't find the Dicom dictionary (because it's
+             path to the directory of dictionary is uncorrect, either
+             because the install relative layout was broken after file moves
+             or because the environnement variable GDCM_DICT_PATH is 
+             unpropely set), gdcm will:
+             1/ print a warning
+             2/ throw an exception (that is internaly UNcatched by gdcm)
+                that in most cases provoques the caller application to
+                exit uncleanly (uncatched excpetions in fine call abort() ).
+             Additionaly on Win32 the warning print isn't displayed because
+             exiting occurs prior to cerr or cout is flushed properly.
+Date: 2004 Oct 15
+Attributed:
+Details: fixes (from dirty to clean)
+         1/ force Win32 to flush it's buffer so at least the user gets some
+            reason why it's application exited (when called in command
+            environement). Note: it looks like the "cerr << flush" fails. Sigh.
+         2/ within gdcm catch the exception, display a decent warning, and
+            return to caller.
+         3/ see the comment below on how to enhance the API and fix things
+            really cleanly.
+Comments: ENH proposal:
+          The caller migth not be aware of the path to the dictionaries
+          on invocation of gdcm (think this path is set by the Interface
+          because the caller wants to skip the default gdcm dictionary in order
+          to provide his own ones e.g. another language based one).
+             Hence, gdcm should postpone the parsing of the default dictionary
+          instead of doing it on library entry.
+          This would enable two things:
+           - It would give a chance to the caller to set the path to
+             the dictionaries he whishes to use, through a call to
+             newly created DictSet::SetDictionaryPath( string ).
+           - It would avoid the burden of using the GDCM_DICT_PATH
+             environnement variable and enable GDCM CONTROL FROM WITHIN
+             THE API. Optionaly, if the caller didn't use the API to
+             provide his prefered path, gdcm could still default to 
+             GDCM_DICT_PATH...
+-----------------------------------------------------------------------------
 Description: vtk/vtkGdcmReader doesn't positionate the normal to the image
 Date: 2004 Oct 1
 Attributed:

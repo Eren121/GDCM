@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:30 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/10/15 10:43:28 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,17 +68,13 @@ friend class File;
    bool IsMonochrome;
    bool IsPaletteColor;
    bool IsYBRFull;
+   bool HasLUT;
 
-private:
-   bool ReadAndUncompressRLEFragment(
-                  uint8_t* decodedZone,
-                  long fragmentSize,
-                  long uncompressedSegmentSize,
-                  FILE* fp );
 public:
    PixelConvert();
    ~PixelConvert();
 
+   //// Setter accessors:
    void SetXSize( int xSize ) { XSize = xSize; }
    void SetYSize( int ySize ) { YSize = ySize; }
    void SetZSize( int zSize ) { ZSize = zSize; }
@@ -112,37 +108,48 @@ public:
    void SetIsPaletteColor( bool isPaletteColor )
            { IsPaletteColor = isPaletteColor; }
    void SetIsYBRFull( bool isYBRFull ) { IsYBRFull = isYBRFull; }
-
-   uint8_t* GetRGB() { return RGB; }
+   void SetHasLUT ( bool hasLUT ) { HasLUT = hasLUT; }
+ 
    void     SetRGBSize( size_t size ) { RGBSize = size; }
-   size_t   GetRGBSize() { return RGBSize; }
-   void     AllocateRGB();
-
-   uint8_t* GetDecompressed() { return Decompressed; }
    void     SetDecompressedSize( size_t size ) { DecompressedSize = size; }
+
+   //// Getter accessors:
+   uint8_t* GetRGB() { return RGB; }
+   size_t   GetRGBSize() { return RGBSize; }
+   uint8_t* GetDecompressed() { return Decompressed; }
    size_t   GetDecompressedSize() { return DecompressedSize; }
-   void     AllocateDecompressed();
+
+   //// Predicates:
+   bool IsDecompressedRGB();
 
 //////////////////////////////////////////////////////////
-// In progress
 private:
-   bool UncompressRLE16BitsFromRLE8Bits(
-                  int NumberOfFrames,
-                  uint8_t* fixMemUncompressed );
+   // Use the fp:
+   bool ReadAndDecompressRLEFragment(
+                  uint8_t* decodedZone,
+                  long fragmentSize,
+                  long uncompressedSegmentSize,
+                  FILE* fp );
+   void ReadAndDecompress12BitsTo16Bits( FILE* fp ) throw ( FormatError );
+   bool ReadAndDecompressRLEFile( FILE* fp );
+   bool ReadAndDecompressJPEGFile( FILE* fp );
+
+   // In place (within Decompressed and with no fp access) decompression
+   // or convertion:
+   bool DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames );
+   void ConvertSwapZone();
+   void ConvertReorderEndianity();
+   bool ConvertReArrangeBits() throw ( FormatError );
+   void ConvertRGBPlanesToRGBPixels();
+   void ConvertYcBcRPlanesToRGBPixels();
+   void ConvertHandleColor();
+
    void ComputeDecompressedImageDataSize();
-   void ReadAndDecompress12BitsTo16Bits(
-                  uint8_t* pixelZone,
-                  FILE* filePtr) throw ( FormatError );
-   bool ReadAndDecompressRLEFile( void* image_buffer, FILE* fp );
-   bool ReadAndDecompressJPEGFile( uint8_t* destination, FILE* fp );
-   void SwapZone( uint8_t* im );
-   void ReorderEndianity( uint8_t* pixelZone );
-   bool ReArrangeBits( uint8_t* pixelZone ) throw ( FormatError );
-   void ConvertRGBPlanesToRGBPixels( uint8_t* destination );
-   void ConvertYcBcRPlanesToRGBPixels( uint8_t* destination );
+   void AllocateRGB();
+   void AllocateDecompressed();
 public:
-   bool ReadAndDecompressPixelData( void* destination, FILE* fp );
-   bool HandleColor( uint8_t* destination );
+// In progress
+   bool ReadAndDecompressPixelData( FILE* fp );
    void Squeeze();
 };
 } // end namespace gdcm

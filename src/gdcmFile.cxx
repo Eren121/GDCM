@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:56:07 $
-  Version:   $Revision: 1.143 $
+  Date:      $Date: 2004/10/15 10:43:27 $
+  Version:   $Revision: 1.144 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -138,7 +138,7 @@ void File::Initialise()
       PixelConverter.SetPixelDataLength( HeaderInternal->GetPixelAreaLength() );
       PixelConverter.SetRLEInfo( &(HeaderInternal->RLEInfo) );
       PixelConverter.SetJPEGInfo( &(HeaderInternal->JPEGInfo) );
-      PixelConverter.SetDecompressedSize( ImageDataSize );
+      PixelConverter.SetHasLUT( HeaderInternal->HasLUT() );
 
       PixelConverter.SetPlanarConfiguration(
           HeaderInternal->GetPlanarConfiguration() );
@@ -564,10 +564,13 @@ void File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    }
 
    FILE* fp = HeaderInternal->OpenFile();
-   PixelConverter.ReadAndDecompressPixelData( destination, fp );
+   PixelConverter.ReadAndDecompressPixelData( fp );
    HeaderInternal->CloseFile();
-                                                                                
-   if ( ! PixelConverter.HandleColor( (uint8_t*)destination ) )
+   memmove( destination,
+            (void*)PixelConverter.GetDecompressed(),
+            PixelConverter.GetDecompressedSize() );
+
+   if ( ! PixelConverter.IsDecompressedRGB() )
    {
       return;
    }

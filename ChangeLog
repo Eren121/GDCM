@@ -1,3 +1,14 @@
+2004-10-15 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * src/gdcmDebug.cxx last ditch attempt to get warning/error messages
+    displayed on Win32 when a brutal abort() occurs (because of uncatched
+    exception). See TODO new entry of this commit for more on this.
+  * TODO added new entry.
+  * CLEANUP_ROUND (12) for gdcmPixelConvert (nicotine is my friend stage)
+    src/gdcmFile.[cxx|h] and gdcmPixelConvert.[cxx|h]:
+    - HandleColor is no longer called from gdcmFile.cxx
+    - gdcmPixelConvert.cxx clean up on method arguments and internal
+      variable names for semantical coherence.
+
 2004-10-14 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * Finished lossless transition, not only do we now read all lossless jpeg
   images, without the need of the Cornwell lib, but we do read them properly now
