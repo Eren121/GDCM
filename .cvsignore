@@ -23,4 +23,15 @@ gdcm.spec
 *.opt
 *Python.cxx
 *lib*
-
+CMakeCCompiler.cmake
+CMakeCXXCompiler.cmake
+CMakeCache.txt
+CMakeOutput.log
+CMakeSystem.cmake
+CMakeTmp
+DartConfiguration.tcl
+DartTestfile.txt
+cmake.check_cache
+cmake.check_depends
+cmake.depends
+gdcmConfigure.h

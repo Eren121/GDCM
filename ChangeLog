@@ -1,5 +1,9 @@
 2004-04-30  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
      * Doc/gdcmUML.xmi added raw UML class view (umbrello format)
+     * Doc/CMakeLists.txt: the main page is now properly differentiated
+       between the developper and user version.
+     * Doc/doxygen.config.in: dropped search related obsolete flags
+     * src/gdcmParser.h, gdcmHeader.h: doxygenation
 
 2004-04-29  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
      * DEVELOPPER: added some helpfull comments for compile/test/install

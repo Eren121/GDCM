@@ -60,7 +60,7 @@ The following comments are intended for core gdcm developpers.
         followed the above instructions).
 
 * Python related section.
-  Depending on the automake/autoconf/autogen.sh flags you used gdcm could
+  Depending on the cmake flags you used in order to compile gdcm could
   be wrapped in two ways:
   - the first python wrappers of gdcm uses Swig (http://www.swig.org). These
     are the one generated when using autogen.sh --enable-python. 

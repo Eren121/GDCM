@@ -23,7 +23,7 @@ IF(GDCM_DOXYGEN)
   # http://www.cmake.org/pipermail/cmake/2003-April/003673.html
   # Too bad CMake doesn't support multiline ""
   SET(GDCM_DOXYGEN_INPUT_COMMON
-    "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt   ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyInstallation.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyIntroduction.txt"
+    "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyInstallation.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyIntroduction.txt"
   )
   SET(GDCM_DOXYGEN_EXCLUDE_COMMON
   )
@@ -36,7 +36,7 @@ IF(GDCM_DOXYGEN)
     html.developper
   )
   SET(GDCM_DOXYGEN_INPUT
-    "${GDCM_DOXYGEN_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyDevelInstal.txt"
+    "${GDCM_DOXYGEN_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyDevelInstal.txt ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt"
   )
   SET(GDCM_DOXYGEN_EXCLUDE
     "${GDCM_DOXYGEN_EXCLUDE_COMMON}  ${GDCM_SOURCE_DIR@/src/iddcmjpeg.h     ${GDCM_SOURCE_DIR@/src/src/gdcmJpeg.cxx"
@@ -59,7 +59,7 @@ IF(GDCM_DOXYGEN)
     html.user
   )
   SET(GDCM_DOXYGEN_INPUT
-    "${GDCM_DOXYGEN_INPUT_COMMON}"
+    "${GDCM_DOXYGEN_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyMainPageUser.txt"
   )
   SET(GDCM_DOXYGEN_EXCLUDE
     "${GDCM_DOXYGEN_EXCLUDE_COMMON}"

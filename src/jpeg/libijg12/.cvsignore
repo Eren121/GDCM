@@ -6,3 +6,6 @@ Makefile.in
 Makefile
 *.lo
 *.la
+DartTestfile.txt
+cmake.check_depends
+cmake.depends

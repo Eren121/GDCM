@@ -4,3 +4,7 @@ Makefile.in
 .libs
 *.lo
 *.la
+DartTestfile.txt
+cmake.check_depends
+cmake.depends
+

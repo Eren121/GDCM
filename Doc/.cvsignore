@@ -2,4 +2,6 @@ Makefile
 Makefile.in
 html.developper
 html.user
-
+DartTestfile.txt
+cmake.check_depends
+cmake.depends

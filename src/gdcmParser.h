@@ -40,25 +40,25 @@ private:
    /// Public dictionary used to parse this header
    gdcmDict *RefPubDict;
    
-   /// Optional "shadow dictionary" (private elements) used to parse
+   /// \brief Optional "shadow dictionary" (private elements) used to parse
    /// this header
    gdcmDict *RefShaDict;
 
    /// Equals 1 if a gdcmHeaderEntry was added post parsing 
    int wasUpdated;
    
-   /// Equals =1 if user wants to skip shadow groups while parsing
+   /// \brief Equals =1 if user wants to skip shadow groups while parsing
    /// (to save space)
    int ignoreShadow;
 
-   /// Size threshold above which an element value will NOT be loaded in 
-   /// memory (to avoid loading the image/volume itself). By default,
+   /// \brief Size threshold above which an element value will NOT be loaded
+   /// in memory (to avoid loading the image/volume itself). By default,
    /// this upper bound is fixed to 1024 bytes (which might look reasonable
    /// when one considers the definition of the various VR contents).
    guint32 MaxSizeLoadEntry;
    
-   /// Size threshold above which an element value will NOT be *printed* in
-   /// order no to polute the screen output. By default, this upper bound
+   /// \brief Size threshold above which an element value will NOT be *printed*
+   /// in order no to polute the screen output. By default, this upper bound
    /// is fixed to 64 bytes.
    guint32 MaxSizePrintEntry;
 
@@ -66,7 +66,7 @@ protected:
    /// Refering underlying filename.
    std::string filename; 
 
-   /// SWap code (e.g. Big Endian, Little Endian, Bad Big Endian,
+   /// \brief SWap code (e.g. Big Endian, Little Endian, Bad Big Endian,
    /// Bad Little Endian) according to the processor Endianity and
    /// what is written on disc.
    int sw;
@@ -80,11 +80,11 @@ protected:
    /// After opening the file, we read HEADER_LENGTH_TO_READ bytes.
    static const unsigned int HEADER_LENGTH_TO_READ; 
 
-   /// Elements whose value is longer than MAX_SIZE_LOAD_ELEMENT_VALUE
+   /// \brief Elements whose value is longer than MAX_SIZE_LOAD_ELEMENT_VALUE
    /// are NOT loaded.
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
 
-   /// Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
+   /// \brief Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
    /// are NOT printed.
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
@@ -94,10 +94,10 @@ protected:
    /// Chained list, to keep the 'spacial' ordering
    ListTag listEntries; 
 
-   /// will be set 1 if user asks to 'go inside' the 'sequences' (VR = "SQ")
+   /// Will be set 1 if user asks to 'go inside' the 'sequences' (VR = "SQ")
    int enableSequences;
 
-   /// Amount of printed details for each Header Entry (Dicom Element):
+   /// \brief Amount of printed details for each Header Entry (Dicom Element):
    /// 0 : stands for the least detail level.
    int printLevel;
    

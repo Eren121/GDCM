@@ -12,6 +12,7 @@ testChangeEntete
 PrintDicomDir
 makeDicomDir
 testDicomDir
+gdcmCxxTests
 bug1
 image.dcm
 image.raw
@@ -24,3 +25,6 @@ test3.acr.raw
 *.dll
 *Debug*
 *Release*
+DartTestfile.txt
+cmake.check_depends
+cmake.depends

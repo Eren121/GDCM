@@ -13,3 +13,6 @@ config.h.in
 stamp-h
 stamp-h1
 stamp-h.in
+DartTestfile.txt
+cmake.check_depends
+cmake.depends

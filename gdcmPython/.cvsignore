@@ -4,6 +4,7 @@ gdcm.py
 gdcm_wrap.cpp
 gdcm_wrap.cxx
 gdcm_wrap.doc
+vtkgdcmPythonInit.cxx
 vtkGdcmReaderPython.cxx
 vtkWrapPythonInit
 vtkGdcmInit.cxx
@@ -15,3 +16,6 @@ Makefile.in
 .libs
 .deps
 _gdcm.so
+DartTestfile.txt
+cmake.check_depends
+cmake.depends
