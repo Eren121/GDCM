@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 03:49:49 $
-  Version:   $Revision: 1.191 $
+  Date:      $Date: 2005/01/17 11:03:28 $
+  Version:   $Revision: 1.192 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,14 +98,14 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
       /// FIXME FIXME FIXME
       /// The tags refered by the three following lines used to be CORRECTLY
       /// defined as having an US Value Representation in the public
-      /// dictionnary. BUT the semantics implied by the three following
+      /// dictionary. BUT the semantics implied by the three following
       /// lines state that the corresponding tag contents are in fact
       /// the ones of a BinEntry.
-      /// In order to fix things "Quick and Dirty" the dictionnary was
+      /// In order to fix things "Quick and Dirty" the dictionary was
       /// altered on PURPOSE but now contains a WRONG value.
       /// In order to fix things and restore the dictionary to its
       /// correct value, one needs to decided of the semantics by deciding
-      /// wether the following tags are either:
+      /// whether the following tags are either:
       /// - multivaluated US, and hence loaded as ValEntry, but afterwards
       ///   also used as BinEntry, which requires the proper conversion,
       /// - OW, and hence loaded as BinEntry, but afterwards also used
@@ -1088,6 +1088,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
       used = true;
       newDocEntry = ReadNextDocEntry( );
+
       if ( !newDocEntry )
       {
          break;
@@ -1114,13 +1115,13 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          //////////////////// BinEntry or UNKOWN VR:
             // When "this" is a Document the Key is simply of the
             // form ( group, elem )...
-            if (Document *dummy = dynamic_cast< Document* > ( set ) )
+            if (/*Document *dummy =*/ dynamic_cast< Document* > ( set ) )
             {
-               (void)dummy;
+               //(void)dummy;
                newBinEntry->SetKey( newBinEntry->GetKey() );
             }
             // but when "this" is a SQItem, we are inserting this new
-            // valEntry in a sequence item, and the kay has the
+            // valEntry in a sequence item, and the key has the
             // generalized form (refer to \ref BaseTagKey):
             if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
             {
@@ -1141,9 +1142,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          /////////////////////// ValEntry
             // When "set" is a Document, then we are at the top of the
             // hierarchy and the Key is simply of the form ( group, elem )...
-            if (Document *dummy = dynamic_cast< Document* > ( set ) )
+            if (/*Document *dummy =*/ dynamic_cast< Document* > ( set ) )
             {
-               (void)dummy;
+               //(void)dummy;
                newValEntry->SetKey( newValEntry->GetKey() );
             }
             // ...but when "set" is a SQItem, we are inserting this new
@@ -1223,9 +1224,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // is a Document, then we are building the first depth level.
          // Hence the SeqEntry we are building simply has a depth
          // level of one:
-         if (Document *dummy = dynamic_cast< Document* > ( set ) )
+         if (/*Document *dummy =*/ dynamic_cast< Document* > ( set ) )
          {
-            (void)dummy;
+            //(void)dummy;
             newSeqEntry->SetDepthLevel( 1 );
             newSeqEntry->SetKey( newSeqEntry->GetKey() );
          }
@@ -1266,10 +1267,13 @@ void Document::ParseSQ( SeqEntry *seqEntry,
 {
    int SQItemNumber = 0;
    bool dlm_mod;
+   long offsetStartCurrentSQItem = offset;
 
    while (true)
    {
+      // the first time, we read the fff0,e000 of the first SQItem
       DocEntry *newDocEntry = ReadNextDocEntry();
+
       if ( !newDocEntry )
       {
          // FIXME Should warn user
@@ -1288,7 +1292,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
          delete newDocEntry;
          break;
       }
-
+      // create the current SQItem
       SQItem *itemSQ = new SQItem( seqEntry->GetDepthLevel() );
       std::ostringstream newBase;
       newBase << seqEntry->GetKey()
@@ -1306,9 +1310,21 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       {
          dlm_mod = false;
       }
-   
-      ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
-      delete newDocEntry; // FIXME Why deleting fffe 000e ?!?
+      // FIXME, TODO
+      // when we're here, element fffe,e000 is already passed.
+      // it's lost for the SQItem we're going to process !!
+
+      //ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
+      //delete newDocEntry; // FIXME well ... it's too late to use it !
+
+      // Let's try :------------
+      // remove fff0,e000, created out of the SQItem
+      delete newDocEntry;
+      Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);
+      // fill up the current SQItem, starting at the beginning of fff0,e000
+      ParseDES(itemSQ, offsetStartCurrentSQItem, l+8, dlm_mod);
+      offsetStartCurrentSQItem = Fp->tellg();
+      // end try -----------------
  
       seqEntry->AddEntry( itemSQ, SQItemNumber ); 
       SQItemNumber++;
@@ -1835,7 +1851,8 @@ void Document::SkipDocEntry(DocEntry *entry)
 void Document::SkipToNextDocEntry(DocEntry *currentDocEntry) 
 {
    Fp->seekg((long)(currentDocEntry->GetOffset()),     std::ios::beg);
-   Fp->seekg( (long)(currentDocEntry->GetReadLength()),std::ios::cur);
+   if (currentDocEntry->GetGroup() != 0xfffe)  // for fffe pb
+      Fp->seekg( (long)(currentDocEntry->GetReadLength()),std::ios::cur);
 }
 
 /**
@@ -2597,8 +2614,6 @@ bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
  */
 uint32_t Document::ReadTagLength(uint16_t testGroup, uint16_t testElement)
 {
-   long positionOnEntry = Fp->tellg();
-   (void)positionOnEntry;
 
    if ( !ReadTag(testGroup, testElement) )
    {
