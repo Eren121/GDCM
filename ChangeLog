@@ -80,7 +80,6 @@
                        of gdcmDicomDirImage::NewImage as empty function.
 
 2004-02-28  Jean-Pierre Roux
-<<<<<<< ChangeLog
      * ENH add gdcmDicomDir:NewPatient
            add gdcmDicomDirPatient:NewStudy
            add gdcmDicomDirStudy:NewSerie
