@@ -62,6 +62,8 @@ INSTALL_FILES(/include .h gdcmConfigure.h)
 
 #-----------------------------------------------------------------------------
 # Add the testing directories
+OPTION(BUILD_TESTING "Build testing." ON)
+
 IF(BUILD_TESTING)
   ENABLE_TESTING()
   INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
