@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 00:01:35 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2005/01/08 00:03:10 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -367,8 +367,8 @@ typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
 #include <IOKit/network/IONetworkInterface.h>
 #include <IOKit/network/IOEthernetController.h>
 
-static kern_return_t FindEthernetInterfaces(io_iterator_t *matchingServices);
-static kern_return_t GetMACAddress(io_iterator_t intfIterator, UInt8 *MACAddress);
+//static kern_return_t FindEthernetInterfaces(io_iterator_t *matchingServices);
+//static kern_return_t GetMACAddress(io_iterator_t intfIterator, UInt8 *MACAddress);
 
 // Returns an iterator containing the primary (built-in) Ethernet interface. The caller is responsible for
 // releasing the iterator after the caller is done with it.
