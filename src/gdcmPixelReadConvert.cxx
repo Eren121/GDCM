@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:43:37 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/12/09 10:11:38 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -789,9 +789,6 @@ void PixelReadConvert::ComputeDecompressedAndRGBSizes()
 
 void PixelReadConvert::GrabInformationsFromHeader( Header* header )
 {
-   // Just in case some access to a Header element requires disk access.
-   // Note: gdcmDocument::Fp is leaved open after OpenFile.
-   std::ifstream* fp = header->OpenFile();
    // Number of Bits Allocated for storing a Pixel is defaulted to 16
    // when absent from the header.
    BitsAllocated = header->GetBitsAllocated();
@@ -848,6 +845,8 @@ void PixelReadConvert::GrabInformationsFromHeader( Header* header )
    HasLUT = header->HasLUT();
    if ( HasLUT )
    {
+      // Just in case some access to a Header element requires disk access.
+      // Note: gdcmDocument::Fp is leaved open after OpenFile.
       LutRedDescriptor   = header->GetEntryByNumber( 0x0028, 0x1101 );
       LutGreenDescriptor = header->GetEntryByNumber( 0x0028, 0x1102 );
       LutBlueDescriptor  = header->GetEntryByNumber( 0x0028, 0x1103 );
@@ -866,64 +865,35 @@ void PixelReadConvert::GrabInformationsFromHeader( Header* header )
       ///       is that the [Bin|Val]Entry is unaware of the FILE* is was
       ///       parsed from. Fix that. FIXME.
    
-      ////// Red round:
+      ////// Red round
+      header->LoadEntryBinArea(0x0028, 0x1201);
       LutRedData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
-         // Read the Lut Data from disk
-         DocEntry* lutRedDataEntry = header->GetDocEntryByNumber( 0x0028,
-                                                                  0x1201 );
-         LutRedData = new uint8_t[ lutRedDataEntry->GetLength() ];
-         fp->seekg(  lutRedDataEntry->GetOffset() ,std::ios::beg );
-         fp->read( (char*)LutRedData, (size_t)lutRedDataEntry->GetLength());
-         if ( fp->fail() || fp->eof())//Fp->gcount() == 1
-         {
-            dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
-                            "unable to read red LUT data" );
-         }
+         dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
+                         "unable to read red LUT data" );
       }
 
       ////// Green round:
+      header->LoadEntryBinArea(0x0028, 0x1202);
       LutGreenData = (uint8_t*)header->GetEntryBinAreaByNumber(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
-         // Read the Lut Data from disk
-         DocEntry* lutGreenDataEntry = header->GetDocEntryByNumber( 0x0028,
-                                                                    0x1202 );
-         LutGreenData = new uint8_t[ lutGreenDataEntry->GetLength() ];
-         fp->seekg( lutGreenDataEntry->GetOffset() , std::ios::beg );
-         fp->read( (char*)LutGreenData, (size_t)lutGreenDataEntry->GetLength() );
-         if ( fp->fail() || fp->eof())//Fp->gcount() == 1
-         {
-            dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
-                           "unable to read green LUT data" );
-         }
+         dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
+                        "unable to read green LUT data" );
       }
 
       ////// Blue round:
+      header->LoadEntryBinArea(0x0028, 0x1203);
       LutBlueData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
-         // Read the Lut Data from disk
-         DocEntry* lutBlueDataEntry  = header->GetDocEntryByNumber( 0x0028,
-                                                                    0x1203 );
-         LutBlueData = new uint8_t[ lutBlueDataEntry->GetLength() ];
-         fp->seekg(  lutBlueDataEntry->GetOffset() , std::ios::beg );
-         fp->read( (char*)LutBlueData, (size_t)lutBlueDataEntry->GetLength() );
-         if ( fp->fail() || fp->eof())//Fp->gcount() == 1
-         {
-            dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
-                           "unable to read blue LUT data" );
-         }
+         dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
+                        "unable to read blue LUT data" );
       }
    }
 
    ComputeDecompressedAndRGBSizes();
-
-   if(fp) 
-   {
-      header->CloseFile();
-   }
 }
 
 /**

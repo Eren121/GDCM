@@ -1,4 +1,8 @@
 2004-12-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmPixelReadConvert.cxx : bug fix when would forcing load of a
+     DocEntry. Now use methods of the Document !
+
+2004-12-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/ShowDicomSeq.cxx : bug fix
  
 2004-12-08 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
