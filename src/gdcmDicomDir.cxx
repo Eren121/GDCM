@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 17:16:48 $
-  Version:   $Revision: 1.134 $
+  Date:      $Date: 2005/03/04 10:01:56 $
+  Version:   $Revision: 1.135 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,10 +164,12 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
          gdcmWarningMacro( "Parse directory and create the DicomDir");
          ParseDirectory();
       }
+      /*
       else
       {
          //  user may just call ParseDirectory() *after* constructor
       }
+      */
    }
    // Only if user passed a DICOMDIR
    // ------------------------------
