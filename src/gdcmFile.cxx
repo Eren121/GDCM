@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 09:37:29 $
-  Version:   $Revision: 1.203 $
+  Date:      $Date: 2005/01/28 10:34:28 $
+  Version:   $Revision: 1.204 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -157,13 +157,20 @@ bool File::Write(std::string fileName, FileType filetype)
       return false;
    }
 
+   // Entry : 0002|0000 = group length -> recalculated
+   ValEntry *e0002 = GetValEntry(0x0002,0x0000);
+   if( e0002 )
+   {
+      std::ostringstream sLen;
+      sLen << ComputeGroup0002Length(filetype);
+      e0002->SetValue(sLen.str());
+   }
+
    // Bits Allocated
    if ( GetEntryValue(0x0028,0x0100) ==  "12")
    {
       SetValEntry("16", 0x0028,0x0100);
    }
-
-  /// \todo correct 'Pixel group' Length if necessary
 
    int i_lgPix = GetEntryLength(GrPixel, NumPixel);
    if (i_lgPix != -2)
@@ -178,7 +185,6 @@ bool File::Write(std::string fileName, FileType filetype)
    //         (or in future gdcmPixelData class)
 
    // Drop Palette Color, if necessary
-   
    if ( GetEntryValue(0x0028,0x0002).c_str()[0] == '3' )
    {
       // if SamplesPerPixel = 3, sure we don't need any LUT !   

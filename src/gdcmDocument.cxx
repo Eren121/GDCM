@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 09:31:51 $
-  Version:   $Revision: 1.215 $
+  Date:      $Date: 2005/01/28 10:34:28 $
+  Version:   $Revision: 1.216 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2181,23 +2181,28 @@ int Document::ComputeGroup0002Length( FileType filetype )
   
    // for each zero-level Tag in the DCM Header
    DocEntry *entry = GetFirstEntry();
-   while(entry)
+   while( entry )
    {
       gr = entry->GetGroup();
 
-      if (gr == 0x0002)
+      if( gr == 0x0002 )
       {
          found0002 = true;
-         vr = entry->GetVR();            
- 
-         if (filetype == ExplicitVR) 
+
+         if( entry->GetElement() != 0x0000 )
          {
-            if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
+            vr = entry->GetVR();
+ 
+            if( filetype == ExplicitVR )
             {
-               groupLength +=  4; // explicit VR AND OB, OW, SQ : 4 more bytes
+               if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
+               {
+                  // explicit VR AND OB, OW, SQ : 4 more bytes
+                  groupLength +=  4;
+               }
             }
+            groupLength += 2 + 2 + 4 + entry->GetLength();   
          }
-         groupLength += 2 + 2 + 4 + entry->GetLength();   
       }
       else if (found0002 )
          break;

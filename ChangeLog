@@ -1,4 +1,8 @@
 2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.cxx, gdcmDocument.cxx : fix the bug on the group|element 
+     0002|0000. The value was incorrect.
+
+2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * vtk/vtkGdcmWriter.[h|cxx] : add the gestion of UID
 
 2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
