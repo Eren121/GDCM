@@ -43,7 +43,7 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error)
   SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
   filename = InFilename;
   Initialise();
-  fp=fopen(InFilename,"rw");
+  fp=fopen(InFilename,"rb");
   if(exception_on_error) {
     if(!fp)
       throw gdcmFileError("gdcmHeader::gdcmHeader(const char *, bool)");

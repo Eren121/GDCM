@@ -1,3 +1,7 @@
+2003-02-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader.cxx : bug fix - opening dicom file in binary !!!
+      * modifications in MSVC projects
+
 2003-02-19 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * As stated by the first lines of Test/ExceptionAndPython/README, it
         looks like we can move back to original usage of exception within
