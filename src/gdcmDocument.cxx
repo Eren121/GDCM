@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:20 $
-  Version:   $Revision: 1.113 $
+  Date:      $Date: 2004/10/25 04:47:43 $
+  Version:   $Revision: 1.114 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2932,9 +2932,9 @@ void Document::BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
 { 
    if (ElementSet* elementSet = dynamic_cast< ElementSet* > ( set ) )
    {
-      TagDocEntryHT* currentHT = elementSet->GetTagHT();
-      for( TagDocEntryHT::const_iterator i  = currentHT->begin();
-                                         i != currentHT->end();
+      TagDocEntryHT const & currentHT = elementSet->GetTagHT();
+      for( TagDocEntryHT::const_iterator i  = currentHT.begin();
+                                         i != currentHT.end();
                                        ++i)
       {
          DocEntry* entry = i->second;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/10/25 04:47:43 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,10 +27,9 @@
 class ValEntry;
 class BinEntry;
 class SeqEntry;
+
 namespace gdcm 
 {
-
-
 typedef std::map<TagKey, DocEntry *> TagDocEntryHT;
 
 //-----------------------------------------------------------------------------
@@ -40,30 +39,28 @@ class GDCM_EXPORT ElementSet : public DocEntrySet
 public:
    ElementSet(int);
    ~ElementSet();
-   virtual bool AddEntry(DocEntry *Entry);
+
+   bool AddEntry(DocEntry *Entry);
    bool RemoveEntry(DocEntry *EntryToRemove);
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
    
-   virtual void Print(std::ostream &os = std::cout); 
-   virtual void Write(std::ofstream *fp, FileType filetype); 
-
+   void Print(std::ostream &os = std::cout); 
+   void Write(std::ofstream *fp, FileType filetype); 
+   
    /// Accessor to \ref TagHT
-   // Do not expose this to user (public API) !
-   // I re-add it temporaryly JPRx
-   TagDocEntryHT &GetEntry() { return TagHT; };
-
+   // Do not expose this to user (public API) ! 
+   // A test is using it thus put it in public (matt)
+   TagDocEntryHT const & GetTagHT() const { return TagHT; };
 
 protected:
+    
+private:
 // Variables
    /// Hash Table (map), to provide fast access
    TagDocEntryHT TagHT; 
-     
-private:
-   /// Just for following ::GetTagHT()
+ 
    friend class Document;
-
-   /// Accessor to \ref TagHT
-   TagDocEntryHT* GetTagHT() { return &TagHT; };
+   friend class DicomDir; //For accessing private TagHT
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

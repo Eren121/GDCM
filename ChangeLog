@@ -1,3 +1,8 @@
+2004-10-25 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * STYLE: ivars should start with a capital letter. 
+  * Accessors should be const to avoid people starting modifying stuff (since this is a ref). 
+  * remove 'virtual' as Style specify subclasses shouldn't reuse the keyword
+  
 2004-10-22 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Doc/Dicom2004_Part5.pdf added (thanks to JPR).
   * Dicts/dicomTS2004.dic, dicomV3VM2004.dic, groupNameAbbreviations2004.dic

@@ -69,7 +69,7 @@ int TestCopyDicom(int , char* [])
       gdcm::File *original = new gdcm::File( filename );
       gdcm::File *copy = new gdcm::File( output );
 
-      gdcm::TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
+      const gdcm::TagDocEntryHT & Ht = original->GetHeader()->GetTagHT();
 
       size_t dataSize = original->GetImageDataSize();
       uint8_t* imageData = original->GetImageData();
@@ -83,7 +83,7 @@ int TestCopyDicom(int , char* [])
 
       gdcm::DocEntry* d;
 
-      for (gdcm::TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
+      for (gdcm::TagDocEntryHT::const_iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
       {
          d = tag->second;
          if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )

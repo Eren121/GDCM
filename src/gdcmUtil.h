@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:48 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/10/25 04:47:43 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@ namespace gdcm
 {
 /**
  * \defgroup Globals Utility functions
- * \brief    Here are some utility functions, belonging to NO class,
+ * \brief    Here are some utility functions, belonging to the Util class,
  *           dealing with strings, file names... that can be called
  *           from anywhere by whomsoever they can help.
  */
@@ -39,15 +39,15 @@ class GDCM_EXPORT Util
 public:
    static std::string Format(const char* format, ...);
    static void        Tokenize (const std::string& str,
-                         std::vector<std::string>& tokens,
-                         const std::string& delimiters = " ");
+                                std::vector<std::string>& tokens,
+                                const std::string& delimiters = " ");
    static int         CountSubstring (const std::string& str,
-                               const std::string& subStr);       
+                                      const std::string& subStr);       
 
-   static std::string CreateCleanString(std::string s);
+   static std::string CreateCleanString(std::string const & s);
    static void        NormalizePath(std::string &name);
-   static std::string GetPath(std::string &fullName);
-   static std::string GetName(std::string &fullName);
+   static std::string GetPath(std::string const &fullName);
+   static std::string GetName(std::string const &fullName);
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

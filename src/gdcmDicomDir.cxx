@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:08:19 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2004/10/25 04:47:43 $
+  Version:   $Revision: 1.76 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -534,7 +534,7 @@ DicomDirPatient * DicomDir::NewPatient()
  *          GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
  * @param   header Header of the current file
  */
-void DicomDir::SetElement(std::string &path, DicomDirType type,
+void DicomDir::SetElement(std::string const & path, DicomDirType type,
                           Document *header)
 {
    ListDicomDirElem elemList; //FIXME this is going to be a by copy operation
@@ -912,7 +912,7 @@ void DicomDir::AddDicomDirSerieToEnd(SQItem *s)
  * @param   path path of the root directory
  * @param   list chained list of Headers
  */
-void DicomDir::SetElements(std::string &path, VectDocument &list)
+void DicomDir::SetElements(std::string const & path, VectDocument const &list)
 {
    std::string patPrevName         = "", patPrevID  = "";
    std::string studPrevInstanceUID = "", studPrevID = "";
@@ -922,8 +922,8 @@ void DicomDir::SetElements(std::string &path, VectDocument &list)
    std::string studCurInstanceUID, studCurID;
    std::string serCurInstanceUID,  serCurID;
 
-   for( VectDocument::iterator it = list.begin();
-                              it != list.end(); ++it )
+   for( VectDocument::const_iterator it = list.begin();
+                                     it != list.end(); ++it )
    {
       // get the current file characteristics
       patCurName         = (*it)->GetEntryByNumber(0x0010,0x0010); 

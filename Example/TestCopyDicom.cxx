@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
    
       gdcm::File *copy = new gdcm::File( output );
 
-      gdcm::TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
+      const gdcm::TagDocEntryHT & Ht = original->GetHeader()->GetTagHT();
 
       size_t dataSize = original->GetImageDataSize();
       uint8_t* imageData = original->GetImageData();
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 
       gdcm::DocEntry* d;
 
-      for (gdcm::TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
+      for (gdcm::TagDocEntryHT::const_iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
       {
          d = tag->second;
          d->Print(); std::cout << std::endl;

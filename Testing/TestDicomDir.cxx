@@ -9,10 +9,10 @@ int TestDicomDir(int argc, char* argv[])
 {  
    gdcm::DicomDir *e1;
    
-   gdcm::ListDicomDirPatient::iterator  itPatient;
-   gdcm::ListDicomDirStudy::iterator    itStudy;
-   gdcm::ListDicomDirSerie::iterator    itSerie;
-   gdcm::ListDicomDirImage::iterator    itImage;
+   gdcm::ListDicomDirPatient::const_iterator  itPatient;
+   gdcm::ListDicomDirStudy::const_iterator    itStudy;
+   gdcm::ListDicomDirSerie::const_iterator    itSerie;
+   gdcm::ListDicomDirImage::const_iterator    itImage;
    gdcm::TSKey v;
     
    std::string file; 

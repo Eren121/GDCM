@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:44 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/10/25 04:47:43 $
+  Version:   $Revision: 1.35 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,9 +27,9 @@
 
 #include <list>
 #include <vector>
+
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 typedef std::list<DicomDirPatient*>   ListDicomDirPatient;
 typedef std::vector<Document*>  VectDocument;
@@ -45,14 +45,14 @@ typedef GDCM_EXPORT void(Method)(void* = NULL);
 class GDCM_EXPORT DicomDir: public Document
 {
 public:
-   DicomDir( std::string const & fileName, bool parseDir = false );
+   DicomDir( std::string const & filename, bool parseDir = false );
    DicomDir(); 
                    
    ~DicomDir();
 
    /// \brief   canonical Printer 
    /// \sa    SetPrintLevel
-   virtual void Print(std::ostream &os = std::cout);
+   void Print(std::ostream &os = std::cout);
 
    /// Informations contained in the parser
    virtual bool IsReadable();
@@ -61,7 +61,7 @@ public:
    DicomDirMeta* GetDicomDirMeta() { return MetaElems; };
 
    /// Returns the PATIENT chained List for this DICOMDIR.    
-   ListDicomDirPatient &GetDicomDirPatients() { return Patients; };
+   ListDicomDirPatient const & GetDicomDirPatients() const { return Patients; };
 
    /// Parsing
    void ParseDirectory();
@@ -115,11 +115,11 @@ private:
    void AddDicomDirSerieToEnd  (SQItem* s);
    void AddDicomDirImageToEnd  (SQItem* s);
 
-   void SetElements(std::string &path, VectDocument &list);
-   void SetElement (std::string &path,DicomDirType type,
+   void SetElements(std::string const & path, VectDocument const &list);
+   void SetElement (std::string const & path, DicomDirType type,
                     Document* header);
 
-   static bool HeaderLessThan(Document* header1,Document* header2);
+   static bool HeaderLessThan(Document* header1, Document* header2);
    
 // Variables
 

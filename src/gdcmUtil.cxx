@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:48 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2004/10/25 04:47:43 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,8 +54,8 @@ std::string Util::Format(const char* format, ...)
  * \brief Because not available in C++ (?)
  */
 void Util::Tokenize (const std::string& str,
-               std::vector<std::string>& tokens,
-               const std::string& delimiters)
+                     std::vector<std::string>& tokens,
+                     const std::string& delimiters)
 {
    std::string::size_type lastPos = str.find_first_not_of(delimiters,0);
    std::string::size_type pos     = str.find_first_of    (delimiters,lastPos);
@@ -74,7 +74,7 @@ void Util::Tokenize (const std::string& str,
  */
  
 int Util::CountSubstring (const std::string& str,
-                    const std::string& subStr)
+                          const std::string& subStr)
 {
    int count = 0;   // counts how many times it appears
    unsigned int x = 0;       // The index position in the string
@@ -99,7 +99,7 @@ int Util::CountSubstring (const std::string& str,
  *         to avoid corrupting the terminal of invocation when printing)
  * @param s string to remove non printable characters from
  */
-std::string Util::CreateCleanString(std::string s)
+std::string Util::CreateCleanString(std::string const & s)
 {
    std::string str = s;
 
@@ -137,9 +137,9 @@ void Util::NormalizePath(std::string &name)
    const std::string SEPARATOR = "/";
    int size = name.size();
 
-   if((name[size-1]!=SEPARATOR_X)&&(name[size-1]!=SEPARATOR_WIN))
+   if( name[size-1] != SEPARATOR_X && name[size-1] != SEPARATOR_WIN )
    {
-      name+=SEPARATOR;
+      name += SEPARATOR;
    }
 }
 
@@ -148,20 +148,21 @@ void Util::NormalizePath(std::string &name)
  * \brief   Get the (directory) path from a full path file name
  * @param   fullName file/directory name to extract Path from
  */
-std::string Util::GetPath(std::string &fullName)
+std::string Util::GetPath(std::string const & fullName)
 {
-   int pos1 = fullName.rfind("/");
-   int pos2 = fullName.rfind("\\");
+   std::string res = fullName;
+   int pos1 = res.rfind("/");
+   int pos2 = res.rfind("\\");
    if( pos1 > pos2)
    {
-      fullName.resize(pos1);
+      res.resize(pos1);
    }
    else
    {
-      fullName.resize(pos2);
+      res.resize(pos2);
    }
 
-   return fullName;
+   return res;
 }
 
 /**
@@ -169,31 +170,21 @@ std::string Util::GetPath(std::string &fullName)
  * \brief   Get the (last) name of a full path file name
  * @param   fullName file/directory name to extract end name from
  */
-std::string Util::GetName(std::string &fullName)
+std::string Util::GetName(std::string const & fullName)
 {   
-   int fin = fullName.length()-1;
-   char a =fullName.c_str()[fin];
-   if (a == '/' || a == '\\')
-   {
-      fin--;
-   }
-   int deb = 0;
-   for (int i=fin;i!=0;i--)
-   {
-      if (fullName.c_str()[i] == '/' || fullName.c_str()[i] == '\\')
-      {
-         break;
-      }
-      deb = i;
-   }
+  std::string filename = fullName;
 
-   std::string lastName;
-   for (int j=deb;j<fin+1;j++)
-   {
-      lastName=lastName+fullName.c_str()[j];
-   }
-
-  return lastName;
+  std::string::size_type slash_pos = filename.rfind("/");
+  std::string::size_type backslash_pos = filename.rfind("\\");
+  slash_pos = slash_pos > backslash_pos ? slash_pos : backslash_pos;
+  if(slash_pos != std::string::npos)
+    {
+    return filename.substr(slash_pos + 1);
+    }
+  else
+    {
+    return filename;
+    }
 } 
 
 } // end namespace gdcm
