@@ -3,6 +3,8 @@
      you debug/warning message just as c++ streams which make them very convinient
      to use. Once this is stabilize I will change the ostringstrem to be
      redirected to a file (ofstream).
+   * Properly support C99 extension: __FUNCTION__ which allow us to display
+     the name of the function call (GNUC also allow __PRETTY_FUNCTION__ for c++)
 
 2005-01-07 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * Removal of useless and dangerous methods :
