@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBase.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:37 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/16 04:50:40 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ public:
    Base( );
    virtual ~Base();
 
-   virtual void Print(std::ostream &os = std::cout); 
+   virtual void Print(std::ostream &os = std::cout, std::string const & indent = "" ); 
 
    /// \brief Sets the print level for the Dicom Header Elements
    /// \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy

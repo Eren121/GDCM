@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 22:21:57 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ JPEGFragmentsInfo::~JPEGFragmentsInfo()
  * @param indent Indentation string to be prepended during printing.
  * @param os     Stream to print to.
  */
-void JPEGFragmentsInfo::Print( std::string indent, std::ostream &os )
+void JPEGFragmentsInfo::Print( std::ostream &os, std::string const & indent )
 {
    os << indent
       << "----------------- JPEG fragments --------------------------------"
@@ -55,7 +55,7 @@ void JPEGFragmentsInfo::Print( std::string indent, std::ostream &os )
    {
       os << indent
          << "   fragment number :" << fragmentNumber++;
-      (*it)->Print( indent + "   ", os );
+      (*it)->Print( os, indent + "   ");
       os << std::endl;
    }
 }

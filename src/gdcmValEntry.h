@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ public:
    /// The size is updated
    virtual void SetValue(std::string const &val);
 
-   virtual void Print(std::ostream &os = std::cout); 
+   virtual void Print(std::ostream &os = std::cout, std::string const & indent = ""); 
 
    virtual void WriteContent(std::ofstream *fp, FileType filetype);
 

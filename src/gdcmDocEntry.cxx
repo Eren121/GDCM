@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:19:48 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ DocEntry::DocEntry(DictEntry *in)
  * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
  * @param   os ostream we want to print in
  */
-void DocEntry::Print(std::ostream &os)
+void DocEntry::Print(std::ostream &os, std::string const & )
 {
    size_t o;
    std::string st;

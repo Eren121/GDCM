@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 22:30:11 $
-  Version:   $Revision: 1.192 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.193 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,7 +127,7 @@ File::~File()
 
 //-----------------------------------------------------------------------------
 // Print
-void File::Print(std::ostream &os)
+void File::Print(std::ostream &os, std::string const &)
 {
    HeaderInternal->SetPrintLevel(PrintLevel);
    HeaderInternal->Print(os);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.46 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ public:
    ~DicomDir();
 
    /// \brief   canonical Printer 
-   void Print(std::ostream &os = std::cout);
+   void Print(std::ostream &os = std::cout, std::string const & indent = "" );
 
    /// Informations contained in the parser
    virtual bool IsReadable();

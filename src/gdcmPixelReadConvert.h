@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,8 +50,7 @@ public:
    //// Predicates:
    bool IsRawRGB();
 
-   void Print( std::ostream &os = std::cout );
-   void Print( std::string indent = "", std::ostream &os = std::cout );
+   void Print( std::ostream &os = std::cout, std::string const & indent = "" );
 
 // In progress
    void GrabInformationsFromHeader( Header *header );

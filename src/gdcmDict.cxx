@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 11:28:30 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@ Dict::~Dict()
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
  */
-void Dict::Print(std::ostream &os)
+void Dict::Print(std::ostream &os, std::string const & )
 {
    os << "Dict file name : " << Filename << std::endl;
    std::ostringstream s;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 14:31:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@ namespace gdcm
  * @param indent Indentation string to be prepended during printing.
  * @param os     Stream to print to.
  */
-void RLEFrame::Print( std::string indent, std::ostream &os )
+void RLEFrame::Print( std::ostream &os, std::string indent )
 {
    os << indent
       << "--- fragments"

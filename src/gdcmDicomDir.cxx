@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 22:20:11 $
-  Version:   $Revision: 1.101 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.102 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -163,7 +163,7 @@ DicomDir::~DicomDir()
 /**
  * \brief  Canonical Printer 
  */
-void DicomDir::Print(std::ostream &os)
+void DicomDir::Print(std::ostream &os, std::string const & )
 {
    if( MetaElems )
    {

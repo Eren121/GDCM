@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 11:28:30 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ DictEntry::DictEntry(uint16_t group, uint16_t element,
 
 //-----------------------------------------------------------------------------
 // Print
-void DictEntry::Print(std::ostream &os)
+void DictEntry::Print(std::ostream &os, std::string const & )
 {
    std::string vr;
    std::ostringstream s;

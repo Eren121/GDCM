@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 17:10:15 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,7 @@ ValEntry::~ValEntry ()
 /**
  * \brief   canonical Printer
  */
-void ValEntry::Print(std::ostream &os)
+void ValEntry::Print(std::ostream &os, std::string const &)
 {
    uint16_t g = GetGroup();
    uint16_t e = GetElement();

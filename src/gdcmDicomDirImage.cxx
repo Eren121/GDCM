@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 15:43:18 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ DicomDirImage::~DicomDirImage()
  * \brief   Prints the Object
  * @return
  */ 
-void DicomDirImage::Print(std::ostream &os)
+void DicomDirImage::Print(std::ostream &os, std::string const & )
 {
    os << "IMAGE : ";
    for(ListDocEntry::iterator i = DocEntries.begin();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 15:06:37 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1280,19 +1280,10 @@ bool PixelReadConvert::BuildRGBImage()
 
 /**
  * \brief        Print self.
- * @param os     Stream to print to.
- */
-void PixelReadConvert::Print( std::ostream &os )
-{
-   Print("",os);
-}
-
-/**
- * \brief        Print self.
  * @param indent Indentation string to be prepended during printing.
  * @param os     Stream to print to.
  */
-void PixelReadConvert::Print( std::string indent, std::ostream &os )
+void PixelReadConvert::Print( std::ostream &os, std::string const & indent )
 {
    os << indent
       << "--- Pixel information -------------------------"
@@ -1308,7 +1299,7 @@ void PixelReadConvert::Print( std::string indent, std::ostream &os )
    {
       if ( RLEInfo )
       {
-         RLEInfo->Print( indent, os );
+         RLEInfo->Print( os, indent );
       }
       else
       {
@@ -1320,7 +1311,7 @@ void PixelReadConvert::Print( std::string indent, std::ostream &os )
    {
       if ( JPEGInfo )
       {
-         JPEGInfo->Print( indent, os );
+         JPEGInfo->Print( os, indent );
       }
       else
       {

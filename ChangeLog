@@ -1,4 +1,9 @@
 2005-01-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Removed the Print/indent/default parameter mess. There is absolutely no
+	 reason to have to methods, moreover with the second takeing the ostream as
+	 *SECOND* parameter. This was clearly a bad hack to get things compile.
+
+2005-01-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Complete rewrite of the GetMacAddress code. Now the code is *much*
 	 smaller (no more MacOSX specific crap). A lot more POSIX oriented.
 	 Unfortunately the main code does not work on SunOS, thus provide a specific

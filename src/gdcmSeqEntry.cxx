@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:45:52 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,7 @@ SeqEntry::~SeqEntry()
 /**
  * \brief   canonical Printer
  */
-void SeqEntry::Print( std::ostream &os )
+void SeqEntry::Print( std::ostream &os, std::string const & )
 {
    // First, Print the Dicom Element itself.
    os << "S ";

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ public:
    DicomDirPatient(); 
    ~DicomDirPatient();
 
-   void Print(std::ostream &os = std::cout);
+   void Print(std::ostream &os = std::cout, std::string const & indent = "" );
    void WriteContent(std::ofstream *fp, FileType t);
 
    /// Returns the STUDY chained List for this PATIENT.

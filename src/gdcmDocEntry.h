@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:45:51 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -140,7 +140,7 @@ public:
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   
 
-   virtual void Print (std::ostream &os = std::cout); 
+   virtual void Print (std::ostream &os = std::cout, std::string const & indent = ""); 
 
 protected:
 // Variables

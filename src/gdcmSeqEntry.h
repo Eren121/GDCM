@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ public:
    SeqEntry( DocEntry *d, int depth );
    ~SeqEntry();
    
-   void Print(std::ostream &os = std::cout); 
+   void Print(std::ostream &os = std::cout, std::string const & indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
 
    /// returns the SQITEM chained List for this SeQuence.

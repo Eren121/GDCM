@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 14:30:40 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ RLEFramesInfo::~RLEFramesInfo()
  * @param indent Indentation string to be prepended during printing.
  * @param os     Stream to print to.
  */
-void RLEFramesInfo::Print( std::string indent, std::ostream &os )
+void RLEFramesInfo::Print( std::ostream &os, std::string indent )
 {
    os << indent
       << "----------------- RLE frames --------------------------------"
@@ -49,7 +49,7 @@ void RLEFramesInfo::Print( std::string indent, std::ostream &os )
       os << indent
          << "   frame number :" << frameNumber++
          << std::endl;
-      (*it)->Print( indent + "   ", os );
+      (*it)->Print( os, indent + "   " );
    }
 }
 

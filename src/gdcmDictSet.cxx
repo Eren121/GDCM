@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/01/16 04:50:41 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ DictSet::~DictSet()
  *          contained is this DictSet, along with their respective content.
  * @param   os Output stream used for printing.
  */
-void DictSet::Print(std::ostream &os) 
+void DictSet::Print(std::ostream &os, std::string const & )
 {
    for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict)
    {

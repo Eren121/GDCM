@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBase.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:25:17 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/16 04:50:40 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ Base::~Base()
  * \brief   Print all the object
  * @param   os The output stream to be written to.
  */
-void Base::Print(std::ostream &)
+void Base::Print(std::ostream &, std::string const & )
 {
 }
 

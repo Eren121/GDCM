@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 00:21:48 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/01/16 04:50:42 $
+  Version:   $Revision: 1.51 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ SQItem::~SQItem()
 /*
  * \brief   canonical Printer
  */
-void SQItem::Print(std::ostream &os)
+void SQItem::Print(std::ostream &os, std::string const &)
 {
    std::ostringstream s;
 
