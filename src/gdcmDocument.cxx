@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 09:51:03 $
-  Version:   $Revision: 1.225 $
+  Date:      $Date: 2005/02/09 21:37:45 $
+  Version:   $Revision: 1.226 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,8 +74,7 @@ Document::Document( std::string const &filename )
    Group0002Parsed = false;
 
    gdcmWarningMacro( "Starting parsing of file: " << Filename.c_str());
-  // Fp->seekg( 0,  std::ios::beg);
-   
+
    Fp->seekg(0, std::ios::end);
    long lgt = Fp->tellg();
            
