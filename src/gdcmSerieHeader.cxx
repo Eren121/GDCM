@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmHeaderHelper.cxx,v $
+  Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 18:33:33 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2004/11/26 10:55:04 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 
-#include "gdcmHeaderHelper.h"
+#include "gdcmSerieHeader.h"
 #include "gdcmDirList.h"
 #include "gdcmDebug.h"
 

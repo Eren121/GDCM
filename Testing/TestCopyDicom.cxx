@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:33 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/26 10:55:03 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,8 +129,6 @@ int CopyDicom(std::string const & filename,
       // Useless to set the image datas, because it's already made when
       // copying the corresponding BinEntry that contains the pixel datas
       copy->SetImageData(imageData, dataSize);
-//      copy->GetImageData();
-//      original->GetHeader()->SetImageDataSize(dataSize);
 
       //////////////// Step 3:
       std::cout << "3...";

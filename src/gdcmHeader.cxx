@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.207 $
+  Date:      $Date: 2004/11/26 10:55:04 $
+  Version:   $Revision: 1.208 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1174,28 +1174,6 @@ std::string Header::GetTransfertSyntaxName()
 
    //delete ts; /// \todo Seg Fault when deleted ?!
    return tsName;
-}
-
-/**
- * \brief Sets the Pixel Area size in the Header
- *        --> not-for-rats function
- * @param ImageDataSize new Pixel Area Size
- *        warning : nothing else is checked
- */
-void Header::SetImageDataSize(size_t ImageDataSize)
-{
-   ///FIXME I don't understand this code why do we set two times 'car' ?
-   std::string car = Util::Format("%d", ImageDataSize);
- 
-   DocEntry *a = GetDocEntryByNumber(GrPixel, NumPixel);
-   a->SetLength(ImageDataSize);
-
-   // Change the value of the BinEntry, not the BinArea !!!
-   ImageDataSize += 8;
-   car = Util::Format("%d", ImageDataSize);
-   car = Util::DicomString( car.c_str() );
-
-   SetEntryByNumber(car, GrPixel, NumPixel);
 }
 
 //-----------------------------------------------------------------------------

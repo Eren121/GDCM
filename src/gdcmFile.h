@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 13:12:02 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2004/11/26 10:55:04 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,6 @@ public:
    uint8_t* GetImageDataRaw();
    size_t GetImageDataIntoVector(void* destination, size_t maxSize);
 
-   // see also Header::SetImageDataSize ?!?         
    bool SetImageData (uint8_t* data, size_t expectedSize);
 
    // Write pixels of ONE image on hard drive
@@ -128,8 +127,6 @@ private:
 
    uint8_t* GetDecompressed();
    int ComputeDecompressedPixelDataSizeFromHeader();
-
-   void SetPixelData(uint8_t* data);
 
 private:
 // members variables:

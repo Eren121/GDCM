@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:18 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/11/26 10:55:03 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,7 +61,6 @@ int main(int argc, char* argv[])
 
   // TODO : Shouldn't we merge those two functions ?
   f1->SetImageData( imageData, dataSize);
-  f1->GetHeader()->SetImageDataSize( dataSize );
 
   f1->GetHeader()->Print();
 

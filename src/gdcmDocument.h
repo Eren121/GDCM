@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 16:35:17 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2004/11/26 10:55:04 $
+  Version:   $Revision: 1.66 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -196,19 +196,28 @@ public:
    virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
    virtual int     GetEntryLengthByNumber(uint16_t group, uint16_t elem);
 //protected:
-   virtual bool SetEntryByName  ( std::string const & content, 
-                                  TagName const & tagName );
+   virtual bool SetEntryByName  (std::string const & content, 
+                                 TagName const & tagName );
    virtual bool SetEntryByNumber(std::string const & content,
                                  uint16_t group, uint16_t element);
    virtual bool SetEntryByNumber(uint8_t* content, int lgth,
                                  uint16_t group, uint16_t element);
-   virtual bool SetEntryLengthByNumber(uint32_t length,
-                                       uint16_t group, uint16_t element);
+   // FIXME
+   // Verify the usefull of this method... otherwise remove it
+   // It's body is commented in the .xx
+   //virtual bool SetEntryLengthByNumber(uint32_t length,
+   //                                    uint16_t group, uint16_t element);
 
-   virtual size_t GetEntryOffsetByNumber(uint16_t group, uint16_t elem);
+   // FIXME
+   // Verify the usefull of this method... otherwise remove it
+   // It's body is commented in the .xx
+   // virtual size_t GetEntryOffsetByNumber(uint16_t group, uint16_t elem);
    virtual void* GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
-   virtual bool  SetEntryBinAreaByNumber(uint8_t* a, uint16_t group,
-                                                   uint16_t elem);
+   // FIXME
+   // Verify the usefull of this method... otherwise remove it
+   // It's body is commented in the .xx
+   //virtual bool  SetEntryBinAreaByNumber(uint8_t* a, uint16_t group,
+   //                                                uint16_t elem);
 
    virtual void UpdateShaEntries();
 

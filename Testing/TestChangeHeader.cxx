@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/11/26 10:55:03 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,7 +83,6 @@ int TestChangeHeader(int argc, char* argv[])
 // TODO : Why don't we merge theese 2 functions ?
 
    f1->SetImageData(imageData,dataSize);
-   f1->GetHeader()->SetImageDataSize(dataSize);
 
    f1->GetHeader()->Print();
 

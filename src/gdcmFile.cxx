@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 16:35:17 $
-  Version:   $Revision: 1.165 $
+  Date:      $Date: 2004/11/26 10:55:04 $
+  Version:   $Revision: 1.166 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -772,23 +772,6 @@ BinEntry* File::CopyBinEntry(uint16_t group,uint16_t element)
 
 //-----------------------------------------------------------------------------
 // Private
-/**
- * \brief Set the pixel datas in the good entry of the Header
- */
-void File::SetPixelData(uint8_t* data)
-{
-   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
-      GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
-
-   // Will be 7fe0, 0010 in standard case
-   DocEntry* currentEntry = GetHeader()->GetDocEntryByNumber(GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
-   if ( currentEntry )
-   {
-      if ( BinEntry* binEntry = dynamic_cast<BinEntry *>(currentEntry) )
-         // Flag is to false because datas are kept in the gdcmPixelConvert
-         binEntry->SetBinArea( data, false );
-   }
-}
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 16:35:16 $
-  Version:   $Revision: 1.141 $
+  Date:      $Date: 2004/11/26 10:55:04 $
+  Version:   $Revision: 1.142 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -979,7 +979,7 @@ bool Document::SetEntryByNumber(uint8_t*content, int lgth,
  * @param element element number of the Entry to modify
  * @return  true on success, false otherwise.
  */
-bool Document::SetEntryLengthByNumber(uint32_t l, 
+/*bool Document::SetEntryLengthByNumber(uint32_t l, 
                                       uint16_t group, uint16_t element) 
 {
    /// \todo use map methods, instead of multimap JPR
@@ -995,7 +995,7 @@ bool Document::SetEntryLengthByNumber(uint32_t l,
    ( ((TagHT.equal_range(key)).first)->second )->SetLength(l); 
 
    return true ;
-}
+}*/
 
 /**
  * \brief   Gets (from Header) the offset  of a 'non string' element value 
@@ -1004,7 +1004,7 @@ bool Document::SetEntryLengthByNumber(uint32_t l,
  * @param elem  element number of the Entry
  * @return File Offset of the Element Value 
  */
-size_t Document::GetEntryOffsetByNumber(uint16_t group, uint16_t elem) 
+/*size_t Document::GetEntryOffsetByNumber(uint16_t group, uint16_t elem) 
 {
    DocEntry* entry = GetDocEntryByNumber(group, elem);
    if (!entry) 
@@ -1013,7 +1013,7 @@ size_t Document::GetEntryOffsetByNumber(uint16_t group, uint16_t elem)
       return 0;
    }
    return entry->GetOffset();
-}
+}*/
 
 /**
  * \brief   Gets (from Header) a 'non string' element value 
@@ -1056,30 +1056,6 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
       return;
 
    LoadEntryBinArea(binElement);
-/*   size_t o =(size_t)docElement->GetOffset();
-   Fp->seekg( o, std::ios_base::beg);
-   size_t l = docElement->GetLength();
-   uint8_t* a = new uint8_t[l];
-   if(!a)
-   {
-      dbg.Verbose(0, "Document::LoadEntryBinArea cannot allocate a");
-      return;
-   }
-
-   // Read the value
-   Fp->read((char*)a, l);
-   if( Fp->fail() || Fp->eof() )//Fp->gcount() == 1
-   {
-      delete[] a;
-      return;
-   }
-
-   // Set the value to the DocEntry
-   if( !SetEntryBinAreaByNumber( a, group, elem ) )
-   {
-      delete[] a;
-      dbg.Verbose(0, "Document::LoadEntryBinArea setting failed.");
-   }*/
 }
 
 /**
@@ -1128,7 +1104,7 @@ void Document::LoadEntryBinArea(BinEntry* element)
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-bool Document::SetEntryBinAreaByNumber(uint8_t* area,
+/*bool Document::SetEntryBinAreaByNumber(uint8_t* area,
                                        uint16_t group, uint16_t element) 
 {
    DocEntry* currentEntry = GetDocEntryByNumber(group, element);
@@ -1144,7 +1120,7 @@ bool Document::SetEntryBinAreaByNumber(uint8_t* area,
    }
 
    return false;
-}
+}*/
 
 /**
  * \brief   Update the entries with the shadow dictionary. 

@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmHeaderHelper.h,v $
+  Module:    $RCSfile: gdcmSerieHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/26 10:55:04 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMHEADERHELPER_H
-#define GDCMHEADERHELPER_H
+#ifndef GDCMSERIEHEADER_H
+#define GDCMSERIEHEADER_H
 
 #include "gdcmHeader.h"
 
@@ -30,7 +30,7 @@ namespace gdcm
  * \brief  
  *
  * - This class should be used for a stack of 2D dicom images.
- * - For a multiframe dicom image better use directly HeaderHelper
+ * - For a multiframe dicom image better use directly SerieHeader
 */
 class GDCM_EXPORT SerieHeader 
 {

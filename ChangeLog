@@ -1,5 +1,10 @@
+2004-11-26 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Remove some useless methods in gdcm::Document, gdcm::Header and gdcm::File
+   * Rename gdcmHeaderHelper.[h|cxx] to gdcmSerieHeader.[h|cxx] to be coherent
+     between the class name and the file name
+
 2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * src/ : fix compilation warnings for the Write method (2 different 
+   * src/ : fix compilation warnings for the Write method (2 different
      proto). So Rename 'Write(ifstream* fp' into 'WriteContent(ifstream* fp'
      fix compilation warnings for the gdcm::Document::TransferSyntaxStrings
      variable... create a static method in gdcm::Document to access to
@@ -8,7 +13,7 @@
 2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocument.[h|cxx] : set the Transfert Syntax values to the header
      file, to be accessed by other files (like gdcmFile). Remove commented
-     code. Move the change of the header to the gdcmFile, using the 
+     code. Move the change of the header to the gdcmFile, using the
      DocEntryArchive
    * src/gdcmHeader.[h|cxx] : the write is completely made in the Header.
      To be sure of that (and simplify calls), the Write of the header now

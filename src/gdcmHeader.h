@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 13:12:02 $
-  Version:   $Revision: 1.94 $
+  Date:      $Date: 2004/11/26 10:55:04 $
+  Version:   $Revision: 1.95 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -168,9 +168,6 @@ public:
    
    /// Accessor to \ref Header::NumPixel
    uint16_t GetNumPixel() { return NumPixel; }
-
-   /// Read (used in File)
-   void SetImageDataSize(size_t expectedSize);
 
    bool Write(std::string fileName, FileType filetype);
 

@@ -33,7 +33,6 @@ SET(libgdcm_la_SOURCES
    gdcmFile.cxx
    gdcmGlobal.cxx
    gdcmHeader.cxx
-   gdcmHeaderHelper.cxx
    gdcmJPEGFragment.cxx
    gdcmJPEGFragmentsInfo.cxx
    gdcmJpeg8.cxx
@@ -44,6 +43,7 @@ SET(libgdcm_la_SOURCES
    gdcmRLEFrame.cxx
    gdcmRLEFramesInfo.cxx
    gdcmSeqEntry.cxx
+   gdcmSerieHeader.cxx
    gdcmSQItem.cxx
    gdcmTS.cxx
    gdcmUtil.cxx
