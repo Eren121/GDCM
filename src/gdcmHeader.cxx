@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 03:36:24 $
-  Version:   $Revision: 1.168 $
+  Date:      $Date: 2004/06/23 09:30:22 $
+  Version:   $Revision: 1.169 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,14 +41,7 @@ gdcmHeader::gdcmHeader(std::string const & filename,
                        bool enable_sequences, 
                        bool ignore_shadow):
    gdcmDocument(filename,exception_on_error,enable_sequences,ignore_shadow)
-{ 
-/*
-   typedef struct {
-      guint32 totalSQlength;
-      guint32 alreadyParsedlength;
-   } pileElem;
-*/
-   
+{    
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
    // (Image Location") . This Element contains the number of
@@ -144,7 +137,7 @@ int gdcmHeader::GetXSize() {
  * \brief   Retrieve the number of lines of image.
  * \warning The defaulted value is 1 as opposed to gdcmHeader::GetXSize()
  * @return  The encountered size when found, 1 by default 
- *          (The ACR-MEMA file contains a Signal, not an Image).
+ *          (The ACR-NEMA file contains a Signal, not an Image).
  */
 int gdcmHeader::GetYSize() {
    std::string StrSize = GetEntryByNumber(0x0028,0x0010);
@@ -841,7 +834,7 @@ unsigned char * gdcmHeader::GetLUTRGBA() {
 // http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
 
 //  if Photometric Interpretation # PALETTE COLOR, no LUT to be done
-   if (GetEntryByNumber(0x0028,0x0004) != "PALETTE COLOR ") {
+   if (GetEntryByNumber(0x0028,0x0004) != "PALETTE COLOR ") { 
       return NULL;
    }  
    int lengthR, debR, nbitsR;
@@ -859,7 +852,7 @@ unsigned char * gdcmHeader::GetLUTRGBA() {
    std::string LutDescriptionB = GetEntryByNumber(0x0028,0x1103);
    if (LutDescriptionB == GDCM_UNFOUND)
       return NULL;
-      
+  
    std::vector<std::string> tokens;
       
    tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
@@ -890,7 +883,7 @@ unsigned char * gdcmHeader::GetLUTRGBA() {
                          GetEntryVoidAreaByNumber(0x0028,0x1202);
    unsigned char *lutB = (unsigned char *)
                          GetEntryVoidAreaByNumber(0x0028,0x1203); 
-   
+
    if (!lutR || !lutG || !lutB ) {
       return NULL;
    } 

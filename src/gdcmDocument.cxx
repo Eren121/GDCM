@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 15:31:17 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/06/23 09:30:22 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,6 +126,25 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
    
    long l=ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
    (void)l; //is l used anywhere ?
+	
+	rewind(fp); 
+   
+   // Load 'non string' values
+      
+   std::string PhotometricInterpretation = GetEntryByNumber(0x0028,0x0004);   
+   if( PhotometricInterpretation == "PALETTE COLOR " ) {
+      LoadEntryVoidArea(0x0028,0x1200);  // gray LUT   
+      LoadEntryVoidArea(0x0028,0x1201);  // R    LUT
+      LoadEntryVoidArea(0x0028,0x1202);  // G    LUT
+      LoadEntryVoidArea(0x0028,0x1203);  // B    LUT
+      
+      LoadEntryVoidArea(0x0028,0x1221);  // Segmented Red   Palette Color LUT Data
+      LoadEntryVoidArea(0x0028,0x1222);  // Segmented Green Palette Color LUT Data
+      LoadEntryVoidArea(0x0028,0x1223);  // Segmented Blue  Palette Color LUT Data
+   } 
+   //FIXME later : how to use it?
+   LoadEntryVoidArea(0x0028,0x3006);  //LUT Data (CTX dependent) 
+	   	
    CloseFile(); 
   
    // --------------------------------------------------------------
@@ -390,11 +409,12 @@ bool gdcmDocument::IsRLELossLessTransferSyntax(void)
  * @return  True when RLE Lossless found. False in all
  *          other cases.
  */
+ 
 bool gdcmDocument::IsJPEGLossless(void)
 {
    return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_55)
            || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_57)
-           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_90) );
+           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_70) ); // was 90 
 }
                                                                                 
 /**
@@ -1349,7 +1369,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
       // to be sure we are at the end of the value ...
       fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);      
       return;		
-       // Be carefull : a BinEntry IS_A valEntry ...  	
+       // Be carefull : a BinEntry IS_A ValEntry ...  	
       if (gdcmValEntry* ValEntryPtr = dynamic_cast< gdcmValEntry* >(Entry) )
       {
          std::ostringstream s;

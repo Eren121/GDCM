@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 03:36:24 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2004/06/23 09:30:22 $
+  Version:   $Revision: 1.108 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -237,7 +237,8 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    // from Lut R + Lut G + Lut B
    unsigned char *newDest = new unsigned char[lgrTotale];
    unsigned char *a       = (unsigned char *)destination;	 
-   unsigned char *lutRGBA =                  Header->GetLUTRGBA();
+   unsigned char *lutRGBA =  Header->GetLUTRGBA();
+
    if (lutRGBA) { 	    
       int l = lgrTotaleRaw;
       memmove(newDest, destination, l);// move Gray pixels to temp area	    
@@ -264,8 +265,8 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
    } else { 
 	     // need to make RGB Pixels (?)
-             //    from grey Pixels (?!)
-             //     and Gray Lut  (!?!) 
+        //    from grey Pixels (?!)
+        //     and Gray Lut  (!?!) 
 	     //    or Segmented xxx Palette Color Lookup Table Data and so on
 		  		  		  
          // Oops! I get one (gdcm-US-ALOKA-16.dcm)
@@ -911,7 +912,7 @@ bool gdcmFile::ReadPixelData(void *destination) {
 
    bool jpg2000 =     Header->IsJPEG2000();
    bool jpgLossless = Header->IsJPEGLossless();
-    
+	    
    bool res = true;
    guint16 ItemTagGr,ItemTagEl;
    int ln;  
@@ -959,7 +960,6 @@ bool gdcmFile::ReadPixelData(void *destination) {
       } // ------------------------------------- endif (JPEG2000)
 	
       else if (jpgLossless) { // JPEG LossLess : call to xmedcom JPEG
-		   
          JPEGLosslessDecodeImage (fp,  // Reading Fragment pixels
 				     (unsigned short *)destination,
 				     Header->GetPixelSize() * 8 * Header->GetSamplesPerPixel(),
