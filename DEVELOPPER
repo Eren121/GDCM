@@ -4,43 +4,43 @@ The following comments are intended for core gdcm developpers.
 * Python related section.
   Depending on the automake/autoconf/autogen.sh flags you used gdcm could
   be wrapped in two ways:
-  - the first python wrappers of gdcm use Swig (http://www.swig.org). They
-    are the ones generated when using autogen.sh --enable-python. 
-    The entry point is here the file gdcmPython/gdcm.i which uses the
-    Swig synthax. As the last lines of this file (the ones starting
+  - the first python wrappers of gdcm uses Swig (http://www.swig.org). These
+    are the one generated when using autogen.sh --enable-python. 
+    The entry point here is the file gdcmPython/gdcm.i which uses the
+    Swig syntax. As the last lines of this file (the ones starting
     with the %include directive) only some classes are wrapped for python.
     In theory only the library interface (basically the classes gdcmHeader
     and gdcmFile) should be wrapped, but the time being some additional
     classes are added (just to make sure those classes are Swig compatible:
-    swig is here used as some lint checker!?).
-    Since gdcm is written in C++, Swig will produce two different outups:
+    swig is here used as some link checker!?).
+    Since gdcm is written in C++, Swig will produce two different outputs:
       -- some C based low level wrapper (see gdcmPython/gdcm_wrap.c)
       -- some Python based object oriented so called "shadow classes" (see
          file gdcmPython/gdcm.py)
     We also added the file gdcmPython/__init__.py which is the one that
-    actually gets loaded when ones uses the gdcmPython Python package.
-    The file __init__.py loads the swig generated shadow classes (gdcm.py)
-    but will only re-export the interface of gdcm which correponds to
+    actually gets loaded when one uses the gdcmPython Python package.
+    The file __init__.py loads the Swig generated shadow classes (gdcm.py)
+    but will only re-export the interface of gdcm which corresponds to
     the lines :
        gdcmHeader = gdcm.gdcmHeader
        gdcmDictSet = gdcm.gdcmDictSet
        gdcmFile = gdcm.gdcmFile
     Hence this whole Swig wrapping process is quite odd since we shall
-    wrap more classes (%include in swig.i) than eventually exported to
+    wrap more classes (%include in swig.i) that eventually get exported to
     the final user by gdcmPython/__init__.py.
-  - the second python wrappers use the vtk (http://public.kitware.com/VTK/)
+  - the second python wrappers uses the vtk (http://public.kitware.com/VTK/)
     native wrappers i.e. the binary vtkWrapPython. But it should be noticed
     that the purpous is here a bit different than the one of the Swig
     generated Python wrappers. When using vtkWrapPython the goal is to
     wrap a single vtk class namely vtkGdcmReader as defined in files
-    in vtk/vtkGdcmReader.h vtk/vtkGdcmReader.cxx (and of course those
+    vtk/vtkGdcmReader.h and vtk/vtkGdcmReader.cxx (and of course those
     files are hand made vtk oriented wrappers of gdcm).
     Those wrappers are the one generated when using
        autogen.sh --enable-python --enable-vtk
   - In order to understand the difference between both wrappers you should 
     compare both demo scripts gdcmPython/demo/vtkGdcmDemo.py and
     gdcmPython/demo/vtkGdcmReader.py. The first one only uses the
-    Swig wraped classes ("from gdcmPython import gdcmHeader') as opposed
-    to vtkGdcmReader.py which also uses vtkWrapPython wraped classes
+    Swig wrapped classes ("from gdcmPython import gdcmHeader') as opposed
+    to vtkGdcmReader.py which also uses vtkWrapPython wrapped classes
     ("from gdcmPython.vtkgdcmPython import *").
     
