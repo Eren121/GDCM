@@ -136,10 +136,6 @@ SOURCE=..\..\src\gdcmHeaderHelper.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdcmHeaderIdo.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\gdcmJpeg.cxx
 # End Source File
 # Begin Source File

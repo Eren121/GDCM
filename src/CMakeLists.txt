@@ -19,7 +19,6 @@ SET(libgdcm_la_SOURCES
 	gdcmDict.cxx
 	gdcmDictSet.cxx
 	gdcmElValSet.cxx
-	gdcmHeaderIdo.cxx
 	gdcmFile.cxx
 	gdcmVR.cxx
 	gdcmTS.cxx

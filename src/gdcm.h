@@ -25,7 +25,6 @@
 
 #include "gdcmHeader.h"
 #include "gdcmHeaderHelper.h"
-#include "gdcmIdo.h"
 #include "gdcmFile.h"
 
 //#include "gdcmTS.h"
