@@ -20,11 +20,12 @@ static int _gdcm_read_RLE_fragment (char ** image_buffer,
                                     FILE* fp);
 // static because nothing but gdcm_read_RLE_file may call it
 
-// ------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 /**
  * \ingroup   gdcmFile
  * \brief     Reads a 'Run Length Encoded' Dicom encapsulated file
- * @param     destination Address (in caller's memory space) at which the
+ * @param     image_buffer destination Address (in caller's memory space) 
+ *            at which the
  *            pixel data should be copied
  * @return    int acts as a Boolean 
  */
