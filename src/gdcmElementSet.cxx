@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 10:37:54 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/11/16 13:20:34 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,10 @@ ElementSet::~ElementSet()
       DocEntry* entryToDelete = cc->second;
       if ( entryToDelete )
       {
-         delete entryToDelete;
+         // FIXME
+         // Because the gdcmFile links the datas of gdcmPixelConvert with the
+         // data in a binArea, these datas are deleted 2 times... very bad...
+         //delete entryToDelete;
       }
    }
    TagHT.clear();
