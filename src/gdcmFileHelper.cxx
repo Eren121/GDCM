@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/03/11 11:12:13 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/03/22 11:40:13 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -640,6 +640,13 @@ bool FileHelper::Write(std::string const &fileName)
    /// \todo the best trick would be *change* the recognition code
    ///       but pb expected if user deals with, e.g. COMPLEX images
    if( WriteType == ACR_LIBIDO )
+   //
+   // if recognition code tells us we dealt with a LibIDO image
+   // we reproduce on disk the switch between lineNumber and columnNumber
+   // just before writting ...
+   /// \todo the best trick would be *change* the recognition code
+   ///       but pb expected if user deals with, e.g. COMPLEX images
+   if( WriteType == ACR_LIBIDO )
    {
       SetWriteToLibido();
    }
@@ -1011,6 +1018,12 @@ void FileHelper::RestoreWriteOfLibido()
    Archive->Restore(0x0028,0x0010);
    Archive->Restore(0x0028,0x0011);
    Archive->Restore(0x0008,0x0010);
+
+   // Restore 'LibIDO-special' entries, if any
+   Archive->Restore(0x0028,0x0015);
+   Archive->Restore(0x0028,0x0016);
+   Archive->Restore(0x0028,0x0017);
+   Archive->Restore(0x0028,0x00199);
 }
 
 /**
@@ -1300,17 +1313,7 @@ void FileHelper::CheckMandatoryElements()
       Archive->Push(e_0010_0010);
    } 
 
-   // Patient's ID : if missing, we set it to 'GDCM_Patient_ID'
-   ValEntry *e_0010_0020 = FileInternal->GetValEntry(0x0010, 0x0020);
-   if ( !e_0010_0020 )
-   {
-      e_0010_0020 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0010, 0x0020) );
-      e_0010_0020->SetValue("GDCM_Patient_ID");
-      Archive->Push(e_0010_0020);
-   }
-
-   // Patient's Birth Date :'type 2' entry -> must exist, value not mandatory
+   // Patient's Birth Date : 'type 2' entry -> must exist, value not mandatory
    ValEntry *e_0010_0030 = FileInternal->GetValEntry(0x0010, 0x0030);
    if ( !e_0010_0030 )
    {
