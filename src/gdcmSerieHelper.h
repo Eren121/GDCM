@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:43:28 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/02/11 17:01:46 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,7 +51,7 @@ public:
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
    void SetDirectory(std::string const &dir, bool recursive=false);
-   void OrderGdcmFileList(GdcmFileList *CoherentGdcmFileList);
+   void OrderGdcmFileList(GdcmFileList *coherentGdcmFileList);
    
    /// \brief Gets the FIRST *coherent* File List.
    ///        Deprecated; kept not to break the API
@@ -62,12 +62,12 @@ public:
   
    GdcmFileList *GetFirstCoherentFileList();
    GdcmFileList *GetNextCoherentFileList();
-   GdcmFileList *GetCoherentFileList(std::string SerieUID);
+   GdcmFileList *GetCoherentFileList(std::string serieUID);
 
 private:
-   bool ImagePositionPatientOrdering(GdcmFileList *CoherentGdcmFileList);
-   bool ImageNumberOrdering(GdcmFileList *CoherentGdcmFileList);
-   bool FileNameOrdering(GdcmFileList *CoherentGdcmFileList);
+   bool ImagePositionPatientOrdering(GdcmFileList *coherentGdcmFileList);
+   bool ImageNumberOrdering(GdcmFileList *coherentGdcmFileList);
+   bool FileNameOrdering(GdcmFileList *coherentGdcmFileList);
    
    static bool ImageNumberLessThan(File *file1, File *file2);
    static bool FileNameLessThan(File *file1, File *file2);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:16:02 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/02/11 17:01:46 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,7 @@ bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw,
  * \brief  We assume Raw contains the decoded RLE pixels but as
  *         8 bits per pixel. We convert those pixels to 16 bits
  *         per pixel.
- * @param raw raw
+ * @param raw raw 
  * @param xSize x Size
  * @param ySize y Size
  * @param numberOfFrames number of frames 
@@ -128,8 +128,6 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits(uint8_t *raw, int xSize,
       }
    }
    delete[] copyRaw;
-
-   /// \todo check that operator new [] didn't fail, and sometimes return false
 
    return true;
 }
