@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/01/17 11:07:40 $
+  Version:   $Revision: 1.52 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,7 @@ void SQItem::Print(std::ostream &os, std::string const &)
          s << "   | " ;
       }
    }
-   //std::cout << s.str() << " --- SQItem number " << SQItemNumber  << std::endl;
+   os << s.str() << " --- SQItem number " << SQItemNumber  << std::endl;
    for (ListDocEntry::iterator i  = DocEntries.begin();
                                i != DocEntries.end();
                              ++i)
@@ -82,9 +82,9 @@ void SQItem::Print(std::ostream &os, std::string const &)
       os << s.str();
       Entry->SetPrintLevel(PrintLevel);
       Entry->Print(os); 
-      if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(Entry) )
+      if ( /* SeqEntry *seqEntry =*/ dynamic_cast<SeqEntry*>(Entry) )
       {
-         (void)seqEntry;  //not used
+         //(void)seqEntry;  //not used
          PrintEndLine = false;
       }
       if (PrintEndLine)
@@ -187,7 +187,7 @@ bool SQItem::SetEntry(std::string const &val, uint16_t group,
          ValEntry* entry = 0;
          TagKey key = DictEntry::TranslateToKey(group, elem);
 
-         // we assume a Public Dictionnary *is* loaded
+         // we assume a Public Dictionary *is* loaded
          Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
          // if the invoked (group,elem) doesn't exist inside the Dictionary
          // we create a VirtualDictEntry
