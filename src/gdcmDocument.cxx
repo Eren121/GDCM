@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 16:53:23 $
-  Version:   $Revision: 1.152 $
+  Date:      $Date: 2005/01/06 09:34:58 $
+  Version:   $Revision: 1.153 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -3143,14 +3143,9 @@ int Document::ComputeGroup0002Length( FileType filetype )
    DocEntry *entry;
 
    Initialize();
-   
-   for (;;)
+   entry = GetNextEntry();
+   while(entry)
    {
-      entry = GetNextEntry();
-
-      if ( entry == 0 )
-         break;
-
       gr = entry->GetGroup();
 
       if (gr == 0x0002)
@@ -3172,6 +3167,8 @@ int Document::ComputeGroup0002Length( FileType filetype )
          }
       }
       groupLength += 2 + 2 + 4 + entry->GetLength();   
+
+      entry = GetNextEntry();
    }
    return groupLength; 
 }
