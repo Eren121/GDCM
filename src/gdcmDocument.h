@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:07:07 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2005/01/20 11:37:37 $
+  Version:   $Revision: 1.94 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,10 +86,14 @@ public:
 
 // Content entries
 
+// Oops ! Python is gonna cry : 
+// 4 methods with same name and different parameters ...
+// Only C++ is aware!
+
    virtual bool SetEntry(std::string const &content,
-                         uint16_t group, uint16_t element);
+                         uint16_t group, uint16_t elem);
    virtual bool SetEntry(uint8_t *content, int lgth,
-                         uint16_t group, uint16_t element);
+                         uint16_t group, uint16_t elem);
    virtual bool SetEntry(std::string const &content, ValEntry *entry);
    virtual bool SetEntry(uint8_t *content, int lgth, BinEntry *entry);
 
@@ -98,11 +102,6 @@ public:
    virtual std::string GetEntry  (uint16_t group, uint16_t elem);
    virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
-
-   DocEntry *GetDocEntry(uint16_t group, uint16_t element);
-   ValEntry *GetValEntry(uint16_t group, uint16_t element);
-   BinEntry *GetBinEntry(uint16_t group, uint16_t element);
-   SeqEntry *GetSeqEntry(uint16_t group, uint16_t element);
 
    ValEntry *ReplaceOrCreate(std::string const &value,
                              uint16_t group, uint16_t elem,

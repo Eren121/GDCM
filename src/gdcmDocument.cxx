@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:26:17 $
-  Version:   $Revision: 1.202 $
+  Date:      $Date: 2005/01/20 11:37:37 $
+  Version:   $Revision: 1.203 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -927,94 +927,6 @@ void Document::LoadEntryBinArea(BinEntry *elem)
 
    return false;
 }*/
-
-/**
- * \brief  retrieves a Dicom Element using (group, element)
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element 
- * @return  
- */
-DocEntry *Document::GetDocEntry(uint16_t group, uint16_t elem) 
-{
-   TagKey key = DictEntry::TranslateToKey(group, elem);
-   if ( !TagHT.count(key))
-   {
-      return NULL;
-   }
-   return TagHT.find(key)->second;
-}
-
-/**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         ValEntry.
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element  
- * @return When present, the corresponding ValEntry. 
- */
-ValEntry *Document::GetValEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *currentEntry = GetDocEntry(group, elem);
-   if ( !currentEntry )
-   {
-      return 0;
-   }
-   if ( ValEntry *entry = dynamic_cast<ValEntry*>(currentEntry) )
-   {
-      return entry;
-   }
-   gdcmVerboseMacro( "Unfound ValEntry.");
-
-   return 0;
-}
-
-/**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         BinEntry.
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element  
- * @return When present, the corresponding BinEntry. 
- */
-BinEntry *Document::GetBinEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *currentEntry = GetDocEntry(group, elem);
-   if ( !currentEntry )
-   {
-      return 0;
-   }
-   if ( BinEntry *entry = dynamic_cast<BinEntry*>(currentEntry) )
-   {
-      return entry;
-   }
-   gdcmVerboseMacro( "Unfound BinEntry.");
-
-   return 0;
-}
-
-/**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         SeqEntry.
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element  
- * @return When present, the corresponding SeqEntry. 
- */
-SeqEntry *Document::GetSeqEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *currentEntry = GetDocEntry(group, elem);
-   if ( !currentEntry )
-   {
-      return 0;
-   }
-   if ( SeqEntry *entry = dynamic_cast<SeqEntry*>(currentEntry) )
-   {
-      return entry;
-   }
-   gdcmVerboseMacro( "Unfound SeqEntry.");
-
-   return 0;
-}
 
 
 /**
