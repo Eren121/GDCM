@@ -34,9 +34,9 @@ SET(libgdcm_la_SOURCES
    gdcmGlobal.cxx
    gdcmHeader.cxx
    gdcmHeaderHelper.cxx
+   gdcmJpeg8.cxx
    gdcmJpeg12.cxx
    gdcmJpeg2000.cxx
-   gdcmJpeg.cxx
    gdcmParsePixels.cxx
    gdcmPixelConvert.cxx
    gdcmRLE.cxx
