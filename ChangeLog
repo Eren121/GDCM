@@ -1,3 +1,10 @@
+2003-03-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * setup.py fixed for un*x (needed macro for stdint.h)
+      * Test/test.cxx renamed to PrintHeader.cxx to avoid collision on
+        un*ces with sh-utils test utility.
+      * gdcmPython/demo/test.py renamed to PrintHeader.py
+      * gdcmPython/demo/ReorganiseFiles.py new demo script added.
+
 2003-03-26 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader[h, cxx] gdcmHeader now has an IsReadable predicate.
       * gdcmPython/demo/test.py changed accordingly.

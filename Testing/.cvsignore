@@ -3,7 +3,7 @@
 .libs
 Makefile.in
 Makefile
-test
+PrintHeader
 testWrite
 hashtest
 dcm2acr

@@ -11,11 +11,13 @@ gdcmDataDir     ="Data"
 # Due to a disutil oddity on Unices : see
 # http://aspn.activestate.com/ASPN/Mail/Message/distutils-sig/588325
 if(os.name=='posix'):
-	targetDir=os.path.join('lib','python'+sys.version[:3],'site-packages')
-	libraries=["stdc++"]
+   targetDir=os.path.join('lib','python'+sys.version[:3],'site-packages')
+   libraries=["stdc++"]
+   macros   =[('__STDC_LIMIT_MACROS', '1')]
 else:
-	targetDir=os.path.join('lib','site-packages')
-	libraries=["WSOCK32"]
+   targetDir=os.path.join('lib','site-packages')
+   libraries=["WSOCK32"]
+   macros   =[]
 
 targetDir=os.path.join(targetDir, ThisModule)
 
@@ -38,6 +40,7 @@ setup(name=ThisModule,
                    sources=Sources,
                    include_dirs=[gdcmSrcDir],
                    libraries=libraries,
+                   define_macros=macros,
                    swig_cpp=1,
                    swig_include=[ gdcmSrcDir] ) ],
       data_files=[(os.path.join(targetDir,"Data"),
