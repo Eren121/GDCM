@@ -37,10 +37,10 @@ int testDicomDir(int argc, char* argv[])
     }
 
    e1 = new gdcmDicomDir(file.c_str());
-	if (argc > 2) {
-	   int level = atoi(argv[2]);   
-	   e1->SetPrintLevel(level);
-	}
+   if (argc > 2) {
+      int level = atoi(argv[2]);   
+      e1->SetPrintLevel(level);
+   }
 
    if(e1->GetDicomDirPatients().begin() == e1->GetDicomDirPatients().end() )
    {
@@ -48,7 +48,7 @@ int testDicomDir(int argc, char* argv[])
       return(1);
    }
 
-// Exemples exploitation de la structure
+// Simple examples of structure exploitation 
 // DON'T REMOVE neither the folowing code, nor the commented out lines
 
 /*
