@@ -995,6 +995,7 @@
 0040 0270 SQ PRC Scheduled Step Attributes Sequence
 0040 0275 SQ PRC Requested Attributes Sequence
 0040 0280 ST PRC Comments on the Performed Procedure Step
+0040 0281 SQ PRC Performed Procedure Step Reason Code Sequence
 0040 0293 SQ PRC Quantity Sequence
 0040 0294 DS PRC Quantity
 0040 0295 SQ PRC Measuring Units Sequence
@@ -1304,6 +1305,7 @@
 0400 0310 OB ??? Certified Timestamp
 0400 0500 SQ ??? Encrypted Attributes Sequence
 0400 0510 UI ??? Encrypted Content Transfer Syntax UID
+0400 0520 OB ??? Encrypted Content
 0400 0550 SQ ??? Modified Attributes Sequence
 2000 0000 UL BFS Group Length
 2000 0010 IS BFS Number of Copies
@@ -1677,6 +1679,7 @@
 300a 00f6 DS RT  Source to Block Tray Distance
 300a 00f8 CS RT  Block Type
 300a 00fa CS RT  Block Divergence
+300a 00fb CS RT  Block Mounting Position
 300a 00fc IS RT  Block Number
 300a 00fe LO RT  Block Name
 300a 0100 DS RT  Block Thickness
@@ -1687,7 +1690,7 @@
 300a 0108 SH RT  Applicator ID
 300a 0109 CS RT  Applicator Type
 300a 010a LO RT  Applicator Description
-300a 010c DS RT  Cumulative Dose Reference COefficient
+300a 010c DS RT  Cumulative Dose Reference Coefficient
 300a 010e DS RT  Final Cumulative Meterset Weight
 300a 0110 IS RT  Number of Control Points
 300a 0111 SQ RT  Control Point Sequence
@@ -1799,6 +1802,9 @@
 300a 02d2 DS RT  Control Point Relative Position
 300a 02d4 DS RT  Control Point 3D Position
 300a 02d6 DS RT  Cumulative Time Weight
+300a 02e0 CS RT  Compensator Divergence
+300a 02e1 CS RT  Compensator Mounting Position
+300a 02e2 DS RT  Source to Compensator Distance
 300c 0000 UL RT  Group Length
 300c 0002 SQ RT  Referenced RT Plan Sequence
 300c 0004 SQ RT  Referenced Beam Sequence
