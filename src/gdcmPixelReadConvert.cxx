@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 05:24:21 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/01/31 06:17:22 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -440,7 +440,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    } 
    else if ( IsRLELossless )
    {
-      if ( ! RLEInfo->ReadAndDecompressRLEFile( fp, Raw, XSize, YSize, ZSize, BitsAllocated ) )
+      if ( ! RLEInfo->DecompressRLEFile( fp, Raw, XSize, YSize, ZSize, BitsAllocated ) )
       {
          gdcmVerboseMacro( "RLE decompressor failed." );
          return false;
