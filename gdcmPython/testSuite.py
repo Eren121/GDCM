@@ -1,5 +1,6 @@
 import unittest
 import os
+from gdcmPython import *
 from vtkgdcmPython import *
 
 class gdcmTestCase(unittest.TestCase):
@@ -486,7 +487,7 @@ class gdcmTestCase(unittest.TestCase):
          #         at 9f8 : fragment length 212866 x(00033f82)
          # at 3497e : ItemTag  b00c,0eb6 (should be fffe,e000 or fffe,e0dd):
  
-      ["gdcm-JPEG-LossLess3b.dcm",
+      ["gdcm-JPEG-LossLessThoravision.dcm",
          # Interest: - Jpeg compression [Lossless, hierar., first-order
          #             pred. 14, Select. Val. 1]
          #           - encoding is sligthly different from LossLess3a.dcm ???
@@ -542,13 +543,24 @@ class gdcmTestCase(unittest.TestCase):
           ("Wrong signature for file %s (got %s, shoud be %s)"
            % (SourceFileName, ComputeSign, Sign)) )
       os.unlink(TargetFileName)
-
+      
 if __name__ == '__main__':
    if not GDCM_TEST_DATA_PATH:
-      print "GDCM_TEST_DATA_PATH is not setup properly. This test suite"
-      print "   requires that some Dicom reference files be installed."
+      print "GDCM_TEST_DATA_PATH (internal variable) is not setup properly."
+      print "   This test suite requires that some Dicom reference files be "
+      print "   installed."
       print "   For further details on installation of gdcmData, please"
       print "   refer to the developper's section of page "
       print "       http://www.creatis.insa-lyon.fr/Public/Gdcm"
-   unittest.main()
+      print ""
+      print "gdcmData directory (used in the test suite) must be placed in"
+      print "the gdcm directory. The gdcm tree must be :"
+      print "   gdcm"
+      print "    |____Dicts"
+      print "    |____Doc"
+      print "    |____gdcmData      (not in gdcm by default)"
+      print "    |____gdcmPython"
+      print "    |____Test"
+   else:
+      unittest.main()
 

@@ -1,6 +1,6 @@
 import os, sys
 
-def BuildInstallOrPreinstallPath(DirName, FileName):
+def BuildInstallOrPreinstallPath(DirName, FileName = None):
    # Builds a path to the DirName directory. This should work both when:
    # - the package is properly installed in which case DirName is a subdir
    #   of the package,
@@ -10,13 +10,23 @@ def BuildInstallOrPreinstallPath(DirName, FileName):
    # In both cases we need to express the full path to DirName relatively
    # to the path to this __init__.py. For this we rely on __path__ variable.
    # In order to make sure we got the correct Path, we check for the
-   # existence of FileName.
+   # existence of FileName if it is setted otherwise for the existence of the
+   # DirName.
    InstallModePath = os.path.join(__path__[0], DirName + "/")
-   if os.path.isfile(os.path.join(InstallModePath, FileName)):
-      return InstallModePath
+   if(FileName):
+      if os.path.isfile(os.path.join(InstallModePath, FileName)):
+         return InstallModePath
+   else:
+      if os.path.isdir(InstallModePath):
+         return InstallModePath
+
    PreInstallModePath = os.path.join(__path__[0], "..", DirName + "/")
-   if os.path.isfile(os.path.join(PreInstallModePath, FileName)):
-      return PreInstallModePath
+   if(FileName):
+      if os.path.isfile(os.path.join(PreInstallModePath, FileName)):
+         return PreInstallModePath
+   else:
+      if os.path.isdir(PreInstallModePath):
+         return PreInstallModePath
    return None
 
 ### Setup the path to the dictionaries. WARNING: this needs to be done
@@ -45,7 +55,7 @@ if not GDCM_DATA_PATH:
    print "GDCM_DATA_PATH is not setup properly: unfound Test directory"
 
 ### Set up the path to the data images of the test suite.
-GDCM_TEST_DATA_PATH = BuildInstallOrPreinstallPath("gdcmData", "test.acr")
+GDCM_TEST_DATA_PATH = BuildInstallOrPreinstallPath("gdcmData")
 
 ### Import the swig generated shadow classes.
 try:
