@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 21:52:06 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/14 22:20:11 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,23 +54,16 @@ DirList::~DirList()
 }
 
 //-----------------------------------------------------------------------------
-// Print
-
-//-----------------------------------------------------------------------------
 // Public
+
 /**
  * \ingroup DirList
- * \brief   Get the directory name
- * @return the directory name 
+ * \brief   Print method
  */
-std::string const &DirList::GetDirName() const
-{
-   return DirName;
-}
-
 void DirList::Print(std::ostream &os)
 {
-   copy(begin(), end(), std::ostream_iterator<std::string>(os, "\n"));
+   std::copy(Filenames.begin(), Filenames.end(), 
+             std::ostream_iterator<std::string>(os, "\n"));
 }
 
 //-----------------------------------------------------------------------------
@@ -138,7 +131,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
       stat(fileName.c_str(), &buf); //really discard output ?
       if( S_ISREG(buf.st_mode) )    //is it a regular file?
       {
-         push_back( fileName );
+         Filenames.push_back( fileName );
          numberOfFiles++;
       }
       else if( S_ISDIR(buf.st_mode) ) //directory?

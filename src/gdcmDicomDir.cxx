@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 12:19:58 $
-  Version:   $Revision: 1.100 $
+  Date:      $Date: 2005/01/14 22:20:11 $
+  Version:   $Revision: 1.101 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -414,12 +414,14 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
 void DicomDir::CreateDicomDirChainedList(std::string const & path)
 {
    CallStartMethod();
-   DirList fileList(path,1); // gets recursively the file list
+   DirList dirList(path,1); // gets recursively the file list
    unsigned int count = 0;
    VectDocument list;
    Header *header;
 
-   for( DirList::iterator it  = fileList.begin();
+   DirListType fileList = dirList.GetFilenames();
+
+   for( DirListType::iterator it  = fileList.begin();
                               it != fileList.end();
                               ++it )
    {
@@ -452,7 +454,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
    // sorts Patient/Study/Serie/
    std::sort(list.begin(), list.end(), DicomDir::HeaderLessThan );
    
-   std::string tmp = fileList.GetDirName();      
+   std::string tmp = dirList.GetDirName();      
    //for each Header of the chained list, add/update the Patient/Study/Serie/Image info
    SetElements(tmp, list);
    CallEndMethod();

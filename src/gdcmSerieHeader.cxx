@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 21:34:53 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/14 22:20:11 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,9 +97,10 @@ void SerieHeader::AddFileName(std::string const &filename)
 void SerieHeader::SetDirectory(std::string const &dir)
 {
    CurrentSerieUID = ""; //Reset previous Serie Instance UID
-   DirList filenames_list(dir);  //OS specific
+   DirList dirList(dir);  //OS specific
   
-   for( DirList::const_iterator it = filenames_list.begin(); 
+   DirListType filenames_list = dirList.GetFilenames();
+   for( DirListType::const_iterator it = filenames_list.begin(); 
         it != filenames_list.end(); ++it)
    {
       AddFileName( *it );
