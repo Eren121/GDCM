@@ -2,12 +2,12 @@
    * SerieHeader::SetDirectory() allow recursive exploration of the Directory
 	* SerieHeader::AddFileName() creates as many Coherent Files lists 
 	              (same Serie UID) as it founds different Serie UID 
-					   amongst the files insead of discarting any file 
+					   amongst the files instead of discarting any file 
 						that doesn't match with the first one he found.
-	* SerieHeader::OrderGdcmFileListhas now pne parameter : 
+	* SerieHeader::OrderGdcmFileList has now one parameter : 
 	               the Coherent Files list the user wants to sort
-   * SerieHeader::GetFirstCoherentFileList()
-   * SerieHeader::GetLastCoherentFileList() allows to parse 
+   * SerieHeader::GetFirstCoherentFileList()  |
+   * SerieHeader::GetLastCoherentFileList()   | allow to parse 
 	               the set of Coherent Files lists 
    * const SerieHeader::GdcmFileList &GetGdcmFileList() is kept, for backwards
 	               compatibility (it returns the *first* Coherent Files list, 
