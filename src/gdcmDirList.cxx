@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 22:53:58 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/14 23:51:40 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,7 +93,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
       fileName = fileData.cFileName;
       if( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
       {
-         // Is the '.' and '..' usefull ?
+         // Need to check for . and .. to avoid infinite loop
          if( fileName != "." && fileName != ".." && recursive )
          {
             numberOfFiles += Explore(dirName+fileName,recursive);
