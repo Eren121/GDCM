@@ -1096,7 +1096,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
    gdcmValEntry *vl;
    gdcmBinEntry *bn;   
    gdcmSeqEntry *sq;
-   string vr;
+   std::string vr;
    long l;
    int depth; 
    

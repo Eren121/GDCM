@@ -43,7 +43,6 @@ gdcmElementSet::~gdcmElementSet()
   * @return
   */ 
 void gdcmElementSet::Print(std::ostream & os) {
-   cout << "entree ds gdcmElementSet::Print" << endl;
    for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
    {
       //(*i)->second->SetPrintLevel(printLevel);

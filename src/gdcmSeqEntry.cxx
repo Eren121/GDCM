@@ -45,7 +45,7 @@ gdcmSeqEntry::~gdcmSeqEntry() {
 void gdcmSeqEntry::Print(std::ostream &os){
 
    std::ostringstream s,s2;
-   string vr;
+   std::string vr;
    unsigned short int g, e;
    long lgth;
    size_t o;    
