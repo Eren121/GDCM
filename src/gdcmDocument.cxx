@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/28 21:13:03 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2004/07/30 11:40:13 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,26 +84,15 @@ const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
  * \brief   constructor  
  * @param   inFilename file to be opened for parsing
  * @param   exception_on_error whether we throw an exception or not
- * @param   enable_sequences = true to allow the header 
- *          to be parsed *inside* the SeQuences,
- *          when they have an actual length 
- * \warning enable_sequences *has to be* true for reading PAPYRUS 3.0 files 
  * @param   ignore_shadow to allow skipping the shadow elements, 
  *          to save memory space.
- * \warning The TRUE value for this param has to be used 
- *          with a FALSE value for the 'enable_sequence' param.
- *          ('public elements' may be embedded in 'shadow Sequences')
  */
 gdcmDocument::gdcmDocument( std::string const & filename, 
                             bool exception_on_error,
-                            bool enable_sequences,
                             bool ignore_shadow) 
               : gdcmElementSet(-1)
 {
    IgnoreShadow = ignore_shadow;
-   //EnableSequences=enable_sequences;
-   (void)enable_sequences;
-   EnableSequences = true; // JPR // TODO : remove params out of the constructor
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = filename;
    Initialise();
@@ -182,7 +171,6 @@ gdcmDocument::gdcmDocument(bool exception_on_error)
              :gdcmElementSet(-1)
 {
    (void)exception_on_error;
-   //EnableSequences=0; // ?!? JPR
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
@@ -2087,8 +2075,7 @@ void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *entry,
       entry->SetReadLength(4); /// \todo a bug is to be fixed !?
    } 
  
-   //////// Deal with sequences, but only on users request:
-   else if ( entry->GetVR() == "SQ" && EnableSequences)
+   else if ( entry->GetVR() == "SQ" )
    {
       foundLength = 0;      // ReadLength is unchanged 
    } 

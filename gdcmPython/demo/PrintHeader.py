@@ -1,5 +1,6 @@
 from gdcmPython import *
 import sys
+import os
 
 ### Get filename from command line or default it
 try:

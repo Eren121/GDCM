@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 03:34:11 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/07/30 11:40:13 $
+  Version:   $Revision: 1.24 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -159,7 +159,6 @@ protected:
    gdcmDocument(bool exception_on_error  = false);
    gdcmDocument(std::string const & filename, 
                 bool  exception_on_error = false, 
-                bool  enable_sequences   = false,
                 bool  ignore_shadow      = false);
    virtual ~gdcmDocument();
    

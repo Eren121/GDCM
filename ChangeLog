@@ -1,4 +1,11 @@
-2004-07-27 Jean-Pierre Roux
+2004-07-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * src/gdcmDicomDir.cxx, gdcmDocEntrySet.cxx: removed inclusion of errno.h
+  * src/gdcmDocument.[h|cxx], gdcmFile.[h|cxx], gdcmHeader.[h|cxx]:
+    enable_sequences removed from gdcmHeader constructor and dependencies.
+  * Example/PrintHeader.cxx: fixed accordingly (enable_sequences removal).
+  * gdcmPython/demo/PrintHeader.py: dummy fix.
+
+2004-07-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Test/CMakeLists.txt: newly re-introduced SIEMENS_Sonata-12-MONO2-SQ.dcm
     in gdcmData (previously known as E00001S03I0015.dcm) is blacklisted.
 

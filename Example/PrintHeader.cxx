@@ -4,14 +4,12 @@
 int main(int argc, char* argv[])
 { 
    bool dropPriv = false;
-   bool showSeq  = true; 
    std::string fileName;   
 
    if (argc == 1) {
       std::cout << argv[0] <<
       " fileName" << std::endl <<
-      "    [nopriv]  if you don't want to print Shadow groups"  << std::endl <<
-      "    [noseq]   if you don't want to 'go inside' the SQ's" << std::endl;
+      "    [nopriv]  if you don't want to print Shadow groups"  << std::endl;
    }
 
    if (argc > 1) {
@@ -24,11 +22,9 @@ int main(int argc, char* argv[])
    for (int j=0;j<argc;j++) {
       if (strcmp(argv[j],"nopriv")==0)
          dropPriv=true;
-      else if (strcmp(argv[j],"noseq")==0)
-         showSeq=false;
    }
    
-   gdcmFile *e2 = new gdcmFile(fileName.c_str(),false, showSeq, dropPriv);
+   gdcmFile *e2 = new gdcmFile(fileName.c_str(),false, dropPriv);
    gdcmHeader *e1 = e2->GetHeader();  
         
    if (argc > 2) {

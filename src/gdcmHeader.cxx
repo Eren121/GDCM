@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 15:16:18 $
-  Version:   $Revision: 1.178 $
+  Date:      $Date: 2004/07/30 11:40:13 $
+  Version:   $Revision: 1.179 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,18 +31,14 @@
  * \brief  Constructor 
  * @param  filename name of the file whose header we want to analyze
  * @param  exception_on_error whether we want to throw an exception or not
- * @param  enable_sequences = true to allow the header 
- *         to be parsed *inside* the SeQuences, when they have an actual length 
  * @param  ignore_shadow = true if user wants to skip shadow groups 
  *         during parsing, to save memory space
  */
 gdcmHeader::gdcmHeader( std::string const & filename, 
                         bool exception_on_error,
-                        bool enable_sequences, 
                         bool ignore_shadow ):
             gdcmDocument( filename,
                           exception_on_error,
-                          enable_sequences,
                           ignore_shadow )
 {    
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010

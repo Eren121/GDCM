@@ -1,7 +1,36 @@
-* Convert the C-like IO to C++ IO (i.e. remove FILE*, fread...). Some docs
-  are available at
-    http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
-* Remove enable_sequences and ignore_shadow from gdcmDocument().
+-----------------------------------------------------------------------------
+Use namespace gdcm:
+  Problem: using enum with name like 'Unknow' on .Net, or LP on cygwin 
+           causes problems.
+  Question: when introducing the namespace, should we remove the gdcm
+            prefix from classes or keep it ?
+-----------------------------------------------------------------------------
+Convert the C-like IO to C++ IO:
+  Goal: remove all the C-oriented IO references like FILE*, fread...
+        with the C++ fstream notation. Provide overload of operators
+        << and >> for any gdcm class using file IO.
+  Question: the underlying jpeg libraries (written in C) use the FILE*
+        notation. Is there a way to still use fstream in gdcm, and 
+        build or pass the proper FILE* to jpeg libs ?
+  References:
+        binary IO are available at
+        http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
+-----------------------------------------------------------------------------
+Switch from errno C-style to exceptions:
+  Goal: remove all the C-oriented errno (#include <errno.h>) and switch
+        to C++ exceptions.
+  Note: - only src/gdcmDocument.cxx includes errno.h
+        - when exceptions were first introduced within gdcm, it caused 
+        gdcmPython to be uncompatible within the corresponding version
+        of wxPython (refer to the first lines of
+        Test/ExceptionAndPython/README). Hence we reverted to the old
+        errno mecanisme. Since wxPython seems not to be problem anymore
+        (check it with Test/ExceptionAndPython) we can now move back to C++
+        exceptions.
+-----------------------------------------------------------------------------
+CLEANUP:
+ - Remove ignore_shadow from gdcmDocument().
+-----------------------------------------------------------------------------
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
   be made at the cost of memory consumption (refer to header of 
   vtk/vtkGdcmHeader.cxx)
@@ -20,9 +49,6 @@
   proceed correctly (in fact problems appears at loading of _gdcm.[so/dll]).
   So, simply uncomment the declaration once you provided the definition of
   the method...
-* As stated by the first lines of Test/ExceptionAndPython/README, it looks
-  like we can move back to the exceptions and remove the errno stuff from
-  src/gdcm* !
 * Fix the bug in Test/bug1.cxx (see first comment line): Win32 only.
 * All (or at least many of) the methods of gdcmHeader whose only arguments
   are an ElValue* (e.g.  FindLength, FindVR, LoadElementValue...) can
@@ -68,5 +94,3 @@
       a.write(output);
    }
 
-* use namespace for gdcm, to avoid problem when using enum with name like
-  'Unknow' on .Net, and LP on cygwin that cause problems
