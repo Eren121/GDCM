@@ -151,7 +151,7 @@ bool gdcmFile::ParsePixelData(void) {
 
       // JPEG Image
 
-      cout << "JPEG image" << endl;
+      cout << "JPEG image" << std::endl;
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Basic Offset Table Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Basic Offset Table Item Tag El
@@ -220,7 +220,7 @@ bool gdcmFile::ParsePixelData(void) {
 
       // RLE Image
 
-      cout << "RLE image" << endl;
+      cout << "RLE image" << std::endl;
       long RleSegmentLength[15],fragmentLength;
       guint32 nbRleSegments;
       guint32 RleSegmentOffsetTable[15];

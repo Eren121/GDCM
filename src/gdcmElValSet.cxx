@@ -94,7 +94,7 @@ void gdcmElValSet::Print(ostream & os) {
                os << "  ==>\t[" << ts->GetValue(v) << "]"; 
          }
       }              
-      os << endl;
+      os << std::endl;
    }
 } 
 
@@ -109,7 +109,7 @@ void gdcmElValSet::PrintByName(ostream & os) {
       os << tag->first << ": ";
       os << "[" << tag->second->GetValue() << "]";
       os << "[" << tag->second->GetKey()   << "]";
-      os << "[" << tag->second->GetVR()    << "]" << endl;
+      os << "[" << tag->second->GetVR()    << "]" << std::endl;
    }
 }
 

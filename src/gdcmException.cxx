@@ -30,14 +30,14 @@ catch(...) {
 
 void gdcmException::fatal(const char *from) throw() {
   try {
-    cerr << "Fatal: exception received in " << from 
-	 << " while handling exception." << endl;
+    std::cerr << "Fatal: exception received in " << from 
+	 << " while handling exception." << std::endl;
     exit(-1);
   }
   catch(...) {
     try {
-      cerr << "Fatal: exception received in Exception::fatal while handling exception."
-	   << endl;
+      std::cerr << "Fatal: exception received in Exception::fatal while handling exception."
+	   << std::endl;
       exit(-1);
     }
     catch(...) {
@@ -86,7 +86,7 @@ gdcmException::operator const char *() const throw() {
 
 ostream& operator<<(ostream &os, const gdcmException &e) {
   try {  
-    os << "Exception " << e.getName() << " thrown: " << e.getError() << endl;
+    os << "Exception " << e.getName() << " thrown: " << e.getError() << std::endl;
   }
   catch(...) {
     gdcmException::fatal("operator<<(ostream &, const gdcmException&)");

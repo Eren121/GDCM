@@ -88,7 +88,7 @@ void gdcmDict::PrintByKey(std::ostream& os) {
       os << hex << tag->second->GetElement() << ") = " << dec;
       os << tag->second->GetVR() << ", ";
       os << tag->second->GetFourth() << ", ";
-      os << tag->second->GetName() << "."  << endl;
+      os << tag->second->GetName() << "."  << std::endl;
    }
 }
 

@@ -37,7 +37,7 @@ static int _gdcm_read_RLE_fragment (char ** image_buffer,
 int
 gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
    char * im = (char *)image_buffer;
-   cout << "RLE image" << endl;
+   cout << "RLE image" << std::endl;
 
    long RleSegmentLength[15],fragmentLength,uncompressedSegmentSize;;
    long ftellRes, ln;
