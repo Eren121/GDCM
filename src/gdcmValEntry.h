@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/21 17:47:20 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/03/22 11:39:04 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ public:
 
    // Other accessors are inherited from gdcm::ContentEntry
 
-   void Print(std::ostream &os = std::cout,std::string const &indent = ""); 
+   void Print(std::ostream &os = std::cout, std::string const &indent = ""); 
 
    void WriteContent(std::ofstream *fp, FileType filetype); 
    
@@ -56,9 +56,21 @@ public:
    /// The size is updated
    void SetValue(std::string const &val);
 
+
+   /// \brief returns the size threshold above which an element value 
+   ///        will NOT be *printed* in order no to polute the screen output
+   static long GetMaxSizePrintEntry() { return ValEntry::MaxSizePrintEntry; };
+
+   static void SetMaxSizePrintEntry(long);
+
 protected:
    
 private:
+
+   /// \brief Size threshold above which an element val
+   ///        By default, this upper bound is fixed to 64 bytes.
+
+   static uint32_t MaxSizePrintEntry;   
 
 };
 

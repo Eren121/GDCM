@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/14 10:45:47 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/03/22 11:39:04 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,14 +22,15 @@
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
+#include "gdcmDocument.h"
 
 #include <fstream>
 
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-#define MAX_SIZE_PRINT_ELEMENT_VALUE 128
-
+#define MAX_SIZE_PRINT_ELEMENT_VALUE 0x7fffffff;
+uint32_t ValEntry::MaxSizePrintEntry = MAX_SIZE_PRINT_ELEMENT_VALUE;
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -114,6 +115,26 @@ void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
    binary_write(*fp, GetValue());
 } 
 
+
+/**
+ * \brief Header Elements too long will not be printed
+ * @param newSize new size
+ */ 
+void ValEntry::SetMaxSizePrintEntry(long newSize) 
+{
+   if ( newSize < 0 )
+   {
+      return;
+   }
+   if ((uint32_t)newSize >= (uint32_t)0xffffffff )
+   {
+      ValEntry::MaxSizePrintEntry = 0xffffffff;
+      return;
+   }
+   ValEntry::MaxSizePrintEntry = newSize;
+}
+
+
 /**
  * \brief   Sets the std::string representable' value of a ValEntry
  * @param  val value to set 
@@ -193,7 +214,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
     
    TSAtr v  = GetValue();     
    d2 = Util::CreateCleanString(v);  // replace non printable characters by '.'            
-   if( GetLength() <= MAX_SIZE_PRINT_ELEMENT_VALUE
+   if( (long)GetLength() <= ValEntry::GetMaxSizePrintEntry()
     || PrintLevel >= 3
     || d2.find(GDCM_NOTLOADED) < d2.length() )
    {
