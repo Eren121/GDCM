@@ -2,4 +2,5 @@ include *.py
 recursive-include src *.h
 recursive-include vtk *.h
 recursive-include Dicts *.dic
-recursive-include Data *.*
+recursive-include Test *.*
+include MANIFEST.in

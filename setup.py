@@ -18,7 +18,7 @@ if(os.name=='posix'):
 	libraries=["stdc++"]
 	macros   =[('__STDC_LIMIT_MACROS', '1')]
 
-	VTK_PATH="/usr"
+	VTK_PATH="/usr/local"
 	vtkWrapper="vtkWrapPython"
 else:
 	targetDir=os.path.join('lib','site-packages')
@@ -39,7 +39,7 @@ targetDir=os.path.join(targetDir, ThisModule)
 # For the Swig compilation
 Sources = []
 Sources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
-Sources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.h")))
+#Sources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.h")))
 Sources.append(os.path.join(gdcmPythonSrcDir,"gdcm.i"))
 
 # For the VTK compilation
@@ -49,7 +49,7 @@ VTK_LIB_DIR=os.path.join(VTK_PATH,"lib","vtk")
 vtkSources = []
 vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
 vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
-# vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.h")))
+#vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.h")))
 
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",
@@ -61,7 +61,8 @@ setup(name=ThisModule,
       author="frog",
       author_email="frog@creatis.insa-lyon.fr",
       url="http://www.creatis.insa-lyon.fr/",
-      packages=[ gdcmPythonSrcDir,
+      packages=[ '.',
+                 gdcmPythonSrcDir,
                  gdcmPythonSrcDir + '.demo' ],
       cmdclass={'build_ext':build_extWrap}, # redirects default build_ext
       ext_modules=[SwigExtension(name='_gdcm',
@@ -74,7 +75,8 @@ setup(name=ThisModule,
                                 ),
                    VTKExtension(name='gdcmPython.vtkgdcmPython',
                                 sources=vtkSources,
-                                include_dirs=[gdcmSrcDir,gdcmvtkSrcDir,VTK_INCLUDE_DIR],
+                                include_dirs=[gdcmSrcDir,gdcmvtkSrcDir,
+                                              VTK_INCLUDE_DIR],
                                 libraries=libraries+vtkLibraries,
                                 define_macros=macros,
                                 library_dirs=[VTK_LIB_DIR],

@@ -1,4 +1,7 @@
 2003-05-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * setup.py, manifest.in : bug fix under linux
+
+2003-05-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * Modification of setup.py to compile vtk part too. Then, we have 2
         wrappers which must work with same distutils. For that, we have a
         generic distutils in distusiltsWrapping.py ; with :
