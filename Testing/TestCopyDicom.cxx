@@ -41,7 +41,7 @@ bool RemoveFile(const char* source)
 // Here we load a gdcmFile and then try to create from scratch a copy of it,
 // copying field by field the dicom image
 
-int TestCopyDicom(int argc, char* argv[])
+int TestCopyDicom(int , char* [])
 {
    int i =0;
    int retVal = 0;  //by default this is an error
