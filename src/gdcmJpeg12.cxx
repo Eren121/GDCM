@@ -101,6 +101,13 @@ extern "C" {
 bool gdcm_write_JPEG_file12 (FILE *fp, void * im_buff, 
                              int image_width, int image_heigh, int quality)
 {
+  (void)fp;
+  (void)im_buff;
+  (void)image_width;
+  (void)image_heigh;
+  (void)quality;
+  
+  return true; //???
 }
 
 /******************** JPEG DECOMPRESSION SAMPLE INTERFACE *******************/

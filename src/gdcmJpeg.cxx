@@ -243,6 +243,8 @@ bool gdcm_write_JPEG_file (FILE *fp, void * im_buf,
   jpeg_destroy_compress(&cinfo);
 
   /* And we're done! */
+
+  return true; //???
 }
 
 
