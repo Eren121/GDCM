@@ -229,3 +229,11 @@ Comments:
 -----------------------------------------------------------------------------
 * Add kwsys as a subdir somewhere in gdcm ( assigned to: Mathieu ).
 -----------------------------------------------------------------------------
+* ljpeg: ljpeg was rip from medcon and not the official one. medcon tried to
+optimised function using MACRO (doh!), so it make its very unreadable and very
+hard to fix warnings. Should go back to official source, copy proper copyright
+and fix warnings on dashboard ( assigned to: Mathieu ).
+-----------------------------------------------------------------------------
+* All ITK/VTK readers support selecting extent. gdcm should support selecting
+extent before being inserted into ITK ( assigned to: Mathieu ).
+-----------------------------------------------------------------------------
