@@ -2,11 +2,11 @@
 # DICOM dictionary stuff
 
 
-INSTALL_FILES(${GDCM_DATA_DIR} FILES 
-  dicomV3.dic
-  dicomVR.dic
-  dicomTS.dic
-  DicomDir.dic
+INSTALL_FILES(${GDCM_DATA_DIR} .dic
+  dicomV3
+  dicomVR
+  dicomTS
+  DicomDir
 )
 
 # Nice trick to avoid creating a .h file each time we compile gdcm
@@ -21,12 +21,12 @@ SET(DICOM_DATA_DICTIONARY "")
 
 FOREACH(line ${ENT})
   STRING(REGEX REPLACE
-    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([1-9n-]+) (.*)$"
-    "   { 0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\" }, " nline "${line}")
+    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([A-Z?]+) ([A-Za-z0-9()'/, ?.&-]*).*$"
+    "   {0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\"}, " nline "${line}")
   SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
 
-SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY} \n { 0,0,0,0,0 }")
+SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY} \n {0,0,0,0,0}")
 
 FILE(READ "dicomTS.dic" ENT_TS)
 STRING(REGEX REPLACE "\n" ";" ENT_TS "${ENT_TS}")
@@ -59,12 +59,12 @@ SET(DICOM_DIR_DICTIONARY "")
 
 FOREACH(line ${ENT_DIR})
   STRING(REGEX REPLACE
-    "^(metaElem|patientElem|studyElem|serieElem|imageElem) *([a-f0-9]+) ([a-f0-9]+) [\"](.*)[\"](.*)$"
-    "  { \"\\1\" , 0x\\2 , 0x\\3 , \"\\4\" }, \\5" nline "${line}")
+    "^(metaElem|patientElem|studyElem|serieElem|imageElem) *([a-f0-9]+) ([a-f0-9]+) [\"](.*)[\"]([A-Za-z'/ ].*)$"
+    "  {\"\\1\" , 0x\\2 , 0x\\3 , \"\\4\"}, \\5" nline "${line}")
   SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
 
-SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY} \n { 0,0,0,0 }")
+SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY} \n {0,0,0,0}")
 
 # See above
 FOREACH(file dicomV3.dic  dicomTS.dic dicomVR.dic DicomDir.dic)
