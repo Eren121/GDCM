@@ -28,6 +28,7 @@ libgdcm_la_SOURCES=		\
 	gdcmElValSet.cxx  \
 	gdcmHeaderIdo.cxx \
 	gdcmFile.cxx	\
+	gdcmVR.cxx	\
 	gdcmJpeg.cxx
 
 libgdcmincludedir = $(includedir)
@@ -41,6 +42,7 @@ libgdcminclude_HEADERS = \
 	gdcmDictEntry.h	\
 	gdcmElValue.h	\
 	gdcmElValSet.h	\
+	gdcmVR.h	\
 	gdcmFile.h
 
 EXTRA_DIST = \

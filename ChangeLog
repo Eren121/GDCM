@@ -1,3 +1,12 @@
+2003-04-15  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
+      * Memory link hunt (by using valgrind --leak-check=yes PrintHeader).
+        - added src/gdcmVR.cxx gdcmVR.h that objectify the previous
+          gdcmHeader::_dicom_vr.
+        - gdcmHeader::InitVRDict transfered as gdcmVR::gdcmVR().
+        - gdcmHeader::dicom_vr is now of type gdcmVR* as opposed to
+          VRHT*.
+        - gdcmGlobal global object contained class added (see src/gdcmUtil.x)
+
 2003-04-9  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * src/Makefile.am now exports all the necessary include files at
         make install stage.

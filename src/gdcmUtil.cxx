@@ -3,6 +3,10 @@
 #include <ctype.h>   // For isspace
 #include "gdcmUtil.h"
 
+// Library globals.
+gdcmDebug dbg;
+gdcmVR * gdcmGlobal::VR = new gdcmVR();
+
 gdcmDebug::gdcmDebug(int level) {
 	DebugLevel = level;
 }
@@ -43,8 +47,19 @@ void gdcmDebug::Exit(int a) {
 #endif
 }
 
-gdcmDebug dbg;
+///////////////////////////////////////////////////////////////////////////
+gdcmGlobal::gdcmGlobal(void) {
+}
 
+gdcmGlobal::~gdcmGlobal(void) {
+   delete VR;
+}
+
+gdcmVR * gdcmGlobal::GetVR(void) {
+   return VR;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // Because is not yet available in g++2.96
 istream& eatwhite(istream& is) {
 	char c;

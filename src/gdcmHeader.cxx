@@ -18,11 +18,11 @@
 // Refer to gdcmHeader::SetMaxSizeLoadElementValue()
 #define _MaxSizeLoadElementValue_   1024
 
-VRHT * gdcmHeader::dicom_vr = (VRHT*)0;
+gdcmVR * gdcmHeader::dicom_vr = (gdcmVR*)0;
 
 void gdcmHeader::Initialise(void) {
    if (!gdcmHeader::dicom_vr)
-      InitVRDict();
+      gdcmHeader::dicom_vr = gdcmGlobal::GetVR();
    Dicts = new gdcmDictSet();
    RefPubDict = Dicts->GetDefaultPubDict();
    RefShaDict = (gdcmDict*)0;
@@ -61,43 +61,9 @@ bool gdcmHeader::CloseFile(void) {
 }
 
 gdcmHeader::~gdcmHeader (void) {
+   delete Dicts;
    //FIXME obviously there is much to be done here !
    return;
-}
-
-void gdcmHeader::InitVRDict (void) {
-   if (dicom_vr) {
-      dbg.Verbose(0, "gdcmHeader::InitVRDict:", "VR dictionary allready set");
-      return;
-   }
-   VRHT *vr = new VRHT;
-   (*vr)["AE"] = "Application Entity";       // At most 16 bytes
-   (*vr)["AS"] = "Age String";               // Exactly 4 bytes
-   (*vr)["AT"] = "Attribute Tag";            // 2 16-bit unsigned short integers
-   (*vr)["CS"] = "Code String";              // At most 16 bytes
-   (*vr)["DA"] = "Date";                     // Exactly 8 bytes
-   (*vr)["DS"] = "Decimal String";           // At most 16 bytes
-   (*vr)["DT"] = "Date Time";                // At most 26 bytes
-   (*vr)["FL"] = "Floating Point Single";    // 32-bit IEEE 754:1985 float
-   (*vr)["FD"] = "Floating Point Double";    // 64-bit IEEE 754:1985 double
-   (*vr)["IS"] = "Integer String";           // At most 12 bytes
-   (*vr)["LO"] = "Long String";              // At most 64 chars
-   (*vr)["LT"] = "Long Text";                // At most 10240 chars
-   (*vr)["OB"] = "Other Byte String";        // String of bytes (vr independant)
-   (*vr)["OW"] = "Other Word String";        // String of 16-bit words (vr dep)
-   (*vr)["PN"] = "Person Name";              // At most 64 chars
-   (*vr)["SH"] = "Short String";             // At most 16 chars
-   (*vr)["SL"] = "Signed Long";              // Exactly 4 bytes
-   (*vr)["SQ"] = "Sequence of Items";        // Not Applicable
-   (*vr)["SS"] = "Signed Short";             // Exactly 2 bytes
-   (*vr)["ST"] = "Short Text";               // At most 1024 chars
-   (*vr)["TM"] = "Time";                     // At most 16 bytes
-   (*vr)["UI"] = "Unique Identifier";        // At most 64 bytes
-   (*vr)["UL"] = "Unsigned Long ";           // Exactly 4 bytes
-   (*vr)["UN"] = "Unknown";                  // Any length of bytes
-   (*vr)["US"] = "Unsigned Short ";          // Exactly 2 bytes
-   (*vr)["UT"] = "Unlimited Text";           // At most 2^32 -1 chars
-   dicom_vr = vr; 
 }
 
 // Fourth semantics:
@@ -324,7 +290,7 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
    // CLEANME searching the dicom_vr at each occurence is expensive.
    // PostPone this test in an optional integrity check at the end
    // of parsing or only in debug mode.
-   if ( RealExplicit && !dicom_vr->count(vr) )
+   if ( RealExplicit && !dicom_vr->Count(vr) )
       RealExplicit= false;
 
    if ( RealExplicit ) {
@@ -851,6 +817,7 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
       return;
    }
    ElVal->SetValue(NewValue);
+   free(NewValue);
 }
 
 /**

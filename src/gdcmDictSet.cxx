@@ -97,6 +97,11 @@ gdcmDictSet::gdcmDictSet(void) {
    dicts[PUB_DICT_NAME] = DefaultPubDict;
 }
 
+gdcmDictSet::~gdcmDictSet() {
+   //FIXME : first destroy pointed dictionaries before trashing hash table.
+   dicts.clear();
+}
+
 /**
  * \ingroup gdcmDictSet
  * \brief   Loads a dictionary from a specified file, and add it

@@ -1,8 +1,12 @@
 // gdcmUtil.h
 
+#ifndef GDCMUTIL_H
+#define GDCMUTIL_H
+
 #include <iostream>
 #include <vector>
 #include <string>
+#include "gdcmVR.h"
 using namespace std;
 
 class gdcmDebug {
@@ -17,6 +21,15 @@ public:
 	void Exit(int);
 };
 
+class gdcmGlobal {
+private:
+   static gdcmVR *VR; 
+public:
+   gdcmGlobal(void);
+   ~gdcmGlobal(void);
+   static gdcmVR * GetVR(void);
+};
+
 istream & eatwhite(istream & is);
 
 void Tokenize (const string& str,
@@ -24,3 +37,5 @@ void Tokenize (const string& str,
                const string& delimiters = " ");
 
 extern gdcmDebug dbg;
+
+#endif

@@ -41,6 +41,7 @@ public:
 	// TODO Swig int LoadAllDictFromDirectory(string DirectoryName);
 	// TODO Swig string* GetAllDictNames();
 	gdcmDictSet(void);
+	~gdcmDictSet(void);
 	void Print(ostream&);
 	gdcmDict* GetDict(DictKey DictName);
 	gdcmDict* GetDefaultPubDict(void);

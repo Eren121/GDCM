@@ -5,6 +5,7 @@
 
 #include <map>
 #include "gdcmCommon.h"
+#include "gdcmUtil.h"
 #include "gdcmException.h"
 #include "gdcmDictSet.h"
 #include "gdcmElValue.h"
@@ -36,7 +37,7 @@ class GDCM_EXPORT gdcmHeader {
 private:
    /// Pointer to the Value Representation Hash Table which contains all
    /// the VR of the DICOM version3 public dictionary. 
-   static VRHT *dicom_vr;
+   static gdcmVR *dicom_vr;
  
    /// Global dictionary container
    gdcmDictSet* Dicts;
@@ -76,7 +77,6 @@ private:
    guint32 FindLengthOB(void);
    void Initialise(void);
    void CheckSwap(void);
-   void InitVRDict(void);
    void SwitchSwapToBigEndian(void);
    // CLEAN ME: NewManualElValToPubDict is NOT called any more.
    gdcmElValue*  NewManualElValToPubDict(string NewTagName, string VR);
