@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/05 21:46:44 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2004/12/13 15:12:33 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 #include <stdarg.h>  //only included in implementation file
 #include <stdio.h>   //only included in implementation file
 
-#if defined _MSC_VER
+#if defined(_MSC_VER)
    #include <winsock.h>  // for gethostname & gethostbyname
    #undef GetCurrentTime
 #else
@@ -304,6 +304,19 @@ std::string Util::GetIPAddress()
 #  define HOST_NAME_MAX 255
   // In this case we should maybe check the string was not truncated.
   // But I don't known how to check that...
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+  // with WinSock DLL we need to initialise the WinSock before using gethostname
+  WORD wVersionRequested = MAKEWORD(1,0);
+  WSADATA WSAData;
+  int err = WSAStartup(wVersionRequested,&WSAData);
+  if (err != 0) {
+      /* Tell the user that we could not find a usable */
+      /* WinSock DLL.                                  */
+      WSACleanup();
+      return "127.0.0.1";
+  }
+#endif
+  
 #endif //HOST_NAME_MAX
 
   std::string str;
@@ -325,6 +338,11 @@ std::string Util::GetIPAddress()
             (unsigned int)((unsigned char*)pHost->h_addr_list[i])[j]);
       }
       // str now contains one local IP address 
+
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+  WSACleanup();
+#endif
+  
     }
   }
   // If an error occur r == -1
