@@ -67,7 +67,7 @@ bool gdcmFile::ParsePixelData(void) {
    long ftellRes;
    char * destination = NULL;
 
-  // ------------------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
+  // -------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
 
    if( !IsRLELossLessTransferSyntax()) {
 
@@ -75,8 +75,8 @@ bool gdcmFile::ParsePixelData(void) {
 
       std::cout << "JPEG image" << std::endl;
       ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Basic Offset Table Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Basic Offset Table Item Tag El
+      fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
       if(GetSwapCode()) {
          ItemTagGr=SwapShort(ItemTagGr); 
          ItemTagEl=SwapShort(ItemTagEl);            
@@ -110,7 +110,7 @@ bool gdcmFile::ParsePixelData(void) {
       printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
             ftellRes,ItemTagGr,ItemTagEl );
       
-      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { // Parse fragments
+      while ( ( ItemTagGr==0xfffe) && (ItemTagEl!=0xe0dd) ) { // Parse fragments
       
          ftellRes=ftell(fp);
          fread(&ln,4,1,fp); 
@@ -149,8 +149,8 @@ bool gdcmFile::ParsePixelData(void) {
       ftellRes=ftell(fp);
       // Basic Offset Table with Item Value
          // Item Tag
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe):Basic Offset Table Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000):Basic Offset Table Item Tag El
+      fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
       if(GetSwapCode()) {
          ItemTagGr=SwapShort(ItemTagGr); 
          ItemTagEl=SwapShort(ItemTagEl);            
@@ -197,10 +197,10 @@ bool gdcmFile::ParsePixelData(void) {
                        
           //------------------ scanning (not reading) fragment pixels
  
-         fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments           
+         fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments
          if(GetSwapCode()) 
             nbRleSegments=SwapLong(nbRleSegments);
-            printf("         Nb of RLE Segments : %d\n",nbRleSegments);
+            printf("   Nb of RLE Segments : %d\n",nbRleSegments);
  
          for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
             ftellRes=ftell(fp);
@@ -208,22 +208,24 @@ bool gdcmFile::ParsePixelData(void) {
             if(GetSwapCode())
                RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
             printf("        at : %x Offset Segment %d : %d (%x)\n",
-                    ftellRes,k,RleSegmentOffsetTable[k],RleSegmentOffsetTable[k]);
+                    ftellRes,k,RleSegmentOffsetTable[k],
+                    RleSegmentOffsetTable[k]);
          }
 
-          if (nbRleSegments>1) { 
-             for(int k=1; k<=nbRleSegments-1; k++) { // skipping (not reading) RLE Segments
-                RleSegmentLength[k]=RleSegmentOffsetTable[k+1]-RleSegmentOffsetTable[k];
+          if (nbRleSegments>1) { // skipping (not reading) RLE Segments
+             for(int k=1; k<=nbRleSegments-1; k++) { 
+                RleSegmentLength[k]=   RleSegmentOffsetTable[k+1]
+                                     - RleSegmentOffsetTable[k];
                 ftellRes=ftell(fp);
-                printf ("        Segment %d : Length = %d x(%x) Start at %x\n",
-                                 k,RleSegmentLength[k],RleSegmentLength[k], ftellRes);         
+                printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
+                           k,RleSegmentLength[k],RleSegmentLength[k], ftellRes);
                 fseek(fp,RleSegmentLength[k],SEEK_CUR);    
              }
           }
-          RleSegmentLength[nbRleSegments] = fragmentLength - RleSegmentOffsetTable[nbRleSegments] ; 
-                                              // TODO : Check the value
+          RleSegmentLength[nbRleSegments]= fragmentLength 
+                                         - RleSegmentOffsetTable[nbRleSegments];
           ftellRes=ftell(fp);
-          printf ("        Segment %d : Length = %d x(%x) Start at %x\n",
+          printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
                            nbRleSegments,RleSegmentLength[nbRleSegments],
                            RleSegmentLength[nbRleSegments],ftellRes);
 
