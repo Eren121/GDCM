@@ -11,7 +11,7 @@ SET(TEST_SOURCES
   TestBug.cxx
   TestDcm2Acr.cxx
   TestHash.cxx
-  testWrite.cxx
+  TestWrite.cxx
 )
 
 # add tests that require data
