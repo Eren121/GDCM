@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 16:51:36 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/02/06 14:43:27 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,9 +48,9 @@ public:
                                      uint8_t *buffer, int nBits, 
                                      int &statesuspension);
 
-   bool ReadJPEGFile8  (std::ifstream* fp, void *image_buffer, int &statesuspension );
-   bool ReadJPEGFile12 (std::ifstream* fp, void *image_buffer, int &statesuspension );
-   bool ReadJPEGFile16 (std::ifstream* fp, void *image_buffer, int &statesuspension );
+   bool ReadJPEGFile8  (std::ifstream *fp, void *image_buffer, int &statesuspension );
+   bool ReadJPEGFile12 (std::ifstream *fp, void *image_buffer, int &statesuspension );
+   bool ReadJPEGFile16 (std::ifstream *fp, void *image_buffer, int &statesuspension );
 
    void SetLength(uint32_t length) { Length = length; };
    uint32_t GetLength()            { return Length;   };

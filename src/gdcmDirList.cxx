@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 16:51:36 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/02/06 14:43:27 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,7 +91,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    HANDLE hFile = FindFirstFile((dirName+"*").c_str(), &fileData);
 
    for(BOOL b = (hFile != INVALID_HANDLE_VALUE); b;
-       b = FindNextFile(hFile,&fileData))
+       b = FindNextFile(hFile, &fileData))
    {
       fileName = fileData.cFileName;
       if( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
@@ -121,9 +121,9 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    }
 
    // According to POSIX, the dirent structure contains a field char d_name[]
-   // of  unspecified  size,  with  at most NAME_MAX characters preceding the
-   // terminating null character.  Use of other fields will harm the  porta-
-   // bility  of  your  programs.
+   // of  unspecified  size, with at most NAME_MAX characters preceding the
+   // terminating null character. Use of other fields will harm the  porta-
+   // bility of your programs.
 
    struct stat buf;
    dirent *d = 0;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:07:41 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/02/06 14:43:27 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ public:
 
    // Probabely useless !
    //EntryNamesList *GetPubDictEntryNames();
-   //EntryNamesByCatMap* GetPubDictEntryNamesByCategory();
+   //EntryNamesByCatMap *GetPubDictEntryNamesByCategory();
 
    Dict *LoadDictFromFile( std::string const &fileName,
                            DictKey const &name );

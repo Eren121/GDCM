@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/02/06 14:43:27 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@ namespace gdcm
  */
 //BOZ depthLevel is not usefull anymore
 ElementSet::ElementSet(int depthLevel) 
-              : DocEntrySet()
+          : DocEntrySet()
 {
   (void)depthLevel;
 }
@@ -235,7 +235,7 @@ void ElementSet::Print(std::ostream &os, std::string const & )
 {
    for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
-      DocEntry* entry = i->second;
+      DocEntry *entry = i->second;
 
       entry->SetPrintLevel(PrintLevel);
       entry->Print(os);   

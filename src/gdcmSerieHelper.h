@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 02:43:06 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/02/06 14:43:28 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ public:
 
    SerieHelper();
    ~SerieHelper();
-   void Print(std::ostream &os = std::cout, std::string const & indent = "" );
+   void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);

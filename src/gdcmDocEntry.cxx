@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/02/06 14:43:27 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    uint16_t group = GetGroup();
    VRKey vr       = GetVR();
    uint16_t el    = GetElement();
-   uint32_t lgr   = GetLength();
+   uint32_t lgth  = GetLength();
 
    if ( group == 0xfffe && el == 0x0000 )
    {
@@ -95,7 +95,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       }
 
       uint16_t z = 0;
-      uint16_t shortLgr = lgr;
+      uint16_t shortLgr = lgth;
 
       if (vr == GDCM_UNKNOWN)
       {
@@ -121,7 +121,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
             }
             else
             {
-               binary_write(*fp, lgr);
+               binary_write(*fp, lgth);
             }
          }
          else
@@ -138,7 +138,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       }
       else
       {
-         binary_write(*fp, lgr);
+         binary_write(*fp, lgth);
       }
    }
 }
