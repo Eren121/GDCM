@@ -587,6 +587,7 @@ bool gdcmFile::SetImageData(void *inData, size_t ExpectedSize) {
    Header->SetImageDataSize(ExpectedSize);
    PixelData = inData;
    lgrTotale = ExpectedSize;
+   PixelRead = 1;
    return(true);
 }
 
