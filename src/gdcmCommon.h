@@ -33,4 +33,13 @@ using namespace std;  // string type lives in the std namespace on VC++
 typedef string TagKey;
 typedef string TagName;
 
+enum FileType {
+      Unknown = 0,
+      ExplicitVR,
+      ImplicitVR,
+      ACR,
+      ACR_LIBIDO
+};  // CLEANME
+
+
 #endif

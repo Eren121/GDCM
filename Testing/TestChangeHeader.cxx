@@ -33,10 +33,12 @@ int main(int argc, char* argv[])
 	
 	// On suppose que les champs DICOM du 2ieme fichier existent *effectivement*
 	
-   // FIXME : floowing lines commented out in order to make compilation work.
-   //FIXME f1->ReplaceOrCreateByNumber(0x0028, 0x0008, f2->GetPubElValSet().GetElValueByNumber(0x0028, 0x0008));// nb Frames
-	//FIXME f1->ReplaceOrCreateByNumber(0x0028, 0x0010, f2->GetPubElValSet().GetElValueByNumber(0x0028, 0x0010));// nbLig
-	//FIXME f1->ReplaceOrCreateByNumber(0x0028, 0x0011, f2->GetPubElValSet().GetElValueByNumber(0x0028, 0x0011));// nbCol
+   f1->ReplaceOrCreateByNumber(0x0028, 0x0008,
+          f2->GetPubElValByNumber(0x0028, 0x0008));// nb Frames
+	f1->ReplaceOrCreateByNumber(0x0028, 0x0010,
+          f2->GetPubElValByNumber(0x0028, 0x0010));// nbLig
+	f1->ReplaceOrCreateByNumber(0x0028, 0x0011,
+          f2->GetPubElValByNumber(0x0028, 0x0011));// nbCol
 	
 	// sans doute d'autres à mettre à jour...
 	
@@ -54,7 +56,7 @@ int main(int argc, char* argv[])
 
 	sprintf(resultat, "%s.vol", deuxieme.c_str());
 	printf ("WriteDCM\n");
-	f1->WriteDcm(resultat);		
+	f1->WriteDcmImplVR(resultat);		
 }
 
 

@@ -1,5 +1,10 @@
 2003-04-7 Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * Data/im_00001 renamed to gdcm-MR-PHILIPS-16-Multi-Seq.dcm
+      * src:
+        - gdcmHeader::GetPubElValSet removed.
+        - gdcmElValSet::WriteDcm, WriteAcr, WriteExplVR, revamped to
+          UpdateGroupLength, WriteElements, Write.
+      * Test/*.cxx changed to agree with above changes
 
 2003-03-31 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.h: LoadElements() is not a public method anymore

@@ -121,14 +121,7 @@ void gdcmHeader::CheckSwap()
    
    entCur = deb + 128;
    if(memcmp(entCur, "DICM", (size_t)4) == 0) {
-      filetype = TrueDicom;
       dbg.Verbose(1, "gdcmHeader::CheckSwap:", "looks like DICOM Version3");
-   } else {
-      filetype = Unknown;
-      dbg.Verbose(1, "gdcmHeader::CheckSwap:", "not a DICOM Version3 file");
-   }
-
-   if(filetype == TrueDicom) {
       // Next, determine the value representation (VR). Let's skip to the
       // first element (0002, 0000) and check there if we find "UL" 
       // - or "OB" if the 1st one is (0002,0001) -,
@@ -145,9 +138,9 @@ void gdcmHeader::CheckSwap()
       // * the 4 bytes of the first tag (0002, 0000),or (0002, 0001)
       // i.e. a total of  136 bytes.
       entCur = deb + 136;
-      ///// FIXME
-      ///// Use gdcmHeader::dicom_vr to test all the possibilities
-      ///// insteadn of just checking for UL, OB and UI !?
+      // FIXME
+      // Use gdcmHeader::dicom_vr to test all the possibilities
+      // instead of just checking for UL, OB and UI !?
       if(  (memcmp(entCur, "UL", (size_t)2) == 0) ||
       	  (memcmp(entCur, "OB", (size_t)2) == 0) ||
       	  (memcmp(entCur, "UI", (size_t)2) == 0) )
@@ -176,11 +169,12 @@ void gdcmHeader::CheckSwap()
       rewind(fp);
       fseek (fp, 132L, SEEK_SET);
       return;
-   } // End of TrueDicom
+   } // End of DicomV3
 
    // Alas, this is not a DicomV3 file and whatever happens there is no file
    // preamble. We can reset the file position indicator to where the data
    // is (i.e. the beginning of the file).
+    dbg.Verbose(1, "gdcmHeader::CheckSwap:", "not a DICOM Version3 file");
    rewind(fp);
 
    // Our next best chance would be to be considering a 'clean' ACR/NEMA file.
@@ -220,6 +214,7 @@ void gdcmHeader::CheckSwap()
    // It is time for despaired wild guesses. So, let's assume this file
    // happens to be 'dirty' ACR/NEMA, i.e. the length of the group is
    // not present. Then the only info we have is the net2host one.
+   filetype = Unknown;
    if (! net2host )
       sw = 0;
    else
@@ -503,8 +498,7 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
  * @return  True when the file is a dicom version 3.
  */
 bool gdcmHeader::IsDicomV3(void) {
-   if (   (filetype == TrueDicom)
-       || (filetype == ExplicitVR)
+   if (   (filetype == ExplicitVR)
        || (filetype == ImplicitVR) )
       return true;
    return false;
@@ -660,7 +654,6 @@ void gdcmHeader::FindLength(gdcmElValue * ElVal) {
  * @return  The suggested integer.
  */
 guint32 gdcmHeader::SwapLong(guint32 a) {
-   // FIXME: il pourrait y avoir un pb pour les entiers negatifs ...
    switch (sw) {
    case    0 :
       break;
@@ -981,42 +974,7 @@ bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
                    "Erroneous Group Length element length.");
    }
  
-   /*  	
-   	// on le traite tt de même (VR peut donner l'info)
-	// faire qq chose + ruse (pas de test si pas de VR)  
-   if ( group % 2 != 0 )
-	// We only have some semantics on documented elements, which are
-	// the even ones.
-      return false;
-       
-    */
-   
-   /*
-   if ( (length != 4) && ( length != 2) )
-      // Swapping only make sense on integers which are 2 or 4 bytes long.
-      		
-		// En fait, pour les entiers de 'Value Multiplicity' supérieur a 1
-		// la longueur n'est pas forcement 2 ou 4 
-		// ET il faudra swapper.
-      return false;
-    */
-   
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
-      return true;
-   
-   
-   // est-ce encore utile?
-   // mieux vaut modifier le source du Dicom Dictionnary 
-   // et remplacer pour ces 2 cas  RET par US
-   
-   if ( (group == 0x0028) && (element == 0x0005) )
-      // The "Image Dimensions" tag is retained from ACR/NEMA and contains
-      // the number of dimensions of the contained object (1 for Signal,
-      // 2 for Image, 3 for Volume, 4 for Sequence).
-      return true;
-   
-   if ( (group == 0x0028) && (element == 0x0200) )
-      // This tag is retained from ACR/NEMA
       return true;
    
    return false;
@@ -1033,7 +991,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
    // is found by indirection through the "Image Location").
    // Inside the group pointed by "Image Location" the searched element
    // is conventionally the element 0x0010 (when the norm is respected).
-   //    When the "Image Location" is absent we default to group 0x7fe0.
+   // When the "Image Location" is absent we default to group 0x7fe0.
    guint16 grPixel;
    guint16 numPixel;
    string ImageLocation = GetPubElValByName("Image Location");
@@ -1043,8 +1001,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
       grPixel = (guint16) atoi( ImageLocation.c_str() );
    }
    if (grPixel != 0x7fe0)
-      // FIXME is this still necessary ?
-      // Now, this looks like an old dirty fix for Philips imager
+      // This is a kludge for old dirty Philips imager.
       numPixel = 0x1010;
    else
       numPixel = 0x0010;
@@ -1068,7 +1025,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
 gdcmDictEntry * gdcmHeader::GetDictEntryByKey(guint16 group, guint16 element) {
    gdcmDictEntry * found = (gdcmDictEntry*)0;
    if (!RefPubDict && !RefShaDict) {
-      dbg.Verbose(0, "FIXME in gdcmHeader::GetDictEntry",
+      dbg.Verbose(0, "gdcmHeader::GetDictEntry",
                      "we SHOULD have a default dictionary");
    }
    if (RefPubDict) {
@@ -1095,7 +1052,7 @@ gdcmDictEntry * gdcmHeader::GetDictEntryByKey(guint16 group, guint16 element) {
 gdcmDictEntry * gdcmHeader::GetDictEntryByName(string Name) {
    gdcmDictEntry * found = (gdcmDictEntry*)0;
    if (!RefPubDict && !RefShaDict) {
-      dbg.Verbose(0, "FIXME in gdcmHeader::GetDictEntry",
+      dbg.Verbose(0, "gdcmHeader::GetDictEntry",
                      "we SHOULD have a default dictionary");
    }
    if (RefPubDict) {
@@ -1573,4 +1530,8 @@ void gdcmHeader::PrintPubElVal(ostream & os) {
 
 void gdcmHeader::PrintPubDict(ostream & os) {
    RefPubDict->Print(os);
+}
+
+int gdcmHeader::Write(FILE * fp, FileType type) {
+   return PubElValSet.Write(fp, type);
 }

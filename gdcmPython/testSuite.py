@@ -524,7 +524,7 @@ class gdcmTestCase(unittest.TestCase):
       Source = gdcmFile(SourceFileName);
       Source.GetImageData()
       TargetFileName = "junk"
-      Target = Source.WriteDcm(TargetFileName)
+      Target = Source.WriteDcmImplVR(TargetFileName)
       Sign = 'c7d6bedae1bef3851f35b29952fbbd4b'
       ComputeSign = md5.new(open(TargetFileName).read()).hexdigest()
       #print ComputeSign

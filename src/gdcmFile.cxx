@@ -45,32 +45,18 @@ gdcmFile::gdcmFile(const char * filename)
  */
 
 size_t gdcmFile::GetImageDataSize(void) {
-	int nbLignes, nbCol, nbFrames, nb;
-	string str_nbFrames, str_nb;
-	// Nombre de Lignes	
-	nbLignes=atoi(gdcmHeader::GetPubElValByNumber(0x0028,0x0010).c_str());
-	// Nombre de Colonnes	
-	nbCol   =atoi(gdcmHeader::GetPubElValByNumber(0x0028,0x0011).c_str());
+	int nb;
+	string str_nb;
 
-	// Nombre de Frames	
-	str_nbFrames=gdcmHeader::GetPubElValByNumber(0x0028,0x0008);
-	
-	if (str_nbFrames == "gdcm::Unfound" ) {
-		nbFrames = 1;
-	} else {
-		nbFrames = atoi(str_nbFrames.c_str() );
-	}
-	
-	// Nombre de Bits Alloues pour le stockage d'un Pixel	
 	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-
 	if (str_nb == "gdcm::Unfound" ) {
 		nb = 16;
 	} else {
 		nb = atoi(str_nb.c_str() );
+      if (nb == 12) nb =16;
 	}
 
-	size_t lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
+	size_t lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() *(nb/8);
 	return (lgrTotale);
 }
 
@@ -373,39 +359,13 @@ int gdcmFile::WriteRawData (string nomFichier) {
  * @return	TODO JPR
  */
 
-int gdcmFile::WriteDcm (string nomFichier) {
-
-// ATTENTION : fonction non terminée (commitée a titre de precaution)
-
-	FILE * fp1;
-	char* filePreamble;
-	fp1 = fopen(nomFichier.c_str(),"wb");
-	if (fp1 == NULL) {
-		printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
-		return (0);
-	} 
-	
-	//	Ecriture Dicom File Preamble
-	filePreamble=(char*)calloc(128,1);
-	fwrite(filePreamble,128,1,fp1);
-	fwrite("DICM",4,1,fp1);
-
-	// un accesseur de + est obligatoire ???
-	// pourtant le gdcmElValSet contenu dans le gdcmHeader 
-	// ne devrait pas être visible par l'utilisateur final (?)
-	
-	GetPubElValSet().Write(fp1);
-		
-	fwrite(Pixels, lgrTotale, 1, fp1);
-
-	fclose (fp1);
-	return(1);
+int gdcmFile::WriteDcmImplVR (string nomFichier) {
+   return WriteBase(nomFichier, ImplicitVR);
 }
 
-int gdcmFile::WriteDcm (const char* nomFichier) {
-   WriteDcm (string (nomFichier));
+int gdcmFile::WriteDcmImplVR (const char* nomFichier) {
+   return WriteDcmImplVR (string (nomFichier));
 }
-	
 	
 /////////////////////////////////////////////////////////////////
 /**
@@ -417,32 +377,7 @@ int gdcmFile::WriteDcm (const char* nomFichier) {
  */
 
 int gdcmFile::WriteDcmExplVR (string nomFichier) {
-
-// ATTENTION : fonction non terminée (commitée a titre de precaution)
-
-	FILE * fp1;
-	char* filePreamble;
-	fp1 = fopen(nomFichier.c_str(),"wb");
-	if (fp1 == NULL) {
-		printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
-		return (0);
-	} 
-	
-	//	Ecriture Dicom File Preamble
-	filePreamble=(char*)calloc(128,1);
-	fwrite(filePreamble,128,1,fp1);
-	fwrite("DICM",4,1,fp1);
-
-	// un accesseur de + est obligatoire ???
-	// pourtant le gdcmElValSet contenu dans le gdcmHeader 
-	// ne devrait pas être visible par l'utilisateur final (?)
-	
-	GetPubElValSet().WriteExplVR(fp1);
-		
-	fwrite(Pixels, lgrTotale, 1, fp1);
-
-	fclose (fp1);
-	return(1);
+   return WriteBase(nomFichier, ExplicitVR);
 }
 	
 /////////////////////////////////////////////////////////////////
@@ -463,24 +398,28 @@ int gdcmFile::WriteDcmExplVR (string nomFichier) {
  */
 
 int gdcmFile::WriteAcr (string nomFichier) {
+   return WriteBase(nomFichier, ACR);
+}
 
-// ATTENTION : fonction non terminée (commitée a titre de precaution)
+int gdcmFile::WriteBase (string nomFichier, FileType type) {
 
-	FILE * fp1;
-	fp1 = fopen(nomFichier.c_str(),"wb");
-	if (fp1 == NULL) {
-		printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
-		return (0);
-	} 
+   FILE * fp1;
+   fp1 = fopen(nomFichier.c_str(),"wb");
+   if (fp1 == NULL) {
+      printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
+      return (0);
+   }
 
-	// un accesseur de + est obligatoire ???
-	// pourtant le gdcmElValSet contenu dans le gdcmHeader 
-	// ne devrait pas être visible par l'utilisateur final (?)
-	
-	GetPubElValSet().WriteAcr(fp1);
-		
-	fwrite(Pixels, lgrTotale, 1, fp1);
+   if ( (type == ImplicitVR) || (type == ExplicitVR) ) {
+      char * filePreamble;
+      // Ecriture Dicom File Preamble
+      filePreamble=(char*)calloc(128,1);
+      fwrite(filePreamble,128,1,fp1);
+      fwrite("DICM",4,1,fp1);
+   }
 
-	fclose (fp1);
-	return(1);
+   gdcmHeader::Write(fp1, type);
+   fwrite(Pixels, lgrTotale, 1, fp1);
+   fclose (fp1);
+   return(1);
 }

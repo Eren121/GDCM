@@ -112,14 +112,6 @@ private:
    bool IsDicomV3(void); 
       
 protected:
-   // FIXME: is this enum still necessary ??
-   enum FileType {
-      Unknown = 0,
-      TrueDicom,
-      ExplicitVR,
-      ImplicitVR,
-      ACR,
-      ACR_LIBIDO};  // CLEANME
    FileType filetype;
    int write(ostream&);   
    int anonymize(ostream&);  // FIXME : anonymize should be a friend ?
@@ -167,13 +159,11 @@ public:
    
    int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   
    int ReplaceOrCreateByNumber(guint16 Group, guint16 Elem, string Value);                                
-
-   gdcmElValSet GetPubElValSet() { return(PubElValSet); }
-   
    int GetXSize(void);  
    int GetYSize(void);
    int GetZSize(void);       
    string GetPixelType(void);  
+   int Write(FILE *, FileType);
    
 };
 

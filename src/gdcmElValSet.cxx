@@ -282,44 +282,29 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    }
 }
 
-int gdcmElValSet::Write(FILE * _fp) {
+int gdcmElValSet::Write(FILE * _fp, FileType type) {
 
-	string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
-	SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);	
-   //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
-   //      values with a VR of UI shall be padded with a single trailing null
-   //      Dans le cas suivant on doit pader manuellement avec un 0.
-	SetElValueLengthByNumber(18, 0x0002, 0x0010); 
-	
-   UpdateGroupLength();
-   WriteElements(TrueDicom, _fp);
-	
-	return(1);
+   if (type == ImplicitVR) {
+      string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
+      SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);
+      //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
+      //      values with a VR of UI shall be padded with a single trailing null
+      //      Dans le cas suivant on doit pader manuellement avec un 0.
+      SetElValueLengthByNumber(18, 0x0002, 0x0010);
+   }
+   if (type == ExplicitVR) {
+      string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
+      SetElValueByNumber(explicitVRTransfertSyntax, 0x0002, 0x0010);
+      // See above comment 
+      SetElValueLengthByNumber(20, 0x0002, 0x0010);
+   }
+
+   if ( (type == ImplicitVR) || (type == ExplicitVR) )
+      UpdateGroupLength();
+   if ( type == ACR)
+      UpdateGroupLength(true);
+
+   WriteElements(type, _fp);
+
+   return(1);
 }
-
-
-int gdcmElValSet::WriteAcr(FILE * _fp) {
-   UpdateGroupLength(true);
-	// Si on fait de l'implicit VR little Endian 
-	// (pour moins se fairche sur processeur INTEL)
-	// penser a forcer le TRANSFERT SYNTAX UID
-   WriteElements(ACR, _fp);
-	
-	return(1);
-}
-
-int gdcmElValSet::WriteExplVR(FILE * _fp) {
-
-	string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
-	SetElValueByNumber(explicitVRTransfertSyntax, 0x0002, 0x0010);	
-   // See comment in gdcmElValSet::Write
-	SetElValueLengthByNumber(20, 0x0002, 0x0010);
-			
-   UpdateGroupLength();
-   WriteElements(ExplicitVR, _fp);
-
-	return(1);
-}
-
-
-

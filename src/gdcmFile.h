@@ -26,6 +26,8 @@ private:
 	void* Data;
 	int Parsed;          // weather allready parsed
 	string OrigFileName; // To avoid file overwrite
+protected:
+   int WriteBase(string FileName, FileType type);
 public:
 	// je ne suis pas sur d'avoir compris *où* il serait légitime de ranger ca.
 	// on pourra tjs le deplacer, et mettre des accesseurs
@@ -90,9 +92,9 @@ public:
 	// Ca sera à l'utilisateur d'appeler son Reader correctement
 		
 	int WriteRawData 	(string nomFichier);
-	int WriteDcm     	(string nomFichier);
-	int WriteDcm     	(const char * nomFichier);
-	int WriteDcmExplVR	(string nomFichier);
+	int WriteDcmImplVR(string nomFichier);
+	int WriteDcmImplVR(const char * nomFichier);
+	int WriteDcmExplVR(string nomFichier);
 	int WriteAcr     	(string nomFichier);
 };
 

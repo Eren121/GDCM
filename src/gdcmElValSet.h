@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.7 2003/04/07 15:04:40 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.8 2003/04/08 15:03:35 frog Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -17,19 +17,13 @@ class GDCM_EXPORT gdcmElValSet {
 	TagElValueHT tagHt;             // Both accesses with a TagKey or with a
 	TagElValueNameHT NameHt;        // the DictEntry.Name are required.
 //FIXME This is redundant with gdcmHeader::FileType enum. That sux !
-enum FileType {
-      TrueDicom,
-      ExplicitVR,
-      ACR};
 public:	
 	void Add(gdcmElValue*);	
 	// TODO
 	//void ReplaceOrCreate(gdcmElValue*);		
 	void Print(ostream &);
 	void PrintByName(ostream &);
-	int  Write(FILE *fp);
-	int  WriteAcr(FILE *fp);
-	int  WriteExplVR(FILE *fp);
+	int  Write(FILE *fp, FileType type);
 
 	gdcmElValue* GetElementByNumber(guint16 group, guint16 element);
 	gdcmElValue* GetElementByName  (string);
