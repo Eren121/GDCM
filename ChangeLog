@@ -1,3 +1,7 @@
+2003-03-04 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * distutilsSwigCPlusPlus.py work around some swig portability
+        bug.
+
 2003-03-03 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Eventually, python/gdcmPython was renamed to gdcmPython. This
         was done in a last ditch attempt to get setup.py _really_
