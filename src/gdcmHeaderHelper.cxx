@@ -37,6 +37,8 @@
    int GetDir(std::string dPath, std::list<std::string> &filenames)
    {
     DIR *dir = opendir( dPath.c_str() );
+    if (dir == NULL)
+       return false;
     struct dirent *entry;
     while((entry = readdir(dir)) != NULL)
     {
@@ -123,7 +125,7 @@ int gdcmHeaderHelper::GetPixelSize() {
  *          - FD    Double,
  * \warning 12 bit images appear as 16 bit.
  * \        24 bit images appear as 8 bit
- * \        DOUBLE images are coded as 64 bits 
+ * \        64 bit means 'DOUBLE' images 
  * \               (no DOUBLE images in kosher DICOM,
  * \                but so usefull for people that miss them ;-)
  * @return  

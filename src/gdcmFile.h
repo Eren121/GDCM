@@ -101,7 +101,7 @@ private:
                       // ==-1 if ImageData never read.
 
    int Parsed;               // weather already parsed
-   std::string OrigFileName; // To avoid file overwrite
+   std::string OrigFileName; // To avoid file overwrite   
 };
 
 //-----------------------------------------------------------------------------

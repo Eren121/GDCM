@@ -111,6 +111,7 @@ protected:
    int anonymize(std::ostream&);  // FIXME : anonymize should be a friend ?
 
 private:
+
 };
 
 //-----------------------------------------------------------------------------

@@ -31,7 +31,36 @@ gdcmHeader::gdcmHeader(const char *InFilename,
                        bool enable_sequences, 
 		       bool ignore_shadow):
    gdcmParser(InFilename,exception_on_error,enable_sequences,ignore_shadow)
-{
+{ 
+   
+   // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
+   // We may encounter the 'RETired' (0x0028, 0x0200) tag
+   // (Image Location") . This Element contains the number of
+   // the group that contains the pixel data (hence the "Pixel Data"
+   // is found by indirection through the "Image Location").
+   // Inside the group pointed by "Image Location" the searched element
+   // is conventionally the element 0x0010 (when the norm is respected).
+   // When the "Image Location" is absent we default to group 0x7fe0.
+   
+   // This IS the right place for the code
+ 
+      std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
+      if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
+         GrPixel = 0x7fe0;                   // default value
+      } else {
+         GrPixel = (guint16) atoi( ImageLocation.c_str() );
+      }   
+      if (GrPixel == 0xe07f) // sometimes Image Location value doesn't follow 
+         GrPixel = 0x7fe0;   // the supposed processor endianity. 
+                             // see gdcmData/cr172241.dcm      
+      if (GrPixel != 0x7fe0) 
+         // This is a kludge for old dirty Philips imager.
+         NumPixel = 0x1010;
+      else
+         NumPixel = 0x0010;
+	 
+      TagKey key = gdcmDictEntry::TranslateToKey(GrPixel, NumPixel);
+      countGrPixel = GetEntry().count(key);       
 }
 
 /**
@@ -298,7 +327,7 @@ int gdcmHeader::GetZSize(void) {
  * @return  The encountered number of Bits Stored, 0 by default.
  *          0 means the file is NOT USABLE. The caller has to check it !
  */
-int gdcmHeader::GetBitsStored(void) { 
+int gdcmHeader::GetBitsStored(void) {  
    std::string StrSize = GetEntryByNumber(0x0028,0x0101);
    if (StrSize == GDCM_UNFOUND)
       return 0;  // It's supposed to be mandatory
@@ -314,7 +343,7 @@ int gdcmHeader::GetBitsStored(void) {
  * @return  The encountered number of Bits Allocated, 0 by default.
  *          0 means the file is NOT USABLE. The caller has to check it !
  */
-int gdcmHeader::GetBitsAllocated(void) { 
+int gdcmHeader::GetBitsAllocated(void) {  // TODO : move to gdcmFile
    std::string StrSize = GetEntryByNumber(0x0028,0x0100);
    if (StrSize == GDCM_UNFOUND)
       return 0; // It's supposed to be mandatory
@@ -330,7 +359,7 @@ int gdcmHeader::GetBitsAllocated(void) {
  * @return  The encountered number of Samples Per Pixel, 1 by default.
  *          (Gray level Pixels)
  */
-int gdcmHeader::GetSamplesPerPixel(void) { 
+int gdcmHeader::GetSamplesPerPixel(void) {  // TODO : move to gdcmFile
    std::string StrSize = GetEntryByNumber(0x0028,0x0002);
    if (StrSize == GDCM_UNFOUND)
       return 1; // Well, it's supposed to be mandatory ...
@@ -345,7 +374,7 @@ int gdcmHeader::GetSamplesPerPixel(void) {
  * 
  * @return  The encountered Planar Configuration, 0 by default.
  */
-int gdcmHeader::GetPlanarConfiguration(void) { 
+int gdcmHeader::GetPlanarConfiguration(void) {
    std::string StrSize = GetEntryByNumber(0x0028,0x0006);
    if (StrSize == GDCM_UNFOUND)
       return 0;
@@ -384,7 +413,7 @@ int gdcmHeader::GetPixelSize(void) {
  * \        24 bit images appear as 8 bit
  * @return  0S if nothing found. NOT USABLE file. The caller has to check
  */
-std::string gdcmHeader::GetPixelType(void) {
+std::string gdcmHeader::GetPixelType(void) { 
    std::string BitsAlloc = GetEntryByNumber(0x0028, 0x0100); // Bits Allocated
    if (BitsAlloc == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
@@ -408,27 +437,25 @@ std::string gdcmHeader::GetPixelType(void) {
    return( BitsAlloc + Signed);
 }
 
+
 /**
  * \ingroup gdcmHeader
  * \brief   Recover the offset (from the beginning of the file) 
  * \        of *image* pixels (not *icone image* pixels, if any !)
  */
-size_t gdcmHeader::GetPixelOffset(void) {
-   // We may encounter the 'RETired' (0x0028, 0x0200) tag
-   // (Image Location") . This Element contains the number of
-   // the group that contains the pixel data (hence the "Pixel Data"
-   // is found by indirection through the "Image Location").
-   // Inside the group pointed by "Image Location" the searched element
-   // is conventionally the element 0x0010 (when the norm is respected).
-   // When the "Image Location" is absent we default to group 0x7fe0.
+size_t gdcmHeader::GetPixelOffset(void) { // TODO : move to gdcmFile
+
    //
    // If the element (0x0088,0x0200) 'icone image sequence' is found
    // (grPixel,numPixel) is stored twice : the first one for the icon
    // the second one for the image ...
    // pb : sometimes , (0x0088,0x0200) exists, but doesn't contain *anything*
    // see gdcmData/MxTwinLossLess.dcm ...
-   guint16 grPixel;
-   guint16 numPixel;
+   
+   
+   /*
+   guint16 grPixel = GrPixel;
+   guint16 numPixel= NumPixel;
    std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
 
    if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
@@ -446,13 +473,15 @@ size_t gdcmHeader::GetPixelOffset(void) {
       numPixel = 0x1010;
    else
       numPixel = 0x0010;
+ */
       
-   IterHT it = GetHeaderEntrySameNumber(grPixel,numPixel);          
+   IterHT it = GetHeaderEntrySameNumber(GrPixel,NumPixel);          
    //std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
-   TagKey key = gdcmDictEntry::TranslateToKey(grPixel,numPixel);
+   TagKey key = gdcmDictEntry::TranslateToKey(GrPixel,NumPixel);
    gdcmHeaderEntry* PixelElement;
   
-   if (tagHT.count(key) == 1)   
+   //if (tagHT.count(key) == 1)
+   if (countGrPixel == 1)   
       PixelElement = (it.first)->second;
    else
       PixelElement = (++it.first)->second;
@@ -470,6 +499,8 @@ size_t gdcmHeader::GetPixelOffset(void) {
  *  @return 0 by default. NOT USABLE file. The caller has to check.
  */
 size_t gdcmHeader::GetPixelAreaLength(void) {
+
+/*
    // If this file complies with the norm we should encounter the
    // "Image Location" tag (0x0028,  0x0200). This tag contains the
    // the group that contains the pixel data (hence the "Pixel Data"
@@ -477,8 +508,10 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
    // Inside the group pointed by "Image Location" the searched element
    // is conventionally the element 0x0010 (when the norm is respected).
    // When the "Image Location" is absent we default to group 0x7fe0.
+   
+
    guint16 grPixel;
-   guint16 numPixel;
+   guint16 numPixel;   
    std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
    if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
       grPixel = 0x7fe0;                   // default value
@@ -493,13 +526,15 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
       numPixel = 0x1010;
    else
       numPixel = 0x0010;
+ */
               
-   IterHT it = GetHeaderEntrySameNumber(grPixel,numPixel);          
+   IterHT it = GetHeaderEntrySameNumber(GrPixel,NumPixel);          
    //std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
-   TagKey key = gdcmDictEntry::TranslateToKey(grPixel,numPixel);
+   TagKey key = gdcmDictEntry::TranslateToKey(GrPixel,NumPixel);
    gdcmHeaderEntry* PixelElement;
   
-   if (tagHT.count(key) == 1)   
+  // if (tagHT.count(key) == 1) 
+  if (countGrPixel)  
       PixelElement = (it.first)->second;
    else
       PixelElement = (++it.first)->second;
@@ -508,7 +543,7 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
       return PixelElement->GetLength();
    else {
       std::cout << "Big trouble : Pixel Element ("
-                << std::hex << grPixel<<","<< numPixel<< ") NOT found" 
+                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found" 
                 << std::endl;
       return 0;
    }
@@ -742,19 +777,19 @@ std::string gdcmHeader::GetTransfertSyntaxName(void) {
  */
 void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    std::string content1;
-   char car[20];	
-   // Assumes HeaderEntry (0x7fe0, 0x0010) exists ...
-   // TODO define private members PixelGroupNumber, PicxelElementNumber
-   //      update them, use them (only necessary for ACR-NEMA, not DICOM)	
+   char car[20];
+   	
+   // Assumes HeaderEntry (GrPixel, NumPixel) is unique ...   
+   // TODO deal with multiplicity (see gdcmData/icone.dcm)	
    sprintf(car,"%d",ImageDataSize);
  
-   gdcmHeaderEntry *a = GetHeaderEntryByNumber(0x7fe0, 0x0010);
+   gdcmHeaderEntry *a = GetHeaderEntryByNumber(GrPixel, NumPixel);
    a->SetLength(ImageDataSize);
  		
    ImageDataSize+=8;
    sprintf(car,"%d",ImageDataSize);
    content1=car;	
-   SetEntryByNumber(content1, 0x7fe0, 0x0000);
+   SetEntryByNumber(content1, GrPixel, NumPixel);
 }
 
 //-----------------------------------------------------------------------------

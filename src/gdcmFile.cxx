@@ -684,11 +684,12 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    // ----------------- End of Special Patch ----------------
    
    // TODO : get the grPixel, numPixel values (for some ACR-NEMA images only)
-   guint16 grPixel =0x7fe0;
-   guint16 numPixel=0x0010;
+   
+   guint16 grPixel =Header->GetGrPixel();
+   guint16 numPixel=Header->GetNumPixel();;
     
    // Update Pixel Data Length
-   // the *last* of the 7fe0,0010, if many.
+   // the *last* of the (GrPixel, NumPixel), if many.
           
    TagKey key = gdcmDictEntry::TranslateToKey(grPixel, numPixel); 
    TagHeaderEntryHT::iterator p2;

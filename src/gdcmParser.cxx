@@ -104,8 +104,9 @@ gdcmParser::gdcmParser(const char *InFilename,
 
    if ( !OpenFile(exception_on_error))
       return;
-   if (ParseHeader())
+   if (ParseHeader()) {
      LoadHeaderEntries();
+   }
    CloseFile();
 
    wasUpdated = 0;  // will be set to 1 if user adds an entry
@@ -381,7 +382,7 @@ bool gdcmParser::CloseFile(void) {
  */
 bool gdcmParser::Write(FILE *fp, FileType type) {
 // ==============
-// TODO The stuff has been rewritten using the chained list instead 
+// TODO The stuff was rewritten using the chained list instead 
 //      of the H table
 //      so we could remove the GroupHT from the gdcmParser
 // To be checked
@@ -1019,15 +1020,10 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
    //       TODO : find a trick (in STL?) to do it, at low cost !
 
    void *ptr;
-
-   // TODO : get grPixel and numPixel
-   guint16 grPixel =0x7fe0;
-   guint16 numPixel=0x0010;
-   //IterHT it = GetHeaderEntrySameNumber(grPixel,numPixel);
-   
-
+      
    // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
-
+   int compte =0;
+   
    for (ListTag::iterator tag2=listEntries.begin();
         tag2 != listEntries.end();
         ++tag2)
@@ -1037,7 +1033,6 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
       lgr = (*tag2)->GetReadLength();
       val = (*tag2)->GetValue().c_str();
       vr =  (*tag2)->GetVR();
- cout << hex << gr << " " << el << "  " << vr <<" lgr " << lgr << endl;     
       if ( type == ACR ) 
       { 
          if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
@@ -1119,14 +1114,17 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
          }
          tokens.clear();
          continue;
-      }     
+      } 
+          
       // Pixels are never loaded in the element !
-      
-      // TODO : FIX --> doesn't work when ICONE is found !!!
-      
-      if ((gr == grPixel) && (el == numPixel) ) 
-         break;
-
+      // we stop writting when Pixel are processed
+      // FIX : we loose trailing elements (RAB, right now)           
+            
+      if ((gr == GrPixel) && (el == NumPixel) ) {
+         compte++;
+	 if (compte == countGrPixel) // we passed *all* the GrPixel,NumPixel   
+            break;
+      }       
       fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
    }
 }
@@ -1240,8 +1238,8 @@ void gdcmParser::LoadHeaderEntries(void) {
       LoadEntryVoidArea(0x0028,0x1221);  // Segmented Red   Palette Color LUT Data
       LoadEntryVoidArea(0x0028,0x1222);  // Segmented Green Palette Color LUT Data
       LoadEntryVoidArea(0x0028,0x1223);  // Segmented Blue  Palette Color LUT Data
-   }
-
+   }   
+   
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to read ACR-LibIDO formated images
    //
@@ -1400,11 +1398,11 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
    guint16 group   = Entry->GetGroup();
    std::string  vr = Entry->GetVR();
    guint16 length16;
-   if( (element == 0x0010) && (group == 0x7fe0) ) 
+   if( (element == NumPixel) && (group == GrPixel) ) 
    {
       dbg.SetDebug(-1);
       dbg.Verbose(2, "gdcmParser::FindLength: ",
-                     "we reached 7fe0 0010");
+                     "we reached (GrPixel,NumPixel)");
    }   
    
    if ( (filetype == ExplicitVR) && (! Entry->IsImplicitVR()) ) 
@@ -1742,19 +1740,25 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
 {
    Entry->SetReadLength(FoundLength); // will be updated only if a bug is found
 		     
-   if ( FoundLength == 0xffffffff) 
-   {
+   if ( FoundLength == 0xffffffff) {
       FoundLength = 0;
+   }
+   
+   guint16 gr =Entry->GetGroup();
+   guint16 el =Entry->GetElement(); 
+     
+   if (FoundLength%2) {
+      std::cout << "Warning : Tag with uneven length " << FoundLength 
+          <<  "in x(" << hex << gr << "," << el <<")" << std::endl;
    }
       
    // Sorry for the patch!  
    // XMedCom did the trick to read some nasty GE images ...
-   else if (FoundLength == 13) 
-   {
+   if (FoundLength == 13) {
       // The following 'if' will be removed when there is no more
       // images on Creatis HDs with a 13 length for Manufacturer...
       if ( (Entry->GetGroup() != 0x0008) ||  
-           ( (Entry->GetElement() != 0x0070) && (Entry->GetElement() != 0x0080) ) ) {
+           ( (Entry->GetElement() != 0x0070) && (Entry->GetElement() != 0x0080) ) ){
       // end of remove area
          FoundLength =10;
          Entry->SetReadLength(10); // a bug is to be fixed
@@ -1764,8 +1768,7 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
    // to fix some garbage 'Leonardo' Siemens images
    // May be commented out to avoid overhead
    else if ( (Entry->GetGroup() == 0x0009) &&
-       ( (Entry->GetElement() == 0x1113) || (Entry->GetElement() == 0x1114) ) )
-   {
+       ( (Entry->GetElement() == 0x1113) || (Entry->GetElement() == 0x1114) ) ){
       FoundLength =4;
       Entry->SetReadLength(4); // a bug is to be fixed 
    } 
@@ -2018,6 +2021,15 @@ bool gdcmParser::CheckSwap() {
       // FIXME
       // Use gdcmParser::dicom_vr to test all the possibilities
       // instead of just checking for UL, OB and UI !?
+      
+      // FIXME : FIXME:
+      // Sometimes (see : gdcmData/icone.dcm) group 0x0002 *is* Explicit VR,
+      // but elem 0002,0010 (Transfert Syntax) tells us the file is *Implicit* VR.
+      // -and it is !- 
+      
+      // The following test is *absolutely useless*, since everything *goes right*
+      // with a *100 % wrong* assumption !!!
+      
       if( (memcmp(entCur, "UL", (size_t)2) == 0) ||
       	  (memcmp(entCur, "OB", (size_t)2) == 0) ||
       	  (memcmp(entCur, "UI", (size_t)2) == 0) )   
@@ -2299,7 +2311,6 @@ gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void) {
       return NULL;
    }
    NewEntry->SetOffset(ftell(fp));  
-   //if ( (g==0x7fe0) && (n==0x0010) ) 
    return NewEntry;
 }
 

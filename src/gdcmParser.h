@@ -98,6 +98,9 @@ public:
 
 // System access
    inline int GetSwapCode(void) { return sw; }
+   guint16 GetGrPixel(void) {return GrPixel;}
+   guint16 GetNumPixel(void) {return NumPixel;}
+   
    guint16 SwapShort(guint16);   // needed by gdcmFile
    guint32 SwapLong(guint32);    // needed by gdcmFile
    guint16 UnswapShort(guint16); // needed by gdcmFile
@@ -142,12 +145,19 @@ protected:
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
 protected:
+   TagHeaderEntryHT tagHT; // H Table (multimap), to provide fast access
+   ListTag listEntries;    // chained list, to keep the 'spacial' ordering
+    
    int enableSequences;
    int printLevel;
    
-   TagHeaderEntryHT tagHT; // H Table (multimap), to provide fast access
-   ListTag listEntries;    // chained list, to keep the 'spacial' ordering 
-   
+   // For some ACR-NEMA images, it's *not* 7fe0, 0010 ...    
+   guint16 GrPixel;
+   guint16 NumPixel;
+   // some files may contain icons; GrPixel,NumPixel appears several times
+   // Let's remember how many times!
+   int countGrPixel;
+      
 private:
    // Read
    bool ParseHeader(bool exception_on_error = false) throw(gdcmFormatError);
@@ -227,7 +237,7 @@ private:
    // order no to polute the screen output. By default,
    // this upper bound is fixed to 64 bytes.   
    guint32 MaxSizePrintEntry;
-
+   
 };
 
 //-----------------------------------------------------------------------------
