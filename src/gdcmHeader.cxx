@@ -289,7 +289,7 @@ void gdcmHeader::FindVR( ElValue *pleCourant) {
 	fseek(fp, PositionOnEntry, SEEK_SET);
 }
 
-void gdcmHeader::RecupLgr( ElValue *pleCourant) {
+void gdcmHeader::FindLength( ElValue *pleCourant) {
 	int lgrLue;
 	guint32 l_gr;
 	unsigned short int l_gr_2;
@@ -307,7 +307,7 @@ void gdcmHeader::RecupLgr( ElValue *pleCourant) {
 			l_gr = SwapLong((guint32)l_gr);
 			
 		} else {
-			//on lit la lgr sur DEUX octets
+			// Length is encoded on 2 bytes.
 			lgrLue=fread (&l_gr_2, (size_t)2,(size_t)1, fp);
 			
 			l_gr_2 = SwapShort((unsigned short)l_gr_2);
@@ -319,17 +319,17 @@ void gdcmHeader::RecupLgr( ElValue *pleCourant) {
 			}
 		}
 	} else {
-		// Explicit VR = 0
-		//on lit la lgr sur QUATRE octets
+		// Either implicit VR or an explicit VR that (at least for this
+		// element) lied a little bit. Length is on 4 bytes.
 		lgrLue=fread (&l_gr, (size_t)4,(size_t)1, fp);
 		l_gr= SwapLong((long)l_gr);
 	}
 
 	// Traitement des curiosites sur la longueur
-	if ( (int)l_gr == 0xffffffff)
+	if ( l_gr == 0xffffffff)
 		l_gr=0; 
 	
-	pleCourant->SetLgrElem(l_gr);
+	pleCourant->SetLength(l_gr);
 }
 
 /**
@@ -386,8 +386,8 @@ short int gdcmHeader::SwapShort(short int a) {
  */
 
 ElValue * gdcmHeader::ReadNextElement(void) {
-	unsigned short g;
-	unsigned short n;
+	guint16 g;
+	guint16 n;
 	guint32 l;
 	size_t lgrLue;
 	ElValue * nouvDcmElem;
@@ -431,19 +431,18 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 		return(NULL);
 	}
 
-	// ------------------------- Lecture longueur element : l
-	
 	FindVR(nouvDcmElem);
-	RecupLgr(nouvDcmElem);
+	FindLength(nouvDcmElem);
 	nouvDcmElem->SetOffset(ftell(fp));
-	l = nouvDcmElem->GetLgrElem();
+	l = nouvDcmElem->GetLength();
 
 	//FIXMEif(!memcmp( VR,"SQ",(size_t)2 )) { // ca annonce une SEQUENCE d'items ?!
 	//FIXME	l_gr=0;                         // on lira donc les items de la sequence 
 	//FIXME}
 	//FIXMEreturn(l_gr);
 
-
+   // Une sequence contient un ensemble de group element repetes n fois
+	// et g=fffe indique la fin (contient une longueur bidon).
 	if(g==0xfffe) l=0;  // pour sauter les indicateurs de 'SQ'
 	
 	
@@ -462,41 +461,58 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	// pas etre charge's !!!! Voir TODO.
 	lgrLue=fread (NewValue, (size_t)l,(size_t)1, fp);
 	
-
-	// ------------------------- Doit-on le Swapper ?
-	
-	if ((n==0) && sw)  {  // n=0 : lgr du groupe : guint32
-		*(guint32 *) NewValue = SwapLong ((*(guint32 *) NewValue));  
-	} else {
-		if(sw) {
-			if ( (g/2)*2-g==0) { /* on ne teste pas les groupes impairs */
-				
-				if ((l==4)||(l==2)) {  // pour eviter de swapper les chaines 
-					                    // de lgr 2 ou 4
-					
-					// FIXME make reference to nouvDcmElem->GetTag
-					string VR = NewTag->GetVR();
-					if (   (VR == "UL") || (VR == "US")
-					    || (VR == "SL") || (VR == "SS")
-					    || (g == 0x0028 && ( n == 0x0005 || n == 0x0200) )) {
-						// seuls (28,5) de vr RET et (28,200) sont des entiers
-						// ... jusqu'a preuve du contraire
-						
-						if(l==4) { 
-							*(guint32 *) NewValue =
-							    SwapLong  ((*(guint32 *) NewValue)); 
-						} else {
-							if(l==2) 
-						    *(unsigned short *) NewValue =
-						    	SwapShort ((*(unsigned short *)NewValue));
-						 }
-					}
-				} /* fin if l==2 ==4 */
-			} /* fin if g pair */
-		} /* fin sw */	
-	}
-	nouvDcmElem->value = NewValue;
+	if ( IsAnInteger(g, n, NewTag->GetVR(), l) ) {
+		// CLEANME THe following is really UGLY ! 
+		if( l == 4 ) {
+			*(guint32 *) NewValue = SwapLong  ((*(guint32 *) NewValue)); 
+		} else {
+			if( l == 2 )
+				*(guint16 *) NewValue = SwapShort ((*(guint16 *)NewValue));
+		}
+		//FIXME: don't we have to distinguish guin16 and guint32
+		//FIXME: make the following an util fonction
+		ostringstream s;
+		s << *(guint32 *) NewValue;
+		nouvDcmElem->value = s.str();
+		g_free(NewValue);
+	} else
+		nouvDcmElem->value = NewValue;
 	return nouvDcmElem;
+}
+
+bool gdcmHeader::IsAnInteger(guint16 group, guint16 element,
+	                             string vr, guint32 length ) {
+	// When we have some semantics on the element we just read, and we
+	// a priori now we are dealing with an integer, then we can swap it's
+	// element value properly.
+	if ( element == 0 )  {  // This is the group length of the group
+		if (length != 4)
+			dbg.Error("gdcmHeader::ShouldBeSwaped", "should be four");
+		return true;
+	}
+	
+	if ( group % 2 != 0 )
+		// We only have some semantics on documented elements, which are
+		// the even ones.
+		return false;
+	
+	if ( (length != 4) && ( length != 2) )
+		// Swapping only make sense on integers which are 2 or 4 bytes long.
+		return false;
+	
+	if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
+		return true;
+	
+	if ( (group == 0x0028) && (element == 0x0005) )
+		// This tag is retained from ACR/NEMA
+		// CHECKME Why should "Image Dimensions" be a single integer ?
+		return true;
+	
+	if ( (group == 0x0028) && (element == 0x0200) )
+		// This tag is retained from ACR/NEMA
+		return true;
+	
+	return false;
 }
 
 /**
@@ -505,12 +521,6 @@ ElValue * gdcmHeader::ReadNextElement(void) {
  *          (Pixel Data) then keep the info aside.
  */
 void gdcmHeader::SetAsidePixelData(ElValue* elem) {
-	  /// FIXME this wall process is bizarre:
-	  // on peut pas lire pixel data et pixel location puis
-	  // a la fin de la lecture aller interpreter ce qui existe ?
-	  // penser a nettoyer les variables globales associes genre
-	  // PixelsTrouve ou grPixelTrouve...
-	  //
 	// They are two cases :
 	// * the pixel data (i.e. the image or the volume) is pointed by it's
 	//   default official tag (0x7fe0,0x0010),
@@ -527,6 +537,20 @@ void gdcmHeader::SetAsidePixelData(ElValue* elem) {
 	//     * if it does not exist, look for the "Pixel Location" tag.
 	//  2/ look at the proper tag ("Pixel Data" or "Pixel Location" when
 	//     it exists) what the offset is.
+	cout << "aaaaaaaaaaaaaaaaaaaaa";
+	// PubElVals.PrintByName(cout);
+	ostringstream val;
+	val << hex << GetPubElValByName("Image Location");
+	cout << GetPubElValByName("Image Location") << endl;
+	cout <<hex << GetPubElValByName("Image Location") << dec << endl;
+	cout << "aaaa" << hex << val << dec << endl;
+	if (val)
+		//grPixel  = val.hex().str();
+		grPixel = 0;
+	else
+		grPixel  = 0x7FE0;
+	return;
+
 	guint16 g;
 	guint16 n;
 	g = elem->GetGroup();
@@ -542,7 +566,7 @@ void gdcmHeader::SetAsidePixelData(ElValue* elem) {
 			if (g == 0x0028) {
 				if (n == 0x0200) {
 					grPixelTrouve = 1;
-					char* NewValue = (char*)g_malloc(elem->GetLgrElem()+1);
+					char* NewValue = (char*)g_malloc(elem->GetLength()+1);
 					// FIXME: not very elegant conversion
 					for(int i=0;i<4;i++)
 						*((char*)(&grPixel)+i) = *(NewValue+i); 
@@ -586,7 +610,12 @@ gdcmDictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
 	return found;
 }
 
-string gdcmHeader::GetPubElValByNumber(unsigned short, unsigned short) {
+string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
+	return PubElVals.GetElValue(group, element);
+}
+
+string gdcmHeader::GetPubElValByName(string TagName) {
+	return PubElVals.GetElValue(TagName);
 }
 
 /**
@@ -600,15 +629,15 @@ void gdcmHeader::BuildHeader(void) {
 	ElValue * newElValue = (ElValue *)0;
 	
 	rewind(fp);
-	rewind(fp);
 	CheckSwap();
 	while ( (newElValue = ReadNextElement()) ) {
 		PubElVals.Add(newElValue);
 	}
+	SetAsidePixelData((ElValue*)0);
 }
 
-int gdcmHeader::PrintPubElVal(ostream & os) {
-	return PubElVals.Print(os);
+void gdcmHeader::PrintPubElVal(ostream & os) {
+	PubElVals.Print(os);
 }
 
 void gdcmHeader::PrintPubDict(ostream & os) {

@@ -9,7 +9,6 @@ gdcmDict::gdcmDict(char * FileName) {
 	guint16 group, element;
 	// CLEANME : use defines for all those constants
 	char buff[1024];
-	char trash[10];
 	TagKey key, vr, fourth, name;
 	while (!from.eof()) {
 		from >> hex >> group >> element;

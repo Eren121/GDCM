@@ -1,3 +1,14 @@
+2002-10-22 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader.cxx :
+        - RecupLgr renamed to FindLength and cut off with new IsAnInteger
+          method.
+        - SetLgrElem renamed to SetLength
+        - GetLgrElem renamed to GetLength
+        - ~gdcmHeader() made virtual to pesky warning messages at compile.
+      * src/gdcmElValSet.cxx fixed both GetElValue methods
+      * Dicts/dicomV3.dic falacious entry [7fe0 0010 OT PXL Pixel Data]
+        due to IdoDude was cleaned out.
+
 2002-10-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx RecupLgr split in FindVR and RecupLgr. FindVR
         concentrates on finding the value representation (when it exists).

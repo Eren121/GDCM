@@ -134,11 +134,11 @@ public:
 	ElValue(gdcmDictEntry*);
 	void   SetVR(string);
 	string GetVR(void);
-	void SetLgrElem(guint32 l) {LgrElem = l; };
+	void SetLength(guint32 l){LgrElem = l; };
 	void SetValue(string val){ value = val; };
 	void SetOffset(size_t of){ Offset = of; };
 	string  GetValue(void)   { return value; };
-	guint32 GetLgrElem(void) { return LgrElem; };
+	guint32 GetLength(void) { return LgrElem; };
 	size_t  GetOffset(void)  { return Offset; };
 	guint16 GetGroup(void)   { return entry->GetGroup(); };
 	guint16 GetElement(void) { return entry->GetElement(); };
@@ -147,14 +147,18 @@ public:
 };
 
 typedef map<TagKey, ElValue*> TagElValueHT;
+typedef map<string, ElValue*> TagElValueNameHT;
 // Container for a set of succefully parsed ElValues.
 class ElValSet {
 	// We need both accesses with a TagKey and the Dicentry.Name
 	TagElValueHT tagHt;
-	map<string, ElValue*> NameHt;
+	TagElValueNameHT NameHt;
 public:
-	int Add(ElValue*);
-	int Print(ostream &);
+	void Add(ElValue*);
+	void Print(ostream &);
+	void PrintByName(ostream &);
+	string GetElValue(guint32 group, guint32 element);
+	string GetElValue(string);
 };
 
 // The various entries of the explicit value representation (VR) shall
@@ -202,7 +206,7 @@ private:
 
 	void Initialise(void);
 	void CheckSwap(void);
-	void RecupLgr(ElValue *);
+	void FindLength(ElValue *);
 	void FindVR(ElValue *);
 	guint32 SwapLong(guint32);
 	short int SwapShort(short int);
@@ -225,9 +229,10 @@ protected:
 /////           See below for an example of how anonymize might be implemented.
 	int anonymize(ostream&);
 public:
+	bool IsAnInteger(guint16, guint16, string, guint32);
 	virtual void BuildHeader(void);
 	gdcmHeader(char* filename);
-	~gdcmHeader();
+	virtual ~gdcmHeader();
 
 	int SetPubDict(string filename);
 	// When some proprietary shadow groups are disclosed, whe can set
@@ -247,7 +252,7 @@ public:
 	// of C/C++ vs Python).
 	string GetPubElValRepByName(string TagName);
 	string GetPubElValRepByNumber(guint16 group, guint16 element);
-	int    PrintPubElVal(ostream &);
+	void   PrintPubElVal(ostream &);
 	void   PrintPubDict(ostream &);
 	  
 	// Same thing with the shadow :

@@ -1385,6 +1385,5 @@
 6000 3000 OW OLY Data
 6000 4000 LO OLY Comments (RET)
 7fe0 0000 UL PXL Group Length
-7fe0 0010 OT PXL Pixel Data
 fffe e000 UL XX   item
 ffff ffff UKN UKN Unknown Code
