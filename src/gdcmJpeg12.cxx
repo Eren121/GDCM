@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg12.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:52:55 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/10/08 17:24:54 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@
  */
 
 extern "C" {
-#include <stdio.h>
+//#include <stdio.h>
 #include "src/jpeg/libijg12/jconfig.h"
 #include "src/jpeg/libijg12/jpeglib.h"
 //#include "jconfig12.h"
@@ -107,7 +107,8 @@ typedef struct my_error_mgr * my_error_ptr;
 /*
  * Here's the routine that will replace the standard error_exit method:
  */
-METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
+METHODDEF(void) my_error_exit (j_common_ptr cinfo)
+{
    /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
    my_error_ptr myerr = (my_error_ptr) cinfo->err;
 
@@ -135,7 +136,8 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @return 1 on success, 0 on error
  */
  
-bool gdcmFile::gdcm_read_JPEG_file12 (FILE* fp,void* image_buffer) {
+bool gdcmFile::gdcm_read_JPEG_file12 (FILE* fp,void* image_buffer)
+{
    char *pimage;
 
    /* This struct contains the JPEG decompression parameters and pointers to
@@ -340,7 +342,7 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE* fp,void* image_buffer) {
 
    /* And we're done! */
 
-   return(true);
+   return true;
 }
 
 /*

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg8.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:52:55 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/10/08 17:24:54 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -368,7 +368,8 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @return 1 on success, 0 on error
  */
  
-bool gdcmFile::gdcm_read_JPEG_file (FILE* fp, void* image_buffer) {
+bool gdcmFile::gdcm_read_JPEG_file (FILE* fp, void* image_buffer)
+{
    char* pimage;
 
    /* This struct contains the JPEG decompression parameters and pointers to
@@ -423,7 +424,8 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE* fp, void* image_buffer) {
   jerr.pub.error_exit = my_error_exit;
   
   /* Establish the setjmp return context for my_error_exit to use. */  
-  if (setjmp(jerr.setjmp_buffer)) {
+  if (setjmp(jerr.setjmp_buffer))
+  {
     /* If we get here, the JPEG code has signaled an error.
      * We need to clean up the JPEG object, close the input file, and return.
      */
@@ -525,7 +527,8 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE* fp, void* image_buffer) {
 #endif //GDCM_JPG_DEBUG
    pimage=(char *)image_buffer;
   
-   while (cinfo.output_scanline < cinfo.output_height) {
+   while (cinfo.output_scanline < cinfo.output_height)
+   {
       /* jpeg_read_scanlines expects an array of pointers to scanlines.
        * Here the array is only one element long, but you could ask for
        * more than one scanline at a time if that's more convenient.
@@ -535,14 +538,15 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE* fp, void* image_buffer) {
      // on ecrit directement les pixels
      // (on DEVRAIT pouvoir)
     
-    //(void) jpeg_read_scanlines(&cinfo, pimage, 1);
-    
      (void) jpeg_read_scanlines(&cinfo, buffer, 1);
       
-     if ( BITS_IN_JSAMPLE == 8) {
+     if ( BITS_IN_JSAMPLE == 8)
+     {
          memcpy( pimage, buffer[0],row_stride); 
          pimage+=row_stride;
-     } else {
+     }
+     else
+     {
          memcpy( pimage, buffer[0],row_stride*2 ); // FIXME : *2  car 16 bits?!?
          pimage+=row_stride*2;                     // FIXME : *2 car 16 bits?!?     
      }
@@ -581,7 +585,7 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE* fp, void* image_buffer) {
 
    /* And we're done! */
 
-   return(true);
+   return true;
 }
 
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 17:02:53 $
-  Version:   $Revision: 1.136 $
+  Date:      $Date: 2004/10/08 17:24:54 $
+  Version:   $Revision: 1.137 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1068,10 +1068,16 @@ bool gdcmFile::ReadPixelData(void* destination)
             // Reading Fragment pixels
             res = gdcm_read_JPEG_file (fp,destination);
          }
-         else
+         else if ( Header->GetBitsStored() == 12)
          {
             // Reading Fragment pixels
             res = gdcm_read_JPEG_file12 (fp,destination);
+         }
+         else
+         {
+            // other JPEG lossy not supported
+            dbg.Error(" gdcmFile::ReadPixelData : unknown jpeg lossy compression");
+            return 0;
          }
          // ------------------------------------- endif (JPEGLossy)
       }
