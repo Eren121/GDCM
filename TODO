@@ -122,11 +122,25 @@ Comments:
      What should the wrapper do in such a case !?
  * Frog: what does VM stand for ?
 -----------------------------------------------------------------------------
+Description: Add information on supported imagers (constructor/model)
+Date: 2004 9 7
+Attributed:
+Details: in order to promote gdcm make a list (on the web pages)
+         of images successfully parsed based on a constructor/model ordering
+Comments: * frog: gdcmData only lists pathological images. How to collect
+    the ones gdcm works smoothly with (hopefully gdcmData is a small
+    subset of what we would like).        
+-----------------------------------------------------------------------------
+Description: Add a GetVersion() global function.
+Date: 2003 july 7
+Attributed:
+Details: This is to be used for version assertion with gdcmPython
+Comments:
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
   be made at the cost of memory consumption (refer to header of 
   vtk/vtkGdcmHeader.cxx)
------------------------------------------------------------------------------
-* Add a GetVersion() global function.
 -----------------------------------------------------------------------------
 * gdcmElValSet::SetElValueLengthByNumber IMNSHO should be trashed.
   It's only purpose is a onliner substitute to calling GetElValueByNumber
@@ -147,7 +161,7 @@ Comments:
   would allow those method to avoid artificial calls to ElValue::GetElement(),
   ElValue::GetVR()...
 -----------------------------------------------------------------------------
-* Eat leanding_trailing_whitespace (found in python/gdcmPython/gdcmi) should
+* Eat leading_trailing_whitespace (found in python/gdcmPython/gdcmi) should
   be used when parsing the dictionary in C++ !
 -----------------------------------------------------------------------------
 * Group length is not a unique tag in a file. Hence avoid putting it
