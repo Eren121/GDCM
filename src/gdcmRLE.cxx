@@ -79,7 +79,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
       }
 
       if (nbRleSegments>1) { 
-         for(int k=1; k<=nbRleSegments-1; k++) { // reading RLE Segments
+         for(unsigned int k=1; k<=nbRleSegments-1; k++) { // reading RLE Segments
             RleSegmentLength[k]=RleSegmentOffsetTable[k+1]-RleSegmentOffsetTable[k];
             ftellRes=ftell(fp);
             fragmentBegining=ftell(fp);   
@@ -137,6 +137,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
 // RLE LossLess Fragment
 int gdcmFile::gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
                                      long uncompressedSegmentSize, FILE *fp) {
+	 (void)lengthToDecode;	//FIXME
    long ftellRes;
    int count;
    long numberOfOutputBytes=0;

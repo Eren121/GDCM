@@ -46,16 +46,16 @@ bool gdcmFile::ParsePixelData(void) {
       nb = atoi(str_nb.c_str() );
       if (nb == 12) nb =16;
    }
-   int nBytes= nb/8;
+   //int nBytes= nb/8;	//FIXME
       
-   int taille = Header->GetXSize() * Header->GetYSize() * Header->GetSamplesPerPixel(); 
+   //int taille = Header->GetXSize() * Header->GetYSize() * Header->GetSamplesPerPixel(); 
          
    printf ("Checking the Dicom-encapsulated Jpeg/RLE Pixels\n");
       
    guint16 ItemTagGr,ItemTagEl; 
    int ln;
    long ftellRes;
-   char * destination = NULL;
+   //char * destination = NULL;
 
   // -------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
 
@@ -70,13 +70,13 @@ bool gdcmFile::ParsePixelData(void) {
          ItemTagEl=Header->SwapShort(ItemTagEl);            
       }
       printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
-                ftellRes,ItemTagGr,ItemTagEl );
+                (unsigned)ftellRes,ItemTagGr,ItemTagEl );
       ftellRes=ftell(fp);
       fread(&ln,4,1,fp); 
       if(Header->GetSwapCode()) 
          ln=Header->SwapLong(ln);    // Basic Offset Table Item Length
-      printf("at %x : Basic Offset Table Item Length (??) %d x(%08x)\n",
-            ftellRes,ln,ln);
+      printf("at %x : Basic Offset Table Item Length (\?\?) %d x(%08x)\n",
+            (unsigned)ftellRes,ln,ln);
       if (ln != 0) {
          // What is it used for ??
          char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
@@ -96,7 +96,7 @@ bool gdcmFile::ParsePixelData(void) {
          ItemTagEl=Header->SwapShort(ItemTagEl);            
       }  
       printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-            ftellRes,ItemTagGr,ItemTagEl );
+            (unsigned)ftellRes,ItemTagGr,ItemTagEl );
       
       while ( ( ItemTagGr==0xfffe) && (ItemTagEl!=0xe0dd) ) { // Parse fragments
       
@@ -105,7 +105,7 @@ bool gdcmFile::ParsePixelData(void) {
          if(Header->GetSwapCode()) 
             ln=Header->SwapLong(ln);    // length
          printf("      at %x : fragment length %d x(%08x)\n",
-                ftellRes, ln,ln);
+                (unsigned)ftellRes, ln,ln);
 
         // destination += taille * nBytes; // location in user's memory        
         //printf ("      Destination will be x(%x) = %d \n",
@@ -123,7 +123,7 @@ bool gdcmFile::ParsePixelData(void) {
             ItemTagEl=Header->SwapShort(ItemTagEl);            
          }
          printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-               ftellRes,ItemTagGr,ItemTagEl );
+               (unsigned)ftellRes,ItemTagGr,ItemTagEl );
       } 
 
    } else {
@@ -142,14 +142,14 @@ bool gdcmFile::ParsePixelData(void) {
          ItemTagEl=Header->SwapShort(ItemTagEl);            
       }
       printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
-                ftellRes,ItemTagGr,ItemTagEl );
+                (unsigned)ftellRes,ItemTagGr,ItemTagEl );
          // Item Length
       ftellRes=ftell(fp);
       fread(&ln,4,1,fp); 
       if(Header->GetSwapCode()) 
          ln=Header->SwapLong(ln);    // Basic Offset Table Item Length
-      printf("at %x : Basic Offset Table Item Length (??) %d x(%08x)\n",
-            ftellRes,ln,ln);
+      printf("at %x : Basic Offset Table Item Length (\?\?) %d x(%08x)\n",
+            (unsigned)ftellRes,ln,ln);
       if (ln != 0) {
          // What is it used for ??
          char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
@@ -169,7 +169,7 @@ bool gdcmFile::ParsePixelData(void) {
          ItemTagEl=Header->SwapShort(ItemTagEl);            
       }  
       printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-            ftellRes,ItemTagGr,ItemTagEl );
+            (unsigned)ftellRes,ItemTagGr,ItemTagEl );
 
       // while 'Sequence Delimiter Item' (fffe,e0dd) not found
       while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
@@ -179,7 +179,7 @@ bool gdcmFile::ParsePixelData(void) {
          if(Header->GetSwapCode()) 
             fragmentLength=Header->SwapLong(fragmentLength);    // length
          printf("      at %x : 'fragment' length %d x(%08x)\n",
-                ftellRes, fragmentLength,fragmentLength);
+                (unsigned)ftellRes, (unsigned)fragmentLength,(unsigned)fragmentLength);
                        
           //------------------ scanning (not reading) fragment pixels
  
@@ -194,17 +194,17 @@ bool gdcmFile::ParsePixelData(void) {
             if(Header->GetSwapCode())
                RleSegmentOffsetTable[k]=Header->SwapLong(RleSegmentOffsetTable[k]);
             printf("        at : %x Offset Segment %d : %d (%x)\n",
-                    ftellRes,k,RleSegmentOffsetTable[k],
+                    (unsigned)ftellRes,k,RleSegmentOffsetTable[k],
                     RleSegmentOffsetTable[k]);
          }
 
           if (nbRleSegments>1) { // skipping (not reading) RLE Segments
-             for(int k=1; k<=nbRleSegments-1; k++) { 
+             for(unsigned int k=1; k<=nbRleSegments-1; k++) { 
                 RleSegmentLength[k]=   RleSegmentOffsetTable[k+1]
                                      - RleSegmentOffsetTable[k];
                 ftellRes=ftell(fp);
                 printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
-                           k,RleSegmentLength[k],RleSegmentLength[k], ftellRes);
+                           k,(unsigned)RleSegmentLength[k],(unsigned)RleSegmentLength[k], (unsigned)ftellRes);
                 fseek(fp,RleSegmentLength[k],SEEK_CUR);    
              }
           }
@@ -212,8 +212,8 @@ bool gdcmFile::ParsePixelData(void) {
                                          - RleSegmentOffsetTable[nbRleSegments];
           ftellRes=ftell(fp);
           printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
-                           nbRleSegments,RleSegmentLength[nbRleSegments],
-                           RleSegmentLength[nbRleSegments],ftellRes);
+                           nbRleSegments,(unsigned)RleSegmentLength[nbRleSegments],
+                           (unsigned)RleSegmentLength[nbRleSegments],(unsigned)ftellRes);
 
           fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR); 
             
@@ -227,7 +227,7 @@ bool gdcmFile::ParsePixelData(void) {
             ItemTagEl=Header->SwapShort(ItemTagEl);            
          }
          printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
-               ftellRes,ItemTagGr,ItemTagEl );
+               (unsigned)ftellRes,ItemTagGr,ItemTagEl );
       } 
    }
    return true;            

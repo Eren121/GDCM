@@ -5,22 +5,22 @@
 ##CXXFLAGS = @CXXFLAGS@
 
 SET(libgdcmijpeg8_la_SOURCES
-	jcapimin.c 
-	jcapistd.c 
-	jctrans.c 
-	jcparam.c
-	jdatadst.c 
-	jcinit.c 
-	jcmaster.c 
-	jcmarker.c 
-	jcmainct.c 
-	jcprepct.c 
-	jccoefct.c 
-	jccolor.c 
-	jcsample.c 
-	jchuff.c 
-	jcphuff.c 
-	jcdctmgr.c 
+#	jcapimin.c 
+#	jcapistd.c 
+#	jctrans.c 
+#	jcparam.c
+#	jdatadst.c 
+#	jcinit.c 
+#	jcmaster.c 
+#	jcmarker.c 
+#	jcmainct.c 
+#	jcprepct.c 
+#	jccoefct.c 
+#	jccolor.c 
+#	jcsample.c 
+#	jchuff.c 
+#	jcphuff.c 
+#	jcdctmgr.c 
 	jfdctfst.c 
 	jfdctflt.c 
 	jfdctint.c 

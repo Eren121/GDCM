@@ -47,7 +47,7 @@ void Tokenize (const std::string& str,
 std::string CreateCleanString(std::string s) {
    std::string str=s;
 
-   for(int i=0;i<str.size();i++)
+   for(unsigned int i=0;i<str.size();i++)
    {
       if(!isprint(str[i]))
          str[i]='.';

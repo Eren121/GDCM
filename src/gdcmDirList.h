@@ -21,9 +21,9 @@ public :
 
    std::string GetDirName(void);
 
-   /// Character \ 
+   /// Character '\' 
    static const char SEPARATOR_X;
-   /// Character /  
+   /// Character '/'  
    static const char SEPARATOR_WIN;
    /// depending on the O.S.
    static const std::string SEPARATOR;

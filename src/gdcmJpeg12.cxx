@@ -21,7 +21,7 @@
 #define jpeg_read_header	jReadHeader
 #define jpeg_read_scanlines	jReadScanlines
 #define jpeg_finish_decompress	jFinDecompress
-#define jpeg_create_decompress  jCreaDecompress
+//#define jpeg_create_decompress  jCreaDecompress //FIXME
 
 // -----------------
 #define jpeg_std_error		jStdError

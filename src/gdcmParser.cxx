@@ -84,6 +84,7 @@ gdcmParser::gdcmParser(const char *inFilename,
  * @param   exception_on_error
  */
 gdcmParser::gdcmParser(bool exception_on_error) {
+	(void)exception_on_error;
    enableSequences=0;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
@@ -751,7 +752,7 @@ void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem)
       return NULL;
    size_t o =(size_t)Element->GetOffset();
    fseek(fp, o, SEEK_SET);
-   int l=Element->GetLength();
+   size_t l=Element->GetLength();
    void * a = malloc(l);
    if(!a) 
       return NULL;
@@ -979,7 +980,7 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
    { 
       // FIXME: g++ -Wall -Wstrict-prototypes reports on following line:
       //        warning: unsigned int format, different type arg
-      sscanf(g->first.c_str(),"%x",&gr_bid);
+      sscanf(g->first.c_str(),"%x",&gr_bid); //FIXME
       tk = g->first + "|0000";   // generate the element full tag
                      
       if ( tagHT.count(tk) == 0) // if element 0x0000 not found
@@ -1070,6 +1071,7 @@ void gdcmParser::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
  */
 void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 {
+   (void)type;
    guint16 group  = tag->GetGroup();
    std::string vr = tag->GetVR();
    guint32 lgr    = tag->GetReadLength();
@@ -1092,7 +1094,7 @@ void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    if (vr == "US" || vr == "SS") 
    {
       // some 'Short integer' fields may be mulivaluated
-      // each single value is separated from the next one by \
+      // each single value is separated from the next one by '\'
       // we split the string and write each value as a short int
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
@@ -1107,7 +1109,7 @@ void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
       return;
    }
       // some 'Integer' fields may be mulivaluated
-      // each single value is separated from the next one by \
+      // each single value is separated from the next one by '\'
       // we split the string and write each value as an int
    if (vr == "UL" || vr == "SL") 
    {
@@ -1301,7 +1303,7 @@ guint16 gdcmParser::UnswapShort(guint16 a) {
  * @return  false if file is not ACR-NEMA / DICOM
  */
 bool gdcmParser::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
-   
+   (void)exception_on_error;
    rewind(fp);
    if (!CheckSwap())
       return false;
@@ -1503,7 +1505,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
  */
  void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry *Entry) {
    guint16 element = Entry->GetElement();
-   guint16 group   = Entry->GetGroup();
+   //guint16 group   = Entry->GetGroup(); //FIXME
    std::string  vr = Entry->GetVR();
    guint16 length16;
    
@@ -1737,7 +1739,7 @@ std::string gdcmParser::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
 
    // When short integer(s) are expected, read and convert the following 
    // n * 2 bytes properly i.e. as a multivaluated strings
-   // (each single value is separated fromthe next one by \
+   // (each single value is separated fromthe next one by '\'
    // as usual for standard multivaluated filels
    // Elements with Value Multiplicity > 1
    // contain a set of short integers (not a single one) 
@@ -1759,7 +1761,7 @@ std::string gdcmParser::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
 
    // When integer(s) are expected, read and convert the following 
    // n * 4 bytes properly i.e. as a multivaluated strings
-   // (each single value is separated fromthe next one by \
+   // (each single value is separated fromthe next one by '\'
    // as usual for standard multivaluated filels
    // Elements with Value Multiplicity > 1
    // contain a set of integers (not a single one) 

@@ -254,7 +254,8 @@ void * gdcmFile::GetImageData (void) {
  *          failure e.g. MaxSize is lower than necessary.
  */
 size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
-   size_t l = GetImageDataIntoVectorRaw (destination, MaxSize);
+   //size_t l = GetImageDataIntoVectorRaw (destination, MaxSize);
+	 GetImageDataIntoVectorRaw (destination, MaxSize);
    PixelRead=0 ; // no PixelRaw
    if (!Header->HasLUT())
       return lgrTotale; 

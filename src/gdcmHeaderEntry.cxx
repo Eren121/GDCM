@@ -124,7 +124,10 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
       if (v == "4294967295") // to avoid troubles in convertion 
          sprintf (st," x(ffffffff)");
       else
-         sprintf(st," x(%x)",(unsigned long)atof(v.c_str()));
+				{
+         //sprintf(st," x(%x)",(unsigned long)atof(v.c_str()));
+         sprintf(st," x(%x)", atoi(v.c_str()));//FIXME
+				 }
       s << st;
    }
    s << std::endl;

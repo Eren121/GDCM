@@ -642,6 +642,9 @@ void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,
       case gdcmDicomDir::GDCM_DICOMDIR_IMAGE:
          AddDicomDirImageToEnd(begin,end);
          break;
+			case gdcmDicomDir::GDCM_DICOMDIR_NONE:
+				 AddDicomDirImageToEnd(begin,end);	//FIXME
+				 break;
    }
 }
 
@@ -929,7 +932,8 @@ void gdcmDicomDir::UpdateDirectoryRecordSequenceLength() {
          offset +=  4; // delimiters don't have a value.     
       }            
    }   
-   bool res=SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
+   //bool res=SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
+	 SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
    return;
 }
 

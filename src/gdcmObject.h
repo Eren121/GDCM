@@ -61,7 +61,7 @@ protected:
  // constructor and destructor are protected to avoid end user to instanciate this class.
    gdcmObject(ListTag::iterator begin,ListTag::iterator end,
               TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
-   ~gdcmObject(void);
+   virtual ~gdcmObject(void);
 
    void FillObject(std::list<gdcmElement> elemList);
 
