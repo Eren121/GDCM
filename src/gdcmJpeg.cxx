@@ -271,7 +271,7 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
    /* Step 5: Start decompressor */
 #ifdef GDCM_DEBUG
    printf("Entree Step 5\n");
-#endif GDCM_DEBUG
+#endif //GDCM_DEBUG
 
    (void) jpeg_start_decompress(&cinfo);
    /* We can ignore the return value since suspension is not possible
