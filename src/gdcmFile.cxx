@@ -126,7 +126,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
       CloseFile();
       return false;
    }
-        
+
 // -------------------------  Compacted File (12 Bits Per Pixel)
 
    /* unpack 12 Bits pixels into 16 Bits pixels */
@@ -152,7 +152,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
       }
       return(true);
    }
-
+        
 
 // -------------------------  Uncompressed File
     
@@ -171,8 +171,18 @@ bool gdcmFile::ReadPixelData(void* destination) {
          return true;
       }
    } 
+
+   
+// ------------------------- Run Length Encoding
+
+      if (gdcmHeader::IsRLELossLessTransferSyntax()) {
+            int res = (bool)gdcm_read_RLE_file (destination);
+            return res; 
+      }  
+ 
+
     
- // ------------------------  Compressed File .
+// ----------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
        
       int nb;
       std::string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
@@ -184,22 +194,11 @@ bool gdcmFile::ReadPixelData(void* destination) {
       }
       int nBytes= nb/8;
       
-      int taille = GetXSize() *  GetYSize()  * GetSamplesPerPixel(); 
-          
-
- 
-  // ---------------- RLE
-
-      if (gdcmHeader::IsRLELossLessTransferSyntax()) {
-            int res = (bool)gdcm_read_RLE_file (destination);
-            return res; 
-      }
-
-  // ----------------- SingleFrame/Multiframe JPEG 
-    
+      int taille = GetXSize() *  GetYSize()  * GetSamplesPerPixel();    
       long fragmentBegining; // for ftell, fseek
       
-      bool b = gdcmHeader::IsJPEG2000();
+      bool jpg2000 =     IsJPEG2000();
+      bool jpgLossless = IsJPEGLossless();
        
       bool res = true;
       guint16 ItemTagGr,ItemTagEl;
@@ -243,39 +242,30 @@ bool gdcmFile::ReadPixelData(void* destination) {
       
          fragmentBegining=ftell(fp);   
  
-         if (b)
+         if (jpg2000) {          // JPEG 2000 :    call to ???
+	 
             res = (bool)gdcm_read_JPEG2000_file (destination);  // Not Yet written 
-            
-         else if (IsJPEGLossless()) { // JPEG LossLess : call to xmedcom JPEG
+
+         } // ------------------------------------- endif (JPEG2000)
+	   
+         else if (jpgLossless) { // JPEG LossLess : call to xmedcom JPEG
 		      
-	    JPEGLosslessDecodeImage (fp, 
+	    JPEGLosslessDecodeImage (fp,                         // Reading Fragment pixels
 				     (unsigned short *)destination,
 				     GetPixelSize()*8* GetSamplesPerPixel(),
-                                     ln);
-								 	   
+                                     ln);						 	   
 	    res=1; // in order not to break the loop
      
-         } // ------------------------------------- endif (IsJPEGLossless())
+         } // ------------------------------------- endif (JPEGLossless)
                   
-         else { //              JPEG Lossy : call to xmedcon JPEG
-	        //               (just to see if it works) --> it does NOT !
-	 /*
-	    JPEGLosslessDecodeImage (fp, 
-				     (unsigned short *)destination,
-				     GetPixelSize()*8* GetSamplesPerPixel(),
-                                     ln);	 
-	 
-	 */
-	    //               JPEG Lossy : call to IJG 6b
+         else {                   // JPEG Lossy : call to IJG 6b
 	 
             if  (GetBitsStored() == 8) {
             	res = (bool)gdcm_read_JPEG_file (destination);  // Reading Fragment pixels         
             } else {
             	res = (bool)gdcm_read_JPEG_file12 (destination);// Reading Fragment pixels  
             } 
-	 
-	 
-	 }      
+	 }  // ------------------------------------- endif (JPEGLossy)    
             
          if (!res) break;
                   
@@ -404,25 +394,28 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
    // *Try* to deal with the color
    // ----------------------------
-
+   
+       std::string str_PhotometricInterpretation = 
+                 gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
+		   
+      if ( (str_PhotometricInterpretation == "MONOCHROME1 ") 
+        || (str_PhotometricInterpretation == "MONOCHROME2 ") ) {
+         return lgrTotale; 
+      }
+      
    // Planar configuration = 0 : Pixels are already RGB
    // Planar configuration = 1 : 3 planes : R, G, B
    // Planar configuration = 2 : 1 gray Plane + 3 LUT
 
    // Well ... supposed to be !
-   // See US-PAL-8-10x-echo.dcm: PlanarConfiguration=0,PhotometricInterpretation=PALETTE COLOR
+   // See US-PAL-8-10x-echo.dcm: PlanarConfiguration=0,
+   //                            PhotometricInterpretation=PALETTE COLOR
    // and heuristic has to be found :-( 
 
-      std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
-   
-      if ( (str_PhotometricInterpretation == "MONOCHROME1 ") 
-        || (str_PhotometricInterpretation == "MONOCHROME2 ") 
-        || (str_PhotometricInterpretation == "RGB")) {
-         return lgrTotale; 
-      }
       int planConf=GetPlanarConfiguration();
 
-      // Whatever Planar Configuration is, "PALETTE COLOR " implies that we deal with the palette. 
+      // Whatever Planar Configuration is, 
+      // "PALETTE COLOR " implies that we deal with the palette. 
       if (str_PhotometricInterpretation == "PALETTE COLOR ")
          planConf=2;
 
@@ -455,9 +448,9 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
             //        integer computation counterpart
             for (int i=0;i<nbFrames;i++) {
                for (int j=0;j<l; j++) {
-                  R= 1.164 *( *a-16) + 1.596 *( *c -128) + 0.5;
-                  G= 1.164 *( *a-16) - 0.813 *( *c -128) - 0.392 *(*b -128) + 0.5;
-                  B= 1.164 *( *a-16) + 2.017 *( *b -128) + 0.5;
+                  R= 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
+                  G= 1.164 *(*a-16) - 0.813 *(*c -128) - 0.392 *(*b -128) + 0.5;
+                  B= 1.164 *(*a-16) + 2.017 *(*b -128) + 0.5;
 
                   if (R<0.0)   R=0.0;
                   if (G<0.0)   G=0.0;
@@ -501,13 +494,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
             memmove(destination,newDest,lgrTotale);
             free(newDest);
         }
-
-            // now, it's an RGB image
-            // Lets's write it in the Header
-         std::string spp = "3";
-         gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002);
-         std::string rgb="RGB";
-         gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
+	  
          break;
        }
      
@@ -544,9 +531,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
             // and check again 
             // if it works, we shall have to check the 3 Palettes
             // to see which byte is ==0 (first one, or second one)
-	            
-            //unsigned char * x = newDest;
-       
+	                   
             for (int i=0;i<l; i++) {
                j=newDest[i]*mult +1;
                *a++ = lutR[j]; 
@@ -555,12 +540,6 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
             }
 
             free(newDest);
-        
-               // now, it's an RGB image      
-           std::string spp = "3";
-           gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002); 
-           std::string rgb="RGB";
-           gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
                
          } else { // need to make RGB Pixels (?)
                   // from grey Pixels (?!)
@@ -569,9 +548,23 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
                     // Well . I'll wait till I find such an image 
          }
          break;
-         }
+      }
    } 
-    
+
+            // now, it's an RGB image
+            // Lets's write it in the Header
+
+         // CreateOrReplaceIfExist ?
+	 
+   std::string spp = "3";        // Samples Per Pixel
+   gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002);
+   std::string rgb="RGB ";       // Photometric Interpretation
+   gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
+   std::string planConfig = "0"; // Planar Configuration
+   gdcmHeader::SetPubElValByNumber(planConfig,0x0028,0x0006);
+	 
+	 // + Drop Palette Color ? 
+	     
    return lgrTotale; 
 }
 

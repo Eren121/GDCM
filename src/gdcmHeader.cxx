@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.102 2003/10/21 12:18:23 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.103 2003/10/23 12:08:32 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -122,7 +122,7 @@ gdcmHeader::~gdcmHeader (void) {
 
 // Fourth semantics:
 //
-// ---> Warning : This fourth fiels is NOT part 
+// ---> Warning : This fourth field is NOT part 
 //                of the 'official' Dicom Dictionnary
 //                and should NOT be used.
 //                (Not defined for all the groups
@@ -672,14 +672,14 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
          return 0;
       TotalLength += 4;  // We even have to decount the group and element 
      
-      if ( g != 0xfffe           && g!=0xb00c ) /*for bogus header */ {
+      if ( g != 0xfffe && g!=0xb00c ) /*for bogus header */ {
          char msg[100]; // for sprintf. Sorry
          sprintf(msg,"wrong group (%04x) for an item sequence (%04x,%04x)\n",g, g,n);
          dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",msg); 
          errno = 1;
          return 0;
       }
-      if ( n == 0xe0dd       || ( g==0xb00c && n==0x0eb6 ) ) /* for bogus header  */ 
+      if ( n == 0xe0dd || ( g==0xb00c && n==0x0eb6 ) ) /* for bogus header  */ 
          FoundSequenceDelimiter = true;
       else if ( n != 0xe000 ){
          char msg[100];  // for sprintf. Sorry
@@ -1767,7 +1767,7 @@ void gdcmHeader::PrintPubElVal(std::ostream & os) {
 
 /**
   * \ingroup gdcmHeader
-  * \brief
+  * \brief 
   * @return
   */  
 void gdcmHeader::PrintPubDict(std::ostream & os) {
@@ -1777,7 +1777,7 @@ void gdcmHeader::PrintPubDict(std::ostream & os) {
 /**
   * \ingroup gdcmHeader
   * \brief
-  * @return
+  * @return integer, acts as a Boolean
   */ 
 int gdcmHeader::Write(FILE * fp, FileType type) {
 
@@ -1841,7 +1841,6 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    	free(a);
    	return NULL;
    }
-   // TODO : finish the function !!!
    return a;  
 }
 
