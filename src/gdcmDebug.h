@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:26:12 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/07 16:39:59 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,8 +39,6 @@ namespace gdcm
 class GDCM_EXPORT Debug
 {
 public:
-   Debug(int level = -1);
-
    /// This is a global flag that controls whether any debug, warning
    /// messages are displayed.
    static void SetDebugLevel (int level);
