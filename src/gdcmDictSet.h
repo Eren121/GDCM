@@ -3,12 +3,12 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 07:49:35 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/09/27 08:39:06 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
-  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
                                                                                 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR

@@ -1,3 +1,7 @@
+2004-09-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * src/*.cxx *.h Reference to License.htm fixed to License.html.
+  * Doc/CMakeLists.txt, doxygen.config.in: fix.
+
 2004-09-24 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * TODO updated with Mathieu suggestions. I proposed a template for
     describing TODO entries and used it for new entries.
