@@ -32,36 +32,36 @@
 /// for detail on gdcmPythonVoidFunc() and gdcmPythonVoidFuncArgDelete().
 void gdcmPythonVoidFunc(void *arg)
 {
-  PyObject *arglist, *result;
-  PyObject *func = (PyObject *)arg;
+   PyObject *arglist, *result;
+   PyObject *func = (PyObject *)arg;
 
-  arglist = Py_BuildValue("()");
+   arglist = Py_BuildValue("()");
 
-  result = PyEval_CallObject(func, arglist);
-  Py_DECREF(arglist);
+   result = PyEval_CallObject(func, arglist);
+   Py_DECREF(arglist);
 
-  if (result)
-    {
-    Py_XDECREF(result);
-    }
-  else
-    {
-    if (PyErr_ExceptionMatches(PyExc_KeyboardInterrupt))
+   if (result)
+   {
+      Py_XDECREF(result);
+   }
+   else
+   {
+      if (PyErr_ExceptionMatches(PyExc_KeyboardInterrupt))
       {
-      std::cerr << "Caught a Ctrl-C within python, exiting program.\n";
-      Py_Exit(1);
+         std::cerr << "Caught a Ctrl-C within python, exiting program.\n";
+         Py_Exit(1);
       }
-    PyErr_Print();
-    }
+      PyErr_Print();
+   }
 }
 
 void gdcmPythonVoidFuncArgDelete(void *arg)
 {
-  PyObject *func = (PyObject *)arg;
-  if (func)
-    {
-    Py_DECREF(func);
-    }
+   PyObject *func = (PyObject *)arg;
+   if (func)
+   {
+      Py_DECREF(func);
+   }
 }
 
 /// This is required in order to avoid %including all the gdcm include files.
@@ -73,7 +73,8 @@ using namespace gdcm;
 
 ////////////////////////////////////////////////
 // Convert an STL list<> to a python native list
-%typemap(out) std::list<std::string> * {
+%typemap(out) std::list<std::string> * 
+{
    PyObject* NewItem = (PyObject*)0;
    PyObject* NewList = PyList_New(0); // The result of this typemap
 
@@ -89,7 +90,8 @@ using namespace gdcm;
 
 //////////////////////////////////////////////////////////////////
 // Convert an STL map<> (hash table) to a python native dictionary
-%typemap(out) std::map<std::string, std::list<std::string> > * {
+%typemap(out) std::map<std::string, std::list<std::string> > * 
+{
    PyObject* NewDict = PyDict_New(); // The result of this typemap
    PyObject* NewKey = (PyObject*)0;
    PyObject* NewVal = (PyObject*)0;
@@ -118,7 +120,8 @@ using namespace gdcm;
 
 /////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
-%typemap(out) gdcm::TagDocEntryHT & {
+%typemap(out) gdcm::TagDocEntryHT & 
+{
    PyObject* NewDict = PyDict_New(); // The result of this typemap
    std::string RawName;              // Element name as gotten from gdcm
    PyObject* NewKey = (PyObject*)0;  // Associated name as python object
@@ -151,45 +154,53 @@ using namespace gdcm;
 }
 
 /////////////////////////////////////
-%typemap(out) ListDicomDirPatient & {
+%typemap(out) ListDicomDirPatient & 
+{
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
 	for (std::list<gdcm::DicomDirPatient *>::iterator New = ($1)->begin();
-	    New != ($1)->end(); ++New) {
+	    New != ($1)->end(); ++New)
+   {
 		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirPatient,1);
 		PyList_Append($result, NewItem);
 	}
 }
 
-%typemap(out) ListDicomDirStudy & {
+%typemap(out) ListDicomDirStudy & 
+{
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
 	for (std::list<gdcm::DicomDirStudy *>::iterator New = ($1)->begin();
-	    New != ($1)->end(); ++New) {
+	    New != ($1)->end(); ++New)
+   {
 		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirStudy,1);
 		PyList_Append($result, NewItem);
 	}
 }
 
-%typemap(out) ListDicomDirSerie & {
+%typemap(out) ListDicomDirSerie & 
+{
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
 	for (std::list<gdcm::DicomDirSerie *>::iterator New = ($1)->begin();
-	    New != ($1)->end(); ++New) {
+	    New != ($1)->end(); ++New)
+   {
 		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirSerie,1);
 		PyList_Append($result, NewItem);
 	}
 }
 
-%typemap(out) ListDicomDirImage & {
+%typemap(out) ListDicomDirImage & 
+{
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
 	for (std::list<gdcm::DicomDirImage *>::iterator New = ($1)->begin();
-	    New != ($1)->end(); ++New) {
+	    New != ($1)->end(); ++New) 
+   {
 		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirImage,1);
 		PyList_Append($result, NewItem);
 	}
@@ -229,7 +240,8 @@ using namespace gdcm;
 
 ////////////////////  STL string versus Python str  ////////////////////////
 // Convertion returning a C++ string.
-%typemap(out) string, std::string  {
+%typemap(out) string, std::string 
+{
     $result = PyString_FromString(($1).c_str());
 }
 
