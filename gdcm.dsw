@@ -105,7 +105,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "libgdcmijpeg8"=.\SRC\WIN32\libgdcmljpeg.dsp - Package Owner=<4>
+Project: "libgdcmljpeg"=.\SRC\WIN32\libgdcmljpeg.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
