@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 16:00:18 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/06/28 16:07:21 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,6 +101,7 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
               : gdcmElementSet(-1)   {
    IgnoreShadow   =ignore_shadow;
    //enableSequences=enable_sequences;
+   (void)enable_sequences;
    enableSequences=true; // JPR // TODO : remove params out of the constructor
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = inFilename;
