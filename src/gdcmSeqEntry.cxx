@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:03:45 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/11/03 20:52:13 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -138,9 +138,9 @@ void SeqEntry::Write(std::ofstream* fp, FileType filetype)
    
    // we force the writting of a Sequence Delimitation item
    // because we wrote the Sequence as a 'no Length' sequence
-   fp->write ( (char*)&seq_term_gr,(size_t)2 );
-   fp->write ( (char*)&seq_term_el,(size_t)2 );
-   fp->write ( (char*)&seq_term_lg,(size_t)4 );
+   binary_write(*fp, seq_term_gr);
+   binary_write(*fp, seq_term_el);
+   binary_write(*fp, seq_term_lg);
 }
 
 //-----------------------------------------------------------------------------

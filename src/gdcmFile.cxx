@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 03:10:58 $
-  Version:   $Revision: 1.150 $
+  Date:      $Date: 2004/11/03 20:52:13 $
+  Version:   $Revision: 1.151 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -558,7 +558,7 @@ bool File::WriteRawData(std::string const & fileName)
   std::ofstream fp1(fileName.c_str(), std::ios::out | std::ios::binary );
    if (!fp1)
    {
-      printf("Fail to open (write) file [%s] \n", fileName.c_str());
+      dbg.Verbose(2, "Fail to open (write) file:", fileName.c_str());
       return false;
    }
    fp1.write((char*)Pixel_Data, ImageDataSize);
@@ -634,16 +634,16 @@ bool File::WriteBase (std::string const & fileName, FileType type)
                               std::ios::out | std::ios::binary);
    if (fp1 == NULL)
    {
-      printf("Failed to open (write) File [%s] \n", fileName.c_str());
+      dbg.Verbose(2, "Failed to open (write) File: " , fileName.c_str());
       return false;
    }
 
    if ( type == ImplicitVR || type == ExplicitVR )
    {
       // writing Dicom File Preamble
-      uint8_t filePreamble[128];
+      char filePreamble[128];
       memset(filePreamble, 0, 128);
-      fp1->write((char*)filePreamble, 128);
+      fp1->write(filePreamble, 128);
       fp1->write("DICM", 4);
    }
 

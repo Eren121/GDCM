@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/11/03 20:52:13 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -137,9 +137,9 @@ void DocEntry::Write(std::ofstream* fp, FileType filetype)
    //
    // ----------- Writes the common part
    //
-   fp->write ((char*) &group,(size_t)2 );  //group
-   fp->write ( (char*)&el,   (size_t)2 );  //element
-      
+   binary_write( *fp, group);  //group
+   binary_write( *fp, el);  //element
+
    if ( filetype == ExplicitVR )
    {
       // Special case of delimiters:
@@ -155,8 +155,8 @@ void DocEntry::Write(std::ofstream* fp, FileType filetype)
 
          // TODO : verify if the Sequence Delimitor Item was forced during Parsing 
 
-         int ff = 0xffffffff;
-         fp->write ((char*)&ff,(size_t)4 );
+         uint32_t ff = 0xffffffff;
+         binary_write(*fp, ff);
          return;
       }
 
@@ -167,32 +167,32 @@ void DocEntry::Write(std::ofstream* fp, FileType filetype)
       {
          // Unknown was 'written'
          // deal with Little Endian            
-         fp->write ( (char*)&shortLgr,(size_t)2 );
-         fp->write ( (char*)&z,       (size_t)2 );
+         binary_write(*fp, shortLgr);
+         binary_write(*fp, z);
       }
       else
       {
-         fp->write (vr.c_str(),(size_t)2 ); 
-
+         binary_write(*fp, vr);
+         assert( vr.size() == 2 );
                   
          if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || (vr == "UN") )
          {
-            fp->write ( (char*)&z,  (size_t)2 );
+            binary_write(*fp, z);
             if (vr == "SQ")
             {
                // we set SQ length to ffffffff
                // and  we shall write a Sequence Delimitor Item 
                // at the end of the Sequence! 
-               fp->write ( (char*)&ffff,(size_t)4 );
+               binary_write(*fp, ffff);
             }
             else
             {
-               fp->write ( (char*)&lgr,(size_t)4 );
+               binary_write(*fp, lgr);
             }
          }
          else
          {
-            fp->write ( (char*)&shortLgr,(size_t)2 );
+            binary_write(*fp, shortLgr);
          }
       }
    } 
@@ -200,11 +200,11 @@ void DocEntry::Write(std::ofstream* fp, FileType filetype)
    { 
       if (vr == "SQ")
       {
-         fp->write ( (char*)&ffff,(size_t)4 );
+         binary_write(*fp, ffff);
       }
       else
       {
-         fp->write ( (char*)&lgr,(size_t)4 );
+         binary_write(*fp, lgr);
       }
    }
 }

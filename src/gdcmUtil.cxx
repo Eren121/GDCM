@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 23:10:25 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2004/11/03 20:52:13 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -223,6 +223,11 @@ std::ostream& binary_write(std::ostream& os, const uint32_t& val)
 std::ostream& binary_write(std::ostream& os, const char* val)
 {
     return os.write(val, strlen(val));
+}
+
+std::ostream& binary_write(std::ostream& os, std::string const & val)
+{
+    return os.write(val.c_str(), val.size());
 }
 
 

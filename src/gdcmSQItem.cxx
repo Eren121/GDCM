@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 03:10:58 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/11/03 20:52:13 $
+  Version:   $Revision: 1.34 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,12 +98,16 @@ SQItem::~SQItem()
  */
 void SQItem::Write(std::ofstream* fp, FileType filetype)
 {
+   int i;
    uint16_t item[4] = { 0xfffe, 0xe000, 0xffff, 0xffff };
    uint16_t itemt[4]= { 0xfffe, 0xe00d, 0xffff, 0xffff };
 
     //we force the writting of an 'Item' Start Element
     // because we want to write the Item as a 'no Length' item
-   fp->write((char*)&item[0],8);  // fffe e000 ffff ffff 
+   for(i=0;i<4;++i)
+   {
+      binary_write( *fp, item[i]);  // fffe e000 ffff ffff 
+   }
      
    for (ListDocEntry::iterator i = DocEntries.begin();  
                               i != DocEntries.end();
@@ -129,8 +133,11 @@ void SQItem::Write(std::ofstream* fp, FileType filetype)
       
     //we force the writting of an 'Item Delimitation' item
     // because we wrote the Item as a 'no Length' item
-   fp->write((char*)&itemt[0],8);  // fffe e000 ffff ffff 
-
+   for(i=0;i<4;++i)
+   {
+      binary_write( *fp, itemt[i]);  // fffe e000 ffff ffff 
+   }
+ 
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:58:06 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/11/03 20:52:13 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,14 @@ public:
    static std::string NormalizePath(std::string const & name);
    static std::string GetPath(std::string const &fullName);
    static std::string GetName(std::string const &fullName);
+
 };
+   template <class T>
+   std::ostream& binary_write(std::ostream& os, const T& val);
+   std::ostream& binary_write(std::ostream& os, const uint16_t& val);
+   std::ostream& binary_write(std::ostream& os, const uint32_t& val);
+   std::ostream& binary_write(std::ostream& os, const char* val);
+   std::ostream& binary_write(std::ostream& os, std::string const & val);
 } // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

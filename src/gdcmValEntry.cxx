@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:42 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/11/03 20:52:13 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -200,8 +200,7 @@ void ValEntry::Write(std::ofstream* fp, FileType filetype)
       for (unsigned int i=0; i<tokens.size();i++)
       {
          uint16_t val_uint16 = atoi(tokens[i].c_str());
-         void* ptr = &val_uint16;
-         fp->write ( (char*)ptr,(size_t)2);
+         binary_write( *fp, val_uint16);
       }
       tokens.clear();
       return;
@@ -218,14 +217,15 @@ void ValEntry::Write(std::ofstream* fp, FileType filetype)
       for (unsigned int i=0; i<tokens.size();i++)
       {
          uint32_t val_uint32 = atoi(tokens[i].c_str());
-         void* ptr = &val_uint32;
-         fp->write ( (char*)ptr,(size_t)4 );
+         binary_write( *fp, val_uint32);
       }
       tokens.clear();
       return;
    } 
           
    fp->write (GetValue().c_str(), (size_t)lgr ); // Elem value
+//   assert( lgr == GetValue().size() ); // FIXME ?????
+//   dbg.Assert(2, lgr == strlen(GetValue().c_str()), "Should be equal" );
 } 
 
 //-----------------------------------------------------------------------------

@@ -1,4 +1,8 @@
 2004-11-03 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * /binary_write/ gdcm source. Now even on big endian we are writting
+    little endian. This should -heopfully- fix some tests
+
+2004-11-03 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * Now the dictionary is compiled into gdcm lib. This is a default 
     behavior, thus any dic file specified is picked before failback to 
     the one comiled into lib

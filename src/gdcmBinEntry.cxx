@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:40 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/11/03 20:52:12 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,6 +111,7 @@ void BinEntry::Write(std::ofstream* fp, FileType filetype)
    {
       // there is a 'non string' LUT, overlay, etc
       fp->write ( (char*)binArea, lgr ); // Elem value
+      //assert( strlen((char*)binArea) == lgr );
 
    }
    else

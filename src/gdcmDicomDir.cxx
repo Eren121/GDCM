@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:47:43 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2004/11/03 20:52:13 $
+  Version:   $Revision: 1.77 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -340,6 +340,7 @@ void DicomDir::SetEndMethodArgDelete(Method* method)
  
 bool DicomDir::WriteDicomDir(std::string const& fileName) 
 {  
+   int i;
    uint16_t sq[4] = { 0x0004, 0x1220, 0xffff, 0xffff };
    uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0xffff, 0xffff };
 
@@ -347,20 +348,23 @@ bool DicomDir::WriteDicomDir(std::string const& fileName)
                                          std::ios::out | std::ios::binary);
    if( !fp ) 
    {
-      printf("Failed to open(write) File [%s] \n", fileName.c_str());
+      dbg.Verbose(2, "Failed to open(write) File: ", fileName.c_str());
       return false;
    }
 
-   uint8_t filePreamble[128];
+   char filePreamble[128];
    memset(filePreamble, 0, 128);
-   fp->write((char*)filePreamble, 128);
-   fp->write("DICM",4);
+   fp->write(filePreamble, 128); //FIXME
+   binary_write( *fp, "DICM");
  
    DicomDirMeta *ptrMeta = GetDicomDirMeta();
    ptrMeta->Write(fp, ExplicitVR);
    
    // force writing 0004|1220 [SQ ], that CANNOT exist within DicomDirMeta
-   fp->write((char*)&sq[0],8);
+   for(i=0;i<4;++i)
+   {
+      binary_write(*fp, sq[i]);
+   }
         
    for(ListDicomDirPatient::iterator cc  = Patients.begin();
                                      cc != Patients.end();
@@ -370,7 +374,10 @@ bool DicomDir::WriteDicomDir(std::string const& fileName)
    }
    
    // force writing Sequence Delimitation Item
-   fp->write((char*)&sqt[0],8);  // fffe e0dd ffff ffff 
+   for(i=0;i<4;++i)
+   {
+      binary_write(*fp, sqt[i]);  // fffe e0dd ffff ffff 
+   }
 
    fp->close();
    return true;
