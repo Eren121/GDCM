@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 18:14:52 $
-  Version:   $Revision: 1.115 $
+  Date:      $Date: 2004/11/04 18:14:34 $
+  Version:   $Revision: 1.116 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2292,7 +2292,7 @@ uint16_t Document::ReadInt16()
    Fp->read ((char*)&g, (size_t)2);
    if ( Fp->fail() )
    {
-          throw FormatError( "Document::ReadInt16()", " file error." );
+      throw FormatError( "Document::ReadInt16()", " file error." );
    }
    if( Fp->eof() )
    {
@@ -2685,8 +2685,18 @@ bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
 
    //// Read the Item Tag group and element, and make
    // sure they are what we expected:
-   uint16_t itemTagGroup   = ReadInt16();
-   uint16_t itemTagElement = ReadInt16();
+   uint16_t itemTagGroup;
+   uint16_t itemTagElement;
+   try
+   {
+      itemTagGroup   = ReadInt16();
+      itemTagElement = ReadInt16();
+   }
+   catch ( FormatError e )
+   {
+      //std::cerr << e << std::endl;
+      return false;
+   }
    if ( itemTagGroup != testGroup || itemTagElement != testElement )
    {
       std::ostringstream s;

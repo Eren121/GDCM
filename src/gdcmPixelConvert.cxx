@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 22:21:57 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/04 18:14:34 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -755,7 +755,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
 {
    // Just in case some access to a Header element requires disk access.
    // Note: gdcmDocument::Fp is leaved open after OpenFile.
-  std::ifstream* fp = header->OpenFile();
+   std::ifstream* fp = header->OpenFile();
    // Number of Bits Allocated for storing a Pixel is defaulted to 16
    // when absent from the header.
    BitsAllocated = header->GetBitsAllocated();

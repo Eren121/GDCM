@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/11/04 18:14:34 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,7 @@ public:
    /// @param from name of the thrower
    /// @param error error description string
    explicit FormatUnexpected(const std::string &from,
-                            const std::string &error = "Unexpected file format")
+                             const std::string &error = "Unexpected file format")
       throw() : Exception( from, error ) { }
 };
 
@@ -124,7 +124,7 @@ public:
    /// @param from name of the thrower
    /// @param error error description string
    explicit FormatError(const std::string &from,
-                            const std::string &error = "Invalid file format")
+                        const std::string &error = "Invalid file format")
       throw() : FormatUnexpected( from, error ) { }
 };
 
