@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:53:42 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/20 11:09:23 $
+  Version:   $Revision: 1.49 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,15 +60,9 @@ public:
    /// \brief   canonical Printer 
    void Print(std::ostream &os = std::cout, std::string const & indent = "" );
 
+   
    /// Informations contained in the parser
    virtual bool IsReadable();
-
-   /// Returns a pointer to the DicomDirMeta for this DICOMDIR. 
-   DicomDirMeta* GetDicomDirMeta() { return MetaElems; };
-
-   // should avoid exposing internal mechanism
-   DicomDirPatient *GetFirstEntry();
-   DicomDirPatient *GetNextEntry();
 
    /// Parsing
    void ParseDirectory();
@@ -88,16 +82,20 @@ public:
    void SetStartMethodArgDelete( DicomDir::Method *m );
    void SetProgressMethodArgDelete( DicomDir::Method *m );
    void SetEndMethodArgDelete( DicomDir::Method *m );
-
    /// GetProgress GetProgress
    float GetProgress()  { return Progress; };
-
    /// AbortProgress AbortProgress
    void  AbortProgress() { Abort = true; };
-
    /// IsAborted IsAborted
    bool  IsAborted() { return Abort; };
-   
+
+   /// Returns a pointer to the DicomDirMeta for this DICOMDIR. 
+   DicomDirMeta* GetMeta() { return MetaElems; };
+
+   // should avoid exposing internal mechanism
+   DicomDirPatient *GetFirstPatient();
+   DicomDirPatient *GetNextPatient();
+
    /// Adding
    DicomDirMeta    *NewMeta();
    DicomDirPatient *NewPatient();
@@ -126,11 +124,10 @@ private:
    void Initialize();
    void CreateDicomDir();
 
-   bool AddDicomDirMeta();
-   bool AddDicomDirPatientToEnd(DicomDirPatient *dd);
-   bool AddDicomDirStudyToEnd  (DicomDirStudy *dd);
-   bool AddDicomDirSerieToEnd  (DicomDirSerie *dd);
-   bool AddDicomDirImageToEnd  (DicomDirImage *dd);
+   bool AddPatientToEnd(DicomDirPatient *dd);
+   bool AddStudyToEnd  (DicomDirStudy *dd);
+   bool AddSerieToEnd  (DicomDirSerie *dd);
+   bool AddImageToEnd  (DicomDirImage *dd);
 
    void SetElements(std::string const &path, VectDocument const &list);
    void SetElement (std::string const &path, DicomDirType type,
@@ -143,10 +140,10 @@ private:
 
    /// Pointer on *the* DicomDirObject 'DicomDirMeta Elements'
    DicomDirMeta* MetaElems;
-   ListDicomDirPatient::iterator ItDicomDirPatient;
 
    /// Chained list of DicomDirPatient (to be exploited recursively) 
    ListDicomDirPatient Patients;
+   ListDicomDirPatient::iterator ItPatient;
 
    /// pointer to the initialisation method for any progress bar   
    Method* StartMethod;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/20 11:09:23 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,6 @@ void DicomDirSerie::Print(std::ostream &os, std::string const &)
 
 //-----------------------------------------------------------------------------
 // Public
-
 /**
  * \brief   Writes the Object
  * @param fp ofstream to write to
@@ -97,9 +96,9 @@ DicomDirImage *DicomDirSerie::NewImage()
       Global::GetDicomDirElements()->GetDicomDirImageElements();
 
    DicomDirImage *st = new DicomDirImage();
-   FillObject(elemList);
-   Images.push_front(st);
+   st->FillObject(elemList);
 
+   Images.push_back(st);
    return st;   
 }
 
@@ -107,11 +106,11 @@ DicomDirImage *DicomDirSerie::NewImage()
  * \brief   Get the first entry while visiting the DicomDirImage
  * \return  The first DicomDirImage if found, otherwhise NULL
  */
-DicomDirImage *DicomDirSerie::GetFirstEntry()
+DicomDirImage *DicomDirSerie::GetFirstImage()
 {
-   ItDicomDirImage = Images.begin();
-   if (ItDicomDirImage != Images.end())
-      return *ItDicomDirImage;
+   ItImage = Images.begin();
+   if (ItImage != Images.end())
+      return *ItImage;
    return NULL;
 }
 
@@ -120,17 +119,32 @@ DicomDirImage *DicomDirSerie::GetFirstEntry()
  * \note : meaningfull only if GetFirstEntry already called
  * \return  The next DicomDirImages if found, otherwhise NULL
  */
-DicomDirImage *DicomDirSerie::GetNextEntry()
+DicomDirImage *DicomDirSerie::GetNextImage()
 {
-   gdcmAssertMacro (ItDicomDirImage != Images.end());
+   gdcmAssertMacro (ItImage != Images.end());
    {
-      ++ItDicomDirImage;
-      if (ItDicomDirImage != Images.end())      
-         return *ItDicomDirImage;
+      ++ItImage;
+      if (ItImage != Images.end())      
+         return *ItImage;
    }
    return NULL;
 }
  
+/**
+ * \brief   Get the first entry while visiting the DicomDirImage
+ * \return  The first DicomDirImage if found, otherwhise NULL
+ */
+DicomDirImage *DicomDirSerie::GetLastImage()
+{
+   ItImage = Images.end();
+   if (ItImage != Images.begin())
+   {
+      --ItImage;
+      return *ItImage;
+   }
+   return NULL;
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 

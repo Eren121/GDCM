@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 15:24:28 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2005/01/20 11:09:23 $
+  Version:   $Revision: 1.108 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,9 +61,9 @@ namespace gdcm
  */
 DicomDir::DicomDir()
    :Document( )
-{ 
+{
    Initialize();  // sets all private fields to NULL
-   MetaElems = NewMeta();
+   NewMeta();
 }
 
 /**
@@ -107,7 +107,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
 
       if ( parseDir ) // user asked for a recursive parsing of a root directory
       {
-         MetaElems = NewMeta();
+         NewMeta();
 
          gdcmVerboseMacro( "Parse directory and create the DicomDir");
          ParseDirectory();
@@ -208,29 +208,6 @@ bool DicomDir::IsReadable()
 
    return true;
 }
-
-/**
- * \brief Sets all fields to NULL
- */
-
-void DicomDir::Initialize()
-{
-   StartMethod             = NULL;
-   ProgressMethod          = NULL;
-   EndMethod               = NULL;
-   StartMethodArgDelete    = NULL;
-   ProgressMethodArgDelete = NULL;
-   EndMethodArgDelete      = NULL;
-   StartArg                = NULL;
-   ProgressArg             = NULL;
-   EndArg                  = NULL;
-
-   Progress = 0.0;
-   Abort = false;
-
-   MetaElems = NULL;   
-}
-
 
 /**
  * \brief  fills the whole structure, starting from a root Directory
@@ -337,6 +314,34 @@ void DicomDir::SetEndMethodArgDelete( DicomDir::Method *method )
 }
 
 /**
+ * \brief   Get the first entry while visiting the DicomDirPatients
+ * \return  The first DicomDirPatient if found, otherwhise NULL
+ */ 
+DicomDirPatient *DicomDir::GetFirstPatient()
+{
+   ItPatient = Patients.begin();
+   if ( ItPatient != Patients.end() )
+      return *ItPatient;
+   return NULL;
+}
+
+/**
+ * \brief   Get the next entry while visiting the DicomDirPatients
+ * \note : meaningfull only if GetFirstEntry already called
+ * \return  The next DicomDirPatient if found, otherwhise NULL
+ */
+DicomDirPatient *DicomDir::GetNextPatient()
+{
+   gdcmAssertMacro (ItPatient != Patients.end());
+   {
+      ++ItPatient;
+      if ( ItPatient != Patients.end() )
+         return *ItPatient;
+   }
+   return NULL;
+}
+
+/**
  * \brief    writes on disc a DICOMDIR
  * \ warning does NOT add the missing elements in the header :
  *           it's up to the user doing it !
@@ -366,7 +371,7 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
    fp->write(filePreamble, 128); //FIXME
    binary_write( *fp, "DICM");
  
-   DicomDirMeta *ptrMeta = GetDicomDirMeta();
+   DicomDirMeta *ptrMeta = GetMeta();
    ptrMeta->WriteContent(fp, ExplicitVR);
    
    // force writing 0004|1220 [SQ ], that CANNOT exist within DicomDirMeta
@@ -463,7 +468,10 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
   
 DicomDirMeta * DicomDir::NewMeta()
 {
-   DicomDirMeta *m = new DicomDirMeta();
+   if( MetaElems )
+      delete MetaElems;
+
+   MetaElems = new DicomDirMeta();
   
    if ( TagHT.begin() != TagHT.end() ) // after Document Parsing
    { 
@@ -475,17 +483,17 @@ DicomDirMeta * DicomDir::NewMeta()
                                     cc != lastOneButSequence;
                                    ++cc)
       {
-         m->AddEntry( cc->second );
+         MetaElems->AddEntry( cc->second );
       }
    }
    else  // after root directory parsing
    {
       ListDicomDirMetaElem const &elemList = 
          Global::GetDicomDirElements()->GetDicomDirMetaElements();
-      m->FillObject(elemList);
+      MetaElems->FillObject(elemList);
    }
-   m->SetSQItemNumber(0); // To avoid further missprinting
-   return m;  
+   MetaElems->SetSQItemNumber(0); // To avoid further missprinting
+   return MetaElems;  
 }
 
 /**
@@ -515,8 +523,7 @@ DicomDirPatient *DicomDir::NewPatient()
       p->AddEntry( entry );
    }
 
-   Patients.push_front( p );
-
+   AddPatientToEnd( p );
    return p;
 }
 
@@ -544,33 +551,37 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       case GDCM_DICOMDIR_IMAGE:
          elemList = Global::GetDicomDirElements()->GetDicomDirImageElements();
          si = new DicomDirImage();
-         if( !AddDicomDirImageToEnd(static_cast<DicomDirImage *>(si)) )
+         if( !AddImageToEnd(static_cast<DicomDirImage *>(si)) )
          {
-            gdcmVerboseMacro( "Add DicomDirImageToEnd failed");
+            delete si;
+            gdcmErrorMacro( "Add ImageToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_SERIE:
          elemList = Global::GetDicomDirElements()->GetDicomDirSerieElements();
          si = new DicomDirSerie();
-         if( !AddDicomDirSerieToEnd(static_cast<DicomDirSerie *>(si)) )
+         if( !AddSerieToEnd(static_cast<DicomDirSerie *>(si)) )
          {
-            gdcmVerboseMacro( "Add DicomDirSerieToEnd failed");
+            delete si;
+            gdcmErrorMacro( "Add SerieToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_STUDY:
          elemList = Global::GetDicomDirElements()->GetDicomDirStudyElements();
          si = new DicomDirStudy();
-         if( !AddDicomDirStudyToEnd(static_cast<DicomDirStudy *>(si)) )
+         if( !AddStudyToEnd(static_cast<DicomDirStudy *>(si)) )
          {
-            gdcmVerboseMacro( "Add DicomDirStudyToEnd failed");
+            delete si;
+            gdcmErrorMacro( "Add StudyToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_PATIENT:
          elemList = Global::GetDicomDirElements()->GetDicomDirPatientElements();
          si = new DicomDirPatient();
-         if( !AddDicomDirPatientToEnd(static_cast<DicomDirPatient *>(si)) )
+         if( !AddPatientToEnd(static_cast<DicomDirPatient *>(si)) )
          {
-            gdcmVerboseMacro( "Add DicomDirPatientToEnd failed");
+            delete si;
+            gdcmErrorMacro( "Add PatientToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_META:
@@ -578,8 +589,8 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirMeta();
          if( MetaElems )
          {
-            gdcmVerboseMacro( "MetaElements already exist, they will be destroyed");
             delete MetaElems;
+            gdcmErrorMacro( "MetaElements already exist, they will be destroyed");
          }
          MetaElems = static_cast<DicomDirMeta *>(si);
          break;
@@ -651,8 +662,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
       {
-         std::cout << "GDCM_DICOMDIR_META ?!? should never print that" 
-                   << std::endl;
+         gdcmVerboseMacro("GDCM_DICOMDIR_META ?!? should never print that");
       }
       si->AddEntry(entry);
    }
@@ -700,6 +710,27 @@ void DicomDir::CallEndMethod()
 //-----------------------------------------------------------------------------
 // Private
 /**
+ * \brief Sets all fields to NULL
+ */
+void DicomDir::Initialize()
+{
+   StartMethod             = NULL;
+   ProgressMethod          = NULL;
+   EndMethod               = NULL;
+   StartMethodArgDelete    = NULL;
+   ProgressMethodArgDelete = NULL;
+   EndMethodArgDelete      = NULL;
+   StartArg                = NULL;
+   ProgressArg             = NULL;
+   EndArg                  = NULL;
+
+   Progress = 0.0;
+   Abort = false;
+
+   MetaElems = NULL;   
+}
+
+/**
  * \brief create a 'DicomDir' from a DICOMDIR Header 
  */
 void DicomDir::CreateDicomDir()
@@ -729,7 +760,7 @@ void DicomDir::CreateDicomDir()
       return;
    }
 
-   MetaElems = NewMeta();
+   NewMeta();
 
    ListSQItem listItems = s->GetSQItems();
    
@@ -753,22 +784,42 @@ void DicomDir::CreateDicomDir()
       if( v == "PATIENT " )
       {
          si = new DicomDirPatient();
-         AddDicomDirPatientToEnd( static_cast<DicomDirPatient *>(si) );
+         if( !AddPatientToEnd( static_cast<DicomDirPatient *>(si)) )
+         {
+            delete si;
+            si = NULL;
+            gdcmErrorMacro( "Add PatientToEnd failed");
+         }
       }
       else if( v == "STUDY " )
       {
          si = new DicomDirStudy();
-         AddDicomDirStudyToEnd( static_cast<DicomDirStudy *>(si) );
+         if( !AddStudyToEnd( static_cast<DicomDirStudy *>(si)) )
+         {
+            delete si;
+            si = NULL;
+            gdcmErrorMacro( "Add AddStudyToEnd failed");
+         }
       }
       else if( v == "SERIES" )
       {
          si = new DicomDirSerie();
-         AddDicomDirSerieToEnd( static_cast<DicomDirSerie *>(si) );
+         if( !AddSerieToEnd( static_cast<DicomDirSerie *>(si)) )
+         {
+            delete si;
+            si = NULL;
+            gdcmErrorMacro( "Add AddSerieToEnd failed");
+         }
       }
       else if( v == "IMAGE " ) 
       {
          si = new DicomDirImage();
-         AddDicomDirImageToEnd( static_cast<DicomDirImage *>(si) );
+         if( !AddImageToEnd( static_cast<DicomDirImage *>(si)) )
+         {
+            delete si;
+            si = NULL;
+            gdcmErrorMacro( "Add AddImageToEnd failed");
+         }
       }
       else
       {
@@ -776,85 +827,90 @@ void DicomDir::CreateDicomDir()
          // neither an 'IMAGE' SQItem. Skip to next item.
          continue;
       }
-      MoveSQItem(si,*i);
+
+      if( si )
+         MoveSQItem(si,*i);
    }
    TagHT.clear();
 }
 
 /**
- * \brief Well ... there is only one occurence  
- */
-bool DicomDir::AddDicomDirMeta()
-{
-   if( MetaElems )
-   {
-      delete MetaElems;
-   }
-   MetaElems = new DicomDirMeta();
-   return true;
-}
-
-/**
- * \brief  AddDicomDirPatientToEnd 
+ * \brief  AddPatientToEnd 
  * @param   dd SQ Item to enqueue to the DicomPatient chained List
  */
-bool DicomDir::AddDicomDirPatientToEnd(DicomDirPatient *dd)
+bool DicomDir::AddPatientToEnd(DicomDirPatient *dd)
 {
    Patients.push_back(dd);
    return true;
 }
 
 /**
- * \brief  AddDicomDirStudyToEnd 
+ * \brief  AddStudyToEnd 
  * @param   dd SQ Item to enqueue to the DicomDirStudy chained List
  */
-bool DicomDir::AddDicomDirStudyToEnd(DicomDirStudy *dd)
+bool DicomDir::AddStudyToEnd(DicomDirStudy *dd)
 {
    if( Patients.size() > 0 )
    {
       ListDicomDirPatient::iterator itp = Patients.end();
       itp--;
-      (*itp)->AddDicomDirStudy(dd);
+      (*itp)->AddStudy(dd);
       return true;
    }
    return false;
 }
 
 /**
- * \brief  AddDicomDirSerieToEnd 
+ * \brief  AddSerieToEnd 
  * @param   dd SQ Item to enqueue to the DicomDirSerie chained List
  */
-bool DicomDir::AddDicomDirSerieToEnd(DicomDirSerie *dd)
+bool DicomDir::AddSerieToEnd(DicomDirSerie *dd)
 {
    if( Patients.size() > 0 )
    {
       ListDicomDirPatient::iterator itp = Patients.end();
       itp--;
 
-      if( (*itp)->GetDicomDirStudies().size() > 0 )
+      DicomDirStudy *study = (*itp)->GetLastStudy();
+      if( study )
+      {
+         study->AddSerie(dd);
+         return true;
+      }
+/*      if( (*itp)->GetDicomDirStudies().size() > 0 )
       {
          ListDicomDirStudy::const_iterator itst = 
             (*itp)->GetDicomDirStudies().end();
          itst--;
-         (*itst)->AddDicomDirSerie(dd);
+         (*itst)->AddSerie(dd);
          return true;
-      }
+      }*/
    }
    return false;
 }
 
 /**
- * \brief   AddDicomDirImageToEnd
+ * \brief   AddImageToEnd
  * @param   dd SQ Item to enqueue to the DicomDirImage chained List
  */
-bool DicomDir::AddDicomDirImageToEnd(DicomDirImage *dd)
+bool DicomDir::AddImageToEnd(DicomDirImage *dd)
 {
    if( Patients.size() > 0 )
    {
       ListDicomDirPatient::iterator itp = Patients.end();
       itp--;
 
-      if( (*itp)->GetDicomDirStudies().size() > 0 )
+      DicomDirStudy *study = (*itp)->GetLastStudy();
+      if( study )
+      {
+         DicomDirSerie *serie = study->GetLastSerie();
+         if( serie )
+         {
+            serie->AddImage(dd);
+            return true;
+         }
+      }
+/*      if( (*itp)->GetDicomDirStudies().size() > 0 )
       {
          ListDicomDirStudy::const_iterator itst = 
             (*itp)->GetDicomDirStudies().end();
@@ -864,10 +920,10 @@ bool DicomDir::AddDicomDirImageToEnd(DicomDirImage *dd)
          {
             ListDicomDirSerie::const_iterator its = (*itst)->GetDicomDirSeries().end();
             its--;
-            (*its)->AddDicomDirImage(dd);
+            (*its)->AddImage(dd);
             return true;
          }
-      }
+      }*/
    }
    return false;
 }
@@ -964,36 +1020,6 @@ bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
 {
    return *header1 < *header2;
 }
-
-
-/**
- * \brief   Get the first entry while visiting the DicomDirPatients
- * \return  The first DicomDirPatient if found, otherwhise NULL
- */ 
-DicomDirPatient *DicomDir::GetFirstEntry()
-{
-   ItDicomDirPatient = Patients.begin();
-   if ( ItDicomDirPatient != Patients.end() )
-      return *ItDicomDirPatient;
-   return NULL;
-}
-
-/**
- * \brief   Get the next entry while visiting the DicomDirPatients
- * \note : meaningfull only if GetFirstEntry already called
- * \return  The next DicomDirPatient if found, otherwhise NULL
- */
-DicomDirPatient *DicomDir::GetNextEntry()
-{
-   gdcmAssertMacro (ItDicomDirPatient != Patients.end());
-   {
-      ++ItDicomDirPatient;
-      if ( ItDicomDirPatient != Patients.end() )
-         return *ItDicomDirPatient;
-   }
-   return NULL;
-}
-
 
 } // end namespace gdcm
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/20 11:09:23 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,25 +48,6 @@ DicomDirObject::~DicomDirObject()
 
 //-----------------------------------------------------------------------------
 // Public
-
-
-/**
- * \brief   Builds a hash table (multimap) containing 
- *          pointers to all Header Entries (i.e Dicom Element)
- *          related to this 'object'
- * @return
- */ 
-TagDocEntryHT DicomDirObject::GetEntryHT()
-{
-   TagDocEntryHT HT;
-   DocEntries = GetDocEntries();   
-   for(ListDocEntry::iterator i = DocEntries.begin(); 
-                              i != DocEntries.end(); ++i)
-   {
-      HT[(*i)->GetKey()] = *i;
-   }
-   return HT;
-}
 
 //-----------------------------------------------------------------------------
 // Protected

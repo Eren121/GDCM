@@ -1,4 +1,8 @@
 2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDicomDir*.[h|cxx] : rename methods to be logik in their name.
+     Remove all access to the hash-tables or lists in the objects.
+
+2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDebug.h : remove the Debug test in the gdcmErrorMacro
    * src/gdcmDocument.[h|cxx] : rename the Initialise method to Initialize, to
      be complient with all the gdcm source code

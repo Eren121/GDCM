@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:53:42 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/20 11:09:23 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,8 @@ DicomDirElement::DicomDirElement()
    std::ifstream from(filename.c_str());
    if(!from)
    {
-      gdcmVerboseMacro( "Can't open dictionary" << filename.c_str());
+      gdcmVerboseMacro( "Can't open DicomDirElement dictionary" 
+                        << filename.c_str());
       FillDefaultDIRDict( this );
    }
    else

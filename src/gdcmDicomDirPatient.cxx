@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/20 11:09:23 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,6 +69,8 @@ void DicomDirPatient::Print(std::ostream &os, std::string const & )
    }
 }
 
+//-----------------------------------------------------------------------------
+// Public
 /**
  * \brief   Writes the Object
  * @param fp ofstream to write to
@@ -85,8 +87,6 @@ void DicomDirPatient::WriteContent(std::ofstream *fp, FileType t)
       (*cc)->WriteContent( fp, t );
    }
 }
-//-----------------------------------------------------------------------------
-// Public
 
 /**
  * \brief   adds a new Patient at the begining of the PatientList
@@ -100,7 +100,7 @@ DicomDirStudy* DicomDirPatient::NewStudy()
    DicomDirStudy *st = new DicomDirStudy();
    st->FillObject(elemList);
 
-   Studies.push_front(st);
+   Studies.push_back(st);
    return st; 
 }   
 
@@ -108,11 +108,11 @@ DicomDirStudy* DicomDirPatient::NewStudy()
  * \brief   Get the first entry while visiting the DicomDirStudy
  * \return  The first DicomDirStudy if found, otherwhise NULL
  */ 
-DicomDirStudy *DicomDirPatient::GetFirstEntry()
+DicomDirStudy *DicomDirPatient::GetFirstStudy()
 {
-   ItDicomDirStudy = Studies.begin();
-   if (ItDicomDirStudy != Studies.end())
-      return *ItDicomDirStudy;
+   ItStudy = Studies.begin();
+   if (ItStudy != Studies.end())
+      return *ItStudy;
    return NULL;
 }
 
@@ -121,16 +121,32 @@ DicomDirStudy *DicomDirPatient::GetFirstEntry()
  * \note : meaningfull only if GetFirstEntry already called
  * \return  The next DicomDirStudies if found, otherwhise NULL
  */
-DicomDirStudy *DicomDirPatient::GetNextEntry()
+DicomDirStudy *DicomDirPatient::GetNextStudy()
 {
-   gdcmAssertMacro (ItDicomDirStudy != Studies.end())
+   gdcmAssertMacro (ItStudy != Studies.end())
    {
-      ++ItDicomDirStudy;
-      if (ItDicomDirStudy != Studies.end())
-         return *ItDicomDirStudy;
+      ++ItStudy;
+      if (ItStudy != Studies.end())
+         return *ItStudy;
    }
    return NULL;
 }
+
+/**
+ * \brief   Get the first entry while visiting the DicomDirStudy
+ * \return  The first DicomDirStudy if found, otherwhise NULL
+ */ 
+DicomDirStudy *DicomDirPatient::GetLastStudy()
+{
+   ItStudy = Studies.end();
+   if (ItStudy != Studies.begin())
+   {
+      --ItStudy;
+      return *ItStudy;
+   }
+   return NULL;
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 

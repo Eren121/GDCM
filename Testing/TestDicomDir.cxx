@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:56:21 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/20 11:09:22 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@ int TestDicomDir(int argc, char* argv[])
    }
 
    // Test if the DicomDir contains any Patient
-   if( !e1->GetFirstEntry() )
+   if( !e1->GetFirstPatient() )
    {
       std::cout<<"          DicomDir '"<<file
                <<" has no patient"<<std::endl
@@ -80,37 +80,41 @@ int TestDicomDir(int argc, char* argv[])
       return 1;
    }
 
-  // step by step structure full exploitation
-  
+   // step by step structure full exploitation
    std::cout << std::endl << std::endl  
              << " = PATIENT/STUDY/SERIE/IMAGE List ============================" 
              << std::endl<< std::endl;
   
-   pa = e1->GetFirstEntry(); 
-   while ( pa ) {  // we process all the PATIENT of this DICOMDIR 
+   pa = e1->GetFirstPatient(); 
+   while ( pa ) 
+   {  // we process all the PATIENT of this DICOMDIR 
       std::cout << pa->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name
-      st = pa->GetFirstEntry();
-      while ( st ) { // we process all the STUDY of this patient
+
+      st = pa->GetFirstStudy();
+      while ( st ) 
+      { // we process all the STUDY of this patient
          std::cout << "--- "<< st->GetEntry(0x0008, 0x1030) << std::endl;    // Study Description
          std::cout << " Stud.ID:["          << st->GetEntry(0x0020, 0x0010); // Study ID
-         se = st->GetFirstEntry();
-         while ( se ) { // we process all the SERIES of this study
+
+         se = st->GetFirstSerie();
+         while ( se ) 
+         { // we process all the SERIES of this study
             std::cout << "--- --- "<< se->GetEntry(0x0008, 0x103e) << std::endl;      // Serie Description
             std::cout << " Ser.nb:["         <<  se->GetEntry(0x0020, 0x0011);        // Series number
             std::cout << "] Mod.:["          <<  se->GetEntry(0x0008, 0x0060) << "]"; // Modality
-            im = se->GetFirstEntry();
+
+            im = se->GetFirstImage();
             while ( im ) { // we process all the IMAGE of this serie
                std::cout << "--- --- --- "<< im->GetEntry(0x0004, 0x1500) << std::endl; // File name
-               im = se->GetNextEntry();   
+               im = se->GetNextImage();   
             }
-            se = st->GetNextEntry();   
+            se = st->GetNextSerie();   
          }
-         st = pa->GetNextEntry();
-     }  
-     pa = e1->GetNextEntry();
-  }  
-      
-    
+         st = pa->GetNextStudy();
+      }  
+      pa = e1->GetNextPatient();
+   }  
+
    std::cout << std::endl << std::endl  
              << " = DICOMDIR full content ====================================" 
              << std::endl<< std::endl;

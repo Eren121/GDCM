@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/20 11:09:23 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,6 @@ void DicomDirStudy::Print(std::ostream &os, std::string const & )
 
 //-----------------------------------------------------------------------------
 // Public
-
 /**
  * \brief   Writes the Object
  * @param fp ofstream to write to
@@ -99,21 +98,21 @@ DicomDirSerie *DicomDirStudy::NewSerie()
       Global::GetDicomDirElements()->GetDicomDirSerieElements();   
 
    DicomDirSerie* st = new DicomDirSerie();
-   FillObject(elemList);
-   Series.push_front(st);
+   st->FillObject(elemList);
 
-   return st;  
+   Series.push_back(st);
+   return st;
 } 
 
- /**
+/**
  * \brief   Get the first entry while visiting the DicomDirSeries
  * \return  The first DicomDirSerie if found, otherwhise NULL
  */
-DicomDirSerie *DicomDirStudy::GetFirstEntry()
+DicomDirSerie *DicomDirStudy::GetFirstSerie()
 {
-   ItDicomDirSerie = Series.begin();
-   if (ItDicomDirSerie != Series.end())
-      return *ItDicomDirSerie;
+   ItSerie = Series.begin();
+   if (ItSerie != Series.end())
+      return *ItSerie;
    return NULL;
 }
 
@@ -122,16 +121,32 @@ DicomDirSerie *DicomDirStudy::GetFirstEntry()
  * \note : meaningfull only if GetFirstEntry already called
  * \return  The next DicomDirSerie if found, otherwhise NULL
  */
-DicomDirSerie *DicomDirStudy::GetNextEntry()
+DicomDirSerie *DicomDirStudy::GetNextSerie()
 {
-   gdcmAssertMacro (ItDicomDirSerie != Series.end());
+   gdcmAssertMacro (ItSerie != Series.end());
    {
-      ++ItDicomDirSerie;
-      if (ItDicomDirSerie != Series.end())
-         return *ItDicomDirSerie;
+      ++ItSerie;
+      if (ItSerie != Series.end())
+         return *ItSerie;
    }
    return NULL;
 }  
+
+/**
+ * \brief   Get the last entry while visiting the DicomDirSeries
+ * \return  The first DicomDirSerie if found, otherwhise NULL
+ */
+DicomDirSerie *DicomDirStudy::GetLastSerie()
+{
+   ItSerie = Series.end();
+   if (ItSerie != Series.begin())
+   {
+     --ItSerie;
+      return *ItSerie;
+   }
+   return NULL;
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 
