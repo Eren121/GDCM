@@ -1,3 +1,7 @@
+2005-04-05 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDictGroupName.[h|cxx] : add a correlation between a group (number)
+     and it's representation name (for the NIH)
+
 2005-03-31 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmPixelReadConvert.cxx : problems of around of double to uint8, when
      conversion of YBR to RGB pixels. So, now, the conversion is made using 

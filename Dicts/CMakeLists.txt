@@ -7,6 +7,7 @@ INSTALL_FILES(${GDCM_DATA_DIR} .dic
   dicomVR
   dicomTS
   DicomDir
+  DictGroupName
 )
 
 # Nice trick to avoid creating a .h file each time we compile gdcm
@@ -28,6 +29,8 @@ ENDFOREACH(line)
 
 SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY} \n {0,0,0,0,0}")
 
+#-----------------------------------------------------------------------------
+# ... for DicomTS file
 FILE(READ "dicomTS.dic" ENT_TS)
 STRING(REGEX REPLACE "\r?\n" ";" ENT_TS "${ENT_TS}")
 SET(DICOM_TS_DICTIONARY "")
@@ -39,6 +42,8 @@ FOREACH(line ${ENT_TS})
   SET(DICOM_TS_DICTIONARY "${DICOM_TS_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
 
+#-----------------------------------------------------------------------------
+# ... for DicomVR file
 FILE(READ "dicomVR.dic" ENT_VR)
 STRING(REGEX REPLACE ";" "/" ENT_VR "${ENT_VR}") # CMake doesn't like ';'
 STRING(REGEX REPLACE "\r?\n" ";" ENT_VR "${ENT_VR}")
@@ -51,6 +56,21 @@ FOREACH(line ${ENT_VR})
   SET(DICOM_VR_DICTIONARY "${DICOM_VR_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
 
+#-----------------------------------------------------------------------------
+# ... for DictGroupName file
+FILE(READ "DictGroupName.dic" ENT_TS)
+STRING(REGEX REPLACE "\r?\n" ";" ENT_TS "${ENT_TS}")
+SET(DICT_GROUP_NAME_DICTIONARY "")
+
+FOREACH(line ${ENT_TS})
+  STRING(REGEX REPLACE
+    "^([0-9a-f]+) +(.*)$"
+    "  groupName[0x\\1] = \\2; " nline "${line}")
+  SET(DICT_GROUP_NAME_DICTIONARY "${DICT_GROUP_NAME_DICTIONARY}\n${nline}")
+ENDFOREACH(line)
+
+#-----------------------------------------------------------------------------
+# ... for DicomDir file
 FILE(READ "DicomDir.dic" ENT_DIR)
 STRING(REGEX REPLACE "\\\\" "\\\\\\\\" ENT_DIR "${ENT_DIR}")
 STRING(REGEX REPLACE ";" "/" ENT_DIR "${ENT_DIR}") # CMake doesn't like ';'
@@ -64,10 +84,11 @@ FOREACH(line ${ENT_DIR})
   SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
 
+#-----------------------------------------------------------------------------
+# ... Set the dictionnary
 SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY} \n {0,0,0,0}")
 
-# See above
-FOREACH(file dicomV3.dic  dicomTS.dic dicomVR.dic DicomDir.dic)
+FOREACH(file dicomV3.dic  dicomTS.dic dicomVR.dic DicomDir.dic DictGroupName.dic)
   CONFIGURE_FILE("${GDCM_SOURCE_DIR}/Dicts/${file}"
     "${GDCM_BINARY_DIR}/Dicts/${file}.out")
 ENDFOREACH(file)

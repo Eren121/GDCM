@@ -135,7 +135,11 @@ FIND_PATH(GDCM_DATA_ROOT gdcm-ACR-LibIDO.acr
 )
 
 # Set the place for the public dictionary, must be set before gdcmConfigure.h
-SET( GDCM_PUB_DICT_PATH "${CMAKE_INSTALL_PREFIX}${GDCM_DATA_DIR}")
+#SET( GDCM_PUB_DICT_PATH "${CMAKE_INSTALL_PREFIX}${GDCM_DATA_DIR}")
+FIND_PATH(GDCM_PUB_DICT_PATH dicomV3.dic
+  ${GDCM_SOURCE_DIR}/Dicts
+  $ENV{PUB_DICT_PATH}
+)
 
 #-----------------------------------------------------------------------------
 # SunOS + old gcc fixes:

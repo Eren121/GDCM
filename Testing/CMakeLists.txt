@@ -13,6 +13,7 @@ SET(TEST_SOURCES
   TestHash.cxx
   TestTS.cxx
   TestVR.cxx
+  TestDictGroupName.cxx
   TestDict.cxx
   TestWriteSimple.cxx
   TestImageSet.cxx

@@ -31,6 +31,9 @@
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
+#include "gdcmVR.h"
+#include "gdcmTS.h"
+#include "gdcmDictGroupName.h"
 
 ////////////////////////////////////////////////////////////////////////////
 /// Refer (below) to the definition of multi-argument typemap
@@ -377,6 +380,9 @@ typedef unsigned long long uint64_t;
 %include "gdcmValEntry.h"
 %include "gdcmBinEntry.h"
 %include "gdcmSeqEntry.h"
+%include "gdcmVR.h"
+%include "gdcmTS.h"
+%include "gdcmDictGroupName.h"
 
 ////////////////////////////////////////////////////////////////////////////
 // Notes on swig and this file gdcm.i:

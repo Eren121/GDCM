@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmGlobal.h,v $
+  Module:    $RCSfile: gdcmDictGroupName.h,v $
   Language:  C++
   Date:      $Date: 2005/04/05 10:56:25 $
-  Version:   $Revision: 1.8 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,49 +16,39 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMGLOBAL_H
-#define GDCMGLOBAL_H
+#ifndef GDCMDICTGROUPNAME_H
+#define GDCMDICTGROUPNAME_H
 
 #include "gdcmCommon.h"
+#include <map>
+#include <string>
+#include <iostream>
 
 namespace gdcm 
 {
-class DictSet;
-class VR;
-class TS;
-class DictGroupName;
-class DicomDirElement;
+
+//-----------------------------------------------------------------------------
+typedef std::string GroupName;
+/// Group Name Hash Table
+typedef std::map<uint16_t, GroupName> DictGroupNameHT;
+
 //-----------------------------------------------------------------------------
 /**
- * \brief   This class contains all globals elements that might be
- *          instanciated only once (singletons).
+ * \brief Container for dicom Value Representation Hash Table
+ * \note   This is a singleton
  */
-class GDCM_EXPORT Global
+class GDCM_EXPORT DictGroupName 
 {
 public:
-   Global();
-   ~Global();
+   DictGroupName(void);
+   ~DictGroupName();
 
-   static DictSet *GetDicts();
-   static VR *GetVR();
-   static TS *GetTS();
-   static DictGroupName *GetDictGroupName();
-   static DicomDirElement *GetDicomDirElements();
+   void Print(std::ostream &os = std::cout);
+
+   const GroupName &GetName(uint16_t group);
 
 private:
-   /// Pointer to a container, holding _all_ the Dicom Dictionaries.
-   static DictSet *Dicts;
-   /// Pointer to a hash table containing the 'Value Representations'.
-   static VR *ValRes;
-   /// \brief Pointer to a hash table containing the Transfer Syntax codes 
-   ///        and their english description 
-   static TS *TranSyn; 
-   /// \brief Pointer to a hash table containing the Group codes 
-   ///        and their english name (from NIH) 
-   static DictGroupName *GroupName; 
-   /// \brief Pointer to the hash table containing the Dicom Elements necessary 
-   ///        to describe each part of a DICOMDIR 
-   static DicomDirElement *ddElem;
+   DictGroupNameHT groupName;
 };
 } // end namespace gdcm
 

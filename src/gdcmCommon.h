@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/04/05 10:56:25 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,6 +92,7 @@ namespace gdcm
 #define DICT_ELEM         "DicomDir.dic"
 #define DICT_TS           "dicomTS.dic"
 #define DICT_VR           "dicomVR.dic"
+#define DICT_GROUP_NAME   "DictGroupName.dic"
 
 GDCM_EXPORT extern const std::string GDCM_UNKNOWN;
 GDCM_EXPORT extern const std::string GDCM_UNFOUND;

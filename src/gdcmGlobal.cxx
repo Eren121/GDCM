@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/22 11:41:24 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/04/05 10:56:25 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #include "gdcmDebug.h"
 #include "gdcmVR.h"
 #include "gdcmTS.h"
+#include "gdcmDictGroupName.h"
 #include "gdcmDictSet.h"
 #include "gdcmDicomDirElement.h"
 
@@ -40,10 +41,11 @@ const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
 const std::string GDCM_UNREAD    = "gdcm::UnRead";
 
 //-----------------------------------------------------------------------------
-DictSet         *Global::Dicts   = (DictSet *)0;
-VR              *Global::ValRes  = (VR *)0;
-TS              *Global::TranSyn = (TS *)0;
-DicomDirElement *Global::ddElem  = (DicomDirElement *)0;
+DictSet         *Global::Dicts     = (DictSet *)0;
+VR              *Global::ValRes    = (VR *)0;
+TS              *Global::TranSyn   = (TS *)0;
+DictGroupName   *Global::GroupName = (DictGroupName *)0;
+DicomDirElement *Global::ddElem    = (DicomDirElement *)0;
 
 //-----------------------------------------------------------------------------
 /**
@@ -63,10 +65,11 @@ Global::Global()
       gdcmWarningMacro( "VR or TS or Dicts already allocated");
       return;
    }
-   Dicts   = new DictSet();
-   ValRes  = new VR();
-   TranSyn = new TS();
-   ddElem  = new DicomDirElement();
+   Dicts     = new DictSet();
+   ValRes    = new VR();
+   TranSyn   = new TS();
+   GroupName = new DictGroupName();
+   ddElem    = new DicomDirElement();
 }
 
 /**
@@ -77,6 +80,7 @@ Global::~Global()
    delete Dicts;
    delete ValRes;
    delete TranSyn;
+   delete GroupName;
    delete ddElem;
 }
 
@@ -104,6 +108,14 @@ VR *Global::GetVR()
 TS *Global::GetTS()
 {
    return TranSyn;
+}
+
+/**
+ * \brief   returns a pointer to the Group name correspondance table
+ */
+DictGroupName *Global::GetDictGroupName()
+{
+   return GroupName;
 }
 
 /**
