@@ -28,7 +28,10 @@ Gdcm is yet another C++ library dedicated to reading/parsing and writing
    <UL>
    <LI>ACR-NEMA version 1 and 2
    </LI>
-   <LI>Dicom version 3 (including various encoding like jpeg or RLE).
+   <LI>Dicom version 3.0 (including various encodings of jpeg, RLE).
+       Please refer to
+       <A HREF="ConformanceSummary.html">gdcm conformance summary</A>
+       for more details.
    </LI>
    </UL>
 </LI>
@@ -70,9 +73,11 @@ or
 <BR>
 In particular <B>gdcm is not aware</B> of:
 <UL>
-<LI>the Dicom network file exchange protocol,
+<LI>the Dicom network file exchange protocol (Query/Retrieve),
 </LI>
 <LI>the Dicom media storage formats,
+</LI>
+<LI>Print, Verification
 </LI>
 <LI>ANY OTHER PART of Dicom.
 </LI>
