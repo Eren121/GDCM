@@ -1,3 +1,9 @@
+2004-09-22 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * src/gdcmDocument.cxx: gdcmDocument::~gdcmDocument() doesn't clear (nor
+    clear) TagHT, which is an inherited member of gdcmElementSet. It is
+    up to the destructor of gdcmElementSet to clean up TagHt and it's
+    pointed content.
+
 2004-09-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Test/CMakeLists.txt: update to follow gdcmData renamings.
   * src/gdcmCommon.h, gdcmDocument.cxx: doxygen typos
