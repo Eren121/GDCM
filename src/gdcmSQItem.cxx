@@ -54,7 +54,14 @@ gdcmSQItem::~gdcmSQItem()
 // Public
 
 bool gdcmSQItem::AddEntry(gdcmDocEntry *entry) {
-   std::cout << "    entree ds gdcmSQItem::AddEntry" << std::endl; 
+   std::cout << "    === entree ds gdcmSQItem::AddEntry " 
+             << hex << entry->GetGroup()
+             << " "
+             << entry->GetElement() 
+	     << " lgt "
+             << entry->GetReadLength()	     
+             << std::endl; 
+	     
    docEntries.push_back(entry);
    //TODO : check if it worked
    return true;

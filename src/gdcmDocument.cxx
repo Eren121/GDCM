@@ -89,6 +89,30 @@ gdcmDocument::gdcmDocument(const char *inFilename,
    long l=ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
    CloseFile();
 
+ /* TO DO : uncomment when everything else is OK  
+  
+   // --------------------------------------------------------------
+   // Special Patch to allow gdcm to read ACR-LibIDO formated images
+   //
+   // if recognition code tells us we deal with a LibIDO image
+   // we switch lineNumber and columnNumber
+   //
+   std::string RecCode;
+   RecCode = GetEntryByNumber(0x0008, 0x0010); // recognition code
+   if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
+       RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
+                                          // with "little-endian strings"
+   {
+         filetype = ACR_LIBIDO; 
+         std::string rows    = GetEntryByNumber(0x0028, 0x0010);
+         std::string columns = GetEntryByNumber(0x0028, 0x0011);
+         SetEntryByNumber(columns, 0x0028, 0x0010);
+         SetEntryByNumber(rows   , 0x0028, 0x0011);
+   }
+   // ----------------- End of Special Patch ---------------- 
+   */ 
+
+
    printLevel = 1;  // 'Medium' print level by default
 }
 
@@ -1240,20 +1264,26 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
    gdcmBinEntry *bn;   
    gdcmSeqEntry *sq;
    string vr;
-   long l;         
+   long l;
+   cout << hex << "offset " << offset 
+        << " l_max "<< l_max 
+        << " ftell a l'entree " << ftell(fp)
+	<< endl;         
    while (true) { 
       NewDocEntry = ReadNextDocEntry( );
       if (!NewDocEntry)
          break;
       	 
-      std::cout << hex << NewDocEntry->GetGroup() 
-               << " "
+      std::cout << hex 
+               << " gr " 
+               << NewDocEntry->GetGroup() 
+               << " el "
 	       << NewDocEntry->GetElement() 
-	       << " "
+	       << " vr "
 	       << NewDocEntry->GetVR()
-	       << " "
+	       << " lgt "
 	       << NewDocEntry->GetReadLength()
-	       << " "
+	       << " off "
 	       << NewDocEntry->GetOffset() 	       
 	       << std::endl;
 	       
@@ -1272,8 +1302,15 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
             set->AddEntry(vl);
 	    LoadDocEntry(vl);
 	    std::cout << "value [" << vl->GetValue() << "]" << std::endl;
-            if (!delim_mode && vl->isItemDelimitor())
+            if (/*!delim_mode && */vl->isItemDelimitor())
                break;
+	    cout << hex
+	         << " l_max = "<< l_max
+	         << " offset = " << offset
+	         << " ftell(fp) = " << ftell(fp)
+	         << endl;
+            if ( !delim_mode && ftell(fp)-offset >= l_max)
+               break;	     
 	 } else { // BinEntry
 	 
         // Hope the following VR *do* correspond to a BinEntry 
@@ -1292,25 +1329,35 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
             std::cout << "value [" << "Bin Entry, in voidArea" << "]" << std::endl;	    	    	 
          }      
 
-          SkipToNextDocEntry(NewDocEntry); // to be sure to be at the beginning 
+          SkipToNextDocEntry(NewDocEntry); // to be sure we are at the beginning 
 	  l = NewDocEntry->GetFullLength(); 
 	    
       } else {   // VR = "SQ"
-      
-         //SkipDocEntry(NewDocEntry);
-      
+            
          std::cout << "gdcmDocument::ParseDES : SQ found " << std::endl;
-         l=NewDocEntry->GetReadLength(); 
+         l=NewDocEntry->GetReadLength();
+	 
          if (l == 0xffffffff)
            delim_mode = true;
          else
            delim_mode = false;
+	   
          sq = new gdcmSeqEntry(NewDocEntry->GetDictEntry());
          sq->Copy(NewDocEntry);
 	 sq->SetDelimitorMode(delim_mode);
-         long lgt = ParseSQ((gdcmDocEntrySet *)sq, offset, l, delim_mode);
+
+	 if (l != 0) {  // Don't try to parse zero-length sequences	 	 
+            long lgt = ParseSQ((gdcmDocEntrySet *)sq, 
+                                //NewDocEntry->GetOffset(),
+				offset, // marche pour DICOMDIR, plante sur 3...dcm
+                                l, delim_mode);
+	 }
 	 // FIXME : on en fait quoi, de lgt ?
          set->AddEntry(sq);
+	 cout << " l_max = " << l_max
+	      << " offset = " << offset
+	      << "ftell(fp) = " << ftell(fp)
+	      << endl;
          if ( !delim_mode && ftell(fp)-offset >= l_max)
             break;
       } 
@@ -1320,48 +1367,63 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
    return l; // ?? 
 }
 
-
-
 /**
  * \brief   Parses a Sequence ( SeqEntry after SeqEntry)
  * @return  parsed length for this level
  */ 
-
-
 long gdcmDocument::ParseSQ(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
 
-         std::cout << "Entree ds gdcmDocument::ParseSQ" << std::endl;
-
+   cout << "=================== gdcmDocument::ParseSQ on entre ds une Sequence"
+        << hex
+        << " offset " << offset
+	<< " l_max " << l_max
+	<< " delim_mode " << delim_mode
+        <<endl;
+   int SQItemNumber = 0;
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
    gdcmSQItem *itemSQ;
    bool dlm_mod;
    int lgr, l, lgth;
-   cout << "=============== on entre ds une Sequence" <<endl;
    
    while (true) {
-      std::cout << "gdcmDocument::ParseSQ on itere" << std::endl;
-
+      std::cout << " ===== gdcmDocument::ParseSQ on itere "
+                << "sur les SQ Items : num " 
+                 << SQItemNumber << std::endl;
+      
+      NewDocEntry = ReadNextDocEntry();
+cout << "=============================== isSequenceDelimitor " 
+     << NewDocEntry->isSequenceDelimitor() 
+     << endl;     
       if(delim_mode) {   
-          NewDocEntry = ReadNextDocEntry();
           if (NewDocEntry->isSequenceDelimitor()) {
+	     cout << " SequenceDelimitationItem found" << endl;
 	  //                    add the Sequence Delimitor  // TODO : find the trick to put it proprerly !
 	  //   ((gdcmSeqEntry *)set)->SetSequenceDelimitationItem(NewDocEntry);
 	     break;
           }	     
       }	     
-      if (!delim_mode && (ftell(fp)-offset) >= l_max){	     
+      if (!delim_mode && (ftell(fp)-offset) >= l_max) {
+             cout << hex
+                  << " offset " << offset
+	          << " l_max " << l_max
+	          << " ftell " << ftell(fp)
+                  << endl;	      	 
+             cout << "depasse ou atteint : on sort " << endl;    
              break;
       }	        
       itemSQ = new gdcmSQItem();
       itemSQ->AddEntry(NewDocEntry); // no value, no voidArea. Think of it while printing !
-      l= NewDocEntry->GetLength();
+      l= NewDocEntry->GetReadLength();
+      cout << "NewDocEntry->GetReadLength() " << l << endl;
       if (l ==0xffffffff)
          dlm_mod = true;
       else
          dlm_mod=false;
-      
-      lgr=ParseDES(itemSQ, offset, l, dlm_mod);
+cout << "================================ appel ParseDES :dlm_mod = " << dlm_mod <<endl;      
+      lgr=ParseDES(itemSQ, NewDocEntry->GetOffset(), l, dlm_mod);
       ((gdcmSeqEntry *)set)->AddEntry(itemSQ);	 
+cout << "================================ sortie ParseDES " << endl;
+      SQItemNumber ++;
    }
    //Update(lgth); 
    lgth = ftell(fp) - offset;

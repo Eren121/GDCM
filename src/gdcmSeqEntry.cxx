@@ -18,8 +18,6 @@
 gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e) 
              : gdcmDocEntry(e)
 {
-   //ListSQItem items est un *champ* de gdcmSeqEntry.
-   
    delimitor_mode = false;
    seq_term  = NULL;   
 }
@@ -33,6 +31,8 @@ gdcmSeqEntry::~gdcmSeqEntry() {
    {
       delete *cc;
    }
+   if (!seq_term)
+      delete seq_term;
 }
 
 //-----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ void gdcmSeqEntry::Print(std::ostream &os){
    }
    // at end, print the sequence terminator item, if any
    /*
-   if (delimitor_mode) {
+   if (delimitor_mode) {  // TODO : find the trick to print it properly
       s << "   | " ;   
       os << s.str();
       if (seq_term = NULL)
@@ -125,6 +125,7 @@ void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem) {
 }
 //-----------------------------------------------------------------------------
 // Protected
+
 
 //-----------------------------------------------------------------------------
 // Private
