@@ -200,7 +200,7 @@ bool ReferenceFileParser::Check()
          }
       }
       delete tested;
-      cout << Indent << endl;
+      cout << Indent << "  OK" << endl;
    }
    cout << Indent << endl;
 }
@@ -368,9 +368,6 @@ void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
       // Uncommented line outside of block is not clean:
       if ( !inBlock && !beginBlock )
       {
-         cerr << Indent
-              << "Syntax warning: outside of block [] data at line "
-              << lineNumber++ << " not considered." << endl;
          continue;
       }
 
