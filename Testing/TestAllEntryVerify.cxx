@@ -306,7 +306,7 @@ void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
 
    while ( ! from.eof() )
    {
-      getline( from, line );
+      std::getline( from, line );
 
       /// This is how we usually end the parsing because we hit EOF:
       if ( ! from.good() )
