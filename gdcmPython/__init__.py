@@ -57,3 +57,9 @@ except ImportError,e:
 gdcmHeader = gdcm.gdcmHeader
 gdcmDictSet = gdcm.gdcmDictSet
 gdcmFile = gdcm.gdcmFile
+
+def GetPubDictTagNames():
+   return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictTagNames()
+
+def GetPubDictTagNamesByCategory():
+   return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictTagNamesByCategory()

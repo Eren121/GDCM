@@ -4,7 +4,7 @@ print "##############################################################"
 print "### Display all the possible tags of the current public"
 print "### dictionary"
 print "##############################################################"
-PubList = gdcmDictSet.GetPubDictTagNames()
+PubList = GetPubDictTagNames()
 for i in range(0, len(PubList)):
    print "   ", PubList[i]
 
@@ -12,7 +12,7 @@ print "##############################################################"
 print "### Display all the possible tags of the current public"
 print "### dictionary, but grouped by using the Fourth field"
 print "##############################################################"
-PubDict = gdcmDictSet.GetPubDictTagNamesByCategory()
+PubDict = GetPubDictTagNamesByCategory()
 for fourth in PubDict:
    print "   ############ Fourth group = ", fourth, " ##############"
    for key in PubDict[fourth]:

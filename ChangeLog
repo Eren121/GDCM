@@ -1,3 +1,19 @@
+2003-05-27  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * gdcmPython/gdcm.i:
+        - typemaps correction to take into account the systematic replacement
+          of "using namespace std" with std:: prefix e.g. std::list,
+          std::string... (cf changes of 2003-05-21).
+        - gdcmGlob global variable of type gdcmGlobal (defined in
+          src/gdcmUtil.cxx and declared in gdcmPython/gdcm.i) is now
+          exported to Python a as cvar.
+      * gdcmPython/__init__.py now defines two functions GetPubDictTagNames()
+        and GetPubDictTagNamesByCategory() as a replacement for deprecated
+        gdcmDictSet.GetPubDictTagNames() and
+        gdcmDictSet.GetPubDictTagNamesByCategory() class functions (i.e.
+        C++ static methods).
+      * gdcmPython/demo/printGroupedPublicDict.py is operational again,
+        with the above changes.
+
 2003-05-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * setup.py, manifest.in : bug fix under linux
 

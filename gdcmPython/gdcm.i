@@ -6,10 +6,9 @@
 #include "gdcmDictSet.h"
 #include "gdcmElValue.h"
 #include "gdcmElValSet.h"
+#include "gdcmUtil.h"
 #include "gdcmHeader.h"
 #include "gdcmFile.h"
-using namespace std;
-
 using namespace std;
 
 // Utility functions on strings for removing leading and trailing spaces
@@ -24,7 +23,13 @@ typedef  unsigned short guint16;
 typedef  unsigned int guint32;
 
 ////////////////////////////////////////////////////////////////////////////
-%typemap(out) list<string> * {
+// Global variables get exported to cvar in Python
+%immutable;
+extern gdcmGlobal gdcmGlob;
+%mutable;
+
+////////////////////////////////////////////////////////////////////////////
+%typemap(out) std::list<std::string> * {
 	PyObject* NewItem = (PyObject*)0;
 	PyObject* NewList = PyList_New(0); // The result of this typemap
 	for (list<string>::iterator NewString = ($1)->begin();
@@ -37,7 +42,7 @@ typedef  unsigned int guint32;
 
 ////////////////////////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
-%typemap(out) map<string, list<string> > * {
+%typemap(out) std::map<std::string, std::list<std::string> > * {
 	PyObject* NewDict = PyDict_New(); // The result of this typemap
 	PyObject* NewKey = (PyObject*)0;
 	PyObject* NewVal = (PyObject*)0;
@@ -98,7 +103,6 @@ typedef  unsigned int guint32;
 %typemap(out) std::string  {
     $result = PyString_FromString(($1).c_str());
 }
-//////%apply int { std::int };    
 
 ////////////////////////////////////////////////////////////////////////////
 %include "gdcmCommon.h"
@@ -107,6 +111,7 @@ typedef  unsigned int guint32;
 %include "gdcmDictSet.h"
 %include "gdcmElValue.h"
 %include "gdcmElValSet.h"
+%include "gdcmUtil.h"
 %include "gdcmHeader.h"
 %include "gdcmFile.h"
 
