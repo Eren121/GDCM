@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:21:20 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/01/28 15:10:56 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,6 +99,8 @@ void BinEntry::Print(std::ostream &os, std::string const & )
    os << s.str();
 }
 
+//-----------------------------------------------------------------------------
+// Public
 /*
  * \brief   canonical Writer
  * @param fp already open file pointer
@@ -169,11 +171,10 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
       fp->seekp(lgr, std::ios::cur);
    }
 }
-//-----------------------------------------------------------------------------
-// Public
 
-
-/// \brief Sets the value (non string) of the current Dicom Header Entry
+/**
+ * \brief Sets the value (non string) of the current Dicom Header Entry
+ */
 void BinEntry::SetBinArea( uint8_t *area, bool self )  
 { 
    if (BinArea && SelfArea)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 09:49:53 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/01/28 15:10:56 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,8 +28,6 @@
 
 namespace gdcm 
 {
-
-// CLEAN ME
 #define MAX_SIZE_PRINT_ELEMENT_VALUE 64
 
 //-----------------------------------------------------------------------------
@@ -114,6 +112,8 @@ void DocEntry::Print(std::ostream &os, std::string const & )
    os << s.str();      
 }
 
+//-----------------------------------------------------------------------------
+// Public
 /**
  * \brief   Writes the common part of any ValEntry, BinEntry, SeqEntry
  * @param fp already open ofstream pointer
@@ -207,9 +207,6 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    }
 }
 
-//-----------------------------------------------------------------------------
-// Public
-
 /**
  * \brief   Gets the full length of the elementary DocEntry (not only value
  *          length) depending on the VR.
@@ -267,10 +264,8 @@ bool DocEntry::IsSequenceDelimitor()
 //-----------------------------------------------------------------------------
 // Protected
 
-
 //-----------------------------------------------------------------------------
 // Private
 
 //-----------------------------------------------------------------------------
-
 } // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/01/28 15:10:56 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,7 +128,7 @@ public:
    
    uint32_t GetFullLength();
    
-   void Copy(DocEntry *doc);
+   virtual void Copy(DocEntry *doc);
 
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   
@@ -136,13 +136,6 @@ public:
    virtual void Print (std::ostream &os = std::cout, std::string const & indent = ""); 
 
 protected:
-   /// \brief   Sets the DicEntry of the current Dicom entry
-   /// \remarks Used only by the gdcm::File !!! (possible because of a friend 
-   ///          link between them)
-   /// @param   newEntry pointer to the DictEntry
-   void SetDictEntry(DictEntry *newEntry) { DicomDict = newEntry; };
-
-// Variables
    /// \brief pointer to the underlying Dicom dictionary element
    DictEntry *DicomDict;
    
@@ -166,7 +159,6 @@ protected:
    TagKey Key;
 
 private:
-   friend class File; // To use SetDictEntry
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

@@ -1,5 +1,8 @@
 2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * src/gdcmFile.cxx, gdcmDocument.cxx : fix the bug on the group|element 
+   * Remove friend classes between DocEntry and File
+
+2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.cxx, gdcmDocument.cxx : fix the bug on the group|element
      0002|0000. The value was incorrect.
 
 2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

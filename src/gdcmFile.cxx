@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 10:34:28 $
-  Version:   $Revision: 1.204 $
+  Date:      $Date: 2005/01/28 15:10:56 $
+  Version:   $Revision: 1.205 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,21 +99,37 @@ File::File( std::string const &filename ):
          ComputeJPEGFragmentInfo();
       CloseFile();
 
-      // Change the created dict entry
-      std::string PixelVR;
-      // 8 bits allocated is a 'O Bytes' , as well as 24 (old ACR-NEMA RGB)
-      // more than 8 (i.e 12, 16) is a 'O Words'
-      if ( GetBitsAllocated() == 8 || GetBitsAllocated() == 24 ) 
-         PixelVR = "OB";
-      else
-         PixelVR = "OW";
+      // Create a new BinEntry to change the the DictEntry
+      // The changed DictEntry will have 
+      // - a correct PixelVR OB or OW)
+      // - a VM to "PXL"
+      // - the name to "Pixel Data"
+      BinEntry *oldEntry = dynamic_cast<BinEntry *>(entry);
+      if(oldEntry)
+      {
+         std::string PixelVR;
+         // 8 bits allocated is a 'O Bytes' , as well as 24 (old ACR-NEMA RGB)
+         // more than 8 (i.e 12, 16) is a 'O Words'
+         if ( GetBitsAllocated() == 8 || GetBitsAllocated() == 24 ) 
+            PixelVR = "OB";
+         else
+            PixelVR = "OW";
 
-      DictEntry* newEntry = NewVirtualDictEntry(GrPixel, NumPixel,
-                                                PixelVR, "PXL", "Pixel Data");
+         // Change only made if usefull
+         if( PixelVR != oldEntry->GetVR() )
+         {
+            DictEntry* newDict = NewVirtualDictEntry(GrPixel,NumPixel,
+                                                     PixelVR,"1","Pixel Data");
 
-      // friend class hunting : should we *create* a new entry,
-      // instead of modifying its DictEntry,in order not to use 'friend' ?
-      entry->SetDictEntry( newEntry );
+            BinEntry *newEntry = new BinEntry(newDict);
+            newEntry->Copy(entry);
+            newEntry->SetBinArea(oldEntry->GetBinArea(),oldEntry->IsSelfArea());
+            oldEntry->SetSelfArea(false);
+
+            RemoveEntry(oldEntry);
+            AddEntry(newEntry);
+         }
+      }
    }
 }
 

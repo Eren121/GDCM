@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmContentEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 16:32:45 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/28 15:10:56 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,6 +46,8 @@ public:
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted 
    /// into a 'string', event if it's physically stored on disk as an integer
    std::string const &GetValue() const { return Value; };
+
+   void Copy(DocEntry *doc);
 
 protected:
    // Contructors are protected, not to be invoked by end user.

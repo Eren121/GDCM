@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:21:20 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/28 15:10:56 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,6 +51,8 @@ public:
    uint8_t *GetBinArea()  { return BinArea; }
 
    void  SetBinArea( uint8_t *area, bool self = true );
+   void SetSelfArea(bool area) { SelfArea = area; };
+   bool IsSelfArea() { return SelfArea; };
 
 private:
    /// \brief memory area to hold 'non std::string' representable values 
