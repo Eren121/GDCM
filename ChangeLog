@@ -1,4 +1,12 @@
 2004-11-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+    1. Finish merging JMR patch for writting DICOM from scratch
+    2. Fix -hopefully- bug with MONOCHROME and space vs null character
+    3. Use const ref when possible
+    4. Add a new function InitializeDefaultHeader, which create a template DICOM header (CT image for now)
+    5. A few more comments
+    6. CreateUniqueUID can now be called without parameter"
+
+2004-11-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * ENH: Slightly bigger patch:
     1. Getting toward full integration of JMR patch for writting dicom from scratch
     2. Update Test to test part of this patch: CreateUniqueUID
