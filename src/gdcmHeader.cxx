@@ -44,7 +44,6 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error)
     dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", InFilename);
   ParseHeader();
   LoadElements();
-  AddAndDefaultElements();
 }
 
 
@@ -146,8 +145,12 @@ void gdcmHeader::CheckSwap()
       // * the 4 bytes of the first tag (0002, 0000),or (0002, 0001)
       // i.e. a total of  136 bytes.
       entCur = deb + 136;
+      ///// FIXME
+      ///// Use gdcmHeader::dicom_vr to test all the possibilities
+      ///// insteadn of just checking for UL, OB and UI !?
       if(  (memcmp(entCur, "UL", (size_t)2) == 0) ||
-      	   (memcmp(entCur, "OB", (size_t)2) == 0) )
+      	  (memcmp(entCur, "OB", (size_t)2) == 0) ||
+      	  (memcmp(entCur, "UI", (size_t)2) == 0) )
       	{
          filetype = ExplicitVR;
          dbg.Verbose(1, "gdcmHeader::CheckSwap:",
@@ -491,6 +494,18 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
    LoadElementValueSafe(Element);
    string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.4.53" )
+      return true;
+   return false;
+}
+/**
+ * \ingroup gdcmHeader
+ * \brief   Predicate for dicom version 3 file.
+ * @return  True when the file is a dicom version 3.
+ */
+bool gdcmHeader::IsDicomV3(void) {
+   if (   (filetype == TrueDicom)
+       || (filetype == ExplicitVR)
+       || (filetype == ImplicitVR) )
       return true;
    return false;
 }
@@ -1390,108 +1405,99 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   accessor to get Rows nbr
+ * \brief   Retrieve the number of columns of image.
+ * @return  The encountered size when found, 0 by default.
  */
- 
-string gdcmHeader::GetYSize(void) {
-	return (GetElValByName("Rows"));
+int gdcmHeader::GetXSize(void) {
+   // We cannot check for "Columns" because the "Columns" tag is present
+   // both in IMG (0028,0011) and OLY (6000,0011) sections of the dictionary.
+   string StrSize = GetPubElValByNumber(0x0028,0x0011);
+   if (StrSize == "gdcm::Unfound")
+      return 0;
+   return atoi(StrSize.c_str());
 }
 
 /**
  * \ingroup gdcmHeader
- * \brief   accessor to get Columns nbr
+ * \brief   Retrieve the number of lines of image.
+ * \warning The defaulted value is 1 as opposed to gdcmHeader::GetXSize()
+ * @return  The encountered size when found, 1 by default.
  */
- 
-string gdcmHeader::GetXSize(void) {
-	return (GetElValByName("Columns"));
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   accessor to get Planes nbr
- * (ACR-NEMA volume file or Multiframe Dicom V3 image file)
- */
- 
-string gdcmHeader::GetZSize(void) {
-	string NewVal;
-	NewVal = GetElValByNumber(0x0028,0x0008); // Number of Frames (DICOM)
-
-   	if (NewVal == "gdcm::Unfound") {
-   		NewVal = GetElValByNumber(0x0028,0x0012); // Planes (ACR-NEMA)
- 				// 6000 0012 : US OLY Planes
-				// 'xxxByName' function not applicable
-   		if (NewVal == "gdcm::Unfound") {
-   			NewVal = "0";
-      		}
-   	}
-   	return(NewVal);
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   accessor to get Pixel Type 
- * (U8, S8, U16, S16, U32, S32)
- *
- * \warning : NOT YET MADE
- * 
- */
- 
-string gdcmHeader::GetPixelType(void) {
-   string NewVal;
-   // TODO
-   return(NewVal);
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Once the header is parsed add some gdcm convenience/helper elements
- *          in the gdcmElValSet. For example add:
- *          - gdcmImageType which is an entry containing a short for the
- *            type of image and whose value ranges in 
- *               I8   (unsigned 8 bit image)
- *               I16  (unsigned 8 bit image)
- *               IS16 (signed 8 bit image)
- *						Replace by U8, S8, U16, S16, U32, S32 
- *
- *          - gdcmXsize, gdcmYsize, gdcmZsize whose values are respectively
- *            the ones of the official DICOM fields Rows, Columns and [Number of Frames/Planes]
- */
-void gdcmHeader::AddAndDefaultElements(void) {
-   gdcmElValue* NewElVal = (gdcmElValue*)0;
-   string NewVal;
-
-   NewElVal = NewManualElValToPubDict("gdcmXSize", "US");
-   if (!NewElVal) return;
-   NewVal = GetElValByName("Rows");
-   if (NewVal != "gdcm::Unfound")
-      NewElVal->SetValue(NewVal);
-   else 
-      NewElVal->SetValue("0");
-
-   NewElVal = NewManualElValToPubDict("gdcmYSize", "US");
-   if (!NewElVal) return;
-   NewVal = GetElValByName("Columns");
-   if (NewVal != "gdcm::Unfound")
-      NewElVal->SetValue(NewVal);
+int gdcmHeader::GetYSize(void) {
+   // We cannot check for "Rows" because the "Rows" tag is present
+   // both in IMG (0028,0010) and OLY (6000,0010) sections of the dictionary.
+   string StrSize = GetPubElValByNumber(0x0028,0x0010);
+   if (StrSize != "gdcm::Unfound")
+      return atoi(StrSize.c_str());
+   if ( IsDicomV3() )
+      return 0;
    else
-      NewElVal->SetValue("0");
+      // The Rows (0028,0010) entry is optional for ACR/NEMA. It might
+      // hence be a signal (1d image). So we default to 1:
+      return 1;
+}
 
+/**
+ * \ingroup gdcmHeader
+ * \brief   Retrieve the number of planes of volume or the number
+ *          of frames of a multiframe.
+ * \warning When present we consider the "Number of Frames" as the third
+ *          dimension. When absent we consider the third dimension as
+ *          being the "Planes" tag content.
+ * @return  The encountered size when found, 1 by default.
+ */
+int gdcmHeader::GetZSize(void) {
+   // Both in DicomV3 and ACR/Nema the consider the "Number of Frames"
+   // as the third dimension.
+   string StrSize = GetPubElValByNumber(0x0028,0x0008);
+   if (StrSize != "gdcm::Unfound")
+      return atoi(StrSize.c_str());
 
-   NewElVal = NewManualElValToPubDict("gdcmZSize", "US");
-   if (!NewElVal) return;
-   NewVal = GetElValByNumber(0x0028,0x0008); // 0028 0008 IS IMG Number of Frames (DICOM)
-   if (NewVal == "gdcm::Unfound") {
-   	NewVal = GetElValByNumber(0x0028,0x0012); // 028 0012 US IMG Planes (ACR-NEMA)
-   	if (NewVal == "gdcm::Unfound") { 	  // Warning !!! : 6000 0012 US OLY Planes
-   		NewElVal->SetValue("0");
-   	} else {
-      		NewElVal->SetValue(NewVal);
-      	}   		
-   } else {
-      NewElVal->SetValue(NewVal);
-   }						// length is still wrong 
-}     						// do we care about it?
+   // We then consider the "Planes" entry as the third dimension [we
+   // cannot retrieve by name since "Planes tag is present both in
+   // IMG (0028,0012) and OLY (6000,0012) sections of the dictionary]. 
+   StrSize = GetPubElValByNumber(0x0028,0x0012);
+   if (StrSize != "gdcm::Unfound")
+      return atoi(StrSize.c_str());
+   return 1;
+}
 
+/**
+ * \ingroup gdcmHeader
+ * \brief   Build the Pixel Type of the image.
+ *          Possible values are:
+ *          - U8  unsigned  8 bit,
+ *          - S8    signed  8 bit,
+ *          - U16 unsigned 16 bit,
+ *          - S16   signed 16 bit,
+ *          - U32 unsigned 32 bit,
+ *          - S32   signed 32 bit,
+ * \warning 12 bit images appear as 16 bit.
+ * @return 
+ */
+string gdcmHeader::GetPixelType(void) {
+   string BitsAlloc;
+   BitsAlloc = GetElValByName("Bits Allocated");
+   if (BitsAlloc == "gdcm::Unfound") {
+      dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
+      BitsAlloc = string("16");
+   }
+   if (BitsAlloc == "12")
+      BitsAlloc = string("16");
+
+   string Signed;
+   Signed = GetElValByName("Pixel Representation");
+   if (Signed == "gdcm::Unfound") {
+      dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
+      BitsAlloc = string("0");
+   }
+   if (Signed == "0")
+      Signed = string("U");
+   else
+      Signed = string("S");
+
+   return( BitsAlloc + Signed);
+}
 
 /**
  * \ingroup gdcmHeader
@@ -1518,13 +1524,11 @@ bool gdcmHeader::IsReadable(void) {
    return true;
 }
 
-
 /**
  * \ingroup gdcmHeader
  * \brief   Small utility function that creates a new manually crafted
  *          (as opposed as read from the file) gdcmElValue with user
  *          specified name and adds it to the public tag hash table.
- *          Refer to gdcmHeader::AddAndDefaultElements for a typical usage.
  * \note    A fake TagKey is generated so the PubDict can keep it's coherence.
  * @param   NewTagName The name to be given to this new tag.
  * @param   VR The Value Representation to be given to this new tag.

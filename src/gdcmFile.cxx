@@ -27,9 +27,13 @@ gdcmFile::gdcmFile(string & filename)
 {
 }
 
+gdcmFile::gdcmFile(const char * filename) 
+	:gdcmHeader(filename)	
+{
+}
+
 
 /////////////////////////////////////////////////////////////////
-// FIXME JPR: comments in English please !
 /**
  * \ingroup   gdcmFile
  * \brief     Renvoie la longueur A ALLOUER pour recevoir les pixels de l'image
@@ -397,16 +401,19 @@ int gdcmFile::WriteDcm (string nomFichier) {
 	fclose (fp1);
 	return(1);
 }
+
+int gdcmFile::WriteDcm (const char* nomFichier) {
+   WriteDcm (string (nomFichier));
+}
 	
 	
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
- * \ TODO
  *
- * @param 
+ * @param  nomFichier TODO JPR
  *
- * @return	
+ * @return TODO JPR
  */
 
 int gdcmFile::WriteDcmExplVR (string nomFichier) {

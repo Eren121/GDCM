@@ -79,8 +79,8 @@ private:
    void CheckSwap(void);
    void InitVRDict(void);
    void SwitchSwapToBigEndian(void);
+   // CLEAN ME: NewManualElValToPubDict is NOT called any more.
    gdcmElValue*  NewManualElValToPubDict(string NewTagName, string VR);
-   void AddAndDefaultElements(void);
    void SetMaxSizeLoadElementValue(long);
 
    gdcmDictEntry * GetDictEntryByKey(guint16, guint16);
@@ -109,6 +109,7 @@ private:
    bool IsJPEGSpectralSelectionProcess6_8TransferSyntax(void); 
    
    bool IsJPEGLossless(void); 
+   bool IsDicomV3(void); 
       
 protected:
    // FIXME: is this enum still necessary ??
@@ -169,13 +170,9 @@ public:
 
    gdcmElValSet GetPubElValSet() { return(PubElValSet); }
    
-   // a mettre en inline
-   // --> ou met-on les doxygeneries ?
-   
-   string GetXSize(void);  
-   string GetYSize(void);
-    
-   string GetZSize(void);       
+   int GetXSize(void);  
+   int GetYSize(void);
+   int GetZSize(void);       
    string GetPixelType(void);  
    
 };

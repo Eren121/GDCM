@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.6 2003/04/01 14:07:40 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.7 2003/04/07 15:04:40 frog Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -16,6 +16,11 @@ typedef map<string, gdcmElValue*> TagElValueNameHT;
 class GDCM_EXPORT gdcmElValSet {
 	TagElValueHT tagHt;             // Both accesses with a TagKey or with a
 	TagElValueNameHT NameHt;        // the DictEntry.Name are required.
+//FIXME This is redundant with gdcmHeader::FileType enum. That sux !
+enum FileType {
+      TrueDicom,
+      ExplicitVR,
+      ACR};
 public:	
 	void Add(gdcmElValue*);	
 	// TODO
@@ -26,20 +31,24 @@ public:
 	int  WriteAcr(FILE *fp);
 	int  WriteExplVR(FILE *fp);
 
-	gdcmElValue* GetElementByNumber(guint32 group, guint32 element);
+	gdcmElValue* GetElementByNumber(guint16 group, guint16 element);
 	gdcmElValue* GetElementByName  (string);
-	string   GetElValueByNumber(guint32 group, guint32 element);
+	string   GetElValueByNumber(guint16 group, guint16 element);
 	string   GetElValueByName  (string);
 	
 	TagElValueHT & GetTagHt(void);	
 	
-	int SetElValueByNumber(string content, guint32 group, guint32 element);
+	int SetElValueByNumber(string content, guint16 group, guint16 element);
 	int SetElValueByName  (string content, string TagName);
 	
-	int SetElValueLengthByNumber(guint32 l, guint32 group, guint32 element);
+	int SetElValueLengthByNumber(guint32 l, guint16 group, guint16 element);
 	int SetElValueLengthByName  (guint32 l, string TagName);
+
+   guint32 GenerateFreeTagKeyInGroup(guint16 group);
 	
-   guint32 GenerateFreeTagKeyInGroup(guint32 group);
+private:
+   void UpdateGroupLength(bool SkipSequence = false);
+   void WriteElements(FileType type, FILE *);
 
 };
 

@@ -81,9 +81,6 @@ gdcmDictEntry * gdcmDict::GetTagByKey(guint16 group, guint16 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! KeyHt.count(key))
 		return (gdcmDictEntry*)0; 
-	if (KeyHt.count(key) > 1)
-		dbg.Verbose(0, "gdcmDict::GetTagByName", 
-		            "multiple entries for this key (FIXME) !");
 	return KeyHt.find(key)->second;
 }
 
@@ -96,63 +93,44 @@ gdcmDictEntry * gdcmDict::GetTagByKey(guint16 group, guint16 element) {
 gdcmDictEntry * gdcmDict::GetTagByName(TagName name) {
 	if ( ! NameHt.count(name))
 		return (gdcmDictEntry*)0; 
-	if (NameHt.count(name) > 1)
-		dbg.Verbose(0, "gdcmDict::GetTagByName", 
-		            "multiple entries for this key (FIXME) !");
 	return NameHt.find(name)->second;
 }
 
-
 int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
-	//JPRCLEAN
-	// au cas ou la NewEntry serait incomplete
-	// Question : cela peut-il se produire ?
-	//
-	// --> NON : voir constructeur
-	//TagKey key;
-	//key = NewEntry->GetKey();
-	//if (key =="") {
-	//	NewEntry->gdcmDictEntry::SetKey(
-	//			gdcmDictEntry::TranslateToKey(NewEntry->GetGroup(), NewEntry->GetElement())
-	//			);
-	//}
-	
-	KeyHt.erase (NewEntry->gdcmDictEntry::GetKey());
-	KeyHt[ NewEntry->GetKey()] = NewEntry;
-	return (1);
-	// Question(jpr): Dans quel cas ça peut planter ?
-	// Reponse(frog): dans les mauvais cas...
+   if ( RemoveEntry(NewEntry->gdcmDictEntry::GetKey()) ) {
+       KeyHt[ NewEntry->GetKey()] = NewEntry;
+       return (1);
+   } 
+   return (0);
 }
- 
 
 int gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
 
 	TagKey key;
 	key = NewEntry->GetKey();
 	
-	if(KeyHt.count(key) >= 1) {
+	if(KeyHt.count(key) == 1) {
 		dbg.Verbose(1, "gdcmDict::AddNewEntry allready present", key.c_str());
 		return(0);
 	} else {
 		KeyHt[NewEntry->GetKey()] = NewEntry;
 		return(1);
 	}
-	}
+}
 
 
-int gdcmDict::RemoveEntry(TagKey key) {	
-	if(KeyHt.count(key) == 1) {
-		KeyHt.erase(key);
-		return (1);
-	} else {
-		dbg.Verbose(1, "gdcmDict::RemoveEntry unfound entry", key.c_str());
-		return (0);
-	}
+int gdcmDict::RemoveEntry(TagKey key) {
+   if(KeyHt.count(key) == 1) {
+      KeyHt.erase(key);
+      return (1);
+   } else {
+      dbg.Verbose(1, "gdcmDict::RemoveEntry unfound entry", key.c_str());
+      return (0);
+  }
 }
 
 
 int gdcmDict::RemoveEntry (guint16 group, guint16 element) {
-
 	return( RemoveEntry(gdcmDictEntry::TranslateToKey(group, element)) );
 }
 

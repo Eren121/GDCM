@@ -44,6 +44,7 @@ public:
 	//    seen as a side effect).
 	
 	gdcmFile(string & filename);
+	gdcmFile(const char * filename);
 	
 	// For promotion (performs a deepcopy of pointed header object)
 	// TODO Swig gdcmFile(gdcmHeader* header);
@@ -90,6 +91,7 @@ public:
 		
 	int WriteRawData 	(string nomFichier);
 	int WriteDcm     	(string nomFichier);
+	int WriteDcm     	(const char * nomFichier);
 	int WriteDcmExplVR	(string nomFichier);
 	int WriteAcr     	(string nomFichier);
 };
