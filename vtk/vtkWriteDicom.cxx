@@ -20,18 +20,14 @@
 //----------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
-   if( argc < 2 )
+   if( argc < 3 )
+   {
       return 0;
+   }
   
    vtkGdcmReader *reader = vtkGdcmReader::New();
    reader->AllowLookupTableOff();
-
-   if( argc == 2 )
-      reader->SetFileName( argv[1] );
-   else
-      for(int i=1; i< argc; i++)
-         reader->AddFileName( argv[i] );
-
+   reader->SetFileName( argv[1] );
    reader->Update();
 
    vtkImageData *output;
@@ -51,17 +47,30 @@ int main(int argc, char *argv[])
    }
   
    //print debug info:
-   output->Print( cout );
+   output->Print(cout);
 
    //////////////////////////////////////////////////////////
    // WRITE...
    //if you wish you can export dicom to a vtk file 
    // this file will have the add of .tmp.dcm extention
-   std::string fileName = argv[1];
-   fileName += ".tmp.dcm";
+   std::string fileName = argv[2];
+   fileName += ".dcm";
 
    vtkGdcmWriter *writer = vtkGdcmWriter::New();
+
+   // For 3D
+   writer->SetFileDimensionality(3);
    writer->SetFileName(fileName.c_str());
+   if(argc >= 4)
+   {
+      if( strcmp(argv[3],"2D" )==0 )
+      {
+         writer->SetFileDimensionality(2);
+         writer->SetFilePrefix(argv[2]);
+         writer->SetFilePattern("%s%d.dcm");
+      }
+   }
+
    writer->SetInput(output);
    writer->Write();
    //////////////////////////////////////////////////////////

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/09 11:31:52 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/12/09 17:08:36 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.5 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.6 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -34,6 +34,7 @@ vtkStandardNewMacro(vtkGdcmWriter);
 vtkGdcmWriter::vtkGdcmWriter()
 {
    this->LookupTable = NULL;
+   this->FileDimensionality = 3;
 }
 
 vtkGdcmWriter::~vtkGdcmWriter()
@@ -56,26 +57,32 @@ void vtkGdcmWriter::PrintSelf(ostream& os, vtkIndent indent)
  * Copy the image and reverse the Y axis
  */
 // The output datas must be deleted by the user of the method !!!
-size_t ReverseData(vtkImageData *img,unsigned char **data)
+size_t ReverseData(vtkImageData *image,unsigned char **data)
 {
-   int *dim = img->GetDimensions();
-   size_t lineSize = dim[0] * img->GetScalarSize()
-                   * img->GetNumberOfScalarComponents();
+   int inc[3];
+   int *extent = image->GetUpdateExtent();
+   int dim[3] = {extent[1]-extent[0]+1,
+                 extent[3]-extent[2]+1,
+                 extent[5]-extent[4]+1};
+
+   size_t lineSize = dim[0] * image->GetScalarSize()
+                   * image->GetNumberOfScalarComponents();
    size_t planeSize = dim[1] * lineSize;
    size_t size = dim[2] * planeSize;
 
    *data = new unsigned char[size];
 
-   unsigned char *src = (unsigned char *)img->GetScalarPointer();
+   image->GetIncrements(inc);
+   unsigned char *src = (unsigned char *)image->GetScalarPointerForExtent(extent);
    unsigned char *dst = *data + planeSize - lineSize;
-   for (int plane = 0; plane < dim[2]; plane++)
+   for (int plane = extent[4]; plane <= extent[5]; plane++)
    {
-      for (int line = 0; line < dim[1]; line++)
+      for (int line = extent[2]; line <= extent[3]; line++)
       {
          // Copy one line at proper destination:
          memcpy((void*)dst, (void*)src, lineSize);
 
-         src += lineSize;
+         src += inc[1]*image->GetScalarSize();
          dst -= lineSize;
       }
       dst += 2 * planeSize;
@@ -92,7 +99,10 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
    std::ostringstream str;
 
    // Image size
-   int *dim = image->GetDimensions();
+   int *extent = image->GetUpdateExtent();
+   int dim[3] = {extent[1]-extent[0]+1,
+                 extent[3]-extent[2]+1,
+                 extent[5]-extent[4]+1};
 
    str.str("");
    str << dim[0];
@@ -180,7 +190,6 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
  */ 
 void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, ofstream *file)
 {
-   (void)axis; // To avoid warning
    if(file)
    {
       vtkErrorMacro( <<  "File musn't be opened");
@@ -196,16 +205,81 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, ofstream *file
       return;
    }
 
-   WriteDcmFile(this->FileName,image);
+   RecursiveWrite(axis,image,image,file);
+   //WriteDcmFile(this->FileName,image);
 }
 
-void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, 
-                                   vtkImageData *cache, ofstream *file)
+void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache, 
+                                   vtkImageData *image, ofstream *file)
 {
-   (void)axis; // To avoid warning
-   (void)image; // To avoid warning
-   (void)cache; // To avoid warning
-   (void)file; // To avoid warning
+   int idx, min, max;
+
+   // if the file is already open then just write to it
+   if( file )
+   {
+      vtkErrorMacro( <<  "File musn't be opened");
+      return;
+   }
+
+   // if we need to open another slice, do it
+   if( (axis + 1) == this->FileDimensionality )
+   {
+      // determine the name
+      if (this->FileName)
+      {
+         sprintf(this->InternalFileName,"%s",this->FileName);
+      }
+      else 
+      {
+         if (this->FilePrefix)
+         {
+            sprintf(this->InternalFileName, this->FilePattern, 
+            this->FilePrefix, this->FileNumber);
+         }
+         else
+         {
+            sprintf(this->InternalFileName, this->FilePattern,this->FileNumber);
+         }
+         if (this->FileNumber < this->MinimumFileNumber)
+         {
+            this->MinimumFileNumber = this->FileNumber;
+         }
+         else if (this->FileNumber > this->MaximumFileNumber)
+         {
+            this->MaximumFileNumber = this->FileNumber;
+         }
+      }
+
+      // Write the file
+      WriteDcmFile(this->InternalFileName,image);
+      ++this->FileNumber;
+      return;
+   }
+
+   // if the current region is too high a dimension forthe file
+   // the we will split the current axis
+   cache->GetAxisUpdateExtent(axis, min, max);
+
+   // if it is the y axis then flip by default
+   if (axis == 1 && !this->FileLowerLeft)
+   {
+      for(idx = max; idx >= min; idx--)
+      {
+         cache->SetAxisUpdateExtent(axis, idx, idx);
+         this->RecursiveWrite(axis - 1, cache, image, file);
+      }
+   }
+   else
+   {
+      for(idx = min; idx <= max; idx++)
+      {
+         cache->SetAxisUpdateExtent(axis, idx, idx);
+         this->RecursiveWrite(axis - 1, cache, image, file);
+      }
+   }
+
+   // restore original extent
+   cache->SetAxisUpdateExtent(axis, min, max);
 }
 
 void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)

@@ -1,4 +1,8 @@
 2004-12-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * vtk/vtkGdcmWriter.[h|cxx] : now can write stack of images.
+   * vtk/vtkWriteDicom.cxx : can write 2D stack or 3D image
+
+2004-12-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Example/WriteDicomSimple.cxx : example to write a dicom file from nothing.
      At this time, this image isn't readable by e-film... waiting JPR help to
      solve it.
