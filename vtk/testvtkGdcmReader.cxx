@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.5 2003/07/08 09:48:43 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.6 2003/09/30 14:07:20 malaterre Exp $
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -44,7 +44,12 @@ int main( int argc, char *argv[] )
    // 16 16 15 S: OK saturation ?
    // reader->SetFileName("../gdcmData/CT-MONO2-16-ort.dcm");
    // 16 16 15 S:
-   reader->SetFileName("../gdcmData/CT-MONO2-16-ankle.dcm");
+
+	if (argc > 1)
+     reader->SetFileName( argv[1] );
+	else
+     reader->SetFileName("../gdcmData/CT-MONO2-16-ankle.dcm");
+
    reader->UpdateWholeExtent();
    vtkImageData *ima = reader->GetOutput();
    taille=ima->GetDimensions();
@@ -88,6 +93,16 @@ int main( int argc, char *argv[] )
    ren->SetBackground(0,0,0.5);
    renwin->Render();
    iren->Start();
+
+  reader->Delete();
+  VTKtable->Delete();
+  VTKtexture->Delete();
+  VTKplane->Delete();
+  VTKplaneMapper->Delete();
+  VTKplaneActor->Delete();
+  ren->Delete();
+  renwin->Delete();
+  iren->Delete();
 
    return(0);
 }
