@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.5 2003/06/11 13:36:54 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.6 2003/06/12 14:53:01 malaterre Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
@@ -37,7 +37,9 @@ private:
   // List of filenames to be read in order to build a stack of images
   // or volume. The order in the list shall be the order of the images.
   std::list<std::string> FileNameList;
-  size_t LoadImageInMemory(std::string FileName, unsigned char * Dest);
+  size_t LoadImageInMemory(std::string FileName, unsigned char * Dest,
+                           const unsigned long UpdateProgressTarget,
+                           unsigned long & UpdateProgressCount);
   //ETX
 };
 #endif
