@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 11:51:26 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/07/28 21:23:20 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,19 +30,20 @@
  * \brief   Construtor
  * @param   FileName from which to build the dictionary.
  */
-gdcmDict::gdcmDict(std::string & FileName) {
+gdcmDict::gdcmDict(std::string const & filename)
+{
    uint16_t group;
    uint16_t element;
-   //char buff[1024];
    TagName vr;
    TagName fourth;
    TagName name;
 
-   std::ifstream from(FileName.c_str());
+   std::ifstream from( filename.c_str() );
    dbg.Error(!from, "gdcmDict::gdcmDict: can't open dictionary",
-                    FileName.c_str());
+                    filename.c_str());
 
-   while (!from.eof()) {
+   while (!from.eof())
+   {
       from >> std::hex;
       from >> group;          /// MEMORY LEAK in std::istream::operator>>
       from >> element;
@@ -57,18 +58,21 @@ gdcmDict::gdcmDict(std::string & FileName) {
    }
    from.close();
 
-   filename=FileName;
+   Filename = filename;
 }
 
 /**
  * \brief  Destructor 
  */
-gdcmDict::~gdcmDict() {
+gdcmDict::~gdcmDict()
+{
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
-      gdcmDictEntry* EntryToDelete = tag->second;
-      if ( EntryToDelete )
-         delete EntryToDelete;
+      gdcmDictEntry* entryToDelete = tag->second;
+      if ( entryToDelete )
+      {
+         delete entryToDelete;
+      }
    }
    // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
    // assume all the pointed gdcmDictEntries are already cleaned-up when
@@ -84,8 +88,9 @@ gdcmDict::~gdcmDict() {
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
  */
-void gdcmDict::Print(std::ostream &os) {
-   os<<"Dict file name : "<<filename<<std::endl;
+void gdcmDict::Print(std::ostream &os)
+{
+   os << "Dict file name : " << Filename << std::endl;
    PrintByKey(os);
 }
 
@@ -118,10 +123,12 @@ void gdcmDict::PrintByKey(std::ostream &os)
  *                           unpredictable result
  * @param   os The output stream to be written to.
  */
-void gdcmDict::PrintByName(std::ostream& os) {
+void gdcmDict::PrintByName(std::ostream& os)
+{
    std::ostringstream s;
 
-   for (TagNameHT::iterator tag = NameHt.begin(); tag != NameHt.end(); ++tag){
+   for (TagNameHT::iterator tag = NameHt.begin(); tag != NameHt.end(); ++tag)
+   {
       s << "Entry : ";
       s << tag->second->GetName() << ",";
       s << tag->second->GetVR() << ", ";
@@ -143,20 +150,18 @@ void gdcmDict::PrintByName(std::ostream& os) {
  */
 bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry) 
 {
-   gdcmTagKey key;
-   key = NewEntry->GetKey();
+   gdcmTagKey key = NewEntry->GetKey();
 
    if(KeyHt.count(key) == 1)
    {
       dbg.Verbose(1, "gdcmDict::AddNewEntry already present", key.c_str());
-      return(false);
+      return false;
    } 
    else 
    {
       KeyHt[NewEntry->GetKey()] = NewEntry;
-      NameHt[NewEntry->GetName()] = NewEntry;  /// MEMORY LEAK in
-                                               /// std::map<>::operator[]
-      return(true);
+      NameHt[NewEntry->GetName()] = NewEntry;
+      return true;
    }
 }
 
@@ -166,13 +171,15 @@ bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry)
  * @param   NewEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
-bool gdcmDict::ReplaceEntry(gdcmDictEntry *NewEntry) {
-   if ( RemoveEntry(NewEntry->gdcmDictEntry::GetKey()) ) {
+bool gdcmDict::ReplaceEntry(gdcmDictEntry *NewEntry)
+{
+   if ( RemoveEntry(NewEntry->gdcmDictEntry::GetKey()) )
+   {
        KeyHt[NewEntry->GetKey()] = NewEntry;
        NameHt[NewEntry->GetName()] = NewEntry;
-       return (true);
+       return true;
    } 
-   return (false);
+   return false;
 }
 
 /**
@@ -195,12 +202,12 @@ bool gdcmDict::RemoveEntry(gdcmTagKey key)
       }
 
       KeyHt.erase(key);
-      return (true);
+      return true;
    } 
    else 
    {
       dbg.Verbose(1, "gdcmDict::RemoveEntry unfound entry", key.c_str());
-      return (false);
+      return false;
   }
 }
 
@@ -224,9 +231,12 @@ bool gdcmDict::RemoveEntry (uint16_t group, uint16_t element)
  *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry* gdcmDict::GetDictEntryByName(TagName name) {
-   if ( ! NameHt.count(name))
-      return NULL; 
+gdcmDictEntry* gdcmDict::GetDictEntryByName(TagName name)
+{
+   if ( !NameHt.count(name))
+   {
+      return 0;
+   }
    return NameHt.find(name)->second;
 }
 
@@ -239,8 +249,10 @@ gdcmDictEntry* gdcmDict::GetDictEntryByName(TagName name) {
 gdcmDictEntry* gdcmDict::GetDictEntryByNumber(uint16_t group, uint16_t element)
 {
    gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! KeyHt.count(key))
-      return NULL; 
+   if ( !KeyHt.count(key) )
+   {
+      return 0;
+   }
    return KeyHt.find(key)->second;
 }
 
@@ -250,14 +262,14 @@ gdcmDictEntry* gdcmDict::GetDictEntryByNumber(uint16_t group, uint16_t element)
  * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string>* gdcmDict::GetDictEntryNames(void) 
+std::list<std::string>* gdcmDict::GetDictEntryNames() 
 {
-   std::list<std::string> *Result = new std::list<std::string>;
+   std::list<std::string> *result = new std::list<std::string>;
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
-      Result->push_back( tag->second->GetName() );
+      result->push_back( tag->second->GetName() );
    }
-   return Result;
+   return result;
 }
 
 /** 
@@ -286,13 +298,14 @@ std::list<std::string>* gdcmDict::GetDictEntryNames(void)
  */
 std::map<std::string, std::list<std::string> > *gdcmDict::GetDictEntryNamesByCategory(void) 
 {
-   std::map<std::string, std::list<std::string> > *Result = new std::map<std::string, std::list<std::string> >;
+   std::map<std::string, std::list<std::string> > *result = new std::map<std::string, std::list<std::string> >;
 
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
-      (*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
+      (*result)[tag->second->GetFourth()].push_back(tag->second->GetName());
    }
-   return Result;
+
+   return result;
 }
 
 //-----------------------------------------------------------------------------

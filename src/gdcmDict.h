@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/07/28 21:23:20 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,9 +41,10 @@ typedef std::map<TagName, gdcmDictEntry*> TagNameHT;
  *           combined with all software versions...
  * \see gdcmDictSet
  */
-class GDCM_EXPORT gdcmDict {
+class GDCM_EXPORT gdcmDict
+{
 public:
-   gdcmDict(std::string & FileName);
+   gdcmDict(std::string const & FileName);
    ~gdcmDict();
 
 // Print
@@ -61,21 +62,21 @@ public:
    gdcmDictEntry *GetDictEntryByName(TagName name);
    gdcmDictEntry *GetDictEntryByNumber(uint16_t group, uint16_t element);
 
-   std::list<std::string> *GetDictEntryNames(void);
+   std::list<std::string> *GetDictEntryNames();
    std::map<std::string, std::list<std::string> > *
-        GetDictEntryNamesByCategory(void);
+        GetDictEntryNamesByCategory();
 
    /// \brief  Returns a ref to the Dicom Dictionary H table (map)
    /// @return the Dicom Dictionary H table
-   TagKeyHT & GetEntriesByKey(void)  { return KeyHt; }
+   TagKeyHT & GetEntriesByKey()  { return KeyHt; }
 
    /// \brief  Returns a ref to the Dicom Dictionary H table (map)
    /// @return the Dicom Dictionary H table
-   TagNameHT & GetEntriesByName(void)  { return NameHt; }
+   TagNameHT & GetEntriesByName()  { return NameHt; }
  
 private:
    /// ASCII file holding the Dictionnary
-   std::string filename;
+   std::string Filename;
    /// Access through gdcmTagKey (see alternate access with NameHt)
    TagKeyHT  KeyHt;
    /// Access through TagName (see alternate access with KeyHt)
