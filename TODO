@@ -1,3 +1,4 @@
+* Remove enable_sequences and ignore_shadow from gdcmDocument().
 * Split gdcmHeader through inheritance to create gdcmHeaderHelper
   that would regroup all the heuristics above a gdcmHeader e.g. the
   functions GetXsize(), GetXSpacing(), GetXImagePosition()...
