@@ -1,3 +1,20 @@
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: TestBug.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/11/16 04:28:20 $
+  Version:   $Revision: 1.15 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
 // The following crashes on Win32
 // We have to be carefull when the code both use cout + printf VC++ gets
 // confused, thus make sure we use only one kind of iostream
