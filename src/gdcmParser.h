@@ -21,8 +21,8 @@ typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 typedef std::multimap<TagKey, gdcmHeaderEntry *> TagHeaderEntryHT;
 typedef std::pair<TagKey, gdcmHeaderEntry *> PairHT;
 typedef std::pair<TagHeaderEntryHT::iterator,TagHeaderEntryHT::iterator> IterHT; 
-
-typedef std::list<gdcmHeaderEntry *> ListTag; // for linking together the Elements
+/// for linking together the Elements
+typedef std::list<gdcmHeaderEntry *> ListTag;
 
 typedef std::string GroupKey;
 typedef std::map<GroupKey, int> GroupHT;
@@ -33,34 +33,81 @@ typedef std::map<GroupKey, int> GroupHT;
  */
 class GDCM_EXPORT gdcmParser
 {
+private:
+   /// Public dictionary used to parse this header
+   gdcmDict *RefPubDict;
+   
+   /// Optional "shadow dictionary" (private elements) used to parse
+   /// this header
+   gdcmDict *RefShaDict;
+
+   /// Equals 1 if a gdcmHeaderEntry was added post parsing 
+   int wasUpdated;
+   
+   /// Equals =1 if user wants to skip shadow groups while parsing
+   /// (to save space)
+   int ignoreShadow;
+
+   /// Size threshold above which an element value will NOT be loaded in 
+   /// memory (to avoid loading the image/volume itself). By default,
+   /// this upper bound is fixed to 1024 bytes (which might look reasonable
+   /// when one considers the definition of the various VR contents).
+   guint32 MaxSizeLoadEntry;
+   
+   /// Size threshold above which an element value will NOT be *printed* in
+   /// order no to polute the screen output. By default, this upper bound
+   /// is fixed to 64 bytes.
+   guint32 MaxSizePrintEntry;
+
+protected:
+   /// Refering underlying filename.
+   std::string filename; 
+
+   /// SWap code (e.g. Big Endian, Little Endian, Bad Big Endian,
+   /// Bad Little Endian) according to the processor Endianity and
+   /// what is written on disc.
+   int sw;
+
+   /// File Pointer, opened during Header parsing.
+   FILE *fp;
+
+   /// ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
+   FileType filetype;  
+
+   /// After opening the file, we read HEADER_LENGTH_TO_READ bytes.
+   static const unsigned int HEADER_LENGTH_TO_READ; 
+
+   /// Elements whose value is longer than MAX_SIZE_LOAD_ELEMENT_VALUE
+   /// are NOT loaded.
+   static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
+
+   /// Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
+   /// are NOT printed.
+   static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
+
+   /// Hash Table (multimap), to provide fast access
+   TagHeaderEntryHT tagHT; 
+
+   /// Chained list, to keep the 'spacial' ordering
+   ListTag listEntries; 
+
+   /// will be set 1 if user asks to 'go inside' the 'sequences' (VR = "SQ")
+   int enableSequences;
+
+   /// Amount of printed details for each Header Entry (Dicom Element):
+   /// 0 : stands for the least detail level.
+   int printLevel;
+   
 public:
+   
 
 // Print
-   /**
-    * \ingroup gdcmParser
-    * \brief   Sets the print level for the Dicom Header 
-    * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
-    */
-   void SetPrintLevel(int level) 
-      { printLevel = level; };
-   /**
-    * \ingroup gdcmParser
-    * \brief   canonical Printer 
-    * \sa    SetPrintLevel
-    */   
+   /// Canonical Printing method (see also gdcmParser::SetPrintLevel)
    virtual void Print        (std::ostream &os = std::cout) 
       {PrintEntry(os);};
    virtual void PrintEntry   (std::ostream &os = std::cout);
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
-
-// Standard values
-   /**
-    * \ingroup gdcmParser
-    * \brief   Gets the external File Name 
-    */
-   inline std::string GetFileName(void) 
-      {return filename;}
 
 // Dictionnaries
    gdcmDict *GetPubDict(void);
@@ -76,52 +123,33 @@ public:
    bool IsExplicitVRBigEndianTransferSyntax(void);
    FileType GetFileType(void);
 
-// Entries
-   /**
-    * \ingroup gdcmHeader
-    * \brief   returns a ref to the Dicom Header H table (multimap)
-    * return the Dicom Header H table
-    */
-   inline TagHeaderEntryHT &GetEntry(void) { return tagHT; };
-
-   /**
-    * \ingroup gdcmHeader
-    * \brief   returns a ref to the Dicom Header chained list
-    * return the Dicom Header chained list
-    */
-   inline ListTag &GetListEntry(void) { return listEntries; };
-
 // Read (used in gdcmFile, gdcmDicomDir)
    FILE *OpenFile(bool exception_on_error = false) throw(gdcmFileError);
    bool CloseFile(void);
 
 // Write (used in gdcmFile, gdcmDicomDir)
    virtual bool Write(FILE *, FileType);
+   virtual void WriteEntryTagVRLength(gdcmHeaderEntry *tag,
+                                       FILE *_fp, FileType type);
+   virtual void WriteEntryValue(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
+   virtual bool WriteEntry(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
+   virtual bool WriteEntries(FILE *_fp,FileType type);
+   void WriteEntriesDeprecated(FILE *_fp,FileType type); // JPR
 
-   gdcmHeaderEntry * ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem);
-   gdcmHeaderEntry * ReplaceOrCreateByNumber(     char  *Value, guint16 Group, guint16 Elem);
-   bool ReplaceIfExistByNumber (     char  *Value, guint16 Group, guint16 Elem);
+   gdcmHeaderEntry * ReplaceOrCreateByNumber(std::string Value,
+                                             guint16 Group, guint16 Elem);
+   bool ReplaceIfExistByNumber (char *Value, guint16 Group, guint16 Elem);
 
 // System access
-   /**
-    * \ingroup gdcmHeader
-    * \brief   returns the 'swap code' 
-    *          (Big Endian, Little Endian, 
-    *          Bad Big Endian, Bad Little Endian)
-    *          according to the processor Endianity and what's written on disc
-    * return 
-    */
-   inline int GetSwapCode(void) { return sw; }
-   
    guint16 SwapShort(guint16);   // needed by gdcmFile
    guint32 SwapLong(guint32);    // needed by gdcmFile
    guint16 UnswapShort(guint16); // needed by gdcmFile
    guint32 UnswapLong(guint32);  // needed by gdcmFile
 
 protected:
-// constructor and destructor are protected to forbid end user 
-// to instanciate class gdcmParser 
-// (only gdcmHeader and gdcmDicomDir are meaningfull)
+   // Constructor and destructor are protected to forbid end user 
+   // to instanciate from this class gdcmParser (only gdcmHeader and
+   // gdcmDicomDir are meaningfull).
    gdcmParser(bool exception_on_error  = false);
    gdcmParser(const char *inFilename, 
               bool  exception_on_error = false, 
@@ -137,8 +165,10 @@ protected:
    virtual int     GetEntryLengthByNumber(guint16 group, guint16 element);
 
    virtual bool SetEntryByName  (std::string content, std::string tagName);
-   virtual bool SetEntryByNumber(std::string content,  guint16 group, guint16 element);
-   virtual bool SetEntryLengthByNumber(guint32 length, guint16 group, guint16 element);
+   virtual bool SetEntryByNumber(std::string content,
+                                 guint16 group, guint16 element);
+   virtual bool SetEntryLengthByNumber(guint32 length,
+                                 guint16 group, guint16 element);
 
    virtual size_t GetEntryOffsetByNumber  (guint16 Group, guint16 Elem);
    virtual void  *GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem);   
@@ -155,78 +185,11 @@ protected:
 
    void LoadHeaderEntrySafe(gdcmHeaderEntry *);
 
-   void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);
-   void WriteEntryTagVRLength(gdcmHeaderEntry *tag, FILE *_fp, FileType type);
-   void WriteEntryValue(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
-   void WriteEntry(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
-   void WriteEntries(FILE *_fp,FileType type);
-   void WriteEntriesDeprecated(FILE *_fp,FileType type); // JPR
+   void UpdateGroupLength(bool SkipSequence = false,
+                          FileType type = ImplicitVR);
 
    void AddHeaderEntry       (gdcmHeaderEntry *);
    
-   /**
-    * \ingroup gdcmParser
-    * \brief   Set the external File Name 
-    */
-   inline void SetFileName(char* fileName) 
-      {filename = fileName;}
-      
-// Variables
-   /**
-   * \brief File Pointer, open during Header parsing
-   */
-   FILE *fp;
-   /**
-   * \brief ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
-   */
-   FileType filetype;  
-
-/// after opening the file, we read HEADER_LENGTH_TO_READ bytes.
-   static const unsigned int HEADER_LENGTH_TO_READ; 
-/// Elements whose value is longer than MAX_SIZE_LOAD_ELEMENT_VALUE are NOT loaded
-   static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
-/// Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE are NOT printed  
-   static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
-
-protected:
-   /**
-   * \brief H Table (multimap), to provide fast access
-   */
-   TagHeaderEntryHT tagHT; 
-   /**
-   * \brief chained list, to keep the 'spacial' ordering
-   */
-   ListTag listEntries; 
-   /**
-   * \brief will be set 1 if user asks to 'go inside' the 'sequences' (VR = "SQ")
-   */    
-   int enableSequences;
-   /**
-   * \brief amount of printed details for each Header Entry (Dicom Element)
-   *  0 : the least 
-   */    
-   int printLevel;
-   
-   /** 
-   * \brief For some ACR-NEMA images, it's *not* 7fe0 ... 
-   */   
-   guint16 GrPixel;
-   
-   /// In some cases (e.g. for some ACR-NEMA images) the Header Entry Element
-   /// Number of the 'Pixel Element' is *not* found at 0x0010. In order to
-   /// make things easier the parser shall store the proper value in
-   /// NumPixel to provide a unique access facility. See also
-   /// \ref gdcmHeader::gdcmHeader
-   guint16 NumPixel;
-   /**
-   * \brief some files may contain icons; GrPixel,NumPixel appears several times
-   * Let's remember how many times!
-   */
-   int countGrPixel;
-   /**
-   * \brief = true when the 'pixel Element' is reached during writting process
-   */   
-   bool itsTimeToWritePixels;
       
 private:
    // Read
@@ -280,51 +243,25 @@ private:
    
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 
-   /**
-   * \brief Refering underlying filename.
-   */
-   std::string filename; 
+public:
+// Accessors:
+   /// Accessor to \ref printLevel
+   void SetPrintLevel(int level) { printLevel = level; };
 
-   /**
-   * \brief Public dictionary used to parse this header
-   */
-   gdcmDict *RefPubDict;
-   
-   /**
-   * \brief Optional "shadow dictionary" (private elements) used to parse this header
-   */
-   gdcmDict *RefShaDict;
+   /// Accessor to \ref filename
+   inline std::string GetFileName(void) {return filename;}
 
-   /**
-   * \brief = 1 if a gdcmHeaderEntry was added post parsing 
-   */   
-   int wasUpdated;
-   
-   /**
-   * \brief =1 if user wants to skip shadow groups while parsing (to save space)
-   */
-   int ignoreShadow;
-   
-   /**
-   * \brief Swap code e.g. little, big, bad-big, bad-little endian). 
-   * \warning : this code is not fixed during header parsing.      
-   */
-   int sw;
-   /**
-   * \brief Size threshold above which an element value will NOT be loaded in 
-   *       memory (to avoid loading the image/volume itself). By default,
-   *       this upper bound is fixed to 1024 bytes (which might look reasonable
-   *       when one considers the definition of the various VR contents).
-   */
-   guint32 MaxSizeLoadEntry;
-   
-   /**
-   * \brief Size threshold above which an element value will NOT be *printed* in
-   *        order no to polute the screen output. 
-   *        By default, this upper bound is fixed to 64 bytes.
-   */   
-   guint32 MaxSizePrintEntry;
-   
+   /// Accessor to \ref filename
+   inline void SetFileName(char* fileName) {filename = fileName;}
+
+   /// Accessor to \ref gdcmParser::tagHT
+   inline TagHeaderEntryHT &GetEntry(void) { return tagHT; };
+
+   /// Accessor to \ref gdcmParser::listEntries
+   inline ListTag &GetListEntry(void) { return listEntries; };
+
+   /// 'Swap code' accessor (see \ref sw )
+   inline int GetSwapCode(void) { return sw; }
 };
 
 //-----------------------------------------------------------------------------

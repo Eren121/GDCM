@@ -1,3 +1,14 @@
+2004-03-30  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+     * src/gdcmParser.[cxx|h] and gdcmHeader.[cxx.h]: gdcmHeader::Write split
+       in WriteEntryTagVRLength and WriteEntryValue. Those methods were
+       moved to base class gdcmParser and only the specialisation is kept
+       in gdcmHeader.
+     * src/gdcmParser.[cxx|h]: ReplaceOrCreateByNumber(char*, guint16, guint16)
+       trashed out (because ReplaceOrCreateByNumber(string, guint16, guint16)
+       allready does the job.
+     * src/gdcmDicomDir.[cxx|h]: WriteDicomDirEntries renamed to WriteEntries
+       (to be consistent with gdcmParser::WriteEntries).
+
 2004-03-30 Benoit Regrain
      * vtk/vtkGdcmReader.[h|cxx] : fix the read of 3 gdcmHeader when making an
        upate of the object's instance. It's passed to 2 in the unfavorable

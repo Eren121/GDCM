@@ -313,20 +313,18 @@ bool gdcmDicomDir::Write(std::string fileName)
    fwrite("DICM",4,1,fp1);
    free(filePreamble);        
    UpdateDirectoryRecordSequenceLength();
-   WriteDicomDirEntries(fp1);
+   WriteEntries(fp1);
 
    fclose(fp1);
    return true;
 }
 
 /**
- * \ingroup gdcmParser
- * \brief   writes on disc according to the DICOMDIR format
- *          using the tree-like structure
+ * \brief   Writes in a file using the tree-like structure.
  * @param   _fp already open file pointer
  */
 
-void gdcmDicomDir::WriteDicomDirEntries(FILE *_fp)
+void gdcmDicomDir::WriteEntries(FILE *_fp)
 {   
    // TODO (?) tester les echecs en ecriture 
    //          (apres chaque fwrite, dans le WriteEntry)

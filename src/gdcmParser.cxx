@@ -123,7 +123,6 @@ void gdcmParser::PrintEntry(std::ostream & os) {
 }
 
 /**
-  * \ingroup gdcmParser
   * \brief   Prints The Dict Entries of THE public Dicom Dictionnry
   * @return
   */  
@@ -132,7 +131,6 @@ void gdcmParser::PrintPubDict(std::ostream & os) {
 }
 
 /**
-  * \ingroup gdcmParser
   * \brief   Prints The Dict Entries of THE shadow Dicom Dictionnary
   * @return
   */
@@ -143,7 +141,6 @@ void gdcmParser::PrintShaDict(std::ostream & os) {
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmParser
  * \brief   Get the public dictionary used
  */
 gdcmDict *gdcmParser::GetPubDict(void) {
@@ -151,7 +148,6 @@ gdcmDict *gdcmParser::GetPubDict(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Get the shadow dictionary used
  */
 gdcmDict *gdcmParser::GetShaDict(void) {
@@ -159,7 +155,6 @@ gdcmDict *gdcmParser::GetShaDict(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Set the shadow dictionary used
  * \param   dict dictionary to use in shadow
  */
@@ -169,7 +164,6 @@ bool gdcmParser::SetShaDict(gdcmDict *dict){
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Set the shadow dictionary used
  * \param   dictName name of the dictionary to use in shadow
  */
@@ -179,7 +173,6 @@ bool gdcmParser::SetShaDict(DictKey dictName){
 }
 
 /**
- * \ingroup gdcmParser
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current gdcmParser was properly parsed
  *         and contains the mandatory information for being considered as
@@ -199,7 +192,6 @@ bool gdcmParser::IsReadable(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a ImplicitVRLittleEndian one.
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
@@ -235,7 +227,6 @@ bool gdcmParser::IsExplicitVRLittleEndianTransferSyntax(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a DeflatedExplicitVRLittleEndian one.
  * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
@@ -253,7 +244,6 @@ bool gdcmParser::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a Explicit VR Big Endian one.
  * @return  True when big endian found. False in all other cases.
@@ -271,7 +261,6 @@ bool gdcmParser::IsExplicitVRBigEndianTransferSyntax(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief  returns the File Type 
  *         (ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown)
  * @return the FileType code
@@ -281,7 +270,6 @@ FileType gdcmParser::GetFileType(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   opens the file
  * @param   exception_on_error
  * @return  
@@ -322,7 +310,6 @@ FILE *gdcmParser::OpenFile(bool exception_on_error)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief closes the file  
  * @return  TRUE if the close was successfull 
  */
@@ -335,13 +322,12 @@ bool gdcmParser::CloseFile(void) {
 }
 
 /**
- * \ingroup gdcmParser
- * \brief writes on disc all the Header Entries (Dicom Elements) 
+ * \brief Writes in a file all the Header Entries (Dicom Elements) 
  *        of the Chained List
  * @param fp file pointer on an already open file
- * @param   type type of the File to be written 
+ * @param type Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
- * @return  always "True" ?!
+ * \return Always true.
  */
 bool gdcmParser::Write(FILE *fp, FileType type) {
 // ==============
@@ -396,18 +382,17 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
 
    WriteEntries(fp,type);
    return(true);
- }
+}
 
 /**
- * \ingroup gdcmParser
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
- *          if it exists; Creates it with the given value if it doesn't
- * \warning : adds the Header Entry to the HTable, NOT to the chained List
- * @param   Value passed as a std::string
- * @param Group   group of the Entry 
- * @param Elem element of the Entry
- * \return  pointer to the created Header Entry
- *          NULL if creation failed
+ *          when it exists. Create it with the given value when unexistant.
+ * \warning Adds the Header Entry to the HTable, NOT to the chained List
+ * @param   Value Value to be set
+ * @param   Group Group of the Entry 
+ * @param   Elem  Element of the Entry
+ * \return  pointer to the modified/created Header Entry (NULL when creation
+ *          failed).
  */
 gdcmHeaderEntry * gdcmParser::ReplaceOrCreateByNumber(
                                          std::string Value, 
@@ -416,47 +401,19 @@ gdcmHeaderEntry * gdcmParser::ReplaceOrCreateByNumber(
    gdcmHeaderEntry* a;
    a = GetHeaderEntryByNumber( Group, Elem);
    if (a == NULL) {
-      gdcmHeaderEntry *a =NewHeaderEntryByNumber(Group, Elem);
+      gdcmHeaderEntry *a = NewHeaderEntryByNumber(Group, Elem);
       if (a == NULL) 
          return NULL;
       AddHeaderEntry(a);
    }   
-   //SetEntryByNumber(Value, Group, Elem);
+   //CLEANME SetEntryByNumber(Value, Group, Elem);
    a->SetValue(Value);
    return(a);
 }   
 
 /**
- * \ingroup gdcmParser
- * \brief   Modifies the value of a given Header Entry (Dicom Element)
- *          if it exists; Creates it with the given value if it doesn't
- * @param   Value passed as a char*
- * @param Group   group of the Entry 
- * @param Elem element of the Entry
- * \return  pointer to the created Header Entry
- *          NULL if creation failed 
- * 
- */
-gdcmHeaderEntry *  gdcmParser::ReplaceOrCreateByNumber(
-                                     char* Value, 
-                                     guint16 Group, 
-                                     guint16 Elem ) {
-   gdcmHeaderEntry* nvHeaderEntry=NewHeaderEntryByNumber(Group, Elem);
-
-   if(!nvHeaderEntry)
-      return(NULL);
-
-   AddHeaderEntry(nvHeaderEntry);
-
-   std::string v = Value;
-   SetEntryByNumber(v, Group, Elem);
-   return(nvHeaderEntry);
-}  
-
-/**
- * \ingroup gdcmParser
- * \brief   Set a new value if the invoked element exists
- *          Seems to be useless !!!
+ * \brief Set a new value if the invoked element exists
+ *        Seems to be useless !!!
  * @param Value new element value
  * @param Group   group of the Entry 
  * @param Elem element of the Entry
@@ -473,7 +430,6 @@ bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem
 // Protected
 
 /**
- * \ingroup gdcmParser
  * \brief   Checks if a given Dicom Element exists
  *          within the H table
  * @param   group Group   number of the searched Dicom Element 
@@ -978,11 +934,10 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
 /**
  * \brief Writes in a file (according to the requested format)
  *        the group, the element, the value representation and the length
-          of a single gdcmHeaderEntry passed as argument.
+ *        of a single gdcmHeaderEntry passed as argument.
  * @param tag  pointer on the gdcmHeaderEntry to be written
  * @param _fp  already open file pointer
  * @param type type of the File to be written 
- *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
 void gdcmParser::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
                                        FILE *_fp,
@@ -1038,6 +993,13 @@ void gdcmParser::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
    }
 }
       
+/**
+ * \brief Writes in a file (according to the requested format)
+ *        the value of a single gdcmHeaderEntry passed as argument.
+ * @param tag  Pointer on the gdcmHeaderEntry to be written
+ * @param _fp  Already open file pointer
+ * @param type type of the File to be written
+ */
 void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 {
    guint16 group  = tag->GetGroup();
@@ -1093,7 +1055,16 @@ void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    fwrite (tag->GetValue().c_str(), (size_t)lgr ,(size_t)1, _fp); // Elem value
 }
 
-void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
+/**
+ * \brief Writes in a file (according to the requested format)
+ *        a single gdcmHeaderEntry passed as argument.
+ * \sa    WriteEntryValue, WriteEntryTagVRLength.
+ * @param tag  Pointer on the gdcmHeaderEntry to be written
+ * @param _fp  Already open file pointer
+ * @param type type of the File to be written
+ */
+
+bool gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 {
    guint32 length = tag->GetLength();
 
@@ -1106,22 +1077,8 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    }
 
    WriteEntryTagVRLength(tag, _fp, type);
-
-   // Pixels are never loaded in the element !
-   // we stop writting when Pixel are processed
-   // FIX : we loose trailing elements (RAB, right now)           
-   guint16 el     = tag->GetElement();
-   guint16 group  = tag->GetGroup();
-   int compte =0;
-   itsTimeToWritePixels = false;
-   if ((group == GrPixel) && (el == NumPixel) ) {
-      compte++;
-      if (compte == countGrPixel) {// we passed *all* the GrPixel,NumPixel   
-         itsTimeToWritePixels = true;
-         return;
-      }
-   }       
    WriteEntryValue(tag, _fp, type);
+   return true;
 }
 
 /**
@@ -1139,7 +1096,7 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
  * @param   _fp already open file pointer
  */
 
-void gdcmParser::WriteEntries(FILE *_fp,FileType type)
+bool gdcmParser::WriteEntries(FILE *_fp,FileType type)
 {   
    // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
    
@@ -1162,10 +1119,10 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
             // Ignore the documented delimiter
             continue;
       } 
-      WriteEntry(*tag2,_fp,type);
-      if (itsTimeToWritePixels) 
-         break;
+      if (! WriteEntry(*tag2,_fp,type) )
+         return false;
    }
+   return true;
 }   
 
 /**
@@ -1201,8 +1158,7 @@ void gdcmParser::WriteEntriesDeprecated(FILE *_fp,FileType type) {
 	 // --> will be done with the next organization
          if ((*tag2->second).GetGroup() == 0xfffe ) continue; // ignore delimiters	
       }
-      WriteEntry(tag2->second,_fp,type);
-      if (itsTimeToWritePixels) 
+      if ( ! WriteEntry(tag2->second,_fp,type))
          break;
    }
 }
@@ -1477,13 +1433,6 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
    guint16 group   = Entry->GetGroup();
    std::string  vr = Entry->GetVR();
    guint16 length16;
-   
-   if( (element == NumPixel) && (group == GrPixel) ) 
-   {
-      dbg.SetDebug(GDCM_DEBUG);
-      dbg.Verbose(2, "gdcmParser::FindLength: ",
-                     "we reached (GrPixel,NumPixel)");
-   }   
    
    if ( (filetype == ExplicitVR) && (! Entry->IsImplicitVR()) ) 
    {

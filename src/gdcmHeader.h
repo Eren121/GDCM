@@ -28,6 +28,24 @@
  */
 class GDCM_EXPORT gdcmHeader : public gdcmParser
 {
+protected:
+   /// In some cases (e.g. for some ACR-NEMA images) the Header Entry Element
+   /// Number of the 'Pixel Element' is *not* found at 0x0010. In order to
+   /// make things easier the parser shall store the proper value in
+   /// NumPixel to provide a unique access facility. See also the constructor
+   /// \ref gdcmHeader::gdcmHeader
+   guint16 NumPixel;
+   /// In some cases (e.g. for some ACR-NEMA images) the header entry for
+   /// the group of pixels is *not* found at 0x7fe0. In order to
+   /// make things easier the parser shall store the proper value in
+   /// GrPixel to provide a unique access facility. See also the constructor
+   /// \ref gdcmHeader::gdcmHeader
+   guint16 GrPixel;
+   /// Some DICOM files may contain several images (e.g. a icon, followd by
+   /// the image itself. Hence the tag (GrPixel,NumPixel) might appear
+   /// several times. countGrPixel is the number of occurences of the 
+   /// tag of pixels (i.e. (GrPixel,NumPixel)) contained in the header.
+   int countGrPixel;
 public:
    gdcmHeader(bool exception_on_error = false);
    gdcmHeader(const char *filename, 
@@ -79,15 +97,10 @@ public:
    // TODO Swig int SetShaDict(std::string filename);
    // TODO Swig int SetPubDict(std::string filename);
    
-// System access
-   /**
-    * \brief   the Header Entry Group Number of the 'Pixel Group' 
-    *          is not allways 0x7fe0
-    * @return  GrPixel
-    */
+   /// Accessor to \ref gdcmHeader::GrPixel
    guint16 GetGrPixel(void)  {return GrPixel;}
    
-   /// Accessor to \ref gdcmParser::NumPixel
+   /// Accessor to \ref gdcmHeader::NumPixel
    guint16 GetNumPixel(void) {return NumPixel;}
 
 // Entry
@@ -107,13 +120,15 @@ public:
    inline virtual std::string GetEntryVRByName  (std::string tagName)
       { return(gdcmParser::GetEntryVRByName(tagName)); }
       
-   inline virtual bool SetEntryByNumber(std::string content,guint16 group, guint16 element)
+   inline virtual bool SetEntryByNumber(std::string content,
+                                        guint16 group, guint16 element)
       { return(gdcmParser::SetEntryByNumber(content,group,element)); }
       
    inline virtual bool SetEntryByName(std::string content,std::string tagName)
       { return(gdcmParser::SetEntryByName(content,tagName)); }
 
-  inline virtual bool SetEntryLengthByNumber(guint32 l,guint16 group, guint16 element)
+  inline virtual bool SetEntryLengthByNumber(guint32 l,
+                                             guint16 group, guint16 element)
       { return(gdcmParser::SetEntryLengthByNumber(l,group,element)); }
 
    inline virtual void UpdateShaEntries(void)
@@ -123,6 +138,9 @@ public:
    void SetImageDataSize(size_t ExpectedSize);
 
    bool operator<(gdcmHeader &header);
+
+   bool WriteEntry(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
+
 
 protected:
    //CLEANME int write(std::ostream&);   

@@ -24,7 +24,6 @@ typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
  * \brief    gdcmDicomDir defines an object representing a DICOMDIR in memory.
  *
  */
- 
 class GDCM_EXPORT gdcmDicomDir: public gdcmParser
 {
 public:
@@ -97,6 +96,7 @@ public:
   gdcmDicomDirPatient * NewPatient(void);
 
 // Write
+   void WriteEntries(FILE *_fp);   
    bool Write(std::string fileName);
 
 /// Types of the gdcmObject within the gdcmDicomDir
@@ -133,7 +133,6 @@ private:
    void UpdateDirectoryRecordSequenceLength(void);
 
    static bool HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2);
-   void WriteDicomDirEntries(FILE *_fp);   
    
 // Variables
 /**

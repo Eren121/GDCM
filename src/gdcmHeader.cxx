@@ -574,7 +574,7 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
 
 //  if Photometric Interpretation # PALETTE COLOR, no LUT to be done
    if (GetEntryByNumber(0x0028,0x0004) != "PALETTE COLOR ") {
-   	return NULL;
+      return NULL;
    }  
    int lengthR, debR, nbitsR;
    int lengthG, debG, nbitsG;
@@ -624,7 +624,7 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
                          GetEntryVoidAreaByNumber(0x0028,0x1203); 
    
    if (!lutR || !lutG || !lutB ) {
-   	return NULL;
+      return NULL;
    } 
    // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT 
    
@@ -633,7 +633,7 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
       return NULL;
    }
    memset(LUTRGBA, 0, 1024);
-	// Bits Allocated
+   // Bits Allocated
    int nb;
    std::string str_nb = GetEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
@@ -714,17 +714,17 @@ std::string gdcmHeader::GetTransfertSyntaxName(void) {
 void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    std::string content1;
    char car[20];
-      	
+
    // Assumes HeaderEntry (GrPixel, NumPixel) is unique ...   
-   // TODO deal with multiplicity (see gdcmData/icone.dcm)	
+   // TODO deal with multiplicity (see gdcmData/icone.dcm)
    sprintf(car,"%d",ImageDataSize);
  
    gdcmHeaderEntry *a = GetHeaderEntryByNumber(GrPixel, NumPixel);
    a->SetLength(ImageDataSize);
- 		
+
    ImageDataSize+=8;
    sprintf(car,"%d",ImageDataSize);
-   content1=car;	
+   content1=car;
    SetEntryByNumber(content1, GrPixel, NumPixel);
 }
 
@@ -745,30 +745,30 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    s1=this->GetEntryByNumber(0x0010,0x0010);
    s2=header.GetEntryByNumber(0x0010,0x0010);
    if(s1 < s2)
-	   return(true);
+      return(true);
    else if(s1 > s2)
-	   return(false);
+      return(false);
    else
    {
       // Patient ID
       s1=this->GetEntryByNumber(0x0010,0x0020);
       s2=header.GetEntryByNumber(0x0010,0x0020);
       if (s1 < s2)
-	      return(true);
+         return(true);
       else if (s1 > s2)
          return(1);
       else
       {
-	      // Study Instance UID
+         // Study Instance UID
          s1=this->GetEntryByNumber(0x0020,0x000d);
          s2=header.GetEntryByNumber(0x0020,0x000d);
          if (s1 < s2)
-	         return(true);
+            return(true);
          else if(s1 > s2)
-	         return(false);
+            return(false);
          else
          {
-	         // Serie Instance UID		
+            // Serie Instance UID
             s1=this->GetEntryByNumber(0x0020,0x000e);
             s2=header.GetEntryByNumber(0x0020,0x000e);
             if (s1 < s2)
@@ -779,6 +779,36 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
       }
    }
    return(false);
+}
+
+bool gdcmHeader::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
+{
+   guint32 length = tag->GetLength();
+                                                                                
+   // The value of a tag MUST (see the DICOM norm) be an odd number of
+   // bytes. When this is not the case, pad with an additional byte:
+   if(length%2==1)
+   {
+      tag->SetValue(tag->GetValue()+"\0");
+      tag->SetLength(tag->GetReadLength()+1);
+   }
+                                                                                
+   WriteEntryTagVRLength(tag, _fp, type);
+                                                                                
+   // Pixels are never loaded in the element !
+   // we stop writting when Pixel are processed
+   // FIX : we loose trailing elements (RAB, right now)
+   guint16 el     = tag->GetElement();
+   guint16 group  = tag->GetGroup();
+   int compte =0;
+   if ((group == GrPixel) && (el == NumPixel) ) {
+      compte++;
+      if (compte == countGrPixel) {// we passed *all* the GrPixel,NumPixel
+         return false;
+      }
+   }
+   WriteEntryValue(tag, _fp, type);
+   return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -803,7 +833,7 @@ bool gdcmHeader::anonymizeHeader() {
      if (StudyInstanceUID !=GDCM_UNFOUND)
         ReplaceOrCreateByNumber(StudyInstanceUID, 0x0010, 0x0010);
      else
-        ReplaceOrCreateByNumber("anonymised", 0x0010, 0x0010);            
+        ReplaceOrCreateByNumber(std::string("anonymised"), 0x0010, 0x0010);
   }
   
   // Just for fun :-(
@@ -858,7 +888,7 @@ bool gdcmHeader::anonymizeHeader() {
 //300a 022c DA RT Air Kerma Rate Reference Date
 //300e 0004 DA RT Review Date
  return true;  
- }
+}
 //-----------------------------------------------------------------------------
 // Private
 
