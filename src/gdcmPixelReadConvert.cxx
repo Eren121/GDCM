@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/13 14:58:41 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/12/14 08:31:30 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -501,7 +501,6 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream* fp )
    JOCTET *buffer = new JOCTET [totalLength];
    JOCTET *p = buffer;
 
-   uint8_t* localRaw = Raw;
    // Loop on the fragment[s]
    for( it  = JPEGInfo->Fragments.begin();
         it != JPEGInfo->Fragments.end();
@@ -515,7 +514,6 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream* fp )
 
    size_t howManyRead = 0;
    size_t howManyWritten = 0;
-   size_t fragmentLength = 0;
    
    if ( BitsStored == 8)
    {
@@ -583,8 +581,8 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp )
 {
    // Loop on the fragment[s] to get total length
    size_t totalLength = 0;
-   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
-        it  = JPEGInfo->Fragments.begin();
+   JPEGFragmentsInfo::JPEGFragmentsList::iterator it;
+   for( it  = JPEGInfo->Fragments.begin();
         it != JPEGInfo->Fragments.end();
         ++it )
    {
@@ -595,10 +593,8 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp )
    JOCTET *buffer = new JOCTET [totalLength];
    JOCTET *p = buffer;
 
-   uint8_t* localRaw = Raw;
    // Loop on the fragment[s]
-   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
-        it  = JPEGInfo->Fragments.begin();
+   for( it  = JPEGInfo->Fragments.begin();
         it != JPEGInfo->Fragments.end();
         ++it )
    {
@@ -612,8 +608,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp )
    size_t howManyWritten = 0;
    size_t fragmentLength = 0;
    
-   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
-        it  = JPEGInfo->Fragments.begin() ;
+   for( it  = JPEGInfo->Fragments.begin() ;
         (it != JPEGInfo->Fragments.end()) && (howManyRead < totalLength);
         ++it )
    {
@@ -697,7 +692,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
       // read from it
       return ReadAndDecompressJPEGSingleFrameFragmentsFromFile( fp );
    }
-   else if (JPEGInfo->Fragments.size() == ZSize)
+   else if (JPEGInfo->Fragments.size() == (size_t)ZSize)
    {
       // suppose each fragment is a frame
       return ReadAndDecompressJPEGFramesFromFile( fp );
