@@ -77,7 +77,10 @@ of the uncompressed pixel data from which the compressed data is derived
  */
 
 extern "C" {
-#include "jpeglib.h"
+//#include "jpeglib.h"
+#include "src/jpeg/libijg8/jconfig.h"
+#include "src/jpeg/libijg8/jpeglib.h"
+
 #include <setjmp.h>
 }
 

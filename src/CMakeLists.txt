@@ -4,10 +4,10 @@ SUBDIRS(jpeg)
 
 # "jpeglib.h" is defined here:
 INCLUDE_DIRECTORIES(
-  ${GDCM_SOURCE_DIR}/src/jpeg/libijg8
-  #${GDCM_SOURCE_DIR}/jpeg/libijg12 #all files have been renamed, appending 12
-  #${GDCM_SOURCE_DIR}/jpeg/ljpg     # JPEG lib from xmedcom 
+  ${GDCM_SOURCE_DIR}/
   ${GDCM_BINARY_DIR}/ #for gdcmConfigure.h
+#  ${GDCM_BINARY_DIR}/src/jpeg/libijg8  #created a build time
+#  ${GDCM_BINARY_DIR}/src/jpeg/libijg12 #created a build time
 )
 
 SET(libgdcm_la_SOURCES

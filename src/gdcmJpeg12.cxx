@@ -9,72 +9,6 @@
 #define GDCM_jpr_DEBUG 0
 #endif   //GDCM_DEBUG
 
-// BITS_IN_JSAMPLE is a compile time defined options.
-// We need both 8 an 12;
-// To avoid renaming *all* the Jpeg functions,
-// we hard code the 'brain damaged liker' option.
-// For all the functions, we shall have the 8 and 12 version
-// (8 with the 'long' name, 12 with the 'short' name)
-
-#define jpeg_read_header        jReadHeader
-#define my_error_exit           myErrorExit
-#define jpeg_destroy_decompress jDestDecompress
-#define jpeg_stdio_src          jStdSrc
-#define jpeg_read_header        jReadHeader
-#define jpeg_read_scanlines     jReadScanlines
-#define jpeg_finish_decompress  jFinDecompress
-//#define jpeg_create_decompress  jCreaDecompress //FIXME
-
-// -----------------
-#define jpeg_std_error           jStdError
-#define jpeg_CreateCompress      jCreaCompress
-#define jpeg_CreateDecompress    jCreaDecompress
-#define jpeg_destroy_compress    jDestCompress
-#define jpeg_destroy_decompress  jDestDecompress
-#define jpeg_stdio_dest          jStdDest
-#define jpeg_stdio_src           jStdSrc
-#define jpeg_set_defaults        jSetDefaults
-#define jpeg_set_colorspace      jSetColorspace
-#define jpeg_default_colorspace  jDefColorspace
-#define jpeg_set_quality         jSetQuality
-#define jpeg_set_linear_quality  jSetLQuality
-#define jpeg_add_quant_table     jAddQuantTable
-#define jpeg_quality_scaling     jQualityScaling
-#define jpeg_simple_progression  jSimProgress
-#define jpeg_suppress_tables     jSuppressTables
-#define jpeg_alloc_quant_table   jAlcQTable
-#define jpeg_alloc_huff_table    jAlcHTable
-#define jpeg_start_compress      jStrtCompress
-#define jpeg_write_scanlines     jWrtScanlines
-#define jpeg_finish_compress     jFinCompress
-#define jpeg_write_raw_data      jWrtRawData
-#define jpeg_write_marker        jWrtMarker
-#define jpeg_write_m_header      jWrtMHeader
-#define jpeg_write_m_byte        jWrtMByte
-#define jpeg_write_tables        jWrtTables
-#define jpeg_read_header         jReadHeader
-#define jpeg_start_decompress    jStrtDecompress
-#define jpeg_read_scanlines      jReadScanlines
-#define jpeg_finish_decompress   jFinDecompress
-#define jpeg_read_raw_data       jReadRawData
-#define jpeg_has_multiple_scans  jHasMultScn
-#define jpeg_start_output        jStrtOutput
-#define jpeg_finish_output       jFinOutput
-#define jpeg_input_complete      jInComplete
-#define jpeg_new_colormap        jNewCMap
-#define jpeg_consume_input          jConsumeInput
-#define jpeg_calc_output_dimensions jCalcDimensions
-#define jpeg_save_markers           jSaveMarkers
-#define jpeg_set_marker_processor   jSetMarker
-#define jpeg_read_coefficients      jReadCoefs
-#define jpeg_write_coefficients     jWrtCoefs
-#define jpeg_copy_critical_parameters jCopyCrit
-#define jpeg_abort_compress      jAbrtCompress
-#define jpeg_abort_decompress    jAbrtDecompress
-#define jpeg_abort               jAbort
-#define jpeg_destroy             jDestroy
-#define jpeg_resync_to_restart   jResyncRestart
-
 /*
  * <setjmp.h> is used for the optional error recovery mechanism shown in
  * the second part of the example.
@@ -89,7 +23,9 @@
  */
 
 extern "C" {
-#include "jpeg/libijg12/jpeglib12.h"
+#include "src/jpeg/libijg12/jconfig.h"
+#include "src/jpeg/libijg12/jpeglib.h"
+//#include "jconfig12.h"
 #include <setjmp.h>
 }
 /******************** JPEG COMPRESSION SAMPLE INTERFACE *******************/
