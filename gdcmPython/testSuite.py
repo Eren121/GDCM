@@ -514,22 +514,23 @@ class gdcmTestCase(unittest.TestCase):
          #         at 9f8 : fragment length 212866 x(00033f82)
          # at 3497e : ItemTag  b00c,0eb6 (should be fffe,e000 or fffe,e0dd):
  
-#       ["gdcm-JPEG-LossLessThoravision.dcm",
-#          # Interest: - Jpeg compression [Lossless, hierar., first-order
-#          #             pred. 14, Select. Val. 1]
-#          #           - encoding is sligthly different from LossLess3a.dcm ???
-#          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.4.70"],
-#            ["Modality", "CR"],
-#            ["Photometric Interpretation", "MONOCHROME2"],
-#            ["Rows", "2076"],
-#            ["Columns", "1876"],
-#            ["Bits Stored", "15"],
-#            ["Bits Allocated", "16"],
-#            ["High Bit", "14"],
-#            ["Pixel Representation", "0"],
-#            ["Manufacturer", "Philips Medical Systems"],
-#            ["Manufacturer's Model Name", "Cassette Holder Type 9840 500 35201"],
-#            ["Pixel Data", "gdcm::NotLoaded. Address:3144 Length:4795668"] ] ],
+      ["gdcm-JPEG-LossLessThoravision.dcm",
+         # Interest: - Jpeg compression [Lossless, hierar., first-order
+         #             pred. 14, Select. Val. 1]
+         #           - encoding is sligthly different from LossLess3a.dcm ???
+         [ ["Transfer Syntax UID", "1.2.840.10008.1.2.4.70"],
+           ["Modality", "CR"],
+           ["Photometric Interpretation", "MONOCHROME2"],
+           ["Rows", "2076"],
+           ["Columns", "1876"],
+           ["Bits Stored", "15"],
+           ["Bits Allocated", "16"],
+           ["High Bit", "14"],
+           ["Pixel Representation", "0"],
+           ["Manufacturer", "Philips Medical Systems"],
+           ["Manufacturer's Model Name", "Cassette Holder Type 9840 500 35201"],
+           ["Pixel Data", "gdcm::NotLoaded. Address:3144 Length:4795668 x(492d14)"]
+			  ] ],
    ]
 
    def _BaseTest(self, FileSet):
