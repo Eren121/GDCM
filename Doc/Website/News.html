@@ -31,6 +31,30 @@
    <LI> A huge number of memory leaks removed
    <LI> Improvement of write process  
 </UL>
+<br>
+<pre>
+For people who get this new release :
+
+We consider now that :
+- any dicom related file is a gdcm::Document.
+- a gdcm::Document can be :
+      - a gdcm::File,     if it contains pixel data,
+      - a gdcm::DicomDir, if it contains only informations 
+                          on the files in a given directory
+- in a gdcm::Document, there are gdcm::DocEntry, that can be :
+     - gdcm::ValEntry (whose value is std::string representable 
+                       i.e. character values, or integers),
+     - gdcm::BinEntry (whose value is not std::string representable 
+                       i.e. color palettes, overlays, icons , ...)
+     - gdcm::Sequence (no proper 'value', but a set of gdcm::SQItems, 
+                       composed of a set of gdc::DocEntry, recursively)
+- in a gdcm::DicomDir, we only deal, hierachically, with :
+     - gdcmPatient
+     - gdcmStudy
+     - gdcmSerie
+     - gdcmImage
+</pre>
+
 
 
 
