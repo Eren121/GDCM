@@ -18,6 +18,7 @@ int TestBug(int argc, char* argv[])
    //e1->PrintPubDict();
    //e1->GetPubDict()->GetEntriesByKey();
    e1->GetPubDict()->PrintByKey();
+   delete e1;
 
-  return 0;
+   return 0;
 }
