@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 23:14:05 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/01/09 00:13:26 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,11 +78,11 @@ namespace gdcm
 #define DICT_TS           "dicomTS.dic"
 #define DICT_VR           "dicomVR.dic"
 
-static const std::string GDCM_UNKNOWN   = "gdcm::Unknown";
-static const std::string GDCM_UNFOUND   = "gdcm::Unfound";
-static const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
-static const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
-static const std::string GDCM_UNREAD    = "gdcm::UnRead";
+extern const std::string GDCM_UNKNOWN;
+extern const std::string GDCM_UNFOUND;
+extern const std::string GDCM_BINLOADED;
+extern const std::string GDCM_NOTLOADED;
+extern const std::string GDCM_UNREAD;
 
 /// \brief TagKey is made to hold an "universal" (as in URL, Universal
 ///        Ressource Locator)  key to a DocEntry i.e. a dicom tag.

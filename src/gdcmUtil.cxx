@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 23:00:23 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2005/01/09 00:13:26 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -366,9 +366,7 @@ typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
 #endif
 
 #ifdef __APPLE__
-
 #include <CoreFoundation/CoreFoundation.h>
-
 #include <IOKit/IOKitLib.h>
 #include <IOKit/network/IOEthernetInterface.h>
 #include <IOKit/network/IONetworkInterface.h>

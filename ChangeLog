@@ -1,3 +1,9 @@
+2005-01-08 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Fix bug on MacOSX with static initialization in a multui threaded
+	 environement. static const string in a header file used to be ill
+	 initialized provoquing the freeze of any tests. patch should solve this
+	 issue.
+
 2005-01-08 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * According to Benoit's suggestion, and without any objection from anybody
       - methods SetxxxByNumber and GetxxxByNumber renamed as Setxxx and Getxxx
