@@ -31,12 +31,7 @@
 //-----------------------------------------------------------------------------
 #ifdef __GNUC__
 #ifndef HAVE_NO_STDINT_H
-//#if defined __STDC_LIMIT_MACROS
-//#endif
 #include <stdint.h>
-//#ifdef UINT32_MAX
-//#error hehrehhehehehe2
-//#endif
 #define guint16 uint16_t
 #define guint32 uint32_t
 #define gint16  int16_t
