@@ -6,10 +6,6 @@
 #http://www.cmake.org/pipermail/cmake/2003-August/004185.html
 #http://www.cmake.org/pipermail/cmake/2003-January/001092.html
 
-#As of 09/10/2003 there was no FindSWIG.cmake
-
-#gdcm_wrap.cxx: $(srcdir)/gdcm.i
-#	$(SWIG)  -python -c++ $(SWIG_INC) -o $@ $<
 
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src
@@ -40,13 +36,18 @@ TARGET_LINK_LIBRARIES(pygdcm
   gdcm
 )
 
-
+#-----------------------------------------------------------------------------
+# As of 09/10/2003 there was no FindSWIG.cmake
+# later we should use SWIG instead of swig
+# Build our custom command :
 ADD_CUSTOM_COMMAND(
-SOURCE    ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i
-COMMAND   swig
-ARGS      -python -c++ -I${GDCM_SOURCE_DIR}/src -o ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
-TARGET    mathieu
-OUTPUTS   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
+  SOURCE    ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i
+  COMMAND   swig
+  ARGS      -python -c++ -I${GDCM_SOURCE_DIR}/src -o 
+            ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx 
+            ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
+  TARGET    pygdcm
+  OUTPUTS   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
 )
 
 

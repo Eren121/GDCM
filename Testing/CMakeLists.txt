@@ -1,5 +1,9 @@
 #For later : rewrite this things for more consistencies, such as a 'FOREACH'
 
+#TODO:
+#http://www.cmake.org/pipermail/cmake/2001-November/002491.html
+#So that dll is copied to each subdir where needed
+
 LINK_LIBRARIES(gdcm)
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src/
