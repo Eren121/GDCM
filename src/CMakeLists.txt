@@ -74,13 +74,13 @@ IF(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
     gdcmijpeg8 
     gdcmijpeg12
-    gdcmjpeg     # JPEG lib from xmedcom 
+    gdcmljpeg     # JPEG lib from xmedcom 
   )
 ELSE(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
     gdcmijpeg8 
     gdcmijpeg12
-    gdcmjpeg
+    gdcmljpeg
     Wsock32.lib   #doesn't exist on cygwin
   )
 ENDIF(UNIX)
