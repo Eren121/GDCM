@@ -3,8 +3,9 @@
 #ifndef GDCMDICOMDIR_H
 #define GDCMDICOMDIR_H
 
-#include "gdcmHeader.h"
+//#include "gdcmHeader.h"
 #include "gdcmCommon.h"
+#include "gdcmDocument.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirMeta.h"
 #include "gdcmDicomDirElement.h"
@@ -14,7 +15,7 @@
 
 //-----------------------------------------------------------------------------
 typedef std::list<gdcmDicomDirPatient *>   ListDicomDirPatient;
-typedef std::vector<gdcmHeader *>  ListHeader;
+typedef std::vector<gdcmDocument *>  VectDocument;
 
 typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
 //-----------------------------------------------------------------------------
@@ -118,12 +119,13 @@ private:
    void AddDicomDirSerieToEnd  (gdcmSQItem *s);
    void AddDicomDirImageToEnd  (gdcmSQItem *s);
 
-   void SetElements(std::string &path,ListHeader &list);
-   void SetElement (std::string &path,gdcmDicomDirType type,gdcmHeader *header);
+   void SetElements(std::string &path, VectDocument &list);
+   void SetElement (std::string &path,gdcmDicomDirType type,
+                    gdcmDocument *header);
    
    void UpdateDirectoryRecordSequenceLength(void);
 
-   static bool HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2);
+   static bool HeaderLessThan(gdcmDocument *header1,gdcmDocument *header2);
    
 // Variables
 

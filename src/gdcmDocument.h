@@ -25,10 +25,11 @@ typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
 //-----------------------------------------------------------------------------
 /**
- * \brief used by both gdcmHeader and gdcmDicomDir
+ * \brief Derived by both gdcmHeader and gdcmDicomDir
  */
 class GDCM_EXPORT gdcmDocument : public gdcmElementSet
 {
+friend class gdcmFile;
 private:
    /// Public dictionary used to parse this header
    gdcmDict *RefPubDict;
@@ -89,18 +90,7 @@ protected:
    int printLevel;
    
 public:
-   
-
-// Print
-  // Canonical Printing method (see also gdcmDocument::SetPrintLevel)
-  // virtual void Print        (std::ostream &os = std::cout);    
- //     {PrintEntry(os);};
- 
- // no more Print method for gdcmDocument (inherits from gdcmElementSet
- // virtual void PrintEntry      (std::ostream &os = std::cout)
- //               { return Print(os);};
-
-   // the 2 following will be merged
+// the 2 following will be merged
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
 
@@ -116,6 +106,15 @@ public:
    bool IsExplicitVRLittleEndianTransferSyntax(void);
    bool IsDeflatedExplicitVRLittleEndianTransferSyntax(void);
    bool IsExplicitVRBigEndianTransferSyntax(void);
+   bool IsJPEGBaseLineProcess1TransferSyntax(void);
+   bool IsJPEGExtendedProcess2_4TransferSyntax(void);
+   bool IsJPEGExtendedProcess3_5TransferSyntax(void);
+   bool IsJPEGSpectralSelectionProcess6_8TransferSyntax(void);
+   bool IsRLELossLessTransferSyntax(void);
+   bool IsJPEGLossless(void);
+   bool IsJPEG2000(void);
+   bool IsDicomV3(void);
+
    FileType GetFileType(void);
 
 // Read (used in gdcmFile, gdcmDicomDir)
@@ -149,20 +148,21 @@ protected:
    // gdcmDicomDir are meaningfull).
    gdcmDocument(bool exception_on_error  = false);
    gdcmDocument(const char *inFilename, 
-              bool  exception_on_error = false, 
-              bool  enable_sequences   = false,
-	      bool  ignore_shadow      = false);
+                bool  exception_on_error = false, 
+                bool  enable_sequences   = false,
+                bool  ignore_shadow      = false);
    virtual ~gdcmDocument(void);
    
    void gdcmDocument::Parse7FE0 (void);   
 // Entry
    int CheckIfEntryExistByNumber(guint16 Group, guint16 Elem ); // int !
+public:
    virtual std::string GetEntryByName    (std::string tagName);
    virtual std::string GetEntryVRByName  (std::string tagName);
    virtual std::string GetEntryByNumber  (guint16 group, guint16 element);
    virtual std::string GetEntryVRByNumber(guint16 group, guint16 element);
    virtual int     GetEntryLengthByNumber(guint16 group, guint16 element);
-
+protected:
    virtual bool SetEntryByName  (std::string content, std::string tagName);
    virtual bool SetEntryByNumber(std::string content,
                                  guint16 group, guint16 element);
@@ -181,22 +181,10 @@ protected:
 
    void LoadDocEntrySafe(gdcmDocEntry *);
 
-   // Probabely useless
-   //void UpdateGroupLength(bool SkipSequence = false,
-   //                       FileType type = ImplicitVR);
-
-   //void AddDocEntry       (gdcmDocEntry *);
-   
-      
 private:
-   // Read
- //bool LoadHeaderEntries(bool exception_on_error = false) throw(gdcmFormatError);
-   // remplacé par ParseDES.
-   // What about exception_on_error ?
-   
-   long ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
-  // long ParseSQ(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
-  long ParseSQ(gdcmSeqEntry *seq, long offset, long l_max, bool delim_mode); 
+// Read
+   long ParseDES(gdcmDocEntrySet *set, long offset, long l_max,bool delim_mode);
+   long ParseSQ(gdcmSeqEntry *seq, long offset, long l_max, bool delim_mode); 
    
    void LoadDocEntry      (gdcmDocEntry *);
    void FindDocEntryLength(gdcmDocEntry *);
@@ -233,18 +221,11 @@ private:
                                       std::string vr     = "unkn",
                                       std::string fourth = "unkn",
                                       std::string name   = "unkn");
-   //gdcmDictEntry *NewVirtualDictEntry(gdcmDocEntry *); // never defined 
-   
    // DocEntry related utilities
-   
    gdcmDocEntry *ReadNextDocEntry   (void);
    gdcmDocEntry *NewDocEntryByNumber(guint16 group, 
                                            guint16 element);
    gdcmDocEntry *NewDocEntryByName  (std::string Name);
-   
-   // Deprecated (Not used) --> commented out
-   //gdcmDocEntry *NewManualDocEntryToPubDict(std::string NewTagName,
-   //                                               std::string VR);
    
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 
@@ -262,14 +243,13 @@ public:
    /// Accessor to \ref gdcmElementSet::tagHT
    inline TagDocEntryHT &GetEntry(void) { return tagHT; };
 
-   /// Accessor to \ref gdcmDocument::listEntries
-   //inline ListTag &GetListEntry(void) { return listEntries; };
-
    /// 'Swap code' accessor (see \ref sw )
    inline int GetSwapCode(void) { return sw; }
    
    /// File pointer
    inline FILE * GetFP(void) { return fp; }
+
+   bool operator<(gdcmDocument &document);
 
 };
 

@@ -112,153 +112,6 @@ bool gdcmHeader::IsReadable(void) {
 }
 
 /**
- * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEGBaseLineProcess1 one.
- * @return  True when JPEGBaseLineProcess1found. False in all other cases.
- */
-bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.4.50" )
-      return true;
-   return false;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEGExtendedProcess2-4 one.
- * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
- */
-bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-   return ( ((gdcmValEntry *)Element)->GetValue() == "1.2.840.10008.1.2.4.51" );
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEGExtendeProcess3-5 one.
- * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
- */
-bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.4.52" )
-      return true;
-   return false;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEGSpectralSelectionProcess6-8 one.
- * @return  True when JPEGSpectralSelectionProcess6-8 found. False in all
- *          other cases.
- */
-bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.4.53" )
-      return true;
-   return false;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a RLE Lossless one.
- * @return  True when RLE Lossless found. False in all
- *          other cases.
- */
-bool gdcmHeader::IsRLELossLessTransferSyntax(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.5" ) {
-      return true;
-    }
-   return false;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief  Determines if Transfer Syntax was already encountered
- *          and if it corresponds to a JPEG Lossless one. 
- * @return  True when RLE Lossless found. False in all
- *          other cases. 
- */
-bool gdcmHeader::IsJPEGLossless(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-    // faire qq chose d'intelligent a la place de ça
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   const char * Transfert = ((gdcmValEntry *)Element)->GetValue().c_str();
-   
-   if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
-   if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
-   
-   if (((gdcmValEntry *)Element)->GetValue() == "1.2.840.10008.1.2.4.57")   return true;
-
-   return false;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEG2000 one
- * @return  True when JPEG2000 (Lossly or LossLess) found. False in all
- *          other cases.
- */
-bool gdcmHeader::IsJPEG2000(void) {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
-      return false;
-   LoadDocEntrySafe(Element);
-
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if (    (Transfer == "1.2.840.10008.1.2.4.90") 
-        || (Transfer == "1.2.840.10008.1.2.4.91") )
-      return true;
-   return false;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Predicate for dicom version 3 file.
- * @return  True when the file is a dicom version 3.
- */
-bool gdcmHeader::IsDicomV3(void) {
-   // Checking if Transfert Syntax exists is enough
-   // Anyway, it's to late check if the 'Preamble' was found ...
-   // And ... would it be a rich idea to check ?
-   // (some 'no Preamble' DICOM images exist !)
-   return (GetDocEntryByNumber(0x0002, 0x0010) != NULL);
-}
-
-/**
- * \ingroup gdcmHeader
  * \brief   Retrieve the number of columns of image.
  * @return  The encountered size when found, 0 by default.
  *          0 means the file is NOT USABLE. The caller will have to check
@@ -674,27 +527,26 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
 } 
 
 /**
- * \ingroup gdcmHeader
- * \brief gets the info from 0002,0010 : Transfert Syntax and gdcmTS
+ * \brief Accesses the info from 0002,0010 : Transfert Syntax and gdcmTS
  *        else 1.
- * @return the full Transfert Syntax Name (as oposite to Transfert Syntax UID)
+ * @return The full Transfert Syntax Name (as opposed to Transfert Syntax UID)
  */
 std::string gdcmHeader::GetTransfertSyntaxName(void) { 
    // use the gdcmTS (TS : Transfert Syntax)
    std::string TransfertSyntax = GetEntryByNumber(0x0002,0x0010);
    if (TransfertSyntax == GDCM_UNFOUND) {
-      dbg.Verbose(0, "gdcmHeader::GetTransfertSyntaxName: unfound Transfert Syntax (0002,0010)");
+      dbg.Verbose(0, "gdcmHeader::GetTransfertSyntaxName:"
+                     " unfound Transfert Syntax (0002,0010)");
       return "Uncompressed ACR-NEMA";
    }
    // we do it only when we need it
    gdcmTS * ts = gdcmGlobal::GetTS();
    std::string tsName=ts->GetValue(TransfertSyntax);
-   //delete ts; // Seg Fault when deleted ?!
+   //delete ts; /// \todo Seg Fault when deleted ?!
    return tsName;
 }
 
 /**
- * \ingroup   gdcmHeader
  * \brief Sets the Pixel Area size in the Header
  *        --> not-for-rats function
  * @param ImageDataSize new Pixel Area Size
@@ -704,8 +556,6 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    std::string content1;
    char car[20];
 
-   // Assumes DocEntry (GrPixel, NumPixel) is unique ...   
-   //\todo deal with multiplicity (see gdcmData/icone.dcm)
    sprintf(car,"%d",ImageDataSize);
  
    gdcmDocEntry *a = GetDocEntryByNumber(GrPixel, NumPixel);
@@ -717,96 +567,16 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    SetEntryByNumber(content1, GrPixel, NumPixel);
 }
 
-
-/**
- * \ingroup   gdcmHeader
- * \brief compares 2 Headers, according to DICOMDIR rules
- *        --> not-for-rats function
- * \warning does NOT work with ACR-NEMA files
- * \todo find a trick to solve the pb (use RET fields ?)
- * @param header 
- * @return true if 'smaller'
- */
- bool gdcmHeader::operator<(gdcmHeader &header){
-   std::string s1,s2;
-
-   // Patient Name
-   s1=this->GetEntryByNumber(0x0010,0x0010);
-   s2=header.GetEntryByNumber(0x0010,0x0010);
-   if(s1 < s2)
-      return(true);
-   else if(s1 > s2)
-      return(false);
-   else
-   {
-      // Patient ID
-      s1=this->GetEntryByNumber(0x0010,0x0020);
-      s2=header.GetEntryByNumber(0x0010,0x0020);
-      if (s1 < s2)
-         return(true);
-      else if (s1 > s2)
-         return(1);
-      else
-      {
-         // Study Instance UID
-         s1=this->GetEntryByNumber(0x0020,0x000d);
-         s2=header.GetEntryByNumber(0x0020,0x000d);
-         if (s1 < s2)
-            return(true);
-         else if(s1 > s2)
-            return(false);
-         else
-         {
-            // Serie Instance UID
-            s1=this->GetEntryByNumber(0x0020,0x000e);
-            s2=header.GetEntryByNumber(0x0020,0x000e);
-            if (s1 < s2)
-               return(true);
-            else if(s1 > s2)
-               return(false);
-         }
-      }
-   }
-   return(false);
-}
-// Replaced by gdcmDocument::WriteEntry
-/*
-bool gdcmHeader::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
-{
-cout << " gdcmHeader::WriteEntry : entree " << endl;
-   guint32 length = tag->GetLength();
-                                                                                
-   // The value of a tag MUST (see the DICOM norm) be an odd number of
-   // bytes. When this is not the case, pad with an additional byte:
-   if(length%2==1)
-   {
-  //    tag->SetValue(tag->GetValue()+"\0"); // to go on compiling
-      tag->SetLength(tag->GetReadLength()+1);
-   }
-                                                                                
-   WriteEntryTagVRLength(tag, _fp, type);
-                                                                                
-   // Pixels are never loaded in the element !
-   // we stop writting when Pixel are processed
-   // FIX : we loose trailing elements (RAB, right now)
-   guint16 el     = tag->GetElement();
-   guint16 group  = tag->GetGroup();
-   WriteEntryValue(tag, _fp, type);
-   return true;
-}
-*/
 //-----------------------------------------------------------------------------
 // Protected
 
 /**
- * \ingroup   gdcmHeader
  * \brief anonymize a Header (removes Patient's personal info)
  *        (read the code to see which ones ...)
  */
 bool gdcmHeader::anonymizeHeader() {
 
   gdcmDocEntry *patientNameHE = GetDocEntryByNumber (0x0010, 0x0010);
- // gdcmDocEntry *patientIDHE   = GetDocEntryByNumber (0x0010, 0x0020); 
     
   ReplaceIfExistByNumber ("  ",0x0010, 0x2154); // Telephone   
   ReplaceIfExistByNumber ("  ",0x0010, 0x1040); // Adress

@@ -1,3 +1,32 @@
+2004-06-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+    * src/gdcmHeader.[cxx|h]:
+      - Predicates on the Transfer syntax (of the form Is[JPEF|RLE]*)
+        and related, moved away to gdcmDocument.
+      - Accessors (on the form [Get|Set]Entry*) set up to expose publicly
+        the corresponding protected accessors of inherited class
+        gdcmDocument, removed ! As a consequence gdcmFile had to be 
+        declared friend of class gdcmDocument (see below).
+      - operator< moved to gdcmDocument (in fact it belongs to gdcmDicomDir).
+      - Clean up of undefined or unused methods.
+    * src/gdcmFile.[cxx|h]: added SetEntryByNumber (in order to take into
+      account the changes to gdcmHeader.h).
+    * src/gdcmDocument.h:
+      - gdcmFile is now a friend class (in order to take into account the
+        changes to gdcmHeader.h).
+      - Predicates on the Transfer syntax (of the form Is[JPEF|RLE]*) added
+        (see changes to gdcmHeader.h).
+      - Accessors (reading on the form GetEntry*) are now public.
+      - Clean up of undefined or unused methods.
+    * src/gdcmDocument.cxx:
+      - adaptation to changes to gdcmDocument.h
+      - ::OpenFile now writes a verbose message when file cannot be opened.
+      - some std::string properly set to VRKey
+    * src/gdcmDicomDir.h: historical references to gdcmHeader changed to
+      references to gdcmDocument. 
+    * Test/TestFindTags.cxx: changed accordingly to above changes.
+    * gdcmPython/testSuite.py: adapted to renaming of acr files in 
+      cvs repository gdcmData.
+
 2004-06-09 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * src/gdcmValEntry.h: member voidArea type changed from char* to void*.
     * src/gdcmBinEntry.h: member voidArea commented out, since it potentially

@@ -75,6 +75,11 @@ public:
 
    // Body in file gdcmParse.cxx
    bool ParsePixelData(void);
+
+   inline virtual bool SetEntryByNumber(std::string content,
+                                        guint16 group, guint16 element)
+      { GetHeader()->SetEntryByNumber(content,group,element); }
+
      
 protected:
    bool WriteBase(std::string FileName, FileType type);
@@ -101,7 +106,9 @@ private:
    /// \brief Header to use to load the file
    gdcmHeader *Header;
 	
-	/// \brief Oops ! Eric : help me    
+	/// \brief Whether the underlying \ref gdcmHeader was loaded by
+   ///  the constructor or passed to the constructor. When false
+   ///  the destructor is in charge of deletion.
    bool SelfHeader;
 
    /// \brief to hold the Pixels (when read)

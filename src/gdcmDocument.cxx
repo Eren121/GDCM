@@ -199,11 +199,13 @@ bool gdcmDocument::SetShaDict(DictKey dictName){
  */
 bool gdcmDocument::IsReadable(void) { 
    if(filetype==gdcmUnknown) {
-      std::cout << "wrong filetype" <<std::endl;
+      dbg.Verbose(0, "gdcmDocument::IsReadable: wrong filetype");
       return(false);
    }
    if(!tagHT.empty()<=0) { 
-      std::cout << "wrong tagHT size "<< tagHT.size() <<std::endl;     
+      std::cout << "gdcmDocument::IsReadable: wrong tagHT size : "
+                << tagHT.size()
+                <<std::endl;     
       return(false);
    }
 
@@ -279,6 +281,145 @@ bool gdcmDocument::IsExplicitVRBigEndianTransferSyntax(void) {
 }
 
 /**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a JPEGBaseLineProcess1 one.
+ * @return  True when JPEGBaseLineProcess1found. False in all other cases.
+ */
+bool gdcmDocument::IsJPEGBaseLineProcess1TransferSyntax(void) {
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadDocEntrySafe(Element);
+                                                                                
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
+   if ( Transfer == "1.2.840.10008.1.2.4.50" )
+      return true;
+   return false;
+}
+                                                                                
+/**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a JPEGExtendedProcess2-4 one.
+ * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
+ */
+bool gdcmDocument::IsJPEGExtendedProcess2_4TransferSyntax(void) {
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadDocEntrySafe(Element);
+   return ( ((gdcmValEntry *)Element)->GetValue() == "1.2.840.10008.1.2.4.51"
+);}
+                                                                                
+/**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a JPEGExtendeProcess3-5 one.
+ * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
+ */
+bool gdcmDocument::IsJPEGExtendedProcess3_5TransferSyntax(void) {
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadDocEntrySafe(Element);
+                                                                                
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
+   if ( Transfer == "1.2.840.10008.1.2.4.52" )
+      return true;
+   return false;
+}
+
+/**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a JPEGSpectralSelectionProcess6-8 one.
+ * @return  True when JPEGSpectralSelectionProcess6-8 found. False in all
+ *          other cases.
+ */
+bool gdcmDocument::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadDocEntrySafe(Element);
+                                                                                
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
+   if ( Transfer == "1.2.840.10008.1.2.4.53" )
+      return true;
+   return false;
+}
+                                                                                
+/**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a RLE Lossless one.
+ * @return  True when RLE Lossless found. False in all
+ *          other cases.
+ */
+bool gdcmDocument::IsRLELossLessTransferSyntax(void) {
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadDocEntrySafe(Element);
+                                                                                
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
+   if ( Transfer == "1.2.840.10008.1.2.5" ) {
+      return true;
+    }
+   return false;
+}
+
+/**
+ * \brief  Determines if Transfer Syntax was already encountered
+ *          and if it corresponds to a JPEG Lossless one.
+ * @return  True when RLE Lossless found. False in all
+ *          other cases.
+ */
+bool gdcmDocument::IsJPEGLossless(void) {
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
+    // faire qq chose d'intelligent a la place de ça
+   if ( !Element )
+      return false;
+   LoadDocEntrySafe(Element);
+                                                                                
+   const char * Transfert = ((gdcmValEntry *)Element)->GetValue().c_str();
+                                                                                
+   if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
+   if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
+                                                                                
+   if (((gdcmValEntry *)Element)->GetValue() == "1.2.840.10008.1.2.4.57")
+return true;
+                                                                                
+   return false;
+}
+                                                                                
+/**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a JPEG2000 one
+ * @return  True when JPEG2000 (Lossly or LossLess) found. False in all
+ *          other cases.
+ */
+bool gdcmDocument::IsJPEG2000(void) {
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadDocEntrySafe(Element);
+                                                                                
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
+   if (    (Transfer == "1.2.840.10008.1.2.4.90")
+        || (Transfer == "1.2.840.10008.1.2.4.91") )
+      return true;
+   return false;
+}
+
+/**
+ * \brief   Predicate for dicom version 3 file.
+ * @return  True when the file is a dicom version 3.
+ */
+bool gdcmDocument::IsDicomV3(void) {
+   // Checking if Transfert Syntax exists is enough
+   // Anyway, it's to late check if the 'Preamble' was found ...
+   // And ... would it be a rich idea to check ?
+   // (some 'no Preamble' DICOM images exist !)
+   return (GetDocEntryByNumber(0x0002, 0x0010) != NULL);
+}
+
+/**
  * \brief  returns the File Type 
  *         (ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown)
  * @return the FileType code
@@ -296,10 +437,17 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
   throw(gdcmFileError) 
 {
   fp=fopen(filename.c_str(),"rb");
-  if(exception_on_error) 
+
+  if(!fp)
   {
-    if(!fp)
-      throw gdcmFileError("gdcmDocument::gdcmDocument(const char *, bool)");
+     if(exception_on_error) 
+        throw gdcmFileError("gdcmDocument::gdcmDocument(const char *, bool)");
+     else
+     {
+        dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file: ",
+                    filename.c_str());
+        return (NULL);
+     }
   }
 
   if ( fp ) 
@@ -602,7 +750,7 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
            
    ((gdcmValEntry*)a)->SetValue(content);
    
-   std::string vr = a->GetVR();
+   VRKey vr = a->GetVR();
    
    guint32 lgr;
    if( (vr == "US") || (vr == "SS") ) 
@@ -835,7 +983,7 @@ void gdcmDocument::WriteEntryTagVRLength(gdcmDocEntry *tag,
                                        FileType type)
 {
    guint16 group  = tag->GetGroup();
-   std::string vr = tag->GetVR();
+   VRKey   vr     = tag->GetVR();
    guint16 el     = tag->GetElement();
    guint32 lgr    = tag->GetReadLength();
 
@@ -898,7 +1046,7 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
    (void)type;
    guint16 group  = tag->GetGroup();
-   std::string vr = tag->GetVR();
+   VRKey   vr     = tag->GetVR();
    guint32 lgr    = tag->GetReadLength();
 
    if (vr == "SQ")
@@ -2301,39 +2449,6 @@ gdcmDocEntry *gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem)
    return NewEntry;
 }
 
-/// \todo Never used; commented out, waiting for removal.
-/**
- * \brief   Small utility function that creates a new manually crafted
- *          (as opposed as read from the file) gdcmDocEntry with user
- *          specified name and adds it to the public tag hash table.
- * \note    A fake TagKey is generated so the PubDict can keep it's coherence.
- * @param   NewTagName The name to be given to this new tag.
- * @param   VR The Value Representation to be given to this new tag.
- * @return  The newly hand crafted Element Value.
- */
-//gdcmDocEntry *gdcmDocument::NewManualDocEntryToPubDict(std::string NewTagName, 
-//                                                           std::string VR) 
-//{
-//   gdcmDocEntry *NewEntry = NULL;
-//   guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
-//   guint32 FreeElem = 0;
-//   gdcmDictEntry *DictEntry = NULL;
-//
-//   FreeElem = GenerateFreeTagKeyInGroup(StuffGroup);
-//   if (FreeElem == UINT32_MAX) 
-//   {
-//      dbg.Verbose(1, "gdcmHeader::NewManualDocEntryToPubDict",
-//                     "Group 0xffff in Public Dict is full");
-//      return NULL;
-//   }
-//
-//   DictEntry = NewVirtualDictEntry(StuffGroup, FreeElem,
-//                                VR, "GDCM", NewTagName);
-//   NewEntry = new gdcmDocEntry(DictEntry);
-//   AddEntry(NewEntry);
-//   return NewEntry;
-//}
-
 /**
  * \brief   Generate a free TagKey i.e. a TagKey that is not present
  *          in the TagHt dictionary.
@@ -2621,6 +2736,55 @@ void gdcmDocument::Parse7FE0 (void) {
    return;            
 }
 
+/**
+ * \brief   Compares two documents, according to \ref gdcmDicomDir rules
+ * \warning Does NOT work with ACR-NEMA files
+ * \todo    Find a trick to solve the pb (use RET fields ?)
+ * @param   document
+ * @return  true if 'smaller'
+ */
+ bool gdcmDocument::operator<(gdcmDocument &document){
+   std::string s1,s2;
+                                                                                
+   // Patient Name
+   s1=this->GetEntryByNumber(0x0010,0x0010);
+   s2=document.GetEntryByNumber(0x0010,0x0010);
+   if(s1 < s2)
+      return(true);
+   else if(s1 > s2)
+      return(false);
+   else
+   {
+      // Patient ID
+      s1=this->GetEntryByNumber(0x0010,0x0020);
+      s2=document.GetEntryByNumber(0x0010,0x0020);
+      if (s1 < s2)
+         return(true);
+      else if (s1 > s2)
+         return(1);
+      else
+      {
+         // Study Instance UID
+         s1=this->GetEntryByNumber(0x0020,0x000d);
+         s2=document.GetEntryByNumber(0x0020,0x000d);
+         if (s1 < s2)
+            return(true);
+         else if(s1 > s2)
+            return(false);
+         else
+         {
+            // Serie Instance UID
+            s1=this->GetEntryByNumber(0x0020,0x000e);
+            s2=document.GetEntryByNumber(0x0020,0x000e);
+            if (s1 < s2)
+               return(true);
+            else if(s1 > s2)
+               return(false);
+         }
+      }
+   }
+   return(false);
+}
 
 
 //-----------------------------------------------------------------------------

@@ -19,6 +19,7 @@
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include "gdcmGlobal.h"
+#include "gdcmHeader.h"
 
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
@@ -393,7 +394,7 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
 
    gdcmDirList fileList(path,1); // gets recursively the file list
    unsigned int count=0;
-   ListHeader list;
+   VectDocument list;
    gdcmHeader *header;
 
    tagHT.clear();
@@ -511,7 +512,8 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
  * @param   type gdcmObject type to create (GDCM_DICOMDIR_PATIENT, GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
  * @param   header gdcmHeader of the current file
  */
-void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader *header)
+void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
+                              gdcmDocument *header)
 {
    std::list<gdcmElement> elemList;
    std::list<gdcmElement>::iterator it;
@@ -841,7 +843,7 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(gdcmSQItem *s)
  * @param   path path of the root directory
  * @param   list chained list of Headers
  */
-void gdcmDicomDir::SetElements(std::string &path, ListHeader &list)
+void gdcmDicomDir::SetElements(std::string &path, VectDocument &list)
 {
    std::string patPrevName="",         patPrevID="";
    std::string studPrevInstanceUID="", studPrevID="";
@@ -853,7 +855,7 @@ void gdcmDicomDir::SetElements(std::string &path, ListHeader &list)
 
    SetElement(path,GDCM_DICOMDIR_META,NULL);
 
-   for(ListHeader::iterator it=list.begin();it!=list.end();++it) 
+   for(VectDocument::iterator it=list.begin();it!=list.end();++it) 
    {
       // get the current file characteristics
       patCurName=        (*it)->GetEntryByNumber(0x0010,0x0010); 
@@ -890,7 +892,7 @@ void gdcmDicomDir::SetElements(std::string &path, ListHeader &list)
  * \ingroup gdcmDicomDir
  * \brief   compares two dgcmHeaders
  */
-bool gdcmDicomDir::HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2)
+bool gdcmDicomDir::HeaderLessThan(gdcmDocument *header1,gdcmDocument *header2)
 {
    return(*header1<*header2);
 }

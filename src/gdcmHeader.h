@@ -53,14 +53,6 @@ public:
 
    // Standard values and informations contained in the header
    virtual bool IsReadable(void);
-   bool IsJPEGBaseLineProcess1TransferSyntax(void);
-   bool IsJPEGExtendedProcess2_4TransferSyntax(void); 
-   bool IsJPEGExtendedProcess3_5TransferSyntax(void);
-   bool IsJPEGSpectralSelectionProcess6_8TransferSyntax(void); 
-   bool IsRLELossLessTransferSyntax(void); 
-   bool IsJPEGLossless(void); 
-   bool IsJPEG2000(void); 
-   bool IsDicomV3(void); 
 
    // Some heuristic based accessors, end user intended 
    // (to be moved to gdcmHeaderHelper?) 
@@ -83,66 +75,16 @@ public:
 
    std::string GetTransfertSyntaxName(void);
 
-   // When some proprietary shadow groups are disclosed, we can set up
-   // an additional specific dictionary to access extra information.
-   
-   // OK : we still have *ONE* HeaderEntrySet, 
-   // with both Public and Shadow Elements
-   // parsed against THE Public Dictionary and A (single) Shadow Dictionary
-   
-   // TODO Swig int SetShaDict(std::string filename);
-   // TODO Swig int SetPubDict(std::string filename);
-   
    /// Accessor to \ref gdcmHeader::GrPixel
    guint16 GetGrPixel(void)  {return GrPixel;}
    
    /// Accessor to \ref gdcmHeader::NumPixel
    guint16 GetNumPixel(void) {return NumPixel;}
 
-// Entry
-
-// These functions are necessary for Python because 
-//       there are protected in the parent class
-
-   inline virtual std::string GetEntryByNumber  (guint16 group, guint16 element)
-      { return(gdcmDocument::GetEntryByNumber(group,element)); }
-      
-   inline virtual std::string GetEntryVRByNumber(guint16 group, guint16 element)
-      { return(gdcmDocument::GetEntryVRByNumber(group,element)); }
-      
-   inline virtual int GetEntryLengthByNumber(guint16 group, guint16 element)
-      { return(gdcmDocument::GetEntryLengthByNumber(group,element)); }
-      
-   inline virtual std::string GetEntryByName    (std::string tagName) 
-      { return(gdcmDocument::GetEntryByName(tagName)); }
-      
-   inline virtual std::string GetEntryVRByName  (std::string tagName)
-      { return(gdcmDocument::GetEntryVRByName(tagName)); }
-      
-   inline virtual bool SetEntryByNumber(std::string content,
-                                        guint16 group, guint16 element)
-      { return(gdcmDocument::SetEntryByNumber(content,group,element)); }
-      
-   inline virtual bool SetEntryByName(std::string content,std::string tagName)
-      { return(gdcmDocument::SetEntryByName(content,tagName)); }
-
-  inline virtual bool SetEntryLengthByNumber(guint32 l,
-                                             guint16 group, guint16 element)
-      { return(gdcmDocument::SetEntryLengthByNumber(l,group,element)); }
-
-   inline virtual void UpdateShaEntries(void)
-      { gdcmDocument::UpdateShaEntries(); }
-
    /// Read (used in gdcmFile)
    void SetImageDataSize(size_t ExpectedSize);
 
-   bool operator<(gdcmHeader &header);
-
-//   bool WriteEntry(gdcmDocEntry *tag,FILE *_fp,FileType type);
-   
 protected:
-   //CLEANME int write(std::ostream&);   
-   //CLEANME int anonymize(std::ostream&);//FIXME: anonymize should be a friend
    bool anonymizeHeader(void);
 private:
 

@@ -81,7 +81,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Manufacturer", "FUJI"],
            ["Pixel Data", "gdcm::NotLoaded. Address:796 Length:262144 x(40000)"]
 			  ] ],
-      ["CT-MONO2-12-lomb-an2.acr2",
+      ["CT-MONO2-12-lomb-an2.acr",
          [ ["Modality", "CT"],
            #"Transfer Syntax UID" and "Photometric Interpretation" are absent.
            ["Rows", "512"],
@@ -109,7 +109,7 @@ class gdcmTestCase(unittest.TestCase):
       ####################################
       ### MR modality examples:
       ####################################
-      ["MR-MONO2-12-angio-an1.acr1",
+      ["MR-MONO2-12-angio-an1.acr",
          [ ["Recognition Code (RET)", "ACR-NEMA 1.0"],
            ["Modality", "MR"],
            #"Transfer Syntax UID" and "Photometric Interpretation" are absent.
@@ -123,7 +123,7 @@ class gdcmTestCase(unittest.TestCase):
            # Note: 256*256*12/8 = 98304
            ["Pixel Data", "gdcm::NotLoaded. Address:650 Length:98304 x(18000)"]
 			  ] ],
-      ["MR-MONO2-12-an2.acr2",
+      ["MR-MONO2-12-an2.acr",
          [ ["Modality", "MR"],
            ["Photometric Interpretation", "MONOCHROME2"],
            ["Rows", "256"],
@@ -310,7 +310,7 @@ class gdcmTestCase(unittest.TestCase):
    ]
 
    GdcmFiles = [
-      ["gdcm-MR-SIEMENS-16.acr1",
+      ["gdcm-MR-SIEMENS-16-1.acr",
          # Interest: good old Acr-Nema Version 1, see also Oddities below
          [ ["Recognition Code (RET)", "ACR-NEMA 1.0"],
            ["Modality", "MR"],
@@ -329,7 +329,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Study ID", ""],
            ["Series Number", ""] ] ],
            # Oddities: "Study" and "Serie Instance UID" are not present
-      ["gdcm-MR-SIEMENS-16.acr2",
+      ["gdcm-MR-SIEMENS-16-2.acr",
          # Interest: Acr-Nema Version 2
          [ ["Recognition Code (RET)", "ACR-NEMA 2.0"],
            ["Modality", "MR"],
