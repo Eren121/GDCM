@@ -2,6 +2,7 @@
 #include "gdcmFile.h"
 #include "gdcmDocument.h"
 #include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -55,7 +56,7 @@ int TestCopyDicom(int , char* [])
 
       if( FileExists( output.c_str() ) )
       {
-         std::cerr << "Don't try to cheat, I am removing the file anyway" << std::endl;
+        // std::cerr << "Don't try to cheat, I am removing the file anyway" << std::endl;
          if( !RemoveFile( output.c_str() ) )
          {
             std::cerr << "Ouch, the file exist, but I cannot remove it" << std::endl;
@@ -66,50 +67,86 @@ int TestCopyDicom(int , char* [])
       gdcmFile *original = new gdcmFile( filename );
       gdcmFile *copy = new gdcmFile( output );
 
+      TagDocEntryHT & Ht = original->GetHeader()->GetEntry(); 
+
       //First of all copy the header field by field
+  
+      // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
+      // It was commented out by Mathieu, that was a *good* idea
+      // (the user does NOT have to know the way we implemented the Header !)
+      // Waiting for a 'clean' solution, I keep the method ...JPRx
+    
       TagNameHT & nameHt = original->GetHeader()->GetPubDict()->GetEntriesByName();
-      for (TagNameHT::iterator tag = nameHt.begin(); tag != nameHt.end(); ++tag)
+
+      gdcmValEntry* v;
+      gdcmBinEntry* b;
+      gdcmDocEntry* d;
+
+      for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
       {
-         if (tag->second->GetVR() == "SQ") //to skip pb of SQ recursive exploration
+         d = tag->second;
+         // for private elements, the gdcmDictEntry is unknown
+         // and it's VR is unpredictable ...
+         // ( In *this* case ReplaceOrCreateByNumber 
+         //  should have a knowledge of the virtual dictionary 
+         //  gdcmDictSet::VirtualEntry)
+ 
+         if ( d->GetGroup()%2 == 1) // Skip private Entries 
             continue;
-
-         //According to JPR I should also skip those:
-//         if (tag->second->GetVR() == "unkn") //to skip pb of SQ recursive exploration
-//            continue;
-
-         //no clue what to do with this one
-         //std::cerr << "Reading: " << tag->second->GetVR() << std::endl;
-         std::string value = ((gdcmValEntry*)(tag->second))->GetValue();
-//         if( value.find( "gdcm::NotLoaded" ) == 0 )
-//            continue;
-
-         //no clue what to do with this one
-         if( value.find( "gdcm::Loaded" ) == 0 )
-            continue;
-
-         copy->GetHeader()->ReplaceOrCreateByNumber( 
-               value, 
-               tag->second->GetGroup(), 
-               tag->second->GetElement() );
+ 
+         if ( gdcmBinEntry* b = dynamic_cast<gdcmBinEntry*>(d) )
+         { 
+ 
+           // std::cout << "BinEntry : " 
+           //           << "------------- " << b->GetVR() << " "<< std::hex
+           //           << b->GetGroup() << " " << b->GetElement() << " "
+           //           << " lg=" << b->GetLength()
+           //           << std::endl; 
+             
+            copy->GetHeader()->ReplaceOrCreateByNumber( 
+                                 b->GetVoidArea(),
+                                 b->GetLength(),
+                                 b->GetGroup(), 
+                                 b->GetElement() );
+            }
+           else  if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
+            {
+            copy->GetHeader()->ReplaceOrCreateByNumber( 
+                                 v->GetValue(),
+                                 v->GetGroup(), 
+                                 v->GetElement() );
+         }
+         else
+         {
+          // We skip pb of SQ recursive exploration
+          //std::cout << "Skipped Sequence " 
+          //          << "------------- " << d->GetVR() << " "<< std::hex
+          //          << d->GetGroup() << " " << d->GetElement()
+          //  << std::endl;    
+         }
       }
 
       size_t dataSize = original->GetImageDataSize();
       void *imageData = original->GetImageData();
 
       copy->SetImageData(imageData, dataSize);
-      //original->GetHeader()->SetImageDataSize(dataSize);
+      original->GetHeader()->SetImageDataSize(dataSize);
 
-      //copy->GetHeader()->PrintEntry();
+      copy->WriteDcmExplVR( output );
 
-      //copy->WriteDcmExplVR( output );
-      
+      delete original;
+      delete copy;
+
+      copy = new gdcmFile( output );
+
       //Is the file written still gdcm parsable ?
-      gdcmFile check( output );
-      retVal += !check.GetHeader()->IsReadable();
+      if ( !copy->GetHeader()->IsReadable() )
+      { 
+         retVal +=1;
+         std::cout << output << " Failed" << std::endl;
+      }
+      i++;
    }
-
    return retVal;
 }
-
-
 
