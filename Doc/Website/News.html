@@ -80,24 +80,32 @@ Any contribution is welcome.
             high values = dark) and <TT>MONOCHROME2</TT> (low values = dark,
             high values = bright) is now taken into account.<br> 
             It's no longer up to the user to change the pixels value
+      <LI> Writing a 'True Dicom' image after reading an ACR-NEMA image 
+           does not request any longer from the user to build up 
+            'manually' the Meta Elements group (0002)
+      <LI> Old '24 Bits' ACR-NEMA are now correctly re-written in DICOM mode.
  
    </UL>
 
    <LI> A.P.I. breaking modifications (since previous version : <TT>1.0</TT>)
    <UL>    
-      <LI>
+      <LI> NEVER more API breaking modifications !!!
 
    </UL>
 
 
    <LI> Known bugs
    <UL>
-      <LI> Writing a 'True Dicom' image after reading an ACR-NEMA image requests
-           from the user to build up 'manually' the Meta Elements group (0002) 
       <LI> Management, on Big Endian Processors, of unloaded BinEntries
-      <LI> Old '24 Bits' ACR-NEMA are not correctly re-written in DICOM mode.
+   </UL>
+
+   <LI> Sample Data
+   <UL>
+      Get a <a href="gdcmData.tar.gz">gzipped tarball</a> of sample data 
+       (warning : 185 Megabytes ...)
    </UL>
 </UL>
+
 
 
 <!#######################################################################>
