@@ -1,3 +1,16 @@
+2003-06-11  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * vtk/vtkGdcmReader.[cxx/h]: 
+        - UpdateProgress method should now be effective
+        - removed the limitation on having only images loaded (as opposed
+          to volumes),
+        - when building a stack of images/volume, a lesser number of
+          gdcmHeader and gdcmFile instances should be used (hopefully
+          accelerating things).
+        - when building a stack of images/volumes, files which are not
+          loadable (wrong path-filename, wrong permissions on existing file,
+          or file not parsable by gdcm) are replaced with a black image
+          in the stack (for the caller to notice the problem).
+
 2003-06-03  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader.cxx: hopefully corrected Z extent.
 
