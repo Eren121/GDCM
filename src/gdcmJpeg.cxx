@@ -2,10 +2,7 @@
 #include <stdio.h>
 #include "gdcmFile.h"
 
-// for jpeglib defined BITS_IN_JSAMPLE
-#include "jpeg/libijg8/jBitsInJsample.h"
-// FIXME : find something else when both 
-// libJpeg8 and libJpeg12 will be active
+#define BITS_IN_JSAMPLE 8
 
 #define DEBUG 0
 

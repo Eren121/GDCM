@@ -1,4 +1,8 @@
 2003-10-31 Jean-Pierre Roux
+     RMV : removal of useless jBitsInJsample.h 
+           for both 8 and 12 Bits JPEG Lossy Libraries
+	   
+2003-10-31 Jean-Pierre Roux
      * ENH : Add the functions gdcmFile::GetImageDataRaw 
                                gdcmFile::GetImageDataIntoVectorRaw
              that act as GetImageData and GetImageDataIntoVector
