@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:48 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/10/27 01:32:15 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,9 +23,9 @@
 #include <map>
 #include <string>
 #include <iostream>
+
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 typedef std::string TSKey;
 typedef std::string TSAtr;
@@ -44,11 +44,11 @@ public:
 
    void Print(std::ostream &os = std::cout);
 
-   int Count(TSKey key);
-   std::string GetValue(TSKey key);
+   int Count(TSKey const & key);
+   TSAtr const & GetValue(TSKey const & key);
 
 private:
-   TSHT ts;
+   TSHT TsMap;
 };
 } // end namespace gdcm
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:48 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/10/27 01:32:15 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,28 +27,26 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 TS::TS() 
 {
-   std::string filename=DictSet::BuildDictPath() + std::string(DICT_TS);
+   std::string filename = DictSet::BuildDictPath() + DICT_TS;
    std::ifstream from(filename.c_str());
-   dbg.Error(!from, "TS::TS: can't open dictionary",filename.c_str());
+   dbg.Error(!from, "TS::TS: can't open dictionary", filename.c_str());
 
-   std::string key;
-   std::string name;
+   TSKey key;
+   TSAtr name;
 
    while (!from.eof())
    {
       from >> key;
+      from >> std::ws;
+      std::getline(from, name);
 
-      from >> std::ws; // used to be eatwhite(from);
-      std::getline(from, name);    /// MEMORY LEAK
-
-      if(key!="")
+      if(key != "")
       {
-         ts[key]=name;
+         TsMap[key] = name;
       }
    }
    from.close();
@@ -57,7 +55,7 @@ TS::TS()
 //-----------------------------------------------------------------------------
 TS::~TS() 
 {
-   ts.clear();
+   TsMap.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -71,27 +69,28 @@ void TS::Print(std::ostream &os)
 {
    std::ostringstream s;
 
-   for (TSHT::iterator it = ts.begin(); it != ts.end(); ++it)
+   for (TSHT::const_iterator it = TsMap.begin(); it != TsMap.end(); ++it)
    {
-      s << "TS : "<<it->first<<" = "<<it->second<<std::endl;
+      s << "TS : " << it->first << " = " << it->second << std::endl;
    }
    os << s.str();
 }
 
 //-----------------------------------------------------------------------------
 // Public
-int TS::Count(TSKey key) 
+int TS::Count(TSKey const & key) 
 {
-   return ts.count(key);
+   return TsMap.count(key);
 }
 
-std::string TS::GetValue(TSKey key) 
+TSAtr const & TS::GetValue(TSKey const & key) 
 {
-   if (ts.count(key) == 0)
+   TSHT::const_iterator it = TsMap.find(key);
+   if (it == TsMap.end())
    {
       return GDCM_UNFOUND;
    }
-   return ts[key];
+   return it->second;
 }
 
 //-----------------------------------------------------------------------------
