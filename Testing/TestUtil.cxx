@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/02/14 10:50:00 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,25 @@
 
 int TestUtil(int , char *[])
 {
+   // CreateCleanString
+   std::string x = "a#@-bc\tdef";
+   std::string y = gdcm::Util::CreateCleanString(x);
+   std::cout << "[" << x <<"] --> [" << y <<"]" << std::endl;
+
+   // CountSubstring : substring id "#@-"
+   x = "abcd#@-wyz*@-lmn#@-uvw-#@ijk";
+   std::cout << "count '#@-' in [" << x << "] : " 
+             << gdcm::Util::CountSubstring(x, "#@-") << std::endl;
+
+   // Tokenize : tokens are '#', '@', '-'
+   std::vector<std::string> tokens;
+   gdcm::Util::Tokenize (x, tokens, "#@-");
+   for (unsigned int i=0; i<tokens.size();i++)
+   {
+      std::cout << "[" << tokens[i] << "]" << std::endl;
+   }
+   tokens.clear();
+
    // Time 
    std::cout << "Time:" << gdcm::Util::GetCurrentDateTime() << std::endl;
 
