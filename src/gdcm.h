@@ -30,10 +30,10 @@
                       //    which should be around 4500 entries which is the
                       //    average dictionary size (said JPR)
 
-#ifdef _MSC_VR
+#ifdef _MSC_VER
 	using namespace std;  // string type lives in the std namespace on VC++
 #endif
-#ifdef _MSC_VR
+#ifdef _MSC_VER
 #define GDCM_EXPORT __declspec( dllexport )
 #else
 #define GDCM_EXPORT
