@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 12:29:17 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,9 +30,9 @@ namespace gdcm
 typedef std::map<DictKey, Dict*> DictSetHT;
 
 //-----------------------------------------------------------------------------
-/*
- * \defgroup DictSet
- * \brief  Container for managing a set of loaded dictionaries.
+/**
+ * \ingroup DictSet
+ * \brief  Container for managing a set of loaded dictionaries (Dict).
  * \note   Hopefully, sharing dictionaries should avoid
  * \par    reloading an already loaded dictionary (saving time)
  * \par    having many in memory representations of the same dictionary

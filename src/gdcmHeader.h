@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:14 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.99 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,26 +23,6 @@
 
 namespace gdcm 
 {
-//-----------------------------------------------------------------------------
-/**
- * \brief
- * The purpose of an instance of Header is to act as a container of
- * all the DICOM elements and their corresponding values (and
- * additionaly the corresponding DICOM dictionary entry) of the header
- * of a DICOM file.
- *
- * The typical usage of instances of class Header is to classify a set of
- * dicom files according to header information e.g. to create a file hierarchy
- * reflecting the Patient/Study/Serie informations, or extracting a given
- * SerieId. Accessing the content (image[s] or volume[s]) is beyond the
- * functionality of this class and belongs to gdmcFile.
- * \note  The various entries of the explicit value representation (VR) shall
- *        be managed within a dictionary which is shared by all Header
- *        instances.
- * \note  The Header::Set*Tag* family members cannot be defined as
- *        protected due to Swig limitations for as Has_a dependency between
- *        File and Header.
- */
 
 //-----------------------------------------------------------------------------
 // Dicom Part 3.3 Compliant
@@ -90,6 +70,26 @@ enum ModalityType {
    XA,       // X-Ray Angiography
    XC        // Photographic Imaging
 };
+
+//-----------------------------------------------------------------------------
+/**
+ * \brief DICOM elements and their corresponding values (and
+ * additionaly the corresponding DICOM dictionary entry) of the header
+ * of a DICOM file.
+ *
+ * The typical usage of instances of class Header is to classify a set of
+ * dicom files according to header information e.g. to create a file hierarchy
+ * reflecting the Patient/Study/Serie informations, or extracting a given
+ * SerieId. Accessing the content (image[s] or volume[s]) is beyond the
+ * functionality of this class and belongs to gdmcFile.
+ * \note  The various entries of the explicit value representation (VR) shall
+ *        be managed within a dictionary which is shared by all Header
+ *        instances.
+ * \note  The Header::Set*Tag* family members cannot be defined as
+ *        protected due to Swig limitations for as Has_a dependency between
+ *        File and Header.
+ */
+
 //-----------------------------------------------------------------------------
 
 class GDCM_EXPORT Header : public Document

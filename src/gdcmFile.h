@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,8 +31,8 @@ class PixelReadConvert;
 class PixelWriteConvert;
 class DocEntryArchive;
 //-----------------------------------------------------------------------------
-/*
- * In addition to Dicom header exploration, this class is designed
+/**
+ * \brief In addition to Dicom Header exploration, this class is designed
  * for accessing the image/volume content. One can also use it to
  * write Dicom/ACR-NEMA/RAW files.
  */

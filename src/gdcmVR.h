@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,8 +34,8 @@ typedef std::string VRAtr;
 typedef std::map<VRKey, VRAtr> VRHT;
 
 //-----------------------------------------------------------------------------
-/*
- * Container for dicom Value Representation Hash Table
+/**
+ * \brief Container for dicom Value Representation Hash Table
  * \note   This is a singleton
  */
 class GDCM_EXPORT VR 

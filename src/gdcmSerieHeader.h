@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,10 +26,9 @@ namespace gdcm
 {
 class Header;
 //-----------------------------------------------------------------------------
-/*
- * \defgroup SerieHeader
+/**
+ * \ingroup SerieHeader
  * \brief  
- *
  * - This class should be used for a stack of 2D dicom images.
  * - For a multiframe dicom image better use directly SerieHeader
 */

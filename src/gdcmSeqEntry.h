@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,13 @@ class SQItem;
 //-----------------------------------------------------------------------------
 typedef std::list<SQItem *> ListSQItem;
 //-----------------------------------------------------------------------------
-
+/**
+ * \brief a SeqEntry (as opposed to a ValEntry) is a non elementary DocEntry.
+ *        It is composed by a set of SQItems.
+ *        Each SQItem is composed by a set of DocEntry
+ *        A DocEntry may be a SeqEntry
+ *        ... and so forth 
+ */ 
 class GDCM_EXPORT SeqEntry : public DocEntry 
 {
 public:

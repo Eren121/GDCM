@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:14:58 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,15 +25,17 @@ namespace gdcm
 {
 
 //-----------------------------------------------------------------------------
-/*
- * \defgroup DictEntry
+/**
+ * \ingroup DictEntry
  * \brief
  * the DictEntry in an element contained by the Dict.
  * It contains :
  *  - the key referenced by the DICOM norm or the constructor (for private keys)
- *  - the corresponding name in english (it's equivalent to a label)
- *  - the owner group
- *  - etc.
+ *    i.e. the Group number
+ *         the Element number
+ *  - the VR (Value Representation)
+ *  - the VM (Value Multplicity)
+ *  - the corresponding name in english
  */
 class GDCM_EXPORT DictEntry : public Base
 {

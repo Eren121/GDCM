@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,9 +27,10 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 /**
- * \ingroup ValEntry
- * \brief   The dicom header of a Dicom file contains a set of such entries
+ * \brief   Any Dicom Document (File Header or DicomDir) contains 
+ *           a set of DocEntry entries 
  *          (when successfuly parsed against a given Dicom dictionary)
+ *          ValEntry is an elementary DocEntry (as opposed to SeqEntry)
  */
 class GDCM_EXPORT ValEntry  : public DocEntry
 {

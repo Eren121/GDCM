@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,8 +47,8 @@ typedef std::list<Element> ListDicomDirImageElem;
 //-----------------------------------------------------------------------------
 /**
  * \ingroup DicomDirElement
- * \brief    DicomDirElement represents elements contained in a dicom dir
- *           Class for the chained lists from the file 'Dicts/DicomDir.dic'
+ * \brief   Represents elements contained in a DicomDir
+ *           class for the chained lists from the file 'Dicts/DicomDir.dic'
  */
 class GDCM_EXPORT DicomDirElement
 {

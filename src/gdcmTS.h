@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:14 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,8 +33,8 @@ typedef std::string TSAtr;
 typedef std::map<TSKey, TSAtr> TSHT;    // Transfer Syntax Hash Table
 
 //-----------------------------------------------------------------------------
-/*
- * Container for dicom Transfer Syntax Hash Table
+/**
+ * \brief Container for dicom 'Transfer Syntax' Hash Table
  * \note   This is a singleton
  */
 class GDCM_EXPORT TS

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,8 @@ typedef std::list<std::string>       EntryNamesList;
 typedef std::map<std::string, 
             std::list<std::string> > EntryNamesByCatMap;
 //-----------------------------------------------------------------------------
-/*
- * \defgroup Dict
+/**
+ * \ingroup Dict
  * \brief    Dict acts a memory representation of a dicom dictionary i.e.
  *           it is a container for a collection of dictionary entries.
  *           The dictionary is loaded from in an ascii file.

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:26 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/11 15:15:37 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,11 +27,13 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup BinEntry
- * \brief   The dicom header of a Dicom file contains a set of such entries
+ * \brief   Any Dicom Document (File Header or DicomDir) contains 
+ *           a set of DocEntry entries 
  *          (when successfuly parsed against a given Dicom dictionary)
- *          This one contains a 'string value'.
+ *          BinEntry is a specialisation of ValEntry (for non std::string
+ *          representable values)
  */
+ 
 class GDCM_EXPORT BinEntry  : public ValEntry
 {
 public:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:04:00 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,6 +31,12 @@ class DocEntry;
 //-----------------------------------------------------------------------------
 typedef std::list<DocEntry *> ListDocEntry;
 //-----------------------------------------------------------------------------
+/**
+ * \brief a SeqEntry is composed by a set of SQItems.
+ *        Each SQItem is composed by a set of DocEntry
+ *        A DocEntry may be a SeqEntry
+ *        ... and so forth 
+ */ 
 class GDCM_EXPORT SQItem : public DocEntrySet 
 {
 public:
@@ -62,16 +68,16 @@ public:
    /// \brief   Sets the ordinal position of a given SQItem
    void SetSQItemNumber(int itemNumber) { SQItemNumber = itemNumber; };
 
-   /// Accessor on \ref SQDepthLevel.
+   ///  \brief Accessor on \ref SQDepthLevel.
    int GetDepthLevel() { return SQDepthLevel; }
                                                                                 
-   /// Accessor on \ref SQDepthLevel.
+   ///  \brief Accessor on \ref SQDepthLevel.
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
-   /// Accessor on \ref BaseTagKey.
+   ///  \brief Accessor on \ref BaseTagKey.
    void SetBaseTagKey( BaseTagKey const &key ) { BaseTagKeyNested = key; }
 
-   /// Accessor on \ref BaseTagKey.
+   ///  \brief Accessor on \ref BaseTagKey.
    BaseTagKey const &GetBaseTagKey() const { return BaseTagKeyNested; }
 
    void Initialize();
@@ -85,7 +91,7 @@ protected:
    /// Chained list iterator, used to visit the TagHT variable
    ListDocEntry::iterator ItDocEntries;
    
-   ///\brief pointer to the HTable of the Document,
+   /// \brief pointer to the HTable of the Document,
    ///       (because we don't know it within any DicomDirObject nor any SQItem)
    // TagDocEntryHT *PtagHT;
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,7 @@ typedef std::string BaseTagKey;
 //-----------------------------------------------------------------------------
 
 /**
+ * \brief
  * \ref DocEntrySet is an abstract base class for \ref ElementSet
  * and \ref SQItem which are both containers for DocEntries.
  * \ref ElementSet is based on the STL map<> container

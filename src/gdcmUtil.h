@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 namespace gdcm 
 {
 /**
- * \defgroup Globals Utility functions
+ * \ingroup Globals Utility functions
  * \brief    Here are some utility functions, belonging to the Util class,
  *           dealing with strings, file names... that can be called
  *           from anywhere by whomsoever they can help.

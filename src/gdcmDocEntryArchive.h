@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,14 +25,13 @@ namespace gdcm
 {
 
 //-----------------------------------------------------------------------------
-/*
- * /brief Container 
- *
+/**
+ * \brief Container 
  * It's goal is to change the Header correctly. At this time, the change is 
  * only made for the first level of the Document. In the future, it might 
- * consider sequences.
+ * consider Dicom Sequences (SeqEntry, within any SQItem).
  * The change is made by replacing a DocEntry by an other that is created
- * outside the class. The old value is kept. When we restore the header
+ * outside the class. The old value is kept. When we restore the Header
  * status, the added DocEntry is deleted and replaced by the old value.
  */
 class GDCM_EXPORT DocEntryArchive 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,8 @@ class DicomDirObject;
 //-----------------------------------------------------------------------------
 /**
  * \ingroup DicomDirObject
- * \brief   Base object
+ * \brief   Parent object for DicomDirPatient, DicomDirStudy, 
+ *                          DicomDirSerie, DicomDirImage, of a DicomDir
  */
 class GDCM_EXPORT DicomDirObject : public SQItem
 {

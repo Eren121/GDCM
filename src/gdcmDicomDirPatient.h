@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/11 15:15:38 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,10 +24,16 @@
 namespace gdcm 
 {
 class DicomDirStudy;
+
 //-----------------------------------------------------------------------------
 typedef std::list<DicomDirStudy*> ListDicomDirStudy;
 
 //-----------------------------------------------------------------------------
+/**
+ * \ingroup DicomDirPatient
+ * \brief   describes a PATIENT within a DICOMDIR (DicomDir)
+ */
+
 class GDCM_EXPORT DicomDirPatient : public DicomDirObject 
 {
 public:
