@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.223 $
+  Date:      $Date: 2005/02/06 14:39:35 $
+  Version:   $Revision: 1.224 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,7 @@
 
 #include <vector>
 #include <iomanip>
+#include <fstream>
 
 // For nthos:
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__) 

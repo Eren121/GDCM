@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.104 $
+  Date:      $Date: 2005/02/06 14:39:35 $
+  Version:   $Revision: 1.105 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 #include "gdcmDict.h"
 #include "gdcmElementSet.h"
 #include "gdcmException.h"
+//#include "gdcmCommon.h"
 
 #include <map>
 #include <list>
@@ -43,10 +44,12 @@ class GDCM_EXPORT Document : public ElementSet
 {
 public:
 
+typedef std::list<Element> ListElements;
+
 // Dictionaries
-   Dict* GetPubDict();
-   Dict* GetShaDict();
-   bool SetShaDict(Dict* dict);
+   Dict *GetPubDict();
+   Dict *GetShaDict();
+   bool SetShaDict(Dict *dict);
    bool SetShaDict(DictKey const &dictName);
 
 // Informations contained in the gdcm::Document
@@ -67,7 +70,7 @@ public:
    /// \brief  Unswaps back the bytes of 2-bytes long integer 
    ///         so they agree with the processor order.
    uint16_t UnswapShort(uint16_t a) { return SwapShort(a);}
-   /// \brief   Unswaps back the bytes of 4-byte long integer 
+   /// \brief  Unswaps back the bytes of 4-byte long integer 
    ///         so they agree with the processor order.
    uint32_t UnswapLong(uint32_t a) { return SwapLong(a);}
    
@@ -86,7 +89,7 @@ public:
    virtual void LoadEntryBinArea(BinEntry *entry);
 
    void LoadDocEntrySafe(DocEntry *entry);
-
+ 
 // Ordering of Documents
    bool operator<(Document &document);
 
@@ -143,6 +146,9 @@ protected:
    /// are NOT printed.
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
+   /// List of element to Anonymize
+   ListElements AnonymizeList;
+
 private:
 // Methods
    void Initialize();
@@ -195,9 +201,11 @@ private:
    /// is fixed to 64 bytes.
    uint32_t MaxSizePrintEntry;   
 
+
 //  uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
 //  void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
 //                                   DocEntrySet *set );
+
 };
 
 } // end namespace gdcm

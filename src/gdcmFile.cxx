@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.212 $
+  Date:      $Date: 2005/02/06 14:39:35 $
+  Version:   $Revision: 1.213 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 // If not found (ACR_NEMA) we try Image Position       (0020,0030)
 // If not found (ACR-NEMA), we consider Slice Location (0020,1041)
 //                                   or Location       (0020,0050) 
-// as the Z coordinate, 
+//                                   as the Z coordinate, 
 // 0. for all the coordinates if nothing is found
 //
 // ---------------------------------------------------------------
@@ -35,6 +35,7 @@
 #include "gdcmTS.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
+#include "gdcmSeqEntry.h"
 #include "gdcmRLEFramesInfo.h"
 #include "gdcmJPEGFragmentsInfo.h"
 
@@ -643,7 +644,7 @@ void File::GetImageOrientationPatient( float iop[6] )
 
 /**
  * \brief   Retrieve the number of Bits Stored (actually used)
- *          (as opposite to number of Bits Allocated)
+ *          (as opposed to number of Bits Allocated)
  * @return  The encountered number of Bits Stored, 0 by default.
  *          0 means the file is NOT USABLE. The caller has to check it !
  */
@@ -1130,34 +1131,119 @@ size_t File::GetPixelAreaLength()
    }
 }
 
-/**
- * \brief anonymize a File (removes Patient's personal info)
- *        (read the code to see which ones ...)
- */
-bool File::AnonymizeFile()
-{
-   // If exist, replace by spaces
-   SetValEntry ("  ",0x0010, 0x2154); // Telephone   
-   SetValEntry ("  ",0x0010, 0x1040); // Adress
-   SetValEntry ("  ",0x0010, 0x0020); // Patient ID
 
-   DocEntry* patientNameHE = GetDocEntry (0x0010, 0x0010);
-  
-   if ( patientNameHE ) // we replace it by Study Instance UID (why not)
-   {
-      std::string studyInstanceUID =  GetEntryValue (0x0020, 0x000d);
-      if ( studyInstanceUID != GDCM_UNFOUND )
+/**
+ * \brief Adds the characteristics of a new element we want to anonymize
+ *
+ */
+void File::AddAnonymizeElement (uint16_t group, uint16_t elem, 
+                          std::string const &value) 
+
+{ 
+   Element el;
+   el.Group = group;
+   el.Elem  = elem;
+   el.Value = value;
+   AnonymizeList.push_back(el); 
+}
+
+/**
+ * \brief Overwrites in the file the values of the DicomElements
+ *       held in the list 
+ */
+void File::AnonymizeNoLoad()
+{
+   std::fstream *fp = new std::fstream(Filename.c_str(), 
+                              std::ios::in | std::ios::out | std::ios::binary);
+   // TODO : FIXME
+   // how to white out disk space if longer than 50 ?
+   char spaces[50] = "                                               ";
+   
+   gdcm::DocEntry *d;
+   uint32_t offset;
+   uint32_t lgth;
+   uint32_t lgtToWrite;
+   for (ListElements::iterator it = AnonymizeList.begin();  
+                               it != AnonymizeList.end();
+                             ++it)
+   {  
+      d = GetDocEntry( (*it).Group, (*it).Elem);
+
+      if ( dynamic_cast<BinEntry *>(d)
+        || dynamic_cast<SeqEntry *>(d) )
+         continue;
+
+      offset = d->GetOffset();
+      lgth =   d->GetLength();
+      fp->seekp( offset, std::ios::beg );
+
+      if ( (*it).Value == "" )
       {
-         InsertValEntry(studyInstanceUID, 0x0010, 0x0010);
+         lgtToWrite = lgth > 50 ? 50 : lgth;
+         fp->write( spaces, lgtToWrite );
       }
       else
       {
-         InsertValEntry("anonymised", 0x0010, 0x0010);
+         // TODO : FIXME
+         // how to white out disk space if longer than 50 ?
+         (*it).Value = (*it).Value + spaces;
+         lgtToWrite = lgth > (*it).Value.length() ? (*it).Value.length() : lgth;
+         fp->write( (char *)(*it).Value.c_str(), lgtToWrite );
+
+      }
+      fp->close();
+      delete fp;
+   }
+}
+
+/**
+ * \brief anonymize a File (removes Patient's personal info passed with
+ *        AddAnonymizeElement()
+ */
+bool File::AnonymizeFile()
+{
+   // If Anonymisation list is empty, let's perform some basic anonymisation
+   if ( AnonymizeList.begin() == AnonymizeList.end() )
+   {
+      // If exist, replace by spaces
+      SetValEntry ("  ",0x0010, 0x2154); // Telephone   
+      SetValEntry ("  ",0x0010, 0x1040); // Adress
+      SetValEntry ("  ",0x0010, 0x0020); // Patient ID
+
+      DocEntry* patientNameHE = GetDocEntry (0x0010, 0x0010);
+  
+      if ( patientNameHE ) // we replace it by Study Instance UID (why not ?)
+      {
+         std::string studyInstanceUID =  GetEntryValue (0x0020, 0x000d);
+         if ( studyInstanceUID != GDCM_UNFOUND )
+         {
+            SetValEntry(studyInstanceUID, 0x0010, 0x0010);
+         }
+         else
+         {
+            SetValEntry("anonymised", 0x0010, 0x0010);
+         }
       }
    }
+   else
+   {
+      gdcm::DocEntry *d;
+      for (ListElements::iterator it = AnonymizeList.begin();  
+                                  it != AnonymizeList.end();
+                                ++it)
+      {  
+         d = GetDocEntry( (*it).Group, (*it).Elem);
 
-  // Just for fun :-(
-  // (if any) remove or replace all the stuff that contains a Date
+         if ( dynamic_cast<BinEntry *>(d)
+           || dynamic_cast<SeqEntry *>(d) )
+            continue;
+
+         SetValEntry ((*it).Value, (*it).Group, (*it).Elem);
+      }
+}
+
+  // In order to make definitively impossible any further identification
+  // remove or replace all the stuff that contains a Date
 
 //0008 0012 DA ID Instance Creation Date
 //0008 0020 DA ID Study Date
@@ -1303,8 +1389,8 @@ bool File::Write(std::string fileName, FileType filetype)
    if ( GetPixelSize() ==  16 )
    {
       uint16_t *im16 = (uint16_t *)b->GetBinArea();
-      int lgr = b->GetLength();
-      for( int i = 0; i < lgr / 2; i++ )
+      int lgth = b->GetLength();
+      for( int i = 0; i < lgth / 2; i++ )
       {
          im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
       }
@@ -1320,8 +1406,8 @@ bool File::Write(std::string fileName, FileType filetype)
    if ( GetPixelSize() ==  16 )
    {
       uint16_t *im16 = (uint16_t*)b->GetBinArea();
-      int lgr = b->GetLength();
-      for( int i = 0; i < lgr / 2; i++ )
+      int lgth = b->GetLength();
+      for( int i = 0; i < lgth / 2; i++ )
       {
          im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
       }

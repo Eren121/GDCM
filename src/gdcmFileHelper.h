@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 14:49:01 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/02/06 14:39:35 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,13 +82,13 @@ public:
 
    // User data
    void SetUserData(uint8_t *data, size_t expectedSize);
-   uint8_t* GetUserData();
+   uint8_t *GetUserData();
    size_t GetUserDataSize();
    // RBG data (from file)
-   uint8_t* GetRGBData();
+   uint8_t *GetRGBData();
    size_t GetRGBDataSize();
    // RAW data (from file)
-   uint8_t* GetRawData();
+   uint8_t *GetRawData();
    size_t GetRawDataSize();
 
    // LUT

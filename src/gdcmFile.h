@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.102 $
+  Date:      $Date: 2005/02/06 14:39:35 $
+  Version:   $Revision: 1.103 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -155,7 +155,13 @@ public:
    /// Returns the JPEG Fragments info
    JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
 
-   /// Replace patient's specific information by 'anonymous'
+// Anonymization process
+   void AddAnonymizeElement (uint16_t group, uint16_t elem, 
+                             std::string const &value);
+   /// Clears the list of elements to be anonymized
+   void ClearAnonymizeList() { AnonymizeList.clear(); }      
+   void AnonymizeNoLoad();
+   /// Replace patient's own information by info from the Anonymization list
    bool AnonymizeFile();
 
    bool Write(std::string fileName, FileType filetype);
@@ -186,6 +192,7 @@ private:
    bool     ReadTag(uint16_t, uint16_t);
    uint32_t ReadTagLength(uint16_t, uint16_t);
    void ReadAndSkipEncapsulatedBasicOffsetTable();
+
 };
 } // end namespace gdcm
 
