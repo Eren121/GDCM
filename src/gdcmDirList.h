@@ -22,7 +22,6 @@ public :
    static const std::string SEPARATOR;
 
 private :
-   void NormalizePath(std::string &dirName);
    void Explore(std::string dirName,bool recursive=false);
 
    std::string name;

@@ -30,6 +30,8 @@ public:
    
    TagHeaderEntryHT GetEntry(void);
    ListTag GetListEntry(void);
+   
+   void ResetBoundaries(int flag);
 /**
  * \ingroup gdcmObject
  * \brief   returns an iterator on the first Header Entry (i.e Dicom Element),
@@ -48,6 +50,18 @@ public:
  */
     ListTag::iterator fin  (void) 
        { return(endObj);  }
+
+/**
+ * \ingroup gdcmObject
+ * \brief   Sets the iterator on the 'new' last Header Entry (i.e Dicom Element),
+ *          inside the DICOMDIR chained list,
+ *          related to this 'Object' 
+ * \warning : NOT end user intended function
+ * \todo find a trick to make this function useless.
+* @return
+ */
+    ListTag::iterator SetEndObj(ListTag::iterator newEnd) 
+       { endObj=newEnd;  }       
    
 protected:
 

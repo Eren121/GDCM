@@ -66,7 +66,8 @@ public:
 
 // Parsing
    void ParseDirectory(void);
-
+   void CheckBoundaries(void);
+   
    void SetStartMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
    void SetStartMethodArgDelete(gdcmMethod *);
    void SetProgressMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);

@@ -1,6 +1,7 @@
 // gdcmDirList.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmDirList.h"
+#include "gdcmUtil.h"
 
 #include <iostream>
 #include <algorithm>
@@ -20,12 +21,6 @@
    #include <unistd.h>
 #endif
 
-//-----------------------------------------------------------------------------
-const char gdcmDirList::SEPARATOR_X      = '/';
-const char gdcmDirList::SEPARATOR_WIN    = '\\';
-const std::string gdcmDirList::SEPARATOR = "/";
-
-//-----------------------------------------------------------------------------
 // Constructor / Destructor
 /*
  * \ingroup gdcmDirList
@@ -69,19 +64,6 @@ std::string gdcmDirList::GetDirName(void)
 
 //-----------------------------------------------------------------------------
 // Private
-/*
- * \ingroup gdcmDirList
- * \brief   Add a SEPARATOR to the end of the directory name is necessary
- * @param   
- */
-void gdcmDirList::NormalizePath(std::string &dirName)
-{
-   int size=dirName.size();
-   if((dirName[size-1]!=SEPARATOR_X)&&(dirName[size-1]!=SEPARATOR_WIN))
-   {
-      dirName+=SEPARATOR;
-   }
-}
 
 /*
  * \ingroup gdcmDirList

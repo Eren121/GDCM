@@ -91,6 +91,12 @@ gdcmDicomDirElement *gdcmGlobal::GetDicomDirElements(void) {
 }
 
 //-----------------------------------------------------------------------------
+// Here are some usefull functions, belonging to NO class,
+// dealing with strings, file names, etc
+// that can be called from anywhere
+// by whomsoever they can help.
+//-----------------------------------------------------------------------------
+
 // Because is not yet available in g++2.96
 std::istream& eatwhite(std::istream& is) {
    char c;
@@ -132,7 +138,6 @@ char *_cleanString(char *v) {
    }	
    return v;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 // to prevent a flashing screen when non-printable character

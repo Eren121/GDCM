@@ -76,8 +76,11 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
 	 ParseDirectory();
       }
    }
-   else
+   else {
       CreateDicomDir();
+      CheckBoundaries(); // JPR 
+   }   
+ 
 }
 
 /*
@@ -397,11 +400,49 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
    std::sort(list.begin(),list.end(),gdcmDicomDir::HeaderLessThan);
 
    std::string tmp=fileList.GetDirName();
+      
    //for each Header of the chained list, add/update the Patient/Study/Serie/Image info
    SetElements(tmp,list);
-
+      
    CallEndMethod();
 }
+
+
+
+void gdcmDicomDir::CheckBoundaries()
+{   
+
+cout <<"entree ds CheckBoundaries " <<endl;
+   ListDicomDirPatient::iterator  itPatient;
+   ListDicomDirStudy::iterator    itStudy;
+   ListDicomDirSerie::iterator    itSerie;
+   ListDicomDirImage::iterator    itImage; 
+   ListTag::iterator i,j; 
+   
+   GetDicomDirMeta()->ResetBoundaries(0);   
+
+   itPatient = GetDicomDirPatients().begin(); 
+   while ( itPatient != GetDicomDirPatients().end() ) {
+      (*itPatient)->ResetBoundaries(1);            
+      itStudy = ((*itPatient)->GetDicomDirStudies()).begin();	      
+      while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) {	
+         (*itStudy)->ResetBoundaries(1); 
+         itSerie = ((*itStudy)->GetDicomDirSeries()).begin();
+         while (itSerie != (*itStudy)->GetDicomDirSeries().end() ) {
+            (*itSerie)->ResetBoundaries(1);
+            itImage = ((*itSerie)->GetDicomDirImages()).begin();
+            while (itImage != (*itSerie)->GetDicomDirImages().end() ) {
+               (*itImage)->ResetBoundaries(1);
+               ++itImage;   	       	    
+	    }
+	    ++itSerie;	    	     	 	      
+         }
+	 ++itStudy; 	       
+      } 
+      ++itPatient;     
+   }
+} 
+
 
 /*
  * \ingroup gdcmDicomDir

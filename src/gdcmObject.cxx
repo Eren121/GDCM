@@ -86,6 +86,34 @@ std::string gdcmObject::GetEntryByName(TagName name)  {
 }
 
 /**
+ * \ingroup gdcmObject
+ * \brief   Set the 'boundaries' gdcmObject (gdcmDicomDirPatient,
+ *          gdcmDicomDirStudy, gdcmDicomDirSerie, gdcmDicomDirImage)
+ *          comming for the parsing of a DICOMDIR file
+ * \warning NOT en user intended function
+ * @param  flag = 0 when META to be dealt with
+ */ 
+void gdcmObject::ResetBoundaries(int flag) {
+
+   if (flag) { // it's NOT a META
+     // upwards to fffe,e000   
+       for( i=j=debut();
+            ((*i)->GetGroup() != 0xfffe)  && ((*i)->GetElement() != 0x0000);
+	    --i,j--) {	    
+       }
+      beginObj=j;
+   }
+         
+  // downwards to fffe,e000       
+   for( i=j=fin();
+        ((*i)->GetGroup() != 0xfffe)  && ((*i)->GetElement() != 0x0000);
+	--i,j--) {	    
+   }
+   j--;
+   endObj=j;    
+}
+
+/**
  * \ingroup gdcmParser
  * \brief   Sets Entry (Dicom Element) value of an element,
  *          specified by it's tag (Group, Number) 
