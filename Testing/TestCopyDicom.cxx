@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 08:14:58 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/11/25 10:24:33 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,13 +73,8 @@ int CopyDicom(std::string const & filename,
 
       //////////////// Step 1:
       std::cout << "      1...";
-      gdcm::File *original = new gdcm::File( filename );
-      gdcm::File *copy = new gdcm::File( output );
-
-      size_t dataSize = original->GetImageDataSizeRaw();
-      uint8_t* imageData = original->GetImageDataRaw();
-      (void)dataSize;  // To use the variable and not have warnings at compil.
-      (void)imageData; // To use the variable and not have warnings at compil.
+      gdcm::Header *originalH = new gdcm::Header( filename );
+      gdcm::Header *copyH     = new gdcm::Header( output );
 
       //First of all copy the header field by field
   
@@ -91,14 +86,14 @@ int CopyDicom(std::string const & filename,
 
       //////////////// Step 2:
       std::cout << "2...";
-      original->GetHeader()->Initialize();
-      gdcm::DocEntry* d=original->GetHeader()->GetNextEntry();
+      originalH->Initialize();
+      gdcm::DocEntry* d=originalH->GetNextEntry();
 
       while(d)
       {
          if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
          {
-            copy->GetHeader()->ReplaceOrCreateByNumber( 
+            copyH->ReplaceOrCreateByNumber( 
                                  b->GetBinArea(),
                                  b->GetLength(),
                                  b->GetGroup(), 
@@ -107,7 +102,7 @@ int CopyDicom(std::string const & filename,
          }
          else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
          {   
-             copy->GetHeader()->ReplaceOrCreateByNumber( 
+             copyH->ReplaceOrCreateByNumber( 
                                  v->GetValue(),
                                  v->GetGroup(), 
                                  v->GetElement(),
@@ -122,9 +117,14 @@ int CopyDicom(std::string const & filename,
           //  << std::endl;    
          }
 
-         d=original->GetHeader()->GetNextEntry();
+         d=originalH->GetNextEntry();
       }
 
+      gdcm::File *original = new gdcm::File( originalH );
+      gdcm::File *copy     = new gdcm::File( copyH );
+
+      size_t dataSize = original->GetImageDataSize();
+      uint8_t* imageData = original->GetImageData();
 
       // Useless to set the image datas, because it's already made when
       // copying the corresponding BinEntry that contains the pixel datas
@@ -134,9 +134,22 @@ int CopyDicom(std::string const & filename,
 
       //////////////// Step 3:
       std::cout << "3...";
-      copy->WriteDcmExplVR( output );
+      copy->SetWriteModeToRGB();
+      if( !copy->WriteDcmExplVR(output) )
+      {
+         std::cout << " Failed" << std::endl
+                   << "        " << output << " not written" << std::endl;
+
+         delete original;
+         delete copy;
+         delete originalH;
+         delete copyH;
+
+         return 1;
+      }
 
       delete copy;
+      delete copyH;
 
       //////////////// Step 4:
       std::cout << "4...";
@@ -145,24 +158,29 @@ int CopyDicom(std::string const & filename,
       //Is the file written still gdcm parsable ?
       if ( !copy->GetHeader()->IsReadable() )
       { 
-         std::cout << "=> " << output << " Failed" << std::endl;
+         std::cout << " Failed" << std::endl
+                   << "        " << output << " not readable" << std::endl;
+
          delete original;
-         return(1);
+         delete originalH;
+
+         return 1;
       }
 
       //////////////// Step 5:
       std::cout << "5...";
-      size_t    dataSizeWritten = copy->GetImageDataSizeRaw();
-      uint8_t* imageDataWritten = copy->GetImageDataRaw();
+      size_t    dataSizeWritten = copy->GetImageDataSize();
+      uint8_t* imageDataWritten = copy->GetImageData();
 
       if (dataSize != dataSizeWritten)
       {
          std::cout << " Failed" << std::endl
-            << "        Pixel areas lengths differ: "
-            << dataSize << " # " << dataSizeWritten << std::endl;
+                   << "        Pixel areas lengths differ: "
+                   << dataSize << " # " << dataSizeWritten << std::endl;
 
          delete original;
          delete copy;
+         delete originalH;
 
          return 1;
       }
@@ -171,10 +189,11 @@ int CopyDicom(std::string const & filename,
       {
          (void)res;
          std::cout << " Failed" << std::endl
-            << "        Pixel differ (as expanded in memory)." << std::endl;
+                   << "        Pixel differ (as expanded in memory)." << std::endl;
 
          delete original;
          delete copy;
+         delete originalH;
 
          return 1;
       }
@@ -182,6 +201,7 @@ int CopyDicom(std::string const & filename,
 
       delete original;
       delete copy;
+      delete originalH;
 
       return 0;
 }
@@ -240,7 +260,6 @@ int TestCopyDicom(int argc, char* argv[])
       filename += "/";  //doh!
       filename += gdcmDataImages[i];
 
-//      std::string output = "../Testing/Temporary/output.dcm";
       std::string output = "output.dcm";
 
       if( CopyDicom( filename, output ) != 0 )

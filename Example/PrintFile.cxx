@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:17 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/11/25 10:24:33 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,35 +20,36 @@
 
 int main(int argc, char* argv[])
 {
- 
    gdcm::Header *e1;
    gdcm::File   *f1;
    std::string fileName;   
-   if (argc != 2) {
+   if (argc != 2) 
+   {
       std::cout << " usage : PrintDocument fileName" << std::endl;
    }
 
-   if (argc > 1) {
+   if (argc > 1) 
+   {
       fileName=argv[1];
-   } else {
+   } 
+   else 
+   {
       fileName += GDCM_DATA_ROOT;
       fileName += "/test.acr";
    }
    
    e1= new gdcm::Header( fileName.c_str() );
-
    f1 = new gdcm::File(e1);
 
    e1->SetPrintLevel(2);
-   
    e1->Print();
-      
+
    std::cout << "\n\n" << std::endl; 
 
-   int dataSize = f1->GetImageDataSize();
    std::cout <<std::endl;
-   std::cout <<" dataSize " << dataSize << std::endl;
-   std::cout <<" dataSizeRaw " << f1->GetImageDataSizeRaw() << std::endl;
+   std::cout <<" dataSize " << f1->GetImageDataSize() << std::endl;
+   std::cout <<" dataSizeRaw " << f1->GetImageDataRawSize() << std::endl;
+
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType;
    nX=e1->GetXSize();
@@ -74,12 +75,13 @@ int main(int argc, char* argv[])
              << std::endl;
 
   
-  if ( e1->GetEntryByNumber(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) {
-     std::cout << "Transfert Syntax not loaded. " << std::endl
-               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
-               << std::endl;
+   if ( e1->GetEntryByNumber(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) 
+   {
+      std::cout << "Transfert Syntax not loaded. " << std::endl
+                << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
+                << std::endl;
       return 0;
-  }
+   }
   
    std::string transferSyntaxName = e1->GetTransfertSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
@@ -89,13 +91,13 @@ int main(int argc, char* argv[])
       && transferSyntaxName != "Deflated Explicit VR - Little Endian"      
       && transferSyntaxName != "Explicit VR - Big Endian"
       && transferSyntaxName != "Uncompressed ACR-NEMA"     )
-  {
+   {
       std::cout << std::endl << "==========================================="
                   << std::endl; 
          f1->GetPixelConverter()->Print();
       std::cout << std::endl << "==========================================="
                   << std::endl; 
-   }      
+   }
    
    if(e1->IsReadable())
       std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;

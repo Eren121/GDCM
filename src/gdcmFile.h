@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:18 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2004/11/25 10:24:34 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,17 +58,15 @@ public:
    /// Accessor to \ref Header
    Header* GetHeader() { return HeaderInternal; }
 
-   /// Accessor to \ref ImageDataSize
    size_t GetImageDataSize();
-   /// Accessor to \ref ImageDataSizeRaw
-   size_t GetImageDataSizeRaw();
+   size_t GetImageDataRawSize();
 
    /// Accessor to \ref PixelConverter
    PixelConvert* GetPixelConverter() { return PixelConverter; };
 
    uint8_t* GetImageData();
-   size_t GetImageDataIntoVector(void* destination, size_t maxSize);
    uint8_t* GetImageDataRaw();
+   size_t GetImageDataIntoVector(void* destination, size_t maxSize);
 
    // see also Header::SetImageDataSize ?!?         
    bool SetImageData (uint8_t* data, size_t expectedSize);
@@ -106,6 +104,7 @@ public:
 
 protected:
    bool WriteBase(std::string const& fileName, FileType type);
+   bool CheckWriteIntegrity();
 
    void SetWriteToNative();
    void SetWriteToDecompressed();
@@ -121,12 +120,12 @@ protected:
 private:
    void Initialise();
 
-   void SaveInitialValues();    // will belong to the future PixelData class
    uint8_t* GetDecompressed();
    int ComputeDecompressedPixelDataSizeFromHeader();
 
-private:
    void SetPixelData(uint8_t* data);
+
+private:
 
 // members variables:
 
@@ -158,11 +157,6 @@ private:
    /// \brief to hold the Pixels (when read)
    uint8_t* Pixel_Data;  // (was PixelData)
    
-   /// \brief Size (in bytes) of required memory to hold the Gray Level pixels
-   ///        represented in this file. This is used when the user DOESN'T want
-   ///        the RGB pixels image when it's stored as a PALETTE COLOR image
-   size_t ImageDataSizeRaw;
-   
    /// \brief Size (in bytes) of requited memory to hold the the pixels
    ///        of this image in it's RGB convertion either from:
    ///        - Plane R, Plane G, Plane B 
@@ -170,14 +164,9 @@ private:
    ///        - YBR Pixels (or from RGB Pixels, as well) 
    size_t ImageDataSize;
        
-  /// \brief ==1  if GetImageDataRaw was used
-  ///        ==0  if GetImageData    was used
-  ///        ==-1 if ImageData never read                       
-   int PixelRead;
-
 //
 // --------------- end of future PixelData class
-//  
+// 
 
 };
 } // end namespace gdcm

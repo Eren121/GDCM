@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:18 $
-  Version:   $Revision: 1.137 $
+  Date:      $Date: 2004/11/25 10:24:34 $
+  Version:   $Revision: 1.138 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1286,9 +1286,12 @@ ValEntry* Document::GetValEntryByNumber(uint16_t group, uint16_t element)
  */
 void Document::LoadDocEntrySafe(DocEntry * entry)
 {
-   long PositionOnEntry = Fp->tellg();
-   LoadDocEntry(entry);
-   Fp->seekg(PositionOnEntry, std::ios_base::beg);
+   if(Fp)
+   {
+      long PositionOnEntry = Fp->tellg();
+      LoadDocEntry(entry);
+      Fp->seekg(PositionOnEntry, std::ios_base::beg);
+   }
 }
 
 /**

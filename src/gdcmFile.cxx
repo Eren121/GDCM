@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:18 $
-  Version:   $Revision: 1.162 $
+  Date:      $Date: 2004/11/25 10:24:34 $
+  Version:   $Revision: 1.163 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,20 +83,11 @@ void File::Initialise()
 
    if ( HeaderInternal->IsReadable() )
    {
-      ImageDataSizeRaw = ComputeDecompressedPixelDataSizeFromHeader();
-      if ( HeaderInternal->HasLUT() )
-      {
-         ImageDataSize = 3 * ImageDataSizeRaw;
-      }
-      else
-      {
-         ImageDataSize = ImageDataSizeRaw;
-      }
-
       PixelConverter->GrabInformationsFromHeader( HeaderInternal );
    }
 
-   SaveInitialValues();
+   Pixel_Data = 0;
+   ImageDataSize = 0;
 }
 
 /**
@@ -122,103 +113,32 @@ File::~File()
    HeaderInternal = 0;
 }
 
-/**
- * \brief Sets some initial values for the Constructor
- * \warning not end user intended
- */
-void File::SaveInitialValues()
-{ 
-   PixelRead  = -1; // no ImageData read yet.
-   Pixel_Data = 0;
-}
-
 //-----------------------------------------------------------------------------
 // Print
 
 //-----------------------------------------------------------------------------
 // Public
-
 /**
- * \brief     computes the length (in bytes) we must ALLOCATE to receive the
- *            image(s) pixels (multiframes taken into account) 
- * \warning : it is NOT the group 7FE0 length
- *          (no interest for compressed images).
+ * \brief   Get the size of the image data
+ * 
+ *          If the image can be RGB (with a lut or by default), the size 
+ *          corresponds to the RGB image
+ * @return  The image size
  */
-int File::ComputeDecompressedPixelDataSizeFromHeader()
-{
-   // see PS 3.3-2003 : C.7.6.3.2.1  
-   // 
-   //   MONOCHROME1
-   //   MONOCHROME2
-   //   PALETTE COLOR
-   //   RGB
-   //   HSV  (Retired)
-   //   ARGB (Retired)
-   //   CMYK (Retired)
-   //   YBR_FULL
-   //   YBR_FULL_422 (no LUT, no Palette)
-   //   YBR_PARTIAL_422
-   //   YBR_ICT
-   //   YBR_RCT
-
-   // LUT's
-   // ex : gdcm-US-ALOKA-16.dcm
-   // 0028|1221 [OW]   [Segmented Red Palette Color Lookup Table Data]
-   // 0028|1222 [OW]   [Segmented Green Palette Color Lookup Table Data]  
-   // 0028|1223 [OW]   [Segmented Blue Palette Color Lookup Table Data]
-
-   // ex  : OT-PAL-8-face.dcm
-   // 0028|1201 [US]   [Red Palette Color Lookup Table Data]
-   // 0028|1202 [US]   [Green Palette Color Lookup Table Data]
-   // 0028|1203 [US]   [Blue Palette Color Lookup Table Data]
-
-   int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
-   // Number of "Bits Allocated" is fixed to 16 when:
-   //  - it is not defined (i.e. it's value is 0)
-   //  - it's 12, since we will expand the image to 16 bits (see
-   //    PixelConvert::ConvertDecompress12BitsTo16Bits() )
-   if ( numberBitsAllocated == 0 || numberBitsAllocated == 12 )
-   {
-      numberBitsAllocated = 16;
-   } 
-
-   int DecompressedSize = HeaderInternal->GetXSize()
-                        * HeaderInternal->GetYSize() 
-                        * HeaderInternal->GetZSize()
-                        * ( numberBitsAllocated / 8 )
-                        * HeaderInternal->GetSamplesPerPixel();
-   
-   return DecompressedSize;
-}
-
-/// Accessor to \ref ImageDataSize
 size_t File::GetImageDataSize()
 {
-   if ( ! GetDecompressed() )
-   {
-      // If the decompression failed nothing can be done.
-      return 0;
-   }
-                                                                                
-   if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
-   {
-      return PixelConverter->GetRGBSize();
-   }
-   else
-   {
-      // When no LUT or LUT conversion fails, return the decompressed
-      return PixelConverter->GetDecompressedSize();
-   }
+   return PixelConverter->GetRGBSize();
 }
 
-/// Accessor to \ref ImageDataSizeRaw
-size_t File::GetImageDataSizeRaw()
+/**
+ * \brief   Get the size of the image data
+ * 
+ *          If the image can be RGB by transformation in a LUT, this
+ *          transformation isn't considered
+ * @return  The raw image size
+ */
+size_t File::GetImageDataRawSize()
 {
-   if ( ! GetDecompressed() )
-   {
-      // If the decompression failed nothing can be done.
-      return 0;
-   }
    return PixelConverter->GetDecompressedSize();
 }
 
@@ -239,7 +159,7 @@ uint8_t* File::GetImageData()
       // If the decompression failed nothing can be done.
       return 0;
    }
-                                                                                
+
    if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
    {
       return PixelConverter->GetRGB();
@@ -333,12 +253,14 @@ uint8_t* File::GetDecompressed()
       // The decompressed image migth not be loaded yet:
       std::ifstream* fp = HeaderInternal->OpenFile();
       PixelConverter->ReadAndDecompressPixelData( fp );
-      if(fp) HeaderInternal->CloseFile();
+      if(fp) 
+         HeaderInternal->CloseFile();
+
       decompressed = PixelConverter->GetDecompressed();
       if ( ! decompressed )
       {
-        dbg.Verbose(0, "File::GetDecompressed: read/decompress of "
-                       "pixel data apparently went wrong.");
+         dbg.Verbose(0, "File::GetDecompressed: read/decompress of "
+                        "pixel data apparently went wrong.");
          return 0;
       }
    }
@@ -361,11 +283,9 @@ uint8_t* File::GetDecompressed()
  */
 bool File::SetImageData(uint8_t* inData, size_t expectedSize)
 {
-   HeaderInternal->SetImageDataSize( expectedSize );
 // FIXME : if already allocated, memory leak !
    Pixel_Data     = inData;
-   ImageDataSize = ImageDataSizeRaw = expectedSize;
-   PixelRead     = 1;
+   ImageDataSize = expectedSize;
 // FIXME : 7fe0, 0010 IS NOT set ...
    return true;
 }
@@ -456,6 +376,14 @@ bool File::Write(std::string const& fileName)
    return(false);
 }
 
+/**
+ * \brief Access to the underlying \ref PixelConverter RGBA LUT
+ */
+uint8_t* File::GetLutRGBA()
+{
+   return PixelConverter->GetLutRGBA();
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 /**
@@ -468,11 +396,6 @@ bool File::Write(std::string const& fileName)
  */
 bool File::WriteBase (std::string const & fileName, FileType type)
 {
-/*   if ( PixelRead == -1 && type != ExplicitVR)
-   {
-      return false;
-   }*/
-
    std::ofstream* fp1 = new std::ofstream(fileName.c_str(), 
                               std::ios::out | std::ios::binary);
    if (fp1 == NULL)
@@ -507,8 +430,12 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       SetWriteToLibido();
    }*/
    // ----------------- End of Special Patch ----------------
- 
-   HeaderInternal->Write(fp1, type);
+
+   bool check=CheckWriteIntegrity();
+   if(check)
+   {
+      HeaderInternal->Write(fp1,type);
+   }
 
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
@@ -523,44 +450,59 @@ bool File::WriteBase (std::string const & fileName, FileType type)
 
    RestoreWrite();
 
-
-   fp1->close ();
+   fp1->close();
    delete fp1;
 
-   return true;
+   return check;
 }
 
 /**
- * \brief Access to the underlying \ref PixelConverter RGBA LUT
+ * \brief Check the write integrity
+ *
+ * The tests made are :
+ *  - verify the size of the image to write with the possible write
+ *    when the user set an image data
+ * @return true if the check successfulls
  */
-uint8_t* File::GetLutRGBA()
+bool File::CheckWriteIntegrity()
 {
-   return PixelConverter->GetLutRGBA();
-}
-
-//-----------------------------------------------------------------------------
-// Private
-/**
- * \brief Set the pixel datas in the good entry of the Header
- */
-void File::SetPixelData(uint8_t* data)
-{
-   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
-      GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
-
-   // Will be 7fe0, 0010 in standard case
-   DocEntry* currentEntry = GetHeader()->GetDocEntryByNumber(GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
-   if ( currentEntry )
+   if(Pixel_Data)
    {
-      if ( BinEntry* binEntry = dynamic_cast<BinEntry *>(currentEntry) )
-         // Flag is to false because datas are kept in the gdcmPixelConvert
-         binEntry->SetBinArea( data, false );
+      switch(WriteMode)
+      {
+         case WMODE_NATIVE :
+            break;
+         case WMODE_DECOMPRESSED :
+            if(GetImageDataRawSize()!=ImageDataSize)
+            {
+               std::cerr<<"RAW : "<<GetImageDataRawSize()<<" / "<<ImageDataSize<<std::endl;
+               return false;
+            }
+            break;
+         case WMODE_RGB :
+            if(GetImageDataSize()!=ImageDataSize)
+            {
+               std::cerr<<"RGB : "<<GetImageDataSize()<<" / "<<ImageDataSize<<std::endl;
+               return false;
+            }
+            break;
+      }
    }
+   
+   return true;
 }
 
 void File::SetWriteToNative()
 {
-// Nothing to do
+   if(Pixel_Data)
+   {
+      BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+      pixel->SetValue(GDCM_BINLOADED);
+      pixel->SetBinArea(Pixel_Data,false);
+      pixel->SetLength(ImageDataSize);
+
+      Archive->Push(pixel);
+   }
 }
 
 void File::SetWriteToDecompressed()
@@ -603,7 +545,7 @@ void File::SetWriteToDecompressed()
 
 void File::SetWriteToRGB()
 {
-   if(HeaderInternal->GetNumberOfScalarComponents()==3 && !HeaderInternal->HasLUT())
+   if(HeaderInternal->GetNumberOfScalarComponents()==3)
    {
       PixelConverter->BuildRGBImage();
       
@@ -641,6 +583,14 @@ void File::SetWriteToRGB()
       Archive->Push(planConfig);
       Archive->Push(photInt);
       Archive->Push(pixel);
+
+      // Remove any LUT
+      Archive->Push(0x0028,0x1101);
+      Archive->Push(0x0028,0x1102);
+      Archive->Push(0x0028,0x1103);
+      Archive->Push(0x0028,0x1201);
+      Archive->Push(0x0028,0x1202);
+      Archive->Push(0x0028,0x1203);
 
       // For old ACR-NEMA
       // Thus, we have a RGB image and the bits allocated = 24 and 
@@ -681,6 +631,14 @@ void File::RestoreWrite()
    Archive->Restore(0x0028,0x0100);
    Archive->Restore(0x0028,0x0101);
    Archive->Restore(0x0028,0x0102);
+
+   // For the LUT
+   Archive->Restore(0x0028,0x1101);
+   Archive->Restore(0x0028,0x1102);
+   Archive->Restore(0x0028,0x1103);
+   Archive->Restore(0x0028,0x1201);
+   Archive->Restore(0x0028,0x1202);
+   Archive->Restore(0x0028,0x1203);
 }
 
 void File::SetWriteToLibido()
@@ -747,6 +705,26 @@ BinEntry* File::CopyBinEntry(uint16_t group,uint16_t element)
 
 
    return(newE);
+}
+
+//-----------------------------------------------------------------------------
+// Private
+/**
+ * \brief Set the pixel datas in the good entry of the Header
+ */
+void File::SetPixelData(uint8_t* data)
+{
+   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
+      GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+
+   // Will be 7fe0, 0010 in standard case
+   DocEntry* currentEntry = GetHeader()->GetDocEntryByNumber(GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+   if ( currentEntry )
+   {
+      if ( BinEntry* binEntry = dynamic_cast<BinEntry *>(currentEntry) )
+         // Flag is to false because datas are kept in the gdcmPixelConvert
+         binEntry->SetBinArea( data, false );
+   }
 }
 
 //-----------------------------------------------------------------------------

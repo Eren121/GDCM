@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 10:23:47 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/11/25 10:24:34 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -587,8 +587,11 @@ void PixelConvert::ConvertRGBPlanesToRGBPixels()
 
 bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
 {
-   ComputeDecompressedAndRGBSizes();
-   AllocateDecompressed();
+   // ComputeDecompressedAndRGBSizes is already made by 
+   // ::GrabInformationsFromHeader. So, the structure sizes are
+   // correct
+   Squeeze();
+
    //////////////////////////////////////////////////
    //// First stage: get our hands on the Pixel Data.
    if ( !fp )
@@ -605,6 +608,8 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
                       "unable to find PixelOffset in file." );
       return false;
    }
+
+   AllocateDecompressed();
 
    //////////////////////////////////////////////////
    //// Second stage: read from disk dans decompress.
@@ -771,7 +776,10 @@ void PixelConvert::ComputeDecompressedAndRGBSizes()
    {
       RGBSize = 3 * DecompressedSize;
    }
-
+   else
+   {
+      RGBSize = DecompressedSize;
+   }
 }
 
 void PixelConvert::GrabInformationsFromHeader( Header* header )
@@ -867,7 +875,6 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          {
             dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
                             "unable to read red LUT data" );
-            return;
          }
       }
 
@@ -885,7 +892,6 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          {
             dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
                            "unable to read green LUT data" );
-            return;
          }
       }
 
@@ -903,12 +909,16 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          {
             dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
                            "unable to read blue LUT data" );
-            return;
          }
       }
    }
 
-   if(fp) header->CloseFile();
+   ComputeDecompressedAndRGBSizes();
+
+   if(fp) 
+   {
+      header->CloseFile();
+   }
 }
 
 /**

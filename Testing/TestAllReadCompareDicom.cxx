@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:18 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/11/25 10:24:33 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,9 +46,10 @@ int InternalTest(std::string const & filename,
       FILE* testFILE = fopen( referenceFileName.c_str(), "r" );
       if (! testFILE )
       {
-         uint8_t* testedImageData = tested->GetImageDataRaw(); // Kludge
+         uint8_t* testedImageData = tested->GetImageData(); // Kludge
          (void)testedImageData;
 
+         tested->SetWriteModeToRGB();
          tested->WriteDcmExplVR( referenceFileName );
       }
       else
@@ -74,11 +75,11 @@ int InternalTest(std::string const & filename,
 
       ////// Step 3b:
       std::cout << "3b...";
-      int testedDataSize    = tested->GetImageDataSizeRaw();
-      uint8_t* testedImageData = tested->GetImageDataRaw();
+      int testedDataSize    = tested->GetImageDataSize();
+      uint8_t* testedImageData = tested->GetImageData();
     
-      int    referenceDataSize = reference->GetImageDataSizeRaw();
-      uint8_t* referenceImageData = reference->GetImageDataRaw();
+      int    referenceDataSize = reference->GetImageDataSize();
+      uint8_t* referenceImageData = reference->GetImageData();
 
       if (testedDataSize != referenceDataSize)
       {

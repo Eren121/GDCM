@@ -1,3 +1,15 @@
+2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocument.cxx : fix bug... test if the fp is opened to use it
+   * src/gdcmPixelConvert.cxx : calculate the image size when while the grab of
+     the header.
+   * src/gdcmFile.[h|cxx] : remove PixelRead and ImageDataSizeRaw variables and
+     some corresponding methods. Write correctly the file and check before
+     write
+   * Test/TestCopyDicom.cxx, TestReadWriteReadCompare.cxx,
+     TestAllReadCompareDicom.cxx : pass the write of images to RGB and test
+     is now on RGB datas (as before my last commit
+   * Example/PrintHeader.cxx, PrintFile.cxx : repad files.
+
 2004-11-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmBinEntry.cxx, gdcmSeqEntry.cxx, gdcmSQItem.cxx, gdcmValEntry.cxx :
      Add a print information of the type of the entry
