@@ -1,5 +1,5 @@
 #include <iddcmjpeg.h>
-	
+#include <stdlib.h>	
 	
 static ClbJpeg* ClbJpegAlloc(void);
 static void 	ClbJpegInit (ClbJpeg *); 
@@ -15,8 +15,8 @@ static BOOL 	ClbJpegFillHuffTable(ClbJpeg *);
 
 void _IdDcmJpegFree(ClbJpeg *jpg)
 {
-	 g_free(jpg->DataImg);
-	 g_free(jpg);
+	 free(jpg->DataImg);
+	 free(jpg);
 }
 
 
@@ -49,7 +49,7 @@ int n;
 
 static ClbJpeg *ClbJpegAlloc(void) {
 ClbJpeg * jpg;
-	jpg = (ClbJpeg *)g_malloc(sizeof(ClbJpeg));
+	jpg = (ClbJpeg *)malloc(sizeof(ClbJpeg));
 	ClbJpegInit(jpg);	
 return jpg;
 }
@@ -183,7 +183,7 @@ static BOOL ClbJpegReadHeader(ClbJpeg *jpg)
 
 				jpg->lSof.SofTabPos=ftell(jpg->infp);
 
-				isLossLess=TRUE;
+				isLossLess=1; // TRUE
 			}
 
 			if (el==0xC4)
@@ -268,7 +268,7 @@ static BOOL ClbJpegDecodeData(ClbJpeg *jpg)
 	if (jpg->lSof.precision==16)
 		mask=0xFFFF;
 
-	 jpg->DataImg=(int*)g_malloc(jpg->lSof.Himg*jpg->lSof.Wimg*sizeof(*jpg->DataImg));
+	 jpg->DataImg=(int*)malloc(jpg->lSof.Himg*jpg->lSof.Wimg*sizeof(*jpg->DataImg));
 	memset( jpg->DataImg,0,(jpg->lSof.Himg*jpg->lSof.Wimg*sizeof(*jpg->DataImg)));
 
 	if (!jpg->RestartInterval)
