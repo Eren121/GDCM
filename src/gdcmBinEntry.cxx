@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 17:36:23 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/01/14 17:38:32 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,12 +141,12 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
 
          // how many BUFFER_SIZE long pieces in binArea ?
          int nbPieces = lgr/BUFFER_SIZE/2; //(16 bits = 2 Bytes)
+         uint16_t binArea16 = (uint16_t*)binArea;
          for (int j=0;j<nbPieces;j++)
          {
             for (int i = 0; i < BUFFER_SIZE/2; i++)
             {
-               buffer[i] =   (uint16_t *)binArea[i] >> 8 
-                           | (uint16_t *)binArea[i] << 8;  
+               buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
             }
             fp->write ( (char*)currPosition, BUFFER_SIZE );
             currPosition += BUFFER_SIZE/2;
