@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:53 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/08/27 15:48:44 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,7 +51,7 @@ gdcmSeqEntry::gdcmSeqEntry(gdcmDocEntry* e, int depth) : gdcmDocEntry(e->GetDict
    this->ImplicitVR   = e->IsImplicitVR();
    this->Offset       = e->GetOffset();
    //this->printLevel   = e->GetPrintLevel(); // no longer exists ?!?
-   this->SQDepthLevel = e->GetDepthLevel();
+   this->SQDepthLevel = depth;
 }
 /**
  * \brief   Canonical destructor.
@@ -105,23 +105,17 @@ void gdcmSeqEntry::Write(FILE *fp, FileType filetype)
 {
    uint16_t seq_term_gr = 0xfffe;
    uint16_t seq_term_el = 0xe0dd;
-   uint32_t seq_term_lg = 0x00000000;
+   uint32_t seq_term_lg = 0xffffffff;
 
    uint16_t item_term_gr = 0xfffe;
    uint16_t item_term_el = 0xe00d;
-
+   
    gdcmDocEntry::Write(fp, filetype);
    for(ListSQItem::iterator cc  = GetSQItems().begin();
                             cc != GetSQItems().end();
                           ++cc)
-   {
+   {        
       (*cc)->Write(fp, filetype);
-      
-    //we force the writting of an Item Delimitation item
-    // because we wrote the Item as a 'no Length' item
-      fwrite ( &item_term_gr,(size_t)2 ,(size_t)1 ,fp);
-      fwrite ( &item_term_el,(size_t)2 ,(size_t)1 ,fp);   
-      fwrite ( &seq_term_lg, (size_t)4 ,(size_t)1 ,fp); // Heu .....
    }
    
     //we force the writting of a Sequence Delimitation item

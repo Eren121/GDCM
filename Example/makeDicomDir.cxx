@@ -72,17 +72,10 @@ int main(int argc, char* argv[]) {
                 << std::endl;
       return 1;
    }
-
-   std::cout << "--------- dcmdir->Print() ------------" << std::endl;   
-
-   dcmdir->SetPrintLevel(-1);
-   //dcmdir->Print(); // just to see
-   std::cout << "---------end  dcmdir->Print() ------------" << std::endl;
     
    dcmdir->Write("NewDICOMDIR");
    std::cout<<std::flush;
 
    delete dcmdir;
-
    return 0;
 }

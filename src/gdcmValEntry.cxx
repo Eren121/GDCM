@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/16 16:30:32 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/08/27 15:48:44 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -181,6 +181,12 @@ void gdcmValEntry::Print(std::ostream & os)
 void gdcmValEntry::Write(FILE *fp, FileType filetype)
 {
    gdcmDocEntry::Write(fp, filetype);
+      
+   if ( GetGroup() == 0xfffe ) 
+   {
+      return; //delimitors have NO value
+   }
+      
    std::string vr = GetVR();
    int lgr = GetReadLength();
    if (vr == "US" || vr == "SS")

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:52 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2004/08/27 15:48:44 $
+  Version:   $Revision: 1.65 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -342,7 +342,7 @@ void gdcmDicomDir::SetEndMethodArgDelete(gdcmMethod *method)
 bool gdcmDicomDir::Write(std::string const & fileName) 
 {  
    uint16_t sq[5] = { 0x0004, 0x1220, 0x0000, 0xffff, 0xffff };
-   uint16_t sqt[3]= { 0xfffe, 0xe0dd, 0x0000 };
+   uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0xffff, 0xffff };
 
    FILE * fp = fopen(fileName.c_str(), "wb");
    if( !fp ) 
@@ -356,23 +356,26 @@ bool gdcmDicomDir::Write(std::string const & fileName)
    fwrite(filePreamble,128,1,fp);
    fwrite("DICM",4,1,fp);
    delete[] filePreamble;
+   
  //  UpdateDirectoryRecordSequenceLength(); // TODO (if *really* usefull)
+ 
    gdcmDicomDirMeta *ptrMeta = GetDicomDirMeta();
    ptrMeta->Write(fp, gdcmExplicitVR);
    
    // force writing 0004|1220 [SQ ], that CANNOT exist within gdcmDicomDirMeta
    fwrite(&sq[0],4,1,fp);  // 0004 1220 
-   fwrite("SQ"  ,2,1,fp);  // SQ
-   fwrite(&sq[2],6,1,fp);  // 00 ffffffff
-      
+   //fwrite("SQ"  ,2,1,fp);  // SQ  // VR no written for 'No length' Sequences !
+   //fwrite(&sq[2],6,1,fp);  // 00 ffffffff
+   fwrite(&sq[3],4,1,fp);  // ffffffff 
+        
    for(ListDicomDirPatient::iterator cc = patients.begin();cc!=patients.end();++cc)
    {
       (*cc)->Write( fp, gdcmExplicitVR );
    }
+   
    // force writing Sequence Delimitation Item
-   fwrite(&sqt[0],4,1,fp);  // fffe e0dd 
-   fwrite("UL"   ,2,1,fp);  // UL
-   fwrite(&sqt[2],1,1,fp);  // 00 
+   fwrite(&sqt[0],8,1,fp);  // fffe e0dd ffff ffff 
+
    fclose( fp );
    return true;
 }
@@ -666,7 +669,10 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
       }
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
+      {
          std::cout << " special Treatment for GDCM_DICOMDIR_META" << std::endl;
+         entry->Print(); // just to see 
+      }
       si->AddEntry(entry);
    }
    switch( type )
