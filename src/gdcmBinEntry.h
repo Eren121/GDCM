@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:05 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/10/07 21:05:39 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,10 +19,9 @@
 #ifndef GDCMBINENTRY_H
 #define GDCMBINENTRY_H
 
-#include <iostream>
-#include <stdio.h>
-
 #include "gdcmValEntry.h"
+
+#include <iostream>
 
 //-----------------------------------------------------------------------------
 /**

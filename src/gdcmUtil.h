@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:08 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/10/07 21:05:40 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,10 +19,10 @@
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
 
+#include "gdcmCommon.h"
 #include <vector>
 #include <string>
 
-#include "gdcmCommon.h"
 
 /**
  * \defgroup Globals Utility functions

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/10/07 21:05:40 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,13 +19,13 @@
 #ifndef GDCMOBJECT_H
 #define GDCMOBJECT_H
 
-#include <string>
-#include <list>
 #include "gdcmCommon.h"
 #include "gdcmDocEntry.h"
 #include "gdcmDocument.h"
 #include "gdcmDicomDirElement.h"
 #include "gdcmSQItem.h"
+#include <string>
+#include <list>
 
 //-----------------------------------------------------------------------------
 class gdcmDicomDirObject;
