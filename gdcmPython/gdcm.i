@@ -17,7 +17,6 @@
 #include "gdcmStudy.h"
 #include "gdcmSerie.h"
 #include "gdcmImage.h"
-#include "gdcmDirList.h"
 
 using namespace std;
 
@@ -115,6 +114,7 @@ extern gdcmGlobal gdcmGlob;
 {
   $1 = PyString_AsString($input);
 }
+
 ////////////////////////////////////////////////////////////////////////////
 %include "gdcmCommon.h"
 %include "gdcmDictEntry.h"
@@ -133,4 +133,3 @@ extern gdcmGlobal gdcmGlob;
 %include "gdcmStudy.h"
 %include "gdcmSerie.h"
 %include "gdcmImage.h"
-%include "gdcmDirList.h"

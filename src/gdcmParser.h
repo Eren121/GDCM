@@ -49,6 +49,7 @@ public:
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
    void SetPrintLevel(int level) { printLevel = level; };
+   virtual void Print        (std::ostream &os = std::cout) {PrintEntry(os);};
    virtual void PrintEntry   (std::ostream &os = std::cout);
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
