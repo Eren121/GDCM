@@ -157,8 +157,10 @@ public:
 	void Add(ElValue*);
 	void Print(ostream &);
 	void PrintByName(ostream &);
+	ElValue* GetElement(guint32 group, guint32 element);
 	string GetElValue(guint32 group, guint32 element);
 	string GetElValue(string);
+	TagElValueHT & GetTagHt(void);
 };
 
 // The various entries of the explicit value representation (VR) shall
@@ -199,21 +201,23 @@ private:
 	// outside of the elements:
 	guint16 grPixel;
 	guint16 numPixel;
-	bool PixelsTrouves;
-	bool grPixelTrouve;
-	size_t PixelPosition;
 	int sw;
 
+	guint16 ReadInt16(void);
+	guint32 ReadInt32(void);
+	guint16 SwapShort(guint16);
+	guint32 SwapLong(guint32);
 	void Initialise(void);
 	void CheckSwap(void);
 	void FindLength(ElValue *);
 	void FindVR(ElValue *);
-	guint32 SwapLong(guint32);
-	short int SwapShort(short int);
+	void LoadElementValue(ElValue *);
+	void SkipElementValue(ElValue *);
 	void InitVRDict(void);
+	bool IsAnInteger(guint16, guint16, string, guint32);
 	ElValue * ReadNextElement(void);
 	gdcmDictEntry * IsInDicts(guint32, guint32);
-	void SetAsidePixelData(ElValue*);
+	size_t GetPixelOffset(void);
 protected:
 	enum FileType {
 		Unknown = 0,
@@ -229,8 +233,8 @@ protected:
 /////           See below for an example of how anonymize might be implemented.
 	int anonymize(ostream&);
 public:
-	bool IsAnInteger(guint16, guint16, string, guint32);
-	virtual void BuildHeader(void);
+	void LoadElements(void);
+	virtual void ParseHeader(void);
 	gdcmHeader(char* filename);
 	virtual ~gdcmHeader();
 

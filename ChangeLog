@@ -1,3 +1,10 @@
+2002-10-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader.cxx :
+        - Parsing of header is now separated from loading of element values
+          (see gdcmHeader::LoadElements).
+        - general clean up of hopefully all file access (creation of
+          ReadInt16 and ReadInt32)
+
 2002-10-22 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx :
         - RecupLgr renamed to FindLength and cut off with new IsAnInteger

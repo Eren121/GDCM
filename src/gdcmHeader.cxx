@@ -15,6 +15,17 @@ extern "C" {
 
 #define HEADER_LENGHT_TO_READ 256 // on ne lit plus que le debut
 
+namespace Error {
+	struct FileReadError {
+		FileReadError(FILE* fp, const char* Mesg) {
+			if (feof(fp))
+				dbg.Verbose(1, "EOF encountered :", Mesg);
+			if (ferror(fp))
+				dbg.Verbose(1, "Error on reading :", Mesg);
+		}
+	};
+}
+
 //FIXME: this looks dirty to me...
 #define str2num(str, typeNum) *((typeNum *)(str))
 
@@ -24,8 +35,6 @@ gdcmDictSet* gdcmHeader::Dicts = new gdcmDictSet();
 void gdcmHeader::Initialise(void) {
 	if (!gdcmHeader::dicom_vr)
 		InitVRDict();
-	PixelPosition = (size_t)0;
-	PixelsTrouves = false;
 	RefPubDict = gdcmHeader::Dicts->GetDefaultPublicDict();
 	RefShaDict = (gdcmDict*)0;
 }
@@ -35,11 +44,11 @@ gdcmHeader::gdcmHeader (char* InFilename) {
 	Initialise();
 	fp=fopen(InFilename,"rw");
 	dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", InFilename);
-	BuildHeader();
-	fclose(fp);
+	ParseHeader();
 }
 
 gdcmHeader::~gdcmHeader (void) {
+	fclose(fp);
 	return;
 }
 
@@ -256,7 +265,7 @@ void gdcmHeader::CheckSwap()
  * @return               longueur retenue pour le champ 
  */
 
-void gdcmHeader::FindVR( ElValue *pleCourant) {
+void gdcmHeader::FindVR( ElValue *ElVal) {
 	char VR[3];
 	int lgrLue;
 	long PositionOnEntry = ftell(fp);
@@ -279,22 +288,21 @@ void gdcmHeader::FindVR( ElValue *pleCourant) {
 	// first extraction by calling proper method.
 	VRAtr FoundVR = dicom_vr->find(string(VR))->first;
 	if ( ! FoundVR.empty()) {
-		pleCourant->SetVR(FoundVR);
+		ElVal->SetVR(FoundVR);
 		return; 
 	}
 	
 	// We thought this was explicit VR, but we end up with an
 	// implicit VR tag. Let's backtrack.
-	pleCourant->SetVR("Implicit");
+	ElVal->SetVR("Implicit");
 	fseek(fp, PositionOnEntry, SEEK_SET);
 }
 
-void gdcmHeader::FindLength( ElValue *pleCourant) {
-	int lgrLue;
-	guint32 l_gr;
-	unsigned short int l_gr_2;
+void gdcmHeader::FindLength( ElValue * ElVal) {
+	guint32 length32;
+	guint16 length16;
 	
-	string vr = pleCourant->GetVR();
+	string vr = ElVal->GetVR();
 	
 	if ( (filetype == ExplicitVR) && (vr != "Implicit") ) {
 		if (   ( vr == "OB" ) || ( vr == "OW" )
@@ -303,34 +311,31 @@ void gdcmHeader::FindLength( ElValue *pleCourant) {
 			// The following two bytes are reserved, so we skip them,
 			// and we proceed on reading the length on 4 bytes.
 			fseek(fp, 2L,SEEK_CUR);
-			lgrLue=fread (&l_gr, (size_t)4,(size_t)1, fp);
-			l_gr = SwapLong((guint32)l_gr);
+			length32 = ReadInt32();
 			
 		} else {
 			// Length is encoded on 2 bytes.
-			lgrLue=fread (&l_gr_2, (size_t)2,(size_t)1, fp);
-			
-			l_gr_2 = SwapShort((unsigned short)l_gr_2);
-			
-			if ( l_gr_2 == 0xffff) {
-				l_gr = 0;
+			length16 = ReadInt16();
+			 
+			if ( length16 == 0xffff) {
+				length32 = 0;
 			} else {
-				l_gr = l_gr_2;
+				length32 = length16;
 			}
 		}
 	} else {
 		// Either implicit VR or an explicit VR that (at least for this
 		// element) lied a little bit. Length is on 4 bytes.
-		lgrLue=fread (&l_gr, (size_t)4,(size_t)1, fp);
-		l_gr= SwapLong((long)l_gr);
+		length32 = ReadInt32();
 	}
-
-	// Traitement des curiosites sur la longueur
-	if ( l_gr == 0xffffffff)
-		l_gr=0; 
 	
-	pleCourant->SetLength(l_gr);
+	// Traitement des curiosites sur la longueur
+	if ( length32 == 0xffffffff)
+		length32=0;
+	
+	ElVal->SetLength(length32);
 }
+
 
 /**
  * \ingroup gdcmHeader
@@ -368,116 +373,133 @@ guint32 gdcmHeader::SwapLong(guint32 a) {
 
  * @return  longueur retenue pour le champ 
  */
-short int gdcmHeader::SwapShort(short int a) {
+guint16 gdcmHeader::SwapShort(guint16 a) {
 	if ( (sw==4321)  || (sw==2143) )
 		a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
 	return (a);
 }
 
+void gdcmHeader::SkipElementValue(ElValue * ElVal) {
+	//FIXME don't dump the returned value
+	(void)fseek(fp, (long)ElVal->GetLength(), SEEK_CUR);
+}
+
+void gdcmHeader::LoadElementValue(ElValue * ElVal) {
+	size_t item_read;
+	guint16 group  = ElVal->GetGroup();
+	guint16 elem   = ElVal->GetElement();
+	string  vr     = ElVal->GetVR();
+	guint32 length = ElVal->GetLength();
+	fseek(fp, (long)ElVal->GetOffset(), SEEK_SET);
+	
+	// Sequences not treated yet !
+	if( vr == "SQ" ) {
+		SkipElementValue(ElVal);
+		ElVal->SetLength(0);
+		return;
+	}
+	// A sequence "contains" a set of tags (called items). It looks like
+	// the last tag of a sequence (the one that terminates the sequence)
+	// has a group of 0xfffe (with a dummy length).
+	if( group == 0xfffe) {
+		SkipElementValue(ElVal);
+		ElVal->SetLength(0);
+		return;
+	}
+	
+	if ( IsAnInteger(group, elem, vr, length) ) {
+		guint32 NewInt;
+		if( length == 2 ) {
+			NewInt = ReadInt16();
+		} else if( length == 4 ) {
+			NewInt = ReadInt32();
+		} else
+			dbg.Error(true, "LoadElementValue: Inconsistency when reading Int.");
+		
+		//FIXME: make the following an util fonction
+		ostringstream s;
+		s << NewInt;
+		ElVal->SetValue(s.str());
+		return;
+	}
+	
+	// FIXME The exact size should be length if we move to strings or whatever
+	char* NewValue = (char*)g_malloc(length+1);
+	if( !NewValue) {
+		dbg.Verbose(1, "LoadElementValue: Failed to allocate NewValue");
+		return;
+	}
+	NewValue[length]= 0;
+	
+	// FIXME les elements trop long (seuil a fixer a la main) ne devraient
+	// pas etre charge's !!!! Voir TODO.
+	item_read = fread(NewValue, (size_t)length, (size_t)1, fp);
+	if ( item_read != 1 ) {
+		g_free(NewValue);
+		Error::FileReadError(fp, "gdcmHeader::LoadElementValue");
+		ElVal->SetValue("gdcm::UnRead");
+		return;
+	}
+	ElVal->SetValue(NewValue);
+}
+
+
+guint16 gdcmHeader::ReadInt16(void) {
+	guint16 g;
+	size_t item_read;
+	item_read = fread (&g, (size_t)2,(size_t)1, fp);
+	if ( item_read != 1 )
+		throw Error::FileReadError(fp, "gdcmHeader::ReadInt16");
+	g = SwapShort(g);
+	return g;
+}
+
+guint32 gdcmHeader::ReadInt32(void) {
+	guint32 g;
+	size_t item_read;
+	item_read = fread (&g, (size_t)4,(size_t)1, fp);
+	if ( item_read != 1 )
+		throw Error::FileReadError(fp, "gdcmHeader::ReadInt32");
+	g = SwapLong(g);
+	return g;
+}
+
 /**
- * \ingroup       gdcmHeader
- * \brief         lit le dicom_element suivant.
- *			(le fichier doit deja avoir ete ouvert,
- *			 _IdAcrCheckSwap(ID_DCM_HDR *e) avoir ete appele)
- * @param e      ID_DCM_HDR  dans lequel effectuer la recherche.
- * @param sw    	code swap.
- * @return        	En cas de succes, 1 
- *               	0 en cas d'echec.
+ * \ingroup gdcmHeader
+ * \brief   Read the next tag without loading it's value
+ * @return  On succes the newly created ElValue, NULL on failure.      
  */
 
 ElValue * gdcmHeader::ReadNextElement(void) {
 	guint16 g;
 	guint16 n;
-	guint32 l;
-	size_t lgrLue;
-	ElValue * nouvDcmElem;
+	ElValue * NewElVal;
 	
-	// ------------------------- Lecture Num group : g
-	lgrLue=fread (&g, (size_t)2,(size_t)1, fp);
-	
-	if (feof(fp))  {
-		dbg.Verbose(1, "ReadNextElement: EOF encountered");
-		return (NULL);
+	try {
+		g = ReadInt16();
+		n = ReadInt16();
 	}
-	if (ferror(fp)){
-		dbg.Verbose(1, "ReadNextElement: failed to read NumGr");
-		return (NULL);
+	catch ( Error::FileReadError ) {
+		// We reached the EOF (or an error occured) and header parsing
+		// has to be considered as finished.
+		return (ElValue *)0;
 	}
-	
-	if (sw) g= SwapShort(((short)g));
-	
-	// ------------------------- Lecture Num Elem : n
-	lgrLue=fread (&n, (size_t)2,(size_t)1, fp);
-	
-	if (feof(fp))  {
-		dbg.Verbose(1, "ReadNextElement: EOF encountered");
-		return (NULL);
-	}
-	if (ferror(fp)){
-		dbg.Verbose(1, "ReadNextElement: failed to read NumElem");
-		return (NULL);
-	}
-	
-	if(sw) n= SwapShort(((short)n));
 
 	// Find out if the tag we encountered is in the dictionaries:
 	gdcmDictEntry * NewTag = IsInDicts(g, n);
 	if (!NewTag)
 		NewTag = new gdcmDictEntry(g, n, "Unknown", "Unknown", "Unkown");
 
-	nouvDcmElem = new ElValue(NewTag);
-	if (!nouvDcmElem) {
+	NewElVal = new ElValue(NewTag);
+	if (!NewElVal) {
 		dbg.Verbose(1, "ReadNextElement: failed to allocate ElValue");
-		return(NULL);
+		return (ElValue*)0;
 	}
 
-	FindVR(nouvDcmElem);
-	FindLength(nouvDcmElem);
-	nouvDcmElem->SetOffset(ftell(fp));
-	l = nouvDcmElem->GetLength();
-
-	//FIXMEif(!memcmp( VR,"SQ",(size_t)2 )) { // ca annonce une SEQUENCE d'items ?!
-	//FIXME	l_gr=0;                         // on lira donc les items de la sequence 
-	//FIXME}
-	//FIXMEreturn(l_gr);
-
-   // Une sequence contient un ensemble de group element repetes n fois
-	// et g=fffe indique la fin (contient une longueur bidon).
-	if(g==0xfffe) l=0;  // pour sauter les indicateurs de 'SQ'
-	
-	
-	// ------------------------- Lecture Valeur element 
-	
-	// FIXME The exact size should be l if we move to strings or whatever
-	// CLEAN ME NEWValue used to be nouvDcmElem->valeurElem
-	char* NewValue = (char*)g_malloc(l+1);
-	if(NewValue) {
-		NewValue[l]= 0;
-	} else {
-		return (NULL);
-	}
-	
-	// FIXME les elements trop long (seuil a fixer a la main) ne devraient
-	// pas etre charge's !!!! Voir TODO.
-	lgrLue=fread (NewValue, (size_t)l,(size_t)1, fp);
-	
-	if ( IsAnInteger(g, n, NewTag->GetVR(), l) ) {
-		// CLEANME THe following is really UGLY ! 
-		if( l == 4 ) {
-			*(guint32 *) NewValue = SwapLong  ((*(guint32 *) NewValue)); 
-		} else {
-			if( l == 2 )
-				*(guint16 *) NewValue = SwapShort ((*(guint16 *)NewValue));
-		}
-		//FIXME: don't we have to distinguish guin16 and guint32
-		//FIXME: make the following an util fonction
-		ostringstream s;
-		s << *(guint32 *) NewValue;
-		nouvDcmElem->value = s.str();
-		g_free(NewValue);
-	} else
-		nouvDcmElem->value = NewValue;
-	return nouvDcmElem;
+	FindVR(NewElVal);
+	FindLength(NewElVal);
+	NewElVal->SetOffset(ftell(fp));
+	return NewElVal;
 }
 
 bool gdcmHeader::IsAnInteger(guint16 group, guint16 element,
@@ -517,78 +539,35 @@ bool gdcmHeader::IsAnInteger(guint16 group, guint16 element,
 
 /**
  * \ingroup gdcmHeader
- * \brief   If we encountered the offset of the pixels in the file
- *          (Pixel Data) then keep the info aside.
+ * \brief   Recover the offset (from the beginning of the file) of the pixels.
  */
-void gdcmHeader::SetAsidePixelData(ElValue* elem) {
-	// They are two cases :
-	// * the pixel data (i.e. the image or the volume) is pointed by it's
-	//   default official tag (0x7fe0,0x0010),
-	// * the writer of this file decided to put the image "address" (i.e the
-	//   offset from the begining of the file) at a different tag.
-	//   Then the "Pixel Data" offset might be found by indirection through
-	//   the "Image Location" tag (0x0028,  0x0200). In other terms the Image
-	//   Location tag contains the group where the "Pixel Data" offset is and
-	//   inside this group the element is conventionally at element 0x0010
-	//   (when the norm is respected).
-	// 
-	// Hence getting our hands on the Pixel Data is a two stage process:
-	//  1/ * find if the "Pixel Data" tag exists.
-	//     * if it does not exist, look for the "Pixel Location" tag.
-	//  2/ look at the proper tag ("Pixel Data" or "Pixel Location" when
-	//     it exists) what the offset is.
-	cout << "aaaaaaaaaaaaaaaaaaaaa";
-	// PubElVals.PrintByName(cout);
-	ostringstream val;
-	val << hex << GetPubElValByName("Image Location");
-	cout << GetPubElValByName("Image Location") << endl;
-	cout <<hex << GetPubElValByName("Image Location") << dec << endl;
-	cout << "aaaa" << hex << val << dec << endl;
-	if (val)
-		//grPixel  = val.hex().str();
-		grPixel = 0;
-	else
-		grPixel  = 0x7FE0;
-	return;
-
-	guint16 g;
-	guint16 n;
-	g = elem->GetGroup();
-	n = elem->GetElement();
-	if (!grPixelTrouve) {   // on n a pas encore trouve les pixels
-		if (g > 0x0028) {
-			if (n > 0x0200 || g == 0x7FE0 ) {  // on a depasse (28,200)
-				grPixel  = 0x7FE0;
-				numPixel = 0x0010;
-				grPixelTrouve = true;
-			}
-		} else {         // on est sur (28,200)
-			if (g == 0x0028) {
-				if (n == 0x0200) {
-					grPixelTrouve = 1;
-					char* NewValue = (char*)g_malloc(elem->GetLength()+1);
-					// FIXME: not very elegant conversion
-					for(int i=0;i<4;i++)
-						*((char*)(&grPixel)+i) = *(NewValue+i); 
-					elem->SetValue(NewValue);
-					
-					if (grPixel != 0x7FE0)   // Vieux pb Philips
-						numPixel = 0x1010;    // encore utile ??
-					else
-						numPixel = 0x0010;
-				}
-			}
-		}
-	} else {     // on vient de trouver les pixels
-		if (g == grPixel) {
-			if (n == numPixel) {
-				PixelPosition = elem->Offset; 
-				PixelsTrouves = true;
-				dbg.Verbose(0, "gdcmHeader::SetAsidePixelData:",
-				            "Pixel data found");
-			}
-		}
+size_t gdcmHeader::GetPixelOffset(void) {
+	// If this file complies with the norm we should encounter the
+	// "Image Location" tag (0x0028,  0x0200). This tag contains the
+	// the group that contains the pixel data (hence the "Pixel Data"
+	// is found by indirection through the "Image Location").
+	// Inside the group pointed by "Image Location" the searched element
+	// is conventionally the element 0x0010 (when the norm is respected).
+	//    When the "Image Location" is absent we default to group 0x7fe0.
+	guint16 grPixel;
+	guint16 numPixel;
+	string ImageLocation = GetPubElValByName("Image Location");
+	if ( ImageLocation == "UNFOUND" ) {
+		grPixel = 0x7FE0;
+	} else {
+		grPixel = (guint16) atoi( ImageLocation.c_str() );
 	}
+	if (grPixel != 0x7fe0)
+		// FIXME is this still necessary ?
+		// Now, this looks like an old dirty fix for Philips imager
+		numPixel = 0x1010;
+	else
+		numPixel = 0x0010;
+	ElValue* PixelElement = PubElVals.GetElement(grPixel, numPixel);
+	if (PixelElement)
+		return PixelElement->GetOffset();
+	else
+		return 0;
 }
 
 gdcmDictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
@@ -619,21 +598,30 @@ string gdcmHeader::GetPubElValByName(string TagName) {
 }
 
 /**
- * \ingroup       gdcmHeader
- * \brief         renvoie un pointeur sur le ID_DCM_HDR correspondant au fichier
- * @param filename      Nom du fichier ACR / LibIDO / DICOM
- * @return       le ID_DCM_HDR 
+ * \ingroup gdcmHeader
+ * \brief   Parses the header of the file but does NOT load element values.
  */
- 
-void gdcmHeader::BuildHeader(void) {
+void gdcmHeader::ParseHeader(void) {
 	ElValue * newElValue = (ElValue *)0;
 	
 	rewind(fp);
 	CheckSwap();
 	while ( (newElValue = ReadNextElement()) ) {
+		SkipElementValue(newElValue);
 		PubElVals.Add(newElValue);
 	}
-	SetAsidePixelData((ElValue*)0);
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Loads the element values of all the elements present in the
+ *          public tag based hash table.
+ */
+void gdcmHeader::LoadElements(void) {
+	rewind(fp);    
+	TagElValueHT ht = PubElVals.GetTagHt();
+	for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag)
+		LoadElementValue(tag->second);
 }
 
 void gdcmHeader::PrintPubElVal(ostream & os) {

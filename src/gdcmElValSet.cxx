@@ -1,6 +1,10 @@
 #include "gdcmlib.h"
 #include "gdcmUtil.h"
 
+TagElValueHT & ElValSet::GetTagHt(void) {
+	return tagHt;
+}
+
 void ElValSet::Add(ElValue * newElValue) {
 	tagHt[newElValue->GetKey()]   = newElValue;
 	NameHt[newElValue->GetName()] = newElValue;
@@ -26,6 +30,16 @@ void ElValSet::PrintByName(ostream & os) {
 		os << "[" << tag->second->GetKey()  << "]";
 		os << "[" << tag->second->GetVR()    << "]" << endl;
 	}
+}
+
+ElValue* ElValSet::GetElement(guint32 group, guint32 element) {
+	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+	if ( ! tagHt.count(key))
+		return (ElValue*)0;
+	if (tagHt.count(key) > 1)
+		dbg.Verbose(0, "ElValSet::GetElValue",
+		            "multiple entries for this key (FIXME) !");
+	return tagHt.find(key)->second;
 }
 
 string ElValSet::GetElValue(guint32 group, guint32 element) {
