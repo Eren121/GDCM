@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 03:06:38 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/06/25 12:54:35 $
+  Version:   $Revision: 1.19 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,11 +101,13 @@ void gdcmSQItem::Write(FILE *fp,FileType filetype)
       // as 'no length'
       if ( (*i)->isItemDelimitor() )
          break;
-      if ( ((*i)->GetGroup() == 0xfffe) && ((*i)->GetElement() == 0x0000) ) 
-        // Fix in order to make some MR PHILIPS images e-film readable
-        // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
-        // we just *always* ignore spurious fffe|0000 tag !   
-         return; 			
+
+      // Fix in order to make some MR PHILIPS images e-film readable
+      // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
+      // we just *always* ignore spurious fffe|0000 tag ! 
+      if ( ((*i)->GetGroup() == 0xfffe) && ((*i)->GetElement() == 0x0000) )  
+         break; 
+
       // It's up to the gdcmDocEntry Writter to write the SQItem begin element
       // (fffe|e000) as a 'no length' one
       (*i)->Write(fp, filetype);
