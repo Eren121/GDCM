@@ -8,7 +8,9 @@ CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\" \
            -D__STDC_LIMIT_MACROS  # Refer to stdint.h
 
 libgdcm_la_LIBADD = \
+   $(top_builddir)/src/jpeg/libijg12/libgdcmijpeg12.la  \
    $(top_builddir)/src/jpeg/libijg8/libgdcmijpeg8.la
+
 
 libgdcm_la_SOURCES=		\
 	gdcmException.cxx	\
@@ -20,10 +22,13 @@ libgdcm_la_SOURCES=		\
 	gdcmDictSet.cxx   \
 	gdcmElValSet.cxx  \
 	gdcmHeaderIdo.cxx \
-	gdcmFile.cxx	\
-	gdcmVR.cxx	\
-	gdcmTS.cxx	\
-	gdcmJpeg.cxx	\
+	gdcmFile.cxx	 \
+	gdcmVR.cxx	 \
+	gdcmTS.cxx	 \
+	gdcmJpeg.cxx	 \
+	gdcmJpeg12.cxx	 \
+	gdcmJpeg2000.cxx \
+	gdcmRLE.cxx      \
 	gdcmJpegIdo.cxx
 
 libgdcmincludedir = $(includedir)

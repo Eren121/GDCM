@@ -1,5 +1,5 @@
 
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.78 2003/07/03 14:38:16 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.79 2003/07/23 08:43:03 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -14,6 +14,7 @@
 #include "gdcmUtil.h"
 #include "gdcmHeader.h"
 using namespace std;
+#include "gdcmTS.h"
 
 
 // TODO : remove DEBUG
@@ -22,8 +23,8 @@ using namespace std;
 // Refer to gdcmHeader::CheckSwap()
 #define HEADER_LENGTH_TO_READ       256
 // Refer to gdcmHeader::SetMaxSizeLoadElementValue()
-#define _MaxSizeLoadElementValue_   1024
-
+//#define _MaxSizeLoadElementValue_   1024
+#define _MaxSizeLoadElementValue_   4096
 /**
  * \ingroup gdcmHeader
  * \brief   
@@ -85,7 +86,7 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
 /**
  * \ingroup gdcmHeader
  * \brief   
- * @return  
+ * @return  TRUE if the close was successfull 
  */
 bool gdcmHeader::CloseFile(void) {
   int closed = fclose(fp);
@@ -137,6 +138,7 @@ gdcmHeader::~gdcmHeader (void) {
 // CRV      Curve
 // OLY      Overlays
 // PXL      Pixels
+// DL       Delimiters
 //
 
 /**
@@ -152,7 +154,7 @@ void gdcmHeader::CheckSwap()
    // 0x00000004. Finding the swap code in then straigthforward. Trouble
    // occurs when we can't find such group...
    guint32  s;
-   guint32  x=4;  // x : pour ntohs
+   guint32  x=4;  // x : for ntohs
    bool net2host; // true when HostByteOrder is the same as NetworkByteOrder
     
    int lgrLue;
@@ -547,6 +549,45 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a RLE Lossless one.
+ *
+ * @return  True when RLE Lossless found. False in all
+ *          other cases.
+ */
+bool gdcmHeader::IsRLELossLessTransferSyntax(void) {
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadElementValueSafe(Element);
+   string Transfer = Element->GetValue();
+   if ( Transfer == "1.2.840.10008.1.2.5" )
+      return true;
+   return false;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a JPEG200 one.0
+ *
+ * @return  True when JPEG2000 (Lossly or LossLess) found. False in all
+ *          other cases.
+ */
+bool gdcmHeader::IsJPEG2000(void) {
+   gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadElementValueSafe(Element);
+   string Transfer = Element->GetValue();
+   if (    (Transfer == "1.2.840.10008.1.2.4.90") 
+        || (Transfer == "1.2.840.10008.1.2.4.91") )
+      return true;
+   return false;
+}
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Predicate for dicom version 3 file.
  * @return  True when the file is a dicom version 3.
  */
@@ -782,7 +823,7 @@ guint16 gdcmHeader::SwapShort(guint16 a) {
 /**
  * \ingroup gdcmHeader
  * \brief   
- *
+ * @param ElVal 
  * @return 
  */
  void gdcmHeader::SkipElementValue(gdcmElValue * ElVal) {
@@ -792,7 +833,7 @@ guint16 gdcmHeader::SwapShort(guint16 a) {
 /**
  * \ingroup gdcmHeader
  * \brief   
- *
+ * @param NewSize
  * @return 
  */
  void gdcmHeader::SetMaxSizeLoadElementValue(long NewSize) {
@@ -834,6 +875,11 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    // Heuristic : a sequence "contains" a set of tags (called items). It looks
    // like the last tag of a sequence (the one that terminates the sequence)
    // has a group of 0xfffe (with a dummy length).
+   // Well ... 
+   // Actually (fffe e000) tells us an Element is beginning
+   //          (fffe e00d) tells us an Element just ended
+   //          (fffe e0dd) tells us the current SEQuence just ended
+  
    if( group == 0xfffe )
       SkipLoad = true;
 
@@ -935,9 +981,10 @@ void gdcmHeader::LoadElementValueSafe(gdcmElValue * ElVal) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   
+ * \brief Reads a supposed to be 16 Bits integer
+ * \     (swaps it depending on processor endianity) 
  *
- * @return 
+ * @return integer acts as a boolean
  */
 guint16 gdcmHeader::ReadInt16(void) {
    guint16 g;
@@ -959,7 +1006,8 @@ guint16 gdcmHeader::ReadInt16(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   
+ * \brief  Reads a supposed to be 32 Bits integer
+ * \       (swaps it depending on processor endianity)  
  *
  * @return 
  */
@@ -1027,6 +1075,7 @@ gdcmElValue* gdcmHeader::NewElValueByNumber(guint16 Group, guint16 Elem) {
  * @param   Value
  * @param   Group
  * @param   Elem
+ * \return integer acts as a boolean
  */
 int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Elem ) {
 
@@ -1046,10 +1095,12 @@ int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Ele
 
 /**
  * \ingroup gdcmHeader
- * \brief   TODO
- * @param   Value
+ * \brief   Modify or (Creates if not found) an element
+ * @param   Value new value
  * @param   Group
- * @param   Elem 
+ * @param   Elem
+ * \return integer acts as a boolean 
+ * 
  */
 int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
@@ -1060,18 +1111,37 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
    return(1);
 }  
 
+
 /**
  * \ingroup gdcmHeader
- * \brief   TODO
+ * \brief   Set a new value if the invoked element exists
+ * @param   Value
  * @param   Group
- * @param   Elem  
+ * @param   Elem
+ * \return integer acts as a boolean 
+ */
+int gdcmHeader::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
+
+   gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);
+   string v = Value;	
+   PubElValSet.SetElValueByNumber(v, Group, Elem);
+   return 1;
+} 
+
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Checks if a given ElValue (group,number) 
+ * \ exists in the Public ElValSet
+ * @param   Group
+ * @param   Elem
+ * @return  integer acts as a boolean  
  */
  
 int gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
    return (PubElValSet.CheckIfExistByNumber(Group, Elem));
  }
- 
- 
+  
 /**
  * \ingroup gdcmHeader
  * \brief   Build a new Element Value from all the low level arguments. 
@@ -1616,6 +1686,19 @@ void gdcmHeader::LoadElements(void) {
    for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
       LoadElementValue(tag->second);
    }
+   // Load 'non string' values
+   rewind(fp);    
+   string PhotometricInterpretation = GetPubElValByNumber(0x0028,0x0004);   
+   if( PhotometricInterpretation == "PALETTE COLOR " ){ 
+      LoadElementVoidArea(0x0028,0x1200);  // gray LUT   
+      LoadElementVoidArea(0x0028,0x1201);  // R    LUT
+      LoadElementVoidArea(0x0028,0x1202);  // G    LUT
+      LoadElementVoidArea(0x0028,0x1203);  // B    LUT
+      
+      LoadElementVoidArea(0x0028,0x1221);  // Segmented Red   Palette Color LUT Data
+      LoadElementVoidArea(0x0028,0x1222);  // Segmented Green Palette Color LUT Data
+      LoadElementVoidArea(0x0028,0x1223);  // Segmented Blue  Palette Color LUT Data
+   }
 }
 
 /**
@@ -1646,8 +1729,79 @@ int gdcmHeader::Write(FILE * fp, FileType type) {
 }
 
 //
+// ------------------------ 'non string' elements related functions
+//
+
+/**
+ * \ingroup       gdcmHeader
+ * \brief         Loads (from disk) the element content 
+ *                when a string is not suitable
+ */
+void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
+   gdcmElValue * Element= PubElValSet.GetElementByNumber(Group, Elem);
+   if ( !Element )
+      return NULL;
+   size_t o =(size_t)Element->GetOffset();
+   fseek(fp, o, SEEK_SET);
+   int l=Element->GetLength();
+   void * a = malloc(l);
+   if(!a) {
+   	cout << "Big Broblem (LoadElementVoidArea, malloc) " 
+   	     << hex << Group << " " << Elem << "\n";
+   	return NULL;
+   }  
+   int res = PubElValSet.SetVoidAreaByNumber(a, Group, Elem);
+   // TODO check the result 
+   size_t l2 = fread(a, 1, l ,fp);
+   if(l != l2) {
+   	cout << "Big Broblem (LoadElementVoidArea, fread) " 
+   	     << hex << Group << " " << Elem << "\n";
+   	free(a);
+   	return NULL;
+   }  
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Gets (from Header) the offset  of a 'non string' element value 
+ * \        (LoadElementValue has already be executed)
+ * @param   Group
+ * @param   Elem
+ * @return File Offset of the Element Value 
+ */
+ size_t gdcmHeader::GetPubElValOffsetByNumber(guint16 Group, guint16 Elem) {
+   gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);	 
+   if (!elValue) {
+      dbg.Verbose(1, "gdcmHeader::GetElValueByNumber",
+                  "failed to Locate gdcmElValue");
+      return (size_t)0;
+   }
+   return elValue->GetOffset();
+}
+
+/**
+ * \ingroup gdcmHeader
+* \brief   Gets (from Header) a 'non string' element value 
+ * \        (LoadElementValue has already be executed)  
+ * @param   Group
+ * @param   Elem
+ * @return Pointer to the 'non string' area
+ 
+ */
+ void * gdcmHeader::GetPubElValVoidAreaByNumber(guint16 Group, guint16 Elem) {
+   gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);	 
+   if (!elValue) {
+      dbg.Verbose(1, "gdcmHeader::GetElValueByNumber",
+                  "failed to Locate gdcmElValue");
+      return (NULL);
+   }
+   return elValue->GetVoidArea();
+}
+
+
+//
 // =============================================================================
-//   Accesors with euristics
+//   Heuristics based accessors
 //==============================================================================
 //
 
@@ -1742,23 +1896,19 @@ int gdcmHeader::GetSamplesPerPixel(void) {
    return atoi(StrSize.c_str());
 }
 
-
-/* ================ COMMENT OUT after unfreeze
-**
+/**
  * \ingroup gdcmHeader
  * \brief   Retrieve the Planar Configuration for RGB images
  *          (0 : RGB Pixels , 1 : R Plane + G Plane + B Plane)
  * 
  * @return  The encountered Planar Configuration, 0 by default.
- *
+ */
 int gdcmHeader::GetPlanarConfiguration(void) { 
    string StrSize = GetPubElValByNumber(0x0028,0x0006);
    if (StrSize == "gdcm::Unfound")
       return 0;
    return atoi(StrSize.c_str());
 }
-
- ======================================= */
 
 /**
  * \ingroup gdcmHeader
@@ -2010,4 +2160,199 @@ float gdcmHeader::GetZImagePosition(void) {
 }
 
 
+/**
+  * \ingroup gdcmHeader
+  * \brief gets the info from 0002,0010 : Transfert Syntax
+  * \           else 1.
+  * @return Transfert Syntax Name (as oposite to Transfert Syntax UID)
+  */
+string gdcmHeader::GetTransferSyntaxName(void) { 
+   string TransfertSyntax = GetPubElValByNumber(0x0002,0x0010);
+   if (TransfertSyntax == "gdcm::Unfound") {
+      dbg.Verbose(0, "gdcmHeader::GetTransferSyntaxName: unfound Transfert Syntax (0002,0010)");
+      return "Uncompressed ACR-NEMA";
+   }
+   // we do it only when we need it
+   gdcmTS * ts = gdcmGlobal::GetTS();
+   string tsName=ts->GetValue(TransfertSyntax);
+   //delete ts; // Seg Fault when deleted ?!
+   return tsName;
+}
 
+// -------------------------------- Lookup Table related functions ------------
+
+/**
+  * \ingroup gdcmHeader
+  * \brief gets the info from 0028,1101 : Lookup Table Desc-Red
+  * \           else 0
+  * @return Lookup Table Length 
+  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
+  */
+  
+int gdcmHeader::GetLUTLength(void) {
+   vector<string> tokens;
+   int LutLength;
+   //int LutDepth;
+   //int LutNbits;
+   // Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
+   string LutDescriptionR = GetPubElValByNumber(0x0028,0x1101);
+   if (LutDescriptionR == "gdcm::Unfound")
+      return 0;
+   string LutDescriptionG = GetPubElValByNumber(0x0028,0x1102);
+   if (LutDescriptionG == "gdcm::Unfound")
+      return 0;
+   string LutDescriptionB = GetPubElValByNumber(0x0028,0x1103);
+   if (LutDescriptionB == "gdcm::Unfound")
+      return 0;
+   if( (LutDescriptionR != LutDescriptionG) || (LutDescriptionR != LutDescriptionB) ) {
+      dbg.Verbose(0, "gdcmHeader::GetLUTLength: The CLUT R,G,B are not equal");
+      return 0;   
+   } 
+   cout << "Lut Description " << LutDescriptionR <<"\n";
+   tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+   Tokenize (LutDescriptionR, tokens, "\\");
+   LutLength=atoi(tokens[0].c_str());
+   //LutDepth=atoi(tokens[1].c_str());
+   //LutNbits=atoi(tokens[2].c_str());
+   tokens.clear();
+   return LutLength;
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief gets the info from 0028,1101 : Lookup Table Desc-Red
+  * \           else 0
+  * @return Lookup Table nBit 
+  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
+  */
+  
+int gdcmHeader::GetLUTNbits(void) {
+   vector<string> tokens;
+   //int LutLength;
+   //int LutDepth;
+   int LutNbits;
+   // Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
+   // Consistency already checked in GetLUTLength
+   string LutDescription = GetPubElValByNumber(0x0028,0x1101);
+   if (LutDescription == "gdcm::Unfound")
+      return 0;
+   tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+   Tokenize (LutDescription, tokens, "\\");
+   //LutLength=atoi(tokens[0].c_str());
+   //LutDepth=atoi(tokens[1].c_str());
+   LutNbits=atoi(tokens[2].c_str());
+   tokens.clear();
+   return LutNbits;
+}
+  
+
+/**
+  * \ingroup gdcmHeader
+  * \brief gets the info from 0028,1201 : Lookup Table Red
+  * \           else 0
+  * @return Lookup Table Red 
+  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
+  */ 
+void * gdcmHeader::GetLUTRed(void) {
+   return GetPubElValVoidAreaByNumber(0x0028,0x1201);  
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief gets the info from 0028,1202 : Lookup Table Green
+  * \           else 0
+  * @return Lookup Table Red 
+  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
+  */ 
+  void * gdcmHeader::GetLUTGreen(void) {
+   return GetPubElValVoidAreaByNumber(0x0028,0x1202);
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief gets the info from 0028,1202 : Lookup Table Blue
+  * \           else 0
+  * @return Lookup Table Blue 
+  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
+  */ 
+void * gdcmHeader::GetLUTBlue(void) {
+   return GetPubElValVoidAreaByNumber(0x0028,0x1203);
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief 
+  * @return Lookup Table RGB
+  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
+  * \        and (0028,1201),(0028,1202),(0028,1202) are found
+  * \warning : hazardous ! Use better GetPubElValVoidAreaByNumber
+  */ 
+void * gdcmHeader::GetLUTRGB(void) {
+// Not so easy : see 
+// http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
+// and  OT-PAL-8-face.dcm
+
+   if (GetPubElValByNumber(0x0028,0x0004) == "gdcm::Unfound") {
+   dbg.Verbose(0, "gdcmHeader::GetLUTRGB: unfound Photometric Interpretation");
+   	return NULL;
+   }  
+   void * LutR,*LutG,*LutB;
+   int l;
+     
+  // Maybe, some day we get an image 
+  // that respects the definition ...
+  // Let's consider no ones does.
+  
+   l= GetLUTLength();  
+   if(l==0) 
+     return (NULL);     
+   int nBits=GetLUTNbits();
+  // a virer quand on aura trouve UNE image 
+  // qui correspond VRAIMENT à la definition !
+    cout << "l " << l << " nBits " << nBits;
+   
+   l= l/(nBits/8);
+    
+   LutR =GetPubElValVoidAreaByNumber(0x0028,0x1201);
+   LutG =GetPubElValVoidAreaByNumber(0x0028,0x1202);
+   LutB =GetPubElValVoidAreaByNumber(0x0028,0x1203);
+   
+   // Warning : Any value for nBits  as to be considered as 8
+   //           Any value for Length as to be considered as 256
+   // That's DICOM ...
+   
+   // Just wait before removing the following code
+   /*
+   if (nBits == 16) {
+      guint16 * LUTRGB, *rgb;
+      LUTRGB = rgb = (guint16 *) malloc(3*l*sizeof( guint16));
+      guint16 * r = (guint16 *)LutR;
+      guint16 * g = (guint16 *)LutG;
+      guint16 * b = (guint16 *)LutB;
+      for(int i=0;i<l;i++) {
+         *rgb++ = *r++;
+         *rgb++ = *g++;
+         *rgb++ = *b++;
+      }
+      return(LUTRGB); 
+   } else
+   
+   */ {      // we assume it's always 8 Bits
+      l=256; // we assume ...
+      unsigned char * LUTRGB, *rgb;
+      LUTRGB = rgb = (unsigned char *) malloc(3*l*sizeof( char));
+      unsigned char * r = (unsigned char *)LutR;
+      unsigned char * g = (unsigned char *)LutG;
+      unsigned char * b = (unsigned char *)LutB;
+      for(int i=0;i<l;i++) {
+      //cout << "lut16 " << i << " : " << *r << " " << *g << " " << *b << "\n";
+      printf("lut 8 %d : %d %d %d \n",i,*r,*g,*b);
+         *rgb++ = *r++;
+         *rgb++ = *g++;
+         *rgb++ = *b++;
+      } 
+      free(LutR); free(LutB); free(LutG);
+      return(LUTRGB);   
+   } 
+}
+ 

@@ -19,9 +19,14 @@ private:
    int Parsed;               // weather already parsed
    std::string OrigFileName; // To avoid file overwrite
    void SwapZone(void* im, int swap, int lgr, int nb);
+   
    bool ReadPixelData(void * destination);
    
-   int gdcm_read_JPEG_file (void * image_buffer);   
+   int gdcm_read_JPEG_file     (void * image_buffer); // For JPEG 8 Bits
+   int gdcm_read_JPEG_file12   (void * image_buffer); // For JPEG 12 Bits
+   int gdcm_read_JPEG2000_file (void * image_buffer); // For JPEG 2000 (TODO)
+   int gdcm_read_RLE_file      (void * image_buffer); // For Run Length Encoding (TODO) 
+    
   
 protected:
    int WriteBase(std::string FileName, FileType type);
@@ -62,11 +67,13 @@ public:
 	// Aucun test n'est fait sur l'"Endiannerie" du processeur.
 	// Ca sera à l'utilisateur d'appeler son Reader correctement
 		
-   int WriteRawData  (std::string nomFichier);
-   int WriteDcmImplVR(std::string nomFichier);
-   int WriteDcmImplVR(const char * nomFichier);
-   int WriteDcmExplVR(std::string nomFichier);
-   int WriteAcr      (std::string nomFichier);
+   int WriteRawData  (std::string fileName);
+   int WriteDcmImplVR(std::string fileName);
+   int WriteDcmImplVR(const char * fileName);
+   int WriteDcmExplVR(std::string fileName);
+   int WriteAcr      (std::string fileName);
+   
+   bool ParsePixelData(void);
 };
 
 #endif

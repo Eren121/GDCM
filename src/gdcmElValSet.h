@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.15 2003/06/26 13:07:01 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.16 2003/07/23 08:43:03 jpr Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -40,6 +40,8 @@ public:
 	
    int SetElValueLengthByNumber(guint32 l, guint16 group, guint16 element);
    int SetElValueLengthByName  (guint32 l, std::string TagName);
+   
+   int SetVoidAreaByNumber(void *a, guint16 Group, guint16 Elem );
 
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
    int CheckIfExistByNumber(guint16 Group, guint16 Elem );

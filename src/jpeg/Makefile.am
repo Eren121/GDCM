@@ -1,1 +1,2 @@
-SUBDIRS = libijg8
+SUBDIRS = libijg12 \
+          libijg8

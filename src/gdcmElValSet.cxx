@@ -14,7 +14,7 @@ gdcmElValSet::~gdcmElValSet() {
    }
    tagHt.clear();
    // Since Add() adds symetrical in both tagHt and NameHt we can
-   // assume all the pointed gdcmElValues are allready cleaned-up when
+   // assume all the pointed gdcmElValues are already cleaned-up when
    // we cleaned tagHt.
    NameHt.clear();
 }
@@ -33,7 +33,6 @@ void gdcmElValSet::Add(gdcmElValue * newElValue) {
 	tagHt [newElValue->GetKey()]  = newElValue;
 	NameHt[newElValue->GetName()] = newElValue;
 }
-
 
 /**
  * \ingroup gdcmElValSet
@@ -68,24 +67,28 @@ void gdcmElValSet::Print(ostream & os) {
       e = tag->second->GetElement();
       v = tag->second->GetValue();
       o = tag->second->GetOffset();
-      d = _CreateCleanString(v); // TODO : trouver qq chose moins goret
+      d = _CreateCleanString(v);  // replace non printable characters by '.'
       d2=d;
 		 
       os << tag->first << ": ";
-      //os << "[" << v << "]";
-      os << "[" << d2 << "]";
-      os << "[" << tag->second->GetName()  << "]";
-      os << "[" << tag->second->GetVR()    << "]"; 
-      
-      if ( (g == 0x0002) && (e == 0x0010) ) {	   
-         os << " [" << ts->GetValue(v) << "]";   
-      }
-      
-      // liberer 'd' ici ?
-      
       os << " lgr : " << tag->second->GetLength();
       os << ", Offset : " << o;
       os << " x(" << hex << o << dec << ") ";
+      os << "\t[" << tag->second->GetVR()    << "]";
+      os << "\t[" << tag->second->GetName()  << "]";       
+      os << "\t[" << d2 << "]";
+      
+      // Display the UID value (instead of displaying the rough code)  
+      if (g == 0x0002) {  // Some more to be displayed ?
+         if ( (e == 0x0010) || (e == 0x0002) ) 	   
+            os << "  ==>\t[" << ts->GetValue(v) << "]";   
+      } else {
+         if (g == 0x0008) {
+            if ( (e == 0x0016) || (e == 0x1150)  ) 	   
+               os << "  ==>\t[" << ts->GetValue(v) << "]"; 
+         }
+      }              
+      free(d);     
       os << endl;
    }
 } 
@@ -230,10 +233,27 @@ guint32 gdcmElValSet::GenerateFreeTagKeyInGroup(guint16 group) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param   length
+ * @param   area
  * @param   group 
  * @param   element 
  * @return  
+ */
+int gdcmElValSet::SetVoidAreaByNumber(void * area,
+                                      guint16 group, guint16 element) {
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! tagHt.count(key))
+      return 0;
+   tagHt[key]->SetVoidArea(area);	 
+   return 1 ;		
+}
+
+/**
+ * \ingroup gdcmElValSet
+ * \brief   
+ * @param   length
+ * @param   group 
+ * @param   element 
+ * @return  int acts as a boolean
  */
 int gdcmElValSet::SetElValueLengthByNumber(guint32 length,
                                            guint16 group, guint16 element) {
@@ -243,8 +263,6 @@ int gdcmElValSet::SetElValueLengthByNumber(guint32 length,
    tagHt[key]->SetLength(length);	 
    return 1 ;		
 }
-
-
 /**
  * \ingroup gdcmElValSet
  * \brief   
@@ -262,7 +280,7 @@ int gdcmElValSet::SetElValueLengthByName(guint32 length, string TagName) {
 /**
  * \ingroup gdcmElValSet
  * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
- * @param   SkipSequence
+ * @param   SkipSequence TRUE if we don't want to write Sequences (ACR-NEMA Files)
  * @param   type
  */
 void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
@@ -300,13 +318,16 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
                 
       if (SkipSequence && vr == "SQ") continue;
       
-         // pas SEQUENCE en ACR-NEMA
-         // WARNING : pb CERTAIN
-         //           si on est descendu 'a l'interieur' des SQ 
-         //
-         // --> la descente a l'interieur' des SQ 
-         // devra etre faite avec une liste chainee, pas avec une HTable...
+         // Still unsolved problem :
+         // we cannot find the 'Sequence Delimitation Item'
+         // since it's at the end of the Hash Table
+         // (fffe,e0dd) 
              
+         // pas SEQUENCE en ACR-NEMA
+         // WARNING : 
+         // --> la descente a l'interieur' des SQ 
+         // devrait etre faite avec une liste chainee, pas avec une HTable...
+            
       if ( groupHt.count(key) == 0) { // we just read the first elem of a given group
          if (el == 0x0000) {	      // the first elem is 0x0000
             groupHt[key] = 0;	      // initialize group length 
@@ -322,6 +343,7 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
          groupHt[key] += 2 + 2 + 4 + elem->GetLength(); 
       } 
    }
+
    unsigned short int gr_bid;
   
    for (GroupHT::iterator g = groupHt.begin(); // for each group we found
@@ -350,7 +372,7 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
  * \ingroup gdcmElValSet
  * \brief   
  * @param   type
- * @param   _fp
+ * @param   _fp 
  * @return  
  */
 void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
@@ -377,18 +399,21 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
       lgr = tag2->second->GetLength();
       val = tag2->second->GetValue().c_str();
       vr =  tag2->second->GetVR();
+      
+     // cout << "Tag "<< hex << gr << " " << el << "\n";
 
       if ( type == ACR ) { 
-         if (gr < 0x0008) continue;
-         // if (gr %2)   continue; // pour voir
-         if (vr == "SQ" ) continue;
+         if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
+         if (gr %2)         continue; // ignore shadow groups
+         if (vr == "SQ" )   continue; // ignore Sequences
+         if (gr == 0xfffe ) continue; // ignore delimiters
       } 
 
       fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
       fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
 
       if ( (type == ExplicitVR) && (gr <= 0x0002) ) {
-         // On est en EXPLICIT VR
+         // EXPLICIT VR
          guint16 z=0, shortLgr;
          fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
 
@@ -400,35 +425,36 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
             shortLgr=lgr;
             fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
          }
-      } else {
+      } else { // IMPLICIT VR
          fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
       }
 
-      tokens.erase(tokens.begin(),tokens.end());
-      Tokenize (tag2->second->GetValue(), tokens, "\\");
-
       if (vr == "US" || vr == "SS") {
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize (tag2->second->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size();i++) {
             val_uint16 = atoi(tokens[i].c_str());
             ptr = &val_uint16;
             fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
          }
+         tokens.clear();
          continue;
       }
       if (vr == "UL" || vr == "SL") {
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize (tag2->second->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size();i++) {
             val_uint32 = atoi(tokens[i].c_str());
             ptr = &val_uint32;
             fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
          }
+         tokens.clear();
          continue;
-      }
-      tokens.clear();
-
-      // Les pixels ne sont pas chargés dans l'element !
+      }     
+      // Pixels are never loaded in the element !
       if ((gr == 0x7fe0) && (el == 0x0010) ) break;
 
-      fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); //valeur Elem
+      fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
    }
 }
 

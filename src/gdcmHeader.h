@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.34 2003/07/07 10:26:14 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.35 2003/07/23 08:43:03 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -125,7 +125,9 @@ public:
    bool IsJPEGExtendedProcess2_4TransferSyntax(void); 
    bool IsJPEGExtendedProcess3_5TransferSyntax(void);
    bool IsJPEGSpectralSelectionProcess6_8TransferSyntax(void); 
+   bool IsRLELossLessTransferSyntax(void); 
    bool IsJPEGLossless(void); 
+   bool IsJPEG2000(void); 
    bool IsDicomV3(void); 
       
    virtual void ParseHeader(bool exception_on_error = false)
@@ -148,7 +150,11 @@ public:
    std::string GetPubElValRepByName  (std::string TagName);
    std::string GetPubElValByNumber   (guint16 group, guint16 element);
    std::string GetPubElValRepByNumber(guint16 group, guint16 element);
-
+   
+   size_t GetPubElValOffsetByNumber(guint16 Group, guint16 Elem);
+   void * GetPubElValVoidAreaByNumber(guint16 Group, guint16 Elem);   
+   void * LoadElementVoidArea(guint16 Group, guint16 Element);
+   
    TagElValueHT & GetPubElVal(void) { return PubElValSet.GetTagHt(); };
    void   PrintPubElVal(std::ostream & os = std::cout);
    void   PrintPubDict (std::ostream & os = std::cout);
@@ -174,16 +180,19 @@ public:
 
    int ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem); 
    int ReplaceOrCreateByNumber(     char * Value, guint16 Group, guint16 Elem);                                
-                               
+   int ReplaceIfExistByNumber (     char * Value, guint16 Group, guint16 Elem);
+                                  
+   int Write(FILE *, FileType);
+   
+ // Some heuristic based accessors, end user intended 
+  
    int GetXSize(void);  
    int GetYSize(void);
    int GetZSize(void);
    int GetBitsStored(void);
    int GetSamplesPerPixel(void);
    
-/* ================ COMMENT OUT after unfreeze
    int GetPlanarConfiguration(void);
-   ======================================= */
 
    int GetPixelSize(void);       
    std::string GetPixelType(void);  
@@ -196,7 +205,15 @@ public:
    float GetYImagePosition(void);
    float GetZImagePosition(void);
    
-   int Write(FILE *, FileType);
+   string GetTransferSyntaxName(void);
+   int    GetLUTLength(void);
+   int    GetLUTNbits(void);
+   void * GetLUTRed(void);
+   void * GetLUTGreen(void);
+   void * GetLUTBlue(void);
+   void * GetLUTRGB(void);
+           
+
 };
 
 #endif

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.6 2003/06/17 17:44:48 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.7 2003/07/23 08:43:03 jpr Exp $
 
 #ifndef GDCMELVALUE_H
 #define GDCMELVALUE_H
@@ -25,6 +25,8 @@ private:
    friend class gdcmHeader;
 public:
    std::string  value;
+   void * voidArea;  // unsecure memory area to hold 'non string' values 
+                      // (ie : Lookup Tables, overlays)
    size_t Offset;     // Offset from the begining of file for direct user access
 	
    gdcmElValue(gdcmDictEntry*);
@@ -35,18 +37,20 @@ public:
 	
    gdcmDictEntry * GetDictEntry(void) { return entry;    };
    
-   guint16      GetGroup(void)   { return entry->GetGroup();  };
-   guint16      GetElement(void) { return entry->GetElement();};
-   std::string  GetKey(void)     { return entry->GetKey();    };
-   std::string  GetName(void)    { return entry->GetName();   };
-   std::string  GetVR(void)      { return entry->GetVR();     };
-   std::string  GetValue(void)   { return value;              };
-   size_t       GetOffset(void)  { return Offset;             };   
-   guint32      GetLength(void)  { return LgrElem;            };
+   guint16      GetGroup(void)    { return entry->GetGroup();  };
+   guint16      GetElement(void)  { return entry->GetElement();};
+   std::string  GetKey(void)      { return entry->GetKey();    };
+   std::string  GetName(void)     { return entry->GetName();   };
+   std::string  GetVR(void)       { return entry->GetVR();     };
+   std::string  GetValue(void)    { return value;              };
+   void *       GetVoidArea(void) { return voidArea;           };
+   size_t       GetOffset(void)   { return Offset;             };   
+   guint32      GetLength(void)   { return LgrElem;            };
    
    void         SetVR(std::string v)     { entry->SetVR(v);   }; 
    void         SetLength(guint32 l)     { LgrElem = l;       };  	
-   void         SetValue(std::string val){ value = val;       };	
+   void         SetValue(std::string val){ value = val;       };
+   void         SetVoidArea(void * area) { voidArea = area;   };	
 
 };
 

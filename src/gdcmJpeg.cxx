@@ -1,7 +1,66 @@
 #include <stdio.h>
 #include "gdcmFile.h"
 
+// for jpeglib defined BITS_IN_JSAMPLE
+#include "jpeg/libijg8/jBitsInJsample.h"
+// FIXME : find something else when both 
+// libJpeg8 and libJpeg12 will be active
+
 #define DEBUG 0
+
+/*
+DICOM provides a mechanism for supporting the use of JPEG Image Compression 
+through the Encapsulated Format (see PS 3.3 of the DICOM Standard). 
+Annex A defines a number of Transfer Syntaxes which reference 
+the JPEG Standard and provide a number of lossless (bit preserving) 
+and lossy compression schemes.
+In order to facilitate interoperability of implementations conforming 
+to the DICOM Standard which elect to use one or more 
+of the Transfer Syntaxes for JPEG Image Compression, the following policy is specified:
+
+  Any implementation which conforms to the DICOM Standard and has elected 
+  to support any one of the Transfer Syntaxes for lossless JPEG Image Compression, 
+  shall support the following lossless compression: 
+  The subset (first-order horizontal prediction [Selection Value 1) of JPEG Process 14 
+  (DPCM, non-hierarchical with Huffman coding) (see Annex F of the DICOM Standard).
+
+   Any implementation which conforms to the DICOM Standard and has elected 
+   to support any one of the Transfer Syntaxes for 8-bit lossy JPEG Image Compression, 
+   shall support the JPEG Baseline Compression (coding Process 1).
+
+   Any implementation which conforms to the DICOM Standard and has elected 
+   to support any one of the Transfer Syntaxes for 12-bit lossy JPEG Image Compression, 
+   shall support the JPEG Compression Process 4.
+
+Note: The DICOM conformance statement shall differentiate between implementations 
+that can simply receive JPEG encoded images and those that can receive and process 
+JPEG encoded images (see PS 3.2 of the DICOM Standard).
+
+The use of the DICOM Encapsulated Format to support JPEG Compressed Pixel Data 
+implies that the Data Elements which are related to the Native Format Pixel Data encoding
+(e.g. Bits Allocated, Bits Stored, High Bit, Pixel Representation, Rows, Columns, etc.) 
+shall contain values which are consistent with the characteristics 
+of the uncompressed pixel data from which the compressed Data Stream was derived. 
+The Pixel Data characteristics included in the JPEG Interchange Format 
+shall be used to decode the compressed data stream.
+
+Run Length Encoding Compression
+
+DICOM provides a mechanism for supporting the use of Run Length Encoding (RLE) 
+Compression which is a byte oriented lossless compression scheme through 
+the encapsulated Format (see PS 3.3 of this Standard). 
+Annex G of the DICOM Standard defines RLE Compression and its Transfer Syntax.
+
+Note: The RLE Compression algorithm described in Annex G 
+of the DICOM Standard is the compression used in 
+the TIFF 6.0 specification known as the "PackBits" scheme.
+
+The use of the DICOM Encapsulated Format to support RLE Compressed Pixel Data 
+implies that the Data Elements which are related to the Native Format Pixel Data encoding (
+e.g. Bits Allocated, Bits Stored, High Bit, Pixel Representation, Rows, Columns, etc.) 
+shall contain values which are consistent with the characteristics 
+of the uncompressed pixel data from which the compressed data is derived
+*/
 
 /*
  * <setjmp.h> is used for the optional error recovery mechanism shown in
@@ -121,6 +180,7 @@ char *pimage;
   JSAMPARRAY buffer;		/* Output row buffer */
   
   // rappel :
+  // ------
   // typedef unsigned char JSAMPLE;
   // typedef JSAMPLE FAR *JSAMPROW;	/* ptr to one image row of pixel samples. */
   // typedef JSAMPROW *JSAMPARRAY;	/* ptr to some rows (a 2-D sample array) */
@@ -221,6 +281,7 @@ if (DEBUG) {
    * if we asked for color quantization.
    * In this example, we need to make an output work buffer of the right size.
    */ 
+   
   /* JSAMPLEs per row in output buffer */
   row_stride = cinfo.output_width * cinfo.output_components;
   
@@ -259,10 +320,15 @@ if (DEBUG) {
     
     //(void) jpeg_read_scanlines(&cinfo, pimage, 1);
     
-     (void) jpeg_read_scanlines(&cinfo, buffer, 1); 
-     memcpy( pimage, buffer[0],row_stride*2 ); // FIXME : *2  car 16 bits?!?
-     
-    pimage+=row_stride*2;  // FIXME : *2 car 16 bits?!?
+     (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+      
+     if ( BITS_IN_JSAMPLE == 8) {
+         memcpy( pimage, buffer[0],row_stride); 
+         pimage+=row_stride;
+     } else {
+         memcpy( pimage, buffer[0],row_stride*2 ); // FIXME : *2  car 16 bits?!?
+         pimage+=row_stride*2;                     // FIXME : *2 car 16 bits?!?     
+     }
   }
  
   /* Step 7: Finish decompression */
@@ -321,5 +387,10 @@ if (DEBUG) printf("Entree Step 8\n");
  * On some systems you may need to set up a signal handler to ensure that
  * temporary files are deleted if the program is interrupted.  See libjpeg.doc.
  */
+ 
+
+
+
+
  
 
