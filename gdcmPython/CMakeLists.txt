@@ -45,9 +45,9 @@ ADD_LIBRARY(pygdcm ${GDCM_PYTHON_SOURCES})
 
 
 IF(GDCM_VTK)
-#  INCLUDE_DIRECTORIES(
-#    ${GDCM_SOURCE_DIR}/vtk
-#  )
+  INCLUDE_DIRECTORIES(
+    ${GDCM_SOURCE_DIR}/vtk
+  )
 
   SET(vtkgdcmPython_la_SOURCES
 #      vtkGdcmReaderPython.cxx
