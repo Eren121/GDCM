@@ -1,4 +1,14 @@
 2004-06-30 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * Test/CmakeList.txt: removed the following from black list (to be coherent
+     with removal from gdcmData):
+      - gdcm-MR-PHILIPS-16-Multi-Seq.fixed.dcm
+      - gdcm-MR-PHILIPS-16.dcm
+      - US.3405.1.dcm
+     Added the following because after last cvs update, they cause
+       ctest -R TestReadWriteReadCompare 
+     to segfault:
+      - gdcm-MR-SIEMENS-16-1.acr
+      - oldACR00001.ima
    * Test/TestReadWriteReadCompare.cxx was properly written (with a call
      to gdcmFile::SetImageData()) BUT since gdcmFile is brain damaged (see
      new comments in this file) we temporarily (sigh) move to a weaker

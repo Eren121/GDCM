@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/29 23:43:19 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2004/06/30 00:10:59 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2530,16 +2530,12 @@ void gdcmDocument::Parse7FE0 (void)
          // Parse fragments of the current Fragment (Frame)    
          //------------------ scanning (not reading) fragment pixels
          guint32 nbRleSegments = ReadInt32();
-         printf("   Nb of RLE Segments : %d\n",nbRleSegments);
  
          //// Reading RLE Segments Offset Table
          guint32 RleSegmentOffsetTable[15];
          for(int k=1; k<=15; k++) {
             ftellRes=ftell(fp);
             RleSegmentOffsetTable[k] = ReadInt32();
-            printf("        at : %x Offset Segment %d : %d (%x)\n",
-                    (unsigned)ftellRes,k,RleSegmentOffsetTable[k],
-                    RleSegmentOffsetTable[k]);
          }
 
          // skipping (not reading) RLE Segments
@@ -2548,9 +2544,6 @@ void gdcmDocument::Parse7FE0 (void)
                 RleSegmentLength[k]=   RleSegmentOffsetTable[k+1]
                                      - RleSegmentOffsetTable[k];
                 ftellRes=ftell(fp);
-                printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
-                        k,(unsigned)RleSegmentLength[k],
-                       (unsigned)RleSegmentLength[k], (unsigned)ftellRes);
                 SkipBytes(RleSegmentLength[k]);    
              }
           }
@@ -2558,9 +2551,6 @@ void gdcmDocument::Parse7FE0 (void)
           RleSegmentLength[nbRleSegments]= fragmentLength 
                                          - RleSegmentOffsetTable[nbRleSegments];
           ftellRes=ftell(fp);
-          printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
-                  nbRleSegments,(unsigned)RleSegmentLength[nbRleSegments],
-                  (unsigned)RleSegmentLength[nbRleSegments],(unsigned)ftellRes);
           SkipBytes(RleSegmentLength[nbRleSegments]); 
       } 
 
