@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:18:26 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/06/21 21:51:01 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,11 +22,6 @@
 #include "gdcmHeader.h"
 
 //-----------------------------------------------------------------------------
-
-class GDCM_EXPORT gdcmHeaderHelper : public gdcmHeader
-{
-};
-
 /*
  * \defgroup gdcmSerieHeader
  * \brief  
