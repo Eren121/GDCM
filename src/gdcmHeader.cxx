@@ -243,6 +243,8 @@ void gdcmHeader::GetPixels(size_t lgrTotale, void* Pixels) {
 	fread(Pixels, 1, lgrTotale, fp);
 }
 
+
+
 /**
  * \ingroup   gdcmHeader
  * \brief     Find the value representation of the current tag.
@@ -254,6 +256,11 @@ void gdcmHeader::GetPixels(size_t lgrTotale, void* Pixels) {
  *                       effectivement lue
  * @return               longueur retenue pour le champ 
  */
+ 
+// -->
+// --> Oops
+// --> C'etait la description de quoi, ca?
+// -->
 
 void gdcmHeader::FindVR( ElValue *ElVal) {
 	if (filetype != ExplicitVR)
@@ -334,11 +341,66 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
 /**
  * \ingroup gdcmHeader
  * \brief   Determines if the Transfer Syntax was allready encountered
- *          and if it corresponds to a Big Endian one.
+ *          and if it corresponds to a ImplicitVRLittleEndian one.
+ *
+ * @return  True when ImplicitVRLittleEndian found. False in all other cases.
+ */
+bool gdcmHeader::IsImplicitVRLittleEndianTransferSyntax(void) {
+	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+	if ( !Element )
+		return false;
+	LoadElementValueSafe(Element);
+	string Transfer = Element->GetValue();
+	if ( Transfer == "1.2.840.10008.1.2" )
+		return true;
+	return false;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was allready encountered
+ *          and if it corresponds to a ExplicitVRLittleEndian one.
+ *
+ * @return  True when ExplicitVRLittleEndian found. False in all other cases.
+ */
+bool gdcmHeader::IsExplicitVRLittleEndianTransferSyntax(void) {
+	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+	if ( !Element )
+		return false;
+	LoadElementValueSafe(Element);
+	string Transfer = Element->GetValue();
+	if ( Transfer == "1.2.840.10008.1.2.1" )
+		return true;
+	return false;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was allready encountered
+ *          and if it corresponds to a DeflatedExplicitVRLittleEndian one.
+ *
+ * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
+ */
+bool gdcmHeader::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
+	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+	if ( !Element )
+		return false;
+	LoadElementValueSafe(Element);
+	string Transfer = Element->GetValue();
+	if ( Transfer == "1.2.840.10008.1.2.1.99" )
+		return true;
+	return false;
+}
+
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was allready encountered
+ *          and if it corresponds to a Explicit VR Big Endian one.
  *
  * @return  True when big endian found. False in all other cases.
  */
-bool gdcmHeader::IsBigEndianTransferSyntax(void) {
+bool gdcmHeader::IsExplicitVRBigEndianTransferSyntax(void) {
 	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
 	if ( !Element )
 		return false;
@@ -349,11 +411,92 @@ bool gdcmHeader::IsBigEndianTransferSyntax(void) {
 	return false;
 }
 
-void gdcmHeader::FixFoundLength(ElValue * ElVal, guint32 FoudLength) {
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was allready encountered
+ *          and if it corresponds to a JPEGBaseLineProcess1 one.
+ *
+ * @return  True when JPEGBaseLineProcess1found. False in all other cases.
+ */
+bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
+	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+	if ( !Element )
+		return false;
+	LoadElementValueSafe(Element);
+	string Transfer = Element->GetValue();
+	if ( Transfer == "1.2.840.10008.1.2.4.50" )
+		return true;
+	return false;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was allready encountered
+ *          and if it corresponds to a JPEGExtendedProcess2-4 one.
+ *
+ * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
+ */
+bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
+	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+	if ( !Element )
+		return false;
+	LoadElementValueSafe(Element);
+	string Transfer = Element->GetValue();
+	if ( Transfer == "1.2.840.10008.1.2.4.51" )
+		return true;
+	return false;
+}
+
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was allready encountered
+ *          and if it corresponds to a JPEGExtendeProcess3-5 one.
+ *
+ * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
+ */
+bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
+	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+	if ( !Element )
+		return false;
+	LoadElementValueSafe(Element);
+	string Transfer = Element->GetValue();
+	if ( Transfer == "1.2.840.10008.1.2.4.52" )
+		return true;
+	return false;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was allready encountered
+ *          and if it corresponds to a JPEGSpectralSelectionProcess6-8 one.
+ *
+ * @return  True when JPEGSpectralSelectionProcess6-8 found. False in all other cases.
+ */
+bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
+	ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+	if ( !Element )
+		return false;
+	LoadElementValueSafe(Element);
+	string Transfer = Element->GetValue();
+	if ( Transfer == "1.2.840.10008.1.2.4.53" )
+		return true;
+	return false;
+}
+
+//
+// Euhhhhhhh
+// Il y en a encore DIX-SEPT, comme ça.
+// Il faudrait trouver qq chose + rusé ...
+//
+
+
+void gdcmHeader::FixFoundLength(ElValue * ElVal, guint32 FoundLength) {
 	// Heuristic: a final fix.
-	if ( FoudLength == 0xffffffff)
-		FoudLength = 0;
-	ElVal->SetLength(FoudLength);
+	if ( FoundLength == 0xffffffff)
+		FoundLength = 0;
+	ElVal->SetLength(FoundLength);
 }
 
 guint32 gdcmHeader::FindLengthOB(void) {
@@ -442,7 +585,7 @@ void gdcmHeader::FindLength(ElValue * ElVal) {
 		// hands on a big endian encoded file: we switch the swap code to
 		// big endian and proceed...
 		if ( (element  == 0x000) && (length16 == 0x0400) ) {
-			if ( ! IsBigEndianTransferSyntax() )
+			if ( ! IsExplicitVRBigEndianTransferSyntax() )
 				throw Error::FileReadError(fp, "gdcmHeader::FindLength");
 			length16 = 4;
 			SwitchSwapToBigEndian();
@@ -628,6 +771,11 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	}
 	
 	// FIXME The exact size should be length if we move to strings or whatever
+	
+	//
+	// QUESTION : y a-t-il une raison pour ne pas utiliser g_malloc ici ?
+	//
+	
 	char* NewValue = (char*)malloc(length+1);
 	if( !NewValue) {
 		dbg.Verbose(1, "LoadElementValue: Failed to allocate NewValue");

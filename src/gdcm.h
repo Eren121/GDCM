@@ -61,7 +61,7 @@ using namespace std;  // string type lives in the std namespace on VC++
 
 #ifdef _MSC_VER 
 typedef  unsigned short guint16;
-typedef  unsigned int guint32;
+typedef  unsigned int   guint32;
 #endif
 
 #ifdef _MSC_VER
@@ -227,6 +227,12 @@ public:
 // 	+ ce qu'on est allé chercher dans le Dictionnaire Dicom)
 //
 
+// QUESTION:
+//
+// Ne faudrait-il pas trouver un autre nom, qui preterait moins à confusion?
+// ElValue n'EST PAS la 'valeur d'un Element', mais la reunion d'infos
+// trouvees dans l'Entete" du fichier ET dans le Dictionnaire
+//
 
 // The dicom header of a Dicom file contains a set of such ELement VALUES
 // (when successfuly parsed against a given Dicom dictionary)
@@ -272,7 +278,7 @@ public:
 //
 
 ////////////////////////////////////////////////////////////////////////////
-// Container for a set of succefully parsed ElValues.
+// Container for a set of successfully parsed ElValues.
 typedef map<TagKey, ElValue*> TagElValueHT;
 typedef map<string, ElValue*> TagElValueNameHT;
 
@@ -285,9 +291,9 @@ public:
 	void Print(ostream &);
 	void PrintByName(ostream &);
 	ElValue* GetElementByNumber(guint32 group, guint32 element);
-	ElValue* GetElementByName(string);
-	string GetElValueByNumber(guint32 group, guint32 element);
-	string GetElValueByName(string);
+	ElValue* GetElementByName  (string);
+	string   GetElValueByNumber(guint32 group, guint32 element);
+	string   GetElValueByName  (string);
 	TagElValueHT & GetTagHt(void);
 };
 
@@ -338,6 +344,9 @@ private:
 	// outside of the elements:
 	guint16 grPixel;
 	guint16 numPixel;
+	// Ne faudrait-il pas une indication sur la presence ou non
+	// du 'groupe des pixels' dans l'entete?
+	// (voir pb du DICOMDIR)
 	
 	// Swap code (little, big, big-bad endian): this code is not fixed
 	// during parsing.FIXME sw should be an enum e.g.
@@ -369,7 +378,23 @@ private:
 	void SwitchSwapToBigEndian(void);
 	void FixFoundLength(ElValue*, guint32);
 	bool IsAnInteger(ElValue *);
-	bool IsBigEndianTransferSyntax(void);
+	
+	bool IsImplicitVRLittleEndianTransferSyntax(void);
+	bool IsExplicitVRLittleEndianTransferSyntax(void);
+	bool IsDeflatedExplicitVRLittleEndianTransferSyntax(void);
+	bool IsExplicitVRBigEndianTransferSyntax(void);
+	bool IsJPEGBaseLineProcess1TransferSyntax(void);
+	bool IsJPEGExtendedProcess2_4TransferSyntax(void);	
+	bool IsJPEGExtendedProcess3_5TransferSyntax(void);
+	bool IsJPEGSpectralSelectionProcess6_8TransferSyntax(void);	
+//
+// Euhhhhhhh
+// Il y en a encore DIX-SEPT, comme ça.
+// Il faudrait trouver qq chose + rusé ...
+//	
+	
+	
+	
 	void SetMaxSizeLoadElementValue(long);
 	ElValue       * ReadNextElement(void);
 	gdcmDictEntry * IsInDicts(guint32, guint32);
@@ -460,7 +485,7 @@ public:
 //////           relationship between a gdcmFile and gdcmHeader is of
 //////           type IS_A or HAS_A !
 
-class GDCM_EXPORT gdcmFile: gdcmHeader
+class GDCM_EXPORT gdcmFile: public gdcmHeader
 {
 private:
 	void* Data;
@@ -491,11 +516,13 @@ public:
 
 	// Allocates necessary memory, copies the data (image[s]/volume[s]) to
 	// newly allocated zone and return a pointer to it:
-	// TODO Swig void * GetImageData();
+	
+	 void * GetImageData();
 	
 	// Returns size (in bytes) of required memory to contain data
 	// represented in this file.
-	// TODO Swig size_t GetImageDataSize();
+	
+	size_t GetImageDataSize();
 	
 	// Copies (at most MaxSize bytes) of data to caller's memory space.
 	// Returns an error code on failure (if MaxSize is not big enough)
