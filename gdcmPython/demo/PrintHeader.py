@@ -24,6 +24,6 @@ print "##############################################################"
 print "### Display all the elements and their respective values"
 print "## found in the ", FileName, " file."
 print "##############################################################"
-ValDict = toRead.GetPubEntry()
+ValDict = toRead.GetEntry()
 for key in ValDict.keys():
 	print "[%s] = [%s]" %(key, ValDict[key])

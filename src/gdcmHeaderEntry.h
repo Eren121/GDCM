@@ -24,9 +24,11 @@ public:
    inline std::string  GetName(void)      { return entry->GetName();   };
    inline std::string  GetVR(void)        { return entry->GetVR();     };
    inline std::string  GetValue(void)     { return value;              };
+
    inline void *       GetVoidArea(void)  { return voidArea;           };
    inline size_t       GetOffset(void)    { return Offset;             };   
    inline guint32      GetLength(void)    { return UsableLength;       };   
+
    inline void         SetVR(std::string v)      { entry->SetVR(v);          };    
    inline void         SetLength(guint32 l)      { ReadLength=UsableLength=l;};
       
@@ -38,14 +40,6 @@ public:
    inline void         SetValue(std::string val) { value = val;      };
    inline void         SetVoidArea(void * area)  { voidArea = area;  };
    
-   void                Print (std::ostream & os = std::cout); 
-   /**
-    * \ingroup gdcmHeaderEntry
-    * \brief   Sets the print level for the Dicom Header Elements
-    * \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
-    */
-   void  SetPrintLevel(int level) { printLevel = level; };
-   
    /**
     * \ingroup gdcmHeaderEntry
     * \brief   Sets the offset of the Dicom Element
@@ -53,15 +47,6 @@ public:
     * @param   of offset to be set
     */
    inline void gdcmHeaderEntry::SetOffset(size_t of) { Offset = of; };
-
-   /**
-    * \ingroup gdcmHeaderEntry
-    * \brief   Sets the DicEntry of the current Dicom Element
-    * @param   NewEntry pointer to the DictEntry
-    */ 
-   inline void gdcmHeaderEntry::SetDictEntry(gdcmDictEntry *NewEntry) { 
-      entry = NewEntry; 
-   };
 
    /**
     * \ingroup gdcmHeaderEntry
@@ -82,6 +67,24 @@ public:
 
    /**
     * \ingroup gdcmHeaderEntry
+    * \brief   tells us if the VR of the current Dicom Element is Unkonwn
+    * @return true if the VR is unkonwn
+    */ 
+   inline bool   gdcmHeaderEntry::IsVRUnknown(void) { 
+      return entry->IsVRUnknown(); 
+   };
+
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets the DicEntry of the current Dicom Element
+    * @param   NewEntry pointer to the DictEntry
+    */ 
+   inline void gdcmHeaderEntry::SetDictEntry(gdcmDictEntry *NewEntry) { 
+      entry = NewEntry;
+   };
+
+   /**
+    * \ingroup gdcmHeaderEntry
     * \brief   Gets the DicEntry of the current Dicom Element
     * @return  the DicEntry of the current Dicom Element
     */
@@ -91,12 +94,11 @@ public:
 
    /**
     * \ingroup gdcmHeaderEntry
-    * \brief   tells us if the VR of the current Dicom Element is Unkonwn
-    * @return true if the VR is unkonwn
-    */ 
-   inline bool   gdcmHeaderEntry::IsVRUnknown(void) { 
-      return entry->IsVRUnknown(); 
-   };
+    * \brief   Sets the print level for the Dicom Header Elements
+    * \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
+    */
+   void  SetPrintLevel(int level) { printLevel = level; };
+   void                Print (std::ostream & os = std::cout); 
 
 private:
    // FIXME: In fact we should be more specific and use :

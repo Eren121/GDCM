@@ -18,11 +18,11 @@ typedef std::string VRKey;
 typedef std::string VRAtr;
 typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
-typedef std::multimap<TagKey, gdcmHeaderEntry*> TagHeaderEntryHT;
-typedef std::pair<TagKey, gdcmHeaderEntry*> PairHT;
+typedef std::multimap<TagKey, gdcmHeaderEntry *> TagHeaderEntryHT;
+typedef std::pair<TagKey, gdcmHeaderEntry *> PairHT;
 typedef std::pair<TagHeaderEntryHT::iterator,TagHeaderEntryHT::iterator> IterHT; 
 
-typedef std::list<gdcmHeaderEntry*> ListTag; // for linking together the Elements
+typedef std::list<gdcmHeaderEntry *> ListTag; // for linking together the Elements
 
 typedef std::string GroupKey;
 typedef std::map<GroupKey, int> GroupHT;
@@ -117,6 +117,8 @@ protected:
    virtual void  *LoadEntryVoidArea       (guint16 Group, guint16 Element);
    virtual bool   SetEntryVoidAreaByNumber(void *a, guint16 Group, guint16 Elem);
 
+   virtual void UpdateShaEntries(void);
+
 // Header entry
    gdcmHeaderEntry *GetHeaderEntryByName  (std::string Name);
    gdcmHeaderEntry *GetHeaderEntryByNumber(guint16 group, guint16 element); 
@@ -142,6 +144,7 @@ private:
    void AddHeaderEntry       (gdcmHeaderEntry *);
    void FindHeaderEntryLength(gdcmHeaderEntry *);
    void FindHeaderEntryVR    (gdcmHeaderEntry *);
+   bool CheckHeaderEntryVR   (gdcmHeaderEntry *, VRKey);
 
    void SkipHeaderEntry          (gdcmHeaderEntry *);
    void FixHeaderEntryFoundLength(gdcmHeaderEntry *, guint32);

@@ -42,12 +42,12 @@ public:
 	bool RemoveEntry (guint16 group, guint16 element);
 
 // Tag
-	gdcmDictEntry * GetTagByName(TagName name);
-	gdcmDictEntry * GetTagByNumber(guint16 group, guint16 element);
+	gdcmDictEntry *GetDictEntryByName(TagName name);
+	gdcmDictEntry *GetDictEntryByNumber(guint16 group, guint16 element);
 
-   std::list<std::string> *GetTagNames(void);
+   std::list<std::string> *GetDictEntryNames(void);
    std::map<std::string, std::list<std::string> > *
-        GetTagNamesByCategory(void);
+        GetDictEntryNamesByCategory(void);
 
    /**
     * \ingroup gdcmDict

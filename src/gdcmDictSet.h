@@ -33,9 +33,9 @@ public:
 
    void Print(std::ostream& os);
 
-   std::list<std::string> *GetPubDictTagNames(void);
+   std::list<std::string> *GetPubDictEntryNames(void);
    std::map<std::string, std::list<std::string> > *
-       GetPubDictTagNamesByCategory(void);
+       GetPubDictEntryNamesByCategory(void);
 
    void LoadDictFromFile(std::string FileName, DictKey Name);
 

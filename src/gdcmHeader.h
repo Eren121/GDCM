@@ -93,6 +93,8 @@ public:
    inline virtual bool SetEntryByNumber(std::string content,guint16 group, guint16 element)
       { return(gdcmParser::SetEntryByNumber(content,group,element)); }
 
+   inline virtual void UpdateShaEntries(void)
+      { gdcmParser::UpdateShaEntries(); }
 
 // Read (used in gdcmFile)
    void SetImageDataSize(size_t ExpectedSize);

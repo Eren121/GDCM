@@ -78,9 +78,9 @@ void gdcmDictSet::Print(std::ostream& os)
  * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string> *gdcmDictSet::GetPubDictTagNames(void) 
+std::list<std::string> *gdcmDictSet::GetPubDictEntryNames(void) 
 {
-   return(GetDefaultPubDict()->GetTagNames());
+   return(GetDefaultPubDict()->GetDictEntryNames());
 }
 
 /** 
@@ -107,9 +107,9 @@ std::list<std::string> *gdcmDictSet::GetPubDictTagNames(void)
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-std::map<std::string, std::list<std::string> > *gdcmDictSet::GetPubDictTagNamesByCategory(void) 
+std::map<std::string, std::list<std::string> > *gdcmDictSet::GetPubDictEntryNamesByCategory(void) 
 {
-   return(GetDefaultPubDict()->GetTagNamesByCategory());
+   return(GetDefaultPubDict()->GetDictEntryNamesByCategory());
 }
 
 /**

@@ -497,7 +497,7 @@ int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element )
  */
 std::string gdcmParser::GetEntryByName(std::string tagName) 
 {
-   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
 
@@ -520,7 +520,7 @@ std::string gdcmParser::GetEntryByName(std::string tagName)
  */
 std::string gdcmParser::GetEntryVRByName(std::string tagName) 
 {
-   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
 
@@ -579,7 +579,7 @@ std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element)
  */
 bool gdcmParser::SetEntryByName(std::string content,std::string tagName) 
 {
-   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return false;				    
 
@@ -649,13 +649,13 @@ bool gdcmParser::SetEntryByNumber(std::string content,
  *          the given value.
  * \warning Use with extreme caution.
  * @param   length new length to substitute with
- * @param   group   group of the ElVal to modify
- * @param   element element of the ElVal to modify
+ * @param   group   group of the entry to modify
+ * @param   element element of the Entry to modify
  * @return  1 on success, 0 otherwise.
  */
 
 bool gdcmParser::SetEntryLengthByNumber(guint32 length, 
-                                           guint16 group, guint16 element) 
+                                        guint16 group, guint16 element) 
 {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
@@ -755,6 +755,38 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,guint16 group, guint16 ele
 
 /**
  * \ingroup gdcmParser
+ * \brief   Update the entries with the shadow dictionary. Only odd entries are
+ *          analized
+ */
+void gdcmParser::UpdateShaEntries(void)
+{
+   if(!RefShaDict)
+      return;
+
+   gdcmDictEntry *entry;
+   std::string vr;
+
+   for(ListTag::iterator it=listEntries.begin();
+       it!=listEntries.end();
+       ++it)
+   {
+      // Odd group => from public dictionary
+      if((*it)->GetGroup()%1==0)
+         continue;
+
+      // Peer group => search the corresponding dict entry
+      entry=RefShaDict->GetDictEntryByNumber((*it)->GetGroup(),(*it)->GetElement());
+      if(entry)
+      {
+         (*it)->SetDictEntry(entry);
+         vr=(*it)->GetVR();
+         CheckHeaderEntryVR(*it,vr);
+      }
+   }
+}
+
+/**
+ * \ingroup gdcmParser
  * \brief   Searches within the Header Entries for a Dicom Element of
  *          a given tag.
  * @param   tagName name of the searched Dicom Element.
@@ -763,7 +795,7 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,guint16 group, guint16 ele
  */
  gdcmHeaderEntry *gdcmParser::GetHeaderEntryByName(std::string tagName) 
  {
-   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return NULL;
 
@@ -1141,17 +1173,17 @@ void gdcmParser::LoadHeaderEntries(void)
  * \brief         Loads the element content if it's length is not bigger
  *                than the value specified with
  *                gdcmParser::SetMaxSizeLoadEntry()
- * @param        ElVal Header Entry (Dicom Element) to be dealt with
+ * @param         Entry Header Entry (Dicom Element) to be dealt with
  */
-void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry * ElVal) 
+void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry) 
 {
    size_t item_read;
-   guint16 group  = ElVal->GetGroup();
-   std::string  vr= ElVal->GetVR();
-   guint32 length = ElVal->GetLength();
+   guint16 group  = Entry->GetGroup();
+   std::string  vr= Entry->GetVR();
+   guint32 length = Entry->GetLength();
    bool SkipLoad  = false;
 
-   fseek(fp, (long)ElVal->GetOffset(), SEEK_SET);
+   fseek(fp, (long)Entry->GetOffset(), SEEK_SET);
    
    // the test was commented out to 'go inside' the SeQuences
    // we don't any longer skip them !
@@ -1168,15 +1200,15 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry * ElVal)
 
    if ( SkipLoad ) 
    {
-      ElVal->SetLength(0);
-      ElVal->SetValue("gdcm::Skipped");
+      Entry->SetLength(0);
+      Entry->SetValue("gdcm::Skipped");
       return;
    }
 
    // When the length is zero things are easy:
    if ( length == 0 ) 
    {
-      ElVal->SetValue("");
+      Entry->SetValue("");
       return;
    }
 
@@ -1187,10 +1219,10 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry * ElVal)
    {
       std::ostringstream s;
       s << "gdcm::NotLoaded.";
-      s << " Address:" << (long)ElVal->GetOffset();
-      s << " Length:"  << ElVal->GetLength();
-      s << " x(" << std::hex << ElVal->GetLength() << ")";
-      ElVal->SetValue(s.str());
+      s << " Address:" << (long)Entry->GetOffset();
+      s << " Length:"  << Entry->GetLength();
+      s << " x(" << std::hex << Entry->GetLength() << ")";
+      Entry->SetValue(s.str());
       return;
    }
    
@@ -1201,7 +1233,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry * ElVal)
    // contain a set of integers (not a single one) 
     	
    // Any compacter code suggested (?)
-   if ( IsHeaderEntryAnInteger(ElVal) ) 
+   if ( IsHeaderEntryAnInteger(Entry) ) 
    {
       guint32 NewInt;
       std::ostringstream s;
@@ -1240,7 +1272,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry * ElVal)
 #ifdef GDCM_NO_ANSI_STRING_STREAM
       s << std::ends; // to avoid oddities on Solaris
 #endif //GDCM_NO_ANSI_STRING_STREAM
-      ElVal->SetValue(s.str());
+      Entry->SetValue(s.str());
       return;	
    }
    
@@ -1258,10 +1290,10 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry * ElVal)
    {
       free(NewValue);
       dbg.Verbose(1, "gdcmParser::LoadElementValue","unread element value");
-      ElVal->SetValue("gdcm::UnRead");
+      Entry->SetValue("gdcm::UnRead");
       return;
    }
-   ElVal->SetValue(NewValue);
+   Entry->SetValue(NewValue);
    free(NewValue);
 }
 
@@ -1284,15 +1316,15 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
 /**
  * \ingroup gdcmParser
  * \brief   
- * @param   ElVal : Header Entry whose length of the value shall be loaded. 
+ * @param   Entry Header Entry whose length of the value shall be loaded. 
 
  * @return 
  */
- void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry * ElVal) 
+ void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry * Entry) 
  {
-   guint16 element = ElVal->GetElement();
-   guint16 group   = ElVal->GetGroup();
-   std::string  vr = ElVal->GetVR();
+   guint16 element = Entry->GetElement();
+   guint16 group   = Entry->GetGroup();
+   std::string  vr = Entry->GetVR();
    guint16 length16;
    if( (element == 0x0010) && (group == 0x7fe0) ) 
    {
@@ -1301,7 +1333,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
                      "we reached 7fe0 0010");
    }   
    
-   if ( (filetype == ExplicitVR) && ! ElVal->IsImplicitVr() ) 
+   if ( (filetype == ExplicitVR) && ! Entry->IsImplicitVr() ) 
    {
       if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) 
       {
@@ -1313,10 +1345,10 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
 
          if ( (vr == "OB") && (length32 == 0xffffffff) ) 
          {
-            ElVal->SetLength(FindHeaderEntryLengthOB());
+            Entry->SetLength(FindHeaderEntryLengthOB());
             return;
          }
-         FixHeaderEntryFoundLength(ElVal, length32); 
+         FixHeaderEntryFoundLength(Entry, length32); 
          return;
       }
 
@@ -1362,8 +1394,8 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
          SwitchSwapToBigEndian();
          // Restore the unproperly loaded values i.e. the group, the element
          // and the dictionary entry depending on them.
-         guint16 CorrectGroup   = SwapShort(ElVal->GetGroup());
-         guint16 CorrectElem    = SwapShort(ElVal->GetElement());
+         guint16 CorrectGroup   = SwapShort(Entry->GetGroup());
+         guint16 CorrectElem    = SwapShort(Entry->GetElement());
          gdcmDictEntry * NewTag = GetDictEntryByNumber(CorrectGroup,
                                                        CorrectElem);
          if (!NewTag) 
@@ -1373,7 +1405,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
          }
          // FIXME this can create a memory leaks on the old entry that be
          // left unreferenced.
-         ElVal->SetDictEntry(NewTag);
+         Entry->SetDictEntry(NewTag);
       }
        
       // Heuristic: well some files are really ill-formed.
@@ -1386,7 +1418,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
          // Unknown Sequence Length 
       }
 
-      FixHeaderEntryFoundLength(ElVal, (guint32)length16);
+      FixHeaderEntryFoundLength(Entry, (guint32)length16);
       return;
    }
 
@@ -1396,24 +1428,22 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
    // on Data elements "Implicit and Explicit VR Data Elements shall
    // not coexist in a Data Set and Data Sets nested within it".]
    // Length is on 4 bytes.
-   FixHeaderEntryFoundLength(ElVal, ReadInt32());
+   FixHeaderEntryFoundLength(Entry, ReadInt32());
    return;
 }
 
 /**
  * \ingroup   gdcmParser
  * \brief     Find the Value Representation of the current Dicom Element.
- * @param ElVal
+ * @param     Entry
  */
-void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *ElVal) 
+void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry) 
 {
    if (filetype != ExplicitVR)
       return;
 
    char VR[3];
-   std::string vr;
    int lgrLue;
-   char msg[100]; // for sprintf. Sorry
 
    long PositionOnEntry = ftell(fp);
    // Warning: we believe this is explicit VR (Value Representation) because
@@ -1423,12 +1453,38 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *ElVal)
    // within an explicit VR file. Hence we make sure the present tag
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
-   bool RealExplicit = true;
    
    lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
    VR[2]=0;
-   vr = std::string(VR);
-      
+   if(!CheckHeaderEntryVR(Entry,VR))
+   {
+      fseek(fp, PositionOnEntry, SEEK_SET);
+      // When this element is known in the dictionary we shall use, e.g. for
+      // the semantics (see the usage of IsAnInteger), the VR proposed by the
+      // dictionary entry. Still we have to flag the element as implicit since
+      // we know now our assumption on expliciteness is not furfilled.
+      // avoid  .
+      if ( Entry->IsVRUnknown() )
+         Entry->SetVR("Implicit");
+      Entry->SetImplicitVr();
+   }
+}
+
+/**
+ * \ingroup   gdcmParser
+ * \brief     Check the correspondance between the VR of the header entry
+ *            and the taken VR. If they are different, the header entry is 
+ *            updated with the new VR.
+ * @param     Entry
+ * @param     VR
+ * @return    false if the VR is incorrect of if the VR isn't referenced
+ *            otherwise, it returns true
+*/
+bool gdcmParser::CheckHeaderEntryVR   (gdcmHeaderEntry *Entry, VRKey vr)
+{
+   char msg[100]; // for sprintf
+   bool RealExplicit = true;
+
    // Assume we are reading a falsely explicit VR file i.e. we reached
    // a tag where we expect reading a VR but are in fact we read the
    // first to bytes of the length. Then we will interogate (through find)
@@ -1437,7 +1493,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *ElVal)
    // expected VR read happens to be non-ascii characters we consider
    // we hit falsely explicit VR tag.
 
-   if ( (!isalpha(VR[0])) && (!isalpha(VR[1])) )
+   if ( (!isalpha(vr[0])) && (!isalpha(vr[1])) )
       RealExplicit = false;
 
    // CLEANME searching the dicom_vr at each occurence is expensive.
@@ -1446,49 +1502,37 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *ElVal)
    if ( RealExplicit && !gdcmGlobal::GetVR()->Count(vr) )
       RealExplicit= false;
 
-   if ( RealExplicit ) 
+   if ( !RealExplicit ) 
    {
-      if ( ElVal->IsVRUnknown() ) 
-      {
-         // When not a dictionary entry, we can safely overwrite the VR.
-         ElVal->SetVR(vr);
-         return; 
-      }
-      if ( ElVal->GetVR() == vr ) 
-      {
-         // The VR we just read and the dictionary agree. Nothing to do.
-         return;
-      }
+      // We thought this was explicit VR, but we end up with an
+      // implicit VR tag. Let's backtrack.   
+      sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", 
+                   Entry->GetGroup(),Entry->GetElement());
+      dbg.Verbose(1, "gdcmParser::FindVR: ",msg);
+
+      return(false);
+   }
+
+   if ( Entry->IsVRUnknown() ) 
+   {
+      // When not a dictionary entry, we can safely overwrite the VR.
+      Entry->SetVR(vr);
+   }
+   else if ( Entry->GetVR() != vr ) 
+   {
       // The VR present in the file and the dictionary disagree. We assume
       // the file writer knew best and use the VR of the file. Since it would
       // be unwise to overwrite the VR of a dictionary (since it would
       // compromise it's next user), we need to clone the actual DictEntry
       // and change the VR for the read one.
-      gdcmDictEntry* NewTag = NewVirtualDictEntry(ElVal->GetGroup(),
-                                 ElVal->GetElement(),
+      gdcmDictEntry* NewTag = NewVirtualDictEntry(Entry->GetGroup(),
+                                 Entry->GetElement(),
                                  vr,
                                  "FIXME",
-                                 ElVal->GetName());
-      ElVal->SetDictEntry(NewTag);
-      return; 
+                                 Entry->GetName());
+      Entry->SetDictEntry(NewTag);
    }
-   
-   // We thought this was explicit VR, but we end up with an
-   // implicit VR tag. Let's backtrack.   
-   
-      sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", 
-                   ElVal->GetGroup(),ElVal->GetElement());
-      dbg.Verbose(1, "gdcmParser::FindVR: ",msg);
-   
-   fseek(fp, PositionOnEntry, SEEK_SET);
-   // When this element is known in the dictionary we shall use, e.g. for
-   // the semantics (see the usage of IsAnInteger), the VR proposed by the
-   // dictionary entry. Still we have to flag the element as implicit since
-   // we know now our assumption on expliciteness is not furfilled.
-   // avoid  .
-   if ( ElVal->IsVRUnknown() )
-      ElVal->SetVR("Implicit");
-   ElVal->SetImplicitVr();
+   return(true); 
 }
 
 /**
@@ -1498,7 +1542,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *ElVal)
  * @param entry 
  * @return 
  */
-void gdcmParser::SkipHeaderEntry(gdcmHeaderEntry * entry) 
+void gdcmParser::SkipHeaderEntry(gdcmHeaderEntry *entry) 
 {
     SkipBytes(entry->GetLength());
 }
@@ -1509,9 +1553,9 @@ void gdcmParser::SkipHeaderEntry(gdcmHeaderEntry * entry)
  *          the parser went Jabberwocky) one can hope improving things by
  *          applying this heuristic.
  */
-void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry * ElVal, guint32 FoundLength) 
+void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 FoundLength) 
 {
-   ElVal->SetReadLength(FoundLength); // will be updated only if a bug is found
+   Entry->SetReadLength(FoundLength); // will be updated only if a bug is found
 		     
    if ( FoundLength == 0xffffffff) 
    {
@@ -1524,26 +1568,26 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry * ElVal, guint32 Foun
    {
       // The following 'if' will be removed when there is no more
       // images on Creatis HDs with a 13 length for Manufacturer...
-      if ( (ElVal->GetGroup() != 0x0008) ||  
-           ( (ElVal->GetElement() != 0x0070) && (ElVal->GetElement() != 0x0080) ) ) {
+      if ( (Entry->GetGroup() != 0x0008) ||  
+           ( (Entry->GetElement() != 0x0070) && (Entry->GetElement() != 0x0080) ) ) {
       // end of remove area
          FoundLength =10;
-         ElVal->SetReadLength(10); // a bug is to be fixed
+         Entry->SetReadLength(10); // a bug is to be fixed
       }
    }
 
    // to fix some garbage 'Leonardo' Siemens images
    // May be commented out to avoid overhead
-   else if ( (ElVal->GetGroup() == 0x0009) &&
-       ( (ElVal->GetElement() == 0x1113) || (ElVal->GetElement() == 0x1114) ) )
+   else if ( (Entry->GetGroup() == 0x0009) &&
+       ( (Entry->GetElement() == 0x1113) || (Entry->GetElement() == 0x1114) ) )
    {
       FoundLength =4;
-      ElVal->SetReadLength(4); // a bug is to be fixed 
+      Entry->SetReadLength(4); // a bug is to be fixed 
    } 
    // end of fix
 	 
    // to try to 'go inside' SeQuences (with length), and not to skip them        
-   else if ( ElVal->GetVR() == "SQ") 
+   else if ( Entry->GetVR() == "SQ") 
    { 
       if (enableSequences)    // only if the user does want to !
          FoundLength =0; 	 
@@ -1558,7 +1602,7 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry * ElVal, guint32 Foun
    // if we set the length to zero IsHeaderEntryAnInteger() breaks...
    // if we don't, we lost 28800 characters from the Header :-(
                                                  
-   else if(ElVal->GetGroup() == 0xfffe)
+   else if(Entry->GetGroup() == 0xfffe)
    { 
                        // sometimes, length seems to be wrong                                      
       FoundLength =0;  // some more clever checking to be done !
@@ -1567,22 +1611,22 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry * ElVal, guint32 Foun
 		       // causes troubles :-(                                                     
    }     
     
-   ElVal->SetUsableLength(FoundLength);
+   Entry->SetUsableLength(FoundLength);
 }
 
 /**
  * \ingroup gdcmParser
  * \brief   Apply some heuristics to predict wether the considered 
  *          element value contains/represents an integer or not.
- * @param   ElVal The element value on which to apply the predicate.
+ * @param   Entry The element value on which to apply the predicate.
  * @return  The result of the heuristical predicate.
  */
-bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry * ElVal) 
+bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) 
 {
-   guint16 element = ElVal->GetElement();
-   guint16 group   = ElVal->GetGroup();
-   std::string  vr = ElVal->GetVR();
-   guint32 length  = ElVal->GetLength();
+   guint16 element = Entry->GetElement();
+   guint16 group   = Entry->GetGroup();
+   std::string  vr = Entry->GetVR();
+   guint32 length  = Entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
@@ -1972,13 +2016,13 @@ gdcmDictEntry *gdcmParser::GetDictEntryByName(std::string Name)
    }
    if (RefPubDict) 
    {
-      found = RefPubDict->GetTagByName(Name);
+      found = RefPubDict->GetDictEntryByName(Name);
       if (found)
          return found;
    }
    if (RefShaDict) 
    {
-      found = RefShaDict->GetTagByName(Name);
+      found = RefShaDict->GetDictEntryByName(Name);
       if (found)
          return found;
    }
@@ -2005,13 +2049,13 @@ gdcmDictEntry *gdcmParser::GetDictEntryByNumber(guint16 group,guint16 element)
    }
    if (RefPubDict) 
    {
-      found = RefPubDict->GetTagByNumber(group, element);
+      found = RefPubDict->GetDictEntryByNumber(group, element);
       if (found)
          return found;
    }
    if (RefShaDict) 
    {
-      found = RefShaDict->GetTagByNumber(group, element);
+      found = RefShaDict->GetDictEntryByNumber(group, element);
       if (found)
          return found;
    }
@@ -2026,7 +2070,7 @@ gdcmDictEntry *gdcmParser::GetDictEntryByNumber(guint16 group,guint16 element)
 gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void) 
 {
    guint16 g,n;
-   gdcmHeaderEntry *NewElVal;
+   gdcmHeaderEntry *NewEntry;
    
    g = ReadInt16();
    n = ReadInt16();
@@ -2036,18 +2080,18 @@ gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void)
       // has to be considered as finished.
       return (gdcmHeaderEntry *)0;
    
-   NewElVal = NewHeaderEntryByNumber(g, n);
-   FindHeaderEntryVR(NewElVal);
-   FindHeaderEntryLength(NewElVal);
+   NewEntry = NewHeaderEntryByNumber(g, n);
+   FindHeaderEntryVR(NewEntry);
+   FindHeaderEntryLength(NewEntry);
 	
    if (errno == 1) 
    {
       // Call it quits
       return NULL;
    }
-   NewElVal->SetOffset(ftell(fp));  
+   NewEntry->SetOffset(ftell(fp));  
    //if ( (g==0x7fe0) && (n==0x0010) ) 
-   return NewElVal;
+   return NewEntry;
 }
 
 /**
@@ -2063,14 +2107,14 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
    if (!NewTag)
       NewTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "Unknown", Name);
 
-   gdcmHeaderEntry* NewElVal = new gdcmHeaderEntry(NewTag);
-   if (!NewElVal) 
+   gdcmHeaderEntry* NewEntry = new gdcmHeaderEntry(NewTag);
+   if (!NewEntry) 
    {
       dbg.Verbose(1, "gdcmParser::ObtainHeaderEntryByName",
                   "failed to allocate gdcmHeaderEntry");
       return (gdcmHeaderEntry *)0;
    }
-   return NewElVal;
+   return NewEntry;
 }  
 
 /**
@@ -2105,14 +2149,14 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
    if (!NewTag)
       NewTag = NewVirtualDictEntry(Group, Elem);
 
-   gdcmHeaderEntry* NewElVal = new gdcmHeaderEntry(NewTag);
-   if (!NewElVal) 
+   gdcmHeaderEntry* NewEntry = new gdcmHeaderEntry(NewTag);
+   if (!NewEntry) 
    {
       dbg.Verbose(1, "gdcmParser::NewHeaderEntryByNumber",
                   "failed to allocate gdcmHeaderEntry");
       return NULL;
    }
-   return NewElVal;
+   return NewEntry;
 }
 
 /**
@@ -2128,24 +2172,24 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
 gdcmHeaderEntry *gdcmParser::NewManualHeaderEntryToPubDict(std::string NewTagName, 
                                                            std::string VR) 
 {
-   gdcmHeaderEntry *NewElVal = (gdcmHeaderEntry *)0;
+   gdcmHeaderEntry *NewEntry = NULL;
    guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
    guint32 FreeElem = 0;
-   gdcmDictEntry *NewEntry = (gdcmDictEntry *)0;
+   gdcmDictEntry *DictEntry = NULL;
 
    FreeElem = GenerateFreeTagKeyInGroup(StuffGroup);
    if (FreeElem == UINT32_MAX) 
    {
-      dbg.Verbose(1, "gdcmHeader::NewManualElValToPubDict",
+      dbg.Verbose(1, "gdcmHeader::NewManualHeaderEntryToPubDict",
                      "Group 0xffff in Public Dict is full");
       return NULL;
    }
 
-   NewEntry = NewVirtualDictEntry(StuffGroup, FreeElem,
+   DictEntry = NewVirtualDictEntry(StuffGroup, FreeElem,
                                 VR, "GDCM", NewTagName);
-   NewElVal = new gdcmHeaderEntry(NewEntry);
-   AddHeaderEntry(NewElVal);
-   return NewElVal;
+   NewEntry = new gdcmHeaderEntry(DictEntry);
+   AddHeaderEntry(NewEntry);
+   return NewEntry;
 }
 
 /**

@@ -211,7 +211,7 @@ bool gdcmDict::RemoveEntry (guint16 group, guint16 element) {
  *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry *gdcmDict::GetTagByName(TagName name) {
+gdcmDictEntry *gdcmDict::GetDictEntryByName(TagName name) {
    if ( ! NameHt.count(name))
       return NULL; 
    return NameHt.find(name)->second;
@@ -224,7 +224,7 @@ gdcmDictEntry *gdcmDict::GetTagByName(TagName name) {
  * @param   element element of the entry to be found
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry *gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
+gdcmDictEntry *gdcmDict::GetDictEntryByNumber(guint16 group, guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! KeyHt.count(key))
       return NULL; 
@@ -238,7 +238,7 @@ gdcmDictEntry *gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
  * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string> *gdcmDict::GetTagNames(void) 
+std::list<std::string> *gdcmDict::GetDictEntryNames(void) 
 {
    std::list<std::string> *Result = new std::list<std::string>;
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
@@ -272,7 +272,7 @@ std::list<std::string> *gdcmDict::GetTagNames(void)
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-std::map<std::string, std::list<std::string> > *gdcmDict::GetTagNamesByCategory(void) 
+std::map<std::string, std::list<std::string> > *gdcmDict::GetDictEntryNamesByCategory(void) 
 {
    std::map<std::string, std::list<std::string> > *Result = new std::map<std::string, std::list<std::string> >;
 
