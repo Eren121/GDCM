@@ -25,12 +25,9 @@ int main(int argc, char* argv[])
 
 	premier = argv[1];
 	f1 = new gdcmFile(premier);
-	f1->LoadElements();
 	
 	deuxieme = argv[2];
 	f2 = new gdcmFile(deuxieme);
-	f2->LoadElements();
-	printf("apres LoadElements\n");
 	
 	//f1->PrintPubElVal();
 	

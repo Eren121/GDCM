@@ -1,17 +1,24 @@
+2003-03-31 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader.h: LoadElements() is not a public method anymore
+        (to avoid double call by end user).
+      * Test/*.cxx LoadElements() doesn't need to be called explicitely
+        by end user, since gdcmHeader::gdcmHeader now handles it.
+
 2003-03-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcm/Doc many doxygen changes:
         - Doxyfile now has two different versions, DoxyfileUsers that generates
-          the html.users end users oriented documentation and DoxyfileDeveloppers
-          that generates the html.developper developper oriented documentation.
+          the html.users end users oriented documentation and
+          DoxyfileDeveloppers that generates the html.developper developper
+          oriented documentation.
         - README changed accordingly
         - requirement.txt removed (old design info moved to TODO).
-        - Additional files DoxyInstallation.txt, DoxyIntroduction.txt, DoxyMainPage.txt,
-          DoxyPython.txt provide more information.
+        - Additional files DoxyInstallation.txt, DoxyIntroduction.txt,
+          DoxyMainPage.txt, DoxyPython.txt provide more information.
         - Note: the website http://www.creatis.insa-lyon.fr/Public/Gdcm/ can now
           be updated by simply regenerating the docs with doxygen and copying 
           html.developper and html.users to tux:/home/httpd/html/Public/Gdcm
-      * src/gdcmElValSet.cxx: stl <map>.count() can only return 0 or 1. Hence all
-        the tests in the form "if (<map>.count() >1)" were removed.
+      * src/gdcmElValSet.cxx: stl <map>.count() can only return 0 or 1. Hence
+        all the tests in the form "if (<map>.count() >1)" were removed.
       * src/gdcmFile.cxx: cosmetic changes to avoid messages of doxygen about
         ill-formed documentation sections.
       * src/gdcmHeader.cxx: ditto

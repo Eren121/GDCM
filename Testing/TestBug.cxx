@@ -9,7 +9,6 @@ int main(int argc, char* argv[])
 		e1 = new gdcmHeader(argv[1]);
 	else
 		e1 = new gdcmHeader("test.acr");
-	e1->LoadElements();
 	e1->PrintPubDict();
 }
 

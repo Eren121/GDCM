@@ -97,6 +97,7 @@ private:
    void SkipElementValue(gdcmElValue *);
    void FixFoundLength(gdcmElValue*, guint32);
    bool IsAnInteger(gdcmElValue *);
+   void LoadElements(void);
    
    bool IsImplicitVRLittleEndianTransferSyntax(void);
    bool IsExplicitVRLittleEndianTransferSyntax(void);
@@ -122,7 +123,6 @@ protected:
    int write(ostream&);   
    int anonymize(ostream&);  // FIXME : anonymize should be a friend ?
 public:
-   void LoadElements(void);
    bool IsReadable(void);
    virtual void ParseHeader(bool exception_on_error = false)
      throw(gdcmFormatError);
