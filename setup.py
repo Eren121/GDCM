@@ -19,7 +19,7 @@ if(os.name=='posix'):
 	libraries=["stdc++"]
 	macros   =[('__STDC_LIMIT_MACROS', '1')]
 
-	VTK_PATH="/usr"
+	VTKPATH="/usr"
 	vtkWrapper="vtkWrapPython"
 else:
 	targetDir=os.path.join('lib','site-packages')
@@ -27,13 +27,13 @@ else:
 	macros   =[]
 
 	try:
-		VTK_PATH=os.environ['VTK_PATH']
+		VTKPATH=os.environ['VTKPATH']
 	except KeyError,e:
 		err=str(e)
 		print "Environment variable",err[err.rfind(':')+1:],'not defined, '\
 		       'please fix it!'
-		VTK_PATH="c:\\Creatis\\vtkDistrib"
-	vtkWrapper=os.path.join(VTK_PATH,"bin","vtkWrapPython")
+		VTKPATH="c:\\Creatis\\vtkDistrib"
+	vtkWrapper=os.path.join(VTKPATH,"bin","vtkWrapPython")
 
 targetDir=os.path.join(targetDir, ThisModule)
 
@@ -60,8 +60,8 @@ Sources.extend(Jpeg8Sources)
 
 # Sources 2/ The second extension contains the VTK classes (which we wrap
 #            with the vtk wrappers):
-VTK_INCLUDE_DIR=os.path.join(VTK_PATH,"include","vtk")
-VTK_LIB_DIR=os.path.join(VTK_PATH,"lib","vtk")
+VTK_INCLUDE_DIR=os.path.join(VTKPATH,"include","vtk")
+VTK_LIB_DIR=os.path.join(VTKPATH,"lib","vtk")
 vtkSources = []
 vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
 vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.4 2003/05/21 16:26:29 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.5 2003/07/08 09:48:43 regrain Exp $
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -25,7 +25,6 @@
   
 int main( int argc, char *argv[] )
 {
-   char a;
    int *taille;
    int x,y;
 

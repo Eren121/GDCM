@@ -53,11 +53,11 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 kernel32.lib user32.lib advapi32.lib shell32.lib Wsock32.lib /nologo /dll /machine:I386 /out:"../_gdcm.dll"
+# ADD LINK32 kernel32.lib user32.lib advapi32.lib shell32.lib Wsock32.lib /nologo /dll /machine:I386 /out:"..\_gdcm.dll"
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=move           $(ProjDir)\gdcm.py           $(ProjDir)\..\ 
+PostBuild_Cmds=move            $(ProjDir)\gdcm.py            $(ProjDir)\..\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmpyembedded - Win32 Debug"
@@ -84,11 +84,11 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib advapi32.lib shell32.lib Wsock32.lib /nologo /dll /debug /machine:I386 /out:"../_gdcm_d.dll" /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib advapi32.lib shell32.lib Wsock32.lib /nologo /dll /debug /machine:I386 /out:"..\_gdcm_d.dll" /pdbtype:sept
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=mv           $(ProjDir)\gdcm.py           $(ProjDir)\..\ 
+PostBuild_Cmds=mv            $(ProjDir)\gdcm.py            $(ProjDir)\..\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -191,190 +191,6 @@ SOURCE=..\..\src\gdcmUtil.cxx
 
 SOURCE=..\..\src\gdcmVR.cxx
 # End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcapimin.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcapistd.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jccoefct.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jccolor.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcdctmgr.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jchuff.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcinit.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcmainct.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcmarker.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcmaster.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcomapi.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcparam.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcphuff.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcprepct.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jcsample.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jctrans.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdapimin.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdapistd.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdatadst.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdatasrc.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdcoefct.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdcolor.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jddctmgr.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdhuff.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdinput.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdmainct.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdmarker.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdmaster.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdmerge.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdphuff.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdpostct.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdsample.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jdtrans.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jerror.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jfdctflt.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jfdctfst.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jfdctint.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jidctflt.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jidctfst.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jidctint.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jidctred.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jmemmgr.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jmemnobs.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jquant1.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jquant2.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\jpeg\libijg8\jutils.c
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -388,5 +204,9 @@ SOURCE=..\..\src\jpeg\libijg8\jutils.c
 SOURCE=c:\Creatis\Python22\libs\python22.lib
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\..\lib\libgdcmijpeg8.lib
+# End Source File
 # End Target
 # End Project

@@ -11,6 +11,9 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name libgdcmijpeg8
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -23,6 +26,9 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name libgdcmijpeg8
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -35,11 +41,29 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name libgdcmijpeg8
+    End Project Dependency
 }}}
 
 ###############################################################################
 
 Project: "gdcmtest"=.\TEST\WIN32\gdcmtest\gdcmtest.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name gdcmdll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "libgdcmijpeg8"=.\SRC\WIN32\libgdcmijpeg8.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -59,6 +83,9 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name vtkgdcm
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -71,6 +98,9 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name libgdcmijpeg8
+    End Project Dependency
 }}}
 
 ###############################################################################

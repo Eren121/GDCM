@@ -45,13 +45,58 @@ Here is the checklist when freezing a version of gdcm:
          cd $(GDCMHOME)
          python setup.py sdist
          cd /tmp
-         tar zxvf ~/cvs/gdcm/dist/gdcmPython-*.tar.gz
+         tar zxvf $(GDCMHOME)/dist/gdcmPython-*.tar.gz
          cd gdcmPython-*/
          python setup.py bdist --formats=rpm
          As root, repeat above installation with rpm and test.
          
   2/ Windoze:
+    Notation: we consider that GDCMHOME is the directory obtained from the
+    following checkout.
+    cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public login
+    cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public co gdcm
+    cd gdcm
+    cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public co gdcmData
 
+    2a/ compile all projects in the gdcm.dsw workspace.
+
+    2b/ set the PYTHONPATH environement variable to the gdcm/gdcmPython
+       directory
+       check the python test suite is clean (python testSuite.py)
+       cd gdcmPython
+       python testSuite.py
+
+    2c/ check the setup.py distutil script is operational and then validate
+        its produced packages through the test suite, in all following cases
+       - Direct installation:
+         cd $(GDCMHOME)
+         python setup.py install --prefix="c:\tmp"
+         cd /tmp/Lib/site-packages/
+         copy $(GDCMDATAHOME) .
+         export PYTHONPATH="c:\tmp\Lib\site-packages"
+         cd gdcmPython/
+         python testSuite.py
+         remove $(GDCMHOME)\build directory
+       - Binary distribution:
+         cd $(GDCMHOME)
+         python setup.py bdist --formats=wininst
+         install $(GDCMHOME)\dist\gdcmPython-0.3.win32-py2.2.exe
+         cd $(PYTHONHOME)\Lib\site-packages\
+         Check out gdcmData
+         cd gdcmPython
+         clean up PYTHONPATH
+         python testSuite.py
+         remove $(GDCMHOME)\build directory
+       - Source distribution and then binary distribution (out of build
+         source distro):
+         cd $(GDCMHOME)
+         python setup.py sdist --formats=zip
+         unzip $(GDCMHOME)\dist\gdcmPython-0.3.zip in TMPHOME directory
+         cd $(TMPHOME)
+         cd gdcmPython-*/
+         python setup.py bdist --formats=wininst
+         As root, repeat above installation with exe and test.
+         
 * Second stage: preparing packaging:
   - Update the version number in configure.in (AM_INIT_AUTOMAKE)
   - Update the version number in setup.py (version entry in setup object).
@@ -73,3 +118,11 @@ Here is the checklist when freezing a version of gdcm:
          python setup.py sdist
          python setup.py bdist --formats=rpm
          collect both source distro and binary distro
+
+  2/ Un*x
+    2a/ Packaging at the python level:
+         cd $(GDCMHOME)
+         python setup.py sdist --formats=zip
+         python setup.py bdist --formats=wininst
+         collect both source distro and binary distro
+
