@@ -529,7 +529,7 @@ int vtkGdcmReader::CheckFileCoherence()
          this->ImageType = type;
          this->PixelSize = GdcmHeader.GetPixelSize();
 
-         if( GdcmHeader.HasLUT() )
+         if( GdcmHeader.HasLUT() && false )
          {
             this->NumComponents = GdcmHeader.GetNumberOfScalarComponentsRaw();
          }
@@ -624,7 +624,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
 
    unsigned char * Source;
    
-   if( GdcmFile.GetHeader()->HasLUT() )
+   if( GdcmFile.GetHeader()->HasLUT() && false )
    {
       size               = GdcmFile.GetImageDataSizeRaw();
       Source             = (unsigned char*) GdcmFile.GetImageDataRaw();

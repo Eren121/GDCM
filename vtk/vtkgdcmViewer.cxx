@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
   vtkImageViewer2 *viewer = vtkImageViewer2::New();
   
-  if( reader->GetLookupTable() )
+/*  if( reader->GetLookupTable() )
   {
     //convert to color:
     vtkImageMapToColors *map = vtkImageMapToColors::New ();
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     viewer->SetInput ( map->GetOutput() );
     map->Delete();
   }
-  else
+  else*/
   
   {
     viewer->SetInput ( reader->GetOutput() );
@@ -86,8 +86,8 @@ int main(int argc, char *argv[])
   viewer->SetupInteractor (iren);
   
   vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
-  viewer->SetColorWindow (range[1] - range[0]);
-  viewer->SetColorLevel (0.5 * (range[1] + range[0]));
+  //viewer->SetColorWindow (range[1] - range[0]);
+  //viewer->SetColorLevel (0.5 * (range[1] + range[0]));
 
   // Here is where we setup the observer, 
   vtkgdcmObserver *obs = vtkgdcmObserver::New();

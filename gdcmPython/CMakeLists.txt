@@ -18,14 +18,17 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   INCLUDE(${SWIG_USE_FILE})
 
   #INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
   #SET(CMAKE_SWIG_FLAGS "")
 
+  #SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES PYTHON ON)
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "-includeall")
-  SWIG_ADD_MODULE(gdcm python gdcm.i gdcm_wrap.cxx)
-  SWIG_LINK_LIBRARIES(gdcm ${PYTHON_LIBRARIES})
-  TARGET_LINK_LIBRARIES(_gdcm gdcm)
+  SWIG_ADD_MODULE(gdcm python gdcm.i )  #gdcm_wrap.cxx
+  SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
+  
+  #SWIG_GET_EXTRA_OUTPUT_FILES(python foobar "/usr/" "gdcm" )
+  #MESSAGE(FATAL_ERROR ${swig_generated_file_fullname})
+  #MESSAGE(FATAL_ERROR ${swig_source_file_fullname})
 
 ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
@@ -161,9 +164,12 @@ IF(GDCM_VTK)
     # The C++ files must be made into a C++ library
     ADD_LIBRARY(vtkgdcmPython SHARED ${gdcmWrapSOURCES})  #MODULE on apple ?
     # set the libraries to link against
+    #SET_TARGET_PROPERTIES(${foobar} PROPERTIES PREFIX "")
+
+    GET_TARGET_PROPERTY(swig_gdcm_fullpath "${SWIG_MODULE_gdcm_REAL_NAME}" LOCATION)
     TARGET_LINK_LIBRARIES (vtkgdcmPython
-                           pygdcm
-                           vtkgdcm
+                           vtkgdcm        # ???
+                           #`${swig_gdcm_fullpath}`  #Does not work
                            vtkCommonPython
                            vtkIOPython)
   ENDIF (GDCM_WRAP_PYTHON)
@@ -174,7 +180,7 @@ IF(GDCM_VTK)
   GET_FILENAME_COMPONENT(VTKPATH ${VTK_DIR}/../../ ABSOLUTE)
   CONFIGURE_FILE(
       ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
-      ${GDCM_BINARY_DIR}/gdcmPython/setup.py
+      ${GDCM_BINARY_DIR}/setup.py
   )
 ENDIF(GDCM_VTK)
 
@@ -185,6 +191,15 @@ ENDIF(GDCM_VTK)
 # in /usr/lib/pythonx.x/site-package and not a a std /usr/lib
 # Thus generate a setup.py file using distutils
 
+# Create a gdcm.pth file:
+
+FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcm.pth
+    "gdcmPython"
+    )
+
+FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
+    "import gdcm"
+    )
 
 #-----------------------------------------------------------------------------
 # Add test from demo subdir:

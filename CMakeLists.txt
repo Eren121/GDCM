@@ -3,11 +3,11 @@ CMAKE_MINIMUM_REQUIRED(VERSION 1.8)
 
 #-----------------------------------------------------------------------------
 # GDCM version number, usefull for packaging and doxygen doc:
-SET(GDCM_VERSION_MAJOR 0)
-SET(GDCM_VERSION_MINOR 4)
-SET(GDCM_VERSION_PATCH 1)
-SET(GDCM_VERSION "${GDCM_VERSION_MAJOR}.${GDCM_VERSION_MINOR}")
-SET(GDCM_VERSION_FULL "${GDCM_VERSION}.${GDCM_VERSION_PATCH}")
+SET(GDCM_MAJOR_VERSION 0)
+SET(GDCM_MINOR_VERSION 4)
+SET(GDCM_BUILD_VERSION 1)
+SET(GDCM_VERSION 
+    "${GDCM_MAJOR_VERSION}.${GDCM_MINOR_VERSION}.${GDCM_BUILD_VERSION}")
 
 #-----------------------------------------------------------------------------
 # datadir in CMake:

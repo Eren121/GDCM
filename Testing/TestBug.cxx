@@ -15,7 +15,9 @@ int TestBug(int argc, char* argv[])
       filename += "/test.acr";
       e1 = new gdcmHeader( filename.c_str() );
    }
-   e1->PrintPubDict();
+   //e1->PrintPubDict();
+   //e1->GetPubDict()->GetEntriesByKey();
+   e1->GetPubDict()->PrintByKey();
 
   return 0;
 }
