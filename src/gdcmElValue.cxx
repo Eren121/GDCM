@@ -1,7 +1,6 @@
 #include "gdcmlib.h"
 
-void ElValue::SetVR(string ValRep) { entry->SetVR(ValRep); }
-
-void ElValue::SetLgrLue(guint32 lgr) { LgrLueElem = lgr; }
+void   ElValue::SetVR(string ValRep) { entry->SetVR(ValRep); }
+string ElValue::GetVR(void)   { return entry->GetVR(); }
 
 ElValue::ElValue(gdcmDictEntry* in) { entry = in; }

@@ -10,7 +10,7 @@ PYTHON_VERSION =`$(PYTHON) -c "import sys; print sys.version[:3]"`
 PYTHON_INCLUDES="-I$(PYTHON_PREFIX)/include/python$(PYTHON_VERSION)"
 
 CXXFLAGS=`glib-config --cflags`
-CPPFLAGS=-g
+CPPFLAGS=-g -Wall -Wunused-variable
 LDFLAGS=`glib-config --libs` -g
 
 %.o : %.cxx
@@ -24,7 +24,8 @@ all: gdcmUtil.o    \
 	gdcmDictEntry.o \
 	gdcmDict.o      \
 	gdcmDictSet.o   \
-	gdcmElValSet.o
+	gdcmElValSet.o  \
+	gdcmHeaderIdo.o
 	g++ -shared -o gdcmlib.so $^ $(LDFLAGS)
 
 test: gdcmHeader.o

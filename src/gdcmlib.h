@@ -125,19 +125,21 @@ public:
 class ElValue {
 private:
 	gdcmDictEntry *entry;
-	guint32 LgrLueElem; // Longueur Lue
+	guint32 LgrElem;
 	// Might prove of some interest (see _ID_DCM_ELEM)
 	// int Swap;
 public:
-	guint32 LgrElem;   // FIXME probably for bad reasons at parse time !
 	string  value;     // used to be char * valeurElem
 	size_t Offset;     // Offset from the begining of file for direct user access
 	ElValue(gdcmDictEntry*);
 	void   SetVR(string);
-	void SetLgrLue(guint32);
+	string GetVR(void);
+	void SetLgrElem(guint32 l) {LgrElem = l; };
 	void SetValue(string val){ value = val; };
+	void SetOffset(size_t of){ Offset = of; };
 	string  GetValue(void)   { return value; };
 	guint32 GetLgrElem(void) { return LgrElem; };
+	size_t  GetOffset(void)  { return Offset; };
 	guint16 GetGroup(void)   { return entry->GetGroup(); };
 	guint16 GetElement(void) { return entry->GetElement(); };
 	string  GetKey(void)     { return entry->GetKey(); };
@@ -170,18 +172,12 @@ typedef map<TagKey, VRAtr> VRHT;    // Value Representation Hash Table
 // * the gdcmHeader::Set*Tag* family members cannot be defined as protected
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
 class gdcmHeader {	
+//FIXME sw should be qn EndianType !!!
 	//enum EndianType {
 		//LittleEndian, 
 		//BadLittleEndian,
 		//BigEndian, 
 		//BadBigEndian};
-	enum FileType {
-		Unknown = 0,
-		TrueDicom,
-		ExplicitVR,
-		ImplicitVR,
-		ACR,
-		ACR_LIBIDO};
 private:
   	// All instances share the same valur representation dictionary
 	static VRHT *dicom_vr;
@@ -190,12 +186,9 @@ private:
 	gdcmDict* RefShaDict;       // Shadow Dictionary (optional)
 	ElValSet PubElVals;     // Element Values parsed with Public Dictionary
 	ElValSet ShaElVals;     // Element Values parsed with Shadow Dictionary
-	FileType filetype;
 	// In order to inspect/navigate through the file
 	string filename;
-	size_t taille_fich;
 	FILE * fp;
-	size_t offsetCourant;
 	// The tag Image Location ((0028,0200) containing the adress of
 	// the pixels) is not allways present. When we store this information
 	// FIXME
@@ -209,8 +202,8 @@ private:
 
 	void Initialise(void);
 	void CheckSwap(void);
-	void setAcrLibido(void);
-	long int RecupLgr(ElValue *, int *);
+	void RecupLgr(ElValue *);
+	void FindVR(ElValue *);
 	guint32 SwapLong(guint32);
 	short int SwapShort(short int);
 	void InitVRDict(void);
@@ -218,13 +211,21 @@ private:
 	gdcmDictEntry * IsInDicts(guint32, guint32);
 	void SetAsidePixelData(ElValue*);
 protected:
+	enum FileType {
+		Unknown = 0,
+		TrueDicom,
+		ExplicitVR,
+		ImplicitVR,
+		ACR,
+		ACR_LIBIDO};
+	FileType filetype;
 ///// QUESTION: Maybe Print is a better name than write !?
 	int write(ostream&);   
 ///// QUESTION: Maybe anonymize should be a friend function !?!?
 /////           See below for an example of how anonymize might be implemented.
 	int anonymize(ostream&);
 public:
-	void BuildHeader(void);
+	virtual void BuildHeader(void);
 	gdcmHeader(char* filename);
 	~gdcmHeader();
 

@@ -13,7 +13,7 @@ extern "C" {
 #include <sstream>
 #include "gdcmUtil.h"
 
-#define LGR_ENTETE_A_LIRE 256 // on ne lit plus que le debut
+#define HEADER_LENGHT_TO_READ 256 // on ne lit plus que le debut
 
 //FIXME: this looks dirty to me...
 #define str2num(str, typeNum) *((typeNum *)(str))
@@ -24,7 +24,6 @@ gdcmDictSet* gdcmHeader::Dicts = new gdcmDictSet();
 void gdcmHeader::Initialise(void) {
 	if (!gdcmHeader::dicom_vr)
 		InitVRDict();
-	bool grPixelTrouve = false;
 	PixelPosition = (size_t)0;
 	PixelsTrouves = false;
 	RefPubDict = gdcmHeader::Dicts->GetDefaultPublicDict();
@@ -105,20 +104,20 @@ void gdcmHeader::CheckSwap()
 	 
 	int lgrLue;
 	char * entCur;
-	char deb[LGR_ENTETE_A_LIRE];
+	char deb[HEADER_LENGHT_TO_READ];
 	 
-	// On teste le processeur
-	if (x==ntohs(x)) {
+	// First, compare HostByteOrder and NetworkByteOrder in order to
+	// determine if we shall need to swap bytes (i.e. the Endian type).
+	if (x==ntohs(x))
 		net2host = true;
-	} else {
+	else
 		net2host = false;
-	}
 	
-	// On commence par verifier si c'est du DICOM 'actuel'
-	//                                      -------------
-	lgrLue = fread(deb,1,LGR_ENTETE_A_LIRE, fp);
+	// The easiest case is the one of a DICOM header, since it possesses a
+	// file preamble where it suffice to look for the sting "DICM".
+	lgrLue = fread(deb, 1, HEADER_LENGHT_TO_READ, fp);
 	
-	entCur = deb+128;
+	entCur = deb + 128;
 	if(memcmp(entCur, "DICM", (size_t)4) == 0) {
 		filetype = TrueDicom;
 		dbg.Verbose(0, "gdcmHeader::CheckSwap:", "looks like DICOM Version3");
@@ -128,11 +127,22 @@ void gdcmHeader::CheckSwap()
 	}
 
 	if(filetype == TrueDicom) {
-		// on saute le File Preamble (souvent a ZERO) : 128 Octets
-		// + le DICM (4), et le (0002, 0000) soit 4 (136 = 128 + 4 + 4)
-		entCur = deb+136;
+		// Next, determine the value representation (VR). Let's skip to the
+		// first element (0002, 0000) and check there if we find "UL", in
+		// which case we (almost) know it is explicit VR.
+		// WARNING: if it happens to be implicit VR then what we will read
+		// is the length of the group. If this ascii representation of this
+		// length happens to be "UL" then we shall believe it is explicit VR.
+		// FIXME: in order to fix the above warning, we could read the next
+		// element value (or a couple of elements values) in order to make
+		// sure we are not commiting a big mistake.
+		// We need to skip :
+		// * the 128 bytes of File Preamble (often padded with zeroes),
+		// * the 4 bytes of "DICM" string,
+		// * the 4 bytes of the first tag (0002, 0000),
+		// i.e. a total of  136 bytes.
+		entCur = deb + 136;
 		if(memcmp(entCur, "UL", (size_t)2) == 0) {
-			// les 2 premiers octets de la lgr peuvent valoir UL --> Explicit VR
 			filetype = ExplicitVR;
 			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
 			            "explicit Value Representation");
@@ -141,98 +151,69 @@ void gdcmHeader::CheckSwap()
 			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
 			            "not an explicit Value Representation");
 		}
-		
-		if (net2host) { // HostByteOrder is different from NetworkByteOrder
-			sw = 0;    // on est sur PC ou DEC --> LITTLE-ENDIAN -> Rien a faire
-			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
-			               "HostByteOrder = NetworkByteOrder");
-		} else {    /* on est sur une Sun ou une SGI */
+
+		if (net2host) {
 			sw = 4321;
 			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
 			               "HostByteOrder != NetworkByteOrder");
+		} else {
+			sw = 0;
+			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			               "HostByteOrder = NetworkByteOrder");
 		}
 		
+		// Position the file position indicator at first tag (i.e.
+		// after the file preamble and the "DICM" string).
 		rewind(fp);
-		fseek (fp, 132L, SEEK_SET); //On se positionne sur le debut des info
-		offsetCourant=132;
+		fseek (fp, 132L, SEEK_SET);
+		return;
 	} // End of TrueDicom
 
-	// Pas du TrueDicom : permiere hypothese c'est de l'ACR 'propre', auquel
-	// cas la lgr du premier element du groupe est FORCEMENT 4
-	entCur=deb + 4;
-	s=str2num(entCur,int);
+	// Alas, this is not a DicomV3 file and whatever happens there is no file
+	// preamble. We can reset the file position indicator to where the data
+	// is (i.e. the beginning of the file).
+	rewind(fp);
+
+	// Our next best chance would be to be considering a 'clean' ACR/NEMA file.
+	// By clean we mean that the length of the first tag is written down.
+	// If this is the case and since the length of the first group HAS to be
+	// four (bytes), then determining the proper swap code is straightforward.
+
+	entCur = deb + 4;
+	s = str2num(entCur, int);
 	
 	switch (s) {
 	case 0x00040000 :
 		sw=3412;
 		filetype = ACR;
-		break;
+		return;
 	case 0x04000000 :
 		sw=4321;
 		filetype = ACR;
-		break;
+		return;
 	case 0x00000400 :
 		sw=2143;
-			filetype = ACR;
-		break;
+		filetype = ACR;
+		return;
 	case 0x00000004 :
 		sw=0;
 		filetype = ACR;
-		break;
-	default :
-		sw = -1;
-		dbg.Verbose(0, "gdcmHeader::CheckSwap:",
-		               "unfound swap info (time to raise bets)");
-	}
-	if(sw!=-1) {
-		rewind(fp);    // les info commencent au debut
-		offsetCourant=0;
 		return;
+	default :
+		dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+		               "ACE/NEMA unfound swap info (time to raise bets)");
 	}
 
-	// Deuxieme hypothese : c'est de l'ACR 'pas propre' i.e. il manque
-	// la lgr du groupe
+	// We are out of luck. It is not a DicomV3 nor a 'clean' ACR/NEMA file.
+	// It is time for despaired wild guesses. So, let's assume this file
+	// happens to be 'dirty' ACR/NEMA, i.e. the length of the group it
+	// not present. Then the only info we have is the net2host one.
+	//FIXME  Si c'est du RAW, ca degagera + tard
 	
-	// On n'a pas trouve l'info de swap.
-	// Si c'est du VRAI ACR NEMA et
-	//  * si on est sur une DEC ou un PC alors swap=0,
-	//  * si on est sur SUN ou SGI,      alors swap=4321
-	// Si c'est du RAW, ca degagera + tard
-	dbg.Verbose(0, "gdcmHeader::CheckSwap:",
-	               "time for wild guesses...");
-	
-	if (x!=ntohs(x)) // HostByteOrder is different from NetworkByteOrder
-		// on est sur PC ou DEC --> LITTLE-ENDIAN -> Rien a faire
+	if (! net2host )
 		sw = 0;
 	else
-		// on est sur Sun ou SGI
 		sw = 4321;
-	rewind(fp);    // les info commencent au debut
-	offsetCourant=0;
-	return;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Pour les fichiers non TrueDicom, si le recognition
- *          code (0008,0010) s'avere etre "ACR_LIBIDO", alors
- *          valide la reconnaissance du fichier en positionnant
- *          filetype.
- */
-void gdcmHeader::setAcrLibido() {
-	string RecCode;
-	
-	if ( filetype != TrueDicom) {
-		printf("_setAcrLibido expects a presumably ACR file\n");
-		// Recognition Code  --> n'existe plus en DICOM V3 ...
-		RecCode = GetPubElValByNumber(0x0008, 0x0010);
-		// FIXME NOW
-		if (RecCode == "ACRNEMA_LIBIDO" ||
-		    RecCode == "CANRME_AILIBOD" )
-			filetype = ACR_LIBIDO;
-		else
-			filetype = ACR;
-	}
 	return;
 }
 
@@ -275,106 +256,80 @@ void gdcmHeader::setAcrLibido() {
  * @return               longueur retenue pour le champ 
  */
 
-long int gdcmHeader::RecupLgr( ElValue *pleCourant, int *skippedLength) {
-	guint32 l_gr; 
-	unsigned short int l_gr_2;
-	int i;
-	char VR[5];
+void gdcmHeader::FindVR( ElValue *pleCourant) {
+	char VR[3];
 	int lgrLue;
+	long PositionOnEntry = ftell(fp);
 	
-	//  FIX ME
-	//   ATTENTION : nbCode correspond au nombre d'elements dans la table
-	//               de type DICOM_VR. A nettoyer.
-	//
-	int nbCode=26;
-	
-	if (filetype == ExplicitVR) {
-		lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
-		VR[2]=0;
-		
-		// Warning: we believe this is explicit VR (Value Representation) because
-		// we used a heuristic that found "UL" in the first tag. Alas this
-		// doesn't guarantee that all the tags will be in explicit VR. In some
-		// cases (see e-film filtered files) one finds implicit VR tags mixed
-		// within an explicit VR file. Hence we make sure the present tag
-		// is in explicit VR and try to fix things if it happens not to be
-		// the case.
+	if (filetype != ExplicitVR)
+		return;
 
-		// FIXME There should be only one occurence returned. Avoid the
-		// first extraction by calling proper method.
-		VRAtr FoundVR = dicom_vr->find(string(VR))->first;
-		if (FoundVR.empty()) {
-			pleCourant->SetVR(FoundVR);
-		} else {
-			
-			// On est mal : implicit VR repere
-			// mais ce n'est pas un code connu ...
-			// On reconstitue la longueur
-			
-			dbg.Verbose(1, "gdcmHeader::RecupLgr:",
-							"Explicit VR, but no known code");
-			memcpy(&l_gr, VR,(size_t)2);
-			lgrLue=fread ( ((char*)&l_gr)+2, (size_t)2, (size_t)1, fp);
-			l_gr = SwapLong((guint32)l_gr);
-			pleCourant->SetLgrLue(l_gr);
-			if ( (int)l_gr == -1)
-				l_gr=0;
-			 
-			*skippedLength = 4; 
-			return(l_gr);
-		}
+	lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
+	VR[2]=0;
 		
-		// On repart dans la sequence 'sensee'
-		if ( (!memcmp( VR,"OB",(size_t)2 )) || 
-		     (!memcmp( VR,"OW",(size_t)2 )) || 
-		     (!memcmp( VR,"SQ",(size_t)2 )) ||
-		     (!memcmp( VR,"UN",(size_t)2 )) ) {
+	// Warning: we believe this is explicit VR (Value Representation) because
+	// we used a heuristic that found "UL" in the first tag. Alas this
+	// doesn't guarantee that all the tags will be in explicit VR. In some
+	// cases (see e-film filtered files) one finds implicit VR tags mixed
+	// within an explicit VR file. Hence we make sure the present tag
+	// is in explicit VR and try to fix things if it happens not to be
+	// the case.
+
+	// FIXME There should be only one occurence returned. Avoid the
+	// first extraction by calling proper method.
+	VRAtr FoundVR = dicom_vr->find(string(VR))->first;
+	if ( ! FoundVR.empty()) {
+		pleCourant->SetVR(FoundVR);
+		return; 
+	}
+	
+	// We thought this was explicit VR, but we end up with an
+	// implicit VR tag. Let's backtrack.
+	pleCourant->SetVR("Implicit");
+	fseek(fp, PositionOnEntry, SEEK_SET);
+}
+
+void gdcmHeader::RecupLgr( ElValue *pleCourant) {
+	int lgrLue;
+	guint32 l_gr;
+	unsigned short int l_gr_2;
+	
+	string vr = pleCourant->GetVR();
+	
+	if ( (filetype == ExplicitVR) && (vr != "Implicit") ) {
+		if (   ( vr == "OB" ) || ( vr == "OW" )
+			 || ( vr == "SQ" ) || ( vr == "UN" ) ) {
 			
-			// les 2 octets suivants sont reserves: on les saute
+			// The following two bytes are reserved, so we skip them,
+			// and we proceed on reading the length on 4 bytes.
 			fseek(fp, 2L,SEEK_CUR);
-			
-			//on lit la lgr sur QUATRE octets
 			lgrLue=fread (&l_gr, (size_t)4,(size_t)1, fp);
 			l_gr = SwapLong((guint32)l_gr);
-			*skippedLength = 8;
-		
+			
 		} else {
 			//on lit la lgr sur DEUX octets
 			lgrLue=fread (&l_gr_2, (size_t)2,(size_t)1, fp);
 			
-			if(sw) l_gr_2 = SwapShort((unsigned short)l_gr_2);
-			
-			pleCourant->SetLgrLue(l_gr_2);
+			l_gr_2 = SwapShort((unsigned short)l_gr_2);
 			
 			if ( l_gr_2 == 0xffff) {
 				l_gr = 0;
 			} else {
 				l_gr = l_gr_2;
 			}
-			*skippedLength = 4;
 		}
 	} else {
 		// Explicit VR = 0
 		//on lit la lgr sur QUATRE octets
-		
 		lgrLue=fread (&l_gr, (size_t)4,(size_t)1, fp);
-		
 		l_gr= SwapLong((long)l_gr);
-		*skippedLength = 4;
 	}
-	
-	pleCourant->SetLgrLue(l_gr);
-	
+
 	// Traitement des curiosites sur la longueur
-	
 	if ( (int)l_gr == 0xffffffff)
 		l_gr=0; 
 	
-	if(!memcmp( VR,"SQ",(size_t)2 )) { // ca annonce une SEQUENCE d'items ?!
-		l_gr=0;                         // on lira donc les items de la sequence 
-	}
-	
-	return(l_gr);
+	pleCourant->SetLgrElem(l_gr);
 }
 
 /**
@@ -434,18 +389,8 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	unsigned short g;
 	unsigned short n;
 	guint32 l;
-	long int posFich;
-	int skL;
 	size_t lgrLue;
-	//CLEANME DICOM_ELEMENTS *t;
 	ElValue * nouvDcmElem;
-	
-	// FIXME la probabilte pour depasser sans s'en rendre compte
-	// est grande avec le test d'egalite' suivant !
-	if(offsetCourant == taille_fich) { // On a atteint la fin du fichier
-		dbg.Verbose(1, "ReadNextElement: EOF reached");
-		return(NULL);
-	}
 	
 	// ------------------------- Lecture Num group : g
 	lgrLue=fread (&g, (size_t)2,(size_t)1, fp);
@@ -488,11 +433,19 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 
 	// ------------------------- Lecture longueur element : l
 	
-	l = RecupLgr(nouvDcmElem, &skL);
-	
+	FindVR(nouvDcmElem);
+	RecupLgr(nouvDcmElem);
+	nouvDcmElem->SetOffset(ftell(fp));
+	l = nouvDcmElem->GetLgrElem();
+
+	//FIXMEif(!memcmp( VR,"SQ",(size_t)2 )) { // ca annonce une SEQUENCE d'items ?!
+	//FIXME	l_gr=0;                         // on lira donc les items de la sequence 
+	//FIXME}
+	//FIXMEreturn(l_gr);
+
+
 	if(g==0xfffe) l=0;  // pour sauter les indicateurs de 'SQ'
 	
-	nouvDcmElem->LgrElem=l;
 	
 	// ------------------------- Lecture Valeur element 
 	
@@ -509,9 +462,6 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	// pas etre charge's !!!! Voir TODO.
 	lgrLue=fread (NewValue, (size_t)l,(size_t)1, fp);
 	
-	offsetCourant +=  2 + 2 + skL; // gr +  num + lgr
-	nouvDcmElem->Offset = offsetCourant;
-	offsetCourant += l;            // debut elem suivant
 
 	// ------------------------- Doit-on le Swapper ?
 	
@@ -546,8 +496,6 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 		} /* fin sw */	
 	}
 	nouvDcmElem->value = NewValue;
-	// CLEAN ME: simply trash the following line and postpone the process !
-	// SetAsidePixelData(nouvDcmElem);
 	return nouvDcmElem;
 }
 
@@ -578,7 +526,7 @@ void gdcmHeader::SetAsidePixelData(ElValue* elem) {
 	//  1/ * find if the "Pixel Data" tag exists.
 	//     * if it does not exist, look for the "Pixel Location" tag.
 	//  2/ look at the proper tag ("Pixel Data" or "Pixel Location" when
-	//     it exists) what the offset it.
+	//     it exists) what the offset is.
 	guint16 g;
 	guint16 n;
 	g = elem->GetGroup();
@@ -652,18 +600,11 @@ void gdcmHeader::BuildHeader(void) {
 	ElValue * newElValue = (ElValue *)0;
 	
 	rewind(fp);
-	fseek(fp, 0L, SEEK_END);
-	/*
-	 * obtains the current value of the file-position    
-	 * indicator for the stream pointed to by stream      
-	 */
-	taille_fich = ftell(fp);
 	rewind(fp);
 	CheckSwap();
 	while ( (newElValue = ReadNextElement()) ) {
 		PubElVals.Add(newElValue);
 	}
-	setAcrLibido();
 }
 
 int gdcmHeader::PrintPubElVal(ostream & os) {

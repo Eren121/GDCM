@@ -1,4 +1,19 @@
-2002-10-7 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+2002-10-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader.cxx RecupLgr split in FindVR and RecupLgr. FindVR
+        concentrates on finding the value representation (when it exists).
+        RecupLgr now only finds the element value length, and it avoids
+        returning the unecessary skL (skipped length).
+        Also, offsetCourant was simply removed (with taille_fich) since
+        it was redundant with the File position internals (by using
+        ftell and fseek). This also made skL (see above in RecupLgr) usage
+        jajun.
+      * src/gdcmHeaderIdo.cxx src/gdcmIdo.h added. Those files concentrate
+        on the libido specificities which are handled through class 
+        inheritance.
+      * Test/implicit_vr.dcm dicom v3 in implicit value representation
+        added.
+
+2002-10-17 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Truckload of changes. Parsing of header is barely functional
         (see Test/test) with the standard dictionary (see Dicts/dicomV3.dic).
 
