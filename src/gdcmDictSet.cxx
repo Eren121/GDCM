@@ -78,6 +78,11 @@ string gdcmDictSet::BuildDictPath(void) {
    return ResultPath;
 }
 
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Loads the default public DICOM V3 dictionary as a gdcmDict.
+ * \return  The newly build reference public dictionary.
+ */
 gdcmDict* gdcmDictSet::LoadDefaultPubDict(void) {
    string PubDictFile = gdcmDictSet::DictPath + PUB_DICT_FILENAME;
    return new gdcmDict(PubDictFile.c_str());
@@ -92,11 +97,26 @@ gdcmDictSet::gdcmDictSet(void) {
    dicts[PUB_DICT_NAME] = DefaultPubDict;
 }
 
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Loads a dictionary from a specified file, and add it
+ *          to allready the existing ones contained in this gdcmDictSet.
+ * @param   FileName Absolute or relative filename containing the
+ *          dictionary to load.
+ * @param   Name Symbolic name that be used as identifier of the newly 
+ *          created dictionary.
+ */
 void gdcmDictSet::LoadDictFromFile(string FileName, DictKey Name) {
    gdcmDict *NewDict = new gdcmDict(FileName.c_str());
    dicts[Name] = NewDict;
 }
 
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Print, in an informal fashion, the list of all the dictionaries
+ *          contained is this gdcmDictSet, along with their respective content.
+ * @param   os Output stream used for printing.
+ */
 void gdcmDictSet::Print(ostream& os) {
    for (DictSetHT::iterator dict = dicts.begin(); dict != dicts.end(); ++dict){
       os << "Printing dictionary " << dict->first << " \n";
@@ -104,11 +124,23 @@ void gdcmDictSet::Print(ostream& os) {
    }
 }
 
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Retrieve the specified dictionary (when existing) from this
+ *          gdcmDictSet.
+ * @param   DictName The synbolic name of the searched dictionary.
+ * \result  The retrieved dictionary.
+ */
 gdcmDict * gdcmDictSet::GetDict(DictKey DictName) {
    DictSetHT::iterator dict = dicts.find(DictName);
    return dict->second;
 }
 
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Retrieve the default reference DICOM V3 public dictionary.
+ * \result  The retrieved default dictionary.
+ */
 gdcmDict * gdcmDictSet::GetDefaultPubDict() {
    return GetDict(PUB_DICT_NAME);
 }

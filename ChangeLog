@@ -1,3 +1,9 @@
+2003-03-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * gdcmPython/__init__.py doesn't crash anymore when running in
+        in InstallMode or PreInstallMode but with an environement given
+        value of GDCM_DICT_PATH.
+      * src/gdcmDictSet.[cxx/h] coding style.
+
 2003-03-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.h and gdcmHeader.cxx Coding style + doxigenation.
       * src/gdcm.h general comments moved to TODO, and README

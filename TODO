@@ -30,3 +30,7 @@
   sous forme d'une liste.
 * gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de suite 
   si on a deduit que c'en est pas...
+* python /usr/lib/python2.2/site-packages/DaVaW/demo/dvwDcmReader.py
+  and load image /home/frog/cvs/DCMlib/Data/CT-MONO2-16-ankle.dcm
+  will yield wrong coloring scheme as opposed to 
+  affim filein=/home/frog/cvs/DCMlib/Data/CT-MONO2-16-ankle.dcm

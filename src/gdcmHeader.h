@@ -14,10 +14,10 @@ typedef string VRKey;
 typedef string VRAtr;
 typedef map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
-/// \brief The purpous of an instance of gdcmHeader is to act as a container of
-///        all the DICOM elements and their corresponding values (and
-///        additionaly the corresponding DICOM dictionary entry) of the header
-///        of a DICOM file.
+/// The purpose of an instance of gdcmHeader is to act as a container of
+/// all the DICOM elements and their corresponding values (and
+/// additionaly the corresponding DICOM dictionary entry) of the header
+/// of a DICOM file.
 ///
 /// The typical usage of instances of class gdcmHeader is to classify a set of
 /// dicom files according to header information e.g. to create a file hierarchy
@@ -42,7 +42,8 @@ private:
    gdcmDictSet* Dicts;
    /// Public dictionary used to parse this header
    gdcmDict* RefPubDict;
-   /// Optional "shadow dictionary" (private elements) used to parse this header
+   /// Optional "shadow dictionary" (private elements) used to parse this
+   /// header
    gdcmDict* RefShaDict;
 
    /// ELement VALueS parsed with the PUBlic dictionary.
