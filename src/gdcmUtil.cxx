@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/07 13:57:05 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2004/09/07 14:11:57 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,7 @@ void Tokenize (const std::string& str,
  int CountSubstring (const std::string& str,
                      const std::string& subStr) {
    int count = 0;   // counts how many times it appears
-   int x = 0;       // The index position in the string
+   unsigned int x = 0;       // The index position in the string
 
    do
     { x = str.find(subStr,x);       // Find the substring
