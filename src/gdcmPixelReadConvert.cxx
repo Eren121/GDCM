@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 22:40:32 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/11 23:26:55 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -324,10 +324,12 @@ void PixelReadConvert::ConvertSwapZone()
          case 3412:
          case 2143:
          case 4321:
+#ifndef GDCM_WORDS_BIGENDIAN
             for( i = 0; i < RawSize / 2; i++ )
             {
                im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
             }
+#endif //GDCM_WORDS_BIGENDIAN
             break;
          default:
             gdcmVerboseMacro("SwapCode value (16 bits) not allowed.");
