@@ -152,7 +152,7 @@ SET(BLACK_LIST
   )
 
 # Add a special test that requires dciodvfy from dicom3tools
-#INCLUDE(${GDCM_SOURCE_DIR}/CMake/FindDicom3Tools.cmake)
+INCLUDE(${GDCM_SOURCE_DIR}/CMake/FindDicom3Tools.cmake)
 
 # This is a GLOB expression, change it into a list separated with a comma and \n
 SET(GDCM_DATA_IMAGES)

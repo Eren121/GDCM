@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/02/02 12:02:33 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,7 +42,7 @@ int TestChangeHeader(int argc, char *argv[])
    // We suppose the DICOM Entries of the second file *does* exist !
 
    std::string nbFrames = f2->GetHeader()->GetEntryValue(0x0028, 0x0008);
-   if(nbFrames != "gdcm::Unfound")
+   if(nbFrames != GDCM_UNFOUND)
    {
       f1->GetHeader()->Insert( nbFrames, 0x0028, 0x0008);
    }
@@ -79,7 +79,7 @@ int TestChangeHeader(int argc, char *argv[])
    printf ("dataSize %d\n",dataSize);
    uint8_t *imageData= f2->GetImageData();
 
-// TODO : Why don't we merge theese 2 functions ?
+// TODO : Why don't we merge these 2 functions ?
 
    f1->SetImageData(imageData,dataSize);
 
