@@ -17,11 +17,12 @@ int main(int argc, char* argv[])
 
    if (argc < 3) {
          std::cerr << "usage: " << std::endl 
-                   << argv[0] << " fileName writtingMode "
+                   << argv[0] << " OriginalFileName writtingMode "
                 << std::endl 
-                   << "(a : ACR, gives fileNamed : DICOM Implicit VR,"
-                   << " x : DICOM Explicit VR  r : RAW,"
-                   << " v : explicit VR + computes the video inv image"
+                   << "(a : ACR, produces a file named OriginalFileName.ACR"
+                   << " x : DICOM Explicit VR, produces a file named OriginalFileName.XDCM"
+                   << " r : RAW, produces a file named OriginalFileName.RAW"
+                   << " v : explicit VR + computes the video inv image --> OriginalFileName.VDCM"
                 << std::endl;
 
          return 0;
@@ -107,7 +108,8 @@ int main(int argc, char* argv[])
       f1->WriteAcr(zozo);
       break;
 
-   case 'd' :
+   case 'd' :  // Not document in the 'usage', because the method is knowed to be bugged. 
+
            // ecriture d'un fichier DICOM Implicit VR 
            // à partir d'un dcmHeader correct.
 
@@ -136,19 +138,26 @@ int main(int argc, char* argv[])
 
    case 'v' :
 
-     if ( f1->GetHeader()->GetBitsStored() == 8)
-        for (int i=0; i<dataSize; i++) {
-           ((char *)imageData)[i] += 127;
+     if ( f1->GetHeader()->GetBitsAllocated() == 8)
+     {
+        std::cout << "videoinv for 8 bits" << std::endl;
+        for (int i=0; i<dataSize; i++) 
+        {
+           ((uint8_t*)imageData)[i] += 127;
         }
-     else  
-        for (int i=0; i<dataSize/2; i++) {
-           ((unsigned short *)imageData)[i] += 32767;
+     }
+     else
+     {
+        std::cout << "videoinv for 16 bits" << std::endl;    
+        for (int i=0; i<dataSize/2; i++) 
+        {
+           ((uint16_t*)imageData)[i] += 60000; //32767;
         }
-
-         sprintf(zozo, "%s.DCM", toto.c_str());
-         printf ("WriteDCM Implicit VR\n");
-         f1->WriteDcmImplVR(zozo);
-         break;
+     }
+     sprintf(zozo, "%s.VDCM", toto.c_str());
+     printf ("WriteDCM Explicit VR + VideoInv\n");
+     f1->WriteDcmExplVR(zozo);
+     break;
 
    }
   return 0;
