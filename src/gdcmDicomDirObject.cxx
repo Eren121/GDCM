@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmObject.cxx,v $
+  Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:21 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/09/23 10:47:10 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,22 +16,22 @@
                                                                                 
 =========================================================================*/
 
-#include "gdcmObject.h"
+#include "gdcmDicomDirObject.h"
 #include "gdcmGlobal.h"
 #include "gdcmDebug.h"
 #include "gdcmValEntry.h"
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmObject
+ * \ingroup gdcmDicomDirObject
  * \brief  Constructor 
  *          
- * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmDocEntries)
  * @param depth Sequence depth level
  */
   
-gdcmObject::gdcmObject(TagDocEntryHT *ptagHT, int depth) 
+gdcmDicomDirObject::gdcmDicomDirObject(TagDocEntryHT *ptagHT, int depth) 
           : gdcmSQItem (depth)
 {
    PtagHT = ptagHT;
@@ -39,10 +39,10 @@ gdcmObject::gdcmObject(TagDocEntryHT *ptagHT, int depth)
 
 
 /**
- * \ingroup gdcmObject
+ * \ingroup gdcmDicomDirObject
  * \brief   Canonical destructor.
  */
-gdcmObject::~gdcmObject()
+gdcmDicomDirObject::~gdcmDicomDirObject()
 {
 }
 
@@ -53,13 +53,13 @@ gdcmObject::~gdcmObject()
 
 
 /**
- * \ingroup gdcmObject
+ * \ingroup gdcmDicomDirObject
  * \brief   Builds a hash table (multimap) containing 
  *          pointers to all Header Entries (i.e Dicom Element)
  *          related to this 'object'
  * @return
  */ 
-TagDocEntryHT gdcmObject::GetEntry()
+TagDocEntryHT gdcmDicomDirObject::GetEntry()
 {
    TagDocEntryHT HT;
    docEntries=GetDocEntries();   
@@ -77,7 +77,7 @@ TagDocEntryHT gdcmObject::GetEntry()
  * \brief   add the 'Object' related Dicom Elements to the listEntries
  *          of a partially created DICOMDIR
  */
-void gdcmObject::FillObject(std::list<gdcmElement> elemList)
+void gdcmDicomDirObject::FillObject(std::list<gdcmElement> elemList)
 {
   // FillObject rempli le SQItem qui sera accroche au bon endroit
 

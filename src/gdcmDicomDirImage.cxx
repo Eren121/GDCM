@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 15:39:48 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/09/23 10:47:10 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,11 +25,11 @@
  * \ingroup gdcmDicomDirImage
  * \brief  Constructor 
  * @param  s  SQ Item holding the elements
- * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmDocEntries)
  */
 gdcmDicomDirImage::gdcmDicomDirImage(gdcmSQItem *s, TagDocEntryHT *ptagHT):
-   gdcmObject(ptagHT)
+   gdcmDicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
 }
@@ -37,11 +37,11 @@ gdcmDicomDirImage::gdcmDicomDirImage(gdcmSQItem *s, TagDocEntryHT *ptagHT):
 /**
  * \ingroup gdcmDicomDirImage
  * \brief  Constructor 
- * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmDocEntries)
  */
 gdcmDicomDirImage::gdcmDicomDirImage(TagDocEntryHT *ptagHT):
-   gdcmObject(ptagHT)
+   gdcmDicomDirObject(ptagHT)
 {
 }
 /**
@@ -71,7 +71,7 @@ void gdcmDicomDirImage::Print(std::ostream &os)
    }
    os << std::endl;
 
-   gdcmObject::Print(os);
+   gdcmDicomDirObject::Print(os);
 }
 
 //-----------------------------------------------------------------------------

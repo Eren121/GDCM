@@ -4,6 +4,7 @@
 	 we can now delete[] it safely 	
   * VoidArea is now called BinArea (less confusing name),
     and all the methods called ...VoidArea... are now ... BinArea...
+  * class gdcmObject is now called gdcmDicomDirObject (less confusing name)
 
 2004-09-22 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmDocument.cxx: gdcmDocument::~gdcmDocument() doesn't clear (nor

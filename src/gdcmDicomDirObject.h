@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmObject.h,v $
+  Module:    $RCSfile: gdcmDicomDirObject.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:53 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/09/23 10:47:10 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,20 +28,20 @@
 #include "gdcmSQItem.h"
 
 //-----------------------------------------------------------------------------
-class gdcmObject;
-typedef std::list<gdcmObject *> ListContent;
+class gdcmDicomDirObject;
+typedef std::list<gdcmDicomDirObject *> ListContent;
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmObject
+ * \ingroup gdcmDicomDirObject
  * \brief   Base object
  */
-class GDCM_EXPORT gdcmObject : public gdcmSQItem
+class GDCM_EXPORT gdcmDicomDirObject : public gdcmSQItem
 {
 public:
 
-   gdcmObject(TagDocEntryHT *ptagHT, int depth = 0);
-   virtual ~gdcmObject();
+   gdcmDicomDirObject(TagDocEntryHT *ptagHT, int depth = 0);
+   virtual ~gdcmDicomDirObject();
    /**
     * \brief   Sets the print level for the Dicom Header 
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy

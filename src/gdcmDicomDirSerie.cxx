@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:52 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/09/23 10:47:10 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,22 +25,22 @@
 /**
  * \brief  Constructor 
  * @param  s  SQ Item holding the elements related to this "SERIE" part
- * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmDocEntries)
  */
 gdcmDicomDirSerie::gdcmDicomDirSerie(gdcmSQItem *s, TagDocEntryHT *ptagHT):
-   gdcmObject(ptagHT)
+   gdcmDicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
 }
 
 /**
  * \brief  Constructor 
- * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmDocEntries)
  */
 gdcmDicomDirSerie::gdcmDicomDirSerie(TagDocEntryHT *ptagHT):
-   gdcmObject(ptagHT)
+   gdcmDicomDirObject(ptagHT)
 {
 }
 /**
@@ -65,7 +65,7 @@ gdcmDicomDirSerie::~gdcmDicomDirSerie()
 void gdcmDicomDirSerie::Print(std::ostream &os)
 {
    os << "SERIE" << std::endl;
-   gdcmObject::Print(os);
+   gdcmDicomDirObject::Print(os);
 
    for(ListDicomDirImage::iterator cc = images.begin();
                                    cc != images.end();
@@ -85,7 +85,7 @@ void gdcmDicomDirSerie::Print(std::ostream &os)
  */ 
 void gdcmDicomDirSerie::Write(FILE *fp, FileType t)
 {
-   gdcmObject::Write(fp, t);
+   gdcmDicomDirObject::Write(fp, t);
 
    for(ListDicomDirImage::iterator cc = images.begin();cc!=images.end();++cc)
    {

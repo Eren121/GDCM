@@ -44,7 +44,7 @@ SET(libgdcm_la_SOURCES
    gdcmDicomDirStudy.cxx
    gdcmDicomDirSerie.cxx
    gdcmDicomDirImage.cxx
-   gdcmObject.cxx
+   gdcmDicomDirObject.cxx
    )
 
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/09/23 10:47:10 $
+  Version:   $Revision: 1.29 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,7 +87,7 @@ public:
 // Write  
    bool WriteDicomDir(std::string const & fileName);
 
-   /// Types of the gdcmObject within the gdcmDicomDir
+   /// Types of the gdcmDicomDirObject within the gdcmDicomDir
    typedef enum
    {
       GDCM_DICOMDIR_NONE,
@@ -121,7 +121,7 @@ private:
    
 // Variables
 
-   /// Pointer on *the* gdcmObject 'DicomDirMeta Elements'
+   /// Pointer on *the* gdcmDicomDirObject 'DicomDirMeta Elements'
    gdcmDicomDirMeta *metaElems;
 
    /// Chained list of DicomDirPatient (to be exploited recursively) 

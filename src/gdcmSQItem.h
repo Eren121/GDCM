@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/16 19:21:57 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/09/23 10:47:10 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ protected:
    int SQItemNumber;
 
    ///\brief pointer to the HTable of the gdcmDocument,
-   ///       (because we don't know it within any gdcmObject nor any gdcmSQItem)
+   ///       (because we don't know it within any gdcmDicomDirObject nor any gdcmSQItem)
    TagDocEntryHT *PtagHT;
 
        

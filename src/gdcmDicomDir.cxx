@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2004/09/23 10:47:10 $
+  Version:   $Revision: 1.68 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -526,7 +526,7 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient()
  * \brief   adds to the HTable 
  *          the gdcmEntries (Dicom Elements) corresponding to the given type
  * @param   path full path file name (only used when type = GDCM_DICOMDIR_IMAGE
- * @param   type gdcmObject type to create (GDCM_DICOMDIR_PATIENT,
+ * @param   type gdcmDicomDirObject type to create (GDCM_DICOMDIR_PATIENT,
  *          GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
  * @param   header gdcmHeader of the current file
  */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:52 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/09/23 10:47:10 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,22 +26,22 @@
  * \ingroup gdcmDicomDirStudy
  * \brief constructor  
  * @param  s SQ Item holding the elements related to this "STUDY" part
- * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmHeaderEntries)
  */
 gdcmDicomDirStudy::gdcmDicomDirStudy(gdcmSQItem *s, TagDocEntryHT *ptagHT):
-   gdcmObject(ptagHT)
+   gdcmDicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
 }
 /**
  * \ingroup gdcmDicomDirStudy
  * \brief constructor  
- * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmHeaderEntries)
  */
 gdcmDicomDirStudy::gdcmDicomDirStudy(TagDocEntryHT *ptagHT):
-   gdcmObject(ptagHT)
+   gdcmDicomDirObject(ptagHT)
 {
 }
 /**
@@ -66,7 +66,7 @@ gdcmDicomDirStudy::~gdcmDicomDirStudy()
 void gdcmDicomDirStudy::Print(std::ostream &os)
 {
    os << "STUDY" << std::endl;
-   gdcmObject::Print(os);
+   gdcmDicomDirObject::Print(os);
 
    for(ListDicomDirSerie::iterator cc = series.begin();
                                    cc != series.end();
@@ -86,7 +86,7 @@ void gdcmDicomDirStudy::Print(std::ostream &os)
  */ 
 void gdcmDicomDirStudy::Write(FILE *fp, FileType t)
 {
-   gdcmObject::Write(fp, t);
+   gdcmDicomDirObject::Write(fp, t);
 
    for(ListDicomDirSerie::iterator cc = series.begin();cc!=series.end();++cc)
    {
