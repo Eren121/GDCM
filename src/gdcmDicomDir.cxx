@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 11:39:59 $
-  Version:   $Revision: 1.105 $
+  Date:      $Date: 2005/01/19 08:57:14 $
+  Version:   $Revision: 1.106 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -938,22 +938,20 @@ void DicomDir::SetElements(std::string const & path, VectDocument const &list)
 }
 
 /**
- * \brief   Move the content of the src SQItem to the dst SQItem
+ * \brief   Move the content of the source SQItem to the destination SQItem
  *          Only DocEntry's are moved
- * 
+ * @param dst destination SQItem
+ * @param src source SQItem
  */
 void DicomDir::MoveSQItem(SQItem *dst,SQItem *src)
 {
    DocEntry *entry;
 
-   src->Initialize();
-   entry = src->GetNextEntry();
+   entry = src->GetFirstEntry();
    while(entry)
    {
       src->RemoveEntryNoDestroy(entry);
       dst->AddEntry(entry);
-
-      src->Initialize();
       entry = src->GetNextEntry();
    }
 }
@@ -969,7 +967,7 @@ bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
 
 /**
  * \brief   Get the first entry while visiting the DicomDirPatients
- * \return  The next DicomDirPatient if found, otherwhise NULL
+ * \return  The first DicomDirPatient if found, otherwhise NULL
  */ 
 DicomDirPatient *DicomDir::GetFirstEntry()
 {

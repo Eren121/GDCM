@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 18:03:17 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2005/01/19 08:57:14 $
+  Version:   $Revision: 1.92 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,10 +99,10 @@ public:
    virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
 
-   DocEntry *GetDocEntry(uint16_t group, uint16_t element); 
-   ValEntry *GetValEntry(uint16_t group, uint16_t element); 
-   BinEntry *GetBinEntry(uint16_t group, uint16_t element); 
-   SeqEntry *GetSeqEntry(uint16_t group, uint16_t element); 
+   DocEntry *GetDocEntry(uint16_t group, uint16_t element);
+   ValEntry *GetValEntry(uint16_t group, uint16_t element);
+   BinEntry *GetBinEntry(uint16_t group, uint16_t element);
+   SeqEntry *GetSeqEntry(uint16_t group, uint16_t element);
 
    ValEntry *ReplaceOrCreate(std::string const &value,
                              uint16_t group, uint16_t elem,
