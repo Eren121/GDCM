@@ -158,7 +158,7 @@ SET(BLACK_LIST
   #   "THERALYS-12-MONO2-Uncompressed-E_Film_Template.dcm"
   #   "PHILIPS_Gyroscan-8-MONO2-Odd_Sequence.dcm"
   #   "PHILIPS_Gyroscan-12-MONO2-Jpeg_Lossless.dcm"
-  
+  "SIEMENS_GBS_III-16-ACR_NEMA_1.acr"
   )
 
 
