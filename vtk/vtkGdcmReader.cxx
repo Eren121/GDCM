@@ -1,4 +1,47 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.16 2003/07/07 10:26:14 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.17 2003/07/07 17:05:17 frog Exp $
+// //////////////////////////////////////////////////////////////
+// WARNING TODO CLENAME 
+// Actual limitations of this code:
+//
+// /////// Redundant and unnecessary header parsing
+// In it's current state this code actually parses three times the Dicom
+// header of a file before the corrersponding image gets loaded in the
+// ad-hoc vtkData !
+// Here is the process:
+//  1/ First loading happens in ExecuteInformation which in order to
+//     positionate the vtk extents calls CheckFileCoherence. The purpous
+//     of CheckFileCoherence is to make sure all the images in the future
+//     stack are "homogenous" (same size, same representation...). This
+//     can only be achieved by parsing all the Dicom headers...
+//  2/ ExecuteData is then responsible for the next two loadings:
+//  2a/ ExecuteData calls AllocateOutputData that in turn seems to 
+//      (indirectely call) ExecuteInformation which ends up in a second
+//      header parsing
+//  2b/ the core of ExecuteData then needs gdcmFile (which in turns
+//      initialiszes gdcmHeader in the constructor) in order to access
+//      the data-image.
+//
+// Possible solution:
+// maintain a list of gdcmFiles (created by say ExecuteInformation) created
+// once and for all accross the life of vtkGdcmHeader (it would only load
+// new gdcmFile if the user changes the list). ExecuteData would then use 
+// those gdcmFile and hence avoid calling the consctutor:
+//  - advantage: the header of the files would only be parser once.
+//  - drawback: once execute information is called (i.e. on creation of
+//              a vtkGdcmHeader) the gdcmFile sctructue is loaded in memory.
+//              The average size of a gdcmHeader being of 100Ko, is one
+//              loads 10 stacks of images with say 200 images each, you
+//              end-up with a loss of 200Mo...
+//
+// /////// Never unallocated memory:
+// ExecuteData allocates space for the pixel data [which will get pointed
+// by the vtkPointData() through the call
+// data->GetPointData()->GetScalars()->SetVoidArray(mem, StackNumPixels, 0);]
+// This data is never "freed" neither in the desctutor nor when the
+// filename list is extended, ExecuteData is called a second (or third)
+// time...
+// //////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
@@ -14,7 +57,6 @@ vtkGdcmReader::vtkGdcmReader()
 //----------------------------------------------------------------------------
 vtkGdcmReader::~vtkGdcmReader()
 { 
-  // FIXME free memory
   this->RemoveAllFileName();
   this->InternalFileNameList.clear();
 }
@@ -283,7 +325,6 @@ int vtkGdcmReader::CheckFileCoherence()
 // Configure the output e.g. WholeExtent, spacing, origin, scalar type...
 void vtkGdcmReader::ExecuteInformation()
 {
-	//FIXME free any old memory
   this->TotalNumberOfPlanes = this->CheckFileCoherence();
   if ( this->TotalNumberOfPlanes == 0)
     {
@@ -423,8 +464,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
 // (see vtkSource.cxx for last step).
 // This function (redefinition of vtkImageReader::ExecuteData, see 
 // VTK/IO/vtkImageReader.cxx) reads a data from a file. The datas
-// extent/axes are assumed to be the
-// same as the file extent/order.
+// extent/axes are assumed to be the same as the file extent/order.
 void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 {
   if (this->InternalFileNameList.empty())
@@ -433,7 +473,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
     return;
     }
 
-  // FIXME : the bad parse of header is made when allocating OuputData
+  // FIXME : extraneous parsing of header is made when allocating OuputData
   vtkImageData *data = this->AllocateOutputData(output);
   data->SetExtent(this->DataExtent);
   data->GetPointData()->GetScalars()->SetName("DicomImage-Volume");

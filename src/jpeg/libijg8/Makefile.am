@@ -52,16 +52,20 @@ libgdcmijpeg8_la_SOURCES=		\
 	jmemmgr.c \
 	jmemnobs.c
 
-###libgdcmincludedir = $(includedir)
-###libgdcmijpeg8include_HEADERS = \
-###	jchuff.h  \
-###	jconfig.h  \
-###	jdct.h  \
-###	jdhuff.h  \
-###	jerror.h  \
-###	jinclude.h  \
-###	jmemsys.h  \
-###	jmorecfg.h  \
-###	jpegint.h  \
-###	jpeglib.h  \
-###	jversion.h
+libgdcmijpeg8includedir = $(includedir)
+libgdcmijpeg8include_HEADERS = \
+	jchuff.h  \
+	jconfig.h  \
+	jdct.h  \
+	jdhuff.h  \
+	jerror.h  \
+	jinclude.h  \
+	jmemsys.h  \
+	jmorecfg.h  \
+	jpegint.h  \
+	jpeglib.h  \
+	jversion.h
+
+EXTRA_DIST = \
+   jconfig.linux \
+   jconfig.vc

@@ -1,3 +1,13 @@
+* Split gdcmHeader through inheritance to create gdcmHeaderHelper
+  that would regroup all the heuristics above a gdcmHeader e.g. the
+  functions GetXsize(), GetXSpacing(), GetXImagePosition()...
+  Those functions are the one using the results of the parsing as
+  done by gdcmHeader to provide the user with heuristics above various
+  values found in the header (the simplest form being to default a value).
+* vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
+  be made a the cost of memory consumption (refer to header of 
+  vtk/vtkGdcmHeader.cxx)
+* Add a GetVersion() global function.
 * gdcmElValSet::SetElValueLengthByNumber IMNSHO should be trashed.
   It's only purpose is a onliner substitute to calling GetElValueByNumber
   and then SetLength. This only obfuscates the caller code more than
@@ -34,10 +44,10 @@
   below the specified size. When accessing the value of such an element
   the content is unfound ! Find a decent way of loading the value on
   explicit demand.
-* fournir une method qui ne fait que lire les elements passes en arguments
+* JPR: fournir une method qui ne fait que lire les elements passes en arguments
   sous forme d'une liste.
-* gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de suite 
-  si on a deduit que c'en est pas...
+* JPR: gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de
+  suite si on a deduit que c'en est pas...
 * python /usr/lib/python2.2/site-packages/DaVaW/demo/dvwDcmReader.py
   and load image /home/frog/cvs/DCMlib/Data/CT-MONO2-16-ankle.dcm
   will yield wrong coloring scheme as opposed to 

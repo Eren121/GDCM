@@ -528,14 +528,19 @@ class gdcmTestCase(unittest.TestCase):
       Source.GetImageData()
       TargetFileName = "junk"
       Target = Source.WriteDcmImplVR(TargetFileName)
-      Sign = '5af8739c15dd579dea223eb3930cacda'
+      Sign = 'c3d27238647b7eaa773bff6ea0692b54'
       ComputeSign = md5.new(open(TargetFileName).read()).hexdigest()
-      #print ComputeSign
       self.assertEqual(ComputeSign, Sign,
           ("Wrong signature for file %s (got %s, shoud be %s)"
            % (SourceFileName, ComputeSign, Sign)) )
       os.unlink(TargetFileName)
 
 if __name__ == '__main__':
+   if not GDCM_TEST_DATA_PATH:
+      print "GDCM_TEST_DATA_PATH is not setup properly. This test suite"
+      print "   requires that some Dicom reference files be installed."
+      print "   For further details on installation of gdcmData, please"
+      print "   refer to the developper's section of page "
+      print "       http://www.creatis.insa-lyon.fr/Public/Gdcm"
    unittest.main()
 

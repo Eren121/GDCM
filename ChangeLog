@@ -1,3 +1,17 @@
+2003-07-07  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmElValSet.cxx, gdcmFile.cxx: JPR bug fix, removal of
+        garbage debug code.
+      * TODO, vtk/vtkGdcmReader.cxx: upcoming fixes comments.
+      * gdcmPython/testSuite.py: JPR bug fix, brutal erasement of 
+        test suite reported error.
+      * PACKAGER file added (describes what a packager must do when
+        packaging a new release).
+      * MANIFEST.in, now declares jconfig.linux and jconfig.vc
+      * configure.in: upgraded version number to 0.3.0
+      * fixing build of rpm (through rpm -ta):
+        - Doc/Makefile.am exports proper doxygen files
+        - src/jpeg/libijg8/Makefile.am exports the include files.
+
 2003-07-07  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader.cxx : bug fix when loading only 1 file.
       * src/gdcmHeader.h : formatting code

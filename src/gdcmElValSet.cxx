@@ -322,14 +322,6 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
          groupHt[key] += 2 + 2 + 4 + elem->GetLength(); 
       } 
    }
-  
-     if(1) // unnormalized way to see what happened
-     for (GroupHT::iterator g = groupHt.begin();
-        g != groupHt.end();
-        ++g){        
-        printf("groupKey %s : %d\n",g->first.c_str(),g->second);
-     }
-       
    unsigned short int gr_bid;
   
    for (GroupHT::iterator g = groupHt.begin(); // for each group we found

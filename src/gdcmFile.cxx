@@ -2,12 +2,6 @@
 
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
-
-
-// TODO : remove DEBUG
-#define DEBUG 0
-
-
 #include "iddcmjpeg.h"
 using namespace std;
 
@@ -89,8 +83,6 @@ bool gdcmFile::ReadPixelData(void* destination) {
    if ( !OpenFile())
       return false;
       
-      printf("GetPixelOffset() %d\n",GetPixelOffset() );
-      
     if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
       CloseFile();
       return false;
@@ -119,15 +111,11 @@ bool gdcmFile::ReadPixelData(void* destination) {
       fread(&ln,4,1,fp); 
       if(GetSwapCode()) 
          ln=SwapLong(ln);
-      if (DEBUG) 
-         printf ("ln %d\n",ln);
       fseek(fp,ln,SEEK_CUR);
       fseek(fp,4,SEEK_CUR);
       fread(&ln,4,1,fp); 
       if(GetSwapCode()) 
          ln=SwapLong(ln);
-      if (DEBUG) 
-         printf ("ln image comprimée %d\n",ln);        
           
   // ------------------------------- JPEG LossLess : call to Jpeg Libido
    

@@ -39,5 +39,5 @@
 #define PACKAGE "gdcm"
 
 /* Version number of package */
-#define VERSION "0.1.0"
+#define VERSION "0.3.0"
 

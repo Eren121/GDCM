@@ -1,0 +1,75 @@
+Here is the checklist when freezing a version of gdcm:
+
+* First stage, checkings:
+  1/ Un*x:
+    Notation: we here assume you have a cvs tree in GDCMHOME directory.
+    cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public login
+    cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public co gdcm
+    cd gdcm
+    export GDCMHOME=`pwd`
+    cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public co gdcmData
+
+    1a/ check the full compilation is effective:
+       ./autogen.sh --enable-vtk --enable-python --enable-doxygen
+       make
+        
+    1b/ check the python test suite is clean (python testSuite.py)
+       cd gdcmPython
+       export PYTHONPATH=`pwd`/..
+       ln -s .libs/pygdcm.so _gdcm.so
+       ln -s .libs/vtkgdcmPython.so .
+       python testSuite.py
+
+    1c/ check the setup.py distutil script is operational and then validate
+        its produced packages through the test suite, in all following cases
+       - Direct installation:
+         cd $(GDCMHOME)
+         python setup.py install --prefix=/tmp/
+         cd /tmp/lib/python2.2/site-packages/
+         ln -s $(GDCMDATAHOME) .
+         export PYTHONPATH=`pwd`
+         cd gdcmPython/
+         python testSuite.py
+       - Binary distribution:
+         cd $(GDCMHOME)
+         python setup.py bdist --formats=rpm
+         su
+         rpm -Uvh dist/gdcmPython-0.[n].i386.rpm
+         cd /usr/lib/python2.2/site-packages/
+         Check out gdcmData
+         cd gdcmPython
+         python testSuite.py
+         rpm --erase gdcmPython
+       - Source distribution and then binary distribution (out of build 
+         source distro):
+         cd $(GDCMHOME)
+         python setup.py sdist
+         cd /tmp
+         tar zxvf ~/cvs/gdcm/dist/gdcmPython-*.tar.gz
+         cd gdcmPython-*/
+         python setup.py bdist --formats=rpm
+         As root, repeat above installation with rpm and test.
+         
+  2/ Windoze:
+
+* Second stage: preparing packaging:
+  - Update the version number in configure.in (AM_INIT_AUTOMAKE)
+  - Update the version number in setup.py (version entry in setup object).
+
+* Third stage: packaging
+  1/ Un*x
+    1a/  Packaging at the C/C++/Python level (i.e. exports both libraries,
+        include files and python package)
+      - Make sure you have a ~/.rpmmacros file containing the line
+            %_topdir <somedirectoryPath>
+        and that <somedirectoryPath> exists and contains the subdirs
+        BUILD, SOURCES, RPMS/i386, SRPMS, SPECS
+      - cd $(GDCMHOME)
+      - ./autogen.sh --enable-vtk --enable-python --enable-doxygen
+      - make release  (generates gdcm-x.y.z.tar.gz)
+      - rpm -ta gdcm-x.y.z.tar.gz
+    1b/ Packaging at the python level:
+         cd $(GDCMHOME)
+         python setup.py sdist
+         python setup.py bdist --formats=rpm
+         collect both source distro and binary distro

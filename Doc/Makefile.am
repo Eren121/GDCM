@@ -1,7 +1,14 @@
 HTML_DIR=$(datadir)/gdcm/html
 TARGET_DIR=$(HTML_DIR)/$(DOC_MODULE)
 
-EXTRA_DIST = DoxyfileDeveloppers
+EXTRA_DIST = \
+  DoxyfileDeveloppers  \
+  DoxyfileUsers        \
+  DoxyDevelInstal.txt  \
+  DoxyIntroduction.txt \
+  DoxyPython.txt       \
+  DoxyInstallation.txt \
+  DoxyMainPage.txt
 
 all-local: html.developper/index.html
 
