@@ -1,3 +1,8 @@
+2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * merging of Test/PrintDicomDir and Test/TestDimoDir
+	* removal of now redundant Test/PrintDicomDir
+	* enhancement of Example/PrintDicomDir
+
 2005-01-13 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Now, python test might work on systems
    * Add the PrintDicomDir test

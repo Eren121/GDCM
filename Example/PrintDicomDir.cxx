@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 14:20:18 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/13 14:56:39 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,11 +59,24 @@ int main(int argc, char* argv[])
    else
       detailLevel = 3;
 
+   if( !e1->IsReadable() )
+   {
+      std::cout<<"          DicomDir '"<<fileName
+               <<"' is not readable"<<std::endl
+               <<"          ...Failed"<<std::endl;
+
+      delete e1;
+      return 1;
+   }
 
    if(e1->GetDicomDirPatients().begin() == e1->GetDicomDirPatients().end() )
    {
-      std::cout<<"Empty list"<<std::endl;
-      return(1);
+      std::cout<<"          DicomDir '"<<fileName
+               <<" has no patients"<<std::endl
+               <<"          ...Failed"<<std::endl;
+
+      delete e1;
+      return 1;
    }
 
 // Structure use Examples 
