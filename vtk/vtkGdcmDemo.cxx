@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmDemo.cxx,v 1.1 2004/10/01 12:40:58 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmDemo.cxx,v 1.2 2004/11/09 11:21:33 regrain Exp $
 
 //----------------------------------------------------------------------------
 // A simple straightfoward example of vtkGdcmReader vtk class usage.
@@ -43,7 +43,7 @@ int main( int argc, char *argv[] )
 
    if (argc < 2)
    {
-      std::cerr << "Usage: " << argv[0] << " image.dcm\n";
+      cerr << "Usage: " << argv[0] << " image.dcm\n";
       return 0;
    }
 

@@ -2,6 +2,9 @@
 # VTK GDCM Reader subdir
 
 #-----------------------------------------------------------------------------
+# Include the VTK library
+INCLUDE(${VTK_USE_FILE})
+
 # Need gdcm header files
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src/
@@ -15,7 +18,7 @@ SET(VTKGDCM_LIB_SRCS
 #-----------------------------------------------------------------------------
 # Create vtkgdcm library
 ADD_LIBRARY(vtkgdcm ${VTKGDCM_LIB_SRCS})
-TARGET_LINK_LIBRARIES(vtkgdcm 
+TARGET_LINK_LIBRARIES(vtkgdcm
   gdcm
   vtkCommon
   vtkIO
@@ -27,7 +30,7 @@ SET(vtkgdcmdemo_SOURCES
   vtkGdcmDemo.cxx
 )
 ADD_EXECUTABLE(vtkgdcmdemo ${vtkgdcmdemo_SOURCES})
-TARGET_LINK_LIBRARIES(vtkgdcmdemo 
+TARGET_LINK_LIBRARIES(vtkgdcmdemo
   vtkgdcm
   vtkGraphics
   vtkRendering
@@ -38,7 +41,7 @@ SET(vtkgdcmViewer_SOURCES
   vtkgdcmViewer.cxx
 )
 ADD_EXECUTABLE(vtkgdcmViewer ${vtkgdcmViewer_SOURCES})
-TARGET_LINK_LIBRARIES(vtkgdcmViewer 
+TARGET_LINK_LIBRARIES(vtkgdcmViewer
   vtkgdcm
   vtkRendering
 )
@@ -47,3 +50,4 @@ TARGET_LINK_LIBRARIES(vtkgdcmViewer
 INSTALL_FILES(/include FILES vtkGdcmReader.h)
 
 INSTALL_TARGETS(/lib/ vtkgdcm)
+

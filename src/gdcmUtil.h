@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/05 20:23:14 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/11/09 11:21:32 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,12 +53,12 @@ public:
    static std::string DicomString(const char* s);
 };
 
-   template <class T>
-   std::ostream& binary_write(std::ostream& os, const T& val);
-   std::ostream& binary_write(std::ostream& os, const uint16_t& val);
-   std::ostream& binary_write(std::ostream& os, const uint32_t& val);
-   std::ostream& binary_write(std::ostream& os, const char* val);
-   std::ostream& binary_write(std::ostream& os, std::string const & val);
+   template <class T> 
+   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, const T& val);
+   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, const uint16_t& val);
+   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, const uint32_t& val);
+   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, const char* val);
+   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, std::string const & val);
 } // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

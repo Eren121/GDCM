@@ -1,3 +1,16 @@
+2004-11-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+  * Bugs fix for the Windows build with VC6
+  * CMakeLists.txt : bug fix - The include of the VTK lib is made only when it's
+    needed (only for projects required VTK). If the VTK is included in all
+    projects, there is conflicts with the jpeg lib of vtk when compiling the
+    gdcmjpeg[8,12,16] projects. The first conflict is on the jmorecfg.h file.
+  * src/gdcmUtil.h : export binary_write methods. Otherwise, there's problems
+    when compiling the gdcm_wrap.cxx file (created by the compilation of the
+    gdcm.i file)
+  * vtk/vtkGdcmDemo.cxx : remove the use of std namespace for the cerr use
+    (like it's already made for the cout use). Otherwise, conflict with the
+    std::cerr of vtk.
+
 2004-11-09 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmDicomDit.h the Method typedef is now local to DicomDir class.
   * gdcmPython/gdcm.i:

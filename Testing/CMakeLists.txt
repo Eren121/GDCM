@@ -31,11 +31,14 @@ IF (GDCM_DATA_ROOT)
   )
   # add test that require VTK:
   IF(GDCM_VTK)
+    # Include the VTK library
+    INCLUDE(${VTK_USE_FILE})
+
     INCLUDE_DIRECTORIES(
       ${GDCM_SOURCE_DIR}/vtk/
       )
     SET(TEST_SOURCES ${TEST_SOURCES}
-      ShowDicom.cxx    
+      ShowDicom.cxx
       )
   ENDIF(GDCM_VTK)
 ENDIF (GDCM_DATA_ROOT)
