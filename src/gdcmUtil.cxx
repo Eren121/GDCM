@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 19:00:39 $
-  Version:   $Revision: 1.134 $
+  Date:      $Date: 2005/02/11 19:06:55 $
+  Version:   $Revision: 1.135 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -899,8 +899,8 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
    uint16_t *buffer = new uint16_t[BUFFER_SIZE/2];
  
    // how many BUFFER_SIZE long pieces in binArea ?
-   int nbPieces = lgr/BUFFER_SIZE; //(16 bits = 2 Bytes)
-   int remainingSize = lgr%BUFFER_SIZE;
+   int nbPieces = len/BUFFER_SIZE; //(16 bits = 2 Bytes)
+   int remainingSize = len%BUFFER_SIZE;
 
    for (int j=0;j<nbPieces;j++)
    {
