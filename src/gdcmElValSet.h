@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.3 2003/03/12 21:33:20 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.4 2003/03/21 08:52:31 jpr Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -17,7 +17,8 @@ class GDCM_EXPORT gdcmElValSet {
 	TagElValueHT tagHt;             // Both accesses with a TagKey or with a
 	TagElValueNameHT NameHt;        // the DictEntry.Name are required.
 public:	
-	void Add(gdcmElValue*);		
+	void Add(gdcmElValue*);	
+	void ReplaceOrCreate(gdcmElValue*);		
 	void Print(ostream &);
 	void PrintByName(ostream &);
 	int  Write(FILE *fp);

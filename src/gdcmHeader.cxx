@@ -768,26 +768,6 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
 	// pour les elements de Value Multiplicity > 1
 	// on aura en fait une serie d'entiers
 	
-	// code original
-	
-	//if ( IsAnInteger(ElVal) ) {
-	//	guint32 NewInt;
-	//	if( length == 2 ) {
-	//		NewInt = ReadInt16();
-	//	} else if( length == 4 ) {
-	//
-	//	NewInt = ReadInt32();
-	//	} else
-	//		dbg.Error(true, "LoadElementValue: Inconsistency when reading Int.");
-	//	
-	//	//FIXME: make the following an util fonction
-	//	ostringstream s;
-	//	s << NewInt;
-	//	ElVal->SetValue(s.str());
-	//	return;
-	//}
-
-	// modif proposee. JPR
 	// on devrait pouvoir faire + compact (?)
 		
 	if ( IsAnInteger(ElVal) ) {
@@ -822,8 +802,6 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
 		ElVal->SetValue(s.str());
 		return;	
 	}
-   
-   
    
    // FIXME The exact size should be length if we move to strings or whatever
    char* NewValue = (char*)malloc(length+1);

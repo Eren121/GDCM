@@ -1,5 +1,6 @@
-// $Id: gdcmElValSet.cxx,v 1.21 2003/03/14 14:26:01 jpr Exp $
+// gdcmElValSet.cxx
 
+#include <sstream>
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
 
@@ -13,6 +14,26 @@ void gdcmElValSet::Add(gdcmElValue * newElValue) {
 	NameHt[newElValue->GetName()] = newElValue;
 }
 
+// TODO : faire un gdcmElValSet::ReplaceOrCreate qui remplace si ça existe, qui cree sinon
+
+void gdcmElValSet::ReplaceOrCreate(gdcmElValue * newElValue) {
+
+	TagKey key = newElValue->GetKey();
+
+	if (tagHt.count(key) > 1)
+		dbg.Verbose(0, "gdcmElValSet::GetElValueByNumber",
+		            "multiple entries for this key (FIXME) !");
+		            
+	if (tagHt.count(key)) {
+		tagHt.erase(key);
+		tagHt.erase(newElValue->GetName());
+	}
+
+	tagHt [key]  		      = newElValue;
+	NameHt[newElValue->GetName()] = newElValue;
+}
+
+
 void gdcmElValSet::Print(ostream & os) {
 	for (TagElValueHT::iterator tag = tagHt.begin();
 		  tag != tagHt.end();
@@ -20,7 +41,9 @@ void gdcmElValSet::Print(ostream & os) {
 		os << tag->first << ": ";
 		os << "[" << tag->second->GetValue() << "]";
 		os << "[" << tag->second->GetName()  << "]";
-		os << "[" << tag->second->GetVR()    << "]" << endl;
+		os << "[" << tag->second->GetVR()    << "]"; 
+		os << " lgr : " << tag->second->GetLength();
+						os << endl;
 	}
 } 
 
@@ -118,8 +141,6 @@ int gdcmElValSet::SetElValueLengthByNumber(guint32 l,
 		            "multiple entries for this key (FIXME) !");
 		return (0); 
 	}		                       
-   // FIXME JPR: comments in English please !
-	// m à j LgrElem 
 	tagHt[key]->SetLength(l);	 
 	return(1);		
 }
@@ -137,6 +158,8 @@ int gdcmElValSet::SetElValueLengthByName(guint32 l, string TagName) {
 	return(1);		
 }
 
+// Sorry for the DEBUG's, but tomorow is gonna be hoter than today
+#define DEBUG 0
 
 int gdcmElValSet::Write(FILE * _fp) {
 
@@ -149,17 +172,18 @@ int gdcmElValSet::Write(FILE * _fp) {
 	guint32 val_uint32;
 	gint32  val_int32;
 	guint16 val_uint16;
-	gint16  val_int16;
+	gint16  val_int16;;
 	
 	vector<string> tokens;
 	
 	void *ptr;
 	char str_lgrCalcGroupe[10];
+
 	
 	string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
 	
 	// Utilisées pour le calcul Group Length
-	int deja = 0;
+	int deja = 0, prem=0;
 	guint32 lgrCalcGroupe=0;
 	gdcmElValue *elem, *elemZ, *elemZPrec;
 	guint16 grCourant = 0;
@@ -175,60 +199,77 @@ int gdcmElValSet::Write(FILE * _fp) {
 	//
 	// cf : code IdDcmWriteFile dans libido/src/dcmwrite.c
 		
-	if (0)  // Risque de pb dans le calcul des lgr de chaque groupe. On le saute pour le moment!
-	
-	for (TagElValueHT::iterator tag = tagHt.begin();
-		  tag != tagHt.end();
-		  ++tag){
-
-		elem = tag->second;
-		printf("gr %04x el %04x lgr %d\n",elem->GetGroup(), elem->GetElement(), elem->GetLength());
-	
-		if ( (elem->GetGroup() != grCourant) &&	  
-			 (elem->GetGroup() != 0xfffe)	) { 	// On arrive sur un nv Groupe
-			 
-		printf("Nouv Groupegr %04x el %04x \n",elem->GetGroup(), elem->GetElement());
-
-			elemZ = elem; 
-			 
-			if(elemZ->GetElement() != 0x0000) { 	// pas d'element 'Lgr groupe'
-				// On crée
-			 	gdcmDictEntry * tagZ = new gdcmDictEntry(grCourant, 0x0000, "UL");
-				elemZ = new gdcmElValue(tagZ); // on le cree
-				elemZ->SetLength(4);
-				Add(elemZ);	 		// On l'accroche à sa place	
-			}	
-			
-			if (deja) {
-				//sprintf(str_lgrCalcGroupe,"%d",lgrCalcGroupe);
-				elemZPrec->SetValue(str_lgrCalcGroupe);
-				lgrCalcGroupe = 0;
-			}
-			deja = 1;
-			
-			lgrCalcGroupe =  12; //2 + 2 + 4 + 4; // Gr + Num + Lgr + LgrGroupe
-			printf ("lgrCalcGroupe %d\n",lgrCalcGroupe);
-			
-			elemZPrec = elemZ;
-	 		grCourant = elem->GetGroup();
-							
-		} else {		// On n'EST PAS sur un nv Groupe
+if (1) {  // Risque de pb dans le calcul des lgr de chaque groupe. On le saute pour le moment!
 		
-			printf ("lgrCalcGroupe avant : %d LgrElem %d\n",lgrCalcGroupe,elem->GetLength());
-
-			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem 
-			
-			printf ("lgrCalcGroupe apres %d\n",lgrCalcGroupe);
-		}		
-	}
-	
-	// Si on fait de l'implicit VR little Endian 
+	// On fait de l'implicit VR little Endian 
 	// (pour moins se fairche sur processeur INTEL)
-	// penser a forcer le TRANSFERT SYNTAX UID
+	// On force le TRANSFERT SYNTAX UID
 				
 	SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);	
 	SetElValueLengthByNumber(18, 0x0002, 0x0010);  // Le 0 de fin de chaine doit etre stocké, dans ce cas	
-		
+			
+	TagElValueHT::iterator tag = tagHt.begin();
+	
+	elem = tag->second;
+	gr   = elem->GetGroup();
+	el   = elem->GetElement();
+			
+	if (el != 0x0000) {
+		if(DEBUG)printf("ajout elem OOOO premiere fois\n");
+		gdcmDictEntry * tagZ = new gdcmDictEntry(gr, 0x0000, "UL");
+		elemZPrec = new gdcmElValue(tagZ);	// on le cree
+		elemZPrec->SetLength(4);
+		Add(elemZPrec);				// On l'accroche à sa place
+	} else {
+		elemZPrec = elem;
+		if(DEBUG)printf("Pas d'ajout elem OOOO premiere fois\n");
+	}
+	lgrCalcGroupe = 0;
+	if(DEBUG)printf("init-1 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);
+	grCourant = gr;
+	
+	for (tag = ++tagHt.begin();
+		  tag != tagHt.end();
+		  ++tag){
+		  
+		elem = tag->second;
+		gr = elem->GetGroup();
+		el = elem->GetElement();
+
+		if ( (gr != grCourant) /*&&	// On arrive sur un nv Groupe	  
+		     (el != 0xfffe) */	) {
+			    
+			if (el != 0x0000) {
+			 	gdcmDictEntry * tagZ = new gdcmDictEntry(gr, 0x0000, "UL");
+				elemZ = new gdcmElValue(tagZ); // on le cree
+				elemZ->SetLength(4);
+				Add(elemZ);	 		// On l'accroche à sa place 
+				if(DEBUG)printf("ajout elem OOOO pour gr %04x\n",gr);
+			} else { 
+				elemZ=elem;
+				if(DEBUG)printf("maj elmeZ\n");
+			}
+			
+			ostringstream fock;
+			fock << lgrCalcGroupe; 
+			//sprintf(str_lgrCalcGroupe,"%d",lgrCalcGroupe);
+			elemZPrec->SetValue(fock.str());
+			if(DEBUG)printf("ecriture lgr (%d, %s) pour gr %04x\n",lgrCalcGroupe, fock.str().c_str(), grCourant);
+			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),elemZPrec->GetValue().c_str());
+			if(DEBUG)cout << "Addresse elemZPrec " << elemZPrec<< endl;
+			elemZPrec=elemZ;
+			lgrCalcGroupe = 0;
+			grCourant     = gr;	
+			if(DEBUG)printf("init-2 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);			
+		} else {			// On n'EST PAS sur un nv Groupe
+			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem
+			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",elem->GetLength(), el, lgrCalcGroupe, gr);
+		}		
+	}
+	
+} // fin if (1)
+
+	
 	// restent à tester les echecs en écriture (apres chaque fwrite)
 	
 	for (TagElValueHT::iterator tag2 = tagHt.begin();
@@ -240,6 +281,7 @@ int gdcmElValSet::Write(FILE * _fp) {
 		lgr = tag2->second->GetLength();
 		val = tag2->second->GetValue().c_str();
 		vr =  tag2->second->GetVR();
+		if(DEBUG)printf ("%04x %04x [%s] : [%s]\n",gr, el, vr.c_str(), val);
 			
 		fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp); 	//group
 		fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp); 	//element
@@ -248,47 +290,28 @@ int gdcmElValSet::Write(FILE * _fp) {
 		
 		// si on n'est pas en IMPLICIT VR voir pb (lgr  + VR)
 		
-		fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp); 		//lgr
+		fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp); 	//lgr
 		
 		tokens.erase(tokens.begin(),tokens.end());
 		Tokenize (tag2->second->GetValue(), tokens, "\\");
 		
-		//printf ("%04x %04x [%s] : [%s]\n",gr, el, vr.c_str(), val);
 		//if (tokens.size() > 1) { printf ("size : %d\n",tokens.size());}
 		
-		
 		if (vr == "US" || vr == "SS") {
-			/*
-			val_int16 = atoi(val);
-			ptr = &val_int16;
-			fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);	
-			continue;
-			*/
-			
 			for (unsigned int i=0; i<tokens.size();i++) {
 				val_uint16 = atoi(tokens[i].c_str());		
 				ptr = &val_uint16;
 				fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
 			}
-			continue;
-			
+			continue;	
 		}
-		if (vr == "UL" || vr == "SL") {
-			/*
-			val_int32 = atoi(val);
-			ptr = &val_int32;
-			fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);	
-			continue;
-			*/
-			
-			
+		if (vr == "UL" || vr == "SL") {	
 			for (unsigned int i=0; i<tokens.size();i++) {
 				val_uint32 = atoi(tokens[i].c_str());		
 				ptr = &val_uint32;
 				fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
 			}
-			continue;				
-			
+			continue;	
 		}	
 		
 		// Les pixels ne sont pas chargés dans l'element !
@@ -343,50 +366,64 @@ int gdcmElValSet::WriteAcr(FILE * _fp) {
 	//
 	// cf : code IdDcmWriteFile dans libido/src/dcmwrite.c
 		
-	if (0)  // Risque de pb dans le calcul des lgr de chaque groupe. On le saute pour le moment!
+
+			
+	TagElValueHT::iterator tag = tagHt.begin();
 	
-	for (TagElValueHT::iterator tag = tagHt.begin();
+	elem = tag->second;
+	gr   = elem->GetGroup();
+	el   = elem->GetElement();
+			
+	if (el != 0x0000) {
+		if(DEBUG)printf("ajout elem OOOO premiere fois\n");
+		gdcmDictEntry * tagZ = new gdcmDictEntry(gr, 0x0000, "UL");
+		elemZPrec = new gdcmElValue(tagZ);	// on le cree
+		elemZPrec->SetLength(4);
+		Add(elemZPrec);				// On l'accroche à sa place
+	} else {
+		elemZPrec = elem;
+		if(DEBUG)printf("Pas d'ajout elem OOOO premiere fois\n");
+	}
+	lgrCalcGroupe = 0;
+	if(DEBUG)printf("init-1 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);
+	grCourant = gr;
+	
+	for (tag = ++tagHt.begin();
 		  tag != tagHt.end();
 		  ++tag){
-
+		  
 		elem = tag->second;
-		//printf("gr %04x el %04x lgr %d\n",elem->GetGroup(), elem->GetElement(), elem->GetLength());
-	
-		if ( (elem->GetGroup() != grCourant) &&	  
-			 (elem->GetGroup() != 0xfffe)	) { 	// On arrive sur un nv Groupe
-			 
-		//printf("Nouv Groupegr %04x el %04x \n",elem->GetGroup(), elem->GetElement());
+		gr = elem->GetGroup();
+		el = elem->GetElement();
 
-			elemZ = elem; 
-			 
-			if(elemZ->GetElement() != 0x0000) { 	// pas d'element 'Lgr groupe'
-				// On crée
-			 	gdcmDictEntry * tagZ = new gdcmDictEntry(grCourant, 0x0000, "UL");
+		if ( (gr != grCourant) /*&&	// On arrive sur un nv Groupe	  
+		     (el != 0xfffe) */	) {
+			    
+			if (el != 0x0000) {
+			 	gdcmDictEntry * tagZ = new gdcmDictEntry(gr, 0x0000, "UL");
 				elemZ = new gdcmElValue(tagZ); // on le cree
 				elemZ->SetLength(4);
-				Add(elemZ);	 				 // On l'accroche à sa place	
-			}	
-			
-			if (deja) {
-				//sprintf(str_lgrCalcGroupe,"%d",lgrCalcGroupe);
-				elemZPrec->SetValue(str_lgrCalcGroupe);
-				lgrCalcGroupe = 0;
+				Add(elemZ);	 		// On l'accroche à sa place 
+				if(DEBUG)printf("ajout elem OOOO pour gr %04x\n",gr);
+			} else { 
+				elemZ=elem;
+				if(DEBUG)printf("maj elmeZ\n");
 			}
-			deja = 1;
 			
-			lgrCalcGroupe =  12; //2 + 2 + 4 + 4; // Gr + Num + Lgr + LgrGroupe
-			//printf ("lgrCalcGroupe %d\n",lgrCalcGroupe);
-			
-			elemZPrec = elemZ;
-	 		grCourant = elem->GetGroup();
-							
-		} else {		// On n'EST PAS sur un nv Groupe
-		
-			//printf ("lgrCalcGroupe avant : %d LgrElem %d\n",lgrCalcGroupe,elem->GetLength());
-
-			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem 
-			
-			//printf ("lgrCalcGroupe apres %d\n",lgrCalcGroupe);
+			ostringstream fock;
+			fock << lgrCalcGroupe; 
+			//sprintf(str_lgrCalcGroupe,"%d",lgrCalcGroupe);
+			elemZPrec->SetValue(fock.str());
+			if(DEBUG)printf("ecriture lgr (%d, %s) pour gr %04x\n",lgrCalcGroupe, fock.str().c_str(), grCourant);
+			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),elemZPrec->GetValue().c_str());
+			if(DEBUG)cout << "Addresse elemZPrec " << elemZPrec<< endl;
+			elemZPrec=elemZ;
+			lgrCalcGroupe = 0;
+			grCourant     = gr;	
+			if(DEBUG)printf("init-2 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);			
+		} else {			// On n'EST PAS sur un nv Groupe
+			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem
+			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",elem->GetLength(), el, lgrCalcGroupe, gr);
 		}		
 	}
 	

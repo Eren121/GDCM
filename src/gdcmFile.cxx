@@ -70,132 +70,32 @@ size_t gdcmFile::GetImageDataSize(void) {
 
 	size_t lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
 	return (lgrTotale);
-
 }
+
+
 
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
- * \brief amene en mémoire les Pixels d'une image NON COMPRESSEE
- * \Aucun test n'est fait pour le moment sur le caractere compresse ou non de l'image
+ * \brief TODO
+ * \warning WARNING
  *
- * @param rien
+ * @param 
  *
- * @return	Pointeur sur la zone mémoire contenant les Pixels lus
- */
-
-/*
-void * gdcmFile::GetImageData (void) {
-	
-	char* _Pixels;
-
-	int  nb, nbu, highBit, signe;
-	string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
-	
-	unsigned short int mask = 0xffff;
-
-	// Nombre de Bits Alloues pour le stockage d'un Pixel	
-	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-
-	if (str_nb == "gdcm::Unfound" ) {
-		nb = 16;
-	} else {
-		nb = atoi(str_nb.c_str() );
-	}
-			
-	// Nombre de Bits Utilises	
-	str_nbu=GetPubElValByNumber(0x0028,0x0101);
-
-	if (str_nbu == "gdcm::Unfound" ) {
-		nbu = nb;
-	} else {
-		nbu = atoi(str_nbu.c_str() );
-	}	
-	
-	// Position du Bit de Poids Fort	
-	str_highBit=GetPubElValByNumber(0x0028,0x0102);
-
-	if (str_highBit == "gdcm::Unfound" ) {
-		highBit = nb - 1;
-	} else {
-		highBit = atoi(str_highBit.c_str() );
-	}
-		
-	// Signe des Pixels 0 : Unsigned
-	str_signe=GetPubElValByNumber(0x0028,0x0103);
-
-	if (str_signe == "gdcm::Unfound" ) {
-		signe = 1;
-	} else {
-		signe = atoi(str_signe.c_str() );
-	}
-	
-	// Longueur en Octets des Pixels a lire
-	size_t _lgrTotale = GetImageDataSize();
-	
-	//Pixels = (char *) g_malloc(_lgrTotale);
-	_Pixels = (char *) malloc(_lgrTotale);
-	
-	GetPixels(lgrTotale, _Pixels);
-
-	// On remet les Octets dans le bon ordre si besoin est
-	if (nb != 8) {
-		int _sw = GetSwapCode();
-
-		_Swap (_Pixels, _sw, _lgrTotale, nb);
-	}
-	
-	// On remet les Bits des Octets dans le bon ordre si besoin est
-	//
-	// ATTENTION :  Jamais confronté a des pixels stockes sur 32 bits 
-	//			avec moins de 32 bits utilises
-	//			et dont le bit de poids fort ne serait pas la ou on l'attend ...
-	// 			--> ne marchera pas dans ce cas 
-	if (nbu!=nb){
-		mask = mask >> (nb-nbu);
-		int l=(int)_lgrTotale/(nb/8);
-		unsigned short *deb = (unsigned short *)_Pixels;
-		for(int i=0;i<l;i++) {
-				*deb = (*deb >> (nbu-highBit-1)) & mask;
-				deb ++;
-		}
-	}	
-	// On l'affecte à un champ du dcmFile
-	
-	Pixels = _Pixels;
-	lgrTotale = _lgrTotale;
-	
-	// et on le retourne
-	// ca fait double emploi, il faudra nettoyer ça
-	
-	return (_Pixels);		
-}
-
-*/
-
-/////////////////////////////////////////////////////////////////
-/**
- * \ingroup   gdcmFile
- * \brief amene en mémoire les Pixels d'une image NON COMPRESSEE
- * \Aucun test n'est fait pour le moment sur le caractere compresse ou non de l'image
- *
- * @param rien
- *
- * @return	Pointeur sur la zone mémoire contenant les Pixels lus
+ * @return
  */
 
 void * gdcmFile::GetImageData (void) {
 	char * _Pixels;
 	// Longueur en Octets des Pixels a lire
 	size_t taille = GetImageDataSize();// ne faudrait-il pas la stocker?
-	_Pixels = (char *) malloc(taille);	
+	_Pixels = (char *) malloc(taille);
 	GetImageDataIntoVector(_Pixels, taille);
 	
 		// On l'affecte à un champ du dcmFile	
 	Pixels =    _Pixels;
 	lgrTotale = taille;
 	
-	// et on le retourne
 	// ca fait double emploi, il faudra nettoyer ça
 	
 	return(_Pixels);
@@ -218,7 +118,7 @@ void * gdcmFile::GetImageData (void) {
 int gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
 // Question :
-//	dans quel cas la Maxize sert-elle a quelque chose?
+//	dans quel cas la MaxSize sert-elle a quelque chose?
 // 	que fait-on si la taille de l'image est + gde    que Maxize?
 // 	que fait-on si la taille de l'image est + petite que Maxize?
 
@@ -379,6 +279,57 @@ if( nb == 32 )
 	} 
 return;
 }
+
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief TODO
+ * \warning WARNING doit-etre etre publique ? 
+ *
+ * @param 
+ *
+ * @return	
+ */
+
+int gdcmFile::SetImageData(void * Data, size_t ExpectedSize) {
+	
+	SetImageDataSize(ExpectedSize);
+	
+	Pixels =    Data;
+	lgrTotale = ExpectedSize;
+	
+	return(1);
+}
+
+
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief TODO
+ * \
+ * \warning WARNING doit-etre etre publique ?
+ *
+ * @param 
+ *
+ * @return
+ */
+
+void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
+
+ 	string content1;
+ 	string content2;
+ 	char car[20];
+ 	
+ 	sprintf(car,"%d",ImageDataSize);
+ 	content2=car;
+ 	SetPubElValByNumber(content2, 0x7fe0, 0x0010);
+ 	
+ 	ImageDataSize+=8;
+ 	sprintf(car,"%d",ImageDataSize);
+ 	content1=car;	
+ 	SetPubElValByNumber(content1, 0x7fe0, 0x0000);
+}
+
 
 /////////////////////////////////////////////////////////////////
 /**

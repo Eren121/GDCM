@@ -69,12 +69,6 @@ public:
 	
 	int GetImageDataIntoVector(void* destination, size_t MaxSize );
 	
-	// Question :
-	//
-	//	GetImageData et GetImageDataIntoVector
-	// Get et Put pour 2 fonctions qui font presque la meme chose :-(
-	//
-	
 	// Allocates ExpectedSize bytes of memory at this->Data and copies the
 	// pointed data to it.
 	
@@ -82,7 +76,8 @@ public:
 	// Pourquoi dupliquer les pixels, alors qu'on les a deja en mémoire,
 	// et que Data (dans le gdcmHeader) est un pointeur ?
 	
-	// TODO Swig int SetImageData(void * Data, size_t ExpectedSize);
+	int SetImageData     (void * Data, size_t ExpectedSize);
+	void SetImageDataSize (size_t ExpectedSize);
 	
 	// Push to disk.
 	// A NE PAS OUBLIER : que fait-on en cas de Transfert Syntax (dans l'entete)
