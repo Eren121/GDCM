@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/14 10:43:53 $
-  Version:   $Revision: 1.140 $
+  Date:      $Date: 2005/02/14 14:34:27 $
+  Version:   $Revision: 1.141 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -871,6 +871,7 @@ std::ostream &binary_write(std::ostream &os, const char *val)
  * \brief
  * @param os ostream to write to
  * @param val val
+ * @param len length of the 'value' to be written  
  */ 
 std::ostream &binary_write(std::ostream &os, std::string const &val)
 {
@@ -892,6 +893,7 @@ std::ostream &binary_write(std::ostream &os, const uint8_t *val, size_t len)
  * \brief  binary_write binary_write
  * @param os ostream to write to
  * @param val val
+ * @param len length of the 'value' to be written 
  */ 
 std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
 {
