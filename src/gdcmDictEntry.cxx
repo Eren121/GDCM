@@ -9,24 +9,24 @@
 // Constructor / Destructor
 /**
  * \ingroup gdcmDictEntry
- * \brief   Construtor
- * @param   InGroup
- * @param   InElement
- * @param   InVr
+ * \brief   Constructor
+ * @param   InGroup    DICOM-Group Number
+ * @param   InElement  DICOM-Element Number
+ * @param   InVr       Value Representatiion
  * @param   InFourth  // DO NOT use any longer
  *                       NOT part of the Dicom Standard
- * @param   InName 
+ * @param   InName    description of the element
 */
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
                              std::string  InVr, std::string InFourth,
                              std::string  InName) {
 	group 	= InGroup;
-	element 	= InElement;
-	vr 		= InVr;
+	element = InElement;
+	vr      = InVr;
 	fourth 	= InFourth;
-	name 		= InName;
-	key 		= TranslateToKey(group, element);
+	name    = InName;
+	key     = TranslateToKey(group, element);
 }
 
 //-----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
  *                                             and a Dicom element number)
  * @param  group the Dicom group   number used to build the tag
  * @param  element the Dicom element number used to build the tag
- * return the built tag
+ * @return the built tag
  */
 
 TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
@@ -57,7 +57,7 @@ TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
 /**
  * \ingroup     gdcmDictEntry
  * \brief       If-and only if-the V(alue) R(epresentation)
- *              is unset then overwrite it.
+ * \            is unset then overwrite it.
  * @param NewVr New V(alue) R(epresentation) to be set.
  */
 void gdcmDictEntry::SetVR(std::string NewVr) 
