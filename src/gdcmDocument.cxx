@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/22 21:01:55 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2004/09/22 21:39:42 $
+  Version:   $Revision: 1.88 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -192,8 +192,16 @@ gdcmDocument::gdcmDocument()
  */
 gdcmDocument::~gdcmDocument ()
 {
-   RefPubDict = 0;
-   RefShaDict = 0;
+   RefPubDict = NULL;
+   RefShaDict = NULL;
+
+   // Recursive clean up of sequences
+   for (TagDocEntryHT::const_iterator it = TagHT.begin(); 
+                                      it != TagHT.end(); ++it )
+   { 
+      //delete it->second; //temp remove
+   }
+   TagHT.clear();
 }
 
 //-----------------------------------------------------------------------------
