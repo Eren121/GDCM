@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:53 $
-  Version:   $Revision: 1.121 $
+  Date:      $Date: 2004/09/01 16:23:59 $
+  Version:   $Revision: 1.122 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,24 +26,34 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
 // Constructor / Destructor
 /**
  * \ingroup   gdcmFile
- * \brief Constructor dedicated to writing a new DICOMV3 part10 compliant
- *        file (see SetFileName, SetDcmTag and Write)
+ * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
+ *        file (gdcmHeader only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
+ *        It will be up to the user to load the pixels into memory
+ *        (see GetImageData, GetImageDataRaw)
  * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
- *        one sets an a posteriori shadow dictionary (efficiency can be
+ *        user sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
- * @param header file to be opened for reading datas
+ * @param header already built gdcmHeader
  * @return
  */
 gdcmFile::gdcmFile(gdcmHeader *header)
 {
    Header     = header;
    SelfHeader = false;
+   
    PixelRead  = -1; // no ImageData read yet.
-
+   LastAllocatedPixelDataLength = 0;
+   PixelData = NULL;
+   
+   InitialSpp = "";     
+   InitialPhotInt = "";
+   InitialPlanConfig = "";
+   InitialBitsAllocated = "";
+       
    if (Header->IsReadable())
    {
       SetPixelDataSizeFromHeader();
@@ -52,10 +62,12 @@ gdcmFile::gdcmFile(gdcmHeader *header)
 
 /**
  * \ingroup   gdcmFile
- * \brief Constructor dedicated to writing a new DICOMV3 part10 compliant
- *        file (see SetFileName, SetDcmTag and Write)
+ * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
+ *        file (gdcmHeader only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
+ *        It will be up to the user to load the pixels into memory
+ *        (see GetImageData, GetImageDataRaw)
  * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
@@ -67,8 +79,16 @@ gdcmFile::gdcmFile(std::string const & filename )
 {
    Header = new gdcmHeader( filename );
    SelfHeader = true;
+   
    PixelRead  = -1; // no ImageData read yet.
+   LastAllocatedPixelDataLength = 0;
+   PixelData = NULL;
 
+   InitialSpp = "";     
+   InitialPhotInt = "";
+   InitialPlanConfig = "";
+   InitialBitsAllocated = "";
+           
    if ( Header->IsReadable() )
    {
       SetPixelDataSizeFromHeader();
@@ -78,8 +98,8 @@ gdcmFile::gdcmFile(std::string const & filename )
 /**
  * \ingroup   gdcmFile
  * \brief canonical destructor
- * \note  If the gdcmHeader is created by the gdcmFile, it is destroyed
- *        by the gdcmFile
+ * \note  If the gdcmHeader was created by the gdcmFile constructor,
+ *        it is destroyed by the gdcmFile
  */
 gdcmFile::~gdcmFile()
 {
@@ -98,11 +118,10 @@ gdcmFile::~gdcmFile()
 
 /**
  * \ingroup   gdcmFile
- * \brief     computes the length (in bytes) to ALLOCATE to receive the
+ * \brief     computes the length (in bytes) we must ALLOCATE to receive the
  *            image(s) pixels (multiframes taken into account) 
  * \warning : it is NOT the group 7FE0 length
  *          (no interest for compressed images).
- * @return length to allocate
  */
 void gdcmFile::SetPixelDataSizeFromHeader()
 {
@@ -153,7 +172,7 @@ void gdcmFile::SetPixelDataSizeFromHeader()
    std::string str_PhotometricInterpretation = 
                              Header->GetEntryByNumber(0x0028,0x0004);
     
-   // if ( str_PhotometricInterpretation == "PALETTE COLOR " )
+   // if ( str_PhotometricInterpretation == "PALETTE COLOR " ),
    // pb when undealt Segmented Palette Color
    
    if ( Header->HasLUT() )
@@ -162,23 +181,13 @@ void gdcmFile::SetPixelDataSizeFromHeader()
    }
 }
 
-/**
- * \ingroup   gdcmFile
- * \brief     Returns the size (in bytes) of required memory to hold
- *            the pixel data represented in this file.
- * @return    The size of pixel data in bytes.
- */
-size_t gdcmFile::GetImageDataSize()
-{
-   return ImageDataSize;
-}
 
 /**
  * \ingroup   gdcmFile
  * \brief     Returns the size (in bytes) of required memory to hold
- *            the pixel data represented in this file, when user DOESN'T want 
+ *            the pixel data represented in this file, if user DOESN'T want 
  *            to get RGB pixels image when it's stored as a PALETTE COLOR image
- *            -the (vtk) user is supposed to know how deal with LUTs- 
+ *            -the (vtk) user is supposed to know how to deal with LUTs-  
  * \warning   to be used with GetImagePixelsRaw()
  * @return    The size of pixel data in bytes.
  */
@@ -189,22 +198,30 @@ size_t gdcmFile::GetImageDataSizeRaw()
 
 /**
  * \ingroup gdcmFile
- * \brief   Allocates necessary memory, copies the pixel data
- *          (image[s]/volume[s]) to newly allocated zone.
- *          Transforms YBR pixels into RGB pixels if any
- *          Transforms 3 planes R, G, B into a single RGB Plane
- *          Transforms single Grey plane + 3 Palettes into a RGB Plane
+ * \brief   - Allocates necessary memory, 
+ *          - Reads the pixels from disk (uncompress if necessary),
+ *          - Transforms YBR pixels, if any, into RGB pixels
+ *          - Transforms 3 planes R, G, B, if any, into a single RGB Plane
+ *          - Transforms single Grey plane + 3 Palettes into a RGB Plane
+ *          - Copies the pixel data (image[s]/volume[s]) to newly allocated zone.
  * @return  Pointer to newly allocated pixel data.
  *          NULL if alloc fails 
  */
 void *gdcmFile::GetImageData()
 {
-   // FIXME
+   // FIXME (Mathieu)
    // I need to deallocate PixelData before doing any allocation:
+   
+   if ( PixelData )
+      if ( LastAllocatedPixelDataLength != ImageDataSize)
+         free (PixelData);
    PixelData = new uint8_t[ImageDataSize];
    if ( PixelData )
    {
+      LastAllocatedPixelDataLength = ImageDataSize;
+         
       GetImageDataIntoVector(PixelData, ImageDataSize);
+      // Will be 7fe0, 0010 in standard case
       GetHeader()->SetEntryVoidAreaByNumber( PixelData, 
          GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel()); 
    }      
@@ -215,10 +232,15 @@ void *gdcmFile::GetImageData()
 
 /**
  * \ingroup gdcmFile
- * \brief   Copies at most MaxSize bytes of pixel data to caller's
+ * \brief
+ *          Read the pixels from disk (uncompress if necessary),
+ *          Transforms YBR pixels, if any, into RGB pixels
+ *          Transforms 3 planes R, G, B, if any, into a single RGB Plane
+ *          Transforms single Grey plane + 3 Palettes into a RGB Plane   
+ *          Copies at most MaxSize bytes of pixel data to caller allocated
  *          memory space.
- * \warning This function was designed to avoid people that want to build
- *          a volume from an image stack to need first to get the image pixels 
+ * \warning This function allows people that want to build a volume
+ *          from an image stack *not to* have, first to get the image pixels, 
  *          and then move them to the volume area.
  *          It's absolutely useless for any VTK user since vtk chooses 
  *          to invert the lines of an image, that is the last line comes first
@@ -236,9 +258,8 @@ void *gdcmFile::GetImageData()
  */
 size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
 {
-   //size_t l = GetImageDataIntoVectorRaw (destination, maxSize);
    GetImageDataIntoVectorRaw (destination, maxSize);
-   PixelRead = 0 ; // no PixelRaw
+   PixelRead = 0 ; // =0 : no ImageDataRaw 
    if ( !Header->HasLUT() )
    {
       return ImageDataSize;
@@ -252,7 +273,6 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
    if ( lutRGBA )
    {
       int j;
-      //int l = ImageDataSizeRaw;  //loss of precision
       // move Gray pixels to temp area  
       memmove(newDest, destination, ImageDataSizeRaw);
       for (size_t i=0; i<ImageDataSizeRaw; ++i) 
@@ -268,30 +288,26 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
    // now, it's an RGB image
    // Lets's write it in the Header
 
-         // CreateOrReplaceIfExist ?
+   // FIXME : Better use CreateOrReplaceIfExist ?
 
    std::string spp = "3";        // Samples Per Pixel
    Header->SetEntryByNumber(spp,0x0028,0x0002);
-   std::string rgb = "RGB ";      // Photometric Interpretation
+   std::string rgb = "RGB ";     // Photometric Interpretation
    Header->SetEntryByNumber(rgb,0x0028,0x0004);
    std::string planConfig = "0"; // Planar Configuration
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
 
    }
-   else  //why is there a 'else' when an allocation failed ?
-   {
-      // need to make RGB Pixels (?)
-      //    from grey Pixels (?!)
-      //     and Gray Lut  (!?!) 
-      //    or Segmented xxx Palette Color Lookup Table Data and so on
- 
-      // Oops! I get one (gdcm-US-ALOKA-16.dcm)
-      // No idea how to manage such an image 
+   else  // GetLUTRGBA() failed
+   { 
+      // (gdcm-US-ALOKA-16.dcm), contains Segmented xxx Palette Color 
+      // that are *more* than 65535 long ?!? 
+      // No idea how to manage such an image !
+      // Need to make RGB Pixels (?) from grey Pixels (?!) and Gray Lut  (!?!)
       // It seems that *no Dicom Viewer* has any idea :-(
-      // Segmented xxx Palette Color are *more* than 65535 long ?!?
-  
-      std::string rgb = "MONOCHROME1 ";      // Photometric Interpretation
-      Header->SetEntryByNumber(rgb,0x0028,0x0004);
+        
+      std::string photomInterp = "MONOCHROME1 ";  // Photometric Interpretation
+      Header->SetEntryByNumber(photomInterp,0x0028,0x0004);
    } 
 
    /// \todo Drop Palette Color out of the Header?
@@ -300,29 +316,36 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
 
 /**
  * \ingroup gdcmFile
- * \brief   Allocates necessary memory, copies the pixel data
- *          (image[s]/volume[s]) to newly allocated zone.
- *          Transforms YBR pixels into RGB pixels if any
- *          Transforms 3 planes R, G, B into a single RGB Plane
+ * \brief   Allocates necessary memory, 
+ *          Transforms YBR pixels (if any) into RGB pixels
+ *          Transforms 3 planes R, G, B  (if any) into a single RGB Plane
+ *          Copies the pixel data (image[s]/volume[s]) to newly allocated zone. 
  *          DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
  * \        NULL if alloc fails 
  */
 void * gdcmFile::GetImageDataRaw ()
 {
-   size_t imgDataSize = ImageDataSize;
+   size_t imgDataSize;
    if ( Header->HasLUT() )
-   {
       /// \todo Let gdcmHeader user a chance to get the right value
       imgDataSize = ImageDataSizeRaw;
-   }
-
-   // FIXME
+   else 
+      imgDataSize = ImageDataSize;
+    
+   // FIXME (Mathieu)
    // I need to deallocate PixelData before doing any allocation:
+   
+   if ( PixelData )
+      if ( LastAllocatedPixelDataLength != imgDataSize)
+         free (PixelData);
    PixelData = new uint8_t[imgDataSize];
    if ( PixelData )
    {
-      GetImageDataIntoVectorRaw(PixelData, ImageDataSize);
+      LastAllocatedPixelDataLength = imgDataSize;
+      
+      GetImageDataIntoVectorRaw(PixelData, imgDataSize);
+      // will be 7fe0, 0010 in standard cases
       GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
          GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel()); 
    } 
@@ -358,8 +381,30 @@ void * gdcmFile::GetImageDataRaw ()
 size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
 {
    int nb, nbu, highBit, sign;
+
+  // we save the initial values of the following
+  // in order to be able to restore the header in a disk-consistent state
+  // (if user asks twice to get the pixels from disk)
+
+   if ( PixelRead == -1 ) // File was never "read" before
+   {  
+      InitialSpp           = Header->GetEntryByNumber(0x0028,0x0002);
+      InitialPhotInt       = Header->GetEntryByNumber(0x0028,0x0004);
+      InitialPlanConfig    = Header->GetEntryByNumber(0x0028,0x0006);
+      InitialBitsAllocated = Header->GetEntryByNumber(0x0028,0x0100);
+   }
+   else // File was already "read", the following *may* have been modified
+        // we restore them to be in a disk-consistent state
+   {
+       // FIXME : What happened with the LUTs ?
+       Header->SetEntryByNumber(InitialSpp,0x0028,0x0002);
+       Header->SetEntryByNumber(InitialPhotInt,0x0028,0x0004);
+       Header->SetEntryByNumber(InitialPlanConfig,0x0028,0x0006);
+       Header->SetEntryByNumber(InitialBitsAllocated,0x0028,0x0100);   
+   }
+   
    PixelRead = 1 ; // PixelRaw
- 
+    
    if ( ImageDataSize > maxSize )
    {
       dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: pixel data bigger"
@@ -598,12 +643,14 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
 
    // CreateOrReplaceIfExist ?
 
-   std::string spp = "3";        // Samples Per Pixel
-   std::string rgb = "RGB ";     // Photometric Interpretation
-   std::string planConfig = "0"; // Planar Configuration
+   std::string spp = "3";            // Samples Per Pixel
+   std::string photInt = "RGB ";     // Photometric Interpretation
+   std::string planConfig = "0";     // Planar Configuration
 
+
+     
    Header->SetEntryByNumber(spp,0x0028,0x0002);
-   Header->SetEntryByNumber(rgb,0x0028,0x0004);
+   Header->SetEntryByNumber(photInt,0x0028,0x0004);
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
  
    /// \todo Drop Palette Color out of the Header? 
@@ -615,7 +662,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
  * \brief performs a shalow copy (not a deep copy) of the user given
  *        pixel area.
  *        'image' Pixels are presented as C-like 2D arrays : line per line.
- *        'volume'Pixels are presented as C-like 3D arrays : lane per plane 
+ *        'volume'Pixels are presented as C-like 3D arrays : plane per plane 
  * \warning user is kindly requested NOT TO 'free' the Pixel area
  * @param inData user supplied pixel area
  * @param expectedSize total image size, in Bytes
@@ -625,10 +672,11 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
 bool gdcmFile::SetImageData(void *inData, size_t expectedSize)
 {
    Header->SetImageDataSize( expectedSize );
+// FIXME : if already allocated, memory leak !
    PixelData     = inData;
-   ImageDataSize = expectedSize;
+   ImageDataSize = ImageDataSizeRaw = expectedSize;
    PixelRead     = 1;
-
+// FIXME : 7fe0, 0010 IS NOT set ...
    return true;
 }
 

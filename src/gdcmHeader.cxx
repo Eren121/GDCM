@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 16:42:14 $
-  Version:   $Revision: 1.182 $
+  Date:      $Date: 2004/09/01 16:23:59 $
+  Version:   $Revision: 1.183 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -753,7 +753,6 @@ int gdcmHeader::GetBitsStored()
       return 0;  // It's supposed to be mandatory
                  // the caller will have to check
    }
-
    return atoi( strSize.c_str() );
 }
 
@@ -773,7 +772,6 @@ int gdcmHeader::GetBitsAllocated()
       return 0; // It's supposed to be mandatory
                 // the caller will have to check
    }
-
    return atoi( strSize.c_str() );
 }
 
@@ -793,7 +791,6 @@ int gdcmHeader::GetSamplesPerPixel()
       return 1; // Well, it's supposed to be mandatory ...
                 // but sometimes it's missing : *we* assume Gray pixels
    }
-
    return atoi( strSize.c_str() );
 }
 
@@ -810,7 +807,6 @@ int gdcmHeader::GetPlanarConfiguration()
    {
       return 0;
    }
-
    return atoi( strSize.c_str() );
 }
 
@@ -844,7 +840,6 @@ int gdcmHeader::GetPixelSize()
    {
       return 8;
    }
-
    dbg.Verbose(0, "gdcmHeader::GetPixelSize: Unknown pixel type");
    return 0;
 }
@@ -903,7 +898,6 @@ std::string gdcmHeader::GetPixelType()
    {
       sign = "S";
    }
-
    return bitsAlloc + sign;
 }
 

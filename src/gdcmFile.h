@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 16:42:14 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2004/09/01 16:23:59 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,12 @@ public:
    gdcmHeader* GetHeader() { return Header; }
 
    void   SetPixelDataSizeFromHeader();
-   size_t GetImageDataSize();
+   
+
+/// \brief     Returns the size (in bytes) of required memory to hold
+///            the pixel data represented in this file.
+   size_t GetImageDataSize(){ return ImageDataSize; };
+
    size_t GetImageDataSizeRaw();
 
    void * GetImageData();
@@ -98,7 +103,7 @@ private:
    // For JPEG 2000, body in file gdcmJpeg2000.cxx
    bool gdcm_read_JPEG2000_file (FILE *fp, void* image_buffer);
 
-   // For Run Length Encoding (TOCHECK)
+   // For Run Length Encoding
    bool gdcm_read_RLE_file      (FILE *fp, void* image_buffer); 
 
 // members variables:
@@ -124,10 +129,22 @@ private:
   /// \brief ==1  if GetImageDataRaw was used
   ///        ==0  if GetImageData    was used
   ///        ==-1 if ImageData never read                       
-   int PixelRead;     
-
+   int PixelRead;
+   
+  /// \brief length of the last allocated area devoided to receive Pixels
+  ///        ( to allow us not to (free + new) if un necessary )     
+   size_t LastAllocatedPixelDataLength; 
+   
+   /// \brief Samples Per Pixel           (0x0028,0x0002), as found on disk
+   std::string InitialSpp;
+   /// \brief Photometric Interpretation  (0x0028,0x0004), as found on disk
+   std::string InitialPhotInt;
+   /// \brief Planar Configuration        (0x0028,0x0006), as found on disk   
+   std::string InitialPlanConfig;    
+   /// \brief Bits Allocated              (0x0028,0x0100), as found on disk
+   std::string InitialBitsAllocated;
    /// wether already parsed 
-   int Parsed;
+   bool Parsed;
 };
 
 //-----------------------------------------------------------------------------
