@@ -1,6 +1,7 @@
-2004-06-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+2004-06-23 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * gdcmDocEntry::PrintCommonPart() and ::WriteCommonPart() removed.
      Use the gdcmDocEntry::Print() and Write() instead.
+   * src/gdcmDocument.cxx: bug fix.
 
 2004-06-22 Jean-Pierre Roux
    In order : to write Sequences, whatever their imbrication level, 
