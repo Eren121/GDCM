@@ -3,7 +3,7 @@
 #ifndef GDCM_H
 #define GDCM_H
 
-using namespace std;
+//using namespace std;
 
 // JPR CLEAN
 // En fait, je disais que dans LE Directory Dicom (dans son etat 2001)

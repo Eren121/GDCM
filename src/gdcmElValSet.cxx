@@ -1,7 +1,14 @@
-// $Id: gdcmElValSet.cxx,v 1.18 2003/03/12 23:38:58 frog Exp $
+// $Id: gdcmElValSet.cxx,v 1.19 2003/03/13 15:56:26 jpr Exp $
 
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
+
+<<<<<<< gdcmElValSet.cxx
+
+#include <vector>
+static void Tokenize (const string& str, vector<string>& tokens, const string& delimiters);
+
+
 
 TagElValueHT & gdcmElValSet::GetTagHt(void) {
 	return tagHt;
