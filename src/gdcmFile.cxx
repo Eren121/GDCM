@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.179 $
+  Date:      $Date: 2005/01/06 08:46:21 $
+  Version:   $Revision: 1.180 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -438,54 +438,13 @@ bool File::WriteAcr (std::string const & fileName)
    return Write(fileName);
 }
 
-bool File::Write(std::string const& fileName)
-{
-   return WriteBase(fileName);
-}
-
-bool File::SetEntryByNumber(std::string const& content,
-                            uint16_t group, uint16_t element)
-{ 
-   return HeaderInternal->SetEntryByNumber(content,group,element);
-}
-
-bool File::SetEntryByNumber(uint8_t* content, int lgth,
-                            uint16_t group, uint16_t element)
-{
-   return HeaderInternal->SetEntryByNumber(content,lgth,group,element);
-}
-
-bool File::ReplaceOrCreateByNumber(std::string const& content,
-                                   uint16_t group, uint16_t element)
-{
-   return HeaderInternal->ReplaceOrCreateByNumber(content,group,element) != NULL;
-}
-
-bool File::ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
-                                   uint16_t group, uint16_t element)
-{
-   return HeaderInternal->ReplaceOrCreateByNumber(binArea,lgth,group,element) != NULL;
-}
-
 /**
- * \brief Access to the underlying \ref PixelReadConverter RGBA LUT
- */
-uint8_t* File::GetLutRGBA()
-{
-   return PixelReadConverter->GetLutRGBA();
-}
-
-//-----------------------------------------------------------------------------
-// Protected
-/**
- * \brief NOT a end user inteded function
- *        (used by WriteDcmExplVR, WriteDcmImplVR, WriteAcr, etc)
+ * \brief Writes on disk A SINGLE Dicom file, 
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
- * @param  type file type (ExplicitVR, ImplicitVR, ...)
  * @return false if write fails
  */
-bool File::WriteBase (std::string const & fileName)
+bool File::Write(std::string const& fileName)
 {
    switch(WriteType)
    {
@@ -550,6 +509,41 @@ bool File::WriteBase (std::string const & fileName)
 
    return check;
 }
+
+bool File::SetEntryByNumber(std::string const& content,
+                            uint16_t group, uint16_t element)
+{ 
+   return HeaderInternal->SetEntryByNumber(content,group,element);
+}
+
+bool File::SetEntryByNumber(uint8_t* content, int lgth,
+                            uint16_t group, uint16_t element)
+{
+   return HeaderInternal->SetEntryByNumber(content,lgth,group,element);
+}
+
+bool File::ReplaceOrCreateByNumber(std::string const& content,
+                                   uint16_t group, uint16_t element)
+{
+   return HeaderInternal->ReplaceOrCreateByNumber(content,group,element) != NULL;
+}
+
+bool File::ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
+                                   uint16_t group, uint16_t element)
+{
+   return HeaderInternal->ReplaceOrCreateByNumber(binArea,lgth,group,element) != NULL;
+}
+
+/**
+ * \brief Access to the underlying \ref PixelReadConverter RGBA LUT
+ */
+uint8_t* File::GetLutRGBA()
+{
+   return PixelReadConverter->GetLutRGBA();
+}
+
+//-----------------------------------------------------------------------------
+// Protected
 
 /**
  * \brief Check the write integrity

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2005/01/06 08:46:21 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -112,7 +112,6 @@ public:
    FileType GetWriteType()            { return WriteType; };
 
 protected:
-   bool WriteBase(std::string const& fileName);
    bool CheckWriteIntegrity();
 
    void SetWriteToRaw();
