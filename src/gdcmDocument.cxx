@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:18:25 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/06/21 12:38:29 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -899,8 +899,7 @@ size_t gdcmDocument::GetEntryOffsetByNumber(guint16 Group, guint16 Elem)
    gdcmDocEntry* Entry = GetDocEntryByNumber(Group, Elem);
    if (!Entry) 
    {
-      dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber",
-                      "failed to Locate gdcmDocEntry");
+      dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber: no entry present.");
       return (size_t)0;
    }
    return Entry->GetOffset();
@@ -918,8 +917,7 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem)
    gdcmDocEntry* Entry = GetDocEntryByNumber(Group, Elem);
    if (!Entry) 
    {
-      dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber",
-                  "failed to Locate gdcmDocEntry");
+      dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber: no entry");
       return (NULL);
    }
    return ((gdcmBinEntry *)Entry)->GetVoidArea();
@@ -1160,12 +1158,12 @@ void gdcmDocument::WriteEntryTagVRLength(gdcmDocEntry *tag,
  */
  
 // \todo TODO : to be re -written recursively !
-void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
+void gdcmDocument::WriteEntryValue(gdcmDocEntry *Entry, FILE *_fp,FileType type)
 {
    (void)type;
-   guint16 group  = tag->GetGroup();
-   VRKey   vr     = tag->GetVR();
-   guint32 lgr    = tag->GetReadLength();
+   guint16 group  = Entry->GetGroup();
+   VRKey   vr     = Entry->GetVR();
+   guint32 lgr    = Entry->GetReadLength();
 
    if (vr == "SQ")
       // SeQuences have no value:
@@ -1174,15 +1172,9 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
       // Delimiters have no associated value:
       return;
 		
-		//--------------------------------
-		//
-		// FIXME :right now, both value and voidArea belong to gdcmValue
-		//
-		// -------------------------------
-		
-// if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) ) {
+// if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(Entry) ) {
       void *voidArea;
-      gdcmBinEntry *BinEntry= (gdcmBinEntry *)tag;;
+      gdcmBinEntry *BinEntry= (gdcmBinEntry *)Entry;;
       voidArea = BinEntry->GetVoidArea();
       if (voidArea != NULL) 
       { // there is a 'non string' LUT, overlay, etc
@@ -1198,7 +1190,7 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
       // we split the string and write each value as a short int
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-      Tokenize (((gdcmValEntry *)tag)->GetValue(), tokens, "\\");
+      Tokenize (((gdcmValEntry *)Entry)->GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++) 
       {
          guint16 val_uint16 = atoi(tokens[i].c_str());
@@ -1216,7 +1208,7 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
       // along the '\' and write each value as an int:
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-      Tokenize (((gdcmValEntry *)tag)->GetValue(), tokens, "\\");
+      Tokenize (((gdcmValEntry *)Entry)->GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++) 
       {
          guint32 val_uint32 = atoi(tokens[i].c_str());
@@ -1226,7 +1218,7 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
       tokens.clear();
       return;
    }           
-   fwrite (((gdcmValEntry *)tag)->GetValue().c_str(),
+   fwrite (((gdcmValEntry *)Entry)->GetValue().c_str(),
            (size_t)lgr ,(size_t)1, _fp); // Elem value
 }
 

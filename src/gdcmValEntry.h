@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:43:02 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/06/21 12:38:29 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,11 +55,11 @@ protected:
    
 private:
 
-// Variables
+// Members :
   
-   /// \brief Document Entry value, stored as a std::string (VR will be used,
-   /// later, to decode)
-   
+   /// \brief Document Entry value, internaly represented as a std::string
+   ///        The Value Representation (\ref gdcmVR) is indenpendently used
+   ///        in order to interpret (decode) this field.
    std::string  value;
 
 };

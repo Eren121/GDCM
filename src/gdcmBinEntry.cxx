@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/06/21 12:38:28 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,8 @@
 /**
  * \brief   Constructor from a given gdcmBinEntry
  */
-gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e) {
+gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e)
+{
    this->voidArea = NULL;
 }
 
@@ -34,7 +35,8 @@ gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e) {
  * \brief   Constructor from a given gdcmBinEntry
  * @param   e Pointer to existing Doc entry
  */
-gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry()){
+gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
+{
    this->UsableLength = e->GetLength();
    this->ReadLength   = e->GetReadLength();
    this->ImplicitVR   = e->IsImplicitVR();
@@ -57,15 +59,25 @@ gdcmBinEntry::~gdcmBinEntry(){
 //-----------------------------------------------------------------------------
 // Print
 /*
- * \ingroup gdcmDocEntry
  * \brief   canonical Printer
  */
  
-void gdcmBinEntry::Print(std::ostream &os) {
-   PrintCommonPart(os);
-   /// \todo Write a true specialisation of Print i.e. display something
-   ///       for BinEntry extension.
-   dbg.Verbose(1, "gdcmBinEntry::Print: so WHAT ?");
+void gdcmBinEntry::Print(std::ostream &os)
+{
+   gdcmValEntry::Print(os);
+   std::ostringstream s;
+   if (voidArea != NULL)
+   {
+      s << " [gdcm::Binary data loaded with lenght is "
+        << GetLength() << "]"
+        << std::endl;
+   }
+   else
+   {
+      s << " [gdcm::Binary data NOT loaded]"
+        << std::endl;
+   }
+   os << s.str();
 }
 //-----------------------------------------------------------------------------
 // Public

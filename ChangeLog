@@ -8,6 +8,9 @@
     * src/gdcmHeader.h: the declaration of gdcmHeader::gdcmHeader(bool)
       as explicit constructor didn't do the trick to fix the above problem.
       Could anyone explain why ?
+    * src/gdcmBinEntry.cxx, gdcmValEntry.cxx: gdcmBinEntry::Print() now
+      properly calls gdcmValEntry::Print() (that was weed out from 
+      code related to gdcmBinEntry).
 
 2004-06-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * In order to fix memory leaks:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:43:02 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/06/21 12:38:29 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,20 +27,20 @@
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmValEntry
  * \brief   Constructor from a given gdcmDictEntry
  * @param   e Pointer to existing dictionary entry
  */
-gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e) {
+gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e)
+{
    voidArea = NULL; // will be in BinEntry ?
 }
 
 /**
- * \ingroup gdcmValEntry
  * \brief   Constructor from a given gdcmDocEntry
  * @param   e Pointer to existing Doc entry
  */
-gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry()){
+gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry())
+{
    this->UsableLength = e->GetLength();
    this->ReadLength   = e->GetReadLength();
    this->ImplicitVR   = e->IsImplicitVR();
@@ -55,7 +55,8 @@ gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry()){
 /**
  * \brief   Canonical destructor.
  */
-gdcmValEntry::~gdcmValEntry (void) {
+gdcmValEntry::~gdcmValEntry (void)
+{
    if (!voidArea)  // will be in BinEntry
       free(voidArea);
 }
@@ -64,13 +65,11 @@ gdcmValEntry::~gdcmValEntry (void) {
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmValEntry
  * \brief   canonical Printer
  */
-void gdcmValEntry::Print(std::ostream & os) { 
-
+void gdcmValEntry::Print(std::ostream & os)
+{
    std::ostringstream s; 
-   //size_t o;  //not used
    unsigned short int g, e;
    char st[20];
    TSKey v;
@@ -90,20 +89,16 @@ void gdcmValEntry::Print(std::ostream & os) {
    vr = GetVR();
    gdcmTS * ts = gdcmGlobal::GetTS();
     
-   if (voidArea != NULL) { // should be moved in gdcmBinEntry Printer (when any)
-       s << " [gdcm::Non String Data Loaded in Unsecure Area (" 
-         << GetLength() << ") ]";
-   } 
-   
-   else {
-      v  = GetValue();  // not applicable for SQ ...     
-      d2 = CreateCleanString(v);  // replace non printable characters by '.'            
-      if( (GetLength()<=MAX_SIZE_PRINT_ELEMENT_VALUE) || 
-          (printLevel>=3)  || 
-          (d2.find("gdcm::NotLoaded.") < d2.length()) )
-         s << " [" << d2 << "]";
-      else 
-         s << " [gdcm::too long for print (" << GetLength() << ") ]";
+   v  = GetValue();  // not applicable for SQ ...     
+   d2 = CreateCleanString(v);  // replace non printable characters by '.'            
+   if( (GetLength()<=MAX_SIZE_PRINT_ELEMENT_VALUE) || 
+       (printLevel>=3)  || (d2.find("gdcm::NotLoaded.") < d2.length()) )
+   {
+      s << " [" << d2 << "]";
+   }
+   else
+   {
+      s << " [gdcm::too long for print (" << GetLength() << ") ]";
    }
    
    // Display the UID value (instead of displaying only the rough code)  
