@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 12:10:53 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/09/21 11:17:42 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,8 +114,8 @@ const std::string GDCM_UNREAD    = "gdcm::UnRead";
 ///           /ItemNumber#Group|Element
 ///        where "/", "#" and "|" are characters acting as separators.
 ///        Then the general form of a gdcmTagKey is given by:
-///           Group|Element<SeqTag>
-///        where <SeqTag> means NO or many instances of SeqTag.
+///           Group|Element[SeqTag]
+///        where [SeqTag] means NO or many instances of SeqTag.
 ///        Hence the gdcmTagKey of a tag not "leaving" in a sequence is the
 ///        string e.g. 
 ///            0028|1201

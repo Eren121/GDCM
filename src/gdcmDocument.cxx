@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/21 10:46:10 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2004/09/21 11:17:42 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2995,8 +2995,8 @@ void gdcmDocument::BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
  *        Dicom entries in a flat structure (a \ref TagDocEntryHT i.e. a
  *        std::map<>).
  * \warning Of course there is NO integrity constrain between the 
- *        returned \ref TagDocEntryHT and the \ref gdcmElemenSet used
- *        to build it. Hence if the underlying \ref gdcmElemenSet is
+ *        returned \ref TagDocEntryHT and the \ref gdcmElementSet used
+ *        to build it. Hence if the underlying \ref gdcmElementSet is
  *        altered, then it is the caller responsability to invoke 
  *        \ref BuildFlatHashTable again...
  * @return The flat std::map<> we juste build.

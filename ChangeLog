@@ -1,5 +1,6 @@
 2004-09-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Test/CMakeLists.txt: update to follow gdcmData renamings.
+  * src/gdcmCommon.h, gdcmDocument.cxx: doxygen typos
 
 2004-09-17 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * ENH: added some utility method that builds a flat dictionnary
