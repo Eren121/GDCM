@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/23 01:20:18 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/12/12 13:32:23 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 #include <iostream>
 #include <algorithm>
 
-#if defined(_MSC_VER) || defined (__CYGWIN__) || defined(__BORLANDC__)
+#if defined(_MSC_VER) || defined(__BORLANDC__)
    #include <windows.h> 
 #ifdef _MSC_VER
    #include <direct.h>
@@ -90,7 +90,7 @@ int DirList::Explore(std::string const & dirpath, bool recursive)
    int numberOfFiles = 0;
    std::string fileName;
    std::string dirName = Util::NormalizePath(dirpath);
-#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__BORLANDC__)
+#if defined(_MSC_VER) || defined(__BORLANDC__)
    WIN32_FIND_DATA fileData; 
    HANDLE hFile=FindFirstFile((dirName+"*").c_str(),&fileData);
    int found = true;
