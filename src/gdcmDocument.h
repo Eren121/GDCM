@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/14 16:47:08 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/09/16 06:48:00 $
+  Version:   $Revision: 1.37 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -133,14 +133,12 @@ public:
    void Write(FILE* fp, FileType type);
 
    gdcmValEntry* ReplaceOrCreateByNumber(std::string const & value,
-                                         uint16_t group, uint16_t elem);
-
-   gdcmValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                          uint16_t group, uint16_t elem,
-                                         std::string const & VR);
+                                         std::string const & VR ="unkn");
    
    gdcmBinEntry* ReplaceOrCreateByNumber(void *voidArea, int lgth,
-                                         uint16_t group, uint16_t elem);
+                                         uint16_t group, uint16_t elem,
+                                         std::string const & VR="unkn");
 
    gdcmSeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
 

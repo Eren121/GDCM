@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/15 03:50:48 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2004/09/16 06:48:00 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -598,7 +598,8 @@ void gdcmDocument::Write(FILE* fp,FileType filetype)
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-  
+
+/*  
 gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          std::string const & value, 
                                          uint16_t group, 
@@ -652,6 +653,7 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
 
    return valEntry;
 }   
+*/
 
 /**
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
@@ -751,26 +753,70 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          void *voidArea,
                                          int lgth, 
                                          uint16_t group, 
-                                         uint16_t elem)
+                                         uint16_t elem,
+                                         std::string const & VR )
 {
-   gdcmBinEntry* b = 0;
-   gdcmDocEntry* a = GetDocEntryByNumber( group, elem);
-   if (!a)
+   gdcmBinEntry* binEntry = 0;
+   gdcmDocEntry* currentEntry = GetDocEntryByNumber( group, elem);
+   if (!currentEntry)
    {
-      a = NewBinEntryByNumber(group, elem);
-      if (!a)
-      {
-         return 0;
-      }
 
-      b = new gdcmBinEntry(a);
-      AddEntry(b);
-      b->SetVoidArea(voidArea);
-   } 
+      // check if (group,element) DictEntry exists
+      // if it doesn't, create an entry in gdcmDictSet::VirtualEntry
+      // and use it
+
+   // Find out if the tag we received is in the dictionaries:
+      gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+      gdcmDictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, elem);
+
+      if (!dictEntry)
+      {
+         currentEntry = NewDocEntryByNumber(group, elem,VR);
+      }
+      else
+      {
+         currentEntry = NewDocEntryByNumber(group, elem);
+      }
+      if (!currentEntry)
+      {
+         dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: call to"
+                        " NewDocEntryByNumber failed.");
+         return NULL;
+      }
+      binEntry = new gdcmBinEntry(currentEntry);
+      if ( !AddEntry(binEntry))
+      {
+         dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: AddEntry"
+                        " failed allthough this is a creation.");
+      }
+   }
+   else
+   {
+      binEntry = dynamic_cast< gdcmBinEntry* >(currentEntry);
+      if ( !binEntry ) // Euuuuh? It wasn't a BinEntry
+                       // then we change it to a BinEntry ?
+                       // Shouldn't it be considered as an error ?
+      {
+         // We need to promote the gdcmDocEntry to a gdcmBinEntry:
+         binEntry = new gdcmBinEntry(currentEntry);
+         if (!RemoveEntry(currentEntry))
+         {
+            dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: removal"
+                           " of previous DocEntry failed.");
+            return NULL;
+         }
+         if ( !AddEntry(binEntry))
+         {
+            dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: adding"
+                           " promoted BinEntry failed.");
+            return NULL;
+         }
+      }
+   }
 
    SetEntryByNumber(voidArea, lgth, group, elem);
 
-   return b;
+   return binEntry;
 }  
 
 

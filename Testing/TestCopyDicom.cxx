@@ -41,7 +41,7 @@ bool RemoveFile(const char* source)
 // Here we load a gdcmFile and then try to create from scratch a copy of it,
 // copying field by field the dicom image
 
-int TestCopyDicom(int , char* [])
+int TestCopyDicom(int argc, char* argv[])
 {
    int i =0;
    int retVal = 0;  //by default this is an error
@@ -75,66 +75,37 @@ int TestCopyDicom(int , char* [])
       // It was commented out by Mathieu, that was a *good* idea
       // (the user does NOT have to know the way we implemented the Header !)
       // Waiting for a 'clean' solution, I keep the method ...JPRx
-    
-      TagNameHT & nameHt = original->GetHeader()->GetPubDict()->GetEntriesByName();
-      (void)nameHt; //not used ?
 
-      //gdcmValEntry* v;
-      //gdcmBinEntry* b;
       gdcmDocEntry* d;
 
       for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
       {
          d = tag->second;
- 
          if ( gdcmBinEntry* b = dynamic_cast<gdcmBinEntry*>(d) )
-         { 
-         // for private elements, the gdcmDictEntry is unknown
-         // and it's VR is unpredictable ...
-         // ( In *this* case ReplaceOrCreateByNumber 
-         //  should have a knowledge of the virtual dictionary 
-         //  gdcmDictSet::VirtualEntry ) 
-         // ReplaceOrCreateByNumber may now receive the VR of the source Entry
-         // as a extra parameter
-         //
-            //if ( d->GetGroup()%2 == 1) // Skip private Entries 
-            //   continue;
-
-           // TODO :write ReplaceOrCreateByNumber with VR, 
-           //       for BinEntries as well!
-             
+         {              
             copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  b->GetVoidArea(),
                                  b->GetLength(),
                                  b->GetGroup(), 
-                                 b->GetElement() );
+                                 b->GetElement(),
+                                 b->GetVR() );
             }
             else  if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
-            {
-               if ( d->GetGroup()%2 != 1)
-               {
-                  copy->GetHeader()->ReplaceOrCreateByNumber( 
-                                 v->GetValue(),
-                                 v->GetGroup(), 
-                                 v->GetElement() );
-                }
-                else
-                {
-                  copy->GetHeader()->ReplaceOrCreateByNumber( 
+            {   
+               copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  v->GetValue(),
                                  v->GetGroup(), 
                                  v->GetElement(),
                                  v->GetVR() ); 
-                }
-         }
-         else
-         {
+           }
+           else
+           {
           // We skip pb of SQ recursive exploration
           //std::cout << "Skipped Sequence " 
           //          << "------------- " << d->GetVR() << " "<< std::hex
           //          << d->GetGroup() << " " << d->GetElement()
           //  << std::endl;    
-         }
+           }
       }
 
       size_t dataSize = original->GetImageDataSize();
