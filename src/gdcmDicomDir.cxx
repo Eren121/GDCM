@@ -90,7 +90,7 @@ gdcmDicomDir::gdcmDicomDir(bool exception_on_error):
 
    progress=0.0;
    abort=false;
-   string pathBidon = ""; // Sorry, NULL not allowed ...
+   std::string pathBidon = ""; // Sorry, NULL not allowed ...
    SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
    
    AddDicomDirMetaToEnd(listEntries.begin(),--listEntries.end());
@@ -864,7 +864,7 @@ void gdcmDicomDir::UpdateDirectoryRecordSequenceLength() {
    int offset = 0;
    ListTag::iterator it;
    guint16 gr, el;
-   string vr;
+   std::string vr;
    for(it=listEntries.begin();it!=listEntries.end();++it) {
       gr = (*it)->GetGroup();
       el = (*it)->GetElement();
