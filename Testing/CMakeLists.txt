@@ -137,6 +137,9 @@ SET(BLACK_LIST
   # serial killer (also segfaults vtkgdcmViewer, but NOT PrintFile)
   "gdcm-JPEG-LossLessThoravision.dcm"
   
+  # Bad decompression of the jpeg part
+  "GE_RHAPSODE-16-MONO2-JPEG-Fragments.dcm"
+
   # Mathieu: temporarily remove as it kills my gnome session (but not kde)
   # JPR: also breaks TestReadWriteReadCompare : Pixel differ (as expanded
   #      in memory)  
