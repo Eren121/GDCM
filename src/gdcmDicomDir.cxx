@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:34:59 $
-  Version:   $Revision: 1.124 $
+  Date:      $Date: 2005/02/01 13:00:16 $
+  Version:   $Revision: 1.125 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -570,6 +570,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    // imageElem 0008 1155 "" // Referenced SOP Instance UID : to be set/forged later
    // imageElem fffe e00d "" // Item delimitation : length to be set to ZERO later
    // for all the relevant elements found in their own spot of the DicomDir.dic
+
    // FIXME : troubles found when it's a SeqEntry
 
    for( it = elemList.begin(); it != elemList.end(); ++it)
@@ -868,7 +869,8 @@ bool DicomDir::AddImageToEnd(DicomDirImage *dd)
 }
 
 /**
- * \brief  for each Header of the chained list, add/update the Patient/Study/Serie/Image info 
+ * \brief  for each Header of the chained list, 
+ *         add/update the Patient/Study/Serie/Image info 
  * @param   path path of the root directory
  * @param   list chained list of Headers
  */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:56 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/02/01 13:00:16 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,11 +70,9 @@ uint8_t *RLEFrame::ReadAndDecompressRLEFrame( uint8_t *subRaw,
 /**
  * \brief Implementation of the RLE decoding algorithm for decompressing
  *        a RLE fragment. [refer to PS 3.5-2003, section G.3.2 p 86]
- * @param subRaw Sub region of \ref Raw where the decoded fragment
- *        should be placed.
+ * @param subRaw Sub region where the decoded fragment should be placed.
  * @param fragmentSize The length of the binary fragment as found on the disk.
- * @param RawSegmentSize The expected length of the fragment ONCE
- *        Raw.
+ * @param rawSegmentSize The expected length of the fragment ONCE Raw.
  * @param fp File Pointer: on entry the position should be the one of
  *        the fragment to be decoded.
  */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:54 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/02/01 13:00:16 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,8 +56,9 @@ void Debug::SetDebugFlag (bool flag)
 }
 
 /**
- * \brief   Accessor
+ * \brief   Gets the debug flag value
  * @param   level Get the debug flag
+ * @return debug flag value
  */ 
 bool Debug::GetDebugFlag ()
 {
@@ -66,7 +67,7 @@ bool Debug::GetDebugFlag ()
 
 /**
  * \brief   Accessor
- * @param   flag Set the debug flag to redirect to file
+ * @param   flag whether we want to redirect to file
  */ 
 void Debug::SetDebugToFile (bool flag) 
 {
@@ -74,8 +75,7 @@ void Debug::SetDebugToFile (bool flag)
 }
 
 /**
- * \brief   Accessor
- * @param   level Get the debug flag to redirect to file
+ * \brief   Accessor to know if debug info are redirected to file
  */ 
 bool Debug::GetDebugToFile ()
 {

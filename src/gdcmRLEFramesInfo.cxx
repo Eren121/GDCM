@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:56 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/02/01 13:00:16 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,12 +85,14 @@ bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw, int xSi
 }
 
 /**
- * \brief     Try to deal with RLE 16 Bits. 
- *            We assume the RLE has already been parsed and loaded in
- *            Raw (through \ref ReadAndDecompressJPEGFile ).
- *            We here need to make 16 Bits Pixels from Low Byte and
- *            High Byte 'Planes'...(for what it may mean)
- * @return    Boolean
+ * \brief  We assume Raw contains the decoded RLE pixels but as
+ *         8 bits per pixel. We convert those pixels to 16 bits
+ *         per pixel.
+ * @param raw raw
+ * @param xSize x Size
+ * @param ySize y Size
+ * @param numberOfFrames number of frames 
+ * @return    Boolean always true
  */
 bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits( uint8_t* raw, int xSize, 
                                              int ySize,int numberOfFrames  )
@@ -118,10 +120,10 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits( uint8_t* raw, int xSize,
          *(x++) = *(a++);
       }
    }
-
    delete[] copyRaw;
-      
+
    /// \todo check that operator new []didn't fail, and sometimes return false
+
    return true;
 }
 
