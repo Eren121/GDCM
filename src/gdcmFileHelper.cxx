@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/22 14:13:42 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/02/23 09:54:59 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1159,7 +1159,8 @@ void FileHelper::CheckMandatoryElements()
 // Entries whose type is 2 are mandatory, with a optional value
 // Entries whose type is 2c are ?
 // Entries whose type is 3 are optional
-   ValEntry *e;
+
+//   ValEntry *e;
 
    // Modality
 /*   ValEntry *e0008_0060 = FileInternal->GetValEntry(0x0008, 0x0060);

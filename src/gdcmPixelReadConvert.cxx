@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/17 10:53:21 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/02/23 09:54:59 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -690,8 +690,8 @@ void PixelReadConvert::ConvertFixGreyLevels()
    {
       if ( BitsAllocated == 8 )
       {
-         int8_t smask8 = 255;
-         int8_t *deb = (int8_t *)Raw;
+         uint8_t smask8 = 255;
+         uint8_t *deb = (uint8_t *)Raw;
          for (i=0; i<RawSize; i++)      
          {
             *deb = smask8 - *deb;
@@ -701,8 +701,8 @@ void PixelReadConvert::ConvertFixGreyLevels()
       }
       if ( BitsAllocated == 16 )
       {
-         int16_t smask16 = 65535;
-         int16_t *deb = (int16_t *)Raw;
+         uint16_t smask16 = 65535;
+         uint16_t *deb = (uint16_t *)Raw;
          for (i=0; i<RawSize/2; i++)      
          {
             *deb = smask16 - *deb;
