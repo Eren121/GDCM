@@ -1023,7 +1023,7 @@ bool gdcmDocument::WriteEntries(FILE *_fp,FileType type)
          if ((*tag2).second->GetGroup() < 0x0008)
             // Ignore pure DICOM V3 groups
             continue;
-         if ((*tag2).second->GetElement() %2)
+         if ((*tag2).second->GetGroup() %2)
             // Ignore the "shadow" groups
             continue;
          if ((*tag2).second->GetVR() == "SQ" ) // ignore Sequences

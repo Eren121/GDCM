@@ -34,7 +34,7 @@ public:
 protected:
 
    /// \brief for 'non string' values. Will be move to gdcmBinEntry, later
-	char* voidArea;  // clean it out later
+	void* voidArea;  // clean it out later
    
 private:
 

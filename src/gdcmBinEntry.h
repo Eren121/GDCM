@@ -39,7 +39,7 @@ private:
    
    /// \brief unsecure memory area to hold 'non string' values 
    /// (ie : Lookup Tables, overlays, icons)   
-   void *voidArea;
+  // void *voidArea;
 
 };
 
