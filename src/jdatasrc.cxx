@@ -18,6 +18,12 @@
 
 /* Expanded data source object for stdio input */
 
+extern "C" {
+  typedef  int(*int_jpeg_decompress_struct)(jpeg_decompress_struct*);
+  typedef  void(*void_jpeg_decompress_struct)(jpeg_decompress_struct*);
+  typedef  void(*void_jpeg_decompress_struct_long)(jpeg_decompress_struct*,long);
+}
+
 typedef struct {
   struct jpeg_source_mgr pub;  /* public fields */
 
@@ -214,11 +220,11 @@ jpeg_stdio_src (j_decompress_ptr cinfo, std::ifstream * infile, gdcm::JPEGFragme
   }
 
   src = (my_src_ptr) cinfo->src;
-  src->pub.init_source = init_source;
-  src->pub.fill_input_buffer = fill_input_buffer;
-  src->pub.skip_input_data = skip_input_data;
+  src->pub.init_source = reinterpret_cast<void_jpeg_decompress_struct>(init_source);
+  src->pub.fill_input_buffer = reinterpret_cast<int_jpeg_decompress_struct>(fill_input_buffer);
+  src->pub.skip_input_data = reinterpret_cast<void_jpeg_decompress_struct_long>(skip_input_data);
   src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
-  src->pub.term_source = term_source;
+  src->pub.term_source = reinterpret_cast<void_jpeg_decompress_struct>(term_source);
   src->infile = infile;
   
   // Need to setup a new buffer, clean bytes_in_buffer and next_input_byte
