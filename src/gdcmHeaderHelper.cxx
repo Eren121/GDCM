@@ -226,8 +226,7 @@ float gdcmHeaderHelper::GetZSpacing() {
    }
 }
 
-float gdcmHeaderHelper::GetRescaleIntercept()
-{
+float gdcmHeaderHelper::GetRescaleIntercept() {
   float resInter = 0.;
   std::string StrRescInter = GetEntryByNumber(0x0028,0x1052); //0028 1052 DS IMG Rescale Intercept
   if (StrRescInter != GDCM_UNFOUND) {
@@ -239,8 +238,7 @@ float gdcmHeaderHelper::GetRescaleIntercept()
   return resInter;
 }
 
-float gdcmHeaderHelper::GetRescaleSlope()
-{
+float gdcmHeaderHelper::GetRescaleSlope() {
   float resSlope = 1.;
   std::string StrRescSlope = GetEntryByNumber(0x0028,0x1053); //0028 1053 DS IMG Rescale Slope
   if (StrRescSlope != GDCM_UNFOUND) {
@@ -312,23 +310,19 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
       return GetSamplesPerPixel();
 }
 
-std::string gdcmHeaderHelper::GetStudyUID()
-{
+std::string gdcmHeaderHelper::GetStudyUID(){
   return GetEntryByNumber(0x0020,0x000d); //0020 000d UI REL Study Instance UID
 }
 
-std::string gdcmHeaderHelper::GetSeriesUID()
-{
+std::string gdcmHeaderHelper::GetSeriesUID(){
   return GetEntryByNumber(0x0020,0x000e); //0020 000e UI REL Series Instance UID
 }
 
-std::string gdcmHeaderHelper::GetClassUID()
-{
+std::string gdcmHeaderHelper::GetClassUID(){
   return GetEntryByNumber(0x0008,0x0016); //0008 0016 UI ID SOP Class UID
 }
 
-std::string gdcmHeaderHelper::GetInstanceUID()
-{
+std::string gdcmHeaderHelper::GetInstanceUID(){
   return GetEntryByNumber(0x0008,0x0018); //0008 0018 UI ID SOP Instance UID
 }
 
@@ -569,8 +563,7 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
 // gdcmSerieHeaderHelper
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper()
-{
+gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper(){
   //! \todo
   for (std::list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
         it != CoherentGdcmFileList.end(); it++)
@@ -589,8 +582,7 @@ gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper()
  * \ingroup gdcmHeaderHelper
  * \brief add a gdcmFile to the list based on file name
  */
-void gdcmSerieHeaderHelper::AddFileName(std::string filename)
-{
+void gdcmSerieHeaderHelper::AddFileName(std::string filename) {
   gdcmHeaderHelper *GdcmFile = new gdcmHeaderHelper( filename.c_str() );
   this->CoherentGdcmFileList.push_back( GdcmFile );
 }
@@ -599,8 +591,7 @@ void gdcmSerieHeaderHelper::AddFileName(std::string filename)
  * \ingroup gdcmHeaderHelper
  * \brief add a gdcmFile to the list
  */
-void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file)
-{
+void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file){
   this->CoherentGdcmFileList.push_back( file );
 }
 
@@ -608,8 +599,7 @@ void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file)
  * \ingroup gdcmHeaderHelper
  * \brief \todo
  */
-void gdcmSerieHeaderHelper::SetDirectory(std::string dir)
-{
+void gdcmSerieHeaderHelper::SetDirectory(std::string dir){
   std::list<std::string> filenames_list;
   GetDir(dir, filenames_list);  //OS specific
   
@@ -624,8 +614,7 @@ void gdcmSerieHeaderHelper::SetDirectory(std::string dir)
 //This could be implemented in a 'Strategy Pattern' approach
 //But as I don't know how to do it, I leave it this way
 //BTW, this is also a Strategy, I don't know this is the best approach :)
-void gdcmSerieHeaderHelper::OrderGdcmFileList()
-{
+void gdcmSerieHeaderHelper::OrderGdcmFileList(){
   if( ImagePositionPatientOrdering() )
   {
     return ;
@@ -640,8 +629,7 @@ void gdcmSerieHeaderHelper::OrderGdcmFileList()
   }
 }
 
-std::list<gdcmHeaderHelper*> &gdcmSerieHeaderHelper::GetGdcmFileList()
-{
+std::list<gdcmHeaderHelper*> &gdcmSerieHeaderHelper::GetGdcmFileList() {
   return CoherentGdcmFileList;
 }
 
@@ -769,8 +757,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
 
 //Based on Image Number
 
-bool gdcmSerieHeaderHelper::ImageNumberOrdering()
-{
+bool gdcmSerieHeaderHelper::ImageNumberOrdering() {
   int min, max, pos;
   int n = 0;//CoherentGdcmFileList.size(); //O(N) operation !!
   unsigned char *partition;
@@ -820,8 +807,7 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering()
   return (mult!=0);
 }
 
-bool gdcmSerieHeaderHelper::FileNameOrdering()
-{
+bool gdcmSerieHeaderHelper::FileNameOrdering() {
   //using the sort
   //sort(CoherentGdcmFileList.begin(), CoherentGdcmFileList.end());
   return true;

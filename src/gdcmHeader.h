@@ -33,7 +33,8 @@ public:
    gdcmHeader(bool exception_on_error = false);
    gdcmHeader(const char *filename, 
               bool  exception_on_error = false, 
-              bool  enable_sequences   = false);
+              bool  enable_sequences   = false,
+	      bool  skip_shadow        = false);
 	      
    virtual ~gdcmHeader();
 

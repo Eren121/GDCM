@@ -314,7 +314,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    }
 	
    (void)ReadPixelData(destination);
-			
+	
 	// Number of Bits Allocated for storing a Pixel
    str_nb = Header->GetEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
@@ -388,8 +388,9 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 // DO NOT remove this code commented out.
 // Nobody knows what's expecting you ...
 // Just to 'see' what was actually read on disk :-(
+
 //   FILE * f2;
-//   f2 = fopen("SpuriousFile.raw","wb");
+//   f2 = fopen("SpuriousFile.RAW","wb");
 //   fwrite(destination,lgrTotale,1,f2);
 //   fclose(f2);
 
@@ -777,17 +778,15 @@ bool gdcmFile::ReadPixelData(void* destination) {
 
    if ( !(fp=Header->OpenFile()))
       return false;
-      
    if ( fseek(fp, Header->GetPixelOffset(), SEEK_SET) == -1 ) {
       Header->CloseFile();
       return false;
    }
-   
-
    // ----------------------  Compacted File (12 Bits Per Pixel)
    /* unpack 12 Bits pixels into 16 Bits pixels */
    /* 2 pixels 12bit =     [0xABCDEF]           */
    /* 2 pixels 16bit = [0x0ABD] + [0x0FCE]      */
+   
    if (Header->GetBitsAllocated()==12) {
       int nbPixels = Header->GetXSize() * Header->GetYSize();
       unsigned char b0, b1, b2;

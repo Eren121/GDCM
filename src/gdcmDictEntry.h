@@ -35,7 +35,7 @@ public:
     *              
     * @return 
     */
-   inline bool IsVRUnknown() {return vr == "Unknown"; }
+   inline bool IsVRUnknown() {return vr == "??"; }
 
    /**
     * \ingroup gdcmDictEntry

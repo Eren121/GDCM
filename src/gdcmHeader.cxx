@@ -26,14 +26,17 @@
  * @param   enable_sequences = true to allow the header 
  *          to be parsed *inside* the SeQuences, 
  *          when they have an actual length 
+ * @param   ignore_shadow = true if user wants to skip shadow groups 
+            during parsing, to save memory space
  *\TODO : may be we need one more bool, 
  *         to allow skipping the private elements while parsing the header
  *         in order to save space	  
  */
 gdcmHeader::gdcmHeader(const char *InFilename, 
                        bool exception_on_error,
-                       bool enable_sequences ):
-   gdcmParser(InFilename,exception_on_error,enable_sequences)
+                       bool enable_sequences, 
+		       bool ignore_shadow):
+   gdcmParser(InFilename,exception_on_error,enable_sequences,ignore_shadow)
 {
 }
 
@@ -68,8 +71,7 @@ gdcmHeader::~gdcmHeader (void) {
  * @return true when gdcmParser is the one of a reasonable Dicom/Acr file,
  *         false otherwise. 
  */
-bool gdcmHeader::IsReadable(void) 
-{
+bool gdcmHeader::IsReadable(void) {
    if(!gdcmParser::IsReadable())
       return(false);
 
@@ -247,9 +249,8 @@ bool gdcmHeader::IsDicomV3(void) {
  *          0 means the file is NOT USABLE. The caller will have to check
  */
 int gdcmHeader::GetXSize(void) {
-   // We cannot check for "Columns" because the "Columns" tag is present
-   // both in IMG (0028,0011) and OLY (6000,0011) sections of the dictionary.
-   std::string StrSize = GetEntryByNumber(0x0028,0x0011);
+   std::string StrSize;
+   StrSize = GetEntryByNumber(0x0028,0x0011);
    if (StrSize == GDCM_UNFOUND)
       return 0;
    return atoi(StrSize.c_str());
@@ -263,8 +264,6 @@ int gdcmHeader::GetXSize(void) {
  *          (The file contains a Signal, not an Image).
  */
 int gdcmHeader::GetYSize(void) {
-   // We cannot check for "Rows" because the "Rows" tag is present
-   // both in IMG (0028,0010) and OLY (6000,0010) sections of the dictionary.
    std::string StrSize = GetEntryByNumber(0x0028,0x0010);
    if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
@@ -421,7 +420,8 @@ std::string gdcmHeader::GetPixelType(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Recover the offset (from the beginning of the file) of the pixels.
+ * \brief   Recover the offset (from the beginning of the file) 
+ * \        of *image* pixels (not *icone* pixels, if any !)
  */
 size_t gdcmHeader::GetPixelOffset(void) {
    // If this file complies with the norm we should encounter the
@@ -431,28 +431,48 @@ size_t gdcmHeader::GetPixelOffset(void) {
    // Inside the group pointed by "Image Location" the searched element
    // is conventionally the element 0x0010 (when the norm is respected).
    // When the "Image Location" is absent we default to group 0x7fe0.
+   // If the element (0x0088,0x0200) 'icone image sequence' is found
+   // (grPixel,numPixel) is stored twice : the first one for the icon
+   // the second one for the image ...
+   // pb : sometimes , (0x0088,0x0200) exists, but doesn't contain *anything*
+   // see gdcmData/MxTwinLossLess.dcm ...
    guint16 grPixel;
    guint16 numPixel;
    std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
 
    if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
-      grPixel = 0x7fe0;
+      grPixel = 0x7fe0;                   // default value
    } else {
       grPixel = (guint16) atoi( ImageLocation.c_str() );
    }
-   if (grPixel != 0x7fe0)
+   
+   if (grPixel == 0xe07f) // sometimes Image Location value doesn't follow 
+      grPixel = 0x7fe0;   // the supposed processor endianity. 
+                          // see gdcmData/cr172241.dcm
+      
+   if (grPixel != 0x7fe0) 
       // This is a kludge for old dirty Philips imager.
       numPixel = 0x1010;
    else
       numPixel = 0x0010;
-         
-   gdcmHeaderEntry* PixelElement = GetHeaderEntryByNumber(grPixel,numPixel);
-   if (PixelElement)
+      
+   IterHT it = GetHeaderEntrySameNumber(grPixel,numPixel);          
+   //std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
+   TagKey key = gdcmDictEntry::TranslateToKey(grPixel,numPixel);
+   gdcmHeaderEntry* PixelElement;
+  
+   if (tagHT.count(key) == 1)   
+      PixelElement = (it.first)->second;
+   else
+      PixelElement = (++it.first)->second;
+   
+   if (PixelElement) {
       return PixelElement->GetOffset();
+   }
    else
       return 0;
 }
-
+// TODO : unify those two (previous one and next one)
 /**
  * \ingroup gdcmHeader
  * \brief   Recover the pixel area length (in Bytes)
@@ -469,18 +489,30 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
    guint16 grPixel;
    guint16 numPixel;
    std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
-   if ( ImageLocation == GDCM_UNFOUND ) {
-      grPixel = 0x7fe0;
+   if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
+      grPixel = 0x7fe0;                   // default value
    } else {
       grPixel = (guint16) atoi( ImageLocation.c_str() );
    }
+   if (grPixel == 0xe07f) // sometimes group doesn't follow 
+      grPixel = 0x7fe0;   // the supposed processor endianity. see cr172241.dcm
+      
    if (grPixel != 0x7fe0)
       // This is a kludge for old dirty Philips imager.
       numPixel = 0x1010;
    else
       numPixel = 0x0010;
-         
-   gdcmHeaderEntry* PixelElement = GetHeaderEntryByNumber(grPixel,numPixel);
+              
+   IterHT it = GetHeaderEntrySameNumber(grPixel,numPixel);          
+   //std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
+   TagKey key = gdcmDictEntry::TranslateToKey(grPixel,numPixel);
+   gdcmHeaderEntry* PixelElement;
+  
+   if (tagHT.count(key) == 1)   
+      PixelElement = (it.first)->second;
+   else
+      PixelElement = (++it.first)->second;
+   
    if (PixelElement)
       return PixelElement->GetLength();
    else {
@@ -502,6 +534,8 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
 bool gdcmHeader::HasLUT(void) {
 
    // Check the presence of the LUT Descriptors 
+   
+   // LutDescriptorRed    
    if ( !GetHeaderEntryByNumber(0x0028,0x1101) )
       return false;
    // LutDescriptorGreen 
@@ -510,12 +544,17 @@ bool gdcmHeader::HasLUT(void) {
    // LutDescriptorBlue 
    if ( !GetHeaderEntryByNumber(0x0028,0x1103) )
       return false;
+      
    //  It is not enough
-   // we check also 
+   //  we check also 
+   
+   // Red Palette Color Lookup Table Data
    if ( !GetHeaderEntryByNumber(0x0028,0x1201) )
-      return false;  
+      return false; 
+   // Green Palette Color Lookup Table Data       
    if ( !GetHeaderEntryByNumber(0x0028,0x1202) )
       return false;
+   // Blue Palette Color Lookup Table Data      
    if ( !GetHeaderEntryByNumber(0x0028,0x1203) )
       return false;   
    return true;
@@ -599,15 +638,15 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
    tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
    Tokenize (LutDescriptionG, tokens, "\\");
    lengthG=atoi(tokens[0].c_str()); // Green LUT length in Bytes
-   debG   =atoi(tokens[1].c_str());
-   nbitsG =atoi(tokens[2].c_str());
+   debG   =atoi(tokens[1].c_str()); // subscript of the first Lut Value
+   nbitsG =atoi(tokens[2].c_str()); // Lut item size (in Bits)
    tokens.clear();  
    
    tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
    Tokenize (LutDescriptionB, tokens, "\\");
    lengthB=atoi(tokens[0].c_str()); // Blue LUT length in Bytes
-   debB   =atoi(tokens[1].c_str());
-   nbitsB =atoi(tokens[2].c_str());
+   debB   =atoi(tokens[1].c_str()); // subscript of the first Lut Value
+   nbitsB =atoi(tokens[2].c_str()); // Lut item size (in Bits)
    tokens.clear();
  
    // Load LUTs into memory, (as they were stored on disk)

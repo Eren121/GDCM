@@ -10,7 +10,7 @@
 /*
  * In addition to Dicom header exploration, this class is designed
  * for accessing the image/volume content. One can also use it to
- * write Dicom files.
+ * write Dicom/ACR-NEMA/RAW files.
  */
 class GDCM_EXPORT gdcmFile
 {

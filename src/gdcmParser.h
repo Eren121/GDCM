@@ -35,10 +35,11 @@ typedef std::map<GroupKey, int> GroupHT;
 class GDCM_EXPORT gdcmParser
 {
 public:
-   gdcmParser(bool exception_on_error = false);
+   gdcmParser(bool exception_on_error  = false);
    gdcmParser(const char *filename, 
               bool  exception_on_error = false, 
-              bool  enable_sequences   = false);
+              bool  enable_sequences   = false,
+	      bool  ignore_shadow      = false);
    virtual ~gdcmParser(void);
 
 // Print
@@ -48,7 +49,7 @@ public:
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
    void SetPrintLevel(int level) { printLevel = level; };
-   virtual void PrintEntry(std::ostream &os = std::cout);
+   virtual void PrintEntry   (std::ostream &os = std::cout);
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
 
@@ -97,8 +98,8 @@ public:
 
 // System access
    inline int GetSwapCode(void) { return sw; }
-   guint16 SwapShort(guint16); // needed by gdcmFile
-   guint32 SwapLong(guint32);  // needed by gdcmFile
+   guint16 SwapShort(guint16);   // needed by gdcmFile
+   guint32 SwapLong(guint32);    // needed by gdcmFile
    guint16 UnswapShort(guint16); // needed by gdcmFile
    guint32 UnswapLong(guint32);  // needed by gdcmFile
 
@@ -122,8 +123,11 @@ protected:
    virtual void UpdateShaEntries(void);
 
 // Header entry
-   gdcmHeaderEntry *GetHeaderEntryByName  (std::string Name);
-   gdcmHeaderEntry *GetHeaderEntryByNumber(guint16 group, guint16 element); 
+   gdcmHeaderEntry *GetHeaderEntryByNumber  (guint16 group, guint16 element); 
+   gdcmHeaderEntry *GetHeaderEntryByName    (std::string Name);
+   IterHT           GetHeaderEntrySameNumber(guint16 group, guint16 element); 
+// IterHT           GetHeaderEntrySameName  (std::string Name); 
+
 
    void LoadHeaderEntrySafe(gdcmHeaderEntry *);
 
@@ -140,7 +144,10 @@ protected:
 protected:
    int enableSequences;
    int printLevel;
-
+   
+   TagHeaderEntryHT tagHT; // H Table (multimap), to provide fast access
+   ListTag listEntries;    // chained list, to keep the 'spacial' ordering 
+   
 private:
    // Read
    void Parse(bool exception_on_error = false) throw(gdcmFormatError);
@@ -176,10 +183,12 @@ private:
 
    // HeaderEntry related utilities
    gdcmHeaderEntry *ReadNextHeaderEntry   (void);
-   gdcmHeaderEntry *NewHeaderEntryByNumber(guint16 group, guint16 element);
+   gdcmHeaderEntry *NewHeaderEntryByNumber(guint16 group, 
+                                           guint16 element);
    gdcmHeaderEntry *NewHeaderEntryByName  (std::string Name);
-   gdcmDictEntry *NewVirtualDictEntry(guint16 group, guint16 element,
-                                      std::string vr = "Unknown",
+   gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
+                                      guint16 element,
+                                      std::string vr     = "Unknown",
                                       std::string fourth = "Unknown",
                                       std::string name   = "Unknown");
    gdcmDictEntry *NewVirtualDictEntry(gdcmHeaderEntry *);
@@ -197,12 +206,11 @@ private:
    // Optional "shadow dictionary" (private elements) used to parse this header
    gdcmDict *RefShaDict;
 
-   TagHeaderEntryHT tagHT; // H Table (multimap), to provide fast access
-   ListTag listEntries;    // chained list, to keep the 'spacial' ordering 
-
-
-   // true if a gdcmHeaderEntry was added post parsing 
+   // = 1 if a gdcmHeaderEntry was added post parsing 
    int wasUpdated;
+   
+   // =1 if user wants to skip shadow groups while parsing (to save space)
+   int ignoreShadow;
 
    // Swap code e.g. little, big, bad-big, bad-little endian). Warning:
    // this code is not fixed during header parsing.

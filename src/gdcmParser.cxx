@@ -24,6 +24,46 @@
 #define UI1_2_840_10008_1_2_2    "1.2.840.10008.1.2.2"
 #define UI1_2_840_10008_1_2_1_99 "1.2.840.10008.1.2.1.99"
 
+   // Fourth semantics:
+   //
+   // ---> Warning : This fourth field is NOT part 
+   //                of the 'official' Dicom Dictionnary
+   //                and should NOT be used.
+   //                (Not defined for all the groups
+   //                 may be removed in a future release)
+   //
+   // CMD      Command        
+   // META     Meta Information 
+   // DIR      Directory
+   // ID
+   // PAT      Patient
+   // ACQ      Acquisition
+   // REL      Related
+   // IMG      Image
+   // SDY      Study
+   // VIS      Visit 
+   // WAV      Waveform
+   // PRC
+   // DEV      Device
+   // NMI      Nuclear Medicine
+   // MED
+   // BFS      Basic Film Session
+   // BFB      Basic Film Box
+   // BIB      Basic Image Box
+   // BAB
+   // IOB
+   // PJ
+   // PRINTER
+   // RT       Radio Therapy
+   // DVH   
+   // SSET
+   // RES      Results
+   // CRV      Curve
+   // OLY      Overlays
+   // PXL      Pixels
+   // DL       Delimiters
+   //
+
 //-----------------------------------------------------------------------------
 // Refer to gdcmParser::CheckSwap()
 const unsigned int gdcmParser::HEADER_LENGTH_TO_READ = 256;
@@ -41,15 +81,18 @@ const unsigned int gdcmParser::MAX_SIZE_LOAD_ELEMENT_VALUE = 4096;
  * @param   enable_sequences = true to allow the header 
  *          to be parsed *inside* the SeQuences, 
  *          when they have an actual length 
- *\TODO    may be we need one more bool, 
- *         to allow skipping the private elements while parsing the header
- *         in order to save space	  
+ * @param ignore_shadow to allow skipping the shadow elements, 
+ *           to save memory space.
+ * \warning  The TRUE value for this param has to be used 
+ *	     with a FALSE value for the 'enable_sequence' param.
+ *	     ('public elements' may be embedded in 'shadow Sequences')
  */
 gdcmParser::gdcmParser(const char *InFilename, 
                        bool exception_on_error,
-                       bool enable_sequences ) 
-{
+                       bool enable_sequences,
+		       bool ignore_shadow) {
    enableSequences=enable_sequences;
+   ignoreShadow   =ignore_shadow;
    
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    filename = InFilename;
@@ -70,8 +113,7 @@ gdcmParser::gdcmParser(const char *InFilename,
  * \brief   
  * @param   exception_on_error
  */
-gdcmParser::gdcmParser(bool exception_on_error) 
-{
+gdcmParser::gdcmParser(bool exception_on_error) {
    enableSequences=0;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
@@ -85,8 +127,7 @@ gdcmParser::gdcmParser(bool exception_on_error)
  * \ingroup gdcmParser
  * \brief   Canonical destructor.
  */
-gdcmParser::~gdcmParser (void) 
-{
+gdcmParser::~gdcmParser (void) {
    RefPubDict = NULL;
    RefShaDict = NULL;
 }
@@ -99,8 +140,7 @@ gdcmParser::~gdcmParser (void)
   *          both from the H Table and the chained list
   * @return
   */ 
-void gdcmParser::PrintEntry(std::ostream & os) 
-{
+void gdcmParser::PrintEntry(std::ostream & os) {
    std::ostringstream s;   
 	   
    for (ListTag::iterator i = listEntries.begin();  
@@ -137,8 +177,7 @@ void gdcmParser::PrintShaDict(std::ostream & os) {
  * \ingroup gdcmParser
  * \brief   Get the public dictionary used
  */
-gdcmDict *gdcmParser::GetPubDict(void)
-{
+gdcmDict *gdcmParser::GetPubDict(void) {
    return(RefPubDict);
 }
 
@@ -146,8 +185,7 @@ gdcmDict *gdcmParser::GetPubDict(void)
  * \ingroup gdcmParser
  * \brief   Get the shadow dictionary used
  */
-gdcmDict *gdcmParser::GetShaDict(void)
-{
+gdcmDict *gdcmParser::GetShaDict(void) {
    return(RefShaDict);
 }
 
@@ -156,8 +194,7 @@ gdcmDict *gdcmParser::GetShaDict(void)
  * \brief   Set the shadow dictionary used
  * \param   dict dictionary to use in shadow
  */
-bool gdcmParser::SetShaDict(gdcmDict *dict)
-{
+bool gdcmParser::SetShaDict(gdcmDict *dict){
    RefShaDict=dict;
    return(!RefShaDict);
 }
@@ -167,8 +204,7 @@ bool gdcmParser::SetShaDict(gdcmDict *dict)
  * \brief   Set the shadow dictionary used
  * \param   dictName name of the dictionary to use in shadow
  */
-bool gdcmParser::SetShaDict(DictKey dictName)
-{
+bool gdcmParser::SetShaDict(DictKey dictName){
    RefShaDict=gdcmGlobal::GetDicts()->GetDict(dictName);
    return(!RefShaDict);
 }
@@ -182,8 +218,7 @@ bool gdcmParser::SetShaDict(DictKey dictName)
  * @return true when gdcmParser is the one of a reasonable Dicom/Acr file,
  *         false otherwise. 
  */
-bool gdcmParser::IsReadable(void) 
-{
+bool gdcmParser::IsReadable(void) {
    if(filetype==Unknown)
       return(false);
 
@@ -200,8 +235,7 @@ bool gdcmParser::IsReadable(void)
  *
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) 
-{
+bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) {
    gdcmHeaderEntry *Element = GetHeaderEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
@@ -220,8 +254,7 @@ bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void)
  *
  * @return  True when ExplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmParser::IsExplicitVRLittleEndianTransferSyntax(void) 
-{
+bool gdcmParser::IsExplicitVRLittleEndianTransferSyntax(void) {
    gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
@@ -240,8 +273,7 @@ bool gdcmParser::IsExplicitVRLittleEndianTransferSyntax(void)
  *
  * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmParser::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) 
-{
+bool gdcmParser::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
    gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
@@ -260,8 +292,7 @@ bool gdcmParser::IsDeflatedExplicitVRLittleEndianTransferSyntax(void)
  *
  * @return  True when big endian found. False in all other cases.
  */
-bool gdcmParser::IsExplicitVRBigEndianTransferSyntax(void) 
-{
+bool gdcmParser::IsExplicitVRBigEndianTransferSyntax(void) {
    gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
@@ -329,8 +360,7 @@ FILE *gdcmParser::OpenFile(bool exception_on_error)
  * \brief closes the file  
  * @return  TRUE if the close was successfull 
  */
-bool gdcmParser::CloseFile(void) 
-{
+bool gdcmParser::CloseFile(void) {
   int closed = fclose(fp);
   fp = (FILE *)0;
   if (! closed)
@@ -346,8 +376,7 @@ bool gdcmParser::CloseFile(void)
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @return  always "True" ?!
  */
-bool gdcmParser::Write(FILE *fp, FileType type) 
-{
+bool gdcmParser::Write(FILE *fp, FileType type) {
 // ==============
 // TODO The stuff has been rewritten using the chained list instead 
 //      of the H table
@@ -411,8 +440,8 @@ bool gdcmParser::Write(FILE *fp, FileType type)
  * \return  boolean
  */
 bool gdcmParser::ReplaceOrCreateByNumber(std::string Value, 
-                                        guint16 Group, guint16 Elem ) 
-{
+                                         guint16 Group, 
+					 guint16 Elem ){
    if (CheckIfEntryExistByNumber(Group, Elem) == 0) {
       gdcmHeaderEntry *a =NewHeaderEntryByNumber(Group, Elem);
       if (a == NULL) 
@@ -433,8 +462,7 @@ bool gdcmParser::ReplaceOrCreateByNumber(std::string Value,
  * \return  boolean 
  * 
  */
-bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) 
-{
+bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
    gdcmHeaderEntry* nvHeaderEntry=NewHeaderEntryByNumber(Group, Elem);
 
    if(!nvHeaderEntry)
@@ -473,8 +501,7 @@ bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem
  * @param   element  Element number of the searched Dicom Element 
  * @return  number of occurences
  */
-int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element ) 
-{
+int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
 	std::string key = gdcmDictEntry::TranslateToKey(group, element );
 	return (tagHT.count(key));
 }
@@ -489,8 +516,7 @@ int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element )
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryByName(std::string tagName) 
-{
+std::string gdcmParser::GetEntryByName(std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -512,8 +538,7 @@ std::string gdcmParser::GetEntryByName(std::string tagName)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryVRByName(std::string tagName) 
-{
+std::string gdcmParser::GetEntryVRByName(std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -533,8 +558,7 @@ std::string gdcmParser::GetEntryVRByName(std::string tagName)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element) 
-{
+std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element){
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return GDCM_UNFOUND;
@@ -556,8 +580,7 @@ std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) 
-{
+std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) {
    gdcmHeaderEntry* elem =  GetHeaderEntryByNumber(group, element);
    if ( !elem )
       return GDCM_UNFOUND;
@@ -571,8 +594,7 @@ std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element)
  * @param   tagName name of the searched Dicom Element.
  * @return  true when found
  */
-bool gdcmParser::SetEntryByName(std::string content,std::string tagName) 
-{
+bool gdcmParser::SetEntryByName(std::string content,std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return false;				    
@@ -605,7 +627,6 @@ bool gdcmParser::SetEntryByNumber(std::string content,
       content = content + '\0';
    }
       
-   //tagHT[key]->SetValue(content);   
    gdcmHeaderEntry * a;
    IterHT p;
    TagHeaderEntryHT::iterator p2;
@@ -619,7 +640,6 @@ bool gdcmParser::SetEntryByNumber(std::string content,
        
    a-> SetValue(content); 
    
-   //std::string vr = tagHT[key]->GetVR();
    std::string vr = a->GetVR();
    
    guint32 lgr;
@@ -630,7 +650,6 @@ bool gdcmParser::SetEntryByNumber(std::string content,
    else
       lgr = l;	   
 
-   //tagHT[key]->SetLength(lgr);
    a->SetLength(lgr);   
    return true;
 }					  
@@ -649,13 +668,13 @@ bool gdcmParser::SetEntryByNumber(std::string content,
  */
 
 bool gdcmParser::SetEntryLengthByNumber(guint32 length, 
-                                        guint16 group, guint16 element) 
+                                        guint16 group, 
+					guint16 element) 
 {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
    if (length%2) length++; // length must be even
-   //tagHT[key]->SetLength(length);
    ( ((tagHT.equal_range(key)).first)->second )->SetLength(length);	 
 	 
    return true ;		
@@ -705,6 +724,8 @@ void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem)
  * \ingroup       gdcmParser
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
+ * @param   Group
+ * @param   Elem
  */
 void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem) 
 {
@@ -737,12 +758,13 @@ void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem)
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-bool gdcmParser::SetEntryVoidAreaByNumber(void * area,guint16 group, guint16 element) 
+bool gdcmParser::SetEntryVoidAreaByNumber(void * area,
+                                          guint16 group, 
+					  guint16 element) 
 {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
-   //tagHT[key]->SetVoidArea(area);
    ( ((tagHT.equal_range(key)).first)->second )->SetVoidArea(area);	 
    return true;
 }
@@ -752,8 +774,7 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,guint16 group, guint16 ele
  * \brief   Update the entries with the shadow dictionary. Only odd entries are
  *          analized
  */
-void gdcmParser::UpdateShaEntries(void)
-{
+void gdcmParser::UpdateShaEntries(void) {
    gdcmDictEntry *entry;
    std::string vr;
 
@@ -777,8 +798,7 @@ void gdcmParser::UpdateShaEntries(void)
          vr=(*it)->GetVR();
 
       (*it)->SetValue(GetHeaderEntryUnvalue(*it));
-      if(entry)
-      {
+      if(entry){
          // Set the new entry and the new value
          (*it)->SetDictEntry(entry);
          CheckHeaderEntryVR(*it,vr);
@@ -801,8 +821,7 @@ void gdcmParser::UpdateShaEntries(void)
  * @return  Corresponding Dicom Element when it exists, and NULL
  *          otherwise.
  */
- gdcmHeaderEntry *gdcmParser::GetHeaderEntryByName(std::string tagName) 
- {
+ gdcmHeaderEntry *gdcmParser::GetHeaderEntryByName(std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return NULL;
@@ -830,6 +849,19 @@ gdcmHeaderEntry* gdcmParser::GetHeaderEntryByNumber(guint16 group, guint16 eleme
 }
 
 /**
+ * \ingroup gdcmParser
+ * \brief   retrieves the Dicom Elements (all of them) using (group, element) 
+ * @param   group Group number of the searched Dicom Element.
+ * @param   element Element number of the searched Dicom Element.
+ * @return  a range (i.e.pair<,>) containing all elements whose key is group|element) 
+ */
+ 
+IterHT gdcmParser::GetHeaderEntrySameNumber(guint16 group, guint16 element){
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   return (tagHT.equal_range(key));
+}
+
+/**
  * \ingroup       gdcmParser
  * \brief         Loads the element while preserving the current
  *                underlying file position indicator as opposed to
@@ -837,8 +869,7 @@ gdcmHeaderEntry* gdcmParser::GetHeaderEntryByNumber(guint16 group, guint16 eleme
  * @param entry   Header Entry whose value shall be loaded. 
  * @return  
  */
-void gdcmParser::LoadHeaderEntrySafe(gdcmHeaderEntry * entry) 
-{
+void gdcmParser::LoadHeaderEntrySafe(gdcmHeaderEntry * entry) {
    long PositionOnEntry = ftell(fp);
    LoadHeaderEntry(entry);
    fseek(fp, PositionOnEntry, SEEK_SET);
@@ -853,8 +884,7 @@ void gdcmParser::LoadHeaderEntrySafe(gdcmHeaderEntry * entry)
  * @param   SkipSequence TRUE if we don't want to write Sequences (ACR-NEMA Files)
  * @param   type Type of the File (ExplicitVR,ImplicitVR, ACR, ...) 
  */
-void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) 
-{
+void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
    guint16 gr, el;
    std::string vr;
    
@@ -1069,10 +1099,8 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
  *          processor order.
  * @return  The properly swaped 32 bits integer.
  */
-guint32 gdcmParser::SwapLong(guint32 a) 
-{
-   switch (sw) 
-   {
+guint32 gdcmParser::SwapLong(guint32 a) {
+   switch (sw) {
       case    0 :
          break;
       case 4321 :
@@ -1100,8 +1128,7 @@ guint32 gdcmParser::SwapLong(guint32 a)
  *          processor order.
  * @return  The properly unswaped 32 bits integer.
  */
-guint32 gdcmParser::UnswapLong(guint32 a) 
-{
+guint32 gdcmParser::UnswapLong(guint32 a) {
    return (SwapLong(a));
 }
 
@@ -1110,8 +1137,7 @@ guint32 gdcmParser::UnswapLong(guint32 a)
  * \brief   Swaps the bytes so they agree with the processor order
  * @return  The properly swaped 16 bits integer.
  */
-guint16 gdcmParser::SwapShort(guint16 a) 
-{
+guint16 gdcmParser::SwapShort(guint16 a) {
    if ( (sw==4321)  || (sw==2143) )
       a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
    return (a);
@@ -1122,8 +1148,7 @@ guint16 gdcmParser::SwapShort(guint16 a)
  * \brief   Unswaps the bytes so they agree with the processor order
  * @return  The properly unswaped 16 bits integer.
  */
-guint16 gdcmParser::UnswapShort(guint16 a) 
-{
+guint16 gdcmParser::UnswapShort(guint16 a) {
    return (SwapShort(a));
 }
 
@@ -1133,16 +1158,16 @@ guint16 gdcmParser::UnswapShort(guint16 a)
  * \ingroup gdcmParser
  * \brief   Parses the header of the file but WITHOUT loading element values.
  */
-void gdcmParser::Parse(bool exception_on_error) throw(gdcmFormatError) 
-{
+void gdcmParser::Parse(bool exception_on_error) throw(gdcmFormatError) {
    gdcmHeaderEntry *newHeaderEntry = (gdcmHeaderEntry *)0;
    
    rewind(fp);
    CheckSwap();
-   while ( (newHeaderEntry = ReadNextHeaderEntry()) ) 
-   {
-      SkipHeaderEntry(newHeaderEntry);
-      AddHeaderEntry(newHeaderEntry);
+   while ( (newHeaderEntry = ReadNextHeaderEntry()) ) {
+     SkipHeaderEntry(newHeaderEntry);
+     if ( (ignoreShadow==0) || (newHeaderEntry->GetGroup()%2) == 0) { //JPR
+        AddHeaderEntry(newHeaderEntry); 
+     }	     
    }
 }
 
@@ -1151,8 +1176,7 @@ void gdcmParser::Parse(bool exception_on_error) throw(gdcmFormatError)
  * \brief   Loads the element values of all the Header Entries pointed in the
  *          public Chained List.
  */
-void gdcmParser::LoadHeaderEntries(void) 
-{
+void gdcmParser::LoadHeaderEntries(void) {
    rewind(fp);
    for (ListTag::iterator i = GetListEntry().begin();
       i != GetListEntry().end();
@@ -1165,8 +1189,7 @@ void gdcmParser::LoadHeaderEntries(void)
 
    // Load 'non string' values   
    std::string PhotometricInterpretation = GetEntryByNumber(0x0028,0x0004);   
-   if( PhotometricInterpretation == "PALETTE COLOR " )
-   {
+   if( PhotometricInterpretation == "PALETTE COLOR " ) {
       LoadEntryVoidArea(0x0028,0x1200);  // gray LUT   
       LoadEntryVoidArea(0x0028,0x1201);  // R    LUT
       LoadEntryVoidArea(0x0028,0x1202);  // G    LUT
@@ -1204,8 +1227,7 @@ void gdcmParser::LoadHeaderEntries(void)
  *                gdcmParser::SetMaxSizeLoadEntry()
  * @param         Entry Header Entry (Dicom Element) to be dealt with
  */
-void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry) 
-{
+void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
    size_t item_read;
    guint16 group  = Entry->GetGroup();
    std::string  vr= Entry->GetVR();
@@ -1227,16 +1249,14 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
    if( group == 0xfffe )
       SkipLoad = true;
 
-   if ( SkipLoad ) 
-   {
+   if ( SkipLoad ) {
       Entry->SetLength(0);
       Entry->SetValue("gdcm::Skipped");
       return;
    }
 
    // When the length is zero things are easy:
-   if ( length == 0 ) 
-   {
+   if ( length == 0 ) {
       Entry->SetValue("");
       return;
    }
@@ -1244,8 +1264,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
    // The elements whose length is bigger than the specified upper bound
    // are not loaded. Instead we leave a short notice of the offset of
    // the element content and it's length.
-   if (length > MaxSizeLoadEntry) 
-   {
+   if (length > MaxSizeLoadEntry) {
       std::ostringstream s;
       s << "gdcm::NotLoaded.";
       s << " Address:" << (long)Entry->GetOffset();
@@ -1262,36 +1281,28 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
    // contain a set of integers (not a single one) 
     	
    // Any compacter code suggested (?)
-   if ( IsHeaderEntryAnInteger(Entry) ) 
-   {
+   if ( IsHeaderEntryAnInteger(Entry) ) {   
       guint32 NewInt;
       std::ostringstream s;
       int nbInt;
-      if (vr == "US" || vr == "SS")
-      {
+      if (vr == "US" || vr == "SS") {
          nbInt = length / 2;
          NewInt = ReadInt16();
          s << NewInt;
-         if (nbInt > 1) 
-         {
-            for (int i=1; i < nbInt; i++) 
-            {
+         if (nbInt > 1){
+            for (int i=1; i < nbInt; i++) {
                s << '\\';
                NewInt = ReadInt16();
                s << NewInt;
             }
-         }
-			
+         }			
       }
-      else if (vr == "UL" || vr == "SL") 
-      {
+      else if (vr == "UL" || vr == "SL") {
          nbInt = length / 4;
          NewInt = ReadInt32();
          s << NewInt;
-         if (nbInt > 1) 
-         {
-            for (int i=1; i < nbInt; i++) 
-            {
+         if (nbInt > 1) {
+            for (int i=1; i < nbInt; i++) {
                s << '\\';
                NewInt = ReadInt32();
                s << NewInt;
@@ -1301,6 +1312,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
 #ifdef GDCM_NO_ANSI_STRING_STREAM
       s << std::ends; // to avoid oddities on Solaris
 #endif //GDCM_NO_ANSI_STRING_STREAM
+
       Entry->SetValue(s.str());
       return;	
    }
@@ -1308,8 +1320,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
    // We need an additional byte for storing \0 that is not on disk
    std::string NewValue(length,0);
    item_read = fread(&(NewValue[0]), (size_t)length, (size_t)1, fp);
-   if ( item_read != 1 ) 
-   {
+   if ( item_read != 1 ) {
       dbg.Verbose(1, "gdcmParser::LoadElementValue","unread element value");
       Entry->SetValue("gdcm::UnRead");
       return;
@@ -1330,8 +1341,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
  * \        when position to be taken care of     
  * @param   newHeaderEntry
  */
-void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) 
-{
+void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
    tagHT.insert( PairHT( newHeaderEntry->GetKey(),newHeaderEntry) );
    listEntries.push_back(newHeaderEntry); 
    wasUpdated = 1;
@@ -1344,8 +1354,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry)
 
  * @return 
  */
- void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry *Entry) 
- {
+ void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry *Entry) {
    guint16 element = Entry->GetElement();
    guint16 group   = Entry->GetGroup();
    std::string  vr = Entry->GetVR();
@@ -1725,7 +1734,7 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
    else if ( Entry->GetVR() == "SQ") 
    { 
       if (enableSequences)    // only if the user does want to !
-         FoundLength =0; 	 
+         FoundLength =0;      // ReadLength is unchanged	 
    } 
     
    // a SeQuence Element is beginning                                          
@@ -1756,13 +1765,11 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
  * @param   Entry The element value on which to apply the predicate.
  * @return  The result of the heuristical predicate.
  */
-bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) 
-{
+bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
    guint16 element = Entry->GetElement();
    guint16 group   = Entry->GetGroup();
    std::string  vr = Entry->GetVR();
    guint32 length  = Entry->GetLength();
-
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
    // able to swap it's element value properly.
@@ -1773,10 +1780,20 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry)
       else 
       {
          std::ostringstream s;
-         s << "Erroneous Group Length element length  on :" \
-           << std::hex << group << " , " << element;
-         dbg.Error("gdcmParser::IsHeaderEntryAnInteger",
-            s.str().c_str());     
+	 int filePosition = ftell(fp);
+         s << "Erroneous Group Length element length  on : (" \
+           << std::hex << group << " , " << element 
+	   << ") -before- position x(" << filePosition << ")"
+	   << "lgt : " << length;
+	// These 2 lines commented out : a *very dirty* patch
+	// to go on PrintHeader'ing gdcm-MR-PHILIPS-16-Multi-Seq.dcm.
+	// have a glance at offset  x(8336) ...
+	// For *regular* headers, the test is useless..
+	// lets's print a warning message and go on, 
+	// instead of giving up with an error message
+	std::cout << s.str().c_str() << std::endl;
+        // dbg.Error("gdcmParser::IsHeaderEntryAnInteger",
+        //    s.str().c_str());     
       }
    }
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
@@ -1791,8 +1808,7 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry)
  *
  * @return 
  */
- guint32 gdcmParser::FindHeaderEntryLengthOB(void) 
- {
+ guint32 gdcmParser::FindHeaderEntryLengthOB(void)  {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
    guint16 g;
    guint16 n; 
@@ -1842,22 +1858,20 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry)
  * \brief Reads a supposed to be 16 Bits integer
  * \     (swaps it depending on processor endianity) 
  *
- * @return integer acts as a boolean
+ * @return read value
  */
-guint16 gdcmParser::ReadInt16(void) 
-{
+guint16 gdcmParser::ReadInt16(void) {
    guint16 g;
    size_t item_read;
    item_read = fread (&g, (size_t)2,(size_t)1, fp);
-   if ( item_read != 1 ) 
-   {
+   if ( item_read != 1 ) {
       if(ferror(fp)) 
          dbg.Verbose(0, "gdcmParser::ReadInt16", " File Error");
       errno = 1;
       return 0;
    }
    errno = 0;
-   g = SwapShort(g);
+   g = SwapShort(g);   
    return g;
 }
 
@@ -1866,15 +1880,13 @@ guint16 gdcmParser::ReadInt16(void)
  * \brief  Reads a supposed to be 32 Bits integer
  * \       (swaps it depending on processor endianity)  
  *
- * @return 
+ * @return read value
  */
-guint32 gdcmParser::ReadInt32(void) 
-{
+guint32 gdcmParser::ReadInt32(void) {
    guint32 g;
    size_t item_read;
    item_read = fread (&g, (size_t)4,(size_t)1, fp);
-   if ( item_read != 1 ) 
-   { 
+   if ( item_read != 1 ) { 
      if(ferror(fp)) 
          dbg.Verbose(0, "gdcmParser::ReadInt32", " File Error");   
       errno = 1;
@@ -1891,8 +1903,7 @@ guint32 gdcmParser::ReadInt32(void)
  *
  * @return 
  */
-void gdcmParser::SkipBytes(guint32 NBytes) 
-{
+void gdcmParser::SkipBytes(guint32 NBytes) {
    //FIXME don't dump the returned value
    (void)fseek(fp, (long)NBytes, SEEK_CUR);
 }
@@ -1913,52 +1924,13 @@ void gdcmParser::Initialise(void)
  *          bad little endian, bad big endian).
  *
  */
-void gdcmParser::CheckSwap()
-{
-   // Fourth semantics:
-   //
-   // ---> Warning : This fourth field is NOT part 
-   //                of the 'official' Dicom Dictionnary
-   //                and should NOT be used.
-   //                (Not defined for all the groups
-   //                 may be removed in a future release)
-   //
-   // CMD      Command        
-   // META     Meta Information 
-   // DIR      Directory
-   // ID
-   // PAT      Patient
-   // ACQ      Acquisition
-   // REL      Related
-   // IMG      Image
-   // SDY      Study
-   // VIS      Visit 
-   // WAV      Waveform
-   // PRC
-   // DEV      Device
-   // NMI      Nuclear Medicine
-   // MED
-   // BFS      Basic Film Session
-   // BFB      Basic Film Box
-   // BIB      Basic Image Box
-   // BAB
-   // IOB
-   // PJ
-   // PRINTER
-   // RT       Radio Therapy
-   // DVH   
-   // SSET
-   // RES      Results
-   // CRV      Curve
-   // OLY      Overlays
-   // PXL      Pixels
-   // DL       Delimiters
-   //
+void gdcmParser::CheckSwap() {
 
    // The only guaranted way of finding the swap code is to find a
    // group tag since we know it's length has to be of four bytes i.e.
    // 0x00000004. Finding the swap code in then straigthforward. Trouble
    // occurs when we can't find such group...
+   
    guint32  s;
    guint32  x=4;  // x : for ntohs
    bool net2host; // true when HostByteOrder is the same as NetworkByteOrder
@@ -1973,16 +1945,15 @@ void gdcmParser::CheckSwap()
       net2host = true;
    else
       net2host = false; 
-    //cout << net2host << endl;
          
    // The easiest case is the one of a DICOM header, since it possesses a
    // file preamble where it suffice to look for the string "DICM".
    lgrLue = fread(deb, 1, HEADER_LENGTH_TO_READ, fp);
    
    entCur = deb + 128;
-   if(memcmp(entCur, "DICM", (size_t)4) == 0) 
-   {
+   if(memcmp(entCur, "DICM", (size_t)4) == 0) {
       dbg.Verbose(1, "gdcmParser::CheckSwap:", "looks like DICOM Version3");
+      
       // Next, determine the value representation (VR). Let's skip to the
       // first element (0002, 0000) and check there if we find "UL" 
       // - or "OB" if the 1st one is (0002,0001) -,
@@ -2002,7 +1973,7 @@ void gdcmParser::CheckSwap()
       // FIXME
       // Use gdcmParser::dicom_vr to test all the possibilities
       // instead of just checking for UL, OB and UI !?
-      if(  (memcmp(entCur, "UL", (size_t)2) == 0) ||
+      if( (memcmp(entCur, "UL", (size_t)2) == 0) ||
       	  (memcmp(entCur, "OB", (size_t)2) == 0) ||
       	  (memcmp(entCur, "UI", (size_t)2) == 0) )   
       {
@@ -2052,9 +2023,8 @@ void gdcmParser::CheckSwap()
    // representation of a 32 bits integer. Hence the following dirty
    // trick :
    s = *((guint32 *)(entCur));
-   
-   switch (s)
-   {
+      
+   switch (s) {
       case 0x00040000 :
          sw = 3412;
          filetype = ACR;
@@ -2202,8 +2172,7 @@ gdcmDictEntry *gdcmParser::GetDictEntryByNumber(guint16 group,guint16 element)
  * \brief   Read the next tag but WITHOUT loading it's value
  * @return  On succes the newly created HeaderEntry, NULL on failure.      
  */
-gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void) 
-{
+gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void) {
    guint16 g,n;
    gdcmHeaderEntry *NewEntry;
    
@@ -2211,16 +2180,24 @@ gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void)
    n = ReadInt16();
       
    if (errno == 1)
-      // We reached the EOF (or an error occured) and header parsing
-      // has to be considered as finished.
+      // We reached the EOF (or an error occured) therefore 
+      // header parsing has to be considered as finished.
       return (gdcmHeaderEntry *)0;
+
+/*  Pb : how to propagate the element length (used in SkipHeaderEntry)
+//       direct call to SkipBytes ?
    
+   if (ignoreShadow == 1 && g%2 ==1)  //JPR
+      // if user wants to skip shadow groups
+      // and current element *is* a shadow element
+      // we don't create anything
+      return (gdcmHeaderEntry *)1; // to tell caller it's NOT finished
+*/   
    NewEntry = NewHeaderEntryByNumber(g, n);
    FindHeaderEntryVR(NewEntry);
    FindHeaderEntryLength(NewEntry);
 	
-   if (errno == 1) 
-   {
+   if (errno == 1) {
       // Call it quits
       return NULL;
    }
