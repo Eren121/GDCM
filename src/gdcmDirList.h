@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 17:01:30 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/02/01 09:46:15 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,6 +54,8 @@ public :
 
    /// Print all element of the DirList
    void Print(std::ostream &os = std::cout);
+
+   static bool IsDirectory(std::string const &dirName);
 
 private :
    int Explore(std::string const &dirName, bool recursive=false);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 03:36:59 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/02/01 09:46:15 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,11 +15,16 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
+#include "gdcmDirList.h"
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 #include <iostream>
 #include <fstream>
+
+#ifdef _MSC_VER
+   #include <windows.h>
+#endif
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -194,10 +199,9 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       ////// Check for existence of reference baseline directory
 
       std::string baseLineDir = GDCM_DATA_ROOT;
-      baseLineDir += "/BaselineDicom/";
+      baseLineDir += "/BaselineDicom";
 
-      std::ifstream testDIR(baseLineDir.c_str(), std::ios::in | std::ios::binary);
-      if (!testDIR )
+      if( !gdcm::DirList::IsDirectory(baseLineDir) )
       {
          std::cerr << "   The reference baseline directory " << std::endl
                    << "      "
@@ -206,7 +210,9 @@ int TestAllReadCompareDicom(int argc, char* argv[])
                    << std::endl;
          return 1;
       }
-      testDIR.close();
+#ifndef _MSC_VER
+      testDir.close();
+#endif
 
       ////// Step 1 (see above description):
       std::string filename = GDCM_DATA_ROOT;
@@ -215,7 +221,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       
       std::string referenceFileName = baseLineDir + gdcmDataImages[i++];
       std::string::size_type slash_pos = referenceFileName.rfind( "." );
-      if ( slash_pos != std::string::npos )
+      if( slash_pos != std::string::npos )
       {
          referenceFileName.replace( slash_pos + 1, 3, "dcm" );
       }
