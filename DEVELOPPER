@@ -1,5 +1,60 @@
 The following comments are intended for core gdcm developpers.
 
+* Compiling gdcm:
+  - Checkout the sources to an arbitrary directory noted GDCM (e.g. ~/cvs/gdcm).
+  - Checkout the test images to an arbitrary directory noted GDCMDATA
+    (e.g. ~/cvs/gdcm/gdcmData).
+  - Optionally create a temporary installation directory GDCMINSTALL e.g.
+    mkdir /tmp/gdcminstall
+  - Create a target directory GDCMBIN e.g.
+    mkdir /tmp/gdcmbin
+  - Configure cmake from GDCMBIN:
+    cd GDCMBIN
+    ccmake GDCM
+      * Toggle and adjust the required options and parameters, mainly
+        -- GDCM_DATA_ROOT should be set to GDCMDATA
+        -- CMAKE_INSTALL_PREFIX (equivalent of --prefix of the autotools)
+           should be set to GDCMINSTALL
+        -- CMAKE_BUILD_TYPE set to Debug or Release
+        -- GDCM_DOXYGEN 
+        -- GDCM_VTK When this option is on VTK_DIR might require manual
+           configuration
+        -- GDCM_WRAP_PYTHON
+      * Configure cmake: hit c
+      * Generate the makefiles (or dsw): hit g
+  - Compile gdcm
+    make  
+  - Run the tests manually (optional):
+    Caveat: if you run the tests before installing, you NEED to positionate
+            the environment variable GDCM_DICT_PATH to GDCM/Dicts e.g.
+            export GDCM_DICT_PATH=~/cvs/gdcm/Dicts
+    Assuming your cwd is GDCMBIN, three modes are then available:
+    -- 1/ acces to a by number:
+          ./Test/gdcmCxxTests
+    -- 2/ acces to a test by it's name, by passing it as argument to
+          gdcmCxxTests e.g.
+          ./Test/gdcmCxxTests hashtest
+    -- 3/ launch all the full test suite (again we assume cwd is GDCMBIN):
+          ctest
+          This is equivalent to "make test".
+          Note: ctest supports the argument filtering with regexp and
+                the verbose mode e.g.
+                   ctest -R print -V
+                proposes the tests containing "print" in their name and
+                makes a verbose output. For other options refer to the
+                documentation at http://www.cmake.org.
+
+* Sending the result to kitware's dashboard (optional)
+  ctest -D Experimental
+  The results should appear in
+     http://public.kitware.com/dashboard.php?name=public
+  under the name GDCM-* within the "Experimental Builds" entry.
+
+* Install gdcm (as specified by CMAKE_INSTALL_PREFIX)
+  make install
+  Note: the dictionaries used by gdcm are now located in
+        CMAKE_INSTALL_PREFIX + /share/ (i.e. GDCMINSTALL + /share/ if you
+        followed the above instructions).
 
 * Python related section.
   Depending on the automake/autoconf/autogen.sh flags you used gdcm could

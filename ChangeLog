@@ -1,3 +1,7 @@
+2004-04-29  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+     * DEVELOPPER: added some helpfull comments for compile/test/install
+       when using cmake.
+
 2004-04-28  Jean-Pierre Roux
      * ENH add the provisional  gdcmHeader::SQDepthLevel to allow 
            SeQuence indented printing of Dicom Header
