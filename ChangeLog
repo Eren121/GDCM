@@ -1,3 +1,10 @@
+2005-01-08 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * According to Benoit's suggestion, and without any objection from anybody
+      - methods SetxxxByNumber and GetxxxByNumber renamed as Setxxx and Getxxx
+      - methods Dict::Print() and Dict::PrintByKey() merged into Dict::Print()
+      - method gdcmDicomDirObject::GetEntry() renamed as 
+         gdcmDicomDirObject::GetEntryHT() to avoid confusion (and compile error)
+
 2005-01-07 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Now gdcm::Debug is clearly a copy/paste of VTK approach. You can manipulate
      you debug/warning message just as c++ streams which make them very convinient
