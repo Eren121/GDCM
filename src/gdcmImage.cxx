@@ -32,7 +32,7 @@ gdcmImage::~gdcmImage()
  */ 
 void gdcmImage::Print(std::ostream &os)
 {
-   os<<"IMAGE : ";
+   os<<"IMAGE"<<std::endl;
    for(ListTag::iterator i=beginObj;i!=endObj;++i)
    {
       if( ((*i)->GetGroup()==0x0004) && ((*i)->GetElement()==0x1500) )
