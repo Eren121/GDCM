@@ -13,9 +13,8 @@
 #include <sstream>
 #include "gdcmUtil.h"
 
-#define HEADER_LENGTH_TO_READ 256 // on ne lit plus que le debut
-
-#define DEBUG 1
+#define HEADER_LENGTH_TO_READ 		256 	// on ne lit plus que le debut
+#define _MaxSizeLoadElementValue_  	1024 	// longueur au dela de laquelle on ne charge plus les valeurs 
 
 namespace Error {
 	struct FileReadError {
@@ -49,7 +48,7 @@ void gdcmHeader::Initialise(void) {
 }
 
 gdcmHeader::gdcmHeader (const char* InFilename) {
-	SetMaxSizeLoadElementValue(1024);
+	SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
 	filename = InFilename;
 	Initialise();
 	fp=fopen(InFilename,"rw");
@@ -248,7 +247,6 @@ void gdcmHeader::SwitchSwapToBigEndian(void) {
 void gdcmHeader::GetPixels(size_t lgrTotale, void* _Pixels) {
 	size_t pixelsOffset; 
 	pixelsOffset = GetPixelOffset();
-	printf("pixelsOffset %d\n",pixelsOffset);
 	fseek(fp, pixelsOffset, SEEK_SET);
 	fread(_Pixels, 1, lgrTotale, fp);
 }
@@ -500,8 +498,8 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
 // Il y en a encore DIX-SEPT, comme ça.
 // Il faudrait trouver qq chose + rusé ...
 //
-
-
+// --> probablement TOUS les supprimer (Eric dixit)
+//
 void gdcmHeader::FixFoundLength(ElValue * ElVal, guint32 FoundLength) {
 	// Heuristic: a final fix.
 	if ( FoundLength == 0xffffffff)
@@ -731,7 +729,7 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	// The group length doesn't represent data to be loaded in memory, since
 	// each element of the group shall be loaded individualy.
 	if( elem == 0 )
- 		SkipLoad = true;
+ 		//SkipLoad = true;		// modif sauvage JPR
 
 	if ( SkipLoad ) {
 			  // FIXME the following skip is not necessary
@@ -1158,15 +1156,10 @@ void gdcmHeader::ParseHeader(void) {
  */
 void gdcmHeader::LoadElements(void) {
 
-	if (DEBUG) printf("LoadElements : Entree\n");
-
 	rewind(fp);   
- 	if (DEBUG) printf("LoadElements : rewind\n");
 
 	TagElValueHT ht = PubElVals.GetTagHt();
 	
-	if (DEBUG) printf("LoadElements : GetTagHt\n");
-
 	for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
 		LoadElementValue(tag->second);
 		}

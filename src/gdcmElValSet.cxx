@@ -8,7 +8,7 @@ TagElValueHT & ElValSet::GetTagHt(void) {
 }
 
 void ElValSet::Add(ElValue * newElValue) {
-	tagHt[newElValue->GetKey()]   = newElValue;
+	tagHt [newElValue->GetKey()]  = newElValue;
 	NameHt[newElValue->GetName()] = newElValue;
 }
 
@@ -30,7 +30,13 @@ int ElValSet::Write(FILE * _fp) {
 
 	guint16 gr, el;
 	guint32 lgr;
+	
 	const char * val;
+	string vr;
+	guint32 val_int32;
+	guint16 val_int16;
+	void *ptr;
+	
 	
 	// A FAIRE :
 	// parcourir la table pour recalculer la longueur des 'elements 0x0000'
@@ -43,11 +49,13 @@ int ElValSet::Write(FILE * _fp) {
 	for (TagElValueHT::iterator tag = tagHt.begin();
 		  tag != tagHt.end();
 		  ++tag){
-
+		  
+		/ ...
 
 	}
 */
 	// resteront à tester les echecs en écriture
+	
 	for (TagElValueHT::iterator tag = tagHt.begin();
 		  tag != tagHt.end();
 		  ++tag){
@@ -56,25 +64,41 @@ int ElValSet::Write(FILE * _fp) {
 		// peut-on se passer des affectations?
 		// - passer l'adresse du resultat d'une fonction (???)
 		// - acceder au champ sans passer par un accesseur ?
+		
 		gr =  tag->second->GetGroup();
 		el =  tag->second->GetElement();
 		lgr = tag->second->GetLength();
 		val = tag->second->GetValue().c_str();
-		
+		vr =  tag->second->GetVR();
+			
 		fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp); 	//group
 		fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp); 	//element
 		
-		//fwrite ( tag->second->GetVR(),(size_t)2 ,(size_t)1 ,_fp); 	//VR
+		//fwrite ( vr,(size_t)2 ,(size_t)1 ,_fp); 	//VR
 		// voir pb lgr  + VR
+		// On fait de l'implicit VR (penser a forcer le SYNTAX TRANSFERT UID)
 		
 		fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp); 			//lgr
-		 
-		// ATTENTION
-		// voir pb des int16 et int32 : les identifier, les convertir, modifier la longueur
-		// ou alors stocker la valeur 16 ou 32 bits, + un indicateur : char, int16, int32
 		
+		if (vr == "US" || vr == "SS") {
+			val_int16 = atoi(val);
+			ptr = &val_int16;
+			fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);	
+			continue;
+		}
+		if (vr == "UL" || vr == "SL") {
+			val_int32 = atoi(val);
+			ptr = &val_int32;
+			fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);	
+			continue;
+		}	
+		
+		// Les pixels ne sont pas chargés dans l'element !
+		if ((gr == 0x7fe0) && (el == 0x0010) ) break;
+
 		fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); //valeur Elem
 	}
+		
 	return(1);
 }
 

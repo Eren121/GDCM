@@ -2,8 +2,6 @@
 
 #include "gdcm.h"
 
-#define DEBUG 1
-
 static void _Swap(void* im, int swap, int lgr, int nb);
 
 /////////////////////////////////////////////////////////////////
@@ -159,10 +157,7 @@ void * gdcmFile::GetImageData (void) {
 				*deb = (*deb >> (nbu-highBit-1)) & mask;
 				deb ++;
 		}
-	}
-		
-	printf ("on est sorti\n");
-	
+	}	
 	// On l'affecte à un champ du dcmFile
 	
 	Pixels = _Pixels;
@@ -413,11 +408,14 @@ int gdcmFile::WriteDcm (string nomFichier) {
 	filePreamble=(char*)calloc(128,1);
 	fwrite(filePreamble,128,1,fp1);
 	fwrite("DICM",4,1,fp1);
-	if(DEBUG) printf("Ecriture File Preamble\n");
 
 	// un accesseur de + est obligatoire ???
+	// pourtant le ElValSet contenu dans le gdcmHeader 
+	// ne devrait pas être visible par l'utilisateur final (?)
 	
 	GetPubElVals().Write(fp1);
+		
+	fwrite(Pixels, lgrTotale, 1, fp1);
 
 	fclose (fp1);
 	return(1);

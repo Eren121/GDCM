@@ -165,10 +165,10 @@ public:
 	int ReplaceEntry(gdcmDictEntry* NewEntry);
 	int RemoveEntry (TagKey k);
 	int RemoveEntry (guint16 group, guint16 element);
-
 	
 	// renvoie une ligne de Dictionnaire Dicom à partir de (numGroup, numElement)
 	gdcmDictEntry * GetTag(guint32 group, guint32 element);
+	
 	void Print(ostream&);
 	TagHT & GetEntries(void) { return entries; }
 };
@@ -264,7 +264,6 @@ public:
 	string  GetName(void)    { return entry->GetName();    };
 	
 	string  GetVR(void)		 { return entry->GetVR(); };
-	
 	void    SetVR(string v)	 { entry->SetVR(v);       }; 
 		
 	// Question :
@@ -359,7 +358,7 @@ private:
 	FILE * fp;
 	// The tag Image Location (0028,0200) - containing the address of
 	// the pixels - is not allways present. Then we store this information
-	
+	// il etait facultatif en ACR-NEMA, il n'existe plus en DICOM 3
 	// FIXME
 	
 	// Question :
