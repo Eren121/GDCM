@@ -1,5 +1,16 @@
+2003-11-03 Jean-Pierre Roux
+     * add gdcmHeaderHelper::GetNumberOfScalarComponentsRaw()
+           to be used by aware (vtk) users that want to manage
+	   LUT (and no to turn the PALETTE image into an RGB pixels one)
+     * GetPixelType now returns 8U for 24 Bits images
+                    (vtkGdcmReader compliant)     	   
+	   
 2003-10-31 Jean-Pierre Roux
-     RMV : removal of useless jBitsInJsample.h 
+     * Removal of *all* gdcmData images and add them again
+       in order to loose the 'history' of un-anonymised images
+       
+2003-10-31 Jean-Pierre Roux
+     *RMV : removal of useless jBitsInJsample.h 
            for both 8 and 12 Bits JPEG Lossy Libraries
 	   
 2003-10-31 Jean-Pierre Roux
@@ -70,8 +81,9 @@
          one for the high Bytes, the other for low Bytes)
 
 2003-10-22 Jean-Pierre Roux
-     * Now CheckRead takes into account the bugged 'Leonardo' Siemens images
-        and XA images, sent thru the burning VPRO station
+     * Now CheckRead takes into account :
+            the bugged 'Leonardo' Siemens images
+            the XA images, sent thru the burning VPRO station
      * add I9000001.dcm, a GE dlx XA image, thru the VEPRO burning station
      (breaks DicomWorks)
 
@@ -112,8 +124,7 @@
        * add US.3405.1.dcm, a genuine RGB medical file ...
        * add gdcm-ACR-LibIDO.acr, unnormalized Rectangular LibIDO format image
        * add CLIP0001-Sequoia-U11.dcm, US 'Clip', from SEQUOIA machine, 
-                                                  UNIT 11, Hop Cardio
-              
+                                                  UNIT 11, Hop Cardio              
 2003-10-15  Jean-Pierre Roux
       * general anonymisation in gdcmData
       * adding the 'color files' from
@@ -135,7 +146,7 @@
 2003-10-14  Jean-Pierre Roux
      * Some supposed-to-be Dicom Images have no preamble.
         OpenFile takes it into account
-     * Jpeg LossLess 24 Bits images doesn-t break any longer gdcm
+     * Jpeg LossLess 24 Bits images doesn't break any longer gdcm
      * Missing elements added in dicomV3.dic
       (just to be affraid : have a look at
        ftp://medical.nema.org/medical/dicom/2003/01v03dif/01v03_06.pdf
@@ -552,7 +563,7 @@
         at configure (or autogen.sh) stage.
 
 2003-04-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
-      * More memmory link related corrections and documentation fixes.
+      * More memory link related corrections and documentation fixes.
         Notes on valgrind:
           - maximum info is obtained with a command of the form:
             valgrind --leak-check=yes --leak-resolution=high --num-callers=40

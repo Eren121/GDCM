@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.22 2003/10/30 17:06:02 jpr Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.23 2003/11/03 10:51:47 jpr Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -239,6 +239,7 @@ int vtkGdcmReader::CheckFileCoherence()
          && (type != "32U") && (type != "32S") )
        {
        vtkErrorMacro("Bad File Type for file" << FileName->c_str());
+       vtkErrorMacro("                      " << type);
        vtkErrorMacro("Removing this file from readed files "
                      << FileName->c_str());
        *FileName = "GDCM_UNREADABLE";
@@ -307,6 +308,11 @@ int vtkGdcmReader::CheckFileCoherence()
        ReturnedTotalNumberOfPlanes += NZ - 1; // First plane already added
        this->ImageType = type;
        this->PixelSize = GdcmHeader.GetPixelSize();
+       
+       // JPR to Mathieu:
+       // Be carefull : when u'll pane to use 'GetImageDataRaw',
+       // use 'GetNumberOfScalarComponentsRaw' ! 
+     
        this->NumComponents = GdcmHeader.GetNumberOfScalarComponents(); //rgb or mono
        
        //Set image spacing
@@ -357,7 +363,7 @@ void vtkGdcmReader::ExecuteInformation()
     }
       
   // if the user has not set the extent, but has set the VOI
-  // set the zaxis extent to the VOI z axis
+  // set the z axis extent to the VOI z axis
   if (this->DataExtent[4]==0 && this->DataExtent[5] == 0 &&
      (this->DataVOI[4] || this->DataVOI[5]))
     {
