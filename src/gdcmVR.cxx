@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:48 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/10/27 21:28:56 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,34 +26,33 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 /**
  * \brief Constructor
  */
 VR::VR() 
 {
-   std::string filename=DictSet::BuildDictPath() + std::string(DICT_VR);
+   std::string filename = DictSet::BuildDictPath() + DICT_VR;
    std::ifstream from(filename.c_str());
-   dbg.Error(!from, "VR::VR: can't open dictionary",filename.c_str());
+   dbg.Error(!from, "VR::VR: can't open dictionary", filename.c_str());
 
    char buff[1024];
-   std::string key;
-   std::string name;
+   VRKey key;
+   VRAtr name;
 
    while (!from.eof()) 
    {
-      from >> std::ws; // used to be eatwhite(from);
+      from >> std::ws;
       from.getline(buff, 1024, ' ');
       key = buff;
-      from >> std::ws; // used to be eatwhite(from);
+      from >> std::ws;
       from.getline(buff, 1024, ';');
       name = buff;
 
-      from >> std::ws; // used to be eatwhite(from);
+      from >> std::ws;
       from.getline(buff, 1024, '\n');
 
-      if(key!="")
+      if(key != "")
       {
          vr[key]=name;
       }
@@ -82,7 +81,7 @@ void VR::Print(std::ostream &os)
 
    for (VRHT::iterator it = vr.begin(); it != vr.end(); ++it)
    {
-      s << "VR : "<<it->first<<" = "<<it->second<<std::endl;
+      s << "VR : " << it->first << " = " << it->second << std::endl;
    }
    os << s.str();
 }
@@ -93,7 +92,7 @@ void VR::Print(std::ostream &os)
  * \brief   Get the count for an element
  * @param   key key to count
  */
-int VR::Count(VRKey key) 
+int VR::Count(VRKey const & key) 
 {
    return vr.count(key);
 }
@@ -106,7 +105,7 @@ int VR::Count(VRKey key)
  *          \ref VR::IsVROfGdcmStringRepresentable .
  * @param   tested value representation to check for.
  */
-bool VR::IsVROfGdcmBinaryRepresentable(VRKey tested)
+bool VR::IsVROfGdcmBinaryRepresentable(VRKey const & tested)
 {
    //std::cout << "VR::IsVROfGdcmBinaryRepresentable===================="
    //   << tested << std::endl;
@@ -136,7 +135,7 @@ bool VR::IsVROfGdcmBinaryRepresentable(VRKey tested)
  *          but NOT a \ref BinEntry.
  * @param   tested value representation to check for.
  */
-bool VR::IsVROfGdcmStringRepresentable(VRKey tested)
+bool VR::IsVROfGdcmStringRepresentable(VRKey const & tested)
 {
 
    if ( ! Count(tested) )
