@@ -20,11 +20,9 @@
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirImage.h"
 
-using namespace std;
-
 ////////////////////////////////////////////////////////////////////////////
 // Utility functions on strings for removing leading and trailing spaces
-void EatLeadingAndTrailingSpaces(string & s) {
+void EatLeadingAndTrailingSpaces(std::string & s) {
 	while ( s.length() && (s[0] == ' ') )
 		s.erase(0,1);
 	while ( s.length() && (s[s.length()-1] == ' ') )
@@ -49,7 +47,7 @@ void gdcmPythonVoidFunc(void *arg)
     {
     if (PyErr_ExceptionMatches(PyExc_KeyboardInterrupt))
       {
-      cerr << "Caught a Ctrl-C within python, exiting program.\n";
+      std::cerr << "Caught a Ctrl-C within python, exiting program.\n";
       Py_Exit(1);
       }
     PyErr_Print();
@@ -79,7 +77,7 @@ extern gdcmGlobal gdcmGlob;
 %typemap(out) std::list<std::string> * {
 	PyObject* NewItem = (PyObject*)0;
 	PyObject* NewList = PyList_New(0); // The result of this typemap
-	for (list<string>::iterator NewString = ($1)->begin();
+	for (std::list<std::string>::iterator NewString = ($1)->begin();
 	     NewString != ($1)->end(); ++NewString) {
 		NewItem = PyString_FromString(NewString->c_str());
 		PyList_Append( NewList, NewItem);
@@ -94,15 +92,15 @@ extern gdcmGlobal gdcmGlob;
 	PyObject* NewKey = (PyObject*)0;
 	PyObject* NewVal = (PyObject*)0;
 
-	for (map<string, list<string> >::iterator tag = ($1)->begin();
+	for (std::map<std::string, std::list<std::string> >::iterator tag = ($1)->begin();
 	     tag != ($1)->end(); ++tag) {
-      string first = tag->first;
+      std::string first = tag->first;
       // Do not publish entries whose keys is made of spaces
       if (first.length() == 0)
          continue;
 		NewKey = PyString_FromString(first.c_str());
 		PyObject* NewList = PyList_New(0);
-		for (list<string>::iterator Item = tag->second.begin();
+		for (std::list<std::string>::iterator Item = tag->second.begin();
 		     Item != tag->second.end(); ++Item) {
 			NewVal = PyString_FromString(Item->c_str());
 			PyList_Append( NewList, NewVal);
@@ -116,9 +114,9 @@ extern gdcmGlobal gdcmGlob;
 // Convert a c++ hash table in a python native dictionary
 %typemap(out) TagHeaderEntryHT & {
 	PyObject* NewDict = PyDict_New(); // The result of this typemap
-	string RawName;                   // Element name as gotten from gdcm
+	std::string RawName;                   // Element name as gotten from gdcm
 	PyObject* NewKey = (PyObject*)0;  // Associated name as python object
-	string RawValue;                  // Element value as gotten from gdcm
+	std::string RawValue;                  // Element value as gotten from gdcm
 	PyObject* NewVal = (PyObject*)0;  // Associated value as python object
 
 	for (TagHeaderEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag) {
@@ -144,9 +142,9 @@ extern gdcmGlobal gdcmGlob;
 
 %typemap(out) TagHeaderEntryHT {
 	PyObject* NewDict = PyDict_New(); // The result of this typemap
-	string RawName;                   // Element name as gotten from gdcm
+	std::string RawName;                   // Element name as gotten from gdcm
 	PyObject* NewKey = (PyObject*)0;  // Associated name as python object
-	string RawValue;                  // Element value as gotten from gdcm
+	std::string RawValue;                  // Element value as gotten from gdcm
 	PyObject* NewVal = (PyObject*)0;  // Associated value as python object
 
 	for (TagHeaderEntryHT::iterator tag = $1.begin(); tag != $1.end(); ++tag) {
@@ -175,7 +173,7 @@ extern gdcmGlobal gdcmGlob;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (list<gdcmDicomDirPatient *>::iterator New = ($1)->begin();
+	for (std::list<gdcmDicomDirPatient *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
 		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirPatient,1);
 		PyList_Append($result, NewItem);
@@ -186,7 +184,7 @@ extern gdcmGlobal gdcmGlob;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (list<gdcmDicomDirStudy *>::iterator New = ($1)->begin();
+	for (std::list<gdcmDicomDirStudy *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
 		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirStudy,1);
 		PyList_Append($result, NewItem);
@@ -197,7 +195,7 @@ extern gdcmGlobal gdcmGlob;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (list<gdcmDicomDirSerie *>::iterator New = ($1)->begin();
+	for (std::list<gdcmDicomDirSerie *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
 		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirSerie,1);
 		PyList_Append($result, NewItem);
@@ -208,7 +206,7 @@ extern gdcmGlobal gdcmGlob;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (list<gdcmDicomDirImage *>::iterator New = ($1)->begin();
+	for (std::list<gdcmDicomDirImage *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
 		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirImage,1);
 		PyList_Append($result, NewItem);
