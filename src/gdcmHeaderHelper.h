@@ -54,8 +54,11 @@ enum ModalityType {
       
 //-----------------------------------------------------------------------------
 /*
- * This class is meant to *interpret* data given from gdcmHeader
- * That is to say :
+ * \defgroup gdcmHeaderHelper
+ * \brief  
+ *
+ * - This class is meant to *interpret* data given from gdcmHeader
+ * - That is to say :
  *  - it will help other dev to link against there lib
  *  - return value instead of string
  *  - will be able to search for data at some other place
@@ -106,9 +109,12 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-/**
-This class should be used for a stack of 2D dicom images.
-For a multiframe dicom image better use directly gdcmHeaderHelper
+/*
+ * \defgroup gdcmSerieHeaderHelper
+ * \brief  
+ *
+ * - This class should be used for a stack of 2D dicom images.
+ * - For a multiframe dicom image better use directly gdcmHeaderHelper
 */
 class GDCM_EXPORT gdcmSerieHeaderHelper {
 public:

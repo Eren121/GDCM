@@ -10,20 +10,23 @@ EXTRA_DIST = \
   DoxyInstallation.txt \
   DoxyMainPage.txt
 
-all-local: html.developper/index.html
+all-local: html.developper/index.html html.user/index.html
 
 if ENABLE_DOXYGEN
 html.developper/index.html: DoxyfileDeveloppers
 	doxygen DoxyfileDeveloppers
+html.user/index.html: DoxyfileUsers
+	doxygen DoxyfileUsers	
 else
 html.developper/index.html:
+html.user/index.html:
 endif
 
 clean-local:
 	rm -f *~ *.bak
-	rm -rf man latex html.developper rtf
+	rm -rf man latex html.developper html.user rtf
 
-install-data-local: html.developper
+install-data-local: html.developper html.user
 	$(mkinstalldirs) $(DESTDIR)$(TARGET_DIR)
 	(installfiles=`echo html.developper/*`; \
         if test "$$installfiles" = 'html.developper/*'; \
@@ -36,6 +39,6 @@ install-data-local: html.developper
         fi)
 
 dist-hook:
-	rm -rf $(distdir)/html.developper
+	rm -rf $(distdir)/html.developper $(distdir)/html.user
 
-.PHONY : html.developper latex man
+.PHONY : html.developper html.user latex man

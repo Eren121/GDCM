@@ -10,7 +10,7 @@
  * - test suite usage (typically after code modifications and prior to
  *   commit).
  * .
- * In the following we shall assume that gdcm is allready compiled-
+ * In the following we shall assume that gdcm is already compiled-
  * BUT not installed- in a directory named <TT>GDCM_HOME</TT>.
  * 
  * \section DoxyDevelInstalCPlusPlus Working with C++
