@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 22:44:11 $
-  Version:   $Revision: 1.97 $
+  Date:      $Date: 2005/01/15 23:00:25 $
+  Version:   $Revision: 1.98 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -378,7 +378,7 @@ typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
 #endif //_WIN32
 
 
-long GetMacAddrSys ( unsigned char *addr)
+int GetMacAddrSys ( unsigned char *addr )
 {
 #ifdef _WIN32
    WSADATA WinsockData;
@@ -467,7 +467,7 @@ long GetMacAddrSys ( unsigned char *addr)
       {
          j++;
          dtmp = varBind[0].value.asnValue.number;
-         printf("Interface #%i type : %i\n", j, dtmp);
+         std::cerr << "Interface #" << j << " type : " << dtmp << std::endl;
 
          // Type 6 describes ethernet interfaces
          if (dtmp == 6)
@@ -484,7 +484,7 @@ long GetMacAddrSys ( unsigned char *addr)
                  && (varBind[1].value.asnValue.address.stream[4] == 0x00) )
                {
                    // Ignore all dial-up networking adapters
-                   printf("Interface #%i is a DUN adapter\n", j);
+                   std::cerr << "Interface #" << j << " is a DUN adapter\n";
                    continue;
                }
                if ( (varBind[1].value.asnValue.address.stream[0] == 0x00)
@@ -496,7 +496,7 @@ long GetMacAddrSys ( unsigned char *addr)
                {
                   // Ignore NULL addresses returned by other network
                   // interfaces
-                  printf("Interface #%i is a NULL address\n", j);
+                  std::cerr << "Interface #" << j << " is a NULL address\n";
                   continue;
                }
                memcpy( addr, varBind[1].value.asnValue.address.stream, 6);
@@ -526,13 +526,15 @@ long GetMacAddrSys ( unsigned char *addr)
    char                    **paddrs;
    int                     sock, status=0;
 
-   gethostname(hostname,  MAXHOSTNAMELEN);
+   if(gethostname(hostname,  MAXHOSTNAMELEN) != 0)
+   {
+      perror("gethostname");
+      return -1;
+   }
    phost = gethostbyname(hostname);
    paddrs = phost->h_addr_list;
 
-   //memcpy(&inaddr.s_addr, *paddrs, sizeof(inaddr.s_addr));
    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-
    if(sock == -1)
    {
       perror("sock");
@@ -540,29 +542,18 @@ long GetMacAddrSys ( unsigned char *addr)
    }
    memset(&parpreq, 0, sizeof(struct arpreq));
    psa = (struct sockaddr_in *) &parpreq.arp_pa;
+
    memset(psa, 0, sizeof(struct sockaddr_in));
    psa->sin_family = AF_INET;
    memcpy(&psa->sin_addr, *paddrs, sizeof(struct in_addr));
 
    status = ioctl(sock, SIOCGARP, &parpreq);
-
    if(status == -1)
    {
       perror("SIOCGARP");
-      //exit(-1);
       return -1;
    }
-
-    memcpy(addr, parpreq.arp_ha.sa_data, 6);
-//    printf("MAC Address: %x:%x:%x:%x:%x:%x\n",
-//
-//           parpreq.arp_ha.sa_data[0],
-//           parpreq.arp_ha.sa_data[1],
-//           parpreq.arp_ha.sa_data[2],
-//           parpreq.arp_ha.sa_data[3],
-//           parpreq.arp_ha.sa_data[4],
-//
-//            parpreq.arp_ha.sa_data[5]);
+   memcpy(addr, parpreq.arp_ha.sa_data, 6);
 
    return 0;
 #else
@@ -632,10 +623,7 @@ long GetMacAddrSys ( unsigned char *addr)
          continue;
       a = (unsigned char *) &sdlp->sdl_data[sdlp->sdl_nlen];
 #else
-      /*
-       * XXX we don't have a way of getting the hardware
-       * address
-       */
+      perror("No way to access hardware");
       close(sd);
       return -1;
 #endif // AF_LINK
@@ -654,7 +642,6 @@ long GetMacAddrSys ( unsigned char *addr)
 #endif
    return -1;
 #endif //__sun
-
 }
 
 std::string Util::GetMACAddress()
@@ -664,10 +651,10 @@ std::string Util::GetMACAddress()
    // 3 OS: Win32, SunOS and 'real' POSIX
    // http://groups-beta.google.com/group/comp.unix.solaris/msg/ad36929d783d63be
    // http://bdn.borland.com/article/0,1410,26040,00.html
-   u_char addr[6];
+   unsigned char addr[6];
    std::string macaddr;
  
-   long stat = GetMacAddrSys(addr);
+   int stat = GetMacAddrSys(addr);
    if (0 == stat)
    {
       //printf( "MAC address = ");
