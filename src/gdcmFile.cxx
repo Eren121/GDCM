@@ -161,8 +161,8 @@ bool gdcmFile::ReadPixelData(void* destination) {
         IsImplicitVRLittleEndianTransferSyntax() ||
         IsExplicitVRLittleEndianTransferSyntax() ||
         IsExplicitVRBigEndianTransferSyntax()    ||
-        IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
-                    
+        IsDeflatedExplicitVRLittleEndianTransferSyntax() ) {
+	 	
       size_t ItemRead = fread(destination, lgrTotale, 1, fp);
       if ( ItemRead != 1 ) {
          CloseFile();
@@ -354,9 +354,11 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    }
 		
 	// Signe des Pixels 
+	// 0 = Unsigned
+	// 1 = Signed
    str_signe=GetPubElValByNumber(0x0028,0x0103);
    if (str_signe == GDCM_UNFOUND ) {
-      signe = 1;
+      signe = 0;  // default is unsigned
    } else {
       signe = atoi(str_signe.c_str() );
    }
@@ -364,7 +366,18 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    // re arange bytes inside the integer
    if (nb != 8)
      SwapZone(destination, GetSwapCode(), lgrTotale, nb);
- 
+     
+   // to avoid pb with some xmedcon breakers images 
+   if (nb==16 && nbu<nb && signe==0) {
+     int l = (int)lgrTotale / (nb/8);
+     guint16 *deb = (guint16 *)destination;
+     for(int i = 0; i<l; i++) {
+        if(*deb == 0xffff) 
+	   *deb=0; 
+	   deb++;   
+         }
+    }
+
    // re arange bits inside the bytes
    if (nbu != nb){
       int l = (int)lgrTotale / (nb/8);
@@ -389,6 +402,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          return (size_t)0; 
       }
    } 
+
 
 // Just to 'see' was was actually read on disk :-(
 // Some troubles expected
