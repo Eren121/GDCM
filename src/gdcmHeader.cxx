@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.101 2003/10/15 15:01:16 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.102 2003/10/21 12:18:23 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -629,14 +629,23 @@ bool gdcmHeader::IsDicomV3(void) {
 void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    if ( FoundLength == 0xffffffff)
       FoundLength = 0;
+      
       // Sorry for the patch!  
       // XMedCom did the trick to read some nasty GE images ...
-    if (FoundLength == 13)
+   else if (FoundLength == 13) {
       // The following 'if' will be removed when there is no more
-      // images on Creatis HD with a 13 length for Manufacturer...
-      if ( (ElVal->GetGroup() != 0x0008) || (ElVal->GetElement() ) )
+      // images on Creatis HDs with a 13 length for Manufacturer...
+      if ( (ElVal->GetGroup() != 0x0008) || (ElVal->GetElement() != 0x0070))  {
       // end of remove area
          FoundLength =10;
+      }
+   } 
+     // to fix some garbage 'Leonardo' Siemens images
+     // May be commented out to avoid overhead
+   else if ( (ElVal->GetGroup() == 0x0009) 
+       &&
+       ( (ElVal->GetElement() == 0x1113) || (ElVal->GetElement() == 0x1114) ) )
+        FoundLength =4;      	 
 
    ElVal->SetLength(FoundLength);
 }
@@ -658,10 +667,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
 
    while ( ! FoundSequenceDelimiter) {
       g = ReadInt16();
-      n = ReadInt16();
-      
-      long l = ftell(fp);
-
+      n = ReadInt16();   
       if (errno == 1)
          return 0;
       TotalLength += 4;  // We even have to decount the group and element 
@@ -670,7 +676,6 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
          char msg[100]; // for sprintf. Sorry
          sprintf(msg,"wrong group (%04x) for an item sequence (%04x,%04x)\n",g, g,n);
          dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",msg); 
-         long l = ftell(fp);
          errno = 1;
          return 0;
       }
@@ -686,8 +691,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
       }
       ItemLength = ReadInt32();
       TotalLength += ItemLength + 4;  // We add 4 bytes since we just read
-                                      // the ItemLength with ReadInt32
-                                      
+                                      // the ItemLength with ReadInt32                                     
       SkipBytes(ItemLength);
    }
    fseek(fp, PositionOnEntry, SEEK_SET);
@@ -1155,6 +1159,7 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
 /**
  * \ingroup gdcmHeader
  * \brief   Set a new value if the invoked element exists
+ *          Seems to be useless !!!
  * @param   Value
  * @param   Group
  * @param   Elem
@@ -1162,7 +1167,7 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
  */
 int gdcmHeader::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
-   gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);
+   //gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);
    std::string v = Value;	
    PubElValSet.SetElValueByNumber(v, Group, Elem);
    return 1;
@@ -1242,9 +1247,8 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
  * @return  The result of the heuristical predicate.
  */
 bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
-   guint16 group   = ElVal->GetGroup();
    guint16 element = ElVal->GetElement();
-   std::string  vr      = ElVal->GetVR();
+   std::string  vr = ElVal->GetVR();
    guint32 length  = ElVal->GetLength();
 
    // When we have some semantics on the element we just read, and if we
@@ -1828,7 +1832,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    	          << std::hex << Group << " " << Elem << std::endl;
    	return NULL;
    }  
-   int res = PubElValSet.SetVoidAreaByNumber(a, Group, Elem);
+   /* int res = */ PubElValSet.SetVoidAreaByNumber(a, Group, Elem);
    // TODO check the result 
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) {
@@ -1836,7 +1840,9 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    	          << std::hex << Group << " " << Elem << std::endl;
    	free(a);
    	return NULL;
-   }  
+   }
+   // TODO : finish the function !!!
+   return a;  
 }
 
 /**
@@ -1959,6 +1965,19 @@ int gdcmHeader::GetBitsStored(void) {
    return atoi(StrSize.c_str());
 }
 
+/**
+ * \ingroup gdcmHeader
+ * \brief   Retrieve the number of Bits Allocated
+ *          (8, 12 -compacted ACR-NEMA files, 16, ...)
+ * 
+ * @return  The encountered number of Bits Allocated, 0 by default.
+ */
+int gdcmHeader::GetBitsAllocated(void) { 
+   std::string StrSize = GetPubElValByNumber(0x0028,0x0100);
+   if (StrSize == GDCM_UNFOUND)
+      return 1;
+   return atoi(StrSize.c_str());
+}
 
 /**
  * \ingroup gdcmHeader
