@@ -1,4 +1,28 @@
 2004-06-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+    * In order to fix writing of dicom files:
+     - Test/TestWriteSimple.cxx: a simpler example of writing.
+     - Test/CMakeLists.txt changed accordingly.
+     - src/gdcmDocument.cxx:
+       -- The destructor now recursilvely removes potential sequences.
+       -- Bug fix in ::IsJPEG2000()
+       -- ::ReplaceOrCreateByNumber(std::string, guint16, guint16)
+          now handles promotion of gdcmDocEntry to gdcmValEntry in a cleaner
+          manner.
+       -- ::GetValEntryByNumber(guint16, guint16) now defined (as opposed
+          to only declared) and build on top of
+          ::GetDocEntryByNumber(guint16, guint16).
+       -- ::SetEntryByNumber() now uses GetValEntryByNumber(group, element)
+     - src/gdcmElementSet.[h|cxx]: added ::RemoveEntry(gdcmDocEntry *)
+       for usage in destructor and treatement of promotion in
+       ::ReplaceOrCreateByNumber().
+     - src/gdcmSQItem.cxx: destructor should better handle his job.
+      Test/TestWriteSimple now runs (or at least it DOES something).
+    * We can now start hutting memory links. A good starting point is:
+      valgrind -q --skin=memcheck --leak-check=yes --leak-resolution=high
+      --num-callers=100 --show-reachable=yes gdcmTests TestWriteSimple
+      $(GDCMDATA_HOME)/012345.002.050.dcm foo.dcm
+
+2004-06-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * Valgrind note: after Mathieu Malaterre teached me how to read
       the valgrind FAQ ;-] (see http://valgrind.kde.org/faq.html), I
       learned that:

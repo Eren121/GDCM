@@ -70,7 +70,8 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
 
    if(tagHT.count(key) == 1)
    {
-      dbg.Verbose(1, "gdcmElementSet::AddEntry key already present: ", key.c_str());
+      dbg.Verbose(1, "gdcmElementSet::AddEntry key already present: ",
+                  key.c_str());
       return(false);
    } 
    else 
@@ -80,3 +81,20 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
    }   
 }
 
+/**
+ * \brief   Clear the hash table from given entry.
+ * @param   EntryToRemove Entry to remove.
+ */
+bool gdcmElementSet::RemoveEntry( gdcmDocEntry *EntryToRemove)
+{
+   TagKey key = EntryToRemove->GetKey();
+   if(tagHT.count(key) == 1)
+   {
+      tagHT.erase(key);
+      dbg.Verbose(1, "gdcmElementSet::RemoveEntry: one element erased.");
+      return true;
+   }
+
+   dbg.Verbose(0, "gdcmElementSet::RemoveEntry: key not present: ");
+   return(false);
+}

@@ -98,8 +98,6 @@ gdcmDocument::gdcmDocument(const char *inFilename,
    dbg.Verbose(0, "gdcmDocument::gdcmDocument: starting parsing of file: ",
                   filename.c_str());
    rewind(fp);
-   //if (!CheckSwap())
-   //   return false; // to go on compiling
    
    fseek(fp,0L,SEEK_END);
    long lgt = ftell(fp);    
@@ -158,12 +156,26 @@ gdcmDocument::gdcmDocument(bool exception_on_error)
 gdcmDocument::~gdcmDocument (void) {
    RefPubDict = NULL;
    RefShaDict = NULL;
+
+   // Recursive clean up of sequences
+   for (TagDocEntryHT::iterator it = tagHT.begin(); it != tagHT.end(); ++it )
+   {
+      gdcmDocEntry * entry = it->second;
+      if ( gdcmSeqEntry* SeqEntry = dynamic_cast<gdcmSeqEntry*>(entry) )
+      {
+         delete SeqEntry;
+         RemoveEntry(SeqEntry);
+      }
+      else
+      {
+         RemoveEntry(entry);
+      }
+   }
+   tagHT.clear();
 }
 
 //-----------------------------------------------------------------------------
 // Print
-/**
- 
 
 /**
   * \brief   Prints The Dict Entries of THE public Dicom Dictionary
@@ -385,8 +397,8 @@ bool gdcmDocument::IsJPEGLossless(void)
  */
 bool gdcmDocument::IsJPEG2000(void)
 {
-   return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_70)
-           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_90) );
+   return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_90)
+           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_91) );
 }
 
 /**
@@ -557,21 +569,53 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          std::string Value, 
                                          guint16 Group, 
                                          guint16 Elem ){
-   gdcmDocEntry* a;
-   gdcmValEntry* b;	
-   a = GetDocEntryByNumber( Group, Elem);
-   if (a == NULL) {
-      a =NewDocEntryByNumber(Group, Elem);
-      if (a == NULL) 
-         return NULL;
-		b = new gdcmValEntry(a);
-      AddEntry(b);
-   }   
-   SetEntryByNumber(Value, Group, Elem);
-   b->SetValue(Value);
-   return (gdcmValEntry*)b;
-}   
+   gdcmDocEntry* CurrentEntry;
+   gdcmValEntry* ValEntry;
 
+   CurrentEntry = GetDocEntryByNumber( Group, Elem);
+   if (!CurrentEntry)
+   {
+      // The entry wasn't present and we simply create the required ValEntry:
+      CurrentEntry = NewDocEntryByNumber(Group, Elem);
+      if (!CurrentEntry)
+      {
+         dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: call to"
+                        " NewDocEntryByNumber failed.");
+         return (gdcmValEntry *)0;
+      }
+      ValEntry = new gdcmValEntry(CurrentEntry);
+      if ( !AddEntry(ValEntry))
+      {
+         dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: AddEntry"
+                        " failed allthough this is a creation.");
+      }
+   }
+   else
+   {
+      ValEntry = dynamic_cast< gdcmValEntry* >(CurrentEntry);
+      if ( !ValEntry )
+      {
+         // We need to promote the gdcmDocEntry to a gdcmValEntry:
+         ValEntry = new gdcmValEntry(CurrentEntry);
+         if (!RemoveEntry(CurrentEntry))
+         {
+            dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: removal"
+                           " of previous DocEntry failed.");
+            return (gdcmValEntry *)0;
+         }
+         if ( !AddEntry(ValEntry))
+         {
+            dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: adding"
+                           " promoted ValEntry failed.");
+            return (gdcmValEntry *)0;
+         }
+      }
+   }
+
+   SetEntryByNumber(Value, Group, Elem);
+
+   return ValEntry;
+}   
 
 /*
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
@@ -754,32 +798,29 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
                                   guint16 group,
                                   guint16 element) 
 {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
+   gdcmValEntry* ValEntry = GetValEntryByNumber(group, element);
+   if (!ValEntry)
+   {
+      dbg.Verbose(0, "gdcmDocument::SetEntryByNumber: no corresponding",
+                     " ValEntry (try promotion first).");
       return false;
-   int l = content.length();
-   if(l%2) // Non even length are padded with a space (020H).
-   {  
-      l++;
-      content = content + '\0';
    }
-      
-   gdcmValEntry * a;
-   a = (gdcmValEntry *)tagHT[key];
-           
-   a->SetValue(content);
-   
-   VRKey vr = a->GetVR();
-   
-   guint32 lgr;
-   if( (vr == "US") || (vr == "SS") ) 
-      lgr = 2;
-   else if( (vr == "UL") || (vr == "SL") )
-      lgr = 4;
-   else
-      lgr = l;   
 
-   a->SetLength(lgr);   
+   // Non even content must be padded with a space (020H).
+   if((content.length())%2)
+      content = content + '\0';
+      
+   ValEntry->SetValue(content);
+   
+   // Integers have a special treatement for their length:
+   VRKey vr = ValEntry->GetVR();
+   if( (vr == "US") || (vr == "SS") ) 
+      ValEntry->SetLength(2);
+   else if( (vr == "UL") || (vr == "SL") )
+      ValEntry->SetLength(4);
+   else
+      ValEntry->SetLength(content.length());
+
    return true;
 } 
 
@@ -1007,6 +1048,25 @@ gdcmDocEntry* gdcmDocument::GetDocEntryByNumber(guint16 group, guint16 element)
 }
 
 /**
+ * \brief  Same as \ref gdcmDocument::GetDocEntryByNumber except it only
+ *         returns a result when the corresponding entry is of type
+ *         ValEntry.
+ * @return When present, the corresponding ValEntry. 
+ */
+gdcmValEntry* gdcmDocument::GetValEntryByNumber(guint16 group, guint16 element)
+{
+  gdcmDocEntry* CurrentEntry = GetDocEntryByNumber(group, element);
+  if (! CurrentEntry)
+     return (gdcmValEntry*)0;
+  if ( gdcmValEntry* ValEntry = dynamic_cast<gdcmValEntry*>(CurrentEntry) )
+  {
+     return ValEntry;
+  }
+  dbg.Verbose(0, "gdcmDocument::GetValEntryByNumber: unfound ValEntry.");
+  return (gdcmValEntry*)0;
+}
+
+/**
  * \brief         Loads the element while preserving the current
  *                underlying file position indicator as opposed to
  *                to LoadDocEntry that modifies it.
@@ -1229,7 +1289,6 @@ bool gdcmDocument::WriteEntries(FILE *_fp,FileType type)
    for (TagDocEntryHT::iterator it = tagHT.begin(); it != tagHT.end(); ++it )
    {
       gdcmDocEntry * entry = it->second;
-      entry->Print();
 
       if ( type == gdcmACR ){ 
          if (entry->GetGroup() < 0x0008)

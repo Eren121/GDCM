@@ -17,14 +17,13 @@ class GDCM_EXPORT gdcmElementSet : public gdcmDocEntrySet
 public:
    gdcmElementSet(int);
    ~gdcmElementSet(void);
-   virtual bool AddEntry(gdcmDocEntry *Entry); // add to the H Table
+   virtual bool AddEntry(gdcmDocEntry *Entry);
+   virtual bool RemoveEntry(gdcmDocEntry *EntryToRemove);
 
-   virtual void Print        (std::ostream &os = std::cout); 
+   virtual void Print(std::ostream &os = std::cout); 
     
 protected:
-
 // Variables
-
    /// Hash Table (map), to provide fast access
    TagDocEntryHT tagHT; 
      

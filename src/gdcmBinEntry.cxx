@@ -1,7 +1,23 @@
-// gdcmBinEntry.cxx
-//-----------------------------------------------------------------------------
-//
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmBinEntry.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/06/18 12:26:54 $
+  Version:   $Revision: 1.9 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.htm for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #include "gdcmBinEntry.h"
+#include "gdcmDebug.h"
 
 
 //-----------------------------------------------------------------------------
@@ -46,7 +62,9 @@ gdcmBinEntry::~gdcmBinEntry(){
  
 void gdcmBinEntry::Print(std::ostream &os) {
    PrintCommonPart(os);
-   std::cout << " gdcmBinEntry : Print, so WHAT ?" <<std::endl;
+   /// \todo Write a true specialisation of Print i.e. display something
+   ///       for BinEntry extension.
+   dbg.Verbose(1, "gdcmBinEntry::Print: so WHAT ?");
 }
 //-----------------------------------------------------------------------------
 // Public

@@ -2,6 +2,7 @@
 //-----------------------------------------------------------------------------
 //
 #include "gdcmSQItem.h"
+#include "gdcmSeqEntry.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmValEntry.h"
@@ -27,8 +28,17 @@ gdcmSQItem::~gdcmSQItem()
        cc != docEntries.end();
        ++cc)
    {
-      delete *cc;
+      gdcmDocEntry* DocEntry = *cc;
+      if ( gdcmSeqEntry* SeqEntry = dynamic_cast<gdcmSeqEntry*>(DocEntry) )
+      {
+         delete SeqEntry;
+      }
+      else
+      {
+         delete DocEntry;
+      }
    }
+   docEntries.clear();
 }
 
 
