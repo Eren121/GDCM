@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/19 18:49:39 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2004/11/22 08:58:12 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,19 +35,19 @@ namespace gdcm
 class GDCM_EXPORT File
 {
 public:
-   typedef enum 
+   enum TWriteMode
    {
       WMODE_NATIVE,
       WMODE_DECOMPRESSED,
       WMODE_RGB,
-   } TWriteMode;
+   };
      
-   typedef enum 
+   enum TWriteType
    {
       WTYPE_IMPL_VR,
       WTYPE_EXPL_VR,
       WTYPE_ACR,
-   } TWriteType;
+   };
      
 public:
    File( Header* header );
@@ -92,18 +92,18 @@ public:
    uint8_t* GetLutRGBA();
 
    // Write mode
-   void SetWriteModeToNative()        { SetWriteMode(WMODE_NATIVE); };
-   void SetWriteModeToDecompressed()  { SetWriteMode(WMODE_DECOMPRESSED); };
-   void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB); };
-   void SetWriteMode(TWriteMode mode) { WriteMode = mode; };
-   TWriteMode GetWriteMode()          { return WriteMode; };
+   void SetWriteModeToNative()          { SetWriteMode(WMODE_NATIVE); };
+   void SetWriteModeToDecompressed()    { SetWriteMode(WMODE_DECOMPRESSED); };
+   void SetWriteModeToRGB()             { SetWriteMode(WMODE_RGB); };
+   void SetWriteMode(unsigned int mode) { WriteMode = mode; };
+   unsigned int GetWriteMode()          { return WriteMode; };
 
    // Write format
-   void SetWriteTypeToDcmImplVR()       { SetWriteType(WTYPE_EXPL_VR); };
-   void SetWriteTypeToDcmExplVR()       { SetWriteType(WTYPE_EXPL_VR); };
-   void SetWriteTypeToAcr()             { SetWriteType(WTYPE_ACR); };
-   void SetWriteType(TWriteType format) { WriteType = format; };
-   TWriteType GetWriteType()            { return WriteType; };
+   void SetWriteTypeToDcmImplVR()         { SetWriteType(WTYPE_EXPL_VR); };
+   void SetWriteTypeToDcmExplVR()         { SetWriteType(WTYPE_EXPL_VR); };
+   void SetWriteTypeToAcr()               { SetWriteType(WTYPE_ACR); };
+   void SetWriteType(unsigned int format) { WriteType = format; };
+   unsigned int GetWriteType()            { return WriteType; };
 
 protected:
    bool WriteBase(std::string const& fileName, FileType type);
@@ -147,8 +147,8 @@ private:
    DocEntryArchive *Archive;
 
    // Write variables
-   TWriteMode WriteMode;
-   TWriteType WriteType;
+   unsigned int WriteMode;
+   unsigned int WriteType;
 
 /// FIXME
 // --------------- Will be moved to a PixelData class
