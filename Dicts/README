@@ -12,7 +12,7 @@ Sources for dicom public dictionaries:
  * Actually, the *official* Dicom Data Dictionary 
    is on http://medical.nema.org/dicom/2003/03_06PU.pdf
    (check it every year, some tags are added, some names change)
-   All C syntax oriented stuff, or anything else -but dgcm one-
+   All C syntax oriented stuff, or anything else -but gdcm one-
    you can find on the net is very partial.
    WARNING : The Dicom Tag is an identifier inside the Dicom Dictionary,
              The Tag Name *is not*
