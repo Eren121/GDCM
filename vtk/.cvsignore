@@ -9,5 +9,3 @@ vtkgdcmdemo
 vtkGdcmReaderPython.cxx
 *Debug*
 *Release*
-*.exp
-*.lib
