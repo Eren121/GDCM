@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmFile.cxx,v $
+  Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:17:00 $
-  Version:   $Revision: 1.194 $
+  Date:      $Date: 2005/01/20 16:22:52 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
