@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:31:58 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2004/10/27 22:31:12 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ Dict::Dict(std::string const & filename)
       from >> std::ws;  //remove white space
       std::getline(from, name);
 
-      DictEntry * newEntry = new DictEntry(group, element, vr, fourth, name);
+      DictEntry newEntry(group, element, vr, fourth, name);
       AddNewEntry(newEntry);
    }
    from.close();
@@ -68,14 +68,14 @@ Dict::Dict(std::string const & filename)
  */
 Dict::~Dict()
 {
-   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
+/*   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
       DictEntry* entryToDelete = tag->second;
       if ( entryToDelete )
       {
          delete entryToDelete;
       }
-   }
+   }*/
    // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
    // assume all the pointed DictEntries are already cleaned-up when
    // we cleaned KeyHt.
@@ -108,12 +108,12 @@ void Dict::PrintByKey(std::ostream &os)
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
       s << "Entry : ";
-      s << "(" << std::hex << std::setw(4) << tag->second->GetGroup() << ',';
-      s << std::hex << std::setw(4) << tag->second->GetElement() << ") = "
+      s << "(" << std::hex << std::setw(4) << tag->second.GetGroup() << ',';
+      s << std::hex << std::setw(4) << tag->second.GetElement() << ") = "
         << std::dec;
-      s << tag->second->GetVR() << ", ";
-      s << tag->second->GetFourth() << ", ";
-      s << tag->second->GetName() << "."  << std::endl;
+      s << tag->second.GetVR() << ", ";
+      s << tag->second.GetFourth() << ", ";
+      s << tag->second.GetName() << "."  << std::endl;
    }
    os << s.str();
 }
@@ -132,11 +132,11 @@ void Dict::PrintByName(std::ostream& os)
    for (TagNameHT::iterator tag = NameHt.begin(); tag != NameHt.end(); ++tag)
    {
       s << "Entry : ";
-      s << tag->second->GetName() << ",";
-      s << tag->second->GetVR() << ", ";
-      s << tag->second->GetFourth() << ", ";
-      s << "(" << std::hex << std::setw(4) << tag->second->GetGroup() << ',';
-      s << std::hex << std::setw(4) << tag->second->GetElement() << ") = ";
+      s << tag->second.GetName() << ",";
+      s << tag->second.GetVR() << ", ";
+      s << tag->second.GetFourth() << ", ";
+      s << "(" << std::hex << std::setw(4) << tag->second.GetGroup() << ',';
+      s << std::hex << std::setw(4) << tag->second.GetElement() << ") = ";
       s << std::dec << std::endl;
    }
    os << s.str();
@@ -150,9 +150,9 @@ void Dict::PrintByName(std::ostream& os)
  * @param   newEntry entry to add 
  * @return  false if Dicom Element already exists
  */
-bool Dict::AddNewEntry(DictEntry *newEntry) 
+bool Dict::AddNewEntry(DictEntry const & newEntry) 
 {
-   TagKey key = newEntry->GetKey();
+   const TagKey & key = newEntry.GetKey();
 
    if(KeyHt.count(key) == 1)
    {
@@ -161,8 +161,14 @@ bool Dict::AddNewEntry(DictEntry *newEntry)
    } 
    else 
    {
-      KeyHt[newEntry->GetKey()] = newEntry;
-      NameHt[newEntry->GetName()] = newEntry;
+      //KeyHt[newEntry.GetKey()] = newEntry;
+      KeyHt.insert( 
+         TagKeyHT::value_type<TagKey, DictEntry>
+            (newEntry.GetKey(), newEntry));
+      //NameHt[newEntry.GetName()] = newEntry;
+      NameHt.insert(
+         TagNameHT::value_type<TagName, DictEntry>
+            (newEntry.GetName(), newEntry ));
       return true;
    }
 }
@@ -173,12 +179,18 @@ bool Dict::AddNewEntry(DictEntry *newEntry)
  * @param   newEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
-bool Dict::ReplaceEntry(DictEntry *newEntry)
+bool Dict::ReplaceEntry(DictEntry const & newEntry)
 {
-   if ( RemoveEntry(newEntry->DictEntry::GetKey()) )
+   if ( RemoveEntry(newEntry.GetKey()) )
    {
-       KeyHt[newEntry->GetKey()] = newEntry;
-       NameHt[newEntry->GetName()] = newEntry;
+      //KeyHt[newEntry.GetKey()] = newEntry;
+      KeyHt.insert( 
+         TagKeyHT::value_type<TagKey, DictEntry>
+            (newEntry.GetKey(), newEntry));
+      //NameHt[newEntry.GetName()] = newEntry;
+      NameHt.insert(
+         TagNameHT::value_type<TagName, DictEntry>
+            (newEntry.GetName(), newEntry ));
        return true;
    } 
    return false;
@@ -191,20 +203,15 @@ bool Dict::ReplaceEntry(DictEntry *newEntry)
  * @param   key (group|element)
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool Dict::RemoveEntry(TagKey const & key) 
+bool Dict::RemoveEntry (TagKey const & key) 
 {
    TagKeyHT::const_iterator it = KeyHt.find(key);
    if(it != KeyHt.end()) 
    {
-      DictEntry* entryToDelete = it->second;
-
-      if ( entryToDelete )
-      {
-         NameHt.erase(entryToDelete->GetName());
-         delete entryToDelete;
-      }
-
+      const DictEntry & entryToDelete = it->second;
+      NameHt.erase(entryToDelete.GetName());
       KeyHt.erase(key);
+
       return true;
    } 
    else 
@@ -236,12 +243,12 @@ bool Dict::RemoveEntry (uint16_t group, uint16_t element)
  */
 DictEntry* Dict::GetDictEntryByName(TagName const & name)
 {
-   TagNameHT::const_iterator it = NameHt.find(name);
+   TagNameHT::iterator it = NameHt.find(name);
    if ( it == NameHt.end() )
    {
       return 0;
    }
-   return it->second;
+   return &(it->second);
 }
 
 /**
@@ -253,12 +260,12 @@ DictEntry* Dict::GetDictEntryByName(TagName const & name)
 DictEntry* Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
 {
    TagKey key = DictEntry::TranslateToKey(group, element);
-   TagKeyHT::const_iterator it = KeyHt.find(key);
+   TagKeyHT::iterator it = KeyHt.find(key);
    if ( it == KeyHt.end() )
    {
       return 0;
    }
-   return it->second;
+   return &(it->second);
 }
 
 /** 
@@ -272,7 +279,7 @@ EntryNamesList* Dict::GetDictEntryNames()
    EntryNamesList *result = new EntryNamesList;
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
-      result->push_back( tag->second->GetName() );
+      result->push_back( tag->second.GetName() );
    }
    return result;
 }
@@ -307,7 +314,7 @@ EntryNamesByCatMap *Dict::GetDictEntryNamesByCategory()
 
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
-      (*result)[tag->second->GetFourth()].push_back(tag->second->GetName());
+      (*result)[tag->second.GetFourth()].push_back(tag->second.GetName());
    }
 
    return result;

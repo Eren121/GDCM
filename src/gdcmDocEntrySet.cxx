@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/10/27 22:31:12 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -177,7 +177,7 @@ DictEntry* DocEntrySet::NewVirtualDictEntry(uint16_t group,
  * @param   elem  elem number of the underlying DictEntry 
  */
 DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group,
-                                                   uint16_t elem)
+                                           uint16_t elem)
 {
    // Find out if the tag we encountered is in the dictionaries:
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
@@ -205,16 +205,15 @@ DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group,
  * @param   VR   V(alue) R(epresentation) of the Entry -if private Entry- 
 
  */
-DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group,
-                                                   uint16_t elem,
-                                                   std::string const &VR)
+DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group, uint16_t elem,
+                                           TagName const & vr)
 {
    // Find out if the tag we encountered is in the dictionaries:
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
    DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, elem);
    if (!dictEntry)
    {
-      dictEntry = NewVirtualDictEntry(group, elem, VR);
+      dictEntry = NewVirtualDictEntry(group, elem, vr);
    }
 
    DocEntry *newEntry = new DocEntry(dictEntry);
@@ -228,9 +227,9 @@ DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group,
 }
 /* \brief
  * Probabely move, as is, to DocEntrySet, as a non virtual method
- * an remove Document::NewDocEntryByName
+ * and remove Document::NewDocEntryByName
  */
-DocEntry *DocEntrySet::NewDocEntryByName  (std::string const & name)
+DocEntry *DocEntrySet::NewDocEntryByName(TagName const & name)
 {
   Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
   DictEntry *newTag = pubDict->GetDictEntryByName(name);
@@ -258,7 +257,7 @@ DocEntry *DocEntrySet::NewDocEntryByName  (std::string const & name)
  * @param   name Name of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
-DictEntry *DocEntrySet::GetDictEntryByName(std::string const & name) 
+DictEntry *DocEntrySet::GetDictEntryByName(TagName const & name) 
 {
    DictEntry *found = 0;
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
@@ -283,8 +282,8 @@ DictEntry *DocEntrySet::GetDictEntryByName(std::string const & name)
  * @param   element element number of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
-DictEntry *DocEntrySet::GetDictEntryByNumber(uint16_t group,
-                                                     uint16_t element) 
+DictEntry *DocEntrySet::GetDictEntryByNumber(uint16_t group, 
+                                             uint16_t element) 
 {
    DictEntry *found = 0;
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 21:28:56 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/10/27 22:31:12 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ VR::VR()
 
       if(key != "")
       {
-         vr[key]=name;
+         vr[key] = name;
       }
    }
    from.close();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:20 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/10/27 22:31:12 $
+  Version:   $Revision: 1.32 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -185,13 +185,12 @@ bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group,
             Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
             // if the invoked (group,elem) doesn't exist inside the Dictionary
             // we create a VirtualDictEntry
-            DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group,
-                                                                     element);
+            DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, element);
             if (dictEntry == NULL)
             {
                dictEntry = 
                   Global::GetDicts()->NewVirtualDictEntry(group, element,
-                                                              "UN", "??", "??");
+                                                          "UN", "??", "??");
             } 
             // we assume the constructor didn't fail
             entry = new ValEntry(dictEntry);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 14:30:40 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2004/10/27 22:31:12 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,16 +58,16 @@ DictSet::~DictSet()
    Dicts.clear();
 
    // Remove virtual dictionnary entries
-   std::map<std::string,DictEntry *>::iterator it;
+/*   TagKeyHT::iterator it;
    for(it = VirtualEntry.begin(); it != VirtualEntry.end(); ++it)
    {
-      DictEntry *entry = it->second;
+      DictEntry entry = it->second;
       if ( entry )
       {
          delete entry;
       }
       it->second = NULL;
-   }
+   }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -178,20 +178,24 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
                                          TagName fourth,
                                          TagName name)
 {
-   DictEntry* entry;
+   DictEntry *entry;
    const std::string tag = DictEntry::TranslateToKey(group,element)
                            + "#" + vr + "#" + fourth + "#" + name;
-   std::map<std::string,DictEntry *>::iterator it;
+   TagKeyHT::iterator it;
    
    it = VirtualEntry.find(tag);
    if(it != VirtualEntry.end())
    {
-      entry = it->second;
+      entry = &(it->second);
    }
    else
    {
-      entry = new DictEntry(group, element, vr, fourth, name);
-      VirtualEntry[tag] = entry;
+      DictEntry ent(group, element, vr, fourth, name);
+      //VirtualEntry[tag] = entry;
+      VirtualEntry.insert(
+         TagKeyHT::value_type<TagKey, DictEntry>
+            (tag, ent));
+      entry = &(VirtualEntry.find(tag)->second);
    }
 
    return entry;
