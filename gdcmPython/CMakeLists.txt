@@ -5,12 +5,7 @@ INCLUDE_DIRECTORIES(
   ${PYTHON_INCLUDE_PATH}
   ${GDCM_BINARY_DIR}/
 )
-
-#-----------------------------------------------------------------------------
-# Create the gdcmVersion.py file:
-FILE(WRITE ${GDCM_BINARY_DIR}/gdcmVersion.py
-  "gdcmVERSION=\"${GDCM_VERSION_FULL}\""
-  )
+SUBDIRS(demo)
 
 #-----------------------------------------------------------------------------
 # SWIG Wrapping
@@ -58,15 +53,6 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   )
   # Since the file gdcm_wrap.cxx does not exist, mark it as GENERATED:
   SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
-  # This swig command will also outputs gdcm.py :
-  SET_SOURCE_FILES_PROPERTIES(gdcm.py GENERATED)
-  # Then add the custom command to copy it to proper location:
-  ADD_CUSTOM_COMMAND(
-    TARGET pygdcm
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py ${GDCM_BINARY_DIR}/bin
-  )
 
   ADD_LIBRARY(pygdcm gdcm_wrap.cxx)
   TARGET_LINK_LIBRARIES(pygdcm
@@ -75,6 +61,64 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   )
   # http://www.cmake.org/pipermail/cmake/2003-August/004190.html
   #SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
+
+  # This swig command will also outputs gdcm.py :
+  SET_SOURCE_FILES_PROPERTIES(gdcm.py GENERATED)
+
+  # Instead of a simple copy operation let create our own gdcm.py file:
+  # First read what swig dumped:
+  FILE(READ ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py SWIG_GDCM_PY)
+
+  # Then create the gdcm.py = gdcmVersion.py + gdcm.py (swig) file:
+  FILE(WRITE ${GDCM_BINARY_DIR}/bin/gdcm.py
+    "import os\n"
+    "gdcmVERSION=\"${GDCM_VERSION_FULL}\"\n"
+    "GDCM_DATA_PATH=\"${GDCM_DATA_ROOT}\"\n\n"
+    ${SWIG_GDCM_PY}
+    )
+
+  # Seems like they want instead a file called gdcmPython.py
+  # Thus add the custom command to copy it to proper location:
+  ADD_CUSTOM_COMMAND(
+    TARGET pygdcm
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E copy 
+      ${GDCM_BINARY_DIR}/bin/gdcm.py 
+      ${GDCM_BINARY_DIR}/bin/gdcmPython.py
+  )
+
+  # Here comes the hack to rename the library to a more 'swig' compliant scheme"
+  ADD_CUSTOM_COMMAND(
+    TARGET pygdcm
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E copy 
+      ${GDCM_BINARY_DIR}/bin/libpygdcm.so
+      ${GDCM_BINARY_DIR}/bin/_gdcm.so
+  )
+
+  # where are library stored ?
+#  SET(GDCM_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
+#  ADD_CUSTOM_COMMAND(
+#    TARGET pygdcm
+#    POST_BUILD
+#    COMMAND ${CMAKE_COMMAND}
+#    ARGS -E copy
+#      ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${MY_LIB_NAME}${CMAKE_SHLIB_SUFFIX}
+#      ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/vtkXY.pvm
+#    TARGET vtkXY
+#  )
+
+  # Remove temporary libpygdcm.so library:
+#  ADD_CUSTOM_COMMAND(
+#    TARGET pygdcm
+#    POST_BUILD
+#    COMMAND ${CMAKE_COMMAND}
+#    ARGS -E remove ${GDCM_BINARY_DIR}/bin/libpygdcm.so
+#  )
+#  GET_TARGET_PROPERTY(foo pygdcm LOCATION)
+#  MESSAGE(FATAL_ERROR ${foo})
 
 ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
