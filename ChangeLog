@@ -1,3 +1,7 @@
+2005-01-13 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * src/gdcmDebug.h : Adding an option to redirect debug stream to a 
+                       file.
+
 2005-01-13 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDictSet.h : set the default output to the os variable
    * src/gdcmDictEntry.[h|cxx] : add the Print method
