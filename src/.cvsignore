@@ -11,4 +11,5 @@ Makefile
 config.h
 config.h.in
 stamp-h
+stamp-h1
 stamp-h.in

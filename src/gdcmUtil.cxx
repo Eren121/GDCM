@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>   // For isspace
 #include <string.h>  // CLEANME: could this be only string ? Related to Win32 ?
+#include <iostream>
 
 /**
  * \ingroup Globals
