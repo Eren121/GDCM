@@ -1,3 +1,16 @@
+* As stated by the first lines of Test/ExceptionAndPython/README, it looks
+  like we can move back to the exceptions and remove the errno stuff from
+  src/gdcm* !
+* adapt python/gdcmPython/Makefile to automake/autoconf tools
+* Fix the bug in Test/bug1.cxx (see first comment line): Win32 only.
+* All (or at least many of) the methods of gdcmHeader whose only arguments
+  are an ElValue* (e.g.  FindLength, FindVR, LoadElementValue...) can
+  be moved away to ElValue class on condition of transmitting the
+  gdcmHeader.fp attribute. This change should be considered since it
+  would allow those method to avoid artificial calls to ElValue::GetElement(),
+  ElValue::GetVR()...
+* Eat leanding_trailing_whitespace (found in python/gdcmPython/gdcmi) should
+  be used when parsing the dictionary in C++ !
 * Group length is not a unique tag in a file. Hence avoid putting it
   in the element values dictionary without doing something smarter
   (say, instead of storing the length store the group and the length

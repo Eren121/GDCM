@@ -1,0 +1,4 @@
+Documentation can be build with doxygen:
+doxygen Doxyfile
+mozilla html/index.html
+

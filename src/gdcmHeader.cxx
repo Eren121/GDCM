@@ -28,12 +28,12 @@
 // je suis preneur
 
 VRHT * gdcmHeader::dicom_vr = (VRHT*)0;
-gdcmDictSet* gdcmHeader::Dicts = new gdcmDictSet();
 
 void gdcmHeader::Initialise(void) {
 	if (!gdcmHeader::dicom_vr)
 		InitVRDict();
-	RefPubDict = gdcmHeader::Dicts->GetDefaultPublicDict();
+	Dicts = new gdcmDictSet();
+	RefPubDict = Dicts->GetDefaultPubDict();
 	RefShaDict = (gdcmDict*)0;
 }
 
@@ -255,20 +255,7 @@ void gdcmHeader::GetPixels(size_t lgrTotale, void* _Pixels) {
 /**
  * \ingroup   gdcmHeader
  * \brief     Find the value representation of the current tag.
- *
- * @param sw  code swap
- * @param skippedLength  pointeur sur nombre d'octets que l'on a saute qd
- *                       la lecture est finie
- * @param longueurLue    pointeur sur longueur (en nombre d'octets) 
- *                       effectivement lue
- * @return               longueur retenue pour le champ 
  */
- 
-// -->
-// --> Oops
-// --> C'etait la description de quoi, ca?
-// -->
-
 void gdcmHeader::FindVR( ElValue *ElVal) {
 	if (filetype != ExplicitVR)
 		return;
@@ -701,12 +688,9 @@ void gdcmHeader::SetMaxSizeLoadElementValue(long NewSize) {
 
 /**
  * \ingroup       gdcmHeader
- * \brief         Loads the element if it's size is not to big.
- * @param ElVal   Element whose value shall be loaded. 
- * @param MaxSize Size treshold above which the element value is not
- *                loaded in memory. The element value is allways loaded
- *                when MaxSize is equal to UINT32_MAX.
- * @return  
+ * \brief         Loads the element content if it's length is not bigger
+ *                than the value specified with
+ *                gdcmHeader::SetMaxSizeLoadElementValue()
  */
 void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	size_t item_read;
@@ -755,17 +739,14 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 		return;
 	}
 
-	// Values bigger than specified are not loaded.
-	//
-	// En fait, c'est les elements dont la longueur est superieure 
-	// a celle fixee qui ne sont pas charges
-	//
+	// The elements whose length is bigger than the specified upper bound
+	// are not loaded. Instead we leave a short notice of the offset of
+	// the element content and it's length.
 	if (length > MaxSizeLoadElementValue) {
 		ostringstream s;
 		s << "gdcm::NotLoaded.";
 		s << " Address:" << (long)ElVal->GetOffset();
 		s << " Length:"  << ElVal->GetLength();
-		//mesg += " Length:"  + ElVal->GetLength();
 		ElVal->SetValue(s.str());
 		return;
 	}
@@ -1005,7 +986,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
  *          group and element. The public dictionary has precedence on the
  *          shadow one.
  * @param   group   group of the searched DictEntry
- * @earam   element element of the searched DictEntry
+ * @param   element element of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
 gdcmDictEntry * gdcmHeader::GetDictEntryByKey(guint16 group, guint16 element) {
@@ -1052,26 +1033,6 @@ gdcmDictEntry * gdcmHeader::GetDictEntryByName(string Name) {
 			return found;
 	}
 	return found;
-}
-
-list<string> * gdcmHeader::GetPubTagNames(void) {
-	list<string> * Result = new list<string>;
-	TagKeyHT entries = RefPubDict->GetEntries();
-
-	for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
-      Result->push_back( tag->second->GetName() );
-	}
-	return Result;
-}
-
-map<string, list<string> > * gdcmHeader::GetPubTagNamesByCategory(void) {
-	map<string, list<string> > * Result = new map<string, list<string> >;
-	TagKeyHT entries = RefPubDict->GetEntries();
-
-	for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
-		(*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
-	}
-	return Result;
 }
 
 string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {

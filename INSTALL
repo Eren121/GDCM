@@ -23,3 +23,8 @@ python testSuite.py (test suite written in unittest, you should use python2)
 * For manual test in python:
 cd python/demo
 python test.py ../../Data/CR-MONO1-10-chest.dcm (or any other file)
+
+
+-----------------------------------------------------------------------------
+Documentation can be found in the Doc sub-directory. Please refer to 
+README file within Doc.

@@ -170,13 +170,19 @@ typedef map<DictKey, gdcmDict*> DictSetHT;
 
 class GDCM_EXPORT gdcmDictSet {
 private:
-	string DictPath;      // Directory path to dictionaries
 	DictSetHT dicts;
 	int AppendDict(gdcmDict* NewDict);
-	int LoadDictFromFile(string filename, DictKey);
-	void SetDictPath(void);
+	void LoadDictFromFile(string filename, DictKey);
+private:
+	static string DictPath;      // Directory path to dictionaries
+	static string BuildDictPath(void);
+	static gdcmDict* DefaultPubDict;
 public:
-	gdcmDictSet(void);    // loads THE DICOM v3 dictionary
+	static list<string> * GetPubDictTagNames(void);
+	static map<string, list<string> >* GetPubDictTagNamesByCategory(void);
+	static gdcmDict* LoadDefaultPubDict(void);
+
+	gdcmDictSet(void);
 	// TODO Swig int LoadDictFromFile(string filename);
    // QUESTION: the following function might not be thread safe !? Maybe
    //           we need some mutex here, to avoid concurent creation of
@@ -185,14 +191,9 @@ public:
 	// TODO Swig int LoadAllDictFromDirectory(string DirectoryName);
 	// TODO Swig string* GetAllDictNames();
 	//
-	// Question : ne faudra-t-il pas mettre LE dictionnaire DICOM dans un Directory
-	// et les eventuels 'dictionnaires prives' dans un autre?
-	// (pour eviter a un utilisateur mal dégourdi de tout saccager ?)
-	//
-	int LoadDicomV3Dict(void);
 	void Print(ostream&);
 	gdcmDict* GetDict(DictKey DictName);
-	gdcmDict* GetDefaultPublicDict(void);
+	gdcmDict* GetDefaultPubDict(void);
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -294,7 +295,7 @@ private:
 	static VRHT *dicom_vr;
 	// Dictionaries of data elements:
 
-	static gdcmDictSet* Dicts;  // global dictionary container
+	gdcmDictSet* Dicts;         // global dictionary container
 	gdcmDict* RefPubDict;       // public dictionary
 	gdcmDict* RefShaDict;       // shadow dictionary (optional)
 	// Parsed element values:
@@ -386,14 +387,7 @@ public:
 	// an additional specific dictionary to access extra information.
 	// TODO Swig int SetShaDict(string filename);
 
-	// Retrieve all potentially available tag [tag = (group, element)] names
-	// from the standard (or public) dictionary. Typical usage : enable the
-	// user of a GUI based interface to select his favorite fields for sorting
-	// or selecting.
-	list<string> * GetPubTagNames(void);
-	map<string, list<string> > * GetPubTagNamesByCategory(void);
 	// Get the element values themselves:
-	
 	string GetPubElValByName(string TagName);
 	string GetPubElValByNumber(guint16 group, guint16 element);
 
@@ -406,7 +400,7 @@ public:
 
 	TagElValueHT & GetPubElVal(void) { return PubElVals.GetTagHt(); };
 	void   PrintPubElVal(ostream & os = cout);
-	void   PrintPubDict(ostream &);
+	void   PrintPubDict(ostream & os = cout);
 	  
 	// Same thing with the shadow :
 	// TODO Swig string* GetShaTagNames(); 

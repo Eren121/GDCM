@@ -11,49 +11,104 @@
 #endif
 #define PUB_DICT_FILENAME "dicomV3.dic"
 
-gdcmDictSet::gdcmDictSet(void) {
-	SetDictPath();
-	if (! LoadDicomV3Dict())
-			  return;
+string gdcmDictSet::DictPath = gdcmDictSet::BuildDictPath();
+gdcmDict* gdcmDictSet::DefaultPubDict = gdcmDictSet::LoadDefaultPubDict();
+
+/** 
+ * \ingroup gdcmDictSet
+ * \brief   Consider all the entries of the public dicom dictionnary. 
+ *          Build all list of all the tag names of all those entries.
+ * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
+ * @return  A list of all entries of the public dicom dictionnary.
+ */
+list<string> * gdcmDictSet::GetPubDictTagNames(void) {
+   list<string> * Result = new list<string>;
+   TagKeyHT entries = gdcmDictSet::DefaultPubDict->GetEntries();
+   
+   for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
+      Result->push_back( tag->second->GetName() );
+   }
+   return Result;
 }
 
-void gdcmDictSet::SetDictPath(void) {
-	const char* EnvPath = (char*)0;
-	EnvPath = getenv("GDCM_DICT_PATH");
-	if (EnvPath && (strlen(EnvPath) != 0)) {
-		DictPath = EnvPath;
-		if (DictPath[DictPath.length() -1] != '/' )
-			DictPath += '/';
-		dbg.Verbose(1, "gdcmDictSet::SetDictPath:",
+/** 
+ * \ingroup gdcmDictSet
+ * \brief   Consider all the entries of the public dicom dictionnary.
+ *          Build an hashtable whose keys are the names of the groups
+ *          (fourth field in each line of dictionary) and whose corresponding
+ *          values are lists of all the dictionnary entries among that
+ *          group. Note that apparently the Dicom standard doesn't explicitely
+ *          define a name (as a string) for each group.
+ *          A typical usage of this method would be to enable a dynamic
+ *          configuration of a Dicom file browser: the admin/user can
+ *          select in the interface which Dicom tags should be displayed.
+ * @return  An hashtable: whose keys are the names of the groups and whose
+ *          corresponding values are lists of all the dictionnary entries
+ *          among that group.
+ */
+map<string, list<string> > * gdcmDictSet::GetPubDictTagNamesByCategory(void) {
+   map<string, list<string> > * Result = new map<string, list<string> >;
+   TagKeyHT entries = gdcmDictSet::DefaultPubDict->GetEntries();
+
+   for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
+      (*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
+   }
+   return Result;
+}
+
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Obtain from the GDCM_DICT_PATH environnement variable the
+ *          path to directory containing the dictionnaries. When
+ *          the environnement variable is absent the path is defaulted
+ *          to "../Dicts/".
+ */
+string gdcmDictSet::BuildDictPath(void) {
+   string ResultPath;
+   const char* EnvPath = (char*)0;
+   EnvPath = getenv("GDCM_DICT_PATH");
+   if (EnvPath && (strlen(EnvPath) != 0)) {
+      ResultPath = EnvPath;
+      if (ResultPath[ResultPath.length() -1] != '/' )
+         ResultPath += '/';
+      dbg.Verbose(1, "gdcmDictSet::BuildDictPath:",
                      "Dictionary path set from environnement");
-	} else
-		DictPath = PUB_DICT_PATH;
+   } else
+      ResultPath = PUB_DICT_PATH;
+   return ResultPath;
 }
 
-int gdcmDictSet::LoadDicomV3Dict(void) {
-	if (dicts.count(PUB_DICT_NAME))
-		return 1;
-	return LoadDictFromFile(DictPath + PUB_DICT_FILENAME, PUB_DICT_NAME);
+gdcmDict* gdcmDictSet::LoadDefaultPubDict(void) {
+   string PubDictFile = gdcmDictSet::DictPath + PUB_DICT_FILENAME;
+   return new gdcmDict(PubDictFile.c_str());
 }
 
-int gdcmDictSet::LoadDictFromFile(string FileName, DictKey Name) {
-	gdcmDict *NewDict = new gdcmDict(FileName.c_str());
-	dicts[Name] = NewDict;
-	return 0;   //FIXME if this is a dummy return make the method void
+/** 
+ * \ingroup gdcmDictSet
+ * \brief   The Dictionnary Set obtained with this constructor simply
+ *          contains the Default Public dictionnary.
+ */
+gdcmDictSet::gdcmDictSet(void) {
+   dicts[PUB_DICT_NAME] = DefaultPubDict;
+}
+
+void gdcmDictSet::LoadDictFromFile(string FileName, DictKey Name) {
+   gdcmDict *NewDict = new gdcmDict(FileName.c_str());
+   dicts[Name] = NewDict;
 }
 
 void gdcmDictSet::Print(ostream& os) {
-	for (DictSetHT::iterator dict = dicts.begin(); dict != dicts.end(); ++dict){
-		os << "Printing dictionary " << dict->first << " \n";
-		dict->second->Print(os);
-	}
+   for (DictSetHT::iterator dict = dicts.begin(); dict != dicts.end(); ++dict){
+      os << "Printing dictionary " << dict->first << " \n";
+      dict->second->Print(os);
+   }
 }
 
 gdcmDict * gdcmDictSet::GetDict(DictKey DictName) {
-	DictSetHT::iterator dict = dicts.find(DictName);
-	return dict->second;
+   DictSetHT::iterator dict = dicts.find(DictName);
+   return dict->second;
 }
 
-gdcmDict * gdcmDictSet::GetDefaultPublicDict() {
-	return GetDict(PUB_DICT_NAME);
+gdcmDict * gdcmDictSet::GetDefaultPubDict() {
+   return GetDict(PUB_DICT_NAME);
 }

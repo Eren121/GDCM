@@ -5,3 +5,4 @@ main
 *.o
 *.so
 *.pyc
+*_wrap.doc

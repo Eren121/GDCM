@@ -1,9 +1,11 @@
-test
+*.o
 .deps
 .libs
 Makefile.in
 Makefile
+test
+testWrite
 hashtest
+bug1
 image.dcm
 image.raw
-

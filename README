@@ -1,1 +1,2 @@
-Requires Swig version >= 1.3.11 for handling member overloading.
+Requires Swig version >= 1.3.17 for handling member overloading, and
+static methods.

@@ -1,3 +1,39 @@
+2003-02-19 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * As stated by the first lines of Test/ExceptionAndPython/README, it
+        looks like we can move back to original usage of exception within
+        src/gdcm* and hence remove the errno stuff that was introduced
+        as a quick and dirty fixture of this problem (added to the TODO).
+      * Doc/Doxyfile configuration file for Doxygen and corresponding
+        README file for usage added.
+      * Test/testWrite.cxx added. This new test comes from a split of
+        test.cxx that is now reverted to its original purpous i.e. 
+        testing the proper parsing of a Dicom related file.
+        testWrite.cxx concentrates on testing the IO part of gdcm.
+      * Test/bug1.cxx (containing a bug on WIn32) added.
+      * src/gdcm.h, gdcmHeader.cxx, gdcmDictSet.cxx: 
+        - gdcmHeader::GetPubTagNames and  gdcmHeader::GetPubTagNamesByCategory
+          whose purpose is to publish the content of the TagNames of the
+          Dicom public dictionnary were not accessible without an
+          instance of class gdcmHeader.
+        - those methods are now static methods of gdcmDictSet and hence
+          require no instances at all to be invocated.
+        - within gdcmDictSet this change required to change some method
+          to class methods (i.e. are now static) among which SetDictPath
+          (renamed to BuildDictPath) and LoadDefaultPubDict.
+      * python/gdcmPython/demo/printGroupedPublicDict.py changed to illustrate
+        the above changes by calling the new method classes of gdcmDictSet.
+      * python/gdcmPython/__init__.py now exposes gdcm.gdcmDictSet for
+        the above to be effective.
+      * python/gdcmPython: in order to wrap properly the above changes
+        for Python, swig version now needs to be > 1.3.17.
+      * python/gdcmPython/Makefile fixed to adapt itself to new 
+        configure/make shema introduced by Johan Montagnat (thanks for the
+        contribution). Alas this Makefile cannot be turned into a proper
+        Makefile.am without some heavy changes in the configure.in
+        (for python dectection).
+      * python/gdcmPython/gdcm.i: the out typemap map<string, list<string>>*
+        now avoids publishing the empty entries.
+
 2003-02-13 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * python/setup.py : bug fix concerning install under windows
         ExtraPath reused :-P

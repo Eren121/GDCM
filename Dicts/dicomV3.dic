@@ -2,7 +2,7 @@
 0000 0002 UI CMD Affected SOP Class UID
 0000 0003 UI CMD Requested SOP Class UID
 0000 0100 US CMD Command Field
-0000 0110 US CMD Message ID
+0000 0110 US CMD Message ID (first)
 0000 0120 US CMD Message ID Responded to
 0000 0600 AE CMD Move Destination
 0000 0700 US CMD Priority
@@ -20,7 +20,7 @@
 0000 1022 US CMD Failed Suboperations
 0000 1023 US CMD Warning Suboperations
 0000 1030 AE CMD AE Title
-0000 1031 US CMD Message ID
+0000 1031 US CMD Message ID (second)
 0000 1005 AT CMD Attribute Identifier List
 0002 0000 UL META Meta Group Length
 0002 0001 OB META File Meta Information Version

@@ -1,3 +1,7 @@
+READ THIS FIRST:
+the oddities described below are NOT present when using
+wxPythonGTK-py2.2-2.4.0.2-2 but are present when wxPythonGTK-py2.2-2.3.4.2-1.
+-------------------------------------------------------------------------
 The purpous of this set of files is to illustrate an unexpected behavior
 of exception handling of swig wrapped c++ libraries with wxPython.
 Context:
