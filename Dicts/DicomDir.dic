@@ -1,10 +1,10 @@
 metaElem    0002 0000 "12345"                // Meta Group Length : to be computed later
-metaElem    0002 0001 "\2\0\0\0"             // File Meta Information Version
+metaElem    0002 0001 "2"                    // File Meta Information Version
 metaElem    0002 0002 "1.2.840.10008.1.3.10" // Media Stored SOP Class UID i.e. : 'Media Storage Directory Storage'
 metaElem    0002 0003 ""                     // Media Stored SOP Instance UID  : may be forged later
 metaElem    0002 0010 "1.2.840.10008.1.2.1"  // Transfer Syntax UID i.e. : Explicit VR - Little Endian
 metaElem    0002 0012 ""                     // Implementation Class UID : may be forged later
-metaElem    0002 0013 "gdcmLib"              // Implementation Version Name
+metaElem    0002 0013 "gdcmLib "             // Implementation Version Name  don't remove trailing space !
 metaElem    0004 1130 ""                     // File-set ID
 metaElem    0004 1200 "0"                    // Offset of the first dir of root dir entity : to be computed later
 metaElem    0004 1202 "0"                    // Offset of the last dir of root dir entity : to be computed later
@@ -55,9 +55,9 @@ imageElem   0004 1400 "0"                    // Offset of next directory record 
 imageElem   0004 1410 "65535"                // Record in use flag : 65535    ?
 imageElem   0004 1420 "0"                    // Offset of referenced lower-level dir entity : to be computed later
 imageElem   0004 1430 "IMAGE "               // Directory Record Type    don't remove trailing space !
-imageElem   0004 1500 ""                     // Referenced File ID : to be set later    relative File Name
+imageElem   0004 1500 ""                     // Referenced File ID : to be set later  =  relative File Name
 imageElem   0004 1510 ""                     // Referenced SOP Class UID in File : may be forged later
-imageElem   0004 1511 ""                     // Referenced SOP Class UID in File :  may be forged later
+imageElem   0004 1511 ""                     // Referenced SOP Instance UID in File : may be forged later
 imageElem   0004 1512 ""                     // Referenced Transfer Syntax in File
 imageElem   0008 0005 "ISO_IR 100"           // Specific Character Set
 imageElem   0008 0008 ""                     // Image Type
