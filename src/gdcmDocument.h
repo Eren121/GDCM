@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 04:13:25 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2004/10/24 03:33:41 $
+  Version:   $Revision: 1.55 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -153,17 +153,16 @@ public:
 
    ValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                      uint16_t group, uint16_t elem,
-                                     std::string const & VR ="unkn");
+                                     std::string const & vr = "unkn");
    
    BinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
                                      uint16_t group, uint16_t elem,
-                                     std::string const & VR="unkn");
+                                     std::string const & vr = "unkn");
 
    SeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
 
    bool ReplaceIfExistByNumber ( std::string const & value,
-                                 uint16_t group,
-                                 uint16_t elem );
+                                 uint16_t group, uint16_t elem );
    
    virtual void* LoadEntryBinArea(uint16_t group, uint16_t elem);
    virtual void* LoadEntryBinArea(BinEntry* entry);
