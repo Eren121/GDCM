@@ -15,7 +15,6 @@
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
 #include "iddcmjpeg.h" // for the 'LibIDO' Jpeg LossLess
-using namespace std;
 
 #define str2num(str, typeNum) *((typeNum *)(str))
 
@@ -37,7 +36,7 @@ using namespace std;
  * @return	
  */
  
-gdcmFile::gdcmFile(string & filename) 
+gdcmFile::gdcmFile(std::string & filename) 
 	:gdcmHeader(filename.c_str())	
 {
    SetPixelDataSizeFromHeader();
@@ -61,7 +60,7 @@ gdcmFile::gdcmFile(const char * filename)
  */
 void gdcmFile::SetPixelDataSizeFromHeader(void) {
    int nb;
-   string str_nb;
+   std::string str_nb;
 
    str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
@@ -72,7 +71,7 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
    }
    lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() * (nb/8)* GetSamplesPerPixel();
    
-   string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
+   std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
    if (   str_PhotometricInterpretation == "PALETTE COLOR " 
        || str_PhotometricInterpretation == "YBR_FULL") {   // --> some more to be added !!
       lgrTotale*=3;
@@ -100,13 +99,14 @@ size_t gdcmFile::GetImageDataSize(void) {
 /**
  * \ingroup gdcmFile
  * \brief   Parse pixel data from disk and *prints* the result
- * \        For multi-fragment Jpeg files checking purpose *only*
+ * \        For multi-fragment Jpeg/Rle files checking purpose *only*
  * \        Allows to 'see' if the file *does* conform
  * \       (some of them do not)
- * \        with Dicom Part 3, Annex A (PS 3.5-2003, page 58)
+ * \        with Dicom Part 3, Annex A (PS 3.5-2003, page 58, page 85)
  *
  */
 bool gdcmFile::ParsePixelData(void) {
+
    if ( !OpenFile())
       return false;
       
@@ -121,12 +121,12 @@ bool gdcmFile::ParsePixelData(void) {
         IsExplicitVRBigEndianTransferSyntax()    ||
         IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
         
-        printf ("gdcmFile::ParsePixelData : non JPEG File\n");
+        printf ("gdcmFile::ParsePixelData : non JPEG/RLE File\n");
         return 0;       
    }        
 
    int nb;
-   string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
+   std::string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
@@ -140,11 +140,18 @@ bool gdcmFile::ParsePixelData(void) {
          
    printf ("Checking the Dicom-Jpeg/RLE Pixels\n");
       
-  // ------------------------------- for Parsing : Position on begining of Jpeg Pixels  
-      guint16 ItemTagGr,ItemTagEl; 
-      int ln;
-      long ftellRes;
-      char * destination = NULL;
+   guint16 ItemTagGr,ItemTagEl; 
+   int ln;
+   long ftellRes;
+   char * destination = NULL;
+
+  // ------------------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
+
+   if( !IsRLELossLessTransferSyntax()) {
+
+      // JPEG Image
+
+      cout << "JPEG image" << endl;
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Basic Offset Table Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Basic Offset Table Item Tag El
@@ -190,12 +197,119 @@ bool gdcmFile::ParsePixelData(void) {
          printf("      at %x : fragment length %d x(%08x)\n",
                 ftellRes, ln,ln);
 
-         destination += taille * nBytes; // location in user's memory 
-                
-         printf ("      Destination will be x(%x) = %d \n",
-               destination,destination );
-                        
+        // destination += taille * nBytes; // location in user's memory        
+        //printf ("      Destination will be x(%x) = %d \n",
+        //     destination,destination );
+
+         // ------------------------                                     
          fseek(fp,ln,SEEK_CUR); // skipping (not reading) fragment pixels    
+         // ------------------------              
+     
+         ftellRes=ftell(fp);
+         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+         if(GetSwapCode()) {
+            ItemTagGr=SwapShort(ItemTagGr); 
+            ItemTagEl=SwapShort(ItemTagEl);            
+         }
+         printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
+               ftellRes,ItemTagGr,ItemTagEl );
+      } 
+
+   } else {
+
+      // RLE Image
+
+      cout << "RLE image" << endl;
+      long RleSegmentLength[15],fragmentLength;
+      guint32 nbRleSegments;
+      guint32 RleSegmentOffsetTable[15];
+      ftellRes=ftell(fp);
+      // Basic Offset Table with Item Value
+         // Item Tag
+      fread(&ItemTagGr,2,1,fp);  // Reading (fffe):Basic Offset Table Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  // Reading (e000):Basic Offset Table Item Tag El
+      if(GetSwapCode()) {
+         ItemTagGr=SwapShort(ItemTagGr); 
+         ItemTagEl=SwapShort(ItemTagEl);            
+      }
+      printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
+                ftellRes,ItemTagGr,ItemTagEl );
+         // Item Length
+      ftellRes=ftell(fp);
+      fread(&ln,4,1,fp); 
+      if(GetSwapCode()) 
+         ln=SwapLong(ln);    // Basic Offset Table Item Lentgh
+      printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
+            ftellRes,ln,ln);
+      if (ln != 0) {
+         // What is it used for ??
+         char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
+         fread(BasicOffsetTableItemValue,ln,1,fp); 
+         guint32 a;
+         for (int i=0;i<ln;i+=4){
+            a=str2num(&BasicOffsetTableItemValue[i],guint32);
+            printf("      x(%08x)  %d\n",a,a);
+         }              
+      }
+
+      ftellRes=ftell(fp);
+      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+      if(GetSwapCode()) {
+         ItemTagGr=SwapShort(ItemTagGr); 
+         ItemTagEl=SwapShort(ItemTagEl);            
+      }  
+      printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
+            ftellRes,ItemTagGr,ItemTagEl );
+
+      // while 'Sequence Delimiter Item' (fffe,e0dd) not found
+      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
+      // Parse fragments of the current Fragment (Frame)    
+         ftellRes=ftell(fp);
+         fread(&fragmentLength,4,1,fp); 
+         if(GetSwapCode()) 
+            fragmentLength=SwapLong(fragmentLength);    // length
+         printf("      at %x : 'fragment' length %d x(%08x)\n",
+                ftellRes, fragmentLength,fragmentLength);
+
+//         destination += taille * nBytes; // location in user's memory                 
+//         printf ("      Destination will be x(%x) = %d \n",
+//               destination,destination );
+                        
+          //------------------ scanning (not reading) fragment pixels
+ 
+         fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments           
+         if(GetSwapCode()) 
+            nbRleSegments=SwapLong(nbRleSegments);
+            printf("         Nb of RLE Segments : %d\n",nbRleSegments);
+ 
+         for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
+            ftellRes=ftell(fp);
+            fread(&RleSegmentOffsetTable[k],4,1,fp);
+            if(GetSwapCode())
+               RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
+            printf("        at : %x Offset Segment %d : %d (%x)\n",
+                      ftellRes,k,RleSegmentOffsetTable[k],RleSegmentOffsetTable[k]);
+         }
+          if (nbRleSegments>1) { 
+             for(int k=1; k<=nbRleSegments-1; k++) { // skipping (not reading) RLE Segments
+                RleSegmentLength[k]=RleSegmentOffsetTable[k+1]-RleSegmentOffsetTable[k];
+                ftellRes=ftell(fp);
+                printf ("        Segment %d : Length = %d Start at %x\n",
+                                 k,RleSegmentLength[k], ftellRes);         
+                fseek(fp,RleSegmentLength[k],SEEK_CUR);    
+             }
+          }
+          RleSegmentLength[nbRleSegments] = fragmentLength - RleSegmentOffsetTable[nbRleSegments] ; 
+                                              // TODO : Check the value
+          ftellRes=ftell(fp);
+          printf ("        Segment %d : Length = %d Start at %x\n",
+                           nbRleSegments,RleSegmentLength[nbRleSegments],ftellRes);
+
+          fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR); 
+            
+         // ------------------ end of scanning fragment pixels        
       
          ftellRes=ftell(fp);
          fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
@@ -206,9 +320,8 @@ bool gdcmFile::ParsePixelData(void) {
          }
          printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
                ftellRes,ItemTagGr,ItemTagEl );
-               
-      
       } 
+   }
    return 1;            
 }
 
@@ -230,7 +343,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
       return false;
    }     
 
-// ------------------------------- Uncompressed File
+// -------------------------  Uncompressed File
     
    if ( !IsDicomV3()                             ||
         IsImplicitVRLittleEndianTransferSyntax() ||
@@ -248,10 +361,10 @@ bool gdcmFile::ReadPixelData(void* destination) {
       }
    } 
     
- // ----------------------------- JPEG Compressed File .
+ // ------------------------  Compressed File .
        
       int nb;
-      string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
+      std::string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
       if (str_nb == GDCM_UNFOUND ) {
          nb = 16;
       } else {
@@ -308,17 +421,19 @@ bool gdcmFile::ReadPixelData(void* destination) {
      }
       _IdDcmJpegFree (jpg);
       return true;
-   }  
+   } 
  
+  // ------------------------------- RLE
+
+      if (gdcmHeader::IsRLELossLessTransferSyntax()) {
+            int res = (bool)gdcm_read_RLE_file (destination);
+            return res; 
+      }
+
   // ------------------------------- JPEG Lossy : call to IJG 6b
     
       long fragmentBegining; // for ftell, fseek
-      
-      bool a=0, b=0;
-      
-      a = gdcmHeader::IsRLELossLessTransferSyntax();
-      if (!a)
-         bool b = gdcmHeader::IsJPEG2000();
+      bool b = gdcmHeader::IsJPEG2000();
        
       bool res;
       guint16 ItemTagGr,ItemTagEl;
@@ -359,9 +474,8 @@ bool gdcmFile::ReadPixelData(void* destination) {
          // FIXME : multi fragments 
          fragmentBegining=ftell(fp);
                        
-         if (a)  
-            res = (bool)gdcm_read_RLE_file (destination);       // Reading Fragment pixels 
-         else if (b)
+ 
+         if (b)
             res = (bool)gdcm_read_JPEG2000_file (destination);  // Reading Fragment pixels 
             
          else if (IsJPEGLossless()) {  // ------------- call to LibIDO Jpeg for each Frame/fragment
@@ -460,7 +574,7 @@ void * gdcmFile::GetImageData (void) {
 size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
    int nb, nbu, highBit, signe;
-   string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
+   std::string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
  
    if ( lgrTotale > MaxSize ) {
       dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: pixel data bigger"
@@ -534,7 +648,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    // Try to deal with the color
    // --------------------------
      
-   string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
+   std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
    
    if ( (str_PhotometricInterpretation == "MONOCHROME1 ") 
      || (str_PhotometricInterpretation == "MONOCHROME2 ") 
@@ -567,9 +681,9 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          memmove(destination,newDest,lgrTotale);
          free(newDest);
          // now, it's an RGB image
-         string spp = "3";
+         std::string spp = "3";
          gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002);
-         string rgb="RGB";
+         std::string rgb="RGB";
          gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
          break;
       }
@@ -604,9 +718,9 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
             free(newDest);
          
             // now, it's an RGB image      
-           string spp = "3";
+           std::string spp = "3";
             gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002); 
-           string rgb="RGB";
+           std::string rgb="RGB";
            gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
             
          } else { // need to make RGB Pixels (?)
@@ -739,7 +853,7 @@ int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
  */
 
 void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
-   string content1;
+   std::string content1;
    char car[20];	
    // Assumes ElValue (0x7fe0, 0x0010) exists ...	
    sprintf(car,"%d",ImageDataSize);
@@ -766,7 +880,7 @@ void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
  * @return	
  */
 
-int gdcmFile::WriteRawData (string fileName) {
+int gdcmFile::WriteRawData (std::string fileName) {
    FILE * fp1;
    fp1 = fopen(fileName.c_str(),"wb");
    if (fp1 == NULL) {
@@ -790,7 +904,7 @@ int gdcmFile::WriteRawData (string fileName) {
  * @return int acts as a boolean
  */
 
-int gdcmFile::WriteDcmImplVR (string fileName) {
+int gdcmFile::WriteDcmImplVR (std::string fileName) {
    return WriteBase(fileName, ImplicitVR);
 }
 
@@ -803,7 +917,7 @@ int gdcmFile::WriteDcmImplVR (string fileName) {
  */
  
 int gdcmFile::WriteDcmImplVR (const char* fileName) {
-   return WriteDcmImplVR (string (fileName));
+   return WriteDcmImplVR (std::string (fileName));
 }
 	
 /////////////////////////////////////////////////////////////////
@@ -814,7 +928,7 @@ int gdcmFile::WriteDcmImplVR (const char* fileName) {
  * @return int acts as a boolean
  */
 
-int gdcmFile::WriteDcmExplVR (string fileName) {
+int gdcmFile::WriteDcmExplVR (std::string fileName) {
    return WriteBase(fileName, ExplicitVR);
 }
 	
@@ -834,7 +948,7 @@ int gdcmFile::WriteDcmExplVR (string fileName) {
  * @return int acts as a boolean	
  */
 
-int gdcmFile::WriteAcr (string fileName) {
+int gdcmFile::WriteAcr (std::string fileName) {
    return WriteBase(fileName, ACR);
 }
 
@@ -847,7 +961,7 @@ int gdcmFile::WriteAcr (string fileName) {
  *
  * @return int acts as a boolean
  */
-int gdcmFile::WriteBase (string FileName, FileType type) {
+int gdcmFile::WriteBase (std::string FileName, FileType type) {
 
    FILE * fp1;
    fp1 = fopen(FileName.c_str(),"wb");

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.18 2003/09/22 08:28:43 regrain Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.19 2003/09/24 11:37:10 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -14,7 +14,6 @@
 #include <ctype.h>   // For isspace
 #include <string.h>
 #include "gdcmUtil.h"
-using namespace std;
 
 // Library globals.
 gdcmDebug dbg;

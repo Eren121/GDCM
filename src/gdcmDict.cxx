@@ -13,7 +13,6 @@
 #include <fstream>
 #include "gdcmDict.h"
 #include "gdcmUtil.h"
-using namespace std;
 
 /**
  * \ingroup gdcmDict
@@ -42,7 +41,7 @@ gdcmDict::gdcmDict(std::string & FileName) {
       from.getline(buff, 256, '\n');
       name = buff;
       gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,
-		                                         vr, fourth, name);
+		                                   vr, fourth, name);
       // FIXME: use AddNewEntry
       NameHt[name] = newEntry;
       KeyHt[gdcmDictEntry::TranslateToKey(group, element)] = newEntry;

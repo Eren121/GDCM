@@ -15,7 +15,6 @@
 #include <stdlib.h>  // For getenv
 #include "gdcmUtil.h"
 #include "gdcmDictSet.h"
-using namespace std;
 
 #define PUB_DICT_NAME     "DicomV3Dict"
 #ifndef PUB_DICT_PATH
@@ -30,8 +29,8 @@ using namespace std;
  * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-list<string> * gdcmDictSet::GetPubDictTagNames(void) {
-   list<string> * Result = new list<string>;
+std::list<std::string> * gdcmDictSet::GetPubDictTagNames(void) {
+   std::list<std::string> * Result = new std::list<std::string>;
    TagKeyHT entries = GetDefaultPubDict()->GetEntries();
    
    for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
@@ -55,8 +54,8 @@ list<string> * gdcmDictSet::GetPubDictTagNames(void) {
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-map<string, list<string> > * gdcmDictSet::GetPubDictTagNamesByCategory(void) {
-   map<string, list<string> > * Result = new map<string, list<string> >;
+std::map<std::string, std::list<std::string> > * gdcmDictSet::GetPubDictTagNamesByCategory(void) {
+   std::map<std::string, std::list<std::string> > * Result = new map<std::string, std::list<std::string> >;
    TagKeyHT entries = GetDefaultPubDict()->GetEntries();
 
    for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
@@ -72,8 +71,8 @@ map<string, list<string> > * gdcmDictSet::GetPubDictTagNamesByCategory(void) {
  *          the environnement variable is absent the path is defaulted
  *          to "../Dicts/".
  */
-string gdcmDictSet::BuildDictPath(void) {
-   string ResultPath;
+std::string gdcmDictSet::BuildDictPath(void) {
+   std::string ResultPath;
    const char* EnvPath = (char*)0;
    EnvPath = getenv("GDCM_DICT_PATH");
    if (EnvPath && (strlen(EnvPath) != 0)) {
@@ -94,7 +93,7 @@ string gdcmDictSet::BuildDictPath(void) {
  */
 gdcmDictSet::gdcmDictSet(void) {
    DictPath = BuildDictPath();
-   string PubDictFile = DictPath + PUB_DICT_FILENAME;
+   std::string PubDictFile = DictPath + PUB_DICT_FILENAME;
    Dicts[PUB_DICT_NAME] = new gdcmDict(PubDictFile);
 }
 
@@ -116,7 +115,7 @@ gdcmDictSet::~gdcmDictSet() {
  * @param   Name Symbolic name that be used as identifier of the newly 
  *          created dictionary.
  */
-void gdcmDictSet::LoadDictFromFile(string FileName, DictKey Name) {
+void gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) {
    gdcmDict *NewDict = new gdcmDict(FileName);
    Dicts[Name] = NewDict;
 }

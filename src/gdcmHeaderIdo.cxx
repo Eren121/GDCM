@@ -12,7 +12,6 @@
 
 #include "gdcmIdo.h"
 #include "gdcmUtil.h"
-using namespace std;
 
 gdcmHeaderIdo::gdcmHeaderIdo (char* InFilename)
 	: gdcmHeader(InFilename)

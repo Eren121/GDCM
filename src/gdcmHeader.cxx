@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.84 2003/09/18 09:32:15 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.85 2003/09/24 11:37:10 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -24,12 +24,7 @@
 #include <sstream>
 #include "gdcmUtil.h"
 #include "gdcmHeader.h"
-using namespace std;
 #include "gdcmTS.h"
-
-
-// TODO : remove DEBUG
-#define DEBUG 0
 
 // Refer to gdcmHeader::CheckSwap()
 #define HEADER_LENGTH_TO_READ       256
@@ -318,7 +313,7 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
       return;
 
    char VR[3];
-   string vr;
+   std::string vr;
    int lgrLue;
    char msg[100]; // for sprintf. Sorry
 
@@ -334,7 +329,7 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
    
    lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
    VR[2]=0;
-   vr = string(VR);
+   vr = std::string(VR);
       
    // Assume we are reading a falsely explicit VR file i.e. we reached
    // a tag where we expect reading a VR but are in fact we read the
@@ -406,7 +401,7 @@ bool gdcmHeader::IsImplicitVRLittleEndianTransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2" )
       return true;
    return false;
@@ -424,7 +419,7 @@ bool gdcmHeader::IsExplicitVRLittleEndianTransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.1" )
       return true;
    return false;
@@ -442,7 +437,7 @@ bool gdcmHeader::IsDeflatedExplicitVRLittleEndianTransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.1.99" )
       return true;
    return false;
@@ -460,7 +455,7 @@ bool gdcmHeader::IsExplicitVRBigEndianTransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.2" )  //1.2.2 ??? A verifier !
       return true;
    return false;
@@ -478,7 +473,7 @@ bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.4.50" )
       return true;
    return false;
@@ -515,7 +510,7 @@ bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.4.51" )
       return true;
    return false;
@@ -533,7 +528,7 @@ bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.4.52" )
       return true;
    return false;
@@ -552,7 +547,7 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.4.53" )
       return true;
    return false;
@@ -571,7 +566,7 @@ bool gdcmHeader::IsRLELossLessTransferSyntax(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.5" )
       return true;
    return false;
@@ -590,7 +585,7 @@ bool gdcmHeader::IsJPEG2000(void) {
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
-   string Transfer = Element->GetValue();
+   std::string Transfer = Element->GetValue();
    if (    (Transfer == "1.2.840.10008.1.2.4.90") 
         || (Transfer == "1.2.840.10008.1.2.4.91") )
       return true;
@@ -682,7 +677,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
  void gdcmHeader::FindLength (gdcmElValue * ElVal) {
    guint16 element = ElVal->GetElement();
    guint16 group   = ElVal->GetGroup();
-   string  vr      = ElVal->GetVR();
+   std::string  vr      = ElVal->GetVR();
    guint16 length16;
    if( (element == 0x0010) && (group == 0x7fe0) ) {
       dbg.SetDebug(0);
@@ -866,7 +861,7 @@ guint16 gdcmHeader::SwapShort(guint16 a) {
 void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    size_t item_read;
    guint16 group  = ElVal->GetGroup();
-   string  vr     = ElVal->GetVR();
+   std::string  vr     = ElVal->GetVR();
    guint32 length = ElVal->GetLength();
    bool SkipLoad  = false;
 
@@ -1088,7 +1083,7 @@ gdcmElValue* gdcmHeader::NewElValueByNumber(guint16 Group, guint16 Elem) {
  * @param   Elem
  * \return integer acts as a boolean
  */
-int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Elem ) {
+int gdcmHeader::ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem ) {
 
 	// TODO : FIXME JPRx
 	// curieux, non ?
@@ -1117,7 +1112,7 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
 
    gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
    PubElValSet.Add(nvElValue);
-   string v = Value;	
+   std::string v = Value;	
    PubElValSet.SetElValueByNumber(v, Group, Elem);
    return(1);
 }  
@@ -1134,7 +1129,7 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
 int gdcmHeader::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
    gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);
-   string v = Value;	
+   std::string v = Value;	
    PubElValSet.SetElValueByNumber(v, Group, Elem);
    return 1;
 } 
@@ -1160,7 +1155,7 @@ int gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
  *          a default one when absent.
  * @param   Name    Name of the underlying DictEntry
  */
-gdcmElValue* gdcmHeader::NewElValueByName(string Name) {
+gdcmElValue* gdcmHeader::NewElValueByName(std::string Name) {
 
    gdcmDictEntry * NewTag = GetDictEntryByName(Name);
    if (!NewTag)
@@ -1189,8 +1184,6 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    n = ReadInt16();
    
    if ( (g==0x7fe0) && (n==0x0010) ) 
-   	if (DEBUG) 
-   	   printf("in gdcmHeader::ReadNextElement try to read 7fe0 0010 \n");
    
    if (errno == 1)
       // We reached the EOF (or an error occured) and header parsing
@@ -1202,13 +1195,10 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    FindLength(NewElVal);
    if (errno == 1) {
       // Call it quits
-      if (DEBUG) printf("in gdcmHeader::ReadNextElement : g %04x n %04x errno %d\n",g, n, errno);
       return (gdcmElValue *)0;
    }
    NewElVal->SetOffset(ftell(fp));  
    if ( (g==0x7fe0) && (n==0x0010) ) 
-      if (DEBUG) 
-         printf("sortie de gdcmHeader::ReadNextElement 7fe0 0010 \n");
    return NewElVal;
 }
 
@@ -1222,7 +1212,7 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
 bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
    guint16 group   = ElVal->GetGroup();
    guint16 element = ElVal->GetElement();
-   string  vr      = ElVal->GetVR();
+   std::string  vr      = ElVal->GetVR();
    guint32 length  = ElVal->GetLength();
 
    // When we have some semantics on the element we just read, and if we
@@ -1232,9 +1222,6 @@ bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
       if (length == 4)
          return true;
       else {
-         if (DEBUG) printf("Erroneous Group Length element length (%04x , %04x) : %d\n",
-            group, element,length);
-                    
          dbg.Error("gdcmHeader::IsAnInteger",
             "Erroneous Group Length element length.");     
       }
@@ -1259,7 +1246,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
    // When the "Image Location" is absent we default to group 0x7fe0.
    guint16 grPixel;
    guint16 numPixel;
-   string ImageLocation = GetPubElValByName("Image Location");
+   std::string ImageLocation = GetPubElValByName("Image Location");
    if ( ImageLocation == GDCM_UNFOUND ) {
       grPixel = 0x7fe0;
    } else {
@@ -1317,7 +1304,7 @@ gdcmDictEntry * gdcmHeader::GetDictEntryByNumber(guint16 group,
  * @param   Name name of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
-gdcmDictEntry * gdcmHeader::GetDictEntryByName(string Name) {
+gdcmDictEntry * gdcmHeader::GetDictEntryByName(std::string Name) {
    gdcmDictEntry * found = (gdcmDictEntry*)0;
    if (!RefPubDict && !RefShaDict) {
       dbg.Verbose(0, "gdcmHeader::GetDictEntry",
@@ -1345,7 +1332,7 @@ gdcmDictEntry * gdcmHeader::GetDictEntryByName(string Name) {
  * @return  Corresponding element value when it exists, and the string
  *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
+std::string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
    return PubElValSet.GetElValueByNumber(group, element);
 }
 
@@ -1363,7 +1350,7 @@ string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
+std::string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
    gdcmElValue* elem =  PubElValSet.GetElementByNumber(group, element);
    if ( !elem )
       return GDCM_UNFOUND;
@@ -1378,7 +1365,7 @@ string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
  * @return  Corresponding element value when it exists, and the string
  *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetPubElValByName(string TagName) {
+std::string gdcmHeader::GetPubElValByName(std::string TagName) {
    return PubElValSet.GetElValueByName(TagName);
 }
 
@@ -1395,7 +1382,7 @@ string gdcmHeader::GetPubElValByName(string TagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetPubElValRepByName(string TagName) {
+std::string gdcmHeader::GetPubElValRepByName(std::string TagName) {
    gdcmElValue* elem =  PubElValSet.GetElementByName(TagName);
    if ( !elem )
       return GDCM_UNFOUND;
@@ -1411,7 +1398,7 @@ string gdcmHeader::GetPubElValRepByName(string TagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
+std::string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
    return ShaElValSet.GetElValueByNumber(group, element);
 }
 
@@ -1429,7 +1416,7 @@ string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
+std::string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
    gdcmElValue* elem =  ShaElValSet.GetElementByNumber(group, element);
    if ( !elem )
       return GDCM_UNFOUND;
@@ -1444,7 +1431,7 @@ string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
  * @return  Corresponding element value when it exists, and the string
  *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetShaElValByName(string TagName) {
+std::string gdcmHeader::GetShaElValByName(std::string TagName) {
    return ShaElValSet.GetElValueByName(TagName);
 }
 
@@ -1461,7 +1448,7 @@ string gdcmHeader::GetShaElValByName(string TagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetShaElValRepByName(string TagName) {
+std::string gdcmHeader::GetShaElValRepByName(std::string TagName) {
    gdcmElValue* elem =  ShaElValSet.GetElementByName(TagName);
    if ( !elem )
       return GDCM_UNFOUND;
@@ -1478,8 +1465,8 @@ string gdcmHeader::GetShaElValRepByName(string TagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
-   string pub = GetPubElValByNumber(group, element);
+std::string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
+   std::string pub = GetPubElValByNumber(group, element);
    if (pub.length())
       return pub;
    return GetShaElValByNumber(group, element);
@@ -1500,8 +1487,8 @@ string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
-   string pub = GetPubElValRepByNumber(group, element);
+std::string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
+   std::string pub = GetPubElValRepByNumber(group, element);
    if (pub.length())
       return pub;
    return GetShaElValRepByNumber(group, element);
@@ -1516,8 +1503,8 @@ string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetElValByName(string TagName) {
-   string pub = GetPubElValByName(TagName);
+std::string gdcmHeader::GetElValByName(std::string TagName) {
+   std::string pub = GetPubElValByName(TagName);
    if (pub.length())
       return pub;
    return GetShaElValByName(TagName);
@@ -1537,8 +1524,8 @@ string gdcmHeader::GetElValByName(string TagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-string gdcmHeader::GetElValRepByName(string TagName) {
-   string pub = GetPubElValRepByName(TagName);
+std::string gdcmHeader::GetElValRepByName(std::string TagName) {
+   std::string pub = GetPubElValRepByName(TagName);
    if (pub.length())
       return pub;
    return GetShaElValRepByName(TagName);
@@ -1553,7 +1540,7 @@ string gdcmHeader::GetElValRepByName(string TagName) {
  * @param   group   group of the ElVal to modify
  * @param   element element of the ElVal to modify
  */
-int gdcmHeader::SetPubElValByNumber(string content, guint16 group,
+int gdcmHeader::SetPubElValByNumber(std::string content, guint16 group,
                                     guint16 element)
                                     
 //TODO  : homogeneiser les noms : SetPubElValByNumber   qui appelle PubElValSet.SetElValueByNumber 
@@ -1570,7 +1557,7 @@ int gdcmHeader::SetPubElValByNumber(string content, guint16 group,
  * @param   content new value to substitute with
  * @param   TagName name of the tag to be modified
  */
-int gdcmHeader::SetPubElValByName(string content, string TagName) {
+int gdcmHeader::SetPubElValByName(std::string content, std::string TagName) {
    return (  PubElValSet.SetElValueByName (content, TagName) );
 }
 
@@ -1601,7 +1588,7 @@ int gdcmHeader::SetPubElValLengthByNumber(guint32 length, guint16 group,
  * @param   element element of the ElVal to modify
  * @return  1 on success, 0 otherwise.
  */
-int gdcmHeader::SetShaElValByNumber(string content,
+int gdcmHeader::SetShaElValByNumber(std::string content,
                                     guint16 group, guint16 element) {
    return (  ShaElValSet.SetElValueByNumber (content, group, element) );
 }
@@ -1613,7 +1600,7 @@ int gdcmHeader::SetShaElValByNumber(string content,
  * @param   content new value to substitute with
  * @param   ShadowTagName name of the tag to be modified
  */
-int gdcmHeader::SetShaElValByName(string content, string ShadowTagName) {
+int gdcmHeader::SetShaElValByName(std::string content, std::string ShadowTagName) {
    return (  ShaElValSet.SetElValueByName (content, ShadowTagName) );
 }
 
@@ -1667,7 +1654,7 @@ bool gdcmHeader::IsReadable(void) {
  * @param   VR The Value Representation to be given to this new tag.
  * @ return The newly hand crafted Element Value.
  */
-gdcmElValue* gdcmHeader::NewManualElValToPubDict(string NewTagName, string VR) {
+gdcmElValue* gdcmHeader::NewManualElValToPubDict(std::string NewTagName, std::string VR) {
    gdcmElValue* NewElVal = (gdcmElValue*)0;
    guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
    guint32 FreeElem = 0;
@@ -1700,7 +1687,7 @@ void gdcmHeader::LoadElements(void) {
    rewind(fp);
 
    // Load 'non string' values   
-   string PhotometricInterpretation = GetPubElValByNumber(0x0028,0x0004);   
+   std::string PhotometricInterpretation = GetPubElValByNumber(0x0028,0x0004);   
    if( PhotometricInterpretation == "PALETTE COLOR " ){ 
       LoadElementVoidArea(0x0028,0x1200);  // gray LUT   
       LoadElementVoidArea(0x0028,0x1201);  // R    LUT
@@ -1718,7 +1705,7 @@ void gdcmHeader::LoadElements(void) {
    // if recognition code tells us we deal with a LibIDO image
    // we switch lineNumber and columnNumber
    //
-   string RecCode;	
+   std::string RecCode;	
    RecCode = GetPubElValByNumber(0x0008, 0x0010);
    if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
        RecCode == "CANRME_AILIBOD1_1." ) {
@@ -1846,7 +1833,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
 int gdcmHeader::GetXSize(void) {
    // We cannot check for "Columns" because the "Columns" tag is present
    // both in IMG (0028,0011) and OLY (6000,0011) sections of the dictionary.
-   string StrSize = GetPubElValByNumber(0x0028,0x0011);
+   std::string StrSize = GetPubElValByNumber(0x0028,0x0011);
    if (StrSize == GDCM_UNFOUND)
       return 0;
    return atoi(StrSize.c_str());
@@ -1861,7 +1848,7 @@ int gdcmHeader::GetXSize(void) {
 int gdcmHeader::GetYSize(void) {
    // We cannot check for "Rows" because the "Rows" tag is present
    // both in IMG (0028,0010) and OLY (6000,0010) sections of the dictionary.
-   string StrSize = GetPubElValByNumber(0x0028,0x0010);
+   std::string StrSize = GetPubElValByNumber(0x0028,0x0010);
    if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
    if ( IsDicomV3() )
@@ -1884,7 +1871,7 @@ int gdcmHeader::GetYSize(void) {
 int gdcmHeader::GetZSize(void) {
    // Both in DicomV3 and ACR/Nema the consider the "Number of Frames"
    // as the third dimension.
-   string StrSize = GetPubElValByNumber(0x0028,0x0008);
+   std::string StrSize = GetPubElValByNumber(0x0028,0x0008);
    if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
 
@@ -1905,7 +1892,7 @@ int gdcmHeader::GetZSize(void) {
  * @return  The encountered number of Bits Stored, 0 by default.
  */
 int gdcmHeader::GetBitsStored(void) { 
-   string StrSize = GetPubElValByNumber(0x0028,0x0101);
+   std::string StrSize = GetPubElValByNumber(0x0028,0x0101);
    if (StrSize == GDCM_UNFOUND)
       return 1;
    return atoi(StrSize.c_str());
@@ -1920,7 +1907,7 @@ int gdcmHeader::GetBitsStored(void) {
  * @return  The encountered number of Samples Per Pixel, 1 by default.
  */
 int gdcmHeader::GetSamplesPerPixel(void) { 
-   string StrSize = GetPubElValByNumber(0x0028,0x0002);
+   std::string StrSize = GetPubElValByNumber(0x0028,0x0002);
    if (StrSize == GDCM_UNFOUND)
       return 1; // Well, it's supposed to be mandatory ...
    return atoi(StrSize.c_str());
@@ -1934,7 +1921,7 @@ int gdcmHeader::GetSamplesPerPixel(void) {
  * @return  The encountered Planar Configuration, 0 by default.
  */
 int gdcmHeader::GetPlanarConfiguration(void) { 
-   string StrSize = GetPubElValByNumber(0x0028,0x0006);
+   std::string StrSize = GetPubElValByNumber(0x0028,0x0006);
    if (StrSize == GDCM_UNFOUND)
       return 0;
    return atoi(StrSize.c_str());
@@ -1947,7 +1934,7 @@ int gdcmHeader::GetPlanarConfiguration(void) {
  *
  */
 int gdcmHeader::GetPixelSize(void) {
-   string PixelType = GetPixelType();
+   std::string PixelType = GetPixelType();
    if (PixelType == "8U"  || PixelType == "8S")
       return 1;
    if (PixelType == "16U" || PixelType == "16S")
@@ -1971,26 +1958,26 @@ int gdcmHeader::GetPixelSize(void) {
  * \warning 12 bit images appear as 16 bit.
  * @return  
  */
-string gdcmHeader::GetPixelType(void) {
-   string BitsAlloc;
+std::string gdcmHeader::GetPixelType(void) {
+   std::string BitsAlloc;
    BitsAlloc = GetElValByName("Bits Allocated");
    if (BitsAlloc == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
-      BitsAlloc = string("16");
+      BitsAlloc = std::string("16");
    }
    if (BitsAlloc == "12")
-      BitsAlloc = string("16");
+      BitsAlloc = std::string("16");
 
-   string Signed;
+   std::string Signed;
    Signed = GetElValByName("Pixel Representation");
    if (Signed == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
-      BitsAlloc = string("0");
+      BitsAlloc = std::string("0");
    }
    if (Signed == "0")
-      Signed = string("U");
+      Signed = std::string("U");
    else
-      Signed = string("S");
+      Signed = std::string("S");
 
    return( BitsAlloc + Signed);
 }
@@ -2001,15 +1988,15 @@ string gdcmHeader::GetPixelType(void) {
   * \           else 1.
   * @return Transfert Syntax Name (as oposite to Transfert Syntax UID)
   */
-string gdcmHeader::GetTransferSyntaxName(void) { 
-   string TransfertSyntax = GetPubElValByNumber(0x0002,0x0010);
+std::string gdcmHeader::GetTransferSyntaxName(void) { 
+   std::string TransfertSyntax = GetPubElValByNumber(0x0002,0x0010);
    if (TransfertSyntax == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetTransferSyntaxName: unfound Transfert Syntax (0002,0010)");
       return "Uncompressed ACR-NEMA";
    }
    // we do it only when we need it
    gdcmTS * ts = gdcmGlobal::GetTS();
-   string tsName=ts->GetValue(TransfertSyntax);
+   std::string tsName=ts->GetValue(TransfertSyntax);
    //delete ts; // Seg Fault when deleted ?!
    return tsName;
 }
@@ -2025,18 +2012,18 @@ string gdcmHeader::GetTransferSyntaxName(void) {
   */
   
 int gdcmHeader::GetLUTLength(void) {
-   vector<string> tokens;
+   vector<std::string> tokens;
    int LutLength;
    //int LutDepth;
    //int LutNbits;
    // Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
-   string LutDescriptionR = GetPubElValByNumber(0x0028,0x1101);
+   std::string LutDescriptionR = GetPubElValByNumber(0x0028,0x1101);
    if (LutDescriptionR == GDCM_UNFOUND)
       return 0;
-   string LutDescriptionG = GetPubElValByNumber(0x0028,0x1102);
+   std::string LutDescriptionG = GetPubElValByNumber(0x0028,0x1102);
    if (LutDescriptionG == GDCM_UNFOUND)
       return 0;
-   string LutDescriptionB = GetPubElValByNumber(0x0028,0x1103);
+   std::string LutDescriptionB = GetPubElValByNumber(0x0028,0x1103);
    if (LutDescriptionB == GDCM_UNFOUND)
       return 0;
    if( (LutDescriptionR != LutDescriptionG) || (LutDescriptionR != LutDescriptionB) ) {
@@ -2062,13 +2049,13 @@ int gdcmHeader::GetLUTLength(void) {
   */
   
 int gdcmHeader::GetLUTNbits(void) {
-   vector<string> tokens;
+   vector<std::string> tokens;
    //int LutLength;
    //int LutDepth;
    int LutNbits;
    // Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
    // Consistency already checked in GetLUTLength
-   string LutDescription = GetPubElValByNumber(0x0028,0x1101);
+   std::string LutDescription = GetPubElValByNumber(0x0028,0x1101);
    if (LutDescription == GDCM_UNFOUND)
       return 0;
    tokens.erase(tokens.begin(),tokens.end()); // clean any previous value

@@ -25,9 +25,11 @@ private:
    int gdcm_read_JPEG_file     (void * image_buffer); // For JPEG 8 Bits
    int gdcm_read_JPEG_file12   (void * image_buffer); // For JPEG 12 Bits
    int gdcm_read_JPEG2000_file (void * image_buffer); // For JPEG 2000 (TODO)
-   int gdcm_read_RLE_file      (void * image_buffer); // For Run Length Encoding (TODO) 
-    
-  
+
+// For Run Length Encoding (TOCHECK)
+   int gdcm_read_RLE_file      (void * image_buffer); 
+
+     
 protected:
    int WriteBase(std::string FileName, FileType type);
 public:

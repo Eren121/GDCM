@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.5 2003/09/18 09:32:15 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.6 2003/09/24 11:37:10 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -16,7 +16,6 @@
 #include <math.h>
 #include <algorithm>
 #include <string.h> //for bzero
-using namespace std;
 
 //directory manipulation (os indep).
 //cygwin ???? -> _WIN32 ??

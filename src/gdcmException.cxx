@@ -13,10 +13,8 @@
 
 #include <typeinfo>
 #include <stdio.h>
-using namespace std;
 
-
-gdcmException::gdcmException(const string &f, const string& msg) throw()
+gdcmException::gdcmException(const std::string &f, const std::string& msg) throw()
 #ifdef __GNUC__
   try
 #endif
@@ -49,24 +47,24 @@ void gdcmException::fatal(const char *from) throw() {
 }
 
 
-string gdcmException::getName() const throw() {
+std::string gdcmException::getName() const throw() {
   try {
 #ifdef __GNUC__   // GNU C++ compiler class name demangling
       unsigned int nested = 1, i, nb, offset;
-      string one;
+      std::string one;
 
-      string name;
-      string iname = typeid(*this).name();
+      std::string name;
+      std::string iname = typeid(*this).name();
       if(iname[0] == 'Q') {
 	nested = iname[1] - '0';
-	iname = string(iname, 2, std::string::npos);
+	iname = std::string(iname, 2, std::string::npos);
       }
       for(i = 0; i < nested; i++) {
 	::sscanf(iname.c_str(), "%u%n", &nb, &offset);
-	iname = string(iname, offset, std::string::npos);
-	name += string(iname, 0, nb);
+	iname = std::string(iname, offset, std::string::npos);
+	name += std::string(iname, 0, nb);
 	if(i + 1 < nested) name += "::";
-	iname = string(iname, nb, std::string::npos);
+	iname = std::string(iname, nb, std::string::npos);
       }
       return name;
 #else             // no class name demangling
@@ -75,7 +73,7 @@ string gdcmException::getName() const throw() {
 #endif
   }
   catch(...) {
-    fatal("Exception::getName(string &)");
+    fatal("Exception::getName(std::string &)");
     return "";
   }
 }

@@ -16,8 +16,8 @@
 
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
-									  std::string  InVr, std::string InFourth,
-									  std::string  InName) {
+                             std::string  InVr, std::string InFourth,
+                             std::string  InName) {
 	group 		= InGroup;
 	element 	= InElement;
 	vr 		= InVr;

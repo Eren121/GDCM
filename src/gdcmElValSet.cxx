@@ -13,7 +13,6 @@
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
 #include "gdcmTS.h"
-using namespace std;
 
 gdcmElValSet::~gdcmElValSet() {
    for (TagElValueHT::iterator tag = tagHt.begin(); tag != tagHt.end(); ++tag) {
@@ -52,7 +51,7 @@ void gdcmElValSet::Add(gdcmElValue * newElValue) {
  * @return  
  */
 int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
-	string key = TranslateToKey(Group, Elem );
+	std::string key = TranslateToKey(Group, Elem );
 	return (tagHt.count(key));
 }
 
@@ -65,7 +64,7 @@ void gdcmElValSet::Print(ostream & os) {
    size_t o;
    short int g, e;
    TSKey v;
-   string d2;
+   std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
    
    for (TagElValueHT::iterator tag = tagHt.begin();
@@ -133,7 +132,7 @@ gdcmElValue* gdcmElValSet::GetElementByNumber(guint16 group, guint16 element) {
  * \brief   
  * @return  
  */
-gdcmElValue* gdcmElValSet::GetElementByName(string TagName) {
+gdcmElValue* gdcmElValSet::GetElementByName(std::string TagName) {
    if ( ! NameHt.count(TagName))
       return (gdcmElValue*)0;
    return NameHt.find(TagName)->second;
@@ -146,7 +145,7 @@ gdcmElValue* gdcmElValSet::GetElementByName(string TagName) {
  * @param   element 
  * @return  
  */
-string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
+std::string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHt.count(key))
       return GDCM_UNFOUND;
@@ -158,7 +157,7 @@ string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
  * \brief   
  * @return  
  */
-string gdcmElValSet::GetElValueByName(string TagName) {
+std::string gdcmElValSet::GetElValueByName(std::string TagName) {
    if ( ! NameHt.count(TagName))
       return GDCM_UNFOUND;
    return NameHt.find(TagName)->second->GetValue();
@@ -172,13 +171,13 @@ string gdcmElValSet::GetElValueByName(string TagName) {
  * @param   element 
  * @return  
  */
-int gdcmElValSet::SetElValueByNumber(string content,
+int gdcmElValSet::SetElValueByNumber(std::string content,
                                      guint16 group, guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHt.count(key))
       return 0;
    tagHt[key]->SetValue(content);	
-   string vr = tagHt[key]->GetVR();
+   std::string vr = tagHt[key]->GetVR();
    guint32 lgr;
 
    if( (vr == "US") || (vr == "SS") ) 
@@ -198,11 +197,11 @@ int gdcmElValSet::SetElValueByNumber(string content,
  * @param   TagName
  * @return  
  */
-int gdcmElValSet::SetElValueByName(string content, string TagName) {
+int gdcmElValSet::SetElValueByName(std::string content, std::string TagName) {
    if ( ! NameHt.count(TagName))
       return 0;
    NameHt[TagName]->SetValue(content);
-   string vr = NameHt[TagName]->GetVR();
+   std::string vr = NameHt[TagName]->GetVR();
    guint32 lgr;
 
    if( (vr == "US") || (vr == "SS") ) 
@@ -276,7 +275,7 @@ int gdcmElValSet::SetElValueLengthByNumber(guint32 length,
  * @param   TagName
  * @return  
  */
-int gdcmElValSet::SetElValueLengthByName(guint32 length, string TagName) {
+int gdcmElValSet::SetElValueLengthByName(guint32 length, std::string TagName) {
    if ( ! NameHt.count(TagName))
       return 0;
    NameHt.find(TagName)->second->SetLength(length);	 
@@ -291,11 +290,11 @@ int gdcmElValSet::SetElValueLengthByName(guint32 length, string TagName) {
  */
 void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
    guint16 gr, el;
-   string vr;
+   std::string vr;
    
    gdcmElValue *elem;
    char trash[10];
-   string str_trash;
+   std::string str_trash;
    
    GroupKey key;
    GroupHT groupHt;  // to hold the length of each group
@@ -385,11 +384,11 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    guint16 gr, el;
    guint32 lgr;
    const char * val;
-   string vr;
+   std::string vr;
    guint32 val_uint32;
    guint16 val_uint16;
    
-   vector<string> tokens;
+   vector<std::string> tokens;
 
    void *ptr;
 
@@ -474,7 +473,7 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
 int gdcmElValSet::Write(FILE * _fp, FileType type) {
 
    if (type == ImplicitVR) {
-      string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
+      std::string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
       SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);
       
       //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
@@ -490,7 +489,7 @@ int gdcmElValSet::Write(FILE * _fp, FileType type) {
 	// no way
 	
    if (type == ExplicitVR) {
-      string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
+      std::string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
       SetElValueByNumber(explicitVRTransfertSyntax, 0x0002, 0x0010);
       // See above comment 
       SetElValueLengthByNumber(20, 0x0002, 0x0010);
