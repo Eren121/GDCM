@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.100 2003/10/14 11:53:16 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.101 2003/10/15 15:01:16 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -44,7 +44,6 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
    Initialise();
    if ( !OpenFile(exception_on_error))
       return;
-
    ParseHeader();
    LoadElements();
    CloseFile();
@@ -73,10 +72,11 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
     if(!fp)
       throw gdcmFileError("gdcmHeader::gdcmHeader(const char *, bool)");
   }
-//  char *testEntete = new char[204];
-  guint16 zero;
-  fread(&zero,  (size_t)2, (size_t)1, fp);
+
   if ( fp ) {
+     guint16 zero;
+     fread(&zero,  (size_t)2, (size_t)1, fp);
+
     //ACR -- or DICOM with no Preamble
     if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200)
        return true;
@@ -84,7 +84,7 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
     fseek(fp, 126L, SEEK_CUR);
     char dicm[4];
     fread(dicm,  (size_t)4, (size_t)1, fp);
-    if( strncmp(dicm, "DICM", 4) == 0 )
+    if( memcmp(dicm, "DICM", 4) == 0 )
        return true;
     fclose(fp);
     dbg.Verbose(0, "gdcmHeader::gdcmHeader not DICOM/ACR", filename.c_str());

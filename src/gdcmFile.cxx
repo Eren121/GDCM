@@ -25,13 +25,15 @@
 gdcmFile::gdcmFile(std::string & filename) 
 	:gdcmHeader(filename.c_str())	
 {
-   SetPixelDataSizeFromHeader();
+      if (IsReadable())
+         SetPixelDataSizeFromHeader();
 }
 
 gdcmFile::gdcmFile(const char * filename) 
 	:gdcmHeader(filename)	
 {
-   SetPixelDataSizeFromHeader();
+   if (IsReadable())
+      SetPixelDataSizeFromHeader();
 }
 
 /**

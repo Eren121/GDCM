@@ -30,7 +30,7 @@ The following comments are intended for core gdcm developpers.
     the final user by gdcmPython/__init__.py.
   - the second python wrappers uses the vtk (http://public.kitware.com/VTK/)
     native wrappers i.e. the binary vtkWrapPython. But it should be noticed
-    that the purpous is here a bit different than the one of the Swig
+    that the purpose is here a bit different than the one of the Swig
     generated Python wrappers. When using vtkWrapPython the goal is to
     wrap a single vtk class namely vtkGdcmReader as defined in files
     vtk/vtkGdcmReader.h and vtk/vtkGdcmReader.cxx (and of course those
