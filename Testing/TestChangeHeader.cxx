@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:44:53 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/25 15:29:33 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,15 +31,15 @@ int TestChangeHeader(int argc, char* argv[])
       return 1;
    }
 
-   std::string premier = argv[1];
-   gdcmFile  *f1 = new gdcmFile(premier);
+   std::string firstArgument = argv[1];
+   gdcmFile  *f1 = new gdcmFile(firstArgument);
 
-   std::string deuxieme = argv[2];
-   gdcmFile  *f2 = new gdcmFile(deuxieme);
+   std::string secondArgument = argv[2];
+   gdcmFile  *f2 = new gdcmFile(secondArgument);
 
    //f1->PrintPubElVal();
 
-   // We suppose the DICOM Entries of the second file *do* exist !
+   // We suppose the DICOM Entries of the second file *does* exist !
 
    std::string nbFrames = f2->GetHeader()->GetEntryValue(0x0028, 0x0008);
    if(nbFrames != "gdcm::Unfound")

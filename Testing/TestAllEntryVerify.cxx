@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:50 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/01/25 15:29:33 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,12 +68,12 @@ private:
 
    bool Check( MapFileValuesType::iterator &fileIt );
    std::string ExtractValue(std::string& toSplit)  throw ( ParserException );
-   void ParseRegularLine( std::string& line ) throw ( ParserException );
-   void FirstPassReferenceFile()         throw ( ParserException );
-   bool SecondPassReferenceFile()        throw ( ParserException );
-   void HandleFileName( std::string& line )   throw ( ParserException );
-   void HandleKey( std::string& line )        throw ( ParserException );
-   bool HandleValue( std::string& line )      throw ( ParserException );
+   void ParseRegularLine( std::string& line )      throw ( ParserException );
+   void FirstPassReferenceFile()                   throw ( ParserException );
+   bool SecondPassReferenceFile()                  throw ( ParserException );
+   void HandleFileName( std::string& line )        throw ( ParserException );
+   void HandleKey( std::string& line )             throw ( ParserException );
+   bool HandleValue( std::string& line )           throw ( ParserException );
    static uint16_t axtoi( char* );
 private:
    /// The directory containing the images to check:
@@ -115,12 +115,12 @@ uint16_t ReferenceFileParser::axtoi(char *hexStg) {
   while (n < 4) {
      if (hexStg[n]=='\0')
         break;
-     if (hexStg[n] > 0x29 && hexStg[n] < 0x40 ) //if 0 to 9
-        digit[n] = hexStg[n] & 0x0f;            //convert to int
+     if (hexStg[n] > 0x29 && hexStg[n] < 0x40 )    //if 0 to 9
+        digit[n] = hexStg[n] & 0x0f;               //convert to int
      else if (hexStg[n] >='a' && hexStg[n] <= 'f') //if a to f
-        digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
+        digit[n] = (hexStg[n] & 0x0f) + 9;         //convert to int
      else if (hexStg[n] >='A' && hexStg[n] <= 'F') //if A to F
-        digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
+        digit[n] = (hexStg[n] & 0x0f) + 9;         //convert to int
      else break;
     n++;
   }
