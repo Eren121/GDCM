@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2004/11/09 22:15:36 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -247,12 +247,12 @@ bool SerieHeader::ImagePositionPatientOrdering()
 
 bool SerieHeader::ImageNumberOrdering() 
 {
-   int min, max, pos;
+   int min, pos;
    int n = 0;//CoherentGdcmFileList.size() is a O(N) operation !!
    unsigned char *partition;
   
    GdcmHeaderList::const_iterator it = CoherentGdcmFileList.begin();
-   min = max = (*it)->GetImageNumber();
+   min = (*it)->GetImageNumber();
 
    for (; it != CoherentGdcmFileList.end(); ++it, ++n)
    {

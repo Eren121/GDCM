@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 21:55:55 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2004/11/09 22:15:36 $
+  Version:   $Revision: 1.79 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -775,7 +775,7 @@ void DicomDir::CreateDicomDir()
       return;
    }
 
-   DicomDirType type = DicomDir::GDCM_DICOMDIR_META;
+   DicomDirType type; // = DicomDir::GDCM_DICOMDIR_META;
    MetaElems = NewMeta();
 
    ListSQItem listItems = s->GetSQItems();

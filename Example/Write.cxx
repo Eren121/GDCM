@@ -92,6 +92,7 @@ int main(int argc, char* argv[])
                 << std::endl; 
    }
    imageData= f1->GetImageData();
+   (void)imageData;  // to avoid warnings
 
    switch (argv[2][0]) {
    case 'a' :

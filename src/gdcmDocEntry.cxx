@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:13 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/11/09 22:15:36 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,15 +57,12 @@ void DocEntry::Print(std::ostream& os)
    PrintLevel = 2; // FIXME
    
    size_t o;
-   unsigned short int g, e;
    std::string st;
    TSKey v;
    std::string d2, vr;
    std::ostringstream s;
    uint32_t lgth;
 
-   g  = GetGroup();
-   e  = GetElement();
    o  = GetOffset();
    vr = GetVR();
 
