@@ -12,6 +12,7 @@ SET(TEST_SOURCES
   TestDcm2Acr.cxx
   TestHash.cxx
   TestWrite.cxx
+  TestWriteRead.cxx  
   TestWriteSimple.cxx
 )
 
