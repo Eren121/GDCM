@@ -85,6 +85,7 @@ nm libgdcmijpeg12.a | grep " T " | colrm 1 11 | sort
 #define jpeg_mem_available gdcm_jpeg12_jpeg_mem_available
 #define jpeg_mem_init gdcm_jpeg12_jpeg_mem_init
 #define jpeg_mem_term gdcm_jpeg12_jpeg_mem_term
+#define jpeg_natural_order gdcm_jpeg12_jpeg_natural_order
 #define jpeg_new_colormap gdcm_jpeg12_jpeg_new_colormap
 #define jpeg_open_backing_store gdcm_jpeg12_jpeg_open_backing_store
 #define jpeg_quality_scaling gdcm_jpeg12_jpeg_quality_scaling
@@ -104,6 +105,7 @@ nm libgdcmijpeg12.a | grep " T " | colrm 1 11 | sort
 #define jpeg_start_decompress gdcm_jpeg12_jpeg_start_decompress
 #define jpeg_start_output gdcm_jpeg12_jpeg_start_output
 #define jpeg_std_error gdcm_jpeg12_jpeg_std_error
+#define jpeg_std_message_table gdcm_jpeg12_jpeg_std_message_table
 #define jpeg_stdio_dest gdcm_jpeg12_jpeg_stdio_dest
 #define jpeg_stdio_src gdcm_jpeg12_jpeg_stdio_src
 #define jpeg_suppress_tables gdcm_jpeg12_jpeg_suppress_tables

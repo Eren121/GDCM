@@ -183,17 +183,26 @@ typedef unsigned int JDIMENSION;
 #define METHODDEF(type)    static type
 /* a function used only in its module: */
 #define LOCAL(type)    static type
+
 /* a function referenced thru EXTERNs: */
-#ifdef WIN32
-  #define GLOBAL(type)    __declspec( dllexport ) type
+#if defined( _WIN32 ) && defined (JPEGDLL)
+#define GLOBAL(type)            __declspec(dllexport) type
 #else
-  #define GLOBAL(type)    type
+#define GLOBAL(type)            type
 #endif
+
 /* a reference to a GLOBAL function: */
-#ifdef WIN32
-  #define EXTERN(type)    extern __declspec( dllexport ) type
+#if defined(_WIN32) && !defined(JPEGSTATIC)
+#ifdef JPEGDLL
+/* Win32, building a dll */
+#define EXTERN(type)            __declspec(dllexport) type
 #else
-  #define EXTERN(type)    extern type
+/* Win32, not building a dll but using the dll */
+#define EXTERN(type)            __declspec(dllimport) type
+#endif
+#else
+/* not a Win32 system or building a static Win32 lib */
+#define EXTERN(type)            extern type
 #endif
 
 
@@ -365,6 +374,22 @@ typedef int boolean;
 #else
 #define FAST_FLOAT  double
 #endif
+#endif
+
+#if defined ( _MSC_VER )
+#pragma warning ( disable : 4100 )
+#pragma warning ( disable : 4115 )
+#pragma warning ( disable : 4127 )
+#pragma warning ( disable : 4244 )
+#pragma warning ( disable : 4251 )
+#pragma warning ( disable : 4267 )
+#pragma warning ( disable : 4305 )
+#pragma warning ( disable : 4309 )
+#pragma warning ( disable : 4706 )
+#pragma warning ( disable : 4786 )
+#pragma warning ( disable : 4057 )
+#pragma warning ( disable : 4189 )
+#pragma warning ( disable : 4505 )
 #endif
 
 #endif /* JPEG_INTERNAL_OPTIONS */
