@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 23:59:12 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2005/01/08 00:01:35 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -467,7 +467,7 @@ static kern_return_t GetMACAddress_MAC(io_iterator_t intfIterator, UInt8 *MACAdd
     bzero(MACAddress, kIOEthernetAddressSize);
     
     // IOIteratorNext retains the returned object, so release it when we're done with it.
-    while (intfService = IOIteratorNext(intfIterator))
+    while ( (intfService = IOIteratorNext(intfIterator)))
     {
         CFTypeRef MACAddressAsCFData;        
 
@@ -801,7 +801,7 @@ long GetMacAddrSys ( u_char *addr)
  */
 
     io_iterator_t intfIterator;
-    //UInt8 MACAddress[ kIOEthernetAddressSize ];
+    UInt8 MACAddress[ kIOEthernetAddressSize ];
  
     kernResult = FindEthernetInterfaces(&intfIterator);
     
@@ -810,7 +810,7 @@ long GetMacAddrSys ( u_char *addr)
         printf("FindEthernetInterfaces returned 0x%08x\n", kernResult);
     }
     else {
-        kernResult = GetMACAddress_MAC(intfIterator, addr);
+        kernResult = GetMACAddress_MAC(intfIterator, MACAddress);
         
         if (KERN_SUCCESS != kernResult)
         {
@@ -820,6 +820,7 @@ long GetMacAddrSys ( u_char *addr)
     
     (void) IOObjectRelease(intfIterator); // Release the iterator.
         
+    memcpy(addr, MACAddress, kIOEthernetAddressSize);
     return kernResult;
 #endif //APPLE
 
