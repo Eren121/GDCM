@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 21:09:42 $
-  Version:   $Revision: 1.95 $
+  Date:      $Date: 2005/01/07 22:03:30 $
+  Version:   $Revision: 1.96 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    // if user passed a root directory, sure we didn't get anything
    if ( TagHT.begin() == TagHT.end() ) // when user passed a Directory to parse
    {
-      gdcmVerboseMacro("DicomDir::DicomDir : entry HT empty");
+      gdcmVerboseMacro( "Entry HT empty");
 
       if ( fileName == "." )
       {
@@ -105,8 +105,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       {
          MetaElems = NewMeta();
 
-         gdcmVerboseMacro("DicomDir::DicomDir : Parse directory" 
-                     " and create the DicomDir");
+         gdcmVerboseMacro( "Parse directory and create the DicomDir");
          ParseDirectory();
       }
       else
@@ -122,8 +121,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       DocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
       if ( !e )
       {
-         gdcmVerboseMacro("DicomDir::DicomDir : NO Directory record"
-                        " sequence (0x0004,0x1220)");
+         gdcmVerboseMacro( "NO Directory record sequence (0x0004,0x1220)");
          /// \todo FIXME : what do we do when the parsed file IS NOT a
          ///       DICOMDIR file ?         
       }
@@ -425,9 +423,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
       header = new Header( it->c_str() );
       if( !header )
       {
-         gdcmVerboseMacro( "DicomDir::CreateDicomDirChainedList: " <<
-                      "failure in new Header " <<
-                      it->c_str() );
+         gdcmVerboseMacro( "Failure in new Header " << it->c_str() );
          continue;
       }
       
@@ -435,8 +431,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
       {
          // Add the file header to the chained list:
          list.push_back(header);
-         gdcmVerboseMacro( "DicomDir::CreateDicomDirChainedList: readable " <<
-                      it->c_str() );
+         gdcmVerboseMacro( "Readable " << it->c_str() );
        }
        else
        {
@@ -550,8 +545,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirImage();
          if( !AddDicomDirImageToEnd(static_cast<DicomDirImage *>(si)) )
          {
-            gdcmVerboseMacro("DicomDir::SetElement:"
-                        "Add DicomDirImageToEnd failed");
+            gdcmVerboseMacro( "Add DicomDirImageToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_SERIE:
@@ -559,8 +553,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirSerie();
          if( !AddDicomDirSerieToEnd(static_cast<DicomDirSerie *>(si)) )
          {
-            gdcmVerboseMacro("DicomDir::SetElement:"
-                        "Add DicomDirSerieToEnd failed");
+            gdcmVerboseMacro( "Add DicomDirSerieToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_STUDY:
@@ -568,8 +561,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirStudy();
          if( !AddDicomDirStudyToEnd(static_cast<DicomDirStudy *>(si)) )
          {
-            gdcmVerboseMacro("DicomDir::SetElement:"
-                        "Add DicomDirStudyToEnd failed");
+            gdcmVerboseMacro( "Add DicomDirStudyToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_PATIENT:
@@ -577,8 +569,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirPatient();
          if( !AddDicomDirPatientToEnd(static_cast<DicomDirPatient *>(si)) )
          {
-            gdcmVerboseMacro("DicomDir::SetElement:"
-                        "Add DicomDirPatientToEnd failed");
+            gdcmVerboseMacro( "Add DicomDirPatientToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_META:
@@ -586,8 +577,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          si = new DicomDirMeta();
          if( MetaElems )
          {
-            gdcmVerboseMacro("DicomDir::SetElement:"
-                        "MetaElements already exist, they will be destroyed");
+            gdcmVerboseMacro( "MetaElements already exist, they will be destroyed");
             delete MetaElems;
          }
          MetaElems = static_cast<DicomDirMeta *>(si);
@@ -637,8 +627,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          {
             if( header->GetFileName().substr(0, path.length()) != path )
             {
-               gdcmVerboseMacro("DicomDir::SetElement : the base path"
-                           " of file name is incorrect");
+               gdcmVerboseMacro( "The base path of file name is incorrect");
                val = header->GetFileName();
             }
             else
@@ -729,8 +718,7 @@ void DicomDir::CreateDicomDir()
    DocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
    if ( !e )
    {
-      gdcmVerboseMacro("DicomDir::DicomDir : NO Directory record"
-                  " sequence (0x0004,0x1220)");
+      gdcmVerboseMacro( "NO Directory record sequence (0x0004,0x1220)");
       /// \todo FIXME: what to do when the parsed file IS NOT a DICOMDIR file ? 
       return;         
    }
@@ -738,7 +726,7 @@ void DicomDir::CreateDicomDir()
    SeqEntry *s = dynamic_cast<SeqEntry *>(e);
    if ( !s )
    {
-      gdcmVerboseMacro("DicomDir::CreateDicomDir: no SeqEntry present");
+      gdcmVerboseMacro( "No SeqEntry present");
       // useless : (0x0004,0x1220) IS a Sequence !
       return;
    }
@@ -761,7 +749,7 @@ void DicomDir::CreateDicomDir()
       }
       else
       {
-         gdcmVerboseMacro("DicomDir::CreateDicomDir: not a ValEntry.");
+         gdcmVerboseMacro( "Not a ValEntry.");
          continue;
       }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 19:20:38 $
-  Version:   $Revision: 1.185 $
+  Date:      $Date: 2005/01/07 22:03:30 $
+  Version:   $Revision: 1.186 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -255,8 +255,7 @@ size_t File::GetImageDataIntoVector (void *destination, size_t maxSize)
    {
       if ( PixelReadConverter->GetRGBSize() > maxSize )
       {
-         gdcmVerboseMacro("File::GetImageDataIntoVector: pixel data bigger"
-                        "than caller's expected MaxSize");
+         gdcmVerboseMacro( "Pixel data bigger than caller's expected MaxSize");
          return 0;
       }
       memcpy( destination,
@@ -268,8 +267,7 @@ size_t File::GetImageDataIntoVector (void *destination, size_t maxSize)
    // Either no LUT conversion necessary or LUT conversion failed
    if ( PixelReadConverter->GetRawSize() > maxSize )
    {
-      gdcmVerboseMacro("File::GetImageDataIntoVector: pixel data bigger"
-                     "than caller's expected MaxSize");
+      gdcmVerboseMacro( "Pixel data bigger than caller's expected MaxSize");
       return 0;
    }
    memcpy( destination,
@@ -373,16 +371,29 @@ bool File::WriteRawData(std::string const &fileName)
   std::ofstream fp1(fileName.c_str(), std::ios::out | std::ios::binary );
    if (!fp1)
    {
-      gdcmVerboseMacro("Fail to open (write) file:" << fileName.c_str());
+      gdcmVerboseMacro( "Fail to open (write) file:" << fileName.c_str());
       return false;
    }
 
-   if(PixelWriteConverter->GetUserData())
-      fp1.write((char*)PixelWriteConverter->GetUserData(), PixelWriteConverter->GetUserDataSize());
-   else if(PixelReadConverter->GetRGB())
-      fp1.write((char*)PixelReadConverter->GetRGB(), PixelReadConverter->GetRGBSize());
-   else if(PixelReadConverter->GetRaw())
-      fp1.write((char*)PixelReadConverter->GetRaw(), PixelReadConverter->GetRawSize());
+   if( PixelWriteConverter->GetUserData() )
+   {
+      fp1.write( (char*)PixelWriteConverter->GetUserData(), 
+                 PixelWriteConverter->GetUserDataSize() );
+   }
+   else if ( PixelReadConverter->GetRGB() )
+   {
+      fp1.write( (char*)PixelReadConverter->GetRGB(), 
+                 PixelReadConverter->GetRGBSize());
+   }
+   else if ( PixelReadConverter->GetRaw() )
+   {
+      fp1.write( (char*)PixelReadConverter->GetRaw(), 
+                 PixelReadConverter->GetRawSize());
+   }
+   else
+   {
+      gdcmErrorMacro( "Nothing written." );
+   }
 
    fp1.close();
 
@@ -615,18 +626,16 @@ bool File::CheckWriteIntegrity()
          case WMODE_RAW :
             if( decSize!=PixelWriteConverter->GetUserDataSize() )
             {
-               gdcmVerboseMacro("File::CheckWriteIntegrity: Data size is incorrect (Raw)");
-               //std::cerr << "File::CheckWriteIntegrity: Data size is incorrect (Raw)\n"
-               //          << decSize << " / " << PixelWriteConverter->GetUserDataSize() << "\n";
+               gdcmVerboseMacro( "Data size is incorrect (Raw)" << decSize 
+                    << " / " << PixelWriteConverter->GetUserDataSize() );
                return false;
             }
             break;
          case WMODE_RGB :
             if( rgbSize!=PixelWriteConverter->GetUserDataSize() )
             {
-               gdcmVerboseMacro( "File::CheckWriteIntegrity: Data size is incorrect (RGB)");
-               //std::cerr << "File::CheckWriteIntegrity: Data size is incorrect (RGB)\n"
-               //          << decSize << " / " << PixelWriteConverter->GetUserDataSize() << "\n";
+               gdcmVerboseMacro( "Data size is incorrect (RGB)" << decSize
+                   << " / " << PixelWriteConverter->GetUserDataSize() );
                return false;
             }
             break;
@@ -910,8 +919,7 @@ uint8_t *File::GetRaw()
       raw = PixelReadConverter->GetRaw();
       if ( ! raw )
       {
-         gdcmVerboseMacro("File::GetRaw: read/decompress of "
-                        "pixel data apparently went wrong.");
+         gdcmVerboseMacro( "Read/decompress of pixel data apparently went wrong.");
          return 0;
       }
    }

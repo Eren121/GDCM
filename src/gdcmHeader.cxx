@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 19:20:38 $
-  Version:   $Revision: 1.224 $
+  Date:      $Date: 2005/01/07 22:03:30 $
+  Version:   $Revision: 1.225 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -328,7 +328,7 @@ float Header::GetXSpacing()
 
    if ( strSpacing == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetXSpacing: unfound Pixel Spacing (0028,0030)");
+      gdcmVerboseMacro( "Unfound Pixel Spacing (0028,0030)" );
       return 1.;
    }
 
@@ -355,7 +355,7 @@ float Header::GetXSpacing()
 
    if ( xspacing == 0.)
    {
-      gdcmVerboseMacro("Header::GetXSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
+      gdcmVerboseMacro("gdcmData/CT-MONO2-8-abdo.dcm problem");
       // seems to be a bug in the header ...
       nbValues = sscanf( strSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
       assert( nbValues == 2 );
@@ -376,7 +376,7 @@ float Header::GetYSpacing()
   
    if ( strSpacing == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetYSpacing: unfound Pixel Spacing (0028,0030)");
+      gdcmVerboseMacro("Unfound Pixel Spacing (0028,0030)");
       return 1.;
     }
 
@@ -411,7 +411,7 @@ float Header::GetZSpacing()
 
    if ( strSpacingBSlices == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetZSpacing: unfound StrSpacingBSlices");
+      gdcmVerboseMacro("Unfound StrSpacingBSlices");
       const std::string &strSliceThickness = GetEntryByNumber(0x0018,0x0050);       
       if ( strSliceThickness == GDCM_UNFOUND )
       {
@@ -444,8 +444,7 @@ float Header::GetRescaleIntercept()
       if( sscanf( strRescInter.c_str(), "%f", &resInter) != 1 )
       {
          // bug in the element 0x0028,0x1052
-         gdcmVerboseMacro("Header::GetRescaleIntercept: Rescale Slope "
-                        "is empty");
+         gdcmVerboseMacro( "Rescale Intercept is empty." );
       }
    }
 
@@ -466,7 +465,7 @@ float Header::GetRescaleSlope()
       if( sscanf( strRescSlope.c_str(), "%f", &resSlope) != 1)
       {
          // bug in the element 0x0028,0x1053
-         gdcmVerboseMacro("Header::GetRescaleSlope: Rescale Slope is empty");
+         gdcmVerboseMacro( "Rescale Slope is empty.");
       }
    }
 
@@ -572,13 +571,11 @@ float Header::GetXOrigin()
 
    if ( strImPos == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetXImagePosition: unfound Image "
-                     "Position Patient (0020,0032)");
+      gdcmVerboseMacro( "Unfound Image Position Patient (0020,0032)");
       strImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
-         gdcmVerboseMacro("Header::GetXImagePosition: unfound Image "
-                        "Position (RET) (0020,0030)");
+         gdcmVerboseMacro( "Unfound Image Position (RET) (0020,0030)");
          /// \todo How to tell the caller nothing was found ?
          return 0.;
       }
@@ -605,13 +602,11 @@ float Header::GetYOrigin()
 
    if ( strImPos == GDCM_UNFOUND)
    {
-      gdcmVerboseMacro("Header::GetYImagePosition: unfound Image "
-                     "Position Patient (0020,0032)");
+      gdcmVerboseMacro( "Unfound Image Position Patient (0020,0032)");
       strImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
-         gdcmVerboseMacro("Header::GetYImagePosition: unfound Image "
-                        "Position (RET) (0020,0030)");
+         gdcmVerboseMacro( "Unfound Image Position (RET) (0020,0030)");
          /// \todo How to tell the caller nothing was found ?
          return 0.;
       }  
@@ -642,8 +637,7 @@ float Header::GetZOrigin()
    {
       if( sscanf( strImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
       {
-         gdcmVerboseMacro("Header::GetZImagePosition: wrong Image "
-                        "Position Patient (0020,0032)");
+         gdcmVerboseMacro( "Wrong Image Position Patient (0020,0032)");
          return 0.;  // bug in the element 0x0020,0x0032
       }
       else
@@ -658,7 +652,7 @@ float Header::GetZOrigin()
       if( sscanf( strImPos.c_str(), 
           "%f\\%f\\%f", &xImPos, &yImPos, &zImPos ) != 3 )
       {
-         gdcmVerboseMacro("Header::GetZImagePosition: wrong Image Position (RET) (0020,0030)");
+         gdcmVerboseMacro( "Wrong Image Position (RET) (0020,0030)");
          return 0.;  // bug in the element 0x0020,0x0032
       }
       else
@@ -672,7 +666,7 @@ float Header::GetZOrigin()
    {
       if( sscanf( strSliceLocation.c_str(), "%f", &zImPos) != 1)
       {
-         gdcmVerboseMacro("Header::GetZImagePosition: wrong Slice Location (0020,1041)");
+         gdcmVerboseMacro( "Wrong Slice Location (0020,1041)");
          return 0.;  // bug in the element 0x0020,0x1041
       }
       else
@@ -680,14 +674,14 @@ float Header::GetZOrigin()
          return zImPos;
       }
    }
-   gdcmVerboseMacro("Header::GetZImagePosition: unfound Slice Location (0020,1041)");
+   gdcmVerboseMacro( "Unfound Slice Location (0020,1041)");
 
    std::string strLocation = GetEntryByNumber(0x0020,0x0050);
    if ( strLocation != GDCM_UNFOUND )
    {
       if( sscanf( strLocation.c_str(), "%f", &zImPos) != 1)
       {
-         gdcmVerboseMacro("Header::GetZImagePosition: wrong Location (0020,0050)");
+         gdcmVerboseMacro( "Wrong Location (0020,0050)");
          return 0.;  // bug in the element 0x0020,0x0050
       }
       else
@@ -695,7 +689,7 @@ float Header::GetZOrigin()
          return zImPos;
       }
    }
-   gdcmVerboseMacro("Header::GetYImagePosition: unfound Location (0020,0050)");  
+   gdcmVerboseMacro( "Unfound Location (0020,0050)");  
 
    return 0.; // Hopeless
 }
@@ -794,8 +788,7 @@ int Header::GetBitsStored()
    std::string strSize = GetEntryByNumber( 0x0028, 0x0101 );
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetBitsStored: this is supposed to "
-                     "be mandatory");
+      gdcmVerboseMacro("This is supposed to be mandatory");
       return 0;  // It's supposed to be mandatory
                  // the caller will have to check
    }
@@ -813,8 +806,7 @@ int Header::GetHighBitPosition()
    std::string strSize = GetEntryByNumber( 0x0028, 0x0102 );
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetHighBitPosition: this is supposed "
-                     "to be mandatory");
+      gdcmVerboseMacro( "This is supposed to be mandatory");
       return 0;
    }
    return atoi( strSize.c_str() );
@@ -831,8 +823,7 @@ bool Header::IsSignedPixelData()
    std::string strSize = GetEntryByNumber( 0x0028, 0x0103 );
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::IsSignedPixelData: this is supposed "
-                     "to be mandatory");
+      gdcmVerboseMacro( "This is supposed to be mandatory");
       return false;
    }
    int sign = atoi( strSize.c_str() );
@@ -854,8 +845,7 @@ int Header::GetBitsAllocated()
    std::string strSize = GetEntryByNumber(0x0028,0x0100);
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetBitsStored: this is supposed to "
-                     "be mandatory");
+      gdcmVerboseMacro( "This is supposed to be mandatory");
       return 0; // It's supposed to be mandatory
                 // the caller will have to check
    }
@@ -873,8 +863,7 @@ int Header::GetSamplesPerPixel()
    const std::string& strSize = GetEntryByNumber(0x0028,0x0002);
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetBitsStored: this is supposed to "
-                     "be mandatory");
+      gdcmVerboseMacro( "This is supposed to be mandatory");
       return 1; // Well, it's supposed to be mandatory ...
                 // but sometimes it's missing : *we* assume Gray pixels
    }
@@ -896,8 +885,7 @@ bool Header::IsMonochrome()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::IsMonochrome: absent Photometric "
-                     "Interpretation");
+      gdcmVerboseMacro( "Absent Photometric Interpretation");
    }
    return false;
 }
@@ -916,8 +904,7 @@ bool Header::IsPaletteColor()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Header::IsPaletteColor: absent Photometric "
-                     "Interpretation");
+      gdcmVerboseMacro( "Absent Palette color");
    }
    return false;
 }
@@ -936,8 +923,7 @@ bool Header::IsYBRFull()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::IsYBRFull: absent Photometric "
-                     "Interpretation");
+      gdcmVerboseMacro( "Absent YBR Full");
    }
    return false;
 }
@@ -952,6 +938,7 @@ int Header::GetPlanarConfiguration()
    std::string strSize = GetEntryByNumber(0x0028,0x0006);
    if ( strSize == GDCM_UNFOUND )
    {
+      gdcmVerboseMacro( "Absent Planar Configuration");
       return 0;
    }
    return atoi( strSize.c_str() );
@@ -986,7 +973,7 @@ int Header::GetPixelSize()
    {
       return 8;
    }
-   gdcmVerboseMacro("Header::GetPixelSize: Unknown pixel type");
+   gdcmVerboseMacro( "Unknown pixel type");
    return 0;
 }
 
@@ -1009,7 +996,7 @@ std::string Header::GetPixelType()
    std::string bitsAlloc = GetEntryByNumber(0x0028, 0x0100); // Bits Allocated
    if ( bitsAlloc == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetPixelType: unfound Bits Allocated");
+      gdcmVerboseMacro( "Unfound Bits Allocated");
       bitsAlloc = "16";
    }
 
@@ -1032,7 +1019,7 @@ std::string Header::GetPixelType()
 
    if (sign == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Header::GetPixelType: unfound Pixel Representation");
+      gdcmVerboseMacro( "Unfound Pixel Representation");
       bitsAlloc = "0";
    }
    else if ( sign == "0" )
@@ -1187,15 +1174,13 @@ std::string Header::GetTransfertSyntaxName()
 
    if ( transfertSyntax == GDCM_NOTLOADED )
    {
-      std::cout << "Transfert Syntax not loaded. " << std::endl
-               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
-               << std::endl;
+      gdcmVerboseMacro( "Transfert Syntax not loaded. " << std::endl
+               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE" );
       return "Uncompressed ACR-NEMA";
    }
    if ( transfertSyntax == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Header::GetTransfertSyntaxName:"
-                     " unfound Transfert Syntax (0002,0010)");
+      gdcmVerboseMacro( "Unfound Transfert Syntax (0002,0010)");
       return "Uncompressed ACR-NEMA";
    }
 
@@ -1312,8 +1297,7 @@ void Header::GetImageOrientationPatient( float iop[6] )
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         gdcmVerboseMacro("Header::GetImageOrientationPatient: "
-                        "wrong Image Orientation Patient (0020,0037)");
+         gdcmVerboseMacro( "Wrong Image Orientation Patient (0020,0037). Less than 6 values were found." );
       }
    }
    //For ACR-NEMA
@@ -1323,8 +1307,7 @@ void Header::GetImageOrientationPatient( float iop[6] )
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         gdcmVerboseMacro("Header::GetImageOrientationPatient: "
-                        "wrong Image Orientation Patient (0020,0035)");
+         gdcmVerboseMacro( "wrong Image Orientation Patient (0020,0035). Less than 6 values were found." );
       }
    }
 }

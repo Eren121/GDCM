@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 19:20:38 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/07 22:03:30 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -113,8 +113,7 @@ bool ElementSet::AddEntry(DocEntry *newEntry)
 
    if( TagHT.count(key) == 1 )
    {
-      gdcmVerboseMacro("ElementSet::AddEntry key already present: " <<
-                  key.c_str());
+      gdcmVerboseMacro( "Key already present: " << key.c_str());
       return false;
    }
    else
@@ -136,12 +135,12 @@ bool ElementSet::RemoveEntry( DocEntry *entryToRemove)
    if( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
-      gdcmVerboseMacro( "ElementSet::RemoveEntry: one element erased.");
+      gdcmVerboseMacro( "One element erased.");
       delete entryToRemove;
       return true;
    }
 
-   gdcmVerboseMacro("ElementSet::RemoveEntry: key not present");
+   gdcmVerboseMacro( "Key not present");
    return false ;
 }
 
@@ -155,11 +154,11 @@ bool ElementSet::RemoveEntryNoDestroy(DocEntry *entryToRemove)
    if( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
-      gdcmVerboseMacro("ElementSet::RemoveEntry: one element erased.");
+      gdcmVerboseMacro( "One element erased.");
       return true;
    }
 
-   gdcmVerboseMacro("ElementSet::RemoveEntry: key not present");
+   gdcmVerboseMacro( "Key not present");
    return false ;
 }
 

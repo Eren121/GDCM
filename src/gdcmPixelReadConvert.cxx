@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 19:20:38 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/07 22:03:30 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -259,8 +259,7 @@ bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t *subRaw,
                                                                                 
       if ( numberOfReadBytes > fragmentSize )
       {
-         gdcmVerboseMacro("PixelReadConvert::ReadAndDecompressRLEFragment: we "
-                        "read more bytes than the segment size.");
+         gdcmVerboseMacro( "Read more bytes than the segment size.");
          return false;
       }
    }
@@ -332,8 +331,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            gdcmVerboseMacro( "PixelReadConvert::ConvertSwapZone: SwapCode value "
-                            "(16 bits) not allowed." );
+            gdcmVerboseMacro("SwapCode value (16 bits) not allowed.");
       }
    }
    else if( BitsAllocated == 32 )
@@ -379,8 +377,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            gdcmVerboseMacro( "PixelReadConvert::ConvertSwapZone: SwapCode value "
-                            "(32 bits) not allowed." );
+            gdcmVerboseMacro("SwapCode value (32 bits) not allowed." );
       }
    }
 }
@@ -738,9 +735,8 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       }
       else
       {
-         gdcmVerboseMacro("PixelReadConvert::ConvertReArrangeBits: weird image");
-         throw FormatError( "PixelReadConvert::ConvertReArrangeBits()",
-                                "weird image !?" );
+         gdcmVerboseMacro("Weird image");
+         throw FormatError( "Weird image !?" );
       }
    }
    return true;
@@ -836,16 +832,14 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    //// First stage: get our hands on the Pixel Data.
    if ( !fp )
    {
-      gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
-                      "unavailable file pointer." );
+      gdcmVerboseMacro( "Unavailable file pointer." );
       return false;
    }
 
    fp->seekg( PixelOffset, std::ios::beg );
-   if( fp->fail() || fp->eof()) //Fp->gcount() == 1
+   if( fp->fail() || fp->eof())
    {
-      gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
-                      "unable to find PixelOffset in file." );
+      gdcmVerboseMacro( "Unable to find PixelOffset in file." );
       return false;
    }
 
@@ -865,8 +859,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // variable). But RawSize is the right size of the image !
       if( PixelDataLength != RawSize)
       {
-         gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
-                      "Mismatch between PixelReadConvert and RawSize." );
+         gdcmVerboseMacro( "Mismatch between PixelReadConvert and RawSize." );
       }
       if( PixelDataLength > RawSize)
       {
@@ -877,10 +870,9 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
          fp->read( (char*)Raw, PixelDataLength);
       }
 
-      if ( fp->fail() || fp->eof())//Fp->gcount() == 1
+      if ( fp->fail() || fp->eof())
       {
-         gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
-                         "reading of Raw pixel data failed." );
+         gdcmVerboseMacro( "Reading of Raw pixel data failed." );
          return false;
       }
    } 
@@ -888,8 +880,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    {
       if ( ! ReadAndDecompressRLEFile( fp ) )
       {
-         gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
-                         "RLE decompressor failed." );
+         gdcmVerboseMacro( "RLE decompressor failed." );
          return false;
       }
    }
@@ -898,8 +889,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // Default case concerns JPEG family
       if ( ! ReadAndDecompressJPEGFile( fp ) )
       {
-         gdcmVerboseMacro( "PixelReadConvert::ReadAndDecompressPixelData: "
-                         "JPEG decompressor failed." );
+         gdcmVerboseMacro( "JPEG decompressor failed." );
          return false;
       }
    }
@@ -1104,8 +1094,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutRedData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
-         gdcmVerboseMacro("PixelReadConvert::GrabInformationsFromHeader: "
-                         "unable to read red LUT data" );
+         gdcmVerboseMacro( "Unable to read red LUT data" );
       }
 
       ////// Green round:
@@ -1113,8 +1102,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutGreenData = (uint8_t*)header->GetEntryBinAreaByNumber(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
-         gdcmVerboseMacro("PixelReadConvert::GrabInformationsFromHeader: "
-                        "unable to read green LUT data" );
+         gdcmVerboseMacro( "Unable to read green LUT data" );
       }
 
       ////// Blue round:
@@ -1122,8 +1110,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutBlueData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
-         gdcmVerboseMacro("PixelReadConvert::GrabInformationsFromHeader: "
-                        "unable to read blue LUT data" );
+         gdcmVerboseMacro( "Unable to read blue LUT data" );
       }
    }
 
@@ -1176,7 +1163,7 @@ void PixelReadConvert::BuildLUTRGBA()
                         &lengthR, &debR, &nbitsR );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro("PixelReadConvert::BuildLUTRGBA: wrong red LUT descriptor");
+      gdcmVerboseMacro( "Wrong red LUT descriptor" );
    }
                                                                                 
    int lengthG;  // Green LUT length in Bytes
@@ -1187,7 +1174,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthG, &debG, &nbitsG );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro("PixelReadConvert::BuildLUTRGBA: wrong green LUT descriptor");
+      gdcmVerboseMacro( "Wrong green LUT descriptor" );
    }
                                                                                 
    int lengthB;  // Blue LUT length in Bytes
@@ -1198,7 +1185,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthB, &debB, &nbitsB );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro("PixelReadConvert::BuildLUTRGBA: wrong blue LUT descriptor");
+      gdcmVerboseMacro( "Wrong blue LUT descriptor" );
    }
                                                                                 
    ////////////////////////////////////////////////////////
@@ -1336,8 +1323,7 @@ void PixelReadConvert::Print( std::string indent, std::ostream &os )
       }
       else
       {
-         gdcmVerboseMacro("PixelReadConvert::Print: set as RLE file "
-                        "but NO RLEinfo present.");
+         gdcmVerboseMacro("Set as RLE file but NO RLEinfo present.");
       }
    }
 
@@ -1349,8 +1335,7 @@ void PixelReadConvert::Print( std::string indent, std::ostream &os )
       }
       else
       {
-         gdcmVerboseMacro("PixelReadConvert::Print: set as JPEG file "
-                        "but NO JPEGinfo present.");
+         gdcmVerboseMacro("Set as JPEG file but NO JPEGinfo present.");
       }
    }
 }

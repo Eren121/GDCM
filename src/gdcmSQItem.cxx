@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 19:20:39 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/01/07 22:03:30 $
+  Version:   $Revision: 1.48 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -235,16 +235,15 @@ bool SQItem::RemoveEntry( DocEntry* entryToRemove)
       if( *it == entryToRemove)
       {
          DocEntries.erase(it);
-         gdcmVerboseMacro( "SQItem::RemoveEntry: one element erased.");
+         gdcmVerboseMacro( "One element erased.");
          delete entryToRemove;
          return true;
       }
    }
-                                                                                
-   gdcmVerboseMacro( "SQItem::RemoveEntry: value not present ");
+   gdcmVerboseMacro( "Value not present.");
    return false ;
 }
-                                                                                
+
 /**
  * \brief   Clear the hash table from given entry BUT keep the entry.
  * @param   entryToRemove Entry to remove.
@@ -258,12 +257,12 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
       if( *it == entryToRemove)
       {
          DocEntries.erase(it);
-         gdcmVerboseMacro( "SQItem::RemoveEntry: one element erased.");
+         gdcmVerboseMacro( "One element erased.");
          return true;
       }
    }
                                                                                 
-   gdcmVerboseMacro( "SQItem::RemoveEntry: value not present ");
+   gdcmVerboseMacro( "Value not present.");
    return false ;
 }
                                                                                 
