@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg8.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/07 14:28:55 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/11/08 20:05:52 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,8 @@
 extern "C" {
 #include "gdcmjpeg/8/jconfig.h"
 #include "gdcmjpeg/8/jpeglib.h"
+#include "gdcmjpeg/8/jinclude.h"
+#include "gdcmjpeg/8/jerror.h"
 }
 
 #define gdcm_write_JPEG_file gdcm_write_JPEG_file8

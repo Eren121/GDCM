@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/04 18:14:34 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/11/08 20:05:52 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -424,7 +424,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
             return false;
          }
       }
-      else if ( BitsStored == 12)
+      else if ( BitsStored <= 12)
       {
          // Reading Fragment pixels
          if ( ! gdcm_read_JPEG_file12 ( fp, localDecompressed ) )
@@ -432,7 +432,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
             return false;
          }
       }
-      else if ( BitsStored == 16)
+      else if ( BitsStored <= 16)
       {
          // Reading Fragment pixels
          if ( ! gdcm_read_JPEG_file16 ( fp, localDecompressed ) )
