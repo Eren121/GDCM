@@ -6,10 +6,10 @@
 
 int main(int argc, char* argv[]) 
 {
-   if (argc)
+   if (argc<2)
    {
       std::cerr << "Test::TestReadWriteReadCompare: Usage: " << argv[0]
-                << " (no arguments needed)." << std::endl;
+                << " fileToCheck.dcm " << std::endl;
    }
    
    std::cout<< "Test::TestReadWriteReadCompare: description " << std::endl;
@@ -29,15 +29,16 @@ int main(int argc, char* argv[])
              << "           match (as expanded by gdcm)." << std::endl;
 
    int i = 0;
-   while( gdcmDataImages[i] != 0 )
+   //while( gdcmDataImages[i] != 0 ) 
    {
       std::string filename = GDCM_DATA_ROOT;
       filename += "/";
-      filename += gdcmDataImages[i++];
+      //filename += gdcmDataImages[i++];
+     filename +=argv[1];
    
       std::cout << "   Testing: " << filename << std::endl;
 
-      //////////////// Step 1 (see above description):
+      //////////////// Step 1 (see above description): 
 
       gdcmHeader *header = new gdcmHeader( filename );
       if( !header->IsReadable() )
