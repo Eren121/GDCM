@@ -1,3 +1,7 @@
+2004-07-21 Jean-Pierre Roux
+  * FIX Now, Parsing and Printing a DICOMDIR do work!
+       ( troubles remain in makeDicomDir and BuildUpDicomDir :-(
+		 
 2004-07-20 Jean-Pierre Roux
   * FIX Some brain damaged headers have Zero-Lenght fields 
         for 'Transfert Syntax UID', or 'Media Stored SOP Class UID'.
