@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:56 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/02/02 10:00:24 $
+  Version:   $Revision: 1.65 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
    }
      
    for (ListDocEntry::iterator it = DocEntries.begin();  
-                              it != DocEntries.end();
+                               it != DocEntries.end();
                              ++it)
    {   
       // we skip delimitors (start and end one) because 
@@ -96,8 +96,7 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
    for(j=0;j<4;++j)
    {
       binary_write( *fp, itemt[j]);  // fffe e000 ffff ffff 
-   }
- 
+   } 
 }
 
 /**
@@ -106,8 +105,8 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
 void SQItem::ClearEntry()
 {
    for(ListDocEntry::iterator cc = DocEntries.begin();
-                             cc != DocEntries.end();
-                             ++cc)
+                              cc != DocEntries.end();
+                            ++cc)
    {
       delete *cc;
    }
@@ -115,12 +114,39 @@ void SQItem::ClearEntry()
 }
 
 /**
- * \brief   Adds any Entry (Dicom Element) to the Sequence Item
+ * \brief   Inserts *in the right place* any Entry (Dicom Element)
+ *          into the Sequence Item
  * @param entry Entry to add
  */
 bool SQItem::AddEntry(DocEntry *entry)
-{
-   DocEntries.push_back(entry);
+{   
+   if (DocEntries.empty() )
+   {
+      DocEntries.push_back(entry);
+      return true;
+   }
+ 
+   ListDocEntry::iterator insertSpot;
+   ListDocEntry::iterator it = DocEntries.end();
+   do
+   {
+      it--;
+
+      if ( (*it)->IsItemDelimitor() )
+      {
+         continue;
+      }
+      if ( (*it)->GetGroup() < entry->GetGroup() )
+         break;
+      else
+         if ( (*it)->GetGroup() == entry->GetGroup() &&
+              (*it)->GetElement() < entry->GetElement() )
+            break;
+   } while (it != DocEntries.begin() );
+  
+   insertSpot = it++;
+   insertSpot++; // ?!?
+   DocEntries.insert(insertSpot, entry); 
    return true;
 }   
 
@@ -129,13 +155,13 @@ bool SQItem::AddEntry(DocEntry *entry)
  * @param   entryToRemove Entry to remove AND delete.
  * @return true if the entry was found and removed; false otherwise
  */
-bool SQItem::RemoveEntry( DocEntry *entryToRemove)
+bool SQItem::RemoveEntry( DocEntry *entryToRemove )
 {
    for(ListDocEntry::iterator it = DocEntries.begin();
-       it != DocEntries.end();
-       ++it)
+                              it != DocEntries.end();
+                            ++it)
    {
-      if( *it == entryToRemove)
+      if( *it == entryToRemove )
       {
          DocEntries.erase(it);
          gdcmVerboseMacro( "One element erased: " << entryToRemove->GetKey() );
@@ -154,11 +180,11 @@ bool SQItem::RemoveEntry( DocEntry *entryToRemove)
  */
 bool SQItem::RemoveEntryNoDestroy(DocEntry *entryToRemove)
 {
-   for(ListDocEntry::iterator it = DocEntries.begin();
-       it != DocEntries.end();
-       ++it)
+   for(ListDocEntry::iterator it =  DocEntries.begin();
+                              it != DocEntries.end();
+                            ++it)
    {
-      if( *it == entryToRemove)
+      if( *it == entryToRemove )
       {
          DocEntries.erase(it);
          gdcmVerboseMacro( "One element erased, no destroyed: "
@@ -178,7 +204,7 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry *entryToRemove)
 DocEntry *SQItem::GetFirstEntry()
 {
    ItDocEntries = DocEntries.begin();
-   if (ItDocEntries != DocEntries.end())
+   if( ItDocEntries != DocEntries.end() )
       return *ItDocEntries;
    return 0;   
 }
@@ -190,7 +216,7 @@ DocEntry *SQItem::GetFirstEntry()
 DocEntry *SQItem::GetNextEntry()
 {
    ++ItDocEntries;
-   if (ItDocEntries != DocEntries.end())
+   if( ItDocEntries != DocEntries.end() )
       return  *ItDocEntries;
    return NULL;
 }
@@ -203,8 +229,9 @@ DocEntry *SQItem::GetNextEntry()
  */
 DocEntry *SQItem::GetDocEntry(uint16_t group, uint16_t elem)
 {
-   for(ListDocEntry::iterator i = DocEntries.begin();
-                              i != DocEntries.end(); ++i)
+   for(ListDocEntry::iterator i =  DocEntries.begin();
+                              i != DocEntries.end(); 
+                            ++i)
    {
       if ( (*i)->GetGroup() == group && (*i)->GetElement() == elem )
          return *i;
