@@ -142,7 +142,7 @@ SET(BLACK_LIST
   # Mathieu: temporarily remove as it kills my gnome session (but not kde)
   # JPR: also breaks TestReadWriteReadCompare : Pixel differ (as expanded
   #      in memory)  
-  "KODAK-12-MONO1-Odd_Terminated_Sequence.dcm"
+  #"KODAK-12-MONO1-Odd_Terminated_Sequence.dcm"
   
   # Multiframe Papyrus format image
   # Just to remember this format exist, and is gdcm::Header compliant
