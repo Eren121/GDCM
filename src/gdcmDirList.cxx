@@ -26,7 +26,6 @@
 gdcmDirList::gdcmDirList(std::string dirName,bool recursive)
 {
    name=dirName;
-
    NormalizePath(name);
    Explore(name,recursive);
 }
@@ -71,7 +70,6 @@ void gdcmDirList::Explore(std::string dirName,bool recursive)
    std::string fileName;
 
    NormalizePath(dirName);
-
 #if defined(_MSC_VER) || (__CYGWIN__)
    WIN32_FIND_DATA fileData; 
    HANDLE hFile=FindFirstFile((dirName+"*").c_str(),&fileData);
@@ -99,7 +97,7 @@ void gdcmDirList::Explore(std::string dirName,bool recursive)
 
    for (int i= 0;i < n; i++) 
    {
-      fileName=namelist[i]->d_name;
+      fileName=namelist[i]->d_name;     
       if(namelist[i]->d_type==DT_DIR)
       {
          if( (fileName!=".") && (fileName!="..") && (recursive) )

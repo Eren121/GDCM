@@ -106,6 +106,9 @@ public:
 
 // Entry
 
+// These functions are necessary for Python because 
+//       there are protected in the parent class
+
    inline virtual std::string GetEntryByNumber  (guint16 group, guint16 element)
       { return(gdcmParser::GetEntryByNumber(group,element)); }
       

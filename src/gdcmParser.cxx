@@ -333,9 +333,9 @@ bool gdcmParser::CloseFile(void) {
  */
 bool gdcmParser::Write(FILE *fp, FileType type) {
 // ==============
-// TODO The stuff was rewritten using the chained list instead 
-//      of the H table
-//      so we could remove the GroupHT from the gdcmParser
+// TODO The stuff will have to be rewritten using the SeQuence based 
+//       tree-like stucture instead  of the chained list .
+//      (so we shall remove the GroupHT from the gdcmParser)
 // To be checked
 // =============
 
@@ -1231,7 +1231,7 @@ guint16 gdcmParser::UnswapShort(guint16 a) {
 /**
  * \ingroup gdcmParser
  * \brief   Parses the header of the file and load element values.
- * @return  false if file is not ACR-NEMA / DICOM
+ * @return  false if file is not ACR-NEMA / PAPYRUS / DICOM 
  */
 bool gdcmParser::LoadHeaderEntries(bool exception_on_error) throw(gdcmFormatError) {
    (void)exception_on_error;
@@ -1244,11 +1244,18 @@ bool gdcmParser::LoadHeaderEntries(bool exception_on_error) throw(gdcmFormatErro
      SkipHeaderEntry(newHeaderEntry);
      if ( (ignoreShadow==0) || (newHeaderEntry->GetGroup()%2) == 0) { 
         AddHeaderEntry(newHeaderEntry); 
-	LoadHeaderEntry(newHeaderEntry); 
      }     
-   }
+   }   
    rewind(fp);
-
+   // Be carefull : merging this two loops may cause troubles ...
+   for (ListTag::iterator i = GetListEntry().begin();                           
+        i != GetListEntry().end();                                                
+        ++i)                                                                      
+   {                                                                            
+      LoadHeaderEntry(*i);                                                      
+   }                                                                            
+   rewind(fp);                                                                     
+   
    // Load 'non string' values
       
    std::string PhotometricInterpretation = GetEntryByNumber(0x0028,0x0004);   
@@ -1274,7 +1281,8 @@ bool gdcmParser::LoadHeaderEntries(bool exception_on_error) throw(gdcmFormatErro
    std::string RecCode;
    RecCode = GetEntryByNumber(0x0008, 0x0010); // recognition code
    if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
-       RecCode == "CANRME_AILIBOD1_1." ) 
+       RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
+                                          // with "little-endian strings"
    {
          filetype = ACR_LIBIDO; 
          std::string rows    = GetEntryByNumber(0x0028, 0x0010);

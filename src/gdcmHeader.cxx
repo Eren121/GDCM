@@ -65,7 +65,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
       countGrPixel = GetEntry().count(key);
       
       // we set the SQ Depth of each Header Entry
-      
+   
    int top =-1;
    int countSQ = 0;      
    pileElem pile[100]; // Hope embedded sequence depth is no that long !
@@ -166,7 +166,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
 	 (*i)->SetPrintLevel(2);
 	 (*i)->Print();
       }      
-   } // end for           
+   } // end for        
 }
 
 /**
