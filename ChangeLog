@@ -1,3 +1,18 @@
+2004-10-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * src/gdcmDocument.cxx ftell() return properly stored in a long (i.e.
+    no longer depends on's programmers PMS = Preposterous Mood Swings ;).
+  * CLEANUP_ROUND (13) for gdcmPixelConvert
+    Substituted File::ParsePixelData() with PixelConvert::Print() new
+    method:
+    - src/gdcmParsePixels.cxx removed (only contained File::ParsePixelData())
+    - src/gdcmRLEFrame.cxx, gdcmJPEGFragment.cxx added. Added a ::Print()
+      method to those classes.
+    - src/gdcmFile.[cxx|h]:
+      -- Added a ::Print() method.
+      -- PixelConverter is now a reference instead of a member.
+      -- gdcmPython/gdcm.i: added "using namespace gdcm" in order for
+         gdcm_wrap.cxx to "understand" File::GetPixelConverter()
+
 2004-10-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Doc/CMakeLists.txt, doxygen.config.in: when dot is present the
     collaboration diagram and inheritance diagram should be generated with

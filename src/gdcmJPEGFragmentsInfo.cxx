@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/10/20 14:30:40 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,9 @@
 namespace gdcm 
 {
 
+/**
+ * \brief Default destructor
+ */
 JPEGFragmentsInfo::~JPEGFragmentsInfo()
 {
    for(JPEGFragmentsList::iterator it  = Fragments.begin();
@@ -31,4 +34,31 @@ JPEGFragmentsInfo::~JPEGFragmentsInfo()
    }
    Fragments.clear();
 }
+
+/**
+ * \brief        Print self.
+ * @param indent Indentation string to be prepended during printing.
+ * @param os     Stream to print to.
+ */
+void JPEGFragmentsInfo::Print( std::string indent, std::ostream &os )
+{
+   os << indent
+      << "----------------- JPEG fragments --------------------------------"
+      << std::endl;
+   os << indent
+      << "Total number of fragments : " << Fragments.size()
+      << std::endl;
+   int fragmentNumber = 0;
+   for(JPEGFragmentsList::iterator it  = Fragments.begin();
+                                   it != Fragments.end();
+                                 ++it)
+   {
+      os << indent
+         << "   fragment number :" << fragmentNumber++;
+      (*it)->Print( indent + "   ", os );
+      os << std::endl;
+   }
+}
+
+
 } // end namespace gdcm

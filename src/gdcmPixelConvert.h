@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 12:49:23 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/10/20 14:30:40 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,6 +47,8 @@ public:
 
    //// Predicates:
    bool IsDecompressedRGB();
+
+   void Print( std::string indent = "", std::ostream &os = std::cout );
 
 // In progress
    void GrabInformationsFromHeader( Header* header );

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 12:49:23 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/10/20 14:30:40 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #define GDCMRLEFRAME_H
 
 #include "gdcmCommon.h"
+#include <iostream>
 
 namespace gdcm 
 {
@@ -48,7 +49,9 @@ friend class PixelConvert;
    int     NumberFragments;
    long    Offset[15];
    long    Length[15];
+public:
    RLEFrame() { NumberFragments = 0; }
+   void Print( std::string indent = "", std::ostream &os = std::cout );
    
 };
 } // end namespace gdcm

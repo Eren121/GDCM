@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 12:49:22 $
-  Version:   $Revision: 1.105 $
+  Date:      $Date: 2004/10/20 14:30:40 $
+  Version:   $Revision: 1.106 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2311,7 +2311,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
          // encounter such an ill-formed image, we simply display a warning
          // message and proceed on parsing (while crossing fingers).
          std::ostringstream s;
-         int filePosition = ftell(Fp);
+         long filePosition = ftell(Fp);
          s << "Erroneous Group Length element length  on : (" \
            << std::hex << group << " , " << element 
            << ") -before- position x(" << filePosition << ")"

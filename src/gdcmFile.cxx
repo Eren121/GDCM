@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 12:49:22 $
-  Version:   $Revision: 1.145 $
+  Date:      $Date: 2004/10/20 14:30:40 $
+  Version:   $Revision: 1.146 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,8 @@ void File::Initialise()
          ImageDataSize = ImageDataSizeRaw;
       }
 
-      PixelConverter.GrabInformationsFromHeader( HeaderInternal );
+      PixelConverter = new PixelConvert;
+      PixelConverter->GrabInformationsFromHeader( HeaderInternal );
    }
    SaveInitialValues();
 }
@@ -362,11 +363,11 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
    }
                             
    FILE* fp = HeaderInternal->OpenFile();
-   if ( PixelConverter.BuildRGBImage( fp ) )
+   if ( PixelConverter->BuildRGBImage( fp ) )
    {
       memmove( destination,
-               (void*)PixelConverter.GetRGB(),
-               PixelConverter.GetRGBSize() );
+               (void*)PixelConverter->GetRGB(),
+               PixelConverter->GetRGBSize() );
     
       // now, it's an RGB image
       // Lets's write it in the Header
@@ -383,8 +384,8 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
    }
    else
    { 
-      // PixelConverter.BuildRGBImage( fp ) failed probably because
-      // PixelConverter.GetLUTRGBA() failed:
+      // PixelConverter->BuildRGBImage() failed probably because
+      // PixelConverter->GetLUTRGBA() failed:
       // (gdcm-US-ALOKA-16.dcm), contains Segmented xxx Palette Color 
       // that are *more* than 65535 long ?!? 
       // No idea how to manage such an image !
@@ -491,13 +492,13 @@ void File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    }
 
    FILE* fp = HeaderInternal->OpenFile();
-   PixelConverter.ReadAndDecompressPixelData( fp );
+   PixelConverter->ReadAndDecompressPixelData( fp );
    HeaderInternal->CloseFile();
    memmove( destination,
-            (void*)PixelConverter.GetDecompressed(),
-            PixelConverter.GetDecompressedSize() );
+            (void*)PixelConverter->GetDecompressed(),
+            PixelConverter->GetDecompressedSize() );
 
-   if ( ! PixelConverter.IsDecompressedRGB() )
+   if ( ! PixelConverter->IsDecompressedRGB() )
    {
       return;
    }
@@ -713,11 +714,11 @@ bool File::WriteBase (std::string const & fileName, FileType type)
 }
 
 /**
- * \brief Access to the underlying \ref PixelConvertver RGBA LUT
+ * \brief Access to the underlying \ref PixelConverter RGBA LUT
  */
 uint8_t* File::GetLutRGBA()
 {
-   return PixelConverter.GetLutRGBA();
+   return PixelConverter->GetLutRGBA();
 }
 
 } // end namespace gdcm

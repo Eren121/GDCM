@@ -32,13 +32,14 @@ SET(libgdcm_la_SOURCES
    gdcmGlobal.cxx
    gdcmHeader.cxx
    gdcmHeaderHelper.cxx
+   gdcmJPEGFragment.cxx
    gdcmJPEGFragmentsInfo.cxx
    gdcmJpeg8.cxx
    gdcmJpeg12.cxx
    gdcmJpeg16.cxx
    gdcmJpeg2000.cxx
-   gdcmParsePixels.cxx
    gdcmPixelConvert.cxx
+   gdcmRLEFrame.cxx
    gdcmRLEFramesInfo.cxx
    gdcmSeqEntry.cxx
    gdcmSQItem.cxx

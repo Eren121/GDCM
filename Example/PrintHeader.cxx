@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
   {
   std::cout << std::endl << "==========================================="
                   << std::endl; 
-        e2->ParsePixelData();
+        e2->GetPixelConverter()->Print();
   std::cout << std::endl << "==========================================="
                   << std::endl; 
   }

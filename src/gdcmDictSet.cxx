@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:31:58 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/10/20 14:30:40 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -136,7 +136,7 @@ EntryNamesByCatMap * DictSet::GetPubDictEntryNamesByCategory()
  * \ingroup DictSet
  * \brief   Loads a dictionary from a specified file, and add it
  *          to already the existing ones contained in this DictSet.
- * @param   fileName Absolute or relative filename containing the
+ * @param   filename Absolute or relative filename containing the
  *          dictionary to load.
  * @param   name Symbolic name that be used as identifier of the newly 
  *          created dictionary.

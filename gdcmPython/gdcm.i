@@ -68,6 +68,7 @@ void gdcmPythonVoidFuncArgDelete(void *arg)
     }
 }
 
+using namespace gdcm;
 %}
 typedef  unsigned short guint16;
 typedef  unsigned int guint32;

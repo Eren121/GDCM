@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 12:49:22 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2004/10/20 14:30:40 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,6 +51,9 @@ public:
    /// Accessor to \ref ImageDataSizeRaw
    size_t GetImageDataSizeRaw(){ return ImageDataSizeRaw; };
 
+   /// Accessor to \ref PixelConverter
+   PixelConvert* GetPixelConverter(){ return PixelConverter; };
+
    uint8_t* GetImageData();
    size_t GetImageDataIntoVector(void* destination, size_t maxSize);
    uint8_t* GetImageDataRaw();
@@ -69,10 +72,6 @@ public:
    bool WriteDcmImplVR(std::string const& fileName);
    bool WriteDcmExplVR(std::string const& fileName);
    bool WriteAcr      (std::string const& fileName);
-
-   // Don't look any longer for the code : 
-   // It's in file gdcmParsePixels.cxx
-   bool ParsePixelData();
 
    virtual bool SetEntryByNumber(std::string const& content,
                                  uint16_t group, uint16_t element)
@@ -113,12 +112,13 @@ private:
    ///  the destructor is in charge of deletion.
    bool SelfHeader;
    
-   /// wether already parsed 
+   /// Wether already parsed or not
    bool Parsed;
       
-   /// FIXME
-   PixelConvert PixelConverter;
-//
+   /// Utility pixel converter
+   PixelConvert* PixelConverter;
+
+/// FIXME
 // --------------- Will be moved to a PixelData class
 //
 

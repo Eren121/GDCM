@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 12:49:22 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/10/20 14:30:40 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -710,7 +710,7 @@ void PixelConvert::ConvertHandleColor()
 
 /**
  * \brief Predicate to know wether the image[s] (once decompressed) is RGB.
- * \note See comments of \ref HandleColor
+ * \note See comments of \ref ConvertHandleColor
  */
 bool PixelConvert::IsDecompressedRGB()
 {
@@ -1044,6 +1044,49 @@ bool PixelConvert::BuildRGBImage( FILE* fp )
    return true;
 }
 
+/**
+ * \brief        Print self.
+ * @param indent Indentation string to be prepended during printing.
+ * @param os     Stream to print to.
+ */
+void PixelConvert::Print( std::string indent, std::ostream &os )
+{
+   os << indent
+      << "--- Pixel information -------------------------"
+      << std::endl;
+   os << indent
+      << "Pixel Data: offset " << PixelOffset
+      << " x" << std::hex << PixelOffset << std::dec
+      << "   length " << PixelDataLength
+      << " x" << std::hex << PixelDataLength << std::dec
+      << std::endl;
+
+   if ( IsRLELossless )
+   {
+      if ( RLEInfo )
+      {
+         RLEInfo->Print( indent, os );
+      }
+      else
+      {
+         dbg.Verbose(0, "PixelConvert::Print: set as RLE file "
+                        "but NO RLEinfo present.");
+      }
+   }
+
+   if ( IsJPEG2000 || IsJPEGLossless )
+   {
+      if ( JPEGInfo )
+      {
+         JPEGInfo->Print( indent, os );
+      }
+      else
+      {
+         dbg.Verbose(0, "PixelConvert::Print: set as JPEG file "
+                        "but NO JPEGinfo present.");
+      }
+   }
+}
 
 } // end namespace gdcm
 

@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   {
       std::cout << std::endl << "==========================================="
                   << std::endl; 
-         f1->ParsePixelData();
+         f1->GetPixelConverter()->Print();
       std::cout << std::endl << "==========================================="
                   << std::endl; 
    }      
