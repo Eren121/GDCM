@@ -79,7 +79,7 @@ gdcmFile::gdcmFile(std::string & filename) {
 /**
  * \ingroup   gdcmFile
  * \brief canonical destructor
- * \Note  If the gdcmHeader is created by the gdcmFile, it is destroyed
+ * \note  If the gdcmHeader is created by the gdcmFile, it is destroyed
  *        by the gdcmFile
  */
 gdcmFile::~gdcmFile(void) {

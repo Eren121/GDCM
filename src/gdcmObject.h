@@ -60,7 +60,7 @@ protected:
    ~gdcmObject(void);
 
 
-void FillObject(std::list<gdcmElement> elemList);
+   void FillObject(std::list<gdcmElement> elemList);
 
 /**
 * \brief iterator on the first Header Entry (i.e Dicom Element), 
@@ -85,13 +85,16 @@ void FillObject(std::list<gdcmElement> elemList);
 */  
    ListTag *plistEntries;
 /**
-* \brief
+* \brief detail level to be printed
 */   
    int printLevel;
    
 /// used to pass variables to FillObject function
-/// Work as 'global' variables
-   std::list<gdcmHeaderEntry *>::iterator debInsertion, finInsertion, i,j;
+/// Works as 'global' variable
+/**
+* \brief used to pass variables to FillObject function
+*        Works as 'global' variable
+*/   std::list<gdcmHeaderEntry *>::iterator debInsertion, finInsertion, i,j;
 
 private:
 

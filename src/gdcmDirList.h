@@ -17,13 +17,16 @@ public :
 
    std::string GetDirName(void);
 
+/// \
    static const char SEPARATOR_X;
-   static const char SEPARATOR_WIN;
+/// /  
+static const char SEPARATOR_WIN;
+/// depending on the O.S.
    static const std::string SEPARATOR;
 
 private :
    void Explore(std::string dirName,bool recursive=false);
-
+/// name of the root directory to explore
    std::string name;
 };
 

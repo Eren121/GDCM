@@ -5,6 +5,8 @@
 
 #define BITS_IN_JSAMPLE 12
 
+#define DEBUG 0
+
 // BITS_IN_JSAMPLE is a compile time defined options.
 // We need both 8 an 12;
 // To avoid renaming *all* the Jpeg functions,
@@ -71,8 +73,6 @@
 #define jpeg_destroy		jDestroy
 #define jpeg_resync_to_restart	jResyncRestart
 
-#define DEBUG 0
-
 /*
  * <setjmp.h> is used for the optional error recovery mechanism shown in
  * the second part of the example.
@@ -132,27 +132,26 @@ extern "C" {
 
 //-----------------------------------------------------------------------------
 struct my_error_mgr {
-  struct jpeg_error_mgr pub;	/* "public" fields */
-  jmp_buf setjmp_buffer;	/* for return to caller */
+   struct jpeg_error_mgr pub;	/* "public" fields */
+   jmp_buf setjmp_buffer;	/* for return to caller */
 };
 
+//-----------------------------------------------------------------------------
 typedef struct my_error_mgr * my_error_ptr;
 
-//-----------------------------------------------------------------------------
 /*
  * Here's the routine that will replace the standard error_exit method:
  */
-METHODDEF(void)
-my_error_exit (j_common_ptr cinfo) {
-  /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
-  my_error_ptr myerr = (my_error_ptr) cinfo->err;
+METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
+   /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+   my_error_ptr myerr = (my_error_ptr) cinfo->err;
 
-  /* Always display the message. */
-  /* We could postpone this until after returning, if we chose. */
-  (*cinfo->err->output_message) (cinfo);
+   /* Always display the message. */
+   /* We could postpone this until after returning, if we chose. */
+   (*cinfo->err->output_message) (cinfo);
 
-  /* Return control to the setjmp point */
-  longjmp(myerr->setjmp_buffer, 1);
+   /* Return control to the setjmp point */
+   longjmp(myerr->setjmp_buffer, 1);
 }
 
 
@@ -177,7 +176,6 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    /* This struct contains the JPEG decompression parameters and pointers to
     * working space (which is allocated as needed by the JPEG library).
     */
-
    struct jpeg_decompress_struct cinfo;
   
    /* -------------- inside, we found :
@@ -204,11 +202,9 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    // typedef JSAMPROW *JSAMPARRAY;	/* ptr to some rows (a 2-D sample array) */
    // typedef JSAMPARRAY *JSAMPIMAGE;	/* a 3-D sample array: top index is color */
 
-
    int row_stride;		/* physical row width in output buffer */
   
    if (DEBUG) printf("entree dans gdcmFile::gdcm_read_JPEG_file12, depuis gdcmJpeg\n");
-
 
    /* In this example we want to open the input file before doing anything else,
     * so that the setjmp() error recovery below can assume the file is open.
@@ -253,11 +249,11 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    if (DEBUG) {   
       printf("--------------Header contents :----------------\n");
       printf("image_width %d image_height %d\n", 
-			      cinfo.image_width , cinfo.image_height);
+              cinfo.image_width , cinfo.image_height);
       printf("bits of precision in image data  %d \n", 
-			      cinfo.output_components);
+              cinfo.output_components);
       printf("nb of color components returned  %d \n", 
-			      cinfo.data_precision);
+              cinfo.data_precision);
    }
 
 
@@ -301,7 +297,7 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
   	
    /* Make a one-row-high sample array that will go away when done with image */
    buffer = (*cinfo.mem->alloc_sarray)
-	   ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+	    ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
    /* Step 6: while (scan lines remain to be read) */
    if (DEBUG)  printf("Entree Step 6\n"); 
@@ -313,7 +309,7 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
     */
 
    if (DEBUG)  printf ("cinfo.output_height %d  cinfo.output_width %d\n",
- 		   cinfo.output_height,cinfo.output_width);
+ 		       cinfo.output_height,cinfo.output_width);
 
    pimage=(char *)image_buffer;
 
@@ -336,7 +332,7 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
  
   /* Step 7: Finish decompression */
    if (DEBUG)  printf("Entree Step 7\n");
-  (void) jpeg_finish_decompress(&cinfo);
+   (void) jpeg_finish_decompress(&cinfo);
    /* We can ignore the return value since suspension is not possible
     * with the stdio data source.
     */

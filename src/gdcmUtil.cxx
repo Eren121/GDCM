@@ -179,9 +179,9 @@ void Tokenize (const std::string& str,
 
 
 ///////////////////////////////////////////////////////////////////////////
-/*
+/**
  * \brief  to prevent a flashing screen when non-printable character
- * @param 
+ * @param v characters array to remove non printable characters from
  */
 char *_cleanString(char *v) {
    char *d;
@@ -197,9 +197,9 @@ char *_cleanString(char *v) {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-/*
+/**
  * \brief   to prevent a flashing screen when non-printable character
- * @param 
+ * @param s string to remove non printable characters from
  */
 std::string _CreateCleanString(std::string s) {
    std::string str=s;
@@ -220,9 +220,9 @@ std::string _CreateCleanString(std::string s) {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-/*
+/**
  * \brief   Add a SEPARATOR to the end of the name is necessary
- * @param   
+ * @param name file/directory name to normalize 
  */
 void NormalizePath(std::string &name)
 {
@@ -237,9 +237,9 @@ const std::string SEPARATOR = "/";
 }
 
 ///////////////////////////////////////////////////////////////////////////
-/*
+/**
  * \brief   Get the (directory) path from a full path file name
- * @param 
+ * @param fullName file/directory name to extract Path from
  */
 std::string GetPath(std::string &fullName)
 {
@@ -253,9 +253,9 @@ std::string GetPath(std::string &fullName)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-/*
+/**
  * \brief   Get the (last) name of a full path file name
- * @param 
+ * @param fullName file/directory name to extract end name from
  */
 std::string GetName(std::string &fullName)
 {   

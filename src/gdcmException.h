@@ -24,37 +24,37 @@ public:
    explicit gdcmException(const std::string &from, const std::string &error = "")
     throw();
 
-   /*
-    * virtual destructor makes this class dynamic
+   /**
+    * \brief virtual destructor makes this class dynamic
     */
    virtual ~gdcmException() throw() {
    }
 
-   // exception caught within exception class: print error message and die
+   /// exception caught within exception class: print error message and die
    static void fatal(const char *from) throw();
 
-   // returns error message
+   /// returns error message
    const std::string &getError(void) const throw() {
     return error;
    }
 
-   // try to discover this (dynamic) class name
+   /// try to discover this (dynamic) class name
    virtual std::string getName() const throw();
 
-   // returns exception name string (overloads std::exception::what)
+   /// returns exception name string (overloads std::exception::what)
    virtual const char *what() const throw() {
     return (const char *) *this;
    }
 
-   // returns exception name string
+   /// returns exception name string
    operator const char *() const throw();
 
    friend std::ostream& operator<<(std::ostream &os, const gdcmException &e);
 
 protected:
-   // error message
+   /// error message part 1
    std::string from;
-   // error message
+   /// error message part 2
    std::string error;
 };
 
@@ -65,10 +65,9 @@ protected:
  */
 class GDCM_EXPORT gdcmFileError : public gdcmException {
 public:
-   /*
-    * Builds an file-related exception with minimal information: name of
-    * the thrower method and error message
-    *
+   /**
+    * \brief Builds an file-related exception with minimal information: name of
+    *               the thrower method and error message
     * @param from name of the thrower
     * @param error error description string
     */

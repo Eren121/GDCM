@@ -15,8 +15,8 @@
 /**
  * \ingroup gdcmHeader
  * \brief  Constructor 
- * @param   InFilename
- * @param   exception_on_error
+ * @param   InFilename name of the file whose header we want to analyze
+ * @param   exception_on_error whether we want to throw an exception or not
  * @param   enable_sequences = true to allow the header 
  *          to be parsed *inside* the SeQuences, 
  *          when they have an actual length 
@@ -63,7 +63,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
 /**
  * \ingroup gdcmHeader
  * \brief Constructor  
- * @param   exception_on_error
+ * @param   exception_on_error whether we want to throw an exception or not
  */
 gdcmHeader::gdcmHeader(bool exception_on_error) :
    gdcmParser(exception_on_error)
@@ -790,7 +790,6 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
  * \ingroup   gdcmHeader
  * \brief anonymize a Header (removes Patient's personal info)
  *        (read the code to see which ones ...)
- * @param 
  */
 bool gdcmHeader::anonymizeHeader() {
 

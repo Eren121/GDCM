@@ -438,7 +438,7 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
       SetEntryLengthByNumber(20, 0x0002, 0x0010);
    }
 
-/* TODO : rewrite later
+/* TODO : rewrite later, if really usefull
 
    if ( (type == ImplicitVR) || (type == ExplicitVR) )
       UpdateGroupLength(false,type);
@@ -1979,7 +1979,7 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
          return 0;
       TotalLength += 4;  // We even have to decount the group and element 
      
-      if ( g != 0xfffe && g!=0xb00c ) /*for bogus header */ 
+      if ( g != 0xfffe && g!=0xb00c ) //for bogus header  
       {
          char msg[100]; // for sprintf. Sorry
          sprintf(msg,"wrong group (%04x) for an item sequence (%04x,%04x)\n",g, g,n);
@@ -1987,7 +1987,7 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
          errno = 1;
          return 0;
       }
-      if ( n == 0xe0dd || ( g==0xb00c && n==0x0eb6 ) ) /* for bogus header  */ 
+      if ( n == 0xe0dd || ( g==0xb00c && n==0x0eb6 ) ) // for bogus header 
          FoundSequenceDelimiter = true;
       else if ( n != 0xe000 )
       {
@@ -2404,15 +2404,15 @@ gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void) {
       // header parsing has to be considered as finished.
       return (gdcmHeaderEntry *)0;
 
-/*  Pb : how to propagate the element length (used in SkipHeaderEntry)
+// Pb : how to propagate the element length (used in SkipHeaderEntry)
 //       direct call to SkipBytes ?
    
-   if (ignoreShadow == 1 && g%2 ==1)
+//   if (ignoreShadow == 1 && g%2 ==1)
       // if user wants to skip shadow groups
       // and current element *is* a shadow element
       // we don't create anything
-      return (gdcmHeaderEntry *)1; // to tell caller it's NOT finished
-*/   
+//      return (gdcmHeaderEntry *)1; // to tell caller it's NOT finished
+  
    NewEntry = NewHeaderEntryByNumber(g, n);
    FindHeaderEntryVR(NewEntry);
    FindHeaderEntryLength(NewEntry);

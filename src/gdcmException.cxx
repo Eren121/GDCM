@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------
 // gdcmException
 
-/*
+/**
  * \ingroup gdcmException
  * \brief constructor
  * @param f
@@ -27,7 +27,7 @@ catch(...) {
 #endif
 
 
-/*
+/**
  * \ingroup gdcmException
  * \brief fatal
  * @param from 
@@ -50,7 +50,7 @@ catch(...) {
   }  
 }
 
-/*
+/**
  * \ingroup gdcmException
  * \brief getName
  * @return string
@@ -86,20 +86,18 @@ catch(...) {
   }
 }
 
-/*
+/**
  * \ingroup gdcmException
  * \brief gdcmException::operator
- * @param   
  */
  gdcmException::operator const char *() const throw() {
   return getName().c_str();
 }
 
 //-----------------------------------------------------------------------------
-/*
+/**
  * \ingroup gdcmException
  * \brief gdcmException::operator <<
- * @param   
  */
  std::ostream& operator<<(std::ostream &os, const gdcmException &e) {
   try {  

@@ -74,10 +74,22 @@ public:
    void SetProgressMethodArgDelete(gdcmMethod *);
    void SetEndMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
    void SetEndMethodArgDelete(gdcmMethod *);
-
-   inline float GetProgress(void)  {return(progress);};
-   inline void  AbortProgress(void){abort=true;      };
-   inline bool  IsAborted(void)    {return(abort);   };
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   GetProgress.
+ */ 
+   inline float GetProgress(void)  
+      {return(progress);};
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   AbortProgress.
+ */   inline void  AbortProgress(void)
+      {abort=true;      };
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   IsAborted.
+ */   inline bool  IsAborted(void)
+      {return(abort);   };
    
 // Adding
   gdcmDicomDirPatient * NewPatient(void);
@@ -131,17 +143,27 @@ private:
 */   
    ListDicomDirPatient patients;
 
+/// pointer to the initialisation method for any progress bar   
    gdcmMethod *startMethod;
-   gdcmMethod *progressMethod;
+/// pointer to the incrementation method for any progress bar
+    gdcmMethod *progressMethod;
+/// pointer to the tremination method for any progress bar
    gdcmMethod *endMethod;
+/// pointer to the ??? method for any progress bar   
    gdcmMethod *startMethodArgDelete;
+/// pointer to the ??? method for any progress bar
    gdcmMethod *progressMethodArgDelete;
+/// pointer to the ??? method for any progress bar
    gdcmMethod *endMethodArgDelete;
+/// pointer to the ??? for any progress bar   
    void *startArg;
+/// pointer to the ??? for any progress bar
    void *progressArg;
+/// pointer to the ??? for any progress bar   
    void *endArg;
-
+/// value of the ??? for any progress bar
    float progress;
+/// value of the ??? for any progress bar   
    bool abort;
 };
 

@@ -1,4 +1,6 @@
-
+2004-03-24  Jean-Pierre Roux
+     * FIX a lot of little surface modifications to be doxygen 1.3.6 compliant
+     
 2004-03-23  Jean-Pierre Roux
      * FIX Now gdcmFile::SwapZone doesn't seg faults any longer for 
            big endian made volumes

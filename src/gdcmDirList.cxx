@@ -21,12 +21,8 @@
    #include <unistd.h>
 #endif
 
-// ================= WARNING 
-// ================= DOXYGEN DOESN'T WORK FOR THIS FILE ?!?
-// =================
-
 // Constructor / Destructor
-/*
+/**
  * \ingroup gdcmDirList
  * \brief Constructor  
  * @param  dirName root directory name
@@ -40,7 +36,7 @@ gdcmDirList::gdcmDirList(std::string dirName,bool recursive)
    Explore(name,recursive);
 }
 
-/*
+/**
  * \ingroup gdcmDirList
  * \brief  Destructor
  */
@@ -53,7 +49,7 @@ gdcmDirList::~gdcmDirList(void)
 
 //-----------------------------------------------------------------------------
 // Public
-/*
+/**
  * \ingroup gdcmDirList
  * \brief   Get the directory name
  * @return the directory name 
@@ -69,7 +65,7 @@ std::string gdcmDirList::GetDirName(void)
 //-----------------------------------------------------------------------------
 // Private
 
-/*
+/**
  * \ingroup gdcmDirList
  * \brief   Explore a directory with possibility of recursion
  * @param  dirName directory to explore

@@ -60,7 +60,7 @@ void gdcmDicomDirSerie::Print(std::ostream &os)
 
 //-----------------------------------------------------------------------------
 // Public
-/*
+/**
  * \ingroup gdcmDicomSerie
  * \brief   adds a new Image to a partially created DICOMDIR
  */

@@ -280,8 +280,8 @@ int gdcmHeaderHelper::GetNumberOfScalarComponents() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief This function is intended to user that DOESN'T want 
-  * \to get RGB pixels image when it's stored as a PALETTE COLOR image
-  * \ - the (vtk) user is supposed to know how deal with LUTs - 
+  *  to get RGB pixels image when it's stored as a PALETTE COLOR image
+  *   - the (vtk) user is supposed to know how deal with LUTs - 
   * \warning to be used with GetImagePixelsRaw()
   * @return 1 if Gray level, 3 if Color (RGB or YBR - NOT 'PALETTE COLOR' -)
   */
@@ -788,7 +788,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
 
 bool gdcmSerieHeaderHelper::ImageNumberOrdering() {
   int min, max, pos;
-  int n = 0;//CoherentGdcmFileList.size(); //O(N) operation !!
+  int n = 0;//CoherentGdcmFileList.size() is a O(N) operation !!
   unsigned char *partition;
   
   std::list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();

@@ -26,21 +26,23 @@
 
 // Constructor / Destructor
 
-/*
+/**
  * \ingroup gdcmDicomDir
- * \brief   Constructor : Parses recursively the directory and creates the DicomDir
- * \                      or uses an already built DICOMDIR, depending on 'parseDir' value
- * @param   Name          name of the root directory (parseDir = true)
- *                        name of the DICOMDIR       (parseDir = false)
- * @param   parseDir      - true if user passed an entry point 
+ * \brief Constructor Parses recursively the directory and creates the DicomDir
+ *                        or uses an already built DICOMDIR, depending on 'parseDir' value
+ * @param FileName        name 
+                        - of the root directory (parseDir = true)
+ *                      - of the DICOMDIR       (parseDir = false)
+ * @param parseDir boolean
+ *                      - true if user passed an entry point 
  *                        and wants to explore recursively the directories
- *                        - false if user passed an already built DICOMDIR file
+ *                      - false if user passed an already built DICOMDIR file
  *                        and wants to use it 
- * @param   exception_on_error whether we want to throw an exception or not
+ * @param exception_on_error whether we want to throw an exception or not
  */
-gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
+gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
                            bool exception_on_error):
-   gdcmParser(Name,exception_on_error,true) // true : enable SeQuences
+   gdcmParser(FileName,exception_on_error,true) // true : enable SeQuences
 {
  // que l'on ai passe un root directory ou un DICOMDIR
  // et quelle que soit la valeur de parseDir,
@@ -69,7 +71,7 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
      // if parseDir == false, it should be tagged as an error
       dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry list empty");
 
-      if(strlen(Name)==1 && Name[0]=='.') { // user passed '.' as Name
+      if(strlen(FileName)==1 && FileName[0]=='.') { // user passed '.' as Name
                                             // we get current directory name
          char*dummy=(char*) malloc(1000);
 #ifdef _MSC_VER
@@ -95,7 +97,7 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
    } 
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   Constructor : creates an empty gdcmDicomDir
  * @param   exception_on_error whether we want to throw an exception or not
@@ -122,7 +124,7 @@ gdcmDicomDir::gdcmDicomDir(bool exception_on_error):
 }
 
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief  Canonical destructor 
  */
@@ -143,7 +145,7 @@ gdcmDicomDir::~gdcmDicomDir()
 
 //-----------------------------------------------------------------------------
 // Print
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief  Canonical Printer 
  */
@@ -163,7 +165,7 @@ void gdcmDicomDir::Print(std::ostream &os)
 
 //-----------------------------------------------------------------------------
 // Public
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current header was properly parsed
@@ -184,7 +186,7 @@ bool gdcmDicomDir::IsReadable(void)
    return(true);
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief  fills the whole structure, starting from a root Directory
  */
@@ -194,11 +196,12 @@ void gdcmDicomDir::ParseDirectory(void)
    CreateDicomDir();
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   Set the start method to call when the parsing of the directory starts
  * @param   method Method to call
  * @param   arg    Argument to pass to the method
+ * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
 void gdcmDicomDir::SetStartMethod(gdcmMethod *method,void *arg,gdcmMethod *argDelete)
@@ -211,7 +214,7 @@ void gdcmDicomDir::SetStartMethod(gdcmMethod *method,void *arg,gdcmMethod *argDe
    startMethodArgDelete=argDelete;
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   Set the method to delete the argument
  *          The argument is destroyed when the method is changed or when the
@@ -223,11 +226,12 @@ void gdcmDicomDir::SetStartMethodArgDelete(gdcmMethod *method)
    startMethodArgDelete=method;
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   Set the progress method to call when the parsing of the directory progress
  * @param   method Method to call
  * @param   arg    Argument to pass to the method
+ * @param   argDelete    Argument  
  * \warning In python : the arg parameter isn't considered
  */
 void gdcmDicomDir::SetProgressMethod(gdcmMethod *method,void *arg,gdcmMethod *argDelete)
@@ -240,7 +244,7 @@ void gdcmDicomDir::SetProgressMethod(gdcmMethod *method,void *arg,gdcmMethod *ar
    progressMethodArgDelete=argDelete;
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   Set the method to delete the argument
  *          The argument is destroyed when the method is changed or when the 
@@ -252,14 +256,15 @@ void gdcmDicomDir::SetProgressMethodArgDelete(gdcmMethod *method)
    progressMethodArgDelete=method;
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   Set the end method to call when the parsing of the directory ends
  * @param   method Method to call
  * @param   arg    Argument to pass to the method
+ * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
-void gdcmDicomDir::SetEndMethod(gdcmMethod *method,void *arg,gdcmMethod *argDelete)
+void gdcmDicomDir::SetEndMethod(gdcmMethod *method, void *arg, gdcmMethod *argDelete)
 {
    if((endArg)&&(endMethodArgDelete))
       endMethodArgDelete(endArg);
@@ -269,7 +274,7 @@ void gdcmDicomDir::SetEndMethod(gdcmMethod *method,void *arg,gdcmMethod *argDele
    endMethodArgDelete=argDelete;
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   Set the method to delete the argument
  *          The argument is destroyed when the method is changed or when the class
@@ -373,7 +378,7 @@ void gdcmDicomDir::WriteDicomDirEntries(FILE *_fp)
 //-----------------------------------------------------------------------------
 // Protected
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief create a gdcmHeader-like chained list from a root Directory 
  * @param path entry point of the tree-like structure
@@ -418,7 +423,10 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
    CallEndMethod();
 }
 
-
+/**
+ * \ingroup gdcmDicomDir
+ * \brief modifies the limits of a gdcmObject, created from a DICOMDIR file  
+ */
 
 void gdcmDicomDir::CheckBoundaries()
 {   
@@ -453,7 +461,7 @@ void gdcmDicomDir::CheckBoundaries()
 } 
 
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   adds a new Patient to a partially created DICOMDIR
  */
@@ -516,7 +524,7 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
    return p;   
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   CallStartMethod
  */
@@ -527,7 +535,7 @@ void gdcmDicomDir::CallStartMethod(void)
    if(startMethod)
       startMethod(startArg);
 }
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   CallProgressMethod
  */
@@ -536,7 +544,7 @@ void gdcmDicomDir::CallProgressMethod(void)
    if(progressMethod)
       progressMethod(progressArg);
 }
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   CallEndMethod
  */
@@ -549,7 +557,7 @@ void gdcmDicomDir::CallEndMethod(void)
 
 //-----------------------------------------------------------------------------
 // Private
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief create a 'gdcmDicomDir' from a DICOMDIR gdcmHeader 
  */
@@ -609,12 +617,12 @@ void gdcmDicomDir::CreateDicomDir()
    if(begin!=end)
       AddObjectToEnd(type,begin,--end2);
 }
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   AddObjectToEnd
  * @param   type
- * @param   begin
- * @param   end
+ * @param   begin iterator on the first HeaderEntry within the chained List
+ * @param   end iterator on the last HeaderEntry within the chained List
  */
 void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,ListTag::iterator end)
 {
@@ -641,11 +649,11 @@ void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,
    }
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief Well ... Not realy to end, there is only one occurence  
- * @param   begin
- * @param   end
+ * @param   begin iterator on the first HeaderEntry within the chained List
+ * @param   end iterator on the last HeaderEntry within the chained List
 */
 void gdcmDicomDir::AddDicomDirMetaToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
@@ -654,22 +662,22 @@ void gdcmDicomDir::AddDicomDirMetaToEnd(ListTag::iterator begin,ListTag::iterato
    metaElems = new gdcmDicomDirMeta(begin,end,&tagHT,&listEntries);
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief  AddDicomDirPatientToEnd 
- * @param   begin
- * @param   end
+ * @param   begin iterator on the first HeaderEntry within the chained List
+ * @param   end iterator on the last HeaderEntry within the chained List
 */
 void gdcmDicomDir::AddDicomDirPatientToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
    patients.push_back(new gdcmDicomDirPatient(begin,end,&tagHT, &listEntries));
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief  AddDicomDirStudyToEnd 
- * @param   begin
- * @param   end
+ * @param   begin iterator on the first HeaderEntry within the chained List
+ * @param   end iterator on the last HeaderEntry within the chained List
  */
  void gdcmDicomDir::AddDicomDirStudyToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
@@ -680,11 +688,11 @@ void gdcmDicomDir::AddDicomDirPatientToEnd(ListTag::iterator begin,ListTag::iter
      (*itp)->AddDicomDirStudy(new gdcmDicomDirStudy(begin,end,&tagHT, &listEntries));
    }
 }
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief  AddDicomDirSerieToEnd 
- * @param   begin
- * @param   end
+ * @param   begin iterator on the first HeaderEntry within the chained List
+ * @param   end iterator on the last HeaderEntry within the chained List
  */
 void gdcmDicomDir::AddDicomDirSerieToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
@@ -702,11 +710,11 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(ListTag::iterator begin,ListTag::iterat
    }
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   AddDicomDirImageToEnd
- * @param   begin
- * @param   end
+ * @param   begin iterator on the first HeaderEntry within the chained List
+ * @param   end iterator on the last HeaderEntry within the chained List
  */
  void gdcmDicomDir::AddDicomDirImageToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
@@ -730,7 +738,7 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(ListTag::iterator begin,ListTag::iterat
    }
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief  for each Header of the chained list, add/update the Patient/Study/Serie/Image info 
  * @param   path path of the root directory
@@ -782,7 +790,7 @@ void gdcmDicomDir::SetElements(std::string &path, ListHeader &list)
    }
 }
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   adds to the HTable and at the end of the Chained List
  *          the gdcmEntries (Dicom Elements) corresponding to the given type
@@ -893,13 +901,19 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader
       //wasUpdated = 1;	// is private
    }     
 }
-
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   compares two dgcmHeaders
+ */
 bool gdcmDicomDir::HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2)
 {
    return(*header1<*header2);
 }
 
-
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   Sets the accurate value for the (0x0004,0x1220) element of a DICOMDIR
+ */
 
 void gdcmDicomDir::UpdateDirectoryRecordSequenceLength() {
    int offset = 0;

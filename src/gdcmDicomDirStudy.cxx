@@ -62,7 +62,7 @@ void gdcmDicomDirStudy::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 
-/*
+/**
  * \ingroup gdcmDicomStudy
  * \brief   adds a new Serie at the begining of the SerieList
  *          of a partially created DICOMDIR

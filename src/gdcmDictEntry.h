@@ -102,22 +102,31 @@ private:
    guint16 group;   // e.g. 0x0010
    /// DicomElement number
    guint16 element; // e.g. 0x0103
-   /// Value Representation i.e. some clue about the nature
-   /// of the data represented e.g. "FD" short for
-   /// "Floating Point Double"
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   Value Representation i.e. some clue about the nature
+    *          of the data represented 
+    *          e.g. "FD" short for "Floating Point Double"
+    */ 
    std::string vr;
 	                	                
 	// CLEANME: find the official dicom name for this field !
-	
-   ///Fourth field containing some semantics.
-   ///(Group Name abbr.)
-   /// DON'T USER ANY LONGER !	
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   Fourth field containing some semantics
+    *          (Group Name abbr.) 
+    *          DON'T USER ANY LONGER !
+    */ 	
    std::string fourth; 
-   /// e.g. "Patient_Name"                    
+   /// e.g. "Patient's Name"                    
    std::string name;      
    /// Redundant with (group, element) but we add it
    /// on efficiency purposes.
-   TagKey  key;
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   Redundant with (group, element) but we add it
+    *          on efficiency purposes. 
+    */ 	   TagKey  key;
                      
 	// DCMTK has many fields for handling a DictEntry (see below). What are the
 	// relevant ones for gdcmlib ?

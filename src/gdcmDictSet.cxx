@@ -85,8 +85,9 @@ std::list<std::string> *gdcmDictSet::GetPubDictEntryNames(void)
 
 /** 
  * \ingroup gdcmDictSet
- * \brief   - Consider all the entries of the public dicom dictionnary.
- *           Build an hashtable whose keys are the names of the groups
+ * \brief   
+ *          - Consider all the entries of the public dicom dictionnary.
+ *          - Build an hashtable whose keys are the names of the groups
  *           (fourth field in each line of dictionary) and whose corresponding
  *           values are lists of all the dictionnary entries among that
  *           group. Note that apparently the Dicom standard doesn't explicitely

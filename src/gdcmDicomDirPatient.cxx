@@ -61,7 +61,7 @@ void gdcmDicomDirPatient::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 
-/*
+/**
  * \ingroup gdcmDicomDir
  * \brief   adds a new Patient at the begining of the PatientList
  *          of a partially created DICOMDIR

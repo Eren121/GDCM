@@ -581,7 +581,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
    size_t size;
 
    // If the data structure of vtk for image/volume representation
-   // were straigthforwards the following would suffice:
+   // were straigthforwards the following would be enough:
    //    GdcmFile.GetImageDataIntoVector((void*)Dest, size);
    // But vtk chooses to invert the lines of an image, that is the last
    // line comes first (for some axis related reasons?). Hence we need

@@ -157,27 +157,26 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @return 1 on success, 0 on error
  */
  
-//GLOBAL(bool)
 bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
    char *pimage;
 
    /* This struct contains the JPEG decompression parameters and pointers to
-   * working space (which is allocated as needed by the JPEG library).
-   */
+    * working space (which is allocated as needed by the JPEG library).
+    */
    struct jpeg_decompress_struct cinfo;
 
    /* -------------- inside, we found :
-   JDIMENSION image_width;	// input image width 
-   JDIMENSION image_height;	// input image height 
-   int input_components;		// nb of color components in input image 
-   J_COLOR_SPACE in_color_space;	// colorspace of input image 
-   double input_gamma;		// image gamma of input image 
-     -------------- */
+    * JDIMENSION image_width;	// input image width 
+    * JDIMENSION image_height;	// input image height 
+    * int input_components;		// nb of color components in input image 
+    * J_COLOR_SPACE in_color_space;	// colorspace of input image 
+    * double input_gamma;		// image gamma of input image 
+    * -------------- */
 
    /* We use our private extension JPEG error handler.
-   * Note that this struct must live as long as the main JPEG parameter
-   * struct, to avoid dangling-pointer problems.
-   */
+    * Note that this struct must live as long as the main JPEG parameter
+    * struct, to avoid dangling-pointer problems.
+    */
    struct my_error_mgr jerr;
    /* More stuff */
 
@@ -189,28 +188,26 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
    // typedef JSAMPLE FAR *JSAMPROW;	/* ptr to one image row of pixel samples. */
    // typedef JSAMPROW *JSAMPARRAY;	/* ptr to some rows (a 2-D sample array) */
    // typedef JSAMPARRAY *JSAMPIMAGE;	/* a 3-D sample array: top index is color */
+
    int row_stride;		/* physical row width in output buffer */
   
-   if (DEBUG) printf("entree dans gdcmFile::gdcm_read_JPEG_file, depuis gdcmJpeg\n");
+   if (DEBUG) printf("entree dans gdcmFile::gdcm_read_JPEG_file12, depuis gdcmJpeg\n");
 
-
-  /* In this example we want to open the input file before doing anything else,
-   * so that the setjmp() error recovery below can assume the file is open.
-   * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
-   * requires it in order to read binary files.
-   */
-
-  /* Step 1: allocate and initialize JPEG decompression object */
-  
+   /* In this example we want to open the input file before doing anything else,
+    * so that the setjmp() error recovery below can assume the file is open.
+    * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
+    * requires it in order to read binary files.
+    */
+    
+  /* Step 1: allocate and initialize JPEG decompression object */  
   if (DEBUG)printf("Entree Step 1\n");
-
+  
   /* We set up the normal JPEG error routines, then override error_exit. */
   
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = my_error_exit;
   
-  /* Establish the setjmp return context for my_error_exit to use. */
-  
+  /* Establish the setjmp return context for my_error_exit to use. */  
   if (setjmp(jerr.setjmp_buffer)) {
     /* If we get here, the JPEG code has signaled an error.
      * We need to clean up the JPEG object, close the input file, and return.
@@ -248,15 +245,14 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
    }
 
 
-/*
-  JDIMENSION image_width;	// input image width 
-  JDIMENSION image_height;	// input image height 
-  int output_components;	// # of color components returned 
-  J_COLOR_SPACE in_color_space;	// colorspace of input image 
-  double input_gamma;		// image gamma of input image
-  int data_precision;		// bits of precision in image data 
- 
-*/
+   /*
+    * JDIMENSION image_width;	// input image width 
+    * JDIMENSION image_height;	// input image height 
+    * int output_components;	// # of color components returned 
+    * J_COLOR_SPACE in_color_space;	// colorspace of input image 
+    * double input_gamma;		// image gamma of input image
+    * int data_precision;		// bits of precision in image data 
+    */
 
    /* Step 4: set parameters for decompression */
    if (DEBUG) printf("Entree Step 4\n");
@@ -267,23 +263,23 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
    /* Step 5: Start decompressor */
    if (DEBUG) printf("Entree Step 5\n");
 
-  (void) jpeg_start_decompress(&cinfo);
-  /* We can ignore the return value since suspension is not possible
-   * with the stdio data source.
-   */
-   
-  /* We may need to do some setup of our own at this point before reading
-   * the data.  After jpeg_start_decompress() we have the correct scaled
-   * output image dimensions available, as well as the output colormap
-   * if we asked for color quantization.
-   * In this example, we need to make an output work buffer of the right size.
-   */ 
-   
-  /* JSAMPLEs per row in output buffer */
-  row_stride = cinfo.output_width * cinfo.output_components;
+   (void) jpeg_start_decompress(&cinfo);
+   /* We can ignore the return value since suspension is not possible
+    * with the stdio data source.
+    */
+
+   /* We may need to do some setup of our own at this point before reading
+    * the data.  After jpeg_start_decompress() we have the correct scaled
+    * output image dimensions available, as well as the output colormap
+    * if we asked for color quantization.
+    * In this example, we need to make an output work buffer of the right size.
+    */ 
+
+   /* JSAMPLEs per row in output buffer */
+   row_stride = cinfo.output_width * cinfo.output_components;
   
    if (DEBUG) printf ("cinfo.output_width %d cinfo.output_components %d  row_stride %d\n",
-      cinfo.output_width, cinfo.output_components,row_stride);
+                      cinfo.output_width, cinfo.output_components,row_stride);
   	
    /* Make a one-row-high sample array that will go away when done with image */
    buffer = (*cinfo.mem->alloc_sarray)
@@ -304,10 +300,10 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
    pimage=(char *)image_buffer;
   
    while (cinfo.output_scanline < cinfo.output_height) {
-    /* jpeg_read_scanlines expects an array of pointers to scanlines.
-     * Here the array is only one element long, but you could ask for
-     * more than one scanline at a time if that's more convenient.
-     */
+      /* jpeg_read_scanlines expects an array of pointers to scanlines.
+       * Here the array is only one element long, but you could ask for
+       * more than one scanline at a time if that's more convenient.
+       */
      
      // l'image est deja allouée (et passée en param)
      // on ecrit directement les pixels
@@ -328,8 +324,8 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
  
   /* Step 7: Finish decompression */
    if (DEBUG)  printf("Entree Step 7\n");
-
    (void) jpeg_finish_decompress(&cinfo);
+   
    /* We can ignore the return value since suspension is not possible
     * with the stdio data source.
     */
@@ -354,7 +350,7 @@ bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
 
    /* And we're done! */
 
-   return 1;
+   return(true);
 }
 
 /*

@@ -203,7 +203,7 @@ ListTag gdcmObject::GetListEntry(void) {
 
 //-----------------------------------------------------------------------------
 // Protected
-/*
+/**
  * \ingroup gdcmObject
  * \brief   add the 'Object' related Dicom Elements to the listEntries
  *          of a partially created DICOMDIR

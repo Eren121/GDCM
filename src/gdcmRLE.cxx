@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------
 #include <stdio.h>
 #include "gdcmFile.h"
-#include <ctype.h>		/* to declare isprint() */
+#include <ctype.h>		// to declare isprint()
 
 #define str2num(str, typeNum) *((typeNum *)(str))
 
