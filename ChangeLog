@@ -1,3 +1,6 @@
+2005-02-22 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFileHelper.cxx : JPR bad personal choices fix
+
 2005-02-11 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Testing/TestMAkeIcon.cxx : complete the test
 

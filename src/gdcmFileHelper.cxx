@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/21 17:45:41 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/02/22 14:13:42 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,6 @@
 #include "gdcmDictSet.h"
 
 #include <fstream>
-
 
 namespace gdcm 
 {
@@ -347,10 +346,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
 }
 
 /**
- * \brief   Points the internal pointer to the callers inData
- *          image representation, BUT WITHOUT COPYING THE DATA.
- *          'image' Pixels are presented as C-like 2D arrays : line per line.
- *          'volume'Pixels are presented as C-like 3D arrays : plane per plane 
+ * \brief   Set the image data defined by the user, BUT WITHOUT COPYING THE DATA.
  * \warning Since the pixels are not copied, it is the caller's responsability
  *          not to deallocate its data before gdcm uses them (e.g. with
  *          the Write() method )
@@ -365,8 +361,11 @@ void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
 }
 
 /**
- * \brief   Set the image data defined by the user
+ * \brief   Set the image data defined by the user, BUT WITHOUT COPYING THE DATA.
  * \warning When writting the file, this data are get as default data to write
+ * \warning Since the pixels are not copied, it is the caller's responsability
+ *          not to deallocate its data before gdcm uses them (e.g. with
+ *          the Write() method )
  * @param inData user supplied pixel area (uint8_t* is just for the compiler.
  *               user is allowed to pass any kind of pixels since the size is
  *               given in bytes) 
@@ -1026,45 +1025,45 @@ void FileHelper::CheckMandatoryElements()
    //0002 0100 UI 1 Private Information Creator
    //0002 0102 OB 1 Private Information
 
-   // Create them if not found
-   ValEntry *e_0002_0000 = CopyValEntry(0x0002,0x0000);
-      e_0002_0000->SetValue("0"); // for the moment
-      Archive->Push(e_0002_0000);
-  
-   BinEntry *e_0002_0001 = CopyBinEntry(0x0002,0x0001, "OB");
-      e_0002_0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(),
-                               false);
-      e_0002_0001->SetLength(2);
 
-   ValEntry *e_0002_0002 = CopyValEntry(0x0002,0x0002);
-      // [Secondary Capture Image Storage]
-      e_0002_0002->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
-      Archive->Push(e_0002_0002);
+   // Create them if not found
+   ValEntry *e0002_0000 = CopyValEntry(0x0002,0x0000);
+   e0002_0000->SetValue("0"); // for the moment
+   Archive->Push(e0002_0000);
+  
+/*   BinEntry *e0002_0001 = CopyBinEntry(0x0002,0x0001, "OB");
+   e0002_0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(),false);
+   e0002_0001->SetLength(2);*/
+
+/*   ValEntry *e0002_0002 = CopyValEntry(0x0002,0x0002);
+   // [Secondary Capture Image Storage]
+   e0002_0002->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
+   Archive->Push(e0002_0002);*/
  
    // 'Media Stored SOP Instance UID'   
-   ValEntry *e_0002_0003 = CopyValEntry(0x0002,0x0003);
-      e_0002_0003->SetValue(Util::CreateUniqueUID());
-      Archive->Push(e_0002_0003); 
+/*   ValEntry *e0002_0003 = CopyValEntry(0x0002,0x0003);
+   e0002_0003->SetValue(Util::CreateUniqueUID());
+   Archive->Push(e0002_0003); */
 
-   ValEntry *e_0002_0010 = CopyValEntry(0x0002,0x0010);
-      //[Explicit VR - Little Endian] 
-      e_0002_0010->SetValue("1.2.840.10008.1.2.1"); 
-      Archive->Push(e_0002_0010);
+/*   ValEntry *e0002_0010 = CopyValEntry(0x0002,0x0010);
+   //[Explicit VR - Little Endian] 
+   e0002_0010->SetValue("1.2.840.10008.1.2.1"); 
+   Archive->Push(e0002_0010);*/
  
    // 'Implementation Class UID'
-   ValEntry *e_0002_0012 = CopyValEntry(0x0002,0x0012);
-      e_0002_0012->SetValue(Util::CreateUniqueUID());
-      Archive->Push(e_0002_0012); 
+/*   ValEntry *e0002_0012 = CopyValEntry(0x0002,0x0012);
+   e0002_0012->SetValue(Util::CreateUniqueUID());
+   Archive->Push(e0002_0012); */
 
    // 'Implementation Version Name'
-   ValEntry *e_0002_0013 = CopyValEntry(0x0002,0x0013);
-      e_0002_0013->SetValue("GDCM 1.0");
-      Archive->Push(e_0002_0013);
+   ValEntry *e0002_0013 = CopyValEntry(0x0002,0x0013);
+   e0002_0013->SetValue("GDCM 1.0");
+   Archive->Push(e0002_0013);
 
    //'Source Application Entity Title' Not Mandatory
-   //ValEntry *e_0002_0016 = CopyValEntry(0x0002,0x0016);
-   //   e_0002_0016->SetValue("1.2.840.10008.5.1.4.1.1.7");
-   //   Archive->Push(e_0002_0016);
+   //ValEntry *e0002_0016 = CopyValEntry(0x0002,0x0016);
+   //   e0002_0016->SetValue("1.2.840.10008.5.1.4.1.1.7");
+   //   Archive->Push(e0002_0016);
 
    // Push out 'LibIDO-special' entries, if any
    Archive->Push(0x0028,0x0015);
@@ -1075,52 +1074,51 @@ void FileHelper::CheckMandatoryElements()
    // --- Check UID-related Entries ---
 
    // If 'SOP Class UID' exists ('true DICOM' image)
-
-   ValEntry *e_0008_0016 = FileInternal->GetValEntry(0x0008, 0x0016);
-   if ( e_0008_0016 != 0 )
+   ValEntry *e0008_0016 = FileInternal->GetValEntry(0x0008, 0x0016);
+   if ( e0008_0016 != 0 )
    {
-      // Create 'Source Image Sequence' SeqEntry
+/*      // Create 'Source Image Sequence' SeqEntry
       SeqEntry *s = new SeqEntry (
       Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x2112) );
       SQItem *sqi = new SQItem(1);
       // (we assume 'SOP Instance UID' exists too) 
       // create 'Referenced SOP Class UID'
-      ValEntry *e_0008_1150 = new ValEntry(
+      ValEntry *e0008_1150 = new ValEntry(
       Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1150) );
-      e_0008_1150->SetValue( e_0008_0016->GetValue());
-      sqi->AddEntry(e_0008_1150);
+      e0008_1150->SetValue( e0008_0016->GetValue());
+      sqi->AddEntry(e0008_1150);
       
       // create 'Referenced SOP Instance UID'
-      ValEntry *e_0008_0018 = FileInternal->GetValEntry(0x0008, 0x0018);
-      ValEntry *e_0008_1155 = new ValEntry(
+      ValEntry *e0008_0018 = FileInternal->GetValEntry(0x0008, 0x0018);
+      ValEntry *e0008_1155 = new ValEntry(
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1155) );
-      e_0008_1155->SetValue( e_0008_0018->GetValue());
-      sqi->AddEntry(e_0008_1155);
+      e0008_1155->SetValue( e0008_0018->GetValue());
+      sqi->AddEntry(e0008_1155);
 
       s->AddSQItem(sqi,1); 
       // temporarily replaces any previous 'Source Image Sequence' 
       Archive->Push(s);
  
       // 'Image Type'
-      ValEntry *e_0008_0008 = CopyValEntry(0x0008,0x0008);
-      e_0008_0008->SetValue("DERIVED\\PRIMARY");
-      Archive->Push(e_0008_0008);
+      ValEntry *e0008_0008 = CopyValEntry(0x0008,0x0008);
+      e0008_0008->SetValue("DERIVED\\PRIMARY");
+      Archive->Push(e0008_0008);*/
    } 
    else
    {
    // SOP Class UID
-      ValEntry *e_0008_0016  =  new ValEntry( 
+/*      e0008_0016  =  new ValEntry( 
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0016) );
       // [Secondary Capture Image Storage]
-      e_0008_0016 ->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
-      Archive->Push(e_0008_0016); 
+      e0008_0016 ->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
+      Archive->Push(e0008_0016); */
    }
 
    // new value for 'SOP Instance UID'
-   ValEntry *e_0008_0018 = new ValEntry(
-    Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0018) );
-   e_0008_0018->SetValue( Util::CreateUniqueUID() );
-   Archive->Push(e_0008_0018);
+   ValEntry *e0008_0018 = new ValEntry(
+      Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0018) );
+   e0008_0018->SetValue( Util::CreateUniqueUID() );
+   Archive->Push(e0008_0018);
 
    // Instance Creation Date
    ValEntry *e0008_0012 = CopyValEntry(0x0008,0x0012);
@@ -1134,24 +1132,25 @@ void FileHelper::CheckMandatoryElements()
    e0008_0013->SetValue(time.c_str());
    Archive->Push(e0008_0013);
 
-   // new value for 'Serie Instance UID'
+/*   // new value for 'Serie Instance UID'
    // TODO prevoir booleen pour figer la valeur d'un appel a l'autre
    //                           calculer nouvelle valeur a chaque fois
 
-   ValEntry *e_0020_000e = new ValEntry(
+   ValEntry *e0020_000e = new ValEntry(
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0020, 0x000e) );
-   e_0020_000e->SetValue( Util::CreateUniqueUID() );
-   Archive->Push(e_0020_000e);
+   e0020_000e->SetValue( Util::CreateUniqueUID() );
+   Archive->Push(e0020_000e);
 
    // new value for 'Study Instance UID'
-   // TODO prevoir flag pour figer la valeurd'un appel a l'autre
+   // TODO prevoir flag pour figer la valeur d'un appel a l'autre
    //                        calculer nouvelle valeur a chaque fois
-   //                        reutiliser mla valeur image origine
+   //                        reutiliser la valeur image origine
 
-   ValEntry *e_0020_000d = new ValEntry(
+   ValEntry *e0020_000d = new ValEntry(
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0020, 0x000d) );
-   e_0020_000d->SetValue( Util::CreateUniqueUID() );
-   Archive->Push(e_0020_000d);
+   e0020_000d->SetValue( Util::CreateUniqueUID() );
+   Archive->Push(e0020_000d);
+*/
 
 // ----- Add Mandatory Entries if missing ---
 
@@ -1163,72 +1162,84 @@ void FileHelper::CheckMandatoryElements()
    ValEntry *e;
 
    // Modality
-   e = FileInternal->GetValEntry(0x0008, 0x0060);
-   if ( !e )
+/*   ValEntry *e0008_0060 = FileInternal->GetValEntry(0x0008, 0x0060);
+   if ( !e0008_0060 )
    {
-      e = InsertValEntry("OT",           0x0008, 0x0060);
-      Archive->Push(e);
+      e0008_0060 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0060) );
+      e0008_0060->SetValue("OT");
+      Archive->Push(e0008_0060);
    } 
+
    // Manufacturer
-   e = FileInternal->GetValEntry(0x0008, 0x0070);
-   if ( !e )
+   ValEntry *e0008_0070 = FileInternal->GetValEntry(0x0008, 0x0070);
+   if ( !e0008_0070 )
    {
-      e = InsertValEntry("GDCM Factory", 0x0008, 0x0070);
-      Archive->Push(e);
+      e0008_0070 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0070) );
+      e0008_0070->SetValue("GDCM Factory");
+      Archive->Push(e0008_0070);
    }
+
    // Institution Name
-   e = FileInternal->GetValEntry(0x0008, 0x0070);
-   if ( !e )
+   ValEntry *e0008_0080 = FileInternal->GetValEntry(0x0008, 0x0080);
+   if ( !e0008_0080 )
    {
-      e = InsertValEntry("GDCM Hospital",0x0008, 0x0080);
-      Archive->Push(e);
+      e0008_0080 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0080) );
+      e0008_0080->SetValue("GDCM Hospital");
+      Archive->Push(e0008_0080);
    }
-   // Institution Adress
-   e = FileInternal->GetValEntry(0x0008, 0x0081);
-   if ( !e )
-   {
-      e = InsertValEntry("@ GDCM",       0x0008, 0x0081);
-      Archive->Push(e);
-   }
+
    // Patient's Name
-   e = FileInternal->GetValEntry(0x0010, 0x0010);
-   if ( !e )
+   ValEntry *e0010_0010 = FileInternal->GetValEntry(0x0010, 0x0010);
+   if ( !e0010_0010 )
    {
-      e = InsertValEntry("GDCM^patient", 0x0010, 0x0010);
-      Archive->Push(e);
+      e0010_0010 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0010, 0x0010) );
+      e0010_0010->SetValue("GDCM_Patient");
+      Archive->Push(e0010_0010);
    }
+
    // Patient's ID
-   e = FileInternal->GetValEntry(0x0010, 0x0020);
+   ValEntry *e_0010_0020 = FileInternal->GetValEntry(0x0010, 0x0020);
    if ( !e )
    {
-      e = InsertValEntry("GDCM_patient_ID",0x0010, 0x0020);
-      Archive->Push(e);
+      e_0010_0020 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0010, 0x0020) );
+      e_0010_0020->SetValue("GDCM_Patient_ID");
+      Archive->Push(e_0010_0020);
    }
 
    // Patient's Birth Date
-   e = FileInternal->GetValEntry(0x0010, 0x0030);
-   if ( !e )
+   ValEntry *e_0010_0030 = FileInternal->GetValEntry(0x0010, 0x0030);
+   if ( !e_0010_0030 )
    {
-      e = InsertValEntry("",0x0010, 0x0030);
-      Archive->Push(e);
+      e_0010_0030 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0010, 0x0030) );
+      e_0010_0030->SetValue("");
+      Archive->Push(e_0010_0030);
    }
 
    // Patient's Sex
-   e = FileInternal->GetValEntry(0x0010, 0x0040);
-   if ( !e )
+   ValEntry *e_0010_0040 = FileInternal->GetValEntry(0x0010, 0x0040);
+   if ( !e_0010_0040 )
    {
-      e = InsertValEntry("",0x0010, 0x0040);
-      Archive->Push(e);
+      e_0010_0040 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0010, 0x0040) );
+      e_0010_0040->SetValue("");
+      Archive->Push(e_0010_0040);
    }
 
    // Referring Physician's Name
-   e = FileInternal->GetValEntry(0x0008, 0x0090);
-   if ( !e )
+   ValEntry *e_0008_0090 = FileInternal->GetValEntry(0x0008, 0x0090);
+   if ( !e_0008_0090 )
    {
-      e = InsertValEntry("",0x0008, 0x0090);
-      Archive->Push(e);
-   }
-
+      e_0008_0090 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0090) );
+      e_0008_0090->SetValue("");
+      Archive->Push(e_0008_0090);
+   }*/
 } 
  
 //-----------------------------------------------------------------------------
