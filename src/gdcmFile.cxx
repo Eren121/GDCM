@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 10:23:47 $
-  Version:   $Revision: 1.160 $
+  Date:      $Date: 2004/11/24 11:17:47 $
+  Version:   $Revision: 1.161 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -209,6 +209,22 @@ uint8_t* File::GetImageData()
       return 0;
    }
                                                                                 
+   if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
+   {
+      return PixelConverter->GetRGB();
+   }
+   else
+   {
+      // When no LUT or LUT conversion fails, return the decompressed
+      return PixelConverter->GetDecompressed();
+   }
+   
+/*   if ( ! GetDecompressed() )
+   {
+      // If the decompression failed nothing can be done.
+      return 0;
+   }
+                                                                                
    uint8_t* pixelData;
    if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
    {
@@ -220,7 +236,7 @@ uint8_t* File::GetImageData()
       pixelData = PixelConverter->GetDecompressed();
    }
 
-/*// PIXELCONVERT CLEANME
+// PIXELCONVERT CLEANME
    // Restore the header in a disk-consistent state
    // (if user asks twice to get the pixels from disk)
    if ( PixelRead != -1 ) // File was "read" before
@@ -275,9 +291,9 @@ uint8_t* File::GetImageData()
 
    // We say the value *is* loaded.
    SetPixelData(pixelData);
-// END PIXELCONVERT CLEANME*/
+// END PIXELCONVERT CLEANME
 
-   return pixelData;
+   return pixelData;*/
 }
 
 /**
@@ -351,13 +367,14 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
  */
 uint8_t* File::GetImageDataRaw ()
 {
-   uint8_t* decompressed = GetDecompressed();
+   return GetDecompressed();
+/*   uint8_t* decompressed = GetDecompressed();
    if ( ! decompressed )
    {
       return 0;
    }
 
-/*// PIXELCONVERT CLEANME
+// PIXELCONVERT CLEANME
    // Restore the header in a disk-consistent state
    // (if user asks twice to get the pixels from disk)
    if ( PixelRead != -1 ) // File was "read" before
@@ -387,9 +404,9 @@ uint8_t* File::GetImageDataRaw ()
    SetPixelData(decompressed);
  
    PixelRead = 1; // PixelRaw
-// END PIXELCONVERT CLEANME*/
+// END PIXELCONVERT CLEANME
 
-   return decompressed;
+   return decompressed;*/
 }
 
 uint8_t* File::GetDecompressed()

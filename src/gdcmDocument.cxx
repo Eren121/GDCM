@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/19 12:44:00 $
-  Version:   $Revision: 1.135 $
+  Date:      $Date: 2004/11/24 11:17:47 $
+  Version:   $Revision: 1.136 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1065,7 +1065,12 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
    if ( !docElement )
       return;
 
-   size_t o =(size_t)docElement->GetOffset();
+   BinEntry *binElement = dynamic_cast<BinEntry *>(docElement);
+   if( !binElement )
+      return;
+
+   LoadEntryBinArea(binElement);
+/*   size_t o =(size_t)docElement->GetOffset();
    Fp->seekg( o, std::ios_base::beg);
    size_t l = docElement->GetLength();
    uint8_t* a = new uint8_t[l];
@@ -1088,8 +1093,9 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
    {
       delete[] a;
       dbg.Verbose(0, "Document::LoadEntryBinArea setting failed.");
-   }
+   }*/
 }
+
 /**
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
@@ -1097,8 +1103,13 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
  */
 void Document::LoadEntryBinArea(BinEntry* element) 
 {
+   bool openFile = !Fp;
+   if(openFile)
+      OpenFile();
+
    size_t o =(size_t)element->GetOffset();
    Fp->seekg(o, std::ios_base::beg);
+
    size_t l = element->GetLength();
    uint8_t* a = new uint8_t[l];
    if( !a )
@@ -1116,6 +1127,9 @@ void Document::LoadEntryBinArea(BinEntry* element)
    }
 
    element->SetBinArea(a);
+
+   if(openFile)
+      CloseFile();
 }
 
 /**

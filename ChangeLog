@@ -1,4 +1,9 @@
 2004-11-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Amelioration of code, remove some code copy. For the loading of
+     BinEntry (in gdcmDocument), add the test to verify if the file is already
+     opened or not.
+
+2004-11-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocEntryArchive.[h|cxx] : bug fix and add a method to temporary
      remove a DocEntry in the header (push an empty DocEntry)
    * src/gdcmFile.[h|cxx] : remove some useless variables, methods and code
