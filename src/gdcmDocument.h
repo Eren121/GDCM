@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 16:44:43 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2005/01/11 17:19:39 $
+  Version:   $Revision: 1.81 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,8 +92,8 @@ public:
                          uint16_t group, uint16_t element);
    virtual bool SetEntry(uint8_t *content, int lgth,
                          uint16_t group, uint16_t element);
-   virtual bool SetEntry(std::string const &content,ValEntry *entry);
-   virtual bool SetEntry(uint8_t *content, int lgth,BinEntry *entry);
+   virtual bool SetEntry(std::string const &content, ValEntry *entry);
+   virtual bool SetEntry(uint8_t *content, int lgth, BinEntry *entry);
 
    virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);   
 
@@ -113,8 +113,8 @@ public:
                              TagName const &vr = GDCM_UNKNOWN);
    SeqEntry *ReplaceOrCreate(uint16_t group, uint16_t elem);
 
-   bool ReplaceIfExist ( std::string const &value,
-                         uint16_t group, uint16_t elem );
+   bool ReplaceIfExist(std::string const &value,
+                       uint16_t group, uint16_t elem );
    
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
    virtual void LoadEntryBinArea(BinEntry *entry);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 16:44:42 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/11 17:19:38 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,6 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmTS.h"
+#include "gdcmGlobal.h"
 
 int TestTS(int , char *[])
 {
@@ -68,6 +69,7 @@ int TestTS(int , char *[])
    std::cout << ts.IsJPEG( "1.2.840.10008.1.2.5") << std::endl;
    std::cout << ts.IsEncapsulate( "1.2.840.10008.1.2.5") << std::endl;
    std::cout << ts.GetSpecialTransferSyntax( ts.GetSpecialTransferSyntax( "1.2.840.10008.1.2.5")) << std::endl;
+   std::cout << gdcm::Global::GetTS()->IsRLELossless( "1.2.840.10008.1.2.5" )  << std::endl;
 
    return ts.GetValue( "" ) != gdcm::GDCM_UNFOUND;
 }
