@@ -114,7 +114,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
      
   // ------------------------------- Position on begining of Jpeg Pixels
   
-       int ln;
+      int ln;
       fseek(fp,4,SEEK_CUR);
       fread(&ln,4,1,fp); 
       if(GetSwapCode()) 
@@ -127,29 +127,18 @@ bool gdcmFile::ReadPixelData(void* destination) {
       if(GetSwapCode()) 
          ln=SwapLong(ln);
       if (DEBUG) 
-         printf ("ln image comprimée %d\n",ln);
-         
+         printf ("ln image comprimée %d\n",ln);        
           
   // ------------------------------- JPEG LossLess : call to Jpeg Libido
    
    if (IsJPEGLossless()) {
  
-       ClbJpeg* jpg = _IdDcmJpegRead(fp);
+      ClbJpeg* jpg = _IdDcmJpegRead(fp);
       if(jpg == NULL) {
          CloseFile();
          return false;
       } 
-      // Gros soucis : 
-      //  jpg->DataImg est alloue en int32 systematiquement :
-      //  il faut le copier pixel par pixel dans destination ...
-      //  ... qui est un void *
-      // --> du CAST sportif a faire ... 
-      
-     // memcpy(destination,jpg->DataImg,lgrTotale);
-     
-     // Bon ...
-     // ... y'a p't etre + ruse (?)
-          
+
       int nb;
       string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
       if (str_nb == "gdcm::Unfound" ) {
@@ -162,14 +151,11 @@ bool gdcmFile::ReadPixelData(void* destination) {
       int * dataJpg = jpg->DataImg;
       int taille = GetXSize() *  GetYSize() *  GetZSize() * GetSamplesPerPixel();
           
-      switch (nBytes) {
-      
+      switch (nBytes) {   
          case 1:
          {
             unsigned short *dest = (unsigned short *)destination;
             for (int i=0; i<taille; i++) {
-               if (DEBUG) 
-                  if (*(dataJpg +i) >255) printf("data %d\n",*(dataJpg +i) );
                *((unsigned char *)dest+i) = *(dataJpg +i);    
             }
          }
@@ -178,21 +164,14 @@ bool gdcmFile::ReadPixelData(void* destination) {
          case 2:
          {
             unsigned short *dest = (unsigned short *)destination;
-            
-            // etonnant (?)
-            // la ligne commentee ci-dessous fait passer l'exec de 0.15 sec a 5.5 sec
-            // pour la meme image 512*512 ...
-            // optimiseur pas mis en oeuvre (?)
-            //for (int i=0; i<GetXSize() *  GetYSize() *  GetZSize(); i++) 
-            
-             for (int i=0; i<taille; i++) {           
+            for (int i=0; i<taille; i++) {           
                *((unsigned short *)dest+i) = *(dataJpg +i);    
             }
          }
          break;
             
-          case 4:
-          {
+         case 4:
+         {
             unsigned int *dest=(unsigned int *)destination;
             for (int i=0;i<taille; i++) {
                *((unsigned int *)dest+i) = *(dataJpg +i);    
@@ -210,6 +189,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
   // TODO : faire qq chose d'intelligent pour limiter 
   // la duplication du code JPEG <bits=8 / bits=12>
   // TODO : eplucher icelui pour traiter *egalement* bits=16
+  
       int nBS;        
       if  ((nBS = GetBitsStored()) != 12) {
          printf("Sorry, Bits Stored = %d not yet taken into account\n",nBS);
@@ -220,7 +200,6 @@ bool gdcmFile::ReadPixelData(void* destination) {
          if (DEBUG) 
             printf ("res : %d\n",res);
       return res;
- 
 }   
 
 /**
@@ -334,69 +313,67 @@ guint32 s32;
 guint16 fort,faible;
 int i;
 
-if(nb == 16)
-    
-	switch(swap) {
-		case 0:
-		case 12:
- 		case 1234:
-			break;
+if(nb == 16)  
+   switch(swap) {
+      case 0:
+      case 12:
+      case 1234:
+         break;
 		
- 		case 21:
- 		case 3412:
- 		case 2143:
- 		case 4321:
+         case 21:
+         case 3412:
+         case 2143:
+         case 4321:
 
- 			for(i=0;i<lgr;i++)
-  				((unsigned short int*)im)[i]= ((((unsigned short int*)im)[i])>>8)
-                            			| ((((unsigned short int*)im)[i])<<8);
- 			break;
+            for(i=0;i<lgr;i++)
+               ((unsigned short int*)im)[i]= ((((unsigned short int*)im)[i])>>8)
+                                           | ((((unsigned short int*)im)[i])<<8);
+               break;
  			
- 		default:
- 			printf("valeur de SWAP (16 bits) non autorisee : %d\n", swap);
-	} 
+         default:
+            printf("valeur de SWAP (16 bits) non autorisee : %d\n", swap);
+   } 
  
 if( nb == 32 )
+   switch (swap) {
+      case 0:
+      case 1234:
+         break;
 
-	switch (swap) {
-    		case 0:
-     		case 1234:
-    			 break;
+      case 4321:
+         for(i=0;i<lgr;i++) {
+            faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 4321 */
+            fort  =((unsigned long int*)im)[i]>>16;
+            fort=  (fort>>8)   | (fort<<8);
+            faible=(faible>>8) | (faible<<8);
+            s32=faible;
+            ((unsigned long int*)im)[i]=(s32<<16)|fort;
+         }
+         break;
 
-    		case 4321:
-    			 for(i=0;i<lgr;i++) {
-        			faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 4321 */
-       				fort  =((unsigned long int*)im)[i]>>16;
-        			fort=  (fort>>8)   | (fort<<8);
-        			faible=(faible>>8) | (faible<<8);
-        			s32=faible;
-        			((unsigned long int*)im)[i]=(s32<<16)|fort;
-       			}
-    			break;
-
-    		case 2143:
-    			for(i=0;i<lgr;i++) {
-       				faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 2143 */
-       				fort=((unsigned long int*)im)[i]>>16;
-       				fort=  (fort>>8)   | (fort<<8);
-       				faible=(faible>>8) | (faible<<8);
-       				s32=fort; 
-       				((unsigned long int*)im)[i]=(s32<<16)|faible;
-      			}
-    			break;
+         case 2143:
+            for(i=0;i<lgr;i++) {
+               faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 2143 */
+               fort=((unsigned long int*)im)[i]>>16;
+               fort=  (fort>>8)   | (fort<<8);
+               faible=(faible>>8) | (faible<<8);
+               s32=fort; 
+               ((unsigned long int*)im)[i]=(s32<<16)|faible;
+            }
+            break;
   
-    		case 3412:
-    			for(i=0;i<lgr;i++) {
-      				faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 3412 */
-       				fort=((unsigned long int*)im)[i]>>16;                  
-       				s32=faible; 
-       				((unsigned long int*)im)[i]=(s32<<16)|fort;
-      			}                 
-    			break; 
+         case 3412:
+            for(i=0;i<lgr;i++) {
+               faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 3412 */
+               fort=((unsigned long int*)im)[i]>>16;                  
+               s32=faible; 
+               ((unsigned long int*)im)[i]=(s32<<16)|fort;
+            }                 
+            break; 
     			        
-   		default:
-   			printf("valeur de SWAP (32 bits) non autorisee : %d\n", swap);
-	} 
+         default:
+            printf("valeur de SWAP (32 bits) non autorisee : %d\n", swap);
+   } 
 return;
 }
 
@@ -436,20 +413,20 @@ int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
 
 void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
 
- 	string content1;
- 	char car[20];
+   string content1;
+   char car[20];
  	
- 	// suppose que le ElValue (0x7fe0, 0x0010) existe ...
+   // suppose que le ElValue (0x7fe0, 0x0010) existe ...
  	
- 	sprintf(car,"%d",ImageDataSize);
+   sprintf(car,"%d",ImageDataSize);
  
- 	gdcmElValue*a = GetElValueByNumber(0x7fe0, 0x0010);
- 	a->SetLength(ImageDataSize);
+   gdcmElValue*a = GetElValueByNumber(0x7fe0, 0x0010);
+   a->SetLength(ImageDataSize);
  		
- 	ImageDataSize+=8;
- 	sprintf(car,"%d",ImageDataSize);
- 	content1=car;	
- 	SetPubElValByNumber(content1, 0x7fe0, 0x0000);
+   ImageDataSize+=8;
+   sprintf(car,"%d",ImageDataSize);
+   content1=car;	
+   SetPubElValByNumber(content1, 0x7fe0, 0x0000);
 }
 
 
@@ -468,16 +445,16 @@ void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
 
 int gdcmFile::WriteRawData (string nomFichier) {
 
-	FILE * fp1;
-	fp1 = fopen(nomFichier.c_str(),"wb");
-	if (fp1 == NULL) {
-		printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
-		return (0);
-	} 
+   FILE * fp1;
+   fp1 = fopen(nomFichier.c_str(),"wb");
+   if (fp1 == NULL) {
+      printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
+      return (0);
+   } 
 	
-	fwrite (PixelData,lgrTotale, 1, fp1);
-	fclose (fp1);
-	return(1);
+   fwrite (PixelData,lgrTotale, 1, fp1);
+   fclose (fp1);
+   return(1);
 }
 
 

@@ -1,5 +1,5 @@
 
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.74 2003/07/01 15:48:27 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.75 2003/07/01 17:22:44 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -193,8 +193,8 @@ void gdcmHeader::CheckSwap()
       // Use gdcmHeader::dicom_vr to test all the possibilities
       // instead of just checking for UL, OB and UI !?
       if(  (memcmp(entCur, "UL", (size_t)2) == 0) ||
-      	  (memcmp(entCur, "OB", (size_t)2) == 0) ||
-      	  (memcmp(entCur, "UI", (size_t)2) == 0) )
+      	   (memcmp(entCur, "OB", (size_t)2) == 0) ||
+      	   (memcmp(entCur, "UI", (size_t)2) == 0) )
       	{
          filetype = ExplicitVR;
          dbg.Verbose(1, "gdcmHeader::CheckSwap:",
@@ -299,6 +299,7 @@ void gdcmHeader::SwitchSwapToBigEndian(void) {
 /**
  * \ingroup   gdcmHeader
  * \brief     Find the value representation of the current tag.
+ * @param ElVal
  */
 void gdcmHeader::FindVR( gdcmElValue *ElVal) {
    if (filetype != ExplicitVR)
@@ -872,8 +873,7 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    // four bytes properly i.e. as an integer as opposed to a string.
 	
 	// pour les elements de Value Multiplicity > 1
-	// on aura en fait une serie d'entiers
-	
+	// on aura en fait une serie d'entiers	
 	// on devrait pouvoir faire + compact (?)
 		
    if ( IsAnInteger(ElVal) ) {
@@ -1033,7 +1033,9 @@ gdcmElValue* gdcmHeader::NewElValueByNumber(guint16 Group, guint16 Elem) {
 /**
  * \ingroup gdcmHeader
  * \brief   TODO
- * @param   
+ * @param   Value
+ * @param   Group
+ * @param   Elem
  */
 int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Elem ) {
 
@@ -1054,7 +1056,9 @@ int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Ele
 /**
  * \ingroup gdcmHeader
  * \brief   TODO
- * @param   
+ * @param   Value
+ * @param   Group
+ * @param   Elem 
  */
 int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
@@ -1068,7 +1072,8 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
 /**
  * \ingroup gdcmHeader
  * \brief   TODO
- * @param   
+ * @param   Group
+ * @param   Elem  
  */
  
 int gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
@@ -1726,11 +1731,11 @@ bool gdcmHeader::IsReadable(void) {
       && atoi(GetElValByName("Image Dimensions").c_str()) > 4 ) {
       return false;
    }
-   if ( GetElValByName("Bits Allocated") == "gdcm::Unfound" )
+   if ( GetElValByName("Bits Allocated")       == "gdcm::Unfound" )
       return false;
-   if ( GetElValByName("Bits Stored") == "gdcm::Unfound" )
+   if ( GetElValByName("Bits Stored")          == "gdcm::Unfound" )
       return false;
-   if ( GetElValByName("High Bit") == "gdcm::Unfound" )
+   if ( GetElValByName("High Bit")             == "gdcm::Unfound" )
       return false;
    if ( GetElValByName("Pixel Representation") == "gdcm::Unfound" )
       return false;
@@ -1801,23 +1806,23 @@ void gdcmHeader::PrintPubDict(std::ostream & os) {
   * \ingroup gdcmHeader
   * \brief
   * @return
-  */
-  
+  */ 
 int gdcmHeader::Write(FILE * fp, FileType type) {
    return PubElValSet.Write(fp, type);
 }
 
 /**
   * \ingroup gdcmHeader
-  * \brief
-  * @return
+  * \brief gets the info from 0028,0030 : Pixel Spacing
+  * \           else 1.
+  * @return X dimension of a pixel
   */
 float gdcmHeader::GetXSpacing(void) {
     float xspacing, yspacing;
     string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
 
     if (StrSpacing == "gdcm::Unfound") {
-       dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing");
+       dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing (0028,0030)");
        return 1.;
      }
    if( sscanf( StrSpacing.c_str(), "%f\\%f", &xspacing, &yspacing) != 2)
@@ -1828,23 +1833,21 @@ float gdcmHeader::GetXSpacing(void) {
 
 /**
   * \ingroup gdcmHeader
-  * \brief
-  * @return
+  * \brief gets the info from 0028,0030 : Pixel Spacing
+  * \           else 1.
+  * @return Y dimension of a pixel
   */
 float gdcmHeader::GetYSpacing(void) {
    float xspacing, yspacing;
    string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
   
    if (StrSpacing == "gdcm::Unfound") {
-      dbg.Verbose(0, "gdcmHeader::GetYSpacing: unfound Pixel Spacing");
+      dbg.Verbose(0, "gdcmHeader::GetYSpacing: unfound Pixel Spacing (0028,0030)");
       return 1.;
     }
-
   if( sscanf( StrSpacing.c_str(), "%f\\%f", &xspacing, &yspacing) != 2)
     return 0.;
-
-  if (yspacing == 0.)
-  {
+  if (yspacing == 0.) {
     dbg.Verbose(0, "gdcmHeader::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
     // seems to be a bug in the header ...
     sscanf( StrSpacing.c_str(), "%f\\0\\%f", &xspacing, &yspacing);
@@ -1854,9 +1857,11 @@ float gdcmHeader::GetYSpacing(void) {
 
 
 /**
-  * \ingroup gdcmHeader
-  * \brief
-  * @return
+  *\ingroup gdcmHeader
+  *\brief gets the info from 0018,0088 : Space Between Slices
+  *\               else from 0018,0050 : Slice Thickness
+  *\               else 1.
+  * @return Z dimension of a voxel-to be
   */
 float gdcmHeader::GetZSpacing(void) {
    // TODO : translate into English
@@ -1889,25 +1894,25 @@ float gdcmHeader::GetZSpacing(void) {
 }
 
 //
-// Image Position Patient (0020,0032):
-// If not found (ACR_NEMA) we try Image Position (0020,0030)
-// If not found (ACR-NEMA), we consider Slice Location (20,1041)
+// Image Position Patient                              (0020,0032):
+// If not found (ACR_NEMA) we try Image Position       (0020,0030)
+// If not found (ACR-NEMA), we consider Slice Location (0020,1041)
 //                                   or Location       (0020,0050) 
 // as the Z coordinate, 
 // 0. for all the coordinates if nothing is found
 // TODO : find a way to inform the caller nothing was found
 // TODO : How to tell the caller a wrong number of values was found?
+
+
 /**
   * \ingroup gdcmHeader
-  * \brief
-  * @return
+  * \brief gets the info from 0020,0032 : Image Position Patient
+  *\                else from 0020,0030 : Image Position (RET)
+  *\                else 0.
+  * @return up-left image corner position
   */
 float gdcmHeader::GetXImagePosition(void) {
-    float xImPos, yImPos, zImPos;
-    // 0020,0032 : Image Position Patient
-    // 0020,0030 : Image Position (RET)
-    // 0020,1041 : Slice Location
-   
+    float xImPos, yImPos, zImPos;  
     string StrImPos = GetPubElValByNumber(0x0020,0x0032);
 
     if (StrImPos == "gdcm::Unfound") {
@@ -1915,31 +1920,24 @@ float gdcmHeader::GetXImagePosition(void) {
        StrImPos = GetPubElValByNumber(0x0020,0x0030); // For ACR-NEMA images
        if (StrImPos == "gdcm::Unfound") {
           dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position (RET) (0020,0030)");
-          string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041); // for *very* old ACR-NEMA images
-          if (StrSliceLoc == "gdcm::Unfound") {
-            dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Slice Location (0020,1041)");
-             // How to tell the caller nothing was found?
-          } 
+          // How to tell the caller nothing was found ?
        }  
        return 0.;
      }
    if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
-     // How to tell the caller a wrong number of values was found?
      return 0.;
-   //else
    return xImPos;
 }
 
 /**
   * \ingroup gdcmHeader
-  * \brief
-  * @return
+  * \brief gets the info from 0020,0032 : Image Position Patient
+  * \               else from 0020,0030 : Image Position (RET)
+  * \               else 0.
+  * @return up-left image corner position
   */
 float gdcmHeader::GetYImagePosition(void) {
     float xImPos, yImPos, zImPos;
-    // 0020,0032 : Image Position Patient
-    // 0020,1041 : Slice Location
-    // 0020,0050 : Location
     string StrImPos = GetPubElValByNumber(0x0020,0x0032);
 
     if (StrImPos == "gdcm::Unfound") {
@@ -1947,34 +1945,25 @@ float gdcmHeader::GetYImagePosition(void) {
        StrImPos = GetPubElValByNumber(0x0020,0x0030); // For ACR-NEMA images
        if (StrImPos == "gdcm::Unfound") {
           dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position (RET) (0020,0030)");
-          string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041); // for *very* old ACR-NEMA images
-          if (StrSliceLoc == "gdcm::Unfound") {
-            dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location (0020,1041)");
-            // How to tell the caller nothing was found?
-          } 
        }  
        return 0.;
      }
    if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
-     // How to tell the caller a wrong number of values was found?
      return 0.;
    return yImPos;
 }
 
 /**
   * \ingroup gdcmHeader
-  * \brief
-  * @return
+  * \brief gets the info from 0020,0032 : Image Position Patient
+  * \               else from 0020,0030 : Image Position (RET)
+  * \               else from 0020,1041 : Slice Location
+  * \               else from 0020,0050 : Location
+  * \               else 0.
+  * @return up-left image corner position
   */
 float gdcmHeader::GetZImagePosition(void) {
-   float xImPos, yImPos, zImPos;
-    // 0020,0032 : Image Position Patient
-    // 0020,1041 : Slice Location
-    // 0020,0050 : Location
-   
-   // TODO : How to tell the caller nothing was found?
-   // TODO : How to tell the caller a wrong number of values was found?
-  
+   float xImPos, yImPos, zImPos; 
    string StrImPos = GetPubElValByNumber(0x0020,0x0032);
    if (StrImPos != "gdcm::Unfound") {
       if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3) {
@@ -1983,8 +1972,7 @@ float gdcmHeader::GetZImagePosition(void) {
       } else {
          return zImPos;
       }    
-   }
-   
+   }  
    StrImPos = GetPubElValByNumber(0x0020,0x0030); // For ACR-NEMA images
    if (StrImPos != "gdcm::Unfound") {
       if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3) {
@@ -1993,8 +1981,7 @@ float gdcmHeader::GetZImagePosition(void) {
       } else {
          return zImPos;
       }    
-   }
-                 
+   }                
    string StrSliceLocation = GetPubElValByNumber(0x0020,0x1041);// for *very* old ACR-NEMA images
    if (StrSliceLocation != "gdcm::Unfound") {
       if( sscanf( StrSliceLocation.c_str(), "%f", &zImPos) !=1) {
@@ -2005,7 +1992,6 @@ float gdcmHeader::GetZImagePosition(void) {
       }
    }   
    dbg.Verbose(0, "gdcmHeader::GetZImagePosition: unfound Slice Location (0020,1041)");
-
    string StrLocation = GetPubElValByNumber(0x0020,0x0050);
    if (StrLocation != "gdcm::Unfound") {
       if( sscanf( StrLocation.c_str(), "%f", &zImPos) !=1) {
@@ -2015,8 +2001,7 @@ float gdcmHeader::GetZImagePosition(void) {
          return zImPos;
       }
    }
-   dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location");
-   
+   dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Location (0020,0050)");  
    return 0.; // Hopeless
 }
 
