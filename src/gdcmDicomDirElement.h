@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:11:49 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/02/05 00:22:14 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@ namespace gdcm
  * \brief internal structure, not end user intended
  *        shouln't appear here
  */  
-GDCM_EXPORT typedef struct
+typedef struct
 {
    /// DicomGroup number
    unsigned short int Group;
