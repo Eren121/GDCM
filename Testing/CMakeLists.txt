@@ -151,10 +151,17 @@ SET(BLACK_LIST
   "PET-cardio-Multiframe-Papyrus.dcm" 
   )
 
+
+# Add a special test that requires dciodvfy from dicom3tools
+INCLUDE(${GDCM_SOURCE_DIR}/FindDicom3Tools.cmake)
+
 # This is a GLOB expression, change it into a list separated with a comma and \n
 SET(GDCM_DATA_IMAGES)
 FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
   GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
+  IF(DCIODVFY_FOUND)
+    ADD_TEST("Clunie-${filename_temp}" "${DCIODVFY_EXECUTABLE}" "${filename}")
+  ENDIF(DCIODVFY_FOUND)
   STRING(REGEX MATCH ${filename_temp} bad_dicom ${BLACK_LIST})
   IF(NOT bad_dicom)
     SET(GDCM_DATA_IMAGES "${GDCM_DATA_IMAGES}\n\"${filename_temp}\",")
