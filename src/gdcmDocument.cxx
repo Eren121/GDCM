@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:06:47 $
-  Version:   $Revision: 1.167 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.168 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,7 +123,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
    
    // Load 'non string' values
       
-   std::string PhotometricInterpretation = GetEntryByNumber(0x0028,0x0004);   
+   std::string PhotometricInterpretation = GetEntry(0x0028,0x0004);   
    if( PhotometricInterpretation == "PALETTE COLOR " )
    {
       LoadEntryBinArea(0x0028,0x1200);  // gray LUT   
@@ -169,16 +169,16 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
    // we switch lineNumber and columnNumber
    //
    std::string RecCode;
-   RecCode = GetEntryByNumber(0x0008, 0x0010); // recognition code
+   RecCode = GetEntry(0x0008, 0x0010); // recognition code
    if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
        RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
                                           // with "little-endian strings"
    {
          Filetype = ACR_LIBIDO; 
-         std::string rows    = GetEntryByNumber(0x0028, 0x0010);
-         std::string columns = GetEntryByNumber(0x0028, 0x0011);
-         SetEntryByNumber(columns, 0x0028, 0x0010);
-         SetEntryByNumber(rows   , 0x0028, 0x0011);
+         std::string rows    = GetEntry(0x0028, 0x0010);
+         std::string columns = GetEntry(0x0028, 0x0011);
+         SetEntry(columns, 0x0028, 0x0010);
+         SetEntry(rows   , 0x0028, 0x0011);
    }
    // ----------------- End of ACR-LibIDO kludge ------------------ 
 }
@@ -303,7 +303,7 @@ bool Document::IsReadable()
  */
 TransferSyntaxType Document::GetTransferSyntax()
 {
-   DocEntry *entry = GetDocEntryByNumber(0x0002, 0x0010);
+   DocEntry *entry = GetDocEntry(0x0002, 0x0010);
    if ( !entry )
    {
       return UnknownTS;
@@ -395,7 +395,7 @@ bool Document::IsDicomV3()
    // Anyway, it's to late check if the 'Preamble' was found ...
    // And ... would it be a rich idea to check ?
    // (some 'no Preamble' DICOM images exist !)
-   return GetDocEntryByNumber(0x0002, 0x0010) != NULL;
+   return GetDocEntry(0x0002, 0x0010) != NULL;
 }
 
 /**
@@ -536,13 +536,13 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
-ValEntry *Document::ReplaceOrCreateByNumber(std::string const &value, 
-                                            uint16_t group, 
-                                            uint16_t elem,
-                                            TagName const &vr )
+ValEntry *Document::ReplaceOrCreate(std::string const &value, 
+                                    uint16_t group, 
+                                    uint16_t elem,
+                                    TagName const &vr )
 {
    ValEntry *valEntry = 0;
-   DocEntry *currentEntry = GetDocEntryByNumber( group, elem);
+   DocEntry *currentEntry = GetDocEntry( group, elem);
    
    if (currentEntry)
    {
@@ -568,7 +568,7 @@ ValEntry *Document::ReplaceOrCreateByNumber(std::string const &value,
    // Create a new valEntry if necessary
    if (!valEntry)
    {
-      valEntry = NewValEntryByNumber(group, elem, vr);
+      valEntry = NewValEntry(group, elem, vr);
 
       if ( !AddEntry(valEntry))
       {
@@ -595,14 +595,14 @@ ValEntry *Document::ReplaceOrCreateByNumber(std::string const &value,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-BinEntry *Document::ReplaceOrCreateByNumber(uint8_t *binArea,
-                                            int lgth, 
-                                            uint16_t group, 
-                                            uint16_t elem,
-                                            TagName const &vr )
+BinEntry *Document::ReplaceOrCreate(uint8_t *binArea,
+                                    int lgth, 
+                                    uint16_t group, 
+                                    uint16_t elem,
+                                    TagName const &vr )
 {
    BinEntry *binEntry = 0;
-   DocEntry *currentEntry = GetDocEntryByNumber( group, elem);
+   DocEntry *currentEntry = GetDocEntry( group, elem);
 
    // Verify the currentEntry
    if (currentEntry)
@@ -629,7 +629,7 @@ BinEntry *Document::ReplaceOrCreateByNumber(uint8_t *binArea,
    // Create a new binEntry if necessary
    if (!binEntry)
    {
-      binEntry = NewBinEntryByNumber(group, elem, vr);
+      binEntry = NewBinEntry(group, elem, vr);
 
       if ( !AddEntry(binEntry))
       {
@@ -670,10 +670,10 @@ BinEntry *Document::ReplaceOrCreateByNumber(uint8_t *binArea,
  * \return  pointer to the modified/created SeqEntry (NULL when creation
  *          failed).
  */
-SeqEntry *Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
+SeqEntry *Document::ReplaceOrCreate( uint16_t group, uint16_t elem)
 {
    SeqEntry *seqEntry = 0;
-   DocEntry *currentEntry = GetDocEntryByNumber( group, elem);
+   DocEntry *currentEntry = GetDocEntry( group, elem);
 
    // Verify the currentEntry
    if (currentEntry)
@@ -700,7 +700,7 @@ SeqEntry *Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
    // Create a new seqEntry if necessary
    if (!seqEntry)
    {
-      seqEntry = NewSeqEntryByNumber(group, elem);
+      seqEntry = NewSeqEntry(group, elem);
 
       if ( !AddEntry(seqEntry))
       {
@@ -722,10 +722,10 @@ SeqEntry *Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
  * @param elem element number of the Entry
  * \return  boolean 
  */
-bool Document::ReplaceIfExistByNumber(std::string const &value, 
-                                      uint16_t group, uint16_t elem ) 
+bool Document::ReplaceIfExist(std::string const &value, 
+                              uint16_t group, uint16_t elem ) 
 {
-   SetEntryByNumber(value, group, elem);
+   SetEntry(value, group, elem);
 
    return true;
 } 
@@ -744,7 +744,7 @@ std::string Document::GetTransferSyntaxValue(TransferSyntaxType type)
  * @param   element  Element number of the searched Dicom Element 
  * @return true is found
  */
-bool Document::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
+bool Document::CheckIfEntryExist(uint16_t group, uint16_t element )
 {
    const std::string &key = DictEntry::TranslateToKey(group, element );
    return TagHT.count(key) != 0;
@@ -760,7 +760,7 @@ bool Document::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string Document::GetEntryByNumber(uint16_t group, uint16_t element)
+std::string Document::GetEntry(uint16_t group, uint16_t element)
 {
    TagKey key = DictEntry::TranslateToKey(group, element);
    if ( !TagHT.count(key))
@@ -785,9 +785,9 @@ std::string Document::GetEntryByNumber(uint16_t group, uint16_t element)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string Document::GetEntryVRByNumber(uint16_t group, uint16_t element)
+std::string Document::GetEntryVR(uint16_t group, uint16_t element)
 {
-   DocEntry *elem = GetDocEntryByNumber(group, element);
+   DocEntry *elem = GetDocEntry(group, element);
    if ( !elem )
    {
       return GDCM_UNFOUND;
@@ -803,9 +803,9 @@ std::string Document::GetEntryVRByNumber(uint16_t group, uint16_t element)
  * @param   element Element number of the searched tag.
  * @return  Corresponding element length; -2 if not found
  */
-int Document::GetEntryLengthByNumber(uint16_t group, uint16_t element)
+int Document::GetEntryLength(uint16_t group, uint16_t element)
 {
-   DocEntry *elem =  GetDocEntryByNumber(group, element);
+   DocEntry *elem =  GetDocEntry(group, element);
    if ( !elem )
    {
       return -2;  //magic number
@@ -821,10 +821,10 @@ int Document::GetEntryLengthByNumber(uint16_t group, uint16_t element)
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */
-bool Document::SetEntryByNumber(std::string const& content, 
-                                uint16_t group, uint16_t element) 
+bool Document::SetEntry(std::string const& content, 
+                        uint16_t group, uint16_t element) 
 {
-   ValEntry *entry = GetValEntryByNumber(group, element);
+   ValEntry *entry = GetValEntry(group, element);
    if (!entry )
    {
       gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
@@ -842,10 +842,10 @@ bool Document::SetEntryByNumber(std::string const& content,
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */
-bool Document::SetEntryByNumber(uint8_t*content, int lgth, 
-                                uint16_t group, uint16_t element) 
+bool Document::SetEntry(uint8_t*content, int lgth, 
+                        uint16_t group, uint16_t element) 
 {
-   BinEntry *entry = GetBinEntryByNumber(group, element);
+   BinEntry *entry = GetBinEntry(group, element);
    if (!entry )
    {
       gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
@@ -904,9 +904,9 @@ bool Document::SetEntry(uint8_t *content, int lgth, BinEntry *entry)
  * @param elem  element number of the Entry
  * @return Pointer to the 'non string' area
  */
-void *Document::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem) 
+void *Document::GetEntryBinArea(uint16_t group, uint16_t elem) 
 {
-   DocEntry *entry = GetDocEntryByNumber(group, elem);
+   DocEntry *entry = GetDocEntry(group, elem);
    if (!entry) 
    {
       gdcmVerboseMacro( "No entry");
@@ -929,7 +929,7 @@ void *Document::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem)
 void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
 {
    // Search the corresponding DocEntry
-   DocEntry *docElement = GetDocEntryByNumber(group, elem);
+   DocEntry *docElement = GetDocEntry(group, elem);
    if ( !docElement )
       return;
 
@@ -986,10 +986,10 @@ void Document::LoadEntryBinArea(BinEntry *element)
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-/*bool Document::SetEntryBinAreaByNumber(uint8_t *area,
-                                       uint16_t group, uint16_t element) 
+/*bool Document::SetEntryBinArea(uint8_t *area,
+                                 uint16_t group, uint16_t element) 
 {
-   DocEntry *currentEntry = GetDocEntryByNumber(group, element);
+   DocEntry *currentEntry = GetDocEntry(group, element);
    if ( !currentEntry )
    {
       return false;
@@ -1014,7 +1014,7 @@ void Document::LoadEntryBinArea(BinEntry *element)
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-DocEntry *Document::GetDocEntryByNumber(uint16_t group, uint16_t element) 
+DocEntry *Document::GetDocEntry(uint16_t group, uint16_t element) 
 {
    TagKey key = DictEntry::TranslateToKey(group, element);
    if ( !TagHT.count(key))
@@ -1025,14 +1025,14 @@ DocEntry *Document::GetDocEntryByNumber(uint16_t group, uint16_t element)
 }
 
 /**
- * \brief  Same as \ref Document::GetDocEntryByNumber except it only
+ * \brief  Same as \ref Document::GetDocEntry except it only
  *         returns a result when the corresponding entry is of type
  *         ValEntry.
  * @return When present, the corresponding ValEntry. 
  */
-ValEntry *Document::GetValEntryByNumber(uint16_t group, uint16_t element)
+ValEntry *Document::GetValEntry(uint16_t group, uint16_t element)
 {
-   DocEntry *currentEntry = GetDocEntryByNumber(group, element);
+   DocEntry *currentEntry = GetDocEntry(group, element);
    if ( !currentEntry )
    {
       return 0;
@@ -1047,14 +1047,14 @@ ValEntry *Document::GetValEntryByNumber(uint16_t group, uint16_t element)
 }
 
 /**
- * \brief  Same as \ref Document::GetDocEntryByNumber except it only
+ * \brief  Same as \ref Document::GetDocEntry except it only
  *         returns a result when the corresponding entry is of type
  *         BinEntry.
  * @return When present, the corresponding BinEntry. 
  */
-BinEntry *Document::GetBinEntryByNumber(uint16_t group, uint16_t element)
+BinEntry *Document::GetBinEntry(uint16_t group, uint16_t element)
 {
-   DocEntry *currentEntry = GetDocEntryByNumber(group, element);
+   DocEntry *currentEntry = GetDocEntry(group, element);
    if ( !currentEntry )
    {
       return 0;
@@ -1675,7 +1675,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // and the dictionary entry depending on them.
          uint16_t correctGroup = SwapShort( entry->GetGroup() );
          uint16_t correctElem  = SwapShort( entry->GetElement() );
-         DictEntry *newTag = GetDictEntryByNumber( correctGroup,
+         DictEntry *newTag = GetDictEntry( correctGroup,
                                                        correctElem );
          if ( !newTag )
          {
@@ -2476,18 +2476,18 @@ DocEntry *Document::ReadNextDocEntry()
 
    if( vr == GDCM_UNKNOWN)
    {
-      DictEntry *dictEntry = GetDictEntryByNumber(group,elem);
+      DictEntry *dictEntry = GetDictEntry(group,elem);
       if( dictEntry )
          realVR = dictEntry->GetVR();
    }
 
    DocEntry *newEntry;
    if( Global::GetVR()->IsVROfSequence(realVR) )
-      newEntry = NewSeqEntryByNumber(group, elem);
+      newEntry = NewSeqEntry(group, elem);
    else if( Global::GetVR()->IsVROfStringRepresentable(realVR) )
-      newEntry = NewValEntryByNumber(group, elem,vr);
+      newEntry = NewValEntry(group, elem,vr);
    else
-      newEntry = NewBinEntryByNumber(group, elem,vr);
+      newEntry = NewBinEntry(group, elem,vr);
 
    if( vr == GDCM_UNKNOWN )
    {
@@ -2896,8 +2896,8 @@ TagDocEntryHT *Document::BuildFlatHashTable()
 bool Document::operator<(Document &document)
 {
    // Patient Name
-   std::string s1 = GetEntryByNumber(0x0010,0x0010);
-   std::string s2 = document.GetEntryByNumber(0x0010,0x0010);
+   std::string s1 = GetEntry(0x0010,0x0010);
+   std::string s2 = document.GetEntry(0x0010,0x0010);
    if(s1 < s2)
    {
       return true;
@@ -2909,8 +2909,8 @@ bool Document::operator<(Document &document)
    else
    {
       // Patient ID
-      s1 = GetEntryByNumber(0x0010,0x0020);
-      s2 = document.GetEntryByNumber(0x0010,0x0020);
+      s1 = GetEntry(0x0010,0x0020);
+      s2 = document.GetEntry(0x0010,0x0020);
       if ( s1 < s2 )
       {
          return true;
@@ -2922,8 +2922,8 @@ bool Document::operator<(Document &document)
       else
       {
          // Study Instance UID
-         s1 = GetEntryByNumber(0x0020,0x000d);
-         s2 = document.GetEntryByNumber(0x0020,0x000d);
+         s1 = GetEntry(0x0020,0x000d);
+         s2 = document.GetEntry(0x0020,0x000d);
          if ( s1 < s2 )
          {
             return true;
@@ -2935,8 +2935,8 @@ bool Document::operator<(Document &document)
          else
          {
             // Serie Instance UID
-            s1 = GetEntryByNumber(0x0020,0x000e);
-            s2 = document.GetEntryByNumber(0x0020,0x000e);    
+            s1 = GetEntry(0x0020,0x000e);
+            s2 = document.GetEntry(0x0020,0x000e);    
             if ( s1 < s2 )
             {
                return true;

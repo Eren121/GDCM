@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/14 13:05:33 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/08 15:03:58 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,41 +76,41 @@ int WriteSimple(Image &img)
    // Set the image size
    str.str("");
    str << img.sizeX;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0011); // Columns
+   header->ReplaceOrCreate(str.str(),0x0028,0x0011); // Columns
 
    str.str("");
    str << img.sizeY;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0010); // Rows
+   header->ReplaceOrCreate(str.str(),0x0028,0x0010); // Rows
 
    if(img.sizeZ>1)
    {
       str.str("");
       str << img.sizeZ;
-      header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0008); // Number of Frames
+      header->ReplaceOrCreate(str.str(),0x0028,0x0008); // Number of Frames
    }
 
    // Set the pixel type
    str.str("");
    str << img.componentSize;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0100); // Bits Allocated
+   header->ReplaceOrCreate(str.str(),0x0028,0x0100); // Bits Allocated
 
    str.str("");
    str << img.componentUse;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0101); // Bits Stored
+   header->ReplaceOrCreate(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << img.componentSize - 1;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0102); // High Bit
+   header->ReplaceOrCreate(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << img.sign;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0103); // Pixel Representation
+   header->ReplaceOrCreate(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Set the samples per pixel
    str.str("");
    str << img.components;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0002); // Samples per Pixel
+   header->ReplaceOrCreate(str.str(),0x0028,0x0002); // Samples per Pixel
 
    if( !header->IsReadable() )
    {

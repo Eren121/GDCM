@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ DicomDirObject::~DicomDirObject()
  *          related to this 'object'
  * @return
  */ 
-TagDocEntryHT DicomDirObject::GetEntry()
+TagDocEntryHT DicomDirObject::GetEntryHT()
 {
    TagDocEntryHT HT;
    DocEntries = GetDocEntries();   
@@ -77,7 +77,7 @@ TagDocEntryHT DicomDirObject::GetEntry()
  */
 void DicomDirObject::FillObject(ListDicomDirMetaElem const &elemList)
 {
-  // FillObject rempli le SQItem qui sera accroche au bon endroit
+  // FillObject fills up the SQItem that will be conneected to the right place
 
    ListDicomDirMetaElem::const_iterator it;
    uint16_t tmpGr,tmpEl;
@@ -89,7 +89,7 @@ void DicomDirObject::FillObject(ListDicomDirMetaElem const &elemList)
    {
       tmpGr = it->Group;
       tmpEl = it->Elem;
-      dictEntry = Global::GetDicts()->GetDefaultPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
+      dictEntry = Global::GetDicts()->GetDefaultPubDict()->GetDictEntry(tmpGr,tmpEl);
       entry = new ValEntry(dictEntry);
       entry->SetOffset(0); // just to avoid further missprinting
       entry->SetValue(it->Value);

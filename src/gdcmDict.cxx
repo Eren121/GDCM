@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,16 +89,6 @@ Dict::~Dict()
 void Dict::Print(std::ostream &os)
 {
    os << "Dict file name : " << Filename << std::endl;
-   PrintByKey(os);
-}
-
-/**
- * \brief   Print all the dictionary entries contained in this dictionary.
- *          Entries will be sorted by tag i.e. the couple (group, element).
- * @param   os The output stream to be written to.
- */
-void Dict::PrintByKey(std::ostream &os)
-{
    std::ostringstream s;
 
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
@@ -113,6 +103,7 @@ void Dict::PrintByKey(std::ostream &os)
    }
    os << s.str();
 }
+
 
 //-----------------------------------------------------------------------------
 // Public
@@ -195,7 +186,7 @@ bool Dict::RemoveEntry (uint16_t group, uint16_t elem)
  * @param   elem element of the entry to be found
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-DictEntry *Dict::GetDictEntryByNumber(uint16_t group, uint16_t elem)
+DictEntry *Dict::GetDictEntry(uint16_t group, uint16_t elem)
 {
    TagKey key = DictEntry::TranslateToKey(group, elem);
    TagKeyHT::iterator it = KeyHt.find(key);

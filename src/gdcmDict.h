@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 09:03:52 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,6 @@ public:
 
 // Print
    void Print(std::ostream &os = std::cout);
-   void PrintByKey(std::ostream &os = std::cout);
 
 // Entries
    bool AddNewEntry (DictEntry const &newEntry);
@@ -63,10 +62,10 @@ public:
    bool RemoveEntry (uint16_t group, uint16_t element);
    
 // Tag
-   DictEntry *GetDictEntryByNumber(uint16_t group, uint16_t element);
+   DictEntry *GetDictEntry(uint16_t group, uint16_t element);
 
-   EntryNamesList *GetDictEntryNames();
-   EntryNamesByCatMap *GetDictEntryNamesByCategory();
+  // EntryNamesList *GetDictEntryNames();
+  // EntryNamesByCatMap *GetDictEntryNamesByCategory();
 
    /// \brief  Returns a ref to the Dicom Dictionary H table (map)
    /// @return the Dicom Dictionary H table

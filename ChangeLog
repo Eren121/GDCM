@@ -204,14 +204,14 @@
 
 2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Remove memory leaks on the DicomDir
-   * Remove some useless datas in DicomDirObject
+   * Remove some useless data in DicomDirObject
    * Add usefull methods in SQItem, to be complient withe the ElementSet
 
 2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFile.[h|cxx] : now use FileType instead of TWriteType.
 
 2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * src/gdcmPixelWriteConvert.[h|cxx] : new class to write datas (and in the
+   * src/gdcmPixelWriteConvert.[h|cxx] : new class to write data (and in the
      future, with convertion)
    * src/gdcmFile.[h|cxx] : the PixelWriteConverter instance replace Pixel_Data
      and ImageDataSize values. Remove the method to get the PixelReadConverter
@@ -301,7 +301,7 @@
      write
    * Test/TestCopyDicom.cxx, TestReadWriteReadCompare.cxx,
      TestAllReadCompareDicom.cxx : pass the write of images to RGB and test
-     is now on RGB datas (as before my last commit
+     is now on RGB data (as before my last commit
    * Example/PrintHeader.cxx, PrintFile.cxx : repad files.
 
 2004-11-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
@@ -311,7 +311,7 @@
      It was in the gdcmFile, and all write have been regrouped
    * src/gdcmFile.[h|cxx] : add methods to get the Raw data elements and size.
      Write correctly all dicom files (in decompressed mode only at this time)
-   * Test/ : test on files are now made using Raw datas and not color datas if
+   * Test/ : test on files are now made using Raw data and not color data if
      any.
    * Example/PrintFile.cxx : add more printings
 
@@ -338,7 +338,7 @@
 2004-11-23 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocEntryArchive.cxx : complete the print function, that prints
      all replaced DocEntry's
-   * src/gdcmFile.[h|cxx] : remove all changes of the header when getting datas.
+   * src/gdcmFile.[h|cxx] : remove all changes of the header when getting data.
      Now, each needed DocEntry to modify is duplicated, modified and inserted
      to the header using DocEntryArchive. Thus, after save, we can restore the
      header initial state.
@@ -378,10 +378,10 @@
      Two problems appear when doing it :
       - with the gdcmFile : when the GetImageData method is called, the pixels
         are stored in the gdcmPixelConvert, but a gdcmBinEntry link to these
-        datas (pixels). And each structure destruct the datas when it's
-        destructed. So we have two destructions for the same datas. To solve it,
+        data (pixels). And each structure destruct the data when it's
+        destructed. So we have two destructions for the same data. To solve it,
         a flag is added in the gdcmBinEntry to indicate if the BinEntry owns the
-        datas or not. If it doesn't own datas, then they will not destroyed by
+        data or not. If it doesn't own data, then they will not destroyed by
         the gdcmBinEntry.
       - with the gdcmDicomDir : the sequences (gdcmSQItem) contain DocEntry
         elements. The DicomDir* (DicomDirPatient, etc.) inherit from SQItem.
@@ -449,7 +449,7 @@
     correctly close is a call to CloseFile.
     When closing the file pointer, test if its not null to close the file.
   * src/gdcmPixelConvert.cxx : bug fix for the SIEMENS_GBS_III-16-ACR_NEMA_1.acr
-    file. For an uncompressed image, the copied datas correspond in the least 
+    file. For an uncompressed image, the copied data correspond in the least 
     case to the image size (calculated) or the image size specified in the 
     header. A verbose is generated if these two size mismatch
 
@@ -1837,7 +1837,7 @@
 
 2003-12-10 Benoit Regrain
      * gdcmHeader is now aggregating gdcmFile, and not derived into. Thus, we
-       can use a gdcmHeaderHelper to load datas
+       can use a gdcmHeaderHelper to load data
      * gdcmPython/testSuite.py : make the testSuite compliant with modifications
        made in the source code
 

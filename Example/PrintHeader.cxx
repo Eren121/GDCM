@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:55 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/08 15:03:57 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 
    std::cout << "\n\n" << std::endl; 
 
-   if ( e1->GetEntryByNumber(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) 
+   if ( e1->GetEntry(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) 
    {
       std::cout << "Transfert Syntax not loaded. " << std::endl
                 << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"

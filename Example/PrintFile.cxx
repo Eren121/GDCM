@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 11:37:01 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/01/08 15:03:57 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
              << " PlanarConfiguration=" << planarConfig 
              << std::endl 
              << " PhotometricInterpretation=" 
-                                << e1->GetEntryByNumber(0x0028,0x0004)
+                                << e1->GetEntry(0x0028,0x0004)
              << std::endl;
 
    int numberOfScalarComponents=e1->GetNumberOfScalarComponents();
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
              << std::endl;
 
   
-   if ( e1->GetEntryByNumber(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) 
+   if ( e1->GetEntry(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) 
    {
       std::cout << "Transfert Syntax not loaded. " << std::endl
                 << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"

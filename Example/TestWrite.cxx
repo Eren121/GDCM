@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:55 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/08 15:03:57 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
              << " SampleserPixel="      << sPP
              << " PlanarConfiguration=" << planarConfig 
              << " PhotometricInterpretation=" 
-                                << e1->GetEntryByNumber(0x0028,0x0004) 
+                                << e1->GetEntry(0x0028,0x0004) 
              << std::endl;
 
    int numberOfScalarComponents=e1->GetNumberOfScalarComponents();

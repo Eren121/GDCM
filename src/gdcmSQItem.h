@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 08:46:18 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/08 15:04:00 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,12 +49,12 @@ public:
    bool RemoveEntry(DocEntry *EntryToRemove);
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
   
-   DocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element);
+   DocEntry *GetDocEntry(uint16_t group, uint16_t element);
    
-   bool SetEntryByNumber(std::string const &val, uint16_t group, 
-                                                 uint16_t element);
+   bool SetEntry(std::string const &val, uint16_t group, 
+                                         uint16_t element);
     
-   std::string GetEntryByNumber(uint16_t group, uint16_t element);
+   std::string GetEntry(uint16_t group, uint16_t element);
 
    /// \brief   returns the ordinal position of a given SQItem
    int GetSQItemNumber() { return SQItemNumber; };

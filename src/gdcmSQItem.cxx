@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/08 15:04:00 $
+  Version:   $Revision: 1.49 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -163,12 +163,12 @@ bool SQItem::AddEntry(DocEntry *entry)
  *          (NOT a shadow one)       
  * @param   val string value to set
  * @param   group Group number of the searched tag.
- * @param   element Element number of the searched tag.
+ * @param   elem Element number of the searched tag.
  * @return  true if element was found or created successfully
  */
 
-bool SQItem::SetEntryByNumber(std::string const &val, uint16_t group, 
-                              uint16_t element)
+bool SQItem::SetEntry(std::string const &val, uint16_t group, 
+                      uint16_t elem)
 {
    for(ListDocEntry::iterator i = DocEntries.begin(); 
                               i != DocEntries.end(); 
@@ -180,23 +180,24 @@ bool SQItem::SetEntryByNumber(std::string const &val, uint16_t group,
       }
 
       if (  ( group  < (*i)->GetGroup() )
-          ||( group == (*i)->GetGroup() && element < (*i)->GetElement()) )
+          ||( group == (*i)->GetGroup() && elem < (*i)->GetElement()) )
       {
-         // instead of ReplaceOrCreateByNumber 
+         // instead of ReplaceOrCreate 
          // that is a method of Document :-( 
          ValEntry* entry = 0;
-         TagKey key = DictEntry::TranslateToKey(group, element);
+         TagKey key = DictEntry::TranslateToKey(group, elem);
 
          // we assume a Public Dictionnary *is* loaded
          Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
          // if the invoked (group,elem) doesn't exist inside the Dictionary
          // we create a VirtualDictEntry
-         DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, element);
+         DictEntry *dictEntry = pubDict->GetDictEntry(group, elem);
          if (dictEntry == NULL)
          {
             dictEntry = 
-               Global::GetDicts()->NewVirtualDictEntry(group, element,
-                                                       "UN", GDCM_UNKNOWN, GDCM_UNKNOWN);
+               Global::GetDicts()->NewVirtualDictEntry(group, elem,
+                                                       "UN", GDCM_UNKNOWN, 
+                                                        GDCM_UNKNOWN);
          } 
          // we assume the constructor didn't fail
          entry = new ValEntry(dictEntry);
@@ -208,7 +209,7 @@ bool SQItem::SetEntryByNumber(std::string const &val, uint16_t group,
 
          return true;
       }   
-      if (group == (*i)->GetGroup() && element == (*i)->GetElement() )
+      if (group == (*i)->GetGroup() && elem == (*i)->GetElement() )
       {
          if ( ValEntry* entry = dynamic_cast<ValEntry*>(*i) )
          {
@@ -296,15 +297,17 @@ DocEntry *SQItem::GetNextEntry()
 //-----------------------------------------------------------------------------
 // Protected
 /**
- * \brief   Gets a Dicom Element inside a SQ Item Entry, by number
+ * \brief   Gets a Dicom Element inside a SQ Item Entry
+ * @param   group   Group number of the Entry
+ * @param   elem  Element number of the Entry
  * @return
  */
-DocEntry* SQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
+DocEntry* SQItem::GetDocEntry(uint16_t group, uint16_t elem)
 {
    for(ListDocEntry::iterator i = DocEntries.begin();
                               i != DocEntries.end(); ++i)
    {
-      if ( (*i)->GetGroup() == group && (*i)->GetElement() == element )
+      if ( (*i)->GetGroup() == group && (*i)->GetElement() == elem )
       {
          return *i;
       }
@@ -313,16 +316,18 @@ DocEntry* SQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
 }
 
 /**
- * \brief   Get the value of a Dicom Element inside a SQ Item Entry, by number
+ * \brief   Get the value of a Dicom Element inside a SQ Item Entry
+ * @param   group   Group number of the Entry
+ * @param   elem  Element number of the Entry 
  * @return
  */ 
 
-std::string SQItem::GetEntryByNumber(uint16_t group, uint16_t element)
+std::string SQItem::GetEntry(uint16_t group, uint16_t elem)
 {
    for(ListDocEntry::iterator i = DocEntries.begin();
                               i != DocEntries.end(); ++i)
    {
-      if ( (*i)->GetGroup() == group && (*i)->GetElement() == element)
+      if ( (*i)->GetGroup() == group && (*i)->GetElement() == elem)
       {
          return ((ValEntry *)(*i))->GetValue();   //FIXME
       }

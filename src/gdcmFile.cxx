@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.186 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.187 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -530,10 +530,10 @@ bool File::Write(std::string const &fileName)
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */
-bool File::SetEntryByNumber(std::string const &content,
-                            uint16_t group, uint16_t element)
+bool File::SetEntry(std::string const &content,
+                    uint16_t group, uint16_t element)
 { 
-   return HeaderInternal->SetEntryByNumber(content,group,element);
+   return HeaderInternal->SetEntry(content,group,element);
 }
 
 
@@ -546,10 +546,10 @@ bool File::SetEntryByNumber(std::string const &content,
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */
-bool File::SetEntryByNumber(uint8_t *content, int lgth,
-                            uint16_t group, uint16_t element)
+bool File::SetEntry(uint8_t *content, int lgth,
+                    uint16_t group, uint16_t element)
 {
-   return HeaderInternal->SetEntryByNumber(content,lgth,group,element);
+   return HeaderInternal->SetEntry(content,lgth,group,element);
 }
 
 /**
@@ -561,10 +561,10 @@ bool File::SetEntryByNumber(uint8_t *content, int lgth,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
-bool File::ReplaceOrCreateByNumber(std::string const &content,
-                                   uint16_t group, uint16_t element)
+bool File::ReplaceOrCreate(std::string const &content,
+                           uint16_t group, uint16_t element)
 {
-   return HeaderInternal->ReplaceOrCreateByNumber(content,group,element) != NULL;
+   return HeaderInternal->ReplaceOrCreate(content,group,element) != NULL;
 }
 
 /*
@@ -577,10 +577,10 @@ bool File::ReplaceOrCreateByNumber(std::string const &content,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-bool File::ReplaceOrCreateByNumber(uint8_t *binArea, int lgth,
-                                   uint16_t group, uint16_t element)
+bool File::ReplaceOrCreate(uint8_t *binArea, int lgth,
+                           uint16_t group, uint16_t element)
 {
-   return HeaderInternal->ReplaceOrCreateByNumber(binArea,lgth,group,element) != NULL;
+   return HeaderInternal->ReplaceOrCreate(binArea,lgth,group,element) != NULL;
 }
 
 /**
@@ -801,9 +801,9 @@ void File::RestoreWriteFileType()
 void File::SetWriteToLibido()
 {
    ValEntry *oldRow = dynamic_cast<ValEntry *>
-                (HeaderInternal->GetDocEntryByNumber(0x0028, 0x0010));
+                (HeaderInternal->GetDocEntry(0x0028, 0x0010));
    ValEntry *oldCol = dynamic_cast<ValEntry *>
-                (HeaderInternal->GetDocEntryByNumber(0x0028, 0x0011));
+                (HeaderInternal->GetDocEntry(0x0028, 0x0011));
    
    if( oldRow && oldCol )
    {
@@ -830,7 +830,7 @@ void File::SetWriteToLibido()
 void File::SetWriteToNoLibido()
 {
    ValEntry *recCode = dynamic_cast<ValEntry *>
-                (HeaderInternal->GetDocEntryByNumber(0x0008,0x0010));
+                (HeaderInternal->GetDocEntry(0x0008,0x0010));
    if( recCode )
    {
       if( recCode->GetValue() == "ACRNEMA_LIBIDO_1.1" )
@@ -851,7 +851,7 @@ void File::RestoreWriteOfLibido()
 
 ValEntry *File::CopyValEntry(uint16_t group,uint16_t element)
 {
-   DocEntry *oldE = HeaderInternal->GetDocEntryByNumber(group, element);
+   DocEntry *oldE = HeaderInternal->GetDocEntry(group, element);
    ValEntry *newE;
 
    if(oldE)
@@ -861,7 +861,7 @@ ValEntry *File::CopyValEntry(uint16_t group,uint16_t element)
    }
    else
    {
-      newE = GetHeader()->NewValEntryByNumber(group,element);
+      newE = GetHeader()->NewValEntry(group,element);
    }
 
    return(newE);
@@ -869,7 +869,7 @@ ValEntry *File::CopyValEntry(uint16_t group,uint16_t element)
 
 BinEntry *File::CopyBinEntry(uint16_t group,uint16_t element)
 {
-   DocEntry *oldE = HeaderInternal->GetDocEntryByNumber(group, element);
+   DocEntry *oldE = HeaderInternal->GetDocEntry(group, element);
    BinEntry *newE;
 
    if(oldE)
@@ -879,7 +879,7 @@ BinEntry *File::CopyBinEntry(uint16_t group,uint16_t element)
    }
    else
    {
-      newE = GetHeader()->NewBinEntryByNumber(group,element);
+      newE = GetHeader()->NewBinEntry(group,element);
    }
 
    return(newE);

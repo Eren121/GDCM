@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/08 11:37:15 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/08 15:03:58 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,7 @@ int CopyRescaleDicom(std::string const & filename,
    {
       if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
       {
-         copyH->ReplaceOrCreateByNumber( 
+         copyH->ReplaceOrCreate( 
                               b->GetBinArea(),
                               b->GetLength(),
                               b->GetGroup(), 
@@ -73,7 +73,7 @@ int CopyRescaleDicom(std::string const & filename,
       }
       else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
-          copyH->ReplaceOrCreateByNumber( 
+          copyH->ReplaceOrCreate( 
                               v->GetValue(),
                               v->GetGroup(), 
                               v->GetElement(),
@@ -95,14 +95,14 @@ int CopyRescaleDicom(std::string const & filename,
    size_t rescaleSize;
    uint8_t *rescaleImage;
 
-   const std::string & bitsStored    = originalH->GetEntryByNumber(0x0028,0x0101);
+   const std::string & bitsStored    = originalH->GetEntry(0x0028,0x0101);
    if( bitsStored == "16" )
    {
       std::cout << "Rescale...";
-      copyH->ReplaceOrCreateByNumber( "8", 0x0028, 0x0100); // BitsAllocated
-      copyH->ReplaceOrCreateByNumber( "8", 0x0028, 0x0101); // BitsStored
-      copyH->ReplaceOrCreateByNumber( "7", 0x0028, 0x0102); // HighBit
-      copyH->ReplaceOrCreateByNumber( "0", 0x0028, 0x0103); //Pixel Representation
+      copyH->ReplaceOrCreate( "8", 0x0028, 0x0100); // BitsAllocated
+      copyH->ReplaceOrCreate( "8", 0x0028, 0x0101); // BitsStored
+      copyH->ReplaceOrCreate( "7", 0x0028, 0x0102); // HighBit
+      copyH->ReplaceOrCreate( "0", 0x0028, 0x0103); //Pixel Representation
  
       // We assume the value were from 0 to uint16_t max
       rescaleSize = dataSize / 2;

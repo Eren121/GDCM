@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:24:00 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,10 +60,10 @@ DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,uint16_t elem,
  * @param   elem  element number of the new Entry
  * @param   vr     VR of the new Entry 
  */
-ValEntry *DocEntrySet::NewValEntryByNumber(uint16_t group,uint16_t elem,
-                                           TagName const & vr) 
+ValEntry *DocEntrySet::NewValEntry(uint16_t group,uint16_t elem,
+                                   TagName const & vr) 
 {
-   DictEntry *dictEntry = GetDictEntryByNumber(group, elem, vr);
+   DictEntry *dictEntry = GetDictEntry(group, elem, vr);
    gdcmAssertMacro(dictEntry);
 
    ValEntry *newEntry = new ValEntry(dictEntry);
@@ -84,10 +84,10 @@ ValEntry *DocEntrySet::NewValEntryByNumber(uint16_t group,uint16_t elem,
  * @param   elem  element number of the new Entry
  * @param   vr     VR of the new Entry 
  */
-BinEntry *DocEntrySet::NewBinEntryByNumber(uint16_t group,uint16_t elem,
-                                           TagName const & vr) 
+BinEntry *DocEntrySet::NewBinEntry(uint16_t group,uint16_t elem,
+                                   TagName const & vr) 
 {
-   DictEntry *dictEntry = GetDictEntryByNumber(group, elem, vr);
+   DictEntry *dictEntry = GetDictEntry(group, elem, vr);
    gdcmAssertMacro(dictEntry);
 
    BinEntry *newEntry = new BinEntry(dictEntry);
@@ -106,9 +106,9 @@ BinEntry *DocEntrySet::NewBinEntryByNumber(uint16_t group,uint16_t elem,
  * @param   group group   number of the new Entry
  * @param   elem  element number of the new Entry
  */
-SeqEntry* DocEntrySet::NewSeqEntryByNumber(uint16_t group,uint16_t elem) 
+SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group,uint16_t elem) 
 {
-   DictEntry *dictEntry = GetDictEntryByNumber(group, elem, "SQ");
+   DictEntry *dictEntry = GetDictEntry(group, elem, "SQ");
    gdcmAssertMacro(dictEntry);
 
    SeqEntry *newEntry = new SeqEntry( dictEntry );
@@ -129,7 +129,7 @@ SeqEntry* DocEntrySet::NewSeqEntryByNumber(uint16_t group,uint16_t elem)
  * @param   elem element number of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
-DictEntry *DocEntrySet::GetDictEntryByNumber(uint16_t group,uint16_t elem) 
+DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem) 
 {
    DictEntry *found = 0;
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
@@ -139,15 +139,15 @@ DictEntry *DocEntrySet::GetDictEntryByNumber(uint16_t group,uint16_t elem)
    }
    else
    {
-      found = pubDict->GetDictEntryByNumber(group, elem);  
+      found = pubDict->GetDictEntry(group, elem);  
    }
    return found;
 }
 
-DictEntry *DocEntrySet::GetDictEntryByNumber(uint16_t group, uint16_t elem,
+DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
                                              TagName const & vr)
 {
-   DictEntry *dictEntry = GetDictEntryByNumber(group,elem);
+   DictEntry *dictEntry = GetDictEntry(group,elem);
    DictEntry *goodEntry = dictEntry;
    std::string goodVR = vr;
 

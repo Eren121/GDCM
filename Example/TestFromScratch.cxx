@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 19:20:37 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/08 15:03:57 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
 
    // Doesn't seems to do anything:
    gdcm::Debug::SetDebugOn();
+
    // Doesn't link properly:
    //gdcm::Debug::GetReference().SetDebug(1);
 
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
          // Do not bother with field from private dict
          if( v->GetName() != "gdcm::Unknown" )
          {  
-            h2->ReplaceOrCreateByNumber( 
+            h2->ReplaceOrCreate( 
                               v->GetValue(),
                               v->GetGroup(), 
                               v->GetElement(),

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:19:48 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1062,9 +1062,9 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
    if ( HasLUT )
    {
       // Just in case some access to a Header element requires disk access.
-      LutRedDescriptor   = header->GetEntryByNumber( 0x0028, 0x1101 );
-      LutGreenDescriptor = header->GetEntryByNumber( 0x0028, 0x1102 );
-      LutBlueDescriptor  = header->GetEntryByNumber( 0x0028, 0x1103 );
+      LutRedDescriptor   = header->GetEntry( 0x0028, 0x1101 );
+      LutGreenDescriptor = header->GetEntry( 0x0028, 0x1102 );
+      LutBlueDescriptor  = header->GetEntry( 0x0028, 0x1103 );
    
       // Depending on the value of Document::MAX_SIZE_LOAD_ELEMENT_VALUE
       // [ refer to invocation of Document::SetMaxSizeLoadEntry() in
@@ -1082,7 +1082,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
    
       ////// Red round
       header->LoadEntryBinArea(0x0028, 0x1201);
-      LutRedData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1201 );
+      LutRedData = (uint8_t*)header->GetEntryBinArea( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
          gdcmVerboseMacro( "Unable to read red LUT data" );
@@ -1090,7 +1090,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
 
       ////// Green round:
       header->LoadEntryBinArea(0x0028, 0x1202);
-      LutGreenData = (uint8_t*)header->GetEntryBinAreaByNumber(0x0028, 0x1202 );
+      LutGreenData = (uint8_t*)header->GetEntryBinArea(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
          gdcmVerboseMacro( "Unable to read green LUT data" );
@@ -1098,7 +1098,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
 
       ////// Blue round:
       header->LoadEntryBinArea(0x0028, 0x1203);
-      LutBlueData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1203 );
+      LutBlueData = (uint8_t*)header->GetEntryBinArea( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
          gdcmVerboseMacro( "Unable to read blue LUT data" );

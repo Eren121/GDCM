@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 14:49:15 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/08 15:03:58 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@ int CopyDicom(std::string const & filename,
       {
          if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
          {
-            copyH->ReplaceOrCreateByNumber( 
+            copyH->ReplaceOrCreate( 
                                  b->GetBinArea(),
                                  b->GetLength(),
                                  b->GetGroup(), 
@@ -101,7 +101,7 @@ int CopyDicom(std::string const & filename,
          }
          else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
          {   
-             copyH->ReplaceOrCreateByNumber( 
+             copyH->ReplaceOrCreate( 
                                  v->GetValue(),
                                  v->GetGroup(), 
                                  v->GetElement(),

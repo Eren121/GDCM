@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:56 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/08 15:03:58 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,7 @@ int TestBug(int argc, char* argv[])
    }
    //e1->PrintPubDict();
    //e1->GetPubDict()->GetEntriesByKey();
-   e1->GetPubDict()->PrintByKey();
+   e1->GetPubDict()->Print();
    delete e1;
 
    return 0;

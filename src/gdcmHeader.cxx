@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:19:48 $
-  Version:   $Revision: 1.226 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.227 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ Header::Header( std::string const &filename ):
    // Note: this IS the right place for the code
  
    // Image Location
-   const std::string &imgLocation = GetEntryByNumber(0x0028, 0x0200);
+   const std::string &imgLocation = GetEntry(0x0028, 0x0200);
    if ( imgLocation == GDCM_UNFOUND )
    {
       // default value
@@ -81,7 +81,7 @@ Header::Header( std::string const &filename ):
    // Let's create a VirtualDictEntry to allow a further VR modification
    // and force VR to match with BitsAllocated.
 
-   DocEntry *entry = GetDocEntryByNumber(GrPixel, NumPixel); 
+   DocEntry *entry = GetDocEntry(GrPixel, NumPixel); 
    if ( entry != 0 )
    {
 
@@ -136,20 +136,20 @@ bool Header::Write(std::string fileName, FileType filetype)
    }
 
    // Bits Allocated
-   if ( GetEntryByNumber(0x0028,0x0100) ==  "12")
+   if ( GetEntry(0x0028,0x0100) ==  "12")
    {
-      SetEntryByNumber("16", 0x0028,0x0100);
+      SetEntry("16", 0x0028,0x0100);
    }
 
   /// \todo correct 'Pixel group' Length if necessary
 
-   int i_lgPix = GetEntryLengthByNumber(GrPixel, NumPixel);
+   int i_lgPix = GetEntryLength(GrPixel, NumPixel);
    if (i_lgPix != -2)
    {
       // no (GrPixel, NumPixel) element
       std::string s_lgPix = Util::Format("%d", i_lgPix+12);
       s_lgPix = Util::DicomString( s_lgPix.c_str() );
-      ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
+      ReplaceOrCreate(s_lgPix,GrPixel, 0x0000);
    }
 
    // FIXME : should be nice if we could move it to File
@@ -157,38 +157,38 @@ bool Header::Write(std::string fileName, FileType filetype)
 
    // Drop Palette Color, if necessary
    
-   if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' )
+   if ( GetEntry(0x0028,0x0002).c_str()[0] == '3' )
    {
       // if SamplesPerPixel = 3, sure we don't need any LUT !   
       // Drop 0028|1101, 0028|1102, 0028|1103
       // Drop 0028|1201, 0028|1202, 0028|1203
 
-      DocEntry *e = GetDocEntryByNumber(0x0028,0x01101);
+      DocEntry *e = GetDocEntry(0x0028,0x01101);
       if (e)
       {
          RemoveEntryNoDestroy(e);
       }
-      e = GetDocEntryByNumber(0x0028,0x1102);
+      e = GetDocEntry(0x0028,0x1102);
       if (e)
       {
          RemoveEntryNoDestroy(e);
       }
-      e = GetDocEntryByNumber(0x0028,0x1103);
+      e = GetDocEntry(0x0028,0x1103);
       if (e)
       {
          RemoveEntryNoDestroy(e);
       }
-      e = GetDocEntryByNumber(0x0028,0x01201);
+      e = GetDocEntry(0x0028,0x01201);
       if (e)
       {
          RemoveEntryNoDestroy(e);
       }
-      e = GetDocEntryByNumber(0x0028,0x1202);
+      e = GetDocEntry(0x0028,0x1202);
       if (e)
       {
          RemoveEntryNoDestroy(e);
       }
-      e = GetDocEntryByNumber(0x0028,0x1203);
+      e = GetDocEntry(0x0028,0x1203);
       if (e)
       {
           RemoveEntryNoDestroy(e);
@@ -224,24 +224,24 @@ bool Header::IsReadable()
       return false;
    }
 
-   const std::string &res = GetEntryByNumber(0x0028, 0x0005);
+   const std::string &res = GetEntry(0x0028, 0x0005);
    if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 )
    {
       return false; // Image Dimensions
    }
-   if ( !GetDocEntryByNumber(0x0028, 0x0100) )
+   if ( !GetDocEntry(0x0028, 0x0100) )
    {
       return false; // "Bits Allocated"
    }
-   if ( !GetDocEntryByNumber(0x0028, 0x0101) )
+   if ( !GetDocEntry(0x0028, 0x0101) )
    {
       return false; // "Bits Stored"
    }
-   if ( !GetDocEntryByNumber(0x0028, 0x0102) )
+   if ( !GetDocEntry(0x0028, 0x0102) )
    {
       return false; // "High Bit"
    }
-   if ( !GetDocEntryByNumber(0x0028, 0x0103) )
+   if ( !GetDocEntry(0x0028, 0x0103) )
    {
       return false; // "Pixel Representation" i.e. 'Sign'
    }
@@ -256,7 +256,7 @@ bool Header::IsReadable()
  */
 int Header::GetXSize()
 {
-   const std::string &strSize = GetEntryByNumber(0x0028,0x0011);
+   const std::string &strSize = GetEntry(0x0028,0x0011);
    if ( strSize == GDCM_UNFOUND )
    {
       return 0;
@@ -273,7 +273,7 @@ int Header::GetXSize()
  */
 int Header::GetYSize()
 {
-   const std::string &strSize = GetEntryByNumber(0x0028,0x0010);
+   const std::string &strSize = GetEntry(0x0028,0x0010);
    if ( strSize != GDCM_UNFOUND )
    {
       return atoi( strSize.c_str() );
@@ -300,14 +300,14 @@ int Header::GetZSize()
 {
    // Both  DicomV3 and ACR/Nema consider the "Number of Frames"
    // as the third dimension.
-   const std::string &strSize = GetEntryByNumber(0x0028,0x0008);
+   const std::string &strSize = GetEntry(0x0028,0x0008);
    if ( strSize != GDCM_UNFOUND )
    {
       return atoi( strSize.c_str() );
    }
 
    // We then consider the "Planes" entry as the third dimension 
-   const std::string &strSize2 = GetEntryByNumber(0x0028,0x0012);
+   const std::string &strSize2 = GetEntry(0x0028,0x0012);
    if ( strSize2 != GDCM_UNFOUND )
    {
       return atoi( strSize2.c_str() );
@@ -324,7 +324,7 @@ int Header::GetZSize()
 float Header::GetXSpacing()
 {
    float xspacing, yspacing;
-   const std::string &strSpacing = GetEntryByNumber(0x0028,0x0030);
+   const std::string &strSpacing = GetEntry(0x0028,0x0030);
 
    if ( strSpacing == GDCM_UNFOUND )
    {
@@ -372,7 +372,7 @@ float Header::GetXSpacing()
 float Header::GetYSpacing()
 {
    float yspacing = 1.;
-   std::string strSpacing = GetEntryByNumber(0x0028,0x0030);
+   std::string strSpacing = GetEntry(0x0028,0x0030);
   
    if ( strSpacing == GDCM_UNFOUND )
    {
@@ -407,12 +407,12 @@ float Header::GetZSpacing()
    //   Si le Spacing Between Slices est absent, 
    //   on suppose que les coupes sont jointives
    
-   const std::string &strSpacingBSlices = GetEntryByNumber(0x0018,0x0088);
+   const std::string &strSpacingBSlices = GetEntry(0x0018,0x0088);
 
    if ( strSpacingBSlices == GDCM_UNFOUND )
    {
       gdcmVerboseMacro("Unfound StrSpacingBSlices");
-      const std::string &strSliceThickness = GetEntryByNumber(0x0018,0x0050);       
+      const std::string &strSliceThickness = GetEntry(0x0018,0x0050);       
       if ( strSliceThickness == GDCM_UNFOUND )
       {
          return 1.;
@@ -438,7 +438,7 @@ float Header::GetRescaleIntercept()
 {
    float resInter = 0.;
    /// 0028 1052 DS IMG Rescale Intercept
-   const std::string &strRescInter = GetEntryByNumber(0x0028,0x1052);
+   const std::string &strRescInter = GetEntry(0x0028,0x1052);
    if ( strRescInter != GDCM_UNFOUND )
    {
       if( sscanf( strRescInter.c_str(), "%f", &resInter) != 1 )
@@ -459,7 +459,7 @@ float Header::GetRescaleSlope()
 {
    float resSlope = 1.;
    //0028 1053 DS IMG Rescale Slope
-   std::string strRescSlope = GetEntryByNumber(0x0028,0x1053);
+   std::string strRescSlope = GetEntry(0x0028,0x1053);
    if ( strRescSlope != GDCM_UNFOUND )
    {
       if( sscanf( strRescSlope.c_str(), "%f", &resSlope) != 1)
@@ -488,12 +488,12 @@ int Header::GetNumberOfScalarComponents()
       
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old RGB images)
-   if ( GetEntryByNumber(0x0028,0x0100) == "24" )
+   if ( GetEntry(0x0028,0x0100) == "24" )
    {
       return 3;
    }
        
-   std::string strPhotometricInterpretation = GetEntryByNumber(0x0028,0x0004);
+   std::string strPhotometricInterpretation = GetEntry(0x0028,0x0004);
 
    if ( ( strPhotometricInterpretation == "PALETTE COLOR ") )
    {
@@ -533,7 +533,7 @@ int Header::GetNumberOfScalarComponentsRaw()
 {
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old RGB images)
-   if ( Header::GetEntryByNumber(0x0028,0x0100) == "24" )
+   if ( Header::GetEntry(0x0028,0x0100) == "24" )
    {
       return 3;
    }
@@ -567,12 +567,12 @@ int Header::GetNumberOfScalarComponentsRaw()
 float Header::GetXOrigin()
 {
    float xImPos, yImPos, zImPos;  
-   std::string strImPos = GetEntryByNumber(0x0020,0x0032);
+   std::string strImPos = GetEntry(0x0020,0x0032);
 
    if ( strImPos == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "Unfound Image Position Patient (0020,0032)");
-      strImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
+      strImPos = GetEntry(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmVerboseMacro( "Unfound Image Position (RET) (0020,0030)");
@@ -598,12 +598,12 @@ float Header::GetXOrigin()
 float Header::GetYOrigin()
 {
    float xImPos, yImPos, zImPos;
-   std::string strImPos = GetEntryByNumber(0x0020,0x0032);
+   std::string strImPos = GetEntry(0x0020,0x0032);
 
    if ( strImPos == GDCM_UNFOUND)
    {
       gdcmVerboseMacro( "Unfound Image Position Patient (0020,0032)");
-      strImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
+      strImPos = GetEntry(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmVerboseMacro( "Unfound Image Position (RET) (0020,0030)");
@@ -631,7 +631,7 @@ float Header::GetYOrigin()
 float Header::GetZOrigin()
 {
    float xImPos, yImPos, zImPos; 
-   std::string strImPos = GetEntryByNumber(0x0020,0x0032);
+   std::string strImPos = GetEntry(0x0020,0x0032);
 
    if ( strImPos != GDCM_UNFOUND )
    {
@@ -646,7 +646,7 @@ float Header::GetZOrigin()
       }
    }
 
-   strImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
+   strImPos = GetEntry(0x0020,0x0030); // For ACR-NEMA images
    if ( strImPos != GDCM_UNFOUND )
    {
       if( sscanf( strImPos.c_str(), 
@@ -661,7 +661,7 @@ float Header::GetZOrigin()
       }
    }
 
-   std::string strSliceLocation = GetEntryByNumber(0x0020,0x1041); // for *very* old ACR-NEMA images
+   std::string strSliceLocation = GetEntry(0x0020,0x1041); // for *very* old ACR-NEMA images
    if ( strSliceLocation != GDCM_UNFOUND )
    {
       if( sscanf( strSliceLocation.c_str(), "%f", &zImPos) != 1)
@@ -676,7 +676,7 @@ float Header::GetZOrigin()
    }
    gdcmVerboseMacro( "Unfound Slice Location (0020,1041)");
 
-   std::string strLocation = GetEntryByNumber(0x0020,0x0050);
+   std::string strLocation = GetEntry(0x0020,0x0050);
    if ( strLocation != GDCM_UNFOUND )
    {
       if( sscanf( strLocation.c_str(), "%f", &zImPos) != 1)
@@ -707,7 +707,7 @@ int Header::GetImageNumber()
    // faster function. sscanf() can do all possible conversions whereas
    // atoi() can only do single decimal integer conversions.
    //0020 0013 IS REL Image Number
-   std::string strImNumber = GetEntryByNumber(0x0020,0x0013);
+   std::string strImNumber = GetEntry(0x0020,0x0013);
    if ( strImNumber != GDCM_UNFOUND )
    {
       return atoi( strImNumber.c_str() );
@@ -722,7 +722,7 @@ int Header::GetImageNumber()
 ModalityType Header::GetModality()
 {
    // 0008 0060 CS ID Modality
-   std::string strModality = GetEntryByNumber(0x0008,0x0060);
+   std::string strModality = GetEntry(0x0008,0x0060);
    if ( strModality != GDCM_UNFOUND )
    {
            if ( strModality.find("AU") < strModality.length()) return AU;
@@ -785,7 +785,7 @@ ModalityType Header::GetModality()
  */
 int Header::GetBitsStored()
 {
-   std::string strSize = GetEntryByNumber( 0x0028, 0x0101 );
+   std::string strSize = GetEntry( 0x0028, 0x0101 );
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro("This is supposed to be mandatory");
@@ -803,7 +803,7 @@ int Header::GetBitsStored()
  */
 int Header::GetHighBitPosition()
 {
-   std::string strSize = GetEntryByNumber( 0x0028, 0x0102 );
+   std::string strSize = GetEntry( 0x0028, 0x0102 );
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "This is supposed to be mandatory");
@@ -820,7 +820,7 @@ int Header::GetHighBitPosition()
  */
 bool Header::IsSignedPixelData()
 {
-   std::string strSize = GetEntryByNumber( 0x0028, 0x0103 );
+   std::string strSize = GetEntry( 0x0028, 0x0103 );
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "This is supposed to be mandatory");
@@ -842,7 +842,7 @@ bool Header::IsSignedPixelData()
  */
 int Header::GetBitsAllocated()
 {
-   std::string strSize = GetEntryByNumber(0x0028,0x0100);
+   std::string strSize = GetEntry(0x0028,0x0100);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "This is supposed to be mandatory");
@@ -860,7 +860,7 @@ int Header::GetBitsAllocated()
  */
 int Header::GetSamplesPerPixel()
 {
-   const std::string& strSize = GetEntryByNumber(0x0028,0x0002);
+   const std::string& strSize = GetEntry(0x0028,0x0002);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "This is supposed to be mandatory");
@@ -877,7 +877,7 @@ int Header::GetSamplesPerPixel()
  */
 bool Header::IsMonochrome()
 {
-   const std::string& PhotometricInterp = GetEntryByNumber( 0x0028, 0x0004 );
+   const std::string& PhotometricInterp = GetEntry( 0x0028, 0x0004 );
    if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1")
       || Util::DicomStringEqual(PhotometricInterp, "MONOCHROME2") )
    {
@@ -897,7 +897,7 @@ bool Header::IsMonochrome()
  */
 bool Header::IsPaletteColor()
 {
-   std::string PhotometricInterp = GetEntryByNumber( 0x0028, 0x0004 );
+   std::string PhotometricInterp = GetEntry( 0x0028, 0x0004 );
    if (   PhotometricInterp == "PALETTE COLOR " )
    {
       return true;
@@ -916,7 +916,7 @@ bool Header::IsPaletteColor()
  */
 bool Header::IsYBRFull()
 {
-   std::string PhotometricInterp = GetEntryByNumber( 0x0028, 0x0004 );
+   std::string PhotometricInterp = GetEntry( 0x0028, 0x0004 );
    if (   PhotometricInterp == "YBR_FULL" )
    {
       return true;
@@ -935,7 +935,7 @@ bool Header::IsYBRFull()
  */
 int Header::GetPlanarConfiguration()
 {
-   std::string strSize = GetEntryByNumber(0x0028,0x0006);
+   std::string strSize = GetEntry(0x0028,0x0006);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "Absent Planar Configuration");
@@ -953,7 +953,7 @@ int Header::GetPixelSize()
 {
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old RGB images)
-   //   if (Header::GetEntryByNumber(0x0028,0x0100) == "24")
+   //   if (Header::GetEntry(0x0028,0x0100) == "24")
    //      return 3;
 
    std::string pixelType = GetPixelType();
@@ -993,7 +993,7 @@ int Header::GetPixelSize()
  */
 std::string Header::GetPixelType()
 {
-   std::string bitsAlloc = GetEntryByNumber(0x0028, 0x0100); // Bits Allocated
+   std::string bitsAlloc = GetEntry(0x0028, 0x0100); // Bits Allocated
    if ( bitsAlloc == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "Unfound Bits Allocated");
@@ -1015,7 +1015,7 @@ std::string Header::GetPixelType()
       bitsAlloc = "8";  // by old RGB images)
    }
 
-   std::string sign = GetEntryByNumber(0x0028, 0x0103);//"Pixel Representation"
+   std::string sign = GetEntry(0x0028, 0x0103);//"Pixel Representation"
 
    if (sign == GDCM_UNFOUND )
    {
@@ -1041,7 +1041,7 @@ std::string Header::GetPixelType()
  */
 size_t Header::GetPixelOffset()
 {
-   DocEntry* pxlElement = GetDocEntryByNumber(GrPixel,NumPixel);
+   DocEntry* pxlElement = GetDocEntry(GrPixel,NumPixel);
    if ( pxlElement )
    {
       return pxlElement->GetOffset();
@@ -1067,7 +1067,7 @@ size_t Header::GetPixelOffset()
  */
 size_t Header::GetPixelAreaLength()
 {
-   DocEntry* pxlElement = GetDocEntryByNumber(GrPixel,NumPixel);
+   DocEntry* pxlElement = GetDocEntry(GrPixel,NumPixel);
    if ( pxlElement )
    {
       return pxlElement->GetLength();
@@ -1095,32 +1095,32 @@ bool Header::HasLUT()
 {
    // Check the presence of the LUT Descriptors, and LUT Tables    
    // LutDescriptorRed    
-   if ( !GetDocEntryByNumber(0x0028,0x1101) )
+   if ( !GetDocEntry(0x0028,0x1101) )
    {
       return false;
    }
    // LutDescriptorGreen 
-   if ( !GetDocEntryByNumber(0x0028,0x1102) )
+   if ( !GetDocEntry(0x0028,0x1102) )
    {
       return false;
    }
    // LutDescriptorBlue 
-   if ( !GetDocEntryByNumber(0x0028,0x1103) )
+   if ( !GetDocEntry(0x0028,0x1103) )
    {
       return false;
    }
    // Red Palette Color Lookup Table Data
-   if ( !GetDocEntryByNumber(0x0028,0x1201) )
+   if ( !GetDocEntry(0x0028,0x1201) )
    {
       return false;
    }
    // Green Palette Color Lookup Table Data       
-   if ( !GetDocEntryByNumber(0x0028,0x1202) )
+   if ( !GetDocEntry(0x0028,0x1202) )
    {
       return false;
    }
    // Blue Palette Color Lookup Table Data      
-   if ( !GetDocEntryByNumber(0x0028,0x1203) )
+   if ( !GetDocEntry(0x0028,0x1203) )
    {
       return false;
    }
@@ -1145,7 +1145,7 @@ int Header::GetLUTNbits()
    //Just hope Lookup Table Desc-Red = Lookup Table Desc-Red
    //                                = Lookup Table Desc-Blue
    // Consistency already checked in GetLUTLength
-   std::string lutDescription = GetEntryByNumber(0x0028,0x1101);
+   std::string lutDescription = GetEntry(0x0028,0x1101);
    if ( lutDescription == GDCM_UNFOUND )
    {
       return 0;
@@ -1170,7 +1170,7 @@ int Header::GetLUTNbits()
 std::string Header::GetTransfertSyntaxName()
 {
    // use the TS (TS : Transfert Syntax)
-   std::string transfertSyntax = GetEntryByNumber(0x0002,0x0010);
+   std::string transfertSyntax = GetEntry(0x0002,0x0010);
 
    if ( transfertSyntax == GDCM_NOTLOADED )
    {
@@ -1206,22 +1206,22 @@ std::string Header::GetTransfertSyntaxName()
 bool Header::AnonymizeHeader()
 {
    // If exist, replace by spaces
-   SetEntryByNumber ("  ",0x0010, 0x2154); // Telephone   
-   SetEntryByNumber ("  ",0x0010, 0x1040); // Adress
-   SetEntryByNumber ("  ",0x0010, 0x0020); // Patient ID
+   SetEntry ("  ",0x0010, 0x2154); // Telephone   
+   SetEntry ("  ",0x0010, 0x1040); // Adress
+   SetEntry ("  ",0x0010, 0x0020); // Patient ID
 
-   DocEntry* patientNameHE = GetDocEntryByNumber (0x0010, 0x0010);
+   DocEntry* patientNameHE = GetDocEntry (0x0010, 0x0010);
   
    if ( patientNameHE ) // we replace it by Study Instance UID (why not)
    {
-      std::string studyInstanceUID =  GetEntryByNumber (0x0020, 0x000d);
+      std::string studyInstanceUID =  GetEntry (0x0020, 0x000d);
       if ( studyInstanceUID != GDCM_UNFOUND )
       {
-         ReplaceOrCreateByNumber(studyInstanceUID, 0x0010, 0x0010);
+         ReplaceOrCreate(studyInstanceUID, 0x0010, 0x0010);
       }
       else
       {
-         ReplaceOrCreateByNumber("anonymised", 0x0010, 0x0010);
+         ReplaceOrCreate("anonymised", 0x0010, 0x0010);
       }
    }
 
@@ -1292,7 +1292,7 @@ void Header::GetImageOrientationPatient( float iop[6] )
    iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
 
    // 0020 0037 DS REL Image Orientation (Patient)
-   if ( (strImOriPat = GetEntryByNumber(0x0020,0x0037)) != GDCM_UNFOUND )
+   if ( (strImOriPat = GetEntry(0x0020,0x0037)) != GDCM_UNFOUND )
    {
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
@@ -1302,7 +1302,7 @@ void Header::GetImageOrientationPatient( float iop[6] )
    }
    //For ACR-NEMA
    // 0020 0035 DS REL Image Orientation (RET)
-   else if ( (strImOriPat = GetEntryByNumber(0x0020,0x0035)) != GDCM_UNFOUND )
+   else if ( (strImOriPat = GetEntry(0x0020,0x0035)) != GDCM_UNFOUND )
    {
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
@@ -1375,14 +1375,14 @@ void Header::InitializeDefaultHeader()
    // Special case this is the image (not a string)
    GrPixel = 0x7fe0;
    NumPixel = 0x0010;
-   ReplaceOrCreateByNumber(0, 0, GrPixel, NumPixel);
+   ReplaceOrCreate(0, 0, GrPixel, NumPixel);
 
    // All remaining strings:
    unsigned int i = 0;
    DICOM_DEFAULT_VALUE current = defaultvalue[i];
    while( current.value )
    {
-      ReplaceOrCreateByNumber(current.value, current.group, current.elem);
+      ReplaceOrCreate(current.value, current.group, current.elem);
       current = defaultvalue[++i];
    }
 }

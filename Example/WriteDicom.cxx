@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:55 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/08 15:03:57 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,15 +39,15 @@ int main(int argc, char* argv[])
  
    // We assume that DICOM fields of second file actually exists :
  
-   std::string nbFrames = f2->GetHeader()->GetEntryByNumber(0x0028, 0x0008);
+   std::string nbFrames = f2->GetHeader()->GetEntry(0x0028, 0x0008);
    if(nbFrames != "gdcm::Unfound") {
-       f1->GetHeader()->ReplaceOrCreateByNumber( nbFrames, 0x0028, 0x0008);
+       f1->GetHeader()->ReplaceOrCreate( nbFrames, 0x0028, 0x0008);
    }
           
-   f1->GetHeader()->ReplaceOrCreateByNumber(
-     f2->GetHeader()->GetEntryByNumber(0x0028, 0x0010), 0x0028, 0x0010); // nbLig
-   f1->GetHeader()->ReplaceOrCreateByNumber( 
-     f2->GetHeader()->GetEntryByNumber(0x0028, 0x0011), 0x0028, 0x0011); // nbCol
+   f1->GetHeader()->ReplaceOrCreate(
+     f2->GetHeader()->GetEntry(0x0028, 0x0010), 0x0028, 0x0010); // nbLig
+   f1->GetHeader()->ReplaceOrCreate( 
+     f2->GetHeader()->GetEntry(0x0028, 0x0011), 0x0028, 0x0011); // nbCol
  
    // Some other tags should be updated:
  
@@ -65,8 +65,8 @@ int main(int argc, char* argv[])
  
    f1->GetHeader()->Print();
  
-   std::string s0  = f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0000);
-   std::string s10 = f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0010);
+   std::string s0  = f2->GetHeader()->GetEntry(0x7fe0, 0x0000);
+   std::string s10 = f2->GetHeader()->GetEntry(0x7fe0, 0x0010);
  
    std::cout << "lgr 7fe0, 0000 " << s0  << std::endl;
    std::cout << "lgr 7fe0, 0010 " << s10 << std::endl;

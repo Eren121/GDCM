@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 14:31:37 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/08 15:03:57 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,14 +37,14 @@ int main(int argc, char* argv[])
 
     // 0018 1310 US ACQ Acquisition Matrix
     gdcm::DictEntry *dictEntry =
-       f2->GetHeader()->GetPubDict()->GetDictEntryByNumber( 0x0018, 1310 );
+       f2->GetHeader()->GetPubDict()->GetDictEntry( 0x0018, 1310 );
     std::cerr << std::hex << dictEntry->GetGroup() << "," << dictEntry->GetElement() << std::endl;
 
-    std::string matrix = f2->GetHeader()->GetEntryByNumber(0x0018, 0x1310);
+    std::string matrix = f2->GetHeader()->GetEntry(0x0018, 0x1310);
     if(matrix != "gdcm::Unfound")
     {
        std::cerr << "Aquisition Matrix:" << matrix << std::endl;
-       f1->GetHeader()->ReplaceOrCreateByNumber( matrix, 0x0018, 0x1310);
+       f1->GetHeader()->ReplaceOrCreate( matrix, 0x0018, 0x1310);
     }
 
     f1->GetImageData();

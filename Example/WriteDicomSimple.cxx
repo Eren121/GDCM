@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 16:48:37 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/08 15:03:57 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,39 +62,39 @@ int main(int argc, char* argv[])
    // Set the image size
    str.str("");
    str << SIZE_X;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0011); // Columns
+   header->ReplaceOrCreate(str.str(),0x0028,0x0011); // Columns
 
    str.str("");
    str << SIZE_Y;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0010); // Rows
+   header->ReplaceOrCreate(str.str(),0x0028,0x0010); // Rows
 
    // Set the pixel type
    str.str("");
    str << COMPONENT_SIZE * 8;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0100); // Bits Allocated
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0101); // Bits Stored
+   header->ReplaceOrCreate(str.str(),0x0028,0x0100); // Bits Allocated
+   header->ReplaceOrCreate(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << COMPONENT_SIZE * 8 - 1;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0102); // High Bit
+   header->ReplaceOrCreate(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << "0"; // Unsigned
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0103); // Pixel Representation
+   header->ReplaceOrCreate(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Set the samples per pixel
    str.str("");
    str << COMPONENT;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x0002); // Samples per Pixel
+   header->ReplaceOrCreate(str.str(),0x0028,0x0002); // Samples per Pixel
 
    // Set the Window / Level
    str.str("");
    str << COLOR_WINDOW;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x1051); // Window Width
+   header->ReplaceOrCreate(str.str(),0x0028,0x1051); // Window Width
    str.str("");
    str << COLOR_LEVEL;
-   header->ReplaceOrCreateByNumber(str.str(),0x0028,0x1050); // Window Center
+   header->ReplaceOrCreate(str.str(),0x0028,0x1050); // Window Center
 
    if( !header->IsReadable() )
    {

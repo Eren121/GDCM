@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:45:51 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.78 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,33 +111,33 @@ public:
 
 // Content entries
 
-   virtual bool SetEntryByNumber(std::string const &content,
-                                 uint16_t group, uint16_t element);
-   virtual bool SetEntryByNumber(uint8_t *content, int lgth,
-                                 uint16_t group, uint16_t element);
+   virtual bool SetEntry(std::string const &content,
+                         uint16_t group, uint16_t element);
+   virtual bool SetEntry(uint8_t *content, int lgth,
+                         uint16_t group, uint16_t element);
    virtual bool SetEntry(std::string const &content,ValEntry *entry);
    virtual bool SetEntry(uint8_t *content, int lgth,BinEntry *entry);
 
-   virtual void *GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
+   virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);   
 
-   virtual std::string GetEntryByNumber  (uint16_t group, uint16_t elem);
-   virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
-   virtual int GetEntryLengthByNumber(uint16_t group, uint16_t elem);
+   virtual std::string GetEntry  (uint16_t group, uint16_t elem);
+   virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
+   virtual int GetEntryLength(uint16_t group, uint16_t elem);
 
-   DocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element); 
-   ValEntry *GetValEntryByNumber(uint16_t group, uint16_t element); 
-   BinEntry *GetBinEntryByNumber(uint16_t group, uint16_t element); 
+   DocEntry *GetDocEntry(uint16_t group, uint16_t element); 
+   ValEntry *GetValEntry(uint16_t group, uint16_t element); 
+   BinEntry *GetBinEntry(uint16_t group, uint16_t element); 
 
-   ValEntry *ReplaceOrCreateByNumber(std::string const &value,
-                                     uint16_t group, uint16_t elem,
-                                     TagName const &vr = GDCM_UNKNOWN);
-   BinEntry *ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
-                                     uint16_t group, uint16_t elem,
-                                     TagName const &vr = GDCM_UNKNOWN);
-   SeqEntry *ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
+   ValEntry *ReplaceOrCreate(std::string const &value,
+                             uint16_t group, uint16_t elem,
+                             TagName const &vr = GDCM_UNKNOWN);
+   BinEntry *ReplaceOrCreate(uint8_t* binArea, int lgth,
+                             uint16_t group, uint16_t elem,
+                             TagName const &vr = GDCM_UNKNOWN);
+   SeqEntry *ReplaceOrCreate(uint16_t group, uint16_t elem);
 
-   bool ReplaceIfExistByNumber ( std::string const &value,
-                                 uint16_t group, uint16_t elem );
+   bool ReplaceIfExist ( std::string const &value,
+                         uint16_t group, uint16_t elem );
    
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
    virtual void LoadEntryBinArea(BinEntry *entry);
@@ -161,7 +161,7 @@ protected:
    void ComputeRLEInfo();
    void ComputeJPEGFragmentInfo();
    // Entry
-   bool CheckIfEntryExistByNumber(uint16_t group, uint16_t elem );
+   bool CheckIfEntryExist(uint16_t group, uint16_t elem );
 
    int ComputeGroup0002Length( FileType filetype );
 

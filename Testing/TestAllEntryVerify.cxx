@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 13:49:06 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/08 15:03:58 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -229,7 +229,7 @@ bool ReferenceFileParser::Check( MapFileValuesType::iterator &fileIt )
       uint16_t group   = axtoi( &(groupString[0]) );
       uint16_t element = axtoi( &(groupElement[0]) );
 
-      std::string testedValue = tested->GetEntryByNumber(group, element);
+      std::string testedValue = tested->GetEntry(group, element);
       if ( testedValue != j->second )
       {
          // Oops make sure this is only the \0 that differ

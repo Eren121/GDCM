@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.92 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,14 +86,14 @@ public:
    bool WriteAcr      (std::string const &fileName);
    bool Write         (std::string const &fileName);
 
-   bool SetEntryByNumber(std::string const &content,
-                         uint16_t group, uint16_t element);
-   bool SetEntryByNumber(uint8_t *content, int lgth,
-                         uint16_t group, uint16_t element);
-   bool ReplaceOrCreateByNumber(std::string const &content,
-                                uint16_t group, uint16_t element);
-   bool ReplaceOrCreateByNumber(uint8_t *binArea, int lgth,
-                                uint16_t group, uint16_t element);
+   bool SetEntry(std::string const &content,
+                 uint16_t group, uint16_t element);
+   bool SetEntry(uint8_t *content, int lgth,
+                 uint16_t group, uint16_t element);
+   bool ReplaceOrCreate(std::string const &content,
+                        uint16_t group, uint16_t element);
+   bool ReplaceOrCreate(uint8_t *binArea, int lgth,
+                        uint16_t group, uint16_t element);
 
    uint8_t* GetLutRGBA();
 

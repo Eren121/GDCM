@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:56 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/08 15:03:58 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,10 +41,10 @@ int TestChangeHeader(int argc, char* argv[])
 
    // We suppose the DICOM Entries of the second file *do* exist !
 
-   std::string nbFrames = f2->GetHeader()->GetEntryByNumber(0x0028, 0x0008);
+   std::string nbFrames = f2->GetHeader()->GetEntry(0x0028, 0x0008);
    if(nbFrames != "gdcm::Unfound")
    {
-      f1->GetHeader()->ReplaceOrCreateByNumber( nbFrames, 0x0028, 0x0008);
+      f1->GetHeader()->ReplaceOrCreate( nbFrames, 0x0028, 0x0008);
    }
 
 
@@ -57,18 +57,18 @@ int TestChangeHeader(int argc, char* argv[])
 // It was not designed as a 'Test' program, but as a utility
 // provided to 'transform' an image 'Siemens MRI New version' into an image 'Siemens MRI old version'
          
-   f1->GetHeader()->ReplaceOrCreateByNumber(
-      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0010), 0x0028, 0x0010);// nbLig
-   f1->GetHeader()->ReplaceOrCreateByNumber( 
-      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0011), 0x0028, 0x0011);// nbCol
-   f1->GetHeader()->ReplaceOrCreateByNumber( 
-      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0100), 0x0028, 0x0100);// BitsAllocated
-   f1->GetHeader()->ReplaceOrCreateByNumber( 
-      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0101), 0x0028, 0x0101);// BitsStored
-   f1->GetHeader()->ReplaceOrCreateByNumber( 
-      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0102), 0x0028, 0x0102);// HighBit
-   f1->GetHeader()->ReplaceOrCreateByNumber( 
-      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0103), 0x0028, 0x0103);// Pixel Representation
+   f1->GetHeader()->ReplaceOrCreate(
+      f2->GetHeader()->GetEntry(0x0028, 0x0010), 0x0028, 0x0010);// nbLig
+   f1->GetHeader()->ReplaceOrCreate( 
+      f2->GetHeader()->GetEntry(0x0028, 0x0011), 0x0028, 0x0011);// nbCol
+   f1->GetHeader()->ReplaceOrCreate( 
+      f2->GetHeader()->GetEntry(0x0028, 0x0100), 0x0028, 0x0100);// BitsAllocated
+   f1->GetHeader()->ReplaceOrCreate( 
+      f2->GetHeader()->GetEntry(0x0028, 0x0101), 0x0028, 0x0101);// BitsStored
+   f1->GetHeader()->ReplaceOrCreate( 
+      f2->GetHeader()->GetEntry(0x0028, 0x0102), 0x0028, 0x0102);// HighBit
+   f1->GetHeader()->ReplaceOrCreate( 
+      f2->GetHeader()->GetEntry(0x0028, 0x0103), 0x0028, 0x0103);// Pixel Representation
 // Probabely some more to update (?)
 
 // TODO : add a default value
@@ -85,8 +85,8 @@ int TestChangeHeader(int argc, char* argv[])
 
    f1->GetHeader()->Print();
 
-   std::string s0 =f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0000);
-   std::string s10=f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0010);
+   std::string s0 =f2->GetHeader()->GetEntry(0x7fe0, 0x0000);
+   std::string s10=f2->GetHeader()->GetEntry(0x7fe0, 0x0010);
    printf("lgr 7fe0, 0000 %s\n",s0.c_str());
    printf("lgr 7fe0, 0010 %s\n",s10.c_str());
 

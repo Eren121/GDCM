@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.96 $
+  Date:      $Date: 2005/01/08 15:03:59 $
+  Version:   $Revision: 1.97 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,7 +118,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    else // Only if user passed a DICOMDIR
    {
       // Directory record sequence
-      DocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
+      DocEntry *e = GetDocEntry(0x0004, 0x1220);
       if ( !e )
       {
          gdcmVerboseMacro( "NO Directory record sequence (0x0004,0x1220)");
@@ -506,7 +506,7 @@ DicomDirPatient *DicomDir::NewPatient()
    {
       tmpGr     = it->Group;
       tmpEl     = it->Elem;
-      dictEntry = GetPubDict()->GetDictEntryByNumber(tmpGr, tmpEl);
+      dictEntry = GetPubDict()->GetDictEntry(tmpGr, tmpEl);
       entry     = new ValEntry( dictEntry );
       entry->SetOffset(0); // just to avoid further missprinting
       entry->SetValue( it->Value );
@@ -599,7 +599,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    {
       tmpGr     = it->Group;
       tmpEl     = it->Elem;
-      dictEntry = GetPubDict()->GetDictEntryByNumber(tmpGr, tmpEl);
+      dictEntry = GetPubDict()->GetDictEntry(tmpGr, tmpEl);
 
       entry     = new ValEntry( dictEntry ); // Be sure it's never a BinEntry !
 
@@ -609,7 +609,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       {
          // NULL when we Build Up (ex nihilo) a DICOMDIR
          //   or when we add the META elems
-         val = header->GetEntryByNumber(tmpGr, tmpEl);
+         val = header->GetEntry(tmpGr, tmpEl);
       }
       else
       {
@@ -642,7 +642,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       }
       else
       {
-         if ( header->GetEntryLengthByNumber(tmpGr,tmpEl) == 0 )
+         if ( header->GetEntryLength(tmpGr,tmpEl) == 0 )
             val = it->Value;
       }
 
@@ -715,7 +715,7 @@ void DicomDir::CreateDicomDir()
    //       + loop to 1 -
 
    // Directory record sequence
-   DocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
+   DocEntry *e = GetDocEntry(0x0004, 0x1220);
    if ( !e )
    {
       gdcmVerboseMacro( "NO Directory record sequence (0x0004,0x1220)");
@@ -742,7 +742,7 @@ void DicomDir::CreateDicomDir()
    for( ListSQItem::iterator i = listItems.begin(); 
                              i !=listItems.end(); ++i ) 
    {
-      d = (*i)->GetDocEntryByNumber(0x0004, 0x1430); // Directory Record Type
+      d = (*i)->GetDocEntry(0x0004, 0x1430); // Directory Record Type
       if ( ValEntry* valEntry = dynamic_cast<ValEntry *>(d) )
       {
          v = valEntry->GetValue();
@@ -908,12 +908,12 @@ void DicomDir::SetElements(std::string const & path, VectDocument const &list)
                                      it != list.end(); ++it )
    {
       // get the current file characteristics
-      patCurName         = (*it)->GetEntryByNumber(0x0010,0x0010);
-      patCurID           = (*it)->GetEntryByNumber(0x0010,0x0011);
-      studCurInstanceUID = (*it)->GetEntryByNumber(0x0020,0x000d);
-      studCurID          = (*it)->GetEntryByNumber(0x0020,0x0010);
-      serCurInstanceUID  = (*it)->GetEntryByNumber(0x0020,0x000e);
-      serCurID           = (*it)->GetEntryByNumber(0x0020,0x0011);
+      patCurName         = (*it)->GetEntry(0x0010,0x0010);
+      patCurID           = (*it)->GetEntry(0x0010,0x0011);
+      studCurInstanceUID = (*it)->GetEntry(0x0020,0x000d);
+      studCurID          = (*it)->GetEntry(0x0020,0x0010);
+      serCurInstanceUID  = (*it)->GetEntry(0x0020,0x000e);
+      serCurID           = (*it)->GetEntry(0x0020,0x0011);
 
       if( patCurName != patPrevName || patCurID != patPrevID || first )
       {
