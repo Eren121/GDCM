@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/10 18:27:24 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2004/11/14 00:53:10 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,6 +50,9 @@ std::string Util::Format(const char* format, ...)
    va_list args;
    va_start(args, format);
    vsprintf(buffer, format, args);  //might be a security flaw
+   va_end(args); // Each invocation of va_start should be matched 
+                 // by a corresponding invocation of va_end
+                 // args is then 'undefined'
    return buffer;
 }
 
@@ -241,8 +244,6 @@ std::string Util::GetCurrentTime()
     return tmp;  
 }
 
-
-
 /**
  * \ingroup Util
  * \brief Create a /DICOM/ string:
@@ -285,7 +286,6 @@ std::ostream& binary_write(std::ostream& os, const uint32_t& val)
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
-//template <>
 std::ostream& binary_write(std::ostream& os, const char* val)
 {
     return os.write(val, strlen(val));
@@ -295,7 +295,6 @@ std::ostream& binary_write(std::ostream& os, std::string const & val)
 {
     return os.write(val.c_str(), val.size());
 }
-
 
 } // end namespace gdcm
 
