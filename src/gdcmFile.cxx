@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 17:17:31 $
-  Version:   $Revision: 1.202 $
+  Date:      $Date: 2005/01/28 09:37:29 $
+  Version:   $Revision: 1.203 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1347,10 +1347,10 @@ void File::InitializeDefaultFile()
    std::string time = Util::GetCurrentTime();
    std::string uid  = Util::CreateUniqueUID();
    std::string uidMedia = uid;
-   std::string uidClass = uid + ".1";
-   std::string uidInst  = uid + ".10";
-   std::string uidStudy = uid + ".100";
-   std::string uidSerie = uid + ".1000";
+   std::string uidInst  = uid;
+   std::string uidClass = Util::CreateUniqueUID();
+   std::string uidStudy = Util::CreateUniqueUID();
+   std::string uidSerie = Util::CreateUniqueUID();
 
    static DICOM_DEFAULT_VALUE defaultvalue[] = {
     { "146 ",                      0x0002, 0x0000}, // Meta Element Group Length // FIXME: how to recompute ?
@@ -1403,7 +1403,6 @@ void File::InitializeDefaultFile()
       current = defaultvalue[++i];
    }
 }
-
 
 //-----------------------------------------------------------------------------
 // Private

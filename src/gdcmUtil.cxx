@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 00:02:15 $
-  Version:   $Revision: 1.125 $
+  Date:      $Date: 2005/01/28 09:37:29 $
+  Version:   $Revision: 1.126 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,6 +90,9 @@
 
 namespace gdcm 
 {
+const std::string Util::GDCM_UID = "1.2.826.0.1.3680043.2.1143";
+std::string Util::RootUID        = GDCM_UID;
+
 /**
  * \brief Provide a better 'c++' approach for sprintf
  * For example c code is:
@@ -695,7 +698,7 @@ std::string Util::GetMACAddress()
    // http://groups-beta.google.com/group/comp.unix.solaris/msg/ad36929d783d63be
    // http://bdn.borland.com/article/0,1410,26040,00.html
    unsigned char addr[6];
- 
+
    int stat = GetMacAddrSys(addr);
    if (stat == 0)
    {
@@ -706,11 +709,11 @@ std::string Util::GetMACAddress()
       int res;
       std::string sres;
       while(!zero)
-        {
-        res = getlastdigit(addr);
-        sres.push_back( '0' + res );
-        zero = (addr[0] == 0) && (addr[1] == 0) && (addr[2] == 0) && (addr[3] == 0) && (addr[4] == 0) && (addr[5] == 0);
-        }
+      {
+         res = getlastdigit(addr);
+         sres += ('0' + res);
+         zero = (addr[0] == 0) && (addr[1] == 0) && (addr[2] == 0) && (addr[3] == 0) && (addr[4] == 0) && (addr[5] == 0);
+      }
       // Since we push back the proper number is reversed:
       std::reverse(sres.begin(),sres.end());
 
@@ -784,49 +787,6 @@ std::string Util::GetIPAddress()
    return str;
 }
 
-/**
- * \brief Creates a new UID. As stipulate in the DICOM ref
- *        each time a DICOM image is create it should have 
- *        a unique identifier (URI)
- * @param root is the DICOM prefix assigned by IOS group
- */
-std::string Util::CreateUniqueUID(const std::string &root)
-{
-   std::string prefix = root;
-   std::string append;
-   if( root.empty() )
-   {
-      // No root was specified use "GDCM" then
-      // echo "gdcm" | od -b
-      // 0000000 147 144 143 155 012
-      //prefix = "147.144.143.155"; // special easter egg
-
-      // gdcm UID prefix, as supplied by http://www.medicalconnections.co.uk
-      prefix = "1.2.826.0.1.3680043.2.1143"; 
-   }
-   // else
-   // A root was specified use it to forge our new UID:
-   append += ".";
-   append += Util::GetMACAddress();
-   append += ".";
-   append += Util::GetCurrentDateTime();
-
-   //Also add a mini random number just in case:
-   int r = (int) (100.0*rand()/RAND_MAX);
-   append += Format("%02d", r);
-
-   // If append is too long we need to rehash it
-   if( (prefix + append).size() > 64 )
-   {
-      gdcmErrorMacro( "Size of UID is too long." );
-      // we need a hash function to truncate this number
-      // if only md5 was cross plateform
-      // MD5(append);
-   }
-
-   return prefix + append;
-}
-
 unsigned int Util::GetCurrentThreadID()
 {
 // FIXME the implementation is far from complete
@@ -856,6 +816,61 @@ unsigned int Util::GetCurrentProcessID()
   return (unsigned int)getpid();
 #endif
 
+}
+
+/**
+ * \brief Creates a new UID. As stipulate in the DICOM ref
+ *        each time a DICOM image is create it should have 
+ *        a unique identifier (URI)
+ * @param root is the DICOM prefix assigned by IOS group
+ */
+std::string Util::CreateUniqueUID(const std::string &root)
+{
+   std::string prefix;
+   std::string append;
+   if( root.empty() )
+   {
+      // gdcm UID prefix, as supplied by http://www.medicalconnections.co.uk
+      prefix = RootUID; 
+   }
+   else
+   {
+      prefix = root;
+   }
+
+   // A root was specified use it to forge our new UID:
+   append += ".";
+   append += Util::GetMACAddress();
+   append += ".";
+   append += Util::GetCurrentDateTime();
+
+   //Also add a mini random number just in case:
+   int r = (int) (100.0*rand()/RAND_MAX);
+   append += Format("%02d", r);
+
+   // If append is too long we need to rehash it
+   if( (prefix + append).size() > 64 )
+   {
+      gdcmErrorMacro( "Size of UID is too long." );
+      // we need a hash function to truncate this number
+      // if only md5 was cross plateform
+      // MD5(append);
+   }
+
+   return prefix + append;
+}
+
+void Util::SetRootUID(const std::string &root)
+{
+   if( root.empty() )
+      RootUID = GDCM_UID;
+   else
+      RootUID = root;
+}
+
+const std::string &Util::GetRootUID()
+{
+   return RootUID;
 }
 
 /**
