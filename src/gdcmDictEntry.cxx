@@ -39,7 +39,7 @@ gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
  * \brief   concatenates 2 guint16 (supposed to be a Dicom group number 
  *                                             and a Dicom element number)
  * @param  group the Dicom group   number used to build the tag
- * @param  group the Dicom element number used to build the tag
+ * @param  element the Dicom element number used to build the tag
  * return the built tag
  */
 

@@ -29,7 +29,7 @@
  */
 bool gdcmFile::ParsePixelData(void) {
 // DO NOT remove the printf s.
-// The ONLY purpose of this methos is to PRINT the content
+// The ONLY purpose of this method is to PRINT the content
    FILE *fp;
 
    if ( !(fp=Header->OpenFile()))

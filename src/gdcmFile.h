@@ -57,19 +57,19 @@ public:
 	// TODO Swig int Write();
 	
    // Write pixels of ONE image on hard drive
-   // No test is made on processor "stupidity"
+   // No test is made on processor "endianity"
    // The user must call his reader correctly
    bool WriteRawData  (std::string fileName);
    bool WriteDcmImplVR(std::string fileName);
    bool WriteDcmImplVR(const char * fileName);
    bool WriteDcmExplVR(std::string fileName);
    bool WriteAcr      (std::string fileName);
-   
-protected:
-   bool WriteBase(std::string FileName, FileType type);
-
+ 
    // Body in file gdcmParse.cxx
    bool ParsePixelData(void);
+     
+protected:
+   bool WriteBase(std::string FileName, FileType type);
 
 private:
    void SwapZone(void* im, int swap, int lgr, int nb);

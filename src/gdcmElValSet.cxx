@@ -42,7 +42,10 @@ void gdcmElValSet::Print(std::ostream & os) {
    TSKey v;
    std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
+
    std::ostringstream s;
+
+   s << "------------- using tagHt ---------------------" << std::endl; 
    
    // Tag HT
    s << "------------- using tagHt ---------------------" << std::endl; 
@@ -80,7 +83,9 @@ void gdcmElValSet::Print(std::ostream & os) {
    guint32 lgth;
    char greltag[10];  //group element tag
    
+
    s << "------------ using listElem -------------------" << std::endl; 
+
    for (ListTag::iterator i = listElem.begin();  
 	   i != listElem.end();
 	   ++i){
@@ -144,8 +149,8 @@ void gdcmElValSet::Add(gdcmElValue * newElValue) {
  *           if you think it's NOT UNIQUE, check the count number
  *           and use iterators to retrieve ALL the Dicoms Elements within
  *           a given couple (group, element)
- * @param   group Group   number of the searched Dicom Element 
- * @param   elem  Element number of the searched Dicom Element 
+ * @param   group Group number of the searched Dicom Element 
+ * @param   element Element number of the searched Dicom Element 
  * @return  
  */
 gdcmElValue* gdcmElValSet::GetElementByNumber(guint16 group, guint16 element) {
@@ -158,8 +163,8 @@ gdcmElValue* gdcmElValSet::GetElementByNumber(guint16 group, guint16 element) {
 /**
  * \ingroup gdcmElValSet
  * \brief  Gets the value (string) of the target Dicom Element
- * @param   group Group   number of the searched Dicom Element 
- * @param   elem  Element number of the searched Dicom Element 
+ * @param   group Group  number of the searched Dicom Element 
+ * @param   element Element number of the searched Dicom Element 
  * @return  
  */
 std::string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
@@ -173,8 +178,8 @@ std::string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
  * \ingroup gdcmElValSet
  * \brief  Sets the value (string) of the target Dicom Element
  * @param   content string value of the Dicom Element
- * @param   group Group   number of the searched Dicom Element 
- * @param   elem  Element number of the searched Dicom Element 
+ * @param   group Group number of the searched Dicom Element 
+ * @param   element Element number of the searched Dicom Element 
  * @return  
  */
 bool gdcmElValSet::SetElValueByNumber(std::string content,
@@ -222,8 +227,8 @@ bool gdcmElValSet::SetElValueByNumber(std::string content,
  * \brief   Sets the value length of the Dicom Element
  * \warning : use with caution !
  * @param   length
- * @param   group Group   number of the searched Dicom Element 
- * @param   elem  Element number of the searched Dicom Element 
+ * @param   group Group number of the searched Dicom Element 
+ * @param   element Element number of the searched Dicom Element 
  * @return  boolean
  */
 bool gdcmElValSet::SetElValueLengthByNumber(guint32 length,
@@ -237,13 +242,12 @@ bool gdcmElValSet::SetElValueLengthByNumber(guint32 length,
 	 
    return true ;		
 }
-
 /**
  * \ingroup gdcmElValSet
  * \brief   Sets a 'non string' value to a given Dicom Element
  * @param   area
- * @param   group Group   number of the searched Dicom Element 
- * @param   elem  Element number of the searched Dicom Element 
+ * @param   group Group number of the searched Dicom Element 
+ * @param   element Element number of the searched Dicom Element 
  * @return  
  */
 bool gdcmElValSet::SetVoidAreaByNumber(void * area,
@@ -276,12 +280,12 @@ guint32 gdcmElValSet::GenerateFreeTagKeyInGroup(guint16 group) {
  * \ingroup gdcmElValSet
  * \brief   Checks if a given Dicom Element exists
  * \        within the H table
- * @param   Group Group   number of the searched Dicom Element 
- * @param   Elem  Element number of the searched Dicom Element 
+ * @param   group Group   number of the searched Dicom Element 
+ * @param   element  Element number of the searched Dicom Element 
  * @return  number of occurences
  */
-int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
-	std::string key = gdcmDictEntry::TranslateToKey(Group, Elem );
+int gdcmElValSet::CheckIfExistByNumber(guint16 group, guint16 element ) {
+	std::string key = gdcmDictEntry::TranslateToKey(group, element );
 	return (tagHt.count(key));
 }
 

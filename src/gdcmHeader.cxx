@@ -82,6 +82,7 @@ gdcmHeader::~gdcmHeader (void) {
 
 //-----------------------------------------------------------------------------
 // Print
+
 /**
   * \ingroup gdcmHeader
   * \brief
@@ -102,6 +103,7 @@ void gdcmHeader::PrintPubDict(std::ostream & os) {
 
 //-----------------------------------------------------------------------------
 // Public
+
 /**
  * \ingroup gdcmHeader
  * \brief  This predicate, based on hopefully reasonable heuristics,
@@ -795,7 +797,7 @@ std::string gdcmHeader::GetTransfertSyntaxName(void) {
    // use the gdcmTS (TS : Transfert Syntax)
    std::string TransfertSyntax = GetPubElValByNumber(0x0002,0x0010);
    if (TransfertSyntax == GDCM_UNFOUND) {
-      dbg.Verbose(0, "gdcmHeader::GetTransferSyntaxName: unfound Transfert Syntax (0002,0010)");
+      dbg.Verbose(0, "gdcmHeader::GetTransfertSyntaxName: unfound Transfert Syntax (0002,0010)");
       return "Uncompressed ACR-NEMA";
    }
    // we do it only when we need it
@@ -1439,6 +1441,7 @@ void gdcmHeader::LoadElements(void) {
  * \brief         Loads the element content if it's length is not bigger
  *                than the value specified with
  *                gdcmHeader::SetMaxSizeLoadElementValue()
+ * @param        ElVal string value of the Dicom Element
  */
 void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    size_t item_read;
@@ -1448,14 +1451,6 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    bool SkipLoad  = false;
 
    fseek(fp, (long)ElVal->GetOffset(), SEEK_SET);
-   
-   // FIXME Sequences not treated yet !
-   //
-   // Ne faudrait-il pas au contraire trouver immediatement
-   // une maniere 'propre' de traiter les sequences (vr = SQ)
-   // car commencer par les ignorer risque de conduire a qq chose
-   // qui pourrait ne pas etre generalisable
-   // Well, I'm expecting your code !!!
    
    // the test was commented out to 'go inside' the SeQuences
    // we don't any longer skip them !

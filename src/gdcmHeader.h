@@ -135,10 +135,15 @@ public:
    inline int GetSwapCode(void) { return sw; }
    guint16 SwapShort(guint16); // needed by gdcmFile
    guint32 SwapLong(guint32);  // for JPEG Files
+   
+   // was protected
+   bool ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem); 
+   bool ReplaceOrCreateByNumber(     char * Value, guint16 Group, guint16 Elem);                                
+   bool ReplaceIfExistByNumber (     char * Value, guint16 Group, guint16 Elem);
 
 protected:
-   gdcmElValue * GetElValueByNumber(guint16 group, guint16 element);
    bool CheckIfExistByNumber(guint16 Group, guint16 Elem );
+   gdcmElValue * GetElValueByNumber(guint16 group, guint16 element); 
 
    int write(std::ostream&);   
    int anonymize(std::ostream&);  // FIXME : anonymize should be a friend ?
@@ -147,9 +152,6 @@ protected:
    void * GetPubElValVoidAreaByNumber(guint16 Group, guint16 Elem);   
    void * LoadElementVoidArea        (guint16 Group, guint16 Element);
 
-   bool ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem); 
-   bool ReplaceOrCreateByNumber(     char * Value, guint16 Group, guint16 Elem);                                
-   bool ReplaceIfExistByNumber (     char * Value, guint16 Group, guint16 Elem);
 
 // Variables
    FILE * fp;
