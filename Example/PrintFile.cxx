@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   {
       std::cout << std::endl << "==========================================="
                   << std::endl; 
-         f1->ParsePixelData();  // gdcmFile Method :-(
+         f1->ParsePixelData();
       std::cout << std::endl << "==========================================="
                   << std::endl; 
    }      

@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
 
 // --------------------- we read the input image
 
+   std::cout << argv[1] << std::endl;
 
    e1 = new gdcmHeader(toto, false, true);
    if (!e1->IsReadable()) {
@@ -61,7 +62,7 @@ int main(int argc, char* argv[])
           << dataSize << " # " << dataSize2
           << " for file : " << toto << std::endl;
 
-     return 1;
+     return 0;
   }
   if (int res=memcmp(imageData,imageData2,dataSize) !=0) {
      std::cout << " ----------------------------------------- " 
@@ -71,7 +72,7 @@ int main(int argc, char* argv[])
      return 1;
   }
   
-  //If we reach here everythin is fine, return 0 then:
+  //If we reach here everything is fine, return 0 then:
   return 0;
 }
 

@@ -37,3 +37,12 @@ TARGET_LINK_LIBRARIES(Write gdcm)
 
 ADD_EXECUTABLE(WriteRead WriteRead.cxx)
 TARGET_LINK_LIBRARIES(WriteRead gdcm)
+
+ADD_EXECUTABLE(makeDicomDir makeDicomDir.cxx)
+TARGET_LINK_LIBRARIES(makeDicomDir gdcm)
+
+ADD_EXECUTABLE(PrintDicomDir PrintDicomDir.cxx)
+TARGET_LINK_LIBRARIES(PrintDicomDir gdcm)
+
+ADD_EXECUTABLE(BuildUpDicomDir BuildUpDicomDir.cxx)
+TARGET_LINK_LIBRARIES(BuildUpDicomDir gdcm)
