@@ -1,5 +1,7 @@
 #-----------------------------------------------------------------------------
 # VTK GDCM Reader subdir
+# Rebuild gdcm whenever a file starting with vtk* is modified
+INCLUDE_REGULAR_EXPRESSION("^vtk.*$")
 
 #-----------------------------------------------------------------------------
 # Include the VTK library
