@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:29 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/10/25 03:35:19 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 class DicomDirObject;
 typedef std::list<DicomDirObject *> ListContent;
@@ -42,7 +41,8 @@ class GDCM_EXPORT DicomDirObject : public SQItem
 public:
 
    DicomDirObject(TagDocEntryHT *ptagHT, int depth = 0);
-   virtual ~DicomDirObject();
+   ~DicomDirObject();
+
    /**
     * \brief   Sets the print level for the Dicom Header 
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
@@ -50,7 +50,7 @@ public:
    void SetPrintLevel(int level) { PrintLevel = level; };
    
    TagDocEntryHT GetEntry();
-   void FillObject(ListDicomDirMetaElem elemList);
+   void FillObject(ListDicomDirMetaElem const & elemList);
 
 protected:
 

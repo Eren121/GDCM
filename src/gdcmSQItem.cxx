@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:42 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/10/25 03:35:20 $
+  Version:   $Revision: 1.31 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,13 +45,13 @@ SQItem::SQItem(int depthLevel )
  */
 SQItem::~SQItem() 
 {
-   for(ListDocEntry::iterator cc = docEntries.begin();
-       cc != docEntries.end();
-       ++cc)
+   for(ListDocEntry::iterator cc = DocEntries.begin();
+                             cc != DocEntries.end();
+                             ++cc)
    {
       delete (*cc);
    }
-   docEntries.clear();
+   DocEntries.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -71,8 +71,8 @@ SQItem::~SQItem()
       }
    }
    std::cout << s.str() << " --- SQItem number " << SQItemNumber  << std::endl;
-   for (ListDocEntry::iterator i  = docEntries.begin();
-                               i != docEntries.end();
+   for (ListDocEntry::iterator i  = DocEntries.begin();
+                               i != DocEntries.end();
                              ++i)
    {
       DocEntry* Entry = *i;
@@ -97,7 +97,7 @@ SQItem::~SQItem()
  * \ingroup SQItem
  * \brief   canonical Writer
  */
-void SQItem::Write(std::ofstream* fp,FileType filetype)
+void SQItem::Write(std::ofstream* fp, FileType filetype)
 {
    uint16_t item[4] = { 0xfffe, 0xe000, 0xffff, 0xffff };
    uint16_t itemt[4]= { 0xfffe, 0xe00d, 0xffff, 0xffff };
@@ -106,9 +106,9 @@ void SQItem::Write(std::ofstream* fp,FileType filetype)
     // because we want to write the Item as a 'no Length' item
    fp->write((char*)&item[0],8);  // fffe e000 ffff ffff 
      
-   for (ListDocEntry::iterator i = docEntries.begin();  
-        i != docEntries.end();
-        ++i)
+   for (ListDocEntry::iterator i = DocEntries.begin();  
+                              i != DocEntries.end();
+                             ++i)
    {   
       // we skip delimitors (start and end one) because 
       // we force them as 'no length'
@@ -141,7 +141,7 @@ void SQItem::Write(std::ofstream* fp,FileType filetype)
  */
 bool SQItem::AddEntry(DocEntry* entry)
 {
-   docEntries.push_back(entry);
+   DocEntries.push_back(entry);
    //TODO : check if it worked
    return true;
 }   
@@ -159,10 +159,12 @@ bool SQItem::AddEntry(DocEntry* entry)
  * @return  true if element was found or created successfully
  */
 
-bool SQItem::SetEntryByNumber(std::string val, uint16_t group, 
-                                  uint16_t element)
+bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group, 
+                              uint16_t element)
 {
-   for(ListDocEntry::iterator i = docEntries.begin(); i != docEntries.end(); ++i)
+   for(ListDocEntry::iterator i = DocEntries.begin(); 
+                              i != DocEntries.end(); 
+                            ++i)
    { 
       if ( (*i)->GetGroup() == 0xfffe && (*i)->GetElement() == 0xe000 ) 
       {
@@ -213,7 +215,7 @@ bool SQItem::SetEntryByNumber(std::string val, uint16_t group,
             entry->SetValue(val); 
          }
          entry->SetLength(val.length());
-         docEntries.insert(i,entry);
+         DocEntries.insert(i,entry);
 
          return true;
       }   
@@ -239,8 +241,8 @@ bool SQItem::SetEntryByNumber(std::string val, uint16_t group,
  */
 DocEntry* SQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
 {
-   for(ListDocEntry::iterator i = docEntries.begin();
-                              i != docEntries.end(); ++i)
+   for(ListDocEntry::iterator i = DocEntries.begin();
+                              i != DocEntries.end(); ++i)
    {
       if ( (*i)->GetGroup() == group && (*i)->GetElement() == element )
       {
@@ -257,8 +259,8 @@ DocEntry* SQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
 
 std::string SQItem::GetEntryByNumber(uint16_t group, uint16_t element)
 {
-   for(ListDocEntry::iterator i = docEntries.begin();
-                              i != docEntries.end(); ++i)
+   for(ListDocEntry::iterator i = DocEntries.begin();
+                              i != DocEntries.end(); ++i)
    {
       if ( (*i)->GetGroup() == group && (*i)->GetElement() == element)
       {

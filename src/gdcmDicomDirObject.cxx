@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:29 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/10/25 03:35:19 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,11 +64,11 @@ DicomDirObject::~DicomDirObject()
 TagDocEntryHT DicomDirObject::GetEntry()
 {
    TagDocEntryHT HT;
-   docEntries=GetDocEntries();   
-   for(ListDocEntry::iterator i = docEntries.begin(); 
-                              i != docEntries.end(); ++i)
+   DocEntries = GetDocEntries();   
+   for(ListDocEntry::iterator i = DocEntries.begin(); 
+                              i != DocEntries.end(); ++i)
    {
-      HT[(*i)->GetKey()]=*i;
+      HT[(*i)->GetKey()] = *i;
    }
    return HT;
 }
@@ -79,11 +79,11 @@ TagDocEntryHT DicomDirObject::GetEntry()
  * \brief   add the 'Object' related Dicom Elements to the listEntries
  *          of a partially created DICOMDIR
  */
-void DicomDirObject::FillObject(ListDicomDirMetaElem elemList)
+void DicomDirObject::FillObject(ListDicomDirMetaElem const & elemList)
 {
   // FillObject rempli le SQItem qui sera accroche au bon endroit
 
-   std::list<Element>::iterator it;
+   std::list<Element>::const_iterator it;
    uint16_t tmpGr,tmpEl;
    DictEntry *dictEntry;
    ValEntry *entry;

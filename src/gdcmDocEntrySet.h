@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/10/25 03:35:19 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,15 +69,15 @@ public:
    virtual void Write (std::ofstream *fp, FileType filetype) = 0;// pure virtual
 
    virtual DocEntry* GetDocEntryByNumber(uint16_t group,
-                                             uint16_t element) = 0;
-   DocEntry *GetDocEntryByName(std::string const & name);
-   virtual std::string GetEntryByNumber(uint16_t group,uint16_t element) = 0;
+                                         uint16_t element) = 0;
+   DocEntry *GetDocEntryByName(TagName const & name);
+   virtual std::string GetEntryByNumber(uint16_t group, uint16_t element) = 0;
    std::string GetEntryByName(TagName const & name);
    DictEntry *NewVirtualDictEntry(uint16_t group, 
                                   uint16_t element,
-                                  std::string const & vr     = "unkn",
-                                  std::string const & fourth = "unkn",
-                                  std::string const & name   = "unkn");
+                                  TagName const & vr     = "unkn",
+                                  TagName const & fourth = "unkn",
+                                  TagName const & name   = "unkn");
   
 protected:
 
@@ -90,13 +90,13 @@ protected:
                                  uint16_t element); 
    DocEntry* NewDocEntryByNumber(uint16_t group, 
                                  uint16_t element,
-                                 std::string const & VR); 
-   DocEntry* NewDocEntryByName  (std::string const & name);
+                                 TagName const & vr); 
+   DocEntry* NewDocEntryByName  (TagName const & name);
    SeqEntry* NewSeqEntryByNumber(uint16_t group, 
                                  uint16_t element);
 
 // DictEntry  related utilities
-   DictEntry *GetDictEntryByName  (std::string const & name);
+   DictEntry *GetDictEntryByName  (TagName const & name);
    DictEntry *GetDictEntryByNumber(uint16_t, uint16_t);
 
 };

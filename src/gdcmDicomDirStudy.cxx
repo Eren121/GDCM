@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/10/25 03:35:19 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 
@@ -36,7 +35,7 @@ namespace gdcm
 DicomDirStudy::DicomDirStudy(SQItem* s, TagDocEntryHT* ptagHT):
    DicomDirObject(ptagHT)
 {
-   docEntries = s->GetDocEntries();
+   DocEntries = s->GetDocEntries();
 }
 /**
  * \ingroup DicomDirStudy

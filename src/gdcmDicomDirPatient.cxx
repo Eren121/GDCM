@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/10/25 03:35:19 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,10 +30,10 @@ namespace gdcm
  * @param ptagHT pointer to the HTable (DicomDirObject needs it 
  *               to build the HeaderEntries)
  */
-DicomDirPatient::DicomDirPatient(SQItem *s, TagDocEntryHT *ptagHT):
+DicomDirPatient::DicomDirPatient(SQItem *s, TagDocEntryHT *ptagHT) :
    DicomDirObject(ptagHT)
 {
-   docEntries = s->GetDocEntries();
+   DocEntries = s->GetDocEntries();
 }
 /**
  * \brief   Constructor
