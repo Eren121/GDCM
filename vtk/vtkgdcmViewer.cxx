@@ -27,7 +27,6 @@ class vtkgdcmObserver : public vtkCommand
           {
             int max = ImageViewer->GetWholeZMax();
             int slice = (ImageViewer->GetZSlice() + 1 ) % ++max;
-	    std::cout << "Slice:" << slice << "," << max << std::endl;
             ImageViewer->SetZSlice( slice );
 	    ImageViewer->GetRenderer()->ResetCameraClippingRange();
             ImageViewer->Render();
