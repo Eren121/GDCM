@@ -61,7 +61,7 @@ vtkGdcmReader::vtkGdcmReader()
 }
 
 vtkGdcmReader::~vtkGdcmReader()
-{ 
+{
    this->RemoveAllFileName();
    this->InternalFileNameList.clear();
    if(this->LookupTable) 
@@ -72,15 +72,15 @@ vtkGdcmReader::~vtkGdcmReader()
 // Print
 void vtkGdcmReader::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkImageReader::PrintSelf(os,indent);
-  os << indent << "Filenames  : " << endl;
-  vtkIndent nextIndent = indent.GetNextIndent();
-  for (std::list<std::string>::iterator FileName  = FileNameList.begin();
-                                        FileName != FileNameList.end();
-                                      ++FileName)
-    {
-    os << nextIndent << FileName->c_str() << endl ;
-    }
+   vtkImageReader::PrintSelf(os,indent);
+   os << indent << "Filenames  : " << endl;
+   vtkIndent nextIndent = indent.GetNextIndent();
+   for (std::list<std::string>::iterator FileName  = FileNameList.begin();
+        FileName != FileNameList.end();
+        ++FileName)
+   {
+      os << nextIndent << FileName->c_str() << endl ;
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -213,7 +213,7 @@ void vtkGdcmReader::ExecuteInformation()
    //Set number of scalar components:
    this->SetNumberOfScalarComponents(this->NumComponents);
 
-   vtkImageReader::ExecuteInformation();
+   this->Superclass::ExecuteInformation();
 }
 
 /*
@@ -248,7 +248,6 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
                             * this->TotalNumberOfPlanes * this->NumComponents;
       size_t stack_size = StackNumPixels * this->PixelSize;
       // Allocate pixel data space itself.
-      unsigned char *mem = new unsigned char [stack_size];
 
       // Variables for the UpdateProgress. We shall use 50 steps to signify
       // the advance of the process:
@@ -259,7 +258,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
       unsigned long UpdateProgressCount = 0;
 
       // Feeling the allocated memory space with each image/volume:
-      unsigned char * Dest = mem;
+      unsigned char *Dest = (unsigned char *)data->GetPointData()->GetScalars()->GetVoidPointer(0);
       for (std::list<std::string>::iterator FileName  = InternalFileNameList.begin();
            FileName != InternalFileNameList.end();
            ++FileName)
@@ -292,12 +291,6 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
             }
          } // Else, file not loadable
       } // Loop on files
-
-      // The "size" of the vtkScalars data is expressed in number of points,
-      // and is not the memory size representing those points:
-      data->GetPointData()->GetScalars()->SetVoidArray(mem, StackNumPixels, 0);
-      //don't know why it's here, it's calling one more time ExecuteInformation:
-      //this->Modified();
    }
 }
 

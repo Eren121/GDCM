@@ -1,3 +1,10 @@
+2004-01-15 Benoit Regrain
+     * vtk/vtkGdcmReader.cxx : bug fix : before, with python only, the program
+       made a fatal error because of the memory release at the end of program.
+       The problem was in vtkGdcmReader::ExecuteData where we were allocate
+       some memory and vtk seems to have some problems with that.
+     * src/gdcmHeaderEntrySet.cxx : bug fix for std lib and cout
+
 2004-01-14 Benoit Regrain
      * src/gdcmHeaderEntry.[h|cxx] : gdcmElValue -> gdcmHeaderEntry
      * src/gdcmHeaderEntrySet.[h|cxx] : gdcmElValSet -> gdcmHeaderEntrySet
