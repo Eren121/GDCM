@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:17:07 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/10/18 02:31:58 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,10 +141,10 @@ EntryNamesByCatMap * DictSet::GetPubDictEntryNamesByCategory()
  * @param   name Symbolic name that be used as identifier of the newly 
  *          created dictionary.
  */
-Dict *DictSet::LoadDictFromFile(std::string const & fileName, 
+Dict *DictSet::LoadDictFromFile(std::string const & filename, 
                                 DictKey const & name) 
 {
-   Dict *newDict = new Dict(fileName);
+   Dict *newDict = new Dict(filename);
    AppendDict(newDict, name);
 
    return newDict;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:17:06 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/10/18 02:31:58 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ public:
 // Entries
    bool AddNewEntry (DictEntry *newEntry);
    bool ReplaceEntry(DictEntry *newEntry);
-   bool RemoveEntry (TagKey key);
+   bool RemoveEntry (TagKey const & key);
    bool RemoveEntry (uint16_t group, uint16_t element);
    
 // Tag

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:17:06 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2004/10/18 02:31:58 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -191,11 +191,12 @@ bool Dict::ReplaceEntry(DictEntry *newEntry)
  * @param   key (group|element)
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool Dict::RemoveEntry(TagKey key) 
+bool Dict::RemoveEntry(TagKey const & key) 
 {
-   if(KeyHt.count(key) == 1) 
+   TagKeyHT::const_iterator it = KeyHt.find(key);
+   if(it != KeyHt.end()) 
    {
-      DictEntry* entryToDelete = KeyHt.find(key)->second;
+      DictEntry* entryToDelete = it->second;
 
       if ( entryToDelete )
       {
@@ -235,11 +236,12 @@ bool Dict::RemoveEntry (uint16_t group, uint16_t element)
  */
 DictEntry* Dict::GetDictEntryByName(TagName const & name)
 {
-   if ( !NameHt.count(name))
+   TagNameHT::const_iterator it = NameHt.find(name);
+   if ( it == NameHt.end() )
    {
       return 0;
    }
-   return NameHt.find(name)->second;
+   return it->second;
 }
 
 /**
@@ -251,11 +253,12 @@ DictEntry* Dict::GetDictEntryByName(TagName const & name)
 DictEntry* Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
 {
    TagKey key = DictEntry::TranslateToKey(group, element);
-   if ( !KeyHt.count(key) )
+   TagKeyHT::const_iterator it = KeyHt.find(key);
+   if ( it == KeyHt.end() )
    {
       return 0;
    }
-   return KeyHt.find(key)->second;
+   return it->second;
 }
 
 /** 
