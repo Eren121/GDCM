@@ -15,16 +15,18 @@
  */
 
 /* this is not a core library module, so it doesn't define JPEG_INTERNALS */
-#include <gdcmjpeg/jinclude.h>
-#include <gdcmjpeg/jerror.h>
+#include "jinclude.h"
+#include "jpeglib.h"
+#include "jerror.h"
+
 
 /* Expanded data source object for stdio input */
 
 typedef struct {
   struct jpeg_source_mgr pub;  /* public fields */
 
-  std::ifstream *infile;  /* source stream */ 
-  JOCTET * buffer;        /* start of buffer */
+  FILE * infile;    /* source stream */
+  JOCTET * buffer;    /* start of buffer */
   boolean start_of_file;  /* have we gotten any data yet? */
 } my_source_mgr;
 
@@ -88,9 +90,9 @@ METHODDEF(boolean)
 fill_input_buffer (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
+  size_t nbytes;
 
-  src->infile->read( (char*)src->buffer, INPUT_BUF_SIZE);
-  size_t nbytes = src->infile->gcount();
+  nbytes = JFREAD(src->infile, src->buffer, INPUT_BUF_SIZE);
 
   if (nbytes <= 0) {
     if (src->start_of_file)  /* Treat empty input file as fatal error */
@@ -166,7 +168,7 @@ skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 METHODDEF(void)
 term_source (j_decompress_ptr cinfo)
 {
-  cinfo=cinfo;
+  (void)cinfo;
   /* no work necessary here */
 }
 
@@ -178,7 +180,7 @@ term_source (j_decompress_ptr cinfo)
  */
 
 GLOBAL(void)
-jpeg_stdio_src (j_decompress_ptr cinfo, std::ifstream * infile)
+jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
 {
   my_src_ptr src;
 

@@ -1,11 +1,12 @@
 #-----------------------------------------------------------------------------
 # Build jpeg lib first:
-SUBDIRS(jpeg)
+SUBDIRS(gdcmjpeg)
 
 # "jpeglib.h" is defined here:
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src
   ${GDCM_BINARY_DIR}/ #for gdcmConfigure.h
+  ${GDCM_BINARY_DIR}/src #for gdcmjpeg 8, 12 and 16 
 )
 
 SET(libgdcm_la_SOURCES
@@ -53,15 +54,15 @@ SET(libgdcm_la_SOURCES
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )
 IF(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
-    gdcmijpeg8 
-    gdcmijpeg12
-    gdcmijpeg16
+    gdcmjpeg8 
+    gdcmjpeg12
+    gdcmjpeg16
   )
 ELSE(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
-    gdcmijpeg8 
-    gdcmijpeg12
-    gdcmijpeg16
+    gdcmjpeg8 
+    gdcmjpeg12
+    gdcmjpeg16
     Wsock32.lib   #doesn't exist on cygwin
   )
 ENDIF(UNIX)

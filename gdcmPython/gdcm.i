@@ -291,8 +291,7 @@ typedef  unsigned int guint32;
 //     {
 //     $1 = new std::string( PyString_AsString( $input ) );
 //     }
-//   
-add a note on the rename that works !
+//   add a note on the rename that works !
 //     void Junk();
 //     void Junk(std::string const & bozo);
 //
