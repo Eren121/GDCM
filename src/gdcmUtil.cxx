@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 14:20:30 $
-  Version:   $Revision: 1.101 $
+  Date:      $Date: 2005/01/17 16:37:00 $
+  Version:   $Revision: 1.102 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -477,13 +477,6 @@ int GetMacAddrSys ( unsigned char *addr )
                                MIB_ifMACEntAddr.idLength);
             if ( !ret && varBind[1].value.asnValue.address.stream != NULL )
             {
-               if ( varBind[1].value.asnType != ASN_RFC1155_IPADDRESS )
-               {
-                   // Ignore all dial-up networking adapters
-                   std::cerr << "Interface #" << j << " is not an IP adress\n";
-                   continue;
-               }
-                  
                if ( (varBind[1].value.asnValue.address.stream[0] == 0x44)
                  && (varBind[1].value.asnValue.address.stream[1] == 0x45)
                  && (varBind[1].value.asnValue.address.stream[2] == 0x53)
@@ -506,7 +499,6 @@ int GetMacAddrSys ( unsigned char *addr )
                   std::cerr << "Interface #" << j << " is a NULL address\n";
                   continue;
                }
-
                memcpy( addr, varBind[1].value.asnValue.address.stream, 6);
             }
          }
@@ -516,24 +508,6 @@ int GetMacAddrSys ( unsigned char *addr )
    // Free the bindings
    SNMP_FreeVarBind(&varBind[0]);
    SNMP_FreeVarBind(&varBind[1]);
-
-
-
-/*   IP_ADAPTER_INFO AdapterInfo[2]; 
-    DWORD dwBufSize = sizeof(AdapterInfo); 
-
-    DWORD dwStatus = GetAdaptersInfo(AdapterInfo, &dwBufSize); 
-
-    PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo; 
-    do 
-    { 
-         unsigned char *MAC=pAdapterInfo->Address;
-         printf("Your MAC Address Is: %02X-%02X-%02X-%02X-%02X-%02X", MAC[0], MAC[1], MAC[2], MAC[3], MAC[4], MAC[5]);
-        pAdapterInfo = pAdapterInfo->Next; 
-    } 
-    while(pAdapterInfo); */
-
-
    return 0;
 #endif //Win32 version
 
@@ -678,17 +652,16 @@ std::string Util::GetMACAddress()
    // http://groups-beta.google.com/group/comp.unix.solaris/msg/ad36929d783d63be
    // http://bdn.borland.com/article/0,1410,26040,00.html
    unsigned char addr[6];
+   std::string macaddr;
+ 
    int stat = GetMacAddrSys(addr);
-
    if (0 == stat)
    {
-      std::string macaddr = "";
       for (int i=0; i<6; ++i) 
       {
-         //macaddr += Format("%2.2x", addr[i]);
-         if(i)
-            macaddr += ".";
-         macaddr += Format("%i", (int)addr[i]);
+         macaddr += Format("%2.2x", addr[i]);
+         //if(i) macaddr += ".";
+         //macaddr += Format("%i", (int)addr[i]);
       }
       return macaddr;
    }
