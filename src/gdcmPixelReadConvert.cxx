@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/14 08:31:30 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/12/14 13:05:34 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -175,24 +175,24 @@ void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
  */
 bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
 {
-   size_t PixelNumber = XSize * YSize;
-   size_t RawSize = XSize * YSize * NumberOfFrames;
+   size_t pixelNumber = XSize * YSize;
+   size_t rawSize = XSize * YSize * NumberOfFrames;
 
    // We assumed Raw contains the decoded RLE pixels but as
    // 8 bits per pixel. In order to convert those pixels to 16 bits
    // per pixel we cannot work in place within Raw and hence
    // we copy it in a safe place, say copyRaw.
 
-   uint8_t* copyRaw = new uint8_t[ RawSize * 2 ];
-   memmove( copyRaw, Raw, RawSize * 2 );
+   uint8_t* copyRaw = new uint8_t[ rawSize * 2 ];
+   memmove( copyRaw, Raw, rawSize * 2 );
 
    uint8_t* x = Raw;
    uint8_t* a = copyRaw;
-   uint8_t* b = a + PixelNumber;
+   uint8_t* b = a + pixelNumber;
 
    for ( int i = 0; i < NumberOfFrames; i++ )
    {
-      for ( unsigned int j = 0; j < PixelNumber; j++ )
+      for ( unsigned int j = 0; j < pixelNumber; j++ )
       {
          *(x++) = *(b++);
          *(x++) = *(a++);

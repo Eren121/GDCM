@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 21:32:11 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/12/14 13:05:33 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -212,7 +212,7 @@ int WriteSimple(Image &img)
 
 // Step 6 : Compare to the written image
    std::cout << "6...";
-   int    dataSizeWritten = reread->GetImageDataSize();
+   size_t dataSizeWritten = reread->GetImageDataSize();
    uint8_t* imageDataWritten = reread->GetImageData();
 
    // Test the image size
