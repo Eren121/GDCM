@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:29:22 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/06 17:20:53 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -155,29 +155,6 @@ SeqEntry* DocEntrySet::NewSeqEntryByNumber(uint16_t group,uint16_t elem)
    {
       dbg.Verbose(1, "Document::NewSeqEntryByNumber",
                   "failed to allocate SeqEntry");
-      return 0;
-   }
-   return newEntry;
-}
-
-/** \brief 
- * Creates a new DocEntry (without any 'value' ...)
- * @param   group     group  number of the underlying DictEntry
- * @param   elem  elem number of the underlying DictEntry 
- * @param   vr    V(alue) R(epresentation) of the Entry -if private Entry- 
- */
-DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group, uint16_t elem,
-                                           TagName const & vr)
-{
-   DictEntry *dictEntry = GetDictEntryByNumber(group, elem, vr);
-   assert(dictEntry);
-
-   // Create the DocEntry
-   DocEntry *newEntry = new DocEntry(dictEntry);
-   if (!newEntry) 
-   {
-      dbg.Verbose(1, "SQItem::NewDocEntryByNumber",
-                  "failed to allocate DocEntry");
       return 0;
    }
    return newEntry;

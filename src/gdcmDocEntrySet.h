@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 15:36:48 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/06 17:20:53 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,8 +89,6 @@ protected:
    BinEntry* NewBinEntryByNumber(uint16_t group,uint16_t elem,
                                  TagName const & vr = GDCM_UNKNOWN);
    SeqEntry* NewSeqEntryByNumber(uint16_t group,uint16_t elem);
-   DocEntry* NewDocEntryByNumber(uint16_t group,uint16_t elem,
-                                 TagName const & vr = GDCM_UNKNOWN); 
 
 // DictEntry  related utilities
    DictEntry *GetDictEntryByName  (TagName const & name);
