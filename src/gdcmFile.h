@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/15 18:12:35 $
-  Version:   $Revision: 1.104 $
+  Date:      $Date: 2005/03/11 11:12:13 $
+  Version:   $Revision: 1.105 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -168,8 +168,6 @@ public:
    bool Write(std::string fileName, FileType filetype);
 
 protected:
-   /// Initialize DICOM File when none
-   void InitializeDefaultFile();
  
    /// Store the RLE frames info obtained during parsing of pixels.
    RLEFramesInfo *RLEInfo;

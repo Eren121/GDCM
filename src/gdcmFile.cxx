@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/09 19:31:54 $
-  Version:   $Revision: 1.229 $
+  Date:      $Date: 2005/03/11 11:12:13 $
+  Version:   $Revision: 1.230 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -153,7 +153,8 @@ File::File():
 {
    RLEInfo  = new RLEFramesInfo;
    JPEGInfo = new JPEGFragmentsInfo;
-   InitializeDefaultFile();
+   GrPixel  = 0x7fe0;
+   NumPixel = 0x0010;
 }
 
 /**
@@ -1404,26 +1405,7 @@ bool File::Write(std::string fileName, FileType writetype)
 
 //-----------------------------------------------------------------------------
 // Protected
-/**
- * \brief Initialize a default DICOM File that should contain all the
- *        fields required by other readers. DICOM standard does not 
- *        explicitely defines those fields, heuristic has been choosen.
- * \todo final removal of this method 
- *       with FileHelper::CheckMandatoryElements()
- */
-void File::InitializeDefaultFile()
-{
-   // fixme  
-   // Just to avoid further trouble if user asks 
-   //to write the file ACR-NEMA mode
 
-   InsertValEntry("", 0x0008, 0x0010); // Recognition Code (RET)
-
-   // fixme
-   GrPixel  = 0x7fe0;
-   NumPixel = 0x0010;
-
-}
 
 //-----------------------------------------------------------------------------
 // Private

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/03/09 09:45:33 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/03/11 11:12:13 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -617,6 +617,13 @@ bool FileHelper::Write(std::string const &fileName)
          break;
       case ACR:
       case ACR_LIBIDO:
+      // Just to avoid further trouble if user create a file ex-nihilo,
+      // wants to write it as an ACR-NEMA file,
+      // and forget to create any Entry belonging to group 0008
+      // (shame on him !)
+      // We add Recognition Code (RET)
+        if ( ! FileInternal->GetValEntry(0x0008, 0x0010) )
+            FileInternal->InsertValEntry("", 0x0008, 0x0010);
          SetWriteFileTypeToACR();
          break;
       default:
