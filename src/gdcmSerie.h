@@ -1,7 +1,7 @@
-// gdcmSequence.h
+// gdcmSerie.h
 //-----------------------------------------------------------------------------
-#ifndef GDCMSEQUENCE_H
-#define GDCMSEQUENCE_H
+#ifndef GDCMSERIE_H
+#define GDCMSERIE_H
 
 #include "gdcmObject.h"
 #include "gdcmImage.h"
@@ -12,11 +12,11 @@ typedef std::list<gdcmImage> lImage;
 
 //-----------------------------------------------------------------------------
 
-class GDCM_EXPORT gdcmSequence : public gdcmObject {
+class GDCM_EXPORT gdcmSerie : public gdcmObject {
 public:
 
-   gdcmSequence();
-   ~gdcmSequence();
+   gdcmSerie();
+   ~gdcmSerie();
 
    std::string GetEntryByNumber(guint16 group, guint16 element);
    std::string GetEntryByName(TagName name);

@@ -29,11 +29,11 @@ libgdcm_la_SOURCES=                \
    gdcmJpeg12.cxx                  \
    gdcmJpeg2000.cxx                \
    gdcmRLE.cxx                     \
-   gdcmParsePixels.cxx                   \
+   gdcmParsePixels.cxx             \
    gdcmDICOMDIR.cxx                \
    gdcmPatient.cxx                 \
    gdcmStudy.cxx                   \
-   gdcmSequence.cxx                \
+   gdcmSerie.cxx                   \
    gdcmImage.cxx
 
 
@@ -55,7 +55,7 @@ libgdcminclude_HEADERS =                \
 	gdcmObject.h                    \
 	gdcmPatient.h                   \
 	gdcmStudy.h                     \
-	gdcmSequence.h                  \
+	gdcmSerie.h                     \
 	gdcmImage.h
 
 

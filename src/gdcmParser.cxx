@@ -2076,11 +2076,11 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
 /**
  * \ingroup gdcmParser
  * \brief   Request a new virtual dict entry to the dict set
- * @param   Group  group   of the underlying DictEntry
- * @param   Elem   element of the underlying DictEntry
- * @param   VR     VR of the underlying DictEntry
- * @param   Fourth owner group
- * @param   Name   english name
+ * @param   group  group   of the underlying DictEntry
+ * @param   elem   element of the underlying DictEntry
+ * @param   vr     VR of the underlying DictEntry
+ * @param   fourth owner group
+ * @param   name   english name
  */
 gdcmDictEntry *gdcmParser::NewVirtualDictEntry(guint16 group, guint16 element,
                                                std::string vr,

@@ -4,11 +4,11 @@
 #define GDCMSTUDY_H
 
 #include "gdcmObject.h"
-#include "gdcmSequence.h"
+#include "gdcmSerie.h"
 
 //-----------------------------------------------------------------------------
 
-typedef std::list<gdcmSequence> lSequence;
+typedef std::list<gdcmSerie> lSerie;
 
 //-----------------------------------------------------------------------------
 
@@ -21,11 +21,11 @@ public:
    std::string GetEntryByNumber(guint16 group, guint16 element);
    std::string GetEntryByName(TagName name);
 
-   inline lSequence GetSequences() {return sequences;};
+   inline lSerie GetSeries() {return series;};
 
 private:
 
-   lSequence sequences;
+   lSerie series;
 
 };
 
