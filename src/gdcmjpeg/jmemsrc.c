@@ -43,6 +43,7 @@ init_source (j_decompress_ptr cinfo)
    * Indeed, if we want to read multiple JPEG images from one buffer,
    * this *must* not do anything to the pointer.
    */
+  (void)cinfo;
 }
 
 
@@ -127,6 +128,7 @@ METHODDEF(void)
 term_source (j_decompress_ptr cinfo)
 {
   /* no work necessary here */
+  (void)cinfo;
 }
 
 
