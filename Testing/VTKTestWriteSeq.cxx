@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWriteSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 15:31:15 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/02/13 12:06:29 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,6 +29,7 @@
 
 //Generated file:
 #include "gdcmDataSeqImages.h"
+#include "gdcmDebug.h"
 
 #ifndef vtkFloatingPointType
 #define vtkFloatingPointType float
@@ -216,6 +217,8 @@ int VTKTestWriteSeq(int argc, char *argv[])
          show = true;
       }
    }
+
+   gdcm::Debug::DebugOn();
 
    int ret = 0;
    vtkTesting *t = vtkTesting::New();
