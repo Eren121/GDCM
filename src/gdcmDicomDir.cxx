@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.97 $
+  Date:      $Date: 2005/01/12 17:57:58 $
+  Version:   $Revision: 1.98 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -731,7 +731,6 @@ void DicomDir::CreateDicomDir()
       return;
    }
 
-   DicomDirType type; // = DicomDir::GDCM_DICOMDIR_META;
    MetaElems = NewMeta();
 
    ListSQItem listItems = s->GetSQItems();
@@ -757,25 +756,21 @@ void DicomDir::CreateDicomDir()
       {
          si = new DicomDirPatient();
          AddDicomDirPatientToEnd( static_cast<DicomDirPatient *>(si) );
-         type = DicomDir::GDCM_DICOMDIR_PATIENT;
       }
       else if( v == "STUDY " )
       {
          si = new DicomDirStudy();
          AddDicomDirStudyToEnd( static_cast<DicomDirStudy *>(si) );
-         type = DicomDir::GDCM_DICOMDIR_STUDY;
       }
       else if( v == "SERIES" )
       {
          si = new DicomDirSerie();
          AddDicomDirSerieToEnd( static_cast<DicomDirSerie *>(si) );
-         type = DicomDir::GDCM_DICOMDIR_SERIE;
       }
       else if( v == "IMAGE " ) 
       {
          si = new DicomDirImage();
          AddDicomDirImageToEnd( static_cast<DicomDirImage *>(si) );
-         type = DicomDir::GDCM_DICOMDIR_IMAGE;
       }
       else
       {
