@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/03/11 11:12:13 $
-  Version:   $Revision: 1.105 $
+  Date:      $Date: 2005/03/22 11:37:15 $
+  Version:   $Revision: 1.106 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -180,9 +180,9 @@ protected:
    /// NumPixel to provide a unique access facility. 
    uint16_t NumPixel;
    /// \brief In some cases (e.g. for some ACR-NEMA images) the header entry for
-   /// the group of pixels is *not* found at 0x7fe0. In order to
-   /// make things easier the parser shall store the proper value in
-   /// GrPixel to provide a unique access facility.
+   /// the group of pixels is *not* found at 0x7fe0. 
+   /// In order to make things easier the parser shall store the proper value
+   /// in GrPixel to provide a unique access facility.
    uint16_t GrPixel;
 
 private:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/11 11:12:13 $
-  Version:   $Revision: 1.230 $
+  Date:      $Date: 2005/03/22 11:37:15 $
+  Version:   $Revision: 1.231 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,12 +46,25 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+
+/**
+ * \brief Constructor used when we want to generate dicom files from scratch
+ */
+File::File():
+   Document()
+{
+   RLEInfo  = new RLEFramesInfo;
+   JPEGInfo = new JPEGFragmentsInfo;
+   GrPixel  = 0x7fe0;
+   NumPixel = 0x0010;
+}
+
 /**
  * \brief  Constructor 
  * @param  filename name of the file whose header we want to analyze
  */
 File::File( std::string const &filename )
-     :Document( filename )
+     :Document(filename)
 {    
    RLEInfo  = new RLEFramesInfo;
    JPEGInfo = new JPEGFragmentsInfo;
@@ -145,17 +158,6 @@ File::File( std::string const &filename )
    }
 }
 
-/**
- * \brief Constructor used when we want to generate dicom files from scratch
- */
-File::File():
-   Document()
-{
-   RLEInfo  = new RLEFramesInfo;
-   JPEGInfo = new JPEGFragmentsInfo;
-   GrPixel  = 0x7fe0;
-   NumPixel = 0x0010;
-}
 
 /**
  * \brief   Canonical destructor.
@@ -170,6 +172,8 @@ File::~File ()
 
 //-----------------------------------------------------------------------------
 // Public
+
+
 /**
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current File was properly parsed
@@ -264,10 +268,14 @@ ModalityType File::GetModality()
       else if ( strModality.find("PT") < strModality.length()) return PT;
       else if ( strModality.find("RF") < strModality.length()) return RF;
       else if ( strModality.find("RG") < strModality.length()) return RG;
-      else if ( strModality.find("RTDOSE")   < strModality.length()) return RTDOSE;
-      else if ( strModality.find("RTIMAGE")  < strModality.length()) return RTIMAGE;
-      else if ( strModality.find("RTPLAN")   < strModality.length()) return RTPLAN;
-      else if ( strModality.find("RTSTRUCT") < strModality.length()) return RTSTRUCT;
+      else if ( strModality.find("RTDOSE")   
+                                       < strModality.length()) return RTDOSE;
+      else if ( strModality.find("RTIMAGE")  
+                                       < strModality.length()) return RTIMAGE;
+      else if ( strModality.find("RTPLAN")
+                                       < strModality.length()) return RTPLAN;
+      else if ( strModality.find("RTSTRUCT") 
+                                       < strModality.length()) return RTSTRUCT;
       else if ( strModality.find("SM") < strModality.length()) return SM;
       else if ( strModality.find("ST") < strModality.length()) return ST;
       else if ( strModality.find("TG") < strModality.length()) return TG;

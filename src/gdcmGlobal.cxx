@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/03/22 11:41:24 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-/// \brief Those global string that are return by reference everywhere in 
+/// \brief Those global string that are returned by reference everywhere in 
 /// gdcm code used to be in gdcmCommon.h but due to a 'bug' in gcc/MacOSX
 /// you cannot have static initialization in a multithreaded environment
 /// since there is a lazy construction everything got skrew up somehow
