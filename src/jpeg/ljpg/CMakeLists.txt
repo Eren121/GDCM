@@ -16,7 +16,7 @@ SET(libgdcmjpginclude_HEADERS
  proto.h
 )
 
-ADD_LIBRARY(gdcmjpeg ${libgdcmjpg_la_SOURCES})
+ADD_LIBRARY(gdcmljpeg ${libgdcmjpg_la_SOURCES})
 
 INSTALL_FILES(/include FILES ${libgdcmjpeginclude_HEADERS})
-INSTALL_TARGETS(/lib/ gdcmjpeg)
+INSTALL_TARGETS(/lib/ gdcmljpeg)
