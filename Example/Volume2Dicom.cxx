@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/04 08:46:10 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/12/04 08:57:19 $
+  Version:   $Revision: 1.2 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef WIN32
-#define stat _stat
+   #define stat _stat
 #endif
 
 const unsigned int Dimension = 3;
@@ -45,7 +45,6 @@ void GetFileDateAndTime(const char *inputfile, std::string &date, std::string &t
 
 int main( int argc, char * argv[] )
 {
-   
    if (argc < 2) 
    {
       std::cerr << argv[0] << USAGE << std::endl;
@@ -55,7 +54,8 @@ int main( int argc, char * argv[] )
    //const char *inputfile = argv[1];
    std::string directory = argv[1];
 //   itksys::SystemTools::ConvertToUnixSlashes( directory );
-   if (directory[directory.size()-1] != '/') directory += '/';
+   if (directory[directory.size()-1] != '/') 
+      directory += '/';
 
    std::cout << "Converting image into dicom in " << directory << std::endl;
 
@@ -71,8 +71,8 @@ int main( int argc, char * argv[] )
     int   sizex      = 256;
     int   sizey      = 256;
     int   sizez      = 10;
-    float spacing[3] = { 1.0, 1.0, 1.5 };
-    float orig[3]    = { 0.0, 0.0, 0.0 };
+    //float spacing[3] = { 1.0, 1.0, 1.5 };
+    //float orig[3]    = { 0.0, 0.0, 0.0 };
     int   sliceSize  = sizex*sizey*sizeof(uint8_t);
 
     ////////////////////////////////////////////////////////////
@@ -82,8 +82,10 @@ int main( int argc, char * argv[] )
     for (int i=1; i<sizex*sizey*sizez; i++) 
     {
        uint8_t val = imageData[i];
-       if (val > max) max = val;
-       if (val < min) min = val;
+       if (val > max) 
+          max = val;
+       if (val < min) 
+          min = val;
     }
     float wcenter = (max+min) / 2.;
     float wwidth  = (max-min)>0 ? (max-min) : 1.;
@@ -150,6 +152,8 @@ int main( int argc, char * argv[] )
     ////////////////////////////////////////////////////////////
     // delete f1; // FIXME: these calls sometimes crashes under .NET ????
     // delete h1;
+
+    return 0;
 }
 
 
@@ -173,4 +177,3 @@ void GetFileDateAndTime(const char *inputfile, std::string &date, std::string &t
       time = "120000";
    }
 }
-

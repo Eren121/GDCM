@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2004/12/04 08:57:20 $
+  Version:   $Revision: 1.86 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -455,11 +455,11 @@ std::cerr<<"File : "<<it->c_str()<<std::endl;
    SetElements(tmp, list);
    CallEndMethod();
 
-   for(VectDocument::iterator it=list.begin();
-       it!=list.end();
-       ++it)
+   for(VectDocument::iterator itDoc=list.begin();
+       itDoc!=list.end();
+       ++itDoc)
    {
-      delete dynamic_cast<Header *>(*it);
+      delete dynamic_cast<Header *>(*itDoc);
    }
 }
 

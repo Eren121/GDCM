@@ -1,10 +1,17 @@
+2004-12-04 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Bug fix due my last commit (compilation under Windows).
+   * Example/Volume2Dicom : bug fix in the file and reformatting source code
+
 2004-12-03 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Huge cleanup:
      - Remove printf / sprintf
      - include iostream AFTER gdcm so we don't get warnings
-     - GDCM_NO_ANSI_STRING_STREAM shouldn't be used explitely ouside of gdcm source
-     - Also remove tons of include from header files, hopefully this should speeup the compilation time, since it was becoming a dog slow.
-     - Remove gdcm.h as it include way too many files and slow down compilation (plus it is not up to date)
+     - GDCM_NO_ANSI_STRING_STREAM shouldn't be used explitely ouside of gdcm 
+       source
+     - Also remove tons of include from header files, hopefully this should 
+       speeup the compilation time, since it was becoming a dog slow.
+     - Remove gdcm.h as it include way too many files and slow down compilation 
+       (plus it is not up to date)
      - remove 'using namespace std' this is BAD !
 
 2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

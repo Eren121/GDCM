@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 17:13:17 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/12/04 08:57:20 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -178,7 +178,7 @@ void ReferenceFileParser::Print()
 
 bool ReferenceFileParser::Check()
 {
-   int ret = true;
+   bool ret = true;
    for (MapFileValuesType::iterator i  = ProducedMap.begin();
                                     i != ProducedMap.end();
                                     ++i)
