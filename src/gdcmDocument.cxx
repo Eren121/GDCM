@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/09 19:31:54 $
-  Version:   $Revision: 1.232 $
+  Date:      $Date: 2005/03/22 11:29:37 $
+  Version:   $Revision: 1.233 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,21 +40,69 @@ namespace gdcm
 
 // Refer to Document::SetMaxSizeLoadEntry()
 const unsigned int Document::MAX_SIZE_LOAD_ELEMENT_VALUE = 0xfff; // 4096
-const unsigned int Document::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 // Constructors and destructors are protected to avoid user to invoke directly
+
 /**
- * \brief   constructor  
- * @param   filename 'Document' (File or DicomDir) to be opened for parsing
+ * \brief This default constructor neither loads nor parses the file. 
+ *        You should then invoke \ref Document::SetFileName 
+ *        and \ref Document::Load.
+ *         
  */
-Document::Document( std::string const &filename ) 
+Document::Document() 
          :ElementSet(-1)
 {
-   SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
-   Filename = filename;
+   Fp = 0;
+
+   SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialize();
+   SwapCode = 1234;
+   Filetype = ExplicitVR;
+   Group0002Parsed = false;
+   LoadMode = 0x00000000; // Load everything
+}
+
+/**
+ * \brief   Constructor (not to break the API) 
+ * @param   filename 'Document' (File or DicomDir) to be opened for parsing
+ */
+Document::Document( std::string const &filename )
+         :ElementSet(-1) 
+{
+   Fp = 0;
+
+   SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
+   Initialize();
+   SwapCode = 1234;
+   Filetype = ExplicitVR;
+   Group0002Parsed = false;
+   LoadMode = 0x00000000; // Load everything
+
+   Load(filename); 
+}
+/**
+ * \brief   Canonical destructor.
+ */
+Document::~Document ()
+{
+   RefPubDict = NULL;
+   RefShaDict = NULL;
+}
+
+//-----------------------------------------------------------------------------
+// Public
+
+/**
+ * \brief   Loader  
+ * @param   filename 'Document' (File or DicomDir) to be opened for parsing
+ */
+void Document::Load( std::string const &filename ) 
+{
+   Filename = filename;
+
+   // We should clean out anything that already exists.
 
    Fp = 0;
    if ( !OpenFile() )
@@ -67,17 +115,18 @@ Document::Document( std::string const &filename )
    gdcmWarningMacro( "Starting parsing of file: " << Filename.c_str());
 
    Fp->seekg(0, std::ios::end);
-   long lgt = Fp->tellg();
-           
+   long lgt = Fp->tellg();       // total length of the file
+
    Fp->seekg(0, std::ios::beg);
 
    CheckSwap();
-   long beg = Fp->tellg();
-   lgt -= beg;
-   
+   long beg = Fp->tellg();      // just after DICOM preamble (if any)
+
+   lgt -= beg;                  // remaining length to parse    
+
    ParseDES( this, beg, lgt, false); // Loading is done during parsing
 
-   Fp->seekg( 0,  std::ios::beg);
+   Fp->seekg( 0, std::ios::beg);
    
    // Load 'non string' values
       
@@ -141,33 +190,6 @@ Document::Document( std::string const &filename )
    // --- End of ACR-LibIDO kludge --- 
 }
 
-/**
- * \brief This default constructor doesn't parse the file. You should
- *        then invoke \ref Document::SetFileName and then the parsing.
- */
-Document::Document() 
-         :ElementSet(-1)
-{
-   Fp = 0;
-
-   SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
-   Initialize();
-   SwapCode = 1234;
-   Filetype = ExplicitVR;
-   Group0002Parsed = false;
-}
-
-/**
- * \brief   Canonical destructor.
- */
-Document::~Document ()
-{
-   RefPubDict = NULL;
-   RefShaDict = NULL;
-}
-
-//-----------------------------------------------------------------------------
-// Public
 /**
  * \brief   Get the public dictionary used
  */
@@ -766,7 +788,10 @@ void Document::Initialize()
 
 /**
  * \brief   Parses a DocEntrySet (Zero-level DocEntries or SQ Item DocEntries)
- * @return  length of the parsed set. 
+ * @param set DocEntrySet we are going to parse ('zero level'   or a SQItem)
+ * @param offset start of parsing
+ * @param l_max  length to parse
+ * @param delim_mode : whether we are in 'delimitor mode' (l=0xffffff) or not
  */ 
 void Document::ParseDES(DocEntrySet *set, long offset, 
                         long l_max, bool delim_mode)
@@ -839,6 +864,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          else
          {
          /////////////////////// ValEntry
+
             // When "set" is a Document, then we are at the top of the
             // hierarchy and the Key is simply of the form ( group, elem )...
             if ( dynamic_cast< Document* > ( set ) )
@@ -856,10 +882,32 @@ void Document::ParseDES(DocEntrySet *set, long offset,
              
             LoadDocEntry( newValEntry );
             bool delimitor=newValEntry->IsItemDelimitor();
+
+            if ( LoadMode & NO_SHADOW ) // User asked to skip, if possible, 
+                                        // shadow groups ( if possible :
+                                        // whether element 0x0000 exits)
+            {
+               if ( newValEntry->GetGroup()%2 != 0 )
+               {
+                  if ( newValEntry->GetElement() == 0x0000 )
+                  {
+                     std::string strLgrGroup = newValEntry->GetValue();
+                     int lgrGroup;
+                     if ( strLgrGroup != GDCM_UNFOUND)
+                     {
+                        lgrGroup = atoi(strLgrGroup.c_str());
+                        Fp->seekg(lgrGroup , std::ios::cur);
+                        used = false;
+                        continue;
+                     }
+                  }
+               }
+             }
+
             if( !set->AddEntry( newValEntry ) )
             {
               // If here expect big troubles
-              //delete newValEntry; //otherwise mem leak
+              // delete newValEntry; //otherwise mem leak
               used=false;
             }
 
@@ -883,7 +931,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       else
       {
          // VR = "SQ"
-         unsigned long l = newDocEntry->GetReadLength();            
+         unsigned long l = newDocEntry->GetReadLength();          
          if ( l != 0 ) // don't mess the delim_mode for zero-length sequence
          {
             if ( l == 0xffffffff )
@@ -895,6 +943,14 @@ void Document::ParseDES(DocEntrySet *set, long offset,
               delim_mode = false;
             }
          }
+
+         if ( (LoadMode & NO_SEQ) && ! delim_mode ) // User asked to skip SQ
+         {
+            Fp->seekg( l, std::ios::cur);
+            used = false;
+            continue;
+          }
+         
          // no other way to create it ...
          newSeqEntry->SetDelimitorMode( delim_mode );
 
@@ -902,9 +958,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // is a Document, then we are building the first depth level.
          // Hence the SeqEntry we are building simply has a depth
          // level of one:
-         if (/*Document *dummy =*/ dynamic_cast< Document* > ( set ) )
+         if ( dynamic_cast< Document* > ( set ) )
          {
-            //(void)dummy;
             newSeqEntry->SetDepthLevel( 1 );
             newSeqEntry->SetKey( newSeqEntry->GetKey() );
          }
@@ -928,6 +983,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
             used = false;
          }
+
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
             if( !used )
@@ -1237,72 +1293,6 @@ void Document::FindDocEntryLength( DocEntry *entry )
 
       // Length is encoded on 2 bytes.
       length16 = ReadInt16();
-
-      // FIXME : This heuristic supposes that the first group following
-      //         group 0002 *has* and element 0000.
-      // BUT ... Element 0000 is optionnal :-(
-
-
-   // Fixed using : HandleOutOfGroup0002()
-   //              (first hereafter strategy ...)
-      
-      // We can tell the current file is encoded in big endian (like
-      // Data/US-RGB-8-epicard) when we find the "Transfer Syntax" tag
-      // and it's value is the one of the encoding of a big endian file.
-      // In order to deal with such big endian encoded files, we have
-      // (at least) two strategies:
-      // * when we load the "Transfer Syntax" tag with value of big endian
-      //   encoding, we raise the proper flags. Then we wait for the end
-      //   of the META group (0x0002) among which is "Transfer Syntax",
-      //   before switching the swap code to big endian. We have to postpone
-      //   the switching of the swap code since the META group is fully encoded
-      //   in little endian, and big endian coding only starts at the next
-      //   group. The corresponding code can be hard to analyse and adds
-      //   many additional unnecessary tests for regular tags.
-      // * the second strategy consists in waiting for trouble, that shall
-      //   appear when we find the first group with big endian encoding. This
-      //   is easy to detect since the length of a "Group Length" tag (the
-      //   ones with zero as element number) has to be of 4 (0x0004). When we
-      //   encounter 1024 (0x0400) chances are the encoding changed and we
-      //   found a group with big endian encoding.
-      //---> Unfortunately, element 0000 is optional.
-      //---> This will not work when missing!
-      // We shall use this second strategy. In order to make sure that we
-      // can interpret the presence of an apparently big endian encoded
-      // length of a "Group Length" without committing a big mistake, we
-      // add an additional check: we look in the already parsed elements
-      // for the presence of a "Transfer Syntax" whose value has to be "big
-      // endian encoding". When this is the case, chances are we have got our
-      // hands on a big endian encoded file: we switch the swap code to
-      // big endian and proceed...
-
-//      if ( element  == 0x0000 && length16 == 0x0400 ) 
-//      {
-//         std::string ts = GetTransferSyntax();
-//         if ( Global::GetTS()->GetSpecialTransferSyntax(ts) 
-//                != TS::ExplicitVRBigEndian ) 
-//         {
-//            throw FormatError( "Document::FindDocEntryLength()",
-//                               " not explicit VR." );
-//           return;
-//        }
-//        length16 = 4;
-//        SwitchByteSwapCode();
-//
-//         // Restore the unproperly loaded values i.e. the group, the element
-//         // and the dictionary entry depending on them.
-//         uint16_t correctGroup = SwapShort( entry->GetGroup() );
-//         uint16_t correctElem  = SwapShort( entry->GetElement() );
-//         DictEntry *newTag = GetDictEntry( correctGroup, correctElem );
-//         if ( !newTag )
-//         {
-//            // This correct tag is not in the dictionary. Create a new one.
-//            newTag = NewVirtualDictEntry(correctGroup, correctElem);
-//         }
-//         // FIXME this can create a memory leaks on the old entry that be
-//         // left unreferenced.
-//         entry->SetDictEntry( newTag );
-//      }
   
       // 0xffff means that we deal with 'No Length' Sequence 
       //        or 'No Length' SQItem
@@ -1362,12 +1352,14 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
       if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
       {
          long filePosition = Fp->tellg();
-         gdcmWarningMacro( "Neither an Item tag nor a Sequence delimiter tag on :" 
+         gdcmWarningMacro( 
+              "Neither an Item tag nor a Sequence delimiter tag on :" 
            << std::hex << group << " , " << elem 
            << ") -before- position x(" << filePosition << ")" );
   
          Fp->seekg(positionOnEntry, std::ios::beg);
-         throw FormatUnexpected( "Neither an Item tag nor a Sequence delimiter tag.");
+         throw FormatUnexpected( 
+               "Neither an Item tag nor a Sequence delimiter tag.");
       }
       if ( elem == 0xe0dd )
       {
@@ -1665,10 +1657,10 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
  */
 bool Document::IsDocEntryAnInteger(DocEntry *entry)
 {
-   uint16_t elem          = entry->GetElement();
-   uint16_t group         = entry->GetGroup();
-   const std::string &vr  = entry->GetVR();
-   uint32_t length        = entry->GetLength();
+   uint16_t elem         = entry->GetElement();
+   uint16_t group        = entry->GetGroup();
+   const std::string &vr = entry->GetVR();
+   uint32_t length       = entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
@@ -1921,26 +1913,6 @@ void Document::SetMaxSizeLoadEntry(long newSize)
 }
 
 /**
- * \brief Header Elements too long will not be printed
- *   See comments of \ref Document::MAX_SIZE_PRINT_ELEMENT_VALUE 
- * @param newSize new size
- */
-void Document::SetMaxSizePrintEntry(long newSize) 
-{
-   if ( newSize < 0 )
-   {
-      return;
-   }
-   if ((uint32_t)newSize >= (uint32_t)0xffffffff )
-   {
-      MaxSizePrintEntry = 0xffffffff;
-      return;
-   }
-   MaxSizePrintEntry = newSize;
-}
-
-
-/**
  * \brief   Read the next tag but WITHOUT loading it's value
  *          (read the 'Group Number', the 'Element Number',
  *          gets the Dict Entry
@@ -1976,9 +1948,14 @@ DocEntry *Document::ReadNextDocEntry()
 
    if( vr == GDCM_UNKNOWN)
    {
-      DictEntry *dictEntry = GetDictEntry(group,elem);
-      if( dictEntry )
-         realVR = dictEntry->GetVR();
+      if ( elem == 0x0000 ) // Group Length
+         realVR = "UL";     // must be UL
+      else
+      {
+         DictEntry *dictEntry = GetDictEntry(group,elem);
+         if( dictEntry )
+            realVR = dictEntry->GetVR();
+      }
    }
 
    DocEntry *newEntry;
@@ -2013,7 +1990,6 @@ DocEntry *Document::ReadNextDocEntry()
    catch ( FormatError e )
    {
       // Call it quits
-      //std::cout << e;
       delete newEntry;
       return 0;
    }
