@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.151 $
+  Date:      $Date: 2005/01/05 16:53:23 $
+  Version:   $Revision: 1.152 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2213,8 +2213,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
    if ( vr == "UL" || vr == "US" || vr == "SL" || vr == "SS" )
    {
       return true;
-   }
-   
+   }   
    return false;
 }
 
@@ -3125,6 +3124,56 @@ bool Document::operator<(Document &document)
       }
    }
    return false;
+}
+
+
+/**
+ * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
+ * @param filetype Type of the File to be written 
+ */
+int Document::ComputeGroup0002Length( FileType filetype ) 
+{
+   uint16_t gr, el;
+   std::string vr;
+   
+   int groupLength = 0;
+   bool found0002 = false;   
+  
+   // for each zero-level Tag in the DCM Header
+   DocEntry *entry;
+
+   Initialize();
+   
+   for (;;)
+   {
+      entry = GetNextEntry();
+
+      if ( entry == 0 )
+         break;
+
+      gr = entry->GetGroup();
+
+      if (gr == 0x0002)
+         found0002 = true;
+      else 
+         if (found0002 )
+            break;
+         else
+            continue;
+
+      el = entry->GetElement();
+      vr = entry->GetVR();            
+ 
+      if (filetype == ExplicitVR) 
+      {
+         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
+         {
+            groupLength +=  4; // explicit VR AND OB, OW, SQ : 4 more bytes
+         }
+      }
+      groupLength += 2 + 2 + 4 + entry->GetLength();   
+   }
+   return groupLength; 
 }
 
 } // end namespace gdcm
