@@ -1,3 +1,8 @@
+2004-10-27 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Change internals for gdcmDict. Don't use any 'new' any more.
+    This should definitely solve any leak problem, and we should be
+    as fast as before, as long as don't modify too much the dictionary.
+
 2004-10-25 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * STYLE: ivars should start with a capital letter. 
   * Accessors should be const to avoid people starting modifying stuff (since this is a ref). 

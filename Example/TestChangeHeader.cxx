@@ -20,7 +20,7 @@ std::endl;
 
     // 0018 1310 US ACQ Acquisition Matrix
     gdcm::DictEntry *dictEntry =
-         f2->GetHeader()->GetPubDict()->GetDictEntryByName( "Acquisition Matrix" );
+       f2->GetHeader()->GetPubDict()->GetDictEntryByName( "Acquisition Matrix" );
     std::cerr << std::hex << dictEntry->GetGroup() << "," << dictEntry->GetElement() << std::endl;
 
    // std::string matrix = f2->GetHeader()->GetEntryByNumber(0x0018, 0x1310);

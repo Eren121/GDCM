@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:31:12 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2004/10/27 22:47:20 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,16 +58,7 @@ DictSet::~DictSet()
    Dicts.clear();
 
    // Remove virtual dictionnary entries
-/*   TagKeyHT::iterator it;
-   for(it = VirtualEntry.begin(); it != VirtualEntry.end(); ++it)
-   {
-      DictEntry entry = it->second;
-      if ( entry )
-      {
-         delete entry;
-      }
-      it->second = NULL;
-   }*/
+   VirtualEntry.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -191,7 +182,6 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
    else
    {
       DictEntry ent(group, element, vr, fourth, name);
-      //VirtualEntry[tag] = entry;
       VirtualEntry.insert(
          TagKeyHT::value_type<TagKey, DictEntry>
             (tag, ent));
@@ -238,7 +228,7 @@ bool DictSet::AppendDict(Dict *newDict, DictKey const & name)
 {
    Dicts[name] = newDict;
 
-   return true;   //FIXME
+   return true;
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:31:12 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2004/10/27 22:47:20 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,14 +68,6 @@ Dict::Dict(std::string const & filename)
  */
 Dict::~Dict()
 {
-/*   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
-   {
-      DictEntry* entryToDelete = tag->second;
-      if ( entryToDelete )
-      {
-         delete entryToDelete;
-      }
-   }*/
    // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
    // assume all the pointed DictEntries are already cleaned-up when
    // we cleaned KeyHt.
@@ -161,11 +153,9 @@ bool Dict::AddNewEntry(DictEntry const & newEntry)
    } 
    else 
    {
-      //KeyHt[newEntry.GetKey()] = newEntry;
       KeyHt.insert( 
          TagKeyHT::value_type<TagKey, DictEntry>
             (newEntry.GetKey(), newEntry));
-      //NameHt[newEntry.GetName()] = newEntry;
       NameHt.insert(
          TagNameHT::value_type<TagName, DictEntry>
             (newEntry.GetName(), newEntry ));
@@ -183,11 +173,9 @@ bool Dict::ReplaceEntry(DictEntry const & newEntry)
 {
    if ( RemoveEntry(newEntry.GetKey()) )
    {
-      //KeyHt[newEntry.GetKey()] = newEntry;
       KeyHt.insert( 
          TagKeyHT::value_type<TagKey, DictEntry>
             (newEntry.GetKey(), newEntry));
-      //NameHt[newEntry.GetName()] = newEntry;
       NameHt.insert(
          TagNameHT::value_type<TagName, DictEntry>
             (newEntry.GetName(), newEntry ));
@@ -237,7 +225,7 @@ bool Dict::RemoveEntry (uint16_t group, uint16_t element)
  * \brief   Get the dictionnary entry identified by it's name.
  * @param   name element of the ElVal to modify
  * \warning : NEVER use it !
- *            the 'name' IS NOT an identifier within the Dicom Dicom Dictionary
+ *            the 'name' IS NOT an identifier within the Dicom Dictionary
  *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
