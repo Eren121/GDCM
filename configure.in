@@ -1,14 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/gdcmDict.cxx)
 
-AC_PREFIX_DEFAULT(/usr/local/DCMlib)
-
-AM_INIT_AUTOMAKE(DCMlib, 0.1.0)
+AM_INIT_AUTOMAKE(gdcm, 0.1.0)
 AM_MAINTAINER_MODE
 AM_CONFIG_HEADER(src/config.h)
-
-CFLAGS="-Wall -g"
-CXXFLAGS="-Wall -g"
 
 dnl Checks for programs.
 AM_PROG_LIBTOOL
@@ -37,9 +32,48 @@ AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 AC_CHECK_SIZEOF(long long, 8)
 
+AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
+AM_CONDITIONAL(HAVE_DOXYGEN, $DOXYGEN)
+AC_SUBST(HAVE_DOXYGEN)
+
+dnl Let people disable the doxygen stuff.
+AC_ARG_ENABLE(docygen, [  --enable-doxygen         Use doxygen to build documentation (default=auto)], enable_doxygen="$enableval",
+enable_doxygen=auto)
+
+if test x$enable_doxygen = xauto ; then
+  if test x$DOXYGEN = xtrue ; then
+    enable_doxygen=yes
+  else
+    enable_doxygen=no
+  fi
+fi
+
+dnl NOTE: We need to use a separate automake conditional for this
+dnl       to make this work with the tarballs.
+AM_CONDITIONAL(ENABLE_DOXYGEN, test x$enable_doxygen = xyes)
+
+dnl Checks for Python
+AC_ARG_ENABLE(python,
+        [  --enable-python          Enable Python language support (default=no).],,
+        [enable_python="no"])
+dnl AC_MSG_RESULT($enable_python)
+build_python=no
+if test "yes" = "$enable_python"; then
+    AM_PATH_PYTHON(2.0)
+    if test -n "$PYTHON"; then
+        AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
+        build_python=yes;
+    fi
+    AC_CHECK_PROGS(SWIG, swig13)
+fi
+AM_CONDITIONAL(BUILD_PYTHON, test x$build_python = xyes)
+
 dnl produce Makefile.in files
 AC_OUTPUT([
 Makefile 
+gdcm.spec
 src/Makefile
+gdcmPython/Makefile
 Test/Makefile
-Dicts/Makefile])
+Dicts/Makefile
+Doc/Makefile])

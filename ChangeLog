@@ -1,3 +1,10 @@
+2003-03-17 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
+      * Makefile.am, acinclude.m4, configure.in, python.m4, Dicts/Makefile.am,
+	Doc/Makefile.am, Test/Makefile.am, gdcmPython/Makefile.am, 
+	src/Makefile.am : the project should properly compile and install
+	with the autotools, included the python wrappers part. 
+      * gdcm.spec.in : added a spec file for RPM packaging.
+
 2003-03-14 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmUtils.cxx : redifinition of defaults parameters in code
 

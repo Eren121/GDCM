@@ -1,6 +1,17 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = src Test Dicts
+SUBDIRS = src gdcmPython Test Dicts Doc
+
+
+EXTRA_DIST = \
+	AUTHORS	\
+	ChangeLog \
+	COPYING \
+	INSTALL \
+	NEWS \
+	README \
+	TODO \
+	gdcm.spec
 
 release:
 	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)

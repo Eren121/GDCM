@@ -14,7 +14,7 @@ LTVERSION = 0:1:0
 
 lib_LTLIBRARIES = libgdcm.la
 
-CXXFLAGS = -DPUB_DICT_PATH=\"$(prefix)/dicts/\"
+CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\"
 
 libgdcm_la_SOURCES=		\
 	gdcmException.cxx	\
@@ -30,10 +30,19 @@ libgdcm_la_SOURCES=		\
 	gdcmJpeg.cxx
 
 libgdcmincludedir = $(includedir)
-libgdcminclude_HEADERS = 	\
-	config.h	\
-	gdcm.h  	\
+libgdcminclude_HEADERS = \
 	gdcmException.h	\
-	gdcmIdo.h  	\
+	gdcmHeader.h  	\
+	gdcmFile.h
+
+EXTRA_DIST = \
 	gdcmUtil.h	\
+	gdcm.h  	\
+	gdcmIdo.h  	\
+	gdcmCommon.h	\
+	gdcmDictSet.h	\
+	gdcmDict.h	\
+	gdcmDictEntry.h	\
+	gdcmElValue.h	\
+	gdcmElValSet.h	\
 	iddcmjpeg.h
