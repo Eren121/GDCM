@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 17:23:32 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/04/05 10:28:59 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,31 +25,34 @@ int main(int argc, char *argv[])
 {
    gdcm::File *e1;
    gdcm::FileHelper   *f1;
-   std::string fileName;   
-   if (argc != 2) 
+   std::string fileName;
+  
+   if (argc == 1) 
    {
-      std::cout << " usage : PrintDocument fileName printLevel debug" 
+      std::cout << " usage : PrintFile fileName printLevel debug "
+          << "short (=NOSEQ + NOSHADOW)" 
                 << std::endl;
+    return 0;
    }
+
+   e1 = new gdcm::File();
 
    if (argc > 1) 
    {
       fileName=argv[1];
    } 
-   else 
-   {
-      fileName += GDCM_DATA_ROOT;
-      fileName += "/test.acr";
-   }
-
 
    if (argc > 3)
       gdcm::Debug::DebugOn();
+
+   if (argc > 4)
+      e1->SetLoadMode(NO_SEQ | NO_SHADOW);
    
-   e1 = new gdcm::File( fileName.c_str() );
+   e1->Load( fileName.c_str() );
+
    f1 = new gdcm::FileHelper(e1);
 
-   if (argc > 2) 
+   if (argc > 2)  // keep it here (f1 needs to be constructed !)
    {
       int level = atoi(argv[2]);   
       f1->SetPrintLevel(level);
