@@ -69,6 +69,9 @@ int TestCopyDicom(int , char* [])
 
       TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
 
+      size_t dataSize = original->GetImageDataSize();
+      void *imageData = original->GetImageData();
+
       //First of all copy the header field by field
   
       // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
@@ -107,9 +110,6 @@ int TestCopyDicom(int , char* [])
           //  << std::endl;    
          }
       }
-
-      size_t dataSize = original->GetImageDataSize();
-      void *imageData = original->GetImageData();
 
       copy->SetImageData(imageData, dataSize);
       original->GetHeader()->SetImageDataSize(dataSize);
