@@ -20,6 +20,7 @@ MARK_AS_ADVANCED(GDCM_DATA_DIR)
 OPTION(BUILD_SHARED_LIBS "Build GDCM with shared libraries." ON)
 
 OPTION(GDCM_DEBUG "Turn verbosity of some statement ON." OFF)
+MARK_AS_ADVANCED(GDCM_DEBUG)
 
 #-----------------------------------------------------------------------------
 SET (EXECUTABLE_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
@@ -73,6 +74,7 @@ OPTION(BUILD_TESTING "Build testing." ON)
 IF(BUILD_TESTING)
   ENABLE_TESTING()
   INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
+  MARK_AS_ADVANCED(DART_ROOT)
   SUBDIRS(Test)
 ENDIF(BUILD_TESTING)
 
