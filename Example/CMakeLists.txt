@@ -46,3 +46,6 @@ TARGET_LINK_LIBRARIES(PrintDicomDir gdcm)
 
 ADD_EXECUTABLE(BuildUpDicomDir BuildUpDicomDir.cxx)
 TARGET_LINK_LIBRARIES(BuildUpDicomDir gdcm)
+
+ADD_EXECUTABLE(TestCopyDicom TestCopyDicom.cxx)
+TARGET_LINK_LIBRARIES(TestCopyDicom  gdcm)
