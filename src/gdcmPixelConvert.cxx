@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 17:07:16 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/10/28 22:21:57 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,6 @@
 
 namespace gdcm
 {
-                                                                                
 #define str2num(str, typeNum) *((typeNum *)(str))
 
 // For JPEG 2000, body in file gdcmJpeg2000.cxx
@@ -106,7 +105,7 @@ void PixelConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
 {
    int nbPixels = XSize * YSize;
    uint16_t* localDecompres = (uint16_t*)Decompressed;
-                                                                                
+
    for( int p = 0; p < nbPixels; p += 2 )
    {
       uint8_t b0, b1, b2;
@@ -131,7 +130,7 @@ void PixelConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
          throw FormatError( "PixelConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
       }
-                                                                                
+
       // Two steps are necessary to please VC++
       //
       // 2 pixels 12bit =     [0xABCDEF]
@@ -140,7 +139,7 @@ void PixelConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
       *localDecompres++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
       //                        F                     C                 E
       *localDecompres++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
-                                                                                
+
       /// \todo JPR Troubles expected on Big-Endian processors ?
    }
 }
@@ -204,7 +203,7 @@ bool PixelConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
    int8_t count;
    long numberOfOutputBytes = 0;
    long numberOfReadBytes = 0;
-                                                                                
+
    while( numberOfOutputBytes < decompressedSegmentSize )
    {
       fp->read( (char*)&count, 1 );
@@ -268,7 +267,6 @@ bool PixelConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
       // Loop on the fragments
       for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
       {
-         //fseek( fp, (*it)->Offset[k] ,SEEK_SET );
          fp->seekg(  (*it)->Offset[k] , std::ios_base::beg );
          (void)ReadAndDecompressRLEFragment( subDecompressed,
                                              (*it)->Length[k],
@@ -277,13 +275,13 @@ bool PixelConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
          subDecompressed += decompressedSegmentSize;
       }
    }
-                                                                                
+
    if ( BitsAllocated == 16 )
    {
       // Try to deal with RLE 16 Bits
       (void)DecompressRLE16BitsFromRLE8Bits( ZSize );
    }
-                                                                                
+
    return true;
 }
 
@@ -293,7 +291,7 @@ bool PixelConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
 void PixelConvert::ConvertSwapZone()
 {
    unsigned int i;
-                                                                                
+
    if( BitsAllocated == 16 )
    {
       uint16_t* im16 = (uint16_t*)Decompressed;
@@ -409,7 +407,6 @@ bool PixelConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
         it != JPEGInfo->Fragments.end();
       ++it )
    {
-      //fseek( fp, (*it)->Offset, SEEK_SET );
       fp->seekg( (*it)->Offset, std::ios_base::beg);
 
       if ( IsJPEG2000 )
@@ -451,12 +448,12 @@ bool PixelConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
                    "jpeg lossy compression ");
          return false;
       }
-                                                                                
+
       // Advance to next free location in Decompressed 
       // for next fragment decompression (if any)
       int length = XSize * YSize * SamplesPerPixel;
       int numberBytes = BitsAllocated / 8;
-                                                                                
+
       localDecompressed += length * numberBytes;
    }
    return true;
@@ -512,7 +509,7 @@ void PixelConvert::ConvertYcBcRPlanesToRGBPixels()
    uint8_t* localDecompressed = Decompressed;
    uint8_t* copyDecompressed = new uint8_t[ DecompressedSize ];
    memmove( copyDecompressed, localDecompressed, DecompressedSize );
-                                                                                
+
    // to see the tricks about YBR_FULL, YBR_FULL_422,
    // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
    // ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
@@ -520,17 +517,17 @@ void PixelConvert::ConvertYcBcRPlanesToRGBPixels()
    //
    int l        = XSize * YSize;
    int nbFrames = ZSize;
-                                                                                
+
    uint8_t* a = copyDecompressed;
    uint8_t* b = copyDecompressed + l;
    uint8_t* c = copyDecompressed + l + l;
    double R, G, B;
-                                                                                
+
    /// \todo : Replace by the 'well known' integer computation
    ///         counterpart. Refer to
    ///            http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
    ///         for code optimisation.
-                                                                                
+
    for ( int i = 0; i < nbFrames; i++ )
    {
       for ( int j = 0; j < l; j++ )
@@ -538,14 +535,14 @@ void PixelConvert::ConvertYcBcRPlanesToRGBPixels()
          R = 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
          G = 1.164 *(*a-16) - 0.813 *(*c -128) - 0.392 *(*b -128) + 0.5;
          B = 1.164 *(*a-16) + 2.017 *(*b -128) + 0.5;
-                                                                                
+
          if (R < 0.0)   R = 0.0;
          if (G < 0.0)   G = 0.0;
          if (B < 0.0)   B = 0.0;
          if (R > 255.0) R = 255.0;
          if (G > 255.0) G = 255.0;
          if (B > 255.0) B = 255.0;
-                                                                                
+
          *(localDecompressed++) = (uint8_t)R;
          *(localDecompressed++) = (uint8_t)G;
          *(localDecompressed++) = (uint8_t)B;
@@ -566,13 +563,13 @@ void PixelConvert::ConvertRGBPlanesToRGBPixels()
    uint8_t* localDecompressed = Decompressed;
    uint8_t* copyDecompressed = new uint8_t[ DecompressedSize ];
    memmove( copyDecompressed, localDecompressed, DecompressedSize );
-                                                                                
+
    int l = XSize * YSize * ZSize;
-                                                                                
+
    uint8_t* a = copyDecompressed;
    uint8_t* b = copyDecompressed + l;
    uint8_t* c = copyDecompressed + l + l;
-                                                                                
+
    for (int j = 0; j < l; j++)
    {
       *(localDecompressed++) = *(a++);
@@ -594,8 +591,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
                      "unavailable file pointer." );
       return false;
    }
-                                                                                
-   //if ( fseek( fp, PixelOffset, SEEK_SET ) == -1 )
+
    fp->seekg( PixelOffset, std::ios_base::beg );
    if( fp->fail() || fp->eof()) //Fp->gcount() == 1
    {
@@ -603,7 +599,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
                      "unable to find PixelOffset in file." );
       return false;
    }
-                                                                                
+
    //////////////////////////////////////////////////
    //// Second stage: read from disk dans decompress.
    if ( BitsAllocated == 12 )
@@ -726,7 +722,7 @@ void PixelConvert::ConvertHandleColor()
 bool PixelConvert::IsDecompressedRGB()
 {
    if (   IsMonochrome
-       || ( PlanarConfiguration == 2 )
+       || PlanarConfiguration == 2
        || IsPaletteColor )
    {
       return false;
@@ -841,11 +837,9 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          DocEntry* lutRedDataEntry = header->GetDocEntryByNumber( 0x0028,
                                                                   0x1201 );
          LutRedData = new uint8_t[ lutRedDataEntry->GetLength() ];
-         //fseek( fp, lutRedDataEntry->GetOffset() ,SEEK_SET );
          fp->seekg(  lutRedDataEntry->GetOffset() ,std::ios_base::beg );
-          fp->read( (char*)LutRedData, (size_t)lutRedDataEntry->GetLength());
-        //if ( numberItem != 1 )
-        if ( fp->fail() || fp->eof())//Fp->gcount() == 1
+         fp->read( (char*)LutRedData, (size_t)lutRedDataEntry->GetLength());
+         if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
             dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
                             "unable to read red LUT data" );
@@ -861,11 +855,9 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          DocEntry* lutGreenDataEntry = header->GetDocEntryByNumber( 0x0028,
                                                                     0x1202 );
          LutGreenData = new uint8_t[ lutGreenDataEntry->GetLength() ];
-         //fseek( fp, lutGreenDataEntry->GetOffset() ,SEEK_SET );
          fp->seekg( lutGreenDataEntry->GetOffset() , std::ios_base::beg );
-          fp->read( (char*)LutGreenData, (size_t)lutGreenDataEntry->GetLength() );
-        //if ( numberItem != 1 )
-        if ( fp->fail() || fp->eof())//Fp->gcount() == 1
+         fp->read( (char*)LutGreenData, (size_t)lutGreenDataEntry->GetLength() );
+         if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
             dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
                            "unable to read green LUT data" );
@@ -881,11 +873,9 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          DocEntry* lutBlueDataEntry  = header->GetDocEntryByNumber( 0x0028,
                                                                     0x1203 );
          LutBlueData = new uint8_t[ lutBlueDataEntry->GetLength() ];
-         //fseek( fp, lutBlueDataEntry->GetOffset() ,SEEK_SET );
          fp->seekg(  lutBlueDataEntry->GetOffset() , std::ios_base::beg );
          fp->read( (char*)LutBlueData, (size_t)lutBlueDataEntry->GetLength() );
-        //if ( numberItem != 1 )
-        if ( fp->fail() || fp->eof())//Fp->gcount() == 1
+         if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
             dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
                            "unable to read blue LUT data" );
@@ -926,9 +916,9 @@ void PixelConvert::BuildLUTRGBA()
       return;
    }
                                                                                 
-   if (   ( LutRedDescriptor   == GDCM_UNFOUND )
-       || ( LutGreenDescriptor == GDCM_UNFOUND )
-       || ( LutBlueDescriptor  == GDCM_UNFOUND ) )
+   if (   LutRedDescriptor   == GDCM_UNFOUND
+       || LutGreenDescriptor == GDCM_UNFOUND
+       || LutBlueDescriptor  == GDCM_UNFOUND )
    {
       return;
    }
@@ -1039,7 +1029,7 @@ bool PixelConvert::BuildRGBImage()
 {
    if ( RGB )
    {
-      // The job is allready done.
+      // The job is already done.
       return true;
    }
 
