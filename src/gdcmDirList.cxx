@@ -6,9 +6,11 @@
 #include <iostream>
 #include <algorithm>
 
-#ifdef _MSC_VER 
+#if defined(_MSC_VER) || defined (__CYGWIN__)
    #include <windows.h> 
+#ifdef _MSC_VER
    #include <direct.h>
+#endif //_MSC_VER
 #else
    #include <dirent.h>   
    #include <unistd.h>
@@ -70,7 +72,7 @@ void gdcmDirList::Explore(std::string dirName,bool recursive)
 
    NormalizePath(dirName);
 
-#ifdef _MSC_VER 
+#if defined(_MSC_VER) || (__CYGWIN__)
    WIN32_FIND_DATA fileData; 
    HANDLE hFile=FindFirstFile((dirName+"*").c_str(),&fileData);
    int found=true;
