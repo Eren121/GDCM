@@ -44,11 +44,12 @@ const unsigned int gdcmParser::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
 
 /**
  * \brief   constructor  
- * @param   inFilename
+ * @param   inFilename file to be opened for parsing
  * @param   exception_on_error whether we throw an exception or not
  * @param   enable_sequences = true to allow the header 
- *          to be parsed *inside* the SeQuences, 
+ *          to be parsed *inside* the SeQuences,
  *          when they have an actual length 
+ * \warning enable_sequences *has to be* true for reading PAPYRUS 3.0 files 
  * @param   ignore_shadow to allow skipping the shadow elements, 
  *          to save memory space.
  * \warning The TRUE value for this param has to be used 

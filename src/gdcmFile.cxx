@@ -43,6 +43,16 @@ gdcmFile::gdcmFile(gdcmHeader *header) {
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
+ * @param   exception_on_error whether we throw an exception or not
+ * @param   enable_sequences = true to allow the header 
+ *          to be parsed *inside* the SeQuences, 
+ *          when they have an actual length 
+ * \warning enable_sequences *has to be* true for reading PAPYRUS 3.0 files
+ * @param   ignore_shadow to allow skipping the shadow elements, 
+ *          to save memory space.
+ * \warning The TRUE value for this param has to be used 
+ *          with a FALSE value for the 'enable_sequence' param.
+ *          ('public elements' may be embedded in 'shadow Sequences')
  */
 gdcmFile::gdcmFile(std::string & filename, 
                    bool exception_on_error,
@@ -71,6 +81,16 @@ gdcmFile::gdcmFile(std::string & filename,
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
+ * @param   exception_on_error whether we throw an exception or not
+ * @param   enable_sequences = true to allow the header 
+ *          to be parsed *inside* the SeQuences, 
+ *          when they have an actual length 
+ * \warning enable_sequences *has to be* true for reading PAPYRUS 3.0 files
+ * @param   ignore_shadow to allow skipping the shadow elements, 
+ *          to save memory space.
+ * \warning The TRUE value for this param has to be used 
+ *          with a FALSE value for the 'enable_sequence' param.
+ *          ('public elements' may be embedded in 'shadow Sequences')
  */
  gdcmFile::gdcmFile(const char * filename, 
                    bool exception_on_error,
