@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:36:59 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/02/01 10:52:09 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,9 +39,10 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
    {
       // locate the corresponding element in 'source' file 
       e1 = pa1->GetDocEntry( e2->GetGroup(),e2->GetElement() );
+
+      // an element doesn't exist in origin file
       if (!e1)
       {
-      // an element doesn't exist in source file
        std::cout << "DicomDir element " << std::hex 
                  << e2->GetGroup() << "," <<e2->GetElement() << std::endl;
        return 1; 
@@ -51,9 +52,21 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
            !dynamic_cast<gdcm::ValEntry*>(e2) )
          continue;
 
+      // a value is read as GDCM_UNFOUND 
+      if ( ((gdcm::ValEntry*)e1)->GetValue() == gdcm::GDCM_UNFOUND )
+      {
+         std::cout << "for gdcm source DicomDir : element (" << std::hex 
+                   << e1->GetGroup() << "," <<e1->GetElement() 
+                   << ") has values [" << gdcm::GDCM_UNFOUND << "]"
+                   << std::endl;
+         return 1;
+      }
+
+      // values differ in source file and destination file
       if ( ((gdcm::ValEntry*)e1)->GetValue() != 
            ((gdcm::ValEntry*)e2)->GetValue() )
       {
+ 
          // serious trouble : values differ in source and destination file
          std::cout << "for gdcm DicomDir element (" << std::hex 
                    << e2->GetGroup() << "," <<e2->GetElement() 
