@@ -23,7 +23,7 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   #SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES PYTHON ON)
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "-includeall")
-  SWIG_ADD_MODULE(gdcm python gdcm.i )  #gdcm_wrap.cxx
+  SWIG_ADD_MODULE(gdcm python gdcm.i)  #gdcm_wrap.cxx
   SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
   
   #SWIG_GET_EXTRA_OUTPUT_FILES(python foobar "/usr/" "gdcm" )
@@ -166,10 +166,9 @@ IF(GDCM_VTK)
     # set the libraries to link against
     #SET_TARGET_PROPERTIES(${foobar} PROPERTIES PREFIX "")
 
-    GET_TARGET_PROPERTY(swig_gdcm_fullpath "${SWIG_MODULE_gdcm_REAL_NAME}" LOCATION)
+    #GET_TARGET_PROPERTY(swig_gdcm_fullpath "${SWIG_MODULE_gdcm_REAL_NAME}" LOCATION)
     TARGET_LINK_LIBRARIES (vtkgdcmPython
-                           vtkgdcm        # ???
-                           #`${swig_gdcm_fullpath}`  #Does not work
+                           vtkgdcm
                            vtkCommonPython
                            vtkIOPython)
   ENDIF (GDCM_WRAP_PYTHON)
@@ -194,12 +193,22 @@ ENDIF(GDCM_VTK)
 # Create a gdcm.pth file:
 
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcm.pth
-    "gdcmPython"
+    "gdcmPython\n"
     )
 
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
-    "import gdcm"
+    "import gdcm\n"
     )
+
+IF(GDCM_VTK)
+  FILE(APPEND ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
+    "import os\n"
+    "if os.name == 'posix':\n"
+    "  from libvtkgdcmPython import *\n"
+    "else:\n"
+    "  from vtkgdcmPython import *\n"
+    )
+ENDIF(GDCM_VTK)
 
 #-----------------------------------------------------------------------------
 # Add test from demo subdir:
