@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:02:31 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/06/22 14:11:34 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -203,7 +203,7 @@ gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string Name) {
 gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByName(std::string Name) 
 {
    gdcmDictEntry *found = (gdcmDictEntry *)0;
-   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict()
+   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
    if (!PubDict) 
    {
       dbg.Verbose(0, "gdcmDocument::GetDictEntry",
