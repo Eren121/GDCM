@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 17:31:57 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/17 14:18:48 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,11 +30,25 @@ int TestDict(int , char* [])
    gdcm::DictSet *dicts=gdcm::Global::GetDicts();
    if(!dicts)
    {
-      std::cout<<"The DictSet hasn't be found... Failed\n";
+      std::cout<<"DictSet hasn't be found... Failed\n";
       return(1);
    }
+
    std::cout<<"DictSet content :\n";
-//   dicts->Print(std::cout);
+
+   dicts->InitTraversal();
+   gdcm::Dict *d = dicts->GetNextEntry();
+   if (!d)
+   {
+      std::cout << "Dictset is empty" << std::endl;
+      return 1;
+   }
+   while (d)
+   {
+      std::cout << "------------- a Dict is found : ----------" << std::endl;
+      d->Print();
+      d = dicts->GetNextEntry();
+   }
 
    // Print the Dict (public)
    std::cout<<"#######################################################\n";
@@ -45,7 +59,7 @@ int TestDict(int , char* [])
       return(1);
    }
    std::cout<<"Public Dict content :\n";
-//   pubDict->Print(std::cout);
+//   pubDict->Print();
 
    // Print the DictEntry (0x10,0x20)
    std::cout<<"#######################################################\n";
@@ -59,7 +73,7 @@ int TestDict(int , char* [])
       return(1);
    }
    std::cout<<"Entry "<<key<<" content :\n";
-   entry->Print(std::cout);
+   entry->Print();
 
    // Print all the DictEntry
    std::cout<<"#######################################################\n";
@@ -67,7 +81,7 @@ int TestDict(int , char* [])
    entry=pubDict->GetNextEntry();
    while(entry)
    {
-      entry->Print(std::cout);
+      entry->Print();
       entry=pubDict->GetNextEntry();
    }
 
