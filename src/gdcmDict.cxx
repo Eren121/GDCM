@@ -57,13 +57,14 @@ int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
 	// au cas ou la NewEntry serait incomplete
 	// Question : cela peut-il se produire ?
 	//
-	TagKey key;
-	key = NewEntry->GetKey();
-	if (key =="") {
-		NewEntry->gdcmDictEntry::SetKey(
-				gdcmDictEntry::TranslateToKey(NewEntry->GetGroup(), NewEntry->GetElement())
-				);
-	}
+	// --> NON : voir constructeur
+	//TagKey key;
+	//key = NewEntry->GetKey();
+	//if (key =="") {
+	//	NewEntry->gdcmDictEntry::SetKey(
+	//			gdcmDictEntry::TranslateToKey(NewEntry->GetGroup(), NewEntry->GetElement())
+	//			);
+	//}
 	
 	entries.erase (NewEntry->gdcmDictEntry::GetKey());
 	entries[ NewEntry->GetKey()] = NewEntry;
@@ -74,18 +75,9 @@ int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
 
 int gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
 
-	// au cas ou la NewEntry serait incomplete
-	// Question : cela peut-il se produire ?
-	//
-	
 	TagKey key;
 	key = NewEntry->GetKey();
-	if (key =="") {
-		NewEntry->SetKey(
-				gdcmDictEntry::TranslateToKey(NewEntry->GetGroup(), NewEntry->GetElement())
-				);
-	}
-
+	
 	if(entries.count(key) >= 1) {
 		printf("gdcmDict::AddNewEntry %s deja present\n", key.c_str());
 		return(0);

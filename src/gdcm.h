@@ -255,31 +255,37 @@ public:
 	ElValue(gdcmDictEntry*);
 	void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };
 	bool   IsVrUnknown(void) { return entry->IsVrUnknown(); };
-	void SetImplicitVr(void) { ImplicitVr = true; };
-	bool  IsImplicitVr(void) { return ImplicitVr; };
+	void SetImplicitVr(void) { ImplicitVr = true; 			};
+	bool  IsImplicitVr(void) { return ImplicitVr; 			};
 
-	guint16 GetGroup(void)   { return entry->GetGroup();   };	
-	guint16 GetElement(void) { return entry->GetElement(); };
-	string  GetKey(void)     { return entry->GetKey();     };
-	string  GetName(void)    { return entry->GetName();    };
+	guint16 GetGroup(void)   { return entry->GetGroup();   	};	
+	guint16 GetElement(void) { return entry->GetElement(); 	};
+	string  GetKey(void)     { return entry->GetKey();     	};
+	string  GetName(void)    { return entry->GetName();    	};
 	
-	string  GetVR(void)		 { return entry->GetVR(); };
-	void    SetVR(string v)	 { entry->SetVR(v);       }; 
+	string  GetVR(void)		 { return entry->GetVR(); 		};
+	void    SetVR(string v)	 { entry->SetVR(v);       		}; 
 		
 	// Question :
 	// Un champ privé, accessible en consultation et en modif (sans restriction)
 	// interet par rapport à un champ public ? 
 	// --> pouvoir en changer la définition sans toucher à l'API
-	
+
 	void SetLength(guint32 l){ LgrElem = l;		};
 	guint32 GetLength(void)  { return LgrElem;	};
+	
+	// Question : SetLength est public 
+	// (sinon, on ne pourrait pas l'appeler dans ElValSet)
+	// alors que *personne* ne devrait s'en servir !
+	// c'est *forcément* la lgr de la string 'value', non?
 
 	void SetValue(string val){ value = val; 	};
 	string  GetValue(void)   { return value;	};
 
 	void SetOffset(size_t of){ Offset = of;		};
-	size_t  GetOffset(void)  { return Offset;	};	
-
+	size_t  GetOffset(void)  { return Offset;	};
+	// Question : SetOffset est public ...
+	// Quel utilisateur serait ammené à modifier l'Offset ?
 };
 
 

@@ -124,7 +124,7 @@ void gdcmHeader::CheckSwap()
 		net2host = false;
 	
 	// The easiest case is the one of a DICOM header, since it possesses a
-	// file preamble where it suffice to look for the sting "DICM".
+	// file preamble where it suffice to look for the string "DICM".
 	lgrLue = fread(deb, 1, HEADER_LENGTH_TO_READ, fp);
 	
 	entCur = deb + 128;
@@ -500,6 +500,8 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
 //
 // --> probablement TOUS les supprimer (Eric dixit)
 //
+
+
 void gdcmHeader::FixFoundLength(ElValue * ElVal, guint32 FoundLength) {
 	// Heuristic: a final fix.
 	if ( FoundLength == 0xffffffff)
@@ -730,6 +732,8 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	// each element of the group shall be loaded individualy.
 	if( elem == 0 )
  		//SkipLoad = true;		// modif sauvage JPR
+ 								// On charge la longueur du groupe
+ 								// quand l'element 0x0000 est présent !
 
 	if ( SkipLoad ) {
 			  // FIXME the following skip is not necessary
