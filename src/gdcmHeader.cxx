@@ -21,10 +21,7 @@
  *          to be parsed *inside* the SeQuences, 
  *          when they have an actual length 
  * @param   ignore_shadow = true if user wants to skip shadow groups 
-            during parsing, to save memory space
- *\TODO : may be we need one more bool, 
- *         to allow skipping the private elements while parsing the header
- *         in order to save space	  
+ *           during parsing, to save memory space	  
  */
 gdcmHeader::gdcmHeader(const char *InFilename, 
                        bool exception_on_error,
@@ -65,7 +62,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
 
 /**
  * \ingroup gdcmHeader
- * \brief   
+ * \brief Constructor  
  * @param   exception_on_error
  */
 gdcmHeader::gdcmHeader(bool exception_on_error) :
@@ -86,6 +83,7 @@ gdcmHeader::~gdcmHeader (void) {
 // see gdcmParser.cxx
 //-----------------------------------------------------------------------------
 // Public
+
 /**
  * \ingroup gdcmHeader
  * \brief  This predicate, based on hopefully reasonable heuristics,
@@ -109,7 +107,7 @@ bool gdcmHeader::IsReadable(void) {
    if ( !GetHeaderEntryByNumber(0x0028, 0x0102) )
       return false; // "High Bit"
    if ( !GetHeaderEntryByNumber(0x0028, 0x0103) )
-      return false; // "Pixel Representation"
+      return false; // "Pixel Representation" i.e. 'Sign'
    return true;
 }
 
@@ -117,7 +115,6 @@ bool gdcmHeader::IsReadable(void) {
  * \ingroup gdcmHeader
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGBaseLineProcess1 one.
- *
  * @return  True when JPEGBaseLineProcess1found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
@@ -136,7 +133,6 @@ bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
  * \ingroup gdcmHeader
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGExtendedProcess2-4 one.
- *
  * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
@@ -151,7 +147,6 @@ bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
  * \ingroup gdcmHeader
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGExtendeProcess3-5 one.
- *
  * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
@@ -170,7 +165,6 @@ bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
  * \ingroup gdcmHeader
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEGSpectralSelectionProcess6-8 one.
- *
  * @return  True when JPEGSpectralSelectionProcess6-8 found. False in all
  *          other cases.
  */
@@ -190,7 +184,6 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
  * \ingroup gdcmHeader
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a RLE Lossless one.
- *
  * @return  True when RLE Lossless found. False in all
  *          other cases.
  */
@@ -211,7 +204,6 @@ bool gdcmHeader::IsRLELossLessTransferSyntax(void) {
  * \ingroup gdcmHeader
  * \brief  Determines if Transfer Syntax was already encountered
  *          and if it corresponds to a JPEG Lossless one. 
- *
  * @return  True when RLE Lossless found. False in all
  *          other cases. 
  */
@@ -233,8 +225,7 @@ bool gdcmHeader::IsJPEGLossless(void) {
 /**
  * \ingroup gdcmHeader
  * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEG200 one.0
- *
+ *          and if it corresponds to a JPEG2000 one
  * @return  True when JPEG2000 (Lossly or LossLess) found. False in all
  *          other cases.
  */
@@ -258,6 +249,9 @@ bool gdcmHeader::IsJPEG2000(void) {
  */
 bool gdcmHeader::IsDicomV3(void) {
    // Checking if Transfert Syntax exists is enough
+   // Anyway, it's to late check if the 'Preamble' was found ...
+   // And ... would it be a rich idea to check ?
+   // (some 'no Preamble' DICOM images exist !)
    return (GetHeaderEntryByNumber(0x0002, 0x0010) != NULL);
 }
 
@@ -280,7 +274,7 @@ int gdcmHeader::GetXSize(void) {
  * \brief   Retrieve the number of lines of image.
  * \warning The defaulted value is 1 as opposed to gdcmHeader::GetXSize()
  * @return  The encountered size when found, 1 by default 
- *          (The file contains a Signal, not an Image).
+ *          (The ACR-MEMA file contains a Signal, not an Image).
  */
 int gdcmHeader::GetYSize(void) {
    std::string StrSize = GetEntryByNumber(0x0028,0x0010);
@@ -300,7 +294,7 @@ int gdcmHeader::GetYSize(void) {
  *          of frames of a multiframe.
  * \warning When present we consider the "Number of Frames" as the third
  *          dimension. When absent we consider the third dimension as
- *          being the "Planes" tag content.
+ *          being the ACR-NEMA "Planes" tag content.
  * @return  The encountered size when found, 1 by default (single image).
  */
 int gdcmHeader::GetZSize(void) {
@@ -310,9 +304,7 @@ int gdcmHeader::GetZSize(void) {
    if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
 
-   // We then consider the "Planes" entry as the third dimension [we
-   // cannot retrieve by name since "Planes tag is present both in
-   // IMG (0028,0012) and OLY (6000,0012) sections of the dictionary]. 
+   // We then consider the "Planes" entry as the third dimension 
    StrSize = GetEntryByNumber(0x0028,0x0012);
    if (StrSize != GDCM_UNFOUND)
       return atoi(StrSize.c_str());
@@ -323,7 +315,6 @@ int gdcmHeader::GetZSize(void) {
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of Bits Stored (actually used)
  *          (as opposite to number of Bits Allocated)
- * 
  * @return  The encountered number of Bits Stored, 0 by default.
  *          0 means the file is NOT USABLE. The caller has to check it !
  */
@@ -339,11 +330,10 @@ int gdcmHeader::GetBitsStored(void) {
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of Bits Allocated
  *          (8, 12 -compacted ACR-NEMA files, 16, ...)
- * 
  * @return  The encountered number of Bits Allocated, 0 by default.
  *          0 means the file is NOT USABLE. The caller has to check it !
  */
-int gdcmHeader::GetBitsAllocated(void) {  // TODO : move to gdcmFile
+int gdcmHeader::GetBitsAllocated(void) {
    std::string StrSize = GetEntryByNumber(0x0028,0x0100);
    if (StrSize == GDCM_UNFOUND)
       return 0; // It's supposed to be mandatory
@@ -355,15 +345,14 @@ int gdcmHeader::GetBitsAllocated(void) {  // TODO : move to gdcmFile
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of Samples Per Pixel
  *          (1 : gray level, 3 : RGB -1 or 3 Planes-)
- * 
  * @return  The encountered number of Samples Per Pixel, 1 by default.
  *          (Gray level Pixels)
  */
-int gdcmHeader::GetSamplesPerPixel(void) {  // TODO : move to gdcmFile
+int gdcmHeader::GetSamplesPerPixel(void) {
    std::string StrSize = GetEntryByNumber(0x0028,0x0002);
    if (StrSize == GDCM_UNFOUND)
       return 1; // Well, it's supposed to be mandatory ...
-                // but sometimes it's missing : we assume Gray pixels
+                // but sometimes it's missing : *we* assume Gray pixels
    return atoi(StrSize.c_str());
 }
 
@@ -371,7 +360,6 @@ int gdcmHeader::GetSamplesPerPixel(void) {  // TODO : move to gdcmFile
  * \ingroup gdcmHeader
  * \brief   Retrieve the Planar Configuration for RGB images
  *          (0 : RGB Pixels , 1 : R Plane + G Plane + B Plane)
- * 
  * @return  The encountered Planar Configuration, 0 by default.
  */
 int gdcmHeader::GetPlanarConfiguration(void) {
@@ -395,6 +383,8 @@ int gdcmHeader::GetPixelSize(void) {
       return 2;
    if (PixelType == "32U" || PixelType == "32S")
       return 4;
+   if (PixelType == "FD")
+      return 8;         
    dbg.Verbose(0, "gdcmHeader::GetPixelSize: Unknown pixel type");
    return 0;
 }
@@ -409,6 +399,7 @@ int gdcmHeader::GetPixelSize(void) {
  *          - 16S   signed 16 bit,
  *          - 32U unsigned 32 bit,
  *          - 32S   signed 32 bit,
+ *          - FD floating double 64 bits (Not kosher DICOM, but so usefull!)
  * \warning 12 bit images appear as 16 bit.
  * \        24 bit images appear as 8 bit
  * @return  0S if nothing found. NOT USABLE file. The caller has to check
@@ -419,6 +410,8 @@ std::string gdcmHeader::GetPixelType(void) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
       BitsAlloc = std::string("16");
    }
+   if (BitsAlloc == "64")            // )
+      return ("FD");
    if (BitsAlloc == "12")            // It will be unpacked
       BitsAlloc = std::string("16");
    else if (BitsAlloc == "24")       // (in order no to be messed up
@@ -442,6 +435,7 @@ std::string gdcmHeader::GetPixelType(void) {
  * \ingroup gdcmHeader
  * \brief   Recover the offset (from the beginning of the file) 
  * \        of *image* pixels (not *icone image* pixels, if any !)
+ * @return Pixel Offset
  */
 size_t gdcmHeader::GetPixelOffset(void) { 
    //
@@ -506,12 +500,12 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
   * \warning Right now, 'Segmented xxx Palette Color Lookup Table Data'
   * \        are NOT considered as LUT, since nobody knows
   * \        how to deal with them
-  * @return a Boolean 
+  * \        Please warn me if you know sbdy that *does* know ... jprx
+  * @return true if LUT Descriptors and LUT Tables were found 
   */
 bool gdcmHeader::HasLUT(void) {
 
-   // Check the presence of the LUT Descriptors 
-   
+   // Check the presence of the LUT Descriptors, and LUT Tables    
    // LutDescriptorRed    
    if ( !GetHeaderEntryByNumber(0x0028,0x1101) )
       return false;
@@ -520,11 +514,7 @@ bool gdcmHeader::HasLUT(void) {
       return false;
    // LutDescriptorBlue 
    if ( !GetHeaderEntryByNumber(0x0028,0x1103) )
-      return false;
-      
-   //  It is not enough :
-   //  we check also 
-   
+      return false;   
    // Red Palette Color Lookup Table Data
    if ( !GetHeaderEntryByNumber(0x0028,0x1201) )
       return false; 
@@ -542,7 +532,8 @@ bool gdcmHeader::HasLUT(void) {
   * \brief gets the info from 0028,1101 : Lookup Table Desc-Red
   * \           else 0
   * @return Lookup Table number of Bits , 0 by default
-  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
+  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
+  * @ return bit number of each LUT item 
   */
 int gdcmHeader::GetLUTNbits(void) {
    std::vector<std::string> tokens;
@@ -716,20 +707,16 @@ std::string gdcmHeader::GetTransfertSyntaxName(void) {
 }
 
 /**
- * \ingroup   gdcmFile
+ * \ingroup   gdcmHeader
  * \brief Sets the Pixel Area size in the Header
  *        --> not-for-rats function
- * 
- * \warning WARNING doit-etre etre publique ? 
- * TODO : y aurait il un inconvenient à fusionner ces 2 fonctions
- *
  * @param ImageDataSize new Pixel Area Size
  *        warning : nothing else is checked
  */
 void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    std::string content1;
    char car[20];
-   	
+      	
    // Assumes HeaderEntry (GrPixel, NumPixel) is unique ...   
    // TODO deal with multiplicity (see gdcmData/icone.dcm)	
    sprintf(car,"%d",ImageDataSize);
@@ -743,8 +730,17 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    SetEntryByNumber(content1, GrPixel, NumPixel);
 }
 
-bool gdcmHeader::operator<(gdcmHeader &header)
-{
+
+/**
+ * \ingroup   gdcmHeader
+ * \brief compares 2 Headers, according to DICOMDIR rules
+ *        --> not-for-rats function
+ * \warning does NOT work with ACR-NEMA files
+ * \todo find a trick to solve the pb (use RET fields ?)
+ * @param header 
+ * @return true if 'smaller'
+ */
+ bool gdcmHeader::operator<(gdcmHeader &header){
    std::string s1,s2;
 
    // Patient Name

@@ -61,7 +61,7 @@
 // Constructor / Destructor
 /**
  * \ingroup gdcmHeaderHelper
- * \brief   cstor
+ * \brief   constructor
  */
 gdcmHeaderHelper::gdcmHeaderHelper() : gdcmHeader( ) {
 
@@ -69,7 +69,14 @@ gdcmHeaderHelper::gdcmHeaderHelper() : gdcmHeader( ) {
 
 /**
  * \ingroup gdcmHeaderHelper
- * \brief   cstor
+ * \brief   constructor
+ * @param   InFilename Name of the file to deal with
+ * @param   exception_on_error
+ * @param   enable_sequences = true to allow the header 
+ *          to be parsed *inside* the SeQuences, 
+ *          when they have an actual length 
+ * @param   ignore_shadow = true if user wants to skip shadow groups 
+ *           during parsing, to save memory space	  
  */
 gdcmHeaderHelper::gdcmHeaderHelper(const char *InFilename, 
                                    bool exception_on_error,
@@ -89,7 +96,7 @@ gdcmHeaderHelper::gdcmHeaderHelper(const char *InFilename,
 // Public
 /**
  * \ingroup gdcmHeaderHelper
- * \brief   Return the size (in bytes) of a single pixel of data.
+ * \brief   Returns the size (in bytes) of a single pixel of data.
  * @return  The size in bytes of a single pixel of data.
  *
  */
@@ -125,10 +132,10 @@ int gdcmHeaderHelper::GetPixelSize() {
  *          - 32S   signed 32 bit,
  *          - FD    Double,
  * \warning 12 bit images appear as 16 bit.
- * \        24 bit images appear as 8 bit
- * \        64 bit means 'DOUBLE' images 
- * \               (no DOUBLE images in kosher DICOM,
- * \                but so usefull for people that miss them ;-)
+ *          24 bit images appear as 8 bit
+ *          64 bit means 'DOUBLE' images 
+ *                 (no DOUBLE images in kosher DICOM,
+ *                  but so usefull for people that miss them ;-)
  * @return  
  */
 std::string gdcmHeaderHelper::GetPixelType() {
@@ -244,6 +251,11 @@ float gdcmHeaderHelper::GetZSpacing() {
    }
 }
 
+/**
+  *\ingroup gdcmHeaderHelper
+  *\brief gets the info from 0028,1052 : Rescale Intercept
+  * @return Rescale Intercept
+ */
 float gdcmHeaderHelper::GetRescaleIntercept() {
   float resInter = 0.;
   std::string StrRescInter = GetEntryByNumber(0x0028,0x1052); //0028 1052 DS IMG Rescale Intercept
@@ -256,7 +268,12 @@ float gdcmHeaderHelper::GetRescaleIntercept() {
   return resInter;
 }
 
-float gdcmHeaderHelper::GetRescaleSlope() {
+/**
+  *\ingroup gdcmHeaderHelper
+  *\brief gets the info from 0028,1053 : Rescale Slope
+  * @return Rescale Slope
+ */
+ float gdcmHeaderHelper::GetRescaleSlope() {
   float resSlope = 1.;
   std::string StrRescSlope = GetEntryByNumber(0x0028,0x1053); //0028 1053 DS IMG Rescale Slope
   if (StrRescSlope != GDCM_UNFOUND) {
@@ -265,19 +282,18 @@ float gdcmHeaderHelper::GetRescaleSlope() {
            // bug in the element 0x0028,0x1053
       }    
    }  
-	return resSlope;
+   return resSlope;
 }
 
 /**
   * \ingroup gdcmHeaderHelper
-  * \brief This function is intended to user who doesn't whan 
+  * \brief This function is intended to user who doesn't want 
   * \ to have to manage a LUT and expects to get an RBG Pixel image
   * \ (or a monochrome one ...) 
   * \warning to be used with GetImagePixels()
   * @return 1 if Gray level, 3 if Color (RGB, YBR or PALETTE COLOR)
   */
 int gdcmHeaderHelper::GetNumberOfScalarComponents() {
-
    if (GetSamplesPerPixel() ==3)
       return 3;
       
@@ -328,22 +344,48 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
       return GetSamplesPerPixel();
 }
 
-std::string gdcmHeaderHelper::GetStudyUID(){
+/**
+  *\ingroup gdcmHeaderHelper
+  *\brief gets the info from 0020,000d : Study Instance UID
+  *\todo ? : return the ACR-NEMA element value if DICOM one is not found 
+  * @return Study Instance UID
+ */
+ std::string gdcmHeaderHelper::GetStudyUID(){
   return GetEntryByNumber(0x0020,0x000d); //0020 000d UI REL Study Instance UID
 }
 
-std::string gdcmHeaderHelper::GetSeriesUID(){
+/**
+  *\ingroup gdcmHeaderHelper
+  *\brief gets the info from 0020,000e : Series Instance UID
+  *\todo ? : return the ACR-NEMA element value if DICOM one is not found 
+  * @return Series Instance UID
+ */
+ std::string gdcmHeaderHelper::GetSeriesUID(){
   return GetEntryByNumber(0x0020,0x000e); //0020 000e UI REL Series Instance UID
 }
 
-std::string gdcmHeaderHelper::GetClassUID(){
+/**
+  *\ingroup gdcmHeaderHelper
+  *\brief gets the info from 0008,0016 : SOP Class UID
+  *\todo ? : return the ACR-NEMA element value if DICOM one is not found 
+  * @return SOP Class UID
+ */
+ std::string gdcmHeaderHelper::GetClassUID(){
   return GetEntryByNumber(0x0008,0x0016); //0008 0016 UI ID SOP Class UID
 }
 
-std::string gdcmHeaderHelper::GetInstanceUID(){
+/**
+  *\ingroup gdcmHeaderHelper
+  *\brief gets the info from 0008,0018 : SOP Instance UID
+  *\todo ? : return the ACR-NEMA element value if DICOM one is not found 
+  * @return SOP Instance UID
+ */
+ std::string gdcmHeaderHelper::GetInstanceUID(){
   return GetEntryByNumber(0x0008,0x0018); //0008 0018 UI ID SOP Instance UID
 }
-
+//
+// --------------  Remember ! ----------------------------------
+//
 // Image Position Patient                              (0020,0032):
 // If not found (ACR_NEMA) we try Image Position       (0020,0030)
 // If not found (ACR-NEMA), we consider Slice Location (0020,1041)
@@ -353,13 +395,18 @@ std::string gdcmHeaderHelper::GetInstanceUID(){
 
 // TODO : find a way to inform the caller nothing was found
 // TODO : How to tell the caller a wrong number of values was found?
+//
+// ---------------------------------------------------------------
+//
+
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
   *\                else from 0020,0030 : Image Position (RET)
   *\                else 0.
-  * @return up-left image corner position
+  * @return up-left image corner X position
   */
+    
 float gdcmHeaderHelper::GetXOrigin() {
     float xImPos, yImPos, zImPos;  
     std::string StrImPos = GetEntryByNumber(0x0020,0x0032);
@@ -383,7 +430,7 @@ float gdcmHeaderHelper::GetXOrigin() {
   * \brief gets the info from 0020,0032 : Image Position Patient
   * \               else from 0020,0030 : Image Position (RET)
   * \               else 0.
-  * @return up-left image corner position
+  * @return up-left image corner Y position
   */
 float gdcmHeaderHelper::GetYOrigin() {
     float xImPos, yImPos, zImPos;
@@ -410,7 +457,7 @@ float gdcmHeaderHelper::GetYOrigin() {
   * \               else from 0020,1041 : Slice Location
   * \               else from 0020,0050 : Location
   * \               else 0.
-  * @return up-left image corner position
+  * @return up-left image corner Z position
   */
 float gdcmHeaderHelper::GetZOrigin() {
    float xImPos, yImPos, zImPos; 
@@ -477,7 +524,7 @@ int gdcmHeaderHelper::GetImageNumber() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0008,0060 : Modality
-  * @return ModalityType
+  * @return Modality Type
   */
 ModalityType gdcmHeaderHelper::GetModality(void) {
   std::string StrModality = GetEntryByNumber(0x0008,0x0060); //0008 0060 CS ID Modality
@@ -536,6 +583,7 @@ ModalityType gdcmHeaderHelper::GetModality(void) {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0037 : Image Orientation Patient
+  * @param iop adress of the (6)float aray to receive values
   * @return cosines of image orientation patient
   */
 void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
@@ -599,6 +647,7 @@ gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper(){
 /**
  * \ingroup gdcmHeaderHelper
  * \brief add a gdcmFile to the list based on file name
+ * @param   filename Name of the file to deal with
  */
 void gdcmSerieHeaderHelper::AddFileName(std::string filename) {
   gdcmHeaderHelper *GdcmFile = new gdcmHeaderHelper( filename.c_str() );
@@ -608,6 +657,7 @@ void gdcmSerieHeaderHelper::AddFileName(std::string filename) {
 /**
  * \ingroup gdcmHeaderHelper
  * \brief add a gdcmFile to the list
+ * @param   file gdcmHeaderHelper to add
  */
 void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file){
   this->CoherentGdcmFileList.push_back( file );
@@ -615,7 +665,8 @@ void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file){
 
 /**
  * \ingroup gdcmHeaderHelper
- * \brief \todo
+ * \brief Sets the Directory
+ * @param   dir Name of the directory to deal with
  */
 void gdcmSerieHeaderHelper::SetDirectory(std::string dir){
   gdcmDirList filenames_list(dir);  //OS specific
@@ -628,24 +679,29 @@ void gdcmSerieHeaderHelper::SetDirectory(std::string dir){
   }
 }
 
-//This could be implemented in a 'Strategy Pattern' approach
-//But as I don't know how to do it, I leave it this way
-//BTW, this is also a Strategy, I don't know this is the best approach :)
+/**
+ * \ingroup gdcmHeaderHelper
+ * \brief Sorts the File List
+ * \warning This could be implemented in a 'Strategy Pattern' approach
+ *          But as I don't know how to do it, I leave it this way
+ *          BTW, this is also a Strategy, I don't know this is the best approach :)
+*/
 void gdcmSerieHeaderHelper::OrderGdcmFileList(){
-  if( ImagePositionPatientOrdering() )
-  {
+  if( ImagePositionPatientOrdering() ) {
     return ;
   }
-  else if( ImageNumberOrdering() )
-  {
+  else if( ImageNumberOrdering() ) {
     return ;
-  }
-  else
-  {
+  } else  {
     FileNameOrdering();
   }
 }
 
+/**
+ * \ingroup gdcmHeaderHelper
+ * \brief Gets the *coherent* File List
+ * @return the *coherent* File List
+*/
 std::list<gdcmHeaderHelper*> &gdcmSerieHeaderHelper::GetGdcmFileList() {
   return CoherentGdcmFileList;
 }
@@ -657,11 +713,12 @@ std::list<gdcmHeaderHelper*> &gdcmSerieHeaderHelper::GetGdcmFileList() {
 // Private
 /**
  * \ingroup gdcmHeaderHelper
- * \brief 
+ * \brief sorts the images, according to their Patient Position
  *  We may order, considering :
  *   -# Image Number
  *   -# Image Position Patient
  *   -# More to come :)
+ * @return false only if the header is bugged !
  */
 bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
 //based on Jolinda's algorithm
@@ -723,7 +780,6 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
         delete[] cosines;
         return false;
       }
-
       
       distlist.push_back( dist );
 
@@ -772,7 +828,11 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
   return true;
 }
 
-//Based on Image Number
+/**
+ * \ingroup gdcmHeaderHelper
+ * \brief sorts the images, according to their Image Number
+ * @return false only if the header is bugged !
+ */
 
 bool gdcmSerieHeaderHelper::ImageNumberOrdering() {
   int min, max, pos;
@@ -824,7 +884,13 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering() {
   return (mult!=0);
 }
 
-bool gdcmSerieHeaderHelper::FileNameOrdering() {
+
+/**
+ * \ingroup gdcmHeaderHelper
+ * \brief sorts the images, according to their File Name
+ * @return false only if the header is bugged !
+ */
+ bool gdcmSerieHeaderHelper::FileNameOrdering() {
   //using the sort
   //sort(CoherentGdcmFileList.begin(), CoherentGdcmFileList.end());
   return true;
