@@ -1,3 +1,76 @@
+2004-06-22 Jean-Pierre Roux
+   In order : to write Sequences, whatever their imbrication level, 
+	         : to allow user to create his own Sequences
+	a lot of modif where necessary (adding, moving, or virtualising methods)
+
+WARNING : save your own sources *before* cvs up !
+	
+	- gdcmBinEntry
+	  ADD virtual void Write(FILE *fp, FileType filetype);
+	  
+   - gdcmDocEntry
+	  ADD virtual void Write(FILE *fp, FileType filetype);
+	  ADD void gdcmDocEntry::WriteCommonPart(FILE *fp, FileType filetype);
+	  
+	- gdcmDocEntrySet
+	  ADD virtual void Write (FILE *fp, FileType filetype)=0;
+	  ADD	virtual gdcmDocEntry *GetDocEntryByNumber(guint16 group,guint16 element) = 0;
+     ADD gdcmDocEntry *GetDocEntryByName(std::string name);
+     ADD virtual std::string GetEntryByNumber(guint16 group,guint16 element) = 0;
+     ADD std::string GetEntryByName(TagName name);		         
+     ADD gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
+                                            guint16 element,
+                                            std::string vr     = "unkn",
+                                            std::string fourth = "unkn",
+                                            std::string name   = "unkn"); 
+	  ADD gdcmValEntry *NewValEntryByNumber(guint16 group, guint16 element); 												 
+     ADD gdcmBinEntry *NewBinEntryByNumber(guint16 group, guint16 element); 	
+     ADD gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element); 
+     ADD gdcmDocEntry *NewDocEntryByName  (std::string Name);   
+     ADD gdcmDictEntry *GetDictEntryByName   (std::string Name);
+     ADD gdcmDictEntry *GetDictEntryByNumber(guint16, guint16);
+	  REM virtual gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element)=0;
+     REM virtual gdcmDocEntry *NewDocEntryByName  (std::string Name)=0;
+	  
+	- gdcmDocument
+     ADD virtual bool WriteF(FileType type); // New stuff, with recursive exploration		
+     ADD virtual std::string GetEntryByName    (TagName tagName);
+     ADD virtual std::string GetEntryVRByName  (TagName tagName);
+     REM virtual bool Write(FILE *, FileType);
+     REM virtual void WriteEntryTagVRLength(gdcmDocEntry *tag,
+                                        FILE *_fp, FileType type);
+     REM virtual void WriteEntryValue(gdcmDocEntry *tag,FILE *_fp,FileType type);
+     REM virtual bool WriteEntry(gdcmDocEntry *tag,FILE *_fp,FileType type);
+     REM virtual bool WriteEntries(FILE *_fp,FileType type);
+     REM virtual std::string GetEntryByName    (std::string tagName);
+     REM virtual std::string GetEntryVRByName  (std::string tagName);
+     REM gdcmDictEntry *GetDictEntryByName  (std::string Name);
+     REM gdcmDictEntry *GetDictEntryByNumber(guint16, guint16);
+     REM gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
+                                            guint16 element,
+                                            std::string vr     = "unkn",
+                                            std::string fourth = "unkn",
+                                            std::string name   = "unkn");
+     REM gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element);
+     REM gdcmDocEntry *NewDocEntryByName  (std::string Name);
+     REM gdcmValEntry *NewValEntryByNumber(guint16 group, guint16 element); 
+     REM gdcmBinEntry *NewBinEntryByNumber(guint16 group, guint16 element); 
+	  													 
+	- gdcmElementSet
+	  ADD virtual void Write(FILE *fp, FileType filetype);
+	  
+   - gdcmSeqEntry
+	  ADD virtual void Write(FILE *fp,FileType filetype);
+ 
+   - gdcmSQItem
+     ADD virtual void Write(FILE *fp, FileType filetype);
+     ADD virtual std::string GetEntryByNumber(guint16 group, guint16 element);	      
+     REM std::string GetEntryByNumber(guint16 group, guint16 element);
+     REM std::string GetEntryByName(TagName name);
+
+   - gdcmValEntry
+	 ADD virtual void gdcmValEntry::Write(FILE *fp, FileType filetype); 
+				  
 2004-06-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * Test/TestWriteSimple.cxx: fix to gdcmHeader-gdcmHeaderHelper revamping.
       The default constructor invoked by the line
@@ -50,6 +123,7 @@
      - gdcmPython/testSuite.py: dirty related kludge removed.
     * src/*: remaining references to gdcmParser removed.
     * src/*[cxx|h]: added copy[way]left header.
+
 
 2004-06-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * In order to fix writing of dicom files:
