@@ -1,5 +1,6 @@
 // The following crashes on Win32
 #include "gdcm.h"
+#include "gdcmConfigure.h"
 
 int bug1(int argc, char* argv[])
 {  
@@ -8,7 +9,11 @@ int bug1(int argc, char* argv[])
 	if (argc > 1)
 		e1 = new gdcmHeader(argv[1]);
 	else
-		e1 = new gdcmHeader("test.acr");
+    {
+    std::string filename = GDCM_DATA_ROOT;
+    filename += "/test.acr";
+		e1 = new gdcmHeader( filename.c_str() );
+    }
 	e1->PrintPubDict();
 
   return 0;

@@ -2,6 +2,7 @@
 #include "gdcm.h"
 #include "gdcmHeaderEntry.h"
 #include "gdcmDicomDir.h"
+#include "gdcmConfigure.h"
 
 #include <fstream>
 #ifdef GDCM_NO_ANSI_STRING_STREAM
@@ -31,9 +32,11 @@ int testDicomDir(int argc, char* argv[])
    std::string file; 
    if (argc > 1) 
       file = argv[1];    
-   else	
-      file = "../gdcmData/DICOMDIR";
-      
+   else {
+      file += GDCM_DATA_ROOT;
+      file += "/DICOMDIR";
+    }
+
    e1 = new gdcmDicomDir(file.c_str());
 	if (argc > 2) {
 	   int level = atoi(argv[2]);   
