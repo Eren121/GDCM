@@ -10,30 +10,31 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(libgdcm_la_SOURCES
-
+   gdcmDebug.cxx
    gdcmDicomDir.cxx
    gdcmDicomDirElement.cxx
+   gdcmDicomDirImage.cxx
+   gdcmDicomDirMeta.cxx
+   gdcmDicomDirPatient.cxx
+   gdcmDicomDirSerie.cxx
+   gdcmDicomDirStudy.cxx
    gdcmDict.cxx
    gdcmDictEntry.cxx
    gdcmDictSet.cxx
    gdcmDirList.cxx
    gdcmException.cxx
    gdcmFile.cxx
+   gdcmGlobal.cxx
    gdcmHeader.cxx
    gdcmHeaderEntry.cxx
    gdcmHeaderHelper.cxx
-   gdcmImage.cxx
-   gdcmMeta.cxx
    gdcmJpeg12.cxx
    gdcmJpeg2000.cxx
    gdcmJpeg.cxx
    gdcmObject.cxx
    gdcmParsePixels.cxx
    gdcmParser.cxx
-   gdcmPatient.cxx
    gdcmRLE.cxx
-   gdcmSerie.cxx
-   gdcmStudy.cxx
    gdcmTS.cxx
    gdcmUtil.cxx
    gdcmVR.cxx
