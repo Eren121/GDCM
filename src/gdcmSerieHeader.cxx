@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:40:46 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/02/01 11:02:27 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,38 +77,9 @@ SerieHeader::~SerieHeader()
 }
 
 //-----------------------------------------------------------------------------
-<<<<<<< gdcmSerieHeader.cxx
-// Print
-
-/**
- * \brief   Canonical printer.
- */
-void SerieHeader::Print()
-{
-   // For all the Coherent File lists of the gdcm::Serie
-   CoherentFileListmap::iterator itl = CoherentGdcmFileListHT.begin();
-   if ( itl == CoherentGdcmFileListHT.end() )
-   {
-      gdcmVerboseMacro( "No Coherent File list found" );
-      return;
-   }
-   while (itl != CoherentGdcmFileListHT.end())
-   { 
-      std::cout << "Serie UID :[" << itl->first << "]" << std::endl;
-      // For all the files of a Coherent File list
-      for (GdcmFileList::iterator it =  (itl->second)->begin();
-                                  it != (itl->second)->end(); 
-                                ++it)
-      {
-         std::cout << " --- " << (*it)->GetFileName() << std::endl;
-      }
-      ++itl;
-   }
-}
 
 //-----------------------------------------------------------------------------
-=======
->>>>>>> 1.18
+
 // Public
 /**
  * \brief add a gdcm::File to the list corresponding to its Serie UID
