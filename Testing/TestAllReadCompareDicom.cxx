@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:00:06 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/03/30 15:30:33 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,13 +25,347 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
+/**
+ * /brief   File Read/Writer specific for the TestAllReadCompareDicom test
+ * /remarks The Test file format is (only in little endian) :
+ *  - 4 bytes : 'gdcm'
+ *  - 4 bytes : size X
+ *  - 4 bytes : size Y
+ *  - 4 bytes : size Z
+ *  - 2 bytes : scalar size (8,16,32)
+ *  - 2 bytes : number of components per pixel (1,2,3)
+ *  - n bytes : datas
+ */
+class TestFile
+{
+public:
+   TestFile(void);
+   ~TestFile(void);
+
+   bool IsReadable(void) {return readable;}
+   unsigned int GetXSize(void) {return sizeX;};
+   void SetXSize(unsigned int size) {sizeX = size;};
+   unsigned int GetYSize(void) {return sizeY;};
+   void SetYSize(unsigned int size) {sizeY = size;};
+   unsigned int GetZSize(void) {return sizeZ;};
+   void SetZSize(unsigned int size) {sizeZ = size;};
+   unsigned int GetScalarSize(void) {return scalarSize;};
+   void SetScalarSize(unsigned int size) {scalarSize = size;};
+   unsigned int GetNumberOfComponents(void) {return components;};
+   void SetNumberOfComponents(unsigned int size) {components = size;};
+
+   unsigned long GetDataSize(void) {return GetLineSize()*sizeY*sizeZ;}
+   uint8_t *GetData(void) {return data;}
+   void SetData(const uint8_t *newData);
+
+   void Load(const std::string &filename);
+   void Write(const std::string &filename);
+
+private:
+   unsigned long GetLineSize(void) {return sizeX*scalarSize*components;}
+   int GetSwapCode(uint32_t tag);
+
+   void NewData(void);
+   void DeleteData(void);
+
+   void ReadFile(void);
+   bool ReadFileHeader(std::ifstream *fp);
+   bool ReadFileData(std::ifstream *fp);
+   void WriteFile(void);
+   bool WriteFileHeader(std::ofstream *fp);
+   bool WriteFileData(std::ofstream *fp);
+
+   uint8_t  ReadInt8 (std::ifstream *fp);
+   uint16_t ReadInt16(std::ifstream *fp);
+   uint32_t ReadInt32(std::ifstream *fp);
+   void WriteInt8 (std::ofstream *fp,uint8_t  data);
+   void WriteInt16(std::ofstream *fp,uint16_t data);
+   void WriteInt32(std::ofstream *fp,uint32_t data);
+
+   std::string fileName;
+   bool readable;
+
+   unsigned int sizeX;
+   unsigned int sizeY;
+   unsigned int sizeZ;
+   unsigned int scalarSize;
+   unsigned int components;
+   uint8_t *data;
+   int swapCode;
+
+   static const unsigned int HEADER_SIZE;
+};
+
+const unsigned int TestFile::HEADER_SIZE = 20;
+
+TestFile::TestFile(void)
+{
+   fileName = "";
+   readable=false;
+
+   sizeX = 0;
+   sizeY = 0;
+   sizeZ = 0;
+   scalarSize = 0;
+   components = 0;
+   data = NULL;
+
+   swapCode = 1234;
+}
+
+TestFile::~TestFile(void)
+{
+   DeleteData();
+}
+
+void TestFile::SetData(const uint8_t *newData)
+{
+   DeleteData();
+   NewData();
+   if( data )
+      memcpy(data,newData,GetDataSize());
+}
+
+void TestFile::Load(const std::string &filename)
+{
+   fileName = filename;
+   ReadFile();
+}
+
+void TestFile::Write(const std::string &filename)
+{
+   fileName = filename;
+   WriteFile();
+}
+
+int TestFile::GetSwapCode(uint32_t tag)
+{
+   int swap = 0;
+   for(int i=0;i<4;i++)
+   {
+      switch(tag&0x000000FF)
+      {
+         case 'g':
+            swap += (i+1)*1000;
+            break;
+         case 'd':
+            swap += (i+1)*100;
+            break;
+         case 'c':
+            swap += (i+1)*10;
+            break;
+         case 'm':
+            swap += (i+1);
+            break;
+         default:
+            return 0;
+      }
+      tag >>= 8;
+   }
+   return swap;
+}
+
+void TestFile::NewData(void)
+{
+   DeleteData();
+   if( GetDataSize() == 0 )
+      return;
+   data = new uint8_t[GetDataSize()];
+}
+
+void TestFile::DeleteData(void)
+{
+   if( data )
+      delete[] data;
+   data = NULL;
+}
+
+void TestFile::ReadFile(void)
+{
+   readable=true;
+   std::ifstream fp(fileName.c_str(),std::ios::in | std::ios::binary);
+
+   if(!fp)
+   {
+      readable=false;
+      return;
+   }
+
+   try
+   {
+      readable=ReadFileHeader(&fp);
+      if(!readable)
+      {
+         std::cout << "Problems when reading Header part" << std::endl;
+         fp.close();
+         return;
+      }
+
+      readable=ReadFileData(&fp);
+      if(!readable)
+      {
+         std::cout << "Problems when reading datas" << std::endl;
+         fp.close();
+         return;
+      }
+   }
+   catch(...)
+   {
+      readable=false;
+      fp.close();
+      return;
+   }
+
+   fp.close();
+}
+
+bool TestFile::ReadFileHeader(std::ifstream *fp)
+{
+   uint32_t tag = ReadInt32(fp);
+   swapCode = GetSwapCode(tag);
+   if( swapCode == 0 )
+   {
+      std::cout << "TestFile: Bad tag - Must be 'gdcm'" << std::endl;
+      return(false);
+   }
+
+   sizeX = ReadInt32(fp); // Size X
+   sizeY = ReadInt32(fp); // Size Y
+   sizeZ = ReadInt32(fp); // Size Z
+   scalarSize = ReadInt16(fp)/8; // bits per scalar
+   components = ReadInt16(fp); // Number of components
+
+   return(true);
+}
+
+bool TestFile::ReadFileData(std::ifstream *fp)
+{
+   DeleteData();
+
+   // Allocate datas
+   NewData();
+   if( !data )
+      return(false);
+
+   // Read datas
+   fp->read((char *)data,GetDataSize());
+
+   return(true);
+}
+
+void TestFile::WriteFile(void)
+{
+   std::ofstream fp(fileName.c_str(),std::ios::out | std::ios::binary);
+
+   if(!fp)
+   {
+      readable=false;
+      return;
+   }
+
+   WriteFileHeader(&fp);
+   WriteFileData(&fp);
+
+   fp.close();
+}
+
+bool TestFile::WriteFileHeader(std::ofstream *fp)
+{
+   WriteInt8(fp,'g'); // Bitmap tag - must be 'g'
+   WriteInt8(fp,'d'); // Bitmap tag - must be 'd'
+   WriteInt8(fp,'c'); // Bitmap tag - must be 'c'
+   WriteInt8(fp,'m'); // Bitmap tag - must be 'm'
+   WriteInt32(fp,sizeX); // Size X
+   WriteInt32(fp,sizeY); // Size Y
+   WriteInt32(fp,sizeZ); // Size Z
+   WriteInt16(fp,scalarSize*8); // bits per scalar
+   WriteInt16(fp,components); // number of components
+
+   return(true);
+}
+
+bool TestFile::WriteFileData(std::ofstream *fp)
+{
+   fp->write((char *)data,GetDataSize());
+
+   return(true);
+}
+
+uint8_t  TestFile::ReadInt8 (std::ifstream *fp)
+   throw( std::ios::failure )
+{
+   uint8_t g;
+   fp->read ((char*)&g, (size_t)1);
+   if ( fp->fail() )
+      throw std::ios::failure( "TestFile::ReadInt8() - file error." );
+   if( fp->eof() )
+      throw std::ios::failure( "TestFile::ReadInt8() - EOF." );
+   return g;
+}
+
+uint16_t TestFile::ReadInt16(std::ifstream *fp)
+   throw( std::ios::failure )
+{
+   uint16_t g;
+   fp->read ((char*)&g, (size_t)2);
+   if ( fp->fail() )
+      throw std::ios::failure( "TestFile::ReadInt16() - file error." );
+   if( fp->eof() )
+      throw std::ios::failure( "TestFile::ReadInt16() - EOF." );
+
+#if defined(GDCM_WORDS_BIGENDIAN)
+   g = ( g << 8 |  g >> 8  );
+#endif
+   return g;
+}
+
+uint32_t TestFile::ReadInt32(std::ifstream *fp)
+   throw( std::ios::failure )
+{
+   uint32_t g;
+   fp->read ((char*)&g, (size_t)4);
+   if ( fp->fail() )
+      throw std::ios::failure( "TestFile::ReadInt32() - file error." );
+   if( fp->eof() )
+      throw std::ios::failure( "TestFile::ReadInt32() - EOF." );
+
+#if defined(GDCM_WORDS_BIGENDIAN)
+   g = (  (g<<24)               | ((g<<8)  & 0x00ff0000) | 
+       (  (g>>8)  & 0x0000ff00) |  (g>>24)               );
+#endif
+   return g;
+}
+
+void TestFile::WriteInt8 (std::ofstream *fp,uint8_t data)
+{
+   fp->write((char*)&data, (size_t)1);
+}
+
+void TestFile::WriteInt16(std::ofstream *fp,uint16_t data)
+{
+#if defined(GDCM_WORDS_BIGENDIAN)
+   data = ( data << 8 |  data >> 8  );
+#endif
+   fp->write((char*)&data, (size_t)2);
+}
+
+void TestFile::WriteInt32(std::ofstream *fp,uint32_t data)
+{
+#if defined(GDCM_WORDS_BIGENDIAN)
+   data = (  (data<<24)               | ((data<<8)  & 0x00ff0000) | 
+          (  (data>>8)  & 0x0000ff00) |  (data>>24)               );
+#endif
+   fp->write((char*)&data, (size_t)4);
+}
+
 int InternalTest(std::string const &filename, 
                  std::string const &referenceFileName )
 {
       std::cout << "   Testing: " << filename << std::endl;
+      std::cout << "      ";
 
       ////// Step 1:
-      std::cout << "      1...";
+      std::cout << "1...";
       gdcm::FileHelper *tested = new gdcm::FileHelper( filename );
       if( !tested->GetFile()->IsReadable() )
       {
@@ -46,56 +380,70 @@ int InternalTest(std::string const &filename,
       ////// Check for existence of reference baseline dicom file:
       std::cout << "2...";
 
-      std::ifstream testFILE( referenceFileName.c_str() );
-      if (! testFILE )
-      {
-         uint8_t *testedImageData = tested->GetImageData(); // Kludge
-         (void)testedImageData;
-
-         tested->SetWriteModeToRGB();
-         tested->WriteDcmExplVR( referenceFileName );
-      }
-      testFILE.close();
-
-      ////// Step 3a:
-      ////// When reference file is not gdcm readable test is failed:
-      std::cout << "3a...";
-
-      gdcm::FileHelper *reference = new gdcm::FileHelper( referenceFileName );
-      if( !reference->GetFile()->IsReadable() )
+      TestFile *reference = new TestFile();
+      reference->Load(referenceFileName);
+      if(!reference->IsReadable())
       {
          std::cout << " Failed" << std::endl
-                   << "              reference image " 
-                   << referenceFileName 
-                   << " is not gdcm compatible." << std::endl;
-         delete tested;
+                   << "      Image not BMP compatible:"
+                   << referenceFileName << std::endl;
+         reference->SetXSize(tested->GetFile()->GetXSize());
+         reference->SetYSize(tested->GetFile()->GetYSize());
+         reference->SetZSize(tested->GetFile()->GetZSize());
+         reference->SetScalarSize(tested->GetFile()->GetPixelSize());
+         reference->SetNumberOfComponents(tested->GetFile()->GetNumberOfScalarComponents());
+         reference->SetData(tested->GetImageData());
+         reference->Write(referenceFileName);
+      }
+
+      reference->Load(referenceFileName);
+      if(!reference->IsReadable())
+      {
+        std::cout << " Failed" << std::endl
+                   << "      Image not Testing compatible:"
+                  << filename << std::endl;
          delete reference;
+         delete tested;
          return 1;
       }
 
-      std::string PixelType = reference->GetFile()->GetPixelType();
-
-      ////// Step 3b:
-      std::cout << "3b...";
+      ////// Step 3:
+      std::string PixelType = tested->GetFile()->GetPixelType();
+      std::cout << "3...";
       int testedDataSize    = tested->GetImageDataSize();
       uint8_t *testedImageData = tested->GetImageData();
     
-      int    referenceDataSize = reference->GetImageDataSize();
-      uint8_t *referenceImageData = reference->GetImageData();
+      int    referenceDataSize = reference->GetDataSize();
+      uint8_t *referenceImageData = reference->GetData();
 
       // Test the image size
-      if (tested->GetFile()->GetXSize() != reference->GetFile()->GetXSize() ||
-          tested->GetFile()->GetYSize() != reference->GetFile()->GetYSize() ||
-          tested->GetFile()->GetZSize() != reference->GetFile()->GetZSize())
+      if (tested->GetFile()->GetXSize() != reference->GetXSize() ||
+          tested->GetFile()->GetYSize() != reference->GetYSize() ||
+          tested->GetFile()->GetZSize() != reference->GetZSize())
       {
          std::cout << "Failed" << std::endl
-            << "        Size differs: "
-            << "X: " << tested->GetFile()->GetXSize() << " # " 
-                     << reference->GetFile()->GetXSize() << " | "
-            << "Y: " << tested->GetFile()->GetYSize() << " # " 
-                     << reference->GetFile()->GetYSize() << " | "
-            << "Z: " << tested->GetFile()->GetZSize() << " # " 
-                     << reference->GetFile()->GetZSize() << std::endl;
+                   << "        Size differs: "
+                   << "X: " << tested->GetFile()->GetXSize() << " # " 
+                   << reference->GetXSize() << " | "
+                   << "Y: " << tested->GetFile()->GetYSize() << " # " 
+                   << reference->GetYSize() << " | "
+                   << "Z: " << tested->GetFile()->GetZSize() << " # " 
+                   << reference->GetZSize() << std::endl;
+         delete reference;
+         delete tested;
+         return 1;
+      }
+
+      // Test the pixel size
+      if (tested->GetFile()->GetPixelSize() != reference->GetScalarSize() ||
+          tested->GetFile()->GetNumberOfScalarComponents() != reference->GetNumberOfComponents())
+      {
+         std::cout << "Failed" << std::endl
+                   << "        Pixel size differs: " << std::endl
+                   << "        Scalar size: " << tested->GetFile()->GetPixelSize() << " # " 
+                   << reference->GetScalarSize() << std::endl
+                   << "        Number of scalar: " << tested->GetFile()->GetNumberOfScalarComponents() << " # " 
+                   << reference->GetNumberOfComponents() << std::endl;
          delete reference;
          delete tested;
          return 1;
@@ -109,6 +457,11 @@ int InternalTest(std::string const &filename,
                    << PixelType
                    <<") areas lengths differ: "
                    << testedDataSize << " # " << referenceDataSize
+                   << std::endl
+                   << "        Image size: ("
+                   << tested->GetFile()->GetXSize() << ","
+                   << tested->GetFile()->GetYSize() << ","
+                   << tested->GetFile()->GetZSize() << ")"
                    << std::endl;
          delete tested;
          delete reference;
@@ -216,7 +569,7 @@ int TestAllReadCompareDicom(int argc, char *argv[])
       std::string::size_type slash_pos = referenceFileName.rfind( "." );
       if( slash_pos != std::string::npos )
       {
-         referenceFileName.replace( slash_pos + 1, 3, "dcm" );
+         referenceFileName.replace( slash_pos + 1, 3, "tst" );
       }
 
       if( InternalTest( filename, referenceFileName ) != 0 )
