@@ -18,7 +18,7 @@ gdcmBinEntry::gdcmBinEntry() : gdcmValEntry() {
  * \brief   Canonical destructor.
  */
 gdcmBinEntry::~gdcmBinEntry(){
-
+   free (voidArea);
 }
 
 
@@ -38,5 +38,5 @@ gdcmBinEntry::~gdcmBinEntry(){
 
 //-----------------------------------------------------------------------------
 // Private
-
+   
 //-----------------------------------------------------------------------------

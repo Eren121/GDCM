@@ -68,6 +68,9 @@ gdcmDocument::gdcmDocument(const char *inFilename,
    if ( !OpenFile(exception_on_error))
       return;
 
+   rewind(fp); 
+   if (!CheckSwap()) 
+      return NULL; // Du menage à faire avant de sortir ?
    LoadDocEntries();   
    CloseFile();
 

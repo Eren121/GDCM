@@ -3,6 +3,11 @@
 #ifndef GDCMSQDOCENTRY_H
 #define GDCMSQDOCENTRY_H
 
+#include <list>
+
+#include "gdcmSQItem.h"
+#include "gdcmDocEntry.h"
+
 //-----------------------------------------------------------------------------
 typedef std::list<gdcmSQItem *> ListSQItem;
 //-----------------------------------------------------------------------------

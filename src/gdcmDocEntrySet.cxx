@@ -2,9 +2,7 @@
 //-----------------------------------------------------------------------------
 //
 #include "gdcmDocEntrySet.h"
-
-#include <iomanip> // for std::ios::left, ...
-
+#include "gdcmException.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -13,9 +11,12 @@
  * \brief   Constructor from a given gdcmDocEntrySet
  */
 gdcmDocEntrySet::gdcmDocEntrySet() {
-
 }
-
+/**
+ * \brief   Canonical destructor.
+ */
+gdcmDocEntrySet::~gdcmDocEntrySet(){
+}
 //-----------------------------------------------------------------------------
 // Print
 /*
@@ -37,13 +38,11 @@ gdcmDocEntrySet::gdcmDocEntrySet() {
 /**
  * \brief   Parses an EntrySet (Document header or SQ Item )
  * \       and load element values (a voir !)
- * @return  false if file is not ACR-NEMA / PAPYRUS / DICOM 
+ * @return  false anything wrong happens 
  */
-bool gdcmDocument::LoadDocEntrySet(bool exception_on_error) throw(gdcmFormatError) {
+bool gdcmDocEntrySet::LoadDocEntrySet(bool exception_on_error) 
+                   throw(gdcmFormatError) {
    (void)exception_on_error;
-   rewind(fp);
-   if (!CheckSwap())
-      return false;
 
    gdcmDocEntry  *newDocEntry = (gdcmDocEntry *)0;     
    gdcmValEntry  *newValEntry = (gdcmValEntry *)0; 

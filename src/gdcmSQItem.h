@@ -1,13 +1,17 @@
 // gdcmSQItem.h
-
+//-----------------------------------------------------------------------------
 #ifndef GDCMSQITEM_H
 #define GDCMSQITEM_H
+
+#include <list>
+
+#include "gdcmDocEntry.h"
+#include "gdcmDocEntrySet.h"
 
 //-----------------------------------------------------------------------------
 typedef std::list<gdcmDocEntry *> ListDocEntry;
 //-----------------------------------------------------------------------------
-
-class GDCM_EXPORT gdcmSQItem : public gdcmDocEntrySet 
+class GDCM_EXPORT gdcmSQItem : public gdcmDocEntrySet
 {
 public:
    gdcmSQItem(void);
@@ -20,7 +24,7 @@ public:
       {return docEntries;};   
    
  /// \brief   adds the passed DocEntry to the DocEntry chained List for this SQ Item.      
-   inline void AddDocEntry(DocEntry *e) 
+   inline void AddDocEntry(gdcmDocEntry *e) 
       {docEntries.push_back(e);};         
             
 protected:
@@ -31,7 +35,7 @@ private:
 // Variables
 
 /// \brief chained list of (Elementary) Doc Entries
-   ListDocEntry docEntries;
+  ListDocEntry docEntries;
 };
 
 

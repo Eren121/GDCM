@@ -27,7 +27,7 @@ public:
    ///  when it's not string-translatable (e.g : a LUT table)         
    inline void *       GetVoidArea(void)  { return voidArea; };
 
-   /// Sets the value (non string) of the current Dicom Header Entry
+   /// \brief Sets the value (non string) of the current Dicom Header Entry
    inline void SetVoidArea(void * area)  { voidArea = area;  };
          
 protected:
@@ -35,18 +35,10 @@ protected:
 private:
 
 // Variables
-
    
    /// \brief unsecure memory area to hold 'non string' values 
    /// (ie : Lookup Tables, overlays, icons)   
    void *voidArea;
-
-
-
-
-
-
-
 
 };
 

@@ -18,7 +18,6 @@ class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry {
 
 public:
 
-
    gdcmValEntry(void); 
    ~gdcmValEntry(void);
 
