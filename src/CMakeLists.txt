@@ -3,6 +3,9 @@ SUBDIRS(jpeg)
 #CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\" \
 #           -D__STDC_LIMIT_MACROS  # Refer to stdint.h
 
+INCLUDE_DIRECTORIES(
+  ${GDCM_SOURCE_DIR}/jpeg/
+)
 
 SET(libgdcm_la_SOURCES
 	gdcmException.cxx
