@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDefaultDicts.cxx.in,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:13 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/11/04 15:20:35 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,9 +32,9 @@ typedef struct
 {
   uint16_t group;
   uint16_t element;
-  char *vr;
-  char *fourth;
-  char *name;
+  const char *vr;
+  const char *fourth;
+  const char *name;
 } DICT_ENTRY;
 
 static DICT_ENTRY datadir[] = {
@@ -65,10 +65,10 @@ void FillDefaultVRDict(VRHT & vr)
 
 typedef struct
 {
-  char *type;
+  const char *type;
   unsigned short group;
   unsigned short element;
-  char *value;
+  const char *value;
 } ELEMENT;
 
 static ELEMENT dataelement[] = {
