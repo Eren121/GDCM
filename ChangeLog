@@ -1,3 +1,11 @@
+2003-11-10 Jean-Pierre Roux
+      *FIX : gdcmHeader::LoadElements is now based 
+             on the ListTag listElem member, 
+             not longer on the TagElValueHT tagHt member
+      *ENH : PrintPubElVal shows (temporarily) both results,
+             with the tagHt member and the listElem member.
+	     (it's easier to 'see' the problems when using Printheader)
+
 2003-11-07 Jean-Pierre Roux
      *FIX misstyping in Transfert Syntax name table
      *ENH gdcmHeader::FixFoundLength now allow to 'go inside' tge SeQuences
