@@ -21,7 +21,7 @@ IF (GDCM_DATA_ROOT)
     TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
     PrintDicomDir.cxx
     TestChangeHeader.cxx
-    TestDicomDir.cxx      #require DICOMDIR
+    TestDicomDir.cxx                 # require DICOMDIR
     BuildUpDicomDir.cxx
     makeDicomDir.cxx
   )
