@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 15:16:18 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2004/07/20 08:29:13 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -317,10 +317,12 @@ bool gdcmDocument::IsGivenTransferSyntax(std::string const & syntaxToCheck)
    if (gdcmValEntry* valEntry = dynamic_cast< gdcmValEntry* >(entry) )
    {
       std::string transfer = valEntry->GetValue();
-
       // The actual transfer (as read from disk) might be padded. We
       // first need to remove the potential padding. We can make the
       // weak assumption that padding was not executed with digits...
+      if  ( transfer.length() == 0 ) { // for brain damaged headers
+         return false;
+      }
       while ( ! isdigit(transfer[transfer.length()-1]) )
       {
          transfer.erase(transfer.length()-1, 1);
