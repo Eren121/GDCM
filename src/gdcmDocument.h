@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 23:06:35 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2005/01/12 10:47:44 $
+  Version:   $Revision: 1.84 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -146,9 +146,17 @@ protected:
    /// Refering underlying filename.
    std::string Filename;
 
-   /// \brief SWap code (e.g. Big Endian, Little Endian, Bad Big Endian,
-   /// Bad Little Endian) according to the processor Endianity and
-   /// what is written on disc.
+   /// \brief Swap code gives an information on the byte order of a 
+   ///  supposed to be an int32, as it's read on disc 
+   /// (depending on the image Transfer Syntax *and* on the processor endianess)
+   /// as opposed as it should in memory to be dealt as an int32.
+   /// For instance, a 'Little Endian' image, read with a little endian procesor
+   /// will have a SwapCode= 1234 (the order is OK; nothing to do)
+   /// a 'Little Endian' image, read with a big endian procesor
+   /// will have a SwapCode= 2143 (the order is wrong; int32 an int16 must be
+   /// swapped)
+   /// note : values 2143, 4321, 3412 remain for the ACR-NEMA time, and
+   /// the well knowed 'Bad Big Endian' and 'Bad Little Endian' codes
    int SwapCode;
 
    ///\brief whether we already parsed group 0002
