@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 16:23:52 $
-  Version:   $Revision: 1.197 $
+  Date:      $Date: 2005/01/18 18:03:16 $
+  Version:   $Revision: 1.198 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -923,11 +923,7 @@ void Document::LoadEntryBinArea(BinEntry *elem)
 }*/
 
 /**
- * \brief  retrieves a Dicom Element (the first one) using (group, element)
- * \warning (group, element) IS NOT an identifier inside the Dicom Header
- *           if you think it's NOT UNIQUE, check the count number
- *           and use iterators to retrieve ALL the Dicoms Elements within
- *           a given couple (group, element)
+ * \brief  retrieves a Dicom Element using (group, element)
  * @param   group  Group number of the searched Dicom Element 
  * @param   elem Element number of the searched Dicom Element 
  * @return  
@@ -991,9 +987,34 @@ BinEntry *Document::GetBinEntry(uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief         Loads the element while preserving the current
- *               underlying file position indicator as opposed to
- *                to LoadDocEntry that modifies it.
+ * \brief  Same as \ref Document::GetDocEntry except it only
+ *         returns a result when the corresponding entry is of type
+ *         SeqEntry.
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element  
+ * @return When present, the corresponding SeqEntry. 
+ */
+SeqEntry *Document::GetSeqEntry(uint16_t group, uint16_t elem)
+{
+   DocEntry *currentEntry = GetDocEntry(group, elem);
+   if ( !currentEntry )
+   {
+      return 0;
+   }
+   if ( SeqEntry *entry = dynamic_cast<SeqEntry*>(currentEntry) )
+   {
+      return entry;
+   }
+   gdcmVerboseMacro( "Unfound SeqEntry.");
+
+   return 0;
+}
+
+
+/**
+ * \brief  Loads the element while preserving the current
+ *         underlying file position indicator as opposed to
+ *        LoadDocEntry that modifies it.
  * @param entry   Header Entry whose value will be loaded. 
  * @return  
  */

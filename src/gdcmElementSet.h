@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:41 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/18 18:03:17 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ public:
    ElementSet(int);
    ~ElementSet();
 
-   virtual void Print(std::ostream &os = std::cout, std::string const & indent = "" ); 
+   virtual void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
 
    bool AddEntry(DocEntry *Entry);
    bool RemoveEntry(DocEntry *EntryToRemove);
@@ -68,7 +68,7 @@ private:
    TagDocEntryHT::iterator ItTagHT; 
  
    friend class Document;
-   friend class DicomDir; //For accessing private TagHT
+   friend class DicomDir;        //For accessing private TagHT
    friend class DocEntryArchive; //For accessing private TagHT
 };
 } // end namespace gdcm
