@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 13:24:15 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/17 13:47:23 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,6 @@ int TestDicomDir(int argc, char* argv[])
       file += "/DICOMDIR";
    }
 
-std::cout << "----------------- " << file << "-----" <<std::endl;
    e1 = new gdcm::DicomDir(file);
    if (argc > 2) 
    {
@@ -70,8 +69,8 @@ std::cout << "----------------- " << file << "-----" <<std::endl;
                <<"' is readable"<<std::endl;
    }
 
-   e1->InitTraversal();
    // Test if the DicomDir contains any Patient
+   e1->InitTraversal();
    if( !e1->GetNextEntry() )
    {
       std::cout<<"          DicomDir '"<<file
@@ -82,7 +81,6 @@ std::cout << "----------------- " << file << "-----" <<std::endl;
       return 1;
    }
 
-
   // step by step structure full exploitation
   
    std::cout << std::endl << std::endl  
@@ -91,22 +89,22 @@ std::cout << "----------------- " << file << "-----" <<std::endl;
   
    e1->InitTraversal();
    pa = e1->GetNextEntry(); 
-   while ( pa ) {  // on degouline la liste de PATIENT
+   while ( pa ) {  // we process all the PATIENT of this DICOMDIR 
       std::cout << pa->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name
       pa->InitTraversal();
       st = pa->GetNextEntry();
-      while ( st ) { // on degouline les STUDY de ce patient
+      while ( st ) { // we process all the STUDY of this patient
          std::cout << "--- "<< st->GetEntry(0x0008, 0x1030) << std::endl;    // Study Description
          std::cout << " Stud.ID:["          << st->GetEntry(0x0020, 0x0010); // Study ID
          st->InitTraversal();
          se = st->GetNextEntry();
-         while ( se ) { // on degouline les SERIES de cette study
+         while ( se ) { // we process all the SERIES of this study
             std::cout << "--- --- "<< se->GetEntry(0x0008, 0x103e) << std::endl;      // Serie Description
             std::cout << " Ser.nb:["         <<  se->GetEntry(0x0020, 0x0011);        // Series number
             std::cout << "] Mod.:["          <<  se->GetEntry(0x0008, 0x0060) << "]"; // Modality
             se->InitTraversal();
             im = se->GetNextEntry();
-            while ( im ) { // on degouline les Images de cette serie
+            while ( im ) { // we process all the IMAGE of this serie
                std::cout << "--- --- --- "<< im->GetEntry(0x0004, 0x1500) << std::endl; // File name
                im = se->GetNextEntry();   
             }

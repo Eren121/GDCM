@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:01:55 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/17 13:47:22 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 
       e1->InitTraversal();
       pa = e1->GetNextEntry();
-      while ( pa ) // on degouline la liste de PATIENT
+      while ( pa ) // on degouline les PATIENT de ce DICOMDIR
       {  
          std::cout << pa->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name 
          pa->InitTraversal();
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 
       e1->InitTraversal();
       pa = e1->GetNextEntry(); 
-      while ( pa )   // on degouline la liste de PATIENT
+      while ( pa )   // on degouline les PATIENT de ce DICOMDIR
       {
        // Patient's Name, Patient ID 
          std::cout << "Pat.Name:[" << pa->GetEntry(0x0010, 0x0010) <<"]"; // Patient's Name
@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
  
       e1->InitTraversal();
       pa = e1->GetNextEntry(); 
-      while ( pa ) {  // on degouline la liste de PATIENT
+      while ( pa ) {  // les PATIENT de ce DICOMDIR
          std::cout << pa->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name
          pa->InitTraversal();
          st = pa->GetNextEntry();
@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
         << std::endl<< std::endl;
  
    itPatient = e1->GetDicomDirPatients().begin();
-   while ( itPatient != e1->GetDicomDirPatients().end() ) {  // on degouline la liste de PATIENT
+   while ( itPatient != e1->GetDicomDirPatients().end() ) {  // on degouline les PATIENT de ce DICOMDIR
       std::cout << (*itPatient)->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name
       itStudy = ((*itPatient)->GetDicomDirStudies()).begin();
       while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) { // on degouline les STUDY de ce patient
