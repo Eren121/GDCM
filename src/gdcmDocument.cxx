@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 17:31:39 $
-  Version:   $Revision: 1.131 $
+  Date:      $Date: 2004/11/17 03:20:05 $
+  Version:   $Revision: 1.132 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1320,10 +1320,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                         long l_max, bool delim_mode)
 {
    DocEntry *newDocEntry = 0;
-   
+
    while (true)
-   { 
-      if ( !delim_mode && (Fp->tellg()-offset) >= l_max)
+   {
+      if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
       {
          break;
       }
@@ -1372,7 +1372,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             {
                break;
             }
-            if ( !delim_mode && (Fp->tellg()-offset) >= l_max)
+            if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
             {
                break;
             }
@@ -1487,7 +1487,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      l, delim_mode);
          }
          set->AddEntry( newSeqEntry );
-         if ( !delim_mode && (Fp->tellg()-offset) >= l_max)
+         if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
             break;
          }
@@ -1522,7 +1522,7 @@ void Document::ParseSQ( SeqEntry* seqEntry,
             break;
          }
       }
-      if ( !delim_mode && (Fp->tellg()-offset) >= l_max)
+      if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
       {
           break;
       }
@@ -1549,7 +1549,7 @@ void Document::ParseSQ( SeqEntry* seqEntry,
       
       seqEntry->AddEntry( itemSQ, SQItemNumber ); 
       SQItemNumber++;
-      if ( !delim_mode && ( Fp->tellg() - offset ) >= l_max )
+      if ( !delim_mode && ((long)(Fp->tellg())-offset ) >= l_max )
       {
          break;
       }
@@ -1770,7 +1770,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
                // the length and proceed.
                long currentPosition = Fp->tellg();
                Fp->seekg(0L,std::ios_base::end);
-               long lengthUntilEOF = Fp->tellg() - currentPosition;
+               long lengthUntilEOF = (long)(Fp->tellg())-currentPosition;
                Fp->seekg(currentPosition, std::ios_base::beg);
                entry->SetLength(lengthUntilEOF);
                return;
