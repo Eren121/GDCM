@@ -20,7 +20,11 @@
 #endif
 #define DICT_ELEM "DicomDir.dic"
 
-
+/**
+ * \ingroup gdcmDicomDirElement
+ * \brief   Class for the chained lists from the file 'Dicts/DicomDir.dic'
+ */
+ 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 

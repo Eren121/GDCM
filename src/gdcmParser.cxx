@@ -1020,16 +1020,6 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
       tag->SetValue(tag->GetValue()+"\0");
       tag->SetLength(tag->GetReadLength()+1);
    }
-      
-   if ( type == ACR ) 
-   { 
-      if (gr < 0x0008)   return; // ignore pure DICOM V3 groups
-      if (gr %2)         return; // ignore shadow groups
-      if (vr == "SQ" )   return; // ignore Sequences
-      // TODO : find a trick to *skip* the SeQuences !
-      // Not only ignore the SQ element
-      if (gr == 0xfffe ) return; // ignore delimiters
-   } 
 
    fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
    fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
@@ -1149,6 +1139,15 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
                           tag2 != listEntries.end();
                           ++tag2)
    {
+      if ( type == ACR ){ 
+         if ((*tag2)->GetGroup() < 0x0008)   continue; // ignore pure DICOM V3 groups
+         if ((*tag2)->GetElement() %2)       continue; // ignore shadow groups
+         if ((*tag2)->GetVR() == "SQ" )      continue; // ignore Sequences
+         // TODO : find a trick to *skip* the SeQuences !
+         // Not only ignore the SQ element
+	 // --> will be done with the next organization
+         if ((*tag2)->GetGroup() == 0xfffe ) continue; // ignore delimiters
+   } 
    WriteEntry(*tag2,_fp,type);
    if (itsTimeToWritePixels) 
       break;
@@ -1179,6 +1178,15 @@ void gdcmParser::WriteEntriesDeprecated(FILE *_fp,FileType type) {
    for (TagHeaderEntryHT::iterator tag2=tagHT.begin();
         tag2 != tagHT.end();
         ++tag2){
+      if ( type == ACR ){ 
+         if ((*tag2->second).GetGroup() < 0x0008)   continue; // ignore pure DICOM V3 groups
+         if ((*tag2->second).GetElement() %2)       continue; // ignore shadow groups
+         if ((*tag2->second).GetVR() == "SQ" )      continue; // ignore Sequences
+         // TODO : find a trick to *skip* the SeQuences !
+         // Not only ignore the SQ element
+	 // --> will be done with the next organization
+         if ((*tag2->second).GetGroup() == 0xfffe ) continue; // ignore delimiters	
+      }
       WriteEntry(tag2->second,_fp,type);
       if (itsTimeToWritePixels) 
          break;

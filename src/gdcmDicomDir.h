@@ -18,11 +18,13 @@ typedef std::vector<gdcmHeader *>  ListHeader;
 
 typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
 //-----------------------------------------------------------------------------
-/*
- * \defgroup gdcmDicomDir
+
+/**
+ * \ingroup gdcmDicomDir
  * \brief    gdcmDicomDir defines an object representing a DICOMDIR in memory.
  *
  */
+ 
 class GDCM_EXPORT gdcmDicomDir: public gdcmParser
 {
 public:
@@ -97,7 +99,7 @@ public:
 // Write
    bool Write(std::string fileName);
 
-// Types
+/// Types of the gdcmObject within the gdcmDicomDir
    typedef enum
    {
       GDCM_DICOMDIR_NONE,

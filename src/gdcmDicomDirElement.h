@@ -25,8 +25,8 @@ typedef std::list<gdcmElement> ListDicomDirSerieElem;
 typedef std::list<gdcmElement> ListDicomDirImageElem;
 
 //-----------------------------------------------------------------------------
-/*
- * \defgroup gdcmDicomDirElement
+/**
+ * \ingroup gdcmDicomDirElement
  * \brief    gdcmDicomDirElement represents elements contained in a dicom dir
  *
  */
