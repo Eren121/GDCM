@@ -239,7 +239,8 @@ int gdcmElValSet::Write(FILE * _fp) {
 			//sprintf(str_lgrCalcGroupe,"%d",lgrCalcGroupe);
 			elemZPrec->SetValue(f.str());
 			if(DEBUG)printf("ecriture lgr (%d, %s) pour gr %04x\n",lgrCalcGroupe, f.str().c_str(), grCourant);
-			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),elemZPrec->GetValue().c_str());
+			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),
+							elemZPrec->GetValue().c_str());
 			if(DEBUG)cout << "Addresse elemZPrec " << elemZPrec<< endl;
 			elemZPrec=elemZ;
 			lgrCalcGroupe = 0;
@@ -247,7 +248,8 @@ int gdcmElValSet::Write(FILE * _fp) {
 			if(DEBUG)printf("init-2 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);			
 		} else {			// On n'EST PAS sur un nv Groupe
 			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem
-			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",elem->GetLength(), el, lgrCalcGroupe, gr);
+			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",
+								elem->GetLength(), el, lgrCalcGroupe, gr);
 		}		
 	}
 	
@@ -386,7 +388,8 @@ int gdcmElValSet::WriteAcr(FILE * _fp) {
 			f << lgrCalcGroupe; 
 			elemZPrec->SetValue(f.str());
 			if(DEBUG)printf("ecriture lgr (%d, %s) pour gr %04x\n",lgrCalcGroupe, f.str().c_str(), grCourant);
-			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),elemZPrec->GetValue().c_str());
+			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),
+							elemZPrec->GetValue().c_str());
 			if(DEBUG)cout << "Addresse elemZPrec " << elemZPrec<< endl;
 			elemZPrec=elemZ;
 			lgrCalcGroupe = 0;
@@ -394,7 +397,8 @@ int gdcmElValSet::WriteAcr(FILE * _fp) {
 			if(DEBUG)printf("init-2 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);			
 		} else {			// On n'EST PAS sur un nv Groupe
 			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem
-			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",elem->GetLength(), el, lgrCalcGroupe, gr);
+			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",elem->GetLength(), el, 
+							lgrCalcGroupe, gr);
 		}		
 	}
 	
@@ -554,7 +558,8 @@ int gdcmElValSet::WriteExplVR(FILE * _fp) {
 			//sprintf(str_lgrCalcGroupe,"%d",lgrCalcGroupe);
 			elemZPrec->SetValue(f.str());
 			if(DEBUG)printf("ecriture lgr (%d, %s) pour gr %04x\n",lgrCalcGroupe, f.str().c_str(), grCourant);
-			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),elemZPrec->GetValue().c_str());
+			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),
+							elemZPrec->GetValue().c_str());
 			if(DEBUG)cout << "Addresse elemZPrec " << elemZPrec<< endl;
 			elemZPrec=elemZ;
 			lgrCalcGroupe = 0;
@@ -562,7 +567,8 @@ int gdcmElValSet::WriteExplVR(FILE * _fp) {
 			if(DEBUG)printf("init-2 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);			
 		} else {			// On n'EST PAS sur un nv Groupe
 			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem
-			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",elem->GetLength(), el, lgrCalcGroupe, gr);
+			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",elem->GetLength(), 
+							el, lgrCalcGroupe, gr);
 		}		
 	}
 		

@@ -168,6 +168,16 @@ public:
    int ReplaceOrCreateByNumber(guint16 Group, guint16 Elem, string Value);                                
 
    gdcmElValSet GetPubElValSet() { return(PubElValSet); }
+   
+   // a mettre en inline
+   // --> ou met-on les doxygeneries ?
+   
+   string GetXSize(void);  
+   string GetYSize(void);
+    
+   string GetZSize(void);       
+   string GetPixelType(void);  
+   
 };
 
 #endif

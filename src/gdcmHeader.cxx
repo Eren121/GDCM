@@ -776,7 +776,6 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
 					s << '\\';
 					NewInt = ReadInt16();
 					s << NewInt;
-					//printf("%s\n", s.str().c_str());
 				}
 			}
 			
@@ -968,12 +967,13 @@ bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
    }
  
    /*  	
-   // on le traite tt de même (VR peut donner l'info)
-		// faire qq chose + ruse (pas de test si pas de VR)  
+   	// on le traite tt de même (VR peut donner l'info)
+	// faire qq chose + ruse (pas de test si pas de VR)  
    if ( group % 2 != 0 )
-      // We only have some semantics on documented elements, which are
-      // the even ones.
-      return false; 
+	// We only have some semantics on documented elements, which are
+	// the even ones.
+      return false;
+       
     */
    
    /*
@@ -991,7 +991,7 @@ bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
    
    
    // est-ce encore utile?
-   // mieux vaut modifier le source du Dicom Dictionnaty 
+   // mieux vaut modifier le source du Dicom Dictionnary 
    // et remplacer pour ces 2 cas  RET par US
    
    if ( (group == 0x0028) && (element == 0x0005) )
@@ -1390,6 +1390,60 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief   accessor to get Rows nbr
+ */
+ 
+string gdcmHeader::GetYSize(void) {
+	return (GetElValByName("Rows"));
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   accessor to get Columns nbr
+ */
+ 
+string gdcmHeader::GetXSize(void) {
+	return (GetElValByName("Columns"));
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   accessor to get Planes nbr
+ * (ACR-NEMA volume file or Multiframe Dicom V3 image file)
+ */
+ 
+string gdcmHeader::GetZSize(void) {
+	string NewVal;
+	NewVal = GetElValByNumber(0x0028,0x0008); // Number of Frames (DICOM)
+
+   	if (NewVal == "gdcm::Unfound") {
+   		NewVal = GetElValByNumber(0x0028,0x0012); // Planes (ACR-NEMA)
+ 				// 6000 0012 : US OLY Planes
+				// 'xxxByName' function not applicable
+   		if (NewVal == "gdcm::Unfound") {
+   			NewVal = "0";
+      		}
+   	}
+   	return(NewVal);
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   accessor to get Pixel Type 
+ * (U8, S8, U16, S16, U32, S32)
+ *
+ * \warning : NOT YET MADE
+ * 
+ */
+ 
+string gdcmHeader::GetPixelType(void) {
+   string NewVal;
+   // TODO
+   return(NewVal);
+}
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Once the header is parsed add some gdcm convenience/helper elements
  *          in the gdcmElValSet. For example add:
  *          - gdcmImageType which is an entry containing a short for the
@@ -1397,8 +1451,10 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
  *               I8   (unsigned 8 bit image)
  *               I16  (unsigned 8 bit image)
  *               IS16 (signed 8 bit image)
+ *						Replace by U8, S8, U16, S16, U32, S32 
+ *
  *          - gdcmXsize, gdcmYsize, gdcmZsize whose values are respectively
- *            the ones of the official DICOM fields Rows, Columns and Planes.
+ *            the ones of the official DICOM fields Rows, Columns and [Number of Frames/Planes]
  */
 void gdcmHeader::AddAndDefaultElements(void) {
    gdcmElValue* NewElVal = (gdcmElValue*)0;
