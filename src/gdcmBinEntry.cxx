@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 12:10:53 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/09/15 03:50:48 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ gdcmBinEntry::~gdcmBinEntry()
 {
    if (VoidArea)
    {
-      free (VoidArea);
+      //free (VoidArea);
       VoidArea = 0; // let's be carefull !
    }
 }

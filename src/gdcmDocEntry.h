@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 12:10:53 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/09/15 03:50:48 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,6 +39,7 @@ class GDCM_EXPORT gdcmDocEntry
 {
 public:
    gdcmDocEntry(gdcmDictEntry*);
+   virtual ~gdcmDocEntry() {};
 
    /// Returns the Dicom Group number of the current Dicom Header Entry
    uint16_t      GetGroup()     { return DictEntry->GetGroup();  };
