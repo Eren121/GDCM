@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/18 12:16:10 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,6 +48,8 @@ public:
 
    /// returns the SQITEM chained List for this SeQuence.
    ListSQItem const &GetSQItems() const { return Items; }
+   SQItem *GetFirstEntry();
+   SQItem *GetNextEntry();
       
    /// Sets the delimitor mode
    void SetDelimitorMode(bool dm) { DelimitorMode = dm; }
@@ -74,7 +76,9 @@ private:
    
    /// Chained list of SQ Items
    ListSQItem Items;
-   
+   /// iterator on the SQItems of the current SeqEntry
+   ListSQItem::iterator ItSQItem;
+
    /// sequence terminator item 
    DocEntry *SeqTerm;
 

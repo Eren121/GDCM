@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:42 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/01/18 12:16:10 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -159,7 +159,7 @@ void SeqEntry::AddEntry(SQItem *sqItem, int itemNumber)
 /**
  * \brief return a pointer to the SQItem referenced by its ordinal number.
  *        Returns the first item when argument is negative.
- *        Returns the last item when argument is bigget than the total
+ *        Returns the last item when argument is bigger than the total
  *        item number.
  */
 SQItem *SeqEntry::GetSQItemByOrdinalNumber(int nb)
@@ -180,6 +180,37 @@ SQItem *SeqEntry::GetSQItemByOrdinalNumber(int nb)
    }
    return *(Items.end()); // Euhhhhh ?!? Is this the last one . FIXME
 }
+
+/**
+ * \brief   Get the first entry while visiting the SeqEntry
+ * \return  The first SQItem if found, otherwhise NULL
+ */ 
+SQItem *SeqEntry::GetFirstEntry()
+{
+   ItSQItem = Items.begin();
+   if (ItSQItem != Items.end())
+      return *ItSQItem;
+   return NULL;
+} 
+
+
+/**
+ * \brief   Get the next SQItem while visiting the SeqEntry
+ * \note : meaningfull only if GetFirstEntry already called
+ * \return  The next SQItem if found, otherwhise NULL
+ */
+
+SQItem *SeqEntry::GetNextEntry()
+{
+   gdcmAssertMacro (ItSQItem != Items.end())
+   {
+      ++ItSQItem;
+      if (ItSQItem != Items.end())
+         return *ItSQItem;
+   }
+   return NULL;
+}
+ 
 //-----------------------------------------------------------------------------
 // Protected
 
