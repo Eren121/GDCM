@@ -1,14 +1,14 @@
 // gdcmHeader.cxx
 //-----------------------------------------------------------------------------
-#include "gdcmHeader.h"
-
 #include <stdio.h>
 #include <cerrno>
 #include <cctype>    // for isalpha
+#include <vector>
 
+#include "gdcmHeader.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 #include "gdcmTS.h"
-
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

@@ -1,9 +1,9 @@
 // gdcmDictEntry.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmDictEntry.h"
+#include "gdcmDebug.h"
 
 #include <stdio.h>    // FIXME For sprintf
-#include "gdcmUtil.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -46,7 +46,7 @@ gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
 TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
 	char trash[10];
 	TagKey key;
-	// CLEAN ME: better call the iostream<< with the hex manipulator on.
+	// CLEANME: better call the iostream<< with the hex manipulator on.
 	// This requires some reading of the stdlibC++ sources to make the
 	// proper call (or copy).
 	sprintf(trash, "%04x|%04x", group , element);

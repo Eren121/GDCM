@@ -2,9 +2,9 @@
 //-----------------------------------------------------------------------------
 #include "gdcmObject.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 //-----------------------------------------------------------------------------
-// Constructor / Destructor
 /**
  * \ingroup gdcmObject
  * \brief  Constructor 

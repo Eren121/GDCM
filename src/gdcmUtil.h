@@ -8,44 +8,8 @@
 #include "gdcmTS.h"
 #include "gdcmDictSet.h"
 #include "gdcmDicomDirElement.h"
-#include <iostream>
 #include <vector>
 #include <string>
-
-//-----------------------------------------------------------------------------
-/*
- * gdcmDebug is an object for debugging in program.
- * It has 2 debugging modes :
- *  - error : for bad library use
- *  - debug : for debugging messages
- * 
- * A debugging message has a level of priority and is 
- * Shown only when the debug level is higher than the 
- * message level.
- */
-class gdcmDebug {
-public:
-   gdcmDebug(int level = GDCM_DEBUG);
-
-  /**
-    * \ingroup gdcmDebug
-    * \brief   sets the debug level 
-    * @param i debug level to be set
-  */ 
-   void SetDebug (int i) 
-      {DebugLevel = i;}
-
-   void Verbose(int, const char*, const char* ="");
-   void Error(bool, const char*,  const char* ="");
-   void Error(const char*, const char* ="", const char* ="");
-
-   void Assert(int, bool, const char*, const char*);
-   void Exit(int);
-
-private:
-/// warning message level to be displayed
-   int DebugLevel;
-};
 
 //-----------------------------------------------------------------------------
 /*
@@ -72,18 +36,14 @@ private:
 //-----------------------------------------------------------------------------
 std::istream & eatwhite(std::istream & is);
 
-   void Tokenize (const std::string& str,
-                  std::vector<std::string>& tokens,
-                  const std::string& delimiters = " ");
+void Tokenize (const std::string& str,
+               std::vector<std::string>& tokens,
+               const std::string& delimiters = " ");
 
-   extern gdcmDebug dbg;
+char *_cleanString(char *v);
+std::string _CreateCleanString(std::string s);
 
-   char *_cleanString(char *v);
-   std::string _CreateCleanString(std::string s);
-
-   void NormalizePath (std::string &name);
-   std::string GetPath(std::string &fullName);
-   std::string GetName(std::string &fullName);
-//-----------------------------------------------------------------------------
+void NormalizePath (std::string &name);
+std::string GetPath(std::string &fullName);
+std::string GetName(std::string &fullName);
 #endif
-

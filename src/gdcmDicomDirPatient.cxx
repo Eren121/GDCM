@@ -3,6 +3,7 @@
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirElement.h"
 #include "gdcmUtil.h"
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**

@@ -1,9 +1,7 @@
 // gdcmParser.cxx
 //-----------------------------------------------------------------------------
-#include "gdcmParser.h"
-#include "gdcmUtil.h"
-
 #include <errno.h>
+#include <vector>
 
 // For nthos:
 #ifdef _MSC_VER
@@ -19,6 +17,10 @@
 #  include <sstream>
 #endif
 #  include <iomanip>
+
+#include "gdcmParser.h"
+#include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 #define UI1_2_840_10008_1_2      "1.2.840.10008.1.2"
 #define UI1_2_840_10008_1_2_1    "1.2.840.10008.1.2.1"

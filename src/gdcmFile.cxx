@@ -1,7 +1,7 @@
 // gdcmFile.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmFile.h"
-#include "gdcmUtil.h"
+#include "gdcmDebug.h"
 #include "jpeg/ljpg/jpegless.h"
 
 typedef std::pair<TagHeaderEntryHT::iterator,TagHeaderEntryHT::iterator> IterHT;
@@ -22,7 +22,6 @@ typedef std::pair<TagHeaderEntryHT::iterator,TagHeaderEntryHT::iterator> IterHT;
  * @param header file to be opened for reading datas
  * @return	
  */
- 
 gdcmFile::gdcmFile(gdcmHeader *header) {
    Header=header;
    SelfHeader=false;

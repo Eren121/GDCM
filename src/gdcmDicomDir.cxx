@@ -1,15 +1,7 @@
 // gdcmDicomDir.cxx
 //-----------------------------------------------------------------------------
-#include "gdcmDicomDir.h"
-#include "gdcmDicomDirStudy.h"
-#include "gdcmDicomDirSerie.h"
-#include "gdcmDicomDirImage.h"
-#include "gdcmDirList.h"
-#include "gdcmUtil.h"
-
 #include <string>
 #include <algorithm>
-
 #include <sys/types.h>
 #include <errno.h>
 
@@ -18,6 +10,14 @@
 #else
    #include <unistd.h>
 #endif
+
+#include "gdcmDicomDir.h"
+#include "gdcmDicomDirStudy.h"
+#include "gdcmDicomDirSerie.h"
+#include "gdcmDicomDirImage.h"
+#include "gdcmDirList.h"
+#include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 //-----------------------------------------------------------------------------
 //  For full DICOMDIR description, see:

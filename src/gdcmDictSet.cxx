@@ -1,7 +1,7 @@
 // gdcmDictEntry
 //-----------------------------------------------------------------------------
 #include "gdcmDictSet.h"
-#include "gdcmUtil.h"
+#include "gdcmDebug.h"
 #include <fstream>
 #include <stdlib.h>  // For getenv
 

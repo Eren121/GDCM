@@ -13,6 +13,7 @@ libgdcm_la_LIBADD = \
    $(top_builddir)/src/jpeg/ljpg/libgdcmjpg.la
 
 libgdcm_la_SOURCES=                \
+   gdcmDebug.cxx                   \
    gdcmDicomDir.cxx                \
    gdcmDicomDirElement.cxx         \
    gdcmDicomDirImage.cxx           \
@@ -42,29 +43,30 @@ libgdcm_la_SOURCES=                \
 
 
 libgdcmincludedir = $(includedir)
-libgdcminclude_HEADERS =                \
-	gdcmCommon.h                    \
-	gdcmDicomDir.h                  \
-        gdcmDicomDirElement.h           \
-	gdcmDicomDirImage.h             \
-        gdcmDicomDirMeta.h              \
-	gdcmDicomDirPatient.h           \
-	gdcmDicomDirSerie.h             \
-	gdcmDicomDirStudy.h             \
-        gdcmDictEntry.h                 \
-	gdcmDict.h                      \
-	gdcmDictSet.h                   \
-	gdcmDirList.h                   \
-	gdcmException.h                 \
-	gdcmFile.h                      \
-	gdcm.h                          \
-	gdcmHeaderEntry.h               \
-	gdcmHeader.h                    \
-	gdcmHeaderHelper.h              \
-	gdcmObject.h                    \
-	gdcmParser.h                    \
-	gdcmVR.h                        \
-	gdcmTS.h
+libgdcminclude_HEADERS =           \
+   gdcmCommon.h                    \
+   gdcmDebug.h                     \
+   gdcmDicomDir.h                  \
+   gdcmDicomDirElement.h           \
+   gdcmDicomDirImage.h             \
+   gdcmDicomDirMeta.h              \
+   gdcmDicomDirPatient.h           \
+   gdcmDicomDirSerie.h             \
+   gdcmDicomDirStudy.h             \
+   gdcmDictEntry.h                 \
+   gdcmDict.h                      \
+   gdcmDictSet.h                   \
+   gdcmDirList.h                   \
+   gdcmException.h                 \
+   gdcmFile.h                      \
+   gdcm.h                          \
+   gdcmHeaderEntry.h               \
+   gdcmHeader.h                    \
+   gdcmHeaderHelper.h              \
+   gdcmObject.h                    \
+   gdcmParser.h                    \
+   gdcmVR.h                        \
+   gdcmTS.h
 
 EXTRA_DIST =   \
 	gdcmUtil.h

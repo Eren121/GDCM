@@ -1,13 +1,6 @@
 // gdcmVR.cxx
-#include <fstream>
 //-----------------------------------------------------------------------------
-#include "gdcmVR.h"
-#include "gdcmUtil.h"
-
-#ifndef PUB_DICT_PATH
-#  define PUB_DICT_PATH     "../Dicts/"
-#endif
-#define DICT_VR "dicomVR.dic"
+#include <fstream>
 
 #include <iostream>
 #ifdef GDCM_NO_ANSI_STRING_STREAM
@@ -16,6 +9,15 @@
 # else
 #  include <sstream>
 #endif
+
+#include "gdcmVR.h"
+#include "gdcmUtil.h"
+#include "gdcmDebug.h"
+
+#ifndef PUB_DICT_PATH
+#  define PUB_DICT_PATH     "../Dicts/"
+#endif
+#define DICT_VR "dicomVR.dic"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

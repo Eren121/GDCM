@@ -4,9 +4,6 @@
 #define GDCMCOMMON_H
 
 //-----------------------------------------------------------------------------
-#define GDCM_DEBUG -1
-
-//-----------------------------------------------------------------------------
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
 // 'identifier' : class 'type' needs to have dll-interface to be used by
@@ -25,10 +22,9 @@
 // return type for 'identifier' is '' (ie; not a UDT or reference to UDT. Will
 // produce errors if applied using infix notation
 #pragma warning ( disable : 4284 )
+// 'type' : forcing value to bool 'true' or 'false' (performance warning)
+// //#pragma warning ( disable : 4800 )
 #endif //_MSC_VER
-
-// Mmmmmm !
-// It reminds me the formerly well known LibIDO's idproto.h
 
 //-----------------------------------------------------------------------------
 #ifdef __GNUC__

@@ -3,14 +3,12 @@
 #include "gdcmHeaderHelper.h"
 #include "gdcmDirList.h"
 
-#include "gdcmUtil.h" //for debug
+#include "gdcmDebug.h"
 #include <math.h>
 #include <algorithm>
+#include <vector>
 
 //-----------------------------------------------------------------------------
-// gdcmHeaderHelper
-//-----------------------------------------------------------------------------
-// Constructor / Destructor
 /**
  * \ingroup gdcmHeaderHelper
  * \brief   constructor

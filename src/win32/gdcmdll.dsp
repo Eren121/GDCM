@@ -104,6 +104,10 @@ PostBuild_Cmds=copy                       ..\..\lib\gdcmdll.dll                 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\gdcmDebug.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\gdcmDicomDir.cxx
 # End Source File
 # Begin Source File
@@ -213,6 +217,10 @@ SOURCE=..\gdcmVR.cxx
 # Begin Source File
 
 SOURCE=..\gdcm.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDebug.h
 # End Source File
 # Begin Source File
 

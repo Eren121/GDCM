@@ -3,6 +3,7 @@
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirElement.h"
 #include "gdcmUtil.h"
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**

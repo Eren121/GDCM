@@ -3,7 +3,7 @@
 #ifndef GDCM_H
 #define GDCM_H
 
-////////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------------
 // Tag based hash tables.
 // We shall use as keys the strings (as the C++ type) obtained by
 // concatenating the group value and the element value (both of type
@@ -31,4 +31,4 @@
 #include "gdcmUtil.h"
 
 //-----------------------------------------------------------------------------
-#endif // #ifndef GDCM_H
+#endif

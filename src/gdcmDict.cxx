@@ -2,6 +2,7 @@
 //-----------------------------------------------------------------------------
 #include "gdcmDict.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 #include <fstream>
 #include <iostream>
