@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 09:53:42 $
-  Version:   $Revision: 1.188 $
+  Date:      $Date: 2005/01/13 12:19:58 $
+  Version:   $Revision: 1.189 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
    long beg = Fp->tellg();
    lgt -= beg;
    
-   ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
+   ParseDES( this, beg, lgt, false); // Loading is done during parsing
 
    Fp->seekg( 0,  std::ios::beg);
    
@@ -256,7 +256,7 @@ bool Document::IsReadable()
    }
 
    if( TagHT.empty() )
-   {
+   { 
       gdcmVerboseMacro( "No tags in internal hash table.");
       return false;
    }
@@ -1269,7 +1269,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
 
    while (true)
    {
-      DocEntry *newDocEntry = ReadNextDocEntry();   
+      DocEntry *newDocEntry = ReadNextDocEntry();
       if ( !newDocEntry )
       {
          // FIXME Should warn user
@@ -1308,8 +1308,8 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       }
    
       ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
-      delete newDocEntry;
-      
+      delete newDocEntry; // FIXME Why deleting fffe 000e ?!?
+ 
       seqEntry->AddEntry( itemSQ, SQItemNumber ); 
       SQItemNumber++;
       if ( !delim_mode && ((long)(Fp->tellg())-offset ) >= l_max )
@@ -2488,7 +2488,7 @@ DocEntry *Document::ReadNextDocEntry()
          if ( newEntry->GetGroup() != 0xfffe )
          { 
             std::string msg;
-            msg = Util::Format("Falsely explicit vr file (%04x,%04x)\n", 
+            msg = Util::Format("Entry (%04x,%04x) should be Explicit VR\n", 
                           newEntry->GetGroup(), newEntry->GetElement());
             gdcmVerboseMacro( msg.c_str() );
           }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 09:46:54 $
-  Version:   $Revision: 1.99 $
+  Date:      $Date: 2005/01/13 12:19:58 $
+  Version:   $Revision: 1.100 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -191,16 +191,19 @@ void DicomDir::Print(std::ostream &os)
  */
 bool DicomDir::IsReadable()
 {
-   if( !Document::IsReadable() )
+   if( Filetype == Unknown)
    {
+      gdcmVerboseMacro( "Wrong filetype");
       return false;
    }
    if( !MetaElems )
    {
+      gdcmVerboseMacro( "Meta Elements missing in DicomDir");
       return false;
    }
    if( Patients.size() <= 0 )
    {
+      gdcmVerboseMacro( "NO Patient in DicomDir");
       return false;
    }
 
