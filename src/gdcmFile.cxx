@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:29 $
-  Version:   $Revision: 1.142 $
+  Date:      $Date: 2004/10/13 14:56:07 $
+  Version:   $Revision: 1.143 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,9 +87,9 @@ void File::Initialise()
 
 
                                                                                 
-      // Just in case some access to a Header element requires disk access:
-      FILE* fp = HeaderInternal->OpenFile();
-      (void)fp;
+      // Just in case some access to a Header element requires disk access.
+      // Note: gdcmDocument::Fp is leaved open after OpenFile. 
+      (void)HeaderInternal->OpenFile();
       // Number of Bits Allocated for storing a Pixel is defaulted to 16
       // when absent from the header.
       int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
