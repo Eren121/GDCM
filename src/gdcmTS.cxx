@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/11 00:37:41 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,6 +104,16 @@ TSAtr const & TS::GetValue(TSKey const &key)
       return GDCM_UNFOUND;
    }
    return it->second;
+}
+
+bool TS::IsTransferSyntax(TSKey const &key)
+{
+   for (TSHT::const_iterator it = TsMap.begin(); it != TsMap.end(); ++it)
+   {
+      if( it->first == key ) return true;
+   }
+
+  return false;
 }
 
 //-----------------------------------------------------------------------------
