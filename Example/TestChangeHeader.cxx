@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:18 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/06 14:31:37 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     {
        std::cerr << "usage :" << std::endl <<
          argv[0] << " nomFichierPourEntete nomFichierPourDonnées" << 
-std::endl;
+         std::endl;
        return 1;
     }
 
@@ -37,19 +37,14 @@ std::endl;
 
     // 0018 1310 US ACQ Acquisition Matrix
     gdcm::DictEntry *dictEntry =
-       f2->GetHeader()->GetPubDict()->GetDictEntryByName( "Acquisition Matrix" );
+       f2->GetHeader()->GetPubDict()->GetDictEntryByNumber( 0x0018, 1310 );
     std::cerr << std::hex << dictEntry->GetGroup() << "," << dictEntry->GetElement() << std::endl;
 
-   // std::string matrix = f2->GetHeader()->GetEntryByNumber(0x0018, 0x1310);
-   // Or, strictly equivalent (a little bit longer at run-time !):
-    std::string matrix = f2->GetHeader()->GetEntryByName("Acquisition Matrix");  
+    std::string matrix = f2->GetHeader()->GetEntryByNumber(0x0018, 0x1310);
     if(matrix != "gdcm::Unfound")
     {
        std::cerr << "Aquisition Matrix:" << matrix << std::endl;
-      f1->GetHeader()->ReplaceOrCreateByNumber( matrix, 0x0018, 0x1310);
-      
-       //f1->GetHeader()->ReplaceOrCreateByNumber( matrix, dictEntry->GetGroup(),
-       //  dictEntry->GetElement());
+       f1->GetHeader()->ReplaceOrCreateByNumber( matrix, 0x0018, 0x1310);
     }
 
     f1->GetImageData();
