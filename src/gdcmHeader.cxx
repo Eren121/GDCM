@@ -2,6 +2,7 @@
 
 #include "gdcm.h"
 #include <stdio.h>
+#include <cerrno>
 // For nthos:
 #ifdef _MSC_VER
 #include <winsock.h>
@@ -15,17 +16,6 @@
 
 #define HEADER_LENGTH_TO_READ 		256 	// on ne lit plus que le debut
 #define _MaxSizeLoadElementValue_  	1024 	// longueur au dela de laquelle on ne charge plus les valeurs 
-
-namespace Error {
-	struct FileReadError {
-		FileReadError(FILE* fp, const char* Mesg) {
-			if (feof(fp))
-				dbg.Verbose(1, "EOF encountered :", Mesg);
-			if (ferror(fp))
-				dbg.Verbose(1, "Error on reading :", Mesg);
-		}
-	};
-}
 
 //FIXME: this looks dirty to me...
 
@@ -521,18 +511,22 @@ guint32 gdcmHeader::FindLengthOB(void) {
 	while ( ! FoundSequenceDelimiter) {
 		g = ReadInt16();
 		n = ReadInt16();
+		if (errno == 1)
+			return 0;
 		TotalLength += 4;  // We even have to decount the group and element 
 		if ( g != 0xfffe ) {
 			dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",
 			            "wrong group for an item sequence.");
-			throw Error::FileReadError(fp, "gdcmHeader::FindLengthOB");
+			errno = 1;
+			return 0;
 		}
 		if ( n == 0xe0dd )
 			FoundSequenceDelimiter = true;
 		else if ( n != 0xe000) {
 			dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",
 			            "wrong element for an item sequence.");
-			throw Error::FileReadError(fp, "gdcmHeader::FindLengthOB");
+			errno = 1;
+			return 0;
 		}
 		ItemLength = ReadInt32();
 		TotalLength += ItemLength + 4;  // We add 4 bytes since we just read
@@ -595,8 +589,11 @@ void gdcmHeader::FindLength(ElValue * ElVal) {
 		// hands on a big endian encoded file: we switch the swap code to
 		// big endian and proceed...
 		if ( (element  == 0x000) && (length16 == 0x0400) ) {
-			if ( ! IsExplicitVRBigEndianTransferSyntax() )
-				throw Error::FileReadError(fp, "gdcmHeader::FindLength");
+			if ( ! IsExplicitVRBigEndianTransferSyntax() ) {
+				dbg.Verbose(0, "gdcmHeader::FindLength", "not explicit VR");
+				errno = 1;
+				return;
+			}
 			length16 = 4;
 			SwitchSwapToBigEndian();
 			// Restore the unproperly loaded values i.e. the group, the element
@@ -783,11 +780,6 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	}
 	
 	// FIXME The exact size should be length if we move to strings or whatever
-	
-	//
-	// QUESTION : y a-t-il une raison pour ne pas utiliser g_malloc ici ?
-	//
-	
 	char* NewValue = (char*)malloc(length+1);
 	if( !NewValue) {
 		dbg.Verbose(1, "LoadElementValue: Failed to allocate NewValue");
@@ -798,7 +790,7 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	item_read = fread(NewValue, (size_t)length, (size_t)1, fp);
 	if ( item_read != 1 ) {
 		free(NewValue);
-		Error::FileReadError(fp, "gdcmHeader::LoadElementValue");
+		dbg.Verbose(1, "gdcmHeader::LoadElementValue","unread element value");
 		ElVal->SetValue("gdcm::UnRead");
 		return;
 	}
@@ -824,8 +816,12 @@ guint16 gdcmHeader::ReadInt16(void) {
 	guint16 g;
 	size_t item_read;
 	item_read = fread (&g, (size_t)2,(size_t)1, fp);
-	if ( item_read != 1 )
-		throw Error::FileReadError(fp, "gdcmHeader::ReadInt16");
+	errno = 0;
+	if ( item_read != 1 ) {
+		dbg.Verbose(1, "gdcmHeader::ReadInt16", " File read error");
+		errno = 1;
+		return 0;
+	}
 	g = SwapShort(g);
 	return g;
 }
@@ -834,8 +830,12 @@ guint32 gdcmHeader::ReadInt32(void) {
 	guint32 g;
 	size_t item_read;
 	item_read = fread (&g, (size_t)4,(size_t)1, fp);
-	if ( item_read != 1 )
-		throw Error::FileReadError(fp, "gdcmHeader::ReadInt32");
+	errno = 0;
+	if ( item_read != 1 ) {
+		dbg.Verbose(1, "gdcmHeader::ReadInt32", " File read error");
+		errno = 1;
+		return 0;
+	}
 	g = SwapLong(g);
 	return g;
 }
@@ -851,15 +851,12 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	guint16 n;
 	ElValue * NewElVal;
 	
-	try {
-		g = ReadInt16();
-		n = ReadInt16();
-	}
-	catch ( Error::FileReadError ) {
+	g = ReadInt16();
+	n = ReadInt16();
+	if (errno == 1)
 		// We reached the EOF (or an error occured) and header parsing
 		// has to be considered as finished.
 		return (ElValue *)0;
-	}
 
 	// Find out if the tag we encountered is in the dictionaries:
 	gdcmDictEntry * NewTag = IsInDicts(g, n);
@@ -873,10 +870,10 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	}
 
 	FindVR(NewElVal);
-	try { FindLength(NewElVal); }
-	catch ( Error::FileReadError ) { // Call it quits
+	FindLength(NewElVal);
+	if (errno == 1)
+		// Call it quits
 		return (ElValue *)0;
-	}
 	NewElVal->SetOffset(ftell(fp));
 	return NewElVal;
 }

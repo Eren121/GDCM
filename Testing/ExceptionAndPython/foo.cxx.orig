@@ -1,0 +1,16 @@
+#include <iostream>
+
+namespace MyError {
+	struct MyException {
+		MyException() { cout << "In exception" << endl; }
+	};
+}
+
+void Thrower(void) {
+	throw MyError::MyException();
+}
+
+void MyWrappedFunction(void) {
+   try { Thrower(); }
+   catch (MyError::MyException) { cout<<"Exception caught in caller"<<endl; }
+}

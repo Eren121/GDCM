@@ -1,0 +1,6 @@
+foo.py
+foo_wrap.cxx
+foo.cxx
+main
+*.o
+*.so
