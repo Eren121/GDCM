@@ -16,7 +16,6 @@ SET(EXAMPLE_SOURCES
   TestCopyDicom
   TestChangeHeader
   TestFromScratch
-  TestReadWriteReadCompare
   TestPapyrus
   TestWrite
   TestWriteSimple
