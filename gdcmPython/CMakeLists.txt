@@ -81,7 +81,7 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   # Thus add the custom command to copy it to proper location:
   ADD_CUSTOM_COMMAND(
     TARGET pygdcm
-    POST_BUILD
+    PRE_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy 
       ${GDCM_BINARY_DIR}/bin/gdcm.py 
@@ -89,13 +89,38 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   )
 
   # Here comes the hack to rename the library to a more 'swig' compliant scheme"
+  SET(LIB_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}pygdcm${CMAKE_SHARED_LIBRARY_SUFFIX})
+  SET(EXE_DIR ${GDCM_BINARY_DIR}/Executable)
+  IF(EXECUTABLE_OUTPUT_PATH)
+    SET(EXE_DIR ${EXECUTABLE_OUTPUT_PATH})
+  ENDIF(EXECUTABLE_OUTPUT_PATH)
+  SET(LIB_DIR ${GDCM_BINARY_DIR}/Library/Shared)
+  IF(LIBRARY_OUTPUT_PATH)
+    SET(LIB_DIR ${LIBRARY_OUTPUT_PATH})
+  ENDIF(LIBRARY_OUTPUT_PATH)
+
+  IF(WIN32 OR APPLE)
+    SET(SHARED_MUST_BE_IN_EXE_DIR 1)
+  ENDIF(WIN32 OR APPLE)
+
+  IF(NOT SHARED_MUST_BE_IN_EXE_DIR)
+    SET(EXE_DIR ${LIB_DIR}) 
+  ENDIF(NOT SHARED_MUST_BE_IN_EXE_DIR)
+
+  ADD_CUSTOM_COMMAND(
+    TARGET pygdcm
+    POST_BUILD 
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy
+    ${LIB_DIR}/${CMAKE_CFG_INTDIR}/${LIB_NAME}
+    ${EXE_DIR}/${CMAKE_CFG_INTDIR}/_gdcm${CMAKE_SHARED_LIBRARY_SUFFIX}
+    )
+
+  # Remove temporary (lib)pygdcm(.so .dll) library:
   ADD_CUSTOM_COMMAND(
     TARGET pygdcm
     POST_BUILD
     COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy 
-      ${GDCM_BINARY_DIR}/bin/libpygdcm.so
-      ${GDCM_BINARY_DIR}/bin/_gdcm.so
+    ARGS -E remove ${LIB_DIR}/${CMAKE_CFG_INTDIR}/${LIB_NAME}
   )
 
   # where are library stored ?
@@ -109,16 +134,6 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 #      ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/vtkXY.pvm
 #    TARGET vtkXY
 #  )
-
-  # Remove temporary libpygdcm.so library:
-#  ADD_CUSTOM_COMMAND(
-#    TARGET pygdcm
-#    POST_BUILD
-#    COMMAND ${CMAKE_COMMAND}
-#    ARGS -E remove ${GDCM_BINARY_DIR}/bin/libpygdcm.so
-#  )
-#  GET_TARGET_PROPERTY(foo pygdcm LOCATION)
-#  MESSAGE(FATAL_ERROR ${foo})
 
 ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
