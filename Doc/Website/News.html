@@ -24,10 +24,6 @@ Any contribution is welcome.
 
 <UL>
    <LI> gdcm doesn't read yet JPEG-LS and JPEG2000 encoded files.
-   <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he doesn't 
-           want to deal with <TT>SeqEntry</TT (every time it's possible)
-   <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he doesn't 
-           want to deal with <TT>Shadow groups</TT> 
    <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he just wants 
            to load a given list of <TT>DocEntries</TT> (to save CPU time and RAM
            space)
@@ -40,13 +36,14 @@ Any contribution is welcome.
            <TT> PATIENT</TT>/<TT>STUDY</TT>/<TT>SERIE</TT>/<TT>IMAGE</TT>)
    <LI> Allow user to add an Entry to the default entry list, before
            making a <TT>DICOMDIR</TT> from a root directory
-   <LI> <TT>DICOMDIR</TT> anonymiser (<TT>Load</TT> and <TT>Noload</TT> mode)
    <LI> 16-bits-LUT full Management
    <LI> User friendly management of <TT>Rescale Slope</TT> and
            <TT>Rescale Intercept</TT>
    <LI> Allow parsing the <TT>Shadow groups</TT> against a user supplied 
            private <TT>Dicom Dictionary</TT> (pfff!...)
    <LI> An accurate <TT>SerieHelper</TT>
+   <LI> A <TT>SerieHelper</TT> that would use the <TT>DICOMDIR</TT> (if any)
+        instead of parsing all the files within the Root Directory
 </UL>
 
 <!#######################################################################>
@@ -70,6 +67,22 @@ Any contribution is welcome.
       <LI>Both <TT>vtkgdcmViewer</TT> and <TT>vtkgdcmViewer2</TT> 
           are available to allow easy displaying of single/multiframe 
           GreyLevel/RGB/PaletteColor images
+      <LI> <TT>DICOMDIR</TT> anonymiser (<TT>Load</TT> and <TT>Noload</TT> mode)       <LI> User is now allowed to tell <TT>gdcm::Document</TT> constructor 
+            he doesn't want to deal with <TT>SeqEntry</TT> 
+            (every time it's possible) <br> and/or he doesn't 
+            want to deal with <TT>Shadow groups</TT> (every time it's
+            possible)<br>
+            use : <br><TT>
+            gdcm::File *f = new gdcm::File();<br>
+            f->SetLoadMode(NO_SEQ | NO_SHADOW);<br>
+            f->Load(fileName);<br>
+            </TT>
+            instead of : <br>
+            <TT>
+            gdcm::File *f = new gdcm::File(fileName);</TT>
+           <br>
+  
+       <LI>
    </UL>
 
    <LI> Bug fixes
@@ -82,7 +95,9 @@ Any contribution is welcome.
            does not request any longer from the user to build up 
             'manually' the Meta Elements group (0002)
       <LI> Old '24 Bits' ACR-NEMA are now correctly re-written in DICOM mode.
- 
+      <LI> Element 0x0000 of <TT>Shadow groups</TT> is always forced to be a
+           <TT>ValEntry</TT> and its VR is forced to <TT>UL</TT> 
+      <LI>
    </UL>
 
    <LI> A.P.I. breaking modifications (since previous version : <TT>1.0</TT>)
