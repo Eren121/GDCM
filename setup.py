@@ -6,7 +6,7 @@ ThisModule='gdcmPython'
 gdcmPythonSrcDir=ThisModule
 gdcmSrcDir      ="src"
 gdcmDictsDir    ="Dicts"
-gdcmDataDir     ="Data"
+gdcmTestDir     ="Test"
 
 # Due to a disutil oddity on Unices : see
 # http://aspn.activestate.com/ASPN/Mail/Message/distutils-sig/588325
@@ -43,8 +43,8 @@ setup(name=ThisModule,
                    define_macros=macros,
                    swig_cpp=1,
                    swig_include=[ gdcmSrcDir] ) ],
-      data_files=[(os.path.join(targetDir,"Data"),
-                   glob.glob(os.path.join(gdcmDataDir,"*.*"))),
+      data_files=[(os.path.join(targetDir,gdcmTestDir),
+                   glob.glob(os.path.join(gdcmTestDir,"*.acr"))),
                   (os.path.join(targetDir,"Dicts"),
                    glob.glob(os.path.join(gdcmDictsDir,"*.*"))),
                 ]

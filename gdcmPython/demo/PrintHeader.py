@@ -7,9 +7,9 @@ try:
 except IndexError:
    FileName = os.path.join(GDCM_DATA_PATH, "test.acr")
 
-if not os.path.isfile(FileName):
-   print "Cannot open file ", FileName
-   sys.exit()
+#if not os.path.isfile(FileName):
+#   print "Cannot open file ", FileName
+#   sys.exit()
 
 # On debugging purposes uncomment the next line
 #s = raw_input("Hit any key in this window to exit")
@@ -17,8 +17,7 @@ if not os.path.isfile(FileName):
 ### Build the header element list
 toRead = gdcmHeader(FileName)
 if not toRead.IsReadable():
-   print "The ", FileName, " file is not "
-   print "   readable with gdcm. Sorry."
+   print "The ", FileName, " file is not readable with gdcm. Sorry."
    sys.exit()
 
 print "##############################################################"

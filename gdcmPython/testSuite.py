@@ -495,7 +495,7 @@ class gdcmTestCase(unittest.TestCase):
 
    def _BaseTest(self, FileSet):
       for entry in FileSet:
-         fileName = os.path.join(GDCM_DATA_PATH, entry[0])
+         fileName = os.path.join(GDCM_TEST_DATA_PATH, entry[0])
          toRead = gdcmHeader(fileName)
          valDict = toRead.GetPubElVal()
          for subEntry in entry[1]:
@@ -519,7 +519,7 @@ class gdcmTestCase(unittest.TestCase):
 
    def testWrite(self):
       import md5
-      SourceFileName = os.path.join(GDCM_DATA_PATH,
+      SourceFileName = os.path.join(GDCM_TEST_DATA_PATH,
                                     'gdcm-MR-PHILIPS-16-Multi-Seq.dcm')
       Source = gdcmFile(SourceFileName);
       Source.GetImageData()

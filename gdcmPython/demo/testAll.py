@@ -1,3 +1,5 @@
+import glob, os
+import sys
 from gdcmPython import *
 
 # Test each file of the Data directory
@@ -26,10 +28,11 @@ AllFiles = [
 	]
 
 if __name__ == '__main__':
-	for file in AllFiles:
-		fileName = os.path.join(GDCM_DATA_PATH, file)
-		print "############## file :", fileName
-		toRead = gdcmHeader(fileName)
-		ValDict = toRead.GetPubElVal()
-		for key in ValDict.keys():
-			print "   [%s] = [%s]" %(key, ValDict[key])
+   # AllFiles = glob.glob(os.path.join(GDCM_TEST_DATA_PATH,"*.dcm"))
+   for file in AllFiles:
+      fileName = os.path.join(GDCM_TEST_DATA_PATH, file)
+      print "############## file :", fileName
+      toRead = gdcmHeader(fileName)
+      ValDict = toRead.GetPubElVal()
+      for key in ValDict.keys():
+          print "   [%s] = [%s]" %(key, ValDict[key])
