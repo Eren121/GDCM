@@ -60,7 +60,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
          NumPixel = 0x0010;
 	 
       TagKey key = gdcmDictEntry::TranslateToKey(GrPixel, NumPixel);
-      countGrPixel = GetEntry().count(key);       
+      countGrPixel = GetEntry().count(key);
 }
 
 /**
@@ -443,107 +443,58 @@ std::string gdcmHeader::GetPixelType(void) {
  * \brief   Recover the offset (from the beginning of the file) 
  * \        of *image* pixels (not *icone image* pixels, if any !)
  */
-size_t gdcmHeader::GetPixelOffset(void) { // TODO : move to gdcmFile
-
+size_t gdcmHeader::GetPixelOffset(void) { 
    //
    // If the element (0x0088,0x0200) 'icone image sequence' is found
    // (grPixel,numPixel) is stored twice : the first one for the icon
    // the second one for the image ...
    // pb : sometimes , (0x0088,0x0200) exists, but doesn't contain *anything*
    // see gdcmData/MxTwinLossLess.dcm ...
-   
-   
-   /*
-   guint16 grPixel = GrPixel;
-   guint16 numPixel= NumPixel;
-   std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
 
-   if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
-      grPixel = 0x7fe0;                   // default value
-   } else {
-      grPixel = (guint16) atoi( ImageLocation.c_str() );
-   }
-   
-   if (grPixel == 0xe07f) // sometimes Image Location value doesn't follow 
-      grPixel = 0x7fe0;   // the supposed processor endianity. 
-                          // see gdcmData/cr172241.dcm
-      
-   if (grPixel != 0x7fe0) 
-      // This is a kludge for old dirty Philips imager.
-      numPixel = 0x1010;
-   else
-      numPixel = 0x0010;
- */
+   //std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
       
    IterHT it = GetHeaderEntrySameNumber(GrPixel,NumPixel);          
-   //std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
    TagKey key = gdcmDictEntry::TranslateToKey(GrPixel,NumPixel);
    gdcmHeaderEntry* PixelElement;
-  
-   //if (tagHT.count(key) == 1)
    if (countGrPixel == 1)   
       PixelElement = (it.first)->second;
-   else
-      PixelElement = (++it.first)->second;
-   
+   else {
+      PixelElement = (++it.first)->second; // hope there are no more than 2 !
+   } 
    if (PixelElement) {
       return PixelElement->GetOffset();
-   }
-   else
+   } else {
       return 0;
+      std::cout << "Big trouble : Pixel Element ("
+                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
+                << std::endl;  
+   }     
 }
 // TODO : unify those two (previous one and next one)
 /**
  * \ingroup gdcmHeader
  * \brief   Recover the pixel area length (in Bytes)
- *  @return 0 by default. NOT USABLE file. The caller has to check.
+ * @return Pixel Element Length, as stored in the header
+ *         (NOT the memory space necessary to hold the Pixels 
+ *          - in case of embeded compressed image-)
+ *         0 : NOT USABLE file. The caller has to check.
  */
-size_t gdcmHeader::GetPixelAreaLength(void) {
-
-/*
-   // If this file complies with the norm we should encounter the
-   // "Image Location" tag (0x0028,  0x0200). This tag contains the
-   // the group that contains the pixel data (hence the "Pixel Data"
-   // is found by indirection through the "Image Location").
-   // Inside the group pointed by "Image Location" the searched element
-   // is conventionally the element 0x0010 (when the norm is respected).
-   // When the "Image Location" is absent we default to group 0x7fe0.
-   
-
-   guint16 grPixel;
-   guint16 numPixel;   
-   std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
-   if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
-      grPixel = 0x7fe0;                   // default value
-   } else {
-      grPixel = (guint16) atoi( ImageLocation.c_str() );
-   }
-   if (grPixel == 0xe07f) // sometimes group doesn't follow 
-      grPixel = 0x7fe0;   // the supposed processor endianity. see cr172241.dcm
-      
-   if (grPixel != 0x7fe0)
-      // This is a kludge for old dirty Philips imager.
-      numPixel = 0x1010;
-   else
-      numPixel = 0x0010;
- */
-              
+size_t gdcmHeader::GetPixelAreaLength(void) { 
+          
    IterHT it = GetHeaderEntrySameNumber(GrPixel,NumPixel);          
-   //std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
    TagKey key = gdcmDictEntry::TranslateToKey(GrPixel,NumPixel);
    gdcmHeaderEntry* PixelElement;
   
-  // if (tagHT.count(key) == 1) 
-  if (countGrPixel)  
+  if (countGrPixel==1)  
       PixelElement = (it.first)->second;
    else
       PixelElement = (++it.first)->second;
-   
-   if (PixelElement)
+
+   if (PixelElement) {
       return PixelElement->GetLength();
-   else {
+   } else {
       std::cout << "Big trouble : Pixel Element ("
-                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found" 
+                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
                 << std::endl;
       return 0;
    }

@@ -14,7 +14,7 @@
 #include <iomanip> // for std::ios::left, ...
 
 
-#define MAX_SIZE_PRINT_ELEMENT_VALUE 10000
+#define MAX_SIZE_PRINT_ELEMENT_VALUE 64
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
