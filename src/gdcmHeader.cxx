@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 20:49:44 $
-  Version:   $Revision: 1.230 $
+  Date:      $Date: 2005/01/11 23:06:35 $
+  Version:   $Revision: 1.231 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1193,39 +1193,6 @@ int Header::GetLUTNbits()
    return lutNbits;
 }
 
-/**
- * \brief Accesses the info from 0002,0010 : Transfer Syntax and TS
- *        else 1.
- * @return The full Transfer Syntax Name (as opposed to Transfer Syntax UID)
- */
-std::string Header::GetTransferSyntaxName()
-{
-   // use the TS (TS : Transfer Syntax)
-   std::string transferSyntax = GetEntry(0x0002,0x0010);
-
-   if ( transferSyntax == GDCM_NOTLOADED )
-   {
-      gdcmVerboseMacro( "Transfer Syntax not loaded. " << std::endl
-               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE" );
-      return "Uncompressed ACR-NEMA";
-   }
-   if ( transferSyntax == GDCM_UNFOUND )
-   {
-      gdcmVerboseMacro( "Unfound Transfer Syntax (0002,0010)");
-      return "Uncompressed ACR-NEMA";
-   }
-
-   while ( ! isdigit((unsigned char)transferSyntax[transferSyntax.length()-1]) )
-   {
-      transferSyntax.erase(transferSyntax.length()-1, 1);
-   }
-   // we do it only when we need it
-   TS* ts         = Global::GetTS();
-   std::string tsName = ts->GetValue( transferSyntax );
-
-   //delete ts; /// \todo Seg Fault when deleted ?!
-   return tsName;
-}
 
 //-----------------------------------------------------------------------------
 // Protected

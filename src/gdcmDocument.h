@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 22:46:22 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2005/01/11 23:06:35 $
+  Version:   $Revision: 1.83 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,7 +121,10 @@ public:
 
    void LoadDocEntrySafe(DocEntry *entry);
    TagDocEntryHT *BuildFlatHashTable();
-      
+
+   /// Return the Transfer Syntax as a string
+   std::string GetTransferSyntaxName();
+
 protected:
 // Methods
    // Constructor and destructor are protected to forbid end user 
