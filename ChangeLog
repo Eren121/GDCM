@@ -5,6 +5,18 @@
       *ENH : PrintPubElVal shows (temporarily) both results,
              with the tagHt member and the listElem member.
 	     (it's easier to 'see' the problems when using Printheader)
+	     
+      *FIX : old private member LgrElem is now splitted into
+             ReadLength   : Length actually found on disk (updated only
+	                    if bug fixing is necessary), for internal
+			    use only
+	     UsableLength : Updated by FixFoundLength, to fix a bug
+	                    or to allow Parser going on.
+	     Will allow to re-write a kosher header when a SeQuence
+	     with a length (not 0000) is found
+      Warning : gdcmFile::Write still uses the TagHt (not ListElem)     
+	        because gdcmElValSet::Add does not update ListElem
+		(to be written)
 
 2003-11-07 Jean-Pierre Roux
      *FIX misstyping in Transfert Syntax name table
