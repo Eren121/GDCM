@@ -1,6 +1,7 @@
 2004-12-04 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Bug fix due my last commit (compilation under Windows).
    * Example/Volume2Dicom : bug fix in the file and reformatting source code
+   * src/gdcmFile.h : bug fix. Variable type and variable name had same name
 
 2004-12-03 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Huge cleanup:

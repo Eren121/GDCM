@@ -140,8 +140,8 @@ using namespace gdcm;
       NewKey = PyString_FromString(RawName.c_str());
 
       // Element values are striped from leading/trailing spaces
-      if (gdcm::ValEntry* ValEntryPtr =
-                dynamic_cast< gdcm::ValEntry* >(tag->second) )
+	  gdcm::ValEntry* ValEntryPtr = dynamic_cast< gdcm::ValEntry* >(tag->second);
+      if ( ValEntryPtr )
       {
          RawValue = ValEntryPtr->GetValue();
       }

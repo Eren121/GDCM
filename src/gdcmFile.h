@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2004/12/04 09:41:02 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ class DocEntryArchive;
 class GDCM_EXPORT File
 {
 public:
-   enum WriteMode
+   enum FileMode
    {
       WMODE_DECOMPRESSED,
       WMODE_RGB
@@ -78,8 +78,8 @@ public:
    // Write mode
    void SetWriteModeToDecompressed() { SetWriteMode(WMODE_DECOMPRESSED); };
    void SetWriteModeToRGB()          { SetWriteMode(WMODE_RGB); };
-   void SetWriteMode(WriteMode mode) { WriteMode = mode; };
-   WriteMode GetWriteMode()          { return WriteMode; };
+   void SetWriteMode(FileMode mode)  { WriteMode = mode; };
+   FileMode GetWriteMode()           { return WriteMode; };
 
    // Write format
    void SetWriteTypeToDcmImplVR()     { SetWriteType(ImplicitVR); };
@@ -137,7 +137,7 @@ private:
    DocEntryArchive *Archive;
 
    // Write variables
-   WriteMode WriteMode;
+   FileMode WriteMode;
    FileType WriteType;
 };
 } // end namespace gdcm
