@@ -156,10 +156,6 @@ SOURCE=..\gdcmJpeg2000.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\gdcmJpegIdo.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\gdcmRLE.cxx
 # End Source File
 # Begin Source File
@@ -183,6 +179,10 @@ SOURCE=..\gdcmVR.cxx
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # End Group
+# Begin Source File
+
+SOURCE=..\..\lib\libgdcmljpeg.lib
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\lib\libgdcmijpeg8.lib
