@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/07 22:06:47 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -457,8 +457,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream *fp )
       else
       {
          // other JPEG lossy not supported
-         gdcmErrorMacro("PixelReadConvert::ReadAndDecompressJPEGFile: unknown "
-                   "jpeg lossy compression ");
+         gdcmErrorMacro( "Unknown jpeg lossy compression ");
          return false;
       }
 
@@ -517,9 +516,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
       if ( ! gdcm_read_JPEG_memory8( buffer, totalLength, Raw,
                                      &howManyRead, &howManyWritten ) ) 
       {
-         gdcmErrorMacro(
-            "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg8 "
-            );
+         gdcmErrorMacro( "Failed to read jpeg8 ");
          delete [] buffer;
          return false;
       }
@@ -529,9 +526,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
       if ( ! gdcm_read_JPEG_memory12( buffer, totalLength, Raw,
                                       &howManyRead, &howManyWritten ) ) 
       {
-         gdcmErrorMacro(
-            "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg12 "
-            );
+         gdcmErrorMacro( "Failed to read jpeg12 ");
             delete [] buffer;
             return false;
       }
@@ -542,9 +537,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
       if ( ! gdcm_read_JPEG_memory16( buffer, totalLength, Raw,
                                       &howManyRead, &howManyWritten ) ) 
       {
-         gdcmErrorMacro(
-            "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg16 "
-            );
+         gdcmErrorMacro( "Failed to read jpeg16 ");
          delete [] buffer;
          return false;
       }
@@ -552,8 +545,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
    else
    {
       // other JPEG lossy not supported
-      gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: unknown "
-                "jpeg lossy compression ");
+      gdcmErrorMacro( "Unknown jpeg lossy compression ");
       delete [] buffer;
       return false;
    }      
@@ -619,7 +611,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
                                      Raw+howManyWritten,
                                      &howManyRead, &howManyWritten ) ) 
           {
-            gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg8 ");
+            gdcmErrorMacro( "Failed to read jpeg8");
             delete [] buffer;
             return false;
           }
@@ -631,7 +623,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
                                       Raw+howManyWritten,
                                       &howManyRead, &howManyWritten ) ) 
           {
-            gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg12 ");
+            gdcmErrorMacro( "Failed to read jpeg12");
             delete [] buffer;
             return false;
          }
@@ -643,7 +635,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
                                       Raw+howManyWritten,
                                       &howManyRead, &howManyWritten ) ) 
           {
-            gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg16 ");
+            gdcmErrorMacro( "Failed to read jpeg16 ");
             delete [] buffer;
             return false;
           }
@@ -651,8 +643,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
       else
       {
          // other JPEG lossy not supported
-         gdcmErrorMacro("PixelConvert::ReadAndDecompressJPEGFile: unknown "
-                   "jpeg lossy compression ");
+         gdcmErrorMacro( "Unknown jpeg lossy compression ");
          delete [] buffer;
          return false;
       }

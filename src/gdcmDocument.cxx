@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.166 $
+  Date:      $Date: 2005/01/07 22:06:47 $
+  Version:   $Revision: 1.167 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1110,7 +1110,7 @@ uint32_t Document::SwapLong(uint32_t a)
          break;
       default :
          //std::cout << "swapCode= " << SwapCode << std::endl;
-         gdcmErrorMacro(" Document::SwapLong : unset swap code");
+         gdcmErrorMacro( "Unset swap code");
          a = 0;
    }
    return a;
@@ -1571,8 +1571,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    }
    else
    {
-      gdcmErrorMacro("Document::LoadDocEntry"
-                      "Should have a ValEntry, here !");
+      gdcmErrorMacro( "Should have a ValEntry, here !");
    }
 }
 
