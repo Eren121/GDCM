@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG12_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG12_EXPORTS" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG12_EXPORTS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
@@ -53,10 +53,10 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /out:"..\..\lib\libgdcmijpeg12.dll"
+# ADD LINK32 gdi32.lib kernel32.lib /nologo /dll /machine:I386 /nodefaultlib /out:"..\..\lib\libgdcmijpeg12.dll"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy   Release__libgdcmijpeg12\libgdcmijpeg12.lib   ..\..\lib\  	copy   ..\..\lib\libgdcmijpeg12.dll   ..\..\gdcmPython\  	copy   ..\..\lib\libgdcmijpeg12.dll   ..\..\vtk\ 
+PostBuild_Cmds=copy    Release__libgdcmijpeg12\libgdcmijpeg12.lib    ..\..\lib\   	copy    ..\..\lib\libgdcmijpeg12.dll    ..\..\gdcmPython\   	copy    ..\..\lib\libgdcmijpeg12.dll    ..\..\vtk\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "libgdcmijpeg12 - Win32 Debug"
@@ -73,7 +73,7 @@ PostBuild_Cmds=copy   Release__libgdcmijpeg12\libgdcmijpeg12.lib   ..\..\lib\  	
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG12_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG12_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG12_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -83,10 +83,10 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"..\..\lib\libgdcmijpeg12.dll" /pdbtype:sept
+# ADD LINK32 kernel32.lib msvcrtd.lib /nologo /dll /debug /machine:I386 /nodefaultlib /out:"..\..\lib\libgdcmijpeg12.dll" /pdbtype:sept
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy   Debug__libgdcmijpeg12\libgdcmijpeg12.lib   ..\..\lib\  	copy   ..\..\lib\libgdcmijpeg12.dll   ..\..\gdcmPython\  	copy   ..\..\lib\libgdcmijpeg12.dll   ..\..\vtk\ 
+PostBuild_Cmds=copy    Debug__libgdcmijpeg12\libgdcmijpeg12.lib    ..\..\lib\   	copy    ..\..\lib\libgdcmijpeg12.dll    ..\..\gdcmPython\   	copy    ..\..\lib\libgdcmijpeg12.dll    ..\..\vtk\ 
 # End Special Build Tool
 
 !ENDIF 

@@ -53,12 +53,12 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib Wsock32.lib /nologo /dll /machine:I386 /out:"../../lib/gdcmdll.dll"
+# ADD LINK32 kernel32.lib msvcrt.lib msvcprt.lib Wsock32.lib /nologo /dll /machine:I386 /nodefaultlib /out:"../../lib/gdcmdll.dll"
 # SUBTRACT LINK32 /debug
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy         ..\..\lib\gdcmdll.dll         ..\..\gdcmPython\     	copy         ..\..\lib\gdcmdll.dll         ..\..\test\     	copy      Release\gdcmdll.lib      ..\..\lib\ 
+PostBuild_Cmds=copy           ..\..\lib\gdcmdll.dll           ..\..\gdcmPython\       	copy           ..\..\lib\gdcmdll.dll           ..\..\test\       	copy        Release\gdcmdll.lib        ..\..\lib\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmdll - Win32 Debug"
@@ -85,12 +85,12 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 Wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"..\..\lib\gdcmdll.dll" /pdbtype:sept
+# ADD LINK32 kernel32.lib msvcrtd.lib msvcprtd.lib Wsock32.lib /nologo /dll /debug /machine:I386 /nodefaultlib /out:"..\..\lib\gdcmdll.dll" /pdbtype:sept
 # SUBTRACT LINK32 /incremental:no
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy         ..\..\lib\gdcmdll.dll         ..\..\gdcmPython\     	copy         ..\..\lib\gdcmdll.dll         ..\..\test\     	copy      Debug\gdcmdll.lib      ..\..\lib\ 
+PostBuild_Cmds=copy           ..\..\lib\gdcmdll.dll           ..\..\gdcmPython\       	copy           ..\..\lib\gdcmdll.dll           ..\..\test\       	copy        Debug\gdcmdll.lib        ..\..\lib\ 
 # End Special Build Tool
 
 !ENDIF 
