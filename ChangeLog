@@ -1,3 +1,9 @@
+2004-02-02 Jean-Pierre Roux
+     * FIX : gdcmWrite : equal_range() for multimap doesn't return a 'second' iterator on last
+             of the last synonym :-(
+     * FIX : gdcmWrite::WriteBase : method stops if Pixels not yet Read (except for
+             DICOMDIR ;-)
+
 2004-01-31 Jean-Pierre Roux
      * FIX gdcmParser::WriteEntries : when a VR is tagged as 'Unknown'
                        no longer writes 'Un' on disk
