@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 11:28:30 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2005/01/17 16:52:21 $
+  Version:   $Revision: 1.88 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,6 +115,8 @@ public:
 
    bool ReplaceIfExist(std::string const &value,
                        uint16_t group, uint16_t elem );
+
+   bool CheckIfEntryExist(uint16_t group, uint16_t elem );
    
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
    virtual void LoadEntryBinArea(BinEntry *entry);
@@ -138,7 +140,6 @@ protected:
    void ComputeRLEInfo();
    void ComputeJPEGFragmentInfo();
    // Entry
-   bool CheckIfEntryExist(uint16_t group, uint16_t elem );
 
    int ComputeGroup0002Length( FileType filetype );
 
