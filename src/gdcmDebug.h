@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 22:30:11 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/13 22:39:15 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,6 +96,9 @@ public:
  * \brief   Debug
  * @param msg message part
  */
+#ifdef NDEBUG
+#define gdcmDebugMacro(msg)
+#else
 #define gdcmDebugMacro(msg)                                 \
 {                                                           \
    if( Debug::GetDebugFlag() )                              \
@@ -111,11 +114,15 @@ public:
       std::cerr << osmacro.str() << std::endl;              \
    }                                                        \
 }
+#endif //NDEBUG
 
 /**
  * \brief   Verbose 
  * @param msg message part
  */
+#ifdef NDEBUG
+#define gdcmVerboseMacro(msg)
+#else
 #define gdcmVerboseMacro(msg)                               \
 {                                                           \
    if( Debug::GetDebugFlag() )                              \
@@ -130,11 +137,15 @@ public:
       std::cerr << osmacro.str() << std::endl;              \
    }                                                        \
 }
+#endif //NDEBUG
 
 /**
  * \brief   Error 
  * @param msg second message part 
  */
+#ifdef NDEBUG
+#define gdcmErrorMacro(msg)
+#else
 #define gdcmErrorMacro(msg)                                 \
 {                                                           \
    if( Debug::GetDebugFlag() )                              \
@@ -150,6 +161,7 @@ public:
    exit(1);                                                 \
    }                                                        \
 }
+#endif //NDEBUG
 
 /**
  * \brief   Assert 
@@ -157,6 +169,9 @@ public:
  *        An easy solution to pass also a message is to do:
  *        gdcmAssertMacro( "my message" && 2 < 3 )
  */
+#ifdef NDEBUG
+#define gdcmAssertMacro(arg)
+#else
 #define gdcmAssertMacro(arg)                                \
 {                                                           \
    if( !(arg) )                                             \
@@ -172,5 +187,6 @@ public:
    assert ( arg );                                          \
    }                                                        \
 }
+#endif //NDEBUG
 
 #endif
