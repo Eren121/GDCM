@@ -4,13 +4,6 @@ SUBDIRS(
   ljpg
 )
 
-# JPEG 8 bits project
-
-#PROJECT(GDCMJPEG)
-#INCLUDE_REGULAR_EXPRESSION("^(jchuff|jconfig|jdct|jdhuff|jerror|jinclude|jmemsys|jmorecfg|jpegint|jpeglib|jversion|jpeg|gdcm).*$")
-#INCLUDE_DIRECTORIES(${GDCMJPEG_SOURCE_DIR})
-
-
 # memmgr back ends: compile only one of these into a working library
 # (For now, let's use the mode that requires the image fit into memory.
 # This is the recommended mode for Win32 anyway.)
@@ -70,7 +63,6 @@ ENDIF (WIN32)
 
 SET(JPEG8_SOURCES)
 SET(JPEG12_SOURCES)
-#  MESSAGE("WOOOO")
 FOREACH(file ${JPEG_SOURCES})
   # Duplicate jpeg source in subdir libijg8
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libijg/${file}"
@@ -84,7 +76,6 @@ FOREACH(file ${JPEG_SOURCES})
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/gdcm_mangle_8bits.h
                  ${CMAKE_CURRENT_BINARY_DIR}/libijg8/gdcm_mangle_8bits.h @ONLY IMMEDIATE)
 
-  #MESSAGE("${CMAKE_CURRENT_BINARY_DIR}/libijg8/${file}")
   # Duplicate jpeg source in subdir libijg12
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libijg/${file}"
     "${CMAKE_CURRENT_BINARY_DIR}/libijg12/${file}"
@@ -111,16 +102,8 @@ ENDFOREACH(file)
 SET(GDCM_BITS_IN_JSAMPLE 8)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jmorecfg.h
                ${CMAKE_CURRENT_BINARY_DIR}/libijg8/jmorecfg.h @ONLY IMMEDIATE)
+
 SET(GDCM_BITS_IN_JSAMPLE 12)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jmorecfg.h
                ${CMAKE_CURRENT_BINARY_DIR}/libijg12/jmorecfg.h @ONLY IMMEDIATE)
 
-#  MESSAGE("${JPEG8_SOURCES}")
-
-#ADD_LIBRARY(gdcmijpeg8 ${systemdependent_SRCS} ${common_SRCS} ${compression_SRCS} ${decompression_SRCS})
-#ADD_LIBRARY(gdcmijpeg8 ${JPEG8_SOURCES})
-#ADD_LIBRARY(gdcmijpeg12 ${JPEG12_SOURCES})
-
-#INSTALL_TARGETS(/lib/ gdcmijpeg8)
-#INSTALL_TARGETS(/lib/ gdcmijpeg12)
-#INSTALL_FILES(/include .h jconfig.linux jconfig.vc)
