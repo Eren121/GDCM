@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 22:20:11 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/14 22:27:27 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,7 +101,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
       }
       else
       {
-         push_back(dirName+fileName);
+         Filenames.push_back(dirName+fileName);
          numberOfFiles++;
       }
 
