@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 08:46:18 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/01/07 16:45:51 $
+  Version:   $Revision: 1.77 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -208,20 +208,19 @@ private:
 
    void LoadDocEntry         (DocEntry *e);
    void FindDocEntryLength   (DocEntry *e) throw ( FormatError );
+   uint32_t FindDocEntryLengthOBOrOW() throw( FormatUnexpected );
    std::string FindDocEntryVR();
    bool CheckDocEntryVR      (VRKey k);
 
-   std::string GetDocEntryValue  (DocEntry *e);
-   std::string GetDocEntryUnvalue(DocEntry *e);
+   std::string GetDocEntryValue  (DocEntry *entry);
+   std::string GetDocEntryUnvalue(DocEntry *entry);
 
 
-   void SkipDocEntry          (DocEntry *e);
-   void SkipToNextDocEntry    (long offset,long readLgth);
+   void SkipDocEntry          (DocEntry *entry);
+   void SkipToNextDocEntry    (DocEntry *entry);
 
-   void FixDocEntryFoundLength(DocEntry *e, uint32_t l);
-   bool IsDocEntryAnInteger   (DocEntry *e);
-
-   uint32_t FindDocEntryLengthOB() throw( FormatUnexpected );
+   void FixDocEntryFoundLength(DocEntry *entry,uint32_t l);
+   bool IsDocEntryAnInteger   (DocEntry *entry);
 
    uint16_t ReadInt16() throw ( FormatError );
    uint32_t ReadInt32() throw ( FormatError );

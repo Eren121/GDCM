@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:26 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/07 16:45:51 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,10 +42,12 @@ BinEntry::BinEntry(DictEntry *e) : ValEntry(e)
  */
 BinEntry::BinEntry(DocEntry *e) : ValEntry(e->GetDictEntry())
 {
-   UsableLength = e->GetLength();
-   ReadLength   = e->GetReadLength();
-   ImplicitVR   = e->IsImplicitVR();
-   Offset       = e->GetOffset();
+   Copy(e);
+/*   Length     = e->GetLength();
+   ReadLength = e->GetReadLength();
+   ImplicitVR = e->IsImplicitVR();
+   Offset     = e->GetOffset();*/
+
    //FIXME
    //SQDepthLevel = e->GetDepthLevel();
 
@@ -114,8 +116,6 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    {
       // there is a 'non string' LUT, overlay, etc
       fp->write ( (char*)binArea, lgr ); // Elem value
-      //assert( strlen((char*)binArea) == lgr );
-
    }
    else
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/07 16:45:51 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ DocEntry::DocEntry(DictEntry *in)
 
    // init some variables
    ReadLength = 0;
-   UsableLength = 0;
+   Length = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void DocEntry::Print(std::ostream &os)
    if (PrintLevel >= 2)
    {
       s << " lg : ";
-      lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
+      lgth = GetReadLength(); // ReadLength, as opposed to Length
       if (lgth == 0xffffffff)
       {
          st = Util::Format("x(ffff)");  // I said : "x(ffff)" !
@@ -126,7 +126,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    uint16_t group = GetGroup();
    VRKey vr   = GetVR();
    uint16_t el    = GetElement();
-   uint32_t lgr   = GetReadLength();
+   uint32_t lgr   = GetLength();
 
    if ( group == 0xfffe && el == 0x0000 )
    {
@@ -246,11 +246,10 @@ uint32_t DocEntry::GetFullLength()
  */
 void DocEntry::Copy (DocEntry *e)
 {
-//   DicomDict    = e->DicomDict;
-   UsableLength = e->UsableLength;
-   ReadLength   = e->ReadLength;
-   ImplicitVR   = e->ImplicitVR;
-   Offset       = e->Offset;
+   Length     = e->Length;
+   ReadLength = e->ReadLength;
+   ImplicitVR = e->ImplicitVR;
+   Offset     = e->Offset;
    // TODO : remove DocEntry SQDepth
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/07 16:45:52 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,10 +47,11 @@ ValEntry::ValEntry(DictEntry *e) : DocEntry(e)
 ValEntry::ValEntry(DocEntry *e)
              : DocEntry(e->GetDictEntry())
 {
-   UsableLength = e->GetLength();
-   ReadLength   = e->GetReadLength();
-   ImplicitVR   = e->IsImplicitVR();
-   Offset       = e->GetOffset();
+   Copy(e);
+/*   Length     = e->GetLength();
+   ReadLength = e->GetReadLength();
+   ImplicitVR = e->IsImplicitVR();
+   Offset     = e->GetOffset();*/
 }
 
 
@@ -223,13 +224,14 @@ void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
    DocEntry::WriteContent(fp, filetype);
 
-   if ( GetGroup() == 0xfffe ) 
+   if ( GetGroup() == 0xfffe )
    {
       return; //delimitors have NO value
    }
-      
+
    std::string vr = GetVR();
-   unsigned int lgr = GetReadLength();
+   unsigned int lgr = GetLength();
+   //std::cout<<std::hex<<GetGroup()<<"|"<<GetElement()<<std::dec<<" : "<<GetReadLength()<<" / "<<GetLength()<<"\n";
    if (vr == "US" || vr == "SS")
    {
       // some 'Short integer' fields may be mulivaluated

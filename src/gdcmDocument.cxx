@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:26:12 $
-  Version:   $Revision: 1.163 $
+  Date:      $Date: 2005/01/07 16:45:51 $
+  Version:   $Revision: 1.164 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1180,7 +1180,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    SeqEntry *newSeqEntry;
    VRKey vr;
    bool used=false;
-   long offsetEntry,readEntry;
 
    while (true)
    {
@@ -1203,9 +1202,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
       if ( newValEntry || newBinEntry )
       {
-         offsetEntry=newDocEntry->GetOffset();
-         readEntry=newDocEntry->GetReadLength();
-               
          if ( newBinEntry )
          {
             if ( ! Global::GetVR()->IsVROfBinaryRepresentable(vr) )
@@ -1301,9 +1297,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                 Fp->seekg( positionOnEntry, std::ios::beg );
              }
          }
-    
+
          // Just to make sure we are at the beginning of next entry.
-         SkipToNextDocEntry(offsetEntry,readEntry);
+         SkipToNextDocEntry(newDocEntry);
       }
       else
       {
@@ -1500,7 +1496,7 @@ void Document::LoadDocEntry(DocEntry *entry)
       LoadEntryBinArea(binEntryPtr); // last one, not to erase length !
       return;
    }
-    
+
    /// \todo Any compacter code suggested (?)
    if ( IsDocEntryAnInteger(entry) )
    {   
@@ -1562,7 +1558,7 @@ void Document::LoadDocEntry(DocEntry *entry)
       //Debug::Verbose(0, "Warning: bad length: ", length );
       Debug::Verbose(0, "For string :",  newValue.c_str()); 
       // Since we change the length of string update it length
-      entry->SetReadLength(length+1);
+      //entry->SetReadLength(length+1);
    }
    else
    {
@@ -1624,9 +1620,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
             uint32_t lengthOB;
             try 
             {
-               /// \todo rename that to FindDocEntryLengthOBOrOW since
-               ///       the above test is on both OB and OW...
-               lengthOB = FindDocEntryLengthOB();
+               lengthOB = FindDocEntryLengthOBOrOW();
             }
             catch ( FormatUnexpected )
             {
@@ -1637,11 +1631,15 @@ void Document::FindDocEntryLength( DocEntry *entry )
                // the length and proceed.
                long currentPosition = Fp->tellg();
                Fp->seekg(0L,std::ios::end);
+
                long lengthUntilEOF = (long)(Fp->tellg())-currentPosition;
                Fp->seekg(currentPosition, std::ios::beg);
+
+               entry->SetReadLength(lengthUntilEOF);
                entry->SetLength(lengthUntilEOF);
                return;
             }
+            entry->SetReadLength(lengthOB);
             entry->SetLength(lengthOB);
             return;
          }
@@ -1690,6 +1688,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
          }
          length16 = 4;
          SwitchSwapToBigEndian();
+
          // Restore the unproperly loaded values i.e. the group, the element
          // and the dictionary entry depending on them.
          uint16_t correctGroup = SwapShort( entry->GetGroup() );
@@ -1926,10 +1925,10 @@ void Document::SkipDocEntry(DocEntry *entry)
  * @param   readLgth length to skip
 
  */
-void Document::SkipToNextDocEntry(long offset,long readLgth) 
+void Document::SkipToNextDocEntry(DocEntry *newDocEntry) 
 {
-   Fp->seekg((long)(offset),    std::ios::beg);
-   Fp->seekg( (long)(readLgth), std::ios::cur);
+   Fp->seekg((long)(newDocEntry->GetOffset()),     std::ios::beg);
+   Fp->seekg( (long)(newDocEntry->GetReadLength()),std::ios::cur);
 }
 
 /**
@@ -1948,15 +1947,15 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
       foundLength = 0;
    }
    
-   uint16_t gr = entry->GetGroup();
-   uint16_t el = entry->GetElement(); 
+   uint16_t gr   = entry->GetGroup();
+   uint16_t elem = entry->GetElement(); 
      
    if ( foundLength % 2)
    {
       std::ostringstream s;
       s << "Warning : Tag with uneven length "
         << foundLength 
-        <<  " in x(" << std::hex << gr << "," << el <<")" << std::dec;
+        <<  " in x(" << std::hex << gr << "," << elem <<")" << std::dec;
       Debug::Verbose(0, s.str().c_str());
    }
       
@@ -1969,9 +1968,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    if ( foundLength == 13)
    {
       // Only happens for this length !
-      if ( entry->GetGroup()   != 0x0008
-      || ( entry->GetElement() != 0x0070
-        && entry->GetElement() != 0x0080 ) )
+      if ( gr != 0x0008 || ( elem != 0x0070 && elem != 0x0080 ) )
       {
          foundLength = 10;
          entry->SetReadLength(10); /// \todo a bug is to be fixed !?
@@ -1982,9 +1979,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    // Occurence of such images is quite low (unless one leaves close to a
    // 'Leonardo' source. Hence, one might consider commenting out the
    // following fix on efficiency reasons.
-   else if ( entry->GetGroup()   == 0x0009 
-        && ( entry->GetElement() == 0x1113
-          || entry->GetElement() == 0x1114 ) )
+   else if ( gr   == 0x0009 && ( elem == 0x1113 || elem == 0x1114 ) )
    {
       foundLength = 4;
       entry->SetReadLength(4); /// \todo a bug is to be fixed !?
@@ -1998,7 +1993,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    //////// We encountered a 'delimiter' element i.e. a tag of the form 
    // "fffe|xxxx" which is just a marker. Delimiters length should not be
    // taken into account.
-   else if( entry->GetGroup() == 0xfffe )
+   else if( gr == 0xfffe )
    {    
      // According to the norm, fffe|0000 shouldn't exist. BUT the Philips
      // image gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm happens to
@@ -2009,7 +2004,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
      }
    } 
            
-   entry->SetUsableLength(foundLength);
+   entry->SetLength(foundLength);
 }
 
 /**
@@ -2066,7 +2061,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
  * @return 
  */
 
-uint32_t Document::FindDocEntryLengthOB()
+uint32_t Document::FindDocEntryLengthOBOrOW()
    throw( FormatUnexpected )
 {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
@@ -2085,7 +2080,7 @@ uint32_t Document::FindDocEntryLengthOB()
       }
       catch ( FormatError )
       {
-         throw FormatError("Document::FindDocEntryLengthOB()",
+         throw FormatError("Document::FindDocEntryLengthOBOrOW()",
                            " group or element not present.");
       }
 
@@ -2094,10 +2089,10 @@ uint32_t Document::FindDocEntryLengthOB()
      
       if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
       {
-         Debug::Verbose(1, "Document::FindDocEntryLengthOB: neither an Item "
+         Debug::Verbose(1, "Document::FindDocEntryLengthOBOrOW: neither an Item "
                         "tag nor a Sequence delimiter tag."); 
          Fp->seekg(positionOnEntry, std::ios::beg);
-         throw FormatUnexpected("Document::FindDocEntryLengthOB()",
+         throw FormatUnexpected("Document::FindDocEntryLengthOBOrOW()",
                                 "Neither an Item tag nor a Sequence "
                                 "delimiter tag.");
       }
