@@ -2,24 +2,24 @@
 //-----------------------------------------------------------------------------
 //
 #include "gdcmBinEntry.h"
-#include "gdcmTS.h"
-#include "gdcmGlobal.h"
-#include "gdcmUtil.h"
 
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-/**
- * \ingroup gdcmBinEntry
- * \brief   Constructor from a given gdcmBinEntry
- * @param   in Pointer to existing dictionary entry
- */
-gdcmBinEntry::gdcmBinEntry() : gdcmDocEntry( ) {
 
+/**
+ * \brief   Constructor from a given gdcmBinEntry
+ */
+gdcmBinEntry::gdcmBinEntry() : gdcmValEntry() {
 
 }
 
+/**
+ * \brief   Canonical destructor.
+ */
+gdcmBinEntry::~gdcmBinEntry(){
 
+}
 
 
 //-----------------------------------------------------------------------------

@@ -5,17 +5,21 @@
 
 //-----------------------------------------------------------------------------
 
-class GDCM_EXPORT gdcmDocEntrySet 
-{
+class GDCM_EXPORT gdcmDocEntrySet  {
+
 public:
 
-void gdcmElementSet::FindDocEntryLength (gdcmDocEntry *Entry);
+
+   gdcmDocEntrySet(void); 
+   ~gdcmDocEntrySet(void);
+
+   void gdcmElementSet::FindDocEntryLength (gdcmDocEntry *Entry);
 
 protected:
 
 private:
 
-bool gdcmDocEntrySet::LoadDocEntriesSet(bool exception_on_error = false) 
+   bool gdcmDocEntrySet::LoadDocEntriesSet(bool exception_on_error = false) 
                      throw(gdcmFormatError);
 };
 

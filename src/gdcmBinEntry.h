@@ -6,6 +6,8 @@
 #include <iostream>
 #include <stdio.h>
 
+#include "gdcmValEntry.h"
+
 //-----------------------------------------------------------------------------
 /**
  * \ingroup gdcmBinEntry
@@ -17,6 +19,17 @@ class GDCM_EXPORT gdcmBinEntry  : public gdcmValEntry {
 
 public:
 
+   gdcmBinEntry(void); 
+   ~gdcmBinEntry(void);
+
+
+   /// \brief Returns the area value of the current Dicom Header Entry
+   ///  when it's not string-translatable (e.g : a LUT table)         
+   inline void *       GetVoidArea(void)  { return voidArea; };
+
+   /// Sets the value (non string) of the current Dicom Header Entry
+   inline void SetVoidArea(void * area)  { voidArea = area;  };
+         
 protected:
 
 private:

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdio.h>
 
+#include "gdcmDocEntry.h"
 //-----------------------------------------------------------------------------
 /**
  * \ingroup gdcmBinEntry
@@ -13,10 +14,22 @@
  *          (when successfuly parsed against a given Dicom dictionary)
  *          This one contains a 'non string' value
  */
-class GDCM_EXPORT gdcmDocEntry  : public gdcmValEntry {
+class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry {
 
 public:
 
+
+   gdcmValEntry(void); 
+   ~gdcmValEntry(void);
+
+   /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
+   /// 'string', if it's stored as an integer in the Dicom Header of the
+   /// current Dicom Header Entry
+   inline std::string  GetValue(void)     { return value; };
+    
+   /// Sets the value (string) of the current Dicom Header Entry
+   inline void SetValue(std::string val)  { value = val;  };
+         
 protected:
 
 private:
@@ -33,7 +46,7 @@ private:
 
 
 
-
+};
 
 //-----------------------------------------------------------------------------
 #endif

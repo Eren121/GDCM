@@ -37,15 +37,6 @@ public:
    /// Dictionnary, of the current Dicom Header Entry
    inline std::string  GetVR(void)        { return entry->GetVR();     };
 
-   /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
-   /// 'string', if it's stored as an integer in the Dicom Header of the
-   /// current Dicom Header Entry
-   inline std::string  GetValue(void)     { return value;              };
-
-   /// \brief Returns the area value of the current Dicom Header Entry
-   ///  when it's not string-translatable (e.g : a LUT table)         
-   inline void *       GetVoidArea(void)  { return voidArea;           };
-
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Pramble, if any) of the value of the current Dicom HeaderEntry
    /// \warning offset of the *value*, not of the Dicom Header Entry
@@ -78,12 +69,6 @@ public:
    /// \brief Sets only 'Usable Length' (*not* 'Read Length') of the current
    /// Dicom Header Entry
    inline void SetUsableLength(guint32 l) { UsableLength = l; }; 
-    
-   /// Sets the value (string) of the current Dicom Header Entry
-   inline void SetValue(std::string val) {  value = val; };
-
-   /// Sets the value (non string) of the current Dicom Header Entry
-   inline void SetVoidArea(void * area)  { voidArea = area;  };
    
    /// \brief   Sets the offset of the Dicom Element
    /// \warning use with caution !

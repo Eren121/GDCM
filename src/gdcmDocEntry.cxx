@@ -30,6 +30,10 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in) {
  * \brief   canonical Printer
  */
 void gdcmDocEntry::Print(std::ostream & os) {
+
+// TODO : (no more chained list ...)
+
+/*
    size_t o;
    unsigned short int g, e;
    char st[20];
@@ -126,6 +130,8 @@ void gdcmDocEntry::Print(std::ostream & os) {
    }
    s << std::endl;
    os << s.str();
+   
+   */
 }
 
 //-----------------------------------------------------------------------------
@@ -153,13 +159,13 @@ guint32 gdcmDocEntry::GetFullLength(void) {
  * \brief   Copies all the attributes from an other DocEntry 
  */
 
-void Copy (gdcmDocEntry* e) {
-   this->entry = e->entry;
+void gdcmDocEntry::Copy (gdcmDocEntry* e) {
+   this->entry        = e->entry;
    this->UsableLength = e->UsableLength;
-   this->ReadLength = e->ReadLength;
-   this->ImplicitVR = e->ImplicitVR;
-   this->Offset = e->Offset;
-   this->printLevel = e->printLevel;
+   this->ReadLength   = e->ReadLength;
+   this->ImplicitVR   = e->ImplicitVR;
+   this->Offset       = e->Offset;
+   this->printLevel   = e->printLevel;
    this->SQDepthLevel = e->SQDepthLevel;      
 }
 

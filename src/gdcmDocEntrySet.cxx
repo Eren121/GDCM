@@ -2,9 +2,6 @@
 //-----------------------------------------------------------------------------
 //
 #include "gdcmDocEntrySet.h"
-#include "gdcmTS.h"
-#include "gdcmGlobal.h"
-#include "gdcmUtil.h"
 
 #include <iomanip> // for std::ios::left, ...
 
