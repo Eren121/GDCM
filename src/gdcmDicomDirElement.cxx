@@ -1,6 +1,7 @@
 // gdcmDicomDirElement.cxx
 //-----------------------------------------------------------------------------
 #include <fstream>
+#include <stdio.h>    // For sprintf
 
 #include "gdcmDicomDirElement.h"
 #include "gdcmUtil.h"
