@@ -1,6 +1,8 @@
 // gdcmUtil.h
 
 #include <iostream>
+#include <vector>
+#include <string>
 using namespace std;
 
 class gdcmDebug {
@@ -16,5 +18,9 @@ public:
 };
 
 istream & eatwhite(istream & is);
+
+void Tokenize (const string& str,
+               vector<string>& tokens,
+               const string& delimiters = " ");
 
 extern gdcmDebug dbg;

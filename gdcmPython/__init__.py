@@ -43,11 +43,11 @@ except KeyError:
 #   installation scheme and the pre-install mode (see above).
 InstallModePath = os.path.join(__path__[0], "Data")
 if os.path.isfile(os.path.join(InstallModePath, "test.acr")):
-   os.environ["GDCM_DATA_PATH"] = InstallModePath
+   GDCM_DATA_PATH = InstallModePath
 else:
    PreInstallModePath = os.path.join(__path__[0], "..", "Data")
    if os.path.isfile(os.path.join(PreInstallModePath, "test.acr")):
-      os.environ["GDCM_DATA_PATH"] = PreInstallModePath
+      GDCM_DATA_PATH = PreInstallModePath
    else:
       print "Unfound data path"
       sys.exit(1)
