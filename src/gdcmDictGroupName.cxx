@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/06 08:59:46 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/04/06 12:49:27 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ DictGroupName::DictGroupName()
    {
       char buff[1024];
       uint16_t key;
-      GroupName value;
+      TagName value;
    
       while (!from.eof()) 
       {
@@ -80,7 +80,7 @@ DictGroupName::~DictGroupName()
 
 //-----------------------------------------------------------------------------
 // Public
-const GroupName &DictGroupName::GetName(uint16_t group)
+const TagName &DictGroupName::GetName(uint16_t group)
 {
    DictGroupNameHT::const_iterator it = groupName.find(group);
    if (it == groupName.end())
