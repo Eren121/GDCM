@@ -15,4 +15,9 @@
 #)
 
 # For now INSTALL doesn't work on Win32 
-INSTALL_FILES(${GDCM_DATA_DIR} FILES dicomV3.dic README)
+INSTALL_FILES(${GDCM_DATA_DIR} FILES 
+  dicomV3.dic 
+  dicomVR.dic 
+  dicomTS.dic
+  DicomDir.dic
+  README)
