@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.29 2003/06/26 13:07:01 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.30 2003/07/01 09:29:56 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -163,14 +163,14 @@ public:
 
    int SetPubElValByName  (std::string content, std::string TagName);
    int SetShaElValByName  (std::string content, std::string ShadowTagName);
+   
    int SetPubElValByNumber(std::string content, guint16 group, guint16 element);
-
    int SetShaElValByNumber(std::string content, guint16 group, guint16 element);
    
    int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   
 
    int ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem); 
-   int ReplaceOrCreateByNumber(char * Value,      guint16 Group, guint16 Elem);                                
+   int ReplaceOrCreateByNumber(     char * Value, guint16 Group, guint16 Elem);                                
                                
    int GetXSize(void);  
    int GetYSize(void);

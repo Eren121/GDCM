@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.71 2003/06/26 13:07:01 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.72 2003/07/01 09:29:56 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -1044,6 +1044,13 @@ gdcmElValue* gdcmHeader::NewElValueByNumber(guint16 Group, guint16 Elem) {
  */
 int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Elem ) {
 
+	// TODO : FIXME JPRx
+	// curieux, non ?
+	// on (je) cree une Elvalue ne contenant pas de valeur
+	// on l'ajoute au ElValSet
+	// on affecte une valeur a cette ElValue a l'interieur du ElValSet
+	// --> devrait pouvoir etre fait + simplement ???
+	
 	gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
 	PubElValSet.Add(nvElValue);	
 	PubElValSet.SetElValueByNumber(Value, Group, Elem);
@@ -1904,12 +1911,16 @@ float gdcmHeader::GetXImagePosition(void) {
     string StrImPos = GetPubElValByNumber(0x0020,0x0032);
 
     if (StrImPos == "gdcm::Unfound") {
-       dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position Patient");
-       string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041);
-       if (StrSliceLoc == "gdcm::Unfound") {
-          dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Slice Location");
-          // How to tell the caller nothing was found?
-       }   
+       dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position Patient (0020,0032)");
+       StrImPos = GetPubElValByNumber(0x0020,0x0030); // For ACR-NEMA images
+       if (StrImPos == "gdcm::Unfound") {
+          dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position (RET) (0020,0030)");
+          string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041); // for *very* old ACR-NEMA images
+          if (StrSliceLoc == "gdcm::Unfound") {
+            dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Slice Location (0020,1041)");
+             // How to tell the caller nothing was found?
+          } 
+       }  
        return 0.;
      }
    if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
@@ -1932,16 +1943,16 @@ float gdcmHeader::GetYImagePosition(void) {
     string StrImPos = GetPubElValByNumber(0x0020,0x0032);
 
     if (StrImPos == "gdcm::Unfound") {
-       dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position Patient");
-       string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041);
-       if (StrSliceLoc == "gdcm::Unfound") {
-          dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location");
-          // How to tell the caller nothing was found?
-          string StrLocation = GetPubElValByNumber(0x0020,0x0050);
+       dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position Patient (0020,0032)");
+       StrImPos = GetPubElValByNumber(0x0020,0x0030); // For ACR-NEMA images
+       if (StrImPos == "gdcm::Unfound") {
+          dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position (RET) (0020,0030)");
+          string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041); // for *very* old ACR-NEMA images
           if (StrSliceLoc == "gdcm::Unfound") {
-             dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location");          
-          }                    
-       }   
+            dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location (0020,1041)");
+             // How to tell the caller nothing was found?
+          } 
+       }  
        return 0.;
      }
    if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
@@ -1968,29 +1979,38 @@ float gdcmHeader::GetZImagePosition(void) {
    string StrImPos = GetPubElValByNumber(0x0020,0x0032);
    if (StrImPos != "gdcm::Unfound") {
       if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3) {
-         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image Position Patient");
+         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image Position Patient (0020,0032)");
          return 0.;  // bug in the element 0x0020,0x0032
       } else {
          return zImPos;
       }    
    }
-   dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position Patient");
-        
-   string StrSliceLocation = GetPubElValByNumber(0x0020,0x1041);
+   
+   StrImPos = GetPubElValByNumber(0x0020,0x0030); // For ACR-NEMA images
+   if (StrImPos != "gdcm::Unfound") {
+      if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3) {
+         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image Position (RET) (0020,0030)");
+         return 0.;  // bug in the element 0x0020,0x0032
+      } else {
+         return zImPos;
+      }    
+   }
+                 
+   string StrSliceLocation = GetPubElValByNumber(0x0020,0x1041);// for *very* old ACR-NEMA images
    if (StrSliceLocation != "gdcm::Unfound") {
       if( sscanf( StrSliceLocation.c_str(), "%f", &zImPos) !=1) {
-         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Slice Location");
+         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Slice Location (0020,1041)");
          return 0.;  // bug in the element 0x0020,0x1041
       } else {
          return zImPos;
       }
    }   
-   dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location");
+   dbg.Verbose(0, "gdcmHeader::GetZImagePosition: unfound Slice Location (0020,1041)");
 
    string StrLocation = GetPubElValByNumber(0x0020,0x0050);
    if (StrLocation != "gdcm::Unfound") {
       if( sscanf( StrLocation.c_str(), "%f", &zImPos) !=1) {
-         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Location");
+         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Location (0020,0050)");
          return 0.;  // bug in the element 0x0020,0x0050
       } else {
          return zImPos;
