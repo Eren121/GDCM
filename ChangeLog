@@ -1,3 +1,7 @@
+2004-12-02 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * gdcmPython/gdcm.i : change gdcmHeaderHelper to gdcmSerieHeader. Now,
+     the python part recompiles
+
 2004-11-30 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/ShowDicom.cxx : Change the test to only open one vtkImageViewer.
      Otherwise, under linux (Graphic card : NVidia / SE : FedoraCore 1) the
