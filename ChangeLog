@@ -1,3 +1,13 @@
+2002-11-7 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * python/gdcm.i: added a typemap that converts a C++ hashing table
+        to native Python dictionary.
+      * python/demo/test.py:
+        - now uses the native dictionary for exploration of gdcmHeader.
+        - takes an optional filename argument (the file to parse).
+      * src/gdcm.h and gdcmHeader.cxx: gdcmHeader now has an accessor on
+        PubElVals hashing table. 
+      * Dicts/dicomV3.dic removed error prone trailing spaces.
+
 2002-11-6 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Python wrapping process moved away from src/Makefile to
         newly created python/Makefile (as well as gdcm.i)

@@ -487,7 +487,7 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	// Find out if the tag we encountered is in the dictionaries:
 	gdcmDictEntry * NewTag = IsInDicts(g, n);
 	if (!NewTag)
-		NewTag = new gdcmDictEntry(g, n, "Unknown", "Unknown", "Unkown");
+		NewTag = new gdcmDictEntry(g, n, "Unknown", "Unknown", "Unknown");
 
 	NewElVal = new ElValue(NewTag);
 	if (!NewElVal) {

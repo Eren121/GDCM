@@ -168,7 +168,7 @@
 0010 0050 SQ PAT Patient's Insurance Plan Code Sequence
 0010 1000 LO PAT Other Patient IDs
 0010 1001 PN PAT Other Patient Names
-0010 1005 PN PAT Patient's Birth Name 
+0010 1005 PN PAT Patient's Birth Name
 0010 1010 AS PAT Patient Age
 0010 1020 DS PAT Patient Size
 0010 1030 DS PAT Patient Weight
@@ -199,7 +199,7 @@
 0018 0020 CS ACQ Scanning Sequence
 0018 0021 CS ACQ Sequence Variant
 0018 0022 CS ACQ Scan Options
-0018 0023 CS ACQ MR Acquisition Type 
+0018 0023 CS ACQ MR Acquisition Type
 0018 0024 SH ACQ Sequence Name
 0018 0025 CS ACQ Angio Flag
 0018 0026 SQ ACQ Intervention Drug Information Sequence
@@ -598,7 +598,7 @@
 0032 1020 LO SDY Scheduled Study Location
 0032 1021 AE SDY Scheduled Study Location AE Title(s)
 0032 1030 LO SDY Study Reason
-0032 1032 PN SDY Requesting Physician 
+0032 1032 PN SDY Requesting Physician
 0032 1033 LO SDY Requesting Service
 0032 1040 DA SDY Study Arrival Date
 0032 1041 TM SDY Study Arrival Time
@@ -696,7 +696,7 @@
 0040 0294 DS PRC Quantity
 0040 0295 SQ PRC Measuring Units Sequence
 0040 0296 SQ PRC Billing Item Sequence
-0040 0300 US PRC Total Time of Fluoroscopy}  
+0040 0300 US PRC Total Time of Fluoroscopy
 0040 0301 US PRC Total Number of Exposures
 0040 0302 US PRC Entrance Dose
 0040 0303 US PRC Exposed Area
@@ -894,7 +894,7 @@
 0054 1330 US NMI Image Index
 0054 1400 CS NMI Counts Included
 0054 1401 CS NMI Dead Time Correction Flag
-0088 0000 UL MED Media Group Length 
+0088 0000 UL MED Media Group Length
 0088 0130 SH MED Storage Media File-set ID
 0088 0140 UI MED Storage Media File-setUID
 0088 0200 SQ MED Icon Image Sequence

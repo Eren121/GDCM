@@ -191,7 +191,7 @@ class gdcmHeader {
 		//BigEndian, 
 		//BadBigEndian};
 private:
-  	// All instances share the same valur representation dictionary
+  	// All instances share the same value representation dictionary
 	static VRHT *dicom_vr;
 	static gdcmDictSet* Dicts;  // Global dictionary container
 	gdcmDict* RefPubDict;       // Public Dictionary
@@ -262,6 +262,7 @@ public:
 	// of C/C++ vs Python).
 	// TODO Swig string GetPubElValRepByName(string TagName);
 	// TODO Swig string GetPubElValRepByNumber(guint16 group, guint16 element);
+	TagElValueHT & GetPubElVal(void) { return PubElVals.GetTagHt(); };
 	void   PrintPubElVal(ostream & os = std::cout);
 	void   PrintPubDict(ostream &);
 	  
