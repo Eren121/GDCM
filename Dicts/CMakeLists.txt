@@ -22,25 +22,23 @@ FILE(READ "${INFILE}" ENT)
 
 STRING(REGEX REPLACE "\n" ";" ENT "${ENT}")
 SET(DICOM_DICTIONARY
-"//
-#include \"gdcmDicomDictionaryEntry.h\"
-
-static gdcmDicomDictionaryEntry[] =
-{")
+  "void FillDefault()\n{"
+)
 
 FOREACH(line ${ENT})
   STRING(REGEX REPLACE
-    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([A-Z]+) (.*)([ \(RET\)]*)$"
-    "   { \\1, \\2, \"\\3\" , \"\\4\" , \"\\5\", \"\\6\"}," nline "${line}")
+#    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([A-Z]+) (.*)([ \(RET\)]*)$"
+    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([A-Z?]+) (.*)$"
+#    "   { \\1, \\2, \"\\3\" , \"\\4\" , \"\\5\", \"\\6\"}," nline "${line}")
+#    "   { \\1, \\2, \"\\3\" , \"\\4\" , \"\\5\"}," nline "${line}")
+    "  AddNewEntry( DictEntry ( 0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\"));" nline "${line}")
   SET(DICOM_DICTIONARY "${DICOM_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
 
-SET(DICOM_DICTIONARY "${DICOM_DICTIONARY}
-   0
-};")
+SET(DICOM_DICTIONARY "${DICOM_DICTIONARY} \n }")
 
 # See above
-#CONFIGURE_FILE("/tmp/output.h.in" "/tmp/output.h")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/gdcmDefaultDict.h.in" "${GDCM_BINARY_DIR}/gdcmDefaultDict.h")
 
 #MESSAGE("${DICOM_DICTIONARY}")
 
