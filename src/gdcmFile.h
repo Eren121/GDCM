@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/12 01:40:09 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2004/09/13 07:49:36 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -155,9 +155,10 @@ private:
   /// \brief Bits Allocated              (0x0028,0x0100), as found on disk
    std::string InitialBitsAllocated;
    
-  // some DocEntry that can be moved ou of the H table during reading process
+  // some DocEntry that can be moved out of the H table during reading process
   // if user asked to transform gray level + LUT image into RGB image
-   
+  // We keep a pointer on them for a future use.
+     
   /// \brief Red Palette Color Lookup Table Descriptor   0028 1101 as read
   gdcmDocEntry* InitialRedLUTDescr;  
   /// \brief Green Palette Color Lookup Table Descriptor 0028 1102 as read

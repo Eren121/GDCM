@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/03 17:28:59 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/09/13 07:49:35 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,7 +51,13 @@ public:
                                DictKey const & name );
 
    gdcmDict* GetDict( DictKey const & DictName );
-   gdcmDict* GetDefaultPubDict();
+
+   /// \brief   Retrieve the default reference DICOM V3 public dictionary.
+   gdcmDict* GetDefaultPubDict() { return GetDict(PUB_DICT_NAME); };
+
+   // \brief   Retrieve the virtual reference DICOM dictionary.
+   // \warning : not end user intended
+   // gdcmDict* GetVirtualDict() { return &VirtualEntry; };
 
    gdcmDictEntry* NewVirtualDictEntry(uint16_t group, uint16_t element,
                                       std::string vr     = "Unknown",
@@ -69,7 +75,7 @@ private:
    /// Directory path to dictionaries
    std::string DictPath;
    /// H table for the on the fly created gdcmDictEntries  
-   std::map<std::string,gdcmDictEntry *> VirtualEntry;
+   TagKeyHT VirtualEntry; 
 };
 
 //-----------------------------------------------------------------------------

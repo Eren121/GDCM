@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 18:54:38 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2004/09/13 07:49:36 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -664,7 +664,8 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
       b = new gdcmBinEntry(a);
       AddEntry(b);
       b->SetVoidArea(voidArea);
-   }   
+   } 
+
    SetEntryByNumber(voidArea, lgth, group, elem);
    //b->SetVoidArea(voidArea);  //what if b == 0 !!
 
@@ -870,6 +871,9 @@ bool gdcmDocument::SetEntryByNumber(std::string const & content,
                                     uint16_t group,
                                     uint16_t element) 
 {
+   int c;
+   int l;
+
    gdcmValEntry* valEntry = GetValEntryByNumber(group, element);
    if (!valEntry )
    {
@@ -878,30 +882,31 @@ bool gdcmDocument::SetEntryByNumber(std::string const & content,
       return false;
    }
    // Non even content must be padded with a space (020H)...
-   std::string evenContent = content;
-   if( evenContent.length() % 2 )
+   std::string finalContent = content;
+   if( finalContent.length() % 2 )
    {
-      evenContent += '\0';  // ... therefore we padd with (000H) .!?!
+      finalContent += '\0';  // ... therefore we padd with (000H) .!?!
    }      
-   valEntry->SetValue(evenContent);
+   valEntry->SetValue(finalContent);
    
    // Integers have a special treatement for their length:
-   gdcmVRKey vr = valEntry->GetVR();
-   if( vr == "US" || vr == "SS" )
-   {
-      int c = CountSubstring(content, "\\"); // for multivaluated items
-      valEntry->SetLength((c+1)*2);
-   }
-   else if( vr == "UL" || vr == "SL" )
-   {
-      int c = CountSubstring(content, "\\"); // for multivaluated items
-      valEntry->SetLength((c+1)*4);
-   }
-   else
-   {
-      valEntry->SetLength(evenContent.length());
-   }
 
+   l = finalContent.length();
+   if ( l != 0) // To avoid to be cheated by 'zero length' integers
+   {   
+      gdcmVRKey vr = valEntry->GetVR();
+      if( vr == "US" || vr == "SS" )
+      {
+         c = CountSubstring(content, "\\") + 1; // for multivaluated items
+         l = c*2;
+      }
+      else if( vr == "UL" || vr == "SL" )
+      {
+         c = CountSubstring(content, "\\") + 1; // for multivaluated items
+         l = c*4;;
+      }
+   }
+   valEntry->SetLength(l);
    return true;
 } 
 
@@ -935,7 +940,7 @@ bool gdcmDocument::SetEntryByNumber(void *content,
 */      
    gdcmBinEntry* a = (gdcmBinEntry *)TagHT[key];           
    a->SetVoidArea(content);  
-   //a->SetLength(lgth);  // ???  
+   a->SetLength(lgth);
 
    return true;
 } 

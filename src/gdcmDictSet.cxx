@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/09/13 07:49:35 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -163,15 +163,6 @@ gdcmDict *gdcmDictSet::GetDict(DictKey const & dictName)
       return dict->second;
    }
    return NULL;
-}
-
-/**
- * \brief   Retrieve the default reference DICOM V3 public dictionary.
- * \result  The retrieved default dictionary.
- */
-gdcmDict *gdcmDictSet::GetDefaultPubDict() 
-{
-   return GetDict(PUB_DICT_NAME);
 }
 
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 18:54:38 $
-  Version:   $Revision: 1.124 $
+  Date:      $Date: 2004/09/13 07:49:36 $
+  Version:   $Revision: 1.125 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,28 +102,15 @@ void gdcmFile::SetInitialValues()
       InitialPlanConfig    = Header->GetEntryByNumber(0x0028,0x0006);
       InitialBitsAllocated = Header->GetEntryByNumber(0x0028,0x0100);
                
-      // the following entries *may* be removed
-      // by gdcmFile::GetImageDataIntoVectorRaw  
-      // we save them.
-
-     // we SHALL save them !
-     // (some troubles, now)
-     /*
+      // the following entries *may* be removed from the H table
+      // (NOT deleted ...) by gdcmFile::GetImageDataIntoVectorRaw  
+      // we keep a pointer on them.
       InitialRedLUTDescr   = Header->GetDocEntryByNumber(0x0028,0x1101);
       InitialGreenLUTDescr = Header->GetDocEntryByNumber(0x0028,0x1102);
       InitialBlueLUTDescr  = Header->GetDocEntryByNumber(0x0028,0x1103);
       InitialRedLUTData    = Header->GetDocEntryByNumber(0x0028,0x1201);
       InitialGreenLUTData  = Header->GetDocEntryByNumber(0x0028,0x1202);
       InitialBlueLUTData   = Header->GetDocEntryByNumber(0x0028,0x1203); 
-      
-      if (InitialRedLUTData == NULL)
-         std::cout << "echec InitialRedLUTData " << std::endl;
-      else  
-      { 
-         printf("%p\n",InitialRedLUTData);
-         InitialRedLUTData->Print(); std::cout <<std::endl;
-      }
-     */        
    }
 }
 
@@ -141,26 +128,9 @@ gdcmFile::~gdcmFile()
    }
    Header = 0;
 
-   if ( InitialRedLUTDescr )           
-      delete InitialRedLUTDescr;
-     
-   if ( InitialGreenLUTDescr )
-      delete InitialGreenLUTDescr;
-      
-   if ( InitialBlueLUTDescr )      
-      delete InitialBlueLUTDescr; 
-          
-/* LATER ...
-       
-   if ( InitialRedLUTData )      
-      delete InitialRedLUTData;
-   
-   if ( InitialGreenLUTData != NULL)
-      delete InitialGreenLUTData;
-      
-   if ( InitialBlueLUTData != NULL)      
-      delete InitialBlueLUTData;      
-*/  
+// InitialLutDescriptors and InitialLutData
+// will have to be deleted if the don't belong any longer
+// to the Header H table ...
 }
 
 //-----------------------------------------------------------------------------
