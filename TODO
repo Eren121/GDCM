@@ -1,3 +1,11 @@
+GetPubElValByNumber doit faire la difference entre chaine vide 
+et chaine pas touve''. Eventuellement raiser une exception ?
+
+gdcmHeader::_IdDcmRecupLgr : le d'elements dans la table de type DICOM_VR
+  est hard code' (a 26). FIX ME.
+
+grep str2num *.c: c'est une macro sans doute proprifiable
+
 gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de suite 
 si on a deduit que c'en est pas...
 

@@ -10,6 +10,8 @@
 
 #include <string>
 #include <stddef.h>    // For size_t
+#include <glib.h>
+#include <stdio.h>
 
 // The requirement for the hash table (or map) that we shall use:
 // 1/ First, next, last (iterators)
@@ -30,8 +32,6 @@
 typedef string TagKey;
 typedef map<TagKey, char*> TagHT;
 
-// Dummy declaration for the time being
-typedef int guint16;    // We shall need glib.h !
 
 class DictEntry {
 private:
@@ -113,7 +113,7 @@ class ElValSet {
 	// We need both accesses with a TagKey and the Dicentry.Name
 ////// QUESTION: this leads to a double storage of a single ElValue
 	map<TagKey, ElValue> tagHt;
-	map<srting, ElValue> NameHt;
+	map<string, ElValue> NameHt;
 public:
 	int Add(ElValue);
 };
@@ -126,12 +126,13 @@ public:
 // Notes:
 // * the gdcmHeader::Set*Tag* family members cannot be defined as protected
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
+typedef int _ID_DCM_ELEM;
 class gdcmHeader {	
-	enum EndianType {
-		LittleEndian, 
-		BadLittleEndian,
-		BigEndian, 
-		BadBigEndian};
+	//enum EndianType {
+		//LittleEndian, 
+		//BadLittleEndian,
+		//BigEndian, 
+		//BadBigEndian};
 	enum FileType {
 		Unknown = 0,
 		TrueDicom,
@@ -140,17 +141,20 @@ class gdcmHeader {
 		ACR,
 		ACR_LIBIDO};
 private:
-	static DictSet* Dicts;	// Global dictionary container
-	Dict* RefPubDict;			// Public Dictionary
-	Dict* RefShaDict;			// Shadow Dictionary (optional)
-	int swapcode;
-	ElValSet PubElVals;		// Element Values parsed with Public Dictionary
-	ElValSet ShaElVals;		// Element Values parsed with Shadow Dictionary
+	static DictSet* Dicts;  // Global dictionary container
+	Dict* RefPubDict;       // Public Dictionary
+	Dict* RefShaDict;       // Shadow Dictionary (optional)
+	ElValSet PubElVals;     // Element Values parsed with Public Dictionary
+	ElValSet ShaElVals;     // Element Values parsed with Shadow Dictionary
 	FileType filetype;
+	FILE * fp;
+	long int offsetCourant;
 	int sw;
-	EndianType CheckSwap();
-	void _setAcrLibido();
-	guint32 _IdDcmRecupLgr(ID_DCM_HDR *e, int sw, int *skippedLength, int *longueurLue);
+	void CheckSwap(void);
+	void setAcrLibido(void);
+	long int RecupLgr(_ID_DCM_ELEM *pleCourant, int sw,
+	                  int *skippedLength, int *longueurLue);
+	guint32 SWAP_LONG(guint32);
 protected:
 ///// QUESTION: Maybe Print is a better name than write !?
 	int write(ostream&);   

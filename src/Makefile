@@ -9,7 +9,7 @@ PYTHON_PREFIX  =`$(PYTHON) -c "import sys; print sys.exec_prefix"`
 PYTHON_VERSION =`$(PYTHON) -c "import sys; print sys.version[:3]"`
 PYTHON_INCLUDES="-I$(PYTHON_PREFIX)/include/python$(PYTHON_VERSION)"
 
-CXXFLAGS=$(PYTHON_INCLUDES)
+CXXFLAGS=$(PYTHON_INCLUDES) `glib-config --cflags`
 
 %.o : %.cxx
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
