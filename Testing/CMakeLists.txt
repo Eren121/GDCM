@@ -1,35 +1,29 @@
-# TODO:
-# http://www.cmake.org/pipermail/cmake/2001-November/002491.html
-# So that dll is copied to each subdir where needed
+# CMakeLists for Testing purpose
+# Cxx file that need a file to run should be place aproprietly
 
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
-SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
+SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmCxxTests)
 
-#INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
-#CHECK_INCLUDE_FILE("stdint.h"    CMAKE_HAVE_STDINT_H)
-
-#IF(NOT CMAKE_HAVE_STDINT_H)
-#  SET(GDCM_TEST_COMPILE_FLAGS "-DHAVE_NO_STDINT_H")
-#ENDIF(NOT CMAKE_HAVE_STDINT_H)
-
-
+# add test that does not require data:
+# They usally return if no argument is given
 SET(TEST_SOURCES
-  PrintHeader.cxx #require test.acr
-  bug1.cxx        #require test.acr
-  dcm2acr.cxx     #require test.acr
+  bug1.cxx
+  dcm2acr.cxx
   hashtest.cxx
-  makeDicomDir.cxx
-  testDicomDir.cxx
   testWrite.cxx
 )
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
 SET(TEST_SOURCES ${TEST_SOURCES}     
+  PrintHeader.cxx     #require test.acr
   PrintDicomDir.cxx
   pourFindTaggs.cxx
   testChangeEntete.cxx
+  testDicomDir.cxx    #require DICOMDIR
+# Disable makeDicomDir for now
+#  makeDicomDir.cxx    #require test.acr
 )
 ENDIF (GDCM_DATA_ROOT)
 
@@ -44,9 +38,6 @@ ADD_EXECUTABLE(gdcmCxxTests ${Tests})
 TARGET_LINK_LIBRARIES(gdcmCxxTests gdcm)
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun gdcmCxxTests.cxx)
-
-#ADD_EXECUTABLE(gdcmTests gdcmTests.cxx ${TEST_SOURCES})
-#TARGET_LINK_LIBRARIES(gdcmTests gdcm)
 
 # Loop over files and create executables
 FOREACH(file ${TEST_SOURCES})
