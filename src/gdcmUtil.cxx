@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 21:41:48 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2005/01/17 21:42:16 $
+  Version:   $Revision: 1.108 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,11 +48,6 @@
    #include <string.h>
    #include <sys/types.h>
 #endif
-
-// How do I do that in CMake ?
-#ifdef __APPLE__
-   #define HAVE_SA_LEN
-#endif //APPLE
 
 #ifdef CMAKE_HAVE_SYS_IOCTL_H
    #include <sys/ioctl.h>  // For SIOCGIFCONF on Linux
