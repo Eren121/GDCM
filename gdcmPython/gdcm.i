@@ -8,6 +8,7 @@
 #include "gdcmElValSet.h"
 #include "gdcmUtil.h"
 #include "gdcmHeader.h"
+#include "gdcmHeaderHelper.h"
 #include "gdcmFile.h"
 using namespace std;
 
@@ -113,5 +114,5 @@ extern gdcmGlobal gdcmGlob;
 %include "gdcmElValSet.h"
 %include "gdcmUtil.h"
 %include "gdcmHeader.h"
+%include "gdcmHeaderHelper.h"
 %include "gdcmFile.h"
-

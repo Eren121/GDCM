@@ -64,9 +64,9 @@ enum ModalityType {
  */
 class GDCM_EXPORT gdcmHeaderHelper : public gdcmHeader {
 public:
-   gdcmHeaderHelper::gdcmHeaderHelper();
-   gdcmHeaderHelper::gdcmHeaderHelper(const char *filename, 
-                                      bool exception_on_error = false);
+   gdcmHeaderHelper();
+   gdcmHeaderHelper(const char *filename, 
+                    bool exception_on_error = false);
 
    int GetPixelSize();
    std::string GetPixelType();
@@ -110,8 +110,8 @@ For a multiframe dicom image better use directly gdcmHeaderHelper
 */
 class GDCM_EXPORT gdcmSerieHeaderHelper {
 public:
-    gdcmSerieHeaderHelper::gdcmSerieHeaderHelper() {};
-    gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper();
+    gdcmSerieHeaderHelper() {};
+    ~gdcmSerieHeaderHelper();
 
    void AddFileName(std::string filename); //should return bool or throw error ?
    void AddGdcmFile(gdcmHeaderHelper *file);

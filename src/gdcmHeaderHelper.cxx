@@ -816,7 +816,7 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering()
   CoherentGdcmFileVector.clear();
   
   delete[] partition;
-  return mult;
+  return (mult!=0);
 }
 
 bool gdcmSerieHeaderHelper::FileNameOrdering()

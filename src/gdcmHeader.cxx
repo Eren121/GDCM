@@ -103,7 +103,6 @@ void gdcmHeader::PrintPubDict(std::ostream & os) {
 
 //-----------------------------------------------------------------------------
 // Public
-
 /**
  * \ingroup gdcmHeader
  * \brief  This predicate, based on hopefully reasonable heuristics,
@@ -1251,7 +1250,7 @@ gdcmElValue* gdcmHeader::GetElValueByNumber(guint16 Group, guint16 Elem) {
  * @return  integer acts as a boolean  
  */
 bool gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
-   return (PubElValSet.CheckIfExistByNumber(Group, Elem));
+   return (PubElValSet.CheckIfExistByNumber(Group, Elem)>0);
 }
 
 /**
