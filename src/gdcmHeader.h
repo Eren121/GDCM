@@ -79,6 +79,7 @@ private:
    void CheckSwap(void);
    void InitVRDict(void);
    void SwitchSwapToBigEndian(void);
+   gdcmElValue*  NewManualElValToPubDict(string NewTagName, string VR);
    void AddAndDefaultElements(void);
    void SetMaxSizeLoadElementValue(long);
 

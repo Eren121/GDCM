@@ -10,6 +10,7 @@ TagElValueHT & gdcmElValSet::GetTagHt(void) {
 }
 
 void gdcmElValSet::Add(gdcmElValue * newElValue) {
+   cout << "#### gdcmElValSet::Add" << newElValue->GetKey() << newElValue->GetName() << endl;
 	tagHt [newElValue->GetKey()]  = newElValue;
 	NameHt[newElValue->GetName()] = newElValue;
 }
@@ -130,6 +131,23 @@ int gdcmElValSet::SetElValueByName(string content, string TagName) {
 	return(1);		
 }
 
+/**
+ * \ingroup  gdcmElValSet
+ * \brief    Generate a free TagKey i.e. a TagKey that is not present
+ *           in the TagHt dictionary. One of the potential usage is
+ *           to add  gdcm generated additional informartion to the ElValSet
+ *           (see gdcmHeader::AddAndDefaultElements).
+ * @param group The generated tag must belong to this group.  
+ * @return   The element of tag with given group which is fee.
+ */
+guint32 gdcmElValSet::GenerateFreeTagKeyInGroup(guint32 group) {
+   for (guint32 elem = 0; elem < UINT32_MAX; elem++) {
+      TagKey key = gdcmDictEntry::TranslateToKey(group, elem);
+      if (tagHt.count(key) == 0)
+         return elem;
+   }
+   return UINT32_MAX;
+}
 
 int gdcmElValSet::SetElValueLengthByNumber(guint32 l,
                                            guint32 group, guint32 element) {

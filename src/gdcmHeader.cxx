@@ -43,6 +43,7 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error)
   else
     dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", InFilename);
   ParseHeader();
+  LoadElements();
   AddAndDefaultElements();
 }
 
@@ -1393,19 +1394,64 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
  *            the ones of the official DICOM fields Rows, Columns and Planes.
  */
 void gdcmHeader::AddAndDefaultElements(void) {
-   gdcmElValue* NewEntry = (gdcmElValue*)0;
+   gdcmElValue* NewElVal = (gdcmElValue*)0;
+   string NewVal;
 
-   NewEntry = NewElValueByName("gdcmXSize");
-   NewEntry->SetValue(GetElValByName("Rows"));
-   PubElVals.Add(NewEntry);
+   NewElVal = NewManualElValToPubDict("gdcmXSize", "US");
+   if (!NewElVal) return;
+   NewVal = GetElValByName("Rows");
+   if (NewVal != "gdcm::Unfound")
+      NewElVal->SetValue(NewVal);
+   else 
+      NewElVal->SetValue("0");
 
-   NewEntry = NewElValueByName("gdcmYSize");
-   NewEntry->SetValue(GetElValByName("Columns"));
-   PubElVals.Add(NewEntry);
 
-   NewEntry = NewElValueByName("gdcmZSize");
-   NewEntry->SetValue(GetElValByName("Planes"));
-   PubElVals.Add(NewEntry);
+   NewElVal = NewManualElValToPubDict("gdcmYSize", "US");
+   if (!NewElVal) return;
+   NewVal = GetElValByName("Columns");
+   if (NewVal != "gdcm::Unfound")
+      NewElVal->SetValue(NewVal);
+   else
+      NewElVal->SetValue("0");
+
+
+   NewElVal = NewManualElValToPubDict("gdcmZSize", "US");
+   if (!NewElVal) return;
+   NewVal = GetElValByName("Planes");
+   if (NewVal != "gdcm::Unfound")
+      NewElVal->SetValue(NewVal);
+   else
+      NewElVal->SetValue("0");
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Small utility function that creates a new manually crafted
+ *          (as opposed as read from the file) gdcmElValue with user
+ *          specified name and adds it to the public tag hash table.
+ *          Refer to gdcmHeader::AddAndDefaultElements for a typical usage.
+ * \note    A fake TagKey is generated so the PubDict can keep it's coherence.
+ * @param   NewTagName The name to be given to this new tag.
+ * @param   VR The Value Representation to be given to this new tag.
+ * @ return The newly hand crafted Element Value.
+ */
+gdcmElValue* gdcmHeader::NewManualElValToPubDict(string NewTagName, string VR) {
+   gdcmElValue* NewElVal = (gdcmElValue*)0;
+   guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
+   guint32 FreeElem = 0;
+   gdcmDictEntry* NewEntry = (gdcmDictEntry*)0;
+
+   FreeElem = PubElVals.GenerateFreeTagKeyInGroup(StuffGroup);
+   if (FreeElem == UINT32_MAX) {
+      dbg.Verbose(1, "gdcmHeader::NewManualElValToPubDict",
+                     "Group 0xffff in Public Dict is full");
+      return (gdcmElValue*)0;
+   }
+   NewEntry = new gdcmDictEntry(StuffGroup, FreeElem,
+                                VR, "GDCM", NewTagName);
+   NewElVal = new gdcmElValue(NewEntry);
+   PubElVals.Add(NewElVal);
+   return NewElVal;
 }
 
 /**

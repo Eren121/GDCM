@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.2 2003/03/12 21:33:20 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.3 2003/03/24 13:11:28 frog Exp $
 
 #ifndef GDCMELVALUE_H
 #define GDCMELVALUE_H
@@ -32,6 +32,7 @@ public:
 	void SetImplicitVr(void) { ImplicitVr = true; };
 	bool  IsImplicitVr(void) { return ImplicitVr; };
 	
+	gdcmDictEntry * GetDictEntry(void) { return entry;    };
 	guint16 GetGroup(void)   { return entry->GetGroup();  };
 	guint16 GetElement(void) { return entry->GetElement();};
 	string  GetKey(void)     { return entry->GetKey();    };

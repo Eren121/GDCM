@@ -11,7 +11,6 @@ if not os.path.isfile(FileName):
    sys.exit()
 
 toRead = gdcmHeader(FileName)
-toRead.LoadElements()
 ValDict = toRead.GetPubElVal()
 ExploreElements = ["Patient Name", "Patient ID",
 						 "Study Date", "Study Time", "Study ID",

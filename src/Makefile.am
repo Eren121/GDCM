@@ -14,7 +14,8 @@ LTVERSION = 0:1:0
 
 lib_LTLIBRARIES = libgdcm.la
 
-CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\"
+CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\" \
+           -D__STDC_LIMIT_MACROS  # Refer to stdint.h
 
 libgdcm_la_SOURCES=		\
 	gdcmException.cxx	\

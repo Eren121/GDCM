@@ -479,7 +479,6 @@ class gdcmTestCase(unittest.TestCase):
 		for entry in FileSet:
 			fileName = os.path.join(GDCM_DATA_PATH, entry[0])
 			toRead = gdcmHeader(fileName)
-			toRead.LoadElements()
 			valDict = toRead.GetPubElVal()
 			for subEntry in entry[1]:
 				element = subEntry[0]

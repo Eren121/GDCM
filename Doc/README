@@ -1,3 +1,7 @@
+The reference for parsing dicom file is the dicom standard. A locat copy
+can be found in Dicom2003_Part5.pdf. A nice starting point for browsing
+the standard can be found at http://www.dclunie.com/dicom-status/status.html.
+
 Documentation can be build with doxygen:
 doxygen Doxyfile
 mozilla html/index.html

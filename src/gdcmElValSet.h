@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.4 2003/03/21 08:52:31 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.5 2003/03/24 13:11:28 frog Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -35,6 +35,7 @@ public:
 	
 	int SetElValueLengthByNumber(guint32 l, guint32 group, guint32 element);
 	int SetElValueLengthByName  (guint32 l, string TagName);
+   guint32 GenerateFreeTagKeyInGroup(guint32 group);
 
 };
 

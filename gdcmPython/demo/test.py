@@ -15,7 +15,6 @@ if not os.path.isfile(FileName):
 
 ### Build the header element list
 toRead = gdcmHeader(FileName)
-toRead.LoadElements()
 
 print "##############################################################"
 print "### Display all the elements and their respective values"

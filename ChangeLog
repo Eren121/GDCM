@@ -1,8 +1,21 @@
+2003-03-24 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader.cxx gdcmHeader::gdcmHeader now calls LoadElements(),
+        hence the user doesn't need this explicit call.
+        - gdcmPython/testSuite.py, gdcmPython/demo/*.py changed accordingly
+          i.e. LoadElements() call removed.
+      * src/gdcmCommon.h now defines UINT32_MAX (see stdint.h).
+        - src/Makefile.am declares the proper flag for g++.
+      * src/gdcmElValSet.h added gdcmElValSet::GenerateFreeTagKeyInGroup
+        for adding user defined new tags.
+        - src/gdcmHeader.cxx gdcmHeader::NewManualElValToPubDict added.
+        - src/gdcmHeader.cxx gdcmHeader::AddAndDefaultElements now
+          cleanly adds some gdcm added tags (like gdcmXSize, gdcmYSize...)
+
 2003-03-17 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
       * Makefile.am, acinclude.m4, configure.in, python.m4, Dicts/Makefile.am,
-	Doc/Makefile.am, Test/Makefile.am, gdcmPython/Makefile.am, 
-	src/Makefile.am : the project should properly compile and install
-	with the autotools, included the python wrappers part. 
+   Doc/Makefile.am, Test/Makefile.am, gdcmPython/Makefile.am, 
+   src/Makefile.am : the project should properly compile and install
+   with the autotools, included the python wrappers part. 
       * gdcm.spec.in : added a spec file for RPM packaging.
 
 2003-03-14 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

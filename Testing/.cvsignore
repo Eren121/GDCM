@@ -6,6 +6,8 @@ Makefile
 test
 testWrite
 hashtest
+dcm2acr
+pourFindTaggs
 bug1
 image.dcm
 image.raw

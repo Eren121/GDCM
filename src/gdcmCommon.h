@@ -16,6 +16,7 @@ typedef  unsigned short guint16;
 typedef  unsigned int   guint32;
 typedef  short 		gint16;
 typedef  int   		gint32;
+#define UINT32_MAX    (4294967295U)
 #endif
 
 #ifdef _MSC_VER
