@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/17 08:54:26 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/09/24 11:34:21 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,13 +48,13 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in)
  * \brief   Prints the common part of gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
  * @param   os ostream we want to print in
  */
-void gdcmDocEntry::Print(std::ostream & os)
+void gdcmDocEntry::Print(std::ostream& os)
 {
    PrintLevel = 2; // FIXME
    
    size_t o;
    unsigned short int g, e;
-   char st[20];
+   char st[20],st2[10];
    TSKey v;
    std::string d2, vr;
    std::ostringstream s;
@@ -65,8 +65,8 @@ void gdcmDocEntry::Print(std::ostream & os)
    o  = GetOffset();
    vr = GetVR();
 
-   s << GetKey();
-       
+   sprintf(st2,"%04x|%04x", GetGroup(),GetElement());
+   s << st2;       
    if (PrintLevel >= 2)
    {
       s << " lg : ";
@@ -114,7 +114,7 @@ void gdcmDocEntry::Print(std::ostream & os)
  * @param fp already open file pointer
  * @param filetype type of the file to be written
  */
-void gdcmDocEntry::Write(FILE *fp, FileType filetype)
+void gdcmDocEntry::Write(FILE* fp, FileType filetype)
 {
    uint32_t FFFF  = 0xffffffff;
    uint16_t group = GetGroup();
