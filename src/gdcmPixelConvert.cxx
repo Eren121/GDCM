@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/08 20:05:52 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/11/08 22:13:40 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -173,8 +173,8 @@ bool PixelConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
    {
       for ( unsigned int j = 0; j < PixelNumber; j++ )
       {
-         *(x++) = *(a++);
          *(x++) = *(b++);
+         *(x++) = *(a++);
       }
    }
 
