@@ -1,3 +1,12 @@
+2005-01-05 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr
+   * ADD : Add the method Util::IsCurrentProcessorBigEndian
+          (we'll need it for 'Explicit VR Big Endian' Transfert Syntax)
+	* ADD  Method Document::ComputeGroupLength
+	* ENH : now  parsing creates a Vitual DictEntry for Pixels Element,
+           in order to allow further VR modification by user
+   * REM : removal of once-called method File::WriteBase	
+	        integration of its code in formerly one-line method File::Write		  
+
 2005-01-05 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmCommon.h : add the GDCM_UNKNOWN constant. This constant is to
      replace the different values "??", "Unkn", "Unknown".
