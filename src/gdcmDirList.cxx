@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 10:25:53 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/11/23 01:20:18 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 
 #if defined(_MSC_VER) || defined (__CYGWIN__) || defined(__BORLANDC__)
    #include <windows.h> 
-#if defined _MSC_VER || defined(__BORLANDC__)
+#ifdef _MSC_VER
    #include <direct.h>
 #endif //_MSC_VER
 #else
