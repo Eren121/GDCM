@@ -1,4 +1,8 @@
 2004-01-19 Benoit Regrain
+     * src/gdcmFile.cxx : bug fix concerning the close of file
+     * src/gdcmParser.[h|cxx] : remove obvious Pub informations
+
+2004-01-19 Benoit Regrain
     * removal of file gdcmHeader2.cxx
     * split class gdcmHeader into gdcmParser and gdcmHeader, with gdcmHeader
       inheriting from gdcmParser. This split is to prepare the integration

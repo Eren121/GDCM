@@ -805,6 +805,8 @@ bool gdcmFile::ReadPixelData(void* destination) {
 		  
 	// Troubles expected on Big-Endian processors ?	      
       }
+
+      Header->CloseFile();
       return(true);
    }        
 
@@ -828,8 +830,9 @@ bool gdcmFile::ReadPixelData(void* destination) {
 
    // ---------------------- Run Length Encoding
    if (Header->IsRLELossLessTransferSyntax()) {
-         bool res = (bool)gdcm_read_RLE_file (fp,destination);
-         return res; 
+      bool res = (bool)gdcm_read_RLE_file (fp,destination);
+      Header->CloseFile();
+      return res; 
    }  
     
    // --------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
@@ -855,7 +858,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
    guint16 ItemTagGr,ItemTagEl;
    int ln;  
    
-      //  Position on begining of Jpeg Pixels
+   //  Position on begining of Jpeg Pixels
    
    fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
    fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
@@ -882,7 +885,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
    }
            
    // parsing fragments until Sequence Delim. Tag found
-   while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
+   while ( ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
       // --- for each Fragment
 
       fread(&ln,4,1,fp); 

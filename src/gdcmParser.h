@@ -75,19 +75,18 @@ public:
     * \brief   returns a ref to the Dicom Header H table (multimap)
     * return the Dicom Header H table
     */
-   inline TagHeaderEntryHT &GetPubEntry(void) { return tagHT; };
+   inline TagHeaderEntryHT &GetEntry(void) { return tagHT; };
 
    /**
     * \ingroup gdcmHeader
     * \brief   returns a ref to the Dicom Header chained list
     * return the Dicom Header chained list
     */
-   inline ListTag &GetPubListEntry(void) { return listEntries; };
+   inline ListTag &GetListEntry(void) { return listEntries; };
 
 // Read (used in gdcmFile)
    FILE *OpenFile(bool exception_on_error = false) throw(gdcmFileError);
    bool CloseFile(void);
-   virtual void Parse(bool exception_on_error = false) throw(gdcmFormatError);
 
 // Write (used in gdcmFile)
    virtual bool Write(FILE *, FileType);
@@ -136,6 +135,8 @@ protected:
 
 private:
    // Read
+   void Parse(bool exception_on_error = false) throw(gdcmFormatError);
+
    void LoadHeaderEntries    (void);
    void LoadHeaderEntry      (gdcmHeaderEntry *);
    void AddHeaderEntry       (gdcmHeaderEntry *);

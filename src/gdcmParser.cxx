@@ -346,23 +346,6 @@ bool gdcmParser::CloseFile(void)
 
 /**
  * \ingroup gdcmParser
- * \brief   Parses the header of the file but WITHOUT loading element values.
- */
-void gdcmParser::Parse(bool exception_on_error) throw(gdcmFormatError) 
-{
-   gdcmHeaderEntry *newHeaderEntry = (gdcmHeaderEntry *)0;
-   
-   rewind(fp);
-   CheckSwap();
-   while ( (newHeaderEntry = ReadNextHeaderEntry()) ) 
-   {
-      SkipHeaderEntry(newHeaderEntry);
-      AddHeaderEntry(newHeaderEntry);
-   }
-}
-
-/**
- * \ingroup gdcmParser
  * \brief 
  * @param fp file pointer on an already open file
  * @param   type type of the File to be written 
@@ -1087,14 +1070,31 @@ guint16 gdcmParser::SwapShort(guint16 a)
 // Private
 /**
  * \ingroup gdcmParser
+ * \brief   Parses the header of the file but WITHOUT loading element values.
+ */
+void gdcmParser::Parse(bool exception_on_error) throw(gdcmFormatError) 
+{
+   gdcmHeaderEntry *newHeaderEntry = (gdcmHeaderEntry *)0;
+   
+   rewind(fp);
+   CheckSwap();
+   while ( (newHeaderEntry = ReadNextHeaderEntry()) ) 
+   {
+      SkipHeaderEntry(newHeaderEntry);
+      AddHeaderEntry(newHeaderEntry);
+   }
+}
+
+/**
+ * \ingroup gdcmParser
  * \brief   Loads the element values of all the Header Entries pointed in the
  *          public Chained List.
  */
 void gdcmParser::LoadHeaderEntries(void) 
 {
    rewind(fp);
-   for (ListTag::iterator i = GetPubListEntry().begin();
-      i != GetPubListEntry().end();
+   for (ListTag::iterator i = GetListEntry().begin();
+      i != GetListEntry().end();
       ++i)
    {
          LoadHeaderEntry(*i);
