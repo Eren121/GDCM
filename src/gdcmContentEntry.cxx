@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmContentEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 14:56:38 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/26 15:03:32 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,13 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+
+
+//-----------------------------------------------------------------------------
+// Public
+
+//-----------------------------------------------------------------------------
+// Protected
 /**
  * \brief   Constructor for a given DictEntry
  * @param   e Pointer to existing dictionary entry
@@ -55,13 +62,6 @@ ContentEntry::ContentEntry(DocEntry *e)
 ContentEntry::~ContentEntry ()
 {
 }
-
-//-----------------------------------------------------------------------------
-// Public
-
-//-----------------------------------------------------------------------------
-// Protected
-
 //-----------------------------------------------------------------------------
 // Private
 
