@@ -16,9 +16,11 @@
 // the declaration once you provided the definition of the method...
 
 #include <string>
+#include <iostream>
 #include <stddef.h>    // For size_t
 #include <glib.h>
 #include <stdio.h>
+
 
 // The requirement for the hash table (or map) that we shall use:
 // 1/ First, next, last (iterators)
@@ -28,8 +30,8 @@
 // 3/ Make sure we can setup some default size value, which should be
 //    around 4500 entries which is the average dictionary size (said JPR)
 #include <map>
-
-
+using namespace std;
+#define GDCM_EXPORT __declspec( dllexport )
 // Tag based hash tables.
 // We shall use as keys the strings (as the C++ type) obtained by
 // concatenating the group value and the element value (both of type
@@ -40,7 +42,7 @@
 // gdcmDictEntry::TranslateToKey for this conversion function.
 typedef string TagKey;
 
-class gdcmDictEntry {
+class GDCM_EXPORT gdcmDictEntry {
 private:
 	guint16 group;    // e.g. 0x0010
 	guint16 element;  // e.g. 0x0010
@@ -70,7 +72,7 @@ private:
 public:
 	//CLEANME gdcmDictEntry();
 	gdcmDictEntry(guint16 group, guint16 element,
-	              string vr, string fourth, string vr);
+	              string vr, string fourth, string name);
 	static TagKey TranslateToKey(guint16 group, guint16 element);
 	guint16 GetGroup(void)  { return group;};
 	guint16 GetElement(void){return element;};
@@ -87,7 +89,7 @@ typedef map<TagKey, gdcmDictEntry*> TagHT;
 // entries. There should be a single public dictionary (THE dictionary of
 // the actual DICOM v3) but as many shadow dictionaries as imagers 
 // combined with all software versions...
-class gdcmDict {
+class GDCM_EXPORT gdcmDict {
 	string name;
 	string filename;
 	TagHT entries;
@@ -104,7 +106,7 @@ public:
 // * having many in memory representations of the same dictionary.
 typedef string DictKey;
 typedef map<DictKey, gdcmDict*> DictSetHT;
-class gdcmDictSet {
+class GDCM_EXPORT gdcmDictSet {
 private:
 	string DictPath;      // Directory path to dictionaries
 	DictSetHT dicts;
@@ -128,7 +130,7 @@ public:
 
 // The dicom header of a Dicom file contains a set of such ELement VALUES
 // (when successfuly parsed against a given Dicom dictionary)
-class ElValue {
+class GDCM_EXPORT ElValue {
 private:
 	gdcmDictEntry *entry;
 	guint32 LgrElem;
@@ -155,7 +157,7 @@ public:
 typedef map<TagKey, ElValue*> TagElValueHT;
 typedef map<string, ElValue*> TagElValueNameHT;
 // Container for a set of succefully parsed ElValues.
-class ElValSet {
+class GDCM_EXPORT ElValSet {
 	// We need both accesses with a TagKey and the Dicentry.Name
 	TagElValueHT tagHt;
 	TagElValueNameHT NameHt;
@@ -183,7 +185,7 @@ typedef map<TagKey, VRAtr> VRHT;    // Value Representation Hash Table
 // Notes:
 // * the gdcmHeader::Set*Tag* family members cannot be defined as protected
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
-class gdcmHeader {	
+class GDCM_EXPORT gdcmHeader {	
 //FIXME sw should be qn EndianType !!!
 	//enum EndianType {
 		//LittleEndian, 
@@ -263,7 +265,7 @@ public:
 	// TODO Swig string GetPubElValRepByName(string TagName);
 	// TODO Swig string GetPubElValRepByNumber(guint16 group, guint16 element);
 	TagElValueHT & GetPubElVal(void) { return PubElVals.GetTagHt(); };
-	void   PrintPubElVal(ostream & os = std::cout);
+	void   PrintPubElVal(ostream & os = cout);
 	void   PrintPubDict(ostream &);
 	  
 	// Same thing with the shadow :
@@ -294,7 +296,7 @@ public:
 ////// QUESTION: this looks still like an open question wether the
 //////           relationship between a gdcmFile and gdcmHeader is of
 //////           type IS_A or HAS_A !
-class gdcmFile: gdcmHeader
+class GDCM_EXPORT gdcmFile: gdcmHeader
 {
 private:
 	void* Data;

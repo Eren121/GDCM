@@ -30,7 +30,8 @@ int gdcmDictSet::LoadDicomV3Dict(void) {
 
 int gdcmDictSet::LoadDictFromFile(string FileName, DictKey Name) {
 	gdcmDict *NewDict = new gdcmDict(FileName.c_str());
-	dicts[Name] = NewDict; 
+	dicts[Name] = NewDict;
+	return 0;
 }
 
 void gdcmDictSet::Print(ostream& os) {

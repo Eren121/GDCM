@@ -623,7 +623,7 @@ void gdcmHeader::LoadElements(void) {
 		LoadElementValue(tag->second);
 }
 
-void gdcmHeader::PrintPubElVal(ostream & os = std::cout) {
+void gdcmHeader::PrintPubElVal(ostream & os) {
 	PubElVals.Print(os);
 }
 
