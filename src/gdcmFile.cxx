@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 10:12:16 $
-  Version:   $Revision: 1.220 $
+  Date:      $Date: 2005/02/10 10:55:26 $
+  Version:   $Revision: 1.221 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1162,17 +1162,18 @@ void File::AnonymizeNoLoad()
  
    // TODO : FIXME
    // how to white out disk space if longer than 50 ?
-   char spaces[50] = "                                               ";
+   
    
    gdcm::DocEntry *d;
    uint32_t offset;
    uint32_t lgth;
-   uint32_t lgtToWrite;
+   uint32_t valLgth;
+   std::string *spaces;
    for (ListElements::iterator it = AnonymizeList.begin();  
                                it != AnonymizeList.end();
                              ++it)
    { 
-   d = GetDocEntry( (*it).Group, (*it).Elem);
+      d = GetDocEntry( (*it).Group, (*it).Elem);
 
       if ( d == NULL)
          continue;
@@ -1183,22 +1184,15 @@ void File::AnonymizeNoLoad()
 
       offset = d->GetOffset();
       lgth =   d->GetLength();
+      if (valLgth < lgth)
+      {
+         spaces = new std::string( lgth-valLgth, ' ');
+         (*it).Value = (*it).Value + *spaces;
+         delete spaces;
+      }
       fp->seekp( offset, std::ios::beg );
-
-      if ( (*it).Value == "" )
-      {
-         lgtToWrite = lgth > 50 ? 50 : lgth;
-         fp->write( spaces, lgtToWrite );
-      }
-      else
-      {
-         // TODO : FIXME
-         // how to white out disk space if longer than 50 ?
-         (*it).Value = (*it).Value + spaces;
-         lgtToWrite = lgth > (*it).Value.length() ? (*it).Value.length() : lgth;
-         fp->write( (char *)(*it).Value.c_str(), lgtToWrite );
-
-      }
+      fp->write( (*it).Value.c_str(), lgth );
+     
    }
    fp->close();
    delete fp;
@@ -1210,7 +1204,7 @@ void File::AnonymizeNoLoad()
  */
 bool File::AnonymizeFile()
 {
-   // If Anonymisation list is empty, let's perform some basic anonymisation
+   // If Anonymisation list is empty, let's perform some basic anonymization
    if ( AnonymizeList.begin() == AnonymizeList.end() )
    {
       // If exist, replace by spaces
