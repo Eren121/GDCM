@@ -1,3 +1,8 @@
+2004-11-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Apply first patch toward better string comparison when dealing with broken 
+    DICOM files. Essentially the string could be padded with a space instead 
+    of a null character as defined by standard
+  
 2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
   * src/gdcmDocument.[cxx|h] : fix memory leaks. The return is suppressed
     because never used... and in the same time, that's remove some memory leaks
