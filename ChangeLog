@@ -1,3 +1,5 @@
+2003-10-09  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+      * CMake-ification of gdcm, we have now two build system
 2003-10-03  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * vtkGdcmReader is now able to read rgb dicom file.
       * src/gdcmHeaderHelper : GetNumberOfScalarComponents()
