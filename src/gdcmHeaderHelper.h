@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.3 2003/09/11 13:44:17 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.4 2003/10/03 14:26:11 jpr Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
@@ -76,7 +76,9 @@ public:
    float GetXSpacing();
    float GetYSpacing();
    float GetZSpacing();
-   
+
+   int GetNumberOfScalarComponents();
+
    std::string GetStudyUID();
    std::string GetSeriesUID();
    std::string GetClassUID();
@@ -96,6 +98,7 @@ public:
    ModalityType GetModality();
    
    void GetImageOrientationPatient( float* iop );
+  
 
 };
 

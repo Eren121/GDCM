@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.9 2003/10/02 11:26:16 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.10 2003/10/03 14:26:11 jpr Exp $
 
 #include "gdcmHeaderHelper.h"
 
@@ -88,6 +88,26 @@ int gdcmHeaderHelper::GetPixelSize() {
       return 4;
    dbg.Verbose(0, "gdcmHeader::GetPixelSize: Unknown pixel type");
    return 0;
+}
+
+//----------------------------------------------------------------------------
+/**
+  * \ingroup gdcmHeaderHelper
+  * \brief gets the info from 0028,0004 : Photometric Interp
+  * \           else 1.
+  * @return 1 if Gray level, 3 if Color
+  */
+int gdcmHeaderHelper::GetNumberOfScalarComponents() {
+      std::string PhotometricInterpretation = 
+                  gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
+
+// The compiler will optimze, if it feels like !
+
+      if (PhotometricInterpretation == GDCM_UNFOUND) return 1;
+      if (PhotometricInterpretation == "MONOCHROME1") return 1;
+      if (PhotometricInterpretation == "MONOCHROME2") return 1;
+
+      return 3;
 }
 //----------------------------------------------------------------------------
 /**

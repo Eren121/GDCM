@@ -426,14 +426,14 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          return (size_t)0; 
       }
    } 
+
 // Just to 'see' was was actually read on disk :-(
 // Some troubles expected
 
-//FILE *  fpSpurious;
-//fpSpurious=fopen("SpuriousFile.raw","w"); 
-//fwrite(destination,lgrTotale, 1,fpSpurious);
-//fclose(fpSpurious);
-
+FILE *  fpSpurious;
+fpSpurious=fopen("SpuriousFile.raw","w"); 
+fwrite(destination,lgrTotale, 1,fpSpurious);
+fclose(fpSpurious);
 
 
    // *Try* to deal with the color
@@ -444,7 +444,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    // Planar configuration = 2 : 1 gray Plane + 3 LUT
 
    // Well ... supposed to be !
-   // See US-PAL-8-10x-echo.dcm, PlanarConfiguration=0,PhotometricInterpretation=PALETTE COLOR
+   // See US-PAL-8-10x-echo.dcm: PlanarConfiguration=0,PhotometricInterpretation=PALETTE COLOR
    // and heuristic has to be found :-( 
 
       std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
