@@ -14,7 +14,7 @@
 #include <iomanip> // for std::ios::left, ...
 
 
-#define MAX_SIZE_PRINT_ELEMENT_VALUE 64
+#define MAX_SIZE_PRINT_ELEMENT_VALUE 10000
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -51,7 +51,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    d2 = _CreateCleanString(v);  // replace non printable characters by '.'
    if (printLevel>=2) { 
       s << "lg : ";
-      lgth = GetReadLength();
+      lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
       if (lgth == 0xffffffff) {
          sprintf(st,"x(ffff)");  // I said : "x(ffff)" !
          s.setf(std::ios::left);

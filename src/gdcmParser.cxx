@@ -104,8 +104,8 @@ gdcmParser::gdcmParser(const char *InFilename,
 
    if ( !OpenFile(exception_on_error))
       return;
-   Parse();
-   LoadHeaderEntries();
+   if (ParseHeader())
+     LoadHeaderEntries();
    CloseFile();
 
    wasUpdated = 0;  // will be set to 1 if user adds an entry
@@ -223,10 +223,8 @@ bool gdcmParser::SetShaDict(DictKey dictName){
  *         false otherwise. 
  */
 bool gdcmParser::IsReadable(void) { 
-cout << "filetype [" << filetype <<"]" << endl;
    if(filetype==Unknown)
       return(false);
-cout << "trouv filetype" << endl;
    if(listEntries.size()<=0)
       return(false);
 
@@ -996,6 +994,8 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
  * \ warning does NOT add the missing elements in the header :
  * \         it's up to the user doing it !
  * \         (function CheckHeaderCoherence to be written)
+ * \ warning DON'T try, right now, to write a DICOM image
+ * \         from an ACR Header (meta elements will be missing!)
  * @param   type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
@@ -1008,8 +1008,10 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
    std::string vr;
    guint32 val_uint32;
    guint16 val_uint16;
-   
+   guint16 valZero =0;
    std::vector<std::string> tokens;
+   
+   // TODO : function CheckHeaderCoherence to be written
    
    //  uses now listEntries to iterate, not TagHt!
    //
@@ -1017,6 +1019,12 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
    //       TODO : find a trick (in STL?) to do it, at low cost !
 
    void *ptr;
+
+   // TODO : get grPixel and numPixel
+   guint16 grPixel =0x7fe0;
+   guint16 numPixel=0x0010;
+   //IterHT it = GetHeaderEntrySameNumber(grPixel,numPixel);
+   
 
    // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
 
@@ -1026,11 +1034,10 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
    {
       gr =  (*tag2)->GetGroup();
       el =  (*tag2)->GetElement();
-      lgr = (*tag2)->GetLength();
+      lgr = (*tag2)->GetReadLength();
       val = (*tag2)->GetValue().c_str();
       vr =  (*tag2)->GetVR();
-//cout << hex << gr << " " << el << " "<< vr << " " << val << endl; // JPR
-      
+ cout << hex << gr << " " << el << "  " << vr <<" lgr " << lgr << endl;     
       if ( type == ACR ) 
       { 
          if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
@@ -1052,21 +1059,30 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
       {
          // EXPLICIT VR
          guint16 z=0, shortLgr;
-         if (gr != 0xfffe) // JPR	 
-            fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
-
-         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || gr == 0xfffe) // JPR
-         {
-            if (gr != 0xfffe)
-	       fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
-            fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
-
-         } 
-         else 
-         {
+	 if (vr == "Unknown") { // Unknown was 'written'	 
             shortLgr=lgr;
             fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
-         }
+            fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
+	 } else {	 
+            if (gr != 0xfffe) { // NO value for 'delimiters'
+	      if (vr == "Unknown") // Unknown was 'written'
+	         fwrite(&z,(size_t)2 ,(size_t)1 ,_fp);
+	      else  	 
+                 fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
+            }
+	 
+            if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || gr == 0xfffe) // JPR
+            {
+               if (gr != 0xfffe)
+	          fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
+               fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
+            } 
+            else 
+            {
+               shortLgr=lgr;
+               fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
+            }
+	 }
       } 
       else // IMPLICIT VR 
       { 
@@ -1105,7 +1121,10 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
          continue;
       }     
       // Pixels are never loaded in the element !
-      if ((gr == 0x7fe0) && (el == 0x0010) ) 
+      
+      // TODO : FIX --> doesn't work when ICONE is found !!!
+      
+      if ((gr == grPixel) && (el == numPixel) ) 
          break;
 
       fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
@@ -1176,18 +1195,22 @@ guint16 gdcmParser::UnswapShort(guint16 a) {
 /**
  * \ingroup gdcmParser
  * \brief   Parses the header of the file but WITHOUT loading element values.
+ * @return  false if file is not ACR-NEMA / DICOM
  */
-void gdcmParser::Parse(bool exception_on_error) throw(gdcmFormatError) {
-   gdcmHeaderEntry *newHeaderEntry = (gdcmHeaderEntry *)0;
+bool gdcmParser::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
    
    rewind(fp);
-   CheckSwap();
+   if (!CheckSwap())
+      return false;
+      
+   gdcmHeaderEntry *newHeaderEntry = (gdcmHeaderEntry *)0;   
    while ( (newHeaderEntry = ReadNextHeaderEntry()) ) {
      SkipHeaderEntry(newHeaderEntry);
-     if ( (ignoreShadow==0) || (newHeaderEntry->GetGroup()%2) == 0) { //JPR
+     if ( (ignoreShadow==0) || (newHeaderEntry->GetGroup()%2) == 0) { 
         AddHeaderEntry(newHeaderEntry); 
      }	     
    }
+   return true;
 }
 
 /**
@@ -1241,9 +1264,8 @@ void gdcmParser::LoadHeaderEntries(void) {
 
 /**
  * \ingroup       gdcmParser
- * \brief         Loads the element content if it's length is not bigger
- *                than the value specified with
- *                gdcmParser::SetMaxSizeLoadEntry()
+ * \brief         Loads the element content if its length doesn't exceed
+ *                the value specified with gdcmParser::SetMaxSizeLoadEntry()
  * @param         Entry Header Entry (Dicom Element) to be dealt with
  */
 void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
@@ -1295,7 +1317,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
    
    // When integer(s) are expected, read and convert the following 
    // n *(two or four bytes)
-   // properly i.e. as integers as opposed to a strings.	
+   // properly i.e. as integers as opposed to strings.	
    // Elements with Value Multiplicity > 1
    // contain a set of integers (not a single one) 
     	
@@ -1346,7 +1368,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
    }
 
    if( (vr == "UI") ) // Because of correspondance with the VR dic
-      Entry->SetValue(NewValue.c_str());
+      Entry->SetValue(NewValue.c_str()); // ??? JPR ???
    else
       Entry->SetValue(NewValue);
 }
@@ -1356,7 +1378,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
  * \brief   add a new Dicom Element pointer to 
  *          the H Table and to the chained List
  * \warning push_bash in listEntries ONLY during ParseHeader
- * \todo    something to allow further Elements addition,
+ * \TODO    something to allow further Elements addition,
  * \        when position to be taken care of     
  * @param   newHeaderEntry
  */
@@ -1941,19 +1963,23 @@ void gdcmParser::Initialise(void)
  * \ingroup gdcmParser
  * \brief   Discover what the swap code is (among little endian, big endian,
  *          bad little endian, bad big endian).
- *
+ *          sw is set
+ * @return false when we are absolutely sure 
+ *               it's neither ACR-NEMA nor DICOM
+ *         true  when we hope ours assuptions are OK
  */
-void gdcmParser::CheckSwap() {
+bool gdcmParser::CheckSwap() {
 
    // The only guaranted way of finding the swap code is to find a
    // group tag since we know it's length has to be of four bytes i.e.
    // 0x00000004. Finding the swap code in then straigthforward. Trouble
    // occurs when we can't find such group...
    
-   guint32  s;
    guint32  x=4;  // x : for ntohs
    bool net2host; // true when HostByteOrder is the same as NetworkByteOrder
-    
+   guint32  s32;
+   guint16  s16;
+       
    int lgrLue;
    char *entCur;
    char deb[HEADER_LENGTH_TO_READ];
@@ -2023,7 +2049,7 @@ void gdcmParser::CheckSwap() {
       // after the file preamble and the "DICM" string).
       rewind(fp);
       fseek (fp, 132L, SEEK_SET);
-      return;
+      return true;
    } // End of DicomV3
 
    // Alas, this is not a DicomV3 file and whatever happens there is no file
@@ -2041,40 +2067,70 @@ void gdcmParser::CheckSwap() {
    // We assume the array of char we are considering contains the binary
    // representation of a 32 bits integer. Hence the following dirty
    // trick :
-   s = *((guint32 *)(entCur));
+   s32 = *((guint32 *)(entCur));
       
-   switch (s) {
+   switch (s32) {
       case 0x00040000 :
          sw = 3412;
          filetype = ACR;
-         return;
+         return true;
       case 0x04000000 :
          sw = 4321;
          filetype = ACR;
-         return;
+         return true;
       case 0x00000400 :
          sw = 2143;
          filetype = ACR;
-         return;
+         return true;
       case 0x00000004 :
          sw = 0;
          filetype = ACR;
-         return;
+         return true;
       default :
-         dbg.Verbose(0, "gdcmParser::CheckSwap:",
-                     "ACR/NEMA unfound swap info (time to raise bets)");
 	 
       // We are out of luck. It is not a DicomV3 nor a 'clean' ACR/NEMA file.
       // It is time for despaired wild guesses. 
-      // So, let's assume this file happens to be 'dirty' ACR/NEMA,
-      //  i.e. the length of the group is  not present.     
+      // So, let's check if this file wouldn't happen to be 'dirty' ACR/NEMA,
+      //  i.e. the 'group length' element is not present :     
+      
+      //  check the supposed to be 'group number'
+      //  0x0002 or 0x0004 or 0x0008
+      //  to determine ' sw' value .
+      //  Only 0 or 4321 will be possible 
+      //  (no oportunity to check for the formerly well known
+      //  ACR-NEMA 'Bad Big Endian' or 'Bad Little Endian' 
+      //  if unsuccessfull (i.e. neither 0x0002 nor 0x0200 etc -4, 8-) 
+      //  the file IS NOT ACR-NEMA nor DICOM V3
+      //  Find a trick to tell it the caller...
+      
+      s16 = *((guint16 *)(deb));
+      
+      switch (s16) {
+      case 0x0002 :
+      case 0x0004 :
+      case 0x0008 :      
+         sw = 0;
          filetype = ACR;
-      // Then the only info we have is the net2host one.    
-	 if (! net2host )
-            sw = 0;
-         else
+         return true;
+      case 0x0200 :
+      case 0x0400 :
+      case 0x0800 : 
          sw = 4321;
-         return;     			
+         filetype = ACR;
+	 return true;
+      default :
+         dbg.Verbose(0, "gdcmParser::CheckSwap:",
+                     "ACR/NEMA unfound swap info (Really hopeless !)"); 
+         filetype = Unknown;     
+         return false;
+      }
+      	 
+      // Then the only info we have is the net2host one. 	 
+	 //if (! net2host )
+         //   sw = 0;
+         //else
+         //  sw = 4321;
+         //return;     			
    }
 }
 
@@ -2312,6 +2368,7 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
    return NewEntry;
 }
 
+// Never used; commented out, waiting for removal.
 /**
  * \ingroup gdcmParser
  * \brief   Small utility function that creates a new manually crafted
@@ -2322,28 +2379,28 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
  * @param   VR The Value Representation to be given to this new tag.
  * @return  The newly hand crafted Element Value.
  */
-gdcmHeaderEntry *gdcmParser::NewManualHeaderEntryToPubDict(std::string NewTagName, 
-                                                           std::string VR) 
-{
-   gdcmHeaderEntry *NewEntry = NULL;
-   guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
-   guint32 FreeElem = 0;
-   gdcmDictEntry *DictEntry = NULL;
-
-   FreeElem = GenerateFreeTagKeyInGroup(StuffGroup);
-   if (FreeElem == UINT32_MAX) 
-   {
-      dbg.Verbose(1, "gdcmHeader::NewManualHeaderEntryToPubDict",
-                     "Group 0xffff in Public Dict is full");
-      return NULL;
-   }
-
-   DictEntry = NewVirtualDictEntry(StuffGroup, FreeElem,
-                                VR, "GDCM", NewTagName);
-   NewEntry = new gdcmHeaderEntry(DictEntry);
-   AddHeaderEntry(NewEntry);
-   return NewEntry;
-}
+//gdcmHeaderEntry *gdcmParser::NewManualHeaderEntryToPubDict(std::string NewTagName, 
+//                                                           std::string VR) 
+//{
+//   gdcmHeaderEntry *NewEntry = NULL;
+//   guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
+//   guint32 FreeElem = 0;
+//   gdcmDictEntry *DictEntry = NULL;
+//
+//   FreeElem = GenerateFreeTagKeyInGroup(StuffGroup);
+//   if (FreeElem == UINT32_MAX) 
+//   {
+//      dbg.Verbose(1, "gdcmHeader::NewManualHeaderEntryToPubDict",
+//                     "Group 0xffff in Public Dict is full");
+//      return NULL;
+//   }
+//
+//   DictEntry = NewVirtualDictEntry(StuffGroup, FreeElem,
+//                                VR, "GDCM", NewTagName);
+//   NewEntry = new gdcmHeaderEntry(DictEntry);
+//   AddHeaderEntry(NewEntry);
+//   return NewEntry;
+//}
 
 /**
  * \ingroup gdcmParser

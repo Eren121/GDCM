@@ -10,8 +10,8 @@ FD Floating Point Double; // 64-bit IEEE 754:1985 double
 IS Integer String;        // At most 12 bytes
 LO Long String;           // At most 64 chars
 LT Long Text;             // At most 10240 chars
-OB Other Byte String;     // String of bytes (vr independant)
-OW Other Word String;     // String of 16-bit words (vr dep)
+OB Other Byte String;     // String of bytes (VR independant)
+OW Other Word String;     // String of 16-bit words (VR dependant)
 PN Person Name;           // At most 64 chars
 SH Short String;          // At most 16 chars
 SL Signed Long;           // Exactly 4 bytes

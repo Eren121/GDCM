@@ -856,7 +856,7 @@
 0028 3002 US IMG LUT Descriptor
 0028 3003 LO IMG LUT Explanation
 0028 3004 LO IMG Modality LUT Type
-0028 3006 CTX IMG LUT Data
+0028 3006 US IMG LUT Data (CTX dependent)
 0028 3010 SQ IMG VOI LUT Sequence
 0028 3110 SQ IMG Softcopy VOI LUT Sequence
 0028 4000 SH IMG Comments (RET)
@@ -1582,268 +1582,268 @@
 3008 0240 SQ ??? Fraction Status Summary Sequence
 3008 0250 DA ??? Treatment Date
 3008 0251 TM ??? Treatment Time
-300a 0000 UL RT  Group Length
-300a 0002 SH RT  RT Plan Label
-300a 0003 LO RT  RT Plan Name
-300a 0004 ST RT  RT Plan Description
-300a 0006 DA RT  RT Plan Date
-300a 0007 TM RT  RT Plan Time
-300a 0009 LO RT  Treatment Protocols
-300a 000a CS RT  Treatment Intent
-300a 000b LO RT  Treatment Sites
-300a 000c CS RT  RT Plan Geometry
-300a 000e ST RT  Prescription Description
-300a 0010 SQ RT  Dose Reference Sequence
-300a 0012 IS RT  Dose Reference Number
-300a 0014 CS RT  Dose Reference Structure Type
-300a 0015 CS RT  Nominal Beam Energy Unit
-300a 0016 LO RT  Dose Reference Description
-300a 0018 DS RT  Dose Reference Point Coordinates
-300a 001a DS RT  Nominal Prior Dose
-300a 0020 CS RT  Dose Reference Type
-300a 0021 DS RT  Constraint Weight
-300a 0022 DS RT  Delivery Warning Dose
-300a 0023 DS RT  Delivery Maximum Dose
-300a 0025 DS RT  Target Minimum Dose
-300a 0026 DS RT  Target Prescription Dose
-300a 0027 DS RT  Target Maximum Dose
-300a 0028 DS RT  Target Underdose Volume Fraction
-300a 002a DS RT  Organ at Risk Full-volume Dose
-300a 002b DS RT  Organ at Risk Limit Dose
-300a 002c DS RT  Organ at Risk Maximum Dose
-300a 002d DS RT  Organ at Risk Overdose Volume Fraction
-300a 0040 SQ RT  Tolerance Table Sequence
-300a 0042 IS RT  Tolerance Table Number
-300a 0043 SH RT  Tolerance Table Label
-300a 0044 DS RT  Gantry Angle Tolerance
-300a 0046 DS RT  Beam Limiting Device Angle Tolerance
-300a 0048 SQ RT  Beam Limiting Device Tolerance Sequence
-300a 004a DS RT  Beam Limiting Device Position Tolerance
-300a 004c DS RT  Patient Support Angle Tolerance
-300a 004e DS RT  Table Top Eccentric Angle Tolerance
-300a 0051 DS RT  Table Top Vertical Position Tolerance
-300a 0052 DS RT  Table Top Longitudinal Position Tolerance
-300a 0053 DS RT  Table Top Lateral Position Tolerance
-300a 0055 CS RT  RT Plan Relationship
-300a 0070 SQ RT  Fraction Group Sequence
-300a 0071 IS RT  Fraction Group Number
-300a 0078 IS RT  Number of Fractions Planned
-300a 0079 IS RT  Number of Fractions Per Day
-300a 007a IS RT  Repeat Fraction Cycle Length
-300a 007b LT RT  Fraction Pattern
-300a 0080 IS RT  Number of Beams
-300a 0082 DS RT  Beam Dose Specification Point
-300a 0084 DS RT  Beam Dose
-300a 0086 DS RT  Beam Meterset
-300a 00a0 IS RT  Number of Brachy Application Setups
-300a 00a2 DS RT  Brachy App Setup Dose Specification Point
-300a 00a4 DS RT  Brachy Application Setup Dose
-300a 00b0 SQ RT  Beam Sequence
-300a 00b2 SH RT  Treatment Machine Name
-300a 00b3 CS RT  Primary Dosimeter Unit
-300a 00b4 DS RT  Source-Axis Distance
-300a 00b6 SQ RT  Beam Limiting Device Sequence
-300a 00b8 CS RT  RT Beam Limiting Device Type
-300a 00ba DS RT  Source to Beam Limiting Device Distance
-300a 00bc IS RT  Number of Leaf/Jaw Pairs
-300a 00be DS RT  Leaf Position Boundaries
-300a 00c0 IS RT  Beam Number
-300a 00c2 LO RT  Beam Name
-300a 00c3 ST RT  Beam Description
-300a 00c4 CS RT  Beam Type
-300a 00c6 CS RT  Radiation Type
-300a 00c7 CS RT  High-Dose Technique Type
-300a 00c8 IS RT  Reference Image Number
-300a 00ca SQ RT  Planned Verification Image Sequence
-300a 00cc LO RT  Imaging Device-Specific Acquisition Parameters
-300a 00ce CS RT  Treatment Delivery Type
-300a 00d0 IS RT  Number of Wedges
-300a 00d1 SQ RT  Wedge Sequence
-300a 00d2 IS RT  Wedge Number
-300a 00d3 CS RT  Wedge Type
-300a 00d4 SH RT  Wedge ID
-300a 00d5 IS RT  Wedge Angle
-300a 00d6 DS RT  Wedge Factor
-300a 00d8 DS RT  Wedge Orientation
-300a 00da DS RT  Source to Wedge Tray Distance
-300a 00e0 IS RT  Number of Compensators
-300a 00e1 SH RT  Material ID
-300a 00e2 DS RT  Total Compensator Tray Factor
-300a 00e3 SQ RT  Compensator Sequence
-300a 00e4 IS RT  Compensator Number
-300a 00e5 SH RT  Compensator ID
-300a 00e6 DS RT  Source to Compensator Tray Distance
-300a 00e7 IS RT  Compensator Rows
-300a 00e8 IS RT  Compensator Columns
-300a 00e9 DS RT  Compensator Pixel Spacing
-300a 00ea DS RT  Compensator Position
-300a 00eb DS RT  Compensator Transmission Data
-300a 00ec DS RT  Compensator Thickness Data
-300a 00ed IS RT  Number of Boli
-300a 00f0 IS RT  Number of Blocks
-300a 00f2 DS RT  Total Block Tray Factor
-300a 00f4 SQ RT  Block Sequence
-300a 00f5 SH RT  Block Tray ID
-300a 00f6 DS RT  Source to Block Tray Distance
-300a 00f8 CS RT  Block Type
-300a 00fa CS RT  Block Divergence
-300a 00fb CS RT  Block Mounting Position
-300a 00fc IS RT  Block Number
-300a 00fe LO RT  Block Name
-300a 0100 DS RT  Block Thickness
-300a 0102 DS RT  Block Transmission
-300a 0104 IS RT  Block Number of Points
-300a 0106 DS RT  Block Data
-300a 0107 SQ RT  Applicator Sequence
-300a 0108 SH RT  Applicator ID
-300a 0109 CS RT  Applicator Type
-300a 010a LO RT  Applicator Description
-300a 010c DS RT  Cumulative Dose Reference Coefficient
-300a 010e DS RT  Final Cumulative Meterset Weight
-300a 0110 IS RT  Number of Control Points
-300a 0111 SQ RT  Control Point Sequence
-300a 0112 IS RT  Control Point Index
-300a 0114 DS RT  Nominal Beam Energy
-300a 0115 DS RT  Dose Rate Set
-300a 0116 SQ RT  Wedge Position Sequence
-300a 0118 CS RT  Wedge Position
-300a 011a SQ RT  Beam Limiting Device Position Sequence
-300a 011c DS RT  Leaf/Jaw Positions
-300a 011e DS RT  Gantry Angle
-300a 011f CS RT  Gantry Rotation Direction
-300a 0120 DS RT  Beam Limiting Device Angle
-300a 0121 CS RT  Beam Limiting Device Rotation Direction
-300a 0122 DS RT  Patient Support Angle
-300a 0123 CS RT  Patient Support Rotation Direction
-300a 0124 DS RT  Table Top Eccentric Axis Distance
-300a 0125 DS RT  Table Top Eccentric Angle
-300a 0126 CS RT  Table Top Eccentric Rotation Direction
-300a 0128 DS RT  Table Top Vertical Position
-300a 0129 DS RT  Table Top Longitudinal Position
-300a 012a DS RT  Table Top Lateral Position
-300a 012c DS RT  Isocenter Position
-300a 012e DS RT  Surface Entry Point
-300a 0130 DS RT  Source to Surface Distance
-300a 0134 DS RT  Cumulative Meterset Weight
-300a 0180 SQ RT  Patient Setup Sequence
-300a 0182 IS RT  Patient Setup Number
-300a 0184 LO RT  Patient Additional Position
-300a 0190 SQ RT  Fixation Device Sequence
-300a 0192 CS RT  Fixation Device Type
-300a 0194 SH RT  Fixation Device Label
-300a 0196 ST RT  Fixation Device Description
-300a 0198 SH RT  Fixation Device Position
-300a 01a0 SQ RT  Shielding Device Sequence
-300a 01a2 CS RT  Shielding Device Type
-300a 01a4 SH RT  Shielding Device Label
-300a 01a6 ST RT  Shielding Device Description
-300a 01a8 SH RT  Shielding Device Position
-300a 01b0 CS RT  Setup Technique
-300a 01b2 ST RT  Setup Technique Description
-300a 01b4 SQ RT  Setup Device Sequence
-300a 01b6 CS RT  Setup Device Type
-300a 01b8 SH RT  Setup Device Label
-300a 01ba ST RT  Setup Device Description
-300a 01bc DS RT  Setup Device Parameter
-300a 01d0 ST RT  Setup Reference Description
-300a 01d2 DS RT  Table Top Vertical Setup Displacement
-300a 01d4 DS RT  Table Top Longitudinal Setup Displacement
-300a 01d6 DS RT  Table Top Lateral Setup Displacement
-300a 0200 CS RT  Brachy Treatment Technique
-300a 0202 CS RT  Brachy Treatment Type
-300a 0206 SQ RT  Treatment Machine Sequence
-300a 0210 SQ RT  Source Sequence
-300a 0212 IS RT  Source Number
-300a 0214 CS RT  Source Type
-300a 0216 LO RT  Source Manufacturer
-300a 0218 DS RT  Active Source Diameter
-300a 021a DS RT  Active Source Length
-300a 0222 DS RT  Source Encapsulation Nominal Thickness
-300a 0224 DS RT  Source Encapsulation Nominal Transmission
-300a 0226 LO RT  Source Isotope Name
-300a 0228 DS RT  Source Isotope Half Life
-300a 022a DS RT  Reference Air Kerma Rate
-300a 022c DA RT  Air Kerma Rate Reference Date
-300a 022e TM RT  Air Kerma Rate Reference Time
-300a 0230 SQ RT  Application Setup Sequence
-300a 0232 CS RT  Application Setup Type
-300a 0234 IS RT  Application Setup Number
-300a 0236 LO RT  Application Setup Name
-300a 0238 LO RT  Application Setup Manufacturer
-300a 0240 IS RT  Template Number
-300a 0242 SH RT  Template Type
-300a 0244 LO RT  Template Name
-300a 0250 DS RT  Total Reference Air Kerma
-300a 0260 SQ RT  Brachy Acessory Device Sequence
-300a 0262 IS RT  Brachy Accessory Device Number
-300a 0263 SH RT  Brachy Accessory Device ID
-300a 0264 CS RT  Brachy Accessory Device Type
-300a 0266 LO RT  Brachy Accessory Device Name
-300a 026a DS RT  Brachy Accessory Device Nominal Thickness
-300a 026c DS RT  Brachy Accessory Device Nominal Transmission
-300a 0280 SQ RT  Channel Sequence
-300a 0282 IS RT  Channel Number
-300a 0284 DS RT  Channel Length
-300a 0286 DS RT  Channel Total Time
-300a 0288 CS RT  Source Movement Type
-300a 028a IS RT  Number of Pulses
-300a 028c DS RT  Pulse Repetition Interval
-300a 0290 IS RT  Source Applicator Number
-300a 0291 SH RT  Source Applicator ID
-300a 0292 CS RT  Source Applicator Type
-300a 0294 LO RT  Source Applicator Name
-300a 0296 DS RT  Source Applicator Length
-300a 0298 LO RT  Source Applicator Manufacturer
-300a 029c DS RT  Source Applicator Wall Nominal Thickness
-300a 029e DS RT  Source Applicator Wall Nominal Transmission
-300a 02a0 DS RT  Source Applicator Step Size
-300a 02a2 IS RT  Transfer Tube Number
-300a 02a4 DS RT  Transfer Tube Length
-300a 02b0 SQ RT  Channel Shield Sequence
-300a 02b2 IS RT  Channel Shield Number
-300a 02b3 SH RT  Channel Shield ID
-300a 02b4 LO RT  Channel Shield Name
-300a 02b8 DS RT  Channel Shield Nominal Thickness
-300a 02ba DS RT  Channel Shield Nominal Transmission
-300a 02c8 DS RT  Final Cumulative Time Weight
-300a 02d0 SQ RT  Brachy Control Point Sequence
-300a 02d2 DS RT  Control Point Relative Position
-300a 02d4 DS RT  Control Point 3D Position
-300a 02d6 DS RT  Cumulative Time Weight
-300a 02e0 CS RT  Compensator Divergence
-300a 02e1 CS RT  Compensator Mounting Position
-300a 02e2 DS RT  Source to Compensator Distance
-300c 0000 UL RT  Group Length
-300c 0002 SQ RT  Referenced RT Plan Sequence
-300c 0004 SQ RT  Referenced Beam Sequence
-300c 0006 IS RT  Referenced Beam Number
-300c 0007 IS RT  Referenced Reference Image Number
-300c 0008 DS RT  Start Cumulative Meterset Weight
-300c 0009 DS RT  End Cumulative Meterset Weight
-300c 000a SQ RT  Referenced Brachy Application Setup Sequence
-300c 000c IS RT  Referenced Brachy Application Setup Number
-300c 000e IS RT  Referenced Source Number
-300c 0020 SQ RT  Referenced Fraction Group Sequence
-300c 0022 IS RT  Referenced Fraction Group Number
-300c 0040 SQ RT  Referenced Verification Image Sequence
-300c 0042 SQ RT  Referenced Reference Image Sequence
-300c 0050 SQ RT  Referenced Dose Reference Sequence
-300c 0051 IS RT  Referenced Dose Reference Number
-300c 0055 SQ RT  Brachy Referenced Dose Reference Sequence
-300c 0060 SQ RT  Referenced Structure Set Sequence
-300c 006a IS RT  Referenced Patient Setup Number
-300c 0080 SQ RT  Referenced Dose Sequence
-300c 00a0 IS RT  Referenced Tolerance Table Number
-300c 00b0 SQ RT  Referenced Bolus Sequence
-300c 00c0 IS RT  Referenced Wedge Number
-300c 00d0 IS RT  Referenced Compensator Number
-300c 00e0 IS RT  Referenced Block Number
-300c 00f0 IS RT  Referenced Control Point Index
-300e 0000 UL RT  Group Length
-300e 0002 CS RT  Approval Status
-300e 0004 DA RT  Review Date
-300e 0005 TM RT  Review Time
-300e 0008 PN RT  Reviewer Name
+300a 0000 UL RT Group Length
+300a 0002 SH RT RT Plan Label
+300a 0003 LO RT RT Plan Name
+300a 0004 ST RT RT Plan Description
+300a 0006 DA RT RT Plan Date
+300a 0007 TM RT RT Plan Time
+300a 0009 LO RT Treatment Protocols
+300a 000a CS RT Treatment Intent
+300a 000b LO RT Treatment Sites
+300a 000c CS RT RT Plan Geometry
+300a 000e ST RT Prescription Description
+300a 0010 SQ RT Dose Reference Sequence
+300a 0012 IS RT Dose Reference Number
+300a 0014 CS RT Dose Reference Structure Type
+300a 0015 CS RT Nominal Beam Energy Unit
+300a 0016 LO RT Dose Reference Description
+300a 0018 DS RT Dose Reference Point Coordinates
+300a 001a DS RT Nominal Prior Dose
+300a 0020 CS RT Dose Reference Type
+300a 0021 DS RT Constraint Weight
+300a 0022 DS RT Delivery Warning Dose
+300a 0023 DS RT Delivery Maximum Dose
+300a 0025 DS RT Target Minimum Dose
+300a 0026 DS RT Target Prescription Dose
+300a 0027 DS RT Target Maximum Dose
+300a 0028 DS RT Target Underdose Volume Fraction
+300a 002a DS RT Organ at Risk Full-volume Dose
+300a 002b DS RT Organ at Risk Limit Dose
+300a 002c DS RT Organ at Risk Maximum Dose
+300a 002d DS RT Organ at Risk Overdose Volume Fraction
+300a 0040 SQ RT Tolerance Table Sequence
+300a 0042 IS RT Tolerance Table Number
+300a 0043 SH RT Tolerance Table Label
+300a 0044 DS RT Gantry Angle Tolerance
+300a 0046 DS RT Beam Limiting Device Angle Tolerance
+300a 0048 SQ RT Beam Limiting Device Tolerance Sequence
+300a 004a DS RT Beam Limiting Device Position Tolerance
+300a 004c DS RT Patient Support Angle Tolerance
+300a 004e DS RT Table Top Eccentric Angle Tolerance
+300a 0051 DS RT Table Top Vertical Position Tolerance
+300a 0052 DS RT Table Top Longitudinal Position Tolerance
+300a 0053 DS RT Table Top Lateral Position Tolerance
+300a 0055 CS RT RT Plan Relationship
+300a 0070 SQ RT Fraction Group Sequence
+300a 0071 IS RT Fraction Group Number
+300a 0078 IS RT Number of Fractions Planned
+300a 0079 IS RT Number of Fractions Per Day
+300a 007a IS RT Repeat Fraction Cycle Length
+300a 007b LT RT Fraction Pattern
+300a 0080 IS RT Number of Beams
+300a 0082 DS RT Beam Dose Specification Point
+300a 0084 DS RT Beam Dose
+300a 0086 DS RT Beam Meterset
+300a 00a0 IS RT Number of Brachy Application Setups
+300a 00a2 DS RT Brachy App Setup Dose Specification Point
+300a 00a4 DS RT Brachy Application Setup Dose
+300a 00b0 SQ RT Beam Sequence
+300a 00b2 SH RT Treatment Machine Name
+300a 00b3 CS RT Primary Dosimeter Unit
+300a 00b4 DS RT Source-Axis Distance
+300a 00b6 SQ RT Beam Limiting Device Sequence
+300a 00b8 CS RT RT Beam Limiting Device Type
+300a 00ba DS RT Source to Beam Limiting Device Distance
+300a 00bc IS RT Number of Leaf/Jaw Pairs
+300a 00be DS RT Leaf Position Boundaries
+300a 00c0 IS RT Beam Number
+300a 00c2 LO RT Beam Name
+300a 00c3 ST RT Beam Description
+300a 00c4 CS RT Beam Type
+300a 00c6 CS RT Radiation Type
+300a 00c7 CS RT High-Dose Technique Type
+300a 00c8 IS RT Reference Image Number
+300a 00ca SQ RT Planned Verification Image Sequence
+300a 00cc LO RT Imaging Device-Specific Acquisition Parameters
+300a 00ce CS RT Treatment Delivery Type
+300a 00d0 IS RT Number of Wedges
+300a 00d1 SQ RT Wedge Sequence
+300a 00d2 IS RT Wedge Number
+300a 00d3 CS RT Wedge Type
+300a 00d4 SH RT Wedge ID
+300a 00d5 IS RT Wedge Angle
+300a 00d6 DS RT Wedge Factor
+300a 00d8 DS RT Wedge Orientation
+300a 00da DS RT Source to Wedge Tray Distance
+300a 00e0 IS RT Number of Compensators
+300a 00e1 SH RT Material ID
+300a 00e2 DS RT Total Compensator Tray Factor
+300a 00e3 SQ RT Compensator Sequence
+300a 00e4 IS RT Compensator Number
+300a 00e5 SH RT Compensator ID
+300a 00e6 DS RT Source to Compensator Tray Distance
+300a 00e7 IS RT Compensator Rows
+300a 00e8 IS RT Compensator Columns
+300a 00e9 DS RT Compensator Pixel Spacing
+300a 00ea DS RT Compensator Position
+300a 00eb DS RT Compensator Transmission Data
+300a 00ec DS RT Compensator Thickness Data
+300a 00ed IS RT Number of Boli
+300a 00f0 IS RT Number of Blocks
+300a 00f2 DS RT Total Block Tray Factor
+300a 00f4 SQ RT Block Sequence
+300a 00f5 SH RT Block Tray ID
+300a 00f6 DS RT Source to Block Tray Distance
+300a 00f8 CS RT Block Type
+300a 00fa CS RT Block Divergence
+300a 00fb CS RT Block Mounting Position
+300a 00fc IS RT Block Number
+300a 00fe LO RT Block Name
+300a 0100 DS RT Block Thickness
+300a 0102 DS RT Block Transmission
+300a 0104 IS RT Block Number of Points
+300a 0106 DS RT Block Data
+300a 0107 SQ RT Applicator Sequence
+300a 0108 SH RT Applicator ID
+300a 0109 CS RT Applicator Type
+300a 010a LO RT Applicator Description
+300a 010c DS RT Cumulative Dose Reference Coefficient
+300a 010e DS RT Final Cumulative Meterset Weight
+300a 0110 IS RT Number of Control Points
+300a 0111 SQ RT Control Point Sequence
+300a 0112 IS RT Control Point Index
+300a 0114 DS RT Nominal Beam Energy
+300a 0115 DS RT Dose Rate Set
+300a 0116 SQ RT Wedge Position Sequence
+300a 0118 CS RT Wedge Position
+300a 011a SQ RT Beam Limiting Device Position Sequence
+300a 011c DS RT Leaf/Jaw Positions
+300a 011e DS RT Gantry Angle
+300a 011f CS RT Gantry Rotation Direction
+300a 0120 DS RT Beam Limiting Device Angle
+300a 0121 CS RT Beam Limiting Device Rotation Direction
+300a 0122 DS RT Patient Support Angle
+300a 0123 CS RT Patient Support Rotation Direction
+300a 0124 DS RT Table Top Eccentric Axis Distance
+300a 0125 DS RT Table Top Eccentric Angle
+300a 0126 CS RT Table Top Eccentric Rotation Direction
+300a 0128 DS RT Table Top Vertical Position
+300a 0129 DS RT Table Top Longitudinal Position
+300a 012a DS RT Table Top Lateral Position
+300a 012c DS RT Isocenter Position
+300a 012e DS RT Surface Entry Point
+300a 0130 DS RT Source to Surface Distance
+300a 0134 DS RT Cumulative Meterset Weight
+300a 0180 SQ RT Patient Setup Sequence
+300a 0182 IS RT Patient Setup Number
+300a 0184 LO RT Patient Additional Position
+300a 0190 SQ RT Fixation Device Sequence
+300a 0192 CS RT Fixation Device Type
+300a 0194 SH RT Fixation Device Label
+300a 0196 ST RT Fixation Device Description
+300a 0198 SH RT Fixation Device Position
+300a 01a0 SQ RT Shielding Device Sequence
+300a 01a2 CS RT Shielding Device Type
+300a 01a4 SH RT Shielding Device Label
+300a 01a6 ST RT Shielding Device Description
+300a 01a8 SH RT Shielding Device Position
+300a 01b0 CS RT Setup Technique
+300a 01b2 ST RT Setup Technique Description
+300a 01b4 SQ RT Setup Device Sequence
+300a 01b6 CS RT Setup Device Type
+300a 01b8 SH RT Setup Device Label
+300a 01ba ST RT Setup Device Description
+300a 01bc DS RT Setup Device Parameter
+300a 01d0 ST RT Setup Reference Description
+300a 01d2 DS RT Table Top Vertical Setup Displacement
+300a 01d4 DS RT Table Top Longitudinal Setup Displacement
+300a 01d6 DS RT Table Top Lateral Setup Displacement
+300a 0200 CS RT Brachy Treatment Technique
+300a 0202 CS RT Brachy Treatment Type
+300a 0206 SQ RT Treatment Machine Sequence
+300a 0210 SQ RT Source Sequence
+300a 0212 IS RT Source Number
+300a 0214 CS RT Source Type
+300a 0216 LO RT Source Manufacturer
+300a 0218 DS RT Active Source Diameter
+300a 021a DS RT Active Source Length
+300a 0222 DS RT Source Encapsulation Nominal Thickness
+300a 0224 DS RT Source Encapsulation Nominal Transmission
+300a 0226 LO RT Source Isotope Name
+300a 0228 DS RT Source Isotope Half Life
+300a 022a DS RT Reference Air Kerma Rate
+300a 022c DA RT Air Kerma Rate Reference Date
+300a 022e TM RT Air Kerma Rate Reference Time
+300a 0230 SQ RT Application Setup Sequence
+300a 0232 CS RT Application Setup Type
+300a 0234 IS RT Application Setup Number
+300a 0236 LO RT Application Setup Name
+300a 0238 LO RT Application Setup Manufacturer
+300a 0240 IS RT Template Number
+300a 0242 SH RT Template Type
+300a 0244 LO RT Template Name
+300a 0250 DS RT Total Reference Air Kerma
+300a 0260 SQ RT Brachy Acessory Device Sequence
+300a 0262 IS RT Brachy Accessory Device Number
+300a 0263 SH RT Brachy Accessory Device ID
+300a 0264 CS RT Brachy Accessory Device Type
+300a 0266 LO RT Brachy Accessory Device Name
+300a 026a DS RT Brachy Accessory Device Nominal Thickness
+300a 026c DS RT Brachy Accessory Device Nominal Transmission
+300a 0280 SQ RT Channel Sequence
+300a 0282 IS RT Channel Number
+300a 0284 DS RT Channel Length
+300a 0286 DS RT Channel Total Time
+300a 0288 CS RT Source Movement Type
+300a 028a IS RT Number of Pulses
+300a 028c DS RT Pulse Repetition Interval
+300a 0290 IS RT Source Applicator Number
+300a 0291 SH RT Source Applicator ID
+300a 0292 CS RT Source Applicator Type
+300a 0294 LO RT Source Applicator Name
+300a 0296 DS RT Source Applicator Length
+300a 0298 LO RT Source Applicator Manufacturer
+300a 029c DS RT Source Applicator Wall Nominal Thickness
+300a 029e DS RT Source Applicator Wall Nominal Transmission
+300a 02a0 DS RT Source Applicator Step Size
+300a 02a2 IS RT Transfer Tube Number
+300a 02a4 DS RT Transfer Tube Length
+300a 02b0 SQ RT Channel Shield Sequence
+300a 02b2 IS RT Channel Shield Number
+300a 02b3 SH RT Channel Shield ID
+300a 02b4 LO RT Channel Shield Name
+300a 02b8 DS RT Channel Shield Nominal Thickness
+300a 02ba DS RT Channel Shield Nominal Transmission
+300a 02c8 DS RT Final Cumulative Time Weight
+300a 02d0 SQ RT Brachy Control Point Sequence
+300a 02d2 DS RT Control Point Relative Position
+300a 02d4 DS RT Control Point 3D Position
+300a 02d6 DS RT Cumulative Time Weight
+300a 02e0 CS RT Compensator Divergence
+300a 02e1 CS RT Compensator Mounting Position
+300a 02e2 DS RT Source to Compensator Distance
+300c 0000 UL RT Group Length
+300c 0002 SQ RT Referenced RT Plan Sequence
+300c 0004 SQ RT Referenced Beam Sequence
+300c 0006 IS RT Referenced Beam Number
+300c 0007 IS RT Referenced Reference Image Number
+300c 0008 DS RT Start Cumulative Meterset Weight
+300c 0009 DS RT End Cumulative Meterset Weight
+300c 000a SQ RT Referenced Brachy Application Setup Sequence
+300c 000c IS RT Referenced Brachy Application Setup Number
+300c 000e IS RT Referenced Source Number
+300c 0020 SQ RT Referenced Fraction Group Sequence
+300c 0022 IS RT Referenced Fraction Group Number
+300c 0040 SQ RT Referenced Verification Image Sequence
+300c 0042 SQ RT Referenced Reference Image Sequence
+300c 0050 SQ RT Referenced Dose Reference Sequence
+300c 0051 IS RT Referenced Dose Reference Number
+300c 0055 SQ RT Brachy Referenced Dose Reference Sequence
+300c 0060 SQ RT Referenced Structure Set Sequence
+300c 006a IS RT Referenced Patient Setup Number
+300c 0080 SQ RT Referenced Dose Sequence
+300c 00a0 IS RT Referenced Tolerance Table Number
+300c 00b0 SQ RT Referenced Bolus Sequence
+300c 00c0 IS RT Referenced Wedge Number
+300c 00d0 IS RT Referenced Compensator Number
+300c 00e0 IS RT Referenced Block Number
+300c 00f0 IS RT Referenced Control Point Index
+300e 0000 UL RT Group Length
+300e 0002 CS RT Approval Status
+300e 0004 DA RT Review Date
+300e 0005 TM RT Review Time
+300e 0008 PN RT Reviewer Name
 4008 0000 UL RES Group Length
 4008 0040 SH RES Results ID
 4008 0042 LO RES Results ID Issuer
@@ -1943,9 +1943,9 @@
 6000 4000 LO OLY Comments (RET)
 7fe0 0000 UL PXL Group Length
 7fe0 0010 OB PXL Pixel Data
-fffa fffa SQ XX  Digital Signatures Sequence
-fffc fffc OB XX  Data Set Trailing Padding
-fffe e000 UL DL  Item
-fffe e00d UL DL  Item Delimitation Item
-fffe e0dd UL DL  Sequence Delimitation Item
+fffa fffa SQ XX Digital Signatures Sequence
+fffc fffc OB XX Data Set Trailing Padding
+fffe e000 UL DL Item
+fffe e00d UL DL Item Delimitation Item
+fffe e0dd UL DL Sequence Delimitation Item
 ffff ffff UKN UKN Unknown Code

@@ -60,8 +60,8 @@
  * \ingroup gdcmHeaderHelper
  * \brief   cstor
  */
-gdcmHeaderHelper::gdcmHeaderHelper() : gdcmHeader( )
-{
+gdcmHeaderHelper::gdcmHeaderHelper() : gdcmHeader( ) {
+
 }
 
 /**
@@ -69,7 +69,13 @@ gdcmHeaderHelper::gdcmHeaderHelper() : gdcmHeader( )
  * \brief   cstor
  */
 gdcmHeaderHelper::gdcmHeaderHelper(const char *InFilename, 
-    bool exception_on_error) : gdcmHeader( InFilename , exception_on_error)
+                                   bool exception_on_error,
+                                   bool enable_sequences,
+		                   bool ignore_shadow)				   
+                 : gdcmHeader( InFilename, 
+		               exception_on_error,
+                               enable_sequences,
+			       ignore_shadow)
 {
 }
 

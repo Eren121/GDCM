@@ -96,6 +96,9 @@ private:
    size_t lgrTotaleRaw;  // Area length to receive the pixels
    size_t lgrTotale;     // Area length to receive the RGB pixels
                          // from Grey Plane + Palette Color
+   int PixelRead;     // ==1  if GetImageDataRaw was used
+                      // ==0  if GetImageData    was used
+                      // ==-1 if ImageData never read.
 
    int Parsed;               // weather already parsed
    std::string OrigFileName; // To avoid file overwrite

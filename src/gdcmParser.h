@@ -150,7 +150,7 @@ protected:
    
 private:
    // Read
-   void Parse(bool exception_on_error = false) throw(gdcmFormatError);
+   bool ParseHeader(bool exception_on_error = false) throw(gdcmFormatError);
 
    void LoadHeaderEntries    (void);
    void LoadHeaderEntry      (gdcmHeaderEntry *);
@@ -173,7 +173,7 @@ private:
    void    SkipBytes(guint32);
 
    void Initialise(void);
-   void CheckSwap(void);
+   bool CheckSwap(void);
    void SwitchSwapToBigEndian(void);
    void SetMaxSizeLoadEntry(long);
    void SetMaxSizePrintEntry(long);
@@ -195,9 +195,9 @@ private:
    gdcmHeaderEntry *NewHeaderEntryByName  (std::string Name);
 
 
-   // Deprecated (Not used)
-   gdcmHeaderEntry *NewManualHeaderEntryToPubDict(std::string NewTagName,
-                                                  std::string VR);
+   // Deprecated (Not used) --> commented out
+   //gdcmHeaderEntry *NewManualHeaderEntryToPubDict(std::string NewTagName,
+   //                                               std::string VR);
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 
    // Refering underlying filename.

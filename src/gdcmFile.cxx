@@ -4,6 +4,8 @@
 #include "gdcmUtil.h"
 #include "jpeg/ljpg/jpegless.h"
 
+typedef std::pair<TagHeaderEntryHT::iterator,TagHeaderEntryHT::iterator> IterHT;
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -26,6 +28,7 @@
 gdcmFile::gdcmFile(gdcmHeader *header) {
    Header=header;
    SelfHeader=false;
+   PixelRead=-1; // no ImageData read yet.
 
    if (Header->IsReadable())
       SetPixelDataSizeFromHeader();
@@ -48,6 +51,7 @@ gdcmFile::gdcmFile(gdcmHeader *header) {
 gdcmFile::gdcmFile(std::string & filename) {
    Header=new gdcmHeader(filename.c_str());
    SelfHeader=true;
+   PixelRead=-1; // no ImageData read yet.
 
    if (Header->IsReadable())
       SetPixelDataSizeFromHeader();
@@ -56,6 +60,7 @@ gdcmFile::gdcmFile(std::string & filename) {
 gdcmFile::gdcmFile(const char * filename) {
    Header=new gdcmHeader(filename);
    SelfHeader=true;
+   PixelRead=-1; // no ImageData read yet.
 
    if (Header->IsReadable())
       SetPixelDataSizeFromHeader();
@@ -181,6 +186,7 @@ void * gdcmFile::GetImageData (void) {
    PixelData = (void *) malloc(lgrTotale);
    if (PixelData)
       GetImageDataIntoVector(PixelData, lgrTotale);
+   PixelRead=0; // no PixelRaw
    return(PixelData);
 }
 
@@ -207,7 +213,7 @@ void * gdcmFile::GetImageData (void) {
  */
 size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    size_t l = GetImageDataIntoVectorRaw (destination, MaxSize);
-   
+   PixelRead=0 ; // no PixelRaw
    if (!Header->HasLUT())
       return lgrTotale; 
                             
@@ -275,6 +281,7 @@ void * gdcmFile::GetImageDataRaw (void) {
    PixelData = (void *) malloc(lgrTotale);
    if (PixelData)
       GetImageDataIntoVectorRaw(PixelData, lgrTotale);
+   PixelRead=1; // PixelRaw
    return(PixelData);
 }
 
@@ -306,6 +313,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 
    int nb, nbu, highBit, signe;
    std::string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
+   PixelRead=1 ; // PixelRaw
  
    if ( lgrTotale > MaxSize ) {
       dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: pixel data bigger"
@@ -664,7 +672,36 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
          Header->SetEntryByNumber(rows   ,  0x0028, 0x0011);
    }	
    // ----------------- End of Special Patch ----------------
-
+   
+   // TODO : get the grPixel, numPixel values
+   guint16 grPixel =0x7fe0;
+   guint16 numPixel=0x0010;
+   
+   IterHT p;
+   TagKey key = gdcmDictEntry::TranslateToKey(grPixel, numPixel); 
+   gdcmHeaderEntry * a;
+   TagHeaderEntryHT::iterator p2;
+   
+  //IterHT it = GetHeaderEntrySameNumber(grPixel,numPixel);
+   // Update Pixel Data Length
+   // the *last* of the 7fe0,0010, if many.
+        
+/*    
+   // good looking, but it doesn't work
+   p= Header->GetEntry().equal_range(key); // get a pair of iterators first-last synonym
+   p2=p.second;               // iterator on the last synonym 
+   a=p2->second;              // H Table target column (2-nd col)
+   //a->SetLength(lgrTotale);
+   a->SetPrintLevel(2);
+   a->Print();
+   // use the old -wrong if many 7fe0,0010- way
+ */  
+   if (PixelRead==1)
+      Header->SetEntryLengthByNumber(lgrTotaleRaw,grPixel, numPixel);
+   else if (PixelRead==0)
+      Header->SetEntryLengthByNumber(lgrTotale,   grPixel, numPixel);
+   // if == -1 : no Pixel Data was read : abort the method 
+   
    Header->Write(fp1, type);
 
    // --------------------------------------------------------------
@@ -678,7 +715,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
          Header->SetEntryByNumber(columns, 0x0028, 0x0011);
    }	
    // ----------------- End of Special Patch ----------------
-
+   
    fwrite(PixelData, lgrTotale, 1, fp1);
    fclose (fp1);
    return(true);

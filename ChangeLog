@@ -1,7 +1,26 @@
+2004-01-31 Jean-Pierre Roux
+     * FIX gdcmParser::WriteEntries : when a VR is tagged as 'Unknown'
+                       no longer writes 'Un' on disk
+     * FIX  SQ elements with actual length are now dealt with corectly
+     * FIX gdcmFile::WriteBase make the difference, for color images, between
+                     the length (for Palette expanded omages) 
+		     and Raw Length (non expanded image + Palette)
+      * FIX  Dicts/dicomV3.dic : removal of 'CTX' (context dependant) VR
+                     (that broke Write). Replaced by UL.
+		     Aware user will reload the field if he 
+		     thinks it's necesssary
+		       
 2004-01-30 Jean-Pierre Roux
      * gdcmParser::CheckSwap() now defaults the filetype to ACR 
        when 'dirty Acr' is found, to be compliant with the new 
        IsReadable() methods.
+       
+     * gdcmHederlHelper :add Pixel Type 'FD', for dealing with 'double' images.
+      (no DOUBLE images in kosher DICOM, 
+      but so usefull for people that miss them ;-)
+      
+     * add Test/testDicomDir.cxx, Test/makeDicomDir.cxx , Test/explDICOMDIR.cxx
+       DICOMDIR related utilities (not checked as Windoze compliant)
 
 2004-01-28 Jean-Pierre Roux
      * upgrade GdcmHeaderEntry Print Method for DICOMDIR

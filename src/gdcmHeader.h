@@ -97,6 +97,8 @@ public:
    inline virtual bool SetEntryByName(std::string content,std::string tagName)
       { return(gdcmParser::SetEntryByName(content,tagName)); }
 
+  inline virtual bool SetEntryLengthByNumber(guint32 l,guint16 group, guint16 element)
+      { return(gdcmParser::SetEntryLengthByNumber(l,group,element)); }
 
    inline virtual void UpdateShaEntries(void)
       { gdcmParser::UpdateShaEntries(); }

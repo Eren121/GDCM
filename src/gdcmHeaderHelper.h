@@ -66,7 +66,9 @@ class GDCM_EXPORT gdcmHeaderHelper : public gdcmHeader {
 public:
    gdcmHeaderHelper();
    gdcmHeaderHelper(const char *filename, 
-                    bool exception_on_error = false);
+              bool  exception_on_error = false, 
+              bool  enable_sequences   = false,
+	      bool  ignore_shadow      = false);
 
    int GetPixelSize();
    std::string GetPixelType();
