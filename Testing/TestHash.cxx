@@ -11,7 +11,7 @@ int TestHash( int, char * [] )
              << std::endl
              << "   by gdcm are operational. " << std::endl;
 
-   typedef std::map<std::string, char*> dict;
+   typedef std::map<std::string, std::string> dict;
    dict tb1;
 
    // Adding entries by key:
@@ -42,10 +42,10 @@ int TestHash( int, char * [] )
    //   http://www.developer.com/net/cplus/article.php/10919_2119781_3
    // Alas it doesn't work with g++ (at least)...
    int i = 0x0010;
-   std::cout.setf(std::ios::hex);
-   std::cout << "Test::TestHash : hexdecimal output : " << i << std::endl;
-   std::cout.setf(std::ios::dec);
-   std::cout << "Test::TestHash : decimal output : "    << i << std::endl;
+   //std::cout.setf(std::ios::hex);
+   std::cout << "Test::TestHash : hexdecimal output : " << std::hex << i << std::endl;
+   //std::cout.setf(std::ios::dec);
+   std::cout << "Test::TestHash : decimal output : "    << std::dec << i << std::endl;
 
    return 0;
 }
