@@ -1,13 +1,4 @@
-import sys
-import os
-
-sys.path.append('${GDCM_BINARY_DIR}')
-if os.name == 'posix':
-   sys.path.append('${GDCM_BINARY_DIR}/bin')
-else:
-   sys.path.append('${GDCM_BINARY_DIR}/bin/Release')
-   sys.path.append('${GDCM_BINARY_DIR}/bin/Debug')
-
+from gdcmConfigDemo import *
 from gdcmPython.core import *
 
 print "#####################################################################"

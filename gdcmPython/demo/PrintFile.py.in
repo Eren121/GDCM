@@ -1,14 +1,15 @@
 import sys
-import os
-
-sys.path.append('${GDCM_BINARY_DIR}')
-if os.name == 'posix':
-   sys.path.append('${GDCM_BINARY_DIR}/bin')
-else:
-   sys.path.append('${GDCM_BINARY_DIR}/bin/Release')
-   sys.path.append('${GDCM_BINARY_DIR}/bin/Debug')
-
+from gdcmConfigDemo import *
 from gdcmPython.core import *
+
+def PrintUse():
+   print ""
+   print "Use :"
+   print "-----"
+   print "%s <fileName>" % sys.argv[0]
+   print "   fileName : path to the DICOM file to parse"
+   print ""
+   print ""
 
 ### Get filename from command line or default it
 try:
@@ -22,11 +23,12 @@ except IndexError:
    printLevel = 1
 
 ### Build the file element list
-print fileName, type(fileName)
 file = gdcm.File(fileName)
 if not file.IsReadable():
+   PrintUse()
    raise RuntimeError,"The '%s' file is not readable with gdcm." % fileName
 
+print "File -->",fileName
 print "##############################################################"
 print "### Display all the elements and their respective values"
 print "## found in the ", fileName, " file."

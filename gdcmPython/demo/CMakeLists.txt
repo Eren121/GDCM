@@ -34,6 +34,11 @@ ENDIF(PYTHON_EXECUTABLE)
 # Copy all the demo directory content to the cmake bin 
 # Without it, tests can't be launched
 CONFIGURE_FILE(
+    ${GDCM_SOURCE_DIR}/gdcmPython/demo/gdcmConfigDemo.py.in
+    ${GDCM_BINARY_DIR}/gdcmPython/demo/gdcmConfigDemo.py
+)
+
+CONFIGURE_FILE(
     ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintFile.py.in
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintFile.py
 )

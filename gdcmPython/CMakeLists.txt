@@ -208,7 +208,7 @@ FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
 
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/core.py
     "import gdcm\n"
-    "GDCM_DATA_ROOT     =\"${GDCM_DATA_ROOT}\"\n"
+    "GDCM_DATA_ROOT = \"${GDCM_DATA_ROOT}\"\n"
     )
 
 IF(GDCM_VTK)
@@ -218,7 +218,7 @@ IF(GDCM_VTK)
     "  from libvtkgdcmPython import *\n"
     "else:\n"
     "  from vtkgdcmPython import *\n"
-    "GDCM_DATA_ROOT     =\"${GDCM_DATA_ROOT}\"\n"
+    "GDCM_DATA_ROOT = \"${GDCM_DATA_ROOT}\"\n"
     )
 ENDIF(GDCM_VTK)
 

@@ -1,22 +1,25 @@
-import sys
-import os
-
-# All paths must be added without system tests, because of ctest...
-sys.path.append('${GDCM_BINARY_DIR}')
-if os.name == 'posix':
-   sys.path.append('${GDCM_BINARY_DIR}/bin')
-else:
-   sys.path.append('${GDCM_BINARY_DIR}/bin/Release')
-   sys.path.append('${GDCM_BINARY_DIR}/bin/Debug')
-
+from gdcmConfigDemo import *
 from gdcmPython.vtk import *
 from vtkpython import *
+
+def PrintUse():
+   print ""
+   print "Use :"
+   print "-----"
+   print "%s <fileName>" % sys.argv[0]
+   print "   fileName : path to the DICOM file to see"
+   print ""
+   print ""
 
 # Get the file names
 try:
    fileName = sys.argv[1]
 except IndexError:
    fileName = os.path.join(GDCM_DATA_ROOT, "test.acr")
+   
+if( not os.path.isfile(fileName) ):
+   PrintUse()
+   sys.exit(1)
 
 # read the image
 reader = vtkGdcmReader()
