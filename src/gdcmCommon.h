@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 16:24:31 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/11/30 17:04:01 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,13 +58,8 @@
 
 #ifdef GDCM_HAVE_STDINT_H
 #include <stdint.h>   // For uint8_t uint16_t and uint32_t
-#endif
-
-namespace gdcm
-{
-
-#ifndef GDCM_HAVE_STDINT_H
-typedef    signed char   int8_t;
+#else
+//typedef    signed char   int8_t;
 typedef  unsigned char  uint8_t;
 typedef  unsigned short uint16_t;
 typedef  unsigned int   uint32_t;
@@ -77,10 +72,8 @@ typedef  unsigned int   uint32_t;
 #define GDCM_EXPORT
 #endif
 
-#ifdef _MSC_VER
-#define getcwd _getcwd
-#endif
-
+namespace gdcm
+{
 
 // Centralize information about the gdcm dictionary in only one file:
 #ifndef PUB_DICT_PATH

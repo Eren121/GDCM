@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:10 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2004/11/30 17:04:01 $
+  Version:   $Revision: 1.83 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,11 +34,16 @@
 #include <algorithm>
 #include <sys/types.h>
 
+#ifdef _MSC_VER
+#define getcwd _getcwd
+#endif
+
 #if defined( _MSC_VER) || defined(__BORLANDC__)
    #include <direct.h>
 #else
    #include <unistd.h>
 #endif
+
 namespace gdcm 
 {
 
