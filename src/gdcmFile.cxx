@@ -160,7 +160,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
                 
   // ------------------------------- JPEG LossLess : call to Jpeg Libido
    
-   if (IsJPEGLossless() && GetZSize() == 1) {
+   if (IsJPEGLossless() /*&& GetZSize() == 1*/) {
    
       int ln; //  Position on begining of Jpeg Pixels
       fseek(fp,4,SEEK_CUR);  // skipping (fffe,e000) : Basic Offset Table Item

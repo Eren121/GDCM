@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.93 2003/10/03 07:46:06 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.94 2003/10/03 16:22:24 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -491,6 +491,8 @@ bool gdcmHeader::IsJPEGLossless(void) {
    const char * Transfert = Element->GetValue().c_str();
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
+   if (Element->GetValue() == "1.2.840.10008.1.2.4.57") return true;
+
    return false;
 }
 
