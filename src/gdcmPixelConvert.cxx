@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:34 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/11/30 16:59:32 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -273,7 +273,7 @@ bool PixelConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
       // Loop on the fragments
       for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
       {
-         fp->seekg(  (*it)->Offset[k] , std::ios_base::beg );
+         fp->seekg(  (*it)->Offset[k] , std::ios::beg );
          (void)ReadAndDecompressRLEFragment( subDecompressed,
                                              (*it)->Length[k],
                                              decompressedSegmentSize, 
@@ -413,7 +413,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
         it != JPEGInfo->Fragments.end();
       ++it )
    {
-      fp->seekg( (*it)->Offset, std::ios_base::beg);
+      fp->seekg( (*it)->Offset, std::ios::beg);
 
       if ( IsJPEG2000 )
       {
@@ -601,7 +601,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
       return false;
    }
 
-   fp->seekg( PixelOffset, std::ios_base::beg );
+   fp->seekg( PixelOffset, std::ios::beg );
    if( fp->fail() || fp->eof()) //Fp->gcount() == 1
    {
       dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
@@ -869,7 +869,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          DocEntry* lutRedDataEntry = header->GetDocEntryByNumber( 0x0028,
                                                                   0x1201 );
          LutRedData = new uint8_t[ lutRedDataEntry->GetLength() ];
-         fp->seekg(  lutRedDataEntry->GetOffset() ,std::ios_base::beg );
+         fp->seekg(  lutRedDataEntry->GetOffset() ,std::ios::beg );
          fp->read( (char*)LutRedData, (size_t)lutRedDataEntry->GetLength());
          if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
@@ -886,7 +886,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          DocEntry* lutGreenDataEntry = header->GetDocEntryByNumber( 0x0028,
                                                                     0x1202 );
          LutGreenData = new uint8_t[ lutGreenDataEntry->GetLength() ];
-         fp->seekg( lutGreenDataEntry->GetOffset() , std::ios_base::beg );
+         fp->seekg( lutGreenDataEntry->GetOffset() , std::ios::beg );
          fp->read( (char*)LutGreenData, (size_t)lutGreenDataEntry->GetLength() );
          if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
@@ -903,7 +903,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          DocEntry* lutBlueDataEntry  = header->GetDocEntryByNumber( 0x0028,
                                                                     0x1203 );
          LutBlueData = new uint8_t[ lutBlueDataEntry->GetLength() ];
-         fp->seekg(  lutBlueDataEntry->GetOffset() , std::ios_base::beg );
+         fp->seekg(  lutBlueDataEntry->GetOffset() , std::ios::beg );
          fp->read( (char*)LutBlueData, (size_t)lutBlueDataEntry->GetLength() );
          if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
