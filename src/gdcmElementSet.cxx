@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,9 @@
 
 #include "gdcmElementSet.h"
 #include "gdcmDebug.h"
+#include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
+#include "gdcmSeqEntry.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -40,7 +43,7 @@ gdcmElementSet::~gdcmElementSet()
    {
       EntryToDelete = cc->second;
       if ( EntryToDelete )
-         delete EntryToDelete;  // TODO : a verifier
+         delete EntryToDelete;
    }
    tagHT.clear();
 }
@@ -60,12 +63,47 @@ gdcmElementSet::~gdcmElementSet()
 void gdcmElementSet::Print(std::ostream & os) {
    for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
    {
-      //(*i)->second->SetPrintLevel(printLevel);
+      //(i)->second->SetPrintLevel(printLevel);
       (i->second)->Print(os);   
    } 
 }
 
+/**
+  * \brief   Writes the Header Entries (Dicom Elements)
+  *          from the H Table
+  * @return
+  */ 
+void gdcmElementSet::Write(FILE *fp, FileType filetype) {
 
+// Troubles expected : BinEntries ARE ValEntries :-(
+// BinEntry is checked first, then ValEntry;
+
+   gdcmDocEntry *e;
+   for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
+   {
+      e=i->second;	
+	   e->WriteCommonPart(fp, filetype);
+		std::cout<<e->GetKey() << " " << hex << e->GetVR() << " " 
+		         << e->GetName()
+		         << std::endl;
+					
+//		 e->Write(fp,filetype); // This will be the right way to proceed !
+		
+      if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(e) ) {
+         BinEntry->Write(fp,filetype);
+			continue;
+      }
+		if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(e) ) {
+         ValEntry->Write(fp,filetype);
+			continue;
+      }
+
+      if (gdcmSeqEntry* SeqEntry = dynamic_cast< gdcmSeqEntry* >(e) ) {
+         SeqEntry->Write(fp,filetype);
+			continue;
+      } 
+   } 
+}
 //-----------------------------------------------------------------------------
 // Protected
 

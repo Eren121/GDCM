@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:18:25 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.13 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,18 +141,14 @@ public:
    bool CloseFile(void);
 
 // Write (used in gdcmFile, gdcmDicomDir)
-   virtual bool Write(FILE *, FileType);
-   virtual void WriteEntryTagVRLength(gdcmDocEntry *tag,
-                                       FILE *_fp, FileType type);
-   virtual void WriteEntryValue(gdcmDocEntry *tag,FILE *_fp,FileType type);
-   virtual bool WriteEntry(gdcmDocEntry *tag,FILE *_fp,FileType type);
-   virtual bool WriteEntries(FILE *_fp,FileType type);
+
+   virtual bool WriteF(FileType type); // New stuff, with recursive exploration
 
    gdcmValEntry * ReplaceOrCreateByNumber(std::string Value,
                                              guint16 Group, guint16 Elem);
-															
+
    gdcmBinEntry * ReplaceOrCreateByNumber(void *voidArea, int lgth,
-                                             guint16 Group, guint16 Elem);															
+                                             guint16 Group, guint16 Elem);
    bool ReplaceIfExistByNumber (char *Value, guint16 Group, guint16 Elem);
    
    virtual void  *LoadEntryVoidArea       (guint16 Group, guint16 Element);
@@ -179,8 +175,8 @@ protected:
    // Entry
    int CheckIfEntryExistByNumber(guint16 Group, guint16 Elem ); // int !
 public:
-   virtual std::string GetEntryByName    (std::string tagName);
-   virtual std::string GetEntryVRByName  (std::string tagName);
+   virtual std::string GetEntryByName    (TagName tagName);
+   virtual std::string GetEntryVRByName  (TagName tagName);
    virtual std::string GetEntryByNumber  (guint16 group, guint16 element);
    virtual std::string GetEntryVRByNumber(guint16 group, guint16 element);
    virtual int     GetEntryLengthByNumber(guint16 group, guint16 element);
@@ -189,7 +185,7 @@ protected:
    virtual bool SetEntryByNumber(std::string content,
                                  guint16 group, guint16 element);
    virtual bool SetEntryByNumber(void *content, int lgth,
-                                 guint16 group, guint16 element);											
+                                 guint16 group, guint16 element);
    virtual bool SetEntryLengthByNumber(guint32 length,
                                  guint16 group, guint16 element);
 
@@ -202,7 +198,7 @@ protected:
    // Header entry
    gdcmDocEntry *GetDocEntryByNumber  (guint16 group, guint16 element); 
    gdcmDocEntry *GetDocEntryByName    (std::string Name);
-	
+
    gdcmValEntry *GetValEntryByNumber  (guint16 group, guint16 element); 
    gdcmBinEntry *GetBinEntryByNumber  (guint16 group, guint16 element); 
 
@@ -242,25 +238,11 @@ private:
    void SetMaxSizeLoadEntry(long);
    void SetMaxSizePrintEntry(long);
 
-  // DictEntry  related utilities
-   
-   gdcmDictEntry *GetDictEntryByName  (std::string Name);
-   gdcmDictEntry *GetDictEntryByNumber(guint16, guint16);
-   gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
-                                      guint16 element,
-                                      std::string vr     = "unkn",
-                                      std::string fourth = "unkn",
-                                      std::string name   = "unkn");
+	 
    // DocEntry related utilities
    gdcmDocEntry *ReadNextDocEntry   ();
-   gdcmDocEntry *NewDocEntryByNumber(guint16 group, 
-                                     guint16 element);
-   gdcmDocEntry *NewDocEntryByName  (std::string Name);
 
-   gdcmValEntry *NewValEntryByNumber(guint16 group, 
-                                     guint16 element); 
-   gdcmBinEntry *NewBinEntryByNumber(guint16 group, 
-                                     guint16 element); 												   
+
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 
 public:

@@ -11,15 +11,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(libgdcm_la_SOURCES
-   gdcmDicomDirElement.cxx
-   gdcmDicomDir.cxx
-   gdcmDicomDirMeta.cxx
-   gdcmDicomDirPatient.cxx
-   gdcmDicomDirStudy.cxx
-   gdcmDicomDirSerie.cxx
-   gdcmDicomDirImage.cxx
    gdcmDirList.cxx
-   gdcmObject.cxx
    gdcmDebug.cxx
    gdcmDict.cxx
    gdcmDictEntry.cxx
@@ -40,12 +32,20 @@ SET(libgdcm_la_SOURCES
    gdcmDocEntry.cxx
    gdcmDocEntrySet.cxx
    gdcmBinEntry.cxx
-   gdcmDocument.cxx
    gdcmSeqEntry.cxx
    gdcmSQItem.cxx
    gdcmElementSet.cxx
    gdcmValEntry.cxx   
-)
+   gdcmDicomDirElement.cxx
+   gdcmDocument.cxx
+   gdcmDicomDir.cxx
+   gdcmDicomDirMeta.cxx
+   gdcmDicomDirPatient.cxx
+   gdcmDicomDirStudy.cxx
+   gdcmDicomDirSerie.cxx
+   gdcmDicomDirImage.cxx
+   gdcmObject.cxx
+   )
 
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )
 IF(UNIX)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/19 23:51:03 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.49 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -133,7 +133,9 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
 gdcmDicomDir::gdcmDicomDir(bool exception_on_error):                           
    gdcmDocument(exception_on_error)
 { 
+
    Initialize();
+
    std::string pathBidon = "Bidon"; // Sorry, NULL not allowed ...
    SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
    AddDicomDirMeta();
@@ -366,8 +368,8 @@ void gdcmDicomDir::WriteEntries(FILE *_fp)
       for(i=(*itPatient)->debut();i!=(*itPatient)->fin();++i) {
          WriteEntry(*i,_fp, gdcmExplicitVR);
       }
-      itStudy = ((*itPatient)->GetDicomDirStudies()).begin();	      
-      while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) {	
+      itStudy = ((*itPatient)->GetDicomDirStudies()).begin();     
+      while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) {
          for(i=(*itStudy)->debut();i!=(*itStudy)->fin();++i) {
             WriteEntry(*i,_fp, gdcmExplicitVR);
          } 
@@ -381,11 +383,11 @@ void gdcmDicomDir::WriteEntries(FILE *_fp)
                for(i=(*itImage)->debut();i!=(*itImage)->fin();++i) {
                   WriteEntry(*i,_fp, gdcmExplicitVR);
                }
-               ++itImage;   	       	    
-	    }
-	    ++itSerie;	    	     	 	      
+               ++itImage;
+            }
+            ++itSerie;
          }
-	 ++itStudy; 	       
+         ++itStudy;
       } 
       ++itPatient;     
    }
@@ -533,8 +535,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
    gdcmValEntry *entry;
    std::string val;
 
-   switch(type)
-   {
+   switch(type){
       case GDCM_DICOMDIR_PATIENT:
          elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();
          break;
@@ -554,12 +555,13 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
          return;
    }
 
-   for(it=elemList.begin();it!=elemList.end();++it)
-   {
+   for(it=elemList.begin();it!=elemList.end();++it) {
+      cout << "it " << endl;
       tmpGr=it->group;
       tmpEl=it->elem;
       dictEntry=GetPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
-      entry=new gdcmValEntry(dictEntry);
+      entry=new gdcmValEntry(dictEntry); // Be sure it's never a BinEntry !
+
       entry->SetOffset(0); // just to avoid further missprinting
 
       if(header)
@@ -602,23 +604,22 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
 
       if(dictEntry)
       {
-         if(dictEntry->GetGroup()==0xfffe) 
-         {
+         if(dictEntry->GetGroup()==0xfffe)  {
             entry->SetLength(entry->GetValue().length());
-         }
-         else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
+      }
+     else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
          {
             entry->SetLength(4);
          } 
-         else if( (dictEntry->GetVR()=="US") || (dictEntry->GetVR()=="SS") ) 
+      else if( (dictEntry->GetVR()=="US") || (dictEntry->GetVR()=="SS") ) 
          {
             entry->SetLength(2); 
          } 
-         else if(dictEntry->GetVR()=="SQ") 
+      else if(dictEntry->GetVR()=="SQ") 
          {
             entry->SetLength(0xffffffff);
          }
-         else
+      else
          {
             entry->SetLength(entry->GetValue().length());
          }
@@ -778,7 +779,7 @@ void gdcmDicomDir::CreateDicomDir()
          AddDicomDirImageToEnd(s);
          break;
       case gdcmDicomDir::GDCM_DICOMDIR_NONE:
-         AddDicomDirImageToEnd(s);	//FIXME
+         AddDicomDirImageToEnd(s);        //FIXME
          break;
    }
 }
@@ -957,7 +958,7 @@ void gdcmDicomDir::UpdateDirectoryRecordSequenceLength() {
       }            
    }   
    //bool res=SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
-	 SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
+    SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
    return;
    */
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:52:08 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,16 +39,17 @@ public:
  
    virtual ~gdcmFile(void);
 	
-   gdcmHeader *GetHeader(void);
+ /// \brief returns the gdcmHeader *Header
+   inline gdcmHeader *GetHeader(void) {return(Header);};
 
-	// For promotion (performs a deepcopy of pointed header object)
-	// TODO Swig gdcmFile(gdcmHeader* header);
-	// TODO Swig ~gdcmFile();
+   // For promotion (performs a deepcopy of pointed header object)
+   // TODO Swig gdcmFile(gdcmHeader* header);
+   // TODO Swig ~gdcmFile();
 
-	// On writing purposes. When instance was created through
-	// gdcmFile(std::string filename) then the filename argument MUST be
+   // On writing purposes. When instance was created through
+   // gdcmFile(std::string filename) then the filename argument MUST be
         // different from the constructor's one (no overwriting allowed).
-	// TODO Swig int SetFileName(std::string filename);
+   // TODO Swig int SetFileName(std::string filename);
 
    void   SetPixelDataSizeFromHeader(void);
    size_t GetImageDataSize();
@@ -58,7 +59,7 @@ public:
    size_t GetImageDataIntoVector(void* destination, size_t MaxSize);
    void * GetImageDataRaw();
    size_t GetImageDataIntoVectorRaw(void* destination, size_t MaxSize);
-	
+
       // Allocates ExpectedSize bytes of memory at this->Data and copies the
       // pointed data to it. Copying the image might look useless but
       // the caller might destroy it's image (without knowing it: think
@@ -69,12 +70,10 @@ public:
    bool SetImageData     (void * Data, size_t ExpectedSize);
       // When the caller is aware we simply point to the data:
       // TODO int SetImageDataNoCopy (void * Data, size_t ExpectedSize);
-	
-	// Push to disk.
-	// A NE PAS OUBLIER : que fait-on en cas de Transfert Syntax (dans l'entete)
-	// incohérente avec l'ordre des octets en mémoire ? 
-	// TODO Swig int Write();
-	
+
+  // Push to disk.
+  // TODO Swig int Write();
+
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianity"
    // The user must call his reader correctly
@@ -116,8 +115,8 @@ private:
 
    /// \brief Header to use to load the file
    gdcmHeader *Header;
-	
-	/// \brief Whether the underlying \ref gdcmHeader was loaded by
+
+   /// \brief Whether the underlying \ref gdcmHeader was loaded by
    ///  the constructor or passed to the constructor. When false
    ///  the destructor is in charge of deletion.
    bool SelfHeader;

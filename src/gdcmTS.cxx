@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:43:02 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,6 +41,7 @@ gdcmTS::gdcmTS(void)
 
    while (!from.eof()) {
       from >> key;
+
       eatwhite(from);
       getline(from, name);    /// MEMORY LEAK
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:43:02 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,7 @@ public:
    virtual ~gdcmSeqEntry();
    
    virtual void Print(std::ostream &os = std::cout); 
+   virtual void Write(FILE *fp,FileType filetype);
 
    /// \brief   returns the SQITEM chained List for this SeQuence.
    inline ListSQItem &GetSQItems() { return items; }
@@ -44,7 +45,7 @@ public:
 
    /// \brief Sets the Sequence Delimitation Item
    inline void SetSequenceDelimitationItem(gdcmDocEntry * e) { seq_term = e;}
-       
+
    void AddEntry(gdcmSQItem *it, int itemNumber);
    gdcmSQItem *GetSQItemByOrdinalNumber(int itemNumber);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 12:38:29 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,7 +66,7 @@
 #define UI1_2_840_10008_1_2_4_91 "1.2.840.10008.1.2.4.91"
 // RLE Lossless
 #define UI1_2_840_10008_1_2_5    "1.2.840.10008.1.2.5"
-
+// UI1_1_2_840_10008_1_2_5
 #define str2num(str, typeNum) *((typeNum *)(str))
 
 //-----------------------------------------------------------------------------
@@ -175,8 +175,8 @@ gdcmDocument::~gdcmDocument (void) {
 
    // Recursive clean up of sequences
    for (TagDocEntryHT::iterator it = tagHT.begin(); it != tagHT.end(); ++it )
-   {
-      delete (it->second);
+   { 
+         delete it->second;
    }
    tagHT.clear();
 }
@@ -255,6 +255,7 @@ bool gdcmDocument::IsReadable(void) {
 
    return(true);
 }
+
 
 /**
  * \brief   Internal function that checks whether the Transfer Syntax given
@@ -490,34 +491,28 @@ bool gdcmDocument::CloseFile(void) {
 
 /**
  * \brief Writes in a file all the Header Entries (Dicom Elements) 
- *        of the Chained List
  * @param fp file pointer on an already open file
- * @param type Type of the File to be written 
+ * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * \return Always true.
  */
-bool gdcmDocument::Write(FILE *fp, FileType type) {
+bool gdcmDocument::WriteF(FileType filetype) {
 /// \todo
-///  ==============
-///      The stuff will have to be rewritten using the SeQuence based 
-///       tree-like stucture instead  of the chained list .
-///      (so we shall remove the Group*HT from the gdcmDocument)
+/// ==============
+///      The stuff is rewritten using the SeQuence based 
+///       tree-like stucture (cf : Print )
 ///      To be checked
 /// =============
 
    /// \todo move the following lines (and a lot of others, to be written)
    /// to a future function CheckAndCorrectHeader
    
-   /// \todo
-   /// Question :
-   /// Comment pourrait-on savoir si le DcmHeader vient d'un fichier
-   /// DicomV3 ou non (FileType est un champ de gdcmDocument ...)
    /// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
-   /// no way 
+   /// no way (check : FileType est un champ de gdcmDocument ...)
    /// a moins de se livrer a un tres complique ajout des champs manquants.
    /// faire un CheckAndCorrectHeader (?)  
 
-   if (type == gdcmImplicitVR) 
+   if (filetype == gdcmImplicitVR) 
    {
       std::string implicitVRTransfertSyntax = UI1_2_840_10008_1_2;
       ReplaceOrCreateByNumber(implicitVRTransfertSyntax,0x0002, 0x0010);
@@ -530,7 +525,7 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
       SetEntryLengthByNumber(18, 0x0002, 0x0010);
    } 
 
-   if (type == gdcmExplicitVR) 
+   if (filetype == gdcmExplicitVR)
    {
       std::string explicitVRTransfertSyntax = UI1_2_840_10008_1_2_1;
       ReplaceOrCreateByNumber(explicitVRTransfertSyntax,0x0002, 0x0010);
@@ -545,18 +540,21 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
 
 /**
  * \todo rewrite later, if really usefull
+ *               ('Group Length' element is optional in DICOM)
  *
- *       --> Warning : un-updated odd groups lengths can causes pb 
+ *       --> Warning : un-updated odd groups lengthes can causes pb
  *       -->           (xmedcon breaks)
  *       --> to be re- written with future org.
  *
- * if ( (type == ImplicitVR) || (type == ExplicitVR) )
- *    UpdateGroupLength(false,type);
- * if ( type == ACR)
+ * if ( (filetype == ImplicitVR) || (filetype == ExplicitVR) )
+ *    UpdateGroupLength(false,filetype);
+ * if ( filetype == ACR)
  *    UpdateGroupLength(true,ACR);
  */
+ 	
+	Write(fp,filetype);  // the gdcmElementSet one !
 
-   WriteEntries(fp,type);
+   /// WriteEntries(fp,type); // old stuff
    return true;
 }
 
@@ -716,7 +714,7 @@ std::string gdcmDocument::GetEntryByName(std::string tagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryVRByName(std::string tagName) {
+std::string gdcmDocument::GetEntryVRByName(TagName tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -956,7 +954,7 @@ void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem)
 
 /**
  * \brief   Sets a 'non string' value to a given Dicom Element
- * @param   area
+ * @param   area area containing the 'non string' value
  * @param   group     Group number of the searched Dicom Element 
  * @param   element Element number of the searched Dicom Element 
  * @return  
@@ -1086,233 +1084,6 @@ void gdcmDocument::LoadDocEntrySafe(gdcmDocEntry * entry) {
    fseek(fp, PositionOnEntry, SEEK_SET);
 }
 
-
-/**
- * \brief Writes in a file (according to the requested format)
- *        the group, the element, the value representation and the length
- *        of a single gdcmDocEntry passed as argument.
- * @param tag  pointer on the gdcmDocEntry to be written
- * @param _fp  already open file pointer
- * @param type type of the File to be written 
- */
-void gdcmDocument::WriteEntryTagVRLength(gdcmDocEntry *tag,
-                                       FILE *_fp,
-                                       FileType type)
-{
-   guint16 group  = tag->GetGroup();
-   VRKey   vr     = tag->GetVR();
-   guint16 el     = tag->GetElement();
-   guint32 lgr    = tag->GetReadLength();
-
-   if ( (group == 0xfffe) && (el == 0x0000) ) 
-     // Fix in order to make some MR PHILIPS images e-film readable
-     // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
-     // we just *always* ignore spurious fffe|0000 tag !   
-      return; 
-
-   fwrite ( &group,(size_t)2 ,(size_t)1 ,_fp);  //group
-   fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);     //element
-      
-   if ( type == gdcmExplicitVR ) {
-
-      // Special case of delimiters:
-      if (group == 0xfffe) {
-         // Delimiters have NO Value Representation and have NO length.
-         // Hence we skip writing the VR and length and we pad by writing
-         // 0xffffffff
-
-         int ff=0xffffffff;
-         fwrite (&ff,(size_t)4 ,(size_t)1 ,_fp);
-         return;
-      }
-
-      guint16 z=0;
-      guint16 shortLgr = lgr;
-      if (vr == "unkn") {     // Unknown was 'written'
-         // deal with Little Endian            
-         fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
-         fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
-      } else {
-         fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);                     
-         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") )
-         {
-            fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
-            fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
-         } else {
-            fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
-         }
-      }
-   } 
-   else // IMPLICIT VR 
-   { 
-      fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
-   }
-}
-      
-/**
- * \brief Writes in a file (according to the requested format)
- *        the value of a single gdcmDocEntry passed as argument.
- * @param tag  Pointer on the gdcmDocEntry to be written
- * @param _fp  Already open file pointer
- * @param type type of the File to be written
- */
- 
-// \todo TODO : to be re -written recursively !
-void gdcmDocument::WriteEntryValue(gdcmDocEntry *Entry, FILE *_fp,FileType type)
-{
-   (void)type;
-   guint16 group  = Entry->GetGroup();
-   VRKey   vr     = Entry->GetVR();
-   guint32 lgr    = Entry->GetReadLength();
-
-   if (vr == "SQ")
-      // SeQuences have no value:
-      return;
-   if (group == 0xfffe)
-      // Delimiters have no associated value:
-      return;
-		
-// if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(Entry) ) {
-      void *voidArea;
-      gdcmBinEntry *BinEntry= (gdcmBinEntry *)Entry;;
-      voidArea = BinEntry->GetVoidArea();
-      if (voidArea != NULL) 
-      { // there is a 'non string' LUT, overlay, etc
-         fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
-         return;            
-      }
-// } 
-
-   if (vr == "US" || vr == "SS") 
-   {
-      // some 'Short integer' fields may be mulivaluated
-      // each single value is separated from the next one by '\'
-      // we split the string and write each value as a short int
-      std::vector<std::string> tokens;
-      tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-      Tokenize (((gdcmValEntry *)Entry)->GetValue(), tokens, "\\");
-      for (unsigned int i=0; i<tokens.size();i++) 
-      {
-         guint16 val_uint16 = atoi(tokens[i].c_str());
-         void *ptr = &val_uint16;
-         fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
-      }
-      tokens.clear();
-      return;
-   }
-   if (vr == "UL" || vr == "SL") 
-   {
-      // Some 'Integer' fields may be multivaluated (multiple instances 
-      // of integers). But each single integer value is separated from the
-      // next one by '\' (backslash character). Hence we split the string
-      // along the '\' and write each value as an int:
-      std::vector<std::string> tokens;
-      tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-      Tokenize (((gdcmValEntry *)Entry)->GetValue(), tokens, "\\");
-      for (unsigned int i=0; i<tokens.size();i++) 
-      {
-         guint32 val_uint32 = atoi(tokens[i].c_str());
-         void *ptr = &val_uint32;
-         fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
-      }
-      tokens.clear();
-      return;
-   }           
-   fwrite (((gdcmValEntry *)Entry)->GetValue().c_str(),
-           (size_t)lgr ,(size_t)1, _fp); // Elem value
-}
-
-/**
- * \brief Writes in a file (according to the requested format)
- *        a single gdcmDocEntry passed as argument.
- * \sa    WriteEntryValue, WriteEntryTagVRLength.
- * @param tag  Pointer on the gdcmDocEntry to be written
- * @param _fp  Already open file pointer
- * @param type type of the File to be written
- */
-
-bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
-{
-   guint32 length = tag->GetLength();
-
-   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(tag) )
-   {
-      // The value of a tag MUST (see the DICOM norm) be an odd number of
-      // bytes. When this is not the case, pad with an additional byte:
-      if(length%2==1) {
-         ValEntry->SetValue(ValEntry->GetValue()+"\0");
-         ValEntry->SetLength(ValEntry->GetReadLength()+1);
-      }
-      WriteEntryTagVRLength(ValEntry, _fp, type);
-      WriteEntryValue(ValEntry, _fp, type);
-      return true;
-   }
-
-   if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) )
-   {
-    (void)BinEntry; //not used
-      /// \todo FIXME : when voidArea belong to gdcmBinEntry only, fix
-      /// voidArea length
-      //
-      // The value of a tag MUST (see the DICOM norm) be an odd number of
-      // bytes. When this is not the case, pad with an additional byte:
-/*
-      if(length%2==1) { 
-         tag->SetValue(tag->GetValue()+"\0");
-         tag->SetLength(tag->GetReadLength()+1);
-      }
-*/
-      WriteEntryTagVRLength(tag, _fp, type);
-      WriteEntryValue(tag, _fp, type);
-      return true;
-   }
-   
-  return false; //default behavior ?
-}
-
-/**
- * \brief   writes on disc according to the requested format
- *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image
- *          using the Chained List
- * \warning does NOT add the missing elements in the header :
- *           it's up to the user doing it !
- *           (function CheckHeaderCoherence to be written)
- * \warning DON'T try, right now, to write a DICOM image
- *           from an ACR Header (meta elements will be missing!)
- * @param   type type of the File to be written 
- *          (ACR-NEMA, ExplicitVR, ImplicitVR)
- * @param   _fp already open file pointer
- */
-
-bool gdcmDocument::WriteEntries(FILE *_fp,FileType type)
-{ 
-   /// \todo FIXME : explore recursively the whole structure...
-   /// \todo (?) check write failures (after *each* fwrite)
- 
-   dbg.Verbose(0, "gdcmDocument::WriteEntries: entering.");
-   for (TagDocEntryHT::iterator it = tagHT.begin(); it != tagHT.end(); ++it )
-   {
-      gdcmDocEntry * entry = it->second;
-
-      if ( type == gdcmACR ){ 
-         if (entry->GetGroup() < 0x0008)
-            // Ignore pure DICOM V3 groups
-            continue;
-         if (entry->GetGroup() %2)
-            // Ignore the "shadow" groups
-            continue;
-         if (entry->GetVR() == "SQ" ) // ignore Sequences
-            continue;    
-      } 
-      if (! WriteEntry(entry, _fp, type) ) {
-         dbg.Verbose(0, "gdcmDocument::WriteEntries: write failure.");
-         return false;
-      }
-   }
-   return true;
-}   
-
-
 /**
  * \brief   Swaps back the bytes of 4-byte long integer accordingly to
  *          processor order.
@@ -1340,7 +1111,7 @@ guint32 gdcmDocument::SwapLong(guint32 a) {
          a=0;
    }
    return(a);
-}
+} 
 
 /**
  * \brief   Unswaps back the bytes of 4-byte long integer accordingly to
@@ -1374,7 +1145,7 @@ guint16 gdcmDocument::UnswapShort(guint16 a) {
 
 /**
  * \brief   Parses a DocEntrySet (Zero-level DocEntries or SQ Item DocEntries)
- * @return  false if file is not ACR-NEMA / PAPYRUS / DICOM 
+ * @return  length of the parsed set. 
  */ 
 
 long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
@@ -1503,8 +1274,6 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
       NewDocEntry = ReadNextDocEntry();   
       if(delim_mode) {   
          if (NewDocEntry->isSequenceDelimitor()) {
-            /// \todo add the Sequence Delimitor
-            /// \todo find the trick to put it properly !
             set->SetSequenceDelimitationItem(NewDocEntry);
             break;
           }
@@ -1515,7 +1284,6 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
 
       itemSQ = new gdcmSQItem(set->GetDepthLevel());
       itemSQ->AddEntry(NewDocEntry);
-      /// \todo  no value, no voidArea. Think of it while printing !
       l= NewDocEntry->GetReadLength();
       
       if (l == 0xffffffff)
@@ -2529,117 +2297,6 @@ gdcmDocEntry *gdcmDocument::ReadNextDocEntry(void) {
    return NewEntry;
 }
 
-/**
- * \brief   Build a new Element Value from all the low level arguments. 
- *          Check for existence of dictionary entry, and build
- *          a default one when absent.
- * @param   Name    Name of the underlying DictEntry
- */
-gdcmDocEntry *gdcmDocument::NewDocEntryByName(std::string Name) 
-{
-   gdcmDictEntry *NewTag = GetDictEntryByName(Name);
-   if (!NewTag)
-      NewTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "unkn", Name);
-
-   gdcmDocEntry* NewEntry = new gdcmDocEntry(NewTag);
-   if (!NewEntry) 
-   {
-      dbg.Verbose(1, "gdcmDocument::ObtainDocEntryByName",
-                  "failed to allocate gdcmDocEntry");
-      return (gdcmDocEntry *)0;
-   }
-   return NewEntry;
-}  
-
-/**
- * \brief   Request a new virtual dict entry to the dict set
- * @param   group     group  number of the underlying DictEntry
- * @param   element  element number of the underlying DictEntry
- * @param   vr     VR of the underlying DictEntry
- * @param   fourth owner group
- * @param   name   english name
- */
-gdcmDictEntry *gdcmDocument::NewVirtualDictEntry(guint16 group, guint16 element,
-                                               std::string vr,
-                                               std::string fourth,
-                                               std::string name)
-{
-   return gdcmGlobal::GetDicts()->NewVirtualDictEntry(group,element,vr,fourth,name);
-}
-
-/**
- * \brief   Build a new Element Value from all the low level arguments. 
- *          Check for existence of dictionary entry, and build
- *          a default one when absent.
- * @param   Group group   number of the underlying DictEntry
- * @param   Elem  element number of the underlying DictEntry
- */
-gdcmDocEntry* gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem) 
-{
-   // Find out if the tag we encountered is in the dictionaries:
-   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
-   if (!DictEntry)
-      DictEntry = NewVirtualDictEntry(Group, Elem);
-
-   gdcmDocEntry *NewEntry = new gdcmDocEntry(DictEntry);
-   if (!NewEntry) 
-   {
-      dbg.Verbose(1, "gdcmDocument::NewDocEntryByNumber",
-                  "failed to allocate gdcmDocEntry");
-      return (gdcmDocEntry*)0;
-   }
-   return NewEntry;
-}
-
-
-/**
- * \brief   Build a new Element Value from all the low level arguments. 
- *          Check for existence of dictionary entry, and build
- *          a default one when absent.
- * @param   Group group   number of the underlying DictEntry
- * @param   Elem  element number of the underlying DictEntry
- */
-gdcmValEntry *gdcmDocument::NewValEntryByNumber(guint16 Group, guint16 Elem) 
-{
-   // Find out if the tag we encountered is in the dictionaries:
-   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
-   if (!DictEntry)
-      DictEntry = NewVirtualDictEntry(Group, Elem);
-
-   gdcmValEntry *NewEntry = new gdcmValEntry(DictEntry);
-   if (!NewEntry) 
-   {
-      dbg.Verbose(1, "gdcmDocument::NewValEntryByNumber",
-                  "failed to allocate gdcmValEntry");
-      return NULL;
-   }
-   return NewEntry;
-}
-
-
-/**
- * \brief   Build a new Element Value from all the low level arguments. 
- *          Check for existence of dictionary entry, and build
- *          a default one when absent.
- * @param   Group group   number of the underlying DictEntry
- * @param   Elem  element number of the underlying DictEntry
- */
-gdcmBinEntry *gdcmDocument::NewBinEntryByNumber(guint16 Group, guint16 Elem) 
-{
-   // Find out if the tag we encountered is in the dictionaries:
-   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
-   if (!DictEntry)
-      DictEntry = NewVirtualDictEntry(Group, Elem);
-
-   gdcmBinEntry *NewEntry = new gdcmBinEntry(DictEntry);
-   if (!NewEntry) 
-   {
-      dbg.Verbose(1, "gdcmDocument::NewBinEntryByNumber",
-                  "failed to allocate gdcmBinEntry");
-      return NULL;
-   }
-   return NewEntry;
-}
 
 /**
  * \brief   Generate a free TagKey i.e. a TagKey that is not present
@@ -2658,68 +2315,6 @@ guint32 gdcmDocument::GenerateFreeTagKeyInGroup(guint16 group)
    return UINT32_MAX;
 }
 
-
-/**
- * \brief   Searches both the public and the shadow dictionary (when they
- *          exist) for the presence of the DictEntry with given name.
- *          The public dictionary has precedence on the shadow one.
- * @param   Name name of the searched DictEntry
- * @return  Corresponding DictEntry when it exists, NULL otherwise.
- */
-gdcmDictEntry *gdcmDocument::GetDictEntryByName(std::string Name) 
-{
-   gdcmDictEntry *found = (gdcmDictEntry *)0;
-   if (!RefPubDict && !RefShaDict) 
-   {
-      dbg.Verbose(0, "gdcmDocument::GetDictEntry",
-                     "we SHOULD have a default dictionary");
-   }
-   if (RefPubDict) 
-   {
-      found = RefPubDict->GetDictEntryByName(Name);
-      if (found)
-         return found;
-   }
-   if (RefShaDict) 
-   {
-      found = RefShaDict->GetDictEntryByName(Name);
-      if (found)
-         return found;
-   }
-   return found;
-}
-
-/**
- * \brief   Searches both the public and the shadow dictionary (when they
- *          exist) for the presence of the DictEntry with given
- *          group and element. The public dictionary has precedence on the
- *          shadow one.
- * @param   group   group number of the searched DictEntry
- * @param   element element number of the searched DictEntry
- * @return  Corresponding DictEntry when it exists, NULL otherwise.
- */
-gdcmDictEntry *gdcmDocument::GetDictEntryByNumber(guint16 group,guint16 element) 
-{
-   gdcmDictEntry *found = (gdcmDictEntry *)0;
-   if (!RefPubDict && !RefShaDict) 
-   {
-      dbg.Verbose(0, "gdcmDocument::GetDictEntry",
-                     "we SHOULD have a default dictionary");
-   }
-   if (RefPubDict) 
-   {
-      found = RefPubDict->GetDictEntryByNumber(group, element);
-      if (found)
-         return found;
-   }
-   if (RefShaDict) 
-   {
-      found = RefShaDict->GetDictEntryByNumber(group, element);
-      if (found)
-         return found;
-   }
-   return found;
-}
 
 /**
  * \brief   Assuming the internal file pointer \ref gdcmDocument::fp 
@@ -2788,7 +2383,7 @@ guint32 gdcmDocument::ReadItemTagLength(void)
 }
 
 /**
- * \brief   Read the length of an exptected Sequence Delimiter tag i.e.
+ * \brief   Read the length of an expected Sequence Delimiter tag i.e.
  *          (0xfffe, 0xe0dd).
  * \sa      \ref gdcmDocument::ReadTagLength
  * \warning See warning of \ref gdcmDocument::ReadTagLength
@@ -2806,6 +2401,7 @@ guint32 gdcmDocument::ReadSequenceDelimiterTagLength(void)
  *          No other way so 'skip' the Data
  *
  */
+
 void gdcmDocument::Parse7FE0 (void)
 {
    gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
@@ -2898,6 +2494,8 @@ void gdcmDocument::Parse7FE0 (void)
    }
 }
 
+
+
 /**
  * \brief   Compares two documents, according to \ref gdcmDicomDir rules
  * \warning Does NOT work with ACR-NEMA files
@@ -2946,7 +2544,6 @@ bool gdcmDocument::operator<(gdcmDocument &document)
          }
       }
    }
-
    return false;
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,8 +23,11 @@
 #include <stdio.h>
 
 #include "gdcmDictEntry.h"
-//#include "gdcmValEntry.h"
+
 class gdcmHeader;
+class gdcmValEntry;
+class gdcmBinEntry;
+class gdcmSeqEntry;
 
 //-----------------------------------------------------------------------------
 /**
@@ -41,7 +44,7 @@ public:
 
    /// Returns the Dicom Element number of the current Dicom Header Entry
    inline guint16      GetElement(void)   { return entry->GetElement();};
-
+	
    /// Returns the 'key' of the current Dicom Header Entry
    inline std::string  GetKey(void)       { return entry->GetKey();    };
 
@@ -60,7 +63,7 @@ public:
    inline size_t       GetOffset(void)    { return Offset;             };
 
    /// \brief Returns the actual value length of the current Dicom Header Entry
-   /// \warning this value is not *allways* the one stored in the Dicom Header
+   /// \warning this value is not *always* the one stored in the Dicom Header
    ///          in case of well knowned bugs
    inline guint32 GetLength(void) { return UsableLength; };
     
@@ -121,8 +124,10 @@ public:
    int GetPrintLevel(void) { return(printLevel); };
    
    virtual void Print (std::ostream & os = std::cout); 
+   virtual void Write(FILE *fp, FileType filetype);
    
    void gdcmDocEntry::PrintCommonPart(std::ostream & os);
+   void gdcmDocEntry::WriteCommonPart(FILE *fp, FileType filetype);
          
    guint32 GetFullLength(void);
    

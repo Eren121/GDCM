@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 12:38:29 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,7 @@ class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry {
 public:
 
    gdcmValEntry(gdcmDictEntry* e);
+
    gdcmValEntry(gdcmDocEntry* d); 
    virtual ~gdcmValEntry();
 
@@ -47,7 +48,7 @@ public:
    inline void SetValue(std::string val)  { value = val;  };
    
    virtual void Print(std::ostream &os = std::cout); 
-           
+   virtual void gdcmValEntry::Write(FILE *fp, FileType filetype);           
 protected:
 
    /// \brief for 'non string' values. Will be move to gdcmBinEntry, later

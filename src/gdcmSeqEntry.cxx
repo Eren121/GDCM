@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:43:02 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,6 +46,7 @@ gdcmSeqEntry::~gdcmSeqEntry() {
    for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
    {
       delete *cc;
+		cout << "delete SQItem" << endl;
    }
    if (!seq_term)
       delete seq_term;
@@ -61,30 +62,25 @@ void gdcmSeqEntry::Print(std::ostream &os){
 
    std::ostringstream s,s2;
    std::string vr;
-   //unsigned short int g, e; //not used
-   //long lgth; //not used
-   //size_t o;    //not used
-   //char greltag[10];  //group element tag //not used
-   //char st[20];   //not used
-
    // First, Print the Dicom Element itself.
    SetPrintLevel(2);   
    PrintCommonPart(os);
    s << std::endl;
    os << s.str();   
- 
+
+    if (GetReadLength() == 0)
+	    return;
+		  
     // Then, Print each SQ Item   
      for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
-   {				
+   {
       (*cc)->Print(os);   
    }
-   // at end, print the sequence terminator item, if any
 
+   // at end, print the sequence terminator item, if any
    if (delimitor_mode) {
-      if (SQDepthLevel>0) {
-         for (int i=0;i<SQDepthLevel;i++)
-            s2 << "   | " ;
-      }		
+      for (int i=0;i<SQDepthLevel+1;i++)
+         s2 << "   | " ;
       os << s2.str();
       if (seq_term != NULL) {
          seq_term->Print(os);
@@ -96,6 +92,18 @@ void gdcmSeqEntry::Print(std::ostream &os){
    }                    
  }
 
+
+/*
+ * \brief   canonical Writer
+ */
+void gdcmSeqEntry::Write(FILE *fp, FileType filetype) {
+  for(ListSQItem::iterator cc  = GetSQItems().begin();
+                           cc != GetSQItems().end();
+                         ++cc) {
+      std::cout << "Et un SQItem !" << std::endl;
+      (*cc)->Write(fp, filetype);   
+   }  
+}
 //-----------------------------------------------------------------------------
 // Public
 
@@ -116,15 +124,15 @@ void gdcmSeqEntry::SetDepthLevel(int depth) {
 
 gdcmSQItem *gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb) {
    if (nb<0)
-		return (*(items.begin()));
-	int count = 0 ;
+      return (*(items.begin()));
+   int count = 0 ;
    for(ListSQItem::iterator cc = items.begin();
-	    cc != items.end();
-		 count ++, ++cc){	
+       cc != items.end();
+       count ++, ++cc){
       if (count==nb)
-		   return (*cc);      
+         return (*cc);      
    }
-	return (*(items.end()));		 
+   return (*(items.end()));
 }
 //-----------------------------------------------------------------------------
 // Protected

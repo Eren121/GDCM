@@ -5,6 +5,7 @@
 
 #define BITS_IN_JSAMPLE 12
 
+#define GDCM_jpr_DEBUG 0
 // BITS_IN_JSAMPLE is a compile time defined options.
 // We need both 8 an 12;
 // To avoid renaming *all* the Jpeg functions,
@@ -201,9 +202,9 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    // typedef JSAMPARRAY *JSAMPIMAGE;	/* a 3-D sample array: top index is color */
 
    int row_stride;		/* physical row width in output buffer */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("entree dans gdcmFile::gdcm_read_JPEG_file12, depuis gdcmJpeg\n");
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
    /* In this example we want to open the input file before doing anything else,
     * so that the setjmp() error recovery below can assume the file is open.
@@ -212,9 +213,9 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
     */
 
    /* Step 1: allocate and initialize JPEG decompression object */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("Entree Step 1\n");
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
    /* We set up the normal JPEG error routines, then override error_exit. */
 
@@ -234,15 +235,15 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    jpeg_create_decompress(&cinfo);
 
    /* Step 2: specify data source (eg, a file) */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("Entree Step 2\n");
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
    jpeg_stdio_src(&cinfo, fp);
 
    /* Step 3: read file parameters with jpeg_read_header() */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("Entree Step 3\n");
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
    (void) jpeg_read_header(&cinfo, TRUE);
 
    /* We can ignore the return value from jpeg_read_header since
@@ -251,7 +252,7 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
     * See libjpeg.doc for more info.
     */
 
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
       printf("--------------Header contents :----------------\n");
       printf("image_width %d image_height %d\n", 
               cinfo.image_width , cinfo.image_height);
@@ -259,7 +260,7 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
               cinfo.output_components);
       printf("nb of color components returned  %d \n", 
               cinfo.data_precision);
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
 
    /*
@@ -272,18 +273,18 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
     */
 
    /* Step 4: set parameters for decompression */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("Entree Step 4\n");
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
    /* In this example, we don't need to change any of the defaults set by
     * jpeg_read_header(), so we do nothing here.
     */
 
    /* Step 5: Start decompressor */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("Entree Step 5\n");
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
    (void) jpeg_start_decompress(&cinfo);
    /* We can ignore the return value since suspension is not possible
@@ -300,19 +301,19 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    /* JSAMPLEs per row in output buffer */
    row_stride = cinfo.output_width * cinfo.output_components;
   
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
       printf ("cinfo.output_width %d cinfo.output_components %d  row_stride %d\n",
               cinfo.output_width, cinfo.output_components,row_stride);
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
    /* Make a one-row-high sample array that will go away when done with image */
    buffer = (*cinfo.mem->alloc_sarray)
 	    ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
    /* Step 6: while (scan lines remain to be read) */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("Entree Step 6\n"); 
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
    /*           jpeg_read_scanlines(...); */
 
@@ -320,10 +321,10 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
     * loop counter, so that we don't have to keep track ourselves.
     */
 
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf ("cinfo.output_height %d  cinfo.output_width %d\n",
  		       cinfo.output_height,cinfo.output_width);
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
    pimage=(char *)image_buffer;
 
@@ -345,18 +346,18 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    }
  
   /* Step 7: Finish decompression */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("Entree Step 7\n");
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
    (void) jpeg_finish_decompress(&cinfo);
    /* We can ignore the return value since suspension is not possible
     * with the stdio data source.
     */
 
    /* Step 8: Release JPEG decompression object */
-#ifdef GDCM_DEBUG
+#ifdef GDCM_jpr_DEBUG
    printf("Entree Step 8\n");
-#endif //GDCM_DEBUG
+#endif //GDCM_jpr_DEBUG
 
    /* This is an important step since it will release a good deal of memory. */
    jpeg_destroy_decompress(&cinfo);

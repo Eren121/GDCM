@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,6 +110,83 @@ void gdcmDocEntry::PrintCommonPart(std::ostream & os) {
     
    s << "[" << GetName()<< "]";
    os << s.str();      
+}
+
+/**
+ * \ingroup gdcmDocEntry
+ * \brief   Writes the common part of any gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
+ */
+void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
+   std::cout << "gdcmDocEntry::Write : Is that what you wanted to do ? " << std::endl;
+   WriteCommonPart(fp, filetype);
+}
+
+/**
+ * \ingroup gdcmDocEntry
+ * \brief   Writes the common part of any gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
+ */
+void gdcmDocEntry::WriteCommonPart(FILE *fp, FileType filetype) {
+
+   guint16 group  = GetGroup();
+   VRKey   vr     = GetVR();
+   guint16 el     = GetElement();
+   guint32 lgr    = GetReadLength();
+
+   if ( (group == 0xfffe) && (el == 0x0000) ) 
+     // Fix in order to make some MR PHILIPS images e-film readable
+     // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
+     // we just *always* ignore spurious fffe|0000 tag !   
+      return; 
+
+//
+// ----------- Writes the common part
+//
+   fwrite ( &group,(size_t)2 ,(size_t)1 ,fp);  //group
+   fwrite ( &el,   (size_t)2 ,(size_t)1 ,fp);  //element
+      
+   if ( filetype == gdcmExplicitVR ) {
+
+      // Special case of delimiters:
+      if (group == 0xfffe) {
+         // Delimiters have NO Value Representation
+         // Hence we skip writing the VR.
+         // In order to avoid further troubles, we choose to write them
+         // as 'no-length' Item Delimitors (we pad by writing 0xffffffff)
+         // The end of a given Item will be found when  :
+         //  - a new Item Delimitor Item is encountered (the Seq goes on)
+         //  - a Sequence Delimitor Item is encountered (the Seq just ended)
+
+       // TODO : verify if the Sequence Delimitor Item was forced during Parsing 
+
+         int ff=0xffffffff;
+         fwrite (&ff,(size_t)4 ,(size_t)1 ,fp);
+         return;
+      }
+
+      guint16 z=0;
+      guint16 shortLgr = lgr;
+      if (vr == "unkn") {     // Unknown was 'written'
+         // deal with Little Endian            
+         fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,fp);
+         fwrite ( &z,  (size_t)2 ,(size_t)1 ,fp);
+      } else {
+         fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,fp); 
+
+// TODO : better we set SQ length to ffffffff
+//      and write a Sequence Delimitor Item at the end of the Sequence!                    
+         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") )
+         {
+            fwrite ( &z,  (size_t)2 ,(size_t)1 ,fp);
+            fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+         } else {
+            fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,fp);
+         }
+      }
+   } 
+   else // IMPLICIT VR 
+   { 
+      fwrite ( &lgr,(size_t)4 ,(size_t)1 ,fp);
+   }
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmParsePixels.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,7 @@ bool gdcmFile::ParsePixelData(void) {
       nb = atoi(str_nb.c_str() );
       if (nb == 12) nb =16;
    }
-   //int nBytes= nb/8;	//FIXME
+   //int nBytes= nb/8;   //FIXME
       
    //int taille = Header->GetXSize() * Header->GetYSize() * Header->GetSamplesPerPixel(); 
          

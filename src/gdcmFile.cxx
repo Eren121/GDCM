@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:52:08 $
-  Version:   $Revision: 1.104 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.105 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,14 +102,6 @@ gdcmFile::~gdcmFile(void) {
 
 //-----------------------------------------------------------------------------
 // Public
-/**
- * \ingroup   gdcmFile
- * \brief returns the gdcmHeader *Header   
- * @return	
- */
-gdcmHeader *gdcmFile::GetHeader(void) {
-   return(Header);
-}
 
 /**
  * \ingroup   gdcmFile

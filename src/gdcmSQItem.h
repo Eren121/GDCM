@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,9 @@
 #include "gdcmDocEntrySet.h"
 #include "gdcmDocument.h"
 
+
+class gdcmBinEntry;
+
 //-----------------------------------------------------------------------------
 typedef std::list<gdcmDocEntry *> ListDocEntry;
 //-----------------------------------------------------------------------------
@@ -33,6 +36,7 @@ public:
    ~gdcmSQItem(void);
 
    virtual void Print(std::ostream &os = std::cout); 
+   virtual void Write(FILE *fp, FileType filetype);
 
    /// \brief   returns the DocEntry chained List for this SQ Item.
    inline ListDocEntry &GetDocEntries() {return docEntries;};   
@@ -48,20 +52,19 @@ public:
    
    bool SetEntryByNumber(std::string val,guint16 group, guint16 element);                   
     
-   std::string GetEntryByNumber(guint16 group, guint16 element);
-   std::string GetEntryByName(TagName name);
+   virtual std::string GetEntryByNumber(guint16 group, guint16 element);
 
-   inline int GetSQItemNumber() { return SQItemNumber;};
+   inline int GetSQItemNumber()
+      {return SQItemNumber;};
 
-   inline void SetSQItemNumber(int itemNumber) { SQItemNumber=itemNumber;};
+   inline void SetSQItemNumber(int itemNumber)
+      {SQItemNumber=itemNumber;};     
+
 protected:
 
 // DocEntry related utilities 
-         
-   virtual gdcmDocEntry *NewDocEntryByNumber(guint16 group,
-                                             guint16 element); // TODO
-   virtual gdcmDocEntry *NewDocEntryByName  (std::string Name); //TODO 
 
+	
 // Variables
 
    /// \brief chained list of (Elementary) Doc Entries

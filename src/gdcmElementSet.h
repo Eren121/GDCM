@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,11 @@
 #include "gdcmCommon.h"
 #include "gdcmDocEntrySet.h"
 
+class gdcmValEntry;
+class gdcmBinEntry;
+class gdcmSeqEntry;
+
+
 typedef std::map<TagKey, gdcmDocEntry *> TagDocEntryHT;
 
 //-----------------------------------------------------------------------------
@@ -37,6 +42,8 @@ public:
    virtual bool RemoveEntry(gdcmDocEntry *EntryToRemove);
 
    virtual void Print(std::ostream &os = std::cout); 
+   virtual void Write(FILE *fp, FileType filetype); 
+
     
 protected:
 // Variables

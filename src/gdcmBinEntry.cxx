@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 12:38:28 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/06/22 13:47:33 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,11 +64,13 @@ gdcmBinEntry::~gdcmBinEntry(){
  
 void gdcmBinEntry::Print(std::ostream &os)
 {
-   gdcmValEntry::Print(os);
+   //gdcmValEntry::Print(os);  // replaced by PrintCommonPart 
+	                            // to avoid bugging the display	
+	PrintCommonPart(os);
    std::ostringstream s;
    if (voidArea != NULL)
    {
-      s << " [gdcm::Binary data loaded with lenght is "
+      s << " [gdcm::Binary data loaded with length is "
         << GetLength() << "]"
         << std::endl;
    }
@@ -78,6 +80,19 @@ void gdcmBinEntry::Print(std::ostream &os)
         << std::endl;
    }
    os << s.str();
+}
+
+/*
+ * \brief   canonical Writer
+ */
+void gdcmBinEntry::Write(FILE *fp, FileType filetype) {
+   void *voidArea = GetVoidArea();
+   int lgr=GetLength();
+   if (voidArea != NULL) 
+   { // there is a 'non string' LUT, overlay, etc
+      fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,fp); // Elem value
+      return;            
+   } 
 }
 //-----------------------------------------------------------------------------
 // Public
