@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:42 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/10/25 03:03:45 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,41 +34,42 @@ class GDCM_EXPORT SeqEntry : public DocEntry
 public:
    SeqEntry( DictEntry* );
    SeqEntry(DocEntry* d,  int depth);
-   virtual ~SeqEntry();
+   ~SeqEntry();
    
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(std::ofstream *fp, FileType);
 
    /// returns the SQITEM chained List for this SeQuence.
-   ListSQItem &GetSQItems() { return items; }
+   ListSQItem const & GetSQItems() const { return Items; }
       
    /// Sets the delimitor mode
-   void SetDelimitorMode(bool dm) { delimitor_mode = dm;}
+   void SetDelimitorMode(bool dm) { DelimitorMode = dm;}
 
    /// Sets the Sequence Delimitation Item
-   void SetSequenceDelimitationItem(DocEntry * e) { seq_term = e;}
+   void SetSequenceDelimitationItem(DocEntry * e) { SeqTerm = e;}
 
    void AddEntry(SQItem *it, int itemNumber);
    SQItem *GetSQItemByOrdinalNumber(int itemNumber);
 
    /// Gets the depth level
-   int GetDepthLevel() { return SQDepthLevel; }
-                                                                                
+   int GetDepthLevel() const { return SQDepthLevel; }
+
    /// Sets the depth level of a Sequence Entry embedded in a SeQuence
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
+
 protected:
 
 private:
 // Variables
 
    /// If this Sequence is in delimitor mode (length =0xffffffff) or not
-   bool delimitor_mode;
+   bool DelimitorMode;
    
    /// Chained list of SQ Items
-   ListSQItem items;
+   ListSQItem Items;
    
    /// sequence terminator item 
-   DocEntry *seq_term;
+   DocEntry *SeqTerm;
 
    /// \brief Defines the depth level of this \ref SeqEntry inside
    ///        the (optionaly) nested sequences. \ref SQDepthLevel

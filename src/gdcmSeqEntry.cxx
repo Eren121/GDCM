@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:42 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/10/25 03:03:45 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,8 +42,8 @@ SeqEntry::SeqEntry( DictEntry* e )
    ReadLength = 0xffffffff;
    SQDepthLevel = -1;
 
-   delimitor_mode = false;
-   seq_term  = NULL;
+   DelimitorMode = false;
+   SeqTerm  = NULL;
 }
 
 /**
@@ -65,13 +65,16 @@ SeqEntry::SeqEntry( DocEntry* e, int depth )
 /**
  * \brief   Canonical destructor.
  */
-SeqEntry::~SeqEntry() {
-   for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
+SeqEntry::~SeqEntry()
+{
+   for(ListSQItem::iterator cc = Items.begin(); cc != Items.end(); ++cc)
    {
       delete *cc;
    }
-   if (!seq_term)
-      delete seq_term;
+   if (!SeqTerm)
+   {
+      delete SeqTerm;
+   }
 }
 
 /**
@@ -88,20 +91,21 @@ void SeqEntry::Print( std::ostream &os )
       return;
 
    // Then, Print each SQ Item   
-   for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
+   for(ListSQItem::iterator cc = Items.begin(); cc != Items.end(); ++cc)
    {
       (*cc)->Print(os);   
    }
 
    // at end, print the sequence terminator item, if any
-   if (delimitor_mode) {
+   if (DelimitorMode)
+   {
       for ( int i = 0; i < SQDepthLevel; i++ )
       {
          os << "   | " ;
       }
-      if (seq_term != NULL)
+      if (SeqTerm != NULL)
       {
-         seq_term->Print(os);
+         SeqTerm->Print(os);
          os << std::endl;
       } 
       else 
@@ -125,8 +129,8 @@ void SeqEntry::Write(std::ofstream* fp, FileType filetype)
    //uint16_t item_term_el = 0xe00d;
    
    DocEntry::Write(fp, filetype);
-   for(ListSQItem::iterator cc  = GetSQItems().begin();
-                            cc != GetSQItems().end();
+   for(ListSQItem::iterator cc  = Items.begin();
+                            cc != Items.end();
                           ++cc)
    {        
       (*cc)->Write(fp, filetype);
@@ -146,7 +150,7 @@ void SeqEntry::Write(std::ofstream* fp, FileType filetype)
 void SeqEntry::AddEntry(SQItem *sqItem, int itemNumber)
 {
    sqItem->SetSQItemNumber(itemNumber);
-   items.push_back(sqItem);
+   Items.push_back(sqItem);
 }
 
 /**
@@ -158,15 +162,20 @@ void SeqEntry::AddEntry(SQItem *sqItem, int itemNumber)
 SQItem* SeqEntry::GetSQItemByOrdinalNumber(int nb)
 {
    if (nb<0)
-      return (*(items.begin()));
-   int count = 0 ;
-   for(ListSQItem::iterator cc = items.begin();
-       cc != items.end();
-       count ++, ++cc){
-      if (count==nb)
-         return *cc;
+   {
+      return *(Items.begin());
    }
-   return (*(items.end())); // Euhhhhh ?!? Is this the last one . FIXME
+   int count = 0 ;
+   for(ListSQItem::iterator cc = Items.begin();
+                           cc != Items.end();
+                           count ++, ++cc)
+   {
+      if (count == nb)
+      {
+         return *cc;
+      }
+   }
+   return *(Items.end()); // Euhhhhh ?!? Is this the last one . FIXME
 }
 //-----------------------------------------------------------------------------
 // Protected
