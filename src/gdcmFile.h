@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/22 08:58:12 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2004/11/23 09:13:26 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,14 +39,14 @@ public:
    {
       WMODE_NATIVE,
       WMODE_DECOMPRESSED,
-      WMODE_RGB,
+      WMODE_RGB
    };
      
    enum TWriteType
    {
       WTYPE_IMPL_VR,
       WTYPE_EXPL_VR,
-      WTYPE_ACR,
+      WTYPE_ACR
    };
      
 public:
