@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/13 15:12:33 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/01/05 15:19:42 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -289,6 +289,25 @@ bool Util::DicomStringEqual(const std::string& s1, const char *s2)
   }
   return s1_even == s2_even;
 }
+
+
+
+/**
+ * \ingroup Util
+ * \brief   tells us if the processor we are working with is BigEndian or not
+ */
+bool Util::IsCurrentProcessorBigEndian()
+{
+   uint16_t intVal = 1;
+   uint8_t bigEndianRepr[4] = { 0x00, 0x00, 0x00, 0x01 };
+   int res = memcmp(reinterpret_cast<const void*>(&intVal),
+                    reinterpret_cast<const void*>(bigEndianRepr), 4);
+   if (res == 0)
+      return true;
+   else
+      return false;
+}
+
 
 /**
  * \ingroup Util
