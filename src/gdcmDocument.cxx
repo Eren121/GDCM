@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 05:59:12 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2004/07/19 15:16:18 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -301,7 +301,7 @@ bool gdcmDocument::IsReadable()
  * @param   SyntaxToCheck The transfert syntax we need to check against.
  * @return  True when SyntaxToCheck corresponds to the Transfer Syntax of
  *          the current document. False either when the document contains
- *          no Transfer Syntax, or when the Tranfer Syntaxes don't match.
+ *          no Transfer Syntax, or when the Tranfer Syntaxes doesn't match.
  */
 bool gdcmDocument::IsGivenTransferSyntax(std::string const & syntaxToCheck)
 {
@@ -312,7 +312,7 @@ bool gdcmDocument::IsGivenTransferSyntax(std::string const & syntaxToCheck)
    }
 
    // The entry might be present but not loaded (parsing and loading
-   // happen at differente stages): try loading and proceed with check...
+   // happen at different stages): try loading and proceed with check...
    LoadDocEntrySafe(entry);
    if (gdcmValEntry* valEntry = dynamic_cast< gdcmValEntry* >(entry) )
    {
@@ -326,10 +326,7 @@ bool gdcmDocument::IsGivenTransferSyntax(std::string const & syntaxToCheck)
          transfer.erase(transfer.length()-1, 1);
       }
       if ( transfer == syntaxToCheck )
-      //if( transfer.find( syntaxToCheck ) )   //should be faster
       {
-         int k = 
-         abort()
          return true;
       }
    }
@@ -880,10 +877,10 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
                      " ValEntry (try promotion first).");
       return false;
    }
-   // Non even content must be padded with a space (020H).
+   // Non even content must be padded with a space (020H)...
    if( content.length() % 2 )
    {
-      content += '\0';
+      content += '\0';  // ... therefore we padd with (000H) .!?!
    }      
    valEntry->SetValue(content);
    
@@ -926,7 +923,7 @@ bool gdcmDocument::SetEntryByNumber(void *content,
       return false;
    }
 
-/* Hope Binaray field length is *never* wrong    
+/* Hope Binary field length is *never* wrong    
    if(lgth%2) // Non even length are padded with a space (020H).
    {  
       lgth++;

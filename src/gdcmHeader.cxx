@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/17 22:45:40 $
-  Version:   $Revision: 1.177 $
+  Date:      $Date: 2004/07/19 15:16:18 $
+  Version:   $Revision: 1.178 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1213,6 +1213,7 @@ std::string gdcmHeader::GetTransfertSyntaxName()
 {
    // use the gdcmTS (TS : Transfert Syntax)
    std::string transfertSyntax = GetEntryByNumber(0x0002,0x0010);
+
    if ( transfertSyntax == GDCM_UNFOUND )
    {
       dbg.Verbose(0, "gdcmHeader::GetTransfertSyntaxName:"
@@ -1220,6 +1221,10 @@ std::string gdcmHeader::GetTransfertSyntaxName()
       return "Uncompressed ACR-NEMA";
    }
 
+   while ( ! isdigit(transfertSyntax[transfertSyntax.length()-1]) )
+   {
+      transfertSyntax.erase(transfertSyntax.length()-1, 1);
+   }
    // we do it only when we need it
    gdcmTS* ts         = gdcmGlobal::GetTS();
    std::string tsName = ts->GetValue( transfertSyntax );

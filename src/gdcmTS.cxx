@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 11:51:26 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/07/19 15:16:19 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,6 @@ gdcmTS::gdcmTS(void)
    std::ifstream from(filename.c_str());
    dbg.Error(!from, "gdcmTS::gdcmTS: can't open dictionary",filename.c_str());
 
-   //char buff[1024];  //not used
    std::string key;
    std::string name;
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/07/19 15:16:19 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,18 +99,28 @@ void gdcmValEntry::Print(std::ostream & os)
       s << " [gdcm::too long for print (" << GetLength() << ") ]";
    }
    
-   // Display the UID value (instead of displaying only the rough code)  
+   // Display the UID value (instead of displaying only the rough code)
+   // First 'clean' trailing character (space or zero) 
    if (g == 0x0002) {  // Any more to be displayed ?
-      if ( (e == 0x0010) || (e == 0x0002) )
+      if ( (e == 0x0010) || (e == 0x0002) ) {
+         if ( ! isdigit(v[v.length()-1]) )
+            v.erase(v.length()-1, 1);
          s << "  ==>\t[" << ts->GetValue(v) << "]";
+      }
    } else {
       if (g == 0x0008) {
-         if ( (e == 0x0016) || (e == 0x1150)  )
+         if ( (e == 0x0016) || (e == 0x1150)  ) {
+            if ( ! isdigit(v[v.length()-1]) )
+               v.erase(v.length()-1, 1);
             s << "  ==>\t[" << ts->GetValue(v) << "]";
+         }
       } else {
          if (g == 0x0004) {
-           if ( (e == 0x1510) || (e == 0x1512)  )
+           if ( (e == 0x1510) || (e == 0x1512)  ) {
+              if ( ! isdigit(v[v.length()-1]) )
+                 v.erase(v.length()-1, 1);  
               s << "  ==>\t[" << ts->GetValue(v) << "]";
+            }
          }     
       }
    }
