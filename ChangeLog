@@ -1,3 +1,12 @@
+2004-02-04 Jean-Pierre Roux
+     * FIX : Final solution (?) for icone embedded images
+     * FIX : dicomVR.dic Overlay group is not *only* 6000, but 60xxx
+             (see http://medical.nema.org/dicom/2003/03_06PU.PDF)
+	     add groups 6002, 6004, 6006, to allow 'clean' parsing of
+	     gdcmData/gdcm-MR-SIEMENS-16.acr1
+     * ENH  add gdcmData/checkWriteExplicit.sh gdcmData/checkWriteImplicit.sh
+            to make full checking easier
+	     
 2004-02-04 Benoit Regrain
      * FIX : WriteEntries : coding style & logic in parameters
 
@@ -42,7 +51,7 @@
        when 'dirty Acr' is found, to be compliant with the new 
        IsReadable() methods.
        
-     * gdcmHederlHelper :add Pixel Type 'FD', for dealing with 'double' images.
+     * gdcmHeaderHelper :add Pixel Type 'FD', for dealing with 'double' images.
       (no DOUBLE images in kosher DICOM, 
       but so usefull for people that miss them ;-)
       
