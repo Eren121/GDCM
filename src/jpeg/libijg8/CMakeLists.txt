@@ -1,8 +1,4 @@
-#LTVERSION = 0:1:0
-
-#lib_LTLIBRARIES = libgdcmijpeg8.la
-
-##CXXFLAGS = @CXXFLAGS@
+# JPEG 8 bits project
 
 SET(libgdcmijpeg8_la_SOURCES
 jcapimin.c 
@@ -20,7 +16,7 @@ jccolor.c
 jcsample.c 
 jchuff.c 
 jcphuff.c 
-jcdctmgr.c # where commented out till here
+jcdctmgr.c # were commented out till here
 jfdctfst.c 
 jfdctflt.c 
 jfdctint.c 
@@ -51,10 +47,8 @@ jutils.c
 jerror.c 
 jmemmgr.c 
 jmemnobs.c 
-# rdrle.c
 )
 
-#libgdcmijpeg8includedir = $(includedir)
 SET(libgdcmijpeg8include_HEADERS
 jchuff.h  
 jconfig.h  
@@ -68,10 +62,6 @@ jpegint.h
 jpeglib.h  
 jversion.h 
 )
-
-#EXTRA_DIST = \
-#   jconfig.linux \
-#   jconfig.vc
 
 ADD_LIBRARY(gdcmijpeg8 ${libgdcmijpeg8_la_SOURCES})
 
