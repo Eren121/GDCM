@@ -1,4 +1,4 @@
-// gdcmMeta.cxx
+// gdcmMeta.h
 //-----------------------------------------------------------------------------
 #include "gdcmMeta.h"
 
@@ -8,7 +8,7 @@
  * \ingroup gdcmMeta
  * \brief   
  * @param   begin iterator of begin for the object
- * @param   end   iterator of end for the object
+ * @param   end   iterator of end   for the object
  */
 gdcmMeta::gdcmMeta(ListTag::iterator begin,ListTag::iterator end):
    gdcmObject(begin,end)
@@ -32,9 +32,7 @@ gdcmMeta::~gdcmMeta()
  */ 
 void gdcmMeta::Print(std::ostream &os)
 {
-   os<<"META : ";
-   os<<std::endl;
-
+   os<<"META :"<<std::endl;
    gdcmObject::Print(os);
 }
 

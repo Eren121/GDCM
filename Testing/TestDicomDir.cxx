@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
 // Exemples exploitation de la structure
 
-// DON'T REMOVE neither the folowong code, nor the commented out lines
+// DON'T REMOVE neither the folowing code, nor the commented out lines
 
 
   cout << std::endl << std::endl  
@@ -129,10 +129,6 @@ int main(int argc, char* argv[])
    }
    
  */  
-
-// DICOM DIR
-
-//What about the META informations?
 
    cout << std::endl << std::endl  
         << " = Contenu Complet du DICOMDIR ==========================================" 

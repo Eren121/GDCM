@@ -202,16 +202,15 @@ void gdcmDicomDir::CreateDicomDir()
    begin=listEntries.begin();
    end=begin;
    
-   for(ListTag::iterator j=listEntries.begin();j !=listEntries.end();++j) 
+   for(ListTag::iterator j=begin;j !=listEntries.end();++j) 
    {
       if((*j)->GetValue()=="PATIENT ") {
          k = j; 
          break;
       }
-      AddObjectToEnd(gdcmDicomDir::GDCM_META,begin,j);       
    }   
+   AddObjectToEnd(gdcmDicomDir::GDCM_META,begin,k);       
     
-//   for(ListTag::iterator i=listEntries.begin();i !=listEntries.end();++i) 
    for(ListTag::iterator i=k;i !=listEntries.end();++i) 
    {
       std::string v=(*i)->GetValue();
