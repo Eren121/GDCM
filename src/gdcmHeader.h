@@ -8,7 +8,6 @@
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmHeader
  * \brief
  * The purpose of an instance of gdcmHeader is to act as a container of
  * all the DICOM elements and their corresponding values (and
@@ -34,8 +33,8 @@ public:
    gdcmHeader(const char *filename, 
               bool  exception_on_error = false, 
               bool  enable_sequences   = false,
-	      bool  skip_shadow        = false);
-	      
+              bool  skip_shadow        = false);
+ 
    virtual ~gdcmHeader();
 
    // Standard values and informations contained in the header
@@ -50,7 +49,7 @@ public:
    bool IsDicomV3(void); 
 
    // Some heuristic based accessors, end user intended 
-   // (to be move to gdcmHeaderHelper?) 
+   // (to be moved to gdcmHeaderHelper?) 
    int GetXSize(void);
    int GetYSize(void);
    int GetZSize(void);
@@ -81,20 +80,15 @@ public:
    // TODO Swig int SetPubDict(std::string filename);
    
 // System access
-/**
- * \ingroup gdcmHeader
- * \brief   the Header Entry Group Number of the 'Pixel Group' 
- *          is not allways 0x7fe0
- * @return  GrPixel
- */
+   /**
+    * \brief   the Header Entry Group Number of the 'Pixel Group' 
+    *          is not allways 0x7fe0
+    * @return  GrPixel
+    */
    guint16 GetGrPixel(void)  {return GrPixel;}
-/**
- * \ingroup gdcmHeader
- * \brief   the Header Entry Element Number of the 'Pixel Element' 
- *          is not allways 0x0010
- * @return  NumPixel
- */
-    guint16 GetNumPixel(void) {return NumPixel;}   
+   
+   /// Accessor to \ref gdcmParser::NumPixel
+   guint16 GetNumPixel(void) {return NumPixel;}
 
 // Entry
 
@@ -125,7 +119,7 @@ public:
    inline virtual void UpdateShaEntries(void)
       { gdcmParser::UpdateShaEntries(); }
 
-// Read (used in gdcmFile)
+   /// Read (used in gdcmFile)
    void SetImageDataSize(size_t ExpectedSize);
 
    bool operator<(gdcmHeader &header);

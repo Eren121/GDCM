@@ -27,6 +27,7 @@ libgdcm_la_SOURCES=                \
    gdcmDirList.cxx                 \
    gdcmException.cxx               \
    gdcmFile.cxx                    \
+   gdcmGlobal.cxx                  \
    gdcmHeader.cxx                  \
    gdcmHeaderEntry.cxx             \
    gdcmHeaderHelper.cxx            \
@@ -59,6 +60,7 @@ libgdcminclude_HEADERS =           \
    gdcmDirList.h                   \
    gdcmException.h                 \
    gdcmFile.h                      \
+   gdcmGlobal.h                    \
    gdcm.h                          \
    gdcmHeaderEntry.h               \
    gdcmHeader.h                    \

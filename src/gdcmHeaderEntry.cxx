@@ -3,6 +3,7 @@
 //
 #include "gdcmHeaderEntry.h"
 #include "gdcmTS.h"
+#include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 
 #ifdef GDCM_NO_ANSI_STRING_STREAM
@@ -24,9 +25,9 @@
  * @param   in Pointer to existing dictionary entry
  */
 gdcmHeaderEntry::gdcmHeaderEntry(gdcmDictEntry* in) {
-	ImplicitVR = false;
-	voidArea = NULL; // unsecure memory area to hold 'non string' values
-	entry = in;
+   ImplicitVR = false;
+   voidArea = NULL; // unsecure memory area to hold 'non string' values
+   entry = in;
 }
 
 //-----------------------------------------------------------------------------
@@ -84,7 +85,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
 
    if (printLevel>=1) {      
       s.setf(std::ios::left);
-      s << std::setw(66-GetName().length()) << " ";	     	 
+      s << std::setw(66-GetName().length()) << " ";
    }
     
    s << "[" << GetName()<< "]";
@@ -122,7 +123,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") ) {
       if (v == "4294967295") // to avoid troubles in convertion 
          sprintf (st," x(ffffffff)");
-      else	
+      else
          sprintf(st," x(%x)",(unsigned long)atof(v.c_str()));
       s << st;
    }

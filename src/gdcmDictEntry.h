@@ -110,23 +110,70 @@ private:
     */ 
    std::string vr;
 	                	                
-	// CLEANME: find the official dicom name for this field !
    /**
-    * \ingroup gdcmDictEntry
-    * \brief   Fourth field containing some semantics
-    *          (Group Name abbr.) 
-    *          DON'T USER ANY LONGER !
-    */ 	
+    * \brief AVOID using the following fourth field at all costs.
+    * 
+    *  They are at leat two good reasons for NOT using fourth:
+    *  - the main reason is that it is NOT part of the 'official'
+    *    Dicom Dictionnary.
+    *  - a second reason is that it is not defined for all the groups.
+    *  .
+    *  Still it provides some semantics as group name abbreviation that
+    *  can prove of some help when organizing things in an interface.
+    *  For the time being we keep it in gdcm but it migth be removed in
+    *  future releases it proves to be source of confusion.
+    *  Here is a small dictionary we encountered in "nature":
+    *  - CMD      Command        
+    *  - META     Meta Information 
+    *  - DIR      Directory
+    *  - ID       ???
+    *  - PAT      Patient
+    *  - ACQ      Acquisition
+    *  - REL      Related
+    *  - IMG      Image
+    *  - SDY      Study
+    *  - VIS      Visit 
+    *  - WAV      Waveform
+    *  - PRC      ???
+    *  - DEV      Device
+    *  - NMI      Nuclear Medicine
+    *  - MED      ???
+    *  - BFS      Basic Film Session
+    *  - BFB      Basic Film Box
+    *  - BIB      Basic Image Box
+    *  - BAB
+    *  - IOB
+    *  - PJ
+    *  - PRINTER
+    *  - RT       Radio Therapy
+    *  - DVH   
+    *  - SSET
+    *  - RES      Results
+    *  - CRV      Curve
+    *  - OLY      Overlays
+    *  - PXL      Pixels
+    *  - DL       Delimiters
+    *  .
+    *
+    *  Other usefull abreviations used for Radiographic view associated with
+    *  Patient Position (0018,5100):
+    *  -  AP = Anterior/Posterior 
+    *  -  PA = Posterior/Anterior 
+    *  -  LL = Left Lateral 
+    *  -  RL = Right Lateral 
+    *  - RLD = Right Lateral Decubitus 
+    *  - LLD = Left  Lateral Decubitus 
+    *  - RLO = Right Lateral Oblique 
+    *  - LLO = Left  Lateral Oblique  
+    *  .
+    */
    std::string fourth; 
+
    /// e.g. "Patient's Name"                    
    std::string name;      
-   /// Redundant with (group, element) but we add it
-   /// on efficiency purposes.
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   Redundant with (group, element) but we add it
-    *          on efficiency purposes. 
-    */ 	   TagKey  key;
+
+   /// Redundant with (group, element) but we add it on efficiency purposes. 
+   TagKey  key;
                      
 	// DCMTK has many fields for handling a DictEntry (see below). What are the
 	// relevant ones for gdcmlib ?

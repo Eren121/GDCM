@@ -18,7 +18,6 @@
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmDict
  * \brief   Construtor
  * @param   FileName from which to build the dictionary.
  */
@@ -45,7 +44,7 @@ gdcmDict::gdcmDict(std::string & FileName) {
       name = buff;
 
       gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,
-		                                   vr, fourth, name);
+                                                   vr, fourth, name);
       AddNewEntry(newEntry);
    }
    from.close();
@@ -54,7 +53,6 @@ gdcmDict::gdcmDict(std::string & FileName) {
 }
 
 /**
- * \ingroup gdcmDict
  * \brief  Destructor 
  */
 gdcmDict::~gdcmDict() {
@@ -83,7 +81,6 @@ void gdcmDict::Print(std::ostream &os) {
 }
 
 /**
- * \ingroup gdcmDict
  * \brief   Print all the dictionary entries contained in this dictionary.
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
@@ -103,7 +100,6 @@ void gdcmDict::PrintByKey(std::ostream &os) {
 }
 
 /**
- * \ingroup gdcmDict
  * \brief   Print all the dictionary entries contained in this dictionary.
  *          Entries will be sorted by the name of the dictionary entries.
  * \warning AVOID USING IT : the name IS NOT an identifier; 
@@ -137,7 +133,7 @@ bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry)
 {
    TagKey key;
    key = NewEntry->GetKey();
-	
+
    if(KeyHt.count(key) == 1)
    {
       dbg.Verbose(1, "gdcmDict::AddNewEntry already present", key.c_str());

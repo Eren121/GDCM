@@ -29,7 +29,6 @@ typedef std::map<GroupKey, int> GroupHT;
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmParser
  * \brief used by both gdcmHeader and gdcmDicomDir
  */
 class GDCM_EXPORT gdcmParser
@@ -211,9 +210,11 @@ protected:
    */   
    guint16 GrPixel;
    
-   /** 
-   * \brief For some ACR-NEMA images, it's *not* 0010 ... 
-   */    
+   /// In some cases (e.g. for some ACR-NEMA images) the Header Entry Element
+   /// Number of the 'Pixel Element' is *not* found at 0x0010. In order to
+   /// make things easier the parser shall store the proper value in
+   /// NumPixel to provide a unique access facility. See also
+   /// \ref gdcmHeader::gdcmHeader
    guint16 NumPixel;
    /**
    * \brief some files may contain icons; GrPixel,NumPixel appears several times

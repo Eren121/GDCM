@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "gdcmHeader.h"
+#include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include "gdcmTS.h"
@@ -13,20 +14,18 @@
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmHeader
  * \brief  Constructor 
- * @param   InFilename name of the file whose header we want to analyze
- * @param   exception_on_error whether we want to throw an exception or not
- * @param   enable_sequences = true to allow the header 
- *          to be parsed *inside* the SeQuences, 
- *          when they have an actual length 
- * @param   ignore_shadow = true if user wants to skip shadow groups 
- *           during parsing, to save memory space	  
+ * @param  InFilename name of the file whose header we want to analyze
+ * @param  exception_on_error whether we want to throw an exception or not
+ * @param  enable_sequences = true to allow the header 
+ *         to be parsed *inside* the SeQuences, when they have an actual length 
+ * @param  ignore_shadow = true if user wants to skip shadow groups 
+ *         during parsing, to save memory space
  */
 gdcmHeader::gdcmHeader(const char *InFilename, 
                        bool exception_on_error,
                        bool enable_sequences, 
-		       bool ignore_shadow):
+                       bool ignore_shadow):
    gdcmParser(InFilename,exception_on_error,enable_sequences,ignore_shadow)
 { 
    
@@ -55,15 +54,14 @@ gdcmHeader::gdcmHeader(const char *InFilename,
          NumPixel = 0x1010;
       else
          NumPixel = 0x0010;
-	 
+
       TagKey key = gdcmDictEntry::TranslateToKey(GrPixel, NumPixel);
       countGrPixel = GetEntry().count(key);
 }
 
 /**
- * \ingroup gdcmHeader
  * \brief Constructor  
- * @param   exception_on_error whether we want to throw an exception or not
+ * @param exception_on_error whether we want to throw an exception or not
  */
 gdcmHeader::gdcmHeader(bool exception_on_error) :
    gdcmParser(exception_on_error)

@@ -12,6 +12,7 @@
 
 #include "gdcmVR.h"
 #include "gdcmUtil.h"
+#include "gdcmDictSet.h"
 #include "gdcmDebug.h"
 
 #ifndef PUB_DICT_PATH
@@ -20,7 +21,9 @@
 #define DICT_VR "dicomVR.dic"
 
 //-----------------------------------------------------------------------------
-// Constructor / Destructor
+/**
+ * \brief Constructor
+ */
 gdcmVR::gdcmVR(void) 
 {
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_VR);
@@ -51,6 +54,9 @@ gdcmVR::gdcmVR(void)
    from.close();
 }
 
+/**
+ * \brief Destructor
+ */
 gdcmVR::~gdcmVR() {
    vr.clear();
 }

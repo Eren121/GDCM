@@ -13,6 +13,7 @@
 #include "gdcmDicomDirElement.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
+#include "gdcmDictSet.h"
 
 #ifndef PUB_DICT_PATH
 #  define PUB_DICT_PATH     "../Dicts/"

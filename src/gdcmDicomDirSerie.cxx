@@ -2,12 +2,11 @@
 //-----------------------------------------------------------------------------
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirElement.h"
-#include "gdcmUtil.h"
+#include "gdcmGlobal.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmDicomDirSerie
  * \brief  Constructor 
  * @param  begin  iterator (inside the gdcmParser chained list)
  *                on the first Header Entry (i.e Dicom Element)
@@ -22,14 +21,13 @@
  */
 gdcmDicomDirSerie::gdcmDicomDirSerie(ListTag::iterator begin,
                                      ListTag::iterator end,              
-				     TagHeaderEntryHT *ptagHT, 
-				     ListTag *plistEntries ):
+                                     TagHeaderEntryHT *ptagHT, 
+                                     ListTag *plistEntries ):
    gdcmObject(begin,end,ptagHT,plistEntries)
 {
 }
 
 /**
- * \ingroup gdcmDicomDirSerie
  * \brief   Canonical destructor.
  */
 gdcmDicomDirSerie::~gdcmDicomDirSerie() 
@@ -43,7 +41,6 @@ gdcmDicomDirSerie::~gdcmDicomDirSerie()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmDicomDirSerie
  * \brief   Prints the Object
  * @return
  */ 
@@ -62,7 +59,6 @@ void gdcmDicomDirSerie::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmDicomSerie
  * \brief   adds a new Image to a partially created DICOMDIR
  */
 gdcmDicomDirImage * gdcmDicomDirSerie::NewImage(void) {

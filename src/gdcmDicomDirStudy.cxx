@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------
 #include "gdcmDicomDirStudy.h"
 #include "gdcmDicomDirElement.h"
-#include "gdcmUtil.h"
+#include "gdcmGlobal.h"
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 
@@ -22,8 +22,8 @@
  */
 gdcmDicomDirStudy::gdcmDicomDirStudy(ListTag::iterator begin,
                                      ListTag::iterator end,
-				     TagHeaderEntryHT *ptagHT, 
-				     ListTag *plistEntries):
+                                     TagHeaderEntryHT *ptagHT, 
+                                     ListTag *plistEntries):
    gdcmObject(begin,end,ptagHT,plistEntries)
 {
 }

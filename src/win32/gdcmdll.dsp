@@ -160,6 +160,10 @@ SOURCE=..\gdcmFile.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\gdcmGlobal.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\gdcmHeader.cxx
 # End Source File
 # Begin Source File
@@ -277,6 +281,10 @@ SOURCE=..\gdcmException.h
 # Begin Source File
 
 SOURCE=..\gdcmFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmGlobal.h
 # End Source File
 # Begin Source File
 

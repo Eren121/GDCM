@@ -18,6 +18,7 @@
 #include "gdcmDirList.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
+#include "gdcmGlobal.h"
 
 //-----------------------------------------------------------------------------
 //  For full DICOMDIR description, see:
@@ -27,11 +28,10 @@
 // Constructor / Destructor
 
 /**
- * \ingroup gdcmDicomDir
  * \brief Constructor Parses recursively the directory and creates the DicomDir
- *                        or uses an already built DICOMDIR, depending on 'parseDir' value
+ *        or uses an already built DICOMDIR, depending on 'parseDir' value.
  * @param FileName        name 
-                        - of the root directory (parseDir = true)
+ *                      - of the root directory (parseDir = true)
  *                      - of the DICOMDIR       (parseDir = false)
  * @param parseDir boolean
  *                      - true if user passed an entry point 
@@ -447,11 +447,11 @@ void gdcmDicomDir::CheckBoundaries()
             itImage = ((*itSerie)->GetDicomDirImages()).begin();
             while (itImage != (*itSerie)->GetDicomDirImages().end() ) {
                (*itImage)->ResetBoundaries(1);
-               ++itImage;   	       	    
-	    }
-	    ++itSerie;	    	     	 	      
+               ++itImage;
+       }
+       ++itSerie;
          }
-	 ++itStudy; 	       
+      ++itStudy;
       } 
       ++itPatient;     
    }
@@ -487,9 +487,9 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
       entry->SetValue(it->value);
 
       if(dictEntry->GetGroup()==0xfffe) 
-	 {
-            entry->SetLength(entry->GetValue().length());	 
-	 }
+      {
+            entry->SetLength(entry->GetValue().length());
+      }
       else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
          {
             entry->SetLength(4);

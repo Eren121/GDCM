@@ -1,7 +1,7 @@
 // gdcmObject.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmObject.h"
-#include "gdcmUtil.h"
+#include "gdcmGlobal.h"
 #include "gdcmDebug.h"
 
 //-----------------------------------------------------------------------------
@@ -47,7 +47,7 @@ void gdcmObject::Print(std::ostream &os) {
       for(i=beginObj;;++i) {
          (*i)->SetPrintLevel(printLevel);
          (*i)->Print(os);
-	 if (i == endObj) break;
+         if (i == endObj) break;
       }
    }
 }

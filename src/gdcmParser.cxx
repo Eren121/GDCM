@@ -19,6 +19,7 @@
 #  include <iomanip>
 
 #include "gdcmParser.h"
+#include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 
@@ -26,59 +27,6 @@
 #define UI1_2_840_10008_1_2_1    "1.2.840.10008.1.2.1"
 #define UI1_2_840_10008_1_2_2    "1.2.840.10008.1.2.2"
 #define UI1_2_840_10008_1_2_1_99 "1.2.840.10008.1.2.1.99"
-
-   // Fourth semantics:
-   //
-   // ---> Warning : This fourth field is NOT part 
-   //                of the 'official' Dicom Dictionnary
-   //                and should NOT be used.
-   //                (Not defined for all the groups
-   //                 may be removed in a future release)
-   //
-   // CMD      Command        
-   // META     Meta Information 
-   // DIR      Directory
-   // ID
-   // PAT      Patient
-   // ACQ      Acquisition
-   // REL      Related
-   // IMG      Image
-   // SDY      Study
-   // VIS      Visit 
-   // WAV      Waveform
-   // PRC
-   // DEV      Device
-   // NMI      Nuclear Medicine
-   // MED
-   // BFS      Basic Film Session
-   // BFB      Basic Film Box
-   // BIB      Basic Image Box
-   // BAB
-   // IOB
-   // PJ
-   // PRINTER
-   // RT       Radio Therapy
-   // DVH   
-   // SSET
-   // RES      Results
-   // CRV      Curve
-   // OLY      Overlays
-   // PXL      Pixels
-   // DL       Delimiters
-   //
-
-   // Other usefull abreviations :
-   // Radiographic view associated with Patient Position (0018,5100).
-   // Defined Terms:
-   // 
-   //  AP = Anterior/Posterior 
-   //  PA = Posterior/Anterior 
-   //  LL = Left Lateral 
-   //  RL = Right Lateral 
-   //  RLD = Right Lateral Decubitus 
-   //  LLD  = Left Lateral Decubitus 
-   //  RLO = Right Lateral Oblique 
-   //  LLO = Left Lateral Oblique  
 
 //-----------------------------------------------------------------------------
 // Refer to gdcmParser::CheckSwap()
@@ -95,23 +43,22 @@ const unsigned int gdcmParser::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
 // Constructor / Destructor
 
 /**
- * \ingroup gdcmParser
- * \brief constructor  
+ * \brief   constructor  
  * @param   inFilename
  * @param   exception_on_error whether we throw an exception or not
  * @param   enable_sequences = true to allow the header 
  *          to be parsed *inside* the SeQuences, 
  *          when they have an actual length 
- * @param ignore_shadow to allow skipping the shadow elements, 
- *           to save memory space.
- * \warning  The TRUE value for this param has to be used 
- *	     with a FALSE value for the 'enable_sequence' param.
- *	     ('public elements' may be embedded in 'shadow Sequences')
+ * @param   ignore_shadow to allow skipping the shadow elements, 
+ *          to save memory space.
+ * \warning The TRUE value for this param has to be used 
+ *          with a FALSE value for the 'enable_sequence' param.
+ *          ('public elements' may be embedded in 'shadow Sequences')
  */
 gdcmParser::gdcmParser(const char *inFilename, 
                        bool exception_on_error,
                        bool enable_sequences,
-		       bool ignore_shadow) {
+                       bool ignore_shadow) {
    enableSequences=enable_sequences;
    ignoreShadow   =ignore_shadow;
    
