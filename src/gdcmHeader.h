@@ -29,24 +29,19 @@
 class GDCM_EXPORT gdcmHeader : public gdcmDocument
 {
 protected:
-   /// In some cases (e.g. for some ACR-NEMA images) the Header Entry Element
+   /// \brief In some cases (e.g. for some ACR-NEMA images) the Header Entry Element
    /// Number of the 'Pixel Element' is *not* found at 0x0010. In order to
    /// make things easier the parser shall store the proper value in
    /// NumPixel to provide a unique access facility. See also the constructor
    /// \ref gdcmHeader::gdcmHeader
    guint16 NumPixel;
-   /// In some cases (e.g. for some ACR-NEMA images) the header entry for
+   /// \brief In some cases (e.g. for some ACR-NEMA images) the header entry for
    /// the group of pixels is *not* found at 0x7fe0. In order to
    /// make things easier the parser shall store the proper value in
    /// GrPixel to provide a unique access facility. See also the constructor
    /// \ref gdcmHeader::gdcmHeader
    guint16 GrPixel;
-   /// Some DICOM files may contain several images (e.g. a icon, followd by
-   /// the image itself. Hence the tag (GrPixel,NumPixel) might appear
-   /// several times. countGrPixel is the number of occurences of the 
-   /// tag of pixels (i.e. (GrPixel,NumPixel)) contained in the header.
-   /// TODO : will be dealt with SQ tree-like stucture
-   int countGrPixel;
+
 public:
    gdcmHeader(bool exception_on_error = false);
    gdcmHeader(const char *filename, 
@@ -143,11 +138,7 @@ public:
 
    bool operator<(gdcmHeader &header);
 
-   bool WriteEntry(gdcmDocEntry *tag,FILE *_fp,FileType type);
-   
-   
-   virtual void PrintEntryNoSQ  (std::ostream &os = std::cout); 
-   virtual void PrintEntryNiceSQ(std::ostream &os = std::cout); 
+//   bool WriteEntry(gdcmDocEntry *tag,FILE *_fp,FileType type);
    
 protected:
    //CLEANME int write(std::ostream&);   

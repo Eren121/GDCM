@@ -86,10 +86,11 @@ void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem) {
    items.push_back(sqItem);
 }
 
-
+/// \brief Sets the depth level of a Sequence Entry embedded in a SeQuence 
 void gdcmSeqEntry::SetDepthLevel(int depth) {
    SQDepthLevel = depth;
 }
+
 //-----------------------------------------------------------------------------
 // Protected
 
@@ -99,22 +100,28 @@ void gdcmSeqEntry::SetDepthLevel(int depth) {
 
 // end-user intended : the guy *wants* to create his own SeQuence ?!?
 
+/// \brief to be written, if really usefull
 gdcmDocEntry *gdcmSeqEntry::NewDocEntryByNumber(guint16 group,
                                                 guint16 element) {
-// TODO				  
+// TODO
+   std::cout << "TODO : gdcmSeqEntry::NewDocEntryByNumber " << endl;				  
    gdcmDocEntry *a;   
    return a;				  
 }
 
+/// \brief to be written, if really usefull
 gdcmDocEntry *gdcmSeqEntry::NewDocEntryByName  (std::string Name) {
 // TODO	: 			  
+   std::cout << "TODO : gdcmSeqEntry::NewDocEntryByName " << endl;				  
    gdcmDocEntry *a;   
    return a;   
 }
 
+/// \brief to be written, if really usefull
 gdcmDocEntry *gdcmSeqEntry::GetDocEntryByNumber(guint16 group,
                                                 guint16 element) {
 // TODO				  
+   std::cout << "TODO : gdcmSeqEntry::GetDocEntryByNumber " << endl;				  
    gdcmDocEntry *a;   
    return a;				  
 }	

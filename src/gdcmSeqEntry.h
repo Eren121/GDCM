@@ -58,8 +58,6 @@ private:
 /// \brief sequence terminator item 
    gdcmDocEntry *seq_term;
 
-   //int SQDepthLevel;
-
 };
 
 

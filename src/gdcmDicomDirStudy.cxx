@@ -18,7 +18,12 @@ gdcmDicomDirStudy::gdcmDicomDirStudy(gdcmSQItem *s, TagDocEntryHT *ptagHT):
 {
    docEntries = s->GetDocEntries();
 }
-
+/**
+ * \ingroup gdcmDicomDirStudy
+ * \brief constructor  
+ * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ *               to build the gdcmHeaderEntries)
+ */
 gdcmDicomDirStudy::gdcmDicomDirStudy(TagDocEntryHT *ptagHT):
    gdcmObject(ptagHT)
 {

@@ -24,6 +24,11 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in) {
    entry = in;
 }
 
+/**
+ * \ingroup gdcmDocEntry
+ * \brief   Canonical Printer
+ * @param   os ostream we want to print in
+ */
 void gdcmDocEntry::Print(std::ostream & os) {
    std::ostringstream s;
    s << std::endl;
@@ -117,7 +122,6 @@ guint32 gdcmDocEntry::GetFullLength(void) {
  * \ingroup gdcmDocEntry
  * \brief   Copies all the attributes from an other DocEntry 
  */
-
 void gdcmDocEntry::Copy (gdcmDocEntry* e) {
    this->entry        = e->entry;
    this->UsableLength = e->UsableLength;
@@ -128,13 +132,20 @@ void gdcmDocEntry::Copy (gdcmDocEntry* e) {
    // TODO : remove gdcmDocEntry SQDepth
 }
 
+/**
+ * \ingroup gdcmDocEntry
+ * \brief   tells us if entry is the first one of a Sequence Item (fffe,e00d) 
+ */
 bool gdcmDocEntry::isItemDelimitor() {
    if ( (GetGroup() == 0xfffe) && (GetElement() == 0xe00d) )
       return true;
    else
       return false;      
 }
-
+/**
+ * \ingroup gdcmDocEntry
+ * \brief   tells us if entry is the last one of a 'no length' Sequence fffe,e0dd) 
+ */
 bool gdcmDocEntry::isSequenceDelimitor() {
    if (GetGroup() == 0xfffe && GetElement() == 0xe0dd)
       return true;

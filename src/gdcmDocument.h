@@ -10,21 +10,19 @@
 #include "gdcmException.h"
 #include "gdcmDictSet.h"
 #include "gdcmDocEntry.h"
-//#include "gdcmSeqEntry.h"
+
 class gdcmSeqEntry;
+
 #include "gdcmDocEntrySet.h"
 #include "gdcmElementSet.h"
 
 #include <map>
 #include <list>
 
-
 //-----------------------------------------------------------------------------
 typedef std::string VRKey;
 typedef std::string VRAtr;
 typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
-
-typedef std::map<TagKey, gdcmDocEntry *> TagDocEntryHT;
 
 //-----------------------------------------------------------------------------
 /**

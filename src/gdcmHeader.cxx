@@ -80,65 +80,6 @@ gdcmHeader::~gdcmHeader (void) {
 //-----------------------------------------------------------------------------
 // Print
 
-// see gdcmParser.cxx
-
-/**
-  * \ingroup gdcmHeader
-  * \brief   Prints the Header Entries (Dicom Elements)
-  *          from the chained list
-  *          and skips the elements belonging to a SeQuence
-  * @return
-  */ 
-void gdcmHeader::PrintEntryNoSQ(std::ostream & os) {
-
-// FIXME : Is it of any use, now?
-
-/*
-   int depth;
-   for (ListTag::iterator i = listEntries.begin();  
-        i != listEntries.end();
-        ++i)
-   {
-      depth= (*i)->GetSQDepthLevel();
-      if ( depth != 0 ){
-         continue;
-      }
-      (*i)->SetPrintLevel(printLevel);
-      (*i)->Print(os); 
-   } 
- */
-}
-
-/**
-  * \ingroup gdcmHeader
-  * \brief   Prints the Header Entries (Dicom Elements)
-  *          from the chained list
-  *          and indents the elements belonging to any SeQuence
-  * \warning : will be removed
-  * @return
-  */ 
-void gdcmHeader::PrintEntryNiceSQ(std::ostream & os) {
-
-/*	   
-   std::ostringstream tab; 
-   tab << "   ";
-
-   int depth;   
-   for (ListTag::iterator i = listEntries.begin();  
-      i != listEntries.end();
-       ++i) {
-      depth= (*i)->GetSQDepthLevel();
-      if (depth != 0) { 
-         for (int k=0;k<depth;k++)
-	    os << tab.str();
-      } 
-      (*i)->SetPrintLevel(printLevel);
-      (*i)->Print(os);
-             
-   } // end for 
-   
-   */    
-}
 
 //-----------------------------------------------------------------------------
 // Public
@@ -828,9 +769,11 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    }
    return(false);
 }
-
+// Replaced by gdcmDocument::WriteEntry
+/*
 bool gdcmHeader::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
+cout << " gdcmHeader::WriteEntry : entree " << endl;
    guint32 length = tag->GetLength();
                                                                                 
    // The value of a tag MUST (see the DICOM norm) be an odd number of
@@ -848,17 +791,10 @@ bool gdcmHeader::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
    // FIX : we loose trailing elements (RAB, right now)
    guint16 el     = tag->GetElement();
    guint16 group  = tag->GetGroup();
-   int compte =0;
-   if ((group == GrPixel) && (el == NumPixel) ) {
-      compte++;
-      if (compte == countGrPixel) {// we passed *all* the GrPixel,NumPixel
-         return false;
-      }
-   }
    WriteEntryValue(tag, _fp, type);
    return true;
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Protected
 

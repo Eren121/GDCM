@@ -107,9 +107,6 @@ public:
    virtual void Print (std::ostream & os = std::cout); 
    
    void gdcmDocEntry::PrintCommonPart(std::ostream & os);
-    
-   /// Gets the depth level of a Dicom Header Entry embedded in a SeQuence
-   inline int GetSQDepthLevel(void) { return (SQDepthLevel); };
          
    guint32 GetFullLength(void);
    
@@ -118,23 +115,23 @@ public:
    bool isItemDelimitor();
    bool isSequenceDelimitor();   
 
+   /// \brief Gets the depth level of a Dicom header entry embedded in a SeQuence
    inline int GetDepthLevel(void) 
       {return(SQDepthLevel);}
-   void SetDepthLevel(int depth) 
+		
+   /// \brief Sets the depth level of a Dicom header entry embedded in a SeQuence
+   inline void SetDepthLevel(int depth) 
       {SQDepthLevel = depth;}
             
 private:
    // FIXME: In fact we should be more specific and use :
    // friend gdcmDocEntry * gdcmHeader::ReadNextElement(void);
-   friend class gdcmHeader;
-
-   /// Sets the depth level of a Dicom Header Entry embedded in a SeQuence 
-   inline void SetSQDepthLevel(int depthLevel) { SQDepthLevel = depthLevel; };
-      
+   friend class gdcmHeader;    
 
 protected:
 // Variables
 
+   /// \brief pointer to the underlying Dicom dictionary element
    gdcmDictEntry *entry;
    
    /// \brief Updated from ReadLength, by FixFoungLentgh() for fixing a bug

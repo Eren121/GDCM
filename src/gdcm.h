@@ -20,10 +20,10 @@
 #include "gdcmDict.h"
 #include "gdcmDictSet.h"
 
-#include "gdcmParser.h"
-
-#include "gdcmHeaderEntry.h"
-
+//#include "gdcmParser.h"
+#include "gdcmDocument.h"
+//#include "gdcmHeaderEntry.h"
+//#include "gdcmDocEntry.h"
 #include "gdcmHeader.h"
 #include "gdcmHeaderHelper.h"
 #include "gdcmFile.h"

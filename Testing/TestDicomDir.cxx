@@ -1,6 +1,6 @@
 #include <iostream>
 #include "gdcm.h"
-#include "gdcmHeaderEntry.h"
+#include "gdcmDocEntry.h"
 #include "gdcmDicomDir.h"
 
 #include <fstream>
@@ -8,7 +8,6 @@
 int TestDicomDir(int argc, char* argv[])
 {  
    gdcmDicomDir *e1;
-   ListTag::iterator deb , fin;
    
    ListDicomDirPatient::iterator  itPatient;
    ListDicomDirStudy::iterator    itStudy;
@@ -37,7 +36,7 @@ int TestDicomDir(int argc, char* argv[])
    }
 
 // Simple examples of structure exploitation 
-// DON'T REMOVE neither the folowing code, nor the commented out lines
+// DON'T REMOVE neither the following code, nor the commented out lines
 
 /*
   cout << std::endl << std::endl  

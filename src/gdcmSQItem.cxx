@@ -58,7 +58,9 @@ gdcmSQItem::~gdcmSQItem()
 
 //-----------------------------------------------------------------------------
 // Public
-
+/**
+ * \brief   adds any Entry (Dicom Element) to the Sequence Item
+ */
 bool gdcmSQItem::AddEntry(gdcmDocEntry *entry) {
    docEntries.push_back(entry);
    //TODO : check if it worked
@@ -128,6 +130,8 @@ bool gdcmSQItem::AddEntry(gdcmDocEntry *entry) {
 // Private
 
 // end-user intended : the guy *wants* to create his own SeQuence ?!?
+
+/// \brief to be written if really usefull
 gdcmDocEntry *gdcmSQItem::NewDocEntryByNumber(guint16 group,
                                               guint16 element) {
 // TODO				  
@@ -136,6 +140,7 @@ gdcmDocEntry *gdcmSQItem::NewDocEntryByNumber(guint16 group,
    return a;				  
 }
 
+/// \brief to be written if really usefull
 gdcmDocEntry *gdcmSQItem::NewDocEntryByName  (std::string Name) {
 // TODO				  
    gdcmDocEntry *a;
@@ -143,7 +148,7 @@ gdcmDocEntry *gdcmSQItem::NewDocEntryByName  (std::string Name) {
    return a;	  				  
 }
 
-/*
+/**
  * \ingroup gdcmSQItem
  * \brief   Gets a Dicom Element inside a SQ Item Entry, by name
  * @return
@@ -156,7 +161,7 @@ gdcmDocEntry *gdcmSQItem::NewDocEntryByName  (std::string Name) {
    return GetDocEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement());      
 }
 
-/*
+/**
  * \ingroup gdcmSQItem
  * \brief   Gets a Dicom Element inside a SQ Item Entry, by number
  * @return
@@ -169,7 +174,7 @@ gdcmDocEntry *gdcmSQItem::GetDocEntryByNumber(guint16 group, guint16 element) {
    return NULL; 					  
 }
 
-/*
+/**
  * \ingroup gdcmSQItem
  * \brief   Get the value of a Dicom Element inside a SQ Item Entry, by number
  * @return

@@ -18,7 +18,12 @@ gdcmDicomDirPatient::gdcmDicomDirPatient(gdcmSQItem *s, TagDocEntryHT *ptagHT):
 {
    docEntries = s->GetDocEntries();
 }
-
+/**
+ * \ingroup gdcmDicomDirPatient
+ * \brief   Constructor
+ * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ *               to build the gdcmHeaderEntries)
+ */
 gdcmDicomDirPatient::gdcmDicomDirPatient(TagDocEntryHT *ptagHT):
    gdcmObject(ptagHT)
 {

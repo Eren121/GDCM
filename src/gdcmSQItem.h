@@ -55,10 +55,9 @@ protected:
 /// \brief SQ Item ordinal number 
   int SQItemNumber;
 
-/**
-* \brief pointer to the HTable of the gdcmDocument,
-*        (because we don't know it within any gdcmObject nor any gdcmSQItem) 
-*/
+
+///\brief pointer to the HTable of the gdcmDocument,
+///       (because we don't know it within any gdcmObject nor any gdcmSQItem) 
   TagDocEntryHT *ptagHT;
        
 private:

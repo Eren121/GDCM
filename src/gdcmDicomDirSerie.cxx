@@ -17,6 +17,12 @@ gdcmDicomDirSerie::gdcmDicomDirSerie(gdcmSQItem *s, TagDocEntryHT *ptagHT):
 {
    docEntries = s->GetDocEntries();
 }
+
+/**
+ * \brief  Constructor 
+ * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ *               to build the gdcmDocEntries)
+ */
 gdcmDicomDirSerie::gdcmDicomDirSerie(TagDocEntryHT *ptagHT):
    gdcmObject(ptagHT)
 {

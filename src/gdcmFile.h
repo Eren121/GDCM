@@ -97,22 +97,26 @@ private:
    bool gdcm_read_RLE_file      (FILE *fp,void * image_buffer); 
 
 // Variables
-   /// Header to use to load the file
-   gdcmHeader *Header;   
+
+   /// \brief Header to use to load the file
+   gdcmHeader *Header;
+	
+	/// \brief Oops ! Eric : help me    
    bool SelfHeader;
 
+   /// \brief to hold the Pixels (when read)
    void* PixelData;
    
-   /// Area length to receive the pixels
+   /// \brief Area length to receive the pixels
    size_t lgrTotaleRaw;
    
-   /// Area length to receive the RGB pixels
+   /// \brief Area length to receive the RGB pixels
    /// from Grey Plane + Palette Color  
    size_t lgrTotale; 
        
-  /// ==1  if GetImageDataRaw was used
-  /// ==0  if GetImageData    was used
-  /// ==-1 if ImageData never read                       
+  /// \brief ==1  if GetImageDataRaw was used
+  ///        ==0  if GetImageData    was used
+  ///        ==-1 if ImageData never read                       
    int PixelRead;     
 
    /// weather already parsed 

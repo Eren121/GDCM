@@ -414,10 +414,9 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
 /**
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
- * \warning Adds the Header Entry to the HTable, NOT to the chained List
  * @param   Value Value to be set
- * @param   Group Group of the Entry 
- * @param   Elem  Element of the Entry
+ * @param   Group   Group number of the Entry 
+ * @param   Elem  Element number of the Entry
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
@@ -444,8 +443,8 @@ gdcmDocEntry * gdcmDocument::ReplaceOrCreateByNumber(
  * \brief Set a new value if the invoked element exists
  *        Seems to be useless !!!
  * @param Value new element value
- * @param Group   group of the Entry 
- * @param Elem element of the Entry
+ * @param Group  group number of the Entry 
+ * @param Elem element number of the Entry
  * \return  boolean 
  */
 bool gdcmDocument::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) 
@@ -459,9 +458,8 @@ bool gdcmDocument::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 El
 // Protected
 
 /**
- * \brief   Checks if a given Dicom Element exists
- *          within the H table
- * @param   group Group   number of the searched Dicom Element 
+ * \brief   Checks if a given Dicom Element exists within the H table
+ * @param   group      Group number of the searched Dicom Element 
  * @param   element  Element number of the searched Dicom Element 
  * @return  number of occurences
  */
@@ -515,8 +513,8 @@ std::string gdcmDocument::GetEntryVRByName(std::string tagName) {
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag.
- * @param   group Group of the searched tag.
- * @param   element Element of the searched tag.
+ * @param   group Group number of the searched tag.
+ * @param   element Element number of the searched tag.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -536,8 +534,8 @@ std::string gdcmDocument::GetEntryByNumber(guint16 group, guint16 element){
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   group Group of the searched tag.
- * @param   element Element of the searched tag.
+ * @param   group     Group number of the searched tag.
+ * @param   element Element number of the searched tag.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -552,8 +550,8 @@ std::string gdcmDocument::GetEntryVRByNumber(guint16 group, guint16 element) {
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the value length of a given tag..
- * @param   group Group of the searched tag.
- * @param   element Element of the searched tag.
+ * @param   group     Group number of the searched tag.
+ * @param   element Element number of the searched tag.
  * @return  Corresponding element length; -2 if not found
  */
 int gdcmDocument::GetEntryLengthByNumber(guint16 group, guint16 element) {
@@ -582,8 +580,8 @@ bool gdcmDocument::SetEntryByName(std::string content,std::string tagName) {
  *          through it's (group, element) and modifies it's content with
  *          the given value.
  * @param   content new value to substitute with
- * @param   group   group of the Dicom Element to modify
- * @param   element element of the Dicom Element to modify
+ * @param   group     group number of the Dicom Element to modify
+ * @param   element element number of the Dicom Element to modify
  */
 bool gdcmDocument::SetEntryByNumber(std::string content, 
                                   guint16 group,
@@ -625,8 +623,8 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
  *          the given value.
  * \warning Use with extreme caution.
  * @param l new length to substitute with
- * @param group   group of the Entry to modify
- * @param element element of the Entry to modify
+ * @param group     group number of the Entry to modify
+ * @param element element number of the Entry to modify
  * @return  true on success, false otherwise.
  */
 bool gdcmDocument::SetEntryLengthByNumber(guint32 l, 
@@ -645,8 +643,8 @@ bool gdcmDocument::SetEntryLengthByNumber(guint32 l,
 /**
  * \brief   Gets (from Header) the offset  of a 'non string' element value 
  *          (LoadElementValues has already be executed)
- * @param Group   group of the Entry 
- * @param Elem  element of the Entry
+ * @param Group   group number of the Entry 
+ * @param Elem  element number of the Entry
  * @return File Offset of the Element Value 
  */
 size_t gdcmDocument::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) 
@@ -664,8 +662,8 @@ size_t gdcmDocument::GetEntryOffsetByNumber(guint16 Group, guint16 Elem)
 /**
  * \brief   Gets (from Header) a 'non string' element value 
  *          (LoadElementValues has already be executed)  
- * @param Group   group of the Entry 
- * @param Elem element of the Entry
+ * @param Group   group number of the Entry 
+ * @param Elem  element number of the Entry
  * @return Pointer to the 'non string' area
  */
 void * gdcmDocument::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) 
@@ -683,8 +681,8 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem)
 /**
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
- * @param Group   group of the Entry 
- * @param Elem element of the Entry
+ * @param Group   group number of the Entry 
+ * @param Elem  element number of the Entry
  */
 void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem) 
 {
@@ -713,7 +711,7 @@ void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem)
 /**
  * \brief   Sets a 'non string' value to a given Dicom Element
  * @param   area
- * @param   group Group number of the searched Dicom Element 
+ * @param   group     Group number of the searched Dicom Element 
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
@@ -909,15 +907,23 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
    if (group == 0xfffe)
       // Delimiters have no associated value:
       return;
-      
+		
+		//--------------------------------
+		//
+		// FIXME
+		//
+		// -------------------------------
+		
+		
+/*     // to go on compiling 
    void *voidArea;
-  // voidArea = tag->GetVoidArea();  // to go on compiling
+   voidArea = tag->GetVoidArea();  // to go on compiling
    if (voidArea != NULL) 
    { // there is a 'non string' LUT, overlay, etc
       fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
       return;            
    }
-      
+*/      
    if (vr == "US" || vr == "SS") 
    {
       // some 'Short integer' fields may be mulivaluated
@@ -967,17 +973,20 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
 bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
    guint32 length = tag->GetLength();
-
+   gdcmValEntry * Vtag = (gdcmValEntry *) tag;
+std::cout << "gdcmDocument::WriteEntry  Vtag->GetValue() " << Vtag->GetValue() << std::endl;
    // The value of a tag MUST (see the DICOM norm) be an odd number of
    // bytes. When this is not the case, pad with an additional byte:
    if(length%2==1)
    { 
-//      tag->SetValue(tag->GetValue()+"\0"); // to go on compiling
-      tag->SetLength(tag->GetReadLength()+1);
+      Vtag->SetValue(Vtag->GetValue()+"\0");
+      Vtag->SetLength(Vtag->GetReadLength()+1);
    }
 
-   WriteEntryTagVRLength(tag, _fp, type);
-   WriteEntryValue(tag, _fp, type);
+   WriteEntryTagVRLength(Vtag, _fp, type);
+	std::cout << "after WriteEntryTagVRLength " << std::endl;
+   WriteEntryValue(Vtag, _fp, type);
+	std::cout << "after WriteEntryValue " << std::endl;
    return true;
 }
 
@@ -990,7 +999,6 @@ bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
  *           (function CheckHeaderCoherence to be written)
  * \warning DON'T try, right now, to write a DICOM image
  *           from an ACR Header (meta elements will be missing!)
- * \sa WriteEntriesDeprecated (Special temporary method for Theralys)
  * @param   type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
@@ -1002,11 +1010,15 @@ bool gdcmDocument::WriteEntries(FILE *_fp,FileType type)
 // FIXME : explore recursively the whole structure...
   
    /// \todo (?) check write failures (after *each* fwrite)
-     
+ 
+ std::cout << "--------------------- gdcmDocument::WriteEntries " << std::endl;   
    for (TagDocEntryHT::iterator tag2=tagHT.begin();
                                 tag2 != tagHT.end();
                               ++tag2)
    {
+	
+	(*tag2).second->Print();
+	
       if ( type == gdcmACR ){ 
          if ((*tag2).second->GetGroup() < 0x0008)
             // Ignore pure DICOM V3 groups
@@ -1016,11 +1028,15 @@ bool gdcmDocument::WriteEntries(FILE *_fp,FileType type)
             continue;
          if ((*tag2).second->GetVR() == "SQ" ) // ignore Sequences
             continue;
-         if ((*tag2).second->GetSQDepthLevel() != 0) // Not only ignore the SQ element
-            continue;	    
+         //if ((*tag2).second->GetDepthLevel() != 0) // Not only ignore the SQ element
+         //   continue;	    
       } 
-      if (! WriteEntry((*tag2).second,_fp,type) )
+      if (! WriteEntry((*tag2).second,_fp,type) ) {
+		   std::cout << "Write Failure " << std::endl;
          return false;
+		} else {
+				
+		}
    }
    return true;
 }   
@@ -2238,8 +2254,8 @@ gdcmDocEntry *gdcmDocument::NewDocEntryByName(std::string Name)
 
 /**
  * \brief   Request a new virtual dict entry to the dict set
- * @param   group  group   of the underlying DictEntry
- * @param   element  element of the underlying DictEntry
+ * @param   group     group  number of the underlying DictEntry
+ * @param   element  element number of the underlying DictEntry
  * @param   vr     VR of the underlying DictEntry
  * @param   fourth owner group
  * @param   name   english name
@@ -2256,8 +2272,8 @@ gdcmDictEntry *gdcmDocument::NewVirtualDictEntry(guint16 group, guint16 element,
  * \brief   Build a new Element Value from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
- * @param   Group group   of the underlying DictEntry
- * @param   Elem  element of the underlying DictEntry
+ * @param   Group group   number of the underlying DictEntry
+ * @param   Elem  element number of the underlying DictEntry
  */
 gdcmDocEntry *gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem) 
 {
