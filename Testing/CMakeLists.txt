@@ -19,7 +19,7 @@ IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}     
     PrintHeader.cxx       #require test.acr
     PrintDicomDir.cxx
-    pourFindTaggs.cxx
+    TestFindTags.cxx
     TestChangeHeader.cxx
     TestDicomDir.cxx      #require DICOMDIR
     BuildUpDicomDir.cxx
