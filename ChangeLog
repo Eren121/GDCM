@@ -1,3 +1,11 @@
+2005-01-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Complete rewrite of the GetMacAddress code. Now the code is *much*
+	 smaller (no more MacOSX specific crap). A lot more POSIX oriented.
+	 Unfortunately the main code does not work on SunOS, thus provide a specific
+	 code for this platform only (and Win32 of course). Since this seems to be
+	 working, change CreateUniqueUID to use GetMACAddress instead of the
+	 problematic getIPAddress
+
 2005-01-14 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Unfortunately to be able to test gdcmDirList I had to break the API
      a little. Now the class is not a std::list anymore but has a member
