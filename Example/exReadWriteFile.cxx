@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 15:44:20 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/02/09 14:00:41 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,24 +23,29 @@
 #include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
 
-// ----- WARNING ----- WARNING ----- WARNING ----- WARNING ----- WARNING ---
-//
-// This program is NOT intendend to be run as is.
-//
-// It just shows a set of possible uses.
-// User MUST read it, 
-//           comment out the useless parts
-//           invoke it with an ad hoc image(*)
-//           check the resulting image      
-// 
-// (*) For samples, user can refer to gdcmData
-//         and read README.txt file
-//
-// ----- WARNING ----- WARNING ----- WARNING ----- WARNING ----- WARNING ---
-
  
 int main(int argc, char *argv[])
 {
+
+
+std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
+std::cout << " "                                                    <<std::endl; 
+std::cout << " This source program is NOT intendend to be run as is"<<std::endl;
+std::cout << " "                                                    <<std::endl;
+std::cout << " It just shows a set of possible uses."               <<std::endl;
+std::cout << "User MUST read it, "                                  <<std::endl;
+std::cout << "          comment out the useless parts "             <<std::endl;
+std::cout << "          invoke it with an ad hoc image(*) "         <<std::endl;
+std::cout << "           check the resulting image   "              <<std::endl; 
+std::cout << "  "                                                   <<std::endl;
+std::cout << " (*) For samples, user can refer to gdcmData"         <<std::endl;
+std::cout << "         and read README.txt file "                   <<std::endl;
+std::cout << " "                                                    <<std::endl;
+std::cout << "This source program will be splitted into smaller elementary" 
+          <<  " programs"                                           <<std::endl;
+std::cout << " "                                                    <<std::endl;
+std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
+
    if (argc < 3)
    {
       std::cerr << "Usage :" << std::endl << 
@@ -54,19 +59,19 @@ int main(int argc, char *argv[])
    // First, let's create a gdcm::File
    // that will contain all the Dicom Field but the Pixels Element
 
-   gdcm::File *e1= new gdcm::File( filename );
+   gdcm::File *f1= new gdcm::File( filename );
 
 
    // Ask content to be printed
    std::cout << std::endl
              << "--- Standard Print -------------------------------------------"
              << std::endl;
-   e1->SetPrintLevel(2);   // to have a nice output
-   //e1->SetPrintLevel(1); 
-   e1->Print();            // user may comment out if too much verbose
+   f1->SetPrintLevel(2);   // to have a nice output
+   //f1->SetPrintLevel(1); 
+   f1->Print();            // user may comment out if too much verbose
 
 
-  // Field by field Printing
+  // User asks for field by field Printing
   
    std::cout << std::endl
              << "--- Display only human readable values -----------------------"
@@ -82,7 +87,7 @@ int main(int argc, char *argv[])
    std::string name; // held in the Dicom Dictionary
 
 
-   gdcm::DocEntry *d = e1->GetFirstEntry();
+   gdcm::DocEntry *d = f1->GetFirstEntry();
    while( d )
    {
       // We skip SeqEntries, since user cannot do much with them
@@ -120,7 +125,7 @@ int main(int argc, char *argv[])
  
               << std::endl;
       }
-      d = e1->GetNextEntry();
+      d = f1->GetNextEntry();
    }
 
    std::cout << std::endl
@@ -130,17 +135,17 @@ int main(int argc, char *argv[])
    // ------ some pre-defined acessors may supply usefull informations ----
 
    // about Image
-   int linesNumber   = e1->GetYSize();
-   int rawsNumber    = e1->GetXSize();
-   int framesNumber  = e1->GetYSize();// defaulted to 1 if not found
+   int linesNumber   = f1->GetYSize();
+   int rawsNumber    = f1->GetXSize();
+   int framesNumber  = f1->GetYSize();// defaulted to 1 if not found
 
    std::cout << "lines : "   << linesNumber  << " columns : " << rawsNumber
              << " frames : " << framesNumber << std::endl;
  
    // about Pixels
-   int pixelSize         = e1->GetPixelSize(); 
-   std::string pixelType = e1->GetPixelType();
-   bool isSigned         = e1->IsSignedPixelData();
+   int pixelSize         = f1->GetPixelSize(); 
+   std::string pixelType = f1->GetPixelType();
+   bool isSigned         = f1->IsSignedPixelData();
   
    std::cout << "pixelSize : "   << pixelSize  << " pixelType : " << pixelType
              << " signed : "     << isSigned   << std::endl;
@@ -148,24 +153,24 @@ int main(int argc, char *argv[])
    // about pixels, too.
    // Better you forget these ones
   
-   std::cout << "GetBitsStored()"      << e1->GetBitsStored()      << std::endl;
-   std::cout << "GetBitsAllocated()"   << e1->GetBitsAllocated()   << std::endl;
-   std::cout << "GetHighBitPosition()" << e1->GetHighBitPosition() << std::endl;
+   std::cout << "GetBitsStored()"      << f1->GetBitsStored()      << std::endl;
+   std::cout << "GetBitsAllocated()"   << f1->GetBitsAllocated()   << std::endl;
+   std::cout << "GetHighBitPosition()" << f1->GetHighBitPosition() << std::endl;
 
    std::cout << "GetSamplesPerPixel()"     
-          << e1->GetSamplesPerPixel()     << std::endl;
+          << f1->GetSamplesPerPixel()     << std::endl;
    std::cout << "GetPlanarConfiguration()" 
-          << e1->GetPlanarConfiguration() << std::endl; 
+          << f1->GetPlanarConfiguration() << std::endl; 
  
    // about 'image geography'
  
-   float xs = e1->GetXSpacing();
-   float ys = e1->GetYSpacing();
-   float zs = e1->GetZSpacing();  // defaulted to 1.0 if not found
+   float xs = f1->GetXSpacing();
+   float ys = f1->GetYSpacing();
+   float zs = f1->GetZSpacing();  // defaulted to 1.0 if not found
 
-   float xo = e1->GetXOrigin();
-   float yo = e1->GetYOrigin();
-   float zo = e1->GetZOrigin();
+   float xo = f1->GetXOrigin();
+   float yo = f1->GetYOrigin();
+   float zo = f1->GetZOrigin();
 
    std::cout << "GetXSpacing()"     << xs      << std::endl;
    std::cout << "GetYSpacing()"     << ys      << std::endl;
@@ -178,16 +183,16 @@ int main(int argc, char *argv[])
    // about its way to store colors (if user is aware)
 
    // checks Photometric Interpretation
-   std::cout << "IsMonochrome()"   << e1->IsMonochrome()     << std::endl;
-   std::cout << "IsYBRFull()"      << e1->IsYBRFull()        << std::endl;
-   std::cout << "IsPaletteColor()" << e1->IsPaletteColor()   << std::endl;
+   std::cout << "IsMonochrome()"   << f1->IsMonochrome()     << std::endl;
+   std::cout << "IsYBRFull()"      << f1->IsYBRFull()        << std::endl;
+   std::cout << "IsPaletteColor()" << f1->IsPaletteColor()   << std::endl;
    // checks if LUT are found
-   std::cout << "HasLUT()"         << e1->HasLUT()           << std::endl;
+   std::cout << "HasLUT()"         << f1->HasLUT()           << std::endl;
 
    std::cout << "GetNumberOfScalarComponents()"    
-          << e1->GetNumberOfScalarComponents()<< std::endl;
+          << f1->GetNumberOfScalarComponents()<< std::endl;
    std::cout << "GetNumberOfScalarComponentsRaw()" 
-          << e1->GetNumberOfScalarComponentsRaw()<< std::endl;
+          << f1->GetNumberOfScalarComponentsRaw()<< std::endl;
   
 
    std::cout << std::endl
@@ -195,21 +200,21 @@ int main(int argc, char *argv[])
              << std::endl;
    // ------ User is aware, and wants to get fields with no accesor --------
 
-   std::cout << "Manufacturer :["     << e1->GetEntryValue(0x0008,0x0070)
+   std::cout << "Manufacturer :["     << f1->GetEntryValue(0x0008,0x0070)
              << "]" << std::endl; 
-   std::cout << "Institution :["      << e1->GetEntryValue(0x0008,0x0080)
+   std::cout << "Institution :["      << f1->GetEntryValue(0x0008,0x0080)
              << "]" << std::endl;
-   std::cout << "Patient's name :["   << e1->GetEntryValue(0x0010,0x0010)
+   std::cout << "Patient's name :["   << f1->GetEntryValue(0x0010,0x0010)
              << "]" << std::endl;
-   std::cout << "Physician's name :[" << e1->GetEntryValue(0x0008,0x0090)
+   std::cout << "Physician's name :[" << f1->GetEntryValue(0x0008,0x0090)
              << "]" << std::endl; 
-   std::cout << "Study Date :["       << e1->GetEntryValue(0x0008,0x0020)
+   std::cout << "Study Date :["       << f1->GetEntryValue(0x0008,0x0020)
              << "]" << std::endl; 
-   std::cout << "Study inst UID :["   << e1->GetEntryValue(0x0020,0x000d)
+   std::cout << "Study inst UID :["   << f1->GetEntryValue(0x0020,0x000d)
              << "]" << std::endl;
-   std::cout << "Serie inst UID :["   << e1->GetEntryValue(0x0020,0x000e)
+   std::cout << "Serie inst UID :["   << f1->GetEntryValue(0x0020,0x000e)
              << "]" << std::endl;
-   std::cout << "Frame ref UID :["   << e1->GetEntryValue(0x0020,0x0052)
+   std::cout << "Frame ref UID :["   << f1->GetEntryValue(0x0020,0x0052)
              << "]" << std::endl;
 
    // ------ User wants to load the pixels---------------------------------
@@ -217,7 +222,7 @@ int main(int argc, char *argv[])
    // Hope now he knows enought about the image ;-)
 
    // First, create a gdcm::FileHelper
-   gdcm::FileHelper *fh1 = new gdcm::FileHelper(e1);
+   gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1);
 
    // Load the pixels, transforms LUT (if any) into RGB Pixels 
    uint8_t *imageData = fh1->GetImageData();
@@ -254,7 +259,7 @@ int main(int argc, char *argv[])
 
    gdcm::FileHelper *copy = new gdcm::FileHelper( output );
  
-   d = e1->GetFirstEntry();
+   d = f1->GetFirstEntry();
    while(d)
    {
       // We skip SeqEntries, since user cannot do much with them
@@ -280,7 +285,7 @@ int main(int argc, char *argv[])
           // We skip gdcm::SeqEntries
          }
       }
-      d = e1->GetNextEntry();
+      d = f1->GetNextEntry();
    }
 
    std::cout << std::endl
@@ -309,14 +314,14 @@ int main(int argc, char *argv[])
    // User wants to keep the Palette Color -if any- 
    // and write the image as it was
    copy->SetImageData(imageDataRaw, dataRawSize);
-   copy->SetWriteModeToRGB();
+   copy->SetWriteModeToRaw();
    copy->WriteDcmExplVR( output );
 
 
    std::cout << std::endl
              << "------------------------------------------------------------"
              << std::endl;
-   // User is in a fancy mood and wants to forge a bonm image
+   // User is in a fancy mood and wants to forge a bomb image
    // just to see how other Dicom viewers act
 
 
@@ -326,7 +331,7 @@ int main(int argc, char *argv[])
    std::cout << std::endl
              << "------------------------------------------------------------"
              << std::endl;
-   delete e1;
+   delete f1;
    delete fh1;
    delete copy;
 
