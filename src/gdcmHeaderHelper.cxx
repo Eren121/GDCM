@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.3 2003/09/11 13:44:17 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.4 2003/09/17 17:46:35 malaterre Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -24,19 +24,22 @@ using namespace std;
 #include <windows.h> 
 int GetDir(string dPath, list<string> &filenames)
 {
+  //For now dPath should have an ending "\"
   WIN32_FIND_DATA FileData; 
   HANDLE hFile; 
-  hFile = FindFirstFile(dPath.c_str(), &FileData); 
+  hFile = FindFirstFile((dPath+"*").c_str(), &FileData); 
   if ( hFile == INVALID_HANDLE_VALUE ) 
   { 
     //No files !
     return false; 
   } 
   
-  filenames.push_back( FileData.cFileName );
+  if( strncmp(FileData.cFileName, ".", 1) != 0 )
+    filenames.push_back( dPath+FileData.cFileName );
   while( FindNextFile(hFile, &FileData ) != 0)
   { 
-    filenames.push_back( FileData.cFileName );
+    if( strncmp(FileData.cFileName, ".", 1) != 0 )
+      filenames.push_back( dPath+FileData.cFileName );
   }
   return true;
 }
