@@ -216,6 +216,7 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
 
    void *ptr;
 
+	// restent à tester les echecs en écriture (apres chaque fwrite)
    for (TagElValueHT::iterator tag2 = tagHt.begin();
         tag2 != tagHt.end();
         ++tag2){
@@ -281,21 +282,8 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    }
 }
 
-// Sorry for the DEBUG's, but tomorow is gonna be hoter than today
-
 int gdcmElValSet::Write(FILE * _fp) {
 
-	guint16 gr, el;
-	guint32 lgr;
-	const char * val;
-	string vr;
-	guint32 val_uint32;
-	guint16 val_uint16;
-	
-	vector<string> tokens;
-	
-	void *ptr;
-	
 	string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
 	SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);	
    //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
@@ -303,253 +291,33 @@ int gdcmElValSet::Write(FILE * _fp) {
    //      Dans le cas suivant on doit pader manuellement avec un 0.
 	SetElValueLengthByNumber(18, 0x0002, 0x0010); 
 	
-	// Question :
-	// Comment pourrait-on tester si on est TrueDicom ou non ,
-	// (FileType est un champ de gdcmHeader ...)
-	//
    UpdateGroupLength();
-
-	// restent à tester les echecs en écriture (apres chaque fwrite)
+   WriteElements(TrueDicom, _fp);
 	
-	for (TagElValueHT::iterator tag2 = tagHt.begin();
-		  tag2 != tagHt.end();
-		  ++tag2){
-		
-		gr =  tag2->second->GetGroup();
-		el =  tag2->second->GetElement();
-		lgr = tag2->second->GetLength();
-		val = tag2->second->GetValue().c_str();
-		vr =  tag2->second->GetVR();
-		if(DEBUG)printf ("%04x %04x [%s] : [%s]\n",gr, el, vr.c_str(), val);
-			
-		fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp); 	//group
-		fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp); 	//element
-		
-		// si on n'est pas en IMPLICIT VR voir pb (lgr  + VR)
-		
-		fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp); 	//lgr
-		
-		tokens.erase(tokens.begin(),tokens.end());
-		Tokenize (tag2->second->GetValue(), tokens, "\\");
-		
-		if (vr == "US" || vr == "SS") {
-			for (unsigned int i=0; i<tokens.size();i++) {
-				val_uint16 = atoi(tokens[i].c_str());		
-				ptr = &val_uint16;
-				fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
-			}
-			continue;	
-		}
-		if (vr == "UL" || vr == "SL") {	
-			for (unsigned int i=0; i<tokens.size();i++) {
-				val_uint32 = atoi(tokens[i].c_str());		
-				ptr = &val_uint32;
-				fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
-			}
-			continue;	
-		}	
-		
-		// Les pixels ne sont pas chargés dans l'element !
-		if ((gr == 0x7fe0) && (el == 0x0010) ) break;
-
-		fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); //valeur Elem
-	}
-		
 	return(1);
 }
 
 
 int gdcmElValSet::WriteAcr(FILE * _fp) {
-//
-// ATTENTION : fusioner le code avec celui de gdcmElValSet::Write
-//
-
-	guint16 gr, el;
-	guint32 lgr;
-	const char * val;
-	string vr;
-	guint32 val_uint32;
-	guint16 val_uint16;
-	
-	vector<string> tokens;
-	
-	void *ptr;
-	
-	//string implicitVRTransfertSyntax = "1.2.840.10008.1.2"; // supprime par rapport à Write
-   //CLEANME Utilisées pour le calcul Group Length
-   //CLEANMEguint32 lgrCalcGroupe=0;
-   //CLEANMEgdcmElValue *elem, *elemZ, *elemZPrec;
-   //CLEANMEguint16 grCourant = 0;
-  
-   // Question :
-   // Comment pourrait-on tester si on est TrueDicom ou non ,
-   // (FileType est un champ de gdcmHeader ...)
-   //
    UpdateGroupLength(true);
-
 	// Si on fait de l'implicit VR little Endian 
 	// (pour moins se fairche sur processeur INTEL)
 	// penser a forcer le TRANSFERT SYNTAX UID
+   WriteElements(ACR, _fp);
 	
-	// supprime par rapport à Write		
-	//SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);	
-	//SetElValueLengthByNumber(18, 0x0002, 0x0010);  // Le 0 de fin de chaine doit etre stocké, dans ce cas	
-		
-	// restent à tester les echecs en écriture (apres chaque fwrite)
-	
-	for (TagElValueHT::iterator tag2 = tagHt.begin();
-		  tag2 != tagHt.end();
-		  ++tag2){
-
-		gr =  tag2->second->GetGroup();
-						// saut des groupes speciaux DICOM V3
-		if (gr < 0x0008) continue; 	// ajouté par rapport à Write
-						// saut des groupes impairs
-		if (gr %2) 	 continue; 	// ajouté par rapport à Write
-		
-		el =  tag2->second->GetElement();
-		lgr = tag2->second->GetLength();
-		val = tag2->second->GetValue().c_str();
-		vr =  tag2->second->GetVR();
-			
-		fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp); 	//group
-		fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp); 	//element
-				
-		// si on n'est pas en IMPLICIT VR voir pb (lgr  + VR)
-		
-		fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp); 		//lgr
-		
-		tokens.erase(tokens.begin(),tokens.end());
-		Tokenize (tag2->second->GetValue(), tokens, "\\");
-		
-		if (vr == "US" || vr == "SS") {
-
-			for (unsigned int i=0; i<tokens.size();i++) {
-				val_uint16 = atoi(tokens[i].c_str());		
-				ptr = &val_uint16;
-				fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
-			}
-			continue;
-			
-		}
-		if (vr == "UL" || vr == "SL") {
-			for (unsigned int i=0; i<tokens.size();i++) {
-				val_uint32 = atoi(tokens[i].c_str());		
-				ptr = &val_uint32;
-				fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
-			}
-			continue;				
-			
-		}	
-		
-		// Les pixels ne sont pas chargés dans l'element !
-		if ((gr == 0x7fe0) && (el == 0x0010) ) break;
-
-		fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); //valeur Elem
-	}
-		
 	return(1);
 }
 
-// Sorry for the DEBUG's, but tomorow is gonna be hoter than today
-
 int gdcmElValSet::WriteExplVR(FILE * _fp) {
 
-//
-// ATTENTION : fusioner le code avec celui de gdcmElValSet::Write
-//
-
-	guint16 gr, el;
-	guint32 lgr;
-	const char * val;
-	string vr;
-	guint32 val_uint32;
-	guint16 val_uint16;
-	guint16 z=0, shortLgr;
-	
-	vector<string> tokens;
-	
-	void *ptr;
-
 	string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
-	
-	
-	// Question :
-	// Comment pourrait-on tester si on est TrueDicom ou non ,
-	// (FileType est un champ de gdcmHeader ...)
-	//
-
-	// On fait de l'Explicit VR little Endian 
-	
-				
 	SetElValueByNumber(explicitVRTransfertSyntax, 0x0002, 0x0010);	
-	SetElValueLengthByNumber(20, 0x0002, 0x0010);  // Le 0 de fin de chaine doit etre stocké, dans ce cas  // ???	
+   // See comment in gdcmElValSet::Write
+	SetElValueLengthByNumber(20, 0x0002, 0x0010);
 			
-   // Question :
-   // Comment pourrait-on tester si on est TrueDicom ou non ,
-   // (FileType est un champ de gdcmHeader ...)
-   //
    UpdateGroupLength();
+   WriteElements(ExplicitVR, _fp);
 
-		
-	// restent à tester les echecs en écriture (apres chaque fwrite)
-	
-	for (TagElValueHT::iterator tag2 = tagHt.begin();
-		  tag2 != tagHt.end();
-		  ++tag2){
-		
-		gr =  tag2->second->GetGroup();
-		el =  tag2->second->GetElement();
-		lgr = tag2->second->GetLength();
-		val = tag2->second->GetValue().c_str();
-		vr =  tag2->second->GetVR();
-		if(DEBUG)printf ("%04x %04x [%s] : [%s]\n",gr, el, vr.c_str(), val);
-			
-		fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp); 	//group
-		fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp); 	//element
-				
-		// On est en EXPLICIT VR
-		if (gr == 0x0002) {
-			fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
-		
-			if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) {
-				fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
-				fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
-
-			} else {
-				shortLgr=lgr;
-				fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
-			}
-		} else {
-			fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
-		}
-		
-		tokens.erase(tokens.begin(),tokens.end());
-		Tokenize (tag2->second->GetValue(), tokens, "\\");
-				
-		if (vr == "US" || vr == "SS") {
-			for (unsigned int i=0; i<tokens.size();i++) {
-				val_uint16 = atoi(tokens[i].c_str());		
-				ptr = &val_uint16;
-				fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
-			}
-			continue;	
-		}
-		if (vr == "UL" || vr == "SL") {	
-			for (unsigned int i=0; i<tokens.size();i++) {
-				val_uint32 = atoi(tokens[i].c_str());		
-				ptr = &val_uint32;
-				fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
-			}
-			continue;	
-		}	
-		
-		// Les pixels ne sont pas chargés dans l'element !
-		if ((gr == 0x7fe0) && (el == 0x0010) ) break;
-
-		fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); //valeur Elem
-	}
-		
 	return(1);
 }
 
