@@ -2046,6 +2046,130 @@
 6006 1500 LO OLY Overlay Label
 6006 3000 OW OLY Overlay Data
 6006 4000 LO OLY Comments (RET)
+600a 0000 UL OLY Group Length
+6008 0010 US OLY Rows
+6008 0011 US OLY Columns
+6008 0012 US OLY Planes
+6008 0015 IS OLY Number of Frames in Overlay
+6008 0022 LO OLY Overlay Description
+6008 0040 CS OLY Overlay Type
+6008 0045 LO OLY Overlay Subtype
+6008 0050 SS OLY Overlay Origin
+6008 0051 US OLY Image Frame Origin
+6008 0052 US OLY Overlay Plane Origin
+6008 0060 LO OLY Compression Code (RET)
+6008 0100 US OLY Overlay Bits Allocated
+6008 0102 US OLY Overlay Bit Position
+6008 0110 LO OLY Overlay Format (RET)
+6008 0200 US OLY Overlay Location (RET)
+6008 1001 US OLY Overlay Activation Layer
+6008 1100 US OLY Overlay Descriptor - Gray (RET)
+6008 1101 US OLY Overlay Descriptor - Red (RET)
+6008 1102 US OLY Overlay Descriptor - Green (RET)
+6008 1103 US OLY Overlay Descriptor - Blue (RET)
+6008 1200 US OLY Overlays - Gray
+6008 1201 US OLY Overlays - Red
+6008 1202 US OLY Overlays - Green
+6008 1203 US OLY Overlays - Blue
+6008 1301 IS OLY ROI Area
+6008 1302 DS OLY ROI Mean
+6008 1303 DS OLY ROI Standard Deviation
+6008 1500 LO OLY Overlay Label
+6008 3000 OW OLY Overlay Data
+6008 4000 LO OLY Comments (RET)
+600a 0000 UL OLY Group Length
+600a 0010 US OLY Rows
+600a 0011 US OLY Columns
+600a 0012 US OLY Planes
+600a 0015 IS OLY Number of Frames in Overlay
+600a 0022 LO OLY Overlay Description
+600a 0040 CS OLY Overlay Type
+600a 0045 LO OLY Overlay Subtype
+600a 0050 SS OLY Overlay Origin
+600a 0051 US OLY Image Frame Origin
+600a 0052 US OLY Overlay Plane Origin
+600a 0060 LO OLY Compression Code (RET)
+600a 0100 US OLY Overlay Bits Allocated
+600a 0102 US OLY Overlay Bit Position
+600a 0110 LO OLY Overlay Format (RET)
+600a 0200 US OLY Overlay Location (RET)
+600a 1001 US OLY Overlay Activation Layer
+600a 1100 US OLY Overlay Descriptor - Gray (RET)
+600a 1101 US OLY Overlay Descriptor - Red (RET)
+600a 1102 US OLY Overlay Descriptor - Green (RET)
+600a 1103 US OLY Overlay Descriptor - Blue (RET)
+600a 1200 US OLY Overlays - Gray
+600a 1201 US OLY Overlays - Red
+600a 1202 US OLY Overlays - Green
+600a 1203 US OLY Overlays - Blue
+600a 1301 IS OLY ROI Area
+600a 1302 DS OLY ROI Mean
+600a 1303 DS OLY ROI Standard Deviation
+600a 1500 LO OLY Overlay Label
+600a 3000 OW OLY Overlay Data
+600a 4000 LO OLY Comments (RET)
+600c 0000 UL OLY Group Length
+600c 0010 US OLY Rows
+600c 0011 US OLY Columns
+600c 0012 US OLY Planes
+600c 0015 IS OLY Number of Frames in Overlay
+600c 0022 LO OLY Overlay Description
+600c 0040 CS OLY Overlay Type
+600c 0045 LO OLY Overlay Subtype
+600c 0050 SS OLY Overlay Origin
+600c 0051 US OLY Image Frame Origin
+600c 0052 US OLY Overlay Plane Origin
+600c 0060 LO OLY Compression Code (RET)
+600c 0100 US OLY Overlay Bits Allocated
+600c 0102 US OLY Overlay Bit Position
+600c 0110 LO OLY Overlay Format (RET)
+600c 0200 US OLY Overlay Location (RET)
+600c 1001 US OLY Overlay Activation Layer
+600c 1100 US OLY Overlay Descriptor - Gray (RET)
+600c 1101 US OLY Overlay Descriptor - Red (RET)
+600c 1102 US OLY Overlay Descriptor - Green (RET)
+600c 1103 US OLY Overlay Descriptor - Blue (RET)
+600c 1200 US OLY Overlays - Gray
+600c 1201 US OLY Overlays - Red
+600c 1202 US OLY Overlays - Green
+600c 1203 US OLY Overlays - Blue
+600c 1301 IS OLY ROI Area
+600c 1302 DS OLY ROI Mean
+600c 1303 DS OLY ROI Standard Deviation
+600c 1500 LO OLY Overlay Label
+600c 3000 OW OLY Overlay Data
+600c 4000 LO OLY Comments (RET)
+600e 0000 UL OLY Group Length
+600e 0010 US OLY Rows
+600e 0011 US OLY Columns
+600e 0012 US OLY Planes
+600e 0015 IS OLY Number of Frames in Overlay
+600e 0022 LO OLY Overlay Description
+600e 0040 CS OLY Overlay Type
+600e 0045 LO OLY Overlay Subtype
+600e 0050 SS OLY Overlay Origin
+600e 0051 US OLY Image Frame Origin
+600e 0052 US OLY Overlay Plane Origin
+600e 0060 LO OLY Compression Code (RET)
+600e 0100 US OLY Overlay Bits Allocated
+600e 0102 US OLY Overlay Bit Position
+600e 0110 LO OLY Overlay Format (RET)
+600e 0200 US OLY Overlay Location (RET)
+600e 1001 US OLY Overlay Activation Layer
+600e 1100 US OLY Overlay Descriptor - Gray (RET)
+600e 1101 US OLY Overlay Descriptor - Red (RET)
+600e 1102 US OLY Overlay Descriptor - Green (RET)
+600e 1103 US OLY Overlay Descriptor - Blue (RET)
+600e 1200 US OLY Overlays - Gray
+600e 1201 US OLY Overlays - Red
+600e 1202 US OLY Overlays - Green
+600e 1203 US OLY Overlays - Blue
+600e 1301 IS OLY ROI Area
+600e 1302 DS OLY ROI Mean
+600e 1303 DS OLY ROI Standard Deviation
+600e 1500 LO OLY Overlay Label
+600e 3000 OW OLY Overlay Data
+600e 4000 LO OLY Comments (RET)
 7fe0 0000 UL PXL Group Length
 7fe0 0010 OB PXL Pixel Data
 fffa fffa SQ XX Digital Signatures Sequence
