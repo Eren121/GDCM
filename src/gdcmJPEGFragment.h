@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:17:00 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/24 14:52:50 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,13 +45,20 @@ class GDCM_EXPORT JPEGFragment
 public:
    JPEGFragment();
    void Print( std::ostream &os = std::cout, std::string indent = "" );
-   void DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits);
+   void DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int & statesuspension);
    void DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer, size_t totalLength, uint8_t* raw, int nBits);
    void DecompressJPEGFragmentedFramesFromFile(JOCTET *buffer, uint8_t* raw, int nBits, size_t &howManyRead, size_t &howManyWritten, size_t totalLength);
 
-private:
-   long    Offset;
-   long    Length;
+   bool gdcm_read_JPEG_file8 (std::ifstream* fp, void* image_buffer, int & statesuspension );
+   bool gdcm_read_JPEG_file12 (std::ifstream* fp, void* image_buffer, int & statesuspension );
+   bool gdcm_read_JPEG_file16 (std::ifstream* fp, void* image_buffer, int & statesuspension );
+
+//private:
+   uint32_t    Offset;
+   uint32_t    Length;
+
+   uint8_t *pimage;
+
 
 friend class Document;
 friend class FileHelper;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 18:13:48 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/24 14:52:50 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,6 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmFileHelper.h"
+#include "gdcmJPEGFragment.h"
 
 /*
 DICOM provides a mechanism for supporting the use of JPEG Image Compression 
@@ -347,9 +348,8 @@ struct my_error_mgr {
    struct jpeg_error_mgr pub; /* "public" fields */
    jmp_buf setjmp_buffer;     /* for return to caller */
 };
-
-//-----------------------------------------------------------------------------
 typedef struct my_error_mgr* my_error_ptr;
+//-----------------------------------------------------------------------------
 
 /*
  * Here's the routine that will replace the standard error_exit method:
@@ -379,15 +379,16 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @param image_buffer to receive uncompressed pixels
  * @return 1 on success, 0 on error
  */
- 
-bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
+void *SampBuffer; 
+bool JPEGFragment::gdcm_read_JPEG_file (std::ifstream* fp, void* image_buffer , int& statesuspension)
 {
-   char* pimage;
-
+   //static int fragimage = 0;
+   //std::cerr << "Image Fragment:" << fragimage++ << std::endl;
+   pimage = (uint8_t*)image_buffer;
    /* This struct contains the JPEG decompression parameters and pointers to
     * working space (which is allocated as needed by the JPEG library).
     */
-   struct jpeg_decompress_struct cinfo;
+   static struct jpeg_decompress_struct cinfo;
 
    /* -------------- inside, we found :
     * JDIMENSION image_width;       // input image width 
@@ -415,6 +416,8 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
 
    int row_stride;/* physical row width in output buffer */
   
+   //std::cerr << "StateSuspension: " << statesuspension << std::endl;
+//#define GDCM_JPG_DEBUG
 #ifdef GDCM_JPG_DEBUG
    printf("entree dans File::gdcm_read_JPEG_file (i.e. 8), depuis gdcmJpeg\n");
 #endif //GDCM_JPG_DEBUG
@@ -441,25 +444,37 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
     /* If we get here, the JPEG code has signaled an error.
      * We need to clean up the JPEG object, close the input file, and return.
      */
+    std::cerr << "Qu'est c'est ce bordel !!!!!" << std::endl;
     jpeg_destroy_decompress(&cinfo);
     return 0;
   }
   /* Now we can initialize the JPEG decompression object. */
+  if( statesuspension == 0 )
+    {
   jpeg_create_decompress(&cinfo);
-
    /* Step 2: specify data source (eg, a file) */
 #ifdef GDCM_JPG_DEBUG
   printf("Entree Step 2\n");
 #endif //GDCM_JPG_DEBUG
 
-   jpeg_stdio_src(&cinfo, fp);
+   jpeg_stdio_src(&cinfo, fp, this, 1);
 
+    }
+  else
+    {
+   jpeg_stdio_src(&cinfo, fp, this, 0);
+    }
    /* Step 3: read file parameters with jpeg_read_header() */
 #ifdef GDCM_JPG_DEBUG
   printf("Entree Step 3\n");
 #endif //GDCM_JPG_DEBUG
 
-   (void) jpeg_read_header(&cinfo, TRUE);
+  if( statesuspension < 2 )
+    {
+   if( jpeg_read_header(&cinfo, TRUE) == JPEG_SUSPENDED )
+     {
+     std::cerr << "Suspension: jpeg_read_header" << std::endl;
+     }
    
    /* We can ignore the return value from jpeg_read_header since
     *   (a) suspension is not possible with the stdio data source, and
@@ -474,6 +489,7 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
       cinfo.out_color_space = JCS_UNKNOWN;
    }
 
+    } //statesuspension < 2
 
 #ifdef GDCM_JPG_DEBUG
       printf("--------------Header contents :----------------\n");
@@ -508,7 +524,12 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
    printf("Entree Step 5\n");
 #endif //GDCM_JPG_DEBUG
 
-   (void) jpeg_start_decompress(&cinfo);
+   if(statesuspension < 3 )
+     {
+   if( jpeg_start_decompress(&cinfo) == FALSE )
+     {
+     std::cerr << "Suspension: jpeg_start_decompress" << std::endl;
+     }
    /* We can ignore the return value since suspension is not possible
     * with the stdio data source.
     */
@@ -545,8 +566,13 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
       printf ("cinfo.output_height %d  cinfo.output_width %d\n",
                cinfo.output_height,cinfo.output_width);
 #endif //GDCM_JPG_DEBUG
-   pimage=(char *)image_buffer;
   
+      SampBuffer = buffer;
+     } // statesuspension < 3
+   else
+     {
+     buffer = (JSAMPARRAY)SampBuffer;
+     }
    int bufsize = cinfo.output_width * cinfo.output_components;
    size_t rowsize = bufsize * sizeof(JSAMPLE);
 
@@ -557,7 +583,12 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
        */
 
      //printf( "scanlines: %d\n",cinfo.output_scanline);
-      (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+      if( jpeg_read_scanlines(&cinfo, buffer, 1) == 0 )
+        {
+        std::cerr << "Suspension: jpeg_read_scanlines" << std::endl;
+        statesuspension = 3;
+        return true;
+        }
 // The ijg has no notion of big endian, therefore always swap the jpeg stream
 #if defined(GDCM_WORDS_BIGENDIAN) && (CMAKE_BITS_IN_JSAMPLE != 8)
       uint16_t *buffer16 = (uint16_t*)*buffer;
@@ -575,7 +606,10 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
    printf("Entree Step 7\n");
 #endif //GDCM_JPG_DEBUG
 
-   (void) jpeg_finish_decompress(&cinfo);
+   if( jpeg_finish_decompress(&cinfo) == FALSE )
+     {
+     std::cerr << "Suspension: jpeg_finish_decompress" << std::endl;
+     }
    
    /* We can ignore the return value since suspension is not possible
     * with the stdio data source.
@@ -590,6 +624,7 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
    /* This is an important step since it will release a good deal of memory. */
 
    jpeg_destroy_decompress(&cinfo);
+   //std::cerr << "jpeg_destroy_decompress" << std::endl;
 
    /* After finish_decompress, we can close the input file.
     * Here we postpone it until after no more JPEG errors are possible,
@@ -662,7 +697,7 @@ bool gdcm_read_JPEG_memory ( const JOCTET* input_buffer, const size_t buflen,
                              void* image_buffer,
                              size_t *howManyRead, size_t *howManyWritten)
 {
-   char* pimage=(char *)image_buffer;
+   volatile char * pimage=(volatile char *)image_buffer;
    JOCTET* input = (JOCTET*) input_buffer;
 
    /* This struct contains the JPEG decompression parameters and pointers to
@@ -848,11 +883,11 @@ bool gdcm_read_JPEG_memory ( const JOCTET* input_buffer, const size_t buflen,
       for(unsigned int i=0;i<rowsize/2;i++)
         pimage16[i] = (buffer16[i] >> 8) | (buffer16[i] << 8 );
 #else
-      memcpy( pimage, *buffer,rowsize);
+      memcpy( (void*)pimage, *buffer,rowsize);
 #endif //GDCM_WORDS_BIGENDIAN
      pimage+=rowsize;
   }
-   
+
   /* Step 7: Finish decompression */
 #ifdef GDCM_JPG_DEBUG
   printf("Entree Step 7\n");

@@ -1,3 +1,8 @@
+2005-01-24 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Grealty simplify the JPEg decompression, no need to differenciate based on 
+     the JPEG possible type (with/without fragment, with/without multiple frame). 
+     Everything is done throught the JPEG IO Suspension mechanism in IJG
+
 2005-01-22 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDicomDirElement.h, gdcmDict.h : rename AddNewXxx methods to AddXxx.
    * src/gdcmDict.h : rename GetDictEntry moethod to GetEntry, to be coherent 

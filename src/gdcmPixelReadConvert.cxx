@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/24 14:52:50 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -389,25 +389,26 @@ void PixelReadConvert::ConvertReorderEndianity()
 bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream *fp )
 {
    // Pointer to the Raw image
-   uint8_t *localRaw = Raw;
+   //uint8_t *localRaw = Raw;
 
    // Precompute the offset localRaw will be shifted with
    int length = XSize * YSize * SamplesPerPixel;
    int numberBytes = BitsAllocated / 8;
 
-   // Loop on the fragment[s]
-   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
-        it  = JPEGInfo->Fragments.begin();
-        it != JPEGInfo->Fragments.end();
-      ++it )
-   {
-      (*it)->DecompressJPEGFramesFromFile(fp, localRaw, BitsStored );
-
-      // Advance to next free location in Raw 
-      // for next fragment decompression (if any)
-
-      localRaw += length * numberBytes;
-   }
+//   // Loop on the fragment[s]
+//   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
+//        it  = JPEGInfo->Fragments.begin();
+//        it != JPEGInfo->Fragments.end();
+//      ++it )
+//   {
+//      (*it)->DecompressJPEGFramesFromFile(fp, localRaw, BitsStored );
+//
+//      // Advance to next free location in Raw 
+//      // for next fragment decompression (if any)
+//
+//      localRaw += length * numberBytes;
+//   }
+   JPEGInfo->DecompressJPEGFramesFromFile(fp, Raw, BitsStored, numberBytes, length );
    return true;
 }
 
@@ -501,24 +502,24 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
          return false;
    }
 
-   if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )
-   {
-      // we have one frame split into several fragments
-      // we will pack those fragments into a single buffer and 
-      // read from it
-      return ReadAndDecompressJPEGSingleFrameFragmentsFromFile( fp );
-   }
-   else if (JPEGInfo->Fragments.size() == (size_t)ZSize)
-   {
+//   if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )
+//   {
+//      // we have one frame split into several fragments
+//      // we will pack those fragments into a single buffer and 
+//      // read from it
+//      return ReadAndDecompressJPEGSingleFrameFragmentsFromFile( fp );
+//   }
+//   else if (JPEGInfo->Fragments.size() == (size_t)ZSize)
+//   {
       // suppose each fragment is a frame
       return ReadAndDecompressJPEGFramesFromFile( fp );
-   }
-   else 
-   {
-      // The dicom image contains frames containing fragments of images
-      // a more complex algorithm :-)
-      return ReadAndDecompressJPEGFragmentedFramesFromFile( fp );
-   }   
+//   }
+//   else 
+//   {
+//      // The dicom image contains frames containing fragments of images
+//      // a more complex algorithm :-)
+//      return ReadAndDecompressJPEGFragmentedFramesFromFile( fp );
+//   }   
 }
 
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/24 14:52:50 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,13 +26,13 @@ namespace gdcm
 bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
 
 // For JPEG 8 Bits, body in file gdcmJpeg8.cxx
-bool gdcm_read_JPEG_file8 (std::ifstream *fp, void *image_buffer);
+//bool gdcm_read_JPEG_file8 (JPEGFragment *frag, std::ifstream *fp, void *image_buffer);
 bool gdcm_read_JPEG_memory8    (const JOCTET *buffer, const size_t buflen, 
                                 void *image_buffer,
                                 size_t *howManyRead, size_t *howManyWritten);
 //
 // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
-bool gdcm_read_JPEG_file12 (std::ifstream *fp, void *image_buffer);
+//bool gdcm_read_JPEG_file12 (JPEGFragment *frag, std::ifstream *fp, void *image_buffer);
 bool gdcm_read_JPEG_memory12   (const JOCTET *buffer, const size_t buflen, 
                                 void *image_buffer,
                                 size_t *howManyRead, size_t *howManyWritten);
@@ -40,7 +40,7 @@ bool gdcm_read_JPEG_memory12   (const JOCTET *buffer, const size_t buflen,
 // For JPEG 16 Bits, body in file gdcmJpeg16.cxx
 // Beware this is misleading there is no 16bits DCT algorithm, only
 // jpeg lossless compression exist in 16bits.
-bool gdcm_read_JPEG_file16 (std::ifstream *fp, void *image_buffer);
+//bool gdcm_read_JPEG_file16 (JPEGFragment *frag, std::ifstream *fp, void *image_buffer);
 bool gdcm_read_JPEG_memory16   (const JOCTET *buffer, const size_t buflen, 
                                 void* image_buffer,
                                 size_t *howManyRead, size_t *howManyWritten);
@@ -52,6 +52,11 @@ JPEGFragment::JPEGFragment()
 {
    Offset = 0;
    Length = 0;
+
+//   StateSuspension = 0;
+//   void *SampBuffer;
+   pimage = 0;
+
 }
 
 /**
@@ -73,7 +78,7 @@ void JPEGFragment::Print( std::ostream &os, std::string indent )
  * @param buffer     output (data decompress)
  * @param nBits      8/12 or 16 bits jpeg
  */
-void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits)
+void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int & statesuspension)
 {
    // First thing need to reset file to proper position:
    fp->seekg( Offset, std::ios::beg);
@@ -81,7 +86,7 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buff
    if ( nBits == 8 )
    {
       // JPEG Lossy : call to IJG 6b
-      if ( ! gdcm_read_JPEG_file8( fp, buffer) )
+      if ( ! this->gdcm_read_JPEG_file8( fp, buffer, statesuspension) )
       {
          //return false;
       }
@@ -89,7 +94,7 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buff
    else if ( nBits <= 12 )
    {
       // Reading Fragment pixels
-      if ( ! gdcm_read_JPEG_file12 ( fp, buffer) )
+      if ( ! this->gdcm_read_JPEG_file12 ( fp, buffer, statesuspension) )
       {
          //return false;
       }
@@ -97,7 +102,7 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buff
    else if ( nBits <= 16 )
    {
       // Reading Fragment pixels
-      if ( ! gdcm_read_JPEG_file16 ( fp, buffer) )
+      if ( ! this->gdcm_read_JPEG_file16 ( fp, buffer, statesuspension) )
       {
          //return false;
       }

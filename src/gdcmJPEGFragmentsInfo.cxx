@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/24 14:52:50 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,10 @@
 namespace gdcm 
 {
 
+JPEGFragmentsInfo::JPEGFragmentsInfo()
+  {
+  StateSuspension = 0;
+  }
 /**
  * \brief Default destructor
  */
@@ -99,6 +103,29 @@ void JPEGFragmentsInfo::ReadAllFragments(std::ifstream *fp, JOCTET *buffer )
       p += len;
    }
 
+}
+
+void JPEGFragmentsInfo::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int numBytes, int length)
+{
+   // Pointer to the Raw image
+   uint8_t *localRaw = buffer;
+
+  // Loop on the fragment[s]
+   JPEGFragmentsList::const_iterator it;
+   for( it  = Fragments.begin();
+        it != Fragments.end();
+        ++it )
+   {
+     //(*it)->pimage = localRaw;
+     (*it)->DecompressJPEGFramesFromFile(fp, localRaw, nBits, StateSuspension);
+     // update pointer to image after some scanlines read:
+     localRaw = (*it)->pimage;
+      // Advance to next free location in Raw 
+      // for next fragment decompression (if any)
+
+      //localRaw += length * numBytes;
+     //std::cerr << "Used to increment by: " << length * numBytes << std::endl;
+   }
 }
 
 } // end namespace gdcm
