@@ -64,6 +64,19 @@
    // DL       Delimiters
    //
 
+   // Other usefull abreviations :
+   //Radiographic view associated with Patient Position (0018,5100).
+   //  Defined Terms:
+   // 
+   //  AP = Anterior/Posterior 
+   //  PA = Posterior/Anterior 
+   //  LL = Left Lateral 
+   //  RL = Right Lateral 
+   //  RLD = Right Lateral Decubitus 
+   //  LLD  = Left Lateral Decubitus 
+   //  RLO = Right Lateral Oblique 
+   //  LLO = Left Lateral Oblique  
+
 //-----------------------------------------------------------------------------
 // Refer to gdcmParser::CheckSwap()
 const unsigned int gdcmParser::HEADER_LENGTH_TO_READ = 256;

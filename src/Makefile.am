@@ -1,4 +1,4 @@
-&SUBDIRS = jpeg
+SUBDIRS = jpeg
 
 LTVERSION = 0:1:0
 
