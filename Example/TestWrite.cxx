@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:32 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/03/02 17:22:11 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
         std::cout << "videoinv for 8 bits" << std::endl;
         for (int i=0; i<dataSize; i++) 
         {
-           ((uint8_t*)imageData)[i] += 127;
+           ((uint8_t*)imageData)[i] = 255 - ((uint8_t*)imageData)[i];
         }
      }
      else
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
         std::cout << "videoinv for 16 bits" << std::endl;    
         for (int i=0; i<dataSize/2; i++) 
         {
-           ((uint16_t*)imageData)[i] += 60000; //32767;
+           ((uint16_t*)imageData)[i] =  65535 - ((uint16_t*)imageData)[i];
         }
      }
      fileNameToWrite = fileName + ".VDCM";
@@ -177,6 +177,8 @@ int main(int argc, char *argv[])
      break;
 
    }
-  return 0;
+   delete e1;
+   delete f1;
+   return 0;
 }
 
