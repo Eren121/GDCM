@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 16:44:57 $
-  Version:   $Revision: 1.104 $
+  Date:      $Date: 2005/01/17 16:50:35 $
+  Version:   $Revision: 1.105 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -641,6 +641,9 @@ int GetMacAddrSys ( unsigned char *addr )
    }
    close(sd);
 #endif
+   /* Not implemented platforms */
+   perror("There was a configuration problem on your plateform");
+   memset(addr,0,6);
    return -1;
 #endif //__sun
 }
