@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/17 10:23:30 $
-  Version:   $Revision: 1.203 $
+  Date:      $Date: 2004/11/23 01:10:40 $
+  Version:   $Revision: 1.204 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ Header::Header( std::string const & filename ):
    // Note: this IS the right place for the code
  
    // Image Location
-   std::string imgLocation = GetEntryByNumber(0x0028, 0x0200);
+   const std::string &imgLocation = GetEntryByNumber(0x0028, 0x0200);
    if ( imgLocation == GDCM_UNFOUND )
    {
       // default value
@@ -188,7 +188,7 @@ bool Header::IsReadable()
       return false;
    }
 
-   std::string res = GetEntryByNumber(0x0028, 0x0005);
+   const std::string &res = GetEntryByNumber(0x0028, 0x0005);
    if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 )
    {
       return false; // Image Dimensions
@@ -220,8 +220,7 @@ bool Header::IsReadable()
  */
 int Header::GetXSize()
 {
-   std::string strSize;
-   strSize = GetEntryByNumber(0x0028,0x0011);
+   const std::string &strSize = GetEntryByNumber(0x0028,0x0011);
    if ( strSize == GDCM_UNFOUND )
    {
       return 0;
@@ -238,7 +237,7 @@ int Header::GetXSize()
  */
 int Header::GetYSize()
 {
-   std::string strSize = GetEntryByNumber(0x0028,0x0010);
+   const std::string &strSize = GetEntryByNumber(0x0028,0x0010);
    if ( strSize != GDCM_UNFOUND )
    {
       return atoi( strSize.c_str() );
@@ -265,17 +264,17 @@ int Header::GetZSize()
 {
    // Both  DicomV3 and ACR/Nema consider the "Number of Frames"
    // as the third dimension.
-   std::string strSize = GetEntryByNumber(0x0028,0x0008);
+   const std::string &strSize = GetEntryByNumber(0x0028,0x0008);
    if ( strSize != GDCM_UNFOUND )
    {
       return atoi( strSize.c_str() );
    }
 
    // We then consider the "Planes" entry as the third dimension 
-   strSize = GetEntryByNumber(0x0028,0x0012);
-   if ( strSize != GDCM_UNFOUND )
+   const std::string &strSize2 = GetEntryByNumber(0x0028,0x0012);
+   if ( strSize2 != GDCM_UNFOUND )
    {
-      return atoi( strSize.c_str() );
+      return atoi( strSize2.c_str() );
    }
 
    return 1;
@@ -289,7 +288,7 @@ int Header::GetZSize()
 float Header::GetXSpacing()
 {
    float xspacing, yspacing;
-   std::string strSpacing = GetEntryByNumber(0x0028,0x0030);
+   const std::string &strSpacing = GetEntryByNumber(0x0028,0x0030);
 
    if ( strSpacing == GDCM_UNFOUND )
    {
