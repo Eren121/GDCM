@@ -20,7 +20,7 @@ IF (GDCM_DATA_ROOT)
     PrintHeader.cxx       #require test.acr
     PrintDicomDir.cxx
     pourFindTaggs.cxx
-    testChangeEntete.cxx
+    TestChangeHeader.cxx
     TestDicomDir.cxx      #require DICOMDIR
     BuildUpDicomDir.cxx
     TestReadWrite.cxx
