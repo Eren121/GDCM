@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 16:22:21 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/06/23 16:34:36 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -225,14 +225,14 @@ void gdcmDocument::PrintShaDict(std::ostream & os) {
  * \brief   Get the public dictionary used
  */
 gdcmDict *gdcmDocument::GetPubDict(void) {
-   return(RefPubDict);
+   return RefPubDict;
 }
 
 /**
  * \brief   Get the shadow dictionary used
  */
 gdcmDict *gdcmDocument::GetShaDict(void) {
-   return(RefShaDict);
+   return RefShaDict;
 }
 
 /**
@@ -241,7 +241,7 @@ gdcmDict *gdcmDocument::GetShaDict(void) {
  */
 bool gdcmDocument::SetShaDict(gdcmDict *dict){
    RefShaDict=dict;
-   return(!RefShaDict);
+   return !RefShaDict;
 }
 
 /**
@@ -250,7 +250,7 @@ bool gdcmDocument::SetShaDict(gdcmDict *dict){
  */
 bool gdcmDocument::SetShaDict(DictKey dictName){
    RefShaDict=gdcmGlobal::GetDicts()->GetDict(dictName);
-   return(!RefShaDict);
+   return !RefShaDict;
 }
 
 /**
@@ -264,12 +264,12 @@ bool gdcmDocument::SetShaDict(DictKey dictName){
 bool gdcmDocument::IsReadable(void) { 
    if(Filetype==gdcmUnknown) {
       dbg.Verbose(0, "gdcmDocument::IsReadable: wrong filetype");
-      return(false);
+      return false;
    }
    if(!tagHT.empty()<=0) { 
       dbg.Verbose(0, "gdcmDocument::IsReadable: no tags in internal"
                      " hash table.");
-      return(false);
+      return false;
    }
 
    return(true);
@@ -414,7 +414,7 @@ bool gdcmDocument::IsJPEGLossless(void)
 {
    return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_55)
            || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_57)
-           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_70) ); // was 90 
+           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_70) );
 }
                                                                                 
 /**
@@ -1130,7 +1130,7 @@ guint32 gdcmDocument::SwapLong(guint32 a) {
          dbg.Error(" gdcmDocument::SwapLong : unset swap code");
          a=0;
    }
-   return(a);
+   return a;
 } 
 
 /**
@@ -1139,7 +1139,7 @@ guint32 gdcmDocument::SwapLong(guint32 a) {
  * @return  The properly unswaped 32 bits integer.
  */
 guint32 gdcmDocument::UnswapLong(guint32 a) {
-   return (SwapLong(a));
+   return SwapLong(a);
 }
 
 /**
@@ -1149,7 +1149,7 @@ guint32 gdcmDocument::UnswapLong(guint32 a) {
 guint16 gdcmDocument::SwapShort(guint16 a) {
    if ( (sw==4321)  || (sw==2143) )
       a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
-   return (a);
+   return a;
 }
 
 /**
@@ -1157,7 +1157,7 @@ guint16 gdcmDocument::SwapShort(guint16 a) {
  * @return  The properly unswaped 16 bits integer.
  */
 guint16 gdcmDocument::UnswapShort(guint16 a) {
-   return (SwapShort(a));
+   return SwapShort(a);
 }
 
 //-----------------------------------------------------------------------------
@@ -1268,7 +1268,6 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
                                 l, delim_mode);
             (void)lgt;  //not used...
          }
-         // FIXME : on en fait quoi, de lgt ?
          set->AddEntry(sq);
          if ( !delim_mode && ftell(fp)-offset >= l_max)
          {
@@ -1277,7 +1276,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
       }
       delete NewDocEntry;
    }
-   return l; // ?? 
+   return l; // Probably useless 
 }
 
 /**
@@ -1330,7 +1329,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
       }
    }
    lgth = ftell(fp) - offset;
-   return(lgth);
+   return lgth;
 }
 
 /**
@@ -1554,14 +1553,12 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
          Entry->SetDictEntry(NewTag);
       }
        
-      // Heuristic: well some files are really ill-formed.
+      // Heuristic: well, some files are really ill-formed.
       if ( length16 == 0xffff) 
       {
          length16 = 0;
-         //dbg.Verbose(0, "gdcmDocument::FindLength",
-         //            "Erroneous element length fixed.");
-         // Actually, length= 0xffff means that we deal with
-         // Unknown Sequence Length 
+         // Length16= 0xffff means that we deal with
+         // 'Unknown Length' Sequence  
       }
       FixDocEntryFoundLength(Entry, (guint32)length16);
       return;
@@ -1660,7 +1657,7 @@ bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *Entry, VRKey vr)
                                    "UL","FIXME","Group Length");
          Entry->SetDictEntry(NewEntry);     
       }
-      return(false);
+      return false;
    }
 
    if ( Entry->IsVRUnknown() ) 
@@ -1684,7 +1681,7 @@ bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *Entry, VRKey vr)
                                  vr,"FIXME",Entry->GetName());
       Entry->SetDictEntry(NewEntry);
    }
-   return(true); 
+   return true; 
 }
 
 /**
@@ -1750,10 +1747,10 @@ std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *Entry)
 #ifdef GDCM_NO_ANSI_STRING_STREAM
       s << std::ends; // to avoid oddities on Solaris
 #endif //GDCM_NO_ANSI_STRING_STREAM
-      return(s.str());
+      return s.str();
    }
 
-   return(((gdcmValEntry *)Entry)->GetValue());
+   return ((gdcmValEntry *)Entry)->GetValue();
 }
 
 /**
@@ -1803,10 +1800,10 @@ std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry *Entry)
 #ifdef GDCM_NO_ANSI_STRING_STREAM
       s << std::ends; // to avoid oddities on Solaris
 #endif //GDCM_NO_ANSI_STRING_STREAM
-      return(s.str());
+      return s.str();
    }
 
-   return(((gdcmValEntry *)Entry)->GetValue());
+   return ((gdcmValEntry *)Entry)->GetValue();
 }
 
 /**
