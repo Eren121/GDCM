@@ -29,6 +29,8 @@ vtkgdcmdemo_LDADD = $(LDADD)
 lib_LTLIBRARIES = libvtkgdcm.la
 libvtkgdcm_la_SOURCES = vtkGdcmReader.cxx
 libvtkgdcm_la_LIBADD = $(LDADD)
+libvtkgdcmincludedir = $(includedir)
+libvtkgdcminclude_HEADERS = vtkGdcmReader.h
 
 else
 all:

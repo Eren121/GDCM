@@ -44,12 +44,12 @@
  *              <A HREF="http://www.doxygen.org/">doxygen</A>
  *              based documentation
  *        .
- *     - <TT>make</TT> (or <TT>make 'CFLAGS=-g</TT>...)
+ *     - <TT>make</TT>
  *     - <TT>make instal</TT>
  *     - As usual, you can optionnally:
  *       -# <TT>make clean</TT>
- *       -# <TT>make 'CFLAGS='</TT> if you are in hurry and want to omit
- *          "-g -O2" default flags
+ *       -# <TT>make CFLAGS='-g' CXXFLAGS='-DPUB_DICT_PATH=\"/usr/local/share/gdcm/\" -D__STDC_LIMIT_MACROS'</TT>
+ *        if you are in hurry and want to omit "-g -O2" default flags
  *       -# <TT>make snapshot</TT>
  *        .
  *     .
