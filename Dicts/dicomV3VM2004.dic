@@ -68,12 +68,12 @@
 0008 0018 UI 1 SOP Instance UID
 0008 001a UI 1-n Related General SOP Class UID
 0008 001a UI 1-n Original Specialized SOP Class UID 
-0008 0020 DA 1 1 Study Date
-0008 0021 DA 1 1 Series Date
-0008 0022 DA 1 1 Acquisition Date
-0008 0023 DA 1 1 Content Date
-0008 0024 DA 1 1 Overlay Date
-0008 0025 DA 1 1 Curve Date
+0008 0020 DA 1 Study Date
+0008 0021 DA 1 Series Date
+0008 0022 DA 1 Acquisition Date
+0008 0023 DA 1 Content Date
+0008 0024 DA 1 Overlay Date
+0008 0025 DA 1 Curve Date
 0008 002a DT 1 Acquisition Datetime
 0008 0030 TM 1 Study Time
 0008 0031 TM 1 Series Time
@@ -2553,7 +2553,7 @@
 600e 4000 LO 1 Comments (RET)
 
 7fe0 0000 UL 1 Group Length
-7fe0 0010 OB 1 Pixel Data
+7fe0 0010 OW 1 Pixel Data
 
 fffa fffa SQ 1 Digital Signatures Sequence
 fffc fffc OB 1 Data Set Trailing Padding
