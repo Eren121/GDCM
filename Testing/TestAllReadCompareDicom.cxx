@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/30 15:30:33 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/03/31 07:45:57 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,16 +43,16 @@ public:
    ~TestFile(void);
 
    bool IsReadable(void) {return readable;}
-   unsigned int GetXSize(void) {return sizeX;};
-   void SetXSize(unsigned int size) {sizeX = size;};
-   unsigned int GetYSize(void) {return sizeY;};
-   void SetYSize(unsigned int size) {sizeY = size;};
-   unsigned int GetZSize(void) {return sizeZ;};
-   void SetZSize(unsigned int size) {sizeZ = size;};
-   unsigned int GetScalarSize(void) {return scalarSize;};
-   void SetScalarSize(unsigned int size) {scalarSize = size;};
-   unsigned int GetNumberOfComponents(void) {return components;};
-   void SetNumberOfComponents(unsigned int size) {components = size;};
+   int GetXSize(void) {return sizeX;};
+   void SetXSize(int size) {sizeX = size;};
+   int GetYSize(void) {return sizeY;};
+   void SetYSize(int size) {sizeY = size;};
+   int GetZSize(void) {return sizeZ;};
+   void SetZSize(int size) {sizeZ = size;};
+   int GetScalarSize(void) {return scalarSize;};
+   void SetScalarSize(int size) {scalarSize = size;};
+   int GetNumberOfComponents(void) {return components;};
+   void SetNumberOfComponents(int size) {components = size;};
 
    unsigned long GetDataSize(void) {return GetLineSize()*sizeY*sizeZ;}
    uint8_t *GetData(void) {return data;}
@@ -75,21 +75,21 @@ private:
    bool WriteFileHeader(std::ofstream *fp);
    bool WriteFileData(std::ofstream *fp);
 
-   uint8_t  ReadInt8 (std::ifstream *fp);
-   uint16_t ReadInt16(std::ifstream *fp);
-   uint32_t ReadInt32(std::ifstream *fp);
-   void WriteInt8 (std::ofstream *fp,uint8_t  data);
-   void WriteInt16(std::ofstream *fp,uint16_t data);
-   void WriteInt32(std::ofstream *fp,uint32_t data);
+   uint8_t  ReadInt8 (std::ifstream *fp) throw( std::ios::failure );
+   uint16_t ReadInt16(std::ifstream *fp) throw( std::ios::failure );
+   uint32_t ReadInt32(std::ifstream *fp) throw( std::ios::failure );
+   void WriteInt8 (std::ofstream *fp,uint8_t  value);
+   void WriteInt16(std::ofstream *fp,uint16_t value);
+   void WriteInt32(std::ofstream *fp,uint32_t value);
 
    std::string fileName;
    bool readable;
 
-   unsigned int sizeX;
-   unsigned int sizeY;
-   unsigned int sizeZ;
-   unsigned int scalarSize;
-   unsigned int components;
+   int sizeX;
+   int sizeY;
+   int sizeZ;
+   int scalarSize;
+   int components;
    uint8_t *data;
    int swapCode;
 
@@ -336,26 +336,26 @@ uint32_t TestFile::ReadInt32(std::ifstream *fp)
    return g;
 }
 
-void TestFile::WriteInt8 (std::ofstream *fp,uint8_t data)
+void TestFile::WriteInt8 (std::ofstream *fp,uint8_t value)
 {
-   fp->write((char*)&data, (size_t)1);
+   fp->write((char*)&value, (size_t)1);
 }
 
-void TestFile::WriteInt16(std::ofstream *fp,uint16_t data)
+void TestFile::WriteInt16(std::ofstream *fp,uint16_t value)
 {
 #if defined(GDCM_WORDS_BIGENDIAN)
-   data = ( data << 8 |  data >> 8  );
+   value = ( value << 8 |  value >> 8  );
 #endif
-   fp->write((char*)&data, (size_t)2);
+   fp->write((char*)&value, (size_t)2);
 }
 
-void TestFile::WriteInt32(std::ofstream *fp,uint32_t data)
+void TestFile::WriteInt32(std::ofstream *fp,uint32_t value)
 {
 #if defined(GDCM_WORDS_BIGENDIAN)
-   data = (  (data<<24)               | ((data<<8)  & 0x00ff0000) | 
-          (  (data>>8)  & 0x0000ff00) |  (data>>24)               );
+   value = (  (value<<24)               | ((value<<8)  & 0x00ff0000) | 
+           (  (value>>8)  & 0x0000ff00) |  (value>>24)               );
 #endif
-   fp->write((char*)&data, (size_t)4);
+   fp->write((char*)&value, (size_t)4);
 }
 
 int InternalTest(std::string const &filename, 
