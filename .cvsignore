@@ -13,3 +13,4 @@ aclocal.m4
 build
 dist
 MANIFEST
+DCMlib*.tar.gz

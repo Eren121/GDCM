@@ -1,6 +1,5 @@
 // gdcmHeader.cxx
 
-#include "gdcm.h"
 #include <stdio.h>
 #include <cerrno>
 // For nthos:
@@ -10,9 +9,9 @@
 #include <netinet/in.h>
 #endif
 #include <cctype>		// for isalpha
-#include <map>
 #include <sstream>
 #include "gdcmUtil.h"
+#include "gdcmHeader.h"
 
 #define HEADER_LENGTH_TO_READ 		256 	// on ne lit plus que le debut
 #define _MaxSizeLoadElementValue_  	1024 	// longueur au dela de laquelle on ne charge plus les valeurs 

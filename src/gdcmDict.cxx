@@ -1,7 +1,7 @@
 // gdcmDict.cxx
 
 #include <fstream>
-#include "gdcm.h"
+#include "gdcmDict.h"
 #include "gdcmUtil.h"
 
 gdcmDict::gdcmDict(const char* FileName) {
@@ -131,7 +131,7 @@ int gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
 	key = NewEntry->GetKey();
 	
 	if(KeyHt.count(key) >= 1) {
-		printf("gdcmDict::AddNewEntry %s deja present\n", key.c_str());
+		dbg.Verbose(1, "gdcmDict::AddNewEntry allready present", key.c_str());
 		return(0);
 	} else {
 		KeyHt[NewEntry->GetKey()] = NewEntry;
@@ -145,7 +145,7 @@ int gdcmDict::RemoveEntry(TagKey key) {
 		KeyHt.erase(key);
 		return (1);
 	} else {
-		printf("gdcmDict::RemoveEntry %s non trouve\n", key.c_str());
+		dbg.Verbose(1, "gdcmDict::RemoveEntry unfound entry", key.c_str());
 		return (0);
 	}
 }

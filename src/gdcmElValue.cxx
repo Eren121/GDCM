@@ -1,6 +1,6 @@
 // gdcmElValue.cxx
 
-#include "gdcm.h"
+#include "gdcmElValue.h"
 
 
 /**

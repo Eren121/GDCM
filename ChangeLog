@@ -1,3 +1,14 @@
+2003-03-05 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcm.h splitted in gdcmCommon.h, gdcmDict.h, gdcmDictEntry.h,
+        gdcmDictSet.h, gdcmElValSet.h, gdcmElValue.h, gdcmFile.h,
+        gdcmHeader.h
+      * src/gdcm*.cxx only include their corresponding include file
+        (as opposed to gdcm.h)
+      * gdcmPython/gdcm.i changed accordingly
+      * Test/Makefile.am corrected and added NEWS, AUTHORS in order for
+        the autogen.sh generated "make snapshot" command to work.
+      * autogen.sh removed history related references to crea package.
+
 2003-03-04 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * distutilsSwigCPlusPlus.py work around some swig portability
         bug.

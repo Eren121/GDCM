@@ -1,7 +1,9 @@
-// gdcmDict.cxx
+// gdcmDictEntry.cxx
 
-#include "gdcm.h"
+#include <stdio.h>    // FIXME For sprintf
+#include "gdcmDictEntry.h"
 #include "gdcmUtil.h"
+
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
                              string  InVr, string InFourth, string InName) 

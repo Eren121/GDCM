@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="crea"
+PKG_NAME="gdcm"
 
 (test -f $srcdir/configure.in \
   && test -d $srcdir/src) || {

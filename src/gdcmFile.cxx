@@ -1,6 +1,6 @@
 // gdcmFile.cxx
 
-#include "gdcm.h"
+#include "gdcmFile.h"
 
 static void _Swap(void* im, int swap, int lgr, int nb);
 

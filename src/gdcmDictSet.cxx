@@ -2,8 +2,8 @@
 
 #include <fstream>
 #include <stdlib.h>  // For getenv
-#include "gdcm.h"
 #include "gdcmUtil.h"
+#include "gdcmDictSet.h"
 
 #define PUB_DICT_NAME     "DicomV3Dict"
 #ifndef PUB_DICT_PATH

@@ -1,6 +1,13 @@
 %module gdcm
 %{
-#include "gdcm.h"
+#include "gdcmCommon.h"
+#include "gdcmDictEntry.h"
+#include "gdcmDict.h"
+#include "gdcmDictSet.h"
+#include "gdcmElValue.h"
+#include "gdcmElValSet.h"
+#include "gdcmHeader.h"
+#include "gdcmFile.h"
 
 // Utility functions on strings for removing leading and trailing spaces
 void EatLeadingAndTrailingSpaces(string & s) {
@@ -77,4 +84,12 @@ typedef  unsigned int guint32;
 	$result = NewDict;
 }
 
-%include gdcm.h
+%include "gdcmCommon.h"
+%include "gdcmDictEntry.h"
+%include "gdcmDict.h"
+%include "gdcmDictSet.h"
+%include "gdcmElValue.h"
+%include "gdcmElValSet.h"
+%include "gdcmHeader.h"
+%include "gdcmFile.h"
+

@@ -1,7 +1,7 @@
 // gdcmElValSet.cxx
 
-#include "gdcm.h"
 #include "gdcmUtil.h"
+#include "gdcmElValSet.h"
 
 TagElValueHT & ElValSet::GetTagHt(void) {
 	return tagHt;
