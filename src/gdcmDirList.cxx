@@ -92,8 +92,14 @@ void gdcmDirList::Explore(std::string dirName,bool recursive)
    }
 
 #else
+   // None  of  these  functions  is  in  POSIX.  The functions scandir() and
+   // alphasort() are from BSD 4.3, and have been available under Linux since
+   // libc4.  Libc4 and libc5 use the more precise prototype
+
    struct dirent **namelist;
    int n=scandir(dirName.c_str(), &namelist, 0, alphasort);
+
+   //if n < 0 should raise error
 
    for (int i= 0;i < n; i++) 
    {
@@ -107,7 +113,9 @@ void gdcmDirList::Explore(std::string dirName,bool recursive)
       {
          this->push_back(dirName+fileName);
       }
+      free(namelist[i]);
    }
+   free(namelist);
 #endif
 }
 
