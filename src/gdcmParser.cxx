@@ -42,8 +42,7 @@ const unsigned int gdcmParser::MAX_SIZE_LOAD_ELEMENT_VALUE = 4096;
  */
 gdcmParser::gdcmParser(const char *InFilename, 
                        bool exception_on_error,
-                       bool enable_sequences ) 
-{
+                       bool enable_sequences ) {
    enableSequences=enable_sequences;
    
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
@@ -67,8 +66,7 @@ gdcmParser::gdcmParser(const char *InFilename,
  * \brief   
  * @param   exception_on_error
  */
-gdcmParser::gdcmParser(bool exception_on_error) 
-{
+gdcmParser::gdcmParser(bool exception_on_error) {
    //enableSequences=0;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
@@ -82,8 +80,7 @@ gdcmParser::gdcmParser(bool exception_on_error)
  * \ingroup gdcmParser
  * \brief   Canonical destructor.
  */
-gdcmParser::~gdcmParser (void) 
-{
+gdcmParser::~gdcmParser (void) {
    RefPubDict = NULL;
    RefShaDict = NULL;
 }
@@ -96,8 +93,7 @@ gdcmParser::~gdcmParser (void)
   *          both from the H Table and the chained list
   * @return
   */ 
-void gdcmParser::PrintEntry(std::ostream & os) 
-{
+void gdcmParser::PrintEntry(std::ostream & os) {
    std::ostringstream s;   
 	   
    s << "------------ gdcmParser::Print, using listEntries ----------------" << std::endl; 
@@ -116,8 +112,7 @@ void gdcmParser::PrintEntry(std::ostream & os)
   * \brief   Prints The Dict Entries of THE public Dicom Dictionnry
   * @return
   */  
-void gdcmParser::PrintPubDict(std::ostream & os) 
-{
+void gdcmParser::PrintPubDict(std::ostream & os) {
    RefPubDict->Print(os);
 }
 
@@ -126,8 +121,7 @@ void gdcmParser::PrintPubDict(std::ostream & os)
   * \brief   Prints The Dict Entries of the current shadow Dicom Dictionnry
   * @return
   */
-void gdcmParser::PrintShaDict(std::ostream & os) 
-{
+void gdcmParser::PrintShaDict(std::ostream & os) {
    RefShaDict->Print(os);
 }
 
@@ -447,8 +441,7 @@ bool gdcmParser::ReplaceOrCreateByNumber(std::string Value,
  * \return  boolean 
  * 
  */
-bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) 
-{
+bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
    gdcmHeaderEntry* nvHeaderEntry=NewHeaderEntryByNumber(Group, Elem);
 
    if(!nvHeaderEntry)
@@ -470,8 +463,7 @@ bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Ele
  * @param   Elem
  * \return  boolean 
  */
-bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) 
-{
+bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
    std::string v = Value;	
    SetEntryByNumber(v, Group, Elem);
    return true;
@@ -487,8 +479,7 @@ bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem
  * @param   element  Element number of the searched Dicom Element 
  * @return  number of occurences
  */
-int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element ) 
-{
+int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
 	std::string key = gdcmDictEntry::TranslateToKey(group, element );
 	return (tagHT.count(key));
 }
@@ -502,8 +493,7 @@ int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element )
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryByName(std::string tagName) 
-{
+std::string gdcmParser::GetEntryByName(std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -525,8 +515,7 @@ std::string gdcmParser::GetEntryByName(std::string tagName)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryVRByName(std::string tagName) 
-{
+std::string gdcmParser::GetEntryVRByName(std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -546,8 +535,7 @@ std::string gdcmParser::GetEntryVRByName(std::string tagName)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element) 
-{
+std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return GDCM_UNFOUND;
@@ -569,8 +557,7 @@ std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) 
-{
+std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) {
    gdcmHeaderEntry* elem =  GetHeaderEntryByNumber(group, element);
    if ( !elem )
       return GDCM_UNFOUND;
@@ -584,8 +571,7 @@ std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element)
  * @param   tagName name of the searched Dicom Element.
  * @return  true when found
  */
-bool gdcmParser::SetEntryByName(std::string content,std::string tagName) 
-{
+bool gdcmParser::SetEntryByName(std::string content,std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return false;				    
@@ -606,8 +592,7 @@ bool gdcmParser::SetEntryByName(std::string content,std::string tagName)
  */
 bool gdcmParser::SetEntryByNumber(std::string content, 
                                   guint16 group,
-                                  guint16 element) 
-{
+                                  guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
@@ -662,8 +647,7 @@ bool gdcmParser::SetEntryByNumber(std::string content,
  */
 
 bool gdcmParser::SetEntryLengthByNumber(guint32 length, 
-                                        guint16 group, guint16 element) 
-{
+                                        guint16 group, guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
@@ -682,8 +666,7 @@ bool gdcmParser::SetEntryLengthByNumber(guint32 length,
  * @param   Elem
  * @return File Offset of the Element Value 
  */
-size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) 
-{
+size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) {
    gdcmHeaderEntry* Entry = GetHeaderEntryByNumber(Group, Elem);	 
    if (!Entry) 
    {
@@ -702,8 +685,7 @@ size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem)
  * @param   Elem
  * @return Pointer to the 'non string' area
  */
-void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) 
-{
+void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) {
    gdcmHeaderEntry* Entry = GetHeaderEntryByNumber(Group, Elem);	 
    if (!Entry) 
    {
@@ -719,8 +701,7 @@ void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem)
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
  */
-void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem) 
-{
+void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem) {
    gdcmHeaderEntry * Element= GetHeaderEntryByNumber(Group, Elem);
    if ( !Element )
       return NULL;
