@@ -72,7 +72,10 @@ TARGET_LINK_LIBRARIES(GdcmToBaseline
 
 #-----------------------------------------------------------------------------
 # Install vtk header
-INSTALL_FILES(/include FILES vtkGdcmReader.h)
+INSTALL_FILES(
+  /include FILES vtkGdcmReader.h
+  /include FILES vtkGdcmWriter.h
+)
 
-INSTALL_TARGETS(/lib/ vtkgdcm)
+INSTALL_TARGETS(/lib/vtkgdcm)
 
