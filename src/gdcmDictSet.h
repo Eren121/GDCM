@@ -20,18 +20,16 @@ typedef map<DictKey, gdcmDict*> DictSetHT;
  */
 class GDCM_EXPORT gdcmDictSet {
 private:
-	DictSetHT dicts;
+   /// Hash table of all dictionaries contained in this gdcmDictSet
+	DictSetHT Dicts;
+   /// Directory path to dictionaries
+	string DictPath;
 	int AppendDict(gdcmDict* NewDict);
 	void LoadDictFromFile(string filename, DictKey);
-private:
-   /// Directory path to dictionaries
-	static string DictPath;
-	static string BuildDictPath(void);
-	static gdcmDict* DefaultPubDict;
+	string BuildDictPath(void);
 public:
-	static list<string> * GetPubDictTagNames(void);
-	static map<string, list<string> >* GetPubDictTagNamesByCategory(void);
-	static gdcmDict* LoadDefaultPubDict(void);
+	list<string> * GetPubDictTagNames(void);
+	map<string, list<string> >* GetPubDictTagNamesByCategory(void);
 
 	// TODO Swig int LoadDictFromFile(string filename);
    // QUESTION: the following function might not be thread safe !? Maybe

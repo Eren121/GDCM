@@ -6,7 +6,8 @@
 
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
-                             string  InVr, string InFourth, string InName) {
+                             string  InVr, string InFourth,
+                             string  InName) {
 	group 		= InGroup;
 	element 	= InElement;
 	vr 		= InVr;

@@ -4,6 +4,18 @@
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
 
+gdcmElValSet::~gdcmElValSet() {
+   for (TagElValueHT::iterator tag = tagHt.begin(); tag != tagHt.end(); ++tag) {
+      gdcmElValue* EntryToDelete = tag->second;
+      if ( EntryToDelete )
+         delete EntryToDelete;
+   }
+   tagHt.clear();
+   // Since Add() adds symetrical in both tagHt and NameHt we can
+   // assume all the pointed gdcmElValues are allready cleaned-up when
+   // we cleaned tagHt.
+   NameHt.clear();
+}
 
 TagElValueHT & gdcmElValSet::GetTagHt(void) {
 	return tagHt;
@@ -267,6 +279,7 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
          }
          continue;
       }
+      tokens.clear();
 
       // Les pixels ne sont pas chargés dans l'element !
       if ((gr == 0x7fe0) && (el == 0x0010) ) break;

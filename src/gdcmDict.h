@@ -14,13 +14,18 @@
 typedef map<TagKey,  gdcmDictEntry*> TagKeyHT;
 typedef map<TagName, gdcmDictEntry*> TagNameHT;
 
+/// Build a memory representation of a dicom dictionary by parsing
+/// an ascii file
 class GDCM_EXPORT gdcmDict {
 	string name;
 	string filename;
-	TagKeyHT  KeyHt;                // Both accesses with a TagKey or with a
-	TagNameHT NameHt;               // TagName are required.
+   /// Access through TagKey (see alternate access with NameHt)
+	TagKeyHT  KeyHt;
+   /// Access through TagName (see alternate access with KeyHt)
+	TagNameHT NameHt;
 public:
-	gdcmDict(const char* FileName);   // Reads Dict from ascii file
+	gdcmDict(string & FileName);
+	~gdcmDict();
 	int AddNewEntry (gdcmDictEntry* NewEntry);
 	int ReplaceEntry(gdcmDictEntry* NewEntry);
 	int RemoveEntry (TagKey key);

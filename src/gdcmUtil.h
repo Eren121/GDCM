@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "gdcmVR.h"
+#include "gdcmDictSet.h"
 using namespace std;
 
 class gdcmDebug {
@@ -24,10 +25,12 @@ public:
 class gdcmGlobal {
 private:
    static gdcmVR *VR; 
+   static gdcmDictSet *Dicts; 
 public:
    gdcmGlobal(void);
-   ~gdcmGlobal(void);
+   ~gdcmGlobal();
    static gdcmVR * GetVR(void);
+   static gdcmDictSet * GetDicts(void);
 };
 
 istream & eatwhite(istream & is);

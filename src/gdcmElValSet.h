@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.10 2003/04/09 14:04:53 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.11 2003/04/16 08:03:27 frog Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -21,6 +21,7 @@ class GDCM_EXPORT gdcmElValSet {
    typedef map<GroupKey, int> GroupHT; 
    
 public:	
+   ~gdcmElValSet();
    void Add(gdcmElValue*);
 			
    void Print(ostream &);

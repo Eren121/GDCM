@@ -5,7 +5,6 @@
 
 // Library globals.
 gdcmDebug dbg;
-gdcmVR * gdcmGlobal::VR = new gdcmVR();
 
 gdcmDebug::gdcmDebug(int level) {
 	DebugLevel = level;
@@ -48,15 +47,28 @@ void gdcmDebug::Exit(int a) {
 }
 
 ///////////////////////////////////////////////////////////////////////////
+gdcmVR      * gdcmGlobal::VR    = (gdcmVR*)0;
+gdcmDictSet * gdcmGlobal::Dicts = (gdcmDictSet*)0;
+gdcmGlobal gdcmGlob;
+
 gdcmGlobal::gdcmGlobal(void) {
+   if (VR || Dicts)
+      dbg.Verbose(0, "gdcmGlobal::gdcmGlobal: VR or Dicts allready allocated");
+   VR = new gdcmVR();
+   Dicts = new gdcmDictSet();
 }
 
-gdcmGlobal::~gdcmGlobal(void) {
+gdcmGlobal::~gdcmGlobal() {
    delete VR;
+   delete Dicts;
 }
 
 gdcmVR * gdcmGlobal::GetVR(void) {
    return VR;
+}
+
+gdcmDictSet * gdcmGlobal::GetDicts(void) {
+   return Dicts;
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -19,11 +19,13 @@
 #define _MaxSizeLoadElementValue_   1024
 
 gdcmVR * gdcmHeader::dicom_vr = (gdcmVR*)0;
+gdcmDictSet * gdcmHeader::Dicts    = (gdcmDictSet*)0;
 
 void gdcmHeader::Initialise(void) {
    if (!gdcmHeader::dicom_vr)
       gdcmHeader::dicom_vr = gdcmGlobal::GetVR();
-   Dicts = new gdcmDictSet();
+   if (!gdcmHeader::Dicts)
+      gdcmHeader::Dicts = gdcmGlobal::GetDicts();
    RefPubDict = Dicts->GetDefaultPubDict();
    RefShaDict = (gdcmDict*)0;
 }
@@ -61,8 +63,10 @@ bool gdcmHeader::CloseFile(void) {
 }
 
 gdcmHeader::~gdcmHeader (void) {
-   delete Dicts;
-   //FIXME obviously there is much to be done here !
+   dicom_vr = (gdcmVR*)0;
+   Dicts    = (gdcmDictSet*)0;
+   RefPubDict = (gdcmDict*)0;
+   RefShaDict = (gdcmDict*)0;
    return;
 }
 

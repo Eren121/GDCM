@@ -4,9 +4,15 @@
 #include "gdcmDict.h"
 #include "gdcmUtil.h"
 
-gdcmDict::gdcmDict(const char* FileName) {
-	std::ifstream from(FileName);
-	dbg.Error(!from, "gdcmDict::gdcmDict: can't open dictionary", FileName);
+/**
+ * \ingroup gdcmDict
+ * \brief   Construtor
+ * @param   FileName from which to build the dictionary.
+ */
+gdcmDict::gdcmDict(string & FileName) {
+	std::ifstream from(FileName.c_str());
+	dbg.Error(!from, "gdcmDict::gdcmDict: can't open dictionary",
+                    FileName.c_str());
 	guint16 group, element;
 	// CLEANME : use defines for all those constants
 	char buff[1024];
@@ -26,10 +32,24 @@ gdcmDict::gdcmDict(const char* FileName) {
 		name = buff;
 		gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,
 		                                         vr, fourth, name);
+      // FIXME: use AddNewEntry
 		NameHt[name] = newEntry;
 		KeyHt[gdcmDictEntry::TranslateToKey(group, element)] = newEntry;
 	}
 	from.close();
+}
+
+gdcmDict::~gdcmDict() {
+   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag) {
+      gdcmDictEntry* EntryToDelete = tag->second;
+      if ( EntryToDelete )
+         delete EntryToDelete;
+   }
+   KeyHt.clear();
+   // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
+   // assume all the pointed gdcmDictEntries are allready cleaned-up when
+   // we cleaned KeyHt.
+   NameHt.clear();
 }
 
 void gdcmDict::Print(ostream& os) {
@@ -37,7 +57,7 @@ void gdcmDict::Print(ostream& os) {
 }
 
 /**
- * \ingroup gdcmHeader
+ * \ingroup gdcmDict
  * \brief   Print all the dictionary entries contained in this dictionary.
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
@@ -54,7 +74,7 @@ void gdcmDict::PrintByKey(ostream& os) {
 }
 
 /**
- * \ingroup gdcmHeader
+ * \ingroup gdcmDict
  * \brief   Print all the dictionary entries contained in this dictionary.
  *          Entries will be sorted by the name of the dictionary entries.
  * @param   os The output stream to be written to.
@@ -71,7 +91,7 @@ void gdcmDict::PrintByName(ostream& os) {
 }
 
 /**
- * \ingroup gdcmHeader
+ * \ingroup gdcmDict
  * \brief   Get the dictionnary entry identified by a given tag (group,element)
  * @param   group   group of the entry to be found
  * @param   element element of the entry to be found
@@ -85,7 +105,7 @@ gdcmDictEntry * gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
 }
 
 /**
- * \ingroup gdcmHeader
+ * \ingroup gdcmDict
  * \brief   Get the dictionnary entry identified by it's name.
  * @param   name element of the ElVal to modify
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
@@ -121,6 +141,9 @@ int gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
 
 int gdcmDict::RemoveEntry(TagKey key) {
    if(KeyHt.count(key) == 1) {
+      gdcmDictEntry* EntryToDelete = KeyHt.find(key)->second;
+      if ( EntryToDelete )
+         delete EntryToDelete;
       KeyHt.erase(key);
       return (1);
    } else {

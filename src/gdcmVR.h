@@ -11,18 +11,15 @@ typedef string VRKey;
 typedef string VRAtr;
 typedef map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
-/*
- * \defgroup gdcmVR
- * \brief  Container for dicom Value Representation Hash Table
- * \note   This is a singleton
- */
+/// Container for dicom Value Representation Hash Table
+/// \note   This is a singleton
 class GDCM_EXPORT gdcmVR {
 private:
-   VRHT *dicom_vr;
+   VRHT vr;
 public:
-	gdcmVR();
+	gdcmVR(void);
    ~gdcmVR();
-   int Count(VRKey);
+   int Count(VRKey key);
 };
 
 #endif

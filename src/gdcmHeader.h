@@ -40,7 +40,7 @@ private:
    static gdcmVR *dicom_vr;
  
    /// Global dictionary container
-   gdcmDictSet* Dicts;
+   static gdcmDictSet* Dicts;
    /// Public dictionary used to parse this header
    gdcmDict* RefPubDict;
    /// Optional "shadow dictionary" (private elements) used to parse this

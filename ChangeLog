@@ -1,5 +1,9 @@
+2003-04-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
+      * More memmory link related corrections and documentation fixes.
+
 2003-04-15  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
-      * Memory link hunt (by using valgrind --leak-check=yes PrintHeader).
+      * Memory link hunt (by using valgrind through the command
+          valgrind --show-reachable=yes --leak-check=yes PrintHeader).
         - added src/gdcmVR.cxx gdcmVR.h that objectify the previous
           gdcmHeader::_dicom_vr.
         - gdcmHeader::InitVRDict transfered as gdcmVR::gdcmVR().

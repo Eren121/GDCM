@@ -11,9 +11,6 @@
 #endif
 #define PUB_DICT_FILENAME "dicomV3.dic"
 
-string gdcmDictSet::DictPath = gdcmDictSet::BuildDictPath();
-gdcmDict* gdcmDictSet::DefaultPubDict = gdcmDictSet::LoadDefaultPubDict();
-
 /** 
  * \ingroup gdcmDictSet
  * \brief   Consider all the entries of the public dicom dictionnary. 
@@ -23,7 +20,7 @@ gdcmDict* gdcmDictSet::DefaultPubDict = gdcmDictSet::LoadDefaultPubDict();
  */
 list<string> * gdcmDictSet::GetPubDictTagNames(void) {
    list<string> * Result = new list<string>;
-   TagKeyHT entries = gdcmDictSet::DefaultPubDict->GetEntries();
+   TagKeyHT entries = GetDefaultPubDict()->GetEntries();
    
    for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
       Result->push_back( tag->second->GetName() );
@@ -48,7 +45,7 @@ list<string> * gdcmDictSet::GetPubDictTagNames(void) {
  */
 map<string, list<string> > * gdcmDictSet::GetPubDictTagNamesByCategory(void) {
    map<string, list<string> > * Result = new map<string, list<string> >;
-   TagKeyHT entries = gdcmDictSet::DefaultPubDict->GetEntries();
+   TagKeyHT entries = GetDefaultPubDict()->GetEntries();
 
    for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
       (*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
@@ -78,28 +75,24 @@ string gdcmDictSet::BuildDictPath(void) {
    return ResultPath;
 }
 
-/**
- * \ingroup gdcmDictSet
- * \brief   Loads the default public DICOM V3 dictionary as a gdcmDict.
- * \return  The newly build reference public dictionary.
- */
-gdcmDict* gdcmDictSet::LoadDefaultPubDict(void) {
-   string PubDictFile = gdcmDictSet::DictPath + PUB_DICT_FILENAME;
-   return new gdcmDict(PubDictFile.c_str());
-}
-
 /** 
  * \ingroup gdcmDictSet
  * \brief   The Dictionnary Set obtained with this constructor simply
  *          contains the Default Public dictionnary.
  */
 gdcmDictSet::gdcmDictSet(void) {
-   dicts[PUB_DICT_NAME] = DefaultPubDict;
+   DictPath = BuildDictPath();
+   string PubDictFile = DictPath + PUB_DICT_FILENAME;
+   Dicts[PUB_DICT_NAME] = new gdcmDict(PubDictFile);
 }
 
 gdcmDictSet::~gdcmDictSet() {
-   //FIXME : first destroy pointed dictionaries before trashing hash table.
-   dicts.clear();
+   for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) {
+      gdcmDict* EntryToDelete = tag->second;
+      if ( EntryToDelete )
+         delete EntryToDelete;
+   }
+   Dicts.clear();
 }
 
 /**
@@ -112,8 +105,8 @@ gdcmDictSet::~gdcmDictSet() {
  *          created dictionary.
  */
 void gdcmDictSet::LoadDictFromFile(string FileName, DictKey Name) {
-   gdcmDict *NewDict = new gdcmDict(FileName.c_str());
-   dicts[Name] = NewDict;
+   gdcmDict *NewDict = new gdcmDict(FileName);
+   Dicts[Name] = NewDict;
 }
 
 /**
@@ -123,7 +116,7 @@ void gdcmDictSet::LoadDictFromFile(string FileName, DictKey Name) {
  * @param   os Output stream used for printing.
  */
 void gdcmDictSet::Print(ostream& os) {
-   for (DictSetHT::iterator dict = dicts.begin(); dict != dicts.end(); ++dict){
+   for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict){
       os << "Printing dictionary " << dict->first << " \n";
       dict->second->Print(os);
    }
@@ -137,7 +130,7 @@ void gdcmDictSet::Print(ostream& os) {
  * \result  The retrieved dictionary.
  */
 gdcmDict * gdcmDictSet::GetDict(DictKey DictName) {
-   DictSetHT::iterator dict = dicts.find(DictName);
+   DictSetHT::iterator dict = Dicts.find(DictName);
    return dict->second;
 }
 
