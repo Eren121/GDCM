@@ -48,7 +48,10 @@ The following comments are intended for core gdcm developpers.
   ctest -D Experimental
   The results should appear in
      http://public.kitware.com/dashboard.php?name=public
-  under the name GDCM-* within the "Experimental Builds" entry.
+     under the name of your machine (uname), but for ease of use you can
+     change the SITE variable in your CMakeCache.txt to something more 
+     accurate such as: GDCM-my_machine_name. The entry will then be within 
+     the "Experimental Builds" entry.
 
 * Install gdcm (as specified by CMAKE_INSTALL_PREFIX)
   make install
