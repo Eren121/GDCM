@@ -1,4 +1,5 @@
 2004-02-04 Benoit Regrain
+     * FIX : even length for some strings when writting the dicom dir
      * FIX : sort the images in the dicom dir
      * FIX : Bug fix for python use of dicom dir
      * Add a python demo

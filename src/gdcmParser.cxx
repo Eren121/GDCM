@@ -1007,6 +1007,7 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
 {
    guint16 gr, el;
    guint32 lgr;
+   std::string value;
    const char * val;
    std::string vr;
    guint32 val_uint32;
@@ -1023,7 +1024,7 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
    //       TODO : find a trick (in STL?) to do it, at low cost !
 
    void *ptr;
-      
+
    // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
    int compte =0;
    
@@ -1031,11 +1032,19 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
         tag2 != listEntries.end();
         ++tag2)
    {
-      gr =  (*tag2)->GetGroup();
-      el =  (*tag2)->GetElement();
-      lgr = (*tag2)->GetReadLength();
-      val = (*tag2)->GetValue().c_str();
-      vr =  (*tag2)->GetVR();
+      // === Deal with the length
+      //     --------------------
+      if(((*tag2)->GetLength())%2==1)
+      {
+         (*tag2)->SetValue((*tag2)->GetValue()+"\0");
+         (*tag2)->SetLength((*tag2)->GetLength()+1);
+      }
+
+      gr    = (*tag2)->GetGroup();
+      el    = (*tag2)->GetElement();
+      lgr   = (*tag2)->GetReadLength();
+      val   = (*tag2)->GetValue().c_str();
+      vr    = (*tag2)->GetVR();
       voidArea = (*tag2)->GetVoidArea();
       
       if ( type == ACR ) 
@@ -1051,38 +1060,39 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
       fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
       fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
       
-      // === Deal with the length
-      //     --------------------
-      
       // if ( (type == ExplicitVR) && (gr <= 0x0002) ) // ?!?  < 2  
       if ( (type == ExplicitVR) || (type == DICOMDIR) )      
       {
          // EXPLICIT VR
          guint16 z=0, shortLgr;
-	 if (vr == "unkn") { // Unknown was 'written'	 
+         if (vr == "unkn") 
+         { // Unknown was 'written'	 
             shortLgr=lgr;
             fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
             fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
-	 } else {	 
-            if (gr != 0xfffe) { // NO value for 'delimiters'
-	      if (vr == "unkn") // Unknown was 'written'
-	         fwrite(&z,(size_t)2 ,(size_t)1 ,_fp);
-	      else  	 
-                 fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
+         } 
+         else 
+         {
+            if (gr != 0xfffe) 
+            { // NO value for 'delimiters'
+               if (vr == "unkn") // Unknown was 'written'
+                  fwrite(&z,(size_t)2 ,(size_t)1 ,_fp);
+               else  	 
+                  fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
             }
-	 
+
             if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || gr == 0xfffe)
             {
                if (gr != 0xfffe)
-	          fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
-               fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
+                  fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
+                  fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
             } 
             else 
             {
                shortLgr=lgr;
                fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
             }
-	 }
+         }
       } 
       else // IMPLICIT VR 
       { 
@@ -1094,9 +1104,10 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
       if (vr == "SQ")  continue; // no "value" to write for the SEQuences
       if (gr == 0xfffe)continue;
       
-      if (voidArea != NULL) { // there is a 'non string' LUT, overlay, etc
+      if (voidArea != NULL) 
+      { // there is a 'non string' LUT, overlay, etc
          fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
-	 continue;            
+         continue;            
       }
       
       if (vr == "US" || vr == "SS") 
@@ -1132,7 +1143,7 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
             
       if ((gr == GrPixel) && (el == NumPixel) ) {
          compte++;
-	 if (compte == countGrPixel) // we passed *all* the GrPixel,NumPixel   
+         if (compte == countGrPixel) // we passed *all* the GrPixel,NumPixel   
             break;
       }       
       fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
