@@ -20,6 +20,12 @@ MARK_AS_ADVANCED(GDCM_DATA_DIR)
 OPTION(BUILD_SHARED_LIBS "Build GDCM with shared libraries." ON)
 SET(GDCM_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
+SET(CMAKE_CONFIGURATION_TYPES
+  Debug
+  Release
+)
+SET(CMAKE_BUILD_TYPE_INIT Debug)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #Put all stuff in one single dir for Win32, otherwise dll are a pain:

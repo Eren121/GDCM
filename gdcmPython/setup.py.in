@@ -4,7 +4,7 @@ from distutilsWrapping import *
 from WrapSwig import *
 from WrapVTK import *
 
-ThisModule='gdcmPython'
+ThisModule      ="gdcmPython"
 gdcmPythonSrcDir=ThisModule
 gdcmSrcDir      ="src"
 gdcmJpeg8SrcDir =os.path.join('src', 'jpeg', 'libijg8')
@@ -81,8 +81,8 @@ Sources.extend(JpgSources)
 VTK_INCLUDE_DIR=os.path.join(VTKPATH,"include","vtk")
 VTK_LIB_DIR=os.path.join(VTKPATH,"lib","vtk")
 vtkSources = []
-vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
-vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
+vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,'vtk*.cxx')))
+vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,'*.cxx')))
 vtkSources.extend(Jpeg8Sources)
 vtkSources.extend(Jpeg12Sources)
 vtkSources.extend(JpgSources)

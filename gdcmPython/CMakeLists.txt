@@ -1,11 +1,9 @@
 #IF(GDCM_WRAP_PYTHON)
 #If we reach this dir we have selected this option
 
-
-#TODO
-#http://www.cmake.org/pipermail/cmake/2003-August/004185.html
-#http://www.cmake.org/pipermail/cmake/2003-January/001092.html
-
+# TODO
+# http://www.cmake.org/pipermail/cmake/2003-August/004185.html
+# http://www.cmake.org/pipermail/cmake/2003-January/001092.html
 
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src
@@ -21,7 +19,7 @@ SET(SWIG_INC
   ${GDCM_INC}
 )
 
-ADD_CUSTOM_TARGET(mathieu ALL)
+#ADD_CUSTOM_TARGET(mathieu ALL)
 
 SET(GDCM_PYTHON_SOURCES
   gdcm_wrap.cxx
@@ -30,8 +28,8 @@ SET(GDCM_PYTHON_SOURCES
 SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
 
 ADD_LIBRARY(pygdcm ${GDCM_PYTHON_SOURCES})
-#http://www.cmake.org/pipermail/cmake/2003-August/004190.html
-#SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "")
+# http://www.cmake.org/pipermail/cmake/2003-August/004190.html
+# SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
 TARGET_LINK_LIBRARIES(pygdcm 
   ${PYTHON_LIBRARY}
   gdcm
@@ -61,17 +59,13 @@ IF(GDCM_VTK)
   )
   SET_SOURCE_FILES_PROPERTIES(vtkGdcmReaderPython.cxx GENERATED)
   
-  # The C++ files must be made into a C++ library
-  #ADD_LIBRARY ( vtkgdcmPython ${vtkgdcmPython_la_SOURCES})
-
-  # set the libraries to link against
-  #TARGET_LINK_LIBRARIES(vtkgdcmPython vtkCommon)
-
   # Configure Python module, which is the plugin itself
   IF (GDCM_WRAP_PYTHON)
     VTK_WRAP_PYTHON2(vtkgdcmPython gdcmfoo
                    ${vtkgdcmPython_la_SOURCES})
+    # The C++ files must be made into a C++ library
     ADD_LIBRARY(vtkgdcmPython SHARED ${gdcmfoo})
+    # set the libraries to link against
     TARGET_LINK_LIBRARIES (vtkgdcmPython
                          pygdcm
                          vtkgdcm
@@ -94,6 +88,8 @@ ENDIF(GDCM_VTK)
 #MESSAGE(STATUS ${SITEPACKAGE})
 #INSTALL_FILES(/include "\\.h$")
 #INSTALL_TARGETS(/lib/ gdcm)
+
+INSTALL_TARGETS(/lib/ "gdcm.py")
 
 # When installing swig-generated python module one should pay attention
 # to library naming convention, see here for more detail:
