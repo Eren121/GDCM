@@ -49,7 +49,6 @@ gdcmFile::gdcmFile(const char * filename)
 void gdcmFile::SetPixelDataSizeFromHeader(void) {
    int nb;
    std::string str_nb;
-
    str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
@@ -65,6 +64,7 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
       lgrTotale*=3;
    }
 }
+
    // see PS 3.3-2003 : C.7.6.3.2.1  
    // 
    //   MONOCHROME1
@@ -85,11 +85,6 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
   // 0028|1221 [OW]   [Segmented Red Palette Color Lookup Table Data]
   // 0028|1222 [OW]   [Segmented Green Palette Color Lookup Table Data]  
   // 0028|1223 [OW]   [Segmented Blue Palette Color Lookup Table Data]
-
-  // ex : US-PAL-8-10x-echo.dcm, 8BitsRunLengthColor.dcm
-  // 0028|1201 [OW]   [Red Palette Color Lookup Table Data]
-  // 0028|1202 [OW]   [Green Palette Color Lookup Table Data]
-  // 0028|1203 [OW]   [Blue Palette Color Lookup Table Data]
 
   // ex  : OT-PAL-8-face.dcm
   // 0028|1201 [US]   [Red Palette Color Lookup Table Data]
@@ -127,8 +122,9 @@ bool gdcmFile::ReadPixelData(void* destination) {
       CloseFile();
       return false;
    }
+   
 
-// -------------------------  Compacted File (12 Bits Per Pixel)
+   // ----------------------  Compacted File (12 Bits Per Pixel)
 
    /* unpack 12 Bits pixels into 16 Bits pixels */
    /* 2 pixels 12bit =     [0xABCDEF]           */
@@ -138,12 +134,12 @@ bool gdcmFile::ReadPixelData(void* destination) {
       int nbPixels = GetXSize()*GetYSize();
       unsigned char b0, b1, b2;
       
+      unsigned short int* pdestination = (unsigned short int*)destination;    
       for(int p=0;p<nbPixels;p+=2) {
          fread(&b0,1,1,fp);
          fread(&b1,1,1,fp);
          fread(&b2,1,1,fp);      
-         //Two steps is necessary to please VC++:
-         unsigned short int* pdestination = (unsigned short int*)destination;
+         //Two steps is necessary to please VC++
          *pdestination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
                        /* A */          /* B */            /* D */
          *pdestination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
@@ -152,18 +148,18 @@ bool gdcmFile::ReadPixelData(void* destination) {
 	// Troubles expected on Big-Endian processors ?	      
       }
       return(true);
-   }
-        
+   }        
 
-// -------------------------  Uncompressed File
+   // ----------------------  Uncompressed File
     
    if ( !IsDicomV3()                             ||
         IsImplicitVRLittleEndianTransferSyntax() ||
         IsExplicitVRLittleEndianTransferSyntax() ||
         IsExplicitVRBigEndianTransferSyntax()    ||
         IsDeflatedExplicitVRLittleEndianTransferSyntax() ) {
-	 	
-      size_t ItemRead = fread(destination, lgrTotale, 1, fp);
+
+      size_t ItemRead = fread(destination, GetPixelAreaLength(), 1, fp);
+      
       if ( ItemRead != 1 ) {
          CloseFile();
          return false;
@@ -173,17 +169,14 @@ bool gdcmFile::ReadPixelData(void* destination) {
       }
    } 
 
-   
-// ------------------------- Run Length Encoding
+   // ---------------------- Run Length Encoding
 
       if (gdcmHeader::IsRLELossLessTransferSyntax()) {
             int res = (bool)gdcm_read_RLE_file (destination);
             return res; 
       }  
- 
-
     
-// ----------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
+   // --------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
        
       int nb;
       std::string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
@@ -307,6 +300,15 @@ void * gdcmFile::GetImageData (void) {
  * \ingroup gdcmFile
  * \brief   Copies at most MaxSize bytes of pixel data to caller's
  *          memory space.
+ * \warning This function was designed to avoid people that want to build
+ *          a volume from an image stack to need first to get the image pixels 
+ *          and then move them to the volume area.
+ *          It's absolutely useless for VTK users since vtk chooses 
+ *          to invert the lines of an image, that is the last line comes first
+ *          (for some axis related reasons?). Hence he will have 
+ *          to load the image line by line, starting from the end.
+ *          VTK users hace to call GetImageData
+ *     
  * @param   destination Address (in caller's memory space) at which the
  *          pixel data should be copied
  * @param   MaxSize Maximum number of bytes to be copied. When MaxSize
@@ -351,9 +353,8 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
       highBit = nb - 1;
    } else {
       highBit = atoi(str_highBit.c_str() );
-   }
-		
-	// Signe des Pixels 
+   }		
+	// Pixel sign
 	// 0 = Unsigned
 	// 1 = Signed
    str_signe=GetPubElValByNumber(0x0028,0x0103);
@@ -403,12 +404,15 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
       }
    } 
 
-
-// Just to 'see' was was actually read on disk :-(
+// Just to 'see' what was actually read on disk :-(
 // Some troubles expected
+//   FILE * f2;
+//   f2 = fopen("SpuriousFile.raw","wb");
+//   fwrite(destination,lgrTotale,1,f2);
+//   fclose(f2);
 
-   // *Try* to deal with the color
-   // ----------------------------
+   // Deal with the color
+   // -------------------
    
        std::string str_PhotometricInterpretation = 
                  gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
@@ -442,8 +446,9 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
       case 1:
 
          {
-         if (str_PhotometricInterpretation == "YBR_FULL") { // Warning : YBR_FULL_422 acts as RGB (?!)
-
+         if (str_PhotometricInterpretation == "YBR_FULL") { 
+	 
+	 // Warning : YBR_FULL_422 acts as RGB
          //       need to make RGB Pixels from Planes Y,cB,cR
          // see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
          // for code optimisation
@@ -486,26 +491,22 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
         } else {
          
          //       need to make RGB Pixels from Planes R,G,B
+	 //       (all the Frames at a time)
 
-            int l = GetXSize()*GetYSize();
-            int nbFrames = GetZSize();
+            int l = GetXSize()*GetYSize()*GetZSize();
 
             char * newDest = (char*) malloc(lgrTotale);
-            char *x  = newDest;
+            char * x = newDest;
             char * a = (char *)destination;
             char * b = a + l;
             char * c = b + l;
 
-               // TODO :
-               // any trick not to have to allocate temporary buffer is welcome ...
-
-            for (int i=0;i<nbFrames;i++) {
-               for (int j=0;j<l; j++) {
-                  *(x++) = *(a++);
-                  *(x++) = *(b++);
-                  *(x++) = *(c++);  
-               }
+            for (int j=0;j<l; j++) {
+               *(x++) = *(a++);
+               *(x++) = *(b++);
+               *(x++) = *(c++);  
             }
+           
             memmove(destination,newDest,lgrTotale);
             free(newDest);
         }
@@ -515,62 +516,40 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
      
        case 2:                      
          //       from Lut R + Lut G + Lut B
-       
-         // we no longer use gdcmHeader::GetLUTRGB
-         // since a lot of images have strange info 
-         // in the Lookup Table Descriptors (0028,1101),...
+
          {
-         unsigned char * newDest = (unsigned char*) malloc(lgrTotale);
-         unsigned char * a = (unsigned char *)destination;
-
-         unsigned char *lutR =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1201);
-         unsigned char *lutG =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1202);
-         unsigned char *lutB =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1203);
-
-         if (lutR && lutG && lutB ) { // need to make RGB Pixels 
-                                      // from grey Pixels 
-                                      // and Lut R,Lut G,Lut B
-
-            unsigned char * newDest = (unsigned char*) malloc(lgrTotale);
-            int l = lgrTotale/3;
-            memmove(newDest, destination, l);// move Gray pixels to temp area
-
-            int j;
-               // See PS 3.3-2003 C.11.1.1.2 p 619
-               // 
-            int mult;
-            if (GetLUTNbits()==16 && nb==8) mult=2; // See PS 3.3 
-            else mult=1;
-
-            // if we get a black image, let's just remove the '+1'
-            // and check again 
-            // if it works, we shall have to check the 3 Palettes
-            // to see which byte is ==0 (first one, or second one)
-	                   
-            for (int i=0;i<l; i++) {
-               j=newDest[i]*mult +1;
-               *a++ = lutR[j]; 
-               *a++ = lutG[j];
-               *a++ = lutB[j];
-            }
-
+         unsigned char * newDest = (unsigned char *)malloc(lgrTotale);
+         unsigned char * a       = (unsigned char *)destination;
+	 
+         unsigned char * lutRGBA = (unsigned char *) GetLUTRGBA();
+	 if (lutRGBA) { 
+	    
+         int l = lgrTotale/3;
+         memmove(newDest, destination, l);// move Gray pixels to temp area	    
+	 int j;	 
+         for (int i=0;i<l; i++) {         // Build RGB Pixels
+            j=newDest[i]*4;
+            *a++ = lutRGBA[j]; 
+            *a++ = lutRGBA[j+1];
+            *a++ = lutRGBA[j+2];
+         }
             free(newDest);
                
          } else { 
 	     // need to make RGB Pixels (?)
-             // from grey Pixels (?!)
-             // and Gray Lut  (!?!) 
-             //unsigned char *lutGray =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1200);
+             //    from grey Pixels (?!)
+             //     and Gray Lut  (!?!) 
+	     //    or Segmented Green Palette Color Lookup Table Data and so on
 		  
-                             // Well . I'll wait till I find such an image 
-		  
-	     // or Segmented Green Palette Color Lookup Table Data and so on
-		  
-		            // Oops! I get one (gdcm-US-ALOKA-16.dcm)
-			    // No idea how to manage it :-(
-			    // Segmented xxx Palette Color are *more* than 65535 long ?!?
+             // Well . I'll wait till I find such an image 
+		  		  
+		   // Oops! I get one (gdcm-US-ALOKA-16.dcm)
+                   // No idea how to manage it 
+		   // It seems that *no Dicom Viewer* has any idea :-(
+		   // Segmented xxx Palette Color are *more* than 65535 long ?!?
 			    
-            // WARNING : quick and dirty trick to produce a single plane Grey image
+            // WARNING : quick and dirty trick to produce 
+	    //           a single plane Grey image
 	    // See also  gdcmHeaderHelper::GetNumberOfScalarComponents()         		      
 		    lgrTotale /=3;
 		    return lgrTotale;
@@ -579,7 +558,6 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          break;
       }
    } 
-
             // now, it's an RGB image
             // Lets's write it in the Header
 
@@ -592,14 +570,11 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    std::string planConfig = "0"; // Planar Configuration
    gdcmHeader::SetPubElValByNumber(planConfig,0x0028,0x0006);
 	 
-	 // + Drop Palette Color ? 
+	 // TODO : Drop Palette Color out of the Header? 
 	     
    return lgrTotale; 
 }
 
-//
-// Je laisse le code integral, au cas ça puisse etre reutilise ailleurs
-//
 
 /**
  * \ingroup gdcmFile
