@@ -4,6 +4,15 @@
      - more code moved away from File:: to PixelConvert::
      - fat setup of PixelConverter set in place in File::Initialise.
 
+2004-10-12 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Apply patch for namespace in gdcm. Didn't rename files for keeping a sort of
+  namespace at the file system level. So now you should convert your examples
+  like this:
+    gdcmHeader  ->   gdcm::Header
+  It would be nice if people keep in mind to no open the namespace, since it
+  allows compilation on broken plateform which were defining common symbol in
+  the standart namespace (like LP, Unknown ...)
+
 2004-10-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND (10) for gdcmPixelConvert (Xanax is my friend stage)
     The JPEG fragments are now parsed at the same stage than the RLE
@@ -57,6 +66,18 @@
   * CLEANUP_ROUND (4) for gdcmPixelConvert
     - src/gdcmDocument.[cxx|h] ::ParseDES and ::ParseSQ no longer bother
       to return an unused length.
+
+2004-10-09 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Remove all sprintf from the code to centralize in one spot in gdcmUtil
+    this should be cleanner from the plane view. The iostream are erally a pain
+    to use to do simple stuff.
+
+2004-10-04 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Redo the compilation of the ijg jpeg library. Now only one source is
+    necesseray. No need to rename file by hand what so ever. CMake handle the
+    copying of the file within different directory, configure header file to
+    modify some symbol. The only addition made to ijg wasd a mangle table so
+    that symbol are different wether we are within 8bits or 12bits.
 
 2004-10-01 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Added documentation of vtkgdcmReader on Website:
