@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 09:23:27 $
-  Version:   $Revision: 1.187 $
+  Date:      $Date: 2005/01/13 09:53:42 $
+  Version:   $Revision: 1.188 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2484,11 +2484,14 @@ DocEntry *Document::ReadNextDocEntry()
       if( Filetype == ExplicitVR )
       {
          // We thought this was explicit VR, but we end up with an
-         // implicit VR tag. Let's backtrack.   
-         std::string msg;
-         msg = Util::Format("Falsely explicit vr file (%04x,%04x)\n", 
-                       newEntry->GetGroup(), newEntry->GetElement());
-         gdcmVerboseMacro( msg.c_str() );
+         // implicit VR tag. Let's backtrack.
+         if ( newEntry->GetGroup() != 0xfffe )
+         { 
+            std::string msg;
+            msg = Util::Format("Falsely explicit vr file (%04x,%04x)\n", 
+                          newEntry->GetGroup(), newEntry->GetElement());
+            gdcmVerboseMacro( msg.c_str() );
+          }
       }
       newEntry->SetImplicitVR();
    }
