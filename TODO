@@ -12,6 +12,13 @@ Comments:
 
 
 -----------------------------------------------------------------------------
+Description: Change jpeg 'exit' call to standard c++ exception using the jpeg error
+handler
+Date: 2004 Oct 8
+Attributed: 
+Details:
+Comments:
+-----------------------------------------------------------------------------
 Description: Add kwsys as a subdir somewhere in gdcm
 Date: 2004 Oct 8
 Attributed: Mathieu
