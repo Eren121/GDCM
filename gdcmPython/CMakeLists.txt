@@ -30,6 +30,18 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   #MESSAGE(FATAL_ERROR ${swig_generated_file_fullname})
   #MESSAGE(FATAL_ERROR ${swig_source_file_fullname})
 
+  # Swig creates a gdcm.py file put it in the right place, if only cmake
+  # was able to do stuff properly ...
+  ADD_CUSTOM_TARGET( CMAKE_S____ ALL)
+  ADD_CUSTOM_COMMAND(
+    TARGET CMAKE_S____
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E copy 
+      ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py
+      ${GDCM_BINARY_DIR}/bin/gdcm.py
+  )
+
 ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
   # As of 09/10/2003 there was no FindSWIG.cmake
@@ -75,7 +87,7 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   # Then create the gdcm.py = gdcmVersion.py + gdcm.py (swig) file:
   FILE(WRITE ${GDCM_BINARY_DIR}/bin/gdcmVersion.py
     "import os\n"
-    "gdcmVERSION=\"${GDCM_VERSION_FULL}\"\n"
+    "gdcmVERSION=\"${GDCM_VERSION}\"\n"
     "GDCM_DATA_PATH=\"${GDCM_DATA_ROOT}\"\n\n"
     ${SWIG_GDCM_PY}
     )
