@@ -192,6 +192,9 @@ void * gdcmFile::GetImageData (void) {
 	Pixels = _Pixels;
 	lgrTotale = _lgrTotale;
 	
+	// et on le retourne
+	// ca fait double emploi, il faudra nettoyer ça
+	
 	return (_Pixels);		
 }
 

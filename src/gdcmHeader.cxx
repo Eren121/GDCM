@@ -30,6 +30,11 @@ namespace Error {
 
 //FIXME: this looks dirty to me...
 #define str2num(str, typeNum) *((typeNum *)(str))
+// str est un pointeur dans un tableau de caractères, qui doit contenir, 
+// à cet endroit la, la représentation binaire d'un entier (16 ou 32 bits)
+// je veux récupérer ça ... dans un entier.
+// s'il y a une autre solution, évitant des cast et les indirections,
+// je suis preneur
 
 VRHT * gdcmHeader::dicom_vr = (VRHT*)0;
 gdcmDictSet* gdcmHeader::Dicts = new gdcmDictSet();
@@ -238,11 +243,12 @@ void gdcmHeader::SwitchSwapToBigEndian(void) {
 		sw = 3412;
 }
 
-void gdcmHeader::GetPixels(size_t lgrTotale, void* Pixels) {
+void gdcmHeader::GetPixels(size_t lgrTotale, void* _Pixels) {
 	size_t pixelsOffset; 
 	pixelsOffset = GetPixelOffset();
+	printf("pixelsOffset %d\n",pixelsOffset);
 	fseek(fp, pixelsOffset, SEEK_SET);
-	fread(Pixels, 1, lgrTotale, fp);
+	fread(_Pixels, 1, lgrTotale, fp);
 }
 
 
@@ -944,7 +950,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
 	guint16 grPixel;
 	guint16 numPixel;
 	string ImageLocation = GetPubElValByName("Image Location");
-	if ( ImageLocation == "UNFOUND" ) {
+	if ( ImageLocation == "gdcm::Unfound" ) {
 		grPixel = 0x7fe0;
 	} else {
 		grPixel = (guint16) atoi( ImageLocation.c_str() );
