@@ -388,12 +388,12 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    guint32 val_uint32;
    guint16 val_uint16;
    
-   vector<std::string> tokens;
+   std::vector<std::string> tokens;
 
    void *ptr;
 
    // Tout ceci ne marche QUE parce qu'on est sur un proc Little Endian 
-   // restent à tester les echecs en écriture (apres chaque fwrite)
+   // restent Ã  tester les echecs en Ã©criture (apres chaque fwrite)
 
    for (TagElValueHT::iterator tag2=tagHt.begin();
         tag2 != tagHt.end();

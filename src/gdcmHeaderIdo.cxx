@@ -29,7 +29,7 @@ void gdcmHeaderIdo::BuildHeader(void) {
  *          filetype.
  */
 void gdcmHeaderIdo::setAcrLibido(void) {
-	string RecCode;
+	std::string RecCode;
 	
 	RecCode = GetPubElValByNumber(0x0008, 0x0010);
 	if (RecCode == "ACRNEMA_LIBIDO" ||
