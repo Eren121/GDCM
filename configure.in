@@ -83,6 +83,8 @@ AC_OUTPUT([
 Makefile 
 gdcm.spec
 src/Makefile
+src/jpeg/Makefile
+src/jpeg/libijg8/Makefile
 gdcmPython/Makefile
 Test/Makefile
 Dicts/Makefile

@@ -1,3 +1,11 @@
+2003-06-20  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * Clean up of previous JPR garbage commit (not even commented in the
+        Changelog):
+        - Test/Makefile.am removed the reference to unexisting testTS.cxx
+        - moved all jpeg related files from src to src/jpeg/libijg8, with
+          addition/modification of Makefile.am and configure.in.
+        - the testSuite is still brain damage (not guilty).
+
 2003-06-02  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * WrapVTK.py : modifications to get correctly vtk source files to 
         compile

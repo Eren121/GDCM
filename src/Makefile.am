@@ -1,14 +1,4 @@
-#
-# Targets
-#
-
-# Before making a release, the LTVERSION string should be modified.
-# The string is of the form C:R:A.
-# - If interfaces have been changed or added, but binary compatibility has
-#   been preserved, change to C+1:0:A+1
-# - If binary compatibility has been broken (eg removed or changed interfaces)
-#   change to C+1:0:0
-# - If the interface is the same as the previous version, change to C:R+1:A
+SUBDIRS = jpeg
 
 LTVERSION = 0:1:0
 
@@ -16,6 +6,9 @@ lib_LTLIBRARIES = libgdcm.la
 
 CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\" \
            -D__STDC_LIMIT_MACROS  # Refer to stdint.h
+
+libgdcm_la_LIBADD = \
+   $(top_builddir)/src/jpeg/libijg8/libgdcmijpeg8.la
 
 libgdcm_la_SOURCES=		\
 	gdcmException.cxx	\
@@ -31,53 +24,7 @@ libgdcm_la_SOURCES=		\
 	gdcmVR.cxx	\
 	gdcmTS.cxx	\
 	gdcmJpeg.cxx	\
-	gdcmJpegIdo.cxx	\
-jcapimin.c \
-jcapistd.c \
-jctrans.c \
-jcparam.c \
-jdatadst.c \
-jcinit.c \
-jcmaster.c \
-jcmarker.c \
-jcmainct.c \
-jcprepct.c \
-jccoefct.c \
-jccolor.c \
-jcsample.c \
-jchuff.c \
-jcphuff.c \
-jcdctmgr.c \
-jfdctfst.c \
-jfdctflt.c \
-jfdctint.c \
-jdapimin.c \
-jdapistd.c \
-jdtrans.c \
-jdatasrc.c \
-jdmaster.c \
-jdinput.c \
-jdmarker.c \
-jdhuff.c \
-jdphuff.c \
-jdmainct.c \
-jdcoefct.c \
-jdpostct.c \
-jddctmgr.c \
-jidctfst.c \
-jidctflt.c \
-jidctint.c \
-jidctred.c \
-jdsample.c \
-jdcolor.c \
-jquant1.c \
-jquant2.c \
-jdmerge.c \
-jcomapi.c \
-jutils.c \
-jerror.c \
-jmemmgr.c \
-jmemnobs.c
+	gdcmJpegIdo.cxx
 
 libgdcmincludedir = $(includedir)
 libgdcminclude_HEADERS = \
@@ -92,18 +39,7 @@ libgdcminclude_HEADERS = \
 	gdcmElValSet.h	\
 	gdcmVR.h	\
 	gdcmTS.h	\
-	gdcmFile.h \
-jchuff.h  \
-jconfig.h  \
-jdct.h  \
-jdhuff.h  \
-jerror.h  \
-jinclude.h  \
-jmemsys.h  \
-jmorecfg.h  \
-jpegint.h  \
-jpeglib.h  \
-jversion.h
+	gdcmFile.h
 
 EXTRA_DIST = \
 	gdcmUtil.h	\
