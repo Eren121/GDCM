@@ -479,8 +479,8 @@ public:
 
 	int SetPubElValByName(string content, string TagName);
 	int SetPubElValByNumber(string content, guint16 group, guint16 element);
-	// TODO Swig int SetShaElValByName(string content, string ShadowTagName);
-	// TODO Swig int SetShaElValByNumber(string content, guint16 group, guint16 element);
+	int SetShaElValByName(string content, string ShadowTagName);
+	int SetShaElValByNumber(string content, guint16 group, guint16 element);
 
 };
 

@@ -1111,6 +1111,29 @@ int gdcmHeader::SetPubElValByName(string content, string TagName) {
 	return (  PubElVals.SetElValueByName (content, TagName) );
 }
 
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Modifie la valeur d'un ElValue déja existant
+ * \	dans le ShaElVals du gdcmHeader,
+ * \	accédé par ses numero de groupe et d'element.
+ */
+int gdcmHeader::SetShaElValByNumber(string content, guint16 group, guint16 element) {
+	
+	return (  ShaElVals.SetElValueByNumber (content, group, element) );
+}
+
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Modifie la valeur d'un ElValue déja existant
+ * \	dans le ShaElVals du gdcmHeader,
+ * \	accédé par son nom
+ */
+int gdcmHeader::SetShaElValByName(string content, string TagName) {
+	
+	return (  ShaElVals.SetElValueByName (content, TagName) );
+}
 /**
  * \ingroup gdcmHeader
  * \brief   Parses the header of the file but does NOT load element values.
