@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/23 11:14:13 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2004/11/24 10:23:47 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,8 +123,6 @@ private:
    void Initialise();
 
    void SaveInitialValues();    // will belong to the future PixelData class
-   void RestoreInitialValues(); // will belong to the future PixelData class
-   void DeleteInitialValues();  // will belong to the future PixelData class 
    uint8_t* GetDecompressed();
    int ComputeDecompressedPixelDataSizeFromHeader();
 
@@ -178,46 +176,6 @@ private:
   ///        ==-1 if ImageData never read                       
    int PixelRead;
 
-  /// \brief length of the last allocated area devoided to receive Pixels
-  ///        ( to allow us not to (free + new) if un necessary )     
-   size_t LastAllocatedPixelDataLength; 
-
-  // Initial values of some fields that can be modified during reading process
-  // if user asked to transform gray level + LUT image into RGB image
-     
-  /// \brief Samples Per Pixel           (0x0028,0x0002), as found on disk
-   std::string InitialSpp;
-  /// \brief Photometric Interpretation  (0x0028,0x0004), as found on disk
-   std::string InitialPhotInt;
-  /// \brief Planar Configuration        (0x0028,0x0006), as found on disk   
-   std::string InitialPlanConfig;
-    
-  // Initial values of some fields that can be modified during reading process
-  // if the image was a 'strange' ACR-NEMA 
-  // (Bits Allocated=12, High Bit not equal to Bits stored +1) 
-  /// \brief Bits Allocated              (0x0028,0x0100), as found on disk
-   std::string InitialBitsAllocated;
-  /// \brief High Bit                    (0x0028,0x0102), as found on disk
-   std::string InitialHighBit;
-  
-  // some DocEntry that can be moved out of the H table during reading process
-  // if user asked to transform gray level + LUT image into RGB image
-  // We keep a pointer on them for a future use.
-     
-  /// \brief Red Palette Color Lookup Table Descriptor   0028 1101 as read
-  DocEntry* InitialRedLUTDescr;  
-  /// \brief Green Palette Color Lookup Table Descriptor 0028 1102 as read
-  DocEntry* InitialGreenLUTDescr;
-  /// \brief Blue Palette Color Lookup Table Descriptor  0028 1103 as read
-  DocEntry* InitialBlueLUTDescr;
-  
-  /// \brief Red Palette Color Lookup Table Data         0028 1201 as read
-  DocEntry* InitialRedLUTData;  
-  /// \brief Green Palette Color Lookup Table Data       0028 1202 as read
-  DocEntry* InitialGreenLUTData;
-  /// \brief Blue Palette Color Lookup Table Data        0028 1203 as read
-  DocEntry* InitialBlueLUTData;
-  
 //
 // --------------- end of future PixelData class
 //  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/11/24 10:23:46 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
       delete header;
       return 1;
    }
-   std::cout << "           step 1 ...";
+   std::cout << "           step 1...";
 
    //////////////// Step 2:
 
@@ -64,6 +64,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
    
    file->SetImageData(imageData, dataSize);
    
+   file->SetWriteModeToRGB();
    file->WriteDcmExplVR( output );
    std::cout << "2...";
  
@@ -72,7 +73,8 @@ int CompareInternal(std::string const & filename, std::string const & output)
    gdcm::File* reread = new gdcm::File( output );
    if( !reread->GetHeader()->IsReadable() )
    {
-     std::cerr << "Test::TestReadWriteReadCompare: Could not reread image "
+     std::cerr << "Failed" << std::endl
+               << "Test::TestReadWriteReadCompare: Could not reread image "
                << "written:" << filename << std::endl;
      delete header;
      delete file;
@@ -88,7 +90,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
 
    if (dataSize != dataSizeWritten)
    {
-      std::cout << std::endl
+      std::cout << "Failed" << std::endl
          << "        Pixel areas lengths differ: "
          << dataSize << " # " << dataSizeWritten << std::endl;
       delete header;
@@ -100,7 +102,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
    if (int res = memcmp(imageData, imageDataWritten, dataSize) !=0)
    {
       (void)res;
-      std::cout << std::endl
+      std::cout << "Failed" << std::endl
          << "        Pixel differ (as expanded in memory)." << std::endl;
       delete header;
       delete file;

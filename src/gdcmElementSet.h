@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/19 18:49:39 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/24 10:23:47 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,12 +52,17 @@ public:
    // A test is using it thus put it in public (matt)
    TagDocEntryHT const & GetTagHT() const { return TagHT; };
 
+   void Initialize();
+   DocEntry *GetNextEntry();
+
 protected:
     
 private:
 // Variables
    /// Hash Table (map), to provide fast access
    TagDocEntryHT TagHT; 
+   /// Hash Table (map) iterator, used to visit the TagHT variable
+   TagDocEntryHT::iterator ItTagHT; 
  
    friend class Document;
    friend class DicomDir; //For accessing private TagHT

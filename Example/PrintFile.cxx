@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/23 17:12:25 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/11/24 10:23:46 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,9 @@ int main(int argc, char* argv[])
              << std::endl;
 
    int numberOfScalarComponents=e1->GetNumberOfScalarComponents();
-   std::cout << " NumberOfScalarComponents " << numberOfScalarComponents <<std::endl;
+   std::cout << " NumberOfScalarComponents " << numberOfScalarComponents <<std::endl
+             << " LUT=" << (e1->HasLUT() ? "TRUE" : "FALSE")
+             << std::endl;
 
   
   if ( e1->GetEntryByNumber(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) {

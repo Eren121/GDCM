@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/23 11:14:13 $
-  Version:   $Revision: 1.159 $
+  Date:      $Date: 2004/11/24 10:23:47 $
+  Version:   $Revision: 1.160 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,10 +75,11 @@ File::File(std::string const & filename )
  */
 void File::Initialise()
 {
-   WriteMode = WMODE_DECOMPRESSED;
+   WriteMode = WMODE_RGB;
    WriteType = WTYPE_IMPL_VR;
-   PixelConverter = NULL; //just in case
-   Archive = NULL;
+
+   PixelConverter = new PixelConvert;
+   Archive = new DocEntryArchive( HeaderInternal );
 
    if ( HeaderInternal->IsReadable() )
    {
@@ -92,10 +93,7 @@ void File::Initialise()
          ImageDataSize = ImageDataSizeRaw;
       }
 
-      PixelConverter = new PixelConvert;
       PixelConverter->GrabInformationsFromHeader( HeaderInternal );
-
-      Archive = new DocEntryArchive( HeaderInternal );
    }
 
    SaveInitialValues();
@@ -122,8 +120,6 @@ File::~File()
       delete HeaderInternal;
    }
    HeaderInternal = 0;
-
-   DeleteInitialValues();
 }
 
 /**
@@ -133,119 +129,7 @@ File::~File()
 void File::SaveInitialValues()
 { 
    PixelRead  = -1; // no ImageData read yet.
-   LastAllocatedPixelDataLength = 0;
    Pixel_Data = 0;
-
-   InitialSpp = "";     
-   InitialPhotInt = "";
-   InitialPlanConfig = "";
-   InitialBitsAllocated = "";
-   InitialHighBit = "";
-  
-   InitialRedLUTDescr   = 0;
-   InitialGreenLUTDescr = 0;
-   InitialBlueLUTDescr  = 0;
-   InitialRedLUTData    = 0;
-   InitialGreenLUTData  = 0;
-   InitialBlueLUTData   = 0; 
-
-   if ( HeaderInternal->IsReadable() )
-   {
-      // the following values *may* be modified 
-      // by File::GetImageDataIntoVectorRaw
-      // we save their initial value.
-      InitialSpp           = HeaderInternal->GetEntryByNumber(0x0028,0x0002);
-      InitialPhotInt       = HeaderInternal->GetEntryByNumber(0x0028,0x0004);
-      InitialPlanConfig    = HeaderInternal->GetEntryByNumber(0x0028,0x0006);
-      
-      InitialBitsAllocated = HeaderInternal->GetEntryByNumber(0x0028,0x0100);
-      InitialHighBit       = HeaderInternal->GetEntryByNumber(0x0028,0x0102);
-
-      // the following entries *may* be removed from the H table
-      // (NOT deleted ...) by File::GetImageDataIntoVectorRaw  
-      // we keep a pointer on them.
-      InitialRedLUTDescr   = HeaderInternal->GetDocEntryByNumber(0x0028,0x1101);
-      InitialGreenLUTDescr = HeaderInternal->GetDocEntryByNumber(0x0028,0x1102);
-      InitialBlueLUTDescr  = HeaderInternal->GetDocEntryByNumber(0x0028,0x1103);
-
-      InitialRedLUTData    = HeaderInternal->GetDocEntryByNumber(0x0028,0x1201);
-      InitialGreenLUTData  = HeaderInternal->GetDocEntryByNumber(0x0028,0x1202);
-      InitialBlueLUTData   = HeaderInternal->GetDocEntryByNumber(0x0028,0x1203); 
-   }
-}
-
-/**
- * \brief restores some initial values
- * \warning not end user intended
- */
-void File::RestoreInitialValues()
-{   
-   if ( HeaderInternal->IsReadable() )
-   {      
-      // the following values *may* have been modified 
-      // by File::GetImageDataIntoVectorRaw
-      // we restore their initial value.
-      if ( InitialSpp != "")
-         HeaderInternal->SetEntryByNumber(InitialSpp,0x0028,0x0002);
-      if ( InitialPhotInt != "")
-         HeaderInternal->SetEntryByNumber(InitialPhotInt,0x0028,0x0004);
-      if ( InitialPlanConfig != "")
-
-         HeaderInternal->SetEntryByNumber(InitialPlanConfig,0x0028,0x0006);
-      if ( InitialBitsAllocated != "")
-          HeaderInternal->SetEntryByNumber(InitialBitsAllocated,0x0028,0x0100);
-      if ( InitialHighBit != "")
-          HeaderInternal->SetEntryByNumber(InitialHighBit,0x0028,0x0102);
-               
-      // the following entries *may* be have been removed from the H table
-      // (NOT deleted ...) by File::GetImageDataIntoVectorRaw  
-      // we restore them.
-
-      if (InitialRedLUTDescr)
-         HeaderInternal->AddEntry(InitialRedLUTDescr);
-      if (InitialGreenLUTDescr)
-         HeaderInternal->AddEntry(InitialGreenLUTDescr);
-      if (InitialBlueLUTDescr)
-         HeaderInternal->AddEntry(InitialBlueLUTDescr);
-
-      if (InitialRedLUTData)
-         HeaderInternal->AddEntry(InitialBlueLUTDescr);
-      if (InitialGreenLUTData)
-         HeaderInternal->AddEntry(InitialGreenLUTData);
-      if (InitialBlueLUTData)
-         HeaderInternal->AddEntry(InitialBlueLUTData);
-   }
-}
-
-/**
- * \brief delete initial values (il they were saved)
- *        of InitialLutDescriptors and InitialLutData
- */
-void File::DeleteInitialValues()
-{ 
-// InitialLutDescriptors and InitialLutData
-// will have to be deleted if the don't belong any longer
-// to the Header H table when the header is deleted...
-
-// FIXME 
-// We don't know if the InitialLutData are still in the header or not !
-/*   if ( InitialRedLUTDescr )
-      delete InitialRedLUTDescr;
-  
-   if ( InitialGreenLUTDescr )
-      delete InitialGreenLUTDescr;
-      
-   if ( InitialBlueLUTDescr )
-      delete InitialBlueLUTDescr;
-       
-   if ( InitialRedLUTData )
-      delete InitialRedLUTData;
-   
-   if ( InitialGreenLUTData )
-      delete InitialGreenLUTData;
-      
-   if ( InitialBlueLUTData )
-      delete InitialBlueLUTData;*/
 }
 
 //-----------------------------------------------------------------------------
@@ -651,10 +535,10 @@ bool File::Write(std::string const& fileName)
  */
 bool File::WriteBase (std::string const & fileName, FileType type)
 {
-   if ( PixelRead == -1 && type != ExplicitVR)
+/*   if ( PixelRead == -1 && type != ExplicitVR)
    {
       return false;
-   }
+   }*/
 
    std::ofstream* fp1 = new std::ofstream(fileName.c_str(), 
                               std::ios::out | std::ios::binary);
@@ -703,7 +587,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    }
    // ----------------- End of Special Patch ----------------
       
-   uint16_t grPixel  = HeaderInternal->GetGrPixel();
+/*   uint16_t grPixel  = HeaderInternal->GetGrPixel();
    uint16_t numPixel = HeaderInternal->GetNumPixel();;
           
    DocEntry* PixelElement = 
@@ -718,7 +602,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    {
       // we tranformed GrayLevel pixels + LUT into RGB Pixel
       PixelElement->SetLength( ImageDataSize );
-   }
+   }*/
  
    HeaderInternal->Write(fp1, type);
 

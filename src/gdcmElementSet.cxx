@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 16:20:23 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/11/24 10:23:47 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -146,6 +146,8 @@ bool ElementSet::RemoveEntryNoDestroy(DocEntry* entryToRemove)
 /**
  * \brief   Clear the hash table from given entry AND delete the entry.
  * @param   entryToRemove Entry to remove AND delete.
+ * \warning Some problems when using under Windows... prefer the use of
+ *          Initialize / GetNext methods
  */
 bool ElementSet::RemoveEntry( DocEntry* entryToRemove)
 {
@@ -161,4 +163,33 @@ bool ElementSet::RemoveEntry( DocEntry* entryToRemove)
    dbg.Verbose(0, "ElementSet::RemoveEntry: key not present: ");
    return false ;
 }
+
+/**
+ * \brief   Initialise the visit of the Hash table (TagHT)
+ */
+void ElementSet::Initialize()
+{
+   ItTagHT = TagHT.begin();
+}
+
+/**
+ * \brief   Get the next entry whil visiting the Hash table (TagHT)
+ * \return  The next DocEntry if found, otherwhise NULL
+ */
+DocEntry *ElementSet::GetNextEntry()
+{
+   if (ItTagHT != TagHT.end())
+   {
+      DocEntry *tmp = ItTagHT->second;
+      ++ItTagHT;
+
+      return(tmp);
+   }
+   else
+   {
+      return(NULL);
+   }
+}
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm

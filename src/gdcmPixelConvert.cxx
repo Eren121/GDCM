@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/17 19:49:13 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/11/24 10:23:47 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -870,7 +870,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
             return;
          }
       }
-   
+
       ////// Green round:
       LutGreenData = (uint8_t*)header->GetEntryBinAreaByNumber(0x0028, 0x1202 );
       if ( ! LutGreenData)
@@ -888,7 +888,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
             return;
          }
       }
-                                                                                   
+
       ////// Blue round:
       LutBlueData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1203 );
       if ( ! LutBlueData )
@@ -907,7 +907,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          }
       }
    }
-                                                                                
+
    if(fp) header->CloseFile();
 }
 

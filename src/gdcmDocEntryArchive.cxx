@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/23 11:14:13 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/11/24 10:23:47 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,12 +82,42 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
       // Save the old DocEntry if any
       TagDocEntryHT::iterator it = HeaderHT.find(key);
       if( it!=HeaderHT.end() )
+      {
          Archive[key] = it->second;
+      }
       else
+      {
          Archive[key] = NULL;
+      }
 
       // Set the new DocEntry
       HeaderHT[key] = newEntry;
+
+      return(true);
+   }
+   return(false);
+}
+
+/**
+ * \brief   Replace in the Header a DocEntry by the new DocEntry. The last
+ *          DocEntry is kept in archieve
+ * @param   newEntry New entry to substitute to an other entry of the Header
+ * @return  FALSE when an other DocEntry is already archieved with the same
+ *          generalized key, TRUE otherwise
+ */
+bool DocEntryArchive::Push(uint16_t group,uint16_t element)
+{
+   std::string key = DictEntry::TranslateToKey(group,element);
+
+   if( Archive.find(key)==Archive.end() )
+   {
+      // Save the old DocEntry if any
+      TagDocEntryHT::iterator it = HeaderHT.find(key);
+      if( it!=HeaderHT.end() )
+      {
+         Archive[key] = it->second;
+         HeaderHT.erase(it);
+      }
 
       return(true);
    }
@@ -109,13 +139,19 @@ bool DocEntryArchive::Restore(uint16_t group,uint16_t element)
    if( restoreIt!=Archive.end() )
    {
       TagDocEntryHT::iterator restorePos = HeaderHT.find(key);
-      if( restoreIt!=HeaderHT.end() )
+      if( restorePos!=HeaderHT.end() )
+      {
          delete restorePos->second;
+      }
 
       if( Archive[key] )
+      {
          HeaderHT[key] = Archive[key];
+      }
       else
+      {
          HeaderHT.erase(restorePos);
+      }
 
       Archive.erase(restoreIt);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/19 18:49:39 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/11/24 10:23:47 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,6 +45,7 @@ public:
    void Print(std::ostream &os = std::cout);
 
    bool Push(DocEntry *newEntry);
+   bool Push(uint16_t group,uint16_t element);
    bool Restore(uint16_t group,uint16_t element);
 
    void ClearArchive(void);
