@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.171 $
+  Date:      $Date: 2004/12/07 09:32:24 $
+  Version:   $Revision: 1.172 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -540,18 +540,13 @@ void File::SetWriteToDecompressed()
          photInt->SetLength(12);
       }
 
+      PixelWriteConverter->SetReadData(PixelReadConverter->GetDecompressed(),
+                                       PixelReadConverter->GetDecompressedSize());
+
       BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
-      if(PixelWriteConverter->GetUserData())
-      {
-         pixel->SetBinArea(PixelWriteConverter->GetUserData(),false);
-         pixel->SetLength(PixelWriteConverter->GetUserDataSize());
-      }
-      else
-      {
-         pixel->SetBinArea(PixelReadConverter->GetDecompressed(),false);
-         pixel->SetLength(PixelReadConverter->GetDecompressedSize());
-      }
+      pixel->SetBinArea(PixelWriteConverter->GetData(),false);
+      pixel->SetLength(PixelWriteConverter->GetDataSize());
 
       Archive->Push(photInt);
       Archive->Push(pixel);
@@ -576,23 +571,21 @@ void File::SetWriteToRGB()
       photInt->SetValue("RGB ");
       photInt->SetLength(4);
 
-      BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
-      pixel->SetValue(GDCM_BINLOADED);
-      if(PixelWriteConverter->GetUserData())
+      if(PixelReadConverter->GetRGB())
       {
-         pixel->SetBinArea(PixelWriteConverter->GetUserData(),false);
-         pixel->SetLength(PixelWriteConverter->GetUserDataSize());
-      }
-      else if(PixelReadConverter->GetRGB())
-      {
-         pixel->SetBinArea(PixelReadConverter->GetRGB(),false);
-         pixel->SetLength(PixelReadConverter->GetRGBSize());
+         PixelWriteConverter->SetReadData(PixelReadConverter->GetRGB(),
+                                          PixelReadConverter->GetRGBSize());
       }
       else // Decompressed data
       {
-         pixel->SetBinArea(PixelReadConverter->GetDecompressed(),false);
-         pixel->SetLength(PixelReadConverter->GetDecompressedSize());
+         PixelWriteConverter->SetReadData(PixelReadConverter->GetDecompressed(),
+                                          PixelReadConverter->GetDecompressedSize());
       }
+
+      BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+      pixel->SetValue(GDCM_BINLOADED);
+      pixel->SetBinArea(PixelWriteConverter->GetData(),false);
+      pixel->SetLength(PixelWriteConverter->GetDataSize());
 
       Archive->Push(spp);
       Archive->Push(planConfig);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 11:55:38 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/12/07 09:32:24 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,6 +42,10 @@ public:
    void SetUserData(uint8_t* data,size_t size);
    uint8_t* GetUserData() { return UserData; }
    size_t   GetUserDataSize() { return UserDataSize; }
+
+   // Get the used image and its size
+   uint8_t* GetData();
+   size_t   GetDataSize();
 
 private:
 // Variables

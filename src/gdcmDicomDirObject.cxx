@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/06 11:37:38 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/12/07 09:32:24 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,7 @@ void DicomDirObject::FillObject(ListDicomDirMetaElem const & elemList)
       else
       {
          entry->SetLength(entry->GetValue().length()); 
-      }                                
+      }
       AddEntry(entry);
    }   
 }   

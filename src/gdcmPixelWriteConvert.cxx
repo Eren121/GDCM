@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 11:55:38 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/12/07 09:32:24 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,15 +57,29 @@ void PixelWriteConvert::SetUserData(uint8_t* data,size_t size)
    UserDataSize = size;
 }
 
+uint8_t* PixelWriteConvert::GetData()
+{
+   if(UserData)
+   {
+      return UserData;
+   }
+   else
+   {
+      return ReadData;
+   }
+}
+
+size_t PixelWriteConvert::GetDataSize()
+{
+   if(UserData)
+   {
+      return UserDataSize;
+   }
+   else
+   {
+      return ReadDataSize;
+   }
+}
+
 //-----------------------------------------------------------------------------
 } // end namespace gdcm
-
-// NOTES on File internal calls
-// User
-// ---> GetImageData
-//     ---> GetImageDataIntoVector
-//        |---> GetImageDataIntoVectorRaw
-//        | lut intervention
-// User
-// ---> GetImageDataRaw
-//     ---> GetImageDataIntoVectorRaw
