@@ -1,0 +1,71 @@
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/12/03 11:55:38 $
+  Version:   $Revision: 1.1 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
+//////////////////   TEMPORARY NOTE
+// look for "fixMem" and convert that to a member of this class
+// Removing the prefix fixMem and dealing with allocations should do the trick
+//
+// grep PixelWriteConvert everywhere and clean up !
+
+#include "gdcmDebug.h"
+#include "gdcmPixelWriteConvert.h"
+#include <stdio.h>
+
+namespace gdcm
+{
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
+PixelWriteConvert::PixelWriteConvert() 
+{
+   ReadData = 0;
+   ReadDataSize = 0;
+
+   UserData = 0;
+   UserDataSize = 0;
+}
+
+PixelWriteConvert::~PixelWriteConvert() 
+{
+}
+
+//-----------------------------------------------------------------------------
+// Public
+void PixelWriteConvert::SetReadData(uint8_t* data,size_t size)
+{
+   ReadData = data;
+   ReadDataSize = size;
+}
+
+void PixelWriteConvert::SetUserData(uint8_t* data,size_t size)
+{
+   UserData = data;
+   UserDataSize = size;
+}
+
+//-----------------------------------------------------------------------------
+} // end namespace gdcm
+
+// NOTES on File internal calls
+// User
+// ---> GetImageData
+//     ---> GetImageDataIntoVector
+//        |---> GetImageDataIntoVectorRaw
+//        | lut intervention
+// User
+// ---> GetImageDataRaw
+//     ---> GetImageDataIntoVectorRaw

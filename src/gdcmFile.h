@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 10:21:54 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2004/12/03 11:55:38 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmCommon.h"
 #include "gdcmHeader.h"
 #include "gdcmPixelReadConvert.h"
+#include "gdcmPixelWriteConvert.h"
 #include "gdcmDocEntryArchive.h"
 
 namespace gdcm 
@@ -59,9 +60,6 @@ public:
 
    size_t GetImageDataSize();
    size_t GetImageDataRawSize();
-
-   /// Accessor to \ref PixelReadConverter
-   PixelReadConvert* GetPixelReadConverter() { return PixelReadConverter; };
 
    uint8_t* GetImageData();
    uint8_t* GetImageDataRaw();
@@ -141,6 +139,7 @@ private:
 
    /// Utility pixel converter
    PixelReadConvert* PixelReadConverter;
+   PixelWriteConvert* PixelWriteConverter;
 
    // Utility header archive
    DocEntryArchive *Archive;
@@ -148,25 +147,6 @@ private:
    // Write variables
    unsigned int WriteMode;
    unsigned int WriteType;
-
-/// FIXME
-// --------------- Will be moved to a PixelData class
-//
-
-   /// \brief to hold the Pixels (when read)
-   uint8_t* Pixel_Data;  // (was PixelData)
-   
-   /// \brief Size (in bytes) of requited memory to hold the the pixels
-   ///        of this image in it's RGB convertion either from:
-   ///        - Plane R, Plane G, Plane B 
-   ///        - Grey Plane + Palette Color
-   ///        - YBR Pixels (or from RGB Pixels, as well) 
-   size_t ImageDataSize;
-       
-//
-// --------------- end of future PixelData class
-// 
-
 };
 } // end namespace gdcm
 

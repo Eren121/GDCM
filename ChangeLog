@@ -1,6 +1,13 @@
 2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmPixelWriteConvert.[h|cxx] : new class to write datas (and in the
+     future, with convertion)
+   * src/gdcmFile.[h|cxx] : the PixelWriteConverter instance replace Pixel_Data
+     and ImageDataSize values. Remove the method to get the PixelReadConverter
+     from the output of the class
+
+2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Rename src/gdcmPixelConvert.[h|cxx] to src/gdcmPixelReadConvert.[h|cxx]
-   
+
 2004-12-02 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * vtk/vtkGdcmReader.cxx : correct error in vtkDebugMacro, vtkWarningMacro
      and vtkErrorMacro use.

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 10:21:53 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/12/03 11:55:37 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
    transferSyntaxName = e1->GetTransfertSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
    
-   if (  transferSyntaxName != "Implicit VR - Little Endian"
+/*   if (  transferSyntaxName != "Implicit VR - Little Endian"
       && transferSyntaxName != "Explicit VR - Little Endian"     
       && transferSyntaxName != "Deflated Explicit VR - Little Endian"      
       && transferSyntaxName != "Explicit VR - Big Endian"
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
       f1->GetPixelReadConverter()->Print();
       std::cout << std::endl << "==========================================="
                 << std::endl; 
-   }
+   }*/
    imageData= f1->GetImageData();
 
    switch (argv[2][0]) {

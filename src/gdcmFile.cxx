@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 10:21:54 $
-  Version:   $Revision: 1.168 $
+  Date:      $Date: 2004/12/03 11:55:38 $
+  Version:   $Revision: 1.169 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,15 +80,13 @@ void File::Initialise()
    WriteType = WTYPE_IMPL_VR;
 
    PixelReadConverter = new PixelReadConvert;
+   PixelWriteConverter = new PixelWriteConvert;
    Archive = new DocEntryArchive( HeaderInternal );
 
    if ( HeaderInternal->IsReadable() )
    {
       PixelReadConverter->GrabInformationsFromHeader( HeaderInternal );
    }
-
-   Pixel_Data = 0;
-   ImageDataSize = 0;
 }
 
 /**
@@ -101,6 +99,10 @@ File::~File()
    if( PixelReadConverter )
    {
       delete PixelReadConverter;
+   }
+   if( PixelWriteConverter )
+   {
+      delete PixelWriteConverter;
    }
    if( Archive )
    {
@@ -270,7 +272,7 @@ uint8_t* File::GetDecompressed()
 }
 
 /**
- * \brief   Points the internal Pixel_Data pointer to the callers inData
+ * \brief   Points the internal pointer to the callers inData
  *          image representation, BUT WITHOUT COPYING THE DATA.
  *          'image' Pixels are presented as C-like 2D arrays : line per line.
  *          'volume'Pixels are presented as C-like 3D arrays : plane per plane 
@@ -284,10 +286,8 @@ uint8_t* File::GetDecompressed()
  */
 bool File::SetImageData(uint8_t* inData, size_t expectedSize)
 {
-// FIXME : if already allocated, memory leak !
-   Pixel_Data     = inData;
-   ImageDataSize = expectedSize;
-// FIXME : 7fe0, 0010 IS NOT set ...
+   PixelWriteConverter->SetUserData(inData,expectedSize);
+
    return true;
 }
 
@@ -308,7 +308,14 @@ bool File::WriteRawData(std::string const & fileName)
       dbg.Verbose(2, "Fail to open (write) file:", fileName.c_str());
       return false;
    }
-   fp1.write((char*)Pixel_Data, ImageDataSize);
+
+   if(PixelWriteConverter->GetUserData())
+      fp1.write((char*)PixelWriteConverter->GetUserData(), PixelWriteConverter->GetUserDataSize());
+   else if(PixelReadConverter->GetRGB())
+      fp1.write((char*)PixelReadConverter->GetRGB(), PixelReadConverter->GetRGBSize());
+   else if(PixelReadConverter->GetDecompressed())
+      fp1.write((char*)PixelReadConverter->GetDecompressed(), PixelReadConverter->GetDecompressedSize());
+
    fp1.close();
 
    return true;
@@ -471,7 +478,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
  */
 bool File::CheckWriteIntegrity()
 {
-   if(Pixel_Data)
+   if(PixelWriteConverter->GetUserData())
    {
       int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
       if ( numberBitsAllocated == 0 || numberBitsAllocated == 12 )
@@ -491,18 +498,16 @@ bool File::CheckWriteIntegrity()
       switch(WriteMode)
       {
          case WMODE_DECOMPRESSED :
-            if( decSize!=ImageDataSize )
+            if( decSize!=PixelWriteConverter->GetUserDataSize() )
             {
                dbg.Verbose(0, "File::CheckWriteIntegrity: Data size is incorrect");
-               //std::cerr<<"Dec : "<<decSize<<" | "<<ImageDataSize<<std::endl;
                return false;
             }
             break;
          case WMODE_RGB :
-            if( rgbSize!=ImageDataSize )
+            if( rgbSize!=PixelWriteConverter->GetUserDataSize() )
             {
                dbg.Verbose(0, "File::CheckWriteIntegrity: Data size is incorrect");
-               //std::cerr<<"RGB : "<<decSize<<" | "<<ImageDataSize<<std::endl;
                return false;
             }
             break;
@@ -511,19 +516,6 @@ bool File::CheckWriteIntegrity()
    
    return true;
 }
-
-/*void File::SetWriteToNative()
-{
-   if(Pixel_Data)
-   {
-      BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
-      pixel->SetValue(GDCM_BINLOADED);
-      pixel->SetBinArea(Pixel_Data,false);
-      pixel->SetLength(ImageDataSize);
-
-      Archive->Push(pixel);
-   }
-}*/
 
 void File::SetWriteToDecompressed()
 {
@@ -547,10 +539,10 @@ void File::SetWriteToDecompressed()
 
       BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
-      if(Pixel_Data)
+      if(PixelWriteConverter->GetUserData())
       {
-         pixel->SetBinArea(Pixel_Data,false);
-         pixel->SetLength(ImageDataSize);
+         pixel->SetBinArea(PixelWriteConverter->GetUserData(),false);
+         pixel->SetLength(PixelWriteConverter->GetUserDataSize());
       }
       else
       {
@@ -583,10 +575,10 @@ void File::SetWriteToRGB()
 
       BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
-      if(Pixel_Data)
+      if(PixelWriteConverter->GetUserData())
       {
-         pixel->SetBinArea(Pixel_Data,false);
-         pixel->SetLength(ImageDataSize);
+         pixel->SetBinArea(PixelWriteConverter->GetUserData(),false);
+         pixel->SetLength(PixelWriteConverter->GetUserDataSize());
       }
       else if(PixelReadConverter->GetRGB())
       {

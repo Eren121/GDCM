@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 10:21:55 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/12/03 11:55:38 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ class GDCM_EXPORT PixelReadConvert
 {
 public:
    PixelReadConvert();
-   ~PixelReadConvert();
+   virtual ~PixelReadConvert();
 
    //// Getter accessors:
    uint8_t* GetRGB() { return RGB; }
