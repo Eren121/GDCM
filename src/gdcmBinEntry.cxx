@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 17:20:34 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/02/02 17:47:56 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    // to write image with Big Endian Transfert Syntax, 
    //   and we are working on Little Endian Processor
 
-#ifdef GDCM_WORDS_BIGENDIAN
+/*#ifdef GDCM_WORDS_BIGENDIAN
       // TODO FIXME Right now, we only care of Pixels element
 
       // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
@@ -123,9 +123,9 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
          // For any other VR, BinEntry is re-written as-is
          fp->write ( (char*)binArea, lgr );
       }
-#else
+#else*/
       fp->write ( (char*)binArea, lgr ); // Elem value
-#endif //GDCM_WORDS_BIGENDIAN
+//#endif //GDCM_WORDS_BIGENDIAN
 
    }
    else

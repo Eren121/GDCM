@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.208 $
+  Date:      $Date: 2005/02/02 17:47:56 $
+  Version:   $Revision: 1.209 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1301,7 +1301,7 @@ bool File::Write(std::string fileName, FileType filetype)
       }
    }
 
-/*
+
 #ifdef GDCM_WORDS_BIGENDIAN
    // Super Super hack that will make gdcm a BOMB ! but should
    // Fix temporarily the dashboard
@@ -1316,11 +1316,11 @@ bool File::Write(std::string fileName, FileType filetype)
       }
    }
 #endif //GDCM_WORDS_BIGENDIAN
-*/
+
 
    Document::WriteContent(fp, filetype);
 
-/*
+
 #ifdef GDCM_WORDS_BIGENDIAN
    // Flip back the pixel ... I told you this is a hack
    if ( GetPixelSize() ==  16 )
@@ -1333,7 +1333,7 @@ bool File::Write(std::string fileName, FileType filetype)
       }
    }
 #endif //GDCM_WORDS_BIGENDIAN
-*/
+
 
    fp->close();
    delete fp;
