@@ -1,5 +1,4 @@
 #include <iostream>
-//#include <glib.h>
 #include "gdcm.h"
 #include "math.h"
 

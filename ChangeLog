@@ -1,3 +1,18 @@
+2004-07-02 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * src/jpeg/libijg12/jdhuff12.c:
+      - printf polluting ctest removed.
+      - TAB removal for comminting
+   * Test:
+     - TestAllReadCompareDicom.cxx: added a test that compares all the
+       images in gdcmDataImages.h with corresponding images in 
+       gdcmData/BaselineDicom/. When baseline images are not present
+       this test creates them.
+       Note: we need to validate each reference image, but before that
+             I'd like to rename them with a more explicit name...
+     - CMakeLists.txt: changed accordingly.
+   * Example/*.cxx: examples now only include gdcm.h (as opposed to 
+     including each header needed).
+
 2004-07-01 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * Test/*.cxx and Example/*.cxx: moved some examples away from the
      test suite to the Example directory. Are concerned:

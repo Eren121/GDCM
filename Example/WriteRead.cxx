@@ -1,9 +1,6 @@
 #include <iostream>
-#include "gdcm.h"
-#include "gdcmHeader.h"
-#include "gdcmDocument.h"
-
 #include <stdio.h>
+#include "gdcm.h"
 
 int main(int argc, char* argv[])
 {  

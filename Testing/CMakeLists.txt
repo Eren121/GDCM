@@ -17,6 +17,7 @@ IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}     
     TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     PrintAllDocument.cxx             # includes generated gdcmDataImages.h
+    TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
     PrintDicomDir.cxx
     TestChangeHeader.cxx
     TestDicomDir.cxx      #require DICOMDIR

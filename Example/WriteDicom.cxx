@@ -1,5 +1,4 @@
-#include "gdcmDocument.h"
-#include "gdcmFile.h"
+#include "gdcm.h"
 
 // Writting of a DICOM file based on a correct dicom header
 // and data pixel of another image

@@ -1,21 +1,5 @@
 #include <iostream>
-
-#include "gdcmException.h"
-#include "gdcmCommon.h"
-
-#include "gdcmDictEntry.h"
-#include "gdcmDict.h"
-#include "gdcmDictSet.h"
-#include "gdcmHeader.h"
-#include "gdcmUtil.h"
-#include "gdcmBinEntry.h"  
-#include "gdcmDocEntry.h" 
-#include "gdcmDocEntrySet.h"           
-#include "gdcmDocument.h"          
-#include "gdcmElementSet.h"        
-#include "gdcmSeqEntry.h" 
-#include "gdcmSQItem.h" 
-#include "gdcmValEntry.h" 
+#include "gdcm.h"
 
 int main(int argc, char* argv[])
 {
