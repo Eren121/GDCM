@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:17:06 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/10/18 02:35:35 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,9 +40,9 @@ class GDCM_EXPORT DictEntry
 public:
    DictEntry(uint16_t group, 
              uint16_t element,
-             TagName vr     = "Unknown",
-             TagName fourth = "Unknown",
-             TagName name   = "Unknown");
+             TagName const & vr     = "Unknown",
+             TagName const & fourth = "Unknown",
+             TagName const & name   = "Unknown");
 
    static TagKey TranslateToKey(uint16_t group, uint16_t element);
 

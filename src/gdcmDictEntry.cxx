@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/18 02:17:06 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/10/18 02:35:35 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,8 @@ namespace gdcm
 */
 
 DictEntry::DictEntry(uint16_t group, uint16_t element,
-                     TagName vr, TagName fourth,
-                     TagName name)
+                     TagName const & vr, TagName const & fourth,
+                     TagName const & name)
 {
    Group   = group;
    Element = element;
