@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 22:27:27 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/14 22:44:39 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,11 +84,11 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    std::string fileName;
    std::string dirName = Util::NormalizePath(dirpath);
 #ifdef _MSC_VER
-   WIN32_FIND_DATA fileData; 
-   HANDLE hFile=FindFirstFile((dirName+"*").c_str(),&fileData);
-   int found = true;
+   WIN32_FIND_DATA fileData;
+   HANDLE hFile = FindFirstFile((dirName+"*").c_str(), &fileData);
 
-   while( hFile != INVALID_HANDLE_VALUE && found )
+   for(BOOL b = (hFile != INVALID_HANDLE_VALUE); b;
+       b = FindNextFile(hFile,&fileData))
    {
       fileName = fileData.cFileName;
       if( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
@@ -104,9 +104,8 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
          Filenames.push_back(dirName+fileName);
          numberOfFiles++;
       }
-
-      found = FindNextFile(hFile, &fileData);
    }
+   if (hFile != INVALID_FILE_HANDLE) FindClose(hFile);
 
 #else
   // Real POSIX implementation: scandir is a BSD extension only, and doesn't 
