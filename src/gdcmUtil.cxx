@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/27 10:06:33 $
-  Version:   $Revision: 1.124 $
+  Date:      $Date: 2005/01/28 00:02:15 $
+  Version:   $Revision: 1.125 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include <iostream>
+#include <algorithm>
 
 // For GetCurrentDate, GetCurrentTime
 #include <time.h>
@@ -666,6 +667,23 @@ int GetMacAddrSys ( unsigned char *addr )
 }
 
 /**
+ * Mini function to return the last digit from a number express in base 256
+ * pre condition data contain an array of 6 unsigned char
+ * post condition carry contain the last digit
+ */
+inline int getlastdigit(unsigned char *data)
+{
+  int extended, carry = 0;
+  for(int i=0;i<6;i++)
+    {
+    extended = (carry << 8) + data[i];
+    data[i] = extended / 10;
+    carry = extended % 10;
+    }
+  return carry;
+}
+
+/**
  * \brief Encode the mac address on a fixed lenght string of 15 characters.
  * we save space this way.
  */
@@ -677,24 +695,26 @@ std::string Util::GetMACAddress()
    // http://groups-beta.google.com/group/comp.unix.solaris/msg/ad36929d783d63be
    // http://bdn.borland.com/article/0,1410,26040,00.html
    unsigned char addr[6];
-   uint64_t n = 0;
  
    int stat = GetMacAddrSys(addr);
    if (stat == 0)
    {
-      // Horner evaluation
-      for(int i=0; i<6; i++)
-      {
-         n *= 256;
-         n += addr[i];
-      }
+      // We need to convert a 6 digit number from base 256 to base 10, using integer
+      // would requires a 48bits one. To avoid this we have to reimplement the div + modulo 
+      // with string only
+      bool zero = false;
+      int res;
+      std::string sres;
+      while(!zero)
+        {
+        res = getlastdigit(addr);
+        sres.push_back( '0' + res );
+        zero = (addr[0] == 0) && (addr[1] == 0) && (addr[2] == 0) && (addr[3] == 0) && (addr[4] == 0) && (addr[5] == 0);
+        }
+      // Since we push back the proper number is reversed:
+      std::reverse(sres.begin(),sres.end());
 
-      // we fit on 15 bytes maximum < 256^6.
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-      return Format("%I64u", n);
-#else
-      return Format("%llu", n);
-#endif
+      return sres;
    }
    else
    {
