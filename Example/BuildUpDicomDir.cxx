@@ -42,12 +42,16 @@
   
 int main(int argc, char* argv[])
 {
-   if (argc) {
-     // std::cerr << "Usage: " << argv[0] << " dummy ";
-   }
+   std::string dirName = "NewDICOMDIR";
+
+   if ( argc > 2 )
+      {
+      std::cerr << "Usage: " << argv[0] << " [dicomdirname] ";
+      dirName = argv[1];
+      }
 
    gdcmDicomDir *dcmdir;
-   std::string dirName;  
+   
 
    printf( "BuildUpDicomDir: entering  BuildUpDicomDir\n");
 
@@ -70,26 +74,26 @@ int main(int argc, char* argv[])
    (void)s2111; //not used
 
    gdcmDicomDirStudy *s11=p1->NewStudy();  
-       s11->SetEntryByNumber("StudyDescrOne.One",0x0008, 0x1030);
-       // Name of the physician reading study
-       // Header Entry to be created
-       s11->SetEntryByNumber("Dr Mabuse",0x0008, 0x1060);
+   s11->SetEntryByNumber("StudyDescrOne.One",0x0008, 0x1030);
+   // Name of the physician reading study
+   // Header Entry to be created
+   s11->SetEntryByNumber("Dr Mabuse",0x0008, 0x1060);
 
-   gdcmDicomDirPatient *p3=dcmdir->NewPatient();
+   gdcmDicomDirPatient *p3 = dcmdir->NewPatient();
    p3->SetEntryByNumber("patientTHREE",0x0010, 0x0010);
 
-   printf( "\n------- BuildUpDicomDir: Test Print of Patient ONE -----\n");
+   std::cout << "\n------- BuildUpDicomDir: Test Print of Patient ONE -----\n";
    p1->Print();
-   printf( "\n------- BuildUpDicomDir: Test Print of Patient THREE -----\n");
+   std::cout << "\n------- BuildUpDicomDir: Test Print of Patient THREE -----\n";
    p3->Print();
-   printf( "\n------- BuildUpDicomDir: Test Print of Patient TWO -------\n");
+   std::cout << "\n------- BuildUpDicomDir: Test Print of Patient TWO -------\n";
    p2->Print();
-   printf( "\n------- BuildUpDicomDir: Test Full Print-------------------\n");  
+   std::cout << "\n------- BuildUpDicomDir: Test Full Print-------------------\n";
    dcmdir->SetPrintLevel(-1);
    dcmdir->Print();
 
-   dcmdir->Write("NewDICOMDIR");
-   std::cout<<std::flush;
+   dcmdir->Write( dirName );
+   std::cout << std::endl;
 
    delete dcmdir;
 
