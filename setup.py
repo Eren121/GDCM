@@ -18,7 +18,7 @@ if(os.name=='posix'):
 	libraries=["stdc++"]
 	macros   =[('__STDC_LIMIT_MACROS', '1')]
 
-	VTK_PATH="/usr/local"
+	VTK_PATH="/usr"
 	vtkWrapper="vtkWrapPython"
 else:
 	targetDir=os.path.join('lib','site-packages')
