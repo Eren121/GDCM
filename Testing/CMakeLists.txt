@@ -15,6 +15,7 @@ SET(TEST_SOURCES
   TestUtil.cxx
   TestDicomString.cxx
   TestDict.cxx
+  TestWriteSimple.cxx
 )
 
 # add tests that require data
@@ -25,9 +26,8 @@ IF (GDCM_DATA_ROOT)
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
     TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
     #TestChangeHeader.cxx
-    TestCopyDicom.cxx
-    TestCopyRescaleDicom.cxx
-    TestWriteSimple.cxx
+    TestCopyDicom.cxx                # includes generated gdcmDataImages.h 
+    TestCopyRescaleDicom.cxx         # includes generated gdcmDataImages.h 
     TestDicomDir.cxx                 # require DICOMDIR
     BuildUpDicomDir.cxx              # writes a file named "NewDICOMDIR"
     makeDicomDir.cxx                 # writes a file named "NewDICOMDIR"
@@ -42,9 +42,9 @@ IF (GDCM_DATA_ROOT)
       ${GDCM_SOURCE_DIR}/vtk/
       )
     SET(TEST_SOURCES ${TEST_SOURCES}
-      ShowDicom.cxx
-      ShowDicomSeq.cxx
-      TestWriteWithVTK.cxx
+      VTKTestRead.cxx
+      VTKTestReadSeq.cxx
+      VTKTestWrite.cxx
       )
   ENDIF(GDCM_VTK)
 ENDIF (GDCM_DATA_ROOT)

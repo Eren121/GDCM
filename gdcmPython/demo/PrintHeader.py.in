@@ -32,8 +32,7 @@ print "### Display all the elements and their respective values"
 print "## found in the ", fileName, " file."
 print "##############################################################"
 
-header.InitTraversal()
-val=header.GetNextEntry()
+val=header.GetFirstEntry()
 while(val):
 	val.Print()
 	print ""

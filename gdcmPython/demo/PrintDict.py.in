@@ -40,8 +40,7 @@ entry.Print()
 print "#####################################################################"
 # Print the public Dict content
 print "dict content :"
-pubDict.InitTraversal()
-entry=pubDict.GetNextEntry()
+entry=pubDict.GetFirstEntry()
 while(entry):
 	entry.Print()
 	entry=pubDict.GetNextEntry()
