@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWriteSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/13 12:06:29 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/03/23 20:26:13 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ int VTKWriteSeqTest(vtkTesting *t, vtkImageViewer *viewer,
 
    char *newFileDcm = new char[filename.size()+1];
    int fileCount = 0;
-   for(int i=0;i<9;i++)
+   for(int i=0;i<10;i++)
    {
       fileCount = i;
       sprintf(newFileDcm,filename.c_str(),i);
