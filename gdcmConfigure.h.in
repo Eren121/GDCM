@@ -49,6 +49,8 @@
 #cmakedefine CMAKE_HAVE_NET_IF_DL_H
 #cmakedefine CMAKE_HAVE_NET_IF_ARP_H
 
+#define HAVE_SA_LEN @GDCM_OS_HAVE_SA_LEN@
+
 
 /*--------------------------------------------------------------------------*/
 /* GDCM Versioning                                                          */

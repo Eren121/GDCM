@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 17:26:55 $
-  Version:   $Revision: 1.106 $
+  Date:      $Date: 2005/01/17 21:41:48 $
+  Version:   $Revision: 1.107 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -561,7 +561,7 @@ int GetMacAddrSys ( unsigned char *addr )
    char buf[1024];
    int      n, i;
    unsigned char    *a;
-#ifdef AF_LINK
+#if defined(AF_LINK) && !(defined(SIOCGIFHWADDR) || !defined(SIOCGENADDR))
    struct sockaddr_dl *sdlp;
 #endif
 
