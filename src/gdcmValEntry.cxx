@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:43:28 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/02/14 10:45:47 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -191,7 +191,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
    
    TS *ts = Global::GetTS();
     
-   TSAtr v  = GetValue();  // not applicable for SQ ...     
+   TSAtr v  = GetValue();     
    d2 = Util::CreateCleanString(v);  // replace non printable characters by '.'            
    if( GetLength() <= MAX_SIZE_PRINT_ELEMENT_VALUE
     || PrintLevel >= 3
