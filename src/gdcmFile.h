@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 03:10:58 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2004/11/16 16:20:23 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,6 +87,8 @@ private:
    int ComputeDecompressedPixelDataSizeFromHeader();
 
 private:
+   void SetPixelData(uint8_t* data);
+
 // members variables:
 
    /// Header to use to load the file

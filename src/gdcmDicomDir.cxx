@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 10:25:52 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2004/11/16 16:20:23 $
+  Version:   $Revision: 1.81 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,7 +121,8 @@ DicomDir::DicomDir(std::string const & fileName, bool parseDir ):
          /// \todo FIXME : what do we do when the parsed file IS NOT a
          ///       DICOMDIR file ?         
       }
-      CreateDicomDir();
+      else
+         CreateDicomDir();
    }
 }
 
@@ -133,6 +134,8 @@ DicomDir::~DicomDir()
    SetStartMethod(NULL);
    SetProgressMethod(NULL);
    SetEndMethod(NULL);
+
+   TagHT.clear();
    for(ListDicomDirPatient::iterator cc = Patients.begin();
                                      cc!= Patients.end();
                                    ++cc)
@@ -401,9 +404,6 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
    VectDocument list;
    Header *header;
 
-   TagHT.clear();
-   Patients.clear();
-
    for( DirList::iterator it  = fileList.begin();
                               it != fileList.end();
                               ++it )
@@ -532,7 +532,7 @@ DicomDirPatient * DicomDir::NewPatient()
    DicomDirPatient *p = new DicomDirPatient(s, &TagHT);
    Patients.push_front( p );
 
-   return p;   
+   return p;
 }
 
 /**
@@ -553,6 +553,7 @@ void DicomDir::SetElement(std::string const & path, DicomDirType type,
    ValEntry *entry;
    std::string val;
    SQItem *si = new SQItem(0); // all the items will be at level 1
+
    switch( type )
    {
       case GDCM_DICOMDIR_IMAGE:
@@ -923,6 +924,9 @@ void DicomDir::AddDicomDirSerieToEnd(SQItem *s)
  */
 void DicomDir::SetElements(std::string const & path, VectDocument const &list)
 {
+   TagHT.clear();
+   Patients.clear();
+
    std::string patPrevName         = "", patPrevID  = "";
    std::string studPrevInstanceUID = "", studPrevID = "";
    std::string serPrevInstanceUID  = "", serPrevID  = "";

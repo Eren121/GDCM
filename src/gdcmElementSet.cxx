@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 13:20:34 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/11/16 16:20:23 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,15 +44,11 @@ ElementSet::ElementSet(int depthLevel)
  */
 ElementSet::~ElementSet() 
 {
-  for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
+   for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
    {
-      DocEntry* entryToDelete = cc->second;
-      if ( entryToDelete )
+      if ( cc->second )
       {
-         // FIXME
-         // Because the gdcmFile links the datas of gdcmPixelConvert with the
-         // data in a binArea, these datas are deleted 2 times... very bad...
-         //delete entryToDelete;
+         delete cc->second;
       }
    }
    TagHT.clear();

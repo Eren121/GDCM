@@ -1,5 +1,22 @@
 2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * FIX : src/gdcmDocument.cxx Remove obvious code in the destructor 
+   * FIX : now, the DocEntries are all deleted in the gdcmElementSet.
+     Two problems appear when doing it :
+      - with the gdcmFile : when the GetImageData method is called, the pixels
+        are stored in the gdcmPixelConvert, but a gdcmBinEntry link to these
+        datas (pixels). And each structure destruct the datas when it's
+        destructed. So we have two destructions for the same datas. To solve it,
+        a flag is added in the gdcmBinEntry to indicate if the BinEntry owns the
+        datas or not. If it doesn't own datas, then they will not destroyed by
+        the gdcmBinEntry.
+      - with the gdcmDicomDir : the sequences (gdcmSQItem) contain DocEntry
+        elements. The DicomDir* (DicomDirPatient, etc.) inherit from SQItem.
+        Thus destruct the DicomDir* elements and the TagHT of the ElementSet 
+        create a double destruction of the same DocEntry's. So, to solve it, 
+        the TagHT is simply cleared and the DicomDir* elements are destroyed.
+   * TODO : add an entry concerning memory leaks in the DicomDir
+
+2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * FIX : src/gdcmDocument.cxx Remove obvious code in the destructor
    * FIX : src/gdcmPixelConvert : Set to NULL the deleted structures in the
      squeeze method
 

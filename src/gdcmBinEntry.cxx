@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/15 16:12:30 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/11/16 16:20:23 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,6 +32,7 @@ namespace gdcm
 BinEntry::BinEntry(DictEntry* e) : ValEntry(e)
 {
    BinArea = 0;
+   SelfArea = true;
 }
 
 /**
@@ -49,6 +50,7 @@ BinEntry::BinEntry(DocEntry* e) : ValEntry(e->GetDictEntry())
    //SQDepthLevel = e->GetDepthLevel();
 
    BinArea = 0; // let's be carefull !
+   SelfArea = true;
 }
 
 /**
@@ -56,7 +58,7 @@ BinEntry::BinEntry(DocEntry* e) : ValEntry(e->GetDictEntry())
  */
 BinEntry::~BinEntry()
 {
-   if (BinArea)
+   if (BinArea && SelfArea)
    {
       delete[] BinArea;
       BinArea = 0; // let's be carefull !
@@ -125,11 +127,13 @@ void BinEntry::Write(std::ofstream* fp, FileType filetype)
 
 
 /// \brief Sets the value (non string) of the current Dicom Header Entry
-void BinEntry::SetBinArea( uint8_t* area )  
+void BinEntry::SetBinArea( uint8_t* area, bool self )  
 { 
-   if (BinArea)
+   if (BinArea && SelfArea)
       delete[] BinArea;
+
    BinArea = area;
+   SelfArea=self;
 }
 
 //-----------------------------------------------------------------------------

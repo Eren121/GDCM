@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 05:03:35 $
-  Version:   $Revision: 1.156 $
+  Date:      $Date: 2004/11/16 16:20:23 $
+  Version:   $Revision: 1.157 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
+#include "gdcmBinEntry.h"
 #include <fstream>
 
 namespace gdcm 
@@ -87,7 +88,7 @@ void File::Initialise()
          ImageDataSize = ImageDataSizeRaw;
       }
 
-      PixelConverter = new PixelConvert;  //LEAK !
+      PixelConverter = new PixelConvert;
       PixelConverter->GrabInformationsFromHeader( HeaderInternal );
    }
    SaveInitialValues();
@@ -136,7 +137,7 @@ void File::SaveInitialValues()
    InitialRedLUTData    = 0;
    InitialGreenLUTData  = 0;
    InitialBlueLUTData   = 0; 
-                
+
    if ( HeaderInternal->IsReadable() )
    {
       // the following values *may* be modified 
@@ -211,28 +212,29 @@ void File::RestoreInitialValues()
  */
 void File::DeleteInitialValues()
 { 
-
 // InitialLutDescriptors and InitialLutData
 // will have to be deleted if the don't belong any longer
 // to the Header H table when the header is deleted...
 
-   if ( InitialRedLUTDescr )           
+// FIXME 
+// We don't know if the InitialLutData are still in the header or not !
+/*   if ( InitialRedLUTDescr )
       delete InitialRedLUTDescr;
   
    if ( InitialGreenLUTDescr )
       delete InitialGreenLUTDescr;
       
-   if ( InitialBlueLUTDescr )      
-      delete InitialBlueLUTDescr; 
+   if ( InitialBlueLUTDescr )
+      delete InitialBlueLUTDescr;
        
-   if ( InitialRedLUTData )      
+   if ( InitialRedLUTData )
       delete InitialRedLUTData;
    
-   if ( InitialGreenLUTData != NULL)
+   if ( InitialGreenLUTData )
       delete InitialGreenLUTData;
       
-   if ( InitialBlueLUTData != NULL)      
-      delete InitialBlueLUTData;      
+   if ( InitialBlueLUTData )
+      delete InitialBlueLUTData;*/
 }
 
 //-----------------------------------------------------------------------------
@@ -377,12 +379,7 @@ uint8_t* File::GetImageData()
    }
 
    // We say the value *is* loaded.
-   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
-      GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
-
-   // Will be 7fe0, 0010 in standard case
-   GetHeader()->SetEntryBinAreaByNumber( pixelData, 
-      GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel()); 
+   SetPixelData(pixelData);
 // END PIXELCONVERT CLEANME
 
    return pixelData;
@@ -429,9 +426,9 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
                         "than caller's expected MaxSize");
          return 0;
       }
-      memmove( destination,
-               (void*)PixelConverter->GetRGB(),
-               PixelConverter->GetRGBSize() );
+      memcpy( destination,
+              (void*)PixelConverter->GetRGB(),
+              PixelConverter->GetRGBSize() );
       return PixelConverter->GetRGBSize();
    }
 
@@ -442,9 +439,9 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
                      "than caller's expected MaxSize");
       return 0;
    }
-   memmove( destination,
-            (void*)PixelConverter->GetDecompressed(),
-            PixelConverter->GetDecompressedSize() );
+   memcpy( destination,
+           (void*)PixelConverter->GetDecompressed(),
+           PixelConverter->GetDecompressedSize() );
    return PixelConverter->GetDecompressedSize();
 }
 
@@ -492,12 +489,13 @@ uint8_t* File::GetImageDataRaw ()
    }
 
    // We say the value *is* loaded.
-   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
+/*   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
    GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
  
    // will be 7fe0, 0010 in standard cases
    GetHeader()->SetEntryBinAreaByNumber( decompressed,
-   GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+   GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());*/
+   SetPixelData(decompressed);
  
    PixelRead = 1; // PixelRaw
 // END PIXELCONVERT CLEANME
@@ -719,5 +717,23 @@ uint8_t* File::GetLutRGBA()
    return PixelConverter->GetLutRGBA();
 }
 
+//-----------------------------------------------------------------------------
+// Private
+void File::SetPixelData(uint8_t* data)
+{
+   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
+      GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+
+   // Will be 7fe0, 0010 in standard case
+   DocEntry* currentEntry = GetHeader()->GetDocEntryByNumber(GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+   if ( currentEntry )
+   {
+      if ( BinEntry* binEntry = dynamic_cast<BinEntry *>(currentEntry) )
+         // Flag is to false because datas are kept in the gdcmPixelConvert
+         binEntry->SetBinArea( data, false );
+   }
+}
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
 

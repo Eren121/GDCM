@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 14:48:19 $
-  Version:   $Revision: 1.128 $
+  Date:      $Date: 2004/11/16 16:20:23 $
+  Version:   $Revision: 1.129 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -951,10 +951,10 @@ bool Document::SetEntryByNumber(uint8_t*content, int lgth,
       //content = content + '\0'; // fing a trick to enlarge a binary field?
    }
 */      
-   BinEntry* a = (BinEntry *)TagHT[key];           
-   a->SetBinArea(content);  
-   a->SetLength(lgth);
-   a->SetValue(GDCM_BINLOADED);
+   BinEntry* entry = (BinEntry *)TagHT[key];           
+   entry->SetBinArea(content);  
+   entry->SetLength(lgth);
+   entry->SetValue(GDCM_BINLOADED);
 
    return true;
 } 
@@ -1092,7 +1092,7 @@ void Document::LoadEntryBinArea(BinEntry* element)
       return;
    }
 
-   element->SetBinArea((uint8_t*)a);
+   element->SetBinArea(a);
 }
 
 /**

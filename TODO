@@ -73,6 +73,17 @@ et si on prenait:
  radical + 147.144.143.155 + IP + time()
 
 -----------------------------------------------------------------------------
+Description: gdcmDicomDir and SQItem creation
+Date: 2004 Nov 16
+Attributed:
+Details: DicomDir creates some SQItem (by new). After that, it creates
+  the corresponding DicomDirPatient, etc. using the content of the SQItem
+  (the content is composed with some DocEntry's that can't be destroyed).
+  So, if the SQItem is deleted, then it's content is deleted to. But the 
+  DicomDirPatient, etc. use the content of the SQItem. Then, the SQItem can't
+  be deleted, and when have memory leaks
+
+-----------------------------------------------------------------------------
 Description: [BUG] Better handling of unfound Dicom dictionary.
              When gdcm doesn't find the Dicom dictionary (because it's
              path to the directory of dictionary is uncorrect, either
@@ -336,3 +347,4 @@ Comments:
       a.write(output);
    }
 -----------------------------------------------------------------------------
+
