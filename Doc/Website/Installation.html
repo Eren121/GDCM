@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+   <TITLE>Gdcm source installation</TITLE>
+</HEAD>
+                                                                                
+<BODY>
+                                                                                
+<!#######################################################################>
+<H1>Installing gdcm from sources</H1>
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
+
+<!###################################>
+<H2> Requirements</H2>
+<UL>
+<LI> For the core C++ library you shall need a C++ compiler with the
+    "list" and "map" STL containers.
+    <BR>
+    Gdcm is developped and tested under:
+    <UL>
+    <LI> GNU/linux (gcc 3.2.x)
+    </LI>
+    <LI> Win32/VC++ 6.x
+    </LI>
+    </UL>
+</LI>
+<LI> <A HREF="http://www.cmake.org">Cmake</A>
+   is used by gdcm for generating Un*x makefiles or VC++ projects.
+   Grab latest release (at least 2.0.3).
+</LI>
+<LI> Optionnaly, for the
+   <A HREF="VtkGdcm.html">VTK wrappers</A>
+   you will additionaly need :
+</LI>
+<LI> Optionnaly, for the
+   <A HREF="html.developper/DoxyPythonComplete.html">Python wrappers</A>
+   you will additionaly need :
+   <UL> 
+   <LI> <A HREF="http://www.python.org/2.2.2/">Python version 2.2.x</A>
+   </LI>
+   <LI> <A HREF="http://www.swig.org">Swig</A>
+       at least version 1.3.17x (in order to handle C++ member overloading,
+       shadow classes and static methods)
+       <UL>
+       <LI>Rpms for GNU/linux:
+     <A HREF="http://www.creatis.insa-lyon.fr/rpm/swig13-1.3.17-1.i386.rpm">
+            swig13-1.3.17-1.i386.rpm</A>,
+     <A HREF="http://www.creatis.insa-lyon.fr/rpm/swig13-1.3.17-1.src.rpm">
+            swig13-1.3.17-1.src.rpm</A>.
+       </LI>
+       <LI>for Win32 you shall need to compile 
+            <A HREF="http://www.swig.org/download.html">the sources</A>
+       </LI>
+       </UL>
+   </LI>
+   </UL>
+</UL>
+
+<!###################################>
+<H2> Step by step recompilation</H2>
+<UL>
+<LI> Retrieve gdcm the
+   <A HREF="http://www.creatis.insa-lyon.fr/Public/Gdcm/cvs.html">
+          sources through cvs</A>.
+   We shall refer to this source directory as <TT>gdcmSources</TT>.
+</LI>
+<LI> Create a compile directory (e.g. <TT>gdcmBin</TT>) that 
+   we shall refer as <TT>gdcmBINARY</TT>.
+   Change working directory to <TT>gdcmBINARY</TT>.
+</LI>
+<LI> Invoke ccmake (from <TT>gdcmBINARY</TT>) with <TT>gdcmSources</TT>
+   as source directory.
+   <BR>
+   Hit "c" for a first automatic configuration of your platteform
+</LI>
+<LI> Select the options that suite your needs. Basically this means
+   toggling ON or OFF the following parameters
+   <UL>
+   <LI> <TT>GDCM_DOXYGEN</TT>
+      if you wish to generate the doxygen documentation,
+   </LI>
+   <LI> <TT>GGDCM_VTK</TT>
+      if you wish to generate the <A HREF="VtkGdcm.html">VTK wrappers</A>,
+   </LI>
+   <LI> <TT>GDCM_WRAP_PYTHON</TT>
+      if you wish to generate the 
+      <A HREF="html.developper/DoxyPythonComplete.html">Python wrappers</A>.
+   </LI>
+   </UL>
+</LI>
+<LI> Among the other options, you might consider
+   toggling ON or OFF the following parameters
+   <UL>
+   <LI> <TT>BUILD_EXAMPLES</TT>
+      if you wish to generate the C++ gdcm examples,
+   </LI>
+   <LI> <TT>BUILD_TESTING</TT>
+      if you wish to generate gdcm test suite. When doing so you will
+      need to retrieve gdcmData i.e. the set of Dicom image used in
+      the test suite.
+   </LI>
+</LI>
+</UL>
+
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
+                                                                                
+</BODY>
+</HTML>
+
