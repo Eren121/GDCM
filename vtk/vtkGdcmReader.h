@@ -1,14 +1,15 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.11 2003/11/05 18:15:41 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.12 2003/11/12 14:06:36 malaterre Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
 
+#include <vtkImageReader.h>
 #include <list>
 #include <string>
-#include "vtkImageReader.h"
-class vtkLookupTable;
 
-class VTK_EXPORT vtkGdcmReader : public vtkImageReader
+class vtkLookupTable;
+//VTK_IO_EXPORT
+class  vtkGdcmReader : public vtkImageReader
 {
 public:
   static vtkGdcmReader *New() {return new vtkGdcmReader;};

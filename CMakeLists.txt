@@ -10,14 +10,6 @@ SET(GDCM_VERSION "${GDCM_VERSION_MAJOR}.${GDCM_VERSION_MINOR}")
 SET(GDCM_VERSION_FULL "${GDCM_VERSION}.${GDCM_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
-# Output directories.
-SET (LIBRARY_OUTPUT_PATH ${GDCM_SOURCE_DIR}/lib CACHE PATH "Single output directory for building all libraries.")
-SET (EXECUTABLE_OUTPUT_PATH ${GDCM_SOURCE_DIR}/lib CACHE PATH "Single output directory for building all executables.")
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(GDCM_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
-SET(GDCM_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
-
-#-----------------------------------------------------------------------------
 # datadir in CMake:
 SET(GDCM_DATA_DIR "/share/gdcm/" CACHE INTERNAL 
   "Install location for data (relative to prefix).")
@@ -28,8 +20,20 @@ MARK_AS_ADVANCED(GDCM_DATA_DIR)
 OPTION(BUILD_SHARED_LIBS "Build GDCM with shared libraries." ON)
 SET(GDCM_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
-#INCLUDE_DIRECTORIES(
-#)
+#-----------------------------------------------------------------------------
+# Output directories.
+#Put all stuff in one single dir for Win32, otherwise dll are a pain:
+IF(WIN32 AND GDCM_BUILD_SHARED_LIBS)
+  SET(OUTPUT_LIB_DIR ${GDCM_SOURCE_DIR}/bin)
+ELSE(WIN32 AND GDCM_BUILD_SHARED_LIBS)
+  SET(OUTPUT_LIB_DIR ${GDCM_SOURCE_DIR}/lib)
+ENDIF(WIN32 AND GDCM_BUILD_SHARED_LIBS)
+
+SET (EXECUTABLE_OUTPUT_PATH ${GDCM_SOURCE_DIR}/bin CACHE PATH "Single output directory for building all executables.")
+SET (LIBRARY_OUTPUT_PATH ${OUTPUT_LIB_DIR} CACHE PATH "Single output directory for building all libraries.")
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+SET(GDCM_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
+SET(GDCM_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
 
 #-----------------------------------------------------------------------------
 # Build directory on which many applications depend
@@ -40,39 +44,39 @@ SUBDIRS(
 )
 
 #-----------------------------------------------------------------------------
-# Search VTK
-FIND_PACKAGE(VTK)
-# If vtk found
-IF(VTK_FOUND)
-  OPTION(GDCM_VTK "Build VTK-GDCM Lib." OFF)
-  IF(GDCM_VTK)
+OPTION(GDCM_VTK "Build VTK-GDCM Lib." OFF)
+IF(GDCM_VTK)
+  # Search VTK
+  FIND_PACKAGE(VTK)
+  # If vtk found
+  IF(VTK_FOUND)
     INCLUDE(${VTK_USE_FILE})
     SUBDIRS(vtk)
-  ENDIF(GDCM_VTK)
-ENDIF(VTK_FOUND)
+  ENDIF(VTK_FOUND)
+ENDIF(GDCM_VTK)
 
 #-----------------------------------------------------------------------------
-# Search Python libs:
-FIND_PACKAGE(PythonLibs)
-# If PythonLibs found
-IF(PYTHON_LIBRARY)
-  OPTION(GDCM_WRAP_PYTHON "Wrap GDCM classes into the Python language." OFF)
-  #if wrapping enable
-  IF(GDCM_WRAP_PYTHON)
+OPTION(GDCM_WRAP_PYTHON "Wrap GDCM classes into the Python language." OFF)
+#if wrapping enable
+IF(GDCM_WRAP_PYTHON)
+  # Search Python libs:
+  FIND_PACKAGE(PythonLibs)
+  # If PythonLibs found
+  IF(PYTHON_LIBRARY)
     SUBDIRS(gdcmPython)
-  ENDIF(GDCM_WRAP_PYTHON)
-ENDIF(PYTHON_LIBRARY)
+  ENDIF(PYTHON_LIBRARY)
+ENDIF(GDCM_WRAP_PYTHON)
 
 #-----------------------------------------------------------------------------
-# Search Doxygen:
-FIND_PACKAGE(Doxygen)
-IF(DOXYGEN)
-  OPTION(GDCM_DOXYGEN "Build source documentation using doxygen." OFF)
-  # if doxygen enable
-  IF(GDCM_DOXYGEN)
+OPTION(GDCM_DOXYGEN "Build source documentation using doxygen." OFF)
+# if doxygen enable
+IF(GDCM_DOXYGEN)
+  # Search Doxygen:
+  FIND_PACKAGE(Doxygen)
+  IF(DOXYGEN)
     SUBDIRS(Doc)
-  ENDIF(GDCM_DOXYGEN)
-ENDIF(DOXYGEN)
+  ENDIF(DOXYGEN)
+ENDIF(GDCM_DOXYGEN)
 
 #-----------------------------------------------------------------------------
 # Configure files with settings for use by the build.

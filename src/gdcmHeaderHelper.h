@@ -1,12 +1,12 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.6 2003/11/07 14:57:58 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.7 2003/11/12 14:06:35 malaterre Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
 
 #include "gdcmHeader.h"
-#include <list>
-#include <string>
-#include <vector>
+//#include <list>
+//#include <string>
+//#include <vector>
 
    // Dicom Part 3.3 Compliant
    enum ModalityType {

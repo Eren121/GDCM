@@ -1,11 +1,11 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.16 2003/11/07 14:57:58 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.17 2003/11/12 14:06:35 malaterre Exp $
 
 #include "gdcmHeaderHelper.h"
 
 #include "gdcmUtil.h" //for debug
 #include <math.h>
 #include <algorithm>
-#include <string.h> //for bzero
+//#include <string.h> //for bzero
 
 //directory manipulation (os indep).
 //cygwin ???? -> _WIN32 ??
@@ -500,31 +500,28 @@ std::string gdcmHeaderHelper::GetInstanceUID()
 //----------------------------------------------------------------------------
 float gdcmHeaderHelper::GetRescaleIntercept()
 {
-  float resInter;
+  float resInter = 0.;
   std::string StrRescInter = GetPubElValByNumber(0x0028,0x1052); //0028 1052 DS IMG Rescale Intercept
   if (StrRescInter != GDCM_UNFOUND) {
       if( sscanf( StrRescInter.c_str(), "%f", &resInter) != 1) {
          dbg.Verbose(0, "gdcmHeader::GetRescaleIntercept: Rescale Slope is empty");
-         return 0.;  // bug in the element 0x0028,0x1052
-      } else {
-         return resInter;
+           // bug in the element 0x0028,0x1052
       }    
-   }  
+   }
+  return resInter;
 }
 //----------------------------------------------------------------------------
 float gdcmHeaderHelper::GetRescaleSlope()
 {
-  float resSlope;
+  float resSlope = 1.;
   std::string StrRescSlope = GetPubElValByNumber(0x0028,0x1053); //0028 1053 DS IMG Rescale Slope
   if (StrRescSlope != GDCM_UNFOUND) {
       if( sscanf( StrRescSlope.c_str(), "%f", &resSlope) != 1) {
          dbg.Verbose(0, "gdcmHeader::GetRescaleSlope: Rescale Slope is empty");
-         return 1.;  // bug in the element 0x0028,0x1053
-      } else {
-         return resSlope;
+           // bug in the element 0x0028,0x1053
       }    
    }  
- 
+	return resSlope;
 }
 
 

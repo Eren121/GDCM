@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.113 2003/11/10 14:17:12 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.114 2003/11/12 14:06:34 malaterre Exp $
 
 #include "gdcmHeader.h"
 
@@ -2237,9 +2237,7 @@ void * gdcmHeader::GetLUTRGBA(void) {
    if (gdcmHeader::GetPubElValByNumber(0x0028,0x0004) != "PALETTE COLOR ") {
    	return NULL;
    }  
-   
-   void * LutR,*LutG,*LutB;
-   int l;
+
    int lengthR, debR, nbitsR;
    int lengthG, debG, nbitsG;
    int lengthB, debB, nbitsB;

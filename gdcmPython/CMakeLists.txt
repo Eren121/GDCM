@@ -14,7 +14,6 @@ INCLUDE_DIRECTORIES(
 
 SET(GDCM_INC
   ${GDCM_SOURCE_DIR}/src
-#  -I$(top_builddir)
 )
 
 SET(SWIG_INC
@@ -32,7 +31,7 @@ SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
 
 ADD_LIBRARY(pygdcm ${GDCM_PYTHON_SOURCES})
 #http://www.cmake.org/pipermail/cmake/2003-August/004190.html
-SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "")
+#SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "")
 TARGET_LINK_LIBRARIES(pygdcm 
   ${PYTHON_LIBRARY}
   gdcm
@@ -52,21 +51,15 @@ ADD_CUSTOM_COMMAND(
   OUTPUTS   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
 )
 
-
-
-
 IF(GDCM_VTK)
   INCLUDE_DIRECTORIES(
     ${GDCM_SOURCE_DIR}/vtk
   )
 
   SET(vtkgdcmPython_la_SOURCES
-#      vtkGdcmReaderPython.cxx
-#      vtkGdcmInit.cxx
       ${GDCM_SOURCE_DIR}/vtk/vtkGdcmReader.cxx
   )
   SET_SOURCE_FILES_PROPERTIES(vtkGdcmReaderPython.cxx GENERATED)
-  #vtkWrapPythonInit.c
   
   # The C++ files must be made into a C++ library
   #ADD_LIBRARY ( vtkgdcmPython ${vtkgdcmPython_la_SOURCES})
@@ -88,9 +81,9 @@ IF(GDCM_VTK)
 ENDIF(GDCM_VTK)
 
 #I should install in path of PYTHON_LIBRARY
-GET_FILENAME_COMPONENT(PYTHON_LIB_INSTALL ${PYTHON_LIBRARY} PATH)
-GET_FILENAME_COMPONENT(SITEPACKAGE ${PYTHON_LIB_INSTALL}/../site-packages ABSOLUTE)
-MESSAGE(STATUS ${SITEPACKAGE})
+#GET_FILENAME_COMPONENT(PYTHON_LIB_INSTALL ${PYTHON_LIBRARY} PATH)
+#GET_FILENAME_COMPONENT(SITEPACKAGE ${PYTHON_LIB_INSTALL}/../site-packages ABSOLUTE)
+#MESSAGE(STATUS ${SITEPACKAGE})
 #INSTALL_FILES(/include "\\.h$")
 #INSTALL_TARGETS(/lib/ gdcm)
 

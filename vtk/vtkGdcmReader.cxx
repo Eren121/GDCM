@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.26 2003/11/06 14:14:10 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.27 2003/11/12 14:06:36 malaterre Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -42,14 +42,16 @@
 // time...
 // //////////////////////////////////////////////////////////////
 
-#include <stdio.h>
+#include "gdcmFile.h"
+#include "gdcmHeaderHelper.h"
+#include "vtkGdcmReader.h"
+
+//#include <stdio.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
-#include "vtkGdcmReader.h"
-#include "gdcm.h"
-#include "gdcmHeaderHelper.h"
+
 
 vtkGdcmReader::vtkGdcmReader()
 {
