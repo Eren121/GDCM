@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 23:16:47 $
-  Version:   $Revision: 1.181 $
+  Date:      $Date: 2005/01/12 11:33:39 $
+  Version:   $Revision: 1.182 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1015,15 +1015,13 @@ uint32_t Document::SwapLong(uint32_t a)
       case 4321 :
          a=( ((a<<24) & 0xff000000) | ((a<<8)  & 0x00ff0000) | 
              ((a>>8)  & 0x0000ff00) | ((a>>24) & 0x000000ff) );
-         break;
-   
+         break;   
       case 3412 :
          a=( ((a<<16) & 0xffff0000) | ((a>>16) & 0x0000ffff) );
-         break;
-   
+         break;  
       case 2143 :
          a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
-         break;
+      break;
       default :
          gdcmErrorMacro( "Unset swap code:" << SwapCode );
          a = 0;
@@ -2257,12 +2255,6 @@ bool Document::CheckSwap()
                Filetype = Unknown;
                return false;
          }
-         // Then the only info we have is the net2host one.
-         //if (! net2host )
-         //   SwapCode = 1234;
-         //else
-         //  SwapCode = 4321;
-         //return;
    }
 }
 

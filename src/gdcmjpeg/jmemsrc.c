@@ -22,9 +22,12 @@
 
 /* Expanded data source object for memory input */
 
+/**
+ * \brief very low level C 'structure', used to decode jpeg file
+ * Should not appear in the Doxygen supplied documentation
+ */
 typedef struct {
   struct jpeg_source_mgr pub; /* public fields */
-
   JOCTET eoi_buffer[2];       /* a place to put a dummy EOI */
 } my_source_mgr;
 

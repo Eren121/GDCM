@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 16:44:43 $
-  Version:   $Revision: 1.190 $
+  Date:      $Date: 2005/01/12 11:33:39 $
+  Version:   $Revision: 1.191 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -140,9 +140,10 @@ void File::Print(std::ostream &os)
 // Public
 /**
  * \brief   Get the size of the image data
- * 
  *          If the image can be RGB (with a lut or by default), the size 
  *          corresponds to the RGB image
+ *         (use GetImageDataRawSize if you want to be sure to get *only*
+ *          the size of the pixels)
  * @return  The image size
  */
 size_t File::GetImageDataSize()
@@ -157,9 +158,9 @@ size_t File::GetImageDataSize()
 
 /**
  * \brief   Get the size of the image data
- * 
- *          If the image can be RGB by transformation in a LUT, this
- *          transformation isn't considered
+ *          If the image could be converted to RGB using a LUT, 
+ *          this transformation is not taken into account by GetImageDataRawSize
+ *          (use GetImageDataSize if you wish)
  * @return  The raw image size
  */
 size_t File::GetImageDataRawSize()
