@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/10/27 22:58:06 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,9 +33,9 @@
    #include <sys/stat.h>
    #include <sys/types.h>
 #endif
+
 namespace gdcm 
 {
-
 // Constructor / Destructor
 /**
  * \ingroup DirList
@@ -43,7 +43,7 @@ namespace gdcm
  * @param  dirName root directory name
  * @param  recursive whether we want to explore recursively or not 
  */
-DirList::DirList(std::string dirName, bool recursive)
+DirList::DirList(std::string const & dirName, bool recursive)
 {
    name = dirName;
    Util::NormalizePath(name);
@@ -68,7 +68,7 @@ DirList::~DirList()
  * \brief   Get the directory name
  * @return the directory name 
  */
-std::string DirList::GetDirName()
+std::string const & DirList::GetDirName() const
 {
    return name;
 }
@@ -86,12 +86,12 @@ std::string DirList::GetDirName()
  * @param  dirName directory to explore
  * @param  recursive whether we want recursion or not
  */
-int DirList::Explore(std::string dirName, bool recursive)
+int DirList::Explore(std::string const & dirName, bool recursive)
 {
    int numberOfFiles = 0;
    std::string fileName;
    Util::NormalizePath(dirName);
-#if defined(_MSC_VER) || (__CYGWIN__)
+#if defined(_MSC_VER) || defined(__CYGWIN__)
    WIN32_FIND_DATA fileData; 
    HANDLE hFile=FindFirstFile((dirName+"*").c_str(),&fileData);
    int found = true;

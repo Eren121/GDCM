@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:47:43 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/10/27 22:58:06 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ public:
                                       const std::string& subStr);       
 
    static std::string CreateCleanString(std::string const & s);
-   static void        NormalizePath(std::string &name);
+   static std::string NormalizePath(std::string const & name);
    static std::string GetPath(std::string const &fullName);
    static std::string GetName(std::string const &fullName);
 };

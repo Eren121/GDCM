@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:47:43 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2004/10/27 22:58:06 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -130,17 +130,19 @@ std::string Util::CreateCleanString(std::string const & s)
  * \brief   Add a SEPARATOR to the end of the name is necessary
  * @param name file/directory name to normalize 
  */
-void Util::NormalizePath(std::string &name)
+std::string Util::NormalizePath(std::string const & pathname)
 {
    const char SEPARATOR_X      = '/';
    const char SEPARATOR_WIN    = '\\';
    const std::string SEPARATOR = "/";
+   std::string name = pathname;
    int size = name.size();
 
    if( name[size-1] != SEPARATOR_X && name[size-1] != SEPARATOR_WIN )
    {
       name += SEPARATOR;
    }
+   return name;
 }
 
 /**
