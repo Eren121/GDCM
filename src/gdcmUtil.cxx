@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 16:50:35 $
-  Version:   $Revision: 1.105 $
+  Date:      $Date: 2005/01/17 17:26:55 $
+  Version:   $Revision: 1.106 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,9 +52,6 @@
 // How do I do that in CMake ?
 #ifdef __APPLE__
    #define HAVE_SA_LEN
-   #define CMAKE_HAVE_NET_IF_DL_H
-   #define CMAKE_HAVE_NETINET_IN_H
-   #define CMAKE_HAVE_NET_IF_H
 #endif //APPLE
 
 #ifdef CMAKE_HAVE_SYS_IOCTL_H
@@ -75,8 +72,7 @@
 #ifdef CMAKE_HAVE_NET_IF_DL_H
    #include <net/if_dl.h>
 #endif
-#ifdef __sun
-   //#if defined(CMAKE_HAVE_NET_IF_ARP_H) && defined(__sun)
+#if defined(CMAKE_HAVE_NET_IF_ARP_H) && defined(__sun)
    // This is absolutely necesseray on SunOS
    #include <net/if_arp.h>
 #endif
