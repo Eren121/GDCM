@@ -3,7 +3,13 @@
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
 #include "gdcmTS.h"
-#include <sstream>
+#ifdef GDCM_NO_ANSI_STRING_STREAM
+#  include <strstream>
+#  define  ostringstream ostrstream
+# else
+#  include <sstream>
+#endif
+
 
 gdcmElValSet::~gdcmElValSet() {
    for (TagElValueHT::iterator tag = tagHt.begin(); tag != tagHt.end(); ++tag) {
