@@ -44,12 +44,13 @@ IF (GDCM_DATA_ROOT)
 
     INCLUDE_DIRECTORIES(
       ${GDCM_SOURCE_DIR}/vtk/
-      )
+    )
     SET(TEST_SOURCES ${TEST_SOURCES}
       VTKTestRead.cxx
       VTKTestReadSeq.cxx
       VTKTestWrite.cxx
-      )
+      VTKTestWriteSeq.cxx
+    )
   ENDIF(GDCM_VTK)
 ENDIF (GDCM_DATA_ROOT)
 
@@ -75,14 +76,7 @@ REMOVE (TestsToRun gdcmTests.cxx)
 # Loop over files and create executables
 FOREACH(file ${TEST_SOURCES})
   GET_FILENAME_COMPONENT(name ${file} NAME_WE)
-#  IF (GDCM_DATA_ROOT)
-#    ADD_TEST(${name} ${GDCM_TESTS} ${name}
-#        -D ${GDCM_DATA_ROOT}
-#        -T ${GDCM_BINARY_DIR}/Testing/Temporary
-#        -V Baseline/gdcm/${name}.png)
-#  ELSE (GDCM_DATA_ROOT)
-    ADD_TEST(${name} ${GDCM_TESTS} ${name})
-#  ENDIF (GDCM_DATA_ROOT)
+  ADD_TEST(${name} ${GDCM_TESTS} ${name})
 ENDFOREACH(file ${TEST_SOURCES})
 
 #-----------------------------------------------------------------------------
@@ -183,9 +177,9 @@ ENDFOREACH(filename)
 # Populate GDCM_DATA_IMAGES:
 FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataImages.h"
   "const char * const gdcmDataImages[] = { ${GDCM_DATA_IMAGES}\n0 };\n" 
-  )
+)
 
 # Populate GDCM_DATA_SEQ_IMAGES:
 FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataSeqImages.h"
   "const char * const gdcmDataSeqImages[] = { ${GDCM_DATA_SEQ_IMAGES}\n0 };\n" 
-  )
+)

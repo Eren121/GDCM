@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: VTKTestReadSeq.cxx,v $
+  Module:    $RCSfile: VTKTestWriteSeq.cxx,v $
   Language:  C++
   Date:      $Date: 2005/02/09 15:31:15 $
-  Version:   $Revision: 1.10 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,6 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "vtkGdcmReader.h"
+#include "vtkGdcmWriter.h"
 #include "vtkImageViewer.h"
 #include "vtkImageData.h"
 #include "vtkRegressionTestImage.h"
@@ -33,7 +34,7 @@
 #define vtkFloatingPointType float
 #endif
 
-int VTKReadSeqTest(vtkTesting *t, vtkImageViewer *viewer,
+int VTKWriteSeqTest(vtkTesting *t, vtkImageViewer *viewer,
                    std::string const &filename, 
                    std::string const &referenceFileName)
 {
@@ -60,6 +61,26 @@ int VTKReadSeqTest(vtkTesting *t, vtkImageViewer *viewer,
          break;
    }
    delete[] newFileDcm;
+   reader->Update();
+
+   // Write the image
+   vtkGdcmWriter *writer = vtkGdcmWriter::New();
+   writer->SetFilePattern("%s%02d.dcm");
+   writer->SetFilePrefix("TestWrite");
+   writer->SetFileDimensionality(2);
+   writer->SetInput(reader->GetOutput());
+   writer->Write();
+
+   reader->Delete();
+   writer->Delete();
+
+   // Reread the image
+   reader = vtkGdcmReader::New();
+   reader->SetFilePattern("%s%02d.dcm");
+   reader->SetFilePrefix("TestWrite");
+   reader->SetFileNameSliceOffset(0);
+   reader->SetFileNameSliceSpacing(1);
+   reader->SetDataExtent(0,0,0,0,0,fileCount-1);
    reader->Update();
 
    double range[2];
@@ -185,7 +206,7 @@ int VTKReadSeqTest(vtkTesting *t, vtkImageViewer *viewer,
    return ret;
 }
 
-int VTKTestReadSeq(int argc, char *argv[])
+int VTKTestWriteSeq(int argc, char *argv[])
 {
    bool show = false;
    if( argc >= 2 )
@@ -214,7 +235,7 @@ int VTKTestReadSeq(int argc, char *argv[])
    }
    else
    {
-      ret = VTKReadSeqTest(t,viewer,argv[1+show],argv[2+show]);
+      ret = VTKWriteSeqTest(t,viewer,argv[1+show],argv[2+show]);
       t->Delete();
       if( viewer )
          viewer->Delete();
@@ -237,7 +258,7 @@ int VTKTestReadSeq(int argc, char *argv[])
       pngfile = pngfile.substr(0, dot_pos).append( ".png" );
       pngfile.insert( 0, "Baseline/");
       
-      ret += VTKReadSeqTest(t,viewer,filename,pngfile);
+      ret += VTKWriteSeqTest(t,viewer,filename,pngfile);
    }
    t->Delete();
    if( viewer )

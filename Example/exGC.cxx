@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGC.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 14:39:48 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/02/09 15:31:15 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -149,8 +149,9 @@ int main(int argc, char *argv[])
 
    int imageSize = fh1->GetImageDataSize();
 // Black up all 'grey' pixels
+   int i;
    int n = 0;
-   for (int i = 0; i<imageSize/3; i++)
+   for (i = 0; i<imageSize/3; i++)
    {
       if ( ((rgb8_t *)imageData)[i].r == ((rgb8_t *)imageData)[i].g
          &&
@@ -167,7 +168,7 @@ int main(int argc, char *argv[])
               << imageSize/3 << ")" << std::endl;
 
    n = 0;
-   for (int i = 0; i<imageSize/3; i++)
+   for (i = 0; i<imageSize/3; i++)
    {
    if ( ((rgb8_t *)imageData)[i].r < threshold
      &&

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 15:06:48 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/02/09 15:31:15 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,6 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmFileHelper.h"
 #include "vtkGdcmReader.h"
 #include "vtkImageViewer.h"
 #include "vtkImageData.h"

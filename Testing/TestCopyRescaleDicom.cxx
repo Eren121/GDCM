@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 15:06:48 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/02/09 15:31:15 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,9 +23,37 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-bool FileExists(const char *filename);
+#ifndef _WIN32
+#include <unistd.h> //for access, unlink
+#else
+#include <io.h> //for _access on Win32
+#endif
 
-bool RemoveFile(const char *source);
+bool FileExists(const char *filename)
+{
+#ifdef _MSC_VER
+# define access _access
+#endif
+#ifndef R_OK
+# define R_OK 04
+#endif
+  if ( access(filename, R_OK) != 0 )
+    {
+    return false;
+    }
+  else
+    {
+    return true;
+    }
+}
+
+bool RemoveFile(const char *source)
+{
+#ifdef _MSC_VER
+#define _unlink unlink
+#endif
+  return unlink(source) != 0 ? false : true;
+}
 
 int CopyRescaleDicom(std::string const &filename, 
                      std::string const &output )

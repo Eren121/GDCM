@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:00:06 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/02/09 15:31:15 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,38 +23,9 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-#ifndef _WIN32
-#include <unistd.h> //for access, unlink
-#else
-#include <io.h> //for _access on Win32
-#endif
-
 // return true if the file exists
-bool FileExists(const char *filename)
-{
-#ifdef _MSC_VER
-# define access _access
-#endif
-#ifndef R_OK
-# define R_OK 04
-#endif
-  if ( access(filename, R_OK) != 0 )
-    {
-    return false;
-    }
-  else
-    {
-    return true;
-    }
-}
-
-bool RemoveFile(const char *source)
-{
-#ifdef _MSC_VER
-#define _unlink unlink
-#endif
-  return unlink(source) != 0 ? false : true;
-}
+bool FileExists(const char *filename);
+bool RemoveFile(const char *source);
 
 int CopyDicom(std::string const &filename, 
               std::string const &output )

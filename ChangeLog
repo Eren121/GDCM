@@ -1,4 +1,7 @@
 2005-02-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/VTKTestWriteSeq.cxx : add a VTK test to write sequences
+
+2005-02-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/ : accelerate tests (it's not very significant accelerations).
      Remove TestCopyDicom that is redundant with TestCopyRescaleDicom
 
