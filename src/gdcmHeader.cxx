@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.96 2003/10/09 13:22:54 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.97 2003/10/09 14:58:28 malaterre Exp $
 
 #include "gdcmHeader.h"
 
@@ -617,7 +617,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
     if (FoundLength == 13)
       // The following 'if' will be removed when there is no more
       // images on Creatis HD with a 13 length for Manufacturer...
-      if ( (ElVal->GetGroup() != 0x0008) || (ElVal->GetElem() )
+      if ( (ElVal->GetGroup() != 0x0008) || (ElVal->GetElement() ) )
       // end of remove area
          FoundLength =10;
 
