@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 17:54:10 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/01/12 21:53:32 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 
 #include <sstream>
 #include <assert.h>
+#include <errno.h>
 
 namespace gdcm 
 {
@@ -86,7 +87,8 @@ public:
    std::ostringstream osmacro;                             \
    osmacro << "Debug: In " __FILE__ ", line " << __LINE__  \
            << ", function " << GDCM_FUNCTION << '\n'       \
-           << msg << "\n\n";                               \
+           << "Last system error was: " << strerror(errno) \
+           << '\n' << msg << "\n\n";                       \
    std::cerr << osmacro.str() << std::endl;                \
    }                                                       \
 }
