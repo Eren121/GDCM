@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 17:27:03 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,6 +52,11 @@ DictEntry::DictEntry(uint16_t group, uint16_t elem,
 
 //-----------------------------------------------------------------------------
 // Print
+/**
+ * \brief   Prints an entry of the Dicom DictionaryEntry
+ * @param   os ostream we want to print in
+ * @param indent Indentation string to be prepended during printing
+ */
 void DictEntry::Print(std::ostream &os, std::string const & )
 {
    std::string vr;

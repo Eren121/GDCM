@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 15:58:00 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/01/23 10:12:32 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,9 +46,6 @@ BinEntry::BinEntry(DocEntry *e) : ValEntry(e->GetDictEntry())
 {
    Copy(e);
 
-   //FIXME
-   //SQDepthLevel = e->GetDepthLevel();
-
    BinArea = 0; // let's be carefull !
    SelfArea = true;
 }
@@ -68,10 +65,11 @@ BinEntry::~BinEntry()
 
 //-----------------------------------------------------------------------------
 // Print
-/*
- * \brief   canonical Printer
+/**
+ * \brief   Prints a BinEntry (Dicom entry)
+ * @param   os ostream we want to print in
+ * @param indent Indentation string to be prepended during printing
  */
- 
 void BinEntry::Print(std::ostream &os, std::string const & )
 {
    os << "B ";
@@ -94,8 +92,7 @@ void BinEntry::Print(std::ostream &os, std::string const & )
       {
          //s << " [gdcm::Binary data NOT loaded]";
          s << " [" <<GetValue() << "]";
-      }
-         
+      }         
    }
    os << s.str();
 }
@@ -117,7 +114,7 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    // TODO FIME
    // Probabely, the same operation will have to be done when we want 
    // to write image with Big Endian Transfert Syntax, 
-   //   and we are working onj Little Endian Processor
+   //   and we are working on Little Endian Processor
 
 #ifdef GDCM_WORDS_BIGENDIAN
       // Be carefull with *any* 16 bits words 'binEntries !'

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 16:44:43 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,9 @@ enum SpecialType {
   JPEGFullProgressionProcess10_12,
   JPEGLosslessProcess14,
   JPEGLosslessProcess14_1,
-  JPEG2000Lossless,
+  JPEGLSLossless,
+  JPEGLSNearLossless,
+  JPEG2000Lossless,  
   JPEG2000,
   RLELossless,
   UnknownTS
@@ -71,9 +73,10 @@ public:
    bool IsTransferSyntax(TSKey const &key);
    bool IsRLELossless(TSKey const &key);
    bool IsJPEGLossless(TSKey const&key);
+   bool IsJPEGLossy(TSKey const&key);
    bool IsJPEG2000(TSKey const &key);
    bool IsJPEG(TSKey const &key);
-   bool IsEncapsulate(TSKey const &key);
+   bool IsJPEGLS(TSKey const &key);
 
    // This should be deprecated very soon
    SpecialType GetSpecialTransferSyntax(TSKey const &key);

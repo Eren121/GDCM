@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,7 @@ DictSet::~DictSet()
  * \brief   Print, in an informal fashion, the list of all the dictionaries
  *          contained is this DictSet, along with their respective content.
  * @param   os Output stream used for printing.
- * @param   indent indent
+ * @param indent Indentation string to be prepended during printing
  */
 void DictSet::Print(std::ostream &os, std::string const & )
 {

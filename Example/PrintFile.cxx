@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:52 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/23 10:12:31 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,16 +45,16 @@ int main(int argc, char* argv[])
    if (argc > 3)
       gdcm::Debug::SetDebugOn();
    
-   e1= new gdcm::File( fileName.c_str() );
+   e1 = new gdcm::File( fileName.c_str() );
    f1 = new gdcm::FileHelper(e1);
 
    if (argc > 2) 
    {
       int level = atoi(argv[2]);   
-      e1->SetPrintLevel(level);
+      f1->SetPrintLevel(level);
    }
 
-   e1->Print();   
+   f1->Print();   
 
    std::cout << "\n\n" << std::endl; 
 

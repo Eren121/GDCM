@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -180,8 +180,8 @@ bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
 /**
  * \brief Implementation of the RLE decoding algorithm for decompressing
  *        a RLE fragment. [refer to PS 3.5-2003, section G.3.2 p 86]
- * @param subRaw Sub region of \ref Raw where the de
- *        decoded fragment should be placed.
+ * @param subRaw Sub region of \ref Raw where the decoded fragment
+ *        should be placed.
  * @param fragmentSize The length of the binary fragment as found on the disk.
  * @param RawSegmentSize The expected length of the fragment ONCE
  *        Raw.
@@ -351,7 +351,7 @@ void PixelReadConvert::ConvertSwapZone()
 }
 
 /**
- * \brief Deal with endianity i.e. re-arange bytes inside the integer
+ * \brief Deal with endianness i.e. re-arange bytes inside the integer
  */
 void PixelReadConvert::ConvertReorderEndianity()
 {
@@ -562,7 +562,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
 }
 
 /**
- * \brief   Convert (Y plane, cB plane, cR plane) to RGB pixels
+ * \brief   Convert (cY plane, cB plane, cR plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
 void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
@@ -673,8 +673,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    else if ( IsRaw )
    {
       // This problem can be found when some obvious informations are found
-      // after the field containing the image datas. In this case, these
-      // bad datas are added to the size of the image (in the PixelDataLength
+      // after the field containing the image data. In this case, these
+      // bad data are added to the size of the image (in the PixelDataLength
       // variable). But RawSize is the right size of the image !
       if( PixelDataLength != RawSize)
       {
@@ -841,7 +841,7 @@ void PixelReadConvert::GrabInformationsFromHeader( File *header )
       BitsAllocated = 16;
    }
 
-   // Number of "Bits Stored" defaulted to number of "Bits Allocated"
+   // Number of "Bits Stored", defaulted to number of "Bits Allocated"
    // when absent from the header.
    BitsStored = header->GetBitsStored();
    if ( BitsStored == 0 )
@@ -849,7 +849,7 @@ void PixelReadConvert::GrabInformationsFromHeader( File *header )
       BitsStored = BitsAllocated;
    }
 
-   // High Bit Position
+   // High Bit Position, defaulted to "Bits Allocated" - 1
    HighBitPosition = header->GetHighBitPosition();
    if ( HighBitPosition == 0 )
    {
@@ -871,9 +871,13 @@ void PixelReadConvert::GrabInformationsFromHeader( File *header )
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian;
-   IsJPEG2000     = Global::GetTS()->IsJPEG2000(ts);
-   IsJPEGLossless = Global::GetTS()->IsJPEGLossless(ts);
-   IsRLELossless  =  Global::GetTS()->IsRLELossless(ts);
+
+   IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts);
+   IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts);
+   IsJPEGLossy     = Global::GetTS()->IsJPEGLossy(ts);
+   IsJPEGLossless  = Global::GetTS()->IsJPEGLossless(ts);
+   IsRLELossless   = Global::GetTS()->IsRLELossless(ts);
+
    PixelOffset     = header->GetPixelOffset();
    PixelDataLength = header->GetPixelAreaLength();
    RLEInfo  = header->GetRLEInfo();
@@ -1137,7 +1141,7 @@ void PixelReadConvert::Print( std::ostream &os, std::string const & indent )
       }
    }
 
-   if ( IsJPEG2000 || IsJPEGLossless )
+   if ( IsJPEG2000 || IsJPEGLossless || IsJPEGLossy || IsJPEGLS )
    {
       if ( JPEGInfo )
       {

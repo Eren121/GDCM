@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 03:05:55 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,14 +38,15 @@ JPEGFragmentsInfo::~JPEGFragmentsInfo()
 
 /**
  * \brief        Print self.
- * @param indent Indentation string to be prepended during printing.
  * @param os     Stream to print to.
+ * @param indent Indentation string to be prepended during printing.
  */
-void JPEGFragmentsInfo::Print( std::ostream &os, std::string const & indent )
+void JPEGFragmentsInfo::Print( std::ostream &os, std::string const &indent )
 {
+   os << std::endl;
    os << indent
       << "----------------- JPEG fragments --------------------------------"
-      << std::endl;
+      << std::endl << std::endl;
    os << indent
       << "Total number of fragments : " << Fragments.size()
       << std::endl;
@@ -57,12 +58,12 @@ void JPEGFragmentsInfo::Print( std::ostream &os, std::string const & indent )
       os << indent
          << "   fragment number :" << fragmentNumber++;
       (*it)->Print( os, indent + "   ");
-      os << std::endl;
    }
+   os << std::endl;
 }
 
 /**
- * \brief  Calculate sum of all fragments lenght and return total
+ * \brief  Calculate sum of all fragments length and return total
  * @return Total size of JPEG fragments length
  */
 size_t JPEGFragmentsInfo::GetFragmentsLength()

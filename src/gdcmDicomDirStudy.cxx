@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:42 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ DicomDirStudy::~DicomDirStudy()
 /**
  * \brief   Prints the Object
  * @param os ostream to write to 
- * @param   indent indent
+ * @param indent Indentation string to be prepended during printing
  * @return
  */ 
 void DicomDirStudy::Print(std::ostream &os, std::string const & )

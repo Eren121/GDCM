@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,7 +98,7 @@ public:
    uint8_t* GetLutRGBA();
 
    // Write mode
-   void SetWriteModeToRaw() { SetWriteMode(WMODE_RAW); };
+   void SetWriteModeToRaw()          { SetWriteMode(WMODE_RAW); };
    void SetWriteModeToRGB()          { SetWriteMode(WMODE_RGB); };
    void SetWriteMode(FileMode mode)  { WriteMode = mode; };
    FileMode GetWriteMode()           { return WriteMode; };
@@ -139,7 +139,7 @@ private:
    /// gdcm::File to use to load the file
    File *FileInternal;
 
-   /// \brief Whether the underlying \ref Header was loaded by
+   /// \brief Whether the underlying \ref gdcm::File was loaded by
    ///  the constructor or passed to the constructor. When false
    ///  the destructor is in charge of deletion.
    bool SelfHeader;

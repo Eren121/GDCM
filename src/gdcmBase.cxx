@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBase.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/23 10:12:32 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@ Base::~Base()
 /**
  * \brief   Print all the object
  * @param   os The output stream to be written to.
- * @param   indent indent
+ * @param indent Indentation string to be prepended during printing
  */
 void Base::Print(std::ostream &, std::string const & )
 {

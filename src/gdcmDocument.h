@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.96 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.97 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,8 +48,9 @@ public:
    FileType GetFileType();
 
    std::string GetTransferSyntax();
- 
+   /// returns RLEFramesInfo 
    RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
+   /// returns JPEGFragmentsInfo
    JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
 
 // Dictionaries
@@ -99,22 +100,19 @@ public:
 
    virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);   
 
-   virtual std::string GetEntry  (uint16_t group, uint16_t elem);
    virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
 
    ValEntry *ReplaceOrCreate(std::string const &value,
                              uint16_t group, uint16_t elem,
                              TagName const &vr = GDCM_UNKNOWN);
-   BinEntry *ReplaceOrCreate(uint8_t* binArea, int lgth,
+   BinEntry *ReplaceOrCreate(uint8_t *binArea, int lgth,
                              uint16_t group, uint16_t elem,
                              TagName const &vr = GDCM_UNKNOWN);
    SeqEntry *ReplaceOrCreate(uint16_t group, uint16_t elem);
 
    bool ReplaceIfExist(std::string const &value,
                        uint16_t group, uint16_t elem );
-
-   bool CheckIfEntryExist(uint16_t group, uint16_t elem );
    
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
    virtual void LoadEntryBinArea(BinEntry *entry);
@@ -126,6 +124,7 @@ public:
    std::string GetTransferSyntaxName();
 
    bool IsDicomV3();
+   bool IsPapyrus();
 
 protected:
 // Methods
@@ -227,11 +226,11 @@ private:
    // DocEntry related utilities
    DocEntry *ReadNextDocEntry();
 
-   uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
-/*   void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
-                                   DocEntrySet* set );*/
+//  uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
+//  void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
+//                                   DocEntrySet *set );
 
-   void HandleBrokenEndian(uint16_t &group, uint16_t &elem);
+   void HandleBrokenEndian  (uint16_t &group, uint16_t &elem);
    void HandleOutOfGroup0002(uint16_t &group, uint16_t &elem);
 
 // Variables
@@ -254,8 +253,9 @@ private:
    uint32_t MaxSizePrintEntry;   
 
 private:
-   friend class FileHelper;
+
 };
+
 } // end namespace gdcm
 
 //-----------------------------------------------------------------------------

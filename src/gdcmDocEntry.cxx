@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 15:58:00 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,7 +116,7 @@ void DocEntry::Print(std::ostream &os, std::string const & )
 
 /**
  * \brief   Writes the common part of any ValEntry, BinEntry, SeqEntry
- * @param fp already open file pointer
+ * @param fp already open ofstream pointer
  * @param filetype type of the file to be written
  */
 void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)

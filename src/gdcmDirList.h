@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 22:20:11 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,17 +28,18 @@
 namespace gdcm 
 {
 
+typedef std::vector<std::string> DirListType;
+
 //-----------------------------------------------------------------------------
+
+// NOTE: Due to a VC6 'feature' we can not export a std::list in a dll, 
+// so GDCM_EXPORT keyword was removed for this class only
+
 /**
  * \ingroup DirList
  * \brief   List containing the file Header s of all the gdcm readable files
  *          found by exploring recursively a root directory. 
  */
-// NOTE: Due to a VC6 'feature' we can not export a std::list in a dll, 
-// so GDCM_EXPORT keyword was removed for this class only
-
-typedef std::vector<std::string> DirListType;
-
 class GDCM_EXPORT DirList
 {
 public :

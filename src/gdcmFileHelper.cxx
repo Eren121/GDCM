@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -901,7 +901,6 @@ ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
 /**
  * \brief   Modifies the value of a given Bin Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
- * @param   content (string) Value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * \return  pointer to the modified/created Bin Entry (NULL when creation

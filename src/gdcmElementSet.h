@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:37:37 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,22 +57,27 @@ public:
 
    DocEntry *GetFirstEntry();
    DocEntry *GetNextEntry();
+   DocEntry *GetLastEntry();
+   DocEntry *GetPreviousEntry();
 
    DocEntry *GetDocEntry(uint16_t group, uint16_t elem);
    ValEntry *GetValEntry(uint16_t group, uint16_t elem);
    BinEntry *GetBinEntry(uint16_t group, uint16_t elem);
    SeqEntry *GetSeqEntry(uint16_t group, uint16_t elem);
 
+   bool IsEmpty() { return TagHT.empty(); };
+   bool CheckIfEntryExist(uint16_t group, uint16_t elem);
+   std::string GetEntry(uint16_t group, uint16_t elem);
+
 protected:
-    
+
 private:
 // Variables
    /// Hash Table (map), to provide fast access
    TagDocEntryHT TagHT; 
    /// Hash Table (map) iterator, used to visit the TagHT variable
    TagDocEntryHT::iterator ItTagHT; 
- 
-   friend class Document;
+     
    friend class DicomDir;        //For accessing private TagHT
    friend class DocEntryArchive; //For accessing private TagHT
 };

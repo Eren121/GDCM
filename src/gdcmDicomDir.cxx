@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 15:28:18 $
-  Version:   $Revision: 1.113 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.114 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,7 +89,8 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    Initialize();  // sets all private fields to NULL
 
    // if user passed a root directory, sure we didn't get anything
-   if ( GetFirstEntry() != 0 ) // when user passed a Directory to parse
+
+   if ( GetFirstEntry() == 0 ) // when user passed a Directory to parse
    {
       if (!parseDir)
          gdcmVerboseMacro( "Entry HT empty for file: "<<fileName);
@@ -161,6 +162,8 @@ DicomDir::~DicomDir()
 // Print
 /**
  * \brief  Canonical Printer 
+ * @param   os ostream we want to print in
+ * @param indent Indentation string to be prepended during printing
  */
 void DicomDir::Print(std::ostream &os, std::string const & )
 {
@@ -471,7 +474,7 @@ DicomDirMeta *DicomDir::NewMeta()
    if( MetaElems )
       delete MetaElems;
 
- // friend hunting : we miss GetLastEntry and GetPreviousEntry
+ // friend class hunting : we miss GetLastEntry and GetPreviousEntry
  //                  to be able to remove any direct reference to TagHT
 
    DocEntry *e = GetFirstEntry();
@@ -743,8 +746,6 @@ void DicomDir::CreateDicomDir()
    }
 
    NewMeta();
-
-   //ListSQItem listItems = s->GetSQItems();
    
    DocEntry *d;
    std::string v;
@@ -813,7 +814,6 @@ void DicomDir::CreateDicomDir()
 
       if( si )
          MoveSQItem(si,tmpSI);
-
       tmpSI=s->GetNextSQItem();
    }
 // friend hunting : this one will be difficult to remove !
@@ -1000,7 +1000,7 @@ void DicomDir::MoveSQItem(SQItem *dst,SQItem *src)
 }
 
 /**
- * \brief   compares two dgcmHeaders
+ * \brief   compares two files
  */
 bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
 {

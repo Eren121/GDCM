@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:37:37 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,6 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
       i->second->WriteContent(fp, filetype);
    } 
 }
-
 
 /**
  * \brief  retrieves a Dicom Element using (group, element)
@@ -189,6 +188,39 @@ SeqEntry *ElementSet::GetSeqEntry(uint16_t group, uint16_t elem)
 //-----------------------------------------------------------------------------
 // Protected
 
+/**
+ * \brief   Checks if a given Dicom Element exists within the H table
+ * @param   group   Group number of the searched Dicom Element 
+ * @param   elem  Element number of the searched Dicom Element 
+ * @return true is found
+ */
+bool ElementSet::CheckIfEntryExist(uint16_t group, uint16_t elem )
+{
+   const std::string &key = DictEntry::TranslateToKey(group, elem );
+   return TagHT.count(key) != 0;
+}
+
+/**
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
+ *          the public and private dictionaries 
+ *          for the element value representation of a given tag.
+ * @param   group  Group number of the searched tag.
+ * @param   elem Element number of the searched tag.
+ * @return  Corresponding element value representation when it exists,
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
+ */
+std::string ElementSet::GetEntry(uint16_t group, uint16_t elem)
+{
+   TagKey key = DictEntry::TranslateToKey(group, elem);
+   if ( !TagHT.count(key))
+   {
+      return GDCM_UNFOUND;
+   }
+
+   return ((ValEntry *)TagHT.find(key)->second)->GetValue();
+}
+
+
 //-----------------------------------------------------------------------------
 // Private
 
@@ -275,6 +307,35 @@ DocEntry *ElementSet::GetNextEntry()
       return  ItTagHT->second;
    return NULL;
 }
+
+
+/**
+ * \brief   Get the larst entry while visiting the DocEntrySet
+ * \return  The last DocEntry if found, otherwhise NULL
+ */
+DocEntry *ElementSet::GetLastEntry()
+{
+   ItTagHT = TagHT.end();
+   if ( ItTagHT != TagHT.begin() )
+      return  ItTagHT->second;
+   return NULL;
+}
+
+/**
+ * \brief   Get the previous entry while visiting the Hash table (TagHT)
+ * \note : meaningfull only if GetFirstEntry already called 
+ * \return  The previous DocEntry if found, otherwhise NULL
+ */
+DocEntry *ElementSet::GetPreviousEntry()
+{
+   gdcmAssertMacro (ItTagHT != TagHT.begin());
+
+   --ItTagHT;
+   if (ItTagHT != TagHT.begin())
+      return  ItTagHT->second;
+   return NULL;
+}
+
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

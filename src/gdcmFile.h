@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 12:37:15 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.99 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -140,12 +140,15 @@ public:
    float GetYSpacing();
    float GetZSpacing();
 
-   // Useful for rescaling graylevel:
+   // For rescaling graylevel:
    float GetRescaleIntercept();
    float GetRescaleSlope();
 
    int GetNumberOfScalarComponents();
    int GetNumberOfScalarComponentsRaw();
+
+   // To organize DICOM files based on their x,y,z position 
+   void GetImageOrientationPatient( float iop[6] );
 
    int GetImageNumber();
    ModalityType GetModality();
@@ -172,12 +175,8 @@ protected:
    /// Replace patient's specific information by 'anonymous'
    bool AnonymizeFile();
 
-   /// Helper function needed to organize DICOM files based on 
-   /// their x,y,z position
-   void GetImageOrientationPatient( float iop[6] );
-
 private:
-  friend class SerieHeader;
+
 };
 } // end namespace gdcm
 

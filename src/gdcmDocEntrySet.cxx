@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:39:49 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ namespace gdcm
  * @param   group group  number of the underlying DictEntry
  * @param   elem  element number of the underlying DictEntry
  * @param   vr    VR (Value Representation) of the underlying DictEntry
- * @param   vm    VM (Value Multiplicity) of the underlying DictEntry
+ * @param   vm    VM (Value Multiplicity)   of the underlying DictEntry
  * @param   name   english name
  */
 DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,uint16_t elem,
@@ -125,7 +125,7 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group,uint16_t elem)
  *          exist)] for the presence of the DictEntry with given
  *          group and element. The public dictionary has precedence on the
  *          shadow one.
- * @param   group   group number of the searched DictEntry
+ * @param   group  group number of the searched DictEntry
  * @param   elem element number of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
@@ -149,7 +149,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
  * \brief   Searches both the public and the shadow dictionary (when they
  *          exist) for the presence of the DictEntry with given
  *          group and element, and create a new virtual DictEntry if necessary
- * @param   group   group number of the searched DictEntry
+ * @param   group  group number of the searched DictEntry
  * @param   elem element number of the searched DictEntry
  * @param   vr Value Representation to use, if necessary 
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
@@ -185,9 +185,10 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
          goodEntry = NewVirtualDictEntry(group, elem, goodVR);
       }
    }
-
    return goodEntry;
 }
+
+
 
 //-----------------------------------------------------------------------------
 // Private

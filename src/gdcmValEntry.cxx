@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 15:58:01 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,9 @@ ValEntry::~ValEntry ()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \brief   canonical Printer
+ * \brief   Prints the 'std::string representable' value of ValEntry
+ * @param   os ostream we want to print in
+ * @param indent Indentation string to be prepended during printing
  */
 void ValEntry::Print(std::ostream &os, std::string const &)
 {
@@ -173,6 +175,12 @@ void ValEntry::Print(std::ostream &os, std::string const &)
 
 //-----------------------------------------------------------------------------
 // Public
+
+/**
+ * \brief   Sets the std::string representable' value of a ValEntry
+ * @param  val value to set 
+ */
+
 void ValEntry::SetValue(std::string const &val)
 {
    // Integers have a special treatement for their length:
@@ -213,8 +221,10 @@ void ValEntry::SetValue(std::string const &val)
    SetLength(l);
 }
 
-/*
- * \brief   canonical Writer
+/**
+ * \brief   Writes the std::string representable' value of a ValEntry
+ * @param fp already open ofstream pointer
+ * @param filetype type of the file to be written
  */
 void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
@@ -227,7 +237,8 @@ void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
 
    const VRKey &vr = GetVR();
    unsigned int lgr = GetLength();
-   //std::cout<<std::hex<<GetGroup()<<"|"<<GetElement()<<std::dec<<" : "<<GetReadLength()<<" / "<<GetLength()<<"\n";
+   //std::cout<<std::hex<<GetGroup()<<"|"<<GetElement()
+   //         <<std::dec<<" : "<<GetReadLength()<<" / "<<GetLength()<<"\n";
    if (vr == "US" || vr == "SS")
    {
       // some 'Short integer' fields may be mulivaluated

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:52 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/23 10:12:32 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 
    // Look for private Papyrus Sequence
    gdcm::SeqEntry *seqPapyrus= h->GetSeqEntry(0x0041, 0x1050);
-   if (!h)
+   if (!seqPapyrus)
    {
       std::cout << "NOT a Papyrus File" << std::endl;
       delete h;
@@ -165,12 +165,16 @@ int main(int argc, char* argv[])
    int lgrImage = iRows*iColumns * iSamplesPerPixel * (iBitsAllocated/8);
 
    // compute number of images
+
+   int nbImages = seqPapyrus->GetNumberOfSQItems();
+/*
    int nbImages = 0;
    while (sqi)
    {
       nbImages++;
       sqi =  seqPapyrus->GetNextSQItem();
    }
+*/
    std::cout <<"Number of frames :" << nbImages << std::endl;  
 
    //  allocate enough room to get the pixels of all images.

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,9 +41,9 @@ public:
    virtual ~PixelReadConvert();
 
    //// Getter accessors:
-   uint8_t* GetRGB() { return RGB; }
+   uint8_t* GetRGB()     { return RGB; }
    size_t   GetRGBSize() { return RGBSize; }
-   uint8_t* GetRaw() { return Raw; }
+   uint8_t* GetRaw()     { return Raw; }
    size_t   GetRawSize() { return RawSize; }
    uint8_t* GetLutRGBA() { return LutRGBA; }
 
@@ -118,7 +118,10 @@ private:
 
    bool IsRaw;
    bool IsJPEG2000;
+   bool IsJPEGLS;
    bool IsJPEGLossless;
+   bool IsJPEGLossy;
+   bool IsJPEG;
    bool IsRLELossless;
 
    RLEFramesInfo *RLEInfo;

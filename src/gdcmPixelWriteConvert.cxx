@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:19:48 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,12 +16,6 @@
                                                                                 
 =========================================================================*/
 
-//////////////////   TEMPORARY NOTE
-// look for "fixMem" and convert that to a member of this class
-// Removing the prefix fixMem and dealing with allocations should do the trick
-//
-// grep PixelWriteConvert everywhere and clean up !
-
 #include "gdcmDebug.h"
 #include "gdcmPixelWriteConvert.h"
 
@@ -29,6 +23,8 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+
+/// \brief Construcror
 PixelWriteConvert::PixelWriteConvert() 
 {
    ReadData = 0;
@@ -38,24 +34,40 @@ PixelWriteConvert::PixelWriteConvert()
    UserDataSize = 0;
 }
 
+/// \brief Destructor
 PixelWriteConvert::~PixelWriteConvert() 
 {
 }
 
 //-----------------------------------------------------------------------------
 // Public
+
+/**
+ * \brief   SetReadData
+ * @param   data data
+ * @param   size size
+ */
 void PixelWriteConvert::SetReadData(uint8_t *data,size_t size)
 {
    ReadData = data;
    ReadDataSize = size;
 }
 
+/**
+ * \brief   SetUserData
+ * @param   data data
+ * @param   size size
+ */
 void PixelWriteConvert::SetUserData(uint8_t *data,size_t size)
 {
    UserData = data;
    UserDataSize = size;
 }
 
+/**
+ * \brief   GetData
+ * @return  data 
+ */
 uint8_t *PixelWriteConvert::GetData()
 {
    if(UserData)
@@ -68,6 +80,10 @@ uint8_t *PixelWriteConvert::GetData()
    }
 }
 
+/**
+ * \brief   GetDataSize
+ * @return  size 
+ */
 size_t PixelWriteConvert::GetDataSize()
 {
    if(UserData)

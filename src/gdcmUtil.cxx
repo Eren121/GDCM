@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/22 23:29:16 $
-  Version:   $Revision: 1.121 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.122 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -328,13 +328,13 @@ std::string Util::DicomString(const char *s, size_t l)
 
 /**
  * \brief Create a /DICOM/ string:
- * It should a of even lenght (no odd length ever)
+ * It should a of even length (no odd length ever)
  * It can contain as many (if you are reading this from your
  * editor the following character is is backslash followed by zero
  * that needed to be escaped with an extra backslash for doxygen) \\0
  * as you want.
  * This function is similar to DicomString(const char*), 
- * except it doesn't take a lenght. 
+ * except it doesn't take a length. 
  * It only pad with a null character if length is odd
  */
 std::string Util::DicomString(const char *s)
@@ -351,8 +351,8 @@ std::string Util::DicomString(const char *s)
 
 /**
  * \brief Safely compare two Dicom String:
- *        - Both string should be of even lenght
- *        - We allow padding of even lenght string by either a null 
+ *        - Both string should be of even length
+ *        - We allow padding of even length string by either a null 
  *          character of a space
  */
 bool Util::DicomStringEqual(const std::string &s1, const char *s2)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:37:37 $
-  Version:   $Revision: 1.203 $
+  Date:      $Date: 2005/01/23 10:12:33 $
+  Version:   $Revision: 1.204 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ const unsigned int Document::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
 
 /**
  * \brief   constructor  
- * @param   filename file to be opened for parsing
+ * @param   filename 'Document' (File or DicomDir) to be opened for parsing
  */
 Document::Document( std::string const &filename ) : ElementSet(-1)
 {
@@ -265,7 +265,8 @@ bool Document::IsReadable()
       return false;
    }
 
-   if( TagHT.empty() )
+   //if( TagHT.empty() )
+   if ( IsEmpty() )
    { 
       gdcmVerboseMacro( "No tag in internal hash table.");
       return false;
@@ -322,6 +323,23 @@ bool Document::IsDicomV3()
    // And ... would it be a rich idea to check ?
    // (some 'no Preamble' DICOM images exist !)
    return GetDocEntry(0x0002, 0x0010) != NULL;
+}
+
+/**
+ * \brief   Predicate for Papyrus file
+ *          Dedicated to whomsoever it may concern
+ * @return  True when the file is a Papyrus file.
+ */
+bool Document::IsPapyrus()
+{
+   // check for Papyrus private Sequence
+   DocEntry *e = GetDocEntry(0x0041, 0x1050);
+   if ( !e )
+      return false;
+   // check if it's actually a Sequence
+   if ( !dynamic_cast<SeqEntry*>(e) )
+      return  false;
+   return true;
 }
 
 /**
@@ -662,39 +680,6 @@ bool Document::ReplaceIfExist(std::string const &value,
 
 //-----------------------------------------------------------------------------
 // Protected
-
-/**
- * \brief   Checks if a given Dicom Element exists within the H table
- * @param   group   Group number of the searched Dicom Element 
- * @param   elem  Element number of the searched Dicom Element 
- * @return true is found
- */
-bool Document::CheckIfEntryExist(uint16_t group, uint16_t elem )
-{
-   const std::string &key = DictEntry::TranslateToKey(group, elem );
-   return TagHT.count(key) != 0;
-}
-
-
-/**
- * \brief   Searches within Header Entries (Dicom Elements) parsed with 
- *          the public and private dictionaries 
- *          for the element value representation of a given tag.
- * @param   group  Group number of the searched tag.
- * @param   elem Element number of the searched tag.
- * @return  Corresponding element value representation when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string Document::GetEntry(uint16_t group, uint16_t elem)
-{
-   TagKey key = DictEntry::TranslateToKey(group, elem);
-   if ( !TagHT.count(key))
-   {
-      return GDCM_UNFOUND;
-   }
-
-   return ((ValEntry *)TagHT.find(key)->second)->GetValue();
-}
 
 /**
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
@@ -2477,25 +2462,25 @@ DocEntry *Document::ReadNextDocEntry()
    return newEntry;
 }
 
-
+//GenerateFreeTagKeyInGroup? What was it designed for ?!? 
 /**
  * \brief   Generate a free TagKey i.e. a TagKey that is not present
  *          in the TagHt dictionary.
  * @param   group The generated tag must belong to this group.  
  * @return  The element of tag with given group which is fee.
  */
-uint32_t Document::GenerateFreeTagKeyInGroup(uint16_t group) 
-{
-   for (uint32_t elem = 0; elem < UINT32_MAX; elem++) 
-   {
-      TagKey key = DictEntry::TranslateToKey(group, elem);
-      if (TagHT.count(key) == 0)
-      {
-         return elem;
-      }
-   }
-   return UINT32_MAX;
-}
+//uint32_t Document::GenerateFreeTagKeyInGroup(uint16_t group) 
+//{
+//   for (uint32_t elem = 0; elem < UINT32_MAX; elem++) 
+//   {
+//      TagKey key = DictEntry::TranslateToKey(group, elem);
+//      if (TagHT.count(key) == 0)
+//      {
+//         return elem;
+//      }
+//   }
+//   return UINT32_MAX;
+//}
 
 /**
  * \brief   Assuming the internal file pointer \ref Document::Fp 
@@ -2749,7 +2734,7 @@ void Document::ComputeJPEGFragmentInfo()
    }
 }
 
-/**
+/*
  * \brief Walk recursively the given \ref DocEntrySet, and feed
  *        the given hash table (\ref TagDocEntryHT) with all the
  *        \ref DocEntry (Dicom entries) encountered.
@@ -2810,7 +2795,7 @@ void Document::ComputeJPEGFragmentInfo()
    }
 }*/
 
-/**
+/*
  * \brief Build a \ref TagDocEntryHT (i.e. a std::map<>) from the current
  *        Document.
  *

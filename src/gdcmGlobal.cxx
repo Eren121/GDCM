@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:41 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ namespace gdcm
 // used to be in gdcmCommon.h but due to a 'bug' in gcc/MacOSX
 // you cannot have static initialization in a multithreaded environment
 // since there is a lazy construction everything got skrew up somehow
-// Therefore the actual initiliazation is done in a cxx file (avoid
+// Therefore the actual initialization is done in a cxx file (avoid
 // duplicated symbol), and an extern is used in gdcmCommon.h
 const std::string GDCM_UNKNOWN   = "gdcm::Unknown";
 const std::string GDCM_UNFOUND   = "gdcm::Unfound";

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:26:18 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ SeqEntry::SeqEntry( DictEntry *e )
  * \brief   Constructor from a given SeqEntry
  * @param   e Pointer to existing Doc entry
  * @param   depth depth level of the current Seq entry
-  */
+ */
 SeqEntry::SeqEntry( DocEntry *e, int depth )
              : DocEntry( e->GetDictEntry() )
 {
@@ -201,9 +201,10 @@ SQItem *SeqEntry::GetSQItem(int nb)
          return *cc;
       }
    }
-   return *(Items.end()); // Euhhhhh ?!? Is this the last one . FIXME
+   return *(Items.end());
 }
 
+/// \brief retuens the number of SQItems within the current Sequence
 unsigned int SeqEntry::GetNumberOfSQItems()
 {
    return Items.size();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:42 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,6 +59,10 @@ static const char *SpecialStrings[] =  {
   "1.2.840.10008.1.2.4.57",
   // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14, [Selection Value 1])
   "1.2.840.10008.1.2.4.70",
+  // JPEG-LS Lossless Image Compression
+  "1.2.840.10008.1.2.4.80",
+  // JPEG-LS Lossy (Near-Lossless) Image Compression
+  "1.2.840.10008.1.2.4.81",
   // JPEG 2000 Lossless
   "1.2.840.10008.1.2.4.90",
   // JPEG 2000
@@ -147,13 +151,24 @@ TSAtr const & TS::GetValue(TSKey const &key)
    }
    return it->second;
 }
-
+/**
+ * \brief   Determines if the key passed corresponds to a 'Transfer Syntax'
+ *          as defined in DICOM (and stored in gdcm::TS class)
+ * @return  True when key is an actual 'Transfer Syntax'. False in all
+ *          other cases.
+ */
 bool TS::IsTransferSyntax(TSKey const &key)
 {
    TSHT::const_iterator it = TsMap.find(key);
    return it != TsMap.end();
 }
 
+/**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a Run Length Encoding Lossless one
+ * @return  True when Run Length Encoding Lossless found. False in all
+ *          other cases.
+ */
 bool TS::IsRLELossless(TSKey const &key)
 {
    bool r = false;
@@ -168,6 +183,12 @@ bool TS::IsRLELossless(TSKey const &key)
    return r;
 }
 
+/**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a 'classical' JPEG Lossless one
+ * @return  True when 'classical' Lossless found. False in all
+ *          other cases.
+ */
 bool TS::IsJPEGLossless(TSKey const &key)
 {
    bool r = false;
@@ -184,6 +205,28 @@ bool TS::IsJPEGLossless(TSKey const &key)
    return r;
 }
 
+/**
+ * \brief   Determines if the Transfer Syntax was already encountered
+ *          and if it corresponds to a 'classical' JPEG Lossy one
+ * @return  True when 'classical' Lossy found. False in all
+ *          other cases.
+ */
+bool TS::IsJPEGLossy(TSKey const &key)
+{
+   bool r = false;
+   // First check this is an actual transfer syntax
+   if( IsTransferSyntax(key) )
+   {
+      if ( key == SpecialStrings[JPEGBaselineProcess1]
+        || key == SpecialStrings[JPEGExtendedProcess2_4]
+        || key == SpecialStrings[JPEGExtendedProcess3_5]
+        || key == SpecialStrings[JPEGSpectralSelectionProcess6_8] )
+      {
+         r = true;
+      }
+   }
+   return r;
+}
 /**
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEG2000 one
@@ -206,8 +249,8 @@ bool TS::IsJPEG2000(TSKey const &key)
 }
 
 /**
- * \brief   Determines if the Transfer Syntax corresponds to any form
- *          of Jpeg encoded Pixel data.
+ * \brief   Determines if the Transfer Syntax corresponds to 
+ *          'classical' Jpeg Lossless or Jpeg lossy.
  * @return  True when any form of JPEG found. False otherwise.
  */
 bool TS::IsJPEG(TSKey const &key)
@@ -216,12 +259,9 @@ bool TS::IsJPEG(TSKey const &key)
    // First check this is an actual transfer syntax
    if( IsTransferSyntax(key) )
    {
-      if ( key == SpecialStrings[JPEGBaselineProcess1]
-        || key == SpecialStrings[JPEGExtendedProcess2_4]
-        || key == SpecialStrings[JPEGExtendedProcess3_5]
-        || key == SpecialStrings[JPEGSpectralSelectionProcess6_8]
-        || IsJPEGLossless( key ) 
-        || IsJPEG2000( key ) )
+      if ( IsJPEGLossy( key )
+        || IsJPEGLossless( key )
+         )
       {
          r = true;
       }
@@ -230,18 +270,18 @@ bool TS::IsJPEG(TSKey const &key)
 }
 
 /**
- * \brief   Determines if the Transfer Syntax corresponds to encapsulated
- *          of encoded Pixel Data (as opposed to native).
- * @return  True when encapsulated. False when native.
+ * \brief   Determines if the Transfer Syntax corresponds to any form
+ *          of Jpeg-LS encoded Pixel data.
+ * @return  True when any form of JPEG-LS found. False otherwise.
  */
-bool TS::IsEncapsulate(TSKey const &key)
+bool TS::IsJPEGLS(TSKey const &key)
 {
    bool r = false;
    // First check this is an actual transfer syntax
    if( IsTransferSyntax(key) )
    {
-      if ( key == SpecialStrings[RLELossless]
-        || IsJPEG(key) )
+      if ( key == SpecialStrings[JPEGLSLossless]
+        || key == SpecialStrings[JPEGLSNearLossless] ) 
       {
          r = true;
       }

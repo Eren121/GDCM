@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 12:37:15 $
-  Version:   $Revision: 1.196 $
+  Date:      $Date: 2005/01/23 10:12:34 $
+  Version:   $Revision: 1.197 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ File::File( std::string const &filename ):
    // is found by indirection through the "Image Location").
    // Inside the group pointed by "Image Location" the searched element
    // is conventionally the element 0x0010 (when the norm is respected).
-   // When the "Image Location" is Missing we default to group 0x7fe0.
+   // When the "Image Location" is missing we default to group 0x7fe0.
    // Note: this IS the right place for the code
  
    // Image Location
@@ -97,6 +97,8 @@ File::File( std::string const &filename ):
                              GrPixel, NumPixel,
                              PixelVR, "PXL", "Pixel Data");
  
+      // friend class hunting : should we *create* a new entry,
+      // instead of modifying its DictEntry,in order not to use 'friend' ?
       entry->SetDictEntry( newEntry );
    }
 }
@@ -1283,6 +1285,7 @@ bool File::AnonymizeFile()
 
 /**
   * \brief gets the info from 0020,0037 : Image Orientation Patient
+  * (needed to organize DICOM files based on their x,y,z position)
   * @param iop adress of the (6)float aray to receive values
   * @return cosines of image orientation patient
   */
