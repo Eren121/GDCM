@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/16 10:19:19 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/02/17 10:53:21 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -644,8 +644,6 @@ void PixelReadConvert::ConvertReorderEndianity()
    }
 }
 
-
-
 /**
  * \brief Deal with Grey levels i.e. re-arange them
  *        to have low values = dark, high values = bright
@@ -655,7 +653,8 @@ void PixelReadConvert::ConvertFixGreyLevels()
    if (!IsMonochrome1)
       return;
 
-   int i; // to please M$VC6
+   uint32_t i; // to please M$VC6
+   int16_t j;
 
    if (!PixelSign)
    {
@@ -673,8 +672,7 @@ void PixelReadConvert::ConvertFixGreyLevels()
       if ( BitsAllocated == 16 )
       {
          uint16_t mask =1;
-         int bitStored = 12;   
-         for (i=0; i<BitsStored-1; i++)
+         for (j=0; j<BitsStored-1; j++)
          {
             mask = (mask << 1) +1; // will be fff when BitsStored=12
          }
