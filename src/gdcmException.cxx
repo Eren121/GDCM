@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/10/28 19:58:05 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,8 @@ std::string Exception::getName() const throw()
    try
    {
 #ifdef __GNUC__   // GNU C++ compiler class name demangling
-      unsigned int nested = 1, i, nb, offset;
+      unsigned int nested = 1, i, nb;
+      int offset;
       std::string one;
 
       std::string name;
