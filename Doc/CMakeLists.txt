@@ -12,18 +12,15 @@ SET(TARGET_DIR
 #EXTRA_DIST = \
 #  DoxyfileDeveloppers  \
 #  DoxyfileUsers        \
-#  DoxyDevelInstal.txt  \
-#  DoxyIntroduction.txt \
 #  DoxyPython.txt       \
-#  DoxyInstallation.txt \
 #  DoxyMainPage.txt
 
 IF(GDCM_DOCUMENTATION)
 
   # http://www.cmake.org/pipermail/cmake/2003-April/003673.html
   # Too bad CMake doesn't support multiline ""
-  SET(GDCM_DOCUMENTATION_INPUT_COMMON
-    "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyInstallation.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyIntroduction.txt"
+  SET(GDCM_DOXYGEN_INPUT_COMMON
+    "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt"
   )
   SET(GDCM_DOCUMENTATION_EXCLUDE_COMMON
   )
@@ -35,8 +32,8 @@ IF(GDCM_DOCUMENTATION)
   SET(GDCM_HTML_OUTPUT
     html.developper
   )
-  SET(GDCM_DOCUMENTATION_INPUT
-    "${GDCM_DOCUMENTATION_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyDevelInstal.txt ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt"
+  SET(GDCM_DOXYGEN_INPUT
+    "${GDCM_DOXYGEN_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt"
   )
   SET(GDCM_DOCUMENTATION_EXCLUDE
     "${GDCM_DOCUMENTATION_EXCLUDE_COMMON}  ${GDCM_SOURCE_DIR@/src/iddcmjpeg.h     ${GDCM_SOURCE_DIR@/src/src/gdcmJpeg.cxx"

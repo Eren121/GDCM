@@ -1,4 +1,4 @@
-Gdcm is copyrighted as an open-source, Berkely-style license. It allows
+Gdcm is copyrighted as an open-source, Berkeley-style license. It allows
 unrestricted use, including use in commercial products. The complete
 copyright is shown below.
 

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+   <TITLE>Gdcm Developpers</TITLE>
+</HEAD>
+
+<BODY>
+
+<!#######################################################################>
+<H1>Gdcm Developpers</H1>
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
+
+First you should be familiar on how to 
+<A HREF="Installation.html">recompile, install and test</A>
+gdcm from the
+<A HREF="Cvs.html">sources obtained with cvs</A>.
+<BR>
+<!##############################>
+Please adopt the
+<A HREF="CodingStyle.html"><B>coding style</B></A>.
+<BR>
+<!##############################>
+<H3>CVS policy</H3>
+<UL>
+<LI>All the commits should be atomic. They must preserve the compilation
+  in order to prevent checkouts with broken code.
+</LI>
+<LI> All the commits must correspond to a state of the code where ctest
+  runs and has no failing subtest. Always run ctest before commiting.
+  <BR>
+  <B>Notes</B>:
+  <UL>
+  <LI> you can start ctest in verbose mode through the command
+     <TT>ctest -V >& log</TT>
+  </LI>
+  <LI> you can start a single test through ctest with
+      ctest -R FailingTestName -V >& log
+  </LI>
+  </UL>
+</LI>
+</UL>
+
+<!##############################>
+<H3>Compiler flags policy</H3>
+When working with gcc please use the following flags when
+configuring the cmake variable <TT>CMAKE_CXX_FLAGS</TT>
+<BR>
+<TT>-g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter
+         -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated
+         -Woverloaded-virtual
+</TT>
+
+<!##############################>
+<H3>Sending the result to kitware's dashboard (optional)</H3>
+Use <TT>ctest -D Experimental</TT>.
+<BR>
+The results should appear in
+<A HREF="http://public.kitware.com/dashboard.php?name=public">
+        Kitware's dashboard</A>
+under the name of your machine (uname). For ease of use you can
+change the SITE variable in your CMakeCache.txt to something more
+accurate such as: GDCM-my_machine_name. The entry will then be within
+the "Experimental Builds" entry.
+
+
+<!#######################################################################>
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
+
+</BODY>
+</HTML>

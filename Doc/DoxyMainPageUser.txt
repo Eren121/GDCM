@@ -1,13 +1,5 @@
 /**
  * \mainpage gdcm documentation
  *
- * - \ref DoxyIntroduction
- * - \ref DoxyInstallation
- * - \ref DoxyPythonComplete
- * - <A HREF="hierarchy.html">Class Hierarchy</A>
- * - <A HREF="classes.html">Alphabetical List</A>
- * - <A HREF="annotated.html">Compound List</A>
- * - <A HREF="files.html">File List</A>
- * - <A HREF="functions.html">Compound Members</A>
- * - <A HREF="globals.html">File Members</A>
+ * This is the users documentation
  */
