@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.39 2003/10/02 11:26:16 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.40 2003/10/21 12:19:43 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -190,6 +190,7 @@ public:
    int GetYSize(void);
    int GetZSize(void);
    int GetBitsStored(void);
+   int GetBitsAllocated(void);
    int GetSamplesPerPixel(void);
    
    int GetPlanarConfiguration(void);
