@@ -1,5 +1,21 @@
-// vtkGdcmReader.h
-//-----------------------------------------------------------------------------
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: vtkGdcmReader.h,v $
+  Language:  C++
+  Date:      $Date: 2004/12/09 10:59:59 $
+  Version:   $Revision: 1.20 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+                                                                                
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
 

@@ -1,4 +1,21 @@
-// vtkGdcmReader.cxx
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: vtkGdcmReader.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/12/09 10:59:59 $
+  Version:   $Revision: 1.64 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+                                                                                
 //-----------------------------------------------------------------------------
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLEANME 
@@ -58,7 +75,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.63 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.64 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------

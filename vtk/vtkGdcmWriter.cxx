@@ -1,53 +1,21 @@
-// vtkGdcmWriter.cxx
-//-----------------------------------------------------------------------------
-// //////////////////////////////////////////////////////////////
-// WARNING TODO CLEANME 
-// Actual limitations of this code:
-//
-// /////// Redundant and unnecessary header parsing
-// In it's current state this code actually parses three times the Dicom
-// header of a file before the corresponding image gets loaded in the
-// ad-hoc vtkData !
-// Here is the process:
-//  1/ First loading happens in ExecuteInformation which in order to
-//     positionate the vtk extents calls CheckFileCoherence. The purpose
-//     of CheckFileCoherence is to make sure all the images in the future
-//     stack are "homogenous" (same size, same representation...). This
-//     can only be achieved by parsing all the Dicom headers...
-//  2/ ExecuteData is then responsible for the next two loadings:
-//  2a/ ExecuteData calls AllocateOutputData that in turn seems to 
-//      (indirectely call) ExecuteInformation which ends up in a second
-//      header parsing
-//      This is fixed by adding a test at the beginning of ExecuteInformation
-//      on the modification of the object instance. If a modification have been
-//      made (method Modified() ), the MTime value is increased. The fileTime
-//      is compared to this new value to find a modification in the class
-//      parameters
-//  2b/ the core of ExecuteData then needs gdcmFile (which in turns
-//      initialises gdcmHeader in the constructor) in order to access
-//      the data-image.
-//
-// Possible solution:
-// maintain a list of gdcmFiles (created by say ExecuteInformation) created
-// once and for all accross the life of vtkGdcmHeader (it would only load
-// new gdcmFile if the user changes the list). ExecuteData would then use 
-// those gdcmFile and hence avoid calling the construtor:
-//  - advantage: the header of the files would only be parser once.
-//  - drawback: once execute information is called (i.e. on creation of
-//              a vtkGdcmHeader) the gdcmFile structure is loaded in memory.
-//              The average size of a gdcmHeader being of 100Ko, is one
-//              loads 10 stacks of images with say 200 images each, you
-//              end-up with a loss of 200Mo...
-//
-// /////// Never unallocated memory:
-// ExecuteData allocates space for the pixel data [which will get pointed
-// by the vtkPointData() through the call
-// data->GetPointData()->GetScalars()->SetVoidArray(mem, StackNumPixels, 0);]
-// This data is never "freed" neither in the destructor nor when the
-// filename list is extended, ExecuteData is called a second (or third)
-// time...
-// //////////////////////////////////////////////////////////////
-
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: vtkGdcmWriter.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/12/09 10:59:59 $
+  Version:   $Revision: 1.4 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+                                                                                
 #include "gdcmHeader.h"
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
@@ -58,7 +26,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.3 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.4 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -212,6 +180,7 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
  */ 
 void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, ofstream *file)
 {
+   (void)axis; // To avoid warning
    if(file)
    {
       vtkErrorMacro(<< "File musn't be opened");
@@ -227,10 +196,19 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, ofstream *file
       return;
    }
 
-   WriteFile(this->FileName,image);
+   WriteDcmFile(this->FileName,image);
 }
 
-void vtkGdcmWriter::WriteFile(char *fileName,vtkImageData *image)
+void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, 
+                                   vtkImageData *cache, ofstream *file)
+{
+   (void)axis; // To avoid warning
+   (void)image; // To avoid warning
+   (void)cache; // To avoid warning
+   (void)file; // To avoid warning
+}
+
+void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)
 {
    // From here, the write of the file begins
    gdcm::File *dcmFile = new gdcm::File();
@@ -239,7 +217,7 @@ void vtkGdcmWriter::WriteFile(char *fileName,vtkImageData *image)
    SetImageInformation(dcmFile,image);
 
    // Write the image
-   if(!dcmFile->Write(FileName))
+   if(!dcmFile->Write(fileName))
    {
       vtkErrorMacro(<< "File " << this->FileName << "couldn't be written by "
                     << " the gdcm library");
