@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2004/09/03 15:11:35 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -721,9 +721,9 @@ bool gdcmDocument::ReplaceIfExistByNumber(std::string const & value,
  * \brief   Checks if a given Dicom Element exists within the H table
  * @param   group      Group number of the searched Dicom Element 
  * @param   element  Element number of the searched Dicom Element 
- * @return  number of occurences
+ * @return true is found
  */
-int gdcmDocument::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
+bool gdcmDocument::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
 {
    const std::string &key = gdcmDictEntry::TranslateToKey(group, element );
    return TagHT.count(key);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/03 07:57:10 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/09/03 15:11:35 $
+  Version:   $Revision: 1.35 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -161,7 +161,7 @@ protected:
    
    void Parse7FE0 ();   
    // Entry
-   int CheckIfEntryExistByNumber(uint16_t group, uint16_t elem ); // int !
+   bool CheckIfEntryExistByNumber(uint16_t group, uint16_t elem );
 public:
    virtual std::string GetEntryByName    (TagName const & tagName);
    virtual std::string GetEntryVRByName  (TagName const & tagName);
