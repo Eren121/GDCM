@@ -156,7 +156,7 @@ void * gdcmFile::GetImageData (void) {
 	if (nb != 8) {
 		int _sw = GetSwapCode();
 
-		_Swap (Pixels, _sw, lgrTotale, nb);   						 // A REMETTRE
+		_Swap (Pixels, _sw, lgrTotale, nb);
 	}
 	
 	// On remet les Bits des Octets dans le bon ordre si besoin est
@@ -182,6 +182,120 @@ void * gdcmFile::GetImageData (void) {
 	return (Pixels);		
 }
 
+
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief amene en mémoire dans une zone précisee par l'utilisateur
+ * \les Pixels d'une image NON COMPRESSEE
+ * \Aucun test n'est fait pour le moment sur le caractere compresse ou non de l'image
+ *
+ * @param 
+ *
+ * @return	
+ */
+
+int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
+	
+	void * Pixels = destination;  // pour garder le code identique avec GetImageData
+	int nbLignes, nbCol;
+
+	int nbFrames, nb, nbu, highBit, signe;
+	string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
+	
+	unsigned short int mask = 0xffff;
+		
+	// Nombre de Lignes	
+	nbLignes=atoi(GetPubElValByNumber(0x0028,0x0010).c_str());
+	// Nombre de Colonnes	
+	nbCol   =atoi(GetPubElValByNumber(0x0028,0x0011).c_str());
+
+	// Nombre de Frames	
+	str_nbFrames=GetPubElValByNumber(0x0028,0x0008);
+
+	
+	if (str_nbFrames == "UNFOUND" ) {
+		nbFrames = 1;
+	} else {
+		nbFrames = atoi(str_nbFrames.c_str() );
+	}
+	
+	// Nombre de Bits Alloues	
+	str_nb=GetPubElValByNumber(0x0028,0x0100);
+
+	if (str_nb == "UNFOUND" ) {
+		nb = 16;
+	} else {
+		nb = atoi(str_nb.c_str() );
+	}
+	
+	// Nombre de Bits Utilises	
+	str_nbu=GetPubElValByNumber(0x0028,0x0101);
+
+	if (str_nbu == "UNFOUND" ) {
+		nbu = nb;
+	} else {
+		nbu = atoi(str_nbu.c_str() );
+	}	
+	
+	// Position du Bit de Poids Fort	
+	str_highBit=GetPubElValByNumber(0x0028,0x0102);
+
+	if (str_highBit == "UNFOUND" ) {
+		highBit = nb - 1;
+	} else {
+		highBit = atoi(str_highBit.c_str() );
+	}
+		
+	// Signe des Pixels 
+	str_signe=GetPubElValByNumber(0x0028,0x0103);
+
+	if (str_signe == "UNFOUND" ) {
+		signe = 1;
+	} else {
+		signe = atoi(str_signe.c_str() );
+	}
+	
+	// Longueur en Octets des Pixels a lire
+	size_t lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
+	
+	// si lgrTotale < MaxSize ==> Gros pb . A VOIR
+	
+	lgrTotale = MaxSize;					// pour garder le code identique avec GetImageData
+	//Pixels = (char *) malloc(lgrTotale);	// pour garder le code identique avec GetImageData
+	
+	GetPixels(lgrTotale, Pixels);
+
+	// On remet les Octets dans le bon ordre si besoin est
+	if (nb != 8) {
+		int _sw = GetSwapCode();
+
+		_Swap (Pixels, _sw, lgrTotale, nb);
+	}
+	
+	// On remet les Bits des Octets dans le bon ordre si besoin est
+	//
+	// ATTENTION :  Jamais confronté a des pixels stockes sur 32 bits 
+	//			avec moins de 32 bits utilises
+	//			et dont le bit de poids fort ne serait pas la ou on l'attend ...
+	// 			--> ne marchera pas dans ce cas 
+	if (nbu!=nb){
+		mask = mask >> (nb-nbu);
+		int l=(int)lgrTotale/(nb/8);
+		unsigned short *deb = (unsigned short *)Pixels;
+		for(int i=0;i<l;i++) {
+				*deb = (*deb >> (nbu-highBit-1)) & mask;
+				deb ++;
+		}
+	}
+		
+	printf ("on est sorti\n");
+	
+	// VOIR s'il ne faudrait pas l'affecter à un champ du dcmHeader
+	
+	//return (Pixels);				// pour garder le code identique avec GetImageData	
+	return 1; 
+}
 
 //
 // Je laisse le code integral, au cas ça puisse etre reutilise ailleurs

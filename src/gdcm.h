@@ -526,7 +526,8 @@ public:
 	
 	// Copies (at most MaxSize bytes) of data to caller's memory space.
 	// Returns an error code on failure (if MaxSize is not big enough)
-	// TODO Swig int PutImageDataHere(void* destination, size_t MaxSize );
+	
+	int PutImageDataHere(void* destination, size_t MaxSize );
 	
 	// Allocates ExpectedSize bytes of memory at this->Data and copies the
 	// pointed data to it.
