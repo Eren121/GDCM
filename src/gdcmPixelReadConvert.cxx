@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/17 01:14:33 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,30 +37,6 @@
 namespace gdcm
 {
 #define str2num(str, typeNum) *((typeNum *)(str))
-
-// For JPEG 2000, body in file gdcmJpeg2000.cxx
-bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
-
-#define JOCTET uint8_t
-// For JPEG 8 Bits, body in file gdcmJpeg8.cxx
-bool gdcm_read_JPEG_file8 (std::ifstream *fp, void *image_buffer);
-bool gdcm_read_JPEG_memory8    (const JOCTET *buffer, const size_t buflen, 
-                                void *image_buffer,
-                                size_t *howManyRead, size_t *howManyWritten);
-//
-// For JPEG 12 Bits, body in file gdcmJpeg12.cxx
-bool gdcm_read_JPEG_file12 (std::ifstream *fp, void *image_buffer);
-bool gdcm_read_JPEG_memory12   (const JOCTET *buffer, const size_t buflen, 
-                                void *image_buffer,
-                                size_t *howManyRead, size_t *howManyWritten);
-
-// For JPEG 16 Bits, body in file gdcmJpeg16.cxx
-// Beware this is misleading there is no 16bits DCT algorithm, only
-// jpeg lossless compression exist in 16bits.
-bool gdcm_read_JPEG_file16 (std::ifstream *fp, void *image_buffer);
-bool gdcm_read_JPEG_memory16   (const JOCTET *buffer, const size_t buflen, 
-                                void* image_buffer,
-                                size_t *howManyRead, size_t *howManyWritten);
 
 
 //-----------------------------------------------------------------------------
@@ -427,37 +403,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream *fp )
    {
       fp->seekg( (*it)->Offset, std::ios::beg);
 
-      if ( BitsStored == 8)
-      {
-         // JPEG Lossy : call to IJG 6b
-         if ( ! gdcm_read_JPEG_file8( fp, localRaw ) )
-         {
-            return false;
-         }
-      }
-      else if ( BitsStored <= 12)
-      {
-         // Reading Fragment pixels
-         if ( ! gdcm_read_JPEG_file12 ( fp, localRaw ) )
-         {
-            return false;
-         }
-      }
-      else if ( BitsStored <= 16)
-      {
-         // Reading Fragment pixels
-         if ( ! gdcm_read_JPEG_file16 ( fp, localRaw ) )
-         {
-            return false;
-         }
-         //gdcmAssertMacro( IsJPEGLossless );
-      }
-      else
-      {
-         // other JPEG lossy not supported
-         gdcmErrorMacro( "Unknown jpeg lossy compression ");
-         return false;
-      }
+      (*it)->DecompressJPEGFramesFromFile(fp, localRaw, BitsStored );
 
       // Advance to next free location in Raw 
       // for next fragment decompression (if any)
@@ -506,47 +452,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
       p += len;
    }
 
-   size_t howManyRead = 0;
-   size_t howManyWritten = 0;
-   
-   if ( BitsStored == 8)
-   {
-      if ( ! gdcm_read_JPEG_memory8( buffer, totalLength, Raw,
-                                     &howManyRead, &howManyWritten ) ) 
-      {
-         gdcmErrorMacro( "Failed to read jpeg8 ");
-         delete [] buffer;
-         return false;
-      }
-   }
-   else if ( BitsStored <= 12)
-   {
-      if ( ! gdcm_read_JPEG_memory12( buffer, totalLength, Raw,
-                                      &howManyRead, &howManyWritten ) ) 
-      {
-         gdcmErrorMacro( "Failed to read jpeg12 ");
-            delete [] buffer;
-            return false;
-      }
-   }
-   else if ( BitsStored <= 16)
-   {
-      
-      if ( ! gdcm_read_JPEG_memory16( buffer, totalLength, Raw,
-                                      &howManyRead, &howManyWritten ) ) 
-      {
-         gdcmErrorMacro( "Failed to read jpeg16 ");
-         delete [] buffer;
-         return false;
-      }
-   }
-   else
-   {
-      // other JPEG lossy not supported
-      gdcmErrorMacro( "Unsupported jpeg lossy compression ");
-      delete [] buffer;
-      return false;
-   }      
+   (*it)->DecompressJPEGSingleFrameFragmentsFromFile(buffer, totalLength, Raw, BitsStored);
 
    // free local buffer
    delete [] buffer;
@@ -602,49 +508,8 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
       fragmentLength += (*it)->Length;
       
       if (howManyRead > fragmentLength) continue;
-
-      if ( BitsStored == 8)
-      {
-        if ( ! gdcm_read_JPEG_memory8( buffer+howManyRead, totalLength-howManyRead,
-                                     Raw+howManyWritten,
-                                     &howManyRead, &howManyWritten ) ) 
-          {
-            gdcmErrorMacro( "Failed to read jpeg8");
-            delete [] buffer;
-            return false;
-          }
-      }
-      else if ( BitsStored <= 12)
-      {
       
-        if ( ! gdcm_read_JPEG_memory12( buffer+howManyRead, totalLength-howManyRead,
-                                      Raw+howManyWritten,
-                                      &howManyRead, &howManyWritten ) ) 
-          {
-            gdcmErrorMacro( "Failed to read jpeg12");
-            delete [] buffer;
-            return false;
-         }
-      }
-      else if ( BitsStored <= 16)
-      {
-      
-        if ( ! gdcm_read_JPEG_memory16( buffer+howManyRead, totalLength-howManyRead,
-                                      Raw+howManyWritten,
-                                      &howManyRead, &howManyWritten ) ) 
-          {
-            gdcmErrorMacro( "Failed to read jpeg16 ");
-            delete [] buffer;
-            return false;
-          }
-      }
-      else
-      {
-         // other JPEG lossy not supported
-         gdcmErrorMacro( "Unsupported jpeg lossy compression ");
-         delete [] buffer;
-         return false;
-      }
+      (*it)->DecompressJPEGFragmentedFramesFromFile(buffer, Raw, BitsStored, howManyRead, howManyWritten, totalLength);
       
       if (howManyRead < fragmentLength)
          howManyRead = fragmentLength;
@@ -667,8 +532,8 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
    if ( IsJPEG2000 )
    {
       fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios::beg);
-      if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
-         return false;
+//      if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
+//         return false;
    }
 
    if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/17 01:14:33 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 
 namespace gdcm 
 {
+#define JOCTET uint8_t
 
 /**
  * \brief Utility class for summerizing the informations of a JPEG
@@ -43,6 +44,9 @@ class GDCM_EXPORT JPEGFragment
 public:
    JPEGFragment();
    void Print( std::ostream &os = std::cout, std::string indent = "" );
+   void DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits);
+   void DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer, size_t totalLength, uint8_t* raw, int nBits);
+   void DecompressJPEGFragmentedFramesFromFile(JOCTET *buffer, uint8_t* raw, int nBits, size_t &howManyRead, size_t &howManyWritten, size_t totalLength);
 
 private:
    long    Offset;

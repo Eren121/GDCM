@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/17 01:14:33 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,5 +60,5 @@ void JPEGFragmentsInfo::Print( std::ostream &os, std::string const & indent )
    }
 }
 
-
 } // end namespace gdcm
+

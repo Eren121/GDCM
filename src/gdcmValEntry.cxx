@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/01/17 01:14:33 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,10 +72,9 @@ void ValEntry::Print(std::ostream &os, std::string const &)
 {
    uint16_t g = GetGroup();
    uint16_t e = GetElement();
-   std::string vr = GetVR();
+   VRKey vr = GetVR();
    std::ostringstream s; 
    std::string st;
-   TSKey v;
    std::string d2;
      
    os << "V ";
@@ -89,10 +88,11 @@ void ValEntry::Print(std::ostream &os, std::string const &)
    
    TS * ts = Global::GetTS();
     
-   v  = GetValue();  // not applicable for SQ ...     
+   TSAtr v  = GetValue();  // not applicable for SQ ...     
    d2 = Util::CreateCleanString(v);  // replace non printable characters by '.'            
-   if( (GetLength()<=MAX_SIZE_PRINT_ELEMENT_VALUE) || 
-       (PrintLevel>=3)  || (d2.find(GDCM_NOTLOADED) < d2.length()) )
+   if( GetLength() <= MAX_SIZE_PRINT_ELEMENT_VALUE
+    || PrintLevel >= 3
+    || d2.find(GDCM_NOTLOADED) < d2.length() )
    {
       s << " [" << d2 << "]";
    }
@@ -106,7 +106,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
    if (g == 0x0002)
    {
       // Any more to be displayed ?
-      if ( (e == 0x0010) || (e == 0x0002) )
+      if ( e == 0x0010 || e == 0x0002 )
       {
          if ( v.length() != 0 )  // for brain damaged headers
          {
@@ -138,7 +138,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
       {
          if (g == 0x0004)
          {
-            if ( (e == 0x1510) || (e == 0x1512)  )
+            if ( e == 0x1510 || e == 0x1512  )
             {
                if ( v.length() != 0 )  // for brain damaged headers  
                {
@@ -153,7 +153,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
       }
    }
    //if (e == 0x0000) {        // elem 0x0000 --> group length 
-   if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
+   if ( vr == "UL" || vr == "US" || vr == "SL" || vr == "SS" )
    {
       if (v == "4294967295") // to avoid troubles in convertion 
       {
@@ -161,7 +161,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
       }
       else
       {
-         if ( GetLength() !=0 )
+         if ( GetLength() != 0 )
          {
             st = Util::Format(" x(%x)", atoi(v.c_str()));//FIXME
          }
@@ -183,7 +183,7 @@ void ValEntry::SetValue(std::string const &val)
    int l = val.length();
    if ( l != 0) // To avoid to be cheated by 'zero length' integers
    {   
-      VRKey vr = GetVR();
+      const VRKey &vr = GetVR();
       if( vr == "US" || vr == "SS" )
       {
          // for multivaluated items
@@ -229,7 +229,7 @@ void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
       return; //delimitors have NO value
    }
 
-   std::string vr = GetVR();
+   const VRKey &vr = GetVR();
    unsigned int lgr = GetLength();
    //std::cout<<std::hex<<GetGroup()<<"|"<<GetElement()<<std::dec<<" : "<<GetReadLength()<<" / "<<GetLength()<<"\n";
    if (vr == "US" || vr == "SS")
