@@ -201,6 +201,10 @@ SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkFiltering.lib
 # End Group
 # Begin Source File
 
+SOURCE=..\..\lib\libgdcmljpeg.lib
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\lib\libgdcmijpeg8.lib
 # End Source File
 # Begin Source File

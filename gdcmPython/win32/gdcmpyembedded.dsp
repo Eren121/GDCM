@@ -161,6 +161,10 @@ SOURCE=c:\Creatis\Python22\libs\python22.lib
 # End Group
 # Begin Source File
 
+SOURCE=..\..\lib\libgdcmljpeg.lib
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\lib\libgdcmijpeg8.lib
 # End Source File
 # Begin Source File

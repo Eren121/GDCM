@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "VTKGDCM_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "..\..\src\jpeg\libijg8" /I "..\..\src\jpeg\libijg12" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "VTKGDCM_EXPORTS" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "..\..\src\jpeg\libijg8" /I "..\..\src\jpeg\libijg12" /I "..\..\src\jpeg\ljpg" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "VTKGDCM_EXPORTS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
@@ -73,7 +73,7 @@ PostBuild_Cmds=copy ..\..\lib\vtkgdcm.dll ..\	copy Release\vtkgdcm.lib ..\..\lib
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "VTKGDCM_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "..\..\src\jpeg\libijg8" /I "..\..\src\jpeg\libijg12" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "VTKGDCM_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "..\..\src\jpeg\libijg8" /I "..\..\src\jpeg\libijg12" /I "..\..\src\jpeg\ljpg" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "VTKGDCM_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -195,6 +195,10 @@ SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkCommon.lib
 SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkFiltering.lib
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\..\lib\libgdcmljpeg.lib
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\lib\libgdcmijpeg8.lib
