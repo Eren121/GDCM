@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 16:09:27 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2004/07/31 18:43:43 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -167,7 +167,7 @@ public:
    /// Read (used in gdcmFile)
    void SetImageDataSize(size_t expectedSize);
 
-   void gdcmHeader::Write(FILE* fp,FileType filetype);
+   void Write(FILE* fp,FileType filetype);
  
 protected:
    bool AnonymizeHeader();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/07/31 18:43:43 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,46 +35,47 @@ class gdcmSeqEntry;
  * \brief   The dicom header of a Dicom file contains a set of such entries
  *          (when successfuly parsed against a given Dicom dictionary)
  */
-class GDCM_EXPORT gdcmDocEntry {
+class GDCM_EXPORT gdcmDocEntry
+{
 public:
    gdcmDocEntry(gdcmDictEntry*);
      
    /// Returns the Dicom Group number of the current Dicom Header Entry
-   uint16_t      GetGroup(void)     { return entry->GetGroup();  };
+   uint16_t      GetGroup()     { return entry->GetGroup();  };
 
    /// Returns the Dicom Element number of the current Dicom Header Entry
-   uint16_t      GetElement(void)   { return entry->GetElement();};
+   uint16_t      GetElement()   { return entry->GetElement();};
 
    /// Returns the 'key' of the current Dicom Header Entry
-   std::string  GetKey(void)       { return entry->GetKey();    };
+   std::string  GetKey()       { return entry->GetKey();    };
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
    /// Dictionnary of the current Dicom Header Entry
-   std::string  GetName(void)      { return entry->GetName();   };
+   std::string  GetName()      { return entry->GetName();   };
 
    /// \brief Returns the 'Value Representation' (e.g. "PN" : Person Name,
    /// "SL" : Signed Long), found in the Dicom Header or in the Dicom
    /// Dictionnary, of the current Dicom Header Entry
-   std::string  GetVR(void)        { return entry->GetVR();     };
+   std::string  GetVR()        { return entry->GetVR();     };
 
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Pramble, if any) of the value of the current Dicom HeaderEntry
    /// \warning offset of the *value*, not of the Dicom Header Entry
-   size_t       GetOffset(void)    { return Offset;             };
+   size_t       GetOffset()    { return Offset;             };
 
    /// \brief Returns the actual value length of the current Dicom Header Entry
    /// \warning this value is not *always* the one stored in the Dicom Header
    ///          in case of well knowned bugs
-   uint32_t GetLength(void) { return UsableLength; };
+   uint32_t GetLength() { return UsableLength; };
     
    /// \brief Returns the 'read length' of the current Dicom Header Entry
    /// \warning this value is the one stored in the Dicom Header but not
    ///          mandatoryly the one thats's used (in case on SQ, or delimiters,
    ///          the usable length is set to zero)
-   uint32_t GetReadLength(void) { return ReadLength; };
+   uint32_t GetReadLength() { return ReadLength; };
 
    /// Sets the 'Value Representation' of the current Dicom Header Entry
-   void SetVR(std::string v) { entry->SetVR(v); };    
+   void SetVR(std::string const & v) { entry->SetVR(v); };    
 
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
    /// Dicom Header Entry
@@ -93,39 +94,38 @@ public:
    /// \brief   Sets the offset of the Dicom Element
    /// \warning use with caution !
    /// @param   of offset to be set
-   void gdcmDocEntry::SetOffset(size_t of) { Offset = of; };
+   void SetOffset(size_t of) { Offset = of; };
 
    /// Sets to TRUE the ImplicitVr flag of the current Dicom Element
-   void gdcmDocEntry::SetImplicitVR(void) { ImplicitVR = true; };
+   void SetImplicitVR() { ImplicitVR = true; };
  
    /// \brief Tells us if the current Dicom Element was checked as ImplicitVr
    /// @return true if the current Dicom Element was checked as ImplicitVr
-   bool gdcmDocEntry::IsImplicitVR(void) { return ImplicitVR; };
+   bool IsImplicitVR() { return ImplicitVR; };
 
    /// \brief Tells us if the VR of the current Dicom Element is Unknown
    /// @return true if the VR is unkonwn
-   bool gdcmDocEntry::IsVRUnknown(void) { return entry->IsVRUnknown(); };
+   bool IsVRUnknown() { return entry->IsVRUnknown(); };
 
    /// \brief   Sets the DicEntry of the current Dicom Element
    /// @param   NewEntry pointer to the DictEntry
-   void gdcmDocEntry::SetDictEntry(gdcmDictEntry *NewEntry)
-               { entry = NewEntry; };
+   void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };
 
    /// \brief  Gets the DicEntry of the current Dicom Element
    /// @return The DicEntry of the current Dicom Element
-   gdcmDictEntry * gdcmDocEntry::GetDictEntry(void) { return entry; }; 
+   gdcmDictEntry * GetDictEntry() { return entry; }; 
 
    /// \brief Sets the print level for the Dicom Header Elements
    /// \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
    void SetPrintLevel(int level) { printLevel = level; };
 
    /// \brief Gets the print level for the Dicom Header Elements
-   int GetPrintLevel(void) { return(printLevel); };
+   int GetPrintLevel() { return(printLevel); };
    
    virtual void Print (std::ostream & os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);
    
-   uint32_t GetFullLength(void);
+   uint32_t GetFullLength();
    
    void Copy(gdcmDocEntry *doc);
 
@@ -134,7 +134,7 @@ public:
 
    /// \brief Gets the depth level of a Dicom header entry embedded in
    ///        a SeQuence
-   int GetDepthLevel(void) {return(SQDepthLevel);}
+   int GetDepthLevel() { return SQDepthLevel; }
 
    /// \brief Sets the depth level of a Dicom header entry embedded in
    ///        a SeQuence
