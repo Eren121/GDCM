@@ -1,6 +1,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <stdio.h>
 
 int main()
 {
@@ -21,4 +22,15 @@ int main()
  	cout << "Find request on key 00380010" << endl;
 	im = tb1.find("00380010");
 	cout << "   \"" << im->first << "\" = " << im->second << endl;
+	
+	int i = 0x0010;
+	std::cout.setf(std::ios::hex);
+	std::cout << i << endl;
+	std::cout.setf(std::ios::dec);
+	std::cout << i << endl;	
+	
+	// Voir :
+	//http://www.developer.com/net/cplus/article.php/10919_2119781_3
+	//
+	// domage que ca ne marche pas ...
 }

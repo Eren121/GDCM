@@ -4,8 +4,6 @@
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
 
-#define DEBUG 0
-
 
 TagElValueHT & gdcmElValSet::GetTagHt(void) {
 	return tagHt;
@@ -143,7 +141,7 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
                  
       sprintf(trash, "%04x", gr);
       key = trash;
-            
+                  
       if (SkipSequence && vr == "SQ") continue;
          // pas SEQUENCE en ACR-NEMA
          // WARNING : pb CERTAIN
@@ -168,15 +166,23 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
       } 
    }
   
+     if(0)
+     for (GroupHT::iterator g = groupHt.begin();
+        g != groupHt.end();
+        ++g){        
+        printf("groupKey %s : %d\n",g->first.c_str(),g->second);
+     }
+       
+  
    unsigned short int gr_bid;
   
    for (GroupHT::iterator g = groupHt.begin();
         g != groupHt.end();
         ++g){ 
   
-      tk = g->first + "|0000";
       sscanf(g->first.c_str(),"%x",&gr_bid);
-               
+      tk = g->first + "|0000";
+                     
       if ( tagHt.count(tk) == 0) { 
          gdcmDictEntry * tagZ = new gdcmDictEntry(gr_bid, 0x0000, "UL");       
          elemZ = new gdcmElValue(tagZ);
@@ -184,7 +190,8 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
          Add(elemZ);
       } else {
          elemZ=GetElementByNumber(gr_bid, 0x0000);
-      }
+      }     
+      sprintf(trash ,"%d",g->second);
       str_trash=trash;
       elemZ->SetValue(str_trash);
    }   
@@ -217,7 +224,6 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
       lgr = tag2->second->GetLength();
       val = tag2->second->GetValue().c_str();
       vr =  tag2->second->GetVR();
-      if(DEBUG)printf ("%04x %04x [%s] : [%s]\n",gr, el, vr.c_str(), val);
 
       if ( type == ACR ) { 
          if (gr < 0x0008) continue;
@@ -280,12 +286,13 @@ int gdcmElValSet::Write(FILE * _fp, FileType type) {
       
       //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
       //      values with a VR of UI shall be padded with a single trailing null
-      //      Dans le cas suivant on doit pader manuellement avec un 0.
+      //      Dans le cas suivant on doit pader manuellement avec un 0
+      
       SetElValueLengthByNumber(18, 0x0002, 0x0010);
    }
    
    	// Question :
-	// Comment pourrait-on si le DcmHeader vient d'un fichoer DicomV3 ou non ,
+	// Comment pourrait-on savoir si le DcmHeader vient d'un fichier DicomV3 ou non ,
 	// (FileType est un champ de gdcmHeader ...)
 	// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
 	// no way
