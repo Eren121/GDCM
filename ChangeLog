@@ -1,3 +1,10 @@
+2003-09-08  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+      * src/gdcmHeaderHelper.[h cxx]: added new class that provide an
+      interpretation to data given by gdcmHeader. For instance there are
+      heuristics to get informations (look at different places).
+      * it also include a specific class: gdcmSerieHeaderHelper devoted to
+      sorting DICOM images based on different strategies.
+      * modified Makefiles accordingly.
 2003-09-05  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * src/*.cxx : added pragma disable 4786/4251 to get rid of ~4300 warning
         when building in debug mode

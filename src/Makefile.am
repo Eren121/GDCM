@@ -16,6 +16,7 @@ libgdcm_la_SOURCES=		\
 	gdcmException.cxx	\
 	gdcmUtil.cxx 		\
 	gdcmHeader.cxx    \
+	gdcmHeaderHelper.cxx    \
 	gdcmElValue.cxx   \
 	gdcmDictEntry.cxx \
 	gdcmDict.cxx      \
@@ -35,6 +36,7 @@ libgdcmincludedir = $(includedir)
 libgdcminclude_HEADERS = \
 	gdcmException.h	\
 	gdcmHeader.h	\
+	gdcmHeaderHelper.h	\
 	gdcmCommon.h	\
 	gdcm.h  	\
 	gdcmDictSet.h	\
