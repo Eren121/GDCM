@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 03:20:23 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/08/16 16:30:32 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@
  */
 gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e)
 {
-   voidArea = NULL; // will be in BinEntry ?
+   VoidArea = NULL; // will be in BinEntry ?
 }
 
 /**
@@ -48,7 +48,7 @@ gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry())
    PrintLevel   = e->GetPrintLevel();
    SQDepthLevel = e->GetDepthLevel();
 
-   voidArea = NULL; // will be in BinEntry ?
+   VoidArea = NULL; // will be in BinEntry ?
 }
 
 
@@ -57,10 +57,10 @@ gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry())
  */
 gdcmValEntry::~gdcmValEntry ()
 {
-   if (!voidArea)  // will be in BinEntry
+   if (!VoidArea)  // will be in BinEntry
    {
-      free(voidArea);
-      voidArea = NULL; // let's be carefull !
+      free(VoidArea);
+      VoidArea = NULL; // let's be carefull !
    }
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/08/16 16:30:32 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,24 +31,24 @@
  *          (when successfuly parsed against a given Dicom dictionary)
  *          This one contains a 'string value'.
  */
-class GDCM_EXPORT gdcmBinEntry  : public gdcmValEntry {
-
+class GDCM_EXPORT gdcmBinEntry  : public gdcmValEntry
+{
 public:
 
    gdcmBinEntry(gdcmDictEntry* e);
    gdcmBinEntry(gdcmDocEntry* d); 
 
-   ~gdcmBinEntry(void);
+   ~gdcmBinEntry();
    
    void Print(std::ostream &os = std::cout);
    virtual void Write(FILE*, FileType);
 
    /// \brief Returns the area value of the current Dicom Header Entry
    ///  when it's not string-translatable (e.g : a LUT table)         
-   void* GetVoidArea(void)  { return voidArea; };
+   void* GetVoidArea()  { return VoidArea; };
 
    /// \brief Sets the value (non string) of the current Dicom Header Entry
-   void SetVoidArea(void * area)  { voidArea = area;  };
+   void SetVoidArea(void * area)  { VoidArea = area;  };
          
 protected:
 
@@ -58,7 +58,7 @@ private:
    
    /// \brief unsecure memory area to hold 'non string' values 
    /// (ie : Lookup Tables, overlays, icons)   
-  // void *voidArea;
+  // void *VoidArea;
 
 };
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:22 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/08/16 16:30:32 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,20 +40,20 @@ public:
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
    /// 'string', if it's stored as an integer in the header of the
    /// current Dicom Document Entry
-   std::string GetValue() { return value; };
+   std::string GetValue() { return Value; };
     
    /// Sets the value (string) of the current Dicom Document Entry
-   void SetValue(std::string const & val) { value = val; };
+   void SetValue(std::string const & val) { Value = val; };
 
    /// Sets the value (void *) of the current Dicom Document Entry
-   void SetVoidArea(void * val) { voidArea = val; };
+   void SetVoidArea(void * val) { VoidArea = val; };
 
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);
 
 protected:
    /// \brief for 'non string' values. Will be move to gdcmBinEntry, later
-   void* voidArea;  // clean it out later
+   void* VoidArea;  // clean it out later
    
 private:
 // Members :
@@ -61,7 +61,7 @@ private:
    /// \brief Document Entry value, internaly represented as a std::string
    ///        The Value Representation (\ref gdcmVR) is independently used
    ///        in order to interpret (decode) this field.
-   std::string  value;
+   std::string  Value;
 };
 
 //-----------------------------------------------------------------------------
