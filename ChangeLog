@@ -1,4 +1,8 @@
 2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDicomDir.cxx : simplify the NewPatient method, like made in
+     gdcm::DicomDirPatient, gdcm::DicomDirStudy, gdcm::DicomDirSerie
+
+2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmSQItem[h|cxx] : rename some methods to have coherent names
 
 2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:26:17 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2005/01/20 11:33:44 $
+  Version:   $Revision: 1.110 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -501,27 +501,10 @@ DicomDirMeta * DicomDir::NewMeta()
  */
 DicomDirPatient *DicomDir::NewPatient()
 {
-   ListDicomDirPatientElem::const_iterator it;
-   uint16_t tmpGr,tmpEl;
-   DictEntry *dictEntry;
-   ValEntry *entry;
-
    ListDicomDirPatientElem const & elemList =
       Global::GetDicomDirElements()->GetDicomDirPatientElements(); 
    DicomDirPatient *p = new DicomDirPatient();
-
-   // for all the DicomDirPatient Elements      
-   for( it = elemList.begin(); it != elemList.end(); ++it ) 
-   {
-      tmpGr     = it->Group;
-      tmpEl     = it->Elem;
-      dictEntry = GetPubDict()->GetDictEntry(tmpGr, tmpEl);
-      entry     = new ValEntry( dictEntry );
-      entry->SetOffset(0); // just to avoid further missprinting
-      entry->SetValue( it->Value );
-
-      p->AddEntry( entry );
-   }
+   p->FillObject(elemList);
 
    AddPatientToEnd( p );
    return p;
