@@ -1,0 +1,7 @@
+2004 september 01
+Tag set: Version0_5_bp
+Branch created with name: Version0_5
+  This brach is only for fix patches (compilation, broken tests...)
+  The HEAD branch remains the only active one for enhancements or new
+  features (plus fixes of course).
+
