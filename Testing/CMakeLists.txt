@@ -10,7 +10,7 @@ SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
 SET(TEST_SOURCES
   PrintBug.cxx
   dcm2acr.cxx
-  hashtest.cxx
+  TestHash.cxx
   testWrite.cxx
 )
 

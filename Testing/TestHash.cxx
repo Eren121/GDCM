@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdio.h>
 
-int hashtest( int, char * [] ) {
+int TestHash( int, char * [] ) {
 
   typedef std::map<std::string, char*> dict;
   
