@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/02/04 14:49:01 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,9 @@ typedef std::string BaseTagKey;
 class GDCM_EXPORT DocEntrySet : public Base
 {
 public:
+   /// Canonical Constructor
    DocEntrySet() {};
+   /// Canonical Destructor
    virtual ~DocEntrySet() {};
 
    /// \brief write any type of entry to the entry set
@@ -73,10 +75,14 @@ public:
    virtual bool RemoveEntry(DocEntry *EntryToRemove) = 0;
    /// \brief Removes any type of entry out of the entry set, DOESN'T destroy it
    virtual bool RemoveEntryNoDestroy(DocEntry *EntryToRemove) = 0;
-
+   /// Gets the first entry of any type of set
    virtual DocEntry *GetFirstEntry()=0;
+   /// Gets the next entry of any type of set
    virtual DocEntry *GetNextEntry()=0;
-
+   /// Gets the first ValEntry of set (for Python users)
+   virtual ValEntry *GetFirstValEntry()=0;
+   /// Gets the next ValEntry of set  (for Python users)
+   virtual ValEntry *GetNextValEntry()=0;
    virtual std::string GetEntryValue(uint16_t group, uint16_t elem);
    virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);   
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
@@ -105,7 +111,7 @@ public:
                                     uint16_t group, uint16_t elem,
                                     TagName const &vr = GDCM_UNKNOWN);
    virtual SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
-
+   /// tells us if the set contains no entry
    virtual bool IsEmpty() = 0;
    virtual bool CheckIfEntryExist(uint16_t group, uint16_t elem);
 

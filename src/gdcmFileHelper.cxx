@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/02/04 14:49:01 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -133,7 +133,7 @@ FileHelper::~FileHelper()
  * @param   elem element number of the Dicom Element to modify
  */
 bool FileHelper::SetValEntry(std::string const &content,
-                    uint16_t group, uint16_t elem)
+                             uint16_t group, uint16_t elem)
 { 
    return FileInternal->SetValEntry(content,group,elem);
 }
@@ -149,7 +149,7 @@ bool FileHelper::SetValEntry(std::string const &content,
  * @param   elem element number of the Dicom Element to modify
  */
 bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
-                                 uint16_t group, uint16_t elem)
+                             uint16_t group, uint16_t elem)
 {
    return FileInternal->SetBinEntry(content,lgth,group,elem);
 }
@@ -164,28 +164,29 @@ bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
  *          failed).
  */ 
 ValEntry *FileHelper::InsertValEntry(std::string const &content,
-                                uint16_t group, uint16_t elem)
+                                     uint16_t group, uint16_t elem)
 {
    return FileInternal->InsertValEntry(content,group,elem);
 }
 
-/*
+/**
  * \brief   Modifies the value of a given DocEntry (Dicom entry)
  *          when it exists. Create it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
  * @param   binArea (binary) value to be set
+ * @param   lgth new value length
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */
 BinEntry *FileHelper::InsertBinEntry(uint8_t *binArea, int lgth,
-                                uint16_t group, uint16_t elem)
+                                     uint16_t group, uint16_t elem)
 {
    return FileInternal->InsertBinEntry(binArea,lgth,group,elem);
 }
 
-/*
+/**
  * \brief   Modifies the value of a given DocEntry (Dicom entry)
  *          when it exists. Create it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
@@ -235,9 +236,9 @@ size_t FileHelper::GetImageDataRawSize()
 }
 
 /**
- * \brief   - Allocates necessary memory, 
+ * \brief   - Allocates necessary memory,
  *          - Reads the pixels from disk (uncompress if necessary),
- *          - Transforms YBR pixels, if any, into RGB pixels
+ *          - Transforms YBR pixels, if any, into RGB pixels,
  *          - Transforms 3 planes R, G, B, if any, into a single RGB Plane
  *          - Transforms single Grey plane + 3 Palettes into a RGB Plane
  *          - Copies the pixel data (image[s]/volume[s]) to newly allocated zone.
@@ -347,9 +348,11 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
  *          'volume'Pixels are presented as C-like 3D arrays : plane per plane 
  * \warning Since the pixels are not copied, it is the caller's responsability
  *          not to deallocate its data before gdcm uses them (e.g. with
- *          the Write() method.
- * @param inData user supplied pixel area
- * @param expectedSize total image size, in Bytes
+ *          the Write() method )
+ * @param inData user supplied pixel area (uint8_t* is just for the compiler.
+ *               user is allowed to pass any kind of pixelsn since the size is
+ *               given in bytes) 
+ * @param expectedSize total image size, *in Bytes*
  *
  * @return boolean
  */
@@ -361,10 +364,15 @@ void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
 /**
  * \brief   Set the image data defined by the user
  * \warning When writting the file, this data are get as default data to write
+ * @param inData user supplied pixel area (uint8_t* is just for the compiler.
+ *               user is allowed to pass any kind of pixelsn since the size is
+ *               given in bytes) 
+ * @param expectedSize total image size, *in Bytes*
+ 
  */
-void FileHelper::SetUserData(uint8_t *data, size_t expectedSize)
+void FileHelper::SetUserData(uint8_t *inData, size_t expectedSize)
 {
-   PixelWriteConverter->SetUserData(data,expectedSize);
+   PixelWriteConverter->SetUserData(inData,expectedSize);
 }
 
 /**

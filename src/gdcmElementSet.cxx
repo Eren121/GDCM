@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/02/04 14:49:01 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -135,7 +135,8 @@ void ElementSet::ClearEntry()
 }
 
 /**
- * \brief   Get the first entry while visiting the DocEntrySet
+ * \brief   Get the first entry while visiting *the* 'zero level' DocEntrySet
+ *              (DocEntries out of any Sequence)
  * \return  The first DocEntry if found, otherwhise NULL
  */
 DocEntry *ElementSet::GetFirstEntry()
@@ -147,7 +148,8 @@ DocEntry *ElementSet::GetFirstEntry()
 }
 
 /**
- * \brief   Get the next entry while visiting the Hash table (TagHT)
+ * \brief   Get the next entry while visiting *the* 'zero level' DocEntrySet
+ *              (DocEntries out of any Sequence) 
  * \note : meaningfull only if GetFirstEntry already called 
  * \return  The next DocEntry if found, otherwhise NULL
  */
@@ -159,6 +161,45 @@ DocEntry *ElementSet::GetNextEntry()
    if (ItTagHT != TagHT.end())
       return  ItTagHT->second;
    return NULL;
+}
+
+/**
+ * \brief   Get the first ValEntry while visiting *the* 'zero level' DocEntrySet
+ *              (DocEntries out of any Sequence)
+ *              This method is designed for Python users
+ * \return  The first ValEntry if found, otherwhise NULL
+ */
+ValEntry *ElementSet::GetFirstValEntry()
+{
+   gdcm::ValEntry *valEntry;
+   gdcm::DocEntry *d = GetFirstEntry();
+   // an other iterator is needed to allow user iterate 
+   // at the same time both on DocEntries and ValEntries 
+   ItValEntryTagHT = ItTagHT;
+   if ( valEntry = dynamic_cast<gdcm::ValEntry*>(d)) 
+      return valEntry;
+   return  GetNextValEntry();  
+}
+
+/**
+ * \brief   Get the next ValEntry while visiting *the* 'zero level' DocEntrySet
+ *              (DocEntries out of any Sequence) 
+ * \note : meaningfull only if GetFirstValEntry already called 
+ * \return  The next ValEntry if found, otherwhise NULL
+ */
+ValEntry *ElementSet::GetNextValEntry()
+{
+   gdcm::ValEntry *valEntry;
+   gdcm::DocEntry *d = ItValEntryTagHT->second;
+   ++ItValEntryTagHT; 
+   while( d )
+   {
+      if ( valEntry = dynamic_cast<gdcm::ValEntry*>(d))
+         return valEntry;
+      else
+         return GetNextValEntry(); 
+   }
+   return 0;
 }
 
 /**

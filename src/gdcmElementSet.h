@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/02/04 14:49:01 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,9 +58,10 @@ public:
    
    DocEntry *GetFirstEntry();
    DocEntry *GetNextEntry();
-
+   ValEntry *GetFirstValEntry();
+   ValEntry *GetNextValEntry();
    DocEntry *GetDocEntry(uint16_t group, uint16_t elem);
-
+   /// Tells us if the ElementSet contains no entry
    bool IsEmpty() { return TagHT.empty(); };
 
 protected:
@@ -69,8 +70,10 @@ private:
 // Variables
    /// Hash Table (map), to provide fast access
    TagDocEntryHT TagHT;
-   /// Hash Table (map) iterator, used to visit the TagHT variable
-   TagDocEntryHT::iterator ItTagHT; 
+   /// iterator, used to visit the TagHT variable
+   TagDocEntryHT::iterator ItTagHT;
+   /// iterator, used to visit the TagHT variable, seeking only for ValEntries
+   TagDocEntryHT::iterator ItValEntryTagHT;
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

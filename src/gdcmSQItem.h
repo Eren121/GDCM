@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:49 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/02/04 14:49:01 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@ public:
    SQItem(int depthLevel);
    ~SQItem();
 
-   virtual void Print(std::ostream &os = std::cout, std::string const & indent = "" ); 
+   virtual void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
 
    bool AddEntry(DocEntry *Entry); // add to the List
@@ -54,6 +54,9 @@ public:
   
    DocEntry *GetFirstEntry();
    DocEntry *GetNextEntry();
+
+   ValEntry *GetFirstValEntry();
+   ValEntry *GetNextValEntry();
 
    DocEntry *GetDocEntry(uint16_t group, uint16_t elem);
 
@@ -77,12 +80,14 @@ public:
    BaseTagKey const &GetBaseTagKey() const { return BaseTagKeyNested; }
 
 protected:
-// Variables that need to be access in subclasses
-   /// \brief Chained list of (Elementary) Doc Entries
+// Variables that need to be accessed in subclasses
+   /// \brief Chained list of Doc Entries
    ListDocEntry DocEntries;
-   /// Chained list iterator, used to visit the TagHT variable
+   /// Iterator, used to visit the entries
    ListDocEntry::iterator ItDocEntries;
-   
+   /// Iterator, used to visit the Val Entries (for Python users)
+   ListDocEntry::iterator ItValEntries;
+  
 private:
    /// \brief Sequences can be nested. This \ref SQDepthLevel represents
    ///        the level of the nesting of instances of this class.

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:03:07 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/02/04 14:49:01 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,17 +95,32 @@ public:
    uint8_t* GetLutRGBA();
 
    // Write mode
-   void SetWriteModeToRaw()           { SetWriteMode(WMODE_RAW);  };
+
+   /// \brief Tells the writer we want to write a Raw File (no header)
+  void SetWriteModeToRaw()           { SetWriteMode(WMODE_RAW);  };
+   /// \brief Tells the writer we want to write RGB image when possible
+   ///        (as opposite to 'Grey pixels + Palettes color')
    void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  };
+   /// \brief Sets the Write Mode ( )
    void SetWriteMode(FileMode mode)   { WriteMode = mode;         };
+   /// \brief Gets the Write Mode ( )
    FileMode GetWriteMode()            { return WriteMode;         };
 
    // Write format
+
+   /// \brief Tells the writer we want to write as Implicit VR
    void SetWriteTypeToDcmImplVR()     { SetWriteType(ImplicitVR); };
+   /// \brief Tells the writer we want to write as Explicit VR
    void SetWriteTypeToDcmExplVR()     { SetWriteType(ExplicitVR); };
+   /// \brief Tells the writer we want to write as ACR-NEMA
    void SetWriteTypeToAcr()           { SetWriteType(ACR);        };
+   /// \brief Tells the writer we want to write as LibIDO
    void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); };
+   /// \brief Tells the writer which format want to write
+   /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    void SetWriteType(FileType format) { WriteType = format;       };
+   /// \brief Gets the format we want to write
+   ///   (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType GetWriteType()            { return WriteType;         };
 
    // Write pixels of ONE image on hard drive
@@ -153,15 +168,20 @@ private:
    /// Wether already parsed or not
    bool Parsed;
 
-   /// Utility pixel converter
+   // Utility pixel converter
+   /// \brief Pointer to the PixelReadConverter
    PixelReadConvert *PixelReadConverter;
+   /// \brief Pointer to the PixelWriteConverter
    PixelWriteConvert *PixelWriteConverter;
 
    // Utility header archive
+   /// \brief Pointer to the DocEntryArchive (used while writting process)
    DocEntryArchive *Archive;
 
    // Write variables
+   /// \brief (WMODE_RAW, WMODE_RGB)
    FileMode WriteMode;
+   /// \brief (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType WriteType;
 };
 } // end namespace gdcm

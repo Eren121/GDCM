@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/02/04 14:49:01 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -252,7 +252,7 @@ ValEntry *DocEntrySet::InsertValEntry(std::string const &value,
                                       TagName const &vr )
 {
    ValEntry *valEntry = 0;
-   DocEntry *currentEntry = GetDocEntry( group, elem);
+   DocEntry *currentEntry = GetDocEntry( group, elem );
    
    if (currentEntry)
    {
@@ -278,7 +278,7 @@ ValEntry *DocEntrySet::InsertValEntry(std::string const &value,
    // Create a new valEntry if necessary
    if( !valEntry )
    {
-      valEntry = NewValEntry(group, elem, vr);
+      valEntry = NewValEntry( group, elem, vr );
 
       if ( !AddEntry(valEntry) )
       {
@@ -294,11 +294,12 @@ ValEntry *DocEntrySet::InsertValEntry(std::string const &value,
    return valEntry;
 }
 
-/*
+/**
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
  * @param   binArea (binary) value to be set
+ * @param   lgth length of the Bin Area we want to set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * @param   vr  V(alue) R(epresentation) of the Entry -if private Entry-
@@ -310,7 +311,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
                                       TagName const &vr )
 {
    BinEntry *binEntry = 0;
-   DocEntry *currentEntry = GetDocEntry( group, elem);
+   DocEntry *currentEntry = GetDocEntry( group, elem );
 
    // Verify the currentEntry
    if (currentEntry)
@@ -370,7 +371,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
    return binEntry;
 }  
 
-/*
+/**
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Creates it when unexistant.
  * @param   group   Group number of the Entry 
@@ -440,7 +441,7 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
  * @param   vr     VR of the new Entry 
  */
 ValEntry *DocEntrySet::NewValEntry(uint16_t group,uint16_t elem,
-                                   TagName const & vr) 
+                                   TagName const &vr) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, vr);
    gdcmAssertMacro(dictEntry);
@@ -507,10 +508,10 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem)
  * @param   vm    VM (Value Multiplicity)   of the underlying DictEntry
  * @param   name   english name
  */
-DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,uint16_t elem,
-                                             TagName const & vr,
-                                             TagName const & vm,
-                                             TagName const & name )
+DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group, uint16_t elem,
+                                             TagName const &vr,
+                                             TagName const &vm,
+                                             TagName const &name )
 {
    return Global::GetDicts()->NewVirtualDictEntry(group,elem,vr,vm,name);
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/02/04 14:49:01 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,6 +41,7 @@ class GDCM_EXPORT DocEntry : public Base
 {
 public:
    DocEntry(DictEntry*);
+   /// \brief Canonical Destructor
    virtual ~DocEntry() {};
 
    virtual void Print (std::ostream &os = std::cout, std::string const &indent = ""); 
