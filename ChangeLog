@@ -1,4 +1,8 @@
 2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+  * src/gdcmDocument.[cxx|h] : fix memory leaks. The return is suppressed
+    because never used... and in the same time, that's remove some memory leaks
+
+2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
   * src/gdcmFile.cxx : now delete the PixelConvert instance.
   * In examples and tests : change the type of image data variables from void*
     to uint8_t*. Remmove all delete on image data variables

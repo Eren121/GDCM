@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:12 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/11/15 16:12:30 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,7 +129,7 @@ void BinEntry::SetBinArea( uint8_t* area )
 { 
    if (BinArea)
       delete[] BinArea;
-   BinArea = area;  
+   BinArea = area;
 }
 
 //-----------------------------------------------------------------------------

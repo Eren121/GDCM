@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/12 21:33:46 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2004/11/15 16:12:30 $
+  Version:   $Revision: 1.58 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,8 +164,8 @@ public:
    bool ReplaceIfExistByNumber ( std::string const & value,
                                  uint16_t group, uint16_t elem );
    
-   virtual void* LoadEntryBinArea(uint16_t group, uint16_t elem);
-   virtual void* LoadEntryBinArea(BinEntry* entry);
+   virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
+   virtual void LoadEntryBinArea(BinEntry* entry);
       
    // System access (meaning endian related !?)
    uint16_t SwapShort(uint16_t);   // needed by File

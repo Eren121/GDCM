@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/12 21:33:46 $
-  Version:   $Revision: 1.122 $
+  Date:      $Date: 2004/11/15 16:12:30 $
+  Version:   $Revision: 1.123 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1044,13 +1044,13 @@ void*  Document::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem)
  * @param group   group number of the Entry 
  * @param elem  element number of the Entry
  */
-void* Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
+void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
 {
+   // Search the corresponding DocEntry
    DocEntry *docElement = GetDocEntryByNumber(group, elem);
    if ( !docElement )
-   {
-      return NULL;
-   }
+      return;
+
    size_t o =(size_t)docElement->GetOffset();
    Fp->seekg( o, std::ios_base::beg);
    size_t l = docElement->GetLength();
@@ -1058,27 +1058,30 @@ void* Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
    if(!a)
    {
       dbg.Verbose(0, "Document::LoadEntryBinArea cannot allocate a");
-      return NULL;
+      return;
    }
+
+   // Read the value
    Fp->read((char*)a, l);
    if( Fp->fail() || Fp->eof() )//Fp->gcount() == 1
    {
       delete[] a;
-      return NULL;
+      return;
    }
-  /// \todo Drop any already existing void area! JPR
+
+   // Set the value to the DocEntry
    if( !SetEntryBinAreaByNumber( a, group, elem ) )
    {
+      delete[] a;
       dbg.Verbose(0, "Document::LoadEntryBinArea setting failed.");
    }
-   return a;
 }
 /**
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
  * @param element  Entry whose binArea is going to be loaded
  */
-void* Document::LoadEntryBinArea(BinEntry* element) 
+void Document::LoadEntryBinArea(BinEntry* element) 
 {
    size_t o =(size_t)element->GetOffset();
    Fp->seekg(o, std::ios_base::beg);
@@ -1087,18 +1090,18 @@ void* Document::LoadEntryBinArea(BinEntry* element)
    if( !a )
    {
       dbg.Verbose(0, "Document::LoadEntryBinArea cannot allocate a");
-      return NULL;
+      return;
    }
-   element->SetBinArea((uint8_t*)a);
+
    /// \todo check the result 
    Fp->read((char*)a, l);
    if( Fp->fail() || Fp->eof()) //Fp->gcount() == 1
    {
       delete[] a;
-      return NULL;
+      return;
    }
 
-   return a;
+   element->SetBinArea((uint8_t*)a);
 }
 
 /**
@@ -1116,12 +1119,14 @@ bool Document::SetEntryBinAreaByNumber(uint8_t* area,
    {
       return false;
    }
+
    if ( BinEntry* binEntry = dynamic_cast<BinEntry*>(currentEntry) )
    {
       binEntry->SetBinArea( area );
       return true;
    }
-   return true;
+
+   return false;
 }
 
 /**
