@@ -65,15 +65,15 @@ ENDIF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
 #-----------------------------------------------------------------------------
 # Test if os defines a lenght for sockaddr
 IF("GDCM_OS_HAVE_SA_LEN" MATCHES "^GDCM_OS_HAVE_SA_LEN$")
-  MESSAGE(STATUS "Checking if ifreq has a sa_len")
   STRING(ASCII 35 POUND)
-  FILE(WRITE ${GDCM_BINARY_DIR}/gdcmTestHAVESALEN.c
+  FILE(WRITE ${GDCM_BINARY_DIR}/CMakeTmp/gdcmTestHAVESALEN.c
     "${POUND}include <sys/types.h>\n"
     "${POUND}include <sys/socket.h>\n"
     "int main() { struct sockaddr sa; sa.sa_len = 0; }")
+  MESSAGE(STATUS "Checking if ifreq has a sa_len")
   TRY_COMPILE(GDCM_OS_HAVE_SA_LEN
-              ${GDCM_BINARY_DIR}/CMakeTmp/HaveSaLen
-              ${GDCM_BINARY_DIR}/gdcmTestHAVESALEN.c
+              ${GDCM_BINARY_DIR}
+              ${GDCM_BINARY_DIR}/CMakeTmp/gdcmTestHAVESALEN.c
               OUTPUT_VARIABLE OUTPUT)
   IF(GDCM_OS_HAVE_SA_LEN)
     MESSAGE(STATUS "Checking if ifreq has a sa_len -- yes")
