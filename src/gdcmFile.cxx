@@ -563,7 +563,7 @@ bool gdcmFile::WriteRawData (std::string fileName) {
    FILE * fp1;
    fp1 = fopen(fileName.c_str(),"wb");
    if (fp1 == NULL) {
-      printf("Echec ouverture (ecriture) Fichier [%s] \n",fileName.c_str());
+      printf("Fail to open (write) file [%s] \n",fileName.c_str());
       return (false);
    } 	
    fwrite (PixelData,lgrTotale, 1, fp1);
@@ -642,6 +642,13 @@ bool gdcmFile::WriteAcr (std::string fileName) {
 bool gdcmFile::WriteBase (std::string fileName, FileType type) {
 
    FILE * fp1;
+   
+   if (PixelRead==-1 && type != DICOMDIR) {
+      std::cout << "U never Read the pixels; U cannot write the file" 
+                << std::endl;
+      return false;		   
+   }
+
    fp1 = fopen(fileName.c_str(),"wb");
    if (fp1 == NULL) {
       printf("Failed to open (write) File [%s] \n",fileName.c_str());
@@ -663,6 +670,9 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    // if recognition code tells us we dealt with a LibIDO image
    // we reproduce on disk the switch between lineNumber and columnNumber
    // just before writting ...
+   
+   // TODO : the best trick would be *change* the recognition code
+   //        but pb expected if user deals with, e.g. COMPLEX images
 
    std::string rows, columns; 
    if ( Header->GetFileType() == ACR_LIBIDO){
@@ -673,35 +683,36 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    }	
    // ----------------- End of Special Patch ----------------
    
-   // TODO : get the grPixel, numPixel values
+   // TODO : get the grPixel, numPixel values (for some ACR-NEMA images only)
    guint16 grPixel =0x7fe0;
    guint16 numPixel=0x0010;
-   
-   IterHT p;
-   TagKey key = gdcmDictEntry::TranslateToKey(grPixel, numPixel); 
-   gdcmHeaderEntry * a;
-   TagHeaderEntryHT::iterator p2;
-   
-  //IterHT it = GetHeaderEntrySameNumber(grPixel,numPixel);
+    
    // Update Pixel Data Length
    // the *last* of the 7fe0,0010, if many.
-        
-/*    
-   // good looking, but it doesn't work
-   p= Header->GetEntry().equal_range(key); // get a pair of iterators first-last synonym
-   p2=p.second;               // iterator on the last synonym 
-   a=p2->second;              // H Table target column (2-nd col)
-   //a->SetLength(lgrTotale);
-   a->SetPrintLevel(2);
-   a->Print();
-   // use the old -wrong if many 7fe0,0010- way
- */  
-   if (PixelRead==1)
-      Header->SetEntryLengthByNumber(lgrTotaleRaw,grPixel, numPixel);
-   else if (PixelRead==0)
-      Header->SetEntryLengthByNumber(lgrTotale,   grPixel, numPixel);
-   // if == -1 : no Pixel Data was read : abort the method 
+          
+   TagKey key = gdcmDictEntry::TranslateToKey(grPixel, numPixel); 
+   TagHeaderEntryHT::iterator p2;
+   gdcmHeaderEntry * PixelElement;
    
+   IterHT it= Header->GetEntry().equal_range(key); // get a pair of iterators first-last synonym   
+
+   if (Header->GetEntry().count(key) == 1) // only the first is significant
+      p2=it.first; // iterator on the first (unique) synonym
+   else
+      p2=it.second;// iterator on the last synonym
+   
+   PixelElement=p2->second;        // H Table target column (2-nd col)
+   PixelElement->SetPrintLevel(2);
+   PixelElement->Print();      
+ 
+   if (PixelRead==1)
+      PixelElement->SetLength(lgrTotaleRaw);
+   else if (PixelRead==0)
+      PixelElement->SetLength(lgrTotale);
+   
+   PixelElement->SetPrintLevel(2);
+   PixelElement->Print();    
+ 
    Header->Write(fp1, type);
 
    // --------------------------------------------------------------
