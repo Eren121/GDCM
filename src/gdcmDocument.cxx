@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/29 14:38:29 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2004/06/29 23:43:19 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -750,7 +750,7 @@ std::string gdcmDocument::GetEntryVRByName(TagName tagName) {
  */
 std::string gdcmDocument::GetEntryByNumber(guint16 group, guint16 element){
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-// TODO : use map methods, instead of multimap  // JPR
+   /// \todo use map methods, instead of multimap JPR
    if ( ! tagHT.count(key))
       return GDCM_UNFOUND;
    return ((gdcmValEntry *)tagHT.find(key)->second)->GetValue();
@@ -862,7 +862,7 @@ bool gdcmDocument::SetEntryByNumber(void *content,
    if ( ! tagHT.count(key))
       return false;
 
-/* Hope Binary field length is *never* wrong    
+/* Hope Binaray field length is *never* wrong    
    if(lgth%2) // Non even length are padded with a space (020H).
    {  
       lgth++;
@@ -891,8 +891,7 @@ bool gdcmDocument::SetEntryLengthByNumber(guint32 l,
                                         guint16 group, 
                                         guint16 element) 
 {
-// TODO : use map methods instead of multimap // JPR
-
+   /// \todo use map methods, instead of multimap JPR
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
@@ -963,7 +962,7 @@ void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem)
       delete[] a;
       return NULL;
    }
-// TODO : Drop any already existing void area ! // JPR
+   /// \todo Drop any allready existing void area! JPR
    SetEntryVoidAreaByNumber(a, Group, Elem);
    return a;  
 }
@@ -1250,7 +1249,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
              if (NewDocEntry->GetReadLength()==0xffffffff)
              {
                 // Broken US.3405.1.dcm
-               Parse7FE0(); // to skip the pixels 
+                Parse7FE0(); // to skip the pixels 
                              // (multipart JPEG/RLE are trouble makers)
              }
              else
@@ -2017,6 +2016,7 @@ uint32_t gdcmDocument::FindDocEntryLengthOB(void)  {
       {
          dbg.Verbose(1, "gdcmDocument::FindLengthOB: neither an Item tag "
                         "nor a Sequence delimiter tag."); 
+         fseek(fp, PositionOnEntry, SEEK_SET);
          errno = 1;
          return 0;
       }
@@ -2392,6 +2392,46 @@ guint32 gdcmDocument::GenerateFreeTagKeyInGroup(guint16 group)
    return UINT32_MAX;
 }
 
+/**
+ * \brief   Assuming the internal file pointer \ref gdcmDocument::fp 
+ *          is placed at the beginning of a tag check whether this
+ *          tag is (TestGroup, TestElement).
+ * \warning On success the internal file pointer \ref gdcmDocument::fp
+ *          is modified to point after the tag.
+ *          On failure (i.e. when the tag wasn't the expected tag
+ *          (TestGroup, TestElement) the internal file pointer
+ *          \ref gdcmDocument::fp is restored to it's original position.
+ * @param   TestGroup   The expected group of the tag.
+ * @param   TestElement The expected Element of the tag.
+ * @return  True on success, false otherwise.
+ */
+bool gdcmDocument::ReadTag(uint16_t TestGroup, uint16_t TestElement)
+{
+   uint16_t ItemTagGroup;
+   uint16_t ItemTagElement; 
+   long PositionOnEntry = ftell(fp);
+   long CurrentPosition = ftell(fp);          // On debugging purposes
+
+   //// Read the Item Tag group and element, and make
+   // sure they are what we expected:
+   ItemTagGroup   = ReadInt16();
+   ItemTagElement = ReadInt16();
+   if ( (ItemTagGroup != TestGroup) || (ItemTagElement != TestElement ) )
+   {
+      std::ostringstream s;
+      s << "   We should have found tag (";
+      s << std::hex << TestGroup << "," << TestElement << ")" << std::endl;
+      s << "   but instead we encountered tag (";
+      s << std::hex << ItemTagGroup << "," << ItemTagElement << ")"
+        << std::endl;
+      s << "  at address: " << (unsigned)CurrentPosition << std::endl;
+      dbg.Verbose(0, "gdcmDocument::ReadItemTagLength: wrong Item Tag found:");
+      dbg.Verbose(0, s.str().c_str());
+      fseek(fp, PositionOnEntry, SEEK_SET);
+      return false;
+   }
+   return true;
+}
 
 /**
  * \brief   Assuming the internal file pointer \ref gdcmDocument::fp 
@@ -2407,34 +2447,17 @@ guint32 gdcmDocument::GenerateFreeTagKeyInGroup(guint16 group)
  * @return  On success returns the length associated to the tag. On failure
  *          returns 0.
  */
-guint32 gdcmDocument::ReadTagLength(guint16 TestGroup, guint16 TestElement)
+uint32_t gdcmDocument::ReadTagLength(uint16_t TestGroup, uint16_t TestElement)
 {
-   guint16 ItemTagGroup;
-   guint16 ItemTagElement; 
    long PositionOnEntry = ftell(fp);
-   long CurrentPosition = ftell(fp);          // On debugging purposes
 
-   //// Read the Item Tag group and element, and make
-   // sure they are respectively 0xfffe and 0xe000:
-   ItemTagGroup   = ReadInt16();
-   ItemTagElement = ReadInt16();
-   if ( (ItemTagGroup != TestGroup) || (ItemTagElement != TestElement ) )
+   if ( !ReadTag(TestGroup, TestElement) )
    {
-      std::ostringstream s;
-      s << "   We should have found tag (";
-      s << std::hex << TestGroup << "," << TestElement << ")" << std::endl;
-      s << "   but instead we encountered tag (";
-      s << std::hex << ItemTagGroup << "," << ItemTagElement << ")"
-        << std::endl;
-      s << "  at address: " << (unsigned)CurrentPosition << std::endl;
-      dbg.Verbose(0, "gdcmDocument::ReadItemTagLength: wrong Item Tag found:");
-      dbg.Verbose(0, s.str().c_str());
-      fseek(fp, PositionOnEntry, SEEK_SET);
       return 0;
    }
                                                                                 
    //// Then read the associated Item Length
-   CurrentPosition=ftell(fp);
+   long CurrentPosition = ftell(fp);
    guint32 ItemLength;
    ItemLength = ReadInt32();
    {
@@ -2448,205 +2471,110 @@ guint32 gdcmDocument::ReadTagLength(guint16 TestGroup, guint16 TestElement)
 }
 
 /**
- * \brief   Read the length of an exptected Item tag i.e. (0xfffe, 0xe000).
- * \sa      \ref gdcmDocument::ReadTagLength
- * \warning See warning of \ref gdcmDocument::ReadTagLength
- * @return  On success returns the length associated to the item tag.
- *          On failure returns 0.
- */ 
-guint32 gdcmDocument::ReadItemTagLength(void)
-{
-   return ReadTagLength(0xfffe, 0xe000);
-}
-
-/**
- * \brief   Read the length of an expected Sequence Delimiter tag i.e.
- *          (0xfffe, 0xe0dd).
- * \sa      \ref gdcmDocument::ReadTagLength
- * \warning See warning of \ref gdcmDocument::ReadTagLength
- * @return  On success returns the length associated to the Sequence
- *          Delimiter tag. On failure returns 0.
- */
-guint32 gdcmDocument::ReadSequenceDelimiterTagLength(void)
-{
-   return ReadTagLength(0xfffe, 0xe0dd);
-}
-
-
-/**
  * \brief   Parse pixel data from disk for multi-fragment Jpeg/Rle files
  *          No other way so 'skip' the Data
  *
  */
-
-
-void gdcmDocument::Parse7FE0 (void) {
-
+void gdcmDocument::Parse7FE0 (void)
+{
    gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return;
       
-   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
-   if (Transfer == UI1_2_840_10008_1_2 )
-      return;  
-   if ( Transfer == UI1_2_840_10008_1_2_1 )
+   if (   IsImplicitVRLittleEndianTransferSyntax()
+       || IsExplicitVRLittleEndianTransferSyntax()
+       || IsExplicitVRBigEndianTransferSyntax() /// \todo 1.2.2 ??? A verifier !
+       || IsDeflatedExplicitVRLittleEndianTransferSyntax() )
       return;
-   if ( Transfer == UI1_2_840_10008_1_2_2 )  //1.2.2 ??? A verifier !
-      return;         
-   if ( Transfer == UI1_2_840_10008_1_2_1_99 )
-      return;
-      
-   int nb;
-   std::string str_nb=GetEntryByNumber(0x0028,0x0100);
-   if (str_nb == GDCM_UNFOUND ) {
-      nb = 16;
-   } else {
-      nb = atoi(str_nb.c_str() );
-      if (nb == 12) nb =16;
+
+   // ---------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
+
+   //// Read the Basic Offset Table Item Tag length...
+   guint32 ItemLength = ReadTagLength(0xfffe, 0xe000);
+
+   //// ... and then read length[s] itself[themselves]. We don't use
+   // the values read (BTW  what is the purpous of those lengths ?)
+   if (ItemLength != 0) {
+      // BTW, what is the purpous of those length anyhow !? 
+      char * BasicOffsetTableItemValue = new char[ItemLength + 1];
+      fread(BasicOffsetTableItemValue, ItemLength, 1, fp); 
+      for (unsigned int i=0; i < ItemLength; i += 4){
+         guint32 IndividualLength;
+         IndividualLength = str2num(&BasicOffsetTableItemValue[i],guint32);
+         std::ostringstream s;
+         s << "   Read one length: ";
+         s << std::hex << IndividualLength << std::endl;
+         dbg.Verbose(0, "gdcmDocument::Parse7FE0: ", s.str().c_str());
+      }              
    }
-      
-   guint16 ItemTagGr,ItemTagEl; 
-   int ln;
-   long ftellRes;
 
-  // -------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
-
-   if ( Transfer != UI1_2_840_10008_1_2_5 ) { // !RLELossLessTransferSyntax 
+   if ( ! IsRLELossLessTransferSyntax() )
+   {
       // JPEG Image
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }
-      ftellRes=ftell(fp);
-      fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item Length
-
-      if (ln != 0) {
-         char * BasicOffsetTableItemValue= new char[ln+1];
-         fread(BasicOffsetTableItemValue,ln,1,fp); 
-         guint32 a;
-         for (int i=0;i<ln;i+=4){
-            a=str2num(&BasicOffsetTableItemValue[i],guint32);
-         }              
-      }
       
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }  
-      
-      while ( ( ItemTagGr==0xfffe) && (ItemTagEl!=0xe0dd) ) { // Parse fragments
-      
-         ftellRes=ftell(fp);
-         fread(&ln,4,1,fp); 
-         if(GetSwapCode()) 
-            ln=SwapLong(ln);    // length
-         // ------------------------                                     
-         fseek(fp,ln,SEEK_CUR); // skipping (not reading) fragment pixels    
-         // ------------------------              
-     
-         ftellRes=ftell(fp);
-         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
-         }
+      //// We then skip (not reading them) all the fragments of images:
+      while ( (ItemLength = ReadTagLength(0xfffe, 0xe000)) )
+      {
+         SkipBytes(ItemLength);
       } 
-
-   } else {
-
+   }
+   else
+   {
       // RLE Image
-      long RleSegmentLength[15],fragmentLength;
-      guint32 nbRleSegments;
-      guint32 RleSegmentOffsetTable[15];
-      ftellRes=ftell(fp);
-      // Basic Offset Table with Item Value
-         // Item Tag
-      fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }
-         // Item Length
-      ftellRes=ftell(fp);
-      fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item Length
-      if (ln != 0) {
-         // What is it used for ??
-         char * BasicOffsetTableItemValue= new char[ln+1];
-         fread(BasicOffsetTableItemValue,ln,1,fp); 
-         guint32 a;
-         for (int i=0;i<ln;i+=4){
-            a=str2num(&BasicOffsetTableItemValue[i],guint32);
-         }              
-      }
+      long ftellRes;
+      long RleSegmentLength[15], fragmentLength;
 
-      ftellRes=ftell(fp);
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }  
-      // while 'Sequence Delimiter Item' (fffe,e0dd) not found
-      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
-      // Parse fragments of the current Fragment (Frame)    
-         ftellRes=ftell(fp);
-         fread(&fragmentLength,4,1,fp); 
-         if(GetSwapCode()) 
-            fragmentLength=SwapLong(fragmentLength);    // length
-
-          //------------------ scanning (not reading) fragment pixels
+      // While we find some items:
+      while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) )
+      { 
+         // Parse fragments of the current Fragment (Frame)    
+         //------------------ scanning (not reading) fragment pixels
+         guint32 nbRleSegments = ReadInt32();
+         printf("   Nb of RLE Segments : %d\n",nbRleSegments);
  
-         fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments
-         if(GetSwapCode()) 
-            nbRleSegments=SwapLong(nbRleSegments);
- 
-         for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
+         //// Reading RLE Segments Offset Table
+         guint32 RleSegmentOffsetTable[15];
+         for(int k=1; k<=15; k++) {
             ftellRes=ftell(fp);
-            fread(&RleSegmentOffsetTable[k],4,1,fp);
-            if(GetSwapCode())
-               RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
+            RleSegmentOffsetTable[k] = ReadInt32();
+            printf("        at : %x Offset Segment %d : %d (%x)\n",
+                    (unsigned)ftellRes,k,RleSegmentOffsetTable[k],
+                    RleSegmentOffsetTable[k]);
          }
 
-          if (nbRleSegments>1) { // skipping (not reading) RLE Segments
-             for(unsigned int k=1; k<=nbRleSegments-1; k++) { 
+         // skipping (not reading) RLE Segments
+         if (nbRleSegments>1) {
+            for(unsigned int k=1; k<=nbRleSegments-1; k++) { 
                 RleSegmentLength[k]=   RleSegmentOffsetTable[k+1]
                                      - RleSegmentOffsetTable[k];
                 ftellRes=ftell(fp);
-
-                fseek(fp,RleSegmentLength[k],SEEK_CUR);    
+                printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
+                        k,(unsigned)RleSegmentLength[k],
+                       (unsigned)RleSegmentLength[k], (unsigned)ftellRes);
+                SkipBytes(RleSegmentLength[k]);    
              }
           }
+
           RleSegmentLength[nbRleSegments]= fragmentLength 
                                          - RleSegmentOffsetTable[nbRleSegments];
           ftellRes=ftell(fp);
-          fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR); 
-            
-         // ------------------ end of scanning fragment pixels        
-      
-         ftellRes=ftell(fp);
-         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
-         }
+          printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
+                  nbRleSegments,(unsigned)RleSegmentLength[nbRleSegments],
+                  (unsigned)RleSegmentLength[nbRleSegments],(unsigned)ftellRes);
+          SkipBytes(RleSegmentLength[nbRleSegments]); 
       } 
+
+      // Make sure that at the end of the item we encounter a 'Sequence
+      // Delimiter Item':
+      if ( ! ReadTag(0xfffe, 0xe0dd) )
+      {
+         dbg.Verbose(0, "gdcmDocument::Parse7FE0: no sequence delimiter item");
+         dbg.Verbose(0, "    at end of RLE item sequence");
+      }
    }
-   return;            
 }
- 
+
+
 
 /**
  * \brief   Compares two documents, according to \ref gdcmDicomDir rules

@@ -113,10 +113,6 @@ SET(BLACK_LIST
   "irmPhlipsNew1.dcm"      #png looks ugly
   "mriThruVPRO.dcm"        #png looks ugly
   "US.3405.1.dcm"          #looks exactly the same as US.1.2.dcm
-  "8BitsRunLengthColor.dcm"    # Write dicom broken
-  "8BitsUncompressedColor.dcm" # Write dicom broken
-  "OT-PAL-8-face.dcm"          # Write dicom broken
-  "US-PAL-8-10x-echo.dcm"      # Write dicom broken
   )
 
 #   gdcm-ACR-LibIDO seems to be cut

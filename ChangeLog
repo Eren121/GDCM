@@ -1,3 +1,24 @@
+2004-06-30 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * Test/TestReadWriteReadCompare.cxx was properly written (with a call
+     to gdcmFile::SetImageData()) BUT since gdcmFile is brain damaged (see
+     new comments in this file) we temporarily (sigh) move to a weaker
+     form of test...
+   * Test/CmakeList.txt: with the change to Test/TestReadWriteReadCompare.cxx
+     we don't need to black list the following images anymore:
+      - 8BitsUncompressedColor.dcm
+      - OT-PAL-8-face.dcm
+      - US-PAL-8-10x-echo.dcm
+   * src/gdcmDocument.[h|cxx]: RE-Reverting to version 1.42 with the proper
+     fixes and the beautified code ;-)
+     This fixes the bug introduced in version 1.42 (when beautifying)
+     that made the parsing of 8BitsRunLengthColor.dcm unproper.
+     Note: ctest was blind to this bug (this means we need to still
+           improve the test suite). The bug could be detected by using
+           gdcmbin/bin/PrintDocument $GDCM_DATA/8BitsRunLengthColor.dcm
+           or by using
+           gdcmbin/bin/ReadWrite $GDCM_DATA/8BitsRunLengthColor.dcm
+           and by displaying the (garbage) produced file temp.XDCM...
+
 2004-06-29 Jean-Pierre Roux
    FIX : - remove Frog's beautified, but never checked 'Parse7FE0' code,
          - replace by uggly but working old code :-(

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/29 14:38:29 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/06/29 23:43:20 $
+  Version:   $Revision: 1.20 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -180,7 +180,6 @@ public:
    virtual std::string GetEntryByNumber  (guint16 group, guint16 element);
    virtual std::string GetEntryVRByNumber(guint16 group, guint16 element);
    virtual int     GetEntryLengthByNumber(guint16 group, guint16 element);
-
 protected:
    virtual bool SetEntryByName  (std::string content, std::string tagName);
    virtual bool SetEntryByNumber(std::string content,
@@ -229,9 +228,8 @@ private:
    guint16 ReadInt16();
    guint32 ReadInt32();
    void    SkipBytes(guint32);
-   guint32 ReadTagLength(guint16, guint16);
-   guint32 ReadItemTagLength();
-   guint32 ReadSequenceDelimiterTagLength();
+   bool ReadTag(uint16_t, uint16_t);
+   uint32_t ReadTagLength(uint16_t, uint16_t);
 
    void Initialise();
    bool CheckSwap();
