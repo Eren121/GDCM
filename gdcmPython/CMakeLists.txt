@@ -36,6 +36,15 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "")
   SWIG_ADD_MODULE(gdcm python gdcm.i)  #gdcm_wrap.cxx
   SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
+
+  SET(GDCM_CXX_FLAGS ${CMAKE_SWIG_FLAGS})
+  # Get rid of -Wall / -W / -pedantic if exist
+  SET(CMAKE_CXX_FLAGS "")
+  # I guess I need to put them back on the this file:
+  SET_SOURCE_FILES_PROPERTIES(${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
+                              PROPERTIES COMPILE_FLAGS "")
+#  SET_TARGET_PROPERTIES(${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
+#                        PROPERTIES CMAKE_CXX_FLAGS "-foo")
   
 ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
