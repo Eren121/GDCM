@@ -133,7 +133,7 @@ void gdcmDocEntry::Print(std::ostream & os) {
 
 /**
  * \ingroup gdcmDocEntry
- * \brief   Gets the full length of the HeaderEntry (not only value length)
+ * \brief   Gets the full length of the DocEntry (not only value length)
  */
 guint32 gdcmDocEntry::GetFullLength(void) {
    guint32 l;
@@ -146,6 +146,21 @@ guint32 gdcmDocEntry::GetFullLength(void) {
       else
          l = l + 8;  // 2 (gr) + 2 (el) + 2 (vr) + 2 (lgth)
    return(l);
+}
+
+/**
+ * \ingroup gdcmDocEntry
+ * \brief   Copies all the attributes from an other DocEntry 
+ */
+
+void Copy (gdcmDocEntry* e) {
+   this->entry = e->entry;
+   this->UsableLength = e->UsableLength;
+   this->ReadLength = e->ReadLength;
+   this->ImplicitVR = e->ImplicitVR;
+   this->Offset = e->Offset;
+   this->printLevel = e->printLevel;
+   this->SQDepthLevel = e->SQDepthLevel;      
 }
 
 //-----------------------------------------------------------------------------

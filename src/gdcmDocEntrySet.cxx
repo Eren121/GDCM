@@ -48,99 +48,77 @@ bool gdcmDocument::LoadDocEntrySet(bool exception_on_error) throw(gdcmFormatErro
    if (!CheckSwap())
       return false;
 
-   guint16 g, n;      
+   gdcmDocEntry  *newDocEntry = (gdcmDocEntry *)0;     
    gdcmValEntry  *newValEntry = (gdcmValEntry *)0; 
    gdcmBinEntry  *newBinEntry = (gdcmBinEntry *)0; 
    gdcmSeqEntry  *newSeqEntry = (gdcmSeqEntry *)0;  
-   gdcmDictEntry *NewTag      = (gdcmDictEntry *)0;
-   char VR[3];
-   long PositionOnEntry;
-     
-//   while ( (newHeaderEntry = ReadNextHeaderEntry()) ) {
-   while (1) {
-   
-   // ----------------------- was ReadNextHeaderEntry -----------------
-      g = ReadInt16();
-      n = ReadInt16();   
-      if (errno == 1)
-      // We reached the EOF (or an error occured) therefore 
-      // header parsing has to be considered as finished.
-         break;
-	 
-   // Find out if the tag we encountered is in the dictionaries:
-      DictEntry = GetDictEntryByNumber(Group, Elem);
-      if (!DictEntry)
-         DictEntry = NewVirtualDictEntry(Group, Elem);
-	 if (!DictEntry) {
-            dbg.Verbose(1, "gdcmDocEntrySet::LoadDocEntrySet",
-                           "failed to allocate gdcmDictEntry");
-            return false;			   	 
-         }			   
-	 
-                               // Right now, 	 
-      vr = DictEntry->GetVR(); // Suppose we get it, suppose it's the same one
-                               // that's in the Explicit VR part of the Header
-                               // TODO
-                               // Resoudre pb quand inadequation entre Explicit VR et Dict 
-			       
-      if (filetype != ExplicitVR) {} // jamais de risque de conflit
-      // pour les autres cas,
-      // refaire l'equiv de gdcmParser::FindHeaderEntryVR
-      //                   qui contient CheckHeaderEntryVR 
-      // le pb, c'est qu'on a besoin de la VR pour fabriquer l'Entry    
-           			             
+   //gdcmDictEntry *NewTag      = (gdcmDictEntry *)0;
+
+   while (newDocEntry = ReadNextDocEntry())) { 
+   // TODO (?) : liberation du DocEntry ainsi cree, 
+   // apres copie dans un ValEntry, SeqEntry, BinEntry   
+      vr = newDocEntry->getVR();
+         
       if (vr == "SQ" ) {
-       // --- SeqEntry      
+      // --- SeqEntry
+      
+         newSeqEntry = (gdcmSeqEntry *)0;
+	 if (!NewSeqEntry) {
+            dbg.Verbose(1, "gdcmDocEntrySet::LoadDocEntrySet",
+                           "failed to allocate gdcmSeqEntry");
+            return false;			   	 
+         }	 
+         newSeqEntry->Copy(newDocEntry);            
       // TODO
       // SEQUENCE; appel 'récursif' de ??? pour charger la 'valeur'
       //           (ensemble d' ITEMs, en fait, 
       //            chaque ITEM etant chargé avec LoadDocEntrySet)
-      
-      
+            
+         SkipDocEntry(newSeqEntry); // voir ce qu'on fait pour une SeQuence
+         AddDocEntry(newSeqEntry); 
+	 
       } else  if (vr == "AE" || vr == "AS" || vr == "DA" || vr == "PN" || 
-          vr == "UI" || vr == "TM" ) {	
-      // --- ValEntry 
-         NewValEntry = new gdcmValEntry(DictEntry);
+                  vr == "UI" || vr == "TM" ) {
+      // --- ValEntry 		  
+		  
+         newValEntry = (gdcmValEntry *)0;
 	 if (!NewValEntry) {
             dbg.Verbose(1, "gdcmDocEntrySet::LoadDocEntrySet",
                            "failed to allocate gdcmValEntry");
             return false;			   	 
-         }
-         FindHeaderEntryVR(NewEntry);
-         FindHeaderEntryLength(NewEntry);	 	    
-      }	
-      
-      
-      else {
+         }	 
+         newValEntry->Copy(newDocEntry);
+         SkipDocEntry(newValEntry); 
+         AddDocEntry(newValEntry); 
+	 	 		  		  
+      }	else {
       // --- BinEntry
+      
          NewBinEntry = new gdcmBinEntry(DictEntry);     
 	 if (!NewValEntry) {
             dbg.Verbose(1, "gdcmDocEntrySet::LoadDocEntrySet",
                            "failed to allocate gdcmBinEntry");
             return false;			   	 
-         }
-    }
-
-
-
-// ------------- end of former ReadNextHeaderEntry -----------------
-             	      
-     SkipHeaderEntry(newHeaderEntry);
-     if ( (ignoreShadow==0) || (newHeaderEntry->GetGroup()%2) == 0) { 
-        AddHeaderEntry(newHeaderEntry); 
-     }     
+         }      
+         newBinEntry->Copy(newDocEntry);
+         SkipDocEntry(newBinEntry); 
+         AddDocEntry(newBinEntry);	      
+      }	                     
    }   
    rewind(fp);
+
+
+   // TODO : il n'y a plus de Chained List qui contient toutes les Entries 
+   //        Le chargement des valeurs devra se faire à la volée  
    // Be carefull : merging this two loops may cause troubles ...
    for (ListTag::iterator i = GetListEntry().begin();                           
         i != GetListEntry().end();                                                
         ++i)                                                                      
    {                                                                            
-      LoadHeaderEntry(*i);                                                      
+      LoadDocEntry(*i);                                                      
    }                                                                            
    rewind(fp);
- 
-   
+    
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to read ACR-LibIDO formated images
    //

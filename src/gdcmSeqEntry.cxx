@@ -26,11 +26,10 @@ gdcmSeqEntry::gdcmSeqEntry() : gdcmDocEntry( ) {
  */
 gdcmSeqEntry::~gdcmSeqEntry() 
 {
-/*   for(tous les Items)
+   for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
    {
       delete *cc;
    }
-   */
 }
 
 //-----------------------------------------------------------------------------

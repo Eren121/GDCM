@@ -11,14 +11,24 @@
 /**
  * \ingroup gdcmSQItem
  * \brief   Constructor from a given gdcmSQItem
- * @param   in Pointer to existing dictionary entry
  */
 gdcmSQItem::gdcmSQItem() : gdcmDocEntry( ) {
 
 
 }
 
-
+/**
+ * \brief   Canonical destructor.
+ */
+gdcmSQItem::~gdcmSQItem() 
+{
+   for(ListDocEntry::iterator cc = docEntries.begin();
+       cc != docEntries.end();
+       ++cc)
+   {
+      delete *cc;
+   }
+}
 
 
 //-----------------------------------------------------------------------------

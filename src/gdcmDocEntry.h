@@ -122,6 +122,8 @@ public:
          
    guint32 GetFullLength(void);
    
+   void Copy(gdcmDocEntry *doc);
+     
 private:
    // FIXME: In fact we should be more specific and use :
    // friend gdcmDocEntry * gdcmHeader::ReadNextElement(void);
