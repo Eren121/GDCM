@@ -59,7 +59,7 @@ int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
  * \ingroup gdcmElValSet
  * \brief   
  */
-void gdcmElValSet::Print(ostream & os) {
+void gdcmElValSet::Print(std::ostream & os) {
 
    size_t o;
    short int g, e;
@@ -102,7 +102,7 @@ void gdcmElValSet::Print(ostream & os) {
  * \ingroup gdcmElValSet
  * \brief   
  */
-void gdcmElValSet::PrintByName(ostream & os) {
+void gdcmElValSet::PrintByName(std::ostream & os) {
    for (TagElValueNameHT::iterator tag = NameHt.begin();
           tag != NameHt.end();
           ++tag){

@@ -89,7 +89,7 @@ std::ostream& operator<<(std::ostream &os, const gdcmException &e) {
     os << "Exception " << e.getName() << " thrown: " << e.getError() << std::endl;
   }
   catch(...) {
-    gdcmException::fatal("operator<<(ostream &, const gdcmException&)");
+    gdcmException::fatal("operator<<(std::ostream &, const gdcmException&)");
   }
   return os;
 }
