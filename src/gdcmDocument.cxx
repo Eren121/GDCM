@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/29 11:27:14 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2004/06/29 14:38:29 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -750,6 +750,7 @@ std::string gdcmDocument::GetEntryVRByName(TagName tagName) {
  */
 std::string gdcmDocument::GetEntryByNumber(guint16 group, guint16 element){
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+// TODO : use map methods, instead of multimap  // JPR
    if ( ! tagHT.count(key))
       return GDCM_UNFOUND;
    return ((gdcmValEntry *)tagHT.find(key)->second)->GetValue();
@@ -861,7 +862,7 @@ bool gdcmDocument::SetEntryByNumber(void *content,
    if ( ! tagHT.count(key))
       return false;
 
-/* Hope Binray field length is never wrong    
+/* Hope Binary field length is *never* wrong    
    if(lgth%2) // Non even length are padded with a space (020H).
    {  
       lgth++;
@@ -890,6 +891,8 @@ bool gdcmDocument::SetEntryLengthByNumber(guint32 l,
                                         guint16 group, 
                                         guint16 element) 
 {
+// TODO : use map methods instead of multimap // JPR
+
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
@@ -954,14 +957,14 @@ void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem)
       dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
       return NULL;
    }
-   SetEntryVoidAreaByNumber(a, Group, Elem);
-   /// \todo check the result 
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) 
    {
       delete[] a;
       return NULL;
    }
+// TODO : Drop any already existing void area ! // JPR
+   SetEntryVoidAreaByNumber(a, Group, Elem);
    return a;  
 }
 /**
@@ -1247,7 +1250,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
              if (NewDocEntry->GetReadLength()==0xffffffff)
              {
                 // Broken US.3405.1.dcm
-                Parse7FE0(); // to skip the pixels 
+               Parse7FE0(); // to skip the pixels 
                              // (multipart JPEG/RLE are trouble makers)
              }
              else
@@ -2476,99 +2479,174 @@ guint32 gdcmDocument::ReadSequenceDelimiterTagLength(void)
  *
  */
 
-void gdcmDocument::Parse7FE0 (void)
-{
+
+void gdcmDocument::Parse7FE0 (void) {
+
    gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return;
       
-   if (   IsImplicitVRLittleEndianTransferSyntax()
-       || IsExplicitVRLittleEndianTransferSyntax()
-       || IsExplicitVRBigEndianTransferSyntax() /// \todo 1.2.2 ??? A verifier !
-       || IsDeflatedExplicitVRLittleEndianTransferSyntax() )
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
+   if (Transfer == UI1_2_840_10008_1_2 )
+      return;  
+   if ( Transfer == UI1_2_840_10008_1_2_1 )
+      return;
+   if ( Transfer == UI1_2_840_10008_1_2_2 )  //1.2.2 ??? A verifier !
+      return;         
+   if ( Transfer == UI1_2_840_10008_1_2_1_99 )
       return;
       
-   // ---------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
-
-   //// Read the Basic Offset Table Item Tag length...
-   guint32 ItemLength = ReadItemTagLength();
-
-   //// ... and then read length[s] itself[themselves]. We don't use
-   // the values read (BTW  what is the purpous of those lengths ?)
-   if (ItemLength != 0) {
-      // BTW, what is the purpous of those length anyhow !? 
-      char * BasicOffsetTableItemValue = new char[ItemLength + 1];
-      fread(BasicOffsetTableItemValue, ItemLength, 1, fp); 
-      for (unsigned int i=0; i < ItemLength; i += 4){
-         guint32 IndividualLength;
-         IndividualLength = str2num(&BasicOffsetTableItemValue[i],guint32);
-         std::ostringstream s;
-         s << "   Read one length: ";
-         s << std::hex << IndividualLength << std::endl;
-         dbg.Verbose(0, "gdcmDocument::Parse7FE0: ", s.str().c_str());
-      }              
+   int nb;
+   std::string str_nb=GetEntryByNumber(0x0028,0x0100);
+   if (str_nb == GDCM_UNFOUND ) {
+      nb = 16;
+   } else {
+      nb = atoi(str_nb.c_str() );
+      if (nb == 12) nb =16;
    }
-
-   if ( ! IsRLELossLessTransferSyntax() )
-   {
-      // JPEG Image
       
-      //// We then skip (not reading them) all the fragments of images:
-      while ( (ItemLength = ReadItemTagLength()) )
-      {
-         SkipBytes(ItemLength);
+   guint16 ItemTagGr,ItemTagEl; 
+   int ln;
+   long ftellRes;
+
+  // -------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
+
+   if ( Transfer != UI1_2_840_10008_1_2_5 ) { // !RLELossLessTransferSyntax 
+      // JPEG Image
+      ftellRes=ftell(fp);
+      fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
+      if(GetSwapCode()) {
+         ItemTagGr=SwapShort(ItemTagGr); 
+         ItemTagEl=SwapShort(ItemTagEl);            
+      }
+      ftellRes=ftell(fp);
+      fread(&ln,4,1,fp); 
+      if(GetSwapCode()) 
+         ln=SwapLong(ln);    // Basic Offset Table Item Length
+
+      if (ln != 0) {
+         char * BasicOffsetTableItemValue= new char[ln+1];
+         fread(BasicOffsetTableItemValue,ln,1,fp); 
+         guint32 a;
+         for (int i=0;i<ln;i+=4){
+            a=str2num(&BasicOffsetTableItemValue[i],guint32);
+         }              
+      }
+      
+      ftellRes=ftell(fp);
+      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+      if(GetSwapCode()) {
+         ItemTagGr=SwapShort(ItemTagGr); 
+         ItemTagEl=SwapShort(ItemTagEl);            
+      }  
+      
+      while ( ( ItemTagGr==0xfffe) && (ItemTagEl!=0xe0dd) ) { // Parse fragments
+      
+         ftellRes=ftell(fp);
+         fread(&ln,4,1,fp); 
+         if(GetSwapCode()) 
+            ln=SwapLong(ln);    // length
+         // ------------------------                                     
+         fseek(fp,ln,SEEK_CUR); // skipping (not reading) fragment pixels    
+         // ------------------------              
+     
+         ftellRes=ftell(fp);
+         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+         if(GetSwapCode()) {
+            ItemTagGr=SwapShort(ItemTagGr); 
+            ItemTagEl=SwapShort(ItemTagEl);            
+         }
       } 
 
-   }
-   else
-   {
-      // RLE Image
-      long ftellRes;
-      long RleSegmentLength[15], fragmentLength;
+   } else {
 
+      // RLE Image
+      long RleSegmentLength[15],fragmentLength;
+      guint32 nbRleSegments;
+      guint32 RleSegmentOffsetTable[15];
+      ftellRes=ftell(fp);
+      // Basic Offset Table with Item Value
+         // Item Tag
+      fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
+      if(GetSwapCode()) {
+         ItemTagGr=SwapShort(ItemTagGr); 
+         ItemTagEl=SwapShort(ItemTagEl);            
+      }
+         // Item Length
+      ftellRes=ftell(fp);
+      fread(&ln,4,1,fp); 
+      if(GetSwapCode()) 
+         ln=SwapLong(ln);    // Basic Offset Table Item Length
+      if (ln != 0) {
+         // What is it used for ??
+         char * BasicOffsetTableItemValue= new char[ln+1];
+         fread(BasicOffsetTableItemValue,ln,1,fp); 
+         guint32 a;
+         for (int i=0;i<ln;i+=4){
+            a=str2num(&BasicOffsetTableItemValue[i],guint32);
+         }              
+      }
+
+      ftellRes=ftell(fp);
+      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+      if(GetSwapCode()) {
+         ItemTagGr=SwapShort(ItemTagGr); 
+         ItemTagEl=SwapShort(ItemTagEl);            
+      }  
       // while 'Sequence Delimiter Item' (fffe,e0dd) not found
-      while ( (fragmentLength = ReadSequenceDelimiterTagLength()) )
-      { 
-         // Parse fragments of the current Fragment (Frame)    
-         //------------------ scanning (not reading) fragment pixels
-         guint32 nbRleSegments = ReadInt32();
-         printf("   Nb of RLE Segments : %d\n",nbRleSegments);
+      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
+      // Parse fragments of the current Fragment (Frame)    
+         ftellRes=ftell(fp);
+         fread(&fragmentLength,4,1,fp); 
+         if(GetSwapCode()) 
+            fragmentLength=SwapLong(fragmentLength);    // length
+
+          //------------------ scanning (not reading) fragment pixels
  
-         //// Reading RLE Segments Offset Table
-         guint32 RleSegmentOffsetTable[15];
-         for(int k=1; k<=15; k++) {
+         fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments
+         if(GetSwapCode()) 
+            nbRleSegments=SwapLong(nbRleSegments);
+ 
+         for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
             ftellRes=ftell(fp);
-            RleSegmentOffsetTable[k] = ReadInt32();
-            printf("        at : %x Offset Segment %d : %d (%x)\n",
-                    (unsigned)ftellRes,k,RleSegmentOffsetTable[k],
-                    RleSegmentOffsetTable[k]);
+            fread(&RleSegmentOffsetTable[k],4,1,fp);
+            if(GetSwapCode())
+               RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
          }
 
-         // skipping (not reading) RLE Segments
-         if (nbRleSegments>1) {
-            for(unsigned int k=1; k<=nbRleSegments-1; k++) { 
+          if (nbRleSegments>1) { // skipping (not reading) RLE Segments
+             for(unsigned int k=1; k<=nbRleSegments-1; k++) { 
                 RleSegmentLength[k]=   RleSegmentOffsetTable[k+1]
                                      - RleSegmentOffsetTable[k];
                 ftellRes=ftell(fp);
-                printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
-                        k,(unsigned)RleSegmentLength[k],
-                       (unsigned)RleSegmentLength[k], (unsigned)ftellRes);
-                SkipBytes(RleSegmentLength[k]);    
+
+                fseek(fp,RleSegmentLength[k],SEEK_CUR);    
              }
           }
-
           RleSegmentLength[nbRleSegments]= fragmentLength 
                                          - RleSegmentOffsetTable[nbRleSegments];
           ftellRes=ftell(fp);
-          printf ("  Segment %d : Length = %d x(%x) Start at %x\n",
-                  nbRleSegments,(unsigned)RleSegmentLength[nbRleSegments],
-                  (unsigned)RleSegmentLength[nbRleSegments],(unsigned)ftellRes);
-          SkipBytes(RleSegmentLength[nbRleSegments]); 
+          fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR); 
+            
+         // ------------------ end of scanning fragment pixels        
+      
+         ftellRes=ftell(fp);
+         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+         if(GetSwapCode()) {
+            ItemTagGr=SwapShort(ItemTagGr); 
+            ItemTagEl=SwapShort(ItemTagEl);            
+         }
       } 
    }
+   return;            
 }
-
-
+ 
 
 /**
  * \brief   Compares two documents, according to \ref gdcmDicomDir rules

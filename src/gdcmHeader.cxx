@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 16:00:18 $
-  Version:   $Revision: 1.174 $
+  Date:      $Date: 2004/06/29 14:38:29 $
+  Version:   $Revision: 1.175 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,7 +115,7 @@ void gdcmHeader::Write(FILE* fp,FileType filetype) {
       delete dumm;
       ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
    }
-
+  
    // Drop Palette Color, if necessary
    
    if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' ) {
@@ -144,6 +144,7 @@ void gdcmHeader::Write(FILE* fp,FileType filetype) {
      if (e) 
        RemoveEntry(e);
    }
+
    gdcmDocument::Write(fp,filetype);
 }
 
