@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.9 2003/07/07 10:06:36 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.10 2003/10/03 14:48:31 malaterre Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
@@ -37,6 +37,8 @@ private:
   int NumLines;
   // Total number of planes (or images) of the stack to be build.
   int TotalNumberOfPlanes;
+  // Number of scalar components of the image to be loaded (1=monochrome 3=rgb)
+  int NumComponents;
   // Type of the image[s]: 8/16/32 bits, signed/unsigned:
   std::string ImageType;
   // Pixel size (in number of bytes):

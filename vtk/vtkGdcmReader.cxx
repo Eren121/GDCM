@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.19 2003/09/10 09:31:55 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.20 2003/10/03 14:48:31 malaterre Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -296,6 +296,7 @@ int vtkGdcmReader::CheckFileCoherence()
        ReturnedTotalNumberOfPlanes += NZ - 1; // First plane already added
        this->ImageType = type;
        this->PixelSize = GdcmHeader.GetPixelSize();
+       this->NumComponents = GdcmHeader.GetNumberOfScalarComponents(); //rgb or mono
        
        //Set image spacing
        this->DataSpacing[0] = GdcmHeader.GetXSpacing();
@@ -423,6 +424,9 @@ void vtkGdcmReader::ExecuteInformation()
     this->SetDataScalarTypeToInt();
     }
 
+  //Set number of scalar components:
+  this->SetNumberOfScalarComponents(this->NumComponents);
+
   vtkImageReader::ExecuteInformation();
 }
 
@@ -448,7 +452,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
   int NumColumns = GdcmFile.GetXSize();
   int NumLines   = GdcmFile.GetYSize();
   int NumPlanes  = GdcmFile.GetZSize();
-  int LineSize   = NumColumns * GdcmFile.GetPixelSize();
+  int LineSize   = NumComponents * NumColumns * GdcmFile.GetPixelSize();
   unsigned char * Source      = (unsigned char*)GdcmFile.GetImageData();
   unsigned char * pSource     = Source; //pointer for later deletion
   unsigned char * Destination = Dest + size - LineSize;
@@ -503,7 +507,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
     // The memory size for a full stack of images of course depends
     // on the number of planes and the size of each image:
     size_t StackNumPixels = this->NumColumns * this->NumLines
-                          * this->TotalNumberOfPlanes;
+                          * this->TotalNumberOfPlanes * this->NumComponents;
     size_t stack_size = StackNumPixels * this->PixelSize;
     // Allocate pixel data space itself.
     unsigned char *mem = new unsigned char [stack_size];
