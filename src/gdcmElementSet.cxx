@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/01/19 15:24:28 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,9 +69,8 @@ void ElementSet::Print(std::ostream &os, std::string const & )
       entry->SetPrintLevel(PrintLevel);
       entry->Print(os);   
 
-      if ( /*SeqEntry *seqEntry = */dynamic_cast<SeqEntry*>(entry) )
+      if ( dynamic_cast<SeqEntry*>(entry) )
       {
-         //(void)seqEntry;
          // Avoid the newline for a sequence:
          continue;
       }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 08:55:09 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/01/19 15:24:28 $
+  Version:   $Revision: 1.55 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -221,7 +221,7 @@ bool SQItem::SetEntry(std::string const &val, uint16_t group,
 }
 
 /**
- * \brief   Clear the hash table from given entry AND delete the entry.
+ * \brief   Clear the std::list from given entry AND delete the entry.
  * @param   entryToRemove Entry to remove AND delete.
  * \warning Some problems when using under Windows... prefer the use of
  *          Initialize / GetNext methods
@@ -236,17 +236,17 @@ bool SQItem::RemoveEntry( DocEntry* entryToRemove)
       if( *it == entryToRemove)
       {
          DocEntries.erase(it);
-         gdcmVerboseMacro( "One element erased.");
+         gdcmVerboseMacro( "One element erased: " << entryToRemove->GetKey() );
          delete entryToRemove;
          return true;
       }
    }
-   gdcmVerboseMacro( "Value not present.");
+   gdcmVerboseMacro( "Entry not found: " << entryToRemove->GetKey() );
    return false ;
 }
 
 /**
- * \brief   Clear the hash table from given entry BUT keep the entry.
+ * \brief   Clear the std::list from given entry BUT keep the entry.
  * @param   entryToRemove Entry to remove.
  * @return true if the entry was found and removed; false otherwise
  */
@@ -259,12 +259,13 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
       if( *it == entryToRemove)
       {
          DocEntries.erase(it);
-         gdcmVerboseMacro( "One element erased.");
+         gdcmVerboseMacro( "One element erased, no destroyed: "
+                            << entryToRemove->GetKey() );
          return true;
       }
    }
                                                                                 
-   gdcmVerboseMacro( "Value not present.");
+   gdcmVerboseMacro( "Entry not found:" << entryToRemove->GetKey() );
    return false ;
 }
                                                                                 
@@ -286,7 +287,7 @@ DocEntry * SQItem::GetFirstEntry()
  */
 DocEntry *SQItem::GetNextEntry()
 {
-   gdcmAssertMacro (ItDocEntries != DocEntries.end());
+  // gdcmAssertMacro (ItDocEntries != DocEntries.end());
    {
       ++ItDocEntries;
       if (ItDocEntries != DocEntries.end())
@@ -371,13 +372,27 @@ SeqEntry* SQItem::GetSeqEntry(uint16_t group, uint16_t elem)
 
 std::string SQItem::GetEntry(uint16_t group, uint16_t elem)
 {
+
+/*
+   DocEntry *e = GetFirstEntry();
+   while (e)
+   {
+      if ( e->GetGroup() == group && e->GetElement() == elem)
+      {
+
+         if (ValEntry *ve = dynamic_cast<ValEntry*>(e))
+            return ve->GetValue();
+      }
+      e = GetNextEntry();
+   }   
+*/
    for(ListDocEntry::iterator i = DocEntries.begin();
                               i != DocEntries.end(); ++i)
    {
       if ( (*i)->GetGroup() == group && (*i)->GetElement() == elem)
       {
-         if (ValEntry *e = dynamic_cast<ValEntry*>(*i))
-            return e->GetValue();
+         if (ValEntry *ve = dynamic_cast<ValEntry*>(*i))
+           return ve->GetValue();
       }
    }
    return GDCM_UNFOUND;

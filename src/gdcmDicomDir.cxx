@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 08:57:14 $
-  Version:   $Revision: 1.106 $
+  Date:      $Date: 2005/01/19 15:24:28 $
+  Version:   $Revision: 1.107 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -952,7 +952,8 @@ void DicomDir::MoveSQItem(SQItem *dst,SQItem *src)
    {
       src->RemoveEntryNoDestroy(entry);
       dst->AddEntry(entry);
-      entry = src->GetNextEntry();
+      // we destroyed -> the current iterator is not longer valid
+      entry = src->GetFirstEntry();
    }
 }
 
