@@ -444,6 +444,8 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
         throw gdcmFileError("gdcmDocument::gdcmDocument(const char *, bool)");
      else
      {
+        std::cout <<"gdcmDocument::OpenFile cannot open file: " 
+                  << filename.c_str() << std::endl;
         dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file: ",
                     filename.c_str());
         return (NULL);
@@ -1058,20 +1060,21 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
 		
 		//--------------------------------
 		//
-		// FIXME
+		// FIXME :right now, both value and voidArea belong to gdcmValue
 		//
 		// -------------------------------
 		
-		
-/*     // to go on compiling 
-   void *voidArea;
-   voidArea = tag->GetVoidArea();  // to go on compiling
-   if (voidArea != NULL) 
-   { // there is a 'non string' LUT, overlay, etc
-      fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
-      return;            
-   }
-*/      
+//   if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) ) {			
+      void *voidArea;
+      gdcmBinEntry *BinEntry= (gdcmBinEntry *)tag;;
+      voidArea = BinEntry->GetVoidArea();	
+      if (voidArea != NULL) 
+      { // there is a 'non string' LUT, overlay, etc
+         fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
+         return;            
+      }
+//   } 
+	    
    if (vr == "US" || vr == "SS") 
    {
       // some 'Short integer' fields may be mulivaluated
@@ -1120,22 +1123,42 @@ void gdcmDocument::WriteEntryValue(gdcmDocEntry *tag, FILE *_fp,FileType type)
 
 bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
-   guint32 length = tag->GetLength();
-   gdcmValEntry * Vtag = (gdcmValEntry *) tag;
-std::cout << "gdcmDocument::WriteEntry  Vtag->GetValue() " << Vtag->GetValue() << std::endl;
-   // The value of a tag MUST (see the DICOM norm) be an odd number of
-   // bytes. When this is not the case, pad with an additional byte:
-   if(length%2==1)
-   { 
-      Vtag->SetValue(Vtag->GetValue()+"\0");
-      Vtag->SetLength(Vtag->GetReadLength()+1);
-   }
+   guint32 length = tag->GetLength();	
 
-   WriteEntryTagVRLength(Vtag, _fp, type);
+   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(tag) )	{
+   // The value of a tag MUST (see the DICOM norm) be an odd number of
+   // bytes. When this is not the case, pad with an additional byte:	
+      if(length%2==1) { 
+         ValEntry->SetValue(ValEntry->GetValue()+"\0");
+         ValEntry->SetLength(ValEntry->GetReadLength()+1);
+      }
+
+   WriteEntryTagVRLength(ValEntry, _fp, type);
 	std::cout << "after WriteEntryTagVRLength " << std::endl;
-   WriteEntryValue(Vtag, _fp, type);
+   WriteEntryValue(ValEntry, _fp, type);
 	std::cout << "after WriteEntryValue " << std::endl;
-   return true;
+   return true;	
+	}
+	
+   if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) )	{
+	//
+	// FIXME : when voidArea belong to gdcmBinEntry only, fix voidArea length
+	//
+   // The value of a tag MUST (see the DICOM norm) be an odd number of
+   // bytes. When this is not the case, pad with an additional byte:	
+	/*
+      if(length%2==1) { 
+         Vtag->SetValue(Vtag->GetValue()+"\0");
+         Vtag->SetLength(Vtag->GetReadLength()+1);
+      }
+*/
+
+   WriteEntryTagVRLength(tag, _fp, type);
+	std::cout << "after WriteEntryTagVRLength " << std::endl;
+   WriteEntryValue(tag, _fp, type);
+	std::cout << "after WriteEntryValue " << std::endl;
+   return true;	
+	}
 }
 
 /**
@@ -1175,9 +1198,7 @@ bool gdcmDocument::WriteEntries(FILE *_fp,FileType type)
             // Ignore the "shadow" groups
             continue;
          if ((*tag2).second->GetVR() == "SQ" ) // ignore Sequences
-            continue;
-         //if ((*tag2).second->GetDepthLevel() != 0) // Not only ignore the SQ element
-         //   continue;	    
+            continue;    
       } 
       if (! WriteEntry((*tag2).second,_fp,type) ) {
 		   std::cout << "Write Failure " << std::endl;

@@ -225,10 +225,14 @@ size_t gdcmFile::GetImageDataSizeRaw(void) {
  */
 void * gdcmFile::GetImageData (void) {
    PixelData = new char[lgrTotale];
-   if (PixelData)
+   if (PixelData) {
       GetImageDataIntoVector(PixelData, lgrTotale);
-      
+		GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
+                      GetHeader()->GetGrPixel(),  
+                      GetHeader()->GetNumPixel()); 
+   }      
    PixelRead=0; // no PixelRaw
+	
    return(PixelData);
 }
 
@@ -322,8 +326,13 @@ void * gdcmFile::GetImageDataRaw (void) {
 		/// Create a member lgrTotaleRaw ???
       lgrTotale /= 3;
    PixelData = new char[lgrTotale];
-   if (PixelData)
+	
+   if (PixelData) {
       GetImageDataIntoVectorRaw(PixelData, lgrTotale);
+		GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
+                      GetHeader()->GetGrPixel(),  
+                      GetHeader()->GetNumPixel()); 
+   } 				
    PixelRead=1; // PixelRaw
    return(PixelData);
 }

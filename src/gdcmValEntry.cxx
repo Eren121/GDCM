@@ -17,7 +17,7 @@
  * @param   e Pointer to existing dictionary entry
  */
 gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e) {
-   voidArea = NULL;
+   voidArea = NULL; // will be in BinEntry ?
 }
 
 /**
