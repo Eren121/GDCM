@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 05:57:20 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2004/07/19 05:59:12 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -328,6 +328,8 @@ bool gdcmDocument::IsGivenTransferSyntax(std::string const & syntaxToCheck)
       if ( transfer == syntaxToCheck )
       //if( transfer.find( syntaxToCheck ) )   //should be faster
       {
+         int k = 
+         abort()
          return true;
       }
    }
@@ -1451,6 +1453,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
       }
    
       int lgr = ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
+      (void)lgr;  //FIXME not used
       
       set->AddEntry(itemSQ, SQItemNumber); 
       SQItemNumber++;
@@ -2313,6 +2316,7 @@ bool gdcmDocument::CheckSwap()
    // The easiest case is the one of a DICOM header, since it possesses a
    // file preamble where it suffice to look for the string "DICM".
    int lgrLue = fread(deb, 1, HEADER_LENGTH_TO_READ, Fp);
+   (void)lgrLue;  //FIXME not used
    
    char *entCur = deb + 128;
    if( memcmp(entCur, "DICM", (size_t)4) == 0 )
