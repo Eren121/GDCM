@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/16 19:21:57 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2004/09/17 13:11:16 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2893,7 +2893,6 @@ uint32_t gdcmDocument::ReadTagLength(uint16_t testGroup, uint16_t testElement)
 /**
  * \brief   Parse pixel data from disk for multi-fragment Jpeg/Rle files
  *          No other way so 'skip' the Data
- *
  */
 void gdcmDocument::Parse7FE0 ()
 {
@@ -2993,6 +2992,97 @@ void gdcmDocument::Parse7FE0 ()
          dbg.Verbose(0, "    at end of RLE item sequence");
       }
    }
+}
+
+/**
+ * \brief Walk recursively the given \ref gdcmDocEntrySet, and feed
+ *        the given hash table (\ref TagDocEntryHT) with all the
+ *        \ref gdcmDocEntry (Dicom entries) encountered.
+ *        This method does the job for \ref BuildFlatHashTable.
+ * @param builtHT Where to collect all the \ref gdcmDocEntry encountered
+ *        when recursively walking the given set.
+ * @param set The structure to be traversed (recursively).
+ */
+void gdcmDocument::BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
+                                              gdcmDocEntrySet* set )
+{ 
+   if (gdcmElementSet* elementSet = dynamic_cast< gdcmElementSet* > ( set ) )
+   {
+      TagDocEntryHT* currentHT = elementSet->GetTagHT();
+      for( TagDocEntryHT::const_iterator i  = currentHT->begin();
+                                         i != currentHT->end();
+                                       ++i)
+      {
+         gdcmDocEntry* entry = i->second;
+         if ( gdcmSeqEntry* seqEntry = dynamic_cast<gdcmSeqEntry*>(entry) )
+         {
+            ListSQItem& items = seqEntry->GetSQItems();
+            for( ListSQItem::const_iterator item  = items.begin();
+                                            item != items.end();
+                                          ++item)
+            {
+               BuildFlatHashTableRecurse( builtHT, *item );
+            }
+            continue;
+         }
+         builtHT[entry->GetKey()] = entry;
+      }
+      return;
+    }
+
+   if (gdcmSQItem* SQItemSet = dynamic_cast< gdcmSQItem* > ( set ) )
+   {
+      ListDocEntry& currentList = SQItemSet->GetDocEntries();
+      for (ListDocEntry::iterator i  = currentList.begin();
+                                  i != currentList.end();
+                                ++i)
+      {
+         gdcmDocEntry* entry = *i;
+         if ( gdcmSeqEntry* seqEntry = dynamic_cast<gdcmSeqEntry*>(entry) )
+         {
+            ListSQItem& items = seqEntry->GetSQItems();
+            for( ListSQItem::const_iterator item  = items.begin();
+                                            item != items.end();
+                                          ++item)
+            {
+               BuildFlatHashTableRecurse( builtHT, *item );
+            }
+            continue;
+         }
+         builtHT[entry->GetKey()] = entry;
+      }
+
+   }
+}
+
+/**
+ * \brief Build a \ref TagDocEntryHT (i.e. a std::map<>) from the current
+ *        gdcmDocument.
+ *
+ *        The structure used by a gdcmDocument (through \ref gdcmElementSet),
+ *        in order to old the parsed entries of a Dicom header, is a recursive
+ *        one. This is due to the fact that the sequences (when present)
+ *        can be nested. Additionaly, the sequence items (represented in
+ *        gdcm as \ref gdcmSQItem) add an extra complexity to the data
+ *        structure. Hence, a gdcm user whishing to visit all the entries of
+ *        a Dicom header will need to dig in the gdcm internals (which
+ *        implies exposing all the internal data structures to the API).
+ *        In order to avoid this burden to the user, \ref BuildFlatHashTable
+ *        recursively builds a temporary hash table, which olds all the
+ *        Dicom entries in a flat structure (a \ref TagDocEntryHT i.e. a
+ *        std::map<>).
+ * \warning Of course there is NO integrity constrain between the 
+ *        returned \ref TagDocEntryHT and the \ref gdcmElemenSet used
+ *        to build it. Hence if the underlying \ref gdcmElemenSet is
+ *        altered, then it is the caller responsability to invoke 
+ *        \ref BuildFlatHashTable again...
+ * @return The flat std::map<> we juste build.
+ */
+TagDocEntryHT* gdcmDocument::BuildFlatHashTable()
+{
+   TagDocEntryHT* FlatHT = new TagDocEntryHT;
+   BuildFlatHashTableRecurse( *FlatHT, this );
+   return FlatHT;
 }
 
 

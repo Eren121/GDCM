@@ -55,3 +55,6 @@ TARGET_LINK_LIBRARIES(TestChangeHeader  gdcm)
 
 ADD_EXECUTABLE(TestReadWriteReadCompare TestReadWriteReadCompare.cxx)
 TARGET_LINK_LIBRARIES(TestReadWriteReadCompare  gdcm)
+
+ADD_EXECUTABLE(FlatHashTablePrint FlatHashTablePrint.cxx)
+TARGET_LINK_LIBRARIES(FlatHashTablePrint gdcm)

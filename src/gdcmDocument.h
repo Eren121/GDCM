@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/16 06:48:00 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/09/17 13:11:16 $
+  Version:   $Revision: 1.38 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -197,6 +197,7 @@ public:
    gdcmBinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
 
    void LoadDocEntrySafe(gdcmDocEntry* entry);
+   TagDocEntryHT* BuildFlatHashTable();
 
 private:
    // Read
@@ -235,6 +236,9 @@ private:
    gdcmDocEntry* ReadNextDocEntry();
 
    uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
+   void BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
+                                   gdcmDocEntrySet* set );
+
 
 public:
 // Accessors:

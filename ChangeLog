@@ -1,3 +1,16 @@
+2004-09-17 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * ENH: added some utility method that builds a flat dictionnary
+    holding all the Dicom entries contained in the recursive structure
+    of a gdcmElementSet. Refer to add FlatHashTablePrint.cxx for 
+    an example of usage.
+    - src/gdcmDocument.[h|cxx] added BuildFlatHashTableRecurse() and
+      BuildFlatHashTable() that build a flat dictionary.
+    - src/gdcmElementSet.h: added a new private GetTag() accessor.
+      gdcmDocument is now a friend of gdcmElementSet.
+    - src/gdcmElementSet.cxx: clean up.
+    - Example/FlatHashTablePrint.cxx added.
+    - Example/CmakeLists.txt changed accordingly
+
 2004-09-16 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * gdcmDocEntrySet::SQDepthLevel and gdcmDocEntrySet::BaseTagKey attributes
     moved away from gdcmDocEntrySet (since this class is an abstract class

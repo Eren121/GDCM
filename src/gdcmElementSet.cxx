@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/16 19:21:57 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/09/17 13:11:16 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,16 +69,12 @@ void gdcmElementSet::Print(std::ostream & os)
    {
       gdcmDocEntry* entry = i->second;
       entry->Print(os);   
-      bool PrintEndLine = true;
       if ( gdcmSeqEntry* seqEntry = dynamic_cast<gdcmSeqEntry*>(entry) )
       {
-         (void)seqEntry;  //not used
-         PrintEndLine = false;
+         // Avoid the newline for a sequence:
+         continue;
       }
-      if( PrintEndLine )
-      {
-         os << std::endl;
-      }
+      os << std::endl;
    }
 }
 
