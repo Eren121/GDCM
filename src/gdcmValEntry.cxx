@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:22 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/08/01 03:20:23 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry())
    ReadLength   = e->GetReadLength();
    ImplicitVR   = e->IsImplicitVR();
    Offset       = e->GetOffset();
-   printLevel   = e->GetPrintLevel();
+   PrintLevel   = e->GetPrintLevel();
    SQDepthLevel = e->GetDepthLevel();
 
    voidArea = NULL; // will be in BinEntry ?
@@ -92,7 +92,7 @@ void gdcmValEntry::Print(std::ostream & os)
    v  = GetValue();  // not applicable for SQ ...     
    d2 = CreateCleanString(v);  // replace non printable characters by '.'            
    if( (GetLength()<=MAX_SIZE_PRINT_ELEMENT_VALUE) || 
-       (printLevel>=3)  || (d2.find("gdcm::NotLoaded.") < d2.length()) )
+       (PrintLevel>=3)  || (d2.find("gdcm::NotLoaded.") < d2.length()) )
    {
       s << " [" << d2 << "]";
    }

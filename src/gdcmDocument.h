@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/31 23:30:04 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/08/01 03:20:23 $
+  Version:   $Revision: 1.28 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,11 +111,11 @@ public:
    gdcmDict *GetPubDict();
    gdcmDict *GetShaDict();
    bool SetShaDict(gdcmDict *dict);
-   bool SetShaDict(DictKey dictName);
+   bool SetShaDict(DictKey const & dictName);
 
 // Informations contained in the parser
    virtual bool IsReadable();
-   bool IsGivenTransferSyntax(std::string const & SyntaxToCheck);
+   bool IsGivenTransferSyntax(std::string const & syntaxToCheck);
    bool IsImplicitVRLittleEndianTransferSyntax();
    bool IsExplicitVRLittleEndianTransferSyntax();
    bool IsDeflatedExplicitVRLittleEndianTransferSyntax();
@@ -171,8 +171,9 @@ public:
    virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
    virtual int     GetEntryLengthByNumber(uint16_t group, uint16_t elem);
 protected:
-   virtual bool SetEntryByName  (std::string content, std::string tagName);
-   virtual bool SetEntryByNumber(std::string content,
+   virtual bool SetEntryByName  (std::string const & content, 
+                                 std::string const & tagName);
+   virtual bool SetEntryByNumber(std::string const & content,
                                  uint16_t group, uint16_t element);
    virtual bool SetEntryByNumber(void *content, int lgth,
                                  uint16_t group, uint16_t element);
@@ -198,7 +199,7 @@ protected:
 private:
    // Read
    long ParseDES(gdcmDocEntrySet *set, long offset, long l_max,bool delim_mode);
-   long ParseSQ(gdcmSeqEntry *seq, long offset, long l_max, bool delim_mode); 
+   long ParseSQ (gdcmSeqEntry *seq, long offset, long l_max, bool delim_mode); 
    
    void LoadDocEntry      (gdcmDocEntry *);
    void FindDocEntryLength(gdcmDocEntry *);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/08/01 03:20:23 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,11 +38,11 @@ public:
    virtual void Print (std::ostream & os = std::cout) = 0;// pure virtual
 
    /// \brief write any type of entry to the entry set
-   virtual void Write (FILE *fp, FileType filetype)=0;// pure virtual
+   virtual void Write (FILE *fp, FileType filetype) = 0;// pure virtual
 
    /// \brief Gets the depth level of a Dicom Header Entry embedded in a
    ///        SeQuence
-   int GetDepthLevel(void) { return SQDepthLevel; }
+   int GetDepthLevel() { return SQDepthLevel; }
 
    /// \brief Sets the depth level of a Dicom Header Entry embedded in a
    /// SeQuence
@@ -50,14 +50,14 @@ public:
 
    virtual gdcmDocEntry* GetDocEntryByNumber(uint16_t group,
                                              uint16_t element) = 0;
-   gdcmDocEntry *GetDocEntryByName(std::string name);
+   gdcmDocEntry *GetDocEntryByName(std::string const & name);
    virtual std::string GetEntryByNumber(uint16_t group,uint16_t element) = 0;
-   std::string GetEntryByName(TagName name);
+   std::string GetEntryByName(TagName const & name);
    gdcmDictEntry *NewVirtualDictEntry(uint16_t group, 
                                       uint16_t element,
-                                      std::string vr     = "unkn",
-                                      std::string fourth = "unkn",
-                                      std::string name   = "unkn");
+                                      std::string const & vr     = "unkn",
+                                      std::string const & fourth = "unkn",
+                                      std::string const & name   = "unkn");
   
 protected:
 
@@ -68,17 +68,15 @@ protected:
                                      uint16_t element);
    gdcmDocEntry* NewDocEntryByNumber(uint16_t group, 
                                      uint16_t element); 
-   gdcmDocEntry* NewDocEntryByName  (std::string Name);
+   gdcmDocEntry* NewDocEntryByName  (std::string const & name);
 
 // DictEntry  related utilities
-   gdcmDictEntry *GetDictEntryByName  (std::string Name);
+   gdcmDictEntry *GetDictEntryByName  (std::string const & name);
    gdcmDictEntry *GetDictEntryByNumber(uint16_t, uint16_t);
 
    /// Gives the depth level of the element set inside SeQuences   
    int SQDepthLevel;
-
 private:
-    
 };
 
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 11:40:13 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/08/01 03:20:23 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,13 +32,15 @@
  * \ingroup gdcmDocEntrySet
  * \brief   Constructor from a given gdcmDocEntrySet
  */
-gdcmDocEntrySet::gdcmDocEntrySet(int depthLevel) {
-   SQDepthLevel = depthLevel + 1;
+gdcmDocEntrySet::gdcmDocEntrySet(int depthLevel)
+{
+   SQDepthLevel = depthLevel + 1;   //magic +1 !
 }
 /**
  * \brief   Canonical destructor.
  */
-gdcmDocEntrySet::~gdcmDocEntrySet(){
+gdcmDocEntrySet::~gdcmDocEntrySet()
+{
 }
 //-----------------------------------------------------------------------------
 // Print
@@ -60,22 +62,24 @@ gdcmDocEntrySet::~gdcmDocEntrySet(){
  * @param   Group group   number of the underlying DictEntry
  * @param   Elem  element number of the underlying DictEntry
  */
-gdcmValEntry *gdcmDocEntrySet::NewValEntryByNumber(uint16_t Group,
-                                                   uint16_t Elem) 
+gdcmValEntry *gdcmDocEntrySet::NewValEntryByNumber(uint16_t group,
+                                                   uint16_t elem) 
 {
    // Find out if the tag we encountered is in the dictionaries:
-   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
-   if (!DictEntry)
-      DictEntry = NewVirtualDictEntry(Group, Elem);
+   gdcmDictEntry *dictEntry = GetDictEntryByNumber(group, elem);
+   if (!dictEntry)
+   {
+      dictEntry = NewVirtualDictEntry(group, elem);
+   }
 
-   gdcmValEntry *NewEntry = new gdcmValEntry(DictEntry);
-   if (!NewEntry) 
+   gdcmValEntry *newEntry = new gdcmValEntry(dictEntry);
+   if (!newEntry) 
    {
       dbg.Verbose(1, "gdcmDocument::NewValEntryByNumber",
                   "failed to allocate gdcmValEntry");
-      return NULL;
+      return 0;
    }
-   return NewEntry;
+   return newEntry;
 }
 
 
@@ -86,22 +90,24 @@ gdcmValEntry *gdcmDocEntrySet::NewValEntryByNumber(uint16_t Group,
  * @param   Group group   number of the underlying DictEntry
  * @param   Elem  element number of the underlying DictEntry
  */
-gdcmBinEntry *gdcmDocEntrySet::NewBinEntryByNumber(uint16_t Group,
-                                                   uint16_t Elem) 
+gdcmBinEntry *gdcmDocEntrySet::NewBinEntryByNumber(uint16_t group,
+                                                   uint16_t elem) 
 {
    // Find out if the tag we encountered is in the dictionaries:
-   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
-   if (!DictEntry)
-      DictEntry = NewVirtualDictEntry(Group, Elem);
+   gdcmDictEntry *dictEntry = GetDictEntryByNumber(group, elem);
+   if (!dictEntry)
+   {
+      dictEntry = NewVirtualDictEntry(group, elem);
+   }
 
-   gdcmBinEntry *NewEntry = new gdcmBinEntry(DictEntry);
-   if (!NewEntry) 
+   gdcmBinEntry *newEntry = new gdcmBinEntry(dictEntry);
+   if (!newEntry) 
    {
       dbg.Verbose(1, "gdcmDocument::NewBinEntryByNumber",
                   "failed to allocate gdcmBinEntry");
-      return NULL;
+      return 0;
    }
-   return NewEntry;
+   return newEntry;
 }
 //-----------------------------------------------------------------------------
 // Protected
@@ -110,11 +116,15 @@ gdcmBinEntry *gdcmDocEntrySet::NewBinEntryByNumber(uint16_t Group,
  * \brief   Gets a Dicom Element inside a SQ Item Entry, by name
  * @return
  */
- gdcmDocEntry *gdcmDocEntrySet::GetDocEntryByName(std::string name) {
-   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
-   gdcmDictEntry *dictEntry = (*PubDict).GetDictEntryByName(name);
-   if( dictEntry == NULL)
-      return NULL;
+ gdcmDocEntry *gdcmDocEntrySet::GetDocEntryByName(std::string const & name)
+ {
+   gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+   gdcmDictEntry *dictEntry = pubDict->GetDictEntryByName(name);
+   if( !dictEntry )
+   {
+      return 0;
+   }
+
    return GetDocEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement());      
 }
 
@@ -125,13 +135,17 @@ gdcmBinEntry *gdcmDocEntrySet::NewBinEntryByNumber(uint16_t Group,
  * @return
  */ 
 
-std::string gdcmDocEntrySet::GetEntryByName(TagName name)  {
-   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
-   gdcmDictEntry *dictEntry = (*PubDict).GetDictEntryByName(name); 
+std::string gdcmDocEntrySet::GetEntryByName(TagName const & name)
+{
+   gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+   gdcmDictEntry *dictEntry = pubDict->GetDictEntryByName(name); 
 
-   if( dictEntry == NULL)
+   if( !dictEntry )
+   {
       return GDCM_UNFOUND;
-   return GetEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement()); 
+   }
+
+   return GetEntryByNumber(dictEntry->GetGroup(), dictEntry->GetElement()); 
 }
 
 
@@ -145,9 +159,9 @@ std::string gdcmDocEntrySet::GetEntryByName(TagName name)  {
  */
 gdcmDictEntry* gdcmDocEntrySet::NewVirtualDictEntry(uint16_t group,
                                                     uint16_t element,
-                                                    std::string vr,
-                                                    std::string fourth,
-                                                    std::string name)
+                                                    std::string const & vr,
+                                                    std::string const & fourth,
+                                                    std::string const & name)
 {
    return gdcmGlobal::GetDicts()->NewVirtualDictEntry(group,element,vr,fourth,name);
 }
@@ -160,37 +174,42 @@ gdcmDocEntry* gdcmDocEntrySet::NewDocEntryByNumber(uint16_t group,
                                                    uint16_t elem)
 {
    // Find out if the tag we encountered is in the dictionaries:
-   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
-   gdcmDictEntry *DictEntry = (*PubDict).GetDictEntryByNumber(group, elem);
-   if (!DictEntry)
-      DictEntry = NewVirtualDictEntry(group, elem);
+   gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+   gdcmDictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, elem);
+   if (!dictEntry)
+   {
+      dictEntry = NewVirtualDictEntry(group, elem);
+   }
 
-   gdcmDocEntry *NewEntry = new gdcmDocEntry(DictEntry);
-   if (!NewEntry) 
+   gdcmDocEntry *newEntry = new gdcmDocEntry(dictEntry);
+   if (!newEntry) 
    {
       dbg.Verbose(1, "gdcmSQItem::NewDocEntryByNumber",
                   "failed to allocate gdcmDocEntry");
-      return (gdcmDocEntry*)0;
+      return 0;
    }
-   return NewEntry;
+   return newEntry;
 }
 
 /// \brief 
-gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string Name) {
+gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string const & name)
+{
+  gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+  gdcmDictEntry *newTag = pubDict->GetDictEntryByName(name);
+   if (!newTag)
+   {
+      newTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "unkn", name);
+   }
 
-  gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
-  gdcmDictEntry *NewTag = (*PubDict).GetDictEntryByName(Name);
-   if (!NewTag)
-      NewTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "unkn", Name);
-
-   gdcmDocEntry* NewEntry = new gdcmDocEntry(NewTag);
-   if (!NewEntry) 
+   gdcmDocEntry* newEntry = new gdcmDocEntry(newTag);
+   if (!newEntry) 
    {
       dbg.Verbose(1, "gdcmSQItem::ObtainDocEntryByName",
                   "failed to allocate gdcmDocEntry");
-      return (gdcmDocEntry *)0;
+      return 0;
    }
-   return NewEntry;
+
+   return newEntry;
 }
 
 
@@ -201,17 +220,19 @@ gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string Name) {
  * @param   Name name of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
-gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByName(std::string Name) 
+gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByName(std::string const & name) 
 {
-   gdcmDictEntry *found = (gdcmDictEntry *)0;
-   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
-   if (!PubDict) 
+   gdcmDictEntry *found = 0;
+   gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+   if (!pubDict) 
    {
       dbg.Verbose(0, "gdcmDocument::GetDictEntry",
                      "we SHOULD have a default dictionary");
    }
-   else 
-     found = PubDict->GetDictEntryByName(Name);  
+   else
+   {
+      found = pubDict->GetDictEntryByName(name);  
+   }
    return found;
 }
 
@@ -227,15 +248,17 @@ gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByName(std::string Name)
 gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByNumber(uint16_t group,
                                                      uint16_t element) 
 {
-   gdcmDictEntry *found = (gdcmDictEntry *)0;
-   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
-   if (!PubDict) 
+   gdcmDictEntry *found = 0;
+   gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+   if (!pubDict) 
    {
       dbg.Verbose(0, "gdcmDocument::GetDictEntry",
                      "we SHOULD have a default dictionary");
    }
-   else 
-     found = PubDict->GetDictEntryByNumber(group, element);  
+   else
+   {
+      found = pubDict->GetDictEntryByNumber(group, element);  
+   }
    return found;
 }
 

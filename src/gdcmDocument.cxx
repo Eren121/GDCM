@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:21 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2004/08/01 03:20:23 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -244,7 +244,7 @@ bool gdcmDocument::SetShaDict(gdcmDict *dict)
  * \brief   Set the shadow dictionary used
  * \param   dictName name of the dictionary to use in shadow
  */
-bool gdcmDocument::SetShaDict(DictKey dictName)
+bool gdcmDocument::SetShaDict(DictKey const & dictName)
 {
    RefShaDict = gdcmGlobal::GetDicts()->GetDict(dictName);
    return !RefShaDict;
@@ -831,7 +831,7 @@ int gdcmDocument::GetEntryLengthByNumber(uint16_t group, uint16_t element)
  * @param   tagName name of the searched Dicom Element.
  * @return  true when found
  */
-bool gdcmDocument::SetEntryByName(std::string content,std::string tagName)
+bool gdcmDocument::SetEntryByName(std::string const & content,std::string const & tagName)
 {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( !dictEntry )
@@ -851,7 +851,7 @@ bool gdcmDocument::SetEntryByName(std::string content,std::string tagName)
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */
-bool gdcmDocument::SetEntryByNumber(std::string content, 
+bool gdcmDocument::SetEntryByNumber(std::string const & content, 
                                     uint16_t group,
                                     uint16_t element) 
 {
@@ -863,11 +863,12 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
       return false;
    }
    // Non even content must be padded with a space (020H)...
-   if( content.length() % 2 )
+   std::string evenContent = content;
+   if( evenContent.length() % 2 )
    {
-      content += '\0';  // ... therefore we padd with (000H) .!?!
+      evenContent += '\0';  // ... therefore we padd with (000H) .!?!
    }      
-   valEntry->SetValue(content);
+   valEntry->SetValue(evenContent);
    
    // Integers have a special treatement for their length:
    gdcmVRKey vr = valEntry->GetVR();
@@ -881,7 +882,7 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
    }
    else
    {
-      valEntry->SetLength(content.length());
+      valEntry->SetLength(evenContent.length());
    }
 
    return true;
@@ -915,10 +916,10 @@ bool gdcmDocument::SetEntryByNumber(void *content,
       //content = content + '\0'; // fing a trick to enlarge a binary field?
    }
 */      
-   gdcmBinEntry * a;
-   a = (gdcmBinEntry *)TagHT[key];           
+   gdcmBinEntry* a = (gdcmBinEntry *)TagHT[key];           
    a->SetVoidArea(content);  
    //a->SetLength(lgth);  // ???  
+
    return true;
 } 
 
@@ -1065,8 +1066,9 @@ bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
    {
       return false;
    }
-      // This was for multimap ?
-    (( gdcmBinEntry *)( ((TagHT.equal_range(key)).first)->second ))->SetVoidArea(area);
+
+   // This was for multimap ?
+   (( gdcmBinEntry *)( ((TagHT.equal_range(key)).first)->second ))->SetVoidArea(area);
       
    return true;
 }
@@ -1244,7 +1246,7 @@ uint16_t gdcmDocument::SwapShort(uint16_t a)
 {
    if ( SwapCode == 4321 || SwapCode == 2143 )
    {
-      a =((( a << 8 ) & 0x0ff00 ) | (( a >> 8 ) & 0x00ff ) );
+      a = ((( a << 8 ) & 0x0ff00 ) | (( a >> 8 ) & 0x00ff ) );
    }
    return a;
 }
@@ -1300,7 +1302,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             newValEntry->SetDepthLevel(depth);
             set->AddEntry(newValEntry);
             LoadDocEntry(newValEntry);
-            if (newValEntry->isItemDelimitor())
+            if (newValEntry->IsItemDelimitor())
             {
                break;
             }
@@ -1410,7 +1412,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
       }
       if( delim_mode )
       {
-         if ( newDocEntry->isSequenceDelimitor() )
+         if ( newDocEntry->IsSequenceDelimitor() )
          {
             set->SetSequenceDelimitationItem( newDocEntry );
             break;
@@ -1688,9 +1690,9 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *entry)
       // endian encoding". When this is the case, chances are we have got our
       // hands on a big endian encoded file: we switch the swap code to
       // big endian and proceed...
-      if ( (element  == 0x0000) && (length16 == 0x0400) ) 
+      if ( element  == 0x0000 && length16 == 0x0400 ) 
       {
-         if ( ! IsExplicitVRBigEndianTransferSyntax() ) 
+         if ( !IsExplicitVRBigEndianTransferSyntax() ) 
          {
             dbg.Verbose(0, "gdcmDocument::FindLength", "not explicit VR");
             errno = 1;
@@ -1801,7 +1803,7 @@ bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *entry, gdcmVRKey vr)
    // expected VR read happens to be non-ascii characters we consider
    // we hit falsely explicit VR tag.
 
-   if ( (!isalpha(vr[0])) && (!isalpha(vr[1])) )
+   if ( !isalpha(vr[0]) && !isalpha(vr[1]) )
    {
       realExplicit = false;
    }
@@ -2542,7 +2544,7 @@ gdcmDocEntry *gdcmDocument::ReadNextDocEntry()
    {
       // Call it quits
       delete newEntry;
-      return NULL;
+      return 0;
    }
    newEntry->SetOffset(ftell(Fp));  
 
@@ -2625,8 +2627,8 @@ bool gdcmDocument::ReadTag(uint16_t testGroup, uint16_t testElement)
  */
 uint32_t gdcmDocument::ReadTagLength(uint16_t testGroup, uint16_t testElement)
 {
-   long PositionOnEntry = ftell(Fp);
-   (void)PositionOnEntry;
+   long positionOnEntry = ftell(Fp);
+   (void)positionOnEntry;
 
    if ( !ReadTag(testGroup, testElement) )
    {
@@ -2743,7 +2745,7 @@ void gdcmDocument::Parse7FE0 ()
 
       // Make sure that at the end of the item we encounter a 'Sequence
       // Delimiter Item':
-      if ( ! ReadTag(0xfffe, 0xe0dd) )
+      if ( !ReadTag(0xfffe, 0xe0dd) )
       {
          dbg.Verbose(0, "gdcmDocument::Parse7FE0: no sequence delimiter item");
          dbg.Verbose(0, "    at end of RLE item sequence");

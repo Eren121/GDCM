@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:21 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/08/01 03:20:23 $
+  Version:   $Revision: 1.23 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -105,7 +105,7 @@ void gdcmSQItem::Write(FILE *fp,FileType filetype)
       // (when it exists) we don't write it right now
       // It will be written outside, because ALL the SQItems are written
       // as 'no length'
-      if ( (*i)->isItemDelimitor() )
+      if ( (*i)->IsItemDelimitor() )
       {
          break;
       }

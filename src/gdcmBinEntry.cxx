@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:21 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/08/01 03:20:23 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
    ReadLength   = e->GetReadLength();
    ImplicitVR   = e->IsImplicitVR();
    Offset       = e->GetOffset();
-   printLevel   = e->GetPrintLevel();
+   PrintLevel   = e->GetPrintLevel();
    SQDepthLevel = e->GetDepthLevel();
 
    voidArea = NULL; // let's be carefull !

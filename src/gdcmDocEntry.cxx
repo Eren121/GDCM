@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:21 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/08/01 03:20:23 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@
 gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in)
 {
    ImplicitVR = false;
-   entry = in;
+   DictEntry = in;
 }
 
 //-----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in)
  */
 void gdcmDocEntry::Print(std::ostream & os)
 {
-   printLevel=2; // FIXME
+   PrintLevel = 2; // FIXME
    
    size_t o;
    unsigned short int g, e;
@@ -66,7 +66,7 @@ void gdcmDocEntry::Print(std::ostream & os)
    sprintf(greltag,"%04x|%04x ",g,e);           
    s << greltag ;
        
-   if (printLevel>=2)
+   if (PrintLevel >= 2)
    {
       s << "lg : ";
       lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
@@ -97,7 +97,7 @@ void gdcmDocEntry::Print(std::ostream & os)
 
    s << "[" << vr  << "] ";
 
-   if (printLevel >= 1)
+   if (PrintLevel >= 1)
    {
       s.setf(std::ios::left);
       s << std::setw(66-GetName().length()) << " ";
@@ -119,7 +119,7 @@ void gdcmDocEntry::Write(FILE *fp, FileType filetype)
    uint16_t el    = GetElement();
    uint32_t lgr   = GetReadLength();
 
-   if ( (group == 0xfffe) && (el == 0x0000) )
+   if ( group == 0xfffe && el == 0x0000 )
    {
      // Fix in order to make some MR PHILIPS images e-film readable
      // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
@@ -235,12 +235,12 @@ uint32_t gdcmDocEntry::GetFullLength()
  */
 void gdcmDocEntry::Copy (gdcmDocEntry* e)
 {
-   entry        = e->entry;
+   DictEntry    = e->DictEntry;
    UsableLength = e->UsableLength;
    ReadLength   = e->ReadLength;
    ImplicitVR   = e->ImplicitVR;
    Offset       = e->Offset;
-   printLevel   = e->printLevel;
+   PrintLevel   = e->PrintLevel;
    // TODO : remove gdcmDocEntry SQDepth
 }
 
@@ -249,7 +249,7 @@ void gdcmDocEntry::Copy (gdcmDocEntry* e)
  * \brief   tells us if entry is the last one of a 'no length' SequenceItem 
  *          (fffe,e00d) 
  */
-bool gdcmDocEntry::isItemDelimitor()
+bool gdcmDocEntry::IsItemDelimitor()
 {
    return (GetGroup() == 0xfffe && GetElement() == 0xe00d);
 }
@@ -258,7 +258,7 @@ bool gdcmDocEntry::isItemDelimitor()
  * \brief   tells us if entry is the last one of a 'no length' Sequence 
  *          (fffe,e0dd) 
  */
-bool gdcmDocEntry::isSequenceDelimitor()
+bool gdcmDocEntry::IsSequenceDelimitor()
 {
    return (GetGroup() == 0xfffe && GetElement() == 0xe0dd);
 }
