@@ -28,24 +28,24 @@ public:
 	// TODO Swig int LoadDictFromName(std::string filename);
 	// TODO Swig int LoadAllDictFromDirectory(std::string DirectoryName);
 	// TODO Swig std::string* GetAllDictNames();
-	gdcmDictSet(void);
-	~gdcmDictSet(void);
+   gdcmDictSet(void);
+   ~gdcmDictSet(void);
 
-	void Print(std::ostream& os);
+   void Print(std::ostream& os);
 
    std::list<std::string> * GetPubDictTagNames(void);
    std::map<std::string, std::list<std::string> >*
        GetPubDictTagNamesByCategory(void);
 
-	void LoadDictFromFile(std::string FileName, DictKey Name);
+   void LoadDictFromFile(std::string FileName, DictKey Name);
 
    gdcmDict* GetDict(DictKey DictName);
-	gdcmDict* GetDefaultPubDict(void);
+   gdcmDict* GetDefaultPubDict(void);
 
    static std::string BuildDictPath(void);
 
 protected:
-	bool AppendDict(gdcmDict* NewDict,DictKey Name);
+   bool AppendDict(gdcmDict* NewDict,DictKey Name);
 
 private:
    /// Hash table of all dictionaries contained in this gdcmDictSet

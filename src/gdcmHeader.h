@@ -19,6 +19,8 @@ typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
 //-----------------------------------------------------------------------------
 /*
+ * \defgroup gdcmHedaer
+ * \brief
  * The purpose of an instance of gdcmHeader is to act as a container of
  * all the DICOM elements and their corresponding values (and
  * additionaly the corresponding DICOM dictionary entry) of the header
@@ -105,7 +107,7 @@ public:
    bool SetPubEntryLengthByNumber(guint32 lgr, guint16 group, guint16 element); 
 
    inline ListTag          & GetPubListEntry(void) { return PubEntrySet.GetListEntry();};
-   inline TagHeaderEntryHT & GetPubEntry(void) { return PubEntrySet.GetTagHT();   };
+   inline TagHeaderEntryHT & GetPubEntry(void)     { return PubEntrySet.GetTagHT();   };
 
    void PrintPubEntry(std::ostream & os = std::cout);
    void PrintPubDict (std::ostream & os = std::cout);
@@ -119,7 +121,7 @@ public:
    bool SetEntryByName(std::string content,std::string tagName); 
 //   bool SetEntryByNumber(std::string content,guint16 group, guint16 element);
 
-//   inline ListTag      & GetListEntry(void) { return PubHeaderEntrySet.GetListElem();};
+//   inline ListTag      & GetListEntry(void)     { return PubHeaderEntrySet.GetListElem();};
 //   inline TagHeaderEntryHT & GetListEntry(void) { return PubHeaderEntrySet.GetTagHt();   };
 
 // Read (used in gdcmFile)
@@ -220,6 +222,7 @@ private:
    std::string filename; 
   
    int enableSequences;
+   int wasUpdated;	// true if a gdcmHeaderEntry was added post parsing
 
    // FIXME sw should be an enum e.g.
    //enum EndianType {

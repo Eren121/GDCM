@@ -7,6 +7,8 @@
 
 //-----------------------------------------------------------------------------
 /*
+ * \defgroup gdcmDictEntry
+ * \brief
  * the gdcmDictEntry in an element contained by the gdcmDict.
  * It contains :
  *  - the key referenced by the DICOM norm or the constructor (for private keys)

@@ -42,9 +42,7 @@ gdcmFile::gdcmFile(gdcmHeader *header) {
  *        This avoid a double parsing of public part of the header when
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
- *
  * @param filename file to be opened for parsing
- *
  * @return	
  */
 gdcmFile::gdcmFile(std::string & filename) {
@@ -65,11 +63,9 @@ gdcmFile::gdcmFile(const char * filename) {
 
 /**
  * \ingroup   gdcmFile
- * \brief Destructor dedicated to writing a new DICOMV3 part10 compliant
- *        file (see SetFileName, SetDcmTag and Write)
+ * \brief canonical destructor
  * \Note  If the gdcmHeader is created by the gdcmFile, it is destroyed
  *        by the gdcmFile
- * *
  */
 gdcmFile::~gdcmFile(void) {
    if(SelfHeader)
@@ -93,13 +89,11 @@ gdcmHeader *gdcmFile::GetHeader(void) {
 
 /**
  * \ingroup   gdcmFile
- * \brief     calcule la longueur (in bytes) A ALLOUER pour recevoir les
- *            pixels de l'image ou DES images dans le cas d'un multiframe
- *  		
- *  	    ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels
- *          (dans le cas d'images compressees, elle n'a pas de sens).
- *
- * @return	longueur a allouer 
+ * \brief     computes the length (in bytes) to ALLOCATE to receive the
+ *            image(s) pixels (multiframes taken into account) 		
+ * \warning : it is NOT the group 7FE0 length
+ *          (no interest for compressed images).
+ * @return length to allocate
  */
 void gdcmFile::SetPixelDataSizeFromHeader(void) {
    // see PS 3.3-2003 : C.7.6.3.2.1  
@@ -166,7 +160,7 @@ size_t gdcmFile::GetImageDataSize(void) {
  * \          the pixel data represented in this file, when user DOESN'T want 
  * \          to get RGB pixels image when it's stored as a PALETTE COLOR image
  * \          - the (vtk) user is supposed to know how deal with LUTs - 
- * \          warning to be used with GetImagePixelsRaw()
+ * \warning   to be used with GetImagePixelsRaw()
  * @return    The size of pixel data in bytes.
  */
 size_t gdcmFile::GetImageDataSizeRaw(void) {
@@ -250,19 +244,15 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
              //    from grey Pixels (?!)
              //     and Gray Lut  (!?!) 
 	     //    or Segmented xxx Palette Color Lookup Table Data and so on
-		  
-             // Well . I'll wait till I find such an image 
-		  		  
-		   // Oops! I get one (gdcm-US-ALOKA-16.dcm)
-                   // No idea how to manage it 
-		   // It seems that *no Dicom Viewer* has any idea :-(
-		   // Segmented xxx Palette Color are *more* than 65535 long ?!?
+		  		  		  
+         // Oops! I get one (gdcm-US-ALOKA-16.dcm)
+         // No idea how to manage such an image 
+         // It seems that *no Dicom Viewer* has any idea :-(
+         // Segmented xxx Palette Color are *more* than 65535 long ?!?
 		   
       std::string rgb= "MONOCHROME1 ";      // Photometric Interpretation
-      Header->SetPubEntryByNumber(rgb,0x0028,0x0004);		   
-		   
-   }   
-    	 
+      Header->SetPubEntryByNumber(rgb,0x0028,0x0004);		   		   
+   }      	 
    // TODO : Drop Palette Color out of the Header? 	     
    return lgrTotale; 
 }
@@ -325,23 +315,21 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 	
    (void)ReadPixelData(destination);
 			
-	// Nombre de Bits Alloues pour le stockage d'un Pixel
+	// Number of Bits Allocated for storing a Pixel
    str_nb = Header->GetPubEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
       nb = atoi(str_nb.c_str() );
-   }
-	
-	// Nombre de Bits Utilises
+   }	
+	// Number of Bits actually used
    str_nbu=Header->GetPubEntryByNumber(0x0028,0x0101);
    if (str_nbu == GDCM_UNFOUND ) {
       nbu = nb;
    } else {
       nbu = atoi(str_nbu.c_str() );
-   }	
-	
-	// Position du Bit de Poids Fort
+   }		
+	// High Bit Position
    str_highBit=Header->GetPubEntryByNumber(0x0028,0x0102);
    if (str_highBit == GDCM_UNFOUND ) {
       highBit = nb - 1;
@@ -358,7 +346,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
       signe = atoi(str_signe.c_str() );
    }
 
-   // re arange bytes inside the integer
+   // re arange bytes inside the integer (processor endianity)
    if (nb != 8)
      SwapZone(destination, Header->GetSwapCode(), lgrTotale, nb);
      
@@ -397,9 +385,9 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
          return (size_t)0; 
       }
    } 
-
+// DO NOT remove this code commented out.
+// Nobody knows what's expecting you ...
 // Just to 'see' what was actually read on disk :-(
-// Some troubles expected
 //   FILE * f2;
 //   f2 = fopen("SpuriousFile.raw","wb");
 //   fwrite(destination,lgrTotale,1,f2);
@@ -444,11 +432,9 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 	 
    // Warning : YBR_FULL_422 acts as RGB
    //         : we need to make RGB Pixels from Planes Y,cB,cR
-   // see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
-   // for code optimisation
 	 
 	 // to see the tricks about YBR_FULL, YBR_FULL_422, 
-    // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
+         // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
 	 //   ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
 	 // and be *very* affraid
 	 //
@@ -460,11 +446,13 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
             unsigned char * a = (unsigned char *)destination;
             unsigned char * b = a + l;
             unsigned char * c = b + l;
-
             double R,G,B;
 
             // TODO : Replace by the 'well known' 
             //        integer computation counterpart
+	    // see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
+            // for code optimisation
+	    
             for (int i=0;i<nbFrames;i++) {
                for (int j=0;j<l; j++) {
                   R= 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
@@ -504,15 +492,12 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
                *(x++) = *(a++);
                *(x++) = *(b++);
                *(x++) = *(c++);  
-            }
-           
+            }           
             memmove(destination,newDest,lgrTotale);
             free(newDest);
-        }
-	  
+        }	  
          break;
-       }
-     
+       }     
        case 2:                      
          //       Palettes were found
          //       Let the user deal with them !
@@ -544,7 +529,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
  * @param inData 
  * @param ExpectedSize 
  *
- * @return integer acts as a boolean	
+ * @return boolean	
  */
 bool gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
    Header->SetImageDataSize(ExpectedSize);
@@ -560,8 +545,9 @@ bool gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
  *        Ca sera à l'utilisateur d'appeler son Reader correctement
  *        (Equivalent a IdImaWriteRawFile) 
  *
- * @param fileName 
- * @return	
+ * @param fileName name of the file to be created
+ *                 (any already existing file is over written)
+ * @return false if write fails	
  */
 
 bool gdcmFile::WriteRawData (std::string fileName) {
@@ -583,8 +569,9 @@ bool gdcmFile::WriteRawData (std::string fileName) {
  *         Ca fonctionnera correctement (?) sur processeur Intel
  *         (Equivalent a IdDcmWrite) 
  *
- * @param fileName 
- * @return int acts as a boolean
+ * @param fileName name of the file to be created
+ *                 (any already existing file is overwritten)
+ * @return false if write fails	
  */
 
 bool gdcmFile::WriteDcmImplVR (std::string fileName) {
@@ -594,8 +581,9 @@ bool gdcmFile::WriteDcmImplVR (std::string fileName) {
 /**
  * \ingroup   gdcmFile
  * \brief  
- * @param  fileName 
- * @return int acts as a boolean
+ * @param fileName name of the file to be created
+ *                 (any already existing file is overwritten)
+ * @return false if write fails	
  */
  
 bool gdcmFile::WriteDcmImplVR (const char* fileName) {
@@ -605,8 +593,9 @@ bool gdcmFile::WriteDcmImplVR (const char* fileName) {
 /**
  * \ingroup   gdcmFile
  * \brief  
- * @param  fileName
- * @return int acts as a boolean
+ * @param fileName name of the file to be created
+ *                 (any already existing file is over written)
+ * @return false if write fails	
  */
 
 bool gdcmFile::WriteDcmExplVR (std::string fileName) {
@@ -618,14 +607,15 @@ bool gdcmFile::WriteDcmExplVR (std::string fileName) {
  * \brief  Ecrit au format ACR-NEMA sur disque l'entete et les pixels
  *        (a l'attention des logiciels cliniques 
  *        qui ne prennent en entrée QUE des images ACR ...
- * \warning si un header DICOM est fourni en entree,
- *        les groupes < 0x0008 et les groupes impairs sont ignores)
- * \warning Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ * \warning if a DICOM_V3 header is supplied,
+ *         groups < 0x0008 and shadow groups are ignored)
+ * \warning NO TEST is performed on processor "Endiannerie".
  *        Ca fonctionnera correctement (?) sur processeur Intel
  *        (Equivalent a IdDcmWrite) 
  *
- * @param fileName
- * @return int acts as a boolean	
+ * @param fileName name of the file to be created
+ *                 (any already existing file is over written)
+ * @return false if write fails		
  */
 
 bool gdcmFile::WriteAcr (std::string fileName) {
@@ -637,10 +627,10 @@ bool gdcmFile::WriteAcr (std::string fileName) {
 /**
  * \ingroup   gdcmFile
  *
- * @param  FileName
- * @param  type 
- *
- * @return int acts as a boolean
+* @param fileName name of the file to be created
+ *                 (any already existing file is over written)
+ * @param  type file type (ExplicitVR, ImplicitVR, ...)
+ * @return false if write fails		
  */
 bool gdcmFile::WriteBase (std::string FileName, FileType type) {
 
@@ -728,7 +718,7 @@ if(nb == 16)
          break;
  			
       default:
-         printf("valeur de SWAP (16 bits) not allowed : %d\n", swap);
+         printf("SWAP value (16 bits) not allowed : %d\n", swap);
    } 
  
 if( nb == 32 )
@@ -769,7 +759,7 @@ if( nb == 32 )
          break; 
     			        
       default:
-         printf(" SWAP value (32 bits) not allowed : %d\n", swap);
+         printf("SWAP value (32 bits) not allowed : %d\n", swap);
    } 
 return;
 }
@@ -809,9 +799,9 @@ bool gdcmFile::ReadPixelData(void* destination) {
          fread(&b2,1,1,fp);      
          //Two steps is necessary to please VC++
          *pdestination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
-                       /* A */          /* B */            /* D */
+                             /* A */          /* B */            /* D */
          *pdestination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
-                       /* F */          /* C */            /* E */
+                             /* F */          /* C */            /* E */
 		  
 	// Troubles expected on Big-Endian processors ?	      
       }

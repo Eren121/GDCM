@@ -10,7 +10,7 @@
 #  include <sstream>
 #endif
 
-#include <iomanip> //la bibli qui va bien
+#include <iomanip> // for std::ios::left, ...
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -25,7 +25,6 @@ gdcmHeaderEntrySet::~gdcmHeaderEntrySet() {
          delete EntryToDelete;
       tag->second=NULL;
    }
-
    tagHT.clear();
 }
 
@@ -46,6 +45,8 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
    gdcmTS * ts = gdcmGlobal::GetTS();
 
    std::ostringstream s;
+/*
+// DO NOT remove this code right now.
    
    // Tag HT
    s << "------------- using tagHT ---------------------" << std::endl; 
@@ -78,7 +79,7 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
       }              
       s << std::endl;
    }
-
+*/
    // List element
    guint32 lgth;
    char greltag[10];  //group element tag
@@ -96,13 +97,23 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
       sprintf(greltag,"%04x|%04x",g,e);           
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
       s << greltag << " lg : ";
-      lgth = (*i)->GetReadLength(); 
-      sprintf(st,"x(%x)",lgth);
-      s.setf(std::ios::left);
-      s << std::setw(10-strlen(st)) << " ";  
-      s << st << " ";
-      s.setf(std::ios::left);
-      s << std::setw(8) << lgth; 
+      //lgth = (*i)->GetLength(); 
+      lgth = (*i)->GetReadLength();
+      if (lgth == 0xffffffff) {
+         sprintf(st,"x(%ff)");
+         s.setf(std::ios::left);
+         s << std::setw(10-strlen(st)) << " ";  
+         s << st << " ";
+         s.setf(std::ios::left);
+         s << std::setw(8) << "-1";      
+      } else {
+         sprintf(st,"x(%x)",lgth);
+         s.setf(std::ios::left);
+         s << std::setw(10-strlen(st)) << " ";  
+         s << st << " ";
+         s.setf(std::ios::left);
+         s << std::setw(8) << lgth; 
+      }
       s << " Off.: ";
       sprintf(st,"x(%x)",o); 
       s << std::setw(10-strlen(st)) << " ";       
@@ -122,10 +133,16 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
             if ( (e == 0x0016) || (e == 0x1150)  ) 	   
                s << "  ==>\t[" << ts->GetValue(v) << "]"; 
          }
-      }                        
+      } 
+      if (e == 0x0000) {        // elem 0x0000 --> group length 
+	 if (v == "4294967295") // to avoid troubles in convertion 
+	    sprintf (st," x(ffffffff)");
+	 else	
+            sprintf(st," x(%08x)",atoi(v.c_str()));
+         s << st;
+      }                     
       s << std::endl;
    } 
-
    os<<s.str();
 } 
 
@@ -135,17 +152,15 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
  * \ingroup gdcmHeaderEntrySet
  * \brief  add a new Dicom Element pointer to 
  *         the H Table and to the chained List
+ * \warning  push_bash in listEntries ONLY during ParseHeader
+ * \todo  something to allow further Elements addition,
+ * \      when position to be taken care of     
  * @param   newHeaderEntry
  */
 void gdcmHeaderEntrySet::Add(gdcmHeaderEntry * newHeaderEntry) {
 
-//	tagHT [newHeaderEntry->GetKey()]  = newHeaderEntry;
-
+// tagHT [newHeaderEntry->GetKey()]  = newHeaderEntry;
    tagHT.insert( PairHT( newHeaderEntry->GetKey(),newHeaderEntry) );
-	
-// WARNING : push_bash in listEntries ONLY during ParseHeader
-// TODO : something to allow further Elements addition 
-// position to be taken care of !	
    listEntries.push_back(newHeaderEntry); 
 }
 
@@ -336,6 +351,7 @@ bool gdcmHeaderEntrySet::Write(FILE * _fp, FileType type) {
  * \ingroup gdcmHeaderEntrySet
  * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
  * \warning : to be re-written using the chained list instead of the H table.
+ * \warning : DO NOT use (doesn't work any longer because of the multimap)
  * \todo : to be re-written using the chained list instead of the H table
  * @param   SkipSequence TRUE if we don't want to write Sequences (ACR-NEMA Files)
  * @param   type Type of the File (ExplicitVR,ImplicitVR, ACR, ...) 
@@ -435,7 +451,6 @@ void gdcmHeaderEntrySet::UpdateGroupLength(bool SkipSequence, FileType type) {
  * @param   type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
- * @return  
  */
 void gdcmHeaderEntrySet::WriteEntries(FileType type, FILE * _fp) {
    guint16 gr, el;
@@ -447,24 +462,24 @@ void gdcmHeaderEntrySet::WriteEntries(FileType type, FILE * _fp) {
    
    std::vector<std::string> tokens;
    
-   // TODO : use listEntries to iterate, not TagHt!
+   //  uses now listEntries to iterate, not TagHt!
+   //
    //        pb : gdcmHeaderEntrySet.Add does NOT update listEntries
-   //        find a trick in STL to do it, at low cost !
+   //       TODO : find a trick (in STL?) to do it, at low cost !
 
    void *ptr;
 
-   // Tout ceci ne marche QUE parce qu'on est sur un proc Little Endian 
-   // restent a tester les echecs en ecriture (apres chaque fwrite)
+   // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
 
-   for (TagHeaderEntryHT::iterator tag2=tagHT.begin();
-        tag2 != tagHT.end();
+   for (ListTag::iterator tag2=listEntries.begin();
+        tag2 != listEntries.end();
         ++tag2){
 
-      gr =  tag2->second->GetGroup();
-      el =  tag2->second->GetElement();
-      lgr = tag2->second->GetLength();
-      val = tag2->second->GetValue().c_str();
-      vr =  tag2->second->GetVR();
+      gr =  (*tag2)->GetGroup();
+      el =  (*tag2)->GetElement();
+      lgr = (*tag2)->GetLength();
+      val = (*tag2)->GetValue().c_str();
+      vr =  (*tag2)->GetVR();
       
       if ( type == ACR ) { 
          if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
@@ -497,7 +512,7 @@ void gdcmHeaderEntrySet::WriteEntries(FileType type, FILE * _fp) {
 
       if (vr == "US" || vr == "SS") {
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (tag2->second->GetValue(), tokens, "\\");
+         Tokenize ((*tag2)->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size();i++) {
             val_uint16 = atoi(tokens[i].c_str());
             ptr = &val_uint16;
@@ -508,7 +523,7 @@ void gdcmHeaderEntrySet::WriteEntries(FileType type, FILE * _fp) {
       }
       if (vr == "UL" || vr == "SL") {
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (tag2->second->GetValue(), tokens, "\\");
+         Tokenize ((*tag2)->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size();i++) {
             val_uint32 = atoi(tokens[i].c_str());
             ptr = &val_uint32;

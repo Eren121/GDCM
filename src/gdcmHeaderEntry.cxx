@@ -1,8 +1,5 @@
 // gdcmHeaderEntry.cxx
 //-----------------------------------------------------------------------------
-// TODO
-// A 'gdcmHeaderEntry' is actually a 'Dicom Element'.
-// WHY such a confusing name???
 //
 #include "gdcmHeaderEntry.h"
 

@@ -24,7 +24,9 @@ typedef std::map<GroupKey, int> GroupHT;
 
 //-----------------------------------------------------------------------------
 /*
- * Container for a set of successfully parsed HeaderEntrys (i.e. Dicom Elements).
+ * \defgroup gdcmHeaderEntrySet
+ * \brief Container for a set of successfully parsed HeaderEntries 
+ *        (i.e. Dicom Elements).
  */
 class GDCM_EXPORT gdcmHeaderEntrySet {
 public:	
@@ -66,7 +68,7 @@ private:
    
 // Variables
    TagHeaderEntryHT tagHT; // H Table (multimap), to provide fast access
-   ListTag listEntries;   // chained list, to keep the 'spacial' ordering
+   ListTag listEntries;    // chained list, to keep the 'spacial' ordering
 };
 
 //-----------------------------------------------------------------------------

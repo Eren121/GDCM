@@ -57,6 +57,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
    if ( !OpenFile(exception_on_error))
       return;
    ParseHeader();
+   wasUpdated = 0;  // will be set to 1 if user adds an entry
    LoadHeaderEntries();
    CloseFile();
 }
@@ -2357,7 +2358,7 @@ gdcmHeaderEntry* gdcmHeader::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
  * \note    A fake TagKey is generated so the PubDict can keep it's coherence.
  * @param   NewTagName The name to be given to this new tag.
  * @param   VR The Value Representation to be given to this new tag.
- * @ return The newly hand crafted Element Value.
+ * @return  The newly hand crafted Element Value.
  */
 gdcmHeaderEntry* gdcmHeader::NewManualHeaderEntryToPubDict(std::string NewTagName, 
                                                            std::string VR) {
