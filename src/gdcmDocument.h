@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 09:40:30 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/09/23 10:17:26 $
+  Version:   $Revision: 1.41 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -136,7 +136,7 @@ public:
                                          uint16_t group, uint16_t elem,
                                          std::string const & VR ="unkn");
    
-   gdcmBinEntry* ReplaceOrCreateByNumber(uint8_t* voidArea, int lgth,
+   gdcmBinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
                                          uint16_t group, uint16_t elem,
                                          std::string const & VR="unkn");
 
@@ -146,8 +146,8 @@ public:
                                  uint16_t group,
                                  uint16_t elem );
    
-   virtual void* LoadEntryVoidArea(uint16_t group, uint16_t elem);
-   virtual void* LoadEntryVoidArea(gdcmBinEntry* entry);
+   virtual void* LoadEntryBinArea(uint16_t group, uint16_t elem);
+   virtual void* LoadEntryBinArea(gdcmBinEntry* entry);
       
    // System access (meaning endian related !?)
    uint16_t SwapShort(uint16_t);   // needed by gdcmFile
@@ -183,8 +183,8 @@ public:
                                        uint16_t group, uint16_t element);
 
    virtual size_t GetEntryOffsetByNumber (uint16_t group, uint16_t elem);
-   virtual void* GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem);   
-   virtual bool  SetEntryVoidAreaByNumber(uint8_t* a, uint16_t group,
+   virtual void* GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
+   virtual bool  SetEntryBinAreaByNumber(uint8_t* a, uint16_t group,
                                                    uint16_t elem);
 
    virtual void UpdateShaEntries();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 09:40:30 $
-  Version:   $Revision: 1.127 $
+  Date:      $Date: 2004/09/23 10:17:26 $
+  Version:   $Revision: 1.128 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -375,7 +375,7 @@ uint8_t* gdcmFile::GetImageData()
          GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
 
       // Will be 7fe0, 0010 in standard case
-      GetHeader()->SetEntryVoidAreaByNumber( Pixel_Data, 
+      GetHeader()->SetEntryBinAreaByNumber( Pixel_Data, 
          GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel()); 
    }      
    PixelRead = 0; // no PixelRaw
@@ -507,7 +507,7 @@ uint8_t* gdcmFile::GetImageDataRaw ()
          GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
  
       // will be 7fe0, 0010 in standard cases
-      GetHeader()->SetEntryVoidAreaByNumber(Pixel_Data, 
+      GetHeader()->SetEntryBinAreaByNumber(Pixel_Data, 
          GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
    } 
    PixelRead = 1; // PixelRaw

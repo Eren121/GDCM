@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 09:40:30 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/09/23 10:17:26 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
  */
 gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e)
 {
-   VoidArea = 0;
+   BinArea = 0;
 }
 
 /**
@@ -45,7 +45,7 @@ gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
    //FIXME
    //SQDepthLevel = e->GetDepthLevel();
 
-   VoidArea = 0; // let's be carefull !
+   BinArea = 0; // let's be carefull !
 }
 
 /**
@@ -53,10 +53,10 @@ gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
  */
 gdcmBinEntry::~gdcmBinEntry()
 {
-   if (VoidArea)
+   if (BinArea)
    {
-      delete[] VoidArea;
-      VoidArea = 0; // let's be carefull !
+      delete[] BinArea;
+      BinArea = 0; // let's be carefull !
    }
 }
 
@@ -71,8 +71,8 @@ void gdcmBinEntry::Print(std::ostream &os)
 {
    gdcmDocEntry::Print(os);
    std::ostringstream s;
-   void *voidArea = GetVoidArea();
-   if (voidArea)
+   void *binArea = GetBinArea();
+   if (binArea)
    {
       //s << " [" << GDCM_BINLOADED 
       s << " [" << GetValue()
@@ -102,12 +102,12 @@ void gdcmBinEntry::Print(std::ostream &os)
 void gdcmBinEntry::Write(FILE *fp, FileType filetype)
 {
    gdcmDocEntry::Write(fp, filetype);
-   void *voidArea = GetVoidArea();
+   void *binArea = GetBinArea();
    int lgr = GetLength();
-   if (voidArea)
+   if (binArea)
    {
       // there is a 'non string' LUT, overlay, etc
-      fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,fp); // Elem value
+      fwrite ( binArea,(size_t)lgr ,(size_t)1 ,fp); // Elem value
    }
    else
    {
@@ -120,11 +120,11 @@ void gdcmBinEntry::Write(FILE *fp, FileType filetype)
 
 
 /// \brief Sets the value (non string) of the current Dicom Header Entry
-void gdcmBinEntry::SetVoidArea( uint8_t* area )  
+void gdcmBinEntry::SetBinArea( uint8_t* area )  
 { 
-   if (VoidArea)
-      delete[] VoidArea;
-   VoidArea = area;  
+   if (BinArea)
+      delete[] BinArea;
+   BinArea = area;  
 }
 
 //-----------------------------------------------------------------------------

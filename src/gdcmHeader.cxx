@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/20 18:14:23 $
-  Version:   $Revision: 1.187 $
+  Date:      $Date: 2004/09/23 10:17:26 $
+  Version:   $Revision: 1.188 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1115,9 +1115,9 @@ uint8_t* gdcmHeader::GetLUTRGBA()
    }
  
    // Load LUTs into memory, (as they were stored on disk)
-   uint8_t* lutR = (uint8_t*) GetEntryVoidAreaByNumber(0x0028,0x1201);
-   uint8_t* lutG = (uint8_t*) GetEntryVoidAreaByNumber(0x0028,0x1202);
-   uint8_t* lutB = (uint8_t*) GetEntryVoidAreaByNumber(0x0028,0x1203); 
+   uint8_t* lutR = (uint8_t*) GetEntryBinAreaByNumber(0x0028,0x1201);
+   uint8_t* lutG = (uint8_t*) GetEntryBinAreaByNumber(0x0028,0x1202);
+   uint8_t* lutB = (uint8_t*) GetEntryBinAreaByNumber(0x0028,0x1203); 
 
    if ( !lutR || !lutG || !lutB )
    {

@@ -87,7 +87,7 @@ int TestCopyDicom(int , char* [])
          if ( gdcmBinEntry* b = dynamic_cast<gdcmBinEntry*>(d) )
          {              
             copy->GetHeader()->ReplaceOrCreateByNumber( 
-                                 b->GetVoidArea(),
+                                 b->GetBinArea(),
                                  b->GetLength(),
                                  b->GetGroup(), 
                                  b->GetElement(),

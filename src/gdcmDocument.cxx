@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 09:40:30 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2004/09/23 10:17:26 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,7 +116,7 @@ gdcmDocument::gdcmDocument( std::string const & filename )
    std::string PhotometricInterpretation = GetEntryByNumber(0x0028,0x0004);   
    if( PhotometricInterpretation == "PALETTE COLOR " )
    {
-      LoadEntryVoidArea(0x0028,0x1200);  // gray LUT   
+      LoadEntryBinArea(0x0028,0x1200);  // gray LUT   
       /// FIXME FIXME FIXME
       /// The tags refered by the three following lines used to be CORRECTLY
       /// defined as having an US Value Representation in the public
@@ -132,19 +132,19 @@ gdcmDocument::gdcmDocument( std::string const & filename )
       ///   also used as gdcmBinEntry, which requires the proper conversion,
       /// - OW, and hence loaded as gdcmBinEntry, but afterwards also used
       ///   as gdcmValEntry, which requires the proper conversion.
-      LoadEntryVoidArea(0x0028,0x1201);  // R    LUT
-      LoadEntryVoidArea(0x0028,0x1202);  // G    LUT
-      LoadEntryVoidArea(0x0028,0x1203);  // B    LUT
+      LoadEntryBinArea(0x0028,0x1201);  // R    LUT
+      LoadEntryBinArea(0x0028,0x1202);  // G    LUT
+      LoadEntryBinArea(0x0028,0x1203);  // B    LUT
       
       // Segmented Red   Palette Color LUT Data
-      LoadEntryVoidArea(0x0028,0x1221);
+      LoadEntryBinArea(0x0028,0x1221);
       // Segmented Green Palette Color LUT Data
-      LoadEntryVoidArea(0x0028,0x1222);
+      LoadEntryBinArea(0x0028,0x1222);
       // Segmented Blue  Palette Color LUT Data
-      LoadEntryVoidArea(0x0028,0x1223);
+      LoadEntryBinArea(0x0028,0x1223);
    } 
    //FIXME later : how to use it?
-   LoadEntryVoidArea(0x0028,0x3006);  //LUT Data (CTX dependent) 
+   LoadEntryBinArea(0x0028,0x3006);  //LUT Data (CTX dependent) 
 
    CloseFile(); 
   
@@ -666,14 +666,14 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
 /*
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
- * @param   voidArea (binary) value to be set
+ * @param   binArea (binary) value to be set
  * @param   Group   Group number of the Entry 
  * @param   Elem  Element number of the Entry
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
 gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
-                                         uint8_t* voidArea,
+                                         uint8_t* binArea,
                                          int lgth, 
                                          uint16_t group, 
                                          uint16_t elem,
@@ -737,7 +737,7 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
       }
    }
 
-   SetEntryByNumber(voidArea, lgth, group, elem);
+   SetEntryByNumber(binArea, lgth, group, elem);
 
    return binEntry;
 }  
@@ -1008,7 +1008,7 @@ bool gdcmDocument::SetEntryByNumber(uint8_t*content,
    }
 */      
    gdcmBinEntry* a = (gdcmBinEntry *)TagHT[key];           
-   a->SetVoidArea(content);  
+   a->SetBinArea(content);  
    a->SetLength(lgth);
    a->SetValue(GDCM_BINLOADED);
 
@@ -1070,7 +1070,7 @@ size_t gdcmDocument::GetEntryOffsetByNumber(uint16_t group, uint16_t elem)
  * @param elem  element number of the Entry
  * @return Pointer to the 'non string' area
  */
-void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem) 
+void * gdcmDocument::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem) 
 {
    gdcmDocEntry* entry = GetDocEntryByNumber(group, elem);
    if (!entry) 
@@ -1078,7 +1078,7 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem)
       dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber: no entry");
       return 0;
    }
-   return ((gdcmBinEntry *)entry)->GetVoidArea();
+   return ((gdcmBinEntry *)entry)->GetBinArea();
 }
 
 /**
@@ -1087,7 +1087,7 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem)
  * @param group   group number of the Entry 
  * @param elem  element number of the Entry
  */
-void* gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
+void* gdcmDocument::LoadEntryBinArea(uint16_t group, uint16_t elem)
 {
    gdcmDocEntry *docElement = GetDocEntryByNumber(group, elem);
    if ( !docElement )
@@ -1100,7 +1100,7 @@ void* gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
    uint8_t* a = new uint8_t[l];
    if(!a)
    {
-      dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
+      dbg.Verbose(0, "gdcmDocument::LoadEntryBinArea cannot allocate a");
       return NULL;
    }
    size_t l2 = fread(a, 1, l , Fp);
@@ -1110,18 +1110,18 @@ void* gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
       return NULL;
    }
    /// \todo Drop any already existing void area! JPR
-   if( !SetEntryVoidAreaByNumber( a, group, elem ) );
+   if( !SetEntryBinAreaByNumber( a, group, elem ) );
    {
-      dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea setting failed.");
+      dbg.Verbose(0, "gdcmDocument::LoadEntryBinArea setting failed.");
    }
    return a;
 }
 /**
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
- * @param element  Entry whose voidArea is going to be loaded
+ * @param element  Entry whose binArea is going to be loaded
  */
-void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *element) 
+void *gdcmDocument::LoadEntryBinArea(gdcmBinEntry *element) 
 {
    size_t o =(size_t)element->GetOffset();
    fseek(Fp, o, SEEK_SET);
@@ -1129,10 +1129,10 @@ void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *element)
    uint8_t* a = new uint8_t[l];
    if( !a )
    {
-      dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
+      dbg.Verbose(0, "gdcmDocument::LoadEntryBinArea cannot allocate a");
       return NULL;
    }
-   element->SetVoidArea((uint8_t*)a);
+   element->SetBinArea((uint8_t*)a);
    /// \todo check the result 
    size_t l2 = fread(a, 1, l , Fp);
    if( l != l2 )
@@ -1151,7 +1151,7 @@ void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *element)
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-bool gdcmDocument::SetEntryVoidAreaByNumber(uint8_t* area,
+bool gdcmDocument::SetEntryBinAreaByNumber(uint8_t* area,
                                             uint16_t group, 
                                             uint16_t element) 
 {
@@ -1162,7 +1162,7 @@ bool gdcmDocument::SetEntryVoidAreaByNumber(uint8_t* area,
    }
    if ( gdcmBinEntry* binEntry = dynamic_cast<gdcmBinEntry*>(currentEntry) )
    {
-      binEntry->SetVoidArea( area );
+      binEntry->SetBinArea( area );
       return true;
    }
    return true;
@@ -1672,7 +1672,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
    {
       s << GDCM_BINLOADED;
       binEntryPtr->SetValue(s.str());
-      LoadEntryVoidArea(binEntryPtr); // last one, not to erase length !
+      LoadEntryBinArea(binEntryPtr); // last one, not to erase length !
       return;
    }
     
