@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/03/04 09:53:21 $
+  Version:   $Revision: 1.57 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ typedef std::vector<Document *>  VectDocument;
 class GDCM_EXPORT DicomDir: public Document
 {
 public:
-   typedef void(Method)(void*);
+   typedef void Method(void*);
 
    DicomDir( std::string const &filename, bool parseDir = false );
    DicomDir(); 
@@ -62,7 +62,7 @@ public:
    virtual bool IsReadable();
 
    // Meta
-   DicomDirMeta    *NewMeta();
+   DicomDirMeta *NewMeta();
    /// Returns a pointer to the DicomDirMeta for this DICOMDIR. 
    DicomDirMeta *GetMeta() { return MetaElems; };
 
@@ -78,7 +78,7 @@ public:
 
    // Note: the DicomDir:: namespace prefix is needed by Swig in the 
    //       following method declarations. Refer to gdcmPython/gdcm.i
-   //       for the reasons of this unecessary notation at C++ level.
+   //       for the reasons of this unnecessary notation at C++ level.
    void SetStartMethod(    DicomDir::Method *method,
                            void *arg = NULL,
                            DicomDir::Method *argDelete = NULL );
@@ -88,9 +88,9 @@ public:
    void SetEndMethod(      DicomDir::Method *method,
                            void *arg = NULL, 
                            DicomDir::Method *argDelete = NULL );
-   void SetStartMethodArgDelete( DicomDir::Method *m );
+   void SetStartMethodArgDelete   ( DicomDir::Method *m );
    void SetProgressMethodArgDelete( DicomDir::Method *m );
-   void SetEndMethodArgDelete( DicomDir::Method *m );
+   void SetEndMethodArgDelete     ( DicomDir::Method *m );
 
    /// GetProgress GetProgress
    float GetProgress()  { return Progress; };
