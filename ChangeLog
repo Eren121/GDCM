@@ -1,3 +1,7 @@
+2004-04-22  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     * ENH: Some cosmetic clean up for compilation with -W -Wall -Werror
+		 * ENH: Change malloc/calloc/free with c++ equivalent
+
 2004-21-02  Jean-Pierre Roux
      * FIX gdcmHeaderHelper::GetXSpacing
            when a single value is found, xpacing is now defaulted to yspacing
