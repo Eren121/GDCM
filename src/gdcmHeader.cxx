@@ -864,6 +864,16 @@ guint32 gdcmHeader::ReadInt32(void) {
    return g;
 }
 
+
+
+
+//
+// TODO : JPR Pour des raisons d'homogeneité de noms, 
+// remplacer les quelques GetxxxByKey 
+// par des GetxxxByNumber, lorsqu'on passe gr, el en param.
+// il peut etre interessant de rajouter des GetxxxByKey, auxquels on passe *vraiment* une TagKey
+//
+
 /**
  * \ingroup gdcmHeader
  * \brief   Build a new Element Value from all the low level arguments. 
@@ -892,7 +902,7 @@ gdcmElValue* gdcmHeader::NewElValueByKey(guint16 Group, guint16 Elem) {
  * \brief   TODO
  * @param   
  */
-int gdcmHeader::ReplaceOrCreateByNumber(guint16 Group, guint16 Elem, string Value) {
+int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Elem ) {
 
 	gdcmElValue* nvElValue=NewElValueByKey(Group, Elem);
 	PubElValSet.Add(nvElValue);	
@@ -969,9 +979,12 @@ bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
    if ( element == 0 )  {  // This is the group length of the group
       if (length == 4)
          return true;
-      else
+      else {
+         printf("Erroneous Group Length element length %d\n",length);
+                    
          dbg.Error("gdcmHeader::IsAnInteger",
-                   "Erroneous Group Length element length.");
+                   "Erroneous Group Length element length.");     
+      }
    }
  
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )

@@ -118,116 +118,19 @@ int gdcmElValSet::SetElValueLengthByName(guint32 length, string TagName) {
 	return 1 ;		
 }
 
-void gdcmElValSet::UpdateGroupLength(bool SkipSequence) {
 
-   // TODO : reecrire entierement : une HTable dans la quelle on stocke les groupes, puis leur lgr
-   // Voir juste apres
 
-	// On parcourt la table pour recalculer la longueur des 'elements 0x0000'
-	// au cas ou un tag ai été ajouté par rapport à ce qui a été lu
-	// dans l'image native
-	//
-	// cf : code IdDcmWriteFile dans libido/src/dcmwrite.c
-				
-	// On fait de l'implicit VR little Endian 
-	// (pour moins se fairche sur processeur INTEL)
-	// On force le TRANSFERT SYNTAX UID
-   guint16 gr, el;
-   string vr;
-   guint32 lgrCalcGroupe=0;
-   gdcmElValue *elem, *elemZ, *elemZPrec;
-   guint16 grCourant = 0;
-				
-	TagElValueHT::iterator tag = tagHt.begin();
-	
-	elem = tag->second;
-	gr   = elem->GetGroup();
-	el   = elem->GetElement();
-			
-	if (el != 0x0000) {
-		if(DEBUG)printf("ajout elem OOOO premiere fois\n");
-		gdcmDictEntry * tagZ = new gdcmDictEntry(gr, 0x0000, "UL");
-		elemZPrec = new gdcmElValue(tagZ);	// on le cree
-		elemZPrec->SetLength(4);
-		Add(elemZPrec);				// On l'accroche à sa place
-	} else {
-		elemZPrec = elem;
-		if(DEBUG)printf("Pas d'ajout elem OOOO premiere fois\n");
-	}
-	lgrCalcGroupe = 0;
-	if(DEBUG)printf("init-1 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);
-	grCourant = gr;
-	
-	for (tag = ++tagHt.begin();
-		  tag != tagHt.end();
-		  ++tag){
-		  
-		elem = tag->second;
-		gr = elem->GetGroup();
-		el = elem->GetElement();
-      vr = elem->GetVR();
-
-      if (SkipSequence && vr == "SQ")  continue;
-         // pas SEQUENCE en ACR-NEMA
-         // WARNING : pb CERTAIN
-         //           si on est descendu 'a l'interieur' des SQ 
-        
-	if ( (gr != grCourant) /*&&	// On arrive sur un nv Groupe	  
-		(el != 0xfffe) */	) {
-			    
-			if (el != 0x0000) {
-			 	gdcmDictEntry * tagZ = new gdcmDictEntry(gr, 0x0000, "UL");
-				elemZ = new gdcmElValue(tagZ); // on le cree
-				elemZ->SetLength(4);
-				Add(elemZ);	 		// On l'accroche à sa place 
-				if(DEBUG)printf("ajout elem OOOO pour gr %04x\n",gr);
-			} else { 
-				elemZ=elem;
-				if(DEBUG)printf("maj elemZ\n");
-			}
-			
-			ostringstream f;
-			f << lgrCalcGroupe; 
-			//sprintf(str_lgrCalcGroupe,"%d",lgrCalcGroupe);
-			elemZPrec->SetValue(f.str());
-			if(DEBUG)printf("ecriture lgr (%d, %s) pour gr %04x\n",lgrCalcGroupe, f.str().c_str(), grCourant);
-			if(DEBUG)printf ("%04x %04x [%s]\n",elemZPrec->GetGroup(), elemZPrec->GetElement(),
-							elemZPrec->GetValue().c_str());
-			if(DEBUG)cout << "Addresse elemZPrec " << elemZPrec<< endl;
-			elemZPrec=elemZ;
-			lgrCalcGroupe = 0;
-			grCourant     = gr;
-	// BUG :
-	// calcule lgr erronnée si ExplicitVR et VR =OB, SQ, etc
-	//	
-			if(DEBUG)printf("init-2 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);			
-		} else {			// On n'EST PAS sur un nv Groupe
-			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem
-			if(DEBUG)printf("increment (%d) el %04x-->lgr (%d) pour gr %04x\n",
-								elem->GetLength(), el, lgrCalcGroupe, gr);
-		}		
-	}
-	
-	// BUG :
-	// Ecriture incorrecte si (7FE0 0000) absent et aucun element apres groupe 7FE0 :-(
-	// A JETTER !
-	//
-}
-
-//
-// Remplacera UpdateGroupLength
-// Commite par precaution.
-// Ne pas utiliser
-//
-
-void gdcmElValSet::UpdateGroupLengthNew(bool SkipSequence, FileType type) {
+void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
    guint16 gr, el;
    string vr;
    
    gdcmElValue *elem;
    char trash[10];
+   string str_trash;
    GroupKey key;
    GroupHT groupHt;
+   TagKey tk;
+   gdcmElValue *elemZ;
    
    for (TagElValueHT::iterator tag2 = tagHt.begin();
         tag2 != tagHt.end();
@@ -237,10 +140,10 @@ void gdcmElValSet::UpdateGroupLengthNew(bool SkipSequence, FileType type) {
       gr = elem->GetGroup();
       el = elem->GetElement();
       vr = elem->GetVR(); 
-           
+                 
       sprintf(trash, "%04x", gr);
       key = trash;
-      
+            
       if (SkipSequence && vr == "SQ") continue;
          // pas SEQUENCE en ACR-NEMA
          // WARNING : pb CERTAIN
@@ -250,7 +153,11 @@ void gdcmElValSet::UpdateGroupLengthNew(bool SkipSequence, FileType type) {
          // devra etre faite avec une liste chainee, pas avec une HTable...
              
       if ( groupHt.count(key) == 0) { 
-         groupHt[key] = 2 + 2 + 4 + 4; // creation automatique, par affectation ???
+         if (el ==0x0000) {
+            groupHt[key] = 0;
+         } else {
+            groupHt[key] =2 + 2 + 4 + elem->GetLength();
+         } 
       } else {       
          if (type = ExplicitVR) {
             if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) {
@@ -258,13 +165,33 @@ void gdcmElValSet::UpdateGroupLengthNew(bool SkipSequence, FileType type) {
             }
          }
          groupHt[key] += 2 + 2 + 4 + elem->GetLength(); 
-      }   
+      } 
    }
+  
+   unsigned short int gr_bid;
+  
+   for (GroupHT::iterator g = groupHt.begin();
+        g != groupHt.end();
+        ++g){ 
+  
+      tk = g->first + "|0000";
+      sscanf(g->first.c_str(),"%x",&gr_bid);
+               
+      if ( tagHt.count(tk) == 0) { 
+         gdcmDictEntry * tagZ = new gdcmDictEntry(gr_bid, 0x0000, "UL");       
+         elemZ = new gdcmElValue(tagZ);
+         elemZ->SetLength(4);
+         Add(elemZ);
+      } else {
+         elemZ=GetElementByNumber(gr_bid, 0x0000);
+      }
+      str_trash=trash;
+      elemZ->SetValue(str_trash);
+   }   
    
    // Liberer groupHt !
+   
 }
-
-
 
 void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    guint16 gr, el;
@@ -372,9 +299,9 @@ int gdcmElValSet::Write(FILE * _fp, FileType type) {
    }
 
    if ( (type == ImplicitVR) || (type == ExplicitVR) )
-      UpdateGroupLength();
+      UpdateGroupLength(false,type);
    if ( type == ACR)
-      UpdateGroupLength(true);
+      UpdateGroupLength(true,ACR);
 
    WriteElements(type, _fp);
 

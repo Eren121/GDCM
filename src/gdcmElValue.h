@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.3 2003/03/24 13:11:28 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.4 2003/04/09 14:04:53 jpr Exp $
 
 #ifndef GDCMELVALUE_H
 #define GDCMELVALUE_H
@@ -6,6 +6,7 @@
 #include "gdcmDictEntry.h"
 class gdcmHeader;
 
+#include <stdio.h>
 
 ///////////////////////////////////////////////////////////////////////////
 // The dicom header of a Dicom file contains a set of such ELement VALUES

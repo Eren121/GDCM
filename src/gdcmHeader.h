@@ -158,7 +158,7 @@ public:
    int SetShaElValByNumber(string content, guint16 group, guint16 element);
    
    int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   
-   int ReplaceOrCreateByNumber(guint16 Group, guint16 Elem, string Value);                                
+   int ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Elem);                                
    int GetXSize(void);  
    int GetYSize(void);
    int GetZSize(void);       

@@ -33,12 +33,12 @@ int main(int argc, char* argv[])
 	
 	// On suppose que les champs DICOM du 2ieme fichier existent *effectivement*
 	
-   f1->ReplaceOrCreateByNumber(0x0028, 0x0008,
-          f2->GetPubElValByNumber(0x0028, 0x0008));// nb Frames
-	f1->ReplaceOrCreateByNumber(0x0028, 0x0010,
-          f2->GetPubElValByNumber(0x0028, 0x0010));// nbLig
-	f1->ReplaceOrCreateByNumber(0x0028, 0x0011,
-          f2->GetPubElValByNumber(0x0028, 0x0011));// nbCol
+        f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x0028, 0x0008),
+          0x0028, 0x0008);// nb Frames
+	f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x0028, 0x0010),
+	  0x0028, 0x0010);// nbLig
+	f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x0028, 0x0011),
+          0x0028, 0x0011);// nbCol
 	
 	// sans doute d'autres à mettre à jour...
 	

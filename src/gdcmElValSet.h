@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.9 2003/04/08 17:10:58 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.10 2003/04/09 14:04:53 jpr Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -43,11 +43,8 @@ public:
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 	
 private:
-   void UpdateGroupLength(bool SkipSequence = false);
+   void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);
    void WriteElements(FileType type, FILE *);
-   
-   void UpdateGroupLengthNew(bool SkipSequence = false, FileType type = ImplicitVR);
-
 };
 
 #endif

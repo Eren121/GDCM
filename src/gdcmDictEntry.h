@@ -7,13 +7,13 @@
 
 class GDCM_EXPORT gdcmDictEntry {
 private:
-	guint16 group;    // e.g. 0x0010
-	guint16 element;  // e.g. 0x0103
+	guint16 group;    // e.g. 0x0010  // FIXME : s'en sert-on qq part
+	guint16 element;  // e.g. 0x0103  // si ce n'est pour fabriquer la TagKey ?
 	string  vr;       // Value Representation i.e. some clue about the nature
 	                  // of the data represented e.g. "FD" short for
 	                  // "Floating Point Double"
 	// CLEANME: find the official dicom name for this field !
-	string  fourth;   // Fourth field containing some semantics.
+	string  fourth;   // Fourth field containing some semantics. (Group Name abbr.)
 	string  name;     // e.g. "Patient_Name"
 	TagKey  key;      // Redundant with (group, element) but we add it
 	                  // on efficiency purposes.
@@ -36,6 +36,7 @@ public:
 	              string vr     = "Unknown",
 	              string fourth = "Unknown",
 	              string name   = "Unknown");
+	              	 
 	// fabrique une 'clé' par concaténation du numGroupe et du numElement
 	static TagKey TranslateToKey(guint16 group, guint16 element);
 	

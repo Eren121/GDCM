@@ -1,3 +1,6 @@
+2003-04-9 JPR
+      * UpdateGroupLength replaced by new one
+
 2003-04-7 JPR
       * UpdateGroupLength re-written using H-Table
         (named UpdateGroupLengthNew untill checks are over)
