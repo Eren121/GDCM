@@ -105,6 +105,53 @@ extern gdcmGlobal gdcmGlob;
 }
 
 ////////////////////////////////////////////////////////////////////////////
+%typemap(out) ListPatient & {
+	PyObject* NewItem = (PyObject*)0;
+	$result = PyList_New(0); // The result of this typemap
+
+	for (list<gdcmPatient *>::iterator New = ($1)->begin();
+	    New != ($1)->end(); ++New) {
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmPatient,1);
+		PyList_Append($result, NewItem);
+	}
+}
+
+%typemap(out) ListStudy & {
+	PyObject* NewItem = (PyObject*)0;
+	$result = PyList_New(0); // The result of this typemap
+
+	for (list<gdcmStudy *>::iterator New = ($1)->begin();
+	    New != ($1)->end(); ++New) {
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmStudy,1);
+		PyList_Append($result, NewItem);
+	}
+}
+
+%typemap(out) ListSerie & {
+	PyObject* NewItem = (PyObject*)0;
+	$result = PyList_New(0); // The result of this typemap
+
+	for (list<gdcmSerie *>::iterator New = ($1)->begin();
+	    New != ($1)->end(); ++New) {
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmSerie,1);
+		PyList_Append($result, NewItem);
+	}
+}
+
+%typemap(out) ListImage & {
+	PyObject* NewItem = (PyObject*)0;
+	$result = PyList_New(0); // The result of this typemap
+
+	for (list<gdcmImage *>::iterator New = ($1)->begin();
+	    New != ($1)->end(); ++New) {
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmImage,1);
+		PyList_Append($result, NewItem);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
 // Deals with function returning a C++ string.
 %typemap(out) string, std::string  {
     $result = PyString_FromString(($1).c_str());

@@ -1,6 +1,7 @@
 2004-02-05 Benoit Regrain
      * ENH : add methods in gdcmObject to get the hash table or the list of
        header entries
+     * FIX : wrapping python for ListPatient, ListStudy, ListSerie, ListImage
 
 2004-02-04 Benoit Regrain
      * FIX : even length for some strings when writting the dicom dir
