@@ -1,3 +1,11 @@
+2004-01-30 Jean-Pierre Roux
+     * gdcmParser::CheckSwap() now defaults the filetype to ACR 
+       when 'dirty Acr' is found, to be compliant with the new 
+       IsReadable() methods.
+
+2004-01-28 Jean-Pierre Roux
+     * upgrade GdcmHeaderEntry Print Method for DICOMDIR
+
 2004-01-27 Jean-Pierre Roux
      * gdcmParser constructor has a new boolean param,'ignore_shadow', 
              to allow skipping the shadow elements, to save memory space.
