@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 16:09:27 $
-  Version:   $Revision: 1.118 $
+  Date:      $Date: 2004/07/31 23:30:04 $
+  Version:   $Revision: 1.119 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -155,7 +155,7 @@ void gdcmFile::SetPixelDataSizeFromHeader()
    std::string str_PhotometricInterpretation = 
                              Header->GetEntryByNumber(0x0028,0x0004);
     
-   /*if ( str_PhotometricInterpretation == "PALETTE COLOR " )*/
+   // if ( str_PhotometricInterpretation == "PALETTE COLOR " )
    // pb when undealt Segmented Palette Color
    
    if ( Header->HasLUT() )
@@ -832,7 +832,7 @@ void gdcmFile::SwapZone(void *im, int swap, int lgr, int nb)
          case 4321:
             for(i=0; i < lgr/2; i++)
             {
-            im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
+               im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
             }
             break;
          default:
@@ -1041,7 +1041,7 @@ bool gdcmFile::ReadPixelData(void *destination)
       if ( jpg2000 )
       {
       // JPEG 2000 :    call to ???
-      res = (bool)gdcm_read_JPEG2000_file (fp,destination);  // Not Yet written 
+      res = gdcm_read_JPEG2000_file (fp,destination);  // Not Yet written 
       // ------------------------------------- endif (JPEG2000)
       }
       else if (jpgLossless)
@@ -1059,12 +1059,12 @@ bool gdcmFile::ReadPixelData(void *destination)
          if ( Header->GetBitsStored() == 8)
          {
             // Reading Fragment pixels
-            res = (bool)gdcm_read_JPEG_file (fp,destination);
+            res = gdcm_read_JPEG_file (fp,destination);
          }
          else
          {
             // Reading Fragment pixels
-            res = (bool)gdcm_read_JPEG_file12 (fp,destination);
+            res = gdcm_read_JPEG_file12 (fp,destination);
          }
          // ------------------------------------- endif (JPEGLossy)
       }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/31 18:43:43 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/07/31 23:30:04 $
+  Version:   $Revision: 1.27 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -136,12 +136,12 @@ public:
 
    void Write(FILE* fp, FileType type);
 
-   gdcmValEntry* ReplaceOrCreateByNumber(std::string value,
+   gdcmValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                          uint16_t group, uint16_t elem);
 
    gdcmBinEntry* ReplaceOrCreateByNumber(void *voidArea, int lgth,
                                          uint16_t group, uint16_t elem);
-   bool ReplaceIfExistByNumber (const char* value, uint16_t group, uint16_t elem);
+   bool ReplaceIfExistByNumber (std::string const & value, uint16_t group, uint16_t elem);
    
    virtual void* LoadEntryVoidArea(uint16_t group, uint16_t elem);
    virtual void* LoadEntryVoidArea(gdcmBinEntry* entry);
@@ -165,8 +165,8 @@ protected:
    // Entry
    int CheckIfEntryExistByNumber(uint16_t group, uint16_t elem ); // int !
 public:
-   virtual std::string GetEntryByName    (TagName tagName);
-   virtual std::string GetEntryVRByName  (TagName tagName);
+   virtual std::string GetEntryByName    (TagName const & tagName);
+   virtual std::string GetEntryVRByName  (TagName const & tagName);
    virtual std::string GetEntryByNumber  (uint16_t group, uint16_t elem);
    virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
    virtual int     GetEntryLengthByNumber(uint16_t group, uint16_t elem);

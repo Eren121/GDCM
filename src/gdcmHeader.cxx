@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 16:09:27 $
-  Version:   $Revision: 1.180 $
+  Date:      $Date: 2004/07/31 23:30:04 $
+  Version:   $Revision: 1.181 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,10 +104,11 @@ gdcmHeader::~gdcmHeader ()
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
-void gdcmHeader::Write(FILE* fp,FileType filetype) {
-   
+void gdcmHeader::Write(FILE* fp,FileType filetype)
+{
    // Bits Allocated
-   if ( GetEntryByNumber(0x0028,0x0100) ==  "12") {
+   if ( GetEntryByNumber(0x0028,0x0100) ==  "12")
+   {
       SetEntryByNumber("16", 0x0028,0x0100);
    }
 
@@ -117,43 +118,55 @@ void gdcmHeader::Write(FILE* fp,FileType filetype) {
    //        (only gdcmHeader knows GrPixel, NumPixel)
 
    int i_lgPix = GetEntryLengthByNumber(GrPixel, NumPixel);
-   if (i_lgPix != -2) { // no (GrPixel, NumPixel) element
-      char * dumm = new char[20];
+   if (i_lgPix != -2)
+   {
+      // no (GrPixel, NumPixel) element
+      char* dumm = new char[20];
       sprintf(dumm ,"%d", i_lgPix+12);
       std::string s_lgPix = dumm;
-      delete dumm;
+      delete[] dumm;
       ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
    }
   
    // Drop Palette Color, if necessary
    
-   if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' ) {
-    // if SamplesPerPixel = 3, sure we don't need any LUT !   
-    // Drop 0028|1101, 0028|1102, 0028|1103
-    // Drop 0028|1201, 0028|1202, 0028|1203
+   if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' )
+   {
+      // if SamplesPerPixel = 3, sure we don't need any LUT !   
+      // Drop 0028|1101, 0028|1102, 0028|1103
+      // Drop 0028|1201, 0028|1202, 0028|1203
 
-     gdcmDocEntry *e;
-     e=GetDocEntryByNumber(0x0028,0x01101);
-     if (e) 
-        RemoveEntry(e);
-     e=GetDocEntryByNumber(0x0028,0x1102);
-     if (e) 
-        RemoveEntry(e);
-     e=GetDocEntryByNumber(0x0028,0x1103);
-
-     if (e) 
-        RemoveEntry(e);
-     e=GetDocEntryByNumber(0x0028,0x01201);
-     if (e) 
-        RemoveEntry(e);
-     e=GetDocEntryByNumber(0x0028,0x1202);
-     if (e) 
-        RemoveEntry(e);
-     e=GetDocEntryByNumber(0x0028,0x1203);
-     if (e) 
-       RemoveEntry(e);
+      gdcmDocEntry* e = GetDocEntryByNumber(0x0028,0x01101);
+      if (e)
+      {
+         RemoveEntry(e);
+      }
+      e = GetDocEntryByNumber(0x0028,0x1102);
+      if (e)
+      {
+         RemoveEntry(e);
+      }
+      e = GetDocEntryByNumber(0x0028,0x1103);
+      if (e)
+      {
+         RemoveEntry(e);
+      }
+      e = GetDocEntryByNumber(0x0028,0x01201);
+      if (e)
+      {
+         RemoveEntry(e);
+      }
+      e = GetDocEntryByNumber(0x0028,0x1202);
+      if (e)
+      {
+         RemoveEntry(e);
+      }
+      e = GetDocEntryByNumber(0x0028,0x1203);
+      if (e)
+      {
+          RemoveEntry(e);
+      }
    }
-
    gdcmDocument::Write(fp,filetype);
 }
 
@@ -396,7 +409,7 @@ float gdcmHeader::GetRescaleIntercept()
       }
    }
 
-  return resInter;
+   return resInter;
 }
 
 /**
@@ -534,7 +547,7 @@ float gdcmHeader::GetXOrigin()
 
    if( sscanf( strImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3 )
    {
-     return 0.;
+      return 0.;
    }
 
    return xImPos;
@@ -1232,17 +1245,16 @@ std::string gdcmHeader::GetTransfertSyntaxName()
  */
 void gdcmHeader::SetImageDataSize(size_t ImageDataSize)
 {
-   std::string content1;
    char car[20];
-
    sprintf(car,"%d",ImageDataSize);
  
    gdcmDocEntry *a = GetDocEntryByNumber(GrPixel, NumPixel);
    a->SetLength(ImageDataSize);
 
-   ImageDataSize+=8;
+   ImageDataSize += 8;
    sprintf(car,"%d",ImageDataSize);
-   content1=car;
+
+   const std::string content1 = car;
    SetEntryByNumber(content1, GrPixel, NumPixel);
 }
 
@@ -1334,42 +1346,32 @@ bool gdcmHeader::AnonymizeHeader()
   * @param iop adress of the (6)float aray to receive values
   * @return cosines of image orientation patient
   */
-void gdcmHeader::GetImageOrientationPatient( float* iop )
+void gdcmHeader::GetImageOrientationPatient( float iop[6] )
 {
+   std::string strImOriPat;
    //iop is supposed to be float[6]
-   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0;
+   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
 
    // 0020 0037 DS REL Image Orientation (Patient)
-   std::string strImOriPat = GetEntryByNumber(0x0020,0x0037);
-   if ( strImOriPat != GDCM_UNFOUND )
+   if ( (strImOriPat = GetEntryByNumber(0x0020,0x0037)) != GDCM_UNFOUND )
    {
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
          dbg.Verbose(0, "gdcmHeader::GetImageOrientationPatient: wrong Image Orientation Patient (0020,0037)");
-         return ;  // bug in the element 0x0020,0x0037
-      }
-      else
-      {
-         return ;
+         // bug in the element 0x0020,0x0037
       }
    }
-
    //For ACR-NEMA
    // 0020 0035 DS REL Image Orientation (RET)
-   strImOriPat = GetEntryByNumber(0x0020,0x0035);
-   if ( strImOriPat != GDCM_UNFOUND )
+   else if ( (strImOriPat = GetEntryByNumber(0x0020,0x0035)) != GDCM_UNFOUND )
    {
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
          dbg.Verbose(0, "gdcmHeader::GetImageOrientationPatient: wrong Image Orientation Patient (0020,0035)");
-         return ;  // bug in the element 0x0020,0x0035
+         // bug in the element 0x0020,0x0035
       }
-   }
-   else
-   {
-      return;
    }
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 16:09:27 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/07/31 23:30:04 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ class GDCM_EXPORT gdcmFile
 public:
    gdcmFile(gdcmHeader *header);
    gdcmFile(std::string const & filename, 
-            bool  exception_on_error = false);
+            bool exception_on_error = false);
  
    virtual ~gdcmFile();
 
@@ -49,13 +49,13 @@ public:
    void * GetImageDataRaw();
    size_t GetImageDataIntoVectorRaw(void* destination, size_t maxSize);
 
-      // Allocates ExpectedSize bytes of memory at this->Data and copies the
-      // pointed data to it. Copying the image might look useless but
-      // the caller might destroy it's image (without knowing it: think
-      // of a complicated interface where display is done with a library
-      // e.g. VTK) before calling the Write
+   // Allocates ExpectedSize bytes of memory at this->Data and copies the
+   // pointed data to it. Copying the image might look useless but
+   // the caller might destroy it's image (without knowing it: think
+   // of a complicated interface where display is done with a library
+   // e.g. VTK) before calling the Write
       
-   // voir gdcmHeader::SetImageDataSize ?!?         
+   // see also gdcmHeader::SetImageDataSize ?!?         
    bool SetImageData (void * data, size_t expectedSize);
 
    /// \todo When the caller is aware we simply point to the data:
@@ -92,15 +92,17 @@ private:
    bool gdcm_read_JPEG_file     (FILE *fp, void * image_buffer); 
    static int gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
                                      long uncompressedSegmentSize, FILE *fp);
+
    // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
    bool gdcm_read_JPEG_file12   (FILE *fp, void* image_buffer);
+
    // For JPEG 2000, body in file gdcmJpeg2000.cxx
    bool gdcm_read_JPEG2000_file (FILE *fp, void* image_buffer);
 
    // For Run Length Encoding (TOCHECK)
    bool gdcm_read_RLE_file      (FILE *fp, void* image_buffer); 
 
-// Variables
+// members variables:
 
    /// \brief Header to use to load the file
    gdcmHeader *Header;

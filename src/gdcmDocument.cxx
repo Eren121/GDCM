@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 16:09:27 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2004/07/31 23:30:04 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,7 +110,7 @@ gdcmDocument::gdcmDocument( std::string const & filename,
    long beg = ftell(Fp);
    lgt -= beg;
    
-   SQDepthLevel=0;
+   SQDepthLevel = 0;
    
    long l = ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
    (void)l; //is l used anywhere ?
@@ -524,7 +524,7 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
 bool gdcmDocument::CloseFile()
 {
   int closed = fclose(Fp);
-  Fp = (FILE *)0;
+  Fp = 0;
 
   return closed;
 }
@@ -599,7 +599,7 @@ void gdcmDocument::Write(FILE* fp,FileType filetype)
  */
   
 gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
-                                         std::string value, 
+                                         std::string const & value, 
                                          uint16_t group, 
                                          uint16_t elem )
 {
@@ -693,11 +693,10 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
  * @param Elem element number of the Entry
  * \return  boolean 
  */
-bool gdcmDocument::ReplaceIfExistByNumber(const char* value, uint16_t group,
-                                          uint16_t elem ) 
+bool gdcmDocument::ReplaceIfExistByNumber(std::string const & value, 
+                                          uint16_t group, uint16_t elem ) 
 {
-   const std::string v = value;
-   SetEntryByNumber(v, group, elem);
+   SetEntryByNumber(value, group, elem);
 
    return true;
 } 
@@ -713,7 +712,7 @@ bool gdcmDocument::ReplaceIfExistByNumber(const char* value, uint16_t group,
  */
 int gdcmDocument::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
 {
-   std::string key = gdcmDictEntry::TranslateToKey(group, element );
+   const std::string &key = gdcmDictEntry::TranslateToKey(group, element );
    return TagHT.count(key);
 }
 
@@ -726,7 +725,7 @@ int gdcmDocument::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryByName(TagName tagName)
+std::string gdcmDocument::GetEntryByName(TagName const & tagName)
 {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( !dictEntry )
@@ -750,7 +749,7 @@ std::string gdcmDocument::GetEntryByName(TagName tagName)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryVRByName(TagName tagName)
+std::string gdcmDocument::GetEntryVRByName(TagName const & tagName)
 {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
@@ -758,8 +757,8 @@ std::string gdcmDocument::GetEntryVRByName(TagName tagName)
       return GDCM_UNFOUND;
    }
 
-   gdcmDocEntry* elem =  GetDocEntryByNumber(dictEntry->GetGroup(),
-                                             dictEntry->GetElement());
+   gdcmDocEntry* elem = GetDocEntryByNumber(dictEntry->GetGroup(),
+                                            dictEntry->GetElement());
    return elem->GetVR();
 }
 
@@ -1222,7 +1221,7 @@ uint32_t gdcmDocument::SwapLong(uint32_t a)
       default :
          std::cout << "swapCode= " << SwapCode << std::endl;
          dbg.Error(" gdcmDocument::SwapLong : unset swap code");
-         a=0;
+         a = 0;
    }
    return a;
 } 
