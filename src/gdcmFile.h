@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 03:36:24 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/06/23 16:22:21 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,12 +82,14 @@ public:
    bool WriteDcmExplVR(std::string const & fileName);
    bool WriteAcr      (std::string const & fileName);
 
-   // Body in file gdcmParse.cxx
+   // Don't look any longer for the code : 
+	// It's in file gdcmParsePixels.cxx
    bool ParsePixelData();
 
    inline virtual bool SetEntryByNumber(std::string const & content,
                                         guint16 group, guint16 element)
-      { GetHeader()->SetEntryByNumber(content,group,element); 
+      { 
+		  GetHeader()->SetEntryByNumber(content,group,element); 
         return true;  //default behavior ?
       }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 15:01:57 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/06/23 16:22:21 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1298,6 +1298,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
    (void)depth; //not used
 
    while (true) {
+
       NewDocEntry = ReadNextDocEntry();   
       if (!NewDocEntry)
          break;
@@ -1448,16 +1449,22 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    // We need an additional byte for storing \0 that is not on disk
    std::string NewValue(length,0);
    item_read = fread(&(NewValue[0]), (size_t)length, (size_t)1, fp);
-   if ( item_read != 1 ) {
-      dbg.Verbose(1, "gdcmDocument::LoadElementValue","unread element value");
-      ((gdcmValEntry *)Entry)->SetValue("gdcm::UnRead");
-      return;
-   }
+	if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) ) {  
+      if ( item_read != 1 ) {
+         dbg.Verbose(1, "gdcmDocument::LoadElementValue","unread element value");
+         ValEntry->SetValue("gdcm::UnRead");
+         return;
+      }
 
-   if( (vr == "UI") ) // Because of correspondance with the VR dic
-      ((gdcmValEntry *)Entry)->SetValue(NewValue.c_str());
-   else
-      ((gdcmValEntry *)Entry)->SetValue(NewValue);
+      if( (vr == "UI") ) // Because of correspondance with the VR dic
+         ValEntry->SetValue(NewValue.c_str());
+      else
+         ValEntry->SetValue(NewValue);
+   } else {
+	// fusible
+	std::cout << "Should have a ValEntry, here !" << std::endl;
+	}
+
 }
 
 

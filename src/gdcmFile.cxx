@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 09:30:22 $
-  Version:   $Revision: 1.108 $
+  Date:      $Date: 2004/06/23 16:22:21 $
+  Version:   $Revision: 1.109 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -229,20 +229,20 @@ void * gdcmFile::GetImageData () {
  */
 size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    //size_t l = GetImageDataIntoVectorRaw (destination, MaxSize);
-	 GetImageDataIntoVectorRaw (destination, MaxSize);
+   GetImageDataIntoVectorRaw (destination, MaxSize);
    PixelRead=0 ; // no PixelRaw
    if (!Header->HasLUT())
       return lgrTotale; 
                             
    // from Lut R + Lut G + Lut B
    unsigned char *newDest = new unsigned char[lgrTotale];
-   unsigned char *a       = (unsigned char *)destination;	 
+   unsigned char *a       = (unsigned char *)destination;
    unsigned char *lutRGBA =  Header->GetLUTRGBA();
 
-   if (lutRGBA) { 	    
+   if (lutRGBA) {
       int l = lgrTotaleRaw;
-      memmove(newDest, destination, l);// move Gray pixels to temp area	    
-      int j;	 
+      memmove(newDest, destination, l);// move Gray pixels to temp area  
+      int j;
       for (int i=0;i<l; i++) {         // Build RGB Pixels
          j=newDest[i]*4;
          *a++ = lutRGBA[j]; 
@@ -255,7 +255,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    // Lets's write it in the Header
 
          // CreateOrReplaceIfExist ?
-	 
+
    std::string spp = "3";        // Samples Per Pixel
    Header->SetEntryByNumber(spp,0x0028,0x0002);
    std::string rgb= "RGB ";      // Photometric Interpretation
@@ -264,20 +264,20 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
 
    } else { 
-	     // need to make RGB Pixels (?)
+        // need to make RGB Pixels (?)
         //    from grey Pixels (?!)
         //     and Gray Lut  (!?!) 
-	     //    or Segmented xxx Palette Color Lookup Table Data and so on
-		  		  		  
+        //    or Segmented xxx Palette Color Lookup Table Data and so on
+ 
          // Oops! I get one (gdcm-US-ALOKA-16.dcm)
          // No idea how to manage such an image 
          // It seems that *no Dicom Viewer* has any idea :-(
          // Segmented xxx Palette Color are *more* than 65535 long ?!?
-		   
+  
       std::string rgb= "MONOCHROME1 ";      // Photometric Interpretation
-      Header->SetEntryByNumber(rgb,0x0028,0x0004);		   		   
-   }      	 
-   /// \todo Drop Palette Color out of the Header? 	     
+      Header->SetEntryByNumber(rgb,0x0028,0x0004);
+   } 
+   /// \todo Drop Palette Color out of the Header?
    return lgrTotale; 
 }
 
@@ -287,23 +287,23 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
  *          (image[s]/volume[s]) to newly allocated zone.
  *          Transforms YBR pixels into RGB pixels if any
  *          Transforms 3 planes R, G, B into a single RGB Plane
- *	    DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
+ *          DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
  * \        NULL if alloc fails 
  */
 void * gdcmFile::GetImageDataRaw () {
    if (Header->HasLUT())
       /// \todo Let gdcmHeadar user a chance to get the right value
-		/// Create a member lgrTotaleRaw ???
+      /// Create a member lgrTotaleRaw ???
       lgrTotale /= 3;
    PixelData = new unsigned char[lgrTotale];
-	
+
    if (PixelData) {
       GetImageDataIntoVectorRaw(PixelData, lgrTotale);
-		GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
-                      GetHeader()->GetGrPixel(),  
-                      GetHeader()->GetNumPixel()); 
-   } 				
+      GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
+      GetHeader()->GetGrPixel(),  
+      GetHeader()->GetNumPixel()); 
+   } 
    PixelRead=1; // PixelRaw
 
    return PixelData;
@@ -344,33 +344,33 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
                      "than caller's expected MaxSize");
       return (size_t)0; 
    }
-	
+
    ReadPixelData(destination);
-   	
-	// Number of Bits Allocated for storing a Pixel
+
+   // Number of Bits Allocated for storing a Pixel
    str_nb = Header->GetEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
       nb = atoi(str_nb.c_str() );
-   }	
-	// Number of Bits actually used
+ }
+    // Number of Bits actually used
    str_nbu=Header->GetEntryByNumber(0x0028,0x0101);
    if (str_nbu == GDCM_UNFOUND ) {
       nbu = nb;
    } else {
       nbu = atoi(str_nbu.c_str() );
-   }		
-	// High Bit Position
+   }
+   // High Bit Position
    str_highBit=Header->GetEntryByNumber(0x0028,0x0102);
    if (str_highBit == GDCM_UNFOUND ) {
       highBit = nb - 1;
    } else {
       highBit = atoi(str_highBit.c_str() );
-   }		
-	// Pixel sign
-	// 0 = Unsigned
-	// 1 = Signed
+   } 
+   // Pixel sign
+   // 0 = Unsigned
+   // 1 = Signed
    str_signe=Header->GetEntryByNumber(0x0028,0x0103);
    if (str_signe == GDCM_UNFOUND ) {
       signe = 0;  // default is unsigned
@@ -388,8 +388,8 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
      guint16 *deb = (guint16 *)destination;
      for(int i = 0; i<l; i++) {
         if(*deb == 0xffff) 
-	   *deb=0; 
-	   deb++;   
+           *deb=0; 
+           deb++;   
          }
     }
    // re arange bits inside the bytes
@@ -430,7 +430,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
    
        std::string str_PhotometricInterpretation = 
                  Header->GetEntryByNumber(0x0028,0x0004);
-		   
+
       if ( (str_PhotometricInterpretation == "MONOCHROME1 ") 
         || (str_PhotometricInterpretation == "MONOCHROME2 ") ) {
          return lgrTotale; 
@@ -461,15 +461,15 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
 
          {
          if (str_PhotometricInterpretation == "YBR_FULL") { 
-	 
+ 
    // Warning : YBR_FULL_422 acts as RGB
    //         : we need to make RGB Pixels from Planes Y,cB,cR
-	 
-	 // to see the tricks about YBR_FULL, YBR_FULL_422, 
-         // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
-	 //   ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
-	 // and be *very* affraid
-	 //
+
+   // to see the tricks about YBR_FULL, YBR_FULL_422, 
+   // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
+   //   ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
+   // and be *very* affraid
+   //
             int l = Header->GetXSize()*Header->GetYSize();
             int nbFrames = Header->GetZSize();
 
@@ -482,9 +482,9 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
 
             /// \todo : Replace by the 'well known' integer computation
             /// counterpart
-	         /// see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
+            /// see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
             /// for code optimisation
-	    
+    
             for (int i=0;i<nbFrames;i++) {
                for (int j=0;j<l; j++) {
                   R= 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
@@ -527,7 +527,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
             }           
             memmove(destination,newDest,lgrTotale);
             delete[] newDest;
-        }	  
+        }  
          break;
        }     
        case 2:                      
@@ -547,14 +547,14 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
 
    std::string planConfig = "0"; // Planar Configuration
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
-	 
-	 /// \todo Drop Palette Color out of the Header? 
+ 
+ /// \todo Drop Palette Color out of the Header? 
    return lgrTotale; 
 }
 
 /**
  * \ingroup   gdcmFile
- * \brief performs a shadow copy (not a deep copy) of the user given
+ * \brief performs a shalow copy (not a deep copy) of the user given
  *        pixel area.
  *        'image' Pixels are presented as C-like 2D arrays : line per line.
  *        'volume'Pixels are presented as C-like 3D arrays : lane per plane 
@@ -562,7 +562,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t MaxSize) {
  * @param inData user supplied pixel area
  * @param ExpectedSize total image size, in Bytes
  *
- * @return boolean	
+ * @return boolean
  */
 bool gdcmFile::SetImageData(void *inData, size_t ExpectedSize) {
    Header->SetImageDataSize(ExpectedSize);
@@ -580,7 +580,7 @@ bool gdcmFile::SetImageData(void *inData, size_t ExpectedSize) {
  *        It's up to the user to call his Reader properly
  * @param fileName name of the file to be created
  *                 (any already existing file is over written)
- * @return false if write fails	
+ * @return false if write fails
  */
 
 bool gdcmFile::WriteRawData (std::string const & fileName) {
@@ -589,7 +589,7 @@ bool gdcmFile::WriteRawData (std::string const & fileName) {
    if (fp1 == NULL) {
       printf("Fail to open (write) file [%s] \n",fileName.c_str());
       return false;
-   } 	
+   }
    fwrite (PixelData,lgrTotale, 1, fp1);
    fclose (fp1);
 
@@ -603,7 +603,7 @@ bool gdcmFile::WriteRawData (std::string const & fileName) {
  *        NO test is performed on  processor "Endiannity".
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
- * @return false if write fails	
+ * @return false if write fails
  */
 
 bool gdcmFile::WriteDcmImplVR (std::string const & fileName) {
@@ -616,13 +616,13 @@ bool gdcmFile::WriteDcmImplVR (std::string const & fileName) {
  *        using the Explicit Value Representation convention
  *        NO test is performed on  processor "Endiannity". * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
- * @return false if write fails	
+ * @return false if write fails
  */
 
 bool gdcmFile::WriteDcmExplVR (std::string const & fileName) {
    return WriteBase(fileName, gdcmExplicitVR);
 }
-	
+
 /**
  * \ingroup   gdcmFile
  * \brief Writes on disk A SINGLE Dicom file, 
@@ -635,7 +635,7 @@ bool gdcmFile::WriteDcmExplVR (std::string const & fileName) {
  * \warning NO TEST is performed on processor "Endiannity".
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
- * @return false if write fails		
+ * @return false if write fails
  */
 
 bool gdcmFile::WriteAcr (std::string const & fileName) {
@@ -651,14 +651,14 @@ bool gdcmFile::WriteAcr (std::string const & fileName) {
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
  * @param  type file type (ExplicitVR, ImplicitVR, ...)
- * @return false if write fails		
+ * @return false if write fails
  */
 bool gdcmFile::WriteBase (std::string const & fileName, FileType type) {
 
    FILE *fp1;
    
    if (PixelRead==-1 && type != gdcmExplicitVR) {
-      return false;		   
+      return false;
    }
 
    fp1 = fopen(fileName.c_str(),"wb");
@@ -693,7 +693,7 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type) {
          columns = Header->GetEntryByNumber(0x0028, 0x0011);
          Header->SetEntryByNumber(columns,  0x0028, 0x0010);
          Header->SetEntryByNumber(rows   ,  0x0028, 0x0011);
-   }	
+   }
    // ----------------- End of Special Patch ----------------
    
    /// \todo get the grPixel, numPixel values (for some ACR-NEMA images only)
@@ -737,7 +737,7 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type) {
    if (Header->GetFileType() == gdcmACR_LIBIDO){
          Header->SetEntryByNumber(rows   , 0x0028, 0x0010);
          Header->SetEntryByNumber(columns, 0x0028, 0x0011);
-   }	
+   }
    // ----------------- End of Special Patch ----------------
    
   // fwrite(PixelData, lgrTotale, 1, fp1);  // should be useless, now
@@ -768,7 +768,7 @@ void gdcmFile::SwapZone(void *im, int swap, int lgr, int nb) {
       case 12:
       case 1234:
          break;
-		
+
       case 21:
       case 3412:
       case 2143:
@@ -777,11 +777,11 @@ void gdcmFile::SwapZone(void *im, int swap, int lgr, int nb) {
          for(i=0;i<lgr/2;i++) {
             ((unsigned short int *)im)[i]= ((((unsigned short int *)im)[i])>>8)
                                         | ((((unsigned short int *)im)[i])<<8);
-	}
+         }
          break;
- 			
+
       default:
-         printf("SWAP value (16 bits) not allowed : %d\n", swap);
+          std::cout << "SWAP value (16 bits) not allowed :i" << swap << std::endl;
    } 
  
   if( nb == 32 )
@@ -820,7 +820,7 @@ void gdcmFile::SwapZone(void *im, int swap, int lgr, int nb) {
             ((unsigned long int *)im)[i]=(s32<<16)|fort;
          }                 
          break; 
-    			        
+     
       default:
          std::cout << "SWAP value (32 bits) not allowed : " << swap << std::endl;
    } 
@@ -862,8 +862,8 @@ bool gdcmFile::ReadPixelData(void *destination) {
                               /* A */            /* B */             /* D */
          *pdestination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
                              /* F */               /* C */           /* E */
-		  
-	// Troubles expected on Big-Endian processors ?	      
+  
+    // Troubles expected on Big-Endian processors ?
       }
 
       Header->CloseFile();
@@ -912,7 +912,7 @@ bool gdcmFile::ReadPixelData(void *destination) {
 
    bool jpg2000 =     Header->IsJPEG2000();
    bool jpgLossless = Header->IsJPEGLossless();
-	    
+
    bool res = true;
    guint16 ItemTagGr,ItemTagEl;
    int ln;  
@@ -958,12 +958,12 @@ bool gdcmFile::ReadPixelData(void *destination) {
          res = (bool)gdcm_read_JPEG2000_file (fp,destination);  // Not Yet written 
 
       } // ------------------------------------- endif (JPEG2000)
-	
+
       else if (jpgLossless) { // JPEG LossLess : call to xmedcom JPEG
          JPEGLosslessDecodeImage (fp,  // Reading Fragment pixels
-				     (unsigned short *)destination,
-				     Header->GetPixelSize() * 8 * Header->GetSamplesPerPixel(),
-                                     ln);						 	   
+                                  (unsigned short *)destination,
+                                   Header->GetPixelSize() * 8 * Header->GetSamplesPerPixel(),
+                                     ln);
          res=1; // in order not to break the loop
   
       } // ------------------------------------- endif (JPEGLossless)
