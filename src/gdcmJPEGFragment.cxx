@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:52:50 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/24 16:03:58 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,12 @@ namespace gdcm
 {
 
 // For JPEG 2000, body in file gdcmJpeg2000.cxx
+// Not yet made
 bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
+
+// For JPEG-LS, body in file gdcmJpegLS.cxx
+// Not yet made
+bool gdcm_read_JPEGLS_file (std::ifstream* fp, void* image_buffer);
 
 // For JPEG 8 Bits, body in file gdcmJpeg8.cxx
 //bool gdcm_read_JPEG_file8 (JPEGFragment *frag, std::ifstream *fp, void *image_buffer);
@@ -78,7 +83,9 @@ void JPEGFragment::Print( std::ostream &os, std::string indent )
  * @param buffer     output (data decompress)
  * @param nBits      8/12 or 16 bits jpeg
  */
-void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int & statesuspension)
+void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
+                                                uint8_t *buffer, int nBits, 
+                                                int & statesuspension)
 {
    // First thing need to reset file to proper position:
    fp->seekg( Offset, std::ios::beg);
@@ -110,6 +117,9 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buff
    }
    else
    {
+      // FIXME : only the bits number is checked,
+      //         NOT the compression method
+
       // other JPEG lossy not supported
       gdcmErrorMacro( "Unknown jpeg lossy compression ");
       //return false;
@@ -117,7 +127,8 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buff
 
 }
 
-void JPEGFragment::DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer, size_t totalLength, uint8_t* raw, int nBits)
+void JPEGFragment::DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer,
+                                 size_t totalLength, uint8_t *raw, int nBits)
 {
    size_t howManyRead = 0;
    size_t howManyWritten = 0;
@@ -155,6 +166,9 @@ void JPEGFragment::DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer, si
    }
    else
    {
+      // FIXME : only the bits number is checked,
+      //         NOT the compression method
+
       // other JPEG lossy not supported
       gdcmErrorMacro( "Unsupported jpeg lossy compression ");
       delete [] buffer;
@@ -163,7 +177,9 @@ void JPEGFragment::DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer, si
 
 }
 
-void JPEGFragment::DecompressJPEGFragmentedFramesFromFile(JOCTET *buffer, uint8_t* raw, int nBits, size_t &howManyRead, size_t &howManyWritten, size_t totalLength)
+void JPEGFragment::DecompressJPEGFragmentedFramesFromFile(JOCTET *buffer, 
+                    uint8_t* raw, int nBits, size_t &howManyRead, 
+                    size_t &howManyWritten, size_t totalLength)
 {
    if ( nBits == 8 )
    {
@@ -202,6 +218,9 @@ void JPEGFragment::DecompressJPEGFragmentedFramesFromFile(JOCTET *buffer, uint8_
    }
    else
    {
+      // FIXME : only the bits number is checked,
+      //         NOT the compression method
+
       // other JPEG lossy not supported
       gdcmErrorMacro( "Unsupported jpeg lossy compression ");
       //delete [] buffer;

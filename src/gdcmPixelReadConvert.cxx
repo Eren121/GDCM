@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:52:50 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/24 16:03:58 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -497,11 +497,31 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 {
    if ( IsJPEG2000 )
    {
+      gdcmVerboseMacro( "Sorry, JPEG2000 not yet taken into account" );
       fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios::beg);
-//      if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
+//    if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
+          gdcmVerboseMacro( "Wrong Blue LUT descriptor" );
+          return false;
+   }
+
+   if ( IsJPEGLS )
+   {
+      gdcmVerboseMacro( "Sorry, JPEG-LS not yet taken into account" );
+      fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios::beg);
+//    if ( ! gdcm_read_JPEGLS_file( fp,Raw ) )
          return false;
    }
 
+   if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )
+   {
+      // we have one frame split into several fragments
+      // we will pack those fragments into a single buffer and 
+      // read from it
+      return ReadAndDecompressJPEGSingleFrameFragmentsFromFile( fp );
+   }
+   else if (JPEGInfo->Fragments.size() == (size_t)ZSize)
+   {
+   }
 //   if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )
 //   {
 //      // we have one frame split into several fragments
@@ -895,9 +915,9 @@ void PixelReadConvert::GrabInformationsFromHeader( File *header )
    if ( HasLUT )
    {
       // Just in case some access to a File element requires disk access.
-      LutRedDescriptor   = header->GetEntry( 0x0028, 0x1101 );
-      LutGreenDescriptor = header->GetEntry( 0x0028, 0x1102 );
-      LutBlueDescriptor  = header->GetEntry( 0x0028, 0x1103 );
+      LutRedDescriptor   = header->GetEntryValue( 0x0028, 0x1101 );
+      LutGreenDescriptor = header->GetEntryValue( 0x0028, 0x1102 );
+      LutBlueDescriptor  = header->GetEntryValue( 0x0028, 0x1103 );
    
       // Depending on the value of Document::MAX_SIZE_LOAD_ELEMENT_VALUE
       // [ refer to invocation of Document::SetMaxSizeLoadEntry() in
