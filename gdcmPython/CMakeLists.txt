@@ -9,6 +9,12 @@ INCLUDE_DIRECTORIES(
 )
 
 #-----------------------------------------------------------------------------
+# Create the gdcmVersion.py file:
+FILE(WRITE ${GDCM_BINARY_DIR}/gdcmVersion.py
+  "gdcmVERSION=\"${GDCM_VERSION_FULL}\""
+  )
+
+#-----------------------------------------------------------------------------
 # SWIG Wrapping
 #
 
