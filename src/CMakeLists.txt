@@ -12,8 +12,8 @@ INCLUDE_DIRECTORIES(
 SET(libgdcm_la_SOURCES
 	gdcmException.cxx
 	gdcmUtil.cxx
+	gdcmParser.cxx
 	gdcmHeader.cxx
-	gdcmHeader2.cxx
 	gdcmHeaderHelper.cxx
 	gdcmHeaderEntry.cxx
 	gdcmDictEntry.cxx
