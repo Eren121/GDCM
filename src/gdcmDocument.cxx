@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 09:34:58 $
-  Version:   $Revision: 1.153 $
+  Date:      $Date: 2005/01/06 09:51:52 $
+  Version:   $Revision: 1.154 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1921,7 +1921,7 @@ bool Document::CheckDocEntryVR(DocEntry *entry, VRKey vr)
          entry->SetVR(vr);
       }
    }
-   else if ( entry->GetVR() != vr ) 
+   else if ( entry->GetVR() != vr )
    {
       // The VR present in the file and the dictionary disagree. We assume
       // the file writer knew best and use the VR of the file. Since it would
@@ -3149,24 +3149,23 @@ int Document::ComputeGroup0002Length( FileType filetype )
       gr = entry->GetGroup();
 
       if (gr == 0x0002)
-         found0002 = true;
-      else 
-         if (found0002 )
-            break;
-         else
-            continue;
-
-      el = entry->GetElement();
-      vr = entry->GetVR();            
- 
-      if (filetype == ExplicitVR) 
       {
-         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
+         found0002 = true;
+
+         el = entry->GetElement();
+         vr = entry->GetVR();            
+ 
+         if (filetype == ExplicitVR) 
          {
-            groupLength +=  4; // explicit VR AND OB, OW, SQ : 4 more bytes
+            if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
+            {
+               groupLength +=  4; // explicit VR AND OB, OW, SQ : 4 more bytes
+            }
          }
+         groupLength += 2 + 2 + 4 + entry->GetLength();   
       }
-      groupLength += 2 + 2 + 4 + entry->GetLength();   
+      else if (found0002 )
+         break;
 
       entry = GetNextEntry();
    }
