@@ -111,19 +111,19 @@ The Photometric Interpretation UID is in the file DICOM Tag field (0028,0004).
 </TR>
 <TR>
    <TD> PALETTE COLOR </TD>
-   <TD> color image description</TD>
+   <TD> pseudo color image description</TD>
 </TR>
 <TR>
    <TD> RGB </TD>
-   <TD> color image description</TD>
+   <TD> true color image description</TD>
 </TR>
 <TR>
    <TD> YBR_FULL </TD>
-   <TD> color image description</TD>
+   <TD> true color image description</TD>
 </TR>
 <TR>
    <TD> YBR_FULL_422 </TD>
-   <TD> color image description</TD>
+   <TD> true color image description</TD>
 </TR>
 </TABLE>
 
@@ -137,7 +137,7 @@ to an even length.
 Gdcm will <B>tolerate</B> an incorrectly formed odd length data field while
 <B>reading</B> (thus not enforcing the standard).
 <BR>
-But gdcm will allways <B>enforce</B> the standard while <B>writing</B>.
+But gdcm will always <B>enforce</B> the standard while <B>writing</B>.
 
 <!##############################################>
 <H2> Note on undefined Value Representations</H2>
@@ -153,10 +153,19 @@ element's VR to be UN (unknown).
 Each time it's possible to assume a 'reasonable' default value for missing
 'mandatory' tag, gdcm does it. <br>
 For instance if the Tag 'Samples Per Pixels' is missing, we assume its value is
-'1' (Grey pixels, as opposite to RGB); if the tag 'High BIt' is missing, we
+'1' (Grey pixels, as opposite to RGB); <br>if the tag 'High Bit' is missing, we
 assume its value is 'Bits stored -1' (i.e. : no bad trick inside the pixels)<br>
 As gdcm wants to read *as well* old ACR-NEMA files, it has to be widely
-tolreant.
+tolerant.
+
+
+<!##############################################>
+<H2> Note 'Value Multiplicity'</H2>
+
+gdcm believes what's written on disc, better than the 'Dicom Dictionary'.<br>
+For instance if the field 'Pixels Spacing' contains a single value -instead of
+the mandatory two, gdcm will suppose both values are equal.
+
 
 <!##############################################>
 <H2>Note on retired and private data elements</H2>
@@ -235,6 +244,27 @@ The Transfer Syntax UID is in the file's DICOM Tag field (0002,0010).
    <TD> 1.2.840.10008.1.2.4.66 </TD>
    <TD> JPEG Lossless, Hierarchical (Process 29) </TD>
 </TR>
+<TR>
+   <TD> 1.2.840.10008.1.2.4.80 </TD>
+   <TD> JPEG-LS Lossless Image Compression </TD>
+</TR>
+<TR>
+   <TD> 1.2.840.10008.1.2.4.81 </TD>
+   <TD> JPEG-LS Lossy (Near-Lossless) Image Compression </TD>
+</TR>
+<TR>
+   <TD> 1.2.840.10008.1.2.4.90 </TD>
+   <TD> JPEG 2000 Image Compression (Lossless Only) </TD>
+</TR>
+<TR>
+   <TD> 1.2.840.10008.1.2.4.91 </TD>
+   <TD> JPEG 2000 Image Compression </TD>
+</TR>
+<TR>
+   <TD> 1.2.840.10008.1.2.4.100 </TD>
+   <TD> MPEG2 Main Profile @ Main Level </TD>
+</TR>
+
 </TABLE>
 
 
