@@ -31,6 +31,7 @@ IF (GDCM_DATA_ROOT)
     #TestCopyDicom.cxx                # includes generated gdcmDataImages.h 
     TestCopyRescaleDicom.cxx         # includes generated gdcmDataImages.h 
     #TestChangeHeader.cxx
+    TestAnonymize.cxx
     TestDirList.cxx
     TestDicomDir.cxx                 # require DICOMDIR
     TestBuildUpDicomDir.cxx          # writes a file named "NewDICOMDIR"
