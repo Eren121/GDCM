@@ -10,28 +10,32 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(libgdcm_la_SOURCES
-	gdcmException.cxx
-	gdcmUtil.cxx
-	gdcmParser.cxx
-	gdcmHeader.cxx
-	gdcmHeaderHelper.cxx
-	gdcmHeaderEntry.cxx
-	gdcmDictEntry.cxx
-	gdcmDict.cxx
-	gdcmDictSet.cxx
-	gdcmFile.cxx
-	gdcmVR.cxx
-	gdcmTS.cxx
-	gdcmJpeg.cxx
-	gdcmJpeg12.cxx
-	gdcmJpeg2000.cxx
-	gdcmRLE.cxx
-	gdcmParse.cxx
 	gdcmDicomDir.cxx
-	gdcmPatient.cxx
-	gdcmStudy.cxx
-	gdcmSequence.cxx
-	gdcmImage.cxx
+	gdcmDicomDirElement.cxx
+	gdcmDict.cxx
+	gdcmDictEntry.cxx
+	gdcmDictSet.cxx
+   gdcmDirList.cxx
+   gdcmException.cxx
+   gdcmFile.cxx
+   gdcmHeader.cxx
+   gdcmHeaderEntry.cxx
+   gdcmHeaderHelper.cxx
+   gdcmImage.cxx
+   gdcmMeta.cxx
+   gdcmJpeg12.cxx
+   gdcmJpeg2000.cxx
+   gdcmJpeg.cxx
+   gdcmObject.cxx
+   gdcmParsePixels.cxx
+   gdcmParser.cxx
+   gdcmPatient.cxx
+   gdcmRLE.cxx
+   gdcmSerie.cxx
+   gdcmStudy.cxx
+   gdcmTS.cxx
+   gdcmUtil.cxx
+   gdcmVR.cxx
 )
 #-----------------------------------------------------------------------------
 # Why one should not use ADD_DEFINITIONS
