@@ -24,10 +24,6 @@ build_bin_dir = "${EXECUTABLE_OUTPUT_PATH}"
 gdcmDictsDir = "${GDCM_SOURCE_DIR}"
 gdcmDictsDir = os.path.join( gdcmDictsDir, "Dicts" )
 
-# You can change this to suit your needs.  However you must make sure
-# that under *nix the libvtk*Python*.so in the specified directory.
-#install_lib_dir = "${CMAKE_INSTALL_PREFIX}/lib/vtk"
-
 def get_libs():
     """Returns a list of libraries to be installed.  """
     libs = []
@@ -45,46 +41,46 @@ def get_libs():
 
     return libs
 
-def get_scripts():
-    """Returns the appropriate gdcm.py python script
-    that is to be installed."""
-    scripts = []
-    if os.name == 'posix':
-        f = os.path.join(build_bin_dir, "gdcm.py")
-        if os.path.exists(f):
-            scripts.append(f)
-    else:
-        win32_bin_dir = build_bin_dir
-        for subdir in ('Debug', 'Release', 'MinSizeRel',
-                       'RelWithDebInfo'):
-            win32_bin_dir = os.path.join(build_bin_dir, subdir)
-            if os.path.exists(win32_bin_dir):
-                break
-        for i in ('vtkpython.exe', 'pvtkpython.exe'):
-            f = os.path.join(os.path.normpath(win32_bin_dir), i)
-            if os.path.exists(f):
-                scripts.append(f)
-    return scripts
+class my_install_data (install_data):
+    def finalize_options (self):
+        """Needed to make this thing work properly."""
+        self.set_undefined_options ('install',
+                                    ('install_lib', 'install_dir'),
+                                    ('root', 'root'),
+                                    ('force', 'force'),
+                                    )
+    def run (self):
+        """Taken shamlessly from VTK source"""
+        self.mkpath(self.install_dir)
+        for f in self.data_files:
+            if type(f) == StringType:
+                # it's a simple file, so copy it
+                f = convert_path(f)
+                if self.warn_dir:
+                    self.warn("setup script did not provide a directory for "
+                              "'%s' -- installing right in '%s'" %
+                              (f, self.install_dir))
+                (out, _) = self.copy_file(f, self.install_dir)
+                self.outfiles.append(out)
+            else:
+                # it's a tuple with path to install to and a list of files
+                dir = convert_path(f[0])
+                if not os.path.isabs(dir):
+                    dir = os.path.join(self.install_dir, dir)
+                elif self.root:
+                    dir = change_root(self.root, dir)
+                self.mkpath(dir)
+                for data in f[1]:
+                    data = convert_path(data)
+                    (out, _) = self.copy_file(data, dir)
+                    self.outfiles.append(out)
+      
+# I should not hardcode 'bin' since user could build in none default path...
+# Well keep finger cross it won't happen :P
 
-
-print get_libs()
-print get_scripts()
-print gdcmDictsDir
-
-"""
-setup(name="Distutils",
-      version="1.0",
-      description="Python Distribution Utilities",
-      author="Greg Ward",
-      author_email="gward@python.net",
-      url="http://www.python.org/sigs/distutils-sig/",
-      packages=['distutils', 'distutils.command'],
-     )
-
-"""
 setup(name             = "gdcmPython",
       version          = "${GDCM_VERSION}",
-      description      = "GNU DiCoM",
+      description      = "Grass Root DiCoM",
       author           = "frog",
       author_email     = "frog@creatis.insa-lyon.fr",
       maintainer       = "GDCM Developers",
@@ -93,12 +89,9 @@ setup(name             = "gdcmPython",
       long_description = "Library dedicated to reading/parsing and writing Dicom files",
       url              = "http://www.creatis.insa-lyon.fr/Public/Gdcm/",
       platforms        = ['Any'],
+      cmdclass          = {'install_data': my_install_data},
       packages         = ['gdcmPython'],
-      #scripts          = get_scripts(),
-      #package_dir      = {'gdcmPython': '.'},
-      #data_files       = [ ('gdcmPython', 'gdcm.pth') ],
+      package_dir      = {'gdcmPython' : 'bin'},
+      data_files       = [ ('gdcmPython', get_libs() ), ('.', ['gdcmPython/gdcm.pth']) ],
      )
-
-      #data_files       = [('gdcmPython', get_libs()), ('gdcmPython', ['gdcm.pth'])]
-      #data_files       = [('Dicts', glob.glob(os.path.join(gdcmDictsDir,"Dicts/*"))) ]
 
