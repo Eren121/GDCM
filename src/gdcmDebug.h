@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:07:07 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/27 11:55:57 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,18 +45,21 @@ namespace gdcm
 class GDCM_EXPORT Debug
 {
 public:
+   Debug();
+   ~Debug();
+
    /// This is a global flag that controls whether any debug, warning
    /// messages are displayed.
    static bool GetDebugFlag ();
    static void SetDebugFlag (bool flag);
-   static void SetDebugOn  () { SetDebugFlag(true); };
+   static void SetDebugOn  () { SetDebugFlag(true);  };
    static void SetDebugOff () { SetDebugFlag(false); };
 
    /// This is a global flag that controls if debug are redirected
    /// to a file or not
    static bool GetDebugToFile ();
    static void SetDebugToFile (bool flag);
-   static void SetDebugToFileOn  () { SetDebugToFile(true); };
+   static void SetDebugToFileOn  () { SetDebugToFile(true);  };
    static void SetDebugToFileOff () { SetDebugToFile(false); };
 
    /// Set the filename the debug stream should be redirect to
@@ -65,7 +68,7 @@ public:
 
    /// Internal use only. Allow us to retrieve the static from anywhere
    /// in gdcm code
-   static std::ofstream & GetDebugFile ();
+   static std::ofstream &GetDebugFile ();
 };
 
 } // end namespace gdcm
