@@ -9,7 +9,7 @@
 #include "gdcmDataImages.h"
 
 typedef std::string EntryValueType;   // same type as ValEntry::value
-typedef std::map< TagKey, EntryValueType > MapEntryValues;
+typedef std::map< gdcm::TagKey, EntryValueType > MapEntryValues;
 typedef MapEntryValues* MapEntryValuesPtr;
 typedef std::string FileNameType;
 typedef std::map< FileNameType, MapEntryValuesPtr > MapFileValuesType;
@@ -533,7 +533,7 @@ void ReferenceFileParser::ParseRegularLine( std::string& line)
 bool ReferenceFileParser::SecondPassReferenceFile()
    throw ( ParserException )
 {
-   TagKey key;
+   gdcm::TagKey key;
    EntryValueType value;
    std::string line;
    bool inBlock = false;

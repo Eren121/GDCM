@@ -6,5 +6,5 @@ int TestTS(int , char *[])
    // There should be 150 entries
    ts.Print( std::cout );
 
-   return ts.GetValue( "" ) != GDCM_UNFOUND;
+   return ts.GetValue( "" ) != gdcm::GDCM_UNFOUND;
 }
