@@ -11,7 +11,7 @@
         on the libido specificities which are handled through class 
         inheritance.
       * Test/implicit_vr.dcm dicom v3 in implicit value representation
-        added.
+        added. 
 
 2002-10-17 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Truckload of changes. Parsing of header is barely functional
