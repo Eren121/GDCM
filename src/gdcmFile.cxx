@@ -449,7 +449,11 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          return lgrTotale; 
       }
       int planConf=GetPlanarConfiguration();
- 
+
+      // Whatever Planar Configuration is, "PALETTE COLOR " implies that we deal with the palette. 
+      if (str_PhotometricInterpretation == "PALETTE COLOR ")
+         planConf=2;
+
       switch (planConf) {
       case 0:                              
          //       Pixels are already RGB
@@ -559,21 +563,26 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
             unsigned char * x = newDest;
 
-               int j;
+            int j;
                // See PS 3.3-2003 C.11.1.1.2 p 619
                // 
-               int mult;
-               if ( GetLUTNbits()==16 && nb==8) mult=2; // See PS 3.3 
-               else mult=1;
-       
-               for (int i=0;i<l; i++) {
-                  j=newDest[i]*mult;
-                  *a++ = lutR[j]; 
-                  *a++ = lutG[j];
-                  *a++ = lutB[j];
-               }
+            int mult;
+            if ( GetLUTNbits()==16 && nb==8) mult=2; // See PS 3.3 
+            else mult=1;
 
-               free(newDest);
+            // if we get a black image, let's just remove the '+1'
+            // and check again 
+            // if it works, we shall have to check the 3 Palettes
+            // to see which byte is ==0 (first one, on second one)        
+       
+            for (int i=0;i<l; i++) {
+               j=newDest[i]*mult +1;
+               *a++ = lutR[j]; 
+               *a++ = lutG[j];
+               *a++ = lutB[j];
+            }
+
+            free(newDest);
         
                // now, it's an RGB image      
            std::string spp = "3";
