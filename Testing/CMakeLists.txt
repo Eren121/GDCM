@@ -80,6 +80,8 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   FILE(GLOB GDCM_DATA_IMAGES_GLOB
     "${GDCM_DATA_ROOT}/*.acr"
     "${GDCM_DATA_ROOT}/*.dcm"
+#    "${GDCM_DATA_ROOT}/*.nema"
+    "${GDCM_DATA_ROOT}/*.ima"
     )
 ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
   # Since there is a bug in cmake 1.8.3, I'll have to do two separate globs
@@ -89,20 +91,28 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   FILE(GLOB GDCM_DATA_IMAGES_GLOB_DCM
     "${GDCM_DATA_ROOT}/*.dcm"
     )
-  SET(GDCM_DATA_IMAGES_GLOB ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR})
+  FILE(GLOB GDCM_DATA_IMAGES_GLOB_NEMA
+#    "${GDCM_DATA_ROOT}/*.nema"
+    )
+  FILE(GLOB GDCM_DATA_IMAGES_GLOB_IMA
+    "${GDCM_DATA_ROOT}/*.ima"
+    )
+  SET(GDCM_DATA_IMAGES_GLOB 
+    ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR}
+    ${GDCM_DATA_IMAGES_GLOB_NEMA} ${GDCM_DATA_IMAGES_GLOB_IMA})
   #SET(GDCM_DATA_IMAGES_GLOB  ${GDCM_DATA_IMAGES_GLOB_ACR})
 ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
-  "gdcm-JPEG-LossLessThoravision.dcm"
-  "cr172241.dcm"  #temporarily remove as it kills my gnome session (but not kde)
-  "emptyImage.dcm"  #the png looks ugly...
-  "gdcm-MR-PHILIPS-16-Multi-Seq.fixed.dcm" weird looks exactly the same as gdcm-MR-PHILIPS-16-Multi-Seq.dcm
-  "gdcm-MR-PHILIPS-16.dcm" png looks ugly
-  "irmPhlipsNew1.dcm" png looks ugly
-  "mriThruVPRO.dcm"   png looks ugly
-  "US.3405.1.dcm" looks exactly the same as US.1.2.dcm
+  "gdcm-JPEG-LossLessThoravision.dcm" # serial killer
+  "cr172241.dcm"           #temporarily remove as it kills my gnome session (but not kde)
+  "emptyImage.dcm"         #the png looks ugly...
+  "gdcm-MR-PHILIPS-16-Multi-Seq.fixed.dcm" #weird looks exactly the same as gdcm-MR-PHILIPS-16-Multi-Seq.dcm
+  "gdcm-MR-PHILIPS-16.dcm" #png looks ugly
+  "irmPhlipsNew1.dcm"      #png looks ugly
+  "mriThruVPRO.dcm"        #png looks ugly
+  "US.3405.1.dcm"          #looks exactly the same as US.1.2.dcm
   )
 
 #   gdcm-ACR-LibIDO seems to be cut
