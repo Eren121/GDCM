@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 10:59:52 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/01/18 07:53:42 $
+  Version:   $Revision: 1.48 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,7 @@ public:
    DicomDirMeta* GetDicomDirMeta() { return MetaElems; };
 
    // should avoid exposing internal mechanism
-   void InitTraversal();
+   DicomDirPatient *GetFirstEntry();
    DicomDirPatient *GetNextEntry();
 
    /// Parsing

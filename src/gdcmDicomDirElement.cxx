@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/01/18 07:53:42 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,7 +76,6 @@ DicomDirElement::DicomDirElement()
 }
 
 /**
- * \ingroup DicomDirElement
  * \brief   canonical destructor 
  */
 DicomDirElement::~DicomDirElement()
@@ -91,7 +90,6 @@ DicomDirElement::~DicomDirElement()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup DicomDirElement
  * \brief   Print all
  * \todo add a 'Print Level' check 
  * @param   os The output stream to be written to.
@@ -144,6 +142,11 @@ void DicomDirElement::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 
+/**
+ * \brief AddNewEntry 
+ * @param  type type
+ * @param elem elem
+ */
 bool DicomDirElement::AddNewEntry(std::string const &type, 
                                   Element const &elem)
 {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/18 07:49:41 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,11 +69,7 @@ public:
   // EntryNamesList *GetDictEntryNames();
   // EntryNamesByCatMap *GetDictEntryNamesByCategory();
 
-   /// \brief  Returns a ref to the Dicom Dictionary H table (map)
-   /// @return the Dicom Dictionary H table
-   //const TagKeyHT & GetEntries() const { return KeyHt; }
-
-   void InitTraversal();
+   DictEntry *GetFirstEntry();
    DictEntry *GetNextEntry();
 
 private:

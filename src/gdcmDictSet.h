@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 10:56:50 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/18 07:50:58 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ public:
 
    static std::string BuildDictPath();
 
-   void InitTraversal();
+   Dict *GetFirstEntry();
    Dict *GetNextEntry();
 
 protected:

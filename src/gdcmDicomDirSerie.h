@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 10:59:52 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/01/18 07:53:42 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,15 +40,12 @@ public:
 
    void Print( std::ostream &os = std::cout, std::string const & indent = "" );
    void WriteContent( std::ofstream *fp, FileType t );
-
-    // TODO Remove GetDicomDirImages
-    // use InitTraversal + GetNextEntry instead.
  
    /// Returns the IMAGE chained List for this SERIE.
    ListDicomDirImage const &GetDicomDirImages() const { return Images; };
 
    // should avoid exposing internal mechanism
-   void InitTraversal();
+   DicomDirImage *GetFirstEntry();
    DicomDirImage *GetNextEntry();
         
    /// adds the passed IMAGE to the IMAGE chained List for this SERIE.    

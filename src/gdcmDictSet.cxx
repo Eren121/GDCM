@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 10:56:50 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/01/18 07:50:58 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,6 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /** 
- * \ingroup DictSet
  * \brief   The Dictionary Set obtained with this constructor simply
  *          contains the Default Public dictionary.
  */
@@ -40,7 +39,6 @@ DictSet::DictSet()
 }
 
 /**
- * \ingroup DictSet
  * \brief  Destructor 
  */
 DictSet::~DictSet() 
@@ -64,7 +62,6 @@ DictSet::~DictSet()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup DictSet
  * \brief   Print, in an informal fashion, the list of all the dictionaries
  *          contained is this DictSet, along with their respective content.
  * @param   os Output stream used for printing.
@@ -81,7 +78,6 @@ void DictSet::Print(std::ostream &os, std::string const & )
 //-----------------------------------------------------------------------------
 // Public
 /** 
- * \ingroup DictSet
  * \brief   Consider all the entries of the public dicom dictionary. 
  *          Build all list of all the tag names of all those entries.
  * \sa DictSet::GetPubDictTagNamesByCategory
@@ -96,7 +92,6 @@ void DictSet::Print(std::ostream &os, std::string const & )
 //}
 
 /** 
- * \ingroup DictSet
  * \brief   
  *          - Consider all the entries of the public dicom dictionary.
  *          - Build an hashtable whose keys are the names of the groups
@@ -133,7 +128,6 @@ void DictSet::Print(std::ostream &os, std::string const & )
 //}
 
 /**
- * \ingroup DictSet
  * \brief   Loads a dictionary from a specified file, and add it
  *          to already the existing ones contained in this DictSet.
  * @param   filename Absolute or relative filename containing the
@@ -151,7 +145,6 @@ Dict *DictSet::LoadDictFromFile(std::string const & filename,
 }
 
 /**
- * \ingroup DictSet
  * \brief   Retrieve the specified dictionary (when existing) from this
  *          DictSet.
  * @param   dictName The symbolic name of the searched dictionary.
@@ -232,15 +225,18 @@ std::string DictSet::BuildDictPath()
 
 
 /**
- * \brief   Initialise the visit of the Hash table (DictSetHT)
+ * \brief   Get the first entry while visiting the DictSet
+ * \return  The first Dict if found, otherwhise NULL
  */
-void DictSet::InitTraversal()
+Dict *DictSet::GetFirstEntry()
 {
    ItDictHt = Dicts.begin();
+   return ItDictHt->second;
 }
 
 /**
  * \brief   Get the next entry while visiting the Hash table (DictSetHT)
+ * \note : meaningfull only if GetFirstEntry already called
  * \return  The next Dict if found, otherwhise NULL
  */
 Dict *DictSet::GetNextEntry()
@@ -260,6 +256,11 @@ Dict *DictSet::GetNextEntry()
 
 //-----------------------------------------------------------------------------
 // Protected
+
+/**
+ * \brief   Adds a Dictionary to a DictSet
+ * \return  always true
+ */
 bool DictSet::AppendDict(Dict *newDict, DictKey const &name)
 {
    Dicts[name] = newDict;

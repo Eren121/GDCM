@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/01/18 07:53:42 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,6 @@ namespace gdcm
 // Constructor / Destructor
 
 /**
- * \ingroup DicomDirMeta
  * \brief  Constructor
  */ 
 DicomDirMeta::DicomDirMeta():
@@ -36,7 +35,6 @@ DicomDirMeta::DicomDirMeta():
 }
 
 /**
- * \ingroup DicomDirMeta
  * \brief   Canonical destructor.
  */
 DicomDirMeta::~DicomDirMeta() 
@@ -47,6 +45,7 @@ DicomDirMeta::~DicomDirMeta()
 // Print
 /**
  * \brief   Prints the Meta Elements
+ * @param os ostream to write to 
  */ 
 void DicomDirMeta::Print(std::ostream &os, std::string const & )
 {
@@ -69,6 +68,8 @@ void DicomDirMeta::Print(std::ostream &os, std::string const & )
 
 /**
  * \brief   Writes the Meta Elements
+ * @param fp ofstream to write to
+ * @param t File Type 
  * @return
  */ 
 void DicomDirMeta::WriteContent(std::ofstream *fp, FileType t)

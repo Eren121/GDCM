@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 10:59:52 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/01/18 07:53:42 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,15 +103,18 @@ DicomDirStudy* DicomDirPatient::NewStudy()
 }   
 
 /**
- * \brief   Initialise the visit of the DicomDirPatients
- */
-void DicomDirPatient::InitTraversal()
+ * \brief   Get the first entry while visiting the DicomDirStudy
+ * \return  The first DicomDirStudy if found, otherwhise NULL
+ */ 
+DicomDirStudy *DicomDirPatient::GetFirstEntry()
 {
    ItDicomDirStudy = Studies.begin();
+   return *ItDicomDirStudy;
 }
 
 /**
  * \brief   Get the next entry while visiting the DicomDirStudies
+ * \note : meaningfull only if GetFirstEntry already called
  * \return  The next DicomDirStudies if found, otherwhise NULL
  */
 DicomDirStudy *DicomDirPatient::GetNextEntry()

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 10:59:52 $
-  Version:   $Revision: 1.103 $
+  Date:      $Date: 2005/01/18 07:53:41 $
+  Version:   $Revision: 1.104 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,6 @@ namespace gdcm
 // Constructor / Destructor
 
 /**
- * \ingroup DicomDir
  * \brief   Constructor : creates an empty DicomDir
  */
 DicomDir::DicomDir()
@@ -234,7 +233,6 @@ void DicomDir::Initialize()
 
 
 /**
- * \ingroup DicomDir
  * \brief  fills the whole structure, starting from a root Directory
  */
 void DicomDir::ParseDirectory()
@@ -244,7 +242,6 @@ void DicomDir::ParseDirectory()
 }
 
 /**
- * \ingroup DicomDir
  * \brief   Set the start method to call when the parsing of the
  *          directory starts.
  * @param   method Method to call
@@ -266,7 +263,6 @@ void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg,
 }
 
 /**
- * \ingroup DicomDir
  * \brief   Set the method to delete the argument
  *          The argument is destroyed when the method is changed or when the
  *          class is destroyed
@@ -278,7 +274,6 @@ void DicomDir::SetStartMethodArgDelete( DicomDir::Method *method )
 }
 
 /**
- * \ingroup DicomDir
  * \brief   Set the progress method to call when the parsing of the
  *          directory progress
  * @param   method Method to call
@@ -300,7 +295,6 @@ void DicomDir::SetProgressMethod( DicomDir::Method *method, void *arg,
 }
 
 /**
- * \ingroup DicomDir
  * \brief   Set the method to delete the argument
  *          The argument is destroyed when the method is changed or when the 
  *          class is destroyed          
@@ -312,7 +306,6 @@ void DicomDir::SetProgressMethodArgDelete( DicomDir::Method *method )
 }
 
 /**
- * \ingroup DicomDir
  * \brief   Set the end method to call when the parsing of the directory ends
  * @param   method Method to call
  * @param   arg    Argument to pass to the method
@@ -333,7 +326,6 @@ void DicomDir::SetEndMethod( DicomDir::Method *method, void *arg,
 }
 
 /**
- * \ingroup DicomDir
  * \brief   Set the method to delete the argument
  *          The argument is destroyed when the method is changed or when
  *          the class is destroyed
@@ -345,7 +337,6 @@ void DicomDir::SetEndMethodArgDelete( DicomDir::Method *method )
 }
 
 /**
- * \ingroup DicomDir
  * \brief    writes on disc a DICOMDIR
  * \ warning does NOT add the missing elements in the header :
  *           it's up to the user doing it !
@@ -407,7 +398,6 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
 // Protected
 
 /**
- * \ingroup DicomDir
  * \brief create a Document-like chained list from a root Directory 
  * @param path entry point of the tree-like structure
  */
@@ -468,7 +458,6 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
 }
 
 /**
- * \ingroup DicomDir
  * \brief   adds *the* Meta to a partially created DICOMDIR
  */
   
@@ -685,7 +674,6 @@ void DicomDir::CallStartMethod()
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DicomDir
  * \brief   CallProgressMethod
  */
 void DicomDir::CallProgressMethod()
@@ -698,7 +686,6 @@ void DicomDir::CallProgressMethod()
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DicomDir
  * \brief   CallEndMethod
  */
 void DicomDir::CallEndMethod()
@@ -713,7 +700,6 @@ void DicomDir::CallEndMethod()
 //-----------------------------------------------------------------------------
 // Private
 /**
- * \ingroup DicomDir
  * \brief create a 'DicomDir' from a DICOMDIR Header 
  */
 void DicomDir::CreateDicomDir()
@@ -796,7 +782,6 @@ void DicomDir::CreateDicomDir()
 }
 
 /**
- * \ingroup DicomDir
  * \brief Well ... there is only one occurence  
  */
 bool DicomDir::AddDicomDirMeta()
@@ -810,7 +795,6 @@ bool DicomDir::AddDicomDirMeta()
 }
 
 /**
- * \ingroup DicomDir
  * \brief  AddDicomDirPatientToEnd 
  * @param   dd SQ Item to enqueue to the DicomPatient chained List
  */
@@ -821,7 +805,6 @@ bool DicomDir::AddDicomDirPatientToEnd(DicomDirPatient *dd)
 }
 
 /**
- * \ingroup DicomDir
  * \brief  AddDicomDirStudyToEnd 
  * @param   dd SQ Item to enqueue to the DicomDirStudy chained List
  */
@@ -838,7 +821,6 @@ bool DicomDir::AddDicomDirStudyToEnd(DicomDirStudy *dd)
 }
 
 /**
- * \ingroup DicomDir
  * \brief  AddDicomDirSerieToEnd 
  * @param   dd SQ Item to enqueue to the DicomDirSerie chained List
  */
@@ -862,7 +844,6 @@ bool DicomDir::AddDicomDirSerieToEnd(DicomDirSerie *dd)
 }
 
 /**
- * \ingroup DicomDir
  * \brief   AddDicomDirImageToEnd
  * @param   dd SQ Item to enqueue to the DicomDirImage chained List
  */
@@ -892,7 +873,6 @@ bool DicomDir::AddDicomDirImageToEnd(DicomDirImage *dd)
 }
 
 /**
- * \ingroup DicomDir
  * \brief  for each Header of the chained list, add/update the Patient/Study/Serie/Image info 
  * @param   path path of the root directory
  * @param   list chained list of Headers
@@ -958,7 +938,6 @@ void DicomDir::SetElements(std::string const & path, VectDocument const &list)
 }
 
 /**
- * \ingroup DicomDir
  * \brief   Move the content of the src SQItem to the dst SQItem
  *          Only DocEntry's are moved
  * 
@@ -980,7 +959,6 @@ void DicomDir::MoveSQItem(SQItem *dst,SQItem *src)
 }
 
 /**
- * \ingroup DicomDir
  * \brief   compares two dgcmHeaders
  */
 bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
@@ -988,16 +966,20 @@ bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
    return *header1 < *header2;
 }
 
+
 /**
- * \brief   Initialise the visit of the DicomDirPatients of the DicomDir
- */
-void DicomDir::InitTraversal()
+ * \brief   Get the first entry while visiting the DicomDirPatients
+ * \return  The next DicomDirPatient if found, otherwhise NULL
+ */ 
+DicomDirPatient *DicomDir::GetFirstEntry()
 {
    ItDicomDirPatient = Patients.begin();
+   return *ItDicomDirPatient;
 }
 
 /**
  * \brief   Get the next entry while visiting the DicomDirPatients
+ * \note : meaningfull only if GetFirstEntry already called
  * \return  The next DicomDirPatient if found, otherwhise NULL
  */
 DicomDirPatient *DicomDir::GetNextEntry()

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:13:21 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/01/18 07:49:41 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,7 +114,6 @@ void Dict::Print(std::ostream &os, std::string const & )
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup Dict
  * \brief   Remove all Dicom Dictionary Entries
  */
 void Dict::ClearEntry()
@@ -125,7 +124,6 @@ void Dict::ClearEntry()
 }
 
 /**
- * \ingroup Dict
  * \brief  adds a new Dicom Dictionary Entry 
  * @param   newEntry entry to add 
  * @return  false if Dicom Element already exists
@@ -147,7 +145,6 @@ bool Dict::AddNewEntry(DictEntry const &newEntry)
 }
 
 /**
- * \ingroup Dict
  * \brief  replaces an already existing Dicom Element by a new one
  * @param   newEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
@@ -163,7 +160,6 @@ bool Dict::ReplaceEntry(DictEntry const &newEntry)
 }
 
 /**
- * \ingroup Dict
  * \brief  removes an already existing Dicom Dictionary Entry,
  *         identified by its Tag
  * @param   key (group|element)
@@ -236,7 +232,6 @@ DictEntry *Dict::GetDictEntry(uint16_t group, uint16_t elem)
 //}
 
 /** 
- * \ingroup Dict
  * \brief   Consider all the entries of the public dicom dictionary.
  *          Build an hashtable whose keys are the names of the groups
  *          (fourth field in each line of dictionary) and whose corresponding
@@ -275,15 +270,18 @@ DictEntry *Dict::GetDictEntry(uint16_t group, uint16_t elem)
 //}
 
 /**
- * \brief   Initialise the visit of the Hash table (KeyHt)
+ * \brief   Get the first entry while visiting the Dict entries
+ * \return  The first DicEntry if found, otherwhise NULL
  */
-void Dict::InitTraversal()
+DictEntry *Dict::GetFirstEntry()
 {
    ItKeyHt = KeyHt.begin();
+   return &(ItKeyHt->second);
 }
 
 /**
  * \brief   Get the next entry while visiting the Hash table (KeyHt)
+ * \note : meaningfull only if GetFirstEntry already called
  * \return  The next DictEntry if found, otherwhise NULL
  */
 DictEntry *Dict::GetNextEntry()

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 10:59:52 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/18 07:53:42 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,6 @@ DicomDirStudy::DicomDirStudy():
 {
 }
 /**
- * \ingroup DicomDirStudy
  * \brief   Canonical destructor.
  */
 DicomDirStudy::~DicomDirStudy() 
@@ -104,17 +103,20 @@ DicomDirSerie *DicomDirStudy::NewSerie()
    return st;  
 } 
 
-/**
- * \brief   Initialise the visit of the Series
+ /**
+ * \brief   Get the first entry while visiting the DicomDirSeries
+ * \return  The first DicomDirSerie if found, otherwhise NULL
  */
-void DicomDirStudy::InitTraversal()
+DicomDirSerie *DicomDirStudy::GetFirstEntry()
 {
    ItDicomDirSerie = Series.begin();
+   return *ItDicomDirSerie;
 }
 
 /**
  * \brief   Get the next entry while visiting the DicomDirSeries
- * \return  The next DicomDirSeries if found, otherwhise NULL
+ * \note : meaningfull only if GetFirstEntry already called
+ * \return  The next DicomDirSerie if found, otherwhise NULL
  */
 DicomDirSerie *DicomDirStudy::GetNextEntry()
 {

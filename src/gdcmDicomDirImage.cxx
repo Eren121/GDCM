@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/18 07:53:42 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,6 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup DicomDirImage
  * \brief  Constructor 
  */
 DicomDirImage::DicomDirImage():
@@ -32,7 +31,6 @@ DicomDirImage::DicomDirImage():
 {
 }
 /**
- * \ingroup DicomDirImage
  * \brief   Canonical destructor.
  */
 DicomDirImage::~DicomDirImage() 
@@ -42,8 +40,8 @@ DicomDirImage::~DicomDirImage()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup DicomDirImage
  * \brief   Prints the Object
+ * @param os ostream to write to
  * @return
  */ 
 void DicomDirImage::Print(std::ostream &os, std::string const & )
