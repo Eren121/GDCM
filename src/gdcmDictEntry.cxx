@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 12:29:17 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/07 16:07:01 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,6 +83,24 @@ void DictEntry::SetVR(TagName const &vr)
    }
 }
 
+//-----------------------------------------------------------------------------
+/**
+ * \brief       If-and only if-the V(alue) M(ultiplicity)
+ * \            is unset then overwrite it.
+ * @param vr    New V(alue) M(ultiplicity) to be set.
+ */
+void DictEntry::SetVM(TagName const &vm) 
+{
+   if ( IsVMUnknown() )
+   {
+      VR = vr;
+   }
+   else 
+   {
+      dbg.Error(true, "DictEntry::SetVM",
+                       "Overwriting VM might compromise a dictionary");
+   }
+}
 //-----------------------------------------------------------------------------
 // Protected
 
