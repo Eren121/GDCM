@@ -1,8 +1,14 @@
 GetPubElValByNumber doit faire la difference entre chaine vide 
 et chaine pas touve''. Eventuellement raiser une exception ?
 
-gdcmHeader::_IdDcmRecupLgr : le d'elements dans la table de type DICOM_VR
-  est hard code' (a 26). FIX ME.
+gdcmHeader::ReadNextElement: retarder le stockage en mem des gros elements
+ * etablir une taille limite sur les elements a ramener en memoire
+   (parametrisable en public dans la classe)
+ * ne pas ramener les elements au dela de ce seuil, mais les flaguer
+   comme a charger plus tard
+ * a l'acces (pour le groupe des pixels par exemple) retourner au fichier
+   pour trouver la bonne valeur (GetPixelData).
+   
 
 grep str2num *.c: c'est une macro sans doute proprifiable
 

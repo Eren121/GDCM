@@ -9,12 +9,58 @@ extern "C" {
 #else
 #include <netinet/in.h>
 #endif
+#include <map>
 
 #define LGR_ENTETE_A_LIRE 256 // on ne lit plus que le debut
 #define DEBUG 1
 
 //FIXME: this looks dirty to me...
 #define str2num(str, typeNum) *((typeNum *)(str))
+
+VRHT * gdcmHeader::dicom_vr = (VRHT*)0;
+
+gdcmHeader::gdcmHeader () {
+	if (!gdcmHeader::dicom_vr)
+		InitVRDict();
+	bool grPixelTrouve = false;
+	PixelPosition = (size_t)0;
+	PixelsTrouves = false;
+}
+
+void gdcmHeader::InitVRDict (void) {
+	if (dicom_vr && DEBUG) {
+		printf ("InitVRDict : VR dictionary allready set\n");
+		return;
+	}
+	VRHT *vr = new VRHT;
+	(*vr)["AE"] = "Application Entity";       // 16 car max
+	(*vr)["AS"] = "Age String";               // 4 car fixe
+	(*vr)["AT"] = "Attribute Tag";            // 2 unsigned short int
+	(*vr)["CS"] = "Code String";              // 16 car max
+	(*vr)["DA"] = "Date";                     // 8 car fixe
+	(*vr)["DS"] = "Decimal String";           // Decimal codé Binaire 16 max
+	(*vr)["DT"] = "Date Time";                // 26 car max
+	(*vr)["FL"] = "Floating Point Single";    // 4 octets IEEE 754:1985
+	(*vr)["FD"] = "Floating Point Double";    // 8 octets IEEE 754:1985
+	(*vr)["IS"] = "Integer String";           // en format externe 12 max
+	(*vr)["LO"] = "Long String";              // 64 octets max
+	(*vr)["LT"] = "Long Text";                // 10240 max
+	(*vr)["OB"] = "Other Byte String";
+	(*vr)["OW"] = "Other Word String";
+	(*vr)["PN"] = "Person Name";
+	(*vr)["SH"] = "Short String";             // 16 car max
+	(*vr)["SL"] = "Signed Long";
+	(*vr)["SQ"] = "Sequence of Items";        // Not Applicable
+	(*vr)["SS"] = "Signed Short";             // 2 octets
+	(*vr)["ST"] = "Short Text";               // 1024 car max
+	(*vr)["TM"] = "Time";                     // 16 car max
+	(*vr)["UI"] = "Unique Identifier";        // 64 car max
+	(*vr)["UN"] = "Unknown";
+	(*vr)["UT"] = "Unlimited Text";           //  2 puissance 32 -1 car max
+	(*vr)["UL"] = "Unsigned Long ";           // 4 octets fixe
+	(*vr)["US"] = "Unsigned Short ";          // 2 octets fixe
+   dicom_vr = vr;	
+}
 
 /**
  * \ingroup gdcmHeader
@@ -208,11 +254,12 @@ void gdcmHeader::setAcrLibido() {
 
 // FIXME sw n'est plus un argument necessaire
 long int gdcmHeader::RecupLgr(
-	_ID_DCM_ELEM *pleCourant, int sw, int *skippedLength, int *longueurLue)
+	ElValue *pleCourant,
+  	int *skippedLength)
 {
 	guint32 l_gr; 
 	unsigned short int l_gr_2;
-	int i, trouve;
+	int i;
 	char VR[5];
 	int lgrLue;
 	
@@ -226,19 +273,20 @@ long int gdcmHeader::RecupLgr(
 		lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
 		VR[2]=0;
 		
-		// ATTENTION :
-		// Ce n'est pas parce qu'on a trouve UL la premiere fois qu'on respecte 
-		// Explicit VR tout le temps (cf e=film ...)
-		
-		for(i=0,trouve=0;i<nbCode;i++) {
-			if(memcmp(_ID_dicom_vr[i].dicom_VR,VR,(size_t)2)==0) {
-				(pleCourant)->VR=_ID_dicom_vr[i].dicom_VR;
-				trouve=1;
-				break;
-			}
-		}
-		
-		if ( trouve == 0) {
+		// Warning: we believe this is explicit VR (Value Representation) because
+		// we used a heuristic that found "UL" in the first tag. Alas this
+		// doesn't guarantee that all the tags will be in explicit VR. In some
+		// cases (see e-film filtered files) one finds implicit VR tags mixed
+		// within an explicit VR file. Hence we make sure the present tag
+		// is in explicit VR and try to fix things if it happens not to be
+		// the case.
+
+		// FIXME There should be only one occurence returned. Avoid the
+		// first extraction by calling proper method.
+		VRAtr FoundVR = dicom_vr->find(string(VR))->first;
+		if (FoundVR.empty()) {
+			pleCourant->SetVR(FoundVR);
+		} else {
 			
 			// On est mal : implicit VR repere
 			// mais ce n'est pas un code connu ...
@@ -255,7 +303,7 @@ long int gdcmHeader::RecupLgr(
 			if(DEBUG)
 				printf("IdDcmRecupLgr : lgr deduite : %08x , %d\n",l_gr,l_gr);
 			
-			*longueurLue=l_gr;
+			pleCourant->SetLgrLue(l_gr);
 			if ( (int)l_gr == -1)
 				l_gr=0;
 			 
@@ -291,9 +339,9 @@ long int gdcmHeader::RecupLgr(
 			//on lit la lgr sur DEUX octets
 			lgrLue=fread (&l_gr_2, (size_t)2,(size_t)1, fp);
 			
-			if(sw) l_gr_2 = _IdDcmSWAP_SHORT((unsigned short)l_gr_2,sw);
+			if(sw) l_gr_2 = SWAP_SHORT((unsigned short)l_gr_2);
 			
-			*longueurLue=l_gr_2;
+			pleCourant->SetLgrLue(l_gr_2);
 			
 			
 			if ( l_gr_2 == 0xffff) {
@@ -313,7 +361,7 @@ long int gdcmHeader::RecupLgr(
 		*skippedLength = 4;
 	}
 	
-	*longueurLue=l_gr;
+	pleCourant->SetLgrLue(l_gr);
 	
 	// Traitement des curiosites sur la longueur
 	
@@ -336,7 +384,6 @@ long int gdcmHeader::RecupLgr(
 
  * @return  longueur retenue pour le champ 
  */
-
 guint32 gdcmHeader::SWAP_LONG(guint32 a) {
 	// FIXME: il pourrait y avoir un pb pour les entiers negatifs ...
 	switch (sw) {
@@ -357,4 +404,274 @@ guint32 gdcmHeader::SWAP_LONG(guint32 a) {
 		a=0;
 	}
 	return(a);
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   remet les octets dans un ordre compatible avec celui du processeur
+
+ * @return  longueur retenue pour le champ 
+ */
+short int gdcmHeader::SWAP_SHORT(short int a) {
+	if ( (sw==4321)  || (sw==2143) )
+		a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
+	return (a);
+}
+
+/**
+ * \ingroup       gdcmHeader
+ * \brief         lit le dicom_element suivant.
+ *			(le fichier doit deja avoir ete ouvert,
+ *			 _IdAcrCheckSwap(ID_DCM_HDR *e) avoir ete appele)
+ * @param e      ID_DCM_HDR  dans lequel effectuer la recherche.
+ * @param sw    	code swap.
+ * @return        	En cas de succes, 1 
+ *               	0 en cas d'echec.
+ */
+
+ElValue * gdcmHeader::ReadNextElement(void) {
+	unsigned short g;
+	unsigned short n;
+	guint32 l;
+	long int posFich;
+	int skL;
+	size_t lgrLue;
+	//CLEANME DICOM_ELEMENTS *t;
+	ElValue * nouvDcmElem;
+	
+	if (DEBUG) printf(" ===> entree ds _IdDcmReadNextElement\n");
+		
+	// FIXME la probabilte pour depasser sans s'en rendre compte
+	// est grande avec le test d'egalite' suivant !
+	if(offsetCourant == taille_fich) { // On a atteint la fin du fichier
+		if (DEBUG) printf(" On a atteint la fin du fichier\n");
+		return(NULL);
+	} else {
+		if (DEBUG) {
+			posFich = ftell(fp);
+			printf("lgrFich %f positionDsFich %f offset courant %f\n", 
+			(float)taille_fich,
+			(float)posFich,
+			(float)offsetCourant);
+		}
+	} 
+	
+	// ------------------------- Lecture Num group : g
+	lgrLue=fread (&g, (size_t)2,(size_t)1, fp);
+	
+	if (feof(fp))  {
+		if (DEBUG) printf("_IdDcmReadNextElement : eof trouve\n");
+		return (NULL);
+	}
+	if (ferror(fp)){
+		if (DEBUG) printf(" IdDcmReadNextElement : echec lecture NumGr\n");
+		return (NULL);
+	}
+	
+	if (DEBUG) printf("_IdDcmReadNextElement : gr  %04x\n",g );
+	
+	if (sw) g= SWAP_SHORT(((short)g));
+	
+	//CLEANME nouvDcmElem->Gr=g;
+	//FIXME this might be usefull for detecting at parse time that
+	//something is screwy in the file
+	//e->__NumeroGroupePrecedent =g;
+	
+
+	// ------------------------- Lecture Num Elem : n
+	lgrLue=fread (&n, (size_t)2,(size_t)1, fp);
+	
+	if (feof(fp))  {
+		if (DEBUG) printf("_IdDcmReadNextElement : eof trouve\n");
+		return (NULL);
+	}
+	if (ferror(fp)){
+		if (DEBUG) printf(" IdDcmReadNextElement : echec lecture NumElem\n");
+		return (NULL);
+	}
+	
+	if (DEBUG) printf("_IdDcmReadNextElement :  num %04x\n",n );
+	
+	if(sw) n= SWAP_SHORT(((short)n));
+	//CLEANMEnouvDcmElem->Num=n;
+
+	// Find out if the tag we encountered is in the dictionaries:
+	DictEntry * NewTag = IsInDicts(g, n);
+	if (!NewTag)
+		NewTag = new DictEntry(g, n, "Unknown", "Unknown");
+
+	nouvDcmElem = new ElValue(NewTag);
+	if (!nouvDcmElem) {
+		printf("Echec alloc ElValue *nouvDcmElem\n");
+		return(NULL);
+	}
+
+	// ------------------------- Lecture longueur element : l
+	
+	l = RecupLgr(nouvDcmElem, &skL);
+	
+	if(g==0xfffe) l=0;  // pour sauter les indicateurs de 'SQ'
+	
+	nouvDcmElem->LgrElem=l;
+	
+	if (DEBUG)
+		if (n!=0)
+			printf("_IdDcmReadNextElement : "
+			       " gr %04x\tnum %04x\tlong %08x (%d)\n", g,n,l,l);
+
+	// ------------------------- Lecture Valeur element 
+	
+	// FIXME The exact size should be l if we move to strings or whatever
+	// CLEAN ME NEWValue used to be nouvDcmElem->valeurElem
+	char* NewValue = (char*)g_malloc(l+1);
+	if(NewValue) {
+		NewValue[l]= 0;
+	} else {
+		if (DEBUG)
+			 printf(" IdDcmReadNextElement : echec Alloc valeurElem lgr : %d\n",l);
+		return (NULL);
+	}
+	
+	// FIXME les elements trop long (seuil a fixer a la main) ne devraient
+	// pas etre charge's !!!! Voir TODO.
+	lgrLue=fread (NewValue, (size_t)l,(size_t)1, fp);
+	
+	offsetCourant +=  2 + 2 + skL; // gr +  num + lgr
+	nouvDcmElem->Offset = offsetCourant;
+	offsetCourant += l;            // debut elem suivant
+
+	// ------------------------- Doit-on le Swapper ?
+	
+	if ((n==0) && sw)  {  // n=0 : lgr du groupe : guint32
+		*(guint32 *) NewValue = SWAP_LONG ((*(guint32 *) NewValue));  
+	} else {
+		if(sw) {
+			if ( (g/2)*2-g==0) { /* on ne teste pas les groupes impairs */
+				
+				if ((l==4)||(l==2)) {  // pour eviter de swapper les chaines 
+					                    // de lgr 2 ou 4
+					if (DEBUG) 
+						printf("Consultation Dictionary DICOM g %04x n %0xx l %d\n",
+						        g,n,l);
+					
+					// FIXME make reference to nouvDcmElem->GetTag
+					string VR = NewTag->GetVR();
+					if (   (VR == "UL") || (VR == "US")
+					    || (VR == "SL") || (VR == "SS")
+					    || (g == 0x0028 && ( n == 0x0005 || n == 0x0200) )) {
+						// seuls (28,5) de vr RET et (28,200) sont des entiers
+						// ... jusqu'a preuve du contraire
+						
+						if(l==4) { 
+							*(guint32 *) NewValue =
+							    SWAP_LONG  ((*(guint32 *) NewValue)); 
+						} else {
+							if(l==2) 
+						    *(unsigned short *) NewValue =
+						    	SWAP_SHORT ((*(unsigned short *)NewValue));
+						 }
+					}
+				} /* fin if l==2 ==4 */
+			} /* fin if g pair */
+		} /* fin sw */	
+	}
+	nouvDcmElem->value = NewValue;
+	SetAsidePixelData(nouvDcmElem);
+	return nouvDcmElem;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   If we encountered the offset of the pixels in the file
+ *          (Pixel Data) then keep the info aside.
+ */
+void gdcmHeader::SetAsidePixelData(ElValue* elem) {
+	  /// FIXME this wall process is bizarre:
+	  // on peut pas lire pixel data et pixel location puis
+	  // a la fin de la lecture aller interpreter ce qui existe ?
+	  // penser a nettoyer les variables globales associes genre
+	  // PixelsTrouve ou grPixelTrouve...
+	  //
+	// They are two cases :
+	// * the pixel data (i.e. the image or the volume) is pointed by it's
+	//   default official tag (0x7fe0,0x0010),
+	// * the writer of this file decided to put the image "address" (i.e the
+	//   offset from the begining of the file) at a different tag.
+	//   Then the "Pixel Data" offset might be found by indirection through
+	//   the "Image Location" tag (0x0028,  0x0200). In other terms the Image
+	//   Location tag contains the group where the "Pixel Data" offset is and
+	//   inside this group the element is conventionally at element 0x0010
+	//   (when the norm is respected).
+	// 
+	// Hence getting our hands on the Pixel Data is a two stage process:
+	//  1/ * find if the "Pixel Data" tag exists.
+	//     * if it does not exist, look for the "Pixel Location" tag.
+	//  2/ look at the proper tag ("Pixel Data" or "Pixel Location" when
+	//     it exists) what the offset it.
+	guint16 g;
+	guint16 n;
+	g = elem->GetGroup();
+	n = elem->GetElement();
+	if (!grPixelTrouve) {   // on n a pas encore trouve les pixels
+		if (g > 0x0028) {
+			if (n > 0x0200 || g == 0x7FE0 ) {  // on a depasse (28,200)
+				grPixel  = 0x7FE0;
+				numPixel = 0x0010;
+				grPixelTrouve = true;
+				if (DEBUG)
+					printf("------------------------grPixel %04x numPixel %04x\n",
+					       grPixel,numPixel);
+			}
+		} else {         // on est sur (28,200)
+			if (g == 0x0028) {
+				if (n == 0x0200) {
+					grPixelTrouve = 1;
+					char* NewValue = (char*)g_malloc(elem->GetLgrElem()+1);
+					// FIXME: not very elegant conversion
+					for(int i=0;i<4;i++)
+						*((char*)(&grPixel)+i) = *(NewValue+i); 
+					elem->SetValue(NewValue);
+					
+					if (DEBUG)
+						printf("------------------------GrPixel %04x\n", grPixel);
+					
+					if (grPixel != 0x7FE0)   // Vieux pb Philips
+						numPixel = 0x1010;    // encore utile ??
+					else
+						numPixel = 0x0010;
+					if (DEBUG)
+						printf("------------------------grPixel %04x numPixel %04x\n",
+						       grPixel,numPixel);
+				}
+			}
+		}
+	} else {     // on vient de trouver les pixels
+		if (g == grPixel) {
+			if (n == numPixel) {
+				PixelPosition = elem->Offset; 
+				PixelsTrouves = true;
+			if (DEBUG)
+				printf(" \t===> Pixels Trouves\n");
+			}
+		}
+	}
+}
+
+DictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
+	DictEntry * found = (DictEntry*)0;
+	if (!RefPubDict && !RefShaDict) {
+		//FIXME build a default dictionary !
+		printf("FIXME in gdcmHeader::IsInDicts\n");
+	}
+	if (RefPubDict) {
+		found = RefPubDict->GetTag(group, element);
+		if (found)
+			return found;
+	}
+	if (RefShaDict) {
+		found = RefShaDict->GetTag(group, element);
+		if (found)
+			return found;
+	}
+	return found;
 }

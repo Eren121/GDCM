@@ -39,12 +39,12 @@ private:
 //////           and the element within a DictEntry. What is the point
 //////           of storing the equivalent of a TagKey within the information
 //////           accessed through that TagKey !?
-	guint16 group;		// e.g. 0x0010
-	guint16 element;	// e.g. 0x0010
-	string  name;		// e.g. "Patient_Name"
-	string  ValRep;	// Value Representation i.e. some clue about the nature
-							// of the data represented e.g. "FD" short for
-							// "Floating Point Double"
+	guint16 group;    // e.g. 0x0010
+	guint16 element;  // e.g. 0x0010
+	string  name;     // e.g. "Patient_Name"
+	string  ValRep;   // Value Representation i.e. some clue about the nature
+	                  // of the data represented e.g. "FD" short for
+	                  // "Floating Point Double"
 	// DCMTK has many fields for handling a DictEntry (see below). What are the
 	// relevant ones for gdcmlib ?
 	//      struct DBI_SimpleEntry {
@@ -63,6 +63,10 @@ private:
 public:
 	DictEntry();
 	DictEntry(guint16 group, guint16 element, string  name, string  VR);
+	void   SetVR(string);
+	string GetVR(void);
+	guint16 GetGroup(void)   { return group;};
+	guint16 GetElement(void) {return element;};
 };
 
 // A single DICOM dictionary i.e. a container for a collection of dictionary
@@ -75,8 +79,9 @@ class Dict {
 	TagHT entries;
 public:
 	Dict();
-	Dict(string filename);	// Read Dict from disk
+	Dict(string filename);   // Read Dict from disk
 	int AppendEntry(DictEntry* NewEntry);
+	DictEntry * GetTag(guint32, guint32);  // Is this tag in this Dict ?
 };
 
 // Container for managing a set of loaded dictionaries. Sharing dictionaries
@@ -89,7 +94,7 @@ private:
 	map<DictId, Dict*> dicts;
 	int AppendDict(Dict* NewDict);
 public:
-	DictSet();		// Default constructor loads THE DICOM v3 dictionary
+	DictSet();    // Default constructor loads THE DICOM v3 dictionary
 	int LoadDictFromFile(string filename);
 ///// QUESTION: the following function might not be thread safe !? Maybe
 /////           we need some mutex here, to avoid concurent creation of
@@ -103,8 +108,22 @@ public:
 // The dicom header of a Dicom file contains a set of such ELement VALUES
 // (when successfuly parsed against a given Dicom dictionary)
 class ElValue {
-	DictEntry entry;
-	string  value;
+private:
+	DictEntry *entry;
+	guint32 LgrLueElem; // Longueur Lue
+	// Might prove of some interest (see _ID_DCM_ELEM)
+	// int Swap;
+public:
+	guint32 LgrElem;   // FIXME probably for bad reasons at parse time !
+	string  value;     // used to be char * valeurElem
+	size_t Offset;     // Offset from the begining of file for direct user access
+	ElValue(DictEntry*);
+	void SetVR(string);
+	void SetLgrLue(guint32);
+	guint16 GetGroup(void)   { return entry->GetGroup(); };
+	guint16 GetElement(void) { return entry->GetElement(); };
+	guint32 GetLgrElem(void) { return LgrElem; };
+	void SetValue(string val) { value = val; };
 };
 
 // Container for a set of succefully parsed ElValues.
@@ -118,6 +137,12 @@ public:
 	int Add(ElValue);
 };
 
+// The various entries of the explicit value representation (VR) shall
+// be managed within a dictionary. 
+typedef string VRKey;
+typedef string VRAtr;
+typedef map<TagKey, VRAtr> VRHT;    // Value Representation Hash Table
+
 // The typical usage of objects of this class is to classify a set of
 // dicom files according to header information e.g. to create a file hierachy
 // reflecting the Patient/Study/Serie informations, or extracting a given
@@ -126,7 +151,6 @@ public:
 // Notes:
 // * the gdcmHeader::Set*Tag* family members cannot be defined as protected
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
-typedef int _ID_DCM_ELEM;
 class gdcmHeader {	
 	//enum EndianType {
 		//LittleEndian, 
@@ -141,20 +165,37 @@ class gdcmHeader {
 		ACR,
 		ACR_LIBIDO};
 private:
+  	// All instances share the same valur representation dictionary
+	static VRHT *dicom_vr;
 	static DictSet* Dicts;  // Global dictionary container
 	Dict* RefPubDict;       // Public Dictionary
 	Dict* RefShaDict;       // Shadow Dictionary (optional)
 	ElValSet PubElVals;     // Element Values parsed with Public Dictionary
 	ElValSet ShaElVals;     // Element Values parsed with Shadow Dictionary
 	FileType filetype;
+	// In order to inspect/navigate through the file
+	size_t taille_fich;
 	FILE * fp;
-	long int offsetCourant;
+	size_t offsetCourant;
+	// The tag Image Location ((0028,0200) containing the adress of
+	// the pixels) is not allways present. When we store this information
+	// FIXME
+	// outside of the elements:
+	guint16 grPixel;
+	guint16 numPixel;
+	bool PixelsTrouves;
+	bool grPixelTrouve;
+	size_t PixelPosition;
 	int sw;
 	void CheckSwap(void);
 	void setAcrLibido(void);
-	long int RecupLgr(_ID_DCM_ELEM *pleCourant, int sw,
-	                  int *skippedLength, int *longueurLue);
+	long int RecupLgr(ElValue *, int *);
 	guint32 SWAP_LONG(guint32);
+	short int SWAP_SHORT(short int);
+	void InitVRDict(void);
+	ElValue * ReadNextElement(void);
+	DictEntry * IsInDicts(guint32, guint32);
+	void SetAsidePixelData(ElValue*);
 protected:
 ///// QUESTION: Maybe Print is a better name than write !?
 	int write(ostream&);   
