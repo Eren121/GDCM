@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 04:00:04 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/31 04:15:33 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,25 +69,6 @@ void JPEGFragmentsInfo::Print( std::ostream &os, std::string const &indent )
    os << std::endl;
 }
 
-/**
- * \brief  Calculate sum of all fragments length and return total
- * @return Total size of JPEG fragments length
- */
-size_t JPEGFragmentsInfo::GetFragmentsLength()
-{
-   // Loop on the fragment[s] to get total length
-   size_t totalLength = 0;
-   JPEGFragmentsList::const_iterator it;
-   for( it  = Fragments.begin();
-        it != Fragments.end();
-        ++it )
-   {
-      totalLength += (*it)->GetLength();
-   }
-   return totalLength;
-}
-
-// to avoid warnings
 void JPEGFragmentsInfo::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int , int )
 {
    // Pointer to the Raw image
@@ -99,15 +80,9 @@ void JPEGFragmentsInfo::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t 
         it != Fragments.end();
         ++it )
    {
-     //(*it)->pimage = localRaw;
      (*it)->DecompressJPEGFramesFromFile(fp, localRaw, nBits, StateSuspension);
      // update pointer to image after some scanlines read:
      localRaw = (*it)->GetImage();
-      // Advance to next free location in Raw 
-      // for next fragment decompression (if any)
-
-      //localRaw += length * numBytes;
-     //std::cerr << "Used to increment by: " << length * numBytes << std::endl;
    }
 }
 

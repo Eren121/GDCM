@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 04:00:05 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/01/31 04:15:33 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -256,7 +256,7 @@ bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream *fp )
                                       fp);
          subRaw += RawSegmentSize;
       }
-      frame = RLEInfo->GetNexttFrame();
+      frame = RLEInfo->GetNextFrame();
    }
 
    if ( BitsAllocated == 16 )
