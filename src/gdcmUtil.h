@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.11 2003/06/17 17:44:48 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.12 2003/06/26 13:07:01 jpr Exp $
 
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
@@ -47,6 +47,8 @@ extern gdcmDebug dbg;
 
 char * _cleanString(char *v);
 char * _CreateCleanString(string s);
+
+std::string TranslateToKey(guint16 group, guint16 element);
 
 #endif
 

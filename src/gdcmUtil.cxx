@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.12 2003/06/17 17:44:48 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.13 2003/06/26 13:07:01 jpr Exp $
 
 #include <stdio.h>
 #include <ctype.h>   // For isspace
@@ -151,4 +151,21 @@ char * _CreateCleanString(string s) {
       }	
    return d;
 }
+
+///////////////////////////////////////////////////////////////////////////
+//
+// because it may not be associated to a dictionary ...
+
+std::string TranslateToKey(guint16 group, guint16 element) {
+	char trash[10];
+	string key;
+	// CLEAN ME: better call the iostream<< with the hex manipulator on.
+	// This requires some reading of the stdlibC++ sources to make the
+	// proper call (or copy).
+	sprintf(trash, "%04x|%04x", group , element);
+	key = trash;  // Convertion through assignement
+	return key;
+}
+
+
 

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.14 2003/06/17 17:44:48 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.15 2003/06/26 13:07:01 jpr Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -42,6 +42,7 @@ public:
    int SetElValueLengthByName  (guint32 l, std::string TagName);
 
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
+   int CheckIfExistByNumber(guint16 Group, guint16 Elem );
 	
 private:
    void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);

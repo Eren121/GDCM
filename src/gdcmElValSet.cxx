@@ -34,6 +34,19 @@ void gdcmElValSet::Add(gdcmElValue * newElValue) {
 	NameHt[newElValue->GetName()] = newElValue;
 }
 
+
+/**
+ * \ingroup gdcmElValSet
+ * \brief   Checks if a given Dicom element exists
+ * \        within a ElValSet
+ * @param     
+ * @return  
+ */
+int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
+	string key = TranslateToKey(Group, Elem );
+	return (tagHt.count(key));
+}
+
 /**
  * \ingroup gdcmElValSet
  * \brief   

@@ -1,4 +1,4 @@
-// gdcm.h
+// gdcmExeption.h
 
 // gdcmlib Intro:  
 // * gdcmlib is a library dedicated to reading and writing dicom files.

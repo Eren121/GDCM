@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.28 2003/06/20 14:17:47 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.29 2003/06/26 13:07:01 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -105,6 +105,7 @@ protected:
    FileType filetype;
    
    gdcmElValue * GetElValueByNumber(guint16 group, guint16 element);
+   int CheckIfExistByNumber(guint16 Group, guint16 Elem );
 
    guint16 SwapShort(guint16); // needed by gdcmFile
    guint32 SwapLong(guint32);  // for JPEG Files :-(

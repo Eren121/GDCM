@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.70 2003/06/20 14:17:47 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.71 2003/06/26 13:07:01 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -647,7 +647,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    guint16 length16;
    if( (element == 0x0010) && (group == 0x7fe0) ) {// JPR
  
-      dbg.SetDebug(1);
+      dbg.SetDebug(10);
       dbg.Verbose(2, "gdcmHeader::FindLength: ", // JPR
                      "on est sur 7fe0 0010");
    }   
@@ -1063,7 +1063,19 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
 	string v = Value;	
 	PubElValSet.SetElValueByNumber(v, Group, Elem);
 	return(1);
-}   
+}  
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   TODO
+ * @param   
+ */
+ 
+ int gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
+ 	return (PubElValSet.CheckIfExistByNumber(Group, Elem));
+ }
+ 
+ 
 /**
  * \ingroup gdcmHeader
  * \brief   Build a new Element Value from all the low level arguments. 
