@@ -27,6 +27,8 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
                            bool exception_on_error):
    gdcmParser(FileName,exception_on_error,true)
 {
+   metaElems=NULL;
+
    if( GetListEntry().begin()==GetListEntry().end() ) 
    {
       dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry list empty");
@@ -43,24 +45,12 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
 
 /*
  * \ingroup gdcmDicomDir
- * \brief   
- * @param   exception_on_error
- */
-/*gdcmDicomDir::gdcmDicomDir(ListTag *l,
-                           bool exception_on_error):                           
-   gdcmParser(exception_on_error )  
-{    
-   listEntries=*l;
-   CreateDicomDir();
-}*/
-
-/*
- * \ingroup gdcmDicomDir
  * \brief  Canonical destructor 
  */
 gdcmDicomDir::~gdcmDicomDir() 
 {
-   delete metaelems;
+   if(metaElems)
+      delete metaElems;
    
    for(ListPatient::iterator cc=patients.begin();cc!=patients.end();++cc)
    {
@@ -76,8 +66,11 @@ gdcmDicomDir::~gdcmDicomDir()
  */
 void gdcmDicomDir::Print(std::ostream &os)
 {
-   (*metaelems).SetPrintLevel(printLevel);
-   (*metaelems).Print(os);   
+   if(metaElems)
+   {
+      metaElems->SetPrintLevel(printLevel);
+      metaElems->Print(os);   
+   }
    
    for(ListPatient::iterator cc=patients.begin();cc!=patients.end();++cc)
    {
@@ -149,6 +142,7 @@ void gdcmDicomDir::NewDicomDir(std::string path)
    for(gdcmDirList::iterator it=fileList.begin(); 
        it!=fileList.end(); ++it) 
    {
+          std::cout<<*it<<std::endl;
       header=new gdcmHeader(it->c_str());
       if(header->IsReadable())
          list.push_back(header);
@@ -196,24 +190,13 @@ void gdcmDicomDir::CreateDicomDir()
    //       + we create the object for the precedent tag
    //       + loop to 1 -
 
-   gdcmDicomDirType type=gdcmDicomDir::GDCM_NONE;
+   gdcmDicomDirType type=gdcmDicomDir::GDCM_META;
    ListTag::iterator begin;
    ListTag::iterator end;
-   ListTag::iterator k;
 
    begin=listEntries.begin();
    end=begin;
-   
-   for(ListTag::iterator j=begin;j !=listEntries.end();++j) 
-   {
-      if((*j)->GetValue()=="PATIENT ") {
-         k = j; 
-         break;
-      }
-   }   
-   AddObjectToEnd(gdcmDicomDir::GDCM_META,begin,k);       
-    
-   for(ListTag::iterator i=k;i !=listEntries.end();++i) 
+   for(ListTag::iterator i=end;i !=listEntries.end();++i) 
    {
       std::string v=(*i)->GetValue();
       if(v=="PATIENT ") 
@@ -253,8 +236,11 @@ void gdcmDicomDir::CreateDicomDir()
       }
    }
 
-   end=GetListEntry().end();
-   AddObjectToEnd(type,begin,end);
+   if(begin!=end)
+   {
+      end=GetListEntry().end();
+      AddObjectToEnd(type,begin,end);
+   }
 }
 /*
  * \ingroup gdcmDicomDir
@@ -288,7 +274,6 @@ void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,
    }
 }
 
-
 /*
  * \ingroup gdcmDicomDir
  * \brief Well ... Not realy to end, there is only one occurence  
@@ -297,7 +282,9 @@ void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,
 */
 void gdcmDicomDir::AddMetaToEnd(ListTag::iterator begin,ListTag::iterator end)
 {
-   metaelems = new gdcmMeta(begin,end);
+   if(metaElems)
+      delete metaElems;
+   metaElems = new gdcmMeta(begin,end);
 }
 
 /*

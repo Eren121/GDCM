@@ -1,9 +1,13 @@
+2004-02-10 Benoit Regrain
+     * FIX : bug fix in the gdcmDirList for the recursivity in directories
+     * FIX : in gdcmDicomDir when the directory is empty
+
 2004-02-06 Jean-Pierre Roux
      * ENH : - now gdcmDicomDir::CreateDicomDir() returns also the meta elements
              - GDCM_META added to gdcmDicomDirType
 	     - class gdcmMeta created
-     * ENH : - A brief summary is now displayed at the beginning of 'testDicomDir'
-	     to help disaster magnitude estimation
+     * ENH : - A brief summary is now displayed at the beginning of
+	    'testDicomDir' to help disaster magnitude estimation
      * REM  : Now useless Test/explDICOMDIR.cxx
 
 2004-02-05 Benoit Regrain

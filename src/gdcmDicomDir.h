@@ -35,7 +35,7 @@ public:
    void SetPrintLevel(int level) { printLevel = level; };
    virtual void Print(std::ostream &os = std::cout);
 
-   inline gdcmMeta   *GetMeta()      {return metaelems;};
+   inline gdcmMeta   *GetMeta()      {return metaElems;};
    inline ListPatient &GetPatients() {return patients;};
 
 // Write
@@ -72,7 +72,7 @@ private:
 
    static bool HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2);
 
-   gdcmMeta *metaelems;
+   gdcmMeta *metaElems;
    ListPatient patients;
 };
 
