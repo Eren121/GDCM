@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/12 17:21:07 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/12/13 06:22:43 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -508,7 +508,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream* fp )
         it != JPEGInfo->Fragments.end();
         ++it )
    {
-      fp->seekg( (*it)->Offset, std::ios_base::beg);
+      fp->seekg( (*it)->Offset, std::ios::beg);
       size_t len = (*it)->Length;
       fp->read((char *)p,len);
       p+=len;
@@ -603,7 +603,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp )
         it != JPEGInfo->Fragments.end();
         ++it )
    {
-      fp->seekg( (*it)->Offset, std::ios_base::beg);
+      fp->seekg( (*it)->Offset, std::ios::beg);
       size_t len = (*it)->Length;
       fp->read((char *)p,len);
       p+=len;
@@ -686,7 +686,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
 {
    if ( IsJPEG2000 )
    {
-      fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios_base::beg);
+      fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios::beg);
       if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
          return false;
    }
