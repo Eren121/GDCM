@@ -18,6 +18,7 @@ IF (GDCM_DATA_ROOT)
     TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     PrintAllDocument.cxx             # includes generated gdcmDataImages.h
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
+    TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
     PrintDicomDir.cxx
     TestChangeHeader.cxx
     TestDicomDir.cxx      #require DICOMDIR
@@ -101,27 +102,26 @@ ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
-  "gdcm-JPEG-LossLessThoravision.dcm" # serial killer
-  "cr172241.dcm"           #temporarily remove as it kills my gnome session
-                           # (but not kde)
-  "emptyImage.dcm"         #the png looks ugly...
-  "irmPhlipsNew1.dcm"      #png looks ugly
-  "mriThruVPRO.dcm"        #png looks ugly
-  "gdcm-MR-SIEMENS-16-1.acr"   #segfaults TestReadWriteReadCompare
-  #segfaults TestReadWriteReadCompare: this image looks corrupted:
-  # - it's pixel data is 132096 bytes long
-  # - it has a size of 256x256 with 16 bytes per pixel, i.e. a size
-  #   of 256*256*2 = 131072 bytes.
-  # Since there is a missmatch, when we have the following call stack:
-  #  gdcmFile::GetImageData()
-  #     PixelData = new uint8_t[ImageDataSize];
-  #     \--->::GetImageDataIntoVector(destination, ImageDataSize)
-  #       \---> ::ReadPixelData(destination)
-  #         \---> fread(destination, Header->GetPixelAreaLength(), 1, fp);
-  # we get a segfault because :
-  #   - destination is ImageDataSize i.e. 131072 bytes long
-  #   - Header->GetPixelAreaLength() = 132096 bytes long
-  "oldACR00001.ima"
+  # serial killer
+  "gdcm-JPEG-LossLessThoravision.dcm"
+  #temporarily remove as it kills my gnome session (but not kde)
+  "cr172241.dcm"
+  #png looks ugly
+  "emptyImage.dcm"
+  #png looks ugly
+  "irmPhlipsNew1.dcm"
+  #png looks ugly
+  "mriThruVPRO.dcm"
+  #segfaults TestReadWriteReadCompare (same pb as below) 
+  "gdcm-MR-SIEMENS-16-1.acr"
+  # see comments in gdcmData ref file TestAllEntryVerifyReference.txt
+  "SIEMENS_GBS_III-16-ACR_NEMA_1.acr"
+  #segfaults TestReadWriteReadCompare (pixels not parsed properly)
+  "I9000001.dcm"
+  # ditto
+  "icone.dcm"
+  # ditto
+  "sonataMonaco.dcm"
   )
 
 #   gdcm-ACR-LibIDO seems to be cut

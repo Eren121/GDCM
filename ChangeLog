@@ -1,3 +1,27 @@
+2004-07-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * WARNING: ctest now depends more tightly on gdcmData. You should
+     check out gdcmData properly for things to run smoothly...
+   * src/gdcmDocument.cxx MAX_SIZE_LOAD_ELEMENT_VALUE is set back to 0xfff
+     (4096) for "ctest -R TestAllEntryVerify" to be able to run (i.e.
+     we need the pixels not be loaded in order to use the ValEntry
+     that displays position and size).
+   * Test/TestAllEntryVerify.cxx a new low level test now seems fair.
+     This is a C++ based equivalent of gdcmPython/testSuite.py that should
+     be deprecated. If you have any doubts about the advantages of a
+     modern scripting language (read Python) versus grass root C++ (i.e.
+     without lex + yacc, because of gdcm commitement to MS-VC++, sighhh),
+     I suggest you compare TestAllEntryVerify.cxx (639 lines, without the
+     reference file gdcmData/TestAllEntryVerifyReference.txt) and testSuite.py.
+        Anyhow, consider documenting the gdcmData images in 
+     gdcmData/TestAllEntryVerifyReference.txt (and please run ctest before
+     commiting changes).
+   * Test/CMakeLists.txt:
+      - now uses TestAllEntryVerify.cxx
+      - specific comments on oldACR00001.ima (now renamed in gdcmData
+        to SIEMENS_GBS_III-16-ACR_NEMA_1.acr) moved away to
+        gdcmData/TestAllEntryVerifyReference.txt
+   * TODO updated.
+
 2004-07-02 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * src/*.[h|cxx] : typedef clean up
      - guint16 and guint32 removed. Use ISO C uint16_t, uint32_t instead.

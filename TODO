@@ -1,10 +1,7 @@
+* Convert the C-like IO to C++ IO (i.e. remove FILE*, fread...). Some docs
+  are available at
+    http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
 * Remove enable_sequences and ignore_shadow from gdcmDocument().
-* Split gdcmHeader through inheritance to create gdcmHeaderHelper
-  that would regroup all the heuristics above a gdcmHeader e.g. the
-  functions GetXsize(), GetXSpacing(), GetXImagePosition()...
-  Those functions are the one using the results of the parsing as
-  done by gdcmHeader to provide the user with heuristics above various
-  values found in the header (the simplest form being to default a value).
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
   be made at the cost of memory consumption (refer to header of 
   vtk/vtkGdcmHeader.cxx)

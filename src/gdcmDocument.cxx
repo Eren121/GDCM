@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2004/07/06 09:50:52 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,8 +74,8 @@
 const unsigned int gdcmDocument::HEADER_LENGTH_TO_READ = 256;
 
 // Refer to gdcmDocument::SetMaxSizeLoadEntry()
-const unsigned int gdcmDocument::MAX_SIZE_LOAD_ELEMENT_VALUE = 0x7fffffff;// 4096;//
-const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;//64;
+const unsigned int gdcmDocument::MAX_SIZE_LOAD_ELEMENT_VALUE = 0xfff; // 4096
+const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

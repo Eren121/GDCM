@@ -10,45 +10,200 @@
 using namespace std;
 
 typedef string EntryValueType;   // same type as gdcmValEntry::value
-typedef list<gdcmTagKey, EntryValueType> ListEntryValues;
+typedef map< gdcmTagKey, EntryValueType > MapEntryValues;
+typedef MapEntryValues* MapEntryValuesPtr;
 typedef string FileNameType;
-typedef map<FileNameType, ListEntryValues*> MapFileValuesType;
+typedef map< FileNameType, MapEntryValuesPtr > MapFileValuesType;
+
+struct ParserException
+{
+   string error;
+   static string Indent;
+
+   static string GetIndent() { return ParserException::Indent; }
+   ParserException( string ErrorMessage )
+   {
+      error = ErrorMessage;
+      Indent = "      ";
+   }
+   void Print() { cerr << Indent << error << endl; }
+};
+
+string ParserException::Indent = "      ";
 
 class ReferenceFileParser
 {
+   bool AddKeyValuePairToMap( string& key, string& value );
+
    istream& eatwhite(istream& is);
    void eatwhite(string& toClean);
    string ExtractFirstString(string& toSplit);
-   string ExtractValue(string& toSplit);
    void CleanUpLine( string& line );
-   void DisplayLine();
 
-   bool FirstPassReferenceFile();
-   bool SecondPassReferenceFile();
-   bool HandleFileName( string& line );
-   bool HandleKey( string& line );
-   bool HandleValue( string& line );
+   string ExtractValue(string& toSplit)  throw ( ParserException );
+   void ParseRegularLine( string& line ) throw ( ParserException );
+   void FirstPassReferenceFile()         throw ( ParserException );
+   bool SecondPassReferenceFile()        throw ( ParserException );
+   void HandleFileName( string& line )   throw ( ParserException );
+   void HandleKey( string& line )        throw ( ParserException );
+   bool HandleValue( string& line )      throw ( ParserException );
+   static uint16_t axtoi( char* );
 public:
    ReferenceFileParser();
    bool Open( string& referenceFileName );
+   void Print();
+   void SetDataPath(string&);
+   bool Check();
 private:
+   /// The directory containing the images to check:
+   string DataPath;
+
+   /// The product of the parser:
+   MapFileValuesType ProducedMap;
+
    /// The ifstream attached to the file we parse:
    ifstream from;
 
-   /// True when things went wrong, false otherwise
-   bool ParsingFailed;
-   
    /// String prefixing every output
    string Indent;
 
    /// The current line position within the stream:
    int lineNumber;
 
+   /// The currently parsed filename:
    string CurrentFileName;
+
+   /// The currently parsed key:
    string CurrentKey;
+
+   /// The currently parsed value:
    string CurrentValue;
-   string CurrentErrorMessage;
+
+   /// The current MapEntryValues pointer:
+   MapEntryValues* CurrentMapEntryValuesPtr;
 };
+
+/// As gotten from:
+/// http://community.borland.com/article/0,1410,17203,0.html
+uint16_t ReferenceFileParser::axtoi(char *hexStg) {
+  int n = 0;         // position in string
+  int m = 0;         // position in digit[] to shift
+  int count;         // loop index
+  int intValue = 0;  // integer value of hex string
+  int digit[5];      // hold values to convert
+  while (n < 4) {
+     if (hexStg[n]=='\0')
+        break;
+     if (hexStg[n] > 0x29 && hexStg[n] < 0x40 ) //if 0 to 9
+        digit[n] = hexStg[n] & 0x0f;            //convert to int
+     else if (hexStg[n] >='a' && hexStg[n] <= 'f') //if a to f
+        digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
+     else if (hexStg[n] >='A' && hexStg[n] <= 'F') //if A to F
+        digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
+     else break;
+    n++;
+  }
+  count = n;
+  m = n - 1;
+  n = 0;
+  while(n < count) {
+     // digit[n] is value of hex digit at position n
+     // (m << 2) is the number of positions to shift
+     // OR the bits into return value
+     intValue = intValue | (digit[n] << (m << 2));
+     m--;   // adjust the position to set
+     n++;   // next digit to process
+  }
+  return (intValue);
+}
+
+void ReferenceFileParser::SetDataPath( string& inDataPath )
+{
+   DataPath = inDataPath;
+}
+
+bool ReferenceFileParser::AddKeyValuePairToMap( string& key, string& value )
+{
+   if ( !CurrentMapEntryValuesPtr )
+      return false;
+   if ( CurrentMapEntryValuesPtr->count(key) != 0 )
+      return false;
+   (*CurrentMapEntryValuesPtr)[key] = value;
+}
+
+void ReferenceFileParser::Print()
+{
+   for (MapFileValuesType::iterator i  = ProducedMap.begin();
+                                    i != ProducedMap.end();
+                                    ++i)
+   {
+      cout << Indent << "FileName: " << i->first << endl;
+      MapEntryValuesPtr KeyValues = i->second;
+      for (MapEntryValues::iterator j  = KeyValues->begin();
+                                    j != KeyValues->end();
+                                    ++j)
+      {
+         cout << Indent
+              << "  Key: " << j->first
+              << "  Value: " << j->second
+              << endl;
+      }
+      cout << Indent << endl;
+   }
+   cout << Indent << endl;
+}
+
+bool ReferenceFileParser::Check()
+{
+   for (MapFileValuesType::iterator i  = ProducedMap.begin();
+                                    i != ProducedMap.end();
+                                    ++i)
+   {
+      string fileName = DataPath + i->first;
+      cout << Indent << "FileName: " << fileName << endl;
+      gdcmHeader* tested = new gdcmHeader( fileName.c_str(), false, true );
+      if( !tested->IsReadable() )
+      {
+        cerr << Indent << "Image not gdcm compatible:"
+             << fileName << endl;
+        delete tested;
+        return false;
+      }
+
+      MapEntryValuesPtr KeyValues = i->second;
+      for (MapEntryValues::iterator j  = KeyValues->begin();
+                                    j != KeyValues->end();
+                                    ++j)
+      {
+         string key = j->first;
+
+         string groupString  = key.substr( 0, 4 );
+         char* groupCharPtr;
+         groupCharPtr = new char(groupString.length() + 1);
+         strcpy( groupCharPtr, groupString.c_str() ); 
+
+         string groupElement = key.substr( key.find_first_of( "|" ) + 1, 4 );
+         char* groupElementPtr;
+         groupElementPtr = new char(groupElement.length() + 1);
+         strcpy( groupElementPtr, groupElement.c_str() ); 
+
+         uint16_t group   = axtoi( groupCharPtr );
+         uint16_t element = axtoi( groupElementPtr );
+
+         string testedValue = tested->GetEntryByNumber(group, element);
+         if ( testedValue != j->second )
+         {
+            cout << Indent << "Uncorrect value for key " << key << endl
+                 << Indent << "   read value " << testedValue << endl
+                 << Indent << "   reference value " << j->second << endl;
+            return false;
+         }
+      }
+      delete tested;
+      cout << Indent << endl;
+   }
+   cout << Indent << endl;
+}
 
 istream& ReferenceFileParser::eatwhite( istream& is )
 {
@@ -84,6 +239,7 @@ string ReferenceFileParser::ExtractFirstString( string& toSplit )
 }
 
 string ReferenceFileParser::ExtractValue( string& toSplit )
+   throw ( ParserException )
 {
    eatwhite( toSplit );
    string::size_type beginPos = toSplit.find_first_of( '"' );
@@ -92,10 +248,7 @@ string ReferenceFileParser::ExtractValue( string& toSplit )
    // Make sure we have at most to " in toSplit:
    string noQuotes = toSplit.substr( beginPos + 1, endPos - beginPos - 1);
    if ( noQuotes.find_first_of( '"' ) != string::npos )
-   {
-      CurrentErrorMessage = "more than two quote character";
-      return string();
-   }
+      throw ParserException( "more than two quote character" );
 
    // No leading quote means this is not a value:
    if ( beginPos == string::npos )
@@ -104,10 +257,7 @@ string ReferenceFileParser::ExtractValue( string& toSplit )
    }
 
    if ( ( endPos == string::npos ) || ( beginPos == endPos ) )
-   {
-      CurrentErrorMessage = "unmatched \" (quote character)";
-      return string();
-   }
+      throw ParserException( "unmatched \" (quote character)" );
 
    if ( beginPos != 0 )
    {
@@ -115,8 +265,7 @@ string ReferenceFileParser::ExtractValue( string& toSplit )
       error  << "leading character ["
              << toSplit.substr(beginPos -1, 1)
              << "] before opening \" ";
-      CurrentErrorMessage = error.str();
-      return string();
+      throw ParserException( error.str() );
    }
 
    // When they are some extra characters at end of value, it must
@@ -128,8 +277,7 @@ string ReferenceFileParser::ExtractValue( string& toSplit )
       error  << "trailing character ["
              << toSplit.substr(endPos + 1, 1)
              << "] after value closing \" ";
-      CurrentErrorMessage = error.str();
-      return string();
+      throw ParserException( error.str() );
    }
 
    string value = toSplit.substr( beginPos + 1, endPos - beginPos - 1 );
@@ -146,7 +294,7 @@ string ReferenceFileParser::ExtractValue( string& toSplit )
 /// @param   from The incoming ifstream to be checked.
 /// @return  True when incoming ifstream has a correct syntax, false otherwise.
 /// \warning The underlying file pointer is not preseved.
-bool ReferenceFileParser::FirstPassReferenceFile()
+void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
 {
    string line;
    lineNumber = 1;
@@ -163,11 +311,7 @@ bool ReferenceFileParser::FirstPassReferenceFile()
          if ( ! inBlock )
             break;
          else
-         {
-           cerr << Indent << "Syntax error: EOF reached when in block." << endl;
-           ParsingFailed = true;
-           break;
-         }
+            throw ParserException( "Syntax error: EOF reached when in block.");
       }
 
       // Don't try to parse comments (weed out anything after first "#"):
@@ -180,24 +324,24 @@ bool ReferenceFileParser::FirstPassReferenceFile()
       // blocks which is illegal:
       if ( line.find_first_of( "[" ) != line.find_last_of( "[" ) )
       {
-         cerr << Indent
-              << "Syntax error: nested block (open) in reference file"
-              << endl
-              << Indent << "at line " << lineNumber << endl;
-         ParsingFailed = true;
-         break;
+         ostringstream error;
+         error << "Syntax error: nested block (open) in reference file"
+               << endl
+               << ParserException::GetIndent()
+               << "   at line " << lineNumber << endl;
+         throw ParserException( error.str() );
       }
 
       // Two occurences of closing blocks on a single line implies nested
       // blocks which is illegal:
       if ( line.find_first_of( "]" ) != line.find_last_of( "]" ) )
       {
-         cerr << Indent
-              << "Syntax error: nested block (close) in reference file"
-              << endl
-              <<  Indent << "at line " << lineNumber << endl;
-         ParsingFailed = true;
-         break;
+         ostringstream error;
+         error << "Syntax error: nested block (close) in reference file"
+               << endl
+               << ParserException::GetIndent()
+               << "   at line " << lineNumber << endl;
+         throw ParserException( error.str() );
       }
 
       bool beginBlock ( line.find_first_of("[") != string::npos );
@@ -206,26 +350,25 @@ bool ReferenceFileParser::FirstPassReferenceFile()
       // Opening and closing of block on same line:
       if ( beginBlock && endBlock )
       {
-         cerr << Indent
-              << "Syntax error: opening and closing on block on same line "
-              << lineNumber++ << endl;
-         ParsingFailed = true;
-         break;
+         ostringstream error;
+         error << "Syntax error: opening and closing on block on same line "
+               << lineNumber++ << endl;
+         throw ParserException( error.str() );
       }
 
       // Illegal closing block when block not open:
       if ( !inBlock && endBlock )
       {
-         cerr << Indent << "Syntax error: unexpected end of block at line "
-              << lineNumber++ << endl;
-         ParsingFailed = true;
-         break;
+         ostringstream error;
+         error << "Syntax error: unexpected end of block at line "
+               << lineNumber++ << endl;
+         throw ParserException( error.str() );
       }
   
       // Uncommented line outside of block is not clean:
       if ( !inBlock && !beginBlock )
       {
-         cout << Indent
+         cerr << Indent
               << "Syntax warning: outside of block [] data at line "
               << lineNumber++ << " not considered." << endl;
          continue;
@@ -233,10 +376,10 @@ bool ReferenceFileParser::FirstPassReferenceFile()
 
       if ( inBlock && beginBlock )
       {
-         cerr << "   Syntax error: illegal opening of nested block at line "
-              << lineNumber++ << endl;
-         ParsingFailed = true;
-         break;
+         ostringstream error;
+         error << "   Syntax error: illegal opening of nested block at line "
+               << lineNumber++ << endl;
+         throw ParserException( error.str() );
       }
 
       // Normal situation of opening block:
@@ -261,14 +404,11 @@ bool ReferenceFileParser::FirstPassReferenceFile()
    // We need rewinding:
    from.clear();
    from.seekg( 0, ios::beg );
-
-   return ! ParsingFailed;
 }
 
 ReferenceFileParser::ReferenceFileParser()
 {
    lineNumber = 1;
-   ParsingFailed = false;
    Indent = "      ";
 }
 
@@ -278,13 +418,19 @@ bool ReferenceFileParser::Open( string& referenceFileName )
    if ( !from.is_open() )
    {
       cerr << Indent << "Can't open reference file." << endl;
-      ParsingFailed = true;
    }
    
-   if ( !FirstPassReferenceFile() )
+   try
+   {
+      FirstPassReferenceFile();
+      SecondPassReferenceFile();
+   }
+   catch ( ParserException except )
+   {
+      except.Print();
       return false;
+   }
 
-   SecondPassReferenceFile();
    from.close();
 }
 
@@ -302,47 +448,38 @@ void ReferenceFileParser::CleanUpLine( string& line )
    eatwhite( line );
 }
 
-bool ReferenceFileParser::HandleFileName( string& line )
+void ReferenceFileParser::HandleFileName( string& line )
+   throw ( ParserException )
 {
    if ( line.length() == 0 )
-   {
-      CurrentErrorMessage = "unfound filename";
-      return false;
-   }
+      throw ParserException( "empty line on call of HandleFileName" );
+
    if ( CurrentFileName.length() != 0 )
-      return true;
+      return;
+
    CurrentFileName = ExtractFirstString(line);
-   cout << Indent << "Found filename " << CurrentFileName << endl;
-   return true;
 }
 
-bool ReferenceFileParser::HandleKey( string& line )
+void ReferenceFileParser::HandleKey( string& line )
+   throw ( ParserException )
 {
-   if ( line.length() == 0 )
-      return false;
-
    if ( CurrentKey.length() != 0 )
-      return false;
+      return;
 
    CurrentKey = ExtractFirstString(line);
    if ( CurrentKey.find_first_of( "|" ) == string::npos )
    {
       ostringstream error;
       error  << "uncorrect key:" << CurrentKey;
-      CurrentErrorMessage = error.str();
-      return false;
+      throw ParserException( error.str() );
    }
-   cout << Indent << "Found key:" << CurrentKey << endl;
-   return true;
 }
 
 bool ReferenceFileParser::HandleValue( string& line )
+   throw ( ParserException )
 {
    if ( line.length() == 0 )
-   {
-      CurrentErrorMessage = "no value present";
-      return false;
-   }
+      throw ParserException( "empty line in HandleValue" );
 
    if ( CurrentKey.length() == 0 )
    {
@@ -353,27 +490,48 @@ bool ReferenceFileParser::HandleValue( string& line )
    string newCurrentValue = ExtractValue(line);
    if ( newCurrentValue.length() == 0 )
    {
-      if ( CurrentErrorMessage.length() == 0 )
-      {
-         ostringstream error;
-         error  << "missing value for key:" << CurrentKey;
-         CurrentErrorMessage = error.str();
-      }
-      return false;
+      ostringstream error;
+      error  << "missing value for key:" << CurrentKey;
+      throw ParserException( error.str() );
    }
 
-   cout << Indent << "Found value:" << newCurrentValue << endl;
    CurrentValue += newCurrentValue;
    return true;
 }
 
-void ReferenceFileParser::DisplayLine()
+void ReferenceFileParser::ParseRegularLine(string& line)
+   throw ( ParserException )
 {
-      cerr << Indent << "Syntax error at line " << lineNumber
-           << ": " << CurrentErrorMessage << "." << endl;
+   if ( line.length() == 0 )
+      return;
+
+   // First thing is to get a filename:
+   HandleFileName( line );
+
+   if ( line.length() == 0 )
+      return;
+
+   // Second thing is to get a key:
+   HandleKey( line );
+       
+   if ( line.length() == 0 )
+      return;
+
+   // Third thing is to get a value:
+   if ( ! HandleValue( line ) )
+      return;
+
+   if ( CurrentKey.length() && CurrentValue.length() )
+   {
+      if ( ! AddKeyValuePairToMap( CurrentKey, CurrentValue ) )
+         throw ParserException( "adding to map of (key, value) failed" );
+      CurrentKey.erase();
+      CurrentValue.erase();
+   }
 }
 
 bool ReferenceFileParser::SecondPassReferenceFile()
+   throw ( ParserException )
 {
    gdcmTagKey key;
    EntryValueType value;
@@ -401,72 +559,26 @@ bool ReferenceFileParser::SecondPassReferenceFile()
 
       if ( beginBlock )
       {
-         cout << Indent << "Begin block" << endl;
          inBlock = true;
          line.erase( 0, line.find_first_of( "[" ) + 1 );
          eatwhite( line );
+         CurrentMapEntryValuesPtr = new MapEntryValues();
       }
       else if ( endBlock )
       {
-         cout << Indent << "Detected End block" << endl;
          line.erase( line.find_last_of( "]" ) );
          eatwhite( line );
+         ParseRegularLine( line );
+         ProducedMap[CurrentFileName] = CurrentMapEntryValuesPtr;
+         inBlock = false;
+         CurrentFileName.erase();
       }
-
+   
       // Outside block lines are dropped:
       if ( ! inBlock )
          continue;
 
-      cout << Indent << "Default case:" << line << endl;
-
-      // First thing is to get a filename:
-      if ( ( ! HandleFileName( line ) ) && ( line.length() != 0 ) )
-      {
-         DisplayLine();
-         return false;
-      }
-
-      // Second thing is to get a key:
-      if ( ( ! HandleKey( line ) ) && ( line.length() != 0 ) )
-      {
-         ParsingFailed = true;
-      }
-       
-      // Third thing is to get a value:
-      if (    ( ! ParsingFailed )
-          &&  ( ! HandleValue( line ) )
-          && ( line.length() != 0) )
-      {
-         ParsingFailed = true;
-      }
-
-      if (   ( ! ParsingFailed )
-          && CurrentKey.length()
-          && CurrentValue.length() )
-      {
-         cout << Indent << "Need to handle pair ("
-              << CurrentKey << ", " << CurrentValue << ")." << endl;
-         CurrentKey.erase();
-         CurrentValue.erase();
-      }
-
-      if ( ParsingFailed )
-      {
-         DisplayLine();
-         return false;
-      }
-
-      if ( endBlock )
-      {
-         cout << Indent << "Need to handle end of block " << endl;
-         inBlock = false;
-         CurrentFileName.erase();
-      }
-
-      //key     = TranslateToKey(group, element);
-      ///tb1[key] = name.c_str();
-      //cout << group << element << vr << fourth << name;
-      //tb1[key] = "bozo";
+      ParseRegularLine( line );
    }
 }
 
@@ -490,12 +602,15 @@ int TestAllEntryVerify(int argc, char* argv[])
              << " IsReadable(). "
              << endl;
 
-   string referenceFilename = GDCM_DATA_ROOT;
-   referenceFilename += "/";  //doh!
-   referenceFilename += "TestAllEntryVerifyReference.txt";
+   string referenceDir = GDCM_DATA_ROOT;
+   referenceDir       += "/";
+   string referenceFilename = referenceDir + "TestAllEntryVerifyReference.txt";
 
    ReferenceFileParser Parser;
    Parser.Open(referenceFilename);
+   Parser.SetDataPath(referenceDir);
+   // Parser.Print();
+   Parser.Check();
 /*
    int i = 0;
    while( gdcmDataImages[i] != 0 )
