@@ -1153,6 +1153,7 @@
 0040 db0c UI PRC Template Extension Organization UID (RET)
 0040 db0d UI PRC Template Extension Creator UID (RET)
 0040 db73 UL PRC Referenced Content Item Identifier
+0050 0000 UL DEV Group Length
 0050 0004 CS DEV Calibration Image
 0050 0010 SQ DEV Device Sequence
 0050 0014 DS DEV Device Length
@@ -1239,6 +1240,7 @@
 0054 1330 US NMI Image Index
 0054 1400 CS NMI Counts Included
 0054 1401 CS NMI Dead Time Correction Flag
+0060 0000 UL HIS Group Length
 0060 3000 SQ HIS Histogram Sequence
 0060 3002 US HIS Histogram Number of Bins
 0060 3004 US HIS Histogram First Bin Value
@@ -1246,6 +1248,7 @@
 0060 3008 US HIS Histogram Bin Width
 0060 3010 LO HIS Histogram Explanation
 0060 3020 UL HIS Histogram Data
+0070 0000 UL ??? Group Length
 0070 0001 SQ ??? Graphic Annotation Sequence
 0070 0002 CS ??? Graphic Layer
 0070 0003 CS ??? Bounding Box Annotation Units
@@ -1291,10 +1294,12 @@
 0088 0906 ST MED Topic Subject
 0088 0910 LO MED Topic Author
 0088 0912 LO MED Topic Keywords
+0100 0000 UL ??? Group Length
 0100 0410 CS ??? SOP Instance Status
 0100 0420 DT ??? SOP Autorization Date and Time
 0100 0424 LT ??? SOP Autorization Comment
 0100 0426 LO ??? Autorization Equipment Certification Number
+0400 0000 UL ??? Group Length
 0400 0005 US ??? MAC ID Number
 0400 0010 UI ??? MAC Calculation Transfer Syntax UID
 0400 0015 UI ??? MAC Algorithm
@@ -1385,9 +1390,10 @@
 2040 0090 CS IOB Overlay Mode (RET)
 2040 0100 CS IOB Threshold Density (RET)
 2040 0500 SQ IOB Referenced Image Box Sequence (RET)
-2050 0010 SQ IOB Presentation LUT Sequence
-2050 0020 CS IOB Presentation LUT Shape
-2050 0030 SQ IOB Referenced Presentation LUT Sequence
+2050 0000 UL ??? Group Length
+2050 0010 SQ ??? Presentation LUT Sequence
+2050 0020 CS ??? Presentation LUT Shape
+2050 0030 SQ ??? Referenced Presentation LUT Sequence
 2100 0000 UL PJ Group Length
 2100 0010 SH PJ Print Job ID
 2100 0020 CS PJ Execution Status
@@ -1407,6 +1413,7 @@
 2120 0010 CS PRINTER Queue Status
 2120 0050 SQ PRINTER Printer Job Description Sequence
 2120 0070 SQ PRINTER Referenced Print Job Sequence
+2130 0000 UL ??? Group Length
 2130 0010 SQ ??? Print Management Capabilities Sequence
 2130 0015 SQ ??? Print Characteristics Sequence
 2130 0030 SQ ??? Film Box Content Sequence
@@ -1505,6 +1512,7 @@
 3006 00c4 CS SSET Frame of Reference Transformation Type
 3006 00c6 DS SSET Frame of Reference Transformation Matrix
 3006 00c8 LO SSET Frame of Reference Transformation Comment
+3008 0000 UL ??? Group Length
 3008 0010 SQ ??? Measured Dose Reference Sequence
 3008 0012 ST ??? Measured Dose Description
 3008 0014 CS ??? Measured Dose Type
@@ -1872,6 +1880,7 @@
 4008 0212 CS RES Interpretation Status ID
 4008 0300 ST RES Impressions
 4008 4000 ST RES Results Comments
+4ffe 0000 UL ??? Group Length
 4ffe 0001 SQ ??? MAC Parameters Sequence
 5000 0000 UL CRV Group Length
 5000 0005 US CRV Curve Dimensions
@@ -1899,8 +1908,10 @@
 5000 2600 SQ CRV Referenced Overlay Sequence
 5000 2610 US CRV Referenced Overlay Group
 5000 3000 OW CRV Curve Data
+5200 0000 UL ??? Group Length
 5200 9229 SQ ??? Shared Functional Groups Sequence
 5200 9230 SQ ??? Pre-frame Functional Groups Sequence
+5400 0000 UL ??? Group Length
 5400 0100 SQ ??? Waveform Sequence
 5400 0110 OB ??? Channel Minimum Value
 5400 0112 OB ??? Channel Maximum Value
@@ -1908,6 +1919,7 @@
 5400 1006 CS ??? Waveform Sample Interpretation
 5400 100a OB ??? Waveform Padding Value
 5400 1010 OB ??? Waveform Data
+5600 0000 UL ??? Group Length
 5600 0010 OF ??? First Order Phase Correction Angle
 5600 0020 OF ??? Spectroscopy Data
 6000 0000 UL OLY Group Length
