@@ -3,4 +3,7 @@
 void   ElValue::SetVR(string ValRep) { entry->SetVR(ValRep); }
 string ElValue::GetVR(void)   { return entry->GetVR(); }
 
-ElValue::ElValue(gdcmDictEntry* in) { entry = in; }
+ElValue::ElValue(gdcmDictEntry* in) {
+	ImplicitVr = false;
+	entry = in;
+}

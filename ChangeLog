@@ -1,3 +1,18 @@
+2002-11-14 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * python/testSuite.py unittest test suite added (uses Data)
+      * Data/* dcm and acr files for the test suite.
+      * glib dependance removed from un*x version. We now use ISO C99
+        7.18 Integer types (see stdint.h)
+        - python/Makefile, src/Makefile src/gdcm.h
+      * src/ when an explicit vr (like dicom files) suddenly poped an
+        implicit element we use to mark the underlying DictEntry of the
+        concerned ElValue with "Implicit". This strategy was damageable
+        too the public or provite dictionaries, since some of their vr
+        would be changed. Since Header::FindLength heavily relies on the
+        detection by Header::FindVR of falsely explicit elements, I
+        added an extra ImplicitVr member to ElValue (boolean).
+        The rest of the changes we the necessary adaptations.
+
 2002-11-12 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader::FindLength bug fix when trapping falsely explicit
         VR files.

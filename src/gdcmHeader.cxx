@@ -1,7 +1,4 @@
 #include "gdcm.h"
-extern "C" {
-#include "glib.h"
-}
 #include <stdio.h>
 // For nthos:
 #ifdef _MSC_VER
@@ -154,21 +151,21 @@ void gdcmHeader::CheckSwap()
 		entCur = deb + 136;
 		if(memcmp(entCur, "UL", (size_t)2) == 0) {
 			filetype = ExplicitVR;
-			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			dbg.Verbose(1, "gdcmHeader::CheckSwap:",
 			            "explicit Value Representation");
 		} else {
 			filetype = ImplicitVR;
-			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			dbg.Verbose(1, "gdcmHeader::CheckSwap:",
 			            "not an explicit Value Representation");
 		}
 
 		if (net2host) {
 			sw = 4321;
-			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			dbg.Verbose(1, "gdcmHeader::CheckSwap:",
 			               "HostByteOrder != NetworkByteOrder");
 		} else {
 			sw = 0;
-			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			dbg.Verbose(1, "gdcmHeader::CheckSwap:",
 			               "HostByteOrder = NetworkByteOrder");
 		}
 		
@@ -305,16 +302,23 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
 		RealExplicit = false;
 
 	if ( RealExplicit ) {
-		ElVal->SetVR(vr);
+		if ( ElVal->IsVrUnknown() ) 
+			ElVal->SetVR(vr);
 		return; 
 	}
 	
 	// We thought this was explicit VR, but we end up with an
 	// implicit VR tag. Let's backtrack.
-	dbg.Verbose(1, "gdcmHeader::FindVR:",
-	               "Falsely explicit vr file");
-	ElVal->SetVR("Implicit");
+	dbg.Verbose(1, "gdcmHeader::FindVR:", "Falsely explicit vr file");
 	fseek(fp, PositionOnEntry, SEEK_SET);
+	// When this element is known in the dictionary we shall use, e.g. for
+	// the semantics (see  the usage of IsAnInteger), the vr proposed by the
+	// dictionary entry. Still we have to flag the element as implicit since
+	// we know now our assumption on expliciteness is not furfilled.
+	// avoid  .
+	if ( ElVal->IsVrUnknown() )
+		ElVal->SetVR("Implicit");
+	ElVal->SetImplicitVr();
 }
 
 void gdcmHeader::FindLength( ElValue * ElVal) {
@@ -322,7 +326,7 @@ void gdcmHeader::FindLength( ElValue * ElVal) {
 	guint16 length16;
 	string vr = ElVal->GetVR();
 	
-	if ( (filetype == ExplicitVR) && (vr != "Implicit") ) {
+	if ( (filetype == ExplicitVR) && ! ElVal->IsImplicitVr() ) {
 		if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) {
 			
 			// The following two bytes are reserved, so we skip them,
@@ -417,6 +421,7 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	guint16 elem   = ElVal->GetElement();
 	string  vr     = ElVal->GetVR();
 	guint32 length = ElVal->GetLength();
+
 	fseek(fp, (long)ElVal->GetOffset(), SEEK_SET);
 	
 	// Sequences not treated yet !
@@ -515,7 +520,7 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	// Find out if the tag we encountered is in the dictionaries:
 	gdcmDictEntry * NewTag = IsInDicts(g, n);
 	if (!NewTag)
-		NewTag = new gdcmDictEntry(g, n, "Unknown", "Unknown", "Unknown");
+		NewTag = new gdcmDictEntry(g, n);
 
 	NewElVal = new ElValue(NewTag);
 	if (!NewElVal) {
@@ -531,9 +536,9 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 
 bool gdcmHeader::IsAnInteger(guint16 group, guint16 element,
 	                             string vr, guint32 length ) {
-	// When we have some semantics on the element we just read, and we
-	// a priori now we are dealing with an integer, then we can swap it's
-	// element value properly.
+	// When we have some semantics on the element we just read, and if we
+	// a priori know we are dealing with an integer, then we shall be
+	// able to swap it's element value properly.
 	if ( element == 0 )  {  // This is the group length of the group
 		if (length != 4)
 			dbg.Error("gdcmHeader::ShouldBeSwaped", "should be four");

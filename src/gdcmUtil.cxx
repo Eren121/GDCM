@@ -1,4 +1,4 @@
-#include <ctype.h>
+#include <ctype.h>   // For isspace
 #include "gdcmUtil.h"
 
 gdcmDebug::gdcmDebug(int level) {

@@ -1,6 +1,5 @@
-CXXFLAGS=`glib-config --cflags`
 CPPFLAGS=-g -Wall -Wunused-variable
-LDFLAGS=`glib-config --libs` -g
+LDFLAGS=-g
 
 OBJECTS=gdcmUtil.o \
 	gdcmHeader.o    \

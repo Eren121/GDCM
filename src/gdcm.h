@@ -18,7 +18,6 @@
 #include <string>
 #include <iostream>
 #include <stddef.h>   // For size_t
-#include <glib.h>
 #include <stdio.h>    // FIXME For FILE on GCC only
 #include <map>        // The requirement for the hash table (or map) that
                       // we shall use:
@@ -29,6 +28,16 @@
                       // 3/ Make sure we can setup some default size value,
                       //    which should be around 4500 entries which is the
                       //    average dictionary size (said JPR)
+#ifdef __GNUC__
+#include <stdint.h>
+#define guint16 uint16_t
+#define guint32 uint32_t
+#define g_malloc malloc
+#define g_free   free
+#endif
+#ifdef _MSC_VER
+#include <glib.h>
+#endif
 
 #ifdef _MSC_VER
 	using namespace std;  // string type lives in the std namespace on VC++
@@ -79,12 +88,15 @@ private:
 public:
 	//CLEANME gdcmDictEntry();
 	gdcmDictEntry(guint16 group, guint16 element,
-	              string vr, string fourth, string name);
+	              string vr     = "Unknown",
+					  string fourth = "Unknown",
+					  string name   = "Unknown");
 	static TagKey TranslateToKey(guint16 group, guint16 element);
 	guint16 GetGroup(void)  { return group;};
 	guint16 GetElement(void){return element;};
 	string  GetVR(void)     {return vr; };
-	void    SetVR(string in){vr = in; };
+	void    SetVR(string);
+	bool    IsVrUnknown(void);
 	string  GetFourth(void) {return fourth;};
 	string  GetName(void)   {return name;};
 	string  GetKey(void)    {return key;};
@@ -141,6 +153,10 @@ class GDCM_EXPORT ElValue {
 private:
 	gdcmDictEntry *entry;
 	guint32 LgrElem;
+	bool ImplicitVr;       // Even when reading explicit vr files, some
+	                       // elements happen to be implicit. Flag them here
+	                       // since we can't use the entry->vr without breaking
+	                       // the underlying dictionary.
 	// Might prove of some interest (see _ID_DCM_ELEM)
 	// int Swap;
 public:
@@ -149,11 +165,14 @@ public:
 	ElValue(gdcmDictEntry*);
 	void   SetVR(string);
 	string GetVR(void);
+	bool   IsVrUnknown(void) { return entry->IsVrUnknown(); };
 	void SetLength(guint32 l){LgrElem = l; };
 	void SetValue(string val){ value = val; };
 	void SetOffset(size_t of){ Offset = of; };
+	void SetImplicitVr(void) { ImplicitVr = true; };
+	bool  IsImplicitVr(void) { return ImplicitVr; };
 	string  GetValue(void)   { return value; };
-	guint32 GetLength(void) { return LgrElem; };
+	guint32 GetLength(void)  { return LgrElem; };
 	size_t  GetOffset(void)  { return Offset; };
 	guint16 GetGroup(void)   { return entry->GetGroup(); };
 	guint16 GetElement(void) { return entry->GetElement(); };

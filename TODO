@@ -1,3 +1,8 @@
+* Group length is not a unique tag in a file. Hence avoid putting it
+  in the element values dictionary without doing something smarter
+  (say, instead of storing the length store the group and the length
+   so we can related a length to a group).
+
 GetPubElValByNumber doit faire la difference entre chaine vide 
 et chaine pas touve''. Eventuellement raiser une exception ?
 
@@ -11,7 +16,7 @@ gdcmHeader::ReadNextElement: retarder le stockage en mem des gros elements
  * fournir une method qui ne fait que lire les elements passes en arguments
    sous forme d'une liste.
 
-grep str2num *.c: c'est une macro sans doute proprifiable
+grep str2num *.cxx: c'est une macro sans doute proprifiable
 
 gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de suite 
 si on a deduit que c'en est pas...

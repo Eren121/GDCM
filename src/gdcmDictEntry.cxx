@@ -1,4 +1,5 @@
 #include "gdcm.h"
+#include "gdcmUtil.h"
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
                              string  InVr, string InFourth, string InName) 
@@ -20,4 +21,24 @@ TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
 	sprintf(trash, "%04x|%04x", group , element);
 	key = trash;  // Convertion through assignement
 	return key;
+}
+
+/**
+ * \ingroup     gdcmDictEntry
+ * \brief       If-and only if-the vr is unset then overwrite it.
+ * @param NewVr New vr to be set.
+ */
+void gdcmDictEntry::SetVR(string NewVr) {
+	if ( IsVrUnknown() )
+		vr = NewVr;
+	else {
+		dbg.Error(true, "gdcmDictEntry::SetVR",
+		          "Overwriting vr might compromise a dictionary");
+	}
+}
+
+bool gdcmDictEntry::IsVrUnknown() {
+	if ( vr == "Unknown" )
+		return true;
+	return false;
 }
