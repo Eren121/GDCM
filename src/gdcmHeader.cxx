@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.107 2003/11/03 10:49:31 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.108 2003/11/05 17:14:59 malaterre Exp $
 
 #include "gdcmHeader.h"
 
@@ -2305,7 +2305,7 @@ void * gdcmHeader::GetLUTRGBA(void) {
      a+=4;       
   }  
   a= LUTRGBA+3;
-  for(i=0;i<255;i++) {
+  for(i=0;i<256;i++) {
      *a = 1; // Alpha component
      a+=4; 
   } 
