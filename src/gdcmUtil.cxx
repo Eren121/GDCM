@@ -153,3 +153,58 @@ std::string _CreateCleanString(std::string s) {
 
    return(str);
 }
+
+///////////////////////////////////////////////////////////////////////////
+/*
+ * \brief   Add a SEPARATOR to the end of the name is necessary
+ * @param   
+ */
+void NormalizePath(std::string &name)
+{
+const char SEPARATOR_X      = '/';
+const char SEPARATOR_WIN    = '\\';
+const std::string SEPARATOR = "/";
+   int size=name.size();
+   if((name[size-1]!=SEPARATOR_X)&&(name[size-1]!=SEPARATOR_WIN))
+   {
+      name+=SEPARATOR;
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////
+/*
+ * \brief   Get the (directory) path from a full path file name
+ */
+std::string GetPath(std::string fullName)
+{
+   int pos1=fullName.rfind("/");
+   int pos2=fullName.rfind("\\");
+   if(pos1>pos2)
+      fullName.resize(pos1);
+   else
+      fullName.resize(pos2);
+   return(fullName);
+}
+
+///////////////////////////////////////////////////////////////////////////
+/*
+ * \brief   Get the (last) name of a full path file name
+ */
+std::string GetName(std::string fullName)
+{   
+  int fin=fullName.length()-1;
+  char a =fullName.c_str()[fin];
+  if (a == '/' || a == '\\') {
+     fin--;
+  }
+  int deb;
+  for (int i=fin;i!=0;i--) {
+     if (fullName.c_str()[i] == '/' || fullName.c_str()[i] == '\\')  
+        break;
+      deb = i;
+  }    
+  std::string lastName;
+  for (int i=deb;i<fin+1;i++)
+    lastName=lastName+fullName.c_str()[i];
+  return(lastName);
+} 

@@ -3,6 +3,7 @@
 #include "gdcmParser.h"
 #include "gdcmUtil.h"
 #include <errno.h>
+#include <unistd.h>
 
 // For nthos:
 #ifdef _MSC_VER
@@ -112,7 +113,7 @@ gdcmParser::gdcmParser(const char *inFilename,
    enableSequences=enable_sequences;
    ignoreShadow   =ignore_shadow;
    
-   SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
+   SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    filename = inFilename;
    Initialise();
 
@@ -183,7 +184,7 @@ void gdcmParser::PrintPubDict(std::ostream & os) {
 
 /**
   * \ingroup gdcmParser
-  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionnry
+  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionnary
   * @return
   */
 void gdcmParser::PrintShaDict(std::ostream & os) {

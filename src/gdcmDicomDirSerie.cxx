@@ -71,9 +71,7 @@ gdcmDicomDirImage * gdcmDicomDirSerie::NewImage(void) {
    FillObject(elemList);
    gdcmDicomDirImage *st = new gdcmDicomDirImage(i, j, ptagHT, plistEntries);
    images.push_front(st);
-   return st; 
-
-  
+   return st;   
 } 
 //-----------------------------------------------------------------------------
 // Protected

@@ -114,7 +114,7 @@ std::string gdcmObject::GetEntryByName(TagName name)  {
          if ( ! ptagHT->count(key)) {
 	   // we assume a Public Dictionnary *is* loaded
            gdcmDict *PubDict         = gdcmGlobal::GetDicts()->GetDefaultPubDict();
-           // if the invoqued (group,elem) doesn't exist inside the Dictionary
+           // if the invoked (group,elem) doesn't exist inside the Dictionary
 	   // we create a VirtualDictEntry
            gdcmDictEntry *DictEntry  = PubDict->GetDictEntryByNumber(group, element);
 	   if (DictEntry == NULL) {

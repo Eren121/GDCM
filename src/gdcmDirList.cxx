@@ -57,7 +57,7 @@ gdcmDirList::~gdcmDirList(void)
 /*
  * \ingroup gdcmDirList
  * \brief   Get the directory name
- * @param   
+ * @return the directory name 
  */
 std::string gdcmDirList::GetDirName(void)
 {
@@ -86,7 +86,8 @@ void gdcmDirList::NormalizePath(std::string &dirName)
 /*
  * \ingroup gdcmDirList
  * \brief   Explore a directory with possibility of recursion
- * @param   
+ * @param  dirName directory to explore
+ * @param  recursive whether we want recursion or not
  */
 void gdcmDirList::Explore(std::string dirName,bool recursive)
 {

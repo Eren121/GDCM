@@ -36,6 +36,11 @@ public:
    gdcmDicomDirElement(void);
    ~gdcmDicomDirElement(void);
 
+  /**
+    * \ingroup gdcmParser
+    * \brief   canonical Printer 
+    * \sa    SetPrintLevel
+  */ 
    void Print(std::ostream &os);
 
 

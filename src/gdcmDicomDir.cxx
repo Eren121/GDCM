@@ -12,6 +12,7 @@
 
 #include <sys/types.h>
 #include <errno.h>
+#include <unistd.h>
 
 //-----------------------------------------------------------------------------
 //  For full DICOMDIR description, see:
@@ -38,6 +39,10 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
  // et quelle que soit la valeur de parseDir,
  // on a lance gdcmParser
  
+ cout << "---------------------------------------------- " << Name <<endl;
+ 
+
+      
    startMethod=            NULL;
    progressMethod=         NULL;
    endMethod=              NULL;
@@ -53,17 +58,26 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
 
    metaElems=NULL;
 
-// Si on passe un root directory, on est assuré de n'avoir rien ramené
+// gdcmParser already  executed
+// Si on a passe un root directory, on est assuré de n'avoir rien ramené
 
    if( GetListEntry().begin()==GetListEntry().end() ) 
    {
      // Si, en plus, parseDir == false, ca devrait etre une erreur
       dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry list empty");
 
+      if(strlen(Name)==1 && Name[0]=='.') { // user passed '.' as Name
+                                            // we get current directory name
+         char*dummy=(char*) malloc(1000); // TODO : check with Windoze
+         getcwd(dummy,(size_t)1000);
+         SetFileName(dummy); // will be converted into a string
+         free(dummy);        // no longer needed   
+      }
+
       if(parseDir)
       {
          dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : Parse directory and create the DicomDir");
-         ParseDirectory();
+	 ParseDirectory();
       }
    }
    else
@@ -141,7 +155,7 @@ void gdcmDicomDir::Print(std::ostream &os)
 /*
  * \ingroup gdcmDicomDir
  * \brief  This predicate, based on hopefully reasonable heuristics,
- *         decides whether or not the current gdcmParser was properly parsed
+ *         decides whether or not the current header was properly parsed
  *         and contains the mandatory information for being considered as
  *         a well formed and usable DicomDir.
  * @return true when gdcmParser is the one of a reasonable DicomDir,
@@ -161,11 +175,11 @@ bool gdcmDicomDir::IsReadable(void)
 
 /*
  * \ingroup gdcmDicomDir
- * \brief  fills whole the structure
+ * \brief  fills the whole structure, starting from a root Directory
  */
 void gdcmDicomDir::ParseDirectory(void)
 {
-   CreateDicomDirChainedList(GetPath());
+   CreateDicomDirChainedList(GetFileName());
    CreateDicomDir();
 }
 
@@ -189,8 +203,8 @@ void gdcmDicomDir::SetStartMethod(gdcmMethod *method,void *arg,gdcmMethod *argDe
 /*
  * \ingroup gdcmDicomDir
  * \brief   Set the method to delete the argument
- *          The argument is destroyed when the method is changed or when the class
- *          is destroyed
+ *          The argument is destroyed when the method is changed or when the
+ *          class is destroyed
  * @param   method Method to call to delete the argument
  */
 void gdcmDicomDir::SetStartMethodArgDelete(gdcmMethod *method) 
@@ -218,8 +232,8 @@ void gdcmDicomDir::SetProgressMethod(gdcmMethod *method,void *arg,gdcmMethod *ar
 /*
  * \ingroup gdcmDicomDir
  * \brief   Set the method to delete the argument
- *          The argument is destroyed when the method is changed or when the class
- *          is destroyed
+ *          The argument is destroyed when the method is changed or when the 
+ *          class is destroyed          
  * @param   method Method to call to delete the argument
  */
 void gdcmDicomDir::SetProgressMethodArgDelete(gdcmMethod *method)
@@ -289,15 +303,13 @@ bool gdcmDicomDir::Write(std::string fileName)
    WriteDicomDirEntries(fp1);
 
    fclose(fp1);
-
    return true;
 }
 
 /**
  * \ingroup gdcmParser
  * \brief   writes on disc according to the DICOMDIR format
- *          using the Chained List
- * \todo a reecrire en utilisant la structure arborescente
+ *          using the tree-like structure
  * @param   _fp already open file pointer
  */
 
@@ -369,7 +381,8 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
    patients.clear();
 
    for(gdcmDirList::iterator it=fileList.begin(); 
-       it!=fileList.end(); ++it) 
+                             it!=fileList.end(); 
+                             ++it) 
    {
       progress=(float)(count+1)/(float)fileList.size();
       CallProgressMethod();
@@ -407,8 +420,7 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
    
    elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();  
    std::list<gdcmHeaderEntry *>::iterator debInsertion, finInsertion, i,j; 
-   
-      
+         
    debInsertion = metaElems->fin(); 
    ++debInsertion;
    finInsertion=debInsertion;
@@ -458,23 +470,6 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
    return p;   
 }
 
-/*
- * \ingroup gdcmDicomDir
- * \brief   Get the DicomDir path
- */
-std::string gdcmDicomDir::GetPath(void)
-{
-   std::string path=GetFileName();
-
-   int pos1=path.rfind("/");
-   int pos2=path.rfind("\\");
-   if(pos1>pos2)
-      path.resize(pos1);
-   else
-      path.resize(pos2);
-
-   return(path);
-}
 /*
  * \ingroup gdcmDicomDir
  * \brief   CallStartMethod
@@ -692,8 +687,8 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(ListTag::iterator begin,ListTag::iterat
 /*
  * \ingroup gdcmDicomDir
  * \brief  for each Header of the chained list, add/update the Patient/Study/Serie/Image info 
- * @param   path
- * @param   list
+ * @param   path path of the root directory
+ * @param   list chained list of Headers
  */
 void gdcmDicomDir::SetElements(std::string &path, ListHeader &list)
 {
@@ -745,7 +740,7 @@ void gdcmDicomDir::SetElements(std::string &path, ListHeader &list)
  * \ingroup gdcmDicomDir
  * \brief   adds to the HTable and at the end of the Chained List
  *          the gdcmEntries (Dicom Elements) corresponding to the given type
- * @param   path file Path (only used when type = GDCM_DICOMDIR_IMAGE
+ * @param   path full path file name(only used when type = GDCM_DICOMDIR_IMAGE
  * @param   type gdcmObject type to create (GDCM_DICOMDIR_PATIENT, GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
  * @param   header gdcmHeader of the current file
  */
@@ -783,7 +778,6 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader
    {
       tmpGr=it->group;
       tmpEl=it->elem;
-
       dictEntry=GetPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
       entry=new gdcmHeaderEntry(dictEntry);
       entry->SetOffset(0); // just to avoid missprinting
@@ -795,10 +789,10 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader
 
       if(val==GDCM_UNFOUND) 
       {
-         if((tmpGr==0x0004) &&(tmpEl==0x1130) )
-         {
-            // TODO force the *end* File Name(remove path)
-            val=path;
+         if((tmpGr==0x0004) &&(tmpEl==0x1130) ) // File-set ID
+         {	 
+	   // force to the *end* File Name
+           val=GetName(path);	   	    
          }
          else if( (tmpGr==0x0004) && (tmpEl==0x1500) ) // Only used for image
          {
@@ -807,8 +801,9 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader
                dbg.Verbose(0, "gdcmDicomDir::SetElement : the base path of file name is incorrect");
                val=header->GetFileName();
             }
-            else
-               val=&(header->GetFileName()[path.length()]);
+            else {
+               val=&(header->GetFileName().c_str()[path.length()]);
+	    }   
          }
          else
          {
@@ -827,7 +822,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader
       {
          if(dictEntry->GetGroup()==0xfffe) 
 	 {
-            entry->SetLength(entry->GetValue().length()); //JPR	 	 
+            entry->SetLength(entry->GetValue().length()); 	 
 	 }
 	 else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
          {

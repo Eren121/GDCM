@@ -159,7 +159,14 @@ protected:
    void WriteEntriesDeprecated(FILE *_fp,FileType type); // JPR
 
    void AddHeaderEntry       (gdcmHeaderEntry *);
-
+   
+   /**
+    * \ingroup gdcmParser
+    * \brief   Set the external File Name 
+    */
+   inline void SetFileName(char* fileName) 
+      {filename = fileName;}
+      
 // Variables
    /**
    * \brief File Pointer, open during Header parsing
@@ -260,7 +267,7 @@ private:
    
    // Deprecated (Not used) --> commented out
    //gdcmHeaderEntry *NewManualHeaderEntryToPubDict(std::string NewTagName,
-   //                                                  std::string VR);
+   //                                               std::string VR);
    
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 

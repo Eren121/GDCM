@@ -35,7 +35,18 @@ public:
                    
    ~gdcmDicomDir(void);
 
-   void SetPrintLevel(int level) { printLevel = level; };
+   /**
+    * \ingroup gdcmParser
+    * \brief   Sets the print level for the Dicom Header 
+    * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
+    */
+   void SetPrintLevel(int level) 
+      { printLevel = level; };
+  /**
+    * \ingroup gdcmParser
+    * \brief   canonical Printer 
+    * \sa    SetPrintLevel
+  */     
    virtual void Print(std::ostream &os = std::cout);
 
 // Informations contained in the parser
@@ -86,7 +97,6 @@ public:
    
 protected:
    void CreateDicomDirChainedList(std::string path);
-   std::string GetPath(void);
 
    void CallStartMethod(void);
    void CallProgressMethod(void);

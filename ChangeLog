@@ -1,3 +1,11 @@
+2004-03-17  Jean-Pierre Roux 
+     * REM (Eric Boix bug) : removal of meaningless  
+       gdcmDicomDirImage::NewImage function.       
+     * FIX now file names and directory name are written properly in the
+                      DICOMDIR
+           now gdcmDicomDir constructor may be call without any trick
+	              about the name
+
 2004-03-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> 
      * FIX (JPR bug) : src/gdcmDicomDirImage.cxx added missing definition
        of gdcmDicomDirImage::NewImage as empty function.
