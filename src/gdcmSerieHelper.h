@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:58:04 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/02/05 01:25:03 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 namespace gdcm 
 {
 class File;
-typedef std::list<File* > GdcmFileList;
+typedef std::vector<File* > GdcmFileList;
 
 //-----------------------------------------------------------------------------
 /**
@@ -46,7 +46,7 @@ public:
 
    SerieHelper();
    ~SerieHelper();
-   void Print();
+   void Print(std::ostream &os = std::cout, std::string const & indent = "" );
 
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
@@ -69,6 +69,8 @@ private:
    bool ImageNumberOrdering(GdcmFileList *CoherentGdcmFileList);
    bool FileNameOrdering(GdcmFileList *CoherentGdcmFileList);
    
+   static bool ImageNumberLessThan(File *file1, File *file2);
+   static bool FileNameLessThan(File *file1, File *file2);
    CoherentFileListmap CoherentGdcmFileListHT;
    CoherentFileListmap::iterator ItListHt;
 };

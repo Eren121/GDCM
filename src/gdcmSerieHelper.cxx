@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:16:07 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/02/05 01:25:03 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,8 +22,8 @@
 #include "gdcmDebug.h"
 
 #include <math.h>
-#include <algorithm>
 #include <vector>
+#include <algorithm>
 
 namespace gdcm 
 {
@@ -199,11 +199,10 @@ GdcmFileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
  *   -# Image Position Patient
  *   -# Image Number
  *   -# More to come :-)
- * @param CoherentGdcmFileList Coherent File list (same Serie UID) to sort
+ * @param fileList Coherent File list (same Serie UID) to sort
  * @return false only if the header is bugged !
  */
-bool SerieHelper::ImagePositionPatientOrdering( 
-                                       GdcmFileList *CoherentGdcmFileList )
+bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
 //based on Jolinda's algorithm
 {
    //iop is calculated based on the file file
@@ -218,8 +217,8 @@ bool SerieHelper::ImagePositionPatientOrdering(
 
    //!\todo rewrite this for loop.
    for ( GdcmFileList::const_iterator 
-         it = CoherentGdcmFileList->begin();
-         it != CoherentGdcmFileList->end(); ++it )
+         it = fileList->begin();
+         it != fileList->end(); ++it )
    {
       if( first ) 
       {
@@ -291,8 +290,8 @@ bool SerieHelper::ImagePositionPatientOrdering(
    n = 0;
     
    //VC++ don't understand what scope is !! it -> it2
-   for (GdcmFileList::const_iterator it2  = CoherentGdcmFileList->begin();
-        it2 != CoherentGdcmFileList->end(); ++it2, ++n)
+   for (GdcmFileList::const_iterator it2  = fileList->begin();
+        it2 != fileList->end(); ++it2, ++n)
    {
       //2*n sort algo !!
       //Assumption: all files are present (no one missing)
@@ -311,13 +310,13 @@ bool SerieHelper::ImagePositionPatientOrdering(
       }
    }
 
-   CoherentGdcmFileList->clear();  // doesn't delete list elements, only node
+   fileList->clear();  // doesn't delete list elements, only node
   
    //VC++ don't understand what scope is !! it -> it3
    for (GdcmFileVector::const_iterator it3  = CoherentGdcmFileVector.begin();
         it3 != CoherentGdcmFileVector.end(); ++it3)
    {
-      CoherentGdcmFileList->push_back( *it3 );
+      fileList->push_back( *it3 );
    }
 
    distlist.clear();
@@ -326,23 +325,28 @@ bool SerieHelper::ImagePositionPatientOrdering(
    return true;
 }
 
+bool SerieHelper::ImageNumberLessThan(File *file1, File *file2)
+{
+  return file1->GetImageNumber() < file2->GetImageNumber();
+}
+
 /**
  * \brief sorts the images, according to their Image Number
  * \note Works only on bona fide files  (i.e image number is a character string
  *                                      corresponding to an integer)
  *             within a bona fide serie (i.e image numbers are consecutive)
- * @param CoherentGdcmFileList Coherent File list (same Serie UID) to sort 
+ * @param fileList Coherent File list (same Serie UID) to sort 
  * @return false if non nona fide stuff encountered
  */
-bool SerieHelper::ImageNumberOrdering(GdcmFileList *CoherentGdcmFileList) 
+bool SerieHelper::ImageNumberOrdering(GdcmFileList *fileList) 
 {
    int min, max, pos;
-   int n = 0;//CoherentGdcmFileList.size() is a O(N) operation
+   int n = fileList->size();
 
-   GdcmFileList::const_iterator it = CoherentGdcmFileList->begin();
+   GdcmFileList::const_iterator it = fileList->begin();
    min = max = (*it)->GetImageNumber();
 
-   for (; it != CoherentGdcmFileList->end(); ++it, ++n)
+   for (; it != fileList->end(); ++it, ++n)
    {
       pos = (*it)->GetImageNumber();
       min = (min < pos) ? min : pos;
@@ -353,41 +357,24 @@ bool SerieHelper::ImageNumberOrdering(GdcmFileList *CoherentGdcmFileList)
    if( min == max || max == 0 || max >= (n+min))
       return false;
 
-   unsigned char *partition = new unsigned char[n];
-   memset(partition, 0, n); 
-
-   GdcmFileVector CoherentGdcmFileVector(n);
-
-   for (it = CoherentGdcmFileList->begin();
-        it != CoherentGdcmFileList->end(); ++it)
-   {
-      pos = (*it)->GetImageNumber();
-      CoherentGdcmFileVector[pos - min] = *it;
-      partition[pos - min]++;
-   }
-  
-   //VC++ doesn't understand what scope is,  it -> it3
-   CoherentGdcmFileList->clear();  // doesn't delete list elements, only nodes
-   for ( GdcmFileVector::const_iterator it3 = CoherentGdcmFileVector.begin();
-         it3 != CoherentGdcmFileVector.end(); ++it3 )
-   {
-      CoherentGdcmFileList->push_back( *it3 );
-   }
-   CoherentGdcmFileVector.clear();
-   delete[] partition;
+   std::sort(fileList->begin(), fileList->end(), SerieHelper::ImageNumberLessThan );
 
    return true;
 }
 
+bool SerieHelper::FileNameLessThan(File *file1, File *file2)
+{
+  return file1->GetFileName() < file2->GetFileName();
+}
+
 /**
  * \brief sorts the images, according to their File Name
- * @param CoherentGdcmFileList Coherent File list (same Serie UID) to sort
+ * @param fileList Coherent File list (same Serie UID) to sort
  * @return false only if the header is bugged !
  */
-bool SerieHelper::FileNameOrdering(GdcmFileList *)
+bool SerieHelper::FileNameOrdering(GdcmFileList *fileList)
 {
-   //TODO using the sort
-   //sort(CoherentGdcmFileList.begin(), CoherentGdcmFileList.end());
+   std::sort(fileList->begin(), fileList->end(), SerieHelper::FileNameLessThan);
    return true;
 }
 
@@ -396,7 +383,7 @@ bool SerieHelper::FileNameOrdering(GdcmFileList *)
 /**
  * \brief   Canonical printer.
  */
-void SerieHelper::Print()
+void SerieHelper::Print(std::ostream &os, std::string const & indent)
 {
    // For all the Coherent File lists of the gdcm::Serie
    CoherentFileListmap::iterator itl = CoherentGdcmFileListHT.begin();
@@ -407,14 +394,14 @@ void SerieHelper::Print()
    }
    while (itl != CoherentGdcmFileListHT.end())
    { 
-      std::cout << "Serie UID :[" << itl->first << "]" << std::endl;
+      os << "Serie UID :[" << itl->first << "]" << std::endl;
 
       // For all the files of a Coherent File list
       for (GdcmFileList::iterator it =  (itl->second)->begin();
                                   it != (itl->second)->end(); 
                                 ++it)
       {
-         std::cout << " --- " << (*it)->GetFileName() << std::endl;
+         os << indent << " --- " << (*it)->GetFileName() << std::endl;
       }
       ++itl;
    }
