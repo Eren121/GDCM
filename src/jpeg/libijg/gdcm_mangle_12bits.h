@@ -10,7 +10,7 @@ GDCM. This also allows us to generate two jpeg library (8bits and 12bits).
 
 The following command was used to obtain the symbol list:
 
-nm libgdcmijpeg12.a | grep " T " | colrm 1 11 | sort
+nm libgdcmijpeg12.a | grep " [R|T] " | colrm 1 11 | sort
 
 (actually copy/paste from gdcm_jpeg8bits)
 */
