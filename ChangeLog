@@ -1,10 +1,17 @@
+2003-05-12  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
+      * src/gdcmHeader>[h/cxx] added gdcmHeader::GetPixelSize()
+      * vtk/vtkGdcmReader.cxx now properly inports the image in the
+        vtk data structure (an image Flip was required).
+      * vtk/testvtkGdcmReader.cxx refers to gdcmData subdir instead of Data.
+      * cosmetic changes in documentation.
+
 2003-05-7  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * src/gdcmHeader.cxx: the constructor no longer exits when an
         unexisting file is given as argument.
       * The subdirectory Data (containing all the images used for the
         test suite) is not part of this repository anymore. A new module
         containing those images is now available at 
-          :pserver:frog@cvs.creatis.insa-lyon.fr:2402/cvs/public
+          :pserver:xxx@cvs.creatis.insa-lyon.fr:2402/cvs/public
         with the name gdcmData.
         All the python scripts (including the package initialisation file
         gdcmPython/__init__.py) were adapated to take this change into

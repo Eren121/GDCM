@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.1 2003/05/05 14:13:59 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.2 2003/05/12 14:32:43 frog Exp $
 
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
@@ -33,18 +33,18 @@ int main( int argc, char *argv[] )
    reader->DebugOn();
    // Alloc Used High
    // 8 8 7 U : OK
-   // reader->SetFileName("../Data/CT-MONO2-8-abdo.dcm");
+   // reader->SetFileName("../gdcmData/CT-MONO2-8-abdo.dcm");
    // 16 12 11 U : OK but saturated
-   // reader->SetFileName("../Data/CT-MONO2-12-lomb-an2.acr2");
+   // reader->SetFileName("../gdcmData/CT-MONO2-12-lomb-an2.acr2");
    // 16 12 11 U OK
-   //OKreader->SetFileName("../Data/MR-MONO2-12-an2.acr2");
+   //OKreader->SetFileName("../gdcmData/MR-MONO2-12-an2.acr2");
    // 16 10 9 U OK
-   //reader->SetFileName("../Data/CR-MONO1-10-chest.dcm");
+   //reader->SetFileName("../gdcmData/CR-MONO1-10-chest.dcm");
    //reader->Update();
    // 16 16 15 S: OK saturation ?
-   // reader->SetFileName("../Data/CT-MONO2-16-ort.dcm");
+   // reader->SetFileName("../gdcmData/CT-MONO2-16-ort.dcm");
    // 16 16 15 S:
-   reader->SetFileName("../Data/CT-MONO2-16-ankle.dcm");
+   reader->SetFileName("../gdcmData/CT-MONO2-16-ankle.dcm");
    reader->UpdateWholeExtent();
    vtkImageData *ima = reader->GetOutput();
    taille=ima->GetDimensions();

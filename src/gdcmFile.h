@@ -35,17 +35,9 @@ public:
 	// from the constructor's one (no overwriting allowed).
 	// TODO Swig int SetFileName(string filename);
 
-   void SetPixelDataSizeFromHeader(void);
-	// Returns size (in bytes) of required memory to contain data
-	// represented in this file.
+   void   SetPixelDataSizeFromHeader(void);
 	size_t GetImageDataSize();
-	
-	// Allocates necessary memory, copies the data (image[s]/volume[s]) to
-	// newly allocated zone and return a pointer to it:
-	 void * GetImageData();
-	
-	// Copies (at most MaxSize bytes) of data to caller's memory space.
-	// Returns an error code on failure (if MaxSize is not big enough)
+	void * GetImageData();
 	size_t GetImageDataIntoVector(void* destination, size_t MaxSize );
 	
 	// Allocates ExpectedSize bytes of memory at this->Data and copies the

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.64 2003/05/07 12:49:10 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.65 2003/05/12 14:32:43 frog Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -1442,16 +1442,34 @@ int gdcmHeader::GetZSize(void) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief   Return the size (in bytes) of a single pixel of data.
+ * @return  The size in bytes of a single pixel of data.
+ *
+ */
+int gdcmHeader::GetPixelSize(void) {
+   string PixelType = GetPixelType();
+   if (PixelType == "8U" || PixelType == "8S")
+      return 1;
+   if (PixelType == "16U" || PixelType == "16S")
+      return 2;
+   if (PixelType == "32U" || PixelType == "32S")
+      return 4;
+   dbg.Verbose(0, "gdcmHeader::GetPixelSize: Unknown pixel type");
+   return 0;
+}
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Build the Pixel Type of the image.
  *          Possible values are:
- *          - U8  unsigned  8 bit,
- *          - S8    signed  8 bit,
- *          - U16 unsigned 16 bit,
- *          - S16   signed 16 bit,
- *          - U32 unsigned 32 bit,
- *          - S32   signed 32 bit,
+ *          - 8U  unsigned  8 bit,
+ *          - 8S    signed  8 bit,
+ *          - 16U unsigned 16 bit,
+ *          - 16S   signed 16 bit,
+ *          - 32U unsigned 32 bit,
+ *          - 32S   signed 32 bit,
  * \warning 12 bit images appear as 16 bit.
- * @return 
+ * @return  
  */
 string gdcmHeader::GetPixelType(void) {
    string BitsAlloc;

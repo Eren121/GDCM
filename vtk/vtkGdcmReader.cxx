@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.1 2003/05/05 14:13:59 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.2 2003/05/12 14:32:43 frog Exp $
 #include "vtkGdcmReader.h"
 #include "vtkByteSwap.h"
 #include <stdio.h>
@@ -159,27 +159,39 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
   data->SetExtent(this->DataExtent);
   data->GetPointData()->GetScalars()->SetName("ImageFile");
 
-  int size =
-    (this->DataExtent[1] - this->DataExtent[0]+1) *
-    (this->DataExtent[3] - this->DataExtent[2]+1) *
-    (this->DataExtent[5] - this->DataExtent[4]+1) *
-    2;
+  // First check the coherence between the DataExtent and the
+  // size of the pixel data as annouced by gdcm (looks a bit paranoid).
   gdcmFile GdcmFile(this->InternalFileName);
-  size = GdcmFile.GetImageDataSize();
-  unsigned char *mem = new unsigned char [size];
+  int NumColumns = this->DataExtent[1] - this->DataExtent[0] + 1;
+  int NumLines   = this->DataExtent[3] - this->DataExtent[2] + 1;
+  int NumPlanes  = this->DataExtent[5] - this->DataExtent[4] + 1;
+  int size = NumColumns * NumLines * NumPlanes * GdcmFile.GetPixelSize();
   if ( size != GdcmFile.GetImageDataSize() )
     {
     vtkDebugMacro("Inconsistency with GetImageDataSize");
     vtkDebugMacro("Number of scalar components"
                   << this->NumberOfScalarComponents);
     }
-  GdcmFile.GetImageDataIntoVector((void*)mem, size);
+  // Allocate pixel data space itself.
+  unsigned char *mem = new unsigned char [size];
+
+  // If the data structure of vtk for image/volume representation
+  // were straigthforwards the following would suffice:
+  //    GdcmFile.GetImageDataIntoVector((void*)mem, size);
+  // But vtk chose to invert the lines of an image, that is the last
+  // line comes first (for some axis related reasons?). Hence we need
+  // to load the image line by line, starting from the end:
+  int LineSize = NumColumns * GdcmFile.GetPixelSize();
+  unsigned char * Source      = (unsigned char*)GdcmFile.GetImageData();
+  unsigned char * Destination = mem + size - LineSize;
+  for (int i = 0; i < NumLines; i++)
+    {
+    memcpy((void*)Destination, (void*)Source, LineSize);
+    Source      += LineSize;
+    Destination -= LineSize;
+    }
+
   data->GetPointData()->GetScalars()->SetVoidArray(mem, size, 0);
-  //vtkImageFlip * Flip = vtkImageFlip::New();
-  //Flip->SetInput(data);
-  //Flip->Update();
-  //data = Flip->GetOutput();
-  //Flip->SetInput(NULL);
   this->Modified();
 
 }

@@ -34,8 +34,6 @@ gdcmFile::gdcmFile(const char * filename)
    SetPixelDataSizeFromHeader();
 }
 
-
-/////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
  * \brief     calcule la longueur (in bytes) A ALLOUER pour recevoir les
@@ -46,7 +44,6 @@ gdcmFile::gdcmFile(const char * filename)
  *
  * @return	longueur a allouer 
  */
-
 void gdcmFile::SetPixelDataSizeFromHeader(void) {
    int nb;
    string str_nb;
@@ -63,12 +60,13 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
 
 /**
  * \ingroup   gdcmFile
- * \brief     Accessor
+ * \brief     Returns the size (in bytes) of required memory to hold
+ *            the pixel data represented in this file.
+ * @return    The size of pixel data in bytes.
  */
 size_t gdcmFile::GetImageDataSize(void) {
    return (lgrTotale);
 }
-
 
 /**
  * \ingroup gdcmFile
@@ -135,12 +133,11 @@ bool gdcmFile::ReadPixelData(void* destination) {
 
 }   
 
-/////////////////////////////////////////////////////////////////
 /**
  * \ingroup gdcmFile
  * \brief   Allocates necessary memory, copies the pixel data
- *          (image[s]/volume[s]) to newly allocated zone and return a
- *          pointer to it:
+ *          (image[s]/volume[s]) to newly allocated zone.
+ * @return  Pointer to newly allocated pixel data. 
  */
 void * gdcmFile::GetImageData (void) {
    PixelData = (void *) malloc(lgrTotale);
@@ -148,16 +145,17 @@ void * gdcmFile::GetImageData (void) {
    return(PixelData);
 }
 
-/////////////////////////////////////////////////////////////////
 /**
- * \ingroup   gdcmFile
- * \brief amene en mémoire dans une zone précisee par l'utilisateur
- *        les Pixels d'une image 
- *
- * @param destination
- * @param MaxSize
- *
- * @return The number of bytes actually copied.
+ * \ingroup gdcmFile
+ * \brief   Copies at most MaxSize bytes of pixel data to caller's
+ *          memory space.
+ * @param   destination Address (in caller's memory space) at which the
+ *          pixel data should be copied
+ * @param   MaxSize Maximum number of bytes to be copied. When MaxSize
+ *          is not sufficient to hold the pixel data the copy is not
+ *          executed (i.e. no partial copy).
+ * @return  On success, the number of bytes actually copied. Zero on
+ *          failure e.g. MaxSize is lower than necessary.
  */
 
 size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {

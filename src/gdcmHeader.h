@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.22 2003/05/06 15:52:13 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.23 2003/05/12 14:32:43 frog Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -165,6 +165,7 @@ public:
    int GetXSize(void);  
    int GetYSize(void);
    int GetZSize(void);       
+   int GetPixelSize(void);       
    string GetPixelType(void);  
    int Write(FILE *, FileType);
    
