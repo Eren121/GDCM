@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 12:29:17 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/01/07 12:42:54 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,6 +47,7 @@ public:
    static TagKey TranslateToKey(uint16_t group, uint16_t element);
 
    void SetVR(TagName const &vr);
+   void SetVM(TagName const &vm);
 
    /// \brief tells if the V(alue) R(epresentation) is known (?!)
    /// @return 

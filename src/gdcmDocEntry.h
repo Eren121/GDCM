@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/07 12:42:54 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,6 +64,17 @@ public:
    /// Dictionnary, of the current Dicom Header Entry
    std::string const &GetVR() const { return DicomDict->GetVR(); };
 
+   /// \brief Returns the 'Value Multiplicity' (e.g. "1", "1-n", "6"),
+   /// found in the Dicom Header or in the Dicom Dictionnary
+   /// of the current Dicom Header Entry
+   std::string const &GetVM() const { return DicomDict->GetVM(); };
+
+   /// Sets the 'Value Representation' of the current Dicom Header Entry
+   void SetVR( TagName const &v) { DicomDict->SetVR(v); };
+
+   /// Sets the 'Value Multiplicity' of the current Dicom Header Entry
+   void SetVM( TagName const &v) { DicomDict->SetVM(v); }; 
+
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Preamble, if any) of the value of the current Dicom HeaderEntry
    /// \warning offset of the *value*, not of the Dicom Header Entry
@@ -79,9 +90,6 @@ public:
    ///          mandatoryly the one thats's used (in case on SQ, or delimiters,
    ///          the usable length is set to zero)
    uint32_t GetReadLength() { return ReadLength; };
-
-   /// Sets the 'Value Representation' of the current Dicom Header Entry
-   void SetVR( TagName const &v) { DicomDict->SetVR(v); };    
 
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
    /// Dicom Header Entry
