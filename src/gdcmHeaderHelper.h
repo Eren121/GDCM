@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.5 2003/11/03 10:49:31 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.6 2003/11/07 14:57:58 malaterre Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
@@ -76,6 +76,10 @@ public:
    float GetXSpacing();
    float GetYSpacing();
    float GetZSpacing();
+   
+   //Usefull for rescaling graylevel:
+   float GetRescaleIntercept();
+   float GetRescaleSlope();
 
    int GetNumberOfScalarComponents();
    int GetNumberOfScalarComponentsRaw();
