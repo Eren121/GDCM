@@ -1,19 +1,10 @@
 ###################################################
-For the impatient:
- * cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public login
-   answer anonymous
- * cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public co gdcm
- * cd gdcm
- * ./autogen.sh (--enable-python --enable-vtk --enable-doc)
- * make
- * make install
- 
-# As of May 2004, cmake has taken over the world^W autotools, therefore you'll 
-  need to grab a recent version from :
-  
-     http://cmake.org (later than 1.8.3)
+The installation documentation entry point is Doc/Website/Installation.html
+###################################################
+As of May 2004, cmake has taken over the world^W autotools, therefore
+you'll need to grab a recent version from: http://cmake.org (later than 1.8.3)
      
-  Then install instruction are:
+ Then install instruction are:
  * cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public login
    answer anonymous
  * cvs -d:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public co gdcm
@@ -25,10 +16,4 @@ For the impatient:
  * make
  * make install
 
-###################################################
-The full documentation for installation is available at
-   http://www.creatis.insa-lyon.fr/Public/Gdcm/html.developper/DoxyInstallation.html
 
-###################################################
-The documentation can also be found in the Doc sub-directory. Please refer to 
-README file within Doc.

@@ -1,3 +1,23 @@
+2004-09-24 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * Added Doc/Website/CodingStyle.html, Developpers.html,
+    DeveloppersPython.html, GdcmDataCvs.html and
+    DownloadVersion0_1.html, DownloadVersion0_3.html.
+  * Some Doc/*.txt Doxygen files (which do not really concern the
+    documentation itself, but the website) moved to html and
+    placed in directory Doc/Website:
+    - Doc/DoxyDevelInstal.txt moved to Doc/Website/Developpers.html
+    - Doc/DoxyInstallation.txt moved to Doc/Website/Installation.html
+    - Doc/DoxyIntroduction.txt included in Doc/Website/Main.html
+  * Doc/DoxyfileDeveloppers, DoxyfileUsers, Makefile.am oldies removed.
+  * CMakeLists.txt changed accordingly.
+  * DEVELOPPER spread out in Doc/Website/Developpers.html, CodingStyle.html,
+    DeveloppersPython.html
+  * INSTALL nows refers to Doc/Website/Installation.html
+
+2004-09-23 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * Added Doc/Website directory, that contains a first raw version
+    of gdcm Web site.
+
 2004-09-23 Jean-Pierre Roux
   * FIX In order not to be poluted any longer by casting problems,
     the member VoidArea of gdcmBinEntry is now uint8_t* (instead of void *)
