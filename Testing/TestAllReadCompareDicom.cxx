@@ -97,6 +97,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       ////// Step 3a:
 
          int testedDataSize    = tested->GetImageDataSize();
+         (void)testedDataSize;
          void* testedImageData = tested->GetImageData(); // Kludge
          tested->WriteDcmExplVR( referenceFileName );
          std::cerr << "      Creating reference baseline file :" << std::endl
@@ -146,6 +147,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       if (int res = memcmp(testedImageData, referenceImageData,
                            testedDataSize) != 0 )
       {
+         (void)res;
          std::cout << "        Pixel differ (as expanded in memory)."
                    << std::endl;
          delete tested;

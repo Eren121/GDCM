@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/06 09:50:52 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2004/07/14 14:08:05 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2491,6 +2491,7 @@ bool gdcmDocument::ReadTag(uint16_t TestGroup, uint16_t TestElement)
 uint32_t gdcmDocument::ReadTagLength(uint16_t TestGroup, uint16_t TestElement)
 {
    long PositionOnEntry = ftell(fp);
+   (void)PositionOnEntry;
 
    if ( !ReadTag(TestGroup, TestElement) )
    {

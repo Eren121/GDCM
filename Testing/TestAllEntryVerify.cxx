@@ -129,6 +129,8 @@ bool ReferenceFileParser::AddKeyValuePairToMap( string& key, string& value )
    if ( CurrentMapEntryValuesPtr->count(key) != 0 )
       return false;
    (*CurrentMapEntryValuesPtr)[key] = value;
+   
+   return true; //??
 }
 
 void ReferenceFileParser::Print()
@@ -203,6 +205,7 @@ bool ReferenceFileParser::Check()
       cout << Indent << "  OK" << endl;
    }
    cout << Indent << endl;
+   return true; //???
 }
 
 istream& ReferenceFileParser::eatwhite( istream& is )
@@ -429,6 +432,7 @@ bool ReferenceFileParser::Open( string& referenceFileName )
    }
 
    from.close();
+   return true; //??
 }
 
 void ReferenceFileParser::CleanUpLine( string& line )
@@ -577,6 +581,7 @@ bool ReferenceFileParser::SecondPassReferenceFile()
 
       ParseRegularLine( line );
    }
+   return true; //??
 }
 
 int TestAllEntryVerify(int argc, char* argv[]) 

@@ -104,8 +104,9 @@ int TestReadWriteReadCompare(int argc, char* argv[])
        return 1;
     }
 
-    if (int res=memcmp(imageData, imageDataWritten, dataSize) !=0)
+    if (int res = memcmp(imageData, imageDataWritten, dataSize) !=0)
     {
+       (void)res;
        std::cout << std::endl
           << "        Pixel differ (as expanded in memory)." << std::endl;
        delete (char*)imageData;
