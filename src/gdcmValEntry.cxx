@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/10 15:54:45 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/11/16 16:49:01 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,7 @@ void ValEntry::Print(std::ostream & os)
       {
          if ( v.length() != 0 )  // for brain damaged headers
          {
-            if ( ! isdigit(v[v.length()-1]) )
+            if ( ! isdigit((unsigned char)v[v.length()-1]) )
             {
                v.erase(v.length()-1, 1);
             }
@@ -124,7 +124,7 @@ void ValEntry::Print(std::ostream & os)
          {
             if ( v.length() != 0 )  // for brain damaged headers
             {
-               if ( ! isdigit(v[v.length()-1]) )
+               if ( ! isdigit((unsigned char)v[v.length()-1]) )
                {
                   v.erase(v.length()-1, 1);
                }
@@ -140,7 +140,7 @@ void ValEntry::Print(std::ostream & os)
             {
                if ( v.length() != 0 )  // for brain damaged headers  
                {
-                  if ( ! isdigit(v[v.length()-1]) )
+                  if ( ! isdigit((unsigned char)v[v.length()-1]) )
                   {
                      v.erase(v.length()-1, 1);  
                   }

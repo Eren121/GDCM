@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 16:20:23 $
-  Version:   $Revision: 1.129 $
+  Date:      $Date: 2004/11/16 16:49:01 $
+  Version:   $Revision: 1.130 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -316,7 +316,7 @@ TransferSyntaxType Document::GetTransferSyntax()
          // for brain damaged headers
          return UnknownTS;
       }
-      while ( !isdigit(transfer[transfer.length()-1]) )
+      while ( !isdigit((unsigned char)transfer[transfer.length()-1]) )
       {
          transfer.erase(transfer.length()-1, 1);
       }
@@ -1921,7 +1921,7 @@ bool Document::CheckDocEntryVR(DocEntry *entry, VRKey vr)
    // expected VR read happens to be non-ascii characters we consider
    // we hit falsely explicit VR tag.
 
-   if ( !isalpha(vr[0]) && !isalpha(vr[1]) )
+   if ( !isalpha((unsigned char)vr[0]) && !isalpha((unsigned char)vr[1]) )
    {
       realExplicit = false;
    }

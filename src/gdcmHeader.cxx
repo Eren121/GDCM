@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 05:03:35 $
-  Version:   $Revision: 1.201 $
+  Date:      $Date: 2004/11/16 16:49:01 $
+  Version:   $Revision: 1.202 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1151,7 +1151,7 @@ std::string Header::GetTransfertSyntaxName()
       return "Uncompressed ACR-NEMA";
    }
 
-   while ( ! isdigit(transfertSyntax[transfertSyntax.length()-1]) )
+   while ( ! isdigit((unsigned char)transfertSyntax[transfertSyntax.length()-1]) )
    {
       transfertSyntax.erase(transfertSyntax.length()-1, 1);
    }

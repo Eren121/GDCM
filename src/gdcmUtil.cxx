@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 10:37:54 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2004/11/16 16:49:01 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,21 +118,21 @@ std::string Util::CreateCleanString(std::string const & s)
 {
    std::string str = s;
 
-   for(unsigned int i=0;i<str.size();i++)
+   for(unsigned int i=0; i<str.size(); i++)
    {
-      if(!isprint(str[i]))
+      if(!isprint((unsigned char)str[i]))
       {
-         str[i]='.';
+         str[i] = '.';
       }
    }
 
-   if(str.size()>0)
+   if(str.size() > 0)
    {
-      if(!isprint(s[str.size()-1]))
+      if(!isprint((unsigned char)s[str.size()-1]))
       {
-         if(s[str.size()-1]==0)
+         if(s[str.size()-1] == 0)
          {
-            str[str.size()-1]=' ';
+            str[str.size()-1] = ' ';
          }
       }
    }
