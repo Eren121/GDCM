@@ -16,19 +16,28 @@ SET(TEST_SOURCES
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
-SET(TEST_SOURCES ${TEST_SOURCES}     
-  PrintHeader.cxx     #require test.acr
-  PrintDicomDir.cxx
-  pourFindTaggs.cxx
-  testChangeEntete.cxx
-  testDicomDir.cxx    #require DICOMDIR
-  BuildUpDicomDir.cxx
-  TestReadWrite.cxx
-
-# Disable makeDicomDir for now
-#  makeDicomDir.cxx
-)
+  SET(TEST_SOURCES ${TEST_SOURCES}     
+    PrintHeader.cxx       #require test.acr
+    PrintDicomDir.cxx
+    pourFindTaggs.cxx
+    testChangeEntete.cxx
+    testDicomDir.cxx      #require DICOMDIR
+    BuildUpDicomDir.cxx
+    TestReadWrite.cxx
+    makeDicomDir.cxx
+  )
+  # add test that require VTK:
+  IF(GDCM_VTK)
+    INCLUDE_DIRECTORIES(
+      ${GDCM_SOURCE_DIR}/vtk/
+      )
+    SET(TEST_SOURCES ${TEST_SOURCES}
+      ShowDicom.cxx    
+      )
+  ENDIF(GDCM_VTK)
 ENDIF (GDCM_DATA_ROOT)
+
+
 
 # include stuff
 INCLUDE_DIRECTORIES(
@@ -38,7 +47,12 @@ INCLUDE_DIRECTORIES(
 
 CREATE_TEST_SOURCELIST(Tests gdcmTests.cxx ${TEST_SOURCES})
 ADD_EXECUTABLE(gdcmTests ${Tests})
-TARGET_LINK_LIBRARIES(gdcmTests gdcm)
+IF(GDCM_VTK)
+  TARGET_LINK_LIBRARIES(gdcmTests vtkgdcm vtkRendering)
+ELSE(GDCM_VTK)
+  TARGET_LINK_LIBRARIES(gdcmTests gdcm)
+ENDIF(GDCM_VTK)
+
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun gdcmTests.cxx)
 
@@ -55,6 +69,31 @@ FOREACH(file ${TEST_SOURCES})
 #  ENDIF (GDCM_DATA_ROOT)
 ENDFOREACH(file ${TEST_SOURCES})
 
+#-----------------------------------------------------------------------------
 
+# We need to test the reading of all dicom images in the gdcmData directory
+# First parse this directory and extract all images
 
+# For now only *.dcm will be picked up, since there is a bug in cmake 1.8.3
+# and I don't know how to work around
+FILE(GLOB GDCM_DATA_IMAGES_GLOB 
+  "${GDCM_DATA_ROOT}/*.dcm"
+#  "${GDCM_DATA_ROOT}/*.acr"
+  )
 
+# This is a GLOB expression, change it into a list separated with a comma and \n
+SET(GDCM_DATA_IMAGES)
+FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
+  SET(GDCM_DATA_IMAGES "${GDCM_DATA_IMAGES}\n\"${filename}\",")
+ENDFOREACH(filename)
+
+# Populate GDCM_DATA_IMAGES:
+FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataImages.h.in"
+  "const char * const gdcmDataImages[] = { @GDCM_DATA_IMAGES@ \n 0 };" 
+  )
+
+# Generate the header file:
+CONFIGURE_FILE(
+  ${GDCM_BINARY_DIR}/gdcmDataImages.h.in
+  ${GDCM_BINARY_DIR}/gdcmDataImages.h
+  )

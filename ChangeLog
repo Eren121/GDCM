@@ -1,3 +1,8 @@
+2004-05-02  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     * Add a new test: ShowDicom, for now this is just the c++ version of
+       checkRead.sh, later it will be able to compare the image read against a
+       baseline.
+
 2004-04-30  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * Add an example subdir, with a real example on how to read + write a 
        dicom image
