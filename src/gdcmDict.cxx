@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 12:29:17 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/01/07 15:58:19 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -166,7 +166,6 @@ bool Dict::RemoveEntry (TagKey const &key)
    TagKeyHT::const_iterator it = KeyHt.find(key);
    if(it != KeyHt.end()) 
    {
-      const DictEntry& entryToDelete = it->second;
       KeyHt.erase(key);
 
       return true;
