@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/07/17 22:47:01 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,8 +77,7 @@ void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
   // FillObject rempli le SQItem qui sera accroche au bon endroit
 
    std::list<gdcmElement>::iterator it;
-   uint16_t tmpGr;
-   uint16_t tmpEl;
+   uint16_t tmpGr,tmpEl;
    gdcmDictEntry *dictEntry;
    gdcmValEntry *entry;
    

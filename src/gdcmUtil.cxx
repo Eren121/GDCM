@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 19:37:05 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2004/07/17 22:47:01 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,12 +102,16 @@ void NormalizePath(std::string &name)
  */
 std::string GetPath(std::string &fullName)
 {
-   int pos1=fullName.rfind("/");
-   int pos2=fullName.rfind("\\");
-   if(pos1>pos2)
+   int pos1 = fullName.rfind("/");
+   int pos2 = fullName.rfind("\\");
+   if( pos1 > pos2)
+   {
       fullName.resize(pos1);
+   }
    else
+   {
       fullName.resize(pos2);
+   }
    return fullName;
 }
 

@@ -5,6 +5,10 @@
 
 #define BITS_IN_JSAMPLE 12
 
+#ifdef GDCM_DEBUG
+#define GDCM_jpr_DEBUG 0
+#endif   //GDCM_DEBUG
+
 // BITS_IN_JSAMPLE is a compile time defined options.
 // We need both 8 an 12;
 // To avoid renaming *all* the Jpeg functions,

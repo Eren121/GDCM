@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmParsePixels.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/07/17 22:47:01 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,8 +68,7 @@ bool gdcmFile::ParsePixelData(void) {
          
    printf ("Checking the Dicom-encapsulated Jpeg/RLE Pixels\n");
       
-   uint16_t ItemTagGr;
-   uint16_t ItemTagEl; 
+   uint16_t ItemTagGr,ItemTagEl; 
    int ln;
    long ftellRes;
    //char * destination = NULL;

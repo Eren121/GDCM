@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/07/17 22:47:01 $
+  Version:   $Revision: 1.21 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -139,8 +139,8 @@ bool gdcmSQItem::AddEntry(gdcmDocEntry *entry)
  * @return  true if element was found or created successfully
  */
 
-bool gdcmSQItem::SetEntryByNumber(std::string val, uint16_t group, 
-                                                   uint16_t element)
+bool gdcmSQItem::SetEntryByNumber(std::string val,uint16_t group, 
+                                  uint16_t element)
 {
    for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i)
    { 
@@ -209,9 +209,12 @@ bool gdcmSQItem::SetEntryByNumber(std::string val, uint16_t group,
  */
 gdcmDocEntry *gdcmSQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
 {
-   for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i) {
+   for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i)
+   {
       if ( (*i)->GetGroup()==group && (*i)->GetElement()==element)
+      {
          return (*i);
+      }
    }   
    return NULL;
 }
@@ -223,8 +226,10 @@ gdcmDocEntry *gdcmSQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
 
 std::string gdcmSQItem::GetEntryByNumber(uint16_t group, uint16_t element)
 { 
-   for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i) {
-      if ( (*i)->GetGroup()==group && (*i)->GetElement()==element) {
+   for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i)
+   {
+      if ( (*i)->GetGroup()==group && (*i)->GetElement()==element)
+      {
          return ((gdcmValEntry *)(*i))->GetValue();
       }
    }   

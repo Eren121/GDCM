@@ -5,6 +5,10 @@
 
 #define BITS_IN_JSAMPLE 8
 
+#ifdef GDCM_DEBUG
+#define GDCM_jpr_DEBUG 0
+#endif   //GDCM_DEBUG
+
 /*
 DICOM provides a mechanism for supporting the use of JPEG Image Compression 
 through the Encapsulated Format (see PS 3.3 of the DICOM Standard). 
