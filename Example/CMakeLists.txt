@@ -5,24 +5,31 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(EXAMPLE_SOURCES
-  BuildUpDicomDir
-  FindTags
-  FlatHashTablePrint
-  MakeDicomDir
+#names starting with 'ex' are examples  
+  exBuildUpDicomDir
+  exReadPapyrus
+  exReadWriteFile
+  
+#the following are utilities
+  PrintDicomDir
   PrintDocument
   PrintFile
   PrintHeader
-  PrintDicomDir
+  FindTags
+  MakeDicomDir
+
+#the following will be transformed into 'examples', or 'utilities'
+#              or will be removed
+
+  FlatHashTablePrint
   TestCopyDicom
   TestChangeHeader
   TestFromScratch
-  TestPapyrus
   TestWrite
   TestWriteSimple
   Volume2Dicom
   WriteDicomSimple
   WriteRead
-  WriteDicom
 )
 
 FOREACH(name ${EXAMPLE_SOURCES})
