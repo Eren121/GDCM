@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 20:04:07 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/03/02 17:15:52 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,9 +77,9 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    size_t lgr = GetLength();
    if (BinArea) // the binArea was *actually* loaded
    {
-   /// \todo  Probabely, the same operation will have to be done when we want 
-   ///        to write image with Big Endian Transfert Syntax, 
-   ///        and we are working on Little Endian Processor
+   /// \todo  Probably, the same operation should be done if we wanted 
+   ///        to write image with Big Endian Transfer Syntax, 
+   ///        while working on Little Endian Processor
 
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
       /// \todo FIXME Right now, we only care of Pixels element

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exAnonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/08 17:58:21 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/03/02 17:19:45 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
    gdcm::Debug::DebugOn();
    std::cout << "------------------------------------------------" << std::endl;
    std::cout << "Anonymize a full gdcm-readable  Dicom image"      << std::endl;
-   std::cout << " Warning : probabely segfaults if pixels are not "
+   std::cout << " Warning : probably segfaults if pixels are not "
           << " gdcm readable. Use exAnonymizeNoLoad"            << std::endl;
 
    if( argc < 3 )

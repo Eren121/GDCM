@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/25 15:49:54 $
-  Version:   $Revision: 1.133 $
+  Date:      $Date: 2005/03/02 17:16:48 $
+  Version:   $Revision: 1.134 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,6 +55,7 @@
 // ----------------------------------------------------------------------------
 //
 //  Dicom PS 3.3 describes the relationship between Directory Records, as follow
+//    (see also PS 4.3, 2004, page 50 for Entity-Relationship model)
 //
 //  Directory Record Type      Directory Record Types which may be included
 //                                in the next lower-level directory Entity
