@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:33 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/12/03 10:21:53 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,8 +37,7 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
 
-   gdcm::File *f1 = new gdcm::File( fileName.c_str() );
-   gdcm::Header *e1 = f1->GetHeader();  
+   gdcm::Header *e1 = new gdcm::Header( fileName.c_str() );  
 
    if (argc > 2) 
    {
@@ -60,19 +59,6 @@ int main(int argc, char* argv[])
 
    std::string transferSyntaxName = e1->GetTransfertSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
-
-   if (  transferSyntaxName != "Implicit VR - Little Endian"
-      && transferSyntaxName != "Explicit VR - Little Endian"     
-      && transferSyntaxName != "Deflated Explicit VR - Little Endian"      
-      && transferSyntaxName != "Explicit VR - Big Endian"
-      && transferSyntaxName != "Uncompressed ACR-NEMA" )
-   {
-      std::cout << std::endl << "==========================================="
-                << std::endl; 
-      f1->GetPixelConverter()->Print();
-      std::cout << std::endl << "==========================================="
-                << std::endl; 
-   }
 
    if(e1->IsReadable())
       std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;

@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmPixelConvert.h,v $
+  Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:08:20 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/12/03 10:21:55 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,8 @@
 =========================================================================*/
 
 
-#ifndef GDCMPIXELCONVERT_H
-#define GDCMPIXELCONVERT_H
+#ifndef GDCMPIXELREADCONVERT_H
+#define GDCMPIXELREADCONVERT_H
 
 #include "gdcmCommon.h"
 #include "gdcmRLEFramesInfo.h"
@@ -32,11 +32,11 @@ namespace gdcm
  * \brief Utility container for gathering the various forms the pixel data
  *        migth take during the user demanded processes.
  */
-class GDCM_EXPORT PixelConvert
+class GDCM_EXPORT PixelReadConvert
 {
 public:
-   PixelConvert();
-   ~PixelConvert();
+   PixelReadConvert();
+   ~PixelReadConvert();
 
    //// Getter accessors:
    uint8_t* GetRGB() { return RGB; }

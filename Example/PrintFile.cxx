@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 10:24:33 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/12/03 10:21:53 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
    {
       std::cout << std::endl << "==========================================="
                   << std::endl; 
-         f1->GetPixelConverter()->Print();
+         f1->GetPixelReadConverter()->Print();
       std::cout << std::endl << "==========================================="
                   << std::endl; 
    }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Write.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:18 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/12/03 10:21:53 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
       && transferSyntaxName != "Uncompressed ACR-NEMA"     ) {
       std::cout << std::endl << "==========================================="
                 << std::endl; 
-      f1->GetPixelConverter()->Print();
+      f1->GetPixelReadConverter()->Print();
       std::cout << std::endl << "==========================================="
                 << std::endl; 
    }

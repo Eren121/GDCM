@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmPixelConvert.cxx,v $
+  Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 16:59:32 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/12/03 10:21:55 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,10 +20,10 @@
 // look for "fixMem" and convert that to a member of this class
 // Removing the prefix fixMem and dealing with allocations should do the trick
 //
-// grep PIXELCONVERT everywhere and clean up !
+// grep PixelReadConvert everywhere and clean up !
 
 #include "gdcmDebug.h"
-#include "gdcmPixelConvert.h"
+#include "gdcmPixelReadConvert.h"
 #include <fstream>
 #include <stdio.h>
 
@@ -48,7 +48,7 @@ bool gdcm_read_JPEG_file16   (std::ifstream* fp, void* image_buffer);
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-PixelConvert::PixelConvert() 
+PixelReadConvert::PixelReadConvert() 
 {
    RGB = 0;
    RGBSize = 0;
@@ -60,7 +60,7 @@ PixelConvert::PixelConvert()
    LutBlueData =0;
 }
 
-void PixelConvert::Squeeze() 
+void PixelReadConvert::Squeeze() 
 {
    if ( RGB )
    {
@@ -81,12 +81,12 @@ void PixelConvert::Squeeze()
    LutRGBA = 0;
 }
 
-PixelConvert::~PixelConvert() 
+PixelReadConvert::~PixelReadConvert() 
 {
    Squeeze();
 }
 
-void PixelConvert::AllocateRGB()
+void PixelReadConvert::AllocateRGB()
 {
   if ( RGB ) {
      delete [] RGB;
@@ -94,7 +94,7 @@ void PixelConvert::AllocateRGB()
   RGB = new uint8_t[ RGBSize ];
 }
 
-void PixelConvert::AllocateDecompressed()
+void PixelReadConvert::AllocateDecompressed()
 {
   if ( Decompressed ) {
      delete [] Decompressed;
@@ -106,7 +106,7 @@ void PixelConvert::AllocateDecompressed()
  * \brief Read from file a 12 bits per pixel image and decompress it
  *        into a 16 bits per pixel image.
  */
-void PixelConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
+void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
                throw ( FormatError )
 {
    int nbPixels = XSize * YSize;
@@ -119,21 +119,21 @@ void PixelConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
       fp->read( (char*)&b0, 1);
       if ( fp->fail() || fp->eof() )//Fp->gcount() == 1
       {
-         throw FormatError( "PixelConvert::ReadAndDecompress12BitsTo16Bits()",
+         throw FormatError( "PixelReadConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound first block" );
       }
 
       fp->read( (char*)&b1, 1 );
       if ( fp->fail() || fp->eof())//Fp->gcount() == 1
       {
-         throw FormatError( "PixelConvert::ReadAndDecompress12BitsTo16Bits()",
+         throw FormatError( "PixelReadConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
       }
 
       fp->read( (char*)&b2, 1 );
       if ( fp->fail() || fp->eof())//Fp->gcount() == 1
       {
-         throw FormatError( "PixelConvert::ReadAndDecompress12BitsTo16Bits()",
+         throw FormatError( "PixelReadConvert::ReadAndDecompress12BitsTo16Bits()",
                                 "Unfound second block" );
       }
 
@@ -158,7 +158,7 @@ void PixelConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
  *            High Byte 'Planes'...(for what it may mean)
  * @return    Boolean
  */
-bool PixelConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
+bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
 {
    size_t PixelNumber = XSize * YSize;
    size_t decompressedSize = XSize * YSize * NumberOfFrames;
@@ -201,7 +201,7 @@ bool PixelConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
  * @param fp File Pointer: on entry the position should be the one of
  *        the fragment to be decoded.
  */
-bool PixelConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
+bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
                                                  long fragmentSize,
                                                  long decompressedSegmentSize,
                                                  std::ifstream* fp )
@@ -244,7 +244,7 @@ bool PixelConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
                                                                                 
       if ( numberOfReadBytes > fragmentSize )
       {
-         dbg.Verbose(0, "PixelConvert::ReadAndDecompressRLEFragment: we "
+         dbg.Verbose(0, "PixelReadConvert::ReadAndDecompressRLEFragment: we "
                         "read more bytes than the segment size.");
          return false;
       }
@@ -259,7 +259,7 @@ bool PixelConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
  *            at which the pixel data should be copied
  * @return    Boolean
  */
-bool PixelConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
+bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
 {
    uint8_t* subDecompressed = Decompressed;
    long decompressedSegmentSize = XSize * YSize;
@@ -294,7 +294,7 @@ bool PixelConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
 /**
  * \brief Swap the bytes, according to \ref SwapCode.
  */
-void PixelConvert::ConvertSwapZone()
+void PixelReadConvert::ConvertSwapZone()
 {
    unsigned int i;
 
@@ -317,7 +317,7 @@ void PixelConvert::ConvertSwapZone()
             }
             break;
          default:
-            dbg.Verbose( 0, "PixelConvert::ConvertSwapZone: SwapCode value "
+            dbg.Verbose( 0, "PixelReadConvert::ConvertSwapZone: SwapCode value "
                             "(16 bits) not allowed." );
       }
    }
@@ -364,7 +364,7 @@ void PixelConvert::ConvertSwapZone()
             }
             break;
          default:
-            dbg.Verbose( 0, "PixelConvert::ConvertSwapZone: SwapCode value "
+            dbg.Verbose( 0, "PixelReadConvert::ConvertSwapZone: SwapCode value "
                             "(32 bits) not allowed." );
       }
    }
@@ -373,7 +373,7 @@ void PixelConvert::ConvertSwapZone()
 /**
  * \brief Deal with endianity i.e. re-arange bytes inside the integer
  */
-void PixelConvert::ConvertReorderEndianity()
+void PixelReadConvert::ConvertReorderEndianity()
 {
    if ( BitsAllocated != 8 )
    {
@@ -404,7 +404,7 @@ void PixelConvert::ConvertReorderEndianity()
  * @param     fp File Pointer
  * @return    Boolean
  */
-bool PixelConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
+bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
 {
    uint8_t* localDecompressed = Decompressed;
    // Loop on the fragment[s]
@@ -450,7 +450,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
       else
       {
          // other JPEG lossy not supported
-         dbg.Error("PixelConvert::ReadAndDecompressJPEGFile: unknown "
+         dbg.Error("PixelReadConvert::ReadAndDecompressJPEGFile: unknown "
                    "jpeg lossy compression ");
          return false;
       }
@@ -469,7 +469,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
  * \brief  Re-arrange the bits within the bytes.
  * @return Boolean
  */
-bool PixelConvert::ConvertReArrangeBits() throw ( FormatError )
+bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
 {
    if ( BitsStored != BitsAllocated )
    {
@@ -498,8 +498,8 @@ bool PixelConvert::ConvertReArrangeBits() throw ( FormatError )
       }
       else
       {
-         dbg.Verbose(0, "PixelConvert::ConvertReArrangeBits: weird image");
-         throw FormatError( "PixelConvert::ConvertReArrangeBits()",
+         dbg.Verbose(0, "PixelReadConvert::ConvertReArrangeBits: weird image");
+         throw FormatError( "PixelReadConvert::ConvertReArrangeBits()",
                                 "weird image !?" );
       }
    }
@@ -510,7 +510,7 @@ bool PixelConvert::ConvertReArrangeBits() throw ( FormatError )
  * \brief   Convert (Y plane, cB plane, cR plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
-void PixelConvert::ConvertYcBcRPlanesToRGBPixels()
+void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
 {
    uint8_t* localDecompressed = Decompressed;
    uint8_t* copyDecompressed = new uint8_t[ DecompressedSize ];
@@ -564,7 +564,7 @@ void PixelConvert::ConvertYcBcRPlanesToRGBPixels()
  * \brief   Convert (Red plane, Green plane, Blue plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
-void PixelConvert::ConvertRGBPlanesToRGBPixels()
+void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
 {
    uint8_t* localDecompressed = Decompressed;
    uint8_t* copyDecompressed = new uint8_t[ DecompressedSize ];
@@ -585,7 +585,7 @@ void PixelConvert::ConvertRGBPlanesToRGBPixels()
    delete[] copyDecompressed;
 }
 
-bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
+bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream* fp )
 {
    // ComputeDecompressedAndRGBSizes is already made by 
    // ::GrabInformationsFromHeader. So, the structure sizes are
@@ -596,7 +596,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    //// First stage: get our hands on the Pixel Data.
    if ( !fp )
    {
-      dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+      dbg.Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
                       "unavailable file pointer." );
       return false;
    }
@@ -604,7 +604,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    fp->seekg( PixelOffset, std::ios::beg );
    if( fp->fail() || fp->eof()) //Fp->gcount() == 1
    {
-      dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+      dbg.Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
                       "unable to find PixelOffset in file." );
       return false;
    }
@@ -625,8 +625,8 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
       // variable). But DecompressedSize is the right size of the image !
       if( PixelDataLength != DecompressedSize)
       {
-         dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
-                      "Mismatch between PixelConvert and DecompressedSize." );
+         dbg.Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
+                      "Mismatch between PixelReadConvert and DecompressedSize." );
       }
       if( PixelDataLength > DecompressedSize)
       {
@@ -639,7 +639,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
 
       if ( fp->fail() || fp->eof())//Fp->gcount() == 1
       {
-         dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+         dbg.Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
                          "reading of decompressed pixel data failed." );
          return false;
       }
@@ -648,7 +648,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    {
       if ( ! ReadAndDecompressRLEFile( fp ) )
       {
-         dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+         dbg.Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
                          "RLE decompressor failed." );
          return false;
       }
@@ -658,7 +658,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
       // Default case concerns JPEG family
       if ( ! ReadAndDecompressJPEGFile( fp ) )
       {
-         dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+         dbg.Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
                          "JPEG decompressor failed." );
          return false;
       }
@@ -673,7 +673,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    return true;
 }
 
-void PixelConvert::ConvertHandleColor()
+void PixelReadConvert::ConvertHandleColor()
 {
    //////////////////////////////////
    // Deal with the color decoding i.e. handle:
@@ -747,7 +747,7 @@ void PixelConvert::ConvertHandleColor()
  * \brief Predicate to know wether the image[s] (once decompressed) is RGB.
  * \note See comments of \ref ConvertHandleColor
  */
-bool PixelConvert::IsDecompressedRGB()
+bool PixelReadConvert::IsDecompressedRGB()
 {
    if (   IsMonochrome
        || PlanarConfiguration == 2
@@ -758,7 +758,7 @@ bool PixelConvert::IsDecompressedRGB()
    return true;
 }
 
-void PixelConvert::ComputeDecompressedAndRGBSizes()
+void PixelReadConvert::ComputeDecompressedAndRGBSizes()
 {
    int bitsAllocated = BitsAllocated;
    // Number of "Bits Allocated" is fixed to 16 when it's 12, since
@@ -782,7 +782,7 @@ void PixelConvert::ComputeDecompressedAndRGBSizes()
    }
 }
 
-void PixelConvert::GrabInformationsFromHeader( Header* header )
+void PixelReadConvert::GrabInformationsFromHeader( Header* header )
 {
    // Just in case some access to a Header element requires disk access.
    // Note: gdcmDocument::Fp is leaved open after OpenFile.
@@ -873,7 +873,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          fp->read( (char*)LutRedData, (size_t)lutRedDataEntry->GetLength());
          if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
-            dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
+            dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
                             "unable to read red LUT data" );
          }
       }
@@ -890,7 +890,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          fp->read( (char*)LutGreenData, (size_t)lutGreenDataEntry->GetLength() );
          if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
-            dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
+            dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
                            "unable to read green LUT data" );
          }
       }
@@ -907,7 +907,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
          fp->read( (char*)LutBlueData, (size_t)lutBlueDataEntry->GetLength() );
          if ( fp->fail() || fp->eof())//Fp->gcount() == 1
          {
-            dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
+            dbg.Verbose(0, "PixelReadConvert::GrabInformationsFromHeader: "
                            "unable to read blue LUT data" );
          }
       }
@@ -936,7 +936,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
  *   no known Dicom reader deals with them :-(
  * @return a RGBA Lookup Table
  */
-void PixelConvert::BuildLUTRGBA()
+void PixelReadConvert::BuildLUTRGBA()
 {
    if ( LutRGBA )
    {
@@ -967,7 +967,7 @@ void PixelConvert::BuildLUTRGBA()
                         &lengthR, &debR, &nbitsR );
    if( nbRead != 3 )
    {
-      dbg.Verbose(0, "PixelConvert::BuildLUTRGBA: wrong red LUT descriptor");
+      dbg.Verbose(0, "PixelReadConvert::BuildLUTRGBA: wrong red LUT descriptor");
    }
                                                                                 
    int lengthG;  // Green LUT length in Bytes
@@ -978,7 +978,7 @@ void PixelConvert::BuildLUTRGBA()
                     &lengthG, &debG, &nbitsG );
    if( nbRead != 3 )
    {
-      dbg.Verbose(0, "PixelConvert::BuildLUTRGBA: wrong green LUT descriptor");
+      dbg.Verbose(0, "PixelReadConvert::BuildLUTRGBA: wrong green LUT descriptor");
    }
                                                                                 
    int lengthB;  // Blue LUT length in Bytes
@@ -989,7 +989,7 @@ void PixelConvert::BuildLUTRGBA()
                     &lengthB, &debB, &nbitsB );
    if( nbRead != 3 )
    {
-      dbg.Verbose(0, "PixelConvert::BuildLUTRGBA: wrong blue LUT descriptor");
+      dbg.Verbose(0, "PixelReadConvert::BuildLUTRGBA: wrong blue LUT descriptor");
    }
                                                                                 
    ////////////////////////////////////////////////////////
@@ -1059,7 +1059,7 @@ void PixelConvert::BuildLUTRGBA()
 /**
  * \brief Build the RGB image from the Decompressed imagage and the LUTs.
  */
-bool PixelConvert::BuildRGBImage()
+bool PixelReadConvert::BuildRGBImage()
 {
    if ( RGB )
    {
@@ -1098,7 +1098,7 @@ bool PixelConvert::BuildRGBImage()
  * @param indent Indentation string to be prepended during printing.
  * @param os     Stream to print to.
  */
-void PixelConvert::Print( std::string indent, std::ostream &os )
+void PixelReadConvert::Print( std::string indent, std::ostream &os )
 {
    os << indent
       << "--- Pixel information -------------------------"
@@ -1118,7 +1118,7 @@ void PixelConvert::Print( std::string indent, std::ostream &os )
       }
       else
       {
-         dbg.Verbose(0, "PixelConvert::Print: set as RLE file "
+         dbg.Verbose(0, "PixelReadConvert::Print: set as RLE file "
                         "but NO RLEinfo present.");
       }
    }
@@ -1131,7 +1131,7 @@ void PixelConvert::Print( std::string indent, std::ostream &os )
       }
       else
       {
-         dbg.Verbose(0, "PixelConvert::Print: set as JPEG file "
+         dbg.Verbose(0, "PixelReadConvert::Print: set as JPEG file "
                         "but NO JPEGinfo present.");
       }
    }

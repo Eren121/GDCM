@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 14:17:52 $
-  Version:   $Revision: 1.167 $
+  Date:      $Date: 2004/12/03 10:21:54 $
+  Version:   $Revision: 1.168 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,12 +79,12 @@ void File::Initialise()
    WriteMode = WMODE_DECOMPRESSED;
    WriteType = WTYPE_IMPL_VR;
 
-   PixelConverter = new PixelConvert;
+   PixelReadConverter = new PixelReadConvert;
    Archive = new DocEntryArchive( HeaderInternal );
 
    if ( HeaderInternal->IsReadable() )
    {
-      PixelConverter->GrabInformationsFromHeader( HeaderInternal );
+      PixelReadConverter->GrabInformationsFromHeader( HeaderInternal );
    }
 
    Pixel_Data = 0;
@@ -98,9 +98,9 @@ void File::Initialise()
  */
 File::~File()
 { 
-   if( PixelConverter )
+   if( PixelReadConverter )
    {
-      delete PixelConverter;
+      delete PixelReadConverter;
    }
    if( Archive )
    {
@@ -128,7 +128,7 @@ File::~File()
  */
 size_t File::GetImageDataSize()
 {
-   return PixelConverter->GetRGBSize();
+   return PixelReadConverter->GetRGBSize();
 }
 
 /**
@@ -140,7 +140,7 @@ size_t File::GetImageDataSize()
  */
 size_t File::GetImageDataRawSize()
 {
-   return PixelConverter->GetDecompressedSize();
+   return PixelReadConverter->GetDecompressedSize();
 }
 
 /**
@@ -161,14 +161,14 @@ uint8_t* File::GetImageData()
       return 0;
    }
 
-   if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
+   if ( HeaderInternal->HasLUT() && PixelReadConverter->BuildRGBImage() )
    {
-      return PixelConverter->GetRGB();
+      return PixelReadConverter->GetRGB();
    }
    else
    {
       // When no LUT or LUT conversion fails, return the decompressed
-      return PixelConverter->GetDecompressed();
+      return PixelReadConverter->GetDecompressed();
    }
 }
 
@@ -205,31 +205,31 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
       return 0;
    }
 
-   if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
+   if ( HeaderInternal->HasLUT() && PixelReadConverter->BuildRGBImage() )
    {
-      if ( PixelConverter->GetRGBSize() > maxSize )
+      if ( PixelReadConverter->GetRGBSize() > maxSize )
       {
          dbg.Verbose(0, "File::GetImageDataIntoVector: pixel data bigger"
                         "than caller's expected MaxSize");
          return 0;
       }
       memcpy( destination,
-              (void*)PixelConverter->GetRGB(),
-              PixelConverter->GetRGBSize() );
-      return PixelConverter->GetRGBSize();
+              (void*)PixelReadConverter->GetRGB(),
+              PixelReadConverter->GetRGBSize() );
+      return PixelReadConverter->GetRGBSize();
    }
 
    // Either no LUT conversion necessary or LUT conversion failed
-   if ( PixelConverter->GetDecompressedSize() > maxSize )
+   if ( PixelReadConverter->GetDecompressedSize() > maxSize )
    {
       dbg.Verbose(0, "File::GetImageDataIntoVector: pixel data bigger"
                      "than caller's expected MaxSize");
       return 0;
    }
    memcpy( destination,
-           (void*)PixelConverter->GetDecompressed(),
-           PixelConverter->GetDecompressedSize() );
-   return PixelConverter->GetDecompressedSize();
+           (void*)PixelReadConverter->GetDecompressed(),
+           PixelReadConverter->GetDecompressedSize() );
+   return PixelReadConverter->GetDecompressedSize();
 }
 
 /**
@@ -248,16 +248,16 @@ uint8_t* File::GetImageDataRaw ()
 
 uint8_t* File::GetDecompressed()
 {
-   uint8_t* decompressed = PixelConverter->GetDecompressed();
+   uint8_t* decompressed = PixelReadConverter->GetDecompressed();
    if ( ! decompressed )
    {
       // The decompressed image migth not be loaded yet:
       std::ifstream* fp = HeaderInternal->OpenFile();
-      PixelConverter->ReadAndDecompressPixelData( fp );
+      PixelReadConverter->ReadAndDecompressPixelData( fp );
       if(fp) 
          HeaderInternal->CloseFile();
 
-      decompressed = PixelConverter->GetDecompressed();
+      decompressed = PixelReadConverter->GetDecompressed();
       if ( ! decompressed )
       {
          dbg.Verbose(0, "File::GetDecompressed: read/decompress of "
@@ -378,11 +378,11 @@ bool File::Write(std::string const& fileName)
 }
 
 /**
- * \brief Access to the underlying \ref PixelConverter RGBA LUT
+ * \brief Access to the underlying \ref PixelReadConverter RGBA LUT
  */
 uint8_t* File::GetLutRGBA()
 {
-   return PixelConverter->GetLutRGBA();
+   return PixelReadConverter->GetLutRGBA();
 }
 
 //-----------------------------------------------------------------------------
@@ -413,28 +413,6 @@ bool File::WriteBase (std::string const & fileName, FileType type)
          SetWriteFileTypeToExplicitVR();
    }
 
-   if( type == ACR_LIBIDO )
-   {
-      SetWriteToLibido();
-   }
-   else
-   {
-      SetWriteToNoLibido();
-   }
-  
-   switch(WriteMode)
-   {
-      case WMODE_NATIVE :
-         SetWriteToNative();
-         break;
-      case WMODE_DECOMPRESSED :
-         SetWriteToDecompressed();
-         break;
-      case WMODE_RGB :
-         SetWriteToRGB();
-         break;
-   }
-
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
    //
@@ -443,11 +421,25 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    // just before writting ...
    /// \todo the best trick would be *change* the recognition code
    ///       but pb expected if user deals with, e.g. COMPLEX images
-/*   if ( HeaderInternal->GetFileType() == ACR_LIBIDO)
+   if( type == ACR_LIBIDO )
    {
       SetWriteToLibido();
-   }*/
+   }
+   else
+   {
+      SetWriteToNoLibido();
+   }
    // ----------------- End of Special Patch ----------------
+  
+   switch(WriteMode)
+   {
+      case WMODE_DECOMPRESSED :
+         SetWriteToDecompressed();
+         break;
+      case WMODE_RGB :
+         SetWriteToRGB();
+         break;
+   }
 
    bool check = CheckWriteIntegrity();
    if(check)
@@ -455,20 +447,16 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       check = HeaderInternal->Write(fileName,type);
    }
 
+   RestoreWrite();
+   RestoreWriteFileType();
+
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
    // 
    // ...and we restore the Header to be Dicom Compliant again 
    // just after writting
-/*   if ( HeaderInternal->GetFileType() == ACR_LIBIDO )
-   {
-      RestoreWriteFromLibido();
-   }*/
-   // ----------------- End of Special Patch ----------------
-
-   RestoreWrite();
-   RestoreWriteFileType();
    RestoreWriteOfLibido();
+   // ----------------- End of Special Patch ----------------
 
    return check;
 }
@@ -502,8 +490,6 @@ bool File::CheckWriteIntegrity()
 
       switch(WriteMode)
       {
-         case WMODE_NATIVE :
-            break;
          case WMODE_DECOMPRESSED :
             if( decSize!=ImageDataSize )
             {
@@ -526,7 +512,7 @@ bool File::CheckWriteIntegrity()
    return true;
 }
 
-void File::SetWriteToNative()
+/*void File::SetWriteToNative()
 {
    if(Pixel_Data)
    {
@@ -537,7 +523,7 @@ void File::SetWriteToNative()
 
       Archive->Push(pixel);
    }
-}
+}*/
 
 void File::SetWriteToDecompressed()
 {
@@ -568,8 +554,8 @@ void File::SetWriteToDecompressed()
       }
       else
       {
-         pixel->SetBinArea(PixelConverter->GetDecompressed(),false);
-         pixel->SetLength(PixelConverter->GetDecompressedSize());
+         pixel->SetBinArea(PixelReadConverter->GetDecompressed(),false);
+         pixel->SetLength(PixelReadConverter->GetDecompressedSize());
       }
 
       Archive->Push(photInt);
@@ -581,7 +567,7 @@ void File::SetWriteToRGB()
 {
    if(HeaderInternal->GetNumberOfScalarComponents()==3)
    {
-      PixelConverter->BuildRGBImage();
+      PixelReadConverter->BuildRGBImage();
       
       ValEntry* spp = CopyValEntry(0x0028,0x0002);
       spp->SetValue("3 ");
@@ -602,15 +588,15 @@ void File::SetWriteToRGB()
          pixel->SetBinArea(Pixel_Data,false);
          pixel->SetLength(ImageDataSize);
       }
-      else if(PixelConverter->GetRGB())
+      else if(PixelReadConverter->GetRGB())
       {
-         pixel->SetBinArea(PixelConverter->GetRGB(),false);
-         pixel->SetLength(PixelConverter->GetRGBSize());
+         pixel->SetBinArea(PixelReadConverter->GetRGB(),false);
+         pixel->SetLength(PixelReadConverter->GetRGBSize());
       }
       else // Decompressed data
       {
-         pixel->SetBinArea(PixelConverter->GetDecompressed(),false);
-         pixel->SetLength(PixelConverter->GetDecompressedSize());
+         pixel->SetBinArea(PixelReadConverter->GetDecompressed(),false);
+         pixel->SetLength(PixelReadConverter->GetDecompressedSize());
       }
 
       Archive->Push(spp);
@@ -789,7 +775,6 @@ BinEntry* File::CopyBinEntry(uint16_t group,uint16_t element)
    {
       newE = GetHeader()->NewBinEntryByNumber(group,element);
    }
-
 
    return(newE);
 }

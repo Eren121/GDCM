@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 14:17:52 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2004/12/03 10:21:54 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 #include "gdcmCommon.h"
 #include "gdcmHeader.h"
-#include "gdcmPixelConvert.h"
+#include "gdcmPixelReadConvert.h"
 #include "gdcmDocEntryArchive.h"
 
 namespace gdcm 
@@ -37,7 +37,6 @@ class GDCM_EXPORT File
 public:
    enum TWriteMode
    {
-      WMODE_NATIVE,
       WMODE_DECOMPRESSED,
       WMODE_RGB
    };
@@ -61,8 +60,8 @@ public:
    size_t GetImageDataSize();
    size_t GetImageDataRawSize();
 
-   /// Accessor to \ref PixelConverter
-   PixelConvert* GetPixelConverter() { return PixelConverter; };
+   /// Accessor to \ref PixelReadConverter
+   PixelReadConvert* GetPixelReadConverter() { return PixelReadConverter; };
 
    uint8_t* GetImageData();
    uint8_t* GetImageDataRaw();
@@ -88,7 +87,6 @@ public:
    uint8_t* GetLutRGBA();
 
    // Write mode
-   void SetWriteModeToNative()          { SetWriteMode(WMODE_NATIVE); };
    void SetWriteModeToDecompressed()    { SetWriteMode(WMODE_DECOMPRESSED); };
    void SetWriteModeToRGB()             { SetWriteMode(WMODE_RGB); };
    void SetWriteMode(unsigned int mode) { WriteMode = mode; };
@@ -105,7 +103,6 @@ protected:
    bool WriteBase(std::string const& fileName, FileType type);
    bool CheckWriteIntegrity();
 
-   void SetWriteToNative();
    void SetWriteToDecompressed();
    void SetWriteToRGB();
    void RestoreWrite();
@@ -143,7 +140,7 @@ private:
    bool Parsed;
 
    /// Utility pixel converter
-   PixelConvert* PixelConverter;
+   PixelReadConvert* PixelReadConverter;
 
    // Utility header archive
    DocEntryArchive *Archive;
