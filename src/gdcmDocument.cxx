@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 21:37:45 $
-  Version:   $Revision: 1.226 $
+  Date:      $Date: 2005/02/11 16:36:52 $
+  Version:   $Revision: 1.227 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -469,7 +469,7 @@ bool Document::CloseFile()
       delete Fp;
       Fp = 0;
    }
-   return true; //FIXME how do we detect a non-closed ifstream ?
+   return true;
 }
 
 /**
@@ -558,7 +558,6 @@ void Document::LoadEntryBinArea(BinEntry *elem)
       return;
    }
 
-   /// \todo check the result 
    Fp->read((char*)a, l);
    if( Fp->fail() || Fp->eof())
    {
@@ -997,12 +996,6 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       {
          dlm_mod = false;
       }
-      // FIXME, TODO
-      // when we're here, element fffe,e000 is already passed.
-      // it's lost for the SQItem we're going to process !!
-
-      //ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
-      //delete newDocEntry; // FIXME well ... it's too late to use it !
 
       // Let's try :------------
       // remove fff0,e000, created out of the SQItem
@@ -1100,7 +1093,6 @@ void Document::LoadDocEntry(DocEntry *entry)
       return;
    }
 
-   /// \todo Any compacter code suggested (?)
    if ( IsDocEntryAnInteger(entry) )
    {   
       uint32_t NewInt;
@@ -1633,7 +1625,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
       if ( gr != 0x0008 || ( elem != 0x0070 && elem != 0x0080 ) )
       {
          foundLength = 10;
-         entry->SetReadLength(10); /// \todo a bug is to be fixed !?
+         entry->SetReadLength(10); // a bug is to be fixed !?
       }
    }
 
@@ -1644,7 +1636,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    else if ( gr   == 0x0009 && ( elem == 0x1113 || elem == 0x1114 ) )
    {
       foundLength = 4;
-      entry->SetReadLength(4); /// \todo a bug is to be fixed !?
+      entry->SetReadLength(4); // a bug is to be fixed !?
    } 
  
    else if ( entry->GetVR() == "SQ" )
@@ -1924,7 +1916,7 @@ void Document::SwitchByteSwapCode()
 
 /**
  * \brief  during parsing, Header Elements too long are not loaded in memory 
- * @param newSize
+ * @param newSize new size
  */
 void Document::SetMaxSizeLoadEntry(long newSize) 
 {
@@ -1942,8 +1934,8 @@ void Document::SetMaxSizeLoadEntry(long newSize)
 
 /**
  * \brief Header Elements too long will not be printed
- * \todo  See comments of \ref Document::MAX_SIZE_PRINT_ELEMENT_VALUE 
- * @param newSize
+ *   See comments of \ref Document::MAX_SIZE_PRINT_ELEMENT_VALUE 
+ * @param newSize new size
  */
 void Document::SetMaxSizePrintEntry(long newSize) 
 {

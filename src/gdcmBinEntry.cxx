@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 14:23:18 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2005/02/11 16:36:52 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,14 +79,14 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    if (binArea) // the binArea was *actually* loaded
    {
 
-   // TODO FIME
-   // Probabely, the same operation will have to be done when we want 
-   // to write image with Big Endian Transfert Syntax, 
-   //   and we are working on Little Endian Processor
+   /// \todo  Probabely, the same operation will have to be done when we want 
+   ///        to write image with Big Endian Transfert Syntax, 
+   ///        and we are working on Little Endian Processor
 
 #ifdef GDCM_WORDS_BIGENDIAN
       const int BUFFER_SIZE = 4096;
-      // TODO FIXME Right now, we only care of Pixels element
+      /// \todo FIXME Right now, we only care of Pixels element
+      ///       we should deal with *all* the BinEntries
 
       // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
       // -value forced while Reading process-

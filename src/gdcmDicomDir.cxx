@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 14:48:34 $
-  Version:   $Revision: 1.130 $
+  Date:      $Date: 2005/02/11 16:36:52 $
+  Version:   $Revision: 1.131 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@
 //  Dicom PS 3.3 describes the relationship between Directory Records, as follow
 //
 //  Directory Record Type      Directory Record Types which may be included
-//                                in the next lower-èlevel directory Entity
+//                                in the next lower-level directory Entity
 //
 // (Root directory Entity)     PATIENT
 //
@@ -165,8 +165,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       }
       else
       {
-         /// \todo if parseDir == false, it should be tagged as an error
-         // NO ! user may just call ParseDirectory() *after* constructor
+         //  user may just call ParseDirectory() *after* constructor
       }
    }
    // Only if user passed a DICOMDIR
@@ -179,8 +178,6 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       {
          gdcmWarningMacro( "NO 'Directory record sequence' (0x0004,0x1220)"
                           << " in file " << fileName);
-         /// \todo FIXME : what do we do when the parsed file IS NOT a
-         ///       DICOMDIR file ?         
       }
       else
          CreateDicomDir();
@@ -620,7 +617,6 @@ void DicomDir::CreateDicomDir()
    if ( !e )
    {
       gdcmWarningMacro( "No Directory Record Sequence (0004,1220) found");
-      /// \todo FIXME: what to do when the parsed file IS NOT a DICOMDIR file ? 
       return;         
    }
    

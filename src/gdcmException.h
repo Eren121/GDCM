@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/02/11 16:36:52 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,9 +36,8 @@ class GDCM_EXPORT Exception : public std::exception
 {
 public:
    /*
-    * Builds an exception with minimal information: name of the thrower
-    * method and error message
-    *
+    * \brief Builds an exception with minimal information: name of the thrower
+    *        method and error message
     * @param from name of the thrower
     * @param error error description string
     */
