@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/14 10:50:00 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/02/14 16:46:15 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,9 +37,9 @@ int TestUtil(int , char *[])
    // Tokenize : tokens are '#', '@', '-'
    std::vector<std::string> tokens;
    gdcm::Util::Tokenize (x, tokens, "#@-");
-   for (unsigned int i=0; i<tokens.size();i++)
+   for (unsigned int ui=0; ui<tokens.size();ui++)
    {
-      std::cout << "[" << tokens[i] << "]" << std::endl;
+      std::cout << "[" << tokens[ui] << "]" << std::endl;
    }
    tokens.clear();
 
