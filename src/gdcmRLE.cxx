@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLE.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 03:36:24 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/06/26 04:09:33 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,7 +141,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
             *(x++) = *(b++);
          }
       }
-      memmove(image_buffer,newDest,lgrTotale);
+      memmove(image_buffer,newDest,ImageDataSize);
       delete[] newDest;
    }
       
@@ -153,7 +153,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
 // RLE LossLess Fragment
 int gdcmFile::gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
                                      long uncompressedSegmentSize, FILE *fp) {
-	 (void)lengthToDecode;	//FIXME
+   (void)lengthToDecode; //FIXME
    long ftellRes;
    int count;
    long numberOfOutputBytes=0;

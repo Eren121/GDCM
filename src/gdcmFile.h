@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 16:22:21 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/06/26 04:09:33 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,9 +38,9 @@ public:
             bool  skip_shadow        = false);
  
    virtual ~gdcmFile();
-	
- /// \brief returns the gdcmHeader *Header
-   inline gdcmHeader *GetHeader() { return Header;};
+
+   /// \brief returns the gdcmHeader *Header
+   inline gdcmHeader *GetHeader() { return Header; }
 
    // For promotion (performs a deepcopy of pointed header object)
    // TODO Swig gdcmFile(gdcmHeader* header);
@@ -83,16 +83,15 @@ public:
    bool WriteAcr      (std::string const & fileName);
 
    // Don't look any longer for the code : 
-	// It's in file gdcmParsePixels.cxx
+   // It's in file gdcmParsePixels.cxx
    bool ParsePixelData();
 
    inline virtual bool SetEntryByNumber(std::string const & content,
                                         guint16 group, guint16 element)
-      { 
-		  GetHeader()->SetEntryByNumber(content,group,element); 
-        return true;  //default behavior ?
-      }
-
+   { 
+      GetHeader()->SetEntryByNumber(content,group,element);
+      return true;  //default behavior ?
+   }
      
 protected:
    bool WriteBase(std::string const & FileName, FileType type);
@@ -128,11 +127,11 @@ private:
    void* PixelData;
    
    /// \brief Area length to receive the pixels
-   size_t lgrTotaleRaw;
+   size_t ImageDataSizeRaw;
    
    /// \brief Area length to receive the RGB pixels
    /// from Grey Plane + Palette Color  
-   size_t lgrTotale; 
+   size_t ImageDataSize;
        
   /// \brief ==1  if GetImageDataRaw was used
   ///        ==0  if GetImageData    was used
@@ -141,9 +140,6 @@ private:
 
    /// wether already parsed 
    int Parsed;
-   
-   /// To avoid file overwrite              
-   std::string OrigFileName;    
 };
 
 //-----------------------------------------------------------------------------
