@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 02:28:49 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/02/05 03:12:28 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,7 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
 
       // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
       // -value forced while Reading process-
-      if (GetGroup() == 0x7fe0 ) //&& GetVR() == "OW")
+      if (GetGroup() == 0x7fe0 && GetVR() == "OW")
       {     
          uint16_t *buffer = new uint16_t[BUFFER_SIZE/2];
 
