@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/06 11:37:38 $
-  Version:   $Revision: 1.147 $
+  Date:      $Date: 2004/12/06 12:54:40 $
+  Version:   $Revision: 1.148 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -442,7 +442,12 @@ std::ifstream* Document::OpenFile()
    }
  
    uint16_t zero;
-   Fp->read((char*)&zero,  (size_t)2 );
+   Fp->read((char*)&zero, (size_t)2);
+   if( Fp->eof() )
+   {
+      CloseFile();
+      return 0;
+   }
  
    //ACR -- or DICOM with no Preamble; may start with a Shadow Group --
    if( 
@@ -458,6 +463,11 @@ std::ifstream* Document::OpenFile()
    Fp->seekg(126L, std::ios::cur);
    char dicm[4];
    Fp->read(dicm,  (size_t)4);
+   if( Fp->eof() )
+   {
+      CloseFile();
+      return 0;
+   }
    if( memcmp(dicm, "DICM", 4) == 0 )
    {
       return Fp;
@@ -1899,8 +1909,6 @@ void Document::FindDocEntryVR( DocEntry *entry )
    // within an explicit VR file. Hence we make sure the present tag
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
-   vr[0] = 0x00;
-   vr[1] = 0x00;
    Fp->read (vr, (size_t)2);
    vr[2] = 0;
 

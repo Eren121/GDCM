@@ -1,4 +1,9 @@
 2004-12-06 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocument.cxx : bug fix when opening the file. All read is followed
+     by an eof to prevent all bad read of the file... and in this case, the
+     file isn't readable. 
+
+2004-12-06 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Example/Volume2Dicom.cxx : comment unused variables
    * Test/PrintDicomDir.cxx : comment unused variables
    * Test/BuildUpDicomDir.cxx : remove dbg.Verbose. Remove the FIXME.
