@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:47 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/10/12 09:59:45 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,11 +16,12 @@
                                                                                 
 =========================================================================*/
 
-//////////////////   TEMPORARY NOT
+//////////////////   TEMPORARY NOTE
 // look for "fixMem" and convert that to a member of this class
 // Removing the prefix fixMem and dealing with allocations should do the trick
 //
 // grep PIXELCONVERT everywhere and clean up !
+
 #include "gdcmDebug.h"
 #include "gdcmPixelConvert.h"
 
@@ -29,10 +30,9 @@
 // for JPEGLosslessDecodeImage
 #include "jpeg/ljpg/jpegless.h"
 
-
-namespace gdcm 
+namespace gdcm
 {
-
+                                                                                
 #define str2num(str, typeNum) *((typeNum *)(str))
 
 // For JPEG 2000, body in file gdcmJpeg2000.cxx
@@ -52,8 +52,8 @@ PixelConvert::PixelConvert()
 {
    RGB = 0;
    RGBSize = 0;
-   Uncompressed = 0;
-   UncompressedSize = 0;
+   Decompressed = 0;
+   DecompressedSize = 0;
 }
 
 void PixelConvert::Squeeze() 
@@ -61,8 +61,8 @@ void PixelConvert::Squeeze()
    if ( RGB ) {
       delete [] RGB;
    } 
-   if ( Uncompressed ) {
-      delete [] Uncompressed;
+   if ( Decompressed ) {
+      delete [] Decompressed;
    }
 }
 
@@ -79,26 +79,24 @@ void PixelConvert::AllocateRGB()
   RGB = new uint8_t[RGBSize];
 }
 
-void PixelConvert::AllocateUncompressed()
+void PixelConvert::AllocateDecompressed()
 {
-  if ( Uncompressed ) {
-     delete [] Uncompressed;
+  if ( Decompressed ) {
+     delete [] Decompressed;
   }
-  Uncompressed = new uint8_t[ UncompressedSize ];
+  Decompressed = new uint8_t[ DecompressedSize ];
 }
 
 /**
  * \brief Read from file a 12 bits per pixel image and uncompress it
  *        into a 16 bits per pixel image.
  */
-void PixelConvert::ConvertDecompress12BitsTo16Bits(
+void PixelConvert::Decompress12BitsTo16Bits(
                   uint8_t* pixelZone,
-                  int sizeX,
-                  int sizeY,
                   FILE* filePtr)
                throw ( FormatError )
 {
-   int nbPixels = sizeX * sizeY;
+   int nbPixels = XSize * YSize;
    uint16_t* destination = (uint16_t*)pixelZone;
                                                                                 
    for( int p = 0; p < nbPixels; p += 2 )
@@ -109,22 +107,22 @@ void PixelConvert::ConvertDecompress12BitsTo16Bits(
       ItemRead = fread( &b0, 1, 1, filePtr);
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::ConvertDecompress12BitsTo16Bits()",
-                            "Unfound first block" );
+         throw FormatError( "File::Decompress12BitsTo16Bits()",
+                                "Unfound first block" );
       }
                                                                                 
       ItemRead = fread( &b1, 1, 1, filePtr);
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::ConvertDecompress12BitsTo16Bits()",
-                            "Unfound second block" );
+         throw FormatError( "File::Decompress12BitsTo16Bits()",
+                                "Unfound second block" );
       }
                                                                                 
       ItemRead = fread( &b2, 1, 1, filePtr);
       if ( ItemRead != 1 )
       {
-         throw FormatError( "File::ConvertDecompress12BitsTo16Bits()",
-                            "Unfound second block" );
+         throw FormatError( "File::Decompress12BitsTo16Bits()",
+                                "Unfound second block" );
       }
                                                                                 
       // Two steps are necessary to please VC++
@@ -149,8 +147,6 @@ void PixelConvert::ConvertDecompress12BitsTo16Bits(
  * @return    Boolean
  */
 bool PixelConvert::UncompressRLE16BitsFromRLE8Bits(
-                       int XSize,
-                       int YSize,
                        int NumberOfFrames,
                        uint8_t* fixMemUncompressed )
 {
@@ -247,13 +243,9 @@ bool PixelConvert::ReadAndUncompressRLEFragment( uint8_t* decodedZone,
  *            at which the pixel data should be copied
  * @return    Boolean
  */
-bool PixelConvert::ReadAndDecompressRLEFile( void* image_buffer,
-                                   int XSize,
-                                   int YSize,
-                                   int ZSize,
-                                   int BitsAllocated,
-                                   RLEFramesInfo* RLEInfo,
-                                   FILE* fp )
+bool PixelConvert::ReadAndDecompressRLEFile(
+                          void* image_buffer,
+                          FILE* fp )
 {
    uint8_t* im = (uint8_t*)image_buffer;
    long uncompressedSegmentSize = XSize * YSize;
@@ -279,10 +271,7 @@ bool PixelConvert::ReadAndDecompressRLEFile( void* image_buffer,
    if ( BitsAllocated == 16 )
    {
       // Try to deal with RLE 16 Bits
-      (void)PixelConvert::UncompressRLE16BitsFromRLE8Bits(
-                                             XSize,
-                                             YSize,
-                                             ZSize,
+      (void)UncompressRLE16BitsFromRLE8Bits( ZSize,
                                              (uint8_t*) image_buffer);
    }
                                                                                 
@@ -293,18 +282,15 @@ bool PixelConvert::ReadAndDecompressRLEFile( void* image_buffer,
  * \brief   Swap the bytes, according to swap code.
  * \warning not end user intended
  * @param   im area to deal with
- * @param   swap swap code
- * @param   lgr Area Length
- * @param   nb Pixels Bit number
  */
-void PixelConvert::SwapZone(void* im, int swap, int lgr, int nb)
+void PixelConvert::SwapZone( uint8_t* im )
 {
    int i;
                                                                                 
-   if( nb == 16 )
+   if( BitsAllocated == 16 )
    {
       uint16_t* im16 = (uint16_t*)im;
-      switch( swap )
+      switch( SwapCode )
       {
          case 0:
          case 12:
@@ -314,28 +300,28 @@ void PixelConvert::SwapZone(void* im, int swap, int lgr, int nb)
          case 3412:
          case 2143:
          case 4321:
-            for(i=0; i < lgr/2; i++)
+            for( i = 0; i < DecompressedSize / 2; i++ )
             {
                im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
             }
             break;
          default:
-            std::cout << "SWAP value (16 bits) not allowed :i" << swap <<
-            std::endl;
+            dbg.Verbose( 0, "PixelConvert::SwapZone: SwapCode value "
+                            "(16 bits) not allowed." );
       }
    }
-   else if( nb == 32 )
+   else if( BitsAllocated == 32 )
    {
       uint32_t s32;
       uint16_t fort, faible;
       uint32_t* im32 = (uint32_t*)im;
-      switch ( swap )
+      switch ( SwapCode )
       {
          case 0:
          case 1234:
             break;
          case 4321:
-            for(i = 0; i < lgr/4; i++)
+            for( i = 0; i < DecompressedSize / 4; i++ )
             {
                faible  = im32[i] & 0x0000ffff;  // 4321
                fort    = im32[i] >> 16;
@@ -346,7 +332,7 @@ void PixelConvert::SwapZone(void* im, int swap, int lgr, int nb)
             }
             break;
          case 2143:
-            for(i = 0; i < lgr/4; i++)
+            for( i = 0; i < DecompressedSize / 4; i++ )
             {
                faible  = im32[i] & 0x0000ffff;   // 2143
                fort    = im32[i] >> 16;
@@ -357,7 +343,7 @@ void PixelConvert::SwapZone(void* im, int swap, int lgr, int nb)
             }
             break;
          case 3412:
-            for(i = 0; i < lgr/4; i++)
+            for( i = 0; i < DecompressedSize / 4; i++ )
             {
                faible  = im32[i] & 0x0000ffff; // 3412
                fort    = im32[i] >> 16;
@@ -366,35 +352,28 @@ void PixelConvert::SwapZone(void* im, int swap, int lgr, int nb)
             }
             break;
          default:
-            std::cout << "SWAP value (32 bits) not allowed : " << swap <<
-            std::endl;
+            dbg.Verbose( 0, "PixelConvert::SwapZone: SwapCode value "
+                            "(32 bits) not allowed." );
       }
    }
 }
 
-
-
 /**
  * \brief Deal with endianity i.e. re-arange bytes inside the integer
  */
-void PixelConvert::ConvertReorderEndianity( uint8_t* pixelZone,
-                                        size_t imageDataSize,
-                                        int numberBitsStored,
-                                        int numberBitsAllocated,
-                                        int swapCode,
-                                        bool signedPixel)
+void PixelConvert::ReorderEndianity( uint8_t* pixelZone )
 {
-   if ( numberBitsAllocated != 8 )
+   if ( BitsAllocated != 8 )
    {
-      SwapZone( pixelZone, swapCode, imageDataSize, numberBitsAllocated );
+      SwapZone( pixelZone );
    }
                                                                                 
    // Special kludge in order to deal with xmedcon broken images:
-   if (  ( numberBitsAllocated == 16 )
-      && ( numberBitsStored < numberBitsAllocated )
-      && ( ! signedPixel ) )
+   if (  ( BitsAllocated == 16 )
+       && ( BitsStored < BitsAllocated )
+       && ( ! PixelSign ) )
    {
-      int l = (int)(imageDataSize / (numberBitsAllocated/8));
+      int l = (int)( DecompressedSize / ( BitsAllocated / 8 ) );
       uint16_t *deb = (uint16_t *)pixelZone;
       for(int i = 0; i<l; i++)
       {
@@ -414,17 +393,9 @@ void PixelConvert::ConvertReorderEndianity( uint8_t* pixelZone,
  * @param     destination Where decompressed fragments should end up
  * @return    Boolean
  */
-bool PixelConvert::ReadAndDecompressJPEGFile( uint8_t* destination,
-                                   int XSize,
-                                   int YSize,
-                                   int BitsAllocated,
-                                   int BitsStored,
-                                   int SamplesPerPixel,
-                                   int PixelSize,
-                                   bool isJPEG2000,
-                                   bool isJPEGLossless,
-                                   JPEGFragmentsInfo* JPEGInfo,
-                                   FILE* fp )
+bool PixelConvert::ReadAndDecompressJPEGFile(
+                          uint8_t* destination,
+                          FILE* fp )
 {
    // Loop on the fragment[s]
    for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
@@ -434,14 +405,14 @@ bool PixelConvert::ReadAndDecompressJPEGFile( uint8_t* destination,
    {
       fseek( fp, (*it)->Offset, SEEK_SET );
                                                                                 
-      if ( isJPEG2000 )
+      if ( IsJPEG2000 )
       {
          if ( ! gdcm_read_JPEG2000_file( fp, destination ) )
          {
             return false;
          }
       }
-      else if ( isJPEGLossless )
+      else if ( IsJPEGLossless )
       {
          // JPEG LossLess : call to xmedcom Lossless JPEG
          JPEGLosslessDecodeImage( fp,
@@ -468,7 +439,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile( uint8_t* destination,
       else
       {
          // other JPEG lossy not supported
-         dbg.Error(" File::ReadPixelData : unknown jpeg lossy "
+         dbg.Error(" File::ReadAndDecompressJPEGFile: unknown jpeg lossy "
                    " compression ");
          return false;
       }
@@ -490,46 +461,180 @@ bool PixelConvert::ReadAndDecompressJPEGFile( uint8_t* destination,
  * @param  destination Where decompressed fragments should end up
  * @return Boolean
  */
-bool PixelConvert::ConvertReArrangeBits(
-                          uint8_t* pixelZone,
-                          size_t imageDataSize,
-                          int numberBitsStored,
-                          int numberBitsAllocated,
-                          int highBitPosition )
+bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
      throw ( FormatError )
 {
-   if ( numberBitsStored != numberBitsAllocated )
+   if ( BitsStored != BitsAllocated )
    {
-      int l = (int)(imageDataSize / (numberBitsAllocated/8));
-      if ( numberBitsAllocated == 16 )
+      int l = (int)( DecompressedSize / ( BitsAllocated / 8 ) );
+      if ( BitsAllocated == 16 )
       {
          uint16_t mask = 0xffff;
-         mask = mask >> ( numberBitsAllocated - numberBitsStored );
+         mask = mask >> ( BitsAllocated - BitsStored );
          uint16_t* deb = (uint16_t*)pixelZone;
          for(int i = 0; i<l; i++)
          {
-            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
+            *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
             deb++;
          }
       }
-      else if ( numberBitsAllocated == 32 )
+      else if ( BitsAllocated == 32 )
       {
          uint32_t mask = 0xffffffff;
-         mask = mask >> ( numberBitsAllocated - numberBitsStored );
+         mask = mask >> ( BitsAllocated - BitsStored );
          uint32_t* deb = (uint32_t*)pixelZone;
          for(int i = 0; i<l; i++)
          {
-            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
+            *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
             deb++;
          }
       }
       else
       {
-         dbg.Verbose(0, "PixelConvert::ConvertReArrangeBits: weird image");
-         throw FormatError( "File::ConvertReArrangeBits()",
+         dbg.Verbose(0, "PixelConvert::ReArrangeBits: weird image");
+         throw FormatError( "File::ReArrangeBits()",
                                 "weird image !?" );
       }
    }
-   return true; //???
 }
+
+/**
+ * \brief   Convert (Y plane, cB plane, cR plane) to RGB pixels
+ * \warning Works on all the frames at a time
+ */
+void PixelConvert::ConvertYcBcRPlanesToRGBPixels(
+                           uint8_t* destination,
+                           size_t imageDataSize )
+{
+   uint8_t* oldPixelZone = new uint8_t[ imageDataSize ];
+   memmove( oldPixelZone, destination, imageDataSize );
+                                                                                
+   // to see the tricks about YBR_FULL, YBR_FULL_422,
+   // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
+   // ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
+   // and be *very* affraid
+   //
+   int l        = XSize * YSize;
+   int nbFrames = ZSize;
+                                                                                
+   uint8_t* a = oldPixelZone;
+   uint8_t* b = oldPixelZone + l;
+   uint8_t* c = oldPixelZone + l + l;
+   double R, G, B;
+                                                                                
+   /// \todo : Replace by the 'well known' integer computation
+   ///         counterpart. Refer to
+   ///            http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
+   ///         for code optimisation.
+                                                                                
+   for ( int i = 0; i < nbFrames; i++ )
+   {
+      for ( int j = 0; j < l; j++ )
+      {
+         R = 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
+         G = 1.164 *(*a-16) - 0.813 *(*c -128) - 0.392 *(*b -128) + 0.5;
+         B = 1.164 *(*a-16) + 2.017 *(*b -128) + 0.5;
+                                                                                
+         if (R < 0.0)   R = 0.0;
+         if (G < 0.0)   G = 0.0;
+         if (B < 0.0)   B = 0.0;
+         if (R > 255.0) R = 255.0;
+         if (G > 255.0) G = 255.0;
+         if (B > 255.0) B = 255.0;
+                                                                                
+         *(destination++) = (uint8_t)R;
+         *(destination++) = (uint8_t)G;
+         *(destination++) = (uint8_t)B;
+         a++;
+         b++;
+         c++;
+      }
+   }
+   delete[] oldPixelZone;
+}
+
+/**
+ * \brief   Convert (Red plane, Green plane, Blue plane) to RGB pixels
+ * \warning Works on all the frames at a time
+ */
+void PixelConvert::ConvertRGBPlanesToRGBPixels(
+                          uint8_t* destination,
+                          size_t imageDataSize )
+{
+   uint8_t* oldPixelZone = new uint8_t[ imageDataSize ];
+   memmove( oldPixelZone, destination, imageDataSize );
+                                                                                
+   int l = XSize * YSize * ZSize;
+                                                                                
+   uint8_t* a = oldPixelZone;
+   uint8_t* b = oldPixelZone + l;
+   uint8_t* c = oldPixelZone + l + l;
+                                                                                
+   for (int j = 0; j < l; j++)
+   {
+      *(destination++) = *(a++);
+      *(destination++) = *(b++);
+      *(destination++) = *(c++);
+   }
+   delete[] oldPixelZone;
+}
+
+bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
+{
+   if ( !fp )
+   {
+      return false;
+   }
+                                                                                
+   if ( fseek(fp, PixelOffset, SEEK_SET) == -1 )
+   {
+      return false;
+   }
+                                                                                
+   if ( BitsAllocated == 12 )
+   {
+      Decompress12BitsTo16Bits( (uint8_t*)destination, fp);
+      return true;
+   }
+                                                                                
+   //////////// Decompressed File
+   if ( IsUncompressed )
+   {
+      size_t ItemRead = fread( destination, PixelDataLength, 1, fp);
+      if ( ItemRead != 1 )
+      {
+         return false;
+      }
+      else
+      {
+         return true;
+      }
+   }
+                                                                                
+   ///////////// Run Length Encoding
+   if ( IsRLELossless )
+   {
+      return ReadAndDecompressRLEFile( destination, fp );
+   }
+                                                                                
+   ///////////// SingleFrame/Multiframe JPEG Lossless/Lossy/2000
+   return ReadAndDecompressJPEGFile( (uint8_t*)destination, fp );
+}
+
+void PixelConvert::ComputeDecompressedImageDataSize()
+{
+   int bitsAllocated;
+   // Number of "Bits Allocated" is fixed to 16 when it's 12, since
+   // in this case we will expand the image to 16 bits (see
+   //    \ref Decompress12BitsTo16Bits() )
+   if (  BitsAllocated == 12 )
+   {
+      bitsAllocated = 16;
+   }
+                                                                                
+   DecompressedSize = XSize * YSize * ZSize
+                    * ( bitsAllocated / 8 )
+                    * SamplesPerPixel;
+}
+
 } // end namespace gdcm

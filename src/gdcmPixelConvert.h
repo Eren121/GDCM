@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:47 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/10/12 09:59:45 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,9 +25,9 @@
 #include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmException.h"
 
-namespace gdcm 
+namespace gdcm
 {
-
+                                                                                
 /*
  * \brief Utility container for gathering the various forms the pixel data
  *        migth take during the user demanded processes.
@@ -38,77 +38,102 @@ friend class File;
    uint8_t* RGB;
    size_t   RGBSize;          //aka ImageDataSize
    /// Pixel data after decompression and bit/byte rearrangement.
-   uint8_t* Uncompressed;
-   size_t   UncompressedSize;
+   uint8_t* Decompressed;
+   size_t   DecompressedSize;
+
+   // Set by the accessors:
+   size_t PixelOffset;
+   size_t PixelDataLength;
+   int XSize;
+   int YSize;
+   int ZSize;
+   int BitsAllocated;
+   int BitsStored;
+   int HighBitPosition;
+   int SamplesPerPixel;
+   int PixelSize;
+   bool PixelSign;
+   int SwapCode;
+   bool IsUncompressed;
+   bool IsJPEG2000;
+   bool IsJPEGLossless;
+   bool IsRLELossless;
+   RLEFramesInfo* RLEInfo;
+   JPEGFragmentsInfo* JPEGInfo;
+   
+private:
+   bool ReadAndUncompressRLEFragment(
+                  uint8_t* decodedZone,
+                  long fragmentSize,
+                  long uncompressedSegmentSize,
+                  FILE* fp );
 public:
    PixelConvert();
    ~PixelConvert();
+
+   void SetXSize( int xSize ) { XSize = xSize; }
+   void SetYSize( int ySize ) { YSize = ySize; }
+   void SetZSize( int zSize ) { ZSize = zSize; }
+   void SetBitsAllocated( int bitsAllocated ) { BitsAllocated = bitsAllocated; }
+   void SetBitsStored( int bitsStored ) { BitsStored = bitsStored; }
+   void SetHighBitPosition( int highBitPosition )
+           { HighBitPosition = highBitPosition; }
+   void SetSamplesPerPixel( int samplesPerPixel )
+           { SamplesPerPixel = samplesPerPixel; }
+   void SetPixelSize( int pixelSize ) { PixelSize = pixelSize; }
+   void SetPixelSign( int pixelSign ) { PixelSign = pixelSign; }
+   void SetSwapCode( int swapCode ) { SwapCode = swapCode; }
+   void SetIsUncompressed( bool isUncompressed )
+           { IsUncompressed = isUncompressed; }
+   void SetIsJPEG2000( bool isJPEG2000 ) { IsJPEG2000 = isJPEG2000; }
+   void SetIsJPEGLossless( bool isJPEGLossless )
+           { IsJPEGLossless = isJPEGLossless; }
+   void SetIsRLELossless( bool isRLELossless )
+           { IsRLELossless = isRLELossless; }
+   void SetPixelOffset( size_t pixelOffset ) { PixelOffset = pixelOffset; }
+   void SetPixelDataLength( size_t pixelDataLength )
+           { PixelDataLength = pixelDataLength; }
+   void SetRLEInfo( RLEFramesInfo* inRLEFramesInfo )
+           { RLEInfo = inRLEFramesInfo; }
+   void SetJPEGInfo( JPEGFragmentsInfo* inJPEGFragmentsInfo )
+           { JPEGInfo = inJPEGFragmentsInfo; }
 
    uint8_t* GetRGB() { return RGB; }
    void     SetRGBSize( size_t size ) { RGBSize = size; }
    size_t   GetRGBSize() { return RGBSize; }
    void     AllocateRGB();
 
-   uint8_t* GetUncompressed() { return Uncompressed; }
-   void     SetUncompressedSize( size_t size ) { UncompressedSize = size; }
-   size_t   GetUncompressedSize() { return UncompressedSize; }
-   void     AllocateUncompressed();
+   uint8_t* GetDecompressed() { return Decompressed; }
+   void     SetDecompressedSize( size_t size ) { DecompressedSize = size; }
+   size_t   GetDecompressedSize() { return DecompressedSize; }
+   void     AllocateDecompressed();
 
-   void Squeeze();
 //////////////////////////////////////////////////////////
 // In progress
-   static bool UncompressRLE16BitsFromRLE8Bits(
-                  int XSize,
-                  int YSize,
+private:
+   bool UncompressRLE16BitsFromRLE8Bits(
                   int NumberOfFrames,
                   uint8_t* fixMemUncompressed );
-   static bool ReadAndUncompressRLEFragment(
-                  uint8_t* decodedZone,
-                  long fragmentSize,
-                  long uncompressedSegmentSize,
-                  FILE* fp );
-   static bool ReadAndDecompressRLEFile(
-                  void* image_buffer,
-                  int XSize,
-                  int YSize,
-                  int ZSize,
-                  int BitsAllocated,
-                  RLEFramesInfo* RLEInfo,
-                  FILE* fp );
-   static void ConvertDecompress12BitsTo16Bits(
+   void ComputeDecompressedImageDataSize();
+   void Decompress12BitsTo16Bits(
                   uint8_t* pixelZone,
-                  int sizeX,
-                  int sizeY,
                   FILE* filePtr) throw ( FormatError );
-   static void SwapZone(void* im, int swap, int lgr, int nb);
-   static void ConvertReorderEndianity(
-                  uint8_t* pixelZone,
-                  size_t imageDataSize,
-                  int numberBitsStored,
-                  int numberBitsAllocated,
-                  int swapCode,
-                  bool signedPixel );
-   static bool ReadAndDecompressJPEGFile(
+   bool ReadAndDecompressRLEFile( void* image_buffer, FILE* fp );
+   bool ReadAndDecompressJPEGFile( uint8_t* destination, FILE* fp );
+   void SwapZone( uint8_t* im );
+public:
+   void ReorderEndianity( uint8_t* pixelZone );
+   bool ReArrangeBits( uint8_t* pixelZone ) throw ( FormatError );
+         void ConvertRGBPlanesToRGBPixels(
                   uint8_t* destination,
-                  int XSize,
-                  int YSize,
-                  int BitsAllocated,
-                  int BitsStored,
-                  int SamplesPerPixel,
-                  int PixelSize,
-                  bool isJPEG2000,
-                  bool isJPEGLossless,
-                  JPEGFragmentsInfo* JPEGInfo,
-                  FILE* fp );
-   static bool PixelConvert::ConvertReArrangeBits(
-                  uint8_t* pixelZone,
-                  size_t imageDataSize,
-                  int numberBitsStored,
-                  int numberBitsAllocated,
-                  int highBitPosition ) throw ( FormatError );
-
-
+                  size_t imageDataSize );
+          void ConvertYcBcRPlanesToRGBPixels(
+                  uint8_t* destination,
+                  size_t imageDataSize );
+          bool ReadAndDecompressPixelData( void* destination, FILE* fp );
+   void Squeeze();
 };
 } // end namespace gdcm
+
 //-----------------------------------------------------------------------------
 #endif

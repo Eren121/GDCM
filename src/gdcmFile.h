@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2004/10/12 09:59:45 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 
 #include "gdcmCommon.h"
 #include "gdcmHeader.h"
+#include "gdcmPixelConvert.h"
 
 namespace gdcm 
 {
@@ -44,9 +45,6 @@ public:
 
    int ComputeDecompressedPixelDataSizeFromHeader();
 
-   void ConvertRGBPlanesToRGBPixels( uint8_t* source, uint8_t* destination );
-   void ConvertYcBcRPlanesToRGBPixels( uint8_t* source, uint8_t* destination );
-   
    /// Accessor to \ref ImageDataSize
    size_t GetImageDataSize(){ return ImageDataSize; };
 
@@ -89,8 +87,6 @@ protected:
 private:
    void Initialise();
 
-   bool ReadPixelData(void* destination);
-   
    // For JPEG 8 Bits, body in file gdcmJpeg.cxx
    bool gdcm_write_JPEG_file    (FILE* fp, void* image_buffer, 
                                  int image_width, int image_heigh,
@@ -107,7 +103,7 @@ private:
 
 // members variables:
 
-   /// \brief Header to use to load the file
+   /// Header to use to load the file
    Header *HeaderInternal;
 
    /// \brief Whether the underlying \ref Header was loaded by
@@ -118,6 +114,8 @@ private:
    /// wether already parsed 
    bool Parsed;
       
+   /// FIXME
+   PixelConvert PixelConverter;
 //
 // --------------- Will be moved to a PixelData class
 //

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.139 $
+  Date:      $Date: 2004/10/12 09:59:45 $
+  Version:   $Revision: 1.140 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,6 @@
 
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
-#include "gdcmPixelConvert.h"
 
 namespace gdcm 
 {
@@ -84,6 +83,64 @@ void File::Initialise()
       {
          ImageDataSize = ImageDataSizeRaw;
       }
+
+
+
+                                                                                
+      // Just in case some access to a Header element requires disk access:
+      FILE* fp = HeaderInternal->OpenFile();
+      // Number of Bits Allocated for storing a Pixel is defaulted to 16
+      // when absent from the header.
+      int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
+      if ( numberBitsAllocated == 0 )
+      {
+         numberBitsAllocated = 16;
+      }
+      PixelConverter.SetBitsAllocated( numberBitsAllocated );
+                                                                                
+      // Number of "Bits Stored" defaulted to number of "Bits Allocated"
+      // when absent from the header.
+      int numberBitsStored = HeaderInternal->GetBitsStored();
+      if ( numberBitsStored == 0 )
+      {
+         numberBitsStored = numberBitsAllocated;
+      }
+      PixelConverter.SetBitsStored( numberBitsStored );
+                                                                                
+      // High Bit Position
+      int highBitPosition = HeaderInternal->GetHighBitPosition();
+      if ( highBitPosition == 0 )
+      {
+         highBitPosition = numberBitsAllocated - 1;
+      }
+      PixelConverter.SetHighBitPosition( highBitPosition );
+                                                                                
+                                                                                
+      PixelConverter.SetXSize( HeaderInternal->GetXSize() );
+      PixelConverter.SetYSize( HeaderInternal->GetYSize() );
+      PixelConverter.SetZSize( HeaderInternal->GetZSize() );
+      PixelConverter.SetSamplesPerPixel( HeaderInternal->GetSamplesPerPixel() );
+      PixelConverter.SetPixelSize( HeaderInternal->GetPixelSize() );
+      PixelConverter.SetPixelSign( HeaderInternal->IsSignedPixelData() );
+      PixelConverter.SetSwapCode( HeaderInternal->GetSwapCode() );
+      PixelConverter.SetIsUncompressed(
+         ! HeaderInternal->IsDicomV3()
+        || HeaderInternal->IsImplicitVRLittleEndianTransferSyntax()
+        || HeaderInternal->IsExplicitVRLittleEndianTransferSyntax()
+        || HeaderInternal->IsExplicitVRBigEndianTransferSyntax()
+        || HeaderInternal->IsDeflatedExplicitVRLittleEndianTransferSyntax() );
+      PixelConverter.SetIsJPEG2000( HeaderInternal->IsJPEG2000() );
+      PixelConverter.SetIsJPEGLossless( HeaderInternal->IsJPEGLossless() );
+      PixelConverter.SetIsRLELossless(
+                        HeaderInternal->IsRLELossLessTransferSyntax() );
+      PixelConverter.SetPixelOffset( HeaderInternal->GetPixelOffset() );
+      PixelConverter.SetPixelDataLength( HeaderInternal->GetPixelAreaLength() );
+      PixelConverter.SetRLEInfo( &(HeaderInternal->RLEInfo) );
+      PixelConverter.SetJPEGInfo( &(HeaderInternal->JPEGInfo) );
+      PixelConverter.SetDecompressedSize( ImageDataSize );
+                                                                                
+      HeaderInternal->CloseFile();
+
    }
    SaveInitialValues();
 }
@@ -266,8 +323,11 @@ int File::ComputeDecompressedPixelDataSizeFromHeader()
    // 0028|1202 [US]   [Green Palette Color Lookup Table Data]
    // 0028|1203 [US]   [Blue Palette Color Lookup Table Data]
 
-   // Number of "Bits Allocated"
    int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
+   // Number of "Bits Allocated" is fixed to 16 when:
+   //  - it is not defined (i.e. it's value is 0)
+   //  - it's 12, since we will expand the image to 16 bits (see
+   //    PixelConvert::ConvertDecompress12BitsTo16Bits() )
    if ( ( numberBitsAllocated == 0 ) || ( numberBitsAllocated == 12 ) )
    {
       numberBitsAllocated = 16;
@@ -496,45 +556,13 @@ size_t File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
       return (size_t)0;
    }
 
-   ReadPixelData( destination );
-
-   // Number of Bits Allocated for storing a Pixel
-   int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
-   if ( numberBitsAllocated == 0 )
-   {
-      numberBitsAllocated = 16;
-   }
-
-   // Number of Bits actually used
-   int numberBitsStored = HeaderInternal->GetBitsStored();
-   if ( numberBitsStored == 0 )
-   {
-      numberBitsStored = numberBitsAllocated;
-   }
-
-   // High Bit Position
-   int highBitPosition = HeaderInternal->GetHighBitPosition();
-   if ( highBitPosition == 0 )
-   {
-      highBitPosition = numberBitsAllocated - 1;
-   }
-
-   bool signedPixel = HeaderInternal->IsSignedPixelData();
-
-   PixelConvert::ConvertReorderEndianity(
-                         (uint8_t*) destination,
-                         ImageDataSize,
-                         numberBitsStored,
-                         numberBitsAllocated,
-                         HeaderInternal->GetSwapCode(),
-                         signedPixel );
-
-   PixelConvert::ConvertReArrangeBits(
-                         (uint8_t*) destination,
-                         ImageDataSize,
-                         numberBitsStored,
-                         numberBitsAllocated,
-                         highBitPosition );
+   FILE* fp = HeaderInternal->OpenFile();
+   PixelConverter.ReadAndDecompressPixelData( destination, fp );
+   HeaderInternal->CloseFile();
+                                                                                
+   PixelConverter.ReorderEndianity( (uint8_t*) destination );
+                                                                                
+   PixelConverter.ReArrangeBits( (uint8_t*) destination );
 
 #ifdef GDCM_DEBUG
    FILE*  DebugFile;
@@ -579,18 +607,20 @@ size_t File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 
    if ( planConf == 1 )
    {
-      uint8_t* newDest = new uint8_t[ImageDataSize];
       // Warning : YBR_FULL_422 acts as RGB
       if ( HeaderInternal->IsYBRFull() )
       {
-         ConvertYcBcRPlanesToRGBPixels((uint8_t*)destination, newDest);
+         PixelConverter.ConvertYcBcRPlanesToRGBPixels(
+                              (uint8_t*)destination,
+                              ImageDataSize );
       }
       else
       {
-         ConvertRGBPlanesToRGBPixels((uint8_t*)destination, newDest);
+         PixelConverter.ConvertRGBPlanesToRGBPixels(
+                              (uint8_t*)destination,
+                              ImageDataSize );
       }
-      memmove(destination, newDest, ImageDataSize);
-      delete[] newDest;
+
    }
 
 ///////////////////////////////////////////////////
@@ -614,77 +644,6 @@ size_t File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
  
    return ImageDataSize; 
-}
-
-/**
- * \brief   Convert (Y plane, cB plane, cR plane) to RGB pixels
- * \warning Works on all the frames at a time
- */
-void File::ConvertYcBcRPlanesToRGBPixels(uint8_t* source,
-                                             uint8_t* destination)
-{
-   // to see the tricks about YBR_FULL, YBR_FULL_422, 
-   // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
-   // ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
-   // and be *very* affraid
-   //
-   int l        = HeaderInternal->GetXSize() * HeaderInternal->GetYSize();
-   int nbFrames = HeaderInternal->GetZSize();
-
-   uint8_t* a = source;
-   uint8_t* b = source + l;
-   uint8_t* c = source + l + l;
-   double R, G, B;
-
-   /// \todo : Replace by the 'well known' integer computation
-   ///         counterpart. Refer to
-   ///            http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
-   ///         for code optimisation.
- 
-   for (int i = 0; i < nbFrames; i++)
-   {
-      for (int j = 0; j < l; j++)
-      {
-         R = 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
-         G = 1.164 *(*a-16) - 0.813 *(*c -128) - 0.392 *(*b -128) + 0.5;
-         B = 1.164 *(*a-16) + 2.017 *(*b -128) + 0.5;
-
-         if (R < 0.0)   R = 0.0;
-         if (G < 0.0)   G = 0.0;
-         if (B < 0.0)   B = 0.0;
-         if (R > 255.0) R = 255.0;
-         if (G > 255.0) G = 255.0;
-         if (B > 255.0) B = 255.0;
-
-         *(destination++) = (uint8_t)R;
-         *(destination++) = (uint8_t)G;
-         *(destination++) = (uint8_t)B;
-         a++;
-         b++;
-         c++;  
-      }
-   }
-}
-
-/**
- * \brief   Convert (Red plane, Green plane, Blue plane) to RGB pixels
- * \warning Works on all the frames at a time
- */
-void File::ConvertRGBPlanesToRGBPixels(uint8_t* source,
-                                           uint8_t* destination)
-{
-   int l = HeaderInternal->GetXSize() * HeaderInternal->GetYSize() * HeaderInternal->GetZSize();
-
-   uint8_t* a = source;
-   uint8_t* b = source + l;
-   uint8_t* c = source + l + l;
-
-   for (int j = 0; j < l; j++)
-   {
-      *(destination++) = *(a++);
-      *(destination++) = *(b++);
-      *(destination++) = *(c++);
-   }
 }
 
 /**
@@ -872,96 +831,6 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    fclose (fp1);
 
    return true;
-}
-
-//-----------------------------------------------------------------------------
-// Private
-/**
- * \brief   Read pixel data from disk (optionaly decompressing) into the
- *          caller specified memory location.
- * @param   destination where the pixel data should be stored.
- *
- */
-bool File::ReadPixelData(void* destination) 
-{
-   FILE* fp = HeaderInternal->OpenFile();
-
-   if ( !fp )
-   {
-      return false;
-   }
-   if ( fseek(fp, HeaderInternal->GetPixelOffset(), SEEK_SET) == -1 )
-   {
-      HeaderInternal->CloseFile();
-      return false;
-   }
-
-   if ( HeaderInternal->GetBitsAllocated() == 12 )
-   {
-      PixelConvert::ConvertDecompress12BitsTo16Bits(
-                                       (uint8_t*)destination, 
-                                       HeaderInternal->GetXSize(),
-                                       HeaderInternal->GetYSize(),
-                                       fp);
-      HeaderInternal->CloseFile();
-      return true;
-   }
-
-   // ----------------------  Uncompressed File
-   if ( !HeaderInternal->IsDicomV3()                             ||
-        HeaderInternal->IsImplicitVRLittleEndianTransferSyntax() ||
-        HeaderInternal->IsExplicitVRLittleEndianTransferSyntax() ||
-        HeaderInternal->IsExplicitVRBigEndianTransferSyntax()    ||
-        HeaderInternal->IsDeflatedExplicitVRLittleEndianTransferSyntax() )
-   {
-      size_t ItemRead = fread(destination, HeaderInternal->GetPixelAreaLength(), 1, fp);
-      HeaderInternal->CloseFile();
-      if ( ItemRead != 1 )
-      {
-         return false;
-      }
-      else
-      {
-         return true;
-      }
-   }
-
-   // ---------------------- Run Length Encoding
-   if ( HeaderInternal->IsRLELossLessTransferSyntax() )
-   {
-      bool res = PixelConvert::ReadAndDecompressRLEFile(
-                                      destination,
-                                      HeaderInternal->GetXSize(),
-                                      HeaderInternal->GetYSize(),
-                                      HeaderInternal->GetZSize(),
-                                      HeaderInternal->GetBitsAllocated(),
-                                      &(HeaderInternal->RLEInfo),
-                                      fp );
-      HeaderInternal->CloseFile();
-      return res; 
-   }  
-    
-   // --------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
-   int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
-   if ( ( numberBitsAllocated == 0 ) || ( numberBitsAllocated == 12 ) )
-   {
-      numberBitsAllocated = 16;
-   }
-
-   bool res = PixelConvert::ReadAndDecompressJPEGFile(
-                                   (uint8_t*)destination,
-                                   HeaderInternal->GetXSize(),
-                                   HeaderInternal->GetYSize(),
-                                   HeaderInternal->GetBitsAllocated(),
-                                   HeaderInternal->GetBitsStored(),
-                                   HeaderInternal->GetSamplesPerPixel(),
-                                   HeaderInternal->GetPixelSize(),
-                                   HeaderInternal->IsJPEG2000(),
-                                   HeaderInternal->IsJPEGLossless(),
-                                   &(HeaderInternal->JPEGInfo),
-                                   fp );
-   HeaderInternal->CloseFile();
-   return res;
 }
 
 } // end namespace gdcm
