@@ -34,16 +34,16 @@ libgdcmincludedir = $(includedir)
 libgdcminclude_HEADERS = \
 	gdcmException.h	\
 	gdcmHeader.h  	\
-	gdcmFile.h
-
-EXTRA_DIST = \
-	gdcmUtil.h	\
-	gdcm.h  	\
-	gdcmIdo.h  	\
 	gdcmCommon.h	\
+	gdcm.h  	\
 	gdcmDictSet.h	\
 	gdcmDict.h	\
 	gdcmDictEntry.h	\
 	gdcmElValue.h	\
 	gdcmElValSet.h	\
+	gdcmFile.h
+
+EXTRA_DIST = \
+	gdcmUtil.h	\
+	gdcmIdo.h  	\
 	iddcmjpeg.h

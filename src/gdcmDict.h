@@ -25,7 +25,7 @@ public:
 	int ReplaceEntry(gdcmDictEntry* NewEntry);
 	int RemoveEntry (TagKey key);
 	int RemoveEntry (guint16 group, guint16 element);
-	gdcmDictEntry * GetTagByKey(guint16 group, guint16 element);
+	gdcmDictEntry * GetTagByNumber(guint16 group, guint16 element);
 	gdcmDictEntry * GetTagByName(TagName name);
 	void Print(ostream&);
 	void PrintByKey(ostream&);

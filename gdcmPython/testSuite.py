@@ -21,7 +21,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "FUJI PHOTO FILM CO. LTD."],
            ["Manufacturer Model Name", "9000"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:776 Length:387200"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:776 Length:387200"] ] ],
       ####################################
       # CT modality examples:
       ####################################
@@ -36,7 +36,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "1"],
            ["Manufacturer", "Picker International, Inc."],
            ["Manufacturer Model Name", "PQ5000"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1680 Length:524288"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1680 Length:524288"] ] ],
       ["CT-MONO2-16-ort.dcm",
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2"],  # Implicit VR, LE
            ["Modality", "CT"],
@@ -48,7 +48,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "1"],
            ["Manufacturer", "GE MEDICAL SYSTEMS"],
            ["Manufacturer Model Name", "HiSpeed CT/i"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1674 Length:524288"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1674 Length:524288"] ] ],
       ["CT-MONO2-16-ankle.dcm",
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2"],  # Implicit, little
            ["Modality", "CT"],
@@ -60,7 +60,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "1"],
            ["Manufacturer", "GE MEDICAL SYSTEMS"],
            ["Manufacturer Model Name", "GENESIS_ZEUS"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1148 Length:524288"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1148 Length:524288"] ] ],
       ["CT-MONO2-8-abdo.dcm",
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2"],  # Implicit, little
            ["Modality", "CT"],
@@ -71,7 +71,7 @@ class gdcmTestCase(unittest.TestCase):
            ["High Bit", "7"],
            ["Pixel Representation", "0"],
            ["Manufacturer", "FUJI"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:796 Length:262144"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:796 Length:262144"] ] ],
       ["CT-MONO2-12-lomb-an2.acr2",
          [ ["Modality", "CT"],
            #"Transfer Syntax UID" and "Photometric Interpretation" are absent.
@@ -82,7 +82,7 @@ class gdcmTestCase(unittest.TestCase):
            ["High Bit", "11"],
            ["Pixel Representation", "0"],
            ["Manufacturer", "SIEMENS"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1230 Length:524288"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1230 Length:524288"] ] ],
       ["CT-MONO2-16-chest.dcm",
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.4.70"], # jpeg...
            ["Modality", "CT"],
@@ -94,7 +94,7 @@ class gdcmTestCase(unittest.TestCase):
            ["High Bit", "15"],
            ["Pixel Representation", "1"],
            ["Manufacturer", "GE MEDICAL SYSTEMS"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1638 Length:143498"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1638 Length:143498"] ] ],
       ####################################
       ### MR modality examples:
       ####################################
@@ -110,7 +110,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "Philips"],
            # Note: 256*256*12/8 = 98304
-           ["7fe0|0010", "gdcm::NotLoaded. Address:650 Length:98304"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:650 Length:98304"] ] ],
       ["MR-MONO2-12-an2.acr2",
          [ ["Modality", "MR"],
            ["Photometric Interpretation", "MONOCHROME2"],
@@ -122,7 +122,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "SIEMENS"],
            ["Manufacturer Model Name", "MAGNETOM VISION"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1866 Length:131072"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1866 Length:131072"] ] ],
       ["MR-MONO2-16-head.dcm",
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2"], # Imp VR, LE
            ["Modality", "MR"],
@@ -135,7 +135,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "1"],
            ["Manufacturer", "GE MEDICAL SYSTEMS"],
            ["Manufacturer Model Name", "GENESIS_SIGNA"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1804 Length:131072"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1804 Length:131072"] ] ],
       # MR-MONO2-12-shoulder example is present in the Jpeg section.
       # MR-MONO2-16-knee is not present in the test suite since it is too
       #    closely related to MR-MONO2-16-head.dcm to be of interest.
@@ -155,7 +155,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Bits Allocated", "8"],
            ["High Bit", "7"],
            ["Pixel Representation", "0"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1654 Length:307200"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1654 Length:307200"] ] ],
       # OT-MONO2-8-colon is not present in the test suite since it is too
       #    closely related to OT-MONO2-8-a7 to be of interest.
       ["OT-MONO2-8-a7.dcm",
@@ -169,7 +169,7 @@ class gdcmTestCase(unittest.TestCase):
            ["High Bit", "7"],
            ["Pixel Representation", "0"],
            ["Manufacturer", "Philips Medical Systems"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:438 Length:262144"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:438 Length:262144"] ] ],
       ####################################
       # US (Ultra Sound) modality examples:
       ####################################
@@ -187,7 +187,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Manufacturer", "Acme Products"],
          # FIXME: 92160 / (120*256) = 3 bytes per pixel NOT 1. Maybe
          # it has something to do with [Samples Per Pixel] = [3] ???
-           ["7fe0|0010", "gdcm::NotLoaded. Address:904 Length:92160"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:904 Length:92160"] ] ],
       ["US-RGB-8-epicard.dcm",
          # Interest: Big endian transfert syntax
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.2"],  # Big endian
@@ -204,7 +204,7 @@ class gdcmTestCase(unittest.TestCase):
          # FIXME: 921600/(480*640) = 3 bytes per pixel NOT 1. Maybe
          # it has something to do with [Samples Per Pixel] = [3] ???
            ["Implementation Version Name", "OFFIS-DCMTK-311"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1012 Length:921600"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1012 Length:921600"] ] ],
    ]
 
    MultiFrameFiles = [
@@ -223,7 +223,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "Philips"],
            # Note: 256*256*16=1048576 (16 is the number of Frames) 
-           ["7fe0|0010", "gdcm::NotLoaded. Address:920 Length:1048576"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:920 Length:1048576"] ] ],
       ["NM-MONO2-16-13x-heart.dcm",
          # Interest: NM modality, multi-frame
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.1"], # ExpVR, LE
@@ -238,7 +238,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "ACME Products"],
            # Note: 64*64*13*2=106496
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1234 Length:106496"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1234 Length:106496"] ] ],
       ["US-MONO2-8-8x-execho.dcm",
          # Interest: multi-frame
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.1"], # ExpVR, LE
@@ -252,7 +252,7 @@ class gdcmTestCase(unittest.TestCase):
            ["High Bit", "7"],
            ["Pixel Representation", "0"],
            ["Manufacturer", "Acme Products"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:976 Length:122880"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:976 Length:122880"] ] ],
       ["US-PAL-8-10x-echo.dcm",
          # Interest: RLE (Run Length Encoded) compression, multiframe
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.5"], # RLE
@@ -266,7 +266,7 @@ class gdcmTestCase(unittest.TestCase):
            ["High Bit", "7"],
            ["Pixel Representation", "0"],
            ["Manufacturer", "ACME Products"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:2428 Length:481182"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:2428 Length:481182"] ] ],
       ["XA-MONO2-8-12x-catheter.dcm",
          # Interest: XA modality, multi-frame
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.4.70"], # jpeg
@@ -280,7 +280,7 @@ class gdcmTestCase(unittest.TestCase):
            ["High Bit", "7"],
            ["Pixel Representation", "0"],
            ["Manufacturer", "Acme Products"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1006 Length:920072"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1006 Length:920072"] ] ],
    ]
 
    GdcmFiles = [
@@ -298,7 +298,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Manufacturer Model Name", "GBS III"],
          # FIXME: this image looks padded at the end. The length of the file
          # is 140288. Notice that, 256*256*2 + 1024 = 131072 + 1024 = 132096
-           ["7fe0|0010", "gdcm::NotLoaded. Address:8192 Length:132096"],
+           ["Pixel Data", "gdcm::NotLoaded. Address:8192 Length:132096"],
            # Oddities: "Study ID" and "Series Number" are empty
            ["Study ID", ""],
            ["Series Number", ""] ] ],
@@ -321,7 +321,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Series Instance UID",
             "1.3.12.2.1107.5.2.4.7630.20000918175714000007"],
            ["Series Number", "7"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:6052 Length:524288"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:6052 Length:524288"] ] ],
       ["gdcm-US-ALOKA-16.dcm",
          # Interest: - possesses 3 LUTS: a Green (checked), a Red and BLue.
          #           - announced as implicit VR, but really explicit VR.
@@ -338,7 +338,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "ALOKA CO., LTD."],
            ["Manufacturer Model Name", "SSD-4000"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:258740 Length:614400"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:258740 Length:614400"] ] ],
       ["gdcm-MR-PHILIPS-16.dcm",
          # Interest: - possesses a sequence
          #           - dicom file, with a recognition code of ACR-NEMA1
@@ -355,7 +355,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Manufacturer", "Philips Medical Systems"],
            ["Manufacturer Model Name", "Gyroscan Intera"],
            ["Sequence Variant", "OTHER"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:6584 Length:131072"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:6584 Length:131072"] ] ],
       ["gdcm-MR-PHILIPS-16-Multi-Seq.dcm",
          # Interest: - possesses many sequences in group 0x0029
          #           - Big sequence 28808 bytes at (0x0029, 0x263d)
@@ -373,7 +373,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Manufacturer", "Philips Medical Systems"],
            ["Manufacturer Model Name", "Gyroscan Intera"],
            ["Sequence Variant", "OTHER"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:35846 Length:32768"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:35846 Length:32768"] ] ],
       ["gdcm-MR-PHILIPS-16-NonRectPix.dcm",
          # Interest: - pixels are non rectangular
          #           - private elements are in explicit VR (which is normal)
@@ -389,7 +389,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Manufacturer", "Philips Medical Systems"],
            ["Manufacturer Model Name", "Gyroscan Intera"],
            ["Pixel Spacing", "0.487416\\0.194966"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:5010 Length:20480"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:5010 Length:20480"] ] ],
       ["gdcm-CR-DCMTK-16-NonSamplePerPix.dcm",
          # Interest: - Misses the "Samples Per Pixel" element which prevents
          #             e-film from reading it.
@@ -404,7 +404,7 @@ class gdcmTestCase(unittest.TestCase):
            ["High Bit", "7"],
            ["Pixel Representation", "0"],
            ["Implementation Version Name", "OFFIS_DCMTK_341"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:740 Length:562500"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:740 Length:562500"] ] ],
    ]
 
    GdcmJpegFiles = [
@@ -421,7 +421,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "SIEMENS"],
            ["Manufacturer Model Name", "Volume Zoom"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:2946 Length:192218"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:2946 Length:192218"] ] ],
       ["MR-MONO2-12-shoulder.dcm",
          # Interest: Jpeg compression [Lossless, non-hierar. (14)]
          [ ["Transfer Syntax UID", "1.2.840.10008.1.2.4.57"],
@@ -435,7 +435,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "Philips Medical Systems"],
            ["Manufacturer Model Name", "Gyroscan NT"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:1580 Length:718948"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:1580 Length:718948"] ] ],
       ["gdcm-JPEG-LossLess3a.dcm",
          # Interest: - Jpeg compression [Lossless, hierar., first-order
          #             pred. 14, Select. Val. 1]
@@ -490,7 +490,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Pixel Representation", "0"],
            ["Manufacturer", "Philips Medical Systems"],
            ["Manufacturer Model Name", "Cassette Holder Type 9840 500 35201"],
-           ["7fe0|0010", "gdcm::NotLoaded. Address:3144 Length:4795668"] ] ],
+           ["Pixel Data", "gdcm::NotLoaded. Address:3144 Length:4795668"] ] ],
    ]
 
    def _BaseTest(self, FileSet):
@@ -525,7 +525,7 @@ class gdcmTestCase(unittest.TestCase):
       Source.GetImageData()
       TargetFileName = "junk"
       Target = Source.WriteDcmImplVR(TargetFileName)
-      Sign = 'c7d6bedae1bef3851f35b29952fbbd4b'
+      Sign = '5af8739c15dd579dea223eb3930cacda'
       ComputeSign = md5.new(open(TargetFileName).read()).hexdigest()
       #print ComputeSign
       self.assertEqual(ComputeSign, Sign,

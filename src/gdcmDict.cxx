@@ -77,7 +77,7 @@ void gdcmDict::PrintByName(ostream& os) {
  * @param   element element of the entry to be found
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry * gdcmDict::GetTagByKey(guint16 group, guint16 element) {
+gdcmDictEntry * gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! KeyHt.count(key))
 		return (gdcmDictEntry*)0; 

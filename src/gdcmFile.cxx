@@ -1,8 +1,8 @@
 // gdcmFile.cxx
 
 #include "gdcmFile.h"
-
-static void _Swap(void* im, int swap, int lgr, int nb);
+#include "gdcmUtil.h"
+#include "iddcmjpeg.h"
 
 /////////////////////////////////////////////////////////////////
 /**
@@ -25,18 +25,21 @@ static void _Swap(void* im, int swap, int lgr, int nb);
 gdcmFile::gdcmFile(string & filename) 
 	:gdcmHeader(filename.c_str())	
 {
+   SetPixelDataSizeFromHeader();
 }
 
 gdcmFile::gdcmFile(const char * filename) 
 	:gdcmHeader(filename)	
 {
+   SetPixelDataSizeFromHeader();
 }
 
 
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
- * \brief     Renvoie la longueur A ALLOUER pour recevoir les pixels de l'image
+ * \brief     calcule la longueur (in bytes) A ALLOUER pour recevoir les
+ *        pixels de l'image
  *  		ou DES images dans le cas d'un multiframe
  *  		ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels	
  *  		(dans le cas d'images compressees, elle n'a pas de sens).
@@ -44,108 +47,112 @@ gdcmFile::gdcmFile(const char * filename)
  * @return	longueur a allouer 
  */
 
-size_t gdcmFile::GetImageDataSize(void) {
-	int nb;
-	string str_nb;
+void gdcmFile::SetPixelDataSizeFromHeader(void) {
+   int nb;
+   string str_nb;
 
-	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-	if (str_nb == "gdcm::Unfound" ) {
-		nb = 16;
-	} else {
-		nb = atoi(str_nb.c_str() );
+   str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
+   if (str_nb == "gdcm::Unfound" ) {
+      nb = 16;
+   } else {
+      nb = atoi(str_nb.c_str() );
       if (nb == 12) nb =16;
-	}
+   }
+   lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() * (nb/8);
+}
 
-	size_t lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() *(nb/8);
-	return (lgrTotale);
+/**
+ * \ingroup   gdcmFile
+ * \brief     Accessor
+ */
+size_t gdcmFile::GetImageDataSize(void) {
+   return (lgrTotale);
 }
 
 
+/**
+ * \ingroup gdcmFile
+ * \brief   Read pixel data from disk (optionaly decompressing) into the
+ *          caller specified memory location.
+ * @param   destination Where the pixel data should be stored.
+ *
+ */
+bool gdcmFile::ReadPixelData(void* destination) {
+   if ( !OpenFile())
+      return false;
+   if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
+      CloseFile();
+      return false;
+   }
+   if (IsJPEGLossless()) {
+      destination = _IdDcmJpegRead(fp);
+   } else { 
+      size_t ItemRead = fread(destination, lgrTotale, 1, fp);
+      if ( ItemRead != 1 ) {
+         CloseFile();
+         return false;
+      }
+   }
+   CloseFile();
+   return true;
+}   
 
 /////////////////////////////////////////////////////////////////
 /**
- * \ingroup   gdcmFile
- * \brief TODO
- * \warning WARNING
- *
+ * \ingroup gdcmFile
+ * \brief   Allocates necessary memory, copies the pixel data
+ *          (image[s]/volume[s]) to newly allocated zone and return a
+ *          pointer to it:
  */
 void * gdcmFile::GetImageData (void) {
-	char * _Pixels;
-	// Longueur en Octets des Pixels a lire
-	size_t taille = GetImageDataSize();// ne faudrait-il pas la stocker?
-	_Pixels = (char *) malloc(taille);
-	GetImageDataIntoVector(_Pixels, taille);
-	
-		// On l'affecte à un champ du dcmFile	
-	Pixels =    _Pixels;
-	lgrTotale = taille;
-	
-	// ca fait double emploi, il faudra nettoyer ça
-	
-	return(_Pixels);
+   PixelData = (void *) malloc(lgrTotale);
+   GetImageDataIntoVector(PixelData, lgrTotale);
+   return(PixelData);
 }
-
-
 
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
  * \brief amene en mémoire dans une zone précisee par l'utilisateur
- *        les Pixels d'une image NON COMPRESSEE
- * \Warning Aucun test n'est fait pour le moment sur le caractere compresse ou non de l'image
+ *        les Pixels d'une image 
  *
  * @param destination
  * @param MaxSize
  *
- * @return TODO JPR	
+ * @return The number of bytes actually copied.
  */
 
-int gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
+size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
-// Question :
-//	dans quel cas la MaxSize sert-elle a quelque chose?
-// 	que fait-on si la taille de l'image est + gde    que Maxize?
-// 	que fait-on si la taille de l'image est + petite que Maxize?
-
+   int nb, nbu, highBit, signe;
+   string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
+ 
+   if ( lgrTotale > MaxSize ) {
+      dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: pixel data bigger"
+                     "than caller's expected MaxSize");
+      return (size_t)0; 
+   }
 	
-	void * Pixels = destination;  // pour garder le code identique avec GetImageData
-
-	int nb, nbu, highBit, signe;
-	string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
-	
-	unsigned short int mask = 0xffff;
-	
-	// Longueur en Octets des Pixels a lire
-	size_t _lgrTotale = GetImageDataSize();	// ne faudrait-il pas la stocker?
-	
-	// si lgrTotale < MaxSize ==> Gros pb 
-	// -> on résoud à la goret
-	
-	if ( _lgrTotale < MaxSize ) MaxSize = _lgrTotale;
-	
-	GetPixels(MaxSize, destination);
+	(void)ReadPixelData(destination);
 			
-	// Nombre de Bits Alloues pour le stockage d'un Pixel	
-	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-
+	// Nombre de Bits Alloues pour le stockage d'un Pixel
+	str_nb = GetPubElValByNumber(0x0028,0x0100);
 	if (str_nb == "gdcm::Unfound" ) {
 		nb = 16;
 	} else {
 		nb = atoi(str_nb.c_str() );
 	}
 	
-	// Nombre de Bits Utilises	
+	// Nombre de Bits Utilises
 	str_nbu=GetPubElValByNumber(0x0028,0x0101);
-
 	if (str_nbu == "gdcm::Unfound" ) {
 		nbu = nb;
 	} else {
 		nbu = atoi(str_nbu.c_str() );
 	}	
 	
-	// Position du Bit de Poids Fort	
+	// Position du Bit de Poids Fort
 	str_highBit=GetPubElValByNumber(0x0028,0x0102);
-
 	if (str_highBit == "gdcm::Unfound" ) {
 		highBit = nb - 1;
 	} else {
@@ -154,39 +161,41 @@ int gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 		
 	// Signe des Pixels 
 	str_signe=GetPubElValByNumber(0x0028,0x0103);
-
 	if (str_signe == "gdcm::Unfound" ) {
 		signe = 1;
 	} else {
 		signe = atoi(str_signe.c_str() );
 	}
 
-	// On remet les Octets dans le bon ordre si besoin est
-	if (nb != 8) {
-		int _sw = GetSwapCode();
-
-		_Swap (destination, _sw, _lgrTotale, nb);
-	}
-	
-	// On remet les Bits des Octets dans le bon ordre si besoin est
-	//
-	// ATTENTION :  Jamais confronté a des pixels stockes sur 32 bits 
-	//			avec moins de 32 bits utilises
-	//			et dont le bit de poids fort ne serait pas la ou on l'attend ...
-	// 			--> ne marchera pas dans ce cas 
-	if (nbu!=nb){
-		mask = mask >> (nb-nbu);
-		int l=(int)MaxSize/(nb/8);
-		unsigned short *deb = (unsigned short *)Pixels;
-		for(int i=0;i<l;i++) {
-				*deb = (*deb >> (nbu-highBit-1)) & mask;
-				deb ++;
-		}
-	}
-			
-	// VOIR s'il ne faudrait pas l'affecter à un champ du dcmHeader
-	
-	return 1; 
+   // On remet les Octets dans le bon ordre si besoin est
+   if (nb != 8)
+     SwapZone(destination, GetSwapCode(), lgrTotale, nb);
+ 
+   // On remet les Bits des Octets dans le bon ordre si besoin est
+   if (nbu != nb){
+      int l = (int)lgrTotale / (nb/8);
+      if (nb == 16) {
+         guint16 mask = 0xffff;
+         mask = mask >> (nb-nbu);
+         guint16 *deb = (guint16 *)destination;
+         for(int i = 0; i<l; i++) {
+            *deb = (*deb >> (nbu-highBit-1)) & mask;
+            deb ++;
+         }
+      } else if (nb == 32 ) {
+         guint32 mask = 0xffffffff;
+         mask = mask >> (nb-nbu);
+         guint32 *deb = (guint32 *)destination;
+         for(int i = 0; i<l; i++) {
+            *deb = (*deb >> (nbu-highBit-1)) & mask;
+            deb ++;
+         }
+      } else {
+         dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: wierd image");
+         return (size_t)0; 
+      }
+   }
+   return lgrTotale; 
 }
 
 
@@ -194,7 +203,7 @@ int gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 // Je laisse le code integral, au cas ça puisse etre reutilise ailleurs
 //
 
-static void _Swap(void* im, int swap, int lgr, int nb) {                     
+void gdcmFile::SwapZone(void* im, int swap, int lgr, int nb) {
 guint32 s32;
 guint16 fort,faible;
 int i;
@@ -276,14 +285,11 @@ return;
  *
  * @return TODO JPR	
  */
-int gdcmFile::SetImageData(void * Data, size_t ExpectedSize) {
-	
-	SetImageDataSize(ExpectedSize);
-	
-	Pixels =    Data;
-	lgrTotale = ExpectedSize;
-	
-	return(1);
+int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
+   SetImageDataSize(ExpectedSize);
+   PixelData = inData;
+   lgrTotale = ExpectedSize;
+   return(1);
 }
 
 
@@ -339,7 +345,7 @@ int gdcmFile::WriteRawData (string nomFichier) {
 		return (0);
 	} 
 	
-	fwrite (Pixels,lgrTotale, 1, fp1);
+	fwrite (PixelData,lgrTotale, 1, fp1);
 	fclose (fp1);
 	return(1);
 }
@@ -383,12 +389,12 @@ int gdcmFile::WriteDcmExplVR (string nomFichier) {
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
- * \brief  Ecrit sur disque UNE image ACR-NEMA 
+ * \brief  Ecrit au format ACR-NEMA sur disque l'entete et les pixels
  *        (a l'attention des logiciels cliniques 
  *        qui ne prennent en entrée QUE des images ACR ...
- *        si un header DICOM est fourni en entree,
+ * \warning si un header DICOM est fourni en entree,
  *        les groupes < 0x0008 et les groupes impairs sont ignores)
- *        Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ * \warning Aucun test n'est fait sur l'"Endiannerie" du processeur.
  *        Ca fonctionnera correctement (?) sur processeur Intel
  *        (Equivalent a IdDcmWrite) 
  *
@@ -419,7 +425,7 @@ int gdcmFile::WriteBase (string nomFichier, FileType type) {
    }
 
    gdcmHeader::Write(fp1, type);
-   fwrite(Pixels, lgrTotale, 1, fp1);
+   fwrite(PixelData, lgrTotale, 1, fp1);
    fclose (fp1);
    return(1);
 }

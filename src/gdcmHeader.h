@@ -52,7 +52,6 @@ private:
    gdcmElValSet ShaElValSet;
    /// Refering underlying filename.
    string filename; 
-   FILE * fp;
    
    // FIXME sw should be an enum e.g.
    //enum EndianType {
@@ -83,12 +82,12 @@ private:
    gdcmElValue*  NewManualElValToPubDict(string NewTagName, string VR);
    void SetMaxSizeLoadElementValue(long);
 
-   gdcmDictEntry * GetDictEntryByKey(guint16, guint16);
+   gdcmDictEntry * GetDictEntryByNumber(guint16, guint16);
    gdcmDictEntry * GetDictEntryByName(string name);
 
    // ElValue related utilities
    gdcmElValue * ReadNextElement(void);
-   gdcmElValue * NewElValueByKey(guint16 group, guint16 element);
+   gdcmElValue * NewElValueByNumber(guint16 group, guint16 element);
    gdcmElValue * NewElValueByName(string name);
    void FindLength(gdcmElValue *);
    void FindVR(gdcmElValue *);
@@ -99,6 +98,16 @@ private:
    bool IsAnInteger(gdcmElValue *);
    void LoadElements(void);
    
+protected:
+   FILE * fp;
+   FileType filetype;
+   bool OpenFile(bool exception_on_error = false)
+     throw(gdcmFileError);
+   bool CloseFile(void);
+   int write(ostream&);   
+   int anonymize(ostream&);  // FIXME : anonymize should be a friend ?
+public:
+   bool IsReadable(void);
    bool IsImplicitVRLittleEndianTransferSyntax(void);
    bool IsExplicitVRLittleEndianTransferSyntax(void);
    bool IsDeflatedExplicitVRLittleEndianTransferSyntax(void);
@@ -107,24 +116,15 @@ private:
    bool IsJPEGExtendedProcess2_4TransferSyntax(void); 
    bool IsJPEGExtendedProcess3_5TransferSyntax(void);
    bool IsJPEGSpectralSelectionProcess6_8TransferSyntax(void); 
-   
    bool IsJPEGLossless(void); 
    bool IsDicomV3(void); 
       
-protected:
-   FileType filetype;
-   int write(ostream&);   
-   int anonymize(ostream&);  // FIXME : anonymize should be a friend ?
-public:
-   bool IsReadable(void);
    virtual void ParseHeader(bool exception_on_error = false)
      throw(gdcmFormatError);
-   gdcmHeader(const char *filename, bool exception_on_error = false)
-     throw(gdcmFileError);
+   gdcmHeader(const char *filename, bool exception_on_error = false);
    virtual ~gdcmHeader();
    
    size_t GetPixelOffset(void);
-   void   GetPixels(size_t, void *);
    int    GetSwapCode(void) { return sw; }
 
    // TODO Swig int SetPubDict(string filename);

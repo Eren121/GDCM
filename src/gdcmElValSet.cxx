@@ -195,9 +195,6 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
       str_trash=trash;
       elemZ->SetValue(str_trash);
    }   
-   
-   // Liberer groupHt !
-   
 }
 
 void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {

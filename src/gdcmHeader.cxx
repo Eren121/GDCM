@@ -13,8 +13,6 @@
 #include "gdcmUtil.h"
 #include "gdcmHeader.h"
 
-#include "iddcmjpeg.h"
-
 // Refer to gdcmHeader::CheckSwap()
 #define HEADER_LENGTH_TO_READ       256
 // Refer to gdcmHeader::SetMaxSizeLoadElementValue()
@@ -30,26 +28,40 @@ void gdcmHeader::Initialise(void) {
    RefShaDict = (gdcmDict*)0;
 }
 
-gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) 
-  throw(gdcmFileError) {
+gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
   SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
   filename = InFilename;
   Initialise();
-  fp=fopen(InFilename,"rb");
+  OpenFile(exception_on_error);
+  ParseHeader();
+  LoadElements();
+  CloseFile();
+}
+
+bool gdcmHeader::OpenFile(bool exception_on_error)
+  throw(gdcmFileError) {
+  fp=fopen(filename.c_str(),"rb");
   if(exception_on_error) {
     if(!fp)
       throw gdcmFileError("gdcmHeader::gdcmHeader(const char *, bool)");
   }
   else
-    dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", InFilename);
-  ParseHeader();
-  LoadElements();
+    dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
+  if ( fp )
+     return true;
+  return false;
 }
 
+bool gdcmHeader::CloseFile(void) {
+  int closed = fclose(fp);
+  fp = (FILE *)0;
+  if (! closed)
+     return false;
+  return true;
+}
 
 gdcmHeader::~gdcmHeader (void) {
    //FIXME obviously there is much to be done here !
-   fclose(fp);
    return;
 }
 
@@ -87,6 +99,38 @@ void gdcmHeader::InitVRDict (void) {
    (*vr)["UT"] = "Unlimited Text";           // At most 2^32 -1 chars
    dicom_vr = vr; 
 }
+
+// Fourth semantics:
+// CMD      Command        
+// META     Meta Information 
+// DIR      Directory
+// ID
+// PAT      Patient
+// ACQ      Acquisition
+// REL      Related
+// IMG      Image
+// SDY      Study
+// VIS      Visit 
+// WAV      Waveform
+// PRC
+// DEV      Device
+// NMI      Nuclear Medicine
+// MED
+// BFS      Basic Film Session
+// BFB      Basic Film Box
+// BIB      Basic Image Box
+// BAB
+// IOB
+// PJ
+// PRINTER
+// RT       Radio Therapy
+// DVH   
+// SSET
+// RES      Results
+// CRV      Curve
+// OLY      Overlays
+// PXL      Pixels
+//
 
 /**
  * \ingroup gdcmHeader
@@ -240,19 +284,6 @@ void gdcmHeader::SwitchSwapToBigEndian(void) {
    if ( sw == 2143 )
       sw = 3412;
 }
-
-void gdcmHeader::GetPixels(size_t lgrTotale, void* _Pixels) {
-   size_t pixelsOffset; 
-   pixelsOffset = GetPixelOffset();
-   fseek(fp, pixelsOffset, SEEK_SET);
-   if (IsJPEGLossless()) {
-   	_Pixels=_IdDcmJpegRead(fp);  
-   } else {
-	fread(_Pixels, 1, lgrTotale, fp);
-   }
-}
-
-
 
 /**
  * \ingroup   gdcmHeader
@@ -617,7 +648,8 @@ void gdcmHeader::FindLength(gdcmElValue * ElVal) {
          // and the dictionary entry depending on them.
          guint16 CorrectGroup   = SwapShort(ElVal->GetGroup());
          guint16 CorrectElem    = SwapShort(ElVal->GetElement());
-         gdcmDictEntry * NewTag = GetDictEntryByKey(CorrectGroup, CorrectElem);
+         gdcmDictEntry * NewTag = GetDictEntryByNumber(CorrectGroup,
+                                                       CorrectElem);
          if (!NewTag) {
             // This correct tag is not in the dictionary. Create a new one.
             NewTag = new gdcmDictEntry(CorrectGroup, CorrectElem);
@@ -803,7 +835,7 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
 		return;	
 	}
    
-   // FIXME The exact size should be length if we move to strings or whatever
+   // We need an additional byte for storing \0 that is not on disk
    char* NewValue = (char*)malloc(length+1);
    if( !NewValue) {
       dbg.Verbose(1, "LoadElementValue: Failed to allocate NewValue");
@@ -864,16 +896,6 @@ guint32 gdcmHeader::ReadInt32(void) {
    return g;
 }
 
-
-
-
-//
-// TODO : JPR Pour des raisons d'homogeneité de noms, 
-// remplacer les quelques GetxxxByKey 
-// par des GetxxxByNumber, lorsqu'on passe gr, el en param.
-// il peut etre interessant de rajouter des GetxxxByKey, auxquels on passe *vraiment* une TagKey
-//
-
 /**
  * \ingroup gdcmHeader
  * \brief   Build a new Element Value from all the low level arguments. 
@@ -882,15 +904,15 @@ guint32 gdcmHeader::ReadInt32(void) {
  * @param   Group group   of the underlying DictEntry
  * @param   Elem  element of the underlying DictEntry
  */
-gdcmElValue* gdcmHeader::NewElValueByKey(guint16 Group, guint16 Elem) {
+gdcmElValue* gdcmHeader::NewElValueByNumber(guint16 Group, guint16 Elem) {
    // Find out if the tag we encountered is in the dictionaries:
-   gdcmDictEntry * NewTag = GetDictEntryByKey(Group, Elem);
+   gdcmDictEntry * NewTag = GetDictEntryByNumber(Group, Elem);
    if (!NewTag)
       NewTag = new gdcmDictEntry(Group, Elem);
 
    gdcmElValue* NewElVal = new gdcmElValue(NewTag);
    if (!NewElVal) {
-      dbg.Verbose(1, "gdcmHeader::NewElValueByKey",
+      dbg.Verbose(1, "gdcmHeader::NewElValueByNumber",
                   "failed to allocate gdcmElValue");
       return (gdcmElValue*)0;
    }
@@ -904,7 +926,7 @@ gdcmElValue* gdcmHeader::NewElValueByKey(guint16 Group, guint16 Elem) {
  */
 int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Elem ) {
 
-	gdcmElValue* nvElValue=NewElValueByKey(Group, Elem);
+	gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
 	PubElValSet.Add(nvElValue);	
 	PubElValSet.SetElValueByNumber(Value, Group, Elem);
 	return(1);
@@ -950,7 +972,7 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
       // has to be considered as finished.
       return (gdcmElValue *)0;
    
-   NewElVal = NewElValueByKey(g, n);
+   NewElVal = NewElValueByNumber(g, n);
    FindVR(NewElVal);
    FindLength(NewElVal);
    if (errno == 1)
@@ -1018,7 +1040,8 @@ size_t gdcmHeader::GetPixelOffset(void) {
       numPixel = 0x1010;
    else
       numPixel = 0x0010;
-   gdcmElValue* PixelElement = PubElValSet.GetElementByNumber(grPixel, numPixel);
+   gdcmElValue* PixelElement = PubElValSet.GetElementByNumber(grPixel,
+                                                              numPixel);
    if (PixelElement)
       return PixelElement->GetOffset();
    else
@@ -1035,19 +1058,20 @@ size_t gdcmHeader::GetPixelOffset(void) {
  * @param   element element of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
-gdcmDictEntry * gdcmHeader::GetDictEntryByKey(guint16 group, guint16 element) {
+gdcmDictEntry * gdcmHeader::GetDictEntryByNumber(guint16 group,
+                                                 guint16 element) {
    gdcmDictEntry * found = (gdcmDictEntry*)0;
    if (!RefPubDict && !RefShaDict) {
       dbg.Verbose(0, "gdcmHeader::GetDictEntry",
                      "we SHOULD have a default dictionary");
    }
    if (RefPubDict) {
-      found = RefPubDict->GetTagByKey(group, element);
+      found = RefPubDict->GetTagByNumber(group, element);
       if (found)
          return found;
    }
    if (RefShaDict) {
-      found = RefShaDict->GetTagByKey(group, element);
+      found = RefShaDict->GetTagByNumber(group, element);
       if (found)
          return found;
    }
