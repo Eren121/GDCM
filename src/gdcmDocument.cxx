@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:07:05 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/06/22 14:57:10 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1180,7 +1180,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
             NewValEntry->SetDepthLevel(depth);
             set->AddEntry(NewValEntry);
             LoadDocEntry(NewValEntry);
-            if (/*!delim_mode && */NewValEntry->isItemDelimitor())
+            if (NewValEntry->isItemDelimitor())
                break;
             if ( !delim_mode && ftell(fp)-offset >= l_max)
             {
@@ -1777,16 +1777,6 @@ void gdcmDocument::SkipToNextDocEntry(gdcmDocEntry *entry)
    (void)fseek(fp, (long)(entry->GetReadLength()), SEEK_CUR);
 }
 
-/**
- * \brief   Loads the value for a a given VLEntry 
- * \warning NOT end user intended method !
- * @param   entry 
- */
-void gdcmDocument::LoadVLEntry(gdcmDocEntry *entry) 
-{
-    //SkipBytes(entry->GetLength());
-    LoadDocEntry(entry);
-}
 /**
  * \brief   When the length of an element value is obviously wrong (because
  *          the parser went Jabberwocky) one can hope improving things by

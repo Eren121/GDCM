@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:59:48 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/06/22 14:57:11 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,6 @@ gdcmSeqEntry::~gdcmSeqEntry() {
 //-----------------------------------------------------------------------------
 // Print
 /*
- * \ingroup gdcmSeqEntry
  * \brief   canonical Printer
  */
 void gdcmSeqEntry::Print(std::ostream &os){
@@ -101,7 +100,7 @@ void gdcmSeqEntry::Write(FILE *fp, FileType filetype) {
                            cc != GetSQItems().end();
                          ++cc) {
       std::cout << "Et un SQItem !" << std::endl;
-      (*cc)->Write(fp, filetype);   
+      (*cc)->Write(fp, filetype);  // Don't remove param filetype !
    }  
 }
 //-----------------------------------------------------------------------------
@@ -118,7 +117,7 @@ void gdcmSeqEntry::SetDepthLevel(int depth) {
    SQDepthLevel = depth;
 }
 
-/// \brief return a pointer to th SQItem referenced by its ordinal number
+/// \brief return a pointer to the SQItem referenced by its ordinal number
 /// (returns the first one if ordinal number is <0
 ///  returns the last  one if ordinal number is > item number
 
@@ -132,7 +131,7 @@ gdcmSQItem *gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb) {
       if (count==nb)
          return (*cc);      
    }
-   return (*(items.end()));
+   return (*(items.end())); // Euhhhhh ?!? Is this the last one . FIXME
 }
 //-----------------------------------------------------------------------------
 // Protected

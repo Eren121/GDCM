@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/06/22 14:57:11 $
+  Version:   $Revision: 1.14 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -152,7 +152,6 @@ public:
    bool ReplaceIfExistByNumber (char *Value, guint16 Group, guint16 Elem);
    
    virtual void  *LoadEntryVoidArea       (guint16 Group, guint16 Element);
-   void           LoadVLEntry             (gdcmDocEntry *entry);
       
    // System access
    guint16 SwapShort(guint16);   // needed by gdcmFile
