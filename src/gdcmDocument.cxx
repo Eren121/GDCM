@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/14 14:08:05 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2004/07/16 15:18:05 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,11 +98,12 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
                            bool exception_on_error,
                            bool enable_sequences,
                            bool ignore_shadow) 
-              : gdcmElementSet(-1)   {
-   IgnoreShadow   =ignore_shadow;
+              : gdcmElementSet(-1)
+{
+   IgnoreShadow = ignore_shadow;
    //enableSequences=enable_sequences;
    (void)enable_sequences;
-   enableSequences=true; // JPR // TODO : remove params out of the constructor
+   enableSequences = true; // JPR // TODO : remove params out of the constructor
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = inFilename;
    Initialise();
@@ -132,7 +133,8 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
    // Load 'non string' values
       
    std::string PhotometricInterpretation = GetEntryByNumber(0x0028,0x0004);   
-   if( PhotometricInterpretation == "PALETTE COLOR " ) {
+   if( PhotometricInterpretation == "PALETTE COLOR " )
+   {
       LoadEntryVoidArea(0x0028,0x1200);  // gray LUT   
       LoadEntryVoidArea(0x0028,0x1201);  // R    LUT
       LoadEntryVoidArea(0x0028,0x1202);  // G    LUT
@@ -195,9 +197,10 @@ gdcmDocument::~gdcmDocument ()
    RefShaDict = NULL;
 
    // Recursive clean up of sequences
-   for (TagDocEntryHT::iterator it = tagHT.begin(); it != tagHT.end(); ++it )
+   for (TagDocEntryHT::const_iterator it = tagHT.begin(); 
+                                      it != tagHT.end(); ++it )
    { 
-         delete it->second;
+      delete it->second;
    }
    tagHT.clear();
 }
@@ -247,7 +250,7 @@ gdcmDict *gdcmDocument::GetShaDict()
  */
 bool gdcmDocument::SetShaDict(gdcmDict *dict)
 {
-   RefShaDict=dict;
+   RefShaDict = dict;
    return !RefShaDict;
 }
 
@@ -257,7 +260,7 @@ bool gdcmDocument::SetShaDict(gdcmDict *dict)
  */
 bool gdcmDocument::SetShaDict(DictKey dictName)
 {
-   RefShaDict=gdcmGlobal::GetDicts()->GetDict(dictName);
+   RefShaDict = gdcmGlobal::GetDicts()->GetDict(dictName);
    return !RefShaDict;
 }
 
@@ -269,22 +272,24 @@ bool gdcmDocument::SetShaDict(DictKey dictName)
  * @return true when gdcmDocument is the one of a reasonable Dicom/Acr file,
  *         false otherwise. 
  */
-bool gdcmDocument::IsReadable() { 
-
-   if(Filetype==gdcmUnknown) {
+bool gdcmDocument::IsReadable()
+{
+   if( Filetype == gdcmUnknown)
+   {
       std::cout << " gdcmDocument::IsReadable: Filetype " << Filetype
                << " " << "gdcmUnknown " << gdcmUnknown << std::endl; //JPR
       dbg.Verbose(0, "gdcmDocument::IsReadable: wrong filetype");
       return false;
    }
 
-   if(tagHT.empty()) { 
+   if(tagHT.empty())
+   {
       dbg.Verbose(0, "gdcmDocument::IsReadable: no tags in internal"
                      " hash table.");
       return false;
    }
 
-   return(true);
+   return true;
 }
 
 
@@ -296,27 +301,32 @@ bool gdcmDocument::IsReadable() {
  *          the current document. False either when the document contains
  *          no Transfer Syntax, or when the Tranfer Syntaxes don't match.
  */
-bool gdcmDocument::IsGivenTransferSyntax(const std::string & SyntaxToCheck)
+bool gdcmDocument::IsGivenTransferSyntax(std::string const & syntaxToCheck)
 {
-   gdcmDocEntry *Entry = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Entry )
+   gdcmDocEntry *entry = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !entry )
+   {
       return false;
+   }
 
    // The entry might be present but not loaded (parsing and loading
    // happen at differente stages): try loading and proceed with check...
-   LoadDocEntrySafe(Entry);
-   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) )
+   LoadDocEntrySafe(entry);
+   if (gdcmValEntry* valEntry = dynamic_cast< gdcmValEntry* >(entry) )
    {
-      std::string Transfer = ValEntry->GetValue();
+      std::string transfer = valEntry->GetValue();
+
       // The actual transfer (as read from disk) might be padded. We
       // first need to remove the potential padding. We can make the
       // weak assumption that padding was not executed with digits...
-      while ( ! isdigit(Transfer[Transfer.length()-1]) )
+      while ( ! isdigit(transfer[transfer.length()-1]) )
       {
-         Transfer.erase(Transfer.length()-1, 1);
+         transfer.erase(transfer.length()-1, 1);
       }
-      if ( Transfer == SyntaxToCheck )
+      if ( transfer == syntaxToCheck )
+      {
          return true;
+      }
    }
    return false;
 }
@@ -451,7 +461,7 @@ bool gdcmDocument::IsDicomV3()
    // Anyway, it's to late check if the 'Preamble' was found ...
    // And ... would it be a rich idea to check ?
    // (some 'no Preamble' DICOM images exist !)
-   return (GetDocEntryByNumber(0x0002, 0x0010) != NULL);
+   return GetDocEntryByNumber(0x0002, 0x0010) != NULL;
 }
 
 /**
@@ -472,12 +482,14 @@ FileType gdcmDocument::GetFileType()
 FILE *gdcmDocument::OpenFile(bool exception_on_error)
   throw(gdcmFileError) 
 {
-  fp=fopen(Filename.c_str(),"rb");
+  fp = fopen(Filename.c_str(),"rb");
 
   if(!fp)
   {
-     if(exception_on_error) 
+     if(exception_on_error)
+     {
         throw gdcmFileError("gdcmDocument::gdcmDocument(const char *, bool)");
+     }
      else
      {
         dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file: ",
@@ -493,22 +505,28 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
 
     //ACR -- or DICOM with no Preamble --
     if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200)
+    {
        return fp;
+    }
 
     //DICOM
     fseek(fp, 126L, SEEK_CUR);
     char dicm[4];
     fread(dicm,  (size_t)4, (size_t)1, fp);
     if( memcmp(dicm, "DICM", 4) == 0 )
+    {
        return fp;
+    }
 
     fclose(fp);
     dbg.Verbose(0, "gdcmDocument::OpenFile not DICOM/ACR", Filename.c_str());
   }
-  else {
+  else
+  {
     dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file", Filename.c_str());
   }
-  return NULL;
+
+  return 0;
 }
 
 /**
@@ -519,9 +537,8 @@ bool gdcmDocument::CloseFile()
 {
   int closed = fclose(fp);
   fp = (FILE *)0;
-  if (! closed)
-     return false;
-  return true;
+
+  return closed;
 }
 
 /**
@@ -533,7 +550,6 @@ bool gdcmDocument::CloseFile()
  */
 void gdcmDocument::Write(FILE* fp,FileType filetype)
 {
-
    /// \todo move the following lines (and a lot of others, to be written)
    /// to a future function CheckAndCorrectHeader
    
@@ -595,26 +611,25 @@ void gdcmDocument::Write(FILE* fp,FileType filetype)
  */
   
 gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
-                                         std::string Value, 
-                                         uint16_t Group, 
-                                         uint16_t Elem )
+                                         std::string value, 
+                                         uint16_t group, 
+                                         uint16_t elem )
 {
-   gdcmDocEntry* CurrentEntry;
-   gdcmValEntry* ValEntry;
+   gdcmValEntry* valEntry;
 
-   CurrentEntry = GetDocEntryByNumber( Group, Elem);
-   if (!CurrentEntry)
+   gdcmDocEntry* currentEntry = GetDocEntryByNumber( group, elem);
+   if (!currentEntry)
    {
       // The entry wasn't present and we simply create the required ValEntry:
-      CurrentEntry = NewDocEntryByNumber(Group, Elem);
-      if (!CurrentEntry)
+      currentEntry = NewDocEntryByNumber(group, elem);
+      if (!currentEntry)
       {
          dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: call to"
                         " NewDocEntryByNumber failed.");
          return NULL;
       }
-      ValEntry = new gdcmValEntry(CurrentEntry);
-      if ( !AddEntry(ValEntry))
+      valEntry = new gdcmValEntry(currentEntry);
+      if ( !AddEntry(valEntry))
       {
          dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: AddEntry"
                         " failed allthough this is a creation.");
@@ -622,18 +637,18 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
    }
    else
    {
-      ValEntry = dynamic_cast< gdcmValEntry* >(CurrentEntry);
-      if ( !ValEntry )
+      valEntry = dynamic_cast< gdcmValEntry* >(currentEntry);
+      if ( !valEntry )
       {
          // We need to promote the gdcmDocEntry to a gdcmValEntry:
-         ValEntry = new gdcmValEntry(CurrentEntry);
-         if (!RemoveEntry(CurrentEntry))
+         valEntry = new gdcmValEntry(currentEntry);
+         if (!RemoveEntry(currentEntry))
          {
             dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: removal"
                            " of previous DocEntry failed.");
             return NULL;
          }
-         if ( !AddEntry(ValEntry))
+         if ( !AddEntry(valEntry))
          {
             dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: adding"
                            " promoted ValEntry failed.");
@@ -642,9 +657,9 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
       }
    }
 
-   SetEntryByNumber(Value, Group, Elem);
+   SetEntryByNumber(value, group, elem);
 
-   return ValEntry;
+   return valEntry;
 }   
 
 /*
@@ -659,22 +674,25 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
 gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          void *voidArea,
                                          int lgth, 
-                                         uint16_t Group, 
-                                         uint16_t Elem)
+                                         uint16_t group, 
+                                         uint16_t elem)
 {
-   gdcmDocEntry* a;
    gdcmBinEntry* b = 0;
-   a = GetDocEntryByNumber( Group, Elem);
-   if (a == NULL) {
-      a =NewBinEntryByNumber(Group, Elem);
-      if (a == NULL) 
-         return NULL;
+   gdcmDocEntry* a = GetDocEntryByNumber( group, elem);
+   if (!a)
+   {
+      a = NewBinEntryByNumber(group, elem);
+      if (!a)
+      {
+         return 0;
+      }
 
       b = new gdcmBinEntry(a);
       AddEntry(b);
+      b->SetVoidArea(voidArea);
    }   
-   SetEntryByNumber(voidArea, lgth, Group, Elem);
-   b->SetVoidArea(voidArea);
+   SetEntryByNumber(voidArea, lgth, group, elem);
+   //b->SetVoidArea(voidArea);  //what if b == 0 !!
 
    return b;
 }  
@@ -687,11 +705,11 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
  * @param Elem element number of the Entry
  * \return  boolean 
  */
-bool gdcmDocument::ReplaceIfExistByNumber(char* Value, uint16_t Group,
-                                                       uint16_t Elem ) 
+bool gdcmDocument::ReplaceIfExistByNumber(const char* value, uint16_t group,
+                                          uint16_t elem ) 
 {
-   std::string v = Value;
-   SetEntryByNumber(v, Group, Elem);
+   std::string v = value;
+   SetEntryByNumber(v, group, elem);
    return true;
 } 
 
@@ -722,8 +740,10 @@ int gdcmDocument::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
 std::string gdcmDocument::GetEntryByName(TagName tagName)
 {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
-   if( dictEntry == NULL)
+   if( !dictEntry )
+   {
       return GDCM_UNFOUND;
+   }
 
    return GetEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement());
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/07/16 15:18:05 $
+  Version:   $Revision: 1.22 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -134,14 +134,14 @@ public:
    FILE* OpenFile(bool exception_on_error = false) throw(gdcmFileError);
    bool CloseFile();
 
-   void Write(FILE* fp,FileType type);
+   void Write(FILE* fp, FileType type);
 
-   gdcmValEntry* ReplaceOrCreateByNumber(std::string Value,
-                                          uint16_t Group, uint16_t Elem);
+   gdcmValEntry* ReplaceOrCreateByNumber(std::string value,
+                                          uint16_t group, uint16_t elem);
 
    gdcmBinEntry* ReplaceOrCreateByNumber(void *voidArea, int lgth,
-                                          uint16_t Group, uint16_t Elem);
-   bool ReplaceIfExistByNumber (char* Value, uint16_t Group, uint16_t Elem);
+                                          uint16_t group, uint16_t elem);
+   bool ReplaceIfExistByNumber (const char* value, uint16_t group, uint16_t elem);
    
    virtual void* LoadEntryVoidArea(uint16_t Group, uint16_t Element);
    virtual void* LoadEntryVoidArea(gdcmBinEntry*);
@@ -241,10 +241,10 @@ public:
    void SetPrintLevel(int level) { printLevel = level; }
 
    /// Accessor to \ref Filename
-   std::string &GetFileName() { return Filename; }
+   const std::string &GetFileName() { return Filename; }
 
    /// Accessor to \ref Filename
-   void SetFileName(const char* fileName) { Filename = fileName; }
+   void SetFileName(std::string const & fileName) { Filename = fileName; }
 
    /// Accessor to \ref gdcmElementSet::tagHT
    TagDocEntryHT &GetEntry() { return tagHT; };

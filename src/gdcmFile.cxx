@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.115 $
+  Date:      $Date: 2004/07/16 15:18:05 $
+  Version:   $Revision: 1.116 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -263,7 +263,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
    // from Lut R + Lut G + Lut B
    uint8_t *newDest = new uint8_t[ImageDataSize];
    uint8_t *a       = (uint8_t *)destination;
-   uint8_t *lutRGBA =  Header->GetLUTRGBA();
+   uint8_t *lutRGBA = Header->GetLUTRGBA();
 
    if ( lutRGBA )
    {
@@ -288,7 +288,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
 
    std::string spp = "3";        // Samples Per Pixel
    Header->SetEntryByNumber(spp,0x0028,0x0002);
-   std::string rgb= "RGB ";      // Photometric Interpretation
+   std::string rgb = "RGB ";      // Photometric Interpretation
    Header->SetEntryByNumber(rgb,0x0028,0x0004);
    std::string planConfig = "0"; // Planar Configuration
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
@@ -330,7 +330,6 @@ void * gdcmFile::GetImageDataRaw ()
    if ( Header->HasLUT() )
    {
       /// \todo Let gdcmHeader user a chance to get the right value
-      // ImageDataSize /= 3;  //dangerous
       imgDataSize = ImageDataSizeRaw;
    }
 
@@ -661,14 +660,13 @@ bool gdcmFile::SetImageData(void *inData, size_t expectedSize)
 
 bool gdcmFile::WriteRawData(std::string const & fileName)
 {
-   FILE *fp1;
-   fp1 = fopen(fileName.c_str(), "wb");
+   FILE *fp1 = fopen(fileName.c_str(), "wb");
    if (fp1 == NULL)
    {
       printf("Fail to open (write) file [%s] \n", fileName.c_str());
       return false;
    }
-   fwrite (PixelData,ImageDataSize, 1, fp1);
+   fwrite (PixelData, ImageDataSize, 1, fp1);
    fclose (fp1);
 
    return true;
@@ -736,14 +734,12 @@ bool gdcmFile::WriteAcr (std::string const & fileName)
  */
 bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
 {
-   FILE *fp1;
-
    if ( PixelRead == -1 && type != gdcmExplicitVR)
    {
       return false;
    }
 
-   fp1 = fopen(fileName.c_str(), "wb");
+   FILE *fp1 = fopen(fileName.c_str(), "wb");
    if (fp1 == NULL)
    {
       printf("Failed to open (write) File [%s] \n", fileName.c_str());
@@ -785,9 +781,8 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
    uint16_t grPixel  = Header->GetGrPixel();
    uint16_t numPixel = Header->GetNumPixel();;
           
-   gdcmDocEntry* PixelElement;
-
-   PixelElement = GetHeader()->GetDocEntryByNumber(grPixel, numPixel);  
+   gdcmDocEntry* PixelElement = 
+      GetHeader()->GetDocEntryByNumber(grPixel, numPixel);  
  
    if ( PixelRead == 1 )
    {
@@ -980,7 +975,7 @@ bool gdcmFile::ReadPixelData(void *destination)
    // ---------------------- Run Length Encoding
    if ( Header->IsRLELossLessTransferSyntax() )
    {
-      bool res = (bool)gdcm_read_RLE_file (fp,destination);
+      bool res = gdcm_read_RLE_file (fp,destination);
       Header->CloseFile();
       return res; 
    }  
