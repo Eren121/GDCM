@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:56 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/02/02 16:18:49 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,14 +67,7 @@ SeqEntry::SeqEntry( DocEntry *e, int depth )
  */
 SeqEntry::~SeqEntry()
 {
-   for(ListSQItem::iterator cc = Items.begin(); cc != Items.end(); ++cc)
-   {
-      delete *cc;
-   }
-   if (SeqTerm)
-   {
-      delete SeqTerm;
-   }
+   ClearSQItem();
 }
 
 //-----------------------------------------------------------------------------
@@ -106,6 +99,38 @@ void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype)
    binary_write(*fp, seq_term_gr);
    binary_write(*fp, seq_term_el);
    binary_write(*fp, seq_term_lg);
+}
+
+/**
+ * \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
+ * @param sqItem SQItem to be pushed back in the SeqEntry
+ * @param itemNumber ordinal number of the SQItem
+ *  \note NOT end-user intendend method !
+ */
+void SeqEntry::AddSQItem(SQItem *sqItem, int itemNumber)
+{
+// FIXME : SQItemNumber is supposed to be the ordinal number of the SQItem
+//         within the Sequence.
+//         Either only 'push_back' is allowed, 
+//                and we just have to do something like SeqEntry::lastNb++
+//         Or we can add (or remove) anywhere, and SQItemNumber will be broken
+   sqItem->SetSQItemNumber(itemNumber);
+   Items.push_back(sqItem);
+}
+
+/**
+ * \brief Remove all SQItem.
+ */
+void SeqEntry::ClearSQItem()
+{
+   for(ListSQItem::iterator cc = Items.begin(); cc != Items.end(); ++cc)
+   {
+      delete *cc;
+   }
+   if (SeqTerm)
+   {
+      delete SeqTerm;
+   }
 }
 
 /**
@@ -168,23 +193,6 @@ SQItem *SeqEntry::GetSQItem(int nb)
 unsigned int SeqEntry::GetNumberOfSQItems()
 {
    return Items.size();
-}
-
-/**
- * \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
- * @param sqItem SQItem to be pushed back in the SeqEntry
- * @param itemNumber ordinal number of the SQItem
- *  \note NOT end-user intendend method !
- */
-void SeqEntry::AddSQItem(SQItem *sqItem, int itemNumber)
-{
-// FIXME : SQItemNumber is supposed to be the ordinal number of the SQItem
-//         within the Sequence.
-//         Either only 'push_back' is allowed, 
-//                and we just have to do something like SeqEntry::lastNb++
-//         Or we can add (or remove) anywhere, and SQItemNumber will be broken
-   sqItem->SetSQItemNumber(itemNumber);
-   Items.push_back(sqItem);
 }
 
 //-----------------------------------------------------------------------------

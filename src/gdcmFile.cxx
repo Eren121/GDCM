@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:17 $
-  Version:   $Revision: 1.207 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.208 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,6 +16,18 @@
                                                                                 
 =========================================================================*/
 
+//
+// --------------  Remember ! ----------------------------------
+//
+// Image Position Patient                              (0020,0032):
+// If not found (ACR_NEMA) we try Image Position       (0020,0030)
+// If not found (ACR-NEMA), we consider Slice Location (0020,1041)
+//                                   or Location       (0020,0050) 
+// as the Z coordinate, 
+// 0. for all the coordinates if nothing is found
+//
+// ---------------------------------------------------------------
+//
 #include "gdcmFile.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
@@ -158,130 +170,6 @@ File::~File ()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief Performs some consistency checking on various 'File related' 
- *       (as opposed to 'DicomDir related') entries 
- *       then writes in a file all the (Dicom Elements) included the Pixels 
- * @param fileName file name to write to
- * @param filetype Type of the File to be written 
- *          (ACR, ExplicitVR, ImplicitVR)
- */
-bool File::Write(std::string fileName, FileType filetype)
-{
-   std::ofstream *fp = new std::ofstream(fileName.c_str(), 
-                                         std::ios::out | std::ios::binary);
-   if (*fp == NULL)
-   {
-      gdcmVerboseMacro("Failed to open (write) File: " << fileName.c_str());
-      return false;
-   }
-
-   // Entry : 0002|0000 = group length -> recalculated
-   ValEntry *e0002 = GetValEntry(0x0002,0x0000);
-   if( e0002 )
-   {
-      std::ostringstream sLen;
-      sLen << ComputeGroup0002Length(filetype);
-      e0002->SetValue(sLen.str());
-   }
-
-   // Bits Allocated
-   if ( GetEntryValue(0x0028,0x0100) ==  "12")
-   {
-      SetValEntry("16", 0x0028,0x0100);
-   }
-
-   int i_lgPix = GetEntryLength(GrPixel, NumPixel);
-   if (i_lgPix != -2)
-   {
-      // no (GrPixel, NumPixel) element
-      std::string s_lgPix = Util::Format("%d", i_lgPix+12);
-      s_lgPix = Util::DicomString( s_lgPix.c_str() );
-      InsertValEntry(s_lgPix,GrPixel, 0x0000);
-   }
-
-   // FIXME : should be nice if we could move it to File
-   //         (or in future gdcmPixelData class)
-
-   // Drop Palette Color, if necessary
-   if ( GetEntryValue(0x0028,0x0002).c_str()[0] == '3' )
-   {
-      // if SamplesPerPixel = 3, sure we don't need any LUT !   
-      // Drop 0028|1101, 0028|1102, 0028|1103
-      // Drop 0028|1201, 0028|1202, 0028|1203
-
-      DocEntry *e = GetDocEntry(0x0028,0x01101);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x1102);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x1103);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x01201);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x1202);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x1203);
-      if (e)
-      {
-          RemoveEntryNoDestroy(e);
-      }
-   }
-
-/*
-#ifdef GDCM_WORDS_BIGENDIAN
-   // Super Super hack that will make gdcm a BOMB ! but should
-   // Fix temporarily the dashboard
-   BinEntry *b = GetBinEntry(GrPixel,NumPixel);
-   if ( GetPixelSize() ==  16 )
-   {
-      uint16_t *im16 = (uint16_t *)b->GetBinArea();
-      int lgr = b->GetLength();
-      for( int i = 0; i < lgr / 2; i++ )
-      {
-         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
-      }
-   }
-#endif //GDCM_WORDS_BIGENDIAN
-*/
-
-   Document::WriteContent(fp, filetype);
-
-/*
-#ifdef GDCM_WORDS_BIGENDIAN
-   // Flip back the pixel ... I told you this is a hack
-   if ( GetPixelSize() ==  16 )
-   {
-      uint16_t *im16 = (uint16_t*)b->GetBinArea();
-      int lgr = b->GetLength();
-      for( int i = 0; i < lgr / 2; i++ )
-      {
-         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
-      }
-   }
-#endif //GDCM_WORDS_BIGENDIAN
-*/
-
-   fp->close();
-   delete fp;
-
-   return true;
-}
-
-/**
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current File was properly parsed
  *         and contains the mandatory information for being considered as
@@ -319,6 +207,89 @@ bool File::IsReadable()
    }
 
    return true;
+}
+
+/**
+ * \brief gets the info from 0020,0013 : Image Number else 0.
+ * @return image number
+ */
+int File::GetImageNumber()
+{
+   // The function i atoi() takes the address of an area of memory as
+   // parameter and converts the string stored at that location to an integer
+   // using the external decimal to internal binary conversion rules. This may
+   // be preferable to sscanf() since atoi() is a much smaller, simpler and
+   // faster function. sscanf() can do all possible conversions whereas
+   // atoi() can only do single decimal integer conversions.
+   //0020 0013 IS REL Image Number
+   std::string strImNumber = GetEntryValue(0x0020,0x0013);
+   if ( strImNumber != GDCM_UNFOUND )
+   {
+      return atoi( strImNumber.c_str() );
+   }
+   return 0;   //Hopeless
+}
+
+/**
+ * \brief gets the info from 0008,0060 : Modality
+ * @return Modality Type
+ */
+ModalityType File::GetModality()
+{
+   // 0008 0060 CS ID Modality
+   std::string strModality = GetEntryValue(0x0008,0x0060);
+   if ( strModality != GDCM_UNFOUND )
+   {
+           if ( strModality.find("AU") < strModality.length()) return AU;
+      else if ( strModality.find("AS") < strModality.length()) return AS;
+      else if ( strModality.find("BI") < strModality.length()) return BI;
+      else if ( strModality.find("CF") < strModality.length()) return CF;
+      else if ( strModality.find("CP") < strModality.length()) return CP;
+      else if ( strModality.find("CR") < strModality.length()) return CR;
+      else if ( strModality.find("CT") < strModality.length()) return CT;
+      else if ( strModality.find("CS") < strModality.length()) return CS;
+      else if ( strModality.find("DD") < strModality.length()) return DD;
+      else if ( strModality.find("DF") < strModality.length()) return DF;
+      else if ( strModality.find("DG") < strModality.length()) return DG;
+      else if ( strModality.find("DM") < strModality.length()) return DM;
+      else if ( strModality.find("DS") < strModality.length()) return DS;
+      else if ( strModality.find("DX") < strModality.length()) return DX;
+      else if ( strModality.find("ECG") < strModality.length()) return ECG;
+      else if ( strModality.find("EPS") < strModality.length()) return EPS;
+      else if ( strModality.find("FA") < strModality.length()) return FA;
+      else if ( strModality.find("FS") < strModality.length()) return FS;
+      else if ( strModality.find("HC") < strModality.length()) return HC;
+      else if ( strModality.find("HD") < strModality.length()) return HD;
+      else if ( strModality.find("LP") < strModality.length()) return LP;
+      else if ( strModality.find("LS") < strModality.length()) return LS;
+      else if ( strModality.find("MA") < strModality.length()) return MA;
+      else if ( strModality.find("MR") < strModality.length()) return MR;
+      else if ( strModality.find("NM") < strModality.length()) return NM;
+      else if ( strModality.find("OT") < strModality.length()) return OT;
+      else if ( strModality.find("PT") < strModality.length()) return PT;
+      else if ( strModality.find("RF") < strModality.length()) return RF;
+      else if ( strModality.find("RG") < strModality.length()) return RG;
+      else if ( strModality.find("RTDOSE")   < strModality.length()) return RTDOSE;
+      else if ( strModality.find("RTIMAGE")  < strModality.length()) return RTIMAGE;
+      else if ( strModality.find("RTPLAN")   < strModality.length()) return RTPLAN;
+      else if ( strModality.find("RTSTRUCT") < strModality.length()) return RTSTRUCT;
+      else if ( strModality.find("SM") < strModality.length()) return SM;
+      else if ( strModality.find("ST") < strModality.length()) return ST;
+      else if ( strModality.find("TG") < strModality.length()) return TG;
+      else if ( strModality.find("US") < strModality.length()) return US;
+      else if ( strModality.find("VF") < strModality.length()) return VF;
+      else if ( strModality.find("XA") < strModality.length()) return XA;
+      else if ( strModality.find("XC") < strModality.length()) return XC;
+
+      else
+      {
+         /// \todo throw error return value ???
+         /// specified <> unknown in our database
+         return Unknow;
+      }
+   }
+
+   return Unknow;
 }
 
 /**
@@ -504,131 +475,6 @@ float File::GetZSpacing()
 }
 
 /**
- *\brief gets the info from 0028,1052 : Rescale Intercept
- * @return Rescale Intercept
- */
-float File::GetRescaleIntercept()
-{
-   float resInter = 0.;
-   /// 0028 1052 DS IMG Rescale Intercept
-   const std::string &strRescInter = GetEntryValue(0x0028,0x1052);
-   if ( strRescInter != GDCM_UNFOUND )
-   {
-      if( sscanf( strRescInter.c_str(), "%f", &resInter) != 1 )
-      {
-         // bug in the element 0x0028,0x1052
-         gdcmVerboseMacro( "Rescale Intercept (0028,1052) is empty." );
-      }
-   }
-
-   return resInter;
-}
-
-/**
- *\brief   gets the info from 0028,1053 : Rescale Slope
- * @return Rescale Slope
- */
-float File::GetRescaleSlope()
-{
-   float resSlope = 1.;
-   //0028 1053 DS IMG Rescale Slope
-   std::string strRescSlope = GetEntryValue(0x0028,0x1053);
-   if ( strRescSlope != GDCM_UNFOUND )
-   {
-      if( sscanf( strRescSlope.c_str(), "%f", &resSlope) != 1)
-      {
-         // bug in the element 0x0028,0x1053
-         gdcmVerboseMacro( "Rescale Slope (0028,1053) is empty.");
-      }
-   }
-
-   return resSlope;
-}
-
-/**
- * \brief This function is intended to user who doesn't want 
- *   to have to manage a LUT and expects to get an RBG Pixel image
- *   (or a monochrome one ...) 
- * \warning to be used with GetImagePixels()
- * @return 1 if Gray level, 3 if Color (RGB, YBR or PALETTE COLOR)
- */
-int File::GetNumberOfScalarComponents()
-{
-   if ( GetSamplesPerPixel() == 3 )
-   {
-      return 3;
-   }
-      
-   // 0028 0100 US IMG Bits Allocated
-   // (in order no to be messed up by old RGB images)
-   if ( GetEntryValue(0x0028,0x0100) == "24" )
-   {
-      return 3;
-   }
-       
-   std::string strPhotometricInterpretation = GetEntryValue(0x0028,0x0004);
-
-   if ( ( strPhotometricInterpretation == "PALETTE COLOR ") )
-   {
-      if ( HasLUT() )// PALETTE COLOR is NOT enough
-      {
-         return 3;
-      }
-      else
-      {
-         return 1;
-      }
-   }
-
-   // beware of trailing space at end of string      
-   // DICOM tags are never of odd length
-   if ( strPhotometricInterpretation == GDCM_UNFOUND   || 
-        Util::DicomStringEqual(strPhotometricInterpretation, "MONOCHROME1") ||
-        Util::DicomStringEqual(strPhotometricInterpretation, "MONOCHROME2") )
-   {
-      return 1;
-   }
-   else
-   {
-      // we assume that *all* kinds of YBR are dealt with
-      return 3;
-   }
-}
-
-/**
- * \brief This function is intended to user that DOESN'T want 
- *  to get RGB pixels image when it's stored as a PALETTE COLOR image
- *   - the (vtk) user is supposed to know how deal with LUTs - 
- * \warning to be used with GetImagePixelsRaw()
- * @return 1 if Gray level, 3 if Color (RGB or YBR - NOT 'PALETTE COLOR' -)
- */
-int File::GetNumberOfScalarComponentsRaw()
-{
-   // 0028 0100 US IMG Bits Allocated
-   // (in order no to be messed up by old RGB images)
-   if ( File::GetEntryValue(0x0028,0x0100) == "24" )
-   {
-      return 3;
-   }
-
-   // we assume that *all* kinds of YBR are dealt with
-   return GetSamplesPerPixel();
-}
-
-//
-// --------------  Remember ! ----------------------------------
-//
-// Image Position Patient                              (0020,0032):
-// If not found (ACR_NEMA) we try Image Position       (0020,0030)
-// If not found (ACR-NEMA), we consider Slice Location (0020,1041)
-//                                   or Location       (0020,0050) 
-// as the Z coordinate, 
-// 0. for all the coordinates if nothing is found
-//
-// ---------------------------------------------------------------
-//
-
-/**
  * \brief gets the info from 0020,0032 : Image Position Patient
  *                 else from 0020,0030 : Image Position (RET)
  *                 else 0.
@@ -763,86 +609,36 @@ float File::GetZOrigin()
 }
 
 /**
- * \brief gets the info from 0020,0013 : Image Number else 0.
- * @return image number
- */
-int File::GetImageNumber()
+  * \brief gets the info from 0020,0037 : Image Orientation Patient
+  * (needed to organize DICOM files based on their x,y,z position)
+  * @param iop adress of the (6)float aray to receive values
+  * @return cosines of image orientation patient
+  */
+void File::GetImageOrientationPatient( float iop[6] )
 {
-   // The function i atoi() takes the address of an area of memory as
-   // parameter and converts the string stored at that location to an integer
-   // using the external decimal to internal binary conversion rules. This may
-   // be preferable to sscanf() since atoi() is a much smaller, simpler and
-   // faster function. sscanf() can do all possible conversions whereas
-   // atoi() can only do single decimal integer conversions.
-   //0020 0013 IS REL Image Number
-   std::string strImNumber = GetEntryValue(0x0020,0x0013);
-   if ( strImNumber != GDCM_UNFOUND )
-   {
-      return atoi( strImNumber.c_str() );
-   }
-   return 0;   //Hopeless
-}
+   std::string strImOriPat;
+   //iop is supposed to be float[6]
+   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
 
-/**
- * \brief gets the info from 0008,0060 : Modality
- * @return Modality Type
- */
-ModalityType File::GetModality()
-{
-   // 0008 0060 CS ID Modality
-   std::string strModality = GetEntryValue(0x0008,0x0060);
-   if ( strModality != GDCM_UNFOUND )
+   // 0020 0037 DS REL Image Orientation (Patient)
+   if ( (strImOriPat = GetEntryValue(0x0020,0x0037)) != GDCM_UNFOUND )
    {
-           if ( strModality.find("AU") < strModality.length()) return AU;
-      else if ( strModality.find("AS") < strModality.length()) return AS;
-      else if ( strModality.find("BI") < strModality.length()) return BI;
-      else if ( strModality.find("CF") < strModality.length()) return CF;
-      else if ( strModality.find("CP") < strModality.length()) return CP;
-      else if ( strModality.find("CR") < strModality.length()) return CR;
-      else if ( strModality.find("CT") < strModality.length()) return CT;
-      else if ( strModality.find("CS") < strModality.length()) return CS;
-      else if ( strModality.find("DD") < strModality.length()) return DD;
-      else if ( strModality.find("DF") < strModality.length()) return DF;
-      else if ( strModality.find("DG") < strModality.length()) return DG;
-      else if ( strModality.find("DM") < strModality.length()) return DM;
-      else if ( strModality.find("DS") < strModality.length()) return DS;
-      else if ( strModality.find("DX") < strModality.length()) return DX;
-      else if ( strModality.find("ECG") < strModality.length()) return ECG;
-      else if ( strModality.find("EPS") < strModality.length()) return EPS;
-      else if ( strModality.find("FA") < strModality.length()) return FA;
-      else if ( strModality.find("FS") < strModality.length()) return FS;
-      else if ( strModality.find("HC") < strModality.length()) return HC;
-      else if ( strModality.find("HD") < strModality.length()) return HD;
-      else if ( strModality.find("LP") < strModality.length()) return LP;
-      else if ( strModality.find("LS") < strModality.length()) return LS;
-      else if ( strModality.find("MA") < strModality.length()) return MA;
-      else if ( strModality.find("MR") < strModality.length()) return MR;
-      else if ( strModality.find("NM") < strModality.length()) return NM;
-      else if ( strModality.find("OT") < strModality.length()) return OT;
-      else if ( strModality.find("PT") < strModality.length()) return PT;
-      else if ( strModality.find("RF") < strModality.length()) return RF;
-      else if ( strModality.find("RG") < strModality.length()) return RG;
-      else if ( strModality.find("RTDOSE")   < strModality.length()) return RTDOSE;
-      else if ( strModality.find("RTIMAGE")  < strModality.length()) return RTIMAGE;
-      else if ( strModality.find("RTPLAN")   < strModality.length()) return RTPLAN;
-      else if ( strModality.find("RTSTRUCT") < strModality.length()) return RTSTRUCT;
-      else if ( strModality.find("SM") < strModality.length()) return SM;
-      else if ( strModality.find("ST") < strModality.length()) return ST;
-      else if ( strModality.find("TG") < strModality.length()) return TG;
-      else if ( strModality.find("US") < strModality.length()) return US;
-      else if ( strModality.find("VF") < strModality.length()) return VF;
-      else if ( strModality.find("XA") < strModality.length()) return XA;
-      else if ( strModality.find("XC") < strModality.length()) return XC;
-
-      else
+      if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
+          &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         /// \todo throw error return value ???
-         /// specified <> unknown in our database
-         return Unknow;
+         gdcmVerboseMacro( "Wrong Image Orientation Patient (0020,0037). Less than 6 values were found." );
       }
    }
-
-   return Unknow;
+   //For ACR-NEMA
+   // 0020 0035 DS REL Image Orientation (RET)
+   else if ( (strImOriPat = GetEntryValue(0x0020,0x0035)) != GDCM_UNFOUND )
+   {
+      if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
+          &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
+      {
+         gdcmVerboseMacro( "wrong Image Orientation Patient (0020,0035). Less than 6 values were found." );
+      }
+   }
 }
 
 /**
@@ -859,6 +655,24 @@ int File::GetBitsStored()
       gdcmVerboseMacro("(0028,0101) is supposed to be mandatory");
       return 0;  // It's supposed to be mandatory
                  // the caller will have to check
+   }
+   return atoi( strSize.c_str() );
+}
+
+/**
+ * \brief   Retrieve the number of Bits Allocated
+ *          (8, 12 -compacted ACR-NEMA files, 16, ...)
+ * @return  The encountered number of Bits Allocated, 0 by default.
+ *          0 means the file is NOT USABLE. The caller has to check it !
+ */
+int File::GetBitsAllocated()
+{
+   std::string strSize = GetEntryValue(0x0028,0x0100);
+   if ( strSize == GDCM_UNFOUND )
+   {
+      gdcmVerboseMacro( "(0028,0100) is supposed to be mandatory");
+      return 0; // It's supposed to be mandatory
+                // the caller will have to check
    }
    return atoi( strSize.c_str() );
 }
@@ -881,46 +695,6 @@ int File::GetHighBitPosition()
 }
 
 /**
- * \brief   Check whether the pixels are signed or UNsigned data.
- * \warning The method defaults to false (UNsigned) when information is Missing.
- *          The responsability of checking this value is left to the caller.
- * @return  True when signed, false when UNsigned
- */
-bool File::IsSignedPixelData()
-{
-   std::string strSize = GetEntryValue( 0x0028, 0x0103 );
-   if ( strSize == GDCM_UNFOUND )
-   {
-      gdcmVerboseMacro( "(0028,0103) is supposed to be mandatory");
-      return false;
-   }
-   int sign = atoi( strSize.c_str() );
-   if ( sign == 0 ) 
-   {
-      return false;
-   }
-   return true;
-}
-
-/**
- * \brief   Retrieve the number of Bits Allocated
- *          (8, 12 -compacted ACR-NEMA files, 16, ...)
- * @return  The encountered number of Bits Allocated, 0 by default.
- *          0 means the file is NOT USABLE. The caller has to check it !
- */
-int File::GetBitsAllocated()
-{
-   std::string strSize = GetEntryValue(0x0028,0x0100);
-   if ( strSize == GDCM_UNFOUND )
-   {
-      gdcmVerboseMacro( "(0028,0100) is supposed to be mandatory");
-      return 0; // It's supposed to be mandatory
-                // the caller will have to check
-   }
-   return atoi( strSize.c_str() );
-}
-
-/**
  * \brief   Retrieve the number of Samples Per Pixel
  *          (1 : gray level, 3 : RGB -1 or 3 Planes-)
  * @return  The encountered number of Samples Per Pixel, 1 by default.
@@ -936,64 +710,6 @@ int File::GetSamplesPerPixel()
                 // but sometimes it's missing : *we* assume Gray pixels
    }
    return atoi( strSize.c_str() );
-}
-
-/**
- * \brief   Check whether this a monochrome picture or not by accessing
- *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
- * @return  true when "MONOCHROME1" or "MONOCHROME2". False otherwise.
- */
-bool File::IsMonochrome()
-{
-   const std::string &PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
-   if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1")
-      || Util::DicomStringEqual(PhotometricInterp, "MONOCHROME2") )
-   {
-      return true;
-   }
-   if ( PhotometricInterp == GDCM_UNFOUND )
-   {
-      gdcmVerboseMacro( "Not found : Photometric Interpretation (0028,0004)");
-   }
-   return false;
-}
-
-/**
- * \brief   Check whether this a "PALETTE COLOR" picture or not by accessing
- *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
- * @return  true when "PALETTE COLOR". False otherwise.
- */
-bool File::IsPaletteColor()
-{
-   std::string PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
-   if (   PhotometricInterp == "PALETTE COLOR " )
-   {
-      return true;
-   }
-   if ( PhotometricInterp == GDCM_UNFOUND )
-   {
-      gdcmVerboseMacro( "Not found : Palette color (0028,0004)");
-   }
-   return false;
-}
-
-/**
- * \brief   Check whether this a "YBR_FULL" color picture or not by accessing
- *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
- * @return  true when "YBR_FULL". False otherwise.
- */
-bool File::IsYBRFull()
-{
-   std::string PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
-   if (   PhotometricInterp == "YBR_FULL" )
-   {
-      return true;
-   }
-   if ( PhotometricInterp == GDCM_UNFOUND )
-   {
-      gdcmVerboseMacro( "Not found : YBR Full (0028,0004)");
-   }
-   return false;
 }
 
 /**
@@ -1101,53 +817,84 @@ std::string File::GetPixelType()
    return bitsAlloc + sign;
 }
 
-
 /**
- * \brief   Recover the offset (from the beginning of the file) 
- *          of *image* pixels (not *icone image* pixels, if any !)
- * @return Pixel Offset
+ * \brief   Check whether the pixels are signed or UNsigned data.
+ * \warning The method defaults to false (UNsigned) when information is Missing.
+ *          The responsability of checking this value is left to the caller.
+ * @return  True when signed, false when UNsigned
  */
-size_t File::GetPixelOffset()
+bool File::IsSignedPixelData()
 {
-   DocEntry* pxlElement = GetDocEntry(GrPixel,NumPixel);
-   if ( pxlElement )
+   std::string strSize = GetEntryValue( 0x0028, 0x0103 );
+   if ( strSize == GDCM_UNFOUND )
    {
-      return pxlElement->GetOffset();
+      gdcmVerboseMacro( "(0028,0103) is supposed to be mandatory");
+      return false;
    }
-   else
+   int sign = atoi( strSize.c_str() );
+   if ( sign == 0 ) 
    {
-#ifdef GDCM_DEBUG
-      std::cout << "Big trouble : Pixel Element ("
-                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
-                << std::endl;  
-#endif //GDCM_DEBUG
-      return 0;
+      return false;
    }
+   return true;
 }
 
 /**
- * \brief   Recover the pixel area length (in Bytes)
- * @return Pixel Element Length, as stored in the header
- *         (NOT the memory space necessary to hold the Pixels 
- *          -in case of embeded compressed image-)
- *         0 : NOT USABLE file. The caller has to check.
+ * \brief   Check whether this a monochrome picture or not by accessing
+ *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
+ * @return  true when "MONOCHROME1" or "MONOCHROME2". False otherwise.
  */
-size_t File::GetPixelAreaLength()
+bool File::IsMonochrome()
 {
-   DocEntry* pxlElement = GetDocEntry(GrPixel,NumPixel);
-   if ( pxlElement )
+   const std::string &PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1")
+      || Util::DicomStringEqual(PhotometricInterp, "MONOCHROME2") )
    {
-      return pxlElement->GetLength();
+      return true;
    }
-   else
+   if ( PhotometricInterp == GDCM_UNFOUND )
    {
-#ifdef GDCM_DEBUG
-      std::cout << "Big trouble : Pixel Element ("
-                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
-                << std::endl;
-#endif //GDCM_DEBUG
-      return 0;
+      gdcmVerboseMacro( "Not found : Photometric Interpretation (0028,0004)");
    }
+   return false;
+}
+
+/**
+ * \brief   Check whether this a "PALETTE COLOR" picture or not by accessing
+ *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
+ * @return  true when "PALETTE COLOR". False otherwise.
+ */
+bool File::IsPaletteColor()
+{
+   std::string PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   if (   PhotometricInterp == "PALETTE COLOR " )
+   {
+      return true;
+   }
+   if ( PhotometricInterp == GDCM_UNFOUND )
+   {
+      gdcmVerboseMacro( "Not found : Palette color (0028,0004)");
+   }
+   return false;
+}
+
+/**
+ * \brief   Check whether this a "YBR_FULL" color picture or not by accessing
+ *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
+ * @return  true when "YBR_FULL". False otherwise.
+ */
+bool File::IsYBRFull()
+{
+   std::string PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   if (   PhotometricInterp == "YBR_FULL" )
+   {
+      return true;
+   }
+   if ( PhotometricInterp == GDCM_UNFOUND )
+   {
+      gdcmVerboseMacro( "Not found : YBR Full (0028,0004)");
+   }
+   return false;
 }
 
 /**
@@ -1230,35 +977,162 @@ int File::GetLUTNbits()
 }
 
 /**
-  * \brief gets the info from 0020,0037 : Image Orientation Patient
-  * (needed to organize DICOM files based on their x,y,z position)
-  * @param iop adress of the (6)float aray to receive values
-  * @return cosines of image orientation patient
-  */
-void File::GetImageOrientationPatient( float iop[6] )
+ *\brief gets the info from 0028,1052 : Rescale Intercept
+ * @return Rescale Intercept
+ */
+float File::GetRescaleIntercept()
 {
-   std::string strImOriPat;
-   //iop is supposed to be float[6]
-   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
-
-   // 0020 0037 DS REL Image Orientation (Patient)
-   if ( (strImOriPat = GetEntryValue(0x0020,0x0037)) != GDCM_UNFOUND )
+   float resInter = 0.;
+   /// 0028 1052 DS IMG Rescale Intercept
+   const std::string &strRescInter = GetEntryValue(0x0028,0x1052);
+   if ( strRescInter != GDCM_UNFOUND )
    {
-      if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
-          &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
+      if( sscanf( strRescInter.c_str(), "%f", &resInter) != 1 )
       {
-         gdcmVerboseMacro( "Wrong Image Orientation Patient (0020,0037). Less than 6 values were found." );
+         // bug in the element 0x0028,0x1052
+         gdcmVerboseMacro( "Rescale Intercept (0028,1052) is empty." );
       }
    }
-   //For ACR-NEMA
-   // 0020 0035 DS REL Image Orientation (RET)
-   else if ( (strImOriPat = GetEntryValue(0x0020,0x0035)) != GDCM_UNFOUND )
+
+   return resInter;
+}
+
+/**
+ *\brief   gets the info from 0028,1053 : Rescale Slope
+ * @return Rescale Slope
+ */
+float File::GetRescaleSlope()
+{
+   float resSlope = 1.;
+   //0028 1053 DS IMG Rescale Slope
+   std::string strRescSlope = GetEntryValue(0x0028,0x1053);
+   if ( strRescSlope != GDCM_UNFOUND )
    {
-      if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
-          &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
+      if( sscanf( strRescSlope.c_str(), "%f", &resSlope) != 1)
       {
-         gdcmVerboseMacro( "wrong Image Orientation Patient (0020,0035). Less than 6 values were found." );
+         // bug in the element 0x0028,0x1053
+         gdcmVerboseMacro( "Rescale Slope (0028,1053) is empty.");
       }
+   }
+
+   return resSlope;
+}
+
+/**
+ * \brief This function is intended to user who doesn't want 
+ *   to have to manage a LUT and expects to get an RBG Pixel image
+ *   (or a monochrome one ...) 
+ * \warning to be used with GetImagePixels()
+ * @return 1 if Gray level, 3 if Color (RGB, YBR or PALETTE COLOR)
+ */
+int File::GetNumberOfScalarComponents()
+{
+   if ( GetSamplesPerPixel() == 3 )
+   {
+      return 3;
+   }
+      
+   // 0028 0100 US IMG Bits Allocated
+   // (in order no to be messed up by old RGB images)
+   if ( GetEntryValue(0x0028,0x0100) == "24" )
+   {
+      return 3;
+   }
+       
+   std::string strPhotometricInterpretation = GetEntryValue(0x0028,0x0004);
+
+   if ( ( strPhotometricInterpretation == "PALETTE COLOR ") )
+   {
+      if ( HasLUT() )// PALETTE COLOR is NOT enough
+      {
+         return 3;
+      }
+      else
+      {
+         return 1;
+      }
+   }
+
+   // beware of trailing space at end of string      
+   // DICOM tags are never of odd length
+   if ( strPhotometricInterpretation == GDCM_UNFOUND   || 
+        Util::DicomStringEqual(strPhotometricInterpretation, "MONOCHROME1") ||
+        Util::DicomStringEqual(strPhotometricInterpretation, "MONOCHROME2") )
+   {
+      return 1;
+   }
+   else
+   {
+      // we assume that *all* kinds of YBR are dealt with
+      return 3;
+   }
+}
+
+/**
+ * \brief This function is intended to user that DOESN'T want 
+ *  to get RGB pixels image when it's stored as a PALETTE COLOR image
+ *   - the (vtk) user is supposed to know how deal with LUTs - 
+ * \warning to be used with GetImagePixelsRaw()
+ * @return 1 if Gray level, 3 if Color (RGB or YBR - NOT 'PALETTE COLOR' -)
+ */
+int File::GetNumberOfScalarComponentsRaw()
+{
+   // 0028 0100 US IMG Bits Allocated
+   // (in order no to be messed up by old RGB images)
+   if ( File::GetEntryValue(0x0028,0x0100) == "24" )
+   {
+      return 3;
+   }
+
+   // we assume that *all* kinds of YBR are dealt with
+   return GetSamplesPerPixel();
+}
+
+/**
+ * \brief   Recover the offset (from the beginning of the file) 
+ *          of *image* pixels (not *icone image* pixels, if any !)
+ * @return Pixel Offset
+ */
+size_t File::GetPixelOffset()
+{
+   DocEntry* pxlElement = GetDocEntry(GrPixel,NumPixel);
+   if ( pxlElement )
+   {
+      return pxlElement->GetOffset();
+   }
+   else
+   {
+#ifdef GDCM_DEBUG
+      std::cout << "Big trouble : Pixel Element ("
+                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
+                << std::endl;  
+#endif //GDCM_DEBUG
+      return 0;
+   }
+}
+
+/**
+ * \brief   Recover the pixel area length (in Bytes)
+ * @return Pixel Element Length, as stored in the header
+ *         (NOT the memory space necessary to hold the Pixels 
+ *          -in case of embeded compressed image-)
+ *         0 : NOT USABLE file. The caller has to check.
+ */
+size_t File::GetPixelAreaLength()
+{
+   DocEntry* pxlElement = GetDocEntry(GrPixel,NumPixel);
+   if ( pxlElement )
+   {
+      return pxlElement->GetLength();
+   }
+   else
+   {
+#ifdef GDCM_DEBUG
+      std::cout << "Big trouble : Pixel Element ("
+                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
+                << std::endl;
+#endif //GDCM_DEBUG
+      return 0;
    }
 }
 
@@ -1339,6 +1213,130 @@ bool File::AnonymizeFile()
 //300a 0006 DA RT RT Plan Date
 //300a 022c DA RT Air Kerma Rate Reference Date
 //300e 0004 DA RT Review Date
+
+   return true;
+}
+
+/**
+ * \brief Performs some consistency checking on various 'File related' 
+ *       (as opposed to 'DicomDir related') entries 
+ *       then writes in a file all the (Dicom Elements) included the Pixels 
+ * @param fileName file name to write to
+ * @param filetype Type of the File to be written 
+ *          (ACR, ExplicitVR, ImplicitVR)
+ */
+bool File::Write(std::string fileName, FileType filetype)
+{
+   std::ofstream *fp = new std::ofstream(fileName.c_str(), 
+                                         std::ios::out | std::ios::binary);
+   if (*fp == NULL)
+   {
+      gdcmVerboseMacro("Failed to open (write) File: " << fileName.c_str());
+      return false;
+   }
+
+   // Entry : 0002|0000 = group length -> recalculated
+   ValEntry *e0002 = GetValEntry(0x0002,0x0000);
+   if( e0002 )
+   {
+      std::ostringstream sLen;
+      sLen << ComputeGroup0002Length(filetype);
+      e0002->SetValue(sLen.str());
+   }
+
+   // Bits Allocated
+   if ( GetEntryValue(0x0028,0x0100) ==  "12")
+   {
+      SetValEntry("16", 0x0028,0x0100);
+   }
+
+   int i_lgPix = GetEntryLength(GrPixel, NumPixel);
+   if (i_lgPix != -2)
+   {
+      // no (GrPixel, NumPixel) element
+      std::string s_lgPix = Util::Format("%d", i_lgPix+12);
+      s_lgPix = Util::DicomString( s_lgPix.c_str() );
+      InsertValEntry(s_lgPix,GrPixel, 0x0000);
+   }
+
+   // FIXME : should be nice if we could move it to File
+   //         (or in future gdcmPixelData class)
+
+   // Drop Palette Color, if necessary
+   if ( GetEntryValue(0x0028,0x0002).c_str()[0] == '3' )
+   {
+      // if SamplesPerPixel = 3, sure we don't need any LUT !   
+      // Drop 0028|1101, 0028|1102, 0028|1103
+      // Drop 0028|1201, 0028|1202, 0028|1203
+
+      DocEntry *e = GetDocEntry(0x0028,0x01101);
+      if (e)
+      {
+         RemoveEntryNoDestroy(e);
+      }
+      e = GetDocEntry(0x0028,0x1102);
+      if (e)
+      {
+         RemoveEntryNoDestroy(e);
+      }
+      e = GetDocEntry(0x0028,0x1103);
+      if (e)
+      {
+         RemoveEntryNoDestroy(e);
+      }
+      e = GetDocEntry(0x0028,0x01201);
+      if (e)
+      {
+         RemoveEntryNoDestroy(e);
+      }
+      e = GetDocEntry(0x0028,0x1202);
+      if (e)
+      {
+         RemoveEntryNoDestroy(e);
+      }
+      e = GetDocEntry(0x0028,0x1203);
+      if (e)
+      {
+          RemoveEntryNoDestroy(e);
+      }
+   }
+
+/*
+#ifdef GDCM_WORDS_BIGENDIAN
+   // Super Super hack that will make gdcm a BOMB ! but should
+   // Fix temporarily the dashboard
+   BinEntry *b = GetBinEntry(GrPixel,NumPixel);
+   if ( GetPixelSize() ==  16 )
+   {
+      uint16_t *im16 = (uint16_t *)b->GetBinArea();
+      int lgr = b->GetLength();
+      for( int i = 0; i < lgr / 2; i++ )
+      {
+         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
+      }
+   }
+#endif //GDCM_WORDS_BIGENDIAN
+*/
+
+   Document::WriteContent(fp, filetype);
+
+/*
+#ifdef GDCM_WORDS_BIGENDIAN
+   // Flip back the pixel ... I told you this is a hack
+   if ( GetPixelSize() ==  16 )
+   {
+      uint16_t *im16 = (uint16_t*)b->GetBinArea();
+      int lgr = b->GetLength();
+      for( int i = 0; i < lgr / 2; i++ )
+      {
+         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
+      }
+   }
+#endif //GDCM_WORDS_BIGENDIAN
+*/
+
+   fp->close();
+   delete fp;
 
    return true;
 }

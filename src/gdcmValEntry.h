@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:21:20 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/02/02 16:18:49 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,6 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-
 /**
  * \brief   Any Dicom Document (File or DicomDir) contains 
  *           a set of DocEntry  - Dicom entries -
@@ -36,8 +35,7 @@ namespace gdcm
  *          whose content is 'std::string representable' : characters,
  *          or integers (loaded in memory as a std::string)
  *          ValEntry is a specialisation of ContentEntry
- */ 
- 
+ */
 class GDCM_EXPORT ValEntry  : public ContentEntry
 {
 public:
@@ -50,8 +48,7 @@ public:
 
    // Other accessors are inherited from gdcm::ContentEntry
 
-   void Print(std::ostream &os = std::cout, 
-              std::string const & indent = ""); 
+   void Print(std::ostream &os = std::cout,std::string const & indent = ""); 
 
    void WriteContent(std::ofstream *fp, FileType filetype); 
    

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:17 $
-  Version:   $Revision: 1.219 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.220 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -496,18 +496,18 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
       fp->write("DICM", 4);
    }
 
-/*
- * \todo rewrite later, if really usefull
- *       - 'Group Length' element is optional in DICOM
- *       - but un-updated odd groups lengthes can causes pb
- *         (xmedcon breaker)
- *
- * if ( (filetype == ImplicitVR) || (filetype == ExplicitVR) )
- *    UpdateGroupLength(false,filetype);
- * if ( filetype == ACR)
- *    UpdateGroupLength(true,ACR);
- */
- 
+   /*
+    * \todo rewrite later, if really usefull
+    *       - 'Group Length' element is optional in DICOM
+    *       - but un-updated odd groups lengthes can causes pb
+    *         (xmedcon breaker)
+    *
+    * if ( (filetype == ImplicitVR) || (filetype == ExplicitVR) )
+    *    UpdateGroupLength(false,filetype);
+    * if ( filetype == ACR)
+    *    UpdateGroupLength(true,ACR);
+    */
+
    ElementSet::WriteContent(fp, filetype); // This one is recursive
 }
 
@@ -587,6 +587,71 @@ void Document::LoadDocEntrySafe(DocEntry *entry)
       LoadDocEntry(entry);
       Fp->seekg(PositionOnEntry, std::ios::beg);
    }
+}
+
+/**
+ * \brief   Compares two documents, according to \ref DicomDir rules
+ * \warning Does NOT work with ACR-NEMA files
+ * \todo    Find a trick to solve the pb (use RET fields ?)
+ * @param   document
+ * @return  true if 'smaller'
+ */
+bool Document::operator<(Document &document)
+{
+   // Patient Name
+   std::string s1 = GetEntryValue(0x0010,0x0010);
+   std::string s2 = document.GetEntryValue(0x0010,0x0010);
+   if(s1 < s2)
+   {
+      return true;
+   }
+   else if( s1 > s2 )
+   {
+      return false;
+   }
+   else
+   {
+      // Patient ID
+      s1 = GetEntryValue(0x0010,0x0020);
+      s2 = document.GetEntryValue(0x0010,0x0020);
+      if ( s1 < s2 )
+      {
+         return true;
+      }
+      else if ( s1 > s2 )
+      {
+         return false;
+      }
+      else
+      {
+         // Study Instance UID
+         s1 = GetEntryValue(0x0020,0x000d);
+         s2 = document.GetEntryValue(0x0020,0x000d);
+         if ( s1 < s2 )
+         {
+            return true;
+         }
+         else if( s1 > s2 )
+         {
+            return false;
+         }
+         else
+         {
+            // Serie Instance UID
+            s1 = GetEntryValue(0x0020,0x000e);
+            s2 = document.GetEntryValue(0x0020,0x000e);    
+            if ( s1 < s2 )
+            {
+               return true;
+            }
+            else if( s1 > s2 )
+            {
+               return false;
+            }
+         }
+      }
+   }
+   return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -693,6 +758,17 @@ int Document::ComputeGroup0002Length( FileType filetype )
 
 //-----------------------------------------------------------------------------
 // Private
+/**
+ * \brief Loads all the needed Dictionaries
+ * \warning NOT end user intended method !   
+ */
+void Document::Initialize() 
+{
+   RefPubDict = Global::GetDicts()->GetDefaultPubDict();
+   RefShaDict = NULL;
+   Filetype   = Unknown;
+}
+
 /**
  * \brief   Parses a DocEntrySet (Zero-level DocEntries or SQ Item DocEntries)
  * @return  length of the parsed set. 
@@ -1363,9 +1439,6 @@ std::string Document::FindDocEntryVR()
 */
 bool Document::CheckDocEntryVR(VRKey vr)
 {
-   // CLEANME searching the dicom_vr at each occurence is expensive.
-   // PostPone this test in an optional integrity check at the end
-   // of parsing or only in debug mode.
    if ( !Global::GetVR()->IsValidVR(vr) )
       return false;
 
@@ -1640,17 +1713,6 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
       return true;
    }   
    return false;
-}
-
-/**
- * \brief Loads all the needed Dictionaries
- * \warning NOT end user intended method !   
- */
-void Document::Initialize() 
-{
-   RefPubDict = Global::GetDicts()->GetDefaultPubDict();
-   RefShaDict = NULL;
-   Filetype   = Unknown;
 }
 
 /**
@@ -2051,94 +2113,8 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
    }
 }
 
-/**
- * \brief   Compares two documents, according to \ref DicomDir rules
- * \warning Does NOT work with ACR-NEMA files
- * \todo    Find a trick to solve the pb (use RET fields ?)
- * @param   document
- * @return  true if 'smaller'
- */
-bool Document::operator<(Document &document)
-{
-   // Patient Name
-   std::string s1 = GetEntryValue(0x0010,0x0010);
-   std::string s2 = document.GetEntryValue(0x0010,0x0010);
-   if(s1 < s2)
-   {
-      return true;
-   }
-   else if( s1 > s2 )
-   {
-      return false;
-   }
-   else
-   {
-      // Patient ID
-      s1 = GetEntryValue(0x0010,0x0020);
-      s2 = document.GetEntryValue(0x0010,0x0020);
-      if ( s1 < s2 )
-      {
-         return true;
-      }
-      else if ( s1 > s2 )
-      {
-         return false;
-      }
-      else
-      {
-         // Study Instance UID
-         s1 = GetEntryValue(0x0020,0x000d);
-         s2 = document.GetEntryValue(0x0020,0x000d);
-         if ( s1 < s2 )
-         {
-            return true;
-         }
-         else if( s1 > s2 )
-         {
-            return false;
-         }
-         else
-         {
-            // Serie Instance UID
-            s1 = GetEntryValue(0x0020,0x000e);
-            s2 = document.GetEntryValue(0x0020,0x000e);    
-            if ( s1 < s2 )
-            {
-               return true;
-            }
-            else if( s1 > s2 )
-            {
-               return false;
-            }
-         }
-      }
-   }
-   return false;
-}
-
 //-----------------------------------------------------------------------------
 // Print
-/**
-  * \brief   Prints The Dict Entries of THE public Dicom Dictionary
-  * @param os ostream to print to
-  * @return
-  */  
-void Document::PrintPubDict(std::ostream &os)
-{
-   RefPubDict->SetPrintLevel(PrintLevel);
-   RefPubDict->Print(os);
-}
-
-/**
-  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionary
-  * @param os ostream to print to
-  * @return
-  */
-void Document::PrintShaDict(std::ostream &os)
-{
-   RefShaDict->SetPrintLevel(PrintLevel);
-   RefShaDict->Print(os);
-}
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

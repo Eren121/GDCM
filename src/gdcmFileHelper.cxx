@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:18 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,6 +124,81 @@ FileHelper::~FileHelper()
 
 //-----------------------------------------------------------------------------
 // Public
+/**
+ * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value (string) to substitute with
+ * @param   group  group number of the Dicom Element to modify
+ * @param   elem element number of the Dicom Element to modify
+ */
+bool FileHelper::SetValEntry(std::string const &content,
+                    uint16_t group, uint16_t elem)
+{ 
+   return FileInternal->SetValEntry(content,group,elem);
+}
+
+
+/**
+ * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value (void*  -> uint8_t*) to substitute with
+ * @param   lgth new value length
+ * @param   group  group number of the Dicom Element to modify
+ * @param   elem element number of the Dicom Element to modify
+ */
+bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
+                                 uint16_t group, uint16_t elem)
+{
+   return FileInternal->SetBinEntry(content,lgth,group,elem);
+}
+
+/**
+ * \brief   Modifies the value of a given DocEntry (Dicom entry)
+ *          when it exists. Create it with the given value when unexistant.
+ * @param   content (string) Value to be set
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * \return  pointer to the modified/created Dicom entry (NULL when creation
+ *          failed).
+ */ 
+ValEntry *FileHelper::InsertValEntry(std::string const &content,
+                                uint16_t group, uint16_t elem)
+{
+   return FileInternal->InsertValEntry(content,group,elem);
+}
+
+/*
+ * \brief   Modifies the value of a given DocEntry (Dicom entry)
+ *          when it exists. Create it with the given value when unexistant.
+ *          A copy of the binArea is made to be kept in the Document.
+ * @param   binArea (binary) value to be set
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * \return  pointer to the modified/created Dicom entry (NULL when creation
+ *          failed).
+ */
+BinEntry *FileHelper::InsertBinEntry(uint8_t *binArea, int lgth,
+                                uint16_t group, uint16_t elem)
+{
+   return FileInternal->InsertBinEntry(binArea,lgth,group,elem);
+}
+
+/*
+ * \brief   Modifies the value of a given DocEntry (Dicom entry)
+ *          when it exists. Create it with the given value when unexistant.
+ *          A copy of the binArea is made to be kept in the Document.
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * \return  pointer to the modified/created Dicom entry (NULL when creation
+ *          failed).
+ */
+SeqEntry *FileHelper::InsertSeqEntry(uint16_t group, uint16_t elem)
+{
+   return FileInternal->InsertSeqEntry(group,elem);
+}
+
 /**
  * \brief   Get the size of the image data
  *          If the image can be RGB (with a lut or by default), the size 
@@ -347,6 +422,14 @@ size_t FileHelper::GetRawDataSize()
 }
 
 /**
+ * \brief Access to the underlying \ref PixelReadConverter RGBA LUT
+ */
+uint8_t* FileHelper::GetLutRGBA()
+{
+   return PixelReadConverter->GetLutRGBA();
+}
+
+/**
  * \brief Writes on disk A SINGLE Dicom file
  *        NO test is performed on  processor "Endiannity".
  *        It's up to the user to call his Reader properly
@@ -354,7 +437,6 @@ size_t FileHelper::GetRawDataSize()
  *                 (any already existing file is over written)
  * @return false if write fails
  */
-
 bool FileHelper::WriteRawData(std::string const &fileName)
 {
   std::ofstream fp1(fileName.c_str(), std::ios::out | std::ios::binary );
@@ -511,89 +593,6 @@ bool FileHelper::Write(std::string const &fileName)
    return check;
 }
 
-/**
- * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
- *          through it's (group, element) and modifies it's content with
- *          the given value.
- * @param   content new value (string) to substitute with
- * @param   group  group number of the Dicom Element to modify
- * @param   elem element number of the Dicom Element to modify
- */
-bool FileHelper::SetValEntry(std::string const &content,
-                    uint16_t group, uint16_t elem)
-{ 
-   return FileInternal->SetValEntry(content,group,elem);
-}
-
-
-/**
- * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
- *          through it's (group, element) and modifies it's content with
- *          the given value.
- * @param   content new value (void*  -> uint8_t*) to substitute with
- * @param   lgth new value length
- * @param   group  group number of the Dicom Element to modify
- * @param   elem element number of the Dicom Element to modify
- */
-bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
-                                 uint16_t group, uint16_t elem)
-{
-   return FileInternal->SetBinEntry(content,lgth,group,elem);
-}
-
-/**
- * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Create it with the given value when unexistant.
- * @param   content (string) Value to be set
- * @param   group   Group number of the Entry 
- * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Dicom entry (NULL when creation
- *          failed).
- */ 
-ValEntry *FileHelper::InsertValEntry(std::string const &content,
-                                uint16_t group, uint16_t elem)
-{
-   return FileInternal->InsertValEntry(content,group,elem);
-}
-
-/*
- * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Create it with the given value when unexistant.
- *          A copy of the binArea is made to be kept in the Document.
- * @param   binArea (binary) value to be set
- * @param   group   Group number of the Entry 
- * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Dicom entry (NULL when creation
- *          failed).
- */
-BinEntry *FileHelper::InsertBinEntry(uint8_t *binArea, int lgth,
-                                uint16_t group, uint16_t elem)
-{
-   return FileInternal->InsertBinEntry(binArea,lgth,group,elem);
-}
-
-/*
- * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Create it with the given value when unexistant.
- *          A copy of the binArea is made to be kept in the Document.
- * @param   group   Group number of the Entry 
- * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Dicom entry (NULL when creation
- *          failed).
- */
-SeqEntry *FileHelper::InsertSeqEntry(uint16_t group, uint16_t elem)
-{
-   return FileInternal->InsertSeqEntry(group,elem);
-}
-
-/**
- * \brief Access to the underlying \ref PixelReadConverter RGBA LUT
- */
-uint8_t* FileHelper::GetLutRGBA()
-{
-   return PixelReadConverter->GetLutRGBA();
-}
-
 //-----------------------------------------------------------------------------
 // Protected
 /**
@@ -650,7 +649,7 @@ bool FileHelper::CheckWriteIntegrity()
 }
 
 /**
- * \brief   
+ * \brief Update the File to write RAW datas  
  */ 
 void FileHelper::SetWriteToRaw()
 {
@@ -686,7 +685,7 @@ void FileHelper::SetWriteToRaw()
 }
 
 /**
- * \brief   
+ * \brief Update the File to write RGB datas  
  */ 
 void FileHelper::SetWriteToRGB()
 {
@@ -759,7 +758,7 @@ void FileHelper::SetWriteToRGB()
 }
 
 /**
- * \brief   
+ * \brief Restore the File write mode  
  */ 
 void FileHelper::RestoreWrite()
 {
@@ -783,7 +782,7 @@ void FileHelper::RestoreWrite()
 }
 
 /**
- * \brief   
+ * \brief Set in the File the write type to ACR
  */ 
 void FileHelper::SetWriteFileTypeToACR()
 {
@@ -791,7 +790,7 @@ void FileHelper::SetWriteFileTypeToACR()
 }
 
 /**
- * \brief   
+ * \brief Set in the File the write type to Explicit VR   
  */ 
 void FileHelper::SetWriteFileTypeToExplicitVR()
 {
@@ -805,7 +804,7 @@ void FileHelper::SetWriteFileTypeToExplicitVR()
 }
 
 /**
- * \brief   
+ * \brief Set in the File the write type to Implicit VR   
  */ 
 void FileHelper::SetWriteFileTypeToImplicitVR()
 {
@@ -820,13 +819,16 @@ void FileHelper::SetWriteFileTypeToImplicitVR()
 
 
 /**
- * \brief   
+ * \brief Restore in the File the write type
  */ 
 void FileHelper::RestoreWriteFileType()
 {
    Archive->Restore(0x0002,0x0010);
 }
 
+/**
+ * \brief Set the Write not to Libido format
+ */ 
 void FileHelper::SetWriteToLibido()
 {
    ValEntry *oldRow = dynamic_cast<ValEntry *>
@@ -857,7 +859,7 @@ void FileHelper::SetWriteToLibido()
 }
 
 /**
- * \brief   
+ * \brief Set the Write not to No Libido format
  */ 
 void FileHelper::SetWriteToNoLibido()
 {
@@ -875,7 +877,7 @@ void FileHelper::SetWriteToNoLibido()
 }
 
 /**
- * \brief   
+ * \brief Restore the Write format
  */ 
 void FileHelper::RestoreWriteOfLibido()
 {
@@ -884,6 +886,13 @@ void FileHelper::RestoreWriteOfLibido()
    Archive->Restore(0x0008,0x0010);
 }
 
+/**
+ * \brief Copy a ValEntry content
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * \return  pointer to the modified/created Val Entry (NULL when creation
+ *          failed).
+ */ 
 ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
 {
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);

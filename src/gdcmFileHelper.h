@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:24 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,6 +55,9 @@ public:
 
    void Print(std::ostream &os = std::cout, std::string const & indent = ""); 
 
+   /// Accessor to \ref File
+   File *GetFile() { return FileInternal; }
+
    // File methods
    bool SetValEntry(std::string const &content,
                     uint16_t group, uint16_t elem);
@@ -67,9 +70,7 @@ public:
                             uint16_t group, uint16_t elem);
    SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
 
-   /// Accessor to \ref File
-   File *GetFile() { return FileInternal; }
-
+   // File helpers
    size_t GetImageDataSize();
    size_t GetImageDataRawSize();
 
@@ -90,15 +91,7 @@ public:
    uint8_t* GetRawData();
    size_t GetRawDataSize();
 
-   // Write pixels of ONE image on hard drive
-   // No test is made on processor "endianity"
-   // The user must call his reader correctly
-   bool WriteRawData  (std::string const &fileName);
-   bool WriteDcmImplVR(std::string const &fileName);
-   bool WriteDcmExplVR(std::string const &fileName);
-   bool WriteAcr      (std::string const &fileName);
-   bool Write         (std::string const &fileName);
-
+   // LUT
    uint8_t* GetLutRGBA();
 
    // Write mode
@@ -114,6 +107,15 @@ public:
    void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); };
    void SetWriteType(FileType format) { WriteType = format; };
    FileType GetWriteType()            { return WriteType; };
+
+   // Write pixels of ONE image on hard drive
+   // No test is made on processor "endianity"
+   // The user must call his reader correctly
+   bool WriteRawData  (std::string const &fileName);
+   bool WriteDcmImplVR(std::string const &fileName);
+   bool WriteDcmExplVR(std::string const &fileName);
+   bool WriteAcr      (std::string const &fileName);
+   bool Write         (std::string const &fileName);
 
 protected:
    bool CheckWriteIntegrity();

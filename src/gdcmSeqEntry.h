@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:34 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/02/02 16:18:49 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,7 @@ namespace gdcm
 class SQItem;
 //-----------------------------------------------------------------------------
 typedef std::list<SQItem *> ListSQItem;
+
 //-----------------------------------------------------------------------------
 /**
  * \brief a SeqEntry (as opposed to a ValEntry) is a non elementary DocEntry.
@@ -46,11 +47,12 @@ public:
    void Print(std::ostream &os = std::cout, std::string const & indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
 
+   void AddSQItem(SQItem *it, int itemNumber);
+   void ClearSQItem();
    SQItem *GetFirstSQItem();
    SQItem *GetNextSQItem();
    SQItem *GetSQItem(int itemNumber);
    unsigned int GetNumberOfSQItems();
-   void AddSQItem(SQItem *it, int itemNumber);
       
    /// Sets the delimitor mode
    void SetDelimitorMode(bool dm) { DelimitorMode = dm; }
@@ -61,7 +63,6 @@ public:
 
    /// Gets the depth level
    int GetDepthLevel() const { return SQDepthLevel; }
-
    /// Sets the depth level of a Sequence Entry embedded in a SeQuence
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
@@ -69,7 +70,6 @@ protected:
 
 private:
 // Variables
-
    /// If this Sequence is in delimitor mode (length =0xffffffff) or not
    bool DelimitorMode;
    

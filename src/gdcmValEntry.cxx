@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:18 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/02/02 16:18:49 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,50 +61,6 @@ ValEntry::~ValEntry ()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   Sets the std::string representable' value of a ValEntry
- * @param  val value to set 
- */
-void ValEntry::SetValue(std::string const &val)
-{
-   // Integers have a special treatement for their length:
-   int l = val.length();
-   if ( l != 0) // To avoid to be cheated by 'zero length' integers
-   {   
-      const VRKey &vr = GetVR();
-      if( vr == "US" || vr == "SS" )
-      {
-         // for multivaluated items
-         l = (Util::CountSubstring(val, "\\") + 1) * 2;
-         ContentEntry::SetValue(val);
-      }
-      else if( vr == "UL" || vr == "SL" )
-      {
-         // for multivaluated items
-         l = (Util::CountSubstring(val, "\\") + 1) * 4;;
-         ContentEntry::SetValue(val);
-      }
-      else
-      {
-         std::string finalVal = Util::DicomString( val.c_str() );
-         gdcmAssertMacro( !(finalVal.size() % 2) );
-
-         l = finalVal.length();
-         ContentEntry::SetValue(finalVal);
-      }
-   }
-   else
-   {
-      std::string finalVal = Util::DicomString( val.c_str() );
-      gdcmAssertMacro( !(finalVal.size() % 2) );
-
-      l = finalVal.length();
-      ContentEntry::SetValue(finalVal);
-   }
-
-   SetLength(l);
-}
-
-/**
  * \brief   Writes the std::string representable' value of a ValEntry
  * @param fp already open ofstream pointer
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
@@ -157,6 +113,50 @@ void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
    gdcmAssertMacro( lgr == GetValue().length() );
    binary_write(*fp, GetValue());
 } 
+
+/**
+ * \brief   Sets the std::string representable' value of a ValEntry
+ * @param  val value to set 
+ */
+void ValEntry::SetValue(std::string const &val)
+{
+   // Integers have a special treatement for their length:
+   int l = val.length();
+   if ( l != 0) // To avoid to be cheated by 'zero length' integers
+   {   
+      const VRKey &vr = GetVR();
+      if( vr == "US" || vr == "SS" )
+      {
+         // for multivaluated items
+         l = (Util::CountSubstring(val, "\\") + 1) * 2;
+         ContentEntry::SetValue(val);
+      }
+      else if( vr == "UL" || vr == "SL" )
+      {
+         // for multivaluated items
+         l = (Util::CountSubstring(val, "\\") + 1) * 4;;
+         ContentEntry::SetValue(val);
+      }
+      else
+      {
+         std::string finalVal = Util::DicomString( val.c_str() );
+         gdcmAssertMacro( !(finalVal.size() % 2) );
+
+         l = finalVal.length();
+         ContentEntry::SetValue(finalVal);
+      }
+   }
+   else
+   {
+      std::string finalVal = Util::DicomString( val.c_str() );
+      gdcmAssertMacro( !(finalVal.size() % 2) );
+
+      l = finalVal.length();
+      ContentEntry::SetValue(finalVal);
+   }
+
+   SetLength(l);
+}
 
 //-----------------------------------------------------------------------------
 // Protected

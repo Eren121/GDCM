@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:17 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -432,22 +432,6 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
 }
 
 /**
- * \brief   Request a new virtual dict entry to the dict set
- * @param   group group  number of the underlying DictEntry
- * @param   elem  element number of the underlying DictEntry
- * @param   vr    VR (Value Representation) of the underlying DictEntry
- * @param   vm    VM (Value Multiplicity)   of the underlying DictEntry
- * @param   name   english name
- */
-DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,uint16_t elem,
-                                             TagName const & vr,
-                                             TagName const & vm,
-                                             TagName const & name )
-{
-   return Global::GetDicts()->NewVirtualDictEntry(group,elem,vr,vm,name);
-}
-
-/**
  * \brief   Build a new Val Entry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
@@ -513,6 +497,22 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem)
       return 0;
    }
    return newEntry;
+}
+
+/**
+ * \brief   Request a new virtual dict entry to the dict set
+ * @param   group group  number of the underlying DictEntry
+ * @param   elem  element number of the underlying DictEntry
+ * @param   vr    VR (Value Representation) of the underlying DictEntry
+ * @param   vm    VM (Value Multiplicity)   of the underlying DictEntry
+ * @param   name   english name
+ */
+DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,uint16_t elem,
+                                             TagName const & vr,
+                                             TagName const & vm,
+                                             TagName const & name )
+{
+   return Global::GetDicts()->NewVirtualDictEntry(group,elem,vr,vm,name);
 }
 
 //-----------------------------------------------------------------------------

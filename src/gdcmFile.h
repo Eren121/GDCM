@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 17:01:30 $
-  Version:   $Revision: 1.101 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.102 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,6 +74,7 @@ enum ModalityType {
 };
 
 //-----------------------------------------------------------------------------
+
 /**
  * \brief DICOM elements and their corresponding values (and
  * additionaly the corresponding DICOM dictionary entry) of the header
@@ -91,11 +92,83 @@ enum ModalityType {
  *        protected due to Swig limitations for as Has_a dependency between
  *        File and FileHelper.
  */
-
-//-----------------------------------------------------------------------------
 class GDCM_EXPORT File : public Document
 {
+public:
+   File();
+   File( std::string const &filename );
+   ~File();
+
+   // Standard values and informations contained in the header
+   bool IsReadable();
+
+   // Some heuristic based accessors, end user intended 
+   int GetImageNumber();
+   ModalityType GetModality();
+
+   int GetXSize();
+   int GetYSize();
+   int GetZSize();
+
+   float GetXSpacing();
+   float GetYSpacing();
+   float GetZSpacing();
+
+   float GetXOrigin();
+   float GetYOrigin();
+   float GetZOrigin();
+
+   void GetImageOrientationPatient( float iop[6] );
+
+   int GetBitsStored();
+   int GetBitsAllocated();
+   int GetHighBitPosition();
+   int GetSamplesPerPixel();
+   int GetPlanarConfiguration();
+   int GetPixelSize();
+   std::string GetPixelType();
+   bool IsSignedPixelData();
+   bool IsMonochrome();
+   bool IsPaletteColor();
+   bool IsYBRFull();
+
+   bool HasLUT();
+   int GetLUTNbits();
+
+   // For rescaling graylevel:
+   float GetRescaleIntercept();
+   float GetRescaleSlope();
+
+   int GetNumberOfScalarComponents();
+   int GetNumberOfScalarComponentsRaw();
+
+   /// Accessor to \ref File::GrPixel
+   uint16_t GetGrPixel()  { return GrPixel; }
+   /// Accessor to \ref File::NumPixel
+   uint16_t GetNumPixel() { return NumPixel; }
+
+   size_t GetPixelOffset();
+   size_t GetPixelAreaLength();
+
+   /// returns the RLE info
+   RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
+   /// Returns the JPEG Fragments info
+   JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
+
+   /// Replace patient's specific information by 'anonymous'
+   bool AnonymizeFile();
+
+   bool Write(std::string fileName, FileType filetype);
+
 protected:
+   /// Initialize DICOM File when none
+   void InitializeDefaultFile();
+ 
+   /// Store the RLE frames info obtained during parsing of pixels.
+   RLEFramesInfo *RLEInfo;
+   /// Store the JPEG fragments info obtained during parsing of pixels.
+   JPEGFragmentsInfo *JPEGInfo;
+
    /// \brief In some cases (e.g. for some ACR-NEMA images) the Entry Element
    /// Number of the 'Pixel Element' is *not* found at 0x0010. In order to
    /// make things easier the parser shall store the proper value in
@@ -107,91 +180,12 @@ protected:
    /// GrPixel to provide a unique access facility.
    uint16_t GrPixel;
 
-public:
-   File();
-   File( std::string const &filename );
- 
-   ~File();
-
-   // Standard values and informations contained in the header
-   bool IsReadable();
-
-   // Some heuristic based accessors, end user intended 
-   int GetBitsStored();
-   int GetBitsAllocated();
-   int GetSamplesPerPixel();
-   int GetPlanarConfiguration();
-   int GetPixelSize();
-   int GetHighBitPosition();
-   bool IsSignedPixelData();
-   bool IsMonochrome();
-   bool IsPaletteColor();
-   bool IsYBRFull();
-
-   std::string GetPixelType();
-   size_t GetPixelOffset();
-   size_t GetPixelAreaLength();
-
-   //Some image informations needed for third package imaging library
-   int GetXSize();
-   int GetYSize();
-   int GetZSize();
-
-   float GetXSpacing();
-   float GetYSpacing();
-   float GetZSpacing();
-
-   // For rescaling graylevel:
-   float GetRescaleIntercept();
-   float GetRescaleSlope();
-
-   int GetNumberOfScalarComponents();
-   int GetNumberOfScalarComponentsRaw();
-
-   // To organize DICOM files based on their x,y,z position 
-   void GetImageOrientationPatient( float iop[6] );
-
-   int GetImageNumber();
-   ModalityType GetModality();
-
-   float GetXOrigin();
-   float GetYOrigin();
-   float GetZOrigin();
-
-   bool   HasLUT();
-   int    GetLUTNbits();
-
-   /// Accessor to \ref File::GrPixel
-   uint16_t GetGrPixel()  { return GrPixel; }
-   
-   /// Accessor to \ref File::NumPixel
-   uint16_t GetNumPixel() { return NumPixel; }
-
-   /// Replace patient's specific information by 'anonymous'
-   bool AnonymizeFile();
-
-   bool Write(std::string fileName, FileType filetype);
-
-   /// returns the RLE info
-   RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
-   /// Returns the JPEG Fragments info
-   JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
-
-protected:
-   /// Initialize DICOM File when none
-   void InitializeDefaultFile();
- 
-   /// Store the RLE frames info obtained during parsing of pixels.
-   RLEFramesInfo *RLEInfo;
-   /// Store the JPEG fragments info obtained during parsing of pixels.
-   JPEGFragmentsInfo *JPEGInfo;
-
 private:
    void ComputeRLEInfo();
    void ComputeJPEGFragmentInfo();
-   void ReadAndSkipEncapsulatedBasicOffsetTable();
    bool     ReadTag(uint16_t, uint16_t);
    uint32_t ReadTagLength(uint16_t, uint16_t);
+   void ReadAndSkipEncapsulatedBasicOffsetTable();
 };
 } // end namespace gdcm
 

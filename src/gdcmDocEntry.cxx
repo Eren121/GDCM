@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:17 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -169,18 +169,6 @@ uint32_t DocEntry::GetFullLength()
 }
 
 /**
- * \brief   Copies all the attributes from an other DocEntry 
- * @param doc entry to copy from
- */
-void DocEntry::Copy(DocEntry *doc)
-{
-   Length     = doc->Length;
-   ReadLength = doc->ReadLength;
-   ImplicitVR = doc->ImplicitVR;
-   Offset     = doc->Offset;
-}
-
-/**
  * \brief   tells us if entry is the last one of a 'no length' SequenceItem 
  *          (fffe,e00d) 
  */
@@ -196,6 +184,18 @@ bool DocEntry::IsItemDelimitor()
 bool DocEntry::IsSequenceDelimitor()
 {
    return (GetGroup() == 0xfffe && GetElement() == 0xe0dd);
+}
+
+/**
+ * \brief   Copies all the attributes from an other DocEntry 
+ * @param doc entry to copy from
+ */
+void DocEntry::Copy(DocEntry *doc)
+{
+   Length     = doc->Length;
+   ReadLength = doc->ReadLength;
+   ImplicitVR = doc->ImplicitVR;
+   Offset     = doc->Offset;
 }
 
 //-----------------------------------------------------------------------------

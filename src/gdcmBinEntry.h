@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/30 17:30:57 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,8 +50,8 @@ public:
    /// \brief Returns the area value of the current Dicom Entry
    ///  when it's not string-translatable (e.g : LUT table, overlay, icon)         
    uint8_t *GetBinArea()  { return BinArea; }
-
    void  SetBinArea( uint8_t *area, bool self = true );
+
    /// \brief Sets SelfArea
    void SetSelfArea(bool area) { SelfArea = area; };
    /// \brief Returns SelfArea

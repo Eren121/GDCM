@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,21 +63,6 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
 }
 
 /**
- * \brief   delete all entries in the ElementSet
- */
-void ElementSet::ClearEntry()
-{
-   for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
-   {
-      if ( cc->second )
-      {
-         delete cc->second;
-      }
-   }
-   TagHT.clear();
-}
-
-/**
  * \brief   add a new Dicom Element pointer to the H Table
  * @param   newEntry entry to add
  */
@@ -132,6 +117,21 @@ bool ElementSet::RemoveEntryNoDestroy(DocEntry *entryToRemove)
 
    gdcmVerboseMacro( "Key not present");
    return false ;
+}
+
+/**
+ * \brief   delete all entries in the ElementSet
+ */
+void ElementSet::ClearEntry()
+{
+   for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
+   {
+      if ( cc->second )
+      {
+         delete cc->second;
+      }
+   }
+   TagHT.clear();
 }
 
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:26:34 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,7 @@
 
 namespace gdcm 
 {
+//-----------------------------------------------------------------------------
 class DocEntry;
 class ValEntry;
 class BinEntry;
@@ -31,8 +32,8 @@ class SeqEntry;
 class DictEntry;
 
 typedef std::string BaseTagKey;
-//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 /**
  * \brief
  * \ref DocEntrySet is an abstract base class for \ref ElementSet
@@ -108,17 +109,18 @@ public:
    virtual bool IsEmpty() = 0;
    virtual bool CheckIfEntryExist(uint16_t group, uint16_t elem);
 
-   DictEntry *NewVirtualDictEntry(uint16_t group,uint16_t elem,
-                                  TagName const &vr     = GDCM_UNKNOWN,
-                                  TagName const &vm     = GDCM_UNKNOWN,
-                                  TagName const &name   = GDCM_UNKNOWN );
-
 // DocEntry  related utilities 
    ValEntry *NewValEntry(uint16_t group,uint16_t elem,
                          TagName const &vr = GDCM_UNKNOWN);
    BinEntry *NewBinEntry(uint16_t group, uint16_t elem,
                          TagName const &vr = GDCM_UNKNOWN);
    SeqEntry *NewSeqEntry(uint16_t group, uint16_t elem);
+
+// DictEntry  related utilities 
+   DictEntry *NewVirtualDictEntry(uint16_t group,uint16_t elem,
+                                  TagName const &vr     = GDCM_UNKNOWN,
+                                  TagName const &vm     = GDCM_UNKNOWN,
+                                  TagName const &name   = GDCM_UNKNOWN );
 
 protected:
 // DictEntry  related utilities

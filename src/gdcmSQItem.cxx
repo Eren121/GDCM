@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:00:24 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.66 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,20 +100,6 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
 }
 
 /**
- * \brief  Remove all entry in the Sequence Item 
- */
-void SQItem::ClearEntry()
-{
-   for(ListDocEntry::iterator cc = DocEntries.begin();
-                              cc != DocEntries.end();
-                            ++cc)
-   {
-      delete *cc;
-   }
-   DocEntries.clear();
-}
-
-/**
  * \brief   Inserts *in the right place* any Entry (Dicom Element)
  *          into the Sequence Item
  * @param entry Entry to add
@@ -197,6 +183,20 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry *entryToRemove)
    return false ;
 }
                                                                                 
+/**
+ * \brief  Remove all entry in the Sequence Item 
+ */
+void SQItem::ClearEntry()
+{
+   for(ListDocEntry::iterator cc = DocEntries.begin();
+                              cc != DocEntries.end();
+                            ++cc)
+   {
+      delete *cc;
+   }
+   DocEntries.clear();
+}
+
 /**
  * \brief   Get the first Dicom entry while visiting the SQItem
  * \return  The first DocEntry if found, otherwhise 0

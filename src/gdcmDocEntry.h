@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:33 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,6 +44,11 @@ public:
    virtual ~DocEntry() {};
 
    virtual void Print (std::ostream &os = std::cout, std::string const &indent = ""); 
+   virtual void WriteContent(std::ofstream *fp, FileType filetype);
+
+   /// \brief  Gets the DicEntry of the current Dicom entry
+   /// @return The DicEntry of the current Dicom entry
+   DictEntry * GetDictEntry() { return DicomDict; }; 
 
    /// Returns the Dicom Group number of the current Dicom entry
    uint16_t      GetGroup()     { return DicomDict->GetGroup();  };
@@ -51,9 +56,8 @@ public:
    /// Returns the Dicom Element number of the current Dicom entry
    uint16_t      GetElement()   { return DicomDict->GetElement();};
 
-   /// Returns the 'key' of the current Dicom entry
+   /// Set the 'key' of the current Dicom entry
    void  SetKey( TagKey const &key ) { Key = key; }
-
    /// Returns the 'key' of the current Dicom entry
    std::string const &GetKey() const { return Key; }
 
@@ -82,7 +86,6 @@ public:
    /// \brief Sets only 'Read Length' (*not* 'Usable Length') of the current
    /// Dicom entry
    void SetReadLength(uint32_t l) { ReadLength = l; };
-
    /// \brief Returns the 'read length' of the current Dicom entry
    /// \warning this value is the one stored in the Dicom header but not
    ///          mandatoryly the one thats's used (in case on SQ, or delimiters,
@@ -92,15 +95,14 @@ public:
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
    /// Dicom entry
    void SetLength(uint32_t l) { Length = l; };
-      
    /// \brief Returns the actual value length of the current Dicom entry
    /// \warning this value is not *always* the one stored in the Dicom header
    ///          in case of well knowned bugs
    uint32_t GetLength() { return Length; };
-    
 
-   // The following 3 members, for internal use only ! 
-   
+   uint32_t GetFullLength();
+
+// The following 3 members, for internal use only ! 
    /// \brief   Sets the offset of the Dicom entry
    /// \warning use with caution !
    /// @param   of offset to be set
@@ -121,18 +123,10 @@ public:
    /// @return true if the VM is unknown
    bool IsVMUnknown() { return DicomDict->IsVMUnknown(); };
 
-   /// \brief  Gets the DicEntry of the current Dicom entry
-   /// @return The DicEntry of the current Dicom entry
-   DictEntry * GetDictEntry() { return DicomDict; }; 
-   
-   virtual void WriteContent(std::ofstream *fp, FileType filetype);
-   
-   uint32_t GetFullLength();
-   
-   virtual void Copy(DocEntry *e);
-
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   
+   
+   virtual void Copy(DocEntry *e);
 
 protected:
    /// \brief pointer to the underlying Dicom dictionary element

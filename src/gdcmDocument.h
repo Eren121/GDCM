@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:34 $
-  Version:   $Revision: 1.103 $
+  Date:      $Date: 2005/02/02 16:18:48 $
+  Version:   $Revision: 1.104 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,9 +44,6 @@ class GDCM_EXPORT Document : public ElementSet
 public:
 
 // Dictionaries
-   virtual void PrintPubDict (std::ostream &os = std::cout);
-   virtual void PrintShaDict (std::ostream &os = std::cout);
-
    Dict* GetPubDict();
    Dict* GetShaDict();
    bool SetShaDict(Dict* dict);
@@ -74,9 +71,6 @@ public:
    ///         so they agree with the processor order.
    uint32_t UnswapLong(uint32_t a) { return SwapLong(a);}
    
-// Ordering of Documents
-   bool operator<(Document &document);
-
 // File I/O
    /// Accessor to \ref Filename
    const std::string &GetFileName() const { return Filename; }
@@ -88,11 +82,13 @@ public:
    void WriteContent( std::ofstream *fp, FileType type );
 
 // Content entries
-
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
    virtual void LoadEntryBinArea(BinEntry *entry);
 
    void LoadDocEntrySafe(DocEntry *entry);
+
+// Ordering of Documents
+   bool operator<(Document &document);
 
 protected:
 // Methods
@@ -149,6 +145,8 @@ protected:
 
 private:
 // Methods
+   void Initialize();
+
    // Read
    void ParseDES(DocEntrySet *set,long offset, long l_max, bool delim_mode);
    void ParseSQ (SeqEntry *seq,   long offset, long l_max, bool delim_mode);
@@ -168,7 +166,6 @@ private:
    void FixDocEntryFoundLength(DocEntry *entry,uint32_t l);
    bool IsDocEntryAnInteger   (DocEntry *entry);
 
-   void Initialize();
    bool CheckSwap();
    void SwitchByteSwapCode();
    void SetMaxSizeLoadEntry(long);
