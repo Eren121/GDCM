@@ -79,6 +79,22 @@ public:
    
    // TODO Swig int SetShaDict(std::string filename);
    // TODO Swig int SetPubDict(std::string filename);
+   
+// System access
+/**
+ * \ingroup gdcmHeader
+ * \brief   the Header Entry Group Number of the 'Pixel Group' 
+ *          is not allways 0x7fe0
+ * @return  GrPixel
+ */
+   guint16 GetGrPixel(void)  {return GrPixel;}
+/**
+ * \ingroup gdcmHeader
+ * \brief   the Header Entry Element Number of the 'Pixel Element' 
+ *          is not allways 0x0010
+ * @return  NumPixel
+ */
+    guint16 GetNumPixel(void) {return NumPixel;}   
 
 // Entry
 

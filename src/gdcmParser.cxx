@@ -90,10 +90,11 @@ const unsigned int gdcmParser::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+
 /**
  * \ingroup gdcmParser
- * \brief   
- * @param   InFilename
+ * \brief constructor  
+ * @param   inFilename
  * @param   exception_on_error
  * @param   enable_sequences = true to allow the header 
  *          to be parsed *inside* the SeQuences, 
@@ -104,7 +105,7 @@ const unsigned int gdcmParser::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
  *	     with a FALSE value for the 'enable_sequence' param.
  *	     ('public elements' may be embedded in 'shadow Sequences')
  */
-gdcmParser::gdcmParser(const char *InFilename, 
+gdcmParser::gdcmParser(const char *inFilename, 
                        bool exception_on_error,
                        bool enable_sequences,
 		       bool ignore_shadow) {
@@ -112,7 +113,7 @@ gdcmParser::gdcmParser(const char *InFilename,
    ignoreShadow   =ignore_shadow;
    
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
-   filename = InFilename;
+   filename = inFilename;
    Initialise();
 
    if ( !OpenFile(exception_on_error))
@@ -128,7 +129,7 @@ gdcmParser::gdcmParser(const char *InFilename,
 
 /**
  * \ingroup gdcmParser
- * \brief   
+ * \brief  constructor 
  * @param   exception_on_error
  */
 gdcmParser::gdcmParser(bool exception_on_error) {
@@ -385,7 +386,8 @@ bool gdcmParser::CloseFile(void) {
 
 /**
  * \ingroup gdcmParser
- * \brief 
+ * \brief writes on disc all the Header Entries (Dicom Elements) 
+ *        of the Chained List
  * @param fp file pointer on an already open file
  * @param   type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
@@ -1020,11 +1022,13 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
  * \ingroup gdcmParser
  * \brief   writes on disc according to the requested format
  *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image
+ *          using the Chained List
  * \warning does NOT add the missing elements in the header :
  *           it's up to the user doing it !
  *           (function CheckHeaderCoherence to be written)
  * \warning DON'T try, right now, to write a DICOM image
  *           from an ACR Header (meta elements will be missing!)
+ * \sa WriteEntriesDeprecated (Special temporay method for Theralys)
  * @param   type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
@@ -1171,7 +1175,8 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
 /**
  * \ingroup gdcmParser
  * \brief   writes on disc according to the requested format
- *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image,
+ *          using only the last synonym of each mutimap H Table post.
  * \warning Uses the H Table, instead of the Chained List
  *          in order to be compliant with the old way to proceed
  *         (added elements taken in to account)
@@ -1179,6 +1184,7 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
  *         to use this method !!!
  * \warning DON'T try, right now, to write a DICOM image
  *           from an ACR Header (meta elements will be missing!)
+ * \sa WriteEntries
  * @param   _fp already open file pointer
  * @param   type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
@@ -1533,9 +1539,8 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
 
 /**
  * \ingroup gdcmParser
- * \brief   
- * @param   Entry Header Entry whose length of the value shall be loaded. 
- * @return 
+ * \brief  Find the value Length of the passed Header Entry
+ * @param  Entry Header Entry whose length of the value shall be loaded. 
  */
  void gdcmParser::FindHeaderEntryLength (gdcmHeaderEntry *Entry) {
    guint16 element = Entry->GetElement();
@@ -2003,13 +2008,13 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
    
    return false;
 }
-
 /**
  * \ingroup gdcmParser
- * \brief   
+ * \brief  Find the Length till the next sequence delimiter
  * \warning NOT end user intended method !
  * @return 
  */
+
  guint32 gdcmParser::FindHeaderEntryLengthOB(void)  {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
    guint16 g;

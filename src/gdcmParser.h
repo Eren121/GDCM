@@ -36,7 +36,7 @@ class GDCM_EXPORT gdcmParser
 {
 public:
    gdcmParser(bool exception_on_error  = false);
-   gdcmParser(const char *filename, 
+   gdcmParser(const char *inFilename, 
               bool  exception_on_error = false, 
               bool  enable_sequences   = false,
 	      bool  ignore_shadow      = false);
@@ -49,12 +49,21 @@ public:
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
    void SetPrintLevel(int level) { printLevel = level; };
+   /**
+    * \ingroup gdcmParser
+    * \brief   canonical Printer 
+    * \sa    SetPrintLevel
+    */   
    virtual void Print        (std::ostream &os = std::cout) {PrintEntry(os);};
    virtual void PrintEntry   (std::ostream &os = std::cout);
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
 
 // Standard values
+   /**
+    * \ingroup gdcmParser
+    * \brief   Gets the external File Name 
+    */
    inline std::string GetFileName(void) {return filename;}
 
 // Dictionnaries
@@ -86,11 +95,11 @@ public:
     */
    inline ListTag &GetListEntry(void) { return listEntries; };
 
-// Read (used in gdcmFile)
+// Read (used in gdcmFile, gdcmDicomDir)
    FILE *OpenFile(bool exception_on_error = false) throw(gdcmFileError);
    bool CloseFile(void);
 
-// Write (used in gdcmFile)
+// Write (used in gdcmFile, gdcmDicomDir)
    virtual bool Write(FILE *, FileType);
 
    bool ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem);
@@ -98,9 +107,15 @@ public:
    bool ReplaceIfExistByNumber (     char  *Value, guint16 Group, guint16 Elem);
 
 // System access
+   /**
+    * \ingroup gdcmHeader
+    * \brief   returns the 'swap code' 
+    *          (Big Endian, Little Endian, 
+    *          Bad Big Endian, Bad Little Endian)
+    *          according to the processor Endianity and what's written on disc
+    * return 
+    */
    inline int GetSwapCode(void) { return sw; }
-   guint16 GetGrPixel(void)  {return GrPixel;}
-   guint16 GetNumPixel(void) {return NumPixel;}
    
    guint16 SwapShort(guint16);   // needed by gdcmFile
    guint32 SwapLong(guint32);    // needed by gdcmFile
@@ -142,25 +157,51 @@ protected:
    void AddHeaderEntry       (gdcmHeaderEntry *);
 
 // Variables
+   /**
+   * \brief File Pointer, open during Header parsing
+   */
    FILE *fp;
-   FileType filetype; // ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
+   /**
+   * \brief ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
+   */
+   FileType filetype;  
 
    static const unsigned int HEADER_LENGTH_TO_READ; 
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
 protected:
-   TagHeaderEntryHT tagHT; // H Table (multimap), to provide fast access
-   ListTag listEntries;    // chained list, to keep the 'spacial' ordering
-    
+   /**
+   * \brief H Table (multimap), to provide fast access
+   */
+   TagHeaderEntryHT tagHT; 
+   /**
+   * \brief chained list, to keep the 'spacial' ordering
+   */
+   ListTag listEntries; 
+   /**
+   * \brief will be set 1 if user asks to 'go inside' the 'sequences' (VR = "SQ")
+   */    
    int enableSequences;
+   /**
+   * \brief amount of printed details for each Header Entry (Dicom Element)
+   *  0 : the least 
+   */    
    int printLevel;
    
-   // For some ACR-NEMA images, it's *not* 7fe0, 0010 ...    
+   /** 
+   * \brief For some ACR-NEMA images, it's *not* 7fe0 ... 
+   */   
    guint16 GrPixel;
+   
+   /** 
+   * \brief For some ACR-NEMA images, it's *not* 0010 ... 
+   */    
    guint16 NumPixel;
-   // some files may contain icons; GrPixel,NumPixel appears several times
-   // Let's remember how many times!
+   /**
+   * \brief some files may contain icons; GrPixel,NumPixel appears several times
+   * Let's remember how many times!
+   */
    int countGrPixel;
       
 private:
