@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 11:40:50 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/01/19 15:26:42 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,17 +73,17 @@ int main(int argc, char* argv[])
    sPP          = e1->GetSamplesPerPixel();
    planarConfig = e1->GetPlanarConfiguration();
    
-   std::cout << " pixelType="           << pixelType 
-             << " SamplesPerPixel="     << sPP
-             << " PlanarConfiguration=" << planarConfig 
-             << std::endl 
-             << " PhotometricInterpretation=" 
+   std::cout << " pixelType= ["           << pixelType 
+             << "] SamplesPerPixel= ["     << sPP
+             << "] PlanarConfiguration= [" << planarConfig 
+             << "] "<< std::endl 
+             << " PhotometricInterpretation= [" 
                                 << e1->GetEntry(0x0028,0x0004)
-             << std::endl;
+             << "] "<< std::endl;
 
    int numberOfScalarComponents=e1->GetNumberOfScalarComponents();
-   std::cout << " NumberOfScalarComponents " << numberOfScalarComponents <<std::endl
-             << " LUT=" << (e1->HasLUT() ? "TRUE" : "FALSE")
+   std::cout << " NumberOfScalarComponents = " << numberOfScalarComponents <<std::endl
+             << " LUT = " << (e1->HasLUT() ? "TRUE" : "FALSE")
              << std::endl;
 
   
