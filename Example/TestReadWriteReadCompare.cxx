@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
              << "images " << std::endl
              << "           match (as expanded by gdcm)." << std::endl;
 
-   int i = 0;
+   //int i = 0;
    //while( gdcmDataImages[i] != 0 ) 
    {
       std::string filename = GDCM_DATA_ROOT;
