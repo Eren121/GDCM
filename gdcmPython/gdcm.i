@@ -24,7 +24,10 @@
 #include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmSQItem.h"
 #include "gdcmUtil.h"
+#include "gdcmDocEntry.h"
 #include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
+#include "gdcmSeqEntry.h"
 
 ////////////////////////////////////////////////////////////////////////////
 /// Refer (below) to the definition of multi-argument typemap
@@ -73,29 +76,51 @@ using namespace gdcm;
 ///////////////////////  typemap section  ////////////////////////////////////
 
 ////////////////////////////////////////////////
+// Convert a DocEntry * to the real derived class
+%typemap(out) gdcm::DocEntry * 
+{
+   PyObject *newEntry;
+
+   if($1)
+   {
+      if(dynamic_cast<SeqEntry *>($1)) // SeqEntry *
+         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__SeqEntry,0);
+      else if(dynamic_cast<BinEntry *>($1)) // BinEntry *
+         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__BinEntry,0);
+      else // ValEntry *
+         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__ValEntry,0);
+   }
+   else
+   {
+      newEntry = Py_BuildValue("");
+   }
+   $result = newEntry;
+}
+
+////////////////////////////////////////////////
 // Convert an STL list<> to a python native list
 %typemap(out) std::list<std::string> * 
 {
-   PyObject* NewItem = (PyObject*)0;
-   PyObject* NewList = PyList_New(0); // The result of this typemap
+   PyObject *newItem = (PyObject *)0;
+   PyObject *newList = PyList_New(0); // The result of this typemap
 
-   for (std::list<std::string>::iterator NewString = ($1)->begin();
-        NewString != ($1)->end();
-        ++NewString)
+   for (std::list<std::string>::iterator strIt = ($1)->begin();
+        strIt != ($1)->end();
+        ++strIt)
    {
-      NewItem = PyString_FromString(NewString->c_str());
-      PyList_Append( NewList, NewItem);
+      newItem = PyString_FromString(strIt->c_str());
+      PyList_Append( newList, newItem);
    }
-   $result = NewList;
+   $result = newList;
 }
 
 //////////////////////////////////////////////////////////////////
 // Convert an STL map<> (hash table) to a python native dictionary
 %typemap(out) std::map<std::string, std::list<std::string> > * 
 {
-   PyObject* NewDict = PyDict_New(); // The result of this typemap
-   PyObject* NewKey = (PyObject*)0;
-   PyObject* NewVal = (PyObject*)0;
+   PyObject *newDict = PyDict_New(); // The result of this typemap
+   PyObject *newKey = (PyObject *)0;
+   PyObject *newVal = (PyObject *)0;
 
    for (std::map<std::string,
         std::list<std::string> >::iterator tag = ($1)->begin();
@@ -105,105 +130,106 @@ using namespace gdcm;
       // Do not publish entries whose keys is made of spaces
       if (first.length() == 0)
          continue;
-      NewKey = PyString_FromString(first.c_str());
-      PyObject* NewList = PyList_New(0);
-      for (std::list<std::string>::iterator Item = tag->second.begin();
-           Item != tag->second.end();
-           ++Item)
+      newKey = PyString_FromString(first.c_str());
+
+      PyObject *newList = PyList_New(0);
+      for (std::list<std::string>::iterator itemIt = tag->second.begin();
+           itemIt != tag->second.end();
+           ++itemIt)
       {
-         NewVal = PyString_FromString(Item->c_str());
-         PyList_Append( NewList, NewVal);
+         newVal = PyString_FromString(itemIt->c_str());
+         PyList_Append( newList, newVal);
       }
-      PyDict_SetItem( NewDict, NewKey, NewList);
+      PyDict_SetItem( newDict, newKey, newList);
    }
-   $result = NewDict;
+   $result = newDict;
 }
 
 /////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
 %typemap(out) gdcm::TagDocEntryHT & 
 {
-   PyObject* NewDict = PyDict_New(); // The result of this typemap
-   std::string RawName;              // Element name as gotten from gdcm
-   PyObject* NewKey = (PyObject*)0;  // Associated name as python object
-   std::string RawValue;             // Element value as gotten from gdcm
-   PyObject* NewVal = (PyObject*)0;  // Associated value as python object
+   PyObject *newDict = PyDict_New(); // The result of this typemap
+   std::string rawName;              // Element name as gotten from gdcm
+   PyObject *newKey = (PyObject *)0; // Associated name as python object
+   std::string rawValue;             // Element value as gotten from gdcm
+   PyObject *newVal = (PyObject *)0; // Associated value as python object
 
    for (gdcm::TagDocEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag)
    {
       // The element name shall be the key:
-      RawName = tag->second->GetName();
+      rawName = tag->second->GetName();
       // gdcm unrecognized (including not loaded because their size exceeds
       // the user specified treshold) elements are exported with their
       // TagKey as key.
-      if (RawName == "Unknown")
-         RawName = tag->second->GetKey();
-      NewKey = PyString_FromString(RawName.c_str());
+      if (rawName == "Unknown")
+         rawName = tag->second->GetKey();
+      newKey = PyString_FromString(rawName.c_str());
 
       // Element values are striped from leading/trailing spaces
-	  gdcm::ValEntry* ValEntryPtr = dynamic_cast< gdcm::ValEntry* >(tag->second);
-      if ( ValEntryPtr )
+      gdcm::ValEntry *valEntryPtr = dynamic_cast< gdcm::ValEntry* >(tag->second);
+      if ( valEntryPtr )
       {
-         RawValue = ValEntryPtr->GetValue();
+         rawValue = valEntryPtr->GetValue();
       }
       else
         continue; 
-      NewVal = PyString_FromString(RawValue.c_str());
-      PyDict_SetItem( NewDict, NewKey, NewVal);
+      newVal = PyString_FromString(rawValue.c_str());
+      PyDict_SetItem( newDict, newKey, newVal);
    }
-   $result = NewDict;
+   $result = newDict;
 }
 
 /////////////////////////////////////
 %typemap(out) ListDicomDirPatient & 
 {
-	PyObject* NewItem = (PyObject*)0;
+	PyObject *newItem = (PyObject *)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (std::list<gdcm::DicomDirPatient *>::iterator New = ($1)->begin();
-	    New != ($1)->end(); ++New)
+	for (std::list<gdcm::DicomDirPatient *>::iterator newIt = ($1)->begin();
+	    newIt != ($1)->end(); ++newIt)
    {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirPatient,1);
-		PyList_Append($result, NewItem);
+		newItem = SWIG_NewPointerObj(*newIt,SWIGTYPE_p_DicomDirPatient,0);
+		PyList_Append($result, newItem);
 	}
 }
 
 %typemap(out) ListDicomDirStudy & 
 {
-	PyObject* NewItem = (PyObject*)0;
+	PyObject *newItem = (PyObject *)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (std::list<gdcm::DicomDirStudy *>::iterator New = ($1)->begin();
-	    New != ($1)->end(); ++New)
+	for (std::list<gdcm::DicomDirStudy *>::iterator newIt = ($1)->begin();
+	    newIt != ($1)->end(); ++newIt)
    {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirStudy,1);
-		PyList_Append($result, NewItem);
+		newItem = SWIG_NewPointerObj(*newIt,SWIGTYPE_p_DicomDirStudy,0);
+		PyList_Append($result, newItem);
 	}
 }
 
 %typemap(out) ListDicomDirSerie & 
 {
-	PyObject* NewItem = (PyObject*)0;
+	PyObject* newItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (std::list<gdcm::DicomDirSerie *>::iterator New = ($1)->begin();
-	    New != ($1)->end(); ++New)
+	for (std::list<gdcm::DicomDirSerie *>::iterator newIt = ($1)->begin();
+	    newIt != ($1)->end(); ++newIt)
    {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirSerie,1);
-		PyList_Append($result, NewItem);
+		newItem = SWIG_NewPointerObj(*newIt,SWIGTYPE_p_DicomDirSerie,0);
+		PyList_Append($result, newItem);
 	}
 }
 
 %typemap(out) ListDicomDirImage & 
 {
-	PyObject* NewItem = (PyObject*)0;
+	PyObject* newItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (std::list<gdcm::DicomDirImage *>::iterator New = ($1)->begin();
-	    New != ($1)->end(); ++New) 
+	for (std::list<gdcm::DicomDirImage *>::iterator newIt = ($1)->begin();
+	    newIt != ($1)->end(); ++newIt) 
    {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirImage,1);
-		PyList_Append($result, NewItem);
+		newItem = SWIG_NewPointerObj(*newIt,SWIGTYPE_p_DicomDirImage,0);
+		PyList_Append($result, newItem);
 	}
 }
 
@@ -302,6 +328,10 @@ using namespace gdcm;
 %include "gdcmUtil.h"
 %include "gdcmGlobal.h"
 %include "gdcmDicomDir.h"
+%include "gdcmDocEntry.h"
+%include "gdcmValEntry.h"
+%include "gdcmBinEntry.h"
+%include "gdcmSeqEntry.h"
 
 ////////////////////////////////////////////////////////////////////////////
 // Notes on swig and this file gdcm.i:

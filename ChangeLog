@@ -1,6 +1,7 @@
 2005-01-11 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Bug fix for the python part use
-   
+   * Now, PrintHeader.py pass... but outside the ctest use. shit !
+
 2005-01-11 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * gdcmPython/gdcm.i : bug fix when compiling with MSCV
 
