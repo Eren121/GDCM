@@ -15,11 +15,12 @@
  * \ingroup gdcmSeqEntry
  * \brief   Constructor from a given gdcmSeqEntry
  */
-gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e) 
+gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e, int depth) 
              : gdcmDocEntry(e)
 {
    delimitor_mode = false;
-   seq_term  = NULL;   
+   seq_term  = NULL;
+   SQDepthLevel = depth; // +1; // ??
 }
 
 /**
@@ -43,7 +44,7 @@ gdcmSeqEntry::~gdcmSeqEntry() {
  */
 void gdcmSeqEntry::Print(std::ostream &os){
 
-   std::ostringstream s;
+   std::ostringstream s,s2;
    string vr;
    unsigned short int g, e;
    long lgth;
@@ -51,69 +52,30 @@ void gdcmSeqEntry::Print(std::ostream &os){
    char greltag[10];  //group element tag
    char st[20]; 
 
-
+   // First, Print the Dicom Element itself.
    SetPrintLevel(2);   
-//   PrintCommonPart(os); // FIXME : why doesn't it work ?
-     
-   // First, Print the Dicom Element itself. 
-   g  = GetGroup();
-   e  = GetElement();   
-   o  = GetOffset();
-   vr = GetVR();
-   sprintf(greltag,"%04x|%04x ",g,e);           
-   s << greltag ;
-   if (GetPrintLevel()>=2) { 
-      s << "lg : ";
-      lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
-      if (lgth == 0xffffffff) {
-         sprintf(st,"x(ffff)");  // I said : "x(ffff)" !
-         s.setf(std::ios::left);
-         s << std::setw(10-strlen(st)) << " ";  
-         s << st << " ";
-         s.setf(std::ios::left);
-         s << std::setw(8) << "-1";      
-      } else {
-         sprintf(st,"x(%x)",lgth);
-         s.setf(std::ios::left);
-         s << std::setw(10-strlen(st)) << " ";  
-         s << st << " ";
-         s.setf(std::ios::left);
-         s << std::setw(8) << lgth; 
-      }
-      s << " Off.: ";
-      sprintf(st,"x(%x)",o); 
-      s << std::setw(10-strlen(st)) << " ";
-      s << st << " ";
-      s << std::setw(8) << o; 
-   }
-
-   s << "[" << vr  << "] ";
-   if (GetPrintLevel()>=1) {      
-      s.setf(std::ios::left);
-      s << std::setw(66-GetName().length()) << " ";
-   }
-    
-   s << "[" << GetName()<< "]";
-
+   PrintCommonPart(os);
    s << std::endl;
-   os << s.str();
-
+   os << s.str();   
  
     // Then, Print each SQ Item   
      for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
-   {
+   { 
       //(*cc)->SetPrintLevel(GetPrintLevel()); aurait-ce un sens ?
-      (*cc)->Print(os);
+      (*cc)->Print(os);   
    }
    // at end, print the sequence terminator item, if any
-   /*
-   if (delimitor_mode) {  // TODO : find the trick to print it properly
-      s << "   | " ;   
-      os << s.str();
-      if (seq_term = NULL)
-         seq_term->Print(os);      
-   }        
-  */             
+
+   if (delimitor_mode) {
+      s2 << "   | " ;   
+      os << s2.str();
+      if (seq_term != NULL) {
+         seq_term->Print(os);
+      }	 
+      else 
+         std::cout << "      -------------- should have a sequence terminator item"
+	           << std::endl;      
+   }                    
  }
 
 //-----------------------------------------------------------------------------
@@ -123,6 +85,11 @@ void gdcmSeqEntry::Print(std::ostream &os){
 void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem) {
    items.push_back(sqItem);
 }
+
+
+void gdcmSeqEntry::SetDepthLevel(int depth) {
+   SQDepthLevel = depth;
+}
 //-----------------------------------------------------------------------------
 // Protected
 
@@ -131,6 +98,7 @@ void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem) {
 // Private
 
 // end-user intended : the guy *wants* to create his own SeQuence ?!?
+
 gdcmDocEntry *gdcmSeqEntry::NewDocEntryByNumber(guint16 group,
                                                 guint16 element) {
 // TODO				  
@@ -141,6 +109,13 @@ gdcmDocEntry *gdcmSeqEntry::NewDocEntryByNumber(guint16 group,
 gdcmDocEntry *gdcmSeqEntry::NewDocEntryByName  (std::string Name) {
 // TODO	: 			  
    gdcmDocEntry *a;   
-   return a;
+   return a;   
+}
+
+gdcmDocEntry *gdcmSeqEntry::GetDocEntryByNumber(guint16 group,
+                                                guint16 element) {
+// TODO				  
+   gdcmDocEntry *a;   
+   return a;				  
 }	
 //-----------------------------------------------------------------------------

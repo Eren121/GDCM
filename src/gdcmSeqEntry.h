@@ -15,7 +15,7 @@ typedef std::list<gdcmSQItem *> ListSQItem;
 class GDCM_EXPORT gdcmSeqEntry : public gdcmDocEntry 
 {
 public:
-   gdcmSeqEntry(gdcmDictEntry* e);
+   gdcmSeqEntry(gdcmDictEntry* e, int depth);
    ~gdcmSeqEntry(void);
    
    virtual void Print(std::ostream &os = std::cout); 
@@ -39,7 +39,10 @@ public:
     
    gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element);    
    gdcmDocEntry *NewDocEntryByName  (std::string Name); 
-     
+   gdcmDocEntry *GetDocEntryByNumber(guint16 group, guint16 element);
+
+   void SetDepthLevel(int depth);
+         
 protected:
 
 private:
@@ -54,6 +57,8 @@ private:
    
 /// \brief sequence terminator item 
    gdcmDocEntry *seq_term;
+
+   //int SQDepthLevel;
 
 };
 

@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include "gdcmDictEntry.h"
+//#include "gdcmValEntry.h"
 class gdcmHeader;
 
 //-----------------------------------------------------------------------------
@@ -18,15 +19,7 @@ class gdcmHeader;
 class GDCM_EXPORT gdcmDocEntry {
 public:
    gdcmDocEntry(gdcmDictEntry*);
-
-   /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
-   /// 'string', if it's stored as an integer in the Dicom Header of the
-   /// current Dicom Header Entry 
-   /// TODO virtual?  
-   //inline std::string  GetValue(void)     { return value; };
-   // Pour continuer a compiler :-(
-   inline std::string  GetValue(void)     { return "value"; };
-      
+     
    /// Returns the Dicom Group number of the current Dicom Header Entry
    inline guint16      GetGroup(void)     { return entry->GetGroup();  };
 
@@ -124,7 +117,12 @@ public:
 
    bool isItemDelimitor();
    bool isSequenceDelimitor();   
-      
+
+   inline int GetDepthLevel(void) 
+      {return(SQDepthLevel);}
+   void SetDepthLevel(int depth) 
+      {SQDepthLevel = depth;}
+            
 private:
    // FIXME: In fact we should be more specific and use :
    // friend gdcmDocEntry * gdcmHeader::ReadNextElement(void);

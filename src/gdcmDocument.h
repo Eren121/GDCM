@@ -10,12 +10,13 @@
 #include "gdcmException.h"
 #include "gdcmDictSet.h"
 #include "gdcmDocEntry.h"
+//#include "gdcmSeqEntry.h"
+class gdcmSeqEntry;
 #include "gdcmDocEntrySet.h"
 #include "gdcmElementSet.h"
 
 #include <map>
 #include <list>
-
 
 
 //-----------------------------------------------------------------------------
@@ -24,13 +25,6 @@ typedef std::string VRAtr;
 typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
 typedef std::map<TagKey, gdcmDocEntry *> TagDocEntryHT;
-typedef std::pair<TagKey, gdcmDocEntry *> PairHT;
-typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT; 
-/// for linking together the Elements
-typedef std::list<gdcmDocEntry *> ListTag;
-
-typedef std::string GroupKey;
-typedef std::map<GroupKey, int> GroupHT;
 
 //-----------------------------------------------------------------------------
 /**
@@ -59,9 +53,7 @@ private:
    /// \brief Size threshold above which an element value will NOT be *printed*
    /// in order no to polute the screen output. By default, this upper bound
    /// is fixed to 64 bytes.
-   guint32 MaxSizePrintEntry;
-   
-   
+   guint32 MaxSizePrintEntry;   
 
 protected:
    /// Refering underlying filename.
@@ -91,12 +83,6 @@ protected:
    ///       \ref gdcmDocEntry.cxx. See also
    ///       \ref gdcmDocument::SetMaxSizePrintEntry()
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
-
-   /// Hash Table (multimap), to provide fast access
-   TagDocEntryHT tagHT; 
-
-   /// Chained list, to keep the 'spacial' ordering
-   ListTag listEntries; 
 
    /// Will be set 1 if user asks to 'go inside' the 'sequences' (VR = "SQ")
    int enableSequences;
@@ -146,7 +132,6 @@ public:
    virtual void WriteEntryValue(gdcmDocEntry *tag,FILE *_fp,FileType type);
    virtual bool WriteEntry(gdcmDocEntry *tag,FILE *_fp,FileType type);
    virtual bool WriteEntries(FILE *_fp,FileType type);
-   void WriteEntriesDeprecated(FILE *_fp,FileType type); // JPR
 
    gdcmDocEntry * ReplaceOrCreateByNumber(std::string Value,
                                              guint16 Group, guint16 Elem);
@@ -171,6 +156,8 @@ protected:
               bool  enable_sequences   = false,
 	      bool  ignore_shadow      = false);
    virtual ~gdcmDocument(void);
+   
+   void gdcmDocument::Parse7FE0 (void);   
 // Entry
    int CheckIfEntryExistByNumber(guint16 Group, guint16 Elem ); // int !
    virtual std::string GetEntryByName    (std::string tagName);
@@ -194,8 +181,6 @@ protected:
 // Header entry
    gdcmDocEntry *GetDocEntryByNumber  (guint16 group, guint16 element); 
    gdcmDocEntry *GetDocEntryByName    (std::string Name);
-   IterHT           GetDocEntrySameNumber(guint16 group, guint16 element); 
-// IterHT           GetDocEntrySameName  (std::string Name); 
 
    void LoadDocEntrySafe(gdcmDocEntry *);
 
@@ -213,8 +198,8 @@ private:
    // What about exception_on_error ?
    
    long ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
-   long ParseSQ(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
-   
+  // long ParseSQ(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
+  long ParseSQ(gdcmSeqEntry *seq, long offset, long l_max, bool delim_mode); 
    
    void LoadDocEntry      (gdcmDocEntry *);
    void FindDocEntryLength(gdcmDocEntry *);
@@ -281,7 +266,7 @@ public:
    inline TagDocEntryHT &GetEntry(void) { return tagHT; };
 
    /// Accessor to \ref gdcmDocument::listEntries
-   inline ListTag &GetListEntry(void) { return listEntries; };
+   //inline ListTag &GetListEntry(void) { return listEntries; };
 
    /// 'Swap code' accessor (see \ref sw )
    inline int GetSwapCode(void) { return sw; }

@@ -31,7 +31,7 @@ gdcmBinEntry::~gdcmBinEntry(){
  
 void gdcmBinEntry::Print(std::ostream &os = std::cout) {
    PrintCommonPart(os);
-   std::cout << "gdcmBinEntry : Print, et alors ?" <<std::endl;
+   std::cout << " gdcmBinEntry : Print, so WHAT ?" <<std::endl;
 }
 //-----------------------------------------------------------------------------
 // Public

@@ -13,13 +13,18 @@ class GDCM_EXPORT gdcmDocEntrySet
 
 public:
 
-   gdcmDocEntrySet(void); 
+   gdcmDocEntrySet(int depth = 0); 
    ~gdcmDocEntrySet(void);
 
    virtual bool AddEntry(gdcmDocEntry *Entry) = 0; // pure virtual
    bool CheckEntryVR(gdcmDocEntry *Entry, std::string vr); 
    virtual void Print (std::ostream & os = std::cout) = 0;// pure virtual
-       				          
+
+   inline int GetDepthLevel(void) 
+      {return(SQDepthLevel);}
+   void SetDepthLevel(int depth) 
+      {SQDepthLevel = depth;}
+         
 protected:
 
    void gdcmDocEntrySet::FindDocEntryLength (gdcmDocEntry *Entry);
@@ -28,10 +33,10 @@ protected:
     
    virtual gdcmDocEntry *NewDocEntryByNumber(guint16 group, 
                                              guint16 element)=0; // pure virtual
-   virtual gdcmDocEntry *NewDocEntryByName  (std::string Name)=0; // pure virtual  
-  
+   virtual gdcmDocEntry *NewDocEntryByName  (std::string Name)=0;// pure virtual  
 
-         
+   int SQDepthLevel;
+                 				          
 private:
     
 };

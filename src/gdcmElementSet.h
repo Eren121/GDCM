@@ -16,7 +16,7 @@ typedef std::map<TagKey, gdcmDocEntry *> TagDocEntryHT;
 class GDCM_EXPORT gdcmElementSet : public gdcmDocEntrySet 
 {
 public:
-   gdcmElementSet(void);
+   gdcmElementSet(int);
    ~gdcmElementSet(void);
    virtual bool AddEntry(gdcmDocEntry *Entry); // add to the H Table
 
@@ -24,12 +24,12 @@ public:
     
 protected:
 
-private:
-
 // Variables
 
    /// Hash Table (map), to provide fast access
-   TagDocEntryHT tagHT;   
+   TagDocEntryHT tagHT; 
+     
+private:
    
 };
 

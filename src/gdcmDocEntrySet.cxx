@@ -18,7 +18,8 @@
  * \ingroup gdcmDocEntrySet
  * \brief   Constructor from a given gdcmDocEntrySet
  */
-gdcmDocEntrySet::gdcmDocEntrySet() {
+gdcmDocEntrySet::gdcmDocEntrySet(int depthLevel) {
+   SQDepthLevel = depthLevel + 1;
 }
 /**
  * \brief   Canonical destructor.

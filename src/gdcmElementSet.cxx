@@ -10,10 +10,8 @@
  * \ingroup gdcmElementSet
  * \brief   Constructor from a given gdcmElementSet
  */
-gdcmElementSet::gdcmElementSet() {
-   //TagDocEntryHT tagHT est un champ de gdcmElementSet.
-   // inutile de faire new ?
-      
+gdcmElementSet::gdcmElementSet(int depthLevel) 
+              : gdcmDocEntrySet(depthLevel) {
 }
 
 /**
@@ -58,12 +56,14 @@ void gdcmElementSet::Print(std::ostream & os) {
 // Protected
 
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 // Private
 
 
 /**
  * \brief   add a new Dicom Element pointer to the H Table
- * @param   newDocEntry entry to add
+ * @param   NewEntry entry to add
  */
 bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
    TagKey key;
