@@ -1,3 +1,6 @@
+2004-04-30  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+     * Doc/gdcmUML.xmi added raw UML class view (umbrello format)
+
 2004-04-29  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
      * DEVELOPPER: added some helpfull comments for compile/test/install
        when using cmake.
