@@ -44,8 +44,6 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
    gdcmTS * ts = gdcmGlobal::GetTS();
 
    std::ostringstream s;
-
-   s << "------------- using tagHT ---------------------" << std::endl; 
    
    // Tag HT
    s << "------------- using tagHT ---------------------" << std::endl; 
@@ -97,10 +95,8 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
       s << greltag << ": lgth : ";
       lgth = (*i)->GetReadLength();
-      if ( lgth == 0xffffffff) 
-         s << std::hex << lgth << std::dec ;
-      else
-         s << lgth;
+      
+      s << std::hex << "x(" << lgth << ") "<< std::dec << lgth;	 
       s << ",\t Offset : " << o;
       s << " x(" << std::hex << o << std::dec << ") ";
       s << "\t[" << (*i)->GetVR()    << "]";

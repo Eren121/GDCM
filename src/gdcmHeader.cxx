@@ -1830,6 +1830,22 @@ void gdcmHeader::FixHeaderEntryFoundLength(gdcmHeaderEntry * ElVal, guint32 Foun
          FoundLength =0; 	 
    } 
     
+
+    // a SeQuence Element is beginning                                          
+    // Let's forget it's length                                                 
+    // (we want to 'go inside')  
+    
+    // Pb : *normaly*  fffe|e000 is just a marker, its length *should be* zero
+    // in gdcm-MR-PHILIPS-16-Multi-Seq.dcm we find lengthes as big as 28800
+    // if we set the length to zero IsAnInteger() breaks...
+    // if we don't, we lost 28800 characters from the Header :-(
+                                                 
+   else if(ElVal->GetGroup() == 0xfffe){ 
+      //printf("========================= %08x %d\n",FoundLength,FoundLength);
+                         // sometimes, length seems to be wrong                                      
+      //FoundLength =0;  // some more clever checking to be done !                                                     
+   }     
+    
    ElVal->SetUsableLength(FoundLength);
 }
 
