@@ -23,7 +23,9 @@
 //  For full DICOMDIR description, see:
 //  PS 3.3-2003, pages 731-750
 //-----------------------------------------------------------------------------
+
 // Constructor / Destructor
+
 /*
  * \ingroup gdcmDicomDir
  * \brief   Constructor : Parses recursively the directory and creates the DicomDir
@@ -59,7 +61,7 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
 
    metaElems=NULL;
 
-// gdcmParser already  executed
+// gdcmParser already executed
 // if user passed a root directory, sure we didn't get anything
 
    if( GetListEntry().begin()==GetListEntry().end() ) 
@@ -69,7 +71,7 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
 
       if(strlen(Name)==1 && Name[0]=='.') { // user passed '.' as Name
                                             // we get current directory name
-         char*dummy=(char*) malloc(1000);   // TODO : check with Windoze // JPR
+         char*dummy=(char*) malloc(1000);
 #ifdef _MSC_VER
          _getcwd(dummy,(size_t)1000);
 #else
@@ -307,8 +309,7 @@ bool gdcmDicomDir::Write(std::string fileName)
    fwrite(filePreamble,128,1,fp1);
    fwrite("DICM",4,1,fp1);
    free(filePreamble);        
-   //UpdateDirectoryRecordSequenceLength(); // a reecrire en utilisant   JPR
-                                            // la structure arborescente JPR
+   UpdateDirectoryRecordSequenceLength();
    WriteDicomDirEntries(fp1);
 
    fclose(fp1);

@@ -120,8 +120,9 @@ public:
    guint32 UnswapLong(guint32);  // needed by gdcmFile
 
 protected:
-// constructor and destructor are protected to forbid end user to instanciate
-// class gdcmParser (only gdcmHeader and gdcmDicomDir are meaningfull)
+// constructor and destructor are protected to forbid end user 
+// to instanciate class gdcmParser 
+// (only gdcmHeader and gdcmDicomDir are meaningfull)
    gdcmParser(bool exception_on_error  = false);
    gdcmParser(const char *inFilename, 
               bool  exception_on_error = false, 

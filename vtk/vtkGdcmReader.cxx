@@ -593,6 +593,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
    int LineSize   = NumComponents * NumColumns * GdcmFile.GetHeader()->GetPixelSize();
 
    unsigned char * Source;
+   
    if( GdcmFile.GetHeader()->HasLUT() )
    {
       size               = GdcmFile.GetImageDataSizeRaw();
@@ -642,7 +643,6 @@ size_t vtkGdcmReader::LoadImageInMemory(
    }
    //GetImageData allocate a (void*)malloc, remove it:
    free(pSource);
-
    return size;
 }
 

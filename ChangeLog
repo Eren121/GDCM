@@ -1,3 +1,11 @@
+
+2004-03-23  Jean-Pierre Roux
+     * FIX Now gdcmFile::SwapZone doesn't seg faults any longer for 
+           big endian made volumes
+     * ENH Now gdcmParser constructor and destructor are protected to forbid 
+           end user to instanciate class gdcmParser
+	   (only gdcmHeader and gdcmDicomDir are meaningfull)
+	   	   
 2004-03-22 Benoit Regrain
      * FIX : src/gdcmDicomDir.cxx : make windows compilable
      * FIX : gdcmPython/gdcm.i : change gdcmStudy to gdcmDicomDirStudy and
@@ -24,12 +32,13 @@
                        of gdcmDicomDirImage::NewImage as empty function.
 
 2004-02-28  Jean-Pierre Roux
-     *ENH add gdcmDicomDir:NewPatient
-          add gdcmDicomDirPatient:NewStudy
-          add gdcmDicomDirStudy:NewSerie
-          add gdcmDicomDirSerie:NewImage
-          to allow making gdcDicomDir object.
-     *ADD PrintDicomDir executable that uses gdcmDicomDir tree-like structure
+<<<<<<< ChangeLog
+     * ENH add gdcmDicomDir:NewPatient
+           add gdcmDicomDirPatient:NewStudy
+           add gdcmDicomDirStudy:NewSerie
+           add gdcmDicomDirSerie:NewImage
+	   to allow making gdcDicomDir object.
+     * ADD PrintDicomDir executable that uses gdcmDicomDir tree-like structure
           (as opposite to the gdcmHeader chained list)
 
 2004-02-11 Benoit Regrain
@@ -52,7 +61,7 @@
 
 2004-02-05 Benoit Regrain
      * ENH : add methods in gdcmObject to get the hash table or the list of
-       header entries
+             header entries
      * FIX : wrapping python for ListPatient, ListStudy, ListSerie, ListImage
      * FIX : wrapping python for TagHeaderEntryHT
 
@@ -177,10 +186,10 @@
      * bug fix under python
 
 2004-01-16 Jean-Pierre Roux
-     * removal of class gdcmHeaderEntrySet
-     * removal of files gdcmHeaderEntrySet.cxx, gdcmHeaderEntrySet.h
-     * add file gdcmHeader2.cxx
-     * add method gdcmHeader::SetPrintLevel (for PrintHeader)
+    * REM removal of class gdcmHeaderEntrySet
+    * REM removal of files gdcmHeaderEntrySet.cxx, gdcmHeaderEntrySet.h
+    * ADD add file gdcmHeader2.cxx 
+    * ADD add method gdcmHeader::SetPrintLevel (for PrintHeader)
 
 2004-01-15 Benoit Regrain
      * src/gdcmDicSet.[h|cxx] : add virtual entries to have a reference of
@@ -238,50 +247,52 @@
      * Update Windows projects and .cvsignore files
 
 2003-11-12 Jean-Pierre Roux
-     *ENH  gdcmHeader constructor has one more parameter (default value : false)
+     * ENH  gdcmHeader constructor has one more parameter (default value : false)
            that allows the user to 'go inside' the SeQuences only
            if he wants to.
            gdcmElValSet:Print takes it into account
 
 2003-11-12  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-     *ENH: Update gdcmPython/CMakeLists
-     *FIX: (gdcmHeaderHelper) GetRescale and GetSlope
-     *FIX: (gdcmElValSet) char 'tag' was overiding private members (VC++)
+     * ENH: Update gdcmPython/CMakeLists
+     * FIX: (gdcmHeaderHelper) GetRescale and GetSlope
+     * FIX: (gdcmElValSet) char 'tag' was overiding private members (VC++)
 
 2003-11-10 Jean-Pierre Roux
-     *FIX : gdcmHeader::LoadElements is now based
-            on the ListTag listElem member,
-            not longer on the TagElValueHT tagHt member
-     *ENH : PrintPubElVal shows (temporarily) both results,
-            with the tagHt member and the listElem member.
-            (it's easier to 'see' the problems when using Printheader)
-     *FIX : old private member LgrElem is now splitted into
-            ReadLength   : Length actually found on disk (updated only
-                      if bug fixing is necessary), for internal use only
-            UsableLength : Updated by FixFoundLength, to fix a bug
-                           or to allow Parser going on.
-            Will allow to re-write a kosher header when a SeQuence
-            with a length (not 0000) is found
-            Warning : gdcmFile::Write still uses the TagHt (not ListElem)
-                      because gdcmElValSet::Add does not update ListElem
-                      (to be written)
+      * FIX : gdcmHeader::LoadElements is now based
+             on the ListTag listElem member,
+             not longer on the TagElValueHT tagHt member
+      * ENH : PrintPubElVal shows (temporarily) both results,
+             with the tagHt member and the listElem member.
+	     (it's easier to 'see' the problems when using Printheader)
+
+      * FIX : old private member LgrElem is now splitted into
+             ReadLength   : Length actually found on disk (updated only
+	                    if bug fixing is necessary), for internal
+			    use only
+	     UsableLength : Updated by FixFoundLength, to fix a bug
+	                    or to allow Parser going on.
+	     Will allow to re-write a kosher header when a SeQuence
+	     with a length (not 0000) is found
+      Warning : gdcmFile::Write still uses the TagHt (not ListElem)
+	        because gdcmElValSet::Add does not update ListElem
+		(to be written)
 
 2003-11-07 Jean-Pierre Roux
-     *FIX misstyping in Transfert Syntax name table
-     *ENH gdcmHeader::FixFoundLength now allow to 'go inside' tge SeQuences
+     * FIX misstyping in Transfert Syntax name table
+     * ENH gdcmHeader::FixFoundLength now allow to 'go inside' tge SeQuences
           when they have an actual length (not 0000 nor FFFFF)
      (Nobody should care of it, but DICOMDIR explorers)
 
 2003-11-06  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-     *ENH: vtkgdcmViewer now works with LUT dicom (OT-PAL-face ...)
+     * ENH: vtkgdcmViewer now works with LUT dicom (OT-PAL-face ...)
 
 2003-11-05  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-     *ENH: vtkGdcmReader now supports LUT !
+     * ENH: vtkGdcmReader now supports LUT !
           (vtkgdcmViewer for now is not able to use them though)
 
 2003-11-05 Jean-Pierre Roux
      * in testSuite.py : new files names for checking the package
-     * Fix : Forgot to commit gdcmFile::GetImageDataSizeRaw();
+     * FIX : Forgot to commit gdcmFile::GetImageDataSizeRaw();
              that returns the pixel area size to the *aware* (vtk) user
              that DOESN'T want to turn the PALETTE COLOR image into an RGB image
 
@@ -302,9 +313,9 @@
        in order to loose the 'history' of un-anonymised images
        
 2003-10-31 Jean-Pierre Roux
-     *RMV : removal of useless jBitsInJsample.h 
-            for both 8 and 12 Bits JPEG Lossy Libraries
-      
+     * RMV : removal of useless jBitsInJsample.h 
+           for both 8 and 12 Bits JPEG Lossy Libraries
+
 2003-10-31 Jean-Pierre Roux
      * ENH : Add the functions gdcmFile::GetImageDataRaw 
                                gdcmFile::GetImageDataIntoVectorRaw
@@ -323,17 +334,17 @@
      * FIX : a VC++ intended syntax modif broke the 12/12 Bytes expanding
              
 2003-10-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-     *ENH: Can be used like this '$vtkgdcmViewer *.dcm' with *.dcm 
-           being coherents dicom files.
+     * ENH: Can be used like this '$vtkgdcmViewer *.dcm' with *.dcm 
+	   being coherents dicom files.
      
 2003-10-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-     *FIX: DOH ! Forgot about windo$e users, they couldn't read lossless jpeg,
+     * FIX: DOH ! Forgot about windo$e users, they couldn't read lossless jpeg,
            from medcon lib !
-     *ENH: Turn it into DOS file type to match libgdcmijpeg8.dsp file type 
-     *ENH: Two steps is necessary to please VC++ compiler...
-     *FIX: DOH ! libgdcmijpg8 -> libgdcmljpeg
-     *ENH: Add include dir to medcon lib
-     *FIX: only one function is being exported for now ! 
+     * ENH: Turn it into DOS file type to match libgdcmijpeg8.dsp file type 
+     * ENH: Two steps is necessary to please VC++ compiler...
+     * FIX: DOH ! libgdcmijpg8 -> libgdcmljpeg
+     * ENH: Add include dir to medcon lib
+     * FIX: only one function is being exported for now ! 
            You should use GLOBAL(return type) see ljpg/jpeg.h for more info
             
 2003-10-29 Jean-Pierre Roux

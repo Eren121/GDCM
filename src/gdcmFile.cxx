@@ -196,6 +196,7 @@ void * gdcmFile::GetImageData (void) {
    PixelData = (void *) malloc(lgrTotale);
    if (PixelData)
       GetImageDataIntoVector(PixelData, lgrTotale);
+      
    PixelRead=0; // no PixelRaw
    return(PixelData);
 }
@@ -332,7 +333,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    }
 	
    (void)ReadPixelData(destination);
-	
+   	
 	// Number of Bits Allocated for storing a Pixel
    str_nb = Header->GetEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
@@ -378,7 +379,6 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 	   deb++;   
          }
     }
-
    // re arange bits inside the bytes
    if (nbu != nb){
       int l = (int)lgrTotale / (nb/8);
@@ -772,9 +772,10 @@ if(nb == 16)
       case 2143:
       case 4321:
 
-         for(i=0;i<lgr;i++)
+         for(i=0;i<lgr/2;i++) {
             ((unsigned short int*)im)[i]= ((((unsigned short int*)im)[i])>>8)
                                         | ((((unsigned short int*)im)[i])<<8);
+	}
          break;
  			
       default:
@@ -788,7 +789,7 @@ if( nb == 32 )
          break;
 
       case 4321:
-         for(i=0;i<lgr;i++) {
+         for(i=0;i<lgr/4;i++) {
             faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 4321 */
             fort  =((unsigned long int*)im)[i]>>16;
             fort=  (fort>>8)   | (fort<<8);
@@ -799,7 +800,7 @@ if( nb == 32 )
          break;
 
       case 2143:
-         for(i=0;i<lgr;i++) {
+         for(i=0;i<lgr/4;i++) {
             faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 2143 */
             fort=((unsigned long int*)im)[i]>>16;
             fort=  (fort>>8)   | (fort<<8);
@@ -810,7 +811,7 @@ if( nb == 32 )
          break;
   
       case 3412:
-         for(i=0;i<lgr;i++) {
+         for(i=0;i<lgr/4;i++) {
             faible=  ((unsigned long int*)im)[i]&0x0000ffff;    /* 3412 */
             fort=((unsigned long int*)im)[i]>>16;                  
             s32=faible; 
