@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 11:22:57 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/01/13 14:39:02 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,11 +66,11 @@ int TestDicomDir(int argc, char* argv[])
    if(e1->GetDicomDirPatients().begin() == e1->GetDicomDirPatients().end() )
    {
       std::cout<<"          DicomDir '"<<file
-               <<" has no patients"<<std::endl
+               <<" has no patient"<<std::endl
                <<"          ...Failed"<<std::endl;
 
       delete e1;
-      return(1);
+      return 1;
    }
 
 // Simple examples of structure exploitation 
@@ -172,5 +172,5 @@ int TestDicomDir(int argc, char* argv[])
    std::cout<<std::flush;
    delete e1;
 
-   return(0);
+   return 0;
 }

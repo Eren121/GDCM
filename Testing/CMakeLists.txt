@@ -23,7 +23,6 @@ IF (GDCM_DATA_ROOT)
     PrintAllDocument.cxx             # includes generated gdcmDataImages.h
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
     TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
-    PrintDicomDir.cxx
     #TestChangeHeader.cxx
     TestDicomDir.cxx                 # require DICOMDIR
     BuildUpDicomDir.cxx              # writes a file named "NewDICOMDIR"
