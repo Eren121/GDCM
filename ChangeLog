@@ -1,5 +1,10 @@
 2004-11-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-  * src/gdcmDicomDir.h : bug fix for the last Boix's commit (problem when 
+  * src/TestAllReadCompareDicom.cxx : test the existence of the directory
+    using an 'ifstream' other than a 'FILE *'. The previous solution ('FILE *')
+    break under windows (with msvc6 compilation).
+
+2004-11-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+  * src/gdcmDicomDir.h : bug fix for the last Boix's commit (problem when
     compiling with MSVC6)
 
 2004-11-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

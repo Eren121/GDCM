@@ -157,7 +157,22 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       std::string baseLineDir = GDCM_DATA_ROOT;
       baseLineDir += "/BaselineDicom/";
 
-      FILE* testFILE = fopen( baseLineDir.c_str(), "r" );
+      std::ifstream* testDIR = new std::ifstream(baseLineDir.c_str(), std::ios::in | std::ios::binary);
+      if (!testDIR )
+      {
+         std::cerr << "   The reference baseline directory " << std::endl
+                   << "      "
+                   << baseLineDir << std::endl
+                   << "   couldn't be opened."
+                   << std::endl;
+         return 1;
+      }
+      else
+      {
+         testDIR->close();
+      }
+
+/*      FILE* testFILE = fopen( baseLineDir.c_str(), "r" );
       if (!testFILE )
       {
          std::cerr << "   The reference baseline directory " << std::endl
@@ -170,7 +185,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       else
       {
          fclose( testFILE );
-      }
+      }*/
 
       ////// Step 1 (see above description):
 
