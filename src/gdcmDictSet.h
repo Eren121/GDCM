@@ -57,7 +57,7 @@ private:
    DictSetHT Dicts;
    /// Directory path to dictionaries
    std::string DictPath;
-
+   /// H table for the on the fly created gdcmDictEntries  
    std::map<std::string,gdcmDictEntry *> virtualEntry;
 };
 

@@ -35,12 +35,6 @@ typedef std::map<GroupKey, int> GroupHT;
 class GDCM_EXPORT gdcmParser
 {
 public:
-   gdcmParser(bool exception_on_error  = false);
-   gdcmParser(const char *inFilename, 
-              bool  exception_on_error = false, 
-              bool  enable_sequences   = false,
-	      bool  ignore_shadow      = false);
-   virtual ~gdcmParser(void);
 
 // Print
    /**
@@ -126,6 +120,14 @@ public:
    guint32 UnswapLong(guint32);  // needed by gdcmFile
 
 protected:
+// constructor and destructor are protected to forbid end user to instanciate
+// class gdcmParser (only gdcmHeader and gdcmDicomDir are meaningfull)
+   gdcmParser(bool exception_on_error  = false);
+   gdcmParser(const char *inFilename, 
+              bool  exception_on_error = false, 
+              bool  enable_sequences   = false,
+	      bool  ignore_shadow      = false);
+   virtual ~gdcmParser(void);
 // Entry
    int CheckIfEntryExistByNumber(guint16 Group, guint16 Elem ); // int !
    virtual std::string GetEntryByName    (std::string tagName);
@@ -177,8 +179,11 @@ protected:
    */
    FileType filetype;  
 
+/// after opening the file, we read HEADER_LENGTH_TO_READ bytes.
    static const unsigned int HEADER_LENGTH_TO_READ; 
+/// Elements whose value is longer than MAX_SIZE_LOAD_ELEMENT_VALUE are NOT loaded
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
+/// Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE are NOT printed  
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
 protected:

@@ -122,7 +122,7 @@ std::string gdcmHeaderHelper::GetPixelType() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0028,0030 : Pixel Spacing
-  *             else 1.
+  *             else 1.0
   * @return X dimension of a pixel
   */
 float gdcmHeaderHelper::GetXSpacing() {
@@ -146,7 +146,7 @@ float gdcmHeaderHelper::GetXSpacing() {
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0028,0030 : Pixel Spacing
-  *             else 1.
+  *             else 1.0
   * @return Y dimension of a pixel
   */
 float gdcmHeaderHelper::GetYSpacing() {
@@ -171,7 +171,7 @@ float gdcmHeaderHelper::GetYSpacing() {
   *\ingroup gdcmHeaderHelper
   *\brief gets the info from 0018,0088 : Space Between Slices
   *                else from 0018,0050 : Slice Thickness
-  *                else 1.
+   *                else 1.0
   * @return Z dimension of a voxel-to be
   */
 float gdcmHeaderHelper::GetZSpacing() {

@@ -10,8 +10,9 @@
 
 /*
  * \ingroup gdcmException
- * \brief 
- * @param   
+ * \brief constructor
+ * @param f
+ * @param msg  
  */
 gdcmException::gdcmException(const std::string &f, const std::string& msg) throw()
 #ifdef __GNUC__
@@ -28,8 +29,8 @@ catch(...) {
 
 /*
  * \ingroup gdcmException
- * \brief 
- * @param   
+ * \brief fatal
+ * @param from 
  */
  void gdcmException::fatal(const char *from) throw() {
   try {
@@ -51,8 +52,8 @@ catch(...) {
 
 /*
  * \ingroup gdcmException
- * \brief 
- * @param   
+ * \brief getName
+ * @return string
  */
  std::string gdcmException::getName() const throw() {
   try {
@@ -74,7 +75,7 @@ catch(...) {
 	iname = std::string(iname, nb, std::string::npos);
       }
       return name;
-#else             // no class name demangling
+#else           // no class name demangling
       //name = typeid(*this).name();
       return "Exception";
 #endif
@@ -87,7 +88,7 @@ catch(...) {
 
 /*
  * \ingroup gdcmException
- * \brief 
+ * \brief gdcmException::operator
  * @param   
  */
  gdcmException::operator const char *() const throw() {
@@ -97,7 +98,7 @@ catch(...) {
 //-----------------------------------------------------------------------------
 /*
  * \ingroup gdcmException
- * \brief 
+ * \brief gdcmException::operator <<
  * @param   
  */
  std::ostream& operator<<(std::ostream &os, const gdcmException &e) {

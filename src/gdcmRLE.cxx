@@ -12,8 +12,7 @@
  * \brief     Reads a 'Run Length Encoded' Dicom encapsulated file
  * @param     fp already open File Pointer
  * @param     image_buffer destination Address (in caller's memory space) 
- *            at which the pixel data should be copied
- *   
+ *            at which the pixel data should be copied 
  * @return    Boolean 
  */
 bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {

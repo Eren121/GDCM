@@ -220,6 +220,7 @@ private:
    /// the underlying dictionary.	
    bool ImplicitVR;
 			  
+   /// Header Entry value, stores as a std::string (VR will be used, later, to decode)
    std::string  value;
 
    /// unsecure memory area to hold 'non string' values 
@@ -227,7 +228,7 @@ private:
    void *voidArea;
    /// Offset from the begining of file for direct user access		     
    size_t Offset; 
-      
+   /// How many details are to be printed (value : 0,1,2)      
    int printLevel;
 };
 

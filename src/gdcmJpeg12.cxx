@@ -161,6 +161,16 @@ my_error_exit (j_common_ptr cinfo) {
  * Sample routine for JPEG decompression.  We assume that the source file name
  * is passed in.  We want to return 1 on success, 0 on error.
  */
+ 
+ /**
+ * \ingroup gdcmFile
+ * \brief   routine for JPEG decompression 
+ * @param fp pointer to an already open file descriptor 
+ *                      12 significant bits per pixel
+ * @param image_buffer to receive uncompressed pixels
+ * @return 1 on success, 0 on error
+ */
+ 
 bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    char *pimage;
 

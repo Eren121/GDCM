@@ -79,10 +79,16 @@ public:
       {return(DicomDirImageList);};
 
 private:
+   /// gdcmElements chained list, related to the MetaElements of DICOMDIR
    ListDicomDirMetaElem    DicomDirMetaList;
+   /// gdcmElements chained list, related to the PatientElements of DICOMDIR
    ListDicomDirPatientElem DicomDirPatientList;
+   /// gdcmElements chained list, related to the StudyElements of DICOMDIR
    ListDicomDirStudyElem   DicomDirStudyList;
+   /// gdcmElements chained list, related to the SerieElements of DICOMDIR
    ListDicomDirSerieElem   DicomDirSerieList;
+   /// gdcmElements chained list, related to the ImageElements of DICOMDIR
+   
    ListDicomDirImageElem   DicomDirImageList;
 };
 

@@ -11,16 +11,36 @@
 gdcmDebug dbg;
 
 //-----------------------------------------------------------------------------
+/**
+ * \ingroup gdcmDebug
+ * \brief   constructor
+ * @param level debug level
+ */ 
+
 gdcmDebug::gdcmDebug(int level) {
    DebugLevel = level;
 }
 
+/**
+ * \ingroup gdcmDebug
+ * \brief   Verbose 
+ * @param Level level
+ * @param Msg1 first message part
+ * @param Msg2 second message part 
+ */
 void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) {
    if (Level > DebugLevel)
       return ;
    std::cerr << Msg1 << ' ' << Msg2 << std::endl;
 }
 
+/**
+ * \ingroup gdcmDebug
+ * \brief   Error 
+ * @param Test test
+ * @param Msg1 first message part
+ * @param Msg2 second message part 
+ */
 void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {
    if (!Test)
       return;
@@ -28,13 +48,28 @@ void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {
    Exit(1);
 }
 
+/**
+ * \ingroup gdcmDebug
+ * \brief   Error 
+ * @param Msg1 first message part
+ * @param Msg2 second message part
+ * @param Msg3 Third message part  
+ */
 void gdcmDebug::Error(const char* Msg1, const char* Msg2,
                       const char* Msg3) {
    std::cerr << Msg1 << ' ' << Msg2 << ' ' << Msg3 << std::endl;
    Exit(1);
 }
 
-void gdcmDebug::Assert(int Level, bool Test,
+/**
+ * \ingroup gdcmDebug
+ * \brief   Assert 
+ * @param Level level 
+ * @param Test test
+ * @param Msg1 first message part
+ * @param Msg2 second message part
+ */
+ void gdcmDebug::Assert(int Level, bool Test,
                  const char * Msg1, const char * Msg2) {
    if (Level > DebugLevel)
       return ;
@@ -42,6 +77,11 @@ void gdcmDebug::Assert(int Level, bool Test,
       std::cerr << Msg1 << ' ' << Msg2 << std::endl;
 }
 
+/**
+ * \ingroup gdcmDebug
+ * \brief   Exit 
+ * @param a return code 
+ */
 void gdcmDebug::Exit(int a) {
 #ifdef __GNUC__
    std::exit(a);
@@ -52,12 +92,22 @@ void gdcmDebug::Exit(int a) {
 }
 
 //-----------------------------------------------------------------------------
+/// Pointer to a container, holding *all* the Dicom Dictionaries
 gdcmDictSet         *gdcmGlobal::Dicts  = (gdcmDictSet *)0;
+/// Pointer to a H table containing the 'Value Representations'
 gdcmVR              *gdcmGlobal::VR     = (gdcmVR *)0;
+/// Pointer to a H table containing the Transfer Syntax codes and their english description 
 gdcmTS              *gdcmGlobal::TS     = (gdcmTS *)0;
+/// Pointer to a H table containing the Dicom Elements necessary to describe each part of a DICOMDIR 
 gdcmDicomDirElement *gdcmGlobal::ddElem = (gdcmDicomDirElement *)0;
+/// gdcm Glob
 gdcmGlobal gdcmGlob;
 
+
+/**
+ * \ingroup gdcmGlobal
+ * \brief   constructor : populates the
+ */
 gdcmGlobal::gdcmGlobal(void) {
    if (VR || TS || Dicts || ddElem)
       dbg.Verbose(0, "gdcmGlobal::gdcmGlobal : VR or TS or Dicts already allocated");
@@ -67,6 +117,10 @@ gdcmGlobal::gdcmGlobal(void) {
    ddElem = new gdcmDicomDirElement();
 }
 
+/**
+ * \ingroup gdcmGlobal
+ * \brief   canonical destructor 
+ */
 gdcmGlobal::~gdcmGlobal() {
    delete Dicts;
    delete VR;
@@ -125,7 +179,10 @@ void Tokenize (const std::string& str,
 
 
 ///////////////////////////////////////////////////////////////////////////
-// to prevent a flashing screen when non-printable character
+/*
+ * \brief  to prevent a flashing screen when non-printable character
+ * @param 
+ */
 char *_cleanString(char *v) {
    char *d;
    int i, l;
@@ -140,7 +197,10 @@ char *_cleanString(char *v) {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// to prevent a flashing screen when non-printable character
+/*
+ * \brief   to prevent a flashing screen when non-printable character
+ * @param 
+ */
 std::string _CreateCleanString(std::string s) {
    std::string str=s;
 
@@ -179,6 +239,7 @@ const std::string SEPARATOR = "/";
 ///////////////////////////////////////////////////////////////////////////
 /*
  * \brief   Get the (directory) path from a full path file name
+ * @param 
  */
 std::string GetPath(std::string &fullName)
 {
@@ -194,6 +255,7 @@ std::string GetPath(std::string &fullName)
 ///////////////////////////////////////////////////////////////////////////
 /*
  * \brief   Get the (last) name of a full path file name
+ * @param 
  */
 std::string GetName(std::string &fullName)
 {   

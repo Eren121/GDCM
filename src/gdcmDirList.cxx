@@ -21,12 +21,16 @@
    #include <unistd.h>
 #endif
 
+// ================= WARNING 
+// ================= DOXYGEN DOESN'T WORK FOR THIS FILE ?!?
+// =================
+
 // Constructor / Destructor
 /*
  * \ingroup gdcmDirList
  * \brief Constructor  
- * @param  dirName
- * @param  recursive 
+ * @param  dirName root directory name
+ * @param  recursive whether we want to explore recursively or not 
  */
 gdcmDirList::gdcmDirList(std::string dirName,bool recursive)
 {

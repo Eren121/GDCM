@@ -25,19 +25,26 @@
  */
 class gdcmDebug {
 public:
-	gdcmDebug(int level = GDCM_DEBUG);
+   gdcmDebug(int level = GDCM_DEBUG);
 
-	void SetDebug (int i) {DebugLevel = i;}
+  /**
+    * \ingroup gdcmDebug
+    * \brief   sets the debug level 
+    * @param i debug level to be set
+  */ 
+   void SetDebug (int i) 
+      {DebugLevel = i;}
 
    void Verbose(int, const char*, const char* ="");
-	void Error(bool, const char*,  const char* ="");
-	void Error(const char*, const char* ="", const char* ="");
+   void Error(bool, const char*,  const char* ="");
+   void Error(const char*, const char* ="", const char* ="");
 
-	void Assert(int, bool, const char*, const char*);
-	void Exit(int);
+   void Assert(int, bool, const char*, const char*);
+   void Exit(int);
 
 private:
-	int DebugLevel;
+/// warning message level to be displayed
+   int DebugLevel;
 };
 
 //-----------------------------------------------------------------------------
@@ -65,18 +72,18 @@ private:
 //-----------------------------------------------------------------------------
 std::istream & eatwhite(std::istream & is);
 
-void Tokenize (const std::string& str,
-               std::vector<std::string>& tokens,
-               const std::string& delimiters = " ");
+   void Tokenize (const std::string& str,
+                  std::vector<std::string>& tokens,
+                  const std::string& delimiters = " ");
 
-extern gdcmDebug dbg;
+   extern gdcmDebug dbg;
 
-char *_cleanString(char *v);
-std::string _CreateCleanString(std::string s);
+   char *_cleanString(char *v);
+   std::string _CreateCleanString(std::string s);
 
-void NormalizePath (std::string &name);
-std::string GetPath(std::string &fullName);
-std::string GetName(std::string &fullName);
+   void NormalizePath (std::string &name);
+   std::string GetPath(std::string &fullName);
+   std::string GetName(std::string &fullName);
 //-----------------------------------------------------------------------------
 #endif
 

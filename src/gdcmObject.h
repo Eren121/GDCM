@@ -17,10 +17,6 @@ typedef std::list<gdcmObject *> ListContent;
 class GDCM_EXPORT gdcmObject 
 {
 public:
-   gdcmObject(ListTag::iterator begin,ListTag::iterator end,
-              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
-   ~gdcmObject(void);
-
    /**
     * \ingroup gdcmParser
     * \brief   Sets the print level for the Dicom Header 
@@ -58,6 +54,11 @@ public:
        { return(endObj);  }
 
 protected:
+ // constructor and destructor are protected to avoid end user to instanciate this class.
+   gdcmObject(ListTag::iterator begin,ListTag::iterator end,
+              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
+   ~gdcmObject(void);
+
 
 void FillObject(std::list<gdcmElement> elemList);
 

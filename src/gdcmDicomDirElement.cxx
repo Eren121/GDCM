@@ -71,7 +71,7 @@
 
 /**
  * \ingroup gdcmDicomDirElement
- * \brief   destructor 
+ * \brief   canonical destructor 
  */
  gdcmDicomDirElement::~gdcmDicomDirElement() {
    DicomDirMetaList.clear();

@@ -628,7 +628,7 @@ bool gdcmFile::WriteDcmExplVR (std::string fileName) {
  *        (a l'attention des logiciels cliniques 
  *        qui ne prennent en entrée QUE des images ACR ...
  * \warning if a DICOM_V3 header is supplied,
- *         groups < 0x0008 and shadow groups are ignored)
+ *         groups < 0x0008 and shadow groups are ignored
  * \warning NO TEST is performed on processor "Endiannity".
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
