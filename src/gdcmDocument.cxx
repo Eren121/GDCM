@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 16:07:21 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2004/06/29 11:27:14 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1205,7 +1205,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
       NewDocEntry = ReadNextDocEntry( );
       if (!NewDocEntry)
          break;
-     // NewDocEntry->Print(); cout << endl; //JPR
+
       vr = NewDocEntry->GetVR();
       if (vr!="SQ")
       {
@@ -1492,10 +1492,9 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
  * @param  Entry Header Entry whose length of the value shall be loaded. 
  */
  void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry) {
-   guint16 element = Entry->GetElement();
-   //guint16 group   = Entry->GetGroup(); //FIXME
+   uint16_t element = Entry->GetElement();
    std::string  vr = Entry->GetVR();
-   guint16 length16;
+   uint16_t length16;
        
    
    if ( (Filetype == gdcmExplicitVR) && (! Entry->IsImplicitVR()) ) 
@@ -1506,11 +1505,27 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
          // 7.1.2 Data element structure with explicit vr p27) must be
          // skipped before proceeding on reading the length on 4 bytes.
          fseek(fp, 2L, SEEK_CUR);
-         guint32 length32 = ReadInt32();
+         uint32_t length32 = ReadInt32();
 
          if ( (vr == "OB") && (length32 == 0xffffffff) ) 
          {
-            Entry->SetLength(FindDocEntryLengthOB());
+            uint32_t LengthOB = FindDocEntryLengthOB();
+            if ( errno == 1 )
+            {
+               // Computing the length failed (this happens with broken
+               // files like gdcm-JPEG-LossLess3a.dcm). We still have a
+               // chance to get the pixels by deciding the element goes
+               // until the end of the file. Hence we artificially fix the
+               // the length and proceed.
+               long CurrentPosition = ftell(fp);
+               fseek(fp,0L,SEEK_END);
+               long LengthUntilEOF = ftell(fp) - CurrentPosition;
+               fseek(fp, CurrentPosition, SEEK_SET);
+               Entry->SetLength(LengthUntilEOF);
+               errno = 0;
+               return;
+            }
+            Entry->SetLength(LengthOB);
             return;
          }
          FixDocEntryFoundLength(Entry, length32); 
@@ -1559,8 +1574,8 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
          SwitchSwapToBigEndian();
          // Restore the unproperly loaded values i.e. the group, the element
          // and the dictionary entry depending on them.
-         guint16 CorrectGroup   = SwapShort(Entry->GetGroup());
-         guint16 CorrectElem    = SwapShort(Entry->GetElement());
+         uint16_t CorrectGroup   = SwapShort(Entry->GetGroup());
+         uint16_t CorrectElem    = SwapShort(Entry->GetElement());
          gdcmDictEntry * NewTag = GetDictEntryByNumber(CorrectGroup,
                                                        CorrectElem);
          if (!NewTag) 
@@ -1580,7 +1595,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
          // Length16= 0xffff means that we deal with
          // 'Unknown Length' Sequence  
       }
-      FixDocEntryFoundLength(Entry, (guint32)length16);
+      FixDocEntryFoundLength(Entry, (uint32_t)length16);
       return;
    }
    else
@@ -1975,14 +1990,14 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
  * @return 
  */
 
- guint32 gdcmDocument::FindDocEntryLengthOB(void)  {
+uint32_t gdcmDocument::FindDocEntryLengthOB(void)  {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
-   guint16 g;
-   guint16 n; 
+   uint16_t g;
+   uint16_t n; 
    long PositionOnEntry = ftell(fp);
    bool FoundSequenceDelimiter = false;
-   guint32 TotalLength = 0;
-   guint32 ItemLength;
+   uint32_t TotalLength = 0;
+   uint32_t ItemLength;
 
    while ( ! FoundSequenceDelimiter) 
    {
@@ -1990,31 +2005,29 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
       n = ReadInt16();   
       if (errno == 1)
          return 0;
-      TotalLength += 4;  // We even have to decount the group and element 
+
+     // We have to decount the group and element we just read
+      TotalLength += 4;
      
-      if ( g != 0xfffe && g!=0xb00c ) //for bogus header  
+      if (     ( g != 0xfffe )
+          || ( ( n != 0xe0dd ) && ( n != 0xe000 ) ) )
       {
-         char msg[100]; // for sprintf. Sorry
-         sprintf(msg,"wrong group (%04x) for an item sequence (%04x,%04x)\n",g, g,n);
-         dbg.Verbose(1, "gdcmDocument::FindLengthOB: ",msg); 
+         dbg.Verbose(1, "gdcmDocument::FindLengthOB: neither an Item tag "
+                        "nor a Sequence delimiter tag."); 
          errno = 1;
          return 0;
       }
-      if ( n == 0xe0dd || ( g==0xb00c && n==0x0eb6 ) ) // for bogus header 
+
+      if ( n == 0xe0dd )
          FoundSequenceDelimiter = true;
-      else if ( n != 0xe000 )
-      {
-         char msg[100];  // for sprintf. Sorry
-         sprintf(msg,"wrong element (%04x) for an item sequence (%04x,%04x)\n",
-                      n, g,n);
-         dbg.Verbose(1, "gdcmDocument::FindLengthOB: ",msg);
-         errno = 1;
-         return 0;
-      }
+
       ItemLength = ReadInt32();
-      TotalLength += ItemLength + 4;  // We add 4 bytes since we just read
-                                      // the ItemLength with ReadInt32                                     
+      // We add 4 bytes since we just read the ItemLength with ReadInt32
+      TotalLength += ItemLength + 4;
       SkipBytes(ItemLength);
+      
+      if ( FoundSequenceDelimiter )
+         break;
    }
    fseek(fp, PositionOnEntry, SEEK_SET);
    return TotalLength;
@@ -2348,7 +2361,8 @@ gdcmDocEntry *gdcmDocument::ReadNextDocEntry(void) {
    FindDocEntryVR(NewEntry);
    FindDocEntryLength(NewEntry);
 
-   if (errno == 1) {
+   if (errno == 1)
+   {
       // Call it quits
       delete NewEntry;
       return NULL;
