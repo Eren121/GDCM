@@ -22,9 +22,11 @@ SET(TEST_SOURCES ${TEST_SOURCES}
   pourFindTaggs.cxx
   testChangeEntete.cxx
   testDicomDir.cxx    #require DICOMDIR
-# Disable makeDicomDir for now
-  makeDicomDir.cxx    #require test.acr ?!? JPR
   BuildUpDicomDir.cxx
+  TestReadWrite.cxx
+
+# Disable makeDicomDir for now
+#  makeDicomDir.cxx
 )
 ENDIF (GDCM_DATA_ROOT)
 
@@ -44,13 +46,12 @@ REMOVE (TestsToRun gdcmCxxTests.cxx)
 FOREACH(file ${TEST_SOURCES})
   GET_FILENAME_COMPONENT(name ${file} NAME_WE)
 #  IF (GDCM_DATA_ROOT)
-#    ADD_TEST(${TName} ${CXX_TEST_PATH}/gdcmCxxTests ${TName}
-#        -D ${VTK_DATA_ROOT}
-#        -T ${VTK_BINARY_DIR}/Testing/Temporary
-#        -V Baseline/gdcm/${TName}.png)
+#    ADD_TEST(${name} ${CXX_TEST_PATH}/gdcmCxxTests ${name}
+#        -D ${GDCM_DATA_ROOT}
+#        -T ${GDCM_BINARY_DIR}/Testing/Temporary
+#        -V Baseline/gdcm/${name}.png)
 #  ELSE (GDCM_DATA_ROOT)
     ADD_TEST(${name} ${GDCM_TESTS} ${name})
-    #ADD_TEST(${TName} ${CXX_TEST_PATH}/gdcmCxxTests ${TName}) 
 #  ENDIF (GDCM_DATA_ROOT)
 ENDFOREACH(file ${TEST_SOURCES})
 
