@@ -77,9 +77,10 @@ int TestCopyDicom(int , char* [])
       // Waiting for a 'clean' solution, I keep the method ...JPRx
     
       TagNameHT & nameHt = original->GetHeader()->GetPubDict()->GetEntriesByName();
+      (void)nameHt; //not used ?
 
-      gdcmValEntry* v;
-      gdcmBinEntry* b;
+      //gdcmValEntry* v;
+      //gdcmBinEntry* b;
       gdcmDocEntry* d;
 
       for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
