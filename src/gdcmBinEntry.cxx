@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:16 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/02/02 17:20:34 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,23 +86,18 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    //   and we are working on Little Endian Processor
 
 #ifdef GDCM_WORDS_BIGENDIAN
-      // Be carefull with *any* 16 bits words 'binEntries !'
-      // if ( GetVR() == "OW") // to be used later
-
       // TODO FIXME Right now, we only care of Pixels element
 
       // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
       // -value forced while Reading process-
       if (GetGroup() == 0x7fe0 && GetVR() == "OW")
       {     
-         uint16_t *currPosition = (uint16_t *)binArea;
-
-         // TODO FIXME : Maybe we should allocate somewhere a static buffer,
-         // in order not to have to alloc/delete for almost every BinEntry ...
          uint16_t *buffer = new uint16_t[BUFFER_SIZE];
 
          // how many BUFFER_SIZE long pieces in binArea ?
          int nbPieces = lgr/BUFFER_SIZE/2; //(16 bits = 2 Bytes)
+         int remainingSize = lgr%BUFFER_SIZE;
+
          uint16_t *binArea16 = (uint16_t*)binArea;
          for (int j=0;j<nbPieces;j++)
          {
@@ -110,15 +105,18 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
             {
                buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
             }
-            fp->write ( (char*)currPosition, BUFFER_SIZE );
-            currPosition += BUFFER_SIZE/2;
+            fp->write ( (char*)buffer, BUFFER_SIZE );
+            binArea16 += BUFFER_SIZE/2;
          }
-         int remainingSize = lgr%BUFFER_SIZE;
-         if ( remainingSize != 0)
+         if ( remainingSize > 0)
          {
-            fp->write ( (char*)currPosition, remainingSize );   
+            for (int i = 0; i < remainingSize/2; i++)
+            {
+               buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
+            }
+            fp->write ( (char*)buffer, remainingSize );
          } 
-         delete[] buffer; 
+         delete[] buffer;
       }
       else
       { 
