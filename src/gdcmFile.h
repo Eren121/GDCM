@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 10:51:49 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2004/12/16 11:37:03 $
+  Version:   $Revision: 1.88 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #ifndef GDCMFILE_H
 #define GDCMFILE_H
 
+#include <iostream>
 #include "gdcmCommon.h"
 
 namespace gdcm 
@@ -50,6 +51,10 @@ public:
    File( std::string const& filename );
  
    virtual ~File();
+
+   void Print(std::ostream &os = std::cout); 
+   /// Accessor to \ref PrintLevel
+   void SetPrintLevel(int level) { PrintLevel = level; }
 
    /// Accessor to \ref Header
    Header* GetHeader() { return HeaderInternal; }
@@ -128,14 +133,16 @@ protected:
    ValEntry* CopyValEntry(uint16_t group,uint16_t element);
    BinEntry* CopyBinEntry(uint16_t group,uint16_t element);
 
+   /// \brief Amount of printed details for each Header Entry (Dicom Element):
+   /// 0 : stands for the least detail level.
+   int PrintLevel;
+
 private:
    void Initialise();
 
    uint8_t* GetRaw();
 
-private:
 // members variables:
-
    /// Header to use to load the file
    Header *HeaderInternal;
 

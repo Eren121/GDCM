@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/06 11:37:38 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/12/16 11:37:02 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,13 +61,15 @@ public:
    DocEntrySet() {};
    virtual ~DocEntrySet() {};
 
+   /// \brief prints any type of entry to the entry set (pure vitual)
+   virtual void Print (std::ostream & os = std::cout) = 0;// pure virtual
+   /// Accessor to \ref PrintLevel
+   void SetPrintLevel(int level) { PrintLevel = level; }
+
    /// \brief adds any type of entry to the entry set (pure vitual)
    virtual bool AddEntry(DocEntry *Entry) = 0; // pure virtual
    virtual bool RemoveEntry(DocEntry *EntryToRemove)=0; // pure virtual
    virtual bool RemoveEntryNoDestroy(DocEntry *EntryToRemove)=0; // pure virtual
-
-   /// \brief prints any type of entry to the entry set (pure vitual)
-   virtual void Print (std::ostream & os = std::cout) = 0;// pure virtual
 
    /// \brief write any type of entry to the entry set
    virtual void WriteContent (std::ofstream *fp, FileType filetype) = 0;// pure virtual
@@ -84,7 +86,6 @@ public:
                                    TagName const & name   = "unkn" );
   
 protected:
-
 // DocEntry  related utilities 
    ValEntry* NewValEntryByNumber(uint16_t group, 
                                  uint16_t element);
@@ -103,6 +104,9 @@ protected:
    DictEntry *GetDictEntryByName  (TagName const & name);
    DictEntry *GetDictEntryByNumber(uint16_t, uint16_t);
 
+   /// \brief Amount of printed details for each Header Entry (Dicom Element):
+   /// 0 : stands for the least detail level.
+   int PrintLevel;
 };
 
 } // end namespace gdcm

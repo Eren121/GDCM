@@ -1,4 +1,11 @@
 2004-12-16 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.[h|cxx] : add the Print method
+   * src/gdcmPixelReadConvert.[h|cxx] : add the generalized Print method
+   * src/gdcmDocEntrySet.h : generalize the Print with the PrintLevel
+   * src/gdcmDocument.h : remove the PrintLevel informations
+   * Example/PrintFile.cxx : use the new gdcm::File::Print
+
+2004-12-16 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFile.cxx : Add the code of ReplaceOrCreateByNumber to not have
      problems when compiling with the python wrapping
 

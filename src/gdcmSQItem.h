@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/06 11:37:38 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/12/16 11:37:03 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ public:
    SQItem(int depthLevel);
    ~SQItem();
 
-   void Print(std::ostream &os = std::cout); 
+   virtual void Print(std::ostream &os = std::cout); 
    void WriteContent(std::ofstream *fp, FileType filetype);
 
    /// \brief   returns the DocEntry chained List for this SQ Item.

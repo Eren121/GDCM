@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 17:13:18 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/12/16 11:37:02 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,11 +54,6 @@ ElementSet::~ElementSet()
    TagHT.clear();
 }
 
-
-//-----------------------------------------------------------------------------
-// Public
-
-
 //-----------------------------------------------------------------------------
 // Print
 /**
@@ -82,6 +77,8 @@ void ElementSet::Print(std::ostream& os)
    }
 }
 
+//-----------------------------------------------------------------------------
+// Public
 /**
   * \brief   Writes the Header Entries (Dicom Elements)
   *          from the H Table
@@ -96,10 +93,9 @@ void ElementSet::WriteContent(std::ofstream* fp, FileType filetype)
       i->second->WriteContent(fp, filetype);
    } 
 }
-//-----------------------------------------------------------------------------
-// Protected
 
 //-----------------------------------------------------------------------------
+// Protected
 
 //-----------------------------------------------------------------------------
 // Private

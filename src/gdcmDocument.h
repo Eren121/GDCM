@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:33 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2004/12/16 11:37:02 $
+  Version:   $Revision: 1.69 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,10 +116,6 @@ protected:
    /// Store the JPEG fragments info obtained during parsing of pixels.
    JPEGFragmentsInfo* JPEGInfo;
 
-   /// \brief Amount of printed details for each Header Entry (Dicom Element):
-   /// 0 : stands for the least detail level.
-   int PrintLevel;
-   
 public:
 // the 2 following will be merged
    virtual void PrintPubDict (std::ostream &os = std::cout);
@@ -261,9 +257,6 @@ private:
    void HandleBrokenEndian(uint16_t  group, uint16_t  elem);
 public:
 // Accessors:
-   /// Accessor to \ref PrintLevel
-   void SetPrintLevel(int level) { PrintLevel = level; }
-
    /// Accessor to \ref Filename
    const std::string &GetFileName() const { return Filename; }
 
@@ -274,7 +267,6 @@ public:
    int GetSwapCode() { return SwapCode; }
    
    bool operator<(Document &document);
-
 };
 } // end namespace gdcm
 

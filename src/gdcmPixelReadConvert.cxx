@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/14 13:05:34 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/12/16 11:37:03 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1305,6 +1305,15 @@ bool PixelReadConvert::BuildRGBImage()
 
 /**
  * \brief        Print self.
+ * @param os     Stream to print to.
+ */
+void PixelReadConvert::Print( std::ostream &os )
+{
+   Print("",os);
+}
+
+/**
+ * \brief        Print self.
  * @param indent Indentation string to be prepended during printing.
  * @param os     Stream to print to.
  */
@@ -1315,10 +1324,10 @@ void PixelReadConvert::Print( std::string indent, std::ostream &os )
       << std::endl;
    os << indent
       << "Pixel Data: offset " << PixelOffset
-      << " x" << std::hex << PixelOffset << std::dec
-      << "   length " << PixelDataLength
-      << " x" << std::hex << PixelDataLength << std::dec
-      << std::endl;
+      << " x(" << std::hex << PixelOffset << std::dec
+      << ")   length " << PixelDataLength
+      << " x(" << std::hex << PixelDataLength << std::dec
+      << ")" << std::endl;
 
    if ( IsRLELossless )
    {
