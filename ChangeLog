@@ -1,4 +1,7 @@
 2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmSQItem[h|cxx] : rename some methods to have coherent names
+
+2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDicomDir*.[h|cxx] : rename methods to be logik in their name.
      Remove all access to the hash-tables or lists in the objects.
 

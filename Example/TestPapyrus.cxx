@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 17:49:42 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/01/20 11:26:17 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
       return 1;
    }
 
-   gdcm::SQItem *sqi = seqPapyrus->GetFirstEntry();
+   gdcm::SQItem *sqi = seqPapyrus->GetFirstSQItem();
    if (sqi == 0)
    {
       std::cout << "NO SQItem found within private Papyrus Sequence"
@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
    while (sqi)
    {
       nbImages++;
-      sqi =  seqPapyrus->GetNextEntry();
+      sqi =  seqPapyrus->GetNextSQItem();
    }
    std::cout <<"Number of frames :" << nbImages << std::endl;  
 
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
 
    uint32_t offset;
    std::string previousRows = Rows;
-   sqi = seqPapyrus->GetFirstEntry();
+   sqi = seqPapyrus->GetFirstSQItem();
    while (sqi)
    {
       std::cout << "One more image read. Keep waiting" << std::endl;
@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
       currentPosition +=lgrImage;
 
       std::string previousRowNb = Rows;
-      sqi =  seqPapyrus->GetNextEntry();
+      sqi =  seqPapyrus->GetNextSQItem();
    }
 
    // build up a new File, with file info + images info + global pixel area.

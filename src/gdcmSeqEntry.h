@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 12:16:10 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/20 11:26:18 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,18 +47,20 @@ public:
    void WriteContent(std::ofstream *fp, FileType filetype);
 
    /// returns the SQITEM chained List for this SeQuence.
-   ListSQItem const &GetSQItems() const { return Items; }
-   SQItem *GetFirstEntry();
-   SQItem *GetNextEntry();
+   //ListSQItem const &GetSQItems() const { return Items; }
+   SQItem *GetFirstSQItem();
+   SQItem *GetNextSQItem();
+   SQItem *GetSQItem(int itemNumber);
+   unsigned int GetNumberOfSQItems();
       
    /// Sets the delimitor mode
    void SetDelimitorMode(bool dm) { DelimitorMode = dm; }
 
    /// Sets the Sequence Delimitation Item
-   void SetSequenceDelimitationItem(DocEntry *e) { SeqTerm = e;}
+   void SetDelimitationItem(DocEntry *e) { SeqTerm = e;}
+   DocEntry *GetDelimitationItem()       { return SeqTerm;}
 
-   void AddEntry(SQItem *it, int itemNumber);
-   SQItem *GetSQItemByOrdinalNumber(int itemNumber);
+   void AddSQItem(SQItem *it, int itemNumber);
 
    /// Gets the depth level
    int GetDepthLevel() const { return SQDepthLevel; }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/01/20 11:26:18 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,6 +78,8 @@ SeqEntry::~SeqEntry()
    }
 }
 
+//-----------------------------------------------------------------------------
+// Print
 /**
  * \brief   canonical Printer
  */
@@ -119,6 +121,8 @@ void SeqEntry::Print( std::ostream &os, std::string const & )
    }                    
 }
 
+//-----------------------------------------------------------------------------
+// Public
 /*
  * \brief   canonical Writer
  */
@@ -146,23 +150,42 @@ void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype)
    binary_write(*fp, seq_term_lg);
 }
 
-//-----------------------------------------------------------------------------
-// Public
-
-/// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
-void SeqEntry::AddEntry(SQItem *sqItem, int itemNumber)
+/**
+ * \brief   Get the first entry while visiting the SeqEntry
+ * \return  The first SQItem if found, otherwhise NULL
+ */ 
+SQItem *SeqEntry::GetFirstSQItem()
 {
-   sqItem->SetSQItemNumber(itemNumber);
-   Items.push_back(sqItem);
-}
+   ItSQItem = Items.begin();
+   if (ItSQItem != Items.end())
+      return *ItSQItem;
+   return NULL;
+} 
 
+/**
+ * \brief   Get the next SQItem while visiting the SeqEntry
+ * \note : meaningfull only if GetFirstEntry already called
+ * \return  The next SQItem if found, otherwhise NULL
+ */
+
+SQItem *SeqEntry::GetNextSQItem()
+{
+   gdcmAssertMacro (ItSQItem != Items.end())
+   {
+      ++ItSQItem;
+      if (ItSQItem != Items.end())
+         return *ItSQItem;
+   }
+   return NULL;
+}
+ 
 /**
  * \brief return a pointer to the SQItem referenced by its ordinal number.
  *        Returns the first item when argument is negative.
  *        Returns the last item when argument is bigger than the total
  *        item number.
  */
-SQItem *SeqEntry::GetSQItemByOrdinalNumber(int nb)
+SQItem *SeqEntry::GetSQItem(int nb)
 {
    if (nb<0)
    {
@@ -181,35 +204,18 @@ SQItem *SeqEntry::GetSQItemByOrdinalNumber(int nb)
    return *(Items.end()); // Euhhhhh ?!? Is this the last one . FIXME
 }
 
-/**
- * \brief   Get the first entry while visiting the SeqEntry
- * \return  The first SQItem if found, otherwhise NULL
- */ 
-SQItem *SeqEntry::GetFirstEntry()
+unsigned int SeqEntry::GetNumberOfSQItems()
 {
-   ItSQItem = Items.begin();
-   if (ItSQItem != Items.end())
-      return *ItSQItem;
-   return NULL;
-} 
-
-/**
- * \brief   Get the next SQItem while visiting the SeqEntry
- * \note : meaningfull only if GetFirstEntry already called
- * \return  The next SQItem if found, otherwhise NULL
- */
-
-SQItem *SeqEntry::GetNextEntry()
-{
-   gdcmAssertMacro (ItSQItem != Items.end())
-   {
-      ++ItSQItem;
-      if (ItSQItem != Items.end())
-         return *ItSQItem;
-   }
-   return NULL;
+   return Items.size();
 }
- 
+
+/// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
+void SeqEntry::AddSQItem(SQItem *sqItem, int itemNumber)
+{
+   sqItem->SetSQItemNumber(itemNumber);
+   Items.push_back(sqItem);
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:07:07 $
-  Version:   $Revision: 1.201 $
+  Date:      $Date: 2005/01/20 11:26:17 $
+  Version:   $Revision: 1.202 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1313,7 +1313,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       {
          if ( newDocEntry->IsSequenceDelimitor() )
          {
-            seqEntry->SetSequenceDelimitationItem( newDocEntry ); 
+            seqEntry->SetDelimitationItem( newDocEntry ); 
             break;
          }
       }
@@ -1356,7 +1356,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       offsetStartCurrentSQItem = Fp->tellg();
       // end try -----------------
  
-      seqEntry->AddEntry( itemSQ, SQItemNumber ); 
+      seqEntry->AddSQItem( itemSQ, SQItemNumber ); 
       SQItemNumber++;
       if ( !delim_mode && ((long)(Fp->tellg())-offset ) >= l_max )
       {

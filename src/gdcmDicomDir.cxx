@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:09:23 $
-  Version:   $Revision: 1.108 $
+  Date:      $Date: 2005/01/20 11:26:17 $
+  Version:   $Revision: 1.109 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -762,15 +762,16 @@ void DicomDir::CreateDicomDir()
 
    NewMeta();
 
-   ListSQItem listItems = s->GetSQItems();
+   //ListSQItem listItems = s->GetSQItems();
    
    DocEntry *d;
    std::string v;
    SQItem *si;
-   for( ListSQItem::iterator i = listItems.begin(); 
-                             i !=listItems.end(); ++i ) 
+
+   SQItem *tmpSI=s->GetFirstSQItem();
+   while(tmpSI)
    {
-      d = (*i)->GetDocEntry(0x0004, 0x1430); // Directory Record Type
+      d = tmpSI->GetDocEntry(0x0004, 0x1430); // Directory Record Type
       if ( ValEntry* valEntry = dynamic_cast<ValEntry *>(d) )
       {
          v = valEntry->GetValue();
@@ -829,7 +830,9 @@ void DicomDir::CreateDicomDir()
       }
 
       if( si )
-         MoveSQItem(si,*i);
+         MoveSQItem(si,tmpSI);
+
+      tmpSI=s->GetNextSQItem();
    }
    TagHT.clear();
 }
