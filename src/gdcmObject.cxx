@@ -112,7 +112,6 @@ std::string gdcmObject::GetEntryByName(TagName name)  {
          gdcmHeaderEntry *Entry;
          TagKey key = gdcmDictEntry::TranslateToKey(group, element);
          if ( ! ptagHT->count(key)) {
-	   // we assume the element belongs to a Public Group (not a shadow one)
 	   // we assume a Public Dictionnary *is* loaded
            gdcmDict *PubDict         = gdcmGlobal::GetDicts()->GetDefaultPubDict();
            // if the invoqued (group,elem) doesn't exist inside the Dictionary

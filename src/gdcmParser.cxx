@@ -1056,14 +1056,6 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
    int compte =0;
    itsTimeToWritePixels = false;
-     
-      // === Deal with the length
-      //     --------------------
-      if((tag->GetLength())%2==1)
-      { 
-         tag->SetValue(tag->GetValue()+"\0");
-         tag->SetLength(tag->GetReadLength()+1);
-      }
 
       gr    = tag->GetGroup();
       el    = tag->GetElement();
@@ -1071,6 +1063,14 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
       val   = tag->GetValue().c_str();
       vr    = tag->GetVR();
       voidArea = tag->GetVoidArea();
+           
+      // === Deal with the length
+      //     --------------------
+      if((tag->GetLength())%2==1)
+      { 
+         tag->SetValue(tag->GetValue()+"\0");
+         tag->SetLength(tag->GetReadLength()+1);
+      }
       
       if ( type == ACR ) 
       { 
@@ -1090,7 +1090,14 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
          guint16 z=0, shortLgr;
 	 
          if (gr == 0xfffe) { // NO Value Representation for 'delimiters'
-               // no length : write ffffffff		
+                             // no length : write ffffffff
+			     			     
+                                        // special patch to make some MR PHILIPS
+             if (el == 0x0000) return;  // images e-film readable					// see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm
+					// from Hospital Guy de Chauliac,
+                                        // Montpellier
+					// we just ignore spurious fffe|0000 tag !
+	     		
             fwrite (&ff,(size_t)4 ,(size_t)1 ,_fp);
             return;       // NO value for 'delimiters'	        	    
 	 }
