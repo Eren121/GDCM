@@ -75,22 +75,21 @@ int main(int argc, char* argv[])
       if (tag->second->GetVR() == "SQ") //to skip pb of SQ recursive exploration
          continue;
 
-      //According to JPR I should also skip those:
-      if (tag->second->GetVR() == "unkn") //to skip pb of SQ recursive exploration
-         continue;
-
       std::string value = ((gdcmValEntry*)(tag->second))->GetValue();
-      if( value.find( "gdcm::NotLoaded" ) != 0 )
-         continue;
-
-// the following produce a seg fault at write time:
-//      if( value.find( "gdcm::Loaded" ) != 0 )
+      //According to JPR I should also skip those:
+//      if (tag->second->GetVR() == "unkn") //to skip pb of SQ recursive exploration
 //         continue;
 
+//      if( value.find( "gdcm::NotLoaded" ) == 0 )
+//         continue;
+
+      if( value.find( "gdcm::Loaded" ) == 0 )
+         continue;
+         
       //std::cerr << "Reading: " << tag->second->GetVR() << std::endl;
       //tag->second->Print(); std::cout << std::endl;
     
-      //std::cerr << "Reading: " << value  << std::endl;
+      std::cerr << "Reading: " << value  << std::endl;
 
       // Well ... Should have dynamic cast here 
       copy->GetHeader()->ReplaceOrCreateByNumber( 
@@ -104,7 +103,7 @@ int main(int argc, char* argv[])
    size_t dataSize = original->GetImageDataSize();
    void *imageData = original->GetImageData();
 
-   copy->GetImageData();
+   //copy->GetImageData();
    copy->SetImageData(imageData, dataSize);
 
    std::cout << "--- Copy ----------------------" << std::endl;
