@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 17:34:42 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/01/14 17:36:23 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -137,7 +137,7 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
 
          // TODO FIXME : Maybe we should allocate somewhere a static buffer,
          // in order not to have to alloc/delete for almost every BinEntry ...
-         uint16_t *buffer = new uint16[BUFFER_SIZE];
+         uint16_t *buffer = new uint16_t[BUFFER_SIZE];
 
          // how many BUFFER_SIZE long pieces in binArea ?
          int nbPieces = lgr/BUFFER_SIZE/2; //(16 bits = 2 Bytes)
@@ -156,7 +156,7 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
          {
             fp->write ( (char*)currPosition, remainingSize );   
          } 
-         delete buffer; 
+         delete[] buffer; 
       }
       else
       { 
