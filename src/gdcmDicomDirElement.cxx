@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 18:08:56 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/11/04 15:59:37 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,9 +57,9 @@ DicomDirElement::DicomDirElement()
          from.getline(buff, 1024, ' ');
          type = buff;
 
-         if( (type=="metaElem")  || (type=="patientElem") || 
-             (type=="studyElem") || (type=="serieElem")   || 
-             (type=="imageElem") )
+         if( type == "metaElem"  || type == "patientElem" || 
+             type == "studyElem" || type == "serieElem"   || 
+             type == "imageElem" )
          {
             from >> std::hex >> elem.Group >> elem.Elem;
 
@@ -68,18 +68,12 @@ DicomDirElement::DicomDirElement()
             from >> std::ws;
             from.getline(buff, 1024, '"');
             elem.Value = buff;
-         
+
             AddNewEntry(type, elem);
-         }
-         else
-         {
-            dbg.Error("DicomDirElement::DicomDirElement: Error parsing file",
-                      filename.c_str());
-            dbg.Error("Type", type.c_str(), " is not registered as valid" );
          }
          from.getline(buff, 1024, '\n');
       }
-   from.close();
+      from.close();
    }
 }
 

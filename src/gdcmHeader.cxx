@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 03:10:58 $
-  Version:   $Revision: 1.196 $
+  Date:      $Date: 2004/11/04 15:59:37 $
+  Version:   $Revision: 1.197 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1170,7 +1170,7 @@ std::string Header::GetTransfertSyntaxName()
  */
 void Header::SetImageDataSize(size_t ImageDataSize)
 {
-   ///FIXME I don't understand this code wh ydo we set two times 'car' ?
+   ///FIXME I don't understand this code why do we set two times 'car' ?
    std::string car = Util::Format("%d", ImageDataSize);
  
    DocEntry *a = GetDocEntryByNumber(GrPixel, NumPixel);
@@ -1207,7 +1207,7 @@ bool Header::AnonymizeHeader()
       }
       else
       {
-         ReplaceOrCreateByNumber(std::string("anonymised"), 0x0010, 0x0010);
+         ReplaceOrCreateByNumber("anonymised", 0x0010, 0x0010);
       }
    }
 
