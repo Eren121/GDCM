@@ -11,7 +11,7 @@ int TestDicomString(int , char* [])
     assert( a.c_str()[i] == '\0' );
     assert( a.data()[i] == '\0' );
   }
-  assert( a.c_str()[3] == '\0' );
+  assert( a.c_str()[2] == '\0' );
 
 /*
 std::string zeros(x, 0);
