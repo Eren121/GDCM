@@ -98,6 +98,8 @@ int gdcmHeaderHelper::GetPixelSize() {
       return 2;
    if (PixelType == "32U" || PixelType == "32S")
       return 4;
+   if (PixelType == "FD") // to help unfortunate users to manage DOUBLE
+      return 8;
    dbg.Verbose(0, "gdcmHeader::GetPixelSize: Unknown pixel type");
    return 0;
 }
@@ -112,8 +114,12 @@ int gdcmHeaderHelper::GetPixelSize() {
  *          - 16S   signed 16 bit,
  *          - 32U unsigned 32 bit,
  *          - 32S   signed 32 bit,
+ *          - FD    Double,
  * \warning 12 bit images appear as 16 bit.
  * \        24 bit images appear as 8 bit
+ * \        DOUBLE images are coded as 64 bits 
+ * \               (no DOUBLE images in kosher DICOM,
+ * \                but so usefull for people that miss them ;-)
  * @return  
  */
 std::string gdcmHeaderHelper::GetPixelType() {
@@ -127,13 +133,16 @@ std::string gdcmHeaderHelper::GetPixelType() {
       BitsAlloc = std::string("16");
    else if (BitsAlloc == "24")      // (in order no to be messed up
       BitsAlloc = std::string("8"); // by old RGB images)
-      
+    
    std::string Signed;
    Signed = GetEntryByNumber(0x0028, 0x0103);
    if (Signed == GDCM_UNFOUND) { // "Pixel Representation"
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
       BitsAlloc = std::string("0");
    }
+   if (BitsAlloc == "64") // to help users that want to deal with DOUBLE
+      return("FD");
+      
    if (Signed == "0")
       Signed = std::string("U");
    else
