@@ -1,3 +1,12 @@
+2004-11-09 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * src/gdcmDicomDit.h the Method typedef is now local to DicomDir class.
+  * gdcmPython/gdcm.i:
+    - comments on the DicomDir::Method related usage added.
+    - now that we use the namespace gdcm, a lot of internal classes do
+      NOT need to be wrapped anymore.
+  * gdcmPython/demo/DicomDirProgressMethod.py (that uses the above
+    DicomDir::Method) new example added.
+
 2004-11-05 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * Improve string manipulation. I now inforce the notion of 'DicomString'
     A DicomString can contain as many \0 as they want

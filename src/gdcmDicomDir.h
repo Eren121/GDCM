@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/02 03:10:32 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/11/09 10:25:27 $
+  Version:   $Revision: 1.37 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,6 @@ namespace gdcm
 typedef std::list<DicomDirPatient*>   ListDicomDirPatient;
 typedef std::vector<Document*>  VectDocument;
 
-typedef GDCM_EXPORT void(Method)(void*);
 //-----------------------------------------------------------------------------
 
 /**
@@ -45,6 +44,7 @@ typedef GDCM_EXPORT void(Method)(void*);
 class GDCM_EXPORT DicomDir: public Document
 {
 public:
+   typedef GDCM_EXPORT void(Method)(void*);
    DicomDir( std::string const & filename, bool parseDir = false );
    DicomDir(); 
                    
@@ -66,12 +66,18 @@ public:
    /// Parsing
    void ParseDirectory();
    
-   void SetStartMethod(Method*, void* = NULL, Method* = NULL);
-   void SetStartMethodArgDelete(Method*);
-   void SetProgressMethod(Method* ,void* = NULL, Method* = NULL);
-   void SetProgressMethodArgDelete(Method*);
-   void SetEndMethod(Method*, void* = NULL,Method* = NULL);
-   void SetEndMethodArgDelete(Method*);
+   void SetStartMethod(    DicomDir::Method*,
+                           void* = NULL,
+                           DicomDir::Method* = NULL );
+   void SetProgressMethod( DicomDir::Method*, 
+                           void* = NULL,
+                           DicomDir::Method* = NULL );
+   void SetEndMethod(      DicomDir::Method*,
+                           void* = NULL, 
+                           DicomDir::Method* = NULL );
+   void SetStartMethodArgDelete( DicomDir::Method* );
+   void SetProgressMethodArgDelete( DicomDir::Method* );
+   void SetEndMethodArgDelete( DicomDir::Method* );
 
    /// GetProgress GetProgress
    float GetProgress()  { return Progress; };

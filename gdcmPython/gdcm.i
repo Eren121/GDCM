@@ -26,14 +26,10 @@
 #include "gdcmValEntry.h"
 
 ////////////////////////////////////////////////////////////////////////////
-// Utility functions on strings for removing leading and trailing spaces
-void EatLeadingAndTrailingSpaces(std::string & s) {
-	while ( s.length() && (s[0] == ' ') )
-		s.erase(0,1);
-	while ( s.length() && (s[s.length()-1] == ' ') )
-		s.erase(s.length()-1, 1);
-}
-
+/// Refer (below) to the definition of multi-argument typemap
+///   %typemap(python, in)
+///      ( gdcm::DicomDir::Method*, void*, gdcm::DicomDir::Method*)
+/// for detail on gdcmPythonVoidFunc() and gdcmPythonVoidFuncArgDelete().
 void gdcmPythonVoidFunc(void *arg)
 {
   PyObject *arglist, *result;
@@ -68,12 +64,14 @@ void gdcmPythonVoidFuncArgDelete(void *arg)
     }
 }
 
+/// This is required in order to avoid %including all the gdcm include files.
 using namespace gdcm;
 %}
-typedef  unsigned short guint16;
-typedef  unsigned int guint32;
 
-////////////////////////////////////////////////////////////////////////////
+
+///////////////////////  typemap section  ////////////////////////////////////
+
+////////////////////////////////////////////////
 // Convert an STL list<> to a python native list
 %typemap(out) std::list<std::string> * {
    PyObject* NewItem = (PyObject*)0;
@@ -89,7 +87,7 @@ typedef  unsigned int guint32;
    $result = NewList;
 }
 
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 // Convert an STL map<> (hash table) to a python native dictionary
 %typemap(out) std::map<std::string, std::list<std::string> > * {
    PyObject* NewDict = PyDict_New(); // The result of this typemap
@@ -118,7 +116,7 @@ typedef  unsigned int guint32;
    $result = NewDict;
 }
 
-////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
 %typemap(out) gdcm::TagDocEntryHT & {
    PyObject* NewDict = PyDict_New(); // The result of this typemap
@@ -146,14 +144,13 @@ typedef  unsigned int guint32;
       }
       else
         continue; 
-      EatLeadingAndTrailingSpaces(RawValue);
       NewVal = PyString_FromString(RawValue.c_str());
       PyDict_SetItem( NewDict, NewKey, NewVal);
    }
    $result = NewDict;
 }
 
-////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////
 %typemap(out) ListDicomDirPatient & {
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
@@ -199,8 +196,22 @@ typedef  unsigned int guint32;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// Deals with function returning a C++ string.
-%typemap(python, in) (gdcm::Method *,void * =NULL,gdcm::Method * =NULL) {
+// Multi-argument typemap designed for wrapping the progress related methods
+// in order to control from an external application the computation of
+// a DicomDir object (see DicomDir::SetStartMethod*,
+// DicomDir::SetProgressMethod* and DicomDir::SetEndMethod*).
+// Motivation: since DicomDir parsing can be quite long, a GUI application
+//             needs to display the avancement and potentially offer a
+//             cancel method to the user (when this one feels things are
+//             longer than expected).
+// Example of usage: refer to demo/DicomDirProgressMethod.py
+// Note: Uses gdcmPythonVoidFunc and gdcmPythonVoidFuncArgDelete defined
+//       in the Swig verbatim section of this gdcm.i i.e. in the above section
+//       enclosed within the %{ ... %} scope operator ).
+%typemap(python, in) ( gdcm::DicomDir::Method *, 
+                       void * = NULL, 
+                       gdcm::DicomDir::Method * = NULL )
+{
 	if($input!=Py_None)
 	{
 		Py_INCREF($input);
@@ -215,7 +226,6 @@ typedef  unsigned int guint32;
 		$3=NULL;
 	}
 }
-
 
 ////////////////////  STL string versus Python str  ////////////////////////
 // Convertion returning a C++ string.
@@ -238,26 +248,27 @@ typedef  unsigned int guint32;
 
 ////////////////////////////////////////////////////////////////////////////
 // Because overloading and %rename don't work together (see below Note 1)
-// we need to ignore the default constructor.
+// we need to ignore some methods (e.g. the overloaded default constructor).
 // The gdcm::Header class doesn't have any SetFilename method anyhow, and
 // this constructor is only used internaly (not from the API) so this is
 // not a big loss.
 %ignore gdcm::Header::Header();
+%ignore gdcm::DicomDir::DicomDir();
 
 ////////////////////////////////////////////////////////////////////////////
 // Warning: Order matters !
 %include "gdcmCommon.h"
-%include "gdcmRLEFramesInfo.h"
-%include "gdcmJPEGFragmentsInfo.h"
-%include "gdcmDictEntry.h"
-%include "gdcmDict.h"
-%include "gdcmDocEntry.h"
+//CLEANME %include "gdcmRLEFramesInfo.h"
+//CLEANME %include "gdcmJPEGFragmentsInfo.h"
+//CLEANME %include "gdcmDictEntry.h"
+//CLEANME %include "gdcmDict.h"
+//CLEANME %include "gdcmDocEntry.h"
 %include "gdcmDocEntrySet.h"
-%include "gdcmElementSet.h"
-%include "gdcmDictSet.h"
-%include "gdcmTS.h"
-%include "gdcmVR.h"
-%include "gdcmSQItem.h"
+//CLEANME %include "gdcmElementSet.h"
+//CLEANME %include "gdcmDictSet.h"
+//CLEANME %include "gdcmTS.h"
+//CLEANME %include "gdcmVR.h"
+//CLEANME %include "gdcmSQItem.h"
 %include "gdcmDicomDirElement.h"
 %include "gdcmDicomDirObject.h"
 %include "gdcmDicomDirImage.h"
@@ -291,7 +302,6 @@ typedef  unsigned int guint32;
 //     {
 //     $1 = new std::string( PyString_AsString( $input ) );
 //     }
-//   add a note on the rename that works !
 //     void Junk();
 //     void Junk(std::string const & bozo);
 //
