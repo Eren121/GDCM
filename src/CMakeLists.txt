@@ -52,20 +52,16 @@ SET(libgdcm_la_SOURCES
    )
 
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )
-IF(UNIX)
-  TARGET_LINK_LIBRARIES(gdcm 
-    gdcmjpeg8 
-    gdcmjpeg12
-    gdcmjpeg16
-  )
-ELSE(UNIX)
-  TARGET_LINK_LIBRARIES(gdcm 
-    gdcmjpeg8 
-    gdcmjpeg12
-    gdcmjpeg16
-    Wsock32.lib   #doesn't exist on cygwin
-  )
-ENDIF(UNIX)
+TARGET_LINK_LIBRARIES(gdcm 
+  gdcmjpeg8 
+  gdcmjpeg12
+  gdcmjpeg16
+)
+IF(WIN32)
+  IF(NOT BORLAND)
+    TARGET_LINK_LIBRARIES(gdcm Wsock32)
+  ENDIF(NOT BORLAND)
+ENDIF(WIN32)
 
 #The following is not working because when a header file is not found it tries 
 #to find one in the binary dir

@@ -20,9 +20,10 @@
 #include <errno.h>
 
 // for Directory pb
-#ifdef _MSC_VER 
+#if defined(_MSC_VER) || defined(__BORLANDC__) 
    #include <windows.h> 
    #include <direct.h>
+   #include <stdio.h>
 #else
    #include <dirent.h>   
    #include <unistd.h>

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/08 22:13:40 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/11/09 21:55:56 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,6 +25,7 @@
 #include "gdcmDebug.h"
 #include "gdcmPixelConvert.h"
 #include <fstream>
+#include <stdio.h>
 
 namespace gdcm
 {

@@ -5,31 +5,6 @@
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDirList.h"
 
-#include <fstream>
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif
-
-#define  ostringstream ostrstream
-
-#include <sys/types.h>
-#include <errno.h>
-
-// for Directory pb
-#ifdef _MSC_VER 
-   #include <windows.h> 
-   #include <direct.h>
-#else
-   #include <dirent.h>   
-   #include <unistd.h>
-#endif
-
-#include <vector>
-#include <algorithm>
-
 // ---
 void StartMethod(void *toto) {
   (void)toto;

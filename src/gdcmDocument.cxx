@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/05 21:23:46 $
-  Version:   $Revision: 1.118 $
+  Date:      $Date: 2004/11/09 21:55:55 $
+  Version:   $Revision: 1.119 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 #include <iomanip>
 
 // For nthos:
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__BORLANDC__)
    #include <winsock.h>
 #else
    #include <netinet/in.h>
@@ -2388,7 +2388,7 @@ bool Document::CheckSwap()
    uint32_t  s32;
    uint16_t  s16;
        
-   char deb[HEADER_LENGTH_TO_READ];
+   char deb[256]; //HEADER_LENGTH_TO_READ];
     
    // First, compare HostByteOrder and NetworkByteOrder in order to
    // determine if we shall need to swap bytes (i.e. the Endian type).

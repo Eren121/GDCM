@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:13 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/11/09 21:55:55 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ typedef  unsigned int   uint32_t;
 #endif //HAVE_NO_STDINT_H
 #endif
 
-#ifdef _MSC_VER 
+#if defined( _MSC_VER) || defined(__BORLANDC__)
 typedef    signed char   int8_t;
 typedef  unsigned char  uint8_t;
 typedef  unsigned short uint16_t;
@@ -65,11 +65,14 @@ typedef  unsigned int   uint32_t;
 #define UINT32_MAX    (4294967295U)
 #endif
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__BORLANDC__)
 #define GDCM_EXPORT __declspec( dllexport )
-#define getcwd _getcwd
 #else
 #define GDCM_EXPORT
+#endif
+
+#ifdef _MSC_VER
+#define getcwd _getcwd
 #endif
 
 // ifdef for old gcc / broken compiler

@@ -1,5 +1,6 @@
 #include "gdcmHeader.h"
 #include "gdcmFile.h"
+#include <stdio.h>
 
 //Generated file:
 #include "gdcmDataImages.h"
