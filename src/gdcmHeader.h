@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.27 2003/06/17 17:44:48 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.28 2003/06/20 14:17:47 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -168,8 +168,9 @@ public:
    
    int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   
 
-   int ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem);                                
-
+   int ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem); 
+   int ReplaceOrCreateByNumber(char * Value,      guint16 Group, guint16 Elem);                                
+                               
    int GetXSize(void);  
    int GetYSize(void);
    int GetZSize(void);

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.69 2003/06/17 17:44:48 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.70 2003/06/20 14:17:47 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -23,7 +23,13 @@ using namespace std;
 // Refer to gdcmHeader::SetMaxSizeLoadElementValue()
 #define _MaxSizeLoadElementValue_   1024
 
-void gdcmHeader::Initialise(void) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ * @param  none   
+ * @return  
+ */
+ void gdcmHeader::Initialise(void) {
    dicom_vr = gdcmGlobal::GetVR();
    dicom_ts = gdcmGlobal::GetTS();
    Dicts =    gdcmGlobal::GetDicts();
@@ -31,7 +37,13 @@ void gdcmHeader::Initialise(void) {
    RefShaDict = (gdcmDict*)0;
 }
 
-gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ * @param     
+ * @return  
+ */
+ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
   SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
   filename = InFilename;
   Initialise();
@@ -42,12 +54,24 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
   CloseFile();
 }
 
-gdcmHeader::gdcmHeader(bool exception_on_error) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ * @param     
+ * @return  
+ */
+ gdcmHeader::gdcmHeader(bool exception_on_error) {
   SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
   Initialise();
 }
 
-bool gdcmHeader::OpenFile(bool exception_on_error)
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ * @param     
+ * @return  
+ */
+ bool gdcmHeader::OpenFile(bool exception_on_error)
   throw(gdcmFileError) {
   fp=fopen(filename.c_str(),"rb");
   if(exception_on_error) {
@@ -60,7 +84,13 @@ bool gdcmHeader::OpenFile(bool exception_on_error)
   return false;
 }
 
-bool gdcmHeader::CloseFile(void) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ * @param     
+ * @return  
+ */
+ bool gdcmHeader::CloseFile(void) {
   int closed = fclose(fp);
   fp = (FILE *)0;
   if (! closed)
@@ -68,7 +98,13 @@ bool gdcmHeader::CloseFile(void) {
   return true;
 }
 
-gdcmHeader::~gdcmHeader (void) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ * @param     
+ * @return  
+ */
+ gdcmHeader::~gdcmHeader (void) {
    dicom_vr =   (gdcmVR*)0; 
    Dicts    =   (gdcmDictSet*)0;
    RefPubDict = (gdcmDict*)0;
@@ -242,7 +278,13 @@ void gdcmHeader::CheckSwap()
    return;
 }
 
-void gdcmHeader::SwitchSwapToBigEndian(void) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ * @param     
+ * @return  
+ */
+ void gdcmHeader::SwitchSwapToBigEndian(void) {
    dbg.Verbose(1, "gdcmHeader::SwitchSwapToBigEndian",
                   "Switching to BigEndian mode.");
    if ( sw == 0    ) {
@@ -1008,6 +1050,20 @@ int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Ele
 	return(1);
 }   
 
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   TODO
+ * @param   
+ */
+int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
+
+	gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
+	PubElValSet.Add(nvElValue);
+	string v = Value;	
+	PubElValSet.SetElValueByNumber(v, Group, Elem);
+	return(1);
+}   
 /**
  * \ingroup gdcmHeader
  * \brief   Build a new Element Value from all the low level arguments. 
