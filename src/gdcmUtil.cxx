@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:43:37 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2004/12/05 21:46:44 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ int Util::CountSubstring (const std::string& str,
                           const std::string& subStr)
 {
    int count = 0;   // counts how many times it appears
-   unsigned int x = 0;       // The index position in the string
+   std::string::size_type x = 0;       // The index position in the string
 
    do
    {
