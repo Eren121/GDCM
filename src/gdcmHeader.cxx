@@ -794,6 +794,26 @@ gdcmDictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
 	return found;
 }
 
+list<string> * gdcmHeader::GetPubTagNames(void) {
+	list<string> * Result = new list<string>;
+	TagHT entries = RefPubDict->GetEntries();
+
+	for (TagHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
+      Result->push_back( tag->second->GetName() );
+	}
+	return Result;
+}
+
+map<string, list<string> > * gdcmHeader::GetPubTagNamesByCategory(void) {
+	map<string, list<string> > * Result = new map<string, list<string> >;
+	TagHT entries = RefPubDict->GetEntries();
+
+	for (TagHT::iterator tag = entries.begin(); tag != entries.end(); ++tag){
+		(*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
+	}
+	return Result;
+}
+
 string gdcmHeader::GetPubElValByNumber(guint16 group, guint16 element) {
 	return PubElVals.GetElValueByNumber(group, element);
 }

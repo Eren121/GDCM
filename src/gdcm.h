@@ -23,6 +23,7 @@ using namespace std;  // string type lives in the std namespace on VC++
 #include <iostream>
 #include <stddef.h>   // For size_t
 #include <stdio.h>    // FIXME For FILE on GCC only
+#include <list>
 #include <map>
 
 #ifdef __GNUC__
@@ -110,6 +111,7 @@ public:
 	// TODO Swig int AppendEntry(gdcmDictEntry* NewEntry);
 	gdcmDictEntry * GetTag(guint32 group, guint32 element);
 	void Print(ostream&);
+	TagHT & GetEntries(void) { return entries; }
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -181,7 +183,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////
 // Container for a set of succefully parsed ElValues.
 typedef map<TagKey, ElValue*> TagElValueHT;
-	typedef map<string, ElValue*> TagElValueNameHT;
+typedef map<string, ElValue*> TagElValueNameHT;
 
 class GDCM_EXPORT ElValSet {
 		// We need both accesses with a TagKey and the Dictentry.Name
@@ -293,7 +295,8 @@ public:
 	// from the standard (or public) dictionary. Typical usage: enable the
 	// user of a GUI based interface to select his favorite fields for sorting
 	// or selection.
-	// TODO Swig string* GetPubTagNames();
+	list<string> * GetPubTagNames(void);
+	map<string, list<string> > * GetPubTagNamesByCategory(void);
 	// Get the element values themselves:
 	string GetPubElValByName(string TagName);
 	string GetPubElValByNumber(guint16 group, guint16 element);

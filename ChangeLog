@@ -1,3 +1,15 @@
+2002-12-16 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcm.h, src/gdcmHeader.cxx: added GetPubTagNames() resp.
+        GetPubTagNamesByCategory() to gdcmHeader that return a list of the
+        entries within the associated public Dicom dictionary resp. the same
+        information but sorted by the fourth field (PAT, IMG, DIR) of the
+        dictionary.
+        - Dicts/dicomV3.dic Entries which had and unspecified fourth field
+          are now in the "???" group.
+        - python/gdcm.i changed accordingly,
+        - python/demo/printGroupedPublicDict.py added, that gives an example
+          of the above new functionalities in Python.
+
 2002-12-11 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h, gdcmHeader.cxx:
         - historic references to glib's g_malloc and g_free (#defined)
