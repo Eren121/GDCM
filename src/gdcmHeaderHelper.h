@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.8 2003/12/22 12:46:16 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.9 2004/01/12 13:12:28 regrain Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
@@ -51,15 +51,15 @@
       XC        // Photographic Imaging
     };
       
-/**
-  This class is meant to *interpret* data given from gdcmHeader
-  That is to say :
-   * it will help other dev to link against there lib
-   * return value instead of string
-   * will be able to search for data at some other place
-   * return *default value* which is not a gdcmHeader goal
-   * ...
-*/
+/*
+ * This class is meant to *interpret* data given from gdcmHeader
+ * That is to say :
+ *  - it will help other dev to link against there lib
+ *  - return value instead of string
+ *  - will be able to search for data at some other place
+ *  - return *default value* which is not a gdcmHeader goal
+ *  - ...
+ */
 class GDCM_EXPORT gdcmHeaderHelper : public gdcmHeader {
 
 public:

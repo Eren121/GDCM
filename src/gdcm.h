@@ -15,15 +15,21 @@
 
 #include "gdcmException.h"
 #include "gdcmCommon.h"
+
 #include "gdcmDictEntry.h"
 #include "gdcmDict.h"
 #include "gdcmDictSet.h"
+
 #include "gdcmElValue.h"
 #include "gdcmElValSet.h"
+
 #include "gdcmHeader.h"
+#include "gdcmHeaderHelper.h"
+#include "gdcmIdo.h"
 #include "gdcmFile.h"
 
-//class gdcmSerie : gdcmFile;
-//class gdcmMultiFrame : gdcmFile;
+//#include "gdcmTS.h"
+//#include "gdcmVR.h"
+//#include "gdcmUtil.h"
 
 #endif // #ifndef GDCM_H

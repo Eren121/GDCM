@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.16 2003/10/02 11:26:16 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.17 2004/01/12 13:12:28 regrain Exp $
 
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
@@ -10,13 +10,22 @@
 #include <vector>
 #include <string>
 
+/*
+ * gdcmDebug is an object for debugging in program.
+ * It has 2 debugging modes :
+ *  - error : for bad library use
+ *  - debug : for debugging messages
+ * 
+ * A debugging message has a level of priority and is 
+ * Shown only when the debug level is higher than the 
+ * message level.
+ */
 class gdcmDebug {
 private:
 	int DebugLevel;
 public:
 	gdcmDebug(int  = 0);
 	void Verbose(int, const char*, const char* ="");
-//	void Verbose(int, char*, char*);
 	void Error(bool, const char*,  const char* ="");
 	void Error(const char*, const char* ="", const char* ="");
 	void Assert(int, bool, const char*, const char*);
@@ -24,6 +33,10 @@ public:
 	void SetDebug (int i) {DebugLevel = i;}
 };
 
+/*
+ * This class contains all globals elements that might be
+ * instanciated only one time
+ */
 class gdcmGlobal {
 private:
    static gdcmVR *VR;

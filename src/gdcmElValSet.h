@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.19 2003/11/13 18:08:34 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.20 2004/01/12 13:12:28 regrain Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -6,13 +6,13 @@
 #include "gdcmCommon.h"
 #include "gdcmElValue.h"
 
-#include <stdio.h>    // FIXME For FILE on GCC only
+#include <stdio.h>
 #include <map>
 #include <list>       // for linking together *all* the Dicom Elements
 
-////////////////////////////////////////////////////////////////////////////
-// Container for a set of successfully parsed ElValues.
-
+/*
+ * Container for a set of successfully parsed ElValues.
+ */
 typedef std::map<TagKey,      gdcmElValue*> TagElValueHT;
 typedef std::map<std::string, gdcmElValue*> TagElValueNameHT;
    

@@ -1,3 +1,6 @@
+2004-01-12 Benoit Regrain
+     * src/*.h : add comments
+     
 2004-01-09 Benoit Regrain
      * gdcmPython/gdcmVersion.py : add a gdcmVERSION variable information
      * setup.py : use a reference to gdcmVERSION

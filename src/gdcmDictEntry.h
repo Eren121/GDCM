@@ -5,6 +5,14 @@
 
 #include "gdcmCommon.h"
 
+/*
+ * the gdcmDictEntry in an element contained by the gdcmDict.
+ * It contains :
+ *  - the key referenced by the DICOM norm or the constructor (for private keys)
+ *  - the corresponding name in english (it's equivalent to a label)
+ *  - the owner group
+ *  - etc.
+ */
 class GDCM_EXPORT gdcmDictEntry {
 private:
    // FIXME : were are the group and element used except from building up
@@ -21,6 +29,7 @@ private:
    std::string  name;   // e.g. "Patient_Name"
    TagKey  key;         // Redundant with (group, element) but we add it
                         // on efficiency purposes.
+
 	// DCMTK has many fields for handling a DictEntry (see below). What are the
 	// relevant ones for gdcmlib ?
 	//      struct DBI_SimpleEntry {

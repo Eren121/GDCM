@@ -6,7 +6,7 @@
 #include <iostream>
 #include <exception>
 
-/**
+/*
  * Any exception thrown in the gdcm library
  */
 class GDCM_EXPORT gdcmException : public std::exception {
@@ -17,7 +17,7 @@ class GDCM_EXPORT gdcmException : public std::exception {
   std::string error;
 
  public:
-  /**
+  /*
    * Builds an exception with minimal information: name of the thrower
    * method and error message
    *
@@ -28,7 +28,7 @@ class GDCM_EXPORT gdcmException : public std::exception {
     throw();
   
 
-  /**
+  /*
    * virtual destructor makes this class dynamic
    */
   virtual ~gdcmException() throw() {
@@ -59,7 +59,7 @@ class GDCM_EXPORT gdcmException : public std::exception {
 };
 
 
-/** prints exception stack on output stream
+/* prints exception stack on output stream
  * @param os output stream
  * @param e exception to print
  * @returns output stream os
@@ -67,12 +67,12 @@ class GDCM_EXPORT gdcmException : public std::exception {
 std::ostream& operator<<(std::ostream &os, const gdcmException &e);
 
 
-/**
+/*
  * File error exception thrown in the gdcm library
  */
 class GDCM_EXPORT gdcmFileError : public gdcmException {
  public:
-  /**
+  /*
    * Builds an file-related exception with minimal information: name of
    * the thrower method and error message
    *
@@ -86,12 +86,12 @@ class GDCM_EXPORT gdcmFileError : public gdcmException {
 };
 
 
-/**
+/*
  * Invalid file format exception
  */
 class GDCM_EXPORT gdcmFormatError : public gdcmException {
  public:
-  /**
+  /*
    * Builds an file-related exception with minimal information: name of
    * the thrower method and error message
    *

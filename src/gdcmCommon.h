@@ -71,5 +71,4 @@ enum FileType {
 //For now gdcm is not willing cmake, try to be more quiet
 //#cmakedefine GDCM_NO_ANSI_STRING_STREAM
 
-
 #endif

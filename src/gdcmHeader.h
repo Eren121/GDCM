@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.45 2003/12/22 12:46:16 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.46 2004/01/12 13:12:28 regrain Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -16,23 +16,24 @@ typedef std::string VRKey;
 typedef std::string VRAtr;
 typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
-/// The purpose of an instance of gdcmHeader is to act as a container of
-/// all the DICOM elements and their corresponding values (and
-/// additionaly the corresponding DICOM dictionary entry) of the header
-/// of a DICOM file.
-///
-/// The typical usage of instances of class gdcmHeader is to classify a set of
-/// dicom files according to header information e.g. to create a file hierarchy
-/// reflecting the Patient/Study/Serie informations, or extracting a given
-/// SerieId. Accesing the content (image[s] or volume[s]) is beyond the
-/// functionality of this class and belongs to gdmcFile.
-/// \note  The various entries of the explicit value representation (VR) shall
-///        be managed within a dictionary which is shared by all gdcmHeader
-///        instances.
-/// \note  The gdcmHeader::Set*Tag* family members cannot be defined as
-///        protected due to Swig limitations for as Has_a dependency between
-///        gdcmFile and gdcmHeader.
-
+/*
+ * The purpose of an instance of gdcmHeader is to act as a container of
+ * all the DICOM elements and their corresponding values (and
+ * additionaly the corresponding DICOM dictionary entry) of the header
+ * of a DICOM file.
+ *
+ * The typical usage of instances of class gdcmHeader is to classify a set of
+ * dicom files according to header information e.g. to create a file hierarchy
+ * reflecting the Patient/Study/Serie informations, or extracting a given
+ * SerieId. Accesing the content (image[s] or volume[s]) is beyond the
+ * functionality of this class and belongs to gdmcFile.
+ * \note  The various entries of the explicit value representation (VR) shall
+ *        be managed within a dictionary which is shared by all gdcmHeader
+ *        instances.
+ * \note  The gdcmHeader::Set*Tag* family members cannot be defined as
+ *        protected due to Swig limitations for as Has_a dependency between
+ *        gdcmFile and gdcmHeader.
+ */
 class GDCM_EXPORT gdcmHeader {
 private:
    /// Pointer to the Value Representation Hash Table which contains all

@@ -24,9 +24,11 @@ private:
 	DictSetHT Dicts;
    /// Directory path to dictionaries
    std::string DictPath;
+
 	int AppendDict(gdcmDict* NewDict);
 	void LoadDictFromFile(std::string FileName, DictKey Name);
    std::string BuildDictPath(void);
+
 public:
    std::list<std::string> * GetPubDictTagNames(void);
    std::map<std::string, std::list<std::string> >*
@@ -42,6 +44,7 @@ public:
 	gdcmDictSet(void);
 	~gdcmDictSet(void);
 	void Print(std::ostream& os);
+
 	gdcmDict* GetDict(DictKey DictName);
 	gdcmDict* GetDefaultPubDict(void);
 };

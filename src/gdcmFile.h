@@ -6,11 +6,11 @@
 #include "gdcmCommon.h"
 #include "gdcmHeader.h"
 
-////////////////////////////////////////////////////////////////////////////
-// In addition to Dicom header exploration, this class is designed
-// for accessing the image/volume content. One can also use it to
-// write Dicom files.
-
+/*
+ * In addition to Dicom header exploration, this class is designed
+ * for accessing the image/volume content. One can also use it to
+ * write Dicom files.
+ */
 class GDCM_EXPORT gdcmFile
 {
 private:
@@ -35,7 +35,6 @@ private:
 // For Run Length Encoding (TOCHECK)
    bool gdcm_read_RLE_file      (FILE *fp,void * image_buffer); 
 
-     
 protected:
    int WriteBase(std::string FileName, FileType type);
 
@@ -53,7 +52,7 @@ public:
 
 	// On writing purposes. When instance was created through
 	// gdcmFile(std::string filename) then the filename argument MUST be
-        // different from the constructor's one (no overwriting allowed).
+   // different from the constructor's one (no overwriting allowed).
 	// TODO Swig int SetFileName(std::string filename);
 
    void   SetPixelDataSizeFromHeader(void);
@@ -81,7 +80,6 @@ public:
 	// Ecrit sur disque les pixels d'UNE image
 	// Aucun test n'est fait sur l'"Endiannerie" du processeur.
 	// Ca sera à l'utilisateur d'appeler son Reader correctement
-		
    int WriteRawData  (std::string fileName);
    int WriteDcmImplVR(std::string fileName);
    int WriteDcmImplVR(const char * fileName);

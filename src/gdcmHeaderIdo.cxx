@@ -5,10 +5,11 @@
 
 gdcmHeaderIdo::gdcmHeaderIdo (char* InFilename)
 	: gdcmHeader(InFilename)
-{ }
+{ 
+}
 
 void gdcmHeaderIdo::BuildHeader(void) {
-	 gdcmHeaderIdo::BuildHeader();
+   gdcmHeaderIdo::BuildHeader();
 	setAcrLibido();
 }
 
