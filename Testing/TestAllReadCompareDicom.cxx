@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:53 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/01/31 03:36:59 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,6 @@ int InternalTest(std::string const & filename,
       ////// Check for existence of reference baseline dicom file:
       std::cout << "2...";
 
-      //FILE* testFILE = fopen( referenceFileName.c_str(), "r" );
       std::ifstream testFILE( referenceFileName.c_str() );
       if (! testFILE )
       {
@@ -54,10 +53,6 @@ int InternalTest(std::string const & filename,
 
          tested->SetWriteModeToRGB();
          tested->WriteDcmExplVR( referenceFileName );
-      }
-      else
-      {
-         //fclose( testFILE );
       }
       testFILE.close();
 
@@ -201,7 +196,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       std::string baseLineDir = GDCM_DATA_ROOT;
       baseLineDir += "/BaselineDicom/";
 
-      std::ifstream* testDIR = new std::ifstream(baseLineDir.c_str(), std::ios::in | std::ios::binary);
+      std::ifstream testDIR(baseLineDir.c_str(), std::ios::in | std::ios::binary);
       if (!testDIR )
       {
          std::cerr << "   The reference baseline directory " << std::endl
@@ -211,10 +206,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
                    << std::endl;
          return 1;
       }
-      else
-      {
-         testDIR->close();
-      }
+      testDIR.close();
 
       ////// Step 1 (see above description):
       std::string filename = GDCM_DATA_ROOT;
