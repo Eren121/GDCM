@@ -215,7 +215,8 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
    for (GroupHT::iterator g = groupHt.begin();
         g != groupHt.end();
         ++g){ 
-  
+      // FIXME: g++ -Wall -Wstrict-prototypes reports on following line:
+      //        warning: unsigned int format, different type arg
       sscanf(g->first.c_str(),"%x",&gr_bid);
       tk = g->first + "|0000";
                      

@@ -25,7 +25,7 @@ private:
    /// Directory path to dictionaries
    std::string DictPath;
 	int AppendDict(gdcmDict* NewDict);
-	void LoadDictFromFile(std::string filename, DictKey);
+	void LoadDictFromFile(std::string FileName, DictKey Name);
    std::string BuildDictPath(void);
 public:
    std::list<std::string> * GetPubDictTagNames(void);
@@ -41,7 +41,7 @@ public:
 	// TODO Swig std::string* GetAllDictNames();
 	gdcmDictSet(void);
 	~gdcmDictSet(void);
-	void Print(std::ostream&);
+	void Print(std::ostream& os);
 	gdcmDict* GetDict(DictKey DictName);
 	gdcmDict* GetDefaultPubDict(void);
 };

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.25 2003/05/21 16:26:28 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.26 2003/05/28 19:36:21 frog Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -81,12 +81,12 @@ private:
    void SetMaxSizeLoadElementValue(long);
 
    gdcmDictEntry * GetDictEntryByNumber(guint16, guint16);
-   gdcmDictEntry * GetDictEntryByName(std::string name);
+   gdcmDictEntry * GetDictEntryByName(std::string Name);
 
    // ElValue related utilities
    gdcmElValue * ReadNextElement(void);
    gdcmElValue * NewElValueByNumber(guint16 group, guint16 element);
-   gdcmElValue * NewElValueByName(std::string name);
+   gdcmElValue * NewElValueByName(std::string Name);
 
    void FindLength(gdcmElValue *);
    void FindVR(gdcmElValue *);
@@ -158,7 +158,7 @@ public:
 
    int SetPubElValByName(std::string content, std::string TagName);
    int SetPubElValByNumber(std::string content, guint16 group, guint16 element);
-   int SetShaElValByName(std::string content, std::string ShadowTagName);
+   int SetShaElValByName(std::string content, std::string TagName);
    int SetShaElValByNumber(std::string content, guint16 group, guint16 element);
    
    int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   

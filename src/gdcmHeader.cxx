@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.67 2003/05/21 16:26:28 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.68 2003/05/28 19:36:21 frog Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -714,7 +714,6 @@ void gdcmHeader::SetMaxSizeLoadElementValue(long NewSize) {
 void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    size_t item_read;
    guint16 group  = ElVal->GetGroup();
-   guint16 elem   = ElVal->GetElement();
    string  vr     = ElVal->GetVR();
    guint32 length = ElVal->GetLength();
    bool SkipLoad  = false;

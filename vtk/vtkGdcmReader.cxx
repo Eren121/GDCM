@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.4 2003/05/21 16:26:29 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.5 2003/05/28 19:36:21 frog Exp $
 //CLEANME#include <vtkByteSwap.h>
 #include <stdio.h>
 #include <vtkObjectFactory.h>
@@ -166,7 +166,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
   int NumColumns = this->DataExtent[1] - this->DataExtent[0] + 1;
   int NumLines   = this->DataExtent[3] - this->DataExtent[2] + 1;
   int NumPlanes  = this->DataExtent[5] - this->DataExtent[4] + 1;
-  int size = NumColumns * NumLines * NumPlanes * GdcmFile.GetPixelSize();
+  size_t size = NumColumns * NumLines * NumPlanes * GdcmFile.GetPixelSize();
   if ( size != GdcmFile.GetImageDataSize() )
     {
     vtkDebugMacro("Inconsistency with GetImageDataSize");

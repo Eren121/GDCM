@@ -1,3 +1,14 @@
+2003-05-28  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * When compiling with distutils (see setup.py) the C++ compiler is
+        called with different flags than the default ones (with automake).
+        In order to fix all those warning, I compiled gdcm with the command
+           make 'CXXFLAGS=-Wall -Wstrict-prototypes -D__STDC_LIMIT_MACROS'
+        and went for warning fixes:
+        - src/gdcmHeader.cxx, Test/dcm2acr.cxx, pourFindTaggs.cxx cleaned
+          up from unused variables.
+        - vtk/vtkGdcmReader.cxx: potential bug fix.
+      * src/gdcmHeader.h: Doxygen warning cleanup
+
 2003-05-27  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/gdcm.i:
         - typemaps correction to take into account the systematic replacement
