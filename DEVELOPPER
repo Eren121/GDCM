@@ -128,7 +128,7 @@ gdcm coding style and religious/agnostic beliefs (proposition)
    across multiple lines as necessary. 
  - Methods and functions should keep a reasonable number of lines when
    possible (a typical editor displays 50 lines). Avoid code duplication.
-   Allways prefer creating a new method or function to duplication.
+   Always prefer creating a new method or function to duplication.
    A high indentation level generally suggests the need for a new
    method or function.
  - All the code should be properly indented. The appropriate indentation
@@ -151,7 +151,7 @@ gdcm coding style and religious/agnostic beliefs (proposition)
     uppercase as in LUT or RGBA.]
    While this does result in long names, it self-documents the code.
  - Naming Files:
-   Files should have the same name as the class, with an "gdcm" prepended.
+   Files should have the same name as the class, with a "gdcm" prepended.
    Header files are named .h, while implementation files are named either
    .cxx or .txx, depending on whether they are implementations of templated
    classes. For example, the class gdcm::Document is declared and defined
@@ -163,7 +163,7 @@ gdcm coding style and religious/agnostic beliefs (proposition)
    named beginning with a capital letter, as in GetImageDataSize().
  - Naming Local Variables:
    Local variables begin in lowercase. There is more flexibility in the
-   naming of local variables allthough they still should convey some
+   naming of local variables although they still should convey some
    semantics.
 
 * Classes:
@@ -338,7 +338,7 @@ gdcm coding style and religious/agnostic beliefs (proposition)
       T* foo = 0;
    and not 
       T *foo = 0;
- - Allways define a typedef for a new type and be consistent in usage.
+ - Always define a typedef for a new type and be consistent in usage.
    Use
       typedef Header* HeaderPointer;
       HeaderPointer MyHeaderPointer;
@@ -357,9 +357,9 @@ CVS policy
 * All the commits should be atomic. They must preserve the compilation
   in order to prevent checkouts with broken code.
 * All the commits must correspond to a stade of the code where ctest
-  runs and has no failing subtest. Allways run ctest before commiting.
-  Note: * you can launch ctest in verbose mode through the command
+  runs and has no failing subtest. Always run ctest before commiting.
+  Note: * you can start ctest in verbose mode through the command
              ctest -V >& log
-        * you can launch a single test through ctest with
+        * you can start a single test through ctest with
              ctest -R FailingTestName -V >& log
 ------------------------------------------------
