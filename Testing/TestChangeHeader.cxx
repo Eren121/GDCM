@@ -30,12 +30,29 @@ int TestChangeHeader(int argc, char* argv[])
    {
       f1->GetHeader()->ReplaceOrCreateByNumber( nbFrames, 0x0028, 0x0008);
    }
+
+
+// WARNING : If user tries to 'merge' two mismatching images
+// e.g. a LUT image and a RGB image
+// or a compressed and an uncompressed one
+// or a single frame and a multiframe,
+// or a '12 Bits Allocated' image and anything else, etc
+// Probabely TestChangeHeader will fail !
+// It was not designed as a 'Test' program, but as a utility
+// provided to 'transform' an image 'Siemens MRI New version' into an image 'Siemens MRI old version'
          
    f1->GetHeader()->ReplaceOrCreateByNumber(
       f2->GetHeader()->GetEntryByNumber(0x0028, 0x0010), 0x0028, 0x0010);// nbLig
    f1->GetHeader()->ReplaceOrCreateByNumber( 
       f2->GetHeader()->GetEntryByNumber(0x0028, 0x0011), 0x0028, 0x0011);// nbCol
-
+   f1->GetHeader()->ReplaceOrCreateByNumber( 
+      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0100), 0x0028, 0x0100);// BitsAllocated
+   f1->GetHeader()->ReplaceOrCreateByNumber( 
+      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0101), 0x0028, 0x0101);// BitsStored
+   f1->GetHeader()->ReplaceOrCreateByNumber( 
+      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0102), 0x0028, 0x0102);// HighBit
+   f1->GetHeader()->ReplaceOrCreateByNumber( 
+      f2->GetHeader()->GetEntryByNumber(0x0028, 0x0103), 0x0028, 0x0103);// Pixel Representation
 // Probabely some more to update (?)
 
 // TODO : add a default value
