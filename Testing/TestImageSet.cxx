@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: TestSequence.cxx,v $
+  Module:    $RCSfile: TestImageSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 14:23:18 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/03/02 16:39:28 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@
 typedef std::list<gdcm::File *> FileList;
 
 // If there is sameSerie, sameStudy is set to true
-int CompareImages(FileList &list,bool sameSerie,bool sameStudy)
+int CompareImages(FileList &list, bool sameSerie, bool sameStudy)
 {
    if( sameSerie )
       sameStudy = true;
@@ -50,7 +50,7 @@ int CompareImages(FileList &list,bool sameSerie,bool sameStudy)
    for(it=list.begin();it!=list.end();++it)
    {
       // SOP Instance UID
-      entry=(*it)->GetValEntry(0x0008,0x0018);
+      entry=(*it)->GetValEntry(0x0008, 0x0018);
       if( entry )
          if( instUID.find(entry->GetValue())!=instUID.end() )
             instUID[entry->GetValue()]++;
@@ -196,7 +196,7 @@ gdcm::File *WriteImage(gdcm::File *file,const std::string &fileName)
    if( !reread->IsReadable() )
    {
      std::cerr << "Failed" << std::endl
-               << "        Could not reread image written:" << fileName << std::endl;
+               << "        Could not reread written image :" << fileName << std::endl;
      delete reread;
      return NULL;
    }
@@ -215,14 +215,14 @@ int TestSequence(int argc, char *argv[])
    }
 
    std::cout << "   Description (Test::TestSequence): " << std::endl;
-   std::cout << "   Will test the creation of sequences of 4 images" << std::endl;
+   std::cout << "   Tests the creation of a 4 images Set" << std::endl;
    std::cout << "   with the following steps : "<< std::endl;
-   std::cout << "   step 1: create separed images without correspondance" << std::endl
-             << "           in UID for study and serie" << std::endl;
-   std::cout << "   step 2: create serie of image." << std::endl
-             << "           So the Serie and Study UID must be equal" << std::endl;
-   std::cout << "   step 3: create separed serie of image with same study" << std::endl
-             << "           So the Study UID must be equal" << std::endl;
+   std::cout << "   step 1: create images belonging" << std::endl
+             << "           to different Study and Terie" << std::endl;
+   std::cout << "   step 2: create images belonging" << std::endl
+             << "           to the same Serie (therefore to the same Study)" << std::endl;
+   std::cout << "   step 3: create images belonging" << std::endl
+             << "           to different Series within the same Study" << std::endl;
    std::cout << std::endl << std::endl;
 
    gdcm::File *file;
@@ -231,8 +231,8 @@ int TestSequence(int argc, char *argv[])
    int i;
 
    std::cout<<"     step...";
-   std::string studyUID = gdcm::Util::CreateUniqueUID();
-   std::string serieUID = gdcm::Util::CreateUniqueUID();
+   std::string studyUID;
+   std::string serieUID;
 
    // Step 1 : All files have different UID 
    fileList.clear();
@@ -241,6 +241,13 @@ int TestSequence(int argc, char *argv[])
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = new gdcm::File();
+      // It's up to the user to initialize Serie UID and Study UID
+      // Study Instance UID
+      studyUID = gdcm::Util::CreateUniqueUID();
+      file->InsertValEntry(studyUID, 0x0020, 0x000d);
+      // Series Instance UID
+      serieUID = gdcm::Util::CreateUniqueUID();
+      file->InsertValEntry(serieUID, 0x0020, 0x000e);
 
       newFile = WriteImage(file,fileName.str());
       if( !newFile )
@@ -265,13 +272,15 @@ int TestSequence(int argc, char *argv[])
 
    // Step 2 : Same Serie & Study
    fileList.clear();
+   studyUID = gdcm::Util::CreateUniqueUID();
+   serieUID = gdcm::Util::CreateUniqueUID();
    for(i = 0;i < 4;i++)
    {
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = new gdcm::File();
-      file->SetValEntry(studyUID,0x0020,0x000d);
-      file->SetValEntry(serieUID,0x0020,0x000e);
+      file->InsertValEntry(studyUID,0x0020,0x000d);
+      file->InsertValEntry(serieUID,0x0020,0x000e);
 
       newFile = WriteImage(file,fileName.str());
       if( !newFile )
@@ -296,13 +305,15 @@ int TestSequence(int argc, char *argv[])
 
    // Step 3 : Same Study
    fileList.clear();
+   serieUID = gdcm::Util::CreateUniqueUID();
    for(i = 0;i < 4;i++)
    {
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = new gdcm::File();
-      file->SetValEntry(studyUID,0x0020,0x000d);
-
+      file->InsertValEntry(studyUID,0x0020,0x000d);
+      serieUID = gdcm::Util::CreateUniqueUID();
+      file->InsertValEntry(serieUID,0x0020,0x000e);
       newFile = WriteImage(file,fileName.str());
       if( !newFile )
       {

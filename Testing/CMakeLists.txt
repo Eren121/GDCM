@@ -15,7 +15,7 @@ SET(TEST_SOURCES
   TestVR.cxx
   TestDict.cxx
   TestWriteSimple.cxx
-  TestSequence.cxx
+  TestImageSet.cxx
   TestDicomDirElement.cxx
   TestDicomString.cxx
 )

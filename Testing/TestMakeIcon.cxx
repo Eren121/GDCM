@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 13:12:05 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/03/02 16:39:28 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,6 +32,8 @@ int TestMakeIcon (int argc, char *argv[])
    // hard coded small image name
    std::string input = "LIBIDO-8-ACR_NEMA-Lena_128_128.acr";
    std::string output = "test.dcm";
+
+   gdcm::Debug::DebugOn();
 
    if ( argc == 3 )
    {
@@ -62,6 +64,7 @@ int TestMakeIcon (int argc, char *argv[])
    // icone is just define like the image
    // The purpose is NOT to imagine an icon, 
    // just check the stuff works
+
    uint16_t binVal[3]={0x52f7,0xf358,0xad9b};
  
    sqi->InsertValEntry( "MONOCHROME2", 0x0028,0x0004);
@@ -81,11 +84,10 @@ int TestMakeIcon (int argc, char *argv[])
 
    f1 = new gdcm::File(output);
    f1->Print();
+   std::cout << "End of Print" << std::endl;
 
    icon = f1->GetSeqEntry(0x0088, 0x0200);
-   sqi = icon->GetFirstSQItem();
-
-   if ( !sqi )
+   if (!icon)
    {
       std::cout << "Sequence 0088|0200 not found" << std::endl
                 << "   ... Failed" << std::endl;
@@ -93,6 +95,20 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "Sequence 0088|0200 found" << std::endl;
+   
+   sqi = icon->GetFirstSQItem();
+
+   if ( !sqi )
+   {
+      std::cout << "Sequence 0088|0200 has no SQItem" << std::endl
+                << "   ... Failed" << std::endl;
+      delete fh1;
+      delete f1;
+      return 1;
+   }
+
+   std::cout << "First Item found" << std::endl;
 
    // Test for entry 0028|0010
    if ( !sqi->GetValEntry(0x0028,0x0010) )
@@ -103,6 +119,7 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "First Item ->ValEntry 0028|0010 found" << std::endl;
    if ( sqi->GetValEntry(0x0028,0x0010)->GetValue() != "128" )
    {
       std::cout << "Value 0028|0010 don't match" << std::endl
@@ -123,6 +140,7 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "First Item ->ValEntry 0028|0011 found" << std::endl;
    if ( sqi->GetValEntry(0x0028,0x0011)->GetValue() != "128" )
    {
       std::cout << "Value 0028|0011 don't match" << std::endl
@@ -143,6 +161,7 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "First Item ->ValEntry 0028|0100 found" << std::endl;
    if ( sqi->GetValEntry(0x0028,0x0100)->GetValue() != "8" )
    {
       std::cout << "Value 0028|0100 don't match" << std::endl
@@ -163,6 +182,7 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "First Item ->ValEntry 0028|0101 found" << std::endl;
    if ( sqi->GetValEntry(0x0028,0x0101)->GetValue() != "8" )
    {
       std::cout << "Value 0028|0101 don't match" << std::endl
@@ -183,6 +203,7 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "First Item ->ValEntry 0028|0102 found" << std::endl;
    if ( sqi->GetValEntry(0x0028,0x0102)->GetValue() != "7" )
    {
       std::cout << "Value 0028|0102 don't match" << std::endl
@@ -203,6 +224,7 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "First Item ->ValEntry 0028|0103 found" << std::endl;
    if ( sqi->GetValEntry(0x0028,0x0103)->GetValue() != "0" )
    {
       std::cout << "Value 0028|0103 don't match" << std::endl
@@ -215,7 +237,7 @@ int TestMakeIcon (int argc, char *argv[])
    }
 
    // Test for entry 0005|0010
-   if ( !sqi->GetValEntry(0x0028,0x0010) )
+   if ( !sqi->GetBinEntry(0x0005,0x0010) )
    {
       std::cout << "BinEntry 0005|0010 not found" << std::endl
                 << "   ... Failed" << std::endl;
@@ -223,6 +245,7 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "First Item ->BinEntry 0005|0010 found" << std::endl;
    if( sqi->GetBinEntry(0x0005,0x0010)->GetLength() != 6 )
    {
       std::cout << "BinEntry size 0005|0010 don't match" << std::endl
@@ -234,6 +257,8 @@ int TestMakeIcon (int argc, char *argv[])
       return 1;
    }
 
+   std::cout << "Length BinEntry 0005|0010 OK" << std::endl;
+
    if( memcmp(sqi->GetBinEntry(0x0005,0x0010)->GetBinArea(),binVal,6)!=0 )
    {
       std::cout << "Value 0005|0010 don't match (BinEntry)" << std::endl
@@ -242,6 +267,7 @@ int TestMakeIcon (int argc, char *argv[])
       delete f1;
       return 1;
    }
+   std::cout << "Value BinEntry 0005|0010 OK" << std::endl;
 
    delete fh1;
    delete f1;

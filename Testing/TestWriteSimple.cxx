@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 14:23:18 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/03/02 16:39:28 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -237,7 +237,7 @@ int WriteSimple(Image &img)
    if( !reread->GetFile()->IsReadable() )
    {
       std::cerr << "Failed" << std::endl
-                << "Could not reread image written: " << fileName << std::endl;
+                << "Could not read written image : " << fileName << std::endl;
       delete fileToBuild;
       delete file;
       delete reread;
@@ -318,10 +318,13 @@ int TestWriteSimple(int argc, char *argv[])
       return 1;
    }
 
+  // gdcm::Debug::DebugOn();    
+ 
    int ret=0;
    int i=0;
    while( Images[i].sizeX>0 && Images[i].sizeY>0 )
    {
+      std::cout << std::endl << "Test n :" << i << std::endl;
       ret += WriteSimple(Images[i]);
       i++;
    }
