@@ -140,7 +140,19 @@ SOURCE=..\..\src\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmJpeg12.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmJpeg2000.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmJpegIdo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmRLE.cxx
 # End Source File
 # Begin Source File
 
@@ -182,6 +194,10 @@ SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkFiltering.lib
 # Begin Source File
 
 SOURCE=..\..\lib\libgdcmijpeg8.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\lib\libgdcmijpeg12.lib
 # End Source File
 # End Target
 # End Project

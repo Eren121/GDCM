@@ -1,8 +1,16 @@
+2003-07-29 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * src/gdcmHeader.h : add std:: prefix for stl elements... like others in
+        the file
+      * src/gdcmFile.cxx : bug fix in affectation type
+      * src/jpeg/libijpeg12/jmorecfg12.h : export for windows modified... like
+        in src/jpeg/libijpeg8/jmorecfg8.h (JPR : copy/paste exists !!!)
+      * Modifs of MVSC projects to compile them. Not concerning 2 identic
+        symbols... futur problem ?
 2003-07-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * src/win32/libgdcmijpeg12.dsp was missing
       * modified gdcm.dsw accordingly
 2003-07-28  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-	   * src/gdcmHeader.cxx : misplaced return 0.; for ACR/NEMA
+      * src/gdcmHeader.cxx : misplaced return 0.; for ACR/NEMA
 2003-07-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/jpeg/libijg12/.cvsignore, jconfig.* : ommited files while last
         commit of JPR (before his hollidays to facilitate our work).

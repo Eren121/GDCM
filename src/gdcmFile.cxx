@@ -396,7 +396,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
          
          // FIXME : will work only when each fragment corresponds to a Frame :-(
          
-         (char *) destination += taille * nBytes; // location in user's memory 
+         destination = (char *)destination + taille * nBytes; // location in user's memory 
                                                   // for next fragment (if any) 
          // TODO : find a suitable file (multifragment/single Frame Jpeg file) to check
          

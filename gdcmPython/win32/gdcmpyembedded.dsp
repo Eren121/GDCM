@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Dynamic-Link Library" 0x0102
 
-CFG=gdcmpyembedded - Win32 Debug
+CFG=gdcmpyembedded - Win32 Release
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,12 +13,11 @@ CFG=gdcmpyembedded - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "gdcmpyembedded.mak" CFG="gdcmpyembedded - Win32 Debug"
+!MESSAGE NMAKE /f "gdcmpyembedded.mak" CFG="gdcmpyembedded - Win32 Release"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
 !MESSAGE "gdcmpyembedded - Win32 Release" (based on "Win32 (x86) Dynamic-Link Library")
-!MESSAGE "gdcmpyembedded - Win32 Debug" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE 
 
 # Begin Project
@@ -28,9 +27,6 @@ CFG=gdcmpyembedded - Win32 Debug
 CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
-
-!IF  "$(CFG)" == "gdcmpyembedded - Win32 Release"
-
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
 # PROP BASE Output_Dir "gdcmpyembedded___Win32_Release"
@@ -57,55 +53,17 @@ LINK32=link.exe
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=move            $(ProjDir)\gdcm.py            $(ProjDir)\..\ 
+PostBuild_Cmds=move              $(ProjDir)\gdcm.py              $(ProjDir)\..\ 
 # End Special Build Tool
-
-!ELSEIF  "$(CFG)" == "gdcmpyembedded - Win32 Debug"
-
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "gdcmpyembedded___Win32_Debug"
-# PROP BASE Intermediate_Dir "gdcmpyembedded___Win32_Debug"
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 1
-# PROP Output_Dir "gdcmpyembedded___Win32_Debug"
-# PROP Intermediate_Dir "gdcmpyembedded___Win32_Debug"
-# PROP Ignore_Export_Lib 0
-# PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /w /W0 /Gm /GX /ZI /I "..\..\src\jpeg\libijg8" /I "$(CREATIS)\python22\include" /I "..\..\src" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /GZ /c
-# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
-# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
-# ADD BASE RSC /l 0x40c /d "_DEBUG"
-# ADD RSC /l 0x40c /d "_DEBUG"
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib advapi32.lib shell32.lib Wsock32.lib /nologo /dll /debug /machine:I386 /out:"..\_gdcm_d.dll" /pdbtype:sept
-# Begin Special Build Tool
-ProjDir=.
-SOURCE="$(InputPath)"
-PostBuild_Cmds=mv            $(ProjDir)\gdcm.py            $(ProjDir)\..\ 
-# End Special Build Tool
-
-!ENDIF 
-
 # Begin Target
 
 # Name "gdcmpyembedded - Win32 Release"
-# Name "gdcmpyembedded - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
 SOURCE=..\gdcm.i
-
-!IF  "$(CFG)" == "gdcmpyembedded - Win32 Release"
-
 # Begin Custom Build
 ProjDir=.
 InputPath=..\gdcm.i
@@ -115,21 +73,6 @@ InputName=gdcm
 	C:\creatis\SWIG\swig -python -c++ -I..\..\src -o $(ProjDir)\$(InputName)_wrap.cxx $(InputPath)
 
 # End Custom Build
-
-!ELSEIF  "$(CFG)" == "gdcmpyembedded - Win32 Debug"
-
-# Begin Custom Build - Performing Custom Build Step on $(InputPath)
-ProjDir=.
-InputPath=..\gdcm.i
-InputName=gdcm
-
-"$(ProjDir)\$(InputName)_wrap.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	C:\creatis\SWIG\swig -python -c++ -I..\..\src -o $(ProjDir)\$(InputName)_wrap.cxx $(InputPath)
-
-# End Custom Build
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -177,7 +120,19 @@ SOURCE=..\..\src\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmJpeg12.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmJpeg2000.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmJpegIdo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmRLE.cxx
 # End Source File
 # Begin Source File
 
@@ -207,6 +162,10 @@ SOURCE=c:\Creatis\Python22\libs\python22.lib
 # Begin Source File
 
 SOURCE=..\..\lib\libgdcmijpeg8.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\lib\libgdcmijpeg12.lib
 # End Source File
 # End Target
 # End Project

@@ -18,7 +18,6 @@ CFG=_vtkGdcm - Win32 Debug
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
 !MESSAGE "_vtkGdcm - Win32 Release" (based on "Win32 (x86) Dynamic-Link Library")
-!MESSAGE "_vtkGdcm - Win32 Debug" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE 
 
 # Begin Project
@@ -28,9 +27,6 @@ CFG=_vtkGdcm - Win32 Debug
 CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
-
-!IF  "$(CFG)" == "_vtkGdcm - Win32 Release"
-
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
 # PROP BASE Output_Dir "Release"
@@ -54,39 +50,9 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib Wsock32.lib /nologo /dll /machine:I386 /out:"..\vtkgdcmPython.dll"
-
-!ELSEIF  "$(CFG)" == "_vtkGdcm - Win32 Debug"
-
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug"
-# PROP BASE Intermediate_Dir "Debug"
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
-# PROP Intermediate_Dir "Debug"
-# PROP Ignore_Export_Lib 0
-# PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "..\\" /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "..\..\src\jpeg\libijg8" /I "..\..\vtk" /I "$(CREATIS)\python22\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ /c
-# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
-# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
-# ADD BASE RSC /l 0x40c /d "_DEBUG"
-# ADD RSC /l 0x40c /d "_DEBUG"
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"..\vtkGdcmPython.dll" /pdbtype:sept
-
-!ENDIF 
-
 # Begin Target
 
 # Name "_vtkGdcm - Win32 Release"
-# Name "_vtkGdcm - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -132,7 +98,19 @@ SOURCE=..\..\src\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmJpeg12.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmJpeg2000.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmJpegIdo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmRLE.cxx
 # End Source File
 # Begin Source File
 
@@ -165,9 +143,6 @@ SOURCE=..\vtkGdcmReaderPython.cxx
 # Begin Source File
 
 SOURCE=.\init.h
-
-!IF  "$(CFG)" == "_vtkGdcm - Win32 Release"
-
 # Begin Custom Build - Performing Custom Build Step on $(VTKPATH)\bin\initwrappythonwin32 vtkgdcmPython vtkGdmReader > $(ProjDir)\vtkGdcmInit.cxx
 ProjDir=.
 InputPath=.\init.h
@@ -176,18 +151,10 @@ InputPath=.\init.h
 	$(VTKPATH)\bin\initwrappythonwin32 vtkgdcmPython vtkGdcmReader > $(ProjDir)\vtkGdcmInit.cxx
 
 # End Custom Build
-
-!ELSEIF  "$(CFG)" == "_vtkGdcm - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\vtk\vtkGdcmReader.h
-
-!IF  "$(CFG)" == "_vtkGdcm - Win32 Release"
-
 # Begin Custom Build - Performing Custom Build Step on $(VTKPATH)\bin\vtkwrappython "$(InputDir)\$(InputName).h" $(VTKPATH)\Examples\Build\vtkMy\Wrapping\hints 1  $(ProjDir)\..\$(InputName)Python.cxx
 InputDir=\Projects\gdcm\vtk
 ProjDir=.
@@ -198,11 +165,6 @@ InputName=vtkGdcmReader
 	$(VTKPATH)\bin\vtkwrappython "$(InputDir)\$(InputName).h" $(VTKPATH)\Examples\Build\vtkMy\Wrapping\hints 1  $(ProjDir)\..\$(InputName)Python.cxx
 
 # End Custom Build
-
-!ELSEIF  "$(CFG)" == "_vtkGdcm - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # End Group
 # Begin Group "Resource Files"
@@ -240,6 +202,10 @@ SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkFiltering.lib
 # Begin Source File
 
 SOURCE=..\..\lib\libgdcmijpeg8.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\lib\libgdcmijpeg12.lib
 # End Source File
 # End Target
 # End Project

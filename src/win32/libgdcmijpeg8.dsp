@@ -56,7 +56,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /out:"..\..\lib\libgdcmijpeg8.dll"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy  Release__libgdcmijpeg8\libgdcmijpeg8.lib  ..\..\lib\ 	copy  ..\..\lib\libgdcmijpeg8.dll  ..\..\gdcmPython\ 	copy  ..\..\lib\libgdcmijpeg8.dll  ..\..\vtk\ 
+PostBuild_Cmds=copy   Release__libgdcmijpeg8\libgdcmijpeg8.lib   ..\..\lib\  	copy   ..\..\lib\libgdcmijpeg8.dll   ..\..\gdcmPython\  	copy   ..\..\lib\libgdcmijpeg8.dll   ..\..\vtk\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "libgdcmijpeg8 - Win32 Debug"
@@ -72,8 +72,8 @@ PostBuild_Cmds=copy  Release__libgdcmijpeg8\libgdcmijpeg8.lib  ..\..\lib\ 	copy 
 # PROP Intermediate_Dir "Debug__libgdcmijpeg8"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG8_EXPORTS" /YX /FD /GZ  /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG8_EXPORTS" /YX /FD /GZ  /c
+# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG8_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LIBGDCMIJPEG8_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -86,7 +86,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"..\..\lib\libgdcmijpeg8.dll" /pdbtype:sept
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy  Debug__libgdcmijpeg8\libgdcmijpeg8.lib  ..\..\lib\ 	copy  ..\..\lib\libgdcmijpeg8.dll  ..\..\gdcmPython\ 	copy  ..\..\lib\libgdcmijpeg8.dll  ..\..\vtk\ 
+PostBuild_Cmds=copy   Debug__libgdcmijpeg8\libgdcmijpeg8.lib   ..\..\lib\  	copy   ..\..\lib\libgdcmijpeg8.dll   ..\..\gdcmPython\  	copy   ..\..\lib\libgdcmijpeg8.dll   ..\..\vtk\ 
 # End Special Build Tool
 
 !ENDIF 

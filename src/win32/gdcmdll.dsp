@@ -58,7 +58,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy        ..\..\lib\gdcmdll.dll        ..\..\gdcmPython\    	copy        ..\..\lib\gdcmdll.dll        ..\..\test\    	copy     Release\gdcmdll.lib     ..\..\lib\ 
+PostBuild_Cmds=copy         ..\..\lib\gdcmdll.dll         ..\..\gdcmPython\     	copy         ..\..\lib\gdcmdll.dll         ..\..\test\     	copy      Release\gdcmdll.lib      ..\..\lib\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmdll - Win32 Debug"
@@ -90,7 +90,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy        ..\..\lib\gdcmdll.dll        ..\..\gdcmPython\    	copy        ..\..\lib\gdcmdll.dll        ..\..\test\    	copy     Debug\gdcmdll.lib     ..\..\lib\ 
+PostBuild_Cmds=copy         ..\..\lib\gdcmdll.dll         ..\..\gdcmPython\     	copy         ..\..\lib\gdcmdll.dll         ..\..\test\     	copy      Debug\gdcmdll.lib      ..\..\lib\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -144,7 +144,19 @@ SOURCE=..\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\gdcmJpeg12.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmJpeg2000.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\gdcmJpegIdo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmRLE.cxx
 # End Source File
 # Begin Source File
 
@@ -170,6 +182,10 @@ SOURCE=..\gdcmVR.cxx
 # Begin Source File
 
 SOURCE=..\..\lib\libgdcmijpeg8.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\lib\libgdcmijpeg12.lib
 # End Source File
 # End Target
 # End Project

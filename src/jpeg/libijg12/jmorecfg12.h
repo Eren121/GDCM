@@ -185,9 +185,17 @@ typedef unsigned int JDIMENSION;
 /* a function used only in its module: */
 #define LOCAL(type)		static type
 /* a function referenced thru EXTERNs: */
-#define GLOBAL(type)		type
+#ifdef WIN32
+  #define GLOBAL(type)		__declspec( dllexport ) type
+#else
+  #define GLOBAL(type)		type
+#endif
 /* a reference to a GLOBAL function: */
-#define EXTERN(type)		extern type
+#ifdef WIN32
+  #define EXTERN(type)		extern __declspec( dllexport ) type
+#else
+  #define EXTERN(type)		extern type
+#endif
 
 
 /* This macro is used to declare a "method", that is, a function pointer.

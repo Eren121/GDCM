@@ -14,6 +14,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name libgdcmijpeg8
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libgdcmijpeg12
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -29,6 +32,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name libgdcmijpeg8
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libgdcmijpeg12
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -43,6 +49,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name libgdcmijpeg8
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libgdcmijpeg12
     End Project Dependency
 }}}
 
@@ -63,7 +72,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "libgdcmijpeg8"=.\SRC\WIN32\libgdcmijpeg8.dsp - Package Owner=<4>
+Project: "libgdcmijpeg12"=.\SRC\WIN32\libgdcmijpeg12.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -75,7 +84,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "libgdcmijpeg12"=.\SRC\WIN32\libgdcmijpeg12.dsp - Package Owner=<4>
+Project: "libgdcmijpeg8"=.\SRC\WIN32\libgdcmijpeg8.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -112,6 +121,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name libgdcmijpeg8
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libgdcmijpeg12
     End Project Dependency
 }}}
 
