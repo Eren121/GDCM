@@ -1,8 +1,16 @@
+2004-02-03 Jean-Pierre Roux
+     * ENH gdcmParser : allows "DICM" files, with NO group '0002'
+
 2004-02-02 Jean-Pierre Roux
      * FIX : gdcmWrite : equal_range() for multimap doesn't return a 'second' iterator on last
              of the last synonym :-(
      * FIX : gdcmWrite::WriteBase : method stops if Pixels not yet Read (except for
-             DICOMDIR ;-)
+             DICOMDIR ;-)	     
+     * ENH gdcmData/checkWrite.sh :modif for full check of Explicit VR writting      
+     * FIX taking into account the possible 7fe0,0010 multiplicity        
+     * FIX add GRPixel,NumPixel,countGrPixel (gdcmParser protected members)
+           to allow removal of references to 7fe0,0010, to deal with
+	   ACR-NEMA images, when 0028,0200 is meaningfull 
 
 2004-01-31 Jean-Pierre Roux
      * FIX gdcmParser::WriteEntries : when a VR is tagged as 'Unknown'
