@@ -8,6 +8,7 @@
 #include "gdcmUtil.h"
 
 #include <string>
+#include <algorithm>
 
 #include <sys/types.h>
 #include <errno.h>
@@ -133,13 +134,14 @@ void gdcmDicomDir::NewDicomDir(std::string path)
    for(gdcmDirList::iterator it=fileList.begin(); 
        it!=fileList.end(); ++it) 
    {
-//      std::cout<<*it<<std::endl;
       header=new gdcmHeader(it->c_str());
       if(header->IsReadable())
          list.push_back(header);
       else
          delete header;
    }
+
+   std::sort(list.begin(),list.end(),gdcmDicomDir::HeaderLessThan);
 
    SetElements(path,list);
 }
@@ -187,13 +189,9 @@ void gdcmDicomDir::CreateDicomDir()
    end=begin;
    for(ListTag::iterator i=listEntries.begin();i !=listEntries.end();++i) 
    {
-      // std::cout << std::hex <<(*i)->GetGroup() << 
-      //                  " " <<(*i)->GetElement() << endl;
-
       std::string v=(*i)->GetValue();
       if(v=="PATIENT ") 
       {
-       //  std::cout<<"PATIENT"<<std::endl;
          end=i;
          AddObjectToEnd(type,begin,end);
 
@@ -203,7 +201,6 @@ void gdcmDicomDir::CreateDicomDir()
 
       if(v=="STUDY ")
       {
-       //  std::cout<<"STUDY"<<std::endl;
          end=i;
          AddObjectToEnd(type,begin,end);
 
@@ -213,7 +210,6 @@ void gdcmDicomDir::CreateDicomDir()
 
       if(v=="SERIES") 
       {
-       //  std::cout<<"SERIES"<<std::endl;
          end=i;
          AddObjectToEnd(type,begin,end);
 
@@ -223,7 +219,6 @@ void gdcmDicomDir::CreateDicomDir()
 
       if(v=="IMAGE ") 
       {
-       //  std::cout<<"IMAGE"<<std::endl;
          end=i;
          AddObjectToEnd(type,begin,end);
 
@@ -354,7 +349,7 @@ void gdcmDicomDir::SetElements(std::string &path,ListHeader &list)
    ListTag::iterator debPat=listEntries.begin();
    for(ListHeader::iterator it=list.begin();it!=list.end();++it) 
    {
-     // get the current file characteristics
+      // get the current file characteristics
       patCurName=(*it)->GetEntryByNumber(0x0010,0x0010); 
       patCurID=(*it)->GetEntryByNumber(0x0010,0x0011); 
       studCurInstanceUID=(*it)->GetEntryByNumber(0x0020,0x000d);            
@@ -482,6 +477,11 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader
 
       listEntries.push_back(entry);
    }     
+}
+
+bool gdcmDicomDir::HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2)
+{
+   return(*header1<*header2);
 }
 
 //-----------------------------------------------------------------------------

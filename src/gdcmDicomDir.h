@@ -8,9 +8,12 @@
 #include "gdcmPatient.h"
 #include "gdcmDicomDirElement.h"
 
+#include <list>
+#include <vector>
+
 //-----------------------------------------------------------------------------
 typedef std::list<gdcmPatient *> ListPatient;
-typedef std::list<gdcmHeader *>  ListHeader;
+typedef std::vector<gdcmHeader *>  ListHeader;
 
 //-----------------------------------------------------------------------------
 /*
@@ -60,6 +63,8 @@ private:
 
    void SetElements(std::string &path,ListHeader &list);
    void SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader *header);
+
+   static bool HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2);
 
    ListPatient patients;
 };

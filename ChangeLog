@@ -1,3 +1,8 @@
+2004-02-04 Benoit Regrain
+     * FIX : sort the images in the dicom dir
+     * FIX : Bug fix for python use of dicom dir
+     * Add a python demo
+
 2004-02-04 Jean-Pierre Roux
      * FIX : Final solution (?) for icone embedded images
      * FIX : dicomVR.dic Overlay group is not *only* 6000, but 60xxx
