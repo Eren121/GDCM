@@ -23,10 +23,8 @@ TARGET_LINK_LIBRARIES(vtkgdcm
 )
 
 #-----------------------------------------------------------------------------
-# See with frog why m4 didn't link to lib, and include cxx file instead ?
 SET(vtkgdcmdemo_SOURCES
-  testvtkGdcmReader.cxx
-#  vtkGdcmReader.cxx
+  vtkGdcmDemo.cxx
 )
 ADD_EXECUTABLE(vtkgdcmdemo ${vtkgdcmdemo_SOURCES})
 TARGET_LINK_LIBRARIES(vtkgdcmdemo 
@@ -36,10 +34,8 @@ TARGET_LINK_LIBRARIES(vtkgdcmdemo
 )
 
 #-----------------------------------------------------------------------------
-# See with frog why m4 didn't link to lib, and include cxx file instead ?
 SET(vtkgdcmViewer_SOURCES
   vtkgdcmViewer.cxx
-  #vtkGdcmReader.cxx 
 )
 ADD_EXECUTABLE(vtkgdcmViewer ${vtkgdcmViewer_SOURCES})
 TARGET_LINK_LIBRARIES(vtkgdcmViewer 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/30 12:51:55 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2004/10/01 12:40:57 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,17 +43,23 @@ public:
 
    void ConvertRGBPlanesToRGBPixels( uint8_t* source, uint8_t* destination );
    void ConvertYcBcRPlanesToRGBPixels( uint8_t* source, uint8_t* destination );
-   void ConvertReArrangeBits( uint8_t* pixelZone,
-                              size_t imageDataSize,
-                              int numberBitsStored,
-                              int numberBitsAllocated,
-                              int highBitPosition ) throw ( gdcmFormatError );
-   void ConvertReorderEndianity( uint8_t* pixelZone,
-                                 size_t imageDataSize,
-                                 int numberBitsStored,
-                                 int numberBitsAllocated,
-                                 bool signedPixel );
-
+   void ConvertReArrangeBits(
+           uint8_t* pixelZone,
+           size_t imageDataSize,
+           int numberBitsStored,
+           int numberBitsAllocated,
+           int highBitPosition ) throw ( gdcmFormatError );
+   void ConvertReorderEndianity(
+           uint8_t* pixelZone,
+           size_t imageDataSize,
+           int numberBitsStored,
+           int numberBitsAllocated,
+           bool signedPixel );
+   void ConvertDecompress12BitsTo16Bits(
+           uint8_t* pixelZone,
+           int sizeX,
+           int sizeY,
+           FILE* filePtr) throw ( gdcmFormatError);
    
    /// Accessor to \ref ImageDataSize
    size_t GetImageDataSize(){ return ImageDataSize; };

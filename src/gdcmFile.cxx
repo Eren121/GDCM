@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/30 12:51:55 $
-  Version:   $Revision: 1.133 $
+  Date:      $Date: 2004/10/01 12:40:57 $
+  Version:   $Revision: 1.134 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1051,32 +1051,12 @@ bool gdcmFile::ReadPixelData(void* destination)
       return false;
    }
 
-   // ----------------------  Compacted File (12 Bits Per Pixel)
-   // unpack 12 Bits pixels into 16 Bits pixels
-   // 2 pixels 12bit =     [0xABCDEF]
-   // 2 pixels 16bit = [0x0ABD] + [0x0FCE]
-   
    if ( Header->GetBitsAllocated() == 12 )
    {
-      int nbPixels = Header->GetXSize() * Header->GetYSize();
-      uint8_t b0, b1, b2;
-      
-      uint16_t* pdestination = (uint16_t*)destination;    
-      for(int p = 0; p < nbPixels; p += 2 )
-      {
-         fread(&b0,1,1,fp);
-         fread(&b1,1,1,fp);
-         fread(&b2,1,1,fp);      
-
-         //Two steps is necessary to please VC++
-         *pdestination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
-         //                     A                     B                 D
-         *pdestination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
-         //                     F                     C                 E
-  
-         // Troubles expected on Big-Endian processors ?
-      }
-
+      ConvertDecompress12BitsTo16Bits( (uint8_t*)destination, 
+                                       Header->GetXSize(),
+                                       Header->GetYSize(),
+                                       fp);
       Header->CloseFile();
       return true;
    }
@@ -1109,22 +1089,13 @@ bool gdcmFile::ReadPixelData(void* destination)
    }  
     
    // --------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
-   int nb;
-   std::string str_nb = Header->GetEntryByNumber(0x0028,0x0100);
-   if ( str_nb == GDCM_UNFOUND )
+   int numberBitsAllocated = Header->GetBitsAllocated();
+   if ( ( numberBitsAllocated == 0 ) || ( numberBitsAllocated == 12 ) )
    {
-      nb = 16;
-   }
-   else
-   {
-      nb = atoi( str_nb.c_str() );
-      if ( nb == 12 )
-      {
-         nb = 16;  // ?? 12 should be ACR-NEMA only
-      }
+      numberBitsAllocated = 16;
    }
 
-   int nBytes= nb/8;
+   int nBytes= numberBitsAllocated/8;
    int taille = Header->GetXSize() * Header->GetYSize()  
                 * Header->GetSamplesPerPixel();
    long fragmentBegining; // for ftell, fseek
@@ -1236,5 +1207,58 @@ bool gdcmFile::ReadPixelData(void* destination)
 
    Header->CloseFile();
    return res;
+}
+
+/**
+ * \brief Read from file a 12 bits per pixel image and uncompress it
+ *        into a 16 bits per pixel image.
+ */
+void gdcmFile::ConvertDecompress12BitsTo16Bits(
+                  uint8_t* pixelZone,
+                  int sizeX,
+                  int sizeY,
+                  FILE* filePtr)
+               throw ( gdcmFormatError )
+{
+   int nbPixels = sizeX * sizeY;
+   uint16_t* destination = (uint16_t*)pixelZone;    
+
+   for( int p = 0; p < nbPixels; p += 2 )
+   {
+      uint8_t b0, b1, b2;
+      size_t ItemRead;
+
+      ItemRead = fread( &b0, 1, 1, filePtr);
+      if ( ItemRead != 1 )
+      {
+         throw gdcmFormatError( "gdcmFile::ConvertDecompress12BitsTo16Bits()",
+                                "Unfound first block" );
+      }
+
+      ItemRead = fread( &b1, 1, 1, filePtr);
+      if ( ItemRead != 1 )
+      {
+         throw gdcmFormatError( "gdcmFile::ConvertDecompress12BitsTo16Bits()",
+                                "Unfound second block" );
+      }
+
+      ItemRead = fread( &b2, 1, 1, filePtr);      
+      if ( ItemRead != 1 )
+      {
+         throw gdcmFormatError( "gdcmFile::ConvertDecompress12BitsTo16Bits()",
+                                "Unfound second block" );
+      }
+
+      // Two steps are necessary to please VC++
+      //
+      // 2 pixels 12bit =     [0xABCDEF]
+      // 2 pixels 16bit = [0x0ABD] + [0x0FCE]
+      //                     A                     B                 D
+      *destination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
+      //                     F                     C                 E
+      *destination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
+  
+      /// \todo JPR Troubles expected on Big-Endian processors ?
+   }
 }
 //-----------------------------------------------------------------------------

@@ -1,3 +1,18 @@
+2004-10-01 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * Added documentation of vtkgdcmReader on Website:
+     - testvtkGdcmReader.cxx renamed to vtkGdcmDemo.cxx (to be compatible
+       with it's binary name).
+     - vtk/vtkGdcmDemo.cxx and vtkgdcmViewer.cxx: added comments for
+       the Website to be more complete.
+     - Doc/doxygen.config.in: vtk/vtkGdcmReader.cxx now appears on 
+       doxygenated documentation.
+     - Doc/DoxyVtkGdcmReaderExamples.txt added
+       (see http://www.creatis.insa-lyon.fr/Public/Gdcm/html.developper/
+                  DoxyVtkGdmReaderExamples.html )
+  * src/win32, vtk/win32 manually maintained .dsp and .dsw removed.
+  * CLEANUP_ROUND (3) for gdcmPixelConvert
+   - src/gdcmFile.cxx, gdcmFile.h splitting GetImageDataIntoVectorRaw
+
 2004-09-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND (2) for gdcmPixelConvert
    - src/gdcmFile.cxx, gdcmFile.h splitting GetImageDataIntoVectorRaw

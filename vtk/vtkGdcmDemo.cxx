@@ -1,4 +1,18 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.9 2004/03/30 09:00:40 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmDemo.cxx,v 1.1 2004/10/01 12:40:58 frog Exp $
+
+//----------------------------------------------------------------------------
+// A simple straightfoward example of vtkGdcmReader vtk class usage.
+//
+// The vtkGdcmReader vtk class behaves like any other derived class of
+// vtkImageReader. It's usage within a vtk pipeline hence follows the
+// classical vtk pattern.
+// This example is a really simple Dicom image viewer demo.
+// It builds the minimal vtk rendering pipeline in order to display
+// (with the native vtk classes) a single Dicom image parsed with gdcm.
+//
+// Usage: the filename of the Dicom image to display should be given as
+//        command line arguments,
+//----------------------------------------------------------------------------
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -25,40 +39,27 @@
   
 int main( int argc, char *argv[] )
 {
-   int *taille;
-   int x,y;
-
-   // Lecture de l'image
    vtkGdcmReader *reader = vtkGdcmReader::New();
-//   reader->DebugOn();
-   // Alloc Used High
-   // 8 8 7 U : OK
-   // reader->SetFileName("../gdcmData/CT-MONO2-8-abdo.dcm");
-   // 16 12 11 U : OK but saturated
-   // reader->SetFileName("../gdcmData/CT-MONO2-12-lomb-an2.acr2");
-   // 16 12 11 U OK
-   //OKreader->SetFileName("../gdcmData/MR-MONO2-12-an2.acr2");
-   // 16 10 9 U OK
-   //reader->SetFileName("../gdcmData/CR-MONO1-10-chest.dcm");
-   //reader->Update();
-   // 16 16 15 S: OK saturation ?
-   // reader->SetFileName("../gdcmData/CT-MONO2-16-ort.dcm");
-   // 16 16 15 S:
 
-	if (argc > 1)
-     reader->SetFileName( argv[1] );
-	else
-     reader->SetFileName("../gdcmData/CT-MONO2-16-ankle.dcm");
+   if (argc < 2)
+   {
+      std::cerr << "Usage: " << argv[0] << " image.dcm\n";
+      return 0;
+   }
+
+   reader->SetFileName( argv[1] );
 
    reader->UpdateWholeExtent();
-//   reader->Update();
-   vtkImageData *ima = reader->GetOutput();
-   taille=ima->GetDimensions();
-   x = taille[0];  y = taille[1];
-   cout << "Dimensions of the picture as read with gdcm: "
-        << x << " x " << y << endl;
+   vtkImageData* ima = reader->GetOutput();
 
-   vtkLookupTable *VTKtable = vtkLookupTable::New();
+   ///////// Display image size on terminal:
+   int* Size = ima->GetDimensions();
+   cout << "Dimensions of the picture as read with gdcm: "
+        << Size[0] << " x " << Size[1] << endl;
+
+   ///////// A simple display pipeline:
+   // 
+   vtkLookupTable* VTKtable = vtkLookupTable::New();
    VTKtable->SetNumberOfColors(1000);
    VTKtable->SetTableRange(0,1000);
    VTKtable->SetSaturationRange(0,0);
@@ -66,25 +67,30 @@ int main( int argc, char *argv[] )
    VTKtable->SetValueRange(0,1);
    VTKtable->SetAlphaRange(1,1);
    VTKtable->Build();
-   // Texture
-   vtkTexture * VTKtexture = vtkTexture::New();
+
+   //// Texture
+   vtkTexture* VTKtexture = vtkTexture::New();
    VTKtexture->SetInput(ima);
    VTKtexture->InterpolateOn();
    VTKtexture->SetLookupTable(VTKtable);
-   // PlaneSource
-   vtkPlaneSource *VTKplane = vtkPlaneSource::New();
+
+   //// PlaneSource
+   vtkPlaneSource* VTKplane = vtkPlaneSource::New();
    VTKplane->SetOrigin( -0.5, -0.5, 0.0);
    VTKplane->SetPoint1(  0.5, -0.5, 0.0);
    VTKplane->SetPoint2( -0.5,  0.5, 0.0);
-   // PolyDataMapper
+
+   //// PolyDataMapper
    vtkPolyDataMapper *VTKplaneMapper = vtkPolyDataMapper::New();
    VTKplaneMapper->SetInput(VTKplane->GetOutput());
-   // Actor
+
+   //// Actor
    vtkActor* VTKplaneActor = vtkActor::New();
    VTKplaneActor->SetTexture(VTKtexture);
    VTKplaneActor->SetMapper(VTKplaneMapper);
    VTKplaneActor->PickableOn();
-   //
+
+   //// Final rendering with simple interactor:
    vtkRenderer        *ren = vtkRenderer::New();
    vtkRenderWindow *renwin = vtkRenderWindow::New();
    renwin->AddRenderer(ren);
@@ -95,6 +101,7 @@ int main( int argc, char *argv[] )
    renwin->Render();
    iren->Start();
 
+   //// Clean up:
    reader->Delete();
    VTKtable->Delete();
    VTKtexture->Delete();
@@ -107,4 +114,3 @@ int main( int argc, char *argv[] )
 
    return(0);
 }
-

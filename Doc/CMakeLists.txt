@@ -20,11 +20,16 @@ IF(GDCM_DOCUMENTATION)
   # http://www.cmake.org/pipermail/cmake/2003-April/003673.html
   # Too bad CMake doesn't support multiline ""
   SET(GDCM_DOCUMENTATION_INPUT_COMMON
-    "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt"
+    "${GDCM_SOURCE_DIR}/src ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt ${GDCM_SOURCE_DIR}/Doc/DoxyVtkGdmReaderExamples.txt"
   )
   SET(GDCM_DOCUMENTATION_EXCLUDE_COMMON
     "${GDCM_SOURCE_DIR}/src/gdcmJpeg.cxx"
   )
+  
+  IF(GDCM_VTK)
+     SET(GDCM_DOCUMENTATION_INPUT_COMMON
+         "${GDCM_DOCUMENTATION_INPUT_COMMON} ${GDCM_SOURCE_DIR}/vtk")
+  ENDIF(GDCM_VTK)
 
   #Should rewrote this thing with FOREACH:
   #-----------------------------------------------------------------------------

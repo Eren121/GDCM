@@ -13,6 +13,27 @@ Comments:
 
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
+Description: vtk/vtkGdcmReader doesn't positionate the normal to the image
+Date: 2004 Oct 1
+Attributed:
+Details: vtkGdcmReader::CheckFileCoherence() sets the DataOrigin[i]
+         but doesn't set the plane (image seen in 3D) normal (is it
+         possible any how). This plane normal could be extracted from 
+         the "orientation" info of the gdcmHeader ( refer to
+         grep "Orientation" Dicts/dicomV3.dic).
+         Problem exhibiting this defect: cine loop on a pile of images
+               whose Origin is correct, but whose normal is not set will
+               plainly suck !
+Comments:
+        * vtkGdcmReader inherits from vtkImageReader which aggregates
+          a vtkTranform. vtkGdcmReader could store (when the user requires
+          it, see below) the origin/normal taken from the Dicom Header
+          within this vtkTransform (looks like a natural place to store
+          this spacial information).
+        * Both settings of the origin and/OR the normal of the plane (image)
+          should be an option defined with a flag (On/Off) in the
+          vtkGdcmReader...
+-----------------------------------------------------------------------------
 Description: Fix the Python wrappers
 Date: 2004 Sep 24
 Attributed: no

@@ -1,3 +1,17 @@
+// This example illustrates how the vtkGdcmReader vtk class can be
+// used in order to:
+//  * produce a simple (vtk based) Dicom image STACK VIEWER.
+//  * dump the stack considered as a volume in a vtkStructuredPoints
+//    vtk file: the vtk gdcm wrappers can be seen as a simple way to convert
+//    a stack of Dicom images into a native vtk volume.
+//
+// Usage:
+//  * the filenames of the Dicom images constituting the stack should be
+//    given as command line arguments,
+//  * you can navigate through the stack by hitting any character key,
+//  * the produced vtk file is named "foo.vtk" (in the invocation directory).
+// 
+//----------------------------------------------------------------------------
 #include <iostream>
 
 #include <vtkRenderWindowInteractor.h>
