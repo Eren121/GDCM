@@ -1,4 +1,8 @@
 2005-02-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFileHelper.[h|cxx] : now correctly set the VR of the datas when 
+     writting the file
+
+2005-02-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/VTKTestWriteSeq.cxx : add a VTK test to write sequences
 
 2005-02-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/02/09 16:28:41 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -681,8 +681,11 @@ void FileHelper::SetWriteToRaw()
       PixelWriteConverter->SetReadData(PixelReadConverter->GetRaw(),
                                        PixelReadConverter->GetRawSize());
 
+      std::string vr = "OB";
+      if( FileInternal->GetBitsAllocated()>8 )
+         vr = "OW";
       BinEntry *pixel = 
-         CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel());
+         CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
       pixel->SetValue(GDCM_BINLOADED);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
@@ -721,8 +724,11 @@ void FileHelper::SetWriteToRGB()
                                           PixelReadConverter->GetRawSize());
       }
 
+      std::string vr = "OB";
+      if( FileInternal->GetBitsAllocated()>8 )
+         vr = "OW";
       BinEntry *pixel = 
-         CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel());
+         CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
       pixel->SetValue(GDCM_BINLOADED);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
@@ -906,7 +912,7 @@ ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    ValEntry *newE;
 
-   if(oldE)
+   if( oldE )
    {
       newE = new ValEntry(oldE->GetDictEntry());
       newE->Copy(oldE);
@@ -927,19 +933,23 @@ ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
  * \return  pointer to the modified/created Bin Entry (NULL when creation
  *          failed).
  */ 
-BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem)
+BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem,const std::string &vr)
 {
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    BinEntry *newE;
 
-   if(oldE)
+   if( oldE )
+      if( oldE->GetVR()!=vr )
+         oldE = NULL;
+
+   if( oldE )
    {
       newE = new BinEntry(oldE->GetDictEntry());
       newE->Copy(oldE);
    }
    else
    {
-      newE = GetFile()->NewBinEntry(group,elem);
+      newE = GetFile()->NewBinEntry(group,elem,vr);
    }
 
    return newE;

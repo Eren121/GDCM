@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 19:17:27 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/02/09 16:28:41 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,13 +64,13 @@ Image Images [] = {
    {256, 512, 1, 1, 16, 16, 0, 'e'},
    {256, 512, 1, 1, 16, 16, 0, 'i'},
 
-   {512, 256, 10, 1, 8,  8, 0, 'a'},
-   {512, 256, 10, 1, 8,  8, 0, 'e'},
-   {512, 256, 10, 1, 8,  8, 0, 'i'},
-   {512, 256, 10, 3, 8,  8, 0, 'a'},
-   {512, 256, 10, 3, 8,  8, 0, 'e'},
-   {512, 256, 10, 3, 8,  8, 0, 'i'},
-   {0,   0,   1,  1, 8,  8, 0, 'i'} // to find the end
+   {512, 256, 10, 1, 8, 8,  0, 'a'},
+   {512, 256, 10, 1, 8, 8,  0, 'e'},
+   {512, 256, 10, 1, 8, 8,  0, 'i'},
+   {512, 256, 10, 3, 8, 8,  0, 'a'},
+   {512, 256, 10, 3, 8, 8,  0, 'e'},
+   {512, 256, 10, 3, 8, 8,  0, 'i'},
+   {0,   0,   1,  1, 8, 8,  0, 'i'} // to find the end
 };
 
 int WriteSimple(Image &img)
@@ -102,18 +102,6 @@ int WriteSimple(Image &img)
    str.str("");
    str << img.componentSize;
    fileToBuild->InsertValEntry(str.str(),0x0028,0x0100); // Bits Allocated
-
-   /******************************************/
-   /******************************************/
-   // Super duper kludge !!
-   if( img.componentSize == 16 )
-   {
-      // I guess by design user should know that...
-      fileToBuild->InsertBinEntry(0,0, 0x7fe0, 0x0010, "OW");
-   }
-   /******************************************/
-   /******************************************/
-   
 
    str.str("");
    str << img.componentUse;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:39:35 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/02/09 16:28:41 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -149,7 +149,8 @@ protected:
    void RestoreWriteOfLibido();
 
    ValEntry *CopyValEntry(uint16_t group, uint16_t elem);
-   BinEntry *CopyBinEntry(uint16_t group, uint16_t elem);
+   BinEntry *CopyBinEntry(uint16_t group, uint16_t elem, 
+                          const std::string &vr);
 
 private:
    void Initialize();
