@@ -23,11 +23,15 @@ void _IdDcmJpegFree(ClbJpeg *jpg)
 ClbJpeg * _IdDcmJpegRead (FILE * fp){
 ClbJpeg * jpg=NULL;
 	jpg=ClbJpegAlloc();
-	if(!jpg) 
-		return(NULL);
+	if(!jpg) {
+	   printf("Fail to ClbJpegAlloc \n");
+	   return(NULL);
+	}
 	ClbJpegInit (jpg); 
-	if(!ClbJpegStart(jpg, fp))
-		return (NULL);
+	if(!ClbJpegStart(jpg, fp)) {
+	   printf("Fail to ClbJpegStart \n");
+	   return (NULL);
+	}
 	return (jpg);
 }
 
@@ -129,9 +133,15 @@ static BOOL ClbJpegFillHuffTable(ClbJpeg *jpg)
 static BOOL ClbJpegStart(ClbJpeg *jpg, FILE *inputfp)
 {
 	jpg->infp=inputfp;
-	if (!ClbJpegReadHeader(jpg)) return 0;
+	if (!ClbJpegReadHeader(jpg)) {
+	   printf("Fail to ClbJpegReadHeader\n");
+	   return 0;
+	}
 	//printf("sortie ClbJpegReadHeader\n");
-	if (!ClbJpegDecodeData(jpg)) return 0;
+	if (!ClbJpegDecodeData(jpg)) {
+	   printf("Fail to ClbJpegDecodeData\n");
+	   return 0;
+	}	
 	//printf("sortie ClbJpegDecodeData\n");
 	return 1;
 }
@@ -155,7 +165,10 @@ static BOOL ClbJpegReadHeader(ClbJpeg *jpg)
 	while(!HeaderEnd)
 	{
 		gr=fgetc(jpg->infp);  
-		if(gr!=0xFF) return 0;
+		if(gr!=0xFF) {
+		   printf("gr!=0xFF (=%02x)\n",gr);
+		   return 0;
+		}
 		el=fgetc(jpg->infp);
 
 		if ( (el==0xFF) || (el==0x01) || (el==0xD8) ||(el==0xD9) ||( (el>=0xD0) && (el<=0xD7) ))
@@ -179,7 +192,7 @@ static BOOL ClbJpegReadHeader(ClbJpeg *jpg)
 				l2=fgetc(jpg->infp);
 				jpg->lSof.Wimg=(l1*256)+l2;
 
-				jpg->lSof.NbComponent=fgetc(jpg->infp);
+				jpg->lSof.NbComponent=fgetc(jpg->infp); 
 
 				jpg->lSof.SofTabPos=ftell(jpg->infp);
 
@@ -215,7 +228,10 @@ static BOOL ClbJpegReadHeader(ClbJpeg *jpg)
 		}
 	}
 
-	if (!isLossLess) return 0;
+	if (!isLossLess) {
+	   printf("NOT isLossLess\n");
+	   return 0;
+	}
 	return 1;
 
 }

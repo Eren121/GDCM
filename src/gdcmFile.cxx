@@ -80,21 +80,59 @@ size_t gdcmFile::GetImageDataSize(void) {
 bool gdcmFile::ReadPixelData(void* destination) {
    if ( !OpenFile())
       return false;
-   if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
+      
+    if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
       CloseFile();
       return false;
+   }     
+    
+   if ( !IsDicomV3()                             ||
+        IsImplicitVRLittleEndianTransferSyntax() ||
+        IsExplicitVRLittleEndianTransferSyntax() ||
+        IsExplicitVRBigEndianTransferSyntax()    ||
+        IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
+             
+         size_t ItemRead = fread(destination, lgrTotale, 1, fp);
+         if ( ItemRead != 1 ) {
+            CloseFile();
+            return false;
+         } else {
+            CloseFile();
+            return true;
+         }
    }
+         
    if (IsJPEGLossless()) {
-      destination = _IdDcmJpegRead(fp);
-   } else { 
-      size_t ItemRead = fread(destination, lgrTotale, 1, fp);
-      if ( ItemRead != 1 ) {
+      int ln;
+      fseek(fp,4,SEEK_CUR);
+      fread(&ln,4,1,fp); 
+      if(GetSwapCode()) 
+         ln=SwapLong(ln);
+      //if (DEBUG) 
+         printf ("ln %d\n",ln);
+      fseek(fp,ln,SEEK_CUR);
+      fseek(fp,4,SEEK_CUR);
+      fread(&ln,4,1,fp); 
+      if(GetSwapCode()) 
+         ln=SwapLong(ln);
+      //if (DEBUG) 
+         printf ("ln image comprimée %d\n",ln);
+
+      ClbJpeg* jpg = _IdDcmJpegRead(fp);
+      if(jpg == NULL) {
          CloseFile();
          return false;
-      }
-   }
-   CloseFile();
-   return true;
+      }     
+      memcpy(destination,jpg->DataImg,lgrTotale);
+      _IdDcmJpegFree (jpg);
+      CloseFile();
+      return true;
+   }     
+
+    printf ("Sorry, TransfertSyntax not yet taken into account ...\n");
+    CloseFile();
+    return false;
+
 }   
 
 /////////////////////////////////////////////////////////////////

@@ -71,8 +71,6 @@ private:
 
    guint16 ReadInt16(void);
    guint32 ReadInt32(void);
-   guint16 SwapShort(guint16);
-   guint32 SwapLong(guint32);
    guint32 FindLengthOB(void);
    void Initialise(void);
    void CheckSwap(void);
@@ -100,6 +98,9 @@ private:
 protected:
    FILE * fp;
    FileType filetype;
+
+   guint16 SwapShort(guint16); // needed by gdcmFile
+   guint32 SwapLong(guint32);  // for JPEG Files :-(
    bool OpenFile(bool exception_on_error = false)
      throw(gdcmFileError);
    bool CloseFile(void);

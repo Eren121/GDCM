@@ -428,6 +428,7 @@ bool gdcmHeader::IsJPEGLossless(void) {
       return false;
    LoadElementValueSafe(Element);
    const char * Transfert = Element->GetValue().c_str();
+   printf("TransfertSyntx %s\n",Transfert);
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
    return false;

@@ -2,6 +2,7 @@
 //#include "gdcm.h"
 #include "gdcmHeader.h"
 #include "gdcmFile.h"
+#include <string>
 
 
 	// ecriture d'un fichier DICOM à partir d'un dcmHeader correct.
@@ -33,30 +34,46 @@ int main(int argc, char* argv[])
 	
 	// On suppose que les champs DICOM du 2ieme fichier existent *effectivement*
 	
-        f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x0028, 0x0008),
-          0x0028, 0x0008);// nb Frames
+	string nbFrames = f2->GetPubElValByNumber(0x0028, 0x0008);
+	if(nbFrames != "gdcm::Unfound") {
+           f1->ReplaceOrCreateByNumber( nbFrames, 0x0028, 0x0008);
+        }
+         
 	f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x0028, 0x0010),
 	  0x0028, 0x0010);// nbLig
 	f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x0028, 0x0011),
           0x0028, 0x0011);// nbCol
 	
+	
 	// sans doute d'autres à mettre à jour...
 	
+	// TODO : rajouter une valeur par defaut.	
 	// TODO : une routine qui recoit une liste de couples (gr,el), et qui fasse le boulot.
 
 				
 	dataSize = f2->GetImageDataSize();
 	printf ("dataSize %d\n",dataSize);
 	imageData= f2->GetImageData();
-	
+			
 	f1->SetImageData(imageData,dataSize);
 	
 	// ou, plus joli:
-	//f1->SetImageData(f2->GetImageData(),f2->GetImageDataSize());	
+	//f1->SetImageData(f2->GetImageData(),f2->GetImageDataSize());
+	
+	string s0 =f2->GetPubElValByNumber(0x7fe0, 0x0000);
+	string s10=f2->GetPubElValByNumber(0x7fe0, 0x0010);
+	printf("lgr 7fe0, 0000 %s\n",s0.c_str());
+	printf("lgr 7fe0, 0010 %s\n",s10.c_str());	
+	
+	f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x7fe0, 0x0000),
+	  0x7fe0, 0x0000);
+	//f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x7fe0, 0x0010),
+	//  0x7fe0, 0x0010);
 
 	sprintf(resultat, "%s.vol", deuxieme.c_str());
 	printf ("WriteDCM\n");
-	f1->WriteDcmImplVR(resultat);		
+	//f1->WriteDcmImplVR(resultat);	
+	f1->WriteAcr(resultat);	
 }
 
 
