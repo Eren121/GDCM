@@ -16,3 +16,8 @@ test2.acr.dcm
 test2.acr.raw
 test3.acr.dcm
 test3.acr.raw
+*.exp
+*.lib
+*.dll
+*Debug*
+*Release*

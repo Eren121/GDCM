@@ -15,3 +15,10 @@ dist
 MANIFEST
 gdcm*.tar.gz
 gdcm.spec
+*Debug*
+*Release*
+*gdcmData*
+*.ncb
+*.opt
+*Python.cxx
+*lib*
