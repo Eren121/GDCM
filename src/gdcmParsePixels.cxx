@@ -79,7 +79,7 @@ bool gdcmFile::ParsePixelData(void) {
             (unsigned)ftellRes,ln,ln);
       if (ln != 0) {
          // What is it used for ??
-         char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
+         char * BasicOffsetTableItemValue= new char[ln+1];
          fread(BasicOffsetTableItemValue,ln,1,fp); 
          guint32 a;
          for (int i=0;i<ln;i+=4){
@@ -152,7 +152,7 @@ bool gdcmFile::ParsePixelData(void) {
             (unsigned)ftellRes,ln,ln);
       if (ln != 0) {
          // What is it used for ??
-         char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
+         char * BasicOffsetTableItemValue= new char[ln+1];
          fread(BasicOffsetTableItemValue,ln,1,fp); 
          guint32 a;
          for (int i=0;i<ln;i+=4){

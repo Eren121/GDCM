@@ -74,10 +74,10 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
 
       if(strlen(FileName)==1 && FileName[0]=='.') { // user passed '.' as Name
                                             // we get current directory name
-         char*dummy=(char*) malloc(1000);
-         getcwd(dummy,(size_t)1000);
+         char* dummy= new char[1000];
+         getcwd(dummy, (size_t)1000);
          SetFileName(dummy); // will be converted into a string
-         free(dummy);        // no longer needed   
+         delete[] dummy;        // no longer needed   
       }
 
       if(parseDir)
@@ -307,11 +307,10 @@ bool gdcmDicomDir::Write(std::string fileName)
       return(false);
    }
 
-   char * filePreamble;
-   filePreamble=(char*)calloc(128,1);
+   char * filePreamble = new char[128];
    fwrite(filePreamble,128,1,fp1);
    fwrite("DICM",4,1,fp1);
-   free(filePreamble);        
+   delete[] filePreamble;
    UpdateDirectoryRecordSequenceLength();
    WriteEntries(fp1);
 

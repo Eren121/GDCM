@@ -224,7 +224,7 @@ size_t gdcmFile::GetImageDataSizeRaw(void) {
  *          NULL if alloc fails 
  */
 void * gdcmFile::GetImageData (void) {
-   PixelData = (void *) malloc(lgrTotale);
+   PixelData = new char[lgrTotale];
    if (PixelData)
       GetImageDataIntoVector(PixelData, lgrTotale);
       
@@ -261,7 +261,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
       return lgrTotale; 
                             
    // from Lut R + Lut G + Lut B
-   unsigned char * newDest = (unsigned char *)malloc(lgrTotale);
+   unsigned char * newDest = new (unsigned char)[lgrTotale];
    unsigned char * a       = (unsigned char *)destination;	 
    unsigned char * lutRGBA =                  Header->GetLUTRGBA();
    if (lutRGBA) { 	    
@@ -274,7 +274,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          *a++ = lutRGBA[j+1];
          *a++ = lutRGBA[j+2];
       }
-      free(newDest);
+      delete[] newDest;
     
    // now, it's an RGB image
    // Lets's write it in the Header
@@ -321,7 +321,7 @@ void * gdcmFile::GetImageDataRaw (void) {
       lgrTotale /= 3;  // TODO Let gdcmHeadar user a chance 
                        // to get the right value
 		       // Create a member lgrTotaleRaw ???
-   PixelData = (void *) malloc(lgrTotale);
+   PixelData = new char[lgrTotale];
    if (PixelData)
       GetImageDataIntoVectorRaw(PixelData, lgrTotale);
    PixelRead=1; // PixelRaw
@@ -492,7 +492,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
             int l = Header->GetXSize()*Header->GetYSize();
             int nbFrames = Header->GetZSize();
 
-            unsigned char * newDest = (unsigned char*) malloc(lgrTotale);
+            unsigned char * newDest = new (unsigned char)[lgrTotale];
             unsigned char *x  = newDest;
             unsigned char * a = (unsigned char *)destination;
             unsigned char * b = a + l;
@@ -524,7 +524,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
                }
            }
             memmove(destination,newDest,lgrTotale);
-            free(newDest);
+            delete[] newDest;
 
         } else {
          
@@ -533,7 +533,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 
             int l = Header->GetXSize()*Header->GetYSize()*Header->GetZSize();
 
-            char * newDest = (char*) malloc(lgrTotale);
+            char * newDest = new char[lgrTotale];
             char * x = newDest;
             char * a = (char *)destination;
             char * b = a + l;
@@ -545,7 +545,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
                *(x++) = *(c++);  
             }           
             memmove(destination,newDest,lgrTotale);
-            free(newDest);
+            delete[] newDest;
         }	  
          break;
        }     
@@ -699,10 +699,10 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    if ( (type == ImplicitVR) || (type == ExplicitVR) ) {
       char * filePreamble;
       // writing Dicom File Preamble
-      filePreamble=(char*)calloc(128,1);
+      filePreamble=new char[128];
       fwrite(filePreamble,128,1,fp1);
       fwrite("DICM",4,1,fp1);
-      free (filePreamble);
+      delete[] filePreamble;
    }
 
    // --------------------------------------------------------------
@@ -959,7 +959,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
       
    if (ln != 0) {
       // What is it used for ?!?
-      char *BasicOffsetTableItemValue = (char *)malloc(ln+1);        
+      char *BasicOffsetTableItemValue = new char[ln+1];
       fread(BasicOffsetTableItemValue,ln,1,fp); 
    }
    

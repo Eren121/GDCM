@@ -753,7 +753,7 @@ void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem)
    size_t o =(size_t)Element->GetOffset();
    fseek(fp, o, SEEK_SET);
    size_t l=Element->GetLength();
-   void * a = malloc(l);
+   char* a = new char[l];
    if(!a) 
       return NULL;
 
@@ -762,7 +762,7 @@ void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem)
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) 
    {
-      free(a);
+      delete[] a;
       return NULL;
    }
 

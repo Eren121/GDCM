@@ -41,7 +41,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
       ln=Header->SwapLong(ln);    // Basic Offset Table Item Lentgh
    if (ln != 0) {
       // What is it used for ??
-      char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
+      char * BasicOffsetTableItemValue= new char[ln+1];
       fread(BasicOffsetTableItemValue,ln,1,fp); 
       guint32 a;
       for (int i=0;i<ln;i+=4){
@@ -114,7 +114,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
       int l = Header->GetXSize()*Header->GetYSize();
       int nbFrames = Header->GetZSize();
 
-      char * newDest = (char*) malloc(l*nbFrames*2);
+      char * newDest = new char[l*nbFrames*2];
       char *x  = newDest;
       char * a = (char *)image_buffer;
       char * b = a + l;
@@ -126,7 +126,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
          }
       }
       memmove(image_buffer,newDest,lgrTotale);
-      free(newDest);   
+      delete[] newDest;
    }
       
    return(true);

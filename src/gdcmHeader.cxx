@@ -631,7 +631,7 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
    } 
    // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT 
    
-   unsigned char *LUTRGBA = (unsigned char *)calloc(1024,1); // 256 * 4 (R, G, B, Alpha) 
+   unsigned char *LUTRGBA = new (unsigned char)[1024]; // 256 * 4 (R, G, B, Alpha) 
    if (!LUTRGBA) {
       return NULL;
    }
