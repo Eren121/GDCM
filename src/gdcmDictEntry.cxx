@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 02:57:11 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/10/10 00:42:54 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ gdcmDictEntry::gdcmDictEntry(uint16_t group, uint16_t element,
  */
 gdcmTagKey gdcmDictEntry::TranslateToKey(uint16_t group, uint16_t element)
 {
-   gdcmTagKey key = Format("%04x|%04x", group , element);
+   gdcmTagKey key = gdcmUtil::Format("%04x|%04x", group , element);
 
    return key;
 }

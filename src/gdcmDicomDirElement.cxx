@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:21:55 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/10 00:42:54 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,35 +117,35 @@ void gdcmDicomDirElement::Print(std::ostream &os)
    s << "Meta Elements :"<<std::endl;
    for (it = DicomDirMetaList.begin(); it != DicomDirMetaList.end(); ++it)
    {
-      greltag = Format("%04x|%04x ",it->Group,it->Elem);
+      greltag = gdcmUtil::Format("%04x|%04x ",it->Group,it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Patient Elements :"<<std::endl;
    for (it = DicomDirPatientList.begin(); it != DicomDirPatientList.end(); ++it)
    {
-      greltag = Format("%04x|%04x ",it->Group,it->Elem);
+      greltag = gdcmUtil::Format("%04x|%04x ",it->Group,it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Study Elements :"<<std::endl;
    for (it = DicomDirStudyList.begin(); it != DicomDirStudyList.end(); ++it)
    {
-      greltag = Format("%04x|%04x ", it->Group, it->Elem);
+      greltag = gdcmUtil::Format("%04x|%04x ", it->Group, it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Serie Elements :"<<std::endl;
    for (it = DicomDirSerieList.begin(); it != DicomDirSerieList.end(); ++it)
    {
-      greltag = Format("%04x|%04x ", it->Group, it->Elem);
+      greltag = gdcmUtil::Format("%04x|%04x ", it->Group, it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Image Elements :"<<std::endl;
    for (it = DicomDirImageList.begin(); it != DicomDirImageList.end(); ++it)
    {
-      greltag = Format("%04x|%04x ", it->Group, it->Elem);
+      greltag = gdcmUtil::Format("%04x|%04x ", it->Group, it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 02:57:12 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2004/10/10 00:42:55 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@
 #include <stdarg.h>  //only included in implementation file
 #include <stdio.h>   //only included in implementation file
 
-std::string Format(const char* format, ...)
+std::string gdcmUtil::Format(const char* format, ...)
 {
    char buffer[2048];
    va_list args;
@@ -50,7 +50,7 @@ std::string Format(const char* format, ...)
  * \ingroup Globals
  * \brief Because not available in C++ (?)
  */
-void Tokenize (const std::string& str,
+void gdcmUtil::Tokenize (const std::string& str,
                std::vector<std::string>& tokens,
                const std::string& delimiters)
 {
@@ -70,7 +70,7 @@ void Tokenize (const std::string& str,
  *        Counts the number of occurences of a substring within a string
  */
  
-int CountSubstring (const std::string& str,
+int gdcmUtil::CountSubstring (const std::string& str,
                     const std::string& subStr)
 {
    int count = 0;   // counts how many times it appears
@@ -96,7 +96,7 @@ int CountSubstring (const std::string& str,
  *         to avoid corrupting the terminal of invocation when printing)
  * @param s string to remove non printable characters from
  */
-std::string CreateCleanString(std::string s)
+std::string gdcmUtil::CreateCleanString(std::string s)
 {
    std::string str = s;
 
@@ -127,7 +127,7 @@ std::string CreateCleanString(std::string s)
  * \brief   Add a SEPARATOR to the end of the name is necessary
  * @param name file/directory name to normalize 
  */
-void NormalizePath(std::string &name)
+void gdcmUtil::NormalizePath(std::string &name)
 {
    const char SEPARATOR_X      = '/';
    const char SEPARATOR_WIN    = '\\';
@@ -145,7 +145,7 @@ void NormalizePath(std::string &name)
  * \brief   Get the (directory) path from a full path file name
  * @param   fullName file/directory name to extract Path from
  */
-std::string GetPath(std::string &fullName)
+std::string gdcmUtil::GetPath(std::string &fullName)
 {
    int pos1 = fullName.rfind("/");
    int pos2 = fullName.rfind("\\");
@@ -166,7 +166,7 @@ std::string GetPath(std::string &fullName)
  * \brief   Get the (last) name of a full path file name
  * @param   fullName file/directory name to extract end name from
  */
-std::string GetName(std::string &fullName)
+std::string gdcmUtil::GetName(std::string &fullName)
 {   
    int fin = fullName.length()-1;
    char a =fullName.c_str()[fin];

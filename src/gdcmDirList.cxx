@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/10/10 00:42:54 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@
 gdcmDirList::gdcmDirList(std::string dirName, bool recursive)
 {
    name = dirName;
-   NormalizePath(name);
+   gdcmUtil::NormalizePath(name);
    Explore(name, recursive);
 }
 
@@ -88,7 +88,7 @@ int gdcmDirList::Explore(std::string dirName, bool recursive)
 {
    int numberOfFiles = 0;
    std::string fileName;
-   NormalizePath(dirName);
+   gdcmUtil::NormalizePath(dirName);
 #if defined(_MSC_VER) || (__CYGWIN__)
    WIN32_FIND_DATA fileData; 
    HANDLE hFile=FindFirstFile((dirName+"*").c_str(),&fileData);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg8.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 17:24:54 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/10 00:42:55 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,6 @@ of the uncompressed pixel data from which the compressed data is derived
  */
 
 extern "C" {
-//#include "stdio.h"
 #include "src/jpeg/libijg8/jconfig.h"
 #include "src/jpeg/libijg8/jpeglib.h"
 

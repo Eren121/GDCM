@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:36:56 $
-  Version:   $Revision: 1.99 $
+  Date:      $Date: 2004/10/10 00:42:54 $
+  Version:   $Revision: 1.100 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -981,12 +981,12 @@ bool gdcmDocument::SetEntryByNumber(std::string const& content,
       gdcmVRKey vr = valEntry->GetVR();
       if( vr == "US" || vr == "SS" )
       {
-         c = CountSubstring(content, "\\") + 1; // for multivaluated items
+         c = gdcmUtil::CountSubstring(content, "\\") + 1; // for multivaluated items
          l = c*2;
       }
       else if( vr == "UL" || vr == "SL" )
       {
-         c = CountSubstring(content, "\\") + 1; // for multivaluated items
+         c = gdcmUtil::CountSubstring(content, "\\") + 1; // for multivaluated items
          l = c*4;;
       }
    }
@@ -1979,7 +1979,7 @@ bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *entry, gdcmVRKey vr)
    {
       // We thought this was explicit VR, but we end up with an
       // implicit VR tag. Let's backtrack.   
-      msg = Format("Falsely explicit vr file (%04x,%04x)\n", 
+      msg = gdcmUtil::Format("Falsely explicit vr file (%04x,%04x)\n", 
                     entry->GetGroup(), entry->GetElement());
       dbg.Verbose(1, "gdcmDocument::FindVR: ", msg.c_str());
 
@@ -2119,7 +2119,7 @@ std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry* entry)
          uint16_t newInt16;
 
          tokens.erase( tokens.begin(), tokens.end()); // clean any previous value
-         Tokenize (((gdcmValEntry *)entry)->GetValue(), tokens, "\\");
+         gdcmUtil::Tokenize (((gdcmValEntry *)entry)->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size(); i++) 
          {
             newInt16 = atoi(tokens[i].c_str());
@@ -2133,7 +2133,7 @@ std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry* entry)
          uint32_t newInt32;
 
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (((gdcmValEntry *)entry)->GetValue(), tokens, "\\");
+         gdcmUtil::Tokenize (((gdcmValEntry *)entry)->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size();i++) 
          {
             newInt32 = atoi(tokens[i].c_str());

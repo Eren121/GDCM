@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:48:25 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/10/10 00:42:55 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,7 +82,7 @@ void gdcmValEntry::Print(std::ostream & os)
    gdcmTS * ts = gdcmGlobal::GetTS();
     
    v  = GetValue();  // not applicable for SQ ...     
-   d2 = CreateCleanString(v);  // replace non printable characters by '.'            
+   d2 = gdcmUtil::CreateCleanString(v);  // replace non printable characters by '.'            
    if( (GetLength()<=MAX_SIZE_PRINT_ELEMENT_VALUE) || 
        //(PrintLevel>=3)  || (d2.find("gdcm::NotLoaded.") < d2.length()) )
        (PrintLevel>=3)  || (d2.find(GDCM_NOTLOADED) < d2.length()) )
@@ -150,17 +150,17 @@ void gdcmValEntry::Print(std::ostream & os)
    {
       if (v == "4294967295") // to avoid troubles in convertion 
       {
-         st = Format(" x(ffffffff)");
+         st = gdcmUtil::Format(" x(ffffffff)");
       }
       else
       {
          if ( GetLength() !=0 )
          {
-            st = Format(" x(%x)", atoi(v.c_str()));//FIXME
+            st = gdcmUtil::Format(" x(%x)", atoi(v.c_str()));//FIXME
          }
          else
          {
-            st = Format(" ");
+            st = gdcmUtil::Format(" ");
          }
       }
       s << st;
@@ -191,7 +191,7 @@ void gdcmValEntry::Write(FILE* fp, FileType filetype)
       // we split the string and write each value as a short int
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-      Tokenize (GetValue(), tokens, "\\");
+      gdcmUtil::Tokenize (GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++)
       {
          uint16_t val_uint16 = atoi(tokens[i].c_str());
@@ -209,7 +209,7 @@ void gdcmValEntry::Write(FILE* fp, FileType filetype)
       // along the '\' and write each value as an int:
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-      Tokenize (GetValue(), tokens, "\\");
+      gdcmUtil::Tokenize (GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++)
       {
          uint32_t val_uint32 = atoi(tokens[i].c_str());

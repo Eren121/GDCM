@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:31:26 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/10/10 00:42:54 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,7 +73,7 @@ void gdcmDocEntry::Print(std::ostream& os)
       lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
       if (lgth == 0xffffffff)
       {
-         st = Format("x(ffff)");  // I said : "x(ffff)" !
+         st = gdcmUtil::Format("x(ffff)");  // I said : "x(ffff)" !
          s.setf(std::ios::left);
          s << std::setw(10-st.size()) << " ";  
          s << st << " ";
@@ -82,7 +82,7 @@ void gdcmDocEntry::Print(std::ostream& os)
       }
       else
       {
-         st = Format("x(%x)",lgth);
+         st = gdcmUtil::Format("x(%x)",lgth);
          s.setf(std::ios::left);
          s << std::setw(10-st.size()) << " ";
          s << st << " ";
@@ -90,7 +90,7 @@ void gdcmDocEntry::Print(std::ostream& os)
          s << std::setw(8) << lgth; 
       }
       s << " Off.: ";
-      st = Format("x(%x)",o); 
+      st = gdcmUtil::Format("x(%x)",o); 
       s << std::setw(10-st.size()) << " ";
       s << st << " ";
       s << std::setw(8) << o; 

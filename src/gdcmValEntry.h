@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 21:05:40 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/10/10 00:42:55 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ public:
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
    /// 'string', if it's stored as an integer in the header of the
    /// current Dicom Document Entry
-   std::string GetValue() { return Value; };
+   std::string & GetValue() { return Value; };
     
    /// Sets the value (string) of the current Dicom Document Entry
    void SetValue(std::string const & val) { Value = val; };

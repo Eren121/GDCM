@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:42:51 $
-  Version:   $Revision: 1.191 $
+  Date:      $Date: 2004/10/10 00:42:54 $
+  Version:   $Revision: 1.192 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,7 +114,7 @@ void gdcmHeader::Write(FILE* fp,FileType filetype)
    {
       // no (GrPixel, NumPixel) element
       std::string s_lgPix;
-      s_lgPix = Format("%d", i_lgPix+12);
+      s_lgPix = gdcmUtil::Format("%d", i_lgPix+12);
       ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
    }
 
@@ -1114,7 +1114,7 @@ int gdcmHeader::GetLUTNbits()
    }
 
    tokens.clear(); // clean any previous value
-   Tokenize ( lutDescription, tokens, "\\" );
+   gdcmUtil::Tokenize ( lutDescription, tokens, "\\" );
    //LutLength=atoi(tokens[0].c_str());
    //LutDepth=atoi(tokens[1].c_str());
 
@@ -1332,13 +1332,13 @@ std::string gdcmHeader::GetTransfertSyntaxName()
 void gdcmHeader::SetImageDataSize(size_t ImageDataSize)
 {
    ///FIXME I don't understand this code wh ydo we set two times 'car' ?
-   std::string car = Format("%d", ImageDataSize);
+   std::string car = gdcmUtil::Format("%d", ImageDataSize);
  
    gdcmDocEntry *a = GetDocEntryByNumber(GrPixel, NumPixel);
    a->SetLength(ImageDataSize);
 
    ImageDataSize += 8;
-   car = Format("%d", ImageDataSize);
+   car = gdcmUtil::Format("%d", ImageDataSize);
 
    SetEntryByNumber(car, GrPixel, NumPixel);
 }

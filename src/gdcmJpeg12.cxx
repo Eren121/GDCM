@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg12.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 17:24:54 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/10 00:42:55 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,10 +32,8 @@
  */
 
 extern "C" {
-//#include <stdio.h>
 #include "src/jpeg/libijg12/jconfig.h"
 #include "src/jpeg/libijg12/jpeglib.h"
-//#include "jconfig12.h"
 #include <setjmp.h>
 }
 /******************** JPEG COMPRESSION SAMPLE INTERFACE *******************/
