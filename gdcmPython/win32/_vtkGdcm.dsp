@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "$(CREATIS)\python22\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "..\\" /I "$(CREATIS)\python22\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -181,7 +181,7 @@ SOURCE=..\..\vtk\vtkGdcmReader.h
 !IF  "$(CFG)" == "_vtkGdcm - Win32 Release"
 
 # Begin Custom Build - Performing Custom Build Step on $(VTKPATH)\bin\vtkwrappython "$(InputDir)\$(InputName).h" $(VTKPATH)\Examples\Build\vtkMy\Wrapping\hints 1  $(ProjDir)\..\$(InputName)Python.cxx
-InputDir=\Creatis\CVSimport\gdcm\vtk
+InputDir=\Projects\gdcm\vtk
 ProjDir=.
 InputPath=..\..\vtk\vtkGdcmReader.h
 InputName=vtkGdcmReader
@@ -202,55 +202,31 @@ InputName=vtkGdcmReader
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=..\..\..\..\Python22\libs\python22.lib
+SOURCE=c:\Creatis\Python22\libs\python22.lib
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkRenderingPython.lib
+SOURCE=C:\Creatis\vtkDistrib\lib\vtk\vtkIOPython.lib
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkCommonPython.lib
+SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkCommonPython.lib
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkFiltering.lib
+SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkIO.lib
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkFilteringPython.lib
+SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkCommon.lib
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkGraphics.lib
+SOURCE=C:\Creatis\vtkDistrib\lib\vtk\vtkFilteringPython.lib
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkGraphicsPython.lib
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkImaging.lib
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkImagingPython.lib
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkRendering.lib
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkCommon.lib
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkIOPython.lib
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkIO.lib
+SOURCE=c:\Creatis\vtkDistrib\lib\vtk\vtkFiltering.lib
 # End Source File
 # End Group
 # End Target

@@ -57,7 +57,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=move         $(ProjDir)\gdcm.py         $(ProjDir)\..\ 
+PostBuild_Cmds=move          $(ProjDir)\gdcm.py          $(ProjDir)\..\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmpyembedded - Win32 Debug"
@@ -75,7 +75,6 @@ PostBuild_Cmds=move         $(ProjDir)\gdcm.py         $(ProjDir)\..\
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /GZ /c
 # ADD CPP /nologo /MTd /w /W0 /Gm /GX /ZI /I "$(CREATIS)\python22\include" /I "..\..\src" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /GZ /c
-# SUBTRACT CPP /O<none>
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -89,7 +88,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=mv         $(ProjDir)\gdcm.py         $(ProjDir)\..\ 
+PostBuild_Cmds=mv          $(ProjDir)\gdcm.py          $(ProjDir)\..\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -194,7 +193,7 @@ SOURCE=..\..\src\gdcmVR.cxx
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=..\..\..\..\Python22\libs\python22.lib
+SOURCE=c:\Creatis\Python22\libs\python22.lib
 # End Source File
 # End Group
 # End Target
