@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:41 $
-  Version:   $Revision: 1.195 $
+  Date:      $Date: 2005/01/18 15:52:22 $
+  Version:   $Revision: 1.196 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,9 +35,11 @@
 #include <iomanip>
 
 // For nthos:
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__) 
    #include <winsock.h>
-#else
+#endif
+
+#ifdef CMAKE_HAVE_NETINET_IN_H
    #include <netinet/in.h>
 #endif
 
