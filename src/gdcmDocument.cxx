@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 16:49:01 $
-  Version:   $Revision: 1.130 $
+  Date:      $Date: 2004/11/16 17:31:39 $
+  Version:   $Revision: 1.131 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -429,8 +429,12 @@ std::ifstream* Document::OpenFile()
    uint16_t zero;
    Fp->read((char*)&zero,  (size_t)2 );
  
-   //ACR -- or DICOM with no Preamble --
-   if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200 )
+   //ACR -- or DICOM with no Preamble; may start with a Shadow Group --
+   if( 
+       zero == 0x0001 || zero == 0x0100 || zero == 0x0002 || zero == 0x0200 ||
+       zero == 0x0003 || zero == 0x0300 || zero == 0x0004 || zero == 0x0400 ||
+       zero == 0x0005 || zero == 0x0500 || zero == 0x0006 || zero == 0x0600 ||
+       zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 )
    {
       return Fp;
    }
@@ -2536,13 +2540,13 @@ bool Document::CheckSwap()
          // So, let's check if this file wouldn't happen to be 'dirty' ACR/NEMA,
          //  i.e. the 'group length' element is not present :     
          
-         //  check the supposed to be 'group number'
-         //  0x0002 or 0x0004 or 0x0008
+         //  check the supposed-to-be 'group number'
+         //  in ( 0x0001 .. 0x0008 )
          //  to determine ' SwapCode' value .
          //  Only 0 or 4321 will be possible 
          //  (no oportunity to check for the formerly well known
          //  ACR-NEMA 'Bad Big Endian' or 'Bad Little Endian' 
-         //  if unsuccessfull (i.e. neither 0x0002 nor 0x0200 etc -4, 8-) 
+         //  if unsuccessfull (i.e. neither 0x0002 nor 0x0200 etc -3, 4, ..., 8-) 
          //  the file IS NOT ACR-NEMA nor DICOM V3
          //  Find a trick to tell it the caller...
       
@@ -2550,22 +2554,32 @@ bool Document::CheckSwap()
       
          switch ( s16 )
          {
+            case 0x0001 :
             case 0x0002 :
+            case 0x0003 :
             case 0x0004 :
-            case 0x0008 :      
+            case 0x0005 :
+            case 0x0006 :
+            case 0x0007 :
+            case 0x0008 :
                SwapCode = 0;
                Filetype = ACR;
                return true;
+            case 0x0100 :
             case 0x0200 :
+            case 0x0300 :
             case 0x0400 :
-            case 0x0800 : 
+            case 0x0500 :
+            case 0x0600 :
+            case 0x0700 :
+            case 0x0800 :
                SwapCode = 4321;
                Filetype = ACR;
                return true;
             default :
                dbg.Verbose(0, "Document::CheckSwap:",
-                     "ACR/NEMA unfound swap info (Really hopeless !)"); 
-               Filetype = Unknown;     
+                     "ACR/NEMA unfound swap info (Really hopeless !)");
+               Filetype = Unknown;
                return false;
          }
          // Then the only info we have is the net2host one.
@@ -2576,6 +2590,7 @@ bool Document::CheckSwap()
          //return;
    }
 }
+
 
 /**
  * \brief Restore the unproperly loaded values i.e. the group, the element
