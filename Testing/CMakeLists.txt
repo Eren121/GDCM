@@ -21,7 +21,8 @@ SET(TEST_SOURCES
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
-  SET(TEST_SOURCES ${TEST_SOURCES}     
+  SET(TEST_SOURCES ${TEST_SOURCES}
+    TestSerieHeader                  # uses gdcmData as a default root directory    
     TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     PrintAllDocument.cxx             # includes generated gdcmDataImages.h
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
