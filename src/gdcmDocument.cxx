@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 17:09:49 $
-  Version:   $Revision: 1.170 $
+  Date:      $Date: 2005/01/10 17:17:52 $
+  Version:   $Revision: 1.171 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1906,14 +1906,12 @@ void Document::SkipDocEntry(DocEntry *entry)
 /**
  * \brief   Skips to the begining of the next Header Entry 
  * \warning NOT end user intended method !
- * @param   offset start of skipping
- * @param   readLgth length to skip
-
+ * @param   currentDocEntry entry to skip
  */
-void Document::SkipToNextDocEntry(DocEntry *newDocEntry) 
+void Document::SkipToNextDocEntry(DocEntry *currentDocEntry) 
 {
-   Fp->seekg((long)(newDocEntry->GetOffset()),     std::ios::beg);
-   Fp->seekg( (long)(newDocEntry->GetReadLength()),std::ios::cur);
+   Fp->seekg((long)(currentDocEntry->GetOffset()),     std::ios::beg);
+   Fp->seekg( (long)(currentDocEntry->GetReadLength()),std::ios::cur);
 }
 
 /**
@@ -1921,7 +1919,7 @@ void Document::SkipToNextDocEntry(DocEntry *newDocEntry)
  *          the parser went Jabberwocky) one can hope improving things by
  *          applying some heuristics.
  * @param   entry entry to check
- * @param   foundLength fist assumption about length    
+ * @param   foundLength first assumption about length    
  */
 void Document::FixDocEntryFoundLength(DocEntry *entry,
                                       uint32_t foundLength)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 19:20:38 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/10 17:17:52 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@ static int DebugFlag = 0;
 //-----------------------------------------------------------------------------
 /**
  * \brief   Accessor
- * @param   level Set the debug level
+ * @param   flag Set the debug flag
  */ 
 void Debug::SetDebugFlag (int flag) 
 {
@@ -36,7 +36,7 @@ void Debug::SetDebugFlag (int flag)
 
 /**
  * \brief   Accessor
- * @param   level Get the debug level
+ * @param   level Get the debug flag
  */ 
 int Debug::GetDebugFlag ()
 {
