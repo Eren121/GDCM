@@ -4,8 +4,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 1.8)
 #-----------------------------------------------------------------------------
 # GDCM version number, usefull for packaging and doxygen doc:
 SET(GDCM_MAJOR_VERSION 0)
-SET(GDCM_MINOR_VERSION 4)
-SET(GDCM_BUILD_VERSION 1)
+SET(GDCM_MINOR_VERSION 6)
+SET(GDCM_BUILD_VERSION 0)
 SET(GDCM_VERSION 
     "${GDCM_MAJOR_VERSION}.${GDCM_MINOR_VERSION}.${GDCM_BUILD_VERSION}")
 
