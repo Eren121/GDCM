@@ -41,7 +41,8 @@ CMAKE_EXPORT_BUILD_SETTINGS(${GDCM_BINARY_DIR}/GDCMBuildSettings.cmake)
 # For GDCM from build tree:
 SET(GDCM_USE_FILE ${GDCM_SOURCE_DIR}/GDCMUse.cmake)
 SET(GDCM_INCLUDE_DIRS
-  ${GDCM_BINARY_DIR}/src
+  ${GDCM_BINARY_DIR}/     #for gdcmConfigure.h
+  ${GDCM_SOURCE_DIR}/src  #for main gdcm include
   )
 SET(GDCM_LIBRARY_DIRS ${LIBRARY_OUTPUT_PATH})
 SET(GDCM_LIBRARY_DEPENDS_FILE ${GDCM_BINARY_DIR}/GDCMLibraryDepends.cmake)
