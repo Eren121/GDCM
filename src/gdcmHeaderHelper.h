@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.1 2003/09/08 16:37:47 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.2 2003/09/09 08:46:32 malaterre Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
@@ -19,7 +19,7 @@
       XA };
       
 /**
-  This class is meant to *interprate* data given from gdcmHeader
+  This class is meant to *interpret* data given from gdcmHeader
   That is to say :
    * it will help other dev to link against there lib
    * return value instead of string
@@ -34,7 +34,6 @@ public:
    gdcmHeaderHelper::gdcmHeaderHelper();
    gdcmHeaderHelper::gdcmHeaderHelper(const char *filename, bool exception_on_error = false);
 
-    //Ces fonction releve de l'interpretation des données de gdcmHeader
    int GetPixelSize();
    std::string GetPixelType();
    

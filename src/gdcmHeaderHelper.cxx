@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.1 2003/09/08 16:37:47 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.2 2003/09/09 08:46:32 malaterre Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -571,7 +571,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
     
       if( dist == 0 )
       {
-        delete cosines;
+        delete[] cosines;
         return false;
       }
 
@@ -591,7 +591,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
 
       if( dist == 0 )
       {
-        delete cosines;
+        delete[] cosines;
         return false;
       }
 
@@ -688,11 +688,10 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering()
         it3 != CoherentGdcmFileVector.end(); it3++)
   {
     CoherentGdcmFileList.push_back( *it3 );
-    std::cout << (*it3)->GetImageNumber() << std::endl;
   }
   CoherentGdcmFileVector.clear();
   
-  delete partition;
+  delete[] partition;
   return mult;
 }
 //----------------------------------------------------------------------------
