@@ -16,9 +16,9 @@ CXXFLAGS=$(PYTHON_INCLUDES)
 %_wrap.cxx : %.i
 	$(SWIG) $(SWIGFLAGS) $(PYTHON_INCLUDES) -o $@ $<
 
-all: dcm_wrap.o
+all: gdcmHeader.o dcm_wrap.o
 
-test: test.o
+test: gdcmHeader.o
 
 clean:
 	rm -f *_wrap* *.so *.o *.pyc

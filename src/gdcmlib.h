@@ -126,7 +126,19 @@ public:
 // Notes:
 // * the gdcmHeader::Set*Tag* family members cannot be defined as protected
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
-class gdcmHeader {
+class gdcmHeader {	
+	enum EndianType {
+		LittleEndian, 
+		BadLittleEndian,
+		BigEndian, 
+		BadBigEndian};
+	enum FileType {
+		Unknown = 0,
+		TrueDicom,
+		ExplicitVR,
+		ImplicitVR,
+		ACR,
+		ACR_LIBIDO};
 private:
 	static DictSet* Dicts;	// Global dictionary container
 	Dict* RefPubDict;			// Public Dictionary
@@ -134,6 +146,11 @@ private:
 	int swapcode;
 	ElValSet PubElVals;		// Element Values parsed with Public Dictionary
 	ElValSet ShaElVals;		// Element Values parsed with Shadow Dictionary
+	FileType filetype;
+	int sw;
+	EndianType CheckSwap();
+	void _setAcrLibido();
+	guint32 _IdDcmRecupLgr(ID_DCM_HDR *e, int sw, int *skippedLength, int *longueurLue);
 protected:
 ///// QUESTION: Maybe Print is a better name than write !?
 	int write(ostream&);   

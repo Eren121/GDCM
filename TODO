@@ -1,0 +1,4 @@
+gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de suite 
+si on a deduit que c'en est pas...
+
+gdcmHeader::_IdDcmRecupLgr return type should be long int.
