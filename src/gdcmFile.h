@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 13:49:07 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2004/12/16 10:51:49 $
+  Version:   $Revision: 1.87 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,7 @@ public:
    bool ReplaceOrCreateByNumber(std::string const& content,
                                 uint16_t group, uint16_t element);
    bool ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
-                                uint16_t group, uint16_t elem);
+                                uint16_t group, uint16_t element);
 
    uint8_t* GetLutRGBA();
 

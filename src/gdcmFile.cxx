@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 10:41:59 $
-  Version:   $Revision: 1.176 $
+  Date:      $Date: 2004/12/16 10:51:49 $
+  Version:   $Revision: 1.177 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -451,6 +451,12 @@ bool File::ReplaceOrCreateByNumber(std::string const& content,
                                    uint16_t group, uint16_t element)
 {
    return HeaderInternal->ReplaceOrCreateByNumber(content,group,element) != NULL;
+}
+
+bool File::ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
+                                   uint16_t group, uint16_t element)
+{
+   return HeaderInternal->ReplaceOrCreateByNumber(binArea,lgth,group,element) != NULL;
 }
 
 /**

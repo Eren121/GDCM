@@ -1,4 +1,8 @@
 2004-12-16 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.cxx : Add the code of ReplaceOrCreateByNumber to not have
+     problems when compiling with the python wrapping
+
+2004-12-16 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFile.cxx : bug fix. Omitted a Push in the DocEntryArchive when
      writting in ImplicitVR
 
