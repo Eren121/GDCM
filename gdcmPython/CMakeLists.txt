@@ -78,6 +78,14 @@ IF(GDCM_VTK)
                          vtkCommonPython
                          vtkIOPython)
   ENDIF (GDCM_WRAP_PYTHON)
+  
+  #generate a setup.py according to VTK installation 
+  #put it in subdir in order to not override old one
+  CONFIGURE_FILE(
+      ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
+      ${GDCM_BINARY_DIR}/gdcmPython/setup.py
+  )
+
 ENDIF(GDCM_VTK)
 
 #I should install in path of PYTHON_LIBRARY

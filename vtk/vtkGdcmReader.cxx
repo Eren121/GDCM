@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.27 2003/11/12 14:06:36 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.28 2003/11/13 10:23:41 malaterre Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -481,7 +481,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
     {
     size               = GdcmFile.GetImageDataSizeRaw();
     Source             = (unsigned char*) GdcmFile.GetImageDataRaw();
-    unsigned char *Lut = (unsigned char*) GdcmFile.GetLUTRGBA();
+    unsigned char *Lut =                  GdcmFile.GetLUTRGBA();
   
     if(!this->LookupTable) this->LookupTable = vtkLookupTable::New();
     this->LookupTable->SetNumberOfTableValues(256);

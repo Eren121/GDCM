@@ -372,7 +372,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          
    unsigned char * newDest = (unsigned char *)malloc(lgrTotale);
    unsigned char * a       = (unsigned char *)destination;	 
-   unsigned char * lutRGBA = (unsigned char *)GetLUTRGBA();
+   unsigned char * lutRGBA =                  GetLUTRGBA();
    if (lutRGBA) { 	    
       int l = lgrTotaleRaw;
       memmove(newDest, destination, l);// move Gray pixels to temp area	    

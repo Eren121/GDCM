@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.43 2003/11/12 15:35:19 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.44 2003/11/13 10:23:40 malaterre Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -211,7 +211,7 @@ public:
    std::string GetTransferSyntaxName(void);
    int    HasLUT(void);
    int    GetLUTNbits(void);
-   void * GetLUTRGBA(void);
+   unsigned char * GetLUTRGBA(void);
            
 
 };

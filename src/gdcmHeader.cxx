@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.115 2003/11/12 15:35:19 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.116 2003/11/13 10:23:40 malaterre Exp $
 
 #include "gdcmHeader.h"
 
@@ -2236,7 +2236,7 @@ int gdcmHeader::GetLUTNbits(void) {
   * @return Lookup Table RGBA
   */ 
   
-void * gdcmHeader::GetLUTRGBA(void) {
+unsigned char * gdcmHeader::GetLUTRGBA(void) {
 // Not so easy : see 
 // http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
 // and  OT-PAL-8-face.dcm
