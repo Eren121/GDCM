@@ -5,6 +5,7 @@
 # Need gdcm header files
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src/
+  ${GDCM_BINARY_DIR}/
 )
 
 SET(VTKGDCM_LIB_SRCS
