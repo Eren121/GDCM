@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 00:21:48 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/14 21:03:54 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmSerieHeader.h"
 #include "gdcmDirList.h"
 #include "gdcmHeader.h"
+#include "gdcmDebug.h"
 
 #include <math.h>
 #include <algorithm>
@@ -33,6 +34,8 @@ typedef std::vector<Header* > GdcmHeaderVector;
 SerieHeader::SerieHeader()
 {
    CoherentGdcmFileList.clear();
+   // Later will contains: 0020 000e UI REL Series Instance UID
+   CurrentSerieUID = "";
 }
 
 SerieHeader::~SerieHeader()
@@ -57,8 +60,32 @@ SerieHeader::~SerieHeader()
  */
 void SerieHeader::AddFileName(std::string const &filename)
 {
-   Header *header = new Header( filename );
-   CoherentGdcmFileList.push_back( header );
+   //directly use string and not const char*:
+   Header *header = new Header( filename ); 
+   if( header->IsReadable() )
+   {
+      // 0020 000e UI REL Series Instance UID
+      std::string uid =  header->GetEntry (0x0020, 0x000e);
+      if( CurrentSerieUID == "" )
+      {
+         // Set the current one
+         CurrentSerieUID = uid;
+      }
+      if( CurrentSerieUID == uid )
+      {
+         // Current Serie UID and DICOM header seems to match add the file:
+         CoherentGdcmFileList.push_back( header );
+      }
+      else
+      {
+         gdcmVerboseMacro("Wrong Serie Instance UID should be:" << CurrentSerieUID );
+      }
+   }
+   else
+   {
+      gdcmVerboseMacro("Could not read file: " << filename );
+      delete header;
+   }
 }
 
 /**
@@ -67,7 +94,14 @@ void SerieHeader::AddFileName(std::string const &filename)
  */
 void SerieHeader::AddGdcmFile(Header *file)
 {
-   CoherentGdcmFileList.push_back( file );
+   if( file->IsReadable() )
+   {
+      CoherentGdcmFileList.push_back( file );
+   }
+   else
+   {
+      gdcmVerboseMacro("Could not add file: " << file->GetFileName() );
+   }
 }
 
 /**
@@ -81,16 +115,7 @@ void SerieHeader::SetDirectory(std::string const &dir)
    for( DirList::const_iterator it = filenames_list.begin(); 
         it != filenames_list.end(); ++it)
    {
-      //directly use string and not const char*:
-      Header *header = new Header( *it ); 
-      if( header->IsReadable() )
-      {
-         CoherentGdcmFileList.push_back( header );
-      }
-      else
-      {
-         delete header;
-      }
+      AddFileName( *it );
    }
 }
 
@@ -134,7 +159,7 @@ bool SerieHeader::ImagePositionPatientOrdering()
 //based on Jolinda's algorithm
 {
    //iop is calculated based on the file file
-   float *cosines = new float[6];
+   float cosines[6];
    float normal[3];
    float ipp[3];
    float dist;
@@ -172,7 +197,6 @@ bool SerieHeader::ImagePositionPatientOrdering()
     
          if( dist == 0 )
          {
-            delete[] cosines;
             return false;
          }
 
@@ -195,7 +219,6 @@ bool SerieHeader::ImagePositionPatientOrdering()
 
          if( dist == 0 )
          {
-            delete[] cosines;
             return false;
          }
       
@@ -241,7 +264,6 @@ bool SerieHeader::ImagePositionPatientOrdering()
 
    distlist.clear();
    CoherentGdcmFileVector.clear();
-   delete[] cosines;
 
    return true;
 }

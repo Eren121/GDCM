@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/14 21:03:55 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,8 @@ class Header;
 class GDCM_EXPORT SerieHeader 
 {
 public:
+   typedef std::list<Header* > GdcmHeaderList;
+
     SerieHeader();
     ~SerieHeader();
 
@@ -48,8 +50,6 @@ public:
    ///          Assumes the list is not empty.
    Header *GetGdcmHeader() { return CoherentGdcmFileList.front(); }
 
-   typedef std::list<Header* > GdcmHeaderList;
-
    /// \brief Gets the *coherent* File List
    /// @return the *coherent* File List
    const GdcmHeaderList &GetGdcmFileList() { return CoherentGdcmFileList; }
@@ -60,6 +60,9 @@ private:
    bool FileNameOrdering();
    
    GdcmHeaderList CoherentGdcmFileList;
+   /// Ref to the current Serie Instance UID to avoid mixing two series
+   /// within the same directory
+   std::string    CurrentSerieUID;
 };
 
 } // end namespace gdcm
