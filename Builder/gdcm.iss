@@ -34,8 +34,8 @@ Name: "sources"; Description: "Soucres"; Types: custom full
 Source: "..\lib\*.dll"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite; Components: core
 Source: "..\lib\*.lib"; DestDir: "{app}\lib"; CopyMode: alwaysoverwrite; Components: core
 Source: "..\Dicts\*.dic"; DestDir: "{app}\Dicts"; CopyMode: alwaysoverwrite; Components: core
-Source: "..\src\*.h"; DestDir: "{app}\include"; CopyMode: alwaysoverwrite; Components: sources
-Source: "..\vtk\*.h"; DestDir: "{app}\include"; CopyMode: alwaysoverwrite; Components: sources
+Source: "..\src\*.h"; DestDir: "{app}\include"; CopyMode: alwaysoverwrite; Components: core
+Source: "..\vtk\*.h"; DestDir: "{app}\include"; CopyMode: alwaysoverwrite; Components: core
 ; Sources
 Source: "..\src\*.*"; DestDir: "{app}\src"; CopyMode: alwaysoverwrite; Components: sources
 Source: "..\src\jpeg\*.*"; DestDir: "{app}\src\jpeg"; CopyMode: alwaysoverwrite; Components: sources
