@@ -199,8 +199,8 @@ jpeg_difference_first_row(j_compress_ptr cinfo, int ci,
      JSAMPROW input_buf, JSAMPROW prev_row,
      JDIFFROW diff_buf, JDIMENSION width)
 {
-  (void)prev_row;
   DIFFERENCE_1D(INITIAL_PREDICTORx);
+  (void)prev_row;
 
   /*
    * Now that we have differenced the first row, we want to use the

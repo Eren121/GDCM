@@ -20,7 +20,7 @@
  * We do not support run-time selection of data precision, sorry.
  */
 
-//#define BITS_IN_JSAMPLE  8  /* use 8 or 12 (or 16 only for lossless) */
+/*#define BITS_IN_JSAMPLE  8*//* use 8 or 12 (or 16 only for lossless) */
 #define BITS_IN_JSAMPLE @GDCM_BITS_IN_JSAMPLE@
 
 /*
