@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.10 2003/10/03 14:26:11 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.11 2003/10/03 15:27:44 malaterre Exp $
 
 #include "gdcmHeaderHelper.h"
 
@@ -101,11 +101,13 @@ int gdcmHeaderHelper::GetNumberOfScalarComponents() {
       std::string PhotometricInterpretation = 
                   gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
 
+
 // The compiler will optimze, if it feels like !
 
-      if (PhotometricInterpretation == GDCM_UNFOUND) return 1;
-      if (PhotometricInterpretation == "MONOCHROME1") return 1;
-      if (PhotometricInterpretation == "MONOCHROME2") return 1;
+      //beware of trailing space at end of string
+      if (PhotometricInterpretation.find(GDCM_UNFOUND) < PhotometricInterpretation.length() || 
+          PhotometricInterpretation.find("MONOCHROME1") < PhotometricInterpretation.length() || 
+          PhotometricInterpretation.find("MONOCHROME2") < PhotometricInterpretation.length() ) return 1;
 
       return 3;
 }
