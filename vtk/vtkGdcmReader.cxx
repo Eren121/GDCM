@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.24 2003/11/04 14:02:03 jpr Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.25 2003/11/05 18:15:41 malaterre Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -46,6 +46,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
 #include <vtkPointData.h>
+#include <vtkLookupTable.h>
 #include "vtkGdcmReader.h"
 #include "gdcm.h"
 #include "gdcmHeaderHelper.h"
@@ -53,6 +54,7 @@
 vtkGdcmReader::vtkGdcmReader()
 {
   // Constructor
+  this->LookupTable = vtkLookupTable::New();
 }
 
 //----------------------------------------------------------------------------
@@ -60,6 +62,7 @@ vtkGdcmReader::~vtkGdcmReader()
 { 
   this->RemoveAllFileName();
   this->InternalFileNameList.clear();
+  this->LookupTable->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -309,11 +312,14 @@ int vtkGdcmReader::CheckFileCoherence()
        this->ImageType = type;
        this->PixelSize = GdcmHeader.GetPixelSize();
        
-       // JPR to Mathieu:
-       // Be carefull : when u'll pane to use 'GetImageDataRaw',
-       // use 'GetNumberOfScalarComponentsRaw' ! 
-     
-       this->NumComponents = GdcmHeader.GetNumberOfScalarComponents(); //rgb or mono
+       if( GdcmHeader.HasLUT() )
+         {
+         this->NumComponents = GdcmHeader.GetNumberOfScalarComponentsRaw();
+         }
+       else
+         {
+         this->NumComponents = GdcmHeader.GetNumberOfScalarComponents(); //rgb or mono
+         }
        
        //Set image spacing
        this->DataSpacing[0] = GdcmHeader.GetXSpacing();
@@ -455,7 +461,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
 {
   vtkDebugMacro("Copying to memory image" << FileName.c_str());
   gdcmFile GdcmFile(FileName.c_str());
-  size_t size = GdcmFile.GetImageDataSize();
+  size_t size;
 
   // If the data structure of vtk for image/volume representation
   // were straigthforwards the following would suffice:
@@ -467,7 +473,33 @@ size_t vtkGdcmReader::LoadImageInMemory(
   int NumLines   = GdcmFile.GetYSize();
   int NumPlanes  = GdcmFile.GetZSize();
   int LineSize   = NumComponents * NumColumns * GdcmFile.GetPixelSize();
-  unsigned char * Source      = (unsigned char*)GdcmFile.GetImageData();
+
+  unsigned char * Source;
+  if( GdcmFile.HasLUT() )
+    {
+    size               = GdcmFile.GetImageDataSizeRaw();
+    Source             = (unsigned char*) GdcmFile.GetImageDataRaw();
+    unsigned char *Lut = (unsigned char*) GdcmFile.GetLUTRGBA();
+
+    this->LookupTable->SetNumberOfTableValues(256);
+    for (int tmp=0; tmp<256; tmp++)
+      {
+      this->LookupTable->SetTableValue(tmp,
+        (float)Lut[4*tmp+0]/255.0,
+        (float)Lut[4*tmp+1]/255.0,
+        (float)Lut[4*tmp+2]/255.0,
+        1);
+      }
+    this->LookupTable->SetRange(0,255);
+    vtkDataSetAttributes *a=this->GetOutput()->GetPointData();
+    a->GetScalars()->SetLookupTable(this->LookupTable);
+    free(Lut);
+    }
+  else
+    {
+    size        = GdcmFile.GetImageDataSize();
+    Source      = (unsigned char*)GdcmFile.GetImageData();
+    }
   unsigned char * pSource     = Source; //pointer for later deletion
   unsigned char * Destination = Dest + size - LineSize;
 

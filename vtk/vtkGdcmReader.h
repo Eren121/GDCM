@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.10 2003/10/03 14:48:31 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.11 2003/11/05 18:15:41 malaterre Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
@@ -6,6 +6,7 @@
 #include <list>
 #include <string>
 #include "vtkImageReader.h"
+class vtkLookupTable;
 
 class VTK_EXPORT vtkGdcmReader : public vtkImageReader
 {
@@ -17,6 +18,7 @@ public:
   void RemoveAllFileName(void);
   void AddFileName(const char* name);
   void SetFileName(const char *name);
+  vtkGetObjectMacro(LookupTable,vtkLookupTable);
 
 protected:
   vtkGdcmReader();
@@ -29,6 +31,7 @@ protected:
 private:
   void RemoveAllInternalFileName(void);
   void AddInternalFileName(const char* name);
+  vtkLookupTable *LookupTable;
 
   //BTX
   // Number of columns of the image/volume to be loaded
