@@ -129,10 +129,10 @@ void gdcmHeader::CheckSwap()
 	entCur = deb + 128;
 	if(memcmp(entCur, "DICM", (size_t)4) == 0) {
 		filetype = TrueDicom;
-		dbg.Verbose(0, "gdcmHeader::CheckSwap:", "looks like DICOM Version3");
+		dbg.Verbose(1, "gdcmHeader::CheckSwap:", "looks like DICOM Version3");
 	} else {
 		filetype = Unknown;
-		dbg.Verbose(0, "gdcmHeader::CheckSwap:", "not a DICOM Version3 file");
+		dbg.Verbose(1, "gdcmHeader::CheckSwap:", "not a DICOM Version3 file");
 	}
 
 	if(filetype == TrueDicom) {

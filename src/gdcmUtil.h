@@ -10,6 +10,7 @@ public:
 	void Error(bool, const char*,  const char* ="");
 	void Error(const char*, const char* ="", const char* ="");
 	void Assert(int, bool, const char*, const char*);
+	void Exit(int);
 };
 
 istream & eatwhite(istream & is);

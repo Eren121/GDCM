@@ -23,13 +23,22 @@ void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {
 	if (!Test)
 		return;
 	std::cerr << Msg1 << ' ' << Msg2 << '\n';
-	exit(1);
+	Exit(1);
 }
 
 void gdcmDebug::Error(const char* Msg1, const char* Msg2,
                       const char* Msg3) {
 	std::cerr << Msg1 << ' ' << Msg2 << ' ' << Msg3 << '\n';
-	exit(1);
+	Exit(1);
+}
+
+void gdcmDebug::Exit(int a) {
+#ifdef __GNUC__
+	std::exit(a);
+#endif
+#ifdef _MSC_VER
+	exit(a);    // Found in #include <stdlib.h>
+#endif
 }
 
 gdcmDebug dbg;

@@ -16,9 +16,13 @@ gdcmDictSet::gdcmDictSet(void) {
 void gdcmDictSet::SetDictPath(void) {
 	const char* EnvPath = (char*)0;
 	EnvPath = getenv("GDCM_DICT_PATH");
-	if (EnvPath && (strlen(EnvPath) != 0))
+	if (EnvPath && (strlen(EnvPath) != 0)) {
 		DictPath = EnvPath;
-	else
+		if (DictPath[DictPath.length() -1] != '/' )
+			DictPath += '/';
+		dbg.Verbose(1, "gdcmDictSet::SetDictPath:",
+                     "Dictionary path set from environnement");
+	} else
 		DictPath = PUB_DICT_PATH;
 }
 
@@ -31,7 +35,7 @@ int gdcmDictSet::LoadDicomV3Dict(void) {
 int gdcmDictSet::LoadDictFromFile(string FileName, DictKey Name) {
 	gdcmDict *NewDict = new gdcmDict(FileName.c_str());
 	dicts[Name] = NewDict;
-	return 0;
+	return 0;   //FIXME if this is a dummy return make the method void
 }
 
 void gdcmDictSet::Print(ostream& os) {

@@ -17,21 +17,28 @@
 
 #include <string>
 #include <iostream>
-#include <stddef.h>    // For size_t
+#include <stddef.h>   // For size_t
 #include <glib.h>
-#include <stdio.h>
+#include <stdio.h>    // CLEANME
+#include <map>        // The requirement for the hash table (or map) that
+                      // we shall use:
+                      // 1/ First, next, last (iterators)
+                      // 2/ should be sortable (i.e. sorted by TagKey). This
+                      //    condition shall be droped since the Win32/VC++
+                      //    implementation doesn't look a sorted one. Pffff....
+                      // 3/ Make sure we can setup some default size value,
+                      //    which should be around 4500 entries which is the
+                      //    average dictionary size (said JPR)
 
-
-// The requirement for the hash table (or map) that we shall use:
-// 1/ First, next, last (iterators)
-// 2/ should be sortable (i.e. sorted by TagKey). This condition
-//    shall be droped since the Win32/VC++ implementation doesn't look
-//    a sorted one. Pffff....
-// 3/ Make sure we can setup some default size value, which should be
-//    around 4500 entries which is the average dictionary size (said JPR)
-#include <map>
-using namespace std;
+#ifdef _MSC_VR
+	using namespace std;  // string type lives in the std namespace on VC++
+#endif
+#ifdef _MSC_VR
 #define GDCM_EXPORT __declspec( dllexport )
+#else
+#define GDCM_EXPORT
+#endif
+
 // Tag based hash tables.
 // We shall use as keys the strings (as the C++ type) obtained by
 // concatenating the group value and the element value (both of type
