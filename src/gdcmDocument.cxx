@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 12:56:39 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/06/25 17:48:45 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -516,8 +516,8 @@ bool gdcmDocument::CloseFile(void) {
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * \return Always true.
  */
-bool gdcmDocument::WriteF(FileType filetype) {
-/// \todo
+void gdcmDocument::Write(FILE* fp,FileType filetype) {
+///
 /// ==============
 ///      The stuff is rewritten using the SeQuence based 
 ///       tree-like stucture (cf : Print )
@@ -530,8 +530,8 @@ bool gdcmDocument::WriteF(FileType filetype) {
    /// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
    /// no way (check : FileType est un champ de gdcmDocument ...)
    /// a moins de se livrer a un tres complique ajout des champs manquants.
-   /// faire un CheckAndCorrectHeader (?)  
-
+   /// faire un CheckAndCorrectHeader (?) 
+ 
    if (filetype == gdcmImplicitVR) 
    {
       std::string implicitVRTransfertSyntax = UI1_2_840_10008_1_2;
@@ -572,9 +572,9 @@ bool gdcmDocument::WriteF(FileType filetype) {
  *    UpdateGroupLength(true,ACR);
  */
  
-   gdcmElementSet::Write(fp,filetype);
+   gdcmElementSet::Write(fp,filetype); 
 
-   return true;
+  // return true;
 }
 
 /**

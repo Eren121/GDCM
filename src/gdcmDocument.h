@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/24 18:03:14 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/06/25 17:48:45 $
+  Version:   $Revision: 1.16 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -142,7 +142,7 @@ public:
 
 // Write (used in gdcmFile, gdcmDicomDir)
 
-   virtual bool WriteF(FileType type); // New stuff, with recursive exploration
+    void Write(FILE * fp,FileType type); // New stuff, with recursive exploration
 
    gdcmValEntry * ReplaceOrCreateByNumber(std::string Value,
                                              guint16 Group, guint16 Elem);
@@ -238,7 +238,7 @@ private:
    void SetMaxSizeLoadEntry(long);
    void SetMaxSizePrintEntry(long);
 
-	 
+ 
    // DocEntry related utilities
    gdcmDocEntry *ReadNextDocEntry   ();
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 16:22:21 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2004/06/25 17:48:45 $
+  Version:   $Revision: 1.110 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -293,7 +293,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
  */
 void * gdcmFile::GetImageDataRaw () {
    if (Header->HasLUT())
-      /// \todo Let gdcmHeadar user a chance to get the right value
+      /// \todo Let gdcmHeader user a chance to get the right value
       /// Create a member lgrTotaleRaw ???
       lgrTotale /= 3;
    PixelData = new unsigned char[lgrTotale];
