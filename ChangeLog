@@ -2,6 +2,8 @@
   * Update jpeg ijg lib to support lossless jpeg implementation
     For more info look in jpeg/libijg/README.GDCM.txt for necessary steps to
     reproduce at home.
+  * Also added a special copyright for dcmtk since we use their bugfixes.
+  Thanks dcmtk crew !
 
 2004-10-13 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Doc/Website/MailingList.html added (Sidebar.html changed accordingly).
