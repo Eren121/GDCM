@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 17:47:56 $
-  Version:   $Revision: 1.209 $
+  Date:      $Date: 2005/02/04 13:15:41 $
+  Version:   $Revision: 1.210 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1351,13 +1351,6 @@ bool File::Write(std::string fileName, FileType filetype)
  */
 void File::InitializeDefaultFile()
 {
-   typedef struct
-   {
-      const char *value;
-      uint16_t group;
-      uint16_t elem;
-   } DICOM_DEFAULT_VALUE;
-
    std::string date = Util::GetCurrentDate();
    std::string time = Util::GetCurrentTime();
    std::string uid  = Util::CreateUniqueUID();
@@ -1367,56 +1360,72 @@ void File::InitializeDefaultFile()
    std::string uidStudy = Util::CreateUniqueUID();
    std::string uidSerie = Util::CreateUniqueUID();
 
-   static DICOM_DEFAULT_VALUE defaultvalue[] = {
-    { "146 ",                      0x0002, 0x0000}, // Meta Element Group Length // FIXME: how to recompute ?
-    { "1.2.840.10008.5.1.4.1.1.2", 0x0002, 0x0002}, // Media Storage SOP Class UID (CT Image Storage)
-    { uidClass.c_str(),            0x0002, 0x0003}, // Media Storage SOP Instance UID
-    { "1.2.840.10008.1.2.1 ",      0x0002, 0x0010}, // Transfer Syntax UID (Explicit VR Little Endian)
-    { uidClass.c_str(),            0x0002, 0x0012}, // META Implementation Class UID
-    { "GDCM",                      0x0002, 0x0016}, // Source Application Entity Title
+   // Meta Element Group Length
+   InsertValEntry("146 ",                      0x0002, 0x0000);
+   // Media Storage SOP Class UID (CT Image Storage)
+   InsertValEntry("1.2.840.10008.5.1.4.1.1.2", 0x0002, 0x0002);
+   // Media Storage SOP Instance UID
+   InsertValEntry(uidClass.c_str(),            0x0002, 0x0003);
+   // Transfer Syntax UID (Explicit VR Little Endian)
+   InsertValEntry("1.2.840.10008.1.2.1 ",      0x0002, 0x0010);
+   // META Implementation Class UID
+   InsertValEntry(uidClass.c_str(),            0x0002, 0x0012);
+   // Source Application Entity Title
+   InsertValEntry("GDCM",                      0x0002, 0x0016);
 
-    { date.c_str(),                0x0008, 0x0012}, // Instance Creation Date
-    { time.c_str(),                0x0008, 0x0013}, // Instance Creation Time
-    { "1.2.840.10008.5.1.4.1.1.2", 0x0008, 0x0016}, // SOP Class UID
-    { uidInst.c_str(),             0x0008, 0x0018}, // SOP Instance UID
-    { "CT",                        0x0008, 0x0060}, // Modality    
-    { "GDCM",                      0x0008, 0x0070}, // Manufacturer
-    { "GDCM",                      0x0008, 0x0080}, // Institution Name
-    { "http://www-creatis.insa-lyon.fr/Public/Gdcm", 0x0008, 0x0081},  // Institution Address
+   // Instance Creation Date
+   InsertValEntry(date.c_str(),                0x0008, 0x0012);
+   // Instance Creation Time
+   InsertValEntry(time.c_str(),                0x0008, 0x0013);
+   // SOP Class UID
+   InsertValEntry("1.2.840.10008.5.1.4.1.1.2", 0x0008, 0x0016);
+   // SOP Instance UID
+   InsertValEntry(uidInst.c_str(),             0x0008, 0x0018);
+   // Modality    
+   InsertValEntry("CT",                        0x0008, 0x0060);
+   // Manufacturer
+   InsertValEntry("GDCM",                      0x0008, 0x0070);
+   // Institution Name
+   InsertValEntry("GDCM",                      0x0008, 0x0080);
+   // Institution Address
+   InsertValEntry("http://www-creatis.insa-lyon.fr/Public/Gdcm", 0x0008, 0x0081);
 
-    { "GDCM",                      0x0010, 0x0010}, // Patient's Name
-    { "GDCMID",                    0x0010, 0x0020}, // Patient ID
+   // Patient's Name
+   InsertValEntry("GDCM",                      0x0010, 0x0010);
+   // Patient ID
+   InsertValEntry("GDCMID",                    0x0010, 0x0020);
 
-    { uidStudy.c_str(),            0x0020, 0x000d}, // Study Instance UID
-    { uidSerie.c_str(),            0x0020, 0x000e}, // Series Instance UID
-    { "1",                         0x0020, 0x0010}, // StudyID
-    { "1",                         0x0020, 0x0011}, // SeriesNumber
+   // Study Instance UID
+   InsertValEntry(uidStudy.c_str(),            0x0020, 0x000d);
+   // Series Instance UID
+   InsertValEntry(uidSerie.c_str(),            0x0020, 0x000e);
+   // StudyID
+   InsertValEntry("1",                         0x0020, 0x0010);
+   // SeriesNumber
+   InsertValEntry("1",                         0x0020, 0x0011);
 
-    { "1",                         0x0028, 0x0002}, // Samples per pixel 1 or 3
-    { "MONOCHROME1",               0x0028, 0x0004}, // photochromatic interpretation
-    { "0",                         0x0028, 0x0010}, // nbRows
-    { "0",                         0x0028, 0x0011}, // nbCols
-    { "8",                         0x0028, 0x0100}, // BitsAllocated 8 or 12 or 16
-    { "8",                         0x0028, 0x0101}, // BitsStored    <= BitsAllocated
-    { "7",                         0x0028, 0x0102}, // HighBit       <= BitsAllocated - 1
-    { "0",                         0x0028, 0x0103}, // Pixel Representation 0(unsigned) or 1(signed)
-    { 0, 0, 0 }
-   };
+   // Samples per pixel 1 or 3
+   InsertValEntry("1",                         0x0028, 0x0002);
+   // photochromatic interpretation
+   InsertValEntry("MONOCHROME1",               0x0028, 0x0004);
+   // nbRows
+   InsertValEntry("0",                         0x0028, 0x0010);
+   // nbCols
+   InsertValEntry("0",                         0x0028, 0x0011);
+   // BitsAllocated 8 or 12 or 16
+   InsertValEntry("8",                         0x0028, 0x0100);
+   // BitsStored    <= BitsAllocated
+   InsertValEntry("8",                         0x0028, 0x0101);
+   // HighBit       <= BitsAllocated - 1
+   InsertValEntry("7",                         0x0028, 0x0102);
+   // Pixel Representation 0(unsigned) or 1(signed)
+   InsertValEntry("0",                         0x0028, 0x0103);
 
    // default value
    // Special case this is the image (not a string)
    GrPixel = 0x7fe0;
    NumPixel = 0x0010;
    InsertBinEntry(0, 0, GrPixel, NumPixel);
-
-   // All remaining strings:
-   unsigned int i = 0;
-   DICOM_DEFAULT_VALUE current = defaultvalue[i];
-   while( current.value )
-   {
-      InsertValEntry(current.value, current.group, current.elem);
-      current = defaultvalue[++i];
-   }
 }
 
 //-----------------------------------------------------------------------------

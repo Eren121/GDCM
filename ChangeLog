@@ -1,4 +1,11 @@
-2005-01-31 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+2005-04-31 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.cxx : remove the default array of initialization.
+     The static array contained pointers to non-static values (comming from
+     strings). To have coherences, when creating files, these values can't be
+     static. So, the array can't be static, too ! To simplify, the array have
+     been replaced by repeted lines to insert values in the File
+
+2005-03-31 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmBinEntry.cxx : bug fix for BIG_ENDIAN part when writing the content
    * gdcmPython/gdcm.i : rename gdcmHeader to gdcmHelper
 
