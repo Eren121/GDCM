@@ -1,7 +1,7 @@
 SUBDIRS(
   libijg12 
   libijg8
-  ljpeg
+  ljpg
 )
 
 # memmgr back ends: compile only one of these into a working library
