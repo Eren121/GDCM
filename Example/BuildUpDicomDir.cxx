@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: BuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:17 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/11/30 18:10:23 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,6 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include <iostream>
 #include "gdcm.h"
 #include "gdcmDocEntry.h"
 #include "gdcmDicomDir.h"
@@ -24,6 +23,8 @@
 #include "gdcmDebug.h"
 
 #include <fstream>
+#include <iostream>
+#include <stdio.h>
 #ifdef GDCM_NO_ANSI_STRING_STREAM
 #  include <strstream>
 #  define  ostringstream ostrstream
