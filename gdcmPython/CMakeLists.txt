@@ -40,6 +40,9 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   IF(NOT SWIG_EXECUTABLE)
     MESSAGE(FATAL_ERROR "Swig could not be found wrapping is impossible")
   ENDIF(NOT SWIG_EXECUTABLE)
+
+  # Bad hack to work around bug #846 in cmake, hopefully will desepear soon anyway
+  FILE(READ ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py SWIG_GDCM_PY)  
   
   # Build our custom command :
   ADD_CUSTOM_COMMAND(
