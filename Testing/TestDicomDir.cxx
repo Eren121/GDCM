@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:01:26 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/17 13:24:15 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,6 +46,7 @@ int TestDicomDir(int argc, char* argv[])
       file += "/DICOMDIR";
    }
 
+std::cout << "----------------- " << file << "-----" <<std::endl;
    e1 = new gdcm::DicomDir(file);
    if (argc > 2) 
    {
@@ -63,9 +64,15 @@ int TestDicomDir(int argc, char* argv[])
       delete e1;
       return 1;
    }
+   else
+   {
+      std::cout<<"          DicomDir '"<<file
+               <<"' is readable"<<std::endl;
+   }
 
+   e1->InitTraversal();
    // Test if the DicomDir contains any Patient
-   if( e1->GetNextEntry() )
+   if( !e1->GetNextEntry() )
    {
       std::cout<<"          DicomDir '"<<file
                <<" has no patient"<<std::endl
@@ -74,6 +81,7 @@ int TestDicomDir(int argc, char* argv[])
       delete e1;
       return 1;
    }
+
 
   // step by step structure full exploitation
   
