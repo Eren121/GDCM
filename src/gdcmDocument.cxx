@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:54 $
-  Version:   $Revision: 1.100 $
+  Date:      $Date: 2004/10/10 03:03:10 $
+  Version:   $Revision: 1.101 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1452,6 +1452,7 @@ void gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             // form ( group, elem )...
             if (gdcmDocument* dummy = dynamic_cast< gdcmDocument* > ( set ) )
             {
+               (void)dummy;
                newBinEntry->SetKey( newBinEntry->GetKey() );
             }
             // but when "this" is a SQItem, we are inserting this new

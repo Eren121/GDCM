@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 17:02:53 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/10/10 03:03:10 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -150,6 +150,7 @@ bool gdcmPixelConvert::ReadUncompressed( FILE* filePointer,
 bool gdcmPixelConvert::ConvertGrayAndLutToRGB( uint8_t *lutRGBA )
 
 {
+   (void)lutRGBA;
    /// We assume Uncompressed contains the decompressed gray plane
    /// and build the RGB image.
    SetRGBSize( UncompressedSize );
@@ -194,7 +195,7 @@ bool gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
 
    for ( int i = 0; i < NumberOfFrames; i++ )
    {
-      for ( int j = 0; j < PixelNumber; j++ )
+      for ( unsigned int j = 0; j < PixelNumber; j++ )
       {
          *(x++) = *(a++);
          *(x++) = *(b++);
@@ -289,7 +290,7 @@ bool gdcmPixelConvert::gdcm_read_RLE_file( void* image_buffer,
       ++it )
    {
       // Loop on the fragments
-      for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
+      for( int k = 1; k <= (*it)->NumberFragments; k++ )
       {
          fseek( fp, (*it)->Offset[k] ,SEEK_SET);
          (void)gdcmPixelConvert::ReadAndUncompressRLEFragment(
