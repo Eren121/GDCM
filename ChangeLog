@@ -1,3 +1,8 @@
+2004-10-13 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Update jpeg ijg lib to support lossless jpeg implementation
+    For more info look in jpeg/libijg/README.GDCM.txt for necessary steps to
+    reproduce at home.
+
 2004-10-13 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Doc/Website/MailingList.html added (Sidebar.html changed accordingly).
   * gdcmPython/gdcm.i: fix for compilation of wrappers (Note: %include order
