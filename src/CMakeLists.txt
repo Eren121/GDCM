@@ -65,3 +65,4 @@ ENDIF(UNIX)
 INSTALL_FILES(/include "\\.h$")
 
 INSTALL_TARGETS(/lib/ gdcm)
+#INSTALL_FILES(/include/vtk .h ${Kit_SRCS})

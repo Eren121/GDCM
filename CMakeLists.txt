@@ -75,6 +75,14 @@ IF(DOXYGEN)
 ENDIF(DOXYGEN)
 
 #-----------------------------------------------------------------------------
+# Configure files with settings for use by the build.
+
+# to be rewritten to include only the necessary
+#CONFIGURE_FILE(${GDCM_SOURCE_DIR}/UseGdcm.cmake.in 
+#               ${GDCM_BINARY_DIR}/UseGdcm.cmake COPYONLY IMMEDIATE)
+
+
+#-----------------------------------------------------------------------------
 # Copy / paste from old m4 script:
 
 # EXTRA_DIST = \
