@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 22:11:09 $
-  Version:   $Revision: 1.218 $
+  Date:      $Date: 2005/02/10 09:07:19 $
+  Version:   $Revision: 1.219 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1159,6 +1159,7 @@ void File::AnonymizeNoLoad()
 {
    std::fstream *fp = new std::fstream(Filename.c_str(), 
                               std::ios::in | std::ios::out | std::ios::binary);
+ 
    // TODO : FIXME
    // how to white out disk space if longer than 50 ?
    char spaces[50] = "                                               ";
@@ -1170,18 +1171,22 @@ void File::AnonymizeNoLoad()
    for (ListElements::iterator it = AnonymizeList.begin();  
                                it != AnonymizeList.end();
                              ++it)
-   {  
-      d = GetDocEntry( (*it).Group, (*it).Elem);
+   { 
+   d = GetDocEntry( (*it).Group, (*it).Elem);
+
+      if ( d == NULL)
+         continue;
 
       if ( dynamic_cast<BinEntry *>(d)
         || dynamic_cast<SeqEntry *>(d) )
          continue;
 
       if( d == NULL)
-        {
-         gdcmWarningMacro( "I have no idea why this is NULL but this solve the seg fault");
+      {
+         gdcmWarningMacro( "I have no idea why this is NULL "
+                           << "but this solves the seg fault");
          continue;
-        }
+      }
       offset = d->GetOffset();
       lgth =   d->GetLength();
       fp->seekp( offset, std::ios::beg );
@@ -1243,10 +1248,19 @@ bool File::AnonymizeFile()
       {  
          d = GetDocEntry( (*it).Group, (*it).Elem);
 
+         if ( d == NULL)
+            continue;
+
          if ( dynamic_cast<BinEntry *>(d)
            || dynamic_cast<SeqEntry *>(d) )
             continue;
 
+         if( d == NULL)
+         {
+            gdcmWarningMacro( "I have no idea why this is NULL "
+                            << "but this solves the seg fault");
+            continue;
+         }
          SetValEntry ((*it).Value, (*it).Group, (*it).Elem);
       }
 }
