@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:54 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/02/05 01:37:08 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ DicomDirElement::DicomDirElement()
    std::ifstream from(filename.c_str());
    if(!from)
    {
-      gdcmVerboseMacro( "Can't open DicomDirElement dictionary" 
+      gdcmWarningMacro( "Can't open DicomDirElement dictionary" 
                         << filename.c_str());
       FillDefaultDIRDict( this );
    }
@@ -70,7 +70,7 @@ DicomDirElement::DicomDirElement()
             type = DD_IMAGE;
          else
          {
-            gdcmVerboseMacro("Unknown type found in the file : "
+            gdcmWarningMacro("Unknown type found in the file : "
                              <<filename.c_str());
             type = DD_UNKNOWN;
          }

@@ -20,7 +20,7 @@
 /* Expanded data destination object for stdio output */
 
 extern "C" {
-  typedef  unsigned char(*uc_jpeg_compress_struct)(jpeg_compress_struct*);
+  typedef  boolean(*boolean_jpeg_compress_struct)(jpeg_compress_struct*);
   typedef  void(*void_jpeg_compress_struct)(jpeg_compress_struct*);
 }
 
@@ -165,7 +165,7 @@ jpeg_stdio_dest (j_compress_ptr cinfo, std::ofstream * outfile)
 
   dest = (my_dest_ptr) cinfo->dest;
   dest->pub.init_destination = reinterpret_cast<void_jpeg_compress_struct>(init_destination);
-  dest->pub.empty_output_buffer = reinterpret_cast<uc_jpeg_compress_struct>(empty_output_buffer);
+  dest->pub.empty_output_buffer = reinterpret_cast<boolean_jpeg_compress_struct>(empty_output_buffer);
   dest->pub.term_destination = reinterpret_cast<void_jpeg_compress_struct>(term_destination);
   dest->outfile = outfile;
 }

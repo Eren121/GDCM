@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:25:03 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/02/05 01:37:09 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,7 +96,7 @@ void SerieHelper::AddFileName(std::string const &filename)
 
       if ( CoherentGdcmFileListHT.count(uid) == 0 )
       {
-         gdcmVerboseMacro(" New Serie UID :[" << uid << "]");
+         gdcmWarningMacro(" New Serie UID :[" << uid << "]");
          // create a std::list in 'uid' position
          CoherentGdcmFileListHT[uid] = new GdcmFileList;
       }
@@ -105,7 +105,7 @@ void SerieHelper::AddFileName(std::string const &filename)
    }
    else
    {
-      gdcmVerboseMacro("Could not read file: " << filename );
+      gdcmWarningMacro("Could not read file: " << filename );
       delete header;
    }
 }
@@ -305,7 +305,7 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
          CoherentGdcmFileVector[pos] = *it2;
       else
       {
-         gdcmVerboseMacro( "2 files same position");
+         gdcmWarningMacro( "2 files same position");
          return false;
       }
    }
@@ -389,7 +389,7 @@ void SerieHelper::Print(std::ostream &os, std::string const & indent)
    CoherentFileListmap::iterator itl = CoherentGdcmFileListHT.begin();
    if ( itl == CoherentGdcmFileListHT.end() )
    {
-      gdcmVerboseMacro( "No Coherent File list found" );
+      gdcmWarningMacro( "No Coherent File list found" );
       return;
    }
    while (itl != CoherentGdcmFileListHT.end())

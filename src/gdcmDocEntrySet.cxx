@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 14:49:01 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/02/05 01:37:08 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,7 +129,7 @@ BinEntry *DocEntrySet::GetBinEntry(uint16_t group, uint16_t elem)
    DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
    {
-      gdcmVerboseMacro( "No corresponding BinEntry " << std::hex << group <<
+      gdcmWarningMacro( "No corresponding BinEntry " << std::hex << group <<
                          "," << elem);
       return NULL;
    }
@@ -150,7 +150,7 @@ SeqEntry *DocEntrySet::GetSeqEntry(uint16_t group, uint16_t elem)
    DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
    {
-      gdcmVerboseMacro( "No corresponding SeqEntry " << std::hex << group <<
+      gdcmWarningMacro( "No corresponding SeqEntry " << std::hex << group <<
                         "," << elem);
       return NULL;
    }
@@ -172,7 +172,7 @@ bool DocEntrySet::SetValEntry(std::string const &content,
    ValEntry *entry = GetValEntry(group, elem);
    if (!entry )
    {
-      gdcmVerboseMacro( "No corresponding ValEntry " << std::hex << group <<
+      gdcmWarningMacro( "No corresponding ValEntry " << std::hex << group <<
                          "," << elem << " element (try promotion first).");
       return false;
    }
@@ -194,7 +194,7 @@ bool DocEntrySet::SetBinEntry(uint8_t *content, int lgth,
    BinEntry *entry = GetBinEntry(group, elem);
    if (!entry )
    {
-      gdcmVerboseMacro( "No corresponding ValEntry " << std::hex << group <<
+      gdcmWarningMacro( "No corresponding ValEntry " << std::hex << group <<
                         "," << elem << " element (try promotion first).");
       return false;
    }
@@ -268,7 +268,7 @@ ValEntry *DocEntrySet::InsertValEntry(std::string const &value,
       {
          if( !RemoveEntry(currentEntry) )
          {
-            gdcmVerboseMacro( "Removal of previous DocEntry failed.");
+            gdcmWarningMacro( "Removal of previous DocEntry failed.");
 
             return NULL;
          }
@@ -282,7 +282,7 @@ ValEntry *DocEntrySet::InsertValEntry(std::string const &value,
 
       if ( !AddEntry(valEntry) )
       {
-         gdcmVerboseMacro("AddEntry failed although this is a creation.");
+         gdcmWarningMacro("AddEntry failed although this is a creation.");
 
          delete valEntry;
          return NULL;
@@ -328,7 +328,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
       {
          if( !RemoveEntry(currentEntry) )
          {
-            gdcmVerboseMacro( "Removal of previous DocEntry failed.");
+            gdcmWarningMacro( "Removal of previous DocEntry failed.");
 
             return NULL;
          }
@@ -342,7 +342,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
 
       if ( !AddEntry(binEntry) )
       {
-         gdcmVerboseMacro( "AddEntry failed allthough this is a creation.");
+         gdcmWarningMacro( "AddEntry failed allthough this is a creation.");
 
          delete binEntry;
          return NULL;
@@ -399,7 +399,7 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
       {
          if (!RemoveEntry(currentEntry))
          {
-            gdcmVerboseMacro( "Removal of previous DocEntry failed.");
+            gdcmWarningMacro( "Removal of previous DocEntry failed.");
 
             return NULL;
          }
@@ -412,7 +412,7 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
 
       if( !AddEntry(seqEntry) )
       {
-         gdcmVerboseMacro( "AddEntry failed allthough this is a creation.");
+         gdcmWarningMacro( "AddEntry failed allthough this is a creation.");
 
          delete seqEntry;
          return NULL;
@@ -449,7 +449,7 @@ ValEntry *DocEntrySet::NewValEntry(uint16_t group,uint16_t elem,
    ValEntry *newEntry = new ValEntry(dictEntry);
    if (!newEntry) 
    {
-      gdcmVerboseMacro( "Failed to allocate ValEntry");
+      gdcmWarningMacro( "Failed to allocate ValEntry");
       return 0;
    }
    return newEntry;
@@ -473,7 +473,7 @@ BinEntry *DocEntrySet::NewBinEntry(uint16_t group, uint16_t elem,
    BinEntry *newEntry = new BinEntry(dictEntry);
    if (!newEntry) 
    {
-      gdcmVerboseMacro( "Failed to allocate BinEntry");
+      gdcmWarningMacro( "Failed to allocate BinEntry");
       return 0;
    }
    return newEntry;
@@ -494,7 +494,7 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem)
    SeqEntry *newEntry = new SeqEntry( dictEntry );
    if (!newEntry)
    {
-      gdcmVerboseMacro( "Failed to allocate SeqEntry");
+      gdcmWarningMacro( "Failed to allocate SeqEntry");
       return 0;
    }
    return newEntry;
@@ -533,7 +533,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
    if (!pubDict) 
    {
-      gdcmVerboseMacro( "We SHOULD have a default dictionary");
+      gdcmWarningMacro( "We SHOULD have a default dictionary");
    }
    else
    {

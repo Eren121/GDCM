@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 16:51:36 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/02/05 01:37:09 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -160,7 +160,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutRedData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
-         gdcmVerboseMacro( "Unable to read Red LUT data" );
+         gdcmWarningMacro( "Unable to read Red LUT data" );
       }
 
       // //// Green round:
@@ -168,7 +168,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutGreenData = (uint8_t*)file->GetEntryBinArea(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
-         gdcmVerboseMacro( "Unable to read Green LUT data" );
+         gdcmWarningMacro( "Unable to read Green LUT data" );
       }
 
       // //// Blue round:
@@ -176,7 +176,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutBlueData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
-         gdcmVerboseMacro( "Unable to read Blue LUT data" );
+         gdcmWarningMacro( "Unable to read Blue LUT data" );
       }
    }
 
@@ -195,14 +195,14 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    //// First stage: get our hands on the Pixel Data.
    if ( !fp )
    {
-      gdcmVerboseMacro( "Unavailable file pointer." );
+      gdcmWarningMacro( "Unavailable file pointer." );
       return false;
    }
 
    fp->seekg( PixelOffset, std::ios::beg );
    if( fp->fail() || fp->eof())
    {
-      gdcmVerboseMacro( "Unable to find PixelOffset in file." );
+      gdcmWarningMacro( "Unable to find PixelOffset in file." );
       return false;
    }
 
@@ -222,7 +222,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // variable). But RawSize is the right size of the image !
       if( PixelDataLength != RawSize)
       {
-         gdcmVerboseMacro( "Mismatch between PixelReadConvert : "
+         gdcmWarningMacro( "Mismatch between PixelReadConvert : "
                             << PixelDataLength << " and RawSize : " << RawSize );
       }
       if( PixelDataLength > RawSize)
@@ -236,7 +236,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
 
       if ( fp->fail() || fp->eof())
       {
-         gdcmVerboseMacro( "Reading of Raw pixel data failed." );
+         gdcmWarningMacro( "Reading of Raw pixel data failed." );
          return false;
       }
    } 
@@ -244,7 +244,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    {
       if ( ! RLEInfo->DecompressRLEFile( fp, Raw, XSize, YSize, ZSize, BitsAllocated ) )
       {
-         gdcmVerboseMacro( "RLE decompressor failed." );
+         gdcmWarningMacro( "RLE decompressor failed." );
          return false;
       }
    }
@@ -253,7 +253,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // Default case concerns JPEG family
       if ( ! ReadAndDecompressJPEGFile( fp ) )
       {
-         gdcmVerboseMacro( "JPEG decompressor failed." );
+         gdcmWarningMacro( "JPEG decompressor failed." );
          return false;
       }
    }
@@ -383,7 +383,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 {
    if ( IsJPEG2000 )
    {
-      gdcmVerboseMacro( "Sorry, JPEG2000 not yet taken into account" );
+      gdcmWarningMacro( "Sorry, JPEG2000 not yet taken into account" );
       fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
 //    if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
           return false;
@@ -391,7 +391,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 
    if ( IsJPEGLS )
    {
-      gdcmVerboseMacro( "Sorry, JPEG-LS not yet taken into account" );
+      gdcmWarningMacro( "Sorry, JPEG-LS not yet taken into account" );
       fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
 //    if ( ! gdcm_read_JPEGLS_file( fp,Raw ) )
          return false;
@@ -452,7 +452,7 @@ void PixelReadConvert::BuildLUTRGBA()
                         &lengthR, &debR, &nbitsR );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro( "Wrong Red LUT descriptor" );
+      gdcmWarningMacro( "Wrong Red LUT descriptor" );
    }
                                                                                 
    int lengthG;  // Green LUT length in Bytes
@@ -463,7 +463,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthG, &debG, &nbitsG );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro( "Wrong Green LUT descriptor" );
+      gdcmWarningMacro( "Wrong Green LUT descriptor" );
    }
                                                                                 
    int lengthB;  // Blue LUT length in Bytes
@@ -474,7 +474,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthB, &debB, &nbitsB );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro( "Wrong Blue LUT descriptor" );
+      gdcmWarningMacro( "Wrong Blue LUT descriptor" );
    }
                                                                                 
    ////////////////////////////////////////////////////////
@@ -563,7 +563,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            gdcmVerboseMacro("SwapCode value (16 bits) not allowed.");
+            gdcmWarningMacro("SwapCode value (16 bits) not allowed.");
       }
    }
    else if( BitsAllocated == 32 )
@@ -608,7 +608,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            gdcmVerboseMacro("SwapCode value (32 bits) not allowed." );
+            gdcmWarningMacro("SwapCode value (32 bits) not allowed." );
       }
    }
 }
@@ -674,7 +674,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       }
       else
       {
-         gdcmVerboseMacro("Weird image");
+         gdcmWarningMacro("Weird image");
          throw FormatError( "Weird image !?" );
       }
    }
@@ -903,7 +903,7 @@ void PixelReadConvert::Print( std::ostream &os, std::string const &indent )
       }
       else
       {
-         gdcmVerboseMacro("Set as RLE file but NO RLEinfo present.");
+         gdcmWarningMacro("Set as RLE file but NO RLEinfo present.");
       }
    }
 
@@ -915,7 +915,7 @@ void PixelReadConvert::Print( std::ostream &os, std::string const &indent )
       }
       else
       {
-         gdcmVerboseMacro("Set as JPEG file but NO JPEGinfo present.");
+         gdcmWarningMacro("Set as JPEG file but NO JPEGinfo present.");
       }
    }
 }

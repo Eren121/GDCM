@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:07:41 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/02/05 01:37:09 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,7 @@ TS::TS()
    std::ifstream from(filename.c_str());
    if( !from )
    {
-      gdcmVerboseMacro("Can't open dictionary" << filename.c_str());
+      gdcmWarningMacro("Can't open dictionary" << filename.c_str());
       FillDefaultTSDict( TsMap );
    }
    else

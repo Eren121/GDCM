@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 16:51:36 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/02/05 01:37:08 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,11 +123,11 @@ public:
  * @param msg message part
  */
 #ifdef NDEBUG
-#define gdcmVerboseMacro(msg)                               \
+#define gdcmWarningMacro(msg)                               \
 {                                                           \
 }
 #else
-#define gdcmVerboseMacro(msg)                               \
+#define gdcmWarningMacro(msg)                               \
 {                                                           \
    if( Debug::GetDebugFlag() )                              \
    {                                                        \

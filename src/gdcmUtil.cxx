@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 18:13:57 $
-  Version:   $Revision: 1.131 $
+  Date:      $Date: 2005/02/05 01:37:09 $
+  Version:   $Revision: 1.132 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -748,7 +748,7 @@ std::string Util::GetMACAddress()
    }
    else
    {
-      gdcmVerboseMacro("Problem in finding the MAC Address");
+      gdcmWarningMacro("Problem in finding the MAC Address");
       return "";
    }
 }

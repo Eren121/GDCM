@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:07:41 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2005/02/05 01:37:08 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ Dict::Dict(std::string const &filename)
    std::ifstream from( filename.c_str() );
    if( !from )
    {
-      gdcmVerboseMacro( "Can't open dictionary" << filename.c_str());
+      gdcmWarningMacro( "Can't open dictionary" << filename.c_str());
       // Using default embeded one:
       FillDefaultDataDict( this );
    }
@@ -100,7 +100,7 @@ bool Dict::AddEntry(DictEntry const &newEntry)
 
    if(KeyHt.count(key) == 1)
    {
-      gdcmVerboseMacro( "Already present" << key.c_str());
+      gdcmWarningMacro( "Already present" << key.c_str());
       return false;
    } 
    else 
@@ -142,7 +142,7 @@ bool Dict::RemoveEntry(TagKey const &key)
    } 
    else 
    {
-      gdcmVerboseMacro( "Unfound entry" << key.c_str());
+      gdcmWarningMacro( "Unfound entry" << key.c_str());
       return false;
   }
 }

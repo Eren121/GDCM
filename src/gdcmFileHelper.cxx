@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 14:49:01 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/05 01:37:08 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -320,7 +320,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
    {
       if ( PixelReadConverter->GetRGBSize() > maxSize )
       {
-         gdcmVerboseMacro( "Pixel data bigger than caller's expected MaxSize");
+         gdcmWarningMacro( "Pixel data bigger than caller's expected MaxSize");
          return 0;
       }
       memcpy( destination,
@@ -332,7 +332,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
    // Either no LUT conversion necessary or LUT conversion failed
    if ( PixelReadConverter->GetRawSize() > maxSize )
    {
-      gdcmVerboseMacro( "Pixel data bigger than caller's expected MaxSize");
+      gdcmWarningMacro( "Pixel data bigger than caller's expected MaxSize");
       return 0;
    }
    memcpy( destination,
@@ -450,7 +450,7 @@ bool FileHelper::WriteRawData(std::string const &fileName)
   std::ofstream fp1(fileName.c_str(), std::ios::out | std::ios::binary );
    if (!fp1)
    {
-      gdcmVerboseMacro( "Fail to open (write) file:" << fileName.c_str());
+      gdcmWarningMacro( "Fail to open (write) file:" << fileName.c_str());
       return false;
    }
 
@@ -635,7 +635,7 @@ bool FileHelper::CheckWriteIntegrity()
          case WMODE_RAW :
             if( decSize!=PixelWriteConverter->GetUserDataSize() )
             {
-               gdcmVerboseMacro( "Data size (Raw) is incorrect. Should be " 
+               gdcmWarningMacro( "Data size (Raw) is incorrect. Should be " 
                            << decSize << " / Found :" 
                            << PixelWriteConverter->GetUserDataSize() );
                return false;
@@ -644,7 +644,7 @@ bool FileHelper::CheckWriteIntegrity()
          case WMODE_RGB :
             if( rgbSize!=PixelWriteConverter->GetUserDataSize() )
             {
-               gdcmVerboseMacro( "Data size (RGB) is incorrect. Should be " 
+               gdcmWarningMacro( "Data size (RGB) is incorrect. Should be " 
                           << decSize << " / Found " 
                           << PixelWriteConverter->GetUserDataSize() );
                return false;
@@ -982,7 +982,7 @@ uint8_t *FileHelper::GetRaw()
       raw = PixelReadConverter->GetRaw();
       if ( ! raw )
       {
-         gdcmVerboseMacro( "Read/decompress of pixel data apparently went wrong.");
+         gdcmWarningMacro( "Read/decompress of pixel data apparently went wrong.");
          return 0;
       }
    }

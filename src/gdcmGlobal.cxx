@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:07:41 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/02/05 01:37:08 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ Global::Global()
 {
    if (ValRes || TranSyn || Dicts || ddElem)
    {
-      gdcmVerboseMacro( "VR or TS or Dicts already allocated");
+      gdcmWarningMacro( "VR or TS or Dicts already allocated");
       return;
    }
    Dicts   = new DictSet();

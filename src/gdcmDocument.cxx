@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:03:07 $
-  Version:   $Revision: 1.222 $
+  Date:      $Date: 2005/02/05 01:37:08 $
+  Version:   $Revision: 1.223 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,7 +72,7 @@ Document::Document( std::string const &filename )
 
    Group0002Parsed = false;
 
-   gdcmVerboseMacro( "Starting parsing of file: " << Filename.c_str());
+   gdcmWarningMacro( "Starting parsing of file: " << Filename.c_str());
   // Fp->seekg( 0,  std::ios::beg);
    
    Fp->seekg(0, std::ios::end);
@@ -225,13 +225,13 @@ bool Document::IsReadable()
 {
    if( Filetype == Unknown)
    {
-      gdcmVerboseMacro( "Wrong filetype");
+      gdcmWarningMacro( "Wrong filetype");
       return false;
    }
 
    if ( IsEmpty() )
    { 
-      gdcmVerboseMacro( "No tag in internal hash table.");
+      gdcmWarningMacro( "No tag in internal hash table.");
       return false;
    }
 
@@ -332,7 +332,7 @@ std::string Document::GetTransferSyntaxName()
    }
    if ( transferSyntax == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Unfound Transfer Syntax (0002,0010)");
+      gdcmWarningMacro( "Unfound Transfer Syntax (0002,0010)");
       return "Uncompressed ACR-NEMA";
    }
 
@@ -402,7 +402,7 @@ std::ifstream *Document::OpenFile()
 
    if(Fp)
    {
-      gdcmVerboseMacro( "File already open: " << Filename.c_str());
+      gdcmWarningMacro( "File already open: " << Filename.c_str());
       CloseFile();
    }
 
@@ -432,7 +432,7 @@ std::ifstream *Document::OpenFile()
    {
       std::string msg 
          = Util::Format("ACR/DICOM with no preamble: (%04x)\n", zero);
-      gdcmVerboseMacro( msg.c_str() );
+      gdcmWarningMacro( msg.c_str() );
       return Fp;
    }
  
@@ -452,7 +452,7 @@ std::ifstream *Document::OpenFile()
    }
  
    CloseFile();
-   gdcmVerboseMacro( "Not DICOM/ACR (missing preamble)" << Filename.c_str());
+   gdcmWarningMacro( "Not DICOM/ACR (missing preamble)" << Filename.c_str());
  
    return 0;
 }
@@ -554,7 +554,7 @@ void Document::LoadEntryBinArea(BinEntry *elem)
    uint8_t *a = new uint8_t[l];
    if( !a )
    {
-      gdcmVerboseMacro( "Cannot allocate BinEntry content");
+      gdcmWarningMacro( "Cannot allocate BinEntry content");
       return;
    }
 
@@ -810,7 +810,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                  !Global::GetVR()->IsVROfBinaryRepresentable(vr) )
             { 
                 ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
-                gdcmVerboseMacro( std::hex << newDocEntry->GetGroup() 
+                gdcmWarningMacro( std::hex << newDocEntry->GetGroup() 
                                   << "|" << newDocEntry->GetElement()
                                   << " : Neither Valentry, nor BinEntry." 
                                   "Probably unknown VR.");
@@ -1158,7 +1158,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    if( length % 2 )
    {
       newValue = Util::DicomString(str, length+1);
-      gdcmVerboseMacro("Warning: bad length: " << length <<
+      gdcmWarningMacro("Warning: bad length: " << length <<
                        ",For string :" <<  newValue.c_str()); 
       // Since we change the length of string update it length
       //entry->SetReadLength(length+1);
@@ -1173,7 +1173,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    {
       if ( Fp->fail() || Fp->eof())
       {
-         gdcmVerboseMacro("Unread element value");
+         gdcmWarningMacro("Unread element value");
          valEntry->SetValue(GDCM_UNREAD);
          return;
       }
@@ -1373,7 +1373,7 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
       if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
       {
          long filePosition = Fp->tellg();
-         gdcmVerboseMacro( "Neither an Item tag nor a Sequence delimiter tag on :" 
+         gdcmWarningMacro( "Neither an Item tag nor a Sequence delimiter tag on :" 
            << std::hex << group << " , " << elem 
            << ") -before- position x(" << filePosition << ")" );
   
@@ -1617,7 +1617,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
      
    if ( foundLength % 2)
    {
-      gdcmVerboseMacro( "Warning : Tag with uneven length " << foundLength 
+      gdcmWarningMacro( "Warning : Tag with uneven length " << foundLength 
         <<  " in x(" << std::hex << gr << "," << elem <<")");
    }
       
@@ -1700,7 +1700,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
          // encounter such an ill-formed image, we simply display a warning
          // message and proceed on parsing (while crossing fingers).
          long filePosition = Fp->tellg();
-         gdcmVerboseMacro( "Erroneous Group Length element length  on : (" 
+         gdcmWarningMacro( "Erroneous Group Length element length  on : (" 
            << std::hex << group << " , " << elem
            << ") -before- position x(" << filePosition << ")"
            << "lgt : " << length );
@@ -1754,7 +1754,7 @@ bool Document::CheckSwap()
    char *entCur = deb + 128;
    if( memcmp(entCur, "DICM", (size_t)4) == 0 )
    {
-      gdcmVerboseMacro( "Looks like DICOM Version3 (preamble + DCM)" );
+      gdcmWarningMacro( "Looks like DICOM Version3 (preamble + DCM)" );
       
       // Group 0002 should always be VR, and the first element 0000
       // Let's be carefull (so many wrong headers ...)
@@ -1786,24 +1786,24 @@ bool Document::CheckSwap()
       // instead of just checking for UL, OB and UI !? group 0000 
       {
          Filetype = ExplicitVR;
-         gdcmVerboseMacro( "Group 0002 : Explicit Value Representation");
+         gdcmWarningMacro( "Group 0002 : Explicit Value Representation");
       } 
       else 
       {
          Filetype = ImplicitVR;
-         gdcmVerboseMacro( "Group 0002 :Not an explicit Value Representation;"
+         gdcmWarningMacro( "Group 0002 :Not an explicit Value Representation;"
                         << "Looks like a bugged Header!");
       }
       
       if ( net2host )
       {
          SwapCode = 4321;
-         gdcmVerboseMacro( "HostByteOrder != NetworkByteOrder");
+         gdcmWarningMacro( "HostByteOrder != NetworkByteOrder");
       }
       else 
       {
          SwapCode = 1234;
-         gdcmVerboseMacro( "HostByteOrder = NetworkByteOrder");
+         gdcmWarningMacro( "HostByteOrder = NetworkByteOrder");
       }
       
       // Position the file position indicator at first tag 
@@ -1816,7 +1816,7 @@ bool Document::CheckSwap()
    // Alas, this is not a DicomV3 file and whatever happens there is no file
    // preamble. We can reset the file position indicator to where the data
    // is (i.e. the beginning of the file).
-   gdcmVerboseMacro( "Not a DICOM Version3 file");
+   gdcmWarningMacro( "Not a DICOM Version3 file");
    Fp->seekg(0, std::ios::beg);
 
    // Our next best chance would be to be considering a 'clean' ACR/NEMA file.
@@ -1891,7 +1891,7 @@ bool Document::CheckSwap()
                Filetype = ACR;
                return true;
             default :
-               gdcmVerboseMacro( "ACR/NEMA unfound swap info (Really hopeless !)");
+               gdcmWarningMacro( "ACR/NEMA unfound swap info (Really hopeless !)");
                Filetype = Unknown;
                return false;
          }
@@ -1903,7 +1903,7 @@ bool Document::CheckSwap()
  */
 void Document::SwitchByteSwapCode() 
 {
-   gdcmVerboseMacro( "Switching Byte Swap code from "<< SwapCode);
+   gdcmWarningMacro( "Switching Byte Swap code from "<< SwapCode);
    if ( SwapCode == 1234 ) 
    {
       SwapCode = 4321;
@@ -2020,7 +2020,7 @@ DocEntry *Document::ReadNextDocEntry()
             std::string msg;
             msg = Util::Format("Entry (%04x,%04x) should be Explicit VR\n", 
                           newEntry->GetGroup(), newEntry->GetElement());
-            gdcmVerboseMacro( msg.c_str() );
+            gdcmWarningMacro( msg.c_str() );
           }
       }
       newEntry->SetImplicitVR();
@@ -2088,7 +2088,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       std::string ts = GetTransferSyntax();
       if ( !Global::GetTS()->IsTransferSyntax(ts) )
       {
-         gdcmVerboseMacro("True DICOM File, with NO Tansfer Syntax: " << ts );
+         gdcmWarningMacro("True DICOM File, with NO Tansfer Syntax: " << ts );
          return;
       }
 
@@ -2103,7 +2103,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       //'Implicit VR Transfer Syntax (GE Private)
       if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian )
       {
-         gdcmVerboseMacro("Transfer Syntax Name = [" 
+         gdcmWarningMacro("Transfer Syntax Name = [" 
                         << GetTransferSyntaxName() << "]" );
          SwitchByteSwapCode();
          group = SwapShort(group);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:52:24 $
-  Version:   $Revision: 1.127 $
+  Date:      $Date: 2005/02/05 01:37:08 $
+  Version:   $Revision: 1.128 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    if ( GetFirstEntry() == 0 ) // when user passed a Directory to parse
    {
       if (!parseDir)
-         gdcmVerboseMacro( "Entry HT empty for file: "<<fileName);
+         gdcmWarningMacro( "Entry HT empty for file: "<<fileName);
 
    // Only if user passed a root directory
    // ------------------------------------
@@ -109,7 +109,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       {
          NewMeta();
 
-         gdcmVerboseMacro( "Parse directory and create the DicomDir");
+         gdcmWarningMacro( "Parse directory and create the DicomDir");
          ParseDirectory();
       }
       else
@@ -126,7 +126,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
       DocEntry *e = GetDocEntry(0x0004, 0x1220);
       if ( !e )
       {
-         gdcmVerboseMacro( "NO 'Directory record sequence' (0x0004,0x1220)"
+         gdcmWarningMacro( "NO 'Directory record sequence' (0x0004,0x1220)"
                           << " in file " << fileName);
          /// \todo FIXME : what do we do when the parsed file IS NOT a
          ///       DICOMDIR file ?         
@@ -166,17 +166,17 @@ bool DicomDir::IsReadable()
 {
    if( Filetype == Unknown)
    {
-      gdcmVerboseMacro( "Wrong filetype");
+      gdcmWarningMacro( "Wrong filetype");
       return false;
    }
    if( !MetaElems )
    {
-      gdcmVerboseMacro( "Meta Elements missing in DicomDir");
+      gdcmWarningMacro( "Meta Elements missing in DicomDir");
       return false;
    }
    if( Patients.size() <= 0 )
    {
-      gdcmVerboseMacro( "NO Patient in DicomDir");
+      gdcmWarningMacro( "NO Patient in DicomDir");
       return false;
    }
 
@@ -393,7 +393,7 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
                                          std::ios::out | std::ios::binary);
    if( !fp ) 
    {
-      gdcmVerboseMacro("Failed to open(write) File: " << fileName.c_str());
+      gdcmWarningMacro("Failed to open(write) File: " << fileName.c_str());
       return false;
    }
 
@@ -460,7 +460,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
       header = new File( it->c_str() );
       if( !header )
       {
-         gdcmVerboseMacro( "Failure in new gdcm::File " << it->c_str() );
+         gdcmWarningMacro( "Failure in new gdcm::File " << it->c_str() );
          continue;
       }
       
@@ -468,7 +468,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
       {
          // Add the file to the chained list:
          list.push_back(header);
-         gdcmVerboseMacro( "Readable " << it->c_str() );
+         gdcmWarningMacro( "Readable " << it->c_str() );
        }
        else
        {
@@ -568,7 +568,7 @@ void DicomDir::CreateDicomDir()
    DocEntry *e = GetDocEntry(0x0004, 0x1220);
    if ( !e )
    {
-      gdcmVerboseMacro( "No Directory Record Sequence (0004,1220) found");
+      gdcmWarningMacro( "No Directory Record Sequence (0004,1220) found");
       /// \todo FIXME: what to do when the parsed file IS NOT a DICOMDIR file ? 
       return;         
    }
@@ -576,7 +576,7 @@ void DicomDir::CreateDicomDir()
    SeqEntry *s = dynamic_cast<SeqEntry *>(e);
    if ( !s )
    {
-      gdcmVerboseMacro( "Element (0004,1220) is not a Sequence ?!?");
+      gdcmWarningMacro( "Element (0004,1220) is not a Sequence ?!?");
       return;
    }
 
@@ -596,7 +596,7 @@ void DicomDir::CreateDicomDir()
       }
       else
       {
-         gdcmVerboseMacro( "Not a ValEntry.");
+         gdcmWarningMacro( "Not a ValEntry.");
          continue;
       }
 
@@ -905,7 +905,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          {
             if( header->GetFileName().substr(0, path.length()) != path )
             {
-               gdcmVerboseMacro( "The base path of file name is incorrect");
+               gdcmWarningMacro( "The base path of file name is incorrect");
                val = header->GetFileName();
             }
             else
@@ -928,7 +928,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
       {
-         gdcmVerboseMacro("GDCM_DICOMDIR_META ?!? should never print that");
+         gdcmWarningMacro("GDCM_DICOMDIR_META ?!? should never print that");
       }
       si->AddEntry(entry);
    }
