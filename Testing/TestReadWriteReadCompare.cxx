@@ -54,11 +54,14 @@ int TestReadWriteReadCompare(int argc, char* argv[])
       gdcmFile*  file = new gdcmFile( header );
       int dataSize    = file->GetImageDataSize();
       void* imageData = file->GetImageData(); //EXTREMELY IMPORTANT
+             // Sure, it is : It's up to the user to decide if he wants to
+             // GetImageData or if he wants to GetImageDataRaw
+             // (even if we do it by setting a flag, he will have to decide) 
 
       /// \todo Following line commented out because gdcmFile::SetImageData() is
       /// brain dead: it sets ImageDataSize to its argument and PixelRead to a.
-      /// Later on, when writing gdcmFile::WriteBase() and because PixelRead == 1
-      /// we call
+      /// Later on, when writing gdcmFile::WriteBase() 
+      /// and because PixelRead == 1 we call
       ///    PixelElement->SetLength( ImageDataSizeRaw );
       /// where we use ImageDataSizeRAW instead of ImageDataSize !
       /// But when the original image made the transformation LUT -> RGB, 
@@ -68,7 +71,11 @@ int TestReadWriteReadCompare(int argc, char* argv[])
       /// images 8BitsUncompressedColor.dcm, OT-PAL-8-face.dcm and 
       /// US-PAL-8-10x-echo.dcm...
       /// In conclusion fix gdcmFile, and then uncomment the following line.
-      /// file->SetImageData(imageData, dataSize);
+      
+      // --> I did. ctest doesn't break. But ... is it enought to say it's OK ?
+      
+      file->SetImageData(imageData, dataSize);
+      
       file->WriteDcmExplVR( "TestReadWriteReadCompare.dcm" );
       std::cout << "2...";
     
