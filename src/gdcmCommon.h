@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/22 22:21:19 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/01/23 01:00:17 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,13 +56,13 @@
 
 // Broken plateform do not respect C99 and do not provide those typedef
 #if defined(_MSC_VER) || defined(__BORLANDC__)
-typedef  signed __int8       int8_t;
-typedef  signed __int16      int16_t;
-typedef  signed __int32      int32_t;
+typedef  signed char         int8_t;
+typedef  signed short        int16_t;
+typedef  signed int          int32_t;
 typedef  signed __int64      int64_t;
-typedef  unsigned __int8     uint8_t;
-typedef  unsigned __int16    uint16_t;
-typedef  unsigned __int32    uint32_t;
+typedef  unsigned char       uint8_t;
+typedef  unsigned short      uint16_t;
+typedef  unsigned int        uint32_t;
 typedef  unsigned __int64    uint64_t;
 #define UINT32_MAX    (4294967295U)
 #endif
