@@ -5,7 +5,6 @@
 
 #define BITS_IN_JSAMPLE 12
 
-#define GDCM_jpr_DEBUG 0
 // BITS_IN_JSAMPLE is a compile time defined options.
 // We need both 8 an 12;
 // To avoid renaming *all* the Jpeg functions,
@@ -13,64 +12,64 @@
 // For all the functions, we shall have the 8 and 12 version
 // (8 with the 'long' name, 12 with the 'short' name)
 
-#define jpeg_read_header	jReadHeader
+#define jpeg_read_header        jReadHeader
 #define my_error_exit           myErrorExit
-#define jpeg_destroy_decompress	jDestDecompress
-#define jpeg_stdio_src		jStdSrc
-#define jpeg_read_header	jReadHeader
-#define jpeg_read_scanlines	jReadScanlines
-#define jpeg_finish_decompress	jFinDecompress
+#define jpeg_destroy_decompress jDestDecompress
+#define jpeg_stdio_src          jStdSrc
+#define jpeg_read_header        jReadHeader
+#define jpeg_read_scanlines     jReadScanlines
+#define jpeg_finish_decompress  jFinDecompress
 //#define jpeg_create_decompress  jCreaDecompress //FIXME
 
 // -----------------
-#define jpeg_std_error		jStdError
-#define jpeg_CreateCompress	jCreaCompress
-#define jpeg_CreateDecompress	jCreaDecompress
-#define jpeg_destroy_compress	jDestCompress
-#define jpeg_destroy_decompress	jDestDecompress
-#define jpeg_stdio_dest		jStdDest
-#define jpeg_stdio_src		jStdSrc
-#define jpeg_set_defaults	jSetDefaults
-#define jpeg_set_colorspace	jSetColorspace
-#define jpeg_default_colorspace	jDefColorspace
-#define jpeg_set_quality	jSetQuality
-#define jpeg_set_linear_quality	jSetLQuality
-#define jpeg_add_quant_table	jAddQuantTable
-#define jpeg_quality_scaling	jQualityScaling
-#define jpeg_simple_progression	jSimProgress
-#define jpeg_suppress_tables	jSuppressTables
-#define jpeg_alloc_quant_table	jAlcQTable
-#define jpeg_alloc_huff_table	jAlcHTable
-#define jpeg_start_compress	jStrtCompress
-#define jpeg_write_scanlines	jWrtScanlines
-#define jpeg_finish_compress	jFinCompress
-#define jpeg_write_raw_data	jWrtRawData
-#define jpeg_write_marker	jWrtMarker
-#define jpeg_write_m_header	jWrtMHeader
-#define jpeg_write_m_byte	jWrtMByte
-#define jpeg_write_tables	jWrtTables
-#define jpeg_read_header	jReadHeader
-#define jpeg_start_decompress	jStrtDecompress
-#define jpeg_read_scanlines	jReadScanlines
-#define jpeg_finish_decompress	jFinDecompress
-#define jpeg_read_raw_data	jReadRawData
-#define jpeg_has_multiple_scans	jHasMultScn
-#define jpeg_start_output	jStrtOutput
-#define jpeg_finish_output	jFinOutput
-#define jpeg_input_complete	jInComplete
-#define jpeg_new_colormap	jNewCMap
-#define jpeg_consume_input	jConsumeInput
-#define jpeg_calc_output_dimensions	jCalcDimensions
-#define jpeg_save_markers	jSaveMarkers
-#define jpeg_set_marker_processor	jSetMarker
-#define jpeg_read_coefficients	jReadCoefs
-#define jpeg_write_coefficients	jWrtCoefs
-#define jpeg_copy_critical_parameters	jCopyCrit
-#define jpeg_abort_compress	jAbrtCompress
-#define jpeg_abort_decompress	jAbrtDecompress
-#define jpeg_abort		jAbort
-#define jpeg_destroy		jDestroy
-#define jpeg_resync_to_restart	jResyncRestart
+#define jpeg_std_error           jStdError
+#define jpeg_CreateCompress      jCreaCompress
+#define jpeg_CreateDecompress    jCreaDecompress
+#define jpeg_destroy_compress    jDestCompress
+#define jpeg_destroy_decompress  jDestDecompress
+#define jpeg_stdio_dest          jStdDest
+#define jpeg_stdio_src           jStdSrc
+#define jpeg_set_defaults        jSetDefaults
+#define jpeg_set_colorspace      jSetColorspace
+#define jpeg_default_colorspace  jDefColorspace
+#define jpeg_set_quality         jSetQuality
+#define jpeg_set_linear_quality  jSetLQuality
+#define jpeg_add_quant_table     jAddQuantTable
+#define jpeg_quality_scaling     jQualityScaling
+#define jpeg_simple_progression  jSimProgress
+#define jpeg_suppress_tables     jSuppressTables
+#define jpeg_alloc_quant_table   jAlcQTable
+#define jpeg_alloc_huff_table    jAlcHTable
+#define jpeg_start_compress      jStrtCompress
+#define jpeg_write_scanlines     jWrtScanlines
+#define jpeg_finish_compress     jFinCompress
+#define jpeg_write_raw_data      jWrtRawData
+#define jpeg_write_marker        jWrtMarker
+#define jpeg_write_m_header      jWrtMHeader
+#define jpeg_write_m_byte        jWrtMByte
+#define jpeg_write_tables        jWrtTables
+#define jpeg_read_header         jReadHeader
+#define jpeg_start_decompress    jStrtDecompress
+#define jpeg_read_scanlines      jReadScanlines
+#define jpeg_finish_decompress   jFinDecompress
+#define jpeg_read_raw_data       jReadRawData
+#define jpeg_has_multiple_scans  jHasMultScn
+#define jpeg_start_output        jStrtOutput
+#define jpeg_finish_output       jFinOutput
+#define jpeg_input_complete      jInComplete
+#define jpeg_new_colormap        jNewCMap
+#define jpeg_consume_input          jConsumeInput
+#define jpeg_calc_output_dimensions jCalcDimensions
+#define jpeg_save_markers           jSaveMarkers
+#define jpeg_set_marker_processor   jSetMarker
+#define jpeg_read_coefficients      jReadCoefs
+#define jpeg_write_coefficients     jWrtCoefs
+#define jpeg_copy_critical_parameters jCopyCrit
+#define jpeg_abort_compress      jAbrtCompress
+#define jpeg_abort_decompress    jAbrtDecompress
+#define jpeg_abort               jAbort
+#define jpeg_destroy             jDestroy
+#define jpeg_resync_to_restart   jResyncRestart
 
 /*
  * <setjmp.h> is used for the optional error recovery mechanism shown in
@@ -131,8 +130,8 @@ extern "C" {
 
 //-----------------------------------------------------------------------------
 struct my_error_mgr {
-   struct jpeg_error_mgr pub;	/* "public" fields */
-   jmp_buf setjmp_buffer;	/* for return to caller */
+   struct jpeg_error_mgr pub;   /* "public" fields */
+   jmp_buf setjmp_buffer;       /* for return to caller */
 };
 
 //-----------------------------------------------------------------------------
@@ -178,11 +177,11 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    struct jpeg_decompress_struct cinfo;
   
    /* -------------- inside, we found :
-    * JDIMENSION image_width;	// input image width 
-    * JDIMENSION image_height;	// input image height 
-    * int input_components;		// nb of color components in input image 
-    * J_COLOR_SPACE in_color_space;	// colorspace of input image 
-    * double input_gamma;		// image gamma of input image 
+    * JDIMENSION image_width;      // input image width 
+    * JDIMENSION image_height;     // input image height 
+    * int input_components;        // nb of color components in input image 
+    * J_COLOR_SPACE in_color_space;// colorspace of input image 
+    * double input_gamma;          // image gamma of input image 
     * -------------- */
   
    /* We use our private extension JPEG error handler.
@@ -192,19 +191,19 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    struct my_error_mgr jerr;
    /* More stuff */
 
-   JSAMPARRAY buffer;		/* Output row buffer */
+   JSAMPARRAY buffer;/* Output row buffer */
 
    // rappel :
    // ------
    // typedef unsigned char JSAMPLE;
-   // typedef JSAMPLE FAR *JSAMPROW;	/* ptr to one image row of pixel samples. */
-   // typedef JSAMPROW *JSAMPARRAY;	/* ptr to some rows (a 2-D sample array) */
-   // typedef JSAMPARRAY *JSAMPIMAGE;	/* a 3-D sample array: top index is color */
+   // typedef JSAMPLE FAR *JSAMPROW;/* ptr to one image row of pixel samples. */
+   // typedef JSAMPROW *JSAMPARRAY;/* ptr to some rows (a 2-D sample array) */
+   // typedef JSAMPARRAY *JSAMPIMAGE;/* a 3-D sample array: top index is color */
 
-   int row_stride;		/* physical row width in output buffer */
-#ifdef GDCM_jpr_DEBUG
+   int row_stride;/* physical row width in output buffer */
+#ifdef GDCM_JPG_DEBUG
    printf("entree dans gdcmFile::gdcm_read_JPEG_file12, depuis gdcmJpeg\n");
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
 
    /* In this example we want to open the input file before doing anything else,
     * so that the setjmp() error recovery below can assume the file is open.
@@ -213,9 +212,9 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
     */
 
    /* Step 1: allocate and initialize JPEG decompression object */
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf("Entree Step 1\n");
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
 
    /* We set up the normal JPEG error routines, then override error_exit. */
 
@@ -235,15 +234,15 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    jpeg_create_decompress(&cinfo);
 
    /* Step 2: specify data source (eg, a file) */
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf("Entree Step 2\n");
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
    jpeg_stdio_src(&cinfo, fp);
 
    /* Step 3: read file parameters with jpeg_read_header() */
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf("Entree Step 3\n");
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
    (void) jpeg_read_header(&cinfo, TRUE);
 
    /* We can ignore the return value from jpeg_read_header since
@@ -252,7 +251,7 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
     * See libjpeg.doc for more info.
     */
 
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
       printf("--------------Header contents :----------------\n");
       printf("image_width %d image_height %d\n", 
               cinfo.image_width , cinfo.image_height);
@@ -260,31 +259,31 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
               cinfo.output_components);
       printf("nb of color components returned  %d \n", 
               cinfo.data_precision);
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
 
 
    /*
-    * JDIMENSION image_width;	// input image width 
-    * JDIMENSION image_height;	// input image height 
-    * int output_components;	// # of color components returned 
-    * J_COLOR_SPACE in_color_space;	// colorspace of input image 
-    * double input_gamma;		// image gamma of input image
-    * int data_precision;		// bits of precision in image data 
+    * JDIMENSION image_width;       // input image width 
+    * JDIMENSION image_height;      // input image height 
+    * int output_components;        // # of color components returned 
+    * J_COLOR_SPACE in_color_space; // colorspace of input image 
+    * double input_gamma;           // image gamma of input image
+    * int data_precision;           // bits of precision in image data 
     */
 
    /* Step 4: set parameters for decompression */
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf("Entree Step 4\n");
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
 
    /* In this example, we don't need to change any of the defaults set by
     * jpeg_read_header(), so we do nothing here.
     */
 
    /* Step 5: Start decompressor */
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf("Entree Step 5\n");
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
 
    (void) jpeg_start_decompress(&cinfo);
    /* We can ignore the return value since suspension is not possible
@@ -301,19 +300,19 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    /* JSAMPLEs per row in output buffer */
    row_stride = cinfo.output_width * cinfo.output_components;
   
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
       printf ("cinfo.output_width %d cinfo.output_components %d  row_stride %d\n",
               cinfo.output_width, cinfo.output_components,row_stride);
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
 
    /* Make a one-row-high sample array that will go away when done with image */
    buffer = (*cinfo.mem->alloc_sarray)
-	    ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+    ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
    /* Step 6: while (scan lines remain to be read) */
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf("Entree Step 6\n"); 
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
 
    /*           jpeg_read_scanlines(...); */
 
@@ -321,10 +320,10 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
     * loop counter, so that we don't have to keep track ourselves.
     */
 
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf ("cinfo.output_height %d  cinfo.output_width %d\n",
- 		       cinfo.output_height,cinfo.output_width);
-#endif //GDCM_jpr_DEBUG
+      cinfo.output_height,cinfo.output_width);
+#endif //GDCM_JPG_DEBUG
 
    pimage=(char *)image_buffer;
 
@@ -346,18 +345,18 @@ bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
    }
  
   /* Step 7: Finish decompression */
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf("Entree Step 7\n");
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
    (void) jpeg_finish_decompress(&cinfo);
    /* We can ignore the return value since suspension is not possible
     * with the stdio data source.
     */
 
    /* Step 8: Release JPEG decompression object */
-#ifdef GDCM_jpr_DEBUG
+#ifdef GDCM_JPG_DEBUG
    printf("Entree Step 8\n");
-#endif //GDCM_jpr_DEBUG
+#endif //GDCM_JPG_DEBUG
 
    /* This is an important step since it will release a good deal of memory. */
    jpeg_destroy_decompress(&cinfo);

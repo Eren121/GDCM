@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 19:37:05 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/06/28 09:30:58 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,8 +74,7 @@
 const unsigned int gdcmDocument::HEADER_LENGTH_TO_READ = 256;
 
 // Refer to gdcmDocument::SetMaxSizeLoadEntry()
-const unsigned int gdcmDocument::MAX_SIZE_LOAD_ELEMENT_VALUE = 0x7fffffff;// 4096;
-
+const unsigned int gdcmDocument::MAX_SIZE_LOAD_ELEMENT_VALUE = 0x7fffffff;// 4096;//
 const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;//64;
 
 //-----------------------------------------------------------------------------
@@ -263,10 +262,12 @@ bool gdcmDocument::SetShaDict(DictKey dictName){
  */
 bool gdcmDocument::IsReadable(void) { 
    if(Filetype==gdcmUnknown) {
+      //std::cout << " gdcmDocument::IsReadable: Filetype " << Filetype
+      //         << " " << "gdcmUnknown " << gdcmUnknown << std::endl; //JPR
       dbg.Verbose(0, "gdcmDocument::IsReadable: wrong filetype");
       return false;
    }
-   if(!tagHT.empty()<=0) { 
+   if(tagHT.empty()) { 
       dbg.Verbose(0, "gdcmDocument::IsReadable: no tags in internal"
                      " hash table.");
       return false;
@@ -558,13 +559,71 @@ void gdcmDocument::Write(FILE* fp,FileType filetype) {
       SetEntryLengthByNumber(20, 0x0002, 0x0010);
    }
 
+// TODO : move to gdcmHeader::Write
+// -----------------------------------------------------
+   // Bits Allocated
+   if ( GetEntryByNumber(0x0028,0x0100) ==  "12") {
+      SetEntryByNumber("16", 0x0028,0x0100);
+   }
+
+  // correct Pixel group Length if necessary
+
+   guint16 GrPixel  = 0x7fe0;
+   guint16 NumPixel = 0x0010;
+
+   // TODO : create a gdcmHeader::Write method and move this part.
+   //        (only gdcmHeader knows GrPixel, NumPixel)
+
+   int i_lgPix = GetEntryLengthByNumber(GrPixel, NumPixel);
+   if (i_lgPix != -2) { // no (GrPixel, NumPixel) element
+      char * dumm = new char[20];
+      sprintf(dumm ,"%d", i_lgPix+12);
+      std::string s_lgPix = dumm;
+      delete dumm;
+      ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
+   }
+
+   // Drop Palette Color, if necessary
+   
+   // FIXME : Why is it always false ???
+
+   // std::cout << "entry 0x0028,0x0002 " << GetEntryByNumber(0x0028,0x0002).c_str() << std::endl;
+
+ /*  if ( GetEntryByNumber(0x0028,0x0002).c_str() == "3" ) */{
+    
+    // Drop 0028|1101, 0028|1102, 0028|1103
+    // Drop 0028|1201, 0028|1202, 0028|1203
+
+      gdcmDocEntry *e;
+      e=GetDocEntryByNumber(0x0028,0x01101);
+      if (e) 
+         RemoveEntry(e);
+      e=GetDocEntryByNumber(0x0028,0x1102);
+      if (e) 
+         RemoveEntry(e);
+      e=GetDocEntryByNumber(0x0028,0x1103);
+
+      if (e) 
+         RemoveEntry(e);
+      e=GetDocEntryByNumber(0x0028,0x01201);
+      if (e) 
+         RemoveEntry(e);
+      e=GetDocEntryByNumber(0x0028,0x1202);
+     if (e) 
+         RemoveEntry(e);
+      e=GetDocEntryByNumber(0x0028,0x1203);
+     if (e) 
+         RemoveEntry(e);
+ } 
+
+// ----------- end move to gdcmHeader::Write -----------------
+  
 /**
  * \todo rewrite later, if really usefull
  *               ('Group Length' element is optional in DICOM)
  *
  *       --> Warning : un-updated odd groups lengthes can causes pb
- *       -->           (xmedcon breaks)
- *       --> to be re- written with future org.
+ *       -->           (xmedcon breaker)
  *
  * if ( (filetype == ImplicitVR) || (filetype == ExplicitVR) )
  *    UpdateGroupLength(false,filetype);
@@ -572,9 +631,8 @@ void gdcmDocument::Write(FILE* fp,FileType filetype) {
  *    UpdateGroupLength(true,ACR);
  */
  
-   gdcmElementSet::Write(fp,filetype); 
+   gdcmElementSet::Write(fp,filetype); // This one is recursive
 
-  // return true;
 }
 
 /**
@@ -1210,7 +1268,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
       NewDocEntry = ReadNextDocEntry( );
       if (!NewDocEntry)
          break;
-
+     // NewDocEntry->Print(); cout << endl; //JPR
       vr = NewDocEntry->GetVR();
       if (vr!="SQ")
       {

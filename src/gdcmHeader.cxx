@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 09:30:22 $
-  Version:   $Revision: 1.169 $
+  Date:      $Date: 2004/06/28 09:30:58 $
+  Version:   $Revision: 1.170 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,6 +103,7 @@ gdcmHeader::~gdcmHeader () {
  */
 bool gdcmHeader::IsReadable() {
    if(!gdcmDocument::IsReadable()) {
+      //std::cout << "doc non Readable " << std::endl; //JPR
       return false;
    }
    std::string res = GetEntryByNumber(0x0028, 0x0005);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 13:02:36 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2004/06/28 09:30:58 $
+  Version:   $Revision: 1.53 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -405,7 +405,6 @@ void gdcmDicomDir::WriteEntries(FILE *) //_fp
 void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
 {
    CallStartMethod();
-
    gdcmDirList fileList(path,1); // gets recursively the file list
    unsigned int count=0;
    VectDocument list;
@@ -418,18 +417,26 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
                              it!=fileList.end(); 
                              ++it) 
    {
+      std::cout << "nom fichier " << it->c_str() << std::endl; //JPR
+
       progress=(float)(count+1)/(float)fileList.size();
       CallProgressMethod();
       if(abort)
-         break;
+          break;
 
       header=new gdcmHeader(it->c_str());
-      if(header->IsReadable())
+      if(!header) {
+         std::cout << "echec new Header " << it->c_str() << std::endl; // JPR
+      }
+      if(header->IsReadable()) {
          list.push_back(header);  // adds the file header to the chained list
+         std::cout << "readable : " <<it->c_str() << std::endl;
+       }
       else
          delete header;
 
       count++;
+
    }
    // sorts Patient/Study/Serie/
    std::sort(list.begin(),list.end(),gdcmDicomDir::HeaderLessThan);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/06/28 09:30:58 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -136,7 +136,7 @@ bool gdcmVR::IsVROfGdcmStringRepresentable(VRKey tested)
        tested == "UI" || tested == "TM" || tested == "SH" || tested == "LO" ||
        tested == "CS" || tested == "IS" || tested == "LO" || tested == "LT" ||
        tested == "SH" || tested == "ST" || tested == "DS" || tested == "SL" ||
-       tested == "SS" || tested == "UL" || tested == "US" )
+       tested == "SS" || tested == "UL" || tested == "US" || tested == "UN")
    {
       return true;
    }

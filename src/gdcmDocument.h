@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 17:48:45 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/06/28 09:30:58 $
+  Version:   $Revision: 1.17 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -238,7 +238,6 @@ private:
    void SetMaxSizeLoadEntry(long);
    void SetMaxSizePrintEntry(long);
 
- 
    // DocEntry related utilities
    gdcmDocEntry *ReadNextDocEntry   ();
 

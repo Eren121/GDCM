@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 03:36:24 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2004/06/28 09:30:58 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -125,7 +125,6 @@ public:
    int GetPlanarConfiguration();
    int GetPixelSize();
 
-   int GetPixelSizeGetPixelType();
    std::string GetPixelType();
    size_t GetPixelOffset();
    size_t GetPixelAreaLength();
