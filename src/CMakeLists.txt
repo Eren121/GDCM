@@ -27,6 +27,11 @@ SET(libgdcm_la_SOURCES
 	gdcmJpeg2000.cxx
 	gdcmRLE.cxx
 	gdcmParse.cxx
+	gdcmDICOMDIR.cxx
+	gdcmPatient.cxx
+	gdcmStudy.cxx
+	gdcmSequence.cxx
+	gdcmImage.cxx
 )
 #-----------------------------------------------------------------------------
 # Why one should not use ADD_DEFINITIONS
