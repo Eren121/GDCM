@@ -116,6 +116,8 @@ Here is the checklist when freezing a version of gdcm:
       - ./autogen.sh --enable-vtk --enable-python --enable-doxygen
       - make release  (generates gdcm-x.y.z.tar.gz)
       - rpm -ta gdcm-x.y.z.tar.gz
+      - collect the result in <somedirectoryPath>/RPMS/i386/ and
+        <somedirectoryPath>/SRPMS.
     1b/ Packaging at the python level:
          cd $(GDCMHOME)
          python setup.py sdist
