@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:35:15 $
-  Version:   $Revision: 1.123 $
+  Date:      $Date: 2005/01/27 10:06:33 $
+  Version:   $Revision: 1.124 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -779,7 +779,10 @@ std::string Util::CreateUniqueUID(const std::string &root)
       // No root was specified use "GDCM" then
       // echo "gdcm" | od -b
       // 0000000 147 144 143 155 012
-      prefix = "147.144.143.155"; // special easter egg 
+      //prefix = "147.144.143.155"; // special easter egg
+
+      // gdcm UID prefix, as supplied by http://www.medicalconnections.co.uk
+      prefix = "1.2.826.0.1.3680043.2.1143"; 
    }
    // else
    // A root was specified use it to forge our new UID:
