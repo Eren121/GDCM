@@ -453,9 +453,10 @@ get_dht (j_decompress_ptr cinfo)
     /* Here we just do minimal validation of the counts to avoid walking
      * off the end of our table space.  jdhuff.c will check more carefully.
      */
-    if (count > 256 || ((INT32) count) > length)
+    if (count > 256 || ((INT32) count) > length) {
+      printf("JERR_BAD_HUFF_TABLE in jdmarker12.c count : %d\n",count);
       ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
-
+    }
     for (i = 0; i < count; i++)
       INPUT_BYTE(cinfo, huffval[i], return FALSE);
 

@@ -182,8 +182,10 @@ jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
   p = 0;
   for (l = 1; l <= 16; l++) {
     i = (int) htbl->bits[l];
-    if (i < 0 || p + i > 256)	/* protect against table overrun */
+    if (i < 0 || p + i > 256){ /* protect against table overrun */
+      printf ("JERR_BAD_HUFF_TABLE : protect against table overrun  (i=%d p=%d)\n",i,p);
       ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+    }
     while (i--)
       huffsize[p++] = (char) l;
   }
@@ -204,8 +206,10 @@ jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
     /* code is now 1 more than the last code used for codelength si; but
      * it must still fit in si bits, since no code is allowed to be all ones.
      */
-    if (((INT32) code) >= (((INT32) 1) << si))
+    if (((INT32) code) >= (((INT32) 1) << si)) {
+      printf("JERR_BAD_HUFF_TABLE : (((INT32) code) >= (((INT32) 1) << si)) code %d si%d\v",code, si);
       ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+    }
     code <<= 1;
     si++;
   }
@@ -259,8 +263,14 @@ jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
   if (isDC) {
     for (i = 0; i < numsymbols; i++) {
       int sym = htbl->huffval[i];
-      if (sym < 0 || sym > 15)
-	ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+      //printf ("htbl->huffval[%d]=%d\n",i,htbl->huffval[i]); 
+      if (sym < 0 || sym > 15) {
+        printf("JERR_BAD_HUFF_TABLE sym %d (>15)\n",sym);
+	//ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+        // Sorry for the patch :
+        // Now, we can read Philips MRI Images
+        htbl->huffval[i]=15;
+      }
     }
   }
 }

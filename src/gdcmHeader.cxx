@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.94 2003/10/03 16:22:24 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.95 2003/10/06 13:37:25 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -612,6 +612,11 @@ bool gdcmHeader::IsDicomV3(void) {
 void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    if ( FoundLength == 0xffffffff)
       FoundLength = 0;
+      // Sorry for the patch!  
+      // XMedCom did the trick to read some nasty GE images ...
+    if (FoundLength == 13) 
+      FoundLength =10;
+
    ElVal->SetLength(FoundLength);
 }
 
@@ -694,6 +699,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
          fseek(fp, 2L, SEEK_CUR);
 
          guint32 length32 = ReadInt32();
+
          if ( (vr == "OB") && (length32 == 0xffffffff) ) {
             ElVal->SetLength(FindLengthOB());
             return;
@@ -758,9 +764,12 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
       // Heuristic: well some files are really ill-formed.
       if ( length16 == 0xffff) {
          length16 = 0;
-         dbg.Verbose(0, "gdcmHeader::FindLength",
-                     "Erroneous element length fixed.");
+         //dbg.Verbose(0, "gdcmHeader::FindLength",
+         //            "Erroneous element length fixed.");
+         // Actually, length= 0xffff means that we deal with
+         // Unknown Sequence Length 
       }
+
       FixFoundLength(ElVal, (guint32)length16);
       return;
    }

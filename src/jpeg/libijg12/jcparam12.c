@@ -168,8 +168,10 @@ add_huff_table (j_compress_ptr cinfo,
   nsymbols = 0;
   for (len = 1; len <= 16; len++)
     nsymbols += bits[len];
-  if (nsymbols < 1 || nsymbols > 256)
+  if (nsymbols < 1 || nsymbols > 256) {
+    printf ("JERR_BAD_HUFF_TABLE nsymbols %d\n",nsymbols);
     ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+  }
 
   MEMCOPY((*htblptr)->huffval, val, nsymbols * SIZEOF(UINT8));
 

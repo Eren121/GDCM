@@ -109,6 +109,8 @@ start_pass_huff (j_compress_ptr cinfo, boolean gather_statistics)
   int ci, dctbl, actbl;
   jpeg_component_info * compptr;
 
+fprintf (stderr,"=======================================================JPEG12\n");
+
   if (gather_statistics) {
 #ifdef ENTROPY_OPT_SUPPORTED
     entropy->pub.encode_mcu = encode_mcu_gather;
@@ -210,8 +212,10 @@ jpeg_make_c_derived_tbl (j_compress_ptr cinfo, boolean isDC, int tblno,
   p = 0;
   for (l = 1; l <= 16; l++) {
     i = (int) htbl->bits[l];
-    if (i < 0 || p + i > 256)	/* protect against table overrun */
+    if (i < 0 || p + i > 256) {	/* protect against table overrun */
+      printf ("JERR_BAD_HUFF_TABLE : protect against table overrun  (i=%d p=%d)\n",i,p);
       ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+    }
     while (i--)
       huffsize[p++] = (char) l;
   }
@@ -232,8 +236,10 @@ jpeg_make_c_derived_tbl (j_compress_ptr cinfo, boolean isDC, int tblno,
     /* code is now 1 more than the last code used for codelength si; but
      * it must still fit in si bits, since no code is allowed to be all ones.
      */
-    if (((INT32) code) >= (((INT32) 1) << si))
+    if (((INT32) code) >= (((INT32) 1) << si)) {
+      printf("JERR_BAD_HUFF_TABLE : (((INT32) code) >= (((INT32) 1) << si)) code %d si%d\v",code, si);
       ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+    }
     code <<= 1;
     si++;
   }
@@ -256,8 +262,10 @@ jpeg_make_c_derived_tbl (j_compress_ptr cinfo, boolean isDC, int tblno,
 
   for (p = 0; p < lastp; p++) {
     i = htbl->huffval[p];
-    if (i < 0 || i > maxsymbol || dtbl->ehufsi[i])
+    if (i < 0 || i > maxsymbol || dtbl->ehufsi[i]) {
+      printf("JERR_BAD_HUFF_TABLE (i < 0 || i > maxsymbol || dtbl->ehufsi[i]) i %d maxsymbol %d dtbl->ehufsi[i] %d\n", i, maxsymbol, dtbl->ehufsi[i]);
       ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+    }
     dtbl->ehufco[i] = huffcode[p];
     dtbl->ehufsi[i] = huffsize[p];
   }
