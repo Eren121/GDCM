@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDefaultDicts.cxx.in,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 18:08:56 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/11/03 19:35:49 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,26 +85,7 @@ void FillDefaultDIRDict(DicomDirElement *dde)
     elem.Group = e.group;
     elem.Elem  = e.element;
     elem.Value = e.value;
-    if( strcmp(e.type, "metaElem" ) == 0 )
-      {
-      dde->GetDicomDirMetaElements().push_back(elem);
-      }
-    else if( strcmp(e.type, "patientElem" ) == 0 )
-      {
-      dde->GetDicomDirPatientElements().push_back(elem);
-      }
-    else if( strcmp(e.type, "studyElem" ) == 0 )
-      {
-      dde->GetDicomDirStudyElements().push_back(elem);
-      }
-    else if( strcmp(e.type, "serieElem" ) == 0 )
-      {
-      dde->GetDicomDirSerieElements().push_back(elem);
-      }
-    else if( strcmp(e.type, "imageElem" ) == 0 )
-      {
-      dde->GetDicomDirImageElements().push_back(elem);
-      }
+    dde->AddNewEntry( e.type, elem);
     e = dataelement[++i];
     }
 }
