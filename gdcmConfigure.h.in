@@ -7,7 +7,7 @@
 /* Platform Features                                                        */
 
 /* Byte order.  */
-//#cmakedefine VTK_WORDS_BIGENDIAN
+//#cmakedefine GDCM_WORDS_BIGENDIAN
 
 /* Allow access to UINT32_MAX , cf gdcmCommon.h */
 #define __STDC_LIMIT_MACROS
@@ -25,7 +25,9 @@
 #cmakedefine HAVE_NO_STDINT_H 
 
 /* This variable allows you to have helpful debug statement */
-/* That are in between #idfef / enif in the gdcm code */
+/* That are in between #ifdef / endif in the gdcm code */
+/* That means if GDCM_DEBUG is OFF there shouldn't be any 'cout' at all ! */
+/* only cerr, for instance 'invalid file' will be allowed */
 #cmakedefine GDCM_DEBUG
 
 /* Whether we are building shared libraries.  */
@@ -34,7 +36,7 @@
 
 
 /*--------------------------------------------------------------------------*/
-/* GDCM Versioning                                                           */
+/* GDCM Versioning                                                          */
 
 /* Version number.  */
 #define GDCM_MAJOR_VERSION @GDCM_MAJOR_VERSION@
