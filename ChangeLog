@@ -1,3 +1,7 @@
+2004-03-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> 
+     * FIX (JPR bug) : src/gdcmDicomDirImage.cxx added missing definition
+       of gdcmDicomDirImage::NewImage as empty function.
+
 2004-02-11 Benoit Regrain
      * FIX : memory leaks and the set of ArgDelete methods in gdcmDicomDir
        when using from python

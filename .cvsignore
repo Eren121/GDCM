@@ -9,6 +9,7 @@ configure
 libtool
 ltmain.sh
 aclocal.m4
+autom4te.cache
 *.pyc
 build
 dist
@@ -22,3 +23,4 @@ gdcm.spec
 *.opt
 *Python.cxx
 *lib*
+

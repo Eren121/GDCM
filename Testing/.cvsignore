@@ -9,6 +9,9 @@ hashtest
 dcm2acr
 pourFindTaggs
 testChangeEntete
+PrintDicomDir
+makeDicomDir
+testDicomDir
 bug1
 image.dcm
 image.raw
