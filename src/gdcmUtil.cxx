@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 09:37:29 $
-  Version:   $Revision: 1.126 $
+  Date:      $Date: 2005/01/28 17:29:59 $
+  Version:   $Revision: 1.127 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,6 @@
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include <iostream>
-#include <algorithm>
 
 // For GetCurrentDate, GetCurrentTime
 #include <time.h>
@@ -711,11 +710,9 @@ std::string Util::GetMACAddress()
       while(!zero)
       {
          res = getlastdigit(addr);
-         sres += ('0' + res);
+         sres.insert(sres.begin(), '0' + res);
          zero = (addr[0] == 0) && (addr[1] == 0) && (addr[2] == 0) && (addr[3] == 0) && (addr[4] == 0) && (addr[5] == 0);
       }
-      // Since we push back the proper number is reversed:
-      std::reverse(sres.begin(),sres.end());
 
       return sres;
    }
