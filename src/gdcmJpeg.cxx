@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 15:15:26 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/02/11 19:00:39 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -259,7 +259,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
   jerr.pub.error_exit = my_error_exit;
   // for any output message call my_output_message
   //jerr.pub.output_message = my_output_message;
-  
+
   // Establish the setjmp return context for my_error_exit to use.
   if (setjmp(jerr.setjmp_buffer))
   {
@@ -289,7 +289,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
       // Suspension in jpeg_read_header
       statesuspension = 2; 
       }
-   
+ 
       // Step 4: set parameters for decompression
       // prevent the library from performing any color space conversion
       if( cinfo.process == JPROC_LOSSLESS )

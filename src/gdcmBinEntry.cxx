@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 16:36:52 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/02/11 19:00:39 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,8 +18,7 @@
 
 #include "gdcmBinEntry.h"
 #include "gdcmContentEntry.h"
-
-#include "gdcmDebug.h"
+#include "gdcmUtil.h"
 
 #include <fstream>
 #include <sstream>
@@ -74,61 +73,33 @@ BinEntry::~BinEntry()
 void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
 { 
    DocEntry::WriteContent(fp, filetype);
-   void* binArea = GetBinArea();
-   int lgr = GetLength();
-   if (binArea) // the binArea was *actually* loaded
+   uint8_t* binArea8 = BinArea; //safe notation
+   size_t lgr = GetLength();
+   if (BinArea) // the binArea was *actually* loaded
    {
-
    /// \todo  Probabely, the same operation will have to be done when we want 
    ///        to write image with Big Endian Transfert Syntax, 
    ///        and we are working on Little Endian Processor
 
 #ifdef GDCM_WORDS_BIGENDIAN
-      const int BUFFER_SIZE = 4096;
       /// \todo FIXME Right now, we only care of Pixels element
       ///       we should deal with *all* the BinEntries
+      ///       well not really since we are not interpreting values read...
 
       // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
       // -value forced while Reading process-
       if (GetGroup() == 0x7fe0 && GetVR() == "OW")
       {     
-         uint16_t *buffer = new uint16_t[BUFFER_SIZE/2];
-
-         // how many BUFFER_SIZE long pieces in binArea ?
-         int nbPieces = lgr/BUFFER_SIZE; //(16 bits = 2 Bytes)
-         int remainingSize = lgr%BUFFER_SIZE;
-
-         uint16_t *binArea16 = (uint16_t*)binArea;
-         for (int j=0;j<nbPieces;j++)
-         {
-            for (int i = 0; i < BUFFER_SIZE/2; i++)
-            {
-               //buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
-               uint16_t val = binArea16[i];
-               buffer[i] = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
-            }
-            fp->write ( (char*)buffer, BUFFER_SIZE );
-            binArea16 += BUFFER_SIZE/2;
-         }
-         if ( remainingSize > 0)
-         {
-            for (int i = 0; i < remainingSize/2; i++)
-            {
-               //buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
-               uint16_t val = binArea16[i];
-               buffer[i] = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
-            }
-            fp->write ( (char*)buffer, remainingSize );
-         } 
-         delete[] buffer;
+         uint16_t *binArea16 = (uint16_t*)binArea8;
+         binary_write (*fp, binArea16, lgr );
       }
       else
       { 
          // For any other VR, BinEntry is re-written as-is
-         fp->write ( (char*)binArea, lgr );
+         binary_write (*fp, binArea8, lgr );
       }
 #else
-      fp->write ( (char*)binArea, lgr ); // Elem value
+      binary_write ( *fp, binArea8, lgr ); // Elem value
 #endif //GDCM_WORDS_BIGENDIAN
 
    }

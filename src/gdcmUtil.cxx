@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.133 $
+  Date:      $Date: 2005/02/11 19:00:39 $
+  Version:   $Revision: 1.134 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -871,6 +871,62 @@ std::ostream &binary_write(std::ostream &os, const char *val)
 std::ostream &binary_write(std::ostream &os, std::string const &val)
 {
    return os.write(val.c_str(), val.size());
+}
+
+/**
+ * \brief  binary_write binary_write
+ * @param os ostream to write to
+ * @param val val
+ */ 
+std::ostream &binary_write(std::ostream &os, const uint8_t *val, size_t len)
+{
+   // We are writting sizeof(char) thus no need to swap bytes
+   return os.write(reinterpret_cast<const char*>(val), len);
+}
+
+/**
+ * \brief  binary_write binary_write
+ * @param os ostream to write to
+ * @param val val
+ */ 
+std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
+{
+// This is tricky since we are writting two bytes buffer. Be carefull with little endian
+// vs big endian. Also this other trick is to allocate a small (efficient) buffer that store
+// intermidiate result before writting it.
+#ifdef GDCM_WORDS_BIGENDIAN
+   const int BUFFER_SIZE = 4096;
+   uint16_t *buffer = new uint16_t[BUFFER_SIZE/2];
+ 
+   // how many BUFFER_SIZE long pieces in binArea ?
+   int nbPieces = lgr/BUFFER_SIZE; //(16 bits = 2 Bytes)
+   int remainingSize = lgr%BUFFER_SIZE;
+
+   for (int j=0;j<nbPieces;j++)
+   {
+      for (int i = 0; i < BUFFER_SIZE/2; i++)
+      {
+         //buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
+         uint16_t val = binArea16[i];
+         buffer[i] = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
+      }
+      fp->write ( (char*)buffer, BUFFER_SIZE );
+      binArea16 += BUFFER_SIZE/2;
+   }
+   if ( remainingSize > 0)
+   {
+      for (int i = 0; i < remainingSize/2; i++)
+      {
+         //buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
+         uint16_t val = binArea16[i];
+         buffer[i] = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
+      }
+      fp->write ( (char*)buffer, remainingSize );
+   }
+   delete[] buffer;
+#else
+   return os.write(reinterpret_cast<const char*>(val), len);
+#endif
 }
 
 //-------------------------------------------------------------------------
