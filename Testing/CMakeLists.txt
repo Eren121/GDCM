@@ -23,7 +23,8 @@ SET(TEST_SOURCES ${TEST_SOURCES}
   testChangeEntete.cxx
   testDicomDir.cxx    #require DICOMDIR
 # Disable makeDicomDir for now
-#  makeDicomDir.cxx    #require test.acr
+  makeDicomDir.cxx    #require test.acr ?!? JPR
+  BuildUpDicomDir.cxx
 )
 ENDIF (GDCM_DATA_ROOT)
 
