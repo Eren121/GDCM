@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.102 $
+  Date:      $Date: 2005/01/17 10:59:52 $
+  Version:   $Revision: 1.103 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -987,6 +987,34 @@ bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
 {
    return *header1 < *header2;
 }
+
+/**
+ * \brief   Initialise the visit of the DicomDirPatients of the DicomDir
+ */
+void DicomDir::InitTraversal()
+{
+   ItDicomDirPatient = Patients.begin();
+}
+
+/**
+ * \brief   Get the next entry while visiting the DicomDirPatients
+ * \return  The next DicomDirPatient if found, otherwhise NULL
+ */
+DicomDirPatient *DicomDir::GetNextEntry()
+{
+   if (ItDicomDirPatient != Patients.end())
+   {
+      DicomDirPatient *tmp = *ItDicomDirPatient;
+      ++ItDicomDirPatient;
+      return tmp;
+   }
+   else
+   {
+      return NULL;
+   }
+}
+
+
 } // end namespace gdcm
 
 //-----------------------------------------------------------------------------

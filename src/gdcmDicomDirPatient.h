@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/01/17 10:59:52 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,6 @@ typedef std::list<DicomDirStudy*> ListDicomDirStudy;
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DicomDirPatient
  * \brief   describes a PATIENT within a DICOMDIR (DicomDir)
  */
 
@@ -43,19 +42,27 @@ public:
    void Print(std::ostream &os = std::cout, std::string const & indent = "" );
    void WriteContent(std::ofstream *fp, FileType t);
 
+    // TODO Remove GetDicomDirStudies
+    // use InitTraversal + GetNextEntry instead.
+  
    /// Returns the STUDY chained List for this PATIENT.
    ListDicomDirStudy const &GetDicomDirStudies() const { return Studies; };
+
+   // should avoid exposing internal mechanism
+   void InitTraversal();
+   DicomDirStudy *GetNextEntry();
 
    /// adds the passed STUDY to the STUDY chained List for this PATIENT.
    void AddDicomDirStudy (DicomDirStudy *obj) { Studies.push_back(obj); };
 
-   ///  TODO
    DicomDirStudy *NewStudy(); 
          
 private:
 
-   /// chained list of DicomDirStudy
+   /// chained list of DicomDirStudy  (to be exploited recursively)
    ListDicomDirStudy Studies;
+   /// iterator on the DicomDirStudies of the current DicomDirPatient
+   ListDicomDirStudy::iterator ItDicomDirStudy;
 };
 } // end namespace gdcm
 

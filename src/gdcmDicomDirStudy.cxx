@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/01/17 10:59:52 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,7 +102,33 @@ DicomDirSerie *DicomDirStudy::NewSerie()
    Series.push_front(st);
 
    return st;  
-}   
+} 
+
+/**
+ * \brief   Initialise the visit of the Series
+ */
+void DicomDirStudy::InitTraversal()
+{
+   ItDicomDirSerie = Series.begin();
+}
+
+/**
+ * \brief   Get the next entry while visiting the DicomDirSeries
+ * \return  The next DicomDirSeries if found, otherwhise NULL
+ */
+DicomDirSerie *DicomDirStudy::GetNextEntry()
+{
+   if (ItDicomDirSerie != Series.end())
+   {
+      DicomDirSerie *tmp = *ItDicomDirSerie;
+      ++ItDicomDirSerie;
+      return tmp;
+   }
+   else
+   {
+      return NULL;
+   }
+}  
 //-----------------------------------------------------------------------------
 // Protected
 
