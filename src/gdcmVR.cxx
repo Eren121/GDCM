@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 14:48:19 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/01/05 15:38:28 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,7 +117,7 @@ bool VR::IsVROfGdcmBinaryRepresentable(VRKey const & tested)
    //std::cout << "VR::IsVROfGdcmBinaryRepresentable===================="
    //   << tested << std::endl;
 
-   if ( tested == "unkn")
+   if ( tested == GDCM_UNKNOWN)
       return true;
 
    if ( ! Count(tested) )

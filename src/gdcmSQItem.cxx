@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/05 15:38:28 $
+  Version:   $Revision: 1.44 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -196,7 +196,7 @@ bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group,
          {
             dictEntry = 
                Global::GetDicts()->NewVirtualDictEntry(group, element,
-                                                       "UN", "??", "??");
+                                                       "UN", GDCM_UNKNOWN, GDCM_UNKNOWN);
          } 
          // we assume the constructor didn't fail
          entry = new ValEntry(dictEntry);

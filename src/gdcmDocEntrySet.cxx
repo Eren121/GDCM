@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/05 15:38:28 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -236,7 +236,7 @@ DocEntry *DocEntrySet::NewDocEntryByName(TagName const & name)
   DictEntry *newTag = pubDict->GetDictEntryByName(name);
    if (!newTag)
    {
-      newTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "unkn", name);
+      newTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", GDCM_UNKNOWN, name);
    }
 
    DocEntry* newEntry = new DocEntry(newTag);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 17:14:12 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/05 15:38:28 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,6 +87,7 @@ namespace gdcm
 #define DICT_TS           "dicomTS.dic"
 #define DICT_VR           "dicomVR.dic"
 
+const std::string GDCM_UNKNOWN   = "gdcm::Unknown";
 const std::string GDCM_UNFOUND   = "gdcm::Unfound";
 const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
 const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:36 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/05 15:38:28 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,7 +116,6 @@ private:
    /// Elements chained list, related to the SerieElements of DICOMDIR
    ListDicomDirSerieElem   DicomDirSerieList;
    /// Elements chained list, related to the ImageElements of DICOMDIR
-   
    ListDicomDirImageElem   DicomDirImageList;
 };
 } // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/05 15:38:28 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -163,7 +163,7 @@ void DocEntry::WriteContent(std::ofstream* fp, FileType filetype)
       uint16_t z = 0;
       uint16_t shortLgr = lgr;
 
-      if (vr == "unkn")
+      if (vr == GDCM_UNKNOWN)
       {
          // Unknown was 'written'
          // deal with Little Endian            

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 11:37:02 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/01/05 15:38:28 $
+  Version:   $Revision: 1.70 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -145,11 +145,11 @@ public:
 
    ValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                      uint16_t group, uint16_t elem,
-                                     TagName const & vr = "unkn");
+                                     TagName const & vr = GDCM_UNKNOWN);
    
    BinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
                                      uint16_t group, uint16_t elem,
-                                     TagName const & vr = "unkn");
+                                     TagName const & vr = GDCM_UNKNOWN);
 
    SeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
 

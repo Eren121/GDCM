@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 17:10:22 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/05 15:38:28 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
       if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
          // Do not bother with field from private dict
-         if( v->GetName() != "unkn" )
+         if( v->GetName() != "gdcm::Unknown" )
          {  
             h2->ReplaceOrCreateByNumber( 
                               v->GetValue(),

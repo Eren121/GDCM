@@ -1,3 +1,11 @@
+2005-01-05 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmCommon.h : add the GDCM_UNKNOWN constant. This constant is to
+     replace the different values "??", "Unkn", "Unknown".
+   * src/gdcmDicomDirElement.h, gdcmDictEntry.h, gdcmDictSet.h,
+     gdcmDocEntry.cxx, gdcmDocEntrySet.[h|cxx], gdcmDocument.h, gdcmSQItem.cxx,
+     gdcmVR.cxx : use the GDCM_UNKNOWN constant.
+   * Appears a bug in gdcmDictEntry : IsVRUnknown always returns false... bad
+
 2004-12-16 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmBase.[h|cxx] : new base class. Contains the PrintLevel and an
      empty Print Method
