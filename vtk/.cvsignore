@@ -3,9 +3,12 @@
 Makefile.in
 Makefile
 vtkgdcmdemo
+vtkgdcmViewer
 *.la
 *.lo
 *.dll
 vtkGdcmReaderPython.cxx
 *Debug*
 *Release*
+*.exp
+*.lib
