@@ -13,7 +13,7 @@ Here is the checklist when freezing a version of gdcm:
        ./autogen.sh --enable-vtk --enable-python --enable-doxygen
        make
         
-    1b/ check the python test suite is clean (python testSuite.py)
+    1b/ check the python test suite is clean:
        cd gdcmPython
        export PYTHONPATH=`pwd`/..
        ln -s .libs/pygdcm.so _gdcm.so
@@ -23,13 +23,15 @@ Here is the checklist when freezing a version of gdcm:
     1c/ check the setup.py distutil script is operational and then validate
         its produced packages through the test suite, in all following cases
        - Direct installation:
-         cd $(GDCMHOME)
+         cd $GDCMHOME
          python setup.py install --prefix=/tmp/
          cd /tmp/lib/python2.2/site-packages/
-         ln -s $(GDCMDATAHOME) .
+         ln -s $GDCMHOME/gdcmData .
          export PYTHONPATH=`pwd`
          cd gdcmPython/
          python testSuite.py
+         cd $GDCMHOME
+         \rm -fr build
        - Binary distribution:
          cd $(GDCMHOME)
          python setup.py bdist --formats=rpm
