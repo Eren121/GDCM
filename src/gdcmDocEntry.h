@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/03 20:27:44 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,10 @@ public:
    uint16_t      GetElement()   { return DictEntry->GetElement();};
 
    /// Returns the 'key' of the current Dicom Header Entry
-   std::string  GetKey()       { return DictEntry->GetKey();    };
+   void  SetKey( gdcmTagKey key ) { Key = key; }
+
+   /// Returns the 'key' of the current Dicom Header Entry
+   std::string GetKey() { return Key; }
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
    /// Dictionnary of the current Dicom Header Entry
@@ -132,14 +135,6 @@ public:
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   
 
-   /// \brief Gets the depth level of a Dicom header entry embedded in
-   ///        a SeQuence
-   int GetDepthLevel() { return SQDepthLevel; }
-
-   /// \brief Sets the depth level of a Dicom header entry embedded in
-   ///        a SeQuence
-   void SetDepthLevel(int depth) { SQDepthLevel = depth; }
-
 private:
    // FIXME: In fact we should be more specific and use :
    // friend gdcmDocEntry * gdcmHeader::ReadNextElement(void);
@@ -170,9 +165,10 @@ protected:
 
    /// How many details are to be printed (value : 0,1,2)      
    int PrintLevel;
-   
-   /// Gives the depth level of elements inside SeQuences   
-   int SQDepthLevel;
+
+   /// \brief Generalized key (i.e. a gdcmBaseTagKey prepending a gdcmTagKey)
+   ///        of this gdcmDocEntry
+   gdcmTagKey Key;
 };
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 14:32:04 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,8 +45,8 @@ public:
 
    /// \brief Returns the area value of the current Dicom Header Entry
    ///  when it's not string-translatable (e.g : a LUT table)         
-   void* GetVoidArea()  { return VoidArea; };
-   void SetVoidArea(void* area);
+   void* GetVoidArea()  { return VoidArea; }
+   void  SetVoidArea( void* area );
          
 protected:
 
@@ -55,8 +55,8 @@ private:
 // Variables
    
    /// \brief unsecure memory area to hold 'non string' values 
-   /// (ie : Lookup Tables, overlays, icons)   
-  // void *VoidArea;
+   ///       (ie : Lookup Tables, overlays, icons)   
+   void *VoidArea;
 
 };
 

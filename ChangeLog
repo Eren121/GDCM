@@ -1,3 +1,68 @@
+2004-09-13 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * Preparation of writing a gdcmHeader iterator: generalisation of gdcmTagKey
+    - The following is the doxygen comment of the typedef declaration
+      of gdcmagKey in src/gdcmCommon.h:
+           gdcmTagKey is made to old an "universal" (as in URL, Universal
+           Ressource Locator)  key to a gdcmDocEntry i.e. a dicom tag.
+           A dicom tag allways has a group and an element, but a set of tags
+           embeded in various (optionally nested) sequences and sharing
+           the same group and element all share the same (group, element)
+           "identifier". Hence the (group, element) cannot be used as an
+           identifier (in gdcm we shall refer to a "TagKey") of a tag.
+           In order to construct a proper tag identifier (i.e. a key) we
+           consider the following definition of a TagKey:
+           - let Group, Element be the string representation of the
+             group and element dicom tag members,
+           - let ItemNumber be the string representation of the integer
+             index of the considered item number of a sequence,
+           Let the key of a tag embeded in a sequence, noted SeqTag, be
+           the form:
+              /ItemNumber#Group|Element
+           where "/", "#" and "|" are characters acting as separators.
+           Then the general form of a gdcmTagKey is given by:
+              Group|Element<SeqTag>
+           where <SeqTag> means NO or many instances of SeqTag.
+           Hence the gdcmTagKey of a tag not "leaving" in a sequence is the
+           string e.g.
+               0028|1201
+           but the gdcmTagKey of a tag "embeded" is the first item of
+           a sequence, itself nested in the third item of a sequence is the
+           string e.g.
+               0004|1220/2#0008|0082/0#0008|0090
+    - src/gdcmDocEntry.h: added a new Key (of type gdcmTagKey) member, in
+      order to hold the new sequence compatible key. Previously, the 
+      GetKey() method would look in the underlying gdcmDictEntry.
+    - src/gdcmDocEntry.cxx:
+      -- constructor now copies the underlying DictEntry key, in the local
+         Key member.
+      -- ::Print: displays the member Key, instead of the (group, element).
+    - src/gdcmCommon.h: added some comments on typedef gdcmTagKey.
+    - src/gdcmDocEntrySet.h:xi
+      -- ::ParseDES() now setups the gdcmTagKey of the sequence it is parsing.
+      -- now has a new BaseTagKey member.
+      -- STYLE.
+  * src/gdcmValEntry.[h|cxx], src/gdcmBinEntry.[h|cxx]: the member VoidArea,
+    previously a member of gdcmValEntry, moved to gdcmBinEntry were is
+    truly belongs.
+    This poses the problem with the semantics of the following lines
+       LoadEntryVoidArea(0x0028,0x1201);  // R    LUT
+       LoadEntryVoidArea(0x0028,0x1202);  // G    LUT
+       LoadEntryVoidArea(0x0028,0x1203);  // B    LUT
+    in gdcmDocument::gdcmDocument(std::string const & ). Please refer
+    to the long FIXME note for what the problem is. Nevertheless in
+    order to get things working the dicom dictionary was altered !
+    Please fix things urgently...
+  * Dicts/dicomV3.dic WRONGLY altered (this means we introduced a uncorrect
+    information), see above note on moving the member VoidArea. Nevertheless
+    the following entries previously correctly set as US are now inproperly
+    set to OW:
+      0028 1201 OW IMG Red Palette Color Lookup Table Data
+      0028 1202 OW IMG Green Palette Color Lookup Table Data
+      0028 1203 OW IMG Blue Palette Color Lookup Table Data
+  * src/gdcmDocEntry.[h|cxx], src/gdcmSeqEntry.h: SQDepthLevel member
+    of gdcmDocEntry moved to gdcmSeqEntry.
+  * src/gdcmSeqEntry.cxx: STYLE.
+
 2004-08-04 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Test/TestAllEntryVerify.cxx minor fix and added comments.
 

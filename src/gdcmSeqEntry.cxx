@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,11 +33,12 @@
 gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e, int depth) 
              : gdcmDocEntry(e)
 {
-   delimitor_mode = false;
-   seq_term  = NULL;
-   SQDepthLevel = depth;
    UsableLength = 0;
    ReadLength = 0xffffffff;
+   SQDepthLevel = depth;
+
+   delimitor_mode = false;
+   seq_term  = NULL;
 }
 
 /**
@@ -45,15 +46,17 @@ gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e, int depth)
  * @param   e Pointer to existing Doc entry
  * @param   depth depth level of the current Seq entry
   */
-gdcmSeqEntry::gdcmSeqEntry(gdcmDocEntry* e, int depth) : gdcmDocEntry(e->GetDictEntry())
+gdcmSeqEntry::gdcmSeqEntry( gdcmDocEntry* e, int depth )
+             : gdcmDocEntry( e->GetDictEntry() )
 {
    this->UsableLength = 0;
    this->ReadLength   = 0xffffffff;
+   SQDepthLevel = depth;
+
    this->ImplicitVR   = e->IsImplicitVR();
    this->Offset       = e->GetOffset();
-   //this->printLevel   = e->GetPrintLevel(); // no longer exists ?!?
-   this->SQDepthLevel = depth;
 }
+
 /**
  * \brief   Canonical destructor.
  */
@@ -66,11 +69,11 @@ gdcmSeqEntry::~gdcmSeqEntry() {
       delete seq_term;
 }
 
-/*
+/**
  * \brief   canonical Printer
  */
-void gdcmSeqEntry::Print(std::ostream &os){
-
+void gdcmSeqEntry::Print(std::ostream &os)
+{
    // First, Print the Dicom Element itself.
    SetPrintLevel(2);   
    gdcmDocEntry::Print(os);
@@ -119,8 +122,8 @@ void gdcmSeqEntry::Write(FILE *fp, FileType filetype)
       (*cc)->Write(fp, filetype);
    }
    
-    //we force the writting of a Sequence Delimitation item
-    // because we wrote the Sequence as a 'no Length' sequence
+   // we force the writting of a Sequence Delimitation item
+   // because we wrote the Sequence as a 'no Length' sequence
    fwrite ( &seq_term_gr,(size_t)2 ,(size_t)1 ,fp);
    fwrite ( &seq_term_el,(size_t)2 ,(size_t)1 ,fp);
    fwrite ( &seq_term_lg,(size_t)4 ,(size_t)1 ,fp); 
@@ -129,22 +132,21 @@ void gdcmSeqEntry::Write(FILE *fp, FileType filetype)
 //-----------------------------------------------------------------------------
 // Public
 
- /// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.      
-void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem, int itemNumber) {
+/// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
+void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem, int itemNumber)
+{
    sqItem->SetSQItemNumber(itemNumber);
    items.push_back(sqItem);
 }
 
-/// \brief Sets the depth level of a Sequence Entry embedded in a SeQuence 
-void gdcmSeqEntry::SetDepthLevel(int depth) {
-   SQDepthLevel = depth;
-}
-
-/// \brief return a pointer to the SQItem referenced by its ordinal number
-/// (returns the first one if ordinal number is <0
-///  returns the last  one if ordinal number is > item number
-
-gdcmSQItem *gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb) {
+/**
+ * \brief return a pointer to the SQItem referenced by its ordinal number.
+ *        Returns the first item when argument is negative.
+ *        Returns the last item when argument is bigget than the total
+ *        item number.
+ */
+gdcmSQItem *gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb)
+{
    if (nb<0)
       return (*(items.begin()));
    int count = 0 ;

@@ -16,6 +16,7 @@ Convert the C-like IO to C++ IO:
         binary IO are available at
         http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
 -----------------------------------------------------------------------------
+* Clean up src/gdcmValEntry.[h|cxx] from VoidArea
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
   be made at the cost of memory consumption (refer to header of 
   vtk/vtkGdcmHeader.cxx)

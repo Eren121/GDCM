@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 14:32:04 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
  */
 gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e)
 {
-   VoidArea = NULL;
+   VoidArea = 0;
 }
 
 /**
@@ -42,7 +42,8 @@ gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
    ImplicitVR   = e->IsImplicitVR();
    Offset       = e->GetOffset();
    PrintLevel   = e->GetPrintLevel();
-   SQDepthLevel = e->GetDepthLevel();
+   //FIXME
+   //SQDepthLevel = e->GetDepthLevel();
 
    VoidArea = 0; // let's be carefull !
 }
@@ -119,7 +120,7 @@ void gdcmBinEntry::Write(FILE *fp, FileType filetype)
 
 
 /// \brief Sets the value (non string) of the current Dicom Header Entry
-void gdcmBinEntry::SetVoidArea(void* area)  
+void gdcmBinEntry::SetVoidArea( void* area )  
 { 
    if (VoidArea)
       free(VoidArea);

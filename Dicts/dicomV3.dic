@@ -841,9 +841,9 @@
 0028 1103 US IMG Blue Palette Color Lookup Table Descriptor
 0028 1199 UI IMG Palette Color Lookup Table UID
 0028 1200 US IMG Gray Lookup Table Data (RET)
-0028 1201 US IMG Red Palette Color Lookup Table Data
-0028 1202 US IMG Green Palette Color Lookup Table Data
-0028 1203 US IMG Blue Palette Color Lookup Table Data
+0028 1201 OW IMG Red Palette Color Lookup Table Data
+0028 1202 OW IMG Green Palette Color Lookup Table Data
+0028 1203 OW IMG Blue Palette Color Lookup Table Data
 0028 1221 OW IMG Segmented Red Palette Color Lookup Table Data
 0028 1222 OW IMG Segmented Green Palette Color Lookup Table Data
 0028 1223 OW IMG Segmented Blue Palette Color Lookup Table Data

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 18:54:39 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,23 +32,20 @@
  */
 gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e)
 {
-   VoidArea = NULL; // will be in BinEntry ?
 }
 
 /**
  * \brief   Constructor from a given gdcmDocEntry
  * @param   e Pointer to existing Doc entry
  */
-gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry())
+gdcmValEntry::gdcmValEntry(gdcmDocEntry* e)
+             : gdcmDocEntry(e->GetDictEntry())
 {
    UsableLength = e->GetLength();
    ReadLength   = e->GetReadLength();
    ImplicitVR   = e->IsImplicitVR();
    Offset       = e->GetOffset();
    PrintLevel   = e->GetPrintLevel();
-   SQDepthLevel = e->GetDepthLevel();
-
-   VoidArea = NULL; // will be in BinEntry ?
 }
 
 
@@ -57,11 +54,6 @@ gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry())
  */
 gdcmValEntry::~gdcmValEntry ()
 {
-   if (!VoidArea)  // will be in BinEntry
-   {
-      free(VoidArea);
-      VoidArea = NULL; // let's be carefull !
-   }
 }
 
 //-----------------------------------------------------------------------------

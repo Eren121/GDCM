@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 07:49:36 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -109,8 +109,7 @@ gdcmDocument::gdcmDocument( std::string const & filename )
    
    SQDepthLevel = 0;
    
-   long l = ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
-   (void)l; //is l used anywhere ?
+   (void)ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
 
    rewind(Fp);
    
@@ -120,13 +119,31 @@ gdcmDocument::gdcmDocument( std::string const & filename )
    if( PhotometricInterpretation == "PALETTE COLOR " )
    {
       LoadEntryVoidArea(0x0028,0x1200);  // gray LUT   
+      /// FIXME FIXME FIXME
+      /// The tags refered by the three following lines used to be CORRECTLY
+      /// defined as having an US Value Representation in the public
+      /// dictionnary. BUT the semantics implied by the three following
+      /// lines state that the corresponding tag contents are in fact
+      /// the ones of a gdcmBinEntry.
+      /// In order to fix things "Quick and Dirty" the dictionnary was
+      /// altered on PURPOUS but now contains a WRONG value.
+      /// In order to fix things and restore the dictionary to its
+      /// correct value, one needs to decided of the semantics by deciding
+      /// wether the following tags are either:
+      /// - multivaluated US, and hence loaded as gdcmValEntry, but afterwards
+      ///   also used as gdcmBinEntry, which requires the proper conversion,
+      /// - OW, and hence loaded as gdcmBinEntry, but afterwards also used
+      ///   as gdcmValEntry, which requires the proper conversion.
       LoadEntryVoidArea(0x0028,0x1201);  // R    LUT
       LoadEntryVoidArea(0x0028,0x1202);  // G    LUT
       LoadEntryVoidArea(0x0028,0x1203);  // B    LUT
       
-      LoadEntryVoidArea(0x0028,0x1221);  // Segmented Red   Palette Color LUT Data
-      LoadEntryVoidArea(0x0028,0x1222);  // Segmented Green Palette Color LUT Data
-      LoadEntryVoidArea(0x0028,0x1223);  // Segmented Blue  Palette Color LUT Data
+      // Segmented Red   Palette Color LUT Data
+      LoadEntryVoidArea(0x0028,0x1221);
+      // Segmented Green Palette Color LUT Data
+      LoadEntryVoidArea(0x0028,0x1222);
+      // Segmented Blue  Palette Color LUT Data
+      LoadEntryVoidArea(0x0028,0x1223);
    } 
    //FIXME later : how to use it?
    LoadEntryVoidArea(0x0028,0x3006);  //LUT Data (CTX dependent) 
@@ -1017,7 +1034,7 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem)
  * @param group   group number of the Entry 
  * @param elem  element number of the Entry
  */
-void *gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
+void* gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
 {
    gdcmDocEntry *docElement = GetDocEntryByNumber(group, elem);
    if ( !docElement )
@@ -1040,7 +1057,10 @@ void *gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
       return NULL;
    }
    /// \TODO Drop any already existing void area! JPR
-   SetEntryVoidAreaByNumber(a, group, elem);
+   if( !SetEntryVoidAreaByNumber( a, group, elem ) );
+   {
+      dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea setting failed.");
+   }
 
    return a;
 }
@@ -1083,15 +1103,16 @@ bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
                                             uint16_t group, 
                                             uint16_t element) 
 {
-   gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( !TagHT.count(key))
+   gdcmDocEntry* currentEntry = GetDocEntryByNumber(group, element);
+   if ( !currentEntry )
    {
       return false;
    }
-
-   // This was for multimap ?
-   (( gdcmBinEntry *)( ((TagHT.equal_range(key)).first)->second ))->SetVoidArea(area);
-      
+   if ( gdcmBinEntry* binEntry = dynamic_cast<gdcmBinEntry*>(currentEntry) )
+   {
+      binEntry->SetVoidArea( area );
+      return true;
+   }
    return true;
 }
 
@@ -1296,7 +1317,6 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
                             bool delim_mode)
 {
    gdcmDocEntry *newDocEntry = 0;
-   gdcmValEntry *newValEntry = 0;
    unsigned long l = 0;
    
    int depth = set->GetDepthLevel();
@@ -1319,11 +1339,12 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
          if ( gdcmGlobal::GetVR()->IsVROfGdcmStringRepresentable(vr) )
          {
             /////// ValEntry
-            newValEntry = new gdcmValEntry(newDocEntry->GetDictEntry());
-            newValEntry->Copy(newDocEntry);
-            newValEntry->SetDepthLevel(depth);
-            set->AddEntry(newValEntry);
-            LoadDocEntry(newValEntry);
+            gdcmValEntry* newValEntry =
+               new gdcmValEntry( newDocEntry->GetDictEntry() );
+            newValEntry->Copy( newDocEntry );
+            newValEntry->SetKey( set->GetBaseTagKey() + newValEntry->GetKey() );
+            set->AddEntry( newValEntry );
+            LoadDocEntry( newValEntry );
             if (newValEntry->IsItemDelimitor())
             {
                break;
@@ -1343,10 +1364,12 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             }
 
             ////// BinEntry or UNKOWN VR:
-            gdcmBinEntry *bn = new gdcmBinEntry(newDocEntry->GetDictEntry());
-            bn->Copy(newDocEntry);
-            set->AddEntry(bn);
-            LoadDocEntry(bn);
+            gdcmBinEntry* newBinEntry =
+               new gdcmBinEntry( newDocEntry->GetDictEntry() );
+            newBinEntry->Copy( newDocEntry );
+            newBinEntry->SetKey( set->GetBaseTagKey() + newBinEntry->GetKey() );
+            set->AddEntry( newBinEntry );
+            LoadDocEntry( newBinEntry );
          }
 
          if (newDocEntry->GetGroup()   == 0x7fe0 && 
@@ -1387,20 +1410,21 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             }
          }
          // no other way to create it ...
-         gdcmSeqEntry *sq = new gdcmSeqEntry(newDocEntry->GetDictEntry(),
-                                             set->GetDepthLevel());
-         sq->Copy(newDocEntry);
-         sq->SetDelimitorMode(delim_mode);
-         sq->SetDepthLevel(depth);
+         gdcmSeqEntry* newSeqEntry =
+            new gdcmSeqEntry( newDocEntry->GetDictEntry(),
+                              set->GetDepthLevel() );
+         newSeqEntry->Copy( newDocEntry );
+         newSeqEntry->SetDelimitorMode( delim_mode );
+         newSeqEntry->SetDepthLevel( depth );
+         newSeqEntry->SetKey( set->GetBaseTagKey() + newSeqEntry->GetKey() );
 
          if ( l != 0 )
          {  // Don't try to parse zero-length sequences
-            long lgt = ParseSQ( sq, 
-                                newDocEntry->GetOffset(),
-                                l, delim_mode);
-            (void)lgt;  //not used...
+            (void)ParseSQ( newSeqEntry, 
+                           newDocEntry->GetOffset(),
+                           l, delim_mode);
          }
-         set->AddEntry(sq);
+         set->AddEntry( newSeqEntry );
          if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
          {
             break;
@@ -1415,17 +1439,15 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
  * \brief   Parses a Sequence ( SeqEntry after SeqEntry)
  * @return  parsed length for this level
  */ 
-long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
-                           long offset, long l_max, bool delim_mode)
+long gdcmDocument::ParseSQ( gdcmSeqEntry* seqEntry,
+                            long offset, long l_max, bool delim_mode)
 {
    int SQItemNumber = 0;
    bool dlm_mod;
-   //int depth = set->GetDepthLevel();
-   //(void)depth; //not used
 
    while (true)
    {
-      gdcmDocEntry *newDocEntry = ReadNextDocEntry();   
+      gdcmDocEntry* newDocEntry = ReadNextDocEntry();   
       if ( !newDocEntry )
       {
          // FIXME Should warn user
@@ -1435,7 +1457,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
       {
          if ( newDocEntry->IsSequenceDelimitor() )
          {
-            set->SetSequenceDelimitationItem( newDocEntry );
+            seqEntry->SetSequenceDelimitationItem( newDocEntry );
             break;
          }
       }
@@ -1444,8 +1466,13 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
           break;
       }
 
-      gdcmSQItem *itemSQ = new gdcmSQItem(set->GetDepthLevel());
-      itemSQ->AddEntry(newDocEntry);
+      gdcmSQItem *itemSQ = new gdcmSQItem( seqEntry->GetDepthLevel() );
+      std::ostringstream newBase;
+      newBase << seqEntry->GetKey()
+              << "/"
+              << SQItemNumber
+              << "#";
+      itemSQ->SetBaseTagKey( newBase.str() );
       unsigned int l = newDocEntry->GetReadLength();
       
       if ( l == 0xffffffff )
@@ -1457,12 +1484,11 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
          dlm_mod = false;
       }
    
-      int lgr = ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
-      (void)lgr;  //FIXME not used
+      (void)ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
       
-      set->AddEntry(itemSQ, SQItemNumber); 
+      seqEntry->AddEntry( itemSQ, SQItemNumber ); 
       SQItemNumber++;
-      if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
+      if ( !delim_mode && ( ftell(Fp) - offset ) >= l_max )
       {
          break;
       }
@@ -1554,7 +1580,6 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
    if ( IsDocEntryAnInteger(entry) )
    {   
       uint32_t NewInt;
-      //std::ostringstream s; //shadow previous declaration
       int nbInt;
       // When short integer(s) are expected, read and convert the following 
       // n *two characters properly i.e. consider them as short integers as

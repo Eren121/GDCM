@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:52 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmException.h"
 #include "gdcmDocEntry.h"
  
+typedef std::string gdcmBaseTagKey;
 //-----------------------------------------------------------------------------
 
 class GDCM_EXPORT gdcmDocEntrySet
@@ -47,6 +48,9 @@ public:
    /// \brief Sets the depth level of a Dicom Header Entry embedded in a
    /// SeQuence
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
+
+   void           SetBaseTagKey( gdcmBaseTagKey key ) { BaseTagKey = key; }
+   gdcmBaseTagKey GetBaseTagKey( ) { return BaseTagKey; }
 
    virtual gdcmDocEntry* GetDocEntryByNumber(uint16_t group,
                                              uint16_t element) = 0;
@@ -78,6 +82,10 @@ protected:
 
    /// Gives the depth level of the element set inside SeQuences   
    int SQDepthLevel;
+
+   /// \brief A TagKey of a gdcmDocEntry nested in a sequence is prepended
+   ///        with this BaseTagKey.
+   gdcmBaseTagKey BaseTagKey;
 private:
 };
 

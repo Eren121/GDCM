@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/09 17:49:24 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,7 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in)
 {
    ImplicitVR = false;
    DictEntry  = in;
+   SetKey( in->GetKey( ) );
    Offset     = 0 ; // To avoid further missprinting
 }
 
@@ -58,14 +59,13 @@ void gdcmDocEntry::Print(std::ostream & os)
    std::string d2, vr;
    std::ostringstream s;
    uint32_t lgth;
-   char greltag[10];  //group element tag
 
    g  = GetGroup();
    e  = GetElement();
    o  = GetOffset();
    vr = GetVR();
-   sprintf(greltag,"%04x|%04x ",g,e);           
-   s << greltag ;
+
+   s << GetKey();
        
    if (PrintLevel >= 2)
    {

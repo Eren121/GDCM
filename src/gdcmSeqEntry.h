@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:53 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/09/13 12:10:53 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,8 +50,11 @@ public:
    void AddEntry(gdcmSQItem *it, int itemNumber);
    gdcmSQItem *GetSQItemByOrdinalNumber(int itemNumber);
 
-   void SetDepthLevel(int depth);
-         
+   /// Gets the depth level
+   int GetDepthLevel() { return SQDepthLevel; }
+                                                                                
+   /// Sets the depth level of a Sequence Entry embedded in a SeQuence
+   void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 protected:
 
 private:
@@ -65,6 +68,9 @@ private:
    
    /// sequence terminator item 
    gdcmDocEntry *seq_term;
+
+   /// Gives the depth level of elements inside SeQuences
+   int SQDepthLevel;
 };
 
 //-----------------------------------------------------------------------------
