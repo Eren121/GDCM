@@ -1,4 +1,7 @@
 2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * vtk/vtkGdcmReader.cxx : compilation bug fix for the vtk part
+
+2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocument.cxx : fix bug... test if the fp is opened to use it
    * src/gdcmPixelConvert.cxx : calculate the image size when while the grab of
      the header.

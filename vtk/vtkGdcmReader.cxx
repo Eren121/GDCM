@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.54 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.55 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -631,7 +631,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
    
    if( file.GetHeader()->HasLUT() && AllowLookupTable )
    {
-      size               = file.GetImageDataSizeRaw();
+      size               = file.GetImageDataSize();
       source             = (unsigned char*) file.GetImageDataRaw();
       unsigned char *lut = (unsigned char*) file.GetLutRGBA();
 
