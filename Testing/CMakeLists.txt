@@ -143,6 +143,12 @@ SET(BLACK_LIST
   # JPR: also breaks TestReadWriteReadCompare : Pixel differ (as expanded
   #      in memory)  
   "KODAK-12-MONO1-Odd_Terminated_Sequence.dcm"
+  
+  # Multiframe Papyrus format image
+  # Just to remember this format exist, and is gdcm::Header compliant
+  # (NOT gdcm::File ...)
+  # any contribution is welcome
+  "PET-cardio-Multiframe-Papyrus.dcm" 
   )
 
 # This is a GLOB expression, change it into a list separated with a comma and \n
