@@ -19,14 +19,17 @@ static int _gdcm_read_RLE_fragment (char ** image_buffer,
  * \ingroup   gdcmFile
  * \brief     Reads a 'Run Length Encoded' Dicom encapsulated file
  * @param     image_buffer destination Address (in caller's memory space) 
- *            at which the
- *            pixel data should be copied
+ *            at which the pixel data should be copied
+ *   
  * @return    int acts as a Boolean 
  */
 
 // This is a debug version.
 // Forget the printf as they will be removed
 // as soon as the last Heuristics are checked
+
+// pb with RLE 16 Bits : 
+
 
 int
 gdcmFile::gdcm_read_RLE_file (void * image_buffer) {

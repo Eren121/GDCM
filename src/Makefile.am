@@ -9,8 +9,8 @@ CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\" \
 
 libgdcm_la_LIBADD = \
    $(top_builddir)/src/jpeg/libijg12/libgdcmijpeg12.la  \
-   $(top_builddir)/src/jpeg/libijg8/libgdcmijpeg8.la
-
+   $(top_builddir)/src/jpeg/libijg8/libgdcmijpeg8.la    \
+   $(top_builddir)/src/jpeg/ljpg/libgdcmjpg.la 
 
 libgdcm_la_SOURCES=		\
 	gdcmException.cxx	\

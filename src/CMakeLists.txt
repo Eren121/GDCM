@@ -6,6 +6,8 @@ SUBDIRS(jpeg)
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/jpeg/libijg8
   #${GDCM_SOURCE_DIR}/jpeg/libijg12 #all files have been renamed, appending 12
+  #${GDCM_SOURCE_DIR}/jpeg/ljpg     # JPEG lib from xmedcom 
+                                    #
 )
 
 SET(libgdcm_la_SOURCES
@@ -27,7 +29,7 @@ SET(libgdcm_la_SOURCES
 	gdcmJpeg2000.cxx
 	gdcmRLE.cxx
 	gdcmParse.cxx
-	gdcmJpegIdo.cxx
+	gdcmJpegIdo.cxx # to be removed
 )
 #-----------------------------------------------------------------------------
 # Why one should not use ADD_DEFINITIONS
@@ -49,16 +51,18 @@ IF(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
     gdcmijpeg8 
     gdcmijpeg12
+    gdcmjpeg     # JPEG lib from xmedcom 
   )
 ELSE(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
     gdcmijpeg8 
     gdcmijpeg12
+    gdcmjpeg 
     Wsock32.lib   #doesn't exist on cygwin
   )
 ENDIF(UNIX)
 
-#The following is not wroking because when a header file is not found it tries 
+#The following is not working because when a header file is not found it tries 
 #to find one in the binary dir
 #INSTALL_FILES(/include .h ${libgdcm_la_SOURCES})
 #INSTALL_FILES(/include FILES gdcmIdo.h iddcmjpeg.h)
