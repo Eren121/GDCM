@@ -1,3 +1,19 @@
+2005-01-30 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * SerieHeader::SetDirectory() allow recursive exploration of the Directory
+	* SerieHeader::AddFileName() creates as many Coherent Files lists 
+	              (same Serie UID) as it founds different Serie UID 
+					   amongst the files insead of discarting any file 
+						that doesn't match with the first one he found.
+	* SerieHeader::OrderGdcmFileListhas now pne parameter : 
+	               the Coherent Files list the user wants to sort
+   * SerieHeader::GetFirstCoherentFileList()
+   * SerieHeader::GetLastCoherentFileList() allows to parse 
+	               the set of Coherent Files lists 
+   * const SerieHeader::GdcmFileList &GetGdcmFileList() is kept, for backwards
+	               compatibility (it returns the *first* Coherent Files list, 
+						since there was only one before)
+	* Test/TestSerieHeader gets gdcmData as a default root directory		
+					  
 2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Remove friend between DocEntry and File classes
    * Remove friend between PixelReadConverter and RLEFramesInfo, 
@@ -23,8 +39,8 @@
 
 2005-01-27 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Rewrite the base 256 to base 10 conversion, using string operation only.
-	 This allos us to get rid of the problematic 64bits integer type (does not
-	 alwyas exist on target platform).
+	 This allows us to get rid of the problematic 64bits integer type (does not
+	 always exist on target platform).
 
 2005-01-27 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * Add construct and destructor to class gdcm::Debug to close the debug file
