@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:26 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/06 20:33:55 $
+  Version:   $Revision: 1.44 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,15 +73,15 @@ public:
    // Note: the DicomDir:: namespace prefix is needed by Swig in the 
    //       following method declarations. Refer to gdcmPython/gdcm.i
    //       for the reasons of this unecessary notation at C++ level.
-   void SetStartMethod(    DicomDir::Method *m,
-                           void* = NULL,
-                           DicomDir::Method *m = NULL );
-   void SetProgressMethod( DicomDir::Method *m, 
-                           void* = NULL,
-                           DicomDir::Method *m = NULL );
-   void SetEndMethod(      DicomDir::Method *m,
-                           void* = NULL, 
-                           DicomDir::Method *m = NULL );
+   void SetStartMethod(    DicomDir::Method *method,
+                           void *arg = NULL,
+                           DicomDir::Method *argDelete = NULL );
+   void SetProgressMethod( DicomDir::Method *method, 
+                           void *arg = NULL,
+                           DicomDir::Method *argDelete = NULL );
+   void SetEndMethod(      DicomDir::Method *method,
+                           void *arg = NULL, 
+                           DicomDir::Method *argDelete = NULL );
    void SetStartMethodArgDelete( DicomDir::Method *m );
    void SetProgressMethodArgDelete( DicomDir::Method *m );
    void SetEndMethodArgDelete( DicomDir::Method *m );
