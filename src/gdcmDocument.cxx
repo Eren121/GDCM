@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/24 18:03:14 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/06/25 12:56:39 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1249,7 +1249,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
          if (NewDocEntry->GetGroup()   == 0x7fe0 && 
              NewDocEntry->GetElement() == 0x0010 )
          {
-             if (NewDocEntry->GetLength()==0xffffffff)
+             if (NewDocEntry->GetReadLength()==0xffffffff)
              {
                 // Broken US.3405.1.dcm
                 Parse7FE0(); // to skip the pixels 
@@ -1417,9 +1417,9 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
 
    // When we find a BinEntry not very much can be done :
    if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) ) {
-	
+
       LoadEntryVoidArea(BinEntryPtr);
-      s << "gdcm::Loaded (BinEntry)";		
+      s << "gdcm::Loaded (BinEntry)";
       BinEntryPtr->SetValue(s.str());
       return;
    }

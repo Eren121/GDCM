@@ -1,3 +1,9 @@
+2004-06-23 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * Test/PrintAllDocument.cxx: looping on files is now effective. It used to
+     loop on the same image until memory went out. 
+     Note: this means we still have gobs of memory loss in PrintDocument
+   * src/gdcmDocument.cxx: fixes problem on parsing on file
+     gdcmData/16BitsJpegLosslessGrayScale.dcm.
 2004-06-24 Jean-Pierre Roux
 FIX : Write - All the Sequences and Sequence Item are now written 
             as 'no length' stuff, and a Sequence Delimitor aor an Item Delimitor
