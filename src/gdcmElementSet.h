@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/03 14:04:02 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/09/10 14:32:04 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,9 +45,9 @@ public:
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype); 
 
-   /// Accessor to \ref gdcmElementSet::tagHT
+   /// Accessor to \ref gdcmElementSet::TagHT
    // Do not expose this to user (public API) !
-   //I re-add it temporaryly JPRx
+   // I re-add it temporaryly JPRx
    TagDocEntryHT &GetEntry() { return TagHT; };
 
 protected:

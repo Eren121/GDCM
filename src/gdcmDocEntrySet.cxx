@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/07 13:57:04 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/09/10 14:32:04 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -194,7 +194,7 @@ gdcmDictEntry* gdcmDocEntrySet::NewVirtualDictEntry(uint16_t group,
 /** \brief 
  * Creates a new DocEntry (without any 'value' ...)
  * @param   group     group  number of the underlying DictEntry
- * @param   element  element number of the underlying DictEntry 
+ * @param   elem  elem number of the underlying DictEntry 
  */
 gdcmDocEntry* gdcmDocEntrySet::NewDocEntryByNumber(uint16_t group,
                                                    uint16_t elem)

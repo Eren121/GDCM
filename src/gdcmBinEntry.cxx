@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/09 17:49:24 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/09/10 14:32:04 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,6 +116,15 @@ void gdcmBinEntry::Write(FILE *fp, FileType filetype)
 }
 //-----------------------------------------------------------------------------
 // Public
+
+
+/// \brief Sets the value (non string) of the current Dicom Header Entry
+void gdcmBinEntry::SetVoidArea(void* area)  
+{ 
+   if (VoidArea)
+      free(VoidArea);
+   VoidArea = area;  
+}
 
 //-----------------------------------------------------------------------------
 // Protected

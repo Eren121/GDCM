@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/09 17:49:24 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2004/09/10 14:32:04 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -610,7 +610,9 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
    else
    {
       valEntry = dynamic_cast< gdcmValEntry* >(currentEntry);
-      if ( !valEntry )
+      if ( !valEntry ) // Euuuuh? It wasn't a ValEntry
+                       // then we change it to a ValEntry ?
+                       // Shouldn't it be considered as an error ?
       {
          // We need to promote the gdcmDocEntry to a gdcmValEntry:
          valEntry = new gdcmValEntry(currentEntry);
