@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/14 16:04:02 $
-  Version:   $Revision: 1.144 $
+  Date:      $Date: 2005/02/14 16:20:30 $
+  Version:   $Revision: 1.145 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -903,9 +903,8 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
 // intermediate result before writting it.
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    const int BUFFER_SIZE = 4096;
-   uint16_t *binArea16 = (uint16_t*)val;
-   static uint16_t buffer[BUFFER_SIZE/2];
-   uint16_t *pbuffer   = buffer;
+   static char buffer[BUFFER_SIZE];
+   uint16_t *binArea16 = (uint16_t*)val; //for the const
  
    // how many BUFFER_SIZE long pieces in binArea ?
    int nbPieces = len/BUFFER_SIZE; //(16 bits = 2 Bytes)
@@ -913,32 +912,25 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
 
    for (int j=0;j<nbPieces;j++)
    {
-
+      uint16_t *pbuffer  = (uint16_t*)buffer; //reinitialize pbuffer
       for (int i = 0; i < BUFFER_SIZE/2; i++)
       {
-        //uint16_t val16 = binArea16[i];
-        //buffer[i] = ((( val16 << 8 ) & 0xff00 ) | (( val16 >> 8 ) & 0x00ff ) );
-        // save CPU time :
-        //   1) Save 1 affectation and 2 AND operations
-        //       buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
-        //   2) Replace * operations by + operations using pointers
          *pbuffer = *binArea16 >> 8 | *binArea16 << 8;
          pbuffer++;
          binArea16++;
       }
-      os.write ( (char*)buffer, BUFFER_SIZE );
+      os.write ( buffer, BUFFER_SIZE );
    }
    if ( remainingSize > 0)
    {
+      uint16_t *pbuffer  = (uint16_t*)buffer; //reinitialize pbuffer
       for (int i = 0; i < remainingSize/2; i++)
       {
-         //uint16_t val16 = binArea16[i];
-         //buffer[i] = ((( val16 << 8 ) & 0xff00 ) | (( val16 >> 8 ) & 0x00ff) );
-         *pbuffer = *binArea16 >> 8 | *binArea16 >> 8;
+         *pbuffer = *binArea16 >> 8 | *binArea16 << 8;
          pbuffer++;
          binArea16++;
       }
-      os.write ( (char*)buffer, remainingSize );
+      os.write ( buffer, remainingSize );
    }
    return os;
 #else
