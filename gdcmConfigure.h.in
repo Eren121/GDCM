@@ -7,7 +7,7 @@
 /* Platform Features                                                        */
 
 /* Byte order.  */
-//#cmakedefine GDCM_WORDS_BIGENDIAN
+#cmakedefine GDCM_WORDS_BIGENDIAN
 
 /* Allow access to UINT32_MAX , cf gdcmCommon.h */
 #define __STDC_LIMIT_MACROS
