@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/07/19 03:34:12 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,21 +37,24 @@ class GDCM_EXPORT gdcmElementSet : public gdcmDocEntrySet
 {
 public:
    gdcmElementSet(int);
-   ~gdcmElementSet(void);
+   ~gdcmElementSet();
    virtual bool AddEntry(gdcmDocEntry *Entry);
    virtual bool RemoveEntry(gdcmDocEntry *EntryToRemove);
 
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype); 
 
-    
+   /// Accessor to \ref gdcmElementSet::tagHT
+   // Do not expose this to user (public API) !
+   //TagDocEntryHT &GetEntry() { return TagHT; };
+
 protected:
 // Variables
    /// Hash Table (map), to provide fast access
-   TagDocEntryHT tagHT; 
+   TagDocEntryHT TagHT; 
      
 private:
-   
+   //friend class gdcmDicomDir;
 };
 
 //-----------------------------------------------------------------------------

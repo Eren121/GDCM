@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/16 15:18:05 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2004/07/19 03:34:11 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,41 +94,43 @@ const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
  *          with a FALSE value for the 'enable_sequence' param.
  *          ('public elements' may be embedded in 'shadow Sequences')
  */
-gdcmDocument::gdcmDocument(std::string const & inFilename, 
-                           bool exception_on_error,
-                           bool enable_sequences,
-                           bool ignore_shadow) 
+gdcmDocument::gdcmDocument( std::string const & filename, 
+                            bool exception_on_error,
+                            bool enable_sequences,
+                            bool ignore_shadow) 
               : gdcmElementSet(-1)
 {
    IgnoreShadow = ignore_shadow;
-   //enableSequences=enable_sequences;
+   //EnableSequences=enable_sequences;
    (void)enable_sequences;
-   enableSequences = true; // JPR // TODO : remove params out of the constructor
+   EnableSequences = true; // JPR // TODO : remove params out of the constructor
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
-   Filename = inFilename;
+   Filename = filename;
    Initialise();
 
    if ( !OpenFile(exception_on_error))
+   {
       return;
+   }
    
    dbg.Verbose(0, "gdcmDocument::gdcmDocument: starting parsing of file: ",
                   Filename.c_str());
-   rewind(fp);
+   rewind(Fp);
    
-   fseek(fp,0L,SEEK_END);
-   long lgt = ftell(fp);    
+   fseek(Fp,0L,SEEK_END);
+   long lgt = ftell(Fp);    
            
-   rewind(fp);
+   rewind(Fp);
    CheckSwap();
-   long beg = ftell(fp);
+   long beg = ftell(Fp);
    lgt -= beg;
    
    SQDepthLevel=0;
    
-   long l=ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
+   long l = ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
    (void)l; //is l used anywhere ?
 
-   rewind(fp); 
+   rewind(Fp);
    
    // Load 'non string' values
       
@@ -169,7 +171,7 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
    }
    // ----------------- End of Special Patch ---------------- 
 
-   printLevel = 1;  // 'Medium' print level by default
+   PrintLevel = 1;  // 'Medium' print level by default
 }
 
 /**
@@ -180,12 +182,12 @@ gdcmDocument::gdcmDocument(bool exception_on_error)
              :gdcmElementSet(-1)
 {
    (void)exception_on_error;
-   //enableSequences=0; // ?!? JPR
+   //EnableSequences=0; // ?!? JPR
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
 
-   printLevel = 1;  // 'Medium' print level by default
+   PrintLevel = 1;  // 'Medium' print level by default
 }
 
 /**
@@ -197,12 +199,12 @@ gdcmDocument::~gdcmDocument ()
    RefShaDict = NULL;
 
    // Recursive clean up of sequences
-   for (TagDocEntryHT::const_iterator it = tagHT.begin(); 
-                                      it != tagHT.end(); ++it )
+   for (TagDocEntryHT::const_iterator it = TagHT.begin(); 
+                                      it != TagHT.end(); ++it )
    { 
       delete it->second;
    }
-   tagHT.clear();
+   TagHT.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -282,7 +284,7 @@ bool gdcmDocument::IsReadable()
       return false;
    }
 
-   if(tagHT.empty())
+   if( TagHT.empty() )
    {
       dbg.Verbose(0, "gdcmDocument::IsReadable: no tags in internal"
                      " hash table.");
@@ -319,11 +321,12 @@ bool gdcmDocument::IsGivenTransferSyntax(std::string const & syntaxToCheck)
       // The actual transfer (as read from disk) might be padded. We
       // first need to remove the potential padding. We can make the
       // weak assumption that padding was not executed with digits...
-      while ( ! isdigit(transfer[transfer.length()-1]) )
-      {
-         transfer.erase(transfer.length()-1, 1);
-      }
-      if ( transfer == syntaxToCheck )
+//      while ( ! isdigit(transfer[transfer.length()-1]) )
+//      {
+//         transfer.erase(transfer.length()-1, 1);
+//      }
+//      if ( transfer == syntaxToCheck )
+      if( transfer.find( syntaxToCheck ) )   //should be faster
       {
          return true;
       }
@@ -482,9 +485,9 @@ FileType gdcmDocument::GetFileType()
 FILE *gdcmDocument::OpenFile(bool exception_on_error)
   throw(gdcmFileError) 
 {
-  fp = fopen(Filename.c_str(),"rb");
+  Fp = fopen(Filename.c_str(),"rb");
 
-  if(!fp)
+  if(!Fp)
   {
      if(exception_on_error)
      {
@@ -498,27 +501,27 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
      }
   }
 
-  if ( fp ) 
+  if ( Fp )
   {
      uint16_t zero;
-     fread(&zero,  (size_t)2, (size_t)1, fp);
+     fread(&zero,  (size_t)2, (size_t)1, Fp);
 
     //ACR -- or DICOM with no Preamble --
-    if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200)
+    if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200 )
     {
-       return fp;
+       return Fp;
     }
 
     //DICOM
-    fseek(fp, 126L, SEEK_CUR);
+    fseek(Fp, 126L, SEEK_CUR);
     char dicm[4];
-    fread(dicm,  (size_t)4, (size_t)1, fp);
+    fread(dicm,  (size_t)4, (size_t)1, Fp);
     if( memcmp(dicm, "DICM", 4) == 0 )
     {
-       return fp;
+       return Fp;
     }
 
-    fclose(fp);
+    fclose(Fp);
     dbg.Verbose(0, "gdcmDocument::OpenFile not DICOM/ACR", Filename.c_str());
   }
   else
@@ -535,8 +538,8 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
  */
 bool gdcmDocument::CloseFile()
 {
-  int closed = fclose(fp);
-  fp = (FILE *)0;
+  int closed = fclose(Fp);
+  Fp = (FILE *)0;
 
   return closed;
 }
@@ -596,7 +599,7 @@ void gdcmDocument::Write(FILE* fp,FileType filetype)
  *    UpdateGroupLength(true,ACR);
  */
  
-   gdcmElementSet::Write(fp,filetype); // This one is recursive
+   gdcmElementSet::Write(fp, filetype); // This one is recursive
 
 }
 
@@ -615,7 +618,7 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          uint16_t group, 
                                          uint16_t elem )
 {
-   gdcmValEntry* valEntry;
+   gdcmValEntry* valEntry = 0;
 
    gdcmDocEntry* currentEntry = GetDocEntryByNumber( group, elem);
    if (!currentEntry)
@@ -708,8 +711,9 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
 bool gdcmDocument::ReplaceIfExistByNumber(const char* value, uint16_t group,
                                           uint16_t elem ) 
 {
-   std::string v = value;
+   const std::string v = value;
    SetEntryByNumber(v, group, elem);
+
    return true;
 } 
 
@@ -725,7 +729,7 @@ bool gdcmDocument::ReplaceIfExistByNumber(const char* value, uint16_t group,
 int gdcmDocument::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
 {
    std::string key = gdcmDictEntry::TranslateToKey(group, element );
-   return tagHT.count(key);
+   return TagHT.count(key);
 }
 
 /**
@@ -765,7 +769,9 @@ std::string gdcmDocument::GetEntryVRByName(TagName tagName)
 {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
+   {
       return GDCM_UNFOUND;
+   }
 
    gdcmDocEntry* elem =  GetDocEntryByNumber(dictEntry->GetGroup(),
                                              dictEntry->GetElement());
@@ -786,9 +792,12 @@ std::string gdcmDocument::GetEntryByNumber(uint16_t group, uint16_t element)
 {
    gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
    /// \todo use map methods, instead of multimap JPR
-   if ( ! tagHT.count(key))
+   if ( !TagHT.count(key))
+   {
       return GDCM_UNFOUND;
-   return ((gdcmValEntry *)tagHT.find(key)->second)->GetValue();
+   }
+
+   return ((gdcmValEntry *)TagHT.find(key)->second)->GetValue();
 }
 
 /**
@@ -807,9 +816,11 @@ std::string gdcmDocument::GetEntryByNumber(uint16_t group, uint16_t element)
  */
 std::string gdcmDocument::GetEntryVRByNumber(uint16_t group, uint16_t element)
 {
-   gdcmDocEntry* elem =  GetDocEntryByNumber(group, element);
+   gdcmDocEntry* elem = GetDocEntryByNumber(group, element);
    if ( !elem )
+   {
       return GDCM_UNFOUND;
+   }
    return elem->GetVR();
 }
 
@@ -825,7 +836,9 @@ int gdcmDocument::GetEntryLengthByNumber(uint16_t group, uint16_t element)
 {
    gdcmDocEntry* elem =  GetDocEntryByNumber(group, element);
    if ( !elem )
-      return -2;
+   {
+      return -2;  //magic number
+   }
    return elem->GetLength();
 }
 /**
@@ -837,8 +850,10 @@ int gdcmDocument::GetEntryLengthByNumber(uint16_t group, uint16_t element)
 bool gdcmDocument::SetEntryByName(std::string content,std::string tagName)
 {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
-   if( dictEntry == NULL)
-      return false;    
+   if( !dictEntry )
+   {
+      return false;
+   }
 
    return SetEntryByNumber(content,dictEntry->GetGroup(),
                                    dictEntry->GetElement());
@@ -856,27 +871,34 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
                                     uint16_t group,
                                     uint16_t element) 
 {
-   gdcmValEntry* ValEntry = GetValEntryByNumber(group, element);
-   if (!ValEntry)
+   gdcmValEntry* valEntry = GetValEntryByNumber(group, element);
+   if (!valEntry )
    {
       dbg.Verbose(0, "gdcmDocument::SetEntryByNumber: no corresponding",
                      " ValEntry (try promotion first).");
       return false;
    }
    // Non even content must be padded with a space (020H).
-   if((content.length())%2) {
-      content = content + '\0';
+   if( content.length() % 2 )
+   {
+      content += '\0';
    }      
-   ValEntry->SetValue(content);
+   valEntry->SetValue(content);
    
    // Integers have a special treatement for their length:
-   gdcmVRKey vr = ValEntry->GetVR();
-   if( (vr == "US") || (vr == "SS") ) 
-      ValEntry->SetLength(2);
-   else if( (vr == "UL") || (vr == "SL") )
-      ValEntry->SetLength(4);
+   gdcmVRKey vr = valEntry->GetVR();
+   if( vr == "US" || vr == "SS" )
+   {
+      valEntry->SetLength(2);
+   }
+   else if( vr == "UL" || vr == "SL" )
+   {
+      valEntry->SetLength(4);
+   }
    else
-      ValEntry->SetLength(content.length());
+   {
+      valEntry->SetLength(content.length());
+   }
 
    return true;
 } 
@@ -897,8 +919,10 @@ bool gdcmDocument::SetEntryByNumber(void *content,
 {
    (void)lgth;  //not used
    gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
+   if ( !TagHT.count(key))
+   {
       return false;
+   }
 
 /* Hope Binaray field length is *never* wrong    
    if(lgth%2) // Non even length are padded with a space (020H).
@@ -908,7 +932,7 @@ bool gdcmDocument::SetEntryByNumber(void *content,
    }
 */      
    gdcmBinEntry * a;
-   a = (gdcmBinEntry *)tagHT[key];           
+   a = (gdcmBinEntry *)TagHT[key];           
    a->SetVoidArea(content);  
    //a->SetLength(lgth);  // ???  
    return true;
@@ -931,10 +955,15 @@ bool gdcmDocument::SetEntryLengthByNumber(uint32_t l,
 {
    /// \todo use map methods, instead of multimap JPR
    gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
+   if ( !TagHT.count(key) )
+   {
       return false;
-   if (l%2) l++; // length must be even
-   ( ((tagHT.equal_range(key)).first)->second )->SetLength(l); 
+   }
+   if ( l % 2 )
+   {
+      l++; // length must be even
+   }
+   ( ((TagHT.equal_range(key)).first)->second )->SetLength(l); 
 
    return true ;
 }
@@ -946,15 +975,15 @@ bool gdcmDocument::SetEntryLengthByNumber(uint32_t l,
  * @param Elem  element number of the Entry
  * @return File Offset of the Element Value 
  */
-size_t gdcmDocument::GetEntryOffsetByNumber(uint16_t Group, uint16_t Elem) 
+size_t gdcmDocument::GetEntryOffsetByNumber(uint16_t group, uint16_t elem) 
 {
-   gdcmDocEntry* Entry = GetDocEntryByNumber(Group, Elem);
-   if (!Entry) 
+   gdcmDocEntry* entry = GetDocEntryByNumber(group, elem);
+   if (!entry) 
    {
       dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber: no entry present.");
-      return (size_t)0;
+      return 0;
    }
-   return Entry->GetOffset();
+   return entry->GetOffset();
 }
 
 /**
@@ -964,15 +993,15 @@ size_t gdcmDocument::GetEntryOffsetByNumber(uint16_t Group, uint16_t Elem)
  * @param Elem  element number of the Entry
  * @return Pointer to the 'non string' area
  */
-void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t Group, uint16_t Elem) 
+void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem) 
 {
-   gdcmDocEntry* Entry = GetDocEntryByNumber(Group, Elem);
-   if (!Entry) 
+   gdcmDocEntry* entry = GetDocEntryByNumber(group, elem);
+   if (!entry) 
    {
       dbg.Verbose(1, "gdcmDocument::GetDocEntryByNumber: no entry");
-      return (NULL);
+      return 0;
    }
-   return ((gdcmBinEntry *)Entry)->GetVoidArea();
+   return ((gdcmBinEntry *)entry)->GetVoidArea();
 }
 
 /**
@@ -981,53 +1010,59 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t Group, uint16_t Elem)
  * @param Group   group number of the Entry 
  * @param Elem  element number of the Entry
  */
-void *gdcmDocument::LoadEntryVoidArea(uint16_t Group, uint16_t Elem) 
+void *gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
 {
-   gdcmDocEntry * Element= GetDocEntryByNumber(Group, Elem);
-   if ( !Element )
+   gdcmDocEntry *docElement = GetDocEntryByNumber(group, elem);
+   if ( !docElement )
+   {
       return NULL;
-   size_t o =(size_t)Element->GetOffset();
-   fseek(fp, o, SEEK_SET);
-   size_t l = Element->GetLength();
+   }
+   size_t o =(size_t)docElement->GetOffset();
+   fseek(Fp, o, SEEK_SET);
+   size_t l = docElement->GetLength();
    char* a = new char[l];
-   if(!a) {
+   if(!a)
+   {
       dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
       return NULL;
    }
-   size_t l2 = fread(a, 1, l ,fp);
-   if(l != l2) 
+   size_t l2 = fread(a, 1, l , Fp);
+   if( l != l2 )
    {
       delete[] a;
       return NULL;
    }
-   /// \todo Drop any allready existing void area! JPR
-   SetEntryVoidAreaByNumber(a, Group, Elem);
-   return a;  
+   /// \todo Drop any already existing void area! JPR
+   SetEntryVoidAreaByNumber(a, group, elem);
+
+   return a;
 }
 /**
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
  * @param Element  Entry whose voidArea is going to be loaded
  */
-void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *Element) 
+void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *element) 
 {
-   size_t o =(size_t)Element->GetOffset();
-   fseek(fp, o, SEEK_SET);
-   size_t l = Element->GetLength();
+   size_t o =(size_t)element->GetOffset();
+   fseek(Fp, o, SEEK_SET);
+   size_t l = element->GetLength();
    char* a = new char[l];
-   if(!a) {
+   if( !a )
+   {
       dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
       return NULL;
    }
-   Element->SetVoidArea((void *)a);
+   element->SetVoidArea((void *)a);
    /// \todo check the result 
-   size_t l2 = fread(a, 1, l ,fp);
-   if(l != l2) 
+   size_t l2 = fread(a, 1, l , Fp);
+   if( l != l2 )
    {
       delete[] a;
       return NULL;
    }
-   return a;  
+
+   return a;
 }
 
 /**
@@ -1042,10 +1077,12 @@ bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
                                             uint16_t element) 
 {
    gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
+   if ( !TagHT.count(key))
+   {
       return false;
+   }
       // This was for multimap ?
-    (( gdcmBinEntry *)( ((tagHT.equal_range(key)).first)->second ))->SetVoidArea(area);
+    (( gdcmBinEntry *)( ((TagHT.equal_range(key)).first)->second ))->SetVoidArea(area);
       
    return true;
 }
@@ -1054,7 +1091,8 @@ bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
  * \brief   Update the entries with the shadow dictionary. 
  *          Only non even entries are analyzed       
  */
-void gdcmDocument::UpdateShaEntries() {
+void gdcmDocument::UpdateShaEntries()
+{
    //gdcmDictEntry *entry;
    std::string vr;
    
@@ -1104,13 +1142,15 @@ void gdcmDocument::UpdateShaEntries() {
  * @return  Corresponding Dicom Element when it exists, and NULL
  *          otherwise.
  */
-gdcmDocEntry* gdcmDocument::GetDocEntryByName(std::string tagName)
+gdcmDocEntry* gdcmDocument::GetDocEntryByName(std::string const & tagName)
 {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
-   if( dictEntry == NULL)
+   if( !dictEntry )
+   {
       return NULL;
+   }
 
-  return(GetDocEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement()));
+  return GetDocEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement());
 }
 
 /**
@@ -1127,9 +1167,11 @@ gdcmDocEntry* gdcmDocument::GetDocEntryByNumber(uint16_t group,
                                                 uint16_t element) 
 {
    gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
+   if ( !TagHT.count(key))
+   {
       return NULL;
-   return tagHT.find(key)->second;
+   }
+   return TagHT.find(key)->second;
 }
 
 /**
@@ -1141,15 +1183,18 @@ gdcmDocEntry* gdcmDocument::GetDocEntryByNumber(uint16_t group,
 gdcmValEntry* gdcmDocument::GetValEntryByNumber(uint16_t group,
                                                 uint16_t element)
 {
-  gdcmDocEntry* CurrentEntry = GetDocEntryByNumber(group, element);
-  if (! CurrentEntry)
-     return (gdcmValEntry*)0;
-  if ( gdcmValEntry* ValEntry = dynamic_cast<gdcmValEntry*>(CurrentEntry) )
-  {
-     return ValEntry;
-  }
-  dbg.Verbose(0, "gdcmDocument::GetValEntryByNumber: unfound ValEntry.");
-  return (gdcmValEntry*)0;
+   gdcmDocEntry* currentEntry = GetDocEntryByNumber(group, element);
+   if ( !currentEntry )
+   {
+      return 0;
+   }
+   if ( gdcmValEntry* valEntry = dynamic_cast<gdcmValEntry*>(currentEntry) )
+   {
+      return valEntry;
+   }
+   dbg.Verbose(0, "gdcmDocument::GetValEntryByNumber: unfound ValEntry.");
+
+   return 0;
 }
 
 /**
@@ -1161,9 +1206,9 @@ gdcmValEntry* gdcmDocument::GetValEntryByNumber(uint16_t group,
  */
 void gdcmDocument::LoadDocEntrySafe(gdcmDocEntry * entry)
 {
-   long PositionOnEntry = ftell(fp);
+   long PositionOnEntry = ftell(Fp);
    LoadDocEntry(entry);
-   fseek(fp, PositionOnEntry, SEEK_SET);
+   fseek(Fp, PositionOnEntry, SEEK_SET);
 }
 
 /**
@@ -1173,7 +1218,8 @@ void gdcmDocument::LoadDocEntrySafe(gdcmDocEntry * entry)
  */
 uint32_t gdcmDocument::SwapLong(uint32_t a)
 {
-   switch (sw) {
+   switch (SwapCode)
+   {
       case    0 :
          break;
       case 4321 :
@@ -1186,10 +1232,10 @@ uint32_t gdcmDocument::SwapLong(uint32_t a)
          break;
    
       case 2143 :
-         a=( ((a<<8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
+         a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
          break;
       default :
-         std::cout << "swapCode= " << sw << std::endl;
+         std::cout << "swapCode= " << SwapCode << std::endl;
          dbg.Error(" gdcmDocument::SwapLong : unset swap code");
          a=0;
    }
@@ -1212,8 +1258,10 @@ uint32_t gdcmDocument::UnswapLong(uint32_t a)
  */
 uint16_t gdcmDocument::SwapShort(uint16_t a)
 {
-   if ( (sw==4321)  || (sw==2143) )
-      a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
+   if ( SwapCode == 4321 || SwapCode == 2143 )
+   {
+      a =((( a << 8 ) & 0x0ff00 ) | (( a >> 8 ) & 0x00ff ) );
+   }
    return a;
 }
 
@@ -1239,39 +1287,40 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
                             long l_max,
                             bool delim_mode)
 {
-   gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
-   gdcmValEntry *NewValEntry = (gdcmValEntry *)0;
-   gdcmBinEntry *bn;   
-   gdcmSeqEntry *sq;
-   gdcmVRKey vr;
+   gdcmDocEntry *newDocEntry = 0;
+   gdcmValEntry *newValEntry = 0;
    unsigned long l = 0;
-   int depth; 
    
-   depth = set->GetDepthLevel();     
-   while (true) { 
-   
-      if ( !delim_mode && ftell(fp)-offset >= l_max) { 
-         break;  
-      }
-      NewDocEntry = ReadNextDocEntry( );
-      if (!NewDocEntry)
+   int depth = set->GetDepthLevel();
+   while (true)
+   { 
+      if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
+      {
          break;
+      }
+      newDocEntry = ReadNextDocEntry( );
+      if ( !newDocEntry )
+      {
+         break;
+      }
 
-      vr = NewDocEntry->GetVR();
-      if (vr!="SQ")
+      gdcmVRKey vr = newDocEntry->GetVR();
+      if ( vr != "SQ" )
       {
                
          if ( gdcmGlobal::GetVR()->IsVROfGdcmStringRepresentable(vr) )
          {
             /////// ValEntry
-            NewValEntry = new gdcmValEntry(NewDocEntry->GetDictEntry());
-            NewValEntry->Copy(NewDocEntry);
-            NewValEntry->SetDepthLevel(depth);
-            set->AddEntry(NewValEntry);
-            LoadDocEntry(NewValEntry);
-            if (NewValEntry->isItemDelimitor())
+            newValEntry = new gdcmValEntry(newDocEntry->GetDictEntry());
+            newValEntry->Copy(newDocEntry);
+            newValEntry->SetDepthLevel(depth);
+            set->AddEntry(newValEntry);
+            LoadDocEntry(newValEntry);
+            if (newValEntry->isItemDelimitor())
+            {
                break;
-            if ( !delim_mode && ftell(fp)-offset >= l_max)
+            }
+            if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
             {
                break;
             }
@@ -1286,16 +1335,16 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             }
 
             ////// BinEntry or UNKOWN VR:
-            bn = new gdcmBinEntry(NewDocEntry->GetDictEntry());
-            bn->Copy(NewDocEntry);
+            gdcmBinEntry *bn = new gdcmBinEntry(newDocEntry->GetDictEntry());
+            bn->Copy(newDocEntry);
             set->AddEntry(bn);
             LoadDocEntry(bn);
          }
 
-         if (NewDocEntry->GetGroup()   == 0x7fe0 && 
-             NewDocEntry->GetElement() == 0x0010 )
+         if (newDocEntry->GetGroup()   == 0x7fe0 && 
+             newDocEntry->GetElement() == 0x0010 )
          {
-             if (NewDocEntry->GetReadLength()==0xffffffff)
+             if (newDocEntry->GetReadLength()==0xffffffff)
              {
                 // Broken US.3405.1.dcm
                 Parse7FE0(); // to skip the pixels 
@@ -1303,48 +1352,55 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
              }
              else
              {
-                SkipToNextDocEntry(NewDocEntry);
-                l = NewDocEntry->GetFullLength(); 
+                SkipToNextDocEntry(newDocEntry);
+                l = newDocEntry->GetFullLength(); 
              }
          }
          else
          {
              // to be sure we are at the beginning 
-             SkipToNextDocEntry(NewDocEntry);
-             l = NewDocEntry->GetFullLength(); 
+             SkipToNextDocEntry(newDocEntry);
+             l = newDocEntry->GetFullLength(); 
          }
       }
       else
-      {   // VR = "SQ"
-      
-         l=NewDocEntry->GetReadLength();            
-         if (l != 0) // don't mess the delim_mode for zero-length sequence
-            if (l == 0xffffffff)
+      {
+         // VR = "SQ"
+         l = newDocEntry->GetReadLength();            
+         if ( l != 0 ) // don't mess the delim_mode for zero-length sequence
+         {
+            if ( l == 0xffffffff )
+            {
               delim_mode = true;
+            }
             else
+            {
               delim_mode = false;
+            }
+         }
          // no other way to create it ...
-         sq = new gdcmSeqEntry(NewDocEntry->GetDictEntry(),
-                               set->GetDepthLevel());
-         sq->Copy(NewDocEntry);
+         gdcmSeqEntry *sq = new gdcmSeqEntry(newDocEntry->GetDictEntry(),
+                                             set->GetDepthLevel());
+         sq->Copy(newDocEntry);
          sq->SetDelimitorMode(delim_mode);
          sq->SetDepthLevel(depth);
 
-         if (l != 0)
+         if ( l != 0 )
          {  // Don't try to parse zero-length sequences
             long lgt = ParseSQ( sq, 
-                                NewDocEntry->GetOffset(),
+                                newDocEntry->GetOffset(),
                                 l, delim_mode);
             (void)lgt;  //not used...
          }
          set->AddEntry(sq);
-         if ( !delim_mode && ftell(fp)-offset >= l_max)
+         if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
          {
             break;
          }
       }
-      delete NewDocEntry;
+      delete newDocEntry;
    }
+
    return l; // Probably useless 
 }
 
@@ -1356,48 +1412,55 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
                            long offset, long l_max, bool delim_mode)
 {
    int SQItemNumber = 0;
-
-   gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
-   gdcmSQItem *itemSQ;
    bool dlm_mod;
-   int lgr, lgth;
-   unsigned int l;
-   int depth = set->GetDepthLevel();
-   (void)depth; //not used
+   //int depth = set->GetDepthLevel();
+   //(void)depth; //not used
 
-   while (true) {
-
-      NewDocEntry = ReadNextDocEntry();   
-      if (!NewDocEntry)
+   while (true)
+   {
+      gdcmDocEntry *newDocEntry = ReadNextDocEntry();   
+      if ( !newDocEntry )
+      {
+         // FIXME Should warn user
          break;
-      if(delim_mode) {   
-         if (NewDocEntry->isSequenceDelimitor()) {
-            set->SetSequenceDelimitationItem(NewDocEntry);
-            break;
-          }
       }
-      if (!delim_mode && (ftell(fp)-offset) >= l_max) {
+      if( delim_mode )
+      {
+         if ( newDocEntry->isSequenceDelimitor() )
+         {
+            set->SetSequenceDelimitationItem( newDocEntry );
+            break;
+         }
+      }
+      if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
+      {
           break;
       }
 
-      itemSQ = new gdcmSQItem(set->GetDepthLevel());
-      itemSQ->AddEntry(NewDocEntry);
-      l= NewDocEntry->GetReadLength();
+      gdcmSQItem *itemSQ = new gdcmSQItem(set->GetDepthLevel());
+      itemSQ->AddEntry(newDocEntry);
+      unsigned int l = newDocEntry->GetReadLength();
       
-      if (l == 0xffffffff)
+      if ( l == 0xffffffff )
+      {
          dlm_mod = true;
+      }
       else
-         dlm_mod=false;
+      {
+         dlm_mod = false;
+      }
    
-      lgr=ParseDES(itemSQ, NewDocEntry->GetOffset(), l, dlm_mod);
+      int lgr = ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
       
-      set->AddEntry(itemSQ,SQItemNumber); 
-      SQItemNumber ++;
-      if (!delim_mode && (ftell(fp)-offset) >= l_max) {
+      set->AddEntry(itemSQ, SQItemNumber); 
+      SQItemNumber++;
+      if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
+      {
          break;
       }
    }
-   lgth = ftell(fp) - offset;
+
+   int lgth = ftell(Fp) - offset;
    return lgth;
 }
 
@@ -1406,14 +1469,14 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
  *                the value specified with gdcmDocument::SetMaxSizeLoadEntry()
  * @param         Entry Header Entry (Dicom Element) to be dealt with
  */
-void gdcmDocument::LoadDocEntry(gdcmDocEntry* Entry)
+void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
 {
    size_t item_read;
-   uint16_t group  = Entry->GetGroup();
-   std::string  vr = Entry->GetVR();
-   uint32_t length = Entry->GetLength();
+   uint16_t group  = entry->GetGroup();
+   std::string  vr = entry->GetVR();
+   uint32_t length = entry->GetLength();
 
-   fseek(fp, (long)Entry->GetOffset(), SEEK_SET);
+   fseek(Fp, (long)entry->GetOffset(), SEEK_SET);
 
    // A SeQuence "contains" a set of Elements.  
    //          (fffe e000) tells us an Element is beginning
@@ -1428,7 +1491,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* Entry)
    // When the length is zero things are easy:
    if ( length == 0 )
    {
-      ((gdcmValEntry *)Entry)->SetValue("");
+      ((gdcmValEntry *)entry)->SetValue("");
       return;
    }
 
@@ -1439,43 +1502,46 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* Entry)
    std::ostringstream s;
    if (length > MaxSizeLoadEntry)
    {
-      if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) )
+      if (gdcmBinEntry* binEntryPtr = dynamic_cast< gdcmBinEntry* >(entry) )
       {         
          s << "gdcm::NotLoaded (BinEntry)";
-         s << " Address:" << (long)Entry->GetOffset();
-         s << " Length:"  << Entry->GetLength();
-         s << " x(" << std::hex << Entry->GetLength() << ")";
-         BinEntryPtr->SetValue(s.str());
+         s << " Address:" << (long)entry->GetOffset();
+         s << " Length:"  << entry->GetLength();
+         s << " x(" << std::hex << entry->GetLength() << ")";
+         binEntryPtr->SetValue(s.str());
       }
       // to be sure we are at the end of the value ...
-      fseek(fp, (long)Entry->GetOffset()+(long)Entry->GetLength(), SEEK_SET);      
-      return;
+      fseek(Fp, (long)entry->GetOffset()+(long)entry->GetLength(), SEEK_SET);      
+
+      return;  //FIXME FIXME FIXME FIXME ????
+
        // Be carefull : a BinEntry IS_A ValEntry ... 
-      if (gdcmValEntry* ValEntryPtr = dynamic_cast< gdcmValEntry* >(Entry) )
+      if (gdcmValEntry* valEntryPtr = dynamic_cast< gdcmValEntry* >(entry) )
       {
          s << "gdcm::NotLoaded. (ValEntry)";
-         s << " Address:" << (long)Entry->GetOffset();
-         s << " Length:"  << Entry->GetLength();
-         s << " x(" << std::hex << Entry->GetLength() << ")";
-         ValEntryPtr->SetValue(s.str());
+         s << " Address:" << (long)entry->GetOffset();
+         s << " Length:"  << entry->GetLength();
+         s << " x(" << std::hex << entry->GetLength() << ")";
+         valEntryPtr->SetValue(s.str());
       }
       // to be sure we are at the end of the value ...
-      fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);      
+      fseek(Fp,(long)entry->GetOffset()+(long)entry->GetLength(),SEEK_SET);      
+
       return;
    }
 
    // When we find a BinEntry not very much can be done :
-   if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) )
+   if (gdcmBinEntry* binEntryPtr = dynamic_cast< gdcmBinEntry* >(entry) )
    {
 
-      LoadEntryVoidArea(BinEntryPtr);
+      LoadEntryVoidArea(binEntryPtr);
       s << "gdcm::Loaded (BinEntry)";
-      BinEntryPtr->SetValue(s.str());
+      binEntryPtr->SetValue(s.str());
       return;
    }
     
    /// \todo Any compacter code suggested (?)
-   if ( IsDocEntryAnInteger(Entry) )
+   if ( IsDocEntryAnInteger(entry) )
    {   
       uint32_t NewInt;
       std::ostringstream s;
@@ -1520,27 +1586,37 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* Entry)
       s << std::ends; // to avoid oddities on Solaris
 #endif //GDCM_NO_ANSI_STRING_STREAM
 
-      ((gdcmValEntry *)Entry)->SetValue(s.str());
+      ((gdcmValEntry *)entry)->SetValue(s.str());
       return;
    }
    
    // We need an additional byte for storing \0 that is not on disk
-   std::string NewValue(length,0);
-   item_read = fread(&(NewValue[0]), (size_t)length, (size_t)1, fp);
-   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) )
+   //std::string newValue(length,0);
+   //item_read = fread(&(newValue[0]), (size_t)length, (size_t)1, Fp);  
+   //rah !! I can't believe it could work, normally this is a const char* !!!
+   char str[length];
+   item_read = fread(str, (size_t)length, (size_t)1, Fp);
+   std::string newValue = str;
+   newValue += '\0';
+   if ( gdcmValEntry* valEntry = dynamic_cast<gdcmValEntry* >(entry) )
    {  
       if ( item_read != 1 )
       {
          dbg.Verbose(1, "gdcmDocument::LoadDocEntry",
                         "unread element value");
-         ValEntry->SetValue("gdcm::UnRead");
+         valEntry->SetValue("gdcm::UnRead");
          return;
       }
 
-      if( (vr == "UI") ) // Because of correspondance with the VR dic
-         ValEntry->SetValue(NewValue.c_str());
+      if( vr == "UI" )
+      {
+         // Because of correspondance with the VR dic
+         valEntry->SetValue(newValue);
+      }
       else
-         ValEntry->SetValue(NewValue);
+      {
+         valEntry->SetValue(newValue);
+      }
    }
    else
    {
@@ -1554,26 +1630,26 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* Entry)
  * \brief  Find the value Length of the passed Header Entry
  * @param  Entry Header Entry whose length of the value shall be loaded. 
  */
-void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry)
+void gdcmDocument::FindDocEntryLength (gdcmDocEntry *entry)
 {
-   uint16_t element = Entry->GetElement();
-   std::string  vr = Entry->GetVR();
+   uint16_t element = entry->GetElement();
+   std::string  vr  = entry->GetVR();
    uint16_t length16;
        
    
-   if ( (Filetype == gdcmExplicitVR) && (! Entry->IsImplicitVR()) ) 
+   if ( Filetype == gdcmExplicitVR && !entry->IsImplicitVR() ) 
    {
-      if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) 
+      if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UN" ) 
       {
          // The following reserved two bytes (see PS 3.5-2001, section
          // 7.1.2 Data element structure with explicit vr p27) must be
          // skipped before proceeding on reading the length on 4 bytes.
-         fseek(fp, 2L, SEEK_CUR);
+         fseek(Fp, 2L, SEEK_CUR);
          uint32_t length32 = ReadInt32();
 
-         if ( (vr == "OB") && (length32 == 0xffffffff) ) 
+         if ( vr == "OB" && length32 == 0xffffffff ) 
          {
-            uint32_t LengthOB = FindDocEntryLengthOB();
+            uint32_t lengthOB = FindDocEntryLengthOB();
             if ( errno == 1 )
             {
                // Computing the length failed (this happens with broken
@@ -1581,18 +1657,18 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry)
                // chance to get the pixels by deciding the element goes
                // until the end of the file. Hence we artificially fix the
                // the length and proceed.
-               long CurrentPosition = ftell(fp);
-               fseek(fp,0L,SEEK_END);
-               long LengthUntilEOF = ftell(fp) - CurrentPosition;
-               fseek(fp, CurrentPosition, SEEK_SET);
-               Entry->SetLength(LengthUntilEOF);
+               long currentPosition = ftell(Fp);
+               fseek(Fp,0L,SEEK_END);
+               long lengthUntilEOF = ftell(Fp) - currentPosition;
+               fseek(Fp, currentPosition, SEEK_SET);
+               entry->SetLength(lengthUntilEOF);
                errno = 0;
                return;
             }
-            Entry->SetLength(LengthOB);
+            entry->SetLength(lengthOB);
             return;
          }
-         FixDocEntryFoundLength(Entry, length32); 
+         FixDocEntryFoundLength(entry, length32); 
          return;
       }
 
@@ -1638,18 +1714,18 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry)
          SwitchSwapToBigEndian();
          // Restore the unproperly loaded values i.e. the group, the element
          // and the dictionary entry depending on them.
-         uint16_t CorrectGroup   = SwapShort(Entry->GetGroup());
-         uint16_t CorrectElem    = SwapShort(Entry->GetElement());
-         gdcmDictEntry * NewTag = GetDictEntryByNumber(CorrectGroup,
-                                                       CorrectElem);
-         if (!NewTag) 
+         uint16_t correctGroup = SwapShort( entry->GetGroup() );
+         uint16_t correctElem  = SwapShort( entry->GetElement() );
+         gdcmDictEntry* newTag = GetDictEntryByNumber( correctGroup,
+                                                       correctElem );
+         if ( !newTag )
          {
             // This correct tag is not in the dictionary. Create a new one.
-            NewTag = NewVirtualDictEntry(CorrectGroup, CorrectElem);
+            newTag = NewVirtualDictEntry(correctGroup, correctElem);
          }
          // FIXME this can create a memory leaks on the old entry that be
          // left unreferenced.
-         Entry->SetDictEntry(NewTag);
+         entry->SetDictEntry( newTag );
       }
        
       // Heuristic: well, some files are really ill-formed.
@@ -1659,7 +1735,7 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry)
          // Length16= 0xffff means that we deal with
          // 'Unknown Length' Sequence  
       }
-      FixDocEntryFoundLength(Entry, (uint32_t)length16);
+      FixDocEntryFoundLength(entry, (uint32_t)length16);
       return;
    }
    else
@@ -1671,7 +1747,7 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry)
       // not coexist in a Data Set and Data Sets nested within it".]
       // Length is on 4 bytes.
       
-      FixDocEntryFoundLength(Entry, ReadInt32());
+      FixDocEntryFoundLength(entry, ReadInt32());
       return;
    }
 }
@@ -1680,14 +1756,16 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry)
  * \brief     Find the Value Representation of the current Dicom Element.
  * @param     Entry
  */
-void gdcmDocument::FindDocEntryVR( gdcmDocEntry *Entry) 
+void gdcmDocument::FindDocEntryVR( gdcmDocEntry *entry )
 {
-   if (Filetype != gdcmExplicitVR)
+   if ( Filetype != gdcmExplicitVR )
+   {
       return;
+   }
 
-   char VR[3];
+   char vr[3];
 
-   long PositionOnEntry = ftell(fp);
+   long positionOnEntry = ftell(Fp);
    // Warning: we believe this is explicit VR (Value Representation) because
    // we used a heuristic that found "UL" in the first tag. Alas this
    // doesn't guarantee that all the tags will be in explicit VR. In some
@@ -1696,19 +1774,22 @@ void gdcmDocument::FindDocEntryVR( gdcmDocEntry *Entry)
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
    
-   (void)fread (&VR, (size_t)2,(size_t)1, fp);
-   VR[2]=0;
-   if(!CheckDocEntryVR(Entry,VR))
+   fread (&vr, (size_t)2,(size_t)1, Fp);
+   vr[2] = 0;
+
+   if( !CheckDocEntryVR(entry, vr) )
    {
-      fseek(fp, PositionOnEntry, SEEK_SET);
+      fseek(Fp, positionOnEntry, SEEK_SET);
       // When this element is known in the dictionary we shall use, e.g. for
       // the semantics (see the usage of IsAnInteger), the VR proposed by the
       // dictionary entry. Still we have to flag the element as implicit since
       // we know now our assumption on expliciteness is not furfilled.
       // avoid  .
-      if ( Entry->IsVRUnknown() )
-         Entry->SetVR("Implicit");
-      Entry->SetImplicitVR();
+      if ( entry->IsVRUnknown() )
+      {
+         entry->SetVR("Implicit");
+      }
+      entry->SetImplicitVR();
    }
 }
 
@@ -1721,10 +1802,10 @@ void gdcmDocument::FindDocEntryVR( gdcmDocEntry *Entry)
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true
 */
-bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *Entry, gdcmVRKey vr)
+bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *entry, gdcmVRKey vr)
 {
    char msg[100]; // for sprintf
-   bool RealExplicit = true;
+   bool realExplicit = true;
 
    // Assume we are reading a falsely explicit VR file i.e. we reached
    // a tag where we expect reading a VR but are in fact we read the
@@ -1735,51 +1816,63 @@ bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *Entry, gdcmVRKey vr)
    // we hit falsely explicit VR tag.
 
    if ( (!isalpha(vr[0])) && (!isalpha(vr[1])) )
-      RealExplicit = false;
+   {
+      realExplicit = false;
+   }
 
    // CLEANME searching the dicom_vr at each occurence is expensive.
    // PostPone this test in an optional integrity check at the end
    // of parsing or only in debug mode.
-   if ( RealExplicit && !gdcmGlobal::GetVR()->Count(vr) )
-      RealExplicit= false;
+   if ( realExplicit && !gdcmGlobal::GetVR()->Count(vr) )
+   {
+      realExplicit = false;
+   }
 
-   if ( !RealExplicit ) 
+   if ( !realExplicit ) 
    {
       // We thought this was explicit VR, but we end up with an
       // implicit VR tag. Let's backtrack.   
       sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", 
-                   Entry->GetGroup(),Entry->GetElement());
+                   entry->GetGroup(), entry->GetElement());
       dbg.Verbose(1, "gdcmDocument::FindVR: ",msg);
-      if (Entry->GetGroup()%2 && Entry->GetElement() == 0x0000) { // Group length is UL !
-         gdcmDictEntry* NewEntry = NewVirtualDictEntry(
-                                   Entry->GetGroup(),Entry->GetElement(),
-                                   "UL","FIXME","Group Length");
-         Entry->SetDictEntry(NewEntry);     
+
+      if( entry->GetGroup() % 2 && entry->GetElement() == 0x0000)
+      {
+         // Group length is UL !
+         gdcmDictEntry* newEntry = NewVirtualDictEntry(
+                                   entry->GetGroup(), entry->GetElement(),
+                                   "UL", "FIXME", "Group Length");
+         entry->SetDictEntry( newEntry );
       }
       return false;
    }
 
-   if ( Entry->IsVRUnknown() ) 
+   if ( entry->IsVRUnknown() )
    {
       // When not a dictionary entry, we can safely overwrite the VR.
-      if (Entry->GetElement() == 0x0000) { // Group length is UL !
-         Entry->SetVR("UL");
-      } else {
-         Entry->SetVR(vr);
+      if( entry->GetElement() == 0x0000 )
+      {
+         // Group length is UL !
+         entry->SetVR("UL");
+      }
+      else
+      {
+         entry->SetVR(vr);
       }
    }
-   else if ( Entry->GetVR() != vr ) 
+   else if ( entry->GetVR() != vr ) 
    {
       // The VR present in the file and the dictionary disagree. We assume
       // the file writer knew best and use the VR of the file. Since it would
       // be unwise to overwrite the VR of a dictionary (since it would
       // compromise it's next user), we need to clone the actual DictEntry
       // and change the VR for the read one.
-      gdcmDictEntry* NewEntry = NewVirtualDictEntry(
-                                 Entry->GetGroup(),Entry->GetElement(),
-                                 vr,"FIXME",Entry->GetName());
-      Entry->SetDictEntry(NewEntry);
+      gdcmDictEntry* newEntry = NewVirtualDictEntry(
+                                entry->GetGroup(), entry->GetElement(),
+                                vr, "FIXME", entry->GetName());
+      entry->SetDictEntry(newEntry);
    }
+
    return true; 
 }
 
@@ -1790,57 +1883,63 @@ bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *Entry, gdcmVRKey vr)
  * @param   Entry 
  * @return  Transformed entry value
  */
-std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *Entry)
+std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *entry)
 {
-   if ( (IsDocEntryAnInteger(Entry)) && (Entry->IsImplicitVR()) )
+   if ( IsDocEntryAnInteger(entry) && entry->IsImplicitVR() )
    {
-      std::string val=((gdcmValEntry *)Entry)->GetValue();
-      std::string vr=Entry->GetVR();
-      uint32_t length = Entry->GetLength();
+      std::string val = ((gdcmValEntry *)entry)->GetValue();
+      std::string vr  = entry->GetVR();
+      uint32_t length = entry->GetLength();
       std::ostringstream s;
       int nbInt;
 
-   // When short integer(s) are expected, read and convert the following 
-   // n * 2 bytes properly i.e. as a multivaluated strings
-   // (each single value is separated fromthe next one by '\'
-   // as usual for standard multivaluated filels
-   // Elements with Value Multiplicity > 1
-   // contain a set of short integers (not a single one) 
+      // When short integer(s) are expected, read and convert the following 
+      // n * 2 bytes properly i.e. as a multivaluated strings
+      // (each single value is separated fromthe next one by '\'
+      // as usual for standard multivaluated filels
+      // Elements with Value Multiplicity > 1
+      // contain a set of short integers (not a single one) 
    
-      if (vr == "US" || vr == "SS")
+      if( vr == "US" || vr == "SS" )
       {
-         uint16_t NewInt16;
+         uint16_t newInt16;
 
          nbInt = length / 2;
          for (int i=0; i < nbInt; i++) 
          {
-            if(i!=0)
+            if( i != 0 )
+            {
                s << '\\';
-            NewInt16 = (val[2*i+0]&0xFF)+((val[2*i+1]&0xFF)<<8);
-            NewInt16 = SwapShort(NewInt16);
-            s << NewInt16;
+            }
+            newInt16 = ( val[2*i+0] & 0xFF ) + ( ( val[2*i+1] & 0xFF ) << 8);
+            newInt16 = SwapShort( newInt16 );
+            s << newInt16;
          }
       }
 
-   // When integer(s) are expected, read and convert the following 
-   // n * 4 bytes properly i.e. as a multivaluated strings
-   // (each single value is separated fromthe next one by '\'
-   // as usual for standard multivaluated filels
-   // Elements with Value Multiplicity > 1
-   // contain a set of integers (not a single one) 
-      else if (vr == "UL" || vr == "SL")
+      // When integer(s) are expected, read and convert the following 
+      // n * 4 bytes properly i.e. as a multivaluated strings
+      // (each single value is separated fromthe next one by '\'
+      // as usual for standard multivaluated filels
+      // Elements with Value Multiplicity > 1
+      // contain a set of integers (not a single one) 
+      else if( vr == "UL" || vr == "SL" )
       {
-         uint32_t NewInt32;
+         uint32_t newInt32;
 
          nbInt = length / 4;
          for (int i=0; i < nbInt; i++) 
          {
-            if(i!=0)
+            if( i != 0)
+            {
                s << '\\';
-            NewInt32= (val[4*i+0]&0xFF)+((val[4*i+1]&0xFF)<<8)+
-                     ((val[4*i+2]&0xFF)<<16)+((val[4*i+3]&0xFF)<<24);
-            NewInt32=SwapLong(NewInt32);
-            s << NewInt32;
+            }
+            newInt32 = ( val[4*i+0] & 0xFF )
+                    + (( val[4*i+1] & 0xFF ) <<  8 )
+                    + (( val[4*i+2] & 0xFF ) << 16 )
+                    + (( val[4*i+3] & 0xFF ) << 24 );
+            newInt32 = SwapLong( newInt32 );
+            s << newInt32;
          }
       }
 #ifdef GDCM_NO_ANSI_STRING_STREAM
@@ -1849,7 +1948,7 @@ std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *Entry)
       return s.str();
    }
 
-   return ((gdcmValEntry *)Entry)->GetValue();
+   return ((gdcmValEntry *)entry)->GetValue();
 }
 
 /**
@@ -1860,38 +1959,41 @@ std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *Entry)
  * @param   Entry 
  * @return  Reverse transformed entry value
  */
-std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry *Entry)
+std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry* entry)
 {
-   if ( (IsDocEntryAnInteger(Entry)) && (Entry->IsImplicitVR()) )
+   if ( IsDocEntryAnInteger(entry) && entry->IsImplicitVR() )
    {
-      std::string vr=Entry->GetVR();
-      std::ostringstream s;
+      std::string vr = entry->GetVR();
       std::vector<std::string> tokens;
+      std::ostringstream s;
 
-      if (vr == "US" || vr == "SS") 
+      if ( vr == "US" || vr == "SS" ) 
       {
-         uint16_t NewInt16;
+         uint16_t newInt16;
 
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (((gdcmValEntry *)Entry)->GetValue(), tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) 
+         tokens.erase( tokens.begin(), tokens.end()); // clean any previous value
+         Tokenize (((gdcmValEntry *)entry)->GetValue(), tokens, "\\");
+         for (unsigned int i=0; i<tokens.size(); i++) 
          {
-            NewInt16 = atoi(tokens[i].c_str());
-            s<<(NewInt16&0xFF)<<((NewInt16>>8)&0xFF);
+            newInt16 = atoi(tokens[i].c_str());
+            s << (  newInt16        & 0xFF ) 
+              << (( newInt16 >> 8 ) & 0xFF );
          }
          tokens.clear();
       }
-      if (vr == "UL" || vr == "SL") 
+      if ( vr == "UL" || vr == "SL")
       {
-         uint32_t NewInt32;
+         uint32_t newInt32;
 
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (((gdcmValEntry *)Entry)->GetValue(), tokens, "\\");
+         Tokenize (((gdcmValEntry *)entry)->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size();i++) 
          {
-            NewInt32 = atoi(tokens[i].c_str());
-            s<<(char)(NewInt32&0xFF)<<(char)((NewInt32>>8)&0xFF)
-               <<(char)((NewInt32>>16)&0xFF)<<(char)((NewInt32>>24)&0xFF);
+            newInt32 = atoi(tokens[i].c_str());
+            s << (char)(  newInt32         & 0xFF ) 
+              << (char)(( newInt32 >>  8 ) & 0xFF )
+              << (char)(( newInt32 >> 16 ) & 0xFF )
+              << (char)(( newInt32 >> 24 ) & 0xFF );
          }
          tokens.clear();
       }
@@ -1902,7 +2004,7 @@ std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry *Entry)
       return s.str();
    }
 
-   return ((gdcmValEntry *)Entry)->GetValue();
+   return ((gdcmValEntry *)entry)->GetValue();
 }
 
 /**
@@ -1922,8 +2024,8 @@ void gdcmDocument::SkipDocEntry(gdcmDocEntry *entry)
  */
 void gdcmDocument::SkipToNextDocEntry(gdcmDocEntry *entry) 
 {
-   (void)fseek(fp, (long)(entry->GetOffset()),     SEEK_SET);
-   (void)fseek(fp, (long)(entry->GetReadLength()), SEEK_CUR);
+   fseek(Fp, (long)(entry->GetOffset()),     SEEK_SET);
+   fseek(Fp, (long)(entry->GetReadLength()), SEEK_CUR);
 }
 
 /**
@@ -1931,21 +2033,23 @@ void gdcmDocument::SkipToNextDocEntry(gdcmDocEntry *entry)
  *          the parser went Jabberwocky) one can hope improving things by
  *          applying some heuristics.
  */
-void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry,
-                                          uint32_t FoundLength)
+void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *entry,
+                                          uint32_t foundLength)
 {
-   Entry->SetReadLength(FoundLength); // will be updated only if a bug is found        
-   if ( FoundLength == 0xffffffff) {
-      FoundLength = 0;
+   entry->SetReadLength( foundLength ); // will be updated only if a bug is found        
+   if ( foundLength == 0xffffffff)
+   {
+      foundLength = 0;
    }
    
-   uint16_t gr =Entry->GetGroup();
-   uint16_t el =Entry->GetElement(); 
+   uint16_t gr = entry->GetGroup();
+   uint16_t el = entry->GetElement(); 
      
-   if (FoundLength%2) {
+   if ( foundLength % 2)
+   {
       std::ostringstream s;
       s << "Warning : Tag with uneven length "
-        << FoundLength 
+        << foundLength 
         <<  " in x(" << std::hex << gr << "," << el <<")" << std::dec;
       dbg.Verbose(0, s.str().c_str());
    }
@@ -1956,13 +2060,15 @@ void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry,
    // are no longer in user (we are talking a few years, here)...
    // Note: XMedCom probably uses such a trick since it is able to read
    //       those pesky GE images ...
-   if (FoundLength == 13) {  // Only happens for this length !
-      if (   (Entry->GetGroup() != 0x0008)
-          || (   (Entry->GetElement() != 0x0070)
-              && (Entry->GetElement() != 0x0080) ) )
+   if ( foundLength == 13)
+   {
+      // Only happens for this length !
+      if ( entry->GetGroup()   != 0x0008
+      || ( entry->GetElement() != 0x0070
+        && entry->GetElement() != 0x0080 ) )
       {
-         FoundLength = 10;
-         Entry->SetReadLength(10); /// \todo a bug is to be fixed !?
+         foundLength = 10;
+         entry->SetReadLength(10); /// \todo a bug is to be fixed !?
       }
    }
 
@@ -1970,38 +2076,35 @@ void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry,
    // Occurence of such images is quite low (unless one leaves close to a
    // 'Leonardo' source. Hence, one might consider commenting out the
    // following fix on efficiency reasons.
-   else
-   if (   (Entry->GetGroup() == 0x0009)
-       && (   (Entry->GetElement() == 0x1113)
-           || (Entry->GetElement() == 0x1114) ) )
+   else if ( entry->GetGroup()   == 0x0009 
+        && ( entry->GetElement() == 0x1113
+          || entry->GetElement() == 0x1114 ) )
    {
-      FoundLength = 4;
-      Entry->SetReadLength(4); /// \todo a bug is to be fixed !?
+      foundLength = 4;
+      entry->SetReadLength(4); /// \todo a bug is to be fixed !?
    } 
  
    //////// Deal with sequences, but only on users request:
-   else
-   if ( ( Entry->GetVR() == "SQ") && enableSequences)
+   else if ( entry->GetVR() == "SQ" && EnableSequences)
    {
-         FoundLength = 0;      // ReadLength is unchanged 
+      foundLength = 0;      // ReadLength is unchanged 
    } 
     
    //////// We encountered a 'delimiter' element i.e. a tag of the form 
    // "fffe|xxxx" which is just a marker. Delimiters length should not be
    // taken into account.
-   else
-   if(Entry->GetGroup() == 0xfffe)
+   else if( entry->GetGroup() == 0xfffe )
    {    
      // According to the norm, fffe|0000 shouldn't exist. BUT the Philips
      // image gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm happens to
      // causes extra troubles...
-     if( Entry->GetElement() != 0x0000 )
+     if( entry->GetElement() != 0x0000 )
      {
-        FoundLength = 0;
+        foundLength = 0;
      }
    } 
            
-   Entry->SetUsableLength(FoundLength);
+   entry->SetUsableLength(foundLength);
 }
 
 /**
@@ -2010,19 +2113,22 @@ void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry,
  * @param   Entry The element value on which to apply the predicate.
  * @return  The result of the heuristical predicate.
  */
-bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
-   uint16_t element = Entry->GetElement();
-   uint16_t group   = Entry->GetGroup();
-   std::string  vr  = Entry->GetVR();
-   uint32_t length  = Entry->GetLength();
+bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *entry)
+{
+   uint16_t element = entry->GetElement();
+   uint16_t group   = entry->GetGroup();
+   std::string  vr  = entry->GetVR();
+   uint32_t length  = entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
    // able to swap it's element value properly.
    if ( element == 0 )  // This is the group length of the group
    {  
-      if (length == 4)
+      if ( length == 4 )
+      {
          return true;
+      }
       else 
       {
          // Allthough this should never happen, still some images have a
@@ -2033,7 +2139,7 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
          // encounter such an ill-formed image, we simply display a warning
          // message and proceed on parsing (while crossing fingers).
          std::ostringstream s;
-         int filePosition = ftell(fp);
+         int filePosition = ftell(Fp);
          s << "Erroneous Group Length element length  on : (" \
            << std::hex << group << " , " << element 
            << ") -before- position x(" << filePosition << ")"
@@ -2042,8 +2148,10 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
       }
    }
 
-   if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
+   if ( vr == "UL" || vr == "US" || vr == "SL" || vr == "SS" )
+   {
       return true;
+   }
    
    return false;
 }
@@ -2054,48 +2162,51 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
  * @return 
  */
 
-uint32_t gdcmDocument::FindDocEntryLengthOB()  {
+uint32_t gdcmDocument::FindDocEntryLengthOB()
+{
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
-   uint16_t g;
-   uint16_t n; 
-   long PositionOnEntry = ftell(fp);
-   bool FoundSequenceDelimiter = false;
-   uint32_t TotalLength = 0;
-   uint32_t ItemLength;
+   long positionOnEntry = ftell(Fp);
+   bool foundSequenceDelimiter = false;
+   uint32_t totalLength = 0;
 
-   while ( ! FoundSequenceDelimiter) 
+   while ( !foundSequenceDelimiter )
    {
-      g = ReadInt16();
-      n = ReadInt16();   
-      if (errno == 1)
+      uint16_t g = ReadInt16();
+      uint16_t n = ReadInt16();   
+      if ( errno == 1 )
+      {
          return 0;
+      }
 
-     // We have to decount the group and element we just read
-      TotalLength += 4;
+      // We have to decount the group and element we just read
+      totalLength += 4;
      
-      if (     ( g != 0xfffe )
-          || ( ( n != 0xe0dd ) && ( n != 0xe000 ) ) )
+      if ( g != 0xfffe || ( n != 0xe0dd && n != 0xe000 ) )
       {
          dbg.Verbose(1, "gdcmDocument::FindLengthOB: neither an Item tag "
                         "nor a Sequence delimiter tag."); 
-         fseek(fp, PositionOnEntry, SEEK_SET);
+         fseek(Fp, positionOnEntry, SEEK_SET);
          errno = 1;
          return 0;
       }
 
       if ( n == 0xe0dd )
-         FoundSequenceDelimiter = true;
+      {
+         foundSequenceDelimiter = true;
+      }
 
-      ItemLength = ReadInt32();
+      uint32_t itemLength = ReadInt32();
       // We add 4 bytes since we just read the ItemLength with ReadInt32
-      TotalLength += ItemLength + 4;
-      SkipBytes(ItemLength);
+      totalLength += itemLength + 4;
+      SkipBytes(itemLength);
       
-      if ( FoundSequenceDelimiter )
+      if ( foundSequenceDelimiter )
+      {
          break;
+      }
    }
-   fseek(fp, PositionOnEntry, SEEK_SET);
-   return TotalLength;
+   fseek(Fp, positionOnEntry, SEEK_SET);
+   return totalLength;
 }
 
 /**
@@ -2103,18 +2214,21 @@ uint32_t gdcmDocument::FindDocEntryLengthOB()  {
  *       (swaps it depending on processor endianity) 
  * @return read value
  */
-uint16_t gdcmDocument::ReadInt16() {
+uint16_t gdcmDocument::ReadInt16()
+{
    uint16_t g;
-   size_t item_read;
-   item_read = fread (&g, (size_t)2,(size_t)1, fp);
-   if ( item_read != 1 ) {
-      if(ferror(fp)) 
+   size_t item_read = fread (&g, (size_t)2,(size_t)1, Fp);
+   if ( item_read != 1 )
+   {
+      if( ferror(Fp) )
+      {
          dbg.Verbose(0, "gdcmDocument::ReadInt16", " File Error");
+      }
       errno = 1;
       return 0;
    }
    errno = 0;
-   g = SwapShort(g);   
+   g = SwapShort(g); 
    return g;
 }
 
@@ -2123,17 +2237,20 @@ uint16_t gdcmDocument::ReadInt16() {
  *         (swaps it depending on processor endianity)  
  * @return read value
  */
-uint32_t gdcmDocument::ReadInt32() {
+uint32_t gdcmDocument::ReadInt32()
+{
    uint32_t g;
-   size_t item_read;
-   item_read = fread (&g, (size_t)4,(size_t)1, fp);
-   if ( item_read != 1 ) { 
-     if(ferror(fp)) 
-         dbg.Verbose(0, "gdcmDocument::ReadInt32", " File Error");   
+   size_t item_read = fread (&g, (size_t)4,(size_t)1, Fp);
+   if ( item_read != 1 )
+   {
+      if( ferror(Fp) )
+      {
+         dbg.Verbose(0, "gdcmDocument::ReadInt32", " File Error");
+      }
       errno = 1;
       return 0;
    }
-   errno = 0;   
+   errno = 0;
    g = SwapLong(g);
    return g;
 }
@@ -2143,9 +2260,10 @@ uint32_t gdcmDocument::ReadInt32() {
  * \warning NOT end user intended method !
  * @return 
  */
-void gdcmDocument::SkipBytes(uint32_t NBytes) {
+void gdcmDocument::SkipBytes(uint32_t nBytes)
+{
    //FIXME don't dump the returned value
-   (void)fseek(fp, (long)NBytes, SEEK_CUR);
+   (void)fseek(Fp, (long)nBytes, SEEK_CUR);
 }
 
 /**
@@ -2166,35 +2284,38 @@ void gdcmDocument::Initialise()
  *               it's neither ACR-NEMA nor DICOM
  *         true  when we hope ours assuptions are OK
  */
-bool gdcmDocument::CheckSwap() {
-
+bool gdcmDocument::CheckSwap()
+{
    // The only guaranted way of finding the swap code is to find a
    // group tag since we know it's length has to be of four bytes i.e.
    // 0x00000004. Finding the swap code in then straigthforward. Trouble
    // occurs when we can't find such group...
    
-   uint32_t  x=4;  // x : for ntohs
+   uint32_t  x = 4;  // x : for ntohs
    bool net2host; // true when HostByteOrder is the same as NetworkByteOrder
    uint32_t  s32;
    uint16_t  s16;
        
-   int lgrLue;
-   char *entCur;
    char deb[HEADER_LENGTH_TO_READ];
     
    // First, compare HostByteOrder and NetworkByteOrder in order to
    // determine if we shall need to swap bytes (i.e. the Endian type).
-   if (x==ntohs(x))
+   if ( x == ntohs(x) )
+   {
       net2host = true;
+   }
    else
-      net2host = false; 
+   {
+      net2host = false;
+   }
          
    // The easiest case is the one of a DICOM header, since it possesses a
    // file preamble where it suffice to look for the string "DICM".
-   lgrLue = fread(deb, 1, HEADER_LENGTH_TO_READ, fp);
+   int lgrLue = fread(deb, 1, HEADER_LENGTH_TO_READ, Fp);
    
-   entCur = deb + 128;
-   if(memcmp(entCur, "DICM", (size_t)4) == 0) {
+   char *entCur = deb + 128;
+   if( memcmp(entCur, "DICM", (size_t)4) == 0 )
+   {
       dbg.Verbose(1, "gdcmDocument::CheckSwap:", "looks like DICOM Version3");
       
       // Next, determine the value representation (VR). Let's skip to the
@@ -2219,10 +2340,10 @@ bool gdcmDocument::CheckSwap() {
       // but elem 0002,0010 (Transfert Syntax) tells us the file is
       // *Implicit* VR.  -and it is !- 
       
-      if( (memcmp(entCur, "UL", (size_t)2) == 0) ||
-          (memcmp(entCur, "OB", (size_t)2) == 0) ||
-          (memcmp(entCur, "UI", (size_t)2) == 0) ||
-          (memcmp(entCur, "CS", (size_t)2) == 0) )  // CS, to remove later
+      if( memcmp(entCur, "UL", (size_t)2) == 0 ||
+          memcmp(entCur, "OB", (size_t)2) == 0 ||
+          memcmp(entCur, "UI", (size_t)2) == 0 ||
+          memcmp(entCur, "CS", (size_t)2) == 0 )  // CS, to remove later
                                                     // when Write DCM *adds*
       // FIXME
       // Use gdcmDocument::dicom_vr to test all the possibilities
@@ -2239,23 +2360,23 @@ bool gdcmDocument::CheckSwap() {
                      "not an explicit Value Representation");
       }
       
-      if (net2host) 
+      if ( net2host )
       {
-         sw = 4321;
+         SwapCode = 4321;
          dbg.Verbose(1, "gdcmDocument::CheckSwap:",
                         "HostByteOrder != NetworkByteOrder");
-      } 
+      }
       else 
       {
-         sw = 0;
+         SwapCode = 0;
          dbg.Verbose(1, "gdcmDocument::CheckSwap:",
                         "HostByteOrder = NetworkByteOrder");
       }
       
       // Position the file position indicator at first tag (i.e.
       // after the file preamble and the "DICM" string).
-      rewind(fp);
-      fseek (fp, 132L, SEEK_SET);
+      rewind(Fp);
+      fseek (Fp, 132L, SEEK_SET);
       return true;
    } // End of DicomV3
 
@@ -2263,7 +2384,7 @@ bool gdcmDocument::CheckSwap() {
    // preamble. We can reset the file position indicator to where the data
    // is (i.e. the beginning of the file).
    dbg.Verbose(1, "gdcmDocument::CheckSwap:", "not a DICOM Version3 file");
-   rewind(fp);
+   rewind(Fp);
 
    // Our next best chance would be to be considering a 'clean' ACR/NEMA file.
    // By clean we mean that the length of the first tag is written down.
@@ -2276,67 +2397,67 @@ bool gdcmDocument::CheckSwap() {
    // trick :
    s32 = *((uint32_t *)(entCur));
       
-   switch (s32) {
+   switch( s32 )
+   {
       case 0x00040000 :
-         sw = 3412;
+         SwapCode = 3412;
          Filetype = gdcmACR;
          return true;
       case 0x04000000 :
-         sw = 4321;
+         SwapCode = 4321;
          Filetype = gdcmACR;
          return true;
       case 0x00000400 :
-         sw = 2143;
+         SwapCode = 2143;
          Filetype = gdcmACR;
          return true;
       case 0x00000004 :
-         sw = 0;
+         SwapCode = 0;
          Filetype = gdcmACR;
          return true;
       default :
-
-      // We are out of luck. It is not a DicomV3 nor a 'clean' ACR/NEMA file.
-      // It is time for despaired wild guesses. 
-      // So, let's check if this file wouldn't happen to be 'dirty' ACR/NEMA,
-      //  i.e. the 'group length' element is not present :     
+         // We are out of luck. It is not a DicomV3 nor a 'clean' ACR/NEMA file.
+         // It is time for despaired wild guesses. 
+         // So, let's check if this file wouldn't happen to be 'dirty' ACR/NEMA,
+         //  i.e. the 'group length' element is not present :     
+         
+         //  check the supposed to be 'group number'
+         //  0x0002 or 0x0004 or 0x0008
+         //  to determine ' SwapCode' value .
+         //  Only 0 or 4321 will be possible 
+         //  (no oportunity to check for the formerly well known
+         //  ACR-NEMA 'Bad Big Endian' or 'Bad Little Endian' 
+         //  if unsuccessfull (i.e. neither 0x0002 nor 0x0200 etc -4, 8-) 
+         //  the file IS NOT ACR-NEMA nor DICOM V3
+         //  Find a trick to tell it the caller...
       
-      //  check the supposed to be 'group number'
-      //  0x0002 or 0x0004 or 0x0008
-      //  to determine ' sw' value .
-      //  Only 0 or 4321 will be possible 
-      //  (no oportunity to check for the formerly well known
-      //  ACR-NEMA 'Bad Big Endian' or 'Bad Little Endian' 
-      //  if unsuccessfull (i.e. neither 0x0002 nor 0x0200 etc -4, 8-) 
-      //  the file IS NOT ACR-NEMA nor DICOM V3
-      //  Find a trick to tell it the caller...
+         s16 = *((uint16_t *)(deb));
       
-      s16 = *((uint16_t *)(deb));
-      
-      switch (s16) {
-      case 0x0002 :
-      case 0x0004 :
-      case 0x0008 :      
-         sw = 0;
-         Filetype = gdcmACR;
-         return true;
-      case 0x0200 :
-      case 0x0400 :
-      case 0x0800 : 
-         sw = 4321;
-         Filetype = gdcmACR;
-         return true;
-      default :
-         dbg.Verbose(0, "gdcmDocument::CheckSwap:",
+         switch ( s16 )
+         {
+            case 0x0002 :
+            case 0x0004 :
+            case 0x0008 :      
+               SwapCode = 0;
+               Filetype = gdcmACR;
+               return true;
+            case 0x0200 :
+            case 0x0400 :
+            case 0x0800 : 
+               SwapCode = 4321;
+               Filetype = gdcmACR;
+               return true;
+            default :
+               dbg.Verbose(0, "gdcmDocument::CheckSwap:",
                      "ACR/NEMA unfound swap info (Really hopeless !)"); 
-         Filetype = gdcmUnknown;     
-         return false;
-      }
-      
-      // Then the only info we have is the net2host one.
-      //if (! net2host )
-         //   sw = 0;
+               Filetype = gdcmUnknown;     
+               return false;
+         }
+         // Then the only info we have is the net2host one.
+         //if (! net2host )
+         //   SwapCode = 0;
          //else
-         //  sw = 4321;
+         //  SwapCode = 4321;
          //return;
    }
 }
@@ -2349,39 +2470,40 @@ void gdcmDocument::SwitchSwapToBigEndian()
 {
    dbg.Verbose(1, "gdcmDocument::SwitchSwapToBigEndian",
                   "Switching to BigEndian mode.");
-   if ( sw == 0    ) 
+   if ( SwapCode == 0    ) 
    {
-      sw = 4321;
-      return;
+      SwapCode = 4321;
    }
-   if ( sw == 4321 ) 
+   else if ( SwapCode == 4321 ) 
    {
-      sw = 0;
-      return;
+      SwapCode = 0;
    }
-   if ( sw == 3412 ) 
+   else if ( SwapCode == 3412 ) 
    {
-      sw = 2143;
-      return;
+      SwapCode = 2143;
    }
-   if ( sw == 2143 )
-      sw = 3412;
+   else if ( SwapCode == 2143 )
+   {
+      SwapCode = 3412;
+   }
 }
 
 /**
  * \brief  during parsing, Header Elements too long are not loaded in memory 
  * @param NewSize
  */
-void gdcmDocument::SetMaxSizeLoadEntry(long NewSize) 
+void gdcmDocument::SetMaxSizeLoadEntry(long newSize) 
 {
-   if (NewSize < 0)
+   if ( newSize < 0 )
+   {
       return;
-   if ((uint32_t)NewSize >= (uint32_t)0xffffffff) 
+   }
+   if ((uint32_t)newSize >= (uint32_t)0xffffffff )
    {
       MaxSizeLoadEntry = 0xffffffff;
       return;
    }
-   MaxSizeLoadEntry = NewSize;
+   MaxSizeLoadEntry = newSize;
 }
 
 
@@ -2390,16 +2512,19 @@ void gdcmDocument::SetMaxSizeLoadEntry(long NewSize)
  * \todo  See comments of \ref gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE 
  * @param NewSize
  */
-void gdcmDocument::SetMaxSizePrintEntry(long NewSize) 
+void gdcmDocument::SetMaxSizePrintEntry(long newSize) 
 {
-   if (NewSize < 0)
+   //DOH !! This is exactly SetMaxSizeLoadEntry FIXME FIXME
+   if ( newSize < 0 )
+   {
       return;
-   if ((uint32_t)NewSize >= (uint32_t)0xffffffff) 
+   }
+   if ((uint32_t)newSize >= (uint32_t)0xffffffff )
    {
       MaxSizePrintEntry = 0xffffffff;
       return;
    }
-   MaxSizePrintEntry = NewSize;
+   MaxSizePrintEntry = newSize;
 }
 
 
@@ -2411,28 +2536,31 @@ void gdcmDocument::SetMaxSizePrintEntry(long NewSize)
  *          gets the VR, gets the length, gets the offset value)
  * @return  On succes the newly created DocEntry, NULL on failure.      
  */
-gdcmDocEntry *gdcmDocument::ReadNextDocEntry() {
-   uint16_t g = ReadInt16();
-   uint16_t n = ReadInt16();
-   gdcmDocEntry *NewEntry;
-      
+gdcmDocEntry *gdcmDocument::ReadNextDocEntry()
+{
    if (errno == 1)
+   {
       // We reached the EOF (or an error occured) therefore 
       // header parsing has to be considered as finished.
-      return (gdcmDocEntry *)0;
+      return 0;
+   }
 
-   NewEntry = NewDocEntryByNumber(g, n);
-   FindDocEntryVR(NewEntry);
-   FindDocEntryLength(NewEntry);
+   uint16_t g = ReadInt16();
+   uint16_t n = ReadInt16();
+   gdcmDocEntry *newEntry = NewDocEntryByNumber(g, n);
+
+   FindDocEntryVR(newEntry);
+   FindDocEntryLength(newEntry);
 
    if (errno == 1)
    {
       // Call it quits
-      delete NewEntry;
+      delete newEntry;
       return NULL;
    }
-   NewEntry->SetOffset(ftell(fp));  
-   return NewEntry;
+   newEntry->SetOffset(ftell(Fp));  
+
+   return newEntry;
 }
 
 
@@ -2447,8 +2575,10 @@ uint32_t gdcmDocument::GenerateFreeTagKeyInGroup(uint16_t group)
    for (uint32_t elem = 0; elem < UINT32_MAX; elem++) 
    {
       gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, elem);
-      if (tagHT.count(key) == 0)
+      if (TagHT.count(key) == 0)
+      {
          return elem;
+      }
    }
    return UINT32_MAX;
 }
@@ -2466,29 +2596,28 @@ uint32_t gdcmDocument::GenerateFreeTagKeyInGroup(uint16_t group)
  * @param   TestElement The expected Element of the tag.
  * @return  True on success, false otherwise.
  */
-bool gdcmDocument::ReadTag(uint16_t TestGroup, uint16_t TestElement)
+bool gdcmDocument::ReadTag(uint16_t testGroup, uint16_t testElement)
 {
-   uint16_t ItemTagGroup;
-   uint16_t ItemTagElement; 
-   long PositionOnEntry = ftell(fp);
-   long CurrentPosition = ftell(fp);          // On debugging purposes
+   long positionOnEntry = ftell(Fp);
+   long currentPosition = ftell(Fp);          // On debugging purposes
 
    //// Read the Item Tag group and element, and make
    // sure they are what we expected:
-   ItemTagGroup   = ReadInt16();
-   ItemTagElement = ReadInt16();
-   if ( (ItemTagGroup != TestGroup) || (ItemTagElement != TestElement ) )
+   uint16_t itemTagGroup   = ReadInt16();
+   uint16_t itemTagElement = ReadInt16();
+   if ( itemTagGroup != testGroup || itemTagElement != testElement )
    {
       std::ostringstream s;
       s << "   We should have found tag (";
-      s << std::hex << TestGroup << "," << TestElement << ")" << std::endl;
+      s << std::hex << testGroup << "," << testElement << ")" << std::endl;
       s << "   but instead we encountered tag (";
-      s << std::hex << ItemTagGroup << "," << ItemTagElement << ")"
+      s << std::hex << itemTagGroup << "," << itemTagElement << ")"
         << std::endl;
-      s << "  at address: " << (unsigned)CurrentPosition << std::endl;
+      s << "  at address: " << (unsigned)currentPosition << std::endl;
       dbg.Verbose(0, "gdcmDocument::ReadItemTagLength: wrong Item Tag found:");
       dbg.Verbose(0, s.str().c_str());
-      fseek(fp, PositionOnEntry, SEEK_SET);
+      fseek(Fp, positionOnEntry, SEEK_SET);
+
       return false;
    }
    return true;
@@ -2508,28 +2637,27 @@ bool gdcmDocument::ReadTag(uint16_t TestGroup, uint16_t TestElement)
  * @return  On success returns the length associated to the tag. On failure
  *          returns 0.
  */
-uint32_t gdcmDocument::ReadTagLength(uint16_t TestGroup, uint16_t TestElement)
+uint32_t gdcmDocument::ReadTagLength(uint16_t testGroup, uint16_t testElement)
 {
-   long PositionOnEntry = ftell(fp);
+   long PositionOnEntry = ftell(Fp);
    (void)PositionOnEntry;
 
-   if ( !ReadTag(TestGroup, TestElement) )
+   if ( !ReadTag(testGroup, testElement) )
    {
       return 0;
    }
                                                                                 
    //// Then read the associated Item Length
-   long CurrentPosition = ftell(fp);
-   uint32_t ItemLength;
-   ItemLength = ReadInt32();
+   long currentPosition = ftell(Fp);
+   uint32_t itemLength  = ReadInt32();
    {
       std::ostringstream s;
       s << "Basic Item Length is: "
-        << ItemLength << std::endl;
-      s << "  at address: " << (unsigned)CurrentPosition << std::endl;
+        << itemLength << std::endl;
+      s << "  at address: " << (unsigned)currentPosition << std::endl;
       dbg.Verbose(0, "gdcmDocument::ReadItemTagLength: ", s.str().c_str());
    }
-   return ItemLength;
+   return itemLength;
 }
 
 /**
@@ -2539,33 +2667,40 @@ uint32_t gdcmDocument::ReadTagLength(uint16_t TestGroup, uint16_t TestElement)
  */
 void gdcmDocument::Parse7FE0 ()
 {
-   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !Element )
+   gdcmDocEntry* element = GetDocEntryByNumber(0x0002, 0x0010);
+   if ( !element )
+   {
+      // Should warn user FIXME
       return;
+   }
       
    if (   IsImplicitVRLittleEndianTransferSyntax()
        || IsExplicitVRLittleEndianTransferSyntax()
        || IsExplicitVRBigEndianTransferSyntax() /// \todo 1.2.2 ??? A verifier !
        || IsDeflatedExplicitVRLittleEndianTransferSyntax() )
+   {
       return;
+   }
 
    // ---------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
 
    //// Read the Basic Offset Table Item Tag length...
-   uint32_t ItemLength = ReadTagLength(0xfffe, 0xe000);
+   uint32_t itemLength = ReadTagLength(0xfffe, 0xe000);
 
    //// ... and then read length[s] itself[themselves]. We don't use
    // the values read (BTW  what is the purpous of those lengths ?)
-   if (ItemLength != 0) {
+   if ( itemLength != 0 )
+   {
       // BTW, what is the purpous of those length anyhow !? 
-      char * BasicOffsetTableItemValue = new char[ItemLength + 1];
-      fread(BasicOffsetTableItemValue, ItemLength, 1, fp); 
-      for (unsigned int i=0; i < ItemLength; i += 4){
-         uint32_t IndividualLength;
-         IndividualLength = str2num(&BasicOffsetTableItemValue[i],uint32_t);
+      char* basicOffsetTableItemValue = new char[itemLength + 1];
+      fread(basicOffsetTableItemValue, itemLength, 1, Fp);
+
+      for (unsigned int i=0; i < itemLength; i += 4 )
+      {
+         uint32_t individualLength = str2num(&basicOffsetTableItemValue[i],uint32_t);
          std::ostringstream s;
          s << "   Read one length: ";
-         s << std::hex << IndividualLength << std::endl;
+         s << std::hex << individualLength << std::endl;
          dbg.Verbose(0, "gdcmDocument::Parse7FE0: ", s.str().c_str());
       }              
    }
@@ -2575,16 +2710,16 @@ void gdcmDocument::Parse7FE0 ()
       // JPEG Image
       
       //// We then skip (not reading them) all the fragments of images:
-      while ( (ItemLength = ReadTagLength(0xfffe, 0xe000)) )
+      while ( (itemLength = ReadTagLength(0xfffe, 0xe000)) )
       {
-         SkipBytes(ItemLength);
-      } 
+         SkipBytes(itemLength);
+      }
    }
    else
    {
       // RLE Image
       long ftellRes;
-      long RleSegmentLength[15], fragmentLength;
+      long rleSegmentLength[15], fragmentLength;
 
       // While we find some items:
       while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) )
@@ -2594,27 +2729,30 @@ void gdcmDocument::Parse7FE0 ()
          uint32_t nbRleSegments = ReadInt32();
  
          //// Reading RLE Segments Offset Table
-         uint32_t RleSegmentOffsetTable[15];
-         for(int k=1; k<=15; k++) {
-            ftellRes=ftell(fp);
-            RleSegmentOffsetTable[k] = ReadInt32();
+         uint32_t rleSegmentOffsetTable[15];
+         for(int k=1; k<=15; k++)
+         {
+            ftellRes = ftell(Fp);
+            rleSegmentOffsetTable[k] = ReadInt32();
          }
 
          // skipping (not reading) RLE Segments
-         if (nbRleSegments>1) {
-            for(unsigned int k=1; k<=nbRleSegments-1; k++) { 
-                RleSegmentLength[k]=   RleSegmentOffsetTable[k+1]
-                                     - RleSegmentOffsetTable[k];
-                ftellRes=ftell(fp);
-                SkipBytes(RleSegmentLength[k]);    
+         if ( nbRleSegments > 1)
+         {
+            for(unsigned int k = 1; k <= nbRleSegments-1; k++)
+            {
+                rleSegmentLength[k] =  rleSegmentOffsetTable[k+1]
+                                     - rleSegmentOffsetTable[k];
+                ftellRes = ftell(Fp);
+                SkipBytes(rleSegmentLength[k]);
              }
           }
 
-          RleSegmentLength[nbRleSegments]= fragmentLength 
-                                         - RleSegmentOffsetTable[nbRleSegments];
-          ftellRes=ftell(fp);
-          SkipBytes(RleSegmentLength[nbRleSegments]); 
-      } 
+          rleSegmentLength[nbRleSegments] = fragmentLength 
+                                          - rleSegmentOffsetTable[nbRleSegments];
+          ftellRes = ftell(Fp);
+          SkipBytes(rleSegmentLength[nbRleSegments]);
+      }
 
       // Make sure that at the end of the item we encounter a 'Sequence
       // Delimiter Item':
@@ -2637,42 +2775,56 @@ void gdcmDocument::Parse7FE0 ()
  */
 bool gdcmDocument::operator<(gdcmDocument &document)
 {
-   std::string s1,s2;
-                                                                                
    // Patient Name
-   s1=this->GetEntryByNumber(0x0010,0x0010);
-   s2=document.GetEntryByNumber(0x0010,0x0010);
+   std::string s1 = this->GetEntryByNumber(0x0010,0x0010);
+   std::string s2 = document.GetEntryByNumber(0x0010,0x0010);
    if(s1 < s2)
+   {
       return true;
+   }
    else if(s1 > s2)
+   {
       return false;
+   }
    else
    {
       // Patient ID
-      s1=this->GetEntryByNumber(0x0010,0x0020);
-      s2=document.GetEntryByNumber(0x0010,0x0020);
-      if (s1 < s2)
+      s1 = this->GetEntryByNumber(0x0010,0x0020);
+      s2 = document.GetEntryByNumber(0x0010,0x0020);
+      if ( s1 < s2 )
+      {
          return true;
-      else if (s1 > s2)
+      }
+      else if ( s1 > s2 )
+      {
          return true;
+      }
       else
       {
          // Study Instance UID
-         s1=this->GetEntryByNumber(0x0020,0x000d);
-         s2=document.GetEntryByNumber(0x0020,0x000d);
-         if (s1 < s2)
+         s1 = this->GetEntryByNumber(0x0020,0x000d);
+         s2 = document.GetEntryByNumber(0x0020,0x000d);
+         if ( s1 < s2 )
+         {
             return true;
-         else if(s1 > s2)
+         }
+         else if( s1 > s2 )
+         {
             return false;
+         }
          else
          {
             // Serie Instance UID
-            s1=this->GetEntryByNumber(0x0020,0x000e);
-            s2=document.GetEntryByNumber(0x0020,0x000e);
-            if (s1 < s2)
+            s1 = this->GetEntryByNumber(0x0020,0x000e);
+            s2 = document.GetEntryByNumber(0x0020,0x000e);
+            if ( s1 < s2 )
+            {
                return true;
-            else if(s1 > s2)
+            }
+            else if( s1 > s2 )
+            {
                return false;
+            }
          }
       }
    }

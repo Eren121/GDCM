@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/07/19 03:34:12 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,8 @@
  * \brief   Constructor from a given gdcmElementSet
  */
 gdcmElementSet::gdcmElementSet(int depthLevel) 
-              : gdcmDocEntrySet(depthLevel) {
+              : gdcmDocEntrySet(depthLevel)
+{
 }
 
 /**
@@ -38,14 +39,15 @@ gdcmElementSet::gdcmElementSet(int depthLevel)
  */
 gdcmElementSet::~gdcmElementSet() 
 {
-  gdcmDocEntry* EntryToDelete;  
-  for(TagDocEntryHT::iterator cc = tagHT.begin();cc != tagHT.end();++cc)
+  for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
    {
-      EntryToDelete = cc->second;
-      if ( EntryToDelete )
-         delete EntryToDelete;
+      gdcmDocEntry* entryToDelete = cc->second;
+      if ( entryToDelete )
+      {
+         delete entryToDelete;
+      }
    }
-   tagHT.clear();
+   TagHT.clear();
 }
 
 
@@ -62,20 +64,21 @@ gdcmElementSet::~gdcmElementSet()
   */ 
 void gdcmElementSet::Print(std::ostream & os)
 {
-   gdcmDocEntry* Entry;
-   for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
+   for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
-      Entry = i->second;
-      Entry->Print(os);   
+      gdcmDocEntry* entry = i->second;
+      entry->Print(os);   
       bool PrintEndLine = true;
-      if ( gdcmSeqEntry* SeqEntry = dynamic_cast<gdcmSeqEntry*>(Entry) )
+      if ( gdcmSeqEntry* seqEntry = dynamic_cast<gdcmSeqEntry*>(entry) )
       {
-         (void)SeqEntry;  //not used
+         (void)seqEntry;  //not used
          PrintEndLine = false;
       }
-      if (PrintEndLine)
+      if( PrintEndLine )
+      {
          os << std::endl;
-   } 
+      }
+   }
 }
 
 /**
@@ -85,8 +88,7 @@ void gdcmElementSet::Print(std::ostream & os)
   */ 
 void gdcmElementSet::Write(FILE *fp, FileType filetype)
 {
-
-   for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
+   for (TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
       i->second->Write(fp, filetype);
    } 
@@ -103,11 +105,11 @@ void gdcmElementSet::Write(FILE *fp, FileType filetype)
  * \brief   add a new Dicom Element pointer to the H Table
  * @param   NewEntry entry to add
  */
-bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
-   gdcmTagKey key;
-   key = NewEntry->GetKey();
+bool gdcmElementSet::AddEntry( gdcmDocEntry *newEntry)
+{
+   gdcmTagKey key = newEntry->GetKey();
 
-   if(tagHT.count(key) == 1)
+   if( TagHT.count(key) == 1 )
    {
       dbg.Verbose(1, "gdcmElementSet::AddEntry key already present: ",
                   key.c_str());
@@ -115,8 +117,8 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
    } 
    else 
    {
-      tagHT[NewEntry->GetKey()] = NewEntry;
-      return(true);
+      TagHT[newEntry->GetKey()] = newEntry;
+      return true;
    }   
 }
 
@@ -124,16 +126,16 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
  * \brief   Clear the hash table from given entry.
  * @param   EntryToRemove Entry to remove.
  */
-bool gdcmElementSet::RemoveEntry( gdcmDocEntry *EntryToRemove)
+bool gdcmElementSet::RemoveEntry( gdcmDocEntry *entryToRemove)
 {
-   gdcmTagKey key = EntryToRemove->GetKey();
-   if(tagHT.count(key) == 1)
+   gdcmTagKey key = entryToRemove->GetKey();
+   if( TagHT.count(key) == 1 )
    {
-      tagHT.erase(key);
+      TagHT.erase(key);
       dbg.Verbose(0, "gdcmElementSet::RemoveEntry: one element erased.");
       return true;
    }
 
    dbg.Verbose(0, "gdcmElementSet::RemoveEntry: key not present: ");
-   return(false);
+   return false ;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/16 15:18:05 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/07/19 03:34:11 $
+  Version:   $Revision: 1.23 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,10 +73,10 @@ protected:
    /// \brief SWap code (e.g. Big Endian, Little Endian, Bad Big Endian,
    /// Bad Little Endian) according to the processor Endianity and
    /// what is written on disc.
-   int sw;
+   int SwapCode;
 
    /// File Pointer, opened during Header parsing.
-   FILE *fp;
+   FILE *Fp;
 
    /// ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
    FileType Filetype;  
@@ -96,11 +96,11 @@ protected:
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// Will be set 1 if user asks to 'go inside' the 'sequences' (VR = "SQ")
-   int enableSequences;
+   int EnableSequences;
 
    /// \brief Amount of printed details for each Header Entry (Dicom Element):
    /// 0 : stands for the least detail level.
-   int printLevel;
+   int PrintLevel;
    
 public:
 // the 2 following will be merged
@@ -115,7 +115,7 @@ public:
 
 // Informations contained in the parser
    virtual bool IsReadable();
-   bool IsGivenTransferSyntax(const std::string & SyntaxToCheck);
+   bool IsGivenTransferSyntax(std::string const & SyntaxToCheck);
    bool IsImplicitVRLittleEndianTransferSyntax();
    bool IsExplicitVRLittleEndianTransferSyntax();
    bool IsDeflatedExplicitVRLittleEndianTransferSyntax();
@@ -137,14 +137,14 @@ public:
    void Write(FILE* fp, FileType type);
 
    gdcmValEntry* ReplaceOrCreateByNumber(std::string value,
-                                          uint16_t group, uint16_t elem);
+                                         uint16_t group, uint16_t elem);
 
    gdcmBinEntry* ReplaceOrCreateByNumber(void *voidArea, int lgth,
-                                          uint16_t group, uint16_t elem);
+                                         uint16_t group, uint16_t elem);
    bool ReplaceIfExistByNumber (const char* value, uint16_t group, uint16_t elem);
    
-   virtual void* LoadEntryVoidArea(uint16_t Group, uint16_t Element);
-   virtual void* LoadEntryVoidArea(gdcmBinEntry*);
+   virtual void* LoadEntryVoidArea(uint16_t group, uint16_t elem);
+   virtual void* LoadEntryVoidArea(gdcmBinEntry* entry);
       
    // System access
    uint16_t SwapShort(uint16_t);   // needed by gdcmFile
@@ -157,7 +157,7 @@ protected:
    // to instanciate from this class gdcmDocument (only gdcmHeader and
    // gdcmDicomDir are meaningfull).
    gdcmDocument(bool exception_on_error  = false);
-   gdcmDocument(std::string const & inFilename, 
+   gdcmDocument(std::string const & filename, 
                 bool  exception_on_error = false, 
                 bool  enable_sequences   = false,
                 bool  ignore_shadow      = false);
@@ -165,13 +165,13 @@ protected:
    
    void gdcmDocument::Parse7FE0 ();   
    // Entry
-   int CheckIfEntryExistByNumber(uint16_t Group, uint16_t Elem ); // int !
+   int CheckIfEntryExistByNumber(uint16_t group, uint16_t elem ); // int !
 public:
    virtual std::string GetEntryByName    (TagName tagName);
    virtual std::string GetEntryVRByName  (TagName tagName);
-   virtual std::string GetEntryByNumber  (uint16_t group, uint16_t element);
-   virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t element);
-   virtual int     GetEntryLengthByNumber(uint16_t group, uint16_t element);
+   virtual std::string GetEntryByNumber  (uint16_t group, uint16_t elem);
+   virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
+   virtual int     GetEntryLengthByNumber(uint16_t group, uint16_t elem);
 protected:
    virtual bool SetEntryByName  (std::string content, std::string tagName);
    virtual bool SetEntryByNumber(std::string content,
@@ -179,23 +179,23 @@ protected:
    virtual bool SetEntryByNumber(void *content, int lgth,
                                  uint16_t group, uint16_t element);
    virtual bool SetEntryLengthByNumber(uint32_t length,
-                                 uint16_t group, uint16_t element);
+                                       uint16_t group, uint16_t element);
 
-   virtual size_t GetEntryOffsetByNumber(uint16_t Group, uint16_t Elem);
-   virtual void* GetEntryVoidAreaByNumber(uint16_t Group, uint16_t Elem);   
-   virtual bool  SetEntryVoidAreaByNumber(void* a, uint16_t Group,
-                                                   uint16_t Elem);
+   virtual size_t GetEntryOffsetByNumber(uint16_t group, uint16_t elem);
+   virtual void* GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem);   
+   virtual bool  SetEntryVoidAreaByNumber(void* a, uint16_t group,
+                                                   uint16_t elem);
 
    virtual void UpdateShaEntries();
 
    // Header entry
    gdcmDocEntry* GetDocEntryByNumber(uint16_t group, uint16_t element); 
-   gdcmDocEntry* GetDocEntryByName  (std::string Name);
+   gdcmDocEntry* GetDocEntryByName  (std::string const & tagName);
 
    gdcmValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
    gdcmBinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
 
-   void LoadDocEntrySafe(gdcmDocEntry*);
+   void LoadDocEntrySafe(gdcmDocEntry* entry);
 
 private:
    // Read
@@ -238,7 +238,7 @@ private:
 public:
 // Accessors:
    /// Accessor to \ref printLevel
-   void SetPrintLevel(int level) { printLevel = level; }
+   void SetPrintLevel(int level) { PrintLevel = level; }
 
    /// Accessor to \ref Filename
    const std::string &GetFileName() { return Filename; }
@@ -246,14 +246,11 @@ public:
    /// Accessor to \ref Filename
    void SetFileName(std::string const & fileName) { Filename = fileName; }
 
-   /// Accessor to \ref gdcmElementSet::tagHT
-   TagDocEntryHT &GetEntry() { return tagHT; };
-
    /// 'Swap code' accessor (see \ref sw )
-   int GetSwapCode() { return sw; }
+   int GetSwapCode() { return SwapCode; }
    
    /// File pointer
-   FILE * GetFP() { return fp; }
+   FILE * GetFP() { return Fp; }
 
    bool operator<(gdcmDocument &document);
 

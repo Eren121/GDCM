@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/17 22:36:55 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2004/07/19 03:34:11 $
+  Version:   $Revision: 1.57 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,7 @@ gdcmDicomDir::gdcmDicomDir(std::string const & fileName, bool parseDir,
    // gdcmDocument already executed
    // if user passed a root directory, sure we didn't get anything
 
-   if( GetEntry().begin() == GetEntry().end() ) 
+   if( TagHT.begin() == TagHT.end() ) 
    {
       dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry HT empty");
 
@@ -176,14 +176,14 @@ void gdcmDicomDir::Print(std::ostream &os)
 {
    if(metaElems)
    {
-      metaElems->SetPrintLevel(printLevel);
+      metaElems->SetPrintLevel(PrintLevel);
       metaElems->Print(os);   
    }   
    for(ListDicomDirPatient::iterator cc  = patients.begin();
                                      cc != patients.end();
                                    ++cc)
    {
-     (*cc)->SetPrintLevel( printLevel );
+     (*cc)->SetPrintLevel( PrintLevel );
      (*cc)->Print( os );
    }
 }
@@ -431,7 +431,7 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
    VectDocument list;
    gdcmHeader *header;
 
-   tagHT.clear();
+   TagHT.clear();
    patients.clear();
 
    for( gdcmDirList::iterator it  = fileList.begin();
@@ -481,9 +481,9 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
   
 gdcmDicomDirMeta * gdcmDicomDir::NewMeta()
 {
-   gdcmDicomDirMeta *m = new gdcmDicomDirMeta( &tagHT );
-   for ( TagDocEntryHT::iterator cc  = tagHT.begin(); 
-                                 cc != tagHT.end(); ++cc)
+   gdcmDicomDirMeta *m = new gdcmDicomDirMeta( &TagHT );
+   for ( TagDocEntryHT::iterator cc  = TagHT.begin(); 
+                                 cc != TagHT.end(); ++cc)
    {
       m->AddDocEntry( cc->second );
    }
@@ -544,7 +544,7 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient()
       s->AddDocEntry( entry );
    }
 
-   gdcmDicomDirPatient *p = new gdcmDicomDirPatient(s, &tagHT);
+   gdcmDicomDirPatient *p = new gdcmDicomDirPatient(s, &TagHT);
    patients.push_front( p );
 
    return p;   
@@ -666,7 +666,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
          }
       }
       //AddDocEntry(entry); // both in H Table and in chained list
-      tagHT[entry->GetKey()] = entry;          // FIXME : use a SEQUENCE !
+      TagHT[entry->GetKey()] = entry;          // FIXME : use a SEQUENCE !
    }
 }
 
@@ -744,7 +744,7 @@ void gdcmDicomDir::CreateDicomDir()
    }
 
    ListSQItem listItems = s->GetSQItems();
-   gdcmDicomDirMeta *m  = new gdcmDicomDirMeta(&tagHT);
+   gdcmDicomDirMeta *m  = new gdcmDicomDirMeta(&TagHT);
    (void)m; //??
    
    gdcmDocEntry * d;
@@ -846,7 +846,7 @@ void gdcmDicomDir::AddDicomDirMeta()
    {
       delete metaElems;
    }
-   metaElems = new gdcmDicomDirMeta( &tagHT );
+   metaElems = new gdcmDicomDirMeta( &TagHT );
 }
 
 /**
@@ -856,7 +856,7 @@ void gdcmDicomDir::AddDicomDirMeta()
  */
 void gdcmDicomDir::AddDicomDirPatientToEnd(gdcmSQItem *s)
 {
-   patients.push_back(new gdcmDicomDirPatient(s, &tagHT));
+   patients.push_back(new gdcmDicomDirPatient(s, &TagHT));
 }
 
 /**
@@ -870,7 +870,7 @@ void gdcmDicomDir::AddDicomDirPatientToEnd(gdcmSQItem *s)
    {
       ListDicomDirPatient::iterator itp = patients.end();
       itp--;
-      (*itp)->AddDicomDirStudy(new gdcmDicomDirStudy(s, &tagHT));
+      (*itp)->AddDicomDirStudy(new gdcmDicomDirStudy(s, &TagHT));
    }
 }
 
@@ -890,7 +890,7 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(gdcmSQItem *s)
       {
          ListDicomDirStudy::iterator itst=(*itp)->GetDicomDirStudies().end();
          itst--;
-         (*itst)->AddDicomDirSerie(new gdcmDicomDirSerie(s, &tagHT));
+         (*itst)->AddDicomDirSerie(new gdcmDicomDirSerie(s, &TagHT));
       }
    }
 }
@@ -916,7 +916,7 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(gdcmSQItem *s)
          {
             ListDicomDirSerie::iterator its = (*itst)->GetDicomDirSeries().end();
             its--;
-            (*its)->AddDicomDirImage(new gdcmDicomDirImage(s, &tagHT));
+            (*its)->AddDicomDirImage(new gdcmDicomDirImage(s, &TagHT));
          }
       }
    }

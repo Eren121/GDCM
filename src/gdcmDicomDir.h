@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/17 22:36:55 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/07/19 03:34:11 $
+  Version:   $Revision: 1.25 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,11 +50,6 @@ public:
                    
    ~gdcmDicomDir();
 
-   /// \brief Sets the print level for the Dicom Header 
-   /// \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
-   void SetPrintLevel(int level) 
-      { printLevel = level; };
-
    /// \brief   canonical Printer 
    /// \sa    SetPrintLevel
    virtual void Print(std::ostream &os = std::cout);
@@ -82,7 +77,7 @@ public:
    float GetProgress()  { return progress; };
 
    /// AbortProgress AbortProgress
-   void  AbortProgress() {abort = true; };
+   void  AbortProgress() { abort = true; };
 
    /// IsAborted IsAborted
    bool  IsAborted() { return abort; };
