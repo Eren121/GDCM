@@ -3,8 +3,6 @@
 #ifndef GDCMDEBUG_H
 #define GDCMDEBUG_H
 
-#define GDCM_DEBUG -1
-
 /**
  * \ingroup gdcmDebug
  * \brief gdcmDebug is an object for debugging in program.
@@ -18,7 +16,7 @@
  */
 class gdcmDebug {
 public:
-   gdcmDebug(int level = GDCM_DEBUG);
+   gdcmDebug(int level = -1);
 
    void SetDebug (int level);
    void Verbose(int, const char*, const char* ="");

@@ -20,6 +20,7 @@ MARK_AS_ADVANCED(GDCM_DATA_DIR)
 OPTION(BUILD_SHARED_LIBS "Build GDCM with shared libraries." ON)
 SET(GDCM_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
+OPTION(GDCM_DEBUG "Turn verbosity of some statement ON." OFF)
 
 #-----------------------------------------------------------------------------
 SET (EXECUTABLE_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")

@@ -2,6 +2,8 @@
      * Add a new test: ShowDicom, for now this is just the c++ version of
        checkRead.sh, later it will be able to compare the image read against a
        baseline.
+     * Replace the DEBUG on the stack with a global entry in cmake interface:
+       GDCM_DEBUG, so you can turn verbosity ON/OFF for debug statement.
 
 2004-04-30  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * Add an example subdir, with a real example on how to read + write a 

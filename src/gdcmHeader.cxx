@@ -1,15 +1,12 @@
 // gdcmHeader.cxx
 //-----------------------------------------------------------------------------
-#include <stdio.h>
-#include <cerrno>
-#include <cctype>    // for isalpha
-#include <vector>
-
 #include "gdcmHeader.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include "gdcmTS.h"
+
+#include <vector>
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -46,25 +43,25 @@ gdcmHeader::gdcmHeader(const char *InFilename,
    
    // This IS the right place for the code
  
-      std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
-      if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
-         GrPixel = 0x7fe0;                   // default value
-      } else {
-         GrPixel = (guint16) atoi( ImageLocation.c_str() );
-      }   
-      if (GrPixel == 0xe07f) // sometimes Image Location value doesn't follow 
-         GrPixel = 0x7fe0;   // the supposed processor endianity. 
-                             // see gdcmData/cr172241.dcm      
-      if (GrPixel != 0x7fe0) 
-         // This is a kludge for old dirty Philips imager.
-         NumPixel = 0x1010;
-      else
-         NumPixel = 0x0010;
+   std::string ImageLocation = GetEntryByNumber(0x0028, 0x0200);
+   if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
+      GrPixel = 0x7fe0;                   // default value
+   } else {
+      GrPixel = (guint16) atoi( ImageLocation.c_str() );
+   }   
+   if (GrPixel == 0xe07f) // sometimes Image Location value doesn't follow 
+      GrPixel = 0x7fe0;   // the supposed processor endianity. 
+                          // see gdcmData/cr172241.dcm      
+   if (GrPixel != 0x7fe0) 
+      // This is a kludge for old dirty Philips imager.
+      NumPixel = 0x1010;
+   else
+      NumPixel = 0x0010;
 
-      TagKey key = gdcmDictEntry::TranslateToKey(GrPixel, NumPixel);
-      countGrPixel = GetEntry().count(key);
+   TagKey key = gdcmDictEntry::TranslateToKey(GrPixel, NumPixel);
+   countGrPixel = GetEntry().count(key);
       
-      // we set the SQ Depth of each Header Entry
+   // we set the SQ Depth of each Header Entry
    
    int top =-1;
    int countSQ = 0;      
@@ -75,97 +72,104 @@ gdcmHeader::gdcmHeader(const char *InFilename,
    std::ostringstream tab; 
    tab << "   ";
    
-   int DEBUG = 0;  // Sorry; Dealing with e-film breaker images
-                   // will (certainly) cause a lot of troubles ...
-                   // I prefer keeping my 'trace' on .		   
+   // GDCM_DEBUG
+   // Sorry; Dealing with e-film breaker images
+   // will (certainly) cause a lot of troubles ...
+   // I prefer keeping my 'trace' on .		   
    
    for (ListTag::iterator i = listEntries.begin();  
-       i != listEntries.end();
-       ++i) {
-      (*i)->SetSQDepthLevel(countSQ);
-      if ( (*i)->GetVR() == "SQ" && (*i)->GetReadLength() != 0) {   // SQ found         
-         countSQ++;
-	 top ++;	 
-	    if ( top >= 20) {
+      i != listEntries.end();
+      ++i) {
+         (*i)->SetSQDepthLevel(countSQ);
+         if ( (*i)->GetVR() == "SQ" && (*i)->GetReadLength() != 0) {   // SQ found         
+            countSQ++;
+            top ++;	 
+            if ( top >= 20) {
+#ifdef GDCM_DEBUG
                std::cout << "Kaie ! Kaie! SQ Stack Overflow" << std::endl;
-	       return;
+#endif //GDCM_DEBUG
+               return;
             }
-	 if (DEBUG) std::cout << "\n >>>>> empile niveau " << top 
-	                 << "; Lgr SeQ: " << (*i)->GetReadLength() 
-                         << "\n" <<std::endl;
-	      	 
-	 pile[top].totalSQlength = (*i)->GetReadLength();
-	 pile[top].alreadyParsedlength = 0; 
-	 currentParsedlength = 0;	   	       
+#ifdef GDCM_DEBUG
+            std::cout << "\n >>>>> empile niveau " << top 
+               << "; Lgr SeQ: " << (*i)->GetReadLength() 
+               << "\n" <<std::endl;
+#endif //GDCM_DEBUG
 
-      } else {                              // non SQ found
-      
-         if (countSQ != 0) {                // we are 'inside a SeQuence'
-            if ( (*i)->GetGroup()==0xfffe  && (*i)->GetElement()==0xe0dd){
-	       // we just found 'end of SeQuence'
-               
-	       if (DEBUG)
-                   std::cout << "fffe,e0dd : depile" << std::endl;
+            pile[top].totalSQlength = (*i)->GetReadLength();
+            pile[top].alreadyParsedlength = 0; 
+            currentParsedlength = 0;	   	       
+
+         } else {  // non SQ found
+         if (countSQ != 0) { // we are 'inside a SeQuence'
+            if ( (*i)->GetGroup()==0xfffe  && (*i)->GetElement()==0xe0dd) {
+               // we just found 'end of SeQuence'
+
+#ifdef GDCM_DEBUG
+               std::cout << "fffe,e0dd : depile" << std::endl;
+#endif //GDCM_DEBUG
+
                currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2			     	       
-	       countSQ --;
+               countSQ --;
                top --; 
                pile[top].alreadyParsedlength +=  currentParsedlength;
             } else {
-	       // we are on a 'standard' elem
-	       // or a Zero-length SeQuence
-	       
-	       totalElementlength =  (*i)->GetFullLength();	       
-	       currentParsedlength += totalElementlength;				 
+               // we are on a 'standard' elem
+               // or a Zero-length SeQuence
+
+               totalElementlength =  (*i)->GetFullLength();	       
+               currentParsedlength += totalElementlength;				 
                pile[top].alreadyParsedlength += totalElementlength;
-	       
+
                if (pile[top].totalSQlength == 0xffffffff) {
-                  if (DEBUG)
-		     std::cout << "totalSeQlength == 0xffffffff" 
-                               << std::endl; 
+#ifdef GDCM_DEBUG
+                  std::cout << "totalSeQlength == 0xffffffff" << std::endl; 
+#endif //GDCM_DEBUG
                } else {
-	          if (DEBUG) 
-                       std::cout << "alrdyPseLgt:"
-		       << pile[top].alreadyParsedlength << " totSeQlgt: " 
-		       << pile[top].totalSQlength << " curPseLgt: " 
-		       << currentParsedlength
-		       << std::endl;
+#ifdef GDCM_DEBUG
+                  std::cout << "alrdyPseLgt:"
+                   << pile[top].alreadyParsedlength << " totSeQlgt: " 
+                   << pile[top].totalSQlength << " curPseLgt: " 
+                   << currentParsedlength
+                   << std::endl;
+#endif //GDCM_DEBUG
                   while (pile[top].alreadyParsedlength==pile[top].totalSQlength) {
-		  
-		     if (DEBUG) 
-                         std::cout << " \n<<<<<< On depile niveau " << top 
-                                   << " \n" <<  std::endl;
-                     (*i)->SetSQDepthLevel(countSQ);		     
-                     currentParsedlength = pile[top].alreadyParsedlength;
-                     countSQ --;
-                     top --;
-	             if (top >=0) {
-			
-                        pile[top].alreadyParsedlength +=  currentParsedlength +12;
-			                        // 12 : length of 'SQ embedded' SQ element
-                        currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2
-									     		     
-		        if (DEBUG)
-                             std::cout << pile[top].alreadyParsedlength << " " 
-                                       << pile[top].totalSQlength << " " 
-                                       << currentParsedlength
-                                       << std::endl;
-                     }		     		     
-		     if (top == -1) {
-                        currentParsedlength = 0;
-                        break;
-                     }		     			   		     
+#ifdef GDCM_DEBUG
+                  std::cout << " \n<<<<<< On depile niveau " << top 
+                     << " \n" <<  std::endl;
+#endif //GDCM_DEBUG
+                  (*i)->SetSQDepthLevel(countSQ);		     
+                  currentParsedlength = pile[top].alreadyParsedlength;
+                  countSQ --;
+                  top --;
+                  if (top >=0) {
+                     pile[top].alreadyParsedlength +=  currentParsedlength +12;
+                     // 12 : length of 'SQ embedded' SQ element
+                     currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2
+
+#ifdef GDCM_DEBUG
+                     std::cout << pile[top].alreadyParsedlength << " " 
+                       << pile[top].totalSQlength << " " 
+                       << currentParsedlength
+                       << std::endl;
+#endif //GDCM_DEBUG
                   }
-               }				
-            }              
-         }   // end : 'inside a SeQuence'   
-      } 
-      if (DEBUG) {
-         for (int k=0; k<(*i)->GetSQDepthLevel();k++) {
-	    std::cout << tab;
-         }
-	 (*i)->SetPrintLevel(2);
-	 (*i)->Print();
-      }      
+                  if (top == -1) {
+                     currentParsedlength = 0;
+                     break;
+                  }
+               }
+            }				
+         }              
+      }   // end : 'inside a SeQuence'   
+   } 
+#ifdef GDCM_DEBUG
+   for (int k=0; k<(*i)->GetSQDepthLevel();k++) {
+      std::cout << tab;
+   }
+   (*i)->SetPrintLevel(2);
+   (*i)->Print();
+#endif //GDCM_DEBUG
    } // end for        
 }
 
@@ -620,9 +624,11 @@ size_t gdcmHeader::GetPixelOffset(void) {
    if (PixelElement) {
       return PixelElement->GetOffset();
    } else {
-/*      std::cout << "Big trouble : Pixel Element ("
+#ifdef GDCM_DEBUG
+      std::cout << "Big trouble : Pixel Element ("
                 << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
-                << std::endl;  */
+                << std::endl;  
+#endif //GDCM_DEBUG
       return 0;
    }     
 }
@@ -649,10 +655,11 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
    if (PixelElement) {
       return PixelElement->GetLength();
    } else {
-/*      std::cout << "Big trouble : Pixel Element ("
+#ifdef GDCM_DEBUG
+      std::cout << "Big trouble : Pixel Element ("
                 << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
                 << std::endl;
-*/
+#endif //GDCM_DEBUG
       return 0;
    }
 }
