@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 12:53:59 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/02/07 18:43:38 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -167,7 +167,7 @@ int WriteSimple(Image &img)
                {
                   *(tmp+1) = j/256;
                }
-               tmp += img.componentSize * img.components/8;
+               tmp += img.components/8;
             }
          }
       }
@@ -222,12 +222,13 @@ int WriteSimple(Image &img)
    gdcm::FileHelper *reread = new gdcm::FileHelper( fileName );
    if( !reread->GetFile()->IsReadable() )
    {
-     std::cerr << "Failed" << std::endl
-               << "Could not reread image written: " << fileName << std::endl;
-     delete fileToBuild;
-     delete file;
-     delete reread;
-     return 1;
+      std::cerr << "Failed" << std::endl
+                << "Could not reread image written: " << fileName << std::endl;
+      delete fileToBuild;
+      delete file;
+      delete reread;
+      delete[] imageData;
+      return 1;
    }
 
 // Step 6 : Compare to the written image
