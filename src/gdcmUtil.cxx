@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:42 $
-  Version:   $Revision: 1.110 $
+  Date:      $Date: 2005/01/18 15:46:49 $
+  Version:   $Revision: 1.111 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -496,13 +496,10 @@ int GetMacAddrSys ( unsigned char *addr )
 #ifdef __sun
    //The POSIX version is broken anyway on Solaris, plus would require full
    //root power
-   int                     i;
    struct  arpreq          parpreq;
-   struct  sockaddr_in     sa, *psa;
-   struct  in_addr         inaddr;
+   struct  sockaddr_in     *psa;
    struct  hostent         *phost;
    char                    hostname[MAXHOSTNAMELEN];
-   unsigned char           *ptr;
    char                    **paddrs;
    int                     sock, status=0;
 
