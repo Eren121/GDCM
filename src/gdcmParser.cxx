@@ -1749,7 +1749,7 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
      
    if (FoundLength%2) {
       std::cout << "Warning : Tag with uneven length " << FoundLength 
-          <<  "in x(" << hex << gr << "," << el <<")" << std::endl;
+         <<  "in x(" << std::hex << gr << "," << el <<")" << std::endl;
    }
       
    // Sorry for the patch!  
