@@ -13,14 +13,7 @@ public:
 
    ~gdcmDicomDirImage(void);
 
-   virtual void Print(std::ostream &os = std::cout);
-   
-/**
- * \ingroup gdcmDicomDirImage
- * \brief   TODO
- */ 
-   gdcmDicomDirImage* NewImage(void);
-      
+   virtual void Print(std::ostream &os = std::cout);      
 };
 
 //-----------------------------------------------------------------------------

@@ -55,13 +55,6 @@ void gdcmDicomDirImage::Print(std::ostream &os)
    gdcmObject::Print(os);
 }
 
-/**
- * \ingroup gdcmDicomDirImage
- * \brief   TODO
- * @return
- */
-gdcmDicomDirImage* gdcmDicomDirImage::NewImage(void) {}
-
 //-----------------------------------------------------------------------------
 // Public
 
