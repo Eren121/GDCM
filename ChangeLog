@@ -28,7 +28,6 @@
      * Split the IsReadable method between gdcmParser which test that the file
        is dicom and gdcmHeader which test that it's an image file
 
->>>>>>> 1.146
 2004-01-22 Benoit Regrain
      * DicomDir : clean code, add methods, set variables in protected or private
      * gdcmUtil : bug fix for the clean string method
