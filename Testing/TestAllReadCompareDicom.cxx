@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/31 07:45:57 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/03/31 08:06:21 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -381,11 +381,12 @@ int InternalTest(std::string const &filename,
       std::cout << "2...";
 
       TestFile *reference = new TestFile();
-      reference->Load(referenceFileName);
-      if(!reference->IsReadable())
+      std::ifstream refFile(referenceFileName.c_str(),
+                            std::ios::binary|std::ios::in);
+      if(!refFile)
       {
          std::cout << " Failed" << std::endl
-                   << "      Image not BMP compatible:"
+                   << "      Image not found:"
                    << referenceFileName << std::endl;
          reference->SetXSize(tested->GetFile()->GetXSize());
          reference->SetYSize(tested->GetFile()->GetYSize());
@@ -395,6 +396,8 @@ int InternalTest(std::string const &filename,
          reference->SetData(tested->GetImageData());
          reference->Write(referenceFileName);
       }
+      else
+         refFile.close();
 
       reference->Load(referenceFileName);
       if(!reference->IsReadable())
