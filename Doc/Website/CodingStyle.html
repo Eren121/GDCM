@@ -149,7 +149,7 @@
    logical blocks of code with the concerned comments.
  - Use parantheses around conditions e.g. with an if statement:
       if ( someLocalVariable == 2 ) { ... }
- - Add spaces around parantheses, or braces. Use
+ - Add spaces around parentheses, or braces. Use
       if ( someLocalVariable == 2 ) { ClassMenber += 1; }
    and not
       if (someLocalVariable == 2) {ClassMenber += 1;}
@@ -227,11 +227,11 @@
        *         dictionaries), look for the element value representation of
        *         a given tag.
        * @param  group Group number of the searched tag.
-       * @param  element Element number of the searched tag.
+       * @param  elem Element number of the searched tag.
        * @return Corresponding element value representation when it exists,
        *         and the string "gdcm::Unfound" otherwise.
        */
-      std::string Document::GetEntryByNumber(guint16 group, guint16 element)
+      std::string Document::GetEntryByNumber(guint16 group, guint16 elem)
       {
          ...
       }
@@ -244,17 +244,26 @@
          warnings won't work).
  - Don't use the C standard library. Don't include stdio.h, ctype.h...
    Don't use printf(), sprinf(), FILE*...
- - Don't use the NULL notation (either as macro, or as const int NULL=0).
+ - Don't use the NULL notation (neither as macro, nor as const int NULL=0).
    A pointer that doesn't refer to an object should simply be defined as
       DataPointer* MyDataPointer = 0;
                                                                                 
 * Basic types:
  - Assume T is a given type. When declaring or defining with the
    "pointer to T" notation, the * character must be adjacent to
-   the type and not the variable. That is use
-      T* foo = 0;
-   and not
+   the variable and not the type. That is use
       T *foo = 0;
+   and not
+      T* foo = 0;
+ - Assume T is a given type. When declaring or defining with the
+   "reference to T" notation, the & character must be adjacent to
+   the variable and not the type. That is use
+      T &foo = 0;
+   and not
+      T& foo = 0;
+   This is the common notation, not a 'gdcm special' notation.
+   (doxygen will not have any longer to correct)
+
  - Always define a typedef for a new type and be consistent in usage.
    Use
       typedef Header* HeaderPointer;

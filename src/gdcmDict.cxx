@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 02:54:35 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/01/06 17:08:06 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,10 +30,10 @@ void FillDefaultDataDict(Dict *d);
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \brief   Construtor
+ * \brief   Constructor
  * @param   filename from which to build the dictionary.
  */
-Dict::Dict(std::string const & filename)
+Dict::Dict(std::string const &filename)
 {
    uint16_t group;
    uint16_t element;
@@ -123,7 +123,7 @@ void Dict::PrintByKey(std::ostream &os)
  *                           unpredictable result
  * @param   os The output stream to be written to.
  */
-void Dict::PrintByName(std::ostream& os)
+void Dict::PrintByName(std::ostream &os)
 {
    std::ostringstream s;
 
@@ -148,9 +148,9 @@ void Dict::PrintByName(std::ostream& os)
  * @param   newEntry entry to add 
  * @return  false if Dicom Element already exists
  */
-bool Dict::AddNewEntry(DictEntry const & newEntry) 
+bool Dict::AddNewEntry(DictEntry const &newEntry) 
 {
-   const TagKey & key = newEntry.GetKey();
+   const TagKey &key = newEntry.GetKey();
 
    if(KeyHt.count(key) == 1)
    {
@@ -171,7 +171,7 @@ bool Dict::AddNewEntry(DictEntry const & newEntry)
  * @param   newEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
-bool Dict::ReplaceEntry(DictEntry const & newEntry)
+bool Dict::ReplaceEntry(DictEntry const &newEntry)
 {
    if ( RemoveEntry(newEntry.GetKey()) )
    {
@@ -189,7 +189,7 @@ bool Dict::ReplaceEntry(DictEntry const & newEntry)
  * @param   key (group|element)
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool Dict::RemoveEntry (TagKey const & key) 
+bool Dict::RemoveEntry (TagKey const &key) 
 {
    TagKeyHT::const_iterator it = KeyHt.find(key);
    if(it != KeyHt.end()) 
@@ -227,7 +227,7 @@ bool Dict::RemoveEntry (uint16_t group, uint16_t element)
  *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-DictEntry* Dict::GetDictEntryByName(TagName const & name)
+DictEntry *Dict::GetDictEntryByName(TagName const &name)
 {
    TagNameHT::iterator it = NameHt.find(name);
    if ( it == NameHt.end() )
@@ -243,7 +243,7 @@ DictEntry* Dict::GetDictEntryByName(TagName const & name)
  * @param   element element of the entry to be found
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-DictEntry* Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
+DictEntry *Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
 {
    TagKey key = DictEntry::TranslateToKey(group, element);
    TagKeyHT::iterator it = KeyHt.find(key);
@@ -260,7 +260,7 @@ DictEntry* Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
  * \sa      DictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-EntryNamesList* Dict::GetDictEntryNames() 
+EntryNamesList *Dict::GetDictEntryNames() 
 {
    EntryNamesList *result = new EntryNamesList;
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
