@@ -14,7 +14,6 @@
 
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
-#include "iddcmjpeg.h" // for the 'LibIDO' Jpeg LossLess
 
 #define str2num(str, typeNum) *((typeNum *)(str))
 

@@ -2,7 +2,6 @@
 
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
-#include "iddcmjpeg.h" // for the 'LibIDO' Jpeg LossLess
 #include "jpeg/ljpg/jpegless.h"
 
 /////////////////////////////////////////////////////////////////
@@ -40,10 +39,10 @@ gdcmFile::gdcmFile(const char * filename)
 /**
  * \ingroup   gdcmFile
  * \brief     calcule la longueur (in bytes) A ALLOUER pour recevoir les
- *        	pixels de l'image
- *  		ou DES images dans le cas d'un multiframe
- *  		ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels
- *  		(dans le cas d'images compressees, elle n'a pas de sens).
+ *            pixels de l'image ou DES images dans le cas d'un multiframe
+ *  		
+ *  	    ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels
+ *          (dans le cas d'images compressees, elle n'a pas de sens).
  *
  * @return	longueur a allouer 
  */
@@ -58,8 +57,10 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
       nb = atoi(str_nb.c_str() );
       if (nb == 12) nb =16;
    }
-   lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() * (nb/8)* GetSamplesPerPixel();
-   std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
+   lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() 
+              * (nb/8)* GetSamplesPerPixel();
+   std::string str_PhotometricInterpretation = 
+                             gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
    if ( str_PhotometricInterpretation == "PALETTE COLOR " ) { 
       lgrTotale*=3;
    }
@@ -412,7 +413,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
    //                            PhotometricInterpretation=PALETTE COLOR
    // and heuristic has to be found :-( 
 
-      int planConf=GetPlanarConfiguration();
+      int planConf=GetPlanarConfiguration();  // 0028,0006
 
       // Whatever Planar Configuration is, 
       // "PALETTE COLOR " implies that we deal with the palette. 
@@ -524,7 +525,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
                // See PS 3.3-2003 C.11.1.1.2 p 619
                // 
             int mult;
-            if ( GetLUTNbits()==16 && nb==8) mult=2; // See PS 3.3 
+            if (GetLUTNbits()==16 && nb==8) mult=2; // See PS 3.3 
             else mult=1;
 
             // if we get a black image, let's just remove the '+1'
@@ -541,11 +542,25 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
             free(newDest);
                
-         } else { // need to make RGB Pixels (?)
-                  // from grey Pixels (?!)
-                  // and Gray Lut  (!?!) 
-               unsigned char *lutGray =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1200);
-                    // Well . I'll wait till I find such an image 
+         } else { 
+	     // need to make RGB Pixels (?)
+             // from grey Pixels (?!)
+             // and Gray Lut  (!?!) 
+             //unsigned char *lutGray =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1200);
+		  
+                             // Well . I'll wait till I find such an image 
+		  
+	     // or Segmented Green Palette Color Lookup Table Data and so on
+		  
+		            // Oops! I get one (gdcm-US-ALOKA-16.dcm)
+			    // No idea how to manage it :-(
+			    // Segmented xxx Palette Color are *more* than 65535 long ?!?
+			    
+            // WARNING : quick and dirty trick to produce a single plane Grey image
+	    // See also  gdcmHeaderHelper::GetNumberOfScalarComponents()         		      
+		    lgrTotale /=3;
+		    return lgrTotale;
+	    // end of dirty trick
          }
          break;
       }

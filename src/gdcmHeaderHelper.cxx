@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.13 2003/10/24 14:34:22 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.14 2003/10/27 14:01:12 jpr Exp $
 
 #include "gdcmHeaderHelper.h"
 
@@ -108,6 +108,11 @@ int gdcmHeaderHelper::GetNumberOfScalarComponents() {
       if (PhotometricInterpretation.find(GDCM_UNFOUND) < PhotometricInterpretation.length() || 
           PhotometricInterpretation.find("MONOCHROME1") < PhotometricInterpretation.length() || 
           PhotometricInterpretation.find("MONOCHROME2") < PhotometricInterpretation.length() ) return 1;
+
+            // WARNING : quick and dirty trick to produce a single plane Grey image
+	    // See also  gdcmFile::GetImageDataIntoVector()
+           // if(GetPubElValVoidAreaByNumber(0x0028,0x1201)==NULL) return 1; // Lut Red
+            // end of dirty trick
 
       return 3;
 }
