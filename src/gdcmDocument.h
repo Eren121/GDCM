@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:17:00 $
-  Version:   $Revision: 1.95 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.96 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,12 +38,12 @@ class JPEGFragmentsInfo;
 
 //-----------------------------------------------------------------------------
 /**
- * \brief Derived by both Header and DicomDir
+ * \brief Derived by both gdcm::File and gdcm::DicomDir
  */
 class GDCM_EXPORT Document : public ElementSet
 {
 public:
-// Informations contained in the parser
+// Informations contained in the gdcm::Document
    virtual bool IsReadable();
    FileType GetFileType();
 
@@ -130,8 +130,8 @@ public:
 protected:
 // Methods
    // Constructor and destructor are protected to forbid end user 
-   // to instanciate from this class Document (only Header and
-   // DicomDir are meaningfull).
+   // to instanciate from this class Document (only gdcm::File and
+   // gdcm::DicomDir are meaningfull).
    Document();
    Document( std::string const &filename );
    virtual ~Document();
@@ -161,13 +161,13 @@ protected:
    /// the well known 'Bad Big Endian' and 'Bad Little Endian' codes
    int SwapCode;
 
-   ///\brief whether we already parsed group 0002
+   ///\brief whether we already parsed group 0002 (Meta Elements)
    bool Group0002Parsed;
 
    ///\brief whether file has a DCM Preamble
    bool HasDCMPreamble;
 
-   /// File Pointer, opened during Header parsing.
+   /// File Pointer, opened during Document parsing.
    std::ifstream *Fp;
 
    /// ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown

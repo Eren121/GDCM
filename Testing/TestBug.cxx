@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:58 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/21 11:40:54 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,18 +19,18 @@
 // We have to be carefull when the code both use cout + printf VC++ gets
 // confused, thus make sure we use only one kind of iostream
 
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 
 int TestBug(int argc, char* argv[])
 {  
-  gdcm::Header* e1;
+  gdcm::File* e1;
 
    if (argc > 1)
-      e1 = new gdcm::Header( argv[1] );
+      e1 = new gdcm::File( argv[1] );
    else {
       std::string filename = GDCM_DATA_ROOT;
       filename += "/test.acr";
-      e1 = new gdcm::Header( filename.c_str() );
+      e1 = new gdcm::File( filename.c_str() );
    }
    //e1->PrintPubDict();
    //e1->GetPubDict()->GetEntriesByKey();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:58 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/21 11:40:53 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 // Writting of a DICOM file based on a correct dicom header
@@ -39,15 +39,15 @@ int main(int argc, char* argv[])
  
    // We assume that DICOM fields of second file actually exists :
  
-   std::string nbFrames = f2->GetHeader()->GetEntry(0x0028, 0x0008);
+   std::string nbFrames = f2->GetFile()->GetEntry(0x0028, 0x0008);
    if(nbFrames != "gdcm::Unfound") {
-       f1->GetHeader()->ReplaceOrCreate( nbFrames, 0x0028, 0x0008);
+       f1->GetFile()->ReplaceOrCreate( nbFrames, 0x0028, 0x0008);
    }
           
-   f1->GetHeader()->ReplaceOrCreate(
-     f2->GetHeader()->GetEntry(0x0028, 0x0010), 0x0028, 0x0010); // nbLig
-   f1->GetHeader()->ReplaceOrCreate( 
-     f2->GetHeader()->GetEntry(0x0028, 0x0011), 0x0028, 0x0011); // nbCol
+   f1->GetFile()->ReplaceOrCreate(
+     f2->GetFile()->GetEntry(0x0028, 0x0010), 0x0028, 0x0010); // nbLig
+   f1->GetFile()->ReplaceOrCreate( 
+     f2->GetFile()->GetEntry(0x0028, 0x0011), 0x0028, 0x0011); // nbCol
  
    // Some other tags should be updated:
  
@@ -63,10 +63,10 @@ int main(int argc, char* argv[])
    // TODO : Shouldn't we merge those two functions ?
    f1->SetImageData( imageData, dataSize);
  
-   f1->GetHeader()->Print();
+   f1->GetFile()->Print();
  
-   std::string s0  = f2->GetHeader()->GetEntry(0x7fe0, 0x0000);
-   std::string s10 = f2->GetHeader()->GetEntry(0x7fe0, 0x0010);
+   std::string s0  = f2->GetFile()->GetEntry(0x7fe0, 0x0000);
+   std::string s10 = f2->GetFile()->GetEntry(0x7fe0, 0x0010);
  
    std::cout << "lgr 7fe0, 0000 " << s0  << std::endl;
    std::cout << "lgr 7fe0, 0010 " << s10 << std::endl;

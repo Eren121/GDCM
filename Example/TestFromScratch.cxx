@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:42 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDictEntry.h"
 #include "gdcmDocEntry.h"
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
    std::string filename = argv[1];
    gdcm::FileHelper *f1 = new gdcm::FileHelper( filename );
-   gdcm::Header *h1 = f1->GetHeader();
+   gdcm::File *h1 = f1->GetFile();
 
    int dataSize = f1->GetImageDataSize();
    std::cout << "DataSize:      " << dataSize << std::endl;
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
    uint8_t* imageData = f1->GetImageData();
  
    // Hopefully default to something
-   gdcm::Header *h2 = new gdcm::Header();
+   gdcm::File *h2 = new gdcm::File();
 
    // Copy of the header content
    gdcm::DocEntry* d = h1->GetFirstEntry();

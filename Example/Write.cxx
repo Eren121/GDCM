@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Write.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:42 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/21 11:40:53 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 #include <iostream>
@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 {  
    std::string zozo;
 
-   gdcm::Header* e1;
+   gdcm::File* e1;
    gdcm::FileHelper  * f1;
 
    //gdcmDocument * d;  //not used
@@ -42,13 +42,13 @@ int main(int argc, char* argv[])
    }
 /*
    if (0) {  // Just to keep the code for further use
-      std::cout <<std::endl << "-------- Test gdcmHeader ------" <<std::endl;
-      e1 = new gdcmHeaderHelper(argv[1]);
-      if (!f1->GetHeader()->IsReadable()) {
+      std::cout <<std::endl << "-------- Test gdcmFile ------" <<std::endl;
+      e1 = new gdcmFileHelper(argv[1]);
+      if (!f1->GetFile()->IsReadable()) {
          std::cout << "Sorry, not a DICOM / ACR File"  <<std::endl;
          exit(0);
       }
-      std::cout << std::endl << "----------------------> after new gdcmHeader"
+      std::cout << std::endl << "----------------------> after new gdcmFile"
                 << std::endl;
       e1->PrintEntry();
       std::cout <<std::endl <<"---------------------------------------" 
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
      
    std::string toto = argv[1]; 
 
-   e1 = new gdcm::Header( toto.c_str() );
+   e1 = new gdcm::File( toto.c_str() );
    if (!e1->IsReadable()) {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
        return 0;
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
    {
    case 'a' :
             // ecriture d'un fichier ACR 
-            // à partir d'un dcmHeader correct.
+            // à partir d'un dcmFile correct.
 
       zozo = toto + ".ACR";
       std::cout << "WriteACR" << std::endl;
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
 
    case 'd' :
            // ecriture d'un fichier DICOM Implicit VR 
-           // à partir d'un dcmHeader correct.
+           // à partir d'un dcmFile correct.
 
       zozo = toto + ".DCM";
       std::cout << "WriteDCM Implicit VR" << std::endl;
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
 
    case 'x' :
               // ecriture d'un fichier DICOM Explicit VR 
-              // à partir d'un dcmHeader correct.
+              // à partir d'un dcmFile correct.
 
       zozo = toto + ".DCM";
       std::cout << "WriteDCM Implicit VR" << std::endl;

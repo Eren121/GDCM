@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:42 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDocument.h"
 #include "gdcmValEntry.h"
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
       gdcm::FileHelper *original = new gdcm::FileHelper( filename );
    
       std::cout << "--- Original ----------------------" << std::endl;
-      //original->GetHeader()->Print();
+      //original->GetFile()->Print();
    
       gdcm::FileHelper *copy = new gdcm::FileHelper( output );
 
@@ -96,15 +96,15 @@ int main(int argc, char* argv[])
   
       // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
       // It was commented out by Mathieu, that was a *good* idea
-      // (the user does NOT have to know the way we implemented the Header !)
+      // (the user does NOT have to know the way we implemented the File !)
       // Waiting for a 'clean' solution, I keep the method ...JPRx
 
-      gdcm::DocEntry* d=original->GetHeader()->GetFirstEntry();
+      gdcm::DocEntry* d=original->GetFile()->GetFirstEntry();
       while(d)
       {
          if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
          {              
-            copy->GetHeader()->ReplaceOrCreate( 
+            copy->GetFile()->ReplaceOrCreate( 
                                  b->GetBinArea(),
                                  b->GetLength(),
                                  b->GetGroup(), 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
          }
          else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
          {   
-            copy->GetHeader()->ReplaceOrCreate( 
+            copy->GetFile()->ReplaceOrCreate( 
                                  v->GetValue(),
                                  v->GetGroup(), 
                                  v->GetElement(),
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
           //  << std::endl;    
          }
 
-         d=original->GetHeader()->GetNextEntry();
+         d=original->GetFile()->GetNextEntry();
       }
 
       //copy->GetImageData();
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 
       std::cout << "--- Copy ----------------------" << std::endl;
       std::cout <<std::endl << "DO NOT care about Offset"  <<std::endl<<std::endl;; 
-      copy->GetHeader()->Print();
+      copy->GetFile()->Print();
       std::cout << "--- ---- ----------------------" << std::endl;
    
       copy->WriteDcmExplVR( output );

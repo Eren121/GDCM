@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:35:10 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 
 namespace gdcm 
 {
-class Header;
+class File;
 class ValEntry;
 class BinEntry;
 class PixelReadConvert;
@@ -32,7 +32,7 @@ class PixelWriteConvert;
 class DocEntryArchive;
 //-----------------------------------------------------------------------------
 /**
- * \brief In addition to Dicom Header exploration, this class is designed
+ * \brief In addition to Dicom header exploration, this class is designed
  * for accessing the image/volume content. One can also use it to
  * write Dicom/ACR-NEMA/RAW files.
  */
@@ -47,15 +47,15 @@ public:
      
 public:
    FileHelper( );
-   FileHelper( Header *header );
+   FileHelper( File *header );
    FileHelper( std::string const &filename );
  
    virtual ~FileHelper();
 
    void Print(std::ostream &os = std::cout, std::string const & indent = ""); 
 
-   /// Accessor to \ref Header
-   Header *GetHeader() { return HeaderInternal; }
+   /// Accessor to \ref File
+   File *GetFile() { return FileInternal; }
 
    size_t GetImageDataSize();
    size_t GetImageDataRawSize();
@@ -131,13 +131,13 @@ protected:
    BinEntry *CopyBinEntry(uint16_t group,uint16_t elem);
 
 private:
-   void Initialise();
+   void Initialize();
 
    uint8_t *GetRaw();
 
 // members variables:
-   /// Header to use to load the file
-   Header *HeaderInternal;
+   /// gdcm::File to use to load the file
+   File *FileInternal;
 
    /// \brief Whether the underlying \ref Header was loaded by
    ///  the constructor or passed to the constructor. When false

@@ -38,9 +38,9 @@ class gdcmTestCase(unittest.TestCase):
    def _BaseTest(self, FileSet):
       for entry in FileSet:
          fileName = os.path.join(GDCM_TEST_DATA_PATH, entry[0])
-         reader = gdcmHeader(fileName)
+         reader = gdcmFile(fileName)
          assert reader.IsReadable(),\
-                "File '%s' is not readable by gdcmHeader" % fileName
+                "File '%s' is not readable by gdcmFile" % fileName
 
          valDict = reader.GetEntry()
          for subEntry in entry[1]:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 03:05:55 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,14 +16,8 @@
                                                                                 
 =========================================================================*/
 
-//////////////////   TEMPORARY NOTE
-// look for "fixMem" and convert that to a member of this class
-// Removing the prefix fixMem and dealing with allocations should do the trick
-//
-// grep PixelReadConvert everywhere and clean up !
-
 #include "gdcmDebug.h"
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmGlobal.h"
 #include "gdcmTS.h"
 #include "gdcmPixelReadConvert.h"
@@ -837,7 +831,7 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
    }
 }
 
-void PixelReadConvert::GrabInformationsFromHeader( Header *header )
+void PixelReadConvert::GrabInformationsFromHeader( File *header )
 {
    // Number of Bits Allocated for storing a Pixel is defaulted to 16
    // when absent from the header.
@@ -895,7 +889,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
    HasLUT = header->HasLUT();
    if ( HasLUT )
    {
-      // Just in case some access to a Header element requires disk access.
+      // Just in case some access to a File element requires disk access.
       LutRedDescriptor   = header->GetEntry( 0x0028, 0x1101 );
       LutGreenDescriptor = header->GetEntry( 0x0028, 0x1102 );
       LutBlueDescriptor  = header->GetEntry( 0x0028, 0x1103 );
@@ -904,8 +898,8 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       // [ refer to invocation of Document::SetMaxSizeLoadEntry() in
       // Document::Document() ], the loading of the value (content) of a
       // [Bin|Val]Entry occurence migth have been hindered (read simply NOT
-      // loaded). Hence, we first try to obtain the LUTs data from the header
-      // and when this fails we read the LUTs data directely from disk.
+      // loaded). Hence, we first try to obtain the LUTs data from the file
+      // and when this fails we read the LUTs data directly from disk.
       /// \TODO Reading a [Bin|Val]Entry directly from disk is a kludge.
       ///       We should NOT bypass the [Bin|Val]Entry class. Instead
       ///       an access to an UNLOADED content of a [Bin|Val]Entry occurence
@@ -943,7 +937,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
 }
 
 /**
- * \brief Build Red/Green/Blue/Alpha LUT from Header
+ * \brief Build Red/Green/Blue/Alpha LUT from File
  *         when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
  *          and (0028,1101),(0028,1102),(0028,1102)
  *            - xxx Palette Color Lookup Table Descriptor - are found

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 /**
- * \brief   Any Dicom Document (File Header or DicomDir) contains 
+ * \brief   Any Dicom Document (File or DicomDir) contains 
  *           a set of DocEntry entries 
  *          (when successfuly parsed against a given Dicom dictionary)
  *          BinEntry is a specialisation of ValEntry (for non std::string
@@ -45,12 +45,12 @@ public:
    void Print( std::ostream &os = std::cout, std::string const & indent = "" );
    void WriteContent( std::ofstream *fp, FileType ft);
 
-   /// \brief Returns the area value of the current Dicom Header Entry
+   /// \brief Returns the area value of the current Dicom Entry
    ///  when it's not string-translatable (e.g : a LUT table)         
    uint8_t *GetBinArea()  { return BinArea; }
    void  SetBinArea( uint8_t *area, bool self = true );
 
-   /// Sets the value (string) of the current Dicom Document Entry
+   /// Sets the value (string) of the current Dicom Entry
    virtual void SetValue(std::string const &val) { SetValueOnly(val); };
 private:
    /// \brief unsecure memory area to hold 'non string' values 

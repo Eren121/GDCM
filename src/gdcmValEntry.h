@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/01/21 11:40:56 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,8 +27,8 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 /**
- * \brief   Any Dicom Document (File Header or DicomDir) contains 
- *           a set of DocEntry entries 
+ * \brief   Any Dicom Document (File header or DicomDir) contains 
+ *           a set of DocEntry  - Dicom entries -
  *          (when successfuly parsed against a given Dicom dictionary)
  *          ValEntry is an elementary DocEntry (as opposed to SeqEntry)
  */
@@ -40,11 +40,11 @@ public:
    ~ValEntry();
 
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
-   /// 'string', event if it's stored as an integer in the header of the
-   /// current Dicom Document Entry
+   /// 'string', event if it's physically stored as an integer in the header of the
+   /// current Document (File or DicomDir)
    std::string const &GetValue() const { return Value; };
     
-   /// Sets the value (string) of the current Dicom Document Entry.
+   /// Sets the value (string) of the current Dicom entry.
    /// The size is updated
    virtual void SetValue(std::string const &val);
 
@@ -53,13 +53,13 @@ public:
    virtual void WriteContent(std::ofstream *fp, FileType filetype);
 
 protected:
-   /// Sets the value (string) of the current Dicom Document Entry
+   /// Sets the value (string) of the current Dicom entry
    void SetValueOnly(std::string const &val) { Value = val; }; 
    
 private:
 // Members :
   
-   /// \brief Document Entry value, internaly represented as a std::string
+   /// \brief Dicom entry value, internaly represented as a std::string.
    ///        The Value Representation (\ref VR) is independently used
    ///        in order to interpret (decode) this field.
    std::string Value;

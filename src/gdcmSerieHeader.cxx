@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 11:56:52 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,7 @@
 
 #include "gdcmSerieHeader.h"
 #include "gdcmDirList.h"
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmDebug.h"
 
 #include <math.h>
@@ -28,7 +28,7 @@
 namespace gdcm 
 {
 
-typedef std::vector<Header* > GdcmHeaderVector;
+typedef std::vector<File* > GdcmFileVector;
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 SerieHeader::SerieHeader()
@@ -41,7 +41,7 @@ SerieHeader::SerieHeader()
 SerieHeader::~SerieHeader()
 {
    /// \todo
-   for ( GdcmHeaderList::const_iterator it = CoherentGdcmFileList.begin();
+   for ( GdcmFileList::const_iterator it = CoherentGdcmFileList.begin();
          it != CoherentGdcmFileList.end(); ++it)
    {
       delete *it;
@@ -61,7 +61,7 @@ SerieHeader::~SerieHeader()
 void SerieHeader::AddFileName(std::string const &filename)
 {
    //directly use string and not const char*:
-   Header *header = new Header( filename ); 
+   File *header = new File( filename ); 
    if( header->IsReadable() )
    {
       // 0020 000e UI REL Series Instance UID
@@ -156,7 +156,7 @@ bool SerieHeader::ImagePositionPatientOrdering()
    std::vector<float> distlist;
 
    //!\todo rewrite this for loop.
-   for ( GdcmHeaderList::const_iterator 
+   for ( GdcmFileList::const_iterator 
          it = CoherentGdcmFileList.begin();
          it != CoherentGdcmFileList.end(); ++it )
    {
@@ -220,7 +220,7 @@ bool SerieHeader::ImagePositionPatientOrdering()
    // Then I order the slices according to the value "dist". Finally, once
    // I've read in all the slices, I calculate the z-spacing as the difference
    // between the "dist" values for the first two slices.
-   GdcmHeaderVector CoherentGdcmFileVector(n);
+   GdcmFileVector CoherentGdcmFileVector(n);
    // CoherentGdcmFileVector.reserve( n );
    CoherentGdcmFileVector.resize( n );
    // gdcmAssertMacro( CoherentGdcmFileVector.capacity() >= n );
@@ -230,7 +230,7 @@ bool SerieHeader::ImagePositionPatientOrdering()
    n = 0;
     
    //VC++ don't understand what scope is !! it -> it2
-   for (GdcmHeaderList::const_iterator it2  = CoherentGdcmFileList.begin();
+   for (GdcmFileList::const_iterator it2  = CoherentGdcmFileList.begin();
         it2 != CoherentGdcmFileList.end(); ++it2, ++n)
    {
       //2*n sort algo !!
@@ -250,7 +250,7 @@ bool SerieHeader::ImagePositionPatientOrdering()
    CoherentGdcmFileList.clear();  //this doesn't delete list's element, node only
   
    //VC++ don't understand what scope is !! it -> it3
-   for (GdcmHeaderVector::const_iterator it3  = CoherentGdcmFileVector.begin();
+   for (GdcmFileVector::const_iterator it3  = CoherentGdcmFileVector.begin();
         it3 != CoherentGdcmFileVector.end(); ++it3)
    {
       CoherentGdcmFileList.push_back( *it3 );
@@ -273,7 +273,7 @@ bool SerieHeader::ImageNumberOrdering()
    int n = 0;//CoherentGdcmFileList.size() is a O(N) operation
    unsigned char *partition;
   
-   GdcmHeaderList::const_iterator it = CoherentGdcmFileList.begin();
+   GdcmFileList::const_iterator it = CoherentGdcmFileList.begin();
    min = max = (*it)->GetImageNumber();
 
    for (; it != CoherentGdcmFileList.end(); ++it, ++n)
@@ -292,10 +292,10 @@ bool SerieHeader::ImageNumberOrdering()
    partition = new unsigned char[n];
    memset(partition, 0, n);
 
-   GdcmHeaderVector CoherentGdcmFileVector(n);
+   GdcmFileVector CoherentGdcmFileVector(n);
 
    //VC++ don't understand what scope is !! it -> it2
-   for (GdcmHeaderList::const_iterator it2 = CoherentGdcmFileList.begin();
+   for (GdcmFileList::const_iterator it2 = CoherentGdcmFileList.begin();
         it2 != CoherentGdcmFileList.end(); ++it2)
    {
       pos = (*it2)->GetImageNumber();
@@ -311,7 +311,7 @@ bool SerieHeader::ImageNumberOrdering()
 
    //VC++ don't understand what scope is !! it -> it3
    CoherentGdcmFileList.clear();  //this doesn't delete list's element, node only
-   for ( GdcmHeaderVector::const_iterator it3 = CoherentGdcmFileVector.begin();
+   for ( GdcmFileVector::const_iterator it3 = CoherentGdcmFileVector.begin();
          it3 != CoherentGdcmFileVector.end(); ++it3 )
    {
       CoherentGdcmFileList.push_back( *it3 );

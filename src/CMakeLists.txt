@@ -36,7 +36,7 @@ SET(libgdcm_la_SOURCES
    gdcmException.cxx
    gdcmFileHelper.cxx
    gdcmGlobal.cxx
-   gdcmHeader.cxx
+   gdcmFile.cxx
    gdcmJPEGFragment.cxx
    gdcmJPEGFragmentsInfo.cxx
    gdcmJpeg8.cxx

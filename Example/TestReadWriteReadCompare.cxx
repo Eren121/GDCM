@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:58 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 //Generated file:
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
    std::cout << "   For all images in gdcmData (and not blacklisted in "
                 "Test/CMakeLists.txt)" << std::endl;
    std::cout << "   apply the following multistep test: " << std::endl;
-   std::cout << "   step 1: parse the image (as gdcmHeader) and call"
+   std::cout << "   step 1: parse the image (as gdcmFile) and call"
              << " IsReadable(). " << std::endl;
    std::cout << "   step 2: write the corresponding image in DICOM V3 "
              << "with explicit" << std::endl
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 
       //////////////// Step 1 (see above description): 
 
-      gdcm::Header *header = new gdcm::Header( filename );
+      gdcm::File *header = new gdcm::File( filename );
       if( !header->IsReadable() )
       {
          std::cerr << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
       //////////////// Step 3:
 
       gdcm::FileHelper *reread = new gdcm::FileHelper( "TestReadWriteReadCompare.dcm" );
-      if( !reread->GetHeader()->IsReadable() )
+      if( !reread->GetFile()->IsReadable() )
       {
         std::cerr << "Test::TestReadWriteReadCompare: Could not reread image "
                   << "written:" << filename << std::endl;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:55 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,14 +15,14 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
  
-   gdcm::Header *e1;
+   gdcm::File *e1;
    std::string fileName;   
 
    if (argc != 2) {
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
    
-   e1= new gdcm::Header( fileName.c_str() );
+   e1= new gdcm::File( fileName.c_str() );
 
    e1->SetPrintLevel(2);
    

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 11:40:50 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmDebug.h"
 
 #include <iostream>
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
    if (argc > 3)
       gdcm::Debug::SetDebugOn();
 
-   gdcm::Header *e1 = new gdcm::Header( fileName.c_str() );  
+   gdcm::File *e1 = new gdcm::File( fileName.c_str() );  
 
    if (argc > 2) 
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 15:58:00 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 
 namespace gdcm 
 {
-class Header;
+class File;
 class ValEntry;
 class BinEntry;
 class SeqEntry;
@@ -43,16 +43,16 @@ public:
    DocEntry(DictEntry*);
    virtual ~DocEntry() {};
 
-   /// Returns the Dicom Group number of the current Dicom Header Entry
+   /// Returns the Dicom Group number of the current Dicom entry
    uint16_t      GetGroup()     { return DicomDict->GetGroup();  };
 
-   /// Returns the Dicom Element number of the current Dicom Header Entry
+   /// Returns the Dicom Element number of the current Dicom entry
    uint16_t      GetElement()   { return DicomDict->GetElement();};
 
-   /// Returns the 'key' of the current Dicom Header Entry
+   /// Returns the 'key' of the current Dicom entry
    void  SetKey( TagKey const &key ) { Key = key; }
 
-   /// Returns the 'key' of the current Dicom Header Entry
+   /// Returns the 'key' of the current Dicom entry
    std::string const &GetKey() const { return Key; }
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
@@ -60,68 +60,68 @@ public:
    std::string const &GetName() const { return DicomDict->GetName(); };
 
    /// \brief Returns the 'Value Representation' (e.g. "PN" : Person Name,
-   /// "SL" : Signed Long), found in the Dicom Header or in the Dicom
-   /// Dictionnary, of the current Dicom Header Entry
+   /// "SL" : Signed Long), found in the Dicom header or in the Dicom
+   /// Dictionnary, of the current Dicom entry
    std::string const &GetVR() const { return DicomDict->GetVR(); };
 
    /// \brief Returns the 'Value Multiplicity' (e.g. "1", "1-n", "6"),
-   /// found in the Dicom Header or in the Dicom Dictionnary
-   /// of the current Dicom Header Entry
+   /// found in the Dicom entry or in the Dicom Dictionnary
+   /// of the current Dicom entry
    std::string const &GetVM() const { return DicomDict->GetVM(); };
 
-   /// Sets the 'Value Multiplicity' of the current Dicom Header Entry
+   /// Sets the 'Value Multiplicity' of the current Dicom entry
    void SetVM( TagName const &v) { DicomDict->SetVM(v); }; 
 
    /// \brief Returns offset (since the beginning of the file, including
-   /// the File Preamble, if any) of the value of the current Dicom HeaderEntry
-   /// \warning offset of the *value*, not of the Dicom Header Entry
+   /// the File Preamble, if any) of the value of the current Dicom entry
+   /// \warning offset of the *value*, not of the Dicom entry
    size_t GetOffset() { return Offset; };
 
 
    /// \brief Sets only 'Read Length' (*not* 'Usable Length') of the current
-   /// Dicom Header Entry
+   /// Dicom entry
    void SetReadLength(uint32_t l) { ReadLength = l; };
 
-   /// \brief Returns the 'read length' of the current Dicom Header Entry
-   /// \warning this value is the one stored in the Dicom Header but not
+   /// \brief Returns the 'read length' of the current Dicom entry
+   /// \warning this value is the one stored in the Dicom header but not
    ///          mandatoryly the one thats's used (in case on SQ, or delimiters,
    ///          the usable length is set to zero)
    uint32_t GetReadLength() { return ReadLength; };
 
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
-   /// Dicom Header Entry
+   /// Dicom entry
    void SetLength(uint32_t l) { Length = l; };
       
-   /// \brief Returns the actual value length of the current Dicom Header Entry
-   /// \warning this value is not *always* the one stored in the Dicom Header
+   /// \brief Returns the actual value length of the current Dicom entry
+   /// \warning this value is not *always* the one stored in the Dicom header
    ///          in case of well knowned bugs
    uint32_t GetLength() { return Length; };
     
 
    // The following 3 members, for internal use only ! 
    
-   /// \brief   Sets the offset of the Dicom Element
+   /// \brief   Sets the offset of the Dicom entry
    /// \warning use with caution !
    /// @param   of offset to be set
    void SetOffset(size_t of) { Offset = of; };
 
-   /// Sets to TRUE the ImplicitVr flag of the current Dicom Element
+   /// Sets to TRUE the ImplicitVr flag of the current Dicom entry
    void SetImplicitVR() { ImplicitVR = true; };
  
-   /// \brief Tells us if the current Dicom Element was checked as ImplicitVr
-   /// @return true if the current Dicom Element was checked as ImplicitVr
+   /// \brief Tells us if the current Dicom entry was checked as ImplicitVr
+   /// @return true if the current Dicom entry was checked as ImplicitVr
    bool IsImplicitVR() { return ImplicitVR; };
 
-   /// \brief Tells us if the VR of the current Dicom Element is Unknown
+   /// \brief Tells us if the VR of the current Dicom entry is Unknown
    /// @return true if the VR is unknown
    bool IsVRUnknown() { return DicomDict->IsVRUnknown(); };
 
-   /// \brief Tells us if the VM of the current Dicom Element is Unknown
+   /// \brief Tells us if the VM of the current Dicom entry is Unknown
    /// @return true if the VM is unknown
    bool IsVMUnknown() { return DicomDict->IsVMUnknown(); };
 
-   /// \brief  Gets the DicEntry of the current Dicom Element
-   /// @return The DicEntry of the current Dicom Element
+   /// \brief  Gets the DicEntry of the current Dicom entry
+   /// @return The DicEntry of the current Dicom entry
    DictEntry * GetDictEntry() { return DicomDict; }; 
    
    virtual void WriteContent(std::ofstream *fp, FileType filetype);
@@ -136,8 +136,8 @@ public:
    virtual void Print (std::ostream &os = std::cout, std::string const & indent = ""); 
 
 protected:
-   /// \brief   Sets the DicEntry of the current Dicom Element
-   /// \remarks Used only by the Header !!! (possible because of a friend 
+   /// \brief   Sets the DicEntry of the current Dicom entry
+   /// \remarks Used only by the gdcm::File !!! (possible because of a friend 
    ///          link between them)
    /// @param   newEntry pointer to the DictEntry
    void SetDictEntry(DictEntry *newEntry) { DicomDict = newEntry; };
@@ -146,11 +146,11 @@ protected:
    /// \brief pointer to the underlying Dicom dictionary element
    DictEntry *DicomDict;
    
-   /// \brief Correspond to the real length of the datas
+   /// \brief Correspond to the real length of the data
    /// This length might always be even
    uint32_t Length; 
   
-   /// \brief Length to read in the file to obtain datas.
+   /// \brief Length to read in the file to obtain data
    uint32_t ReadLength;
 
    /// \brief Even when reading explicit vr files, some elements happen to
@@ -167,8 +167,8 @@ protected:
 
 private:
    // FIXME: In fact we should be more specific and use :
-   // friend DocEntry * Header::ReadNextElement(void);
-   friend class Header;    
+   // friend DocEntry *File::ReadNextElement(void);
+   friend class File;    
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:58 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDocument.h"
 #include "gdcmValEntry.h"
@@ -61,7 +61,7 @@ bool RemoveFile(const char* source)
 }
 
 // ----------------------------------------------------------------------
-// Here we load a supposed to be Papyrus File (gdcm::Header compliant)
+// Here we load a supposed to be Papyrus File (gdcm::File compliant)
 // and then try to get the pixels, using low-level SeqEntry accessors.
 // Since it's not a general purpose Papyrus related program
 // (just a light example) we suppose *everything* is clean
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
       }
    }
    gdcm::FileHelper *original = new gdcm::FileHelper( filename );
-   gdcm::Header *h = original->GetHeader();
+   gdcm::File *h = original->GetFile();
 
    // Look for private Papyrus Sequence
    gdcm::SeqEntry *seqPapyrus= h->GetSeqEntry(0x0041, 0x1050);
@@ -224,8 +224,8 @@ int main(int argc, char* argv[])
 
    std::string NumberOfFrames = gdcm::Util::Format("%d", nbImages); 
 
-   gdcm::Header *n = new gdcm::Header();
-   n->InitializeDefaultHeader();
+   gdcm::File *n = new gdcm::File();
+   n->InitializeDefaultFile();
 
    n->ReplaceOrCreate(MediaStSOPinstUID,  0x0002,0x0002);
   // Whe keep default gdcm Transfer Syntax (Explicit VR Little Endian)

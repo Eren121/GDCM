@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:43 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/21 11:40:56 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
                                                                                 
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDebug.h"
 #include "vtkGdcmWriter.h"
@@ -26,7 +26,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.12 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.13 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDcm2Acr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:42 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmFileHelper.h"
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 
 #include <iostream>
 
@@ -44,29 +44,29 @@ int main(int argc, char* argv[])
    std::cout << " Sortie gdcmFileHelper()" << std::endl;
 
    //e1.PrintPubDict(std::cout);
-   f1->GetHeader()->Print();
+   f1->GetFile()->Print();
 
    //cle = gdcmDictEntry::TranslateToKey(0x0028,0x0008);
 
    int dataSize = f1->GetImageDataSize();
    std::cout << "dataSize:" << dataSize << std::endl;
 
-   // void* imageData= f1->GetHeader()->GetImageData();
+   // void* imageData= f1->GetFile()->GetImageData();
 
    // Ecriture d'un Raw File, a afficher avec affim filein= dim= nbit= signe=
    //f1->WriteRawData("image.raw");
 
-   // ecriture d'un fichier DICOM à partir d'un dcmHeader correct.
+   // ecriture d'un fichier DICOM à partir d'un dcmFile correct.
 
    //f1->WriteDcmImplVR("image.dcm");
 
-   // ecriture d'un fichier ACR à partir d'un dcmHeader correct.
+   // ecriture d'un fichier ACR à partir d'un dcmFile correct.
 
    zozo = toto + ".nema";
    f1->WriteAcr(zozo);
    std::cout << "\n\n---------------------------------------\n\n" << std::endl;
 
-   f1->GetHeader()->Print();
+   f1->GetFile()->Print();
    
    return 0;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:42 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/21 11:40:53 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 int main(int argc, char* argv[])
@@ -24,14 +24,14 @@ int main(int argc, char* argv[])
   if (argc < 3) 
     {
     std::cerr << "Usage :" << std::endl << argv[0] << 
-      " InputHeader OutputDicom" << std::endl;
+      " InputFile OutputDicom" << std::endl;
     return 0;
     }
 
   std::string header = argv[1];
   const char *output = argv[2];
 
-  gdcm::Header       *f1 = new gdcm::Header( header );
+  gdcm::File       *f1 = new gdcm::File( header );
   gdcm::FileHelper   *f2 = new gdcm::FileHelper( f1 );
 
   // If the following call is important, then the API sucks. Why is it

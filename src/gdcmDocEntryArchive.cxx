@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:13:21 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@ namespace gdcm
 /**
  * \brief Constructor
  */
-DocEntryArchive::DocEntryArchive(Header *header):
+DocEntryArchive::DocEntryArchive(File *header):
    HeaderHT(header->TagHT)
 {
 }

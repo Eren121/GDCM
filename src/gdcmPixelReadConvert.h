@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 
 namespace gdcm
 {
-class Header;
+class File;
 class RLEFramesInfo;
 class JPEGFragmentsInfo;
 
@@ -53,7 +53,7 @@ public:
    void Print( std::ostream &os = std::cout, std::string const & indent = "" );
 
 // In progress
-   void GrabInformationsFromHeader( Header *header );
+   void GrabInformationsFromHeader( File *f );
    bool ReadAndDecompressPixelData( std::ifstream *fp );
    void Squeeze();
    bool BuildRGBImage();

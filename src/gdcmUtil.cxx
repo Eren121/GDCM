@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 16:19:57 $
-  Version:   $Revision: 1.112 $
+  Date:      $Date: 2005/01/21 11:40:56 $
+  Version:   $Revision: 1.113 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -670,7 +670,7 @@ std::string Util::GetIPAddress()
    // In this case we should maybe check the string was not truncated.
    // But I don't known how to check that...
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
-   // with WinSock DLL we need to initialise the WinSock before using gethostname
+   // with WinSock DLL we need to initialize the WinSock before using gethostname
    WORD wVersionRequested = MAKEWORD(1,0);
    WSADATA WSAData;
    int err = WSAStartup(wVersionRequested,&WSAData);

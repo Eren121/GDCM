@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:42 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/21 11:40:53 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 #include <iostream>
@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 {  
    std::string zozo;
 
-   gdcm::Header* e1, *e2;
+   gdcm::File* e1, *e2;
    gdcm::FileHelper  * f1, *f2;
 
    uint8_t* imageData, *imageData2;
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 
    std::cout << argv[1] << std::endl;
 
-   e1 = new gdcm::Header( toto );
+   e1 = new gdcm::File( toto );
    if (!e1->IsReadable()) {
        std::cerr << "Sorry, " << toto <<"  not a Readable DICOM / ACR File"
                  <<std::endl;
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
 // --------------------- we read the written image
       
-   e2 = new gdcm::Header( zozo );
+   e2 = new gdcm::File( zozo );
    if (!e2->IsReadable()) {
        std::cerr << "Sorry, " << zozo << " not a Readable DICOM / ACR File"  
                  <<std::endl;

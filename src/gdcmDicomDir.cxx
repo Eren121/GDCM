@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:41 $
-  Version:   $Revision: 1.111 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.112 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include "gdcmGlobal.h"
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 #include "gdcmValEntry.h"
@@ -182,7 +182,7 @@ void DicomDir::Print(std::ostream &os, std::string const & )
 // Public
 /**
  * \brief  This predicate, based on hopefully reasonable heuristics,
- *         decides whether or not the current header was properly parsed
+ *         decides whether or not the current document was properly parsed
  *         and contains the mandatory information for being considered as
  *         a well formed and usable DicomDir.
  * @return true when Document is the one of a reasonable DicomDir,
@@ -412,7 +412,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
    DirList dirList(path,1); // gets recursively the file list
    unsigned int count = 0;
    VectDocument list;
-   Header *header;
+   File *header;
 
    DirListType fileList = dirList.GetFilenames();
 
@@ -427,16 +427,16 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
          break;
       }
 
-      header = new Header( it->c_str() );
+      header = new File( it->c_str() );
       if( !header )
       {
-         gdcmVerboseMacro( "Failure in new Header " << it->c_str() );
+         gdcmVerboseMacro( "Failure in new gdcm::File " << it->c_str() );
          continue;
       }
       
       if( header->IsReadable() )
       {
-         // Add the file header to the chained list:
+         // Add the file to the chained list:
          list.push_back(header);
          gdcmVerboseMacro( "Readable " << it->c_str() );
        }
@@ -450,7 +450,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
    std::sort(list.begin(), list.end(), DicomDir::HeaderLessThan );
    
    std::string tmp = dirList.GetDirName();      
-   //for each Header of the chained list, add/update the Patient/Study/Serie/Image info
+   //for each File of the chained list, add/update the Patient/Study/Serie/Image info
    SetElements(tmp, list);
    CallEndMethod();
 
@@ -458,7 +458,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
        itDoc!=list.end();
        ++itDoc)
    {
-      delete dynamic_cast<Header *>(*itDoc);
+      delete dynamic_cast<File *>(*itDoc);
    }
 }
 

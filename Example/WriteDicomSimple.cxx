@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:58 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/21 11:40:53 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
  * The image content is a horizontal grayscale from 
  * 
  */
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 #include <iostream>
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 
 
 // Step 1 : Create the header of the image
-   gdcm::Header *header = new gdcm::Header();
+   gdcm::File *header = new gdcm::File();
    std::ostringstream str;
 
    // Set the image size

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:31:42 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/01/21 11:40:54 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 //Generated file:
@@ -27,7 +27,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
 
    //////////////// Step 1 (see above description):
 
-   gdcm::Header *header = new gdcm::Header( filename );
+   gdcm::File *header = new gdcm::File( filename );
    if( !header->IsReadable() )
    {
       std::cerr << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
@@ -71,7 +71,7 @@ int CompareInternal(std::string const & filename, std::string const & output)
    //////////////// Step 3:
 
    gdcm::FileHelper* reread = new gdcm::FileHelper( output );
-   if( !reread->GetHeader()->IsReadable() )
+   if( !reread->GetFile()->IsReadable() )
    {
      std::cerr << "Failed" << std::endl
                << "Test::TestReadWriteReadCompare: Could not reread image "
@@ -88,18 +88,18 @@ int CompareInternal(std::string const & filename, std::string const & output)
 
    //////////////// Step 4:
    // Test the image size
-   if (header->GetXSize() != reread->GetHeader()->GetXSize() ||
-       header->GetYSize() != reread->GetHeader()->GetYSize() ||
-       header->GetZSize() != reread->GetHeader()->GetZSize())
+   if (header->GetXSize() != reread->GetFile()->GetXSize() ||
+       header->GetYSize() != reread->GetFile()->GetYSize() ||
+       header->GetZSize() != reread->GetFile()->GetZSize())
    {
       std::cout << "Failed" << std::endl
          << "        X Size differs: "
          << "X: " << header->GetXSize() << " # " 
-                  << reread->GetHeader()->GetXSize() << " | "
+                  << reread->GetFile()->GetXSize() << " | "
          << "Y: " << header->GetYSize() << " # " 
-                  << reread->GetHeader()->GetYSize() << " | "
+                  << reread->GetFile()->GetYSize() << " | "
          << "Z: " << header->GetZSize() << " # " 
-                  << reread->GetHeader()->GetZSize() << std::endl;
+                  << reread->GetFile()->GetZSize() << std::endl;
       delete header;
       delete file;
       delete reread;
@@ -158,7 +158,7 @@ int TestReadWriteReadCompare(int argc, char* argv[])
       std::cout << "   For all images in gdcmData (and not blacklisted in "
                    "Test/CMakeLists.txt)" << std::endl;
       std::cout << "   apply the following multistep test: " << std::endl;
-      std::cout << "   step 1: parse the image (as gdcmHeader) and call"
+      std::cout << "   step 1: parse the image (as gdcmFile) and call"
                 << " IsReadable(). " << std::endl;
       std::cout << "   step 2: write the corresponding image in DICOM V3 "
                 << "with explicit" << std::endl

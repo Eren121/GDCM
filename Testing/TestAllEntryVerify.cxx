@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 23:18:30 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/01/21 11:40:53 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 
 #include <map>
 #include <list>
@@ -207,7 +207,7 @@ bool ReferenceFileParser::Check( MapFileValuesType::iterator &fileIt )
 {
    std::string fileName = DataPath + fileIt->first;
    std::cout << Indent << "FileName: " << fileName << std::endl;
-   gdcm::Header* tested = new gdcm::Header( fileName.c_str() );
+   gdcm::File* tested = new gdcm::File( fileName.c_str() );
    if( !tested->IsReadable() )
    {
      std::cerr << Indent << "Failed\n"

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FindTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:58 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmFileHelper.h"
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmUtil.h"
 
 #include <iostream>
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
    f1->SetEntry(ManufacturerName ,0x0008,0x0070);
 
 // ImagePositionPatient
-   ImagePositionPatient = f1->GetHeader()->GetEntry(0x0020,0x0032);
+   ImagePositionPatient = f1->GetFile()->GetEntry(0x0020,0x0032);
 
 // Image Position (RET)
    f1->SetEntry(ImagePositionPatient, 0x0020,0x0030);
@@ -79,25 +79,25 @@ int main(int argc, char* argv[])
 // SetEntryLength is private now.
 //TO DO : see is the pb goes on...
 
-//f1->GetHeader()->SetEntryLength(strlen(Location.c_str())-1, 0x0020,0x0050);
+//f1->GetFile()->SetEntryLength(strlen(Location.c_str())-1, 0x0020,0x0050);
 
 // Image Location 
 
    zizi = gdcm::Util::Format("%d",0x7FE0);
    ImageLocation = gdcm::Util::DicomString(zizi.c_str());
 //f1->SetEntry(Location, 0x0028,0x0200);
-//f1->GetHeader()->SetEntryLength(strlen(ImageLocation.c_str())-1, 0x0020,0x0050); // prudence !
+//f1->GetFile()->SetEntryLength(strlen(ImageLocation.c_str())-1, 0x0020,0x0050); // prudence !
 
 // void* imageData= f1->GetImageData();
 
-// ecriture d'un fichier ACR à partir d'un dcmHeader correct.
+// ecriture d'un fichier ACR à partir d'un dcmFile correct.
 
    std::cout << "----------------avant PrintEntry---------------------" << std::endl;
-   f1->GetHeader()->Print();
+   f1->GetFile()->Print();
    std::cout << "----------------avant WriteDcm---------------------" << std::endl;
 
 
-// ecriture d'un fichier ACR à partir d'un dcmHeader correct.
+// ecriture d'un fichier ACR à partir d'un dcmFile correct.
 
    zozo = toto + ".acr";
    std::cout << "WriteACR" << std::endl;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:59 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/21 11:40:54 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
@@ -71,8 +71,8 @@ int CopyDicom(std::string const & filename,
 
       //////////////// Step 1:
       std::cout << "      1...";
-      gdcm::Header *originalH = new gdcm::Header( filename );
-      gdcm::Header *copyH     = new gdcm::Header( );
+      gdcm::File *originalH = new gdcm::File( filename );
+      gdcm::File *copyH     = new gdcm::File( );
 
       //First of all copy the header field by field
   
@@ -143,7 +143,7 @@ int CopyDicom(std::string const & filename,
       copy = new gdcm::FileHelper( output );
 
       //Is the file written still gdcm parsable ?
-      if ( !copy->GetHeader()->IsReadable() )
+      if ( !copy->GetFile()->IsReadable() )
       { 
          std::cout << " Failed" << std::endl
                    << "        " << output << " not readable" << std::endl;
@@ -223,7 +223,7 @@ int TestCopyDicom(int argc, char* argv[])
              << std::endl;
    std::cout << "   apply the following to each filename.xxx: "
              << std::endl;
-   std::cout << "   step 1: parse the image (as gdcmHeader) and call"
+   std::cout << "   step 1: parse the image (as gdcmFile) and call"
              << " IsReadable(). After that, call GetImageData() and "
              << "GetImageDataSize() "
              << std::endl;

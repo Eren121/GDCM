@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:59 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/21 11:40:53 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 #include <iostream>
@@ -32,7 +32,7 @@ int InternalTest(std::string const & filename,
       ////// Step 1:
       std::cout << "      1...";
       gdcm::FileHelper* tested = new gdcm::FileHelper( filename );
-      if( !tested->GetHeader()->IsReadable() )
+      if( !tested->GetFile()->IsReadable() )
       {
         std::cout << " Failed" << std::endl
                    << "      Image not gdcm compatible:"
@@ -66,7 +66,7 @@ int InternalTest(std::string const & filename,
       std::cout << "3a...";
 
       gdcm::FileHelper* reference = new gdcm::FileHelper( referenceFileName );
-      if( !reference->GetHeader()->IsReadable() )
+      if( !reference->GetFile()->IsReadable() )
       {
          std::cout << " Failed" << std::endl
                    << "              reference image " 
@@ -77,7 +77,7 @@ int InternalTest(std::string const & filename,
          return 1;
       }
 
-      std::string PixelType = reference->GetHeader()->GetPixelType();
+      std::string PixelType = reference->GetFile()->GetPixelType();
 
       ////// Step 3b:
       std::cout << "3b...";
@@ -88,18 +88,18 @@ int InternalTest(std::string const & filename,
       uint8_t* referenceImageData = reference->GetImageData();
 
       // Test the image size
-      if (tested->GetHeader()->GetXSize() != reference->GetHeader()->GetXSize() ||
-          tested->GetHeader()->GetYSize() != reference->GetHeader()->GetYSize() ||
-          tested->GetHeader()->GetZSize() != reference->GetHeader()->GetZSize())
+      if (tested->GetFile()->GetXSize() != reference->GetFile()->GetXSize() ||
+          tested->GetFile()->GetYSize() != reference->GetFile()->GetYSize() ||
+          tested->GetFile()->GetZSize() != reference->GetFile()->GetZSize())
       {
          std::cout << "Failed" << std::endl
             << "        Size differs: "
-            << "X: " << tested->GetHeader()->GetXSize() << " # " 
-                     << reference->GetHeader()->GetXSize() << " | "
-            << "Y: " << tested->GetHeader()->GetYSize() << " # " 
-                     << reference->GetHeader()->GetYSize() << " | "
-            << "Z: " << tested->GetHeader()->GetZSize() << " # " 
-                     << reference->GetHeader()->GetZSize() << std::endl;
+            << "X: " << tested->GetFile()->GetXSize() << " # " 
+                     << reference->GetFile()->GetXSize() << " | "
+            << "Y: " << tested->GetFile()->GetYSize() << " # " 
+                     << reference->GetFile()->GetYSize() << " | "
+            << "Z: " << tested->GetFile()->GetZSize() << " # " 
+                     << reference->GetFile()->GetZSize() << std::endl;
          delete reference;
          delete tested;
          return 1;
@@ -170,7 +170,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
              << std::endl;
    std::cout << "   apply the following to each filename.xxx: "
              << std::endl;
-   std::cout << "   step 1: parse the image (as gdcmHeader) and call"
+   std::cout << "   step 1: parse the image (as gdcmFile) and call"
              << " IsReadable(). "
              << std::endl;
    std::cout << "   step 2: find in GDCM_DATA_ROOT/BaselineDicom/filename.dcm"

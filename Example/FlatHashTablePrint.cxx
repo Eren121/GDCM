@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FlatHashTablePrint.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 17:31:34 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/21 11:40:52 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmDocEntry.h"
 
 // Iterate on all the Dicom entries encountered in the gdcmFile (given
@@ -31,7 +31,7 @@ int main(int , char* [])
       return 1;
    }
 
-   gdcm::Header* header = new gdcm::Header( argv[1] );
+   gdcm::File* header = new gdcm::File( argv[1] );
    gdcm::TagDocEntryHT* Ht = header->BuildFlatHashTable();
    
    for (gdcm::TagDocEntryHT::iterator tag = Ht->begin(); tag != Ht->end(); ++tag)

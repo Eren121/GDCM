@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:59 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/21 11:40:54 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
  * The image content is a horizontal grayscale from 
  * 
  */
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
 #include <iostream>
@@ -71,7 +71,7 @@ int WriteSimple(Image &img)
 
 // Step 1 : Create the header of the image
    std::cout << "        1...";
-   gdcm::Header *header = new gdcm::Header();
+   gdcm::File *header = new gdcm::File();
    std::ostringstream str;
 
    // Set the image size
@@ -200,7 +200,7 @@ int WriteSimple(Image &img)
 // Step 5 : Read the written image
    std::cout << "5...";
    gdcm::FileHelper* reread = new gdcm::FileHelper( fileName );
-   if( !reread->GetHeader()->IsReadable() )
+   if( !reread->GetFile()->IsReadable() )
    {
      std::cerr << "Failed" << std::endl
                << "Test::TestReadWriteReadCompare: Could not reread image "
@@ -217,18 +217,18 @@ int WriteSimple(Image &img)
    uint8_t* imageDataWritten = reread->GetImageData();
 
    // Test the image size
-   if (header->GetXSize() != reread->GetHeader()->GetXSize() ||
-       header->GetYSize() != reread->GetHeader()->GetYSize() ||
-       header->GetZSize() != reread->GetHeader()->GetZSize())
+   if (header->GetXSize() != reread->GetFile()->GetXSize() ||
+       header->GetYSize() != reread->GetFile()->GetYSize() ||
+       header->GetZSize() != reread->GetFile()->GetZSize())
    {
       std::cout << "Failed" << std::endl
          << "        X Size differs: "
          << "X: " << header->GetXSize() << " # " 
-                  << reread->GetHeader()->GetXSize() << " | "
+                  << reread->GetFile()->GetXSize() << " | "
          << "Y: " << header->GetYSize() << " # " 
-                  << reread->GetHeader()->GetYSize() << " | "
+                  << reread->GetFile()->GetYSize() << " | "
          << "Z: " << header->GetZSize() << " # " 
-                  << reread->GetHeader()->GetZSize() << std::endl;
+                  << reread->GetFile()->GetZSize() << std::endl;
       delete header;
       delete file;
       delete reread;

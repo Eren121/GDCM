@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:22:52 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/01/21 11:40:55 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 #include "gdcmBinEntry.h"
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmPixelReadConvert.h"
 #include "gdcmPixelWriteConvert.h"
 #include "gdcmDocEntryArchive.h"
@@ -38,11 +38,10 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
 // Constructor / Destructor
 /**
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (Header only deals with the ... header)
+ *        file (gdcm::File only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
- *        (see GetImageData, GetImageDataRaw)
  * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
@@ -51,18 +50,17 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
  */
 FileHelper::FileHelper( )
 {
-   HeaderInternal = new Header( );
+   FileInternal = new File( );
    SelfHeader = true;
-   Initialise();
+   Initialize();
 }
 
 /**
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (Header only deals with the ... header)
+ *        file (File only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
- *        (see GetImageData, GetImageDataRaw)
  * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
@@ -70,20 +68,19 @@ FileHelper::FileHelper( )
  *        seen as a side effect).   
  * @param header already built Header
  */
-FileHelper::FileHelper(Header *header)
+FileHelper::FileHelper(File *header)
 {
-   HeaderInternal = header;
+   FileInternal = header;
    SelfHeader = false;
-   Initialise();
+   Initialize();
 }
 
 /**
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (Header only deals with the ... header)
+ *        file (gdcm::File only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
- *        (see GetImageData, GetImageDataRaw)
  * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
@@ -93,9 +90,9 @@ FileHelper::FileHelper(Header *header)
  */
 FileHelper::FileHelper(std::string const & filename )
 {
-   HeaderInternal = new Header( filename );
+   FileInternal = new File( filename );
    SelfHeader = true;
-   Initialise();
+   Initialize();
 }
 
 /**
@@ -120,17 +117,17 @@ FileHelper::~FileHelper()
 
    if( SelfHeader )
    {
-      delete HeaderInternal;
+      delete FileInternal;
    }
-   HeaderInternal = 0;
+   FileInternal = 0;
 }
 
 //-----------------------------------------------------------------------------
 // Print
 void FileHelper::Print(std::ostream &os, std::string const &)
 {
-   HeaderInternal->SetPrintLevel(PrintLevel);
-   HeaderInternal->Print(os);
+   FileInternal->SetPrintLevel(PrintLevel);
+   FileInternal->Print(os);
 
    PixelReadConverter->SetPrintLevel(PrintLevel);
    PixelReadConverter->Print(os);
@@ -196,7 +193,7 @@ uint8_t *FileHelper::GetImageData()
       return 0;
    }
 
-   if ( HeaderInternal->HasLUT() && PixelReadConverter->BuildRGBImage() )
+   if ( FileInternal->HasLUT() && PixelReadConverter->BuildRGBImage() )
    {
       return PixelReadConverter->GetRGB();
    }
@@ -254,7 +251,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
       return 0;
    }
 
-   if ( HeaderInternal->HasLUT() && PixelReadConverter->BuildRGBImage() )
+   if ( FileInternal->HasLUT() && PixelReadConverter->BuildRGBImage() )
    {
       if ( PixelReadConverter->GetRGBSize() > maxSize )
       {
@@ -508,7 +505,7 @@ bool FileHelper::Write(std::string const &fileName)
    bool check = CheckWriteIntegrity();
    if(check)
    {
-      check = HeaderInternal->Write(fileName,WriteType);
+      check = FileInternal->Write(fileName,WriteType);
    }
 
    RestoreWrite();
@@ -517,7 +514,7 @@ bool FileHelper::Write(std::string const &fileName)
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
    // 
-   // ...and we restore the Header to be Dicom Compliant again 
+   // ...and we restore the header to be Dicom Compliant again 
    // just after writting
    RestoreWriteOfLibido();
    // ----------------- End of Special Patch ----------------
@@ -536,7 +533,7 @@ bool FileHelper::Write(std::string const &fileName)
 bool FileHelper::SetEntry(std::string const &content,
                     uint16_t group, uint16_t elem)
 { 
-   return HeaderInternal->SetEntry(content,group,elem);
+   return FileInternal->SetEntry(content,group,elem);
 }
 
 
@@ -552,38 +549,38 @@ bool FileHelper::SetEntry(std::string const &content,
 bool FileHelper::SetEntry(uint8_t *content, int lgth,
                     uint16_t group, uint16_t elem)
 {
-   return HeaderInternal->SetEntry(content,lgth,group,elem);
+   return FileInternal->SetEntry(content,lgth,group,elem);
 }
 
 /**
- * \brief   Modifies the value of a given Doc Entry (Dicom Element)
+ * \brief   Modifies the value of a given DocEntry (Dicom entry)
  *          when it exists. Create it with the given value when unexistant.
  * @param   content (string) Value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Header Entry (NULL when creation
+ * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */ 
 bool FileHelper::ReplaceOrCreate(std::string const &content,
                            uint16_t group, uint16_t elem)
 {
-   return HeaderInternal->ReplaceOrCreate(content,group,elem) != NULL;
+   return FileInternal->ReplaceOrCreate(content,group,elem) != NULL;
 }
 
 /*
- * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ * \brief   Modifies the value of a given DocEntry (Dicom entry)
  *          when it exists. Create it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
  * @param   binArea (binary) value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Header Entry (NULL when creation
+ * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */
 bool FileHelper::ReplaceOrCreate(uint8_t *binArea, int lgth,
                            uint16_t group, uint16_t elem)
 {
-   return HeaderInternal->ReplaceOrCreate(binArea,lgth,group,elem) != NULL;
+   return FileInternal->ReplaceOrCreate(binArea,lgth,group,elem) != NULL;
 }
 
 /**
@@ -609,19 +606,19 @@ bool FileHelper::CheckWriteIntegrity()
 {
    if(PixelWriteConverter->GetUserData())
    {
-      int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
+      int numberBitsAllocated = FileInternal->GetBitsAllocated();
       if ( numberBitsAllocated == 0 || numberBitsAllocated == 12 )
       {
          numberBitsAllocated = 16;
       }
 
-      size_t decSize = HeaderInternal->GetXSize()
-                    * HeaderInternal->GetYSize() 
-                    * HeaderInternal->GetZSize()
+      size_t decSize = FileInternal->GetXSize()
+                    * FileInternal->GetYSize() 
+                    * FileInternal->GetZSize()
                     * ( numberBitsAllocated / 8 )
-                    * HeaderInternal->GetSamplesPerPixel();
+                    * FileInternal->GetSamplesPerPixel();
       size_t rgbSize = decSize;
-      if( HeaderInternal->HasLUT() )
+      if( FileInternal->HasLUT() )
          rgbSize = decSize * 3;
 
       switch(WriteMode)
@@ -653,15 +650,15 @@ bool FileHelper::CheckWriteIntegrity()
  */ 
 void FileHelper::SetWriteToRaw()
 {
-   if( HeaderInternal->GetNumberOfScalarComponents() == 3 
-    && !HeaderInternal->HasLUT())
+   if( FileInternal->GetNumberOfScalarComponents() == 3 
+    && !FileInternal->HasLUT())
    {
       SetWriteToRGB();
    } 
    else
    {
       ValEntry *photInt = CopyValEntry(0x0028,0x0004);
-      if(HeaderInternal->HasLUT())
+      if(FileInternal->HasLUT())
       {
          photInt->SetValue("PALETTE COLOR ");
       }
@@ -674,7 +671,7 @@ void FileHelper::SetWriteToRaw()
                                        PixelReadConverter->GetRawSize());
 
       BinEntry *pixel = 
-         CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+         CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
@@ -684,13 +681,12 @@ void FileHelper::SetWriteToRaw()
    }
 }
 
-
 /**
  * \brief   
  */ 
 void FileHelper::SetWriteToRGB()
 {
-   if(HeaderInternal->GetNumberOfScalarComponents()==3)
+   if(FileInternal->GetNumberOfScalarComponents()==3)
    {
       PixelReadConverter->BuildRGBImage();
       
@@ -715,7 +711,7 @@ void FileHelper::SetWriteToRGB()
       }
 
       BinEntry *pixel = 
-         CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+         CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
@@ -736,7 +732,7 @@ void FileHelper::SetWriteToRGB()
       // For old ACR-NEMA
       // Thus, we have a RGB image and the bits allocated = 24 and 
       // samples per pixels = 1 (in the read file)
-      if(HeaderInternal->GetBitsAllocated()==24) 
+      if(FileInternal->GetBitsAllocated()==24) 
       {
          ValEntry *bitsAlloc = CopyValEntry(0x0028,0x0100);
          bitsAlloc->SetValue("8 ");
@@ -766,7 +762,7 @@ void FileHelper::RestoreWrite()
    Archive->Restore(0x0028,0x0002);
    Archive->Restore(0x0028,0x0004);
    Archive->Restore(0x0028,0x0006);
-   Archive->Restore(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+   Archive->Restore(GetFile()->GetGrPixel(),GetFile()->GetNumPixel());
 
    // For old ACR-NEMA (24 bits problem)
    Archive->Restore(0x0028,0x0100);
@@ -830,9 +826,9 @@ void FileHelper::RestoreWriteFileType()
 void FileHelper::SetWriteToLibido()
 {
    ValEntry *oldRow = dynamic_cast<ValEntry *>
-                (HeaderInternal->GetDocEntry(0x0028, 0x0010));
+                (FileInternal->GetDocEntry(0x0028, 0x0010));
    ValEntry *oldCol = dynamic_cast<ValEntry *>
-                (HeaderInternal->GetDocEntry(0x0028, 0x0011));
+                (FileInternal->GetDocEntry(0x0028, 0x0011));
    
    if( oldRow && oldCol )
    {
@@ -862,7 +858,7 @@ void FileHelper::SetWriteToLibido()
 void FileHelper::SetWriteToNoLibido()
 {
    ValEntry *recCode = dynamic_cast<ValEntry *>
-                (HeaderInternal->GetDocEntry(0x0008,0x0010));
+                (FileInternal->GetDocEntry(0x0008,0x0010));
    if( recCode )
    {
       if( recCode->GetValue() == "ACRNEMA_LIBIDO_1.1" )
@@ -886,7 +882,7 @@ void FileHelper::RestoreWriteOfLibido()
 
 ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
 {
-   DocEntry *oldE = HeaderInternal->GetDocEntry(group, elem);
+   DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    ValEntry *newE;
 
    if(oldE)
@@ -896,7 +892,7 @@ ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
    }
    else
    {
-      newE = GetHeader()->NewValEntry(group,elem);
+      newE = GetFile()->NewValEntry(group,elem);
    }
 
    return newE;
@@ -913,7 +909,7 @@ ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
  */ 
 BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem)
 {
-   DocEntry *oldE = HeaderInternal->GetDocEntry(group, elem);
+   DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    BinEntry *newE;
 
    if(oldE)
@@ -923,7 +919,7 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem)
    }
    else
    {
-      newE = GetHeader()->NewBinEntry(group,elem);
+      newE = GetFile()->NewBinEntry(group,elem);
    }
 
    return newE;
@@ -934,18 +930,18 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem)
 /**
  * \brief Factorization for various forms of constructors.
  */
-void FileHelper::Initialise()
+void FileHelper::Initialize()
 {
    WriteMode = WMODE_RAW;
    WriteType = ExplicitVR;
 
    PixelReadConverter = new PixelReadConvert;
    PixelWriteConverter = new PixelWriteConvert;
-   Archive = new DocEntryArchive( HeaderInternal );
+   Archive = new DocEntryArchive( FileInternal );
 
-   if ( HeaderInternal->IsReadable() )
+   if ( FileInternal->IsReadable() )
    {
-      PixelReadConverter->GrabInformationsFromHeader( HeaderInternal );
+      PixelReadConverter->GrabInformationsFromHeader( FileInternal );
    }
 }
 
@@ -958,10 +954,10 @@ uint8_t *FileHelper::GetRaw()
    if ( ! raw )
    {
       // The Raw image migth not be loaded yet:
-      std::ifstream *fp = HeaderInternal->OpenFile();
+      std::ifstream *fp = FileInternal->OpenFile();
       PixelReadConverter->ReadAndDecompressPixelData( fp );
       if(fp) 
-         HeaderInternal->CloseFile();
+         FileInternal->CloseFile();
 
       raw = PixelReadConverter->GetRaw();
       if ( ! raw )

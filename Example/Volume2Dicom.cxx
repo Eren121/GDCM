@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:58 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/21 11:40:53 $
+  Version:   $Revision: 1.5 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
  * It's aim is to show people how to write their data volume into DICOM slices
  */
 
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmDocEntry.h"
 #include "gdcmBinEntry.h"
 #include "gdcmFileHelper.h"
@@ -99,7 +99,7 @@ int main( int argc, char * argv[] )
     ////////////////////////////////////////////////////////////
     // Create a new dicom header and fill in some info        //
     ////////////////////////////////////////////////////////////
-    gdcm::Header *h1 = new gdcm::Header();
+    gdcm::File *h1 = new gdcm::File();
 
     //h1->SetDateAndTime(filedate, filetime);
     //h1->SetModality("CT");

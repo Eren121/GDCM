@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:59 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/21 11:40:54 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
@@ -43,14 +43,14 @@ int CopyRescaleDicom(std::string const & filename,
 
    //////////////// Step 1:
    std::cout << "      1...";
-   gdcm::Header *originalH = new gdcm::Header( filename );
-   gdcm::Header *copyH     = new gdcm::Header( );
+   gdcm::File *originalH = new gdcm::File( filename );
+   gdcm::File *copyH     = new gdcm::File( );
 
    //First of all copy the header field by field
 
    // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
    // It was commented out by Mathieu, that was a *good* idea
-   // (the user does NOT have to know the way we implemented the Header !)
+   // (the user does NOT have to know the way we implemented the File !)
    // Waiting for a 'clean' solution, I keep the method ...JPRx
 
 
@@ -147,7 +147,7 @@ int CopyRescaleDicom(std::string const & filename,
    copy = new gdcm::FileHelper( output );
 
    //Is the file written still gdcm parsable ?
-   if ( !copy->GetHeader()->IsReadable() )
+   if ( !copy->GetFile()->IsReadable() )
    { 
       std::cout << " Failed" << std::endl
                 << "        " << output << " not readable" << std::endl;
@@ -164,18 +164,18 @@ int CopyRescaleDicom(std::string const & filename,
    size_t    dataSizeWritten = copy->GetImageDataSize();
    uint8_t* imageDataWritten = copy->GetImageData();
 
-   if (originalH->GetXSize() != copy->GetHeader()->GetXSize() ||
-       originalH->GetYSize() != copy->GetHeader()->GetYSize() ||
-       originalH->GetZSize() != copy->GetHeader()->GetZSize())
+   if (originalH->GetXSize() != copy->GetFile()->GetXSize() ||
+       originalH->GetYSize() != copy->GetFile()->GetYSize() ||
+       originalH->GetZSize() != copy->GetFile()->GetZSize())
    {
       std::cout << "Failed" << std::endl
          << "        X Size differs: "
          << "X: " << originalH->GetXSize() << " # " 
-                  << copy->GetHeader()->GetXSize() << " | "
+                  << copy->GetFile()->GetXSize() << " | "
          << "Y: " << originalH->GetYSize() << " # " 
-                  << copy->GetHeader()->GetYSize() << " | "
+                  << copy->GetFile()->GetYSize() << " | "
          << "Z: " << originalH->GetZSize() << " # " 
-                  << copy->GetHeader()->GetZSize() << std::endl;
+                  << copy->GetFile()->GetZSize() << std::endl;
       delete original;
       delete copy;
       delete originalH;
@@ -251,7 +251,7 @@ int TestCopyRescaleDicom(int argc, char* argv[])
              << std::endl;
    std::cout << "   apply the following to each filename.xxx: "
              << std::endl;
-   std::cout << "   step 1: parse the image (as gdcmHeader) and call"
+   std::cout << "   step 1: parse the image (as gdcmFile) and call"
              << " IsReadable(). After that, call GetImageData() and "
              << "GetImageDataSize() "
              << std::endl;

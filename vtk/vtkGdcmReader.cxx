@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:17:01 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/01/21 11:40:56 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,18 +41,18 @@
 //      is compared to this new value to find a modification in the class
 //      parameters
 //  2b/ the core of ExecuteData then needs gdcmFile (which in turns
-//      initialises gdcmHeader in the constructor) in order to access
+//      initialises gdcmFile in the constructor) in order to access
 //      the data-image.
 //
 // Possible solution:
 // maintain a list of gdcmFiles (created by say ExecuteInformation) created
-// once and for all accross the life of vtkGdcmHeader (it would only load
+// once and for all accross the life of vtkGdcmFile (it would only load
 // new gdcmFile if the user changes the list). ExecuteData would then use 
 // those gdcmFile and hence avoid calling the construtor:
 //  - advantage: the header of the files would only be parser once.
 //  - drawback: once execute information is called (i.e. on creation of
-//              a vtkGdcmHeader) the gdcmFile structure is loaded in memory.
-//              The average size of a gdcmHeader being of 100Ko, is one
+//              a vtkGdcmFile) the gdcmFile structure is loaded in memory.
+//              The average size of a gdcmFile being of 100Ko, is one
 //              loads 10 stacks of images with say 200 images each, you
 //              end-up with a loss of 200Mo...
 //
@@ -66,7 +66,7 @@
 // //////////////////////////////////////////////////////////////
 
 #include "gdcmFileHelper.h"
-#include "gdcmHeader.h"
+#include "gdcmFile.h"
 #include "vtkGdcmReader.h"
 
 //#include <stdio.h>
@@ -75,7 +75,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.65 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.66 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -461,8 +461,8 @@ int vtkGdcmReader::CheckFileCoherence()
       fclose(fp);
 
       // Stage 1.2: check for Gdcm parsability
-      gdcm::Header GdcmHeader(filename->c_str() );
-      if (!GdcmHeader.IsReadable())
+      gdcm::File GdcmFile(filename->c_str() );
+      if (!GdcmFile.IsReadable())
       {
          vtkErrorMacro(<< "Gdcm cannot parse file " << filename->c_str());
          vtkErrorMacro(<< "Removing this file from readed files "
@@ -472,7 +472,7 @@ int vtkGdcmReader::CheckFileCoherence()
       }
 
       // Stage 1.3: further gdcm compatibility on PixelType
-      std::string type = GdcmHeader.GetPixelType();
+      std::string type = GdcmFile.GetPixelType();
       if (   (type !=  "8U") && (type !=  "8S")
           && (type != "16U") && (type != "16S")
           && (type != "32U") && (type != "32S") )
@@ -486,9 +486,9 @@ int vtkGdcmReader::CheckFileCoherence()
       }
 
       // Stage 2: check coherence of the set of files
-      int NX = GdcmHeader.GetXSize();
-      int NY = GdcmHeader.GetYSize();
-      int NZ = GdcmHeader.GetZSize();
+      int NX = GdcmFile.GetXSize();
+      int NY = GdcmFile.GetYSize();
+      int NZ = GdcmFile.GetZSize();
       if (FoundReferenceFile) 
       {
          // Stage 2.1: mandatory coherence stage:
@@ -547,27 +547,27 @@ int vtkGdcmReader::CheckFileCoherence()
          ReferenceNZ      = NZ;
          ReturnedTotalNumberOfPlanes += NZ - 1; // First plane already added
          this->ImageType = type;
-         this->PixelSize = GdcmHeader.GetPixelSize();
+         this->PixelSize = GdcmFile.GetPixelSize();
 
-         if( GdcmHeader.HasLUT() && this->AllowLookupTable )
+         if( GdcmFile.HasLUT() && this->AllowLookupTable )
          {
             // I could raise an error is AllowLookupTable is on and HasLUT() off
-            this->NumComponents = GdcmHeader.GetNumberOfScalarComponentsRaw();
+            this->NumComponents = GdcmFile.GetNumberOfScalarComponentsRaw();
          }
          else
          {
-            this->NumComponents = GdcmHeader.GetNumberOfScalarComponents(); //rgb or mono
+            this->NumComponents = GdcmFile.GetNumberOfScalarComponents(); //rgb or mono
          }
        
          //Set image spacing
-         this->DataSpacing[0] = GdcmHeader.GetXSpacing();
-         this->DataSpacing[1] = GdcmHeader.GetYSpacing();
-         this->DataSpacing[2] = GdcmHeader.GetZSpacing();
+         this->DataSpacing[0] = GdcmFile.GetXSpacing();
+         this->DataSpacing[1] = GdcmFile.GetYSpacing();
+         this->DataSpacing[2] = GdcmFile.GetZSpacing();
 
          //Set image origin
-         //this->DataOrigin[0] = GdcmHeader.GetXOrigin();
-         //this->DataOrigin[1] = GdcmHeader.GetYOrigin();
-         //this->DataOrigin[2] = GdcmHeader.GetZOrigin();
+         //this->DataOrigin[0] = GdcmFile.GetXOrigin();
+         //this->DataOrigin[1] = GdcmFile.GetYOrigin();
+         //this->DataOrigin[2] = GdcmFile.GetZOrigin();
 
       }
    } // End of loop on filename
@@ -639,15 +639,15 @@ size_t vtkGdcmReader::LoadImageInMemory(
    // line comes first (for some axis related reasons?). Hence we need
    // to load the image line by line, starting from the end.
 
-   int numColumns = file.GetHeader()->GetXSize();
-   int numLines   = file.GetHeader()->GetYSize();
-   int numPlanes  = file.GetHeader()->GetZSize();
-   int lineSize   = NumComponents * numColumns * file.GetHeader()->GetPixelSize();
+   int numColumns = file.GetFile()->GetXSize();
+   int numLines   = file.GetFile()->GetYSize();
+   int numPlanes  = file.GetFile()->GetZSize();
+   int lineSize   = NumComponents * numColumns * file.GetFile()->GetPixelSize();
    int planeSize  = lineSize * numLines;
 
    unsigned char *src;
    
-   if( file.GetHeader()->HasLUT() && AllowLookupTable )
+   if( file.GetFile()->HasLUT() && AllowLookupTable )
    {
       size               = file.GetImageDataSize();
       src                = (unsigned char*) file.GetImageDataRaw();
