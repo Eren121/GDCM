@@ -1,31 +1,6 @@
 import unittest
 import os
-
-# Where all the test images are
-TestFileDir =  os.path.join("..", "Data")
-
-### Defaulting the path to the dictionaries
-# WARNING: this needs to be done before importation of gdcm !
-# FIXME: this needs to be put in a wrapper of the swig generated
-#			shadow classes (say Pygdcm.py?)
-try:
-	os.environ["GDCM_DICT_PATH"]
-except KeyError:
-	os.environ["GDCM_DICT_PATH"] = os.path.join("..", "Dicts/")
-
-### When not properly installed (like in a cvs hierachy) try
-#   to handle properly the import of gdcm
-try:
-	import gdcm
-except ImportError:
-	import sys, os
-	PreInstallPath = os.path.join(os.getcwd(), "..")
-	sys.path.append(PreInstallPath)
-	try:
-		import gdcm
-	except ImportError,e:
-		raise ImportError, "gdcm extension module not found"
-		sys.exit()
+from gdcmPython import *
 
 class gdcmTestCase(unittest.TestCase):
 	# The files whose name starts with a modality (e.g. CR-MONO1-10-chest.dcm)
@@ -502,8 +477,8 @@ class gdcmTestCase(unittest.TestCase):
 
 	def _BaseTest(self, FileSet):
 		for entry in FileSet:
-			fileName = os.path.join(TestFileDir, entry[0])
-			toRead = gdcm.gdcmHeader(fileName)
+			fileName = os.path.join(GDCM_DATA_PATH, entry[0])
+			toRead = gdcmHeader(fileName)
 			toRead.LoadElements()
 			valDict = toRead.GetPubElVal()
 			for subEntry in entry[1]:

@@ -1,5 +1,5 @@
-from load import *
-toRead = gdcm.gdcmHeader(FileName)
+from gdcmPython import *
+toRead = gdcmHeader(FileName)
 toRead.LoadElements()
 
 print "##############################################################"

@@ -1,7 +1,6 @@
-from load import *
+from gdcmPython import *
 
-# Where all the test images are
-TestFileDir =  os.path.join("..", "..", "Data")
+# Test each file of the Data directory
 
 AllFiles = [
 	"CR-MONO1-10-chest.dcm",
@@ -28,11 +27,10 @@ AllFiles = [
 
 if __name__ == '__main__':
 	for file in AllFiles:
-		fileName = os.path.join(TestFileDir, file)
+		fileName = os.path.join(GDCM_DATA_PATH, file)
 		print "############## file :", fileName
-		toRead = gdcm.gdcmHeader(fileName)
+		toRead = gdcmHeader(fileName)
 		toRead.LoadElements()
 		ValDict = toRead.GetPubElVal()
 		for key in ValDict.keys():
 			print "   [%s] = [%s]" %(key, ValDict[key])
-

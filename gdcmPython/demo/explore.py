@@ -1,7 +1,6 @@
-from load import *
+from gdcmPython import *
 
-########## Real usage of Pygdcm starts here
-toRead = gdcm.gdcmHeader(FileName)
+toRead = gdcmHeader(FileName)
 toRead.LoadElements()
 ValDict = toRead.GetPubElVal()
 ExploreElements = ["Patient Name", "Patient ID",

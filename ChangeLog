@@ -1,5 +1,13 @@
 2003-01-15 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python subdir moved to gdcmPython (preparation of distutils packaging).
+      * gdcmPython/setup.py and distutilsSwigCPlusPlus.py added. The
+        distutils installer is operational.
+      * - gdcmPython/__init__.py now properly loads the swig generated
+          shadow classes (from gdcm.py).
+        - gdcmPython/demo/*.py changed to import the package gdcmPython
+          instead of gdcmPython/demo/load.py.
+        - gdcmPython/testSuite.py changed to import the package gdcmPython.
+        
 
 2002-12-16 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h, src/gdcmHeader.cxx: added GetPubTagNames() resp.
