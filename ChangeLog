@@ -18,6 +18,16 @@
      * FIX (JPR bug) : src/gdcmDicomDirImage.cxx added missing definition
        of gdcmDicomDirImage::NewImage as empty function.
 
+
+2004-02-28  Jean-Pierre Roux
+     *ENH add gdcmDicomDir:NewPatient
+          add gdcmDicomDirPatient:NewStudy
+          add gdcmDicomDirStudy:NewSerie
+          add gdcmDicomDirSerie:NewImage
+	  to allow making gdcDicomDir object.
+     *ADD PrintDicomDir executable that uses gdcmDicomDir tree-like structure
+          (as opposite to the gdcmHeader chained list)
+
 2004-02-11 Benoit Regrain
      * FIX : memory leaks and the set of ArgDelete methods in gdcmDicomDir
        when using from python
