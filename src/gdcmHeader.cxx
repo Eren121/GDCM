@@ -1423,12 +1423,19 @@ void gdcmHeader::AddAndDefaultElements(void) {
 
    NewElVal = NewManualElValToPubDict("gdcmZSize", "US");
    if (!NewElVal) return;
-   NewVal = GetElValByName("Planes");
-   if (NewVal != "gdcm::Unfound")
+   NewVal = GetElValByNumber(0x0028,0x0008); // 0028 0008 IS IMG Number of Frames (DICOM)
+   if (NewVal == "gdcm::Unfound") {
+   	NewVal = GetElValByNumber(0x0028,0x0012); // 028 0012 US IMG Planes (ACR-NEMA)
+   	if (NewVal == "gdcm::Unfound") { 	  // Warning !!! : 6000 0012 US OLY Planes
+   		NewElVal->SetValue("0");
+   	} else {
+      		NewElVal->SetValue(NewVal);
+      	}   		
+   } else {
       NewElVal->SetValue(NewVal);
-   else
-      NewElVal->SetValue("0");
-}
+   }						// length is still wrong 
+}     						// do we care about it?
+
 
 /**
  * \ingroup gdcmHeader
