@@ -63,7 +63,6 @@ protected:
               TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
    ~gdcmObject(void);
 
-
    void FillObject(std::list<gdcmElement> elemList);
 
 /**

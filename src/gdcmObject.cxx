@@ -105,8 +105,7 @@ void gdcmObject::ResetBoundaries(int flag) {
   // upwards again to fffe,e000   
    if (fin()== (--(plistEntries->end())) )  // Don't try anything more when end 
        return;                              // of Chained List is reached   
-       
-                                    
+                                           
    for( i=j=fin();
         ((*i)->GetGroup() != 0xfffe)  && ((*i)->GetElement() != 0xe000);
 	--i,j--) {	    

@@ -446,13 +446,13 @@ void gdcmDicomDir::CheckBoundaries()
             itImage = ((*itSerie)->GetDicomDirImages()).begin();
             while (itImage != (*itSerie)->GetDicomDirImages().end() ) {
                (*itImage)->ResetBoundaries(1);
-               ++itImage;
-       }
-       ++itSerie;
-         }
-      ++itStudy;
-      } 
-      ++itPatient;     
+              ++itImage;
+            }
+            ++itSerie;
+        }
+        ++itStudy;
+     } 
+     ++itPatient;     
    }
 } 
 

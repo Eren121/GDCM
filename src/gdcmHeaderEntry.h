@@ -132,7 +132,7 @@ public:
     * \brief   Sets the value (string)
     *          of the current Dicom Header Entry
     */  	
-   inline void         SetValue(std::string val) { value = val;      };
+   inline void         SetValue(std::string val) {  value = val; };
 
    /**
     * \ingroup gdcmHeaderEntry

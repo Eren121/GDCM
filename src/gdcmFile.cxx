@@ -721,7 +721,6 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    
    //PixelElement->SetPrintLevel(2);
    //PixelElement->Print();    
- 
    Header->Write(fp1, type);
 
    // --------------------------------------------------------------

@@ -401,7 +401,7 @@ gdcmHeaderEntry * gdcmParser::ReplaceOrCreateByNumber(
    gdcmHeaderEntry* a;
    a = GetHeaderEntryByNumber( Group, Elem);
    if (a == NULL) {
-      gdcmHeaderEntry *a = NewHeaderEntryByNumber(Group, Elem);
+      a =NewHeaderEntryByNumber(Group, Elem);
       if (a == NULL) 
          return NULL;
       AddHeaderEntry(a);
@@ -1099,7 +1099,7 @@ bool gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 bool gdcmParser::WriteEntries(FILE *_fp,FileType type)
 {   
    // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
-   
+     
    for (ListTag::iterator tag2=listEntries.begin();
                           tag2 != listEntries.end();
                           ++tag2)
