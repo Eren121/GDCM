@@ -7,8 +7,8 @@ from WrapVTK import *
 ThisModule='gdcmPython'
 gdcmPythonSrcDir=ThisModule
 gdcmSrcDir      ="src"
-gdcmJpeg8SrcDir  =os.path.join('src', 'jpeg', 'libijg8')
-gdcmJpeg12SrcDir  =os.path.join('src', 'jpeg', 'libijg12')
+gdcmJpeg8SrcDir =os.path.join('src', 'jpeg', 'libijg8')
+gdcmJpeg12SrcDir=os.path.join('src', 'jpeg', 'libijg12')
 gdcmvtkSrcDir   ="vtk"
 gdcmDictsDir    ="Dicts"
 gdcmTestDir     ="Test"

@@ -1,3 +1,12 @@
+2003-09-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
+      * Cosmetic changes:
+        - gdcmPython/testSuite.py adapted to the JPR updated Dicts/dicomV3.dic
+          Dicom dictionary. The test suite can now be run again. Note:
+          I'm note very happy with the " (RET)" changes. I believe this
+          RETAINED comment should be dropped when parsing the dictionary. 
+        - PACKAGER corrected
+        - DEVELOPPER added.
+        - AUTHORS updated and now in alphabetical order
 2003-09-11  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * cygwin complains about missing std:: in subdir Test/
 2003-09-10  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>

@@ -34,6 +34,12 @@ Here is the checklist when freezing a version of gdcm:
          \rm -fr build /tmp/lib
        - Binary distribution:
          cd $GDCMHOME
+         make clean
+            [ or you migth get some complains about the function 
+              PyVTKClass_vtkGdcmReaderNew being multiply defined: this is
+              because of the loose definition of vtkSources in setup.py
+              in which the usage of the glob function will produce a link
+              stage with multiple occurences of vtkGdcmReaderPython.o)].
          python setup.py bdist --formats=rpm
          su
          rpm -Uvh dist/gdcmPython-0.*.i386.rpm
@@ -45,6 +51,7 @@ Here is the checklist when freezing a version of gdcm:
        - Source distribution and then binary distribution (out of build 
          source distro):
          cd $GDCMHOME
+         [make clean (see above) ]
          python setup.py sdist
          cd /tmp
          tar zxvf $GDCMHOME/dist/gdcmPython-*.tar.gz
