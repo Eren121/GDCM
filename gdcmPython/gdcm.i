@@ -264,23 +264,21 @@ using namespace gdcm;
 // The gdcm::Header class doesn't have any SetFilename method anyhow, and
 // this constructor is only used internaly (not from the API) so this is
 // not a big loss.
+%ignore gdcm::binary_write(std::ostream &,uint32_t const &);
+%ignore gdcm::binary_write(std::ostream &,uint16_t const &);
+
 %ignore gdcm::Header::Header();
 %ignore gdcm::DicomDir::DicomDir();
 
 ////////////////////////////////////////////////////////////////////////////
 // Warning: Order matters !
 %include "gdcmCommon.h"
-//CLEANME %include "gdcmRLEFramesInfo.h"
-//CLEANME %include "gdcmJPEGFragmentsInfo.h"
-//CLEANME %include "gdcmDictEntry.h"
-//CLEANME %include "gdcmDict.h"
-//CLEANME %include "gdcmDocEntry.h"
+%include "gdcmDictEntry.h"
+%include "gdcmDict.h"
 %include "gdcmDocEntrySet.h"
-//CLEANME %include "gdcmElementSet.h"
-//CLEANME %include "gdcmDictSet.h"
-//CLEANME %include "gdcmTS.h"
-//CLEANME %include "gdcmVR.h"
-//CLEANME %include "gdcmSQItem.h"
+%include "gdcmElementSet.h"
+%include "gdcmDictSet.h"
+%include "gdcmSQItem.h"
 %include "gdcmDicomDirElement.h"
 %include "gdcmDicomDirObject.h"
 %include "gdcmDicomDirImage.h"

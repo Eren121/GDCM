@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.57 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.58 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -126,7 +126,7 @@ void vtkGdcmReader::SetFileName(const char *name)
    // Since we maintain a list of filenames, when building a volume,
    // (see vtkGdcmReader::AddFileName), we additionaly need to purge
    // this list when we manually positionate the filename.
-   vtkDebugMacro("Clearing all files given with AddFileName");
+   vtkDebugMacro(<< "Clearing all files given with AddFileName");
    this->FileNameList.clear();
    this->Modified();
 }
@@ -143,7 +143,7 @@ void vtkGdcmReader::ExecuteInformation()
       this->TotalNumberOfPlanes = this->CheckFileCoherence();
       if ( this->TotalNumberOfPlanes == 0)
       {
-         vtkErrorMacro("File set is not coherent. Exiting...");
+         vtkErrorMacro(<< "File set is not coherent. Exiting...");
          return;
       }
       
@@ -168,7 +168,7 @@ void vtkGdcmReader::ExecuteInformation()
              (this->DataVOI[4] < 0) ||
              (this->DataVOI[5] >= this->TotalNumberOfPlanes ))
          {
-            vtkWarningMacro("The requested VOI is larger than expected extent.");
+            vtkWarningMacro(<< "The requested VOI is larger than expected extent.");
             this->DataVOI[0] = 0;
             this->DataVOI[1] = this->NumColumns - 1;
             this->DataVOI[2] = 0;
@@ -192,39 +192,39 @@ void vtkGdcmReader::ExecuteInformation()
       // But we do need to set up the data type for downstream filters:
       if      ( ImageType == "8U" )
       {
-         vtkDebugMacro("8 bits unsigned image");
+         vtkDebugMacro(<< "8 bits unsigned image");
          this->SetDataScalarTypeToUnsignedChar(); 
       }
       else if ( ImageType == "8S" )
       {
-         vtkErrorMacro("Cannot handle 8 bit signed files");
+         vtkErrorMacro(<< "Cannot handle 8 bit signed files");
          return;
       }
       else if ( ImageType == "16U" )
       {
-         vtkDebugMacro("16 bits unsigned image");
+         vtkDebugMacro(<< "16 bits unsigned image");
          this->SetDataScalarTypeToUnsignedShort();
       }
       else if ( ImageType == "16S" )
       {
-         vtkDebugMacro("16 bits signed image");
+         vtkDebugMacro(<< "16 bits signed image");
          this->SetDataScalarTypeToShort();
-         //vtkErrorMacro("Cannot handle 16 bit signed files");
+         //vtkErrorMacro(<< "Cannot handle 16 bit signed files");
       }
       else if ( ImageType == "32U" )
       {
-         vtkDebugMacro("32 bits unsigned image");
+         vtkDebugMacro(<< "32 bits unsigned image");
          vtkDebugMacro("WARNING: forced to signed int !");
          this->SetDataScalarTypeToInt();
       }
       else if ( ImageType == "32S" )
       {
-         vtkDebugMacro("32 bits signed image");
+         vtkDebugMacro(<< "32 bits signed image");
          this->SetDataScalarTypeToInt();
       }
       else if ( ImageType == "FD" )
       {
-         vtkDebugMacro("64 bits Double image");
+         vtkDebugMacro(<< "64 bits Double image");
          this->SetDataScalarTypeToDouble();
       }
       //Set number of scalar components:
@@ -247,7 +247,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 {
    if (this->InternalFileNameList.empty())
    {
-      vtkErrorMacro("A least a valid FileName must be specified.");
+      vtkErrorMacro(<< "A least a valid FileName must be specified.");
       return;
    }
 
@@ -328,36 +328,36 @@ void vtkGdcmReader::BuildFileListFromPattern()
 
    if ((! this->FileNameList.empty()) && this->FileName )
    {
-      vtkErrorMacro("Both AddFileName and SetFileName schemes were used");
-      vtkErrorMacro("No images loaded ! ");
+      vtkErrorMacro(<< "Both AddFileName and SetFileName schemes were used");
+      vtkErrorMacro(<< "No images loaded ! ");
       return;
    }
 
    if ((! this->FileNameList.empty()) && this->FilePrefix )
    {
-      vtkErrorMacro("Both AddFileName and SetFilePrefix schemes were used");
-      vtkErrorMacro("No images loaded ! ");
+      vtkErrorMacro(<< "Both AddFileName and SetFilePrefix schemes were used");
+      vtkErrorMacro(<< "No images loaded ! ");
       return;
    }
 
    if (this->FileName && this->FilePrefix)
    {
-      vtkErrorMacro("Both SetFileName and SetFilePrefix schemes were used");
-      vtkErrorMacro("No images loaded ! ");
+      vtkErrorMacro(<< "Both SetFileName and SetFilePrefix schemes were used");
+      vtkErrorMacro(<< "No images loaded ! ");
       return;
    }
 
    if (! this->FileNameList.empty()  )
    {
-      vtkDebugMacro("Using the AddFileName specified files");
+      vtkDebugMacro(<< "Using the AddFileName specified files");
       this->InternalFileNameList=this->FileNameList;
       return;
    }
 
    if (!this->FileName && !this->FilePrefix)
    {
-      vtkErrorMacro("FileNames are not set. Either use AddFileName() or");
-      vtkErrorMacro("specify a FileName or FilePrefix.");
+      vtkErrorMacro(<< "FileNames are not set. Either use AddFileName() or");
+      vtkErrorMacro(<< "specify a FileName or FilePrefix.");
       return;
    }
 
@@ -366,7 +366,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
       // Single file loading (as given with ::SetFileName()):
       // Case of multi-frame file considered here
       this->ComputeInternalFileName(this->DataExtent[4]);
-      vtkDebugMacro("Adding file " << this->InternalFileName);
+      vtkDebugMacro(<< "Adding file " << this->InternalFileName);
       this->AddInternalFileName(this->InternalFileName);
    }
    else
@@ -375,7 +375,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
       for (int idx = this->DataExtent[4]; idx <= this->DataExtent[5]; ++idx)
       {
          this->ComputeInternalFileName(idx);
-         vtkDebugMacro("Adding file " << this->InternalFileName);
+         vtkDebugMacro(<< "Adding file " << this->InternalFileName);
          this->AddInternalFileName(this->InternalFileName);
       }
    }
@@ -404,7 +404,7 @@ int vtkGdcmReader::CheckFileCoherence()
    this->BuildFileListFromPattern();
    if (this->InternalFileNameList.empty())
    {
-      vtkErrorMacro("FileNames are not set.");
+      vtkErrorMacro(<< "FileNames are not set.");
       return 0;
    }
 
@@ -435,8 +435,8 @@ int vtkGdcmReader::CheckFileCoherence()
       fp = fopen(filename->c_str(),"rb");
       if (!fp)
       {
-         vtkErrorMacro("Unable to open file " << filename->c_str());
-         vtkErrorMacro("Removing this file from readed files "
+         vtkErrorMacro(<< "Unable to open file " << filename->c_str());
+         vtkErrorMacro(<< "Removing this file from readed files "
                      << filename->c_str());
          *filename = "GDCM_UNREADABLE";
          continue;
@@ -447,8 +447,8 @@ int vtkGdcmReader::CheckFileCoherence()
       gdcm::Header GdcmHeader(filename->c_str() );
       if (!GdcmHeader.IsReadable())
       {
-         vtkErrorMacro("Gdcm cannot parse file " << filename->c_str());
-         vtkErrorMacro("Removing this file from readed files "
+         vtkErrorMacro(<< "Gdcm cannot parse file " << filename->c_str());
+         vtkErrorMacro(<< "Removing this file from readed files "
                         << filename->c_str());
          *filename = "GDCM_UNREADABLE";
          continue;
@@ -460,9 +460,9 @@ int vtkGdcmReader::CheckFileCoherence()
           && (type != "16U") && (type != "16S")
           && (type != "32U") && (type != "32S") )
       {
-         vtkErrorMacro("Bad File Type for file" << filename->c_str());
-         vtkErrorMacro("                      " << type.c_str());
-         vtkErrorMacro("Removing this file from readed files "
+         vtkErrorMacro(<< "Bad File Type for file" << filename->c_str());
+         vtkErrorMacro(<< "                      " << type.c_str());
+         vtkErrorMacro(<< "Removing this file from readed files "
                         << filename->c_str());
          *filename = "GDCM_UNREADABLE";
          continue;
@@ -479,9 +479,9 @@ int vtkGdcmReader::CheckFileCoherence()
              || ( NY   != this->NumLines )
              || ( type != this->ImageType ) ) 
          {
-            vtkErrorMacro("This file is not coherent with previous ones"
+            vtkErrorMacro(<< "This file is not coherent with previous ones"
                            << filename->c_str());
-            vtkErrorMacro("Removing this file from readed files "
+            vtkErrorMacro(<< "Removing this file from readed files "
                            << filename->c_str());
             *filename = "GDCM_UNREADABLE";
             continue;
@@ -490,12 +490,12 @@ int vtkGdcmReader::CheckFileCoherence()
          // Stage 2.2: optional coherence stage
          if ( NZ != ReferenceNZ )
          {
-            vtkErrorMacro("File is not coherent in Z with previous ones"
+            vtkErrorMacro(<< "File is not coherent in Z with previous ones"
                            << filename->c_str());
          }
          else
          {
-            vtkDebugMacro("File is coherent with previous ones"
+            vtkDebugMacro(<< "File is coherent with previous ones"
                            << filename->c_str());
          }
 
@@ -503,7 +503,7 @@ int vtkGdcmReader::CheckFileCoherence()
          // notify the caller.
          if (NZ > 1)
          {
-            vtkErrorMacro("This file contains multiple planes (images)"
+            vtkErrorMacro(<< "This file contains multiple planes (images)"
                            << filename->c_str());
          }
 
@@ -519,11 +519,11 @@ int vtkGdcmReader::CheckFileCoherence()
          // We didn't have a workable reference file yet. Set this one
          // as the reference.
          FoundReferenceFile = true;
-         vtkDebugMacro("This file taken as coherence reference:"
+         vtkDebugMacro(<< "This file taken as coherence reference:"
                         << filename->c_str());
-         vtkDebugMacro("Image dimension of reference file as read from Gdcm:" 
+         vtkDebugMacro(<< "Image dimension of reference file as read from Gdcm:" 
                         << NX << " " << NY << " " << NZ);
-         vtkDebugMacro("Number of planes added to the stack: " << NZ);
+         vtkDebugMacro(<< "Number of planes added to the stack: " << NZ);
          // Set aside the size of the image
          this->NumColumns = NX;
          this->NumLines   = NY;
@@ -567,14 +567,14 @@ int vtkGdcmReader::CheckFileCoherence()
          NumberCoherentFiles++;
       }
    }
-   vtkDebugMacro("Number of coherent files: " << NumberCoherentFiles);
+   vtkDebugMacro(<< "Number of coherent files: " << NumberCoherentFiles);
 
    if (ReturnedTotalNumberOfPlanes == 0)
    {
-      vtkErrorMacro("No loadable file.");
+      vtkErrorMacro(<< "No loadable file.");
    }
 
-   vtkDebugMacro("Total number of planes on the stack: "
+   vtkDebugMacro(<< "Total number of planes on the stack: "
                   << ReturnedTotalNumberOfPlanes);
    
    return ReturnedTotalNumberOfPlanes;
@@ -611,7 +611,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
              const unsigned long updateProgressTarget,
              unsigned long & updateProgressCount)
 {
-   vtkDebugMacro("Copying to memory image [" << fileName.c_str() << "]");
+   vtkDebugMacro(<< "Copying to memory image [" << fileName.c_str() << "]");
    gdcm::File file( fileName.c_str() );
    size_t size;
 

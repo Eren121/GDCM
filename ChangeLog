@@ -1,4 +1,9 @@
 2004-12-02 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * vtk/vtkGdcmReader.cxx : correct error in vtkDebugMacro, vtkWarningMacro
+     and vtkErrorMacro use.
+   * gdcmPython/gdcm.i : corrections to avoid warnings at compilation
+
+2004-12-02 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/TestCopyDicom.cxx : the new dicom created is created empty, without
      file name in input
    * src/gdcmSeqEntry.cxx : bug fix in destruction of an element
