@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/16 04:25:18 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2004/08/16 04:34:56 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1521,7 +1521,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
    if ( IsDocEntryAnInteger(entry) )
    {   
       uint32_t NewInt;
-      std::ostringstream s;
+      //std::ostringstream s; //shadow previous declaration
       int nbInt;
       // When short integer(s) are expected, read and convert the following 
       // n *two characters properly i.e. consider them as short integers as
