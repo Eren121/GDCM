@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 00:03:10 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2005/01/08 15:55:57 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -556,7 +556,6 @@ long GetMacAddrSys ( u_char *addr)
    int dtmp;
    int i = 0, j = 0;
    BOOL found = FALSE;
-   char TempEthernet[13];
    m_Init = NULL;
    m_InitEx = NULL;
    m_Query = NULL;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 23:10:10 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/08 15:55:57 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,7 +126,7 @@ public:
  */
 #define gdcmAssertMacro(arg)                               \
 {                                                          \
-   if( !arg )                                              \
+   if( !(arg) )                                              \
    {                                                       \
    std::ostringstream osmacro;                             \
    osmacro << "Assert: In " __FILE__ ", line " << __LINE__ \
