@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/29 17:33:17 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/10/08 08:56:48 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,9 @@
                                                                                 
 =========================================================================*/
 
-////// #include <stdio.h>
+//////////////////   TEMPORARY NOT
+// look for "fixMem" and convert that to a member of this class
+// Removing the prefix fixMem and dealing with allocations should do the trick
 #define str2num(str, typeNum) *((typeNum *)(str))
 
 #include "gdcmDebug.h"
@@ -162,30 +164,35 @@ bool gdcmPixelConvert::ConvertGrayAndLutToRGB( uint8_t *lutRGBA )
  *            High Byte 'Planes'...(for what it may mean)
  * @return    Boolean
  */
-bool gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
-                       size_t PixelNumber,
-                       int    NumberOfFrames )
-
+uint8_t* gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
+                       int XSize,
+                       int YSize,
+                       int NumberOfFrames,
+                       uint8_t* fixMemUncompressed )
 {
-   /// We assumed Uncompressed contains the decoded RLE pixels but as
-   /// 8 bits per pixel. In order to convert those pixels to 16 bits
-   /// per pixel we need to double the space. Hence we cannot work in
-   /// place within Uncompressed. So, here is how we handle things:
-   /// - First  stage: copy Uncompressed in a safe place, say OldUncompressed
-   /// - Second stage: reallocate Uncompressed with the needed space
-   /// - Third  stage: expand from OldUncompressed to Uncompressed
-   /// - Fourth stage: clean up OldUncompressed
+   size_t PixelNumber = XSize * YSize;
+   size_t fixMemUncompressedSize = XSize * YSize * NumberOfFrames;
+
+   // We assumed Uncompressed contains the decoded RLE pixels but as
+   // 8 bits per pixel. In order to convert those pixels to 16 bits
+   // per pixel we cannot work in place within Uncompressed.
+   // Here is how we handle things:
+   // - First  stage: copy Uncompressed in a safe place, say OldUncompressed
+   // - Second stage: reallocate Uncompressed with the needed space
+   // - Third  stage: expand from OldUncompressed to Uncompressed
+   // - Fourth stage: clean up OldUncompressed
 
    /// First stage:
-   uint8_t* OldUncompressed = new uint8_t[UncompressedSize * 2];
-   memmove( OldUncompressed, Uncompressed, UncompressedSize);
+   uint8_t* OldUncompressed = new uint8_t[ fixMemUncompressedSize * 2 ];
+   memmove( OldUncompressed, fixMemUncompressed, fixMemUncompressedSize * 2);
 
    /// Second stage:
-   SetUncompressedSize( 2 * UncompressedSize );
-   AllocateUncompressed();
+   //fixMem SetUncompressedSize( 2 * UncompressedSize );
+   //fixMem AllocateUncompressed();
+   uint8_t* fixMemNewUncompressed = new uint8_t[fixMemUncompressedSize * 2];
 
    /// Third stage:
-   uint8_t* x = Uncompressed;
+   uint8_t* x = fixMemNewUncompressed;
    uint8_t* a = OldUncompressed;
    uint8_t* b = a + PixelNumber;
 
@@ -202,5 +209,5 @@ bool gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
    delete[] OldUncompressed;
       
    /// \todo check that operator new []didn't fail, and sometimes return false
-   return true;
+   return fixMemNewUncompressed;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLE.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:52:55 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/10/08 08:56:48 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,9 @@
 =========================================================================*/
 
 #include "gdcmFile.h"
-
-#define str2num(str, typeNum) *((typeNum *)(str))
+#include "gdcmDebug.h"
+#include "gdcmPixelConvert.h"
+#include <stdio.h>
 
 //-----------------------------------------------------------------------------
 /**
@@ -29,9 +30,9 @@
  *            at which the pixel data should be copied 
  * @return    Boolean 
  */
-bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer)
+bool gdcmFile::gdcm_read_RLE_file( FILE* fp, void* image_buffer )
 {
-   char * im = (char *)image_buffer;
+   char* im = (char *)image_buffer;
    long uncompressedSegmentSize = Header->GetXSize() * Header->GetYSize();
    
 
@@ -46,17 +47,23 @@ bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer)
       for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
       {
          fseek( fp, (*it)->Offset[k] ,SEEK_SET);  
-         gdcm_read_RLE_fragment( &im, (*it)->Length[k],
-                                 uncompressedSegmentSize, fp );
+         (void)gdcm_read_RLE_fragment( (uint8_t**) (&im), (*it)->Length[k],
+                                      uncompressedSegmentSize, fp );
       }
    }
-
-   if (Header->GetBitsAllocated()==16)
+ 
+   if ( Header->GetBitsAllocated() == 16 )
    {
-      // try to deal with RLE 16 Bits
-   
+     // Try to deal with RLE 16 Bits
+     /*
+      image_buffer = (void*)gdcmPixelConvert::UncompressRLE16BitsFromRLE8Bits(
+                                             Header->GetXSize(),
+                                             Header->GetYSize(),
+                                             Header->GetZSize(),
+                                             (uint8_t*) im);
+     */
       im = (char *)image_buffer;
-         //  need to make 16 Bits Pixels from Low Byte and Hight Byte 'Planes'
+      //  need to make 16 Bits Pixels from Low Byte and Hight Byte 'Planes'
 
       int l = Header->GetXSize()*Header->GetYSize();
       int nbFrames = Header->GetZSize();
@@ -83,41 +90,59 @@ bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer)
 
 
 // ----------------------------------------------------------------------------
-// RLE LossLess Fragment
-int gdcmFile::gdcm_read_RLE_fragment(char** areaToRead, long lengthToDecode, 
-                                     long uncompressedSegmentSize, FILE* fp)
+/**
+ * \brief Implementation of the RLE decoding algorithm for uncompressing
+ *        a RLE fragment. [refer to PS 3.5-2003, section G.3.2 p 86]
+ */
+bool gdcmFile::gdcm_read_RLE_fragment( uint8_t** decodedZone,
+                                       long fragmentSize, 
+                                       long uncompressedSegmentSize,
+                                       FILE* fp )
 {
-   (void)lengthToDecode; //FIXME
-   int count;
-   long numberOfOutputBytes=0;
-   char n, car;
+   int8_t count;
+   long numberOfOutputBytes = 0;
+   long numberOfReadBytes = 0;
 
    while( numberOfOutputBytes < uncompressedSegmentSize )
    {
-      fread(&n,sizeof(char),1,fp);
-      count=n;
-      if (count >= 0 && count <= 127)
+      fread( &count, 1, 1, fp );
+      numberOfReadBytes += 1;
+      if ( count >= 0 )
+      // Note: count <= 127 comparison is always true due to limited range
+      //       of data type int8_t [since the maximum of an exact width
+      //       signed integer of width N is 2^(N-1) - 1, which for int8_t
+      //       is 127].
       {
-         fread(*areaToRead,(count+1)*sizeof(char),1,fp);
-         *areaToRead+=count+1;
-         numberOfOutputBytes+=count+1;
+         fread( *decodedZone, count + 1, 1, fp);
+         numberOfReadBytes += count + 1;
+         *decodedZone        += count + 1;
+         numberOfOutputBytes += count + 1;
       }
       else
       {
-         if (count <= -1 && count >= -127)
+         if ( ( count <= -1 ) && ( count >= -127 ) )
          {
-            fread(&car,sizeof(char),1,fp);
-            for(int i=0; i<-count+1; i++)
+            int8_t newByte;
+            fread( &newByte, 1, 1, fp);
+            numberOfReadBytes += 1;
+            for( int i = 0; i < -count + 1; i++ )
             {
-               (*areaToRead)[i]=car;  
+               (*decodedZone)[i] = newByte;  
             }
-            *areaToRead+=(-count+1);
-            numberOfOutputBytes+=(-count+1); 
+            *decodedZone        += -count + 1;
+            numberOfOutputBytes += -count + 1; 
          }
       } 
-      // if count = 128 output nothing (See : PS 3.5-2003 Page 86)
+      // if count = 128 output nothing
+
+      if ( numberOfReadBytes > fragmentSize )
+      { 
+         dbg.Verbose(0, "gdcmFile::gdcm_read_RLE_fragment: we read more "
+                        "bytes than the segment size.");
+         return false;
+      }
    } 
-   return 1;
+   return true;
 }
 
 // ----------------------------------------------------------------------------

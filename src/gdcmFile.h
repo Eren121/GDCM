@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/01 12:40:57 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2004/10/08 08:56:48 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,8 +127,9 @@ private:
 // (would be static in C, or embedded in ADA)
 // It's NOT a method, but a not user intended fonction.
 // How do we write that in C++ ?)
-   static int gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
-                                     long uncompressedSegmentSize, FILE* fp);
+   static bool gdcm_read_RLE_fragment( uint8_t** decodedZone,
+                                       long fragmentSize, 
+                                       long uncompressedSegmentSize, FILE* fp);
 
    void SaveInitialValues();    // will belong to the future gdcmPixelData class
    void RestoreInitialValues(); // will belong to the future gdcmPixelData class

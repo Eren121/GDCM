@@ -1,3 +1,9 @@
+2004-10-08 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * src/gdcmCommon.h now declares int8_t for non stdint.h plateforms.
+  * CLEANUP_ROUND (7) for gdcmPixelConvert (lost at sea)
+    - src/gdcmFile.h gdcmPixelConvert.cxx gdcmPixelConvert.h gdcmRLE.cxx:
+      clean up of RLE related code. 
+
 2004-10-07 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND (5) for gdcmPixelConvert (Upshit creek without a paddle)
     - src/gdcmDocument.[cxx|h] Parse7Fe0 renamed to ComputeRLEInfo.

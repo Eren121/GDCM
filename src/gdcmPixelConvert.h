@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/29 17:33:17 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/10/08 08:56:48 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,11 +59,12 @@ bool ReadUncompressed( FILE* filePointer,
                        size_t expectedSize );
 bool ConvertGrayAndLutToRGB( uint8_t *lutRGBA );
 bool ReadAndUncompressRLE8Bits(FILE* fp, size_t uncompressedSize );
-bool UncompressRLE16BitsFromRLE8Bits( size_t PixelNumber, int NumberOfFrames );
-
-
-
-
+static uint8_t* UncompressRLE16BitsFromRLE8Bits(
+                       int XSize,
+                       int YSize,
+                       int NumberOfFrames,
+                       uint8_t* fixMemUncompressed );
+ 
 
 };
 
