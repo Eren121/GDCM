@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/20 08:29:13 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2004/07/28 21:10:07 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1777,7 +1777,7 @@ void gdcmDocument::FindDocEntryVR( gdcmDocEntry *entry )
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
    
-   fread (&vr, (size_t)2,(size_t)1, Fp);
+   fread (vr, (size_t)2,(size_t)1, Fp);
    vr[2] = 0;
 
    if( !CheckDocEntryVR(entry, vr) )
