@@ -1,4 +1,5 @@
 SUBDIRS(
+  libijg16 
   libijg12 
   libijg8
   ljpg
@@ -93,6 +94,7 @@ ENDIF (WIN32)
 
 SET(JPEG8_SOURCES)
 SET(JPEG12_SOURCES)
+SET(JPEG16_SOURCES)
 FOREACH(file ${JPEG_SOURCES})
   # Duplicate jpeg source in subdir libijg8
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libijg/${file}"
@@ -100,26 +102,21 @@ FOREACH(file ${JPEG_SOURCES})
     )
   SET(JPEG8_SOURCES ${JPEG8_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/libijg8/${file}")
 
-  SET(BITS_TYPE_JPEG_MANGLE_NAME gdcm_mangle_8bits.h)
-  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jconfig.h.in
-                 ${CMAKE_CURRENT_BINARY_DIR}/libijg8/jconfig.h @ONLY IMMEDIATE)
-  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/gdcm_mangle_8bits.h
-                 ${CMAKE_CURRENT_BINARY_DIR}/libijg8/gdcm_mangle_8bits.h @ONLY IMMEDIATE)
-
   # Duplicate jpeg source in subdir libijg12
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libijg/${file}"
     "${CMAKE_CURRENT_BINARY_DIR}/libijg12/${file}"
     )
   SET(JPEG12_SOURCES ${JPEG12_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/libijg12/${file}")
 
-  SET(BITS_TYPE_JPEG_MANGLE_NAME gdcm_mangle_12bits.h)
-  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jconfig.h.in
-                 ${CMAKE_CURRENT_BINARY_DIR}/libijg12/jconfig.h @ONLY IMMEDIATE)
-  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/gdcm_mangle_12bits.h
-                 ${CMAKE_CURRENT_BINARY_DIR}/libijg12/gdcm_mangle_12bits.h @ONLY IMMEDIATE)
+  # Duplicate jpeg source in subdir libijg16
+  CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libijg/${file}"
+    "${CMAKE_CURRENT_BINARY_DIR}/libijg16/${file}"
+    )
+  SET(JPEG_16SOURCES ${JPEG_16SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/libijg16/${file}")
+
 ENDFOREACH(file)
 
-# Now copy the header file
+# Now copy the header files
 FOREACH(file ${JPEG_HEADER_FILES})
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libijg/${file}"
     "${CMAKE_CURRENT_BINARY_DIR}/libijg8/${file}"
@@ -127,13 +124,39 @@ FOREACH(file ${JPEG_HEADER_FILES})
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libijg/${file}"
     "${CMAKE_CURRENT_BINARY_DIR}/libijg12/${file}"
     )
+  CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libijg/${file}"
+    "${CMAKE_CURRENT_BINARY_DIR}/libijg16/${file}"
+    )
 ENDFOREACH(file)
-# Particular case jmorecfg.h needs to be specified either 8 or 12 bits:
+
+# Particular case jmorecfg.h needs to be specified either 8, 12 or 16 bits:
 SET(GDCM_BITS_IN_JSAMPLE 8)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jmorecfg.h
                ${CMAKE_CURRENT_BINARY_DIR}/libijg8/jmorecfg.h @ONLY IMMEDIATE)
+SET(BITS_TYPE_JPEG_MANGLE_NAME gdcm_mangle_8bits.h)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jconfig.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/libijg8/jconfig.h @ONLY IMMEDIATE)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/gdcm_mangle_8bits.h
+               ${CMAKE_CURRENT_BINARY_DIR}/libijg8/gdcm_mangle_8bits.h @ONLY IMMEDIATE)
+
+
 
 SET(GDCM_BITS_IN_JSAMPLE 12)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jmorecfg.h
                ${CMAKE_CURRENT_BINARY_DIR}/libijg12/jmorecfg.h @ONLY IMMEDIATE)
+SET(BITS_TYPE_JPEG_MANGLE_NAME gdcm_mangle_12bits.h)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jconfig.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/libijg12/jconfig.h @ONLY IMMEDIATE)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/gdcm_mangle_12bits.h
+               ${CMAKE_CURRENT_BINARY_DIR}/libijg12/gdcm_mangle_12bits.h @ONLY IMMEDIATE)
 
+
+
+SET(GDCM_BITS_IN_JSAMPLE 16)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jmorecfg.h
+               ${CMAKE_CURRENT_BINARY_DIR}/libijg16/jmorecfg.h @ONLY IMMEDIATE)
+SET(BITS_TYPE_JPEG_MANGLE_NAME gdcm_mangle_16bits.h)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/jconfig.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/libijg16/jconfig.h @ONLY IMMEDIATE)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libijg/gdcm_mangle_16bits.h
+               ${CMAKE_CURRENT_BINARY_DIR}/libijg16/gdcm_mangle_16bits.h @ONLY IMMEDIATE)
