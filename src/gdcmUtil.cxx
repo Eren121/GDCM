@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/22 22:56:22 $
-  Version:   $Revision: 1.120 $
+  Date:      $Date: 2005/01/22 23:29:16 $
+  Version:   $Revision: 1.121 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
 #include <sys/timeb.h>
 #else
 #include <sys/time.h>
@@ -284,23 +284,23 @@ std::string Util::GetCurrentDateTime()
 {
    char tmp[40];
    long milliseconds;
-   time_t *timep;
+   time_t timep;
   
    // We need implementation specific functions to obtain millisecond precision
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
    struct timeb tb;
    ::ftime(&tb);
-   timep = &tb.time;
+   timep = tb.time;
    milliseconds = tb.millitm;
 #else
    struct timeval tv;
    gettimeofday (&tv, NULL);
-   timep = (time_t*)(&tv.tv_sec);
+   timep = tv.tv_sec;
    // Compute milliseconds from microseconds.
    milliseconds = tv.tv_usec / 1000;
 #endif
    // Obtain the time of day, and convert it to a tm struct.
-   struct tm *ptm = localtime (timep);
+   struct tm *ptm = localtime (&timep);
    // Format the date and time, down to a single second.
    strftime (tmp, sizeof (tmp), "%Y%m%d%H%M%S", ptm);
 
