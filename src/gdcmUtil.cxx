@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 23:43:59 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/01/07 23:44:46 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -517,7 +517,7 @@ long GetMacAddrSys ( u_char *addr)
                    //        varBind[1].value.asnValue.address.stream[3],
                    //        varBind[1].value.asnValue.address.stream[4],
                    //        varBind[1].value.asnValue.address.stream[5]);
-                   memcpy( addr, *varBind[1].value.asnValue.address.stream, 6);
+                   memcpy( addr, varBind[1].value.asnValue.address.stream, 6);
                    //printf("MAC Address of interface #%i: %s\n", j, addr);
               }
            }
