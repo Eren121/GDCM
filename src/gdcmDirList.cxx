@@ -101,7 +101,6 @@ void gdcmDirList::Explore(std::string dirName,bool recursive)
    while( (hFile!=INVALID_HANDLE_VALUE) && (found) )
    {
       fileName=fileData.cFileName;
-      std::cout<<fileName<<std::endl;
       if(fileData.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
       {
          if( (fileName!=".") && (fileName!="..") && (recursive) )

@@ -142,7 +142,6 @@ void gdcmDicomDir::NewDicomDir(std::string path)
    for(gdcmDirList::iterator it=fileList.begin(); 
        it!=fileList.end(); ++it) 
    {
-          std::cout<<*it<<std::endl;
       header=new gdcmHeader(it->c_str());
       if(header->IsReadable())
          list.push_back(header);
