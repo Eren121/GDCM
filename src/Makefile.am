@@ -15,7 +15,8 @@ LTVERSION = 0:1:0
 lib_LTLIBRARIES = libgdcm.la
 
 libgdcm_la_SOURCES=		\
-	gdcmUtil.cxx 	\
+	gdcmException.cxx	\
+	gdcmUtil.cxx 		\
 	gdcmHeader.cxx    \
 	gdcmElValue.cxx   \
 	gdcmDictEntry.cxx \
@@ -29,5 +30,6 @@ libgdcmincludedir = $(includedir)
 libgdcminclude_HEADERS = 	\
 	config.h	\
 	gdcm.h  	\
+	gdcmException.h	\
 	gdcmIdo.h  	\
 	gdcmUtil.h

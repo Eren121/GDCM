@@ -37,15 +37,23 @@ void gdcmHeader::Initialise(void) {
 	RefShaDict = (gdcmDict*)0;
 }
 
-gdcmHeader::gdcmHeader (const char* InFilename) {
-	SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
-	filename = InFilename;
-	Initialise();
-	fp=fopen(InFilename,"rw");
-	dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", InFilename);
-	ParseHeader();
-	AddAndDefaultElements();
+
+gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) 
+  throw(gdcmFileError) {
+  SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
+  filename = InFilename;
+  Initialise();
+  fp=fopen(InFilename,"rw");
+  if(exception_on_error) {
+    if(!fp)
+      throw gdcmFileError("gdcmHeader::gdcmHeader(const char *, bool)");
+  }
+  else
+    dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", InFilename);
+  ParseHeader();
+  AddAndDefaultElements();
 }
+
 
 gdcmHeader::~gdcmHeader (void) {
 	fclose(fp);
@@ -1198,7 +1206,7 @@ int gdcmHeader::SetShaElValByName(string content, string TagName) {
  * \ingroup gdcmHeader
  * \brief   Parses the header of the file but WITHOUT loading element values.
  */
-void gdcmHeader::ParseHeader(void) {
+void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
 	ElValue * newElValue = (ElValue *)0;
 	
 	rewind(fp);

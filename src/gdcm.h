@@ -17,16 +17,19 @@
 // problems appears at loading of _gdcm.[so/dll]). So, simply uncomment
 // the declaration once you provided the definition of the method...
 
+#ifndef GDCM_H
+#define GDCM_H
+
 #include <string>
-#ifdef _MSC_VER
-using namespace std;  // string type lives in the std namespace on VC++
-#endif
+using namespace std;
 
 #include <iostream>
 #include <stddef.h>   // For size_t
 #include <stdio.h>    // FIXME For FILE on GCC only
 #include <list>
 #include <map>
+#include "gdcmException.h"
+
 
 		      // The requirement for the hash table (or map) that
                       // we shall use:
@@ -368,8 +371,10 @@ protected:
 	int anonymize(ostream&);  // FIXME : anonymize should be a friend ?
 public:
 	void LoadElements(void);
-	virtual void ParseHeader(void);
-	gdcmHeader(const char* filename);
+	virtual void ParseHeader(bool exception_on_error = false)
+	  throw(gdcmFormatError);
+	gdcmHeader(const char *filename, bool exception_on_error = false)
+	  throw(gdcmFileError);
 	virtual ~gdcmHeader();
 	
 	size_t GetPixelOffset(void);
@@ -544,3 +549,4 @@ public:
 //class gdcmMultiFrame : gdcmFile;
 
 
+#endif // #ifndef GDCM_H
