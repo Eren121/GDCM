@@ -26,7 +26,7 @@ TagElValueHT & gdcmElValSet::GetTagHt(void) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   newElValue
  * @return  
  */
 void gdcmElValSet::Add(gdcmElValue * newElValue) {
@@ -39,7 +39,8 @@ void gdcmElValSet::Add(gdcmElValue * newElValue) {
  * \ingroup gdcmElValSet
  * \brief   Checks if a given Dicom element exists
  * \        within a ElValSet
- * @param     
+ * @param   Group
+ * @param   Elem
  * @return  
  */
 int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
@@ -50,10 +51,8 @@ int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
- * @return  
  */
- void gdcmElValSet::Print(ostream & os) {
+void gdcmElValSet::Print(ostream & os) {
 
    size_t o;
    short int g, e;
@@ -94,10 +93,8 @@ int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
- * @return  
  */
- void gdcmElValSet::PrintByName(ostream & os) {
+void gdcmElValSet::PrintByName(ostream & os) {
    for (TagElValueNameHT::iterator tag = NameHt.begin();
           tag != NameHt.end();
           ++tag){
@@ -111,7 +108,8 @@ int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   group 
+ * @param   element 
  * @return  
  */
 gdcmElValue* gdcmElValSet::GetElementByNumber(guint16 group, guint16 element) {
@@ -124,7 +122,6 @@ gdcmElValue* gdcmElValSet::GetElementByNumber(guint16 group, guint16 element) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
  * @return  
  */
 gdcmElValue* gdcmElValSet::GetElementByName(string TagName) {
@@ -136,7 +133,8 @@ gdcmElValue* gdcmElValSet::GetElementByName(string TagName) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   group 
+ * @param   element 
  * @return  
  */
 string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
@@ -149,7 +147,6 @@ string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
  * @return  
  */
 string gdcmElValSet::GetElValueByName(string TagName) {
@@ -161,7 +158,9 @@ string gdcmElValSet::GetElValueByName(string TagName) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   content
+ * @param   group 
+ * @param   element 
  * @return  
  */
 int gdcmElValSet::SetElValueByNumber(string content,
@@ -186,7 +185,8 @@ int gdcmElValSet::SetElValueByNumber(string content,
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   content
+ * @param   TagName
  * @return  
  */
 int gdcmElValSet::SetElValueByName(string content, string TagName) {
@@ -230,7 +230,9 @@ guint32 gdcmElValSet::GenerateFreeTagKeyInGroup(guint16 group) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   length
+ * @param   group 
+ * @param   element 
  * @return  
  */
 int gdcmElValSet::SetElValueLengthByNumber(guint32 length,
@@ -246,7 +248,8 @@ int gdcmElValSet::SetElValueLengthByNumber(guint32 length,
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   length
+ * @param   TagName
  * @return  
  */
 int gdcmElValSet::SetElValueLengthByName(guint32 length, string TagName) {
@@ -256,15 +259,11 @@ int gdcmElValSet::SetElValueLengthByName(guint32 length, string TagName) {
    return 1 ;		
 }
 
-
-// re-computes the length of a ACR-NEMA/Dicom group
-// from a DcmHeader
-
 /**
  * \ingroup gdcmElValSet
- * \brief   
- * @param     
- * @return  
+ * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
+ * @param   SkipSequence
+ * @param   type
  */
 void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
    guint16 gr, el;
@@ -358,7 +357,8 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   type
+ * @param   _fp
  * @return  
  */
 void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
@@ -443,7 +443,8 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
 /**
  * \ingroup gdcmElValSet
  * \brief   
- * @param     
+ * @param   _fp
+ * @param   type
  * @return  
  */
 int gdcmElValSet::Write(FILE * _fp, FileType type) {

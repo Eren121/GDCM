@@ -38,6 +38,6 @@ int gdcmTS::Count(TSKey key) {
    return ts.count(key);
 }
 
-string gdcmTS::GetValue(TSKey key) {
+std::string gdcmTS::GetValue(TSKey key) {
    return ts[key];
 }

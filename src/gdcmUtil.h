@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.12 2003/06/26 13:07:01 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.13 2003/07/01 10:04:36 frog Exp $
 
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
@@ -46,7 +46,7 @@ void Tokenize (const std::string& str,
 extern gdcmDebug dbg;
 
 char * _cleanString(char *v);
-char * _CreateCleanString(string s);
+char * _CreateCleanString(std::string s);
 
 std::string TranslateToKey(guint16 group, guint16 element);
 

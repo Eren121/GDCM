@@ -21,7 +21,7 @@ public:
    gdcmTS(void);
    ~gdcmTS();
    int Count(TSKey key);
-   string GetValue(TSKey key);
+   std::string GetValue(TSKey key);
 };
 
 #endif

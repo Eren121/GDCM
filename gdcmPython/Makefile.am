@@ -68,7 +68,7 @@ endif### BUILD_PYTHON #######################################
 ############ Automake general usage classics:
 MOSTLYCLEANFILES = $(pygdcm_la_SOURCES) $(vtkgdcmPython_la_SOURCES)
 BUILT_SOURCES =    $(pygdcm_la_SOURCES) $(vtkgdcmPython_la_SOURCES)
-CLEANFILES = gdcm_wrap.cxx gdcm.py gdcm.pyc vtkWrapPythonInit
+CLEANFILES = gdcm_wrap.cxx gdcm.py gdcm.pyc $(PYTHON_WRAPPER_INIT)
 
 dist-hook:
 	rm -f $(distdir)/gdcm_wrap.cxx

@@ -1,17 +1,3 @@
-// gdcmExeption.h
-
-// gdcmlib Intro:  
-// * gdcmlib is a library dedicated to reading and writing dicom files.
-// * LGPL for the license
-// * lightweigth as opposed to CTN or DCMTK which come bundled which try
-//   to implement the full DICOM standard (networking...). gdcmlib concentrates
-//   on reading and writing
-// * Formats: this lib should be able to read ACR-NEMA v1 and v2, Dicom v3 (as
-//   stated in part10). [cf dcmtk/dcmdata/docs/datadict.txt]
-// * Targeted plateforms: Un*xes and Win32/VC++6.0
-//
-//
-
 #ifndef GDCM_EXCEPTION_H
 #define GDCM_EXCEPTION_H
 
@@ -23,7 +9,7 @@
 /**
  * Any exception thrown in the gdcm library
  */
-class GDCM_EXPORT gdcmException : public exception {
+class GDCM_EXPORT gdcmException : public std::exception {
  protected:
   /// error message
   std::string from;
@@ -45,7 +31,7 @@ class GDCM_EXPORT gdcmException : public exception {
   /**
    * virtual destructor makes this class dynamic
    */
-  virtual ~gdcmException() {
+  virtual ~gdcmException() throw() {
   }
   
   /// returns error message

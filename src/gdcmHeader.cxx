@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.72 2003/07/01 09:29:56 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.73 2003/07/01 10:04:36 frog Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -26,10 +26,8 @@ using namespace std;
 /**
  * \ingroup gdcmHeader
  * \brief   
- * @param  none   
- * @return  
  */
- void gdcmHeader::Initialise(void) {
+void gdcmHeader::Initialise(void) {
    dicom_vr = gdcmGlobal::GetVR();
    dicom_ts = gdcmGlobal::GetTS();
    Dicts =    gdcmGlobal::GetDicts();
@@ -40,8 +38,8 @@ using namespace std;
 /**
  * \ingroup gdcmHeader
  * \brief   
- * @param     
- * @return  
+ * @param   InFilename
+ * @param   exception_on_error
  */
  gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
   SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
@@ -57,10 +55,9 @@ using namespace std;
 /**
  * \ingroup gdcmHeader
  * \brief   
- * @param     
- * @return  
+ * @param   exception_on_error
  */
- gdcmHeader::gdcmHeader(bool exception_on_error) {
+gdcmHeader::gdcmHeader(bool exception_on_error) {
   SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
   Initialise();
 }
@@ -68,7 +65,7 @@ using namespace std;
 /**
  * \ingroup gdcmHeader
  * \brief   
- * @param     
+ * @param   exception_on_error
  * @return  
  */
  bool gdcmHeader::OpenFile(bool exception_on_error)
@@ -87,10 +84,9 @@ using namespace std;
 /**
  * \ingroup gdcmHeader
  * \brief   
- * @param     
  * @return  
  */
- bool gdcmHeader::CloseFile(void) {
+bool gdcmHeader::CloseFile(void) {
   int closed = fclose(fp);
   fp = (FILE *)0;
   if (! closed)
@@ -100,11 +96,9 @@ using namespace std;
 
 /**
  * \ingroup gdcmHeader
- * \brief   
- * @param     
- * @return  
+ * \brief   Canonical destructor.
  */
- gdcmHeader::~gdcmHeader (void) {
+gdcmHeader::~gdcmHeader (void) {
    dicom_vr =   (gdcmVR*)0; 
    Dicts    =   (gdcmDictSet*)0;
    RefPubDict = (gdcmDict*)0;
@@ -281,10 +275,8 @@ void gdcmHeader::CheckSwap()
 /**
  * \ingroup gdcmHeader
  * \brief   
- * @param     
- * @return  
  */
- void gdcmHeader::SwitchSwapToBigEndian(void) {
+void gdcmHeader::SwitchSwapToBigEndian(void) {
    dbg.Verbose(1, "gdcmHeader::SwitchSwapToBigEndian",
                   "Switching to BigEndian mode.");
    if ( sw == 0    ) {
@@ -1541,10 +1533,10 @@ int gdcmHeader::SetShaElValByNumber(string content,
  * \brief   Accesses an existing gdcmElValue in the ShaElValSet of this instance
  *          through tag name and modifies it's content with the given value.
  * @param   content new value to substitute with
- * @param   TagName name of the tag to be modified
+ * @param   ShadowTagName name of the tag to be modified
  */
-int gdcmHeader::SetShaElValByName(string content, string TagName) {
-   return (  ShaElValSet.SetElValueByName (content, TagName) );
+int gdcmHeader::SetShaElValByName(string content, string ShadowTagName) {
+   return (  ShaElValSet.SetElValueByName (content, ShadowTagName) );
 }
 
 /**
@@ -1958,7 +1950,6 @@ float gdcmHeader::GetYImagePosition(void) {
    if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
      // How to tell the caller a wrong number of values was found?
      return 0.;
-    //else
    return yImPos;
 }
 

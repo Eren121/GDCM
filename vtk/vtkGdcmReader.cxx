@@ -1,5 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.12 2003/06/17 08:07:23 regrain Exp $
-//CLEANME#include <vtkByteSwap.h>
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.13 2003/07/01 10:04:37 frog Exp $
 #include <stdio.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
@@ -411,9 +410,9 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 
   // Variables for the UpdateProgress. We shall use 50 steps to signify
   // the advance of the process:
-  unsigned long UpdateProgressTarget = (unsigned long) this->NumLines
+  unsigned long UpdateProgressTarget = (unsigned long) ceil (this->NumLines
                                      * this->TotalNumberOfPlanes
-                                     / 50.0;
+                                     / 50.0);
   // The actual advance measure:
   unsigned long UpdateProgressCount = 0;
 

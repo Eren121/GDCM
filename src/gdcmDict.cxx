@@ -43,10 +43,8 @@ gdcmDict::gdcmDict(std::string & FileName) {
 /**
  * \ingroup gdcmDict
  * \brief   
- * @param   
- * @return  
  */
- gdcmDict::~gdcmDict() {
+gdcmDict::~gdcmDict() {
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag) {
       gdcmDictEntry* EntryToDelete = tag->second;
       if ( EntryToDelete )
@@ -62,8 +60,7 @@ gdcmDict::gdcmDict(std::string & FileName) {
 /**
  * \ingroup gdcmDict
  * \brief   
- * @param   
- * @return  
+ * @param   os
  */
 void gdcmDict::Print(std::ostream& os) {
    PrintByKey(os);
@@ -132,7 +129,7 @@ gdcmDictEntry * gdcmDict::GetTagByName(TagName name) {
 /**
  * \ingroup gdcmDict
  * \brief   
- * @param   
+ * @param   NewEntry
  * @return  
  */
 int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
@@ -146,7 +143,7 @@ int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
 /**
  * \ingroup gdcmDict
  * \brief   
- * @param   
+ * @param   NewEntry
  * @return  
  */
  int gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
@@ -165,7 +162,7 @@ int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
 /**
  * \ingroup gdcmDict
  * \brief   
- * @param   
+ * @param   key
  * @return  
  */
 int gdcmDict::RemoveEntry(TagKey key) {
@@ -184,7 +181,8 @@ int gdcmDict::RemoveEntry(TagKey key) {
 /**
  * \ingroup gdcmDict
  * \brief   
- * @param   
+ * @param   group 
+ * @param   element
  * @return  
  */
 int gdcmDict::RemoveEntry (guint16 group, guint16 element) {

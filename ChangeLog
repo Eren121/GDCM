@@ -1,3 +1,16 @@
+2003-07-01  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * gdcmPython/Makefile.am now avoids calling the wrappers for the
+        clean target.
+      * src/gdcm*.[cxx|h] :
+        - to allow compilation with gcc 3.x
+          -- clean up of STL usage (added explicit usage of std::)
+          -- small fixes on exceptions.
+          Note: linking not tested !
+        - clean of doxygen comments to avoid warnings at documentation
+          building stage.
+      * vtk/vtkGdcmReader.cxx: g++ warning message clean up (platform
+        dependent convertion).
+
 2003-06-20  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Clean up of previous JPR garbage commit (not even commented in the
         Changelog):

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.13 2003/06/26 13:07:01 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.14 2003/07/01 10:04:36 frog Exp $
 
 #include <stdio.h>
 #include <ctype.h>   // For isspace
@@ -16,23 +16,15 @@ gdcmDebug::gdcmDebug(int level) {
 void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) {
    if (Level > DebugLevel)
       return ;
-   cerr << Msg1 << ' ' << Msg2 << '\n';
+   std::cerr << Msg1 << ' ' << Msg2 << '\n';
 }
-
-/*
-void gdcmDebug::Verbose(int Level, char * Msg1, char * Msg2) {
-   if (Level > DebugLevel)
-      return ;
-   cerr << Msg1 << ' ' << Msg2 << '\n';
-}
-*/
 
 void gdcmDebug::Assert(int Level, bool Test,
                  const char * Msg1, const char * Msg2) {
    if (Level > DebugLevel)
       return ;
    if (!Test)
-      cerr << Msg1 << ' ' << Msg2 << '\n';
+      std::cerr << Msg1 << ' ' << Msg2 << '\n';
 }
 
 void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {

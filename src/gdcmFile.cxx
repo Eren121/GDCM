@@ -183,7 +183,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
             // la ligne commentee ci-dessous fait passer l'exec de 0.15 sec a 5.5 sec
             // pour la meme image 512*512 ...
             // optimiseur pas mis en oeuvre (?)
-            //for (int i=0; i<GetXSize() *  GetYSize() *  GetZSize(); i++) { 
+            //for (int i=0; i<GetXSize() *  GetYSize() *  GetZSize(); i++) 
             
              for (int i=0; i<taille; i++) {           
                *((unsigned short *)dest+i) = *(dataJpg +i);    
@@ -550,17 +550,17 @@ int gdcmFile::WriteAcr (string nomFichier) {
 /**
  * \ingroup   gdcmFile
  *
- * @param  nomFichier TODO JPR
+ * @param  FileName TODO JPR
  * @param  type TODO JPR
  *
  * @return TODO JPR
  */
-int gdcmFile::WriteBase (string nomFichier, FileType type) {
+int gdcmFile::WriteBase (string FileName, FileType type) {
 
    FILE * fp1;
-   fp1 = fopen(nomFichier.c_str(),"wb");
+   fp1 = fopen(FileName.c_str(),"wb");
    if (fp1 == NULL) {
-      printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
+      printf("Echec ouverture (ecriture) Fichier [%s] \n",FileName.c_str());
       return (0);
    }
 
