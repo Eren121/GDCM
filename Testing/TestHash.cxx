@@ -22,17 +22,17 @@ int TestHash( int, char * [] ) {
    std::cout << "Find request on key 00380010" << std::endl;
    im = tb1.find("00380010");
    std::cout << "   \"" << im->first << "\" = " << im->second << std::endl;
-	
+
    int i = 0x0010;
    std::cout.setf(std::ios::hex);
    std::cout << i << std::endl;
    std::cout.setf(std::ios::dec);
    std::cout << i << std::endl;	
-	
-	// Voir :
-	//http://www.developer.com/net/cplus/article.php/10919_2119781_3
-	//
-	// dommage que ca ne marche pas ...
+
+// Voir :
+//http://www.developer.com/net/cplus/article.php/10919_2119781_3
+//
+// dommage que ca ne marche pas ...
 
   return 0;
 }

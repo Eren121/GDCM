@@ -7,7 +7,7 @@
 int TestBug(int argc, char* argv[])
 {  
    gdcmHeader* e1;
-	
+
    if (argc > 1)
       e1 = new gdcmHeader( argv[1] );
    else {
