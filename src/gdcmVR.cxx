@@ -76,7 +76,7 @@ void gdcmVR::Print(std::ostream &os)
 /**
  * \ingroup gdcmVR
  * \brief   Get the count for an element
- * @param   Key key to count
+ * @param   key key to count
  */
 int gdcmVR::Count(VRKey key) 
 {

@@ -131,12 +131,20 @@ char *_cleanString(char *v) {
 // to prevent a flashing screen when non-printable character
 std::string _CreateCleanString(std::string s) {
   std::string str=s;
-  for(int i=0;i<str.size();i++)
+  int n = str.size();
+  for(int i=0;i<n-1;i++)
   {
     if(!isprint(str[i]))
       str[i]='.';
   }
-
+  if(!isprint(str[n])) { // to avoid trouble with odd length fields
+                        // padded with zeo to become even
+  
+     if (str[n] == '\0') 
+        str[n] = ' ';
+     else
+        str[n] = '.';
+  }
   return(str);
 }
 
