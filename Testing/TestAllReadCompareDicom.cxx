@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:56 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/12/03 20:43:36 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,7 +17,9 @@
 =========================================================================*/
 #include "gdcmHeader.h"
 #include "gdcmFile.h"
+
 #include <iostream>
+#include <fstream>
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -43,7 +45,8 @@ int InternalTest(std::string const & filename,
       ////// Check for existence of reference baseline dicom file:
       std::cout << "2...";
 
-      FILE* testFILE = fopen( referenceFileName.c_str(), "r" );
+      //FILE* testFILE = fopen( referenceFileName.c_str(), "r" );
+      std::ifstream testFILE( referenceFileName.c_str() );
       if (! testFILE )
       {
          uint8_t* testedImageData = tested->GetImageData(); // Kludge
@@ -54,8 +57,9 @@ int InternalTest(std::string const & filename,
       }
       else
       {
-         fclose( testFILE );
+         //fclose( testFILE );
       }
+      testFILE.close();
 
       ////// Step 3a:
       ////// When reference file is not gdcm readable test is failed:

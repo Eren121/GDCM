@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 16:49:01 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2004/12/03 20:43:37 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,12 +27,14 @@
 #include <stdarg.h>  //only included in implementation file
 #include <stdio.h>   //only included in implementation file
 
-#if defined _MSC_VER || defined(__BORLANDC__)
+#if defined _MSC_VER
    #include <winsock.h>  // for gethostname & gethostbyname
    #undef GetCurrentTime
 #else
+#ifndef __BORLANDC__
    #include <unistd.h>  // for gethostname
    #include <netdb.h>   // for gethostbyname
+#endif
 #endif
 
 namespace gdcm 
