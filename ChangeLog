@@ -1,4 +1,8 @@
 2004-05-04 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+    * src/gdcmCommon.h, gdcmDicomDir.cxx, gdcmFile.cxx, gdcmHeaderHelper.h,
+      gdcmParser.cxx, gdcmParser.h : bug fix for the Microsoft .Net compilation
+
+2004-05-04 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
      * src/gdcmFile.cxx, gdcmHeader.cxx : bug fix for the msvc compilation
      * Test/ShowDicom.cxx : bug fix for msvc compilation
      * vtk/vtkgdcmViewer.cxx : bug fix for msvc compilation

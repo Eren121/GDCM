@@ -194,7 +194,7 @@ protected:
    void LoadHeaderEntrySafe(gdcmHeaderEntry *);
 
    void UpdateGroupLength(bool SkipSequence = false,
-                          FileType type = ImplicitVR);
+                          FileType type = gdcmImplicitVR);
 
    void AddHeaderEntry       (gdcmHeaderEntry *);
    

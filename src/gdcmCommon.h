@@ -92,11 +92,11 @@ typedef std::string TagKey;
 typedef std::string TagName;
 
 enum FileType {
-      Unknown = 0,
-      ExplicitVR, // gdcmDicomDir is in this case
-      ImplicitVR,
-      ACR,
-      ACR_LIBIDO
+      gdcmUnknown = 0,
+      gdcmExplicitVR, // gdcmDicomDir is in this case
+      gdcmImplicitVR,
+      gdcmACR,
+      gdcmACR_LIBIDO
 };
 
 //-----------------------------------------------------------------------------

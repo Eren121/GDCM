@@ -623,7 +623,7 @@ bool gdcmFile::WriteRawData (std::string fileName) {
  */
 
 bool gdcmFile::WriteDcmImplVR (std::string fileName) {
-   return WriteBase(fileName, ImplicitVR);
+   return WriteBase(fileName, gdcmImplicitVR);
 }
 
 /**
@@ -649,7 +649,7 @@ bool gdcmFile::WriteDcmImplVR (const char *fileName) {
  */
 
 bool gdcmFile::WriteDcmExplVR (std::string fileName) {
-   return WriteBase(fileName, ExplicitVR);
+   return WriteBase(fileName, gdcmExplicitVR);
 }
 	
 /**
@@ -668,7 +668,7 @@ bool gdcmFile::WriteDcmExplVR (std::string fileName) {
  */
 
 bool gdcmFile::WriteAcr (std::string fileName) {
-   return WriteBase(fileName, ACR);
+   return WriteBase(fileName, gdcmACR);
 }
 
 //-----------------------------------------------------------------------------
@@ -686,7 +686,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
 
    FILE *fp1;
    
-   if (PixelRead==-1 && type != ExplicitVR) {
+   if (PixelRead==-1 && type != gdcmExplicitVR) {
       return false;		   
    }
 
@@ -696,7 +696,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
       return (false);
    }
 
-   if ( (type == ImplicitVR) || (type == ExplicitVR) ) {
+   if ( (type == gdcmImplicitVR) || (type == gdcmExplicitVR) ) {
       char *filePreamble;
       // writing Dicom File Preamble
       filePreamble=new char[128];
@@ -717,7 +717,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    ///       but pb expected if user deals with, e.g. COMPLEX images
 
    std::string rows, columns; 
-   if ( Header->GetFileType() == ACR_LIBIDO){
+   if ( Header->GetFileType() == gdcmACR_LIBIDO){
          rows    = Header->GetEntryByNumber(0x0028, 0x0010);
          columns = Header->GetEntryByNumber(0x0028, 0x0011);
          Header->SetEntryByNumber(columns,  0x0028, 0x0010);
@@ -763,7 +763,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    // ...and we restore the Header to be Dicom Compliant again 
    // just after writting
 
-   if (Header->GetFileType() == ACR_LIBIDO){
+   if (Header->GetFileType() == gdcmACR_LIBIDO){
          Header->SetEntryByNumber(rows   , 0x0028, 0x0010);
          Header->SetEntryByNumber(columns, 0x0028, 0x0011);
    }	

@@ -178,7 +178,7 @@ bool gdcmParser::SetShaDict(DictKey dictName){
  *         false otherwise. 
  */
 bool gdcmParser::IsReadable(void) { 
-   if(filetype==Unknown) {
+	if(filetype==gdcmUnknown) {
       return(false);
    }
    if(listEntries.size()<=0) {    
@@ -258,7 +258,7 @@ bool gdcmParser::IsExplicitVRBigEndianTransferSyntax(void) {
 
 /**
  * \brief  returns the File Type 
- *         (ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown)
+ *         (ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unfound)
  * @return the FileType code
  */
 FileType gdcmParser::GetFileType(void) {
@@ -346,7 +346,7 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
    /// a moins de se livrer a un tres complique ajout des champs manquants.
    /// faire un CheckAndCorrectHeader (?)  
 
-   if (type == ImplicitVR) 
+   if (type == gdcmImplicitVR) 
    {
       std::string implicitVRTransfertSyntax = UI1_2_840_10008_1_2;
       ReplaceOrCreateByNumber(implicitVRTransfertSyntax,0x0002, 0x0010);
@@ -359,7 +359,7 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
       SetEntryLengthByNumber(18, 0x0002, 0x0010);
    } 
 
-   if (type == ExplicitVR) 
+   if (type == gdcmExplicitVR) 
    {
       std::string explicitVRTransfertSyntax = UI1_2_840_10008_1_2_1;
       ReplaceOrCreateByNumber(explicitVRTransfertSyntax,0x0002, 0x0010);
@@ -881,7 +881,7 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
       } 
       else // any elem but the first
       {   
-         if (type == ExplicitVR) 
+         if (type == gdcmExplicitVR) 
          {
             if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
             {
@@ -946,7 +946,7 @@ void gdcmParser::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
    fwrite ( &group,(size_t)2 ,(size_t)1 ,_fp);  //group
    fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);     //element
       
-   if ( type == ExplicitVR ) {
+   if ( type == gdcmExplicitVR ) {
 
       // Special case of delimiters:
       if (group == 0xfffe) {
@@ -961,7 +961,7 @@ void gdcmParser::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
 
       guint16 z=0;
       guint16 shortLgr = lgr;
-      if (vr == "unkn") {     // Unknown was 'written'
+      if (vr == "unkn") {     // Unfound was 'written'
          // deal with Little Endian            
          fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
          fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
@@ -1097,7 +1097,7 @@ bool gdcmParser::WriteEntries(FILE *_fp,FileType type)
                           tag2 != listEntries.end();
                           ++tag2)
    {
-      if ( type == ACR ){ 
+      if ( type == gdcmACR ){ 
          if ((*tag2)->GetGroup() < 0x0008)
             // Ignore pure DICOM V3 groups
             continue;
@@ -1138,7 +1138,7 @@ void gdcmParser::WriteEntriesDeprecated(FILE *_fp,FileType type) {
    for (TagHeaderEntryHT::iterator tag2=tagHT.begin();
         tag2 != tagHT.end();
         ++tag2){
-      if ( type == ACR ){ 
+      if ( type == gdcmACR ){ 
          if ((*tag2->second).GetGroup() < 0x0008)    continue; // ignore pure DICOM V3 groups
          if ((*tag2->second).GetElement() %2)        continue; // ignore shadow groups
          if ((*tag2->second).GetVR() == "SQ" )       continue; // ignore Sequences
@@ -1261,7 +1261,7 @@ bool gdcmParser::LoadHeaderEntries(bool exception_on_error) throw(gdcmFormatErro
        RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
                                           // with "little-endian strings"
    {
-         filetype = ACR_LIBIDO; 
+         filetype = gdcmACR_LIBIDO; 
          std::string rows    = GetEntryByNumber(0x0028, 0x0010);
          std::string columns = GetEntryByNumber(0x0028, 0x0011);
          SetEntryByNumber(columns, 0x0028, 0x0010);
@@ -1398,7 +1398,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
    guint16 length16;
        
    
-   if ( (filetype == ExplicitVR) && (! Entry->IsImplicitVR()) ) 
+   if ( (filetype == gdcmExplicitVR) && (! Entry->IsImplicitVR()) ) 
    {
       if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) 
       {
@@ -1480,7 +1480,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
          //dbg.Verbose(0, "gdcmParser::FindLength",
          //            "Erroneous element length fixed.");
          // Actually, length= 0xffff means that we deal with
-         // Unknown Sequence Length 
+         // Unfound Sequence Length 
       }
       FixHeaderEntryFoundLength(Entry, (guint32)length16);
       return;
@@ -1505,7 +1505,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
  */
 void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry) 
 {
-   if (filetype != ExplicitVR)
+   if (filetype != gdcmExplicitVR)
       return;
 
    char VR[3];
@@ -2026,13 +2026,13 @@ bool gdcmParser::CheckSwap() {
       // Use gdcmParser::dicom_vr to test all the possibilities
       // instead of just checking for UL, OB and UI !? group 0000 
       {
-         filetype = ExplicitVR;
+         filetype = gdcmExplicitVR;
          dbg.Verbose(1, "gdcmParser::CheckSwap:",
                      "explicit Value Representation");
       } 
       else 
       {
-         filetype = ImplicitVR;
+         filetype = gdcmImplicitVR;
          dbg.Verbose(1, "gdcmParser::CheckSwap:",
                      "not an explicit Value Representation");
       }
@@ -2077,19 +2077,19 @@ bool gdcmParser::CheckSwap() {
    switch (s32) {
       case 0x00040000 :
          sw = 3412;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       case 0x04000000 :
          sw = 4321;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       case 0x00000400 :
          sw = 2143;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       case 0x00000004 :
          sw = 0;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       default :
 
@@ -2108,27 +2108,27 @@ bool gdcmParser::CheckSwap() {
       //  the file IS NOT ACR-NEMA nor DICOM V3
       //  Find a trick to tell it the caller...
       
-      s16 = *((guint16 *)(deb));
-      
-      switch (s16) {
-      case 0x0002 :
-      case 0x0004 :
-      case 0x0008 :      
-         sw = 0;
-         filetype = ACR;
-         return true;
-      case 0x0200 :
-      case 0x0400 :
-      case 0x0800 : 
-         sw = 4321;
-         filetype = ACR;
-         return true;
-      default :
-         dbg.Verbose(0, "gdcmParser::CheckSwap:",
-                     "ACR/NEMA unfound swap info (Really hopeless !)"); 
-         filetype = Unknown;     
-         return false;
-      }
+		s16 = *((guint16 *)(deb));
+	      
+		switch (s16) {
+			case 0x0002 :
+			case 0x0004 :
+			case 0x0008 :      
+				sw = 0;
+				filetype = gdcmACR;
+				return true;
+			case 0x0200 :
+			case 0x0400 :
+			case 0x0800 : 
+				sw = 4321;
+				filetype = gdcmACR;
+				return true;
+			default :
+				dbg.Verbose(0, "gdcmParser::CheckSwap:",
+							"ACR/NEMA unfound swap info (Really hopeless !)"); 
+				filetype = gdcmUnknown;     
+				return false;
+		}
       
       // Then the only info we have is the net2host one.
       //if (! net2host )
