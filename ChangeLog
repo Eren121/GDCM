@@ -7,6 +7,11 @@
       Hence Parse7Fe0 was no longer necessary. When renaming to ComputeRLEInfo
       we just recylce the code for parsing RLE fragments and computing
       offsets.
+  * CLEANUP_ROUND (6) for gdcmPixelConvert (man, I need a paddle bad)
+    - src/gdcmRLE.cxx: is now much simpler and avoids code replication
+        with the retired Parse7Fe0().
+    - src/gdcmRLEFrame.h: type fix for properly computing OffSet[]
+    - src/gdcmDocument.cxx: segments offset are now correct + clean up.
 
 2004-10-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND (3) for gdcmPixelConvert (nightmare stage)

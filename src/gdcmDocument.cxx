@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 21:30:02 $
-  Version:   $Revision: 1.95 $
+  Date:      $Date: 2004/10/06 22:31:31 $
+  Version:   $Revision: 1.96 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2894,18 +2894,18 @@ void gdcmDocument::ComputeRLEInfo()
       // Offset Table information on fragments of this current Frame.
       // Note that the fragment pixels themselves are not loaded
       // (but just skipped).
+      long frameOffset = ftell(Fp);
+
       uint32_t nbRleSegments = ReadInt32();
  
       uint32_t rleSegmentOffsetTable[15];
-      long ftellRes;
       for( int k = 1; k <= 15; k++ )
       {
-         ftellRes = ftell(Fp);
          rleSegmentOffsetTable[k] = ReadInt32();
       }
 
       // Deduce from both the RLE Header and the frameLength the
-      // fragment length, and again store this infor in a
+      // fragment length, and again store this info in a
       // gdcmRLEFramesInfo.
       long rleSegmentLength[15];
       // skipping (not reading) RLE Segments
@@ -2915,14 +2915,12 @@ void gdcmDocument::ComputeRLEInfo()
          {
              rleSegmentLength[k] =  rleSegmentOffsetTable[k+1]
                                   - rleSegmentOffsetTable[k];
-             ftellRes = ftell(Fp);
              SkipBytes(rleSegmentLength[k]);
           }
        }
 
        rleSegmentLength[nbRleSegments] = frameLength 
                                       - rleSegmentOffsetTable[nbRleSegments];
-       ftellRes = ftell(Fp);
        SkipBytes(rleSegmentLength[nbRleSegments]);
 
        // Store the collected info
@@ -2930,7 +2928,7 @@ void gdcmDocument::ComputeRLEInfo()
        newFrameInfo->NumberFragments = nbRleSegments;
        for( unsigned int k = 1; k <= nbRleSegments; k++ )
        {
-          newFrameInfo->Offset[k] = rleSegmentOffsetTable[k];
+          newFrameInfo->Offset[k] = frameOffset + rleSegmentOffsetTable[k];
           newFrameInfo->Length[k] = rleSegmentLength[k];
        }
        RLEInfo.Frames.push_back( newFrameInfo );
