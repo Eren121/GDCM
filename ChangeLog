@@ -3,7 +3,6 @@
     * split class gdcmHeader into gdcmParser and gdcmHeader, with gdcmHeader
       inheriting from gdcmParser. This split is to prepare the integration
       of dicom dir parsing
-    *
 
 2004-01-16 Jean-Pierre Roux
     * removal of class gdcmHeaderEntrySet
