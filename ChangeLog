@@ -1,3 +1,17 @@
+2004-09-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * CLEANUP_ROUND for gdcmPixelConvert:
+    - src/gdcmFile.cxx, gdcmFile.h, gdcmHeader.cxx, gdcmHeader.h clean up
+    - src/gdcmPixelStuff[h|cxx] removed
+    - src/gdcmPixelConvert[h|cxx] added. Preparatory work included.
+    - src/CMakeLists.txt changed accordingly
+  * GDCMHOME clean up:
+    - MANIFEST.in, WrapSwig.py, WrapVTK.py, distutilsWrapping.py and
+      gdcmVersion.py moved to newly created ATTIC related
+      gdcmPython/SetupOldies/ directory.
+  * Autotools clean up:
+    - */*/Makefile.am removed AT EXCEPTION of gdcmPython/Makefile.am
+    - autogen.sh configure.in acinclude.m4 python.m4 removed 
+
 2004-09-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/*.cxx *.h Reference to License.htm fixed to License.html.
   * Doc/CMakeLists.txt, doxygen.config.in: fix.

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.131 $
+  Date:      $Date: 2004/09/29 17:33:17 $
+  Version:   $Revision: 1.132 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,6 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
 //-------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup   gdcmFile
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
  *        file (gdcmHeader only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
@@ -43,11 +42,10 @@ gdcmFile::gdcmFile(gdcmHeader *header)
 {
    Header     = header;
    SelfHeader = false;
-   SaveInitialValues();
+   Initialise();
 }
 
 /**
- * \ingroup   gdcmFile
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
  *        file (gdcmHeader only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
@@ -65,11 +63,30 @@ gdcmFile::gdcmFile(std::string const & filename )
 {
    Header = new gdcmHeader( filename );
    SelfHeader = true;
+   Initialise();
+}
+
+/**
+ * \brief Factorization for various forms of constructors.
+ */
+void gdcmFile::Initialise()
+{
+   if ( Header->IsReadable() )
+   {
+      ImageDataSizeRaw = ComputeDecompressedPixelDataSizeFromHeader();
+      if ( Header->HasLUT() )
+      {
+         ImageDataSize = 3 * ImageDataSizeRaw;
+      }
+      else
+      {
+         ImageDataSize = ImageDataSizeRaw;
+      }
+   }
    SaveInitialValues();
 }
 
 /**
- * \ingroup   gdcmFile
  * \brief canonical destructor
  * \note  If the gdcmHeader was created by the gdcmFile constructor,
  *        it is destroyed by the gdcmFile
@@ -86,7 +103,6 @@ gdcmFile::~gdcmFile()
 }
 
 /**
- * \ingroup   gdcmFile
  * \brief Sets some initial values for the Constructor
  * \warning not end user intended
  */
@@ -112,8 +128,6 @@ void gdcmFile::SaveInitialValues()
                 
    if ( Header->IsReadable() )
    {
-      SetPixelDataSizeFromHeader();
-      
       // the following values *may* be modified 
       // by gdcmFile::GetImageDataIntoVectorRaw
       // we save their initial value.
@@ -138,7 +152,6 @@ void gdcmFile::SaveInitialValues()
 }
 
 /**
- * \ingroup   gdcmFile
  * \brief restores some initial values
  * \warning not end user intended
  */
@@ -182,7 +195,6 @@ void gdcmFile::RestoreInitialValues()
 }
 
 /**
- * \ingroup   gdcmFile
  * \brief delete initial values (il they were saved)
  *        of InitialLutDescriptors and InitialLutData
  */
@@ -212,62 +224,6 @@ void gdcmFile::DeleteInitialValues()
       delete InitialBlueLUTData;      
 }
 
-/**
- * \ingroup   gdcmFile
- * \brief drop palette related initial values -if any-
- *        (InitialLutDescriptors and InitialLutData)
- *        out of header, to make it consistent with the Pixel_Data
- *        as it's loaded in memory
- */
-
-//FIXME : Should be nice, if we could let it here.
-//        will be moved to PixelData class
-// Now, the job is done in gdcmHeader.cxx
-  
- /*
-void gdcmFile::DropInitialValues()
-{ 
-   gdcmHeader* h=GetHeader();
-   if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' )
-   {
-      // if SamplesPerPixel = 3, sure we don't need any LUT !   
-      // Drop 0028|1101, 0028|1102, 0028|1103
-      // Drop 0028|1201, 0028|1202, 0028|1203
-
-      gdcmDocEntry* e = h->GetDocEntryByNumber(0x0028,0x01101);
-      if (e)
-      {
-         h->RemoveEntryNoDestroy(e);
-      }
-      e = h->GetDocEntryByNumber(0x0028,0x1102);
-      if (e)
-      {
-         h->RemoveEntryNoDestroy(e);
-      }
-      e = h->GetDocEntryByNumber(0x0028,0x1103);
-      if (e)
-      {
-         h->RemoveEntryNoDestroy(e);
-      }
-      e = h->GetDocEntryByNumber(0x0028,0x01201);
-      if (e)
-      {
-         h->RemoveEntryNoDestroy(e);
-      }
-      e = h->GetDocEntryByNumber(0x0028,0x1202);
-      if (e)
-      {
-         h->RemoveEntryNoDestroy(e);
-      }
-      e = h->GetDocEntryByNumber(0x0028,0x1203);
-      if (e)
-      {
-         h->RemoveEntryNoDestroy(e);
-      }
-   }
-}
-*/
-
 //-----------------------------------------------------------------------------
 // Print
 
@@ -275,14 +231,12 @@ void gdcmFile::DropInitialValues()
 // Public
 
 /**
- * \ingroup   gdcmFile
  * \brief     computes the length (in bytes) we must ALLOCATE to receive the
  *            image(s) pixels (multiframes taken into account) 
  * \warning : it is NOT the group 7FE0 length
  *          (no interest for compressed images).
- * \warning : not end user intended ?
  */
-void gdcmFile::SetPixelDataSizeFromHeader()
+int gdcmFile::ComputeDecompressedPixelDataSizeFromHeader()
 {
    // see PS 3.3-2003 : C.7.6.3.2.1  
    // 
@@ -311,38 +265,22 @@ void gdcmFile::SetPixelDataSizeFromHeader()
    // 0028|1203 [US]   [Blue Palette Color Lookup Table Data]
 
    // Number of "Bits Allocated"
-   int nb;
-   std::string str_nb = Header->GetEntryByNumber(0x0028,0x0100);
-
-   if ( str_nb == GDCM_UNFOUND )
+   int numberBitsAllocated = Header->GetBitsAllocated();
+   if ( ( numberBitsAllocated == 0 ) || ( numberBitsAllocated == 12 ) )
    {
-      nb = 16;
+      numberBitsAllocated = 16;
    } 
-   else
-   {
-      nb = atoi( str_nb.c_str() );
-      if (nb == 12) 
-      {
-         nb =16;
-      }
-   }
-   ImageDataSize =
-   ImageDataSizeRaw = Header->GetXSize() * Header->GetYSize() 
-                * Header->GetZSize() * (nb/8) * Header->GetSamplesPerPixel();
-   std::string str_PhotometricInterpretation = 
-                             Header->GetEntryByNumber(0x0028,0x0004);
-    
-   // if ( str_PhotometricInterpretation == "PALETTE COLOR " ),
-   // pb when undealt Segmented Palette Color
+
+   int DecompressedSize = Header->GetXSize()
+                        * Header->GetYSize() 
+                        * Header->GetZSize()
+                        * ( numberBitsAllocated / 8 )
+                        * Header->GetSamplesPerPixel();
    
-   if ( Header->HasLUT() )
-   {
-      ImageDataSize *= 3;
-   }
+   return DecompressedSize;
 }
 
 /**
- * \ingroup gdcmFile
  * \brief   - Allocates necessary memory, 
  *          - Reads the pixels from disk (uncompress if necessary),
  *          - Transforms YBR pixels, if any, into RGB pixels
@@ -384,7 +322,6 @@ uint8_t* gdcmFile::GetImageData()
 }
 
 /**
- * \ingroup gdcmFile
  * \brief
  *          Read the pixels from disk (uncompress if necessary),
  *          Transforms YBR pixels, if any, into RGB pixels
@@ -468,7 +405,6 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
 }
 
 /**
- * \ingroup gdcmFile
  * \brief   Allocates necessary memory, 
  *          Transforms YBR pixels (if any) into RGB pixels
  *          Transforms 3 planes R, G, B  (if any) into a single RGB Plane
@@ -516,7 +452,6 @@ uint8_t* gdcmFile::GetImageDataRaw ()
 }
 
 /**
- * \ingroup gdcmFile
  * \brief   Copies at most MaxSize bytes of pixel data to caller's
  *          memory space.
  * \warning This function was designed to avoid people that want to build
@@ -541,8 +476,6 @@ uint8_t* gdcmFile::GetImageDataRaw ()
  */
 size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 {
-   int nb, nbu, highBit, sign;
-
   // we save the initial values of the following
   // in order to be able to restore the header in a disk-consistent state
   // (if user asks twice to get the pixels from disk)
@@ -564,64 +497,43 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    ReadPixelData( destination );
 
    // Number of Bits Allocated for storing a Pixel
-   std::string str_nb = Header->GetEntryByNumber(0x0028,0x0100);
-   if ( str_nb == GDCM_UNFOUND )
+   int numberBitsAllocated = Header->GetBitsAllocated();
+   if ( numberBitsAllocated == 0 )
    {
-      nb = 16;
-   }
-   else
-   {
-      nb = atoi( str_nb.c_str() );
-      // FIXME
-      // From reading SetPixelDataSizeFromHeader, it seems 12 should be treated
-      // separately, correct ?
+      numberBitsAllocated = 16;
    }
 
    // Number of Bits actually used
-   std::string str_nbu = Header->GetEntryByNumber(0x0028,0x0101);
-   if ( str_nbu == GDCM_UNFOUND )
+   int numberBitsStored = Header->GetBitsStored();
+   if ( numberBitsStored == 0 )
    {
-      nbu = nb;
-   } 
-   else 
-   {
-      nbu = atoi( str_nbu.c_str() );
+      numberBitsStored = numberBitsAllocated;
    }
 
    // High Bit Position
-   std::string str_highBit = Header->GetEntryByNumber(0x0028,0x0102);
-   if ( str_highBit == GDCM_UNFOUND )
+   int highBitPosition = Header->GetHighBitPosition();
+   if ( highBitPosition == 0 )
    {
-      highBit = nb - 1;
-   }
-   else
-   {
-      highBit = atoi( str_highBit.c_str() );
-   } 
-
-   // Pixel sign
-   // 0 = Unsigned
-   // 1 = Signed
-   std::string str_sign = Header->GetEntryByNumber(0x0028,0x0103);
-   if ( str_sign == GDCM_UNFOUND )
-   {
-      sign = 0;  // default is unsigned
-   }
-   else
-   {
-      sign = atoi( str_sign.c_str() );
+      highBitPosition = numberBitsAllocated - 1;
    }
 
-   // re arange bytes inside the integer (processor endianity)
-   if ( nb != 8 )
+   bool signedPixel = Header->IsSignedPixelData();
+
+// SPLIT ME
+////////////////////////////////////////////////////////
+// ENDIANITY SECTION: re-arange bytes inside the integer
+   if ( numberBitsAllocated != 8 )
    {
-      SwapZone(destination, Header->GetSwapCode(), ImageDataSize, nb);
+      SwapZone( destination, Header->GetSwapCode(), ImageDataSize,
+                numberBitsAllocated );
    }
      
    // to avoid pb with some xmedcon breakers images 
-   if ( nb == 16 && nbu < nb && sign == 0)
+   if (  ( numberBitsAllocated == 16 )
+      && ( numberBitsStored < numberBitsAllocated )
+      && ( ! signedPixel ) )
    {
-      int l = (int)(ImageDataSize / (nb/8));
+      int l = (int)(ImageDataSize / (numberBitsAllocated/8));
       uint16_t *deb = (uint16_t *)destination;
       for(int i = 0; i<l; i++)
       {
@@ -633,29 +545,31 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
       }
    }
 
-   // re arange bits inside the bytes
-   if ( nbu != nb )
+// SPLIT ME
+//////////////////////////////////
+// re arange bits inside the bytes
+   if ( numberBitsStored != numberBitsAllocated )
    {
-      int l = (int)(ImageDataSize / (nb/8));
-      if ( nb == 16 )
+      int l = (int)(ImageDataSize / (numberBitsAllocated/8));
+      if ( numberBitsAllocated == 16 )
       {
          uint16_t mask = 0xffff;
-         mask = mask >> (nb-nbu);
+         mask = mask >> ( numberBitsAllocated - numberBitsStored );
          uint16_t *deb = (uint16_t *)destination;
          for(int i = 0; i<l; i++)
          {
-            *deb = (*deb >> (nbu - highBit - 1)) & mask;
+            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
             deb++;
          }
       }
-      else if ( nb == 32 )
+      else if ( numberBitsAllocated == 32 )
       {
          uint32_t mask = 0xffffffff;
-         mask         = mask >> (nb - nbu);
+         mask         = mask >> ( numberBitsAllocated - numberBitsStored );
          uint32_t *deb = (uint32_t *)destination;
          for(int i = 0; i<l; i++)
          {
-            *deb = (*deb >> (nbu - highBit - 1)) & mask;
+            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
             deb++;
          }
       }
@@ -665,24 +579,22 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
          return 0;
       }
    }
-/// \todo
-/// DO NOT remove this code commented out.
-/// Nobody knows what's expecting you ...
-/// Just to 'see' what was actually read on disk :-(
-///
-///   FILE*  f2;
-///   f2 = fopen("SpuriousFile.RAW","wb");
-///   fwrite(destination,ImageDataSize,1,f2);
-///   fclose(f2);
 
-   // Deal with the color
-   // -------------------
+#ifdef GDCM_DEBUG
+   FILE*  DebugFile;
+   DebugFile = fopen( "SpuriousFile.RAW", "wb" );
+   fwrite( PixelConvertor.GetUncompressed(),
+           PixelConvertor.GetUncompressedsSize(),
+           1, DebugFile );
+   fclose( DebugFile );
+#endif //GDCM_DEBUG
+
+// SPLIT ME
+//////////////////////////////////
+// Deal with the color
    
-   std::string str_PhotometricInterpretation = 
-      Header->GetEntryByNumber(0x0028,0x0004);
-
-   if ( str_PhotometricInterpretation == "MONOCHROME1 " 
-     || str_PhotometricInterpretation == "MONOCHROME2 " )
+   // Monochrome pictures don't require color intervention
+   if ( Header->IsMonochrome() )
    {
       return ImageDataSize; 
    }
@@ -700,7 +612,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 
    // Whatever Planar Configuration is, 
    // "PALETTE COLOR " implies that we deal with the palette. 
-   if ( str_PhotometricInterpretation == "PALETTE COLOR ")
+   if ( Header->IsPaletteColor() )
    {
       planConf = 2;
    }
@@ -711,7 +623,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
          // Pixels are already RGB
          break;
       case 1:
-         if (str_PhotometricInterpretation == "YBR_FULL")
+         if ( Header->IsYBRFull() )
          {
             // Warning : YBR_FULL_422 acts as RGB
             //         : we need to make RGB Pixels from Planes Y,cB,cR
@@ -811,12 +723,13 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 }
 
 /**
- * \ingroup   gdcmFile
- * \brief performs a shalow copy (not a deep copy) of the user given
- *        pixel area.
- *        'image' Pixels are presented as C-like 2D arrays : line per line.
- *        'volume'Pixels are presented as C-like 3D arrays : plane per plane 
- * \warning user is kindly requested NOT TO 'free' the Pixel area
+ * \brief   Points the internal Pixel_Data pointer to the callers inData
+ *          image representation, BUT WITHOUT COPYING THE DATA.
+ *          'image' Pixels are presented as C-like 2D arrays : line per line.
+ *          'volume'Pixels are presented as C-like 3D arrays : plane per plane 
+ * \warning Since the pixels are not copied, it is the caller's responsability
+ *          not to deallocate it's data before gdcm uses them (e.g. with
+ *          the Write() method.
  * @param inData user supplied pixel area
  * @param expectedSize total image size, in Bytes
  *
@@ -834,7 +747,6 @@ bool gdcmFile::SetImageData(uint8_t* inData, size_t expectedSize)
 }
 
 /**
- * \ingroup   gdcmFile
  * \brief Writes on disk A SINGLE Dicom file
  *        NO test is performed on  processor "Endiannity".
  *        It's up to the user to call his Reader properly
@@ -858,7 +770,6 @@ bool gdcmFile::WriteRawData(std::string const & fileName)
 }
 
 /**
- * \ingroup   gdcmFile
  * \brief Writes on disk A SINGLE Dicom file, 
  *        using the Implicit Value Representation convention
  *        NO test is performed on  processor "Endiannity".
@@ -873,7 +784,6 @@ bool gdcmFile::WriteDcmImplVR (std::string const & fileName)
 }
 
 /**
- * \ingroup   gdcmFile
 * \brief Writes on disk A SINGLE Dicom file, 
  *        using the Explicit Value Representation convention
  *        NO test is performed on  processor "Endiannity". * @param fileName name of the file to be created
@@ -887,7 +797,6 @@ bool gdcmFile::WriteDcmExplVR (std::string const & fileName)
 }
 
 /**
- * \ingroup   gdcmFile
  * \brief Writes on disk A SINGLE Dicom file, 
  *        using the ACR-NEMA convention
  *        NO test is performed on  processor "Endiannity".
@@ -909,7 +818,6 @@ bool gdcmFile::WriteAcr (std::string const & fileName)
 //-----------------------------------------------------------------------------
 // Protected
 /**
- * \ingroup   gdcmFile
  * \brief NOT a end user inteded function
  *        (used by WriteDcmExplVR, WriteDcmImplVR, WriteAcr, etc)
  * @param fileName name of the file to be created
@@ -1004,7 +912,6 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
 //-----------------------------------------------------------------------------
 // Private
 /**
- * \ingroup gdcmFile
  * \brief   Swap the bytes, according to swap code.
  * \warning not end user intended
  * @param   im area to deal with
@@ -1088,7 +995,6 @@ void gdcmFile::SwapZone(void* im, int swap, int lgr, int nb)
 }
 
 /**
- * \ingroup gdcmFile
  * \brief   Read pixel data from disk (optionaly decompressing) into the
  *          caller specified memory location.
  * @param   destination where the pixel data should be stored.

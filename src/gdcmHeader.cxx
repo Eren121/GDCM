@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.189 $
+  Date:      $Date: 2004/09/29 17:33:17 $
+  Version:   $Revision: 1.190 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,6 @@ gdcmHeader::gdcmHeader()
 }
 
 /**
- * \ingroup gdcmHeader
  * \brief   Canonical destructor.
  */
 gdcmHeader::~gdcmHeader ()
@@ -108,7 +107,7 @@ void gdcmHeader::Write(FILE* fp,FileType filetype)
       SetEntryByNumber("16", 0x0028,0x0100);
    }
 
-  // TODO : correct 'Pixel group' Length if necessary
+  /// \todo correct 'Pixel group' Length if necessary
 
    int i_lgPix = GetEntryLengthByNumber(GrPixel, NumPixel);
    if (i_lgPix != -2)
@@ -231,7 +230,6 @@ int gdcmHeader::GetXSize()
 }
 
 /**
- * \ingroup gdcmHeader
  * \brief   Retrieve the number of lines of image.
  * \warning The defaulted value is 1 as opposed to gdcmHeader::GetXSize()
  * @return  The encountered size when found, 1 by default 
@@ -255,7 +253,6 @@ int gdcmHeader::GetYSize()
 }
 
 /**
- * \ingroup gdcmHeader
  * \brief   Retrieve the number of planes of volume or the number
  *          of frames of a multiframe.
  * \warning When present we consider the "Number of Frames" as the third
@@ -284,7 +281,6 @@ int gdcmHeader::GetZSize()
 }
 
 /**
-  * \ingroup gdcmHeader
   * \brief gets the info from 0028,0030 : Pixel Spacing
   *             else 1.0
   * @return X dimension of a pixel
@@ -321,7 +317,6 @@ float gdcmHeader::GetXSpacing()
 }
 
 /**
-  * \ingroup gdcmHeader
   * \brief gets the info from 0028,0030 : Pixel Spacing
   *             else 1.0
   * @return Y dimension of a pixel
@@ -344,12 +339,11 @@ float gdcmHeader::GetYSpacing()
 } 
 
 /**
-  *\ingroup gdcmHeader
-  *\brief gets the info from 0018,0088 : Space Between Slices
-  *                else from 0018,0050 : Slice Thickness
-   *                else 1.0
-  * @return Z dimension of a voxel-to be
-  */
+ * \brief gets the info from 0018,0088 : Space Between Slices
+ *                else from 0018,0050 : Slice Thickness
+ *                else 1.0
+ * @return Z dimension of a voxel-to be
+ */
 float gdcmHeader::GetZSpacing()
 {
    // Spacing Between Slices : distance entre le milieu de chaque coupe
@@ -388,20 +382,21 @@ float gdcmHeader::GetZSpacing()
 }
 
 /**
-  *\ingroup gdcmHeader
-  *\brief gets the info from 0028,1052 : Rescale Intercept
-  * @return Rescale Intercept
+ *\brief gets the info from 0028,1052 : Rescale Intercept
+ * @return Rescale Intercept
  */
 float gdcmHeader::GetRescaleIntercept()
 {
    float resInter = 0.;
-   std::string strRescInter = GetEntryByNumber(0x0028,0x1052); //0028 1052 DS IMG Rescale Intercept
+   /// 0028 1052 DS IMG Rescale Intercept
+   std::string strRescInter = GetEntryByNumber(0x0028,0x1052);
    if ( strRescInter != GDCM_UNFOUND )
    {
       if( sscanf( strRescInter.c_str(), "%f", &resInter) != 1 )
       {
          // bug in the element 0x0028,0x1052
-         dbg.Verbose(0, "gdcmHeader::GetRescaleIntercept: Rescale Slope is empty");
+         dbg.Verbose(0, "gdcmHeader::GetRescaleIntercept: Rescale Slope "
+                        "is empty");
       }
    }
 
@@ -409,14 +404,14 @@ float gdcmHeader::GetRescaleIntercept()
 }
 
 /**
-  *\ingroup gdcmHeader
-  *\brief gets the info from 0028,1053 : Rescale Slope
-  * @return Rescale Slope
+ *\brief   gets the info from 0028,1053 : Rescale Slope
+ * @return Rescale Slope
  */
 float gdcmHeader::GetRescaleSlope()
 {
    float resSlope = 1.;
-   std::string strRescSlope = GetEntryByNumber(0x0028,0x1053); //0028 1053 DS IMG Rescale Slope
+   //0028 1053 DS IMG Rescale Slope
+   std::string strRescSlope = GetEntryByNumber(0x0028,0x1053);
    if ( strRescSlope != GDCM_UNFOUND )
    {
       if( sscanf( strRescSlope.c_str(), "%f", &resSlope) != 1)
@@ -430,13 +425,12 @@ float gdcmHeader::GetRescaleSlope()
 }
 
 /**
-  * \ingroup gdcmHeader
-  * \brief This function is intended to user who doesn't want 
-  *   to have to manage a LUT and expects to get an RBG Pixel image
-  *   (or a monochrome one ...) 
-  * \warning to be used with GetImagePixels()
-  * @return 1 if Gray level, 3 if Color (RGB, YBR or PALETTE COLOR)
-  */
+ * \brief This function is intended to user who doesn't want 
+ *   to have to manage a LUT and expects to get an RBG Pixel image
+ *   (or a monochrome one ...) 
+ * \warning to be used with GetImagePixels()
+ * @return 1 if Gray level, 3 if Color (RGB, YBR or PALETTE COLOR)
+ */
 int gdcmHeader::GetNumberOfScalarComponents()
 {
    if ( GetSamplesPerPixel() == 3 )
@@ -481,13 +475,12 @@ int gdcmHeader::GetNumberOfScalarComponents()
 }
 
 /**
-  * \ingroup gdcmHeader
-  * \brief This function is intended to user that DOESN'T want 
-  *  to get RGB pixels image when it's stored as a PALETTE COLOR image
-  *   - the (vtk) user is supposed to know how deal with LUTs - 
-  * \warning to be used with GetImagePixelsRaw()
-  * @return 1 if Gray level, 3 if Color (RGB or YBR - NOT 'PALETTE COLOR' -)
-  */
+ * \brief This function is intended to user that DOESN'T want 
+ *  to get RGB pixels image when it's stored as a PALETTE COLOR image
+ *   - the (vtk) user is supposed to know how deal with LUTs - 
+ * \warning to be used with GetImagePixelsRaw()
+ * @return 1 if Gray level, 3 if Color (RGB or YBR - NOT 'PALETTE COLOR' -)
+ */
 int gdcmHeader::GetNumberOfScalarComponentsRaw()
 {
    // 0028 0100 US IMG Bits Allocated
@@ -518,12 +511,11 @@ int gdcmHeader::GetNumberOfScalarComponentsRaw()
 //
 
 /**
-  * \brief gets the info from 0020,0032 : Image Position Patient
-  *                 else from 0020,0030 : Image Position (RET)
-  *                 else 0.
-  * @return up-left image corner X position
-  */
-    
+ * \brief gets the info from 0020,0032 : Image Position Patient
+ *                 else from 0020,0030 : Image Position (RET)
+ *                 else 0.
+ * @return up-left image corner X position
+ */
 float gdcmHeader::GetXOrigin()
 {
    float xImPos, yImPos, zImPos;  
@@ -531,11 +523,13 @@ float gdcmHeader::GetXOrigin()
 
    if ( strImPos == GDCM_UNFOUND )
    {
-      dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position Patient (0020,0032)");
+      dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image "
+                     "Position Patient (0020,0032)");
       strImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
-         dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position (RET) (0020,0030)");
+         dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image "
+                        "Position (RET) (0020,0030)");
          /// \todo How to tell the caller nothing was found ?
          return 0.;
       }
@@ -550,11 +544,11 @@ float gdcmHeader::GetXOrigin()
 }
 
 /**
-  * \brief gets the info from 0020,0032 : Image Position Patient
-  *                 else from 0020,0030 : Image Position (RET)
-  *                 else 0.
-  * @return up-left image corner Y position
-  */
+ * \brief gets the info from 0020,0032 : Image Position Patient
+ *                 else from 0020,0030 : Image Position (RET)
+ *                 else 0.
+ * @return up-left image corner Y position
+ */
 float gdcmHeader::GetYOrigin()
 {
    float xImPos, yImPos, zImPos;
@@ -562,11 +556,13 @@ float gdcmHeader::GetYOrigin()
 
    if ( strImPos == GDCM_UNFOUND)
    {
-      dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position Patient (0020,0032)");
+      dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image "
+                     "Position Patient (0020,0032)");
       strImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
-         dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position (RET) (0020,0030)");
+         dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image "
+                        "Position (RET) (0020,0030)");
          /// \todo How to tell the caller nothing was found ?
          return 0.;
       }  
@@ -581,13 +577,13 @@ float gdcmHeader::GetYOrigin()
 }
 
 /**
-  * \brief gets the info from 0020,0032 : Image Position Patient
-  * \               else from 0020,0030 : Image Position (RET)
-  * \               else from 0020,1041 : Slice Location
-  * \               else from 0020,0050 : Location
-  * \               else 0.
-  * @return up-left image corner Z position
-  */
+ * \brief gets the info from 0020,0032 : Image Position Patient
+ *                 else from 0020,0030 : Image Position (RET)
+ *                 else from 0020,1041 : Slice Location
+ *                 else from 0020,0050 : Location
+ *                 else 0.
+ * @return up-left image corner Z position
+ */
 float gdcmHeader::GetZOrigin()
 {
    float xImPos, yImPos, zImPos; 
@@ -597,7 +593,8 @@ float gdcmHeader::GetZOrigin()
    {
       if( sscanf( strImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
       {
-         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image Position Patient (0020,0032)");
+         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image "
+                        "Position Patient (0020,0032)");
          return 0.;  // bug in the element 0x0020,0x0032
       }
       else
@@ -655,10 +652,9 @@ float gdcmHeader::GetZOrigin()
 }
 
 /**
-  * \brief gets the info from 0020,0013 : Image Number
-  * \               else 0.
-  * @return image number
-  */
+ * \brief gets the info from 0020,0013 : Image Number else 0.
+ * @return image number
+ */
 int gdcmHeader::GetImageNumber()
 {
    // The function i atoi() takes the address of an area of memory as
@@ -667,7 +663,8 @@ int gdcmHeader::GetImageNumber()
    // be preferable to sscanf() since atoi() is a much smaller, simpler and
    // faster function. sscanf() can do all possible conversions whereas
    // atoi() can only do single decimal integer conversions.
-   std::string strImNumber = GetEntryByNumber(0x0020,0x0013); //0020 0013 IS REL Image Number
+   //0020 0013 IS REL Image Number
+   std::string strImNumber = GetEntryByNumber(0x0020,0x0013);
    if ( strImNumber != GDCM_UNFOUND )
    {
       return atoi( strImNumber.c_str() );
@@ -676,9 +673,9 @@ int gdcmHeader::GetImageNumber()
 }
 
 /**
-  * \brief gets the info from 0008,0060 : Modality
-  * @return Modality Type
-  */
+ * \brief gets the info from 0008,0060 : Modality
+ * @return Modality Type
+ */
 ModalityType gdcmHeader::GetModality()
 {
    // 0008 0060 CS ID Modality
@@ -738,7 +735,6 @@ ModalityType gdcmHeader::GetModality()
 }
 
 /**
- * \ingroup gdcmHeader
  * \brief   Retrieve the number of Bits Stored (actually used)
  *          (as opposite to number of Bits Allocated)
  * @return  The encountered number of Bits Stored, 0 by default.
@@ -746,10 +742,11 @@ ModalityType gdcmHeader::GetModality()
  */
 int gdcmHeader::GetBitsStored()
 {
-   std::string strSize = GetEntryByNumber(0x0028,0x0101);
+   std::string strSize = GetEntryByNumber( 0x0028, 0x0101 );
    if ( strSize == GDCM_UNFOUND )
    {
-      dbg.Verbose(0, "gdcmHeader::GetBitsStored: this is supposed to be mandatory");
+      dbg.Verbose(0, "gdcmHeader::GetBitsStored: this is supposed to "
+                     "be mandatory");
       return 0;  // It's supposed to be mandatory
                  // the caller will have to check
    }
@@ -757,7 +754,47 @@ int gdcmHeader::GetBitsStored()
 }
 
 /**
- * \ingroup gdcmHeader
+ * \brief   Retrieve the high bit position.
+ * \warning The method defaults to 0 when information is absent.
+ *          The responsability of checking this value is left to the caller.
+ * @return  The high bit positin when present. 0 when absent.
+ */
+int gdcmHeader::GetHighBitPosition()
+{
+   std::string strSize = GetEntryByNumber( 0x0028, 0x0102 );
+   if ( strSize == GDCM_UNFOUND )
+   {
+      dbg.Verbose(0, "gdcmHeader::GetHighBitPosition: this is supposed "
+                     "to be mandatory");
+      return 0;
+   }
+   return atoi( strSize.c_str() );
+}
+
+/**
+ * \brief   Check wether the pixels are signed or UNsigned data.
+ * \warning The method defaults to false (UNsigned) when information is absent.
+ *          The responsability of checking this value is left to the caller.
+ * @return  True when signed, false when UNsigned
+ */
+bool gdcmHeader::IsSignedPixelData()
+{
+   std::string strSize = GetEntryByNumber( 0x0028, 0x0103 );
+   if ( strSize == GDCM_UNFOUND )
+   {
+      dbg.Verbose(0, "gdcmHeader::IsSignedPixelData: this is supposed "
+                     "to be mandatory");
+      return false;
+   }
+   int sign = atoi( strSize.c_str() );
+   if ( sign == 0 ) 
+   {
+      return false;
+   }
+   return true;
+}
+
+/**
  * \brief   Retrieve the number of Bits Allocated
  *          (8, 12 -compacted ACR-NEMA files, 16, ...)
  * @return  The encountered number of Bits Allocated, 0 by default.
@@ -768,7 +805,8 @@ int gdcmHeader::GetBitsAllocated()
    std::string strSize = GetEntryByNumber(0x0028,0x0100);
    if ( strSize == GDCM_UNFOUND )
    {
-      dbg.Verbose(0, "gdcmHeader::GetBitsStored: this is supposed to be mandatory");
+      dbg.Verbose(0, "gdcmHeader::GetBitsStored: this is supposed to "
+                     "be mandatory");
       return 0; // It's supposed to be mandatory
                 // the caller will have to check
    }
@@ -776,7 +814,6 @@ int gdcmHeader::GetBitsAllocated()
 }
 
 /**
- * \ingroup gdcmHeader
  * \brief   Retrieve the number of Samples Per Pixel
  *          (1 : gray level, 3 : RGB -1 or 3 Planes-)
  * @return  The encountered number of Samples Per Pixel, 1 by default.
@@ -787,7 +824,8 @@ int gdcmHeader::GetSamplesPerPixel()
    std::string strSize = GetEntryByNumber(0x0028,0x0002);
    if ( strSize == GDCM_UNFOUND )
    {
-      dbg.Verbose(0, "gdcmHeader::GetBitsStored: this is supposed to be mandatory");
+      dbg.Verbose(0, "gdcmHeader::GetBitsStored: this is supposed to "
+                     "be mandatory");
       return 1; // Well, it's supposed to be mandatory ...
                 // but sometimes it's missing : *we* assume Gray pixels
    }
@@ -795,7 +833,67 @@ int gdcmHeader::GetSamplesPerPixel()
 }
 
 /**
- * \ingroup gdcmHeader
+ * \brief   Check wether this a monochrome picture or not by accessing
+ *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
+ * @return  true when "MONOCHROME1" or "MONOCHROME2". False otherwise.
+ */
+bool gdcmHeader::IsMonochrome()
+{
+   std::string PhotometricInterp = GetEntryByNumber( 0x0028, 0x0004 );
+   if (   PhotometricInterp == "MONOCHROME1 "
+       || PhotometricInterp == "MONOCHROME2 " )
+   {
+      return true;
+   }
+   if ( PhotometricInterp == GDCM_UNFOUND )
+   {
+      dbg.Verbose(0, "gdcmHeader::IsMonochrome: absent Photometric "
+                     "Interpretation");
+   }
+   return false;
+}
+
+/**
+ * \brief   Check wether this a "PALETTE COLOR" picture or not by accessing
+ *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
+ * @return  true when "PALETTE COLOR". False otherwise.
+ */
+bool gdcmHeader::IsPaletteColor()
+{
+   std::string PhotometricInterp = GetEntryByNumber( 0x0028, 0x0004 );
+   if (   PhotometricInterp == "PALETTE COLOR " )
+   {
+      return true;
+   }
+   if ( PhotometricInterp == GDCM_UNFOUND )
+   {
+      dbg.Verbose(0, "gdcmHeader::IsPaletteColor: absent Photometric "
+                     "Interpretation");
+   }
+   return false;
+}
+
+/**
+ * \brief   Check wether this a "YBR_FULL" color picture or not by accessing
+ *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
+ * @return  true when "YBR_FULL". False otherwise.
+ */
+bool gdcmHeader::IsYBRFull()
+{
+   std::string PhotometricInterp = GetEntryByNumber( 0x0028, 0x0004 );
+   if (   PhotometricInterp == "YBR_FULL" )
+   {
+      return true;
+   }
+   if ( PhotometricInterp == GDCM_UNFOUND )
+   {
+      dbg.Verbose(0, "gdcmHeader::IsYBRFull: absent Photometric "
+                     "Interpretation");
+   }
+   return false;
+}
+
+/**
  * \brief   Retrieve the Planar Configuration for RGB images
  *          (0 : RGB Pixels , 1 : R Plane + G Plane + B Plane)
  * @return  The encountered Planar Configuration, 0 by default.
@@ -811,10 +909,9 @@ int gdcmHeader::GetPlanarConfiguration()
 }
 
 /**
- * \ingroup gdcmHeader
  * \brief   Return the size (in bytes) of a single pixel of data.
  * @return  The size in bytes of a single pixel of data; 0 by default
- *          0 means the file is NOT USABLE; the caller will have to check        
+ *          0 means the file is NOT USABLE; the caller will have to check
  */
 int gdcmHeader::GetPixelSize()
 {
@@ -845,7 +942,6 @@ int gdcmHeader::GetPixelSize()
 }
 
 /**
- * \ingroup gdcmHeader
  * \brief   Build the Pixel Type of the image.
  *          Possible values are:
  *          - 8U  unsigned  8 bit,
@@ -883,7 +979,7 @@ std::string gdcmHeader::GetPixelType()
       bitsAlloc = "8";  // by old RGB images)
    }
 
-   std::string sign = GetEntryByNumber(0x0028, 0x0103); // "Pixel Representation"
+   std::string sign = GetEntryByNumber(0x0028, 0x0103);//"Pixel Representation"
 
    if (sign == GDCM_UNFOUND )
    {
@@ -903,7 +999,6 @@ std::string gdcmHeader::GetPixelType()
 
 
 /**
- * \ingroup gdcmHeader
  * \brief   Recover the offset (from the beginning of the file) 
  *          of *image* pixels (not *icone image* pixels, if any !)
  * @return Pixel Offset
@@ -926,9 +1021,8 @@ size_t gdcmHeader::GetPixelOffset()
    }
 }
 
-// TODO : unify those two (previous one and next one)
+/// \todo TODO : unify those two (previous one and next one)
 /**
- * \ingroup gdcmHeader
  * \brief   Recover the pixel area length (in Bytes)
  * @return Pixel Element Length, as stored in the header
  *         (NOT the memory space necessary to hold the Pixels 
@@ -954,7 +1048,6 @@ size_t gdcmHeader::GetPixelAreaLength()
 }
 
 /**
-  * \ingroup gdcmHeader
   * \brief tells us if LUT are used
   * \warning Right now, 'Segmented xxx Palette Color Lookup Table Data'
   *          are NOT considered as LUT, since nobody knows
@@ -1002,7 +1095,6 @@ bool gdcmHeader::HasLUT()
 }
 
 /**
-  * \ingroup gdcmHeader
   * \brief gets the info from 0028,1101 : Lookup Table Desc-Red
   *             else 0
   * @return Lookup Table number of Bits , 0 by default
@@ -1014,7 +1106,8 @@ int gdcmHeader::GetLUTNbits()
    std::vector<std::string> tokens;
    int lutNbits;
 
-   //Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
+   //Just hope Lookup Table Desc-Red = Lookup Table Desc-Red
+   //                                = Lookup Table Desc-Blue
    // Consistency already checked in GetLUTLength
    std::string lutDescription = GetEntryByNumber(0x0028,0x1101);
    if ( lutDescription == GDCM_UNFOUND )
@@ -1034,7 +1127,6 @@ int gdcmHeader::GetLUTNbits()
 }
 
 /**
-  * \ingroup gdcmHeader
   * \brief builts Red/Green/Blue/Alpha LUT from Header
   *         when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
   *          and (0028,1101),(0028,1102),(0028,1102)  
@@ -1207,7 +1299,8 @@ std::string gdcmHeader::GetTransfertSyntaxName()
    // use the gdcmTS (TS : Transfert Syntax)
    std::string transfertSyntax = GetEntryByNumber(0x0002,0x0010);
 
-   if ( transfertSyntax == GDCM_NOTLOADED ) { // fusible
+   if ( transfertSyntax == GDCM_NOTLOADED )
+   {
       std::cout << "Transfert Syntax not loaded. " << std::endl
                << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
                << std::endl;
@@ -1354,8 +1447,8 @@ void gdcmHeader::GetImageOrientationPatient( float iop[6] )
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         dbg.Verbose(0, "gdcmHeader::GetImageOrientationPatient: wrong Image Orientation Patient (0020,0037)");
-         // bug in the element 0x0020,0x0037
+         dbg.Verbose(0, "gdcmHeader::GetImageOrientationPatient: "
+                        "wrong Image Orientation Patient (0020,0037)");
       }
    }
    //For ACR-NEMA
@@ -1365,8 +1458,8 @@ void gdcmHeader::GetImageOrientationPatient( float iop[6] )
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         dbg.Verbose(0, "gdcmHeader::GetImageOrientationPatient: wrong Image Orientation Patient (0020,0035)");
-         // bug in the element 0x0020,0x0035
+         dbg.Verbose(0, "gdcmHeader::GetImageOrientationPatient: "
+                        "wrong Image Orientation Patient (0020,0035)");
       }
    }
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2004/09/29 17:33:17 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,18 +39,12 @@ public:
    /// Accessor to \ref Header
    gdcmHeader* GetHeader() { return Header; }
 
-   void   SetPixelDataSizeFromHeader();
+   int ComputeDecompressedPixelDataSizeFromHeader();
    
-
-/// \brief     Returns the size (in bytes) of required memory to hold
-///            the pixel data represented in this file.
+   /// Accessor to \ref ImageDataSize
    size_t GetImageDataSize(){ return ImageDataSize; };
 
-   
-/// \brief     Returns the size (in bytes) of required memory to hold
-///            the pixel data represented in this file, if user DOESN'T want 
-///            to get RGB pixels image when it's stored as a PALETTE COLOR image
-///            -the (vtk) user is supposed to know how to deal with LUTs-     
+   /// Accessor to \ref ImageDataSizeRaw
    size_t GetImageDataSizeRaw(){ return ImageDataSizeRaw; };
 
    uint8_t* GetImageData();
@@ -58,12 +52,6 @@ public:
    uint8_t* GetImageDataRaw();
    size_t GetImageDataIntoVectorRaw(void* destination, size_t maxSize);
 
-   // Allocates ExpectedSize bytes of memory at this->Data and copies the
-   // pointed data to it. Copying the image might look useless but
-   // the caller might destroy it's image (without knowing it: think
-   // of a complicated interface where display is done with a library
-   // e.g. VTK) before calling the Write
-      
    // see also gdcmHeader::SetImageDataSize ?!?         
    bool SetImageData (uint8_t* data, size_t expectedSize);
 
@@ -93,6 +81,7 @@ protected:
    bool WriteBase(std::string const& fileName, FileType type);
 
 private:
+   void Initialise();
    void SwapZone(void* im, int swap, int lgr, int nb);
 
    bool ReadPixelData(void* destination);
@@ -138,20 +127,23 @@ private:
    /// wether already parsed 
    bool Parsed;
       
-   //
-   // --------------- Will be moved to a gdcmPixelData class
-   //
+//
+// --------------- Will be moved to a gdcmPixelData class
+//
 
    /// \brief to hold the Pixels (when read)
    uint8_t* Pixel_Data;  // (was PixelData)
    
-   /// \brief Area length to receive the Gray Level pixels
+   /// \brief Size (in bytes) of required memory to hold the Gray Level pixels
+   ///        represented in this file. This is used when the user DOESN'T want
+   ///        the RGB pixels image when it's stored as a PALETTE COLOR image
    size_t ImageDataSizeRaw;
    
-   /// \brief Area length to receive the pixels making RGB
-   ///        from Plane R, Plane G, Plane B 
-   ///     or from Grey Plane + Palette Color
-   ///     or from YBR Pixels (or from RGB Pixels, as well) 
+   /// \brief Size (in bytes) of requited memory to hold the the pixels
+   ///        of this image in it's RGB convertion either from:
+   ///        - Plane R, Plane G, Plane B 
+   ///        - Grey Plane + Palette Color
+   ///        - YBR Pixels (or from RGB Pixels, as well) 
    size_t ImageDataSize;
        
   /// \brief ==1  if GetImageDataRaw was used
@@ -164,8 +156,6 @@ private:
    size_t LastAllocatedPixelDataLength; 
 
   // Initial values of some fields that can be modified during reading process
-  // (in a future stage, they will be modified just before the writting process
-  //  and restored just after)
   // if user asked to transform gray level + LUT image into RGB image
      
   /// \brief Samples Per Pixel           (0x0028,0x0002), as found on disk
@@ -176,8 +166,6 @@ private:
    std::string InitialPlanConfig;
     
   // Initial values of some fields that can be modified during reading process
-  // (in a future stage, they will be modified just before the writting process
-  //  and restored just after)
   // if the image was a 'strange' ACR-NEMA 
   // (Bits Allocated=12, High Bit not equal to Bits stored +1) 
   /// \brief Bits Allocated              (0x0028,0x0100), as found on disk
@@ -186,8 +174,6 @@ private:
    std::string InitialHighBit;
   
   // some DocEntry that can be moved out of the H table during reading process
-  // (in a future stage, they will be modified just before the writting process
-  //  and restored just after)
   // if user asked to transform gray level + LUT image into RGB image
   // We keep a pointer on them for a future use.
      
@@ -205,9 +191,9 @@ private:
   /// \brief Blue Palette Color Lookup Table Data        0028 1203 as read
   gdcmDocEntry* InitialBlueLUTData;
   
-   //
-   // --------------- end of future gdcmPixelData class
-   //  
+//
+// --------------- end of future gdcmPixelData class
+//  
 
 };
 
