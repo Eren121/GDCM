@@ -21,7 +21,7 @@
 #include "gdcmDictSet.h"
 
 #include "gdcmHeaderEntry.h"
-#include "gdcmHedaerEntrySet.h"
+#include "gdcmHeaderEntrySet.h"
 
 #include "gdcmHeader.h"
 #include "gdcmHeaderHelper.h"
