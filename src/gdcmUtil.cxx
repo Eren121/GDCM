@@ -133,27 +133,9 @@ void Tokenize (const std::string& str,
  * \ingroup Globals
  * \brief  Weed out a string from the non-printable characters (in order
  *         to avoid corrupting the terminal of invocation when printing)
- * @param v characters array to remove non printable characters from
- */
-char *_cleanString(char *v) {
-   char *d;
-   int i, l;
-   l = strlen(v);
-   for (i=0,d=v; 
-      i<l ; 
-      i++,d++) {
-         if (!isprint(*d))
-         *d = '.';
-   }
-   return v;
-}
-
-/**
- * \ingroup Globals
- * \brief   to prevent a flashing screen when non-printable character
  * @param s string to remove non printable characters from
  */
-std::string _CreateCleanString(std::string s) {
+std::string CreateCleanString(std::string s) {
    std::string str=s;
 
    for(int i=0;i<str.size();i++)

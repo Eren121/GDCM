@@ -2,6 +2,13 @@
      * src/gdcmUtil.[cxx|h] split in two. Additional file gdcmDebug.[cxx|h]
        now contains all the Debug related code.
      * minor clean-up of includes in src/*.cxx
+     * src/gdcmUtil.[cxx|h] _cleanString C style function (replaced with
+       CreateCleanString) removed.
+     * src/gdcmUtil.[cxx|h] _CreateCleanString renamed to CreateCleanString
+     * Doc/DoxyMainPageUser.txt added.
+     * Doc/Doc/DoxyfileUsers updated to version 1.3.4 of Doxygen.
+     * src/gdcmCommon.h now defines getcwd for Win32 (moved away from 
+       src/gdcmDirList.cxx)
 
 2004-03-24  Jean-Pierre Roux
      * FIX a lot of little surface modifications to be doxygen 1.3.6 compliant

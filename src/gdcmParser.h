@@ -28,8 +28,8 @@ typedef std::string GroupKey;
 typedef std::map<GroupKey, int> GroupHT;
 
 //-----------------------------------------------------------------------------
-/*
- * \defgroup gdcmParser
+/**
+ * \ingroup gdcmParser
  * \brief used by both gdcmHeader and gdcmDicomDir
  */
 class GDCM_EXPORT gdcmParser

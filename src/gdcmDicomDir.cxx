@@ -74,26 +74,23 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
       if(strlen(FileName)==1 && FileName[0]=='.') { // user passed '.' as Name
                                             // we get current directory name
          char*dummy=(char*) malloc(1000);
-#ifdef _MSC_VER
-         _getcwd(dummy,(size_t)1000);
-#else
          getcwd(dummy,(size_t)1000);
-#endif
          SetFileName(dummy); // will be converted into a string
          free(dummy);        // no longer needed   
       }
 
       if(parseDir)
       {
-         dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : Parse directory and create the DicomDir");
-	 ParseDirectory();
+         dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : Parse directory"
+                        " and create the DicomDir");
+         ParseDirectory();
       }
    }
    else {
       CreateDicomDir();
       CheckBoundaries(); // to maintain consistency between 
                          // home-made gdcmDicomDir 
-			 // and the ones comming from a DICOMDIR file
+                         // and the ones comming from a DICOMDIR file
    } 
 }
 

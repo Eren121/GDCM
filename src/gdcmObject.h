@@ -14,6 +14,10 @@ class gdcmObject;
 typedef std::list<gdcmObject *> ListContent;
 
 //-----------------------------------------------------------------------------
+/**
+ * \ingroup gdcmObject
+ * \brief   Base object
+ */
 class GDCM_EXPORT gdcmObject 
 {
 public:
@@ -43,13 +47,13 @@ public:
  */
    ListTag::iterator debut(void) 
       { return(beginObj);}
-/**
- * \ingroup gdcmObject
- * \brief   returns an iterator on the last Header Entry (i.e Dicom Element),
- *          inside the DICOMDIR chained list,
- *          related to this 'Object' 
- * @return
- */
+   /**
+    * \ingroup gdcmObject
+    * \brief   returns an iterator on the last Header Entry (i.e Dicom Element),
+    *          inside the DICOMDIR chained list,
+    *          related to this 'Object' 
+    * @return
+    */
     ListTag::iterator fin  (void) 
        { return(endObj);  }
 
@@ -89,12 +93,11 @@ protected:
 */   
    int printLevel;
    
-/// used to pass variables to FillObject function
-/// Works as 'global' variable
-/**
-* \brief used to pass variables to FillObject function
-*        Works as 'global' variable
-*/   std::list<gdcmHeaderEntry *>::iterator debInsertion, finInsertion, i,j;
+   /**
+   * \brief used to pass variables to FillObject function
+   *        Works as 'global' variable
+   */
+   std::list<gdcmHeaderEntry *>::iterator debInsertion, finInsertion, i,j;
 
 private:
 

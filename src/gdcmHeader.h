@@ -7,8 +7,8 @@
 #include "gdcmParser.h"
 
 //-----------------------------------------------------------------------------
-/*
- * \defgroup gdcmHeader
+/**
+ * \ingroup gdcmHeader
  * \brief
  * The purpose of an instance of gdcmHeader is to act as a container of
  * all the DICOM elements and their corresponding values (and
@@ -38,7 +38,7 @@ public:
 	      
    virtual ~gdcmHeader();
 
-// Standard values and informations contained in the header
+   // Standard values and informations contained in the header
    virtual bool IsReadable(void);
    bool IsJPEGBaseLineProcess1TransferSyntax(void);
    bool IsJPEGExtendedProcess2_4TransferSyntax(void); 
@@ -131,8 +131,8 @@ public:
    bool operator<(gdcmHeader &header);
 
 protected:
-   int write(std::ostream&);   
-   int anonymize(std::ostream&);  // FIXME : anonymize should be a friend ?
+   //CLEANME int write(std::ostream&);   
+   //CLEANME int anonymize(std::ostream&);//FIXME: anonymize should be a friend
    bool anonymizeHeader(void);
 private:
 

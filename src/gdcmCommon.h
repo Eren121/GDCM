@@ -53,6 +53,7 @@ typedef  int   		gint32;
 
 #ifdef _MSC_VER
 #define GDCM_EXPORT __declspec( dllexport )
+#define getcwd _getcwd
 #else
 #define GDCM_EXPORT
 #endif

@@ -54,7 +54,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    sprintf(greltag,"%04x|%04x ",g,e);           
    s << greltag ;
        
-   d2 = _CreateCleanString(v);  // replace non printable characters by '.'
+   d2 = CreateCleanString(v);  // replace non printable characters by '.'
    if (printLevel>=2) { 
       s << "lg : ";
       lgth = GetReadLength(); // ReadLength, as opposed to UsableLength

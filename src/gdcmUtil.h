@@ -12,9 +12,10 @@
 #include <string>
 
 //-----------------------------------------------------------------------------
-/*
- * This class contains all globals elements that might be
- * instanciated only one time
+/**
+ * \ingroup gdcmGlobal
+ * \brief   This class contains all globals elements that might be
+ *          instanciated only once (singletons).
  */
 class GDCM_EXPORT gdcmGlobal {
 public:
@@ -40,10 +41,8 @@ void Tokenize (const std::string& str,
                std::vector<std::string>& tokens,
                const std::string& delimiters = " ");
 
-char *_cleanString(char *v);
-std::string _CreateCleanString(std::string s);
-
-void NormalizePath (std::string &name);
+std::string CreateCleanString(std::string s);
+void        NormalizePath(std::string &name);
 std::string GetPath(std::string &fullName);
 std::string GetName(std::string &fullName);
 #endif

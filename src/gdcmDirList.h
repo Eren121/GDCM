@@ -9,6 +9,10 @@
 #include <list>
 
 //-----------------------------------------------------------------------------
+/**
+ * \ingroup gdcmDirList
+ * \brief   List containing the file headers from root directory. 
+ */
 class GDCM_EXPORT gdcmDirList: public std::list<std::string>
 {
 public :
@@ -17,16 +21,16 @@ public :
 
    std::string GetDirName(void);
 
-/// \
+   /// Character \ 
    static const char SEPARATOR_X;
-/// /  
-static const char SEPARATOR_WIN;
-/// depending on the O.S.
+   /// Character /  
+   static const char SEPARATOR_WIN;
+   /// depending on the O.S.
    static const std::string SEPARATOR;
 
 private :
    void Explore(std::string dirName,bool recursive=false);
-/// name of the root directory to explore
+   /// name of the root directory to explore
    std::string name;
 };
 

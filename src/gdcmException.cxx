@@ -88,7 +88,7 @@ catch(...) {
 
 /**
  * \ingroup gdcmException
- * \brief gdcmException::operator
+ * \brief gdcmException
  */
  gdcmException::operator const char *() const throw() {
   return getName().c_str();

@@ -10,9 +10,10 @@
 class gdcmHeader;
 
 //-----------------------------------------------------------------------------
-/*
- * The dicom header of a Dicom file contains a set of such entries
- * (when successfuly parsed against a given Dicom dictionary)
+/**
+ * \ingroup gdcmHeaderEntry
+ * \brief   The dicom header of a Dicom file contains a set of such entries
+ *          (when successfuly parsed against a given Dicom dictionary)
  */
 class GDCM_EXPORT gdcmHeaderEntry {
 public:
