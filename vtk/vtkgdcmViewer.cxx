@@ -12,20 +12,18 @@
 //  * the produced vtk file is named "foo.vtk" (in the invocation directory).
 // 
 //----------------------------------------------------------------------------
+#include <iostream>
+
 #include <vtkRenderWindowInteractor.h>
-#include <vtkImageViewer.h>
+#include <vtkImageViewer2.h>
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsWriter.h>
-#include <vtkPNGWriter.h>
 #include <vtkCommand.h>
 #include <vtkRenderer.h>
 #include <vtkImageMapToColors.h>
 #include <vtkLookupTable.h>
 
 #include "vtkGdcmReader.h"
-#include "gdcmDebug.h"
-
-#include <iostream>
 
 #ifndef vtkFloatingPointType
 #define vtkFloatingPointType float
@@ -62,7 +60,7 @@ public:
          }
       }
    }
-   vtkImageViewer *ImageViewer;
+   vtkImageViewer2 *ImageViewer;
 };
 
 
@@ -71,7 +69,6 @@ int main(int argc, char *argv[])
    if( argc < 2 )
       return 0;
   
-   gdcm::Debug::SetDebugOff();
    vtkGdcmReader *reader = vtkGdcmReader::New();
    reader->AllowLookupTableOff();
 
@@ -88,7 +85,7 @@ int main(int argc, char *argv[])
 
    vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
 
-   vtkImageViewer *viewer = vtkImageViewer::New();
+   vtkImageViewer2 *viewer = vtkImageViewer2::New();
 
    if( reader->GetLookupTable() )
    {
@@ -124,13 +121,11 @@ int main(int argc, char *argv[])
    iren->Start();
 
    //if you wish you can export dicom to a vtk file  
-   //vtkStructuredPointsWriter *writer = vtkStructuredPointsWriter::New();
-   vtkPNGWriter *writer = vtkPNGWriter::New();
+   vtkStructuredPointsWriter *writer = vtkStructuredPointsWriter::New();
    writer->SetInput( reader->GetOutput());
-   writer->SetFileName( "foo.png" );
-   //writer->SetFileTypeToBinary();
+   writer->SetFileName( "foo.vtk" );
+   writer->SetFileTypeToBinary();
    writer->Write();
-
 
    reader->Delete();
    iren->Delete();
