@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.103 2003/10/23 12:08:32 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.104 2003/10/30 17:04:21 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -812,8 +812,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
  * \ingroup gdcmHeader
  * \brief   Swaps back the bytes of 4-byte long integer accordingly to
  *          processor order.
- *
- * @return  The suggested integer.
+ * @return  The properly swaped 32 bits integer.
  */
 guint32 gdcmHeader::SwapLong(guint32 a) {
    switch (sw) {
@@ -912,13 +911,10 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    if( vr == "SQ" )
       SkipLoad = true;
 
-   // Heuristic : a sequence "contains" a set of tags (called items). It looks
-   // like the last tag of a sequence (the one that terminates the sequence)
-   // has a group of 0xfffe (with a dummy length).
-   // Well ... 
-   // Actually (fffe e000) tells us an Element is beginning
+   // A sequence "contains" a set of Elements.  
+   //          (fffe e000) tells us an Element is beginning
    //          (fffe e00d) tells us an Element just ended
-   //          (fffe e0dd) tells us the current SEQuence just ended
+   //          (fffe e0dd) tells us the current SQuence just ended
   
    if( group == 0xfffe )
       SkipLoad = true;
@@ -1298,6 +1294,40 @@ size_t gdcmHeader::GetPixelOffset(void) {
                                                               numPixel);
    if (PixelElement)
       return PixelElement->GetOffset();
+   else
+      return 0;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Recover the pixel area length (in Bytes) .
+ */
+size_t gdcmHeader::GetPixelAreaLength(void) {
+   // If this file complies with the norm we should encounter the
+   // "Image Location" tag (0x0028,  0x0200). This tag contains the
+   // the group that contains the pixel data (hence the "Pixel Data"
+   // is found by indirection through the "Image Location").
+   // Inside the group pointed by "Image Location" the searched element
+   // is conventionally the element 0x0010 (when the norm is respected).
+   // When the "Image Location" is absent we default to group 0x7fe0.
+   guint16 grPixel;
+   guint16 numPixel;
+   std::string ImageLocation = GetPubElValByName("Image Location");
+   if ( ImageLocation == GDCM_UNFOUND ) {
+      grPixel = 0x7fe0;
+   } else {
+      grPixel = (guint16) atoi( ImageLocation.c_str() );
+   }
+   if (grPixel != 0x7fe0)
+      // This is a kludge for old dirty Philips imager.
+      numPixel = 0x1010;
+   else
+      numPixel = 0x0010;
+         
+   gdcmElValue* PixelElement = PubElValSet.GetElementByNumber(grPixel,
+                                                              numPixel);
+   if (PixelElement)
+      return PixelElement->GetLength();
    else
       return 0;
 }
@@ -2084,39 +2114,22 @@ std::string gdcmHeader::GetTransferSyntaxName(void) {
 
 /**
   * \ingroup gdcmHeader
-  * \brief gets the info from 0028,1101 : Lookup Table Desc-Red
-  * \           else 0
-  * @return Lookup Table Length 
-  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
+  * \brief tells us if LUT are used
+  * @return int acts as a Boolean 
   */
   
-int gdcmHeader::GetLUTLength(void) {
-   std::vector<std::string> tokens;
-   int LutLength;
-   //int LutDepth;
-   //int LutNbits;
-   // Just hope Lookup Table Desc-Red = Lookup Table Desc-Red = Lookup Table Desc-Blue
-   std::string LutDescriptionR = GetPubElValByNumber(0x0028,0x1101);
-   if (LutDescriptionR == GDCM_UNFOUND)
+int gdcmHeader::HasLUT(void) {
+
+   // Just hope checking the presence of the LUT Descriptors is enough 
+   if (GetPubElValByNumber(0x0028,0x1101) == GDCM_UNFOUND)
       return 0;
-   std::string LutDescriptionG = GetPubElValByNumber(0x0028,0x1102);
-   if (LutDescriptionG == GDCM_UNFOUND)
+   // LutDescriptorGreen 
+   if (GetPubElValByNumber(0x0028,0x1102) == GDCM_UNFOUND)
       return 0;
-   std::string LutDescriptionB = GetPubElValByNumber(0x0028,0x1103);
-   if (LutDescriptionB == GDCM_UNFOUND)
-      return 0;
-   if( (LutDescriptionR != LutDescriptionG) || (LutDescriptionR != LutDescriptionB) ) {
-      dbg.Verbose(0, "gdcmHeader::GetLUTLength: The CLUT R,G,B are not equal");
-      return 0;   
-   } 
-   std::cout << "Lut Description " << LutDescriptionR <<std::endl;
-   tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-   Tokenize (LutDescriptionR, tokens, "\\");
-   LutLength=atoi(tokens[0].c_str());
-   //LutDepth=atoi(tokens[1].c_str());
-   //LutNbits=atoi(tokens[2].c_str());
-   tokens.clear();
-   return LutLength;
+   // LutDescriptorBlue 
+   if (GetPubElValByNumber(0x0028,0x1103) == GDCM_UNFOUND)
+      return 0;  
+   return 1;
 }
 
 /**
@@ -2145,161 +2158,145 @@ int gdcmHeader::GetLUTNbits(void) {
    tokens.clear();
    return LutNbits;
 }
-  
 
 /**
   * \ingroup gdcmHeader
-  * \brief gets the info from 0028,1201 : Lookup Table Red
-  * \           else 0
-  * @return Lookup Table Red 
-  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
-  */ 
-void * gdcmHeader::GetLUTRed(void) {
-   return GetPubElValVoidAreaByNumber(0x0028,0x1201);  
-}
-
-/**
-  * \ingroup gdcmHeader
-  * \brief gets the info from 0028,1202 : Lookup Table Green
-  * \           else 0
-  * @return Lookup Table Red 
-  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
-  */ 
-  void * gdcmHeader::GetLUTGreen(void) {
-   return GetPubElValVoidAreaByNumber(0x0028,0x1202);
-}
-
-/**
-  * \ingroup gdcmHeader
-  * \brief gets the info from 0028,1202 : Lookup Table Blue
-  * \           else 0
-  * @return Lookup Table Blue 
-  * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
-  */ 
-void * gdcmHeader::GetLUTBlue(void) {
-   return GetPubElValVoidAreaByNumber(0x0028,0x1203);
-}
-
-/**
-  * \ingroup gdcmHeader
-  * \brief 
-  * @return Lookup Table RGB
+  * \brief builts Red/Green/Blue/Alpha LUT from Header
   * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
-  * \        and (0028,1201),(0028,1202),(0028,1202) are found
-  * \warning : hazardous ! Use better GetPubElValVoidAreaByNumber
+  * \        and (0028,1101),(0028,1102),(0028,1102)  
+  * \          - xxx Palette Color Lookup Table Descriptor - are found
+  * \        and (0028,1201),(0028,1202),(0028,1202) 
+  * \          - xxx Palette Color Lookup Table Data - are found 
+  * \warning does NOT deal with :
+  * \ 0028 1100 Gray Lookup Table Descriptor (Retired)
+  * \ 0028 1221 Segmented Red Palette Color Lookup Table Data
+  * \ 0028 1222 Segmented Green Palette Color Lookup Table Data
+  * \ 0028 1223 Segmented Blue Palette Color Lookup Table Data 
+  * \ no known Dicom reader deails with them :-(
+  * @return Lookup Table RGBA
   */ 
-void * gdcmHeader::GetLUTRGB(void) {
+  
+void * gdcmHeader::GetLUTRGBA(void) {
 // Not so easy : see 
 // http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
 // and  OT-PAL-8-face.dcm
 
-   if (GetPubElValByNumber(0x0028,0x0004) == GDCM_UNFOUND) {
-   dbg.Verbose(0, "gdcmHeader::GetLUTRGB: unfound Photometric Interpretation");
+//  if Photometric Interpretation # PALETTE COLOR, no LUT to be done
+		 
+   if (gdcmHeader::GetPubElValByNumber(0x0028,0x0004) != "PALETTE COLOR ") {
    	return NULL;
    }  
+   
    void * LutR,*LutG,*LutB;
    int l;
-     
-  // Maybe, some day we get an image 
-  // that respects the definition ...
-  // Let's consider no ones does.
-  
-   l= GetLUTLength();  
-   if(l==0) 
-     return (NULL);     
-   int nBits=GetLUTNbits();
-
-  // a virer quand on aura trouve UNE image 
-  // qui correspond VRAIMENT à la definition !
-    std::cout << "l " << l << " nBits " << nBits;
+   int lengthR, debR, nbitsR;
+   int lengthG, debG, nbitsG;
+   int lengthB, debB, nbitsB;
    
-   l= l/(nBits/8);
-    
-   LutR =GetPubElValVoidAreaByNumber(0x0028,0x1201);
-   LutG =GetPubElValVoidAreaByNumber(0x0028,0x1202);
-   LutB =GetPubElValVoidAreaByNumber(0x0028,0x1203);
+// Get info from Lut Descriptors
+// (the 3 LUT descriptors may be different)    
    
-   // Warning : Any value for nBits  as to be considered as 8
-   //           Any value for Length as to be considered as 256
-   // That's DICOM ...
+   std::string LutDescriptionR = GetPubElValByNumber(0x0028,0x1101);
+   if (LutDescriptionR == GDCM_UNFOUND)
+      return NULL;
+   std::string LutDescriptionG = GetPubElValByNumber(0x0028,0x1102);
+   if (LutDescriptionG == GDCM_UNFOUND)
+      return NULL;   
+   std::string LutDescriptionB = GetPubElValByNumber(0x0028,0x1103);
+   if (LutDescriptionB == GDCM_UNFOUND)
+      return NULL;
+      
+   std::vector<std::string> tokens;
+      
+   tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+   Tokenize (LutDescriptionR, tokens, "\\");
+   lengthR=atoi(tokens[0].c_str()); // Red LUT length in Bytes
+   debR   =atoi(tokens[1].c_str()); // subscript of the first Lut Value
+   nbitsR =atoi(tokens[2].c_str()); // Lut item size (in Bits)
+   tokens.clear();
    
-   // Just wait before removing the following code
-   /*
-   if (nBits == 16) {
-      guint16 * LUTRGB, *rgb;
-      LUTRGB = rgb = (guint16 *) malloc(3*l*sizeof( guint16));
-      guint16 * r = (guint16 *)LutR;
-      guint16 * g = (guint16 *)LutG;
-      guint16 * b = (guint16 *)LutB;
-      for(int i=0;i<l;i++) {
-         *rgb++ = *r++;
-         *rgb++ = *g++;
-         *rgb++ = *b++;
-      }
-      return(LUTRGB); 
-   } else
+   tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+   Tokenize (LutDescriptionG, tokens, "\\");
+   lengthG=atoi(tokens[0].c_str()); // Green LUT length in Bytes
+   debG   =atoi(tokens[1].c_str());
+   nbitsG =atoi(tokens[2].c_str());
+   tokens.clear();  
    
-   */ {      // we assume it's always 8 Bits
-      l=256; // we assume ...
-      unsigned char * LUTRGB, *rgb;
-      LUTRGB = rgb = (unsigned char *) malloc(3*l*sizeof( char));
-      unsigned char * r = (unsigned char *)LutR;
-      unsigned char * g = (unsigned char *)LutG;
-      unsigned char * b = (unsigned char *)LutB;
-      for(int i=0;i<l;i++) {
-      //std::cout << "lut16 " << i << " : " << *r << " " << *g << " " << *b 
-      //          << std::endl;
-      printf("lut 8 %d : %d %d %d \n",i,*r,*g,*b);
-         *rgb++ = *r++;
-         *rgb++ = *g++;
-         *rgb++ = *b++;
-      } 
-      free(LutR); free(LutB); free(LutG);
-      return(LUTRGB);   
+   tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+   Tokenize (LutDescriptionB, tokens, "\\");
+   lengthB=atoi(tokens[0].c_str()); // Blue LUT length in Bytes
+   debB   =atoi(tokens[1].c_str());
+   nbitsB =atoi(tokens[2].c_str());
+   tokens.clear();
+ 
+// Load LUTs into memory, (as they were stored on disk)
+   
+   unsigned char *lutR =(unsigned char *)
+                                   GetPubElValVoidAreaByNumber(0x0028,0x1201);
+   unsigned char *lutG =(unsigned char *)
+                                   GetPubElValVoidAreaByNumber(0x0028,0x1202);
+   unsigned char *lutB =(unsigned char *)
+                                   GetPubElValVoidAreaByNumber(0x0028,0x1203); 
+   
+   if (!lutR || !lutG || !lutB ) {
+   	return NULL;
    } 
+ // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT 
+   
+  char *LUTRGBA = (char *)calloc(1024,1); // 256 * 4 (R, G, B, Alpha) 
+  if (!LUTRGBA) {
+     return NULL;
+  }			
+	// Bits Allocated
+   int nb;
+   std::string str_nb = GetPubElValByNumber(0x0028,0x0100);
+   if (str_nb == GDCM_UNFOUND ) {
+      nb = 16;
+   } else {
+      nb = atoi(str_nb.c_str() );
+   }  
+  int mult;
+  
+  if (nbitsR==16 && nb==8) // when LUT item size is different than pixel size
+     mult=2;               // high byte must be = low byte 
+  else                     // See PS 3.3-2003 C.11.1.1.2 p 619
+     mult=1; 
+ 
+ 
+            // if we get a black image, let's just remove the '+1'
+            // from 'i*mult+1' and check again 
+            // if it works, we shall have to check the 3 Palettes
+            // to see which byte is ==0 (first one, or second one)
+	    // and fix the code
+	    // We give up the checking to avoid some overhead    
+  char *a;      
+  a= LUTRGBA+debR;
+  for(int i=0;i<lengthR;i++) {
+     *a = lutR[i*mult+1]; 
+     a+=4;       
+  }        
+  a= LUTRGBA+debG;
+  for(int i=0;i<lengthG;i++) {
+     *(a+1) = lutG[i*mult+1]; 
+     a+=4;       
+  }  
+  a= LUTRGBA+debB;
+  for(int i=0;i<lengthB;i++) {
+     *(a+2) = lutB[i*mult+1]; 
+     a+=4;       
+  }  
+  for(int i=0;i<255;i++) {
+     *(a+3) = 1; // Alpha component
+     a+=4; 
+  } 
+  
+for (int i=0;i<255;i++)
+    printf ( "%d %02x %02x %02x %02x \n",
+    i,(LUTRGBA+i*4)[0],(LUTRGBA+i*4)[1],(LUTRGBA+i*4)[2],(LUTRGBA+i*4)[3]);
+    
+// WHY does it seg fault ?!?
+//free(LutR); free(LutB); free(LutG); printf ("libere\n");
 
-/*  Sorry for the comments. The code will be moved in a fonction
-
-        std::string x=GetPubElValByNumber(0x0028,0x1201);
-        unsigned short int * lutR = (unsigned short int *)malloc((size_t)200*sizeof(short int));
-        unsigned short int * lutG = (unsigned short int *)malloc((size_t)200*sizeof(short int));
-        unsigned short int * lutB = (unsigned short int *)malloc((size_t)200*sizeof(short int));
-
-         std::vector<std::string> tokens;
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize ((const std::string)x, tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) {
-            lutR[i] = atoi(tokens[i].c_str());
-            printf("%d (%x)\n",lutR[i],lutR[i]);   
-         }
-
-         std::string y=GetPubElValByNumber(0x0028,0x1202);
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize ((const std::string)y, tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) {
-            lutG[i] = atoi(tokens[i].c_str());   
-         }
-
-         std::string z=GetPubElValByNumber(0x0028,0x1203);
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize ((const std::string)z, tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) {
-            lutB[i] = atoi(tokens[i].c_str());   
-         }
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize ((const std::string)x, tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) {
-            lutB[i] = atoi(tokens[i].c_str()); 
-         }
-
- */
-
-//int lgth=GetLUTLength();
-//cout << "lgth " << lgth << std::endl;;
-//for (int j=0;j<lgth;j++){
-//printf ("%d : %d (%x) %d (%x) %d (%x)\n",j,lutR[j],lutR[j],lutG[j],lutG[j],lutB[j],lutB[j]);
-//}
-
-
-}
+  return(LUTRGBA);   
+} 
  
