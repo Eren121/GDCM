@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.61 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.62 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -548,9 +548,9 @@ int vtkGdcmReader::CheckFileCoherence()
          this->DataSpacing[2] = GdcmHeader.GetZSpacing();
 
          //Set image origin
-         this->DataOrigin[0] = GdcmHeader.GetXOrigin();
-         this->DataOrigin[1] = GdcmHeader.GetYOrigin();
-         this->DataOrigin[2] = GdcmHeader.GetZOrigin();
+         //this->DataOrigin[0] = GdcmHeader.GetXOrigin();
+         //this->DataOrigin[1] = GdcmHeader.GetYOrigin();
+         //this->DataOrigin[2] = GdcmHeader.GetZOrigin();
 
       }
    } // End of loop on filename

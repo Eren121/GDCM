@@ -41,6 +41,7 @@ IF (GDCM_DATA_ROOT)
       )
     SET(TEST_SOURCES ${TEST_SOURCES}
       ShowDicom.cxx
+      TestWriteWithVTK.cxx
       )
   ENDIF(GDCM_VTK)
 ENDIF (GDCM_DATA_ROOT)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:33 $
-  Version:   $Revision: 1.213 $
+  Date:      $Date: 2004/12/07 17:28:50 $
+  Version:   $Revision: 1.214 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1311,7 +1311,7 @@ void Header::InitializeDefaultHeader()
    std::string uid  = Util::CreateUniqueUID();
 
    static DICOM_DEFAULT_VALUE defaultvalue[] = {
-    { "76", 0x0002, 0x0000},         // MetaElementGroup Length // FIXME: how to recompute ?
+    { "76 ",      0x0002, 0x0000},         // MetaElementGroup Length // FIXME: how to recompute ?
     { "1.2.840.10008.5.1.4.1.1.2", 0x0002, 0x0002},  // MediaStorageSOPInstanceUID (CT Image Storage)
     { uid.c_str(), 0x0002, 0x0012},  // META Implementation Class UID
     { "ISO_IR 100",0x0008, 0x0005},  // Specific Character Set
@@ -1331,10 +1331,9 @@ void Header::InitializeDefaultHeader()
     { "",          0x0020, 0x0011},   // AcquisitionNumber
     { "1\\0\\0\\0\\1\\0", 0x0020, 0x0037},  // Image Orientation Patient
     { "1",         0x0028, 0x0002},  // Samples per pixel 1 or 3
-    { "MONOCHROME2",0x0028, 0x0004},  // photochromatic interpretation
+    { "MONOCHROME1",0x0028, 0x0004},  // photochromatic interpretation
 
 // Date and timeG
-
     { date.c_str(), 0x0008, 0x0012 } ,  // Instance Creation Date
     { time.c_str(), 0x0008, 0x0013 } ,  // Instance Creation Time
     { date.c_str(), 0x0008, 0x0020 } ,  // Study Date
@@ -1352,8 +1351,8 @@ void Header::InitializeDefaultHeader()
     { "64",         0x0028, 0x0010 } ,  // nbRows
     { "64",         0x0028, 0x0011 } ,  // nbCols
     { "16",         0x0028, 0x0100 } ,  // BitsAllocated 8 or 16
-    { "12",         0x0028, 0x0101 } ,  // BitsStored    8 or 12
-    { "11",         0x0028, 0x0102 } ,  // HighBit       7 or 11
+    { "12",         0x0028, 0x0101 } ,  // BitsStored    8 or 12 or 16
+    { "11",         0x0028, 0x0102 } ,  // HighBit       7 or 11 or 15
     { "0",          0x0028, 0x0103 } ,  // Pixel Representation 0(unsigned) or 1(signed)
     { "1000.0",     0x0028, 0x1051 } ,  // Window Width
     { "500.0",      0x0028, 0x1050 } ,  // Window Center
@@ -1371,8 +1370,7 @@ void Header::InitializeDefaultHeader()
    DICOM_DEFAULT_VALUE current = defaultvalue[i];
    while( current.value )
    {
-      std::string value = Util::DicomString( current.value ); //pad the string properly
-      ReplaceOrCreateByNumber(value, current.group, current.elem);
+      ReplaceOrCreateByNumber(current.value, current.group, current.elem);
       current = defaultvalue[++i];
    }
 }

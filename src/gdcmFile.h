@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/04 09:41:02 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2004/12/07 17:28:50 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,6 +45,7 @@ public:
    };
      
 public:
+   File( );
    File( Header* header );
    File( std::string const& filename );
  
@@ -72,7 +73,14 @@ public:
    bool Write(std::string const& fileName);
 
    bool SetEntryByNumber(std::string const& content,
+                         uint16_t group, uint16_t element);
+   bool SetEntryByNumber(uint8_t* content, int lgth,
+                         uint16_t group, uint16_t element);
+   bool ReplaceOrCreateByNumber(std::string const& content,
                                 uint16_t group, uint16_t element);
+   bool ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
+                                uint16_t group, uint16_t elem);
+
    uint8_t* GetLutRGBA();
 
    // Write mode

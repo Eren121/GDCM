@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:33 $
-  Version:   $Revision: 1.173 $
+  Date:      $Date: 2004/12/07 17:28:50 $
+  Version:   $Revision: 1.174 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,6 +34,26 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
 
 //-------------------------------------------------------------------------
 // Constructor / Destructor
+/**
+ * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
+ *        file (Header only deals with the ... header)
+ *        Opens (in read only and when possible) an existing file and checks
+ *        for DICOM compliance. Returns NULL on failure.
+ *        It will be up to the user to load the pixels into memory
+ *        (see GetImageData, GetImageDataRaw)
+ * \note  the in-memory representation of all available tags found in
+ *        the DICOM header is post-poned to first header information access.
+ *        This avoid a double parsing of public part of the header when
+ *        one sets an a posteriori shadow dictionary (efficiency can be
+ *        seen as a side effect).   
+ */
+File::File( )
+{
+   HeaderInternal = new Header( );
+   SelfHeader = true;
+   Initialise();
+}
+
 /**
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
  *        file (Header only deals with the ... header)
@@ -82,7 +102,7 @@ File::File(std::string const & filename )
 void File::Initialise()
 {
    WriteMode = WMODE_DECOMPRESSED;
-   WriteType = ImplicitVR;
+   WriteType = ExplicitVR;
 
    PixelReadConverter = new PixelReadConvert;
    PixelWriteConverter = new PixelWriteConvert;
@@ -383,8 +403,19 @@ bool File::Write(std::string const& fileName)
 bool File::SetEntryByNumber(std::string const& content,
                             uint16_t group, uint16_t element)
 { 
-   HeaderInternal->SetEntryByNumber(content,group,element);
-   return true;
+   return HeaderInternal->SetEntryByNumber(content,group,element);
+}
+
+bool File::SetEntryByNumber(uint8_t* content, int lgth,
+                            uint16_t group, uint16_t element)
+{
+   return HeaderInternal->SetEntryByNumber(content,lgth,group,element);
+}
+
+bool File::ReplaceOrCreateByNumber(std::string const& content,
+                                   uint16_t group, uint16_t element)
+{
+   return HeaderInternal->ReplaceOrCreateByNumber(content,group,element) != NULL;
 }
 
 /**

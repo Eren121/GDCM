@@ -1,4 +1,11 @@
 2004-12-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * vtk/vtkGdcmWriter.[h|cxx] : add a first version of vtkGdcmWriter
+   * src/gdcmValEntry.cxx : bug fix when setting the value. Problems of odd
+     length
+   * src/gdcmHeader.cxx : Remove a useless call to Util::DicomString
+   * Add vtkGdcmWriter example and test
+
+2004-12-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/TestUtil.cxx : reformat the source code
    * vtk/vtkGdcmReader.cxx : remove and change prints
    * src/gdcmValEntry.[cxx|h] : now set the length of the value when calling

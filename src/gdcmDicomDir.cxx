@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:33 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2004/12/07 17:28:50 $
+  Version:   $Revision: 1.89 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -422,7 +422,6 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
          break;
       }
 
-std::cerr<<"File : "<<it->c_str()<<std::endl;
       header = new Header( it->c_str() );
       if( !header )
       {

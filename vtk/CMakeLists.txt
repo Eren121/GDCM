@@ -13,6 +13,7 @@ INCLUDE_DIRECTORIES(
 
 SET(VTKGDCM_LIB_SRCS
   vtkGdcmReader.cxx
+  vtkGdcmWriter.cxx
 )
 
 #-----------------------------------------------------------------------------
@@ -43,6 +44,17 @@ SET(vtkgdcmViewer_SOURCES
 ADD_EXECUTABLE(vtkgdcmViewer ${vtkgdcmViewer_SOURCES})
 TARGET_LINK_LIBRARIES(vtkgdcmViewer
   vtkgdcm
+  vtkRendering
+)
+
+#-----------------------------------------------------------------------------
+SET(vtkWriteDicom_SOURCES
+  vtkWriteDicom.cxx
+)
+ADD_EXECUTABLE(vtkWriteDicom ${vtkWriteDicom_SOURCES})
+TARGET_LINK_LIBRARIES(vtkWriteDicom
+  vtkgdcm
+  vtkIO
   vtkRendering
 )
 
