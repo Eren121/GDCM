@@ -1,26 +1,133 @@
 -----------------------------------------------------------------------------
-Use namespace gdcm:
-  Problem: using enum with name like 'Unknow' on .Net, or LP on cygwin 
-           causes problems.
-  Question: when introducing the namespace, should we remove the gdcm
-            prefix from classes or keep it ?
+Proposed Template of an entry in this TODO:
+(Note: Date is the date of registering of first demand.)
+
+-------------
+Description:
+Date:
+Attributed:
+Details:
+Comments:
+-------------
+
+
 -----------------------------------------------------------------------------
-Convert the C-like IO to C++ IO:
-  Goal: remove all the C-oriented IO references like FILE*, fread...
-        with the C++ fstream notation. Provide overload of operators
-        << and >> for any gdcm class using file IO.
-  Question: the underlying jpeg libraries (written in C) use the FILE*
-        notation. Is there a way to still use fstream in gdcm, and 
-        build or pass the proper FILE* to jpeg libs ?
-  References:
-        binary IO are available at
-        http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
 -----------------------------------------------------------------------------
-* Clean up src/gdcmValEntry.[h|cxx] from VoidArea
+Description: Fix the Python wrappers
+Date: 2004 Sep 24
+Attributed: no
+Details:
+Comments:
+-----------------------------------------------------------------------------
+Description: clean up gdcmFile/gdcmHeader relationship
+Date: 2004 Sep 24
+Attributed:
+Details:
+ * simplify the API for the user (no need to call GetImageData() before
+   calling Write().
+ * avoid memory leaks with with Pixel_Data.
+Comments:
+-----------------------------------------------------------------------------
+Description: remove all autotools references
+Date: 2004 Sep 24
+Attributed: no
+Details:
+Comments:
+-----------------------------------------------------------------------------
+Description: introduce namespace "gdcm"
+Date: 2004 Jul 30
+Attributed:
+Details:
+Comments:
+  1/ Problem: using enum with name like 'Unknow' on .Net, or LP on cygwin 
+              causes problems.
+  2/ Question: when introducing the namespace, should we remove the gdcm
+              prefix from classes or keep it ?
+-----------------------------------------------------------------------------
+Description: complete the doxygen Documentation
+Date: 2004 Sep 24
+Attributed:
+Details:
+Comments:
+-----------------------------------------------------------------------------
+Description: test the private dictionary part.
+Date: 2004 Sep 24
+Attributed:
+Details:
+Comments:
+ * Frog: where can we obtain such a private/dictionary and the corresponding
+         Dicom file ? Any examples on-line ?
+-----------------------------------------------------------------------------
+Description: fix definitively the memory leaks problems.
+Date: 2004 Sep 24
+Attributed:
+Details:
+Comments:
+-----------------------------------------------------------------------------
+Description: test gdcm on a big endian OS.
+Date: 2004 Sep 24
+Attributed:
+Details:
+Comments:
+-----------------------------------------------------------------------------
+Description: More tests !
+Date: 2004 Sep 24
+Attributed:
+Details:
+ * an example of new test could be to clone a Dicom image by 
+   copying gdcmDocEntry one after the other
+Comments:
+ * look at traversal used in Example/FlatHashTablePrint.cxx
+-----------------------------------------------------------------------------
+Description: revoir la gestion des resources, win32 permet d'inclure des
+   fichiers texte (=dicomV3.dic) dans une dll ou quelquechose du genre.
+Date: 2004 Sep 24
+Attributed:
+Details:
+Comments:
+ * Frog: no comprendo !? De plus est-ce portable ?
+-----------------------------------------------------------------------------
+Description: Convert the C-like IO to C++ IO:
+Date: 2004 Jul 30
+Attributed:
+Details:
+   remove all the C-oriented IO references like FILE*, fread...
+   and replace them with the C++ fstream notation.
+   Provide overload of operators << and >> for any gdcm class using file IO.
+Comments:
+ * Question: the underlying jpeg libraries (written in C) use the FILE*
+   notation. Is there a way to still use fstream in gdcm, and 
+   build or pass the proper FILE* to jpeg libs ?
+ * Binary IO references are available at
+   http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
+-----------------------------------------------------------------------------
+Description: generate methods based on VM.
+Date: 2004 Jul 30
+Attributed:
+Details:
+ * cmake should parse le DICOM dictionary to generate methods like
+   gdcm???::SetImagePosition(int, int)
+   {
+     //generated content do not edit
+     ...
+   }
+   gdcm???::SetImageNumber(int)
+   {
+     //generated content do not edit
+     ...
+   }
+Comments:
+ * Regrain: a dicom dictionary entry name is NOT UNIQUE [this means
+     two tags=(group, element) can share the same name].
+     What should the wrapper do in such a case !?
+ * Frog: what does VM stand for ?
+-----------------------------------------------------------------------------
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
   be made at the cost of memory consumption (refer to header of 
   vtk/vtkGdcmHeader.cxx)
+-----------------------------------------------------------------------------
 * Add a GetVersion() global function.
+-----------------------------------------------------------------------------
 * gdcmElValSet::SetElValueLengthByNumber IMNSHO should be trashed.
   It's only purpose is a onliner substitute to calling GetElValueByNumber
   and then SetLength. This only obfuscates the caller code more than
@@ -30,34 +137,44 @@ Convert the C-like IO to C++ IO:
   gdcmElValSet::GetElValueByNumber except for the returned code.
   gdcmHeader::SetPubElValLengthByNumber (which is based on 
   gdcmElValSet::SetElValueLengthByNumber) is used nowhere...
+-----------------------------------------------------------------------------
 * Fix the bug in Test/bug1.cxx (see first comment line): Win32 only.
+-----------------------------------------------------------------------------
 * All (or at least many of) the methods of gdcmHeader whose only arguments
   are an ElValue* (e.g.  FindLength, FindVR, LoadElementValue...) can
   be moved away to ElValue class on condition of transmitting the
   gdcmHeader.fp attribute. This change should be considered since it
   would allow those method to avoid artificial calls to ElValue::GetElement(),
   ElValue::GetVR()...
+-----------------------------------------------------------------------------
 * Eat leanding_trailing_whitespace (found in python/gdcmPython/gdcmi) should
   be used when parsing the dictionary in C++ !
+-----------------------------------------------------------------------------
 * Group length is not a unique tag in a file. Hence avoid putting it
   in the element values dictionary without doing something smarter
   (say, instead of storing the length store the group and the length
    so we can related a length to a group).
+-----------------------------------------------------------------------------
 * GetPubElValByNumber doit faire la difference entre chaine vide 
   et chaine pas touve''. Eventuellement raiser une exception ?
+-----------------------------------------------------------------------------
 * gdcmHeader::LoadElements only loads the element whose length is
   below the specified size. When accessing the value of such an element
   the content is unfound ! Find a decent way of loading the value on
   explicit demand.
+-----------------------------------------------------------------------------
 * JPR: fournir une method qui ne fait que lire les elements passes en arguments
   sous forme d'une liste.
+-----------------------------------------------------------------------------
 * JPR: gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de
   suite si on a deduit que c'en est pas...
+-----------------------------------------------------------------------------
 * python /usr/lib/python2.2/site-packages/DaVaW/demo/dvwDcmReader.py
   and load image /home/frog/cvs/DCMlib/Data/CT-MONO2-16-ankle.dcm
   will yield wrong coloring scheme as opposed to 
   affim filein=/home/frog/cvs/DCMlib/Data/CT-MONO2-16-ankle.dcm
-* gdcmFile should implement the following:
+-----------------------------------------------------------------------------
+* gdcmFile should implement the following API:
    gdcmFile WriteDicom;
    WriteDicom.SetFileName("MyDicomFile.dcm");
    string * AllTags = gdcmHeader.GetDcmTagNames();
@@ -74,4 +191,4 @@ Convert the C-like IO to C++ IO:
       a.SetPubValueByName("Study Date", "");
       a.write(output);
    }
-
+-----------------------------------------------------------------------------
