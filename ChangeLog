@@ -1,3 +1,7 @@
+2002-10-7 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * Truckload of changes. Parsing of header is barely functional
+        (see Test/test) with the standard dictionary (see Dicts/dicomV3.dic).
+
 2002-10-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx many addons of low level methods
 

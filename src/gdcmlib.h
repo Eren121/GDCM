@@ -22,29 +22,29 @@
 //    around 4500 entries which is the average dictionary size (said JPR)
 #include <map>
 
+
 // Tag based hash tables.
 // We shall use as keys the strings (as the C++ type) obtained by
 // concatenating the group value and the element value (both of type
 // unsigned 16 bit integers in Dicom) expressed in hexadecimal.
 // Example: consider the tag given as (group, element) = (0x0010, 0x0010).
-// Then the corresponding TagKey shall be the string 00100010 (or maybe
-// 0x00100x0010, we need some checks here).
+// Then the corresponding TagKey shall be the string 0010|0010 (where
+// the | (pipe symbol) acts as a separator). Refer to 
+// gdcmDictEntry::TranslateToKey for this conversion function.
 typedef string TagKey;
-typedef map<TagKey, char*> TagHT;
 
-
-class DictEntry {
+class gdcmDictEntry {
 private:
-////// QUESTION: it is not sure that we need to store the group and
-//////           and the element within a DictEntry. What is the point
-//////           of storing the equivalent of a TagKey within the information
-//////           accessed through that TagKey !?
 	guint16 group;    // e.g. 0x0010
 	guint16 element;  // e.g. 0x0010
-	string  name;     // e.g. "Patient_Name"
-	string  ValRep;   // Value Representation i.e. some clue about the nature
+	string  vr;       // Value Representation i.e. some clue about the nature
 	                  // of the data represented e.g. "FD" short for
 	                  // "Floating Point Double"
+	// CLEAN ME: find the official dicom name for this field !
+	string  fourth;   // Fourth field containing some semantics.
+	string  name;     // e.g. "Patient_Name"
+	TagKey  key;      // This is redundant zith (group, element) but we add
+	                  // on efficiency purposes.
 	// DCMTK has many fields for handling a DictEntry (see below). What are the
 	// relevant ones for gdcmlib ?
 	//      struct DBI_SimpleEntry {
@@ -61,55 +61,70 @@ private:
 	//         DcmDictRangeRestriction elementRestriction;
 	//       };
 public:
-	DictEntry();
-	DictEntry(guint16 group, guint16 element, string  name, string  VR);
-	void   SetVR(string);
-	string GetVR(void);
-	guint16 GetGroup(void)   { return group;};
-	guint16 GetElement(void) {return element;};
+	//CLEANME gdcmDictEntry();
+	gdcmDictEntry(guint16 group, guint16 element,
+	              string vr, string fourth, string vr);
+	static TagKey TranslateToKey(guint16 group, guint16 element);
+	guint16 GetGroup(void)  { return group;};
+	guint16 GetElement(void){return element;};
+	string  GetVR(void)     {return vr; };
+	void    SetVR(string in){vr = in; };
+	string  GetFourth(void) {return fourth;};
+	string  GetName(void)   {return name;};
+	string  GetKey(void)    {return key;};
 };
+  
+typedef map<TagKey, gdcmDictEntry*> TagHT;
 
 // A single DICOM dictionary i.e. a container for a collection of dictionary
 // entries. There should be a single public dictionary (THE dictionary of
 // the actual DICOM v3) but as many shadow dictionaries as imagers 
 // combined with all software versions...
-class Dict {
+class gdcmDict {
 	string name;
 	string filename;
 	TagHT entries;
 public:
-	Dict();
-	Dict(string filename);   // Read Dict from disk
-	int AppendEntry(DictEntry* NewEntry);
-	DictEntry * GetTag(guint32, guint32);  // Is this tag in this Dict ?
+	gdcmDict();
+	gdcmDict(char *FileName);   // Read Dict from disk
+	int AppendEntry(gdcmDictEntry* NewEntry);
+	gdcmDictEntry * GetTag(guint32 group, guint32 element);
+	void Print(ostream&);
 };
 
 // Container for managing a set of loaded dictionaries. Sharing dictionaries
 // should avoid :
 // * reloading an allready loaded dictionary.
 // * having many in memory representations of the same dictionary.
-typedef int DictId;
-class DictSet {
+#define PUBDICTNAME     "DicomV3Dict"
+#define PUBDICTFILENAME "../Dicts/dicomV3.dic"
+typedef string DictKey;
+typedef map<DictKey, gdcmDict*> DictSetHT;
+class gdcmDictSet {
 private:
-	map<DictId, Dict*> dicts;
-	int AppendDict(Dict* NewDict);
+	DictSetHT dicts;
+	int AppendDict(gdcmDict* NewDict);
 public:
-	DictSet();    // Default constructor loads THE DICOM v3 dictionary
+	gdcmDictSet(void);    // loads THE DICOM v3 dictionary
 	int LoadDictFromFile(string filename);
 ///// QUESTION: the following function might not be thread safe !? Maybe
 /////           we need some mutex here, to avoid concurent creation of
 /////           the same dictionary !?!?!
 	int LoadDictFromName(string filename);
-	int LoadAllDictFromDirectory(string directorynanme);
+	int LoadDictFromFile(char*, DictKey);
+	int LoadAllDictFromDirectory(string DirectoryName);
+	int LoadDicomV3Dict(void);
 	string* GetAllDictNames();
-	Dict* GetDict(string DictName);
+	void Print(ostream&);
+	gdcmDict* GetDict(DictKey DictName);
+	gdcmDict* GetDefaultPublicDict(void);
 };
 
 // The dicom header of a Dicom file contains a set of such ELement VALUES
 // (when successfuly parsed against a given Dicom dictionary)
 class ElValue {
 private:
-	DictEntry *entry;
+	gdcmDictEntry *entry;
 	guint32 LgrLueElem; // Longueur Lue
 	// Might prove of some interest (see _ID_DCM_ELEM)
 	// int Swap;
@@ -117,24 +132,27 @@ public:
 	guint32 LgrElem;   // FIXME probably for bad reasons at parse time !
 	string  value;     // used to be char * valeurElem
 	size_t Offset;     // Offset from the begining of file for direct user access
-	ElValue(DictEntry*);
-	void SetVR(string);
+	ElValue(gdcmDictEntry*);
+	void   SetVR(string);
 	void SetLgrLue(guint32);
+	void SetValue(string val){ value = val; };
+	string  GetValue(void)   { return value; };
+	guint32 GetLgrElem(void) { return LgrElem; };
 	guint16 GetGroup(void)   { return entry->GetGroup(); };
 	guint16 GetElement(void) { return entry->GetElement(); };
-	guint32 GetLgrElem(void) { return LgrElem; };
-	void SetValue(string val) { value = val; };
+	string  GetKey(void)     { return entry->GetKey(); };
+	string  GetName(void)    { return entry->GetName();};
 };
 
+typedef map<TagKey, ElValue*> TagElValueHT;
 // Container for a set of succefully parsed ElValues.
-typedef map<TagKey, char*> TagHT;
 class ElValSet {
 	// We need both accesses with a TagKey and the Dicentry.Name
-////// QUESTION: this leads to a double storage of a single ElValue
-	map<TagKey, ElValue> tagHt;
-	map<string, ElValue> NameHt;
+	TagElValueHT tagHt;
+	map<string, ElValue*> NameHt;
 public:
-	int Add(ElValue);
+	int Add(ElValue*);
+	int Print(ostream &);
 };
 
 // The various entries of the explicit value representation (VR) shall
@@ -167,13 +185,14 @@ class gdcmHeader {
 private:
   	// All instances share the same valur representation dictionary
 	static VRHT *dicom_vr;
-	static DictSet* Dicts;  // Global dictionary container
-	Dict* RefPubDict;       // Public Dictionary
-	Dict* RefShaDict;       // Shadow Dictionary (optional)
+	static gdcmDictSet* Dicts;  // Global dictionary container
+	gdcmDict* RefPubDict;       // Public Dictionary
+	gdcmDict* RefShaDict;       // Shadow Dictionary (optional)
 	ElValSet PubElVals;     // Element Values parsed with Public Dictionary
 	ElValSet ShaElVals;     // Element Values parsed with Shadow Dictionary
 	FileType filetype;
 	// In order to inspect/navigate through the file
+	string filename;
 	size_t taille_fich;
 	FILE * fp;
 	size_t offsetCourant;
@@ -187,14 +206,16 @@ private:
 	bool grPixelTrouve;
 	size_t PixelPosition;
 	int sw;
+
+	void Initialise(void);
 	void CheckSwap(void);
 	void setAcrLibido(void);
 	long int RecupLgr(ElValue *, int *);
-	guint32 SWAP_LONG(guint32);
-	short int SWAP_SHORT(short int);
+	guint32 SwapLong(guint32);
+	short int SwapShort(short int);
 	void InitVRDict(void);
 	ElValue * ReadNextElement(void);
-	DictEntry * IsInDicts(guint32, guint32);
+	gdcmDictEntry * IsInDicts(guint32, guint32);
 	void SetAsidePixelData(ElValue*);
 protected:
 ///// QUESTION: Maybe Print is a better name than write !?
@@ -203,8 +224,8 @@ protected:
 /////           See below for an example of how anonymize might be implemented.
 	int anonymize(ostream&);
 public:
-	gdcmHeader();
-	gdcmHeader(string filename);
+	void BuildHeader(void);
+	gdcmHeader(char* filename);
 	~gdcmHeader();
 
 	int SetPubDict(string filename);
@@ -225,6 +246,8 @@ public:
 	// of C/C++ vs Python).
 	string GetPubElValRepByName(string TagName);
 	string GetPubElValRepByNumber(guint16 group, guint16 element);
+	int    PrintPubElVal(ostream &);
+	void   PrintPubDict(ostream &);
 	  
 	// Same thing with the shadow :
 	string* GetShaTagNames(); 
@@ -271,7 +294,7 @@ public:
 	//    This avoid a double parsing of public part of the header when
 	//    one sets an a posteriori shadow dictionary (efficiency can be
 	//    seen a a side effect).
-	gdcmFile(string filename);
+	gdcmFile(string & filename);
 	// For promotion (performs a deepcopy of pointed header object)
 	gdcmFile(gdcmHeader* header);
 	~gdcmFile();

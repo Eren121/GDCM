@@ -8,11 +8,10 @@ gdcmHeader::ReadNextElement: retarder le stockage en mem des gros elements
    comme a charger plus tard
  * a l'acces (pour le groupe des pixels par exemple) retourner au fichier
    pour trouver la bonne valeur (GetPixelData).
-   
+ * fournir une method qui ne fait que lire les elements passes en arguments
+   sous forme d'une liste.
 
 grep str2num *.c: c'est une macro sans doute proprifiable
 
 gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de suite 
 si on a deduit que c'en est pas...
-
-gdcmHeader::_IdDcmRecupLgr return type should be long int.

@@ -10,26 +10,43 @@ extern "C" {
 #include <netinet/in.h>
 #endif
 #include <map>
+#include <sstream>
+#include "gdcmUtil.h"
 
 #define LGR_ENTETE_A_LIRE 256 // on ne lit plus que le debut
-#define DEBUG 1
 
 //FIXME: this looks dirty to me...
 #define str2num(str, typeNum) *((typeNum *)(str))
 
 VRHT * gdcmHeader::dicom_vr = (VRHT*)0;
+gdcmDictSet* gdcmHeader::Dicts = new gdcmDictSet();
 
-gdcmHeader::gdcmHeader () {
+void gdcmHeader::Initialise(void) {
 	if (!gdcmHeader::dicom_vr)
 		InitVRDict();
 	bool grPixelTrouve = false;
 	PixelPosition = (size_t)0;
 	PixelsTrouves = false;
+	RefPubDict = gdcmHeader::Dicts->GetDefaultPublicDict();
+	RefShaDict = (gdcmDict*)0;
+}
+
+gdcmHeader::gdcmHeader (char* InFilename) {
+	filename = InFilename;
+	Initialise();
+	fp=fopen(InFilename,"rw");
+	dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", InFilename);
+	BuildHeader();
+	fclose(fp);
+}
+
+gdcmHeader::~gdcmHeader (void) {
+	return;
 }
 
 void gdcmHeader::InitVRDict (void) {
-	if (dicom_vr && DEBUG) {
-		printf ("InitVRDict : VR dictionary allready set\n");
+	if (dicom_vr) {
+		dbg.Verbose(0, "gdcmHeader::InitVRDict:", "VR dictionary allready set");
 		return;
 	}
 	VRHT *vr = new VRHT;
@@ -104,10 +121,10 @@ void gdcmHeader::CheckSwap()
 	entCur = deb+128;
 	if(memcmp(entCur, "DICM", (size_t)4) == 0) {
 		filetype = TrueDicom;
-		if (DEBUG) printf ("_IdDcmCheckSwap : C est du DICOM actuel \n");
+		dbg.Verbose(0, "gdcmHeader::CheckSwap:", "looks like DICOM Version3");
 	} else {
 		filetype = Unknown;
-		if (DEBUG) printf ("_IdDcmCheckSwap : Ce n'est PAS du DICOM actuel\n");
+		dbg.Verbose(0, "gdcmHeader::CheckSwap:", "not a DICOM Version3 file");
 	}
 
 	if(filetype == TrueDicom) {
@@ -117,18 +134,22 @@ void gdcmHeader::CheckSwap()
 		if(memcmp(entCur, "UL", (size_t)2) == 0) {
 			// les 2 premiers octets de la lgr peuvent valoir UL --> Explicit VR
 			filetype = ExplicitVR;
-			if (DEBUG)  printf ("_IdDcmCheckSwap : Explicit VR\n");
+			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			            "explicit Value Representation");
 		} else {
 			filetype = ImplicitVR;
-			if (DEBUG)  printf ("_IdDcmCheckSwap : PAS Explicit VR\n");
+			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			            "not an explicit Value Representation");
 		}
 		
 		if (net2host) { // HostByteOrder is different from NetworkByteOrder
 			sw = 0;    // on est sur PC ou DEC --> LITTLE-ENDIAN -> Rien a faire
-			if (DEBUG) printf("HostByteOrder = NetworkByteOrder\n");
+			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			               "HostByteOrder = NetworkByteOrder");
 		} else {    /* on est sur une Sun ou une SGI */
 			sw = 4321;
-			if (DEBUG) printf("HostByteOrder != NetworkByteOrder\n");
+			dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+			               "HostByteOrder != NetworkByteOrder");
 		}
 		
 		rewind(fp);
@@ -143,24 +164,25 @@ void gdcmHeader::CheckSwap()
 	
 	switch (s) {
 	case 0x00040000 :
-		sw=3412; if(DEBUG) printf("s : %08x sw : %d\n",s,sw);
+		sw=3412;
 		filetype = ACR;
 		break;
 	case 0x04000000 :
-		sw=4321; if(DEBUG) printf("s : %08x sw : %d\n",s,sw);
+		sw=4321;
 		filetype = ACR;
 		break;
 	case 0x00000400 :
-		sw=2143; if(DEBUG) printf("s : %08x sw : %d\n",s,sw);
+		sw=2143;
 			filetype = ACR;
 		break;
 	case 0x00000004 :
-		sw=0;    if(DEBUG) printf("s : %08x sw : %d\n",s,sw);
+		sw=0;
 		filetype = ACR;
 		break;
 	default :
 		sw = -1;
-		if (DEBUG) printf (" Pas trouve l info de Swap; On va parier\n");
+		dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+		               "unfound swap info (time to raise bets)");
 	}
 	if(sw!=-1) {
 		rewind(fp);    // les info commencent au debut
@@ -176,7 +198,8 @@ void gdcmHeader::CheckSwap()
 	//  * si on est sur une DEC ou un PC alors swap=0,
 	//  * si on est sur SUN ou SGI,      alors swap=4321
 	// Si c'est du RAW, ca degagera + tard
-	if (DEBUG) printf("On force la chance \n");
+	dbg.Verbose(0, "gdcmHeader::CheckSwap:",
+	               "time for wild guesses...");
 	
 	if (x!=ntohs(x)) // HostByteOrder is different from NetworkByteOrder
 		// on est sur PC ou DEC --> LITTLE-ENDIAN -> Rien a faire
@@ -252,11 +275,7 @@ void gdcmHeader::setAcrLibido() {
  * @return               longueur retenue pour le champ 
  */
 
-// FIXME sw n'est plus un argument necessaire
-long int gdcmHeader::RecupLgr(
-	ElValue *pleCourant,
-  	int *skippedLength)
-{
+long int gdcmHeader::RecupLgr( ElValue *pleCourant, int *skippedLength) {
 	guint32 l_gr; 
 	unsigned short int l_gr_2;
 	int i;
@@ -292,57 +311,40 @@ long int gdcmHeader::RecupLgr(
 			// mais ce n'est pas un code connu ...
 			// On reconstitue la longueur
 			
-			if(DEBUG)
-				printf("IdDcmRecupLgr : Explicit VR, mais pas de code connu\n");
+			dbg.Verbose(1, "gdcmHeader::RecupLgr:",
+							"Explicit VR, but no known code");
 			memcpy(&l_gr, VR,(size_t)2);
-			
 			lgrLue=fread ( ((char*)&l_gr)+2, (size_t)2, (size_t)1, fp);
-			
-			l_gr = SWAP_LONG((guint32)l_gr);
-			
-			if(DEBUG)
-				printf("IdDcmRecupLgr : lgr deduite : %08x , %d\n",l_gr,l_gr);
-			
+			l_gr = SwapLong((guint32)l_gr);
 			pleCourant->SetLgrLue(l_gr);
 			if ( (int)l_gr == -1)
 				l_gr=0;
 			 
 			*skippedLength = 4; 
-			if (DEBUG)
-				printf(" 1 : lgr %08x (%d )skippedLength %d\n",
-				       l_gr,l_gr, *skippedLength);
 			return(l_gr);
 		}
 		
 		// On repart dans la sequence 'sensee'
-		
-		if(DEBUG)
-			printf("VR : [%01x , %01x] (%c%c) en position %d du tableau\n",
-			        VR[0],VR[1],VR[0],VR[1],i);
-		
 		if ( (!memcmp( VR,"OB",(size_t)2 )) || 
 		     (!memcmp( VR,"OW",(size_t)2 )) || 
 		     (!memcmp( VR,"SQ",(size_t)2 )) ||
 		     (!memcmp( VR,"UN",(size_t)2 )) ) {
 			
 			// les 2 octets suivants sont reserves: on les saute
-			if(DEBUG)
-				printf("IdDcmRecupLgr : les 2 octets suivants sont reserves\n");
 			fseek(fp, 2L,SEEK_CUR);
 			
 			//on lit la lgr sur QUATRE octets
 			lgrLue=fread (&l_gr, (size_t)4,(size_t)1, fp);
-			l_gr = SWAP_LONG((guint32)l_gr);
+			l_gr = SwapLong((guint32)l_gr);
 			*skippedLength = 8;
 		
 		} else {
 			//on lit la lgr sur DEUX octets
 			lgrLue=fread (&l_gr_2, (size_t)2,(size_t)1, fp);
 			
-			if(sw) l_gr_2 = SWAP_SHORT((unsigned short)l_gr_2);
+			if(sw) l_gr_2 = SwapShort((unsigned short)l_gr_2);
 			
 			pleCourant->SetLgrLue(l_gr_2);
-			
 			
 			if ( l_gr_2 == 0xffff) {
 				l_gr = 0;
@@ -357,7 +359,7 @@ long int gdcmHeader::RecupLgr(
 		
 		lgrLue=fread (&l_gr, (size_t)4,(size_t)1, fp);
 		
-		l_gr= SWAP_LONG((long)l_gr);
+		l_gr= SwapLong((long)l_gr);
 		*skippedLength = 4;
 	}
 	
@@ -370,11 +372,8 @@ long int gdcmHeader::RecupLgr(
 	
 	if(!memcmp( VR,"SQ",(size_t)2 )) { // ca annonce une SEQUENCE d'items ?!
 		l_gr=0;                         // on lira donc les items de la sequence 
-		if (DEBUG) printf(" SQ trouve : lgr %d \n",l_gr);
 	}
 	
-	if (DEBUG)
-		printf(" 2 : lgr %08x (%d) skippedLength %d\n",l_gr,l_gr, *skippedLength);
 	return(l_gr);
 }
 
@@ -384,9 +383,11 @@ long int gdcmHeader::RecupLgr(
 
  * @return  longueur retenue pour le champ 
  */
-guint32 gdcmHeader::SWAP_LONG(guint32 a) {
+guint32 gdcmHeader::SwapLong(guint32 a) {
 	// FIXME: il pourrait y avoir un pb pour les entiers negatifs ...
 	switch (sw) {
+	case    0 :
+		break;
 	case 4321 :
 		a=(   ((a<<24) & 0xff000000) | ((a<<8)  & 0x00ff0000)    | 
 		      ((a>>8)  & 0x0000ff00) | ((a>>24) & 0x000000ff) );
@@ -400,7 +401,7 @@ guint32 gdcmHeader::SWAP_LONG(guint32 a) {
 		a=(    ((a<<8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
 		break;
 	default :
-		printf("\n\n\n *******\n erreur code swap ?!?\n\n\n");
+		dbg.Error(" gdcmHeader::SwapLong : unset swap code");
 		a=0;
 	}
 	return(a);
@@ -412,7 +413,7 @@ guint32 gdcmHeader::SWAP_LONG(guint32 a) {
 
  * @return  longueur retenue pour le champ 
  */
-short int gdcmHeader::SWAP_SHORT(short int a) {
+short int gdcmHeader::SwapShort(short int a) {
 	if ( (sw==4321)  || (sw==2143) )
 		a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
 	return (a);
@@ -439,70 +440,49 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	//CLEANME DICOM_ELEMENTS *t;
 	ElValue * nouvDcmElem;
 	
-	if (DEBUG) printf(" ===> entree ds _IdDcmReadNextElement\n");
-		
 	// FIXME la probabilte pour depasser sans s'en rendre compte
 	// est grande avec le test d'egalite' suivant !
 	if(offsetCourant == taille_fich) { // On a atteint la fin du fichier
-		if (DEBUG) printf(" On a atteint la fin du fichier\n");
+		dbg.Verbose(1, "ReadNextElement: EOF reached");
 		return(NULL);
-	} else {
-		if (DEBUG) {
-			posFich = ftell(fp);
-			printf("lgrFich %f positionDsFich %f offset courant %f\n", 
-			(float)taille_fich,
-			(float)posFich,
-			(float)offsetCourant);
-		}
-	} 
+	}
 	
 	// ------------------------- Lecture Num group : g
 	lgrLue=fread (&g, (size_t)2,(size_t)1, fp);
 	
 	if (feof(fp))  {
-		if (DEBUG) printf("_IdDcmReadNextElement : eof trouve\n");
+		dbg.Verbose(1, "ReadNextElement: EOF encountered");
 		return (NULL);
 	}
 	if (ferror(fp)){
-		if (DEBUG) printf(" IdDcmReadNextElement : echec lecture NumGr\n");
+		dbg.Verbose(1, "ReadNextElement: failed to read NumGr");
 		return (NULL);
 	}
 	
-	if (DEBUG) printf("_IdDcmReadNextElement : gr  %04x\n",g );
+	if (sw) g= SwapShort(((short)g));
 	
-	if (sw) g= SWAP_SHORT(((short)g));
-	
-	//CLEANME nouvDcmElem->Gr=g;
-	//FIXME this might be usefull for detecting at parse time that
-	//something is screwy in the file
-	//e->__NumeroGroupePrecedent =g;
-	
-
 	// ------------------------- Lecture Num Elem : n
 	lgrLue=fread (&n, (size_t)2,(size_t)1, fp);
 	
 	if (feof(fp))  {
-		if (DEBUG) printf("_IdDcmReadNextElement : eof trouve\n");
+		dbg.Verbose(1, "ReadNextElement: EOF encountered");
 		return (NULL);
 	}
 	if (ferror(fp)){
-		if (DEBUG) printf(" IdDcmReadNextElement : echec lecture NumElem\n");
+		dbg.Verbose(1, "ReadNextElement: failed to read NumElem");
 		return (NULL);
 	}
 	
-	if (DEBUG) printf("_IdDcmReadNextElement :  num %04x\n",n );
-	
-	if(sw) n= SWAP_SHORT(((short)n));
-	//CLEANMEnouvDcmElem->Num=n;
+	if(sw) n= SwapShort(((short)n));
 
 	// Find out if the tag we encountered is in the dictionaries:
-	DictEntry * NewTag = IsInDicts(g, n);
+	gdcmDictEntry * NewTag = IsInDicts(g, n);
 	if (!NewTag)
-		NewTag = new DictEntry(g, n, "Unknown", "Unknown");
+		NewTag = new gdcmDictEntry(g, n, "Unknown", "Unknown", "Unkown");
 
 	nouvDcmElem = new ElValue(NewTag);
 	if (!nouvDcmElem) {
-		printf("Echec alloc ElValue *nouvDcmElem\n");
+		dbg.Verbose(1, "ReadNextElement: failed to allocate ElValue");
 		return(NULL);
 	}
 
@@ -514,11 +494,6 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	
 	nouvDcmElem->LgrElem=l;
 	
-	if (DEBUG)
-		if (n!=0)
-			printf("_IdDcmReadNextElement : "
-			       " gr %04x\tnum %04x\tlong %08x (%d)\n", g,n,l,l);
-
 	// ------------------------- Lecture Valeur element 
 	
 	// FIXME The exact size should be l if we move to strings or whatever
@@ -527,8 +502,6 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	if(NewValue) {
 		NewValue[l]= 0;
 	} else {
-		if (DEBUG)
-			 printf(" IdDcmReadNextElement : echec Alloc valeurElem lgr : %d\n",l);
 		return (NULL);
 	}
 	
@@ -543,16 +516,13 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	// ------------------------- Doit-on le Swapper ?
 	
 	if ((n==0) && sw)  {  // n=0 : lgr du groupe : guint32
-		*(guint32 *) NewValue = SWAP_LONG ((*(guint32 *) NewValue));  
+		*(guint32 *) NewValue = SwapLong ((*(guint32 *) NewValue));  
 	} else {
 		if(sw) {
 			if ( (g/2)*2-g==0) { /* on ne teste pas les groupes impairs */
 				
 				if ((l==4)||(l==2)) {  // pour eviter de swapper les chaines 
 					                    // de lgr 2 ou 4
-					if (DEBUG) 
-						printf("Consultation Dictionary DICOM g %04x n %0xx l %d\n",
-						        g,n,l);
 					
 					// FIXME make reference to nouvDcmElem->GetTag
 					string VR = NewTag->GetVR();
@@ -564,11 +534,11 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 						
 						if(l==4) { 
 							*(guint32 *) NewValue =
-							    SWAP_LONG  ((*(guint32 *) NewValue)); 
+							    SwapLong  ((*(guint32 *) NewValue)); 
 						} else {
 							if(l==2) 
 						    *(unsigned short *) NewValue =
-						    	SWAP_SHORT ((*(unsigned short *)NewValue));
+						    	SwapShort ((*(unsigned short *)NewValue));
 						 }
 					}
 				} /* fin if l==2 ==4 */
@@ -576,7 +546,8 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 		} /* fin sw */	
 	}
 	nouvDcmElem->value = NewValue;
-	SetAsidePixelData(nouvDcmElem);
+	// CLEAN ME: simply trash the following line and postpone the process !
+	// SetAsidePixelData(nouvDcmElem);
 	return nouvDcmElem;
 }
 
@@ -618,9 +589,6 @@ void gdcmHeader::SetAsidePixelData(ElValue* elem) {
 				grPixel  = 0x7FE0;
 				numPixel = 0x0010;
 				grPixelTrouve = true;
-				if (DEBUG)
-					printf("------------------------grPixel %04x numPixel %04x\n",
-					       grPixel,numPixel);
 			}
 		} else {         // on est sur (28,200)
 			if (g == 0x0028) {
@@ -632,16 +600,10 @@ void gdcmHeader::SetAsidePixelData(ElValue* elem) {
 						*((char*)(&grPixel)+i) = *(NewValue+i); 
 					elem->SetValue(NewValue);
 					
-					if (DEBUG)
-						printf("------------------------GrPixel %04x\n", grPixel);
-					
 					if (grPixel != 0x7FE0)   // Vieux pb Philips
 						numPixel = 0x1010;    // encore utile ??
 					else
 						numPixel = 0x0010;
-					if (DEBUG)
-						printf("------------------------grPixel %04x numPixel %04x\n",
-						       grPixel,numPixel);
 				}
 			}
 		}
@@ -650,15 +612,15 @@ void gdcmHeader::SetAsidePixelData(ElValue* elem) {
 			if (n == numPixel) {
 				PixelPosition = elem->Offset; 
 				PixelsTrouves = true;
-			if (DEBUG)
-				printf(" \t===> Pixels Trouves\n");
+				dbg.Verbose(0, "gdcmHeader::SetAsidePixelData:",
+				            "Pixel data found");
 			}
 		}
 	}
 }
 
-DictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
-	DictEntry * found = (DictEntry*)0;
+gdcmDictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
+	gdcmDictEntry * found = (gdcmDictEntry*)0;
 	if (!RefPubDict && !RefShaDict) {
 		//FIXME build a default dictionary !
 		printf("FIXME in gdcmHeader::IsInDicts\n");
@@ -674,4 +636,40 @@ DictEntry * gdcmHeader::IsInDicts(guint32 group, guint32 element) {
 			return found;
 	}
 	return found;
+}
+
+string gdcmHeader::GetPubElValByNumber(unsigned short, unsigned short) {
+}
+
+/**
+ * \ingroup       gdcmHeader
+ * \brief         renvoie un pointeur sur le ID_DCM_HDR correspondant au fichier
+ * @param filename      Nom du fichier ACR / LibIDO / DICOM
+ * @return       le ID_DCM_HDR 
+ */
+ 
+void gdcmHeader::BuildHeader(void) {
+	ElValue * newElValue = (ElValue *)0;
+	
+	rewind(fp);
+	fseek(fp, 0L, SEEK_END);
+	/*
+	 * obtains the current value of the file-position    
+	 * indicator for the stream pointed to by stream      
+	 */
+	taille_fich = ftell(fp);
+	rewind(fp);
+	CheckSwap();
+	while ( (newElValue = ReadNextElement()) ) {
+		PubElVals.Add(newElValue);
+	}
+	setAcrLibido();
+}
+
+int gdcmHeader::PrintPubElVal(ostream & os) {
+	return PubElVals.Print(os);
+}
+
+void gdcmHeader::PrintPubDict(ostream & os) {
+	RefPubDict->Print(os);
 }
