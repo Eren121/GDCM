@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 11:39:59 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/01/18 14:28:32 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,6 +91,7 @@ Dict::~Dict()
  * \brief   Print all the dictionary entries contained in this dictionary.
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
+ * @param   indent indent 
  */
 void Dict::Print(std::ostream &os, std::string const & )
 {

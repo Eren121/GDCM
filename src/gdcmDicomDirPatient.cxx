@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 11:39:59 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/18 14:28:32 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,6 +53,7 @@ DicomDirPatient::~DicomDirPatient()
 /**
  * \brief   Prints the Object
  * @param os ostream to write to 
+ * @param   indent indent
  */ 
 void DicomDirPatient::Print(std::ostream &os, std::string const & )
 {

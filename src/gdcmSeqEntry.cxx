@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 12:16:10 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/01/18 14:28:32 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -192,7 +192,6 @@ SQItem *SeqEntry::GetFirstEntry()
       return *ItSQItem;
    return NULL;
 } 
-
 
 /**
  * \brief   Get the next SQItem while visiting the SeqEntry

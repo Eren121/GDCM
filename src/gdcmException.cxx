@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:41 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/18 14:28:32 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,6 +120,7 @@ std::string Exception::getName() const throw()
 /**
  * \brief Exception::operator <<
  * @param os ostream to write to
+ * @param e exception to raise
  */
  std::ostream& operator<<(std::ostream &os, const Exception &e) {
   try {  

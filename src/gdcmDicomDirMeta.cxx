@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:53:42 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/18 14:28:32 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,6 +46,7 @@ DicomDirMeta::~DicomDirMeta()
 /**
  * \brief   Prints the Meta Elements
  * @param os ostream to write to 
+ * @param   indent indent
  */ 
 void DicomDirMeta::Print(std::ostream &os, std::string const & )
 {

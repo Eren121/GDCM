@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 11:40:00 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/18 14:28:32 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ ElementSet::~ElementSet()
   * \brief   Prints the Header Entries (Dicom Elements)
   *          from the H Table
   * @param os ostream to write to  
-  * @return
+  * @param indent Indentation string to be prepended during printing
   */ 
 void ElementSet::Print(std::ostream &os, std::string const & )
 {
@@ -84,8 +84,8 @@ void ElementSet::Print(std::ostream &os, std::string const & )
 /**
   * \brief   Writes the Header Entries (Dicom Elements)
   *          from the H Table
-  * @param os ostream to write to  
-  * @return
+  * @param fp ofstream to write to  
+  * @param filetype filetype
   */ 
 void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
 {
