@@ -1,3 +1,26 @@
+2004-06-14 Jean-Pierre Roux
+   * gdcmBinEntry.cxx 
+      - adding a constructor taking a gdcmDocEntry as an input param
+	   - ReplaceOrCreateByNumber now returns :
+	      a gdcmBinEntry * if a Binary (void *) value is passed as a param
+		   a gdcmValEntry * if a string value is passed as a param
+   * dcmDocument.cxx
+      - SetEntryByNumber now allows setting gdcmValEntry or gdcmBinEntry, 
+	      according to the param type (no longer sets a gdcmDocEntry)
+	   - GetValEntryByNumber, GetBinEntryByNumber added
+      - NewValEntryByNumber and NewBinEntryByNumber added
+   * gdcmFile.cxx
+      - Pixel Data are now linked to the (7fe0,0010) elements, after reading
+   * gdcmSQItem.h
+      - GetSQItemNumber and SetSQItemNumber added, to provide 
+            a (relative) Item identier inside a given Sequence
+            \warning : some pb remaining around this number
+				will be solved asap
+      - AddEntry now takes the Item Number as a param 	
+   * gdcmValEntry.cxx 
+      - adding a constructor taking a gdcmDocEntry as an input param	
+	
+	
 2004-06-14 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * Memory leak hunt with the following command:
       valgrind --leak-check=yes --leak-resolution=high --num-callers=40
