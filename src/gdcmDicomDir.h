@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:31:09 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/02/07 14:48:34 $
+  Version:   $Revision: 1.55 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -140,7 +140,7 @@ private:
    /// Pointer on *the* DicomDirObject 'DicomDirMeta Elements'
    DicomDirMeta* MetaElems;
 
-   /// Chained list of DicomDirPatient (to be exploited recursively) 
+   /// Chained list of DicomDirPatient (to be exploited hierarchicaly) 
    ListDicomDirPatient Patients;
    ListDicomDirPatient::iterator ItPatient;
 

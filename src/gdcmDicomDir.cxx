@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:31:09 $
-  Version:   $Revision: 1.129 $
+  Date:      $Date: 2005/02/07 14:48:34 $
+  Version:   $Revision: 1.130 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,7 +96,7 @@
 // PATIENT                     STUDY
 // STUDY                       SERIES 
 // SERIES                      IMAGE
-// IMAGE
+// IMAGE                       /
 //
 // DicomDir::CreateDicomDir will have to be completed
 // Treelike structure management will have to be upgraded

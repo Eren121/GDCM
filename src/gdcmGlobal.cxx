@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/02/07 14:48:34 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,10 +40,10 @@ const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
 const std::string GDCM_UNREAD    = "gdcm::UnRead";
 
 //-----------------------------------------------------------------------------
-DictSet         *Global::Dicts  = (DictSet *)0;
-VR              *Global::ValRes     = (VR *)0;
-TS              *Global::TranSyn     = (TS *)0;
-DicomDirElement *Global::ddElem = (DicomDirElement *)0;
+DictSet         *Global::Dicts   = (DictSet *)0;
+VR              *Global::ValRes  = (VR *)0;
+TS              *Global::TranSyn = (TS *)0;
+DicomDirElement *Global::ddElem  = (DicomDirElement *)0;
 
 //-----------------------------------------------------------------------------
 /**

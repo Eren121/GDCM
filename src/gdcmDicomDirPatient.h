@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 16:51:36 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/02/07 14:48:34 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ public:
 
 private:
 
-   /// chained list of DicomDirStudy  (to be exploited recursively)
+   /// chained list of DicomDirStudy  (to be exploited hierarchicaly)
    ListDicomDirStudy Studies;
    /// iterator on the DicomDirStudies of the current DicomDirPatient
    ListDicomDirStudy::iterator ItStudy;

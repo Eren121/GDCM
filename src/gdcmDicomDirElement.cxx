@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/02/07 14:48:34 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,8 +108,9 @@ DicomDirElement::~DicomDirElement()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief Add an entry 
- * @param type type
+ * \brief Add an entry to one of the DicomDir Elements 
+ *        (Patient, Study, Serie, Image)
+ * @param type Element type (DD_PATIENT, DD_STUDY, DD_SERIE, DD_IMAGE) 
  * @param elem elem
  */
 bool DicomDirElement::AddEntry(DicomDirType type, Element const &elem)
@@ -137,6 +138,22 @@ bool DicomDirElement::AddEntry(DicomDirType type, Element const &elem)
    return true;
 }
 
+/**
+ * \brief Add an entry to one of the DicomDir Elements 
+ *        (Patient, Study, Serie, Image)
+ * @param type Element type (DD_PATIENT, DD_STUDY, DD_SERIE, DD_IMAGE) 
+ * @param group  Group number of the entry to be added
+ * @param elem Element number of the entry to be added
+ */
+void DicomDirElement::AddDicomDirElement(DicomDirType type,
+                                         uint16_t group, uint16_t elem)
+{
+   Element el;
+   el.Group = group;
+   el.Elem  = elem;
+   el.Value = "";
+   AddEntry(type, el);
+}
 //-----------------------------------------------------------------------------
 // Protected
 

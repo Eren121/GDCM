@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:31:09 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/02/07 14:48:34 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,13 @@ class DicomDirSerie;
 //-----------------------------------------------------------------------------
 typedef std::list<DicomDirSerie *> ListDicomDirSerie;
 
+/*
+// For future use (Full DICOMDIR)
+typedef std::list<DicomDirVisit *> ListDicomDirVisit;
+typedef std::list<DicomDirResult *> ListDicomDirResult;
+typedef std::list<DicomDirStudyComponent *> ListDicomDirStudyComponent;
+
+*/
 //-----------------------------------------------------------------------------
 /**
  * \brief   describes a STUDY within a within a PATIENT
@@ -50,14 +57,46 @@ public:
    DicomDirSerie *GetFirstSerie();
    DicomDirSerie *GetNextSerie();
    DicomDirSerie *GetLastSerie();
+
+/*
+   // for future use (Full DICOMDIR)
+
+   DicomDirVisit *GetFirstVisit();
+   DicomDirVisit *GetNextVisit();
+
+   DicomDirResult *GetFirstResult();
+   DicomDirResult *GetNextResult();
+
+   DicomDirStudyComponent *GetFirstStudyComponent();
+   DicomDirStudyComponent *GetNextStudyComponent();
+
+*/
     
 private:
 
-   /// chained list of DicomDirSeries (to be exploited recursively)
+   /// chained list of DicomDirSeries (to be exploited hierarchicaly)
    ListDicomDirSerie Series;
    /// iterator on the DicomDirSeries of the current DicomDirStudy
    ListDicomDirSerie::iterator ItSerie;
 
+/*
+   // for future use (Full DICOMDIR)
+
+   /// chained list of DicomDirVisits(single level)
+   ListDicomDirVisit Visits;
+   /// iterator on the DicomDirVisits of the current DicomDirStudy
+   ListDicomDirVisit::iterator ItVisit;
+
+   /// chained list of DicomDirResults(single level)
+   ListDicomDirResult Results;
+   /// iterator on the DicomDirResults of the current DicomDirStudy
+   ListDicomDirResult::iterator ItResult;
+
+   /// chained list of DicomDirStudyComponents(single level)
+   ListDicomDirStudyComponent StudyComponents;
+   /// iterator on the DicomDirStudyComponents of the current DicomDirStudy
+   ListDicomDirStudyComponent::iterator ItStudyComponents;
+*/
 };
 } // end namespace gdcm
 
