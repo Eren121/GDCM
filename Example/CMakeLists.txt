@@ -20,6 +20,7 @@ SET(EXAMPLE_SOURCES
   TestWrite
   TestWriteSimple
   Volume2Dicom
+  WriteDicomSimple
   Write
   WriteRead
   WriteDicom

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/09 10:59:59 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/12/09 11:31:52 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.4 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.5 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -95,28 +95,28 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
    int *dim = image->GetDimensions();
 
    str.str("");
-   str<<dim[0];
+   str << dim[0];
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0011);
 
    str.str("");
-   str<<dim[1];
+   str << dim[1];
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0010);
 
    if(dim[2]>1)
    {
       str.str("");
-      str<<dim[2];
+      str << dim[2];
       file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0012);
    }
 
    // Pixel type
    str.str("");
-   str<<image->GetScalarSize()*8;
+   str << image->GetScalarSize()*8;
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0100);
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0101);
 
    str.str("");
-   str<<image->GetScalarSize()*8-1;
+   str << image->GetScalarSize()*8-1;
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0102);
 
    // Pixel Repr
@@ -128,44 +128,44 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
        image->GetScalarType() == VTK_UNSIGNED_INT ||
        image->GetScalarType() == VTK_UNSIGNED_LONG )
    {
-      str<<"0"; // Unsigned
+      str << "0"; // Unsigned
    }
    else
    {
-      str<<"1"; // Signed
+      str << "1"; // Signed
    }
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0103);
 
    // Samples per pixel
    str.str("");
-   str<<image->GetNumberOfScalarComponents();
+   str << image->GetNumberOfScalarComponents();
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0002);
 
    // Spacing
    double *sp = image->GetSpacing();
 
    str.str("");
-   str<<sp[0]<<"\\"<<sp[1];
+   str << sp[0] << "\\" << sp[1];
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0030);
    str.str("");
-   str<<sp[2];
+   str << sp[2];
    file->ReplaceOrCreateByNumber(str.str(),0x0018,0x0088);
 
    // Origin
    double *org = image->GetOrigin();
 
    str.str("");
-   str<<org[0]<<"\\"<<org[1]<<"\\"<<org[2];
+   str << org[0] << "\\" << org[1] << "\\" << org[2];
    file->ReplaceOrCreateByNumber(str.str(),0x0020,0x0032);
 
    // Window / Level
    double *rng=image->GetScalarRange();
 
    str.str("");
-   str<<rng[1]-rng[0];
+   str << rng[1]-rng[0];
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x1051);
    str.str("");
-   str<<(rng[1]+rng[0])/2.0;
+   str << (rng[1]+rng[0])/2.0;
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x1050);
 
    // Pixels
@@ -183,7 +183,7 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, ofstream *file
    (void)axis; // To avoid warning
    if(file)
    {
-      vtkErrorMacro(<< "File musn't be opened");
+      vtkErrorMacro( <<  "File musn't be opened");
       return;
    }
 
@@ -219,9 +219,9 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)
    // Write the image
    if(!dcmFile->Write(fileName))
    {
-      vtkErrorMacro(<< "File " << this->FileName << "couldn't be written by "
-                    << " the gdcm library");
-      std::cerr<<"not written \n";
+      vtkErrorMacro( << "File "  <<  this->FileName  <<  "couldn't be written by "
+                     << " the gdcm library");
+      std::cerr << "not written \n";
    }
 
    delete dcmFile;

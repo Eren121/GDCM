@@ -1,4 +1,9 @@
 2004-12-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Example/WriteDicomSimple.cxx : example to write a dicom file from nothing.
+     At this time, this image isn't readable by e-film... waiting JPR help to
+     solve it.
+
+2004-12-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmPixelReadConvert.cxx : bug fix when would forcing load of a
      DocEntry. Now use methods of the Document !
 
