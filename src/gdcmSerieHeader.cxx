@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 11:02:27 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/02/01 19:05:53 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -342,8 +342,7 @@ bool SerieHeader::ImageNumberOrdering(GdcmFileList *CoherentGdcmFileList)
 {
    int min, max, pos;
    int n = 0;//CoherentGdcmFileList.size() is a O(N) operation
-   unsigned char *partition;
-  
+
    GdcmFileList::const_iterator it = CoherentGdcmFileList->begin();
    min = max = (*it)->GetImageNumber();
 
@@ -358,37 +357,30 @@ bool SerieHeader::ImageNumberOrdering(GdcmFileList *CoherentGdcmFileList)
    if( min == max || max == 0 || max >= (n+min))
       return false;
 
-   partition = new unsigned char[n];
+   unsigned char *partition = new unsigned char[n];
    memset(partition, 0, n); 
 
    GdcmFileVector CoherentGdcmFileVector(n);
 
-   //VC++ doesn't understand what scope is !! it -> it2
-   for (GdcmFileList::const_iterator it2 = CoherentGdcmFileList->begin();
-        it2 != CoherentGdcmFileList->end(); ++it2)
+   for (it = CoherentGdcmFileList->begin();
+        it != CoherentGdcmFileList->end(); ++it)
    {
-      pos = (*it2)->GetImageNumber();
-      CoherentGdcmFileVector[pos - min] = *it2;
+      pos = (*it)->GetImageNumber();
+      CoherentGdcmFileVector[pos - min] = *it;
       partition[pos - min]++;
    }
   
-   unsigned char mult = 1;
-   for( int i=0; i<n ; i++ )
-   {
-      mult *= partition[i];
-   }
-
-   //VC++ doesn't understand what scope is !! it -> it3
+   //VC++ doesn't understand what scope is,  it -> it3
    CoherentGdcmFileList->clear();  // doesn't delete list elements, only nodes
    for ( GdcmFileVector::const_iterator it3 = CoherentGdcmFileVector.begin();
          it3 != CoherentGdcmFileVector.end(); ++it3 )
    {
       CoherentGdcmFileList->push_back( *it3 );
    }
-   CoherentGdcmFileVector.clear();  
+   CoherentGdcmFileVector.clear();
    delete[] partition;
 
-   return mult != 0;
+   return true;
 }
 
 /**
