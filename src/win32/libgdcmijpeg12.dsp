@@ -56,7 +56,7 @@ LINK32=link.exe
 # ADD LINK32 gdi32.lib kernel32.lib /nologo /dll /machine:I386 /nodefaultlib /out:"..\..\lib\libgdcmijpeg12.dll"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy    Release__libgdcmijpeg12\libgdcmijpeg12.lib    ..\..\lib\   	copy    ..\..\lib\libgdcmijpeg12.dll    ..\..\gdcmPython\   	copy    ..\..\lib\libgdcmijpeg12.dll    ..\..\vtk\ 
+PostBuild_Cmds=copy     Release__libgdcmijpeg12\libgdcmijpeg12.lib     ..\..\lib\    	copy     ..\..\lib\libgdcmijpeg12.dll     ..\..\gdcmPython\    	copy     ..\..\lib\libgdcmijpeg12.dll     ..\..\vtk\ 	copy  ..\..\lib\libgdcmijpeg12.dll            ..\..\test\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "libgdcmijpeg12 - Win32 Debug"
@@ -86,7 +86,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib msvcrtd.lib /nologo /dll /debug /machine:I386 /nodefaultlib /out:"..\..\lib\libgdcmijpeg12.dll" /pdbtype:sept
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy    Debug__libgdcmijpeg12\libgdcmijpeg12.lib    ..\..\lib\   	copy    ..\..\lib\libgdcmijpeg12.dll    ..\..\gdcmPython\   	copy    ..\..\lib\libgdcmijpeg12.dll    ..\..\vtk\ 
+PostBuild_Cmds=copy     Debug__libgdcmijpeg12\libgdcmijpeg12.lib     ..\..\lib\    	copy     ..\..\lib\libgdcmijpeg12.dll     ..\..\gdcmPython\    	copy     ..\..\lib\libgdcmijpeg12.dll     ..\..\vtk\ 	copy  ..\..\lib\libgdcmijpeg12.dll            ..\..\test\ 
 # End Special Build Tool
 
 !ENDIF 

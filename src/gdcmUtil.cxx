@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.17 2003/09/19 15:36:05 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.18 2003/09/22 08:28:43 regrain Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -139,8 +139,8 @@ char * _cleanString(char *v) {
 ///////////////////////////////////////////////////////////////////////////
 // to prevent a flashing screen when non-printable character
 
-/*char * _CreateCleanString(string s) {
-   char *d, *di, *v;
+std::string _CreateCleanString(std::string s) {
+/*   char *d, *di, *v;
    int i, l;
    v=(char*)s.c_str();
    l = strlen(v);
@@ -151,8 +151,16 @@ char * _cleanString(char *v) {
       if (!isprint(*v))
          *di = '.';
       }	
-   return d;
-}*/
+   return d;*/
+  string str=s;
+  for(int i=0;i<str.size();i++)
+  {
+    if(!isprint(str[i]))
+      str[i]='.';
+  }
+
+  return(str);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 //

@@ -65,7 +65,6 @@ void gdcmElValSet::Print(ostream & os) {
    size_t o;
    short int g, e;
    TSKey v;
-   char * d;
    string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
    
@@ -76,8 +75,7 @@ void gdcmElValSet::Print(ostream & os) {
       e = tag->second->GetElement();
       v = tag->second->GetValue();
       o = tag->second->GetOffset();
-      //d = _CreateCleanString(v);  // replace non printable characters by '.'
-      d2=v;
+      d2 = _CreateCleanString(v);  // replace non printable characters by '.'
 		 
       os << tag->first << ": ";
       os << " lgr : " << tag->second->GetLength();
@@ -97,7 +95,6 @@ void gdcmElValSet::Print(ostream & os) {
                os << "  ==>\t[" << ts->GetValue(v) << "]"; 
          }
       }              
-      //free(d);
       os << endl;
    }
 } 
