@@ -20,6 +20,7 @@ typedef  int   		gint32;
 
 #ifdef _MSC_VER
 #define GDCM_EXPORT __declspec( dllexport )
+using namespace std;
 #else
 #define GDCM_EXPORT
 #endif

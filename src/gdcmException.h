@@ -49,7 +49,7 @@ class GDCM_EXPORT gdcmException : public exception {
   
 
   /**
-   * virtual descructor makes this class dynamic
+   * virtual destructor makes this class dynamic
    */
   virtual ~gdcmException() {
   }
