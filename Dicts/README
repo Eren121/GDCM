@@ -1,0 +1,9 @@
+Sources for dicom public dictionaries:
+ * http://www.fpimage.com/Manuals/Imp/dicomdic.html
+   an html group based presentation.
+ * ftp://rsbweb.nih.gov/pub/nih-image/documents/dicom-dict.txt
+   a C syntax oriented version provided by NIH (Jim Nash)
+ * http://afni.nimh.nih.gov/afni/AFNI_Dist/afni_src.tgz
+   extract mri_dicom_hdr.c (tar zxvf afni_src.tgz afni_src/mri_dicom_hdr.c)
+   and look for the definitions of CMD_dictionary, META_dictionary,
+   ID_dictionary, PAT_dictionary...
