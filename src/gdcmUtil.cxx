@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 21:36:01 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2005/01/15 21:45:48 $
+  Version:   $Revision: 1.94 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -554,7 +554,8 @@ long GetMacAddrSys ( unsigned char *addr)
    if(status == -1)
    {
       perror("SIOCGARP");
-      exit(-1);
+      //exit(-1);
+      return -1;
    }
 
     memcpy(addr, parpreq.arp_ha.sa_data, 6);
@@ -568,6 +569,7 @@ long GetMacAddrSys ( unsigned char *addr)
 //
 //            parpreq.arp_ha.sa_data[5]);
 
+   return 0;
 #else
 #ifdef CMAKE_HAVE_NET_IF_H
    int       sd;
