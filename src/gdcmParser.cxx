@@ -1775,8 +1775,10 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
    guint16 el =Entry->GetElement(); 
      
    if (FoundLength%2) {
-      std::cout << "Warning : Tag with uneven length " << FoundLength 
-         <<  " in x(" << std::hex << gr << "," << el <<")" << std::dec << std::endl;
+      std::ostringstream s;
+      s << "Warning : Tag with uneven length " << FoundLength 
+         <<  " in x(" << std::hex << gr << "," << el <<")" << std::dec;
+      dbg.Verbose(0,s.str().c_str());
    }
       
    // Sorry for the patch!  

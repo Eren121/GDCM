@@ -651,8 +651,8 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    FILE * fp1;
    
    if (PixelRead==-1 && type != DICOMDIR) {
-      std::cout << "U never Read the pixels; U cannot write the file" 
-                << std::endl;
+/*      std::cout << "U never Read the pixels; U cannot write the file" 
+                << std::endl;*/
       return false;		   
    }
 

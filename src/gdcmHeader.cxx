@@ -458,10 +458,10 @@ size_t gdcmHeader::GetPixelOffset(void) {
    if (PixelElement) {
       return PixelElement->GetOffset();
    } else {
-      return 0;
-      std::cout << "Big trouble : Pixel Element ("
+/*      std::cout << "Big trouble : Pixel Element ("
                 << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
-                << std::endl;  
+                << std::endl;  */
+      return 0;
    }     
 }
 // TODO : unify those two (previous one and next one)
@@ -487,9 +487,9 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
    if (PixelElement) {
       return PixelElement->GetLength();
    } else {
-      std::cout << "Big trouble : Pixel Element ("
+/*      std::cout << "Big trouble : Pixel Element ("
                 << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
-                << std::endl;
+                << std::endl;*/
       return 0;
    }
 }
