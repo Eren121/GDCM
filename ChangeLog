@@ -1,3 +1,15 @@
+2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * ENH - Comment out Mathieu's (dangerous) Super Hack 
+	      for dealing with BIGENDIAN processors
+			- Move equivalent stuff to BinEntry::WriteContent
+			When necessary, 16 Bits Pixels are swapped in a small buffer
+			and then written. This avoid allocating a huge buffer, in
+			PixelWriteConveror, and avoid modifying the Pixel Area.
+			Note :
+	      Probabely, the same operation will have to be done when we want 
+	      to write image with Big Endian Transfert Syntax, 
+	      and we are working onj Little Endian Processor
+						
 2005-01-14 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocument.[h|cxx] : comment all methods concerning a flat hash
      table.

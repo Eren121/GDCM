@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 09:24:08 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/01/14 15:06:37 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -411,7 +411,7 @@ void PixelReadConvert::ConvertReorderEndianity()
 
 /**
  * \brief     Reads from disk the Pixel Data of JPEG Dicom encapsulated
- *            file and decompress it. This funciton assumes that each
+ *            file and decompress it. This function assumes that each
  *            jpeg fragment contains a whole frame (jpeg file).
  * @param     fp File Pointer
  * @return    Boolean
@@ -543,7 +543,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
    else
    {
       // other JPEG lossy not supported
-      gdcmErrorMacro( "Unknown jpeg lossy compression ");
+      gdcmErrorMacro( "Unsupported jpeg lossy compression ");
       delete [] buffer;
       return false;
    }      
@@ -641,7 +641,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
       else
       {
          // other JPEG lossy not supported
-         gdcmErrorMacro( "Unknown jpeg lossy compression ");
+         gdcmErrorMacro( "Unsupported jpeg lossy compression ");
          delete [] buffer;
          return false;
       }
@@ -1070,7 +1070,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       // [Bin|Val]Entry occurence migth have been hindered (read simply NOT
       // loaded). Hence, we first try to obtain the LUTs data from the header
       // and when this fails we read the LUTs data directely from disk.
-      /// \todo Reading a [Bin|Val]Entry directly from disk is a kludge.
+      /// \TODO Reading a [Bin|Val]Entry directly from disk is a kludge.
       ///       We should NOT bypass the [Bin|Val]Entry class. Instead
       ///       an access to an UNLOADED content of a [Bin|Val]Entry occurence
       ///       (e.g. BinEntry::GetBinArea()) should force disk access from
@@ -1083,7 +1083,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutRedData = (uint8_t*)header->GetEntryBinArea( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
-         gdcmVerboseMacro( "Unable to read red LUT data" );
+         gdcmVerboseMacro( "Unable to read Red LUT data" );
       }
 
       ////// Green round:
@@ -1091,7 +1091,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutGreenData = (uint8_t*)header->GetEntryBinArea(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
-         gdcmVerboseMacro( "Unable to read green LUT data" );
+         gdcmVerboseMacro( "Unable to read Green LUT data" );
       }
 
       ////// Blue round:
@@ -1099,7 +1099,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
       LutBlueData = (uint8_t*)header->GetEntryBinArea( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
-         gdcmVerboseMacro( "Unable to read blue LUT data" );
+         gdcmVerboseMacro( "Unable to read Blue LUT data" );
       }
    }
 
@@ -1152,7 +1152,7 @@ void PixelReadConvert::BuildLUTRGBA()
                         &lengthR, &debR, &nbitsR );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro( "Wrong red LUT descriptor" );
+      gdcmVerboseMacro( "Wrong Red LUT descriptor" );
    }
                                                                                 
    int lengthG;  // Green LUT length in Bytes
@@ -1163,7 +1163,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthG, &debG, &nbitsG );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro( "Wrong green LUT descriptor" );
+      gdcmVerboseMacro( "Wrong Green LUT descriptor" );
    }
                                                                                 
    int lengthB;  // Blue LUT length in Bytes
@@ -1174,7 +1174,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthB, &debB, &nbitsB );
    if( nbRead != 3 )
    {
-      gdcmVerboseMacro( "Wrong blue LUT descriptor" );
+      gdcmVerboseMacro( "Wrong Blue LUT descriptor" );
    }
                                                                                 
    ////////////////////////////////////////////////////////
@@ -1209,7 +1209,7 @@ void PixelReadConvert::BuildLUTRGBA()
    // if it works, we shall have to check the 3 Palettes
    // to see which byte is ==0 (first one, or second one)
    // and fix the code
-   // We give up the checking to avoid some (useless ?)overhead
+   // We give up the checking to avoid some (useless ?) overhead
    // (optimistic asumption)
    int i;
    uint8_t* a = LutRGBA + 0;

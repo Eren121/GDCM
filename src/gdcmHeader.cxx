@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 23:06:35 $
-  Version:   $Revision: 1.231 $
+  Date:      $Date: 2005/01/14 15:06:37 $
+  Version:   $Revision: 1.232 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -196,11 +196,12 @@ bool Header::Write(std::string fileName, FileType filetype)
       }
    }
 
+/*
 #ifdef GDCM_WORDS_BIGENDIAN
-   // Super Duper hack that will make gdcm a BOMB ! but should
+   // Super Super hack that will make gdcm a BOMB ! but should
    // Fix temporarily the dashboard
-   BinEntry *b = GetBinEntry(0x7fe0,0x0010);
-   if ( GetEntry(0x0028,0x0100) ==  "16")
+   BinEntry *b = GetBinEntry(GrPixel,NumPixel);
+   if ( GetPixelSize() ==  16 )
    {
       uint16_t *im16 = (uint16_t*)b->GetBinArea();
       int lgr = b->GetLength();
@@ -210,12 +211,14 @@ bool Header::Write(std::string fileName, FileType filetype)
       }
    }
 #endif //GDCM_WORDS_BIGENDIAN
+*/
 
    Document::WriteContent(fp,filetype);
 
+/*
 #ifdef GDCM_WORDS_BIGENDIAN
    // Flip back the pixel ... I told you this is a hack
-   if ( GetEntry(0x0028,0x0100) ==  "16")
+   if ( GetPixelSize() ==  16 )
    {
       uint16_t *im16 = (uint16_t*)b->GetBinArea();
       int lgr = b->GetLength();
@@ -225,6 +228,7 @@ bool Header::Write(std::string fileName, FileType filetype)
       }
    }
 #endif //GDCM_WORDS_BIGENDIAN
+*/
 
    fp->close();
    delete fp;
