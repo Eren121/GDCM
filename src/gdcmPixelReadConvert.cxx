@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/01/11 16:44:43 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,8 @@
 
 #include "gdcmDebug.h"
 #include "gdcmHeader.h"
+#include "gdcmGlobal.h"
+#include "gdcmTS.h"
 #include "gdcmPixelReadConvert.h"
 #include "gdcmDocEntry.h"
 #include "gdcmRLEFramesInfo.h"
@@ -1035,17 +1037,17 @@ void PixelReadConvert::GrabInformationsFromHeader( Header *header )
    PixelSize = header->GetPixelSize();
    PixelSign = header->IsSignedPixelData();
    SwapCode  = header->GetSwapCode();
-   TransferSyntaxType ts = header->GetTransferSyntax();
+   std::string ts = header->GetTransferSyntax();
    IsRaw =
         ( ! header->IsDicomV3() )
-     || ts == ImplicitVRLittleEndian
-     || ts == ImplicitVRLittleEndianDLXGE
-     || ts == ExplicitVRLittleEndian
-     || ts == ExplicitVRBigEndian
-     || ts == DeflatedExplicitVRLittleEndian;
-   IsJPEG2000     = header->IsJPEG2000();
-   IsJPEGLossless = header->IsJPEGLossless();
-   IsRLELossless  =  ( ts == RLELossless );
+     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
+     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndianDLXGE
+     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
+     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian
+     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian;
+   IsJPEG2000     = Global::GetTS()->IsJPEG2000(ts);
+   IsJPEGLossless = Global::GetTS()->IsJPEGLossless(ts);
+   IsRLELossless  =  Global::GetTS()->IsRLELossless(ts);
    PixelOffset     = header->GetPixelOffset();
    PixelDataLength = header->GetPixelAreaLength();
    RLEInfo  = header->GetRLEInfo();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:13 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/01/11 16:44:43 $
+  Version:   $Revision: 1.80 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,25 +36,6 @@ class Dict;
 class RLEFramesInfo;
 class JPEGFragmentsInfo;
 
-enum TransferSyntaxType {
-  ImplicitVRLittleEndian = 0,
-  ImplicitVRLittleEndianDLXGE,
-  ExplicitVRLittleEndian,
-  DeflatedExplicitVRLittleEndian,
-  ExplicitVRBigEndian,
-  JPEGBaselineProcess1,
-  JPEGExtendedProcess2_4,
-  JPEGExtendedProcess3_5,
-  JPEGSpectralSelectionProcess6_8,
-  JPEGFullProgressionProcess10_12,
-  JPEGLosslessProcess14,
-  JPEGLosslessProcess14_1,
-  JPEG2000Lossless,
-  JPEG2000,
-  RLELossless,
-  UnknownTS
-};
-
 //-----------------------------------------------------------------------------
 /**
  * \brief Derived by both Header and DicomDir
@@ -66,12 +47,8 @@ public:
    virtual bool IsReadable();
    FileType GetFileType();
 
-   TransferSyntaxType GetTransferSyntax();
+   std::string GetTransferSyntax();
 
-   bool IsJPEGLossless();
-   bool IsJPEG2000();
-   bool IsJPEG();
-   bool IsEncapsulate();
    bool IsDicomV3();
 
    RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
@@ -145,9 +122,6 @@ public:
    void LoadDocEntrySafe(DocEntry *entry);
    TagDocEntryHT *BuildFlatHashTable();
       
-// Divers
-   static std::string GetTransferSyntaxValue(TransferSyntaxType type);
-
 protected:
 // Methods
    // Constructor and destructor are protected to forbid end user 

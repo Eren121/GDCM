@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/11 16:44:43 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,6 +32,7 @@ typedef std::string TSKey;
 typedef std::string TSAtr;
 typedef std::map<TSKey, TSAtr> TSHT;    // Transfer Syntax Hash Table
 
+
 //-----------------------------------------------------------------------------
 /**
  * \brief Container for dicom 'Transfer Syntax' Hash Table
@@ -39,6 +40,26 @@ typedef std::map<TSKey, TSAtr> TSHT;    // Transfer Syntax Hash Table
  */
 class GDCM_EXPORT TS
 {
+public:
+enum SpecialType {
+  ImplicitVRLittleEndian = 0,
+  ImplicitVRLittleEndianDLXGE,
+  ExplicitVRLittleEndian,
+  DeflatedExplicitVRLittleEndian,
+  ExplicitVRBigEndian,
+  JPEGBaselineProcess1,
+  JPEGExtendedProcess2_4,
+  JPEGExtendedProcess3_5,
+  JPEGSpectralSelectionProcess6_8,
+  JPEGFullProgressionProcess10_12,
+  JPEGLosslessProcess14,
+  JPEGLosslessProcess14_1,
+  JPEG2000Lossless,
+  JPEG2000,
+  RLELossless,
+  UnknownTS
+};
+
 public:
    TS();
    ~TS();
@@ -48,6 +69,15 @@ public:
    int Count(TSKey const &key);
    TSAtr const &GetValue(TSKey const &key);
    bool IsTransferSyntax(TSKey const &key);
+   bool IsRLELossless(TSKey const &key);
+   bool IsJPEGLossless(TSKey const&key);
+   bool IsJPEG2000(TSKey const &key);
+   bool IsJPEG(TSKey const &key);
+   bool IsEncapsulate(TSKey const &key);
+
+   // This should be deprecated very soon
+   SpecialType GetSpecialTransferSyntax(TSKey const &key);
+   const char* GetSpecialTransferSyntax(SpecialType t);
 
 private:
    TSHT TsMap;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:13 $
-  Version:   $Revision: 1.173 $
+  Date:      $Date: 2005/01/11 16:44:43 $
+  Version:   $Revision: 1.174 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,41 +43,6 @@
 
 namespace gdcm 
 {
-//-----------------------------------------------------------------------------
-static const char *TransferSyntaxStrings[] =  {
-  // Implicit VR Little Endian
-  "1.2.840.10008.1.2",
-  // Implicit VR Big Endian DLX (G.E Private)
-  "1.2.840.113619.5.2",
-  // Explicit VR Little Endian
-  "1.2.840.10008.1.2.1",
-  // Deflated Explicit VR Little Endian
-  "1.2.840.10008.1.2.1.99",
-  // Explicit VR Big Endian
-  "1.2.840.10008.1.2.2",
-  // JPEG Baseline (Process 1)
-  "1.2.840.10008.1.2.4.50",
-  // JPEG Extended (Process 2 & 4)
-  "1.2.840.10008.1.2.4.51",
-  // JPEG Extended (Process 3 & 5)
-  "1.2.840.10008.1.2.4.52",
-  // JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8)
-  "1.2.840.10008.1.2.4.53",
-  // JPEG Full Progression, Non-Hierarchical (Process 10 & 12)
-  "1.2.840.10008.1.2.4.55",
-  // JPEG Lossless, Non-Hierarchical (Process 14)
-  "1.2.840.10008.1.2.4.57",
-  // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14, [Selection Value 1])
-  "1.2.840.10008.1.2.4.70",
-  // JPEG 2000 Lossless
-  "1.2.840.10008.1.2.4.90",
-  // JPEG 2000
-  "1.2.840.10008.1.2.4.91",
-  // RLE Lossless
-  "1.2.840.10008.1.2.5",
-  // Unknown
-  "Unknown Transfer Syntax"
-};
 
 //-----------------------------------------------------------------------------
 // Refer to Document::CheckSwap()
@@ -304,12 +269,12 @@ bool Document::IsReadable()
  *          value from disk when only parsing occured).
  * @return  The encountered Transfer Syntax of the current document.
  */
-TransferSyntaxType Document::GetTransferSyntax()
+std::string Document::GetTransferSyntax()
 {
    DocEntry *entry = GetDocEntry(0x0002, 0x0010);
    if ( !entry )
    {
-      return UnknownTS;
+      return GDCM_UNKNOWN;
    }
 
    // The entry might be present but not loaded (parsing and loading
@@ -324,68 +289,15 @@ TransferSyntaxType Document::GetTransferSyntax()
       if  ( transfer.length() == 0 )
       {
          // for brain damaged headers
-         return UnknownTS;
+         return GDCM_UNKNOWN;
       }
       while ( !isdigit((unsigned char)transfer[transfer.length()-1]) )
       {
          transfer.erase(transfer.length()-1, 1);
       }
-      for (int i = 0; TransferSyntaxStrings[i] != NULL; i++)
-      {
-         if ( TransferSyntaxStrings[i] == transfer )
-         {
-            return TransferSyntaxType(i);
-         }
-      }
+      return transfer;
    }
-   return UnknownTS;
-}
-
-bool Document::IsJPEGLossless()
-{
-   TransferSyntaxType r = GetTransferSyntax();
-   return    r ==  JPEGFullProgressionProcess10_12
-          || r == JPEGLosslessProcess14
-          || r == JPEGLosslessProcess14_1;
-}
-                                                                                
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEG2000 one
- * @return  True when JPEG2000 (Lossly or LossLess) found. False in all
- *          other cases.
- */
-bool Document::IsJPEG2000()
-{
-   TransferSyntaxType r = GetTransferSyntax();
-   return r == JPEG2000Lossless || r == JPEG2000;
-}
-
-/**
- * \brief   Determines if the Transfer Syntax corresponds to any form
- *          of Jpeg encoded Pixel data.
- * @return  True when any form of JPEG found. False otherwise.
- */
-bool Document::IsJPEG()
-{
-   TransferSyntaxType r = GetTransferSyntax();
-   return r == JPEGBaselineProcess1 
-     || r == JPEGExtendedProcess2_4
-     || r == JPEGExtendedProcess3_5
-     || r == JPEGSpectralSelectionProcess6_8
-     ||      IsJPEGLossless()
-     ||      IsJPEG2000();
-}
-
-/**
- * \brief   Determines if the Transfer Syntax corresponds to encapsulated
- *          of encoded Pixel Data (as opposed to native).
- * @return  True when encapsulated. False when native.
- */
-bool Document::IsEncapsulate()
-{
-   TransferSyntaxType r = GetTransferSyntax();
-   return IsJPEG() || r == RLELossless;
+   return GDCM_UNKNOWN;
 }
 
 /**
@@ -738,11 +650,6 @@ bool Document::ReplaceIfExist(std::string const &value,
 
    return true;
 } 
-
-std::string Document::GetTransferSyntaxValue(TransferSyntaxType type)
-{
-   return TransferSyntaxStrings[type];
-}
 
 //-----------------------------------------------------------------------------
 // Protected
@@ -1273,15 +1180,15 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          if (    ( newDocEntry->GetGroup()   == 0x7fe0 )
               && ( newDocEntry->GetElement() == 0x0010 ) )
          {
-             TransferSyntaxType ts = GetTransferSyntax();
-             if ( ts == RLELossless ) 
+             std::string ts = GetTransferSyntax();
+             if ( Global::GetTS()->IsRLELossless(ts) ) 
              {
                 long positionOnEntry = Fp->tellg();
                 Fp->seekg( newDocEntry->GetOffset(), std::ios::beg );
                 ComputeRLEInfo();
                 Fp->seekg( positionOnEntry, std::ios::beg );
              }
-             else if ( IsJPEG() )
+             else if ( Global::GetTS()->IsJPEG(ts) )
              {
                 long positionOnEntry = Fp->tellg();
                 Fp->seekg( newDocEntry->GetOffset(), std::ios::beg );
@@ -1669,8 +1576,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
       // big endian and proceed...
       if ( element  == 0x0000 && length16 == 0x0400 ) 
       {
-         TransferSyntaxType ts = GetTransferSyntax();
-         if ( ts != ExplicitVRBigEndian ) 
+         std::string ts = GetTransferSyntax();
+         if ( Global::GetTS()->GetSpecialTransferSyntax(ts) != TS::ExplicitVRBigEndian ) 
          {
             throw FormatError( "Document::FindDocEntryLength()",
                                " not explicit VR." );
@@ -2714,8 +2621,8 @@ void Document::ReadAndSkipEncapsulatedBasicOffsetTable()
  */
 void Document::ComputeRLEInfo()
 {
-   TransferSyntaxType ts = GetTransferSyntax();
-   if ( ts != RLELossless )
+   std::string ts = GetTransferSyntax();
+   if ( Global::GetTS()->IsRLELossless(ts) ) 
    {
       return;
    }
@@ -2812,7 +2719,8 @@ void Document::ComputeRLEInfo()
 void Document::ComputeJPEGFragmentInfo()
 {
    // If you need to, look for comments of ComputeRLEInfo().
-   if ( ! IsJPEG() )
+   std::string ts = GetTransferSyntax();
+   if ( ! Global::GetTS()->IsJPEG(ts) )
    {
       return;
    }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:13 $
-  Version:   $Revision: 1.189 $
+  Date:      $Date: 2005/01/11 16:44:43 $
+  Version:   $Revision: 1.190 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,8 @@
 =========================================================================*/
 
 #include "gdcmFile.h"
+#include "gdcmGlobal.h"
+#include "gdcmTS.h"
 #include "gdcmDocument.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
@@ -777,7 +779,7 @@ void File::SetWriteFileTypeToACR()
 void File::SetWriteFileTypeToExplicitVR()
 {
    std::string ts = Util::DicomString( 
-      Document::GetTransferSyntaxValue(ExplicitVRLittleEndian).c_str() );
+      Global::GetTS()->GetSpecialTransferSyntax(TS::ExplicitVRLittleEndian) );
 
    ValEntry *tss = CopyValEntry(0x0002,0x0010);
    tss->SetValue(ts);
@@ -788,7 +790,7 @@ void File::SetWriteFileTypeToExplicitVR()
 void File::SetWriteFileTypeToImplicitVR()
 {
    std::string ts = Util::DicomString(
-      Document::GetTransferSyntaxValue(ImplicitVRLittleEndian).c_str() );
+      Global::GetTS()->GetSpecialTransferSyntax(TS::ImplicitVRLittleEndian) );
 
    ValEntry *tss = CopyValEntry(0x0002,0x0010);
    tss->SetValue(ts);

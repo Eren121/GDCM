@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 14:39:03 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/11 16:44:42 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,6 +55,19 @@ int TestTS(int , char *[])
    std::cout << ts.IsTransferSyntax( "1.2.840.10008.1.2.5" ) << std::endl;
    // Unknown
    std::cout << ts.IsTransferSyntax( "Unknown Transfer Syntax" ) << std::endl;
+
+   // Test JPEG test:
+   std::cout << "Test TS:" << std::endl;
+   std::cout << ts.IsJPEGLossless( "1.2.840.10008.1.2.4.55") << std::endl;
+//if ( key == "1.2.840.10008.1.2.4.55"
+//        || key == "1.2.840.10008.1.2.4.57"
+//        || key == "1.2.840.10008.1.2.4.70" )
+   std::cout << ts.IsRLELossless( "1.2.840.10008.1.2.5") << std::endl;
+   std::cout << ts.IsJPEGLossless( "1.2.840.10008.1.2.5") << std::endl;
+   std::cout << ts.IsJPEG2000( "1.2.840.10008.1.2.5") << std::endl;
+   std::cout << ts.IsJPEG( "1.2.840.10008.1.2.5") << std::endl;
+   std::cout << ts.IsEncapsulate( "1.2.840.10008.1.2.5") << std::endl;
+   std::cout << ts.GetSpecialTransferSyntax( ts.GetSpecialTransferSyntax( "1.2.840.10008.1.2.5")) << std::endl;
 
    return ts.GetValue( "" ) != gdcm::GDCM_UNFOUND;
 }
