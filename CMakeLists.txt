@@ -1,5 +1,15 @@
 PROJECT(GDCM)
-CMAKE_MINIMUM_REQUIRED(VERSION 1.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
+
+#MESSAGE("MATHIEU: ${CMAKE_VERSION_RELEASE}")
+#MESSAGE("MATHIEU: ${CMAKE_VERSION}")
+#MESSAGE("MATHIEU: ${CMAKE_CACHE_RELEASE_VERSION}")
+#IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} EQUAL 2.0)
+#  IF(${CMAKE_CACHE_RELEASE_VERSION} EQUAL "patch 5")
+#    MESSAGE("MAHTIEU FOO")
+#  ENDIF(${CMAKE_CACHE_RELEASE_VERSION} EQUAL "patch 5")
+#ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} EQUAL 2.0)
+
 
 #-----------------------------------------------------------------------------
 # GDCM version number, usefull for packaging and doxygen doc:
@@ -51,6 +61,7 @@ IF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
       "${OUTPUT}\n" APPEND)
   ENDIF(GDCM_COMPILER_HAS_FUNCTION)
 ENDIF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
+
 #-----------------------------------------------------------------------------
 # Build directory on which many applications depend
 SUBDIRS(
