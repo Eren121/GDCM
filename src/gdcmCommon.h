@@ -13,6 +13,14 @@
 #pragma warning ( disable : 4786 )
 //'identifier' : decorated name length exceeded, name was truncated
 #pragma warning ( disable : 4503 )
+// C++ exception specification ignored except to indicate a 
+// function is not __declspec(nothrow)
+#pragma warning ( disable : 4290 )
+// signed/unsigned mismatch
+#pragma warning ( disable : 4018 )
+// return type for 'identifier' is '' (ie; not a UDT or reference to UDT. Will
+// produce errors if applied using infix notation
+#pragma warning ( disable : 4284 )
 #endif //_MSC_VER
 
 #ifdef __GNUC__
