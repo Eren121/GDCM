@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: GdcmToBaseline.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 15:44:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/01/20 16:31:43 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,10 +21,7 @@
 #include "vtkPNGWriter.h"
 #include "vtkWindowToImageFilter.h"
 
-
-
-
-#include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 
 #include <iostream>
 
