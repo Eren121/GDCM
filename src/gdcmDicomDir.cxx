@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 15:58:40 $
-  Version:   $Revision: 1.121 $
+  Date:      $Date: 2005/01/29 11:43:05 $
+  Version:   $Revision: 1.122 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -725,7 +725,7 @@ void DicomDir::Initialize()
  */
 void DicomDir::CreateDicomDir()
 {
-   // The list is parsed. 
+   // The SeqEntries of "Directory Record Sequence" are parsed. 
    //  When a DicomDir tag ("PATIENT", "STUDY", "SERIE", "IMAGE") is found :
    //  1 - we save the beginning iterator
    //  2 - we continue to parse
@@ -737,7 +737,7 @@ void DicomDir::CreateDicomDir()
    DocEntry *e = GetDocEntry(0x0004, 0x1220);
    if ( !e )
    {
-      gdcmVerboseMacro( "NO Directory record sequence (0x0004,0x1220)");
+      gdcmVerboseMacro( "No Directory Record Sequence (0004,1220) found");
       /// \todo FIXME: what to do when the parsed file IS NOT a DICOMDIR file ? 
       return;         
    }
@@ -745,8 +745,7 @@ void DicomDir::CreateDicomDir()
    SeqEntry *s = dynamic_cast<SeqEntry *>(e);
    if ( !s )
    {
-      gdcmVerboseMacro( "No SeqEntry present");
-      // useless : (0x0004,0x1220) IS a Sequence !
+      gdcmVerboseMacro( "Element (0004,1220) is not a Sequence ?!?");
       return;
    }
 
@@ -816,6 +815,9 @@ void DicomDir::CreateDicomDir()
          // neither an 'IMAGE' SQItem. Skip to next item.
          continue;
       }
+      if( si )
+         MoveSQItem(si,tmpSI);
+
       tmpSI=s->GetNextSQItem();
    }
    ClearEntry();
