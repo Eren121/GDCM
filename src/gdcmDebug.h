@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:26 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/07 16:26:12 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,24 +41,19 @@ class GDCM_EXPORT Debug
 public:
    Debug(int level = -1);
 
-   void SetDebug (int level);
-   void Verbose(int level, const char *msg1, const char *msg2 = "") ;
-   void Error  (bool test, const char *msg1, const char *msg2 = "");
-   void Error  (const char *msg1, const char *msg2 = "", const char *msg3 = "");
+   /// This is a global flag that controls whether any debug, warning
+   /// messages are displayed.
+   static void SetDebugLevel (int level);
+   static int  GetDebugLevel ();
 
-   void Assert(int level, bool test, const char *msg1, const char *msg2);
-   void Exit(int a);
+   static void Verbose(int level, const char *msg1, const char *msg2 = "") ;
+   static void Error  (bool test, const char *msg1, const char *msg2 = "");
+   static void Error  (const char *msg1, const char *msg2 = "", const char *msg3 = "");
 
-   static Debug &GetReference();
-
-private:
-/// warning message level to be displayed
-   int DebugLevel;
-
+   static void Assert(int level, bool test, const char *msg1, const char *msg2);
+   static void Exit  (int a);
 };
 
 } // end namespace gdcm
-/// Instance of debugging utility.
-static gdcm::Debug dbg;
 
 #endif

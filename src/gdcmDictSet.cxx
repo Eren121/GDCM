@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 12:29:17 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/01/07 16:26:12 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -220,7 +220,7 @@ std::string DictSet::BuildDictPath()
       {
          resultPath += '/';
       }
-      dbg.Verbose(1, "DictSet::BuildDictPath:",
+      Debug::Verbose(1, "DictSet::BuildDictPath:",
                      "Dictionary path set from environnement");
    } 
    else

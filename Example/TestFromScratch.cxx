@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 15:38:28 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/07 16:26:11 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
    }
 
    // Doesn't seems to do anything:
-   dbg.SetDebug(-1);
+   gdcm::Debug::SetDebugLevel(-1);
    // Doesn't link properly:
    //gdcm::Debug::GetReference().SetDebug(1);
 

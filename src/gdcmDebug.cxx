@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:26 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/07 16:26:12 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,21 +22,14 @@
 namespace gdcm 
 {
 
+/// warning message level to be displayed
+static int DebugLevel = -1;
 //-----------------------------------------------------------------------------
-/**
- * \brief   constructor
- * @param level debug level
- */ 
-Debug::Debug(int level) 
-{
-   DebugLevel = level;
-}
-
 /**
  * \brief   Accessor
  * @param   level Set the debug level
  */ 
-void Debug::SetDebug(int level) 
+void Debug::SetDebugLevel (int level) 
 {
    DebugLevel = level;
 }
@@ -53,7 +46,7 @@ void Debug::Verbose(int level, const char *msg1, const char *msg2)
    {
       return ;
    }
-   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << std::endl << std::flush;
+   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << std::endl;
 }
 
 /**
@@ -68,7 +61,7 @@ void Debug::Error(bool test, const char *msg1, const char *msg2)
    {
       return;
    }
-   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << std::endl << std::flush;
+   std::cerr << "gdcm::" << msg1 << ' ' << msg2 << std::endl;
    Exit(1);
 }
 
@@ -82,7 +75,7 @@ void Debug::Error(const char *msg1, const char *msg2,
                   const char *msg3) 
 {
    std::cerr << "gdcm::" << msg1 << ' ' << msg2 << ' ' << msg3
-             << std::endl << std::flush;
+             << std::endl;
    Exit(1);
 }
 
@@ -103,7 +96,7 @@ void Debug::Assert(int level, bool test, const char *msg1,
    if (!test)
    {
       std::cerr << "gdcm::" <<  msg1 << ' ' << msg2
-                << std::endl << std::flush;
+                << std::endl;
    }
 }
 
@@ -113,12 +106,7 @@ void Debug::Assert(int level, bool test, const char *msg1,
  */
 void Debug::Exit(int a) 
 {
-#ifdef __GNUC__
-   std::exit(a);
-#endif
-#if defined(_MSC_VER) || defined(__BORLANDC__)
    exit(a);    // Found in #include <stdlib.h>
-#endif
 }
 
 } // end namespace gdcm

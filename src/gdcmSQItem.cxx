@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/01/07 16:26:13 $
+  Version:   $Revision: 1.46 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -235,13 +235,13 @@ bool SQItem::RemoveEntry( DocEntry* entryToRemove)
       if( *it == entryToRemove)
       {
          DocEntries.erase(it);
-         dbg.Verbose(0, "SQItem::RemoveEntry: one element erased.");
+         Debug::Verbose(0, "SQItem::RemoveEntry: one element erased.");
          delete entryToRemove;
          return true;
       }
    }
                                                                                 
-   dbg.Verbose(0, "SQItem::RemoveEntry: value not present ");
+   Debug::Verbose(0, "SQItem::RemoveEntry: value not present ");
    return false ;
 }
                                                                                 
@@ -258,12 +258,12 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
       if( *it == entryToRemove)
       {
          DocEntries.erase(it);
-         dbg.Verbose(0, "SQItem::RemoveEntry: one element erased.");
+         Debug::Verbose(0, "SQItem::RemoveEntry: one element erased.");
          return true;
       }
    }
                                                                                 
-   dbg.Verbose(0, "SQItem::RemoveEntry: value not present ");
+   Debug::Verbose(0, "SQItem::RemoveEntry: value not present ");
    return false ;
 }
                                                                                 
