@@ -1,3 +1,8 @@
+2005-01-31 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Finish cleaning up my JPEG mess. Should be ok now.
+	* Getting toward a RLE very similar to JPEG. Every RLE stuff is now self
+	contained within the RLE* class(doh!)
+
 2005-01-30 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * SerieHeader::SetDirectory() allow recursive exploration of the Directory
 	* SerieHeader::AddFileName() creates as many Coherent Files lists 
