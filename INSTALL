@@ -1,5 +1,16 @@
 cd src
 make
-cd ../test
+
+For testing in C++:
+cd Test
 make
-./test
+./test ../Data/CR-MONO1-10-chest.dcm (or any other file in there)
+
+For testing in Python:
+cd python
+make  (requires SWIG Version 1.3.16u i.e. the contemporary devel version)
+python testSuite.py (test suite written in unittest)
+
+For manual test in python:
+cd python/demo
+python test.py ../../Data/CR-MONO1-10-chest.dcm (or any other file)
