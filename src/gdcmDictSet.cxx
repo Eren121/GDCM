@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:40 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/01/18 11:40:00 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -231,7 +231,9 @@ std::string DictSet::BuildDictPath()
 Dict *DictSet::GetFirstEntry()
 {
    ItDictHt = Dicts.begin();
-   return ItDictHt->second;
+   if( ItDictHt != Dicts.end() )
+      return ItDictHt->second;
+   return NULL;
 }
 
 /**
@@ -241,17 +243,12 @@ Dict *DictSet::GetFirstEntry()
  */
 Dict *DictSet::GetNextEntry()
 {
-   if (ItDictHt != Dicts.end())
-   {
-      Dict *tmp = ItDictHt->second;
-      ++ItDictHt;
-
-      return tmp;
-   }
-   else
-   {
-      return NULL;
-   }
+   gdcmAssertMacro (ItDictHt != Dicts.end());
+  
+   ++ItDictHt;
+   if ( ItDictHt != Dicts.end() )
+      return ItDictHt->second;
+   return NULL;
 }
 
 //-----------------------------------------------------------------------------

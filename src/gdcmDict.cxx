@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:49:41 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/01/18 11:39:59 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -276,7 +276,9 @@ DictEntry *Dict::GetDictEntry(uint16_t group, uint16_t elem)
 DictEntry *Dict::GetFirstEntry()
 {
    ItKeyHt = KeyHt.begin();
-   return &(ItKeyHt->second);
+   if( ItKeyHt != KeyHt.end() )
+      return &(ItKeyHt->second);
+   return NULL;
 }
 
 /**
@@ -286,17 +288,14 @@ DictEntry *Dict::GetFirstEntry()
  */
 DictEntry *Dict::GetNextEntry()
 {
-   if (ItKeyHt != KeyHt.end())
-   {
-      DictEntry *tmp = &(ItKeyHt->second);
-      ++ItKeyHt;
+   gdcmAssertMacro (ItKeyHt != KeyHt.end());
 
-      return tmp;
-   }
-   else
    {
-      return NULL;
+      ++ItKeyHt;
+      if (ItKeyHt != KeyHt.end())
+         return &(ItKeyHt->second);
    }
+   return NULL;
 }
 
 //-----------------------------------------------------------------------------

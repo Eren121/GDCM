@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:53:41 $
-  Version:   $Revision: 1.104 $
+  Date:      $Date: 2005/01/18 11:39:59 $
+  Version:   $Revision: 1.105 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -974,7 +974,9 @@ bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
 DicomDirPatient *DicomDir::GetFirstEntry()
 {
    ItDicomDirPatient = Patients.begin();
-   return *ItDicomDirPatient;
+   if ( ItDicomDirPatient != Patients.end() )
+      return *ItDicomDirPatient;
+   return NULL;
 }
 
 /**
@@ -984,16 +986,13 @@ DicomDirPatient *DicomDir::GetFirstEntry()
  */
 DicomDirPatient *DicomDir::GetNextEntry()
 {
-   if (ItDicomDirPatient != Patients.end())
+   gdcmAssertMacro (ItDicomDirPatient != Patients.end());
    {
-      DicomDirPatient *tmp = *ItDicomDirPatient;
       ++ItDicomDirPatient;
-      return tmp;
+      if ( ItDicomDirPatient != Patients.end() )
+         return *ItDicomDirPatient;
    }
-   else
-   {
-      return NULL;
-   }
+   return NULL;
 }
 
 

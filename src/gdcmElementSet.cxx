@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:41 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/18 11:40:00 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -167,7 +167,9 @@ bool ElementSet::RemoveEntryNoDestroy(DocEntry *entryToRemove)
 DocEntry *ElementSet::GetFirstEntry()
 {
    ItTagHT = TagHT.begin();
-   return ItTagHT->second;
+   if (ItTagHT != TagHT.end())
+      return  ItTagHT->second;
+   return NULL;
 }
 
 /**
@@ -177,17 +179,12 @@ DocEntry *ElementSet::GetFirstEntry()
  */
 DocEntry *ElementSet::GetNextEntry()
 {
-   if (ItTagHT != TagHT.end())
-   {
-      DocEntry *tmp = ItTagHT->second;
-      ++ItTagHT;
+   gdcmAssertMacro (ItTagHT != TagHT.end());
 
-      return tmp;
-   }
-   else
-   {
-      return NULL;
-   }
+   ++ItTagHT;
+   if (ItTagHT != TagHT.end())
+      return  ItTagHT->second;
+   return NULL;
 }
 
 //-----------------------------------------------------------------------------

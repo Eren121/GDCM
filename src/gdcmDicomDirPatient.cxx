@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:53:42 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/01/18 11:39:59 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #include "gdcmGlobal.h"
 #include "gdcmDicomDirStudy.h"
 #include "gdcmSQItem.h"
+#include "gdcmDebug.h"
 
 namespace gdcm 
 {
@@ -109,7 +110,9 @@ DicomDirStudy* DicomDirPatient::NewStudy()
 DicomDirStudy *DicomDirPatient::GetFirstEntry()
 {
    ItDicomDirStudy = Studies.begin();
-   return *ItDicomDirStudy;
+   if (ItDicomDirStudy != Studies.end())
+      return *ItDicomDirStudy;
+   return NULL;
 }
 
 /**
@@ -119,16 +122,13 @@ DicomDirStudy *DicomDirPatient::GetFirstEntry()
  */
 DicomDirStudy *DicomDirPatient::GetNextEntry()
 {
-   if (ItDicomDirStudy != Studies.end())
+   gdcmAssertMacro (ItDicomDirStudy != Studies.end())
    {
-      DicomDirStudy *tmp = *ItDicomDirStudy;
       ++ItDicomDirStudy;
-      return tmp;
+      if (ItDicomDirStudy != Studies.end())
+         return *ItDicomDirStudy;
    }
-   else
-   {
-      return NULL;
-   }
+   return NULL;
 }
 //-----------------------------------------------------------------------------
 // Protected
