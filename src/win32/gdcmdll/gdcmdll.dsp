@@ -58,7 +58,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy  ..\..\..\python\gdcmdll.dll  ..\..\..\test\ 
+PostBuild_Cmds=copy   ..\..\..\python\gdcmdll.dll   ..\..\..\test\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmdll - Win32 Debug"
@@ -90,7 +90,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy  ..\..\..\python\gdcmdll.dll  ..\..\..\test\ 
+PostBuild_Cmds=copy   ..\..\..\python\gdcmdll.dll   ..\..\..\test\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -140,6 +140,10 @@ SOURCE=..\..\gdcmHeaderIdo.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\gdcmJpeg.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\gdcmUtil.cxx
 # End Source File
 # End Group
@@ -150,10 +154,6 @@ SOURCE=..\..\gdcmUtil.cxx
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-# Begin Source File
-
-SOURCE="C:\creatis\glib-1.3\src\glib\glib-1.3.lib"
-# End Source File
 # End Group
 # End Target
 # End Project

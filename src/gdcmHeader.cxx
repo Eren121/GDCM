@@ -13,7 +13,7 @@
 #include "gdcmUtil.h"
 #include "gdcmHeader.h"
 
-#include <iddcmjpeg.h>
+#include "iddcmjpeg.h"
 
 // Refer to gdcmHeader::CheckSwap()
 #define HEADER_LENGTH_TO_READ       256

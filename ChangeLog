@@ -4,6 +4,9 @@
         un*ces with sh-utils test utility.
       * gdcmPython/demo/test.py renamed to PrintHeader.py
       * gdcmPython/demo/ReorganiseFiles.py new demo script added.
+      * gdcmPython/win32/gdcmpycomplet.dsp renamed to gdcmpyembedded.dsp.
+      * gdcmPython/win32/gdcmpy.dsp trashed away (brain damaged).
+      * src/gdcm*.cxx JPR's bad inclusion fixed.
 
 2003-03-26 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader[h, cxx] gdcmHeader now has an IsReadable predicate.

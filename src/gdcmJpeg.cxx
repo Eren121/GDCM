@@ -1,4 +1,4 @@
-#include <iddcmjpeg.h>
+#include "iddcmjpeg.h"
 #include <stdlib.h>	
 	
 static ClbJpeg* ClbJpegAlloc(void);
