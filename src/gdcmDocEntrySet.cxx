@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:19:48 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/07 22:22:02 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -149,22 +149,30 @@ DictEntry *DocEntrySet::GetDictEntryByNumber(uint16_t group, uint16_t elem,
 {
    DictEntry *dictEntry = GetDictEntryByNumber(group,elem);
    DictEntry *goodEntry = dictEntry;
-   std::string goodVR=vr;
+   std::string goodVR = vr;
 
-   if (elem==0x0000)
-      goodVR="UL";
+   if (elem==0x0000) goodVR="UL";
 
    if (goodEntry)
-      if (goodEntry->GetVR() != goodVR && goodVR!=GDCM_UNKNOWN)
+   {
+      if ( goodEntry->GetVR() != goodVR 
+        && goodVR != GDCM_UNKNOWN )
+      {
          goodEntry=NULL;
+      }
+   }
 
    // Create a new virtual DictEntry if necessary
    if (!goodEntry)
    {
       if (dictEntry)
+      {
          goodEntry = NewVirtualDictEntry(group, elem, goodVR,"FIXME",dictEntry->GetName());
+      }
       else
+      {
          goodEntry = NewVirtualDictEntry(group, elem, goodVR);
+      }
    }
 
    return goodEntry;
