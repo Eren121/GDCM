@@ -79,7 +79,7 @@ void gdcmElValSet::Print(ostream & os) {
       os << tag->first << ": ";
       os << " lgr : " << tag->second->GetLength();
       os << ", Offset : " << o;
-      os << " x(" << hex << o << dec << ") ";
+      os << " x(" << std::hex << o << std::dec << ") ";
       os << "\t[" << tag->second->GetVR()    << "]";
       os << "\t[" << tag->second->GetName()  << "]";       
       os << "\t[" << d2 << "]";
@@ -405,7 +405,7 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
       val = tag2->second->GetValue().c_str();
       vr =  tag2->second->GetVR();
       
-     // cout << "Tag "<< hex << gr << " " << el << std::endl;
+     // cout << "Tag "<< std::hex << gr << " " << el << std::endl;
 
       if ( type == ACR ) { 
          if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups

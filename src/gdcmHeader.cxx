@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.87 2003/09/24 13:36:15 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.88 2003/09/24 13:45:11 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -1764,7 +1764,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    void * a = malloc(l);
    if(!a) {
    	cout << "Big Broblem (LoadElementVoidArea, malloc) " 
-   	     << hex << Group << " " << Elem << std::endl;
+   	     << std::hex << Group << " " << Elem << std::endl;
    	return NULL;
    }  
    int res = PubElValSet.SetVoidAreaByNumber(a, Group, Elem);
@@ -1772,7 +1772,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) {
    	cout << "Big Broblem (LoadElementVoidArea, fread) " 
-   	     << hex << Group << " " << Elem << std::endl;
+   	     << std::hex << Group << " " << Elem << std::endl;
    	free(a);
    	return NULL;
    }  

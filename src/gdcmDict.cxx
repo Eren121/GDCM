@@ -84,8 +84,8 @@ void gdcmDict::Print(std::ostream& os) {
 void gdcmDict::PrintByKey(std::ostream& os) {
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag){
       os << "Tag : ";
-      os << "(" << hex << tag->second->GetGroup() << ',';
-      os << hex << tag->second->GetElement() << ") = " << dec;
+      os << "(" << std::hex << tag->second->GetGroup() << ',';
+      os << std::hex << tag->second->GetElement() << ") = " << std::dec;
       os << tag->second->GetVR() << ", ";
       os << tag->second->GetFourth() << ", ";
       os << tag->second->GetName() << "."  << std::endl;
@@ -105,7 +105,7 @@ void gdcmDict::PrintByName(std::ostream& os) {
       os << tag->second->GetVR() << ", ";
       os << tag->second->GetFourth() << ", ";
       os << "(" << std::hex << tag->second->GetGroup() << ',';
-      os << std::hex << tag->second->GetElement() << ") = " << dec << std::endl;
+      os << std::hex << tag->second->GetElement() << ") = " << std::dec << std::endl;
    }
 }
 
