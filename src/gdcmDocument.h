@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/03 04:16:29 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/09/03 07:57:10 $
+  Version:   $Revision: 1.34 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,10 +50,6 @@ private:
    /// \brief Optional "shadow dictionary" (private elements) used to parse
    /// this header
    gdcmDict *RefShaDict;
-   
-   /// \brief Equals =1 if user wants to skip shadow groups while parsing
-   /// (to save space)
-   int IgnoreShadow;
 
    /// \brief Size threshold above which an element value will NOT be loaded
    /// in memory (to avoid loading the image/volume itself). By default,

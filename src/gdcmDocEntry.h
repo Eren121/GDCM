@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/09/03 07:57:10 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ public:
    std::string  GetVR()        { return DictEntry->GetVR();     };
 
    /// \brief Returns offset (since the beginning of the file, including
-   /// the File Pramble, if any) of the value of the current Dicom HeaderEntry
+   /// the File Preamble, if any) of the value of the current Dicom HeaderEntry
    /// \warning offset of the *value*, not of the Dicom Header Entry
    size_t       GetOffset()    { return Offset;             };
 
@@ -104,7 +104,7 @@ public:
    bool IsImplicitVR() { return ImplicitVR; };
 
    /// \brief Tells us if the VR of the current Dicom Element is Unknown
-   /// @return true if the VR is unkonwn
+   /// @return true if the VR is unknown
    bool IsVRUnknown() { return DictEntry->IsVRUnknown(); };
 
    /// \brief   Sets the DicEntry of the current Dicom Element

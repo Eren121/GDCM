@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/01 16:23:59 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2004/09/03 07:57:10 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -131,20 +131,23 @@ private:
   ///        ==-1 if ImageData never read                       
    int PixelRead;
    
+  /// wether already parsed 
+   bool Parsed;
+      
   /// \brief length of the last allocated area devoided to receive Pixels
   ///        ( to allow us not to (free + new) if un necessary )     
    size_t LastAllocatedPixelDataLength; 
    
-   /// \brief Samples Per Pixel           (0x0028,0x0002), as found on disk
+  /// \brief Samples Per Pixel           (0x0028,0x0002), as found on disk
    std::string InitialSpp;
-   /// \brief Photometric Interpretation  (0x0028,0x0004), as found on disk
+  /// \brief Photometric Interpretation  (0x0028,0x0004), as found on disk
    std::string InitialPhotInt;
-   /// \brief Planar Configuration        (0x0028,0x0006), as found on disk   
+  /// \brief Planar Configuration        (0x0028,0x0006), as found on disk   
    std::string InitialPlanConfig;    
-   /// \brief Bits Allocated              (0x0028,0x0100), as found on disk
+  /// \brief Bits Allocated              (0x0028,0x0100), as found on disk
    std::string InitialBitsAllocated;
-   /// wether already parsed 
-   bool Parsed;
+   
+
 };
 
 //-----------------------------------------------------------------------------
