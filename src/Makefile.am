@@ -30,7 +30,7 @@ libgdcm_la_SOURCES=                \
    gdcmJpeg2000.cxx                \
    gdcmRLE.cxx                     \
    gdcmParsePixels.cxx             \
-   gdcmDICOMDIR.cxx                \
+   gdcmDicomDir.cxx                \
    gdcmObject.cxx                  \
    gdcmPatient.cxx                 \
    gdcmStudy.cxx                   \
@@ -52,7 +52,7 @@ libgdcminclude_HEADERS =                \
 	gdcmVR.h                        \
 	gdcmTS.h                        \
 	gdcmFile.h                      \
-	gdcmDICOMDIR.h                  \
+	gdcmDicomDir.h                  \
 	gdcmObject.h                    \
 	gdcmPatient.h                   \
 	gdcmStudy.h                     \

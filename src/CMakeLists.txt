@@ -27,7 +27,7 @@ SET(libgdcm_la_SOURCES
 	gdcmJpeg2000.cxx
 	gdcmRLE.cxx
 	gdcmParse.cxx
-	gdcmDICOMDIR.cxx
+	gdcmDicomDir.cxx
 	gdcmPatient.cxx
 	gdcmStudy.cxx
 	gdcmSequence.cxx
