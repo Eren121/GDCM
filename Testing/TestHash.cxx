@@ -15,7 +15,7 @@ int main() {
   tb1["00380010"] = "Admission ID";
 
 	std::cout << "Traversal of dictionary (note the proper ordering on key)." << std::endl;
-	for ( dict::iterator im = tb1.begin(); im != tb1.end(); ++im )
+	for ( im = tb1.begin(); im != tb1.end(); ++im )
 		std::cout << "   \"" << im->first << "\" = " << im->second << std::endl;
  	std::cout << "End of dictionary." << std::endl;
 
