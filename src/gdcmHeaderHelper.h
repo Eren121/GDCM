@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.2 2003/09/09 08:46:32 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.3 2003/09/11 13:44:17 jpr Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
@@ -8,15 +8,51 @@
 #include <string>
 #include <vector>
 
+   // Dicom Part 3.3 Compliant
    enum ModalityType {
       Unknow,
-      CR,
-      CT,
-      MR,
-      NM,
-      OT,
-      US,
-      XA };
+      AU,       // Voice Audio
+      AS,       // Angioscopy
+      BI,       // Biomagnetic Imaging
+      CF,       // Cinefluorography
+      CP,       // Culposcopy
+      CR,       // Computed Radiography
+      CS,       // Cystoscopy
+      CT,       // Computed Tomography
+      DD,       // Duplex Dopler
+      DF,       // Digital Fluoroscopy
+      DG,       // Diaphanography
+      DM,       // Digital Microscopy
+      DS,       // Digital Substraction Angiography
+      DX,       // Digital Radiography
+      ECG,      // Echocardiography
+      EPS,      // Basic Cardiac EP
+      ES,       // Endoscopy
+      FA,       // Fluorescein Angiography
+      FS,       // Fundoscopy
+      HC,       // Hard Copy
+      HD,       // Hemodynamic
+      LP,       // Laparoscopy
+      LS,       // Laser Surface Scan
+      MA,       // Magnetic Resonance Angiography
+      MR,       // Magnetic Resonance
+      NM,       // Nuclear Medicine
+      OT,       // Other
+      PT,       // Positron Emission Tomography
+      RF,       // Radio Fluoroscopy
+      RG,       // Radiographic Imaging
+      RTDOSE,   // Radiotherapy Dose
+      RTIMAGE,  // Radiotherapy Image
+      RTPLAN,   // Radiotherapy Plan
+      RTSTRUCT, // Radiotherapy Structure Set
+      SM,       // Microscopic Imaging
+      ST,       // Single-photon Emission Computed Tomography
+      TG,       // Thermography
+      US,       // Ultrasound
+      VF,       // Videofluorography
+      XA,       // X-Ray Angiography
+      XC        // Photographic Imaging
+    };
       
 /**
   This class is meant to *interpret* data given from gdcmHeader

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.2 2003/09/09 08:46:32 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.3 2003/09/11 13:44:17 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -358,34 +358,47 @@ int gdcmHeaderHelper::GetImageNumber() {
 ModalityType gdcmHeaderHelper::GetModality(void) {
   string StrModality = GetPubElValByNumber(0x0008,0x0060); //0008 0060 CS ID Modality
   if (StrModality != "gdcm::Unfound") {
-    if ( StrModality.find("CR") < StrModality.length())
-    {
-      return CR;
-    }
-    else if ( StrModality.find("CT") < StrModality.length() )
-    {
-      return CT;
-    }
-    else if ( StrModality.find("MR") < StrModality.length())
-    {
-      return MR;
-    }
-    else if ( StrModality.find("NM") < StrModality.length())
-    {
-      return NM;
-    }
-    else if ( StrModality.find("OT") < StrModality.length())
-    {
-      return OT;
-    }
-    else if ( StrModality.find("US") < StrModality.length())
-    {
-      return US;
-    }
-    else if ( StrModality.find("XA") < StrModality.length())
-    {
-      return XA;
-    }
+         if ( StrModality.find("AU") < StrModality.length()) return AU;
+    else if ( StrModality.find("AS") < StrModality.length()) return AS;
+    else if ( StrModality.find("BI") < StrModality.length()) return BI;
+    else if ( StrModality.find("CF") < StrModality.length()) return CF;
+    else if ( StrModality.find("CP") < StrModality.length()) return CP;
+    else if ( StrModality.find("CR") < StrModality.length()) return CR;
+    else if ( StrModality.find("CT") < StrModality.length()) return CT;
+    else if ( StrModality.find("CS") < StrModality.length()) return CS;
+    else if ( StrModality.find("DD") < StrModality.length()) return DD;
+    else if ( StrModality.find("DF") < StrModality.length()) return DF;
+    else if ( StrModality.find("DG") < StrModality.length()) return DG;
+    else if ( StrModality.find("DM") < StrModality.length()) return DM;
+    else if ( StrModality.find("DS") < StrModality.length()) return DS;
+    else if ( StrModality.find("DX") < StrModality.length()) return DX;
+    else if ( StrModality.find("ECG") < StrModality.length()) return ECG;
+    else if ( StrModality.find("EPS") < StrModality.length()) return EPS;
+    else if ( StrModality.find("FA") < StrModality.length()) return FA;
+    else if ( StrModality.find("FS") < StrModality.length()) return FS;
+    else if ( StrModality.find("HC") < StrModality.length()) return HC;
+    else if ( StrModality.find("HD") < StrModality.length()) return HD;
+    else if ( StrModality.find("LP") < StrModality.length()) return LP;
+    else if ( StrModality.find("LS") < StrModality.length()) return LS;
+    else if ( StrModality.find("MA") < StrModality.length()) return MA;
+    else if ( StrModality.find("MR") < StrModality.length()) return MR;
+    else if ( StrModality.find("NM") < StrModality.length()) return NM;
+    else if ( StrModality.find("OT") < StrModality.length()) return OT;
+    else if ( StrModality.find("PT") < StrModality.length()) return PT;
+    else if ( StrModality.find("RF") < StrModality.length()) return RF;
+    else if ( StrModality.find("RG") < StrModality.length()) return RG;
+    else if ( StrModality.find("RTDOSE")   < StrModality.length()) return RTDOSE;
+    else if ( StrModality.find("RTIMAGE")  < StrModality.length()) return RTIMAGE;
+    else if ( StrModality.find("RTPLAN")   < StrModality.length()) return RTPLAN;
+    else if ( StrModality.find("RTSTRUCT") < StrModality.length()) return RTSTRUCT;
+    else if ( StrModality.find("SM") < StrModality.length()) return SM;
+    else if ( StrModality.find("ST") < StrModality.length()) return ST;
+    else if ( StrModality.find("TG") < StrModality.length()) return TG;
+    else if ( StrModality.find("US") < StrModality.length()) return US;
+    else if ( StrModality.find("VF") < StrModality.length()) return VF;
+    else if ( StrModality.find("XA") < StrModality.length()) return XA;
+    else if ( StrModality.find("XC") < StrModality.length()) return XC;
+
     else
     {
       //throw error return value ???
