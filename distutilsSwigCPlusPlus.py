@@ -27,9 +27,9 @@ class mybuild_ext(build_ext):
 		# taken into account
 		if self.swig_include==None:self.swig_include=ext.swig_include
 		if self.swig_cpp==None:self.swig_cpp=ext.swig_cpp
-				
+
 		build_ext.build_extension(self,ext)
-	
+
 	def swig_sources (self, sources):
 
 		"""Walk the list of source files in 'sources', looking for SWIG
@@ -69,7 +69,7 @@ class mybuild_ext(build_ext):
 			return new_sources
 
 		swig = self.find_swig()
-		
+
 		## Modified lines (compared to buil_exts.wig_sources original method)
 		swig_cmd = [swig, "-python"]
 		if self.swig_cpp:
@@ -84,26 +84,36 @@ class mybuild_ext(build_ext):
 			target = swig_targets[source]
 			self.announce("swigging %s to %s" % (source, target))
 			self.spawn(swig_cmd + ["-o", target, source])
-			print swig_cmd + ["-o", target, source]
 			## Modified lines (compared to buil_exts.wig_sources original method)
-	      # When swig generated some shadow classes, place them under
-	      # self.build_lib (the build directory for Python source).
-			import string
-			swig_shadow = string.split(os.path.basename(source), ".")[0]
-			swig_shadow = swig_shadow + '.py'
-			infile      = os.path.join(os.path.dirname(source), swig_shadow)
-			if os.path.isfile(infile):
-				outfile = [self.build_lib, self.distribution.get_name()]
-				outfile.append(swig_shadow)
-				outfile = apply(os.path.join, outfile)
-				self.copy_file(infile, outfile, preserve_mode=0)
+			# When swig generated some shadow classes, place them under
+			# self.build_lib (the build directory for Python source).
+			if self.swig_cpp:
+				# Generate the full pathname of the shadow classes file
+				import string
+				swig_shadow = string.split(os.path.basename(source), ".")[0]
+				swig_shadow = swig_shadow + '.py'
+				# On win32 swig places the shadow classes in the directory
+				# where it was invoked. This is to be opposed to posix where
+				# swig places the shadow classes aside the C++ wrapping code
+				# (the target in our context).
+				if(os.name=='posix'):
+					infile = os.path.join(os.path.dirname(source), swig_shadow)
+				else:
+					infile = swig_shadow
+				if os.path.isfile(infile):
+					outfile = [self.build_lib, self.distribution.get_name()]
+					outfile.append(swig_shadow)
+					outfile = apply(os.path.join, outfile)
+					self.copy_file(infile, outfile, preserve_mode=0)
+				else:
+					self.announce("Warning: swig shadow classes not copied")
 			## End of modification
-	
+
 		return new_sources
 
 class MyExtension(Extension):
 	"""
-	This class extends basic distutils Extension class, adding two keyword 
+	This class extends basic distutils Extension class, adding two keyword
 	arguments :
 		* swig_cpp, which triggers -c++ mode when swigging
 		* swig_include, which specifies -I flag when swigging
@@ -111,10 +121,10 @@ class MyExtension(Extension):
 	"""
 	def __init__(self,swig_include=None,swig_cpp=None,**args):
 		Extension.__init__(self,**args)
-		
+
 		assert ((swig_include==None or type(swig_include) is ListType),
 				  "swig_include must be a list of strings")
-				  
+
 		self.swig_include = swig_include or []
 		self.swig_cpp = swig_cpp
 
