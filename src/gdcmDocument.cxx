@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 21:55:55 $
-  Version:   $Revision: 1.119 $
+  Date:      $Date: 2004/11/10 16:13:18 $
+  Version:   $Revision: 1.120 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,6 +90,7 @@ Document::Document( std::string const & filename ) : ElementSet(-1)
    Filename = filename;
    Initialise();
 
+   Fp = 0;
    if ( !OpenFile() )
    {
       return;
@@ -181,6 +182,8 @@ Document::Document( std::string const & filename ) : ElementSet(-1)
  */
 Document::Document() : ElementSet(-1)
 {
+   Fp = 0;
+
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
    PrintLevel = 1;  // 'Medium' print level by default
@@ -413,6 +416,13 @@ FileType Document::GetFileType()
  */
 std::ifstream* Document::OpenFile()
 {
+   if(Fp)
+   {
+      dbg.Verbose( 0,
+                   "Document::OpenFile is already opened when opening: ",
+                   Filename.c_str());
+   }
+
    Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
 
    if(!Fp)
@@ -441,7 +451,7 @@ std::ifstream* Document::OpenFile()
       return Fp;
    }
  
-   Fp->close();
+   CloseFile();
    dbg.Verbose( 0,
                 "Document::OpenFile not DICOM/ACR (missing preamble)",
                 Filename.c_str());
@@ -455,11 +465,14 @@ std::ifstream* Document::OpenFile()
  */
 bool Document::CloseFile()
 {
-  Fp->close();
-  delete Fp;
-  Fp = 0;
+   if( Fp )
+   {
+      Fp->close();
+      delete Fp;
+      Fp = 0;
+   }
 
-  return true; //FIXME how do we detect a non-close ifstream ?
+   return true; //FIXME how do we detect a non-close ifstream ?
 }
 
 /**

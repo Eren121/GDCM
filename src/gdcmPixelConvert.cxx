@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 21:55:56 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/11/10 16:13:18 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -588,16 +588,16 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    //// First stage: get our hands on the Pixel Data.
    if ( !fp )
    {
-     dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
-                     "unavailable file pointer." );
+      dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+                      "unavailable file pointer." );
       return false;
    }
 
    fp->seekg( PixelOffset, std::ios_base::beg );
    if( fp->fail() || fp->eof()) //Fp->gcount() == 1
    {
-     dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
-                     "unable to find PixelOffset in file." );
+      dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+                      "unable to find PixelOffset in file." );
       return false;
    }
 
@@ -609,7 +609,20 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    }
    else if ( IsDecompressed )
    {
-      fp->read( (char*)Decompressed, PixelDataLength);
+      if( PixelDataLength != DecompressedSize)
+      {
+         dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
+                      "Mismatch between PixelConvert and DecompressedSize." );
+      }
+      if( PixelDataLength > DecompressedSize)
+      {
+         fp->read( (char*)Decompressed, DecompressedSize);
+      }
+      else
+      {
+         fp->read( (char*)Decompressed, PixelDataLength);
+      }
+
       if ( fp->fail() || fp->eof())//Fp->gcount() == 1
       {
          dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "

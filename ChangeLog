@@ -1,5 +1,17 @@
+2004-11-10 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+  * src/gdcmDocument.cxx : Set the file pointer TP to 0 in the constructors.
+    Verify the file pointer value before open the file, and if it's not null,
+    a verbose message is generated.
+    Close correctly the file when the file isn't considered dicom-like. The
+    correctly close is a call to CloseFile.
+    When closing the file pointer, test if its not null to close the file.
+  * src/gdcmPixelConvert.cxx : bug fix for the SIEMENS_GBS_III-16-ACR_NEMA_1.acr
+    file. For an uncompressed image, the copied datas correspond in the least 
+    case to the image size (calculated) or the image size specified in the 
+    header. A verbose is generated if these two size mismatch
+
 2004-11-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-  * src/TestAllReadCompareDicom.cxx : test the existence of the directory
+  * Test/TestAllReadCompareDicom.cxx : test the existence of the directory
     using an 'ifstream' other than a 'FILE *'. The previous solution ('FILE *')
     break under windows (with msvc6 compilation).
 
@@ -41,7 +53,7 @@
     little endian. This should -heopfully- fix some tests
 
 2004-11-03 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-  * Now the dictionary is compiled into gdcm lib. This is a default 
+  * Now the dictionary is compiled into gdcm lib. This is a default
     behavior, thus any dic file specified is picked before failback to 
     the one comiled into lib
 
