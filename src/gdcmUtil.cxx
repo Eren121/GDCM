@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 19:09:30 $
-  Version:   $Revision: 1.136 $
+  Date:      $Date: 2005/02/11 19:12:40 $
+  Version:   $Revision: 1.137 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -897,7 +897,7 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
 #ifdef GDCM_WORDS_BIGENDIAN
    const int BUFFER_SIZE = 4096;
    uint16_t *buffer = new uint16_t[BUFFER_SIZE/2];
-   uint16_t *binArea16 = val;
+   uint16_t *binArea16 = (uint16_t*)val;
  
    // how many BUFFER_SIZE long pieces in binArea ?
    int nbPieces = len/BUFFER_SIZE; //(16 bits = 2 Bytes)
@@ -911,7 +911,7 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
          uint16_t val16 = binArea16[i];
          buffer[i] = ((( val16 << 8 ) & 0xff00 ) | (( val16 >> 8 ) & 0x00ff ) );
       }
-      fp->write ( (char*)buffer, BUFFER_SIZE );
+      os.write ( (char*)buffer, BUFFER_SIZE );
       binArea16 += BUFFER_SIZE/2;
    }
    if ( remainingSize > 0)
@@ -922,9 +922,10 @@ std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
          uint16_t val16 = binArea16[i];
          buffer[i] = ((( val16 << 8 ) & 0xff00 ) | (( val16 >> 8 ) & 0x00ff ) );
       }
-      fp->write ( (char*)buffer, remainingSize );
+      os.write ( (char*)buffer, remainingSize );
    }
    delete[] buffer;
+   return os;
 #else
    return os.write(reinterpret_cast<const char*>(val), len);
 #endif
