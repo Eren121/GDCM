@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/08 15:18:02 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/11/10 15:54:45 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -188,7 +188,7 @@ void ValEntry::Write(std::ofstream* fp, FileType filetype)
    }
       
    std::string vr = GetVR();
-   int lgr = GetReadLength();
+   unsigned int lgr = GetReadLength();
    if (vr == "US" || vr == "SS")
    {
       // some 'Short integer' fields may be mulivaluated
