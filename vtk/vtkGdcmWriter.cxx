@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/03 11:39:24 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/03/03 18:26:48 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.19 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.20 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -131,36 +131,36 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
                  extent[3]-extent[2]+1,
                  extent[5]-extent[4]+1};
 
-   str.seekp(0);
+   str.str("");
    str << dim[0];
    file->InsertValEntry(str.str(),0x0028,0x0011); // Columns
 
-   str.seekp(0);
+   str.str("");
    str << dim[1];
    file->InsertValEntry(str.str(),0x0028,0x0010); // Rows
 
    if(dim[2]>1)
    {
-      str.seekp(0);
+      str.str("");
       str << dim[2];
       //file->Insert(str.str(),0x0028,0x0012); // Planes
       file->InsertValEntry(str.str(),0x0028,0x0008); // Number of Frames
    }
 
    // Pixel type
-   str.seekp(0);
+   str.str("");
    str << image->GetScalarSize()*8;
    file->InsertValEntry(str.str(),0x0028,0x0100); // Bits Allocated
    file->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
 
-   str.seekp(0);
+   str.str("");
    str << image->GetScalarSize()*8-1;
    file->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
 
    // Pixel Repr
    // FIXME : what do we do when the ScalarType is 
    // VTK_UNSIGNED_INT or VTK_UNSIGNED_LONG
-   str.seekp(0);
+   str.str("");
    if( image->GetScalarType() == VTK_UNSIGNED_CHAR ||
        image->GetScalarType() == VTK_UNSIGNED_SHORT ||
        image->GetScalarType() == VTK_UNSIGNED_INT ||
@@ -175,7 +175,7 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    file->InsertValEntry(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Samples per pixel
-   str.seekp(0);
+   str.str("");
    str << image->GetNumberOfScalarComponents();
    file->InsertValEntry(str.str(),0x0028,0x0002); // Samples per Pixel
 
@@ -185,13 +185,13 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    // Spacing
    double *sp = image->GetSpacing();
 
-   str.seekp(0);
+   str.str("");
    // We are about to enter floating point value. By default ostringstream are smart and don't do fixed point
    // thus forcing to fixed point value
    str.setf( std::ios::fixed );
    str << sp[0] << "\\" << sp[1];
    file->InsertValEntry(str.str(),0x0028,0x0030); // Pixel Spacing
-   str.seekp(0);
+   str.str("");
    str << sp[2];
    file->InsertValEntry(str.str(),0x0018,0x0088); // Spacing Between Slices
 
@@ -201,7 +201,7 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    /// \todo : Image Position Patient is meaningfull ONLY for CT an MR modality
    ///       We should perform some checkings before forcing the Entry creation
 
-   str.seekp(0);
+   str.str("");
    str << org[0] << "\\" << org[1] << "\\" << org[2];
    file->InsertValEntry(str.str(),0x0020,0x0032); // Image Position Patient
    str.unsetf( std::ios::fixed ); //done with floating point values
@@ -209,10 +209,10 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    // Window / Level
    double *rng=image->GetScalarRange();
 
-   str.seekp(0);
+   str.str("");
    str << rng[1]-rng[0];
    file->InsertValEntry(str.str(),0x0028,0x1051); // Window Width
-   str.seekp(0);
+   str.str("");
    str << (rng[1]+rng[0])/2.0;
    file->InsertValEntry(str.str(),0x0028,0x1050); // Window Center
 
