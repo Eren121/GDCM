@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:31:09 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/02/07 19:17:27 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,8 @@
 // 'identifier' : class 'type' needs to have dll-interface to be used by
 // clients of class 'type2'
 #pragma warning ( disable : 4251 )
+// non dll-interface class 'type' used as base for dll-interface class 'type2'
+#pragma warning ( disable : 4275 )
 // 'identifier' : identifier was truncated to 'number' characters in the
 // debug information
 #pragma warning ( disable : 4786 )

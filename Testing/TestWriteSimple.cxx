@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 18:43:38 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/02/07 19:17:27 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -152,7 +152,7 @@ int WriteSimple(Image &img)
                * img.components * img.componentSize / 8;
    unsigned char *imageData = new unsigned char[size];
 
-   // FIXME : find a best heuristic to create the image
+   // FIXME : find a better heuristic to create the image
    unsigned char *tmp = imageData;
    for(int k=0;k<img.sizeZ;k++)
    {
