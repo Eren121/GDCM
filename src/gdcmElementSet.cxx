@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:03:30 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/06/22 14:37:04 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,26 +81,26 @@ void gdcmElementSet::Write(FILE *fp, FileType filetype) {
    gdcmDocEntry *e;
    for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
    {
-      e=i->second;	
-	   e->WriteCommonPart(fp, filetype);
-		std::cout<<e->GetKey() << " " << std::hex << e->GetVR() << " " 
-		         << e->GetName()
-		         << std::endl;
-					
-//		 e->Write(fp,filetype); // This will be the right way to proceed !
-		
+      e=i->second;
+      e->WriteCommonPart(fp, filetype);
+      std::cout<<e->GetKey() << " " << std::hex << e->GetVR() << " " 
+               << e->GetName()
+               << std::endl;
+
+// e->Write(fp,filetype); // This will be the right way to proceed !
+
       if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(e) ) {
          BinEntry->Write(fp,filetype);
-			continue;
+         continue;
       }
-		if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(e) ) {
-         ValEntry->Write(fp,filetype);
-			continue;
+     if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(e) ) {
+         ValEntry->Write(fp);
+         continue;
       }
 
       if (gdcmSeqEntry* SeqEntry = dynamic_cast< gdcmSeqEntry* >(e) ) {
          SeqEntry->Write(fp,filetype);
-			continue;
+         continue;
       } 
    } 
 }
