@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/01/21 16:06:21 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,6 +50,9 @@ public:
    static std::string GetName(std::string const &fullName);
    static std::string GetCurrentDate();
    static std::string GetCurrentTime();
+   static std::string GetCurrentDateTime();
+   static unsigned int GetCurrentThreadID();
+   static unsigned int GetCurrentProcessID();
 
    static std::string DicomString(const char *s, size_t l);
    static std::string DicomString(const char *s);
