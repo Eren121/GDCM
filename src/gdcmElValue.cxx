@@ -2,10 +2,11 @@
 
 #include "gdcm.h"
 
-void   ElValue::SetVR(string ValRep) { entry->SetVR(ValRep); }
-string ElValue::GetVR(void)          { return entry->GetVR(); }
+	// void    ElValue::SetVR(string v)	 { entry->SetVR(v);       };
 
 ElValue::ElValue(gdcmDictEntry* in) {
 	ImplicitVr = false;
 	entry = in;
 }
+
+

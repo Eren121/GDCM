@@ -52,7 +52,6 @@ using namespace std;  // string type lives in the std namespace on VC++
                       // exporter des images lisibles par les consoles cliniques 
                       // et pas seulement importables dans e-film. 
 
-
 #ifdef __GNUC__
 #include <stdint.h>
 #define guint16 uint16_t
@@ -69,7 +68,6 @@ typedef  unsigned int   guint32;
 #else
 #define GDCM_EXPORT
 #endif
-
 
 //
 // ---------------------------------------------------- gdcmDictEntry
@@ -133,6 +131,7 @@ public:
 	guint16 GetElement(void){return element;};
 	string  GetVR(void)     {return vr;     };
 	void    SetVR(string);
+	void	SetKey(string k){ key = k;		}
 	bool    IsVrUnknown(void);
 	string  GetFourth(void) {return fourth;};
 	string  GetName(void)   {return name;  };
@@ -154,8 +153,6 @@ public:
 typedef map<TagKey, gdcmDictEntry*> TagHT;
 	// Table de Hachage : (group,Elem) --> pointeur vers une ligne du Dictionnaire Dicom
 
-typedef map<TagKey, gdcmDictEntry*> TagHT;
-
 class GDCM_EXPORT gdcmDict {
 	string name;
 	string filename;
@@ -164,10 +161,11 @@ public:
 	// rempli le Dictionnaire Dicom à partir d'un fichier texte
 	gdcmDict(const char* FileName);   // Read Dict from disk
 	
-	// QUESTION :
-	// Ca doit ajouter une nouvelle entrée 'a la fin', ou 'a sa place' ?
-	//
-	// TODO Swig int AppendEntry(gdcmDictEntry* NewEntry);
+	int AddNewEntry (gdcmDictEntry* NewEntry);
+	int ReplaceEntry(gdcmDictEntry* NewEntry);
+	int RemoveEntry (TagKey k);
+	int RemoveEntry (guint16 group, guint16 element);
+
 	
 	// renvoie une ligne de Dictionnaire Dicom à partir de (numGroup, numElement)
 	gdcmDictEntry * GetTag(guint32 group, guint32 element);
@@ -253,25 +251,36 @@ private:
 public:
 	string  value;     // used to be char * valeurElem
 	size_t Offset;     // Offset from the begining of file for direct user access
+	
 	ElValue(gdcmDictEntry*);
 	void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };
-
 	bool   IsVrUnknown(void) { return entry->IsVrUnknown(); };
-	
-	void SetLength(guint32 l){ LgrElem = l; };
-	void SetValue(string val){ value = val; };
-	void SetOffset(size_t of){ Offset = of; };
 	void SetImplicitVr(void) { ImplicitVr = true; };
 	bool  IsImplicitVr(void) { return ImplicitVr; };
-	void    SetVR(string);
-	string  GetVR(void);
-	string  GetValue(void)   { return value;               };
-	guint32 GetLength(void)  { return LgrElem;             };
-	size_t  GetOffset(void)  { return Offset;              };
-	guint16 GetGroup(void)   { return entry->GetGroup();   };
+
+	guint16 GetGroup(void)   { return entry->GetGroup();   };	
 	guint16 GetElement(void) { return entry->GetElement(); };
 	string  GetKey(void)     { return entry->GetKey();     };
 	string  GetName(void)    { return entry->GetName();    };
+	
+	string  GetVR(void)		 { return entry->GetVR(); };
+	
+	void    SetVR(string v)	 { entry->SetVR(v);       }; 
+		
+	// Question :
+	// Un champ privé, accessible en consultation et en modif (sans restriction)
+	// interet par rapport à un champ public ? 
+	// --> pouvoir en changer la définition sans toucher à l'API
+	
+	void SetLength(guint32 l){ LgrElem = l;		};
+	guint32 GetLength(void)  { return LgrElem;	};
+
+	void SetValue(string val){ value = val; 	};
+	string  GetValue(void)   { return value;	};
+
+	void SetOffset(size_t of){ Offset = of;		};
+	size_t  GetOffset(void)  { return Offset;	};	
+
 };
 
 
@@ -300,7 +309,8 @@ public:
 	ElValue* GetElementByName  (string);
 	string   GetElValueByNumber(guint32 group, guint32 element);
 	string   GetElValueByName  (string);
-	TagElValueHT & GetTagHt(void);
+	
+	TagElValueHT & GetTagHt(void);	
 	
 	int SetElValueByNumber(string content, guint32 group, guint32 element);
 	int SetElValueByName(string content, string TagName);
@@ -328,24 +338,17 @@ public:
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
  
 
-typedef string VRKey;	// Ne devrait-elle pas etre utilisee dans la definition de VRHT ?
+typedef string VRKey;
 typedef string VRAtr;
-typedef map<TagKey, VRAtr> VRHT;    // Value Representation Hash Table
-		// Cette Table de Hachage ne devrait servir qu'a determiner
-		// si deux caractères correspondent à une VR existante ?	
+typedef map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
+
 
 class GDCM_EXPORT gdcmHeader {
 	void SkipBytes(guint32);
 private:
 	static VRHT *dicom_vr;
 	// Dictionaries of data elements:
-	
-	// Question :
-	// Pourquoi mettre un pointeur statique vers le container des dictionnaires
-	// (qui est une H-table de pointeurs vers des dictionnaires)
-	// en plus des pointeurs vers chacun des dictionnaires ?
-	// Ces derniers n'auraient-ils pas suffit ?
-	//
+
 	static gdcmDictSet* Dicts;  // global dictionary container
 	gdcmDict* RefPubDict;       // public dictionary
 	gdcmDict* RefShaDict;       // shadow dictionary (optional)
@@ -559,6 +562,12 @@ public:
 	// Returns an error code on failure (if MaxSize is not big enough)
 	
 	int PutImageDataHere(void* destination, size_t MaxSize );
+	
+	// Question :
+	//
+	//	GetImageData et PutImageDataHere
+	// Get et Put pour 2 fonctions qui font presque la meme chose :-(
+	//
 	
 	// Allocates ExpectedSize bytes of memory at this->Data and copies the
 	// pointed data to it.

@@ -6,12 +6,12 @@
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
                              string  InVr, string InFourth, string InName) 
 {
-	group = InGroup;
-	element = InElement;
-	vr = InVr;
-	fourth = InFourth;
-	name = InName;
-	key = TranslateToKey(group, element);
+	group 		= InGroup;
+	element 	= InElement;
+	vr 		= InVr;
+	fourth 		= InFourth;
+	name 		= InName;
+	key 		= TranslateToKey(group, element);
 }
 
 TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {

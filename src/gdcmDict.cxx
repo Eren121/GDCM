@@ -50,3 +50,65 @@ gdcmDictEntry * gdcmDict::GetTag(guint32 group, guint32 element) {
 		            "multiple entries for this key (FIXME) !");
 	return entries.find(key)->second;
 }
+
+
+int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
+
+	// au cas ou la NewEntry serait incomplete
+	// Question : cela peut-il se produire ?
+	//
+	TagKey key;
+	key = NewEntry->GetKey();
+	if (key =="") {
+		NewEntry->gdcmDictEntry::SetKey(
+				gdcmDictEntry::TranslateToKey(NewEntry->GetGroup(), NewEntry->GetElement())
+				);
+	}
+	
+	entries.erase (NewEntry->gdcmDictEntry::GetKey());
+	entries[ NewEntry->GetKey()] = NewEntry;
+	return (1);
+	// Question : Dans quel cas ça peut planter ?
+}
+ 
+
+int gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
+
+	// au cas ou la NewEntry serait incomplete
+	// Question : cela peut-il se produire ?
+	//
+	
+	TagKey key;
+	key = NewEntry->GetKey();
+	if (key =="") {
+		NewEntry->SetKey(
+				gdcmDictEntry::TranslateToKey(NewEntry->GetGroup(), NewEntry->GetElement())
+				);
+	}
+
+	if(entries.count(key) >= 1) {
+		printf("gdcmDict::AddNewEntry %s deja present\n", key.c_str());
+		return(0);
+	} else {
+		entries[NewEntry->GetKey()] = NewEntry;
+		return(1);
+	}
+	}
+
+
+int gdcmDict::RemoveEntry(TagKey key) {	
+	if(entries.count(key) == 1) {
+		entries.erase(key);
+		return (1);
+	} else {
+		printf("gdcmDict::RemoveEntry %s non trouve\n", key.c_str());
+		return (0);
+	}
+}
+
+
+int gdcmDict::RemoveEntry (guint16 group, guint16 element) {
+
+	return( RemoveEntry(gdcmDictEntry::TranslateToKey(group, element)) );
+}
+

@@ -24,10 +24,9 @@ static void _Swap(void* im, int swap, int lgr, int nb);
  * @return	
  */
  
-gdcmFile::gdcmFile(string & filename)
-	:gdcmHeader(filename.c_str())
+gdcmFile::gdcmFile(string & filename) 
+	:gdcmHeader(filename.c_str())	
 {
-	if (DEBUG) printf("On a echappe a gdcmHeader !\n");
 }
 
 
@@ -52,10 +51,6 @@ size_t gdcmFile::GetImageDataSize(void) {
 	// Nombre de Colonnes	
 	nbCol   =atoi(gdcmHeader::GetPubElValByNumber(0x0028,0x0011).c_str());
 
-printf("nbCol %d\n",nbCol);
-printf("nbLig %d\n",nbLignes);
-
-
 	// Nombre de Frames	
 	str_nbFrames=gdcmHeader::GetPubElValByNumber(0x0028,0x0008);
 	
@@ -64,7 +59,6 @@ printf("nbLig %d\n",nbLignes);
 	} else {
 		nbFrames = atoi(str_nbFrames.c_str() );
 	}
-printf("nbFrames %d\n",nbFrames);
 	
 	// Nombre de Bits Alloues pour le stockage d'un Pixel	
 	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
@@ -74,8 +68,6 @@ printf("nbFrames %d\n",nbFrames);
 	} else {
 		nb = atoi(str_nb.c_str() );
 	}
-
-printf("nb %d\n",nb);
 
 	size_t lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
 	return (lgrTotale);
@@ -96,37 +88,21 @@ printf("nb %d\n",nb);
 void * gdcmFile::GetImageData (void) {
 	
 	char* _Pixels;
-	int nbLignes, nbCol;
 
-	int nbFrames, nb, nbu, highBit, signe;
+	int  nb, nbu, highBit, signe;
 	string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
 	
 	unsigned short int mask = 0xffff;
-		
-	// Nombre de Lignes	
-	nbLignes=atoi(GetPubElValByNumber(0x0028,0x0010).c_str());
-	// Nombre de Colonnes	
-	nbCol   =atoi(GetPubElValByNumber(0x0028,0x0011).c_str());
 
-	// Nombre de Frames	
-	str_nbFrames=GetPubElValByNumber(0x0028,0x0008);
-
-	
-	if (str_nbFrames == "gdcm::Unfound" ) {
-		nbFrames = 1;
-	} else {
-		nbFrames = atoi(str_nbFrames.c_str() );
-	}
-	
-	// Nombre de Bits Alloues	
-	str_nb=GetPubElValByNumber(0x0028,0x0100);
+	// Nombre de Bits Alloues pour le stockage d'un Pixel	
+	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
 
 	if (str_nb == "gdcm::Unfound" ) {
 		nb = 16;
 	} else {
 		nb = atoi(str_nb.c_str() );
 	}
-	
+			
 	// Nombre de Bits Utilises	
 	str_nbu=GetPubElValByNumber(0x0028,0x0101);
 
@@ -155,7 +131,7 @@ void * gdcmFile::GetImageData (void) {
 	}
 	
 	// Longueur en Octets des Pixels a lire
-	size_t _lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
+	size_t _lgrTotale = GetImageDataSize();
 	
 	//Pixels = (char *) g_malloc(_lgrTotale);
 	_Pixels = (char *) malloc(_lgrTotale);
@@ -212,32 +188,33 @@ void * gdcmFile::GetImageData (void) {
  */
 
 int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
+
+// Question :
+//	dans quel cas la Maxize sert-elle a quelque chose?
+// 	que fait-on si la taille de l'image est + gde    que Maxize?
+// 	que fait-on si la taille de l'image est + petite que Maxize?
+
 	
 	void * Pixels = destination;  // pour garder le code identique avec GetImageData
-	int nbLignes, nbCol;
 
-	int nbFrames, nb, nbu, highBit, signe;
+	int nb, nbu, highBit, signe;
 	string str_nbFrames, str_nb, str_nbu, str_highBit, str_signe;
 	
 	unsigned short int mask = 0xffff;
+	
+	// Longueur en Octets des Pixels a lire
+	size_t _lgrTotale = GetImageDataSize();	// ne faudrait-il pas la stocker?
+	
+	// si lgrTotale < MaxSize ==> Gros pb . A VOIR
+	
+	lgrTotale = MaxSize;					// pour garder le code identique avec GetImageData
+	//Pixels = (char *) malloc(lgrTotale);	// pour garder le code identique avec GetImageData
+	
+	GetPixels(lgrTotale, Pixels);
 		
-	// Nombre de Lignes	
-	nbLignes=atoi(GetPubElValByNumber(0x0028,0x0010).c_str());
-	// Nombre de Colonnes	
-	nbCol   =atoi(GetPubElValByNumber(0x0028,0x0011).c_str());
-
-	// Nombre de Frames	
-	str_nbFrames=GetPubElValByNumber(0x0028,0x0008);
-
-	
-	if (str_nbFrames == "gdcm::Unfound" ) {
-		nbFrames = 1;
-	} else {
-		nbFrames = atoi(str_nbFrames.c_str() );
-	}
-	
-	// Nombre de Bits Alloues	
-	str_nb=GetPubElValByNumber(0x0028,0x0100);
+		
+	// Nombre de Bits Alloues pour le stockage d'un Pixel	
+	str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
 
 	if (str_nb == "gdcm::Unfound" ) {
 		nb = 16;
@@ -271,16 +248,7 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 	} else {
 		signe = atoi(str_signe.c_str() );
 	}
-	
-	// Longueur en Octets des Pixels a lire
-	size_t lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
-	
-	// si lgrTotale < MaxSize ==> Gros pb . A VOIR
-	
-	lgrTotale = MaxSize;					// pour garder le code identique avec GetImageData
-	//Pixels = (char *) malloc(lgrTotale);	// pour garder le code identique avec GetImageData
-	
-	GetPixels(lgrTotale, Pixels);
+
 
 	// On remet les Octets dans le bon ordre si besoin est
 	if (nb != 8) {
@@ -304,9 +272,7 @@ int gdcmFile::PutImageDataHere (void* destination, size_t MaxSize) {
 				deb ++;
 		}
 	}
-		
-	printf ("on est sorti\n");
-	
+			
 	// VOIR s'il ne faudrait pas l'affecter à un champ du dcmHeader
 	
 	//return (Pixels);				// pour garder le code identique avec GetImageData	
@@ -388,9 +354,6 @@ if( nb == 32 )
 return;
 }
 
-
-
-
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
@@ -425,8 +388,8 @@ int gdcmFile::WriteRawData (string nomFichier) {
  * \ingroup   gdcmFile
  * \brief Ecrit sur disque UNE image Dicom
  * \Aucun test n'est fait sur l'"Endiannerie" du processeur.
- * \Ca sera à l'utilisateur d'appeler son Reader correctement
- * \ Equivalent a IdDcmWrite) 
+ * \Ca sera à l'utilisateur d'appeler son Reader correctement.
+ * \ (Equivalent a IdDcmWrite) 
  *
  * @param 
  *
@@ -447,13 +410,13 @@ int gdcmFile::WriteDcm (string nomFichier) {
 	} 
 	
 	//	Ecriture Dicom File Preamble
-	//filePreamble=(char*)g_malloc0(128); // voir pourquoi ca ne passe pas a la compile
 	filePreamble=(char*)calloc(128,1);
 	fwrite(filePreamble,128,1,fp1);
 	fwrite("DICM",4,1,fp1);
 	if(DEBUG) printf("Ecriture File Preamble\n");
 
 	// un accesseur de + est obligatoire ???
+	
 	GetPubElVals().Write(fp1);
 
 	fclose (fp1);

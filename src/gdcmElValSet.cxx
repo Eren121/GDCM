@@ -22,14 +22,32 @@ void ElValSet::Print(ostream & os) {
 		os << "[" << tag->second->GetVR()    << "]" << endl;
 	}
 }
-
+ 
 
 int ElValSet::Write(FILE * _fp) {
+
+// ATTENTION : fonction non terminée (commitée a titre de precaution)
 
 	guint16 gr, el;
 	guint32 lgr;
 	const char * val;
-	// restent à tester les echecs en écriture
+	
+	// A FAIRE :
+	// parcourir la table pour recalculer la longueur des 'elements 0x0000'
+	// au cas ou un tag ai été ajouté par rapport à ce qui a été lu
+	// dans l'image native
+	//
+	// cf : code IdDcmWriteFile
+	
+/*	
+	for (TagElValueHT::iterator tag = tagHt.begin();
+		  tag != tagHt.end();
+		  ++tag){
+
+
+	}
+*/
+	// resteront à tester les echecs en écriture
 	for (TagElValueHT::iterator tag = tagHt.begin();
 		  tag != tagHt.end();
 		  ++tag){
@@ -38,29 +56,37 @@ int ElValSet::Write(FILE * _fp) {
 		// peut-on se passer des affectations?
 		// - passer l'adresse du resultat d'une fonction (???)
 		// - acceder au champ sans passer par un accesseur ?
-		gr = tag->second->GetGroup();
-		el = tag->second->GetElement();
+		gr =  tag->second->GetGroup();
+		el =  tag->second->GetElement();
 		lgr = tag->second->GetLength();
 		val = tag->second->GetValue().c_str();
 		
 		fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp); 	//group
 		fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp); 	//element
-		//fwrite ( tag->second->GetVR(),(size_t)2 ,(size_t)1 ,_fp); 	//VR
 		
+		//fwrite ( tag->second->GetVR(),(size_t)2 ,(size_t)1 ,_fp); 	//VR
 		// voir pb lgr  + VR
-		fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp); 			//lgr 
+		
+		fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp); 			//lgr
+		 
+		// ATTENTION
 		// voir pb des int16 et int32 : les identifier, les convertir, modifier la longueur
+		// ou alors stocker la valeur 16 ou 32 bits, + un indicateur : char, int16, int32
+		
 		fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); //valeur Elem
 	}
 	return(1);
 }
+
+
+
 void ElValSet::PrintByName(ostream & os) {
 	for (TagElValueNameHT::iterator tag = NameHt.begin();
 		  tag != NameHt.end();
 		  ++tag){
 		os << tag->first << ": ";
 		os << "[" << tag->second->GetValue() << "]";
-		os << "[" << tag->second->GetKey()  << "]";
+		os << "[" << tag->second->GetKey()   << "]";
 		os << "[" << tag->second->GetVR()    << "]" << endl;
 	}
 }
