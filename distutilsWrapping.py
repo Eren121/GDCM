@@ -1,7 +1,9 @@
 from distutils.command.build_ext import build_ext
 from distutils.core import Extension
+from distutils.file_util import copy_file
 from types import ListType
 import os
+import string
 
 class build_extWrap(build_ext):
 	"""
@@ -15,6 +17,26 @@ class build_extWrap(build_ext):
 		# taken into account
 		self.__ext=ext
 		build_ext.build_extension(self,ext)
+
+		if(os.name!='posix'):
+			# Copy the .lib file
+			fullname = self.get_ext_fullname(ext.name)
+			modpath = string.split(fullname, '.')
+			package = string.join(modpath[0:-1], '.')
+			base = modpath[-1]
+			if self.inplace:
+				# ignore build-lib -- put the compiled extension into
+				# the source tree along with pure Python modules
+				build_py = self.get_finalized_command('build_py')
+				package_dir = build_py.get_package_dir(package)
+				dstLib=package_dir
+			else:
+				dstLib=self.build_lib
+	
+			srcLib=os.path.join(self.build_temp,base+".lib")
+			dstLib=os.path.join(dstLib,package)
+	
+			copy_file(srcLib,dstLib)
 
 	def swig_sources(self,sources):
 		"""Walk the list of source files in 'sources',looking for SWIG
