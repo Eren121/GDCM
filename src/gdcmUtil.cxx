@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 18:53:02 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/01/06 19:10:07 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -639,28 +639,32 @@ long GetMacAddrSys ( u_char *addr)
   return -1;
 }
 
-//std::string Util::GetMACAddress()
-//{
-//   // This is a rip from: http://cplus.kompf.de/macaddr.html for Linux, HPUX and AIX 
-//   // and http://tangentsoft.net/wskfaq/examples/src/snmpmac.cpp for windows version
-//   long stat;
-//   int i;
-//   u_char addr[6];
-// 
-//   stat = mac_addr_sys( addr);
-//   if (0 == stat)
-//   {
-//      printf( "MAC address = ");
-//      for (i=0; i<6; ++i) {
-//           printf("%2.2x", addr[i]);
-//         }
-//         printf( "\n");
-//     }
-//     else {
-//         fprintf( stderr, "can't get MAC address\n");
-//         exit( 1);
-//     }
-//}
+std::string Util::GetMACAddress()
+{
+   // This is a rip from: http://cplus.kompf.de/macaddr.html for Linux, HPUX and AIX 
+   // and http://tangentsoft.net/wskfaq/examples/src/snmpmac.cpp for windows version
+   long stat;
+   u_char addr[6];
+   std::string macaddr;
+ 
+   stat = GetMacAddrSys( addr);
+   if (0 == stat)
+   {
+      //printf( "MAC address = ");
+        for (int i=0; i<6; ++i) 
+        {
+            //printf("%2.2x", addr[i]);
+            macaddr += Format("%2.2x", addr[i]);
+        }
+       // printf( "\n");
+      return macaddr;
+   }
+   else
+   {
+      //printf( "No MAC address !\n" );
+      return "";
+   }
+}
 
 /**
  * \ingroup Util

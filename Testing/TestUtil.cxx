@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:32 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/06 19:10:07 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,6 +42,9 @@ int TestUtil(int , char * [])
       return 1;
    if(  gdcm::Util::DicomStringEqual(d,ref) ) 
       return 1;
+
+   // MAC Adress
+   std::cout << "Mac Address:" << gdcm::Util::GetMACAddress() << std::endl;
 
    return 0;
 }
