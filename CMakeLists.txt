@@ -64,33 +64,33 @@ ENDIF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
 
 #-----------------------------------------------------------------------------
 # Test if os defines a lenght for sockaddr
-IF("GDCM_OS_HAVE_SA_LEN" MATCHES "^GDCM_OS_HAVE_SA_LEN$")
+IF("HAVE_SA_LEN" MATCHES "^HAVE_SA_LEN$")
   STRING(ASCII 35 POUND)
   FILE(WRITE ${GDCM_BINARY_DIR}/CMakeTmp/gdcmTestHAVESALEN.c
     "${POUND}include <sys/types.h>\n"
     "${POUND}include <sys/socket.h>\n"
     "int main() { struct sockaddr sa; sa.sa_len = 0; }")
   MESSAGE(STATUS "Checking if ifreq has a sa_len")
-  TRY_COMPILE(GDCM_OS_HAVE_SA_LEN
+  TRY_COMPILE(HAVE_SA_LEN
               ${GDCM_BINARY_DIR}
               ${GDCM_BINARY_DIR}/CMakeTmp/gdcmTestHAVESALEN.c
               OUTPUT_VARIABLE OUTPUT)
-  IF(GDCM_OS_HAVE_SA_LEN)
+  IF(HAVE_SA_LEN)
     MESSAGE(STATUS "Checking if ifreq has a sa_len -- yes")
-    SET(GDCM_OS_HAVE_SA_LEN 1 CACHE INTERNAL "Support if ifreq has a sa_len")
+    SET(HAVE_SA_LEN 1 CACHE INTERNAL "Support if ifreq has a sa_len")
     WRITE_FILE(${CMAKE_BINARY_DIR}/CMakeOutput.log
       "Determining if ifreq has a sa_len"
       "passed with the following output:\n"
       "${OUTPUT}\n" APPEND)
-  ELSE(GDCM_OS_HAVE_SA_LEN)
+  ELSE(HAVE_SA_LEN)
     MESSAGE(STATUS "Checking if ifreq has a sa_len -- no")
-    SET(GDCM_OS_HAVE_SA_LEN 0 CACHE INTERNAL "Support if ifreq has a sa_len")
+    SET(HAVE_SA_LEN 0 CACHE INTERNAL "Support if ifreq has a sa_len")
     WRITE_FILE(${CMAKE_BINARY_DIR}/CMakeError.log
       "Determining if ifreq has a sa_len"
       "failed with the following output:\n"
       "${OUTPUT}\n" APPEND)
-  ENDIF(GDCM_OS_HAVE_SA_LEN)
-ENDIF("GDCM_OS_HAVE_SA_LEN" MATCHES "^GDCM_OS_HAVE_SA_LEN$")
+  ENDIF(HAVE_SA_LEN)
+ENDIF("HAVE_SA_LEN" MATCHES "^HAVE_SA_LEN$")
 
 #-----------------------------------------------------------------------------
 # Build directory on which many applications depend
