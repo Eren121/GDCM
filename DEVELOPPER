@@ -1,5 +1,5 @@
 The following comments are intended for core gdcm developpers.
-	
+		
 * Compiling gdcm:
   - Checkout the sources to an arbitrary directory noted GDCM (e.g. ~/cvs/gdcm).
   - Checkout the test images to an arbitrary directory noted GDCMDATA
