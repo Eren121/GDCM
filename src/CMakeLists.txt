@@ -62,15 +62,15 @@ SET_SOURCE_FILES_PROPERTIES(${libgdcm_la_SOURCES}
 
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )
 #TODO this is not working out of the box (on the first time)
-IF(WIN32)
-  TARGET_LINK_LIBRARIES(gdcm 
-    gdcmijpeg8 
-    gdcmijpeg12
-    Wsock32.lib
-  )
-ELSE(WIN32)
+IF(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
     gdcmijpeg8 
     gdcmijpeg12
   )
-ENDIF(WIN32)
+ELSE(UNIX)
+  TARGET_LINK_LIBRARIES(gdcm 
+    gdcmijpeg8 
+    gdcmijpeg12
+    Wsock32.lib   #doesn't exist on cygwin
+  )
+ENDIF(UNIX)
