@@ -27,32 +27,29 @@ Any contribution is welcome.
    <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he doesn't 
            want to deal with <TT>SeqEntry</TT (every time it's possible)
    <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he doesn't 
-           want to deal with Shadow groups 
+           want to deal with <TT>Shadow groups</TT> 
    <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he just wants 
            to load a given list of <TT>DocEntries</TT> (to save CPU time and RAM
            space)
    <LI> Allow user to tell the Writer he doesn't want to write down
            <TT>SeqEntry</TT> (if any) 
    <LI> Allow user to tell the Writer he doesn't want to write down
-           Shadow groups (if any)
+           <TT>Shadow groups</TT> (if any)
    <LI> <TT>Icon Image</TT> management (Read and Write) 
    <LI> <TT>DICOMDIR</TT> full management (not limited to
            <TT> PATIENT</TT>/<TT>STUDY</TT>/<TT>SERIE</TT>/<TT>IMAGE</TT>)
-   <LI> Allow user to add an Entry to the default entry list, for
+   <LI> Allow user to add an Entry to the default entry list, before
            making a <TT>DICOMDIR</TT> from a root directory
    <LI> <TT>DICOMDIR</TT> anonymiser (<TT>Load</TT> and <TT>Noload</TT> mode)
    <LI> 16-bits-LUT full Management
    <LI> User friendly management of <TT>Rescale Slope</TT> and
            <TT>Rescale Intercept</TT>
-   <LI> Allow parsing the Shadow groups against a user supplied 
-           Private Dicom Dictionary (pfff!...)
+   <LI> Allow parsing the <TT>Shadow groups</TT> against a user supplied 
+           private <TT>Dicom Dictionary</TT> (pfff!...)
    <LI> An accurate <TT>SerieHelper</TT>
 </UL>
 
 <!#######################################################################>
-
-
-
 <HR size="1"><ADDRESS style="align: right;"></ADDRESS>
 <H2>
    <A CLASS="anchor" NAME="NewsCurrentVersion">
@@ -64,16 +61,25 @@ Any contribution is welcome.
    <LI>State of the art
    <UL>    
       <LI>
-         <a href="uml-gdcmV1.0.pdf">gdcm UML Class Diagram</a> current version.
+         <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a> current version.
 
       <LI>
    </UL>
 
-   <LI> New Features / Bug fixes
+   <LI> New Features
    <UL>
       <LI>Both <TT>vtkgdcmViewer</TT> and <TT>vtkgdcmViewer2</TT> 
           are available to allow easy displaying of single/multiframe 
           GreyLevel/RGB/PaletteColor images
+      <LI>
+   </UL>
+
+   <LI> Bug fixes
+   <UL>
+      <LI> The difference between <TT>MONOCHROME1</TT> (low values = bright,
+            high values = dark) and <TT>MONOCHROME2</TT> (low values = dark,
+            high values = bright) is now taken into account. 
+            It's no longer up to the user to change the pixels value
       <LI>
    </UL>
 
@@ -86,9 +92,6 @@ Any contribution is welcome.
 
    <LI> Known bugs
    <UL>
-      <LI> The difference between <TT>MONOCHROME1</TT> and <TT>MONOCHROME2</TT>
-           is not taken into account. It's up to the user to change the pixels
-           value
       <LI> Writing a 'True Dicom' image after reading an ACR-NEMA image requests
            from the user to build up 'manually' the Meta Elements group (0002) 
       <LI> Management, on Big Endian Processors, of unloaded BinEntries
@@ -103,19 +106,14 @@ Any contribution is welcome.
    <A CLASS="anchor" NAME="NewsVersion1_0">
       <B>Version 1.0 (Feb 14 2005)</B></A>
 </H2>
-
-<!#######################################################################>
-
-
-
 <UL>
    <LI>State of the art
    <UL>
-   <LI>
-      <a href="Doc1.0/uml-gdcmV1.0.pdf">gdcm 1.0 UML Class Diagram</a> version.
-   <LI> <a href= "Doc1.0/html.user/index.html">User Documentation"</a>
-   <LI> <a href= "Doc1.0/html.developper/index.html">Developper
-Documentation"</a>
+      <LI>
+         <a href="Doc1.0/uml-gdcmV1.0.pdf">gdcm 1.0 UML Class Diagram</a> version.
+      <LI> <a href= "Doc1.0/html.user/index.html">User Documentation"</a>
+      <LI> <a href= "Doc1.0/html.developper/index.html">Developper
+         Documentation"</a>
       <LI> Final check of the jpeg sub-library: all 'classical' jpeg
         compressed Dicom files can be read<br>
       <LI>All the previously gdcm-breaker images are now readable<br>
@@ -126,17 +124,31 @@ Documentation"</a>
  
    <LI> A.P.I. breaking modifications (since previous version : <TT>0.6</TT>)
    <UL>
-      <LI> Use of <TT> namespace</TT> : all the methods formerly called
-          <TT>className::gdcmXxx()</TT> are now called <TT>className::Xxx()</TT>
-      <LI> Removal of accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
-           and <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT> 
-           replaced by <TT>GetXxx</TT>, <TT>SetXxx</TT>
-      <LI> a <TT>gdcm::Document</TT> is now specialized 
-           in <TT>gdcm::DicomDir</TT> and <TT>gdcm::File</TT>
+      <LI> Use of <TT> namespace</TT> : all the methods formerly named
+          <TT>className::gdcmXxx()</TT> are now named <TT>className::Xxx()</TT>
+          <br> End user will have to call them as <TT>gdcm::className::Xxx() </TT>
+      <LI> a <TT>gdcm::Document</TT> is now specialized in : 
+      <UL>
+         <LI> <TT>gdcm::DicomDir</TT>
+         <LI> <TT>gdcm::File</TT>
+      </UL>
+      <LI> a <TT>gdcm::DicomElementSet</TT> is composed of a set of 
+            <TT>gdcm::DicomDocEntry</TT>
+      <LI> a <TT>gdcm::DicomDocEntry</TT> can be :
+      <UL>
+         <LI> a <TT>gdcm::ContentEntry</TT>, specialized in :
+         <UL>
+            <LI> <TT>gdcm::ValEntry</TT>
+            <LI> <TT>gdcm::BinEntry</TT> (no longer a specialization of
+                 <TT>gdcm::ValEntry</TT>) 
+        </UL>
+      <LI> a <TT>gdcm::SeqEntry</TT> 
+      </UL>
+   <LI> Removal of useless accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
+   <LI> Removal of accessors <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT>, 
+        renamed as <TT>GetXxx</TT>, <TT>SetXxx</TT>
    </UL>
-
 </UL>
-
 
 <!#######################################################################>
 <HR size="1"><ADDRESS style="align: right;"></ADDRESS>
@@ -154,20 +166,30 @@ Documentation"</a>
        <TT>gdcmHeader</TT> class and <TT>gdcmDicomDir</TT> class.
    <LI> Massive modifications in the Class Diagram :
    <UL>
-      <LI> Entries (<TT>gdcmEntry</TT>) are now separated into 
-          <TT>ValEntry</TT> and <TT>SeqEntry</TT> (whose VR =
-          <TT>SQ</TT>)
-      <LI> a <TT>gdcmDocument</TT> is_a <TT>gdcmElementSet</TT>,
-         composed of a set of <TT>gdcmValEntry</TT> 
-         and <TT>gdcmSeqEntry</TT>
-      <LI> a <TT>gdcmSeqEntry</TT> is considered as a set 
-          of <TT>gdcmSQItem</TT>
-      <LI> Dicom Sequences (VR = <TT>SQ</TT>) are now dealt as tree-like 
-          structures within <TT>gdcmSQItem</TT> class.<br>
-          they are considered as a set of <TT>gdcmSQItem</TT>s
-      <LI> a <TT>gdcmSQItem</TT> is_a <TT>gdcmElementSet</TT> 
-  </UL>
-     <LI> Improvement of the jpeg sub-library: jpeg
+      <LI> any dicom related file is a <TT>gdcmDocument</TT>
+      <LI> a <TT>gdcmDocument</TT> can be :
+      <UL>
+         <LI> a <TT>gdcmHeader</TT>, if it contains pixel data
+         <LI> a <TT>gdcmDicomDir</TT>, if it contains only informations 
+              on the files in a given directory  
+      </UL>
+
+   <LI> a <TT>gdcmDocument</TT> is_a <TT>gdcmElementSet</TT>,
+        composed of a set of <TT>gdcmEntry</TT> separated into :
+      <UL>
+      <LI> <TT>gdcmValEntry</TT><br>
+           a specialization of <TT>gdcmValEntry</TT>, for 'non
+           <TT>std::string</TT> representable' values is 
+           <TT>gdcmBinEntry</TT> 
+       <LI> <TT>gdcmSeqEntry</TT> (VR = <TT>SQ</TT>, i.e Dicom Sequences)<br>
+             they are dealt as tree-like structures :<br>
+             - a <TT>gdcmSeqEntry</TT> is considered as a set 
+             of <TT>gdcmSQItem</TT>,<br>
+             - a <TT>gdcmSQItem</TT> is_a <TT>gdcmElementSet</TT>, composed 
+             of <TT>gdcmDocEntries</TT>, recursively <br>
+      </UL>
+   </UL>
+   <LI> Improvement of the jpeg sub-library: jpeg
            compressed Dicom files (lossless and lossy) 
            might be read (check-it out)
 </UL>
@@ -192,7 +214,7 @@ Documentation"</a>
    <LI> Introduction of a RLE (Run-Time Encoding) library
    <LI> Color images (RGB or Palette Color) are dealt with
    <LI> Confusing names <TT>gdcmPatient</TT>, <TT>gdcmStudy</TT>,
-        <TT>gdcmDicomDirSerie</TT>, <TT>gdcmDicomDirPatient</TT> changed to 
+        <TT>gdcmSerie</TT>, <TT>gdcmPatient</TT> changed to 
         <TT>gdcmDicomDirPatient</TT>, <TT>gdcmDicomDirStudy</TT>, 
         <TT>gdcmDicomDirSerie</TT>, <TT>gdcmDicomDirPatient</TT>
  
