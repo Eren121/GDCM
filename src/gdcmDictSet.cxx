@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/01/17 10:56:50 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,8 +28,8 @@ namespace gdcm
 // Constructor / Destructor
 /** 
  * \ingroup DictSet
- * \brief   The Dictionnary Set obtained with this constructor simply
- *          contains the Default Public dictionnary.
+ * \brief   The Dictionary Set obtained with this constructor simply
+ *          contains the Default Public dictionary.
  */
 DictSet::DictSet() 
 {
@@ -57,7 +57,7 @@ DictSet::~DictSet()
    }
    Dicts.clear();
 
-   // Remove virtual dictionnary entries
+   // Remove virtual dictionary entries
    VirtualEntry.clear();
 }
 
@@ -82,10 +82,10 @@ void DictSet::Print(std::ostream &os, std::string const & )
 // Public
 /** 
  * \ingroup DictSet
- * \brief   Consider all the entries of the public dicom dictionnary. 
+ * \brief   Consider all the entries of the public dicom dictionary. 
  *          Build all list of all the tag names of all those entries.
  * \sa DictSet::GetPubDictTagNamesByCategory
- * @return  A list of all entries of the public dicom dictionnary.
+ * @return  A list of all entries of the public dicom dictionary.
  */
 
 // Probabely useless!
@@ -98,10 +98,10 @@ void DictSet::Print(std::ostream &os, std::string const & )
 /** 
  * \ingroup DictSet
  * \brief   
- *          - Consider all the entries of the public dicom dictionnary.
+ *          - Consider all the entries of the public dicom dictionary.
  *          - Build an hashtable whose keys are the names of the groups
  *           (fourth field in each line of dictionary) and whose corresponding
- *           values are lists of all the dictionnary entries among that
+ *           values are lists of all the dictionary entries among that
  *           group. Note that apparently the Dicom standard doesn't explicitely
  *           define a name (as a string) for each group.
  *           NO ! Dicom Standard explicitely doesn't define 
@@ -111,16 +111,16 @@ void DictSet::Print(std::ostream &os, std::string const & )
  *           select in the interface which Dicom tags should be displayed.
  * \warning 
  *          - Dicom *doesn't* define any name for any 'categorie'
- *          (the dictionnary fourth field was formerly NIH defined
+ *          (the dictionary fourth field was formerly NIH defined
  *           -and no longer he is-
  *           and will be removed when Dicom provides us a text file
- *           with the 'official' Dictionnary, that would be more friendly
- *           than asking us to perform a line by line check of the dictionnary
+ *           with the 'official' Dictionary, that would be more friendly
+ *           than asking us to perform a line by line check of the dictionary
  *           at the beginning of each year to -try to- guess the changes)
  *          - Therefore : please NEVER use that fourth field :-(
  * *
  * @return  An hashtable: whose keys are the names of the groups and whose
- *          corresponding values are lists of all the dictionnary entries
+ *          corresponding values are lists of all the dictionary entries
  *          among that group.
  */
 
@@ -168,8 +168,8 @@ Dict *DictSet::GetDict(DictKey const &dictName)
 }
 
 /**
- * \brief   Create a DictEntry which will be reference 
- *          in no dictionnary
+ * \brief   Create a DictEntry which will be referenced 
+ *          in no dictionary
  * @return  virtual entry
  */
 DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
@@ -228,6 +228,34 @@ std::string DictSet::BuildDictPath()
    }
 
    return resultPath;
+}
+
+
+/**
+ * \brief   Initialise the visit of the Hash table (DictSetHT)
+ */
+void DictSet::InitTraversal()
+{
+   ItDictHt = Dicts.begin();
+}
+
+/**
+ * \brief   Get the next entry while visiting the Hash table (DictSetHT)
+ * \return  The next Dict if found, otherwhise NULL
+ */
+Dict *DictSet::GetNextEntry()
+{
+   if (ItDictHt != Dicts.end())
+   {
+      Dict *tmp = ItDictHt->second;
+      ++ItDictHt;
+
+      return tmp;
+   }
+   else
+   {
+      return NULL;
+   }
 }
 
 //-----------------------------------------------------------------------------
