@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.63 2003/05/07 12:21:17 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.64 2003/05/07 12:49:10 frog Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -43,10 +43,9 @@ bool gdcmHeader::OpenFile(bool exception_on_error)
     if(!fp)
       throw gdcmFileError("gdcmHeader::gdcmHeader(const char *, bool)");
   }
-  else
-    dbg.Verbose(0, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
   if ( fp )
      return true;
+  dbg.Verbose(0, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
   return false;
 }
 
