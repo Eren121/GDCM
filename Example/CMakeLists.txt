@@ -17,7 +17,6 @@ SET(EXAMPLE_SOURCES
   TestChangeHeader
   TestFromScratch
   TestReadWriteReadCompare
-  TestDcm2Acr
   TestPapyrus
   TestWrite
   TestWriteSimple
