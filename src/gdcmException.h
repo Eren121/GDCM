@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/08/02 14:06:58 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,22 +95,33 @@ public:
 
 
 //-----------------------------------------------------------------------------
-/*
- * Invalid file format exception
+/**
+ * \brief Unexpected file format exception
  */
-class GDCM_EXPORT gdcmFormatError : public gdcmException {
+class GDCM_EXPORT gdcmFormatUnexpected : public gdcmException {
 public:
-   /*
-    * Builds an file-related exception with minimal information: name of
-    * the thrower method and error message
-    *
-    * @param from name of the thrower
-    * @param error error description string
-    */
+   /// \brief Builds a file-related exception with minimal information:
+   /// name of the thrower method and error message
+   /// @param from name of the thrower
+   /// @param error error description string
+   explicit gdcmFormatUnexpected(const std::string &from,
+                            const std::string &error = "Unexpected file format")
+      throw() : gdcmException( from, error ) { }
+};
+
+//-----------------------------------------------------------------------------
+/**
+ * \brief Invalid file format exception
+ */
+class GDCM_EXPORT gdcmFormatError : public gdcmFormatUnexpected {
+public:
+   /// \brief Builds a file-related exception with minimal information:
+   /// name of the thrower method and error message
+   /// @param from name of the thrower
+   /// @param error error description string
    explicit gdcmFormatError(const std::string &from,
-                            const std::string &error = "Invalid file format error")
-      throw() : gdcmException(from, error) {
-   }
+                            const std::string &error = "Invalid file format")
+      throw() : gdcmFormatUnexpected( from, error ) { }
 };
 
 //-----------------------------------------------------------------------------

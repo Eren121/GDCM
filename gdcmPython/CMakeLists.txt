@@ -22,7 +22,16 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
   #SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES PYTHON ON)
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
-  SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "-includeall")
+  # Setting SWIG_FLAGS to "-includeall" at the following line looks like
+  # a bad idea since swig tries to reculsively include all the referenced
+  # files, "including" the C++ <sstream>, <list>, <map>... Of course swig
+  # has no way of finding the path to those files (unless it is told by
+  # cmake) since they are related to the compiler installation layout.
+  # Anyhow, since this inclusion recursion is not necessary, just don't
+  # do it.
+  # Note: apparently the line is required in order to avoid a NOTFOUND
+  #       as argument of swig on invocation of make.
+  SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "")
   SWIG_ADD_MODULE(gdcm python gdcm.i)  #gdcm_wrap.cxx
   SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
   

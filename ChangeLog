@@ -1,3 +1,12 @@
+2004-08-02 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * gdcmPython/CMakeLists.txt: SWIG_FLAGS doesn't declare includeall
+    to avoid inclusion recursion until STL is reached.
+  * src/gdcmDocument.[h|cxx]: exceptions substituted to errno C-style
+    mecanism. errno.h is not included in gdcm anymore.
+  * src/gdcmException.h: introduced new gdcmFormatUnexpected class
+    (gdcmFormatError now inherits from gdcmFormatUnexpected).
+  * TODO updated
+
 2004-07-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmDicomDir.cxx, gdcmDocEntrySet.cxx: removed inclusion of errno.h
   * src/gdcmDocument.[h|cxx], gdcmFile.[h|cxx], gdcmHeader.[h|cxx]:

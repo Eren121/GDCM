@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 03:20:23 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/08/02 14:06:58 $
+  Version:   $Revision: 1.29 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -131,7 +131,7 @@ public:
 
    FileType GetFileType();
 
-   FILE* OpenFile(bool exception_on_error = false) throw(gdcmFileError);
+   FILE* OpenFile(bool exception_on_error = false) throw( gdcmFileError );
    bool CloseFile();
 
    void Write(FILE* fp, FileType type);
@@ -202,7 +202,7 @@ private:
    long ParseSQ (gdcmSeqEntry *seq, long offset, long l_max, bool delim_mode); 
    
    void LoadDocEntry      (gdcmDocEntry *);
-   void FindDocEntryLength(gdcmDocEntry *);
+   void FindDocEntryLength(gdcmDocEntry *) throw ( gdcmFormatError );
    void FindDocEntryVR    (gdcmDocEntry *);
    bool CheckDocEntryVR   (gdcmDocEntry *, gdcmVRKey);
 
@@ -215,10 +215,10 @@ private:
    void FixDocEntryFoundLength(gdcmDocEntry *, uint32_t);
    bool IsDocEntryAnInteger   (gdcmDocEntry *);
 
-   uint32_t FindDocEntryLengthOB();
+   uint32_t FindDocEntryLengthOB() throw( gdcmFormatUnexpected );
 
-   uint16_t ReadInt16();
-   uint32_t ReadInt32();
+   uint16_t ReadInt16() throw ( gdcmFormatError );
+   uint32_t ReadInt32() throw ( gdcmFormatError );
    void     SkipBytes(uint32_t);
    bool     ReadTag(uint16_t, uint16_t);
    uint32_t ReadTagLength(uint16_t, uint16_t);

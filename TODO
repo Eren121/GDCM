@@ -16,21 +16,6 @@ Convert the C-like IO to C++ IO:
         binary IO are available at
         http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
 -----------------------------------------------------------------------------
-Switch from errno C-style to exceptions:
-  Goal: remove all the C-oriented errno (#include <errno.h>) and switch
-        to C++ exceptions.
-  Note: - only src/gdcmDocument.cxx includes errno.h
-        - when exceptions were first introduced within gdcm, it caused 
-        gdcmPython to be uncompatible within the corresponding version
-        of wxPython (refer to the first lines of
-        Test/ExceptionAndPython/README). Hence we reverted to the old
-        errno mecanisme. Since wxPython seems not to be problem anymore
-        (check it with Test/ExceptionAndPython) we can now move back to C++
-        exceptions.
------------------------------------------------------------------------------
-CLEANUP:
- - Remove ignore_shadow from gdcmDocument().
------------------------------------------------------------------------------
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
   be made at the cost of memory consumption (refer to header of 
   vtk/vtkGdcmHeader.cxx)

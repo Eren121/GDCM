@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 03:20:23 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2004/08/02 14:06:57 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,6 @@
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 
-#include <errno.h>
 #include <vector>
 
 // For nthos:
@@ -1499,8 +1498,12 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
       }
       // to be sure we are at the end of the value ...
       fseek(Fp, (long)entry->GetOffset()+(long)entry->GetLength(), SEEK_SET);      
-
-      return;  //FIXME FIXME FIXME FIXME ????
+      // Following return introduced by JPR on version 1.25. Since the 
+      // treatement of a ValEntry is never executed (doh!) this means
+      // we were lucky up to now because we NEVER encountered a ValEntry
+      // whose length was bigger thant MaxSizeLoadEntry !? I can't believe
+      // this could ever work...
+      return;  //FIXME FIXME FIXME FIXME JPR ????
 
        // Be carefull : a BinEntry IS_A ValEntry ... 
       if (gdcmValEntry* valEntryPtr = dynamic_cast< gdcmValEntry* >(entry) )
@@ -1618,7 +1621,8 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
  * \brief  Find the value Length of the passed Header Entry
  * @param  Entry Header Entry whose length of the value shall be loaded. 
  */
-void gdcmDocument::FindDocEntryLength (gdcmDocEntry *entry)
+void gdcmDocument::FindDocEntryLength( gdcmDocEntry *entry )
+   throw ( gdcmFormatError )
 {
    uint16_t element = entry->GetElement();
    std::string  vr  = entry->GetVR();
@@ -1637,8 +1641,12 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *entry)
 
          if ( vr == "OB" && length32 == 0xffffffff ) 
          {
-            uint32_t lengthOB = FindDocEntryLengthOB();
-            if ( errno == 1 )
+            uint32_t lengthOB;
+            try 
+            {
+               lengthOB = FindDocEntryLengthOB();
+            }
+            catch ( gdcmFormatUnexpected )
             {
                // Computing the length failed (this happens with broken
                // files like gdcm-JPEG-LossLess3a.dcm). We still have a
@@ -1650,7 +1658,6 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *entry)
                long lengthUntilEOF = ftell(Fp) - currentPosition;
                fseek(Fp, currentPosition, SEEK_SET);
                entry->SetLength(lengthUntilEOF);
-               errno = 0;
                return;
             }
             entry->SetLength(lengthOB);
@@ -1694,8 +1701,8 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *entry)
       {
          if ( !IsExplicitVRBigEndianTransferSyntax() ) 
          {
-            dbg.Verbose(0, "gdcmDocument::FindLength", "not explicit VR");
-            errno = 1;
+            throw gdcmFormatError( "gdcmDocument::FindDocEntryLength()",
+                                   " not explicit VR." );
             return;
          }
          length16 = 4;
@@ -1719,11 +1726,10 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *entry)
       // Heuristic: well, some files are really ill-formed.
       if ( length16 == 0xffff) 
       {
+         // 0xffff means that we deal with 'Unknown Length' Sequence  
          length16 = 0;
-         // Length16= 0xffff means that we deal with
-         // 'Unknown Length' Sequence  
       }
-      FixDocEntryFoundLength(entry, (uint32_t)length16);
+      FixDocEntryFoundLength( entry, (uint32_t)length16 );
       return;
    }
    else
@@ -1735,7 +1741,7 @@ void gdcmDocument::FindDocEntryLength (gdcmDocEntry *entry)
       // not coexist in a Data Set and Data Sets nested within it".]
       // Length is on 4 bytes.
       
-      FixDocEntryFoundLength(entry, ReadInt32());
+      FixDocEntryFoundLength( entry, ReadInt32() );
       return;
    }
 }
@@ -2150,6 +2156,7 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *entry)
  */
 
 uint32_t gdcmDocument::FindDocEntryLengthOB()
+   throw( gdcmFormatUnexpected )
 {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
    long positionOnEntry = ftell(Fp);
@@ -2158,26 +2165,33 @@ uint32_t gdcmDocument::FindDocEntryLengthOB()
 
    while ( !foundSequenceDelimiter )
    {
-      uint16_t g = ReadInt16();
-      uint16_t n = ReadInt16();   
-      if ( errno == 1 )
+      uint16_t group;
+      uint16_t elem;
+      try
       {
-         return 0;
+         group = ReadInt16();
+         elem  = ReadInt16();   
+      }
+      catch ( gdcmFormatError )
+      {
+         throw gdcmFormatError("gdcmDocument::FindDocEntryLengthOB()",
+                               " group or element not present.");
       }
 
       // We have to decount the group and element we just read
       totalLength += 4;
      
-      if ( g != 0xfffe || ( n != 0xe0dd && n != 0xe000 ) )
+      if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
       {
-         dbg.Verbose(1, "gdcmDocument::FindLengthOB: neither an Item tag "
-                        "nor a Sequence delimiter tag."); 
+         dbg.Verbose(1, "gdcmDocument::FindDocEntryLengthOB: neither an Item "
+                        "tag nor a Sequence delimiter tag."); 
          fseek(Fp, positionOnEntry, SEEK_SET);
-         errno = 1;
-         return 0;
+         throw gdcmFormatUnexpected("gdcmDocument::FindDocEntryLengthOB()",
+                                    "Neither an Item tag nor a Sequence "
+                                    "delimiter tag.");
       }
 
-      if ( n == 0xe0dd )
+      if ( elem == 0xe0dd )
       {
          foundSequenceDelimiter = true;
       }
@@ -2202,6 +2216,7 @@ uint32_t gdcmDocument::FindDocEntryLengthOB()
  * @return read value
  */
 uint16_t gdcmDocument::ReadInt16()
+   throw( gdcmFormatError )
 {
    uint16_t g;
    size_t item_read = fread (&g, (size_t)2,(size_t)1, Fp);
@@ -2209,12 +2224,10 @@ uint16_t gdcmDocument::ReadInt16()
    {
       if( ferror(Fp) )
       {
-         dbg.Verbose(0, "gdcmDocument::ReadInt16", " File Error");
+         throw gdcmFormatError( "gdcmDocument::ReadInt16()", " file error." );
       }
-      errno = 1;
-      return 0;
+      throw gdcmFormatError( "gdcmDocument::ReadInt16()", "EOF." );
    }
-   errno = 0;
    g = SwapShort(g); 
    return g;
 }
@@ -2225,6 +2238,7 @@ uint16_t gdcmDocument::ReadInt16()
  * @return read value
  */
 uint32_t gdcmDocument::ReadInt32()
+   throw( gdcmFormatError )
 {
    uint32_t g;
    size_t item_read = fread (&g, (size_t)4,(size_t)1, Fp);
@@ -2232,12 +2246,10 @@ uint32_t gdcmDocument::ReadInt32()
    {
       if( ferror(Fp) )
       {
-         dbg.Verbose(0, "gdcmDocument::ReadInt32", " File Error");
+         throw gdcmFormatError( "gdcmDocument::ReadInt16()", " file error." );
       }
-      errno = 1;
-      return 0;
+      throw gdcmFormatError( "gdcmDocument::ReadInt32()", "EOF." );
    }
-   errno = 0;
    g = SwapLong(g);
    return g;
 }
@@ -2524,28 +2536,39 @@ void gdcmDocument::SetMaxSizePrintEntry(long newSize)
  *          gets the VR, gets the length, gets the offset value)
  * @return  On succes the newly created DocEntry, NULL on failure.      
  */
-gdcmDocEntry *gdcmDocument::ReadNextDocEntry()
+gdcmDocEntry* gdcmDocument::ReadNextDocEntry()
 {
-   uint16_t g = ReadInt16();
-   uint16_t n = ReadInt16();
+   uint16_t group;
+   uint16_t elem;
 
-   if (errno == 1)
+   try
+   {
+      group = ReadInt16();
+      elem  = ReadInt16();
+   }
+   catch ( gdcmFormatError e )
    {
       // We reached the EOF (or an error occured) therefore 
       // header parsing has to be considered as finished.
+      std::cout << e;
       return 0;
    }
-   gdcmDocEntry *newEntry = NewDocEntryByNumber(g, n);
 
+   gdcmDocEntry *newEntry = NewDocEntryByNumber(group, elem);
    FindDocEntryVR(newEntry);
-   FindDocEntryLength(newEntry);
 
-   if (errno == 1)
+   try
+   {
+      FindDocEntryLength(newEntry);
+   }
+   catch ( gdcmFormatError e )
    {
       // Call it quits
+      std::cout << e;
       delete newEntry;
       return 0;
    }
+
    newEntry->SetOffset(ftell(Fp));  
 
    return newEntry;
