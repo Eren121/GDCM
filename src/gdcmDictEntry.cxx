@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:07:01 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/07 16:14:58 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,7 +93,7 @@ void DictEntry::SetVM(TagName const &vm)
 {
    if ( IsVMUnknown() )
    {
-      VR = vr;
+      VM = vm;
    }
    else 
    {
