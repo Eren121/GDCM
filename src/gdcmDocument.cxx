@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 00:21:48 $
-  Version:   $Revision: 1.172 $
+  Date:      $Date: 2005/01/11 11:37:13 $
+  Version:   $Revision: 1.173 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,8 +106,10 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
       return;
    }
 
+   Group0002Parsed = false;
+
    gdcmVerboseMacro( "Starting parsing of file: " << Filename.c_str());
-   Fp->seekg( 0,  std::ios::beg);
+  // Fp->seekg( 0,  std::ios::beg);
    
    Fp->seekg(0,  std::ios::end);
    long lgt = Fp->tellg();
@@ -195,6 +197,7 @@ Document::Document() : ElementSet(-1)
    Initialise();
    SwapCode = 0;
    Filetype = ExplicitVR;
+   Group0002Parsed = false;
 }
 
 /**
@@ -391,7 +394,7 @@ bool Document::IsEncapsulate()
  */
 bool Document::IsDicomV3()
 {
-   // Checking if Transfert Syntax exists is enough
+   // Checking if Transfer Syntax exists is enough
    // Anyway, it's to late check if the 'Preamble' was found ...
    // And ... would it be a rich idea to check ?
    // (some 'no Preamble' DICOM images exist !)
@@ -415,6 +418,8 @@ FileType Document::GetFileType()
  */
 std::ifstream *Document::OpenFile()
 {
+
+   HasDCMPreamble = false;
    if (Filename.length() == 0) 
    {
       return 0;
@@ -422,7 +427,7 @@ std::ifstream *Document::OpenFile()
 
    if(Fp)
    {
-      gdcmVerboseMacro( "Is already opened when opening: " << Filename.c_str());
+      gdcmVerboseMacro( "File already open: " << Filename.c_str());
    }
 
    Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
@@ -466,6 +471,7 @@ std::ifstream *Document::OpenFile()
    }
    if( memcmp(dicm, "DICM", 4) == 0 )
    {
+      HasDCMPreamble = true;
       return Fp;
    }
  
@@ -1671,7 +1677,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
             return;
          }
          length16 = 4;
-         SwitchSwapToBigEndian();
+         SwitchByteSwapCode();
 
          // Restore the unproperly loaded values i.e. the group, the element
          // and the dictionary entry depending on them.
@@ -2222,7 +2228,7 @@ bool Document::CheckSwap()
      
       // FIXME : FIXME:
       // Sometimes (see : gdcmData/icone.dcm) group 0x0002 *is* Explicit VR,
-      // but elem 0002,0010 (Transfert Syntax) tells us the file is
+      // but elem 0002,0010 (Transfer Syntax) tells us the file is
       // *Implicit* VR.  -and it is !- 
       
       if( memcmp(entCur, "UL", (size_t)2) == 0 ||
@@ -2355,12 +2361,11 @@ bool Document::CheckSwap()
 
 
 /**
- * \brief Restore the unproperly loaded values i.e. the group, the element
- *        and the dictionary entry depending on them. 
+ * \brief Change the Byte Swap code. 
  */
-void Document::SwitchSwapToBigEndian() 
+void Document::SwitchByteSwapCode() 
 {
-   gdcmVerboseMacro( "Switching to BigEndian mode.");
+   gdcmVerboseMacro( "Switching Byte Swap code.");
    if ( SwapCode == 0    ) 
    {
       SwapCode = 4321;
@@ -2435,7 +2440,7 @@ void Document::HandleBrokenEndian(uint16_t group, uint16_t elem)
    {
      // start endian swap mark for group found
      reversedEndian++;
-     SwitchSwapToBigEndian();
+     SwitchByteSwapCode();
      // fix the tag
      group = 0xfffe;
      elem = 0xe000;
@@ -2444,14 +2449,47 @@ void Document::HandleBrokenEndian(uint16_t group, uint16_t elem)
    {
      // end of reversed endian group
      reversedEndian--;
-     SwitchSwapToBigEndian();
+     SwitchByteSwapCode();
+   }
+}
+
+/**
+ * \brief   Group 0002 is always coded Little Endian
+ *          whatever Transfer Syntax is
+ * @return  no return
+ */
+void Document::HandleOutOfGroup0002(uint16_t group)
+{
+   // Endian reversion. Some files contain groups of tags with reversed endianess.
+   if ( !Group0002Parsed && group != 0x0002)
+   {
+      Group0002Parsed = true;
+     // we just came out of group 0002
+     // if Transfer syntax is Big Endian we have to change CheckSwap
+
+      TagKey key = DictEntry::TranslateToKey(0x0002, 0x0010);
+      if ( !TagHT.count(key))
+      {
+         gdcmVerboseMacro("True DICOM File, with NO Tansfer Syntax ?!?");
+         return;
+      }
+
+   // FIXME Strangely, this works with 
+   //'Implicit VR Transfer Syntax (GE Private)
+
+       if ( ((ValEntry *)TagHT.find(key)->second)->GetValue()
+               == "Explicit VR - Big Endian" )
+       {
+          gdcmVerboseMacro("Tansfer Syntax = Explicit VR - Big Endian");
+          SwitchByteSwapCode();
+        }
    }
 }
 
 /**
  * \brief   Read the next tag but WITHOUT loading it's value
  *          (read the 'Group Number', the 'Element Number',
- *           gets the Dict Entry
+ *          gets the Dict Entry
  *          gets the VR, gets the length, gets the offset value)
  * @return  On succes the newly created DocEntry, NULL on failure.      
  */
@@ -2473,7 +2511,13 @@ DocEntry *Document::ReadNextDocEntry()
       return 0;
    }
 
+   // Sometimes file contains groups of tags with reversed endianess.
    HandleBrokenEndian(group, elem);
+
+// In 'true DICOM' files Group 0002 is allways little endian
+   if ( HasDCMPreamble )
+      HandleOutOfGroup0002(group);
+ 
    std::string vr = FindDocEntryVR();
    std::string realVR = vr;
 
@@ -2583,7 +2627,10 @@ bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
        << "   but instead we encountered tag ("
        << std::hex << itemTagGroup << "," << itemTagElement << ")"
        << std::dec
-       << "  at address: " << (unsigned int)currentPosition );
+       << "  at address: " << (unsigned int)currentPosition 
+       << std::hex 
+       << "  0x(" << (unsigned int)currentPosition  << ")" 
+       ) ;
       Fp->seekg(positionOnEntry, std::ios::beg);
 
       return false;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:57 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/11 11:37:13 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 
    int numberOfScalarComponents=e1->GetNumberOfScalarComponents();
    std::cout << "NumberOfScalarComponents " << numberOfScalarComponents <<std::endl;
-   transferSyntaxName = e1->GetTransfertSyntaxName();
+   transferSyntaxName = e1->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
    
 /*   if (  transferSyntaxName != "Implicit VR - Little Endian"

@@ -1,14 +1,23 @@
+2005-01-11 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * Replace confusing name SwitchSwapToBigEndian name by SwitchByteSwapCode
+   * Add the Document::HandleOutOfGroup0002(uint16_t group) method
+	    to swap the Swap Code, at parsing time, when we come out of group 0002
+		 and Transfer Syntax is Big Endian
+		 We should be able to read now 'true DICOM" Big Endian coded images
+	 * Add optional run time SetDebugOn (last param) for PrintHeader, PrintFile
+	 * Replace the french 'Transfert Syntax' by the english 'Transfer Syntax'
+
 2005-01-10 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Hopefully fix the bug on MacOSX and static global initialization. 
    This is the only -minor- patch I found that both please MacOSX and VS6. 
    Other patch would be to declare a const std::string & GDCM_UNFOUND() instead, 
-   but this would require a lot of change. Another approach wqould be that Global 
+   but this would require a lot of change. Another approach would be that Global 
    create those string and GDCM_UNFOUND becomes a pointer to a string (which 
    gdcm::Global would destroy at exit).
 
 2005-01-08 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-   * Fix bug on MacOSX with static initialization in a multui threaded
-	 environement. static const string in a header file used to be ill
+   * Fix bug on MacOSX with static initialization in a multy threaded
+	 environment. static const string in a header file used to be ill
 	 initialized provoquing the freeze of any tests. patch should solve this
 	 issue.
 
@@ -617,7 +626,7 @@
   images, without the need of the Cornwell lib, but we do read them properly now
   * To reduce code (well to avoid code duplication), I defined a common place
   for jpeg read/write: gdcmJpeg.cxx. Now gdcmJpeg[8,12 16] include this file and
-  redefine symbols. This is not prefect but this the best solution I found for a
+  redefine symbols. This is not perfect but this the best solution I found for a
   compilation time jpeg option.
 
 2004-10-13 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:57 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/11 11:37:12 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirImage.h"
 #include "gdcmTS.h"
+#include "gdcmDebug.h"
 
 #include <fstream>
 #include <iostream>
@@ -44,6 +45,9 @@ int main(int argc, char* argv[])
       file += GDCM_DATA_ROOT;
       file += "/DICOMDIR";
    }
+
+   if (argc > 3)
+      gdcm::Debug::SetDebugOn();
 
    e1 = new gdcm::DicomDir( file );
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:57 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/01/11 11:37:13 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,6 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmHeader.h"
+#include "gdcmDebug.h"
 #include "gdcmFile.h"
 
 #include <iostream>
@@ -39,12 +40,18 @@ int main(int argc, char* argv[])
       fileName += GDCM_DATA_ROOT;
       fileName += "/test.acr";
    }
+
+   if (argc > 3)
+      gdcm::Debug::SetDebugOn();
    
    e1= new gdcm::Header( fileName.c_str() );
    f1 = new gdcm::File(e1);
 
-   f1->SetPrintLevel(2);
-   f1->Print();
+   if (argc > 2) 
+   {
+      int level = atoi(argv[2]);   
+      e1->SetPrintLevel(level);
+   }
 
    std::cout << "\n\n" << std::endl; 
 
@@ -79,13 +86,13 @@ int main(int argc, char* argv[])
   
    if ( e1->GetEntry(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) 
    {
-      std::cout << "Transfert Syntax not loaded. " << std::endl
+      std::cout << "Transfer Syntax not loaded. " << std::endl
                 << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
                 << std::endl;
       return 0;
    }
   
-   std::string transferSyntaxName = e1->GetTransfertSyntaxName();
+   std::string transferSyntaxName = e1->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
    
    if(e1->IsReadable())

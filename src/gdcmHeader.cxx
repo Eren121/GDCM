@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 17:09:49 $
-  Version:   $Revision: 1.228 $
+  Date:      $Date: 2005/01/11 11:37:14 $
+  Version:   $Revision: 1.229 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1164,34 +1164,34 @@ int Header::GetLUTNbits()
 }
 
 /**
- * \brief Accesses the info from 0002,0010 : Transfert Syntax and TS
+ * \brief Accesses the info from 0002,0010 : Transfer Syntax and TS
  *        else 1.
- * @return The full Transfert Syntax Name (as opposed to Transfert Syntax UID)
+ * @return The full Transfer Syntax Name (as opposed to Transfer Syntax UID)
  */
-std::string Header::GetTransfertSyntaxName()
+std::string Header::GetTransferSyntaxName()
 {
-   // use the TS (TS : Transfert Syntax)
-   std::string transfertSyntax = GetEntry(0x0002,0x0010);
+   // use the TS (TS : Transfer Syntax)
+   std::string transferSyntax = GetEntry(0x0002,0x0010);
 
-   if ( transfertSyntax == GDCM_NOTLOADED )
+   if ( transferSyntax == GDCM_NOTLOADED )
    {
-      gdcmVerboseMacro( "Transfert Syntax not loaded. " << std::endl
+      gdcmVerboseMacro( "Transfer Syntax not loaded. " << std::endl
                << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE" );
       return "Uncompressed ACR-NEMA";
    }
-   if ( transfertSyntax == GDCM_UNFOUND )
+   if ( transferSyntax == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Unfound Transfert Syntax (0002,0010)");
+      gdcmVerboseMacro( "Unfound Transfer Syntax (0002,0010)");
       return "Uncompressed ACR-NEMA";
    }
 
-   while ( ! isdigit((unsigned char)transfertSyntax[transfertSyntax.length()-1]) )
+   while ( ! isdigit((unsigned char)transferSyntax[transferSyntax.length()-1]) )
    {
-      transfertSyntax.erase(transfertSyntax.length()-1, 1);
+      transferSyntax.erase(transferSyntax.length()-1, 1);
    }
    // we do it only when we need it
    TS* ts         = Global::GetTS();
-   std::string tsName = ts->GetValue( transfertSyntax );
+   std::string tsName = ts->GetValue( transferSyntax );
 
    //delete ts; /// \todo Seg Fault when deleted ?!
    return tsName;

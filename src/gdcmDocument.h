@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2005/01/11 11:37:13 $
+  Version:   $Revision: 1.79 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -174,6 +174,12 @@ protected:
    /// what is written on disc.
    int SwapCode;
 
+   ///\brief whether we already parsed group 0002
+   bool Group0002Parsed;
+
+   ///\brief whether file has a DCM Preamble
+   bool HasDCMPreamble;
+
    /// File Pointer, opened during Header parsing.
    std::ifstream *Fp;
 
@@ -230,7 +236,7 @@ private:
 
    void Initialise();
    bool CheckSwap();
-   void SwitchSwapToBigEndian();
+   void SwitchByteSwapCode();
    void SetMaxSizeLoadEntry(long);
    void SetMaxSizePrintEntry(long);
 
@@ -242,6 +248,7 @@ private:
                                    DocEntrySet* set );
 
    void HandleBrokenEndian(uint16_t  group, uint16_t  elem);
+   void HandleOutOfGroup0002(uint16_t group);
 
 // Variables
    /// Public dictionary used to parse this header

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 20:52:39 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/11 11:37:14 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,7 @@ VR *Global::GetVR()
 }
 /**
  * \ingroup Global
- * \brief   returns a pointer to the 'Transfert Syntax Table' 
+ * \brief   returns a pointer to the 'Transfer Syntax Table' 
  */
 TS *Global::GetTS()
 {

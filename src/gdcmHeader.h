@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:28 $
-  Version:   $Revision: 1.97 $
+  Date:      $Date: 2005/01/11 11:37:14 $
+  Version:   $Revision: 1.98 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -160,7 +160,7 @@ public:
    int    GetLUTNbits();
 
    /// Return the Transfer Syntax as a string
-   std::string GetTransfertSyntaxName();
+   std::string GetTransferSyntaxName();
 
    /// Accessor to \ref Header::GrPixel
    uint16_t GetGrPixel()  { return GrPixel; }
