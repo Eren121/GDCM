@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 00:30:09 $
-  Version:   $Revision: 1.99 $
+  Date:      $Date: 2005/01/17 13:55:26 $
+  Version:   $Revision: 1.100 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -477,6 +477,13 @@ int GetMacAddrSys ( unsigned char *addr )
                                MIB_ifMACEntAddr.idLength);
             if ( !ret && varBind[1].value.asnValue.address.stream != NULL )
             {
+               if ( varBind[1].value.asnType != ASN_RFC1155_IPADDRESS )
+               {
+                   // Ignore all dial-up networking adapters
+                   std::cerr << "Interface #" << j << " is not an IP adress\n";
+                   continue;
+               }
+                  
                if ( (varBind[1].value.asnValue.address.stream[0] == 0x44)
                  && (varBind[1].value.asnValue.address.stream[1] == 0x45)
                  && (varBind[1].value.asnValue.address.stream[2] == 0x53)
@@ -499,6 +506,7 @@ int GetMacAddrSys ( unsigned char *addr )
                   std::cerr << "Interface #" << j << " is a NULL address\n";
                   continue;
                }
+
                memcpy( addr, varBind[1].value.asnValue.address.stream, 6);
             }
          }
@@ -652,15 +660,16 @@ std::string Util::GetMACAddress()
    // http://groups-beta.google.com/group/comp.unix.solaris/msg/ad36929d783d63be
    // http://bdn.borland.com/article/0,1410,26040,00.html
    unsigned char addr[6];
-   std::string macaddr;
- 
    int stat = GetMacAddrSys(addr);
+
    if (0 == stat)
    {
+      std::string macaddr = "";
       for (int i=0; i<6; ++i) 
       {
          //macaddr += Format("%2.2x", addr[i]);
-         if(i) macaddr += ".";
+         if(i)
+            macaddr += ".";
          macaddr += Format("%i", (int)addr[i]);
       }
       return macaddr;
