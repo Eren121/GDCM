@@ -15,7 +15,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "gdcmpy"=.\python\gdcmPython\win32\gdcmpy.dsp - Package Owner=<4>
+Project: "gdcmpy"=.\gdcmPython\win32\gdcmpy.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -27,7 +27,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "gdcmpycomplet"=.\python\gdcmPython\win32\gdcmpycomplet.dsp - Package Owner=<4>
+Project: "gdcmpycomplet"=.\gdcmPython\win32\gdcmpycomplet.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
