@@ -47,6 +47,8 @@ int main(int argc, char* argv[])
       return 1;
    }
 
+// don't modify identation in order to let this source xdiffable with ../Test
+
       std::string filename = argv[1];
       std::string output = argv[2];
 

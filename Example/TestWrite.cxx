@@ -19,9 +19,11 @@ int main(int argc, char* argv[])
          std::cerr << "usage: " << std::endl 
                    << argv[0] << " fileName writtingMode "
                 << std::endl 
-                   << "(a : ACR, d : DICOM Implicit VR,"
-                   << " x : DICOM Explicit VR  r : RAW)"
+                   << "(a : ACR, gives fileNamed : DICOM Implicit VR,"
+                   << " x : DICOM Explicit VR  r : RAW,"
+                   << " v : explicit VR + computes the video inv image"
                 << std::endl;
+
          return 0;
    }
 /*
@@ -131,6 +133,22 @@ int main(int argc, char* argv[])
       std::cout << "WriteRaw" << std::endl;
       f1->WriteRawData(zozo);
       break;
+
+   case 'v' :
+
+     if ( f1->GetHeader()->GetBitsStored() == 8)
+        for (int i=0; i<dataSize; i++) {
+           ((char *)imageData)[i] += 127;
+        }
+     else  
+        for (int i=0; i<dataSize/2; i++) {
+           ((unsigned short *)imageData)[i] += 32767;
+        }
+
+         sprintf(zozo, "%s.DCM", toto.c_str());
+         printf ("WriteDCM Implicit VR\n");
+         f1->WriteDcmImplVR(zozo);
+         break;
 
    }
   return 0;
