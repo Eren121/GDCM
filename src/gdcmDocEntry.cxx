@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/06/23 13:02:36 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,25 +38,14 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in) {
    entry = in;
 }
 
-/**
- * \ingroup gdcmDocEntry
- * \brief   Canonical Printer
- * @param   os ostream we want to print in
- */
-void gdcmDocEntry::Print(std::ostream & os) {
-   std::ostringstream s;
-   s << std::endl;
-   PrintCommonPart(os);
-   os << s.str();
-}
-
 //-----------------------------------------------------------------------------
 // Print
 /**
  * \ingroup gdcmDocEntry
  * \brief   Prints the common part of gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
+ * @param   os ostream we want to print in
  */
-void gdcmDocEntry::PrintCommonPart(std::ostream & os) {
+void gdcmDocEntry::Print(std::ostream & os) {
 
    printLevel=2; // FIXME
    
@@ -117,15 +106,6 @@ void gdcmDocEntry::PrintCommonPart(std::ostream & os) {
  * \brief   Writes the common part of any gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
  */
 void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
-   std::cout << "gdcmDocEntry::Write : Is that what you wanted to do ? " << std::endl;
-   WriteCommonPart(fp, filetype);
-}
-
-/**
- * \ingroup gdcmDocEntry
- * \brief   Writes the common part of any gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
- */
-void gdcmDocEntry::WriteCommonPart(FILE *fp, FileType filetype) {
 
    guint16 group  = GetGroup();
    VRKey   vr     = GetVR();

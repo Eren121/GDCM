@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 02:13:14 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/06/23 13:02:36 $
+  Version:   $Revision: 1.16 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,51 +59,42 @@ gdcmSQItem::~gdcmSQItem()
  void gdcmSQItem::Print(std::ostream & os) {
    std::ostringstream s;
 
-   if (SQDepthLevel>0) {
+   if (SQDepthLevel>0)
+   {
       for (int i=0;i<SQDepthLevel;i++)
          s << "   | " ;
    }
    std::cout << s.str() << " --- SQItem number " << SQItemNumber  << std::endl;
-   for (ListDocEntry::iterator i = docEntries.begin();  
-        i != docEntries.end();
-        ++i)
+   for (ListDocEntry::iterator i  = docEntries.begin();  
+                               i != docEntries.end();
+                             ++i)
    {
-       os << s.str();
-      //(*i)->SetPrintLevel(printLevel); //self->GetPrintLevel() ?
-      (*i)->SetPrintLevel(2);
-      (*i)->Print(os);   
+      gdcmDocEntry* Entry = *i;
+      bool PrintEndLine = true;
+
+      os << s.str();
+      Entry->SetPrintLevel(2);
+      Entry->Print(os);   
+      if ( gdcmSeqEntry* SeqEntry = dynamic_cast<gdcmSeqEntry*>(Entry) )
+         PrintEndLine = false;
+      if (PrintEndLine)
+         os << std::endl;
    } 
 }
-
 
 /*
  * \ingroup gdcmSQItem
  * \brief   canonical Writer
  */
- void gdcmSQItem::Write(FILE *fp,FileType filetype) {
-   gdcmDocEntry *Entry;
+void gdcmSQItem::Write(FILE *fp,FileType filetype)
+{
    for (ListDocEntry::iterator i = docEntries.begin();  
         i != docEntries.end();
         ++i)
    {
-      Entry=*i;
-      (Entry)->WriteCommonPart(fp, filetype);
-
-      if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(Entry) ) {
-         BinEntry->Write(fp);
-         return;
-      }
-      if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) ) {
-         ValEntry->Write(fp);
-         return;
-      }
-      if (gdcmSeqEntry* SeqEntry = dynamic_cast< gdcmSeqEntry* >(Entry) ) {
-         SeqEntry->Write(fp,filetype);
-         return;
-      }
+      (*i)->Write(fp, filetype);
    } 
 }
-
 
 //-----------------------------------------------------------------------------
 // Public

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/06/23 13:02:36 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,9 +126,6 @@ public:
    virtual void Print (std::ostream & os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);
    
-   void gdcmDocEntry::PrintCommonPart(std::ostream & os);
-   void gdcmDocEntry::WriteCommonPart(FILE *fp, FileType filetype);
-         
    guint32 GetFullLength(void);
    
    void Copy(gdcmDocEntry *doc);

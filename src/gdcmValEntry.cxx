@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:37:04 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/06/23 13:02:36 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,24 +69,22 @@ gdcmValEntry::~gdcmValEntry (void)
  */
 void gdcmValEntry::Print(std::ostream & os)
 {
+   guint16 g = GetGroup();
+   guint16 e = GetElement();
+   std::string vr = GetVR();
    std::ostringstream s; 
-   unsigned short int g, e;
    char st[20];
    TSKey v;
-   std::string d2, vr;
+   std::string d2;
      
-   PrintCommonPart(os); 
+   gdcmDocEntry::Print(os); 
 
-   g  = GetGroup();
-   
-   if (g == 0xfffe) {
-      s << std::endl;
-      os << s.str(); 
-      return;  // just to avoid identing all the remaining code     
+   if (g == 0xfffe)
+   {
+      // just to avoid identing all the remaining code     
+      return;
    }
    
-   e  = GetElement();
-   vr = GetVR();
    gdcmTS * ts = gdcmGlobal::GetTS();
     
    v  = GetValue();  // not applicable for SQ ...     
@@ -117,7 +115,8 @@ void gdcmValEntry::Print(std::ostream & os)
       }
    }
    //if (e == 0x0000) {        // elem 0x0000 --> group length 
-   if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") ) {
+   if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
+   {
       if (v == "4294967295") // to avoid troubles in convertion 
          sprintf (st," x(ffffffff)");
       else {
@@ -128,51 +127,51 @@ void gdcmValEntry::Print(std::ostream & os)
       }
       s << st;
    }
-        
-   s << std::endl;
-   os << s.str();   
+   os << s.str();
 }
-
 
 /*
  * \brief   canonical Writer
  */
-void gdcmValEntry::Write(FILE *fp) {
-      std::string vr=GetVR();
-      int lgr=GetLength();
-      if (vr == "US" || vr == "SS") {
-         // some 'Short integer' fields may be mulivaluated
-         // each single value is separated from the next one by '\'
-         // we split the string and write each value as a short int
-         std::vector<std::string> tokens;
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (GetValue(), tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) {
-            guint16 val_uint16 = atoi(tokens[i].c_str());
-            void *ptr = &val_uint16;
-            fwrite ( ptr,(size_t)2 ,(size_t)1 ,fp);
-         }
-         tokens.clear();
-         return;
+void gdcmValEntry::Write(FILE *fp, FileType filetype)
+{
+   gdcmDocEntry::Write(fp, filetype);
+   std::string vr=GetVR();
+   int lgr=GetLength();
+   if (vr == "US" || vr == "SS")
+   {
+      // some 'Short integer' fields may be mulivaluated
+      // each single value is separated from the next one by '\'
+      // we split the string and write each value as a short int
+      std::vector<std::string> tokens;
+      tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+      Tokenize (GetValue(), tokens, "\\");
+      for (unsigned int i=0; i<tokens.size();i++) {
+         guint16 val_uint16 = atoi(tokens[i].c_str());
+         void *ptr = &val_uint16;
+         fwrite ( ptr,(size_t)2 ,(size_t)1 ,fp);
       }
-      if (vr == "UL" || vr == "SL") {
-         // Some 'Integer' fields may be multivaluated (multiple instances 
-         // of integers). But each single integer value is separated from the
-         // next one by '\' (backslash character). Hence we split the string
-         // along the '\' and write each value as an int:
-         std::vector<std::string> tokens;
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (GetValue(), tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++){
-            guint32 val_uint32 = atoi(tokens[i].c_str());
-            void *ptr = &val_uint32;
-            fwrite ( ptr,(size_t)4 ,(size_t)1 ,fp);
-         }
-         tokens.clear();
-         return;
-      }           
-      fwrite (GetValue().c_str(),
-              (size_t)lgr ,(size_t)1, fp); // Elem value
+      tokens.clear();
+      return;
+   }
+   if (vr == "UL" || vr == "SL")
+   {
+      // Some 'Integer' fields may be multivaluated (multiple instances 
+      // of integers). But each single integer value is separated from the
+      // next one by '\' (backslash character). Hence we split the string
+      // along the '\' and write each value as an int:
+      std::vector<std::string> tokens;
+      tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+      Tokenize (GetValue(), tokens, "\\");
+      for (unsigned int i=0; i<tokens.size();i++){
+         guint32 val_uint32 = atoi(tokens[i].c_str());
+         void *ptr = &val_uint32;
+         fwrite ( ptr,(size_t)4 ,(size_t)1 ,fp);
+      }
+      tokens.clear();
+      return;
+   }           
+   fwrite (GetValue().c_str(), (size_t)lgr ,(size_t)1, fp); // Elem value
 } 
 
 //-----------------------------------------------------------------------------

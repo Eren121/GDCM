@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 09:30:22 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/06/23 13:02:36 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -571,8 +571,8 @@ bool gdcmDocument::WriteF(FileType filetype) {
  * if ( filetype == ACR)
  *    UpdateGroupLength(true,ACR);
  */
- 
-   Write(fp,filetype);  // the gdcmElementSet one !
+ 	
+	gdcmElementSet::Write(fp,filetype);
 
    /// WriteEntries(fp,type); // old stuff
    return true;

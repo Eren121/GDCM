@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:42:02 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/06/23 13:02:36 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,11 +60,18 @@ gdcmElementSet::~gdcmElementSet()
   *          from the H Table
   * @return
   */ 
-void gdcmElementSet::Print(std::ostream & os) {
+void gdcmElementSet::Print(std::ostream & os)
+{
+   gdcmDocEntry* Entry;
    for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
    {
-      //(i)->second->SetPrintLevel(printLevel);
-      (i->second)->Print(os);   
+      Entry = i->second;
+      Entry->Print(os);   
+      bool PrintEndLine = true;
+      if ( gdcmSeqEntry* SeqEntry = dynamic_cast<gdcmSeqEntry*>(Entry) )
+         PrintEndLine = false;
+      if (PrintEndLine)
+         os << std::endl;
    } 
 }
 
@@ -73,35 +80,12 @@ void gdcmElementSet::Print(std::ostream & os) {
   *          from the H Table
   * @return
   */ 
-void gdcmElementSet::Write(FILE *fp, FileType filetype) {
+void gdcmElementSet::Write(FILE *fp, FileType filetype)
+{
 
-// Troubles expected : BinEntries ARE ValEntries :-(
-// BinEntry is checked first, then ValEntry;
-
-   gdcmDocEntry *e;
    for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
    {
-      e=i->second;
-      e->WriteCommonPart(fp, filetype);
-      std::cout<<e->GetKey() << " " << std::hex << e->GetVR() << " " 
-               << e->GetName()
-               << std::endl;
-
-// e->Write(fp,filetype); // This will be the right way to proceed !
-
-      if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(e) ) {
-         BinEntry->Write(fp);
-         continue;
-      }
-     if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(e) ) {
-         ValEntry->Write(fp);
-         continue;
-      }
-
-      if (gdcmSeqEntry* SeqEntry = dynamic_cast< gdcmSeqEntry* >(e) ) {
-         SeqEntry->Write(fp,filetype);
-         continue;
-      } 
+      i->second->Write(fp, filetype);
    } 
 }
 //-----------------------------------------------------------------------------
@@ -111,7 +95,6 @@ void gdcmElementSet::Write(FILE *fp, FileType filetype) {
 
 //-----------------------------------------------------------------------------
 // Private
-
 
 /**
  * \brief   add a new Dicom Element pointer to the H Table

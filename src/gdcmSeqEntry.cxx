@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 03:36:24 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/06/23 13:02:36 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,6 @@ gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e, int depth)
 }
 
 /**
- * \ingroup gdcmSeqEntry
  * \brief   Canonical destructor.
  */
 gdcmSeqEntry::~gdcmSeqEntry() {
@@ -52,26 +51,21 @@ gdcmSeqEntry::~gdcmSeqEntry() {
       delete seq_term;
 }
 
-//-----------------------------------------------------------------------------
-// Print
 /*
  * \brief   canonical Printer
  */
 void gdcmSeqEntry::Print(std::ostream &os){
 
-   std::ostringstream s,s2;
-   std::string vr;
    // First, Print the Dicom Element itself.
    SetPrintLevel(2);   
-   PrintCommonPart(os);
-   s << std::endl;
-   os << s.str();   
+   gdcmDocEntry::Print(os);
+   os << std::endl;
 
-    if (GetReadLength() == 0)
-       return;
+   if (GetReadLength() == 0)
+      return;
 
-    // Then, Print each SQ Item   
-     for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
+   // Then, Print each SQ Item   
+   for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
    {
       (*cc)->Print(os);   
    }
@@ -79,30 +73,29 @@ void gdcmSeqEntry::Print(std::ostream &os){
    // at end, print the sequence terminator item, if any
    if (delimitor_mode) {
       for (int i=0;i<SQDepthLevel+1;i++)
-         s2 << "   | " ;
-      os << s2.str();
+         os << "   | " ;
       if (seq_term != NULL) {
          seq_term->Print(os);
       } 
       else 
-         std::cout
-             << "      -------------- should have a sequence terminator item"
-             << std::endl;      
+         os << "      -------------- should have a sequence terminator item";
    }                    
- }
-
+}
 
 /*
  * \brief   canonical Writer
  */
-void gdcmSeqEntry::Write(FILE *fp, FileType filetype) {
-  for(ListSQItem::iterator cc  = GetSQItems().begin();
-                           cc != GetSQItems().end();
-                         ++cc) {
-      std::cout << "Et un SQItem !" << std::endl;
-      (*cc)->Write(fp, filetype);  // Don't remove param filetype !
+void gdcmSeqEntry::Write(FILE *fp, FileType filetype)
+{
+   gdcmDocEntry::Write(fp, filetype);
+   for(ListSQItem::iterator cc  = GetSQItems().begin();
+                            cc != GetSQItems().end();
+                          ++cc)
+   {
+      (*cc)->Write(fp, filetype);   
    }  
 }
+
 //-----------------------------------------------------------------------------
 // Public
 
