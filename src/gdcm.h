@@ -163,14 +163,16 @@ public:
 	string  value;     // used to be char * valeurElem
 	size_t Offset;     // Offset from the begining of file for direct user access
 	ElValue(gdcmDictEntry*);
-	void   SetVR(string);
-	string GetVR(void);
+	void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };
+
 	bool   IsVrUnknown(void) { return entry->IsVrUnknown(); };
 	void SetLength(guint32 l){LgrElem = l; };
 	void SetValue(string val){ value = val; };
 	void SetOffset(size_t of){ Offset = of; };
 	void SetImplicitVr(void) { ImplicitVr = true; };
 	bool  IsImplicitVr(void) { return ImplicitVr; };
+	void    SetVR(string);
+	string  GetVR(void);
 	string  GetValue(void)   { return value; };
 	guint32 GetLength(void)  { return LgrElem; };
 	size_t  GetOffset(void)  { return Offset; };
@@ -211,7 +213,7 @@ typedef map<TagKey, VRAtr> VRHT;    // Value Representation Hash Table
 // Notes:
 // * the gdcmHeader::Set*Tag* family members cannot be defined as protected
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
-class GDCM_EXPORT gdcmHeader {	
+class GDCM_EXPORT gdcmHeader {
 //FIXME sw should be qn EndianType !!!
 	//enum EndianType {
 		//LittleEndian, 
@@ -246,9 +248,13 @@ private:
 	void FindLength(ElValue *);
 	void FindVR(ElValue *);
 	void LoadElementValue(ElValue *);
+	void LoadElementValueSafe(ElValue *);
 	void SkipElementValue(ElValue *);
 	void InitVRDict(void);
-	bool IsAnInteger(guint16, guint16, string, guint32);
+	void SwitchSwapToBigEndian(void);
+	void FixFoundLength(ElValue*, guint32);
+	bool IsAnInteger(ElValue *);
+	bool IsBigEndianTransferSyntax(void);
 	ElValue * ReadNextElement(void);
 	gdcmDictEntry * IsInDicts(guint32, guint32);
 	size_t GetPixelOffset(void);

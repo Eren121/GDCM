@@ -1,3 +1,10 @@
+2002-11-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcm.h and gdcmHeader.cxx are now "Big Endian transfer syntax"
+        aware. See the strategy comments in gdcmHeader::FindeLength().
+      * Test/test.cxx now accepts a filename as first argument.
+      * Data/US-PAL-8-10x-echo.dcm and US-RGB-8-epicard.dcm added.
+      * python/testSuite.py changed to integrate test on above files.
+
 2002-11-15 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Dicts/dicomV3.dic removed all the trailing (RET) when the
         the vr was also RET.

@@ -191,19 +191,19 @@ void gdcmHeader::CheckSwap()
 	
 	switch (s) {
 	case 0x00040000 :
-		sw=3412;
+		sw = 3412;
 		filetype = ACR;
 		return;
 	case 0x04000000 :
-		sw=4321;
+		sw = 4321;
 		filetype = ACR;
 		return;
 	case 0x00000400 :
-		sw=2143;
+		sw = 2143;
 		filetype = ACR;
 		return;
 	case 0x00000004 :
-		sw=0;
+		sw = 0;
 		filetype = ACR;
 		return;
 	default :
@@ -213,7 +213,7 @@ void gdcmHeader::CheckSwap()
 
 	// We are out of luck. It is not a DicomV3 nor a 'clean' ACR/NEMA file.
 	// It is time for despaired wild guesses. So, let's assume this file
-	// happens to be 'dirty' ACR/NEMA, i.e. the length of the group it
+	// happens to be 'dirty' ACR/NEMA, i.e. the length of the group is
 	// not present. Then the only info we have is the net2host one.
 	//FIXME  Si c'est du RAW, ca degagera + tard
 	
@@ -222,6 +222,24 @@ void gdcmHeader::CheckSwap()
 	else
 		sw = 4321;
 	return;
+}
+
+void gdcmHeader::SwitchSwapToBigEndian(void) {
+	dbg.Verbose(0, "gdcmHeader::FindLength", "Switching to BigEndian mode.");
+	if ( sw == 0    ) {
+		sw = 4321;
+		return;
+	}
+	if ( sw == 4321 ) {
+		sw = 0;
+		return;
+	}
+	if ( sw == 3412 ) {
+		sw = 2143;
+		return;
+	}
+	if ( sw == 2143 )
+		sw = 3412;
 }
 
 /**
@@ -321,10 +339,35 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
 	ElVal->SetImplicitVr();
 }
 
+/**
+ * \ingroup gdcmHeader
+ * \brief   Determines if the Transfer Syntax was allready encountered
+ *          and if it corresponds to a Big Endian one.
+ *
+ * @return  True when big endian found. False in all other cases.
+ */
+bool gdcmHeader::IsBigEndianTransferSyntax(void) {
+	ElValue* Element = PubElVals.GetElement(0x0002, 0x0010);
+	if ( !Element )
+		return false;
+	LoadElementValueSafe(Element);
+	string Transfer = Element->GetValue();
+	if ( Transfer == "1.2.840.10008.1.2.2" )
+		return true;
+	return false;
+}
+
+void gdcmHeader::FixFoundLength(ElValue * ElVal, guint32 FoudLength) {
+	// Heuristic: a final fix.
+	if ( FoudLength == 0xffffffff)
+		FoudLength = 0;
+	ElVal->SetLength(FoudLength);
+}
+
 void gdcmHeader::FindLength( ElValue * ElVal) {
-	guint32 length32;
+	guint16 element = ElVal->GetElement();
+	string  vr      = ElVal->GetVR();
 	guint16 length16;
-	string vr = ElVal->GetVR();
 	
 	if ( (filetype == ExplicitVR) && ! ElVal->IsImplicitVr() ) {
 		if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) {
@@ -332,37 +375,81 @@ void gdcmHeader::FindLength( ElValue * ElVal) {
 			// The following two bytes are reserved, so we skip them,
 			// and we proceed on reading the length on 4 bytes.
 			fseek(fp, 2L,SEEK_CUR);
-			length32 = ReadInt32();
-			
-		} else {
-			// Length is encoded on 2 bytes.
-			length16 = ReadInt16();
-			 
-			if ( length16 == 0xffff) {
-				length32 = 0;
-			} else {
-				length32 = length16;
-			}
+			FixFoundLength(ElVal, ReadInt32());
+			return;
 		}
-	} else {
-		// Either implicit VR or an explicit VR that (at least for this
-		// element) lied a little bit. Length is on 4 bytes.
-		length32 = ReadInt32();
+
+		// Length is encoded on 2 bytes.
+		length16 = ReadInt16();
+		
+		// We can tell the current file is encoded in big endian (like
+		// Data/US-RGB-8-epicard) when we find the "Transfer Syntax" tag
+		// and it's value is the one of the encoding of a bie endian file.
+		// In order to deal with such big endian encoded files, we have
+		// (at least) two strategies:
+		// * when we load the "Transfer Syntax" tag with value of big endian
+		//   encoding, we raise the proper flags. Then we wait for the end
+		//   of the META group (0x0002) among which is "Transfer Syntax",
+		//   before switching the swap code to big endian. We have to postpone
+		//   the switching of the swap code since the META group is fully encoded
+		//   in little endian, and big endian coding only starts at the next
+		//   group. The corresponding code can be hard to analyse and adds
+		//   many additional unnecessary tests for regular tags.
+		// * the second strategy consist to wait for trouble, that shall appear
+		//   when we find the first group with big endian encoding. This is
+		//   easy to detect since the length of a "Group Length" tag (the
+		//   ones with zero as element number) has to be of 4 (0x0004). When we
+		//   encouter 1024 (0x0400) chances are the encoding changed and we
+		//   found a group with big endian encoding.
+		// We shall use this second strategy. In order make sure that we
+		// can interpret the presence of an apparently big endian encoded
+		// length of a "Group Length" without committing a big mistake, we
+		// add an additional check: we look in the allready parsed elements
+		// for the presence of a "Transfer Syntax" whose value has to be "big
+		// endian encoding". When this is the case, chances are we got our
+		// hands on a big endian encoded file: we switch the swap code to
+		// big endian and proceed...
+		if ( (element  == 0) && (length16 == 1024) ) {
+			if ( ! IsBigEndianTransferSyntax() )
+				throw Error::FileReadError(fp, "gdcmHeader::FindLength");
+			length16 = 4;
+			SwitchSwapToBigEndian();
+			// Restore the unproperly loaded values i.e. the group, the element
+			// and the dictionary entry depending on them.
+			guint16 CorrectGroup   = SwapShort(ElVal->GetGroup());
+			guint16 CorrectElem    = SwapShort(ElVal->GetElement());
+			gdcmDictEntry * NewTag = IsInDicts(CorrectGroup, CorrectElem);
+			if (!NewTag) {
+				// This correct tag is not in the dictionary. Create a new one.
+				NewTag = new gdcmDictEntry(CorrectGroup, CorrectElem);
+			}
+			// FIXME this can create a memory leaks on the old entry that be
+			// left unreferenced.
+			ElVal->SetDictEntry(NewTag);
+		}
+		 
+		// Heuristic: well some files are really ill-formed.
+		if ( length16 == 0xffff) {
+			length16 = 0;
+			dbg.Verbose(0, "gdcmHeader::FindLength",
+			            "Erroneous element length fixed.");
+		}
+		FixFoundLength(ElVal, (guint32)length16);
+		return;
 	}
-	
-	// Traitement des curiosites sur la longueur
-	if ( length32 == 0xffffffff)
-		length32=0;
-	
-	ElVal->SetLength(length32);
+
+	// Either implicit VR or an explicit VR that (at least for this
+	// element) lied a little bit. Length is on 4 bytes.
+	FixFoundLength(ElVal, ReadInt32());
 }
 
 
 /**
  * \ingroup gdcmHeader
- * \brief   remet les octets dans un ordre compatible avec celui du processeur
-
- * @return  longueur retenue pour le champ 
+ * \brief   Swaps back the bytes of 4-byte long integer accordingly to
+ *          processor order.
+ *
+ * @return  The suggested integer.
  */
 guint32 gdcmHeader::SwapLong(guint32 a) {
 	// FIXME: il pourrait y avoir un pb pour les entiers negatifs ...
@@ -391,11 +478,9 @@ guint32 gdcmHeader::SwapLong(guint32 a) {
 /**
  * \ingroup gdcmHeader
  * \brief   Swaps the bytes so they agree with the processor order
-
- * @return  longueur retenue pour le champ 
+ * @return  The properly swaped 16 bits integer.
  */
 guint16 gdcmHeader::SwapShort(guint16 a) {
-	//FIXME how could sw be equal to 2143 since we never set it this way ?
 	if ( (sw==4321)  || (sw==2143) )
 		a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
 	return (a);
@@ -421,25 +506,41 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	guint16 elem   = ElVal->GetElement();
 	string  vr     = ElVal->GetVR();
 	guint32 length = ElVal->GetLength();
+	bool SkipLoad  = false;
 
 	fseek(fp, (long)ElVal->GetOffset(), SEEK_SET);
 	
 	// Sequences not treated yet !
-	if( vr == "SQ" ) {
+	if( vr == "SQ" )
+		SkipLoad = true;
+
+	// Heuristic : a sequence "contains" a set of tags (called items). It looks
+	// like the last tag of a sequence (the one that terminates the sequence)
+	// has a group of 0xfffe (with a dummy length).
+	if( group == 0xfffe )
+		SkipLoad = true;
+
+	// The group length doesn't represent data to be loaded in memory, since
+	// each element of the group shall be loaded individualy.
+	if( elem == 0 )
+ 		SkipLoad = true;
+
+	if ( SkipLoad ) {
 		SkipElementValue(ElVal);
 		ElVal->SetLength(0);
+		ElVal->SetValue("gdcm::Skipped");
 		return;
 	}
-	// A sequence "contains" a set of tags (called items). It looks like
-	// the last tag of a sequence (the one that terminates the sequence)
-	// has a group of 0xfffe (with a dummy length).
-	if( group == 0xfffe) {
-		SkipElementValue(ElVal);
-		ElVal->SetLength(0);
+
+	// When the length is zero things are easy:
+	if ( length == 0 ) {
+		ElVal->SetValue("");
 		return;
 	}
 	
-	if ( IsAnInteger(group, elem, vr, length) ) {
+	// When an integer is expected, read and convert the following two or
+	// four bytes properly i.e. as an integer as opposed to a string.
+	if ( IsAnInteger(ElVal) ) {
 		guint32 NewInt;
 		if( length == 2 ) {
 			NewInt = ReadInt16();
@@ -473,6 +574,20 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 		return;
 	}
 	ElVal->SetValue(NewValue);
+}
+
+/**
+ * \ingroup       gdcmHeader
+ * \brief         Loads the element while preserving the current
+ *                underlying file position indicator as opposed to
+ *                to LoadElementValue that modifies it.
+ * @param ElVal   Element whose value shall be loaded. 
+ * @return  
+ */
+void gdcmHeader::LoadElementValueSafe(ElValue * ElVal) {
+	long PositionOnEntry = ftell(fp);
+	LoadElementValue(ElVal);
+	fseek(fp, PositionOnEntry, SEEK_SET);
 }
 
 
@@ -529,20 +644,29 @@ ElValue * gdcmHeader::ReadNextElement(void) {
 	}
 
 	FindVR(NewElVal);
-	FindLength(NewElVal);
+	try { FindLength(NewElVal); }
+	catch ( Error::FileReadError ) { // Call it quits
+		return (ElValue *)0;
+	}
 	NewElVal->SetOffset(ftell(fp));
 	return NewElVal;
 }
 
-bool gdcmHeader::IsAnInteger(guint16 group, guint16 element,
-	                             string vr, guint32 length ) {
+bool gdcmHeader::IsAnInteger(ElValue * ElVal) {
+	guint16 group   = ElVal->GetGroup();
+	guint16 element = ElVal->GetElement();
+	string  vr      = ElVal->GetVR();
+	guint32 length  = ElVal->GetLength();
+
 	// When we have some semantics on the element we just read, and if we
 	// a priori know we are dealing with an integer, then we shall be
 	// able to swap it's element value properly.
 	if ( element == 0 )  {  // This is the group length of the group
-		if (length != 4)
-			dbg.Error("gdcmHeader::ShouldBeSwaped", "should be four");
-		return true;
+		if (length == 4)
+			return true;
+		else
+			dbg.Error("gdcmHeader::IsAnInteger",
+			          "Erroneous Group Length element length.");
 	}
 	
 	if ( group % 2 != 0 )

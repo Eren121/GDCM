@@ -22,7 +22,7 @@
 0000 1030 AE CMD AE Title
 0000 1031 US CMD Message ID
 0000 1005 AT CMD Attribute Identifier List
-0002 0000 UL META Group Length
+0002 0000 UL META Meta Group Length
 0002 0001 OB META File Meta Information Version
 0002 0002 UI META Media Stored SOP Class UID
 0002 0003 UI META Media Stored SOP Instance UID
