@@ -1,4 +1,7 @@
 2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.[h|cxx] : now use FileType instead of TWriteType.
+
+2004-12-03 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmPixelWriteConvert.[h|cxx] : new class to write datas (and in the
      future, with convertion)
    * src/gdcmFile.[h|cxx] : the PixelWriteConverter instance replace Pixel_Data

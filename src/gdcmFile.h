@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 11:55:38 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2004/12/03 14:22:40 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,17 +36,10 @@ namespace gdcm
 class GDCM_EXPORT File
 {
 public:
-   enum TWriteMode
+   enum WriteMode
    {
       WMODE_DECOMPRESSED,
       WMODE_RGB
-   };
-     
-   enum TWriteType
-   {
-      WTYPE_IMPL_VR,
-      WTYPE_EXPL_VR,
-      WTYPE_ACR
    };
      
 public:
@@ -85,20 +78,21 @@ public:
    uint8_t* GetLutRGBA();
 
    // Write mode
-   void SetWriteModeToDecompressed()    { SetWriteMode(WMODE_DECOMPRESSED); };
-   void SetWriteModeToRGB()             { SetWriteMode(WMODE_RGB); };
-   void SetWriteMode(unsigned int mode) { WriteMode = mode; };
-   unsigned int GetWriteMode()          { return WriteMode; };
+   void SetWriteModeToDecompressed() { SetWriteMode(WMODE_DECOMPRESSED); };
+   void SetWriteModeToRGB()          { SetWriteMode(WMODE_RGB); };
+   void SetWriteMode(WriteMode mode) { WriteMode = mode; };
+   WriteMode GetWriteMode()          { return WriteMode; };
 
    // Write format
-   void SetWriteTypeToDcmImplVR()         { SetWriteType(WTYPE_EXPL_VR); };
-   void SetWriteTypeToDcmExplVR()         { SetWriteType(WTYPE_EXPL_VR); };
-   void SetWriteTypeToAcr()               { SetWriteType(WTYPE_ACR); };
-   void SetWriteType(unsigned int format) { WriteType = format; };
-   unsigned int GetWriteType()            { return WriteType; };
+   void SetWriteTypeToDcmImplVR()     { SetWriteType(ImplicitVR); };
+   void SetWriteTypeToDcmExplVR()     { SetWriteType(ExplicitVR); };
+   void SetWriteTypeToAcr()           { SetWriteType(ACR); };
+   void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); };
+   void SetWriteType(FileType format) { WriteType = format; };
+   FileType GetWriteType()            { return WriteType; };
 
 protected:
-   bool WriteBase(std::string const& fileName, FileType type);
+   bool WriteBase(std::string const& fileName);
    bool CheckWriteIntegrity();
 
    void SetWriteToDecompressed();
@@ -145,8 +139,8 @@ private:
    DocEntryArchive *Archive;
 
    // Write variables
-   unsigned int WriteMode;
-   unsigned int WriteType;
+   WriteMode WriteMode;
+   FileType WriteType;
 };
 } // end namespace gdcm
 

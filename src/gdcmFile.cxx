@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 11:55:38 $
-  Version:   $Revision: 1.169 $
+  Date:      $Date: 2004/12/03 14:22:40 $
+  Version:   $Revision: 1.170 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,7 +77,7 @@ File::File(std::string const & filename )
 void File::Initialise()
 {
    WriteMode = WMODE_DECOMPRESSED;
-   WriteType = WTYPE_IMPL_VR;
+   WriteType = ImplicitVR;
 
    PixelReadConverter = new PixelReadConvert;
    PixelWriteConverter = new PixelWriteConvert;
@@ -372,16 +372,7 @@ bool File::WriteAcr (std::string const & fileName)
 
 bool File::Write(std::string const& fileName)
 {
-   switch(WriteType)
-   {
-      case WTYPE_IMPL_VR:
-         return WriteBase(fileName,ImplicitVR);
-      case WTYPE_EXPL_VR:
-         return WriteBase(fileName,ExplicitVR);
-      case WTYPE_ACR:
-         return WriteBase(fileName,ACR);
-   }
-   return(false);
+   return WriteBase(fileName);
 }
 
 /**
@@ -402,9 +393,9 @@ uint8_t* File::GetLutRGBA()
  * @param  type file type (ExplicitVR, ImplicitVR, ...)
  * @return false if write fails
  */
-bool File::WriteBase (std::string const & fileName, FileType type)
+bool File::WriteBase (std::string const & fileName)
 {
-   switch(type)
+   switch(WriteType)
    {
       case ImplicitVR:
          SetWriteFileTypeToImplicitVR();
@@ -428,7 +419,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    // just before writting ...
    /// \todo the best trick would be *change* the recognition code
    ///       but pb expected if user deals with, e.g. COMPLEX images
-   if( type == ACR_LIBIDO )
+   if( WriteType == ACR_LIBIDO )
    {
       SetWriteToLibido();
    }
@@ -451,7 +442,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    bool check = CheckWriteIntegrity();
    if(check)
    {
-      check = HeaderInternal->Write(fileName,type);
+      check = HeaderInternal->Write(fileName,WriteType);
    }
 
    RestoreWrite();
