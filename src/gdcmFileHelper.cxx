@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/03/04 16:24:19 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/03/07 18:48:02 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1054,15 +1054,15 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group, uint16_t elem,
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    BinEntry *newE;
 
-   if( oldE )  // Is this really usefull?
+   if( oldE )  // The pb stands for Pixels Element, 
+               // when File is created ex-nihilo
       if( oldE->GetVR()!=vr )
       {
-      gdcmWarningMacro( " Unconsistent VR for Bin Entry : [" << oldE->GetVR() 
-                        << "] vs [" << vr << "] for " <<
-                        std::hex << group << "|" << elem);
-      //delete oldE;
-      oldE = NULL;  // Revert temporary to old code to avoid Seg Fault
-      /// \ todo fixme 
+         gdcmWarningMacro( " Unconsistent VR for Bin Entry : [" << oldE->GetVR() 
+                           << "] vs [" << vr << "] for " <<
+                           std::hex << group << "|" << elem);
+         FileInternal->RemoveEntry( oldE );
+         oldE = NULL;
       } 
    if( oldE )
    {
