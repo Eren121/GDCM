@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 04:17:58 $
-  Version:   $Revision: 1.97 $
+  Date:      $Date: 2004/10/08 08:38:54 $
+  Version:   $Revision: 1.98 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1784,8 +1784,8 @@ void gdcmDocument::FindDocEntryLength( gdcmDocEntry *entry )
    {
       if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UN" ) 
       {
-         // The following reserved two bytes (see PS 3.5-2001, section
-         // 7.1.2 Data element structure with explicit vr p27) must be
+         // The following reserved two bytes (see PS 3.5-2003, section
+         // "7.1.2 Data element structure with explicit vr", p 27) must be
          // skipped before proceeding on reading the length on 4 bytes.
          fseek(Fp, 2L, SEEK_CUR);
          uint32_t length32 = ReadInt32();
@@ -2839,11 +2839,11 @@ void gdcmDocument::ComputeRLEInfo()
    }
    // Encoded pixel data: for the time being we are only concerned with
    // Jpeg or RLE Pixel data encodings.
-   // As stated in ps-3.3, 8.2:
+   // As stated in PS 3.5-2003, section 8.2 p44:
    // "If sent in Encapsulated Format (i.e. other than the Native Format) the
    //  value representation OB is used".
    // Hence we expect an OB value representation. Concerning OB VR,
-   // the section PS3.3, A.4.c (p58 and p59), states:
+   // the section PS 3.5-2003, section A.4.c p 58-59, states:
    // "For the Value Representations OB and OW, the encoding shall meet the
    //   following specifications depending on the Data element tag:"
    //   [...snip...]
@@ -2877,7 +2877,7 @@ void gdcmDocument::ComputeRLEInfo()
       delete[] basicOffsetTableItemValue;
    }
 
-   // Encapsulated RLE Compressed Images (see PS-3.3, Annex G).
+   // Encapsulated RLE Compressed Images (see PS 3.5-2003, Annex G)
    // Loop on the frame[s] and store the parsed information in a
    // gdcmRLEFramesInfo.
    long frameLength;
