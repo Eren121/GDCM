@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/01 16:12:20 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/03/03 11:39:24 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.18 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.19 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -37,11 +37,6 @@ vtkGdcmWriter::vtkGdcmWriter()
    this->LookupTable = NULL;
    this->FileDimensionality = 3;
    this->WriteType = VTK_GDCM_WRITE_TYPE_EXPLICIT_VR;
-
-   UIDPrefix = "";
-   StudyInstanceUID = "";
-   SeriesInstanceUID = "";
-   FrameOfReferenceInstanceUID = "";
 }
 
 vtkGdcmWriter::~vtkGdcmWriter()
@@ -50,9 +45,9 @@ vtkGdcmWriter::~vtkGdcmWriter()
 
 //-----------------------------------------------------------------------------
 // Print
-void vtkGdcmWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkGdcmWriter::PrintSelf(ostream &os, vtkIndent indent)
 {
-   this->Superclass::PrintSelf(os,indent);
+   this->Superclass::PrintSelf(os, indent);
 
    os << indent << "Write type : " << this->GetWriteTypeAsString();
 }
@@ -76,37 +71,12 @@ const char *vtkGdcmWriter::GetWriteTypeAsString()
    }
 }
 
-void vtkGdcmWriter::SetUIDPrefix(const char *prefix)
-{
-   UIDPrefix = prefix;
-}
-
-const char *vtkGdcmWriter::GetUIDPrefix()
-{
-   return UIDPrefix.c_str();
-}
-
-void vtkGdcmWriter::NewStudyInstanceUID()
-{
-   StudyInstanceUID = "";
-}
-
-void vtkGdcmWriter::NewSeriesInstanceUID()
-{
-   SeriesInstanceUID = "";
-}
-
-void vtkGdcmWriter::NewFrameOfReferenceInstanceUID()
-{
-   FrameOfReferenceInstanceUID = "";
-}
-
 //-----------------------------------------------------------------------------
 // Protected
 /**
  * Copy the image and reverse the Y axis
  */
-// The output datas must be deleted by the user of the method !!!
+// The output data must be deleted by the user of the method !!!
 size_t ReverseData(vtkImageData *image,unsigned char **data)
 {
    int inc[3];
@@ -149,9 +119,9 @@ size_t ReverseData(vtkImageData *image,unsigned char **data)
 }
 
 /**
- * Set the datas informations in the file
+ * Set the data informations in the file
  */
-void SetImageInformation(gdcm::FileHelper *file,vtkImageData *image)
+void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
 {
    std::ostringstream str;
 
@@ -209,6 +179,9 @@ void SetImageInformation(gdcm::FileHelper *file,vtkImageData *image)
    str << image->GetNumberOfScalarComponents();
    file->InsertValEntry(str.str(),0x0028,0x0002); // Samples per Pixel
 
+   /// \todo : Spacing Between Slices is meaningfull ONLY for CT an MR modality
+   ///       We should perform some checkings before forcing the Entry creation
+
    // Spacing
    double *sp = image->GetSpacing();
 
@@ -224,6 +197,9 @@ void SetImageInformation(gdcm::FileHelper *file,vtkImageData *image)
 
    // Origin
    double *org = image->GetOrigin();
+
+   /// \todo : Image Position Patient is meaningfull ONLY for CT an MR modality
+   ///       We should perform some checkings before forcing the Entry creation
 
    str.seekp(0);
    str << org[0] << "\\" << org[1] << "\\" << org[2];
@@ -250,24 +226,25 @@ void SetImageInformation(gdcm::FileHelper *file,vtkImageData *image)
  * Write of the files
  * The call to this method is recursive if there is some files to write
  */ 
-void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, ofstream *file)
+void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image, 
+                    ofstream *file)
 {
    if(file)
    {
-      vtkErrorMacro( <<  "File musn't be opened");
+      vtkErrorMacro( <<  "File must not be open");
       return;
    }
 
    if( image->GetScalarType() == VTK_FLOAT || 
        image->GetScalarType() == VTK_DOUBLE )
    {
-      vtkErrorMacro(<< "Bad input type. Scalar type musn't be of type "
+      vtkErrorMacro(<< "Bad input type. Scalar type must not be of type "
                     << "VTK_FLOAT or VTKDOUBLE (found:"
                     << image->GetScalarTypeAsString());
       return;
    }
 
-   RecursiveWrite(axis,image,image,file);
+   RecursiveWrite(axis,image, image, file);
    //WriteDcmFile(this->FileName,image);
 }
 
@@ -279,7 +256,7 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
    // if the file is already open then just write to it
    if( file )
    {
-      vtkErrorMacro( <<  "File musn't be opened");
+      vtkErrorMacro( <<  "File musn't be open");
       return;
    }
 
@@ -289,7 +266,7 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
       // determine the name
       if (this->FileName)
       {
-         sprintf(this->InternalFileName,"%s",this->FileName);
+         sprintf(this->InternalFileName, "%s", this->FileName);
       }
       else 
       {
@@ -318,7 +295,7 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
       return;
    }
 
-   // if the current region is too high a dimension forthe file
+   // if the current region is too high a dimension for the file
    // the we will split the current axis
    cache->GetAxisUpdateExtent(axis, min, max);
 
@@ -344,28 +321,13 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
    cache->SetAxisUpdateExtent(axis, min, max);
 }
 
-void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)
+void vtkGdcmWriter::WriteDcmFile(char *fileName, vtkImageData *image)
 {
    // From here, the write of the file begins
    gdcm::FileHelper *dcmFile = new gdcm::FileHelper();
 
-   // Set the image UID
-   if( StudyInstanceUID.empty() )
-      StudyInstanceUID = gdcm::Util::CreateUniqueUID( UIDPrefix );
-   if( SeriesInstanceUID.empty() )
-      SeriesInstanceUID = gdcm::Util::CreateUniqueUID( UIDPrefix );
-   if( FrameOfReferenceInstanceUID.empty() )
-      FrameOfReferenceInstanceUID = gdcm::Util::CreateUniqueUID( UIDPrefix );
-   std::string uid = gdcm::Util::CreateUniqueUID( UIDPrefix );
-
-   dcmFile->InsertValEntry(uid,0x0008,0x0018); //[SOP Instance UID]
-   dcmFile->InsertValEntry(uid,0x0002,0x0003); //[Media Stored SOP Instance UID]
-   dcmFile->InsertValEntry(StudyInstanceUID,0x0020,0x000d); //[Study Instance UID]
-   dcmFile->InsertValEntry(SeriesInstanceUID,0x0020,0x000e); //[Series Instance UID]
-   dcmFile->InsertValEntry(FrameOfReferenceInstanceUID,0x0020, 0x0052); //[Frame of Reference UID] 
-
    // Set the image informations
-   SetImageInformation(dcmFile,image);
+   SetImageInformation(dcmFile, image);
 
    // Write the image
    switch(this->WriteType)
@@ -388,7 +350,7 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)
 
    if(!dcmFile->Write(fileName))
    {
-      vtkErrorMacro( << "File "  <<  this->FileName  <<  "couldn't be written by "
+      vtkErrorMacro( << "File "  <<  this->FileName  <<  "cannot be written by "
                      << " the gdcm library");
    }
 

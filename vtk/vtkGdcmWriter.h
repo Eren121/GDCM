@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 10:07:35 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/03/03 11:39:24 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,25 +38,18 @@ public:
    static vtkGdcmWriter *New();
    vtkTypeRevisionMacro(vtkGdcmWriter, vtkImageWriter);
 
-   void PrintSelf(ostream& os, vtkIndent indent);
+   void PrintSelf(ostream &os, vtkIndent indent);
 
-   vtkSetObjectMacro(LookupTable,vtkLookupTable);
-   vtkGetObjectMacro(LookupTable,vtkLookupTable);
+   vtkSetObjectMacro(LookupTable, vtkLookupTable);
+   vtkGetObjectMacro(LookupTable, vtkLookupTable);
 
-   void SetWriteTypeToDcmImplVR()     { SetWriteType(VTK_GDCM_WRITE_TYPE_EXPLICIT_VR); };
-   void SetWriteTypeToDcmExplVR()     { SetWriteType(VTK_GDCM_WRITE_TYPE_IMPLICIT_VR); };
-   void SetWriteTypeToAcr()           { SetWriteType(VTK_GDCM_WRITE_TYPE_ACR); };
-   void SetWriteTypeToAcrLibido()     { SetWriteType(VTK_GDCM_WRITE_TYPE_ACR_LIBIDO); };
-   vtkSetMacro(WriteType,int);
-   vtkGetMacro(WriteType,int);
+   void SetWriteTypeToDcmImplVR(){SetWriteType(VTK_GDCM_WRITE_TYPE_EXPLICIT_VR);};
+   void SetWriteTypeToDcmExplVR(){SetWriteType(VTK_GDCM_WRITE_TYPE_IMPLICIT_VR);};
+   void SetWriteTypeToAcr()      {SetWriteType(VTK_GDCM_WRITE_TYPE_ACR);        };
+   void SetWriteTypeToAcrLibido(){SetWriteType(VTK_GDCM_WRITE_TYPE_ACR_LIBIDO); };
+   vtkSetMacro(WriteType, int);
+   vtkGetMacro(WriteType, int);
    const char *GetWriteTypeAsString();
-
-   void SetUIDPrefix(const char *prefix);
-   const char *GetUIDPrefix();
-
-   void NewStudyInstanceUID();
-   void NewSeriesInstanceUID();
-   void NewFrameOfReferenceInstanceUID();
 
 protected:
    vtkGdcmWriter();
@@ -65,19 +58,12 @@ protected:
   virtual void RecursiveWrite(int axis, vtkImageData *image, ofstream *file);
   virtual void RecursiveWrite(int axis, vtkImageData *image, 
                               vtkImageData *cache, ofstream *file);
-  void WriteDcmFile(char *fileName,vtkImageData *image);
+  void WriteDcmFile(char *fileName, vtkImageData *image);
 
 private:
 // Variables
    vtkLookupTable *LookupTable;
    int WriteType;
-
-   //BTX
-   std::string UIDPrefix;
-   std::string StudyInstanceUID;
-   std::string SeriesInstanceUID;
-   std::string FrameOfReferenceInstanceUID;
-   //ETX
 };
 
 //-----------------------------------------------------------------------------

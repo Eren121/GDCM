@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:56 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/03/03 11:39:24 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.66 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.67 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -226,7 +226,6 @@ void vtkGdcmReader::ExecuteInformation()
       {
          vtkDebugMacro(<< "16 bits signed image");
          this->SetDataScalarTypeToShort();
-         //vtkErrorMacro(<< "Cannot handle 16 bit signed files");
       }
       else if ( ImageType == "32U" )
       {
@@ -257,7 +256,7 @@ void vtkGdcmReader::ExecuteInformation()
  * Update => ouput->Update => UpdateData => Execute => ExecuteData 
  * (see vtkSource.cxx for last step).
  * This function (redefinition of vtkImageReader::ExecuteData, see 
- * VTK/IO/vtkImageReader.cxx) reads a data from a file. The datas
+ * VTK/IO/vtkImageReader.cxx) reads a data from a file. The data
  * extent/axes are assumed to be the same as the file extent/order.
  */
 void vtkGdcmReader::ExecuteData(vtkDataObject *output)
@@ -533,8 +532,8 @@ int vtkGdcmReader::CheckFileCoherence()
       } 
       else 
       {
-         // We didn't have a workable reference file yet. Set this one
-         // as the reference.
+         // We didn't have a workable reference file yet. 
+         // Set this one as the reference.
          FoundReferenceFile = true;
          vtkDebugMacro(<< "This file taken as coherence reference:"
                         << filename->c_str());
