@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.18 2003/11/10 09:21:40 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.19 2003/11/13 18:08:34 jpr Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -39,8 +39,8 @@ public:
    std::string  GetElValueByNumber(guint16 group, guint16 element);
    std::string  GetElValueByName  (std::string);
 	
-   TagElValueHT & GetTagHt(void);	
-   ListTag & GetListElem(void);	
+   TagElValueHT & GetTagHt(void)     {return tagHt;};	
+   ListTag      & GetListElem(void)  {return listElem;};	
 	
    int SetElValueByNumber(std::string content, guint16 group, guint16 element);
    int SetElValueByName  (std::string content, std::string TagName);

@@ -18,15 +18,6 @@ gdcmElValSet::~gdcmElValSet() {
    NameHt.clear();
 }
 
-TagElValueHT & gdcmElValSet::GetTagHt(void) {
-	return tagHt;
-}
-
-
-ListTag & gdcmElValSet::GetListElem(void) {
-	return listElem;
-}
-
 /**
  * \ingroup gdcmElValSet
  * \brief   
@@ -63,12 +54,12 @@ int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
 void gdcmElValSet::Print(std::ostream & os) {
 
    size_t o;
-   short int g, e;
+   unsigned short int g, e;
    TSKey v;
    std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
    
-   std::cout << "------------- using tagHt ----------------------------" << std::endl;
+   std::cout << "------------- using tagHt ---------------------" << std::endl;
    
    for (TagElValueHT::iterator tag = tagHt.begin();
 	   tag != tagHt.end();
@@ -100,19 +91,19 @@ void gdcmElValSet::Print(std::ostream & os) {
       os << std::endl;
    }
    
-   std::cout << "------------ using listElem -----------------" << std::endl;
+   std::cout << "------------ using listElem -------------------" << std::endl;
       
   guint32 lgth;
-  char greltag[9];  //group element tag
+  char greltag[10];  //group element tag
    
-  for (std::list<gdcmElValue*>::iterator i = listElem.begin();  
+  for (ListTag::iterator i = listElem.begin();  
 	   i != listElem.end();
 	   ++i){
       g = (*i)->GetGroup();
       e = (*i)->GetElement();
-      sprintf(greltag,"%04x|%04x",g,e);      
       v = (*i)->GetValue();
       o = (*i)->GetOffset();
+      sprintf(greltag,"%04x|%04x",g,e);           
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
       os << greltag << ": lgth : ";
       lgth = (*i)->GetReadLength();

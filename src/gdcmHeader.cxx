@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.116 2003/11/13 10:23:40 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.117 2003/11/13 18:08:34 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -1011,7 +1011,8 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
                s << NewInt;
             }
          }
-      }					
+      }	
+      s << '\0'; // to avoid oddities on Solaris
       ElVal->SetValue(s.str());
       return;	
    }
@@ -1791,7 +1792,7 @@ void gdcmHeader::LoadElements(void) {
    //     LoadElementValue(tag->second);
    //}
    
-     for (std::list<gdcmElValue*>::iterator i = GetListElem().begin();  
+     for (ListTag::iterator i = GetListElem().begin();  
 	   i != GetListElem().end();
 	   ++i){
         LoadElementValue(*i);   
