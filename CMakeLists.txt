@@ -22,11 +22,11 @@ SET(GDCM_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
 
 #-----------------------------------------------------------------------------
-#SET (EXECUTABLE_OUTPUT_PATH ${GDCM_SOURCE_DIR}/bin CACHE PATH "Single output directory for building all executables.")
-#SET (LIBRARY_OUTPUT_PATH ${OUTPUT_LIB_DIR} CACHE PATH "Single output directory for building all libraries.")
+SET (EXECUTABLE_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
+SET (LIBRARY_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
 #MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(GDCM_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
-SET(GDCM_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
+#SET(GDCM_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
+#SET(GDCM_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
 
 #-----------------------------------------------------------------------------
 # Build directory on which many applications depend

@@ -3,7 +3,7 @@
 
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
-SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmCxxTests)
+SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
 
 # add test that does not require data:
 # They usally return if no argument is given
@@ -36,17 +36,17 @@ INCLUDE_DIRECTORIES(
   ${GDCM_BINARY_DIR}/
 )
 
-CREATE_TEST_SOURCELIST(Tests gdcmCxxTests.cxx ${TEST_SOURCES})
-ADD_EXECUTABLE(gdcmCxxTests ${Tests})
-TARGET_LINK_LIBRARIES(gdcmCxxTests gdcm)
+CREATE_TEST_SOURCELIST(Tests gdcmTests.cxx ${TEST_SOURCES})
+ADD_EXECUTABLE(gdcmTests ${Tests})
+TARGET_LINK_LIBRARIES(gdcmTests gdcm)
 SET (TestsToRun ${Tests})
-REMOVE (TestsToRun gdcmCxxTests.cxx)
+REMOVE (TestsToRun gdcmTests.cxx)
 
 # Loop over files and create executables
 FOREACH(file ${TEST_SOURCES})
   GET_FILENAME_COMPONENT(name ${file} NAME_WE)
 #  IF (GDCM_DATA_ROOT)
-#    ADD_TEST(${name} ${CXX_TEST_PATH}/gdcmCxxTests ${name}
+#    ADD_TEST(${name} ${CXX_TEST_PATH}/gdcmTests ${name}
 #        -D ${GDCM_DATA_ROOT}
 #        -T ${GDCM_BINARY_DIR}/Testing/Temporary
 #        -V Baseline/gdcm/${name}.png)
