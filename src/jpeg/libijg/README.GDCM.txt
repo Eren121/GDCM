@@ -6,6 +6,8 @@ process is replaced with a CMake build process.
 
 We'd like to thank the IJG for distributing a public JPEG IO library.
 
+We'd like to also thank the dcmtk crew for releasing their toolkit under such a nice license that allow us to patch ijg properly to handle all sort of jpeg compression found in the DICOM implementation. The copyright can be found in COPYRIGHT.dcmtk.
+
 Modifications
 -------------
 
