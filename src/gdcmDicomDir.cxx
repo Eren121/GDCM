@@ -151,7 +151,7 @@ void gdcmDicomDir::NewDicomDir(std::string path)
 
    std::sort(list.begin(),list.end(),gdcmDicomDir::HeaderLessThan);
 
-   SetElements(path,list);
+   SetElements(fileList.GetDirName(),list);
 }
 
 /*
