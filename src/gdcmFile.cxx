@@ -8,16 +8,16 @@ static void _Swap(void* im, int swap, int lgr, int nb);
 /**
  * \ingroup   gdcmFile
  * \brief Constructor dedicated to writing a new DICOMV3 part10 compliant
- * \file (see SetFileName, SetDcmTag and Write)
- * \Opens (in read only and when possible) an existing file and checks
- * \for DICOM compliance. Returns NULL on failure.
- * \Note: the in-memory representation of all available tags found in
- * \the DICOM header is post-poned to first header information access.
- * \This avoid a double parsing of public part of the header when
- * \one sets an a posteriori shadow dictionary (efficiency can be
- * \seen as a side effect).   
+ *        file (see SetFileName, SetDcmTag and Write)
+ *        Opens (in read only and when possible) an existing file and checks
+ *        for DICOM compliance. Returns NULL on failure.
+ * \Note  the in-memory representation of all available tags found in
+ *        the DICOM header is post-poned to first header information access.
+ *        This avoid a double parsing of public part of the header when
+ *        one sets an a posteriori shadow dictionary (efficiency can be
+ *        seen as a side effect).   
  *
- * @param 
+ * @param filename file to be opened for parsing
  *
  * @return	
  */
@@ -29,6 +29,7 @@ gdcmFile::gdcmFile(string & filename)
 
 
 /////////////////////////////////////////////////////////////////
+// FIXME JPR: comments in English please !
 /**
  * \ingroup   gdcmFile
  * \brief     Renvoie la longueur A ALLOUER pour recevoir les pixels de l'image
@@ -439,7 +440,7 @@ int gdcmFile::WriteDcm (string nomFichier) {
 	fwrite("DICM",4,1,fp1);
 
 	// un accesseur de + est obligatoire ???
-	// pourtant le ElValSet contenu dans le gdcmHeader 
+	// pourtant le gdcmElValSet contenu dans le gdcmHeader 
 	// ne devrait pas être visible par l'utilisateur final (?)
 	
 	GetPubElVals().Write(fp1);
@@ -479,7 +480,7 @@ int gdcmFile::WriteAcr (string nomFichier) {
 	} 
 
 	// un accesseur de + est obligatoire ???
-	// pourtant le ElValSet contenu dans le gdcmHeader 
+	// pourtant le gdcmElValSet contenu dans le gdcmHeader 
 	// ne devrait pas être visible par l'utilisateur final (?)
 	
 	GetPubElVals().WriteAcr(fp1);

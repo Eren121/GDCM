@@ -1,4 +1,4 @@
-// gdcmElValSet.h
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.3 2003/03/12 21:33:20 frog Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -10,20 +10,20 @@
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for a set of successfully parsed ElValues.
-typedef map<TagKey, ElValue*> TagElValueHT;
-typedef map<string, ElValue*> TagElValueNameHT;
+typedef map<TagKey, gdcmElValue*> TagElValueHT;
+typedef map<string, gdcmElValue*> TagElValueNameHT;
 
-class GDCM_EXPORT ElValSet {
+class GDCM_EXPORT gdcmElValSet {
 	TagElValueHT tagHt;             // Both accesses with a TagKey or with a
 	TagElValueNameHT NameHt;        // the DictEntry.Name are required.
 public:	
-	void Add(ElValue*);		
+	void Add(gdcmElValue*);		
 	void Print(ostream &);
 	void PrintByName(ostream &);
 	int  Write(FILE *fp);
 	int  WriteAcr(FILE *fp);
-	ElValue* GetElementByNumber(guint32 group, guint32 element);
-	ElValue* GetElementByName  (string);
+	gdcmElValue* GetElementByNumber(guint32 group, guint32 element);
+	gdcmElValue* GetElementByName  (string);
 	string   GetElValueByNumber(guint32 group, guint32 element);
 	string   GetElValueByName  (string);
 	

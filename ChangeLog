@@ -1,3 +1,11 @@
+2003-03-12 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * gdcmPython/__init__.py fix of GDCM_DICT_PATH which was not
+        to exported to the environement (see gdcmPython/testSuite.py
+        for usage).
+      * src/gdcmElValSet.[cxx/h], gdcmElValue.[cxx/h], gdcmFile.[cxx/h],
+        gdcmHeader.[cxx/h]: ElValSet class renamed to gdcmElValSet, and
+        ElValue class renamed to gdcmElValue for obvious consistency reasons.
+
 2003-03-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/__init__.py doesn't crash anymore when running in
         in InstallMode or PreInstallMode but with an environement given

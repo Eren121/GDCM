@@ -1,4 +1,4 @@
-// gdcmElValSet.cxx
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.cxx,v 1.17 2003/03/12 21:33:20 frog Exp $
 
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
@@ -8,16 +8,16 @@
 static void Tokenize (const string& str, vector<string>& tokens, const string& delimiters = " ");
 
 
-TagElValueHT & ElValSet::GetTagHt(void) {
+TagElValueHT & gdcmElValSet::GetTagHt(void) {
 	return tagHt;
 }
 
-void ElValSet::Add(ElValue * newElValue) {
+void gdcmElValSet::Add(gdcmElValue * newElValue) {
 	tagHt [newElValue->GetKey()]  = newElValue;
 	NameHt[newElValue->GetName()] = newElValue;
 }
 
-void ElValSet::Print(ostream & os) {
+void gdcmElValSet::Print(ostream & os) {
 	for (TagElValueHT::iterator tag = tagHt.begin();
 		  tag != tagHt.end();
 		  ++tag){
@@ -28,7 +28,7 @@ void ElValSet::Print(ostream & os) {
 	}
 } 
 
-void ElValSet::PrintByName(ostream & os) {
+void gdcmElValSet::PrintByName(ostream & os) {
 	for (TagElValueNameHT::iterator tag = NameHt.begin();
 		  tag != NameHt.end();
 		  ++tag){
@@ -39,50 +39,51 @@ void ElValSet::PrintByName(ostream & os) {
 	}
 }
 
-ElValue* ElValSet::GetElementByNumber(guint32 group, guint32 element) {
+gdcmElValue* gdcmElValSet::GetElementByNumber(guint32 group, guint32 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! tagHt.count(key))
-		return (ElValue*)0;
+		return (gdcmElValue*)0;
 	if (tagHt.count(key) > 1)
-		dbg.Verbose(0, "ElValSet::GetElementByNumber",
+		dbg.Verbose(0, "gdcmElValSet::GetElementByNumber",
 		            "multiple entries for this key (FIXME) !");
 	return tagHt.find(key)->second;
 }
 
-ElValue* ElValSet::GetElementByName(string TagName) {
+gdcmElValue* gdcmElValSet::GetElementByName(string TagName) {
    if ( ! NameHt.count(TagName))
-      return (ElValue*)0;
+      return (gdcmElValue*)0;
    if (NameHt.count(TagName) > 1)
-      dbg.Verbose(0, "ElValSet::GetElement",
+      dbg.Verbose(0, "gdcmElValSet::GetElement",
                   "multipe entries for this key (FIXME) !");
    return NameHt.find(TagName)->second;
 }
 
-string ElValSet::GetElValueByNumber(guint32 group, guint32 element) {
+string gdcmElValSet::GetElValueByNumber(guint32 group, guint32 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! tagHt.count(key))
 		return "gdcm::Unfound";
 	if (tagHt.count(key) > 1)
-		dbg.Verbose(0, "ElValSet::GetElValueByNumber",
+		dbg.Verbose(0, "gdcmElValSet::GetElValueByNumber",
 		            "multiple entries for this key (FIXME) !");
 	return tagHt.find(key)->second->GetValue();
 }
 
-string ElValSet::GetElValueByName(string TagName) {
+string gdcmElValSet::GetElValueByName(string TagName) {
 	if ( ! NameHt.count(TagName))
 		return "gdcm::Unfound";
 	if (NameHt.count(TagName) > 1)
-		dbg.Verbose(0, "ElValSet::GetElValue",
+		dbg.Verbose(0, "gdcmElValSet::GetElValue",
 		            "multipe entries for this key (FIXME) !");
 	return NameHt.find(TagName)->second->GetValue();
 }
 
-int ElValSet::SetElValueByNumber(string content, guint32 group, guint32 element) {
+int gdcmElValSet::SetElValueByNumber(string content,
+                                     guint32 group, guint32 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! tagHt.count(key))
 		return 0;
 	if (tagHt.count(key) > 1) {
-		dbg.Verbose(0, "ElValSet::SetElValueByNumber",
+		dbg.Verbose(0, "gdcmElValSet::SetElValueByNumber",
 		            "multiple entries for this key (FIXME) !");
 		return (0); 
 	}		                       
@@ -97,11 +98,11 @@ int ElValSet::SetElValueByNumber(string content, guint32 group, guint32 element)
 	return(1);		
 }
 
-int ElValSet::SetElValueByName(string content, string TagName) {
+int gdcmElValSet::SetElValueByName(string content, string TagName) {
 	if ( ! NameHt.count(TagName))
 		return 0;
 	if (NameHt.count(TagName) > 1) {
-		dbg.Verbose(0, "ElValSet::SetElValueByName",
+		dbg.Verbose(0, "gdcmElValSet::SetElValueByName",
 		            "multipe entries for this key (FIXME) !");
 		return 0;
 	}
@@ -111,26 +112,28 @@ int ElValSet::SetElValueByName(string content, string TagName) {
 }
 
 
-int ElValSet::SetElValueLengthByNumber(guint32 l, guint32 group, guint32 element) {
+int gdcmElValSet::SetElValueLengthByNumber(guint32 l,
+                                           guint32 group, guint32 element) {
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! tagHt.count(key))
 		return 0;
 	if (tagHt.count(key) > 1) {
-		dbg.Verbose(0, "ElValSet::SetElValueLengthByNumber",
+		dbg.Verbose(0, "gdcmElValSet::SetElValueLengthByNumber",
 		            "multiple entries for this key (FIXME) !");
 		return (0); 
 	}		                       
+   // FIXME JPR: comments in English please !
 	// m à j LgrElem 
 	tagHt[key]->SetLength(l);	 
 	return(1);		
 }
 
 
-int ElValSet::SetElValueLengthByName(guint32 l, string TagName) {
+int gdcmElValSet::SetElValueLengthByName(guint32 l, string TagName) {
 	if ( ! NameHt.count(TagName))
 		return 0;
 	if (NameHt.count(TagName) > 1) {
-		dbg.Verbose(0, "ElValSet::SetElValueByName",
+		dbg.Verbose(0, "gdcmElValSet::SetElValueByName",
 		            "multipe entries for this key (FIXME) !");
 		return 0;
 	}
@@ -139,7 +142,7 @@ int ElValSet::SetElValueLengthByName(guint32 l, string TagName) {
 }
 
 
-int ElValSet::Write(FILE * _fp) {
+int gdcmElValSet::Write(FILE * _fp) {
 
 // ATTENTION : fonction non terminée (commitée a titre de precaution)
 
@@ -162,7 +165,7 @@ int ElValSet::Write(FILE * _fp) {
 	// Utilisées pour le calcul Group Length
 	int deja = 0;
 	guint32 lgrCalcGroupe=0;
-	ElValue *elem, *elemZ, *elemZPrec;
+	gdcmElValue *elem, *elemZ, *elemZPrec;
 	guint16 grCourant = 0;
 	
 	// Question :
@@ -195,7 +198,7 @@ int ElValSet::Write(FILE * _fp) {
 			if(elemZ->GetElement() != 0x0000) { 	// pas d'element 'Lgr groupe'
 				// On crée
 			 	gdcmDictEntry * tagZ = new gdcmDictEntry(grCourant, 0x0000, "UL");
-				elemZ = new ElValue(tagZ); // on le cree
+				elemZ = new gdcmElValue(tagZ); // on le cree
 				elemZ->SetLength(4);
 				Add(elemZ);	 				 // On l'accroche à sa place	
 			}	
@@ -304,7 +307,7 @@ int ElValSet::Write(FILE * _fp) {
 
 
 
-int ElValSet::WriteAcr(FILE * _fp) {
+int gdcmElValSet::WriteAcr(FILE * _fp) {
 
 
 // ATTENTION : fonction non terminée (commitée a titre de precaution)
@@ -330,7 +333,7 @@ int ElValSet::WriteAcr(FILE * _fp) {
 	// Utilisées pour le calcul Group Length
 	int deja = 0;
 	guint32 lgrCalcGroupe=0;
-	ElValue *elem, *elemZ, *elemZPrec;
+	gdcmElValue *elem, *elemZ, *elemZPrec;
 	guint16 grCourant = 0;
 	
 	// Question :
@@ -363,7 +366,7 @@ int ElValSet::WriteAcr(FILE * _fp) {
 			if(elemZ->GetElement() != 0x0000) { 	// pas d'element 'Lgr groupe'
 				// On crée
 			 	gdcmDictEntry * tagZ = new gdcmDictEntry(grCourant, 0x0000, "UL");
-				elemZ = new ElValue(tagZ); // on le cree
+				elemZ = new gdcmElValue(tagZ); // on le cree
 				elemZ->SetLength(4);
 				Add(elemZ);	 				 // On l'accroche à sa place	
 			}	

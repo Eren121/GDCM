@@ -47,9 +47,9 @@ private:
    gdcmDict* RefShaDict;
 
    /// ELement VALueS parsed with the PUBlic dictionary.
-   ElValSet PubElVals;
+   gdcmElValSet PubElVals;
    /// ELement VALueS parsed with the SHAdow dictionary.
-   ElValSet ShaElVals;
+   gdcmElValSet ShaElVals;
    /// Refering underlying filename.
    string filename; 
    FILE * fp;
@@ -86,16 +86,16 @@ private:
    gdcmDictEntry * GetDictEntryByName(string name);
 
    // ElValue related utilities
-   ElValue * ReadNextElement(void);
-   ElValue * NewElValueByKey(guint16 group, guint16 element);
-   ElValue * NewElValueByName(string name);
-   void FindLength(ElValue *);
-   void FindVR(ElValue *);
-   void LoadElementValue(ElValue *);
-   void LoadElementValueSafe(ElValue *);
-   void SkipElementValue(ElValue *);
-   void FixFoundLength(ElValue*, guint32);
-   bool IsAnInteger(ElValue *);
+   gdcmElValue * ReadNextElement(void);
+   gdcmElValue * NewElValueByKey(guint16 group, guint16 element);
+   gdcmElValue * NewElValueByName(string name);
+   void FindLength(gdcmElValue *);
+   void FindVR(gdcmElValue *);
+   void LoadElementValue(gdcmElValue *);
+   void LoadElementValueSafe(gdcmElValue *);
+   void SkipElementValue(gdcmElValue *);
+   void FixFoundLength(gdcmElValue*, guint32);
+   bool IsAnInteger(gdcmElValue *);
    
    bool IsImplicitVRLittleEndianTransferSyntax(void);
    bool IsExplicitVRLittleEndianTransferSyntax(void);
@@ -165,7 +165,7 @@ public:
    int gdcmHeader::SetPubElValLengthByNumber(guint32 lgr, guint16 group,
                                     guint16 element);
 
-   ElValSet GetPubElVals() { return(PubElVals); }
+   gdcmElValSet GetPubElVals() { return(PubElVals); }
 };
 
 #endif

@@ -9,7 +9,7 @@
  * @param   in Pointer to existing dictionary entry
  */
 
-ElValue::ElValue(gdcmDictEntry* in) {
+gdcmElValue::gdcmElValue(gdcmDictEntry* in) {
 	ImplicitVr = false;
 	entry = in;
 }

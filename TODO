@@ -1,3 +1,12 @@
+* gdcmElValSet::SetElValueLengthByNumber IMNSHO should be trashed.
+  It's only purpose is a onliner substitute to calling GetElValueByNumber
+  and then SetLength. This only obfuscates the caller code more than
+  clarifying it.
+  Besides the definition of gdcmElValSet::SetElValueLengthByNumber itself
+  it quite poor since it is a almost exact copy of
+  gdcmElValSet::GetElValueByNumber except for the returned code.
+  gdcmHeader::SetPubElValLengthByNumber (which is based on 
+  gdcmElValSet::SetElValueLengthByNumber) is used nowhere...
 * The declarations commented out and starting with "TODO Swig" (try
   grep "TODO Swig" *.h) needed to be temporarily removed for swig to
   proceed correctly (in fact problems appears at loading of _gdcm.[so/dll]).
