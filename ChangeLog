@@ -1,3 +1,10 @@
+2004-04-25  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     * ENH: Adding automatic testing
+       1. Need a DartConfig.cmake to submit to public
+       2. Add a test driver gdcmTest.cxx
+       3. gdcmTestMain, an helper for the main test driver gdcmTest
+       4. Files in Test don't have a main anymore, this becomes intersting when we add more and more tests, thus dsw don't have to load too many projects
+
 2004-04-22  Jean-Pierre Roux
      * ENH Minor changes to the Print() methods
      * ADD gdcmParser::PrintEntryNiceSQ() to allow SQ-indented
