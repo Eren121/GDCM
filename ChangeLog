@@ -1,3 +1,7 @@
+2004-07-27 Jean-Pierre Roux
+  * Test/CMakeLists.txt: newly re-introduced SIEMENS_Sonata-12-MONO2-SQ.dcm
+    in gdcmData (previously known as E00001S03I0015.dcm) is blacklisted.
+
 2004-07-21 Jean-Pierre Roux
   * FIX Now, Parsing and Printing a DICOMDIR do work!
        ( troubles remain in makeDicomDir and BuildUpDicomDir :-(

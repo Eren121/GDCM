@@ -116,12 +116,20 @@ SET(BLACK_LIST
   "gdcm-MR-SIEMENS-16-1.acr"
   # see comments in gdcmData ref file TestAllEntryVerifyReference.txt
   "SIEMENS_GBS_III-16-ACR_NEMA_1.acr"
-  #segfaults TestReadWriteReadCompare (pixels not parsed properly)
+  #segfaults TestReadWriteReadCompare (pixels not parsed properly):
   "I9000001.dcm"
-  # ditto
   "icone.dcm"
-  # ditto
   "sonataMonaco.dcm"
+  # Fails on TestAllReadCompareDicom at the RE-reading stage with message:
+  #    Big trouble : Pixel Element (7fe0,10) NOT found
+  # The temporary file GDCMDATAHOME/BaselineDicom/SIEMENS_Sonata-12-MONO2-SQ.dcm
+  # stops after the first binEntry (binary entry) as can be seen with
+  #   " gdcmbin/bin/PrintHeader 
+  #         GDCMDATAHOME/BaselineDicom/SIEMENS_Sonata-12-MONO2-SQ.dcm "
+  # and effectively the pixels are missing (as well as all the entries
+  # after tag 0029|1010)
+  # Note: this file was previously known as E00001S03I0015.dcm
+  "SIEMENS_Sonata-12-MONO2-SQ.dcm"
   )
 
 #   gdcm-ACR-LibIDO seems to be cut
