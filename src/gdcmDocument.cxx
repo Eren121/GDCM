@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 17:19:39 $
-  Version:   $Revision: 1.175 $
+  Date:      $Date: 2005/01/11 19:03:01 $
+  Version:   $Revision: 1.176 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2623,7 +2623,7 @@ void Document::ReadAndSkipEncapsulatedBasicOffsetTable()
 void Document::ComputeRLEInfo()
 {
    std::string ts = GetTransferSyntax();
-   if ( Global::GetTS()->IsRLELossless(ts) ) 
+   if ( !Global::GetTS()->IsRLELossless(ts) ) 
    {
       return;
    }

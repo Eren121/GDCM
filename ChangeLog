@@ -1,3 +1,8 @@
+2005-01-11 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Untangle TransferSynatx from gdcm::Document. Now Document only manipulate
+     a string and should ask the global TS dict what are the propreties of 
+     the transfer syntax
+
 2005-01-11 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * Replace confusing name SwitchSwapToBigEndian name by SwitchByteSwapCode
    * Add the Document::HandleOutOfGroup0002(uint16_t group) method
