@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 22:21:57 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2004/10/28 23:10:25 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -199,9 +199,9 @@ std::ostream& binary_write(std::ostream& os, const T& val)
 std::ostream& binary_write(std::ostream& os, const uint16_t& val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
-    uint16_t *swap;
-    swap = (((*val>>8)&0xff) | ((*val&0xff)<<8));
-    return os.write(reinterpret_cast<const char*>(swap), 2);
+    uint16_t swap;
+    swap = ((( val << 8 ) & 0x0ff00 ) | (( val >> 8 ) & 0x00ff ) );
+    return os.write(reinterpret_cast<const char*>(&swap), 2);
 #else
     return os.write(reinterpret_cast<const char*>(&val), 2);
 #endif //GDCM_WORDS_BIGENDIAN
@@ -210,10 +210,10 @@ std::ostream& binary_write(std::ostream& os, const uint16_t& val)
 std::ostream& binary_write(std::ostream& os, const uint32_t& val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
-    uint32_t *swap;
+    uint32_t swap;
     swap = ( ((val<<24) & 0xff000000) | ((val<<8)  & 0x00ff0000) | 
              ((val>>8)  & 0x0000ff00) | ((val>>24) & 0x000000ff) );
-    return os.write(reinterpret_cast<const char*>(swap), 4);
+    return os.write(reinterpret_cast<const char*>(&swap), 4);
 #else
     return os.write(reinterpret_cast<const char*>(&val), 4);
 #endif //GDCM_WORDS_BIGENDIAN
