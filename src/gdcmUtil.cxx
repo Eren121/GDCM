@@ -40,7 +40,7 @@ gdcmGlobal gdcmGlob;
 
 /**
  * \ingroup gdcmGlobal
- * \brief   constructor : populates the
+ * \brief   constructor : populates the various H Tables
  */
 gdcmGlobal::gdcmGlobal(void) {
    if (VR || TS || Dicts || ddElem)
@@ -61,19 +61,31 @@ gdcmGlobal::~gdcmGlobal() {
    delete TS;
    delete ddElem;
 }
-
+/**
+ * \ingroup gdcmGlobal
+ * \brief   returns a pointer to the 'Value Representation Table' 
+ */
 gdcmVR *gdcmGlobal::GetVR(void) {
    return VR;
 }
-
+/**
+ * \ingroup gdcmGlobal
+ * \brief   returns a pointer to the 'Transfert Syntax Table' 
+ */
 gdcmTS *gdcmGlobal::GetTS(void) {
    return TS;
 }
-
+/**
+ * \ingroup gdcmGlobal
+ * \brief   returns a pointer to Dictionaries Table 
+ */
 gdcmDictSet *gdcmGlobal::GetDicts(void) {
    return Dicts;
 }
-
+/**
+ * \ingroup gdcmGlobal
+ * \brief   returns a pointer to the DicomDir related elements Table 
+ */
 gdcmDicomDirElement *gdcmGlobal::GetDicomDirElements(void) {
    return ddElem;
 }
@@ -84,6 +96,7 @@ gdcmDicomDirElement *gdcmGlobal::GetDicomDirElements(void) {
  *           dealing with strings, file names... that can be called
  *           from anywhere by whomsoever they can help.
  */
+
 
 /**
  * \ingroup Globals
