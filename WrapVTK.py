@@ -30,7 +30,8 @@ class VTKWrapper(Wrapper):
 		for source in sources:
 			(base,ext)=os.path.splitext(source)
 			fileName=os.path.split(base)
-			if((ext==".cxx")and(fileName[-1][0:3]=="vtk")):
+			if((ext==".cxx")and(fileName[-1][0:3]=="vtk")
+			   and(fileName[-1][-6:]!="Python")):
 				newSources.append(source)
 				newSources.append(base+target_ext)
 				vtkSources.append(base+'.h')
@@ -41,7 +42,7 @@ class VTKWrapper(Wrapper):
 		# Find vtkWrapPython
 		wrapper=self.FindvtkWrapPython()
 		if(not self.__extWrap.vtkHints):
-			self.__extWrap.vtkHints="toto"
+			self.__extWrap.vtkHints="dummyHints"
 
 		wrapCmd=[wrapper]
 		for source in vtkSources:

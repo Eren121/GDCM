@@ -1,5 +1,9 @@
+2003-06-02  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * WrapVTK.py : modifications to get correctly vtk source files to 
+        compile
+
 2003-06-11  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
-      * vtk/vtkGdcmReader.[cxx/h]: 
+      * vtk/vtkGdcmReader.[cxx/h]:
         - UpdateProgress method should now be effective
         - removed the limitation on having only images loaded (as opposed
           to volumes),
