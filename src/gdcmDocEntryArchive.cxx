@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 00:21:48 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/17 11:13:21 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,9 +64,9 @@ void DocEntryArchive::Print(std::ostream &os)
 // Public
 /**
  * \brief   Replace in the Header a DocEntry by the new DocEntry. The last
- *          DocEntry is kept in archieve
+ *          DocEntry is kept in archive
  * @param   newEntry New entry to substitute to an other entry of the Header
- * @return  FALSE when an other DocEntry is already archieved with the same
+ * @return  FALSE when an other DocEntry is already archived with the same
  *          generalized key, TRUE otherwise
  */
 bool DocEntryArchive::Push(DocEntry *newEntry)
@@ -103,13 +103,13 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
  * \brief   Replace in the Header a DocEntry by the new DocEntry. The last
  *          DocEntry is kept in archieve
  * @param   group   Group number of the Entry 
- * @param   element  Element number of the Entry
- * @return  FALSE when an other DocEntry is already archieved with the same
+ * @param   elem  Element number of the Entry
+ * @return  FALSE when an other DocEntry is already archived with the same
  *          generalized key, TRUE otherwise
  */
-bool DocEntryArchive::Push(uint16_t group,uint16_t element)
+bool DocEntryArchive::Push(uint16_t group,uint16_t elem)
 {
-   std::string key = DictEntry::TranslateToKey(group,element);
+   std::string key = DictEntry::TranslateToKey(group,elem);
 
    if( Archive.find(key)==Archive.end() )
    {
@@ -130,13 +130,13 @@ bool DocEntryArchive::Push(uint16_t group,uint16_t element)
  * \brief   Restore in the Header the DocEntry that have the generalized key. 
  *          The old entry is destroyed.
  * @param   group   Group number of the Entry 
- * @param   element  Element number of the Entry
- * @return  FALSE when the generalized key isn't in the archieve, 
+ * @param   elem  Element number of the Entry
+ * @return  FALSE when the generalized key isn't in the archive, 
  *          TRUE otherwise
  */
-bool DocEntryArchive::Restore(uint16_t group,uint16_t element)
+bool DocEntryArchive::Restore(uint16_t group,uint16_t elem)
 {
-   std::string key=DictEntry::TranslateToKey(group,element);
+   std::string key=DictEntry::TranslateToKey(group,elem);
 
    TagDocEntryHT::iterator restoreIt=Archive.find(key);
    if( restoreIt!=Archive.end() )
@@ -164,10 +164,10 @@ bool DocEntryArchive::Restore(uint16_t group,uint16_t element)
 }
 
 /**
- * \brief   Remove all DocEntry that are in the archive. The entries aren't 
- *          restored but only destroyed.
+ * \brief   Remove all DocEntry that are in the archive.  
+ *          The entries aren't restored but only destroyed.
  */
-void DocEntryArchive::ClearArchive(void)
+void DocEntryArchive::ClearArchive( )
 {
    for(TagDocEntryHT::iterator it = Archive.begin();
        it!=Archive.end();

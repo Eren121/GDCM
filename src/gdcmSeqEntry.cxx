@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/17 11:13:21 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #include "gdcmTS.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 #include <iostream>
 #include <iomanip>
@@ -114,7 +115,7 @@ void SeqEntry::Print( std::ostream &os, std::string const & )
       else 
       {
          // fuse
-         os << "      -------------- should have a sequence terminator item";
+         gdcmVerboseMacro("  -------- should have a sequence terminator item");
       }
    }                    
 }

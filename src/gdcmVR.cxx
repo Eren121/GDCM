@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 00:21:49 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/17 11:13:21 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,15 +106,12 @@ int VR::Count(VRKey const &key)
 
 //-----------------------------------------------------------------------------
 /**
- * \brief   Simple predicate that checks wether the given argument
+ * \brief   Simple predicate that checks whether the given argument
  *          corresponds to the Value Representation of a \ref BinEntry .
  * @param   tested value representation to check for.
  */
 bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
 {
-   //std::cout << "VR::IsVROfGdcmBinaryRepresentable===================="
-   //   << tested << std::endl;
-
    if ( tested == GDCM_UNKNOWN)
       return true;
 
@@ -128,10 +125,10 @@ bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
 }
 
 /**
- * \brief   Simple predicate that checks wether the given argument
+ * \brief   Simple predicate that checks whether the given argument
  *          corresponds to the Value Representation of a \ref ValEntry
  *          but NOT a \ref BinEntry.
- * @param   tested value representation to check for.
+ * @param   tested value representation to be checked.
  */
 bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
@@ -156,7 +153,7 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
 }
 
 /**
- * \brief   Simple predicate that checks wether the given argument
+ * \brief   Simple predicate that checks whether the given argument
  *          corresponds to the Value Representation of a \ref SeqEntry
  * @param   tested value representation to check for.
  */

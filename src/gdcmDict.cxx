@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/01/17 11:13:21 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ void FillDefaultDataDict(Dict *d);
 /**
  * \brief   Constructor
  */
-Dict::Dict(void)
+Dict::Dict( )
 {
    Filename="";
 }
@@ -198,10 +198,10 @@ bool Dict::RemoveEntry (uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief   Get the dictionnary entry identified by a given tag (group,element)
+ * \brief   Get the dictionary entry identified by a given tag (group,element)
  * @param   group   group of the entry to be found
  * @param   elem element of the entry to be found
- * @return  the corresponding dictionnary entry when existing, NULL otherwise
+ * @return  the corresponding dictionary entry when existing, NULL otherwise
  */
 DictEntry *Dict::GetDictEntry(uint16_t group, uint16_t elem)
 {
@@ -215,10 +215,10 @@ DictEntry *Dict::GetDictEntry(uint16_t group, uint16_t elem)
 }
 
 /** 
- * \brief   Consider all the entries of the public dicom dictionnary. 
+ * \brief   Consider all the entries of the public dicom dictionary. 
  *          Build all list of all the tag names of all those entries.
  * \sa      DictSet::GetPubDictTagNamesByCategory
- * @return  A list of all entries of the public dicom dictionnary.
+ * @return  A list of all entries of the public dicom dictionary.
  */
 
  
@@ -237,26 +237,26 @@ DictEntry *Dict::GetDictEntry(uint16_t group, uint16_t elem)
 
 /** 
  * \ingroup Dict
- * \brief   Consider all the entries of the public dicom dictionnary.
+ * \brief   Consider all the entries of the public dicom dictionary.
  *          Build an hashtable whose keys are the names of the groups
  *          (fourth field in each line of dictionary) and whose corresponding
- *          values are lists of all the dictionnary entries among that
+ *          values are lists of all the dictionary entries among that
  *          group. Note that apparently the Dicom standard doesn't explicitely
  *          define a name (as a string) for each group.
  *          A typical usage of this method would be to enable a dynamic
  *          configuration of a Dicom file browser: the admin/user can
  *          select in the interface which Dicom tags should be displayed.
  * \warning Dicom *doesn't* define any name for any 'categorie'
- *          (the dictionnary fourth field was formerly NIH defined
+ *          (the dictionary fourth field was formerly NIH defined
  *           - and no longer he is-
  *           and will be removed when Dicom provides us a text file
- *           with the 'official' Dictionnary, that would be more friendly
- *           than asking us to perform a line by line check of the dictionnary
+ *           with the 'official' Dictionary, that would be more friendly
+ *           than asking us to perform a line by line check of the dictionary
  *           at the beginning of each year to -try to- guess the changes)
  *           Therefore : please NEVER use that fourth field :-(
  *
  * @return  An hashtable: whose keys are the names of the groups and whose
- *          corresponding values are lists of all the dictionnary entries
+ *          corresponding values are lists of all the dictionary entries
  *          among that group.
  */
  
@@ -283,7 +283,7 @@ void Dict::InitTraversal()
 }
 
 /**
- * \brief   Get the next entry whil visiting the Hash table (KeyHt)
+ * \brief   Get the next entry while visiting the Hash table (KeyHt)
  * \return  The next DictEntry if found, otherwhise NULL
  */
 DictEntry *Dict::GetNextEntry()

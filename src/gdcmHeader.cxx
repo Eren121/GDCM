@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 15:06:37 $
-  Version:   $Revision: 1.232 $
+  Date:      $Date: 2005/01/17 11:13:21 $
+  Version:   $Revision: 1.233 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -848,7 +848,7 @@ int Header::GetHighBitPosition()
 }
 
 /**
- * \brief   Check wether the pixels are signed or UNsigned data.
+ * \brief   Check whether the pixels are signed or UNsigned data.
  * \warning The method defaults to false (UNsigned) when information is Missing.
  *          The responsability of checking this value is left to the caller.
  * @return  True when signed, false when UNsigned
@@ -906,7 +906,7 @@ int Header::GetSamplesPerPixel()
 }
 
 /**
- * \brief   Check wether this a monochrome picture or not by accessing
+ * \brief   Check whether this a monochrome picture or not by accessing
  *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
  * @return  true when "MONOCHROME1" or "MONOCHROME2". False otherwise.
  */
@@ -926,7 +926,7 @@ bool Header::IsMonochrome()
 }
 
 /**
- * \brief   Check wether this a "PALETTE COLOR" picture or not by accessing
+ * \brief   Check whether this a "PALETTE COLOR" picture or not by accessing
  *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
  * @return  true when "PALETTE COLOR". False otherwise.
  */
@@ -945,7 +945,7 @@ bool Header::IsPaletteColor()
 }
 
 /**
- * \brief   Check wether this a "YBR_FULL" color picture or not by accessing
+ * \brief   Check whether this a "YBR_FULL" color picture or not by accessing
  *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
  * @return  true when "YBR_FULL". False otherwise.
  */
