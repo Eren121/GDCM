@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:18 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/02/02 10:16:02 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,8 @@ RLEFrame *RLEFramesInfo::GetNextFrame()
  * @param raw raw
  * @param xSize x Size
  * @param ySize y Size
- * @param BitsAllocated Bits allocated
+ * @param zSize z Size
+ * @param bitsAllocated Bits allocated
  * @return    Boolean
  */
 bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw, 
