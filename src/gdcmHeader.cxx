@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 14:35:58 $
-  Version:   $Revision: 1.216 $
+  Date:      $Date: 2004/12/16 23:17:27 $
+  Version:   $Revision: 1.217 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -316,14 +316,23 @@ float Header::GetXSpacing()
       // if single value is found, xspacing is defaulted to yspacing
       if ( nbValues == 1 )
       {
-         return yspacing;
+         xspacing = yspacing;
       }
+
+      if ( xspacing == 0.0 ) xspacing = 1.0;
+
+      return xspacing;
    }
+
+   // to avoid troubles with David Clunie's-like images
+   if ( xspacing == 0. && yspacing == 0.) return 1.;
+
    if ( xspacing == 0.)
    {
-      dbg.Verbose(0, "Header::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
+      dbg.Verbose(0, "Header::GetXSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
       // seems to be a bug in the header ...
-      sscanf( strSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
+      nbValues = sscanf( strSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
+      assert( nbValues == 3 );
    }
 
    return xspacing;
@@ -336,7 +345,7 @@ float Header::GetXSpacing()
   */
 float Header::GetYSpacing()
 {
-   float yspacing = 0;
+   float yspacing = 1.;
    std::string strSpacing = GetEntryByNumber(0x0028,0x0030);
   
    if ( strSpacing == GDCM_UNFOUND )
@@ -347,6 +356,8 @@ float Header::GetYSpacing()
 
    // if sscanf cannot read any float value, it won't affect yspacing
    sscanf( strSpacing.c_str(), "%f", &yspacing);
+
+   if ( yspacing == 0.0 ) yspacing = 1.0;
 
    return yspacing;
 } 
