@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:16 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,6 +128,33 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
 }
 
 /**
+ * \brief   Get the first entry while visiting the DictSet
+ * \return  The first Dict if found, otherwhise NULL
+ */
+Dict *DictSet::GetFirstEntry()
+{
+   ItDictHt = Dicts.begin();
+   if( ItDictHt != Dicts.end() )
+      return ItDictHt->second;
+   return NULL;
+}
+
+/**
+ * \brief   Get the next entry while visiting the Hash table (DictSetHT)
+ * \note : meaningfull only if GetFirstEntry already called
+ * \return  The next Dict if found, otherwhise NULL
+ */
+Dict *DictSet::GetNextEntry()
+{
+   gdcmAssertMacro (ItDictHt != Dicts.end());
+  
+   ++ItDictHt;
+   if ( ItDictHt != Dicts.end() )
+      return ItDictHt->second;
+   return NULL;
+}
+
+/**
  * \brief   Obtain from the GDCM_DICT_PATH environnement variable the
  *          path to directory containing the dictionaries. When
  *          the environnement variable is absent the path is defaulted
@@ -155,33 +182,6 @@ std::string DictSet::BuildDictPath()
    }
 
    return resultPath;
-}
-
-/**
- * \brief   Get the first entry while visiting the DictSet
- * \return  The first Dict if found, otherwhise NULL
- */
-Dict *DictSet::GetFirstEntry()
-{
-   ItDictHt = Dicts.begin();
-   if( ItDictHt != Dicts.end() )
-      return ItDictHt->second;
-   return NULL;
-}
-
-/**
- * \brief   Get the next entry while visiting the Hash table (DictSetHT)
- * \note : meaningfull only if GetFirstEntry already called
- * \return  The next Dict if found, otherwhise NULL
- */
-Dict *DictSet::GetNextEntry()
-{
-   gdcmAssertMacro (ItDictHt != Dicts.end());
-  
-   ++ItDictHt;
-   if ( ItDictHt != Dicts.end() )
-      return ItDictHt->second;
-   return NULL;
 }
 
 //-----------------------------------------------------------------------------

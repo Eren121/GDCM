@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:11:49 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,11 +52,11 @@ public:
    static std::string GetCurrentDateTime();
    static unsigned int GetCurrentThreadID();
    static unsigned int GetCurrentProcessID();
+   static bool         IsCurrentProcessorBigEndian();
 
    static std::string DicomString(const char *s, size_t l);
    static std::string DicomString(const char *s);
    static bool        DicomStringEqual(const std::string &s1, const char *s2);
-   static bool        IsCurrentProcessorBigEndian();
 
    static std::string GetMACAddress();
 
@@ -71,12 +71,12 @@ private:
    static const std::string GDCM_UID;
 };
 
-   template <class T> 
-   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const T &val);
-   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint16_t &val);
-   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint32_t &val);
-   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const char *val);
-   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, std::string const &val);
+template <class T> 
+GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const T &val);
+GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint16_t &val);
+GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint32_t &val);
+GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const char *val);
+GDCM_EXPORT std::ostream &binary_write(std::ostream &os, std::string const &val);
 } // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

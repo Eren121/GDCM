@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:18 $
-  Version:   $Revision: 1.129 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.130 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,6 +94,7 @@ const std::string Util::GDCM_UID = "1.2.826.0.1.3680043.2.1143";
 std::string Util::RootUID        = GDCM_UID;
 
 //-------------------------------------------------------------------------
+// Public
 /**
  * \brief Provide a better 'c++' approach for sprintf
  * For example c code is:
@@ -315,6 +316,48 @@ std::string Util::GetCurrentDateTime()
    return r;
 }
 
+unsigned int Util::GetCurrentThreadID()
+{
+// FIXME the implementation is far from complete
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
+  return (unsigned int)GetCurrentThreadId();
+#endif
+#ifdef __linux__
+   return 0;
+   // Doesn't work on fedora, but is in the man page...
+   //return (unsigned int)gettid();
+#endif
+#ifdef __sun
+   return (unsigned int)thr_self();
+#else
+   //default implementation
+   return 0;
+#endif
+}
+
+unsigned int Util::GetCurrentProcessID()
+{
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
+  // NOTE: There is also a _getpid()...
+  return (unsigned int)GetCurrentProcessId();
+#else
+  // get process identification, POSIX
+  return (unsigned int)getpid();
+#endif
+}
+
+/**
+ * \brief   tells us if the processor we are working with is BigEndian or not
+ */
+bool Util::IsCurrentProcessorBigEndian()
+{
+#ifdef GDCM_WORDS_BIGENDIAN
+   return true;
+#else
+   return false;
+#endif
+}
+
 /**
  * \brief Create a /DICOM/ string:
  * It should a of even length (no odd length ever)
@@ -369,18 +412,6 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
     s1_even[s1_even.size()-1] = '\0'; //replace space character by null
   }
   return s1_even == s2_even;
-}
-
-/**
- * \brief   tells us if the processor we are working with is BigEndian or not
- */
-bool Util::IsCurrentProcessorBigEndian()
-{
-#ifdef GDCM_WORDS_BIGENDIAN
-   return true;
-#else
-   return false;
-#endif
 }
 
 #ifdef _WIN32
@@ -723,97 +754,6 @@ std::string Util::GetMACAddress()
 }
 
 /**
- * \brief   Return the IP adress of the machine writting the DICOM image
- */
-std::string Util::GetIPAddress()
-{
-   // This is a rip from 
-   // http://www.codeguru.com/Cpp/I-N/internet/network/article.php/c3445/
-#ifndef HOST_NAME_MAX
-   // SUSv2 guarantees that `Host names are limited to 255 bytes'.
-   // POSIX 1003.1-2001 guarantees that `Host names (not including the
-   // terminating NUL) are limited to HOST_NAME_MAX bytes'.
-#define HOST_NAME_MAX 255
-   // In this case we should maybe check the string was not truncated.
-   // But I don't known how to check that...
-#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
-   // with WinSock DLL we need to initialize the WinSock before using gethostname
-   WORD wVersionRequested = MAKEWORD(1,0);
-   WSADATA WSAData;
-   int err = WSAStartup(wVersionRequested,&WSAData);
-   if (err != 0)
-   {
-      // Tell the user that we could not find a usable
-      // WinSock DLL.
-      WSACleanup();
-      return "127.0.0.1";
-   }
-#endif
-  
-#endif //HOST_NAME_MAX
-
-   std::string str;
-   char szHostName[HOST_NAME_MAX+1];
-   int r = gethostname(szHostName, HOST_NAME_MAX);
- 
-   if( r == 0 )
-   {
-      // Get host adresses
-      struct hostent *pHost = gethostbyname(szHostName);
- 
-      for( int i = 0; pHost!= NULL && pHost->h_addr_list[i]!= NULL; i++ )
-      {
-         for( int j = 0; j<pHost->h_length; j++ )
-         {
-            if( j > 0 ) str += ".";
- 
-            str += Util::Format("%u", 
-                (unsigned int)((unsigned char*)pHost->h_addr_list[i])[j]);
-         }
-         // str now contains one local IP address 
- 
-#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
-   WSACleanup();
-#endif
-
-      }
-   }
-   // If an error occur r == -1
-   // Most of the time it will return 127.0.0.1...
-   return str;
-}
-
-unsigned int Util::GetCurrentThreadID()
-{
-// FIXME the implementation is far from complete
-#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
-  return (unsigned int)GetCurrentThreadId();
-#endif
-#ifdef __linux__
-   return 0;
-   // Doesn't work on fedora, but is in the man page...
-   //return (unsigned int)gettid();
-#endif
-#ifdef __sun
-   return (unsigned int)thr_self();
-#else
-   //default implementation
-   return 0;
-#endif
-}
-
-unsigned int Util::GetCurrentProcessID()
-{
-#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
-  // NOTE: There is also a _getpid()...
-  return (unsigned int)GetCurrentProcessId();
-#else
-  // get process identification, POSIX
-  return (unsigned int)getpid();
-#endif
-}
-
-/**
  * \brief Creates a new UID. As stipulate in the DICOM ref
  *        each time a DICOM image is create it should have 
  *        a unique identifier (URI)
@@ -931,6 +871,72 @@ std::ostream &binary_write(std::ostream &os, const char *val)
 std::ostream &binary_write(std::ostream &os, std::string const &val)
 {
    return os.write(val.c_str(), val.size());
+}
+
+//-------------------------------------------------------------------------
+// Protected
+
+//-------------------------------------------------------------------------
+// Private
+/**
+ * \brief   Return the IP adress of the machine writting the DICOM image
+ */
+std::string Util::GetIPAddress()
+{
+   // This is a rip from 
+   // http://www.codeguru.com/Cpp/I-N/internet/network/article.php/c3445/
+#ifndef HOST_NAME_MAX
+   // SUSv2 guarantees that `Host names are limited to 255 bytes'.
+   // POSIX 1003.1-2001 guarantees that `Host names (not including the
+   // terminating NUL) are limited to HOST_NAME_MAX bytes'.
+#define HOST_NAME_MAX 255
+   // In this case we should maybe check the string was not truncated.
+   // But I don't known how to check that...
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
+   // with WinSock DLL we need to initialize the WinSock before using gethostname
+   WORD wVersionRequested = MAKEWORD(1,0);
+   WSADATA WSAData;
+   int err = WSAStartup(wVersionRequested,&WSAData);
+   if (err != 0)
+   {
+      // Tell the user that we could not find a usable
+      // WinSock DLL.
+      WSACleanup();
+      return "127.0.0.1";
+   }
+#endif
+  
+#endif //HOST_NAME_MAX
+
+   std::string str;
+   char szHostName[HOST_NAME_MAX+1];
+   int r = gethostname(szHostName, HOST_NAME_MAX);
+ 
+   if( r == 0 )
+   {
+      // Get host adresses
+      struct hostent *pHost = gethostbyname(szHostName);
+ 
+      for( int i = 0; pHost!= NULL && pHost->h_addr_list[i]!= NULL; i++ )
+      {
+         for( int j = 0; j<pHost->h_length; j++ )
+         {
+            if( j > 0 ) str += ".";
+ 
+            str += Util::Format("%u", 
+                (unsigned int)((unsigned char*)pHost->h_addr_list[i])[j]);
+         }
+         // str now contains one local IP address 
+ 
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
+   WSACleanup();
+#endif
+
+      }
+   }
+   // If an error occur r == -1
+   // Most of the time it will return 127.0.0.1...
+   return str;
 }
 
 //-------------------------------------------------------------------------

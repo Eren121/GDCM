@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,12 +83,21 @@ Global::~Global()
 //-----------------------------------------------------------------------------
 // Public
 /**
+ * \brief   returns a pointer to Dictionaries Table 
+ */
+DictSet *Global::GetDicts()
+{
+   return Dicts;
+}
+
+/**
  * \brief   returns a pointer to the 'Value Representation Table' 
  */
 VR *Global::GetVR()
 {
    return ValRes;
 }
+
 /**
  * \brief   returns a pointer to the 'Transfer Syntax Table' 
  */
@@ -96,13 +105,7 @@ TS *Global::GetTS()
 {
    return TranSyn;
 }
-/**
- * \brief   returns a pointer to Dictionaries Table 
- */
-DictSet *Global::GetDicts()
-{
-   return Dicts;
-}
+
 /**
  * \brief   returns a pointer to the DicomDir related elements Table 
  */

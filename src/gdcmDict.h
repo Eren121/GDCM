@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:33 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,11 +56,11 @@ public:
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
 // Entries
-   void ClearEntry  ();
-   bool AddEntry (DictEntry const &newEntry);
+   bool AddEntry(DictEntry const &newEntry);
    bool ReplaceEntry(DictEntry const &newEntry);
    bool RemoveEntry (TagKey const &key);
    bool RemoveEntry (uint16_t group, uint16_t elem);
+   void ClearEntry();
    
 // Tag
    DictEntry *GetEntry(uint16_t group, uint16_t elem);

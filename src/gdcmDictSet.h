@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:11:49 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,10 +66,10 @@ public:
                                   TagName vm     = GDCM_UNKNOWN,
                                   TagName name   = GDCM_UNKNOWN);
 
-   static std::string BuildDictPath();
-
    Dict *GetFirstEntry();
    Dict *GetNextEntry();
+
+   static std::string BuildDictPath();
 
 protected:
    bool AppendDict(Dict *NewDict, DictKey const &name);

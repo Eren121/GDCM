@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,14 +54,15 @@ DirList::~DirList()
 
 //-----------------------------------------------------------------------------
 // Public
-/**
- * \brief   Print method
- * @param os ostream to write to 
- */
-void DirList::Print(std::ostream &os)
+bool DirList::IsDirectory(std::string const &dirName)
 {
-   std::copy(Filenames.begin(), Filenames.end(), 
-             std::ostream_iterator<std::string>(os, "\n"));
+#ifndef _MSC_VER
+   struct stat buf;
+   stat(dirName.c_str(), &buf);
+   return S_ISDIR(buf.st_mode);
+#else
+   return (GetFileAttributes(dirName.c_str()) & FILE_ATTRIBUTE_DIRECTORY) != 0;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -149,19 +150,17 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
   return numberOfFiles;
 }
 
-bool DirList::IsDirectory(std::string const &dirName)
-{
-#ifndef _MSC_VER
-   struct stat buf;
-   stat(dirName.c_str(), &buf);
-   return S_ISDIR(buf.st_mode);
-#else
-   return (GetFileAttributes(dirName.c_str()) & FILE_ATTRIBUTE_DIRECTORY) != 0;
-#endif
-}
-
 //-----------------------------------------------------------------------------
 // Print
+/**
+ * \brief   Print method
+ * @param os ostream to write to 
+ */
+void DirList::Print(std::ostream &os)
+{
+   std::copy(Filenames.begin(), Filenames.end(), 
+             std::ostream_iterator<std::string>(os, "\n"));
+}
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

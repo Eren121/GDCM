@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:11:49 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,9 +48,6 @@ public:
 // Print
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
-// Key creation
-   static TagKey TranslateToKey(uint16_t group, uint16_t elem);
-
 // Content of DictEntry
    void SetVR(TagName const &vr);
    void SetVM(TagName const &vm);
@@ -92,6 +89,9 @@ public:
    /// \brief  Gets the key of the current DictEntry
    /// @return the key.
    const TagName &GetKey() const { return Key; }
+
+// Key creation
+   static TagKey TranslateToKey(uint16_t group, uint16_t elem);
 
 private:
    /// \todo FIXME 

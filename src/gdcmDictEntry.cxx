@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,18 +52,6 @@ DictEntry::DictEntry(uint16_t group, uint16_t elem,
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
- *                                              and a Dicom element number)
- * @param  group the Dicom group number used to build the tag
- * @param  elem the Dicom element number used to build the tag
- * @return the built tag
- */
-TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t elem)
-{
-   return Util::Format("%04x|%04x", group, elem);
-}
-
-/**
  * \brief       If-and only if-the V(alue) R(epresentation)
  * \            is unset then overwrite it.
  * @param vr    New V(alue) R(epresentation) to be set.
@@ -96,6 +84,19 @@ void DictEntry::SetVM(TagName const &vm)
       gdcmErrorMacro( "Overwriting VM might compromise a dictionary");
    }
 }
+
+/**
+ * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
+ *                                              and a Dicom element number)
+ * @param  group the Dicom group number used to build the tag
+ * @param  elem the Dicom element number used to build the tag
+ * @return the built tag
+ */
+TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t elem)
+{
+   return Util::Format("%04x|%04x", group, elem);
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 

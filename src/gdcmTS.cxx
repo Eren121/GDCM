@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:18 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -211,6 +211,7 @@ bool TS::IsJPEGLossy(TSKey const &key)
    }
    return r;
 }
+
 /**
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEG2000 one

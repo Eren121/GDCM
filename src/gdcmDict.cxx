@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/02/02 15:07:41 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,16 +90,6 @@ Dict::~Dict()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   Remove all Dicom Dictionary Entries
- */
-void Dict::ClearEntry()
-{
-   // we assume all the pointed DictEntries are already cleaned-up
-   // when we clean KeyHt.
-   KeyHt.clear();
-}
-
-/**
  * \brief  adds a new Dicom Dictionary Entry 
  * @param   newEntry entry to add 
  * @return  false if Dicom Element already exists
@@ -141,7 +131,7 @@ bool Dict::ReplaceEntry(DictEntry const &newEntry)
  * @param   key (group|element)
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool Dict::RemoveEntry (TagKey const &key) 
+bool Dict::RemoveEntry(TagKey const &key) 
 {
    TagKeyHT::const_iterator it = KeyHt.find(key);
    if(it != KeyHt.end()) 
@@ -164,9 +154,19 @@ bool Dict::RemoveEntry (TagKey const &key)
  * @param   elem Dicom element number of the Dicom Element
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool Dict::RemoveEntry (uint16_t group, uint16_t elem)
+bool Dict::RemoveEntry(uint16_t group, uint16_t elem)
 {
    return RemoveEntry(DictEntry::TranslateToKey(group, elem));
+}
+
+/**
+ * \brief   Remove all Dicom Dictionary Entries
+ */
+void Dict::ClearEntry()
+{
+   // we assume all the pointed DictEntries are already cleaned-up
+   // when we clean KeyHt.
+   KeyHt.clear();
 }
 
 /**
@@ -207,11 +207,9 @@ DictEntry *Dict::GetNextEntry()
 {
    gdcmAssertMacro (ItKeyHt != KeyHt.end());
 
-   {
-      ++ItKeyHt;
-      if (ItKeyHt != KeyHt.end())
-         return &(ItKeyHt->second);
-   }
+   ++ItKeyHt;
+   if (ItKeyHt != KeyHt.end())
+      return &(ItKeyHt->second);
    return NULL;
 }
 
