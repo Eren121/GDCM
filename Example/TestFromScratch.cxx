@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 16:48:37 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/12/10 17:10:22 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,26 +59,25 @@ int main(int argc, char *argv[])
    // Copy of the header content
    while(d)
    {
-      if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
-      {
-         // We skip bin entries
-      }
-      else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
+      if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
-          h2->ReplaceOrCreateByNumber( 
+         // Do not bother with field from private dict
+         if( v->GetName() != "unkn" )
+         {  
+            h2->ReplaceOrCreateByNumber( 
                               v->GetValue(),
                               v->GetGroup(), 
                               v->GetElement(),
                               v->GetVR() ); 
+         }
       }
-      else
-      {
-       // We skip pb of SQ recursive exploration
-      }
+      //else
+         // We skip pb of SQ recursive exploration
+         // We skip bin entries
 
       d = h1->GetNextEntry();
    }
-   //h2->Print( std::cout );
+   h2->Print( std::cout );
 
    gdcm::File *f2 = new gdcm::File( h2 );
    f2->SetImageData(imageData, dataSize);
