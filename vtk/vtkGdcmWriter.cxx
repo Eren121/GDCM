@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -116,11 +116,27 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
    str<<image->GetScalarSize()*8-1;
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0102);
 
+   // Pixel Repr
+   // FIXME : what do we do when the ScalarType is 
+   // VTK_UNSIGNED_INT or VTK_UNSIGNED_LONG
+   str.str("");
+   if( image->GetScalarType() == VTK_UNSIGNED_CHAR ||
+       image->GetScalarType() == VTK_UNSIGNED_SHORT ||
+       image->GetScalarType() == VTK_UNSIGNED_INT ||
+       image->GetScalarType() == VTK_UNSIGNED_LONG )
+   {
+      str<<"0"; // Unsigned
+   }
+   else
+   {
+      str<<"1"; // Signed
+   }
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0103);
+
    // Samples per pixel
    str.str("");
    str<<image->GetNumberOfScalarComponents();
    file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0002);
-   std::cout<<file->GetHeader()->GetEntryByNumber(0x0028,0x0002)<<"-"<<file->GetHeader()->GetNumberOfScalarComponents()<<"\n";
 
    // Spacing
    double *sp = image->GetSpacing();
