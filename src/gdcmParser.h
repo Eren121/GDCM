@@ -48,13 +48,15 @@ public:
     * \brief   Sets the print level for the Dicom Header 
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
-   void SetPrintLevel(int level) { printLevel = level; };
+   void SetPrintLevel(int level) 
+      { printLevel = level; };
    /**
     * \ingroup gdcmParser
     * \brief   canonical Printer 
     * \sa    SetPrintLevel
     */   
-   virtual void Print        (std::ostream &os = std::cout) {PrintEntry(os);};
+   virtual void Print        (std::ostream &os = std::cout) 
+      {PrintEntry(os);};
    virtual void PrintEntry   (std::ostream &os = std::cout);
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
@@ -64,7 +66,8 @@ public:
     * \ingroup gdcmParser
     * \brief   Gets the external File Name 
     */
-   inline std::string GetFileName(void) {return filename;}
+   inline std::string GetFileName(void) 
+      {return filename;}
 
 // Dictionnaries
    gdcmDict *GetPubDict(void);
@@ -132,7 +135,7 @@ protected:
    virtual int     GetEntryLengthByNumber(guint16 group, guint16 element);
 
    virtual bool SetEntryByName  (std::string content, std::string tagName);
-   virtual bool SetEntryByNumber(std::string content, guint16 group, guint16 element);
+   virtual bool SetEntryByNumber(std::string content,  guint16 group, guint16 element);
    virtual bool SetEntryLengthByNumber(guint32 length, guint16 group, guint16 element);
 
    virtual size_t GetEntryOffsetByNumber  (guint16 Group, guint16 Elem);
@@ -151,6 +154,7 @@ protected:
    void LoadHeaderEntrySafe(gdcmHeaderEntry *);
 
    void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);
+   void WriteEntry(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
    void WriteEntries(FILE *_fp,FileType type);
    void WriteEntriesDeprecated(FILE *_fp,FileType type); // JPR
 
@@ -203,6 +207,10 @@ protected:
    * Let's remember how many times!
    */
    int countGrPixel;
+   /**
+   * \brief = true when the 'pixel Element' is reached during writting process
+   */   
+   bool itsTimeToWritePixels;
       
 private:
    // Read
@@ -241,9 +249,10 @@ private:
                                       std::string vr     = "unkn",
                                       std::string fourth = "unkn",
                                       std::string name   = "unkn");
-   gdcmDictEntry *NewVirtualDictEntry(gdcmHeaderEntry *);
+   //gdcmDictEntry *NewVirtualDictEntry(gdcmHeaderEntry *); // never defined
    
    // HeaderEntry related utilities
+   
    gdcmHeaderEntry *ReadNextHeaderEntry   (void);
    gdcmHeaderEntry *NewHeaderEntryByNumber(guint16 group, 
                                            guint16 element);
@@ -252,35 +261,53 @@ private:
 
    // Deprecated (Not used) --> commented out
    //gdcmHeaderEntry *NewManualHeaderEntryToPubDict(std::string NewTagName,
-   //                                               std::string VR);
+   //                                                  std::string VR);
+   
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 
-   // Refering underlying filename.
+   /**
+   * \brief Refering underlying filename.
+   */
    std::string filename; 
 
-   // Public dictionary used to parse this header
+   /**
+   * \brief Public dictionary used to parse this header
+   */
    gdcmDict *RefPubDict;
-   // Optional "shadow dictionary" (private elements) used to parse this header
+   
+   /**
+   * \brief Optional "shadow dictionary" (private elements) used to parse this header
+   */
    gdcmDict *RefShaDict;
 
-   // = 1 if a gdcmHeaderEntry was added post parsing 
+   /**
+   * \brief = 1 if a gdcmHeaderEntry was added post parsing 
+   */   
    int wasUpdated;
    
-   // =1 if user wants to skip shadow groups while parsing (to save space)
+   /**
+   * \brief =1 if user wants to skip shadow groups while parsing (to save space)
+   */
    int ignoreShadow;
-
-   // Swap code e.g. little, big, bad-big, bad-little endian). Warning:
-   // this code is not fixed during header parsing.
+   
+   /**
+   * \brief Swap code e.g. little, big, bad-big, bad-little endian). 
+   * \warning : this code is not fixed during header parsing.      
+   */
    int sw;
-
-   // Size treshold above which an element value will NOT be loaded in 
-   // memory (to avoid loading the image/volume itself). By default,
-   // this upper bound is fixed to 1024 bytes (which might look reasonable
-   // when one considers the definition of the various VR contents).
+   /**
+   * \brief Size treshold above which an element value will NOT be loaded in 
+   *       memory (to avoid loading the image/volume itself). By default,
+   *       this upper bound is fixed to 1024 bytes (which might look reasonable
+   * when one considers the definition of the various VR contents).
+   */
    guint32 MaxSizeLoadEntry;
-   // Size treshold above which an element value will NOT be *printed* in 
-   // order no to polute the screen output. By default,
-   // this upper bound is fixed to 64 bytes.   
+   
+   /**
+   * \brief Size treshold above which an element value will NOT be *printed* in
+   *        order no to polute the screen output. 
+   *        By default, this upper bound is fixed to 64 bytes.
+   */   
    guint32 MaxSizePrintEntry;
    
 };

@@ -199,28 +199,34 @@ private:
 
 // Variables
    gdcmDictEntry *entry;
-   guint32 UsableLength;  // Updated from ReadLength, by FixFoungLentgh()
-                          // for fixing a bug in the header 
-                          // or helping the parser going on 
+   /// Updated from ReadLength, by FixFoungLentgh()
+   /// for fixing a bug in the header 
+   /// or helping the parser going on    
+   guint32 UsableLength; 
 			  
-   guint32 ReadLength;    // Length actually read on disk
-                          // (before FixFoundLength)
-                          // ReadLength will be updated only when
-                          // FixFoundLength actually fixes a bug in the header,
-                          // not when it performs a trick to help the Parser
-                          // going on.
-                          // *for internal* use only
-	
-   bool ImplicitVR;       // Even when reading explicit vr files, some
-	                  // elements happen to be implicit. Flag them here
-	                  // since we can't use the entry->vr without breaking
-	                  // the underlying dictionary.
-			  
+   /// Length actually read on disk
+   /// (before FixFoundLength)
+   /// ReadLength will be updated only when
+   /// FixFoundLength actually fixes a bug in the header,
+   /// not when it performs a trick to help the Parser
+   /// going on.
+   /// *for internal* use only
+   guint32 ReadLength;
 
+ /// Even when reading explicit vr files, some
+ /// elements happen to be implicit. Flag them here
+ /// since we can't use the entry->vr without breaking
+ /// the underlying dictionary.	
+   bool ImplicitVR;
+			  
    std::string  value;
-   void *voidArea;   // unsecure memory area to hold 'non string' values 
-                     // (ie : Lookup Tables, overlays)
-   size_t Offset;    // Offset from the begining of file for direct user access
+
+  /// unsecure memory area to hold 'non string' values 
+  /// (ie : Lookup Tables, overlays)   
+   void *voidArea;
+  /// Offset from the begining of file for direct user access		     
+   size_t Offset; 
+      
    int printLevel;
 };
 

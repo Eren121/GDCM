@@ -24,7 +24,8 @@
 
 /**
  * \ingroup gdcmDicomDirElement
- * \brief   constructor 
+ * \brief   constructor : populates the chained lists 
+ *          from the file 'Dicts/DicomDir.dic'
  */
  gdcmDicomDirElement::gdcmDicomDirElement(void) {
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_ELEM);

@@ -6,13 +6,21 @@
 #include "gdcmObject.h"
 
 //-----------------------------------------------------------------------------
-class GDCM_EXPORT gdcmDicomDirImage : public gdcmObject 
-{
+class GDCM_EXPORT gdcmDicomDirImage : public gdcmObject {
 public:
-   gdcmDicomDirImage(ListTag::iterator begin,ListTag::iterator end);
+   gdcmDicomDirImage(ListTag::iterator begin,ListTag::iterator end,
+              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
+
    ~gdcmDicomDirImage(void);
 
    virtual void Print(std::ostream &os = std::cout);
+   
+/**
+ * \ingroup gdcmDicomDirImage
+ * \brief   TODO
+ */ 
+   gdcmDicomDirImage* NewImage(void);
+      
 };
 
 //-----------------------------------------------------------------------------

@@ -13,15 +13,34 @@ typedef std::list<gdcmDicomDirImage *> ListDicomDirImage;
 class GDCM_EXPORT gdcmDicomDirSerie : public gdcmObject 
 {
 public:
-   gdcmDicomDirSerie(ListTag::iterator begin,ListTag::iterator end);
+   gdcmDicomDirSerie(ListTag::iterator begin,ListTag::iterator end,
+              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
    ~gdcmDicomDirSerie(void);
 
    virtual void Print(std::ostream &os = std::cout);
+/**
+ * \ingroup gdcmDicomDirSerie
+ * \brief   returns the IMAGE chained List for this SERIE.
+ */
+   inline ListDicomDirImage &GetDicomDirImages() 
+      {return images;};
+/**
+ * \ingroup gdcmDicomDirSerie
+ * \brief   adds the passed IMAGE to the IMAGE chained List for this SERIE.
+ */       
+   inline void AddDicomDirImage(gdcmDicomDirImage *obj) 
+      {images.push_back(obj);};
 
-   inline ListDicomDirImage &GetDicomDirImages() {return images;};
-   inline void AddDicomDirImage(gdcmDicomDirImage *obj) {images.push_back(obj);};
-
+/**
+ * \ingroup gdcmDicomDirSerie
+ * \brief   TODO
+ */ 
+   gdcmDicomDirImage* NewImage(void);
+    
 private:
+/**
+* \brief chained list of DicomDirImages
+*/ 
    ListDicomDirImage images;
 };
 

@@ -91,21 +91,34 @@ public:
    inline std::string GetKey(void) { return key; }
 
 private:
-   // FIXME : were are the group and element used except from building up
+   // FIXME : where are the group and element used except from building up
    //         a TagKey. If the answer is nowhere then there is no need
    //         to store the group and element independently.
+   //
+   //         --> EVERYWHERE ! The alternate question would be :
+   //                          What's TagKey used for ?
+   
+   /// DicomGroup number
    guint16 group;   // e.g. 0x0010
+   /// DicomElement number
    guint16 element; // e.g. 0x0103
-   std::string vr; // Value Representation i.e. some clue about the nature
-	                // of the data represented e.g. "FD" short for
-	                // "Floating Point Double"
+   /// Value Representation i.e. some clue about the nature
+   /// of the data represented e.g. "FD" short for
+   /// "Floating Point Double"
+   std::string vr;
+	                	                
 	// CLEANME: find the official dicom name for this field !
-   std::string fourth; // Fourth field containing some semantics.
-                       //(Group Name abbr.)
-   std::string name; // e.g. "Patient_Name"
-   TagKey  key;      // Redundant with (group, element) but we add it
-                     // on efficiency purposes.
-
+	
+   ///Fourth field containing some semantics.
+   ///(Group Name abbr.)
+   /// DON'T USER ANY LONGER !	
+   std::string fourth; 
+   /// e.g. "Patient_Name"                    
+   std::string name;      
+   /// Redundant with (group, element) but we add it
+   /// on efficiency purposes.
+   TagKey  key;
+                     
 	// DCMTK has many fields for handling a DictEntry (see below). What are the
 	// relevant ones for gdcmlib ?
 	//      struct DBI_SimpleEntry {

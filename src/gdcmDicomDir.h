@@ -31,7 +31,8 @@ public:
    gdcmDicomDir(const char *FileName, 
                 bool parseDir = false,
                 bool exception_on_error = false);
-   
+   gdcmDicomDir(bool exception_on_error = false); 
+                   
    ~gdcmDicomDir(void);
 
    void SetPrintLevel(int level) { printLevel = level; };
@@ -39,8 +40,18 @@ public:
 
 // Informations contained in the parser
    virtual bool IsReadable(void);
-   inline gdcmDicomDirMeta   *GetDicomDirMeta()      {return metaElems;};
-   inline ListDicomDirPatient &GetDicomDirPatients() {return patients;};
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   returns a pointer to the gdcmDicomDirMeta for this DICOMDIR.
+ */   
+   inline gdcmDicomDirMeta   *GetDicomDirMeta()      
+      {return metaElems;};
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   returns the PATIENT chained List for this DICOMDIR.
+ */      
+   inline ListDicomDirPatient &GetDicomDirPatients() 
+      {return patients;};
 
 // Parsing
    void ParseDirectory(void);
@@ -53,9 +64,11 @@ public:
    void SetEndMethodArgDelete(gdcmMethod *);
 
    inline float GetProgress(void)  {return(progress);};
-
-   inline void AbortProgress(void) {abort=true;};
-   inline bool IsAborted(void)     {return(abort);};
+   inline void  AbortProgress(void){abort=true;      };
+   inline bool  IsAborted(void)    {return(abort);   };
+   
+// Adding
+  gdcmDicomDirPatient * NewPatient(void);
 
 // Write
    bool Write(std::string fileName);
@@ -72,7 +85,7 @@ public:
    } gdcmDicomDirType;
    
 protected:
-   void NewDicomDir(std::string path);
+   void CreateDicomDirChainedList(std::string path);
    std::string GetPath(void);
 
    void CallStartMethod(void);
@@ -82,7 +95,7 @@ protected:
 private:
    void CreateDicomDir(void);
    void AddObjectToEnd(gdcmDicomDirType type,
-                        ListTag::iterator begin,ListTag::iterator end);
+                                ListTag::iterator begin,ListTag::iterator end);
    void AddDicomDirMetaToEnd   (ListTag::iterator begin,ListTag::iterator end);
    void AddDicomDirPatientToEnd(ListTag::iterator begin,ListTag::iterator end);
    void AddDicomDirStudyToEnd  (ListTag::iterator begin,ListTag::iterator end);
@@ -95,8 +108,16 @@ private:
    void UpdateDirectoryRecordSequenceLength(void);
 
    static bool HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2);
-
+   void WriteDicomDirEntries(FILE *_fp);   
+   
+// Variables
+/**
+* \brief pointer on *the* gdcmObject 'DicomDirMeta Elements'
+*/
    gdcmDicomDirMeta *metaElems;
+/**
+* \brief chained list of DicomDirPatient (to be exploited recursively)
+*/   
    ListDicomDirPatient patients;
 
    gdcmMethod *startMethod;

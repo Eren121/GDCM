@@ -13,15 +13,34 @@ typedef std::list<gdcmDicomDirStudy *> ListDicomDirStudy;
 class GDCM_EXPORT gdcmDicomDirPatient : public gdcmObject 
 {
 public:
-   gdcmDicomDirPatient(ListTag::iterator begin,ListTag::iterator end);
+   gdcmDicomDirPatient(ListTag::iterator begin,ListTag::iterator end,
+              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
    ~gdcmDicomDirPatient(void);
 
    virtual void Print(std::ostream &os = std::cout);
-
-   inline ListDicomDirStudy &GetDicomDirStudies() {return studies;};
-   inline void AddDicomDirStudy(gdcmDicomDirStudy *obj) {studies.push_back(obj);};
-       
+/**
+ * \ingroup gdcmDicomDirPatient
+ * \brief   returns the STUDY chained List for this PATIENT.
+ */
+   inline ListDicomDirStudy &GetDicomDirStudies() 
+      {return studies;};
+/**
+ * \ingroup gdcmDicomDirPatient
+ * \brief   adds the passed STUDY to the STUDY chained List for this PATIENT.
+ */      
+   inline void AddDicomDirStudy(gdcmDicomDirStudy *obj) 
+      {studies.push_back(obj);};
+/**
+ * \ingroup gdcmDicomDirPatient
+ * \brief   TODO
+ */ 
+   gdcmDicomDirStudy* NewStudy(void); 
+         
 private:
+
+/**
+* \brief chained list of DicomDirStudy
+*/ 
    ListDicomDirStudy studies;
 };
 

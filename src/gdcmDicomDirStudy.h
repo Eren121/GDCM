@@ -12,15 +12,35 @@ typedef std::list<gdcmDicomDirSerie *> ListDicomDirSerie;
 //-----------------------------------------------------------------------------
 class GDCM_EXPORT gdcmDicomDirStudy : public gdcmObject {
 public:
-   gdcmDicomDirStudy(ListTag::iterator begin,ListTag::iterator end);
+   gdcmDicomDirStudy(ListTag::iterator begin,ListTag::iterator end,
+              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
+
    ~gdcmDicomDirStudy(void);
 
    virtual void Print(std::ostream &os = std::cout);
+/**
+ * \ingroup gdcmDicomDirStudy
+ * \brief   returns the SERIE chained List for this STUDY.
+ */
+   inline ListDicomDirSerie &GetDicomDirSeries() 
+      {return series;};
+/**
+ * \ingroup gdcmDicomDirStudy
+ * \brief   adds the passed SERIE to the SERIE chained List for this STUDY.
+ */ 
+    inline void AddDicomDirSerie(gdcmDicomDirSerie *obj) 
+       {series.push_back(obj);};
 
-   inline ListDicomDirSerie &GetDicomDirSeries() {return series;};
-   inline void AddDicomDirSerie(gdcmDicomDirSerie *obj) {series.push_back(obj);};
-
+/**
+ * \ingroup gdcmDicomDirStudy
+ * \brief   TODO
+ */ 
+   gdcmDicomDirSerie* NewSerie(void);
+    
 private:
+/**
+* \brief chained list of DicomDirSeries (to be exploited recursively)
+*/ 
    ListDicomDirSerie series;
 };
 

@@ -1,17 +1,30 @@
 // gdcmDicomDirStudy.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmDicomDirStudy.h"
-
+#include "gdcmDicomDirElement.h"
+#include "gdcmUtil.h"
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+
 /**
  * \ingroup gdcmDicomDirStudy
- * \brief   
- * @param   begin iterator of begin for the object
- * @param   end   iterator of end for the object
+ * \brief constructor  
+ * @param  begin  iterator (inside the gdcmParser chained list)
+ *                on the first Header Entry (i.e Dicom Element)
+ *                related to this "STUDY" part
+ * @param  end  iterator  (inside the gdcmParser chained list)
+ *              on the last Header Entry (i.e Dicom Element) 
+ *              related to this 'STUDY' part
+ * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ *               to build the gdcmHeaderEntries)
+ * @param plistEntries pointer to the chained List (gdcmObject needs it 
+ *               to build the gdcmHeaderEntries)
  */
-gdcmDicomDirStudy::gdcmDicomDirStudy(ListTag::iterator begin,ListTag::iterator end):
-   gdcmObject(begin,end)
+gdcmDicomDirStudy::gdcmDicomDirStudy(ListTag::iterator begin,
+                                     ListTag::iterator end,
+				     TagHeaderEntryHT *ptagHT, 
+				     ListTag *plistEntries):
+   gdcmObject(begin,end,ptagHT,plistEntries)
 {
 }
 
@@ -49,6 +62,21 @@ void gdcmDicomDirStudy::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 
+/*
+ * \ingroup gdcmDicomStudy
+ * \brief   adds a new Serie at the begining of the SerieList
+ *          of a partially created DICOMDIR
+ */
+gdcmDicomDirSerie * gdcmDicomDirStudy::NewSerie(void) {
+  
+   std::list<gdcmElement> elemList;
+   elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();   
+
+   FillObject(elemList);
+   gdcmDicomDirSerie *st = new gdcmDicomDirSerie(i, j, ptagHT, plistEntries);
+   series.push_front(st);
+   return st;  
+}   
 //-----------------------------------------------------------------------------
 // Protected
 

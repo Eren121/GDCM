@@ -65,8 +65,8 @@
    //
 
    // Other usefull abreviations :
-   //Radiographic view associated with Patient Position (0018,5100).
-   //  Defined Terms:
+   // Radiographic view associated with Patient Position (0018,5100).
+   // Defined Terms:
    // 
    //  AP = Anterior/Posterior 
    //  PA = Posterior/Anterior 
@@ -95,7 +95,7 @@ const unsigned int gdcmParser::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
  * \ingroup gdcmParser
  * \brief constructor  
  * @param   inFilename
- * @param   exception_on_error
+ * @param   exception_on_error whether we throw an exception or not
  * @param   enable_sequences = true to allow the header 
  *          to be parsed *inside* the SeQuences, 
  *          when they have an actual length 
@@ -1021,19 +1021,14 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
 /**
  * \ingroup gdcmParser
  * \brief   writes on disc according to the requested format
- *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image
- *          using the Chained List
- * \warning does NOT add the missing elements in the header :
- *           it's up to the user doing it !
- *           (function CheckHeaderCoherence to be written)
- * \warning DON'T try, right now, to write a DICOM image
- *           from an ACR Header (meta elements will be missing!)
- * \sa WriteEntriesDeprecated (Special temporay method for Theralys)
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR) ONE
+ *          gdcmHeaderEntry 
+ * @param   tag pointer on the gdcmHeaderEntry to be written
  * @param   type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
  */
-void gdcmParser::WriteEntries(FILE *_fp,FileType type)
+void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 {
    guint16 gr, el;
    guint32 lgr;
@@ -1045,46 +1040,36 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
    guint16 valZero =0;
    void *voidArea;
    std::vector<std::string> tokens;
-   
-   // TODO : function CheckHeaderCoherence to be written
-   
-   //  uses now listEntries to iterate, not TagHt!
-   //
-   //        pb : gdcmParser.Add does NOT update listEntries
-   //       TODO : find a trick (in STL?) to do it, at low cost !
 
    void *ptr;
    int ff=0xffffffff;
    // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
    int compte =0;
-   
-   for (ListTag::iterator tag2=listEntries.begin();
-        tag2 != listEntries.end();
-        ++tag2)
-   {
+   itsTimeToWritePixels = false;
+     
       // === Deal with the length
       //     --------------------
-      if(((*tag2)->GetLength())%2==1)
+      if((tag->GetLength())%2==1)
       { 
-         (*tag2)->SetValue((*tag2)->GetValue()+"\0");
-         (*tag2)->SetLength((*tag2)->GetReadLength()+1);
+         tag->SetValue(tag->GetValue()+"\0");
+         tag->SetLength(tag->GetReadLength()+1);
       }
 
-      gr    = (*tag2)->GetGroup();
-      el    = (*tag2)->GetElement();
-      lgr   = (*tag2)->GetReadLength();
-      val   = (*tag2)->GetValue().c_str();
-      vr    = (*tag2)->GetVR();
-      voidArea = (*tag2)->GetVoidArea();
+      gr    = tag->GetGroup();
+      el    = tag->GetElement();
+      lgr   = tag->GetReadLength();
+      val   = tag->GetValue().c_str();
+      vr    = tag->GetVR();
+      voidArea = tag->GetVoidArea();
       
       if ( type == ACR ) 
       { 
-         if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
-         if (gr %2)         continue; // ignore shadow groups
-         if (vr == "SQ" )   continue; // ignore Sequences
+         if (gr < 0x0008)   return; // ignore pure DICOM V3 groups
+         if (gr %2)         return; // ignore shadow groups
+         if (vr == "SQ" )   return; // ignore Sequences
 	           // TODO : find a trick to *skip* the SeQuences !
 		   // Not only ignore the SQ element
-         if (gr == 0xfffe ) continue; // ignore delimiters
+         if (gr == 0xfffe ) return; // ignore delimiters
       } 
 
       fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
@@ -1097,7 +1082,7 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
          if (gr == 0xfffe) { // NO Value Representation for 'delimiters'
                // no length : write ffffffff		
             fwrite (&ff,(size_t)4 ,(size_t)1 ,_fp);
-            continue;       // NO value for 'delimiters'	        	    
+            return;       // NO value for 'delimiters'	        	    
 	 }
 	 
 	 shortLgr=lgr;	 
@@ -1122,19 +1107,19 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
       
       // === Deal with the value
       //     -------------------
-      if (vr == "SQ")  continue; // no "value" to write for the SEQuences
-      if (gr == 0xfffe)continue; // no "value" to write for the delimiters
+      if (vr == "SQ")  return; // no "value" to write for the SEQuences
+      if (gr == 0xfffe)return; // no "value" to write for the delimiters
       
       if (voidArea != NULL) 
       { // there is a 'non string' LUT, overlay, etc
          fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
-         continue;            
+         return;            
       }
       
       if (vr == "US" || vr == "SS") 
       {
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize ((*tag2)->GetValue(), tokens, "\\");
+         Tokenize (tag->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size();i++) 
          {
             val_uint16 = atoi(tokens[i].c_str());
@@ -1142,12 +1127,12 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
             fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
          }
          tokens.clear();
-         continue;
+         return;
       }
       if (vr == "UL" || vr == "SL") 
       {
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize ((*tag2)->GetValue(), tokens, "\\");
+         Tokenize (tag->GetValue(), tokens, "\\");
          for (unsigned int i=0; i<tokens.size();i++) 
          {
             val_uint32 = atoi(tokens[i].c_str());
@@ -1155,7 +1140,7 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
             fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
          }
          tokens.clear();
-         continue;
+         return;
       } 
           
       // Pixels are never loaded in the element !
@@ -1164,13 +1149,43 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
             
       if ((gr == GrPixel) && (el == NumPixel) ) {
          compte++;
-         if (compte == countGrPixel) // we passed *all* the GrPixel,NumPixel   
-            break;
+         if (compte == countGrPixel) {// we passed *all* the GrPixel,NumPixel   
+            itsTimeToWritePixels = true;
+	    return;
+	 }
       }       
       fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
-   }
 }
 
+/**
+ * \ingroup gdcmParser
+ * \brief   writes on disc according to the requested format
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image
+ *          using the Chained List
+ * \warning does NOT add the missing elements in the header :
+ *           it's up to the user doing it !
+ *           (function CheckHeaderCoherence to be written)
+ * \warning DON'T try, right now, to write a DICOM image
+ *           from an ACR Header (meta elements will be missing!)
+ * \sa WriteEntriesDeprecated (Special temporary method for Theralys)
+ * @param   type type of the File to be written 
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR)
+ * @param   _fp already open file pointer
+ */
+
+void gdcmParser::WriteEntries(FILE *_fp,FileType type)
+{   
+   // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
+   
+   for (ListTag::iterator tag2=listEntries.begin();
+                          tag2 != listEntries.end();
+                          ++tag2)
+   {
+   WriteEntry(*tag2,_fp,type);
+   if (itsTimeToWritePixels) 
+      break;
+   }
+}   
 
 /**
  * \ingroup gdcmParser
@@ -1190,92 +1205,17 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
 void gdcmParser::WriteEntriesDeprecated(FILE *_fp,FileType type) {
-   guint16 gr, el;
-   guint32 lgr;
-   const char * val;
-   std::string vr;
-   guint32 val_uint32;
-   guint16 val_uint16;
-   
-   std::vector<std::string> tokens;
 
-   void *ptr;
-
-   // Tout ceci ne marche QUE parce qu'on est sur un proc Little Endian 
    // restent a tester les echecs en ecriture (apres chaque fwrite)
 
    for (TagHeaderEntryHT::iterator tag2=tagHT.begin();
         tag2 != tagHT.end();
         ++tag2){
-
-      gr =  tag2->second->GetGroup();
-      el =  tag2->second->GetElement();
-      lgr = tag2->second->GetLength();
-      val = tag2->second->GetValue().c_str();
-      vr =  tag2->second->GetVR();
-      
-     // std::cout << "Tag "<< std::hex << gr << " " << el << std::endl;
-
-      if ( type == ACR ) { 
-         if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
-         if (gr %2)         continue; // ignore shadow groups
-         if (vr == "SQ" )   continue; // ignore Sequences
-         if (gr == 0xfffe ) continue; // ignore delimiters
-      } 
-
-      fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
-      fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
-
-      if ( (type == ExplicitVR) && (gr <= 0x0002) ) {
-         // EXPLICIT VR
-         guint16 z=0, shortLgr;
-         fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
-
-         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) {
-            fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
-            fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
-
-         } else {
-            shortLgr=lgr;
-            fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
-         }
-      } else { // IMPLICIT VR
-         fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
-      }
-
-      if (vr == "US" || vr == "SS") {
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (tag2->second->GetValue(), tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) {
-            val_uint16 = atoi(tokens[i].c_str());
-            ptr = &val_uint16;
-            fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
-         }
-         tokens.clear();
-         continue;
-      }
-      if (vr == "UL" || vr == "SL") {
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Tokenize (tag2->second->GetValue(), tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) {
-            val_uint32 = atoi(tokens[i].c_str());
-            ptr = &val_uint32;
-            fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
-         }
-         tokens.clear();
-         continue;
-      }     
-      // Pixels are never loaded in the element !
-      if ((gr == 0x7fe0) && (el == 0x0010) ) break;
-
-      fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
+      WriteEntry(tag2->second,_fp,type);
+      if (itsTimeToWritePixels) 
+         break;
    }
 }
-
-
-
-
-
 
 /**
  * \ingroup gdcmParser
@@ -1524,7 +1464,7 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
 /**
  * \ingroup gdcmParser
  * \brief   add a new Dicom Element pointer to 
- *          the H Table and to the chained List
+ *          the H Table and at the end of the chained List
  * \warning push_bash in listEntries ONLY during ParseHeader
  * \todo    something to allow further Elements addition,
  *          (at their right place in the chained list)
@@ -1965,7 +1905,7 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
 
 /**
  * \ingroup gdcmParser
- * \brief   Apply some heuristics to predict wether the considered 
+ * \brief   Apply some heuristics to predict whether the considered 
  *          element value contains/represents an integer or not.
  * @param   Entry The element value on which to apply the predicate.
  * @return  The result of the heuristical predicate.
@@ -2104,7 +2044,7 @@ guint32 gdcmParser::ReadInt32(void) {
 
 /**
  * \ingroup gdcmParser
- * \brief   
+ * \brief skips bytes inside the source file 
  * \warning NOT end user intended method !
  * @return 
  */
@@ -2115,7 +2055,8 @@ void gdcmParser::SkipBytes(guint32 NBytes) {
 
 /**
  * \ingroup gdcmParser
- * \brief   
+ * \brief Loads all the needed Dictionaries
+ * \warning NOT end user intended method !   
  */
 void gdcmParser::Initialise(void) 
 {
@@ -2310,7 +2251,8 @@ bool gdcmParser::CheckSwap() {
 
 /**
  * \ingroup gdcmParser
- * \brief   
+ * \brief Restore the unproperly loaded values i.e. the group, the element
+ *        and the dictionary entry depending on them. 
  */
 void gdcmParser::SwitchSwapToBigEndian(void) 
 {

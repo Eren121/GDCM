@@ -57,8 +57,8 @@ public:
    inline TagKeyHT & gdcmDict::GetEntries(void)  { return KeyHt; }
  
 private:
+   /// ASCII file holding the Dictionnary
    std::string filename;
-
    /// Access through TagKey (see alternate access with NameHt)
 	TagKeyHT  KeyHt;
    /// Access through TagName (see alternate access with KeyHt)

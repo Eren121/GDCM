@@ -9,7 +9,9 @@
 class GDCM_EXPORT gdcmDicomDirMeta : public gdcmObject 
 {
 public:
-   gdcmDicomDirMeta(ListTag::iterator begin,ListTag::iterator end);
+   gdcmDicomDirMeta(ListTag::iterator begin,ListTag::iterator end,
+                    TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
+
    ~gdcmDicomDirMeta(void);
 
    virtual void Print(std::ostream &os = std::cout);

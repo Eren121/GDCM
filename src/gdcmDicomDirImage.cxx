@@ -4,19 +4,31 @@
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+
 /**
  * \ingroup gdcmDicomDirImage
  * \brief   
- * @param   begin iterator of begin for the object
- * @param   end   iterator of end for the object
+ * @param  begin  iterator (inside the gdcmParser chained list)
+ *                on the first Header Entry (i.e Dicom Element)
+ *                related to this "IMAGE" part
+ * @param  end  iterator  (inside the gdcmParser chained list)
+ *              on the last Header Entry (i.e Dicom Element) 
+ *              related to this 'IMAGE' part
+ * @param ptagHT pointer to the HTable (gdcmObject needs it 
+ *               to build the gdcmHeaderEntries)
+ * @param plistEntries pointer to the chained List (gdcmObject needs it 
+ *               to build the gdcmHeaderEntries)
  */
-gdcmDicomDirImage::gdcmDicomDirImage(ListTag::iterator begin,ListTag::iterator end):
-   gdcmObject(begin,end)
+gdcmDicomDirImage::gdcmDicomDirImage(ListTag::iterator begin,
+                                     ListTag::iterator end,
+                                     TagHeaderEntryHT *ptagHT, 
+				     ListTag *plistEntries):
+   gdcmObject(begin,end,ptagHT,plistEntries)
 {
 }
 
 /**
- * \ingroup gdcmImage
+ * \ingroup gdcmDicomDirImage
  * \brief   Canonical destructor.
  */
 gdcmDicomDirImage::~gdcmDicomDirImage() 

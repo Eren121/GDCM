@@ -89,19 +89,29 @@ private:
    bool gdcm_read_RLE_file      (FILE *fp,void * image_buffer); 
 
 // Variables
-   gdcmHeader *Header;   // Header to use to load the file
+   /// Header to use to load the file
+   gdcmHeader *Header;   
    bool SelfHeader;
 
    void* PixelData;
-   size_t lgrTotaleRaw;  // Area length to receive the pixels
-   size_t lgrTotale;     // Area length to receive the RGB pixels
-                         // from Grey Plane + Palette Color
-   int PixelRead;     // ==1  if GetImageDataRaw was used
-                      // ==0  if GetImageData    was used
-                      // ==-1 if ImageData never read.
-
-   int Parsed;               // weather already parsed
-   std::string OrigFileName; // To avoid file overwrite   
+   
+   /// Area length to receive the pixels
+   size_t lgrTotaleRaw;
+   
+   /// Area length to receive the RGB pixels
+   /// from Grey Plane + Palette Color  
+   size_t lgrTotale; 
+       
+  /// ==1  if GetImageDataRaw was used
+  /// ==0  if GetImageData    was used
+  /// ==-1 if ImageData never read                       
+   int PixelRead;     
+                       .
+   /// weather already parsed 
+   int Parsed;
+   
+   /// To avoid file overwrite              
+   std::string OrigFileName;    
 };
 
 //-----------------------------------------------------------------------------
