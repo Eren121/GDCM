@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.104 2003/10/30 17:04:21 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.105 2003/10/31 10:38:34 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -394,7 +394,7 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
    
    fseek(fp, PositionOnEntry, SEEK_SET);
    // When this element is known in the dictionary we shall use, e.g. for
-   // the semantics (see  the usage of IsAnInteger), the vr proposed by the
+   // the semantics (see the usage of IsAnInteger), the vr proposed by the
    // dictionary entry. Still we have to flag the element as implicit since
    // we know now our assumption on expliciteness is not furfilled.
    // avoid  .
@@ -2289,10 +2289,6 @@ void * gdcmHeader::GetLUTRGBA(void) {
      *(a+3) = 1; // Alpha component
      a+=4; 
   } 
-  
-for (int i=0;i<255;i++)
-    printf ( "%d %02x %02x %02x %02x \n",
-    i,(LUTRGBA+i*4)[0],(LUTRGBA+i*4)[1],(LUTRGBA+i*4)[2],(LUTRGBA+i*4)[3]);
     
 // WHY does it seg fault ?!?
 //free(LutR); free(LutB); free(LutG); printf ("libere\n");

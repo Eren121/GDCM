@@ -15,7 +15,10 @@ class GDCM_EXPORT gdcmFile: public gdcmHeader
 {
 private:
    void* PixelData;
-   size_t lgrTotale;
+   size_t lgrTotaleRaw;  // Area length to receive the pixels
+   size_t lgrTotale;     // Area length to receive the RGB pixels
+                         // from Grey Plane + Palette Color
+
    int Parsed;               // weather already parsed
    std::string OrigFileName; // To avoid file overwrite
    void SwapZone(void* im, int swap, int lgr, int nb);
@@ -48,7 +51,9 @@ public:
    void   SetPixelDataSizeFromHeader(void);
    size_t GetImageDataSize();
    void * GetImageData();
-   size_t GetImageDataIntoVector(void* destination, size_t MaxSize );
+   size_t GetImageDataIntoVector(void* destination, size_t MaxSize);
+   void * GetImageDataRaw();
+   size_t GetImageDataIntoVectorRaw(void* destination, size_t MaxSize);
 	
       // Allocates ExpectedSize bytes of memory at this->Data and copies the
       // pointed data to it. Copying the image might look useless but
