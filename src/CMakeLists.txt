@@ -28,7 +28,6 @@ SET(libgdcm_la_SOURCES
 	gdcmJpeg2000.cxx
 	gdcmRLE.cxx
 	gdcmParse.cxx
-	gdcmJpegIdo.cxx # to be removed
 )
 #-----------------------------------------------------------------------------
 # Why one should not use ADD_DEFINITIONS
