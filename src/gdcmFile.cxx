@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 15:07:42 $
-  Version:   $Revision: 1.217 $
+  Date:      $Date: 2005/02/09 22:11:09 $
+  Version:   $Revision: 1.218 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1177,6 +1177,11 @@ void File::AnonymizeNoLoad()
         || dynamic_cast<SeqEntry *>(d) )
          continue;
 
+      if( d == NULL)
+        {
+         gdcmWarningMacro( "I have no idea why this is NULL but this solve the seg fault");
+         continue;
+        }
       offset = d->GetOffset();
       lgth =   d->GetLength();
       fp->seekp( offset, std::ios::beg );
