@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/02/10 10:51:39 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,9 @@
                                                                                 
 =========================================================================*/
 #include "gdcmDicomDirElement.h"
-
+#include "gdcmDebug.h"
+#include "gdcmGlobal.h"
+#include "gdcmCommon.h"
 #include <iostream>
 
 int TestDicomDirElement(int , char *[])
@@ -29,7 +31,22 @@ int TestDicomDirElement(int , char *[])
    }  
    ddElt->Print( std::cout );
 
-   // TODO : User add an Entry (e.g Physician Name )
+   // Let's allow User to add an Entry (e.g Patient Weight )
+
+   // We can add an Entry to the default list of any of the Element
+ 
+   // Add Patient Weight to the default list
+
+   // FIXME : Why doesn't it compile ?!?
+   // FIXME :`DD_PATIENT' undeclared (first use this function)
+   // FIXME : see gdcmCommon.h !!
+
+   //ddElt->AddDicomDirElement ( DD_PATIENT, 0x0010, 0x1010 );
+
+   // We could add others
+
+   std::cout << " -------- DicomDirElement After modif --------" <<std::endl;
+   ddElt->Print(std::cout );
 
    delete ddElt;
    return 0;
