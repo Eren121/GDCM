@@ -5,7 +5,7 @@
 
 int main() {
 
-  typedef map<string, char*> dict;
+  typedef std::map<std::string, char*> dict;
   
   dict tb1;
   dict::iterator im = tb1.find("00380010");
@@ -14,20 +14,20 @@ int main() {
   tb1["50000010"] = "Number of points";
   tb1["00380010"] = "Admission ID";
 
-	cout << "Traversal of dictionary (note the proper ordering on key)." << endl;
+	std::cout << "Traversal of dictionary (note the proper ordering on key)." << std::endl;
 	for ( dict::iterator im = tb1.begin(); im != tb1.end(); ++im )
-		cout << "   \"" << im->first << "\" = " << im->second << endl;
- 	cout << "End of dictionary." << endl;
+		std::cout << "   \"" << im->first << "\" = " << im->second << std::endl;
+ 	std::cout << "End of dictionary." << std::endl;
 
- 	cout << "Find request on key 00380010" << endl;
+ 	std::cout << "Find request on key 00380010" << std::endl;
 	im = tb1.find("00380010");
-	cout << "   \"" << im->first << "\" = " << im->second << endl;
+	std::cout << "   \"" << im->first << "\" = " << im->second << std::endl;
 	
 	int i = 0x0010;
 	std::cout.setf(std::ios::hex);
-	std::cout << i << endl;
+	std::cout << i << std::endl;
 	std::cout.setf(std::ios::dec);
-	std::cout << i << endl;	
+	std::cout << i << std::endl;	
 	
 	// Voir :
 	//http://www.developer.com/net/cplus/article.php/10919_2119781_3

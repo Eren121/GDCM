@@ -10,7 +10,7 @@
 	
 	
 int main(int argc, char* argv[]) {  
-	string premier, deuxieme;
+	std::string premier, deuxieme;
 	char resultat[200];
 	
 	gdcmFile  *f1, *f2;
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 	
 	// On suppose que les champs DICOM du 2ieme fichier existent *effectivement*
 	
-	string nbFrames = f2->GetPubElValByNumber(0x0028, 0x0008);
+	std::string nbFrames = f2->GetPubElValByNumber(0x0028, 0x0008);
 	if(nbFrames != "gdcm::Unfound") {
            f1->ReplaceOrCreateByNumber( nbFrames, 0x0028, 0x0008);
         }
@@ -63,8 +63,8 @@ int main(int argc, char* argv[]) {
 	// ou, plus joli:
 	//f1->SetImageData(f2->GetImageData(),f2->GetImageDataSize());
 	
-	string s0 =f2->GetPubElValByNumber(0x7fe0, 0x0000);
-	string s10=f2->GetPubElValByNumber(0x7fe0, 0x0010);
+	std::string s0 =f2->GetPubElValByNumber(0x7fe0, 0x0000);
+	std::string s10=f2->GetPubElValByNumber(0x7fe0, 0x0010);
 	printf("lgr 7fe0, 0000 %s\n",s0.c_str());
 	printf("lgr 7fe0, 0010 %s\n",s10.c_str());	
 
