@@ -1,5 +1,5 @@
-metaElem    0002 0000 "12345"                // Meta Group Length : to be computed later
-metaElem    0002 0001 "2"                    // File Meta Information Version
+metaElem    0002 0000 "123"                  // Meta Group Length : to be computed later
+metaElem    0002 0001 "\002\000\000\000"     // File Meta Information Version
 metaElem    0002 0002 "1.2.840.10008.1.3.10" // Media Stored SOP Class UID i.e. : 'Media Storage Directory Storage'
 metaElem    0002 0003 ""                     // Media Stored SOP Instance UID  : may be forged later
 metaElem    0002 0010 "1.2.840.10008.1.2.1"  // Transfer Syntax UID i.e. : Explicit VR - Little Endian
@@ -9,7 +9,7 @@ metaElem    0004 1130 ""                     // File-set ID
 metaElem    0004 1200 "0"                    // Offset of the first dir of root dir entity : to be computed later
 metaElem    0004 1202 "0"                    // Offset of the last dir of root dir entity : to be computed later
 metaElem    0004 1212 "0"                    // File-set consistency flag
-metaElem    0004 1220 "0"                    // Directory record sequence : *length* to be set later
+metaElem    0004 1220 "123456879"            // Directory record sequence : *length* to be set later
 
 patientElem fffe e000 "0"
 patientElem 0004 1400 "0"                    // Offset of next directory record : to be computed later
@@ -21,6 +21,7 @@ patientElem 0010 0010 ""                     // Patient's Name
 patientElem 0010 0020 ""                     // Patient ID
 patientElem 0010 0030 ""                     // Patient's Birthdate
 patientElem 0010 0040 ""                     // Patient's Sex
+patientElem fffe e00d "0"
 
 studyElem   fffe e000 "0"
 studyElem   0004 1400 "0"                    // Offset of next directory record : to be computed later
@@ -34,6 +35,7 @@ studyElem   0008 0050 ""                     // Accession Number
 studyElem   0008 1030 ""                     // Study Description
 studyElem   0020 000d ""                     // Study Instance UID : may be forged later
 studyElem   0020 0010 ""                     // Study ID : may be forged later
+studyElem   fffe e00d "0"
 
 serieElem   fffe e000 "0"
 serieElem   0004 1400 "0"                    // Offset of next directory record : to be computed later
@@ -49,6 +51,7 @@ serieElem   0008 0081 ""                     // Institution Address : may be for
 serieElem   0008 103e ""                     // Series Description :  may be forged later
 serieElem   0020 000e ""                     // Series Instance UID : may be forged later
 serieElem   0020 0011 "0"                    // Series Number : may be forged later
+serieElem   fffe e00d "0"
 
 imageElem   fffe e000 "0"
 imageElem   0004 1400 "0"                    // Offset of next directory record : to be computed later
@@ -66,15 +69,19 @@ imageElem   0008 0018 ""                     // SOP Instance UID : to be set/for
 imageElem   0008 0023 ""                     // Content Date
 imageElem   0008 0033 ""                     // Content Time
 imageElem   0008 1040 ""                     // Referenced Image Sequence : to be set/forged later
-imageElem   fffe e000 "0"
 imageElem   0008 1150 ""                     // Referenced SOP Class UID : to be set/forged later
 imageElem   0008 1155 ""                     // Referenced SOP Instance UID : to be set/forged later
 imageElem   0020 0013 "0"                    // Image Number
-imageElem   0020 0032 "0"                    // Image Position Patient
-imageElem   0020 0037 "0"                    // Image Orientation    Patient
+imageElem   0020 0032 "1.0\1.0\1.0 "         // Image Position Patient
+imageElem   0020 0037 "1\0\0\0\1\0 "         // Image Orientation    Patient
 imageElem   0020 0052 "0"                    // Frame of Reference UID
+imageElem   0020 1041 "0.0"                  // Slice Location
+imageElem   0028 0002 "1"                    // Samples per Pixel
+imageElem   0028 0006 "0"                    // Planar Configuration
+imageElem   0028 0008 "1"                    // Number of Frames
 imageElem   0028 0010 "0"                    // Rows
 imageElem   0028 0011 "0"                    // Columns
-imageElem   0028 0030 "0"                    // Pixel Spacing
+imageElem   0028 0030 "1.0\1.0 "             // Pixel Spacing
 imageElem   0050 0004 "0"                    // Calibration Image
+imageElem   fffe e00d "0"
 
