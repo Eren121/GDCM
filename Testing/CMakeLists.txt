@@ -22,8 +22,8 @@ IF (GDCM_DATA_ROOT)
     PrintDicomDir.cxx
     TestChangeHeader.cxx
     TestDicomDir.cxx                 # require DICOMDIR
-   # BuildUpDicomDir.cxx
-   # makeDicomDir.cxx
+    BuildUpDicomDir.cxx              # writes a file named "NewDICOMDIR"
+    makeDicomDir.cxx                 # writes a file named "NewDICOMDIR"
   )
   # add test that require VTK:
   IF(GDCM_VTK)

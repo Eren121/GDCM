@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/16 16:30:32 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,7 +93,9 @@ void gdcmBinEntry::Print(std::ostream &os)
 
 /*
  * \brief   canonical Writer
- */
+ * @param fp already open file pointer
+ * @param filetype type of the file to be written
+*/
 void gdcmBinEntry::Write(FILE *fp, FileType filetype)
 {
    gdcmDocEntry::Write(fp, filetype);

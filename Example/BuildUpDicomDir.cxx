@@ -51,12 +51,7 @@ int main(int argc, char* argv[])
       }
 
    gdcmDicomDir *dcmdir;
-   
-
-   printf( "BuildUpDicomDir: entering  BuildUpDicomDir\n");
-
    dcmdir=new gdcmDicomDir();
-   printf( "BuildUpDicomDir: exiting new DicomDir\n");
 
    printf( "\n------- BuildUpDicomDir: Test Print Meta only -----\n");
    ((gdcmDocument *)dcmdir)->Print();
@@ -92,7 +87,7 @@ int main(int argc, char* argv[])
    dcmdir->SetPrintLevel(-1);
    dcmdir->Print();
 
-   dcmdir->Write( dirName );
+   dcmdir->WriteDicomDir( dirName );
    std::cout << std::endl;
 
    delete dcmdir;

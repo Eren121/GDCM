@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 03:20:23 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,7 @@ public:
    bool IsVRUnknown() { return DictEntry->IsVRUnknown(); };
 
    /// \brief   Sets the DicEntry of the current Dicom Element
-   /// @param   NewEntry pointer to the DictEntry
+   /// @param   newEntry pointer to the DictEntry
    void SetDictEntry(gdcmDictEntry *newEntry) { DictEntry = newEntry; };
 
    /// \brief  Gets the DicEntry of the current Dicom Element

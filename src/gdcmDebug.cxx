@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 02:39:09 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,9 +43,9 @@ void gdcmDebug::SetDebug(int level)
 
 /**
  * \brief   Verbose 
- * @param Level level
- * @param Msg1 first message part
- * @param Msg2 second message part 
+ * @param level level
+ * @param msg1 first message part
+ * @param msg2 second message part 
  */
 void gdcmDebug::Verbose(int level, const char * msg1, const char * msg2) 
 {
@@ -58,9 +58,9 @@ void gdcmDebug::Verbose(int level, const char * msg1, const char * msg2)
 
 /**
  * \brief   Error 
- * @param Test test
- * @param Msg1 first message part
- * @param Msg2 second message part 
+ * @param test test
+ * @param msg1 first message part
+ * @param msg2 second message part 
  */
 void gdcmDebug::Error(bool test, const char * msg1, const char * msg2) 
 {
@@ -74,9 +74,9 @@ void gdcmDebug::Error(bool test, const char * msg1, const char * msg2)
 
 /**
  * \brief   Error 
- * @param Msg1 first message part
- * @param Msg2 second message part
- * @param Msg3 Third message part  
+ * @param msg1 first message part
+ * @param msg2 second message part
+ * @param msg3 Third message part  
  */
 void gdcmDebug::Error(const char* msg1, const char* msg2,
                       const char* msg3) 
@@ -87,10 +87,10 @@ void gdcmDebug::Error(const char* msg1, const char* msg2,
 
 /**
  * \brief   Assert 
- * @param Level level 
- * @param Test test
- * @param Msg1 first message part
- * @param Msg2 second message part
+ * @param level level 
+ * @param test test
+ * @param msg1 first message part
+ * @param msg2 second message part
  */
 void gdcmDebug::Assert(int level, bool test, const char * msg1, 
                        const char * msg2) 

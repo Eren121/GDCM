@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/30 16:15:40 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.67 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ gdcmDicomDir::gdcmDicomDir()
 /**
  * \brief Constructor Parses recursively the directory and creates the DicomDir
  *        or uses an already built DICOMDIR, depending on 'parseDir' value.
- * @param FileName        name 
+ * @param fileName        name 
  *                      - of the root directory (parseDir = true)
  *                      - of the DICOMDIR       (parseDir = false)
  * @param parseDir boolean
@@ -72,12 +72,11 @@ gdcmDicomDir::gdcmDicomDir()
 gdcmDicomDir::gdcmDicomDir(std::string const & fileName, bool parseDir ):
    gdcmDocument( fileName )
 {
-   // que l'on ai passe un root directory ou un DICOMDIR
-   // et quelle que soit la valeur de parseDir,
-   // on a deja lance gdcmDocument 
+   // Whatever user passed (a root directory or a DICOMDIR)
+   // and whatever the value of parseDir was,
+   // gdcmDocument is already executed
    Initialize();  // sets all private fields to NULL
 
-   // gdcmDocument already executed
    // if user passed a root directory, sure we didn't get anything
 
    if ( TagHT.begin() == TagHT.end() ) // when user passed a Directory to parse
@@ -337,7 +336,7 @@ void gdcmDicomDir::SetEndMethodArgDelete(gdcmMethod *method)
  * @return false only when fail to open
  */
  
-bool gdcmDicomDir::Write(std::string const & fileName) 
+bool gdcmDicomDir::WriteDicomDir(std::string const & fileName) 
 {  
    uint16_t sq[4] = { 0x0004, 0x1220, 0xffff, 0xffff };
    uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0xffff, 0xffff };
@@ -354,8 +353,6 @@ bool gdcmDicomDir::Write(std::string const & fileName)
    fwrite(filePreamble,128,1,fp);
    fwrite("DICM",4,1,fp);
    delete[] filePreamble;
-   
- //  UpdateDirectoryRecordSequenceLength(); // TODO (if *really* usefull)
  
    gdcmDicomDirMeta *ptrMeta = GetDicomDirMeta();
    ptrMeta->Write(fp, gdcmExplicitVR);
@@ -431,8 +428,8 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
    }
    // sorts Patient/Study/Serie/
    std::sort(list.begin(), list.end(), gdcmDicomDir::HeaderLessThan );
-   std::string tmp = fileList.GetDirName();
-      
+   
+   std::string tmp = fileList.GetDirName();      
    //for each Header of the chained list, add/update the Patient/Study/Serie/Image info
    SetElements(tmp, list);
    CallEndMethod();
@@ -451,7 +448,7 @@ gdcmDicomDirMeta * gdcmDicomDir::NewMeta()
    { 
       TagDocEntryHT::iterator lastOneButSequence = TagHT.end();
       lastOneButSequence --;
-      // This works because ALL the 'out of Sequence' Tags belong to Meta Elems
+      // ALL the 'out of Sequence' Tags belong to Meta Elems
       // (we skip 0004|1220 [Directory record sequence] )
       for ( TagDocEntryHT::iterator cc  = TagHT.begin(); 
                                     cc != lastOneButSequence;
@@ -469,7 +466,6 @@ gdcmDicomDirMeta * gdcmDicomDir::NewMeta()
    m->SetSQItemNumber(0); // To avoid further missprinting
    return m;  
 }
-
 
 /**
  * \brief   adds a new Patient (with the basic elements) to a partially created DICOMDIR
@@ -908,8 +904,6 @@ void gdcmDicomDir::SetElements(std::string &path, VectDocument &list)
    std::string studCurInstanceUID, studCurID;
    std::string serCurInstanceUID,  serCurID;
 
-   //SetElement( path, GDCM_DICOMDIR_META,NULL); // already done (NewMeta) 
-
    for( VectDocument::iterator it = list.begin();
                               it != list.end(); ++it )
    {
@@ -956,41 +950,7 @@ void gdcmDicomDir::SetElements(std::string &path, VectDocument &list)
  */
 bool gdcmDicomDir::HeaderLessThan(gdcmDocument *header1, gdcmDocument *header2)
 {
-
-std::cout <<header1->GetFileName() << " " << header2->GetFileName() <<std::endl;
    return *header1 < *header2;
-}
-
-/**
- * \brief   Sets the accurate value for the (0x0004,0x1220) element of a DICOMDIR
- */
-void gdcmDicomDir::UpdateDirectoryRecordSequenceLength()
-{
-
-/// \todo FIXME : to go on compiling
-///
-/// to be re written !
-///   int offset = 0;
-///   ListTag::iterator it;
-///   uint16_t gr, el;
-///   std::string vr;
-///   for(it=listEntries.begin();it!=listEntries.end();++it) {
-///      gr = (*it)->GetGroup();
-///      el = (*it)->GetElement();
-///      vr = (*it)->GetVR();      
-///      if (gr !=0xfffe) {
-///         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) {    
-///            offset +=  4; // explicit VR AND OB, OW, SQ : 4 more bytes
-///         }         
-///         offset += 2 + 2 + 4 + (*it)->GetLength(); 
-///      } else {
-///         offset +=  4; // delimiters don't have a value.     
-///      }            
-///   }   
-///   //bool res=SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
-///    SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
-///   return;
-///
 }
 
 //-----------------------------------------------------------------------------

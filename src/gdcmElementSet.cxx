@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 03:34:12 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,7 +103,7 @@ void gdcmElementSet::Write(FILE *fp, FileType filetype)
 
 /**
  * \brief   add a new Dicom Element pointer to the H Table
- * @param   NewEntry entry to add
+ * @param   newEntry entry to add
  */
 bool gdcmElementSet::AddEntry( gdcmDocEntry *newEntry)
 {
@@ -124,7 +124,7 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *newEntry)
 
 /**
  * \brief   Clear the hash table from given entry.
- * @param   EntryToRemove Entry to remove.
+ * @param   entryToRemove Entry to remove.
  */
 bool gdcmElementSet::RemoveEntry( gdcmDocEntry *entryToRemove)
 {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:52 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.28 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ public:
    gdcmDicomDirPatient* NewPatient();
 
 // Write  
-   bool Write(std::string const & fileName);
+   bool WriteDicomDir(std::string const & fileName);
 
    /// Types of the gdcmObject within the gdcmDicomDir
    typedef enum
@@ -116,8 +116,6 @@ private:
    void SetElements(std::string &path, VectDocument &list);
    void SetElement (std::string &path,gdcmDicomDirType type,
                     gdcmDocument *header);
-   
-   void UpdateDirectoryRecordSequenceLength();
 
    static bool HeaderLessThan(gdcmDocument *header1,gdcmDocument *header2);
    

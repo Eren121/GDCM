@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
       return 1;
    }
     
-   dcmdir->Write("NewDICOMDIR");
+   dcmdir->WriteDicomDir("NewDICOMDIR");
    std::cout<<std::flush;
 
    delete dcmdir;

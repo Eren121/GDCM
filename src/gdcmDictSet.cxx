@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 02:39:09 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -134,9 +134,9 @@ std::map<std::string, std::list<std::string> > *
  * \ingroup gdcmDictSet
  * \brief   Loads a dictionary from a specified file, and add it
  *          to already the existing ones contained in this gdcmDictSet.
- * @param   FileName Absolute or relative filename containing the
+ * @param   fileName Absolute or relative filename containing the
  *          dictionary to load.
- * @param   Name Symbolic name that be used as identifier of the newly 
+ * @param   name Symbolic name that be used as identifier of the newly 
  *          created dictionary.
  */
 gdcmDict *gdcmDictSet::LoadDictFromFile(std::string const & fileName, 
@@ -152,7 +152,7 @@ gdcmDict *gdcmDictSet::LoadDictFromFile(std::string const & fileName,
  * \ingroup gdcmDictSet
  * \brief   Retrieve the specified dictionary (when existing) from this
  *          gdcmDictSet.
- * @param   DictName The symbolic name of the searched dictionary.
+ * @param   dictName The symbolic name of the searched dictionary.
  * \result  The retrieved dictionary.
  */
 gdcmDict *gdcmDictSet::GetDict(DictKey const & dictName) 

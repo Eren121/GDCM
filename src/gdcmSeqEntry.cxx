@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/28 02:28:06 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,8 @@ gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e, int depth)
 /**
  * \brief   Constructor from a given gdcmSeqEntry
  * @param   e Pointer to existing Doc entry
- */
+ * @param   depth depth level of the current Seq entry
+  */
 gdcmSeqEntry::gdcmSeqEntry(gdcmDocEntry* e, int depth) : gdcmDocEntry(e->GetDictEntry())
 {
    this->UsableLength = 0;

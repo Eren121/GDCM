@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:53 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,7 @@ const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
 
 /**
  * \brief   constructor  
- * @param   inFilename file to be opened for parsing
+ * @param   filename file to be opened for parsing
  */
 gdcmDocument::gdcmDocument( std::string const & filename ) 
               : gdcmElementSet(-1)
@@ -278,7 +278,7 @@ bool gdcmDocument::IsReadable()
 /**
  * \brief   Internal function that checks whether the Transfer Syntax given
  *          as argument is the one present in the current document.
- * @param   SyntaxToCheck The transfert syntax we need to check against.
+ * @param   syntaxToCheck The transfert syntax we need to check against.
  * @return  True when SyntaxToCheck corresponds to the Transfer Syntax of
  *          the current document. False either when the document contains
  *          no Transfer Syntax, or when the Tranfer Syntaxes doesn't match.
@@ -575,9 +575,9 @@ void gdcmDocument::Write(FILE* fp,FileType filetype)
 /**
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
- * @param   Value (string) Value to be set
- * @param   Group   Group number of the Entry 
- * @param   Elem  Element number of the Entry
+ * @param   value (string) Value to be set
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
@@ -701,9 +701,9 @@ gdcmSeqEntry * gdcmDocument::ReplaceOrCreateByNumber(
 /**
  * \brief Set a new value if the invoked element exists
  *        Seems to be useless !!!
- * @param Value new element value
- * @param Group  group number of the Entry 
- * @param Elem element number of the Entry
+ * @param value new element value
+ * @param group  group number of the Entry 
+ * @param elem element number of the Entry
  * \return  boolean 
  */
 bool gdcmDocument::ReplaceIfExistByNumber(std::string const & value, 
@@ -969,8 +969,8 @@ bool gdcmDocument::SetEntryLengthByNumber(uint32_t l,
 /**
  * \brief   Gets (from Header) the offset  of a 'non string' element value 
  *          (LoadElementValues has already be executed)
- * @param Group   group number of the Entry 
- * @param Elem  element number of the Entry
+ * @param group   group number of the Entry 
+ * @param elem  element number of the Entry
  * @return File Offset of the Element Value 
  */
 size_t gdcmDocument::GetEntryOffsetByNumber(uint16_t group, uint16_t elem) 
@@ -987,8 +987,8 @@ size_t gdcmDocument::GetEntryOffsetByNumber(uint16_t group, uint16_t elem)
 /**
  * \brief   Gets (from Header) a 'non string' element value 
  *          (LoadElementValues has already be executed)  
- * @param Group   group number of the Entry 
- * @param Elem  element number of the Entry
+ * @param group   group number of the Entry 
+ * @param elem  element number of the Entry
  * @return Pointer to the 'non string' area
  */
 void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem) 
@@ -1005,8 +1005,8 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem)
 /**
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
- * @param Group   group number of the Entry 
- * @param Elem  element number of the Entry
+ * @param group   group number of the Entry 
+ * @param elem  element number of the Entry
  */
 void *gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
 {
@@ -1038,7 +1038,7 @@ void *gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
 /**
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
- * @param Element  Entry whose voidArea is going to be loaded
+ * @param element  Entry whose voidArea is going to be loaded
  */
 void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *element) 
 {
@@ -1466,7 +1466,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
 /**
  * \brief         Loads the element content if its length doesn't exceed
  *                the value specified with gdcmDocument::SetMaxSizeLoadEntry()
- * @param         Entry Header Entry (Dicom Element) to be dealt with
+ * @param         entry Header Entry (Dicom Element) to be dealt with
  */
 void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
 {
@@ -1632,7 +1632,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
 
 /**
  * \brief  Find the value Length of the passed Header Entry
- * @param  Entry Header Entry whose length of the value shall be loaded. 
+ * @param  entry Header Entry whose length of the value shall be loaded. 
  */
 void gdcmDocument::FindDocEntryLength( gdcmDocEntry *entry )
    throw ( gdcmFormatError )
@@ -1760,7 +1760,7 @@ void gdcmDocument::FindDocEntryLength( gdcmDocEntry *entry )
 
 /**
  * \brief     Find the Value Representation of the current Dicom Element.
- * @param     Entry
+ * @param     entry
  */
 void gdcmDocument::FindDocEntryVR( gdcmDocEntry *entry )
 {
@@ -1803,7 +1803,7 @@ void gdcmDocument::FindDocEntryVR( gdcmDocEntry *entry )
  * \brief     Check the correspondance between the VR of the header entry
  *            and the taken VR. If they are different, the header entry is 
  *            updated with the new VR.
- * @param     Entry Header Entry to check
+ * @param     entry Header Entry to check
  * @param     vr    Dicom Value Representation
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true
@@ -1886,7 +1886,7 @@ bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *entry, gdcmVRKey vr)
  * \brief   Get the transformed value of the header entry. The VR value 
  *          is used to define the transformation to operate on the value
  * \warning NOT end user intended method !
- * @param   Entry 
+ * @param   entry entry to tranform
  * @return  Transformed entry value
  */
 std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *entry)
@@ -1962,7 +1962,7 @@ std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *entry)
  *          value is used to define the reverse transformation to operate on
  *          the value
  * \warning NOT end user intended method !
- * @param   Entry 
+ * @param   entry Entry to reverse transform
  * @return  Reverse transformed entry value
  */
 std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry* entry)
@@ -2016,7 +2016,7 @@ std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry* entry)
 /**
  * \brief   Skip a given Header Entry 
  * \warning NOT end user intended method !
- * @param   entry 
+ * @param   entry entry to skip
  */
 void gdcmDocument::SkipDocEntry(gdcmDocEntry *entry) 
 {
@@ -2026,7 +2026,7 @@ void gdcmDocument::SkipDocEntry(gdcmDocEntry *entry)
 /**
  * \brief   Skips to the begining of the next Header Entry 
  * \warning NOT end user intended method !
- * @param   entry 
+ * @param   entry entry to skip
  */
 void gdcmDocument::SkipToNextDocEntry(gdcmDocEntry *entry) 
 {
@@ -2038,6 +2038,8 @@ void gdcmDocument::SkipToNextDocEntry(gdcmDocEntry *entry)
  * \brief   When the length of an element value is obviously wrong (because
  *          the parser went Jabberwocky) one can hope improving things by
  *          applying some heuristics.
+ * @param   entry entry to check
+ * @param   foundLength fist assumption about length    
  */
 void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *entry,
                                           uint32_t foundLength)
@@ -2115,7 +2117,7 @@ void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *entry,
 /**
  * \brief   Apply some heuristics to predict whether the considered 
  *          element value contains/represents an integer or not.
- * @param   Entry The element value on which to apply the predicate.
+ * @param   entry The element value on which to apply the predicate.
  * @return  The result of the heuristical predicate.
  */
 bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *entry)
@@ -2502,7 +2504,7 @@ void gdcmDocument::SwitchSwapToBigEndian()
 
 /**
  * \brief  during parsing, Header Elements too long are not loaded in memory 
- * @param NewSize
+ * @param newSize
  */
 void gdcmDocument::SetMaxSizeLoadEntry(long newSize) 
 {
@@ -2522,7 +2524,7 @@ void gdcmDocument::SetMaxSizeLoadEntry(long newSize)
 /**
  * \brief Header Elements too long will not be printed
  * \todo  See comments of \ref gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE 
- * @param NewSize
+ * @param newSize
  */
 void gdcmDocument::SetMaxSizePrintEntry(long newSize) 
 {
@@ -2607,16 +2609,16 @@ uint32_t gdcmDocument::GenerateFreeTagKeyInGroup(uint16_t group)
 }
 
 /**
- * \brief   Assuming the internal file pointer \ref gdcmDocument::fp 
+ * \brief   Assuming the internal file pointer \ref gdcmDocument::Fp 
  *          is placed at the beginning of a tag check whether this
  *          tag is (TestGroup, TestElement).
- * \warning On success the internal file pointer \ref gdcmDocument::fp
+ * \warning On success the internal file pointer \ref gdcmDocument::Fp
  *          is modified to point after the tag.
  *          On failure (i.e. when the tag wasn't the expected tag
  *          (TestGroup, TestElement) the internal file pointer
- *          \ref gdcmDocument::fp is restored to it's original position.
- * @param   TestGroup   The expected group of the tag.
- * @param   TestElement The expected Element of the tag.
+ *          \ref gdcmDocument::Fp is restored to it's original position.
+ * @param   testGroup   The expected group of the tag.
+ * @param   testElement The expected Element of the tag.
  * @return  True on success, false otherwise.
  */
 bool gdcmDocument::ReadTag(uint16_t testGroup, uint16_t testElement)
@@ -2647,16 +2649,16 @@ bool gdcmDocument::ReadTag(uint16_t testGroup, uint16_t testElement)
 }
 
 /**
- * \brief   Assuming the internal file pointer \ref gdcmDocument::fp 
+ * \brief   Assuming the internal file pointer \ref gdcmDocument::Fp 
  *          is placed at the beginning of a tag (TestGroup, TestElement),
  *          read the length associated to the Tag.
- * \warning On success the internal file pointer \ref gdcmDocument::fp
+ * \warning On success the internal file pointer \ref gdcmDocument::Fp
  *          is modified to point after the tag and it's length.
  *          On failure (i.e. when the tag wasn't the expected tag
  *          (TestGroup, TestElement) the internal file pointer
- *          \ref gdcmDocument::fp is restored to it's original position.
- * @param   TestGroup   The expected group of the tag.
- * @param   TestElement The expected Element of the tag.
+ *          \ref gdcmDocument::Fp is restored to it's original position.
+ * @param   testGroup   The expected group of the tag.
+ * @param   testElement The expected Element of the tag.
  * @return  On success returns the length associated to the tag. On failure
  *          returns 0.
  */
@@ -2806,7 +2808,7 @@ bool gdcmDocument::operator<(gdcmDocument &document)
    {
       return true;
    }
-   else if(s1 > s2)
+   else if( s1 > s2 )
    {
       return false;
    }
@@ -2821,7 +2823,7 @@ bool gdcmDocument::operator<(gdcmDocument &document)
       }
       else if ( s1 > s2 )
       {
-         return true;
+         return false;
       }
       else
       {
@@ -2840,7 +2842,7 @@ bool gdcmDocument::operator<(gdcmDocument &document)
          {
             // Serie Instance UID
             s1 = GetEntryByNumber(0x0020,0x000e);
-            s2 = document.GetEntryByNumber(0x0020,0x000e);
+            s2 = document.GetEntryByNumber(0x0020,0x000e);    
             if ( s1 < s2 )
             {
                return true;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/26 15:29:52 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,8 +59,8 @@ gdcmDocEntrySet::~gdcmDocEntrySet()
  * \brief   Build a new Val Entry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
- * @param   Group group   number of the underlying DictEntry
- * @param   Elem  element number of the underlying DictEntry
+ * @param   group group   number of the underlying DictEntry
+ * @param   elem  element number of the underlying DictEntry
  */
 gdcmValEntry *gdcmDocEntrySet::NewValEntryByNumber(uint16_t group,
                                                    uint16_t elem) 
@@ -87,8 +87,8 @@ gdcmValEntry *gdcmDocEntrySet::NewValEntryByNumber(uint16_t group,
  * \brief   Build a new Bin Entry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
- * @param   Group group   number of the underlying DictEntry
- * @param   Elem  element number of the underlying DictEntry
+ * @param   group group   number of the underlying DictEntry
+ * @param   elem  element number of the underlying DictEntry
  */
 gdcmBinEntry *gdcmDocEntrySet::NewBinEntryByNumber(uint16_t group,
                                                    uint16_t elem) 
@@ -242,7 +242,7 @@ gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string const & name)
  * \brief   Searches both the public and the shadow dictionary (when they
  *          exist) for the presence of the DictEntry with given name.
  *          The public dictionary has precedence on the shadow one.
- * @param   Name name of the searched DictEntry
+ * @param   name Name of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
 gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByName(std::string const & name) 

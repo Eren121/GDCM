@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 02:39:09 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2004/08/31 14:24:47 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 // Constructor / Destructor
 /**
  * \brief   Construtor
- * @param   FileName from which to build the dictionary.
+ * @param   filename from which to build the dictionary.
  */
 gdcmDict::gdcmDict(std::string const & filename)
 {
@@ -145,7 +145,7 @@ void gdcmDict::PrintByName(std::ostream& os)
 /**
  * \ingroup gdcmDict
  * \brief  adds a new Dicom Dictionary Entry 
- * @param   NewEntry entry to add 
+ * @param   newEntry entry to add 
  * @return  false if Dicom Element already exists
  */
 bool gdcmDict::AddNewEntry(gdcmDictEntry *newEntry) 
@@ -168,7 +168,7 @@ bool gdcmDict::AddNewEntry(gdcmDictEntry *newEntry)
 /**
  * \ingroup gdcmDict
  * \brief  replaces an already existing Dicom Element by a new one
- * @param   NewEntry new entry (overwrites any previous one with same tag)
+ * @param   newEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
 bool gdcmDict::ReplaceEntry(gdcmDictEntry *newEntry)
