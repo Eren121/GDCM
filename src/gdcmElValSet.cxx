@@ -221,20 +221,20 @@ int ElValSet::Write(FILE * _fp) {
 		
 	// restent à tester les echecs en écriture (apres chaque fwrite)
 	
-	for (TagElValueHT::iterator tag = tagHt.begin();
-		  tag != tagHt.end();
-		  ++tag){
+	for (TagElValueHT::iterator tag2 = tagHt.begin();
+		  tag2 != tagHt.end();
+		  ++tag2){
 
 		// Question :
 		// peut-on se passer des affectations?
 		// - passer l'adresse du resultat d'une fonction (???)
 		// - acceder au champ sans passer par un accesseur ?
 		
-		gr =  tag->second->GetGroup();
-		el =  tag->second->GetElement();
-		lgr = tag->second->GetLength();
-		val = tag->second->GetValue().c_str();
-		vr =  tag->second->GetVR();
+		gr =  tag2->second->GetGroup();
+		el =  tag2->second->GetElement();
+		lgr = tag2->second->GetLength();
+		val = tag2->second->GetValue().c_str();
+		vr =  tag2->second->GetVR();
 			
 		fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp); 	//group
 		fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp); 	//element
