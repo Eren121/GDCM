@@ -1,3 +1,7 @@
+2004-01-26 Benoit Regrain
+     * Bug fix in the print of hexadecimal representations. Remove long fields 
+       in the print and add a third level of print to print them
+
 2004-01-23 Benoit Regrain
      * Bug fix on field having a VR = 'UI'. Assume that is a string field
      * Bug fix on test suite after remove the strip made on not string fields

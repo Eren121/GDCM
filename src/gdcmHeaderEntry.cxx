@@ -79,7 +79,10 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    } 
      
    s << "[" << GetName()<< "]";       
-   s << " [" << d2 << "]";
+   if( (GetLength()<64) || (printLevel>=3) )
+      s << " [" << d2 << "]";
+   else
+      s << " [ gdcm::too long for print (" << GetLength() << ") ]";
 
    // Display the UID value (instead of displaying the rough code)  
    if (g == 0x0002) {  // Any more to be displayed ?
@@ -96,7 +99,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
       if (v == "4294967295") // to avoid troubles in convertion 
          sprintf (st," x(ffffffff)");
       else	
-         sprintf(st," x(%x)",atoi(v.c_str()));
+         sprintf(st," x(%x)",(unsigned long)atof(v.c_str()));
       s << st;
    }
    s << std::endl;
