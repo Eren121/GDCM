@@ -20,12 +20,12 @@
 int main(int argc, char* argv[])
 {
  
-//   gdcmFile *e2;
    gdcmHeader *e1;
    std::string fileName;   
 
    if (argc != 2) {
-      std::cout << " usage : PrintDocument fileName" << std::endl;
+      std::cout << " Usage : " << argv[0] 
+                << " filename." << std::endl;
    }
 
    if (argc > 1) {

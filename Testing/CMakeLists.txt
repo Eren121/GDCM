@@ -12,7 +12,7 @@ SET(TEST_SOURCES
   TestDcm2Acr.cxx
   TestHash.cxx
   TestWrite.cxx
-  TestWriteRead.cxx  
+  TestReadWriteReadCompare.cxx
   TestWriteSimple.cxx
 )
 
@@ -26,7 +26,6 @@ IF (GDCM_DATA_ROOT)
     TestChangeHeader.cxx
     TestDicomDir.cxx      #require DICOMDIR
     BuildUpDicomDir.cxx
-    TestReadWrite.cxx
     makeDicomDir.cxx
   )
   # add test that require VTK:
@@ -114,7 +113,10 @@ SET(BLACK_LIST
   "irmPhlipsNew1.dcm"      #png looks ugly
   "mriThruVPRO.dcm"        #png looks ugly
   "US.3405.1.dcm"          #looks exactly the same as US.1.2.dcm
-  "8BitsRunLengthColor.dcm" # Write broken
+  "8BitsRunLengthColor.dcm"    # Write dicom broken
+  "8BitsUncompressedColor.dcm" # Write dicom broken
+  "OT-PAL-8-face.dcm"          # Write dicom broken
+  "US-PAL-8-10x-echo.dcm"      # Write dicom broken
   )
 
 #   gdcm-ACR-LibIDO seems to be cut

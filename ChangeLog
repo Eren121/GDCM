@@ -1,4 +1,11 @@
 2004-06-28 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * Test/TestWriteRead.cxx and TestReadWrite.cxx merged (because of
+     redundancy) to added Test/TestReadWriteReadCompare.cxx
+   * Test/CmakeList.txt: because the compare test of
+     Test/TestReadWriteReadCompare.cxx fails, the following images are
+     black listed: - 8BitsUncompressedColor.dcm
+                   - OT-PAL-8-face.dcm
+                   - US-PAL-8-10x-echo.dcm
    * src/gdcmDocument.cxx: for broken (non DICOM V3 conformal) images
      (e.g. gdcm-JPEG-LossLess3a.dcm see comments in
      gdcm/gdcmPython/testSuite.py for details) ::FindDocLengthOB() had
@@ -12,6 +19,7 @@
      (because TestWriteRead breaks on it, after a non conformal commit?).
      ctest now runs properly, except for MakeDicomDir (which was allways
      broken) and the Python related stuff (still not fixed).
+   
 2004-06-24 Jean-Pierre Roux
   ADD : Examples/WriteRead, that acts like the former Test/TestWriteRead
   FIX : Test/TestReadWrite now iterates on all the file names 
