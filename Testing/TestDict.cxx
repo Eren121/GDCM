@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 14:18:48 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/18 07:56:21 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,7 @@ int TestDict(int , char* [])
 
    std::cout<<"DictSet content :\n";
 
-   dicts->InitTraversal();
-   gdcm::Dict *d = dicts->GetNextEntry();
+   gdcm::Dict *d = dicts->GetFirstEntry();
    if (!d)
    {
       std::cout << "Dictset is empty" << std::endl;
@@ -77,8 +76,7 @@ int TestDict(int , char* [])
 
    // Print all the DictEntry
    std::cout<<"#######################################################\n";
-   pubDict->InitTraversal();
-   entry=pubDict->GetNextEntry();
+   entry=pubDict->GetFirstEntry();
    while(entry)
    {
       entry->Print();

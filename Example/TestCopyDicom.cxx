@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 11:28:28 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/18 07:55:16 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,8 +99,7 @@ int main(int argc, char* argv[])
       // (the user does NOT have to know the way we implemented the Header !)
       // Waiting for a 'clean' solution, I keep the method ...JPRx
 
-      original->GetHeader()->InitTraversal();
-      gdcm::DocEntry* d=original->GetHeader()->GetNextEntry();
+      gdcm::DocEntry* d=original->GetHeader()->GetFirstEntry();
       while(d)
       {
          if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )

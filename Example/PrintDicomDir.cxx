@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 13:47:22 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/18 07:55:16 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,8 +71,7 @@ int main(int argc, char* argv[])
    }
 
    // Test if the DicomDir contains any Patient
-   e1->InitTraversal();
-   pa = e1->GetNextEntry();
+   pa = e1->GetFirstEntry();
    if ( pa  == 0)
    {
       std::cout<<"          DicomDir '"<<fileName
@@ -92,8 +91,7 @@ int main(int argc, char* argv[])
        << " =  PATIENT List ==========================================" 
        << std::endl<< std::endl;
 
-      e1->InitTraversal();
-      pa = e1->GetNextEntry();
+      pa = e1->GetFirstEntry();
       while (pa) 
       {
          std::cout << pa->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name   
@@ -106,13 +104,11 @@ int main(int argc, char* argv[])
         << " = PATIENT/STUDY List =======================================" 
         << std::endl<< std::endl;
 
-      e1->InitTraversal();
-      pa = e1->GetNextEntry();
+      pa = e1->GetFirstEntry();
       while ( pa ) // on degouline les PATIENT de ce DICOMDIR
       {  
          std::cout << pa->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name 
-         pa->InitTraversal();
-         st = pa->GetNextEntry();
+         st = pa->GetFirstEntry();
          while ( st ) { // on degouline les STUDY de ce patient
             std::cout << "--- "<< st->GetEntry(0x0008, 0x1030) << std::endl; // Study Description
             st = pa->GetNextEntry();
@@ -126,22 +122,19 @@ int main(int argc, char* argv[])
         << " =  PATIENT/STUDY/SERIE List ==================================" 
         << std::endl<< std::endl;
 
-      e1->InitTraversal();
-      pa = e1->GetNextEntry(); 
+      pa = e1->GetFirstEntry(); 
       while ( pa )   // on degouline les PATIENT de ce DICOMDIR
       {
        // Patient's Name, Patient ID 
          std::cout << "Pat.Name:[" << pa->GetEntry(0x0010, 0x0010) <<"]"; // Patient's Name
          std::cout << " Pat.ID:[";
          std::cout << pa->GetEntry(0x0010, 0x0020) << "]" << std::endl; // Patient ID
-         pa->InitTraversal();
-         st = pa->GetNextEntry();
+         st = pa->GetFirstEntry();
          while ( st ) { // on degouline les STUDY de ce patient
             std::cout << "--- Stud.descr:["    << st->GetEntry(0x0008, 0x1030) << "]";// Study Description 
             std::cout << " Stud.ID:["          << st->GetEntry(0x0020, 0x0010);       // Study ID
             std::cout << "]" << std::endl;
-            st->InitTraversal();
-            se = st->GetNextEntry();
+            se = st->GetFirstEntry();
             while ( se ) { // on degouline les SERIES de cette study
                std::cout << "--- --- Ser.Descr:["<< se->GetEntry(0x0008, 0x103e)<< "]";  // Series Description
                std::cout << " Ser.nb:["         <<  se->GetEntry(0x0020, 0x0011);        // Series number
@@ -160,23 +153,19 @@ int main(int argc, char* argv[])
            << " = PATIENT/STUDY/SERIE/IMAGE List ============================" 
            << std::endl<< std::endl;
  
-      e1->InitTraversal();
-      pa = e1->GetNextEntry(); 
+      pa = e1->GetFirstEntry(); 
       while ( pa ) {  // les PATIENT de ce DICOMDIR
          std::cout << pa->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name
-         pa->InitTraversal();
-         st = pa->GetNextEntry();
+         st = pa->GetFirstEntry();
          while ( st ) { // on degouline les STUDY de ce patient
             std::cout << "--- "<< st->GetEntry(0x0008, 0x1030) << std::endl;    // Study Description
             std::cout << " Stud.ID:["          << st->GetEntry(0x0020, 0x0010); // Study ID
-            st->InitTraversal();
-            se = st->GetNextEntry();
+            se = st->GetFirstEntry();
             while ( se ) { // on degouline les SERIES de cette study
                std::cout << "--- --- "<< se->GetEntry(0x0008, 0x103e) << std::endl;      // Serie Description
                std::cout << " Ser.nb:["         <<  se->GetEntry(0x0020, 0x0011);        // Series number
                std::cout << "] Mod.:["          <<  se->GetEntry(0x0008, 0x0060) << "]"; // Modality
-               se->InitTraversal();
-               im = se->GetNextEntry();
+               im = se->GetFirstEntry();
                while ( im ) { // on degouline les Images de cette serie
                   std::cout << "--- --- --- "<< im->GetEntry(0x0004, 0x1500) << std::endl; // File name
                   im = se->GetNextEntry();   

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: makeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:01:55 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/18 07:55:16 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,8 +57,7 @@ int main(int argc, char* argv[]) {
    dcmdir->SetStartMethod(StartMethod, (void *) NULL);
    dcmdir->SetEndMethod(EndMethod);
    
-   dcmdir->InitTraversal();
-   if ( !dcmdir->GetNextEntry() ) 
+   if ( !dcmdir->GetFirstEntry() ) 
    {
       std::cout << "makeDicomDir: no patient list present. Exiting."
                 << std::endl;

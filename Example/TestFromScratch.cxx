@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 11:28:28 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/18 07:55:16 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
    //gdcm::Debug::GetReference().SetDebug(1);
 
    std::string filename = argv[1];
-   //gdcm::File *f1 = new gdcm::File( "/home/malaterre/Creatis/gdcmData/012345.002.050.dcm" );
    gdcm::File *f1 = new gdcm::File( filename );
    gdcm::Header *h1 = f1->GetHeader();
 
@@ -55,8 +54,7 @@ int main(int argc, char *argv[])
    gdcm::Header *h2 = new gdcm::Header();
 
    // Copy of the header content
-   h1->InitTraversal();
-   gdcm::DocEntry* d = h1->GetNextEntry();
+   gdcm::DocEntry* d = h1->GetFirstEntry();
    while(d)
    {
       if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
