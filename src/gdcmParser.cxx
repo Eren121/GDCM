@@ -374,6 +374,10 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
 
 /* TODO : rewrite later, if really usefull
 
+--> Warning : un-updated odd groups lengths can causes pb 
+-->           (xmedcon breaks)
+--> to be re- written with future org.
+
    if ( (type == ImplicitVR) || (type == ExplicitVR) )
       UpdateGroupLength(false,type);
    if ( type == ACR)
@@ -948,8 +952,14 @@ void gdcmParser::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
    guint16 el     = tag->GetElement();
    guint32 lgr    = tag->GetReadLength();
 
+   if ( (group == 0xfffe) && (el == 0x0000) ) 
+     // Fix in order to make some MR PHILIPS images e-film readable
+     // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
+     // we just *always* ignore spurious fffe|0000 tag !   
+      return; 
+
    fwrite ( &group,(size_t)2 ,(size_t)1 ,_fp);  //group
-   fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
+   fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);     //element
       
    if ( type == ExplicitVR ) {
 
@@ -958,12 +968,6 @@ void gdcmParser::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
          // Delimiters have NO Value Representation and have NO length.
          // Hence we skip writing the VR and length and we pad by writing
          // 0xffffffff
-
-         if (el == 0x0000)
-            // Fix in order to make some MR PHILIPS images e-film readable
-            // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
-            // we just ignore spurious fffe|0000 tag !
-            return;
 
          int ff=0xffffffff;
          fwrite (&ff,(size_t)4 ,(size_t)1 ,_fp);
