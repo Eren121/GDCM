@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/29 17:33:17 $
-  Version:   $Revision: 1.190 $
+  Date:      $Date: 2004/10/09 03:42:51 $
+  Version:   $Revision: 1.191 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -113,10 +113,8 @@ void gdcmHeader::Write(FILE* fp,FileType filetype)
    if (i_lgPix != -2)
    {
       // no (GrPixel, NumPixel) element
-      char* dumm = new char[20];
-      sprintf(dumm ,"%d", i_lgPix+12);
-      std::string s_lgPix = dumm;
-      delete[] dumm;
+      std::string s_lgPix;
+      s_lgPix = Format("%d", i_lgPix+12);
       ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
    }
 
@@ -1333,17 +1331,16 @@ std::string gdcmHeader::GetTransfertSyntaxName()
  */
 void gdcmHeader::SetImageDataSize(size_t ImageDataSize)
 {
-   char car[20];
-   sprintf(car,"%d",ImageDataSize);
+   ///FIXME I don't understand this code wh ydo we set two times 'car' ?
+   std::string car = Format("%d", ImageDataSize);
  
    gdcmDocEntry *a = GetDocEntryByNumber(GrPixel, NumPixel);
    a->SetLength(ImageDataSize);
 
    ImageDataSize += 8;
-   sprintf(car,"%d",ImageDataSize);
+   car = Format("%d", ImageDataSize);
 
-   const std::string content1 = car;
-   SetEntryByNumber(content1, GrPixel, NumPixel);
+   SetEntryByNumber(car, GrPixel, NumPixel);
 }
 
 //-----------------------------------------------------------------------------
