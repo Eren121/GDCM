@@ -1,6 +1,4 @@
-# TODO
-# http://www.cmake.org/pipermail/cmake/2003-August/004185.html
-# http://www.cmake.org/pipermail/cmake/2003-January/001092.html
+# gdcm Python wrapping stuff:
 
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src
@@ -50,19 +48,25 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   
   # Build our custom command :
   ADD_CUSTOM_COMMAND(
-    TARGET    pygdcm
+    OUTPUT    ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
     COMMAND   ${SWIG_EXECUTABLE}
     ARGS      -python -c++ -I${GDCM_SOURCE_DIR}/src -o 
               ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx 
               ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
-    SOURCE    ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i
-    OUTPUTS   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
+    DEPENDS   ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i
     COMMENT   "Generating gdcm_wrap.cxx/gdcm.py based on gdcm.i"
   )
-  # This swig command will also outputs gdcm.py :
-  SET_SOURCE_FILES_PROPERTIES(gdcm.py GENERATED)
   # Since the file gdcm_wrap.cxx does not exist, mark it as GENERATED:
   SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
+  # This swig command will also outputs gdcm.py :
+  SET_SOURCE_FILES_PROPERTIES(gdcm.py GENERATED)
+  # Then add the custom command to copy it to proper location:
+  ADD_CUSTOM_COMMAND(
+    TARGET pygdcm
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E copy ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py ${GDCM_BINARY_DIR}/bin
+  )
 
   ADD_LIBRARY(pygdcm gdcm_wrap.cxx)
   TARGET_LINK_LIBRARIES(pygdcm
@@ -70,7 +74,7 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
     gdcm
   )
   # http://www.cmake.org/pipermail/cmake/2003-August/004190.html
-  SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
+  #SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
 
 ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
