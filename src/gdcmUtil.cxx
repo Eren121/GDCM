@@ -208,8 +208,10 @@ std::string GetName(std::string &fullName)
         break;
       deb = i;
   }    
+
   std::string lastName;
-  for (int i=deb;i<fin+1;i++)
-    lastName=lastName+fullName.c_str()[i];
+  for (int j=deb;j<fin+1;j++)
+    lastName=lastName+fullName.c_str()[j];
+
   return(lastName);
 } 

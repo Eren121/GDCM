@@ -2,8 +2,8 @@
 //-----------------------------------------------------------------------------
 #include "gdcmParser.h"
 #include "gdcmUtil.h"
+
 #include <errno.h>
-#include <unistd.h>
 
 // For nthos:
 #ifdef _MSC_VER

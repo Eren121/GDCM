@@ -127,7 +127,6 @@ void gdcmObject::ResetBoundaries(int flag) {
  bool gdcmObject::SetEntryByNumber(std::string val,guint16 group, 
 						   guint16 element) {
 
-   gdcmHeaderEntry *a;
    for(ListTag::iterator i=beginObj;;++i) { 
       if ( (*i)->GetGroup() == 0xfffe && (*i)->GetElement() == 0xe000 ) 
          continue;

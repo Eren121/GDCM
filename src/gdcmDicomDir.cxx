@@ -12,7 +12,12 @@
 
 #include <sys/types.h>
 #include <errno.h>
-#include <unistd.h>
+
+#ifdef _MSC_VER 
+   #include <direct.h>
+#else
+   #include <unistd.h>
+#endif
 
 //-----------------------------------------------------------------------------
 //  For full DICOMDIR description, see:
@@ -65,7 +70,11 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
       if(strlen(Name)==1 && Name[0]=='.') { // user passed '.' as Name
                                             // we get current directory name
          char*dummy=(char*) malloc(1000);   // TODO : check with Windoze // JPR
+#ifdef _MSC_VER
+         _getcwd(dummy,(size_t)1000);
+#else
          getcwd(dummy,(size_t)1000);
+#endif
          SetFileName(dummy); // will be converted into a string
          free(dummy);        // no longer needed   
       }
@@ -412,8 +421,6 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
 
 void gdcmDicomDir::CheckBoundaries()
 {   
-
-cout <<"entree ds CheckBoundaries " <<endl;
    ListDicomDirPatient::iterator  itPatient;
    ListDicomDirStudy::iterator    itStudy;
    ListDicomDirSerie::iterator    itSerie;

@@ -58,7 +58,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy                      ..\..\lib\gdcmdll.dll                      ..\..\gdcmPython\                  	copy                      ..\..\lib\gdcmdll.dll                      ..\..\test\                  	copy                   Release\gdcmdll.lib                   ..\..\lib\ 
+PostBuild_Cmds=copy                       ..\..\lib\gdcmdll.dll                       ..\..\gdcmPython\                   	copy                       ..\..\lib\gdcmdll.dll                       ..\..\test\                   	copy                    Release\gdcmdll.lib                    ..\..\lib\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmdll - Win32 Debug"
@@ -90,7 +90,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copy for test
-PostBuild_Cmds=copy                      ..\..\lib\gdcmdll.dll                      ..\..\gdcmPython\                  	copy                      ..\..\lib\gdcmdll.dll                      ..\..\test\                  	copy                   Debug\gdcmdll.lib                   ..\..\lib\ 
+PostBuild_Cmds=copy                       ..\..\lib\gdcmdll.dll                       ..\..\gdcmPython\                   	copy                       ..\..\lib\gdcmdll.dll                       ..\..\test\                   	copy                    Debug\gdcmdll.lib                    ..\..\lib\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -109,6 +109,26 @@ SOURCE=..\gdcmDicomDir.cxx
 # Begin Source File
 
 SOURCE=..\gdcmDicomDirElement.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirImage.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirMeta.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirPatient.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirSerie.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirStudy.cxx
 # End Source File
 # Begin Source File
 
@@ -148,10 +168,6 @@ SOURCE=..\gdcmHeaderHelper.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\gdcmImage.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
@@ -161,10 +177,6 @@ SOURCE=..\gdcmJpeg12.cxx
 # Begin Source File
 
 SOURCE=..\gdcmJpeg2000.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmMeta.cxx
 # End Source File
 # Begin Source File
 
@@ -180,19 +192,7 @@ SOURCE=..\gdcmParser.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\gdcmPatient.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\gdcmRLE.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmSerie.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmStudy.cxx
 # End Source File
 # Begin Source File
 
@@ -225,6 +225,26 @@ SOURCE=..\gdcmDicomDir.h
 # Begin Source File
 
 SOURCE=..\gdcmDicomDirElement.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirImage.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirMeta.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirPatient.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirSerie.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gdcmDicomDirStudy.h
 # End Source File
 # Begin Source File
 
@@ -264,31 +284,11 @@ SOURCE=..\gdcmHeaderHelper.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\gdcmImage.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmMeta.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\gdcmObject.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\gdcmParser.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmPatient.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmSerie.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\gdcmStudy.h
 # End Source File
 # Begin Source File
 

@@ -104,6 +104,26 @@ SOURCE=..\..\src\gdcmDicomDirElement.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmDicomDirImage.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDicomDirMeta.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDicomDirPatient.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDicomDirSerie.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDicomDirStudy.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmDict.cxx
 # End Source File
 # Begin Source File
@@ -140,10 +160,6 @@ SOURCE=..\..\src\gdcmHeaderHelper.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdcmImage.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
@@ -153,10 +169,6 @@ SOURCE=..\..\src\gdcmJpeg12.cxx
 # Begin Source File
 
 SOURCE=..\..\src\gdcmJpeg2000.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\gdcmMeta.cxx
 # End Source File
 # Begin Source File
 
@@ -172,19 +184,7 @@ SOURCE=..\..\src\gdcmParser.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdcmPatient.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\gdcmRLE.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\gdcmSerie.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\gdcmStudy.cxx
 # End Source File
 # Begin Source File
 

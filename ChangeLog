@@ -1,50 +1,54 @@
+2004-03-22 Benoit Regrain
+     * FIX : src/gdcmDicomDir.cxx : make windows compilable
+     * FIX : gdcmPython/gdcm.i : change gdcmStudy to gdcmDicomDirStudy and
+             gdcmSerie to gdcmDicomDirSerie
+
 2004-03-19  Jean-Pierre Roux
-     * ENH Now the tree-like structure describing a DICOMDIR comming from 
-           an already existing DICOMDIR file is consistent with 
-           the home-made tree-like structure build ex-nihilo 
-           or build from the files held (recursively) in a Directory 
-           functions gdcmDicomDir::CheckBoundaries() 
-	            gdcmObject::SetBoundaries() added
+     * ENH Now the tree-like structure describing a DICOMDIR comming from
+           an already existing DICOMDIR file is consistent with
+           the home-made tree-like structure build ex-nihilo
+           or build from the files held (recursively) in a Directory
+           functions gdcmDicomDir::CheckBoundaries()
+           gdcmObject::SetBoundaries() added
 
-2004-03-17  Jean-Pierre Roux 
-     * REM (Eric Boix bug) : removal of meaningless  
-                             gdcmDicomDirImage::NewImage function.       
+2004-03-17  Jean-Pierre Roux
+     * REM (Eric Boix bug) : removal of meaningless
+                             gdcmDicomDirImage::NewImage function.
      * FIX now file names and directory name are written properly in the
-                      DICOMDIR
+           DICOMDIR
      * FIX now gdcmDicomDir constructor may be call without any trick
-	              about the name
+           about the name
 
-2004-03-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> 
+2004-03-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
      * FIX (JPR bug) : src/gdcmDicomDirImage.cxx added missing definition
-       of gdcmDicomDirImage::NewImage as empty function.
-
+                       of gdcmDicomDirImage::NewImage as empty function.
 
 2004-02-28  Jean-Pierre Roux
      *ENH add gdcmDicomDir:NewPatient
           add gdcmDicomDirPatient:NewStudy
           add gdcmDicomDirStudy:NewSerie
           add gdcmDicomDirSerie:NewImage
-	  to allow making gdcDicomDir object.
+          to allow making gdcDicomDir object.
      *ADD PrintDicomDir executable that uses gdcmDicomDir tree-like structure
           (as opposite to the gdcmHeader chained list)
 
 2004-02-11 Benoit Regrain
      * FIX : memory leaks and the set of ArgDelete methods in gdcmDicomDir
-       when using from python
+             when using from python
 
 2004-02-10 Benoit Regrain
      * FIX : bug fix in the gdcmDirList for the recursivity in directories
      * FIX : in gdcmDicomDir when the directory is empty
      * ENH : add callback and methods to get the progression of dicomDir
-       directory parsing
+             directory parsing
 
 2004-02-06 Jean-Pierre Roux
      * ENH : - now gdcmDicomDir::CreateDicomDir() returns also the meta elements
              - GDCM_META added to gdcmDicomDirType
-	     - class gdcmMeta created
+             - class gdcmMeta created
      * ENH : - A brief summary is now displayed at the beginning of
-	    'testDicomDir' to help disaster magnitude estimation
-     * REM  : Now useless Test/explDICOMDIR.cxx
+             'testDicomDir' to help disaster magnitude estimation
+     * REM : Now useless Test/explDICOMDIR.cxx
 
 2004-02-05 Benoit Regrain
      * ENH : add methods in gdcmObject to get the hash table or the list of
@@ -62,11 +66,11 @@
      * FIX : Final solution (?) for icone embedded images
      * FIX : dicomVR.dic Overlay group is not *only* 6000, but 60xxx
              (see http://medical.nema.org/dicom/2003/03_06PU.PDF)
-	     add groups 6002, 6004, 6006, to allow 'clean' parsing of
-	     gdcmData/gdcm-MR-SIEMENS-16.acr1
-     * ENH  add gdcmData/checkWriteExplicit.sh gdcmData/checkWriteImplicit.sh
-            to make full checking easier
-	     
+             add groups 6002, 6004, 6006, to allow 'clean' parsing of
+             gdcmData/gdcm-MR-SIEMENS-16.acr1
+     * ENH add gdcmData/checkWriteExplicit.sh gdcmData/checkWriteImplicit.sh
+           to make full checking easier
+        
 2004-02-04 Benoit Regrain
      * FIX : WriteEntries : coding style & logic in parameters
      * FIX : Set the elements to create the DicomDir in a dictionary file
@@ -85,28 +89,28 @@
         
 2004-02-02 Jean-Pierre Roux
      * FIX : gdcmWrite : equal_range() for multimap doesn't return a 'second' 
-	          iterator on last
+             iterator on last
              of the last synonym :-(
      * FIX : gdcmWrite::WriteBase : method stops if Pixels not yet Read (except 
-	          for DICOMDIR ;-)
+             for DICOMDIR ;-)
      * ENH gdcmData/checkWrite.sh :modif for full check of Explicit VR writting
      * FIX taking into account the possible 7fe0,0010 multiplicity        
      * FIX add GRPixel,NumPixel,countGrPixel (gdcmParser protected members)
            to allow removal of references to 7fe0,0010, to deal with
-	   ACR-NEMA images, when 0028,0200 is meaningfull
+      ACR-NEMA images, when 0028,0200 is meaningfull
 
 2004-01-31 Jean-Pierre Roux
      * FIX gdcmParser::WriteEntries : when a VR is tagged as 'Unknown'
-                       no longer writes 'Un' on disk
-     * FIX  SQ elements with actual length are now dealt with corectly
+           no longer writes 'Un' on disk
+     * FIX SQ elements with actual length are now dealt with corectly
      * FIX gdcmFile::WriteBase make the difference, for color images, between
-                     the length (for Palette expanded omages) 
-		     and Raw Length (non expanded image + Palette)
-      * FIX  Dicts/dicomV3.dic : removal of 'CTX' (context dependant) VR
-                     (that broke Write). Replaced by UL.
-		     Aware user will reload the field if he 
-		     thinks it's necesssary
-		       
+           the length (for Palette expanded images)
+           and Raw Length (non expanded image + Palette)
+     * FIX Dicts/dicomV3.dic : removal of 'CTX' (context dependant) VR
+           (that broke Write). Replaced by UL.
+           Aware user will reload the field if he 
+           thinks it's necesssary
+             
 2004-01-30 Jean-Pierre Roux
      * gdcmParser::CheckSwap() now defaults the filetype to ACR 
        when 'dirty Acr' is found, to be compliant with the new 
@@ -125,22 +129,22 @@
 2004-01-27 Jean-Pierre Roux
      * gdcmParser constructor has a new boolean param,'ignore_shadow', 
              to allow skipping the shadow elements, to save memory space.
-	     The TRUE value for this param has to be used 
-	     with a FALSE value for the 'enable_sequence' param.
-	     ('public elements' may be embedded in 'shadow Sequences')
+        The TRUE value for this param has to be used 
+        with a FALSE value for the 'enable_sequence' param.
+        ('public elements' may be embedded in 'shadow Sequences')
      * gdcmHeader methods now deal with 'embedded icones images' in the header
              (even when an 'icone image sequence' is announced by the 
-	     element (0x0088,0x0200), but there is NO icone at all ...
-	     
+        element (0x0088,0x0200), but there is NO icone at all ...
+        
      * gdcmHeader sometimes Image Location value doesn't follow  
              the supposed processor endianity (see gdcmData/cr172241.dcm).
-	     Fixed
-	     	     
+             Fixed
+
      * gdcmHeader add the method
              IterHT  GetHeaderEntrySameNumber(grPixel,numPixel);
-	     to get *all* the Header Entries with the same tag.
-	     GetHeaderEntrySameName is probabely *useless* 
-	     (no meaning : Name is *not* an identifier within the Dictionnary)
+        to get *all* the Header Entries with the same tag.
+        GetHeaderEntrySameName is probabely *useless* 
+        (no meaning : Name is *not* an identifier within the Dictionnary)
 
 2004-01-26 Benoit Regrain
      * Bug fix in the print of hexadecimal representations. Remove long fields 
@@ -166,17 +170,17 @@
      * Add the update of header entries using the shadow library
 
 2004-01-19 Benoit Regrain
-    * removal of file gdcmHeader2.cxx
-    * split class gdcmHeader into gdcmParser and gdcmHeader, with gdcmHeader
-      inheriting from gdcmParser. This split is to prepare the integration
-      of dicom dir parsing
-    * bug fix under python
+     * removal of file gdcmHeader2.cxx
+     * split class gdcmHeader into gdcmParser and gdcmHeader, with gdcmHeader
+       inheriting from gdcmParser. This split is to prepare the integration
+       of dicom dir parsing
+     * bug fix under python
 
 2004-01-16 Jean-Pierre Roux
-    * removal of class gdcmHeaderEntrySet
-    * removal of files gdcmHeaderEntrySet.cxx, gdcmHeaderEntrySet.h
-    * add file gdcmHeader2.cxx 
-    * add method gdcmHeader::SetPrintLevel (for PrintHeader)
+     * removal of class gdcmHeaderEntrySet
+     * removal of files gdcmHeaderEntrySet.cxx, gdcmHeaderEntrySet.h
+     * add file gdcmHeader2.cxx
+     * add method gdcmHeader::SetPrintLevel (for PrintHeader)
 
 2004-01-15 Benoit Regrain
      * src/gdcmDicSet.[h|cxx] : add virtual entries to have a reference of
@@ -236,8 +240,8 @@
 2003-11-12 Jean-Pierre Roux
      *ENH  gdcmHeader constructor has one more parameter (default value : false)
            that allows the user to 'go inside' the SeQuences only
-	   if he wants to.
-	   gdcmElValSet:Print takes it into account
+           if he wants to.
+           gdcmElValSet:Print takes it into account
 
 2003-11-12  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      *ENH: Update gdcmPython/CMakeLists
@@ -245,30 +249,28 @@
      *FIX: (gdcmElValSet) char 'tag' was overiding private members (VC++)
 
 2003-11-10 Jean-Pierre Roux
-      *FIX : gdcmHeader::LoadElements is now based
-             on the ListTag listElem member,
-             not longer on the TagElValueHT tagHt member
-      *ENH : PrintPubElVal shows (temporarily) both results,
-             with the tagHt member and the listElem member.
-	     (it's easier to 'see' the problems when using Printheader)
-
-      *FIX : old private member LgrElem is now splitted into
-             ReadLength   : Length actually found on disk (updated only
-	                    if bug fixing is necessary), for internal
-			    use only
-	     UsableLength : Updated by FixFoundLength, to fix a bug
-	                    or to allow Parser going on.
-	     Will allow to re-write a kosher header when a SeQuence
-	     with a length (not 0000) is found
-      Warning : gdcmFile::Write still uses the TagHt (not ListElem)
-	        because gdcmElValSet::Add does not update ListElem
-		(to be written)
+     *FIX : gdcmHeader::LoadElements is now based
+            on the ListTag listElem member,
+            not longer on the TagElValueHT tagHt member
+     *ENH : PrintPubElVal shows (temporarily) both results,
+            with the tagHt member and the listElem member.
+            (it's easier to 'see' the problems when using Printheader)
+     *FIX : old private member LgrElem is now splitted into
+            ReadLength   : Length actually found on disk (updated only
+                      if bug fixing is necessary), for internal use only
+            UsableLength : Updated by FixFoundLength, to fix a bug
+                           or to allow Parser going on.
+            Will allow to re-write a kosher header when a SeQuence
+            with a length (not 0000) is found
+            Warning : gdcmFile::Write still uses the TagHt (not ListElem)
+                      because gdcmElValSet::Add does not update ListElem
+                      (to be written)
 
 2003-11-07 Jean-Pierre Roux
      *FIX misstyping in Transfert Syntax name table
      *ENH gdcmHeader::FixFoundLength now allow to 'go inside' tge SeQuences
           when they have an actual length (not 0000 nor FFFFF)
-	  (Nobody should care of it, but DICOMDIR explorers)
+     (Nobody should care of it, but DICOMDIR explorers)
 
 2003-11-06  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      *ENH: vtkgdcmViewer now works with LUT dicom (OT-PAL-face ...)
@@ -291,38 +293,38 @@
 2003-11-03 Jean-Pierre Roux
      * add gdcmHeaderHelper::GetNumberOfScalarComponentsRaw()
            to be used by aware (vtk) users that want to manage
-	   LUT (and no to turn the PALETTE image into an RGB pixels one)
+           LUT (and no to turn the PALETTE image into an RGB pixels one)
      * GetPixelType now returns 8U for 24 Bits images
-                    (vtkGdcmReader compliant)     	   
-	   
+                    (vtkGdcmReader compliant)           
+      
 2003-10-31 Jean-Pierre Roux
      * Removal of *all* gdcmData images and add them again
        in order to loose the 'history' of un-anonymised images
        
 2003-10-31 Jean-Pierre Roux
      *RMV : removal of useless jBitsInJsample.h 
-           for both 8 and 12 Bits JPEG Lossy Libraries
-	   
+            for both 8 and 12 Bits JPEG Lossy Libraries
+      
 2003-10-31 Jean-Pierre Roux
      * ENH : Add the functions gdcmFile::GetImageDataRaw 
                                gdcmFile::GetImageDataIntoVectorRaw
              that act as GetImageData and GetImageDataIntoVector
-	     except the making of an RGB Plane from Gray Plane + LUT
-	     Intended to aware (vtk) users who know how to manage 
-	     such an image : 
-	     After gdcmHeader :
-	        GetLUTRGBA return a R,G,B,A LUT if any
-	        lgrTotaleRaw gives the 'Raw' length
-	        GetImageDataRaw returns the gray Plane    
+             except the making of an RGB Plane from Gray Plane + LUT
+             Intended to aware (vtk) users who know how to manage
+             such an image :
+             After gdcmHeader :
+              GetLUTRGBA return a R,G,B,A LUT if any
+              lgrTotaleRaw gives the 'Raw' length
+              GetImageDataRaw returns the gray Plane
      * FIX : no more dirty trick for 'Segmented xxx Palette Color Lookup' images
              (They stay Grey, just like with other Dicom viewers :-(
 
 2003-10-30 Jean-Pierre Roux
      * FIX : a VC++ intended syntax modif broke the 12/12 Bytes expanding
-     	     
+             
 2003-10-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      *ENH: Can be used like this '$vtkgdcmViewer *.dcm' with *.dcm 
-	   being coherents dicom files.
+           being coherents dicom files.
      
 2003-10-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      *FIX: DOH ! Forgot about windo$e users, they couldn't read lossless jpeg,
@@ -336,17 +338,17 @@
             
 2003-10-29 Jean-Pierre Roux
       * adding  gdcmHeader::GetLUTRGBA
-               returns a 4 * 256 Bytes Reg/Green/Blue/Alpha vtk compliant LUT
-	       --> Mathieu, the modif u're waiting for is not yet committed
+        returns a 4 * 256 Bytes Reg/Green/Blue/Alpha vtk compliant LUT
+          --> Mathieu, the modif u're waiting for is not yet committed
       * removal of now useless GetLUTRed,GetLUTGreen,GetLUTBlue,GetLUTRGB
-      
+
 2003-10-27 Jean-Pierre Roux
-      * adding some xmedcon breaker files (courtesy of Loïc Boussel) 
- .              00191113.dcm DermaColorLossLess.dcm 
-	        MxTwinLossLess.dcm RadBWLossLess.dcm       
-       * ENH: For version prior to vtkImageViewer2 -r 1.19
-       * FIX: avoid pb with xmedcon-breaker CT McTwin Elscint images
-           
+      * adding some xmedcon breaker files (courtesy of Loïc Boussel)
+        00191113.dcm DermaColorLossLess.dcm
+        MxTwinLossLess.dcm RadBWLossLess.dcm
+      * ENH: For version prior to vtkImageViewer2 -r 1.19
+      * FIX: avoid pb with xmedcon-breaker CT McTwin Elscint images
+
 2003-10-27  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * Removal of ido stuff in CMakeLists.txt
                                                
@@ -363,7 +365,7 @@
       * ENH: CMakeLists.txt now generate 'pygdcm.so' instead of 'libpygdcm.so' 
       * FIX: More pragma disable fro VC++, 
              I don't think I break something as it is also disable in VTK/ITK. 
-	     But it fasten debug compilation time.
+        But it fasten debug compilation time.
             
 2003-10-23 Jean-Pierre Roux
       * gdcm now deals with 16 Bits Run Length Encoded images
@@ -371,16 +373,16 @@
          one for the high Bytes, the other for low Bytes)
 
 2003-10-22 Jean-Pierre Roux
-     * Now CheckRead takes into account :
-            the bugged 'Leonardo' Siemens images
-            the XA images, sent thru the burning VPRO station
-     * add I9000001.dcm, a GE dlx XA image, thru the VEPRO burning station
-     (breaks DicomWorks)
+      * Now CheckRead takes into account :
+         - the bugged 'Leonardo' Siemens images
+         - the XA images, sent thru the burning VPRO station
+      * add I9000001.dcm, a GE dlx XA image, thru the VEPRO burning station
+       (breaks DicomWorks)
 
 2003-10-22  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * FIX: When copying a Makefile.am to CMakeLists.txt 
              one should remove the '\'
-	     
+        
 2003-10-22 Jean-Pierre Roux
       * in gdcmData adding a bugged 'Leonardo' Siemens image 
         (wrong lengths in header)
@@ -407,21 +409,21 @@
 2003-10-20  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * ENH: vtkgdcmViewer now autoscale color/window level on start-up, 
         no need to press 'r' now.
-	
+   
 2003-10-20  Jean-Pierre Roux
-      * upgrade of checkRead.sh checkWrite.sh according 
+      * upgrade of checkRead.sh checkWrite.sh according
         to new Jpeg Lossless decompressor
-       * add US.3405.1.dcm, a genuine RGB medical file ...
-       * add gdcm-ACR-LibIDO.acr, unnormalized Rectangular LibIDO format image
-       * add CLIP0001-Sequoia-U11.dcm, US 'Clip', from SEQUOIA machine, 
+      * add US.3405.1.dcm, a genuine RGB medical file ...
+      * add gdcm-ACR-LibIDO.acr, unnormalized Rectangular LibIDO format image
+      * add CLIP0001-Sequoia-U11.dcm, US 'Clip', from SEQUOIA machine,
                                                   UNIT 11, Hop Cardio              
 2003-10-15  Jean-Pierre Roux
       * general anonymisation in gdcmData
       * adding the 'color files' from
-         http://www.leadtools.com/SDK/Medical/DICOM/ltdc19.htm
+        http://www.leadtools.com/SDK/Medical/DICOM/ltdc19.htm
       * adding some well knowed bugged-header images
       * adding checkRead.sk, checkReadColor.sh, checkWrite.sh,
-         waiting for their inclusion in Python testsuite
+        waiting for their inclusion in Python testsuite
 
 2003-10-15  Jean-Pierre Roux
     * gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error)
@@ -458,7 +460,7 @@
              is not gdcm Readable
      * ENH : One more JPEG LossLess type "JPEG Baseline (Process 14)" 
              is now decoded.
-	     
+        
 2003-10-10  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * FIX: CMake generate now documentation
      * ENH: out of source doc build !
@@ -468,7 +470,7 @@
      * FIX: make install should be ok now on ùnix plateform
      * FIX: PATH to dictionary was wrong (missing /)
      * ENH: OpenFile, return true if the file looks like an ACR or DICOM file 
-             	     
+                     
 2003-10-09  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * vtkGdcmReader is now able to read rgb dicom file.
      * src/gdcmHeaderHelper : GetNumberOfScalarComponents()
@@ -483,7 +485,7 @@
 2003-10-06  Emanuel Ollart
      * FIX : compilation process wad broken.
              Changed gdcmViewer_sources to vtkgdcmViewer_sources
-	     
+        
 2003-10-06  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * change gdcmViewer -> vtkgdcmViewer
      * change GetXSpacing and GetYSpacing "%f\\%" is parsed backward
@@ -502,7 +504,7 @@
 2003-10-03 Jean-Pierre Roux
       * ENH :gdcmHeaderHelper::GetNumberOfScalarComponents() added, 
              to allow displaying RGB images (not only by affim ;-)
-	     
+        
 2003-10-03  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * vtkGdcmReader is now able to read rgb dicom file.
       * src/gdcmHeaderHelper : GetNumberOfScalarComponents()
@@ -532,11 +534,12 @@
       * src/*.cxx removed pragma thingies to src/gdcmCommon.h
         Two reasons: - clear things
                      - third parties acces gdcm through header files, so won't
-                     suffer anymore VC++ complains
+                       suffer anymore VC++ complains
+
 2003-09-30  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * add argv[1] in testvtkGdcmReader.cxx
       * removed leaks
-      		     
+
 2003-09-24 Jean-Pierre Roux
       * The lines are now eigthy characters long.for 
         gdcmHeader.cxx gdcmHeaderHelper.cxx gdcmParse.cxx 
@@ -584,10 +587,10 @@
 
 2003-09-08  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * src/gdcmHeaderHelper.[h cxx]: added new class that provide an
-      interpretation to data given by gdcmHeader. For instance there are
-      heuristics to get informations (look at different places).
+        interpretation to data given by gdcmHeader. For instance there are
+        heuristics to get informations (look at different places).
       * it also include a specific class: gdcmSerieHeaderHelper devoted to
-      sorting DICOM images based on different strategies.
+        sorting DICOM images based on different strategies.
       * modified Makefiles accordingly.
 
 2003-09-05  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
@@ -857,7 +860,7 @@
         Notes on valgrind:
           - maximum info is obtained with a command of the form:
             valgrind --leak-check=yes --leak-resolution=high --num-callers=40
-                   --show-reachable=yes PrintHeader
+                     --show-reachable=yes PrintHeader
           - the remaining reachable blocks seem to come from the STL
             allocation scheme through the usage of map and list. It looks
             like this memory cannot be freed but it is not a memory leak

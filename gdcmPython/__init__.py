@@ -71,12 +71,18 @@ except ImportError,e:
    raise ImportError, "gdcm extension not imported."
 
 ### Expose only the necessary stuff
-gdcmGlobal       = gdcm.gdcmGlobal
-gdcmDictSet      = gdcm.gdcmDictSet
-gdcmDicomDir     = gdcm.gdcmDicomDir
-gdcmHeader       = gdcm.gdcmHeader
-gdcmHeaderHelper = gdcm.gdcmHeaderHelper
-gdcmFile         = gdcm.gdcmFile
+gdcmGlobal          = gdcm.gdcmGlobal
+gdcmDictSet         = gdcm.gdcmDictSet
+gdcmDicomDir        = gdcm.gdcmDicomDir
+gdcmHeader          = gdcm.gdcmHeader
+gdcmHeaderHelper    = gdcm.gdcmHeaderHelper
+gdcmFile            = gdcm.gdcmFile
+
+gdcmDicomDirMeta    = gdcm.gdcmDicomDirMeta
+gdcmDicomDirPatient = gdcm.gdcmDicomDirPatient
+gdcmDicomDirStudy   = gdcm.gdcmDicomDirStudy
+gdcmDicomDirSerie   = gdcm.gdcmDicomDirSerie
+gdcmDicomDirImage   = gdcm.gdcmDicomDirImage
 
 def GetPubDictEntryNames():
    return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictEntryNames()

@@ -30,7 +30,7 @@ void EatLeadingAndTrailingSpaces(string & s) {
 		s.erase(s.length()-1, 1);
 }
 
-void vtkPythonVoidFunc(void *arg)
+void gdcmPythonVoidFunc(void *arg)
 {
   PyObject *arglist, *result;
   PyObject *func = (PyObject *)arg;
@@ -55,7 +55,7 @@ void vtkPythonVoidFunc(void *arg)
     }
 }
 
-void vtkPythonVoidFuncArgDelete(void *arg)
+void gdcmPythonVoidFuncArgDelete(void *arg)
 {
   PyObject *func = (PyObject *)arg;
   if (func)
@@ -181,7 +181,7 @@ extern gdcmGlobal gdcmGlob;
 	}
 }
 
-%typemap(out) ListStudy & {
+%typemap(out) ListDicomDirStudy & {
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
@@ -192,7 +192,7 @@ extern gdcmGlobal gdcmGlob;
 	}
 }
 
-%typemap(out) ListSerie & {
+%typemap(out) ListDicomDirSerie & {
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
@@ -220,9 +220,9 @@ extern gdcmGlobal gdcmGlob;
 	if($input!=Py_None)
 	{
 		Py_INCREF($input);
-		$1=vtkPythonVoidFunc;
+		$1=gdcmPythonVoidFunc;
 		$2=$input;
-		$3=vtkPythonVoidFuncArgDelete;
+		$3=gdcmPythonVoidFuncArgDelete;
 	}
 	else
 	{
