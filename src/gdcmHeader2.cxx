@@ -1,7 +1,7 @@
-// gdcmHeaderEntrySet.cxx
+// gdcmHeader2.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmUtil.h"
-#include "gdcmHeaderEntrySet.h"
+#include "gdcmHeader.h"
 #include "gdcmTS.h"
 #ifdef GDCM_NO_ANSI_STRING_STREAM
 #  include <strstream>
@@ -13,37 +13,20 @@
 #include <iomanip> // for std::ios::left, ...
 
 //-----------------------------------------------------------------------------
-// Constructor / Destructor
-/**
- * \ingroup gdcmHeaderEntrySet
- * \brief  Destructor 
- */
-gdcmHeaderEntrySet::~gdcmHeaderEntrySet() {
-   for (TagHeaderEntryHT::iterator tag = tagHT.begin(); tag != tagHT.end(); ++tag) {
-      gdcmHeaderEntry* EntryToDelete = tag->second;
-      if ( EntryToDelete )
-         delete EntryToDelete;
-      tag->second=NULL;
-   }
-   tagHT.clear();
-}
-
-//-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmHeaderEntrySet
+ * \ingroup gdcmHeader
  * \brief prints the Dicom Elements of the gdcmHeader
  *        using both H table and Chained List
  * @param   os The output stream to be written to.  
  */
-void gdcmHeaderEntrySet::Print(std::ostream & os) {
+void gdcmHeader::Print(std::ostream & os) {
 
    size_t o;
    unsigned short int g, e;
    TSKey v;
    std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
-
    std::ostringstream s;
 /*
 // DO NOT remove this code right now.
@@ -79,7 +62,8 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
       }              
       s << std::endl;
    }
-*/
+*/	   
+	   
    // List element
    guint32 lgth;
    char greltag[10];  //group element tag
@@ -94,36 +78,42 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
       e = (*i)->GetElement();
       v = (*i)->GetValue();
       o = (*i)->GetOffset();
-      sprintf(greltag,"%04x|%04x",g,e);           
+      sprintf(greltag,"%04x|%04x ",g,e);           
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
-      s << greltag << " lg : ";
-      //lgth = (*i)->GetLength(); 
-      lgth = (*i)->GetReadLength();
-      if (lgth == 0xffffffff) {
-         sprintf(st,"x(%ff)");
-         s.setf(std::ios::left);
-         s << std::setw(10-strlen(st)) << " ";  
+      s << greltag ;
+          
+      if (printLevel>=2) { 
+         s << "lg : ";
+         lgth = (*i)->GetReadLength();
+         if (lgth == 0xffffffff) {
+            sprintf(st,"x(%ff)");
+            s.setf(std::ios::left);
+            s << std::setw(10-strlen(st)) << " ";  
+            s << st << " ";
+            s.setf(std::ios::left);
+            s << std::setw(8) << "-1";      
+         } else {
+            sprintf(st,"x(%x)",lgth);
+            s.setf(std::ios::left);
+            s << std::setw(10-strlen(st)) << " ";  
+            s << st << " ";
+            s.setf(std::ios::left);
+            s << std::setw(8) << lgth; 
+         }
+         s << " Off.: ";
+         sprintf(st,"x(%x)",o); 
+         s << std::setw(10-strlen(st)) << " ";       
          s << st << " ";
-         s.setf(std::ios::left);
-         s << std::setw(8) << "-1";      
-      } else {
-         sprintf(st,"x(%x)",lgth);
-         s.setf(std::ios::left);
-         s << std::setw(10-strlen(st)) << " ";  
-         s << st << " ";
-         s.setf(std::ios::left);
-         s << std::setw(8) << lgth; 
+         s << std::setw(8) << o; 
       }
-      s << " Off.: ";
-      sprintf(st,"x(%x)",o); 
-      s << std::setw(10-strlen(st)) << " ";       
-      s << st << " ";
-      s << std::setw(8) << o; 
-      s << "[" << (*i)->GetVR()  << "] ";
-      s.setf(std::ios::left);
-      s << std::setw(66-(*i)->GetName().length()) << " ";
-      s << "[" << (*i)->GetName()<< "] ";       
-      s << "[" << d2 << "]";
+      if (printLevel>=1) {      
+         s << "[" << (*i)->GetVR()  << "] ";
+         s.setf(std::ios::left);
+         s << std::setw(66-(*i)->GetName().length()) << " ";	     	 
+      } 
+        
+      s << "[" << (*i)->GetName()<< "]";       
+      s << " [" << d2 << "]";
        // Display the UID value (instead of displaying the rough code)  
       if (g == 0x0002) {  // Any more to be displayed ?
          if ( (e == 0x0010) || (e == 0x0002) ) 	   
@@ -149,7 +139,7 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmHeaderEntrySet
+ * \ingroup gdcmHeader
  * \brief  add a new Dicom Element pointer to 
  *         the H Table and to the chained List
  * \warning  push_bash in listEntries ONLY during ParseHeader
@@ -157,122 +147,24 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
  * \      when position to be taken care of     
  * @param   newHeaderEntry
  */
-void gdcmHeaderEntrySet::Add(gdcmHeaderEntry * newHeaderEntry) {
+void gdcmHeader::Add(gdcmHeaderEntry * newHeaderEntry) {
 
 // tagHT [newHeaderEntry->GetKey()]  = newHeaderEntry;
    tagHT.insert( PairHT( newHeaderEntry->GetKey(),newHeaderEntry) );
    listEntries.push_back(newHeaderEntry); 
+   wasUpdated = 1;
 }
 
-/**
- * \ingroup gdcmHeaderEntrySet
- * \brief  retrieves a Dicom Element (the first one) using (group, element)
- * \ warning (group, element) IS NOT an identifier inside the Dicom Header
- *           if you think it's NOT UNIQUE, check the count number
- *           and use iterators to retrieve ALL the Dicoms Elements within
- *           a given couple (group, element)
- * @param   group Group number of the searched Dicom Element 
- * @param   element Element number of the searched Dicom Element 
- * @return  
- */
-gdcmHeaderEntry* gdcmHeaderEntrySet::GetHeaderEntryByNumber(guint16 group, guint16 element) {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
-      return NULL;
-   return tagHT.find(key)->second;
-}
 
 /**
- * \ingroup gdcmHeaderEntrySet
- * \brief  Gets the value (string) of the target Dicom Element
- * @param   group Group  number of the searched Dicom Element 
- * @param   element Element number of the searched Dicom Element 
- * @return  
- */
-std::string gdcmHeaderEntrySet::GetEntryByNumber(guint16 group, guint16 element) {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
-      return GDCM_UNFOUND;
-   return tagHT.find(key)->second->GetValue();
-}
-
-/**
- * \ingroup gdcmHeaderEntrySet
- * \brief  Sets the value (string) of the target Dicom Element
- * @param   content string value of the Dicom Element
- * @param   group Group number of the searched Dicom Element 
- * @param   element Element number of the searched Dicom Element 
- * @return  
- */
-bool gdcmHeaderEntrySet::SetEntryByNumber(std::string content,
-                                          guint16 group, guint16 element) {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
-      return false;
-   int l = content.length();
-   if(l%2) {  // Odd length are padded with a space (020H).
-      l++;
-      content = content + '\0';
-   }
-      
-   //tagHT[key]->SetValue(content);   
-   gdcmHeaderEntry * a;
-   IterHT p;
-   TagHeaderEntryHT::iterator p2;
-   // DO NOT remove the following lines : they explain the stuff   
-   //p= tagHT.equal_range(key); // get a pair of iterators first-last synonym
-   //p2=p.first;                // iterator on the first synonym 
-   //a=p2->second;              // H Table target column (2-nd col)
-    
-   // or, easier :
-   a = ((tagHT.equal_range(key)).first)->second; 
-       
-   a-> SetValue(content); 
-   
-   //std::string vr = tagHT[key]->GetVR();
-   std::string vr = a->GetVR();
-   
-   guint32 lgr;
-   if( (vr == "US") || (vr == "SS") ) 
-      lgr = 2;
-   else if( (vr == "UL") || (vr == "SL") )
-      lgr = 4;
-   else
-      lgr = l;	   
-   //tagHT[key]->SetLength(lgr);
-   a->SetLength(lgr);   
-   return true;
-}
-
-/**
- * \ingroup gdcmHeaderEntrySet
- * \brief   Sets the value length of the Dicom Element
- * \warning : use with caution !
- * @param   length
- * @param   group Group number of the searched Dicom Element 
- * @param   element Element number of the searched Dicom Element 
- * @return  boolean
- */
-bool gdcmHeaderEntrySet::SetEntryLengthByNumber(guint32 length,
-                                                guint16 group, guint16 element) {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHT.count(key))
-      return false;
-   if (length%2) length++; // length must be even
-   //tagHT[key]->SetLength(length);
-   ( ((tagHT.equal_range(key)).first)->second )->SetLength(length);	 
-	 
-   return true ;		
-}
-/**
- * \ingroup gdcmHeaderEntrySet
+ * \ingroup gdcmHeader
  * \brief   Sets a 'non string' value to a given Dicom Element
  * @param   area
  * @param   group Group number of the searched Dicom Element 
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-bool gdcmHeaderEntrySet::SetVoidAreaByNumber(void * area,
+bool gdcmHeader::SetVoidAreaByNumber(void * area,
                                       guint16 group, guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
@@ -283,13 +175,13 @@ bool gdcmHeaderEntrySet::SetVoidAreaByNumber(void * area,
 }
 
 /**
- * \ingroup gdcmHeaderEntrySet
+ * \ingroup gdcmHeader
  * \brief   Generate a free TagKey i.e. a TagKey that is not present
  *          in the TagHt dictionary.
  * @param   group The generated tag must belong to this group.  
  * @return  The element of tag with given group which is fee.
  */
-guint32 gdcmHeaderEntrySet::GenerateFreeTagKeyInGroup(guint16 group) {
+guint32 gdcmHeader::GenerateFreeTagKeyInGroup(guint16 group) {
    for (guint32 elem = 0; elem < UINT32_MAX; elem++) {
       TagKey key = gdcmDictEntry::TranslateToKey(group, elem);
       if (tagHT.count(key) == 0)
@@ -298,57 +190,13 @@ guint32 gdcmHeaderEntrySet::GenerateFreeTagKeyInGroup(guint16 group) {
    return UINT32_MAX;
 }
 
-/**
- * \ingroup gdcmHeaderEntrySet
- * \brief   Checks if a given Dicom Element exists
- * \        within the H table
- * @param   group Group   number of the searched Dicom Element 
- * @param   element  Element number of the searched Dicom Element 
- * @return  number of occurences
- */
-int gdcmHeaderEntrySet::CheckIfExistByNumber(guint16 group, guint16 element ) {
-	std::string key = gdcmDictEntry::TranslateToKey(group, element );
-	return (tagHT.count(key));
-}
-
-// ==============
-// TODO to be re-written using the chained list instead of the H table
-//      so we can remove the GroupHT from the gdcmHeader
-// =============
-/**
- * \ingroup gdcmHeaderEntrySet
- * \brief   
- * @param   _fp already open file pointer
- * @param   type type of the File to be written 
- *          (ACR-NEMA, ExplicitVR, ImplicitVR)
- * @return  always "True" ?!
- */
-bool gdcmHeaderEntrySet::Write(FILE * _fp, FileType type) {
-
-   	// Question :
-	// Comment pourrait-on savoir si le DcmHeader vient d'un fichier DicomV3 ou non
-	// (FileType est un champ de gdcmHeader ...)
-	// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
-	// no way 
-        // a moins de se livrer a un tres complique ajout des champs manquants.
-        // faire un CheckAndCorrectHeader (?)
-
-   if ( (type == ImplicitVR) || (type == ExplicitVR) )
-      UpdateGroupLength(false,type);
-   if ( type == ACR)
-      UpdateGroupLength(true,ACR);
-
-   WriteEntries(type, _fp);
-   return(true);
-}
-
 //-----------------------------------------------------------------------------
 // Protected
 
 //-----------------------------------------------------------------------------
 // Private
 /**
- * \ingroup gdcmHeaderEntrySet
+ * \ingroup gdcmHeader
  * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
  * \warning : to be re-written using the chained list instead of the H table.
  * \warning : DO NOT use (doesn't work any longer because of the multimap)
@@ -356,7 +204,7 @@ bool gdcmHeaderEntrySet::Write(FILE * _fp, FileType type) {
  * @param   SkipSequence TRUE if we don't want to write Sequences (ACR-NEMA Files)
  * @param   type Type of the File (ExplicitVR,ImplicitVR, ACR, ...) 
  */
-void gdcmHeaderEntrySet::UpdateGroupLength(bool SkipSequence, FileType type) {
+void gdcmHeader::UpdateGroupLength(bool SkipSequence, FileType type) {
    guint16 gr, el;
    std::string vr;
    
@@ -428,7 +276,7 @@ void gdcmHeaderEntrySet::UpdateGroupLength(bool SkipSequence, FileType type) {
       tk = g->first + "|0000";			// generate the element full tag
                      
       if ( tagHT.count(tk) == 0) { 		// if element 0x0000 not found
-         gdcmDictEntry * tagZ = gdcmGlobal::GetDicts()->NewVirtualDictEntry(gr_bid, 0x0000, "UL");
+         gdcmDictEntry * tagZ = new gdcmDictEntry(gr_bid, 0x0000, "UL");       
          elemZ = new gdcmHeaderEntry(tagZ);
          elemZ->SetLength(4);
          Add(elemZ);				// create it
@@ -442,7 +290,7 @@ void gdcmHeaderEntrySet::UpdateGroupLength(bool SkipSequence, FileType type) {
 }
 
 /**
- * \ingroup gdcmHeaderEntrySet
+ * \ingroup gdcmHeader
  * \brief   writes on disc according to the requested format
  * \        (ACR-NEMA, ExplicitVR, ImplicitVR) the image
  * \ warning does NOT add the missing elements in the header :
@@ -452,7 +300,7 @@ void gdcmHeaderEntrySet::UpdateGroupLength(bool SkipSequence, FileType type) {
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
  */
-void gdcmHeaderEntrySet::WriteEntries(FileType type, FILE * _fp) {
+void gdcmHeader::WriteEntries(FileType type, FILE * _fp) {
    guint16 gr, el;
    guint32 lgr;
    const char * val;
@@ -464,7 +312,7 @@ void gdcmHeaderEntrySet::WriteEntries(FileType type, FILE * _fp) {
    
    //  uses now listEntries to iterate, not TagHt!
    //
-   //        pb : gdcmHeaderEntrySet.Add does NOT update listEntries
+   //        pb : gdcmHeader.Add does NOT update listEntries
    //       TODO : find a trick (in STL?) to do it, at low cost !
 
    void *ptr;

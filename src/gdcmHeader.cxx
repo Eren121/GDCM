@@ -57,9 +57,10 @@ gdcmHeader::gdcmHeader(const char *InFilename,
    if ( !OpenFile(exception_on_error))
       return;
    ParseHeader();
-   wasUpdated = 0;  // will be set to 1 if user adds an entry
    LoadHeaderEntries();
    CloseFile();
+   wasUpdated = 0;  // will be set to 1 if user adds an entry
+   printLevel = 1;  // 'Heavy' header print by default
 }
 
 /**
@@ -94,7 +95,7 @@ gdcmHeader::~gdcmHeader (void) {
   * @return
   */ 
 void gdcmHeader::PrintPubEntry(std::ostream & os) {
-   PubEntrySet.Print(os);
+   Print(os);
 }
 
 /**
@@ -695,7 +696,7 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
 // http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
 
 //  if Photometric Interpretation # PALETTE COLOR, no LUT to be done
-   if (gdcmHeader::GetEntryByNumber(0x0028,0x0004) != "PALETTE COLOR ") {
+   if (GetEntryByNumber(0x0028,0x0004) != "PALETTE COLOR ") {
    	return NULL;
    }  
    int lengthR, debR, nbitsR;
@@ -865,18 +866,6 @@ std::string gdcmHeader::GetPubEntryVRByName(std::string tagName) {
    return elem->GetVR();
 }
 
-/**
- * \ingroup gdcmHeader
- * \brief   Searches within the public dictionary for element value of
- *          a given tag.
- * @param   group Group of the researched tag.
- * @param   element Element of the researched tag.
- * @return  Corresponding element value when it exists, and the string
- *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string gdcmHeader::GetPubEntryByNumber(guint16 group, guint16 element) {
-   return PubEntrySet.GetEntryByNumber(group, element);
-}
 
 /**
  * \ingroup gdcmHeader
@@ -912,30 +901,76 @@ bool gdcmHeader::SetPubEntryByName(std::string content, std::string tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
    if( dictEntry == NULL)
       return false;
-   return(PubEntrySet.SetEntryByNumber(content,
-                                       dictEntry->GetGroup(),
-                                       dictEntry->GetElement()));   
+   return(SetEntryByNumber(content,
+                           dictEntry->GetGroup(),
+                           dictEntry->GetElement()));   
 }
 
 /**
  * \ingroup gdcmHeader
  * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
- *          in the PubHeaderEntrySet of this instance
  *          through it's (group, element) and modifies it's content with
  *          the given value.
  * @param   content new value to substitute with
  * @param   group   group of the Dicom Element to modify
  * @param   element element of the Dicom Element to modify
  */
-bool gdcmHeader::SetPubEntryByNumber(std::string content, guint16 group,
-                                    guint16 element)
-                                    
-//TODO  : homogeneiser les noms : SetPubElValByNumber   
-//                    qui appelle PubHeaderEntrySet.SetHeaderEntryByNumber 
-//        pourquoi pas            SetPubHeaderEntryByNumber ??
-{
-   return ( PubEntrySet.SetEntryByNumber (content, group, element) );
+bool gdcmHeader::SetPubEntryByNumber(std::string content, 
+                                          guint16 group,
+                                          guint16 element) {
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! tagHT.count(key))
+      return false;
+   int l = content.length();
+   if(l%2) {  // Odd length are padded with a space (020H).
+      l++;
+      content = content + '\0';
+   }
+      
+   //tagHT[key]->SetValue(content);   
+   gdcmHeaderEntry * a;
+   IterHT p;
+   TagHeaderEntryHT::iterator p2;
+   // DO NOT remove the following lines : they explain the stuff   
+   //p= tagHT.equal_range(key); // get a pair of iterators first-last synonym
+   //p2=p.first;                // iterator on the first synonym 
+   //a=p2->second;              // H Table target column (2-nd col)
+    
+   // or, easier :
+   a = ((tagHT.equal_range(key)).first)->second; 
+       
+   a-> SetValue(content); 
+   
+   //std::string vr = tagHT[key]->GetVR();
+   std::string vr = a->GetVR();
+   
+   guint32 lgr;
+   if( (vr == "US") || (vr == "SS") ) 
+      lgr = 2;
+   else if( (vr == "UL") || (vr == "SL") )
+      lgr = 4;
+   else
+      lgr = l;	   
+   //tagHT[key]->SetLength(lgr);
+   a->SetLength(lgr);   
+   return true;
 }
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * \warning Don't use any longer : use SetPubEntryByNumber
+ * @param   content new value to substitute with
+ * @param   group   group of the Dicom Element to modify
+ * @param   element element of the Dicom Element to modify
+ */
+bool gdcmHeader::SetEntryByNumber(std::string content, 
+                                          guint16 group,
+                                          guint16 element) {
+   return SetPubEntryByNumber(content, group, element);					  
+}					  
 
 /**
  * \ingroup gdcmHeader
@@ -950,16 +985,41 @@ bool gdcmHeader::SetPubEntryByNumber(std::string content, guint16 group,
  * @return  1 on success, 0 otherwise.
  */
 
-bool gdcmHeader::SetPubEntryLengthByNumber(guint32 length, guint16 group,
-                                    guint16 element) {
-	return (  PubEntrySet.SetEntryLengthByNumber (length, group, element) );
+bool gdcmHeader::SetPubEntryLengthByNumber(guint32 length, 
+                                           guint16 group, guint16 element) {
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! tagHT.count(key))
+      return false;
+   if (length%2) length++; // length must be even
+   //tagHT[key]->SetLength(length);
+   ( ((tagHT.equal_range(key)).first)->second )->SetLength(length);	 
+	 
+   return true ;		
 }
 
+/**
+ * \ingroup gdcmHeader
+ * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
+ *          in the PubHeaderEntrySet of this instance
+ *          through it's (group, element) and modifies it's length with
+ *          the given value.
+ * \warning Don't use any longer : use SetPubEntryLengthByNumber
+ * @param   length new length to substitute with
+ * @param   group   group of the ElVal to modify
+ * @param   element element of the ElVal to modify
+ * @return  1 on success, 0 otherwise.
+ */
+
+bool gdcmHeader::SetEntryLengthByNumber(guint32 length, 
+                                        guint16 group, guint16 element) {
+   return SetPubEntryLengthByNumber( length, group,element);					   
+}					   
 /**
  * \ingroup gdcmHeader
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value of a given tag.
+ * \warning Don't use any longer : use GetPubEntryByName
  * @param   tagName name of the searched element.
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
@@ -997,8 +1057,25 @@ std::string gdcmHeader::GetEntryVRByName(std::string tagName) {
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
 std::string gdcmHeader::GetEntryByNumber(guint16 group, guint16 element) {
-   return GetPubEntryByNumber(group, element);
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! tagHT.count(key))
+      return GDCM_UNFOUND;
+   return tagHT.find(key)->second->GetValue();
 }
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Searches within the public dictionary for element value of
+ *          a given tag.
+ * @param   group Group of the researched tag.
+ * @param   element Element of the researched tag.
+ * @return  Corresponding element value when it exists, and the string
+ *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
+ */
+std::string gdcmHeader::GetPubEntryByNumber(guint16 group, guint16 element) {
+   return GetEntryByNumber(group, element);
+}
+
 
 /**
  * \ingroup gdcmHeader
@@ -1034,7 +1111,7 @@ bool gdcmHeader::SetEntryByName(std::string content,std::string tagName) {
 				    
    TagKey key = gdcmDictEntry::TranslateToKey(dictEntry->GetGroup(), 
                                               dictEntry->GetElement());
-   if ( PubEntrySet.GetTagHT().count(key) == 0 )
+   if ( GetPubEntry().count(key) == 0 )
       return false;
    int l = content.length();
    if(l%2) {  // Odd length are padded with a space (020H).
@@ -1051,7 +1128,7 @@ bool gdcmHeader::SetEntryByName(std::string content,std::string tagName) {
    //p2=p.first;                // iterator on the first synonym 
    //a=p2->second;              // H Table target column (2-nd col)    
    // or, easier :
-   a = ((PubEntrySet.GetTagHT().equal_range(key)).first)->second;       
+   a = ((GetPubEntry().equal_range(key)).first)->second;       
    a-> SetValue(content);   
    std::string vr = a->GetVR();
    
@@ -1128,21 +1205,40 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
    CheckSwap();
    while ( (newHeaderEntry = ReadNextHeaderEntry()) ) { 
       SkipHeaderEntry(newHeaderEntry);
-      PubEntrySet.Add(newHeaderEntry);
+      Add(newHeaderEntry);
    }
 }
+
+
 
 /**
  * \ingroup gdcmHeader
  * \brief 
  * @param fp file pointer on an already open file
- * @param type file type ( ImplicitVR, ExplicitVR, ...)
- * @return  Boolean
- */ 
+ * @param   type type of the File to be written 
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR)
+ * @return  always "True" ?!
+ */
 bool gdcmHeader::Write(FILE * fp, FileType type) {
+
+// ==============
+// TODO The stuff has been rewritten using the chained list instead 
+//      of the H table
+//      so we could remove the GroupHT from the gdcmHeader
+// To be checked
+// =============
 
    // TODO : move the following lines (and a lot of others, to be written)
    // to a future function CheckAndCorrectHeader
+   
+   	// Question :
+	// Comment pourrait-on savoir si le DcmHeader vient d'un fichier DicomV3 ou non
+	// (FileType est un champ de gdcmHeader ...)
+	// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
+	// no way 
+        // a moins de se livrer a un tres complique ajout des champs manquants.
+        // faire un CheckAndCorrectHeader (?)  
+	 
 
    if (type == ImplicitVR) {
       std::string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
@@ -1152,7 +1248,7 @@ bool gdcmHeader::Write(FILE * fp, FileType type) {
       //      values with a VR of UI shall be padded with a single trailing null
       //      Dans le cas suivant on doit pader manuellement avec un 0
       
-      PubEntrySet.SetEntryLengthByNumber(18, 0x0002, 0x0010);
+      SetEntryLengthByNumber(18, 0x0002, 0x0010);
    } 
 
    if (type == ExplicitVR) {
@@ -1163,11 +1259,18 @@ bool gdcmHeader::Write(FILE * fp, FileType type) {
       //      values with a VR of UI shall be padded with a single trailing null
       //      Dans le cas suivant on doit pader manuellement avec un 0
       
-      PubEntrySet.SetEntryLengthByNumber(20, 0x0002, 0x0010);
+      SetEntryLengthByNumber(20, 0x0002, 0x0010);
    }
 
-   return PubEntrySet.Write(fp, type);
-}
+
+   if ( (type == ImplicitVR) || (type == ExplicitVR) )
+      UpdateGroupLength(false,type);
+   if ( type == ACR)
+      UpdateGroupLength(true,ACR);
+
+   WriteEntries(type, fp);
+   return(true);
+ }
 
 /**
  * \ingroup   gdcmFile
@@ -1211,9 +1314,9 @@ bool gdcmHeader::ReplaceOrCreateByNumber(std::string Value,
       gdcmHeaderEntry* a =NewHeaderEntryByNumber(Group, Elem);
       if (a == NULL) 
          return false;
-      PubEntrySet.Add(a);
+      Add(a);
    }   
-   PubEntrySet.SetEntryByNumber(Value, Group, Elem);
+   SetPubEntryByNumber(Value, Group, Elem);
    return(true);
 }   
 
@@ -1231,9 +1334,9 @@ bool gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Ele
 
    gdcmHeaderEntry* nvHeaderEntry=NewHeaderEntryByNumber(Group, Elem);
    // TODO : check if fails
-   PubEntrySet.Add(nvHeaderEntry);
+   Add(nvHeaderEntry);
    std::string v = Value;	
-   PubEntrySet.SetEntryByNumber(v, Group, Elem);
+   SetEntryByNumber(v, Group, Elem);
    return(true);
 }  
 
@@ -1244,12 +1347,12 @@ bool gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Ele
  * @param   Value
  * @param   Group
  * @param   Elem
- * \return integer acts as a boolean 
+ * \return  boolean 
  */
 bool gdcmHeader::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
    std::string v = Value;	
-   PubEntrySet.SetEntryByNumber(v, Group, Elem);
+   SetEntryByNumber(v, Group, Elem);
    return true;
 } 
 
@@ -1295,21 +1398,25 @@ guint16 gdcmHeader::SwapShort(guint16 a) {
 
 //-----------------------------------------------------------------------------
 // Protected
+
 /**
  * \ingroup gdcmHeader
- * \brief   
- *
- * @return 
+ * \brief  retrieves a Dicom Element (the first one) using (group, element)
+ * \ warning (group, element) IS NOT an identifier inside the Dicom Header
+ *           if you think it's NOT UNIQUE, check the count number
+ *           and use iterators to retrieve ALL the Dicoms Elements within
+ *           a given couple (group, element)
+ * @param   group Group number of the searched Dicom Element 
+ * @param   element Element number of the searched Dicom Element 
+ * @return  
  */
-gdcmHeaderEntry *gdcmHeader::GetHeaderEntryByNumber(guint16 Group, guint16 Elem) {
-   gdcmHeaderEntry *HeaderEntry = PubEntrySet.GetHeaderEntryByNumber(Group, Elem);	 
-   if (!HeaderEntry) {
-      dbg.Verbose(1, "gdcmHeader::GetHeaderEntryByNumber",
-                  "failed to Locate gdcmHeaderEntry");
+gdcmHeaderEntry* gdcmHeader::GetHeaderEntryByNumber(guint16 group, guint16 element) {
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! tagHT.count(key))
       return NULL;
-   }
-   return HeaderEntry;
+   return tagHT.find(key)->second;
 }
+
 
 /**
  * \ingroup gdcmHeader
@@ -1329,14 +1436,15 @@ gdcmHeaderEntry *gdcmHeader::GetHeaderEntryByNumber(guint16 Group, guint16 Elem)
 
 /**
  * \ingroup gdcmHeader
- * \brief   Checks if a given HeaderEntry (group,number) 
- * \ exists in the Public HeaderEntrySet
- * @param   Group
- * @param   Elem
- * @return  boolean  
+ * \brief   Checks if a given Dicom Element exists
+ * \        within the H table
+ * @param   group Group   number of the searched Dicom Element 
+ * @param   element  Element number of the searched Dicom Element 
+ * @return  number of occurences
  */
-bool gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
-   return (PubEntrySet.CheckIfExistByNumber(Group, Elem)>0);
+int gdcmHeader::CheckIfExistByNumber(guint16 group, guint16 element ) {
+	std::string key = gdcmDictEntry::TranslateToKey(group, element );
+	return (tagHT.count(key));
 }
 
 /**
@@ -1392,7 +1500,7 @@ void * gdcmHeader::LoadEntryVoidArea(guint16 Group, guint16 Elem) {
    	return NULL;
    }  
    
-   PubEntrySet.SetVoidAreaByNumber(a, Group, Elem);
+   SetVoidAreaByNumber(a, Group, Elem);
    // TODO check the result 
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) {
@@ -1583,7 +1691,7 @@ void gdcmHeader::LoadHeaderEntrySafe(gdcmHeaderEntry * entry) {
 /**
  * \ingroup gdcmHeader
  * \brief   
- * @param entry   Header Entry whose value shall be loaded. 
+ * @param ElVal   Header Entry whose length of the value shall be loaded. 
 
  * @return 
  */
@@ -1781,8 +1889,9 @@ void gdcmHeader::FindHeaderEntryVR( gdcmHeaderEntry *ElVal) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   
- * @param ElVal 
+ * \brief  Skip a given Header Entry 
+ * \warning NOT end user intended method !
+ * @param entry 
  * @return 
  */
 void gdcmHeader::SkipHeaderEntry(gdcmHeaderEntry * entry) {
@@ -2367,7 +2476,7 @@ gdcmHeaderEntry* gdcmHeader::NewManualHeaderEntryToPubDict(std::string NewTagNam
    guint32 FreeElem = 0;
    gdcmDictEntry* NewEntry = (gdcmDictEntry*)0;
 
-   FreeElem = PubEntrySet.GenerateFreeTagKeyInGroup(StuffGroup);
+   FreeElem = GenerateFreeTagKeyInGroup(StuffGroup);
    if (FreeElem == UINT32_MAX) {
       dbg.Verbose(1, "gdcmHeader::NewManualElValToPubDict",
                      "Group 0xffff in Public Dict is full");
@@ -2376,7 +2485,7 @@ gdcmHeaderEntry* gdcmHeader::NewManualHeaderEntryToPubDict(std::string NewTagNam
    NewEntry = Dicts->NewVirtualDictEntry(StuffGroup, FreeElem,
                                 VR, "GDCM", NewTagName);
    NewElVal = new gdcmHeaderEntry(NewEntry);
-   PubEntrySet.Add(NewElVal);
+   Add(NewElVal);
    return NewElVal;
 }
 

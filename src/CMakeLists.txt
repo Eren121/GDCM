@@ -13,9 +13,9 @@ SET(libgdcm_la_SOURCES
 	gdcmException.cxx
 	gdcmUtil.cxx
 	gdcmHeader.cxx
+	gdcmHeader2.cxx
 	gdcmHeaderHelper.cxx
 	gdcmHeaderEntry.cxx
-	gdcmHeaderEntrySet.cxx
 	gdcmDictEntry.cxx
 	gdcmDict.cxx
 	gdcmDictSet.cxx

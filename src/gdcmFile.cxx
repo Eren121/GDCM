@@ -172,8 +172,8 @@ size_t gdcmFile::GetImageDataSizeRaw(void) {
  * \brief   Allocates necessary memory, copies the pixel data
  *          (image[s]/volume[s]) to newly allocated zone.
  *          Transforms YBR pixels into RGB pixels if any
-            Transforms 3 planes R, G, B into a single RGB Plane
-	    Transforms single Grey plane + 3 Palettes into a RGB Plane
+ *          Transforms 3 planes R, G, B into a single RGB Plane
+ *          Transforms single Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
  * \        NULL if alloc fails 
  */
@@ -262,8 +262,8 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
  * \brief   Allocates necessary memory, copies the pixel data
  *          (image[s]/volume[s]) to newly allocated zone.
  *          Transforms YBR pixels into RGB pixels if any
-            Transforms 3 planes R, G, B into a single RGB Plane
-	    DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
+ *          Transforms 3 planes R, G, B into a single RGB Plane
+ *	    DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
  * \        NULL if alloc fails 
  */
@@ -594,7 +594,7 @@ bool gdcmFile::WriteDcmImplVR (const char* fileName) {
  * \ingroup   gdcmFile
  * \brief  
  * @param fileName name of the file to be created
- *                 (any already existing file is over written)
+ *                 (any already existing file is overwritten)
  * @return false if write fails	
  */
 
@@ -609,12 +609,12 @@ bool gdcmFile::WriteDcmExplVR (std::string fileName) {
  *        qui ne prennent en entrée QUE des images ACR ...
  * \warning if a DICOM_V3 header is supplied,
  *         groups < 0x0008 and shadow groups are ignored)
- * \warning NO TEST is performed on processor "Endiannerie".
+ * \warning NO TEST is performed on processor "Endiannity".
  *        Ca fonctionnera correctement (?) sur processeur Intel
  *        (Equivalent a IdDcmWrite) 
  *
  * @param fileName name of the file to be created
- *                 (any already existing file is over written)
+ *                 (any already existing file is overwritten)
  * @return false if write fails		
  */
 
@@ -628,16 +628,16 @@ bool gdcmFile::WriteAcr (std::string fileName) {
  * \ingroup   gdcmFile
  *
 * @param fileName name of the file to be created
- *                 (any already existing file is over written)
+ *                 (any already existing file is overwritten)
  * @param  type file type (ExplicitVR, ImplicitVR, ...)
  * @return false if write fails		
  */
-bool gdcmFile::WriteBase (std::string FileName, FileType type) {
+bool gdcmFile::WriteBase (std::string fileName, FileType type) {
 
    FILE * fp1;
-   fp1 = fopen(FileName.c_str(),"wb");
+   fp1 = fopen(fileName.c_str(),"wb");
    if (fp1 == NULL) {
-      printf("Echec ouverture (ecriture) Fichier [%s] \n",FileName.c_str());
+      printf("Echec ouverture (ecriture) Fichier [%s] \n",fileName.c_str());
       return (false);
    }
 
