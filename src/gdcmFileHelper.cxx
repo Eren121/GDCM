@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/03/03 11:55:00 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/03/04 09:45:04 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1203,7 +1203,7 @@ void FileHelper::CheckMandatoryElements()
       // the source image was NOT a true Dicom one.
       // We consider the image is a 'Secondary Capture' one
       // SOP Class UID
-      ValEntry *e_0008_0016  =  new ValEntry( 
+      e_0008_0016  =  new ValEntry( 
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0016) );
       // [Secondary Capture Image Storage]
       e_0008_0016 ->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
