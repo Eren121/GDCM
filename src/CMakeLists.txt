@@ -69,6 +69,12 @@ IF(WIN32)
   ENDIF(NOT BORLAND)
 ENDIF(WIN32)
 
+#Need additional library for the MacAddress code in gdcmUtil.cxx
+IF(APPLE)
+  TARGET_LINK_LIBRARIES(gdcm "-framework IOKit" "-framework CoreFoundation")
+ENDIF(APPLE)
+
+
 #The following is not working because when a header file is not found it tries 
 #to find one in the binary dir
 #INSTALL_FILES(/include .h ${libgdcm_la_SOURCES})
