@@ -24,7 +24,7 @@ except IndexError:
 print fileName, type(fileName)
 header = gdcm.Header(fileName)
 if not header.IsReadable():
-   print "The ", fileName, " file is not readable with gdcm. Sorry."
+   print "The '", fileName, "' file is not readable with gdcm. Sorry."
    sys.exit()
 
 print "##############################################################"

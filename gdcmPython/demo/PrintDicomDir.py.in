@@ -1,5 +1,14 @@
-from gdcmPython import *
 import sys
+import os
+
+sys.path.append('${GDCM_BINARY_DIR}')
+if os.name == 'posix':
+   sys.path.append('${GDCM_BINARY_DIR}/bin')
+else:
+   sys.path.append('${GDCM_BINARY_DIR}/bin/Release')
+   sys.path.append('${GDCM_BINARY_DIR}/bin/Debug')
+
+from gdcmPython.core import *
 
 ### Get filename from command line or default it
 try:
@@ -13,10 +22,11 @@ except IndexError:
    printLevel = 1
 
 ### Build the header element list
-dicomdir = gdcmDicomDir(fileName)
+dicomdir = gdcm.DicomDir(fileName)
 if not dicomdir.IsReadable():
-   print "The '", fileName, "' DicomDir is not readable with gdcm. Sorry."
-   sys.exit()
+   print
+   raise RuntimeError,"The '%s' DicomDir is not readable with gdcm." % fileName
+   #sys.exit()
 
 print "##############################################################"
 print "## Display all the elements and their respective values"

@@ -21,19 +21,11 @@ try:
 except IndexError:
    printLevel = 1
 
-#if not os.path.isfile(FileName):
-#   print "Cannot open file ", FileName
-#   sys.exit()
-
-# On debugging purposes uncomment the next line
-#s = raw_input("Hit any key in this window to exit")
-
 ### Build the header element list
 print fileName, type(fileName)
 header = gdcm.Header(fileName)
 if not header.IsReadable():
-   print "The ", fileName, " file is not readable with gdcm. Sorry."
-   sys.exit()
+   raise RuntimeError,"The '%s' file is not readable with gdcm." % fileName
 
 print "##############################################################"
 print "### Display all the elements and their respective values"
