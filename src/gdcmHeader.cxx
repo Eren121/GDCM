@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 11:40:13 $
-  Version:   $Revision: 1.179 $
+  Date:      $Date: 2004/07/30 16:09:27 $
+  Version:   $Revision: 1.180 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,15 +31,11 @@
  * \brief  Constructor 
  * @param  filename name of the file whose header we want to analyze
  * @param  exception_on_error whether we want to throw an exception or not
- * @param  ignore_shadow = true if user wants to skip shadow groups 
- *         during parsing, to save memory space
  */
 gdcmHeader::gdcmHeader( std::string const & filename, 
-                        bool exception_on_error,
-                        bool ignore_shadow ):
+                        bool exception_on_error ):
             gdcmDocument( filename,
-                          exception_on_error,
-                          ignore_shadow )
+                          exception_on_error )
 {    
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
@@ -49,8 +45,7 @@ gdcmHeader::gdcmHeader( std::string const & filename,
    // Inside the group pointed by "Image Location" the searched element
    // is conventionally the element 0x0010 (when the norm is respected).
    // When the "Image Location" is absent we default to group 0x7fe0.
-   
-   // This IS the right place for the code
+   // Note: this IS the right place for the code
  
    // Image Location
    std::string imgLocation = GetEntryByNumber(0x0028, 0x0200);

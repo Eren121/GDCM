@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 
    std::cout << argv[1] << std::endl;
 
-   e1 = new gdcmHeader(toto, false, true);
+   e1 = new gdcmHeader( toto, false );
    if (!e1->IsReadable()) {
        std::cerr << "Sorry, " << toto <<"  not a Readable DICOM / ACR File"
                  <<std::endl;
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
 // --------------------- we read the written image
       
-   e2 = new gdcmHeader(zozo, false, true);
+   e2 = new gdcmHeader( zozo, false );
    if (!e2->IsReadable()) {
        std::cerr << "Sorry, " << zozo << " not a Readable DICOM / ACR File"  
                  <<std::endl;

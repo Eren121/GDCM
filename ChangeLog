@@ -4,6 +4,9 @@
     enable_sequences removed from gdcmHeader constructor and dependencies.
   * Example/PrintHeader.cxx: fixed accordingly (enable_sequences removal).
   * gdcmPython/demo/PrintHeader.py: dummy fix.
+  * src/gdcmDocument.[h|cxx], gdcmFile.[h|cxx], gdcmHeader.[h|cxx]:
+    skip_shadow removed from gdcmHeader constructor and dependencies.
+  * Example/*.cxx and Test/*.cxx changed accordingly.
 
 2004-07-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Test/CMakeLists.txt: newly re-introduced SIEMENS_Sonata-12-MONO2-SQ.dcm

@@ -3,28 +3,24 @@
 
 int main(int argc, char* argv[])
 { 
-   bool dropPriv = false;
    std::string fileName;   
 
-   if (argc == 1) {
-      std::cout << argv[0] <<
-      " fileName" << std::endl <<
-      "    [nopriv]  if you don't want to print Shadow groups"  << std::endl;
+   if (argc == 1)
+   {
+      std::cout << argv[0] << " fileName" << std::endl;
    }
 
-   if (argc > 1) {
+   if (argc > 1)
+   {
       fileName=argv[1];
-   } else {
+   }
+   else
+   {
       fileName += GDCM_DATA_ROOT;
       fileName += "/test.acr";
    }
    
-   for (int j=0;j<argc;j++) {
-      if (strcmp(argv[j],"nopriv")==0)
-         dropPriv=true;
-   }
-   
-   gdcmFile *e2 = new gdcmFile(fileName.c_str(),false, dropPriv);
+   gdcmFile *e2 = new gdcmFile( fileName.c_str(), false );
    gdcmHeader *e1 = e2->GetHeader();  
         
    if (argc > 2) {

@@ -46,8 +46,9 @@ int main(int argc, char* argv[])
      
    toto = argv[1]; 
 
-   e1 = new gdcmHeader(toto.c_str(), false, true);
-   if (!e1->IsReadable()) {
+   e1 = new gdcmHeader( toto.c_str(), false );
+   if (!e1->IsReadable())
+   {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
        return 0;
    }

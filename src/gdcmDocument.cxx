@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 11:40:13 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2004/07/30 16:09:27 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,15 +84,11 @@ const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
  * \brief   constructor  
  * @param   inFilename file to be opened for parsing
  * @param   exception_on_error whether we throw an exception or not
- * @param   ignore_shadow to allow skipping the shadow elements, 
- *          to save memory space.
  */
 gdcmDocument::gdcmDocument( std::string const & filename, 
-                            bool exception_on_error,
-                            bool ignore_shadow) 
+                            bool exception_on_error) 
               : gdcmElementSet(-1)
 {
-   IgnoreShadow = ignore_shadow;
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = filename;
    Initialise();

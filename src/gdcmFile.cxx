@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 11:40:13 $
-  Version:   $Revision: 1.117 $
+  Date:      $Date: 2004/07/30 16:09:27 $
+  Version:   $Revision: 1.118 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,16 +63,11 @@ gdcmFile::gdcmFile(gdcmHeader *header)
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
  * @param   exception_on_error whether we throw an exception or not
- * @param   ignore_shadow to allow skipping the shadow elements, 
- *          to save memory space.
  */
 gdcmFile::gdcmFile(std::string const & filename, 
-                   bool exception_on_error,
-                   bool ignore_shadow)
+                   bool exception_on_error )
 {
-   Header = new gdcmHeader( filename,
-                            exception_on_error,
-                            ignore_shadow );
+   Header = new gdcmHeader( filename, exception_on_error );
    SelfHeader = true;
    PixelRead  = -1; // no ImageData read yet.
 

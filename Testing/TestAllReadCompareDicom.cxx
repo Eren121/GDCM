@@ -73,7 +73,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
    
       std::cout << "   Testing: " << filename << std::endl;
 
-      gdcmFile* tested = new gdcmFile( filename, false, true );
+      gdcmFile* tested = new gdcmFile( filename, false );
       if( !tested->GetHeader()->IsReadable() )
       {
         std::cout << "      Image not gdcm compatible:"
@@ -116,8 +116,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
 
       ////// When reference file is not gdcm readable test is failed:
   
-      gdcmFile* reference = new gdcmFile( referenceFileName.c_str(),
-                                          false, true );
+      gdcmFile* reference = new gdcmFile( referenceFileName.c_str(), false );
       if( !reference->GetHeader()->IsReadable() )
       {
          std::cout << "      Reference image " << std::endl

@@ -18,8 +18,7 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
    
-   e1= new gdcmHeader 
-          (fileName.c_str(),false, true);
+   e1= new gdcmHeader( fileName.c_str(), false );
 
    f1 = new gdcmFile(e1);
 

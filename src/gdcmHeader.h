@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 11:40:13 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2004/07/30 16:09:27 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -109,8 +109,7 @@ protected:
 public:
    gdcmHeader(bool exception_on_error = false);
    gdcmHeader(std::string const & filename, 
-              bool  exception_on_error = false, 
-              bool  skip_shadow        = false);
+              bool  exception_on_error = false);
  
    virtual ~gdcmHeader();
 

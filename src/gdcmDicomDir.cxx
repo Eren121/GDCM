@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 11:40:13 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2004/07/30 16:09:27 $
+  Version:   $Revision: 1.61 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,7 @@ gdcmDicomDir::gdcmDicomDir(bool exception_on_error):
  */
 gdcmDicomDir::gdcmDicomDir(std::string const & fileName, bool parseDir,
                            bool exception_on_error):
-   gdcmDocument( fileName, exception_on_error, true) // true : enable SeQuences
+   gdcmDocument( fileName, exception_on_error)
 {
    // que l'on ai passe un root directory ou un DICOMDIR
    // et quelle que soit la valeur de parseDir,
@@ -451,21 +451,29 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
          break;
       }
 
-      header = new gdcmHeader(it->c_str(),false,true);
-      if(!header) {
-         std::cout << "failure in new Header " << it->c_str() << std::endl; // JPR
-      }
-      if(header->IsReadable()) {
-         list.push_back(header);  // adds the file header to the chained list
-         std::cout << "readable : " <<it->c_str() << std::endl; // JPR
-       }
-      else
+      header = new gdcmHeader( it->c_str(),false );
+      if( !header )
       {
-         delete header;
+         dbg.Verbose( 1,
+                      "gdcmDicomDir::CreateDicomDirChainedList: "
+                      "failure in new Header ",
+                      it->c_str() );
       }
-      count++;
-
+      if( header->IsReadable() )
+      {
+         // Add the file header to the chained list:
+         list.push_back(header);
+         dbg.Verbose( 1,
+                      "gdcmDicomDir::CreateDicomDirChainedList: readable ",
+                      it->c_str() );
+       }
+       else
+       {
+          delete header;
+       }
+       count++;
    }
+
    // sorts Patient/Study/Serie/
    std::sort(list.begin(), list.end(), gdcmDicomDir::HeaderLessThan );
 

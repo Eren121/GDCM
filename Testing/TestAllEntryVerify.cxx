@@ -163,7 +163,7 @@ bool ReferenceFileParser::Check()
    {
       string fileName = DataPath + i->first;
       cout << Indent << "FileName: " << fileName << endl;
-      gdcmHeader* tested = new gdcmHeader( fileName.c_str(), false, true );
+      gdcmHeader* tested = new gdcmHeader( fileName.c_str(), false );
       if( !tested->IsReadable() )
       {
         cerr << Indent << "Image not gdcm compatible:"

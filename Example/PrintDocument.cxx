@@ -8,8 +8,10 @@ int main(int argc, char* argv[])
    std::string fileName;   
 
    if (argc != 2) {
-      std::cout << " Usage : " << argv[0] 
-                << " filename." << std::endl;
+      std::cout << " Usage : "
+                << argv[0] 
+                << " filename."
+                << std::endl;
    }
 
    if (argc > 1) {
@@ -19,8 +21,7 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
    
-   e1= new gdcmHeader 
-      (fileName.c_str(),false, true);
+   e1= new gdcmHeader( fileName.c_str(), false );
 
    e1->SetPrintLevel(2);
    

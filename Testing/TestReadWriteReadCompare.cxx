@@ -39,7 +39,7 @@ int TestReadWriteReadCompare(int argc, char* argv[])
 
       //////////////// Step 1 (see above description):
 
-      gdcmHeader *header = new gdcmHeader( filename, false, true );
+      gdcmHeader *header = new gdcmHeader( filename, false );
       if( !header->IsReadable() )
       {
          std::cerr << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
@@ -74,8 +74,7 @@ int TestReadWriteReadCompare(int argc, char* argv[])
     
       //////////////// Step 3:
 
-      gdcmFile* reread = new gdcmFile( "TestReadWriteReadCompare.dcm",
-                                      false, true );
+      gdcmFile* reread = new gdcmFile( "TestReadWriteReadCompare.dcm", false );
       if( !reread->GetHeader()->IsReadable() )
       {
         std::cerr << "Test::TestReadWriteReadCompare: Could not reread image "
