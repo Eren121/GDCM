@@ -122,6 +122,7 @@ void vtkGdcmReader::SetFileName(const char *name)
    // Since we maintain a list of filenames, when building a volume,
    // (see vtkGdcmReader::AddFileName), we additionaly need to purge
    // this list when we manually positionate the filename.
+   vtkDebugMacro("Clearing all files given with AddFileName");
    this->FileNameList.clear();
    this->Modified();
 }
@@ -319,10 +320,26 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
  */
 void vtkGdcmReader::BuildFileListFromPattern()
 {
+   this->RemoveAllInternalFileName();
+
    if ((! this->FileNameList.empty()) && this->FileName )
    {
-      vtkErrorMacro("Both file patterns and AddFileName schemes were used");
-      vtkErrorMacro("Only the files specified with AddFileName shall be used");
+      vtkErrorMacro("Both AddFileName and SetFileName schemes were used");
+      vtkErrorMacro("No images loaded ! ");
+      return;
+   }
+
+   if ((! this->FileNameList.empty()) && this->FilePattern )
+   {
+      vtkErrorMacro("Both AddFileName and SetFilePattern schemes were used");
+      vtkErrorMacro("No images loaded ! ");
+      return;
+   }
+
+   if (this->FileName && this->FilePattern)
+   {
+      vtkErrorMacro("Both SetFileName and SetFilePattern schemes were used");
+      vtkErrorMacro("No images loaded ! ");
       return;
    }
 
@@ -340,17 +357,17 @@ void vtkGdcmReader::BuildFileListFromPattern()
       return;
    }
 
-   this->RemoveAllInternalFileName();
-   if( this->FileNameList.empty() )
+   if( this->FileName )
    {
-      //Multiframe case:
+      // Single file loading (as given with ::SetFileName()):
+      // Case of multi-frame file considered here
       this->ComputeInternalFileName(this->DataExtent[4]);
       vtkDebugMacro("Adding file " << this->InternalFileName);
       this->AddInternalFileName(this->InternalFileName);
    }
    else
    {
-      //stack of 2D dicom case:
+      // Multi file loading (as given with ::SetFilePattern()):
       for (int idx = this->DataExtent[4]; idx <= this->DataExtent[5]; ++idx)
       {
          this->ComputeInternalFileName(idx);
