@@ -8,6 +8,7 @@ testWrite
 hashtest
 dcm2acr
 pourFindTaggs
+testChangeEntete
 bug1
 image.dcm
 image.raw

@@ -5,7 +5,7 @@ GDCM_INC   = -I$(top_srcdir)/src  -I$(top_builddir)
 SWIG_INC   = $(GLIB_CFLAGS) $(PYTHON_INCLUDES) $(GDCM_INC) 
 INCLUDES   = $(GDCM_INC) $(PYTHON_INCLUDES)
 
-LIBADDS     = $(top_builddir)/src/libgdcm.la
+LIBADDS     = $(top_builddir)/src/libgdcm.la -lstdc++
 
 ### Non default rules
 

@@ -10,7 +10,6 @@ TagElValueHT & gdcmElValSet::GetTagHt(void) {
 }
 
 void gdcmElValSet::Add(gdcmElValue * newElValue) {
-   cout << "#### gdcmElValSet::Add" << newElValue->GetKey() << newElValue->GetName() << endl;
 	tagHt [newElValue->GetKey()]  = newElValue;
 	NameHt[newElValue->GetName()] = newElValue;
 }

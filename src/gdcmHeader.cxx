@@ -730,16 +730,7 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    if( group == 0xfffe )
       SkipLoad = true;
 
-   // The group length doesn't represent data to be loaded in memory, since
-   // each element of the group shall be loaded individualy.
-   if( elem == 0 )
-      //SkipLoad = true;	// modif sauvage JPR
-                        	// On charge la longueur du groupe
-                        	// quand l'element 0x0000 est présent !
-
    if ( SkipLoad ) {
-           // FIXME the following skip is not necessary
-      SkipElementValue(ElVal);
       ElVal->SetLength(0);
       ElVal->SetValue("gdcm::Skipped");
       return;

@@ -3,3 +3,9 @@ gdcm.py
 gdcm_wrap.cpp
 gdcm_wrap.cxx
 gdcm_wrap.doc
+Makefile
+Makefile.in
+*.lo
+*.la
+.libs
+.deps

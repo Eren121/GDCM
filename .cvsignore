@@ -14,3 +14,4 @@ build
 dist
 MANIFEST
 DCMlib*.tar.gz
+gdcm.spec

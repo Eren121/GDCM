@@ -1,3 +1,12 @@
+2003-03-25 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * gdcmPython/Makefile.am fixed linking against libstdc++
+      * gdcmPython/_gdcm.so symbolic link to gdcmPython/.libs/pygdcm.so added.
+      * Swig subdir (historical tests of swig version 1.3.17++) removed
+      * Test/testChangeEntete.cxx some lines commented out in order to make
+        compilation work.
+      * src/gdcmHeader.cxx cleaned up wild JPR's dirty kludge.
+      * src/gdcmElValSet.cxx cleaned up frog's forgotten debug message
+
 2003-03-24 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx gdcmHeader::gdcmHeader now calls LoadElements(),
         hence the user doesn't need this explicit call.
