@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:08 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/10/08 04:43:38 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,20 +16,19 @@
                                                                                 
 =========================================================================*/
 
-#include <fstream>
-
-#include <iostream>
-
 #include "gdcmVR.h"
 #include "gdcmUtil.h"
 #include "gdcmDictSet.h"
 #include "gdcmDebug.h"
 
+#include <fstream>
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 /**
  * \brief Constructor
  */
-gdcmVR::gdcmVR(void) 
+gdcmVR::gdcmVR() 
 {
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_VR);
    std::ifstream from(filename.c_str());
@@ -41,14 +40,14 @@ gdcmVR::gdcmVR(void)
 
    while (!from.eof()) 
    {
-      eatwhite(from);
+      from >> std::ws; // used to be eatwhite(from);
       from.getline(buff, 1024, ' ');
       key = buff;
-      eatwhite(from);
+      from >> std::ws; // used to be eatwhite(from);
       from.getline(buff, 1024, ';');
       name = buff;
 
-      eatwhite(from);
+      from >> std::ws; // used to be eatwhite(from);
       from.getline(buff, 1024, '\n');
 
       if(key!="")
@@ -59,10 +58,12 @@ gdcmVR::gdcmVR(void)
    from.close();
 }
 
+//-----------------------------------------------------------------------------
 /**
  * \brief Destructor
  */
-gdcmVR::~gdcmVR() {
+gdcmVR::~gdcmVR()
+{
    vr.clear();
 }
 
@@ -94,6 +95,7 @@ int gdcmVR::Count(gdcmVRKey key)
    return vr.count(key);
 }
 
+//-----------------------------------------------------------------------------
 /**
  * \brief   Simple predicate that checks wether the given argument
  *          corresponds to the Value Representation of a \ref gdcmBinEntry .
@@ -124,6 +126,7 @@ bool gdcmVR::IsVROfGdcmBinaryRepresentable(gdcmVRKey tested)
    return true;
 }
 
+//-----------------------------------------------------------------------------
 /**
  * \brief   Simple predicate that checks wether the given argument
  *          corresponds to the Value Representation of a \ref gdcmValEntry

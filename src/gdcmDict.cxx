@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2004/10/08 04:43:38 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ gdcmDict::gdcmDict(std::string const & filename)
       from >> element;
       from >> vr;
       from >> fourth;
-      eatwhite(from);
+      from >> std::ws; // used to be eatwhite(from);
       std::getline(from, name);    /// MEMORY LEAK in std::getline<>
 
       gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,

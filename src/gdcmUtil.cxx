@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:08 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2004/10/08 04:43:38 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,25 +18,6 @@
 
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
-#include <stdio.h>
-#include <ctype.h>   // For isspace
-#include <string.h>  // CLEANME: could this be only string ? Related to Win32 ?
-#include <iostream>
-
-/**
- * \ingroup Globals
- * \brief   Because is not yet available in g++2.96
- */
-std::istream& eatwhite(std::istream& is) {
-   char c;
-   while (is.get(c)) {
-      if (!isspace(c)) {
-         is.putback(c);
-         break;
-      }
-   }
-   return is;
-}
 
 /**
  * \ingroup Globals
@@ -44,10 +25,12 @@ std::istream& eatwhite(std::istream& is) {
  */
 void Tokenize (const std::string& str,
                std::vector<std::string>& tokens,
-               const std::string& delimiters) {
+               const std::string& delimiters)
+{
    std::string::size_type lastPos = str.find_first_not_of(delimiters,0);
    std::string::size_type pos     = str.find_first_of    (delimiters,lastPos);
-   while (std::string::npos != pos || std::string::npos != lastPos) {
+   while (std::string::npos != pos || std::string::npos != lastPos)
+   {
       tokens.push_back(str.substr(lastPos, pos - lastPos));
       lastPos = str.find_first_not_of(delimiters, pos);
       pos     = str.find_first_of    (delimiters, lastPos);
@@ -60,18 +43,21 @@ void Tokenize (const std::string& str,
  *        Counts the number of occurences of a substring within a string
  */
  
- int CountSubstring (const std::string& str,
-                     const std::string& subStr) {
+int CountSubstring (const std::string& str,
+                    const std::string& subStr)
+{
    int count = 0;   // counts how many times it appears
    unsigned int x = 0;       // The index position in the string
 
    do
-    { x = str.find(subStr,x);       // Find the substring
+   {
+      x = str.find(subStr,x);       // Find the substring
       if (x != std::string::npos)   // If present
-        { count++;                  // increase the count
-          x += subStr.length();     // Skip this word
-        }
-    }
+      {
+         count++;                  // increase the count
+         x += subStr.length();     // Skip this word
+      }
+   }
    while (x != std::string::npos);  // Carry on until not present
 
    return count;
@@ -83,19 +69,28 @@ void Tokenize (const std::string& str,
  *         to avoid corrupting the terminal of invocation when printing)
  * @param s string to remove non printable characters from
  */
-std::string CreateCleanString(std::string s) {
-   std::string str=s;
+std::string CreateCleanString(std::string s)
+{
+   std::string str = s;
 
    for(unsigned int i=0;i<str.size();i++)
    {
       if(!isprint(str[i]))
+      {
          str[i]='.';
+      }
    }
 
    if(str.size()>0)
+   {
       if(!isprint(s[str.size()-1]))
+      {
          if(s[str.size()-1]==0)
+         {
             str[str.size()-1]=' ';
+         }
+      }
+   }
 
    return str;
 }
@@ -110,7 +105,7 @@ void NormalizePath(std::string &name)
    const char SEPARATOR_X      = '/';
    const char SEPARATOR_WIN    = '\\';
    const std::string SEPARATOR = "/";
-   int size=name.size();
+   int size = name.size();
 
    if((name[size-1]!=SEPARATOR_X)&&(name[size-1]!=SEPARATOR_WIN))
    {
@@ -135,6 +130,7 @@ std::string GetPath(std::string &fullName)
    {
       fullName.resize(pos2);
    }
+
    return fullName;
 }
 
@@ -145,21 +141,27 @@ std::string GetPath(std::string &fullName)
  */
 std::string GetName(std::string &fullName)
 {   
-  int fin=fullName.length()-1;
-  char a =fullName.c_str()[fin];
-  if (a == '/' || a == '\\') {
-     fin--;
-  }
-  int deb = 0;
-  for (int i=fin;i!=0;i--) {
-     if (fullName.c_str()[i] == '/' || fullName.c_str()[i] == '\\')  
-        break;
+   int fin = fullName.length()-1;
+   char a =fullName.c_str()[fin];
+   if (a == '/' || a == '\\')
+   {
+      fin--;
+   }
+   int deb = 0;
+   for (int i=fin;i!=0;i--)
+   {
+      if (fullName.c_str()[i] == '/' || fullName.c_str()[i] == '\\')
+      {
+         break;
+      }
       deb = i;
-  }    
+   }
 
-  std::string lastName;
-  for (int j=deb;j<fin+1;j++)
-    lastName=lastName+fullName.c_str()[j];
+   std::string lastName;
+   for (int j=deb;j<fin+1;j++)
+   {
+      lastName=lastName+fullName.c_str()[j];
+   }
 
   return lastName;
 } 

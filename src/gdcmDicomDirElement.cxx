@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/10/08 04:43:37 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,15 +16,14 @@
                                                                                 
 =========================================================================*/
 
-#include <fstream>
-#include <stdio.h>    // For sprintf
-#include <iostream>
-
 #include "gdcmDicomDirElement.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include "gdcmDictSet.h"
 
+#include <fstream>
+#include <stdio.h>    // For sprintf
+#include <iostream>
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -46,7 +45,7 @@ gdcmDicomDirElement::gdcmDicomDirElement()
 
    while (!from.eof())
    {
-      eatwhite(from);
+      from >> std::ws;  // used to be eatwhite(from);
       from.getline(buff, 1024, ' ');
       type = buff;
 
@@ -56,9 +55,9 @@ gdcmDicomDirElement::gdcmDicomDirElement()
       {
          from >> std::hex >> elem.group >> elem.elem;
 
-         eatwhite(from);
+         from >> std::ws; // used to be eatwhite(from);
          from.getline(buff, 1024, '"');
-         eatwhite(from);
+         from >> std::ws; // Used to be eatwhite(from);
          from.getline(buff, 1024, '"');
          elem.value = buff;
 

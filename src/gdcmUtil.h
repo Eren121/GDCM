@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 21:05:40 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/10/08 04:43:38 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,8 +32,6 @@
  */
 
 //-----------------------------------------------------------------------------
-GDCM_EXPORT std::istream & eatwhite(std::istream & is);
-
 GDCM_EXPORT void Tokenize (const std::string& str,
                           std::vector<std::string>& tokens,
                           const std::string& delimiters = " ");

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/10/08 04:43:38 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,20 +16,18 @@
                                                                                 
 =========================================================================*/
 
-#include <fstream>
-#include <string>
-#include <iostream>
-
 #include "gdcmTS.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 #include "gdcmDictSet.h"
 
-
+#include <fstream>
+#include <string>
+#include <iostream>
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-gdcmTS::gdcmTS(void) 
+gdcmTS::gdcmTS() 
 {
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_TS);
    std::ifstream from(filename.c_str());
@@ -38,13 +36,14 @@ gdcmTS::gdcmTS(void)
    std::string key;
    std::string name;
 
-   while (!from.eof()) {
+   while (!from.eof())
+   {
       from >> key;
 
-      eatwhite(from);
+      from >> std::ws; // used to be eatwhite(from);
       std::getline(from, name);    /// MEMORY LEAK
 
-      if(key!="") 
+      if(key!="")
       {
          ts[key]=name;
       }
@@ -52,6 +51,7 @@ gdcmTS::gdcmTS(void)
    from.close();
 }
 
+//-----------------------------------------------------------------------------
 gdcmTS::~gdcmTS() 
 {
    ts.clear();
@@ -84,8 +84,10 @@ int gdcmTS::Count(TSKey key)
 
 std::string gdcmTS::GetValue(TSKey key) 
 {
-   if (ts.count(key) == 0) 
+   if (ts.count(key) == 0)
+   {
       return GDCM_UNFOUND;
+   }
    return ts[key];
 }
 
