@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.89 2003/09/24 13:52:46 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.90 2003/09/24 16:18:32 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -55,7 +55,10 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
    Initialise();
    if ( !OpenFile(exception_on_error))
       return;
+printf ("avant ParseHeader\n");
    ParseHeader();
+printf ("avant LoadElements\n");
+
    LoadElements();
    CloseFile();
 }
@@ -1183,7 +1186,7 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    g = ReadInt16();
    n = ReadInt16();
    
-   if ( (g==0x7fe0) && (n==0x0010) ) 
+   //if ( (g==0x7fe0) && (n==0x0010) ) 
    
    if (errno == 1)
       // We reached the EOF (or an error occured) and header parsing
@@ -1198,7 +1201,7 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
       return (gdcmElValue *)0;
    }
    NewElVal->SetOffset(ftell(fp));  
-   if ( (g==0x7fe0) && (n==0x0010) ) 
+   //if ( (g==0x7fe0) && (n==0x0010) ) 
    return NewElVal;
 }
 
