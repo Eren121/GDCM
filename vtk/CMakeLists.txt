@@ -48,3 +48,5 @@ TARGET_LINK_LIBRARIES(vtkgdcmViewer
 
 # Install vtk header
 INSTALL_FILES(/include FILES vtkGdcmReader.h)
+
+INSTALL_TARGETS(/lib/ vtkgdcm)
