@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 21:52:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/01/14 23:57:06 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@ int TestDirList(int , char* [])
    std::string path = GDCM_DATA_ROOT;
    std::cerr << path << std::endl;
 
-   gdcm::DirList list(path);
+   gdcm::DirList list(path, true);
    list.Print();
 
    return 0;
