@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 16:24:31 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/11/30 16:29:01 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,7 +121,7 @@ void BinEntry::WriteContent(std::ofstream* fp, FileType filetype)
    else
    {
     // nothing was loaded, but we need to skip space on disc
-      fp->seekp(lgr, std::ios_base::cur);
+      fp->seekp(lgr, std::ios::cur);
    }
 }
 //-----------------------------------------------------------------------------
