@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:55:57 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2005/01/08 23:00:23 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -349,6 +349,13 @@ typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
 #include <linux/if.h>
 #endif
 
+#ifdef __FreeBSD__
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <ifaddrs.h>
+#include <net/if_dl.h>
+#endif
+
 #ifdef __HP_aCC
 #include <netio.h>
 #endif
@@ -687,47 +694,85 @@ long GetMacAddrSys ( u_char *addr)
 #endif //_WIN32
 
 /* implementation for Linux */
-// FreeBSD might be similar ??
 #ifdef __linux__
-    struct ifreq ifr;
-    struct ifreq *IFR;
-    struct ifconf ifc;
-    char buf[1024];
-    int s, i;
-    int ok = 0;
+   struct ifreq ifr;
+   struct ifreq *IFR;
+   struct ifconf ifc;
+   char buf[1024];
+   int s, i;
+   int ok = 0;
 
-    s = socket(AF_INET, SOCK_DGRAM, 0);
-    if (s==-1) {
-        return -1;
-    }
+   s = socket(AF_INET, SOCK_DGRAM, 0);
+   if (s==-1) {
+       return -1;
+   }
 
-    ifc.ifc_len = sizeof(buf);
-    ifc.ifc_buf = buf;
-    ioctl(s, SIOCGIFCONF, &ifc);
+   ifc.ifc_len = sizeof(buf);
+   ifc.ifc_buf = buf;
+   ioctl(s, SIOCGIFCONF, &ifc);
  
-    IFR = ifc.ifc_req;
-    for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++) {
+   IFR = ifc.ifc_req;
+   for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++) {
 
-        strcpy(ifr.ifr_name, IFR->ifr_name);
-        if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0) {
-            if (! (ifr.ifr_flags & IFF_LOOPBACK)) {
-                if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0) {
-                    ok = 1;
-                    break;
-                }
-            }
-        }
-    }
+       strcpy(ifr.ifr_name, IFR->ifr_name);
+       if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0) {
+           if (! (ifr.ifr_flags & IFF_LOOPBACK)) {
+               if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0) {
+                   ok = 1;
+                   break;
+               }
+           }
+       }
+   }
 
-    close(s);
-    if (ok) {
-        bcopy( ifr.ifr_hwaddr.sa_data, addr, 6);
-    }
-    else {
-        return -1;
-    }
-    return 0;
+   close(s);
+   if (ok) {
+       bcopy( ifr.ifr_hwaddr.sa_data, addr, 6);
+   }
+   else {
+       return -1;
+   }
+   return 0;
 #endif
+
+/* implementation for FreeBSD */
+#ifdef __FreeBSD__
+   struct ifaddrs *ifap, *ifaphead;
+   int rtnerr;
+   const struct sockaddr_dl *sdl;
+   caddr_t ap;
+   int alen;
+ 
+   rtnerr = getifaddrs(&ifaphead);
+   if (rtnerr) {
+     //perror(NULL);
+     return -1;
+   }
+ 
+   for (ifap = ifaphead; ifap; ifap = ifap->ifa_next) {
+ 
+     if (ifap->ifa_addr->sa_family == AF_LINK) {
+       sdl = (const struct sockaddr_dl *) ifap->ifa_addr;
+       ap = ((caddr_t)((sdl)->sdl_data + (sdl)->sdl_nlen));
+       alen = sdl->sdl_alen;
+       if (ap && alen > 0) {
+         int i;
+ 
+         //printf ("%s:", ifap->ifa_name);
+         //for (i = 0; i < alen; i++, ap++)
+           {
+           //printf("%c%02x", i > 0 ? ':' : ' ', 0xff&*ap);
+           }
+         bcopy( ap, addr, 6);
+         //putchar('\n');
+       }
+     }
+   }
+   //putchar('\n');
+ 
+   freeifaddrs(ifaphead);
+   return 0;
+#endif //FreeBSD
 
 /* implementation for HP-UX */
 #ifdef __HP_aCC
@@ -832,6 +877,8 @@ std::string Util::GetMACAddress()
 {
    // This is a rip from: http://cplus.kompf.de/macaddr.html for Linux, HPUX and AIX 
    // and http://tangentsoft.net/wskfaq/examples/src/snmpmac.cpp for windows version
+   // and http://groups-beta.google.com/group/sol.lists.freebsd.hackers/msg/0d0f862e05fce6c0 for the FreeBSD version
+   // and http://developer.apple.com/samplecode/GetPrimaryMACAddress/GetPrimaryMACAddress.html for MacOSX version
    long stat;
    u_char addr[6];
    std::string macaddr;
