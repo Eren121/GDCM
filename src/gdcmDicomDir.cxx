@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/27 15:48:44 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2004/08/30 16:15:40 $
+  Version:   $Revision: 1.66 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,10 +53,8 @@ gdcmDicomDir::gdcmDicomDir()
    :gdcmDocument( )
 { 
    Initialize();  // sets all private fields to NULL
-
-   std::string pathBidon = "Bidon"; // Sorry, NULL not allowed ...
-   SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
-   AddDicomDirMeta();
+   std::string pathBidon = "Bidon"; // Sorry, NULL not allowed ...   
+   metaElems = NewMeta();
 }
 
 /**
@@ -341,7 +339,7 @@ void gdcmDicomDir::SetEndMethodArgDelete(gdcmMethod *method)
  
 bool gdcmDicomDir::Write(std::string const & fileName) 
 {  
-   uint16_t sq[5] = { 0x0004, 0x1220, 0x0000, 0xffff, 0xffff };
+   uint16_t sq[4] = { 0x0004, 0x1220, 0xffff, 0xffff };
    uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0xffff, 0xffff };
 
    FILE * fp = fopen(fileName.c_str(), "wb");
@@ -363,10 +361,7 @@ bool gdcmDicomDir::Write(std::string const & fileName)
    ptrMeta->Write(fp, gdcmExplicitVR);
    
    // force writing 0004|1220 [SQ ], that CANNOT exist within gdcmDicomDirMeta
-   fwrite(&sq[0],4,1,fp);  // 0004 1220 
-   //fwrite("SQ"  ,2,1,fp);  // SQ  // VR no written for 'No length' Sequences !
-   //fwrite(&sq[2],6,1,fp);  // 00 ffffffff
-   fwrite(&sq[3],4,1,fp);  // ffffffff 
+   fwrite(&sq[0],8,1,fp);  // 0004 1220 ffff ffff
         
    for(ListDicomDirPatient::iterator cc = patients.begin();cc!=patients.end();++cc)
    {
@@ -418,6 +413,7 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
                       "failure in new Header ",
                       it->c_str() );
       }
+      
       if( header->IsReadable() )
       {
          // Add the file header to the chained list:
@@ -425,6 +421,7 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
          dbg.Verbose( 1,
                       "gdcmDicomDir::CreateDicomDirChainedList: readable ",
                       it->c_str() );
+
        }
        else
        {
@@ -432,14 +429,12 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string const & path)
        }
        count++;
    }
-
    // sorts Patient/Study/Serie/
    std::sort(list.begin(), list.end(), gdcmDicomDir::HeaderLessThan );
-
    std::string tmp = fileList.GetDirName();
       
    //for each Header of the chained list, add/update the Patient/Study/Serie/Image info
-   SetElements(tmp, list);      
+   SetElements(tmp, list);
    CallEndMethod();
 }
 
@@ -467,13 +462,9 @@ gdcmDicomDirMeta * gdcmDicomDir::NewMeta()
    }
    else  // after root directory parsing
    {
-     //cout << "gdcmDicomDir::NewMeta avec FillObject" << endl;
      std::list<gdcmElement> elemList;
      elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirMetaElements();
      m->FillObject(elemList);
-     // we create the Sequence manually
-     //gdcmSeqEntry *se =NewSeqEntryByNumber(0x0004, 0x1220); // NOT YET!
-     //m->AddEntry(se);
     }
    m->SetSQItemNumber(0); // To avoid further missprinting
    return m;  
@@ -492,13 +483,6 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient()
 
    std::list<gdcmElement> elemList;   
    elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements(); 
-// Looks nice, but gdcmDicomDir IS NOT a gdcmObject ... 
-//   gdcmDicomDirPatient *p = new gdcmDicomDirPatient(ptagHT);
-//   FillObject(elemList);
-//   patients.push_front( p );
-//   return p;    
-/// \todo TODO : find a trick to use FillObject !!!
-
    gdcmSQItem *s = new gdcmSQItem(0);
 
    // for all the DicomDirPatient Elements      
@@ -580,7 +564,6 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
   
       case GDCM_DICOMDIR_META:
          elemList = gdcmGlobal::GetDicomDirElements()->GetDicomDirMetaElements();
-         // add already done ?
          break;
 
       default:
@@ -670,8 +653,8 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
       {
-         std::cout << " special Treatment for GDCM_DICOMDIR_META" << std::endl;
-         entry->Print(); // just to see 
+         std::cout << "GDCM_DICOMDIR_META ?!? should never print that" 
+                   << std::endl;
       }
       si->AddEntry(entry);
    }
@@ -973,6 +956,8 @@ void gdcmDicomDir::SetElements(std::string &path, VectDocument &list)
  */
 bool gdcmDicomDir::HeaderLessThan(gdcmDocument *header1, gdcmDocument *header2)
 {
+
+std::cout <<header1->GetFileName() << " " << header2->GetFileName() <<std::endl;
    return *header1 < *header2;
 }
 
