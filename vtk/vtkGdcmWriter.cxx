@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/09 17:08:36 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/12/10 08:34:08 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.6 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.7 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -106,28 +106,29 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
 
    str.str("");
    str << dim[0];
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0011);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0011); // Columns
 
    str.str("");
    str << dim[1];
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0010);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0010); // Rows
 
    if(dim[2]>1)
    {
       str.str("");
       str << dim[2];
-      file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0012);
+      //file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0012); // Planes
+      file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0008); // Number of Frames
    }
 
    // Pixel type
    str.str("");
    str << image->GetScalarSize()*8;
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0100);
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0101);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0100); // Bits Allocated
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << image->GetScalarSize()*8-1;
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0102);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0102); // High Bit
 
    // Pixel Repr
    // FIXME : what do we do when the ScalarType is 
@@ -144,39 +145,39 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
    {
       str << "1"; // Signed
    }
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0103);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Samples per pixel
    str.str("");
    str << image->GetNumberOfScalarComponents();
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0002);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0002); // Samples per Pixel
 
    // Spacing
    double *sp = image->GetSpacing();
 
    str.str("");
    str << sp[0] << "\\" << sp[1];
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0030);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x0030); // Pixel Spacing
    str.str("");
    str << sp[2];
-   file->ReplaceOrCreateByNumber(str.str(),0x0018,0x0088);
+   file->ReplaceOrCreateByNumber(str.str(),0x0018,0x0088); // Spacing Between Slices
 
    // Origin
    double *org = image->GetOrigin();
 
    str.str("");
    str << org[0] << "\\" << org[1] << "\\" << org[2];
-   file->ReplaceOrCreateByNumber(str.str(),0x0020,0x0032);
+   file->ReplaceOrCreateByNumber(str.str(),0x0020,0x0032); // Image Position Patient
 
    // Window / Level
    double *rng=image->GetScalarRange();
 
    str.str("");
    str << rng[1]-rng[0];
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x1051);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x1051); // Window Width
    str.str("");
    str << (rng[1]+rng[0])/2.0;
-   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x1050);
+   file->ReplaceOrCreateByNumber(str.str(),0x0028,0x1050); // Window Center
 
    // Pixels
    unsigned char *data;
