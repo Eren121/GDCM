@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/03/04 09:53:21 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/03/09 19:29:38 $
+  Version:   $Revision: 1.58 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,6 +101,8 @@ public:
 
    // Write
    bool WriteDicomDir(std::string const &fileName);
+
+   bool AnonymizeDicomDir();
 
    /// Types of the DicomDirObject within the DicomDir
    typedef enum

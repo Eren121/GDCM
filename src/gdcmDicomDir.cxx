@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/04 10:01:56 $
-  Version:   $Revision: 1.135 $
+  Date:      $Date: 2005/03/09 19:29:38 $
+  Version:   $Revision: 1.136 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -478,6 +478,44 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
    return true;
 }
 
+/**
+ * \brief    Anonymize a DICOMDIR
+ * @return true 
+ */
+ 
+bool DicomDir::AnonymizeDicomDir() 
+{
+   ValEntry *v;
+   // Something clever to be found to forge the Patient names
+   std::ostringstream s;
+   int i = 1;
+   for(ListDicomDirPatient::iterator cc = Patients.begin();
+                                     cc!= Patients.end();
+                                   ++cc)
+   {
+      s << i;
+      v = (*cc)->GetValEntry(0x0010, 0x0010) ; // Patient's Name
+      if (v)
+      {
+         v->SetValue(s.str());
+      }
+
+      v = (*cc)->GetValEntry(0x0010, 0x0020) ; // Patient ID
+      if (v)
+      {
+         v->SetValue(" ");
+      }
+
+      v = (*cc)->GetValEntry(0x0010, 0x0030) ; // Patient's BirthDate
+      if (v)
+      {
+         v->SetValue(" ");
+      }
+      s << "";
+      i++;
+   }
+   return true;
+}
 //-----------------------------------------------------------------------------
 // Protected
 /**
@@ -643,7 +681,7 @@ void DicomDir::CreateDicomDir()
       }
       else
       {
-         gdcmWarningMacro( "Not a ValEntry.");
+         gdcmWarningMacro( "(0004,1430) not a ValEntry ?!?");
          continue;
       }
 
