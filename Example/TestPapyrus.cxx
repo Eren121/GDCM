@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:26:17 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/20 13:28:23 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,8 @@
 #include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
+#include "gdcmDebug.h"
+#include "gdcmUtil.h"
 
 //#include <fstream>
 
@@ -66,19 +68,20 @@ bool RemoveFile(const char* source)
 // and we don't perform any integrity check
 // ----------------------------------------------------------------------
 
-// TODO : finish writing the program !
-
 int main(int argc, char* argv[])
 {
    if (argc < 3)
    {
       std::cerr << "Usage :" << std::endl << 
-      argv[0] << " input_papyrus output_dicom" << std::endl;
+      argv[0] << " input_papyrus output_dicom verbose" << std::endl;
       return 1;
    }
 
    std::string filename = argv[1];
    std::string output = argv[2];
+
+   if (argc > 3)
+      gdcm::Debug::SetDebugOn();
 
    if( FileExists( output.c_str() ) )
    {
@@ -108,17 +111,19 @@ int main(int argc, char* argv[])
       delete h;
       return 1;
    }
-
-// Get informations on the file : 
-//  Modality, Transfer Syntax, Study Date, Study Time
-// Patient Name, etc
       
    std::string TransferSyntax;
    std::string StudyDate;
    std::string StudyTime;
    std::string Modality;
    std::string PatientName;
+   std::string MediaStSOPinstUID;
 
+// Get informations on the file : 
+//  Modality, Transfer Syntax, Study Date, Study Time
+// Patient Name, Media Storage SOP Instance UID, etc
+
+   MediaStSOPinstUID   =   h->GetEntry(0x0002,0x0002);
    TransferSyntax      =   h->GetEntry(0x0002,0x0010);
    StudyDate           = sqi->GetEntry(0x0008,0x0020);
    StudyTime           = sqi->GetEntry(0x0008,0x0030);
@@ -134,14 +139,7 @@ int main(int argc, char* argv[])
    std::string BitsStored;
    std::string HighBit;
    std::string PixelRepresentation;
-
-   // just convert those needed to compute PixelArea length
-   int iRows            = (uint32_t) atoi( Rows.c_str() );
-   int iColumns         = (uint32_t) atoi( Columns.c_str() );
-   int iSamplesPerPixel = (uint32_t) atoi( SamplesPerPixel.c_str() );
-   int iBitsAllocated   = (uint32_t) atoi( BitsAllocated.c_str() );
-
-   int lgrImage = iRows*iColumns * iSamplesPerPixel * (iSamplesPerPixel/8);
+   
 
    // we brutally suppose all the images within a Papyrus file
    // have the same caracteristics.
@@ -158,6 +156,14 @@ int main(int argc, char* argv[])
    HighBit             = sqi->GetEntry(0x0028,0x0102);
    PixelRepresentation = sqi->GetEntry(0x0028,0x0102);
 
+   // just convert those needed to compute PixelArea length
+   int iRows            = (uint32_t) atoi( Rows.c_str() );
+   int iColumns         = (uint32_t) atoi( Columns.c_str() );
+   int iSamplesPerPixel = (uint32_t) atoi( SamplesPerPixel.c_str() );
+   int iBitsAllocated   = (uint32_t) atoi( BitsAllocated.c_str() );
+
+   int lgrImage = iRows*iColumns * iSamplesPerPixel * (iBitsAllocated/8);
+
    // compute number of images
    int nbImages = 0;
    while (sqi)
@@ -171,7 +177,7 @@ int main(int argc, char* argv[])
 
    uint8_t *PixelArea = new uint8_t[lgrImage*nbImages];
    uint8_t *currentPosition = PixelArea;
-   gdcm::BinEntry *pixels;
+  gdcm::BinEntry *pixels;
 
    // declare and open the file
    std::ifstream *Fp;
@@ -210,34 +216,42 @@ int main(int argc, char* argv[])
       currentPosition +=lgrImage;
 
       std::string previousRowNb = Rows;
+
       sqi =  seqPapyrus->GetNextSQItem();
    }
 
    // build up a new File, with file info + images info + global pixel area.
 
+   std::string NumberOfFrames = gdcm::Util::Format("%d", nbImages); 
+
    gdcm::Header *n = new gdcm::Header();
    n->InitializeDefaultHeader();
 
-   n->SetEntry(TransferSyntax,     0x0002,0x0010);
-   n->SetEntry(StudyDate,          0x0008,0x0020);
-   n->SetEntry(StudyTime,          0x0008,0x0030);
-   n->SetEntry(Modality,           0x0008,0x0060);
-   n->SetEntry(PatientName,        0x0010,0x0010);
+   n->ReplaceOrCreate(MediaStSOPinstUID,  0x0002,0x0002);
+  // Whe keep default gdcm Transfer Syntax (Explicit VR Little Endian)
+  // since using Papyrus one (Implicit VR Little Endian) is a mess
+   //n->ReplaceOrCreate(TransferSyntax,     0x0002,0x0010);
+   n->ReplaceOrCreate(StudyDate,          0x0008,0x0020);
+   n->ReplaceOrCreate(StudyTime,          0x0008,0x0030);
+   n->ReplaceOrCreate(Modality,           0x0008,0x0060);
+   n->ReplaceOrCreate(PatientName,        0x0010,0x0010);
 
-   n->SetEntry(SamplesPerPixel,    0x0028,0x0002);
-   n->SetEntry(Rows,               0x0028,0x0010);
-   n->SetEntry(Columns,            0x0028,0x0011);
-   n->SetEntry(BitsAllocated,      0x0028,0x0100);
-   n->SetEntry(BitsStored,         0x0028,0x0101);
-   n->SetEntry(HighBit,            0x0028,0x0102);
-   n->SetEntry(PixelRepresentation,0x0028,0x0102);
+   n->ReplaceOrCreate(SamplesPerPixel,    0x0028,0x0002);
+   n->ReplaceOrCreate(NumberOfFrames,     0x0028,0x0008);
+   n->ReplaceOrCreate(Rows,               0x0028,0x0010);
+   n->ReplaceOrCreate(Columns,            0x0028,0x0011);
+   n->ReplaceOrCreate(BitsAllocated,      0x0028,0x0100);
+   n->ReplaceOrCreate(BitsStored,         0x0028,0x0101);
+   n->ReplaceOrCreate(HighBit,            0x0028,0x0102);
+   n->ReplaceOrCreate(PixelRepresentation,0x0028,0x0102);
 
    // create the file
    gdcm::File *file = new gdcm::File(n);
 
-   file->SetImageData(PixelArea,lgrImage);
+   file->SetImageData(PixelArea,lgrImage*nbImages);
    file->SetWriteTypeToDcmExplVR();
 
+   //file->SetPrintLevel(2);
    file->Print();
 
    // Write the file
@@ -247,28 +261,5 @@ int main(int argc, char* argv[])
       std::cout <<"Fail to open (write) file:[" << argv[2]<< "]" << std::endl;;
       return 1;  
    }
-/*    
-  std::ofstream *fp2;
-  fp2 =  new std::ofstream(argv[2], std::ios::out | std::ios::binary );
-  
-  if (!fp2)
-  {
-      std::cout <<"Fail to open (write) file:" << argv[2]  << std::endl;;
-      return 1;  
-  }
-   if( !fp2->write((char *)PixelArea, lgrImage) )
-   {
-      std::cout << "Failed\n"
-                << "File in unwrittable :["
-                << argv[2] << "]" << std::endl;
- 
-      delete fp2;
-      delete n;
-      delete[] PixelArea;
-      return 1;
-   }
-   fp2->close();
- */
- 
    return 0;
 }
