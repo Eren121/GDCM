@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MT /w /W0 /GX /O2 /I "$(CREATIS)\python22\include" /I "..\..\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /c
+# ADD CPP /nologo /MT /w /W0 /GX /O2 /I "$(CREATIS)\python22\include" /I "..\..\src" /I "..\..\src\jpeg\libijg8" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
@@ -57,7 +57,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=move          $(ProjDir)\gdcm.py          $(ProjDir)\..\ 
+PostBuild_Cmds=move           $(ProjDir)\gdcm.py           $(ProjDir)\..\ 
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmpyembedded - Win32 Debug"
@@ -74,7 +74,7 @@ PostBuild_Cmds=move          $(ProjDir)\gdcm.py          $(ProjDir)\..\
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /w /W0 /Gm /GX /ZI /I "$(CREATIS)\python22\include" /I "..\..\src" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /w /W0 /Gm /GX /ZI /I "..\..\src\jpeg\libijg8" /I "$(CREATIS)\python22\include" /I "..\..\src" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMPYembedded_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=mv          $(ProjDir)\gdcm.py          $(ProjDir)\..\ 
+PostBuild_Cmds=mv           $(ProjDir)\gdcm.py           $(ProjDir)\..\ 
 # End Special Build Tool
 
 !ENDIF 
@@ -177,11 +177,203 @@ SOURCE=..\..\src\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmJpegIdo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmTS.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmUtil.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\gdcmVR.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcapimin.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcapistd.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jccoefct.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jccolor.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcdctmgr.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jchuff.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcinit.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcmainct.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcmarker.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcmaster.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcomapi.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcparam.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcphuff.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcprepct.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jcsample.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jctrans.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdapimin.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdapistd.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdatadst.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdatasrc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdcoefct.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdcolor.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jddctmgr.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdhuff.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdinput.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdmainct.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdmarker.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdmaster.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdmerge.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdphuff.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdpostct.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdsample.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jdtrans.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jerror.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jfdctflt.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jfdctfst.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jfdctint.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jidctflt.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jidctfst.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jidctint.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jidctred.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jmemmgr.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jmemnobs.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jquant1.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jquant2.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\jpeg\libijg8\jutils.c
 # End Source File
 # End Group
 # Begin Group "Header Files"

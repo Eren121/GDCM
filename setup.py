@@ -65,13 +65,14 @@ VTK_LIB_DIR=os.path.join(VTK_PATH,"lib","vtk")
 vtkSources = []
 vtkSources.extend(glob.glob(os.path.join(gdcmvtkSrcDir,"vtk*.cxx")))
 vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
+vtkSources.extend(Jpeg8Sources)
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",
               "vtkFiltering","vtkFilteringPython"]
 
 ##### 
 setup(name=ThisModule,
-      version="0.2",
+      version="0.3",
       description="...",
       author="frog",
       author_email="frog@creatis.insa-lyon.fr",
@@ -82,7 +83,7 @@ setup(name=ThisModule,
       cmdclass={'build_ext':build_extWrap}, # redirects default build_ext
       ext_modules=[SwigExtension(name='_gdcm',
                                  sources=Sources,
-                                 include_dirs=[gdcmSrcDir],
+                                 include_dirs=[gdcmSrcDir,gdcmJpeg8SrcDir],
                                  libraries=libraries,
                                  define_macros=macros,
                                  swig_cpp=1,

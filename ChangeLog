@@ -1,3 +1,7 @@
+2003-07-03  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * setup.py : adding include dir of jpeg lib to compile all sources
+      * */Win32/*.dsp : JPR fix for windows compilation
+
 2003-07-02  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/jpeg/libijg8/jconfig.* : JPR bug fix : now compile on both
         linux and WINDOWS !
