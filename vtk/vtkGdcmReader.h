@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.8 2003/07/07 09:10:33 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.9 2003/07/07 10:06:36 regrain Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
@@ -44,6 +44,13 @@ private:
   // List of filenames to be read in order to build a stack of images
   // or volume. The order in the list shall be the order of the images.
   std::list<std::string> FileNameList;
+
+  // List of filenames created in ExecuteInformation and used in
+  // ExecuteData.
+  // If FileNameList isn't empty, InternalFileNameList is a copy of
+  //    FileNameList
+  // Otherwise, InternalFileNameList correspond to the list of 
+  //    files patterned
   std::list<std::string> InternalFileNameList;
 
   size_t LoadImageInMemory(std::string FileName, unsigned char * Dest,

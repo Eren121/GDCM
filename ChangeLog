@@ -1,10 +1,11 @@
 2003-07-07  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader.[cxx|h] : bug fix when loading only one file.
         We were obtaining error message from vtk. Now, creation of file list
-        is made in an internal list to prevent this problem. 
+        is made in an internal list to prevent this problem.
         Bug fix when output is empty.
         Bug fix in update of progress value. Previous commit for this was a bad
         correction.
+      * vtk/vtkGdcmReader.h : adding comments for InternalFileNaleList variable
 
 2003-07-04  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmHeader.h : added method to get the file name
