@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.62 2003/05/06 15:52:13 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.63 2003/05/07 12:21:17 frog Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -29,7 +29,8 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
   SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
   filename = InFilename;
   Initialise();
-  OpenFile(exception_on_error);
+  if ( !OpenFile(exception_on_error))
+     return;
   ParseHeader();
   LoadElements();
   CloseFile();
@@ -43,7 +44,7 @@ bool gdcmHeader::OpenFile(bool exception_on_error)
       throw gdcmFileError("gdcmHeader::gdcmHeader(const char *, bool)");
   }
   else
-    dbg.Error(!fp, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
+    dbg.Verbose(0, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
   if ( fp )
      return true;
   return false;
