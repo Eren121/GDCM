@@ -309,6 +309,7 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
   int comp, ci /* , yoffset */ ;
   JSAMPARRAY buffer[MAX_COMPONENTS];
   jpeg_component_info *compptr;
+  (void)input_buf;
 
   /* Align the virtual buffers for the components used in this scan.
    * NB: during first pass, this is safe only because the buffers will
