@@ -1,3 +1,23 @@
+2005-01-15 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+    * ADD DicomDir, DicomDirPatient, DicomDirStudy, DicomDirSerie, DicomDirImage
+	       related methods, in order not to expose internal mechanisms
+        InitTraversal();
+        GetNextEntry();			     	 
+	 * REM methods that exposed internal mechanisms :
+        DicomDir::GetDicomDirPatients()
+        DicomDirPatient::GetDicomDirStudies()
+        DicomDirStudy::GetDicomDirSeries()
+        DicomDirSerie::GetDicomDirImages()
+	 * UPD Test programs :
+	     makeDicomDir.cxx
+	     BuildUpDicomDir.cxx
+	     TestDicomDir.cxx
+	  * UPD Example program
+	     PrintDicomDir.cxx
+    * ADD DictSet methods
+        InitTraversal()
+        GetNextEntry()
+
 2005-01-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Removed the Print/indent/default parameter mess. There is absolutely no
 	 reason to have to methods, moreover with the second takeing the ostream as
@@ -136,7 +156,7 @@
          Dict::GetDictEntryNamesByCategory()
          DictSet::GetPubDictEntryNames()
          DictSet::GetPubDictEntryNamesByCategory()			
-	* ENH : New Dicom Dictionnary (with Value Multiplicity) is now used 	
+	* ENH : New Dicom Dictionary (with Value Multiplicity) is now used 	
 	* ENH : Use dicomTS.dic as described in 2004 version	
 	* ENH : Removal out of the Dicom Dictionary of non dicom 'fourth' field
            Add         to the Dicom Dictionary of Dicom 'Value Multiplicity' field
@@ -815,7 +835,7 @@
     necesseray. No need to rename file by hand what so ever. CMake handle the
     copying of the file within different directory, configure header file to
     modify some symbol. The only addition made to ijg wasd a mangle table so
-    that symbol are different wether we are within 8bits or 12bits.
+    that symbol are different whether we are within 8bits or 12bits.
 
 2004-10-01 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Added documentation of vtkgdcmReader on Website:
@@ -896,7 +916,7 @@
   * src/gdcmCommon.h, gdcmDocument.cxx: doxygen typos
 
 2004-09-17 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
-  * ENH: added some utility method that builds a flat dictionnary
+  * ENH: added some utility method that builds a flat dictionary
     holding all the Dicom entries contained in the recursive structure
     of a gdcmElementSet. Refer to add FlatHashTablePrint.cxx for 
     an example of usage.
@@ -1870,7 +1890,7 @@
              IterHT  GetHeaderEntrySameNumber(grPixel,numPixel);
         to get *all* the Header Entries with the same tag.
         GetHeaderEntrySameName is probabely *useless* 
-        (no meaning : Name is *not* an identifier within the Dictionnary)
+        (no meaning : Name is *not* an identifier within the Dictionary)
 
 2004-01-26 Benoit Regrain
      * Bug fix in the print of hexadecimal representations. Remove long fields 
@@ -1941,9 +1961,9 @@
 2004-01-12 Benoit Regrain
      * src/*.h : add comments
      * src/gdcmDictSet.h : set the method BuildDictPath in public
-     * src/gdcmTS.cxx, gdcmVR.cxx : use now a dictionnary file other than to be
+     * src/gdcmTS.cxx, gdcmVR.cxx : use now a dictionary file other than to be
        directly setted in the source code
-     * Dicts/dicomTS.dic, dicomVR.dic : 2 new dictionnary files loaded by
+     * Dicts/dicomTS.dic, dicomVR.dic : 2 new dictionary files loaded by
        gdcmTS and gdcmVR
 
 2004-01-09 Benoit Regrain
@@ -2789,7 +2809,7 @@
       * src/gdcm.h, gdcmHeader.cxx, gdcmDictSet.cxx:
         - gdcmHeader::GetPubTagNames and  gdcmHeader::GetPubTagNamesByCategory
           whose purpose is to publish the content of the TagNames of the
-          Dicom public dictionnary were not accessible without an
+          Dicom public dictionary were not accessible without an
           instance of class gdcmHeader.
         - those methods are now static methods of gdcmDictSet and hence
           require no instances at all to be invocated.
