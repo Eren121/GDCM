@@ -119,7 +119,8 @@ public:
 	
 	// fabrique une ligne de Dictionnaire Dicom à partir des parametres en entrée
 
-	gdcmDictEntry(guint16 group, guint16 element,
+	gdcmDictEntry(guint16 group, 
+			  guint16 element,
 	              string vr     = "Unknown",
 	              string fourth = "Unknown",
 	              string name   = "Unknown");
@@ -128,14 +129,14 @@ public:
 
 	static TagKey TranslateToKey(guint16 group, guint16 element);
 	
-	guint16 GetGroup(void)  { return group;};
+	guint16 GetGroup(void)  { return group; };
 	guint16 GetElement(void){return element;};
-	string  GetVR(void)     {return vr; };
+	string  GetVR(void)     {return vr;     };
 	void    SetVR(string);
 	bool    IsVrUnknown(void);
 	string  GetFourth(void) {return fourth;};
-	string  GetName(void)   {return name;};
-	string  GetKey(void)    {return key;};
+	string  GetName(void)   {return name;  };
+	string  GetKey(void)    {return key;   };
 };
   
 //
@@ -151,7 +152,7 @@ public:
 // combined with all software versions...
 
 typedef map<TagKey, gdcmDictEntry*> TagHT;
-	// Table de Hachage  (group,Elem) --> pointeur vers une ligne du Dictionnaire Dicom
+	// Table de Hachage : (group,Elem) --> pointeur vers une ligne du Dictionnaire Dicom
 
 typedef map<TagKey, gdcmDictEntry*> TagHT;
 
@@ -212,6 +213,7 @@ public:
 	//
 	// Question : ne faudra-t-il pas mettre LE dictionnaire DICOM dans un Directory
 	// et les eventuels 'dictionnaires prives' dans un autre?
+	// (pour eviter a un utilisateur mal dégourdi de tout saccager ?)
 	//
 	int LoadDicomV3Dict(void);
 	void Print(ostream&);
@@ -255,6 +257,7 @@ public:
 	void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };
 
 	bool   IsVrUnknown(void) { return entry->IsVrUnknown(); };
+	
 	void SetLength(guint32 l){ LgrElem = l; };
 	void SetValue(string val){ value = val; };
 	void SetOffset(size_t of){ Offset = of; };
@@ -292,6 +295,7 @@ public:
 	void Add(ElValue*);		
 	void Print(ostream &);
 	void PrintByName(ostream &);
+	int  Write(FILE *fp);
 	ElValue* GetElementByNumber(guint32 group, guint32 element);
 	ElValue* GetElementByName  (string);
 	string   GetElValueByNumber(guint32 group, guint32 element);
@@ -350,8 +354,8 @@ private:
 	ElValSet ShaElVals;         // parsed with Shadow Dictionary
 	string filename;            // refering underlying file
 	FILE * fp;
-	// The tag Image Location ((0028,0200) containing the address of
-	// the pixels) is not allways present. Then we store this information
+	// The tag Image Location (0028,0200) - containing the address of
+	// the pixels - is not allways present. Then we store this information
 	
 	// FIXME
 	
@@ -441,7 +445,7 @@ public:
 	// TODO Swig int SetShaDict(string filename);
 
 	// Retrieve all potentially available tag [tag = (group, element)] names
-	// from the standard (or public) dictionary. Typical usage: enable the
+	// from the standard (or public) dictionary. Typical usage : enable the
 	// user of a GUI based interface to select his favorite fields for sorting
 	// or selecting.
 	list<string> * GetPubTagNames(void);
@@ -482,21 +486,22 @@ public:
 	int SetShaElValByName(string content, string ShadowTagName);
 	int SetShaElValByNumber(string content, guint16 group, guint16 element);
 
+	ElValSet GetPubElVals() { return(PubElVals); }
 };
 
 //
 // ---------------------------------------------------- gdcmFile
 //
 //	un fichier EST_UNE entete, ou A_UNE entete ?
-//
-//
+// 
+//	On dit 'EST_UNE' ...
 
 
 ////////////////////////////////////////////////////////////////////////////
 // In addition to Dicom header exploration, this class is designed
 // for accessing the image/volume content. One can also use it to
 // write Dicom files.
-////// QUESTION: this looks still like an open question wether the
+////// QUESTION: this looks still like an open question whether the
 //////           relationship between a gdcmFile and gdcmHeader is of
 //////           type IS_A or HAS_A !
 
@@ -557,7 +562,13 @@ public:
 	
 	// Allocates ExpectedSize bytes of memory at this->Data and copies the
 	// pointed data to it.
+	
+	// Question :
+	// Pourquoi dupliquer les pixels, alors qu'on les a deja en mémoire,
+	// et que Data (dans le gdcmHeader) est un pointeur ?
+	
 	// TODO Swig int SetImageData(void * Data, size_t ExpectedSize);
+	
 	// Push to disk.
 	// A NE PAS OUBLIER : que fait-on en cas de Transfert Syntax (dans l'entete)
 	// incohérente avec l'ordre des octets en mémoire  
@@ -565,9 +576,10 @@ public:
 	
 	// Ecrit sur disque les pixels d'UNE image
 	// Aucun test n'est fait sur l'"Endiannerie" du processeur.
-	// C'est à l'utilisateur d'appeler son Reader correctement
+	// Ca sera à l'utilisateur d'appeler son Reader correctement
 		
 	int WriteRawData (string nomFichier);
+	int WriteDcm (string nomFichier);
 };
 
 //

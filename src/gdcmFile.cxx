@@ -396,8 +396,8 @@ return;
  * \ingroup   gdcmFile
  * \brief Ecrit sur disque les pixels d'UNE image
  * \Aucun test n'est fait sur l'"Endiannerie" du processeur.
- * \ C'est à l'utilisateur d'appeler son Reader correctement
- * \(Equivalent a IdImaWriteRawFile) 
+ * \Ca sera à l'utilisateur d'appeler son Reader correctement
+ * \ Equivalent a IdImaWriteRawFile) 
  *
  * @param 
  *
@@ -415,6 +415,49 @@ int gdcmFile::WriteRawData (string nomFichier) {
 	
 	fwrite (Pixels,lgrTotale, 1, fp1);
 	fclose (fp1);
+	return(1);
+}
+
+
+
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief Ecrit sur disque UNE image Dicom
+ * \Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ * \Ca sera à l'utilisateur d'appeler son Reader correctement
+ * \ Equivalent a IdDcmWrite) 
+ *
+ * @param 
+ *
+ * @return	
+ */
+
+int gdcmFile::WriteDcm (string nomFichier) {
+
+
+// ATTENTION : fonction non terminée (commitée a titre de precaution)
+
+	FILE * fp1;
+	char* filePreamble;
+	fp1 = fopen(nomFichier.c_str(),"wb");
+	if (fp1 == NULL) {
+		printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
+		return (0);
+	} 
+	
+	//	Ecriture Dicom File Preamble
+	//filePreamble=(char*)g_malloc0(128); // voir pourquoi ca ne passe pas a la compile
+	filePreamble=(char*)calloc(128,1);
+	fwrite(filePreamble,128,1,fp1);
+	fwrite("DICM",4,1,fp1);
+	if(DEBUG) printf("Ecriture File Preamble\n");
+
+	// un accesseur de + est obligatoire ???
+	GetPubElVals().Write(fp1);
+
+	fclose (fp1);
+	return(1);
 }
 	
 

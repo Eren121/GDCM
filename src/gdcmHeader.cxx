@@ -29,7 +29,9 @@ namespace Error {
 }
 
 //FIXME: this looks dirty to me...
+
 #define str2num(str, typeNum) *((typeNum *)(str))
+
 // str est un pointeur dans un tableau de caractères, qui doit contenir, 
 // à cet endroit la, la représentation binaire d'un entier (16 ou 32 bits)
 // je veux récupérer ça ... dans un entier.
@@ -578,7 +580,7 @@ void gdcmHeader::FindLength(ElValue * ElVal) {
 		//   in little endian, and big endian coding only starts at the next
 		//   group. The corresponding code can be hard to analyse and adds
 		//   many additional unnecessary tests for regular tags.
-		// * the second strategy consist in waiting for trouble, that shall appear
+		// * the second strategy consists in waiting for trouble, that shall appear
 		//   when we find the first group with big endian encoding. This is
 		//   easy to detect since the length of a "Group Length" tag (the
 		//   ones with zero as element number) has to be of 4 (0x0004). When we

@@ -23,6 +23,37 @@ void ElValSet::Print(ostream & os) {
 	}
 }
 
+
+int ElValSet::Write(FILE * _fp) {
+
+	guint16 gr, el;
+	guint32 lgr;
+	const char * val;
+	// restent à tester les echecs en écriture
+	for (TagElValueHT::iterator tag = tagHt.begin();
+		  tag != tagHt.end();
+		  ++tag){
+
+		// Question :
+		// peut-on se passer des affectations?
+		// - passer l'adresse du resultat d'une fonction (???)
+		// - acceder au champ sans passer par un accesseur ?
+		gr = tag->second->GetGroup();
+		el = tag->second->GetElement();
+		lgr = tag->second->GetLength();
+		val = tag->second->GetValue().c_str();
+		
+		fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp); 	//group
+		fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp); 	//element
+		//fwrite ( tag->second->GetVR(),(size_t)2 ,(size_t)1 ,_fp); 	//VR
+		
+		// voir pb lgr  + VR
+		fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp); 			//lgr 
+		// voir pb des int16 et int32 : les identifier, les convertir, modifier la longueur
+		fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); //valeur Elem
+	}
+	return(1);
+}
 void ElValSet::PrintByName(ostream & os) {
 	for (TagElValueNameHT::iterator tag = NameHt.begin();
 		  tag != NameHt.end();
