@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:52:50 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,17 +53,17 @@ public:
    bool gdcm_read_JPEG_file12 (std::ifstream* fp, void* image_buffer, int & statesuspension );
    bool gdcm_read_JPEG_file16 (std::ifstream* fp, void* image_buffer, int & statesuspension );
 
-//private:
-   uint32_t    Offset;
-   uint32_t    Length;
+   void SetLength(uint32_t length) { Length = length; };
+   uint32_t GetLength() { return Length;};
+   void SetOffset(uint32_t offset) { Offset = offset; };
+   uint32_t GetOffset() { return Offset;};
+   uint8_t *GetImage()  { return pImage;};
 
-   uint8_t *pimage;
+private:
+   uint32_t Offset;
+   uint32_t Length;
 
-
-friend class Document;
-friend class FileHelper;
-friend class PixelReadConvert;
-friend class JPEGFragmentsInfo;
+   uint8_t *pImage;
 };
 } // end namespace gdcm
 

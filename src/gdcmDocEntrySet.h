@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:23 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,6 @@ typedef std::string BaseTagKey;
  */
 class GDCM_EXPORT DocEntrySet : public Base
 {
-friend class FileHelper;
 public:
    DocEntrySet() {};
    virtual ~DocEntrySet() {};
@@ -114,7 +113,6 @@ public:
                                   TagName const &vm     = GDCM_UNKNOWN,
                                   TagName const &name   = GDCM_UNKNOWN );
 
-protected:
 // DocEntry  related utilities 
    ValEntry *NewValEntry(uint16_t group,uint16_t elem,
                          TagName const &vr = GDCM_UNKNOWN);
@@ -122,10 +120,13 @@ protected:
                          TagName const &vr = GDCM_UNKNOWN);
    SeqEntry *NewSeqEntry(uint16_t group,uint16_t elem);
 
+protected:
 // DictEntry  related utilities
    DictEntry *GetDictEntry(uint16_t group, uint16_t elem);
    DictEntry *GetDictEntry(uint16_t group, uint16_t elem,
                            TagName const &vr);
+
+private:
 };
 
 } // end namespace gdcm

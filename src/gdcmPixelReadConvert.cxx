@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:03:58 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -257,11 +257,11 @@ bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream *fp )
       ++it )
    {
       // Loop on the fragments
-      for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
+      for( unsigned int k = 1; k <= (*it)->GetNumberOfFragments(); k++ )
       {
-         fp->seekg(  (*it)->Offset[k] , std::ios::beg );
+         fp->seekg(  (*it)->GetOffset(k) , std::ios::beg );
          (void)ReadAndDecompressRLEFragment( subRaw,
-                                             (*it)->Length[k],
+                                             (*it)->GetLength(k),
                                              RawSegmentSize, 
                                              fp );
          subRaw += RawSegmentSize;
@@ -471,7 +471,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
         (it != JPEGInfo->Fragments.end()) && (howManyRead < totalLength);
         ++it )
    {
-      fragmentLength += (*it)->Length;
+      fragmentLength += (*it)->GetLength();
       
       if (howManyRead > fragmentLength) continue;
       
@@ -498,7 +498,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
    if ( IsJPEG2000 )
    {
       gdcmVerboseMacro( "Sorry, JPEG2000 not yet taken into account" );
-      fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios::beg);
+      fp->seekg( (*JPEGInfo->Fragments.begin())->GetOffset(), std::ios::beg);
 //    if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
           gdcmVerboseMacro( "Wrong Blue LUT descriptor" );
           return false;
@@ -507,7 +507,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
    if ( IsJPEGLS )
    {
       gdcmVerboseMacro( "Sorry, JPEG-LS not yet taken into account" );
-      fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios::beg);
+      fp->seekg( (*JPEGInfo->Fragments.begin())->GetOffset(), std::ios::beg);
 //    if ( ! gdcm_read_JPEGLS_file( fp,Raw ) )
          return false;
    }

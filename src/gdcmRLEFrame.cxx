@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,7 @@
 =========================================================================*/
                                                                                 
 #include "gdcmRLEFrame.h"
+#include "gdcmDebug.h"
                                                                                 
 namespace gdcm
 {
@@ -38,6 +39,30 @@ void RLEFrame::Print( std::ostream &os, std::string indent )
          << "   length : " <<  Length[i]
          << std::endl;
    }
+}
+
+void RLEFrame::SetOffset(unsigned int id,long offset)
+{
+   gdcmAssertMacro(id<15);
+   Offset[id] = offset;
+}
+
+long RLEFrame::GetOffset(unsigned int id)
+{
+   gdcmAssertMacro(id<15);
+   return Offset[id];
+}
+
+void RLEFrame::SetLength(unsigned int id,long length)
+{
+   gdcmAssertMacro(id<15);
+   Length[id] = length;
+}
+
+long RLEFrame::GetLength(unsigned int id)
+{
+   gdcmAssertMacro(id<15);
+   return Length[id];
 }
 
 } // end namespace gdcm

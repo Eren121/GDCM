@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:52:50 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -384,7 +384,7 @@ bool JPEGFragment::gdcm_read_JPEG_file (std::ifstream* fp, void* image_buffer , 
 {
    //static int fragimage = 0;
    //std::cerr << "Image Fragment:" << fragimage++ << std::endl;
-   pimage = (uint8_t*)image_buffer;
+   pImage = (uint8_t*)image_buffer;
    /* This struct contains the JPEG decompression parameters and pointers to
     * working space (which is allocated as needed by the JPEG library).
     */
@@ -592,13 +592,13 @@ bool JPEGFragment::gdcm_read_JPEG_file (std::ifstream* fp, void* image_buffer , 
 // The ijg has no notion of big endian, therefore always swap the jpeg stream
 #if defined(GDCM_WORDS_BIGENDIAN) && (CMAKE_BITS_IN_JSAMPLE != 8)
       uint16_t *buffer16 = (uint16_t*)*buffer;
-      uint16_t *pimage16 = (uint16_t*)pimage;
+      uint16_t *pimage16 = (uint16_t*)pImage;
       for(unsigned int i=0;i<rowsize/2;i++)
         pimage16[i] = (buffer16[i] >> 8) | (buffer16[i] << 8 );
 #else
-      memcpy( pimage, *buffer,rowsize);
+      memcpy( pImage, *buffer,rowsize);
 #endif //GDCM_WORDS_BIGENDIAN
-      pimage+=rowsize;
+      pImage+=rowsize;
    }
 
   /* Step 7: Finish decompression */

@@ -91,17 +91,17 @@ fill_input_buffer (j_decompress_ptr cinfo)
   my_src_ptr src = (my_src_ptr) cinfo->src;
 
   //std::cerr << "Before comp:" << src->bytes_read << " / " << src->frag->Length << std::endl;
-  if( src->bytes_read == src->frag->Length )
+  if( src->bytes_read == src->frag->GetLength() )
     {
     //std::cerr << "Sweet finished this fragment" << std::endl;
     return FALSE;
     }
 
   size_t input_buf_size = INPUT_BUF_SIZE;
-  if( (src->bytes_read + INPUT_BUF_SIZE) > src->frag->Length )
+  if( (src->bytes_read + INPUT_BUF_SIZE) > src->frag->GetLength() )
     {
     //std::cerr << "Woula error:" << src->bytes_read << " / " << src->frag->Length << std::endl;
-    input_buf_size = src->frag->Length - src->bytes_read;
+    input_buf_size = src->frag->GetLength() - src->bytes_read;
     //std::cerr << "Ok only reading: " << input_buf_size << " / " << INPUT_BUF_SIZE << std::endl;
      }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:52:50 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,7 +79,7 @@ size_t JPEGFragmentsInfo::GetFragmentsLength()
         it != Fragments.end();
         ++it )
    {
-      totalLength += (*it)->Length;
+      totalLength += (*it)->GetLength();
    }
    return totalLength;
 }
@@ -97,8 +97,8 @@ void JPEGFragmentsInfo::ReadAllFragments(std::ifstream *fp, JOCTET *buffer )
         it != Fragments.end();
         ++it )
    {
-      fp->seekg( (*it)->Offset, std::ios::beg);
-      size_t len = (*it)->Length;
+      fp->seekg( (*it)->GetOffset(), std::ios::beg);
+      size_t len = (*it)->GetLength();
       fp->read((char *)p,len);
       p += len;
    }
@@ -119,7 +119,7 @@ void JPEGFragmentsInfo::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t 
      //(*it)->pimage = localRaw;
      (*it)->DecompressJPEGFramesFromFile(fp, localRaw, nBits, StateSuspension);
      // update pointer to image after some scanlines read:
-     localRaw = (*it)->pimage;
+     localRaw = (*it)->GetImage();
       // Advance to next free location in Raw 
       // for next fragment decompression (if any)
 

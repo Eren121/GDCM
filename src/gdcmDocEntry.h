@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -166,9 +166,7 @@ protected:
    TagKey Key;
 
 private:
-   // FIXME: In fact we should be more specific and use :
-   // friend DocEntry *File::ReadNextElement(void);
-   friend class File;    
+   friend class File; // To use SetDictEntry
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:37:51 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ JPEGFragment::JPEGFragment()
 
 //   StateSuspension = 0;
 //   void *SampBuffer;
-   pimage = 0;
+   pImage = 0;
 
 }
 

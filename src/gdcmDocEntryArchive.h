@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ namespace gdcm
 class GDCM_EXPORT DocEntryArchive 
 {
 public:
-   DocEntryArchive(File *f);
+   DocEntryArchive(File *file);
    ~DocEntryArchive();
 
    void Print(std::ostream &os = std::cout);
@@ -49,7 +49,8 @@ public:
    void ClearArchive(void);
 
 private:
-   TagDocEntryHT &HeaderHT;  // we keep the name HeaderHT
+//   TagDocEntryHT &HeaderHT;  // we keep the name HeaderHT
+   File *ArchFile;
    TagDocEntryHT Archive;
 };
 } // end namespace gdcm

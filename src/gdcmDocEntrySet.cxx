@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 10:29:17 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -445,8 +445,6 @@ DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,uint16_t elem,
    return Global::GetDicts()->NewVirtualDictEntry(group,elem,vr,vm,name);
 }
 
-//-----------------------------------------------------------------------------
-// Protected
 /**
  * \brief   Build a new Val Entry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
@@ -515,6 +513,8 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group,uint16_t elem)
    return newEntry;
 }
 
+//-----------------------------------------------------------------------------
+// Protected
 /**
  * \brief   Searches [both] the public [and the shadow dictionary (when they
  *          exist)] for the presence of the DictEntry with given

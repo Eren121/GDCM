@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 10:29:17 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/26 11:42:02 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,9 +28,9 @@ namespace gdcm
 /**
  * \brief Constructor
  */
-DocEntryArchive::DocEntryArchive(File *header):
-   HeaderHT(header->TagHT)
+DocEntryArchive::DocEntryArchive(File *file)
 {
+   ArchFile = file;
 }
 
 //-----------------------------------------------------------------------------
@@ -74,13 +74,22 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
    if(!newEntry)
       return false;
 
-   uint16_t gr = newEntry->GetDictEntry()->GetGroup();
-   uint16_t elt = newEntry->GetDictEntry()->GetElement();
-   std::string key = DictEntry::TranslateToKey(gr,elt);
+   uint16_t group = newEntry->GetDictEntry()->GetGroup();
+   uint16_t elem = newEntry->GetDictEntry()->GetElement();
+   std::string key = DictEntry::TranslateToKey(group,elem);
 
    if( Archive.find(key)==Archive.end() )
    {
       // Save the old DocEntry if any
+      DocEntry *old = ArchFile->GetDocEntry(group,elem);
+      Archive[key] = old;
+      if( old )
+         ArchFile->RemoveEntryNoDestroy(old);
+
+      // Set the new DocEntry
+      ArchFile->AddEntry(newEntry);
+
+/*      // Save the old DocEntry if any
       TagDocEntryHT::iterator it = HeaderHT.find(key);
       if( it!=HeaderHT.end() )
       {
@@ -92,7 +101,7 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
       }
 
       // Set the new DocEntry
-      HeaderHT[key] = newEntry;
+      HeaderHT[key] = newEntry;*/
 
       return true;
    }
@@ -114,12 +123,18 @@ bool DocEntryArchive::Push(uint16_t group,uint16_t elem)
    if( Archive.find(key)==Archive.end() )
    {
       // Save the old DocEntry if any
+      DocEntry *old = ArchFile->GetDocEntry(group,elem);
+      Archive[key] = old;
+      if( old )
+         ArchFile->RemoveEntryNoDestroy(old);
+
+/*      // Save the old DocEntry if any
       TagDocEntryHT::iterator it = HeaderHT.find(key);
       if( it!=HeaderHT.end() )
       {
          Archive[key] = it->second;
          HeaderHT.erase(it);
-      }
+      }*/
 
       return true;
    }
@@ -141,12 +156,23 @@ bool DocEntryArchive::Restore(uint16_t group,uint16_t elem)
    TagDocEntryHT::iterator restoreIt=Archive.find(key);
    if( restoreIt!=Archive.end() )
    {
+      // Delete the new value
+      DocEntry *rem = ArchFile->GetDocEntry(group,elem);
+      if( rem )
+         ArchFile->RemoveEntry(rem);
+
+      // Restore the old value
+      if( Archive[key] )
+         ArchFile->AddEntry(Archive[key]);
+
+/*      // Delete the new value
       TagDocEntryHT::iterator restorePos = HeaderHT.find(key);
       if( restorePos!=HeaderHT.end() )
       {
          delete restorePos->second;
       }
 
+      // Restore the old value
       if( Archive[key] )
       {
          HeaderHT[key] = Archive[key];
@@ -154,7 +180,7 @@ bool DocEntryArchive::Restore(uint16_t group,uint16_t elem)
       else
       {
          HeaderHT.erase(restorePos);
-      }
+      }*/
 
       Archive.erase(restoreIt);
 
