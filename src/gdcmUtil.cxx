@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 02:04:00 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2004/11/16 02:54:35 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,9 @@
 
 #include <stdarg.h>  //only included in implementation file
 #include <stdio.h>   //only included in implementation file
+
+#include <unistd.h>  // for gethostname
+#include <netdb.h>   // for gethostbyname
 
 namespace gdcm 
 {
@@ -267,13 +270,86 @@ std::string Util::DicomString(const char* s)
 bool Util::DicomStringEqual(const std::string& s1, const char *s2)
 {
   // s2 is the string from the DICOM reference: 'MONOCHROME1'
-  std::string s1_even = s1; //Never directly change input parameter
+  std::string s1_even = s1; //Never change input parameter
   std::string s2_even = DicomString( s2 );
   if( s1_even[s1_even.size()-1] == ' ')
   {
     s1_even[s1_even.size()-1] = '\0'; //replace space character by null
   }
   return s1_even == s2_even;
+}
+
+/**
+ * \ingroup Util
+ * \brief   Return the IP adress of the machine writting the DICOM image
+ */
+std::string Util::GetIPAddress()
+{
+  // This is a rip from http://www.codeguru.com/Cpp/I-N/internet/network/article.php/c3445/
+#ifndef HOST_NAME_MAX
+  // SUSv2 guarantees that `Host names are limited to 255 bytes'.
+  // POSIX 1003.1-2001 guarantees that `Host names (not including the
+  // terminating NUL) are limited to HOST_NAME_MAX bytes'.
+#  define HOST_NAME_MAX 255
+  // In this case we should maybe check the string was not truncated.
+  // But I don't known how to check that...
+#endif //HOST_NAME_MAX
+
+  std::string str;
+  char szHostName[HOST_NAME_MAX+1];
+  int r = gethostname(szHostName, HOST_NAME_MAX);
+
+  if( r == 0 )
+  {
+    // Get host adresses
+    struct hostent * pHost = gethostbyname(szHostName);
+
+    for( int i = 0; pHost!= NULL && pHost->h_addr_list[i]!= NULL; i++ )
+    {
+      for( int j = 0; j<pHost->h_length; j++ )
+      {
+        if( j > 0 ) str += ".";
+
+        str += Util::Format("%u", 
+            (unsigned int)((unsigned char*)pHost->h_addr_list[i])[j]);
+      }
+      // str now contains one local IP address 
+    }
+  }
+  // If an error occur r == -1
+  // Most of the time it will return 127.0.0.1...
+  return str;
+}
+
+/**
+ * \ingroup Util
+ * \brief Creates a new UID. As stipulate in the DICOM ref
+ *        each time a DICOM image is create it should have 
+ *        a unique identifier (URI)
+ */
+std::string Util::CreateUniqueUID(const std::string& root)
+{
+  // The code works as follow:
+  // echo "gdcm" | od -b
+  // 0000000 147 144 143 155 012
+  // Therefore we return
+  // radical + 147.144.143.155 + IP + time()
+  std::string radical = root;
+  if( !root.size() ) //anything better ?
+  {
+    radical = "0.0."; // Is this really usefull ?
+  }
+  // else
+  // A root was specified use it to forge our new UID:
+  radical += "147.144.143.155"; // gdcm
+  radical += ".";
+  radical += Util::GetIPAddress();
+  radical += ".";
+  radical += Util::GetCurrentDate();
+  radical += ".";
+  radical += Util::GetCurrentTime();
+
+  return radical;
 }
 
 template <class T>

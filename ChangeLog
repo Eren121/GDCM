@@ -1,4 +1,16 @@
 2004-11-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * ENH: Slightly bigger patch:
+    1. Getting toward full integration of JMR patch for writting dicom from scratch
+    2. Update Test to test part of this patch: CreateUniqueUID
+    3. File was not close properly in gdcmDict
+    4. Use of typedef is to be prefered when possible (gdcmDict.cxx)
+    5. Use of const ref instead of copy (speed issue)
+    6. Remove temporary (duplicate) string in TranslateToKey
+    7. Mark extremely dangerous code as such (gdcmDocument.cxx and AddEntry fallback case)
+    8. Do not repeat virtual in subclasses
+    9. Implemented in gdcm::Util two new function: GetIPAddress, and CreateUniqueUID
+
+2004-11-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * Apply first patch toward better string comparison when dealing with broken 
     DICOM files. Essentially the string could be padded with a space instead 
     of a null character as defined by standard

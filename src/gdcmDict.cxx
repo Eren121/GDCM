@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 18:08:56 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2004/11/16 02:54:35 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,10 +63,10 @@ Dict::Dict(std::string const & filename)
          const DictEntry newEntry(group, element, vr, fourth, name);
          AddNewEntry(newEntry);
       }
-      from.close();
 
       Filename = filename;
    }
+   from.close();
 }
 
 /**
@@ -159,12 +159,8 @@ bool Dict::AddNewEntry(DictEntry const & newEntry)
    } 
    else 
    {
-      KeyHt.insert( 
-         std::map<TagKey, DictEntry>::value_type
-            (newEntry.GetKey(), newEntry));
-      NameHt.insert(
-         std::map<TagName, DictEntry>::value_type
-            (newEntry.GetName(), newEntry ));
+      KeyHt.insert( TagKeyHT::value_type(newEntry.GetKey(), newEntry));
+      NameHt.insert( TagNameHT::value_type(newEntry.GetName(), newEntry ));
       return true;
    }
 }
@@ -179,12 +175,8 @@ bool Dict::ReplaceEntry(DictEntry const & newEntry)
 {
    if ( RemoveEntry(newEntry.GetKey()) )
    {
-      KeyHt.insert( 
-         std::map<TagKey, DictEntry>::value_type
-            (newEntry.GetKey(), newEntry));
-      NameHt.insert(
-         std::map<TagName, DictEntry>::value_type
-            (newEntry.GetName(), newEntry ));
+       KeyHt.insert( TagKeyHT::value_type(newEntry.GetKey(), newEntry));
+       NameHt.insert( TagNameHT::value_type(newEntry.GetName(), newEntry ));
        return true;
    } 
    return false;
@@ -202,7 +194,7 @@ bool Dict::RemoveEntry (TagKey const & key)
    TagKeyHT::const_iterator it = KeyHt.find(key);
    if(it != KeyHt.end()) 
    {
-      const DictEntry & entryToDelete = it->second;
+      const DictEntry& entryToDelete = it->second;
       NameHt.erase(entryToDelete.GetName());
       KeyHt.erase(key);
 

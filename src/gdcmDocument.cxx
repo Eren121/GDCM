@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/15 16:12:30 $
-  Version:   $Revision: 1.123 $
+  Date:      $Date: 2004/11/16 02:54:35 $
+  Version:   $Revision: 1.124 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1346,7 +1346,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
          /////////////////////// ValEntry
             ValEntry* newValEntry =
-               new ValEntry( newDocEntry->GetDictEntry() );
+               new ValEntry( newDocEntry->GetDictEntry() ); //LEAK
             newValEntry->Copy( newDocEntry );
              
             // When "set" is a Document, then we are at the top of the
@@ -1365,7 +1365,11 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                    + newValEntry->GetKey() );
             }
              
-            set->AddEntry( newValEntry );
+            if( !set->AddEntry( newValEntry ) )
+            {
+              // If here expect big troubles
+              delete newValEntry; //otherwise mem leak
+            }
             LoadDocEntry( newValEntry );
             if (newValEntry->IsItemDelimitor())
             {
@@ -1406,7 +1410,11 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                    + newBinEntry->GetKey() );
             }
 
-            set->AddEntry( newBinEntry );
+            if( !set->AddEntry( newBinEntry ) )
+            {
+              //Expect big troubles if here
+              delete newBinEntry;
+            }
             LoadDocEntry( newBinEntry );
          }
 
@@ -1596,7 +1604,7 @@ void Document::LoadDocEntry(DocEntry* entry)
          s << " x(" << std::hex << entry->GetLength() << ")";
          binEntryPtr->SetValue(s.str());
       }
-       // Be carefull : a BinEntry IS_A ValEntry ... 
+      // Be carefull : a BinEntry IS_A ValEntry ... 
       else if (ValEntry* valEntryPtr = dynamic_cast< ValEntry* >(entry) )
       {
         // s << "gdcm::NotLoaded. (ValEntry)";

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/05 21:23:46 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/11/16 02:54:35 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,9 @@ void ElementSet::Print(std::ostream& os)
   */ 
 void ElementSet::Write(std::ofstream* fp, FileType filetype)
 {
-   for (TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
+   for (TagDocEntryHT::const_iterator i = TagHT.begin(); 
+                                     i != TagHT.end(); 
+                                    ++i)
    {
       i->second->Write(fp, filetype);
    } 
@@ -107,9 +109,9 @@ void ElementSet::Write(std::ofstream* fp, FileType filetype)
  * \brief   add a new Dicom Element pointer to the H Table
  * @param   newEntry entry to add
  */
-bool ElementSet::AddEntry( DocEntry* newEntry)
+bool ElementSet::AddEntry(DocEntry* newEntry)
 {
-   TagKey key = newEntry->GetKey();
+   const TagKey& key = newEntry->GetKey();
 
    if( TagHT.count(key) == 1 )
    {
@@ -119,7 +121,7 @@ bool ElementSet::AddEntry( DocEntry* newEntry)
    } 
    else 
    {
-      TagHT[newEntry->GetKey()] = newEntry;
+      TagHT.insert(TagDocEntryHT::value_type(newEntry->GetKey(), newEntry));
       return true;
    }   
 }
@@ -128,9 +130,9 @@ bool ElementSet::AddEntry( DocEntry* newEntry)
  * \brief   Clear the hash table from given entry BUT keep the entry.
  * @param   entryToRemove Entry to remove.
  */
-bool ElementSet::RemoveEntryNoDestroy( DocEntry* entryToRemove)
+bool ElementSet::RemoveEntryNoDestroy(DocEntry* entryToRemove)
 {
-   TagKey key = entryToRemove->GetKey();
+   const TagKey& key = entryToRemove->GetKey();
    if( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
@@ -148,7 +150,7 @@ bool ElementSet::RemoveEntryNoDestroy( DocEntry* entryToRemove)
  */
 bool ElementSet::RemoveEntry( DocEntry* entryToRemove)
 {
-   TagKey key = entryToRemove->GetKey();
+   const TagKey& key = entryToRemove->GetKey();
    if( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);

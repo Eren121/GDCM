@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:31:12 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/16 02:54:35 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,10 +30,11 @@ namespace gdcm
 {
 
 //-----------------------------------------------------------------------------
-typedef std::map<TagKey, DictEntry> TagKeyHT;
+typedef std::map<TagKey, DictEntry>  TagKeyHT;
 typedef std::map<TagName, DictEntry> TagNameHT;
-typedef std::list<std::string>        EntryNamesList;
-typedef std::map<std::string, std::list<std::string> > EntryNamesByCatMap;
+typedef std::list<std::string>       EntryNamesList;
+typedef std::map<std::string, 
+            std::list<std::string> > EntryNamesByCatMap;
 //-----------------------------------------------------------------------------
 /*
  * \defgroup Dict

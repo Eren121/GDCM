@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/15 16:12:30 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2004/11/16 02:54:35 $
+  Version:   $Revision: 1.59 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -261,7 +261,7 @@ private:
    void BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
                                    DocEntrySet* set );
 
-   void HandleBrokenEndian(uint16_t group, uint16_t elem);
+   void HandleBrokenEndian(uint16_t  group, uint16_t  elem);
 public:
 // Accessors:
    /// Accessor to \ref PrintLevel

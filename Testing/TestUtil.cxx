@@ -5,6 +5,8 @@
 
 int TestUtil(int , char * [])
 {
+   std::cout << gdcm::Util::CreateUniqueUID("") << std::endl;
+   
    const char ref[] = "MONOCHROME1";
    std::string a = "MONOCHROME1";
    a += '\0';

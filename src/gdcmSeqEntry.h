@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:03:45 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/16 02:54:35 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,17 +33,17 @@ class GDCM_EXPORT SeqEntry : public DocEntry
 {
 public:
    SeqEntry( DictEntry* );
-   SeqEntry(DocEntry* d,  int depth);
+   SeqEntry( DocEntry* d, int depth );
    ~SeqEntry();
    
-   virtual void Print(std::ostream &os = std::cout); 
-   virtual void Write(std::ofstream *fp, FileType);
+   void Print(std::ostream &os = std::cout); 
+   void Write(std::ofstream *fp, FileType filetype);
 
    /// returns the SQITEM chained List for this SeQuence.
    ListSQItem const & GetSQItems() const { return Items; }
       
    /// Sets the delimitor mode
-   void SetDelimitorMode(bool dm) { DelimitorMode = dm;}
+   void SetDelimitorMode(bool dm) { DelimitorMode = dm; }
 
    /// Sets the Sequence Delimitation Item
    void SetSequenceDelimitationItem(DocEntry * e) { SeqTerm = e;}
