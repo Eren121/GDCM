@@ -1,4 +1,8 @@
-
+2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
+   * FIX : First entry following group 0002 was lost for
+	        Explicit Big Endian Transfer Syntax files
+          (group and elem not swaped)
+	
 2005-01-12 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * FIX : Old quick and dirty 'optimistic' heuristic to deal with
 	        Big Endian Transfer Syntax supposed the group following 0002
@@ -858,10 +862,10 @@
 2004-09-13 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Preparation of writing a gdcmHeader iterator: generalisation of gdcmTagKey
     - The following is the doxygen comment of the typedef declaration
-      of gdcmagKey in src/gdcmCommon.h:
+      of gdcmTagKey in src/gdcmCommon.h:
            gdcmTagKey is made to old an "universal" (as in URL, Universal
            Ressource Locator)  key to a gdcmDocEntry i.e. a dicom tag.
-           A dicom tag allways has a group and an element, but a set of tags
+           A dicom tag always has a group and an element, but a set of tags
            embeded in various (optionally nested) sequences and sharing
            the same group and element all share the same (group, element)
            "identifier". Hence the (group, element) cannot be used as an
@@ -939,7 +943,7 @@
   * TODO updated
   * gdcmPython/testSuite.py checks on CR-MONO1-10-chest.dcm moved to
     gdcmData/TestAllEntryVerifyReference.txt
-  * Test/TestAllEntryVerify.cxx is now effective (used allways return true)
+  * Test/TestAllEntryVerify.cxx is now effective (used always return true)
   * src/gdcmDocument.[cxx|h]: constructors no longer use the bool
     exception_on_error parameter.
     - src/gdcmFile.[cxx|h], src/gdcmHeader.[cxx|h] changed accordingly,
@@ -1091,7 +1095,7 @@
      image.
    * Test/CmakeList.txt: 8BitsRunLengthColor.dcm is now blacklisted
      (because TestWriteRead breaks on it, after a non conformal commit?).
-     ctest now runs properly, except for MakeDicomDir (which was allways
+     ctest now runs properly, except for MakeDicomDir (which was always
      broken) and the Python related stuff (still not fixed).
    
 2004-06-24 Jean-Pierre Roux
@@ -2958,7 +2962,7 @@
         that we can import de shadow classes without errors].
 
 2002-10-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
-      * hashtest.cxx removed (since allready in Test)
+      * hashtest.cxx removed (since already in Test)
       * src/gdcmlib.h renamed to src/gdcm.h
       * src/dcm.i renamed to src/gdcm.i
       * src/Makefile prepared for python wrapping

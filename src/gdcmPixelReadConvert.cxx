@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 15:22:23 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/01/13 09:24:08 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -919,7 +919,7 @@ void PixelReadConvert::ConvertHandleColor()
    // formated Dicom) files (e.g. gdcmData/US-PAL-8-10x-echo.dcm) we encounter:
    //     - "Planar Configuration" = 0,
    //     - "Photometric Interpretation" = "PALETTE COLOR".
-   // Hence gdcm shall use the folowing "heuristic" in order to be tolerant
+   // Hence gdcm will use the folowing "heuristic" in order to be tolerant
    // towards Dicom-non-conformance files:
    //   << whatever the "Planar Configuration" value might be, a
    //      "Photometric Interpretation" set to "PALETTE COLOR" forces
