@@ -1,3 +1,7 @@
+2004-07-20 Jean-Pierre Roux
+  * FIX Some brain damaged headers have Zero-Lenght fields 
+        for 'Transfert Syntax UID', or 'Media Stored SOP Class UID'.
+
 2004-07-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmCommon.h, gdcmDict.cxx, gdcmTS.cxx : bug fix for msvc6 compilation
    * src/gdcmDebug.[h|cxx] : bug fix for msvc6 compilation. Replace the dbg
