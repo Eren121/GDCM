@@ -137,7 +137,7 @@ ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
   # serial killer (also segfaults vtkgdcmViewer, but NOT PrintFile)
-  "gdcm-JPEG-LossLessThoravision.dcm"
+  #"gdcm-JPEG-LossLessThoravision.dcm"
 
   # Mathieu: temporarily remove as it kills my gnome session (but not kde)
   # JPR: also breaks TestReadWriteReadCompare : Pixel differ (as expanded
