@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.25 2003/11/05 18:15:41 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.26 2003/11/06 14:14:10 malaterre Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -54,7 +54,7 @@
 vtkGdcmReader::vtkGdcmReader()
 {
   // Constructor
-  this->LookupTable = vtkLookupTable::New();
+  this->LookupTable = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ vtkGdcmReader::~vtkGdcmReader()
 { 
   this->RemoveAllFileName();
   this->InternalFileNameList.clear();
-  this->LookupTable->Delete();
+  if(this->LookupTable) this->LookupTable->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -480,7 +480,8 @@ size_t vtkGdcmReader::LoadImageInMemory(
     size               = GdcmFile.GetImageDataSizeRaw();
     Source             = (unsigned char*) GdcmFile.GetImageDataRaw();
     unsigned char *Lut = (unsigned char*) GdcmFile.GetLUTRGBA();
-
+  
+    if(!this->LookupTable) this->LookupTable = vtkLookupTable::New();
     this->LookupTable->SetNumberOfTableValues(256);
     for (int tmp=0; tmp<256; tmp++)
       {

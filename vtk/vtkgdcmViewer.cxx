@@ -4,6 +4,8 @@
 #include <vtkStructuredPointsWriter.h>
 #include <vtkCommand.h>
 #include <vtkRenderer.h>
+#include <vtkImageMapToColors.h>
+#include <vtkLookupTable.h>
 
 #include "vtkGdcmReader.h"
 
@@ -59,7 +61,20 @@ int main(int argc, char *argv[])
   vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
 
   vtkImageViewer2 *viewer = vtkImageViewer2::New();
-  viewer->SetInput ( reader->GetOutput() );
+  if( reader->GetLookupTable() )
+  {
+    //convert to color:
+    vtkImageMapToColors *map = vtkImageMapToColors::New ();
+    map->SetInput (reader->GetOutput());
+    map->SetLookupTable (reader->GetLookupTable());
+    map->SetOutputFormatToRGB();
+    viewer->SetInput ( map->GetOutput() );
+    map->Delete();
+  }
+  else
+  {
+    viewer->SetInput ( reader->GetOutput() );
+  }
   viewer->SetupInteractor (iren);
   
 //  float *range = reader->GetOutput()->GetScalarRange();
