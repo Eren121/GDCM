@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.23 2003/09/24 13:27:02 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.24 2003/09/24 13:29:49 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -151,7 +151,7 @@ std::string _CreateCleanString(std::string s) {
          *di = '.';
       }	
    return d;*/
-  string str=s;
+  std::string str=s;
   for(int i=0;i<str.size();i++)
   {
     if(!isprint(str[i]))
@@ -167,7 +167,7 @@ std::string _CreateCleanString(std::string s) {
 
 std::string TranslateToKey(guint16 group, guint16 element) {
 	char trash[10];
-	string key;
+	std::string key;
 	// CLEAN ME: better call the iostream<< with the hex manipulator on.
 	// This requires some reading of the stdlibC++ sources to make the
 	// proper call (or copy).
