@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
    gdcm::File  * f1;
 
    //gdcmDocument * d;  //not used
-   void* imageData;
+   uint8_t* imageData;
    int dataSize;
 
    if (argc < 3) {

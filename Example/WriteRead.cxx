@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
    gdcm::Header* e1, *e2;
    gdcm::File  * f1, *f2;
 
-   void* imageData, *imageData2;
+   uint8_t* imageData, *imageData2;
    int dataSize, dataSize2;
      
    if( argc < 2 )

@@ -61,7 +61,7 @@ int TestChangeHeader(int argc, char* argv[])
 
    int dataSize = f2->GetImageDataSize();
    printf ("dataSize %d\n",dataSize);
-   void* imageData= f2->GetImageData();
+   uint8_t* imageData= f2->GetImageData();
 
 // TODO : Why don't we merge theese 2 functions ?
 

@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
       std::cout << "3...";
       // For the next step:
       int    dataSizeWritten = reread->GetImageDataSize();
-      void* imageDataWritten = reread->GetImageData();
+      uint8_t* imageDataWritten = reread->GetImageData();
 
       //////////////// Step 4:
  
@@ -104,8 +104,6 @@ int main(int argc, char* argv[])
          std::cout << std::endl
             << "        Pixel areas lengths differ: "
             << dataSize << " # " << dataSizeWritten << std::endl;
-         delete (char*)imageData;
-         delete (char*)imageDataWritten;
          delete header;
          delete file;
          delete reread;
@@ -117,8 +115,6 @@ int main(int argc, char* argv[])
          (void)res;
          std::cout << std::endl
             << "        Pixel differ (as expanded in memory)." << std::endl;
-         delete (char*)imageData;
-         delete (char*)imageDataWritten;
          delete header;
          delete file;
          delete reread;
@@ -127,8 +123,6 @@ int main(int argc, char* argv[])
       std::cout << "4...OK." << std::endl ;
 
       //////////////// Clean up:
-      delete (char*)imageData;
-      delete (char*)imageDataWritten;
       delete header;
       delete file;
       delete reread;

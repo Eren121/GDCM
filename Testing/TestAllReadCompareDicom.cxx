@@ -27,16 +27,13 @@ int InternalTest(std::string const & filename,
       if (! testFILE )
       {
       ////// Step 3a:
-
-         int testedDataSize    = tested->GetImageDataSize();
-         (void)testedDataSize;
-         void* testedImageData = tested->GetImageData(); // Kludge
+         uint8_t* testedImageData = tested->GetImageData(); // Kludge
          tested->WriteDcmExplVR( referenceFileName );
          std::cerr << "      Creating reference baseline file :" << std::endl
                    << "      " << referenceFileName 
                    << std::endl;
          delete tested;
-         delete (char*)testedImageData;
+         //delete (char*)testedImageData;
          return 0;
       }
       else
@@ -60,10 +57,10 @@ int InternalTest(std::string const & filename,
       ////// Step 3b:
 
       int testedDataSize    = tested->GetImageDataSize();
-      void* testedImageData = tested->GetImageData();
+      uint8_t* testedImageData = tested->GetImageData();
     
       int    referenceDataSize = reference->GetImageDataSize();
-      void* referenceImageData = reference->GetImageData();
+      uint8_t* referenceImageData = reference->GetImageData();
 
       if (testedDataSize != referenceDataSize)
       {
@@ -72,8 +69,6 @@ int InternalTest(std::string const & filename,
                    << std::endl;
          delete tested;
          delete reference;
-         delete (char*)testedImageData;
-         delete (char*)referenceImageData;
          return 1;
       }
 
@@ -85,17 +80,14 @@ int InternalTest(std::string const & filename,
                    << std::endl;
          delete tested;
          delete reference;
-         delete (char*)testedImageData;
-         delete (char*)referenceImageData;
          return 1;
       }
-      std::cout << "      Passed." << std::endl ;
+      std::cout << "      Passed..." << std::endl;
 
       //////////////// Clean up:
       delete tested;
       delete reference;
-      delete (char*)testedImageData;
-      delete (char*)referenceImageData;
+      std::cout << "      Passed clean up." << std::endl ;
       
       return 0;
 }
@@ -173,23 +165,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
          testDIR->close();
       }
 
-/*      FILE* testFILE = fopen( baseLineDir.c_str(), "r" );
-      if (!testFILE )
-      {
-         std::cerr << "   The reference baseline directory " << std::endl
-                   << "      "
-                   << baseLineDir << std::endl
-                   << "   couldn't be opened."
-                   << std::endl;
-         return 1;
-      }
-      else
-      {
-         fclose( testFILE );
-      }*/
-
       ////// Step 1 (see above description):
-
       std::string filename = GDCM_DATA_ROOT;
       filename += "/";
       filename += gdcmDataImages[i];

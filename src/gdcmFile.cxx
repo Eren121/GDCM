@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/10 18:27:23 $
-  Version:   $Revision: 1.153 $
+  Date:      $Date: 2004/11/15 15:29:04 $
+  Version:   $Revision: 1.154 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,7 @@ File::~File()
    DeleteInitialValues();
    if( PixelConverter )
    {
-      //delete PixelConverter;
+      delete PixelConverter;
    }
 
 }

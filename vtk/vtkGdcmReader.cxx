@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.52 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.53 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -690,7 +690,11 @@ size_t vtkGdcmReader::LoadImageInMemory(
 //   fclose(f2); 
    
    //GetImageData allocate a (void*)malloc, remove it:
-   delete[] pSource;
+
+   // CLEANME
+   // Now, the delete on values keep from GetImageData is useless (made in
+   // the PixelConvert class)
+   //delete[] pSource;
    return size;
 }
 

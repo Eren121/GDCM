@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
   // If the following call is important, then the API sucks. Why is it
   // required to allocate PixelData when we are not using it !?
-  void* PixelData = f2->GetImageData(); //EXTREMELY IMPORTANT
+  uint8_t* PixelData = f2->GetImageData(); //EXTREMELY IMPORTANT
   //Otherwise ReadPixel == -1 -> the dicom writing fails completely
   
   int dataSize    = f2->GetImageDataSize();
@@ -30,7 +30,6 @@ int main(int argc, char* argv[])
 
   f2->WriteDcmExplVR( output );
   
-  delete[] imageData;
   delete f1;
   delete f2;
   //delete PixelData; //Does GetImageData return the same pointer ?

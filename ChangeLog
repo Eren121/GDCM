@@ -1,3 +1,8 @@
+2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+  * src/gdcmFile.cxx : now delete the PixelConvert instance.
+  * In examples and tests : change the type of image data variables from void*
+    to uint8_t*. Remmove all delete on image data variables
+
 2004-11-10 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
   * src/gdcmDocument.cxx : Set the file pointer TP to 0 in the constructors.
     Verify the file pointer value before open the file, and if it's not null,
