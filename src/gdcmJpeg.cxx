@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 17:14:40 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/12 19:02:13 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -822,7 +822,14 @@ bool gdcm_read_JPEG_memory ( const JOCTET* input_buffer, const size_t buflen,
 
      //printf( "scanlines: %d\n",cinfo.output_scanline);
      (void) jpeg_read_scanlines(&cinfo, buffer, 1);
-     memcpy( pimage, *buffer,rowsize); 
+#if defined(GDCM_WORDS_BIGENDIAN) && (CMAKE_BITS_IN_JSAMPLE != 8)
+      uint16_t *buffer16 = (uint16_t*)*buffer;
+      uint16_t *pimage16 = (uint16_t*)pimage;
+      for(int i=0;i<rowsize/2;i++)
+        pimage16[i] = (buffer16[i] >> 8) | (buffer16[i] << 8 );
+#else
+      memcpy( pimage, *buffer,rowsize);
+#endif //GDCM_WORDS_BIGENDIAN
      pimage+=rowsize;
   }
    
