@@ -1,4 +1,8 @@
 2004-11-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+  * src/gdcmDicomDir.h : bug fix for the last Boix's commit (problem when 
+    compiling with MSVC6)
+
+2004-11-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
   * Bugs fix for the Windows build with VC6
   * CMakeLists.txt : bug fix - The include of the VTK lib is made only when it's
     needed (only for projects required VTK). If the VTK is included in all

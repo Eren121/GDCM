@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 10:25:27 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/11/09 13:10:44 $
+  Version:   $Revision: 1.38 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,8 @@ typedef std::vector<Document*>  VectDocument;
 class GDCM_EXPORT DicomDir: public Document
 {
 public:
-   typedef GDCM_EXPORT void(Method)(void*);
+   typedef void(Method)(void*);
+
    DicomDir( std::string const & filename, bool parseDir = false );
    DicomDir(); 
                    
