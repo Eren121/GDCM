@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/03/03 11:05:00 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/03/03 11:55:00 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1084,7 +1084,7 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group, uint16_t elem,
  *             - we push the sensitive entries to the Archive
  *          The writing process will restore the entries as they where before 
  *          entering FileHelper::CheckMandatoryElements, so the user will always
- *          see the entries just as he
+ *          see the entries just as he left them.
  * 
  * \todo : - warn the user if we had to add some entries :
  *         even if a mandatory entry is missing, we add it, with a default value
@@ -1350,9 +1350,9 @@ void FileHelper::CheckMandatoryElements()
  
    // Remove some inconstencies (probably some more will be added)
 
-   // Push out (0020 0052),Frame of Reference UID
    // if (0028 0008)Number of Frames exists
-   // (0020 0052),Frame of Reference UID only meaningfull within a Serie
+   //    Push out (0020 0052),Frame of Reference UID
+   //    (only meaningfull within a Serie)
    ValEntry *e_0028_0008 = FileInternal->GetValEntry(0x0028, 0x0008);
    if ( !e_0028_0008 )
    {
