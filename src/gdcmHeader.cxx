@@ -688,9 +688,9 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief gets the info from 0002,0010 : Transfert Syntax
+ * \brief gets the info from 0002,0010 : Transfert Syntax and gdcmTS
  *        else 1.
- * @return Transfert Syntax Name (as oposite to Transfert Syntax UID)
+ * @return the full Transfert Syntax Name (as oposite to Transfert Syntax UID)
  */
 std::string gdcmHeader::GetTransfertSyntaxName(void) { 
    // use the gdcmTS (TS : Transfert Syntax)
@@ -786,6 +786,82 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
 //-----------------------------------------------------------------------------
 // Protected
 
+/**
+ * \ingroup   gdcmHeader
+ * \brief anonymize a Header (removes Patient's personal info)
+ *        (read the code to see which ones ...)
+ * @param 
+ */
+bool gdcmHeader::anonymizeHeader() {
+
+  gdcmHeaderEntry *patientNameHE = GetHeaderEntryByNumber (0x0010, 0x0010);
+ // gdcmHeaderEntry *patientIDHE   = GetHeaderEntryByNumber (0x0010, 0x0020); 
+    
+  ReplaceIfExistByNumber ("  ",0x0010, 0x2154); // Telephone   
+  ReplaceIfExistByNumber ("  ",0x0010, 0x1040); // Adress
+  ReplaceIfExistByNumber ("  ",0x0010, 0x0020); // Patient ID
+  
+  if (patientNameHE) {
+     std::string StudyInstanceUID =  GetEntryByNumber (0x0020, 0x000d);
+     if (StudyInstanceUID !=GDCM_UNFOUND)
+        ReplaceOrCreateByNumber(StudyInstanceUID, 0x0010, 0x0010);
+     else
+        ReplaceOrCreateByNumber("anonymised", 0x0010, 0x0010);            
+  }
+  
+  // Just for fun :-(
+  // (if any) remove or replace 
+  
+//0008 0012 DA ID Instance Creation Date
+//0008 0020 DA ID Study Date
+//0008 0021 DA ID Series Date
+//0008 0022 DA ID Acquisition Date
+//0008 0023 DA ID Content Date
+//0008 0024 DA ID Overlay Date
+//0008 0025 DA ID Curve Date
+//0008 002a DT ID Acquisition Datetime
+//0018 9074 DT ACQ Frame Acquisition Datetime
+//0018 9151 DT ACQ Frame Reference Datetime
+//0018 a002 DT ACQ Contribution Date Time
+//0020 3403 SH REL Modified Image Date (RET)
+//0032 0032 DA SDY Study Verified Date
+//0032 0034 DA SDY Study Read Date
+//0032 1000 DA SDY Scheduled Study Start Date
+//0032 1010 DA SDY Scheduled Study Stop Date
+//0032 1040 DA SDY Study Arrival Date
+//0032 1050 DA SDY Study Completion Date
+//0038 001a DA VIS Scheduled Admission Date
+//0038 001c DA VIS Scheduled Discharge Date
+//0038 0020 DA VIS Admitting Date
+//0038 0030 DA VIS Discharge Date
+//0040 0002 DA PRC Scheduled Procedure Step Start Date
+//0040 0004 DA PRC Scheduled Procedure Step End Date
+//0040 0244 DA PRC Performed Procedure Step Start Date
+//0040 0250 DA PRC Performed Procedure Step End Date
+//0040 2004 DA PRC Issue Date of Imaging Service Request
+//0040 4005 DT PRC Scheduled Procedure Step Start Date and Time
+//0040 4011 DT PRC Expected Completion Date and Time
+//0040 a030 DT PRC Verification Date Time
+//0040 a032 DT PRC Observation Date Time
+//0040 a120 DT PRC DateTime
+//0040 a121 DA PRC Date
+//0040 a13a DT PRC Referenced Datetime
+//0070 0082 DA ??? Presentation Creation Date
+//0100 0420 DT ??? SOP Autorization Date and Time
+//0400 0105 DT ??? Digital Signature DateTime
+//2100 0040 DA PJ Creation Date
+//3006 0008 DA SSET Structure Set Date
+//3008 0024 DA ??? Treatment Control Point Date
+//3008 0054 DA ??? First Treatment Date
+//3008 0056 DA ??? Most Recent Treatment Date
+//3008 0162 DA ??? Safe Position Exit Date
+//3008 0166 DA ??? Safe Position Return Date
+//3008 0250 DA ??? Treatment Date
+//300a 0006 DA RT RT Plan Date
+//300a 022c DA RT Air Kerma Rate Reference Date
+//300e 0004 DA RT Review Date
+ return true;  
+ }
 //-----------------------------------------------------------------------------
 // Private
 

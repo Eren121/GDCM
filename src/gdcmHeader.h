@@ -111,7 +111,7 @@ public:
 protected:
    int write(std::ostream&);   
    int anonymize(std::ostream&);  // FIXME : anonymize should be a friend ?
-
+   bool anonymizeHeader(void);
 private:
 
 };
