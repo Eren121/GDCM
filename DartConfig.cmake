@@ -30,8 +30,19 @@ SET (GNATS_WEB_URL "http://${DROP_SITE}/Bug/index.php")
 # Continuous email delivery variables
 SET (CONTINUOUS_FROM "luis.ibanez@kitware.com")
 SET (SMTP_MAILHOST "public.kitware.com")
-SET (CONTINUOUS_MONITOR_LIST "luis.ibanez@kitware.com")
+SET (CONTINUOUS_MONITOR_LIST "luis.ibanez@kitware.com mathieu.malaterre@kitware.com dcmlib@creatis.insa-lyon.fr")
 SET (CONTINUOUS_BASE_URL "http://www.kitware.com/Testing")
 
-MARK_AS_ADVANCED(BUILD_DOXYGEN)
+#MARK_AS_ADVANCED(BUILD_DOXYGEN)
+
+SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_TEST_FAILURES ON)
+SET (DELIVER_BROKEN_BUILD_EMAIL "Continuous Nightly")
+SET (EMAIL_FROM "dcmlib@creatis.insa-lyon.fr")
+#SET (DARTBOARD_BASE_URL "${PROJECT_URL}/Testing")
+                                                                                
+SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_CONFIGURE_FAILURES 1)
+SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_BUILD_ERRORS 1)
+SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_BUILD_WARNINGS 1)
+SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_TEST_NOT_RUNS 1)
+SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_TEST_FAILURES 1)
 
