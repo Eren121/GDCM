@@ -105,6 +105,8 @@ private:
    bool IsJPEGExtendedProcess2_4TransferSyntax(void); 
    bool IsJPEGExtendedProcess3_5TransferSyntax(void);
    bool IsJPEGSpectralSelectionProcess6_8TransferSyntax(void); 
+   
+   bool IsJPEGLossless(void); 
       
 protected:
    // FIXME: is this enum still necessary ??

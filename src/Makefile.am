@@ -26,7 +26,8 @@ libgdcm_la_SOURCES=		\
 	gdcmDictSet.cxx   \
 	gdcmElValSet.cxx  \
 	gdcmHeaderIdo.cxx \
-	gdcmFile.cxx
+	gdcmFile.cxx	\
+	gdcmJpeg.cxx
 
 libgdcmincludedir = $(includedir)
 libgdcminclude_HEADERS = 	\
@@ -34,4 +35,5 @@ libgdcminclude_HEADERS = 	\
 	gdcm.h  	\
 	gdcmException.h	\
 	gdcmIdo.h  	\
-	gdcmUtil.h
+	gdcmUtil.h	\
+	iddcmjpeg.h

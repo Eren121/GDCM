@@ -13,6 +13,8 @@
 #include "gdcmUtil.h"
 #include "gdcmHeader.h"
 
+#include <iddcmjpeg.h>
+
 // Refer to gdcmHeader::CheckSwap()
 #define HEADER_LENGTH_TO_READ       256
 // Refer to gdcmHeader::SetMaxSizeLoadElementValue()
@@ -128,8 +130,9 @@ void gdcmHeader::CheckSwap()
 
    if(filetype == TrueDicom) {
       // Next, determine the value representation (VR). Let's skip to the
-      // first element (0002, 0000) and check there if we find "UL", in
-      // which case we (almost) know it is explicit VR.
+      // first element (0002, 0000) and check there if we find "UL" 
+      // - or "OB" if the 1st one is (0002,0001) -,
+      // in which case we (almost) know it is explicit VR.
       // WARNING: if it happens to be implicit VR then what we will read
       // is the length of the group. If this ascii representation of this
       // length happens to be "UL" then we shall believe it is explicit VR.
@@ -139,10 +142,12 @@ void gdcmHeader::CheckSwap()
       // We need to skip :
       // * the 128 bytes of File Preamble (often padded with zeroes),
       // * the 4 bytes of "DICM" string,
-      // * the 4 bytes of the first tag (0002, 0000),
+      // * the 4 bytes of the first tag (0002, 0000),or (0002, 0001)
       // i.e. a total of  136 bytes.
       entCur = deb + 136;
-      if(memcmp(entCur, "UL", (size_t)2) == 0) {
+      if(  (memcmp(entCur, "UL", (size_t)2) == 0) ||
+      	   (memcmp(entCur, "OB", (size_t)2) == 0) )
+      	{
          filetype = ExplicitVR;
          dbg.Verbose(1, "gdcmHeader::CheckSwap:",
                      "explicit Value Representation");
@@ -241,7 +246,11 @@ void gdcmHeader::GetPixels(size_t lgrTotale, void* _Pixels) {
    size_t pixelsOffset; 
    pixelsOffset = GetPixelOffset();
    fseek(fp, pixelsOffset, SEEK_SET);
-   fread(_Pixels, 1, lgrTotale, fp);
+   if (IsJPEGLossless()) {
+   	_Pixels=_IdDcmJpegRead(fp);  
+   } else {
+	fread(_Pixels, 1, lgrTotale, fp);
+   }
 }
 
 
@@ -286,7 +295,7 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
    // PostPone this test in an optional integrity check at the end
    // of parsing or only in debug mode.
    if ( RealExplicit && !dicom_vr->count(vr) )
-      RealExplicit = false;
+      RealExplicit= false;
 
    if ( RealExplicit ) {
       if ( ElVal->IsVrUnknown() ) {
@@ -393,7 +402,7 @@ bool gdcmHeader::IsExplicitVRBigEndianTransferSyntax(void) {
       return false;
    LoadElementValueSafe(Element);
    string Transfer = Element->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.2" )
+   if ( Transfer == "1.2.840.10008.1.2.2" )  //1.2.2 ??? A verifier !
       return true;
    return false;
 }
@@ -415,6 +424,20 @@ bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
       return true;
    return false;
 }
+
+// faire qq chose d'intelligent a la place de ça
+
+bool gdcmHeader::IsJPEGLossless(void) {
+   ElValue* Element = PubElVals.GetElementByNumber(0x0002, 0x0010);
+   if ( !Element )
+      return false;
+   LoadElementValueSafe(Element);
+   const char * Transfert = Element->GetValue().c_str();
+   if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
+   if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
+   return false;
+}
+
 
 /**
  * \ingroup gdcmHeader
