@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 17:33:24 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/14 17:34:42 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -133,11 +133,11 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
       // -value forced while Reading process-
       if (GetGroup() == 0x7fe0 && GetVR() == "OW")
       {     
-         unit16_t *currPosition = (uint16_t *)binArea;
+         uint16_t *currPosition = (uint16_t *)binArea;
 
          // TODO FIXME : Maybe we should allocate somewhere a static buffer,
          // in order not to have to alloc/delete for almost every BinEntry ...
-         unit16_t *buffer = new uint16[BUFFER_SIZE];
+         uint16_t *buffer = new uint16[BUFFER_SIZE];
 
          // how many BUFFER_SIZE long pieces in binArea ?
          int nbPieces = lgr/BUFFER_SIZE/2; //(16 bits = 2 Bytes)
