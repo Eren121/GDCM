@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 09:07:19 $
-  Version:   $Revision: 1.219 $
+  Date:      $Date: 2005/02/10 10:12:16 $
+  Version:   $Revision: 1.220 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1181,12 +1181,6 @@ void File::AnonymizeNoLoad()
         || dynamic_cast<SeqEntry *>(d) )
          continue;
 
-      if( d == NULL)
-      {
-         gdcmWarningMacro( "I have no idea why this is NULL "
-                           << "but this solves the seg fault");
-         continue;
-      }
       offset = d->GetOffset();
       lgth =   d->GetLength();
       fp->seekp( offset, std::ios::beg );
@@ -1255,12 +1249,6 @@ bool File::AnonymizeFile()
            || dynamic_cast<SeqEntry *>(d) )
             continue;
 
-         if( d == NULL)
-         {
-            gdcmWarningMacro( "I have no idea why this is NULL "
-                            << "but this solves the seg fault");
-            continue;
-         }
          SetValEntry ((*it).Value, (*it).Group, (*it).Elem);
       }
 }
