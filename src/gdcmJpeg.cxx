@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/14 22:16:33 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/10/15 15:44:42 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -543,8 +543,6 @@ bool gdcm_read_JPEG_file ( FILE* fp, void* image_buffer )
       pimage+=rowsize;
    }
 
- 
-printf( "Image size read: %d\n\n\n\n", (cinfo.output_scanline) * rowsize);
   /* Step 7: Finish decompression */
 #ifdef GDCM_JPG_DEBUG
    printf("Entree Step 7\n");
