@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 17:15:53 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/01/21 19:51:12 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,6 +54,7 @@ typedef  signed char    int8_t;
 typedef  unsigned char  uint8_t;
 typedef  unsigned short uint16_t;
 typedef  unsigned int   uint32_t;
+typedef  unsigned long  uint64_t;
 #define UINT32_MAX    (4294967295U)
 #endif
 

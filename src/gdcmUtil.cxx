@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 16:06:21 $
-  Version:   $Revision: 1.114 $
+  Date:      $Date: 2005/01/21 19:51:12 $
+  Version:   $Revision: 1.115 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -287,7 +287,7 @@ std::string Util::GetCurrentDateTime()
    time_t *timep;
   
    // We need implementation specific functions to obtain millisecond precision
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
    struct timeb tb;
    ::ftime(&tb);
    timep = &tb.time;
@@ -684,19 +684,15 @@ std::string Util::GetMACAddress()
    // 3 OS: Win32, SunOS and 'real' POSIX
    // http://groups-beta.google.com/group/comp.unix.solaris/msg/ad36929d783d63be
    // http://bdn.borland.com/article/0,1410,26040,00.html
-   unsigned char addr[6];
-   std::string macaddr;
+   union dual { uint64_t n; unsigned char addr[6];  };
  
-   int stat = GetMacAddrSys(addr);
-   if (0 == stat)
+   // zero-initialize the whole thing first:
+   dual d = { 0 };
+   int stat = GetMacAddrSys(d.addr);
+   if (stat == 0)
    {
-      for (int i=0; i<6; ++i) 
-      {
-         //macaddr += Format("%2.2x", addr[i]);
-         if(i) macaddr += ".";
-         macaddr += Format("%i", (int)addr[i]);
-      }
-      return macaddr;
+      // fill with zero to fit on 15 bytes.
+      return Format("%015llu", d.n);
    }
    else
    {
