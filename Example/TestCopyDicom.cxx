@@ -2,9 +2,10 @@
 #include "gdcmFile.h"
 #include "gdcmDocument.h"
 #include "gdcmValEntry.h"
+#include "gdcmBinEntry.h"
 
 #ifndef _WIN32
-#include <unistd.h>
+#include <unistd.h> //for access, unlink
 #endif
 
 // return true if the file exists
@@ -46,74 +47,85 @@ int main(int argc, char* argv[])
       return 1;
    }
 
-   if( FileExists( argv[2] ) )
-   {
-      std::cerr << "Don't try to cheat, I am removing the file anyway" << std::endl;
-      if( !RemoveFile( argv[2] ) )
+      std::string filename = argv[1];
+      std::string output = argv[2];
+
+      if( FileExists( output.c_str() ) )
       {
-         std::cerr << "Ouch, the file exist, but I cannot remove it" << std::endl;
-         return 1;
+         std::cerr << "Don't try to cheat, I am removing the file anyway" << std::endl;
+         if( !RemoveFile( output.c_str() ) )
+         {
+            std::cerr << "Ouch, the file exist, but I cannot remove it" << std::endl;
+            return 1;
+         }
       }
-   }
-   gdcmFile *original = new gdcmFile( argv[1] );
+      gdcmFile *original = new gdcmFile( filename );
    
-   std::cout << "--- Original ----------------------" << std::endl;
-   //original->GetHeader()->Print();
+      std::cout << "--- Original ----------------------" << std::endl;
+      //original->GetHeader()->Print();
    
-   gdcmFile *copy = new gdcmFile( argv[2] );
+      gdcmFile *copy = new gdcmFile( output );
 
-   //First of all copy the header field by field
+      TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
+
+      size_t dataSize = original->GetImageDataSize();
+      void *imageData = original->GetImageData();
   
-   // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
-   //It was commented out by Mathieu, that was a *good* idea
-   // (the user does NOT have to know the way we implemented the Header !)
-    
-   TagDocEntryHT & Ht = original->GetHeader()->GetEntry();   
+      //First of all copy the header field by field
+  
+      // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
+      // It was commented out by Mathieu, that was a *good* idea
+      // (the user does NOT have to know the way we implemented the Header !)
+      // Waiting for a 'clean' solution, I keep the method ...JPRx
+
+      gdcmDocEntry* d;
+
+      for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
+      {
+         d = tag->second;
+         d->Print(); std::cout << std::endl;
+         if ( gdcmBinEntry* b = dynamic_cast<gdcmBinEntry*>(d) )
+         {              
+            copy->GetHeader()->ReplaceOrCreateByNumber( 
+                                 b->GetVoidArea(),
+                                 b->GetLength(),
+                                 b->GetGroup(), 
+                                 b->GetElement(),
+                                 b->GetVR() );
+         }
+         else if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
+         {   
+            copy->GetHeader()->ReplaceOrCreateByNumber( 
+                                 v->GetValue(),
+                                 v->GetGroup(), 
+                                 v->GetElement(),
+                                 v->GetVR() ); 
+         }
+         else
+         {
+          // We skip pb of SQ recursive exploration
+          //std::cout << "Skipped Sequence " 
+          //          << "------------- " << d->GetVR() << " "<< std::hex
+          //          << d->GetGroup() << " " << d->GetElement()
+          //  << std::endl;    
+         }
+      }
+
+
+
+
+
+      //copy->GetImageData();
+      copy->SetImageData(imageData, dataSize);
+
+      std::cout << "--- Copy ----------------------" << std::endl;
+      std::cout <<std::endl << "DO NOT care about Offset"  <<std::endl<<std::endl;; 
+      copy->GetHeader()->Print();
+      std::cout << "--- ---- ----------------------" << std::endl;
    
-   for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
-   {
-      if (tag->second->GetVR() == "SQ") //to skip pb of SQ recursive exploration
-         continue;
+      copy->WriteDcmExplVR( output );
 
-      std::string value = ((gdcmValEntry*)(tag->second))->GetValue();
-      //According to JPR I should also skip those:
-//      if (tag->second->GetVR() == "unkn") //to skip pb of SQ recursive exploration
-//         continue;
-
-//      if( value.find( "gdcm::NotLoaded" ) == 0 )
-//         continue;
-
-      if( value.find( "gdcm::Loaded" ) == 0 )
-         continue;
-         
-      //std::cerr << "Reading: " << tag->second->GetVR() << std::endl;
-      //tag->second->Print(); std::cout << std::endl;
-    
-      std::cerr << "Reading: " << value  << std::endl;
-
-      // Well ... Should have dynamic cast here 
-      copy->GetHeader()->ReplaceOrCreateByNumber( 
-                                 value,
-                                 tag->second->GetGroup(), 
-                                 tag->second->GetElement() );
-   
-     // todo : Setting Offset to 0 to avoid further missprint 
-   }
-
-   size_t dataSize = original->GetImageDataSize();
-   void *imageData = original->GetImageData();
-
-   //copy->GetImageData();
-   copy->SetImageData(imageData, dataSize);
-
-   std::cout << "--- Copy ----------------------" << std::endl;
-   std::cout <<std::endl << "DO NOT care about Offset"  <<std::endl<<std::endl;; 
-   //copy->GetHeader()->Print();
-   std::cout << "--- ---- ----------------------" << std::endl;
-   
-   copy->WriteDcmExplVR( argv[2] );
-
-   return 0;
+      return 0;
 }
 
 
