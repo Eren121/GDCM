@@ -56,10 +56,8 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
       if (nb == 12) nb =16;
    }
    lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() * (nb/8)* GetSamplesPerPixel();
-   
    std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
-   if (   str_PhotometricInterpretation == "PALETTE COLOR " 
-       || str_PhotometricInterpretation == "YBR_FULL") {   // --> some more to be added !!
+   if ( str_PhotometricInterpretation == "PALETTE COLOR " ) { 
       lgrTotale*=3;
    }
 }
@@ -427,98 +425,176 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: wierd image");
          return (size_t)0; 
       }
-   }  
-   
+   } 
+// Just to 'see' was was actually read on disk :-(
+// Some troubles expected
+
+//FILE *  fpSpurious;
+//fpSpurious=fopen("SpuriousFile.raw","w"); 
+//fwrite(destination,lgrTotale, 1,fpSpurious);
+//fclose(fpSpurious);
+
+
+
    // *Try* to deal with the color
-   // --------------------------
-     
-   std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
+   // ----------------------------
+
+   // Planar configuration = 0 : Pixels are already RGB
+   // Planar configuration = 1 : 3 planes : R, G, B
+   // Planar configuration = 2 : 1 gray Plane + 3 LUT
+
+   // Well ... supposed to be !
+   // See US-PAL-8-10x-echo.dcm, PlanarConfiguration=0,PhotometricInterpretation=PALETTE COLOR
+   // and heuristic has to be found :-( 
+
+      std::string str_PhotometricInterpretation = gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
    
-   if ( (str_PhotometricInterpretation == "MONOCHROME1 ") 
-     || (str_PhotometricInterpretation == "MONOCHROME2 ") 
-     || (str_PhotometricInterpretation == "RGB")) {
-      return lgrTotale; 
-   }
-   int planConf=GetPlanarConfiguration();
-
-   if( str_PhotometricInterpretation!="PALETTE COLOR" && planConf == 0) 
-      planConf=2;  // Sorry, this is an heuristic
-     
-   switch ( planConf) {
-   case 0:                              
-      //       Pixels are already RGB
-      break;
+      if ( (str_PhotometricInterpretation == "MONOCHROME1 ") 
+        || (str_PhotometricInterpretation == "MONOCHROME2 ") 
+        || (str_PhotometricInterpretation == "RGB")) {
+         return lgrTotale; 
+      }
+      int planConf=GetPlanarConfiguration();
+ 
+      switch (planConf) {
+      case 0:                              
+         //       Pixels are already RGB
+         break;
     
-   case 1:
-      //       need to make RGB Pixels from Planes R,G,B
-      {
-         int l = lgrTotale/3 ;
+      case 1:
 
-         char * a = (char *)destination;
-         char * b = a + l;
-         char * c = b + l;
-         char * newDest = (char*) malloc(lgrTotale);
-         // TODO :
-         // any trick not to have to allocate temporary buffer is welcome ...
-         char *x = newDest;
-         for (int j=0;j<l; j++) {
-            *(x++) = *(a++);
-            *(x++) = *(b++);
-            *(x++) = *(c++);  
-         }
-         memmove(destination,newDest,lgrTotale);
-         free(newDest);
-         // now, it's an RGB image
+         {
+         if (str_PhotometricInterpretation == "YBR_FULL") { // Warning : YBR_FULL_422 acts as RGB (?!)
+
+         //       need to make RGB Pixels from Planes Y,cB,cR
+         // see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
+         // for code optimisation
+
+            int l = GetXSize()*GetYSize();
+            int nbFrames = GetZSize();
+
+            unsigned char * newDest = (unsigned char*) malloc(lgrTotale);
+            unsigned char *x  = newDest;
+            unsigned char * a = (unsigned char *)destination;
+            unsigned char * b = a + l;
+            unsigned char * c = b + l;
+
+            double R,G,B;
+
+            // TODO : Replace by the 'well known' 
+            //        integer computation counterpart
+            for (int i=0;i<nbFrames;i++) {
+               for (int j=0;j<l; j++) {
+                  R= 1.164 *( *a-16) + 1.596 *( *c -128) + 0.5;
+                  G= 1.164 *( *a-16) - 0.813 *( *c -128) - 0.392 *(*b -128) + 0.5;
+                  B= 1.164 *( *a-16) + 2.017 *( *b -128) + 0.5;
+
+                  if (R<0.0)   R=0.0;
+                  if (G<0.0)   G=0.0;
+                  if (B<0.0)   B=0.0;
+                  if (R>255.0) R=255.0;
+                  if (G>255.0) G=255.0;
+                  if (B>255.0) B=255.0;
+
+                  *(x++) = (unsigned char)R;
+                  *(x++) = (unsigned char)G;
+                  *(x++) = (unsigned char)B;
+                  a++; b++; c++;  
+               }
+           }
+            memmove(destination,newDest,lgrTotale);
+            free(newDest);
+
+        } else {
+         
+         //       need to make RGB Pixels from Planes R,G,B
+
+            int l = GetXSize()*GetYSize();
+            int nbFrames = GetZSize();
+
+            char * newDest = (char*) malloc(lgrTotale);
+            char *x  = newDest;
+            char * a = (char *)destination;
+            char * b = a + l;
+            char * c = b + l;
+
+               // TODO :
+               // any trick not to have to allocate temporary buffer is welcome ...
+
+            for (int i=0;i<nbFrames;i++) {
+               for (int j=0;j<l; j++) {
+                  *(x++) = *(a++);
+                  *(x++) = *(b++);
+                  *(x++) = *(c++);  
+               }
+            }
+            memmove(destination,newDest,lgrTotale);
+            free(newDest);
+        }
+
+            // now, it's an RGB image
+            // Lets's write it in the Header
          std::string spp = "3";
          gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002);
          std::string rgb="RGB";
          gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
          break;
-      }
-      
-    case 2:                      
-      //       from Lut R + Lut G + Lut B
+       }
+     
+       case 2:                      
+         //       from Lut R + Lut G + Lut B
        
-      // we no longer use gdcmHeader::GetLUTRGB
-      // since a lot of images have wrong info 
-      // in the Lookup Table Descriptors (0028,1101),...
-      {
+         // we no longer use gdcmHeader::GetLUTRGB
+         // since a lot of images have strange info 
+         // in the Lookup Table Descriptors (0028,1101),...
+         {
+         unsigned char * newDest = (unsigned char*) malloc(lgrTotale);
+         unsigned char * a = (unsigned char *)destination;
+
          unsigned char *lutR =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1201);
          unsigned char *lutG =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1202);
          unsigned char *lutB =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1203);
-      
+
          if (lutR && lutG && lutB ) { // need to make RGB Pixels 
                                       // from grey Pixels 
                                       // and Lut R,Lut G,Lut B
+
             unsigned char * newDest = (unsigned char*) malloc(lgrTotale);
             int l = lgrTotale/3;
             memmove(newDest, destination, l);// move Gray pixels to temp area
 
             unsigned char * x = newDest;
-            unsigned char * a = (unsigned char *)destination;
-            int j;        
-            for (int i=0;i<l; i++) {
-               j=newDest[i]*2;  // Who can explain *why* we have to skip bytes
-               *a++ = lutR[j]; 
-               *a++ = lutG[j];
-               *a++ = lutB[j];
-            }
-            free(newDest);
-         
-            // now, it's an RGB image      
+
+               int j;
+               // See PS 3.3-2003 C.11.1.1.2 p 619
+               // 
+               int mult;
+               if ( GetLUTNbits()==16 && nb==8) mult=2; // See PS 3.3 
+               else mult=1;
+       
+               for (int i=0;i<l; i++) {
+                  j=newDest[i]*mult;
+                  *a++ = lutR[j]; 
+                  *a++ = lutG[j];
+                  *a++ = lutB[j];
+               }
+
+               free(newDest);
+        
+               // now, it's an RGB image      
            std::string spp = "3";
-            gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002); 
+           gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002); 
            std::string rgb="RGB";
            gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
-            
+               
          } else { // need to make RGB Pixels (?)
-               // from grey Pixels (?!)
-               // and Gray Lut  (!?!) 
-            unsigned char *lutGray =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1200); 
-                 // Well . I'll wait till I find such an image 
+                  // from grey Pixels (?!)
+                  // and Gray Lut  (!?!) 
+               unsigned char *lutGray =(unsigned char *)GetPubElValVoidAreaByNumber(0x0028,0x1200);
+                    // Well . I'll wait till I find such an image 
          }
          break;
-      }
+         }
    } 
     
    return lgrTotale; 

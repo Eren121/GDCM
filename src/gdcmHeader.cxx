@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.92 2003/10/02 11:26:15 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.93 2003/10/03 07:46:06 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -2177,5 +2177,49 @@ void * gdcmHeader::GetLUTRGB(void) {
       free(LutR); free(LutB); free(LutG);
       return(LUTRGB);   
    } 
+
+/*  Sorry for the comments. The code will be moved in a fonction
+
+        std::string x=GetPubElValByNumber(0x0028,0x1201);
+        unsigned short int * lutR = (unsigned short int *)malloc((size_t)200*sizeof(short int));
+        unsigned short int * lutG = (unsigned short int *)malloc((size_t)200*sizeof(short int));
+        unsigned short int * lutB = (unsigned short int *)malloc((size_t)200*sizeof(short int));
+
+         std::vector<std::string> tokens;
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize ((const std::string)x, tokens, "\\");
+         for (unsigned int i=0; i<tokens.size();i++) {
+            lutR[i] = atoi(tokens[i].c_str());
+            printf("%d (%x)\n",lutR[i],lutR[i]);   
+         }
+
+         std::string y=GetPubElValByNumber(0x0028,0x1202);
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize ((const std::string)y, tokens, "\\");
+         for (unsigned int i=0; i<tokens.size();i++) {
+            lutG[i] = atoi(tokens[i].c_str());   
+         }
+
+         std::string z=GetPubElValByNumber(0x0028,0x1203);
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize ((const std::string)z, tokens, "\\");
+         for (unsigned int i=0; i<tokens.size();i++) {
+            lutB[i] = atoi(tokens[i].c_str());   
+         }
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize ((const std::string)x, tokens, "\\");
+         for (unsigned int i=0; i<tokens.size();i++) {
+            lutB[i] = atoi(tokens[i].c_str()); 
+         }
+
+ */
+
+//int lgth=GetLUTLength();
+//cout << "lgth " << lgth << std::endl;;
+//for (int j=0;j<lgth;j++){
+//printf ("%d : %d (%x) %d (%x) %d (%x)\n",j,lutR[j],lutR[j],lutG[j],lutG[j],lutB[j],lutB[j]);
+//}
+
+
 }
  
