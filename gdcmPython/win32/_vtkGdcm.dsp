@@ -74,6 +74,10 @@ SOURCE=..\..\src\gdcmDictSet.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmDirList.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmException.cxx
 # End Source File
 # Begin Source File
@@ -164,6 +168,10 @@ SOURCE=..\vtkGdcmReaderPython.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDirList.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\init.h

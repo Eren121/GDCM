@@ -63,7 +63,8 @@ for Remove in Jpeg8SourcesToRemove:
 Sources.extend(Jpeg8Sources)
 
 Jpeg12Sources = glob.glob(os.path.join(gdcmJpeg12SrcDir,"j*.c"))
-Jpeg12SourcesToRemove = ['jmemansi12.c', 'jmemname12.c', 'jmemdos12.c', 'jmemmac12.c']
+Jpeg12SourcesToRemove = ['jmemansi12.c', 'jmemname12.c', 'jmemdos12.c', 
+                         'jmemmac12.c']
 for Remove in Jpeg12SourcesToRemove:
    ### Because setup.py is a multiple pass process we need to trap
    ### the case where the files were allready wed out on a previous pass.

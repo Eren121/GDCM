@@ -53,7 +53,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=move                    $(ProjDir)\gdcm.py                    $(ProjDir)\..\ 
+PostBuild_Cmds=move                     $(ProjDir)\gdcm.py                     $(ProjDir)\..\ 
 # End Special Build Tool
 # Begin Target
 
@@ -93,6 +93,10 @@ SOURCE=..\..\src\gdcmDictEntry.cxx
 # Begin Source File
 
 SOURCE=..\..\src\gdcmDictSet.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDirList.cxx
 # End Source File
 # Begin Source File
 

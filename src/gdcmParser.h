@@ -134,7 +134,7 @@ protected:
    void LoadHeaderEntrySafe(gdcmHeaderEntry *);
 
    void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);
-   void WriteEntries(FileType type, FILE *);
+   void WriteEntries(FILE *_fp,FileType type);
 
 // Variables
    FILE *fp;

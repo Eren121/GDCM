@@ -289,7 +289,7 @@ bool gdcmDicomDir::Write(std::string fileName)
    fwrite("DICM",4,1,fp1);
    free(filePreamble);
 
-   WriteEntries(DICOMDIR,fp1);
+   WriteEntries(fp1,DICOMDIR);
 
    fclose(fp1);
 

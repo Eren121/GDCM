@@ -434,7 +434,7 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
       UpdateGroupLength(true,ACR);
 */
 
-   WriteEntries(type, fp);
+   WriteEntries(fp,type);
    return(true);
  }
 
@@ -1004,7 +1004,7 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
  */
-void gdcmParser::WriteEntries(FileType type, FILE * _fp) 
+void gdcmParser::WriteEntries(FILE *_fp,FileType type)
 {
    guint16 gr, el;
    guint32 lgr;
