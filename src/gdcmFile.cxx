@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/15 10:43:27 $
-  Version:   $Revision: 1.144 $
+  Date:      $Date: 2004/10/18 12:49:22 $
+  Version:   $Revision: 1.145 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,70 +84,7 @@ void File::Initialise()
          ImageDataSize = ImageDataSizeRaw;
       }
 
-
-
-                                                                                
-      // Just in case some access to a Header element requires disk access.
-      // Note: gdcmDocument::Fp is leaved open after OpenFile. 
-      (void)HeaderInternal->OpenFile();
-      // Number of Bits Allocated for storing a Pixel is defaulted to 16
-      // when absent from the header.
-      int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
-      if ( numberBitsAllocated == 0 )
-      {
-         numberBitsAllocated = 16;
-      }
-      PixelConverter.SetBitsAllocated( numberBitsAllocated );
-                                                                                
-      // Number of "Bits Stored" defaulted to number of "Bits Allocated"
-      // when absent from the header.
-      int numberBitsStored = HeaderInternal->GetBitsStored();
-      if ( numberBitsStored == 0 )
-      {
-         numberBitsStored = numberBitsAllocated;
-      }
-      PixelConverter.SetBitsStored( numberBitsStored );
-                                                                                
-      // High Bit Position
-      int highBitPosition = HeaderInternal->GetHighBitPosition();
-      if ( highBitPosition == 0 )
-      {
-         highBitPosition = numberBitsAllocated - 1;
-      }
-      PixelConverter.SetHighBitPosition( highBitPosition );
-                                                                                
-                                                                                
-      PixelConverter.SetXSize( HeaderInternal->GetXSize() );
-      PixelConverter.SetYSize( HeaderInternal->GetYSize() );
-      PixelConverter.SetZSize( HeaderInternal->GetZSize() );
-      PixelConverter.SetSamplesPerPixel( HeaderInternal->GetSamplesPerPixel() );
-      PixelConverter.SetPixelSize( HeaderInternal->GetPixelSize() );
-      PixelConverter.SetPixelSign( HeaderInternal->IsSignedPixelData() );
-      PixelConverter.SetSwapCode( HeaderInternal->GetSwapCode() );
-      PixelConverter.SetIsUncompressed(
-         ! HeaderInternal->IsDicomV3()
-        || HeaderInternal->IsImplicitVRLittleEndianTransferSyntax()
-        || HeaderInternal->IsExplicitVRLittleEndianTransferSyntax()
-        || HeaderInternal->IsExplicitVRBigEndianTransferSyntax()
-        || HeaderInternal->IsDeflatedExplicitVRLittleEndianTransferSyntax() );
-      PixelConverter.SetIsJPEG2000( HeaderInternal->IsJPEG2000() );
-      PixelConverter.SetIsJPEGLossless( HeaderInternal->IsJPEGLossless() );
-      PixelConverter.SetIsRLELossless(
-                        HeaderInternal->IsRLELossLessTransferSyntax() );
-      PixelConverter.SetPixelOffset( HeaderInternal->GetPixelOffset() );
-      PixelConverter.SetPixelDataLength( HeaderInternal->GetPixelAreaLength() );
-      PixelConverter.SetRLEInfo( &(HeaderInternal->RLEInfo) );
-      PixelConverter.SetJPEGInfo( &(HeaderInternal->JPEGInfo) );
-      PixelConverter.SetHasLUT( HeaderInternal->HasLUT() );
-
-      PixelConverter.SetPlanarConfiguration(
-          HeaderInternal->GetPlanarConfiguration() );
-      PixelConverter.SetIsMonochrome( HeaderInternal->IsMonochrome() );
-      PixelConverter.SetIsPaletteColor( HeaderInternal->IsPaletteColor() );
-      PixelConverter.SetIsYBRFull( HeaderInternal->IsYBRFull() );
-                                                                                
-      HeaderInternal->CloseFile();
-
+      PixelConverter.GrabInformationsFromHeader( HeaderInternal );
    }
    SaveInitialValues();
 }
@@ -424,41 +361,30 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
       return ImageDataSize;
    }
                             
-   // from Lut R + Lut G + Lut B
-   uint8_t *newDest = new uint8_t[ImageDataSize];
-   uint8_t *a       = (uint8_t *)destination;
-   uint8_t *lutRGBA = HeaderInternal->GetLUTRGBA();
-
-   if ( lutRGBA )
+   FILE* fp = HeaderInternal->OpenFile();
+   if ( PixelConverter.BuildRGBImage( fp ) )
    {
-      int j;
-      // move Gray pixels to temp area  
-      memmove(newDest, destination, ImageDataSizeRaw);
-      for (size_t i=0; i<ImageDataSizeRaw; ++i) 
-      {
-         // Build RGB Pixels
-         j    = newDest[i]*4;
-         *a++ = lutRGBA[j];
-         *a++ = lutRGBA[j+1];
-         *a++ = lutRGBA[j+2];
-      }
-      delete[] newDest;
+      memmove( destination,
+               (void*)PixelConverter.GetRGB(),
+               PixelConverter.GetRGBSize() );
     
-   // now, it's an RGB image
-   // Lets's write it in the Header
+      // now, it's an RGB image
+      // Lets's write it in the Header
 
-   // FIXME : Better use CreateOrReplaceIfExist ?
+      // FIXME : Better use CreateOrReplaceIfExist ?
 
-   std::string spp = "3";        // Samples Per Pixel
-   HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
-   std::string rgb = "RGB ";     // Photometric Interpretation
-   HeaderInternal->SetEntryByNumber(rgb,0x0028,0x0004);
-   std::string planConfig = "0"; // Planar Configuration
-   HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
+      std::string spp = "3";        // Samples Per Pixel
+      HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
+      std::string rgb = "RGB ";     // Photometric Interpretation
+      HeaderInternal->SetEntryByNumber(rgb,0x0028,0x0004);
+      std::string planConfig = "0"; // Planar Configuration
+      HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
 
    }
-   else  // GetLUTRGBA() failed
+   else
    { 
+      // PixelConverter.BuildRGBImage( fp ) failed probably because
+      // PixelConverter.GetLUTRGBA() failed:
       // (gdcm-US-ALOKA-16.dcm), contains Segmented xxx Palette Color 
       // that are *more* than 65535 long ?!? 
       // No idea how to manage such an image !
@@ -468,6 +394,7 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
       std::string photomInterp = "MONOCHROME1 ";  // Photometric Interpretation
       HeaderInternal->SetEntryByNumber(photomInterp,0x0028,0x0004);
    } 
+   HeaderInternal->CloseFile();
 
    /// \todo Drop Palette Color out of the Header?
    return ImageDataSize; 
@@ -783,6 +710,14 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    fclose (fp1);
 
    return true;
+}
+
+/**
+ * \brief Access to the underlying \ref PixelConvertver RGBA LUT
+ */
+uint8_t* File::GetLutRGBA()
+{
+   return PixelConverter.GetLutRGBA();
 }
 
 } // end namespace gdcm

@@ -31,6 +31,14 @@ IF(GDCM_DOCUMENTATION)
          "${GDCM_DOCUMENTATION_INPUT_COMMON} ${GDCM_SOURCE_DIR}/vtk")
   ENDIF(GDCM_VTK)
 
+  IF(DOT)
+     GET_FILENAME_COMPONENT(GDCM_DOCUMENTATION_DOT_PATH ${DOT} PATH)
+     SET(GDCM_DOCUMENTATION_HAVE_DOT "YES")
+  ELSE(DOT)
+     SET(GDCM_DOCUMENTATION_DOT_PATH "")
+     SET(GDCM_DOCUMENTATION_HAVE_DOT "NO")
+  ENDIF(DOT)
+
   #Should rewrote this thing with FOREACH:
   #-----------------------------------------------------------------------------
   # Build the documentation for developpers

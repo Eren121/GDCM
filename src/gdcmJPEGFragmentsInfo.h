@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/14 22:35:01 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/18 12:49:22 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,10 +39,11 @@ namespace gdcm
  */
 class GDCM_EXPORT JPEGFragmentsInfo
 {
-   typedef std::list< JPEGFragment* > JPEGFragmentsList;
 friend class Document;
 friend class File;
 friend class PixelConvert;
+private:
+   typedef std::list< JPEGFragment* > JPEGFragmentsList;
    JPEGFragmentsList Fragments;
 public:
    ~JPEGFragmentsInfo();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/15 10:43:28 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/10/18 12:49:22 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,15 +53,25 @@ PixelConvert::PixelConvert()
    RGBSize = 0;
    Decompressed = 0;
    DecompressedSize = 0;
+   LutRGBA = 0;
+   LutRedData = 0;
+   LutGreenData = 0;
+   LutBlueData =0;
 }
 
 void PixelConvert::Squeeze() 
 {
-   if ( RGB ) {
+   if ( RGB )
+   {
       delete [] RGB;
    } 
-   if ( Decompressed ) {
+   if ( Decompressed )
+   {
       delete [] Decompressed;
+   }
+   if ( LutRGBA )
+   {
+      delete [] LutRGBA;
    }
 }
 
@@ -75,7 +85,7 @@ void PixelConvert::AllocateRGB()
   if ( RGB ) {
      delete [] RGB;
   }
-  RGB = new uint8_t[RGBSize];
+  RGB = new uint8_t[ RGBSize ];
 }
 
 void PixelConvert::AllocateDecompressed()
@@ -87,7 +97,7 @@ void PixelConvert::AllocateDecompressed()
 }
 
 /**
- * \brief Read from file a 12 bits per pixel image and uncompress it
+ * \brief Read from file a 12 bits per pixel image and decompress it
  *        into a 16 bits per pixel image.
  */
 void PixelConvert::ReadAndDecompress12BitsTo16Bits( FILE* fp )
@@ -146,15 +156,15 @@ void PixelConvert::ReadAndDecompress12BitsTo16Bits( FILE* fp )
 bool PixelConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
 {
    size_t PixelNumber = XSize * YSize;
-   size_t uncompressedSize = XSize * YSize * NumberOfFrames;
+   size_t decompressedSize = XSize * YSize * NumberOfFrames;
 
    // We assumed Decompressed contains the decoded RLE pixels but as
    // 8 bits per pixel. In order to convert those pixels to 16 bits
    // per pixel we cannot work in place within Decompressed and hence
    // we copy it in a safe place, say copyDecompressed.
 
-   uint8_t* copyDecompressed = new uint8_t[ uncompressedSize * 2 ];
-   memmove( copyDecompressed, Decompressed, uncompressedSize * 2 );
+   uint8_t* copyDecompressed = new uint8_t[ decompressedSize * 2 ];
+   memmove( copyDecompressed, Decompressed, decompressedSize * 2 );
 
    uint8_t* x = Decompressed;
    uint8_t* a = copyDecompressed;
@@ -176,26 +186,26 @@ bool PixelConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
 }
 
 /**
- * \brief Implementation of the RLE decoding algorithm for uncompressing
+ * \brief Implementation of the RLE decoding algorithm for decompressing
  *        a RLE fragment. [refer to PS 3.5-2003, section G.3.2 p 86]
  * @param subDecompressed Sub region of \ref Decompressed where the de
  *        decoded fragment should be placed.
  * @param fragmentSize The length of the binary fragment as found on the disk.
- * @param uncompressedSegmentSize The expected length of the fragment ONCE
+ * @param decompressedSegmentSize The expected length of the fragment ONCE
  *        decompressed.
  * @param fp File Pointer: on entry the position should be the one of
  *        the fragment to be decoded.
  */
 bool PixelConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
                                                  long fragmentSize,
-                                                 long uncompressedSegmentSize,
+                                                 long decompressedSegmentSize,
                                                  FILE* fp )
 {
    int8_t count;
    long numberOfOutputBytes = 0;
    long numberOfReadBytes = 0;
                                                                                 
-   while( numberOfOutputBytes < uncompressedSegmentSize )
+   while( numberOfOutputBytes < decompressedSegmentSize )
    {
       fread( &count, 1, 1, fp );
       numberOfReadBytes += 1;
@@ -239,7 +249,7 @@ bool PixelConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
 
 /**
  * \brief     Reads from disk the Pixel Data of 'Run Length Encoded'
- *            Dicom encapsulated file and uncompress it.
+ *            Dicom encapsulated file and decompress it.
  * @param     fp already open File Pointer
  *            at which the pixel data should be copied
  * @return    Boolean
@@ -385,7 +395,7 @@ void PixelConvert::ConvertReorderEndianity()
 
 /**
  * \brief     Reads from disk the Pixel Data of JPEG Dicom encapsulated
- &            file and uncompress it.
+ &            file and decompress it.
  * @param     fp File Pointer
  * @return    Boolean
  */
@@ -572,9 +582,7 @@ void PixelConvert::ConvertRGBPlanesToRGBPixels()
 
 bool PixelConvert::ReadAndDecompressPixelData( FILE* fp )
 {
-   ComputeDecompressedImageDataSize();
-   if ( HasLUT )
-      DecompressedSize *= 3;
+   ComputeDecompressedAndRGBSizes();
    AllocateDecompressed();
    //////////////////////////////////////////////////
    //// First stage: get our hands on the Pixel Data.
@@ -593,18 +601,18 @@ bool PixelConvert::ReadAndDecompressPixelData( FILE* fp )
    }
                                                                                 
    //////////////////////////////////////////////////
-   //// Second stage: read from disk dans uncompress.
+   //// Second stage: read from disk dans decompress.
    if ( BitsAllocated == 12 )
    {
       ReadAndDecompress12BitsTo16Bits( fp);
    }
-   else if ( IsUncompressed )
+   else if ( IsDecompressed )
    {
       size_t ItemRead = fread( Decompressed, PixelDataLength, 1, fp );
       if ( ItemRead != 1 )
       {
          dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
-                         "reading of uncompressed pixel data failed." );
+                         "reading of decompressed pixel data failed." );
          return false;
       }
    } 
@@ -715,7 +723,7 @@ bool PixelConvert::IsDecompressedRGB()
    return true;
 }
 
-void PixelConvert::ComputeDecompressedImageDataSize()
+void PixelConvert::ComputeDecompressedAndRGBSizes()
 {
    int bitsAllocated = BitsAllocated;
    // Number of "Bits Allocated" is fixed to 16 when it's 12, since
@@ -726,10 +734,316 @@ void PixelConvert::ComputeDecompressedImageDataSize()
       bitsAllocated = 16;
    }
                                                                                 
-   DecompressedSize = XSize * YSize * ZSize
-                    * ( bitsAllocated / 8 )
-                    * SamplesPerPixel;
+   DecompressedSize =  XSize * YSize * ZSize
+                     * ( bitsAllocated / 8 )
+                     * SamplesPerPixel;
+   if ( HasLUT )
+   {
+      RGBSize = 3 * DecompressedSize;
+   }
+
 }
+
+void PixelConvert::GrabInformationsFromHeader( Header* header )
+{
+   // Just in case some access to a Header element requires disk access.
+   // Note: gdcmDocument::Fp is leaved open after OpenFile.
+   FILE* fp = header->OpenFile();
+   // Number of Bits Allocated for storing a Pixel is defaulted to 16
+   // when absent from the header.
+   BitsAllocated = header->GetBitsAllocated();
+   if ( BitsAllocated == 0 )
+   {
+      BitsAllocated = 16;
+   }
+
+   // Number of "Bits Stored" defaulted to number of "Bits Allocated"
+   // when absent from the header.
+   BitsStored = header->GetBitsStored();
+   if ( BitsStored == 0 )
+   {
+      BitsStored = BitsAllocated;
+   }
+
+   // High Bit Position
+   HighBitPosition = header->GetHighBitPosition();
+   if ( HighBitPosition == 0 )
+   {
+      HighBitPosition = BitsAllocated - 1;
+   }
+
+   XSize = header->GetXSize();
+   YSize = header->GetYSize();
+   ZSize = header->GetZSize();
+   SamplesPerPixel = header->GetSamplesPerPixel();
+   PixelSize = header->GetPixelSize();
+   PixelSign = header->IsSignedPixelData();
+   SwapCode  = header->GetSwapCode();
+   IsDecompressed =
+        ( ! header->IsDicomV3() )
+     || header->IsImplicitVRLittleEndianTransferSyntax()
+     || header->IsExplicitVRLittleEndianTransferSyntax()
+     || header->IsExplicitVRBigEndianTransferSyntax()
+     || header->IsDeflatedExplicitVRLittleEndianTransferSyntax();
+   IsJPEG2000     = header->IsJPEG2000();
+   IsJPEGLossless = header->IsJPEGLossless();
+   IsRLELossless  = header->IsRLELossLessTransferSyntax();
+   PixelOffset     = header->GetPixelOffset();
+   PixelDataLength = header->GetPixelAreaLength();
+   RLEInfo  = header->GetRLEInfo();
+   JPEGInfo = header->GetJPEGInfo();
+                                                                             
+   PlanarConfiguration = header->GetPlanarConfiguration();
+   IsMonochrome = header->IsMonochrome();
+   IsPaletteColor = header->IsPaletteColor();
+   IsYBRFull = header->IsYBRFull();
+
+   /////////////////////////////////////////////////////////////////
+   // LUT section:
+   HasLUT = header->HasLUT();
+   if ( HasLUT )
+   {
+      LutRedDescriptor   = header->GetEntryByNumber( 0x0028, 0x1101 );
+      LutGreenDescriptor = header->GetEntryByNumber( 0x0028, 0x1102 );
+      LutBlueDescriptor  = header->GetEntryByNumber( 0x0028, 0x1103 );
+   
+      // Depending on the value of Document::MAX_SIZE_LOAD_ELEMENT_VALUE
+      // [ refer to invocation of Document::SetMaxSizeLoadEntry() in
+      // Document::Document() ], the loading of the value (content) of a
+      // [Bin|Val]Entry occurence migth have been hindered (read simply NOT
+      // loaded). Hence, we first try to obtain the LUTs data from the header
+      // and when this fails we read the LUTs data directely from disk.
+      /// \todo Reading a [Bin|Val]Entry directly from disk is a kludge.
+      ///       We should NOT bypass the [Bin|Val]Entry class. Instead
+      ///       an access to an UNLOADED content of a [Bin|Val]Entry occurence
+      ///       (e.g. BinEntry::GetBinArea()) should force disk access from
+      ///       within the [Bin|Val]Entry class itself. The only problem
+      ///       is that the [Bin|Val]Entry is unaware of the FILE* is was
+      ///       parsed from. Fix that. FIXME.
+   
+      ////// Red round:
+      LutRedData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1201 );
+      if ( ! LutRedData )
+      {
+         // Read the Lut Data from disk
+         DocEntry* lutRedDataEntry = header->GetDocEntryByNumber( 0x0028,
+                                                                  0x1201 );
+         LutRedData = new uint8_t[ lutRedDataEntry->GetLength() ];
+         fseek( fp, lutRedDataEntry->GetOffset() ,SEEK_SET );
+         int numberItem = fread( LutRedData,
+                                 (size_t)lutRedDataEntry->GetLength(),
+                                 1, fp );
+         if ( numberItem != 1 )
+         {
+            dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
+                            "unable to read red LUT data" );
+            return;
+         }
+      }
+   
+      ////// Green round:
+      LutGreenData = (uint8_t*)header->GetEntryBinAreaByNumber(0x0028, 0x1202 );
+      if ( ! LutGreenData)
+      {
+         // Read the Lut Data from disk
+         DocEntry* lutGreenDataEntry = header->GetDocEntryByNumber( 0x0028,
+                                                                    0x1202 );
+         LutGreenData = new uint8_t[ lutGreenDataEntry->GetLength() ];
+         fseek( fp, lutGreenDataEntry->GetOffset() ,SEEK_SET );
+         int numberItem = fread( LutGreenData,
+                                 (size_t)lutGreenDataEntry->GetLength(),
+                                 1, fp );
+         if ( numberItem != 1 )
+         {
+            dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
+                           "unable to read green LUT data" );
+            return;
+         }
+      }
+                                                                                   
+      ////// Blue round:
+      LutBlueData = (uint8_t*)header->GetEntryBinAreaByNumber( 0x0028, 0x1203 );
+      if ( ! LutBlueData )
+      {
+         // Read the Lut Data from disk
+         DocEntry* lutBlueDataEntry  = header->GetDocEntryByNumber( 0x0028,
+                                                                    0x1203 );
+         LutBlueData = new uint8_t[ lutBlueDataEntry->GetLength() ];
+         fseek( fp, lutBlueDataEntry->GetOffset() ,SEEK_SET );
+         int numberItem = fread( LutBlueData,
+                                 (size_t)lutBlueDataEntry->GetLength(),
+                                 1, fp );
+         if ( numberItem != 1 )
+         {
+            dbg.Verbose(0, "PixelConvert::GrabInformationsFromHeader: "
+                           "unable to read blue LUT data" );
+            return;
+         }
+      }
+   }
+                                                                                
+   header->CloseFile();
+}
+
+/**
+ * \brief Build Red/Green/Blue/Alpha LUT from Header
+ *         when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
+ *          and (0028,1101),(0028,1102),(0028,1102)
+ *            - xxx Palette Color Lookup Table Descriptor - are found
+ *          and (0028,1201),(0028,1202),(0028,1202)
+ *            - xxx Palette Color Lookup Table Data - are found
+ * \warning does NOT deal with :
+ *   0028 1100 Gray Lookup Table Descriptor (Retired)
+ *   0028 1221 Segmented Red Palette Color Lookup Table Data
+ *   0028 1222 Segmented Green Palette Color Lookup Table Data
+ *   0028 1223 Segmented Blue Palette Color Lookup Table Data
+ *   no known Dicom reader deals with them :-(
+ * @return a RGBA Lookup Table
+ */
+void PixelConvert::BuildLUTRGBA( FILE* fp )
+{
+   if ( LutRGBA )
+   {
+      return;
+   }
+   // Not so easy : see
+   // http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
+                                                                                
+   if ( ! IsPaletteColor )
+   {
+      return;
+   }
+                                                                                
+   if (   ( LutRedDescriptor   == GDCM_UNFOUND )
+       || ( LutGreenDescriptor == GDCM_UNFOUND )
+       || ( LutBlueDescriptor  == GDCM_UNFOUND ) )
+   {
+      return;
+   }
+
+   ////////////////////////////////////////////
+   // Extract the info from the LUT descriptors
+   int lengthR;   // Red LUT length in Bytes
+   int debR;      // Subscript of the first Lut Value
+   int nbitsR;    // Lut item size (in Bits)
+   int nbRead = sscanf( LutRedDescriptor.c_str(),
+                        "%d\\%d\\%d",
+                        &lengthR, &debR, &nbitsR );
+   if( nbRead != 3 )
+   {
+      dbg.Verbose(0, "PixelConvert::BuildLUTRGBA: wrong red LUT descriptor");
+   }
+                                                                                
+   int lengthG;  // Green LUT length in Bytes
+   int debG;     // Subscript of the first Lut Value
+   int nbitsG;   // Lut item size (in Bits)
+   nbRead = sscanf( LutGreenDescriptor.c_str(),
+                    "%d\\%d\\%d",
+                    &lengthG, &debG, &nbitsG );
+   if( nbRead != 3 )
+   {
+      dbg.Verbose(0, "PixelConvert::BuildLUTRGBA: wrong green LUT descriptor");
+   }
+                                                                                
+   int lengthB;  // Blue LUT length in Bytes
+   int debB;     // Subscript of the first Lut Value
+   int nbitsB;   // Lut item size (in Bits)
+   nbRead = sscanf( LutRedDescriptor.c_str(),
+                    "%d\\%d\\%d",
+                    &lengthB, &debB, &nbitsB );
+   if( nbRead != 3 )
+   {
+      dbg.Verbose(0, "PixelConvert::BuildLUTRGBA: wrong blue LUT descriptor");
+   }
+                                                                                
+   ////////////////////////////////////////////////////////
+   if ( ( ! LutRedData ) || ( ! LutGreenData ) || ( ! LutBlueData ) )
+   {
+      return;
+   }
+
+   ////////////////////////////////////////////////
+   // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT
+   LutRGBA = new uint8_t[ 1024 ]; // 256 * 4 (R, G, B, Alpha)
+   if ( !LutRGBA )
+   {
+      return;
+   }
+   memset( LutRGBA, 0, 1024 );
+                                                                                
+   int mult;
+   if ( ( nbitsR == 16 ) && ( BitsAllocated == 8 ) )
+   {
+      // when LUT item size is different than pixel size
+      mult = 2; // high byte must be = low byte
+   }
+   else
+   {
+      // See PS 3.3-2003 C.11.1.1.2 p 619
+      mult = 1;
+   }
+                                                                                
+   // if we get a black image, let's just remove the '+1'
+   // from 'i*mult+1' and check again
+   // if it works, we shall have to check the 3 Palettes
+   // to see which byte is ==0 (first one, or second one)
+   // and fix the code
+   // We give up the checking to avoid some (useless ?)overhead
+   // (optimistic asumption)
+   int i;
+   uint8_t* a = LutRGBA + 0;
+   for( i=0; i < lengthR; ++i )
+   {
+      *a = LutRedData[i*mult+1];
+      a += 4;
+   }
+                                                                                
+   a = LutRGBA + 1;
+   for( i=0; i < lengthG; ++i)
+   {
+      *a = LutGreenData[i*mult+1];
+      a += 4;
+   }
+                                                                                
+   a = LutRGBA + 2;
+   for(i=0; i < lengthB; ++i)
+   {
+      *a = LutBlueData[i*mult+1];
+      a += 4;
+   }
+                                                                                
+   a = LutRGBA + 3;
+   for(i=0; i < 256; ++i)
+   {
+      *a = 1; // Alpha component
+      a += 4;
+   }
+}
+
+/**
+ * \brief Build the RGB image from the Decompressed imagage and the LUTs.
+ */
+bool PixelConvert::BuildRGBImage( FILE* fp )
+{
+   BuildLUTRGBA( fp );
+   if ( ! LutRGBA )
+   {
+       return false;
+   }
+                                                                                
+   // Build RGB Pixels
+   AllocateRGB();
+   uint8_t* localRGB = RGB;
+   for (size_t i = 0; i < DecompressedSize; ++i )
+   {
+      int j  = Decompressed[i] * 4; // \todo I don't get this 4 coefficient !
+      *localRGB++ = LutRGBA[j];
+      *localRGB++ = LutRGBA[j+1];
+      *localRGB++ = LutRGBA[j+2];
+   }
+   return true;
+}
+
 
 } // end namespace gdcm
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2004/10/18 12:49:22 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -162,7 +162,6 @@ public:
 
    bool   HasLUT();
    int    GetLUTNbits();
-   unsigned char * GetLUTRGBA();
 
    std::string GetTransfertSyntaxName();
 

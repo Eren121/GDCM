@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 17:31:56 $
-  Version:   $Revision: 1.104 $
+  Date:      $Date: 2004/10/18 12:49:22 $
+  Version:   $Revision: 1.105 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1109,7 +1109,12 @@ void*  Document::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem)
       dbg.Verbose(1, "Document::GetDocEntryByNumber: no entry");
       return 0;
    }
-   return ((BinEntry *)entry)->GetBinArea();
+   if ( BinEntry* binEntry = dynamic_cast<BinEntry*>(entry) )
+   {
+      return binEntry->GetBinArea();
+   }
+
+   return 0;
 }
 
 /**
@@ -2447,6 +2452,8 @@ void Document::Initialise()
 {
    RefPubDict = Global::GetDicts()->GetDefaultPubDict();
    RefShaDict = NULL;
+   RLEInfo  = new RLEFramesInfo;
+   JPEGInfo = new JPEGFragmentsInfo;
 }
 
 /**
@@ -2962,7 +2969,7 @@ void Document::ComputeRLEInfo()
           newFrameInfo->Offset[uk] = frameOffset + rleSegmentOffsetTable[uk];
           newFrameInfo->Length[uk] = rleSegmentLength[uk];
        }
-       RLEInfo.Frames.push_back( newFrameInfo );
+       RLEInfo->Frames.push_back( newFrameInfo );
    }
 
    // Make sure that at the end of the item we encounter a 'Sequence
@@ -3001,7 +3008,7 @@ void Document::ComputeJPEGFragmentInfo()
        JPEGFragment* newFragment = new JPEGFragment;
        newFragment->Offset = fragmentOffset;
        newFragment->Length = fragmentLength;
-       JPEGInfo.Fragments.push_back( newFragment );
+       JPEGInfo->Fragments.push_back( newFragment );
 
        SkipBytes( fragmentLength );
    }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:29 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2004/10/18 12:49:22 $
+  Version:   $Revision: 1.52 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,11 +48,11 @@ class GDCM_EXPORT Document : public ElementSet
 friend class File;
 private:
    /// Public dictionary used to parse this header
-   Dict *RefPubDict;
+   Dict* RefPubDict;
    
    /// \brief Optional "shadow dictionary" (private elements) used to parse
    /// this header
-   Dict *RefShaDict;
+   Dict* RefShaDict;
 
    /// \brief Size threshold above which an element value will NOT be loaded
    /// in memory (to avoid loading the image/volume itself). By default,
@@ -75,7 +75,7 @@ protected:
    int SwapCode;
 
    /// File Pointer, opened during Header parsing.
-   FILE *Fp;
+   FILE* Fp;
 
    /// ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
    FileType Filetype;  
@@ -95,10 +95,10 @@ protected:
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// Store the RLE frames info obtained during parsing of pixels.
-   RLEFramesInfo RLEInfo;
+   RLEFramesInfo* RLEInfo;
 
    /// Store the JPEG fragments info obtained during parsing of pixels.
-   JPEGFragmentsInfo JPEGInfo;
+   JPEGFragmentsInfo* JPEGInfo;
 
    /// \brief Amount of printed details for each Header Entry (Dicom Element):
    /// 0 : stands for the least detail level.
@@ -110,9 +110,9 @@ public:
    virtual void PrintShaDict (std::ostream &os = std::cout);
 
 // Dictionnaries
-   Dict *GetPubDict();
-   Dict *GetShaDict();
-   bool SetShaDict(Dict *dict);
+   Dict* GetPubDict();
+   Dict* GetShaDict();
+   bool SetShaDict(Dict* dict);
    bool SetShaDict(DictKey const & dictName);
 
 // Informations contained in the parser
@@ -138,7 +138,7 @@ public:
    FILE* OpenFile();
    bool CloseFile();
 
-   void Write(FILE* fp, FileType type);
+   void Write( FILE* fp, FileType type );
 
    ValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                          uint16_t group, uint16_t elem,
@@ -205,6 +205,8 @@ public:
 
    ValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
    //BinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
+   RLEFramesInfo* GetRLEInfo() { return RLEInfo; }
+   JPEGFragmentsInfo* GetJPEGInfo() { return JPEGInfo; }
 
    void LoadDocEntrySafe(DocEntry* entry);
    TagDocEntryHT* BuildFlatHashTable();

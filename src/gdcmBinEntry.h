@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:44 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/10/18 12:49:22 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,30 +36,23 @@ namespace gdcm
 class GDCM_EXPORT BinEntry  : public ValEntry
 {
 public:
-
-   BinEntry(DictEntry* e);
-   BinEntry(DocEntry* d); 
+   BinEntry( DictEntry* e );
+   BinEntry( DocEntry* d ); 
 
    ~BinEntry();
    
-   void Print(std::ostream &os = std::cout);
-   void Write(FILE*, FileType);
+   void Print( std::ostream &os = std::cout );
+   void Write( FILE*, FileType );
 
    /// \brief Returns the area value of the current Dicom Header Entry
    ///  when it's not string-translatable (e.g : a LUT table)         
    uint8_t* GetBinArea()  { return BinArea; }
    void  SetBinArea( uint8_t* area );
          
-protected:
-
 private:
-
-// Variables
-   
    /// \brief unsecure memory area to hold 'non string' values 
    ///       (ie : Lookup Tables, overlays, icons)   
    uint8_t* BinArea;
-
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

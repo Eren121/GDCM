@@ -1,3 +1,21 @@
+2004-10-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * Doc/CMakeLists.txt, doxygen.config.in: when dot is present the
+    collaboration diagram and inheritance diagram should be generated with
+    doxygen.
+  * Doc/Website/Sidebar.html: Dashboard is now also in the sidebar.
+  * gdcmPython/gdcm.i: gdcmRLEFramesInfo.h gdcmJPEGFragmentsInfo.h are
+    pointlessly wrapped (see
+    http://www.creatis.insa-lyon.fr/pipermail/dcmlib/2004-October/000692.html )
+  * CLEANUP_ROUND (12) for gdcmPixelConvert (sugar is my friend stage)
+    - Header::GetLUTRGBA() moved to PixelConvert::GetLutRGBA()
+    - vtk/vtkGdcmReader.cxx: adapted to displacment of Header::GetLUTRGBA()
+    - Document::RLEInfo and JPEGInfo are now pointer members (Swig thing)
+    - src/gdcmFile.[cxx|h] and gdcmPixelConvert.[cxx|h]:
+      -- File::Initialise: PixelConverter setup moved away to
+           PixelConverter::GrabInformationsFromHeader()
+      -- File::GetImageDataIntoVector(): Lut R + Lut G + Lut B color table
+         interpretation moved away to PixelConverter::BuildRGBImage()
+
 2004-10-16 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * Remove GDCM_EXPORT keyword from gdcm::DirList due to :
     http://support.microsoft.com/support/kb/articles/Q168/9/58.ASP

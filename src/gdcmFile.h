@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:30 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2004/10/18 12:49:22 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,6 +80,7 @@ public:
       HeaderInternal->SetEntryByNumber(content,group,element);
       return true;
    }
+   uint8_t* GetLutRGBA();
      
 protected:
    bool WriteBase(std::string const& fileName, FileType type);
@@ -101,6 +102,7 @@ private:
    void RestoreInitialValues(); // will belong to the future PixelData class
    void DeleteInitialValues();  // will belong to the future PixelData class 
 
+private:
 // members variables:
 
    /// Header to use to load the file
