@@ -11,7 +11,7 @@ if not os.path.isfile(FileName):
    sys.exit()
 
 toRead = gdcmHeader(FileName)
-ValDict = toRead.GetPubEntry()
+ValDict = toRead.GetEntry()
 ExploreElements = ["Patient's Name", "Patient ID",
                    "Study Date", "Study Time", "Study ID",
                    "Study Instance UID",
@@ -24,4 +24,4 @@ for elem in ExploreElements:
 		print "[%s]" % ValDict[elem]
 	except KeyError:
 		print "NOT FOUND"
-		
+

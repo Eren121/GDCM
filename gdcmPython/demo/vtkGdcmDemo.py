@@ -40,9 +40,9 @@ class vtkHistogram:
          self.ComputeHisto()
       self.__CumulHisto = []
       histo = self.__Histo.GetOutput()
-      self.__CumulHisto.append(int(histo.GetScalarComponentAsFloat(0,0,0,0)))
+      self.__CumulHisto.append(int(histo.GetScalarComponentAsDouble(0,0,0,0)))
       for i in range(1, self.__NumberOfBins):
-         value = int(histo.GetScalarComponentAsFloat(i,0,0,0))
+         value = int(histo.GetScalarComponentAsDouble(i,0,0,0))
          self.__CumulHisto.append( self.__CumulHisto[i-1] + value)
 
    def GetTruncateLevels(self, LostPercentage):
@@ -179,7 +179,7 @@ if not check.IsReadable():
    print "The ", FileName, " file is not "
    print "   readable with gdcm. Sorry."
    sys.exit()
-check = check.GetPubEntry()
+check = check.GetEntry()
 try:
    HighBit = check["High Bit"]
    if len(HighBit) == 0 or HighBit == "gdcm::Unfound":

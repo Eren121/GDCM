@@ -33,6 +33,6 @@ if __name__ == '__main__':
       fileName = os.path.join(GDCM_TEST_DATA_PATH, file)
       print "############## file :", fileName
       toRead = gdcmHeader(fileName)
-      ValDict = toRead.GetPubEntry()
+      ValDict = toRead.GetEntry()
       for key in ValDict.keys():
           print "   [%s] = [%s]" %(key, ValDict[key])
