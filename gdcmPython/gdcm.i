@@ -281,9 +281,19 @@ typedef unsigned long long uint64_t;
 
 ////////////////////  STL string versus Python str  ////////////////////////
 // Convertion returning a C++ string.
-%typemap(out) string, std::string 
+%typemap(out) std::string
 {
     $result = PyString_FromString(($1).c_str());
+}
+
+%typemap(out) string
+{
+    $result = PyString_FromString(($1).c_str());
+}
+
+%typemap(out) std::string const &
+{
+    $result = PyString_FromString(($1)->c_str());
 }
 
 // Convertion of incoming Python str to STL string

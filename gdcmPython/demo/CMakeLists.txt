@@ -19,8 +19,8 @@ IF(PYTHON_EXECUTABLE)
   ADD_TEST(Python-PrintDict ${PYTHON_EXECUTABLE}
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDict.py
     )
-  ADD_TEST(Python-PrintHeader ${PYTHON_EXECUTABLE}
-    ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintHeader.py
+  ADD_TEST(Python-PrintFile ${PYTHON_EXECUTABLE}
+    ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintFile.py
     )
   ADD_TEST(Python-PrintDicomDir ${PYTHON_EXECUTABLE}
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDicomDir.py
@@ -34,8 +34,8 @@ ENDIF(PYTHON_EXECUTABLE)
 # Copy all the demo directory content to the cmake bin 
 # Without it, tests can't be launched
 CONFIGURE_FILE(
-    ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintHeader.py.in
-    ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintHeader.py
+    ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintFile.py.in
+    ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintFile.py
 )
 
 CONFIGURE_FILE(

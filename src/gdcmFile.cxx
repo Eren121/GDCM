@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:39:35 $
-  Version:   $Revision: 1.213 $
+  Date:      $Date: 2005/02/07 09:51:03 $
+  Version:   $Revision: 1.214 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -370,7 +370,7 @@ float File::GetXSpacing()
    float xspacing, yspacing;
    const std::string &strSpacing = GetEntryValue(0x0028,0x0030);
 
-   if ( strSpacing == GDCM_UNFOUND )
+   if( strSpacing == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
       return 1.;
@@ -380,11 +380,12 @@ float File::GetXSpacing()
    if( ( nbValues = sscanf( strSpacing.c_str(), 
          "%f\\%f", &yspacing, &xspacing)) != 2 )
    {
+      // if no values, xspacing is set to 1.0
+      if( nbValues == 0 )
+         xspacing = 1.0;
       // if single value is found, xspacing is defaulted to yspacing
-      if ( nbValues == 1 )
-      {
+      if( nbValues == 1 )
          xspacing = yspacing;
-      }
 
       if ( xspacing == 0.0 )
          xspacing = 1.0;
@@ -425,7 +426,11 @@ float File::GetYSpacing()
     }
 
    // if sscanf cannot read any float value, it won't affect yspacing
-   sscanf( strSpacing.c_str(), "%f", &yspacing);
+   int nbValues = sscanf( strSpacing.c_str(), "%f", &yspacing);
+
+   // if no values, xspacing is set to 1.0
+   if( nbValues == 0 )
+      yspacing = 1.0;
 
    if ( yspacing == 0.0 )
       yspacing = 1.0;

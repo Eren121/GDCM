@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:39:35 $
-  Version:   $Revision: 1.224 $
+  Date:      $Date: 2005/02/07 09:51:03 $
+  Version:   $Revision: 1.225 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -416,7 +416,7 @@ std::ifstream *Document::OpenFile()
       return 0;
    }
  
-   uint16_t zero;
+   uint16_t zero = 0;
    Fp->read((char*)&zero, (size_t)2);
    if( Fp->eof() )
    {
@@ -439,7 +439,7 @@ std::ifstream *Document::OpenFile()
  
    //DICOM
    Fp->seekg(126L, std::ios::cur);
-   char dicm[4];
+   char dicm[4] = {' ',' ',' ',' '};
    Fp->read(dicm,  (size_t)4);
    if( Fp->eof() )
    {
