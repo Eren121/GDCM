@@ -700,6 +700,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
       char * filePreamble;
       // writing Dicom File Preamble
       filePreamble=new char[128];
+      memset(filePreamble,0,128);
       fwrite(filePreamble,128,1,fp1);
       fwrite("DICM",4,1,fp1);
       delete[] filePreamble;
