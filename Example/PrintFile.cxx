@@ -52,6 +52,14 @@ int main(int argc, char* argv[])
    int numberOfScalarComponents=e1->GetNumberOfScalarComponents();
    std::cout << " NumberOfScalarComponents " << numberOfScalarComponents <<std::endl;
 
+  
+  if ( e1->GetEntryByNumber(0x0002,0x0010) == GDCM_NOTLOADED ) {
+     std::cout << "Transfert Syntax not loaded. " << std::endl
+               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
+               << std::endl;
+      return 0;
+  }
+  
    std::string transferSyntaxName = e1->GetTransfertSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
    

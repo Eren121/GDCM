@@ -30,7 +30,15 @@ int main(int argc, char* argv[])
 
   e1->Print();   
       
-  std::cout << "\n\n" << std::endl;      
+  std::cout << "\n\n" << std::endl; 
+  
+  if ( e1->GetEntryByNumber(0x0002,0x0010) == GDCM_NOTLOADED ) {
+     std::cout << "Transfert Syntax not loaded. " << std::endl
+               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
+               << std::endl;
+     return 0;
+  }
+      
   std::string transferSyntaxName = e1->GetTransfertSyntaxName();
   std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
    
@@ -38,7 +46,7 @@ int main(int argc, char* argv[])
       && transferSyntaxName != "Explicit VR - Little Endian"     
       && transferSyntaxName != "Deflated Explicit VR - Little Endian"      
       && transferSyntaxName != "Explicit VR - Big Endian"
-      && transferSyntaxName != "Uncompressed ACR-NEMA"     )
+      && transferSyntaxName != "Uncompressed ACR-NEMA" )
   {
   std::cout << std::endl << "==========================================="
                   << std::endl; 

@@ -52,3 +52,6 @@ TARGET_LINK_LIBRARIES(TestCopyDicom  gdcm)
 
 ADD_EXECUTABLE(TestChangeHeader TestChangeHeader.cxx)
 TARGET_LINK_LIBRARIES(TestChangeHeader  gdcm)
+
+ADD_EXECUTABLE(TestReadWriteReadCompare TestReadWriteReadCompare.cxx)
+TARGET_LINK_LIBRARIES(TestReadWriteReadCompare  gdcm)
