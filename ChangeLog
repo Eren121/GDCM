@@ -5,6 +5,8 @@
       * src/gdcmElValSet.[cxx/h], gdcmElValue.[cxx/h], gdcmFile.[cxx/h],
         gdcmHeader.[cxx/h]: ElValSet class renamed to gdcmElValSet, and
         ElValue class renamed to gdcmElValue for obvious consistency reasons.
+      * src/gdcmElValSet.cxx, src/gdcmUtil.[cxx-h] Tokenize utility function
+        moved away from gdcmElValSet.cxx to gdcmUtil.cxx.
 
 2003-03-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/__init__.py doesn't crash anymore when running in
