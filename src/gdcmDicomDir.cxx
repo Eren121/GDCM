@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:36 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2005/01/06 15:41:28 $
+  Version:   $Revision: 1.91 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -819,7 +819,7 @@ bool DicomDir::AddDicomDirMeta()
 /**
  * \ingroup DicomDir
  * \brief  AddDicomDirPatientToEnd 
- * @param   s SQ Item to enqueue to the DicomPatient chained List
+ * @param   dd SQ Item to enqueue to the DicomPatient chained List
  */
 bool DicomDir::AddDicomDirPatientToEnd(DicomDirPatient *dd)
 {
@@ -830,7 +830,7 @@ bool DicomDir::AddDicomDirPatientToEnd(DicomDirPatient *dd)
 /**
  * \ingroup DicomDir
  * \brief  AddDicomDirStudyToEnd 
- * @param   s SQ Item to enqueue to the DicomDirStudy chained List
+ * @param   dd SQ Item to enqueue to the DicomDirStudy chained List
  */
 bool DicomDir::AddDicomDirStudyToEnd(DicomDirStudy *dd)
 {
@@ -847,7 +847,7 @@ bool DicomDir::AddDicomDirStudyToEnd(DicomDirStudy *dd)
 /**
  * \ingroup DicomDir
  * \brief  AddDicomDirSerieToEnd 
- * @param   s SQ Item to enqueue to the DicomDirSerie chained List
+ * @param   dd SQ Item to enqueue to the DicomDirSerie chained List
  */
 bool DicomDir::AddDicomDirSerieToEnd(DicomDirSerie *dd)
 {
@@ -871,7 +871,7 @@ bool DicomDir::AddDicomDirSerieToEnd(DicomDirSerie *dd)
 /**
  * \ingroup DicomDir
  * \brief   AddDicomDirImageToEnd
- * @param   s SQ Item to enqueue to the DicomDirImage chained List
+ * @param   dd SQ Item to enqueue to the DicomDirImage chained List
  */
 bool DicomDir::AddDicomDirImageToEnd(DicomDirImage *dd)
 {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 17:13:18 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/06 15:43:18 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,8 +26,6 @@ namespace gdcm
 /**
  * \ingroup DicomDirImage
  * \brief  Constructor 
- * @param ptagHT pointer to the HTable (DicomDirObject needs it 
- *               to build the DocEntries)
  */
 DicomDirImage::DicomDirImage():
    DicomDirObject()

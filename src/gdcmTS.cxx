@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 18:08:56 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/06 15:41:28 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,12 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+
+// TODO
+// a lot of troubles expected with TS : 1.2.840.113619.5.2
+// Implicit VR - Big Endian
+// see : http://www.gemedicalsystemseurope.com/euen/it_solutions/pdf/lsqxi_rev2.pdf
+// 
 
 namespace gdcm 
 {
