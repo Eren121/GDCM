@@ -144,7 +144,7 @@ CHECK_INCLUDE_FILE_CONCAT("net/if_arp.h"   CMAKE_HAVE_NET_IF_ARP_H)
 
 #-----------------------------------------------------------------------------
 # Force Big Endian emulation on little endian:
-OPTION(GDCM_FORCE_BIGENDIAN_EMULATION "Force Big Endian Emulation." OFF)
+OPTION(GDCM_FORCE_BIGENDIAN_EMULATION "Force Big Endian Emulation. Do use if you don't know what you are doing." OFF)
 
 CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
                ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE)
