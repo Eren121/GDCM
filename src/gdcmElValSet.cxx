@@ -101,23 +101,25 @@ void gdcmElValSet::Print(std::ostream & os) {
    }
    
    std::cout << "------------ using listElem -----------------" << std::endl;
-   
-   //for (ListTag::iterator i = listElem.begin();
-   
+      
+  guint32 lgth;
   char greltag[9];  //group element tag
    
   for (std::list<gdcmElValue*>::iterator i = listElem.begin();  
 	   i != listElem.end();
 	   ++i){
-      sprintf(greltag,"%04x|%04x",(*i)->GetGroup(),(*i)->GetElement());
       g = (*i)->GetGroup();
       e = (*i)->GetElement();
+      sprintf(greltag,"%04x|%04x",g,e);      
       v = (*i)->GetValue();
       o = (*i)->GetOffset();
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
-      //os << std::hex <<g << "|" << e << std::dec << ": ";
-      os << greltag << " : ";
-      os << " lgr : " << (*i)->GetReadLength();
+      os << greltag << ": lgth : ";
+      lgth = (*i)->GetReadLength();
+      if ( lgth == 0xffffffff) 
+         os << std::hex << lgth << std::dec ;
+      else
+         os << lgth;
       os << ", Offset : " << o;
       os << " x(" << std::hex << o << std::dec << ") ";
       os << "\t[" << (*i)->GetVR()    << "]";

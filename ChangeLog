@@ -1,3 +1,14 @@
+2003-11-12 Jean-Pierre Roux
+     *ENH  gdcmHeader constructor has one more parameter (default value : false)
+           that allows the user to 'go inside' the SeQuences only
+	   if he wants to.
+	   gdcmElValSet:Print takes it into account
+	   
+2003-11-12  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     *ENH: Update gdcmPython/CMakeLists
+     *FIX: (gdcmHeaderHelper) GetRescale and GetSlope
+     *FIX: (gdcmElValSet) char 'tag' was overiding private members (VC++)
+     
 2003-11-10 Jean-Pierre Roux
       *FIX : gdcmHeader::LoadElements is now based 
              on the ListTag listElem member, 

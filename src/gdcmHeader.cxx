@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.114 2003/11/12 14:06:34 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.115 2003/11/12 15:35:19 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -38,7 +38,14 @@ void gdcmHeader::Initialise(void) {
  * @param   InFilename
  * @param   exception_on_error
  */
-gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
+gdcmHeader::gdcmHeader(const char *InFilename, 
+                       bool exception_on_error,
+		       bool  enable_sequences ) {
+   if (enable_sequences)
+      enableSequences = 1;
+   else
+      enableSequences = 0;
+   
    SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
    filename = InFilename;
    Initialise();
@@ -629,9 +636,10 @@ bool gdcmHeader::IsDicomV3(void) {
 void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
 
    ElVal->SetReadLength(FoundLength); // will be updated only if a bug is found
-   
-   if ( FoundLength == 0xffffffff)
+		     
+   if ( FoundLength == 0xffffffff) {  
       FoundLength = 0;
+   }
       
       // Sorry for the patch!  
       // XMedCom did the trick to read some nasty GE images ...
@@ -655,8 +663,9 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    } 
      // end of fix
 	 
-    // to try to 'go inside' SeQuences (with length), and not to ship them        
+    // to try to 'go inside' SeQuences (with length), and not to skip them        
     else if ( ElVal->GetVR() == "SQ") { 
+       if (enableSequences)    // only if the user does want to !
 	  FoundLength =0; 	 
     } 
     

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.42 2003/11/10 09:21:40 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.43 2003/11/12 15:35:19 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -56,7 +56,9 @@ private:
    gdcmElValSet ShaElValSet;
    /// Refering underlying filename.
    std::string filename; 
-   
+  
+   int enableSequences;
+     
    // FIXME sw should be an enum e.g.
    //enum EndianType {
       //LittleEndian, 
@@ -85,20 +87,20 @@ private:
    void SetMaxSizeLoadElementValue(long);
 
    gdcmDictEntry * GetDictEntryByNumber(guint16, guint16);
-   gdcmDictEntry * GetDictEntryByName(std::string Name);
+   gdcmDictEntry * GetDictEntryByName  (std::string Name);
 
    // ElValue related utilities
    gdcmElValue * ReadNextElement(void);
    gdcmElValue * NewElValueByNumber(guint16 group, guint16 element);
-   gdcmElValue * NewElValueByName(std::string Name);
+   gdcmElValue * NewElValueByName  (std::string Name);
 
-   void FindLength(gdcmElValue *);
-   void FindVR(gdcmElValue *);
-   void LoadElementValue(gdcmElValue *);
+   void FindLength          (gdcmElValue *);
+   void FindVR              (gdcmElValue *);
+   void LoadElementValue    (gdcmElValue *);
    void LoadElementValueSafe(gdcmElValue *);
-   void SkipElementValue(gdcmElValue *);
-   void FixFoundLength(gdcmElValue*, guint32);
-   bool IsAnInteger(gdcmElValue *);
+   void SkipElementValue    (gdcmElValue *);
+   void FixFoundLength      (gdcmElValue*, guint32);
+   bool IsAnInteger         (gdcmElValue *);
    void LoadElements(void);
    
 protected:
@@ -132,8 +134,12 @@ public:
       
    virtual void ParseHeader(bool exception_on_error = false)
      throw(gdcmFormatError);
-   gdcmHeader(const char *filename, bool exception_on_error = false);
+     
    gdcmHeader( bool exception_on_error = false);
+   gdcmHeader(const char *filename, 
+              bool  exception_on_error = false, 
+	      bool  enable_sequences   = false);
+	      
    virtual ~gdcmHeader();
 
    std::string GetFileName(void) {return filename;}
