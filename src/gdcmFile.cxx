@@ -21,17 +21,6 @@ static void _Swap(void* im, int swap, int lgr, int nb);
  *
  * @return	
  */
-
-/////////////////////////////////////////////////////////////////
-/**
- * \ingroup   gdcmFile
- * \brief    constructeur 
- *
- * @param 
- *
- * @return
- */
- 
  
 gdcmFile::gdcmFile(string & filename)
 	:gdcmHeader(filename.c_str())
@@ -44,7 +33,7 @@ gdcmFile::gdcmFile(string & filename)
  * \ingroup   gdcmFile
  * \brief     Renvoie la longueur A ALLOUER pour recevoir les pixels de l'image
  * \		ou DES images dans le cas d'un multiframe
- * \		ATTENTION : il ne s'agit PAS de la lgr du groupe des Pixels	
+ * \		ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels	
  * \		(dans le cas d'images compressees, elle n'a pas de sens).
  *
  * @param void	Rien en entree
@@ -165,9 +154,9 @@ void * gdcmFile::GetImageData (void) {
 
 	// On remet les Octets dans le bon ordre si besoin est
 	if (nb != 8) {
-		//int sw = GetSwapCode();
+		int _sw = GetSwapCode();
 
-	//	_Swap (Pixels, sw, lgrTotale, nb);   						 // A REMETTRE
+		_Swap (Pixels, _sw, lgrTotale, nb);   						 // A REMETTRE
 	}
 	
 	// On remet les Bits des Octets dans le bon ordre si besoin est
