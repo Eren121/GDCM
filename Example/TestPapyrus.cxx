@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:34:59 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,7 @@
 #endif
 
 // return true if the file exists
-bool FileExists(const char* filename)
+bool FileExists(const char *filename)
 {
 #ifdef _MSC_VER
 # define access _access
@@ -52,7 +52,7 @@ bool FileExists(const char* filename)
     }
 }
 
-bool RemoveFile(const char* source)
+bool RemoveFile(const char *source)
 {
 #ifdef _MSC_VER
 #define _unlink unlink
@@ -68,7 +68,7 @@ bool RemoveFile(const char* source)
 // and we don't perform any integrity check
 // ----------------------------------------------------------------------
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
    if (argc < 3)
    {
@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
       return 0;
    }
    // to be sure to be at the beginning
-   Fp->seekg(0,  std::ios::end);
+   Fp->seekg(0, std::ios::end);
 
    uint32_t offset;
    std::string previousRows = Rows;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:00:16 $
-  Version:   $Revision: 1.125 $
+  Date:      $Date: 2005/02/02 10:02:16 $
+  Version:   $Revision: 1.126 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ namespace gdcm
  * \brief   Constructor : creates an empty DicomDir
  */
 DicomDir::DicomDir()
-   :Document( )
+         :Document( )
 {
    Initialize();  // sets all private fields to NULL
    NewMeta();
@@ -68,7 +68,7 @@ DicomDir::DicomDir()
 /**
  * \brief Constructor Parses recursively the directory and creates the DicomDir
  *        or uses an already built DICOMDIR, depending on 'parseDir' value.
- * @param fileName        name 
+ * @param fileName  name 
  *                      - of the root directory (parseDir = true)
  *                      - of the DICOMDIR       (parseDir = false)
  * @param parseDir boolean
@@ -378,7 +378,7 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
  * \brief create a Document-like chained list from a root Directory 
  * @param path entry point of the tree-like structure
  */
-void DicomDir::CreateDicomDirChainedList(std::string const & path)
+void DicomDir::CreateDicomDirChainedList(std::string const &path)
 {
    CallStartMethod();
    DirList dirList(path,1); // gets recursively the file list

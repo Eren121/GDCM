@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.218 $
+  Date:      $Date: 2005/02/02 10:02:17 $
+  Version:   $Revision: 1.219 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,8 @@ const unsigned int Document::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
  * \brief   constructor  
  * @param   filename 'Document' (File or DicomDir) to be opened for parsing
  */
-Document::Document( std::string const &filename ) : ElementSet(-1)
+Document::Document( std::string const &filename ) 
+         :ElementSet(-1)
 {
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = filename;
@@ -74,10 +75,10 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
    gdcmVerboseMacro( "Starting parsing of file: " << Filename.c_str());
   // Fp->seekg( 0,  std::ios::beg);
    
-   Fp->seekg(0,  std::ios::end);
+   Fp->seekg(0, std::ios::end);
    long lgt = Fp->tellg();
            
-   Fp->seekg( 0,  std::ios::beg);
+   Fp->seekg(0, std::ios::beg);
 
    CheckSwap();
    long beg = Fp->tellg();
@@ -153,7 +154,8 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
  * \brief This default constructor doesn't parse the file. You should
  *        then invoke \ref Document::SetFileName and then the parsing.
  */
-Document::Document() : ElementSet(-1)
+Document::Document() 
+         :ElementSet(-1)
 {
    Fp = 0;
 
@@ -1602,10 +1604,10 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
  */
 bool Document::IsDocEntryAnInteger(DocEntry *entry)
 {
-   uint16_t elem    = entry->GetElement();
-   uint16_t group   = entry->GetGroup();
+   uint16_t elem          = entry->GetElement();
+   uint16_t group         = entry->GetGroup();
    const std::string &vr  = entry->GetVR();
-   uint32_t length  = entry->GetLength();
+   uint32_t length        = entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
@@ -1648,7 +1650,7 @@ void Document::Initialize()
 {
    RefPubDict = Global::GetDicts()->GetDefaultPubDict();
    RefShaDict = NULL;
-   Filetype = Unknown;
+   Filetype   = Unknown;
 }
 
 /**
@@ -1918,7 +1920,6 @@ DocEntry *Document::ReadNextDocEntry()
    {
       // We reached the EOF (or an error occured) therefore 
       // header parsing has to be considered as finished.
-      //std::cout << e;
       return 0;
    }
 

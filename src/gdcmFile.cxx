@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.206 $
+  Date:      $Date: 2005/02/02 10:02:17 $
+  Version:   $Revision: 1.207 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,8 +37,8 @@ namespace gdcm
  * \brief  Constructor 
  * @param  filename name of the file whose header we want to analyze
  */
-File::File( std::string const &filename ):
-   Document( filename )
+File::File( std::string const &filename )
+     :Document( filename )
 {    
    RLEInfo  = new RLEFramesInfo;
    JPEGInfo = new JPEGFragmentsInfo;
@@ -248,7 +248,7 @@ bool File::Write(std::string fileName, FileType filetype)
    BinEntry *b = GetBinEntry(GrPixel,NumPixel);
    if ( GetPixelSize() ==  16 )
    {
-      uint16_t *im16 = (uint16_t*)b->GetBinArea();
+      uint16_t *im16 = (uint16_t *)b->GetBinArea();
       int lgr = b->GetLength();
       for( int i = 0; i < lgr / 2; i++ )
       {
@@ -258,7 +258,7 @@ bool File::Write(std::string fileName, FileType filetype)
 #endif //GDCM_WORDS_BIGENDIAN
 */
 
-   Document::WriteContent(fp,filetype);
+   Document::WriteContent(fp, filetype);
 
 /*
 #ifdef GDCM_WORDS_BIGENDIAN
@@ -928,7 +928,7 @@ int File::GetBitsAllocated()
  */
 int File::GetSamplesPerPixel()
 {
-   const std::string& strSize = GetEntryValue(0x0028,0x0002);
+   const std::string &strSize = GetEntryValue(0x0028,0x0002);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "(0028,0002) is supposed to be mandatory");
@@ -945,7 +945,7 @@ int File::GetSamplesPerPixel()
  */
 bool File::IsMonochrome()
 {
-   const std::string& PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   const std::string &PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
    if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1")
       || Util::DicomStringEqual(PhotometricInterp, "MONOCHROME2") )
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/02/02 10:02:16 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,8 +30,8 @@ namespace gdcm
  * \brief  Constructor 
  * \note End user must use : DicomDirPatient::NewStudy()
  */
-DicomDirStudy::DicomDirStudy(bool empty):
-   DicomDirObject()
+DicomDirStudy::DicomDirStudy(bool empty)
+              :DicomDirObject()
 {
    if( !empty )
    {
@@ -75,7 +75,7 @@ void DicomDirStudy::WriteContent(std::ofstream *fp, FileType t)
  */
 DicomDirSerie *DicomDirStudy::NewSerie()
 {
-   DicomDirSerie* st = new DicomDirSerie();
+   DicomDirSerie *st = new DicomDirSerie();
    Series.push_back(st);
    return st;
 } 

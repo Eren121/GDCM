@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:22 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/02/02 10:06:31 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 #endif
 
 // return true if the file exists
-bool FileExists(const char* filename)
+bool FileExists(const char *filename)
 {
 #ifdef _MSC_VER
 # define access _access
@@ -46,7 +46,7 @@ bool FileExists(const char* filename)
     }
 }
 
-bool RemoveFile(const char* source)
+bool RemoveFile(const char *source)
 {
 #ifdef _MSC_VER
 #define _unlink unlink
@@ -88,27 +88,22 @@ int main(int argc, char* argv[])
       gdcm::FileHelper *copy = new gdcm::FileHelper( output );
 
       size_t dataSize = original->GetImageDataSize();
-      uint8_t* imageData = original->GetImageData();
+      uint8_t *imageData = original->GetImageData();
       (void)imageData;
       (void)dataSize;
   
       //First of all copy the header field by field
-  
-      // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
-      // It was commented out by Mathieu, that was a *good* idea
-      // (the user does NOT have to know the way we implemented the File !)
-      // Waiting for a 'clean' solution, I keep the method ...JPRx
 
-      gdcm::DocEntry* d=original->GetFile()->GetFirstEntry();
+      gdcm::DocEntry *d = original->GetFile()->GetFirstEntry();
       while(d)
       {
-         if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
+         if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
          {              
             copy->GetFile()->InsertBinEntry( b->GetBinArea(),b->GetLength(),
                                              b->GetGroup(),b->GetElement(),
                                              b->GetVR() );
          }
-         else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
+         else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
          {   
             copy->GetFile()->InsertValEntry( v->GetValue(),
                                              v->GetGroup(),v->GetElement(),

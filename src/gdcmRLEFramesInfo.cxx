@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:00:16 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/02 10:02:18 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,9 +62,15 @@ RLEFrame *RLEFramesInfo::GetNextFrame()
  *            Dicom encapsulated file and decompress it.
  * @param     fp already open File Pointer
  *            at which the pixel data should be copied
+ * @param raw raw
+ * @param xSize x Size
+ * @param ySize y Size
+ * @param BitsAllocated Bits allocated
  * @return    Boolean
  */
-bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw, int xSize, int ySize, int zSize, int bitsAllocated )
+bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw, 
+                                       int xSize, int ySize, int zSize, 
+                                       int bitsAllocated )
 {
    uint8_t *subRaw = raw;
    long rawSegmentSize = xSize * ySize;
@@ -94,8 +100,8 @@ bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw, int xSi
  * @param numberOfFrames number of frames 
  * @return    Boolean always true
  */
-bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits( uint8_t* raw, int xSize, 
-                                             int ySize,int numberOfFrames  )
+bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits(uint8_t *raw, int xSize, 
+                                                 int ySize, int numberOfFrames)
 {
    size_t pixelNumber = xSize * ySize;
    size_t rawSize = xSize * ySize * numberOfFrames;
@@ -105,12 +111,12 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits( uint8_t* raw, int xSize,
    // per pixel we cannot work in place within Raw and hence
    // we copy it in a safe place, say copyRaw.
 
-   uint8_t* copyRaw = new uint8_t[rawSize * 2];
+   uint8_t *copyRaw = new uint8_t[rawSize * 2];
    memmove( copyRaw, raw, rawSize * 2 );
 
-   uint8_t* x = raw;
-   uint8_t* a = copyRaw;
-   uint8_t* b = a + pixelNumber;
+   uint8_t *x = raw;
+   uint8_t *a = copyRaw;
+   uint8_t *b = a + pixelNumber;
 
    for ( int i = 0; i < numberOfFrames; i++ )
    {
@@ -122,7 +128,7 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits( uint8_t* raw, int xSize,
    }
    delete[] copyRaw;
 
-   /// \todo check that operator new []didn't fail, and sometimes return false
+   /// \todo check that operator new [] didn't fail, and sometimes return false
 
    return true;
 }

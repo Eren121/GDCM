@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestHash.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 #include <string>
 #include <iostream>
 
-int TestHash( int, char * [] )
+int TestHash( int, char *[] )
 {
    std::cout << "Test::TestHash : " << std::endl;
    std::cout << "   Checks that the basic STL <map> functionalities required "

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: makeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:55:16 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,8 @@ void EndMethod(void *toto) {
   *          and writes a file named NewDICOMDIR..
   */  
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) 
+{
    gdcm::DicomDir *dcmdir;
    std::string dirName;   
 

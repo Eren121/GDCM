@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/27 12:02:26 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 #include "gdcmDebug.h"
 #include <iostream>
 
-int TestUtil(int , char * [])
+int TestUtil(int , char *[])
 {
    // Time 
    std::cout << "Time:" << gdcm::Util::GetCurrentDateTime() << std::endl;

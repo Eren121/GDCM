@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 04:00:04 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/02/02 10:02:18 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,11 +56,11 @@ namespace gdcm
  * @return 1 on success, 0 on error
  */
  
-bool gdcm_write_JPEG_file (std::ofstream* fp, void*  im_buf, 
+bool gdcm_write_JPEG_file (std::ofstream *fp, void *im_buf, 
                            int image_width, int image_height, int quality)
 {
 
-   JSAMPLE* image_buffer = (JSAMPLE*) im_buf;
+   JSAMPLE *image_buffer = (JSAMPLE*) im_buf;
 
   /* This struct contains the JPEG compression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
@@ -208,7 +208,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @return 1 on success, 0 on error
  */
 void *SampBuffer; 
-bool JPEGFragment::ReadJPEGFile (std::ifstream* fp, void* image_buffer , int& statesuspension)
+bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &statesuspension)
 {
    pImage = (uint8_t*)image_buffer;
    // This struct contains the JPEG decompression parameters and pointers to

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/27 10:47:29 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 
 typedef std::string EntryValueType;   // same type as ValEntry::value
 typedef std::map< gdcm::TagKey, EntryValueType > MapEntryValues;
-typedef MapEntryValues* MapEntryValuesPtr;
+typedef MapEntryValues *MapEntryValuesPtr;
 typedef std::string FileNameType;
 typedef std::map< FileNameType, MapEntryValuesPtr > MapFileValuesType;
 
@@ -61,21 +61,21 @@ public:
    bool Check( std::string fileName );
 
 private:
-   bool AddKeyValuePairToMap( std::string& key, std::string& value );
+   bool AddKeyValuePairToMap( std::string &key, std::string &value );
 
-   std::istream& eatwhite(std::istream& is);
-   void eatwhite(std::string& toClean);
-   std::string ExtractFirstString(std::string& toSplit);
-   void CleanUpLine( std::string& line );
+   std::istream& eatwhite(std::istream &is);
+   void eatwhite(std::string &toClean);
+   std::string ExtractFirstString(std::string &toSplit);
+   void CleanUpLine( std::string &line );
 
    bool Check( MapFileValuesType::iterator &fileIt );
-   std::string ExtractValue(std::string& toSplit)  throw ( ParserException );
-   void ParseRegularLine( std::string& line )      throw ( ParserException );
+   std::string ExtractValue(std::string &toSplit)  throw ( ParserException );
+   void ParseRegularLine( std::string &line )      throw ( ParserException );
    void FirstPassReferenceFile()                   throw ( ParserException );
    bool SecondPassReferenceFile()                  throw ( ParserException );
-   void HandleFileName( std::string& line )        throw ( ParserException );
-   void HandleKey( std::string& line )             throw ( ParserException );
-   bool HandleValue( std::string& line )           throw ( ParserException );
+   void HandleFileName( std::string &line )        throw ( ParserException );
+   void HandleKey( std::string &line )             throw ( ParserException );
+   bool HandleValue( std::string &line )           throw ( ParserException );
    static uint16_t axtoi( char* );
 
 private:
@@ -104,7 +104,7 @@ private:
    std::string CurrentValue;
 
    /// The current MapEntryValues pointer:
-   MapEntryValues* CurrentMapEntryValuesPtr;
+   MapEntryValues *CurrentMapEntryValuesPtr;
 };
 
 ReferenceFileParser::ReferenceFileParser()
@@ -160,13 +160,13 @@ uint16_t ReferenceFileParser::axtoi(char *hexStg)
    return intValue;
 }
 
-void ReferenceFileParser::SetDataPath( std::string& inDataPath )
+void ReferenceFileParser::SetDataPath( std::string &inDataPath )
 {
    DataPath = inDataPath;
 }
 
-bool ReferenceFileParser::AddKeyValuePairToMap( std::string& key, 
-                                                std::string& value )
+bool ReferenceFileParser::AddKeyValuePairToMap( std::string &key, 
+                                                std::string &value )
 {
    if ( !CurrentMapEntryValuesPtr )
       return false;
@@ -277,7 +277,7 @@ bool ReferenceFileParser::Check( MapFileValuesType::iterator &fileIt )
    return true;
 }
 
-std::istream& ReferenceFileParser::eatwhite( std::istream& is )
+std::istream &ReferenceFileParser::eatwhite( std::istream &is )
 {
    char c;
    while (is.get(c)) {
@@ -295,7 +295,7 @@ void ReferenceFileParser::eatwhite( std::string& toClean )
       toClean.erase( 0, toClean.find_first_of( " " ) + 1 );
 }
 
-std::string ReferenceFileParser::ExtractFirstString( std::string& toSplit )
+std::string ReferenceFileParser::ExtractFirstString( std::string &toSplit )
 {
    std::string firstString;
    eatwhite( toSplit );
@@ -310,7 +310,7 @@ std::string ReferenceFileParser::ExtractFirstString( std::string& toSplit )
    return firstString;
 }
 
-std::string ReferenceFileParser::ExtractValue( std::string& toSplit )
+std::string ReferenceFileParser::ExtractValue( std::string &toSplit )
    throw ( ParserException )
 {
    eatwhite( toSplit );
@@ -477,7 +477,7 @@ void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
    from.seekg( 0, std::ios::beg );
 }
 
-bool ReferenceFileParser::Open( std::string& referenceFileName )
+bool ReferenceFileParser::Open( std::string &referenceFileName )
 {
    from.open( referenceFileName.c_str(), std::ios::in );
    if ( !from.is_open() )
@@ -500,7 +500,7 @@ bool ReferenceFileParser::Open( std::string& referenceFileName )
    return true; //??
 }
 
-void ReferenceFileParser::CleanUpLine( std::string& line )
+void ReferenceFileParser::CleanUpLine( std::string &line )
 {
    // Cleanup from comments:
    if ( line.find_first_of( "#" ) != std::string::npos )
@@ -514,7 +514,7 @@ void ReferenceFileParser::CleanUpLine( std::string& line )
    eatwhite( line );
 }
 
-void ReferenceFileParser::HandleFileName( std::string& line )
+void ReferenceFileParser::HandleFileName( std::string &line )
    throw ( ParserException )
 {
    if ( line.length() == 0 )
@@ -526,7 +526,7 @@ void ReferenceFileParser::HandleFileName( std::string& line )
    CurrentFileName = ExtractFirstString(line);
 }
 
-void ReferenceFileParser::HandleKey( std::string& line )
+void ReferenceFileParser::HandleKey( std::string &line )
    throw ( ParserException )
 {
    if ( CurrentKey.length() != 0 )
@@ -541,7 +541,7 @@ void ReferenceFileParser::HandleKey( std::string& line )
    }
 }
 
-bool ReferenceFileParser::HandleValue( std::string& line )
+bool ReferenceFileParser::HandleValue( std::string &line )
    throw ( ParserException )
 {
    if ( line.length() == 0 )
@@ -564,7 +564,7 @@ bool ReferenceFileParser::HandleValue( std::string& line )
    return true;
 }
 
-void ReferenceFileParser::ParseRegularLine( std::string& line)
+void ReferenceFileParser::ParseRegularLine( std::string &line)
    throw ( ParserException )
 {
    if ( line.length() == 0 )
@@ -648,7 +648,7 @@ bool ReferenceFileParser::SecondPassReferenceFile()
    return true; //??
 }
 
-int TestAllEntryVerify(int argc, char* argv[]) 
+int TestAllEntryVerify(int argc, char *argv[]) 
 {
    if ( argc > 2 )
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomString.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 23:18:31 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,7 @@
 #include "gdcmUtil.h"
 #include <assert.h>
 
-int TestDicomString(int , char* [])
+int TestDicomString(int, char *[])
 {
   int i;
   const char *s = "\0\0";
@@ -36,7 +36,8 @@ std::string zeros(x, 0);
 char s1[] = "\0";
 char s2[] = "\0\0";
 char s3[] = "\0\0\0";
-char s4[] = "\0abc";*/
+char s4[] = "\0abc";
+*/
 
   return 0;
 }

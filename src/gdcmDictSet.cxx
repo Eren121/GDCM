@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/02/02 10:02:16 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,8 +69,8 @@ DictSet::~DictSet()
  * @param   name Symbolic name that be used as identifier of the newly 
  *          created dictionary.
  */
-Dict *DictSet::LoadDictFromFile(std::string const & filename, 
-                                DictKey const & name) 
+Dict *DictSet::LoadDictFromFile(std::string const &filename, 
+                                DictKey const &name) 
 {
    Dict *newDict = new Dict(filename);
    AppendDict(newDict, name);

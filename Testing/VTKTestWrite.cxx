@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:45:49 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.8 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,8 @@
 #endif
 
 int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
-                 std::string const & filename, 
-                 std::string const & referenceFileName)
+                 std::string const &filename, 
+                 std::string const &referenceFileName)
 {
    int retVal = 0;  //by default this is an error
 
@@ -197,7 +197,7 @@ int VTKTestWrite(int argc, char *argv[])
    }
 
    int ret = 0;
-   vtkTesting* t = vtkTesting::New();
+   vtkTesting *t = vtkTesting::New();
    vtkImageViewer *viewer;
    if( show )
       viewer = vtkImageViewer::New();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:53 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,13 +20,14 @@
 
 #include <iostream>
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {  
-   std::string zozo;
+   std::string fileNameToWrite;
 
-   gdcm::File* e1, *e2;
-   gdcm::FileHelper  * f1, *f2;
-
+   gdcm::File *e1;
+   gdcm::File *e2;
+   gdcm::FileHelper *f1;
+   gdcm::FileHelper *f2;
    uint8_t* imageData, *imageData2;
    int dataSize, dataSize2;
      
@@ -36,15 +37,15 @@ int main(int argc, char* argv[])
     return 1;
     }
 
-   std::string toto = argv[1];
+   std::string fileName = argv[1];
 
 // --------------------- we read the input image
 
    std::cout << argv[1] << std::endl;
 
-   e1 = new gdcm::File( toto );
+   e1 = new gdcm::File( fileName );
    if (!e1->IsReadable()) {
-       std::cerr << "Sorry, " << toto <<"  not a Readable DICOM / ACR File"
+       std::cerr << "Sorry, " << fileName <<"  not a Readable DICOM / ACR File"
                  <<std::endl;
        return 0;
    }
@@ -55,15 +56,15 @@ int main(int argc, char* argv[])
 
 // --------------------- we write it as an Explicit VR DICOM file
 
-      zozo = "temp.XDCM";
+      fileNameToWrite = "temp.XDCM";
       std::cout << "WriteDCM Explicit VR" << std::endl;
-      f1->WriteDcmExplVR(zozo);
+      f1->WriteDcmExplVR(fileNameToWrite);
 
 // --------------------- we read the written image
       
-   e2 = new gdcm::File( zozo );
+   e2 = new gdcm::File( fileNameToWrite );
    if (!e2->IsReadable()) {
-       std::cerr << "Sorry, " << zozo << " not a Readable DICOM / ACR File"  
+       std::cerr << "Sorry, " << fileNameToWrite << " not a Readable DICOM / ACR File"  
                  <<std::endl;
        return 0;
    }
@@ -77,14 +78,14 @@ int main(int argc, char* argv[])
      std::cout << " ----------------------------------------- " 
           << "Bad shot! Lengthes are different : " 
           << dataSize << " # " << dataSize2
-          << " for file : " << toto << std::endl;
+          << " for file : " << fileName << std::endl;
 
      return 0;
   }
   if (int res=memcmp(imageData,imageData2,dataSize) !=0) {
      std::cout << " ----------------------------------------- " 
           << "Bad shot! Pixels are different : " 
-          << " for file : " << toto << std::endl;
+          << " for file : " << fileName << std::endl;
      std::cout << "memcmp(imageData,imageData2,dataSize) = " << res << std::endl;
      return 1;
   }

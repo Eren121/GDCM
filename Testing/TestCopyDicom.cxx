@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 16:43:10 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ bool FileExists(const char* filename)
     }
 }
 
-bool RemoveFile(const char* source)
+bool RemoveFile(const char *source)
 {
 #ifdef _MSC_VER
 #define _unlink unlink
@@ -56,8 +56,8 @@ bool RemoveFile(const char* source)
   return unlink(source) != 0 ? false : true;
 }
 
-int CopyDicom(std::string const & filename, 
-              std::string const & output )
+int CopyDicom(std::string const &filename, 
+              std::string const &output )
 {
       std::cout << "   Testing: " << filename << std::endl;
       if( FileExists( output.c_str() ) )
@@ -78,16 +78,16 @@ int CopyDicom(std::string const & filename,
 
       //////////////// Step 2:
       std::cout << "2...";
-      gdcm::DocEntry* d=originalH->GetFirstEntry();
+      gdcm::DocEntry *d=originalH->GetFirstEntry();
       while(d)
       {
-         if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
+         if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
          {
             copyH->InsertBinEntry( b->GetBinArea(),b->GetLength(),
                                    b->GetGroup(),b->GetElement(),
                                    b->GetVR() );
          }
-         else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
+         else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
          {   
              copyH->InsertValEntry( v->GetValue(),
                                     v->GetGroup(),v->GetElement(),
@@ -105,7 +105,7 @@ int CopyDicom(std::string const & filename,
       gdcm::FileHelper *copy     = new gdcm::FileHelper( copyH );
 
       size_t dataSize = original->GetImageDataSize();
-      uint8_t* imageData = original->GetImageData();
+      uint8_t *imageData = original->GetImageData();
 
       // Useless to set the image data, because it's already made when
       // copying the corresponding BinEntry that contains the pixel data
@@ -149,7 +149,7 @@ int CopyDicom(std::string const & filename,
       //////////////// Step 5:
       std::cout << "5...";
       size_t    dataSizeWritten = copy->GetImageDataSize();
-      uint8_t* imageDataWritten = copy->GetImageData();
+      uint8_t *imageDataWritten = copy->GetImageData();
 
       if (dataSize != dataSizeWritten)
       {
@@ -188,7 +188,7 @@ int CopyDicom(std::string const & filename,
 // Here we load a gdcmFile and then try to create from scratch a copy of it,
 // copying field by field the dicom image
 
-int TestCopyDicom(int argc, char* argv[])
+int TestCopyDicom(int argc, char *argv[])
 {
    if ( argc == 3 )
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 16:43:10 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,15 +23,15 @@
 #include <iostream>
 #include <iomanip>
 
-int TestDict(int , char* [])
+int TestDict(int , char *[])
 { 
 
-   std::cout << "-------- Test Default Dicom Dictionary : ----------" << std::endl;
+   std::cout << "----- Test Default Dicom Dictionary : ----------" << std::endl;
    // Just to improve test coverage:
    gdcm::Dict *tempDict = new gdcm::Dict("dummyFileNameThatDoesntExist");
    // Default dict is supposed to be used.
    tempDict->Print();
-   std::cout << "-------- end Test Default Dicom Dictionary : --------" << std::endl;
+   std::cout << "---- end Test Default Dicom Dictionary : -------" << std::endl;
 
    // Lets delete it.
    delete tempDict;

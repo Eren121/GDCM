@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/02/02 10:02:17 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ std::string DocEntrySet::GetEntryValue(uint16_t group, uint16_t elem)
  */
 void *DocEntrySet::GetEntryBinArea(uint16_t group, uint16_t elem) 
 {
-   BinEntry *entry = GetBinEntry(group,elem);
+   BinEntry *entry = GetBinEntry(group, elem);
    if( entry )
       return entry->GetBinArea();
    return 0;
@@ -72,7 +72,7 @@ void *DocEntrySet::GetEntryBinArea(uint16_t group, uint16_t elem)
  */
 int DocEntrySet::GetEntryLength(uint16_t group, uint16_t elem)
 {
-   DocEntry *entry = GetDocEntry(group,elem);
+   DocEntry *entry = GetDocEntry(group, elem);
    if( entry )
       return entry->GetLength();
    return -1;
@@ -93,7 +93,7 @@ int DocEntrySet::GetEntryLength(uint16_t group, uint16_t elem)
  */
 std::string DocEntrySet::GetEntryVR(uint16_t group, uint16_t elem)
 {
-   DocEntry *entry = GetDocEntry(group,elem);
+   DocEntry *entry = GetDocEntry(group, elem);
    if( entry )
       return entry->GetVR();
    return GDCM_UNFOUND;
@@ -166,7 +166,7 @@ SeqEntry *DocEntrySet::GetSeqEntry(uint16_t group, uint16_t elem)
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool DocEntrySet::SetValEntry(std::string const& content, 
+bool DocEntrySet::SetValEntry(std::string const &content, 
                               uint16_t group, uint16_t elem) 
 {
    ValEntry *entry = GetValEntry(group, elem);
@@ -305,7 +305,7 @@ ValEntry *DocEntrySet::InsertValEntry(std::string const &value,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea,int lgth, 
+BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth, 
                                       uint16_t group, uint16_t elem,
                                       TagName const &vr )
 {
@@ -479,8 +479,8 @@ ValEntry *DocEntrySet::NewValEntry(uint16_t group,uint16_t elem,
  * @param   elem  element number of the new Entry
  * @param   vr     VR of the new Entry 
  */
-BinEntry *DocEntrySet::NewBinEntry(uint16_t group,uint16_t elem,
-                                   TagName const & vr) 
+BinEntry *DocEntrySet::NewBinEntry(uint16_t group, uint16_t elem,
+                                   TagName const &vr) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, vr);
    gdcmAssertMacro(dictEntry);
@@ -501,7 +501,7 @@ BinEntry *DocEntrySet::NewBinEntry(uint16_t group,uint16_t elem,
  * @param   group group   number of the new Entry
  * @param   elem  element number of the new Entry
  */
-SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group,uint16_t elem) 
+SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, "SQ");
    gdcmAssertMacro(dictEntry);
@@ -551,7 +551,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
 DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
-                                             TagName const & vr)
+                                     TagName const &vr)
 {
    DictEntry *dictEntry = GetDictEntry(group,elem);
    DictEntry *goodEntry = dictEntry;

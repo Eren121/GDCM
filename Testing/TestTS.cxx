@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:32 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,8 @@ int TestTS(int , char *[])
    std::cout << ts.IsTransferSyntax( "1.2.840.10008.1.2.4.55" ) << std::endl;
    // JPEG Lossless, Non-Hierarchical (Process 14)
    std::cout << ts.IsTransferSyntax( "1.2.840.10008.1.2.4.57" ) << std::endl;
-   // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14, [Selection Value 1])
+   // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14, 
+   //               [Selection Value 1])
    std::cout << ts.IsTransferSyntax( "1.2.840.10008.1.2.4.70" ) << std::endl;
    // JPEG 2000 Lossless
    std::cout << ts.IsTransferSyntax( "1.2.840.10008.1.2.4.90" ) << std::endl;
@@ -61,14 +62,16 @@ int TestTS(int , char *[])
    std::cout << "Test TS:" << std::endl;
    std::cout << ts.IsJPEGLossless( "1.2.840.10008.1.2.4.55") << std::endl;
 //if ( key == "1.2.840.10008.1.2.4.55"
-//        || key == "1.2.840.10008.1.2.4.57"
-//        || key == "1.2.840.10008.1.2.4.70" )
+//  || key == "1.2.840.10008.1.2.4.57"
+//  || key == "1.2.840.10008.1.2.4.70" )
    std::cout << ts.IsRLELossless( "1.2.840.10008.1.2.5") << std::endl;
    std::cout << ts.IsJPEGLossless( "1.2.840.10008.1.2.5") << std::endl;
    std::cout << ts.IsJPEG2000( "1.2.840.10008.1.2.5") << std::endl;
    std::cout << ts.IsJPEG( "1.2.840.10008.1.2.5") << std::endl;
-   std::cout << ts.GetSpecialTransferSyntax( ts.GetSpecialTransferSyntax( "1.2.840.10008.1.2.5")) << std::endl;
-   std::cout << gdcm::Global::GetTS()->IsRLELossless( "1.2.840.10008.1.2.5" )  << std::endl;
+   std::cout << ts.GetSpecialTransferSyntax( 
+                ts.GetSpecialTransferSyntax( "1.2.840.10008.1.2.5")) << std::endl;
+   std::cout << gdcm::Global::GetTS()->IsRLELossless( "1.2.840.10008.1.2.5" )  
+             << std::endl;
 
    return ts.GetValue( "" ) != gdcm::GDCM_UNFOUND;
 }

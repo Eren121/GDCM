@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:56 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/02/02 10:02:18 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,8 @@ namespace gdcm
  * \brief   Constructor from a given DictEntry
  * @param   e Pointer to existing dictionary entry
  */
-ValEntry::ValEntry(DictEntry *e) : ContentEntry(e)
+ValEntry::ValEntry(DictEntry *e) 
+        : ContentEntry(e)
 {
 }
 
@@ -45,7 +46,7 @@ ValEntry::ValEntry(DictEntry *e) : ContentEntry(e)
  * @param   e Pointer to existing Doc entry
  */
 ValEntry::ValEntry(DocEntry *e)
-             : ContentEntry(e->GetDictEntry())
+        : ContentEntry(e->GetDictEntry())
 {
    Copy(e);
 }
@@ -174,7 +175,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
 {
    uint16_t g = GetGroup();
    uint16_t e = GetElement();
-   VRKey vr = GetVR();
+   VRKey vr   = GetVR();
    std::ostringstream s; 
    std::string st;
    std::string d2;
@@ -188,7 +189,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
       return;
    }
    
-   TS * ts = Global::GetTS();
+   TS *ts = Global::GetTS();
     
    TSAtr v  = GetValue();  // not applicable for SQ ...     
    d2 = Util::CreateCleanString(v);  // replace non printable characters by '.'            

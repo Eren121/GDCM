@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 11:13:08 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/02/02 10:06:31 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 #include <iostream>
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
    gdcm::File *e1;
    gdcm::FileHelper   *f1;

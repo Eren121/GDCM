@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDcm2Acr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:52 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/02/02 10:06:31 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,20 +20,20 @@
 
 #include <iostream>
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {  
-   std::string toto;
-   std::string zozo;
+   std::string fileName;
+   std::string fileNameToWrite;
 
-   gdcm::FileHelper  * f1;
+   gdcm::FileHelper *f1;
 
    std::cout << " Before gdcmFileHelper()" << std::endl;
    std::cout << "\n\n---------------------------------------" << std::endl;
 
    if (argc > 1)
    {
-      toto = argv[1];
-      f1 = new gdcm::FileHelper(toto);
+      fileName = argv[1];
+      f1 = new gdcm::FileHelper(fileName);
    }
    else
    {
@@ -41,17 +41,14 @@ int main(int argc, char* argv[])
       filename += "/test.acr";
       f1 = new gdcm::FileHelper(filename);
    }
-   std::cout << " Sortie gdcmFileHelper()" << std::endl;
+   std::cout << " After gdcmFileHelper()" << std::endl;
 
-   //e1.PrintPubDict(std::cout);
    f1->GetFile()->Print();
-
-   //cle = gdcmDictEntry::TranslateToKey(0x0028,0x0008);
 
    int dataSize = f1->GetImageDataSize();
    std::cout << "dataSize:" << dataSize << std::endl;
 
-   // void* imageData= f1->GetFile()->GetImageData();
+   // void *imageData= f1->GetFile()->GetImageData();
 
    // Ecriture d'un Raw File, a afficher avec affim filein= dim= nbit= signe=
    //f1->WriteRawData("image.raw");
@@ -62,8 +59,8 @@ int main(int argc, char* argv[])
 
    // ecriture d'un fichier ACR à partir d'un dcmFile correct.
 
-   zozo = toto + ".nema";
-   f1->WriteAcr(zozo);
+   fileNameToWrite = fileName + ".nema";
+   f1->WriteAcr(fileNameToWrite);
    std::cout << "\n\n---------------------------------------\n\n" << std::endl;
 
    f1->GetFile()->Print();

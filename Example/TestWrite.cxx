@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:49 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,12 +22,12 @@
 
 int main(int argc, char *argv[])
 {  
-   std::string zozo;
+   std::string fileNameToWrite;
 
    gdcm::File *e1;
    gdcm::FileHelper *f1;
 
-   void* imageData;
+   void *imageData;
    int dataSize;
 
    if (argc < 3) {
@@ -62,10 +62,10 @@ int main(int argc, char *argv[])
              << "--------------------- file :" << argv[1] 
              << std::endl;
      
-   std::string toto = argv[1]; 
+   std::string fileName = argv[1]; 
    std::string mode = argv[2];
 
-   e1 = new gdcm::File( toto.c_str() );
+   e1 = new gdcm::File( fileName.c_str() );
    if (!e1->IsReadable())
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
@@ -120,9 +120,9 @@ int main(int argc, char *argv[])
             // ecriture d'un fichier ACR 
             // à partir d'un dcmFile correct.
 
-      zozo = toto + ".ACR";
+      fileNameToWrite = fileName + ".ACR";
       std::cout << "WriteACR" << std::endl;
-      f1->WriteAcr(zozo);
+      f1->WriteAcr(fileNameToWrite);
       break;
 
    case 'd' :  // Not document in the 'usage', because the method is knowed to be bugged. 
@@ -130,27 +130,27 @@ int main(int argc, char *argv[])
            // ecriture d'un fichier DICOM Implicit VR 
            // à partir d'un dcmFile correct.
 
-      zozo = toto + ".DCM";
+      fileNameToWrite = fileName + ".DCM";
       std::cout << "WriteDCM Implicit VR" << std::endl;
-      f1->WriteDcmImplVR(zozo);
+      f1->WriteDcmImplVR(fileNameToWrite);
       break;
 
    case 'x' :
               // ecriture d'un fichier DICOM Explicit VR 
               // à partir d'un dcmFile correct.
 
-      zozo = toto + ".XDCM";
+      fileNameToWrite = fileName + ".XDCM";
       std::cout << "WriteDCM Explicit VR" << std::endl;
-      f1->WriteDcmExplVR(zozo);
+      f1->WriteDcmExplVR(fileNameToWrite);
       break;
 
    case 'r' :
              //  Ecriture d'un Raw File, a afficher avec 
              // affim filein= dimx= dimy= nbit= signe=
 
-      zozo = toto + ".RAW";
+      fileNameToWrite = fileName + ".RAW";
       std::cout << "WriteRaw" << std::endl;
-      f1->WriteRawData(zozo);
+      f1->WriteRawData(fileNameToWrite);
       break;
 
    case 'v' :
@@ -171,9 +171,9 @@ int main(int argc, char *argv[])
            ((uint16_t*)imageData)[i] += 60000; //32767;
         }
      }
-     zozo = toto + ".VDCM";
+     fileNameToWrite = fileName + ".VDCM";
      std::cout << "WriteDCM Explicit VR + VideoInv" << std::endl;
-     f1->WriteDcmExplVR(zozo);
+     f1->WriteDcmExplVR(fileNameToWrite);
      break;
 
    }

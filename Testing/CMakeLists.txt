@@ -138,19 +138,13 @@ ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
-  # serial killer (also segfaults vtkgdcmViewer, but NOT PrintFile)
-  #"gdcm-JPEG-LossLessThoravision.dcm"
-
-  # Mathieu: temporarily remove as it kills my gnome session (but not kde)
-  # JPR: also breaks TestReadWriteReadCompare : Pixel differ (as expanded
-  #      in memory)  
-  #"KODAK-12-MONO1-Odd_Terminated_Sequence.dcm"
   
   # Multiframe Papyrus format image
-  # Just to remember this format exist, and is gdcm::Header compliant
-  # (NOT gdcm::File ...)
+  # Just to remember this format exists, and is gdcm::File compliant
+  # (NOT gdcm::FileHelper ...)
   # any contribution is welcome
-  "PET-cardio-Multiframe-Papyrus.dcm"   
+  "PET-cardio-Multiframe-Papyrus.dcm"
+  # From David Clunie's Compresion Dataset  
   "D_CLUNIE_CT1_JLSN.dcm"
   "D_CLUNIE_CT1_JLSL.dcm"
   "D_CLUNIE_CT1_J2KR.dcm"

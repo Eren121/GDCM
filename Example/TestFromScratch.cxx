@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 11:13:08 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,16 +49,16 @@ int main(int argc, char *argv[])
    int dataSize = f1->GetImageDataSize();
    std::cout << "DataSize:      " << dataSize << std::endl;
    // Since we know the image is 16bits:
-   uint8_t* imageData = f1->GetImageData();
+   uint8_t *imageData = f1->GetImageData();
  
    // Hopefully default to something
    gdcm::File *h2 = new gdcm::File();
 
    // Copy of the header content
-   gdcm::DocEntry* d = h1->GetFirstEntry();
+   gdcm::DocEntry *d = h1->GetFirstEntry();
    while(d)
    {
-      if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
+      if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
          // Do not bother with field from private dict
          if( v->GetName() != "gdcm::Unknown" )

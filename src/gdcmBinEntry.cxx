@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:54 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/02/02 10:02:16 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,8 @@ namespace gdcm
 /**
  * \brief   Constructor from a given BinEntry
  */
-BinEntry::BinEntry(DictEntry *e) : ContentEntry(e)
+BinEntry::BinEntry(DictEntry *e) 
+         :ContentEntry(e)
 {
    BinArea = 0;
    SelfArea = true;
@@ -42,7 +43,8 @@ BinEntry::BinEntry(DictEntry *e) : ContentEntry(e)
  * \brief   Constructor from a given BinEntry
  * @param   e Pointer to existing Doc entry
  */
-BinEntry::BinEntry(DocEntry *e) : ContentEntry(e->GetDictEntry())
+BinEntry::BinEntry(DocEntry *e) 
+        : ContentEntry(e->GetDictEntry())
 {
    Copy(e);
 
@@ -168,7 +170,6 @@ void BinEntry::Print(std::ostream &os, std::string const & )
    void* binArea = GetBinArea();
    if (binArea)
    {
-      //s << " [" << GDCM_BINLOADED 
       s << " [" << GetValue()
         << "; length = " << GetLength() << "]";
    }
@@ -180,7 +181,6 @@ void BinEntry::Print(std::ostream &os, std::string const & )
       }
       else 
       {
-         //s << " [gdcm::Binary data NOT loaded]";
          s << " [" <<GetValue() << "]";
       }         
    }

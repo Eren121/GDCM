@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:29:33 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 // and pixels of an other image
 
 
-int TestChangeHeader(int argc, char* argv[])
+int TestChangeHeader(int argc, char *argv[])
 {
    if (argc < 3)
    {
@@ -77,7 +77,7 @@ int TestChangeHeader(int argc, char* argv[])
 
    int dataSize = f2->GetImageDataSize();
    printf ("dataSize %d\n",dataSize);
-   uint8_t* imageData= f2->GetImageData();
+   uint8_t *imageData= f2->GetImageData();
 
 // TODO : Why don't we merge theese 2 functions ?
 

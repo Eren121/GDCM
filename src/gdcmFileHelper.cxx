@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/02/02 10:02:18 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ FileHelper::FileHelper(File *header)
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
  */
-FileHelper::FileHelper(std::string const & filename )
+FileHelper::FileHelper(std::string const &filename )
 {
    FileInternal = new File( filename );
    SelfHeader = true;

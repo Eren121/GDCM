@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:22 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 // Writting of a DICOM file based on a correct dicom header
 // and data pixel of another image
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
  
    if (argc < 3) 
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
    //        and that does the job
  
    int dataSize    = f2->GetImageDataSize();
-   uint8_t* imageData = f2->GetImageData();
+   uint8_t *imageData = f2->GetImageData();
  
    std::cout << "dataSize :" << dataSize << std::endl;
  

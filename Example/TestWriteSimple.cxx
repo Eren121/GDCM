@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/22 12:39:11 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,7 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
    if (argc < 3) 
    {
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
    const char *output = argv[2];
 
    gdcm::File       *f1 = new gdcm::File( header );
-   gdcm::FileHelper   *f2 = new gdcm::FileHelper( f1 );
+   gdcm::FileHelper *f2 = new gdcm::FileHelper( f1 );
 
    // If the following call is important, then the API sucks. Why is it
    // required to allocate PixelData when we are not using it !?

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:54 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,21 +27,21 @@ int CompareInternal(std::string const & filename, std::string const & output)
 
    //////////////// Step 1 (see above description):
 
-   gdcm::File *header = new gdcm::File( filename );
-   if( !header->IsReadable() )
+   gdcm::File *file = new gdcm::File( filename );
+   if( !file->IsReadable() )
    {
       std::cerr << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
                 << filename << std::endl;
-      delete header;
+      delete file;
       return 1;
    }
    std::cout << "           step 1...";
 
    //////////////// Step 2:
 
-   gdcm::FileHelper*  file = new gdcm::FileHelper( header );
-   int dataSize    = file->GetImageDataSize();
-   uint8_t* imageData = file->GetImageData(); //EXTREMELY IMPORTANT
+   gdcm::FileHelper *filehelper = new gdcm::FileHelper( file );
+   int dataSize    = filehelper->GetImageDataSize();
+   uint8_t *imageData = filehelper->GetImageData(); //EXTREMELY IMPORTANT
           // Sure, it is : It's up to the user to decide if he wants to
           // GetImageData or if he wants to GetImageDataRaw
           // (even if we do it by setting a flag, he will have to decide) 
@@ -62,46 +62,46 @@ int CompareInternal(std::string const & filename, std::string const & output)
    
    // --> I did. ctest doesn't break. But ... is it enought to say it's OK ?
    
-   file->SetImageData(imageData, dataSize);
+   filehelper->SetImageData(imageData, dataSize);
    
-   file->SetWriteModeToRGB();
-   file->WriteDcmExplVR( output );
+   filehelper->SetWriteModeToRGB();
+   filehelper->WriteDcmExplVR( output );
    std::cout << "2...";
  
    //////////////// Step 3:
 
-   gdcm::FileHelper* reread = new gdcm::FileHelper( output );
+   gdcm::FileHelper *reread = new gdcm::FileHelper( output );
    if( !reread->GetFile()->IsReadable() )
    {
      std::cerr << "Failed" << std::endl
                << "Test::TestReadWriteReadCompare: Could not reread image "
                << "written:" << filename << std::endl;
-     delete header;
      delete file;
+     delete filehelper;
      delete reread;
      return 1;
    }
    std::cout << "3...";
    // For the next step:
    int    dataSizeWritten = reread->GetImageDataSize();
-   uint8_t* imageDataWritten = reread->GetImageData();
+   uint8_t *imageDataWritten = reread->GetImageData();
 
    //////////////// Step 4:
    // Test the image size
-   if (header->GetXSize() != reread->GetFile()->GetXSize() ||
-       header->GetYSize() != reread->GetFile()->GetYSize() ||
-       header->GetZSize() != reread->GetFile()->GetZSize())
+   if (file->GetXSize() != reread->GetFile()->GetXSize() ||
+       file->GetYSize() != reread->GetFile()->GetYSize() ||
+       file->GetZSize() != reread->GetFile()->GetZSize())
    {
       std::cout << "Failed" << std::endl
          << "        X Size differs: "
-         << "X: " << header->GetXSize() << " # " 
+         << "X: " << file->GetXSize() << " # " 
                   << reread->GetFile()->GetXSize() << " | "
-         << "Y: " << header->GetYSize() << " # " 
+         << "Y: " << file->GetYSize() << " # " 
                   << reread->GetFile()->GetYSize() << " | "
-         << "Z: " << header->GetZSize() << " # " 
+         << "Z: " << file->GetZSize() << " # " 
                   << reread->GetFile()->GetZSize() << std::endl;
-      delete header;
       delete file;
+      delete filehelper;
       delete reread;
       return 1;
    }
@@ -112,34 +112,33 @@ int CompareInternal(std::string const & filename, std::string const & output)
       std::cout << "Failed" << std::endl
          << "        Pixel areas lengths differ: "
          << dataSize << " # " << dataSizeWritten << std::endl;
-      delete header;
       delete file;
+      delete filehelper;
       delete reread;
       return 1;
    }
 
    // Test the data's content
-   if (int res = memcmp(imageData, imageDataWritten, dataSize) !=0)
+   if (memcmp(imageData, imageDataWritten, dataSize) !=0)
    {
-      (void)res;
       std::cout << "Failed" << std::endl
          << "        Pixel differ (as expanded in memory)." << std::endl;
-      delete header;
       delete file;
+      delete filehelper;
       delete reread;
       return 1;
    }
    std::cout << "4...OK." << std::endl ;
 
    //////////////// Clean up:
-   delete header;
    delete file;
+   delete filehelper;
    delete reread;
 
    return 0;
 }
 
-int TestReadWriteReadCompare(int argc, char* argv[]) 
+int TestReadWriteReadCompare(int argc, char *argv[]) 
 {
    int result = 0;
    if (argc == 3)

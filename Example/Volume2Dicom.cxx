@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:53 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.6 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,9 +41,10 @@
 const unsigned int Dimension = 3;
 
 void gdcmwrite(const char *inputfile, std::string directory);
-void GetFileDateAndTime(const char *inputfile, std::string &date, std::string &time);
+void GetFileDateAndTime(const char *inputfile, 
+                        std::string &date, std::string &time);
 
-int main( int argc, char * argv[] )
+int main( int argc, char *argv[] )
 {
    if (argc < 2) 
    {
@@ -158,7 +159,8 @@ int main( int argc, char * argv[] )
 
 
 // just an utility function to retrieve date and time of a file
-void GetFileDateAndTime(const char *inputfile, std::string &date, std::string &time)
+void GetFileDateAndTime(const char *inputfile, std::string &date, 
+                                               std::string &time)
 {
    struct stat buf;    
    if (stat(inputfile, &buf) == 0) 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FindTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:22 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/02 10:06:31 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,24 +22,24 @@
 #include <iostream>
 #include <stdio.h> // for sscanf
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-   std::string toto, titi;
+   std::string fileName;
 
    gdcm::FileHelper *f1;
 
    if(argc > 1 )
       f1 = new gdcm::FileHelper(argv[1]);
    else  {
-      toto = GDCM_DATA_ROOT;
-      toto += "/test.acr";
-      f1 = new gdcm::FileHelper(toto);
+      fileName = GDCM_DATA_ROOT;
+      fileName += "/test.acr";
+      f1 = new gdcm::FileHelper(fileName);
    }
 
    std::string ManufacturerName="SIEMENS ";
    std::string RecCode="ACR-NEMA 2.0";
    std::string ImagePositionPatient, Location, ImageLocation;
-   std::string zozo;
+   std::string fileNameToWrite;
    char c;
 
    float x, y, z, l;
@@ -58,12 +58,12 @@ int main(int argc, char* argv[])
 
    sscanf(ImagePositionPatient.c_str(), "%f%c%f%c%f", &x,&c,&y,&c,&z);
 
-// ceci est probablement une mauvaise idée !
+// probablely a bad idea !
 // (peut casser l'ordre des images si la pile d'images 
 // traverse l'axe des X, ou des Y, ou des Z)
 //l=sqrt(x*x + y*y + z*z);
 
-// ceci ne marchera pas si on se déplace à Z constant :-(
+// Will not work if we move on a Z constant :-(
    l=z;
 // existerait-il qq chose qui marche à tout coup?
 
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 // a eclaircir !
 
 // SetEntryLength is private now.
-//TO DO : see is the pb goes on...
+//TO DO : see if the pb goes on...
 
 //f1->GetFile()->SetEntryLength(strlen(Location.c_str())-1, 0x0020,0x0050);
 
@@ -88,20 +88,20 @@ int main(int argc, char* argv[])
 //f1->SetValEntry(Location, 0x0028,0x0200);
 //f1->GetFile()->SetEntryLength(strlen(ImageLocation.c_str())-1, 0x0020,0x0050); // prudence !
 
-// void* imageData= f1->GetImageData();
+// void *imageData= f1->GetImageData();
 
 // ecriture d'un fichier ACR à partir d'un dcmFile correct.
 
-   std::cout << "----------------avant PrintEntry---------------------" << std::endl;
+   std::cout << "----------------before PrintEntry---------------------" << std::endl;
    f1->GetFile()->Print();
-   std::cout << "----------------avant WriteDcm---------------------" << std::endl;
+   std::cout << "----------------before WriteDcm---------------------" << std::endl;
 
 
 // ecriture d'un fichier ACR à partir d'un dcmFile correct.
 
-   zozo = toto + ".acr";
+   fileNameToWrite = fileName + ".acr";
    std::cout << "WriteACR" << std::endl;
-   f1->WriteAcr(zozo);
+   f1->WriteAcr(fileNameToWrite);
 
    std::cout << "----------------apres Write---------------------" << std::endl;
 

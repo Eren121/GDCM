@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/02/02 10:02:18 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,14 +37,14 @@ namespace gdcm
 // Constructor / Destructor
 PixelReadConvert::PixelReadConvert() 
 {
-   RGB = 0;
-   RGBSize = 0;
-   Raw = 0;
-   RawSize = 0;
-   LutRGBA = 0;
-   LutRedData = 0;
+   RGB          = 0;
+   RGBSize      = 0;
+   Raw          = 0;
+   RawSize      = 0;
+   LutRGBA      = 0;
+   LutRedData   = 0;
    LutGreenData = 0;
-   LutBlueData =0;
+   LutBlueData  = 0;
 }
 
 PixelReadConvert::~PixelReadConvert() 
@@ -91,7 +91,7 @@ void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream *fp )
                throw ( FormatError )
 {
    int nbPixels = XSize * YSize;
-   uint16_t* localDecompres = (uint16_t*)Raw;
+   uint16_t *localDecompres = (uint16_t*)Raw;
 
    for( int p = 0; p < nbPixels; p += 2 )
    {
@@ -163,7 +163,7 @@ void PixelReadConvert::ConvertSwapZone()
       uint32_t s32;
       uint16_t high;
       uint16_t low;
-      uint32_t* im32 = (uint32_t*)Raw;
+      uint32_t *im32 = (uint32_t*)Raw;
       switch ( SwapCode )
       {
          case 1234:
@@ -279,7 +279,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       {
          uint16_t mask = 0xffff;
          mask = mask >> ( BitsAllocated - BitsStored );
-         uint16_t* deb = (uint16_t*)Raw;
+         uint16_t *deb = (uint16_t*)Raw;
          for(int i = 0; i<l; i++)
          {
             *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
@@ -290,7 +290,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       {
          uint32_t mask = 0xffffffff;
          mask = mask >> ( BitsAllocated - BitsStored );
-         uint32_t* deb = (uint32_t*)Raw;
+         uint32_t *deb = (uint32_t*)Raw;
          for(int i = 0; i<l; i++)
          {
             *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
@@ -372,9 +372,9 @@ void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
 
    int l = XSize * YSize * ZSize;
 
-   uint8_t* a = copyRaw;
-   uint8_t* b = copyRaw + l;
-   uint8_t* c = copyRaw + l + l;
+   uint8_t *a = copyRaw;
+   uint8_t *b = copyRaw + l;
+   uint8_t *c = copyRaw + l + l;
 
    for (int j = 0; j < l; j++)
    {
@@ -790,7 +790,7 @@ void PixelReadConvert::BuildLUTRGBA()
    // We give up the checking to avoid some (useless ?) overhead
    // (optimistic asumption)
    int i;
-   uint8_t* a = LutRGBA + 0;
+   uint8_t *a = LutRGBA + 0;
    for( i=0; i < lengthR; ++i )
    {
       *a = LutRedData[i*mult+1];
@@ -845,7 +845,7 @@ bool PixelReadConvert::BuildRGBImage()
                                                                                 
    // Build RGB Pixels
    AllocateRGB();
-   uint8_t* localRGB = RGB;
+   uint8_t *localRGB = RGB;
    for (size_t i = 0; i < RawSize; ++i )
    {
       int j  = Raw[i] * 4;
@@ -869,7 +869,7 @@ bool PixelReadConvert::BuildRGBImage()
  * @param indent Indentation string to be prepended during printing.
  * @param os     Stream to print to.
  */
-void PixelReadConvert::Print( std::ostream &os, std::string const & indent )
+void PixelReadConvert::Print( std::ostream &os, std::string const &indent )
 {
    os << indent
       << "--- Pixel information -------------------------"

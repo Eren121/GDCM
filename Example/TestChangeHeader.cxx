@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:22 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/02 10:06:31 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 // This examples read two images (could be the same). Try to modify
 // Acquisition Matrix and then write the image again
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     if (argc < 3)
     {

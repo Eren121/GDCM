@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/02/02 10:02:17 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
-   VRKey vr   = GetVR();
+   VRKey vr       = GetVR();
    uint16_t el    = GetElement();
    uint32_t lgr   = GetLength();
 
@@ -74,8 +74,8 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    //
    // ----------- Writes the common part
    //
-   binary_write( *fp, group); //group
-   binary_write( *fp, el);    //element
+   binary_write( *fp, group); //group number
+   binary_write( *fp, el);    //element number
 
    if ( filetype == ExplicitVR )
    {

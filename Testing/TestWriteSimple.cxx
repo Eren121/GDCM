@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 16:43:10 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -200,7 +200,7 @@ int WriteSimple(Image &img)
 
 // Step 5 : Read the written image
    std::cout << "5...";
-   gdcm::FileHelper* reread = new gdcm::FileHelper( fileName );
+   gdcm::FileHelper *reread = new gdcm::FileHelper( fileName );
    if( !reread->GetFile()->IsReadable() )
    {
      std::cerr << "Failed" << std::endl
@@ -215,7 +215,7 @@ int WriteSimple(Image &img)
 // Step 6 : Compare to the written image
    std::cout << "6...";
    size_t dataSizeWritten = reread->GetImageDataSize();
-   uint8_t* imageDataWritten = reread->GetImageData();
+   uint8_t *imageDataWritten = reread->GetImageData();
 
    // Test the image size
    if (fileToBuild->GetXSize() != reread->GetFile()->GetXSize() ||
@@ -276,7 +276,7 @@ int WriteSimple(Image &img)
    return 0;
 }
 
-int TestWriteSimple(int argc, char* argv[])
+int TestWriteSimple(int argc, char *argv[])
 {
    if (argc < 1) 
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:22 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@
 #define COLOR_WINDOW    256
 #define COLOR_LEVEL     128
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
    if (argc < 3) 
    {

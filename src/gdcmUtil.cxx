@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:56 $
-  Version:   $Revision: 1.128 $
+  Date:      $Date: 2005/02/02 10:02:18 $
+  Version:   $Revision: 1.129 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@
 #include <stdio.h>   //only included in implementation file
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-   #include <winsock.h>  // for gethostname & gethostbyname
+   #include <winsock.h>  // for gethostname and gethostbyname
    #undef GetCurrentTime
 #else
 #ifndef __BORLANDC__
@@ -127,7 +127,7 @@ std::string Util::Format(const char *format, ...)
  */
 void Util::Tokenize (const std::string &str,
                      std::vector<std::string> &tokens,
-                     const std::string& delimiters)
+                     const std::string &delimiters)
 {
    std::string::size_type lastPos = str.find_first_not_of(delimiters,0);
    std::string::size_type pos     = str.find_first_of    (delimiters,lastPos);

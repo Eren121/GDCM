@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:56 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/02/02 10:02:18 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -119,7 +119,7 @@ int TS::Count(TSKey const &key)
    return TsMap.count(key);
 }
 
-TSAtr const & TS::GetValue(TSKey const &key) 
+TSAtr const &TS::GetValue(TSKey const &key) 
 {
    // First thing clean up the string sometime the transfer syntax is padded with spaces
    std::string copy = key;

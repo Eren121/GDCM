@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 16:43:10 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,8 @@ int TestDicomDirElement(int , char *[])
    return 1;
    }  
    ddElt->Print( std::cout );
+
+   // TODO : User add an Entry (e.g Physician Name )
 
    delete ddElt;
    return 0;

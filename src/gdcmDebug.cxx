@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:00:16 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/02/02 10:02:16 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,6 @@ void Debug::SetDebugFlag (bool flag)
 
 /**
  * \brief   Gets the debug flag value
- * @param   level Get the debug flag
  * @return debug flag value
  */ 
 bool Debug::GetDebugFlag ()
@@ -84,7 +83,7 @@ bool Debug::GetDebugToFile ()
 
 /**
  * \brief   Set Accessor
- * @param   flag Set the debug flag to redirect to file
+ * @param   filename  File to redirect debug info
  *          Absolutely nothing is check. You have to pass in
  *          a correct filename
  */ 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:52 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/02/02 10:06:32 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-int main(int argc, char* argv[]) 
+int main(int argc, char *argv[]) 
 {
    if (argc<2)
    {

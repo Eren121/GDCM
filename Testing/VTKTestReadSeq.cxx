@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestReadSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:45:49 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/02/02 10:05:26 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,9 +34,9 @@
 #define vtkFloatingPointType float
 #endif
 
-int VTKReadSeqTest(vtkTesting *t,vtkImageViewer *viewer,
-                   std::string const & filename, 
-                   std::string const & referenceFileName)
+int VTKReadSeqTest(vtkTesting *t, vtkImageViewer *viewer,
+                   std::string const &filename, 
+                   std::string const &referenceFileName)
 {
    int retVal = 0;  //by default this is an error
 
