@@ -1,3 +1,25 @@
+2004-06-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+    * Valgrind note: after Mathieu Malaterre teached me how to read
+      the valgrind FAQ ;-] (see http://valgrind.kde.org/faq.html), I
+      learned that:
+          Using gcc, you can force the STL to use malloc and to free memory as
+          soon as possible by globally disabling memory caching.
+          With 3.2.2 and later, you should export the environment variable
+          GLIBCPP_FORCE_NEW before running your program.
+      By setting GLIBCPP_FORCE_NEW, STL related memory leak messages of gdcm
+      simply vanish (it is still not clear to me, whether this means that
+      STL std::string leaks or if valgrind believes it leaks...).
+    * Fixing of SegFault of Test/makeDicomDir (as shown by ctest or by
+      running bin/gdcmTests makeDicomDir):
+      - src/gdcmDicomDir.cxx: dynamic casting used + clean up.
+      - Test/makeDicomDir.cxx now properly traps empty lists and returns
+        with 1.
+      NOW, makeDicomDir cleanly fails (in ctest terminology) instead of
+      SegFaulting (I drowned in DicomDir related code when trying to
+      understand why the list is empty...).
+    * src/gdcmDocument.h: first BSD license header try.
+    * Doc/License.txt added.
+
 2004-06-15 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * src/gdcmDocument.[h|cxx]:
       - Clean up of the Transfer related predicates. They are now all based
@@ -199,12 +221,12 @@
             2. Tests as mentionned smarter
             3. Some clean up
             4. Add a new method in gdcmDict that return the PubDict by name 
-	       this is interesting for 3rd party lib like ITK, 
-	       where we could set the institution name / patient name...
+          this is interesting for 3rd party lib like ITK, 
+          where we could set the institution name / patient name...
 
        * ENH: 1. Now the test suite is working for real
               2. All binaries are now output in the gdcm-bin directory 
-	         (this was not true before)		 
+                 (this was not true before)
 
 2004-04-28  Jean-Pierre Roux
      * ENH add the provisional  gdcmHeader::SQDepthLevel to allow 

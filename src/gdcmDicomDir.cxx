@@ -20,7 +20,6 @@
 #include "gdcmDebug.h"
 #include "gdcmGlobal.h"
 #include "gdcmHeader.h"
-
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 #include "gdcmValEntry.h"
@@ -69,12 +68,11 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
 
    metaElems=NULL;   
 
-// gdcmDocument already executed
-// if user passed a root directory, sure we didn't get anything
+   // gdcmDocument already executed
+   // if user passed a root directory, sure we didn't get anything
 
-   if( GetEntry().begin()==GetEntry().end() ) 
+   if( GetEntry().begin() == GetEntry().end() ) 
    {
-     // if parseDir == false, it should be tagged as an error
       dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry HT empty");
 
       if(strlen(FileName)==1 && FileName[0]=='.') { // user passed '.' as Name
@@ -90,14 +88,19 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
          dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : Parse directory"
                         " and create the DicomDir");
          ParseDirectory();
+      } else {
+         /// \todo if parseDir == false, it should be tagged as an error
       }
    }
-   else {
-      gdcmDocEntry *e = GetDocEntryByNumber(0x0004, 0x1220); // Directory record sequence
+   else
+   {
+      // Directory record sequence
+      gdcmDocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
       if (e==NULL) {
-         dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : NO Directory record sequence (0x0004,0x1220)"
-                     );
-         // FIXME : what to do when the parsed file IS NOT a DICOMDIR file ?         
+         dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : NO Directory record"
+                        " sequence (0x0004,0x1220)");
+         /// \todo FIXME : what to do when the parsed file IS NOT a
+         ///       DICOMDIR file ?         
       }      
       CreateDicomDir();
    } 
@@ -122,7 +125,7 @@ gdcmDicomDir::gdcmDicomDir(bool exception_on_error):
    endArg=                 NULL;
    progress=0.0;
    abort=false;
-   std::string pathBidon = ""; // Sorry, NULL not allowed ...
+   std::string pathBidon = "Bidon"; // Sorry, NULL not allowed ...
    SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
    AddDicomDirMeta();
 }
@@ -493,7 +496,7 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
          }
       else
          {
-            entry->SetLength(entry->GetValue().length());	 
+            entry->SetLength(entry->GetValue().length());
          } 
       s->AddDocEntry(entry);
    }
@@ -503,13 +506,12 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
    return p;   
 }
 
-
 /**
- * \ingroup gdcmDicomDir
  * \brief   adds to the HTable 
  *          the gdcmEntries (Dicom Elements) corresponding to the given type
  * @param   path full path file name (only used when type = GDCM_DICOMDIR_IMAGE
- * @param   type gdcmObject type to create (GDCM_DICOMDIR_PATIENT, GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
+ * @param   type gdcmObject type to create (GDCM_DICOMDIR_PATIENT,
+ *          GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
  * @param   header gdcmHeader of the current file
  */
 void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
@@ -519,7 +521,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
    std::list<gdcmElement>::iterator it;
    guint16 tmpGr, tmpEl;
    gdcmDictEntry *dictEntry;
-   gdcmDocEntry *entry;
+   gdcmValEntry *entry;
    std::string val;
 
    switch(type)
@@ -548,7 +550,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
       tmpGr=it->group;
       tmpEl=it->elem;
       dictEntry=GetPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
-      entry=new gdcmDocEntry(dictEntry);
+      entry=new gdcmValEntry(dictEntry);
       entry->SetOffset(0); // just to avoid further missprinting
 
       if(header)
@@ -559,20 +561,22 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
       if(val==GDCM_UNFOUND) 
       {
          if((tmpGr==0x0004) &&(tmpEl==0x1130) ) // File-set ID
-         {	 
-	   // force to the *end* File Name
-           val=GetName(path);	   	    
+         {
+           // force to the *end* File Name
+           val=GetName(path);
          }
          else if( (tmpGr==0x0004) && (tmpEl==0x1500) ) // Only used for image
          {
             if(header->GetFileName().substr(0,path.length())!=path)
             {
-               dbg.Verbose(0, "gdcmDicomDir::SetElement : the base path of file name is incorrect");
+               dbg.Verbose(0, "gdcmDicomDir::SetElement : the base path"
+                              " of file name is incorrect");
                val=header->GetFileName();
             }
-            else {
+            else
+            {
                val=&(header->GetFileName().c_str()[path.length()]);
-	    }   
+            }   
          }
          else
          {
@@ -582,18 +586,18 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
       else
       {
          if (header->GetEntryLengthByNumber(tmpGr,tmpEl)== 0)
-	    val=it->value;
+            val=it->value;
       }
             
-      ((gdcmValEntry *)entry)->SetValue(val);
+      entry->SetValue(val);
 
       if(dictEntry)
       {
          if(dictEntry->GetGroup()==0xfffe) 
-	 {
-            entry->SetLength(((gdcmValEntry *)entry)->GetValue().length()); 	 
-	 }
-	 else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
+         {
+            entry->SetLength(entry->GetValue().length());
+         }
+         else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
          {
             entry->SetLength(4);
          } 
@@ -607,15 +611,15 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
          }
          else
          {
-            entry->SetLength(((gdcmValEntry *)entry)->GetValue().length());	 
+            entry->SetLength(entry->GetValue().length());
          }
       }
       //AddDocEntry(entry); // both in H Table and in chained list
       tagHT[entry->GetKey()] = entry;          // FIXME : use a SEQUENCE !
    }     
 }
+
 /**
- * \ingroup gdcmDicomDir
  * \brief   CallStartMethod
  */
 void gdcmDicomDir::CallStartMethod(void)
@@ -663,31 +667,47 @@ void gdcmDicomDir::CreateDicomDir()
 
    gdcmDicomDirType type=gdcmDicomDir::GDCM_DICOMDIR_META;
    
-   gdcmDocEntry *e = GetDocEntryByNumber(0x0004, 0x1220); // Directory record sequence
-   if (e==NULL) {
-      dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : NO Directory record sequence (0x0004,0x1220)"
-                  );
-         // FIXME : what to do when the parsed file IS NOT a DICOMDIR file ? 
+   // Directory record sequence
+   gdcmDocEntry *e = GetDocEntryByNumber(0x0004, 0x1220);
+   if (e==NULL)
+   {
+      dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : NO Directory record"
+                     " sequence (0x0004,0x1220)");
+      /// \todo FIXME: what to do when the parsed file IS NOT a DICOMDIR file ? 
       return;         
    }
    
+   gdcmSeqEntry* s = dynamic_cast<gdcmSeqEntry*>(e);
+   if (!s)
+   {
+      dbg.Verbose(0, "gdcmDicomDir::CreateDicomDir: no SeqEntry present");
+      return;
+   }
+
+   ListSQItem listItems = s->GetSQItems();
    gdcmDicomDirMeta *m = new gdcmDicomDirMeta(&tagHT);
    
-   gdcmSeqEntry *s = (gdcmSeqEntry *)e;  // FIXME : It is allowed ???  
-   ListSQItem listItems = s->GetSQItems();
-   
    gdcmDocEntry * d;   
+   std::string v;
    for(ListSQItem::iterator i=listItems.begin(); i !=listItems.end();++i) 
    {  
       d=(*i)->GetDocEntryByNumber(0x0004, 0x1430); // Directory Record Type   
-      std::string v=((gdcmValEntry *)d)->GetValue();
-      
+      if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(d) )
+      {
+         v = ValEntry->GetValue();
+      }
+      else 
+      {
+         dbg.Verbose(0, "gdcmDicomDir::CreateDicomDir: not a ValEntry.");
+         continue;
+      } 
+
       if(v=="PATIENT ") 
       {  
          AddDicomDirPatientToEnd(*i);
          //AddObjectToEnd(type,*i);
          type=gdcmDicomDir::GDCM_DICOMDIR_PATIENT;
-      }	
+      }
 
       else if(v=="STUDY ")
       {
@@ -711,7 +731,9 @@ void gdcmDicomDir::CreateDicomDir()
       }
       
       else
-         continue ;  // It was 'non PATIENT', 'non STUDY', 'non SERIE', 'non IMAGE' SQItem	 
+         // It was not a 'PATIENT', nor a 'STUDY', nor a 'SERIE',
+         // neither an 'IMAGE' SQItem. Skip to next item.
+         continue;
    }
 }
 /**

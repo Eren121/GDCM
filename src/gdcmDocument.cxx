@@ -95,6 +95,8 @@ gdcmDocument::gdcmDocument(const char *inFilename,
    if ( !OpenFile(exception_on_error))
       return;
    
+   dbg.Verbose(0, "gdcmDocument::gdcmDocument: starting parsing of file: ",
+                  filename.c_str());
    rewind(fp);
    //if (!CheckSwap())
    //   return false; // to go on compiling
@@ -227,9 +229,8 @@ bool gdcmDocument::IsReadable(void) {
       return(false);
    }
    if(!tagHT.empty()<=0) { 
-      std::cout << "gdcmDocument::IsReadable: wrong tagHT size : "
-                << tagHT.size()
-                <<std::endl;     
+      dbg.Verbose(0, "gdcmDocument::IsReadable: no tags in internal"
+                     " hash table.");
       return(false);
    }
 
