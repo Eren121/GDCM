@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.6 2003/05/29 16:58:24 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.7 2003/05/30 18:48:36 frog Exp $
 //CLEANME#include <vtkByteSwap.h>
 #include <stdio.h>
 #include <vtkObjectFactory.h>
@@ -30,6 +30,7 @@ void vtkGdcmReader::AddFileName(const char* name)
    // Starting from two files we have a stack of images:
    if(this->FileNameList.size() >= 2)
       this->SetFileDimensionality(3);
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -151,7 +152,7 @@ bool vtkGdcmReader::CheckFileCoherence()
          ReferenceNY = NY;
          ReferenceNZ = NZ;
          ReferenceType = type;
-         vtkDebugMacro("File is taken a coherence references" << *FileName);
+         vtkDebugMacro("This file taken as coherence reference:" << *FileName);
        }
      } // End of loop on FileName
 
@@ -182,26 +183,13 @@ void vtkGdcmReader::ExecuteInformation()
     this->DataExtent[4] = this->DataVOI[4];
     this->DataExtent[5] = this->DataVOI[5];
     }
-
-  this->ComputeInternalFileName(this->DataExtent[4]);
-  
-  // Check for file existence.
-  FILE *fp;
-  fp = fopen(this->InternalFileName,"rb");
-  if (!fp)
+  if ( ! this->CheckFileCoherence() )
     {
-    vtkErrorMacro("Unable to open file " << this->InternalFileName);
-    return;
+       vtkErrorMacro("File set is not coherent. Exiting...");
+       return;
     }
-  fclose(fp);
-
-  // Check for Gdcm parsability
-  gdcmHeader GdcmHeader(this->InternalFileName);
-  if (!GdcmHeader.IsReadable())
-    {
-    vtkErrorMacro("Gdcm cannot parse file " << this->InternalFileName);
-    return;
-    }
+  string ReferenceFile = this->FileNameList.front();
+  gdcmHeader GdcmHeader(ReferenceFile.c_str());
 
   int NX = GdcmHeader.GetXSize();
   int NY = GdcmHeader.GetYSize();
@@ -224,7 +212,7 @@ void vtkGdcmReader::ExecuteInformation()
         (this->DataVOI[5] >= NZ))
       {
       vtkWarningMacro("The requested VOI is larger than the file's ("
-                      << this->InternalFileName << ") extent ");
+                      << ReferenceFile << ") extent ");
       this->DataVOI[0] = 0;
       this->DataVOI[1] = NX - 1;
       this->DataVOI[2] = 0;
@@ -284,12 +272,51 @@ void vtkGdcmReader::ExecuteInformation()
     }
   else
     {
-    vtkErrorMacro("Bad File Type " << this->InternalFileName
+    vtkErrorMacro("Bad File Type " << ReferenceFile
                                    << "Type " << type.c_str());
     return;
     }
 
   vtkImageReader::ExecuteInformation();
+}
+
+//----------------------------------------------------------------------------
+void vtkGdcmReader::LoadImageInMemory(string FileName, 
+                                      unsigned char * Dest,
+                                      size_t size)
+{
+  vtkDebugMacro("Copying to memmory image" << FileName.c_str());
+  gdcmFile GdcmFile(FileName.c_str());
+
+  if (GdcmFile.GetZSize() != 1 )
+    vtkErrorMacro("Cannot handle images with multiple planes");
+
+  // First check the expected size of the image is the one found by gdcm.
+  if ( size != GdcmFile.GetImageDataSize() )
+    {
+    vtkErrorMacro("Inconsistency with GetImageDataSize for file" 
+                  << FileName.c_str());
+    vtkErrorMacro("Number of scalar components"
+                  << this->NumberOfScalarComponents);
+    }
+
+  // If the data structure of vtk for image/volume representation
+  // were straigthforwards the following would suffice:
+  //    GdcmFile.GetImageDataIntoVector((void*)Dest, size);
+  // But vtk chose to invert the lines of an image, that is the last
+  // line comes first (for some axis related reasons?). Hence we need
+  // to load the image line by line, starting from the end:
+  int NumColumns = GdcmFile.GetXSize();
+  int NumLines   = GdcmFile.GetYSize();
+  int LineSize   = NumColumns * GdcmFile.GetPixelSize();
+  unsigned char * Source      = (unsigned char*)GdcmFile.GetImageData();
+  unsigned char * Destination = Dest + size - LineSize;
+  for (int i = 0; i < NumLines; i++)
+    {
+    memcpy((void*)Destination, (void*)Source, LineSize);
+    Source      += LineSize;
+    Destination -= LineSize;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -301,19 +328,21 @@ void vtkGdcmReader::ExecuteInformation()
 // same as the file extent/order.
 void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 {
-  if (!this->FileName)
+  if (this->FileNameList.empty())
     {
-    vtkErrorMacro("A valid FileName must be specified.");
+    vtkErrorMacro("A least a valid FileName must be specified.");
     return;
     }
 
   vtkImageData *data = this->AllocateOutputData(output);
   data->SetExtent(this->DataExtent);
-  data->GetPointData()->GetScalars()->SetName("ImageFile");
+  data->GetPointData()->GetScalars()->SetName("DicomImage-Volume");
 
   // First check the coherence between the DataExtent and the
-  // size of the pixel data as annouced by gdcm (looks a bit paranoid).
-  gdcmFile GdcmFile(this->InternalFileName);
+  // size of the pixel data as annouced by gdcm (looks a bit paranoid)
+  // for the reference file (i.e. the first one in the list):
+  string ReferenceFile = this->FileNameList.front();
+  gdcmFile GdcmFile(ReferenceFile.c_str());
   int NumColumns = this->DataExtent[1] - this->DataExtent[0] + 1;
   int NumLines   = this->DataExtent[3] - this->DataExtent[2] + 1;
   int NumPlanes  = this->DataExtent[5] - this->DataExtent[4] + 1;
@@ -324,28 +353,27 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
     vtkDebugMacro("Number of scalar components"
                   << this->NumberOfScalarComponents);
     }
-  // Allocate pixel data space itself.
-  unsigned char *mem = new unsigned char [size];
 
-  // If the data structure of vtk for image/volume representation
-  // were straigthforwards the following would suffice:
-  //    GdcmFile.GetImageDataIntoVector((void*)mem, size);
-  // But vtk chose to invert the lines of an image, that is the last
-  // line comes first (for some axis related reasons?). Hence we need
-  // to load the image line by line, starting from the end:
-  int LineSize = NumColumns * GdcmFile.GetPixelSize();
-  unsigned char * Source      = (unsigned char*)GdcmFile.GetImageData();
-  unsigned char * Destination = mem + size - LineSize;
-  for (int i = 0; i < NumLines; i++)
+  // The memory size for a full stack of images of course depends
+  // on the number of images:
+  size_t stack_size = size * this->FileNameList.size();
+  // Allocate pixel data space itself.
+  unsigned char *mem = new unsigned char [stack_size];
+
+  unsigned char * Dest = mem;
+  for (std::list<std::string>::iterator FileName  = FileNameList.begin();
+                                        FileName != FileNameList.end();
+                                      ++FileName)
     {
-    memcpy((void*)Destination, (void*)Source, LineSize);
-    Source      += LineSize;
-    Destination -= LineSize;
+       this->LoadImageInMemory(*FileName, Dest, size);
+       Dest += size;
     }
+
+
   // The "size" of the vtkScalars data is expressed in number of points,
   // and is not the memory size representing those points:
-  size = size / GdcmFile.GetPixelSize();
-  data->GetPointData()->GetScalars()->SetVoidArray(mem, size, 0);
+  stack_size = stack_size / GdcmFile.GetPixelSize();
+  data->GetPointData()->GetScalars()->SetVoidArray(mem, stack_size, 0);
   this->Modified();
 
 }

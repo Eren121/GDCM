@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.2 2003/05/29 16:58:24 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.3 2003/05/30 18:48:36 frog Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
@@ -22,10 +22,12 @@ protected:
   void ExecuteData(vtkDataObject *output);
   void BuilFileListFromPattern();
   bool CheckFileCoherence();
+private:
   // List of filenames to be read in order to build a stack of images
   // or volume. The order in the list shall be the order of the images.
   //BTX
   std::list<std::string> FileNameList;
+  void LoadImageInMemory(string FileName, unsigned char * Dest, size_t size);
   //ETX
 };
 #endif

@@ -22,6 +22,9 @@ if not test.IsReadable():
 del test
 toDisplay = vtkGdcmReader()
 toDisplay.SetFileName(FileName)
+### Uncomment to test for volumes:
+###toDisplay.DebugOn()
+###toDisplay.AddFileName(FileName)
 toDisplay.UpdateWholeExtent()
 
 VTKtable = vtkLookupTable()

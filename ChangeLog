@@ -1,3 +1,8 @@
+2003-05-30  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * vtk/vtkGdcmReader[cxx|h] should now be volume aware (read ready for
+        debug stage).
+      * gdcmPython/demo/vtkGdcmReader.py: commented lines for volume test
+
 2003-05-29  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader[cxx|h] preparation addons for loading volumes.
 
