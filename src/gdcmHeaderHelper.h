@@ -88,7 +88,7 @@ public:
    std::string GetInstanceUID();
    
    /**
-    * change GetXImagePosition -> GetXOrigin in order not to confused reader
+    * change GetXImagePosition -> GetXOrigin in order not to confuse reader
     * -# GetXOrigin can return default value (=0) if it was not ImagePosition
     * -# Image Position is different in dicomV3 <> ACR NEMA -> better use generic
     * name

@@ -136,7 +136,8 @@ protected:
 
    static const unsigned int HEADER_LENGTH_TO_READ; 
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
-
+protected:
+   int enableSequences;
 private:
    // Read
    void Parse(bool exception_on_error = false) throw(gdcmFormatError);
@@ -195,7 +196,7 @@ private:
 
    TagHeaderEntryHT tagHT; // H Table (multimap), to provide fast access
    ListTag listEntries;    // chained list, to keep the 'spacial' ordering 
-   int enableSequences;
+
 
    // true if a gdcmHeaderEntry was added post parsing 
    int wasUpdated;

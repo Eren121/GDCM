@@ -52,12 +52,14 @@ gdcmParser::gdcmParser(const char *InFilename,
 
    if ( !OpenFile(exception_on_error))
       return;
+
    Parse();
    LoadHeaderEntries();
+
    CloseFile();
 
    wasUpdated = 0;  // will be set to 1 if user adds an entry
-   printLevel = 1;  // 'Heavy' header print by default
+   printLevel = 1;  // 'Medium' header print by default
 }
 
 /**
@@ -67,7 +69,7 @@ gdcmParser::gdcmParser(const char *InFilename,
  */
 gdcmParser::gdcmParser(bool exception_on_error) 
 {
-   enableSequences=0;
+   //enableSequences=0;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
@@ -98,7 +100,7 @@ void gdcmParser::PrintEntry(std::ostream & os)
 {
    std::ostringstream s;   
 	   
-   s << "------------ using listEntries ----------------" << std::endl; 
+   s << "------------ gdcmParser::Print, using listEntries ----------------" << std::endl; 
    for (ListTag::iterator i = listEntries.begin();  
 	   i != listEntries.end();
 	   ++i)
@@ -121,7 +123,7 @@ void gdcmParser::PrintPubDict(std::ostream & os)
 
 /**
   * \ingroup gdcmParser
-  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionnry
+  * \brief   Prints The Dict Entries of the current shadow Dicom Dictionnry
   * @return
   */
 void gdcmParser::PrintShaDict(std::ostream & os) 
@@ -133,7 +135,7 @@ void gdcmParser::PrintShaDict(std::ostream & os)
 // Public
 /**
  * \ingroup gdcmParser
- * \brief   Get the public dictionary used
+ * \brief   Get THE public dictionary used
  */
 gdcmDict *gdcmParser::GetPubDict(void)
 {
@@ -142,7 +144,7 @@ gdcmDict *gdcmParser::GetPubDict(void)
 
 /**
  * \ingroup gdcmParser
- * \brief   Get the shadow dictionary used
+ * \brief   Get the current shadow dictionary 
  */
 gdcmDict *gdcmParser::GetShaDict(void)
 {
@@ -165,8 +167,7 @@ bool gdcmParser::SetShaDict(gdcmDict *dict)
  * \brief   Set the shadow dictionary used
  * \param   dictName name of the dictionary to use in shadow
  */
-bool gdcmParser::SetShaDict(DictKey dictName)
-{
+bool gdcmParser::SetShaDict(DictKey dictName) {
    RefShaDict=gdcmGlobal::GetDicts()->GetDict(dictName);
    return(!RefShaDict);
 }
@@ -183,19 +184,27 @@ bool gdcmParser::SetShaDict(DictKey dictName)
 bool gdcmParser::IsReadable(void) 
 {
    std::string res = GetEntryByNumber(0x0028, 0x0005);
-   if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) 
-   {
+   if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) {
+      //std::cout << "error on : 28 5" << std::endl;
       return false; // Image Dimensions
    }
 
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0100) )
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0100) ) {
+      //std::cout << "error on : 28 100" << std::endl;
       return false; // "Bits Allocated"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0101) )
+   }
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0101) ){ 
+        // std::cout << "error on : 28 101" << std::endl;
       return false; // "Bits Stored"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0102) )
+   }
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0102) ) {
+         //std::cout << "error on : 28 102" << std::endl;
       return false; // "High Bit"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0103) )
+   }
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0103) ) {
+         //std::cout << "error on : 28 103" << std::endl;
       return false; // "Pixel Representation"
+   }
    return true;
 }
 
@@ -206,8 +215,7 @@ bool gdcmParser::IsReadable(void)
  *
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) 
-{
+bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) {
    gdcmHeaderEntry *Element = GetHeaderEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
@@ -490,7 +498,6 @@ int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element )
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value of a given tag.
- * \warning Don't use any longer : use GetPubEntryByName
  * @param   tagName name of the searched element.
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
@@ -2257,11 +2264,11 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
 /**
  * \ingroup gdcmParser
  * \brief   Request a new virtual dict entry to the dict set
- * @param   group  group   of the underlying DictEntry
- * @param   elem   element of the underlying DictEntry
- * @param   vr     VR of the underlying DictEntry
- * @param   fourth owner group
- * @param   name   english name
+ * @param   group   group   of the underlying DictEntry
+ * @param   element element of the underlying DictEntry
+ * @param   vr      VR of the underlying DictEntry
+ * @param   fourth  owner group
+ * @param   name    english name
  */
 gdcmDictEntry *gdcmParser::NewVirtualDictEntry(guint16 group, guint16 element,
                                                std::string vr,

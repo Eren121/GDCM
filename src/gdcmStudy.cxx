@@ -8,17 +8,9 @@ gdcmStudy::gdcmStudy() {
 
 
 gdcmStudy::~gdcmStudy() {
-
+   lSerie::iterator cc = GetSeries().begin();
+   while  (cc != GetSeries().end() ) {
+      delete *cc;
+      ++cc;
+   }
 }
-
-
-
-std::string gdcmStudy::GetEntryByNumber(guint16 group, guint16 element) {
-    return "";
-}
-
-
-std::string gdcmStudy::GetEntryByName(TagName name) {
-    return "";
-}
-

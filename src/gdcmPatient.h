@@ -8,7 +8,7 @@
 
 //-----------------------------------------------------------------------------
 
-typedef std::list<gdcmStudy> lStudy;
+typedef std::list<gdcmStudy *> lStudy;
 
 //-----------------------------------------------------------------------------
 
@@ -18,14 +18,11 @@ public:
    gdcmPatient();
    ~gdcmPatient();
 
-   std::string GetEntryByNumber(guint16 group, guint16 element);
-   std::string GetEntryByName(TagName name);
-
-   inline lStudy GetStudies() {return studies;};
-
+   inline lStudy &GetStudies() {return studies;};
+       
+   lStudy studies;
 private:
 
-   lStudy studies;
 
 };
 

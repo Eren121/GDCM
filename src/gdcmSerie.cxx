@@ -8,17 +8,10 @@ gdcmSerie::gdcmSerie() {
 
 
 gdcmSerie::~gdcmSerie() {
-
-}
-
-
-
-std::string gdcmSerie::GetEntryByNumber(guint16 group, guint16 element) {
-    return "";
-}
-
-
-std::string gdcmSerie::GetEntryByName(TagName name) {
-    return "";
+   lImage::iterator cc = GetImages().begin();
+   while  (cc != GetImages().end() ) {
+      delete *cc;
+      ++cc;
+   }
 }
 

@@ -768,6 +768,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
 }
 
 //Based on Image Number
+
 bool gdcmSerieHeaderHelper::ImageNumberOrdering()
 {
   int min, max, pos;
@@ -800,7 +801,7 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering()
     partition[pos - min]++;
   }
   
-  unsigned char mult;
+  unsigned char mult = 1;
   for(int i=0; i<n ; i++)
   {
     mult *= partition[i];

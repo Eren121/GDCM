@@ -31,6 +31,7 @@ libgdcm_la_SOURCES=                \
    gdcmRLE.cxx                     \
    gdcmParsePixels.cxx             \
    gdcmDICOMDIR.cxx                \
+   gdcmObject.cxx                  \
    gdcmPatient.cxx                 \
    gdcmStudy.cxx                   \
    gdcmSerie.cxx                   \

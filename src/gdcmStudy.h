@@ -8,7 +8,7 @@
 
 //-----------------------------------------------------------------------------
 
-typedef std::list<gdcmSerie> lSerie;
+typedef std::list<gdcmSerie *> lSerie;
 
 //-----------------------------------------------------------------------------
 
@@ -18,14 +18,12 @@ public:
    gdcmStudy();
    ~gdcmStudy();
 
-   std::string GetEntryByNumber(guint16 group, guint16 element);
-   std::string GetEntryByName(TagName name);
-
-   inline lSerie GetSeries() {return series;};
-
+   inline lSerie &GetSeries() {return series;};
+   
+   lSerie series;
+   
 private:
 
-   lSerie series;
 
 };
 

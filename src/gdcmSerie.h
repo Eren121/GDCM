@@ -8,7 +8,7 @@
 
 //-----------------------------------------------------------------------------
 
-typedef std::list<gdcmImage> lImage;
+typedef std::list<gdcmImage *> lImage;
 
 //-----------------------------------------------------------------------------
 
@@ -18,14 +18,12 @@ public:
    gdcmSerie();
    ~gdcmSerie();
 
-   std::string GetEntryByNumber(guint16 group, guint16 element);
-   std::string GetEntryByName(TagName name);
-
-   inline lImage GetImages() {return images;};
-
+   inline lImage &GetImages() {return images;};
+   
+   lImage images;
+   
 private:
 
-   lImage images;
 
 };
 
