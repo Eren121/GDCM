@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 20:24:02 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2005/01/15 21:36:01 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,12 +46,22 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h>
-//#include <errno.h>
 #include <sys/types.h>
-#include <sys/time.h>
+#endif
+
+#ifdef __sun
+//#include <time.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <net/if_arp.h>
+#else
+//#include <fcntl.h>
+//#include <errno.h>
+//#include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/file.h>
+#endif //__sun
+
 #ifdef CMAKE_HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>  // For SIOCGIFCONF on Linux
 #endif
@@ -75,8 +85,6 @@
 #ifdef __APPLE__
 #define HAVE_SA_LEN
 #endif //APPLE
-
-#endif //_WIN32
 
 namespace gdcm 
 {
@@ -506,8 +514,61 @@ long GetMacAddrSys ( unsigned char *addr)
    SNMP_FreeVarBind(&varBind[0]);
    SNMP_FreeVarBind(&varBind[1]);
    return 0;
-#else
+#endif //Win32 version
+
+
 // implementation for POSIX system
+#ifdef __sun
+   //The POSIX version is broken anyway on Solaris, plus would require full
+   //root power
+   int                     i;
+   struct  arpreq          parpreq;
+   struct  sockaddr_in     sa, *psa;
+   struct  in_addr         inaddr;
+   struct  hostent         *phost;
+   char                    hostname[MAXHOSTNAMELEN];
+   unsigned char           *ptr;
+   char                    **paddrs;
+   int                     sock, status=0;
+
+   gethostname(hostname,  MAXHOSTNAMELEN);
+   phost = gethostbyname(hostname);
+   paddrs = phost->h_addr_list;
+
+   //memcpy(&inaddr.s_addr, *paddrs, sizeof(inaddr.s_addr));
+   sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+   if(sock == -1)
+   {
+      perror("sock");
+      return -1;
+   }
+   memset(&parpreq, 0, sizeof(struct arpreq));
+   psa = (struct sockaddr_in *) &parpreq.arp_pa;
+   memset(psa, 0, sizeof(struct sockaddr_in));
+   psa->sin_family = AF_INET;
+   memcpy(&psa->sin_addr, *paddrs, sizeof(struct in_addr));
+
+   status = ioctl(sock, SIOCGARP, &parpreq);
+
+   if(status == -1)
+   {
+      perror("SIOCGARP");
+      exit(-1);
+   }
+
+    memcpy(addr, parpreq.arp_ha.sa_data, 6);
+//    printf("MAC Address: %x:%x:%x:%x:%x:%x\n",
+//
+//           parpreq.arp_ha.sa_data[0],
+//           parpreq.arp_ha.sa_data[1],
+//           parpreq.arp_ha.sa_data[2],
+//           parpreq.arp_ha.sa_data[3],
+//           parpreq.arp_ha.sa_data[4],
+//
+//            parpreq.arp_ha.sa_data[5]);
+
+#else
 #ifdef CMAKE_HAVE_NET_IF_H
    int       sd;
    struct ifreq    ifr, *ifrp;
@@ -590,7 +651,7 @@ long GetMacAddrSys ( unsigned char *addr)
    close(sd);
 #endif
    return -1;
-#endif //_WIN32
+#endif //__sun
 
 }
 
