@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.99 2003/10/10 16:54:25 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.100 2003/10/14 11:53:16 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -77,8 +77,8 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
   guint16 zero;
   fread(&zero,  (size_t)2, (size_t)1, fp);
   if ( fp ) {
-    //ACR
-    if( zero == 0x0008 || zero == 0x0800 )
+    //ACR -- or DICOM with no Preamble
+    if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200)
        return true;
     //DICOM
     fseek(fp, 126L, SEEK_CUR);

@@ -149,7 +149,7 @@ static BOOL ClbJpegReadHeader(ClbJpeg *jpg) {
       else {
          l1=fgetc(jpg->infp);
          l2=fgetc(jpg->infp);
-         sztag=(l1*256)+l2-2; //tag lengh
+         sztag=(l1*256)+l2-2; //tag length
          ouca=ftell(jpg->infp);
 
          if (el==0xC3) {
@@ -166,7 +166,9 @@ static BOOL ClbJpegReadHeader(ClbJpeg *jpg) {
             jpg->lSof.Wimg=(l1*256)+l2;
 
             //printf("%x %x Wimg %d\n",l1,l2,jpg->lSof.Wimg);
+
             jpg->lSof.NbComponent=fgetc(jpg->infp); 
+            //printf("NbComponent %d\n", jpg->lSof.NbComponent);
 
             jpg->lSof.SofTabPos=ftell(jpg->infp);
 
@@ -239,8 +241,10 @@ static BOOL ClbJpegDecodeData(ClbJpeg *jpg)
 	int iX,iY;
 	int lbInc=0;
 	unsigned int mask; 
+        int dimX;
 	  
 	int lPredicted=(1<<(jpg->lSof.precision-1-jpg->lSos.Sospttrans));
+        dimX=jpg->lSof.Wimg;
 
 	jpg->ValCurByte=jpg->lSos.SuccessiveAp;
 	jpg->PosCurBit=9;
@@ -255,13 +259,13 @@ static BOOL ClbJpegDecodeData(ClbJpeg *jpg)
 //printf("jpg->lSof.precision : %d\n",jpg->lSof.precision );
 //printf("sizeof(*jpg->DataImg) : %d\n",sizeof(*jpg->DataImg) );
 
-	 jpg->DataImg=(int*)malloc(jpg->lSof.Himg*jpg->lSof.Wimg*sizeof(*jpg->DataImg));
-	memset( jpg->DataImg,0,(jpg->lSof.Himg * jpg->lSof.Wimg * sizeof(*jpg->DataImg)));
+	jpg->DataImg=(int*)malloc(jpg->lSof.Himg*dimX*sizeof(*jpg->DataImg)*jpg->lSof.NbComponent);    // *3
+	memset( jpg->DataImg,0,(jpg->lSof.Himg * dimX * sizeof(*jpg->DataImg)*jpg->lSof.NbComponent)); // *3
 
 	if (!jpg->RestartInterval)
 	{
 	//printf("il N'y a PAS un define interval\n");
-		for(iX=0;iX<jpg->lSof.Wimg;iX++) // lit première ligne
+		for(iX=0;iX<dimX*jpg->lSof.NbComponent;iX++) // lit première ligne // *3
 		{
 			lbInc+=1;
 			if (lbInc>1)
@@ -277,8 +281,8 @@ static BOOL ClbJpegDecodeData(ClbJpeg *jpg)
 		for (iY=1;iY<jpg->lSof.Himg;iY++) //lit la suite
 		{
 			lbInc+=1;
-			if (lbInc>(jpg->lSof.Himg*jpg->lSof.Wimg-1)) break;
-			lPredicted= jpg->DataImg[lbInc-jpg->lSof.Wimg];	// se base % premier é ligne d'avant
+			if (lbInc>(jpg->lSof.Himg*dimX*jpg->lSof.NbComponent-1)) break; //*3
+			lPredicted= jpg->DataImg[lbInc-jpg->lSof.Wimg*jpg->lSof.NbComponent];//*3	// se base % premier é ligne d'avant
 			 jpg->DataImg[lbInc]=lPredicted+ClbJpegDecodeDiff(jpg);
 
 			if (  jpg->DataImg[lbInc] > ((1<<(jpg->lSof.precision))-1) ) 
@@ -286,12 +290,12 @@ static BOOL ClbJpegDecodeData(ClbJpeg *jpg)
 			if ( jpg->DataImg[lbInc]<0) 
 				 jpg->DataImg[lbInc]= jpg->DataImg[lbInc]&mask;
 
-			for(iX=1;iX<jpg->lSof.Wimg;iX++)
+			for(iX=1;iX<jpg->lSof.Wimg*jpg->lSof.NbComponent;iX++) //*3
 			{
 				lbInc+=1;
-				if (lbInc>(jpg->lSof.Himg*jpg->lSof.Wimg-1)) break;
+				if (lbInc>(jpg->lSof.Himg*jpg->lSof.Wimg*jpg->lSof.NbComponent-1)) break;//*3
 				if (jpg->lSos.SpectralSelStart==7) // si spectral
-					lPredicted=( jpg->DataImg[lbInc-1]+ jpg->DataImg[lbInc-jpg->lSof.Wimg])>>1;
+					lPredicted=( jpg->DataImg[lbInc-1]+ jpg->DataImg[lbInc-jpg->lSof.Wimg*jpg->lSof.NbComponent])>>1; //*3
 				else
 					lPredicted= jpg->DataImg[lbInc-1];		// se base%pixel juste avant
 				 jpg->DataImg[lbInc]=lPredicted+ClbJpegDecodeDiff(jpg);
@@ -321,10 +325,10 @@ static BOOL ClbJpegDecodeData(ClbJpeg *jpg)
 					 jpg->DataImg[lbInc]= jpg->DataImg[lbInc]&mask;
 
 				lbInc+=1;
-				if (lbInc>(jpg->lSof.Himg*jpg->lSof.Wimg-1)) return 1;
+				if (lbInc>(jpg->lSof.Himg*jpg->lSof.Wimg*jpg->lSof.NbComponent-1)) return 1; //*3
 
 				if (jpg->lSos.SpectralSelStart==7) // si spectral
-					lPredicted=( jpg->DataImg[lbInc-1]+ jpg->DataImg[lbInc-jpg->lSof.Wimg])>>1;
+					lPredicted=( jpg->DataImg[lbInc-1]+ jpg->DataImg[lbInc-jpg->lSof.Wimg*jpg->lSof.NbComponent])>>1; //*3
 				else
 					lPredicted= jpg->DataImg[lbInc-1];
 			}

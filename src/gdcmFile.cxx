@@ -180,7 +180,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
          return false;
       }      
       int * dataJpg = jpg->DataImg;
-      
+ 
       switch (nBytes) {   
          case 1:
          {
