@@ -4,7 +4,8 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-int InternalTest(std::string const & filename, std::string const & referenceFileName )
+int InternalTest(std::string const & filename, 
+                 std::string const & referenceFileName )
 {
       std::cout << "   Testing: " << filename << std::endl;
 
@@ -148,6 +149,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
              << std::endl << std::endl;
 
    int i = 0;
+   int result = 0;
    while( gdcmDataImages[i] != 0 )
    {
       ////// Check for existence of reference baseline directory
@@ -185,9 +187,9 @@ int TestAllReadCompareDicom(int argc, char* argv[])
 
       if( InternalTest( filename, referenceFileName ) != 0 )
       {
-         return 1;
+         result++;
       }
    }
 
-   return 0;
+   return result;
 }
