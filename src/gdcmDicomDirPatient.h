@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:09:23 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/01/20 16:16:42 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ typedef std::list<DicomDirStudy*> ListDicomDirStudy;
 class GDCM_EXPORT DicomDirPatient : public DicomDirObject 
 {
 public:
-   DicomDirPatient(); 
+   DicomDirPatient(bool empty=false); 
    ~DicomDirPatient();
 
    void Print(std::ostream &os = std::cout, std::string const & indent = "" );

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:09:23 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/20 16:16:42 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,10 +31,17 @@ namespace gdcm
 /**
  * \brief   Constructor
  */
-DicomDirPatient::DicomDirPatient():
+DicomDirPatient::DicomDirPatient(bool empty):
    DicomDirObject()
 {
+   if( !empty )
+   {
+      ListDicomDirStudyElem const &elemList = 
+         Global::GetDicomDirElements()->GetDicomDirPatientElements();
+      FillObject(elemList);
+   }
 }
+
 /**
  * \brief   Canonical destructor.
  */
@@ -94,12 +101,7 @@ void DicomDirPatient::WriteContent(std::ofstream *fp, FileType t)
  */
 DicomDirStudy* DicomDirPatient::NewStudy()
 {
-   ListDicomDirStudyElem const &elemList = 
-      Global::GetDicomDirElements()->GetDicomDirStudyElements();
-      
    DicomDirStudy *st = new DicomDirStudy();
-   st->FillObject(elemList);
-
    Studies.push_back(st);
    return st; 
 }   
@@ -154,5 +156,4 @@ DicomDirStudy *DicomDirPatient::GetLastStudy()
 // Private
 
 //-----------------------------------------------------------------------------
-
 } // end namespace gdcm

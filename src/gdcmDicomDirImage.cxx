@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/01/20 16:16:42 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmDicomDirImage.h"
 #include "gdcmValEntry.h"
+#include "gdcmGlobal.h"
 
 namespace gdcm 
 {
@@ -26,10 +27,17 @@ namespace gdcm
 /**
  * \brief  Constructor 
  */
-DicomDirImage::DicomDirImage():
+DicomDirImage::DicomDirImage(bool empty):
    DicomDirObject()
 {
+   if( !empty )
+   {
+      ListDicomDirImageElem const &elemList = 
+         Global::GetDicomDirElements()->GetDicomDirImageElements();
+      FillObject(elemList);
+   }
 }
+
 /**
  * \brief   Canonical destructor.
  */
@@ -54,7 +62,7 @@ void DicomDirImage::Print(std::ostream &os, std::string const & )
    {
       if( (*i)->GetGroup() == 0x0004 && (*i)->GetElement() == 0x1500 )
       {
-         os << ((ValEntry *)(*i))->GetValue(); //FIXME
+         os << (dynamic_cast<ValEntry *>(*i))->GetValue(); //FIXME
       }
    }
    os << std::endl;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/01/20 16:16:42 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmDicomDirMeta.h"
 #include "gdcmDocument.h"
 #include "gdcmDocEntry.h"
+#include "gdcmGlobal.h"
 
 namespace gdcm 
 {
@@ -29,9 +30,15 @@ namespace gdcm
 /**
  * \brief  Constructor
  */ 
-DicomDirMeta::DicomDirMeta():
+DicomDirMeta::DicomDirMeta(bool empty):
    DicomDirObject()
 {
+   if( !empty )
+   {
+      ListDicomDirStudyElem const &elemList = 
+         Global::GetDicomDirElements()->GetDicomDirMetaElements();
+      FillObject(elemList);
+   }
 }
 
 /**
@@ -90,5 +97,4 @@ void DicomDirMeta::WriteContent(std::ofstream *fp, FileType t)
 // Private
 
 //-----------------------------------------------------------------------------
-
 } // end namespace gdcm

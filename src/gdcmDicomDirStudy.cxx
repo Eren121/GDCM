@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:09:23 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/20 16:16:42 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,10 +29,17 @@ namespace gdcm
 /**
  * \brief  Constructor 
  */
-DicomDirStudy::DicomDirStudy():
+DicomDirStudy::DicomDirStudy(bool empty):
    DicomDirObject()
 {
+   if( !empty )
+   {
+      ListDicomDirStudyElem const &elemList = 
+         Global::GetDicomDirElements()->GetDicomDirStudyElements();
+      FillObject(elemList);
+   }
 }
+
 /**
  * \brief   Canonical destructor.
  */
@@ -94,12 +101,7 @@ void DicomDirStudy::WriteContent(std::ofstream *fp, FileType t)
  */
 DicomDirSerie *DicomDirStudy::NewSerie()
 {
-   ListDicomDirSerieElem const &elemList = 
-      Global::GetDicomDirElements()->GetDicomDirSerieElements();   
-
    DicomDirSerie* st = new DicomDirSerie();
-   st->FillObject(elemList);
-
    Series.push_back(st);
    return st;
 } 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:09:23 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/01/20 16:16:42 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ typedef std::list<DicomDirSerie *> ListDicomDirSerie;
 class GDCM_EXPORT DicomDirStudy : public DicomDirObject
 {
 public:
-   DicomDirStudy(); 
+   DicomDirStudy(bool empty=false); 
    ~DicomDirStudy();
 
    void Print(std::ostream &os = std::cout, std::string const & indent = "" );

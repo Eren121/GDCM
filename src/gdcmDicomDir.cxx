@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:33:44 $
-  Version:   $Revision: 1.110 $
+  Date:      $Date: 2005/01/20 16:16:41 $
+  Version:   $Revision: 1.111 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -471,10 +471,11 @@ DicomDirMeta * DicomDir::NewMeta()
    if( MetaElems )
       delete MetaElems;
 
-   MetaElems = new DicomDirMeta();
   
    if ( TagHT.begin() != TagHT.end() ) // after Document Parsing
    { 
+      MetaElems = new DicomDirMeta(true);
+
       TagDocEntryHT::iterator lastOneButSequence = TagHT.end();
       lastOneButSequence --;
       // ALL the 'out of Sequence' Tags belong to Meta Elems
@@ -488,9 +489,7 @@ DicomDirMeta * DicomDir::NewMeta()
    }
    else  // after root directory parsing
    {
-      ListDicomDirMetaElem const &elemList = 
-         Global::GetDicomDirElements()->GetDicomDirMetaElements();
-      MetaElems->FillObject(elemList);
+      MetaElems = new DicomDirMeta(false);
    }
    MetaElems->SetSQItemNumber(0); // To avoid further missprinting
    return MetaElems;  
@@ -501,11 +500,7 @@ DicomDirMeta * DicomDir::NewMeta()
  */
 DicomDirPatient *DicomDir::NewPatient()
 {
-   ListDicomDirPatientElem const & elemList =
-      Global::GetDicomDirElements()->GetDicomDirPatientElements(); 
    DicomDirPatient *p = new DicomDirPatient();
-   p->FillObject(elemList);
-
    AddPatientToEnd( p );
    return p;
 }
@@ -533,7 +528,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    {
       case GDCM_DICOMDIR_IMAGE:
          elemList = Global::GetDicomDirElements()->GetDicomDirImageElements();
-         si = new DicomDirImage();
+         si = new DicomDirImage(true);
          if( !AddImageToEnd(static_cast<DicomDirImage *>(si)) )
          {
             delete si;
@@ -542,7 +537,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          break;
       case GDCM_DICOMDIR_SERIE:
          elemList = Global::GetDicomDirElements()->GetDicomDirSerieElements();
-         si = new DicomDirSerie();
+         si = new DicomDirSerie(true);
          if( !AddSerieToEnd(static_cast<DicomDirSerie *>(si)) )
          {
             delete si;
@@ -551,7 +546,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          break;
       case GDCM_DICOMDIR_STUDY:
          elemList = Global::GetDicomDirElements()->GetDicomDirStudyElements();
-         si = new DicomDirStudy();
+         si = new DicomDirStudy(true);
          if( !AddStudyToEnd(static_cast<DicomDirStudy *>(si)) )
          {
             delete si;
@@ -560,7 +555,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          break;
       case GDCM_DICOMDIR_PATIENT:
          elemList = Global::GetDicomDirElements()->GetDicomDirPatientElements();
-         si = new DicomDirPatient();
+         si = new DicomDirPatient(true);
          if( !AddPatientToEnd(static_cast<DicomDirPatient *>(si)) )
          {
             delete si;
@@ -569,7 +564,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          break;
       case GDCM_DICOMDIR_META:
          elemList = Global::GetDicomDirElements()->GetDicomDirMetaElements();
-         si = new DicomDirMeta();
+         si = new DicomDirMeta(true);
          if( MetaElems )
          {
             delete MetaElems;
@@ -767,7 +762,7 @@ void DicomDir::CreateDicomDir()
 
       if( v == "PATIENT " )
       {
-         si = new DicomDirPatient();
+         si = new DicomDirPatient(true);
          if( !AddPatientToEnd( static_cast<DicomDirPatient *>(si)) )
          {
             delete si;
@@ -777,7 +772,7 @@ void DicomDir::CreateDicomDir()
       }
       else if( v == "STUDY " )
       {
-         si = new DicomDirStudy();
+         si = new DicomDirStudy(true);
          if( !AddStudyToEnd( static_cast<DicomDirStudy *>(si)) )
          {
             delete si;
@@ -787,7 +782,7 @@ void DicomDir::CreateDicomDir()
       }
       else if( v == "SERIES" )
       {
-         si = new DicomDirSerie();
+         si = new DicomDirSerie(true);
          if( !AddSerieToEnd( static_cast<DicomDirSerie *>(si)) )
          {
             delete si;
@@ -797,7 +792,7 @@ void DicomDir::CreateDicomDir()
       }
       else if( v == "IMAGE " ) 
       {
-         si = new DicomDirImage();
+         si = new DicomDirImage(true);
          if( !AddImageToEnd( static_cast<DicomDirImage *>(si)) )
          {
             delete si;

@@ -1,4 +1,10 @@
 2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDicomDirObject.h : set the FillObject method in protected.
+     Thus, DicomDirXXX are created with a flad that indicates if the created 
+     object is empty or not (when not empty, the DicomDirElement is used to
+     fill the object)
+
+2005-01-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDicomDir.cxx : simplify the NewPatient method, like made in
      gdcm::DicomDirPatient, gdcm::DicomDirStudy, gdcm::DicomDirSerie
 
