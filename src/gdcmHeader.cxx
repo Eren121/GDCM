@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/21 17:43:55 $
-  Version:   $Revision: 1.218 $
+  Date:      $Date: 2005/01/05 16:30:50 $
+  Version:   $Revision: 1.219 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,6 +76,30 @@ Header::Header( std::string const & filename ):
    {
       NumPixel = 0x0010;
    }
+
+   // Now, we know GrPixel and NumPixel.
+   // Let's create a VirtualDictEntry to allow a further VR modification
+   // and force VR to match with BitsAllocated.
+
+   DocEntry* entry = GetDocEntryByNumber(GrPixel, NumPixel); 
+   if ( entry != 0 )
+   {
+
+      std::string PixelVR;
+      // 8 bits allocated is a 'O Bytes' , as well as 24 (old ACR-NEMA RGB)
+      // more than 8 (i.e 12, 16) is a 'O Words'
+      if ( GetBitsAllocated() == 8 || GetBitsAllocated() == 24 ) 
+         PixelVR = "OB";
+      else
+         PixelVR = "OW";
+
+      DictEntry* newEntry = NewVirtualDictEntry(
+                             GrPixel, NumPixel,
+                             PixelVR, "PXL", "Pixel Data");
+ 
+      entry->SetDictEntry( newEntry );
+   } 
+
 }
 
 /**
@@ -102,7 +126,7 @@ Header::~Header ()
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
-bool Header::Write(std::string fileName,FileType filetype)
+bool Header::Write(std::string fileName, FileType filetype)
 {
    std::ofstream* fp = new std::ofstream(fileName.c_str(), 
                                          std::ios::out | std::ios::binary);
@@ -261,7 +285,7 @@ int Header::GetYSize()
    }
 
    // The Rows (0028,0010) entry was optional for ACR/NEMA. It might
-   // hence be a signal (1d image). So we default to 1:
+   // hence be a signal (1D image). So we default to 1:
    return 1;
 }
 
@@ -319,13 +343,16 @@ float Header::GetXSpacing()
          xspacing = yspacing;
       }
 
-      if ( xspacing == 0.0 ) xspacing = 1.0;
+      if ( xspacing == 0.0 )
+         xspacing = 1.0;
 
       return xspacing;
+
    }
 
    // to avoid troubles with David Clunie's-like images
-   if ( xspacing == 0. && yspacing == 0.) return 1.;
+   if ( xspacing == 0. && yspacing == 0.)
+      return 1.;
 
    if ( xspacing == 0.)
    {
@@ -357,15 +384,16 @@ float Header::GetYSpacing()
    // if sscanf cannot read any float value, it won't affect yspacing
    sscanf( strSpacing.c_str(), "%f", &yspacing);
 
-   if ( yspacing == 0.0 ) yspacing = 1.0;
+   if ( yspacing == 0.0 )
+      yspacing = 1.0;
 
    return yspacing;
 } 
 
 /**
  * \brief gets the info from 0018,0088 : Space Between Slices
- *                else from 0018,0050 : Slice Thickness
- *                else 1.0
+ *                 else from 0018,0050 : Slice Thickness
+ *                 else 1.0
  * @return Z dimension of a voxel-to be
  */
 float Header::GetZSpacing()
@@ -1304,8 +1332,8 @@ void Header::GetImageOrientationPatient( float iop[6] )
 
 /**
  * \brief Initialize a default DICOM header that should contain all the
- *        field require by other reader. DICOM standart does not 
- *        explicitely defines thoses fields, heuristic has been choosen.
+ *        field require by other reader. DICOM standard does not 
+ *        explicitely defines those fields, heuristic has been choosen.
  *        This is not perfect as we are writting a CT image...
  */
 void Header::InitializeDefaultHeader()
@@ -1354,9 +1382,9 @@ void Header::InitializeDefaultHeader()
     { "MONOCHROME1",               0x0028, 0x0004}, // photochromatic interpretation
     { "0",                         0x0028, 0x0010}, // nbRows
     { "0",                         0x0028, 0x0011}, // nbCols
-    { "8",                         0x0028, 0x0100}, // BitsAllocated 8 or 16
-    { "8",                         0x0028, 0x0101}, // BitsStored    8 or 12 or 16
-    { "7",                         0x0028, 0x0102}, // HighBit       7 or 11 or 15
+    { "8",                         0x0028, 0x0100}, // BitsAllocated 8 or 12 or 16
+    { "8",                         0x0028, 0x0101}, // BitsStored    <= BitsAllocated
+    { "7",                         0x0028, 0x0102}, // HighBit       <= BitsAllocated - 1
     { "0",                         0x0028, 0x0103}, // Pixel Representation 0(unsigned) or 1(signed)
     { 0, 0, 0 }
    };
@@ -1376,6 +1404,7 @@ void Header::InitializeDefaultHeader()
       current = defaultvalue[++i];
    }
 }
+
 
 //-----------------------------------------------------------------------------
 // Private
