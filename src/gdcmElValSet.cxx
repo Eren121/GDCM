@@ -119,6 +119,10 @@ int gdcmElValSet::SetElValueLengthByName(guint32 length, string TagName) {
 }
 
 void gdcmElValSet::UpdateGroupLength(bool SkipSequence) {
+
+   // TODO : reecrire entierement : une HTable dans la quelle on stocke les groupes, puis leur lgr
+   // Voir juste apres
+
 	// On parcourt la table pour recalculer la longueur des 'elements 0x0000'
 	// au cas ou un tag ai été ajouté par rapport à ce qui a été lu
 	// dans l'image native
@@ -163,15 +167,13 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence) {
 		el = elem->GetElement();
       vr = elem->GetVR();
 
-      if (SkipSequence && vr == "SQ")
+      if (SkipSequence && vr == "SQ")  continue;
          // pas SEQUENCE en ACR-NEMA
-         // WARNING : risque de pb 
+         // WARNING : pb CERTAIN
          //           si on est descendu 'a l'interieur' des SQ 
-         continue;
-            //
-            //
-		if ( (gr != grCourant) /*&&	// On arrive sur un nv Groupe	  
-		     (el != 0xfffe) */	) {
+        
+	if ( (gr != grCourant) /*&&	// On arrive sur un nv Groupe	  
+		(el != 0xfffe) */	) {
 			    
 			if (el != 0x0000) {
 			 	gdcmDictEntry * tagZ = new gdcmDictEntry(gr, 0x0000, "UL");
@@ -194,7 +196,10 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence) {
 			if(DEBUG)cout << "Addresse elemZPrec " << elemZPrec<< endl;
 			elemZPrec=elemZ;
 			lgrCalcGroupe = 0;
-			grCourant     = gr;	
+			grCourant     = gr;
+	// BUG :
+	// calcule lgr erronnée si ExplicitVR et VR =OB, SQ, etc
+	//	
 			if(DEBUG)printf("init-2 lgr (%d) pour gr %04x\n",lgrCalcGroupe, gr);			
 		} else {			// On n'EST PAS sur un nv Groupe
 			lgrCalcGroupe += 2 + 2 + 4 + elem->GetLength();  // Gr + Num + Lgr + LgrElem
@@ -202,7 +207,64 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence) {
 								elem->GetLength(), el, lgrCalcGroupe, gr);
 		}		
 	}
+	
+	// BUG :
+	// Ecriture incorrecte si (7FE0 0000) absent et aucun element apres groupe 7FE0 :-(
+	// A JETTER !
+	//
 }
+
+//
+// Remplacera UpdateGroupLength
+// Commite par precaution.
+// Ne pas utiliser
+//
+
+void gdcmElValSet::UpdateGroupLengthNew(bool SkipSequence, FileType type) {
+   guint16 gr, el;
+   string vr;
+   
+   gdcmElValue *elem;
+   char trash[10];
+   GroupKey key;
+   GroupHT groupHt;
+   
+   for (TagElValueHT::iterator tag2 = tagHt.begin();
+        tag2 != tagHt.end();
+        ++tag2){
+
+      elem  = tag2->second;
+      gr = elem->GetGroup();
+      el = elem->GetElement();
+      vr = elem->GetVR(); 
+           
+      sprintf(trash, "%04x", gr);
+      key = trash;
+      
+      if (SkipSequence && vr == "SQ") continue;
+         // pas SEQUENCE en ACR-NEMA
+         // WARNING : pb CERTAIN
+         //           si on est descendu 'a l'interieur' des SQ 
+         //
+         // --> la descente a l'interieur' des SQ 
+         // devra etre faite avec une liste chainee, pas avec une HTable...
+             
+      if ( groupHt.count(key) == 0) { 
+         groupHt[key] = 2 + 2 + 4 + 4; // creation automatique, par affectation ???
+      } else {       
+         if (type = ExplicitVR) {
+            if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) {
+               groupHt[key] +=  4;
+            }
+         }
+         groupHt[key] += 2 + 2 + 4 + elem->GetLength(); 
+      }   
+   }
+   
+   // Liberer groupHt !
+}
+
+
 
 void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    guint16 gr, el;
@@ -211,13 +273,15 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    string vr;
    guint32 val_uint32;
    guint16 val_uint16;
-
+   
    vector<string> tokens;
 
    void *ptr;
 
-	// restent à tester les echecs en écriture (apres chaque fwrite)
-   for (TagElValueHT::iterator tag2 = tagHt.begin();
+   // Tout ceci ne marche QUE parce qu'on est sur un proc Little Endian 
+   // restent à tester les echecs en écriture (apres chaque fwrite)
+
+   for (TagElValueHT::iterator tag2=tagHt.begin();
         tag2 != tagHt.end();
         ++tag2){
 
@@ -233,7 +297,6 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
          if (gr %2)   continue;
          if (vr == "SQ" ) continue;
       } 
-
 
       fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
       fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
@@ -287,11 +350,20 @@ int gdcmElValSet::Write(FILE * _fp, FileType type) {
    if (type == ImplicitVR) {
       string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
       SetElValueByNumber(implicitVRTransfertSyntax, 0x0002, 0x0010);
+      
       //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
       //      values with a VR of UI shall be padded with a single trailing null
       //      Dans le cas suivant on doit pader manuellement avec un 0.
       SetElValueLengthByNumber(18, 0x0002, 0x0010);
    }
+   
+   	// Question :
+	// Comment pourrait-on si le DcmHeader vient d'un fichoer DicomV3 ou non ,
+	// (FileType est un champ de gdcmHeader ...)
+	// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
+	// no way
+	
+	
    if (type == ExplicitVR) {
       string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
       SetElValueByNumber(explicitVRTransfertSyntax, 0x0002, 0x0010);

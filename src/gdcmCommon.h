@@ -39,7 +39,7 @@ enum FileType {
       ImplicitVR,
       ACR,
       ACR_LIBIDO
-};  // CLEANME
+};
 
 
 #endif
