@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/17 11:02:47 $
-  Version:   $Revision: 1.225 $
+  Date:      $Date: 2005/02/17 16:18:33 $
+  Version:   $Revision: 1.226 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1473,7 +1473,7 @@ void File::InitializeDefaultFile()
    // Samples per pixel 1 or 3
    InsertValEntry("1",                         0x0028, 0x0002);
    // photochromatic interpretation
-   InsertValEntry("MONOCHROME1",               0x0028, 0x0004);
+   InsertValEntry("MONOCHROME2",               0x0028, 0x0004);
    // nbRows
    InsertValEntry("0",                         0x0028, 0x0010);
    // nbCols
