@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.5 2003/05/28 19:36:21 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.6 2003/05/29 16:58:24 frog Exp $
 //CLEANME#include <vtkByteSwap.h>
 #include <stdio.h>
 #include <vtkObjectFactory.h>
@@ -18,6 +18,157 @@ vtkGdcmReader::~vtkGdcmReader()
   // FIXME free memory
 }
 
+//----------------------------------------------------------------------------
+// Adds a file name to the list of images to read.
+void vtkGdcmReader::AddFileName(const char* name)
+{
+   // We need to bypass the const pointer [since list<>.push_bash() only
+   // takes a char* (but not a const char*)] by making a local copy:
+   char * LocalName = new char[strlen(name) + 1];
+   strcpy(LocalName, name);
+   this->FileNameList.push_back(LocalName);
+   // Starting from two files we have a stack of images:
+   if(this->FileNameList.size() >= 2)
+      this->SetFileDimensionality(3);
+}
+
+//----------------------------------------------------------------------------
+// Sets up a filename to be read.
+void vtkGdcmReader::SetFileName(const char *name) {
+   vtkImageReader2::SetFileName(name);
+   // Since we maintain a list of filenames (when building a volume)
+   // we additionaly need to maintain this list. First we clean-up the
+   // list and then positionate the incoming filename:
+   this->FileNameList.empty();
+   this->AddFileName(name);
+}
+
+//----------------------------------------------------------------------------
+// vtkGdcmReader can have the file names specified through two ways:
+// (1) by calling the vtkImageReader2::SetFileName(), SetFilePrefix() and
+//     SetFilePattern()
+// (2) By successive calls to vtkGdcmReader::SetFileName()
+// When the first method was used by caller we need to update the local
+// filename list
+void vtkGdcmReader::BuilFileListFromPattern()
+{
+   if (! this->FileNameList.empty())
+      return;
+   if (!this->FileName && !this->FilePattern)
+     {
+     vtkErrorMacro("FileNames are not set. Either use AddFileName() or");
+     vtkErrorMacro("specify a FileName or FilePattern.");
+     return;
+     }
+   for (int idx = this->DataExtent[4]; idx <= this->DataExtent[5]; ++idx)
+     {
+     this->ComputeInternalFileName(idx);
+     vtkDebugMacro("Adding file " << this->InternalFileName);
+     this->AddFileName(this->InternalFileName);
+     }
+}
+
+//----------------------------------------------------------------------------
+// When more than one filename is specified (i.e. we expect loading
+// a stack or volume) we need to check the corresponding images are
+// coherent:
+//  - they all share the same X dimensions
+//  - they all share the same Y dimensions
+//  - each file a Z dimension of 1
+//  - they all share the same type ( 8 bit signed, or unsigned...)
+bool vtkGdcmReader::CheckFileCoherence()
+{
+   this->BuilFileListFromPattern();
+   if (this->FileNameList.empty())
+     {
+     vtkErrorMacro("FileNames are not set.");
+     return false;
+     }
+   if (this->FileNameList.size() == 1)
+     {
+     vtkDebugMacro("Single file specified.");
+     return true;
+     }
+
+   // Loop on the filenames:
+   // - check for their existence and gdcm "parasability"
+   // - get the coherence check done:
+   bool FoundReferenceFile = false;
+   int ReferenceNX;
+   int ReferenceNY;
+   int ReferenceNZ;
+   std::string ReferenceType;
+   for (std::list<std::string>::iterator FileName  = FileNameList.begin();
+                                        FileName != FileNameList.end();
+                                      ++FileName)
+     {
+     // Check for file existence.
+     FILE *fp;
+     fp = fopen(FileName->c_str(),"rb");
+     if (!fp)
+       {
+       vtkErrorMacro("Unable to open file " << *FileName);
+       vtkErrorMacro("Removing this file from readed files " << *FileName);
+       FileNameList.remove(*FileName);
+       continue;
+       }
+     fclose(fp);
+   
+     // Check for Gdcm parsability
+     gdcmHeader GdcmHeader(FileName->c_str());
+     if (!GdcmHeader.IsReadable())
+       {
+       vtkErrorMacro("Gdcm cannot parse file " << *FileName);
+       vtkErrorMacro("Removing this file from readed files " << *FileName);
+       FileNameList.remove(*FileName);
+       continue;
+       }
+
+     // Coherence stage:
+     int NX = GdcmHeader.GetXSize();
+     int NY = GdcmHeader.GetYSize();
+     int NZ = GdcmHeader.GetZSize();
+     std::string type = GdcmHeader.GetPixelType();
+     if (FoundReferenceFile) 
+       {
+       if (   ( NX != ReferenceNX )
+           || ( NY != ReferenceNY )
+           || ( NZ != ReferenceNZ )
+           || ( type != ReferenceType ) ) 
+         {
+            vtkErrorMacro("This file is not coherent with previous ones"
+                          << *FileName);
+            vtkErrorMacro("Removing this file from readed files " << *FileName);
+            FileNameList.remove(*FileName);
+            continue;
+         } else {
+            vtkDebugMacro("File is coherent with previous ones" << *FileName);
+         }
+       } else {
+         // This file shall be the reference:
+         FoundReferenceFile = true;
+         ReferenceNX = NX;
+         ReferenceNY = NY;
+         ReferenceNZ = NZ;
+         ReferenceType = type;
+         vtkDebugMacro("File is taken a coherence references" << *FileName);
+       }
+     } // End of loop on FileName
+
+   if (this->FileNameList.empty())
+     {
+     vtkDebugMacro("No gdcm parsable file.");
+     return false;
+     }
+   if (this->FileNameList.size() == 1)
+     {
+     vtkDebugMacro("Single parsable file left after coherence test.");
+     return true;
+     }
+   return true;
+}
+
+//----------------------------------------------------------------------------
 // Configure the output e.g. WholeExtent, spacing, origin, scalar type...
 void vtkGdcmReader::ExecuteInformation()
 {
@@ -96,9 +247,8 @@ void vtkGdcmReader::ExecuteInformation()
   
   // We don't need to positionate the Endian related stuff (by using
   // this->SetDataByteOrderToBigEndian() or SetDataByteOrderToLittleEndian()
-  // since the // reading of the file is done by gdcm
-
-  // But we need to set up the data type for downstream filters:
+  // since the reading of the file is done by gdcm.
+  // But we do need to set up the data type for downstream filters:
   std::string type = GdcmHeader.GetPixelType();
   if      ( type == "8U" )
     {
@@ -142,6 +292,7 @@ void vtkGdcmReader::ExecuteInformation()
   vtkImageReader::ExecuteInformation();
 }
 
+//----------------------------------------------------------------------------
 // Update -> UpdateData -> Execute -> ExecuteData (see vtkSource.cxx for
 // last step.
 // This function (redefinition of vtkImageReader::ExecuteData, see 
@@ -199,8 +350,16 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 
 }
 
+//----------------------------------------------------------------------------
 void vtkGdcmReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkImageReader::PrintSelf(os,indent);
-  //CLEANME os << indent << "TypeSize: " << this->TypeSize << "\n";
+  os << indent << "Filenames  : " << endl;
+  vtkIndent nextIndent = indent.GetNextIndent();
+  for (std::list<std::string>::iterator FileName  = FileNameList.begin();
+                                        FileName != FileNameList.end();
+                                      ++FileName)
+    {
+    os << nextIndent << *FileName << endl ;
+    }
 }
