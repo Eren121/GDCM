@@ -16,15 +16,17 @@
           be read when compressed or when HighBit + 1 != BitsStored),
         - gdcmPython/demo/vtkGdcmReader.py added. This demo illustrates
           the usage of the python wrapper of vtkGdcmReader vtk class.
-      * vtk/vtkGdcmReader.cxx: bug fixed (thanks to Benoit Regrain).  
+      * vtk/vtkGdcmReader.cxx: bug fixed (thanks to Benoit Regrain).
       * src/*.[h] all occurences of stl classes are now prefixed with
         std::, and all occurences of "using namespace std;" where removed.
         This is to avoid pollution of global namespace in included files.
         Apparently vtk does not avoid this pitfall: when using both
         gdcm and vtk (as in vtk/vtkGdcmReader.cxx) this ended up in a
         collision of various stl members (principally cout...).
-      * gdcmPython/testSuite.py now cleanly removes temprory generated 
+      * gdcmPython/testSuite.py now cleanly removes temprory generated
         file.
+      * gdcmPython/gdcm.i now declares a typemap for std::string (to
+         comply with above changes)
 
 2003-05-12  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * src/gdcmHeader>[h/cxx] added gdcmHeader::GetPixelSize()

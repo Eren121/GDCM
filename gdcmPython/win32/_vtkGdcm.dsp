@@ -40,9 +40,10 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
+# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "..\..\vtk" /I "$(CREATIS)\python22\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
@@ -52,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib Wsock32.lib /nologo /dll /machine:I386 /out:"..\vtkgdcmPython.dll"
 
 !ELSEIF  "$(CFG)" == "_vtkGdcm - Win32 Debug"
 
@@ -65,9 +66,10 @@ LINK32=link.exe
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
+# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ  /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ  /c
+# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "$(VTKPATH)\include\vtk" /I "..\..\src" /I "$(CREATIS)\python22\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_VTKGDCM_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -77,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"..\vtkGdcmPython.dll" /pdbtype:sept
 
 !ENDIF 
 
@@ -88,14 +90,168 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDict.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDictEntry.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDictSet.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmElValSet.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmElValue.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmException.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmFile.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmHeader.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmHeaderIdo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmJpeg.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmUtil.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmVR.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=.\vtkGdcmInit.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\vtk\vtkGdcmReader.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\vtkGdcmReaderPython.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\init.h
+
+!IF  "$(CFG)" == "_vtkGdcm - Win32 Release"
+
+# Begin Custom Build - Performing Custom Build Step on $(VTKPATH)\bin\initwrappythonwin32 vtkgdcmPython vtkGdmReader > $(ProjDir)\vtkGdcmInit.cxx
+ProjDir=.
+InputPath=.\init.h
+
+"$(ProjDir)\vtkGdcmInit.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(VTKPATH)\bin\initwrappythonwin32 vtkgdcmPython vtkGdcmReader > $(ProjDir)\vtkGdcmInit.cxx
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "_vtkGdcm - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\vtk\vtkGdcmReader.h
+
+!IF  "$(CFG)" == "_vtkGdcm - Win32 Release"
+
+# Begin Custom Build - Performing Custom Build Step on $(VTKPATH)\bin\vtkwrappython "$(InputDir)\$(InputName).h" $(VTKPATH)\Examples\Build\vtkMy\Wrapping\hints 1  $(ProjDir)\..\$(InputName)Python.cxx
+InputDir=\Creatis\CVSimport\gdcm\vtk
+ProjDir=.
+InputPath=..\..\vtk\vtkGdcmReader.h
+InputName=vtkGdcmReader
+
+"$(ProjDir)\..\$(InputName)Python.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(VTKPATH)\bin\vtkwrappython "$(InputDir)\$(InputName).h" $(VTKPATH)\Examples\Build\vtkMy\Wrapping\hints 1  $(ProjDir)\..\$(InputName)Python.cxx
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "_vtkGdcm - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=..\..\..\..\Python22\libs\python22.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkRenderingPython.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkCommonPython.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkFiltering.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkFilteringPython.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkGraphics.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkGraphicsPython.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkImaging.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkImagingPython.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkRendering.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkCommon.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkIOPython.lib
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\vtkDistrib\lib\vtk\vtkIO.lib
+# End Source File
 # End Group
 # End Target
 # End Project
