@@ -54,6 +54,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "gdcmTestDicomDir2"=.\TEST\WIN32\gdcmTestDicomDir2.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "gdcmdll"=.\src\win32\gdcmdll.dsp - Package Owner=<4>
 
 Package=<5>
