@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:09:22 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/24 16:10:50 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,24 +88,24 @@ int TestDicomDir(int argc, char* argv[])
    pa = e1->GetFirstPatient(); 
    while ( pa ) 
    {  // we process all the PATIENT of this DICOMDIR 
-      std::cout << pa->GetEntry(0x0010, 0x0010) << std::endl; // Patient's Name
+      std::cout << pa->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name
 
       st = pa->GetFirstStudy();
       while ( st ) 
       { // we process all the STUDY of this patient
-         std::cout << "--- "<< st->GetEntry(0x0008, 0x1030) << std::endl;    // Study Description
-         std::cout << " Stud.ID:["          << st->GetEntry(0x0020, 0x0010); // Study ID
+         std::cout << "--- "<< st->GetEntryValue(0x0008, 0x1030) << std::endl;    // Study Description
+         std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010); // Study ID
 
          se = st->GetFirstSerie();
          while ( se ) 
          { // we process all the SERIES of this study
-            std::cout << "--- --- "<< se->GetEntry(0x0008, 0x103e) << std::endl;      // Serie Description
-            std::cout << " Ser.nb:["         <<  se->GetEntry(0x0020, 0x0011);        // Series number
-            std::cout << "] Mod.:["          <<  se->GetEntry(0x0008, 0x0060) << "]"; // Modality
+            std::cout << "--- --- "<< se->GetEntryValue(0x0008, 0x103e) << std::endl;      // Serie Description
+            std::cout << " Ser.nb:["         <<  se->GetEntryValue(0x0020, 0x0011);        // Series number
+            std::cout << "] Mod.:["          <<  se->GetEntryValue(0x0008, 0x0060) << "]"; // Modality
 
             im = se->GetFirstImage();
             while ( im ) { // we process all the IMAGE of this serie
-               std::cout << "--- --- --- "<< im->GetEntry(0x0004, 0x1500) << std::endl; // File name
+               std::cout << "--- --- --- "<< im->GetEntryValue(0x0004, 0x1500) << std::endl; // File name
                im = se->GetNextImage();   
             }
             se = st->GetNextSerie();   

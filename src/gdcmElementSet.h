@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,13 @@ public:
 
    bool IsEmpty() { return TagHT.empty(); };
    bool CheckIfEntryExist(uint16_t group, uint16_t elem);
-   std::string GetEntry(uint16_t group, uint16_t elem);
+
+   std::string GetEntryValue(uint16_t group, uint16_t elem);
+   int GetEntryLength(uint16_t group, uint16_t elem);
+   std::string GetEntryVR(uint16_t group, uint16_t elem);
+
+   bool SetEntryValue(std::string const& content, 
+                      uint16_t group, uint16_t elem);
 
 protected:
 

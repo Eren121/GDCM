@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,14 +66,14 @@ public:
 
    void SetImageData(uint8_t *data, size_t expectedSize);
 
-   // User datas
+   // User data
    void SetUserData(uint8_t *data, size_t expectedSize);
    uint8_t* GetUserData();
    size_t GetUserDataSize();
-   // RBG datas (from file
+   // RBG data (from file
    uint8_t* GetRGBData();
    size_t GetRGBDataSize();
-   // RAW datas (from file
+   // RAW data (from file
    uint8_t* GetRawData();
    size_t GetRawDataSize();
 
@@ -86,9 +86,9 @@ public:
    bool WriteAcr      (std::string const &fileName);
    bool Write         (std::string const &fileName);
 
-   bool SetEntry(std::string const &content,
+   bool SetEntryValue(std::string const &content,
                  uint16_t group, uint16_t elem);
-   bool SetEntry(uint8_t *content, int lgth,
+   bool SetEntryBinArea(uint8_t *content, int lgth,
                  uint16_t group, uint16_t elem);
    bool ReplaceOrCreate(std::string const &content,
                         uint16_t group, uint16_t elem);

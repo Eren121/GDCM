@@ -18,15 +18,17 @@
       <B></B></A>
 </H2>
 <UL>
-   <LI> Final check of the jpeg sub-library: all kinds of jpeg
-        compressed Dicom files (but jpeg2000) can be read
+   <LI> Final check of the jpeg sub-library: all 'classical' jpeg
+        compressed Dicom files can be read<br>
+        All the previously gdcm-breaker images are now readable<br>
+        gdcm doesn't read yet JPEG-LS and JPEG2000 encoded files.
    <LI> Use of <TT> namespace</TT> : all the methods formerly called
        <TT>className::gdcmXxx()</TT> are now called <TT>className::Xxx()</TT>
    <LI> Removal of accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
         and <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT> 
-        replaced by <TT>GetXxx</TT>, <TT>SetXxx</TT> 
+        replaced by <TT>GetXxx</TT>, <TT>SetXxx</TT>
+   <LI> a gdcm::Document is now specialized in gdcm::DicomDir and gdcm::File
    <LI> A huge number of memory leaks removed
-   <LI> All the previously gdcm-breaker images are now readable
    <LI> Improvement of write process  
 </UL>
 
@@ -40,7 +42,7 @@
 </H2>
 <UL>
    This version will be used by Insight Tool Kit 
-   (<a href="http://www.itk.org">ITK</a> 2.0) at the beginning of 2005.<br>
+   (<a href="http://www.itk.org">ITK</a> 1.10) at the beginning of 2005.<br>
     It's not yet packaged ...<br><br>
    <LI> The new <TT>gdcmDocument</TT> class is a parent class of 
        <TT>gdcmHeader</TT> class and <TT>gdcmDicomDir</TT> class.

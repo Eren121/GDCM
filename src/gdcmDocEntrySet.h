@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:11 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ public:
 
    /// \brief Gets the 'string value' of a ValEntry
    ///        identified by its (group,elem) - Sorry for the name !...-
-   virtual std::string GetEntry(uint16_t group, uint16_t elem) = 0;
+   virtual std::string GetEntryValue(uint16_t group, uint16_t elem) = 0;
 
    DictEntry *NewVirtualDictEntry(uint16_t group, 
                                   uint16_t elem,

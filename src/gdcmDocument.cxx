@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:11 $
-  Version:   $Revision: 1.205 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.206 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
    
    // Load 'non string' values
       
-   std::string PhotometricInterpretation = GetEntry(0x0028,0x0004);   
+   std::string PhotometricInterpretation = GetEntryValue(0x0028,0x0004);   
    if( PhotometricInterpretation == "PALETTE COLOR " )
    {
       LoadEntryBinArea(0x0028,0x1200);  // gray LUT   
@@ -141,16 +141,16 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
    // we switch lineNumber and columnNumber
    //
    std::string RecCode;
-   RecCode = GetEntry(0x0008, 0x0010); // recognition code (RET)
+   RecCode = GetEntryValue(0x0008, 0x0010); // recognition code (RET)
    if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
        RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
                                           // with "little-endian strings"
    {
          Filetype = ACR_LIBIDO; 
-         std::string rows    = GetEntry(0x0028, 0x0010);
-         std::string columns = GetEntry(0x0028, 0x0011);
-         SetEntry(columns, 0x0028, 0x0010);
-         SetEntry(rows   , 0x0028, 0x0011);
+         std::string rows    = GetEntryValue(0x0028, 0x0010);
+         std::string columns = GetEntryValue(0x0028, 0x0011);
+         SetEntryValue(columns, 0x0028, 0x0010);
+         SetEntryValue(rows   , 0x0028, 0x0011);
    }
    // ----------------- End of ACR-LibIDO kludge ------------------ 
 }
@@ -529,7 +529,7 @@ ValEntry *Document::ReplaceOrCreate(std::string const &value,
    }
 
    // Set the binEntry value
-   SetEntry(value, valEntry);
+   SetEntryValue(value, valEntry); // The std::string value
    return valEntry;
 }   
 
@@ -600,7 +600,7 @@ BinEntry *Document::ReplaceOrCreate(uint8_t *binArea,
    {
       tmpArea = 0;
    }
-   if (!SetEntry(tmpArea,lgth,binEntry))
+   if (!SetEntryBinArea(tmpArea,lgth,binEntry))
    {
       if (tmpArea)
       {
@@ -672,7 +672,7 @@ SeqEntry *Document::ReplaceOrCreate( uint16_t group, uint16_t elem)
 bool Document::ReplaceIfExist(std::string const &value, 
                               uint16_t group, uint16_t elem ) 
 {
-   SetEntry(value, group, elem);
+   SetEntryValue(value, group, elem);
 
    return true;
 } 
@@ -729,7 +729,7 @@ int Document::GetEntryLength(uint16_t group, uint16_t elem)
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool Document::SetEntry(std::string const& content, 
+bool Document::SetEntryValue(std::string const& content, 
                         uint16_t group, uint16_t elem) 
 {
    ValEntry *entry = GetValEntry(group, elem);
@@ -738,9 +738,8 @@ bool Document::SetEntry(std::string const& content,
       gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
       return false;
    }
-   return SetEntry(content,entry);
+   return SetEntryValue(content,entry);
 } 
-
 /**
  * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
  *          through it's (group, element) and modifies it's content with
@@ -750,7 +749,7 @@ bool Document::SetEntry(std::string const& content,
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool Document::SetEntry(uint8_t*content, int lgth, 
+bool Document::SetEntryBinArea(uint8_t*content, int lgth, 
                         uint16_t group, uint16_t elem) 
 {
    BinEntry *entry = GetBinEntry(group, elem);
@@ -760,7 +759,7 @@ bool Document::SetEntry(uint8_t*content, int lgth,
       return false;
    }
 
-   return SetEntry(content,lgth,entry);
+   return SetEntryBinArea(content,lgth,entry);
 } 
 
 /**
@@ -769,7 +768,7 @@ bool Document::SetEntry(uint8_t*content, int lgth,
  * @param  content new value (string) to substitute with
  * @param  entry Entry to be modified
  */
-bool Document::SetEntry(std::string const &content, ValEntry *entry)
+bool Document::SetEntryValue(std::string const &content, ValEntry *entry)
 {
    if(entry)
    {
@@ -786,7 +785,7 @@ bool Document::SetEntry(std::string const &content, ValEntry *entry)
  * @param  entry Entry to be modified 
  * @param  lgth new value length
  */
-bool Document::SetEntry(uint8_t *content, int lgth, BinEntry *entry)
+bool Document::SetEntryBinArea(uint8_t *content, int lgth, BinEntry *entry)
 {
    if(entry)
    {
@@ -2315,7 +2314,7 @@ void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
 std::string Document::GetTransferSyntaxName()
 {
    // use the TS (TS : Transfer Syntax)
-   std::string transferSyntax = GetEntry(0x0002,0x0010);
+   std::string transferSyntax = GetEntryValue(0x0002,0x0010);
 
    if ( (transferSyntax.find(GDCM_NOTLOADED) < transferSyntax.length()) )
    {
@@ -2836,8 +2835,8 @@ void Document::ComputeJPEGFragmentInfo()
 bool Document::operator<(Document &document)
 {
    // Patient Name
-   std::string s1 = GetEntry(0x0010,0x0010);
-   std::string s2 = document.GetEntry(0x0010,0x0010);
+   std::string s1 = GetEntryValue(0x0010,0x0010);
+   std::string s2 = document.GetEntryValue(0x0010,0x0010);
    if(s1 < s2)
    {
       return true;
@@ -2849,8 +2848,8 @@ bool Document::operator<(Document &document)
    else
    {
       // Patient ID
-      s1 = GetEntry(0x0010,0x0020);
-      s2 = document.GetEntry(0x0010,0x0020);
+      s1 = GetEntryValue(0x0010,0x0020);
+      s2 = document.GetEntryValue(0x0010,0x0020);
       if ( s1 < s2 )
       {
          return true;
@@ -2862,8 +2861,8 @@ bool Document::operator<(Document &document)
       else
       {
          // Study Instance UID
-         s1 = GetEntry(0x0020,0x000d);
-         s2 = document.GetEntry(0x0020,0x000d);
+         s1 = GetEntryValue(0x0020,0x000d);
+         s2 = document.GetEntryValue(0x0020,0x000d);
          if ( s1 < s2 )
          {
             return true;
@@ -2875,8 +2874,8 @@ bool Document::operator<(Document &document)
          else
          {
             // Serie Instance UID
-            s1 = GetEntry(0x0020,0x000e);
-            s2 = document.GetEntry(0x0020,0x000e);    
+            s1 = GetEntryValue(0x0020,0x000e);
+            s2 = document.GetEntryValue(0x0020,0x000e);    
             if ( s1 < s2 )
             {
                return true;

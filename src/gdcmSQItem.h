@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:39:49 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/24 16:10:53 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,10 +60,10 @@ public:
    BinEntry *GetBinEntry(uint16_t group, uint16_t elem); 
    SeqEntry *GetSeqEntry(uint16_t group, uint16_t elem); 
    
-   bool SetEntry(std::string const &val, uint16_t group, 
+   bool SetEntryValue(std::string const &val, uint16_t group, 
                                          uint16_t elem);
     
-   std::string GetEntry(uint16_t group, uint16_t elem);
+   std::string GetEntryValue(uint16_t group, uint16_t elem);
 
    /// \brief   returns the ordinal position of a given SQItem
    int GetSQItemNumber() { return SQItemNumber; };

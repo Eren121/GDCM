@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:11 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/01/24 16:10:53 $
+  Version:   $Revision: 1.57 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,6 +96,8 @@ void SQItem::Print(std::ostream &os, std::string const &)
 
 /*
  * \brief   canonical Writer
+ * @param fp     file pointer to an already open file. 
+ * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
 void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
 {
@@ -145,6 +147,7 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
 // Public
 /**
  * \brief   adds any Entry (Dicom Element) to the Sequence Item
+ * @param entry Entry to add
  */
 bool SQItem::AddEntry(DocEntry *entry)
 {
@@ -161,12 +164,12 @@ bool SQItem::AddEntry(DocEntry *entry)
  * \warning we suppose, right now, the element belongs to a Public Group
  *          (NOT a shadow one)       
  * @param   val string value to set
- * @param   group Group number of the searched tag.
+ * @param   group  Group number of the searched tag.
  * @param   elem Element number of the searched tag.
  * @return  true if element was found or created successfully
  */
 
-bool SQItem::SetEntry(std::string const &val, uint16_t group, 
+bool SQItem::SetEntryValue(std::string const &val, uint16_t group, 
                       uint16_t elem)
 {
    for(ListDocEntry::iterator i = DocEntries.begin(); 
@@ -223,8 +226,6 @@ bool SQItem::SetEntry(std::string const &val, uint16_t group,
 /**
  * \brief   Clear the std::list from given entry AND delete the entry.
  * @param   entryToRemove Entry to remove AND delete.
- * \warning Some problems when using under Windows... prefer the use of
- *          Initialize / GetNext methods
  * @return true if the entry was found and removed; false otherwise
  */
 bool SQItem::RemoveEntry( DocEntry* entryToRemove)
@@ -270,7 +271,7 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
 }
                                                                                 
 /**
- * \brief   Get the first entry while visiting the SQItem
+ * \brief   Get the first Dicom entry while visiting the SQItem
  * \return  The first DocEntry if found, otherwhise 0
  */
 DocEntry * SQItem::GetFirstEntry()
@@ -282,7 +283,7 @@ DocEntry * SQItem::GetFirstEntry()
 }
                                                                                 
 /**
- * \brief   Get the next entry while visiting the chained list
+ * \brief   Get the next Dicom entry while visiting the chained list
  * \return  The next DocEntry if found, otherwhise NULL
  */
 DocEntry *SQItem::GetNextEntry()
@@ -300,7 +301,7 @@ DocEntry *SQItem::GetNextEntry()
 // Protected
 /**
  * \brief   Gets a Dicom Element inside a SQ Item Entry
- * @param   group   Group number of the Entry
+ * @param   group Group number of the Entry
  * @param   elem  Element number of the Entry
  * @return Entry whose (group,elem) was passed. 0 if not found
  */
@@ -319,7 +320,7 @@ DocEntry *SQItem::GetDocEntry(uint16_t group, uint16_t elem)
 
 /**
  * \brief   Gets a Dicom Element inside a SQ Item Entry
- * @param   group   Group number of the Entry
+ * @param   group Group number of the Entry
  * @param   elem  Element number of the Entry
  * @return Entry whose (group,elem) was passed. 0 if not found
  */
@@ -370,7 +371,7 @@ SeqEntry* SQItem::GetSeqEntry(uint16_t group, uint16_t elem)
  *           GDCM_UNFOUND if not found
  */ 
 
-std::string SQItem::GetEntry(uint16_t group, uint16_t elem)
+std::string SQItem::GetEntryValue(uint16_t group, uint16_t elem)
 {
 
 /*

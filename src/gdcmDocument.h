@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:11 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.99 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,12 +92,12 @@ public:
 // 4 methods with same name and different parameters ...
 // Only C++ is aware!
 
-   virtual bool SetEntry(std::string const &content,
+   virtual bool SetEntryValue(std::string const &content,
                          uint16_t group, uint16_t elem);
-   virtual bool SetEntry(uint8_t *content, int lgth,
+   virtual bool SetEntryBinArea(uint8_t *content, int lgth,
                          uint16_t group, uint16_t elem);
-   virtual bool SetEntry(std::string const &content, ValEntry *entry);
-   virtual bool SetEntry(uint8_t *content, int lgth, BinEntry *entry);
+   virtual bool SetEntryValue(std::string const &content, ValEntry *entry);
+   virtual bool SetEntryBinArea(uint8_t *content, int lgth, BinEntry *entry);
 
    virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);   
 

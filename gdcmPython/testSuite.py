@@ -32,7 +32,7 @@ class gdcmTestCase(unittest.TestCase):
            ["Manufacturer's Model Name", "Gyroscan Intera"],
            ["Sequence Variant", "OTHER"],
            ["Pixel Data", "gdcm::NotLoaded. Address:6584 Length:131072 x(20000)"]
-			  ] ],
+          ] ],
    ]
 
    def _BaseTest(self, FileSet):
@@ -42,7 +42,7 @@ class gdcmTestCase(unittest.TestCase):
          assert reader.IsReadable(),\
                 "File '%s' is not readable by gdcmFile" % fileName
 
-         valDict = reader.GetEntry()
+         valDict = reader.GetEntryValue()
          for subEntry in entry[1]:
             element = subEntry[0]
             value   = subEntry[1]

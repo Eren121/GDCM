@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/01/24 16:10:53 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
    os << "V ";
    DocEntry::Print(os); 
 
-   if (g == 0xfffe)
+   if (g == 0xfffe) // delimiters have NO value
    {
       // just to avoid identing all the remaining code     
       return;
@@ -224,7 +224,7 @@ void ValEntry::SetValue(std::string const &val)
 /**
  * \brief   Writes the std::string representable' value of a ValEntry
  * @param fp already open ofstream pointer
- * @param filetype type of the file to be written
+ * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
 void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
@@ -237,11 +237,9 @@ void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
 
    const VRKey &vr = GetVR();
    unsigned int lgr = GetLength();
-   //std::cout<<std::hex<<GetGroup()<<"|"<<GetElement()
-   //         <<std::dec<<" : "<<GetReadLength()<<" / "<<GetLength()<<"\n";
    if (vr == "US" || vr == "SS")
    {
-      // some 'Short integer' fields may be mulivaluated
+      // some 'Short integer' fields may be multivaluated
       // each single value is separated from the next one by '\'
       // we split the string and write each value as a short int
       std::vector<std::string> tokens;
@@ -258,7 +256,7 @@ void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
    if (vr == "UL" || vr == "SL")
    {
       // Some 'Integer' fields may be multivaluated (multiple instances 
-      // of integers). But each single integer value is separated from the
+      // of integer). But each single integer value is separated from the
       // next one by '\' (backslash character). Hence we split the string
       // along the '\' and write each value as an int:
       std::vector<std::string> tokens;

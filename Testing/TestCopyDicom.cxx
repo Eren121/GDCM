@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:54 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/24 16:10:50 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,9 +75,6 @@ int CopyDicom(std::string const & filename,
       gdcm::File *copyH     = new gdcm::File( );
 
       //First of all copy the header field by field
-  
-      // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
-      // It was commented out by Mathieu, that was a *good* idea
 
       //////////////// Step 2:
       std::cout << "2...";

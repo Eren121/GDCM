@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:10 $
-  Version:   $Revision: 1.115 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.116 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -606,7 +606,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       {
          // NULL when we Build Up (ex nihilo) a DICOMDIR
          //   or when we add the META elems
-         val = header->GetEntry(tmpGr, tmpEl);
+         val = header->GetEntryValue(tmpGr, tmpEl);
       }
       else
       {
@@ -937,12 +937,12 @@ void DicomDir::SetElements(std::string const & path, VectDocument const &list)
                                      it != list.end(); ++it )
    {
       // get the current file characteristics
-      patCurName         = (*it)->GetEntry(0x0010,0x0010);
-      patCurID           = (*it)->GetEntry(0x0010,0x0011);
-      studCurInstanceUID = (*it)->GetEntry(0x0020,0x000d);
-      studCurID          = (*it)->GetEntry(0x0020,0x0010);
-      serCurInstanceUID  = (*it)->GetEntry(0x0020,0x000e);
-      serCurID           = (*it)->GetEntry(0x0020,0x0011);
+      patCurName         = (*it)->GetEntryValue(0x0010,0x0010);
+      patCurID           = (*it)->GetEntryValue(0x0010,0x0011);
+      studCurInstanceUID = (*it)->GetEntryValue(0x0020,0x000d);
+      studCurID          = (*it)->GetEntryValue(0x0020,0x0010);
+      serCurInstanceUID  = (*it)->GetEntryValue(0x0020,0x000e);
+      serCurID           = (*it)->GetEntryValue(0x0020,0x0011);
 
       if( patCurName != patPrevName || patCurID != patPrevID || first )
       {

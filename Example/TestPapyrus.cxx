@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:32 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/24 16:10:49 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,12 +123,12 @@ int main(int argc, char* argv[])
 //  Modality, Transfer Syntax, Study Date, Study Time
 // Patient Name, Media Storage SOP Instance UID, etc
 
-   MediaStSOPinstUID   =   h->GetEntry(0x0002,0x0002);
-   TransferSyntax      =   h->GetEntry(0x0002,0x0010);
-   StudyDate           = sqi->GetEntry(0x0008,0x0020);
-   StudyTime           = sqi->GetEntry(0x0008,0x0030);
-   Modality            = sqi->GetEntry(0x0008,0x0060);
-   PatientName         = sqi->GetEntry(0x0010,0x0010);
+   MediaStSOPinstUID   =   h->GetEntryValue(0x0002,0x0002);
+   TransferSyntax      =   h->GetEntryValue(0x0002,0x0010);
+   StudyDate           = sqi->GetEntryValue(0x0008,0x0020);
+   StudyTime           = sqi->GetEntryValue(0x0008,0x0030);
+   Modality            = sqi->GetEntryValue(0x0008,0x0060);
+   PatientName         = sqi->GetEntryValue(0x0010,0x0010);
 
    std::cout << "TransferSyntax " << TransferSyntax << std::endl;
 
@@ -143,18 +143,18 @@ int main(int argc, char* argv[])
 
    // we brutally suppose all the images within a Papyrus file
    // have the same caracteristics.
-   // if you're aware they have not, just move the GetEntry
+   // if you're aware they have not, just move the GetEntryValue
    // inside the loop
 
    // Get caracteristics of the first image
 
-   SamplesPerPixel     = sqi->GetEntry(0x0028,0x0002);
-   Rows                = sqi->GetEntry(0x0028,0x0010);
-   Columns             = sqi->GetEntry(0x0028,0x0011);
-   BitsAllocated       = sqi->GetEntry(0x0028,0x0100);
-   BitsStored          = sqi->GetEntry(0x0028,0x0101);
-   HighBit             = sqi->GetEntry(0x0028,0x0102);
-   PixelRepresentation = sqi->GetEntry(0x0028,0x0102);
+   SamplesPerPixel     = sqi->GetEntryValue(0x0028,0x0002);
+   Rows                = sqi->GetEntryValue(0x0028,0x0010);
+   Columns             = sqi->GetEntryValue(0x0028,0x0011);
+   BitsAllocated       = sqi->GetEntryValue(0x0028,0x0100);
+   BitsStored          = sqi->GetEntryValue(0x0028,0x0101);
+   HighBit             = sqi->GetEntryValue(0x0028,0x0102);
+   PixelRepresentation = sqi->GetEntryValue(0x0028,0x0102);
 
    // just convert those needed to compute PixelArea length
    int iRows            = (uint32_t) atoi( Rows.c_str() );
@@ -203,7 +203,7 @@ int main(int argc, char* argv[])
    while (sqi)
    {
       std::cout << "One more image read. Keep waiting" << std::endl;
-      Rows = sqi->GetEntry(0x0028,0x0010);
+      Rows = sqi->GetEntryValue(0x0028,0x0010);
       // minimum integrity check
       if (Rows != previousRows)
       {

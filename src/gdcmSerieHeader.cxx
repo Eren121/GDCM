@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/24 16:10:53 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,7 @@ void SerieHeader::AddFileName(std::string const &filename)
    if( header->IsReadable() )
    {
       // 0020 000e UI REL Series Instance UID
-      std::string uid =  header->GetEntry (0x0020, 0x000e);
+      std::string uid =  header->GetEntryValue (0x0020, 0x000e);
       // if uid == GDCM_UNFOUND then consistenly we should find GDCM_UNFOUND
       // no need here to do anything special
       if( CurrentSerieUID == "" )

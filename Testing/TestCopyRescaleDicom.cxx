@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:54 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/24 16:10:50 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,12 +48,6 @@ int CopyRescaleDicom(std::string const & filename,
 
    //First of all copy the header field by field
 
-   // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
-   // It was commented out by Mathieu, that was a *good* idea
-   // (the user does NOT have to know the way we implemented the File !)
-   // Waiting for a 'clean' solution, I keep the method ...JPRx
-
-
    //////////////// Step 2:
    std::cout << "2...";
    // Copy of the header content
@@ -93,7 +87,7 @@ int CopyRescaleDicom(std::string const & filename,
    size_t rescaleSize;
    uint8_t *rescaleImage;
 
-   const std::string & bitsStored    = originalH->GetEntry(0x0028,0x0101);
+   const std::string & bitsStored    = originalH->GetEntryValue(0x0028,0x0101);
    if( bitsStored == "16" )
    {
       std::cout << "Rescale...";

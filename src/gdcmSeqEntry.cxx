@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/01/24 16:10:53 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -125,6 +125,8 @@ void SeqEntry::Print( std::ostream &os, std::string const & )
 // Public
 /*
  * \brief   canonical Writer
+ * @param fp pointer to an already open file
+ * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
 void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {

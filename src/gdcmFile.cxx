@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.197 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.198 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ File::File( std::string const &filename ):
    // Note: this IS the right place for the code
  
    // Image Location
-   const std::string &imgLocation = GetEntry(0x0028, 0x0200);
+   const std::string &imgLocation = GetEntryValue(0x0028, 0x0200);
    if ( imgLocation == GDCM_UNFOUND )
    {
       // default value
@@ -125,7 +125,7 @@ File::~File ()
  *       then writes in a file all the (Dicom Elements) included the Pixels 
  * @param fileName file name to write to
  * @param filetype Type of the File to be written 
- *          (ACR-NEMA, ExplicitVR, ImplicitVR)
+ *          (ACR, ExplicitVR, ImplicitVR)
  */
 bool File::Write(std::string fileName, FileType filetype)
 {
@@ -138,9 +138,9 @@ bool File::Write(std::string fileName, FileType filetype)
    }
 
    // Bits Allocated
-   if ( GetEntry(0x0028,0x0100) ==  "12")
+   if ( GetEntryValue(0x0028,0x0100) ==  "12")
    {
-      SetEntry("16", 0x0028,0x0100);
+      SetEntryValue("16", 0x0028,0x0100);
    }
 
   /// \todo correct 'Pixel group' Length if necessary
@@ -159,7 +159,7 @@ bool File::Write(std::string fileName, FileType filetype)
 
    // Drop Palette Color, if necessary
    
-   if ( GetEntry(0x0028,0x0002).c_str()[0] == '3' )
+   if ( GetEntryValue(0x0028,0x0002).c_str()[0] == '3' )
    {
       // if SamplesPerPixel = 3, sure we don't need any LUT !   
       // Drop 0028|1101, 0028|1102, 0028|1103
@@ -259,7 +259,7 @@ bool File::IsReadable()
       return false;
    }
 
-   const std::string &res = GetEntry(0x0028, 0x0005);
+   const std::string &res = GetEntryValue(0x0028, 0x0005);
    if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 )
    {
       return false; // Image Dimensions
@@ -291,7 +291,7 @@ bool File::IsReadable()
  */
 int File::GetXSize()
 {
-   const std::string &strSize = GetEntry(0x0028,0x0011);
+   const std::string &strSize = GetEntryValue(0x0028,0x0011);
    if ( strSize == GDCM_UNFOUND )
    {
       return 0;
@@ -308,7 +308,7 @@ int File::GetXSize()
  */
 int File::GetYSize()
 {
-   const std::string &strSize = GetEntry(0x0028,0x0010);
+   const std::string &strSize = GetEntryValue(0x0028,0x0010);
    if ( strSize != GDCM_UNFOUND )
    {
       return atoi( strSize.c_str() );
@@ -335,14 +335,14 @@ int File::GetZSize()
 {
    // Both  DicomV3 and ACR/Nema consider the "Number of Frames"
    // as the third dimension.
-   const std::string &strSize = GetEntry(0x0028,0x0008);
+   const std::string &strSize = GetEntryValue(0x0028,0x0008);
    if ( strSize != GDCM_UNFOUND )
    {
       return atoi( strSize.c_str() );
    }
 
    // We then consider the "Planes" entry as the third dimension 
-   const std::string &strSize2 = GetEntry(0x0028,0x0012);
+   const std::string &strSize2 = GetEntryValue(0x0028,0x0012);
    if ( strSize2 != GDCM_UNFOUND )
    {
       return atoi( strSize2.c_str() );
@@ -359,7 +359,7 @@ int File::GetZSize()
 float File::GetXSpacing()
 {
    float xspacing, yspacing;
-   const std::string &strSpacing = GetEntry(0x0028,0x0030);
+   const std::string &strSpacing = GetEntryValue(0x0028,0x0030);
 
    if ( strSpacing == GDCM_UNFOUND )
    {
@@ -407,7 +407,7 @@ float File::GetXSpacing()
 float File::GetYSpacing()
 {
    float yspacing = 1.;
-   std::string strSpacing = GetEntry(0x0028,0x0030);
+   std::string strSpacing = GetEntryValue(0x0028,0x0030);
   
    if ( strSpacing == GDCM_UNFOUND )
    {
@@ -442,12 +442,12 @@ float File::GetZSpacing()
    //   Si le Spacing Between Slices est Missing, 
    //   on suppose que les coupes sont jointives
    
-   const std::string &strSpacingBSlices = GetEntry(0x0018,0x0088);
+   const std::string &strSpacingBSlices = GetEntryValue(0x0018,0x0088);
 
    if ( strSpacingBSlices == GDCM_UNFOUND )
    {
       gdcmVerboseMacro("Unfound Spacing Between Slices (0018,0088)");
-      const std::string &strSliceThickness = GetEntry(0x0018,0x0050);       
+      const std::string &strSliceThickness = GetEntryValue(0x0018,0x0050);       
       if ( strSliceThickness == GDCM_UNFOUND )
       {
          gdcmVerboseMacro("Unfound Slice Thickness (0018,0050)");
@@ -474,7 +474,7 @@ float File::GetRescaleIntercept()
 {
    float resInter = 0.;
    /// 0028 1052 DS IMG Rescale Intercept
-   const std::string &strRescInter = GetEntry(0x0028,0x1052);
+   const std::string &strRescInter = GetEntryValue(0x0028,0x1052);
    if ( strRescInter != GDCM_UNFOUND )
    {
       if( sscanf( strRescInter.c_str(), "%f", &resInter) != 1 )
@@ -495,7 +495,7 @@ float File::GetRescaleSlope()
 {
    float resSlope = 1.;
    //0028 1053 DS IMG Rescale Slope
-   std::string strRescSlope = GetEntry(0x0028,0x1053);
+   std::string strRescSlope = GetEntryValue(0x0028,0x1053);
    if ( strRescSlope != GDCM_UNFOUND )
    {
       if( sscanf( strRescSlope.c_str(), "%f", &resSlope) != 1)
@@ -524,12 +524,12 @@ int File::GetNumberOfScalarComponents()
       
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old RGB images)
-   if ( GetEntry(0x0028,0x0100) == "24" )
+   if ( GetEntryValue(0x0028,0x0100) == "24" )
    {
       return 3;
    }
        
-   std::string strPhotometricInterpretation = GetEntry(0x0028,0x0004);
+   std::string strPhotometricInterpretation = GetEntryValue(0x0028,0x0004);
 
    if ( ( strPhotometricInterpretation == "PALETTE COLOR ") )
    {
@@ -569,7 +569,7 @@ int File::GetNumberOfScalarComponentsRaw()
 {
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old RGB images)
-   if ( File::GetEntry(0x0028,0x0100) == "24" )
+   if ( File::GetEntryValue(0x0028,0x0100) == "24" )
    {
       return 3;
    }
@@ -603,12 +603,12 @@ int File::GetNumberOfScalarComponentsRaw()
 float File::GetXOrigin()
 {
    float xImPos, yImPos, zImPos;  
-   std::string strImPos = GetEntry(0x0020,0x0032);
+   std::string strImPos = GetEntryValue(0x0020,0x0032);
 
    if ( strImPos == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "Unfound Image Position Patient (0020,0032)");
-      strImPos = GetEntry(0x0020,0x0030); // For ACR-NEMA images
+      strImPos = GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmVerboseMacro( "Unfound Image Position (RET) (0020,0030)");
@@ -634,12 +634,12 @@ float File::GetXOrigin()
 float File::GetYOrigin()
 {
    float xImPos, yImPos, zImPos;
-   std::string strImPos = GetEntry(0x0020,0x0032);
+   std::string strImPos = GetEntryValue(0x0020,0x0032);
 
    if ( strImPos == GDCM_UNFOUND)
    {
       gdcmVerboseMacro( "Unfound Image Position Patient (0020,0032)");
-      strImPos = GetEntry(0x0020,0x0030); // For ACR-NEMA images
+      strImPos = GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmVerboseMacro( "Unfound Image Position (RET) (0020,0030)");
@@ -667,7 +667,7 @@ float File::GetYOrigin()
 float File::GetZOrigin()
 {
    float xImPos, yImPos, zImPos; 
-   std::string strImPos = GetEntry(0x0020,0x0032);
+   std::string strImPos = GetEntryValue(0x0020,0x0032);
 
    if ( strImPos != GDCM_UNFOUND )
    {
@@ -682,7 +682,7 @@ float File::GetZOrigin()
       }
    }
 
-   strImPos = GetEntry(0x0020,0x0030); // For ACR-NEMA images
+   strImPos = GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
    if ( strImPos != GDCM_UNFOUND )
    {
       if( sscanf( strImPos.c_str(), 
@@ -697,7 +697,7 @@ float File::GetZOrigin()
       }
    }
 
-   std::string strSliceLocation = GetEntry(0x0020,0x1041); // for *very* old ACR-NEMA images
+   std::string strSliceLocation = GetEntryValue(0x0020,0x1041); // for *very* old ACR-NEMA images
    if ( strSliceLocation != GDCM_UNFOUND )
    {
       if( sscanf( strSliceLocation.c_str(), "%f", &zImPos) != 1)
@@ -712,7 +712,7 @@ float File::GetZOrigin()
    }
    gdcmVerboseMacro( "Unfound Slice Location (0020,1041)");
 
-   std::string strLocation = GetEntry(0x0020,0x0050);
+   std::string strLocation = GetEntryValue(0x0020,0x0050);
    if ( strLocation != GDCM_UNFOUND )
    {
       if( sscanf( strLocation.c_str(), "%f", &zImPos) != 1)
@@ -743,7 +743,7 @@ int File::GetImageNumber()
    // faster function. sscanf() can do all possible conversions whereas
    // atoi() can only do single decimal integer conversions.
    //0020 0013 IS REL Image Number
-   std::string strImNumber = GetEntry(0x0020,0x0013);
+   std::string strImNumber = GetEntryValue(0x0020,0x0013);
    if ( strImNumber != GDCM_UNFOUND )
    {
       return atoi( strImNumber.c_str() );
@@ -758,7 +758,7 @@ int File::GetImageNumber()
 ModalityType File::GetModality()
 {
    // 0008 0060 CS ID Modality
-   std::string strModality = GetEntry(0x0008,0x0060);
+   std::string strModality = GetEntryValue(0x0008,0x0060);
    if ( strModality != GDCM_UNFOUND )
    {
            if ( strModality.find("AU") < strModality.length()) return AU;
@@ -821,7 +821,7 @@ ModalityType File::GetModality()
  */
 int File::GetBitsStored()
 {
-   std::string strSize = GetEntry( 0x0028, 0x0101 );
+   std::string strSize = GetEntryValue( 0x0028, 0x0101 );
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro("(0028,0101) is supposed to be mandatory");
@@ -839,7 +839,7 @@ int File::GetBitsStored()
  */
 int File::GetHighBitPosition()
 {
-   std::string strSize = GetEntry( 0x0028, 0x0102 );
+   std::string strSize = GetEntryValue( 0x0028, 0x0102 );
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "(0028,0102) is supposed to be mandatory");
@@ -856,7 +856,7 @@ int File::GetHighBitPosition()
  */
 bool File::IsSignedPixelData()
 {
-   std::string strSize = GetEntry( 0x0028, 0x0103 );
+   std::string strSize = GetEntryValue( 0x0028, 0x0103 );
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "(0028,0103) is supposed to be mandatory");
@@ -878,7 +878,7 @@ bool File::IsSignedPixelData()
  */
 int File::GetBitsAllocated()
 {
-   std::string strSize = GetEntry(0x0028,0x0100);
+   std::string strSize = GetEntryValue(0x0028,0x0100);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "(0028,0100) is supposed to be mandatory");
@@ -896,7 +896,7 @@ int File::GetBitsAllocated()
  */
 int File::GetSamplesPerPixel()
 {
-   const std::string& strSize = GetEntry(0x0028,0x0002);
+   const std::string& strSize = GetEntryValue(0x0028,0x0002);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "(0028,0002) is supposed to be mandatory");
@@ -913,7 +913,7 @@ int File::GetSamplesPerPixel()
  */
 bool File::IsMonochrome()
 {
-   const std::string& PhotometricInterp = GetEntry( 0x0028, 0x0004 );
+   const std::string& PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
    if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1")
       || Util::DicomStringEqual(PhotometricInterp, "MONOCHROME2") )
    {
@@ -933,7 +933,7 @@ bool File::IsMonochrome()
  */
 bool File::IsPaletteColor()
 {
-   std::string PhotometricInterp = GetEntry( 0x0028, 0x0004 );
+   std::string PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
    if (   PhotometricInterp == "PALETTE COLOR " )
    {
       return true;
@@ -952,7 +952,7 @@ bool File::IsPaletteColor()
  */
 bool File::IsYBRFull()
 {
-   std::string PhotometricInterp = GetEntry( 0x0028, 0x0004 );
+   std::string PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
    if (   PhotometricInterp == "YBR_FULL" )
    {
       return true;
@@ -971,7 +971,7 @@ bool File::IsYBRFull()
  */
 int File::GetPlanarConfiguration()
 {
-   std::string strSize = GetEntry(0x0028,0x0006);
+   std::string strSize = GetEntryValue(0x0028,0x0006);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "Not found : Planar Configuration (0028,0006)");
@@ -989,7 +989,7 @@ int File::GetPixelSize()
 {
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old RGB images)
-   //   if (File::GetEntry(0x0028,0x0100) == "24")
+   //   if (File::GetEntryValue(0x0028,0x0100) == "24")
    //      return 3;
 
    std::string pixelType = GetPixelType();
@@ -1029,7 +1029,7 @@ int File::GetPixelSize()
  */
 std::string File::GetPixelType()
 {
-   std::string bitsAlloc = GetEntry(0x0028, 0x0100); // Bits Allocated
+   std::string bitsAlloc = GetEntryValue(0x0028, 0x0100); // Bits Allocated
    if ( bitsAlloc == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "Missing  Bits Allocated (0028,0100)");
@@ -1051,7 +1051,7 @@ std::string File::GetPixelType()
       bitsAlloc = "8";  // by old RGB images)
    }
 
-   std::string sign = GetEntry(0x0028, 0x0103);//"Pixel Representation"
+   std::string sign = GetEntryValue(0x0028, 0x0103);//"Pixel Representation"
 
    if (sign == GDCM_UNFOUND )
    {
@@ -1181,7 +1181,7 @@ int File::GetLUTNbits()
    //Just hope Lookup Table Desc-Red = Lookup Table Desc-Red
    //                                = Lookup Table Desc-Blue
    // Consistency already checked in GetLUTLength
-   std::string lutDescription = GetEntry(0x0028,0x1101);
+   std::string lutDescription = GetEntryValue(0x0028,0x1101);
    if ( lutDescription == GDCM_UNFOUND )
    {
       return 0;
@@ -1209,15 +1209,15 @@ int File::GetLUTNbits()
 bool File::AnonymizeFile()
 {
    // If exist, replace by spaces
-   SetEntry ("  ",0x0010, 0x2154); // Telephone   
-   SetEntry ("  ",0x0010, 0x1040); // Adress
-   SetEntry ("  ",0x0010, 0x0020); // Patient ID
+   SetEntryValue ("  ",0x0010, 0x2154); // Telephone   
+   SetEntryValue ("  ",0x0010, 0x1040); // Adress
+   SetEntryValue ("  ",0x0010, 0x0020); // Patient ID
 
    DocEntry* patientNameHE = GetDocEntry (0x0010, 0x0010);
   
    if ( patientNameHE ) // we replace it by Study Instance UID (why not)
    {
-      std::string studyInstanceUID =  GetEntry (0x0020, 0x000d);
+      std::string studyInstanceUID =  GetEntryValue (0x0020, 0x000d);
       if ( studyInstanceUID != GDCM_UNFOUND )
       {
          ReplaceOrCreate(studyInstanceUID, 0x0010, 0x0010);
@@ -1296,7 +1296,7 @@ void File::GetImageOrientationPatient( float iop[6] )
    iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
 
    // 0020 0037 DS REL Image Orientation (Patient)
-   if ( (strImOriPat = GetEntry(0x0020,0x0037)) != GDCM_UNFOUND )
+   if ( (strImOriPat = GetEntryValue(0x0020,0x0037)) != GDCM_UNFOUND )
    {
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
@@ -1306,7 +1306,7 @@ void File::GetImageOrientationPatient( float iop[6] )
    }
    //For ACR-NEMA
    // 0020 0035 DS REL Image Orientation (RET)
-   else if ( (strImOriPat = GetEntry(0x0020,0x0035)) != GDCM_UNFOUND )
+   else if ( (strImOriPat = GetEntryValue(0x0020,0x0035)) != GDCM_UNFOUND )
    {
       if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )

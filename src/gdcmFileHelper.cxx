@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -282,7 +282,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
  *          'image' Pixels are presented as C-like 2D arrays : line per line.
  *          'volume'Pixels are presented as C-like 3D arrays : plane per plane 
  * \warning Since the pixels are not copied, it is the caller's responsability
- *          not to deallocate it's data before gdcm uses them (e.g. with
+ *          not to deallocate its data before gdcm uses them (e.g. with
  *          the Write() method.
  * @param inData user supplied pixel area
  * @param expectedSize total image size, in Bytes
@@ -295,8 +295,8 @@ void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
 }
 
 /**
- * \brief   Set the image datas defined by the user
- * \warning When writting the file, this datas are get as default datas to write
+ * \brief   Set the image data defined by the user
+ * \warning When writting the file, this data are get as default data to write
  */
 void FileHelper::SetUserData(uint8_t *data, size_t expectedSize)
 {
@@ -304,8 +304,8 @@ void FileHelper::SetUserData(uint8_t *data, size_t expectedSize)
 }
 
 /**
- * \brief   Get the image datas defined by the user
- * \warning When writting the file, this datas are get as default data to write
+ * \brief   Get the image data defined by the user
+ * \warning When writting the file, this data are get as default data to write
  */
 uint8_t *FileHelper::GetUserData()
 {
@@ -314,7 +314,7 @@ uint8_t *FileHelper::GetUserData()
 
 /**
  * \brief   Get the image data size defined by the user
- * \warning When writting the file, this datas are get as default data to write
+ * \warning When writting the file, this data are get as default data to write
  */
 size_t FileHelper::GetUserDataSize()
 {
@@ -322,7 +322,7 @@ size_t FileHelper::GetUserDataSize()
 }
 
 /**
- * \brief   Get the image datas from the file.
+ * \brief   Get the image data from the file.
  *          If a LUT is found, the data are expanded to be RGB
  */
 uint8_t *FileHelper::GetRGBData()
@@ -340,8 +340,8 @@ size_t FileHelper::GetRGBDataSize()
 }
 
 /**
- * \brief   Get the image datas from the file.
- *          If a LUT is found, the datas are not expanded !
+ * \brief   Get the image data from the file.
+ *          If a LUT is found, the data are not expanded !
  */
 uint8_t *FileHelper::GetRawData()
 {
@@ -530,10 +530,10 @@ bool FileHelper::Write(std::string const &fileName)
  * @param   group     group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool FileHelper::SetEntry(std::string const &content,
+bool FileHelper::SetEntryValue(std::string const &content,
                     uint16_t group, uint16_t elem)
 { 
-   return FileInternal->SetEntry(content,group,elem);
+   return FileInternal->SetEntryValue(content,group,elem);
 }
 
 
@@ -543,13 +543,13 @@ bool FileHelper::SetEntry(std::string const &content,
  *          the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param   lgth new value length
- * @param   group     group number of the Dicom Element to modify
+ * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool FileHelper::SetEntry(uint8_t *content, int lgth,
+bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
                     uint16_t group, uint16_t elem)
 {
-   return FileInternal->SetEntry(content,lgth,group,elem);
+   return FileInternal->SetEntryBinArea(content,lgth,group,elem);
 }
 
 /**
@@ -600,7 +600,7 @@ uint8_t* FileHelper::GetLutRGBA()
  * The tests made are :
  *  - verify the size of the image to write with the possible write
  *    when the user set an image data
- * @return true if the check successfulls
+ * @return true if check is successfull
  */
 bool FileHelper::CheckWriteIntegrity()
 {

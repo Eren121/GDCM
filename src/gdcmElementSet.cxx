@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:33 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/24 16:10:52 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \brief   Constructor from a given ElementSet
+ * \brief   Constructor for a given ElementSet
  */
 //BOZ depthLevel is not usefull anymore
 ElementSet::ElementSet(int depthLevel) 
@@ -55,8 +55,7 @@ ElementSet::~ElementSet()
 //-----------------------------------------------------------------------------
 // Print
 /**
-  * \brief   Prints the Header Entries (Dicom Elements)
-  *          from the H Table
+  * \brief   Prints the Header Entries (Dicom Elements) from the H Table
   * @param os ostream to write to  
   * @param indent Indentation string to be prepended during printing
   */ 
@@ -201,15 +200,13 @@ bool ElementSet::CheckIfEntryExist(uint16_t group, uint16_t elem )
 }
 
 /**
- * \brief   Searches within Header Entries (Dicom Elements) parsed with 
- *          the public and private dictionaries 
- *          for the element value representation of a given tag.
+ * \brief   Get the (std::string representable) value of the Dicom entry
  * @param   group  Group number of the searched tag.
  * @param   elem Element number of the searched tag.
- * @return  Corresponding element value representation when it exists,
+ * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string ElementSet::GetEntry(uint16_t group, uint16_t elem)
+std::string ElementSet::GetEntryValue(uint16_t group, uint16_t elem)
 {
    TagKey key = DictEntry::TranslateToKey(group, elem);
    if ( !TagHT.count(key))
