@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 13:02:36 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/06/23 15:01:57 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,6 +76,7 @@ void gdcmSeqEntry::Print(std::ostream &os){
          os << "   | " ;
       if (seq_term != NULL) {
          seq_term->Print(os);
+         os << std::endl;
       } 
       else 
          os << "      -------------- should have a sequence terminator item";

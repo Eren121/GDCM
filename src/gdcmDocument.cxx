@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 13:54:56 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/06/23 15:01:57 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1227,9 +1227,16 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
              NewDocEntry->GetElement() == 0x0010 )
          {
              if (NewDocEntry->GetLength()==0xffffffff)
+             {
                 // Broken US.3405.1.dcm
                 Parse7FE0(); // to skip the pixels 
                              // (multipart JPEG/RLE are trouble makers)
+             }
+             else
+             {
+                SkipToNextDocEntry(NewDocEntry);
+                l = NewDocEntry->GetFullLength(); 
+             }
          }
          else
          {
