@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 19:02:13 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/18 08:01:41 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,7 +127,6 @@ namespace gdcm
  */
 
  /**
- * \ingroup File
  * \brief   routine for JPEG decompression 
  * @param fp pointer to an already open file descriptor 
  *                      8 significant bits per pixel

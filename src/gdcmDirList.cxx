@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 23:51:40 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/18 08:01:41 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,6 @@ namespace gdcm
 {
 // Constructor / Destructor
 /**
- * \ingroup DirList
  * \brief Constructor  
  * @param  dirName root directory name
  * @param  recursive whether we want to explore recursively or not 
@@ -46,7 +45,6 @@ DirList::DirList(std::string const &dirName, bool recursive)
 }
 
 /**
- * \ingroup DirList
  * \brief  Destructor
  */
 DirList::~DirList()
@@ -57,8 +55,8 @@ DirList::~DirList()
 // Public
 
 /**
- * \ingroup DirList
  * \brief   Print method
+ * @param os ostream to write to 
  */
 void DirList::Print(std::ostream &os)
 {
@@ -119,7 +117,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
 
    // According to POSIX, the dirent structure contains a field char d_name[]
    // of  unspecified  size,  with  at most NAME_MAX characters preceding the
-   // terminating null character.  Use of other fields will harm  the  porta-
+   // terminating null character.  Use of other fields will harm the  porta-
    // bility  of  your  programs.
 
    struct stat buf;

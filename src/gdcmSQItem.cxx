@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:07:40 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/01/18 08:01:42 $
+  Version:   $Revision: 1.53 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,6 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup SQItem
  * \brief   Constructor from a given SQItem
  */
 SQItem::SQItem(int depthLevel ) 
@@ -95,7 +94,6 @@ void SQItem::Print(std::ostream &os, std::string const &)
 }
 
 /*
- * \ingroup SQItem
  * \brief   canonical Writer
  */
 void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
@@ -276,7 +274,7 @@ void SQItem::Initialize()
 }
                                                                                 
 /**
- * \brief   Get the next entry whil visiting the chained list
+ * \brief   Get the next entry while visiting the chained list
  * \return  The next DocEntry if found, otherwhise NULL
  */
 DocEntry *SQItem::GetNextEntry()

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 11:37:14 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/18 08:01:41 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,39 +39,33 @@ const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
 const std::string GDCM_UNREAD    = "gdcm::UnRead";
 
 /**
- * \ingroup Globals
  * \brief Pointer to a container, holding _all_ the Dicom Dictionaries.
  */
 DictSet         *Global::Dicts  = (DictSet *)0;
 
 /**
- * \ingroup Globals
  * \brief   Pointer to a hash table containing the 'Value Representations'.
  */
 VR              *Global::ValRes     = (VR *)0;
 
 /**
- * \ingroup Globals
  * \brief   Pointer to a hash table containing the Transfer Syntax codes
  *          and their english description 
  */
 TS              *Global::TranSyn     = (TS *)0;
 
 /**
- * \ingroup Globals
  * \brief   Pointer to the hash table containing the Dicom Elements
  *          necessary to describe each part of a DICOMDIR 
  */
 DicomDirElement *Global::ddElem = (DicomDirElement *)0;
 
 /**
- * \ingroup Globals
  * \brief   Global container
  */
 Global Glob;
 
 /**
- * \ingroup Global
  * \brief   constructor : populates the various H Tables
  */
 Global::Global()
@@ -88,7 +82,6 @@ Global::Global()
 }
 
 /**
- * \ingroup Global
  * \brief   canonical destructor 
  */
 Global::~Global()
@@ -99,7 +92,6 @@ Global::~Global()
    delete ddElem;
 }
 /**
- * \ingroup Global
  * \brief   returns a pointer to the 'Value Representation Table' 
  */
 VR *Global::GetVR()
@@ -107,7 +99,6 @@ VR *Global::GetVR()
    return ValRes;
 }
 /**
- * \ingroup Global
  * \brief   returns a pointer to the 'Transfer Syntax Table' 
  */
 TS *Global::GetTS()
@@ -115,7 +106,6 @@ TS *Global::GetTS()
    return TranSyn;
 }
 /**
- * \ingroup Global
  * \brief   returns a pointer to Dictionaries Table 
  */
 DictSet *Global::GetDicts()
@@ -123,7 +113,6 @@ DictSet *Global::GetDicts()
    return Dicts;
 }
 /**
- * \ingroup Global
  * \brief   returns a pointer to the DicomDir related elements Table 
  */
 DicomDirElement *Global::GetDicomDirElements()

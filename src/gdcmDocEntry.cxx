@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:41 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/01/18 08:01:41 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,6 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup DocEntry
  * \brief   Constructor from a given DictEntry
  * @param   in Pointer to existing dictionary entry
  */
@@ -54,7 +53,6 @@ DocEntry::DocEntry(DictEntry *in)
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup DocEntry
  * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
  * @param   os ostream we want to print in
  */
@@ -116,7 +114,6 @@ void DocEntry::Print(std::ostream &os, std::string const & )
 }
 
 /**
- * \ingroup DocEntry
  * \brief   Writes the common part of any ValEntry, BinEntry, SeqEntry
  * @param fp already open file pointer
  * @param filetype type of the file to be written
@@ -216,7 +213,6 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
 // Public
 
 /**
- * \ingroup DocEntry
  * \brief   Gets the full length of the elementary DocEntry (not only value
  *          length) depending on the VR.
  */
@@ -242,8 +238,8 @@ uint32_t DocEntry::GetFullLength()
 }
 
 /**
- * \ingroup DocEntry
  * \brief   Copies all the attributes from an other DocEntry 
+ * @param e entry to copy from
  */
 void DocEntry::Copy (DocEntry *e)
 {
@@ -251,11 +247,9 @@ void DocEntry::Copy (DocEntry *e)
    ReadLength = e->ReadLength;
    ImplicitVR = e->ImplicitVR;
    Offset     = e->Offset;
-   // TODO : remove DocEntry SQDepth
 }
 
 /**
- * \ingroup DocEntry
  * \brief   tells us if entry is the last one of a 'no length' SequenceItem 
  *          (fffe,e00d) 
  */
@@ -264,7 +258,6 @@ bool DocEntry::IsItemDelimitor()
    return (GetGroup() == 0xfffe && GetElement() == 0xe00d);
 }
 /**
- * \ingroup DocEntry
  * \brief   tells us if entry is the last one of a 'no length' Sequence 
  *          (fffe,e0dd) 
  */

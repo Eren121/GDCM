@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 23:16:47 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/01/18 08:01:42 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,7 +110,6 @@ TS::~TS()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup VR
  * \brief   Print all 
  * @param   os The output stream to be written to.
  */

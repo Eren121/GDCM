@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 16:52:21 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2005/01/18 08:01:41 $
+  Version:   $Revision: 1.89 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,13 +48,11 @@ public:
    FileType GetFileType();
 
    std::string GetTransferSyntax();
-
-   bool IsDicomV3();
-
+ 
    RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
    JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
 
-// Dictionnaries
+// Dictionaries
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
 
@@ -126,6 +124,8 @@ public:
 
    /// Return the Transfer Syntax as a string
    std::string GetTransferSyntaxName();
+
+   bool IsDicomV3();
 
 protected:
 // Methods

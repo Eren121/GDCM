@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 17:31:01 $
-  Version:   $Revision: 1.194 $
+  Date:      $Date: 2005/01/18 08:01:41 $
+  Version:   $Revision: 1.195 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2977,10 +2977,7 @@ int Document::ComputeGroup0002Length( FileType filetype )
    bool found0002 = false;   
   
    // for each zero-level Tag in the DCM Header
-   DocEntry *entry;
-
-   InitTraversal();
-   entry = GetNextEntry();
+   DocEntry *entry = GetFirstEntry();
    while(entry)
    {
       gr = entry->GetGroup();

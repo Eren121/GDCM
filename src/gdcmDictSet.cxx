@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:50:58 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/01/18 08:01:40 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ DictSet::DictSet()
  */
 DictSet::~DictSet() 
 {
-   // Remove dictionnaries
+   // Remove dictionaries
    for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) 
    {
       Dict *entryToDelete = tag->second;
@@ -195,10 +195,10 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
 
 /**
  * \brief   Obtain from the GDCM_DICT_PATH environnement variable the
- *          path to directory containing the dictionnaries. When
+ *          path to directory containing the dictionaries. When
  *          the environnement variable is absent the path is defaulted
  *          to "../Dicts/".
- * @return  path to directory containing the dictionnaries
+ * @return  path to directory containing the dictionaries
  */
 std::string DictSet::BuildDictPath() 
 {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 23:11:25 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2005/01/18 08:01:42 $
+  Version:   $Revision: 1.110 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,6 @@
 namespace gdcm 
 {
 /**
- * \ingroup Globals
  * \brief Provide a better 'c++' approach for sprintf
  * For example c code is:
  * sprintf(trash, "%04x|%04x", group , elem);
@@ -105,7 +104,6 @@ std::string Util::Format(const char *format, ...)
 
 
 /**
- * \ingroup Globals
  * \brief Because not available in C++ (?)
  */
 void Util::Tokenize (const std::string &str,
@@ -123,7 +121,6 @@ void Util::Tokenize (const std::string &str,
 }
 
 /**
- * \ingroup Globals
  * \brief Because not available in C++ (?)
  *        Counts the number of occurences of a substring within a string
  */
@@ -149,7 +146,6 @@ int Util::CountSubstring (const std::string &str,
 }
 
 /**
- * \ingroup Globals
  * \brief  Weed out a string from the non-printable characters (in order
  *         to avoid corrupting the terminal of invocation when printing)
  * @param s string to remove non printable characters from
@@ -181,7 +177,6 @@ std::string Util::CreateCleanString(std::string const &s)
 }
 
 /**
- * \ingroup Globals
  * \brief   Add a SEPARATOR to the end of the name is necessary
  * @param   pathname file/directory name to normalize 
  */
@@ -201,7 +196,6 @@ std::string Util::NormalizePath(std::string const &pathname)
 }
 
 /**
- * \ingroup Globals
  * \brief   Get the (directory) path from a full path file name
  * @param   fullName file/directory name to extract Path from
  */
@@ -223,7 +217,6 @@ std::string Util::GetPath(std::string const &fullName)
 }
 
 /**
- * \ingroup Util
  * \brief   Get the (last) name of a full path file name
  * @param   fullName file/directory name to extract end name from
  */
@@ -245,7 +238,6 @@ std::string Util::GetName(std::string const &fullName)
 } 
 
 /**
- * \ingroup Util
  * \brief   Get the current date of the system in a dicom string
  */
 std::string Util::GetCurrentDate()
@@ -258,7 +250,6 @@ std::string Util::GetCurrentDate()
 }
 
 /**
- * \ingroup Util
  * \brief   Get the current time of the system in a dicom string
  */
 std::string Util::GetCurrentTime()
@@ -286,7 +277,6 @@ std::string Util::DicomString(const char *s, size_t l)
 }
 
 /**
- * \ingroup Util
  * \brief Create a /DICOM/ string:
  * It should a of even lenght (no odd length ever)
  * It can contain as many (if you are reading this from your
@@ -310,7 +300,6 @@ std::string Util::DicomString(const char *s)
 }
 
 /**
- * \ingroup Util
  * \brief Safely compare two Dicom String:
  *        - Both string should be of even lenght
  *        - We allow padding of even lenght string by either a null 
@@ -331,7 +320,6 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
 
 
 /**
- * \ingroup Util
  * \brief   tells us if the processor we are working with is BigEndian or not
  */
 bool Util::IsCurrentProcessorBigEndian()
@@ -639,6 +627,9 @@ int GetMacAddrSys ( unsigned char *addr )
 #endif //__sun
 }
 
+/**
+ * \brief Gets the M.A.C. adress of the machine writting the DICOM image
+ */
 std::string Util::GetMACAddress()
 {
    // This code is the result of a long internet search to find something
@@ -668,7 +659,6 @@ std::string Util::GetMACAddress()
 }
 
 /**
- * \ingroup Util
  * \brief   Return the IP adress of the machine writting the DICOM image
  */
 std::string Util::GetIPAddress()
@@ -730,7 +720,6 @@ std::string Util::GetIPAddress()
 }
 
 /**
- * \ingroup Util
  * \brief Creates a new UID. As stipulate in the DICOM ref
  *        each time a DICOM image is create it should have 
  *        a unique identifier (URI)
@@ -756,12 +745,22 @@ std::string Util::CreateUniqueUID(const std::string &root)
    return radical;
 }
 
+/**
+ * \brief
+ * @param os ostream to write to
+ * @param val val
+ */ 
 template <class T>
 std::ostream &binary_write(std::ostream &os, const T &val)
 {
    return os.write(reinterpret_cast<const char*>(&val), sizeof val);
 }
 
+/**
+ * \brief binary_write binary_write
+ * @param os ostream to write to 
+ * @param val val
+ */ 
 std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
@@ -773,6 +772,11 @@ std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
+/**
+ * \brief binary_write binary_write
+ * @param os ostream to write to
+ * @param val val
+ */ 
 std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
@@ -785,11 +789,21 @@ std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
+/**
+ * \brief  binary_write binary_write
+ * @param os ostream to write to
+ * @param val val
+ */ 
 std::ostream &binary_write(std::ostream &os, const char *val)
 {
    return os.write(val, strlen(val));
 }
 
+/**
+ * \brief
+ * @param os ostream to write to
+ * @param val val
+ */ 
 std::ostream &binary_write(std::ostream &os, std::string const &val)
 {
    return os.write(val.c_str(), val.size());

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/01/18 08:01:41 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,10 +26,9 @@ namespace gdcm
 // Exception
 
 /**
- * \ingroup Exception
  * \brief constructor
- * @param f
- * @param msg  
+ * @param f f
+ * @param msg msg 
  */
 Exception::Exception(const std::string &f, const std::string &msg) throw()
 #ifdef __GNUC__
@@ -45,9 +44,8 @@ catch(...) {
 
 
 /**
- * \ingroup Exception
  * \brief fatal
- * @param from 
+ * @param from from
  */
 void Exception::fatal(const char *from) throw() {
    try
@@ -72,7 +70,6 @@ void Exception::fatal(const char *from) throw() {
 }
 
 /**
- * \ingroup Exception
  * \brief getName
  * @return string
  */
@@ -113,7 +110,6 @@ std::string Exception::getName() const throw()
 }
 
 /**
- * \ingroup Exception
  * \brief Exception
  */
  Exception::operator const char *() const throw() {
@@ -122,8 +118,8 @@ std::string Exception::getName() const throw()
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup Exception
  * \brief Exception::operator <<
+ * @param os ostream to write to
  */
  std::ostream& operator<<(std::ostream &os, const Exception &e) {
   try {  

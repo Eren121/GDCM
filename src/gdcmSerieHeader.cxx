@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 22:20:11 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/18 08:01:42 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -135,7 +135,6 @@ void SerieHeader::OrderGdcmFileList()
 //-----------------------------------------------------------------------------
 // Private
 /**
- * \ingroup Header
  * \brief sorts the images, according to their Patient Position
  *  We may order, considering :
  *   -# Image Number
@@ -257,7 +256,6 @@ bool SerieHeader::ImagePositionPatientOrdering()
 }
 
 /**
- * \ingroup Header
  * \brief sorts the images, according to their Image Number
  * @return false only if the header is bugged !
  */
@@ -320,7 +318,6 @@ bool SerieHeader::ImageNumberOrdering()
 
 
 /**
- * \ingroup Header
  * \brief sorts the images, according to their File Name
  * @return false only if the header is bugged !
  */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:13:21 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/18 08:01:42 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,6 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup SeqEntry
  * \brief   Constructor from a given SeqEntry
  */
 SeqEntry::SeqEntry( DictEntry *e ) 
