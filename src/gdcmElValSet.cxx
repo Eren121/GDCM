@@ -22,6 +22,11 @@ TagElValueHT & gdcmElValSet::GetTagHt(void) {
 	return tagHt;
 }
 
+
+ListTag & gdcmElValSet::GetListElem(void) {
+	return listElem;
+}
+
 /**
  * \ingroup gdcmElValSet
  * \brief   
@@ -31,6 +36,11 @@ TagElValueHT & gdcmElValSet::GetTagHt(void) {
 void gdcmElValSet::Add(gdcmElValue * newElValue) {
 	tagHt [newElValue->GetKey()]  = newElValue;
 	NameHt[newElValue->GetName()] = newElValue;
+	
+// WARNING : push_bash in listElem ONLY during ParseHeader
+// TODO : something to allow further Elements addition 
+// position to be taken care of !	
+	listElem.push_back(newElValue); 
 }
 
 /**
@@ -87,6 +97,45 @@ void gdcmElValSet::Print(std::ostream & os) {
       }              
       os << std::endl;
    }
+   
+   std::cout << "----------------------------------------------" << std::endl;
+   
+   //for (ListTag::iterator i = listElem.begin();
+   
+  char tag[9];
+   
+  for (std::list<gdcmElValue*>::iterator i = listElem.begin();  
+	   i != listElem.end();
+	   ++i){
+      sprintf(tag,"%04x|%04x",(*i)->GetGroup(),(*i)->GetElement());
+      g = (*i)->GetGroup();
+      e = (*i)->GetElement();
+      v = (*i)->GetValue();
+      o = (*i)->GetOffset();
+      d2 = _CreateCleanString(v);  // replace non printable characters by '.'
+      //os << std::hex <<g << "|" << e << std::dec << ": ";
+      os << tag << " : ";
+      os << " lgr : " << (*i)->GetLength();
+      os << ", Offset : " << o;
+      os << " x(" << std::hex << o << std::dec << ") ";
+      os << "\t[" << (*i)->GetVR()    << "]";
+      os << "\t[" << (*i)->GetName()  << "]";       
+      os << "\t[" << d2 << "]";
+      
+      // Display the UID value (instead of displaying the rough code)  
+      if (g == 0x0002) {  // Any more to be displayed ?
+         if ( (e == 0x0010) || (e == 0x0002) ) 	   
+            os << "  ==>\t[" << ts->GetValue(v) << "]";   
+      } else {
+         if (g == 0x0008) {
+            if ( (e == 0x0016) || (e == 0x1150)  ) 	   
+               os << "  ==>\t[" << ts->GetValue(v) << "]"; 
+         }
+      }              
+      os << std::endl;
+
+   }
+	   
 } 
 
 /**

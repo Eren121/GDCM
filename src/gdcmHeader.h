@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.41 2003/10/30 17:06:00 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.42 2003/11/10 09:21:40 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -157,6 +157,8 @@ public:
    void * GetPubElValVoidAreaByNumber(guint16 Group, guint16 Elem);   
    void * LoadElementVoidArea(guint16 Group, guint16 Element);
    
+   ListTag & GetListElem(void) { return PubElValSet.GetListElem(); };
+
    TagElValueHT & GetPubElVal(void) { return PubElValSet.GetTagHt(); };
    void   PrintPubElVal(std::ostream & os = std::cout);
    void   PrintPubDict (std::ostream & os = std::cout);

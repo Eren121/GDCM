@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.111 2003/11/07 14:34:50 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.112 2003/11/10 09:21:40 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -923,16 +923,16 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    // qui pourrait ne pas etre generalisable
    // Well, I'm expecting your code !!!
    
-   // to try to 'go inside' the SeQuences
+   // the test was commented out to 'go inside' the SeQuences
    // we don't any longer skip them !
     
   // if( vr == "SQ" )  
   //    SkipLoad = true;
 
-   // A sequence "contains" a set of Elements.  
+   // A SeQuence "contains" a set of Elements.  
    //          (fffe e000) tells us an Element is beginning
    //          (fffe e00d) tells us an Element just ended
-   //          (fffe e0dd) tells us the current SQuence just ended
+   //          (fffe e0dd) tells us the current SeQuence just ended
   
    if( group == 0xfffe )
       SkipLoad = true;
@@ -957,6 +957,7 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
       s << "gdcm::NotLoaded.";
       s << " Address:" << (long)ElVal->GetOffset();
       s << " Length:"  << ElVal->GetLength();
+      s << " x(" << std::hex << ElVal->GetLength() << ")";
       ElVal->SetValue(s.str());
       return;
    }
@@ -964,9 +965,9 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    // When an integer is expected, read and convert the following two or
    // four bytes properly i.e. as an integer as opposed to a string.
 	
-	// pour les elements de Value Multiplicity > 1
-	// on aura en fait une serie d'entiers	
-	// on devrait pouvoir faire + compact (?)
+	// Actually, elements with Value Multiplicity > 1
+	// contain a set of integers (not a single one)  	
+	// Any compacter code suggested (?)
 		
    if ( IsAnInteger(ElVal) ) {
       guint32 NewInt;
@@ -1133,7 +1134,6 @@ gdcmElValue* gdcmHeader::NewElValueByNumber(guint16 Group, guint16 Elem) {
  */
 int gdcmHeader::ReplaceOrCreateByNumber(std::string Value, 
                                         guint16 Group, guint16 Elem ) {
-
 	// TODO : FIXME JPRx
 	// curieux, non ?
 	// on (je) cree une Elvalue ne contenant pas de valeur
@@ -1445,7 +1445,7 @@ std::string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
  * \ingroup gdcmHeader
  * \brief   Searches within the public dictionary for element value of
  *          a given tag.
- * @param   TagName name of the researched element.
+ * @param   TagName name of the searched element.
  * @return  Corresponding element value when it exists, and the string
  *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1462,7 +1462,7 @@ std::string gdcmHeader::GetPubElValByName(std::string TagName) {
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   TagName name of the researched element.
+ * @param   TagName name of the searched element.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1477,8 +1477,8 @@ std::string gdcmHeader::GetPubElValRepByName(std::string TagName) {
  * \ingroup gdcmHeader
  * \brief   Searches within elements parsed with the SHADOW dictionary 
  *          for the element value of a given tag.
- * @param   group Group of the researched tag.
- * @param   element Element of the researched tag.
+ * @param   group Group of the searched tag.
+ * @param   element Element of the searched tag.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1495,8 +1495,8 @@ std::string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   group Group of the researched tag.
- * @param   element Element of the researched tag.
+ * @param   group Group of the searched tag.
+ * @param   element Element of the searched tag.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1511,7 +1511,7 @@ std::string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
  * \ingroup gdcmHeader
  * \brief   Searches within the elements parsed with the shadow dictionary
  *          for an element value of given tag.
- * @param   TagName name of the researched element.
+ * @param   TagName name of the searched element.
  * @return  Corresponding element value when it exists, and the string
  *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1528,7 +1528,7 @@ std::string gdcmHeader::GetShaElValByName(std::string TagName) {
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   TagName name of the researched element.
+ * @param   TagName name of the searched element.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1544,8 +1544,8 @@ std::string gdcmHeader::GetShaElValRepByName(std::string TagName) {
  * \brief   Searches within elements parsed with the public dictionary 
  *          and then within the elements parsed with the shadow dictionary
  *          for the element value of a given tag.
- * @param   group Group of the researched tag.
- * @param   element Element of the researched tag.
+ * @param   group Group of the searched tag.
+ * @param   element Element of the searched tag.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1566,8 +1566,8 @@ std::string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   group Group of the researched tag.
- * @param   element Element of the researched tag.
+ * @param   group Group of the searched tag.
+ * @param   element Element of the searched tag.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1583,7 +1583,7 @@ std::string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
  * \brief   Searches within elements parsed with the public dictionary 
  *          and then within the elements parsed with the shadow dictionary
  *          for the element value of a given tag.
- * @param   TagName name of the researched element.
+ * @param   TagName name of the searched element.
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1604,7 +1604,7 @@ std::string gdcmHeader::GetElValByName(std::string TagName) {
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   TagName name of the researched element.
+ * @param   TagName name of the searched element.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
@@ -1698,7 +1698,7 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
    
    rewind(fp);
    CheckSwap();
-   while ( (newElValue = ReadNextElement()) ) {   
+   while ( (newElValue = ReadNextElement()) ) { 
       SkipElementValue(newElValue);
       PubElValSet.Add(newElValue);
    }
@@ -1706,7 +1706,7 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
 
 /**
  * \ingroup gdcmHeader
- * \brief  This predicate, based on hopefully reasonnable heuristics,
+ * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current gdcmHeader was properly parsed
  *         and contains the mandatory information for being considered as
  *         a well formed and usable image.
@@ -1765,11 +1765,22 @@ gdcmElValue* gdcmHeader::NewManualElValToPubDict(std::string NewTagName,
  *          public tag based hash table.
  */
 void gdcmHeader::LoadElements(void) {
-   rewind(fp);   
-   TagElValueHT ht = PubElValSet.GetTagHt();
-   for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
-         LoadElementValue(tag->second);
-   }
+   rewind(fp);
+   
+   // We don't use any longer the HashTable, since a lot a stuff is missing
+   // we SeQuences were encountered 
+   //  
+   //TagElValueHT ht = PubElValSet.GetTagHt();
+   //for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
+   //     LoadElementValue(tag->second);
+   //}
+   
+     for (std::list<gdcmElValue*>::iterator i = GetListElem().begin();  
+	   i != GetListElem().end();
+	   ++i){
+        LoadElementValue(*i);   
+     }    
+    
    rewind(fp);
 
    // Load 'non string' values   
@@ -1829,8 +1840,7 @@ void gdcmHeader::PrintPubDict(std::ostream & os) {
   */ 
 int gdcmHeader::Write(FILE * fp, FileType type) {
 
-
-   // TODO : move the following lines (and a lot of others)
+   // TODO : move the following lines (and a lot of others, to be written)
    // to a future function CheckAndCorrectHeader
 
    if (type == ImplicitVR) {
