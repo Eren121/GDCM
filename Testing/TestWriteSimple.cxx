@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 15:46:15 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/12/10 21:32:11 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -284,7 +284,7 @@ int TestWriteSimple(int argc, char* argv[])
       return 1;
    }
 
-   int ret;
+   int ret=0;
    int i=0;
    while( Images[i].sizeX>0 && Images[i].sizeY>0 )
    {
