@@ -22,6 +22,7 @@ SET(TEST_SOURCES
 # add tests that require data
 IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}
+    TestFileAccessors.cxx
     TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     TestPrintAllDocument.cxx         # includes generated gdcmDataImages.h
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
