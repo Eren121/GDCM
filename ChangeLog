@@ -1,3 +1,6 @@
+2004-01-13 Benoit Regrain
+     * gdcmPython/testSuite.py : test the readable flag of file for tests
+
 2004-01-12 Benoit Regrain
      * src/*.h : add comments
      * src/gdcmDictSet.h : set the method BuildDictPath in public

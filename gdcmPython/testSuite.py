@@ -536,15 +536,17 @@ class gdcmTestCase(unittest.TestCase):
    def _BaseTest(self, FileSet):
       for entry in FileSet:
          fileName = os.path.join(GDCM_TEST_DATA_PATH, entry[0])
-         toRead = gdcmHeader(fileName)
-         valDict = toRead.GetPubElVal()
+         reader = gdcmHeader(fileName)
+         assert reader.IsReadable(),\
+                "File '%s' is not readable by gdcmHeader" % fileName
+
+         valDict = reader.GetPubElVal()
          for subEntry in entry[1]:
             element = subEntry[0]
             value   = subEntry[1]
             self.assertEqual(valDict[element], value,
                              ("Wrong %s for file %s (got %s, shoud be %s)"
                              % (element,fileName, valDict[element], value)) )
-
 
    def testBarre(self):
       gdcmTestCase._BaseTest(self, gdcmTestCase.BarreFiles)
