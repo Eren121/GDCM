@@ -1,4 +1,4 @@
-// gdcmUtil.h
+// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.9 2003/05/21 14:42:46 frog Exp $
 
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
@@ -8,7 +8,6 @@
 #include <string>
 #include "gdcmVR.h"
 #include "gdcmDictSet.h"
-using namespace std;
 
 class gdcmDebug {
 private:
@@ -35,9 +34,9 @@ public:
 
 istream & eatwhite(istream & is);
 
-void Tokenize (const string& str,
-               vector<string>& tokens,
-               const string& delimiters = " ");
+void Tokenize (const std::string& str,
+               std::vector<std::string>& tokens,
+               const std::string& delimiters = " ");
 
 extern gdcmDebug dbg;
 

@@ -16,19 +16,9 @@
 #define GDCM_EXCEPTION_H
 
 #include <string>
-#ifdef _MSC_VER
-using namespace std;  // string type lives in the std namespace on VC++
-#endif
-
 #include <iostream>
 #include <exception>
-using namespace std;
-
-#ifdef _MSC_VER
-#define GDCM_EXPORT __declspec( dllexport )
-#else
-#define GDCM_EXPORT
-#endif
+#include "gdcmCommon.h"
 
 /**
  * Any exception thrown in the gdcm library
@@ -36,9 +26,9 @@ using namespace std;
 class GDCM_EXPORT gdcmException : public exception {
  protected:
   /// error message
-  string from;
+  std::string from;
   /// error message
-  string error;
+  std::string error;
 
  public:
   /**
@@ -48,7 +38,7 @@ class GDCM_EXPORT gdcmException : public exception {
    * @param from name of the thrower
    * @param error error description string
    */
-  explicit gdcmException(const string &from, const string &error = "")
+  explicit gdcmException(const std::string &from, const std::string &error = "")
     throw();
   
 
@@ -59,7 +49,7 @@ class GDCM_EXPORT gdcmException : public exception {
   }
   
   /// returns error message
-  const string &getError(void) const throw() {
+  const std::string &getError(void) const throw() {
     return error;
   }
 
@@ -76,9 +66,9 @@ class GDCM_EXPORT gdcmException : public exception {
   static void fatal(const char *from) throw();
 
   /// try to discover this (dynamic) class name
-  virtual string getName() const throw();
+  virtual std::string getName() const throw();
 
-  friend ostream& operator<<(ostream &os, const gdcmException &e);
+  friend std::ostream& operator<<(std::ostream &os, const gdcmException &e);
   
 };
 
@@ -103,13 +93,11 @@ class GDCM_EXPORT gdcmFileError : public gdcmException {
    * @param from name of the thrower
    * @param error error description string
    */
-  explicit gdcmFileError(const string &from,
-			 const string &error = "File error")
+  explicit gdcmFileError(const std::string &from,
+			 const std::string &error = "File error")
     throw() : gdcmException(from, error) {
   }
 };
-
-
 
 
 /**
@@ -124,8 +112,8 @@ class GDCM_EXPORT gdcmFormatError : public gdcmException {
    * @param from name of the thrower
    * @param error error description string
    */
-  explicit gdcmFormatError(const string &from,
-			   const string &error = "Invalid file format error")
+  explicit gdcmFormatError(const std::string &from,
+			   const std::string &error = "Invalid file format error")
     throw() : gdcmException(from, error) {
   }
 };

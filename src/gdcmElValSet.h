@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.11 2003/04/16 08:03:27 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.12 2003/05/21 14:42:46 frog Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -10,15 +10,15 @@
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for a set of successfully parsed ElValues.
-typedef map<TagKey, gdcmElValue*> TagElValueHT;
-typedef map<string, gdcmElValue*> TagElValueNameHT;
+typedef std::map<TagKey, gdcmElValue*> TagElValueHT;
+typedef std::map<std::string, gdcmElValue*> TagElValueNameHT;
 
 class GDCM_EXPORT gdcmElValSet {
    TagElValueHT tagHt;             // Both accesses with a TagKey or with a
    TagElValueNameHT NameHt;        // the DictEntry.Name are required.
    
-   typedef string GroupKey;
-   typedef map<GroupKey, int> GroupHT; 
+   typedef std::string GroupKey;
+   typedef std::map<GroupKey, int> GroupHT; 
    
 public:	
    ~gdcmElValSet();
@@ -29,17 +29,17 @@ public:
    int  Write(FILE *fp, FileType type);
 
    gdcmElValue* GetElementByNumber(guint16 group, guint16 element);
-   gdcmElValue* GetElementByName  (string);
-   string   GetElValueByNumber(guint16 group, guint16 element);
-   string   GetElValueByName  (string);
+   gdcmElValue* GetElementByName  (std::string);
+   std::string  GetElValueByNumber(guint16 group, guint16 element);
+   std::string  GetElValueByName  (std::string);
 	
    TagElValueHT & GetTagHt(void);	
 	
-   int SetElValueByNumber(string content, guint16 group, guint16 element);
-   int SetElValueByName  (string content, string TagName);
+   int SetElValueByNumber(std::string content, guint16 group, guint16 element);
+   int SetElValueByName  (std::string content, std::string TagName);
 	
    int SetElValueLengthByNumber(guint32 l, guint16 group, guint16 element);
-   int SetElValueLengthByName  (guint32 l, string TagName);
+   int SetElValueLengthByName  (guint32 l, std::string TagName);
 
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 	

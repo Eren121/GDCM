@@ -17,13 +17,13 @@ private:
 	void* PixelData;
 	size_t lgrTotale;
 	int Parsed;          // weather allready parsed
-	string OrigFileName; // To avoid file overwrite
+   std::string OrigFileName; // To avoid file overwrite
    void SwapZone(void* im, int swap, int lgr, int nb);
    bool ReadPixelData(void * destination);
 protected:
-   int WriteBase(string FileName, FileType type);
+   int WriteBase(std::string FileName, FileType type);
 public:
-	gdcmFile(string & filename);
+	gdcmFile(std::string & filename);
 	gdcmFile(const char * filename);
 	
 	// For promotion (performs a deepcopy of pointed header object)
@@ -31,9 +31,9 @@ public:
 	// TODO Swig ~gdcmFile();
 
 	// On writing purposes. When instance was created through
-	// gdcmFile(string filename) then the filename argument MUST be different
-	// from the constructor's one (no overwriting allowed).
-	// TODO Swig int SetFileName(string filename);
+	// gdcmFile(std::string filename) then the filename argument MUST be
+   // different from the constructor's one (no overwriting allowed).
+	// TODO Swig int SetFileName(std::string filename);
 
    void   SetPixelDataSizeFromHeader(void);
 	size_t GetImageDataSize();
@@ -59,11 +59,11 @@ public:
 	// Aucun test n'est fait sur l'"Endiannerie" du processeur.
 	// Ca sera à l'utilisateur d'appeler son Reader correctement
 		
-	int WriteRawData 	(string nomFichier);
-	int WriteDcmImplVR(string nomFichier);
+	int WriteRawData 	(std::string nomFichier);
+	int WriteDcmImplVR(std::string nomFichier);
 	int WriteDcmImplVR(const char * nomFichier);
-	int WriteDcmExplVR(string nomFichier);
-	int WriteAcr     	(string nomFichier);
+	int WriteDcmExplVR(std::string nomFichier);
+	int WriteAcr     	(std::string nomFichier);
 };
 
 #endif

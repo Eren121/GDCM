@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.65 2003/05/12 14:32:43 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.66 2003/05/21 14:42:46 frog Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -12,6 +12,7 @@
 #include <sstream>
 #include "gdcmUtil.h"
 #include "gdcmHeader.h"
+using namespace std;
 
 // Refer to gdcmHeader::CheckSwap()
 #define HEADER_LENGTH_TO_READ       256

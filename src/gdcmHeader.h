@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.23 2003/05/12 14:32:43 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.24 2003/05/21 14:42:46 frog Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -11,9 +11,9 @@
 #include "gdcmElValue.h"
 #include "gdcmElValSet.h"
 
-typedef string VRKey;
-typedef string VRAtr;
-typedef map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
+typedef std::string VRKey;
+typedef std::string VRAtr;
+typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
 /// The purpose of an instance of gdcmHeader is to act as a container of
 /// all the DICOM elements and their corresponding values (and
@@ -51,7 +51,7 @@ private:
    /// ELement VALueS parsed with the SHAdow dictionary.
    gdcmElValSet ShaElValSet;
    /// Refering underlying filename.
-   string filename; 
+   std::string filename; 
    
    // FIXME sw should be an enum e.g.
    //enum EndianType {
@@ -76,16 +76,17 @@ private:
    void CheckSwap(void);
    void SwitchSwapToBigEndian(void);
    // CLEAN ME: NewManualElValToPubDict is NOT called any more.
-   gdcmElValue*  NewManualElValToPubDict(string NewTagName, string VR);
+   gdcmElValue*  NewManualElValToPubDict(std::string NewTagName,
+                                         std::string VR);
    void SetMaxSizeLoadElementValue(long);
 
    gdcmDictEntry * GetDictEntryByNumber(guint16, guint16);
-   gdcmDictEntry * GetDictEntryByName(string name);
+   gdcmDictEntry * GetDictEntryByName(std::string name);
 
    // ElValue related utilities
    gdcmElValue * ReadNextElement(void);
    gdcmElValue * NewElValueByNumber(guint16 group, guint16 element);
-   gdcmElValue * NewElValueByName(string name);
+   gdcmElValue * NewElValueByName(std::string name);
 
    void FindLength(gdcmElValue *);
    void FindVR(gdcmElValue *);
@@ -130,43 +131,43 @@ public:
    size_t GetPixelOffset(void);
    int    GetSwapCode(void) { return sw; }
 
-   // TODO Swig int SetPubDict(string filename);
+   // TODO Swig int SetPubDict(std::string filename);
    // When some proprietary shadow groups are disclosed, we can set up
    // an additional specific dictionary to access extra information.
-   // TODO Swig int SetShaDict(string filename);
+   // TODO Swig int SetShaDict(std::string filename);
 
-   string GetPubElValByName(string TagName);
-   string GetPubElValByNumber(guint16 group, guint16 element);
-   string GetPubElValRepByName(string TagName);
-   string GetPubElValRepByNumber(guint16 group, guint16 element);
+   std::string GetPubElValByName(std::string TagName);
+   std::string GetPubElValByNumber(guint16 group, guint16 element);
+   std::string GetPubElValRepByName(std::string TagName);
+   std::string GetPubElValRepByNumber(guint16 group, guint16 element);
 
    TagElValueHT & GetPubElVal(void) { return PubElValSet.GetTagHt(); };
    void   PrintPubElVal(ostream & os = cout);
    void   PrintPubDict (ostream & os = cout);
      
-   // TODO Swig string* GetShaTagNames(); 
-   string GetShaElValByName(string TagName);
-   string GetShaElValByNumber(guint16 group, guint16 element);
-   string GetShaElValRepByName(string TagName);
-   string GetShaElValRepByNumber(guint16 group, guint16 element);
+   // TODO Swig std::string* GetShaTagNames(); 
+   std::string GetShaElValByName(std::string TagName);
+   std::string GetShaElValByNumber(guint16 group, guint16 element);
+   std::string GetShaElValRepByName(std::string TagName);
+   std::string GetShaElValRepByNumber(guint16 group, guint16 element);
 
-   string GetElValByName(string TagName);
-   string GetElValByNumber(guint16 group, guint16 element);
-   string GetElValRepByName(string TagName);
-   string GetElValRepByNumber(guint16 group, guint16 element);
+   std::string GetElValByName(std::string TagName);
+   std::string GetElValByNumber(guint16 group, guint16 element);
+   std::string GetElValRepByName(std::string TagName);
+   std::string GetElValRepByNumber(guint16 group, guint16 element);
 
-   int SetPubElValByName(string content, string TagName);
-   int SetPubElValByNumber(string content, guint16 group, guint16 element);
-   int SetShaElValByName(string content, string ShadowTagName);
-   int SetShaElValByNumber(string content, guint16 group, guint16 element);
+   int SetPubElValByName(std::string content, std::string TagName);
+   int SetPubElValByNumber(std::string content, guint16 group, guint16 element);
+   int SetShaElValByName(std::string content, std::string ShadowTagName);
+   int SetShaElValByNumber(std::string content, guint16 group, guint16 element);
    
    int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   
-   int ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Elem);                                
+   int ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem);                                
    int GetXSize(void);  
    int GetYSize(void);
    int GetZSize(void);       
    int GetPixelSize(void);       
-   string GetPixelType(void);  
+   std::string GetPixelType(void);  
    int Write(FILE *, FileType);
    
 };

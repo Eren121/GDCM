@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.4 2003/04/09 14:04:53 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.5 2003/05/21 14:42:46 frog Exp $
 
 #ifndef GDCMELVALUE_H
 #define GDCMELVALUE_H
@@ -24,7 +24,7 @@ private:
    //friend gdcmElValue * gdcmHeader::ReadNextElement(void);
    friend class gdcmHeader;
 public:
-	string  value;
+   std::string  value;
 	size_t Offset;     // Offset from the begining of file for direct user access
 	
 	gdcmElValue(gdcmDictEntry*);
@@ -34,17 +34,17 @@ public:
 	bool  IsImplicitVr(void) { return ImplicitVr; };
 	
 	gdcmDictEntry * GetDictEntry(void) { return entry;    };
-	guint16 GetGroup(void)   { return entry->GetGroup();  };
-	guint16 GetElement(void) { return entry->GetElement();};
-	string  GetKey(void)     { return entry->GetKey();    };
-	string  GetName(void)    { return entry->GetName();   };
-	string  GetVR(void)      { return entry->GetVR();     };
-	void    SetVR(string v)  { entry->SetVR(v);           }; 
-	void SetLength(guint32 l){ LgrElem = l;               };
-	guint32 GetLength(void)  { return LgrElem;            };
+	guint16      GetGroup(void)   { return entry->GetGroup();  };
+	guint16      GetElement(void) { return entry->GetElement();};
+   std::string  GetKey(void)     { return entry->GetKey();    };
+   std::string  GetName(void)    { return entry->GetName();   };
+   std::string  GetVR(void)      { return entry->GetVR();     };
+	void         SetVR(std::string v)  { entry->SetVR(v);      }; 
+	void         SetLength(guint32 l){ LgrElem = l;            };
+	guint32      GetLength(void)  { return LgrElem;            };
 	
-	void SetValue(string val){ value = val; };
-	string  GetValue(void)   { return value;};
+	void         SetValue(std::string val){ value = val; };
+   std::string  GetValue(void)    { return value;};
 
 	size_t  GetOffset(void)  { return Offset;};
 };

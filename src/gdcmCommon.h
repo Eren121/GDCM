@@ -26,12 +26,9 @@ typedef  int   		gint32;
 #endif
 
 #include <string>
-#ifdef _MSC_VER
-using namespace std;  // string type lives in the std namespace on VC++
-#endif
 
-typedef string TagKey;
-typedef string TagName;
+typedef std::string TagKey;
+typedef std::string TagName;
 
 enum FileType {
       Unknown = 0,

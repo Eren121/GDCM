@@ -1,4 +1,4 @@
-// gdcmUtil.cxx
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.10 2003/05/21 14:42:46 frog Exp $
 
 #include <ctype.h>   // For isspace
 #include "gdcmUtil.h"

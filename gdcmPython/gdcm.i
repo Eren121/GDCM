@@ -8,6 +8,7 @@
 #include "gdcmElValSet.h"
 #include "gdcmHeader.h"
 #include "gdcmFile.h"
+using namespace std;
 
 // Utility functions on strings for removing leading and trailing spaces
 void EatLeadingAndTrailingSpaces(string & s) {

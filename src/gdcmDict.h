@@ -7,8 +7,8 @@
 #include "gdcmCommon.h"
 #include "gdcmDictEntry.h"
 
-typedef map<TagKey,  gdcmDictEntry*> TagKeyHT;
-typedef map<TagName, gdcmDictEntry*> TagNameHT;
+typedef std::map<TagKey,  gdcmDictEntry*> TagKeyHT;
+typedef std::map<TagName, gdcmDictEntry*> TagNameHT;
 
 /*
  * \defgroup gdcmDict
@@ -21,14 +21,14 @@ typedef map<TagName, gdcmDictEntry*> TagNameHT;
  * \see gdcmDictSet
  */
 class GDCM_EXPORT gdcmDict {
-	string name;
-	string filename;
+   std::string name;
+   std::string filename;
    /// Access through TagKey (see alternate access with NameHt)
 	TagKeyHT  KeyHt;
    /// Access through TagName (see alternate access with KeyHt)
 	TagNameHT NameHt;
 public:
-	gdcmDict(string & FileName);
+	gdcmDict(std::string & FileName);
 	~gdcmDict();
 	int AddNewEntry (gdcmDictEntry* NewEntry);
 	int ReplaceEntry(gdcmDictEntry* NewEntry);

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = src gdcmPython Test Dicts Doc vtk
+SUBDIRS = src vtk gdcmPython Test Dicts Doc
 
 
 EXTRA_DIST = \

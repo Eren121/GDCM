@@ -7,9 +7,9 @@
 #include <string>
 #include "gdcmCommon.h"
 
-typedef string VRKey;
-typedef string VRAtr;
-typedef map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
+typedef std::string VRKey;
+typedef std::string VRAtr;
+typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 
 /// Container for dicom Value Representation Hash Table
 /// \note   This is a singleton

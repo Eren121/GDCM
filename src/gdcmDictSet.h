@@ -7,8 +7,8 @@
 #include <list>
 #include "gdcmDict.h"
 
-typedef string DictKey;
-typedef map<DictKey, gdcmDict*> DictSetHT;
+typedef std::string DictKey;
+typedef std::map<DictKey, gdcmDict*> DictSetHT;
 
 /*
  * \defgroup gdcmDictSet
@@ -23,21 +23,22 @@ private:
    /// Hash table of all dictionaries contained in this gdcmDictSet
 	DictSetHT Dicts;
    /// Directory path to dictionaries
-	string DictPath;
+   std::string DictPath;
 	int AppendDict(gdcmDict* NewDict);
-	void LoadDictFromFile(string filename, DictKey);
-	string BuildDictPath(void);
+	void LoadDictFromFile(std::string filename, DictKey);
+   std::string BuildDictPath(void);
 public:
-	list<string> * GetPubDictTagNames(void);
-	map<string, list<string> >* GetPubDictTagNamesByCategory(void);
+   std::list<std::string> * GetPubDictTagNames(void);
+   std::map<std::string, std::list<std::string> >*
+       GetPubDictTagNamesByCategory(void);
 
-	// TODO Swig int LoadDictFromFile(string filename);
+	// TODO Swig int LoadDictFromFile(std::string filename);
    // QUESTION: the following function might not be thread safe !? Maybe
    //           we need some mutex here, to avoid concurent creation of
    //           the same dictionary !?!?!
-	// TODO Swig int LoadDictFromName(string filename);
-	// TODO Swig int LoadAllDictFromDirectory(string DirectoryName);
-	// TODO Swig string* GetAllDictNames();
+	// TODO Swig int LoadDictFromName(std::string filename);
+	// TODO Swig int LoadAllDictFromDirectory(std::string DirectoryName);
+	// TODO Swig std::string* GetAllDictNames();
 	gdcmDictSet(void);
 	~gdcmDictSet(void);
 	void Print(ostream&);
