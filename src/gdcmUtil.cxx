@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 20:04:08 $
-  Version:   $Revision: 1.138 $
+  Date:      $Date: 2005/02/11 20:48:49 $
+  Version:   $Revision: 1.139 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -351,7 +351,7 @@ unsigned int Util::GetCurrentProcessID()
  */
 bool Util::IsCurrentProcessorBigEndian()
 {
-#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
+#if defined(GDCM_WORDS_BIGENDIAN)
    return true;
 #else
    return false;
