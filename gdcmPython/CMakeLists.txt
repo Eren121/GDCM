@@ -31,6 +31,8 @@ SET(GDCM_PYTHON_SOURCES
 SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
 
 ADD_LIBRARY(pygdcm ${GDCM_PYTHON_SOURCES})
+#http://www.cmake.org/pipermail/cmake/2003-August/004190.html
+SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "")
 TARGET_LINK_LIBRARIES(pygdcm 
   ${PYTHON_LIBRARY}
   gdcm
@@ -91,3 +93,8 @@ GET_FILENAME_COMPONENT(SITEPACKAGE ${PYTHON_LIB_INSTALL}/../site-packages ABSOLU
 MESSAGE(STATUS ${SITEPACKAGE})
 #INSTALL_FILES(/include "\\.h$")
 #INSTALL_TARGETS(/lib/ gdcm)
+
+# When installing swig-generated python module one should pay attention
+# to library naming convention, see here for more detail:
+# http://www.swig.org/Doc1.3/Python.html#n6
+# even with the $swig -module mylib, there is always a trailing underscore added
