@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.23 2003/11/03 10:51:47 jpr Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.24 2003/11/04 14:02:03 jpr Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -239,7 +239,7 @@ int vtkGdcmReader::CheckFileCoherence()
          && (type != "32U") && (type != "32S") )
        {
        vtkErrorMacro("Bad File Type for file" << FileName->c_str());
-       vtkErrorMacro("                      " << type);
+       vtkErrorMacro("                      " << type.c_str());
        vtkErrorMacro("Removing this file from readed files "
                      << FileName->c_str());
        *FileName = "GDCM_UNREADABLE";
