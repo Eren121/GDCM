@@ -20,8 +20,8 @@
 #include "gdcmDict.h"
 #include "gdcmDictSet.h"
 
-#include "gdcmElValue.h"
-#include "gdcmElValSet.h"
+#include "gdcmHeaderEntry.h"
+#include "gdcmHedaerEntrySet.h"
 
 #include "gdcmHeader.h"
 #include "gdcmHeaderHelper.h"

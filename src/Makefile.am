@@ -41,8 +41,8 @@ libgdcminclude_HEADERS =	\
 	gdcmDictSet.h				\
 	gdcmDict.h					\
 	gdcmDictEntry.h			\
-	gdcmElValue.h				\
-	gdcmElValSet.h				\
+	gdcmHeaderEntry.h				\
+	gdcmHeaderEntrySet.h				\
 	gdcmVR.h						\
 	gdcmTS.h						\
 	gdcmFile.h
