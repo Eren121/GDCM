@@ -153,26 +153,16 @@ int gdcmElValSet::SetElValueLengthByNumber(guint32 l,
 	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
 	if ( ! tagHt.count(key))
 		return 0;
-	if (tagHt.count(key) > 1) {
-		dbg.Verbose(0, "gdcmElValSet::SetElValueLengthByNumber",
-		            "multiple entries for this key (FIXME) !");
-		return (0); 
-	}		                       
 	tagHt[key]->SetLength(l);	 
-	return(1);		
+	return 1 ;		
 }
 
 
 int gdcmElValSet::SetElValueLengthByName(guint32 l, string TagName) {
 	if ( ! NameHt.count(TagName))
 		return 0;
-	if (NameHt.count(TagName) > 1) {
-		dbg.Verbose(0, "gdcmElValSet::SetElValueByName",
-		            "multipe entries for this key (FIXME) !");
-		return 0;
-	}
 	NameHt.find(TagName)->second->SetLength(l);	 
-	return(1);		
+	return 1 ;		
 }
 
 // Sorry for the DEBUG's, but tomorow is gonna be hoter than today

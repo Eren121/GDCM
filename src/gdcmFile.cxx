@@ -33,11 +33,9 @@ gdcmFile::gdcmFile(string & filename)
 /**
  * \ingroup   gdcmFile
  * \brief     Renvoie la longueur A ALLOUER pour recevoir les pixels de l'image
- * \		ou DES images dans le cas d'un multiframe
- * \		ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels	
- * \		(dans le cas d'images compressees, elle n'a pas de sens).
- *
- * @param void	Rien en entree
+ *  		ou DES images dans le cas d'un multiframe
+ *  		ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels	
+ *  		(dans le cas d'images compressees, elle n'a pas de sens).
  *
  * @return	longueur a allouer 
  */
@@ -80,11 +78,7 @@ size_t gdcmFile::GetImageDataSize(void) {
  * \brief TODO
  * \warning WARNING
  *
- * @param 
- *
- * @return
  */
-
 void * gdcmFile::GetImageData (void) {
 	char * _Pixels;
 	// Longueur en Octets des Pixels a lire
@@ -107,12 +101,13 @@ void * gdcmFile::GetImageData (void) {
 /**
  * \ingroup   gdcmFile
  * \brief amene en mémoire dans une zone précisee par l'utilisateur
- * \les Pixels d'une image NON COMPRESSEE
- * \Aucun test n'est fait pour le moment sur le caractere compresse ou non de l'image
+ *        les Pixels d'une image NON COMPRESSEE
+ * \Warning Aucun test n'est fait pour le moment sur le caractere compresse ou non de l'image
  *
- * @param 
+ * @param destination
+ * @param MaxSize
  *
- * @return	
+ * @return TODO JPR	
  */
 
 int gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
@@ -283,14 +278,14 @@ return;
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
- * \brief TODO
- * \warning WARNING doit-etre etre publique ? 
+ * \brief TODO JPR
+ * \warning doit-etre etre publique ?  FIXME JPR
  *
- * @param 
+ * @param Data TODO JPR
+ * @param ExpectedSize TODO JPR
  *
- * @return	
+ * @return TODO JPR	
  */
-
 int gdcmFile::SetImageData(void * Data, size_t ExpectedSize) {
 	
 	SetImageDataSize(ExpectedSize);
@@ -305,13 +300,12 @@ int gdcmFile::SetImageData(void * Data, size_t ExpectedSize) {
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
- * \brief TODO
+ * \brief TODO JPR
  * \
- * \warning WARNING doit-etre etre publique ?
+ * \warning WARNING doit-etre etre publique ? FIXME JPR
  *
- * @param 
+ * @param ImageDataSize TODO JPR
  *
- * @return
  */
 
 void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
@@ -335,13 +329,13 @@ void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
 /**
  * \ingroup   gdcmFile
  * \brief Ecrit sur disque les pixels d'UNE image
- * \Aucun test n'est fait sur l'"Endiannerie" du processeur.
- * \Ca sera à l'utilisateur d'appeler son Reader correctement
- * \ (Equivalent a IdImaWriteRawFile) 
+ *        Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ *        Ca sera à l'utilisateur d'appeler son Reader correctement
+ *        (Equivalent a IdImaWriteRawFile) FIXME JPR
  *
- * @param 
+ * @param nomFichier TODO JPR
  *
- * @return	
+ * @return TODO JPR	
  */
 
 int gdcmFile::WriteRawData (string nomFichier) {
@@ -364,13 +358,13 @@ int gdcmFile::WriteRawData (string nomFichier) {
 /**
  * \ingroup   gdcmFile
  * \brief Ecrit sur disque UNE image Dicom
- * \Aucun test n'est fait sur l'"Endiannerie" du processeur.
- * \Ca fonctionnera correctement (?) sur processeur Intel
- * \ (Equivalent a IdDcmWrite) 
+ *        Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ *         Ca fonctionnera correctement (?) sur processeur Intel
+ *         (Equivalent a IdDcmWrite) FIXME JPR 
  *
- * @param 
+ * @param nomFichier TODO JPR
  *
- * @return	
+ * @return	TODO JPR
  */
 
 int gdcmFile::WriteDcm (string nomFichier) {
@@ -405,18 +399,18 @@ int gdcmFile::WriteDcm (string nomFichier) {
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
- * \brief Ecrit sur disque UNE image ACR-NEMA 
- * \ (a l'attention des logiciels cliniques 
- * \ qui ne prennent en entrée QUE des images ACR ...
- * \ si un header DICOM est fourni en entree,
- * \ les groupes < 0x0008 et les groupes impairs sont ignores)
- * \ Aucun test n'est fait sur l'"Endiannerie" du processeur.
- * \ Ca fonctionnera correctement (?) sur processeur Intel
- * \ (Equivalent a IdDcmWrite) 
+ * \brief  Ecrit sur disque UNE image ACR-NEMA 
+ *        (a l'attention des logiciels cliniques 
+ *        qui ne prennent en entrée QUE des images ACR ...
+ *        si un header DICOM est fourni en entree,
+ *        les groupes < 0x0008 et les groupes impairs sont ignores)
+ *        Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ *        Ca fonctionnera correctement (?) sur processeur Intel
+ *        (Equivalent a IdDcmWrite) 
  *
- * @param 
+ * @param nomFichier TODO JPR
  *
- * @return	
+ * @return TODO JPR	
  */
 
 int gdcmFile::WriteAcr (string nomFichier) {

@@ -15,7 +15,6 @@
 * As stated by the first lines of Test/ExceptionAndPython/README, it looks
   like we can move back to the exceptions and remove the errno stuff from
   src/gdcm* !
-* adapt python/gdcmPython/Makefile to automake/autoconf tools
 * Fix the bug in Test/bug1.cxx (see first comment line): Win32 only.
 * All (or at least many of) the methods of gdcmHeader whose only arguments
   are an ElValue* (e.g.  FindLength, FindVR, LoadElementValue...) can
@@ -43,3 +42,21 @@
   and load image /home/frog/cvs/DCMlib/Data/CT-MONO2-16-ankle.dcm
   will yield wrong coloring scheme as opposed to 
   affim filein=/home/frog/cvs/DCMlib/Data/CT-MONO2-16-ankle.dcm
+* gdcmFile should implement the following:
+   gdcmFile WriteDicom;
+   WriteDicom.SetFileName("MyDicomFile.dcm");
+   string * AllTags = gdcmHeader.GetDcmTagNames();
+   WriteDicom.SetDcmTag(AllTags[5], "253");
+   WriteDicom.SetDcmTag("Patient Name", "bozo");
+   WriteDicom.SetDcmTag("Patient Name", "bozo");
+   WriteDicom.SetImageData(Image);
+   WriteDicom.Write();
+
+   Anonymize(ostream& output) {
+      a = gdcmFile("toto1");
+      a.SetPubValueByName("Patient Name", "");
+      a.SetPubValueByName("Date", "");
+      a.SetPubValueByName("Study Date", "");
+      a.write(output);
+   }
+

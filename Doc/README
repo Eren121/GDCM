@@ -3,6 +3,11 @@ can be found in Dicom2003_Part5.pdf. A nice starting point for browsing
 the standard can be found at http://www.dclunie.com/dicom-status/status.html.
 
 Documentation can be build with doxygen:
-doxygen Doxyfile
-mozilla html/index.html
+* For the developpers version:
+  doxygen DoxyfileDeveloppers
+  mozilla html.developper/index.html
+
+* For the user version:
+  doxygen DoxyfileUsers
+  mozilla html.user/index.html
 
