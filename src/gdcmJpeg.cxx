@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 23:49:23 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/02/05 05:08:53 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -258,7 +258,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
   // for any jpeg error call my_error_exit
   jerr.pub.error_exit = my_error_exit;
   // for any output message call my_output_message
-  jerr.pub.output_message = my_output_message;
+  //jerr.pub.output_message = my_output_message;
   
   // Establish the setjmp return context for my_error_exit to use.
   if (setjmp(jerr.setjmp_buffer))
