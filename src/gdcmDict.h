@@ -1,8 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
-// A single DICOM dictionary i.e. a container for a collection of dictionary
-// entries. There should be a single public dictionary (THE dictionary of
-// the actual DICOM v3) but as many shadow dictionaries as imagers 
-// combined with all software versions...
+// gdcmDict.h
 
 #ifndef GDCMDICT_H
 #define GDCMDICT_H
@@ -14,8 +10,16 @@
 typedef map<TagKey,  gdcmDictEntry*> TagKeyHT;
 typedef map<TagName, gdcmDictEntry*> TagNameHT;
 
-/// Build a memory representation of a dicom dictionary by parsing
-/// an ascii file
+/*
+ * \defgroup gdcmDict
+ * \brief    gdcmDict acts a memory representation of a dicom dictionary i.e.
+ *           it is a container for a collection of dictionary entries. The
+ *           dictionary is loaded from in an ascii file.
+ *           There should be a single public dictionary (THE dictionary of
+ *           the actual DICOM v3) but as many shadow dictionaries as imagers 
+ *           combined with all software versions...
+ * \see gdcmDictSet
+ */
 class GDCM_EXPORT gdcmDict {
 	string name;
 	string filename;

@@ -1,4 +1,4 @@
-// gdcmHeader.cxx
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.61 2003/05/05 14:13:59 frog Exp $
 
 #include <stdio.h>
 #include <cerrno>

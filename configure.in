@@ -54,7 +54,7 @@ AM_CONDITIONAL(ENABLE_DOXYGEN, test x$enable_doxygen = xyes)
 
 dnl Checks for Python
 AC_ARG_ENABLE(python,
-        [  --enable-python          Enable Python language support (default=no).],,
+        [  --enable-python      Enable Python language support (default=no).],,
         [enable_python="no"])
 dnl AC_MSG_RESULT($enable_python)
 build_python=no
@@ -68,6 +68,12 @@ if test "yes" = "$enable_python"; then
 fi
 AM_CONDITIONAL(BUILD_PYTHON, test x$build_python = xyes)
 
+dnl Checks for vtk
+AC_ARG_ENABLE(vtk,
+        [  --enable-vtk      Enable vtk extensions support (default=no).],,
+        [enable_vtk="no"])
+AM_CONDITIONAL(BUILD_VTK, test x$enable_vtk = xyes)
+
 dnl produce Makefile.in files
 AC_OUTPUT([
 Makefile 
@@ -76,4 +82,5 @@ src/Makefile
 gdcmPython/Makefile
 Test/Makefile
 Dicts/Makefile
+vtk/Makefile
 Doc/Makefile])

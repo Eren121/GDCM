@@ -1,4 +1,4 @@
-// gdcmHeader.h
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.21 2003/05/05 14:13:59 frog Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H

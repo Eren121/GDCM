@@ -1,3 +1,10 @@
+2003-05-5  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
+      * vtk subdir added. Contains vtkGdcmReader.[cxx|h] a vtk class
+        inherinting from vtkImageReader and testvtkGdcmReader.cxx a small
+        demo of the usage of this class.
+        Compilation of this vtk part is only done when using the --enable-vtk
+        at configure (or autogen.sh) stage.
+
 2003-04-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * More memmory link related corrections and documentation fixes.
         Notes on valgrind:

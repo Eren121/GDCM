@@ -34,12 +34,12 @@
  *       -# <TT>./autogen.sh --prefix=/where/ever/you/want</TT>
  *           to configure the script to force installation in a specified
  *            place.
- *       -# <TT>./autogen.sh --configure-python</TT> to generate the
+ *       -# <TT>./autogen.sh --enable-python</TT> to generate the
  *              python wrappers.
  *        .
  *     - <TT>make</TT> (or <TT>make 'CFLAGS=-g</TT>...)
  *     - <TT>make instal</TT>
- *     - As usual, you can optionnaly:
+ *     - As usual, you can optionnally:
  *       -# <TT>make clean</TT>
  *       -# <TT>make 'CFLAGS='</TT> if you are in hurry and want to omit
  *          "-g -O2" default flags
