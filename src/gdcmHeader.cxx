@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:30:58 $
-  Version:   $Revision: 1.170 $
+  Date:      $Date: 2004/06/28 09:51:02 $
+  Version:   $Revision: 1.171 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,6 +85,74 @@ gdcmHeader::gdcmHeader(bool exception_on_error) :
  */
 gdcmHeader::~gdcmHeader () {
 }
+
+
+/**
+ * \brief Writes in a file all the Header Entries (Dicom Elements) 
+ * @param fp file pointer on an already open file
+ * @param filetype Type of the File to be written 
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR)
+ * \return Always true.
+ */
+void gdcmHeader::Write(FILE* fp,FileType filetype) {
+   
+   // Bits Allocated
+   if ( GetEntryByNumber(0x0028,0x0100) ==  "12") {
+      SetEntryByNumber("16", 0x0028,0x0100);
+   }
+
+  // correct Pixel group Length if necessary
+
+   //guint16 GrPixel  = 0x7fe0;
+   //guint16 NumPixel = 0x0010;
+
+   // TODO : create a gdcmHeader::Write method and move this part.
+   //        (only gdcmHeader knows GrPixel, NumPixel)
+
+   int i_lgPix = GetEntryLengthByNumber(GrPixel, NumPixel);
+   if (i_lgPix != -2) { // no (GrPixel, NumPixel) element
+      char * dumm = new char[20];
+      sprintf(dumm ,"%d", i_lgPix+12);
+      std::string s_lgPix = dumm;
+      delete dumm;
+      ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
+   }
+
+   // Drop Palette Color, if necessary
+   
+   // FIXME : Why is it always false ???
+
+   // std::cout << "entry 0x0028,0x0002 " << GetEntryByNumber(0x0028,0x0002).c_str() << std::endl;
+
+ /*  if ( GetEntryByNumber(0x0028,0x0002).c_str() == "3" ) */{
+    
+    // Drop 0028|1101, 0028|1102, 0028|1103
+    // Drop 0028|1201, 0028|1202, 0028|1203
+
+     gdcmDocEntry *e;
+     e=GetDocEntryByNumber(0x0028,0x01101);
+     if (e) 
+        RemoveEntry(e);
+     e=GetDocEntryByNumber(0x0028,0x1102);
+     if (e) 
+        RemoveEntry(e);
+     e=GetDocEntryByNumber(0x0028,0x1103);
+
+     if (e) 
+        RemoveEntry(e);
+     e=GetDocEntryByNumber(0x0028,0x01201);
+     if (e) 
+        RemoveEntry(e);
+     e=GetDocEntryByNumber(0x0028,0x1202);
+     if (e) 
+        RemoveEntry(e);
+     e=GetDocEntryByNumber(0x0028,0x1203);
+     if (e) 
+       RemoveEntry(e);
+   }
+   gdcmDocument::Write(fp,filetype);
+}
+// ----------- end move to gdcmHeader::Write -----------------
 
 //-----------------------------------------------------------------------------
 // Print

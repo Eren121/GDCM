@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:30:58 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2004/06/28 09:51:02 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -183,6 +183,8 @@ public:
    /// Read (used in gdcmFile)
    void SetImageDataSize(size_t expectedSize);
 
+   void gdcmHeader::Write(FILE* fp,FileType filetype);
+ 
 protected:
    bool AnonymizeHeader();
    void GetImageOrientationPatient( float* iop );

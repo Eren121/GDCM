@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:30:58 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/06/28 09:51:02 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -518,12 +518,6 @@ bool gdcmDocument::CloseFile(void) {
  * \return Always true.
  */
 void gdcmDocument::Write(FILE* fp,FileType filetype) {
-///
-/// ==============
-///      The stuff is rewritten using the SeQuence based 
-///       tree-like stucture (cf : Print )
-///      To be checked
-/// =============
 
    /// \todo move the following lines (and a lot of others, to be written)
    /// to a future function CheckAndCorrectHeader
@@ -541,7 +535,7 @@ void gdcmDocument::Write(FILE* fp,FileType filetype) {
       /// \todo Refer to standards on page 21, chapter 6.2
       ///       "Value representation": values with a VR of UI shall be
       ///       padded with a single trailing null
-      ///       Dans le cas suivant on doit pader manuellement avec un 0
+      ///       in the following case we have to padd manually with a 0
       
       SetEntryLengthByNumber(18, 0x0002, 0x0010);
    } 
@@ -558,72 +552,12 @@ void gdcmDocument::Write(FILE* fp,FileType filetype) {
       
       SetEntryLengthByNumber(20, 0x0002, 0x0010);
    }
-
-// TODO : move to gdcmHeader::Write
-// -----------------------------------------------------
-   // Bits Allocated
-   if ( GetEntryByNumber(0x0028,0x0100) ==  "12") {
-      SetEntryByNumber("16", 0x0028,0x0100);
-   }
-
-  // correct Pixel group Length if necessary
-
-   guint16 GrPixel  = 0x7fe0;
-   guint16 NumPixel = 0x0010;
-
-   // TODO : create a gdcmHeader::Write method and move this part.
-   //        (only gdcmHeader knows GrPixel, NumPixel)
-
-   int i_lgPix = GetEntryLengthByNumber(GrPixel, NumPixel);
-   if (i_lgPix != -2) { // no (GrPixel, NumPixel) element
-      char * dumm = new char[20];
-      sprintf(dumm ,"%d", i_lgPix+12);
-      std::string s_lgPix = dumm;
-      delete dumm;
-      ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
-   }
-
-   // Drop Palette Color, if necessary
-   
-   // FIXME : Why is it always false ???
-
-   // std::cout << "entry 0x0028,0x0002 " << GetEntryByNumber(0x0028,0x0002).c_str() << std::endl;
-
- /*  if ( GetEntryByNumber(0x0028,0x0002).c_str() == "3" ) */{
-    
-    // Drop 0028|1101, 0028|1102, 0028|1103
-    // Drop 0028|1201, 0028|1202, 0028|1203
-
-      gdcmDocEntry *e;
-      e=GetDocEntryByNumber(0x0028,0x01101);
-      if (e) 
-         RemoveEntry(e);
-      e=GetDocEntryByNumber(0x0028,0x1102);
-      if (e) 
-         RemoveEntry(e);
-      e=GetDocEntryByNumber(0x0028,0x1103);
-
-      if (e) 
-         RemoveEntry(e);
-      e=GetDocEntryByNumber(0x0028,0x01201);
-      if (e) 
-         RemoveEntry(e);
-      e=GetDocEntryByNumber(0x0028,0x1202);
-     if (e) 
-         RemoveEntry(e);
-      e=GetDocEntryByNumber(0x0028,0x1203);
-     if (e) 
-         RemoveEntry(e);
- } 
-
-// ----------- end move to gdcmHeader::Write -----------------
   
 /**
  * \todo rewrite later, if really usefull
- *               ('Group Length' element is optional in DICOM)
- *
- *       --> Warning : un-updated odd groups lengthes can causes pb
- *       -->           (xmedcon breaker)
+ *       - 'Group Length' element is optional in DICOM
+ *       - but un-updated odd groups lengthes can causes pb
+ *         (xmedcon breaker)
  *
  * if ( (filetype == ImplicitVR) || (filetype == ExplicitVR) )
  *    UpdateGroupLength(false,filetype);
