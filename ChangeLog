@@ -1,5 +1,6 @@
 2004-01-13 Benoit Regrain
      * src/*.[h|cxx] : coding style
+     * vtk/*.[h|cxx] : coding style
 
 2004-01-13 Benoit Regrain
      * gdcmPython/testSuite.py : test the readable flag of file for tests
