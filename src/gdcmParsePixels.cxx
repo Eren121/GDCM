@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmParsePixels.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,11 +19,14 @@
 #include "gdcmCommon.h"
 #include "gdcmFile.h"
 
+namespace gdcm 
+{
+
 #define str2num(str, typeNum) *((typeNum *)(str))
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmFile
+ * \ingroup File
  * \brief   Parse pixel data from disk and *prints* the result
  * \        For multi-fragment Jpeg/Rle files checking purpose *only*
  * \        Allows to 'see' if the file *does* conform
@@ -31,31 +34,31 @@
  * \        with Dicom Part 3, Annex A (PS 3.5-2003, page 58, page 85)
  *
  */
-bool gdcmFile::ParsePixelData(void) {
+bool File::ParsePixelData(void) {
 // DO NOT remove the printf s.
 // The ONLY purpose of this method is to PRINT the content
    FILE* fp;
 
-   if ( !(fp=Header->OpenFile()))
+   if ( !(fp=GetHeader()->OpenFile()))
       return false;
       
-    if ( fseek(fp, Header->GetPixelOffset(), SEEK_SET) == -1 ) {
-      Header->CloseFile();
+    if ( fseek(fp, GetHeader()->GetPixelOffset(), SEEK_SET) == -1 ) {
+      GetHeader()->CloseFile();
       return false;
    } 
    
-   if ( !Header->IsDicomV3()                             ||
-        Header->IsImplicitVRLittleEndianTransferSyntax() ||
-        Header->IsExplicitVRLittleEndianTransferSyntax() ||
-        Header->IsExplicitVRBigEndianTransferSyntax()    ||
-        Header->IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
+   if ( !GetHeader()->IsDicomV3()                             ||
+        GetHeader()->IsImplicitVRLittleEndianTransferSyntax() ||
+        GetHeader()->IsExplicitVRLittleEndianTransferSyntax() ||
+        GetHeader()->IsExplicitVRBigEndianTransferSyntax()    ||
+        GetHeader()->IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
         
-        printf ("gdcmFile::ParsePixelData : non JPEG/RLE File\n");
+        printf ("File::ParsePixelData : non JPEG/RLE File\n");
         return false;       
    }        
 
    int nb;
-   std::string str_nb=Header->GetEntryByNumber(0x0028,0x0100);
+   std::string str_nb=GetHeader()->GetEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
@@ -64,7 +67,7 @@ bool gdcmFile::ParsePixelData(void) {
    }
    //int nBytes= nb/8;   //FIXME
       
-   //int taille = Header->GetXSize() * Header->GetYSize() * Header->GetSamplesPerPixel(); 
+   //int taille = GetHeader()->GetXSize() * GetHeader()->GetYSize() * GetHeader()->GetSamplesPerPixel(); 
          
    printf ("Checking the Dicom-encapsulated Jpeg/RLE Pixels\n");
       
@@ -75,22 +78,22 @@ bool gdcmFile::ParsePixelData(void) {
 
   // -------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
 
-   if( !Header->IsRLELossLessTransferSyntax()) {
+   if( !GetHeader()->IsRLELossLessTransferSyntax()) {
 
       // JPEG Image
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
-      if(Header->GetSwapCode()) {
-         ItemTagGr=Header->SwapShort(ItemTagGr); 
-         ItemTagEl=Header->SwapShort(ItemTagEl);            
+      if(GetHeader()->GetSwapCode()) {
+         ItemTagGr=GetHeader()->SwapShort(ItemTagGr); 
+         ItemTagEl=GetHeader()->SwapShort(ItemTagEl);            
       }
       printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
                 (unsigned)ftellRes,ItemTagGr,ItemTagEl );
       ftellRes=ftell(fp);
       fread(&ln,4,1,fp); 
-      if(Header->GetSwapCode()) 
-         ln=Header->SwapLong(ln);    // Basic Offset Table Item Length
+      if(GetHeader()->GetSwapCode()) 
+         ln=GetHeader()->SwapLong(ln);    // Basic Offset Table Item Length
       printf("at %x : Basic Offset Table Item Length (\?\?) %d x(%08x)\n",
             (unsigned)ftellRes,ln,ln);
       if (ln != 0) {
@@ -107,9 +110,9 @@ bool gdcmFile::ParsePixelData(void) {
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(Header->GetSwapCode()) {
-         ItemTagGr=Header->SwapShort(ItemTagGr); 
-         ItemTagEl=Header->SwapShort(ItemTagEl);            
+      if(GetHeader()->GetSwapCode()) {
+         ItemTagGr=GetHeader()->SwapShort(ItemTagGr); 
+         ItemTagEl=GetHeader()->SwapShort(ItemTagEl);            
       }  
       printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
             (unsigned)ftellRes,ItemTagGr,ItemTagEl );
@@ -118,8 +121,8 @@ bool gdcmFile::ParsePixelData(void) {
       
          ftellRes=ftell(fp);
          fread(&ln,4,1,fp); 
-         if(Header->GetSwapCode()) 
-            ln=Header->SwapLong(ln);    // length
+         if(GetHeader()->GetSwapCode()) 
+            ln=GetHeader()->SwapLong(ln);    // length
          printf("      at %x : fragment length %d x(%08x)\n",
                 (unsigned)ftellRes, ln,ln);
 
@@ -134,9 +137,9 @@ bool gdcmFile::ParsePixelData(void) {
          ftellRes=ftell(fp);
          fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
          fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(Header->GetSwapCode()) {
-            ItemTagGr=Header->SwapShort(ItemTagGr); 
-            ItemTagEl=Header->SwapShort(ItemTagEl);            
+         if(GetHeader()->GetSwapCode()) {
+            ItemTagGr=GetHeader()->SwapShort(ItemTagGr); 
+            ItemTagEl=GetHeader()->SwapShort(ItemTagEl);            
          }
          printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
                (unsigned)ftellRes,ItemTagGr,ItemTagEl );
@@ -153,17 +156,17 @@ bool gdcmFile::ParsePixelData(void) {
          // Item Tag
       fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
-      if(Header->GetSwapCode()) {
-         ItemTagGr=Header->SwapShort(ItemTagGr); 
-         ItemTagEl=Header->SwapShort(ItemTagEl);            
+      if(GetHeader()->GetSwapCode()) {
+         ItemTagGr=GetHeader()->SwapShort(ItemTagGr); 
+         ItemTagEl=GetHeader()->SwapShort(ItemTagEl);            
       }
       printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
                 (unsigned)ftellRes,ItemTagGr,ItemTagEl );
          // Item Length
       ftellRes=ftell(fp);
       fread(&ln,4,1,fp); 
-      if(Header->GetSwapCode()) 
-         ln=Header->SwapLong(ln);    // Basic Offset Table Item Length
+      if(GetHeader()->GetSwapCode()) 
+         ln=GetHeader()->SwapLong(ln);    // Basic Offset Table Item Length
       printf("at %x : Basic Offset Table Item Length (\?\?) %d x(%08x)\n",
             (unsigned)ftellRes,ln,ln);
       if (ln != 0) {
@@ -180,9 +183,9 @@ bool gdcmFile::ParsePixelData(void) {
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(Header->GetSwapCode()) {
-         ItemTagGr=Header->SwapShort(ItemTagGr); 
-         ItemTagEl=Header->SwapShort(ItemTagEl);            
+      if(GetHeader()->GetSwapCode()) {
+         ItemTagGr=GetHeader()->SwapShort(ItemTagGr); 
+         ItemTagEl=GetHeader()->SwapShort(ItemTagEl);            
       }  
       printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
             (unsigned)ftellRes,ItemTagGr,ItemTagEl );
@@ -192,23 +195,23 @@ bool gdcmFile::ParsePixelData(void) {
       // Parse fragments of the current Fragment (Frame)    
          ftellRes=ftell(fp);
          fread(&fragmentLength,4,1,fp); 
-         if(Header->GetSwapCode()) 
-            fragmentLength=Header->SwapLong(fragmentLength);    // length
+         if(GetHeader()->GetSwapCode()) 
+            fragmentLength=GetHeader()->SwapLong(fragmentLength);    // length
          printf("      at %x : 'fragment' length %d x(%08x)\n",
                 (unsigned)ftellRes, (unsigned)fragmentLength,(unsigned)fragmentLength);
                        
           //------------------ scanning (not reading) fragment pixels
  
          fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments
-         if(Header->GetSwapCode()) 
-            nbRleSegments=Header->SwapLong(nbRleSegments);
+         if(GetHeader()->GetSwapCode()) 
+            nbRleSegments=GetHeader()->SwapLong(nbRleSegments);
             printf("   Nb of RLE Segments : %d\n",nbRleSegments);
  
          for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
             ftellRes=ftell(fp);
             fread(&RleSegmentOffsetTable[k],4,1,fp);
-            if(Header->GetSwapCode())
-               RleSegmentOffsetTable[k]=Header->SwapLong(RleSegmentOffsetTable[k]);
+            if(GetHeader()->GetSwapCode())
+               RleSegmentOffsetTable[k]=GetHeader()->SwapLong(RleSegmentOffsetTable[k]);
             printf("        at : %x Offset Segment %d : %d (%x)\n",
                     (unsigned)ftellRes,k,RleSegmentOffsetTable[k],
                     RleSegmentOffsetTable[k]);
@@ -238,9 +241,9 @@ bool gdcmFile::ParsePixelData(void) {
          ftellRes=ftell(fp);
          fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
          fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(Header->GetSwapCode()) {
-            ItemTagGr=Header->SwapShort(ItemTagGr); 
-            ItemTagEl=Header->SwapShort(ItemTagEl);            
+         if(GetHeader()->GetSwapCode()) {
+            ItemTagGr=GetHeader()->SwapShort(ItemTagGr); 
+            ItemTagEl=GetHeader()->SwapShort(ItemTagEl);            
          }
          printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
                (unsigned)ftellRes,ItemTagGr,ItemTagEl );
@@ -250,3 +253,5 @@ bool gdcmFile::ParsePixelData(void) {
 }
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm
+

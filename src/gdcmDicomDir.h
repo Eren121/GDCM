@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:21:55 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/10/12 04:35:44 $
+  Version:   $Revision: 1.34 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,26 +27,28 @@
 
 #include <list>
 #include <vector>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
-typedef std::list<gdcmDicomDirPatient*>   ListDicomDirPatient;
-typedef std::vector<gdcmDocument*>  VectDocument;
+typedef std::list<DicomDirPatient*>   ListDicomDirPatient;
+typedef std::vector<Document*>  VectDocument;
 
-typedef GDCM_EXPORT void(gdcmMethod)(void* = NULL);
+typedef GDCM_EXPORT void(Method)(void* = NULL);
 //-----------------------------------------------------------------------------
 
 /**
- * \ingroup gdcmDicomDir
- * \brief    gdcmDicomDir defines an object representing a DICOMDIR in memory.
+ * \ingroup DicomDir
+ * \brief    DicomDir defines an object representing a DICOMDIR in memory.
  *
  */
-class GDCM_EXPORT gdcmDicomDir: public gdcmDocument
+class GDCM_EXPORT DicomDir: public Document
 {
 public:
-   gdcmDicomDir( std::string const & fileName, bool parseDir = false );
-   gdcmDicomDir(); 
+   DicomDir( std::string const & fileName, bool parseDir = false );
+   DicomDir(); 
                    
-   ~gdcmDicomDir();
+   ~DicomDir();
 
    /// \brief   canonical Printer 
    /// \sa    SetPrintLevel
@@ -55,8 +57,8 @@ public:
    /// Informations contained in the parser
    virtual bool IsReadable();
 
-   /// Returns a pointer to the gdcmDicomDirMeta for this DICOMDIR. 
-   gdcmDicomDirMeta* GetDicomDirMeta() { return MetaElems; };
+   /// Returns a pointer to the DicomDirMeta for this DICOMDIR. 
+   DicomDirMeta* GetDicomDirMeta() { return MetaElems; };
 
    /// Returns the PATIENT chained List for this DICOMDIR.    
    ListDicomDirPatient &GetDicomDirPatients() { return Patients; };
@@ -64,12 +66,12 @@ public:
    /// Parsing
    void ParseDirectory();
    
-   void SetStartMethod(gdcmMethod*, void* = NULL, gdcmMethod* = NULL);
-   void SetStartMethodArgDelete(gdcmMethod*);
-   void SetProgressMethod(gdcmMethod* ,void* = NULL, gdcmMethod* = NULL);
-   void SetProgressMethodArgDelete(gdcmMethod*);
-   void SetEndMethod(gdcmMethod*, void* = NULL,gdcmMethod* = NULL);
-   void SetEndMethodArgDelete(gdcmMethod*);
+   void SetStartMethod(Method*, void* = NULL, Method* = NULL);
+   void SetStartMethodArgDelete(Method*);
+   void SetProgressMethod(Method* ,void* = NULL, Method* = NULL);
+   void SetProgressMethodArgDelete(Method*);
+   void SetEndMethod(Method*, void* = NULL,Method* = NULL);
+   void SetEndMethodArgDelete(Method*);
 
    /// GetProgress GetProgress
    float GetProgress()  { return Progress; };
@@ -81,13 +83,13 @@ public:
    bool  IsAborted() { return Abort; };
    
    /// Adding
-   gdcmDicomDirMeta*    NewMeta();
-   gdcmDicomDirPatient* NewPatient();
+   DicomDirMeta*    NewMeta();
+   DicomDirPatient* NewPatient();
 
    /// Write  
    bool WriteDicomDir(std::string const & fileName);
 
-   /// Types of the gdcmDicomDirObject within the gdcmDicomDir
+   /// Types of the DicomDirObject within the DicomDir
    typedef enum
    {
       GDCM_DICOMDIR_NONE,
@@ -96,7 +98,7 @@ public:
       GDCM_DICOMDIR_STUDY,
       GDCM_DICOMDIR_SERIE,
       GDCM_DICOMDIR_IMAGE
-   } gdcmDicomDirType;
+   } DicomDirType;
    
 protected:
    void CreateDicomDirChainedList(std::string const & path);
@@ -108,37 +110,37 @@ private:
    void Initialize();
    void CreateDicomDir();
    void AddDicomDirMeta();
-   void AddDicomDirPatientToEnd(gdcmSQItem* s);
-   void AddDicomDirStudyToEnd  (gdcmSQItem* s);
-   void AddDicomDirSerieToEnd  (gdcmSQItem* s);
-   void AddDicomDirImageToEnd  (gdcmSQItem* s);
+   void AddDicomDirPatientToEnd(SQItem* s);
+   void AddDicomDirStudyToEnd  (SQItem* s);
+   void AddDicomDirSerieToEnd  (SQItem* s);
+   void AddDicomDirImageToEnd  (SQItem* s);
 
    void SetElements(std::string &path, VectDocument &list);
-   void SetElement (std::string &path,gdcmDicomDirType type,
-                    gdcmDocument* header);
+   void SetElement (std::string &path,DicomDirType type,
+                    Document* header);
 
-   static bool HeaderLessThan(gdcmDocument* header1,gdcmDocument* header2);
+   static bool HeaderLessThan(Document* header1,Document* header2);
    
 // Variables
 
-   /// Pointer on *the* gdcmDicomDirObject 'DicomDirMeta Elements'
-   gdcmDicomDirMeta* MetaElems;
+   /// Pointer on *the* DicomDirObject 'DicomDirMeta Elements'
+   DicomDirMeta* MetaElems;
 
    /// Chained list of DicomDirPatient (to be exploited recursively) 
    ListDicomDirPatient Patients;
 
    /// pointer to the initialisation method for any progress bar   
-   gdcmMethod* StartMethod;
+   Method* StartMethod;
    /// pointer to the incrementation method for any progress bar
-   gdcmMethod* ProgressMethod;
+   Method* ProgressMethod;
    /// pointer to the termination method for any progress bar
-   gdcmMethod* EndMethod;
+   Method* EndMethod;
    /// pointer to the ??? method for any progress bar   
-   gdcmMethod* StartMethodArgDelete;
+   Method* StartMethodArgDelete;
    /// pointer to the ??? method for any progress bar
-   gdcmMethod* ProgressMethodArgDelete;
+   Method* ProgressMethodArgDelete;
    /// pointer to the ??? method for any progress bar
-   gdcmMethod* EndMethodArgDelete;
+   Method* EndMethodArgDelete;
    /// pointer to the ??? for any progress bar   
    void* StartArg;
    /// pointer to the ??? for any progress bar
@@ -150,6 +152,6 @@ private:
    /// value of the ??? for any progress bar   
    bool Abort;
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

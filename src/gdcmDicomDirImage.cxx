@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/10/12 04:35:44 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,60 +18,64 @@
 
 #include "gdcmDicomDirImage.h"
 #include "gdcmValEntry.h"
+
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 
 /**
- * \ingroup gdcmDicomDirImage
+ * \ingroup DicomDirImage
  * \brief  Constructor 
  * @param  s  SQ Item holding the elements
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmDocEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the DocEntries)
  */
-gdcmDicomDirImage::gdcmDicomDirImage(gdcmSQItem *s, TagDocEntryHT *ptagHT):
-   gdcmDicomDirObject(ptagHT)
+DicomDirImage::DicomDirImage(SQItem *s, TagDocEntryHT *ptagHT):
+   DicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
 }
 
 /**
- * \ingroup gdcmDicomDirImage
+ * \ingroup DicomDirImage
  * \brief  Constructor 
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmDocEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the DocEntries)
  */
-gdcmDicomDirImage::gdcmDicomDirImage(TagDocEntryHT *ptagHT):
-   gdcmDicomDirObject(ptagHT)
+DicomDirImage::DicomDirImage(TagDocEntryHT *ptagHT):
+   DicomDirObject(ptagHT)
 {
 }
 /**
- * \ingroup gdcmDicomDirImage
+ * \ingroup DicomDirImage
  * \brief   Canonical destructor.
  */
-gdcmDicomDirImage::~gdcmDicomDirImage() 
+DicomDirImage::~DicomDirImage() 
 {
 }
 
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmDicomDirImage
+ * \ingroup DicomDirImage
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmDicomDirImage::Print(std::ostream &os)
+void DicomDirImage::Print(std::ostream &os)
 {
    os << "IMAGE : ";
    for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i)
    {
       if( (*i)->GetGroup() == 0x0004 && (*i)->GetElement() == 0x1500 )
       {
-         os << ((gdcmValEntry *)(*i))->GetValue(); //FIXME
+         os << ((ValEntry *)(*i))->GetValue(); //FIXME
       }
    }
    os << std::endl;
 
-   gdcmDicomDirObject::Print(os);
+   DicomDirObject::Print(os);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,3 +88,5 @@ void gdcmDicomDirImage::Print(std::ostream &os)
 // Private
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm
+

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,31 +21,34 @@
 
 #include "gdcmHeader.h"
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 /*
- * \defgroup gdcmSerieHeader
+ * \defgroup SerieHeader
  * \brief  
  *
  * - This class should be used for a stack of 2D dicom images.
- * - For a multiframe dicom image better use directly gdcmHeaderHelper
+ * - For a multiframe dicom image better use directly HeaderHelper
 */
-class GDCM_EXPORT gdcmSerieHeader 
+class GDCM_EXPORT SerieHeader 
 {
 public:
-    gdcmSerieHeader();
-    ~gdcmSerieHeader();
+    SerieHeader();
+    ~SerieHeader();
 
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const & filename);
-   void AddGdcmFile(gdcmHeader *file);
+   void AddGdcmFile(Header *file);
    void SetDirectory(std::string const & dir);
    void OrderGdcmFileList();
    
    /// \warning Assumes all elements in the list have the same global infos.
    ///          Assumes the list is not empty.
-   gdcmHeader* GetGdcmHeader() { return CoherentGdcmFileList.front(); }
+   Header* GetGdcmHeader() { return CoherentGdcmFileList.front(); }
 
-   typedef std::list<gdcmHeader* > GdcmHeaderList;
+   typedef std::list<Header* > GdcmHeaderList;
 
    /// \brief Gets the *coherent* File List
    /// @return the *coherent* File List
@@ -58,6 +61,8 @@ private:
    
    GdcmHeaderList CoherentGdcmFileList;
 };
+
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

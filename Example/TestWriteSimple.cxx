@@ -13,8 +13,8 @@ int main(int argc, char* argv[])
   std::string header = argv[1];
   const char *output = argv[2];
 
-  gdcmHeader *f1 = new gdcmHeader( header );
-  gdcmFile   *f2 = new gdcmFile( f1 );
+  gdcm::Header *f1 = new gdcm::Header( header );
+  gdcm::File   *f2 = new gdcm::File( f1 );
 
   // If the following call is important, then the API sucks. Why is it
   // required to allocate PixelData when we are not using it !?

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.50 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,27 +30,29 @@
 #include "gdcmDocEntrySet.h"
 #include "gdcmElementSet.h"
 
-class gdcmValEntry;
-class gdcmBinEntry;
-class gdcmSeqEntry;
+class ValEntry;
+class BinEntry;
+class SeqEntry;
 
 #include <map>
 #include <list>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 /**
- * \brief Derived by both gdcmHeader and gdcmDicomDir
+ * \brief Derived by both Header and DicomDir
  */
-class GDCM_EXPORT gdcmDocument : public gdcmElementSet
+class GDCM_EXPORT Document : public ElementSet
 {
-friend class gdcmFile;
+friend class File;
 private:
    /// Public dictionary used to parse this header
-   gdcmDict *RefPubDict;
+   Dict *RefPubDict;
    
    /// \brief Optional "shadow dictionary" (private elements) used to parse
    /// this header
-   gdcmDict *RefShaDict;
+   Dict *RefShaDict;
 
    /// \brief Size threshold above which an element value will NOT be loaded
    /// in memory (to avoid loading the image/volume itself). By default,
@@ -88,15 +90,15 @@ protected:
    /// \brief Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
    /// are NOT printed.
    /// \todo Currently not used since collides with #define in
-   ///       \ref gdcmDocEntry.cxx. See also
-   ///       \ref gdcmDocument::SetMaxSizePrintEntry()
+   ///       \ref DocEntry.cxx. See also
+   ///       \ref Document::SetMaxSizePrintEntry()
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// Store the RLE frames info obtained during parsing of pixels.
-   gdcmRLEFramesInfo RLEInfo;
+   RLEFramesInfo RLEInfo;
 
    /// Store the JPEG fragments info obtained during parsing of pixels.
-   gdcmJPEGFragmentsInfo JPEGInfo;
+   JPEGFragmentsInfo JPEGInfo;
 
    /// \brief Amount of printed details for each Header Entry (Dicom Element):
    /// 0 : stands for the least detail level.
@@ -108,9 +110,9 @@ public:
    virtual void PrintShaDict (std::ostream &os = std::cout);
 
 // Dictionnaries
-   gdcmDict *GetPubDict();
-   gdcmDict *GetShaDict();
-   bool SetShaDict(gdcmDict *dict);
+   Dict *GetPubDict();
+   Dict *GetShaDict();
+   bool SetShaDict(Dict *dict);
    bool SetShaDict(DictKey const & dictName);
 
 // Informations contained in the parser
@@ -138,36 +140,36 @@ public:
 
    void Write(FILE* fp, FileType type);
 
-   gdcmValEntry* ReplaceOrCreateByNumber(std::string const & value,
+   ValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                          uint16_t group, uint16_t elem,
                                          std::string const & VR ="unkn");
    
-   gdcmBinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
+   BinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
                                          uint16_t group, uint16_t elem,
                                          std::string const & VR="unkn");
 
-   gdcmSeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
+   SeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
 
    bool ReplaceIfExistByNumber ( std::string const & value,
                                  uint16_t group,
                                  uint16_t elem );
    
    virtual void* LoadEntryBinArea(uint16_t group, uint16_t elem);
-   virtual void* LoadEntryBinArea(gdcmBinEntry* entry);
+   virtual void* LoadEntryBinArea(BinEntry* entry);
       
    // System access (meaning endian related !?)
-   uint16_t SwapShort(uint16_t);   // needed by gdcmFile
-   uint32_t SwapLong(uint32_t);    // needed by gdcmFile
-   uint16_t UnswapShort(uint16_t); // needed by gdcmFile
-   uint32_t UnswapLong(uint32_t);  // needed by gdcmFile
+   uint16_t SwapShort(uint16_t);   // needed by File
+   uint32_t SwapLong(uint32_t);    // needed by File
+   uint16_t UnswapShort(uint16_t); // needed by File
+   uint32_t UnswapLong(uint32_t);  // needed by File
 
 protected:
    // Constructor and destructor are protected to forbid end user 
-   // to instanciate from this class gdcmDocument (only gdcmHeader and
-   // gdcmDicomDir are meaningfull).
-   gdcmDocument();
-   gdcmDocument( std::string const & filename );
-   virtual ~gdcmDocument();
+   // to instanciate from this class Document (only Header and
+   // DicomDir are meaningfull).
+   Document();
+   Document( std::string const & filename );
+   virtual ~Document();
    
    void ReadAndSkipEncapsulatedBasicOffsetTable();
    void ComputeRLEInfo();
@@ -198,38 +200,38 @@ public:
    virtual void UpdateShaEntries();
 
    // Header entry
-   gdcmDocEntry* GetDocEntryByNumber(uint16_t group, uint16_t element); 
-   gdcmDocEntry* GetDocEntryByName  (std::string const & tagName);
+   DocEntry* GetDocEntryByNumber(uint16_t group, uint16_t element); 
+   DocEntry* GetDocEntryByName  (std::string const & tagName);
 
-   gdcmValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
-   //gdcmBinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
+   ValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
+   //BinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
 
-   void LoadDocEntrySafe(gdcmDocEntry* entry);
+   void LoadDocEntrySafe(DocEntry* entry);
    TagDocEntryHT* BuildFlatHashTable();
 
 private:
    // Read
-   void ParseDES(gdcmDocEntrySet *set,long offset, long l_max, bool delim_mode);
-   void ParseSQ (gdcmSeqEntry *seq,   long offset, long l_max, bool delim_mode);
+   void ParseDES(DocEntrySet *set,long offset, long l_max, bool delim_mode);
+   void ParseSQ (SeqEntry *seq,   long offset, long l_max, bool delim_mode);
 
-   void LoadDocEntry      (gdcmDocEntry *);
-   void FindDocEntryLength(gdcmDocEntry *) throw ( gdcmFormatError );
-   void FindDocEntryVR    (gdcmDocEntry *);
-   bool CheckDocEntryVR   (gdcmDocEntry *, gdcmVRKey);
+   void LoadDocEntry      (DocEntry *);
+   void FindDocEntryLength(DocEntry *) throw ( FormatError );
+   void FindDocEntryVR    (DocEntry *);
+   bool CheckDocEntryVR   (DocEntry *, VRKey);
 
-   std::string GetDocEntryValue  (gdcmDocEntry *);
-   std::string GetDocEntryUnvalue(gdcmDocEntry *);
+   std::string GetDocEntryValue  (DocEntry *);
+   std::string GetDocEntryUnvalue(DocEntry *);
 
-   void SkipDocEntry          (gdcmDocEntry *);
-   void SkipToNextDocEntry    (gdcmDocEntry *);
+   void SkipDocEntry          (DocEntry *);
+   void SkipToNextDocEntry    (DocEntry *);
 
-   void FixDocEntryFoundLength(gdcmDocEntry *, uint32_t);
-   bool IsDocEntryAnInteger   (gdcmDocEntry *);
+   void FixDocEntryFoundLength(DocEntry *, uint32_t);
+   bool IsDocEntryAnInteger   (DocEntry *);
 
-   uint32_t FindDocEntryLengthOB() throw( gdcmFormatUnexpected );
+   uint32_t FindDocEntryLengthOB() throw( FormatUnexpected );
 
-   uint16_t ReadInt16() throw ( gdcmFormatError );
-   uint32_t ReadInt32() throw ( gdcmFormatError );
+   uint16_t ReadInt16() throw ( FormatError );
+   uint32_t ReadInt32() throw ( FormatError );
    void     SkipBytes(uint32_t);
    bool     ReadTag(uint16_t, uint16_t);
    uint32_t ReadTagLength(uint16_t, uint16_t);
@@ -241,11 +243,11 @@ private:
    void SetMaxSizePrintEntry(long);
 
    // DocEntry related utilities
-   gdcmDocEntry* ReadNextDocEntry();
+   DocEntry* ReadNextDocEntry();
 
    uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
    void BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
-                                   gdcmDocEntrySet* set );
+                                   DocEntrySet* set );
 
 
 public:
@@ -265,9 +267,10 @@ public:
    /// File pointer
    FILE * GetFP() { return Fp; }
 
-   bool operator<(gdcmDocument &document);
+   bool operator<(Document &document);
 
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

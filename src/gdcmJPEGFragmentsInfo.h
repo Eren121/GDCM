@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,28 +22,31 @@
 
 #include "gdcmJPEGFragment.h"
 #include <list>
+namespace gdcm 
+{
 
 /**
  * \brief Utility class for gathering the informations of the collection
- *        of JPEG fragment[s] (see \ref gdcmJPEGFragment)  when handling
+ *        of JPEG fragment[s] (see \ref JPEGFragment)  when handling
  *        "Encapsulated JPEG Compressed Images". 
  *        The informations on each frame are obtained during the parsing
- *        of a gdcmDocument (refer to
- *         \ref gdcmDocument::ComputeJPEGFragmentInfo() ).
+ *        of a Document (refer to
+ *         \ref Document::ComputeJPEGFragmentInfo() ).
  *        They shall be used when (if necessary) decoding the fragments.
  *
- *        This class is simply a stl list<> of \ref gdcmJPEGFragment.
+ *        This class is simply a stl list<> of \ref JPEGFragment.
  */
-class GDCM_EXPORT gdcmJPEGFragmentsInfo
+class GDCM_EXPORT JPEGFragmentsInfo
 {
-   typedef std::list< gdcmJPEGFragment* > JPEGFragmentsList;
-friend class gdcmDocument;
-friend class gdcmFile;
-friend class gdcmPixelConvert;
+   typedef std::list< JPEGFragment* > JPEGFragmentsList;
+friend class Document;
+friend class File;
+friend class PixelConvert;
    JPEGFragmentsList Fragments;
 public:
-   ~gdcmJPEGFragmentsInfo();
+   ~JPEGFragmentsInfo();
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 21:05:40 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,32 +16,33 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMOBJECT_H
-#define GDCMOBJECT_H
+#ifndef GDCMDICOMDIROBJECT_H
+#define GDCMDICOMDIROBJECT_H
 
-#include "gdcmCommon.h"
-#include "gdcmDocEntry.h"
-#include "gdcmDocument.h"
-#include "gdcmDicomDirElement.h"
 #include "gdcmSQItem.h"
+#include "gdcmDicomDirElement.h"
+
 #include <string>
 #include <list>
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
-class gdcmDicomDirObject;
-typedef std::list<gdcmDicomDirObject *> ListContent;
+class DicomDirObject;
+typedef std::list<DicomDirObject *> ListContent;
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmDicomDirObject
+ * \ingroup DicomDirObject
  * \brief   Base object
  */
-class GDCM_EXPORT gdcmDicomDirObject : public gdcmSQItem
+class GDCM_EXPORT DicomDirObject : public SQItem
 {
 public:
 
-   gdcmDicomDirObject(TagDocEntryHT *ptagHT, int depth = 0);
-   virtual ~gdcmDicomDirObject();
+   DicomDirObject(TagDocEntryHT *ptagHT, int depth = 0);
+   virtual ~DicomDirObject();
    /**
     * \brief   Sets the print level for the Dicom Header 
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
@@ -49,18 +50,19 @@ public:
    void SetPrintLevel(int level) { PrintLevel = level; };
    
    TagDocEntryHT GetEntry();
-   void FillObject(std::list<gdcmElement> elemList);
+   void FillObject(std::list<Element> elemList);
 
 protected:
 
    // Constructor and destructor are protected to avoid end user to
    // instanciate from this class. 
-   // NO ! gdcmDicomDir needs to instanciate it!
+   // NO ! DicomDir needs to instanciate it!
 
 // Members :
    ///\brief detail level to be printed 
    int PrintLevel;
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

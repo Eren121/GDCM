@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:21:55 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/10/12 04:35:44 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,9 @@
 
 #include <list>
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 typedef struct
 {
@@ -32,25 +35,25 @@ typedef struct
    unsigned short int Elem;
    /// value (coded as a std::string) of the Element
    std::string Value;
-} gdcmElement;
+} Element;
 
-typedef std::list<gdcmElement> ListDicomDirMetaElem;
-typedef std::list<gdcmElement> ListDicomDirPatientElem;
-typedef std::list<gdcmElement> ListDicomDirStudyElem;
-typedef std::list<gdcmElement> ListDicomDirSerieElem;
-typedef std::list<gdcmElement> ListDicomDirImageElem;
+typedef std::list<Element> ListDicomDirMetaElem;
+typedef std::list<Element> ListDicomDirPatientElem;
+typedef std::list<Element> ListDicomDirStudyElem;
+typedef std::list<Element> ListDicomDirSerieElem;
+typedef std::list<Element> ListDicomDirImageElem;
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmDicomDirElement
- * \brief    gdcmDicomDirElement represents elements contained in a dicom dir
+ * \ingroup DicomDirElement
+ * \brief    DicomDirElement represents elements contained in a dicom dir
  *           Class for the chained lists from the file 'Dicts/DicomDir.dic'
  */
-class GDCM_EXPORT gdcmDicomDirElement
+class GDCM_EXPORT DicomDirElement
 {
 public:
-   gdcmDicomDirElement();
-   ~gdcmDicomDirElement();
+   DicomDirElement();
+   ~DicomDirElement();
 
   /**
     * \brief   canonical Printer 
@@ -59,7 +62,7 @@ public:
    void Print(std::ostream &os);
 
    /**
-    * \ingroup gdcmDicomDirElement
+    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the META Elements of a DICOMDIR.
     */
@@ -67,7 +70,7 @@ public:
       { return DicomDirMetaList; };
 
    /**
-    * \ingroup gdcmDicomDirElement
+    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the PATIENT Elements of a DICOMDIR.
     */      
@@ -75,7 +78,7 @@ public:
       { return DicomDirPatientList; };
 
    /**
-    * \ingroup gdcmDicomDirElement
+    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the STUDY Elements of a DICOMDIR.
     */      
@@ -83,7 +86,7 @@ public:
       { return DicomDirStudyList; };
 
    /**
-    * \ingroup gdcmDicomDirElement
+    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the SERIE Elements of a DICOMDIR.
     */
@@ -91,7 +94,7 @@ public:
       { return DicomDirSerieList; };
 
    /**
-    * \ingroup gdcmDicomDirElement
+    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the IMAGE Elements of a DICOMDIR.
     */
@@ -99,18 +102,18 @@ public:
       { return DicomDirImageList; };
 
 private:
-   /// gdcmElements chained list, related to the MetaElements of DICOMDIR
+   /// Elements chained list, related to the MetaElements of DICOMDIR
    ListDicomDirMetaElem    DicomDirMetaList;
-   /// gdcmElements chained list, related to the PatientElements of DICOMDIR
+   /// Elements chained list, related to the PatientElements of DICOMDIR
    ListDicomDirPatientElem DicomDirPatientList;
-   /// gdcmElements chained list, related to the StudyElements of DICOMDIR
+   /// Elements chained list, related to the StudyElements of DICOMDIR
    ListDicomDirStudyElem   DicomDirStudyList;
-   /// gdcmElements chained list, related to the SerieElements of DICOMDIR
+   /// Elements chained list, related to the SerieElements of DICOMDIR
    ListDicomDirSerieElem   DicomDirSerieList;
-   /// gdcmElements chained list, related to the ImageElements of DICOMDIR
+   /// Elements chained list, related to the ImageElements of DICOMDIR
    
    ListDicomDirImageElem   DicomDirImageList;
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

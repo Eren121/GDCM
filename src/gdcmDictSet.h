@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,24 +22,26 @@
 #include "gdcmDict.h"
 #include <map>
 #include <list>
+namespace gdcm 
+{
 
 typedef std::string DictKey;
-typedef std::map<DictKey, gdcmDict*> DictSetHT;
+typedef std::map<DictKey, Dict*> DictSetHT;
 
 //-----------------------------------------------------------------------------
 /*
- * \defgroup gdcmDictSet
+ * \defgroup DictSet
  * \brief  Container for managing a set of loaded dictionaries.
  * \note   Hopefully, sharing dictionaries should avoid
  * \par    reloading an already loaded dictionary (saving time)
  * \par    having many in memory representations of the same dictionary
  *        (saving memory).
  */
-class GDCM_EXPORT gdcmDictSet
+class GDCM_EXPORT DictSet
 {
 public:
-   gdcmDictSet();
-   ~gdcmDictSet();
+   DictSet();
+   ~DictSet();
 
    void Print(std::ostream& os);
 
@@ -47,19 +49,19 @@ public:
    std::map<std::string, std::list<std::string> > *
        GetPubDictEntryNamesByCategory();
 
-   gdcmDict* LoadDictFromFile( std::string const & fileName,
+   Dict* LoadDictFromFile( std::string const & fileName,
                                DictKey const & name );
 
-   gdcmDict* GetDict( DictKey const & DictName );
+   Dict* GetDict( DictKey const & DictName );
 
    /// \brief   Retrieve the default reference DICOM V3 public dictionary.
-   gdcmDict* GetDefaultPubDict() { return GetDict(PUB_DICT_NAME); };
+   Dict* GetDefaultPubDict() { return GetDict(PUB_DICT_NAME); };
 
    // \brief   Retrieve the virtual reference DICOM dictionary.
    // \warning : not end user intended
-   // gdcmDict* GetVirtualDict() { return &VirtualEntry; };
+   // Dict* GetVirtualDict() { return &VirtualEntry; };
 
-   gdcmDictEntry* NewVirtualDictEntry(uint16_t group, uint16_t element,
+   DictEntry* NewVirtualDictEntry(uint16_t group, uint16_t element,
                                       std::string vr     = "Unknown",
                                       std::string fourth = "Unknown",
                                       std::string name   = "Unknown");
@@ -67,16 +69,17 @@ public:
    static std::string BuildDictPath();
 
 protected:
-   bool AppendDict(gdcmDict *NewDict, DictKey const & name);
+   bool AppendDict(Dict *NewDict, DictKey const & name);
 
 private:
-   /// Hash table of all dictionaries contained in this gdcmDictSet
+   /// Hash table of all dictionaries contained in this DictSet
    DictSetHT Dicts;
    /// Directory path to dictionaries
    std::string DictPath;
-   /// H table for the on the fly created gdcmDictEntries  
+   /// H table for the on the fly created DictEntries  
    TagKeyHT VirtualEntry; 
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

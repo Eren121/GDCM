@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/10/12 04:35:48 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,14 +24,18 @@
 
 #include <iostream>
 #include <iomanip>
+
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmSeqEntry
- * \brief   Constructor from a given gdcmSeqEntry
+ * \ingroup SeqEntry
+ * \brief   Constructor from a given SeqEntry
  */
-gdcmSeqEntry::gdcmSeqEntry( gdcmDictEntry* e ) 
-             : gdcmDocEntry(e)
+SeqEntry::SeqEntry( DictEntry* e ) 
+             : DocEntry(e)
 {
    UsableLength = 0;
    ReadLength = 0xffffffff;
@@ -42,12 +46,12 @@ gdcmSeqEntry::gdcmSeqEntry( gdcmDictEntry* e )
 }
 
 /**
- * \brief   Constructor from a given gdcmSeqEntry
+ * \brief   Constructor from a given SeqEntry
  * @param   e Pointer to existing Doc entry
  * @param   depth depth level of the current Seq entry
   */
-gdcmSeqEntry::gdcmSeqEntry( gdcmDocEntry* e, int depth )
-             : gdcmDocEntry( e->GetDictEntry() )
+SeqEntry::SeqEntry( DocEntry* e, int depth )
+             : DocEntry( e->GetDictEntry() )
 {
    this->UsableLength = 0;
    this->ReadLength   = 0xffffffff;
@@ -60,7 +64,7 @@ gdcmSeqEntry::gdcmSeqEntry( gdcmDocEntry* e, int depth )
 /**
  * \brief   Canonical destructor.
  */
-gdcmSeqEntry::~gdcmSeqEntry() {
+SeqEntry::~SeqEntry() {
    for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
    {
       delete *cc;
@@ -72,11 +76,11 @@ gdcmSeqEntry::~gdcmSeqEntry() {
 /**
  * \brief   canonical Printer
  */
-void gdcmSeqEntry::Print( std::ostream &os )
+void SeqEntry::Print( std::ostream &os )
 {
    // First, Print the Dicom Element itself.
    SetPrintLevel(2);   
-   gdcmDocEntry::Print(os);
+   DocEntry::Print(os);
    os << std::endl;
 
    if (GetReadLength() == 0)
@@ -110,7 +114,7 @@ void gdcmSeqEntry::Print( std::ostream &os )
 /*
  * \brief   canonical Writer
  */
-void gdcmSeqEntry::Write(FILE* fp, FileType filetype)
+void SeqEntry::Write(FILE* fp, FileType filetype)
 {
    uint16_t seq_term_gr = 0xfffe;
    uint16_t seq_term_el = 0xe0dd;
@@ -119,7 +123,7 @@ void gdcmSeqEntry::Write(FILE* fp, FileType filetype)
    //uint16_t item_term_gr = 0xfffe;
    //uint16_t item_term_el = 0xe00d;
    
-   gdcmDocEntry::Write(fp, filetype);
+   DocEntry::Write(fp, filetype);
    for(ListSQItem::iterator cc  = GetSQItems().begin();
                             cc != GetSQItems().end();
                           ++cc)
@@ -138,7 +142,7 @@ void gdcmSeqEntry::Write(FILE* fp, FileType filetype)
 // Public
 
 /// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
-void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem, int itemNumber)
+void SeqEntry::AddEntry(SQItem *sqItem, int itemNumber)
 {
    sqItem->SetSQItemNumber(itemNumber);
    items.push_back(sqItem);
@@ -150,7 +154,7 @@ void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem, int itemNumber)
  *        Returns the last item when argument is bigget than the total
  *        item number.
  */
-gdcmSQItem* gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb)
+SQItem* SeqEntry::GetSQItemByOrdinalNumber(int nb)
 {
    if (nb<0)
       return (*(items.begin()));
@@ -171,3 +175,5 @@ gdcmSQItem* gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb)
 // Private
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm
+

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 08:41:04 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/10/12 04:35:44 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,8 +98,8 @@ const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
 const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
 const std::string GDCM_UNREAD    = "gdcm::UnRead";
 
-/// \brief gdcmTagKey is made to hold an "universal" (as in URL, Universal
-///        Ressource Locator)  key to a gdcmDocEntry i.e. a dicom tag.
+/// \brief TagKey is made to hold an "universal" (as in URL, Universal
+///        Ressource Locator)  key to a DocEntry i.e. a dicom tag.
 ///        A dicom tag always has a group and an element, but a set of tags
 ///        embeded in various (optionally nested) sequences and sharing
 ///        the same group and element all share the same (group, element)
@@ -115,25 +115,25 @@ const std::string GDCM_UNREAD    = "gdcm::UnRead";
 ///        the form:
 ///           /ItemNumber#Group|Element
 ///        where "/", "#" and "|" are characters acting as separators.
-///        Then the general form of a gdcmTagKey is given by:
+///        Then the general form of a TagKey is given by:
 ///           Group|Element[SeqTag]
 ///        where [SeqTag] means NO or many instances of SeqTag.
-///        Hence the gdcmTagKey of a tag not "leaving" in a sequence is the
+///        Hence the TagKey of a tag not "leaving" in a sequence is the
 ///        string e.g. 
 ///            0028|1201
-///        but the gdcmTagKey of a tag "embeded" is the first item of
+///        but the TagKey of a tag "embeded" is the first item of
 ///        a sequence, itself nested in the third item of a sequence is the
 ///        string e.g.
 ///            0004|1220/2#0008|0082/0#0008|0090
-typedef std::string gdcmTagKey;
+typedef std::string TagKey;
 typedef std::string TagName;
 
 enum FileType {
-      gdcmUnknown = 0,
-      gdcmExplicitVR, // gdcmDicomDir is in this case
-      gdcmImplicitVR,
-      gdcmACR,
-      gdcmACR_LIBIDO
+      Unknown = 0,
+      ExplicitVR, // DicomDir is in this case
+      ImplicitVR,
+      ACR,
+      ACR_LIBIDO
 };
 
 //-----------------------------------------------------------------------------

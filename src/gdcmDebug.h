@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:05 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/10/12 04:35:44 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,12 +20,14 @@
 #define GDCMDEBUG_H
 
 #include "gdcmCommon.h"
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 
 /**
- * \ingroup gdcmDebug
- * \brief gdcmDebug is an object for debugging in program.
+ * \ingroup Debug
+ * \brief Debug is an object for debugging in program.
  * It has 2 debugging modes :
  *  - error : for bad library use
  *  - debug : for debugging messages
@@ -34,10 +36,10 @@
  * Shown only when the debug level is higher than the 
  * message level.
  */
-class GDCM_EXPORT gdcmDebug
+class GDCM_EXPORT Debug
 {
 public:
-   gdcmDebug(int level = -1);
+   Debug(int level = -1);
 
    void SetDebug (int level);
    void Verbose(int level, const char* msg1, const char* msg2 = "") ;
@@ -47,7 +49,7 @@ public:
    void Assert(int level, bool test, const char * msg1, const char * msg2);
    void Exit(int a);
 
-   static gdcmDebug &GetReference();
+   static Debug &GetReference();
 
 private:
 /// warning message level to be displayed
@@ -55,7 +57,8 @@ private:
 
 };
 
+} // end namespace gdcm
 /// Instance of debugging utility.
-static gdcmDebug dbg;
+static gdcm::Debug dbg;
 
 #endif

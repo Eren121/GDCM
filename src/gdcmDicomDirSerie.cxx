@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,33 +20,36 @@
 #include "gdcmDicomDirElement.h"
 #include "gdcmGlobal.h"
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
  * \brief  Constructor 
  * @param  s  SQ Item holding the elements related to this "SERIE" part
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmDocEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the DocEntries)
  */
-gdcmDicomDirSerie::gdcmDicomDirSerie(gdcmSQItem* s, TagDocEntryHT* ptagHT):
-   gdcmDicomDirObject(ptagHT)
+DicomDirSerie::DicomDirSerie(SQItem* s, TagDocEntryHT* ptagHT):
+   DicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
 }
 
 /**
  * \brief  Constructor 
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmDocEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the DocEntries)
  */
-gdcmDicomDirSerie::gdcmDicomDirSerie(TagDocEntryHT* ptagHT):
-   gdcmDicomDirObject(ptagHT)
+DicomDirSerie::DicomDirSerie(TagDocEntryHT* ptagHT):
+   DicomDirObject(ptagHT)
 {
 }
 /**
  * \brief   Canonical destructor.
  */
-gdcmDicomDirSerie::~gdcmDicomDirSerie() 
+DicomDirSerie::~DicomDirSerie() 
 {
    for(ListDicomDirImage::iterator cc = images.begin();
                                    cc != images.end();
@@ -62,10 +65,10 @@ gdcmDicomDirSerie::~gdcmDicomDirSerie()
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmDicomDirSerie::Print(std::ostream& os)
+void DicomDirSerie::Print(std::ostream& os)
 {
    os << "SERIE" << std::endl;
-   gdcmDicomDirObject::Print(os);
+   DicomDirObject::Print(os);
 
    for(ListDicomDirImage::iterator cc = images.begin();
                                    cc != images.end();
@@ -83,9 +86,9 @@ void gdcmDicomDirSerie::Print(std::ostream& os)
  * \brief   Writes the Object
  * @return
  */ 
-void gdcmDicomDirSerie::Write(FILE* fp, FileType t)
+void DicomDirSerie::Write(FILE* fp, FileType t)
 {
-   gdcmDicomDirObject::Write(fp, t);
+   DicomDirObject::Write(fp, t);
 
    for(ListDicomDirImage::iterator cc = images.begin();cc!=images.end();++cc)
    {
@@ -96,12 +99,12 @@ void gdcmDicomDirSerie::Write(FILE* fp, FileType t)
 /**
  * \brief   adds a new Image (with the basic elements) to a partially created DICOMDIR
  */
-gdcmDicomDirImage* gdcmDicomDirSerie::NewImage()
+DicomDirImage* DicomDirSerie::NewImage()
 {
-   std::list<gdcmElement> elemList = 
-      gdcmGlobal::GetDicomDirElements()->GetDicomDirImageElements();
+   std::list<Element> elemList = 
+      Global::GetDicomDirElements()->GetDicomDirImageElements();
 
-   gdcmDicomDirImage* st = new gdcmDicomDirImage(PtagHT);
+   DicomDirImage* st = new DicomDirImage(PtagHT);
    FillObject(elemList);
    images.push_front(st);
 
@@ -114,3 +117,6 @@ gdcmDicomDirImage* gdcmDicomDirSerie::NewImage()
 // Private
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm
+
+

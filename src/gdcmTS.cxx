@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:43:38 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/10/12 04:35:48 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,13 +25,16 @@
 #include <string>
 #include <iostream>
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-gdcmTS::gdcmTS() 
+TS::TS() 
 {
-   std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_TS);
+   std::string filename=DictSet::BuildDictPath() + std::string(DICT_TS);
    std::ifstream from(filename.c_str());
-   dbg.Error(!from, "gdcmTS::gdcmTS: can't open dictionary",filename.c_str());
+   dbg.Error(!from, "TS::TS: can't open dictionary",filename.c_str());
 
    std::string key;
    std::string name;
@@ -52,7 +55,7 @@ gdcmTS::gdcmTS()
 }
 
 //-----------------------------------------------------------------------------
-gdcmTS::~gdcmTS() 
+TS::~TS() 
 {
    ts.clear();
 }
@@ -60,11 +63,11 @@ gdcmTS::~gdcmTS()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmVR
+ * \ingroup VR
  * \brief   Print all 
  * @param   os The output stream to be written to.
  */
-void gdcmTS::Print(std::ostream &os) 
+void TS::Print(std::ostream &os) 
 {
    std::ostringstream s;
 
@@ -77,12 +80,12 @@ void gdcmTS::Print(std::ostream &os)
 
 //-----------------------------------------------------------------------------
 // Public
-int gdcmTS::Count(TSKey key) 
+int TS::Count(TSKey key) 
 {
    return ts.count(key);
 }
 
-std::string gdcmTS::GetValue(TSKey key) 
+std::string TS::GetValue(TSKey key) 
 {
    if (ts.count(key) == 0)
    {
@@ -98,3 +101,5 @@ std::string gdcmTS::GetValue(TSKey key)
 // Private
 
 //-----------------------------------------------------------------------------
+
+} // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 21:01:10 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/12 04:35:47 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,21 +18,29 @@
 #ifndef GDCMSQITEM_H
 #define GDCMSQITEM_H
 
-#include "gdcmDocEntry.h"
 #include "gdcmDocEntrySet.h"
-#include "gdcmDocument.h"
+#include "gdcmElementSet.h"
+
+//#include "gdcmDocEntry.h"
+//#include "gdcmDocument.h"
+//#include "gdcmBinEntry.h"
+
 #include <list>
 
-class gdcmBinEntry;
+namespace gdcm 
+{
+class DocEntry;
 
 //-----------------------------------------------------------------------------
-typedef std::list<gdcmDocEntry *> ListDocEntry;
+typedef std::list<DocEntry *> ListDocEntry;
 //-----------------------------------------------------------------------------
-class GDCM_EXPORT gdcmSQItem : public gdcmDocEntrySet
+class GDCM_EXPORT SQItem 
+  : 
+  public DocEntrySet 
 {
 public:
-   gdcmSQItem(int);
-   ~gdcmSQItem();
+   SQItem(int);
+   ~SQItem();
 
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);
@@ -42,13 +50,13 @@ public:
    
    /// \brief   adds the passed DocEntry to the DocEntry chained List for
    /// this SQ Item.      
-   void AddDocEntry(gdcmDocEntry *e) { docEntries.push_back(e); };
+   void AddDocEntry(DocEntry *e) { docEntries.push_back(e); };
 
-   virtual bool AddEntry(gdcmDocEntry *Entry); // add to the List
+   virtual bool AddEntry(DocEntry *Entry); // add to the List
   
-   gdcmDocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element);
+   DocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element);
    // FIXME method to write
-   //gdcmDocEntry *GetDocEntryByName  (std::string Name);
+   //DocEntry *GetDocEntryByName  (std::string Name);
    
    bool SetEntryByNumber(std::string val, uint16_t group, uint16_t element);                   
     
@@ -67,10 +75,10 @@ public:
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
    /// Accessor on \ref BaseTagKey.
-   void           SetBaseTagKey( gdcmBaseTagKey key ) { BaseTagKey = key; }
+   void           SetBaseTagKey( BaseTagKey key ) { BaseTagKeyNested = key; }
 
    /// Accessor on \ref BaseTagKey.
-   gdcmBaseTagKey GetBaseTagKey( ) { return BaseTagKey; }
+   BaseTagKey GetBaseTagKey( ) { return BaseTagKeyNested; }
 
 
 protected:
@@ -83,8 +91,8 @@ protected:
    /// \brief SQ Item ordinal number 
    int SQItemNumber;
 
-   ///\brief pointer to the HTable of the gdcmDocument,
-   ///       (because we don't know it within any gdcmDicomDirObject nor any gdcmSQItem)
+   ///\brief pointer to the HTable of the Document,
+   ///       (because we don't know it within any DicomDirObject nor any SQItem)
    TagDocEntryHT *PtagHT;
 
        
@@ -92,16 +100,16 @@ private:
 
    /// \brief Sequences can be nested. This \ref SQDepthLevel represents
    ///        the level of the nesting of instances of this class.
-   ///        \ref SQDepthLevel and its \ref gdcmSeqEntry::SQDepthLevel
+   ///        \ref SQDepthLevel and its \ref SeqEntry::SQDepthLevel
    ///        counterpart are only defined on printing purposes
    ///        (see \ref Print).
    int SQDepthLevel;
 
-   /// \brief A TagKey of a gdcmDocEntry nested in a sequence is prepended
+   /// \brief A TagKey of a DocEntry nested in a sequence is prepended
    ///        with this BaseTagKey.
-   gdcmBaseTagKey BaseTagKey;
+   BaseTagKey BaseTagKeyNested;
 
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

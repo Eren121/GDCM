@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,17 +22,21 @@
 #include "gdcmDicomDirObject.h"
 #include "gdcmDicomDirStudy.h"
 #include "gdcmSQItem.h"
-//-----------------------------------------------------------------------------
-typedef std::list<gdcmDicomDirStudy*> ListDicomDirStudy;
+
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
-class GDCM_EXPORT gdcmDicomDirPatient : public gdcmDicomDirObject 
+typedef std::list<DicomDirStudy*> ListDicomDirStudy;
+
+//-----------------------------------------------------------------------------
+class GDCM_EXPORT DicomDirPatient : public DicomDirObject 
 {
 public:
-   gdcmDicomDirPatient(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
-   gdcmDicomDirPatient(TagDocEntryHT *ptagHT); 
+   DicomDirPatient(SQItem *s, TagDocEntryHT *ptagHT); 
+   DicomDirPatient(TagDocEntryHT *ptagHT); 
 
-   ~gdcmDicomDirPatient();
+   ~DicomDirPatient();
 
    virtual void Print(std::ostream &os = std::cout);
    virtual void Write(FILE *fp, FileType t);
@@ -40,16 +44,17 @@ public:
    ListDicomDirStudy &GetDicomDirStudies() { return studies; };
 
    /// adds the passed STUDY to the STUDY chained List for this PATIENT.
-   void AddDicomDirStudy(gdcmDicomDirStudy *obj) { studies.push_back(obj); };
+   void AddDicomDirStudy(DicomDirStudy *obj) { studies.push_back(obj); };
 
    ///  TODO
-   gdcmDicomDirStudy* NewStudy(); 
+   DicomDirStudy* NewStudy(); 
          
 private:
 
    /// chained list of DicomDirStudy
    ListDicomDirStudy studies;
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

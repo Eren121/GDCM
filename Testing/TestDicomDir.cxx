@@ -7,13 +7,13 @@
 
 int TestDicomDir(int argc, char* argv[])
 {  
-   gdcmDicomDir *e1;
+   gdcm::DicomDir *e1;
    
-   ListDicomDirPatient::iterator  itPatient;
-   ListDicomDirStudy::iterator    itStudy;
-   ListDicomDirSerie::iterator    itSerie;
-   ListDicomDirImage::iterator    itImage;
-   TSKey v;
+   gdcm::ListDicomDirPatient::iterator  itPatient;
+   gdcm::ListDicomDirStudy::iterator    itStudy;
+   gdcm::ListDicomDirSerie::iterator    itSerie;
+   gdcm::ListDicomDirImage::iterator    itImage;
+   gdcm::TSKey v;
     
    std::string file; 
    if (argc > 1) 
@@ -23,7 +23,7 @@ int TestDicomDir(int argc, char* argv[])
       file += "/DICOMDIR";
     }
 
-   e1 = new gdcmDicomDir(file);
+   e1 = new gdcm::DicomDir(file);
    if (argc > 2) {
       int level = atoi(argv[2]);   
       e1->SetPrintLevel(level);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/10/12 04:35:47 $
+  Version:   $Revision: 1.29 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,18 +22,19 @@
 #include "gdcmBinEntry.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
-
 #include "gdcmDebug.h"
 
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmSQItem
- * \brief   Constructor from a given gdcmSQItem
+ * \ingroup SQItem
+ * \brief   Constructor from a given SQItem
  */
-gdcmSQItem::gdcmSQItem(int depthLevel ) 
-          : gdcmDocEntrySet( )
+SQItem::SQItem(int depthLevel ) 
+          : DocEntrySet( )
 {
    SQDepthLevel = depthLevel;
 }
@@ -41,7 +42,7 @@ gdcmSQItem::gdcmSQItem(int depthLevel )
 /**
  * \brief   Canonical destructor.
  */
-gdcmSQItem::~gdcmSQItem() 
+SQItem::~SQItem() 
 {
    for(ListDocEntry::iterator cc = docEntries.begin();
        cc != docEntries.end();
@@ -57,7 +58,7 @@ gdcmSQItem::~gdcmSQItem()
 /*
  * \brief   canonical Printer
  */
- void gdcmSQItem::Print(std::ostream& os)
+ void SQItem::Print(std::ostream& os)
  {
    std::ostringstream s;
 
@@ -73,15 +74,15 @@ gdcmSQItem::~gdcmSQItem()
                                i != docEntries.end();
                              ++i)
    {
-      gdcmDocEntry* Entry = *i;
+      DocEntry* Entry = *i;
       bool PrintEndLine = true;
 
       os << s.str();
       Entry->SetPrintLevel(2);
       Entry->Print(os); 
-      if ( gdcmSeqEntry* SeqEntry = dynamic_cast<gdcmSeqEntry*>(Entry) )
+      if ( SeqEntry* seqEntry = dynamic_cast<SeqEntry*>(Entry) )
       {
-         (void)SeqEntry;  //not used
+         (void)seqEntry;  //not used
          PrintEndLine = false;
       }
       if (PrintEndLine)
@@ -92,10 +93,10 @@ gdcmSQItem::~gdcmSQItem()
 }
 
 /*
- * \ingroup gdcmSQItem
+ * \ingroup SQItem
  * \brief   canonical Writer
  */
-void gdcmSQItem::Write(FILE* fp,FileType filetype)
+void SQItem::Write(FILE* fp,FileType filetype)
 {
    uint16_t item[4] = { 0xfffe, 0xe000, 0xffff, 0xffff };
    uint16_t itemt[4]= { 0xfffe, 0xe00d, 0xffff, 0xffff };
@@ -137,7 +138,7 @@ void gdcmSQItem::Write(FILE* fp,FileType filetype)
 /**
  * \brief   adds any Entry (Dicom Element) to the Sequence Item
  */
-bool gdcmSQItem::AddEntry(gdcmDocEntry* entry)
+bool SQItem::AddEntry(DocEntry* entry)
 {
    docEntries.push_back(entry);
    //TODO : check if it worked
@@ -157,7 +158,7 @@ bool gdcmSQItem::AddEntry(gdcmDocEntry* entry)
  * @return  true if element was found or created successfully
  */
 
-bool gdcmSQItem::SetEntryByNumber(std::string val, uint16_t group, 
+bool SQItem::SetEntryByNumber(std::string val, uint16_t group, 
                                   uint16_t element)
 {
    for(ListDocEntry::iterator i = docEntries.begin(); i != docEntries.end(); ++i)
@@ -171,39 +172,39 @@ bool gdcmSQItem::SetEntryByNumber(std::string val, uint16_t group,
           ||( group == (*i)->GetGroup() && element < (*i)->GetElement()) )
       {
          // instead of ReplaceOrCreateByNumber 
-         // that is a method of gdcmDocument :-( 
-         gdcmValEntry* entry = 0;
-         gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
+         // that is a method of Document :-( 
+         ValEntry* entry = 0;
+         TagKey key = DictEntry::TranslateToKey(group, element);
 
          if ( ! PtagHT->count(key))
          {
             // we assume a Public Dictionnary *is* loaded
-            gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+            Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
             // if the invoked (group,elem) doesn't exist inside the Dictionary
             // we create a VirtualDictEntry
-            gdcmDictEntry *dictEntry = pubDict->GetDictEntryByNumber(group,
+            DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group,
                                                                      element);
             if (dictEntry == NULL)
             {
                dictEntry = 
-                  gdcmGlobal::GetDicts()->NewVirtualDictEntry(group, element,
+                  Global::GetDicts()->NewVirtualDictEntry(group, element,
                                                               "UN", "??", "??");
             } 
             // we assume the constructor didn't fail
-            entry = new gdcmValEntry(dictEntry);
+            entry = new ValEntry(dictEntry);
             /// \todo
             /// ----
             /// better we don't assume too much !
-            /// gdcmSQItem is now used to describe any DICOMDIR related object
+            /// SQItem is now used to describe any DICOMDIR related object
          }
          else
          {
-            gdcmDocEntry* foundEntry = PtagHT->find(key)->second;
-            entry = dynamic_cast<gdcmValEntry*>(foundEntry);
+            DocEntry* foundEntry = PtagHT->find(key)->second;
+            entry = dynamic_cast<ValEntry*>(foundEntry);
             if (!entry)
             {
-               dbg.Verbose(0, "gdcmSQItem::SetEntryByNumber: docEntries"
-                              " contains non gdcmValEntry occurences");
+               dbg.Verbose(0, "SQItem::SetEntryByNumber: docEntries"
+                              " contains non ValEntry occurences");
             }
          }
          if (entry)
@@ -217,7 +218,7 @@ bool gdcmSQItem::SetEntryByNumber(std::string val, uint16_t group,
       }   
       if (group == (*i)->GetGroup() && element == (*i)->GetElement() )
       {
-         if ( gdcmValEntry* entry = dynamic_cast<gdcmValEntry*>(*i) )
+         if ( ValEntry* entry = dynamic_cast<ValEntry*>(*i) )
          {
             entry->SetValue(val);
          }
@@ -235,7 +236,7 @@ bool gdcmSQItem::SetEntryByNumber(std::string val, uint16_t group,
  * \brief   Gets a Dicom Element inside a SQ Item Entry, by number
  * @return
  */
-gdcmDocEntry* gdcmSQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
+DocEntry* SQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
 {
    for(ListDocEntry::iterator i = docEntries.begin();
                               i != docEntries.end(); ++i)
@@ -253,14 +254,14 @@ gdcmDocEntry* gdcmSQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
  * @return
  */ 
 
-std::string gdcmSQItem::GetEntryByNumber(uint16_t group, uint16_t element)
+std::string SQItem::GetEntryByNumber(uint16_t group, uint16_t element)
 {
    for(ListDocEntry::iterator i = docEntries.begin();
                               i != docEntries.end(); ++i)
    {
       if ( (*i)->GetGroup() == group && (*i)->GetElement() == element)
       {
-         return ((gdcmValEntry *)(*i))->GetValue();   //FIXME
+         return ((ValEntry *)(*i))->GetValue();   //FIXME
       }
    }
    return GDCM_UNFOUND;
@@ -270,3 +271,5 @@ std::string gdcmSQItem::GetEntryByNumber(uint16_t group, uint16_t element)
 
 
 //-----------------------------------------------------------------------------
+
+} // end namespace gdcm

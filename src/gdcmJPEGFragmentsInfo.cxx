@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,10 @@
 
 #include "gdcmJPEGFragmentsInfo.h"
 
-gdcmJPEGFragmentsInfo::~gdcmJPEGFragmentsInfo()
+namespace gdcm 
+{
+
+JPEGFragmentsInfo::~JPEGFragmentsInfo()
 {
    for(JPEGFragmentsList::iterator it  = Fragments.begin();
                                    it != Fragments.end();
@@ -28,3 +31,4 @@ gdcmJPEGFragmentsInfo::~gdcmJPEGFragmentsInfo()
    }
    Fragments.clear();
 }
+} // end namespace gdcm

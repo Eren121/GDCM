@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/10/12 04:35:47 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,12 +25,15 @@
 #include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmException.h"
 
+namespace gdcm 
+{
+
 /*
  * \brief Utility container for gathering the various forms the pixel data
  *        migth take during the user demanded processes.
  */
-class GDCM_EXPORT gdcmPixelConvert {
-friend class gdcmFile;
+class GDCM_EXPORT PixelConvert {
+friend class File;
    /// Pixel data represented as RGB after color interpretation
    uint8_t* RGB;
    size_t   RGBSize;          //aka ImageDataSize
@@ -38,8 +41,8 @@ friend class gdcmFile;
    uint8_t* Uncompressed;
    size_t   UncompressedSize;
 public:
-   gdcmPixelConvert();
-   ~gdcmPixelConvert();
+   PixelConvert();
+   ~PixelConvert();
 
    uint8_t* GetRGB() { return RGB; }
    void     SetRGBSize( size_t size ) { RGBSize = size; }
@@ -70,13 +73,13 @@ public:
                   int YSize,
                   int ZSize,
                   int BitsAllocated,
-                  gdcmRLEFramesInfo* RLEInfo,
+                  RLEFramesInfo* RLEInfo,
                   FILE* fp );
    static void ConvertDecompress12BitsTo16Bits(
                   uint8_t* pixelZone,
                   int sizeX,
                   int sizeY,
-                  FILE* filePtr) throw ( gdcmFormatError );
+                  FILE* filePtr) throw ( FormatError );
    static void SwapZone(void* im, int swap, int lgr, int nb);
    static void ConvertReorderEndianity(
                   uint8_t* pixelZone,
@@ -95,17 +98,17 @@ public:
                   int PixelSize,
                   bool isJPEG2000,
                   bool isJPEGLossless,
-                  gdcmJPEGFragmentsInfo* JPEGInfo,
+                  JPEGFragmentsInfo* JPEGInfo,
                   FILE* fp );
-   static bool gdcmPixelConvert::ConvertReArrangeBits(
+   static bool PixelConvert::ConvertReArrangeBits(
                   uint8_t* pixelZone,
                   size_t imageDataSize,
                   int numberBitsStored,
                   int numberBitsAllocated,
-                  int highBitPosition ) throw ( gdcmFormatError );
+                  int highBitPosition ) throw ( FormatError );
 
 
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

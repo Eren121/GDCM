@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:54 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,8 @@
 #include "gdcmUtil.h"
 
 #include <iomanip> // for std::ios::left, ...
+namespace gdcm 
+{
 
 // CLEAN ME
 #define MAX_SIZE_PRINT_ELEMENT_VALUE 64
@@ -29,14 +31,14 @@
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmDocEntry
- * \brief   Constructor from a given gdcmDictEntry
+ * \ingroup DocEntry
+ * \brief   Constructor from a given DictEntry
  * @param   in Pointer to existing dictionary entry
  */
-gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in)
+DocEntry::DocEntry(DictEntry* in)
 {
    ImplicitVR = false;
-   DictEntry  = in;
+   DicomDict  = in;
    SetKey( in->GetKey( ) );
    Offset     = 0 ; // To avoid further missprinting
 }
@@ -44,11 +46,11 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in)
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmDocEntry
- * \brief   Prints the common part of gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
+ * \ingroup DocEntry
+ * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
  * @param   os ostream we want to print in
  */
-void gdcmDocEntry::Print(std::ostream& os)
+void DocEntry::Print(std::ostream& os)
 {
    PrintLevel = 2; // FIXME
    
@@ -65,7 +67,7 @@ void gdcmDocEntry::Print(std::ostream& os)
    o  = GetOffset();
    vr = GetVR();
 
-   s << gdcmDictEntry::TranslateToKey(GetGroup(),GetElement()); 
+   s << DictEntry::TranslateToKey(GetGroup(),GetElement()); 
 
    if (PrintLevel >= 2)
    {
@@ -73,7 +75,7 @@ void gdcmDocEntry::Print(std::ostream& os)
       lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
       if (lgth == 0xffffffff)
       {
-         st = gdcmUtil::Format("x(ffff)");  // I said : "x(ffff)" !
+         st = Util::Format("x(ffff)");  // I said : "x(ffff)" !
          s.setf(std::ios::left);
          s << std::setw(10-st.size()) << " ";  
          s << st << " ";
@@ -82,7 +84,7 @@ void gdcmDocEntry::Print(std::ostream& os)
       }
       else
       {
-         st = gdcmUtil::Format("x(%x)",lgth);
+         st = Util::Format("x(%x)",lgth);
          s.setf(std::ios::left);
          s << std::setw(10-st.size()) << " ";
          s << st << " ";
@@ -90,7 +92,7 @@ void gdcmDocEntry::Print(std::ostream& os)
          s << std::setw(8) << lgth; 
       }
       s << " Off.: ";
-      st = gdcmUtil::Format("x(%x)",o); 
+      st = Util::Format("x(%x)",o); 
       s << std::setw(10-st.size()) << " ";
       s << st << " ";
       s << std::setw(8) << o; 
@@ -109,16 +111,16 @@ void gdcmDocEntry::Print(std::ostream& os)
 }
 
 /**
- * \ingroup gdcmDocEntry
- * \brief   Writes the common part of any gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
+ * \ingroup DocEntry
+ * \brief   Writes the common part of any ValEntry, BinEntry, SeqEntry
  * @param fp already open file pointer
  * @param filetype type of the file to be written
  */
-void gdcmDocEntry::Write(FILE* fp, FileType filetype)
+void DocEntry::Write(FILE* fp, FileType filetype)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
-   gdcmVRKey vr   = GetVR();
+   VRKey vr   = GetVR();
    uint16_t el    = GetElement();
    uint32_t lgr   = GetReadLength();
 
@@ -136,7 +138,7 @@ void gdcmDocEntry::Write(FILE* fp, FileType filetype)
    fwrite ( &group,(size_t)2 ,(size_t)1 ,fp);  //group
    fwrite ( &el,   (size_t)2 ,(size_t)1 ,fp);  //element
       
-   if ( filetype == gdcmExplicitVR )
+   if ( filetype == ExplicitVR )
    {
       // Special case of delimiters:
       if (group == 0xfffe)
@@ -208,11 +210,11 @@ void gdcmDocEntry::Write(FILE* fp, FileType filetype)
 // Public
 
 /**
- * \ingroup gdcmDocEntry
+ * \ingroup DocEntry
  * \brief   Gets the full length of the elementary DocEntry (not only value
  *          length) depending on the VR.
  */
-uint32_t gdcmDocEntry::GetFullLength()
+uint32_t DocEntry::GetFullLength()
 {
    uint32_t l = GetReadLength();
    if ( IsImplicitVR() )
@@ -234,35 +236,35 @@ uint32_t gdcmDocEntry::GetFullLength()
 }
 
 /**
- * \ingroup gdcmDocEntry
+ * \ingroup DocEntry
  * \brief   Copies all the attributes from an other DocEntry 
  */
-void gdcmDocEntry::Copy (gdcmDocEntry* e)
+void DocEntry::Copy (DocEntry* e)
 {
-   DictEntry    = e->DictEntry;
+   DicomDict    = e->DicomDict;
    UsableLength = e->UsableLength;
    ReadLength   = e->ReadLength;
    ImplicitVR   = e->ImplicitVR;
    Offset       = e->Offset;
    PrintLevel   = e->PrintLevel;
-   // TODO : remove gdcmDocEntry SQDepth
+   // TODO : remove DocEntry SQDepth
 }
 
 /**
- * \ingroup gdcmDocEntry
+ * \ingroup DocEntry
  * \brief   tells us if entry is the last one of a 'no length' SequenceItem 
  *          (fffe,e00d) 
  */
-bool gdcmDocEntry::IsItemDelimitor()
+bool DocEntry::IsItemDelimitor()
 {
    return (GetGroup() == 0xfffe && GetElement() == 0xe00d);
 }
 /**
- * \ingroup gdcmDocEntry
+ * \ingroup DocEntry
  * \brief   tells us if entry is the last one of a 'no length' Sequence 
  *          (fffe,e0dd) 
  */
-bool gdcmDocEntry::IsSequenceDelimitor()
+bool DocEntry::IsSequenceDelimitor()
 {
    return (GetGroup() == 0xfffe && GetElement() == 0xe0dd);
 }
@@ -275,3 +277,5 @@ bool gdcmDocEntry::IsSequenceDelimitor()
 // Private
 
 //-----------------------------------------------------------------------------
+
+} // end namespace gdcm

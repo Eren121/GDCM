@@ -6,14 +6,14 @@ int main(int argc, char* argv[]) {
 
    std::string toto, titi;
 
-   gdcmFile  * f1;
+   gdcm::File  * f1;
 
    if(argc > 1 )
-      f1 = new gdcmFile(argv[1]);
+      f1 = new gdcm::File(argv[1]);
    else  {
       toto = GDCM_DATA_ROOT;
       toto += "/test.acr";
-      f1 = new gdcmFile(toto);
+      f1 = new gdcm::File(toto);
    }
 
    std::string ManufacturerName="SIEMENS ";

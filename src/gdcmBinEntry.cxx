@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:05 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/10/12 04:35:44 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,23 +19,25 @@
 #include "gdcmBinEntry.h"
 #include "gdcmDebug.h"
 
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 
 /**
- * \brief   Constructor from a given gdcmBinEntry
+ * \brief   Constructor from a given BinEntry
  */
-gdcmBinEntry::gdcmBinEntry(gdcmDictEntry* e) : gdcmValEntry(e)
+BinEntry::BinEntry(DictEntry* e) : ValEntry(e)
 {
    BinArea = 0;
 }
 
 /**
- * \brief   Constructor from a given gdcmBinEntry
+ * \brief   Constructor from a given BinEntry
  * @param   e Pointer to existing Doc entry
  */
-gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
+BinEntry::BinEntry(DocEntry* e) : ValEntry(e->GetDictEntry())
 {
    UsableLength = e->GetLength();
    ReadLength   = e->GetReadLength();
@@ -51,7 +53,7 @@ gdcmBinEntry::gdcmBinEntry(gdcmDocEntry* e) : gdcmValEntry(e->GetDictEntry())
 /**
  * \brief   Canonical destructor.
  */
-gdcmBinEntry::~gdcmBinEntry()
+BinEntry::~BinEntry()
 {
    if (BinArea)
    {
@@ -67,9 +69,9 @@ gdcmBinEntry::~gdcmBinEntry()
  * \brief   canonical Printer
  */
  
-void gdcmBinEntry::Print(std::ostream &os)
+void BinEntry::Print(std::ostream &os)
 {
-   gdcmDocEntry::Print(os);
+   DocEntry::Print(os);
    std::ostringstream s;
    void* binArea = GetBinArea();
    if (binArea)
@@ -99,9 +101,9 @@ void gdcmBinEntry::Print(std::ostream &os)
  * @param fp already open file pointer
  * @param filetype type of the file to be written
 */
-void gdcmBinEntry::Write(FILE* fp, FileType filetype)
+void BinEntry::Write(FILE* fp, FileType filetype)
 {
-   gdcmDocEntry::Write(fp, filetype);
+   DocEntry::Write(fp, filetype);
    void* binArea = GetBinArea();
    int lgr = GetLength();
    if (binArea)
@@ -120,7 +122,7 @@ void gdcmBinEntry::Write(FILE* fp, FileType filetype)
 
 
 /// \brief Sets the value (non string) of the current Dicom Header Entry
-void gdcmBinEntry::SetBinArea( uint8_t* area )  
+void BinEntry::SetBinArea( uint8_t* area )  
 { 
    if (BinArea)
       delete[] BinArea;
@@ -134,3 +136,4 @@ void gdcmBinEntry::SetBinArea( uint8_t* area )
 // Private
    
 //-----------------------------------------------------------------------------
+} // end namespace gdcm

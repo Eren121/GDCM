@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:43:38 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,8 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -30,7 +32,7 @@
  * \brief   Construtor
  * @param   filename from which to build the dictionary.
  */
-gdcmDict::gdcmDict(std::string const & filename)
+Dict::Dict(std::string const & filename)
 {
    uint16_t group;
    uint16_t element;
@@ -39,7 +41,7 @@ gdcmDict::gdcmDict(std::string const & filename)
    TagName name;
 
    std::ifstream from( filename.c_str() );
-   dbg.Error(!from, "gdcmDict::gdcmDict: can't open dictionary",
+   dbg.Error(!from, "Dict::Dict: can't open dictionary",
                     filename.c_str());
 
    while (!from.eof())
@@ -52,7 +54,7 @@ gdcmDict::gdcmDict(std::string const & filename)
       from >> std::ws; // used to be eatwhite(from);
       std::getline(from, name);    /// MEMORY LEAK in std::getline<>
 
-      gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,
+      DictEntry * newEntry = new DictEntry(group, element,
                                                    vr, fourth, name);
       AddNewEntry(newEntry);
    }
@@ -64,18 +66,18 @@ gdcmDict::gdcmDict(std::string const & filename)
 /**
  * \brief  Destructor 
  */
-gdcmDict::~gdcmDict()
+Dict::~Dict()
 {
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
-      gdcmDictEntry* entryToDelete = tag->second;
+      DictEntry* entryToDelete = tag->second;
       if ( entryToDelete )
       {
          delete entryToDelete;
       }
    }
    // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
-   // assume all the pointed gdcmDictEntries are already cleaned-up when
+   // assume all the pointed DictEntries are already cleaned-up when
    // we cleaned KeyHt.
    KeyHt.clear();
    NameHt.clear();
@@ -88,7 +90,7 @@ gdcmDict::~gdcmDict()
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
  */
-void gdcmDict::Print(std::ostream &os)
+void Dict::Print(std::ostream &os)
 {
    os << "Dict file name : " << Filename << std::endl;
    PrintByKey(os);
@@ -99,7 +101,7 @@ void gdcmDict::Print(std::ostream &os)
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
  */
-void gdcmDict::PrintByKey(std::ostream &os)
+void Dict::PrintByKey(std::ostream &os)
 {
    std::ostringstream s;
 
@@ -123,7 +125,7 @@ void gdcmDict::PrintByKey(std::ostream &os)
  *                           unpredictable result
  * @param   os The output stream to be written to.
  */
-void gdcmDict::PrintByName(std::ostream& os)
+void Dict::PrintByName(std::ostream& os)
 {
    std::ostringstream s;
 
@@ -143,18 +145,18 @@ void gdcmDict::PrintByName(std::ostream& os)
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmDict
+ * \ingroup Dict
  * \brief  adds a new Dicom Dictionary Entry 
  * @param   newEntry entry to add 
  * @return  false if Dicom Element already exists
  */
-bool gdcmDict::AddNewEntry(gdcmDictEntry *newEntry) 
+bool Dict::AddNewEntry(DictEntry *newEntry) 
 {
-   gdcmTagKey key = newEntry->GetKey();
+   TagKey key = newEntry->GetKey();
 
    if(KeyHt.count(key) == 1)
    {
-      dbg.Verbose(1, "gdcmDict::AddNewEntry already present", key.c_str());
+      dbg.Verbose(1, "Dict::AddNewEntry already present", key.c_str());
       return false;
    } 
    else 
@@ -166,14 +168,14 @@ bool gdcmDict::AddNewEntry(gdcmDictEntry *newEntry)
 }
 
 /**
- * \ingroup gdcmDict
+ * \ingroup Dict
  * \brief  replaces an already existing Dicom Element by a new one
  * @param   newEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
-bool gdcmDict::ReplaceEntry(gdcmDictEntry *newEntry)
+bool Dict::ReplaceEntry(DictEntry *newEntry)
 {
-   if ( RemoveEntry(newEntry->gdcmDictEntry::GetKey()) )
+   if ( RemoveEntry(newEntry->DictEntry::GetKey()) )
    {
        KeyHt[newEntry->GetKey()] = newEntry;
        NameHt[newEntry->GetName()] = newEntry;
@@ -183,17 +185,17 @@ bool gdcmDict::ReplaceEntry(gdcmDictEntry *newEntry)
 }
 
 /**
- * \ingroup gdcmDict
+ * \ingroup Dict
  * \brief  removes an already existing Dicom Dictionary Entry,
  *         identified by its Tag
  * @param   key (group|element)
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool gdcmDict::RemoveEntry(gdcmTagKey key) 
+bool Dict::RemoveEntry(TagKey key) 
 {
    if(KeyHt.count(key) == 1) 
    {
-      gdcmDictEntry* entryToDelete = KeyHt.find(key)->second;
+      DictEntry* entryToDelete = KeyHt.find(key)->second;
 
       if ( entryToDelete )
       {
@@ -206,7 +208,7 @@ bool gdcmDict::RemoveEntry(gdcmTagKey key)
    } 
    else 
    {
-      dbg.Verbose(1, "gdcmDict::RemoveEntry unfound entry", key.c_str());
+      dbg.Verbose(1, "Dict::RemoveEntry unfound entry", key.c_str());
       return false;
   }
 }
@@ -218,9 +220,9 @@ bool gdcmDict::RemoveEntry(gdcmTagKey key)
  * @param   element Dicom element number of the Dicom Element
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool gdcmDict::RemoveEntry (uint16_t group, uint16_t element)
+bool Dict::RemoveEntry (uint16_t group, uint16_t element)
 {
-   return RemoveEntry(gdcmDictEntry::TranslateToKey(group, element));
+   return RemoveEntry(DictEntry::TranslateToKey(group, element));
 }
 
 /**
@@ -231,7 +233,7 @@ bool gdcmDict::RemoveEntry (uint16_t group, uint16_t element)
  *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry* gdcmDict::GetDictEntryByName(TagName name)
+DictEntry* Dict::GetDictEntryByName(TagName name)
 {
    if ( !NameHt.count(name))
    {
@@ -246,9 +248,9 @@ gdcmDictEntry* gdcmDict::GetDictEntryByName(TagName name)
  * @param   element element of the entry to be found
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry* gdcmDict::GetDictEntryByNumber(uint16_t group, uint16_t element)
+DictEntry* Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
 {
-   gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   TagKey key = DictEntry::TranslateToKey(group, element);
    if ( !KeyHt.count(key) )
    {
       return 0;
@@ -259,10 +261,10 @@ gdcmDictEntry* gdcmDict::GetDictEntryByNumber(uint16_t group, uint16_t element)
 /** 
  * \brief   Consider all the entries of the public dicom dictionnary. 
  *          Build all list of all the tag names of all those entries.
- * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
+ * \sa      DictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string>* gdcmDict::GetDictEntryNames() 
+std::list<std::string>* Dict::GetDictEntryNames() 
 {
    std::list<std::string> *result = new std::list<std::string>;
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
@@ -273,7 +275,7 @@ std::list<std::string>* gdcmDict::GetDictEntryNames()
 }
 
 /** 
- * \ingroup gdcmDict
+ * \ingroup Dict
  * \brief   Consider all the entries of the public dicom dictionnary.
  *          Build an hashtable whose keys are the names of the groups
  *          (fourth field in each line of dictionary) and whose corresponding
@@ -296,7 +298,7 @@ std::list<std::string>* gdcmDict::GetDictEntryNames()
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-std::map<std::string, std::list<std::string> > *gdcmDict::GetDictEntryNamesByCategory(void) 
+std::map<std::string, std::list<std::string> > *Dict::GetDictEntryNamesByCategory(void) 
 {
    std::map<std::string, std::list<std::string> > *result = new std::map<std::string, std::list<std::string> >;
 
@@ -315,3 +317,5 @@ std::map<std::string, std::list<std::string> > *gdcmDict::GetDictEntryNamesByCat
 // Private
 
 //-----------------------------------------------------------------------------
+
+} // end namespace gdcm

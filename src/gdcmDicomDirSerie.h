@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,37 +21,39 @@
 
 #include "gdcmDicomDirObject.h"
 #include "gdcmDicomDirImage.h"
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
-typedef std::list<gdcmDicomDirImage *> ListDicomDirImage;
+typedef std::list<DicomDirImage *> ListDicomDirImage;
 
 //-----------------------------------------------------------------------------
-class GDCM_EXPORT gdcmDicomDirSerie : public gdcmDicomDirObject 
+class GDCM_EXPORT DicomDirSerie : public DicomDirObject 
 {
 public:
-   gdcmDicomDirSerie(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
-   gdcmDicomDirSerie(TagDocEntryHT *ptagHT); 
+   DicomDirSerie(SQItem *s, TagDocEntryHT *ptagHT); 
+   DicomDirSerie(TagDocEntryHT *ptagHT); 
 
-   ~gdcmDicomDirSerie();
+   ~DicomDirSerie();
 
    virtual void Print(std::ostream &os = std::cout);
    virtual void Write(FILE *fp, FileType t);
 /**
- * \ingroup gdcmDicomDirSerie
+ * \ingroup DicomDirSerie
  * \brief   returns the IMAGE chained List for this SERIE.
  */
    ListDicomDirImage &GetDicomDirImages() { return images; };
 /**
- * \ingroup gdcmDicomDirSerie
+ * \ingroup DicomDirSerie
  * \brief   adds the passed IMAGE to the IMAGE chained List for this SERIE.
  */       
-   void AddDicomDirImage(gdcmDicomDirImage *obj) { images.push_back(obj); };
+   void AddDicomDirImage(DicomDirImage *obj) { images.push_back(obj); };
 
 /**
- * \ingroup gdcmDicomDirSerie
+ * \ingroup DicomDirSerie
  * \brief   TODO
  */ 
-   gdcmDicomDirImage* NewImage();
+   DicomDirImage* NewImage();
     
 private:
 /**
@@ -59,6 +61,6 @@ private:
 */ 
    ListDicomDirImage images;
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

@@ -1,4 +1,5 @@
 #include "gdcmHeader.h"
+
 #include <map>
 #include <list>
 #include <fstream>
@@ -7,77 +8,75 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-using namespace std;
-
-typedef string EntryValueType;   // same type as gdcmValEntry::value
-typedef map< gdcmTagKey, EntryValueType > MapEntryValues;
+typedef std::string EntryValueType;   // same type as ValEntry::value
+typedef std::map< TagKey, EntryValueType > MapEntryValues;
 typedef MapEntryValues* MapEntryValuesPtr;
-typedef string FileNameType;
-typedef map< FileNameType, MapEntryValuesPtr > MapFileValuesType;
+typedef std::string FileNameType;
+typedef std::map< FileNameType, MapEntryValuesPtr > MapFileValuesType;
 
 struct ParserException
 {
-   string error;
-   static string Indent;
+   std::string error;
+   static std::string Indent;
 
-   static string GetIndent() { return ParserException::Indent; }
-   ParserException( string ErrorMessage )
+   static std::string GetIndent() { return ParserException::Indent; }
+   ParserException( std::string ErrorMessage )
    {
       error = ErrorMessage;
       Indent = "      ";
    }
-   void Print() { cerr << Indent << error << endl; }
+   void Print() { std::cerr << Indent << error << std::endl; }
 };
 
-string ParserException::Indent = "      ";
+std::string ParserException::Indent = "      ";
 
 class ReferenceFileParser
 {
-   bool AddKeyValuePairToMap( string& key, string& value );
+   bool AddKeyValuePairToMap( std::string& key, std::string& value );
 
-   istream& eatwhite(istream& is);
-   void eatwhite(string& toClean);
-   string ExtractFirstString(string& toSplit);
-   void CleanUpLine( string& line );
+   std::istream& eatwhite(std::istream& is);
+   void eatwhite(std::string& toClean);
+   std::string ExtractFirstString(std::string& toSplit);
+   void CleanUpLine( std::string& line );
 
-   string ExtractValue(string& toSplit)  throw ( ParserException );
-   void ParseRegularLine( string& line ) throw ( ParserException );
+   std::string ExtractValue(std::string& toSplit)  throw ( ParserException );
+   void ParseRegularLine( std::string& line ) throw ( ParserException );
    void FirstPassReferenceFile()         throw ( ParserException );
    bool SecondPassReferenceFile()        throw ( ParserException );
-   void HandleFileName( string& line )   throw ( ParserException );
-   void HandleKey( string& line )        throw ( ParserException );
-   bool HandleValue( string& line )      throw ( ParserException );
+   void HandleFileName( std::string& line )   throw ( ParserException );
+   void HandleKey( std::string& line )        throw ( ParserException );
+   bool HandleValue( std::string& line )      throw ( ParserException );
    static uint16_t axtoi( char* );
 public:
    ReferenceFileParser();
-   bool Open( string& referenceFileName );
+   bool Open( std::string& referenceFileName );
    void Print();
-   void SetDataPath(string&);
+   void SetDataPath(std::string&);
    bool Check();
 private:
    /// The directory containing the images to check:
-   string DataPath;
+   std::string DataPath;
 
    /// The product of the parser:
    MapFileValuesType ProducedMap;
 
    /// The ifstream attached to the file we parse:
-   ifstream from;
+   std::ifstream from;
 
    /// String prefixing every output
-   string Indent;
+   std::string Indent;
 
    /// The current line position within the stream:
    int lineNumber;
 
    /// The currently parsed filename:
-   string CurrentFileName;
+   std::string CurrentFileName;
 
    /// The currently parsed key:
-   string CurrentKey;
+   std::string CurrentKey;
 
    /// The currently parsed value:
-   string CurrentValue;
+   std::string CurrentValue;
 
    /// The current MapEntryValues pointer:
    MapEntryValues* CurrentMapEntryValuesPtr;
@@ -114,15 +113,15 @@ uint16_t ReferenceFileParser::axtoi(char *hexStg) {
      m--;   // adjust the position to set
      n++;   // next digit to process
   }
-  return (intValue);
+  return intValue;
 }
 
-void ReferenceFileParser::SetDataPath( string& inDataPath )
+void ReferenceFileParser::SetDataPath( std::string& inDataPath )
 {
    DataPath = inDataPath;
 }
 
-bool ReferenceFileParser::AddKeyValuePairToMap( string& key, string& value )
+bool ReferenceFileParser::AddKeyValuePairToMap( std::string& key, std::string& value )
 {
    if ( !CurrentMapEntryValuesPtr )
       return false;
@@ -139,20 +138,20 @@ void ReferenceFileParser::Print()
                                     i != ProducedMap.end();
                                     ++i)
    {
-      cout << Indent << "FileName: " << i->first << endl;
+      std::cout << Indent << "FileName: " << i->first << std::endl;
       MapEntryValuesPtr KeyValues = i->second;
       for (MapEntryValues::iterator j  = KeyValues->begin();
                                     j != KeyValues->end();
                                     ++j)
       {
-         cout << Indent
+         std::cout << Indent
               << "  Key: " << j->first
               << "  Value: " << j->second
-              << endl;
+              << std::endl;
       }
-      cout << Indent << endl;
+      std::cout << Indent << std::endl;
    }
-   cout << Indent << endl;
+   std::cout << Indent << std::endl;
 }
 
 bool ReferenceFileParser::Check()
@@ -161,13 +160,13 @@ bool ReferenceFileParser::Check()
                                     i != ProducedMap.end();
                                     ++i)
    {
-      string fileName = DataPath + i->first;
-      cout << Indent << "FileName: " << fileName << endl;
-      gdcmHeader* tested = new gdcmHeader( fileName.c_str() );
+      std::string fileName = DataPath + i->first;
+      std::cout << Indent << "FileName: " << fileName << std::endl;
+      gdcm::Header* tested = new gdcm::Header( fileName.c_str() );
       if( !tested->IsReadable() )
       {
-        cerr << Indent << "Image not gdcm compatible:"
-             << fileName << endl;
+        std::cerr << Indent << "Image not gdcm compatible:"
+             << fileName << std::endl;
         delete tested;
         return false;
       }
@@ -177,14 +176,14 @@ bool ReferenceFileParser::Check()
                                     j != KeyValues->end();
                                     ++j)
       {
-         string key = j->first;
+         std::string key = j->first;
 
-         string groupString  = key.substr( 0, 4 );
+         std::string groupString  = key.substr( 0, 4 );
          char* groupCharPtr;
          groupCharPtr = new char(groupString.length() + 1);
          strcpy( groupCharPtr, groupString.c_str() ); 
 
-         string groupElement = key.substr( key.find_first_of( "|" ) + 1, 4 );
+         std::string groupElement = key.substr( key.find_first_of( "|" ) + 1, 4 );
          char* groupElementPtr;
          groupElementPtr = new char(groupElement.length() + 1);
          strcpy( groupElementPtr, groupElement.c_str() ); 
@@ -192,24 +191,24 @@ bool ReferenceFileParser::Check()
          uint16_t group   = axtoi( groupCharPtr );
          uint16_t element = axtoi( groupElementPtr );
 
-         string testedValue = tested->GetEntryByNumber(group, element);
+         std::string testedValue = tested->GetEntryByNumber(group, element);
          if ( testedValue != j->second )
          {
-            cout << Indent << "Uncorrect value for key " << key << endl
-                 << Indent << "   read value [" << testedValue << "]" << endl
+            std::cout << Indent << "Uncorrect value for key " << key << std::endl
+                 << Indent << "   read value [" << testedValue << "]" << std::endl
                  << Indent << "   reference value [" << j->second << "]"
-                           << endl;
+                           << std::endl;
             return false;
          }
       }
       delete tested;
-      cout << Indent << "  OK" << endl;
+      std::cout << Indent << "  OK" << std::endl;
    }
-   cout << Indent << endl;
+   std::cout << Indent << std::endl;
    return true;
 }
 
-istream& ReferenceFileParser::eatwhite( istream& is )
+std::istream& ReferenceFileParser::eatwhite( std::istream& is )
 {
    char c;
    while (is.get(c)) {
@@ -221,17 +220,17 @@ istream& ReferenceFileParser::eatwhite( istream& is )
    return is;
 }
 
-void ReferenceFileParser::eatwhite( string& toClean )
+void ReferenceFileParser::eatwhite( std::string& toClean )
 {
    while( toClean.find_first_of( " " ) == 0  )
       toClean.erase( 0, toClean.find_first_of( " " ) + 1 );
 }
 
-string ReferenceFileParser::ExtractFirstString( string& toSplit )
+std::string ReferenceFileParser::ExtractFirstString( std::string& toSplit )
 {
    std::string firstString;
    eatwhite( toSplit );
-   if ( toSplit.find( " " ) == string::npos ) {
+   if ( toSplit.find( " " ) == std::string::npos ) {
       firstString = toSplit;
       toSplit.erase();
       return firstString;
@@ -242,30 +241,30 @@ string ReferenceFileParser::ExtractFirstString( string& toSplit )
    return firstString;
 }
 
-string ReferenceFileParser::ExtractValue( string& toSplit )
+std::string ReferenceFileParser::ExtractValue( std::string& toSplit )
    throw ( ParserException )
 {
    eatwhite( toSplit );
-   string::size_type beginPos = toSplit.find_first_of( '"' );
-   string::size_type   endPos = toSplit.find_last_of( '"' );
+   std::string::size_type beginPos = toSplit.find_first_of( '"' );
+   std::string::size_type   endPos = toSplit.find_last_of( '"' );
 
    // Make sure we have at most two " in toSplit:
-   string noQuotes = toSplit.substr( beginPos + 1, endPos - beginPos - 1);
-   if ( noQuotes.find_first_of( '"' ) != string::npos )
+   std::string noQuotes = toSplit.substr( beginPos + 1, endPos - beginPos - 1);
+   if ( noQuotes.find_first_of( '"' ) != std::string::npos )
       throw ParserException( "more than two quote character" );
 
    // No leading quote means this is not a value:
-   if ( beginPos == string::npos )
+   if ( beginPos == std::string::npos )
    {
-      return string();
+      return std::string();
    }
 
-   if ( ( endPos == string::npos ) || ( beginPos == endPos ) )
+   if ( ( endPos == std::string::npos ) || ( beginPos == endPos ) )
       throw ParserException( "unmatched \" (quote character)" );
 
    if ( beginPos != 0 )
    {
-      ostringstream error;
+      std::ostringstream error;
       error  << "leading character ["
              << toSplit.substr(beginPos -1, 1)
              << "] before opening \" ";
@@ -277,14 +276,14 @@ string ReferenceFileParser::ExtractValue( string& toSplit )
    if (   ( endPos != toSplit.length() - 1 )
        && ( toSplit.substr(endPos + 1, 1) != " " ) )
    {
-      ostringstream error;
+      std::ostringstream error;
       error  << "trailing character ["
              << toSplit.substr(endPos + 1, 1)
              << "] after value closing \" ";
       throw ParserException( error.str() );
    }
 
-   string value = toSplit.substr( beginPos + 1, endPos - beginPos - 1 );
+   std::string value = toSplit.substr( beginPos + 1, endPos - beginPos - 1 );
    toSplit.erase(  beginPos, endPos - beginPos + 1);
    eatwhite( toSplit );
    return value;
@@ -300,10 +299,10 @@ string ReferenceFileParser::ExtractValue( string& toSplit )
 /// \warning The underlying file pointer is not preseved.
 void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
 {
-   string line;
+   std::string line;
    lineNumber = 1;
    bool inBlock = false;
-   from.seekg( 0, ios::beg );
+   from.seekg( 0, std::ios::beg );
 
    while ( ! from.eof() )
    {
@@ -319,7 +318,7 @@ void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
       }
 
       // Don't try to parse comments (weed out anything after first "#"):
-      if ( line.find_first_of( "#" ) != string::npos )
+      if ( line.find_first_of( "#" ) != std::string::npos )
       {
          line.erase( line.find_first_of( "#" ) );
       }
@@ -328,11 +327,11 @@ void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
       // blocks which is illegal:
       if ( line.find_first_of( "[" ) != line.find_last_of( "[" ) )
       {
-         ostringstream error;
+         std::ostringstream error;
          error << "Syntax error: nested block (open) in reference file"
-               << endl
+               << std::endl
                << ParserException::GetIndent()
-               << "   at line " << lineNumber << endl;
+               << "   at line " << lineNumber << std::endl;
          throw ParserException( error.str() );
       }
 
@@ -340,32 +339,32 @@ void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
       // blocks which is illegal:
       if ( line.find_first_of( "]" ) != line.find_last_of( "]" ) )
       {
-         ostringstream error;
+         std::ostringstream error;
          error << "Syntax error: nested block (close) in reference file"
-               << endl
+               << std::endl
                << ParserException::GetIndent()
-               << "   at line " << lineNumber << endl;
+               << "   at line " << lineNumber << std::endl;
          throw ParserException( error.str() );
       }
 
-      bool beginBlock ( line.find_first_of("[") != string::npos );
-      bool endBlock   ( line.find_last_of("]")  != string::npos );
+      bool beginBlock ( line.find_first_of("[") != std::string::npos );
+      bool endBlock   ( line.find_last_of("]")  != std::string::npos );
 
       // Opening and closing of block on same line:
       if ( beginBlock && endBlock )
       {
-         ostringstream error;
+         std::ostringstream error;
          error << "Syntax error: opening and closing on block on same line "
-               << lineNumber++ << endl;
+               << lineNumber++ << std::endl;
          throw ParserException( error.str() );
       }
 
       // Illegal closing block when block not open:
       if ( !inBlock && endBlock )
       {
-         ostringstream error;
+         std::ostringstream error;
          error << "Syntax error: unexpected end of block at line "
-               << lineNumber++ << endl;
+               << lineNumber++ << std::endl;
          throw ParserException( error.str() );
       }
   
@@ -377,9 +376,9 @@ void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
 
       if ( inBlock && beginBlock )
       {
-         ostringstream error;
+         std::ostringstream error;
          error << "   Syntax error: illegal opening of nested block at line "
-               << lineNumber++ << endl;
+               << lineNumber++ << std::endl;
          throw ParserException( error.str() );
       }
 
@@ -404,7 +403,7 @@ void ReferenceFileParser::FirstPassReferenceFile() throw ( ParserException )
 
    // We need rewinding:
    from.clear();
-   from.seekg( 0, ios::beg );
+   from.seekg( 0, std::ios::beg );
 }
 
 ReferenceFileParser::ReferenceFileParser()
@@ -413,12 +412,12 @@ ReferenceFileParser::ReferenceFileParser()
    Indent = "      ";
 }
 
-bool ReferenceFileParser::Open( string& referenceFileName )
+bool ReferenceFileParser::Open( std::string& referenceFileName )
 {
-   from.open( referenceFileName.c_str(), ios::in );
+   from.open( referenceFileName.c_str(), std::ios::in );
    if ( !from.is_open() )
    {
-      cerr << Indent << "Can't open reference file." << endl;
+      std::cerr << Indent << "Can't open reference file." << std::endl;
    }
    
    try
@@ -436,21 +435,21 @@ bool ReferenceFileParser::Open( string& referenceFileName )
    return true; //??
 }
 
-void ReferenceFileParser::CleanUpLine( string& line )
+void ReferenceFileParser::CleanUpLine( std::string& line )
 {
    // Cleanup from comments:
-   if ( line.find_first_of( "#" ) != string::npos )
+   if ( line.find_first_of( "#" ) != std::string::npos )
       line.erase( line.find_first_of( "#" ) );
 
    // Cleanup everything after end block delimiter:
-   if ( line.find_last_of( "]" ) != string::npos )
+   if ( line.find_last_of( "]" ) != std::string::npos )
       line.erase( line.find_last_of( "]" ) + 1 );
 
    // Cleanup leading whites and skip empty lines:
    eatwhite( line );
 }
 
-void ReferenceFileParser::HandleFileName( string& line )
+void ReferenceFileParser::HandleFileName( std::string& line )
    throw ( ParserException )
 {
    if ( line.length() == 0 )
@@ -462,22 +461,22 @@ void ReferenceFileParser::HandleFileName( string& line )
    CurrentFileName = ExtractFirstString(line);
 }
 
-void ReferenceFileParser::HandleKey( string& line )
+void ReferenceFileParser::HandleKey( std::string& line )
    throw ( ParserException )
 {
    if ( CurrentKey.length() != 0 )
       return;
 
    CurrentKey = ExtractFirstString(line);
-   if ( CurrentKey.find_first_of( "|" ) == string::npos )
+   if ( CurrentKey.find_first_of( "|" ) == std::string::npos )
    {
-      ostringstream error;
+      std::ostringstream error;
       error  << "uncorrect key:" << CurrentKey;
       throw ParserException( error.str() );
    }
 }
 
-bool ReferenceFileParser::HandleValue( string& line )
+bool ReferenceFileParser::HandleValue( std::string& line )
    throw ( ParserException )
 {
    if ( line.length() == 0 )
@@ -485,22 +484,22 @@ bool ReferenceFileParser::HandleValue( string& line )
 
    if ( CurrentKey.length() == 0 )
    {
-      cout << Indent << "No key present:" << CurrentKey << endl;
+      std::cout << Indent << "No key present:" << CurrentKey << std::endl;
       return false;
    }
    
-   string newCurrentValue = ExtractValue(line);
+   std::string newCurrentValue = ExtractValue(line);
    if ( newCurrentValue.length() == 0 )
    {
-      cout << Indent << "Warning: empty value for key:"
-                     << CurrentKey << endl;
+      std::cout << Indent << "Warning: empty value for key:"
+                     << CurrentKey << std::endl;
    }
 
    CurrentValue += newCurrentValue;
    return true;
 }
 
-void ReferenceFileParser::ParseRegularLine(string& line)
+void ReferenceFileParser::ParseRegularLine( std::string& line)
    throw ( ParserException )
 {
    if ( line.length() == 0 )
@@ -534,9 +533,9 @@ void ReferenceFileParser::ParseRegularLine(string& line)
 bool ReferenceFileParser::SecondPassReferenceFile()
    throw ( ParserException )
 {
-   gdcmTagKey key;
+   TagKey key;
    EntryValueType value;
-   string line;
+   std::string line;
    bool inBlock = false;
    lineNumber = 0;
 
@@ -551,8 +550,8 @@ bool ReferenceFileParser::SecondPassReferenceFile()
       if ( line.length() == 0 )
          continue;
 
-      bool beginBlock ( line.find_first_of("[") != string::npos );
-      bool endBlock   ( line.find_last_of("]")  != string::npos );
+      bool beginBlock ( line.find_first_of("[") != std::string::npos );
+      bool endBlock   ( line.find_last_of("]")  != std::string::npos );
 
       // Waiting for a block to be opened. Meanwhile, drop everything:
       if ( !inBlock && !beginBlock )
@@ -588,34 +587,34 @@ int TestAllEntryVerify(int argc, char* argv[])
 {
    if ( argc > 1 )
    {
-      cerr << "   Usage: " << argv[0]
-                << " (no arguments needed)." << endl;
+      std::cerr << "   Usage: " << argv[0]
+                << " (no arguments needed)." << std::endl;
       return 1;
    }
 
-   string referenceDir = GDCM_DATA_ROOT;
+   std::string referenceDir = GDCM_DATA_ROOT;
    referenceDir       += "/";
-   string referenceFilename = referenceDir + "TestAllEntryVerifyReference.txt";
+   std::string referenceFilename = referenceDir + "TestAllEntryVerifyReference.txt";
    
-   cout << "   Description (Test::TestAllEntryVerify): "
-        << endl;
-   cout << "   For all images (not blacklisted in gdcm/Test/CMakeLists.txt)"
-        << endl;
-   cout << "   encountered in directory: " << GDCM_DATA_ROOT << endl;
-   cout << "   apply the following tests : "<< endl;
-   cout << "   step 1: parse the image and call IsReadable(). "  << endl;
-   cout << "   step 2: look for the entry corresponding to the image" << endl;
-   cout << "           in the reference file: " << referenceFilename << endl;
-   cout << "   step 3: check that each reference tag value listed for this"
-        << endl;
-   cout << "           entry matches the tag encountered at parsing step 1."
-        << endl << endl;
+   std::cout << "   Description (Test::TestAllEntryVerify): "
+        << std::endl;
+   std::cout << "   For all images (not blacklisted in gdcm/Test/CMakeLists.txt)"
+        << std::endl;
+   std::cout << "   encountered in directory: " << GDCM_DATA_ROOT << std::endl;
+   std::cout << "   apply the following tests : "<< std::endl;
+   std::cout << "   step 1: parse the image and call IsReadable(). "  << std::endl;
+   std::cout << "   step 2: look for the entry corresponding to the image" << std::endl;
+   std::cout << "           in the reference file: " << referenceFilename << std::endl;
+   std::cout << "   step 3: check that each reference tag value listed for this"
+        << std::endl;
+   std::cout << "           entry matches the tag encountered at parsing step 1."
+        << std::endl << std::endl;
 
    ReferenceFileParser Parser;
    if ( !Parser.Open(referenceFilename) )
    {
-      cout << "   Corrupted reference file name: "
-           << referenceFilename << endl;
+      std::cout << "   Corrupted reference file name: "
+           << referenceFilename << std::endl;
       return 1;
    }
    Parser.SetDataPath(referenceDir);

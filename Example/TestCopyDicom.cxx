@@ -63,14 +63,14 @@ int main(int argc, char* argv[])
             return 1;
          }
       }
-      gdcmFile *original = new gdcmFile( filename );
+      gdcm::File *original = new gdcm::File( filename );
    
       std::cout << "--- Original ----------------------" << std::endl;
       //original->GetHeader()->Print();
    
-      gdcmFile *copy = new gdcmFile( output );
+      gdcm::File *copy = new gdcm::File( output );
 
-      TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
+      gdcm::TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
 
       size_t dataSize = original->GetImageDataSize();
       uint8_t* imageData = original->GetImageData();
@@ -82,13 +82,13 @@ int main(int argc, char* argv[])
       // (the user does NOT have to know the way we implemented the Header !)
       // Waiting for a 'clean' solution, I keep the method ...JPRx
 
-      gdcmDocEntry* d;
+      gdcm::DocEntry* d;
 
-      for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
+      for (gdcm::TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
       {
          d = tag->second;
          d->Print(); std::cout << std::endl;
-         if ( gdcmBinEntry* b = dynamic_cast<gdcmBinEntry*>(d) )
+         if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
          {              
             copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  b->GetBinArea(),
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
                                  b->GetElement(),
                                  b->GetVR() );
          }
-         else if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
+         else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
          {   
             copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  v->GetValue(),

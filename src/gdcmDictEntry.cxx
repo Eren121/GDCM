@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:54 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,8 @@
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -33,7 +35,7 @@
  * @param   name      description of the element
 */
 
-gdcmDictEntry::gdcmDictEntry(uint16_t group, uint16_t element,
+DictEntry::DictEntry(uint16_t group, uint16_t element,
                              std::string vr, std::string fourth,
                              std::string name)
 {
@@ -57,9 +59,9 @@ gdcmDictEntry::gdcmDictEntry(uint16_t group, uint16_t element,
  * @param  element the Dicom element number used to build the tag
  * @return the built tag
  */
-gdcmTagKey gdcmDictEntry::TranslateToKey(uint16_t group, uint16_t element)
+TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t element)
 {
-   gdcmTagKey key = gdcmUtil::Format("%04x|%04x", group , element);
+   TagKey key = Util::Format("%04x|%04x", group , element);
 
    return key;
 }
@@ -70,7 +72,7 @@ gdcmTagKey gdcmDictEntry::TranslateToKey(uint16_t group, uint16_t element)
  * \            is unset then overwrite it.
  * @param vr    New V(alue) R(epresentation) to be set.
  */
-void gdcmDictEntry::SetVR(std::string const & vr) 
+void DictEntry::SetVR(std::string const & vr) 
 {
    if ( IsVRUnknown() )
    {
@@ -78,7 +80,7 @@ void gdcmDictEntry::SetVR(std::string const & vr)
    }
    else 
    {
-      dbg.Error(true, "gdcmDictEntry::SetVR",
+      dbg.Error(true, "DictEntry::SetVR",
                        "Overwriting VR might compromise a dictionary");
    }
 }
@@ -90,3 +92,5 @@ void gdcmDictEntry::SetVR(std::string const & vr)
 // Private
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm
+

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg12.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,6 +36,8 @@ extern "C" {
 #include "src/jpeg/libijg12/jpeglib.h"
 #include <setjmp.h>
 }
+namespace gdcm 
+{
 /******************** JPEG COMPRESSION SAMPLE INTERFACE *******************/
 
 //
@@ -126,7 +128,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo)
  */
  
  /**
- * \ingroup gdcmFile
+ * \ingroup File
  * \brief   routine for JPEG decompression 
  * @param fp pointer to an already open file descriptor 
  *                      12 significant bits per pixel
@@ -169,7 +171,7 @@ bool gdcm_read_JPEG_file12 ( FILE* fp,void* image_buffer )
 
    int row_stride;/* physical row width in output buffer */
 #ifdef GDCM_JPG_DEBUG
-   printf("entree dans gdcmFile::gdcm_read_JPEG_file12, depuis gdcmJpeg\n");
+   printf("entree dans File::gdcm_read_JPEG_file12, depuis gdcmJpeg\n");
 #endif //GDCM_JPG_DEBUG
 
    /* In this example we want to open the input file before doing anything else,
@@ -369,3 +371,6 @@ bool gdcm_read_JPEG_file12 ( FILE* fp,void* image_buffer )
  */
 
 //-----------------------------------------------------------------------------
+
+} // end namespace gdcm
+

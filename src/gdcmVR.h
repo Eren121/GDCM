@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:08 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/10/12 04:35:48 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,32 +23,35 @@
 #include <map>
 #include <string>
 #include <iostream>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
-typedef std::string gdcmVRKey;
-typedef std::string gdcmVRAtr;
+typedef std::string VRKey;
+typedef std::string VRAtr;
 /// Value Representation Hash Table
-typedef std::map<gdcmVRKey, gdcmVRAtr> gdcmVRHT;
+typedef std::map<VRKey, VRAtr> VRHT;
 
 //-----------------------------------------------------------------------------
 /*
  * Container for dicom Value Representation Hash Table
  * \note   This is a singleton
  */
-class GDCM_EXPORT gdcmVR 
+class GDCM_EXPORT VR 
 {
 public:
-   gdcmVR(void);
-   ~gdcmVR();
+   VR(void);
+   ~VR();
 
    void Print(std::ostream &os = std::cout);
-   int Count(gdcmVRKey key);
-   bool IsVROfGdcmBinaryRepresentable(gdcmVRKey);
-   bool IsVROfGdcmStringRepresentable(gdcmVRKey);
+   int Count(VRKey key);
+   bool IsVROfGdcmBinaryRepresentable(VRKey);
+   bool IsVROfGdcmStringRepresentable(VRKey);
 
 private:
-   gdcmVRHT vr;
+   VRHT vr;
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

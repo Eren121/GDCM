@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 02:57:11 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,27 +21,30 @@
 
 #include "gdcmCommon.h"
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 /*
- * \defgroup gdcmDictEntry
+ * \defgroup DictEntry
  * \brief
- * the gdcmDictEntry in an element contained by the gdcmDict.
+ * the DictEntry in an element contained by the Dict.
  * It contains :
  *  - the key referenced by the DICOM norm or the constructor (for private keys)
  *  - the corresponding name in english (it's equivalent to a label)
  *  - the owner group
  *  - etc.
  */
-class GDCM_EXPORT gdcmDictEntry 
+class GDCM_EXPORT DictEntry 
 {
 public:
-   gdcmDictEntry(uint16_t group, 
+   DictEntry(uint16_t group, 
                  uint16_t element,
                  std::string vr     = "Unknown",
                  std::string fourth = "Unknown",
                  std::string name   = "Unknown");
 
-   static gdcmTagKey TranslateToKey(uint16_t group, uint16_t element);
+   static TagKey TranslateToKey(uint16_t group, uint16_t element);
 
    void SetVR(std::string const & vr);
 
@@ -49,46 +52,46 @@ public:
    /// @return 
    bool IsVRUnknown() { return VR == "??"; }
 
-   /// \brief  Returns the Dicom Group Number of the current gdcmDictEntry
+   /// \brief  Returns the Dicom Group Number of the current DictEntry
    /// @return the Dicom Group Number
    uint16_t GetGroup() { return Group; }
   
-   /// \brief  Returns the Dicom Element Number of the current gdcmDictEntry
+   /// \brief  Returns the Dicom Element Number of the current DictEntry
    /// @return the Dicom Element Number
    uint16_t GetElement() { return Element; }
  
    /// \brief  Returns the Dicom Value Representation of the current
-   ///         gdcmDictEntry
+   ///         DictEntry
    /// @return the Dicom Value Representation
    std::string GetVR() { return VR; }
  
-   /// \brief   sets the key of the current gdcmDictEntry
+   /// \brief   sets the key of the current DictEntry
    /// @param k New key to be set.
    void SetKey(std::string const & k)  { Key = k; }
  
-   /// \brief   returns the Fourth field of the current gdcmDictEntry
+   /// \brief   returns the Fourth field of the current DictEntry
    /// \warning NOT part of the Dicom Standard.
    ///          May be REMOVED an any time. NEVER use it.
    /// @return  The Fourth field
    std::string GetFourth() { return Fourth; } 
 
-   /// \brief  Returns the Dicom Name of the current gdcmDictEntry
+   /// \brief  Returns the Dicom Name of the current DictEntry
    ///         e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
    /// @return the Dicom Name
    std::string GetName() { return Name; } 
  
-   /// \brief  Gets the key of the current gdcmDictEntry
+   /// \brief  Gets the key of the current DictEntry
    /// @return the key.
    std::string GetKey() { return Key; }
 
 private:
    /// \todo FIXME 
    ///        where are the group and element used except from building up
-   ///        a gdcmTagKey. If the answer is nowhere then there is no need
+   ///        a TagKey. If the answer is nowhere then there is no need
    ///        to store the group and element independently.
    ///
    ///        --> EVERYWHERE ! The alternate question would be :
-   ///                         What's gdcmTagKey used for ?
+   ///                         What's TagKey used for ?
    
    /// DicomGroup number
    uint16_t Group;   // e.g. 0x0010
@@ -98,7 +101,7 @@ private:
 
    /// \brief Value Representation i.e. some clue about the nature
    ///        of the data represented e.g. "FD" short for
-   ///        "Floating Point Double" (see \ref gdcmVR)
+   ///        "Floating Point Double" (see \ref VR)
    std::string VR;
 
    /**
@@ -164,8 +167,8 @@ private:
    std::string Name;      
 
    /// Redundant with (group, element) but we add it for efficiency purpose.
-   gdcmTagKey  Key;
+   TagKey  Key;
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

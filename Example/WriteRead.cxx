@@ -7,8 +7,8 @@ int main(int argc, char* argv[])
    std::string toto;
    char zozo[200];
 
-   gdcmHeader* e1, *e2;
-   gdcmFile  * f1, *f2;
+   gdcm::Header* e1, *e2;
+   gdcm::File  * f1, *f2;
 
    void* imageData, *imageData2;
    int dataSize, dataSize2;
@@ -25,14 +25,14 @@ int main(int argc, char* argv[])
 
    std::cout << argv[1] << std::endl;
 
-   e1 = new gdcmHeader( toto );
+   e1 = new gdcm::Header( toto );
    if (!e1->IsReadable()) {
        std::cerr << "Sorry, " << toto <<"  not a Readable DICOM / ACR File"
                  <<std::endl;
        return 0;
    }
    
-   f1 = new gdcmFile(e1);
+   f1 = new gdcm::File(e1);
    imageData= f1->GetImageData();
    dataSize = f1->GetImageDataSize();
 
@@ -44,13 +44,13 @@ int main(int argc, char* argv[])
 
 // --------------------- we read the written image
       
-   e2 = new gdcmHeader( zozo );
+   e2 = new gdcm::Header( zozo );
    if (!e2->IsReadable()) {
        std::cerr << "Sorry, " << zozo << " not a Readable DICOM / ACR File"  
                  <<std::endl;
        return 0;
    }
-   f2 = new gdcmFile(e2);
+   f2 = new gdcm::File(e2);
    imageData2= f2->GetImageData();
    dataSize2 = f2->GetImageDataSize();
 

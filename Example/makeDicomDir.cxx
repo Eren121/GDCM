@@ -52,7 +52,7 @@ void EndMethod(void *toto) {
   */  
 
 int main(int argc, char* argv[]) {
-   gdcmDicomDir *dcmdir;
+  gdcm::DicomDir *dcmdir;
    std::string dirName;   
 
    if (argc > 1)
@@ -60,12 +60,12 @@ int main(int argc, char* argv[]) {
    else
       dirName = GDCM_DATA_ROOT;
 
-   dcmdir=new gdcmDicomDir(dirName, true); // we ask for Directory parsing
+   dcmdir = new gdcm::DicomDir(dirName, true); // we ask for Directory parsing
 
    dcmdir->SetStartMethod(StartMethod, (void *) NULL);
    dcmdir->SetEndMethod(EndMethod);
    
-   ListDicomDirPatient lp = dcmdir->GetDicomDirPatients();
+   gdcm::ListDicomDirPatient lp = dcmdir->GetDicomDirPatients();
    if (! lp.size() ) 
    {
       std::cout << "makeDicomDir: no patient list present. Exiting."

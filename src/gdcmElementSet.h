@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 18:09:11 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,23 +24,25 @@
 #include <map>
 #include <iostream>
 
-class gdcmValEntry;
-class gdcmBinEntry;
-class gdcmSeqEntry;
+class ValEntry;
+class BinEntry;
+class SeqEntry;
+namespace gdcm 
+{
 
 
-typedef std::map<gdcmTagKey, gdcmDocEntry *> TagDocEntryHT;
+typedef std::map<TagKey, DocEntry *> TagDocEntryHT;
 
 //-----------------------------------------------------------------------------
 
-class GDCM_EXPORT gdcmElementSet : public gdcmDocEntrySet
+class GDCM_EXPORT ElementSet : public DocEntrySet
 {
 public:
-   gdcmElementSet(int);
-   ~gdcmElementSet();
-   virtual bool AddEntry(gdcmDocEntry *Entry);
-   bool RemoveEntry(gdcmDocEntry *EntryToRemove);
-   bool RemoveEntryNoDestroy(gdcmDocEntry *EntryToRemove);
+   ElementSet(int);
+   ~ElementSet();
+   virtual bool AddEntry(DocEntry *Entry);
+   bool RemoveEntry(DocEntry *EntryToRemove);
+   bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
    
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype); 
@@ -58,12 +60,12 @@ protected:
      
 private:
    /// Just for following ::GetTagHT()
-   friend class gdcmDocument;
+   friend class Document;
 
    /// Accessor to \ref TagHT
    TagDocEntryHT* GetTagHT() { return &TagHT; };
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif
 

@@ -13,10 +13,10 @@ int main(int argc, char* argv[])
       return 1;
    }
 
-   gdcmHeader* header = new gdcmHeader( argv[1] );
-   TagDocEntryHT* Ht = header->BuildFlatHashTable();
+   gdcm::Header* header = new gdcm::Header( argv[1] );
+   gdcm::TagDocEntryHT* Ht = header->BuildFlatHashTable();
    
-   for (TagDocEntryHT::iterator tag = Ht->begin(); tag != Ht->end(); ++tag)
+   for (gdcm::TagDocEntryHT::iterator tag = Ht->begin(); tag != Ht->end(); ++tag)
    {
       tag->second->Print(); 
       std::cout << std::endl;

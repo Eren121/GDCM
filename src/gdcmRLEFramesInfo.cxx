@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 09:58:08 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/10/12 04:35:47 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,10 @@
 
 #include "gdcmRLEFramesInfo.h"
 
-gdcmRLEFramesInfo::~gdcmRLEFramesInfo()
+namespace gdcm 
+{
+
+RLEFramesInfo::~RLEFramesInfo()
 {
    for(RLEFrameList::iterator it = Frames.begin(); it != Frames.end(); ++it)
    {
@@ -26,3 +29,4 @@ gdcmRLEFramesInfo::~gdcmRLEFramesInfo()
    }
    Frames.clear();
 }
+} // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,36 +19,40 @@
 #include "gdcmDicomDirStudy.h"
 #include "gdcmDicomDirElement.h"
 #include "gdcmGlobal.h"
+
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 
 /**
- * \ingroup gdcmDicomDirStudy
+ * \ingroup DicomDirStudy
  * \brief constructor  
  * @param  s SQ Item holding the elements related to this "STUDY" part
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmHeaderEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the HeaderEntries)
  */
-gdcmDicomDirStudy::gdcmDicomDirStudy(gdcmSQItem* s, TagDocEntryHT* ptagHT):
-   gdcmDicomDirObject(ptagHT)
+DicomDirStudy::DicomDirStudy(SQItem* s, TagDocEntryHT* ptagHT):
+   DicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
 }
 /**
- * \ingroup gdcmDicomDirStudy
+ * \ingroup DicomDirStudy
  * \brief constructor  
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmHeaderEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the HeaderEntries)
  */
-gdcmDicomDirStudy::gdcmDicomDirStudy(TagDocEntryHT* ptagHT):
-   gdcmDicomDirObject(ptagHT)
+DicomDirStudy::DicomDirStudy(TagDocEntryHT* ptagHT):
+   DicomDirObject(ptagHT)
 {
 }
 /**
- * \ingroup gdcmDicomDirStudy
+ * \ingroup DicomDirStudy
  * \brief   Canonical destructor.
  */
-gdcmDicomDirStudy::~gdcmDicomDirStudy() 
+DicomDirStudy::~DicomDirStudy() 
 {
    for(ListDicomDirSerie::iterator cc = series.begin();cc != series.end();++cc)
    {
@@ -59,14 +63,14 @@ gdcmDicomDirStudy::~gdcmDicomDirStudy()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmDicomDirStudy
+ * \ingroup DicomDirStudy
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmDicomDirStudy::Print(std::ostream& os)
+void DicomDirStudy::Print(std::ostream& os)
 {
    os << "STUDY" << std::endl;
-   gdcmDicomDirObject::Print(os);
+   DicomDirObject::Print(os);
 
    for(ListDicomDirSerie::iterator cc = series.begin();
                                    cc != series.end();
@@ -84,9 +88,9 @@ void gdcmDicomDirStudy::Print(std::ostream& os)
  * \brief   Writes the Object
  * @return
  */ 
-void gdcmDicomDirStudy::Write(FILE* fp, FileType t)
+void DicomDirStudy::Write(FILE* fp, FileType t)
 {
-   gdcmDicomDirObject::Write(fp, t);
+   DicomDirObject::Write(fp, t);
 
    for(ListDicomDirSerie::iterator cc = series.begin();cc!=series.end();++cc)
    {
@@ -95,16 +99,16 @@ void gdcmDicomDirStudy::Write(FILE* fp, FileType t)
 }
 
 /**
- * \ingroup gdcmDicomStudy
+ * \ingroup DicomDirStudy
  * \brief   adds a new Serie at the begining of the SerieList
  *          of a partially created DICOMDIR
  */
-gdcmDicomDirSerie* gdcmDicomDirStudy::NewSerie()
+DicomDirSerie* DicomDirStudy::NewSerie()
 {
-   std::list<gdcmElement> elemList = 
-      gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();   
+   std::list<Element> elemList = 
+      Global::GetDicomDirElements()->GetDicomDirSerieElements();   
 
-   gdcmDicomDirSerie* st = new gdcmDicomDirSerie(PtagHT);
+   DicomDirSerie* st = new DicomDirSerie(PtagHT);
    FillObject(elemList);
    series.push_front(st);
 
@@ -117,3 +121,5 @@ gdcmDicomDirSerie* gdcmDicomDirStudy::NewSerie()
 // Private
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm
+

@@ -66,10 +66,10 @@ int TestCopyDicom(int , char* [])
          }
       }
 
-      gdcmFile *original = new gdcmFile( filename );
-      gdcmFile *copy = new gdcmFile( output );
+      gdcm::File *original = new gdcm::File( filename );
+      gdcm::File *copy = new gdcm::File( output );
 
-      TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
+      gdcm::TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
 
       size_t dataSize = original->GetImageDataSize();
       uint8_t* imageData = original->GetImageData();
@@ -81,12 +81,12 @@ int TestCopyDicom(int , char* [])
       // (the user does NOT have to know the way we implemented the Header !)
       // Waiting for a 'clean' solution, I keep the method ...JPRx
 
-      gdcmDocEntry* d;
+      gdcm::DocEntry* d;
 
-      for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
+      for (gdcm::TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
       {
          d = tag->second;
-         if ( gdcmBinEntry* b = dynamic_cast<gdcmBinEntry*>(d) )
+         if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
          {              
             copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  b->GetBinArea(),
@@ -95,7 +95,7 @@ int TestCopyDicom(int , char* [])
                                  b->GetElement(),
                                  b->GetVR() );
          }
-         else if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
+         else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
          {   
              copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  v->GetValue(),
@@ -121,7 +121,7 @@ int TestCopyDicom(int , char* [])
       delete original;
       delete copy;
 
-      copy = new gdcmFile( output );
+      copy = new gdcm::File( output );
 
       //Is the file written still gdcm parsable ?
       if ( !copy->GetHeader()->IsReadable() )

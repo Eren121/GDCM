@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/09 03:21:55 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,29 +20,31 @@
 #include "gdcmGlobal.h"
 #include "gdcmDebug.h"
 #include "gdcmValEntry.h"
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmDicomDirObject
+ * \ingroup DicomDirObject
  * \brief  Constructor 
  *          
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmDocEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the DocEntries)
  * @param depth Sequence depth level
  */
   
-gdcmDicomDirObject::gdcmDicomDirObject(TagDocEntryHT *ptagHT, int depth) 
-          : gdcmSQItem (depth)
+DicomDirObject::DicomDirObject(TagDocEntryHT *ptagHT, int depth) 
+          : SQItem (depth)
 {
    PtagHT = ptagHT;
 }
 
 
 /**
- * \ingroup gdcmDicomDirObject
+ * \ingroup DicomDirObject
  * \brief   Canonical destructor.
  */
-gdcmDicomDirObject::~gdcmDicomDirObject()
+DicomDirObject::~DicomDirObject()
 {
 }
 
@@ -53,13 +55,13 @@ gdcmDicomDirObject::~gdcmDicomDirObject()
 
 
 /**
- * \ingroup gdcmDicomDirObject
+ * \ingroup DicomDirObject
  * \brief   Builds a hash table (multimap) containing 
  *          pointers to all Header Entries (i.e Dicom Element)
  *          related to this 'object'
  * @return
  */ 
-TagDocEntryHT gdcmDicomDirObject::GetEntry()
+TagDocEntryHT DicomDirObject::GetEntry()
 {
    TagDocEntryHT HT;
    docEntries=GetDocEntries();   
@@ -77,22 +79,22 @@ TagDocEntryHT gdcmDicomDirObject::GetEntry()
  * \brief   add the 'Object' related Dicom Elements to the listEntries
  *          of a partially created DICOMDIR
  */
-void gdcmDicomDirObject::FillObject(std::list<gdcmElement> elemList)
+void DicomDirObject::FillObject(std::list<Element> elemList)
 {
   // FillObject rempli le SQItem qui sera accroche au bon endroit
 
-   std::list<gdcmElement>::iterator it;
+   std::list<Element>::iterator it;
    uint16_t tmpGr,tmpEl;
-   gdcmDictEntry *dictEntry;
-   gdcmValEntry *entry;
+   DictEntry *dictEntry;
+   ValEntry *entry;
       
    // for all the Elements found in they own part of the DicomDir dict.     
    for(it = elemList.begin(); it != elemList.end(); ++it)
    {
       tmpGr = it->Group;
       tmpEl = it->Elem;
-      dictEntry = gdcmGlobal::GetDicts()->GetDefaultPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
-      entry = new gdcmValEntry(dictEntry);
+      dictEntry = Global::GetDicts()->GetDefaultPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
+      entry = new ValEntry(dictEntry);
       entry->SetOffset(0); // just to avoid further missprinting
       entry->SetValue(it->Value);
 
@@ -121,3 +123,5 @@ void gdcmDicomDirObject::FillObject(std::list<gdcmElement> elemList)
       AddDocEntry(entry);
    }   
 }   
+} // end namespace gdcm
+

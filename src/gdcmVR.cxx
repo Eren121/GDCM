@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:43:38 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/12 04:35:48 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,15 +24,18 @@
 #include <fstream>
 #include <iostream>
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 /**
  * \brief Constructor
  */
-gdcmVR::gdcmVR() 
+VR::VR() 
 {
-   std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_VR);
+   std::string filename=DictSet::BuildDictPath() + std::string(DICT_VR);
    std::ifstream from(filename.c_str());
-   dbg.Error(!from, "gdcmVR::gdcmVR: can't open dictionary",filename.c_str());
+   dbg.Error(!from, "VR::VR: can't open dictionary",filename.c_str());
 
    char buff[1024];
    std::string key;
@@ -62,7 +65,7 @@ gdcmVR::gdcmVR()
 /**
  * \brief Destructor
  */
-gdcmVR::~gdcmVR()
+VR::~VR()
 {
    vr.clear();
 }
@@ -73,11 +76,11 @@ gdcmVR::~gdcmVR()
  * \brief   Print all 
  * @param   os The output stream to be written to.
  */
-void gdcmVR::Print(std::ostream &os) 
+void VR::Print(std::ostream &os) 
 {
    std::ostringstream s;
 
-   for (gdcmVRHT::iterator it = vr.begin(); it != vr.end(); ++it)
+   for (VRHT::iterator it = vr.begin(); it != vr.end(); ++it)
    {
       s << "VR : "<<it->first<<" = "<<it->second<<std::endl;
    }
@@ -90,7 +93,7 @@ void gdcmVR::Print(std::ostream &os)
  * \brief   Get the count for an element
  * @param   key key to count
  */
-int gdcmVR::Count(gdcmVRKey key) 
+int VR::Count(VRKey key) 
 {
    return vr.count(key);
 }
@@ -98,14 +101,14 @@ int gdcmVR::Count(gdcmVRKey key)
 //-----------------------------------------------------------------------------
 /**
  * \brief   Simple predicate that checks wether the given argument
- *          corresponds to the Value Representation of a \ref gdcmBinEntry .
+ *          corresponds to the Value Representation of a \ref BinEntry .
  *          This predicate is the negation of
- *          \ref gdcmVR::IsVROfGdcmStringRepresentable .
+ *          \ref VR::IsVROfGdcmStringRepresentable .
  * @param   tested value representation to check for.
  */
-bool gdcmVR::IsVROfGdcmBinaryRepresentable(gdcmVRKey tested)
+bool VR::IsVROfGdcmBinaryRepresentable(VRKey tested)
 {
-   //std::cout << "gdcmVR::IsVROfGdcmBinaryRepresentable===================="
+   //std::cout << "VR::IsVROfGdcmBinaryRepresentable===================="
    //   << tested << std::endl;
 
    if ( tested == "unkn")
@@ -113,13 +116,13 @@ bool gdcmVR::IsVROfGdcmBinaryRepresentable(gdcmVRKey tested)
 
    if ( ! Count(tested) )
    {
-      dbg.Verbose(0, "gdcmVR::IsVROfGdcmBinaryRepresentable: tested not a VR!");
+      dbg.Verbose(0, "VR::IsVROfGdcmBinaryRepresentable: tested not a VR!");
       return false;
    }
 
    if ( IsVROfGdcmStringRepresentable(tested) )
    {
-      dbg.Verbose(0, "gdcmVR::IsVROfGdcmBinaryRepresentable: binary VR !");
+      dbg.Verbose(0, "VR::IsVROfGdcmBinaryRepresentable: binary VR !");
       return false;
    }
 
@@ -129,16 +132,16 @@ bool gdcmVR::IsVROfGdcmBinaryRepresentable(gdcmVRKey tested)
 //-----------------------------------------------------------------------------
 /**
  * \brief   Simple predicate that checks wether the given argument
- *          corresponds to the Value Representation of a \ref gdcmValEntry
- *          but NOT a \ref gdcmBinEntry.
+ *          corresponds to the Value Representation of a \ref ValEntry
+ *          but NOT a \ref BinEntry.
  * @param   tested value representation to check for.
  */
-bool gdcmVR::IsVROfGdcmStringRepresentable(gdcmVRKey tested)
+bool VR::IsVROfGdcmStringRepresentable(VRKey tested)
 {
 
    if ( ! Count(tested) )
    {
-      dbg.Verbose(0, "gdcmVR::IsVROfGdcmStringRepresentable: tested not a VR!");
+      dbg.Verbose(0, "VR::IsVROfGdcmStringRepresentable: tested not a VR!");
       return false;
    }
 
@@ -160,3 +163,5 @@ bool gdcmVR::IsVROfGdcmStringRepresentable(gdcmVRKey tested)
 // Private
 
 //-----------------------------------------------------------------------------
+
+} // end namespace gdcm

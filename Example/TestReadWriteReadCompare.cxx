@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 
       //////////////// Step 1 (see above description): 
 
-      gdcmHeader *header = new gdcmHeader( filename );
+      gdcm::Header *header = new gdcm::Header( filename );
       if( !header->IsReadable() )
       {
          std::cerr << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 
       //////////////// Step 2:
 
-      gdcmFile*  file = new gdcmFile( header );
+      gdcm::File*  file = new gdcm::File( header );
       int dataSize    = file->GetImageDataSize();
       uint8_t* imageData = file->GetImageData(); //EXTREMELY IMPORTANT
              // Sure, it is : It's up to the user to decide if he wants to
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
     
       //////////////// Step 3:
 
-      gdcmFile* reread = new gdcmFile( "TestReadWriteReadCompare.dcm" );
+      gdcm::File* reread = new gdcm::File( "TestReadWriteReadCompare.dcm" );
       if( !reread->GetHeader()->IsReadable() )
       {
         std::cerr << "Test::TestReadWriteReadCompare: Could not reread image "

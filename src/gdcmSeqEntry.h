@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 21:05:40 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/10/12 04:35:48 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,17 +22,19 @@
 #include "gdcmSQItem.h"
 #include "gdcmDocEntry.h"
 #include <list>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
-typedef std::list<gdcmSQItem *> ListSQItem;
+typedef std::list<SQItem *> ListSQItem;
 //-----------------------------------------------------------------------------
 
-class GDCM_EXPORT gdcmSeqEntry : public gdcmDocEntry 
+class GDCM_EXPORT SeqEntry : public DocEntry 
 {
 public:
-   gdcmSeqEntry( gdcmDictEntry* );
-   gdcmSeqEntry(gdcmDocEntry* d,  int depth);
-   virtual ~gdcmSeqEntry();
+   SeqEntry( DictEntry* );
+   SeqEntry(DocEntry* d,  int depth);
+   virtual ~SeqEntry();
    
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType);
@@ -44,10 +46,10 @@ public:
    void SetDelimitorMode(bool dm) { delimitor_mode = dm;}
 
    /// Sets the Sequence Delimitation Item
-   void SetSequenceDelimitationItem(gdcmDocEntry * e) { seq_term = e;}
+   void SetSequenceDelimitationItem(DocEntry * e) { seq_term = e;}
 
-   void AddEntry(gdcmSQItem *it, int itemNumber);
-   gdcmSQItem *GetSQItemByOrdinalNumber(int itemNumber);
+   void AddEntry(SQItem *it, int itemNumber);
+   SQItem *GetSQItemByOrdinalNumber(int itemNumber);
 
    /// Gets the depth level
    int GetDepthLevel() { return SQDepthLevel; }
@@ -66,15 +68,15 @@ private:
    ListSQItem items;
    
    /// sequence terminator item 
-   gdcmDocEntry *seq_term;
+   DocEntry *seq_term;
 
-   /// \brief Defines the depth level of this \ref gdcmSeqEntry inside
+   /// \brief Defines the depth level of this \ref SeqEntry inside
    ///        the (optionaly) nested sequences. \ref SQDepthLevel
-   ///        and its \ref gdcmSQItem::SQDepthLevel counterpart
+   ///        and its \ref SQItem::SQDepthLevel counterpart
    ///        are only defined on printing purposes (see \ref Print).
    int SQDepthLevel;
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif
 

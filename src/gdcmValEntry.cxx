@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:55 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/10/12 04:35:48 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,25 +21,28 @@
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 
+namespace gdcm 
+{
+
 // CLEAN ME
 #define MAX_SIZE_PRINT_ELEMENT_VALUE 128
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \brief   Constructor from a given gdcmDictEntry
+ * \brief   Constructor from a given DictEntry
  * @param   e Pointer to existing dictionary entry
  */
-gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e)
+ValEntry::ValEntry(DictEntry* e) : DocEntry(e)
 {
 }
 
 /**
- * \brief   Constructor from a given gdcmDocEntry
+ * \brief   Constructor from a given DocEntry
  * @param   e Pointer to existing Doc entry
  */
-gdcmValEntry::gdcmValEntry(gdcmDocEntry* e)
-             : gdcmDocEntry(e->GetDictEntry())
+ValEntry::ValEntry(DocEntry* e)
+             : DocEntry(e->GetDictEntry())
 {
    UsableLength = e->GetLength();
    ReadLength   = e->GetReadLength();
@@ -52,7 +55,7 @@ gdcmValEntry::gdcmValEntry(gdcmDocEntry* e)
 /**
  * \brief   Canonical destructor.
  */
-gdcmValEntry::~gdcmValEntry ()
+ValEntry::~ValEntry ()
 {
 }
 
@@ -61,7 +64,7 @@ gdcmValEntry::~gdcmValEntry ()
 /**
  * \brief   canonical Printer
  */
-void gdcmValEntry::Print(std::ostream & os)
+void ValEntry::Print(std::ostream & os)
 {
    uint16_t g = GetGroup();
    uint16_t e = GetElement();
@@ -71,7 +74,7 @@ void gdcmValEntry::Print(std::ostream & os)
    TSKey v;
    std::string d2;
      
-   gdcmDocEntry::Print(os); 
+   DocEntry::Print(os); 
 
    if (g == 0xfffe)
    {
@@ -79,10 +82,10 @@ void gdcmValEntry::Print(std::ostream & os)
       return;
    }
    
-   gdcmTS * ts = gdcmGlobal::GetTS();
+   TS * ts = Global::GetTS();
     
    v  = GetValue();  // not applicable for SQ ...     
-   d2 = gdcmUtil::CreateCleanString(v);  // replace non printable characters by '.'            
+   d2 = Util::CreateCleanString(v);  // replace non printable characters by '.'            
    if( (GetLength()<=MAX_SIZE_PRINT_ELEMENT_VALUE) || 
        //(PrintLevel>=3)  || (d2.find("gdcm::NotLoaded.") < d2.length()) )
        (PrintLevel>=3)  || (d2.find(GDCM_NOTLOADED) < d2.length()) )
@@ -150,17 +153,17 @@ void gdcmValEntry::Print(std::ostream & os)
    {
       if (v == "4294967295") // to avoid troubles in convertion 
       {
-         st = gdcmUtil::Format(" x(ffffffff)");
+         st = Util::Format(" x(ffffffff)");
       }
       else
       {
          if ( GetLength() !=0 )
          {
-            st = gdcmUtil::Format(" x(%x)", atoi(v.c_str()));//FIXME
+            st = Util::Format(" x(%x)", atoi(v.c_str()));//FIXME
          }
          else
          {
-            st = gdcmUtil::Format(" ");
+            st = Util::Format(" ");
          }
       }
       s << st;
@@ -171,9 +174,9 @@ void gdcmValEntry::Print(std::ostream & os)
 /*
  * \brief   canonical Writer
  */
-void gdcmValEntry::Write(FILE* fp, FileType filetype)
+void ValEntry::Write(FILE* fp, FileType filetype)
 {
-   gdcmDocEntry::Write(fp, filetype);
+   DocEntry::Write(fp, filetype);
 
    //std::cout << "=====================================" << GetVR() << std::endl;
       
@@ -191,7 +194,7 @@ void gdcmValEntry::Write(FILE* fp, FileType filetype)
       // we split the string and write each value as a short int
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-      gdcmUtil::Tokenize (GetValue(), tokens, "\\");
+      Util::Tokenize (GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++)
       {
          uint16_t val_uint16 = atoi(tokens[i].c_str());
@@ -209,7 +212,7 @@ void gdcmValEntry::Write(FILE* fp, FileType filetype)
       // along the '\' and write each value as an int:
       std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-      gdcmUtil::Tokenize (GetValue(), tokens, "\\");
+      Util::Tokenize (GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++)
       {
          uint32_t val_uint32 = atoi(tokens[i].c_str());
@@ -233,3 +236,5 @@ void gdcmValEntry::Write(FILE* fp, FileType filetype)
 // Private
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm
+

@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
    
-   gdcmFile *e2 = new gdcmFile( fileName.c_str() );
-   gdcmHeader *e1 = e2->GetHeader();  
+   gdcm::File *e2 = new gdcm::File( fileName.c_str() );
+   gdcm::Header *e1 = e2->GetHeader();  
         
    if (argc > 2) {
       int level = atoi(argv[2]);   

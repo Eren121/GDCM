@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.50 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.51 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -444,7 +444,7 @@ int vtkGdcmReader::CheckFileCoherence()
       fclose(fp);
 
       // Stage 1.2: check for Gdcm parsability
-      gdcmHeader GdcmHeader(filename->c_str() );
+      gdcm::Header GdcmHeader(filename->c_str() );
       if (!GdcmHeader.IsReadable())
       {
          vtkErrorMacro("Gdcm cannot parse file " << filename->c_str());
@@ -612,7 +612,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
              unsigned long & updateProgressCount)
 {
    vtkDebugMacro("Copying to memory image [" << fileName.c_str() << "]");
-   gdcmFile file( fileName.c_str() );
+   gdcm::File file( fileName.c_str() );
    size_t size;
 
    // If the data structure of vtk for image/volume representation

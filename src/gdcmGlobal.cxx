@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:52:55 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,94 +19,98 @@
 #include "gdcmGlobal.h"
 #include "gdcmDebug.h"
 
+namespace gdcm 
+{
+
 /**
  * \ingroup Globals
  * \brief Pointer to a container, holding _all_ the Dicom Dictionaries.
  */
-gdcmDictSet         *gdcmGlobal::Dicts  = (gdcmDictSet *)0;
+DictSet         *Global::Dicts  = (DictSet *)0;
 
 /**
  * \ingroup Globals
  * \brief   Pointer to a hash table containing the 'Value Representations'.
  */
-gdcmVR              *gdcmGlobal::VR     = (gdcmVR *)0;
+VR              *Global::ValRes     = (VR *)0;
 
 /**
  * \ingroup Globals
  * \brief   Pointer to a hash table containing the Transfer Syntax codes
  *          and their english description 
  */
-gdcmTS              *gdcmGlobal::TS     = (gdcmTS *)0;
+TS              *Global::TranSyn     = (TS *)0;
 
 /**
  * \ingroup Globals
  * \brief   Pointer to the hash table containing the Dicom Elements
  *          necessary to describe each part of a DICOMDIR 
  */
-gdcmDicomDirElement *gdcmGlobal::ddElem = (gdcmDicomDirElement *)0;
+DicomDirElement *Global::ddElem = (DicomDirElement *)0;
 
 /**
  * \ingroup Globals
  * \brief   Global container
  */
-gdcmGlobal gdcmGlob;
+Global Glob;
 
 /**
- * \ingroup gdcmGlobal
+ * \ingroup Global
  * \brief   constructor : populates the various H Tables
  */
-gdcmGlobal::gdcmGlobal()
+Global::Global()
 {
-   if (VR || TS || Dicts || ddElem)
+   if (ValRes || TranSyn || Dicts || ddElem)
    {
-      dbg.Verbose(0, "gdcmGlobal::gdcmGlobal : VR or TS or Dicts already allocated");
+      dbg.Verbose(0, "Global::Global : VR or TS or Dicts already allocated");
    }
-   Dicts  = new gdcmDictSet();
-   VR     = new gdcmVR();
-   TS     = new gdcmTS();
-   ddElem = new gdcmDicomDirElement();
+   Dicts   = new DictSet();
+   ValRes  = new VR();
+   TranSyn = new TS();
+   ddElem  = new DicomDirElement();
 }
 
 /**
- * \ingroup gdcmGlobal
+ * \ingroup Global
  * \brief   canonical destructor 
  */
-gdcmGlobal::~gdcmGlobal()
+Global::~Global()
 {
    delete Dicts;
-   delete VR;
-   delete TS;
+   delete ValRes;
+   delete TranSyn;
    delete ddElem;
 }
 /**
- * \ingroup gdcmGlobal
+ * \ingroup Global
  * \brief   returns a pointer to the 'Value Representation Table' 
  */
-gdcmVR *gdcmGlobal::GetVR()
+VR *Global::GetVR()
 {
-   return VR;
+   return ValRes;
 }
 /**
- * \ingroup gdcmGlobal
+ * \ingroup Global
  * \brief   returns a pointer to the 'Transfert Syntax Table' 
  */
-gdcmTS *gdcmGlobal::GetTS()
+TS *Global::GetTS()
 {
-   return TS;
+   return TranSyn;
 }
 /**
- * \ingroup gdcmGlobal
+ * \ingroup Global
  * \brief   returns a pointer to Dictionaries Table 
  */
-gdcmDictSet *gdcmGlobal::GetDicts()
+DictSet *Global::GetDicts()
 {
    return Dicts;
 }
 /**
- * \ingroup gdcmGlobal
+ * \ingroup Global
  * \brief   returns a pointer to the DicomDir related elements Table 
  */
-gdcmDicomDirElement *gdcmGlobal::GetDicomDirElements()
+DicomDirElement *Global::GetDicomDirElements()
 {
    return ddElem;
 }
+} // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,21 +18,24 @@
 
 #include "gdcmHeaderHelper.h"
 #include "gdcmDirList.h"
-
 #include "gdcmDebug.h"
+
 #include <math.h>
 #include <algorithm>
 #include <vector>
 
-typedef std::vector<gdcmHeader* > GdcmHeaderVector;
+namespace gdcm 
+{
+
+typedef std::vector<Header* > GdcmHeaderVector;
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-gdcmSerieHeader::gdcmSerieHeader()
+SerieHeader::SerieHeader()
 {
    CoherentGdcmFileList.clear();
 }
 
-gdcmSerieHeader::~gdcmSerieHeader()
+SerieHeader::~SerieHeader()
 {
    /// \todo
    for ( GdcmHeaderList::const_iterator it = CoherentGdcmFileList.begin();
@@ -49,20 +52,20 @@ gdcmSerieHeader::~gdcmSerieHeader()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief add a gdcmFile to the list based on file name
+ * \brief add a File to the list based on file name
  * @param   filename Name of the file to deal with
  */
-void gdcmSerieHeader::AddFileName(std::string const & filename)
+void SerieHeader::AddFileName(std::string const & filename)
 {
-   gdcmHeader *header = new gdcmHeader( filename );
+   Header *header = new Header( filename );
    CoherentGdcmFileList.push_back( header );
 }
 
 /**
- * \brief add a gdcmFile to the list
- * @param   file gdcmHeader to add
+ * \brief add a File to the list
+ * @param   file Header to add
  */
-void gdcmSerieHeader::AddGdcmFile(gdcmHeader *file)
+void SerieHeader::AddGdcmFile(Header *file)
 {
    CoherentGdcmFileList.push_back( file );
 }
@@ -71,15 +74,15 @@ void gdcmSerieHeader::AddGdcmFile(gdcmHeader *file)
  * \brief Sets the Directory
  * @param   dir Name of the directory to deal with
  */
-void gdcmSerieHeader::SetDirectory(std::string const & dir)
+void SerieHeader::SetDirectory(std::string const & dir)
 {
-   gdcmDirList filenames_list(dir);  //OS specific
+   DirList filenames_list(dir);  //OS specific
   
-   for( gdcmDirList::const_iterator it = filenames_list.begin(); 
+   for( DirList::const_iterator it = filenames_list.begin(); 
         it != filenames_list.end(); ++it)
    {
       //use string and not const char*:
-      gdcmHeader *header = new gdcmHeader( *it ); 
+      Header *header = new Header( *it ); 
       CoherentGdcmFileList.push_back( header );
    }
 }
@@ -90,7 +93,7 @@ void gdcmSerieHeader::SetDirectory(std::string const & dir)
  *          But as I don't know how to do it, I leave it this way
  *          BTW, this is also a Strategy, I don't know this is the best approach :)
  */
-void gdcmSerieHeader::OrderGdcmFileList()
+void SerieHeader::OrderGdcmFileList()
 {
    if( ImagePositionPatientOrdering() ) 
    {
@@ -112,7 +115,7 @@ void gdcmSerieHeader::OrderGdcmFileList()
 //-----------------------------------------------------------------------------
 // Private
 /**
- * \ingroup gdcmHeader
+ * \ingroup Header
  * \brief sorts the images, according to their Patient Position
  *  We may order, considering :
  *   -# Image Number
@@ -120,7 +123,7 @@ void gdcmSerieHeader::OrderGdcmFileList()
  *   -# More to come :)
  * @return false only if the header is bugged !
  */
-bool gdcmSerieHeader::ImagePositionPatientOrdering()
+bool SerieHeader::ImagePositionPatientOrdering()
 //based on Jolinda's algorithm
 {
    //iop is calculated based on the file file
@@ -237,12 +240,12 @@ bool gdcmSerieHeader::ImagePositionPatientOrdering()
 }
 
 /**
- * \ingroup gdcmHeader
+ * \ingroup Header
  * \brief sorts the images, according to their Image Number
  * @return false only if the header is bugged !
  */
 
-bool gdcmSerieHeader::ImageNumberOrdering() 
+bool SerieHeader::ImageNumberOrdering() 
 {
    int min, max, pos;
    int n = 0;//CoherentGdcmFileList.size() is a O(N) operation !!
@@ -296,15 +299,16 @@ bool gdcmSerieHeader::ImageNumberOrdering()
 
 
 /**
- * \ingroup gdcmHeader
+ * \ingroup Header
  * \brief sorts the images, according to their File Name
  * @return false only if the header is bugged !
  */
-bool gdcmSerieHeader::FileNameOrdering()
+bool SerieHeader::FileNameOrdering()
 {
    //using the sort
    //sort(CoherentGdcmFileList.begin(), CoherentGdcmFileList.end());
    return true;
 }
 
+} // end namespace gdcm
 //-----------------------------------------------------------------------------

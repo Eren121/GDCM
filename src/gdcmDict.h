@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,27 +25,29 @@
 #include <iostream>
 #include <list>
 #include <map>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
-typedef std::map<gdcmTagKey, gdcmDictEntry*> TagKeyHT;
-typedef std::map<TagName, gdcmDictEntry*> TagNameHT;
+typedef std::map<TagKey, DictEntry*> TagKeyHT;
+typedef std::map<TagName, DictEntry*> TagNameHT;
 
 //-----------------------------------------------------------------------------
 /*
- * \defgroup gdcmDict
- * \brief    gdcmDict acts a memory representation of a dicom dictionary i.e.
+ * \defgroup Dict
+ * \brief    Dict acts a memory representation of a dicom dictionary i.e.
  *           it is a container for a collection of dictionary entries. The
  *           dictionary is loaded from in an ascii file.
  *           There should be a single public dictionary (THE dictionary of
  *           the actual DICOM v3) but as many shadow dictionaries as imagers 
  *           combined with all software versions...
- * \see gdcmDictSet
+ * \see DictSet
  */
-class GDCM_EXPORT gdcmDict
+class GDCM_EXPORT Dict
 {
 public:
-   gdcmDict(std::string const & FileName);
-   ~gdcmDict();
+   Dict(std::string const & FileName);
+   ~Dict();
 
 // Print
    void Print(std::ostream &os = std::cout);
@@ -53,14 +55,14 @@ public:
    void PrintByName(std::ostream &os = std::cout);
 
 // Entries
-   bool AddNewEntry (gdcmDictEntry *NewEntry);
-   bool ReplaceEntry(gdcmDictEntry *NewEntry);
-   bool RemoveEntry (gdcmTagKey key);
+   bool AddNewEntry (DictEntry *NewEntry);
+   bool ReplaceEntry(DictEntry *NewEntry);
+   bool RemoveEntry (TagKey key);
    bool RemoveEntry (uint16_t group, uint16_t element);
    
 // Tag
-   gdcmDictEntry *GetDictEntryByName(TagName name);
-   gdcmDictEntry *GetDictEntryByNumber(uint16_t group, uint16_t element);
+   DictEntry *GetDictEntryByName(TagName name);
+   DictEntry *GetDictEntryByNumber(uint16_t group, uint16_t element);
 
    std::list<std::string> *GetDictEntryNames();
    std::map<std::string, std::list<std::string> > *
@@ -77,11 +79,12 @@ public:
 private:
    /// ASCII file holding the Dictionnary
    std::string Filename;
-   /// Access through gdcmTagKey (see alternate access with NameHt)
+   /// Access through TagKey (see alternate access with NameHt)
    TagKeyHT  KeyHt;
    /// Access through TagName (see alternate access with KeyHt)
    TagNameHT NameHt;
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

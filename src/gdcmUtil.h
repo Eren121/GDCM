@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:55 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/10/12 04:35:48 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,8 @@
 #include <vector>
 #include <string>
 
-
+namespace gdcm 
+{
 /**
  * \defgroup Globals Utility functions
  * \brief    Here are some utility functions, belonging to NO class,
@@ -33,7 +34,7 @@
 
 //-----------------------------------------------------------------------------
 
-class GDCM_EXPORT gdcmUtil
+class GDCM_EXPORT Util
 {
 public:
    static std::string Format(const char* format, ...);
@@ -48,5 +49,6 @@ public:
    static std::string GetPath(std::string &fullName);
    static std::string GetName(std::string &fullName);
 };
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

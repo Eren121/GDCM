@@ -4,8 +4,8 @@
 int main(int argc, char* argv[])
 {
  
-   gdcmHeader *e1;
-   gdcmFile   *f1;
+   gdcm::Header *e1;
+   gdcm::File   *f1;
    std::string fileName;   
    if (argc != 2) {
       std::cout << " usage : PrintDocument fileName" << std::endl;
@@ -18,9 +18,9 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
    
-   e1= new gdcmHeader( fileName.c_str() );
+   e1= new gdcm::Header( fileName.c_str() );
 
-   f1 = new gdcmFile(e1);
+   f1 = new gdcm::File(e1);
 
    e1->SetPrintLevel(2);
    

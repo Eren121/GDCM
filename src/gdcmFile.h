@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,22 +22,25 @@
 #include "gdcmCommon.h"
 #include "gdcmHeader.h"
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 /*
  * In addition to Dicom header exploration, this class is designed
  * for accessing the image/volume content. One can also use it to
  * write Dicom/ACR-NEMA/RAW files.
  */
-class GDCM_EXPORT gdcmFile
+class GDCM_EXPORT File
 {
 public:
-   gdcmFile( gdcmHeader *header );
-   gdcmFile( std::string const& filename );
+   File( Header *header );
+   File( std::string const& filename );
  
-   virtual ~gdcmFile();
+   virtual ~File();
 
    /// Accessor to \ref Header
-   gdcmHeader* GetHeader() { return Header; }
+   Header* GetHeader() { return HeaderInternal; }
 
    int ComputeDecompressedPixelDataSizeFromHeader();
 
@@ -55,7 +58,7 @@ public:
    uint8_t* GetImageDataRaw();
    size_t GetImageDataIntoVectorRaw(void* destination, size_t maxSize);
 
-   // see also gdcmHeader::SetImageDataSize ?!?         
+   // see also Header::SetImageDataSize ?!?         
    bool SetImageData (uint8_t* data, size_t expectedSize);
 
    /// \todo When the caller is aware we simply point to the data:
@@ -76,7 +79,7 @@ public:
    virtual bool SetEntryByNumber(std::string const& content,
                                  uint16_t group, uint16_t element)
    { 
-      Header->SetEntryByNumber(content,group,element);
+      HeaderInternal->SetEntryByNumber(content,group,element);
       return true;
    }
      
@@ -98,16 +101,16 @@ private:
                                  int image_width, int image_height,
                                  int quality);
 
-   void SaveInitialValues();    // will belong to the future gdcmPixelData class
-   void RestoreInitialValues(); // will belong to the future gdcmPixelData class
-   void DeleteInitialValues();  // will belong to the future gdcmPixelData class 
+   void SaveInitialValues();    // will belong to the future PixelData class
+   void RestoreInitialValues(); // will belong to the future PixelData class
+   void DeleteInitialValues();  // will belong to the future PixelData class 
 
 // members variables:
 
    /// \brief Header to use to load the file
-   gdcmHeader *Header;
+   Header *HeaderInternal;
 
-   /// \brief Whether the underlying \ref gdcmHeader was loaded by
+   /// \brief Whether the underlying \ref Header was loaded by
    ///  the constructor or passed to the constructor. When false
    ///  the destructor is in charge of deletion.
    bool SelfHeader;
@@ -116,7 +119,7 @@ private:
    bool Parsed;
       
 //
-// --------------- Will be moved to a gdcmPixelData class
+// --------------- Will be moved to a PixelData class
 //
 
    /// \brief to hold the Pixels (when read)
@@ -166,24 +169,25 @@ private:
   // We keep a pointer on them for a future use.
      
   /// \brief Red Palette Color Lookup Table Descriptor   0028 1101 as read
-  gdcmDocEntry* InitialRedLUTDescr;  
+  DocEntry* InitialRedLUTDescr;  
   /// \brief Green Palette Color Lookup Table Descriptor 0028 1102 as read
-  gdcmDocEntry* InitialGreenLUTDescr;
+  DocEntry* InitialGreenLUTDescr;
   /// \brief Blue Palette Color Lookup Table Descriptor  0028 1103 as read
-  gdcmDocEntry* InitialBlueLUTDescr;
+  DocEntry* InitialBlueLUTDescr;
   
   /// \brief Red Palette Color Lookup Table Data         0028 1201 as read
-  gdcmDocEntry* InitialRedLUTData;  
+  DocEntry* InitialRedLUTData;  
   /// \brief Green Palette Color Lookup Table Data       0028 1202 as read
-  gdcmDocEntry* InitialGreenLUTData;
+  DocEntry* InitialGreenLUTData;
   /// \brief Blue Palette Color Lookup Table Data        0028 1203 as read
-  gdcmDocEntry* InitialBlueLUTData;
+  DocEntry* InitialBlueLUTData;
   
 //
-// --------------- end of future gdcmPixelData class
+// --------------- end of future PixelData class
 //  
 
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

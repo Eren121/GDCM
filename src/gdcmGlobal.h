@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,27 +24,32 @@
 #include "gdcmDictSet.h"
 #include "gdcmDicomDirElement.h"
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 /**
  * \brief   This class contains all globals elements that might be
  *          instanciated only once (singletons).
  */
-class GDCM_EXPORT gdcmGlobal {
+class GDCM_EXPORT Global
+{
 public:
-   gdcmGlobal(void);
-   ~gdcmGlobal();
+   Global();
+   ~Global();
 
-   static gdcmDictSet *GetDicts(void);
-   static gdcmVR *GetVR(void);
-   static gdcmTS *GetTS(void);
-   static gdcmDicomDirElement *GetDicomDirElements(void);
+   static DictSet *GetDicts();
+   static VR *GetVR();
+   static TS *GetTS();
+   static DicomDirElement *GetDicomDirElements();
 
 private:
-   static gdcmDictSet *Dicts; 
-   static gdcmVR *VR;
-   static gdcmTS *TS; 
-   static gdcmDicomDirElement *ddElem;
+   static DictSet *Dicts; 
+   static VR *ValRes;
+   static TS *TranSyn; 
+   static DicomDirElement *ddElem;
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

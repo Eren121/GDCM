@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 16:55:16 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,17 +23,19 @@
 
 #include <string>
 #include <list>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmDirList
+ * \ingroup DirList
  * \brief   List containing the file headers from root directory. 
  */
-class GDCM_EXPORT gdcmDirList: public std::list<std::string>
+class GDCM_EXPORT DirList: public std::list<std::string>
 {
 public :
-   gdcmDirList(std::string dirName,bool recursive=false);
-   virtual ~gdcmDirList();
+   DirList(std::string dirName,bool recursive=false);
+   virtual ~DirList();
 
    std::string GetDirName();
 
@@ -49,6 +51,6 @@ private :
    /// name of the root directory to explore
    std::string name;
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

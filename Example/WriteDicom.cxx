@@ -14,10 +14,10 @@ int main(int argc, char* argv[])
     }
 
   const char *first = argv[1];
-  gdcmFile *f1 = new gdcmFile( first );
+  gdcm::File *f1 = new gdcm::File( first );
 
   const char *second = argv[2];
-  gdcmFile *f2 = new gdcmFile( second );
+  gdcm::File *f2 = new gdcm::File( second );
 
   // We assume that DICOM fields of second file actually exists :
 

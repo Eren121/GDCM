@@ -4,7 +4,7 @@
 int main(int argc, char* argv[])
 {
  
-   gdcmHeader *e1;
+   gdcm::Header *e1;
    std::string fileName;   
 
    if (argc != 2) {
@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
       fileName += "/test.acr";
    }
    
-   e1= new gdcmHeader( fileName.c_str() );
+   e1= new gdcm::Header( fileName.c_str() );
 
    e1->SetPrintLevel(2);
    

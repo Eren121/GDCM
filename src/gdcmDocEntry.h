@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:52:55 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,43 +22,47 @@
 #include "gdcmDictEntry.h"
 #include <iostream>
 
-class gdcmHeader;
-class gdcmValEntry;
-class gdcmBinEntry;
-class gdcmSeqEntry;
+class Header;
+class ValEntry;
+class BinEntry;
+class SeqEntry;
+
+namespace gdcm 
+{
+
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmDocEntry
+ * \ingroup DocEntry
  * \brief   The dicom header of a Dicom file contains a set of such entries
  *          (when successfuly parsed against a given Dicom dictionary)
  */
-class GDCM_EXPORT gdcmDocEntry
+class GDCM_EXPORT DocEntry
 {
 public:
-   gdcmDocEntry(gdcmDictEntry*);
-   virtual ~gdcmDocEntry() {};
+   DocEntry(DictEntry*);
+   virtual ~DocEntry() {};
 
    /// Returns the Dicom Group number of the current Dicom Header Entry
-   uint16_t      GetGroup()     { return DictEntry->GetGroup();  };
+   uint16_t      GetGroup()     { return DicomDict->GetGroup();  };
 
    /// Returns the Dicom Element number of the current Dicom Header Entry
-   uint16_t      GetElement()   { return DictEntry->GetElement();};
+   uint16_t      GetElement()   { return DicomDict->GetElement();};
 
    /// Returns the 'key' of the current Dicom Header Entry
-   void  SetKey( gdcmTagKey key ) { Key = key; }
+   void  SetKey( TagKey key ) { Key = key; }
 
    /// Returns the 'key' of the current Dicom Header Entry
    std::string GetKey() { return Key; }
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
    /// Dictionnary of the current Dicom Header Entry
-   std::string  GetName()      { return DictEntry->GetName();   };
+   std::string  GetName()      { return DicomDict->GetName();   };
 
    /// \brief Returns the 'Value Representation' (e.g. "PN" : Person Name,
    /// "SL" : Signed Long), found in the Dicom Header or in the Dicom
    /// Dictionnary, of the current Dicom Header Entry
-   std::string  GetVR()        { return DictEntry->GetVR();     };
+   std::string  GetVR()        { return DicomDict->GetVR();     };
 
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Preamble, if any) of the value of the current Dicom HeaderEntry
@@ -77,7 +81,7 @@ public:
    uint32_t GetReadLength() { return ReadLength; };
 
    /// Sets the 'Value Representation' of the current Dicom Header Entry
-   void SetVR(std::string const & v) { DictEntry->SetVR(v); };    
+   void SetVR(std::string const & v) { DicomDict->SetVR(v); };    
 
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
    /// Dicom Header Entry
@@ -107,15 +111,15 @@ public:
 
    /// \brief Tells us if the VR of the current Dicom Element is Unknown
    /// @return true if the VR is unknown
-   bool IsVRUnknown() { return DictEntry->IsVRUnknown(); };
+   bool IsVRUnknown() { return DicomDict->IsVRUnknown(); };
 
    /// \brief   Sets the DicEntry of the current Dicom Element
    /// @param   newEntry pointer to the DictEntry
-   void SetDictEntry(gdcmDictEntry *newEntry) { DictEntry = newEntry; };
+   void SetDictEntry(DictEntry *newEntry) { DicomDict = newEntry; };
 
    /// \brief  Gets the DicEntry of the current Dicom Element
    /// @return The DicEntry of the current Dicom Element
-   gdcmDictEntry * GetDictEntry() { return DictEntry; }; 
+   DictEntry * GetDictEntry() { return DicomDict; }; 
 
    /// \brief Sets the print level for the Dicom Header Elements
    /// \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
@@ -129,21 +133,21 @@ public:
    
    uint32_t GetFullLength();
    
-   void Copy(gdcmDocEntry *doc);
+   void Copy(DocEntry *doc);
 
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   
 
 private:
    // FIXME: In fact we should be more specific and use :
-   // friend gdcmDocEntry * gdcmHeader::ReadNextElement(void);
-   friend class gdcmHeader;    
+   // friend DocEntry * Header::ReadNextElement(void);
+   friend class Header;    
 
 protected:
 // Variables
 
    /// \brief pointer to the underlying Dicom dictionary element
-   gdcmDictEntry *DictEntry;
+   DictEntry *DicomDict;
    
    /// \brief Updated from ReadLength, by FixFoungLentgh() for fixing a bug
    /// in the header or helping the parser going on    
@@ -165,10 +169,10 @@ protected:
    /// How many details are to be printed (value : 0,1,2)      
    int PrintLevel;
 
-   /// \brief Generalized key (i.e. a gdcmBaseTagKey prepending a gdcmTagKey)
-   ///        of this gdcmDocEntry
-   gdcmTagKey Key;
+   /// \brief Generalized key (i.e. a BaseTagKey prepending a TagKey)
+   ///        of this DocEntry
+   TagKey Key;
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

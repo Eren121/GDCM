@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,41 +20,47 @@
 #define GDCMDOCENTRYSET_H
 
 #include "gdcmException.h"
-#include "gdcmDocEntry.h"
- 
-typedef std::string gdcmBaseTagKey;
+
+namespace gdcm 
+{
+class DocEntry;
+class ValEntry;
+class BinEntry;
+class SeqEntry;
+class DictEntry;
+
+typedef std::string BaseTagKey;
 //-----------------------------------------------------------------------------
 
 /**
- * \ref gdcmDocEntrySet is an abstract base class for \ref gdcmElementSet
- * and \ref gdcmSQItem which are both containers for gdcmDocEntries.
- * \ref gdcmElementSet is based on the STL map<> container
- * (see \ref gdcmElementSet::TagHT), as opposed to \ref gdcmSQItem
- * which is based on an STL list container (see \ref gdcmSQItem::docEntries).
+ * \ref DocEntrySet is an abstract base class for \ref ElementSet
+ * and \ref SQItem which are both containers for DocEntries.
+ * \ref ElementSet is based on the STL map<> container
+ * (see \ref ElementSet::TagHT), as opposed to \ref SQItem
+ * which is based on an STL list container (see \ref SQItem::docEntries).
  * Since the syntax for adding a new element to a map<> or a list<>
- * differ, \ref gdcmDocEntrySet is designed as an adapter to unify the
- * interfaces of \ref gdcmDocEntrySet and \ref gdcmElementSet.
+ * differ, \ref DocEntrySet is designed as an adapter to unify the
+ * interfaces of \ref DocEntrySet and \ref ElementSet.
  * As an illustration of this design, please refer to the implementation
  * of \ref AddEntry (or any pure virtual method) in both derived classes.
  * This adapter unification of interfaces enables the parsing of a
  * DICOM header containing (optionaly heavily nested) sequences to be
- * written recursively [see \ref gdcmDocument::ParseDES 
- * which calls \ref gdcmDocument::ParseSQ, which in turns calls 
- * \ref gdcmDocument::ParseDES ].
+ * written recursively [see \ref Document::ParseDES 
+ * which calls \ref Document::ParseSQ, which in turns calls 
+ * \ref Document::ParseDES ].
  *
  * \note Developpers should strongly resist to the temptation of adding
  *       members to this class since this class is designed as an adapter 
  *       in the form of an abstract base class.
  */
-class GDCM_EXPORT gdcmDocEntrySet
+class GDCM_EXPORT DocEntrySet
 {
 public:
-
-   gdcmDocEntrySet() {}
-   virtual ~gdcmDocEntrySet() {}
+   DocEntrySet() {};
+   virtual ~DocEntrySet() {};
 
    /// \brief adds any type of entry to the entry set (pure vitual)
-   virtual bool AddEntry(gdcmDocEntry *Entry) = 0; // pure virtual
+   virtual bool AddEntry(DocEntry *Entry) = 0; // pure virtual
  
    /// \brief prints any type of entry to the entry set (pure vitual)
    virtual void Print (std::ostream & os = std::cout) = 0;// pure virtual
@@ -62,40 +68,40 @@ public:
    /// \brief write any type of entry to the entry set
    virtual void Write (FILE *fp, FileType filetype) = 0;// pure virtual
 
-   virtual gdcmDocEntry* GetDocEntryByNumber(uint16_t group,
+   virtual DocEntry* GetDocEntryByNumber(uint16_t group,
                                              uint16_t element) = 0;
-   gdcmDocEntry *GetDocEntryByName(std::string const & name);
+   DocEntry *GetDocEntryByName(std::string const & name);
    virtual std::string GetEntryByNumber(uint16_t group,uint16_t element) = 0;
    std::string GetEntryByName(TagName const & name);
-   gdcmDictEntry *NewVirtualDictEntry(uint16_t group, 
-                                      uint16_t element,
-                                      std::string const & vr     = "unkn",
-                                      std::string const & fourth = "unkn",
-                                      std::string const & name   = "unkn");
+   DictEntry *NewVirtualDictEntry(uint16_t group, 
+                                  uint16_t element,
+                                  std::string const & vr     = "unkn",
+                                  std::string const & fourth = "unkn",
+                                  std::string const & name   = "unkn");
   
 protected:
 
 // DocEntry  related utilities 
-   gdcmValEntry* NewValEntryByNumber(uint16_t group, 
-                                     uint16_t element);
-   gdcmBinEntry* NewBinEntryByNumber(uint16_t group, 
-                                     uint16_t element);
-   gdcmDocEntry* NewDocEntryByNumber(uint16_t group, 
-                                     uint16_t element); 
-   gdcmDocEntry* NewDocEntryByNumber(uint16_t group, 
-                                     uint16_t element,
-                                     std::string const & VR); 
-   gdcmDocEntry* NewDocEntryByName  (std::string const & name);
-   gdcmSeqEntry* NewSeqEntryByNumber(uint16_t group, 
-                                     uint16_t element);
+   ValEntry* NewValEntryByNumber(uint16_t group, 
+                                 uint16_t element);
+   BinEntry* NewBinEntryByNumber(uint16_t group, 
+                                 uint16_t element);
+   DocEntry* NewDocEntryByNumber(uint16_t group, 
+                                 uint16_t element); 
+   DocEntry* NewDocEntryByNumber(uint16_t group, 
+                                 uint16_t element,
+                                 std::string const & VR); 
+   DocEntry* NewDocEntryByName  (std::string const & name);
+   SeqEntry* NewSeqEntryByNumber(uint16_t group, 
+                                 uint16_t element);
 
 // DictEntry  related utilities
-   gdcmDictEntry *GetDictEntryByName  (std::string const & name);
-   gdcmDictEntry *GetDictEntryByNumber(uint16_t, uint16_t);
+   DictEntry *GetDictEntryByName  (std::string const & name);
+   DictEntry *GetDictEntryByNumber(uint16_t, uint16_t);
 
 };
 
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,32 +20,34 @@
 #include "gdcmDebug.h"
 #include <fstream>
 #include <stdlib.h>  // For getenv
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /** 
- * \ingroup gdcmDictSet
+ * \ingroup DictSet
  * \brief   The Dictionnary Set obtained with this constructor simply
  *          contains the Default Public dictionnary.
  */
-gdcmDictSet::gdcmDictSet() 
+DictSet::DictSet() 
 {
    DictPath = BuildDictPath();
    std::string pubDictFile(DictPath);
    pubDictFile += PUB_DICT_FILENAME;
-   Dicts[PUB_DICT_NAME] = new gdcmDict(pubDictFile);
+   Dicts[PUB_DICT_NAME] = new Dict(pubDictFile);
 }
 
 /**
- * \ingroup gdcmDictSet
+ * \ingroup DictSet
  * \brief  Destructor 
  */
-gdcmDictSet::~gdcmDictSet() 
+DictSet::~DictSet() 
 {
    // Remove dictionnaries
    for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) 
    {
-      gdcmDict *entryToDelete = tag->second;
+      Dict *entryToDelete = tag->second;
       if ( entryToDelete )
       {
          delete entryToDelete;
@@ -55,10 +57,10 @@ gdcmDictSet::~gdcmDictSet()
    Dicts.clear();
 
    // Remove virtual dictionnary entries
-   std::map<std::string,gdcmDictEntry *>::iterator it;
+   std::map<std::string,DictEntry *>::iterator it;
    for(it = VirtualEntry.begin(); it != VirtualEntry.end(); ++it)
    {
-      gdcmDictEntry *entry = it->second;
+      DictEntry *entry = it->second;
       if ( entry )
       {
          delete entry;
@@ -70,12 +72,12 @@ gdcmDictSet::~gdcmDictSet()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmDictSet
+ * \ingroup DictSet
  * \brief   Print, in an informal fashion, the list of all the dictionaries
- *          contained is this gdcmDictSet, along with their respective content.
+ *          contained is this DictSet, along with their respective content.
  * @param   os Output stream used for printing.
  */
-void gdcmDictSet::Print(std::ostream& os) 
+void DictSet::Print(std::ostream& os) 
 {
    for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict)
    {
@@ -87,19 +89,19 @@ void gdcmDictSet::Print(std::ostream& os)
 //-----------------------------------------------------------------------------
 // Public
 /** 
- * \ingroup gdcmDictSet
+ * \ingroup DictSet
  * \brief   Consider all the entries of the public dicom dictionnary. 
  *          Build all list of all the tag names of all those entries.
- * \sa gdcmDictSet::GetPubDictTagNamesByCategory
+ * \sa DictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string> *gdcmDictSet::GetPubDictEntryNames() 
+std::list<std::string> *DictSet::GetPubDictEntryNames() 
 {
    return GetDefaultPubDict()->GetDictEntryNames();
 }
 
 /** 
- * \ingroup gdcmDictSet
+ * \ingroup DictSet
  * \brief   
  *          - Consider all the entries of the public dicom dictionnary.
  *          - Build an hashtable whose keys are the names of the groups
@@ -125,37 +127,37 @@ std::list<std::string> *gdcmDictSet::GetPubDictEntryNames()
  *          among that group.
  */
 std::map<std::string, std::list<std::string> > *
-   gdcmDictSet::GetPubDictEntryNamesByCategory() 
+   DictSet::GetPubDictEntryNamesByCategory() 
 {
    return GetDefaultPubDict()->GetDictEntryNamesByCategory();
 }
 
 /**
- * \ingroup gdcmDictSet
+ * \ingroup DictSet
  * \brief   Loads a dictionary from a specified file, and add it
- *          to already the existing ones contained in this gdcmDictSet.
+ *          to already the existing ones contained in this DictSet.
  * @param   fileName Absolute or relative filename containing the
  *          dictionary to load.
  * @param   name Symbolic name that be used as identifier of the newly 
  *          created dictionary.
  */
-gdcmDict *gdcmDictSet::LoadDictFromFile(std::string const & fileName, 
+Dict *DictSet::LoadDictFromFile(std::string const & fileName, 
                                         DictKey const & name) 
 {
-   gdcmDict *newDict = new gdcmDict(fileName);
+   Dict *newDict = new Dict(fileName);
    AppendDict(newDict, name);
 
    return newDict;
 }
 
 /**
- * \ingroup gdcmDictSet
+ * \ingroup DictSet
  * \brief   Retrieve the specified dictionary (when existing) from this
- *          gdcmDictSet.
+ *          DictSet.
  * @param   dictName The symbolic name of the searched dictionary.
  * \result  The retrieved dictionary.
  */
-gdcmDict *gdcmDictSet::GetDict(DictKey const & dictName) 
+Dict *DictSet::GetDict(DictKey const & dictName) 
 {
    DictSetHT::iterator dict = Dicts.find(dictName);
    if(dict != Dicts.end())
@@ -166,20 +168,20 @@ gdcmDict *gdcmDictSet::GetDict(DictKey const & dictName)
 }
 
 /**
- * \brief   Create a gdcmDictEntry which will be reference 
+ * \brief   Create a DictEntry which will be reference 
  *          in no dictionnary
  * @return  virtual entry
  */
-gdcmDictEntry *gdcmDictSet::NewVirtualDictEntry(uint16_t group,
+DictEntry *DictSet::NewVirtualDictEntry(uint16_t group,
                                                 uint16_t element,
                                                 std::string vr,
                                                 std::string fourth,
                                                 std::string name)
 {
-   gdcmDictEntry* entry;
-   const std::string tag = gdcmDictEntry::TranslateToKey(group,element)
+   DictEntry* entry;
+   const std::string tag = DictEntry::TranslateToKey(group,element)
                            + "#" + vr + "#" + fourth + "#" + name;
-   std::map<std::string,gdcmDictEntry *>::iterator it;
+   std::map<std::string,DictEntry *>::iterator it;
    
    it = VirtualEntry.find(tag);
    if(it != VirtualEntry.end())
@@ -188,7 +190,7 @@ gdcmDictEntry *gdcmDictSet::NewVirtualDictEntry(uint16_t group,
    }
    else
    {
-      entry = new gdcmDictEntry(group, element, vr, fourth, name);
+      entry = new DictEntry(group, element, vr, fourth, name);
       VirtualEntry[tag] = entry;
    }
 
@@ -202,7 +204,7 @@ gdcmDictEntry *gdcmDictSet::NewVirtualDictEntry(uint16_t group,
  *          to "../Dicts/".
  * @return  path to directory containing the dictionnaries
  */
-std::string gdcmDictSet::BuildDictPath() 
+std::string DictSet::BuildDictPath() 
 {
    std::string resultPath;
    const char *envPath = 0;
@@ -215,7 +217,7 @@ std::string gdcmDictSet::BuildDictPath()
       {
          resultPath += '/';
       }
-      dbg.Verbose(1, "gdcmDictSet::BuildDictPath:",
+      dbg.Verbose(1, "DictSet::BuildDictPath:",
                      "Dictionary path set from environnement");
    } 
    else
@@ -228,7 +230,7 @@ std::string gdcmDictSet::BuildDictPath()
 
 //-----------------------------------------------------------------------------
 // Protected
-bool gdcmDictSet::AppendDict(gdcmDict *newDict, DictKey const & name)
+bool DictSet::AppendDict(Dict *newDict, DictKey const & name)
 {
    Dicts[name] = newDict;
 
@@ -240,4 +242,4 @@ bool gdcmDictSet::AppendDict(gdcmDict *newDict, DictKey const & name)
 
 //-----------------------------------------------------------------------------
 
-
+} // end namespace gdcm

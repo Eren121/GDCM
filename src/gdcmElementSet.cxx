@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,28 +22,31 @@
 #include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmElementSet
- * \brief   Constructor from a given gdcmElementSet
+ * \ingroup ElementSet
+ * \brief   Constructor from a given ElementSet
  */
 //BOZ depthLevel is not usefull anymore
-gdcmElementSet::gdcmElementSet(int depthLevel) 
-              : gdcmDocEntrySet()
+ElementSet::ElementSet(int depthLevel) 
+              : DocEntrySet()
 {
   (void)depthLevel;
 }
 
 /**
- * \ingroup gdcmElementSet
+ * \ingroup ElementSet
  * \brief   Canonical destructor.
  */
-gdcmElementSet::~gdcmElementSet() 
+ElementSet::~ElementSet() 
 {
   for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
    {
-      gdcmDocEntry* entryToDelete = cc->second;
+      DocEntry* entryToDelete = cc->second;
       if ( entryToDelete )
       {
          delete entryToDelete;
@@ -64,13 +67,13 @@ gdcmElementSet::~gdcmElementSet()
   *          from the H Table
   * @return
   */ 
-void gdcmElementSet::Print(std::ostream& os)
+void ElementSet::Print(std::ostream& os)
 {
    for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
-      gdcmDocEntry* entry = i->second;
+      DocEntry* entry = i->second;
       entry->Print(os);   
-      if ( gdcmSeqEntry* seqEntry = dynamic_cast<gdcmSeqEntry*>(entry) )
+      if ( SeqEntry* seqEntry = dynamic_cast<SeqEntry*>(entry) )
       {
          (void)seqEntry;
          // Avoid the newline for a sequence:
@@ -85,7 +88,7 @@ void gdcmElementSet::Print(std::ostream& os)
   *          from the H Table
   * @return
   */ 
-void gdcmElementSet::Write(FILE* fp, FileType filetype)
+void ElementSet::Write(FILE* fp, FileType filetype)
 {
    for (TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
@@ -104,13 +107,13 @@ void gdcmElementSet::Write(FILE* fp, FileType filetype)
  * \brief   add a new Dicom Element pointer to the H Table
  * @param   newEntry entry to add
  */
-bool gdcmElementSet::AddEntry( gdcmDocEntry* newEntry)
+bool ElementSet::AddEntry( DocEntry* newEntry)
 {
-   gdcmTagKey key = newEntry->GetKey();
+   TagKey key = newEntry->GetKey();
 
    if( TagHT.count(key) == 1 )
    {
-      dbg.Verbose(1, "gdcmElementSet::AddEntry key already present: ",
+      dbg.Verbose(1, "ElementSet::AddEntry key already present: ",
                   key.c_str());
       return(false);
    } 
@@ -125,17 +128,17 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry* newEntry)
  * \brief   Clear the hash table from given entry BUT keep the entry.
  * @param   entryToRemove Entry to remove.
  */
-bool gdcmElementSet::RemoveEntryNoDestroy( gdcmDocEntry* entryToRemove)
+bool ElementSet::RemoveEntryNoDestroy( DocEntry* entryToRemove)
 {
-   gdcmTagKey key = entryToRemove->GetKey();
+   TagKey key = entryToRemove->GetKey();
    if( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
-      dbg.Verbose(0, "gdcmElementSet::RemoveEntry: one element erased.");
+      dbg.Verbose(0, "ElementSet::RemoveEntry: one element erased.");
       return true;
    }
 
-   dbg.Verbose(0, "gdcmElementSet::RemoveEntry: key not present: ");
+   dbg.Verbose(0, "ElementSet::RemoveEntry: key not present: ");
    return false ;
 }
 
@@ -143,17 +146,18 @@ bool gdcmElementSet::RemoveEntryNoDestroy( gdcmDocEntry* entryToRemove)
  * \brief   Clear the hash table from given entry AND delete the entry.
  * @param   entryToRemove Entry to remove AND delete.
  */
-bool gdcmElementSet::RemoveEntry( gdcmDocEntry* entryToRemove)
+bool ElementSet::RemoveEntry( DocEntry* entryToRemove)
 {
-   gdcmTagKey key = entryToRemove->GetKey();
+   TagKey key = entryToRemove->GetKey();
    if( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
-      dbg.Verbose(0, "gdcmElementSet::RemoveEntry: one element erased.");
+      dbg.Verbose(0, "ElementSet::RemoveEntry: one element erased.");
       delete entryToRemove;
       return true;
    }
 
-   dbg.Verbose(0, "gdcmElementSet::RemoveEntry: key not present: ");
+   dbg.Verbose(0, "ElementSet::RemoveEntry: key not present: ");
    return false ;
 }
+} // end namespace gdcm

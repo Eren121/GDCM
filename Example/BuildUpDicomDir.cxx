@@ -50,31 +50,31 @@ int main(int argc, char* argv[])
       dirName = argv[1];
       }
 
-   gdcmDicomDir *dcmdir;
-   dcmdir=new gdcmDicomDir();
+   gdcm::DicomDir *dcmdir;
+   dcmdir = new gdcm::DicomDir();
 
    printf( "\n------- BuildUpDicomDir: Test Print Meta only -----\n");
-   ((gdcmDocument *)dcmdir)->Print();
+   ((gdcm::Document *)dcmdir)->Print();
 
-   gdcmDicomDirPatient *p1=dcmdir->NewPatient();
+   gdcm::DicomDirPatient *p1=dcmdir->NewPatient();
    p1->SetEntryByNumber("patientONE",0x0010, 0x0010);
 
      
-   gdcmDicomDirPatient *p2=dcmdir->NewPatient();
+   gdcm::DicomDirPatient *p2=dcmdir->NewPatient();
    p2->SetEntryByNumber("patientTWO",0x0010, 0x0010);     
-   gdcmDicomDirStudy *s21=p2->NewStudy();  
+   gdcm::DicomDirStudy *s21=p2->NewStudy();  
        s21->SetEntryByNumber("StudyDescrTwo.One",0x0008, 0x1030);        
-   gdcmDicomDirSerie *s211=s21->NewSerie();   
-   gdcmDicomDirImage *s2111=s211->NewImage();
+   gdcm::DicomDirSerie *s211=s21->NewSerie();   
+   gdcm::DicomDirImage *s2111=s211->NewImage();
    (void)s2111; //not used
 
-   gdcmDicomDirStudy *s11=p1->NewStudy();  
+   gdcm::DicomDirStudy *s11=p1->NewStudy();  
    s11->SetEntryByNumber("StudyDescrOne.One",0x0008, 0x1030);
    // Name of the physician reading study
    // Header Entry to be created
    s11->SetEntryByNumber("Dr Mabuse",0x0008, 0x1060);
 
-   gdcmDicomDirPatient *p3 = dcmdir->NewPatient();
+   gdcm::DicomDirPatient *p3 = dcmdir->NewPatient();
    p3->SetEntryByNumber("patientTHREE",0x0010, 0x0010);
 
    std::cout << "\n------- BuildUpDicomDir: Test Print of Patient ONE -----\n";

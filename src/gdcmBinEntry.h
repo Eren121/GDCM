@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 21:05:39 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/10/12 04:35:44 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,21 +23,24 @@
 
 #include <iostream>
 
+namespace gdcm 
+{
+
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmBinEntry
+ * \ingroup BinEntry
  * \brief   The dicom header of a Dicom file contains a set of such entries
  *          (when successfuly parsed against a given Dicom dictionary)
  *          This one contains a 'string value'.
  */
-class GDCM_EXPORT gdcmBinEntry  : public gdcmValEntry
+class GDCM_EXPORT BinEntry  : public ValEntry
 {
 public:
 
-   gdcmBinEntry(gdcmDictEntry* e);
-   gdcmBinEntry(gdcmDocEntry* d); 
+   BinEntry(DictEntry* e);
+   BinEntry(DocEntry* d); 
 
-   ~gdcmBinEntry();
+   ~BinEntry();
    
    void Print(std::ostream &os = std::cout);
    void Write(FILE*, FileType);
@@ -58,7 +61,7 @@ private:
    uint8_t* BinArea;
 
 };
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,12 +23,14 @@
 #include <string>
 #include <iostream>
 #include <exception>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 /*
  * Any exception thrown in the gdcm library
  */
-class GDCM_EXPORT gdcmException : public std::exception
+class GDCM_EXPORT Exception : public std::exception
 {
 public:
    /*
@@ -38,13 +40,13 @@ public:
     * @param from name of the thrower
     * @param error error description string
     */
-   explicit gdcmException(const std::string &from, const std::string &error = "")
+   explicit Exception(const std::string &from, const std::string &error = "")
       throw();
 
    /**
     * \brief virtual destructor makes this class dynamic
     */
-   virtual ~gdcmException() throw() {};
+   virtual ~Exception() throw() {};
 
    /// exception caught within exception class: print error message and die
    static void fatal(const char *from) throw();
@@ -65,7 +67,7 @@ public:
    /// returns exception name string
    operator const char *() const throw();
 
-   friend std::ostream& operator<<(std::ostream &os, const gdcmException &e);
+   friend std::ostream& operator<<(std::ostream &os, const Exception &e);
 
 protected:
    /// error message part 1
@@ -79,7 +81,7 @@ protected:
 /*
  * File error exception thrown in the gdcm library
  */
-class GDCM_EXPORT gdcmFileError : public gdcmException
+class GDCM_EXPORT FileError : public Exception
 {
 public:
    /**
@@ -88,9 +90,9 @@ public:
     * @param from name of the thrower
     * @param error error description string
     */
-   explicit gdcmFileError(const std::string &from,
+   explicit FileError(const std::string &from,
                           const std::string &error = "File error")
-      throw() : gdcmException(from, error) { }
+      throw() : Exception(from, error) { }
 };
 
 
@@ -98,32 +100,32 @@ public:
 /**
  * \brief Unexpected file format exception
  */
-class GDCM_EXPORT gdcmFormatUnexpected : public gdcmException
+class GDCM_EXPORT FormatUnexpected : public Exception
 {
 public:
    /// \brief Builds a file-related exception with minimal information:
    /// name of the thrower method and error message
    /// @param from name of the thrower
    /// @param error error description string
-   explicit gdcmFormatUnexpected(const std::string &from,
+   explicit FormatUnexpected(const std::string &from,
                             const std::string &error = "Unexpected file format")
-      throw() : gdcmException( from, error ) { }
+      throw() : Exception( from, error ) { }
 };
 
 //-----------------------------------------------------------------------------
 /**
  * \brief Invalid file format exception
  */
-class GDCM_EXPORT gdcmFormatError : public gdcmFormatUnexpected
+class GDCM_EXPORT FormatError : public FormatUnexpected
 {
 public:
    /// \brief Builds a file-related exception with minimal information:
    /// name of the thrower method and error message
    /// @param from name of the thrower
    /// @param error error description string
-   explicit gdcmFormatError(const std::string &from,
+   explicit FormatError(const std::string &from,
                             const std::string &error = "Invalid file format")
-      throw() : gdcmFormatUnexpected( from, error ) { }
+      throw() : FormatUnexpected( from, error ) { }
 };
 
 //-----------------------------------------------------------------------------
@@ -132,7 +134,9 @@ public:
  * @param e exception to print
  * @returns output stream os
  */
-std::ostream& operator<<(std::ostream &os, const gdcmException &e);
+std::ostream& operator<<(std::ostream &os, const Exception &e);
+
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif // GDCM_EXCEPTION_H

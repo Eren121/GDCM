@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:52:55 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,17 +19,19 @@
 #include "gdcmException.h"
 
 #include <typeinfo>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
-// gdcmException
+// Exception
 
 /**
- * \ingroup gdcmException
+ * \ingroup Exception
  * \brief constructor
  * @param f
  * @param msg  
  */
-gdcmException::gdcmException(const std::string &f, const std::string& msg) throw()
+Exception::Exception(const std::string &f, const std::string& msg) throw()
 #ifdef __GNUC__
   try
 #endif
@@ -37,17 +39,17 @@ gdcmException::gdcmException(const std::string &f, const std::string& msg) throw
   }
 #ifdef __GNUC__
 catch(...) {
-  fatal("gdcmException::gdcmException(const std::string&, const std::string&, const std::string&)");
+  fatal("Exception::Exception(const std::string&, const std::string&, const std::string&)");
 }
 #endif
 
 
 /**
- * \ingroup gdcmException
+ * \ingroup Exception
  * \brief fatal
  * @param from 
  */
-void gdcmException::fatal(const char *from) throw() {
+void Exception::fatal(const char *from) throw() {
    try
    {
       std::cerr << "Fatal: exception received in " << from 
@@ -70,11 +72,11 @@ void gdcmException::fatal(const char *from) throw() {
 }
 
 /**
- * \ingroup gdcmException
+ * \ingroup Exception
  * \brief getName
  * @return string
  */
-std::string gdcmException::getName() const throw()
+std::string Exception::getName() const throw()
 {
    try
    {
@@ -110,26 +112,26 @@ std::string gdcmException::getName() const throw()
 }
 
 /**
- * \ingroup gdcmException
- * \brief gdcmException
+ * \ingroup Exception
+ * \brief Exception
  */
- gdcmException::operator const char *() const throw() {
+ Exception::operator const char *() const throw() {
   return getName().c_str();
 }
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmException
- * \brief gdcmException::operator <<
+ * \ingroup Exception
+ * \brief Exception::operator <<
  */
- std::ostream& operator<<(std::ostream &os, const gdcmException &e) {
+ std::ostream& operator<<(std::ostream &os, const Exception &e) {
   try {  
     os << "Exception " << e.getName() << " thrown: " << e.getError() << std::endl;
   }
   catch(...) {
-    gdcmException::fatal("operator<<(std::ostream &, const gdcmException&)");
+    Exception::fatal("operator<<(std::ostream &, const Exception&)");
   }
   return os;
 }
-
+} // end namespace gdcm
 //-----------------------------------------------------------------------------

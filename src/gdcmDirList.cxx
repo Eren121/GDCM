@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:54 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,26 +33,28 @@
    #include <sys/stat.h>
    #include <sys/types.h>
 #endif
+namespace gdcm 
+{
 
 // Constructor / Destructor
 /**
- * \ingroup gdcmDirList
+ * \ingroup DirList
  * \brief Constructor  
  * @param  dirName root directory name
  * @param  recursive whether we want to explore recursively or not 
  */
-gdcmDirList::gdcmDirList(std::string dirName, bool recursive)
+DirList::DirList(std::string dirName, bool recursive)
 {
    name = dirName;
-   gdcmUtil::NormalizePath(name);
+   Util::NormalizePath(name);
    Explore(name, recursive);
 }
 
 /**
- * \ingroup gdcmDirList
+ * \ingroup DirList
  * \brief  Destructor
  */
-gdcmDirList::~gdcmDirList()
+DirList::~DirList()
 {
 }
 
@@ -62,11 +64,11 @@ gdcmDirList::~gdcmDirList()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmDirList
+ * \ingroup DirList
  * \brief   Get the directory name
  * @return the directory name 
  */
-std::string gdcmDirList::GetDirName()
+std::string DirList::GetDirName()
 {
    return name;
 }
@@ -78,17 +80,17 @@ std::string gdcmDirList::GetDirName()
 // Private
 
 /**
- * \ingroup gdcmDirList
+ * \ingroup DirList
  * \brief   Explore a directory with possibility of recursion
  *          return number of files read
  * @param  dirName directory to explore
  * @param  recursive whether we want recursion or not
  */
-int gdcmDirList::Explore(std::string dirName, bool recursive)
+int DirList::Explore(std::string dirName, bool recursive)
 {
    int numberOfFiles = 0;
    std::string fileName;
-   gdcmUtil::NormalizePath(dirName);
+   Util::NormalizePath(dirName);
 #if defined(_MSC_VER) || (__CYGWIN__)
    WIN32_FIND_DATA fileData; 
    HANDLE hFile=FindFirstFile((dirName+"*").c_str(),&fileData);
@@ -158,5 +160,6 @@ int gdcmDirList::Explore(std::string dirName, bool recursive)
 
   return numberOfFiles;
 }
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------

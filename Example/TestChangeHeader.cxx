@@ -14,12 +14,12 @@ std::endl;
        return 1;
     }
 
-    gdcmHeader *h1 = new gdcmHeader( argv[1] );
-    gdcmFile  *f1 = new gdcmFile( h1 );
-    gdcmFile  *f2 = new gdcmFile( argv[2] );
+    gdcm::Header *h1 = new gdcm::Header( argv[1] );
+    gdcm::File  *f1 = new gdcm::File( h1 );
+    gdcm::File  *f2 = new gdcm::File( argv[2] );
 
     // 0018 1310 US ACQ Acquisition Matrix
-    gdcmDictEntry *dictEntry =
+    gdcm::DictEntry *dictEntry =
          f2->GetHeader()->GetPubDict()->GetDictEntryByName( "Acquisition Matrix" );
     std::cerr << std::hex << dictEntry->GetGroup() << "," << dictEntry->GetElement() << std::endl;
 

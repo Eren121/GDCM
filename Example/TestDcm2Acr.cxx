@@ -6,18 +6,18 @@ int main(int argc, char* argv[])
    std::string toto;
    char zozo[100];
 
-   gdcmFile  * f1;
+   gdcm::File  * f1;
 
    printf (" Before gdcmFile() \n");
    printf ("\n\n---------------------------------------\n\n");
 
    if (argc > 1) {
       toto = argv[1];
-      f1 = new gdcmFile(toto);
+      f1 = new gdcm::File(toto);
    } else {
       std::string filename = GDCM_DATA_ROOT;
       filename += "/test.acr";
-      f1 = new gdcmFile(filename.c_str());
+      f1 = new gdcm::File(filename.c_str());
    }
    printf (" Sortie gdcmFile() \n");
 

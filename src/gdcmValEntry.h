@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 00:42:55 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/10/12 04:35:48 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,19 +21,21 @@
 
 #include "gdcmDocEntry.h"
 #include <iostream>
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmValEntry
+ * \ingroup ValEntry
  * \brief   The dicom header of a Dicom file contains a set of such entries
  *          (when successfuly parsed against a given Dicom dictionary)
  */
-class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry
+class GDCM_EXPORT ValEntry  : public DocEntry
 {
 public:
-   gdcmValEntry(gdcmDictEntry* e);
-   gdcmValEntry(gdcmDocEntry* d); 
-   virtual ~gdcmValEntry();
+   ValEntry(DictEntry* e);
+   ValEntry(DocEntry* d); 
+   virtual ~ValEntry();
 
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
    /// 'string', if it's stored as an integer in the header of the
@@ -52,10 +54,11 @@ private:
 // Members :
   
    /// \brief Document Entry value, internaly represented as a std::string
-   ///        The Value Representation (\ref gdcmVR) is independently used
+   ///        The Value Representation (\ref VR) is independently used
    ///        in order to interpret (decode) this field.
    std::string  Value;
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

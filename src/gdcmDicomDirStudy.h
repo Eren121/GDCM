@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,37 +21,39 @@
 
 #include "gdcmDicomDirObject.h"
 #include "gdcmDicomDirSerie.h"
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
-typedef std::list<gdcmDicomDirSerie *> ListDicomDirSerie;
+typedef std::list<DicomDirSerie *> ListDicomDirSerie;
 
 //-----------------------------------------------------------------------------
-class GDCM_EXPORT gdcmDicomDirStudy : public gdcmDicomDirObject
+class GDCM_EXPORT DicomDirStudy : public DicomDirObject
 {
 public:
-   gdcmDicomDirStudy(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
-   gdcmDicomDirStudy(TagDocEntryHT *ptagHT); 
+   DicomDirStudy(SQItem *s, TagDocEntryHT *ptagHT); 
+   DicomDirStudy(TagDocEntryHT *ptagHT); 
 
-   ~gdcmDicomDirStudy();
+   ~DicomDirStudy();
 
    virtual void Print(std::ostream &os = std::cout);
    virtual void Write(FILE *fp, FileType t);
 /**
- * \ingroup gdcmDicomDirStudy
+ * \ingroup DicomDirStudy
  * \brief   returns the SERIE chained List for this STUDY.
  */
    ListDicomDirSerie &GetDicomDirSeries() { return series; };
 /**
- * \ingroup gdcmDicomDirStudy
+ * \ingroup DicomDirStudy
  * \brief   adds the passed SERIE to the SERIE chained List for this STUDY.
  */ 
-   void AddDicomDirSerie(gdcmDicomDirSerie *obj) { series.push_back(obj); };
+   void AddDicomDirSerie(DicomDirSerie *obj) { series.push_back(obj); };
 
 /**
- * \ingroup gdcmDicomDirStudy
+ * \ingroup DicomDirStudy
  * \brief   TODO
  */ 
-   gdcmDicomDirSerie* NewSerie();
+   DicomDirSerie* NewSerie();
     
 private:
 /**
@@ -59,6 +61,7 @@ private:
 */ 
    ListDicomDirSerie series;
 };
+} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
 #endif

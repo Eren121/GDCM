@@ -116,14 +116,14 @@ typedef  unsigned int guint32;
 
 ////////////////////////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
-%typemap(out) TagDocEntryHT & {
+%typemap(out) gdcm::TagDocEntryHT & {
    PyObject* NewDict = PyDict_New(); // The result of this typemap
    std::string RawName;              // Element name as gotten from gdcm
    PyObject* NewKey = (PyObject*)0;  // Associated name as python object
    std::string RawValue;             // Element value as gotten from gdcm
    PyObject* NewVal = (PyObject*)0;  // Associated value as python object
 
-   for (TagDocEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag)
+   for (gdcm::TagDocEntryHT::iterator tag = $1->begin(); tag != $1->end(); ++tag)
    {
       // The element name shall be the key:
       RawName = tag->second->GetName();
@@ -135,8 +135,8 @@ typedef  unsigned int guint32;
       NewKey = PyString_FromString(RawName.c_str());
 
       // Element values are striped from leading/trailing spaces
-      if (gdcmValEntry* ValEntryPtr =
-                dynamic_cast< gdcmValEntry* >(tag->second) )
+      if (gdcm::ValEntry* ValEntryPtr =
+                dynamic_cast< gdcm::ValEntry* >(tag->second) )
       {
          RawValue = ValEntryPtr->GetValue();
       }
@@ -154,9 +154,9 @@ typedef  unsigned int guint32;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (std::list<gdcmDicomDirPatient *>::iterator New = ($1)->begin();
+	for (std::list<gdcm::DicomDirPatient *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirPatient,1);
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirPatient,1);
 		PyList_Append($result, NewItem);
 	}
 }
@@ -165,9 +165,9 @@ typedef  unsigned int guint32;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (std::list<gdcmDicomDirStudy *>::iterator New = ($1)->begin();
+	for (std::list<gdcm::DicomDirStudy *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirStudy,1);
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirStudy,1);
 		PyList_Append($result, NewItem);
 	}
 }
@@ -176,9 +176,9 @@ typedef  unsigned int guint32;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (std::list<gdcmDicomDirSerie *>::iterator New = ($1)->begin();
+	for (std::list<gdcm::DicomDirSerie *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirSerie,1);
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirSerie,1);
 		PyList_Append($result, NewItem);
 	}
 }
@@ -187,16 +187,16 @@ typedef  unsigned int guint32;
 	PyObject* NewItem = (PyObject*)0;
 	$result = PyList_New(0); // The result of this typemap
 
-	for (std::list<gdcmDicomDirImage *>::iterator New = ($1)->begin();
+	for (std::list<gdcm::DicomDirImage *>::iterator New = ($1)->begin();
 	    New != ($1)->end(); ++New) {
-		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_gdcmDicomDirImage,1);
+		NewItem = SWIG_NewPointerObj(*New,SWIGTYPE_p_DicomDirImage,1);
 		PyList_Append($result, NewItem);
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // Deals with function returning a C++ string.
-%typemap(python, in) (gdcmMethod *,void * =NULL,gdcmMethod * =NULL) {
+%typemap(python, in) (gdcm::Method *,void * =NULL,gdcm::Method * =NULL) {
 	if($input!=Py_None)
 	{
 		Py_INCREF($input);
@@ -229,21 +229,25 @@ typedef  unsigned int guint32;
 %include "gdcmCommon.h"
 %include "gdcmDictEntry.h"
 %include "gdcmDict.h"
-%include "gdcmDictSet.h"
+%include "gdcmDocEntry.h"
 %include "gdcmDocEntrySet.h"
 %include "gdcmElementSet.h"
-%include "gdcmDocument.h"
+%include "gdcmDictSet.h"
+%include "gdcmTS.h"
+%include "gdcmVR.h"
 %include "gdcmSQItem.h"
+%include "gdcmDicomDirObject.h"
+%include "gdcmDicomDirStudy.h"
+%include "gdcmDicomDirPatient.h"
+%include "gdcmDicomDirSerie.h"
+%include "gdcmDicomDirElement.h"
+%include "gdcmDicomDirMeta.h"
+%include "gdcmDocument.h"
 %include "gdcmHeader.h"
 %include "gdcmHeaderHelper.h"
 %include "gdcmFile.h"
 %include "gdcmUtil.h"
 %include "gdcmGlobal.h"
-%include "gdcmDicomDirObject.h"
 %include "gdcmDicomDir.h"
 %include "gdcmDicomDirElement.h"
-%include "gdcmDicomDirMeta.h"
-%include "gdcmDicomDirPatient.h"
-%include "gdcmDicomDirStudy.h"
-%include "gdcmDicomDirSerie.h"
 %include "gdcmDicomDirImage.h"

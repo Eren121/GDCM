@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/10 16:44:00 $
-  Version:   $Revision: 1.138 $
+  Date:      $Date: 2004/10/12 04:35:46 $
+  Version:   $Revision: 1.139 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,13 +20,15 @@
 #include "gdcmDebug.h"
 #include "gdcmPixelConvert.h"
 
+namespace gdcm 
+{
 typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
 
 //-------------------------------------------------------------------------
 // Constructor / Destructor
 /**
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (gdcmHeader only deals with the ... header)
+ *        file (Header only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
@@ -36,18 +38,18 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
  *        This avoid a double parsing of public part of the header when
  *        user sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
- * @param header already built gdcmHeader
+ * @param header already built Header
  */
-gdcmFile::gdcmFile(gdcmHeader *header)
+File::File(Header *header)
 {
-   Header     = header;
+   HeaderInternal = header;
    SelfHeader = false;
    Initialise();
 }
 
 /**
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (gdcmHeader only deals with the ... header)
+ *        file (Header only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
@@ -59,9 +61,9 @@ gdcmFile::gdcmFile(gdcmHeader *header)
  *        seen as a side effect).   
  * @param filename file to be opened for parsing
  */
-gdcmFile::gdcmFile(std::string const & filename )
+File::File(std::string const & filename )
 {
-   Header = new gdcmHeader( filename );
+   HeaderInternal = new Header( filename );
    SelfHeader = true;
    Initialise();
 }
@@ -69,12 +71,12 @@ gdcmFile::gdcmFile(std::string const & filename )
 /**
  * \brief Factorization for various forms of constructors.
  */
-void gdcmFile::Initialise()
+void File::Initialise()
 {
-   if ( Header->IsReadable() )
+   if ( HeaderInternal->IsReadable() )
    {
       ImageDataSizeRaw = ComputeDecompressedPixelDataSizeFromHeader();
-      if ( Header->HasLUT() )
+      if ( HeaderInternal->HasLUT() )
       {
          ImageDataSize = 3 * ImageDataSizeRaw;
       }
@@ -88,16 +90,16 @@ void gdcmFile::Initialise()
 
 /**
  * \brief canonical destructor
- * \note  If the gdcmHeader was created by the gdcmFile constructor,
- *        it is destroyed by the gdcmFile
+ * \note  If the Header was created by the File constructor,
+ *        it is destroyed by the File
  */
-gdcmFile::~gdcmFile()
+File::~File()
 { 
    if( SelfHeader )
    {
-      delete Header;
+      delete HeaderInternal;
    }
-   Header = 0;
+   HeaderInternal = 0;
 
    DeleteInitialValues();
 }
@@ -106,7 +108,7 @@ gdcmFile::~gdcmFile()
  * \brief Sets some initial values for the Constructor
  * \warning not end user intended
  */
-void gdcmFile::SaveInitialValues()
+void File::SaveInitialValues()
 { 
 
    PixelRead  = -1; // no ImageData read yet.
@@ -126,28 +128,28 @@ void gdcmFile::SaveInitialValues()
    InitialGreenLUTData  = 0;
    InitialBlueLUTData   = 0; 
                 
-   if ( Header->IsReadable() )
+   if ( HeaderInternal->IsReadable() )
    {
       // the following values *may* be modified 
-      // by gdcmFile::GetImageDataIntoVectorRaw
+      // by File::GetImageDataIntoVectorRaw
       // we save their initial value.
-      InitialSpp           = Header->GetEntryByNumber(0x0028,0x0002);
-      InitialPhotInt       = Header->GetEntryByNumber(0x0028,0x0004);
-      InitialPlanConfig    = Header->GetEntryByNumber(0x0028,0x0006);
+      InitialSpp           = HeaderInternal->GetEntryByNumber(0x0028,0x0002);
+      InitialPhotInt       = HeaderInternal->GetEntryByNumber(0x0028,0x0004);
+      InitialPlanConfig    = HeaderInternal->GetEntryByNumber(0x0028,0x0006);
       
-      InitialBitsAllocated = Header->GetEntryByNumber(0x0028,0x0100);
-      InitialHighBit       = Header->GetEntryByNumber(0x0028,0x0102);
+      InitialBitsAllocated = HeaderInternal->GetEntryByNumber(0x0028,0x0100);
+      InitialHighBit       = HeaderInternal->GetEntryByNumber(0x0028,0x0102);
 
       // the following entries *may* be removed from the H table
-      // (NOT deleted ...) by gdcmFile::GetImageDataIntoVectorRaw  
+      // (NOT deleted ...) by File::GetImageDataIntoVectorRaw  
       // we keep a pointer on them.
-      InitialRedLUTDescr   = Header->GetDocEntryByNumber(0x0028,0x1101);
-      InitialGreenLUTDescr = Header->GetDocEntryByNumber(0x0028,0x1102);
-      InitialBlueLUTDescr  = Header->GetDocEntryByNumber(0x0028,0x1103);
+      InitialRedLUTDescr   = HeaderInternal->GetDocEntryByNumber(0x0028,0x1101);
+      InitialGreenLUTDescr = HeaderInternal->GetDocEntryByNumber(0x0028,0x1102);
+      InitialBlueLUTDescr  = HeaderInternal->GetDocEntryByNumber(0x0028,0x1103);
 
-      InitialRedLUTData    = Header->GetDocEntryByNumber(0x0028,0x1201);
-      InitialGreenLUTData  = Header->GetDocEntryByNumber(0x0028,0x1202);
-      InitialBlueLUTData   = Header->GetDocEntryByNumber(0x0028,0x1203); 
+      InitialRedLUTData    = HeaderInternal->GetDocEntryByNumber(0x0028,0x1201);
+      InitialGreenLUTData  = HeaderInternal->GetDocEntryByNumber(0x0028,0x1202);
+      InitialBlueLUTData   = HeaderInternal->GetDocEntryByNumber(0x0028,0x1203); 
    }
 }
 
@@ -155,42 +157,42 @@ void gdcmFile::SaveInitialValues()
  * \brief restores some initial values
  * \warning not end user intended
  */
-void gdcmFile::RestoreInitialValues()
+void File::RestoreInitialValues()
 {   
-   if ( Header->IsReadable() )
+   if ( HeaderInternal->IsReadable() )
    {      
       // the following values *may* have been modified 
-      // by gdcmFile::GetImageDataIntoVectorRaw
+      // by File::GetImageDataIntoVectorRaw
       // we restore their initial value.
       if ( InitialSpp != "")
-         Header->SetEntryByNumber(InitialSpp,0x0028,0x0002);
+         HeaderInternal->SetEntryByNumber(InitialSpp,0x0028,0x0002);
       if ( InitialPhotInt != "")
-         Header->SetEntryByNumber(InitialPhotInt,0x0028,0x0004);
+         HeaderInternal->SetEntryByNumber(InitialPhotInt,0x0028,0x0004);
       if ( InitialPlanConfig != "")
 
-         Header->SetEntryByNumber(InitialPlanConfig,0x0028,0x0006);
+         HeaderInternal->SetEntryByNumber(InitialPlanConfig,0x0028,0x0006);
       if ( InitialBitsAllocated != "")
-          Header->SetEntryByNumber(InitialBitsAllocated,0x0028,0x0100);
+          HeaderInternal->SetEntryByNumber(InitialBitsAllocated,0x0028,0x0100);
       if ( InitialHighBit != "")
-          Header->SetEntryByNumber(InitialHighBit,0x0028,0x0102);
+          HeaderInternal->SetEntryByNumber(InitialHighBit,0x0028,0x0102);
                
       // the following entries *may* be have been removed from the H table
-      // (NOT deleted ...) by gdcmFile::GetImageDataIntoVectorRaw  
+      // (NOT deleted ...) by File::GetImageDataIntoVectorRaw  
       // we restore them.
 
       if (InitialRedLUTDescr)
-         Header->AddEntry(InitialRedLUTDescr);
+         HeaderInternal->AddEntry(InitialRedLUTDescr);
       if (InitialGreenLUTDescr)
-         Header->AddEntry(InitialGreenLUTDescr);
+         HeaderInternal->AddEntry(InitialGreenLUTDescr);
       if (InitialBlueLUTDescr)
-         Header->AddEntry(InitialBlueLUTDescr);
+         HeaderInternal->AddEntry(InitialBlueLUTDescr);
 
       if (InitialRedLUTData)
-         Header->AddEntry(InitialBlueLUTDescr);
+         HeaderInternal->AddEntry(InitialBlueLUTDescr);
       if (InitialGreenLUTData)
-         Header->AddEntry(InitialGreenLUTData);
+         HeaderInternal->AddEntry(InitialGreenLUTData);
       if (InitialBlueLUTData)
-         Header->AddEntry(InitialBlueLUTData);
+         HeaderInternal->AddEntry(InitialBlueLUTData);
    }
 }
 
@@ -198,7 +200,7 @@ void gdcmFile::RestoreInitialValues()
  * \brief delete initial values (il they were saved)
  *        of InitialLutDescriptors and InitialLutData
  */
-void gdcmFile::DeleteInitialValues()
+void File::DeleteInitialValues()
 { 
 
 // InitialLutDescriptors and InitialLutData
@@ -236,7 +238,7 @@ void gdcmFile::DeleteInitialValues()
  * \warning : it is NOT the group 7FE0 length
  *          (no interest for compressed images).
  */
-int gdcmFile::ComputeDecompressedPixelDataSizeFromHeader()
+int File::ComputeDecompressedPixelDataSizeFromHeader()
 {
    // see PS 3.3-2003 : C.7.6.3.2.1  
    // 
@@ -265,17 +267,17 @@ int gdcmFile::ComputeDecompressedPixelDataSizeFromHeader()
    // 0028|1203 [US]   [Blue Palette Color Lookup Table Data]
 
    // Number of "Bits Allocated"
-   int numberBitsAllocated = Header->GetBitsAllocated();
+   int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
    if ( ( numberBitsAllocated == 0 ) || ( numberBitsAllocated == 12 ) )
    {
       numberBitsAllocated = 16;
    } 
 
-   int DecompressedSize = Header->GetXSize()
-                        * Header->GetYSize() 
-                        * Header->GetZSize()
+   int DecompressedSize = HeaderInternal->GetXSize()
+                        * HeaderInternal->GetYSize() 
+                        * HeaderInternal->GetZSize()
                         * ( numberBitsAllocated / 8 )
-                        * Header->GetSamplesPerPixel();
+                        * HeaderInternal->GetSamplesPerPixel();
    
    return DecompressedSize;
 }
@@ -290,7 +292,7 @@ int gdcmFile::ComputeDecompressedPixelDataSizeFromHeader()
  * @return  Pointer to newly allocated pixel data.
  *          NULL if alloc fails 
  */
-uint8_t* gdcmFile::GetImageData()
+uint8_t* File::GetImageData()
 {
    // FIXME (Mathieu)
    // I need to deallocate Pixel_Data before doing any allocation:
@@ -346,11 +348,11 @@ uint8_t* gdcmFile::GetImageData()
  * @return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
-size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
+size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
 {
    GetImageDataIntoVectorRaw (destination, maxSize);
    PixelRead = 0 ; // =0 : no ImageDataRaw 
-   if ( !Header->HasLUT() )
+   if ( !HeaderInternal->HasLUT() )
    {
       return ImageDataSize;
    }
@@ -358,7 +360,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
    // from Lut R + Lut G + Lut B
    uint8_t *newDest = new uint8_t[ImageDataSize];
    uint8_t *a       = (uint8_t *)destination;
-   uint8_t *lutRGBA = Header->GetLUTRGBA();
+   uint8_t *lutRGBA = HeaderInternal->GetLUTRGBA();
 
    if ( lutRGBA )
    {
@@ -381,11 +383,11 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
    // FIXME : Better use CreateOrReplaceIfExist ?
 
    std::string spp = "3";        // Samples Per Pixel
-   Header->SetEntryByNumber(spp,0x0028,0x0002);
+   HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
    std::string rgb = "RGB ";     // Photometric Interpretation
-   Header->SetEntryByNumber(rgb,0x0028,0x0004);
+   HeaderInternal->SetEntryByNumber(rgb,0x0028,0x0004);
    std::string planConfig = "0"; // Planar Configuration
-   Header->SetEntryByNumber(planConfig,0x0028,0x0006);
+   HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
 
    }
    else  // GetLUTRGBA() failed
@@ -397,7 +399,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
       // It seems that *no Dicom Viewer* has any idea :-(
         
       std::string photomInterp = "MONOCHROME1 ";  // Photometric Interpretation
-      Header->SetEntryByNumber(photomInterp,0x0028,0x0004);
+      HeaderInternal->SetEntryByNumber(photomInterp,0x0028,0x0004);
    } 
 
    /// \todo Drop Palette Color out of the Header?
@@ -413,11 +415,11 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
  * @return  Pointer to newly allocated pixel data.
  * \        NULL if alloc fails 
  */
-uint8_t* gdcmFile::GetImageDataRaw ()
+uint8_t* File::GetImageDataRaw ()
 {
    size_t imgDataSize;
-   if ( Header->HasLUT() )
-      /// \todo Let gdcmHeader user a chance to get the right value
+   if ( HeaderInternal->HasLUT() )
+      /// \todo Let Header user a chance to get the right value
       imgDataSize = ImageDataSizeRaw;
    else 
       imgDataSize = ImageDataSize;
@@ -474,7 +476,7 @@ uint8_t* gdcmFile::GetImageDataRaw ()
  * @return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
-size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
+size_t File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 {
   // we save the initial values of the following
   // in order to be able to restore the header in a disk-consistent state
@@ -489,7 +491,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
     
    if ( ImageDataSize > maxSize )
    {
-      dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: pixel data bigger"
+      dbg.Verbose(0, "File::GetImageDataIntoVector: pixel data bigger"
                      "than caller's expected MaxSize");
       return (size_t)0;
    }
@@ -497,37 +499,37 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    ReadPixelData( destination );
 
    // Number of Bits Allocated for storing a Pixel
-   int numberBitsAllocated = Header->GetBitsAllocated();
+   int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
    if ( numberBitsAllocated == 0 )
    {
       numberBitsAllocated = 16;
    }
 
    // Number of Bits actually used
-   int numberBitsStored = Header->GetBitsStored();
+   int numberBitsStored = HeaderInternal->GetBitsStored();
    if ( numberBitsStored == 0 )
    {
       numberBitsStored = numberBitsAllocated;
    }
 
    // High Bit Position
-   int highBitPosition = Header->GetHighBitPosition();
+   int highBitPosition = HeaderInternal->GetHighBitPosition();
    if ( highBitPosition == 0 )
    {
       highBitPosition = numberBitsAllocated - 1;
    }
 
-   bool signedPixel = Header->IsSignedPixelData();
+   bool signedPixel = HeaderInternal->IsSignedPixelData();
 
-   gdcmPixelConvert::ConvertReorderEndianity(
+   PixelConvert::ConvertReorderEndianity(
                          (uint8_t*) destination,
                          ImageDataSize,
                          numberBitsStored,
                          numberBitsAllocated,
-                         Header->GetSwapCode(),
+                         HeaderInternal->GetSwapCode(),
                          signedPixel );
 
-   gdcmPixelConvert::ConvertReArrangeBits(
+   PixelConvert::ConvertReArrangeBits(
                          (uint8_t*) destination,
                          ImageDataSize,
                          numberBitsStored,
@@ -548,7 +550,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 // Deal with the color
    
    // Monochrome pictures don't require color intervention
-   if ( Header->IsMonochrome() )
+   if ( HeaderInternal->IsMonochrome() )
    {
       return ImageDataSize; 
    }
@@ -562,13 +564,13 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    //                            PhotometricInterpretation=PALETTE COLOR
    // and heuristic has to be found :-( 
 
-   int planConf = Header->GetPlanarConfiguration();
+   int planConf = HeaderInternal->GetPlanarConfiguration();
 
    // Planar configuration = 2 ==> 1 gray Plane + 3 LUT
    //   ...and...
    // whatever the Planar Configuration might be, "PALETTE COLOR "
    // implies that we deal with the palette. 
-   if ( ( planConf == 2 ) || Header->IsPaletteColor() )
+   if ( ( planConf == 2 ) || HeaderInternal->IsPaletteColor() )
    {
       return ImageDataSize;
    }
@@ -579,7 +581,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    {
       uint8_t* newDest = new uint8_t[ImageDataSize];
       // Warning : YBR_FULL_422 acts as RGB
-      if ( Header->IsYBRFull() )
+      if ( HeaderInternal->IsYBRFull() )
       {
          ConvertYcBcRPlanesToRGBPixels((uint8_t*)destination, newDest);
       }
@@ -607,9 +609,9 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    std::string photInt = "RGB ";     // Photometric Interpretation
    std::string planConfig = "0";     // Planar Configuration
      
-   Header->SetEntryByNumber(spp,0x0028,0x0002);
-   Header->SetEntryByNumber(photInt,0x0028,0x0004);
-   Header->SetEntryByNumber(planConfig,0x0028,0x0006);
+   HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
+   HeaderInternal->SetEntryByNumber(photInt,0x0028,0x0004);
+   HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
  
    return ImageDataSize; 
 }
@@ -618,7 +620,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
  * \brief   Convert (Y plane, cB plane, cR plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
-void gdcmFile::ConvertYcBcRPlanesToRGBPixels(uint8_t* source,
+void File::ConvertYcBcRPlanesToRGBPixels(uint8_t* source,
                                              uint8_t* destination)
 {
    // to see the tricks about YBR_FULL, YBR_FULL_422, 
@@ -626,8 +628,8 @@ void gdcmFile::ConvertYcBcRPlanesToRGBPixels(uint8_t* source,
    // ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
    // and be *very* affraid
    //
-   int l        = Header->GetXSize() * Header->GetYSize();
-   int nbFrames = Header->GetZSize();
+   int l        = HeaderInternal->GetXSize() * HeaderInternal->GetYSize();
+   int nbFrames = HeaderInternal->GetZSize();
 
    uint8_t* a = source;
    uint8_t* b = source + l;
@@ -668,10 +670,10 @@ void gdcmFile::ConvertYcBcRPlanesToRGBPixels(uint8_t* source,
  * \brief   Convert (Red plane, Green plane, Blue plane) to RGB pixels
  * \warning Works on all the frames at a time
  */
-void gdcmFile::ConvertRGBPlanesToRGBPixels(uint8_t* source,
+void File::ConvertRGBPlanesToRGBPixels(uint8_t* source,
                                            uint8_t* destination)
 {
-   int l = Header->GetXSize() * Header->GetYSize() * Header->GetZSize();
+   int l = HeaderInternal->GetXSize() * HeaderInternal->GetYSize() * HeaderInternal->GetZSize();
 
    uint8_t* a = source;
    uint8_t* b = source + l;
@@ -698,9 +700,9 @@ void gdcmFile::ConvertRGBPlanesToRGBPixels(uint8_t* source,
  *
  * @return boolean
  */
-bool gdcmFile::SetImageData(uint8_t* inData, size_t expectedSize)
+bool File::SetImageData(uint8_t* inData, size_t expectedSize)
 {
-   Header->SetImageDataSize( expectedSize );
+   HeaderInternal->SetImageDataSize( expectedSize );
 // FIXME : if already allocated, memory leak !
    Pixel_Data     = inData;
    ImageDataSize = ImageDataSizeRaw = expectedSize;
@@ -718,7 +720,7 @@ bool gdcmFile::SetImageData(uint8_t* inData, size_t expectedSize)
  * @return false if write fails
  */
 
-bool gdcmFile::WriteRawData(std::string const & fileName)
+bool File::WriteRawData(std::string const & fileName)
 {
    FILE* fp1 = fopen(fileName.c_str(), "wb");
    if (fp1 == NULL)
@@ -741,9 +743,9 @@ bool gdcmFile::WriteRawData(std::string const & fileName)
  * @return false if write fails
  */
 
-bool gdcmFile::WriteDcmImplVR (std::string const & fileName)
+bool File::WriteDcmImplVR (std::string const & fileName)
 {
-   return WriteBase(fileName, gdcmImplicitVR);
+   return WriteBase(fileName, ImplicitVR);
 }
 
 /**
@@ -754,9 +756,9 @@ bool gdcmFile::WriteDcmImplVR (std::string const & fileName)
  * @return false if write fails
  */
 
-bool gdcmFile::WriteDcmExplVR (std::string const & fileName)
+bool File::WriteDcmExplVR (std::string const & fileName)
 {
-   return WriteBase(fileName, gdcmExplicitVR);
+   return WriteBase(fileName, ExplicitVR);
 }
 
 /**
@@ -773,9 +775,9 @@ bool gdcmFile::WriteDcmExplVR (std::string const & fileName)
  * @return false if write fails
  */
 
-bool gdcmFile::WriteAcr (std::string const & fileName)
+bool File::WriteAcr (std::string const & fileName)
 {
-   return WriteBase(fileName, gdcmACR);
+   return WriteBase(fileName, ACR);
 }
 
 //-----------------------------------------------------------------------------
@@ -788,9 +790,9 @@ bool gdcmFile::WriteAcr (std::string const & fileName)
  * @param  type file type (ExplicitVR, ImplicitVR, ...)
  * @return false if write fails
  */
-bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
+bool File::WriteBase (std::string const & fileName, FileType type)
 {
-   if ( PixelRead == -1 && type != gdcmExplicitVR)
+   if ( PixelRead == -1 && type != ExplicitVR)
    {
       return false;
    }
@@ -802,7 +804,7 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
       return false;
    }
 
-   if ( type == gdcmImplicitVR || type == gdcmExplicitVR )
+   if ( type == ImplicitVR || type == ExplicitVR )
    {
       // writing Dicom File Preamble
       uint8_t* filePreamble = new uint8_t[128];
@@ -824,20 +826,20 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
    ///       but pb expected if user deals with, e.g. COMPLEX images
 
    std::string rows, columns; 
-   if ( Header->GetFileType() == gdcmACR_LIBIDO)
+   if ( HeaderInternal->GetFileType() == ACR_LIBIDO)
    {
-      rows    = Header->GetEntryByNumber(0x0028, 0x0010);
-      columns = Header->GetEntryByNumber(0x0028, 0x0011);
+      rows    = HeaderInternal->GetEntryByNumber(0x0028, 0x0010);
+      columns = HeaderInternal->GetEntryByNumber(0x0028, 0x0011);
 
-      Header->SetEntryByNumber(columns,  0x0028, 0x0010);
-      Header->SetEntryByNumber(rows   ,  0x0028, 0x0011);
+      HeaderInternal->SetEntryByNumber(columns,  0x0028, 0x0010);
+      HeaderInternal->SetEntryByNumber(rows   ,  0x0028, 0x0011);
    }
    // ----------------- End of Special Patch ----------------
       
-   uint16_t grPixel  = Header->GetGrPixel();
-   uint16_t numPixel = Header->GetNumPixel();;
+   uint16_t grPixel  = HeaderInternal->GetGrPixel();
+   uint16_t numPixel = HeaderInternal->GetNumPixel();;
           
-   gdcmDocEntry* PixelElement = 
+   DocEntry* PixelElement = 
       GetHeader()->GetDocEntryByNumber(grPixel, numPixel);  
  
    if ( PixelRead == 1 )
@@ -851,7 +853,7 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
       PixelElement->SetLength( ImageDataSize );
    }
  
-   Header->Write(fp1, type);
+   HeaderInternal->Write(fp1, type);
 
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
@@ -859,10 +861,10 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
    // ...and we restore the Header to be Dicom Compliant again 
    // just after writting
 
-   if ( Header->GetFileType() == gdcmACR_LIBIDO )
+   if ( HeaderInternal->GetFileType() == ACR_LIBIDO )
    {
-      Header->SetEntryByNumber(rows   , 0x0028, 0x0010);
-      Header->SetEntryByNumber(columns, 0x0028, 0x0011);
+      HeaderInternal->SetEntryByNumber(rows   , 0x0028, 0x0010);
+      HeaderInternal->SetEntryByNumber(columns, 0x0028, 0x0011);
    }
    // ----------------- End of Special Patch ----------------
    
@@ -880,40 +882,40 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
  * @param   destination where the pixel data should be stored.
  *
  */
-bool gdcmFile::ReadPixelData(void* destination) 
+bool File::ReadPixelData(void* destination) 
 {
-   FILE* fp = Header->OpenFile();
+   FILE* fp = HeaderInternal->OpenFile();
 
    if ( !fp )
    {
       return false;
    }
-   if ( fseek(fp, Header->GetPixelOffset(), SEEK_SET) == -1 )
+   if ( fseek(fp, HeaderInternal->GetPixelOffset(), SEEK_SET) == -1 )
    {
-      Header->CloseFile();
+      HeaderInternal->CloseFile();
       return false;
    }
 
-   if ( Header->GetBitsAllocated() == 12 )
+   if ( HeaderInternal->GetBitsAllocated() == 12 )
    {
-      gdcmPixelConvert::ConvertDecompress12BitsTo16Bits(
+      PixelConvert::ConvertDecompress12BitsTo16Bits(
                                        (uint8_t*)destination, 
-                                       Header->GetXSize(),
-                                       Header->GetYSize(),
+                                       HeaderInternal->GetXSize(),
+                                       HeaderInternal->GetYSize(),
                                        fp);
-      Header->CloseFile();
+      HeaderInternal->CloseFile();
       return true;
    }
 
    // ----------------------  Uncompressed File
-   if ( !Header->IsDicomV3()                             ||
-        Header->IsImplicitVRLittleEndianTransferSyntax() ||
-        Header->IsExplicitVRLittleEndianTransferSyntax() ||
-        Header->IsExplicitVRBigEndianTransferSyntax()    ||
-        Header->IsDeflatedExplicitVRLittleEndianTransferSyntax() )
+   if ( !HeaderInternal->IsDicomV3()                             ||
+        HeaderInternal->IsImplicitVRLittleEndianTransferSyntax() ||
+        HeaderInternal->IsExplicitVRLittleEndianTransferSyntax() ||
+        HeaderInternal->IsExplicitVRBigEndianTransferSyntax()    ||
+        HeaderInternal->IsDeflatedExplicitVRLittleEndianTransferSyntax() )
    {
-      size_t ItemRead = fread(destination, Header->GetPixelAreaLength(), 1, fp);
-      Header->CloseFile();
+      size_t ItemRead = fread(destination, HeaderInternal->GetPixelAreaLength(), 1, fp);
+      HeaderInternal->CloseFile();
       if ( ItemRead != 1 )
       {
          return false;
@@ -925,40 +927,42 @@ bool gdcmFile::ReadPixelData(void* destination)
    }
 
    // ---------------------- Run Length Encoding
-   if ( Header->IsRLELossLessTransferSyntax() )
+   if ( HeaderInternal->IsRLELossLessTransferSyntax() )
    {
-      bool res = gdcmPixelConvert::ReadAndDecompressRLEFile(
+      bool res = PixelConvert::ReadAndDecompressRLEFile(
                                       destination,
-                                      Header->GetXSize(),
-                                      Header->GetYSize(),
-                                      Header->GetZSize(),
-                                      Header->GetBitsAllocated(),
-                                      &(Header->RLEInfo),
+                                      HeaderInternal->GetXSize(),
+                                      HeaderInternal->GetYSize(),
+                                      HeaderInternal->GetZSize(),
+                                      HeaderInternal->GetBitsAllocated(),
+                                      &(HeaderInternal->RLEInfo),
                                       fp );
-      Header->CloseFile();
+      HeaderInternal->CloseFile();
       return res; 
    }  
     
    // --------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
-   int numberBitsAllocated = Header->GetBitsAllocated();
+   int numberBitsAllocated = HeaderInternal->GetBitsAllocated();
    if ( ( numberBitsAllocated == 0 ) || ( numberBitsAllocated == 12 ) )
    {
       numberBitsAllocated = 16;
    }
 
-   bool res = gdcmPixelConvert::ReadAndDecompressJPEGFile(
+   bool res = PixelConvert::ReadAndDecompressJPEGFile(
                                    (uint8_t*)destination,
-                                   Header->GetXSize(),
-                                   Header->GetYSize(),
-                                   Header->GetBitsAllocated(),
-                                   Header->GetBitsStored(),
-                                   Header->GetSamplesPerPixel(),
-                                   Header->GetPixelSize(),
-                                   Header->IsJPEG2000(),
-                                   Header->IsJPEGLossless(),
-                                   &(Header->JPEGInfo),
+                                   HeaderInternal->GetXSize(),
+                                   HeaderInternal->GetYSize(),
+                                   HeaderInternal->GetBitsAllocated(),
+                                   HeaderInternal->GetBitsStored(),
+                                   HeaderInternal->GetSamplesPerPixel(),
+                                   HeaderInternal->GetPixelSize(),
+                                   HeaderInternal->IsJPEG2000(),
+                                   HeaderInternal->IsJPEGLossless(),
+                                   &(HeaderInternal->JPEGInfo),
                                    fp );
-   Header->CloseFile();
+   HeaderInternal->CloseFile();
    return res;
 }
+
+} // end namespace gdcm
 

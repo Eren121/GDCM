@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/10/12 04:35:45 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,33 +19,35 @@
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirElement.h"
 #include "gdcmGlobal.h"
+namespace gdcm 
+{
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
  * \brief   Constructor
  * @param  s SQ Item holding the elements related to this "PATIENT" part
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmHeaderEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the HeaderEntries)
  */
-gdcmDicomDirPatient::gdcmDicomDirPatient(gdcmSQItem *s, TagDocEntryHT *ptagHT):
-   gdcmDicomDirObject(ptagHT)
+DicomDirPatient::DicomDirPatient(SQItem *s, TagDocEntryHT *ptagHT):
+   DicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
 }
 /**
  * \brief   Constructor
- * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
- *               to build the gdcmHeaderEntries)
+ * @param ptagHT pointer to the HTable (DicomDirObject needs it 
+ *               to build the HeaderEntries)
  */
-gdcmDicomDirPatient::gdcmDicomDirPatient(TagDocEntryHT* ptagHT):
-   gdcmDicomDirObject(ptagHT)
+DicomDirPatient::DicomDirPatient(TagDocEntryHT* ptagHT):
+   DicomDirObject(ptagHT)
 {
 }
 /**
  * \brief   Canonical destructor.
  */
-gdcmDicomDirPatient::~gdcmDicomDirPatient() 
+DicomDirPatient::~DicomDirPatient() 
 {
    for(ListDicomDirStudy::iterator cc = studies.begin();
                                    cc != studies.end(); ++cc)
@@ -60,10 +62,10 @@ gdcmDicomDirPatient::~gdcmDicomDirPatient()
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmDicomDirPatient::Print(std::ostream& os)
+void DicomDirPatient::Print(std::ostream& os)
 {
    os << "PATIENT" << std::endl;
-   gdcmDicomDirObject::Print(os);
+   DicomDirObject::Print(os);
 
    for(ListDicomDirStudy::iterator cc = studies.begin();
                                    cc != studies.end(); ++cc)
@@ -77,9 +79,9 @@ void gdcmDicomDirPatient::Print(std::ostream& os)
  * \brief   Writes the Object
  * @return
  */ 
-void gdcmDicomDirPatient::Write(FILE* fp, FileType t)
+void DicomDirPatient::Write(FILE* fp, FileType t)
 {
-   gdcmDicomDirObject::Write(fp, t);
+   DicomDirObject::Write(fp, t);
 
    for(ListDicomDirStudy::iterator cc = studies.begin();cc!=studies.end();++cc)
    {
@@ -93,12 +95,12 @@ void gdcmDicomDirPatient::Write(FILE* fp, FileType t)
  * \brief   adds a new Patient at the begining of the PatientList
  *          of a partially created DICOMDIR
  */
-gdcmDicomDirStudy* gdcmDicomDirPatient::NewStudy()
+DicomDirStudy* DicomDirPatient::NewStudy()
 {
-   std::list<gdcmElement> elemList = 
-      gdcmGlobal::GetDicomDirElements()->GetDicomDirStudyElements();
+   std::list<Element> elemList = 
+      Global::GetDicomDirElements()->GetDicomDirStudyElements();
       
-   gdcmDicomDirStudy* st = new gdcmDicomDirStudy( PtagHT );
+   DicomDirStudy* st = new DicomDirStudy( PtagHT );
    st->FillObject(elemList);
 
    studies.push_front(st);
@@ -112,3 +114,5 @@ gdcmDicomDirStudy* gdcmDicomDirPatient::NewStudy()
 // Private
 
 //-----------------------------------------------------------------------------
+
+} // end namespace gdcm
