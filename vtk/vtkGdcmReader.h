@@ -14,8 +14,8 @@ class vtkLookupTable;
 class VTK_EXPORT vtkGdcmReader : public vtkImageReader
 {
 public:
-   static vtkGdcmReader *New() {return new vtkGdcmReader;};
-   vtkTypeMacro(vtkGdcmReader, vtkImageReader);
+   static vtkGdcmReader *New();
+   vtkTypeRevisionMacro(vtkGdcmReader, vtkImageReader);
    void PrintSelf(ostream& os, vtkIndent indent);
 
    virtual void RemoveAllFileName(void);

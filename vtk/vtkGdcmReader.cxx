@@ -58,6 +58,9 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.45 $");
+vtkStandardNewMacro(vtkGdcmReader);
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 vtkGdcmReader::vtkGdcmReader()
