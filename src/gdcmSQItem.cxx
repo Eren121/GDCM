@@ -37,12 +37,15 @@ gdcmSQItem::~gdcmSQItem()
  * \brief   canonical Printer
  */
  void gdcmSQItem::Print(std::ostream & os) {
-
+   std::ostringstream s;
+   s << "   | " ;
    for (ListDocEntry::iterator i = docEntries.begin();  
         i != docEntries.end();
         ++i)
    {
+       os << s.str();
       //(*i)->SetPrintLevel(printLevel); //self->GetPrintLevel() ?
+      (*i)->SetPrintLevel(2);
       (*i)->Print(os);   
    } 
 }
@@ -51,6 +54,7 @@ gdcmSQItem::~gdcmSQItem()
 // Public
 
 bool gdcmSQItem::AddEntry(gdcmDocEntry *entry) {
+   std::cout << "    entree ds gdcmSQItem::AddEntry" << std::endl; 
    docEntries.push_back(entry);
    //TODO : check if it worked
    return true;

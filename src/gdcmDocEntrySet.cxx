@@ -41,7 +41,6 @@ gdcmDocEntrySet::~gdcmDocEntrySet(){
 // Protected
 
 
-
 //-----------------------------------------------------------------------------
 // Private
 
@@ -108,7 +107,7 @@ bool gdcmDocEntrySet::LoadDocEntrySet(bool exception_on_error)
 
         // Maybe the following VR do correspond to a BinEntry 
 		
-        //AT Attribute Tag; // OK        // 2 16-bit unsigned short integers
+        //AT Attribute Tag;         // 2 16-bit unsigned short integers
         //FL Floating Point Single; // 32-bit IEEE 754:1985 float
         //FD Floating Point Double; // 64-bit IEEE 754:1985 double
         //UN Unknown;               // Any length of bytes

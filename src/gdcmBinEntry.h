@@ -21,7 +21,8 @@ public:
 
    gdcmBinEntry(gdcmDictEntry* e); 
    ~gdcmBinEntry(void);
-
+   
+   void Print(std::ostream &os = std::cout);
 
    /// \brief Returns the area value of the current Dicom Header Entry
    ///  when it's not string-translatable (e.g : a LUT table)         

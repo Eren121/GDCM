@@ -71,10 +71,22 @@ gdcmDocument::gdcmDocument(const char *inFilename,
 
    if ( !OpenFile(exception_on_error))
       return;
+   
+   rewind(fp);
+   //if (!CheckSwap())
+   //   return false; // to go on compiling
+   
+   fseek(fp,0L,SEEK_END);
+   long lgt = ftell(fp);    
+           
+   rewind(fp);
+   CheckSwap();
+   long beg = ftell(fp);
+   lgt -= beg;
+   
+    //std::cout << "beg, lgt : " << beg << "  " << lgt << std::endl;        
 
-   //LoadHeaderEntries();
-   long l=ParseES( (gdcmDocEntrySet *)this, 120L, 0x7fffffff, false);
-   // TODO : find the right values    
+   long l=ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
    CloseFile();
 
    printLevel = 1;  // 'Medium' print level by default
@@ -105,21 +117,7 @@ gdcmDocument::~gdcmDocument (void) {
 //-----------------------------------------------------------------------------
 // Print
 /**
-  * \brief   Prints the Header Entries (Dicom Elements)
-  *          from the chained list
-  * @return
-  */ 
-void gdcmDocument::PrintEntry(std::ostream & os) {
-
-   for (ListTag::iterator i = listEntries.begin();  
-        i != listEntries.end();
-        ++i)
-   {
-      (*i)->SetPrintLevel(printLevel);
-      (*i)->Print(os);   
-   } 
-}
-
+ 
 
 /**
   * \brief   Prints The Dict Entries of THE public Dicom Dictionary
@@ -180,7 +178,7 @@ bool gdcmDocument::SetShaDict(DictKey dictName){
  *         false otherwise. 
  */
 bool gdcmDocument::IsReadable(void) { 
-   if(filetype==Unknown) {
+   if(filetype==gdcmUnknown) {
       return(false);
    }
    if(listEntries.size()<=0) {    
@@ -348,7 +346,7 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
    /// a moins de se livrer a un tres complique ajout des champs manquants.
    /// faire un CheckAndCorrectHeader (?)  
 
-   if (type == ImplicitVR) 
+   if (type == gdcmImplicitVR) 
    {
       std::string implicitVRTransfertSyntax = UI1_2_840_10008_1_2;
       ReplaceOrCreateByNumber(implicitVRTransfertSyntax,0x0002, 0x0010);
@@ -361,7 +359,7 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
       SetEntryLengthByNumber(18, 0x0002, 0x0010);
    } 
 
-   if (type == ExplicitVR) 
+   if (type == gdcmExplicitVR) 
    {
       std::string explicitVRTransfertSyntax = UI1_2_840_10008_1_2_1;
       ReplaceOrCreateByNumber(explicitVRTransfertSyntax,0x0002, 0x0010);
@@ -413,7 +411,7 @@ gdcmDocEntry * gdcmDocument::ReplaceOrCreateByNumber(
       a =NewDocEntryByNumber(Group, Elem);
       if (a == NULL) 
          return NULL;
-      AddDocEntry(a);
+      AddEntry(a);
    }   
    SetEntryByNumber(Value, Group, Elem);
    //a->SetValue(Value);
@@ -921,7 +919,7 @@ void gdcmDocument::UpdateGroupLength(bool SkipSequence, FileType type) {
          gdcmDictEntry * tagZ = new gdcmDictEntry(gr_bid, 0x0000, "UL");       
          elemZ = new gdcmDocEntry(tagZ);
          elemZ->SetLength(4);
-         AddDocEntry(elemZ);   // create it
+         AddEntry(elemZ);   // create it
       } 
       else 
       {
@@ -961,7 +959,7 @@ void gdcmDocument::WriteEntryTagVRLength(gdcmDocEntry *tag,
    fwrite ( &group,(size_t)2 ,(size_t)1 ,_fp);  //group
    fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);     //element
       
-   if ( type == ExplicitVR ) {
+   if ( type == gdcmExplicitVR ) {
 
       // Special case of delimiters:
       if (group == 0xfffe) {
@@ -1117,7 +1115,7 @@ bool gdcmDocument::WriteEntries(FILE *_fp,FileType type)
                           tag2 != listEntries.end();
                           ++tag2)
    {
-      if ( type == ACR ){ 
+      if ( type == gdcmACR ){ 
          if ((*tag2)->GetGroup() < 0x0008)
             // Ignore pure DICOM V3 groups
             continue;
@@ -1158,7 +1156,7 @@ void gdcmDocument::WriteEntriesDeprecated(FILE *_fp,FileType type) {
    for (TagDocEntryHT::iterator tag2=tagHT.begin();
         tag2 != tagHT.end();
         ++tag2){
-      if ( type == ACR ){ 
+      if ( type == gdcmACR ){ 
          if ((*tag2->second).GetGroup() < 0x0008)    continue; // ignore pure DICOM V3 groups
          if ((*tag2->second).GetElement() %2)        continue; // ignore shadow groups
          if ((*tag2->second).GetVR() == "SQ" )       continue; // ignore Sequences
@@ -1191,6 +1189,7 @@ guint32 gdcmDocument::SwapLong(guint32 a) {
          a=( ((a<<8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
          break;
       default :
+         std::cout << "swapCode= " << sw << std::endl;
          dbg.Error(" gdcmDocument::SwapLong : unset swap code");
          a=0;
    }
@@ -1234,75 +1233,139 @@ guint16 gdcmDocument::UnswapShort(guint16 a) {
  * @return  false if file is not ACR-NEMA / PAPYRUS / DICOM 
  */ 
 
-long gdcmDocument::ParseES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
+long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
 
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
    gdcmValEntry *vl;
+   gdcmBinEntry *bn;   
    gdcmSeqEntry *sq;
+   string vr;
    long l;         
    while (true) { 
       NewDocEntry = ReadNextDocEntry( );
       if (!NewDocEntry)
          break;
-   if (NewDocEntry->GetVR() !="SQ") {	 
-      vl= new gdcmValEntry(NewDocEntry->GetDictEntry());
-      vl->Copy(NewDocEntry);
-      delete NewDocEntry;
-      set->AddEntry(vl);
-      if (!delim_mode && vl->isItemDelimitor())
-         break;      
+      	 
+      std::cout << hex << NewDocEntry->GetGroup() 
+               << " "
+	       << NewDocEntry->GetElement() 
+	       << " "
+	       << NewDocEntry->GetVR()
+	       << " "
+	       << NewDocEntry->GetReadLength()
+	       << " "
+	       << NewDocEntry->GetOffset() 	       
+	       << std::endl;
+	       
+      vr = NewDocEntry->GetVR();   	 
+      if (vr!="SQ") {
+               
+         if (vr == "AE" || vr == "AS" || vr == "DA" || vr == "PN" || 
+             vr == "UI" || vr == "TM" || vr == "SH" || vr == "LO" ||
+             vr == "CS" || vr == "IS" || vr == "LO" || vr == "LT" ||
+             vr == "SH" || vr == "ST" || 		  
+             vr == "SL" || vr == "SS" || vr == "UL" || vr == "US"
+		                                                  ) {
+      // --- ValEntry 		        	 
+            vl= new gdcmValEntry(NewDocEntry->GetDictEntry());
+            vl->Copy(NewDocEntry);
+            set->AddEntry(vl);
+	    LoadDocEntry(vl);
+	    std::cout << "value [" << vl->GetValue() << "]" << std::endl;
+            if (!delim_mode && vl->isItemDelimitor())
+               break;
+	 } else { // BinEntry
+	 
+        // Hope the following VR *do* correspond to a BinEntry 
+		
+        //AT Attribute Tag;         // 2 16-bit unsigned short integers
+        //FL Floating Point Single; // 32-bit IEEE 754:1985 float
+        //FD Floating Point Double; // 64-bit IEEE 754:1985 double
+        //UN Unknown;               // Any length of bytes
+        //UT Unlimited Text;        // At most 2^32 -1 chars
+	//OB Other Byte String;     // String of bytes (VR independant)
+        //OW Other Word String;     // String of 16-bit words (VR dependant)
+	 	 
+            bn = new gdcmBinEntry(NewDocEntry->GetDictEntry());
+	    bn->Copy(NewDocEntry);
+	    LoadDocEntry(bn);
+            std::cout << "value [" << "Bin Entry, in voidArea" << "]" << std::endl;	    	    	 
+         }      
+
+          SkipToNextDocEntry(NewDocEntry); // to be sure to be at the beginning 
+	  l = NewDocEntry->GetFullLength(); 
+	    
+      } else {   // VR = "SQ"
       
-   } else {   // VR = "SQ"
-      l=NewDocEntry->GetReadLength(); 
-      if (l == 0xffffffff)
-        delim_mode = true;
-      else
-        delim_mode = false;
-      sq = new gdcmSeqEntry(NewDocEntry->GetDictEntry());
-      sq->Copy(NewDocEntry);
-      long lgt = ParseSQ((gdcmDocEntrySet *)sq, offset, l, delim_mode);
-      set->AddEntry(sq);
-      if ( !delim_mode && ftell(fp)-offset >= l_max)
-         break;
+         //SkipDocEntry(NewDocEntry);
+      
+         std::cout << "gdcmDocument::ParseDES : SQ found " << std::endl;
+         l=NewDocEntry->GetReadLength(); 
+         if (l == 0xffffffff)
+           delim_mode = true;
+         else
+           delim_mode = false;
+         sq = new gdcmSeqEntry(NewDocEntry->GetDictEntry());
+         sq->Copy(NewDocEntry);
+	 sq->SetDelimitorMode(delim_mode);
+         long lgt = ParseSQ((gdcmDocEntrySet *)sq, offset, l, delim_mode);
+	 // FIXME : on en fait quoi, de lgt ?
+         set->AddEntry(sq);
+         if ( !delim_mode && ftell(fp)-offset >= l_max)
+            break;
       } 
-   } 
+   }
+   cout << endl; 
+   delete NewDocEntry;   
    return l; // ?? 
 }
 
 
 
+/**
+ * \brief   Parses a Sequence ( SeqEntry after SeqEntry)
+ * @return  parsed length for this level
+ */ 
+
 
 long gdcmDocument::ParseSQ(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
+
+         std::cout << "Entree ds gdcmDocument::ParseSQ" << std::endl;
 
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
    gdcmSQItem *itemSQ;
    bool dlm_mod;
    int lgr, l, lgth;
+   cout << "=============== on entre ds une Sequence" <<endl;
    
    while (true) {
+      std::cout << "gdcmDocument::ParseSQ on itere" << std::endl;
+
       if(delim_mode) {   
           NewDocEntry = ReadNextDocEntry();
-          if (NewDocEntry->isSequenceDelimitor())
-	  // =====> ATTENTION : il faudra tout de meme ajouter 
-	  //                    le Sequence Delimiter  ?!?
-	  //set.Add(???);
+          if (NewDocEntry->isSequenceDelimitor()) {
+	  //                    add the Sequence Delimitor  // TODO : find the trick to put it proprerly !
+	  //   ((gdcmSeqEntry *)set)->SetSequenceDelimitationItem(NewDocEntry);
 	     break;
+          }	     
       }	     
       if (!delim_mode && (ftell(fp)-offset) >= l_max){	     
              break;
       }	        
       itemSQ = new gdcmSQItem();
-      
+      itemSQ->AddEntry(NewDocEntry); // no value, no voidArea. Think of it while printing !
       l= NewDocEntry->GetLength();
       if (l ==0xffffffff)
          dlm_mod = true;
       else
          dlm_mod=false;
       
-      lgr=ParseES(itemSQ, offset, l, dlm_mod);
+      lgr=ParseDES(itemSQ, offset, l, dlm_mod);
       ((gdcmSeqEntry *)set)->AddEntry(itemSQ);	 
    }
-   //Update(lgth); // TODO // to go on compiling
+   //Update(lgth); 
+   lgth = ftell(fp) - offset;
+   cout << "=============== lgr Sequence :" << lgth <<endl;
    return(lgth);
 }
 
@@ -1325,7 +1388,7 @@ bool gdcmDocument::LoadHeaderEntries(bool exception_on_error) throw(gdcmFormatEr
    while ( (newDocEntry = ReadNextDocEntry()) ) {
      SkipDocEntry(newDocEntry);
      if ( (ignoreShadow==0) || (newDocEntry->GetGroup()%2) == 0) { 
-        AddDocEntry(newDocEntry); 
+        AddEntry(newDocEntry); 
      }     
    }   
    rewind(fp);
@@ -1469,19 +1532,6 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)  {
       ((gdcmValEntry *)Entry)->SetValue(NewValue);
 }
 
-/**
- * \brief   add a new Dicom Element pointer to 
- *          the H Table and at the end of the chained List
- * \warning push_bash in listEntries ONLY during ParseHeader
- * \todo    something to allow further Elements addition,
- *          (at their right place in the chained list)
- *          when position to be taken care of     
- * @param   newDocEntry
- */
-void gdcmDocument::AddDocEntry(gdcmDocEntry *newDocEntry) {
-   tagHT.insert( PairHT( newDocEntry->GetKey(),newDocEntry) );
-   listEntries.push_back(newDocEntry); 
-}
 
 /**
  * \brief  Find the value Length of the passed Header Entry
@@ -1494,7 +1544,7 @@ void gdcmDocument::AddDocEntry(gdcmDocEntry *newDocEntry) {
    guint16 length16;
        
    
-   if ( (filetype == ExplicitVR) && (! Entry->IsImplicitVR()) ) 
+   if ( (filetype == gdcmExplicitVR) && (! Entry->IsImplicitVR()) ) 
    {
       if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) 
       {
@@ -1601,7 +1651,7 @@ void gdcmDocument::AddDocEntry(gdcmDocEntry *newDocEntry) {
  */
 void gdcmDocument::FindDocEntryVR( gdcmDocEntry *Entry) 
 {
-   if (filetype != ExplicitVR)
+   if (filetype != gdcmExplicitVR)
       return;
 
    char VR[3];
@@ -1831,9 +1881,30 @@ std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry *Entry)
  */
 void gdcmDocument::SkipDocEntry(gdcmDocEntry *entry) 
 {
-    SkipBytes(entry->GetLength());
+   SkipBytes(entry->GetLength());
 }
 
+/**
+ * \brief   Skips to the begining of the next Header Entry 
+ * \warning NOT end user intended method !
+ * @param   entry 
+ */
+void gdcmDocument::SkipToNextDocEntry(gdcmDocEntry *entry) 
+{
+   (void)fseek(fp, (long)(entry->GetOffset()),     SEEK_SET);
+   (void)fseek(fp, (long)(entry->GetReadLength()), SEEK_CUR);
+}
+
+/**
+ * \brief   Loads the value for a a given VLEntry 
+ * \warning NOT end user intended method !
+ * @param   entry 
+ */
+void gdcmDocument::LoadVLEntry(gdcmDocEntry *entry) 
+{
+    //SkipBytes(entry->GetLength());
+    LoadDocEntry(entry);
+}
 /**
  * \brief   When the length of an element value is obviously wrong (because
  *          the parser went Jabberwocky) one can hope improving things by
@@ -2122,13 +2193,13 @@ bool gdcmDocument::CheckSwap() {
       // Use gdcmDocument::dicom_vr to test all the possibilities
       // instead of just checking for UL, OB and UI !? group 0000 
       {
-         filetype = ExplicitVR;
+         filetype = gdcmExplicitVR;
          dbg.Verbose(1, "gdcmDocument::CheckSwap:",
                      "explicit Value Representation");
       } 
       else 
       {
-         filetype = ImplicitVR;
+         filetype = gdcmImplicitVR;
          dbg.Verbose(1, "gdcmDocument::CheckSwap:",
                      "not an explicit Value Representation");
       }
@@ -2173,19 +2244,19 @@ bool gdcmDocument::CheckSwap() {
    switch (s32) {
       case 0x00040000 :
          sw = 3412;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       case 0x04000000 :
          sw = 4321;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       case 0x00000400 :
          sw = 2143;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       case 0x00000004 :
          sw = 0;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       default :
 
@@ -2211,18 +2282,18 @@ bool gdcmDocument::CheckSwap() {
       case 0x0004 :
       case 0x0008 :      
          sw = 0;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       case 0x0200 :
       case 0x0400 :
       case 0x0800 : 
          sw = 4321;
-         filetype = ACR;
+         filetype = gdcmACR;
          return true;
       default :
          dbg.Verbose(0, "gdcmDocument::CheckSwap:",
                      "ACR/NEMA unfound swap info (Really hopeless !)"); 
-         filetype = Unknown;     
+         filetype = gdcmUnknown;     
          return false;
       }
       
@@ -2296,70 +2367,13 @@ void gdcmDocument::SetMaxSizePrintEntry(long NewSize)
    MaxSizePrintEntry = NewSize;
 }
 
-/**
- * \brief   Searches both the public and the shadow dictionary (when they
- *          exist) for the presence of the DictEntry with given name.
- *          The public dictionary has precedence on the shadow one.
- * @param   Name name of the searched DictEntry
- * @return  Corresponding DictEntry when it exists, NULL otherwise.
- */
-gdcmDictEntry *gdcmDocument::GetDictEntryByName(std::string Name) 
-{
-   gdcmDictEntry *found = (gdcmDictEntry *)0;
-   if (!RefPubDict && !RefShaDict) 
-   {
-      dbg.Verbose(0, "gdcmDocument::GetDictEntry",
-                     "we SHOULD have a default dictionary");
-   }
-   if (RefPubDict) 
-   {
-      found = RefPubDict->GetDictEntryByName(Name);
-      if (found)
-         return found;
-   }
-   if (RefShaDict) 
-   {
-      found = RefShaDict->GetDictEntryByName(Name);
-      if (found)
-         return found;
-   }
-   return found;
-}
 
-/**
- * \brief   Searches both the public and the shadow dictionary (when they
- *          exist) for the presence of the DictEntry with given
- *          group and element. The public dictionary has precedence on the
- *          shadow one.
- * @param   group   group of the searched DictEntry
- * @param   element element of the searched DictEntry
- * @return  Corresponding DictEntry when it exists, NULL otherwise.
- */
-gdcmDictEntry *gdcmDocument::GetDictEntryByNumber(guint16 group,guint16 element) 
-{
-   gdcmDictEntry *found = (gdcmDictEntry *)0;
-   if (!RefPubDict && !RefShaDict) 
-   {
-      dbg.Verbose(0, "gdcmDocument::GetDictEntry",
-                     "we SHOULD have a default dictionary");
-   }
-   if (RefPubDict) 
-   {
-      found = RefPubDict->GetDictEntryByNumber(group, element);
-      if (found)
-         return found;
-   }
-   if (RefShaDict) 
-   {
-      found = RefShaDict->GetDictEntryByNumber(group, element);
-      if (found)
-         return found;
-   }
-   return found;
-}
 
 /**
  * \brief   Read the next tag but WITHOUT loading it's value
+ *          (read the 'Group Number', the 'Element Number',
+ *           gets the Dict Entry
+ *          gets the VR, gets the length, gets the offset value)
  * @return  On succes the newly created DocEntry, NULL on failure.      
  */
 gdcmDocEntry *gdcmDocument::ReadNextDocEntry(void) {
@@ -2388,6 +2402,7 @@ gdcmDocEntry *gdcmDocument::ReadNextDocEntry(void) {
 
    if (errno == 1) {
       // Call it quits
+      delete NewEntry;
       return NULL;
    }
    NewEntry->SetOffset(ftell(fp));  
@@ -2485,7 +2500,7 @@ gdcmDocEntry *gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem)
 //   DictEntry = NewVirtualDictEntry(StuffGroup, FreeElem,
 //                                VR, "GDCM", NewTagName);
 //   NewEntry = new gdcmDocEntry(DictEntry);
-//   AddDocEntry(NewEntry);
+//   AddEntry(NewEntry);
 //   return NewEntry;
 //}
 
@@ -2505,5 +2520,70 @@ guint32 gdcmDocument::GenerateFreeTagKeyInGroup(guint16 group)
    }
    return UINT32_MAX;
 }
+
+
+/**
+ * \brief   Searches both the public and the shadow dictionary (when they
+ *          exist) for the presence of the DictEntry with given name.
+ *          The public dictionary has precedence on the shadow one.
+ * @param   Name name of the searched DictEntry
+ * @return  Corresponding DictEntry when it exists, NULL otherwise.
+ */
+gdcmDictEntry *gdcmDocument::GetDictEntryByName(std::string Name) 
+{
+   gdcmDictEntry *found = (gdcmDictEntry *)0;
+   if (!RefPubDict && !RefShaDict) 
+   {
+      dbg.Verbose(0, "gdcmDocument::GetDictEntry",
+                     "we SHOULD have a default dictionary");
+   }
+   if (RefPubDict) 
+   {
+      found = RefPubDict->GetDictEntryByName(Name);
+      if (found)
+         return found;
+   }
+   if (RefShaDict) 
+   {
+      found = RefShaDict->GetDictEntryByName(Name);
+      if (found)
+         return found;
+   }
+   return found;
+}
+
+/**
+ * \brief   Searches both the public and the shadow dictionary (when they
+ *          exist) for the presence of the DictEntry with given
+ *          group and element. The public dictionary has precedence on the
+ *          shadow one.
+ * @param   group   group of the searched DictEntry
+ * @param   element element of the searched DictEntry
+ * @return  Corresponding DictEntry when it exists, NULL otherwise.
+ */
+gdcmDictEntry *gdcmDocument::GetDictEntryByNumber(guint16 group,guint16 element) 
+{
+   gdcmDictEntry *found = (gdcmDictEntry *)0;
+   if (!RefPubDict && !RefShaDict) 
+   {
+      dbg.Verbose(0, "gdcmDocument::GetDictEntry",
+                     "we SHOULD have a default dictionary");
+   }
+   if (RefPubDict) 
+   {
+      found = RefPubDict->GetDictEntryByNumber(group, element);
+      if (found)
+         return found;
+   }
+   if (RefShaDict) 
+   {
+      found = RefShaDict->GetDictEntryByNumber(group, element);
+      if (found)
+         return found;
+   }
+   return found;
+}
+
+
 
 //-----------------------------------------------------------------------------

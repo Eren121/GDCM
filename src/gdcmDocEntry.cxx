@@ -9,7 +9,7 @@
 
 #include <iomanip> // for std::ios::left, ...
 
-
+// CLEAN ME
 #define MAX_SIZE_PRINT_ELEMENT_VALUE 64
 
 //-----------------------------------------------------------------------------
@@ -24,36 +24,39 @@ gdcmDocEntry::gdcmDocEntry(gdcmDictEntry* in) {
    entry = in;
 }
 
+void gdcmDocEntry::Print(std::ostream & os) {
+   std::ostringstream s;
+   s << std::endl;
+   PrintCommonPart(os);
+   os << s.str();
+}
+
 //-----------------------------------------------------------------------------
 // Print
 /**
  * \ingroup gdcmDocEntry
- * \brief   canonical Printer
+ * \brief   Prints the common part of gdcmValEntry, gdcmBinEntry, gdcmSeqEntry
  */
-void gdcmDocEntry::Print(std::ostream & os) {
+void gdcmDocEntry::PrintCommonPart(std::ostream & os) {
 
-// TODO : (no more chained list ...)
-
-/*
+   printLevel=2; // FIXME
+   
    size_t o;
    unsigned short int g, e;
    char st[20];
    TSKey v;
    std::string d2, vr;
-   gdcmTS * ts = gdcmGlobal::GetTS();
    std::ostringstream s;
    guint32 lgth;
    char greltag[10];  //group element tag
 
    g  = GetGroup();
    e  = GetElement();
-   v  = GetValue();
    o  = GetOffset();
    vr = GetVR();
    sprintf(greltag,"%04x|%04x ",g,e);           
    s << greltag ;
        
-   d2 = CreateCleanString(v);  // replace non printable characters by '.'
    if (printLevel>=2) { 
       s << "lg : ";
       lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
@@ -87,52 +90,7 @@ void gdcmDocEntry::Print(std::ostream & os) {
    }
     
    s << "[" << GetName()<< "]";
-
-   if (voidArea != NULL) {
-       s << " [gdcm::Non String Data Loaded in Unsecure Area (" 
-         << GetLength() << ") ]";
-   } 
-   
-   else {             
-      if( (GetLength()<MAX_SIZE_PRINT_ELEMENT_VALUE) || 
-          (printLevel>=3)  || 
-          (d2.find("gdcm::NotLoaded.") < d2.length()) )
-         s << " [" << d2 << "]";
-      else 
-         s << " [gdcm::too long for print (" << GetLength() << ") ]";
-   }
-   
-   // Display the UID value (instead of displaying only the rough code)  
-   if (g == 0x0002) {  // Any more to be displayed ?
-      if ( (e == 0x0010) || (e == 0x0002) )
-         s << "  ==>\t[" << ts->GetValue(v) << "]";
-   } else {
-      if (g == 0x0008) {
-         if ( (e == 0x0016) || (e == 0x1150)  )
-            s << "  ==>\t[" << ts->GetValue(v) << "]";
-      } else {
-         if (g == 0x0004) {
-	    if ( (e == 0x1510) || (e == 0x1512)  )
-	       s << "  ==>\t[" << ts->GetValue(v) << "]";
-	 }     
-      }
-   }
-   //if (e == 0x0000) {        // elem 0x0000 --> group length 
-   if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") ) {
-      if (v == "4294967295") // to avoid troubles in convertion 
-         sprintf (st," x(ffffffff)");
-      else {
-         if ( GetLength() !=0 )        
-            sprintf(st," x(%x)", atoi(v.c_str()));//FIXME
-	 else
-	  sprintf(st," "); 
-      }
-      s << st;
-   }
-   s << std::endl;
-   os << s.str();
-   
-   */
+   os << s.str();      
 }
 
 //-----------------------------------------------------------------------------
@@ -140,11 +98,11 @@ void gdcmDocEntry::Print(std::ostream & os) {
 
 /**
  * \ingroup gdcmDocEntry
- * \brief   Gets the full length of the DocEntry (not only value length)
+ * \brief   Gets the full length of the elementary DocEntry (not only value length)
  */
 guint32 gdcmDocEntry::GetFullLength(void) {
    guint32 l;
-   l = GetLength();
+   l = GetReadLength();
    if ( IsImplicitVR() ) 
       l = l + 8;  // 2 (gr) + 2 (el) + 4 (lgth) 
    else    
@@ -167,7 +125,7 @@ void gdcmDocEntry::Copy (gdcmDocEntry* e) {
    this->ImplicitVR   = e->ImplicitVR;
    this->Offset       = e->Offset;
    this->printLevel   = e->printLevel;
-   this->SQDepthLevel = e->SQDepthLevel;      
+   // TODO : remove gdcmDocEntry SQDepth
 }
 
 bool gdcmDocEntry::isItemDelimitor() {

@@ -11,6 +11,7 @@
 #include "gdcmDictSet.h"
 #include "gdcmDocEntry.h"
 #include "gdcmDocEntrySet.h"
+#include "gdcmElementSet.h"
 
 #include <map>
 #include <list>
@@ -35,7 +36,7 @@ typedef std::map<GroupKey, int> GroupHT;
 /**
  * \brief used by both gdcmHeader and gdcmDicomDir
  */
-class GDCM_EXPORT gdcmDocument
+class GDCM_EXPORT gdcmDocument : public gdcmElementSet
 {
 private:
    /// Public dictionary used to parse this header
@@ -59,6 +60,8 @@ private:
    /// in order no to polute the screen output. By default, this upper bound
    /// is fixed to 64 bytes.
    guint32 MaxSizePrintEntry;
+   
+   
 
 protected:
    /// Refering underlying filename.
@@ -106,10 +109,13 @@ public:
    
 
 // Print
-   /// Canonical Printing method (see also gdcmDocument::SetPrintLevel)
-   virtual void Print        (std::ostream &os = std::cout) 
-      {PrintEntry(os);};
-   virtual void PrintEntry      (std::ostream &os = std::cout);
+  // Canonical Printing method (see also gdcmDocument::SetPrintLevel)
+  // virtual void Print        (std::ostream &os = std::cout);    
+ //     {PrintEntry(os);};
+ 
+ // no more Print method for gdcmDocument (inherits from gdcmElementSet
+ // virtual void PrintEntry      (std::ostream &os = std::cout)
+ //               { return Print(os);};
 
    // the 2 following will be merged
    virtual void PrintPubDict (std::ostream &os = std::cout);
@@ -147,7 +153,8 @@ public:
    bool ReplaceIfExistByNumber (char *Value, guint16 Group, guint16 Elem);
    
    virtual void  *LoadEntryVoidArea       (guint16 Group, guint16 Element);
-   
+   void           LoadVLEntry             (gdcmDocEntry *entry);
+      
 // System access
    guint16 SwapShort(guint16);   // needed by gdcmFile
    guint32 SwapLong(guint32);    // needed by gdcmFile
@@ -196,16 +203,16 @@ protected:
    //void UpdateGroupLength(bool SkipSequence = false,
    //                       FileType type = ImplicitVR);
 
-   void AddDocEntry       (gdcmDocEntry *);
+   //void AddDocEntry       (gdcmDocEntry *);
    
       
 private:
    // Read
  //bool LoadHeaderEntries(bool exception_on_error = false) throw(gdcmFormatError);
-   // remplacé par ParseES.
+   // remplacé par ParseDES.
    // What about exception_on_error ?
    
-   long ParseES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
+   long ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
    long ParseSQ(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode);
    
    
@@ -218,6 +225,8 @@ private:
    std::string GetDocEntryUnvalue(gdcmDocEntry *);
 
    void SkipDocEntry          (gdcmDocEntry *);
+   void SkipToNextDocEntry    (gdcmDocEntry *);
+
    void FixDocEntryFoundLength(gdcmDocEntry *, guint32);
    bool IsDocEntryAnInteger   (gdcmDocEntry *);
 
@@ -233,7 +242,8 @@ private:
    void SetMaxSizeLoadEntry(long);
    void SetMaxSizePrintEntry(long);
 
-   // DictEntry  related utilities
+  // DictEntry  related utilities
+   
    gdcmDictEntry *GetDictEntryByName  (std::string Name);
    gdcmDictEntry *GetDictEntryByNumber(guint16, guint16);
    gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
@@ -241,7 +251,7 @@ private:
                                       std::string vr     = "unkn",
                                       std::string fourth = "unkn",
                                       std::string name   = "unkn");
-   //gdcmDictEntry *NewVirtualDictEntry(gdcmDocEntry *); // never defined
+   //gdcmDictEntry *NewVirtualDictEntry(gdcmDocEntry *); // never defined 
    
    // DocEntry related utilities
    

@@ -111,7 +111,9 @@ public:
    /// \brief Gets the print level for the Dicom Header Elements
    int GetPrintLevel(void) { return(printLevel); };
    
-   void Print (std::ostream & os = std::cout); 
+   virtual void Print (std::ostream & os = std::cout); 
+   
+   void gdcmDocEntry::PrintCommonPart(std::ostream & os);
     
    /// Gets the depth level of a Dicom Header Entry embedded in a SeQuence
    inline int GetSQDepthLevel(void) { return (SQDepthLevel); };
@@ -131,6 +133,8 @@ private:
    /// Sets the depth level of a Dicom Header Entry embedded in a SeQuence 
    inline void SetSQDepthLevel(int depthLevel) { SQDepthLevel = depthLevel; };
       
+
+protected:
 // Variables
 
    gdcmDictEntry *entry;

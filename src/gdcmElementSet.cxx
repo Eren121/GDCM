@@ -36,6 +36,35 @@ gdcmElementSet::~gdcmElementSet()
 //-----------------------------------------------------------------------------
 // Public
 
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+  * \brief   Prints the Header Entries (Dicom Elements)
+  *          from the H Table
+  * @return
+  */ 
+void gdcmElementSet::Print(std::ostream & os) {
+   cout << "entree ds gdcmElementSet::Print" << endl;
+   for (TagDocEntryHT::iterator i = tagHT.begin(); i != tagHT.end(); ++i)  
+   {
+      //(*i)->second->SetPrintLevel(printLevel);
+      (i->second)->Print(os);   
+   } 
+}
+
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+
+/**
+ * \brief   add a new Dicom Element pointer to the H Table
+ * @param   newDocEntry entry to add
+ */
 bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
    TagKey key;
    key = NewEntry->GetKey();
@@ -52,22 +81,3 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
    }   
 }
 
-// end-user intended : the guy *wants* to create his own SeQuence ?!?
-gdcmDocEntry *gdcmElementSet::NewDocEntryByNumber(guint16 group,
-                                                  guint16 element) {
-// TODO				  
-   gdcmDocEntry *a;   
-   return a;				  
-}
-
-gdcmDocEntry *gdcmElementSet::NewDocEntryByName  (std::string Name) {
-// TODO	: 			  
-   gdcmDocEntry *a;   
-   return a;
-}
-
-//-----------------------------------------------------------------------------
-// Protected
-
-//-----------------------------------------------------------------------------
-// Private

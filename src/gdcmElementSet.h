@@ -20,16 +20,11 @@ public:
    ~gdcmElementSet(void);
    virtual bool AddEntry(gdcmDocEntry *Entry); // add to the H Table
 
-  
+   virtual void Print        (std::ostream &os = std::cout); 
+    
 protected:
 
 private:
-
-   // DocEntry related utilities    
-   virtual gdcmDocEntry *NewDocEntryByNumber(guint16 group,
-                                             guint16 element);
-   virtual gdcmDocEntry *NewDocEntryByName  (std::string Name);  
-
 
 // Variables
 

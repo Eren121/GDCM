@@ -29,7 +29,10 @@ gdcmBinEntry::~gdcmBinEntry(){
  * \brief   canonical Printer
  */
  
-
+void gdcmBinEntry::Print(std::ostream &os = std::cout) {
+   PrintCommonPart(os);
+   std::cout << "gdcmBinEntry : Print, et alors ?" <<std::endl;
+}
 //-----------------------------------------------------------------------------
 // Public
 

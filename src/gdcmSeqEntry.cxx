@@ -19,8 +19,9 @@ gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e)
              : gdcmDocEntry(e)
 {
    //ListSQItem items est un *champ* de gdcmSeqEntry.
-   // inutile de faire new ?
-      
+   
+   delimitor_mode = false;
+   seq_term  = NULL;   
 }
 
 /**
@@ -48,8 +49,12 @@ void gdcmSeqEntry::Print(std::ostream &os){
    long lgth;
    size_t o;    
    char greltag[10];  //group element tag
-   char st[20];
-      
+   char st[20]; 
+
+
+   SetPrintLevel(2);   
+//   PrintCommonPart(os); // FIXME : why doesn't it work ?
+     
    // First, Print the Dicom Element itself. 
    g  = GetGroup();
    e  = GetElement();   
@@ -89,16 +94,26 @@ void gdcmSeqEntry::Print(std::ostream &os){
    }
     
    s << "[" << GetName()<< "]";
+
    s << std::endl;
    os << s.str();
+
  
     // Then, Print each SQ Item   
      for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
    {
       //(*cc)->SetPrintLevel(GetPrintLevel()); aurait-ce un sens ?
       (*cc)->Print(os);
-   }       
-             
+   }
+   // at end, print the sequence terminator item, if any
+   /*
+   if (delimitor_mode) {
+      s << "   | " ;   
+      os << s.str();
+      if (seq_term = NULL)
+         seq_term->Print(os);      
+   }        
+  */             
  }
 
 //-----------------------------------------------------------------------------

@@ -28,16 +28,23 @@ public:
     
    /// Sets the value (string) of the current Dicom Header Entry
    inline void SetValue(std::string val)  { value = val;  };
-         
+   
+   virtual void Print(std::ostream &os = std::cout); 
+           
 protected:
 
+   char* voidArea;  // clean it out later
+   
 private:
 
 // Variables
   
    /// \brief Header Entry value, stored as a std::string (VR will be used,
    /// later, to decode)
+   
    std::string  value;
+   
+
 
 
 };
