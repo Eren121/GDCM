@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/26 16:28:58 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,6 @@
 
 namespace gdcm 
 {
-
 /**
  * \brief Utility class for gathering the informations of the collection
  *        of RLE frame[s] (see \ref RLEFrame)  when handling
@@ -47,12 +46,13 @@ public:
    ~RLEFramesInfo();
    void Print( std::ostream &os = std::cout, std::string indent = "" );
 
+   void AddFrame(RLEFrame *frame);
+
 private:
-   typedef std::list< RLEFrame* > RLEFrameList;
+   typedef std::list<RLEFrame *> RLEFrameList;
 
    RLEFrameList Frames;
 
-   friend class Document;
    friend class PixelReadConvert;
 };
 } // end namespace gdcm

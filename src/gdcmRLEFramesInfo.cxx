@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:53 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/26 16:28:58 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,6 +52,11 @@ void RLEFramesInfo::Print( std::ostream &os, std::string indent )
          << std::endl;
       (*it)->Print( os, indent + "   " );
    }
+}
+
+void RLEFramesInfo::AddFrame(RLEFrame *frame)
+{
+   Frames.push_back(frame);
 }
 
 } // end namespace gdcm

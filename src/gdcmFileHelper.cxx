@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:24 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/26 16:28:58 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -958,7 +958,7 @@ void FileHelper::Initialize()
 
    if ( FileInternal->IsReadable() )
    {
-      PixelReadConverter->GrabInformationsFromHeader( FileInternal );
+      PixelReadConverter->GrabInformationsFromFile( FileInternal );
    }
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.212 $
+  Date:      $Date: 2005/01/26 16:28:58 $
+  Version:   $Revision: 1.213 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2330,14 +2330,14 @@ void Document::ComputeRLEInfo()
        SkipBytes(rleSegmentLength[nbRleSegments]);
 
        // Store the collected info
-       RLEFrame *newFrameInfo = new RLEFrame;
-       newFrameInfo->SetNumberOfFragments(nbRleSegments);
+       RLEFrame *newFrame = new RLEFrame;
+       newFrame->SetNumberOfFragments(nbRleSegments);
        for( unsigned int uk = 1; uk <= nbRleSegments; uk++ )
        {
-          newFrameInfo->SetOffset(uk,frameOffset + rleSegmentOffsetTable[uk]);
-          newFrameInfo->SetLength(uk,rleSegmentLength[uk]);
+          newFrame->SetOffset(uk,frameOffset + rleSegmentOffsetTable[uk]);
+          newFrame->SetLength(uk,rleSegmentLength[uk]);
        }
-       RLEInfo->Frames.push_back( newFrameInfo );
+       RLEInfo->AddFrame(newFrame);
    }
 
    // Make sure that at the end of the item we encounter a 'Sequence
@@ -2376,9 +2376,9 @@ void Document::ComputeJPEGFragmentInfo()
        JPEGFragment *newFragment = new JPEGFragment;
        newFragment->SetOffset(fragmentOffset);
        newFragment->SetLength(fragmentLength);
-       JPEGInfo->Fragments.push_back( newFragment );
+       JPEGInfo->AddFragment(newFragment);
 
-       SkipBytes( fragmentLength );
+       SkipBytes(fragmentLength);
    }
 
    // Make sure that at the end of the item we encounter a 'Sequence

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/26 16:28:58 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,6 @@
 
 namespace gdcm 
 {
-
 /**
  * \brief Utility class for gathering the informations of the collection
  *        of JPEG fragment[s] (see \ref JPEGFragment)  when handling
@@ -50,8 +49,10 @@ public:
 
    void DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int numBytes, int length);
 
+   void AddFragment(JPEGFragment *fragment);
+
 private:
-   typedef std::list< JPEGFragment* > JPEGFragmentsList;
+   typedef std::list<JPEGFragment *> JPEGFragmentsList;
 
     //Some mathieu hack:
    int StateSuspension;
@@ -59,7 +60,6 @@ private:
    char* pimage;
    JPEGFragmentsList Fragments;
 
-   friend class Document;
    friend class PixelReadConvert;
 };
 } // end namespace gdcm

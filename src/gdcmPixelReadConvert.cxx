@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/26 16:28:58 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,21 +50,15 @@ PixelReadConvert::PixelReadConvert()
 void PixelReadConvert::Squeeze() 
 {
    if ( RGB )
-   {
       delete [] RGB;
-   } 
    RGB = 0;
 
    if ( Raw )
-   {
       delete [] Raw;
-   }
    Raw = 0;
 
    if ( LutRGBA )
-   {
       delete [] LutRGBA;
-   }
    LutRGBA = 0;
 }
 
@@ -75,18 +69,16 @@ PixelReadConvert::~PixelReadConvert()
 
 void PixelReadConvert::AllocateRGB()
 {
-  if ( RGB ) {
+  if ( RGB )
      delete [] RGB;
-  }
-  RGB = new uint8_t[ RGBSize ];
+  RGB = new uint8_t[RGBSize];
 }
 
 void PixelReadConvert::AllocateRaw()
 {
-  if ( Raw ) {
+  if ( Raw )
      delete [] Raw;
-  }
-  Raw = new uint8_t[ RawSize ];
+  Raw = new uint8_t[RawSize];
 }
 
 /**
@@ -155,7 +147,7 @@ bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
    // per pixel we cannot work in place within Raw and hence
    // we copy it in a safe place, say copyRaw.
 
-   uint8_t* copyRaw = new uint8_t[ rawSize * 2 ];
+   uint8_t* copyRaw = new uint8_t[rawSize * 2];
    memmove( copyRaw, Raw, rawSize * 2 );
 
    uint8_t* x = Raw;
@@ -664,7 +656,7 @@ void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
 bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
 {
    // ComputeRawAndRGBSizes is already made by 
-   // ::GrabInformationsFromHeader. So, the structure sizes are
+   // ::GrabInformationsFromfile. So, the structure sizes are
    // correct
    Squeeze();
 
@@ -852,41 +844,41 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
    }
 }
 
-void PixelReadConvert::GrabInformationsFromHeader( File *header )
+void PixelReadConvert::GrabInformationsFromFile( File *file )
 {
    // Number of Bits Allocated for storing a Pixel is defaulted to 16
-   // when absent from the header.
-   BitsAllocated = header->GetBitsAllocated();
+   // when absent from the file.
+   BitsAllocated = file->GetBitsAllocated();
    if ( BitsAllocated == 0 )
    {
       BitsAllocated = 16;
    }
 
    // Number of "Bits Stored", defaulted to number of "Bits Allocated"
-   // when absent from the header.
-   BitsStored = header->GetBitsStored();
+   // when absent from the file.
+   BitsStored = file->GetBitsStored();
    if ( BitsStored == 0 )
    {
       BitsStored = BitsAllocated;
    }
 
    // High Bit Position, defaulted to "Bits Allocated" - 1
-   HighBitPosition = header->GetHighBitPosition();
+   HighBitPosition = file->GetHighBitPosition();
    if ( HighBitPosition == 0 )
    {
       HighBitPosition = BitsAllocated - 1;
    }
 
-   XSize = header->GetXSize();
-   YSize = header->GetYSize();
-   ZSize = header->GetZSize();
-   SamplesPerPixel = header->GetSamplesPerPixel();
-   PixelSize = header->GetPixelSize();
-   PixelSign = header->IsSignedPixelData();
-   SwapCode  = header->GetSwapCode();
-   std::string ts = header->GetTransferSyntax();
+   XSize = file->GetXSize();
+   YSize = file->GetYSize();
+   ZSize = file->GetZSize();
+   SamplesPerPixel = file->GetSamplesPerPixel();
+   PixelSize = file->GetPixelSize();
+   PixelSign = file->IsSignedPixelData();
+   SwapCode  = file->GetSwapCode();
+   std::string ts = file->GetTransferSyntax();
    IsRaw =
-        ( ! header->IsDicomV3() )
+        ( ! file->IsDicomV3() )
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndianDLXGE
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
@@ -899,25 +891,25 @@ void PixelReadConvert::GrabInformationsFromHeader( File *header )
    IsJPEGLossless  = Global::GetTS()->IsJPEGLossless(ts);
    IsRLELossless   = Global::GetTS()->IsRLELossless(ts);
 
-   PixelOffset     = header->GetPixelOffset();
-   PixelDataLength = header->GetPixelAreaLength();
-   RLEInfo  = header->GetRLEInfo();
-   JPEGInfo = header->GetJPEGInfo();
-                                                                             
-   PlanarConfiguration = header->GetPlanarConfiguration();
-   IsMonochrome = header->IsMonochrome();
-   IsPaletteColor = header->IsPaletteColor();
-   IsYBRFull = header->IsYBRFull();
+   PixelOffset     = file->GetPixelOffset();
+   PixelDataLength = file->GetPixelAreaLength();
+   RLEInfo  = file->GetRLEInfo();
+   JPEGInfo = file->GetJPEGInfo();
+
+   PlanarConfiguration = file->GetPlanarConfiguration();
+   IsMonochrome = file->IsMonochrome();
+   IsPaletteColor = file->IsPaletteColor();
+   IsYBRFull = file->IsYBRFull();
 
    /////////////////////////////////////////////////////////////////
    // LUT section:
-   HasLUT = header->HasLUT();
+   HasLUT = file->HasLUT();
    if ( HasLUT )
    {
       // Just in case some access to a File element requires disk access.
-      LutRedDescriptor   = header->GetEntryValue( 0x0028, 0x1101 );
-      LutGreenDescriptor = header->GetEntryValue( 0x0028, 0x1102 );
-      LutBlueDescriptor  = header->GetEntryValue( 0x0028, 0x1103 );
+      LutRedDescriptor   = file->GetEntryValue( 0x0028, 0x1101 );
+      LutGreenDescriptor = file->GetEntryValue( 0x0028, 0x1102 );
+      LutBlueDescriptor  = file->GetEntryValue( 0x0028, 0x1103 );
    
       // Depending on the value of Document::MAX_SIZE_LOAD_ELEMENT_VALUE
       // [ refer to invocation of Document::SetMaxSizeLoadEntry() in
@@ -934,24 +926,24 @@ void PixelReadConvert::GrabInformationsFromHeader( File *header )
       ///       parsed from. Fix that. FIXME.
    
       ////// Red round
-      header->LoadEntryBinArea(0x0028, 0x1201);
-      LutRedData = (uint8_t*)header->GetEntryBinArea( 0x0028, 0x1201 );
+      file->LoadEntryBinArea(0x0028, 0x1201);
+      LutRedData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
          gdcmVerboseMacro( "Unable to read Red LUT data" );
       }
 
       ////// Green round:
-      header->LoadEntryBinArea(0x0028, 0x1202);
-      LutGreenData = (uint8_t*)header->GetEntryBinArea(0x0028, 0x1202 );
+      file->LoadEntryBinArea(0x0028, 0x1202);
+      LutGreenData = (uint8_t*)file->GetEntryBinArea(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
          gdcmVerboseMacro( "Unable to read Green LUT data" );
       }
 
       ////// Blue round:
-      header->LoadEntryBinArea(0x0028, 0x1203);
-      LutBlueData = (uint8_t*)header->GetEntryBinArea( 0x0028, 0x1203 );
+      file->LoadEntryBinArea(0x0028, 0x1203);
+      LutBlueData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
          gdcmVerboseMacro( "Unable to read Blue LUT data" );
@@ -1042,9 +1034,8 @@ void PixelReadConvert::BuildLUTRGBA()
    // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT
    LutRGBA = new uint8_t[ 1024 ]; // 256 * 4 (R, G, B, Alpha)
    if ( !LutRGBA )
-   {
       return;
-   }
+
    memset( LutRGBA, 0, 1024 );
                                                                                 
    int mult;
