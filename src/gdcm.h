@@ -186,7 +186,7 @@ typedef map<TagKey, ElValue*> TagElValueHT;
 typedef map<string, ElValue*> TagElValueNameHT;
 // Container for a set of succefully parsed ElValues.
 class GDCM_EXPORT ElValSet {
-	// We need both accesses with a TagKey and the Dicentry.Name
+	// We need both accesses with a TagKey and the Dictentry.Name
 	TagElValueHT tagHt;
 	TagElValueNameHT NameHt;
 public:

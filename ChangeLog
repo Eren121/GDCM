@@ -1,3 +1,12 @@
+2002-11-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * python/demo/*.py load.py extracted from test.py. Added explore.py
+        that only displays required tags and testAll.py that parses all
+        the files of the testsuite without using unittest.
+      * python/testSuite.py other additional test on new files added.
+      * Data/* new test files added accordingly to the testSuite.
+      * src/gdcmHeader.cxx avoid overwriting of the dictionary when
+        the vr in the file differs from the one of the dictionary.
+
 2002-11-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h and gdcmHeader.cxx gdcm no longer loads all the elements
         values, but limits itself to values which are below a user specified

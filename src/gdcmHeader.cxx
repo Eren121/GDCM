@@ -226,7 +226,8 @@ void gdcmHeader::CheckSwap()
 }
 
 void gdcmHeader::SwitchSwapToBigEndian(void) {
-	dbg.Verbose(1, "gdcmHeader::FindLength", "Switching to BigEndian mode.");
+	dbg.Verbose(1, "gdcmHeader::SwitchSwapToBigEndian",
+	               "Switching to BigEndian mode.");
 	if ( sw == 0    ) {
 		sw = 4321;
 		return;
@@ -283,6 +284,9 @@ void gdcmHeader::SwitchSwapToBigEndian(void) {
  */
 
 void gdcmHeader::FindVR( ElValue *ElVal) {
+	if (filetype != ExplicitVR)
+		return;
+
 	char VR[3];
 	string vr;
 	int lgrLue;
@@ -296,9 +300,6 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
 	// the case.
 	bool RealExplicit = true;
 	
-	if (filetype != ExplicitVR)
-		return;
-
 	lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
 	VR[2]=0;
 	vr = string(VR);
@@ -321,8 +322,26 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
 		RealExplicit = false;
 
 	if ( RealExplicit ) {
-		if ( ElVal->IsVrUnknown() ) 
+		if ( ElVal->IsVrUnknown() ) {
+			// When not a dictionary entry, we can safely overwrite the vr.
 			ElVal->SetVR(vr);
+			return; 
+		}
+		if ( ElVal->GetVR() == vr ) {
+			// The vr we just read and the dictionary agree. Nothing to do.
+			return;
+		}
+		// The vr present in the file and the dictionary disagree. We assume
+		// the file writer knew best and use the vr of the file. Since it would
+		// be unwise to overwrite the vr of a dictionary (since it would
+		// compromise it's next user), we need to clone the actual DictEntry
+		// and change the vr for the read one.
+		gdcmDictEntry* NewTag = new gdcmDictEntry(ElVal->GetGroup(),
+		                           ElVal->GetElement(),
+		                           vr,
+		                           "FIXME",
+		                           ElVal->GetName());
+		ElVal->SetDictEntry(NewTag);
 		return; 
 	}
 	
