@@ -325,8 +325,8 @@ bool gdcmDicomDir::Write(std::string fileName)
 
 void gdcmDicomDir::WriteEntries(FILE *_fp)
 {   
-   // TODO (?) tester les echecs en ecriture 
-   //          (apres chaque fwrite, dans le WriteEntry)
+   /// \todo (?) tester les echecs en ecriture 
+   ///          (apres chaque fwrite, dans le WriteEntry)
 
    gdcmDicomDirMeta *ptrMeta;
    ListDicomDirPatient::iterator  itPatient;

@@ -604,7 +604,10 @@ size_t gdcmHeader::GetPixelOffset(void) {
    // pb : sometimes , (0x0088,0x0200) exists, but doesn't contain *anything*
    // see gdcmData/MxTwinLossLess.dcm ...
 
-   //std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
+   /**
+    * \todo Clean me
+    *std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
+    */
       
    IterHT it = GetHeaderEntrySameNumber(GrPixel,NumPixel);          
    TagKey key = gdcmDictEntry::TranslateToKey(GrPixel,NumPixel);
@@ -880,7 +883,7 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    char car[20];
 
    // Assumes HeaderEntry (GrPixel, NumPixel) is unique ...   
-   // TODO deal with multiplicity (see gdcmData/icone.dcm)
+   //\todo deal with multiplicity (see gdcmData/icone.dcm)
    sprintf(car,"%d",ImageDataSize);
  
    gdcmHeaderEntry *a = GetHeaderEntryByNumber(GrPixel, NumPixel);

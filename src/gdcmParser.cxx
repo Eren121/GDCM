@@ -37,8 +37,6 @@ const unsigned int gdcmParser::HEADER_LENGTH_TO_READ = 256;
 // Refer to gdcmParser::SetMaxSizeLoadEntry()
 const unsigned int gdcmParser::MAX_SIZE_LOAD_ELEMENT_VALUE = 4096;
 
-// Refer to gdcmParser::SetMaxSizePrintEntry()
-// TODO : Right now, better see "define, in gdcmHederEntry.cxx
 const unsigned int gdcmParser::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
 
 //-----------------------------------------------------------------------------
@@ -80,7 +78,6 @@ gdcmParser::gdcmParser(const char *inFilename,
 }
 
 /**
- * \ingroup gdcmParser
  * \brief  constructor 
  * @param   exception_on_error
  */
@@ -96,7 +93,6 @@ gdcmParser::gdcmParser(bool exception_on_error) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Canonical destructor.
  */
 gdcmParser::~gdcmParser (void) {
@@ -107,7 +103,6 @@ gdcmParser::~gdcmParser (void) {
 //-----------------------------------------------------------------------------
 // Print
 /**
-  * \ingroup gdcmParser
   * \brief   Prints the Header Entries (Dicom Elements)
   *          from the chained list
   * @return
@@ -211,7 +206,6 @@ bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a ExplicitVRLittleEndian one.
  * @return  True when ExplicitVRLittleEndian found. False in all other cases.
@@ -332,32 +326,35 @@ bool gdcmParser::CloseFile(void) {
  * \return Always true.
  */
 bool gdcmParser::Write(FILE *fp, FileType type) {
-// ==============
-// TODO The stuff will have to be rewritten using the SeQuence based 
-//       tree-like stucture instead  of the chained list .
-//      (so we shall remove the GroupHT from the gdcmParser)
-// To be checked
-// =============
+/// \todo
+///  ==============
+///      The stuff will have to be rewritten using the SeQuence based 
+///       tree-like stucture instead  of the chained list .
+///      (so we shall remove the GroupHT from the gdcmParser)
+///      To be checked
+/// =============
 
-   // TODO : move the following lines (and a lot of others, to be written)
-   // to a future function CheckAndCorrectHeader
+   /// \todo move the following lines (and a lot of others, to be written)
+   /// to a future function CheckAndCorrectHeader
    
-   // Question :
-   // Comment pourrait-on savoir si le DcmHeader vient d'un fichier
-   // DicomV3 ou non (FileType est un champ de gdcmParser ...)
-   // WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
-   // no way 
-   // a moins de se livrer a un tres complique ajout des champs manquants.
-   // faire un CheckAndCorrectHeader (?)  
+   /// \todo
+   /// Question :
+   /// Comment pourrait-on savoir si le DcmHeader vient d'un fichier
+   /// DicomV3 ou non (FileType est un champ de gdcmParser ...)
+   /// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
+   /// no way 
+   /// a moins de se livrer a un tres complique ajout des champs manquants.
+   /// faire un CheckAndCorrectHeader (?)  
 
    if (type == ImplicitVR) 
    {
       std::string implicitVRTransfertSyntax = UI1_2_840_10008_1_2;
       ReplaceOrCreateByNumber(implicitVRTransfertSyntax,0x0002, 0x0010);
       
-      //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
-      //      values with a VR of UI shall be padded with a single trailing null
-      //      Dans le cas suivant on doit pader manuellement avec un 0
+      /// \todo Refer to standards on page 21, chapter 6.2
+      ///       "Value representation": values with a VR of UI shall be
+      ///       padded with a single trailing null
+      ///       Dans le cas suivant on doit pader manuellement avec un 0
       
       SetEntryLengthByNumber(18, 0x0002, 0x0010);
    } 
@@ -367,24 +364,26 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
       std::string explicitVRTransfertSyntax = UI1_2_840_10008_1_2_1;
       ReplaceOrCreateByNumber(explicitVRTransfertSyntax,0x0002, 0x0010);
       
-      //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
-      //      values with a VR of UI shall be padded with a single trailing null
-      //      Dans le cas suivant on doit pader manuellement avec un 0
+      /// \todo Refer to standards on page 21, chapter 6.2
+      ///       "Value representation": values with a VR of UI shall be
+      ///       padded with a single trailing null
+      ///       Dans le cas suivant on doit pader manuellement avec un 0
       
       SetEntryLengthByNumber(20, 0x0002, 0x0010);
    }
 
-/* TODO : rewrite later, if really usefull
-
---> Warning : un-updated odd groups lengths can causes pb 
--->           (xmedcon breaks)
---> to be re- written with future org.
-
-   if ( (type == ImplicitVR) || (type == ExplicitVR) )
-      UpdateGroupLength(false,type);
-   if ( type == ACR)
-      UpdateGroupLength(true,ACR);
-*/
+/**
+ * \todo rewrite later, if really usefull
+ *
+ *       --> Warning : un-updated odd groups lengths can causes pb 
+ *       -->           (xmedcon breaks)
+ *       --> to be re- written with future org.
+ *
+ * if ( (type == ImplicitVR) || (type == ExplicitVR) )
+ *    UpdateGroupLength(false,type);
+ * if ( type == ACR)
+ *    UpdateGroupLength(true,ACR);
+ */
 
    WriteEntries(fp,type);
    return(true);
@@ -448,7 +447,6 @@ int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value of a given tag.
@@ -466,7 +464,6 @@ std::string gdcmParser::GetEntryByName(std::string tagName) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag.
@@ -491,7 +488,6 @@ std::string gdcmParser::GetEntryVRByName(std::string tagName) {
 
 
 /**
- * \ingroup gdcmParser
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag.
@@ -508,7 +504,6 @@ std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element){
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value representation of a given tag..
@@ -530,7 +525,6 @@ std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the value length of a given tag..
@@ -545,7 +539,6 @@ int gdcmParser::GetEntryLengthByNumber(guint16 group, guint16 element) {
    return elem->GetLength();
 }
 /**
- * \ingroup gdcmParser
  * \brief   Sets the value (string) of the Header Entry (Dicom Element)
  * @param   content string value of the Dicom Element
  * @param   tagName name of the searched Dicom Element.
@@ -561,7 +554,6 @@ bool gdcmParser::SetEntryByName(std::string content,std::string tagName) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
  *          through it's (group, element) and modifies it's content with
  *          the given value.
@@ -612,7 +604,6 @@ bool gdcmParser::SetEntryByNumber(std::string content,
 }  
 
 /**
- * \ingroup gdcmParser
  * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
  *          in the PubHeaderEntrySet of this instance
  *          through it's (group, element) and modifies it's length with
@@ -637,7 +628,6 @@ bool gdcmParser::SetEntryLengthByNumber(guint32 l,
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Gets (from Header) the offset  of a 'non string' element value 
  *          (LoadElementValues has already be executed)
  * @param Group   group of the Entry 
@@ -657,7 +647,6 @@ size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Gets (from Header) a 'non string' element value 
  *          (LoadElementValues has already be executed)  
  * @param Group   group of the Entry 
@@ -695,7 +684,7 @@ void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem)
       return NULL;
 
    SetEntryVoidAreaByNumber(a, Group, Elem);
-   // TODO check the result 
+   /// \todo check the result 
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) 
    {
@@ -707,7 +696,6 @@ void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Sets a 'non string' value to a given Dicom Element
  * @param   area
  * @param   group Group number of the searched Dicom Element 
@@ -726,7 +714,6 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Update the entries with the shadow dictionary. 
  *          Only non even entries are analyzed       
  */
@@ -770,7 +757,6 @@ void gdcmParser::UpdateShaEntries(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Searches within the Header Entries for a Dicom Element of
  *          a given tag.
  * @param   tagName name of the searched Dicom Element.
@@ -786,7 +772,6 @@ void gdcmParser::UpdateShaEntries(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief  retrieves a Dicom Element (the first one) using (group, element)
  * \warning (group, element) IS NOT an identifier inside the Dicom Header
  *           if you think it's NOT UNIQUE, check the count number
@@ -805,7 +790,6 @@ gdcmHeaderEntry* gdcmParser::GetHeaderEntryByNumber(guint16 group, guint16 eleme
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   retrieves the Dicom Elements (all of them) using (group, element) 
  * @param   group Group number of the searched Dicom Element.
  * @param   element Element number of the searched Dicom Element.
@@ -818,7 +802,6 @@ IterHT gdcmParser::GetHeaderEntrySameNumber(guint16 group, guint16 element){
 }
 
 /**
- * \ingroup       gdcmParser
  * \brief         Loads the element while preserving the current
  *                underlying file position indicator as opposed to
  *                to LoadHeaderEntry that modifies it.
@@ -1108,7 +1091,7 @@ bool gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 
 bool gdcmParser::WriteEntries(FILE *_fp,FileType type)
 {   
-   // TODO (?) check write failures (after *each* fwrite)
+   /// \todo (?) check write failures (after *each* fwrite)
      
    for (ListTag::iterator tag2=listEntries.begin();
                           tag2 != listEntries.end();
@@ -1133,7 +1116,6 @@ bool gdcmParser::WriteEntries(FILE *_fp,FileType type)
 }   
 
 /**
- * \ingroup gdcmParser
  * \brief   writes on disc according to the requested format
  *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image,
  *          using only the last synonym of each mutimap H Table post.
@@ -1168,7 +1150,6 @@ void gdcmParser::WriteEntriesDeprecated(FILE *_fp,FileType type) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Swaps back the bytes of 4-byte long integer accordingly to
  *          processor order.
  * @return  The properly swaped 32 bits integer.
@@ -1197,7 +1178,6 @@ guint32 gdcmParser::SwapLong(guint32 a) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Unswaps back the bytes of 4-byte long integer accordingly to
  *          processor order.
  * @return  The properly unswaped 32 bits integer.
@@ -1207,7 +1187,6 @@ guint32 gdcmParser::UnswapLong(guint32 a) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Swaps the bytes so they agree with the processor order
  * @return  The properly swaped 16 bits integer.
  */
@@ -1218,7 +1197,6 @@ guint16 gdcmParser::SwapShort(guint16 a) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Unswaps the bytes so they agree with the processor order
  * @return  The properly unswaped 16 bits integer.
  */
@@ -1229,7 +1207,6 @@ guint16 gdcmParser::UnswapShort(guint16 a) {
 //-----------------------------------------------------------------------------
 // Private
 /**
- * \ingroup gdcmParser
  * \brief   Parses the header of the file and load element values.
  * @return  false if file is not ACR-NEMA / PAPYRUS / DICOM 
  */
@@ -1295,7 +1272,6 @@ bool gdcmParser::LoadHeaderEntries(bool exception_on_error) throw(gdcmFormatErro
 }
 
 /**
- * \ingroup       gdcmParser
  * \brief         Loads the element content if its length doesn't exceed
  *                the value specified with gdcmParser::SetMaxSizeLoadEntry()
  * @param         Entry Header Entry (Dicom Element) to be dealt with
@@ -1397,7 +1373,6 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   add a new Dicom Element pointer to 
  *          the H Table and at the end of the chained List
  * \warning push_bash in listEntries ONLY during ParseHeader
@@ -1413,7 +1388,6 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief  Find the value Length of the passed Header Entry
  * @param  Entry Header Entry whose length of the value shall be loaded. 
  */
@@ -1526,7 +1500,6 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
 }
 
 /**
- * \ingroup   gdcmParser
  * \brief     Find the Value Representation of the current Dicom Element.
  * @param     Entry
  */
@@ -1563,7 +1536,6 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
 }
 
 /**
- * \ingroup   gdcmParser
  * \brief     Check the correspondance between the VR of the header entry
  *            and the taken VR. If they are different, the header entry is 
  *            updated with the new VR.
@@ -1635,7 +1607,6 @@ bool gdcmParser::CheckHeaderEntryVR(gdcmHeaderEntry *Entry, VRKey vr)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Get the transformed value of the header entry. The VR value 
  *          is used to define the transformation to operate on the value
  * \warning NOT end user intended method !
@@ -1705,7 +1676,6 @@ std::string gdcmParser::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Get the reverse transformed value of the header entry. The VR 
  *          value is used to define the reverse transformation to operate on
  *          the value
@@ -1759,7 +1729,6 @@ std::string gdcmParser::GetHeaderEntryUnvalue(gdcmHeaderEntry *Entry)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Skip a given Header Entry 
  * \warning NOT end user intended method !
  * @param   entry 
@@ -1770,7 +1739,6 @@ void gdcmParser::SkipHeaderEntry(gdcmHeaderEntry *entry)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   When the length of an element value is obviously wrong (because
  *          the parser went Jabberwocky) one can hope improving things by
  *          applying this heuristic.
@@ -1835,7 +1803,6 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Apply some heuristics to predict whether the considered 
  *          element value contains/represents an integer or not.
  * @param   Entry The element value on which to apply the predicate.
@@ -1879,7 +1846,6 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
    return false;
 }
 /**
- * \ingroup gdcmParser
  * \brief  Find the Length till the next sequence delimiter
  * \warning NOT end user intended method !
  * @return 
@@ -1931,7 +1897,6 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief Reads a supposed to be 16 Bits integer
  *       (swaps it depending on processor endianity) 
  * @return read value
@@ -1952,7 +1917,6 @@ guint16 gdcmParser::ReadInt16(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief  Reads a supposed to be 32 Bits integer
  *         (swaps it depending on processor endianity)  
  * @return read value
@@ -1973,7 +1937,6 @@ guint32 gdcmParser::ReadInt32(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief skips bytes inside the source file 
  * \warning NOT end user intended method !
  * @return 
@@ -1984,7 +1947,6 @@ void gdcmParser::SkipBytes(guint32 NBytes) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief Loads all the needed Dictionaries
  * \warning NOT end user intended method !   
  */
@@ -1995,7 +1957,6 @@ void gdcmParser::Initialise(void)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Discover what the swap code is (among little endian, big endian,
  *          bad little endian, bad big endian).
  *          sw is set
@@ -2179,7 +2140,6 @@ bool gdcmParser::CheckSwap() {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief Restore the unproperly loaded values i.e. the group, the element
  *        and the dictionary entry depending on them. 
  */
@@ -2207,7 +2167,6 @@ void gdcmParser::SwitchSwapToBigEndian(void)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief  during parsing, Header Elements too long are not loaded in memory 
  * @param NewSize
  */
@@ -2225,13 +2184,8 @@ void gdcmParser::SetMaxSizeLoadEntry(long NewSize)
 
 
 /**
- * \ingroup gdcmParser
  * \brief Header Elements too long will not be printed
- * \warning 
- * \todo : not yet usable 
- *          (see MAX_SIZE_PRINT_ELEMENT_VALUE 
- *           in gdcmHeaderEntry gdcmLoadEntry)
- *             
+ * \todo  See comments of \ref gdcmParser::MAX_SIZE_PRINT_ELEMENT_VALUE 
  * @param NewSize
  */
 void gdcmParser::SetMaxSizePrintEntry(long NewSize) 
@@ -2247,7 +2201,6 @@ void gdcmParser::SetMaxSizePrintEntry(long NewSize)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Searches both the public and the shadow dictionary (when they
  *          exist) for the presence of the DictEntry with given name.
  *          The public dictionary has precedence on the shadow one.
@@ -2278,7 +2231,6 @@ gdcmDictEntry *gdcmParser::GetDictEntryByName(std::string Name)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Searches both the public and the shadow dictionary (when they
  *          exist) for the presence of the DictEntry with given
  *          group and element. The public dictionary has precedence on the
@@ -2311,7 +2263,6 @@ gdcmDictEntry *gdcmParser::GetDictEntryByNumber(guint16 group,guint16 element)
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Read the next tag but WITHOUT loading it's value
  * @return  On succes the newly created HeaderEntry, NULL on failure.      
  */
@@ -2348,7 +2299,6 @@ gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Build a new Element Value from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
@@ -2371,7 +2321,6 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
 }  
 
 /**
- * \ingroup gdcmParser
  * \brief   Request a new virtual dict entry to the dict set
  * @param   group  group   of the underlying DictEntry
  * @param   element  element of the underlying DictEntry
@@ -2388,7 +2337,6 @@ gdcmDictEntry *gdcmParser::NewVirtualDictEntry(guint16 group, guint16 element,
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Build a new Element Value from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
@@ -2412,9 +2360,8 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
    return NewEntry;
 }
 
-// Never used; commented out, waiting for removal.
+/// \todo Never used; commented out, waiting for removal.
 /**
- * \ingroup gdcmParser
  * \brief   Small utility function that creates a new manually crafted
  *          (as opposed as read from the file) gdcmHeaderEntry with user
  *          specified name and adds it to the public tag hash table.
@@ -2447,7 +2394,6 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
 //}
 
 /**
- * \ingroup gdcmParser
  * \brief   Generate a free TagKey i.e. a TagKey that is not present
  *          in the TagHt dictionary.
  * @param   group The generated tag must belong to this group.  

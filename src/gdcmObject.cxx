@@ -115,7 +115,6 @@ void gdcmObject::ResetBoundaries(int flag) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Sets Entry (Dicom Element) value of an element,
  *          specified by it's tag (Group, Number) 
  *          and the length, too ...
@@ -150,12 +149,11 @@ void gdcmObject::ResetBoundaries(int flag) {
 	   } 
            // we assume the constructor didn't fail
            Entry = new gdcmHeaderEntry(DictEntry);
-	   // ----
-	   // TODO
-	   // ----
-	   // better we don't assume too much !
-	   // in the next release, gdcmObject will be used 
-	   // to describe any Header Entry ...
+	   /// \todo
+	   /// ----
+	   /// better we don't assume too much !
+	   /// in the next release, gdcmObject will be used 
+	   /// to describe any Header Entry ...
          } else {
             Entry = ptagHT->find(key)->second;
          }

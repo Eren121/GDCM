@@ -86,6 +86,9 @@ protected:
 
    /// \brief Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
    /// are NOT printed.
+   /// \todo Currently not used since collides with #define in
+   ///       \ref gdcmHeaderEntry.cxx. See also
+   ///       \ref gdcmParser::SetMaxSizePrintEntry()
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// Hash Table (multimap), to provide fast access

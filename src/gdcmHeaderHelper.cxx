@@ -10,7 +10,6 @@
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup gdcmHeaderHelper
  * \brief   constructor
  */
 gdcmHeaderHelper::gdcmHeaderHelper() : gdcmHeader( ) {
@@ -18,7 +17,6 @@ gdcmHeaderHelper::gdcmHeaderHelper() : gdcmHeader( ) {
 }
 
 /**
- * \ingroup gdcmHeaderHelper
  * \brief   constructor
  * @param   InFilename Name of the file to deal with
  * @param   exception_on_error
@@ -45,7 +43,6 @@ gdcmHeaderHelper::gdcmHeaderHelper(const char *InFilename,
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmHeaderHelper
  * \brief   Returns the size (in bytes) of a single pixel of data.
  * @return  The size in bytes of a single pixel of data.
  *
@@ -322,7 +319,6 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
 }
 
 /**
-  *\ingroup gdcmHeaderHelper
   *\brief gets the info from 0008,0018 : SOP Instance UID
   *\todo ? : return the ACR-NEMA element value if DICOM one is not found 
   * @return SOP Instance UID
@@ -340,14 +336,13 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
 // as the Z coordinate, 
 // 0. for all the coordinates if nothing is found
 
-// TODO : find a way to inform the caller nothing was found
-// TODO : How to tell the caller a wrong number of values was found?
+// \todo find a way to inform the caller nothing was found
+// \todo How to tell the caller a wrong number of values was found?
 //
 // ---------------------------------------------------------------
 //
 
 /**
-  * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
   *                 else from 0020,0030 : Image Position (RET)
   *                 else 0.
@@ -363,7 +358,7 @@ float gdcmHeaderHelper::GetXOrigin() {
        StrImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
        if (StrImPos == GDCM_UNFOUND) {
           dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position (RET) (0020,0030)");
-          // How to tell the caller nothing was found ?
+          /// \todo How to tell the caller nothing was found ?
          return 0.;
        }  
      }
@@ -373,7 +368,6 @@ float gdcmHeaderHelper::GetXOrigin() {
 }
 
 /**
-  * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
   *                 else from 0020,0030 : Image Position (RET)
   *                 else 0.
@@ -388,7 +382,7 @@ float gdcmHeaderHelper::GetYOrigin() {
        StrImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
        if (StrImPos == GDCM_UNFOUND) {
           dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position (RET) (0020,0030)");
-          // How to tell the caller nothing was found ?
+          /// \todo How to tell the caller nothing was found ?
            return 0.;
        }  
      }
@@ -398,7 +392,6 @@ float gdcmHeaderHelper::GetYOrigin() {
 }
 
 /**
-  * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
   * \               else from 0020,0030 : Image Position (RET)
   * \               else from 0020,1041 : Slice Location
@@ -450,17 +443,17 @@ float gdcmHeaderHelper::GetZOrigin() {
 }
 
 /**
-  * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0013 : Image Number
   * \               else 0.
   * @return image number
   */
 int gdcmHeaderHelper::GetImageNumber() {
-  //The function i atoi() takes the address of an area of memory as parameter and converts 
-  //the string stored at that location to an integer using the external decimal to internal
-  //binary conversion rules. This may be preferable to sscanf() since atoi() is a much smaller,
-  // simpler and faster function. sscanf() can do all possible conversions whereas atoi() can 
-  //only do single decimal integer conversions.
+  // The function i atoi() takes the address of an area of memory as
+  // parameter and converts the string stored at that location to an integer
+  // using the external decimal to internal binary conversion rules. This may
+  // be preferable to sscanf() since atoi() is a much smaller, simpler and
+  // faster function. sscanf() can do all possible conversions whereas
+  // atoi() can only do single decimal integer conversions.
   std::string StrImNumber = GetEntryByNumber(0x0020,0x0013); //0020 0013 IS REL Image Number
   if (StrImNumber != GDCM_UNFOUND) {
     return atoi( StrImNumber.c_str() );
@@ -469,12 +462,12 @@ int gdcmHeaderHelper::GetImageNumber() {
 }
 
 /**
-  * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0008,0060 : Modality
   * @return Modality Type
   */
 ModalityType gdcmHeaderHelper::GetModality(void) {
-  std::string StrModality = GetEntryByNumber(0x0008,0x0060); //0008 0060 CS ID Modality
+  // 0008 0060 CS ID Modality
+  std::string StrModality = GetEntryByNumber(0x0008,0x0060);
   if (StrModality != GDCM_UNFOUND) {
          if ( StrModality.find("AU") < StrModality.length()) return AU;
     else if ( StrModality.find("AS") < StrModality.length()) return AS;
@@ -519,8 +512,8 @@ ModalityType gdcmHeaderHelper::GetModality(void) {
 
     else
     {
-      //throw error return value ???
-      // specified <> unknow in our database
+      /// \todo throw error return value ???
+      /// specified <> unknow in our database
       return Unknow;
     }
   }
@@ -528,7 +521,6 @@ ModalityType gdcmHeaderHelper::GetModality(void) {
 }
 
 /**
-  * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0037 : Image Orientation Patient
   * @param iop adress of the (6)float aray to receive values
   * @return cosines of image orientation patient
@@ -538,7 +530,8 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
   //iop is supposed to be float[6]
   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0;
   
-  std::string StrImOriPat = GetEntryByNumber(0x0020,0x0037); // 0020 0037 DS REL Image Orientation (Patient)
+  // 0020 0037 DS REL Image Orientation (Patient)
+  std::string StrImOriPat = GetEntryByNumber(0x0020,0x0037);
   if (StrImOriPat != GDCM_UNFOUND) {
     if( sscanf( StrImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
             &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6) {
@@ -550,7 +543,8 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
   }
   
   //For ACR-NEMA
-  StrImOriPat = GetEntryByNumber(0x0020,0x0035); //0020 0035 DS REL Image Orientation (RET)
+  // 0020 0035 DS REL Image Orientation (RET)
+  StrImOriPat = GetEntryByNumber(0x0020,0x0035);
   if (StrImOriPat != GDCM_UNFOUND) {
     if( sscanf( StrImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
             &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6) {
@@ -573,11 +567,9 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
 
 
 //-----------------------------------------------------------------------------
-// gdcmSerieHeaderHelper
-//-----------------------------------------------------------------------------
 // Constructor / Destructor
 gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper(){
-  //! \todo
+  /// \todo
   for (std::list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
         it != CoherentGdcmFileList.end(); it++)
   {
@@ -592,7 +584,6 @@ gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper(){
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \ingroup gdcmHeaderHelper
  * \brief add a gdcmFile to the list based on file name
  * @param   filename Name of the file to deal with
  */
@@ -602,7 +593,6 @@ void gdcmSerieHeaderHelper::AddFileName(std::string filename) {
 }
 
 /**
- * \ingroup gdcmHeaderHelper
  * \brief add a gdcmFile to the list
  * @param   file gdcmHeaderHelper to add
  */
@@ -611,7 +601,6 @@ void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file){
 }
 
 /**
- * \ingroup gdcmHeaderHelper
  * \brief Sets the Directory
  * @param   dir Name of the directory to deal with
  */
@@ -627,7 +616,6 @@ void gdcmSerieHeaderHelper::SetDirectory(std::string dir){
 }
 
 /**
- * \ingroup gdcmHeaderHelper
  * \brief Sorts the File List
  * \warning This could be implemented in a 'Strategy Pattern' approach
  *          But as I don't know how to do it, I leave it this way
@@ -645,7 +633,6 @@ void gdcmSerieHeaderHelper::OrderGdcmFileList(){
 }
 
 /**
- * \ingroup gdcmHeaderHelper
  * \brief Gets the *coherent* File List
  * @return the *coherent* File List
 */

@@ -302,7 +302,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
       std::string rgb= "MONOCHROME1 ";      // Photometric Interpretation
       Header->SetEntryByNumber(rgb,0x0028,0x0004);		   		   
    }      	 
-   // TODO : Drop Palette Color out of the Header? 	     
+   /// \todo Drop Palette Color out of the Header? 	     
    return lgrTotale; 
 }
 
@@ -318,9 +318,9 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
  */
 void * gdcmFile::GetImageDataRaw (void) {
    if (Header->HasLUT())
-      lgrTotale /= 3;  // TODO Let gdcmHeadar user a chance 
-                       // to get the right value
-		       // Create a member lgrTotaleRaw ???
+      /// \todo Let gdcmHeadar user a chance to get the right value
+		/// Create a member lgrTotaleRaw ???
+      lgrTotale /= 3;
    PixelData = new char[lgrTotale];
    if (PixelData)
       GetImageDataIntoVectorRaw(PixelData, lgrTotale);
@@ -499,10 +499,10 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
             unsigned char * c = b + l;
             double R,G,B;
 
-            // TODO : Replace by the 'well known' 
-            //        integer computation counterpart
-	    // see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
-            // for code optimisation
+            /// \todo : Replace by the 'well known' integer computation
+            /// counterpart
+	         /// see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
+            /// for code optimisation
 	    
             for (int i=0;i<nbFrames;i++) {
                for (int j=0;j<l; j++) {
@@ -567,7 +567,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    std::string planConfig = "0"; // Planar Configuration
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
 	 
-	 // TODO : Drop Palette Color out of the Header? 
+	 /// \todo Drop Palette Color out of the Header? 
    return lgrTotale; 
 }
 
@@ -712,8 +712,8 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    // we reproduce on disk the switch between lineNumber and columnNumber
    // just before writting ...
    
-   // TODO : the best trick would be *change* the recognition code
-   //        but pb expected if user deals with, e.g. COMPLEX images
+   /// \todo the best trick would be *change* the recognition code
+   ///       but pb expected if user deals with, e.g. COMPLEX images
 
    std::string rows, columns; 
    if ( Header->GetFileType() == ACR_LIBIDO){
@@ -724,7 +724,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    }	
    // ----------------- End of Special Patch ----------------
    
-   // TODO : get the grPixel, numPixel values (for some ACR-NEMA images only)
+   /// \todo get the grPixel, numPixel values (for some ACR-NEMA images only)
    
    guint16 grPixel =Header->GetGrPixel();
    guint16 numPixel=Header->GetNumPixel();;
