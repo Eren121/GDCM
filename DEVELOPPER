@@ -20,6 +20,11 @@ The following comments are intended for core gdcm developpers.
         -- GDCM_VTK When this option is on VTK_DIR might require manual
            configuration
         -- GDCM_WRAP_PYTHON
+        -- CMAKE_CXX_FLAGS (when working with gcc of course) should be set to
+           -g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter
+           -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated
+           -Woverloaded-virtual
+           (this is to avoid spurious problems with overloading)
       * Configure cmake: hit c
       * Generate the makefiles (or dsw): hit g
   - Compile gdcm
@@ -373,4 +378,8 @@ CVS policy
              ctest -V >& log
         * you can start a single test through ctest with
              ctest -R FailingTestName -V >& log
+------------------------------------------------
+Compiler flags policy:
+ When working with gcc please use the flags specified in DEVELOPPER file
+ (in order to avoid difficult overloading problems).
 ------------------------------------------------
