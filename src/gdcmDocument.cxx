@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 23:06:35 $
-  Version:   $Revision: 1.180 $
+  Date:      $Date: 2005/01/11 23:16:47 $
+  Version:   $Revision: 1.181 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2373,7 +2373,7 @@ std::string Document::GetTransferSyntaxName()
 
    if ( transferSyntax == GDCM_NOTLOADED )
    {
-      gdcmVerboseMacro( "Transfer Syntax not loaded. " << std::endl
+      gdcmErrorMacro( "Transfer Syntax not loaded. " << std::endl
                << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE" );
       return "Uncompressed ACR-NEMA";
    }
@@ -2383,13 +2383,8 @@ std::string Document::GetTransferSyntaxName()
       return "Uncompressed ACR-NEMA";
    }
 
-   while ( ! isdigit((unsigned char)transferSyntax[transferSyntax.length()-1]) )
-   {
-      transferSyntax.erase(transferSyntax.length()-1, 1);
-   }
    // we do it only when we need it
-   TS* ts         = Global::GetTS();
-   std::string tsName = ts->GetValue( transferSyntax );
+   const TSKey &tsName = Global::GetTS()->GetValue( transferSyntax );
 
    // Global::GetTS() is a global static you shall never try to delete it!
    return tsName;
