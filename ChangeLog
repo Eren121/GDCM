@@ -52,6 +52,17 @@
         VR files.
       * src/gdcmHeader::FindVR: hard way fix of falsely explicit vr files.
 
+2002-11-8 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * Adaptation for porting to VC++:
+        - src/gdcm.h
+          o forced to use std namespace (for string to be known)
+          o all class use __declspec export style on WIN32
+        - src/gdcmUtil.cxx new Exit method that wraps the exit call
+          (in stdlib.h on Win32 but in std:: for gcc)
+      * src/gdcmDictSet::SetDictPath adds a trailing / to environement
+        variable GDCM_DICT_PATH.
+      * src/gdcmHeader.cxx verbose comments made discrete.
+
 2002-11-7 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/gdcm.i: added a typemap that converts a C++ hashing table
         to native Python dictionary.
