@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:41 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/18 16:44:46 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -545,7 +545,7 @@ bool gdcm_read_JPEG_file ( std::ifstream* fp, void* image_buffer )
 #if defined(GDCM_WORDS_BIGENDIAN) && (CMAKE_BITS_IN_JSAMPLE != 8)
       uint16_t *buffer16 = (uint16_t*)*buffer;
       uint16_t *pimage16 = (uint16_t*)pimage;
-      for(int i=0;i<rowsize/2;i++)
+      for(unsigned int i=0;i<rowsize/2;i++)
         pimage16[i] = (buffer16[i] >> 8) | (buffer16[i] << 8 );
 #else
       memcpy( pimage, *buffer,rowsize);
@@ -824,7 +824,7 @@ bool gdcm_read_JPEG_memory ( const JOCTET* input_buffer, const size_t buflen,
 #if defined(GDCM_WORDS_BIGENDIAN) && (CMAKE_BITS_IN_JSAMPLE != 8)
       uint16_t *buffer16 = (uint16_t*)*buffer;
       uint16_t *pimage16 = (uint16_t*)pimage;
-      for(int i=0;i<rowsize/2;i++)
+      for(unsigned int i=0;i<rowsize/2;i++)
         pimage16[i] = (buffer16[i] >> 8) | (buffer16[i] << 8 );
 #else
       memcpy( pimage, *buffer,rowsize);
