@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/17 16:18:33 $
-  Version:   $Revision: 1.226 $
+  Date:      $Date: 2005/02/21 17:47:19 $
+  Version:   $Revision: 1.227 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1411,12 +1411,14 @@ bool File::Write(std::string fileName, FileType writetype)
 // Protected
 /**
  * \brief Initialize a default DICOM File that should contain all the
- *        field require by other reader. DICOM standard does not 
+ *        fields required by other readers. DICOM standard does not 
  *        explicitely defines those fields, heuristic has been choosen.
- *        This is not perfect as we are writting a Secondary Capture image...
+ * \todo some more tests to be performed to avoid collisions 
+ *       with FileHelper::CheckMandatoryElements()
  */
 void File::InitializeDefaultFile()
 {
+
    std::string date = Util::GetCurrentDate();
    std::string time = Util::GetCurrentTime();
    std::string uid  = Util::CreateUniqueUID();
@@ -1448,7 +1450,7 @@ void File::InitializeDefaultFile()
    // SOP Instance UID
    InsertValEntry(uidInst.c_str(),             0x0008, 0x0018);
    // Modality    
-   InsertValEntry("CT",                        0x0008, 0x0060);
+   InsertValEntry("OT",                        0x0008, 0x0060);
    // Manufacturer
    InsertValEntry("GDCM",                      0x0008, 0x0070);
    // Institution Name
@@ -1457,7 +1459,7 @@ void File::InitializeDefaultFile()
    InsertValEntry("http://www-creatis.insa-lyon.fr/Public/Gdcm", 0x0008, 0x0081);
 
    // Patient's Name
-   InsertValEntry("GDCM",                      0x0010, 0x0010);
+   InsertValEntry("GDCM^patient",              0x0010, 0x0010);
    // Patient ID
    InsertValEntry("GDCMID",                    0x0010, 0x0020);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 08:48:18 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/02/21 17:47:19 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,8 @@ public:
    ElementSet(int);
    ~ElementSet();
 
-   virtual void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
+   virtual void Print(std::ostream &os = std::cout, 
+                      std::string const &indent = "" ); 
 
    void WriteContent(std::ofstream *fp, FileType filetype); 
 
