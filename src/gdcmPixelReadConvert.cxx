@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:03:07 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/02/03 17:12:46 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -145,15 +145,15 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       // [Bin|Val]Entry occurence migth have been hindered (read simply NOT
       // loaded). Hence, we first try to obtain the LUTs data from the file
       // and when this fails we read the LUTs data directly from disk.
-      /// \TODO Reading a [Bin|Val]Entry directly from disk is a kludge.
-      ///       We should NOT bypass the [Bin|Val]Entry class. Instead
-      ///       an access to an UNLOADED content of a [Bin|Val]Entry occurence
-      ///       (e.g. BinEntry::GetBinArea()) should force disk access from
-      ///       within the [Bin|Val]Entry class itself. The only problem
-      ///       is that the [Bin|Val]Entry is unaware of the FILE* is was
-      ///       parsed from. Fix that. FIXME.
+      // \TODO Reading a [Bin|Val]Entry directly from disk is a kludge.
+      //       We should NOT bypass the [Bin|Val]Entry class. Instead
+      //       an access to an UNLOADED content of a [Bin|Val]Entry occurence
+      //       (e.g. BinEntry::GetBinArea()) should force disk access from
+      //       within the [Bin|Val]Entry class itself. The only problem
+      //       is that the [Bin|Val]Entry is unaware of the FILE* is was
+      //       parsed from. Fix that. FIXME.
    
-      ////// Red round
+      // //// Red round
       file->LoadEntryBinArea(0x0028, 0x1201);
       LutRedData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1201 );
       if ( ! LutRedData )
@@ -161,7 +161,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
          gdcmVerboseMacro( "Unable to read Red LUT data" );
       }
 
-      ////// Green round:
+      // //// Green round:
       file->LoadEntryBinArea(0x0028, 0x1202);
       LutGreenData = (uint8_t*)file->GetEntryBinArea(0x0028, 0x1202 );
       if ( ! LutGreenData)
@@ -169,7 +169,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
          gdcmVerboseMacro( "Unable to read Green LUT data" );
       }
 
-      ////// Blue round:
+      // //// Blue round:
       file->LoadEntryBinArea(0x0028, 0x1203);
       LutBlueData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1203 );
       if ( ! LutBlueData )
