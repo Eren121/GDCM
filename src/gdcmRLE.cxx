@@ -28,8 +28,7 @@ static int _gdcm_read_RLE_fragment (char ** image_buffer,
 // pb with RLE 16 Bits : 
 
 
-int
-gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
+bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
    long fragmentBegining; // for ftell, fseek
    char * im = (char *)image_buffer;
 
@@ -38,21 +37,21 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
    guint32 nbRleSegments;
    guint32 RleSegmentOffsetTable[15];
    guint16 ItemTagGr,ItemTagEl;
-   uncompressedSegmentSize=GetXSize()*GetYSize();
+   uncompressedSegmentSize=Header->GetXSize()*Header->GetYSize();
    ftellRes=ftell(fp);
    // Basic Offset Table with Item Value
       // Item Tag
    fread(&ItemTagGr,2,1,fp);  // Reading (fffe):Basic Offset Table Item Tag Gr
    fread(&ItemTagEl,2,1,fp);  // Reading (e000):Basic Offset Table Item Tag El
-   if(GetSwapCode()) {
-      ItemTagGr=SwapShort(ItemTagGr); 
-      ItemTagEl=SwapShort(ItemTagEl);      
+   if(Header->GetSwapCode()) {
+      ItemTagGr=Header->SwapShort(ItemTagGr); 
+      ItemTagEl=Header->SwapShort(ItemTagEl);      
    }
       // Item Length
    ftellRes=ftell(fp);
    fread(&ln,4,1,fp); 
-   if(GetSwapCode()) 
-      ln=SwapLong(ln);    // Basic Offset Table Item Lentgh
+   if(Header->GetSwapCode()) 
+      ln=Header->SwapLong(ln);    // Basic Offset Table Item Lentgh
    if (ln != 0) {
       // What is it used for ??
       char * BasicOffsetTableItemValue= (char *)malloc(ln+1);
@@ -66,9 +65,9 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
    ftellRes=ftell(fp);
    fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
    fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-   if(GetSwapCode()) {
-      ItemTagGr=SwapShort(ItemTagGr); 
-      ItemTagEl=SwapShort(ItemTagEl);      
+   if(Header->GetSwapCode()) {
+      ItemTagGr=Header->SwapShort(ItemTagGr); 
+      ItemTagEl=Header->SwapShort(ItemTagEl);      
    }  
 
    // while 'Sequence Delimiter Item' (fffe,e0dd) not found
@@ -76,20 +75,20 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
    // Parse fragments of the current Fragment (Frame)    
       ftellRes=ftell(fp);
       fread(&fragmentLength,4,1,fp); 
-      if(GetSwapCode()) 
-         fragmentLength=SwapLong(fragmentLength);    // length
+      if(Header->GetSwapCode()) 
+         fragmentLength=Header->SwapLong(fragmentLength);    // length
 
           //------------------ scanning (not reading) fragment pixels
  
       fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments        
-      if(GetSwapCode()) 
-         nbRleSegments=SwapLong(nbRleSegments);
+      if(Header->GetSwapCode()) 
+         nbRleSegments=Header->SwapLong(nbRleSegments);
  
       for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
          ftellRes=ftell(fp);
          fread(&RleSegmentOffsetTable[k],4,1,fp);
-         if(GetSwapCode())
-            RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
+         if(Header->GetSwapCode())
+            RleSegmentOffsetTable[k]=Header->SwapLong(RleSegmentOffsetTable[k]);
       }
 
       if (nbRleSegments>1) { 
@@ -114,19 +113,19 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);      
+      if(Header->GetSwapCode()) {
+         ItemTagGr=Header->SwapShort(ItemTagGr); 
+         ItemTagEl=Header->SwapShort(ItemTagEl);      
       }
    } 
    
-   if (GetBitsAllocated()==16) { // try to deal with RLE 16 Bits
+   if (Header->GetBitsAllocated()==16) { // try to deal with RLE 16 Bits
    
       im = (char *)image_buffer;
          //  need to make 16 Bits Pixels from Low Byte and Hight Byte 'Planes'
 
-      int l = GetXSize()*GetYSize();
-      int nbFrames = GetZSize();
+      int l = Header->GetXSize()*Header->GetYSize();
+      int nbFrames = Header->GetZSize();
 
       char * newDest = (char*) malloc(l*nbFrames*2);
       char *x  = newDest;
@@ -143,7 +142,7 @@ gdcmFile::gdcm_read_RLE_file (void * image_buffer) {
       free(newDest);   
    }
       
-   return (1);
+   return(true);
 }
 
 

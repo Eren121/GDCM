@@ -1,4 +1,10 @@
 2003-12-10 Benoit Regrain
+     * gdcmHeader is now aggregating gdcmFile, and not derived into. Thus, we 
+       can use a gdcmHeaderHelper to load datas
+     * gdcmPython/testSuite.py : make the testSuite compliant with modifications
+       made in the source code
+
+2003-12-10 Benoit Regrain
      * Update Windows projects and .cvsignore files
 
 2003-11-12 Jean-Pierre Roux

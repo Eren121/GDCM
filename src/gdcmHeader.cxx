@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.120 2003/11/18 09:23:16 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.121 2003/12/22 12:46:16 regrain Exp $
 
 #include "gdcmHeader.h"
 
@@ -47,7 +47,7 @@ void gdcmHeader::Initialise(void) {
  */
 gdcmHeader::gdcmHeader(const char *InFilename, 
                        bool exception_on_error,
-		       bool  enable_sequences ) {
+                       bool enable_sequences ) {
    if (enable_sequences)
       enableSequences = 1;
    else
@@ -79,7 +79,7 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
  * @param   exception_on_error
  * @return  
  */
- bool gdcmHeader::OpenFile(bool exception_on_error)
+FILE *gdcmHeader::OpenFile(bool exception_on_error)
   throw(gdcmFileError) {
   fp=fopen(filename.c_str(),"rb");
   if(exception_on_error) {
@@ -93,20 +93,22 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
 
     //ACR -- or DICOM with no Preamble
     if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200)
-       return true;
+       return(fp);
+
     //DICOM
     fseek(fp, 126L, SEEK_CUR);
     char dicm[4];
     fread(dicm,  (size_t)4, (size_t)1, fp);
     if( memcmp(dicm, "DICM", 4) == 0 )
-       return true;
+       return(fp);
+
     fclose(fp);
     dbg.Verbose(0, "gdcmHeader::gdcmHeader not DICOM/ACR", filename.c_str());
   }
   else {
     dbg.Verbose(0, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
   }
-  return false;
+  return(NULL);
 }
 
 /**
@@ -746,7 +748,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    std::string  vr = ElVal->GetVR();
    guint16 length16;
    if( (element == 0x0010) && (group == 0x7fe0) ) {
-      dbg.SetDebug(0);
+      dbg.SetDebug(-1);
       dbg.Verbose(2, "gdcmHeader::FindLength: ",
                      "we reached 7fe0 0010");
    }   
@@ -1732,6 +1734,16 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief  
+ * @return 
+ */
+FileType gdcmHeader::GetFileType(void)
+{
+   return(filetype);
+}
+
+/**
+ * \ingroup gdcmHeader
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current gdcmHeader was properly parsed
  *         and contains the mandatory information for being considered as
@@ -1912,16 +1924,12 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    int l=Element->GetLength();
    void * a = malloc(l);
    if(!a) {
-   	std::cout << "Big Broblem (LoadElementVoidArea, malloc) " 
-   	          << std::hex << Group << " " << Elem << std::endl;
    	return NULL;
    }  
    /* int res = */ PubElValSet.SetVoidAreaByNumber(a, Group, Elem);
    // TODO check the result 
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) {
-   	std::cout << "Big Broblem (LoadElementVoidArea, fread) " 
-   	          << std::hex << Group << " " << Elem << std::endl;
    	free(a);
    	return NULL;
    }
@@ -2143,8 +2151,6 @@ std::string gdcmHeader::GetPixelType(void) {
    if (Signed == "0")
       Signed = std::string("U");
    else
-
-std::cout << "GetPixelType : " << BitsAlloc + Signed << std::endl;
       Signed = std::string("S");
 
    return( BitsAlloc + Signed);
@@ -2369,3 +2375,32 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
   return(LUTRGBA);   
 } 
  
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief Sets the Pixel Area size in the Header
+ *        --> not-for-rats function
+ * 
+ * \warning WARNING doit-etre etre publique ? 
+ * TODO : y aurait il un inconvenient à fusionner ces 2 fonctions
+ *
+ * @param ImageDataSize new Pixel Area Size
+ *        warning : nothing else is checked
+ */
+
+void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
+   std::string content1;
+   char car[20];	
+   // Assumes ElValue (0x7fe0, 0x0010) exists ...	
+   sprintf(car,"%d",ImageDataSize);
+ 
+   gdcmElValue *a = GetElValueByNumber(0x7fe0, 0x0010);
+   a->SetLength(ImageDataSize);
+ 		
+   ImageDataSize+=8;
+   sprintf(car,"%d",ImageDataSize);
+   content1=car;	
+   SetPubElValByNumber(content1, 0x7fe0, 0x0000);
+}
+
+

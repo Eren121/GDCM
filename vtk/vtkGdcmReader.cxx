@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.28 2003/11/13 10:23:41 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.29 2003/12/22 12:46:19 regrain Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -471,17 +471,17 @@ size_t vtkGdcmReader::LoadImageInMemory(
   // But vtk chooses to invert the lines of an image, that is the last
   // line comes first (for some axis related reasons?). Hence we need
   // to load the image line by line, starting from the end.
-  int NumColumns = GdcmFile.GetXSize();
-  int NumLines   = GdcmFile.GetYSize();
-  int NumPlanes  = GdcmFile.GetZSize();
-  int LineSize   = NumComponents * NumColumns * GdcmFile.GetPixelSize();
+  int NumColumns = GdcmFile.GetHeader()->GetXSize();
+  int NumLines   = GdcmFile.GetHeader()->GetYSize();
+  int NumPlanes  = GdcmFile.GetHeader()->GetZSize();
+  int LineSize   = NumComponents * NumColumns * GdcmFile.GetHeader()->GetPixelSize();
 
   unsigned char * Source;
-  if( GdcmFile.HasLUT() )
+  if( GdcmFile.GetHeader()->HasLUT() )
     {
     size               = GdcmFile.GetImageDataSizeRaw();
     Source             = (unsigned char*) GdcmFile.GetImageDataRaw();
-    unsigned char *Lut =                  GdcmFile.GetLUTRGBA();
+    unsigned char *Lut =                  GdcmFile.GetHeader()->GetLUTRGBA();
   
     if(!this->LookupTable) this->LookupTable = vtkLookupTable::New();
     this->LookupTable->SetNumberOfTableValues(256);

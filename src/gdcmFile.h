@@ -11,9 +11,12 @@
 // for accessing the image/volume content. One can also use it to
 // write Dicom files.
 
-class GDCM_EXPORT gdcmFile: public gdcmHeader
+class GDCM_EXPORT gdcmFile
 {
 private:
+   gdcmHeader *Header;   // Header to use to load the file
+   bool SelfHeader;
+
    void* PixelData;
    size_t lgrTotaleRaw;  // Area length to receive the pixels
    size_t lgrTotale;     // Area length to receive the RGB pixels
@@ -25,20 +28,25 @@ private:
    
    bool ReadPixelData(void * destination);
    
-   int gdcm_read_JPEG_file     (void * image_buffer); // For JPEG 8 Bits
-   int gdcm_read_JPEG_file12   (void * image_buffer); // For JPEG 12 Bits
-   int gdcm_read_JPEG2000_file (void * image_buffer); // For JPEG 2000 (TODO)
+   bool gdcm_read_JPEG_file     (FILE *fp,void * image_buffer); // For JPEG 8 Bits
+   bool gdcm_read_JPEG_file12   (FILE *fp,void * image_buffer); // For JPEG 12 Bits
+   bool gdcm_read_JPEG2000_file (FILE *fp,void * image_buffer); // For JPEG 2000 (TODO)
 
 // For Run Length Encoding (TOCHECK)
-   int gdcm_read_RLE_file      (void * image_buffer); 
+   bool gdcm_read_RLE_file      (FILE *fp,void * image_buffer); 
 
      
 protected:
    int WriteBase(std::string FileName, FileType type);
+
 public:
+   gdcmFile(gdcmHeader *header);
    gdcmFile(std::string & filename);
    gdcmFile(const char * filename);
+   virtual ~gdcmFile(void);
 	
+   gdcmHeader *GetHeader(void);
+
 	// For promotion (performs a deepcopy of pointed header object)
 	// TODO Swig gdcmFile(gdcmHeader* header);
 	// TODO Swig ~gdcmFile();
@@ -64,7 +72,6 @@ public:
    int SetImageData     (void * Data, size_t ExpectedSize);
       // When the caller is aware we simply point to the data:
       // TODO int SetImageDataNoCopy (void * Data, size_t ExpectedSize);
-   void SetImageDataSize (size_t ExpectedSize);
 	
 	// Push to disk.
 	// A NE PAS OUBLIER : que fait-on en cas de Transfert Syntax (dans l'entete)

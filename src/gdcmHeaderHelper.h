@@ -1,12 +1,9 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.7 2003/11/12 14:06:35 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.8 2003/12/22 12:46:16 regrain Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
 
 #include "gdcmHeader.h"
-//#include <list>
-//#include <string>
-//#include <vector>
 
    // Dicom Part 3.3 Compliant
    enum ModalityType {
@@ -66,7 +63,6 @@
 class GDCM_EXPORT gdcmHeaderHelper : public gdcmHeader {
 
 public:
-
    gdcmHeaderHelper::gdcmHeaderHelper();
    gdcmHeaderHelper::gdcmHeaderHelper(const char *filename, bool exception_on_error = false);
 

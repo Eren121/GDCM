@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.44 2003/11/13 10:23:40 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.45 2003/12/22 12:46:16 regrain Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -34,7 +34,6 @@ typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
 ///        gdcmFile and gdcmHeader.
 
 class GDCM_EXPORT gdcmHeader {
-   void SkipBytes(guint32);
 private:
    /// Pointer to the Value Representation Hash Table which contains all
    /// the VR of the DICOM version3 public dictionary. 
@@ -58,7 +57,7 @@ private:
    std::string filename; 
   
    int enableSequences;
-     
+
    // FIXME sw should be an enum e.g.
    //enum EndianType {
       //LittleEndian, 
@@ -82,42 +81,44 @@ private:
    void CheckSwap(void);
    void SwitchSwapToBigEndian(void);
    // CLEAN ME: NewManualElValToPubDict is NOT called any more.
-   gdcmElValue*  NewManualElValToPubDict(std::string NewTagName,
+   gdcmElValue *NewManualElValToPubDict(std::string NewTagName,
                                          std::string VR);
    void SetMaxSizeLoadElementValue(long);
 
-   gdcmDictEntry * GetDictEntryByNumber(guint16, guint16);
-   gdcmDictEntry * GetDictEntryByName  (std::string Name);
+   gdcmDictEntry *GetDictEntryByNumber(guint16, guint16);
+   gdcmDictEntry *GetDictEntryByName  (std::string Name);
 
    // ElValue related utilities
-   gdcmElValue * ReadNextElement(void);
-   gdcmElValue * NewElValueByNumber(guint16 group, guint16 element);
-   gdcmElValue * NewElValueByName  (std::string Name);
+   gdcmElValue *ReadNextElement(void);
+   gdcmElValue *NewElValueByNumber(guint16 group, guint16 element);
+   gdcmElValue *NewElValueByName  (std::string Name);
 
    void FindLength          (gdcmElValue *);
    void FindVR              (gdcmElValue *);
    void LoadElementValue    (gdcmElValue *);
    void LoadElementValueSafe(gdcmElValue *);
    void SkipElementValue    (gdcmElValue *);
-   void FixFoundLength      (gdcmElValue*, guint32);
+   void FixFoundLength      (gdcmElValue *, guint32);
    bool IsAnInteger         (gdcmElValue *);
    void LoadElements(void);
-   
+   void SkipBytes(guint32);
+
 protected:
-   FILE * fp;
    FileType filetype;
-   
+   FILE * fp;
+
    gdcmElValue * GetElValueByNumber(guint16 group, guint16 element);
    int CheckIfExistByNumber(guint16 Group, guint16 Elem );
 
-   guint16 SwapShort(guint16); // needed by gdcmFile
-   guint32 SwapLong(guint32);  // for JPEG Files :-(
-   bool OpenFile(bool exception_on_error = false)
-     throw(gdcmFileError);
-   bool CloseFile(void);
    int write(std::ostream&);   
    int anonymize(std::ostream&);  // FIXME : anonymize should be a friend ?
+
 public:
+   FILE *OpenFile(bool exception_on_error = false)
+     throw(gdcmFileError);
+   bool CloseFile(void);
+   FileType GetFileType(void);
+
    bool IsReadable(void);
    bool IsImplicitVRLittleEndianTransferSyntax(void);
    bool IsExplicitVRLittleEndianTransferSyntax(void);
@@ -135,10 +136,10 @@ public:
    virtual void ParseHeader(bool exception_on_error = false)
      throw(gdcmFormatError);
      
-   gdcmHeader( bool exception_on_error = false);
+   gdcmHeader(bool exception_on_error = false);
    gdcmHeader(const char *filename, 
               bool  exception_on_error = false, 
-	      bool  enable_sequences   = false);
+              bool  enable_sequences   = false);
 	      
    virtual ~gdcmHeader();
 
@@ -213,7 +214,11 @@ public:
    int    GetLUTNbits(void);
    unsigned char * GetLUTRGBA(void);
            
+   void SetImageDataSize (size_t ExpectedSize);
 
+// System access
+   guint16 SwapShort(guint16); // needed by gdcmFile
+   guint32 SwapLong(guint32);  // for JPEG Files
 };
 
 #endif

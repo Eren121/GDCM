@@ -146,11 +146,8 @@ my_error_exit (j_common_ptr cinfo) {
  * Sample routine for JPEG decompression.  We assume that the source file name
  * is passed in.  We want to return 1 on success, 0 on error.
  */
-
-
-//GLOBAL(int)
-int
-gdcmFile::gdcm_read_JPEG_file (void * image_buffer) {
+//GLOBAL(bool)
+bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
 
 char *pimage;
 

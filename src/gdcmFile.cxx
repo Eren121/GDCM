@@ -17,23 +17,85 @@
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
  *
- * @param filename file to be opened for parsing
+ * @param header file to be opened for reading datas
  *
  * @return	
  */
  
-gdcmFile::gdcmFile(std::string & filename) 
-	:gdcmHeader(filename.c_str())	
+gdcmFile::gdcmFile(gdcmHeader *header)
 {
-      if (IsReadable())
-         SetPixelDataSizeFromHeader();
+   Header=header;
+   SelfHeader=false;
+
+   if (Header->IsReadable())
+      SetPixelDataSizeFromHeader();
 }
 
-gdcmFile::gdcmFile(const char * filename) 
-	:gdcmHeader(filename)	
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief Constructor dedicated to writing a new DICOMV3 part10 compliant
+ *        file (see SetFileName, SetDcmTag and Write)
+ *        Opens (in read only and when possible) an existing file and checks
+ *        for DICOM compliance. Returns NULL on failure.
+ * \Note  the in-memory representation of all available tags found in
+ *        the DICOM header is post-poned to first header information access.
+ *        This avoid a double parsing of public part of the header when
+ *        one sets an a posteriori shadow dictionary (efficiency can be
+ *        seen as a side effect).   
+ *
+ * @param filename file to be opened for parsing
+ *
+ * @return	
+ */
+gdcmFile::gdcmFile(std::string & filename)
 {
-   if (IsReadable())
+   Header=new gdcmHeader(filename.c_str());
+   SelfHeader=true;
+
+   if (Header->IsReadable())
       SetPixelDataSizeFromHeader();
+}
+
+gdcmFile::gdcmFile(const char * filename)
+{
+   Header=new gdcmHeader(filename);
+   SelfHeader=true;
+
+   if (Header->IsReadable())
+      SetPixelDataSizeFromHeader();
+}
+
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief Destructor dedicated to writing a new DICOMV3 part10 compliant
+ *        file (see SetFileName, SetDcmTag and Write)
+ *        Opens (in read only and when possible) an existing file and checks
+ *        for DICOM compliance. Returns NULL on failure.
+ * \Note  If the gdcmHeader is created by the gdcmFile, it is destroyed
+ *        by the gdcmFile
+ *
+ * @param filename file to be opened for parsing
+ *
+ * @return	
+ */
+gdcmFile::~gdcmFile(void)
+{
+   if(SelfHeader)
+      delete Header;
+   Header=NULL;
+}
+
+
+/**
+ * \ingroup   gdcmFile
+ * \brief     
+ * @return	
+ */
+gdcmHeader *gdcmFile::GetHeader(void)
+{
+   return(Header);
 }
 
 /**
@@ -49,22 +111,22 @@ gdcmFile::gdcmFile(const char * filename)
 void gdcmFile::SetPixelDataSizeFromHeader(void) {
    int nb;
    std::string str_nb;
-   str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
+   str_nb=Header->GetPubElValByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
       nb = atoi(str_nb.c_str() );
       if (nb == 12) nb =16;
    }
-   lgrTotale =  lgrTotaleRaw = GetXSize() *  GetYSize() *  GetZSize() 
-              * (nb/8)* GetSamplesPerPixel();
+   lgrTotale =  lgrTotaleRaw = Header->GetXSize() * Header->GetYSize() 
+              * Header->GetZSize() * (nb/8)* Header->GetSamplesPerPixel();
    std::string str_PhotometricInterpretation = 
-                             gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
+                             Header->GetPubElValByNumber(0x0028,0x0004);
 			     
    /*if ( str_PhotometricInterpretation == "PALETTE COLOR " )*/
    // pb when undealt Segmented Palette Color
    
-    if (HasLUT()) { 
+    if (Header->HasLUT()) { 
       lgrTotale*=3;
    }
 }
@@ -134,11 +196,13 @@ size_t gdcmFile::GetImageDataSize(void) {
  */
 bool gdcmFile::ReadPixelData(void* destination) {
 
-   if ( !OpenFile())
+   FILE *fp;
+
+   if ( !(fp=Header->OpenFile()))
       return false;
       
-    if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
-      CloseFile();
+   if ( fseek(fp, Header->GetPixelOffset(), SEEK_SET) == -1 ) {
+      Header->CloseFile();
       return false;
    }
    
@@ -149,8 +213,8 @@ bool gdcmFile::ReadPixelData(void* destination) {
    /* 2 pixels 12bit =     [0xABCDEF]           */
    /* 2 pixels 16bit = [0x0ABD] + [0x0FCE]      */
 
-   if (GetBitsAllocated()==12) {
-      int nbPixels = GetXSize()*GetYSize();
+   if (Header->GetBitsAllocated()==12) {
+      int nbPixels = Header->GetXSize() * Header->GetYSize();
       unsigned char b0, b1, b2;
       
       unsigned short int* pdestination = (unsigned short int*)destination;    
@@ -171,135 +235,137 @@ bool gdcmFile::ReadPixelData(void* destination) {
 
    // ----------------------  Uncompressed File
     
-   if ( !IsDicomV3()                             ||
-        IsImplicitVRLittleEndianTransferSyntax() ||
-        IsExplicitVRLittleEndianTransferSyntax() ||
-        IsExplicitVRBigEndianTransferSyntax()    ||
-        IsDeflatedExplicitVRLittleEndianTransferSyntax() ) {
+   if ( !Header->IsDicomV3()                             ||
+        Header->IsImplicitVRLittleEndianTransferSyntax() ||
+        Header->IsExplicitVRLittleEndianTransferSyntax() ||
+        Header->IsExplicitVRBigEndianTransferSyntax()    ||
+        Header->IsDeflatedExplicitVRLittleEndianTransferSyntax() ) {
 
-      size_t ItemRead = fread(destination, GetPixelAreaLength(), 1, fp);
+      size_t ItemRead = fread(destination, Header->GetPixelAreaLength(), 1, fp);
       
       if ( ItemRead != 1 ) {
-         CloseFile();
+         Header->CloseFile();
          return false;
       } else {
-         CloseFile();
+         Header->CloseFile();
          return true;
       }
    } 
 
    // ---------------------- Run Length Encoding
 
-      if (gdcmHeader::IsRLELossLessTransferSyntax()) {
-            int res = (bool)gdcm_read_RLE_file (destination);
-            return res; 
-      }  
+   if (Header->IsRLELossLessTransferSyntax()) {
+         bool res = (bool)gdcm_read_RLE_file (fp,destination);
+         return res; 
+   }  
     
    // --------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
        
-      int nb;
-      std::string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
-      if (str_nb == GDCM_UNFOUND ) {
-         nb = 16;
-      } else {
-         nb = atoi(str_nb.c_str() );
-         if (nb == 12) nb =16;  // ?? 12 should be ACR-NEMA only ?
-      }
-      int nBytes= nb/8;
-      
-      int taille = GetXSize() *  GetYSize()  * GetSamplesPerPixel();    
-      long fragmentBegining; // for ftell, fseek
-      
-      bool jpg2000 =     IsJPEG2000();
-      bool jpgLossless = IsJPEGLossless();
-       
-      bool res = true;
-      guint16 ItemTagGr,ItemTagEl;
-      int ln;  
-      
-         //  Position on begining of Jpeg Pixels
-      
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }
-      fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item length
-         
-      if (ln != 0) {
-         // What is it used for ?!?
-         char *BasicOffsetTableItemValue = (char *)malloc(ln+1);        
-         fread(BasicOffsetTableItemValue,ln,1,fp); 
-      }
-      
-      // first Fragment initialisation
-      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
-      }
-              
-      // parsing fragments until Sequence Delim. Tag found
-      		               
-      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
-      
-                        // --- for each Fragment
-     
-         fread(&ln,4,1,fp); 
-         if(GetSwapCode()) 
-            ln=SwapLong(ln);    // Fragment Item length
-      
-         fragmentBegining=ftell(fp);   
- 
-         if (jpg2000) {          // JPEG 2000 :    call to ???
-	 
-            res = (bool)gdcm_read_JPEG2000_file (destination);  // Not Yet written 
+   int nb;
+   std::string str_nb=Header->GetPubElValByNumber(0x0028,0x0100);
+   if (str_nb == GDCM_UNFOUND ) {
+      nb = 16;
+   } else {
+      nb = atoi(str_nb.c_str() );
+      if (nb == 12) nb =16;  // ?? 12 should be ACR-NEMA only ?
+   }
 
-         } // ------------------------------------- endif (JPEG2000)
-	   
-         else if (jpgLossless) { // JPEG LossLess : call to xmedcom JPEG
-		      
-	    JPEGLosslessDecodeImage (fp,                         // Reading Fragment pixels
-				     (unsigned short *)destination,
-				     GetPixelSize()*8* GetSamplesPerPixel(),
-                                     ln);						 	   
-	    res=1; // in order not to break the loop
-     
-         } // ------------------------------------- endif (JPEGLossless)
-                  
-         else {                   // JPEG Lossy : call to IJG 6b
-	 
-            if  (GetBitsStored() == 8) {
-            	res = (bool)gdcm_read_JPEG_file (destination);  // Reading Fragment pixels         
-            } else {
-            	res = (bool)gdcm_read_JPEG_file12 (destination);// Reading Fragment pixels  
-            } 
-	 }  // ------------------------------------- endif (JPEGLossy)    
-            
-         if (!res) break;
-                  
-         destination = (char *)destination + taille * nBytes; // location in user's memory 
-                                                              // for next fragment (if any) 
-         
-         fseek(fp,fragmentBegining,SEEK_SET); // To be sure we start 
-         fseek(fp,ln,SEEK_CUR);               // at the begining of next fragment
-         
-         ItemTagGr = ItemTagEl =0;
-         fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
-         fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
-         } 
-      
-      }     // endWhile parsing fragments until Sequence Delim. Tag found    
+   int nBytes= nb/8;
+   
+   int taille = Header->GetXSize() * Header->GetYSize()  
+               * Header->GetSamplesPerPixel();    
+   long fragmentBegining; // for ftell, fseek
+   
+   bool jpg2000 =     Header->IsJPEG2000();
+   bool jpgLossless = Header->IsJPEGLossless();
     
-      return res;
-}   
+   bool res = true;
+   guint16 ItemTagGr,ItemTagEl;
+   int ln;  
+   
+      //  Position on begining of Jpeg Pixels
+   
+   fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+   fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+   if(Header->GetSwapCode()) {
+      ItemTagGr=Header->SwapShort(ItemTagGr); 
+      ItemTagEl=Header->SwapShort(ItemTagEl);            
+   }
+   fread(&ln,4,1,fp); 
+   if(Header->GetSwapCode()) 
+      ln=Header->SwapLong(ln);    // Basic Offset Table Item length
+      
+   if (ln != 0) {
+      // What is it used for ?!?
+      char *BasicOffsetTableItemValue = (char *)malloc(ln+1);        
+      fread(BasicOffsetTableItemValue,ln,1,fp); 
+   }
+   
+   // first Fragment initialisation
+   fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+   fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+   if(Header->GetSwapCode()) {
+      ItemTagGr=Header->SwapShort(ItemTagGr); 
+      ItemTagEl=Header->SwapShort(ItemTagEl);            
+   }
+           
+   // parsing fragments until Sequence Delim. Tag found
+      		            
+   while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
+      // --- for each Fragment
+
+      fread(&ln,4,1,fp); 
+      if(Header->GetSwapCode()) 
+         ln=Header->SwapLong(ln);    // Fragment Item length
+   
+      fragmentBegining=ftell(fp);   
+
+      if (jpg2000) {          // JPEG 2000 :    call to ???
+ 
+         res = (bool)gdcm_read_JPEG2000_file (fp,destination);  // Not Yet written 
+
+      } // ------------------------------------- endif (JPEG2000)
+	
+      else if (jpgLossless) { // JPEG LossLess : call to xmedcom JPEG
+		   
+         JPEGLosslessDecodeImage (fp,  // Reading Fragment pixels
+				     (unsigned short *)destination,
+				     Header->GetPixelSize()*8* Header->GetSamplesPerPixel(),
+                                     ln);						 	   
+         res=1; // in order not to break the loop
+  
+      } // ------------------------------------- endif (JPEGLossless)
+               
+      else {                   // JPEG Lossy : call to IJG 6b
+
+         if  (Header->GetBitsStored() == 8) {
+            res = (bool)gdcm_read_JPEG_file (fp,destination);  // Reading Fragment pixels         
+         } else {
+            res = (bool)gdcm_read_JPEG_file12 (fp,destination);// Reading Fragment pixels  
+         } 
+      }  // ------------------------------------- endif (JPEGLossy)    
+         
+      if (!res) break;
+               
+      destination = (char *)destination + taille * nBytes; // location in user's memory 
+                                                           // for next fragment (if any) 
+      
+      fseek(fp,fragmentBegining,SEEK_SET); // To be sure we start 
+      fseek(fp,ln,SEEK_CUR);               // at the begining of next fragment
+      
+      ItemTagGr = ItemTagEl =0;
+      fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
+      fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
+      if(Header->GetSwapCode()) {
+         ItemTagGr=Header->SwapShort(ItemTagGr); 
+         ItemTagEl=Header->SwapShort(ItemTagEl);            
+      } 
+   
+   }     // endWhile parsing fragments until Sequence Delim. Tag found    
+ 
+   Header->CloseFile();
+   return res;
+}
 
 /**
  * \ingroup gdcmFile
@@ -329,7 +395,7 @@ void * gdcmFile::GetImageData (void) {
  * \        NULL if alloc fails 
  */
 void * gdcmFile::GetImageDataRaw (void) {
-   if (HasLUT())
+   if (Header->HasLUT())
       lgrTotale /= 3;  // TODO Let gdcmHeadar user a chance 
                        // to get the right value
 		       // Create a member lgrTotaleRaw ???
@@ -365,14 +431,14 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 
    size_t l = GetImageDataIntoVectorRaw (destination, MaxSize);
    
-   if (!HasLUT())
+   if (!Header->HasLUT())
       return lgrTotale; 
                             
          //       from Lut R + Lut G + Lut B
          
    unsigned char * newDest = (unsigned char *)malloc(lgrTotale);
    unsigned char * a       = (unsigned char *)destination;	 
-   unsigned char * lutRGBA =                  GetLUTRGBA();
+   unsigned char * lutRGBA =                  Header->GetLUTRGBA();
    if (lutRGBA) { 	    
       int l = lgrTotaleRaw;
       memmove(newDest, destination, l);// move Gray pixels to temp area	    
@@ -391,11 +457,11 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          // CreateOrReplaceIfExist ?
 	 
    std::string spp = "3";        // Samples Per Pixel
-   gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002);
+   Header->SetPubElValByNumber(spp,0x0028,0x0002);
    std::string rgb= "RGB ";      // Photometric Interpretation
-   gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
+   Header->SetPubElValByNumber(rgb,0x0028,0x0004);
    std::string planConfig = "0"; // Planar Configuration
-   gdcmHeader::SetPubElValByNumber(planConfig,0x0028,0x0006);
+   Header->SetPubElValByNumber(planConfig,0x0028,0x0006);
        
                
    } else { 
@@ -412,7 +478,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 		   // Segmented xxx Palette Color are *more* than 65535 long ?!?
 		   
       std::string rgb= "MONOCHROME1 ";      // Photometric Interpretation
-      gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);		   
+      Header->SetPubElValByNumber(rgb,0x0028,0x0004);		   
 		   
    }   
     	 
@@ -461,7 +527,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    (void)ReadPixelData(destination);
 			
 	// Nombre de Bits Alloues pour le stockage d'un Pixel
-   str_nb = GetPubElValByNumber(0x0028,0x0100);
+   str_nb = Header->GetPubElValByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
@@ -469,7 +535,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    }
 	
 	// Nombre de Bits Utilises
-   str_nbu=GetPubElValByNumber(0x0028,0x0101);
+   str_nbu=Header->GetPubElValByNumber(0x0028,0x0101);
    if (str_nbu == GDCM_UNFOUND ) {
       nbu = nb;
    } else {
@@ -477,7 +543,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    }	
 	
 	// Position du Bit de Poids Fort
-   str_highBit=GetPubElValByNumber(0x0028,0x0102);
+   str_highBit=Header->GetPubElValByNumber(0x0028,0x0102);
    if (str_highBit == GDCM_UNFOUND ) {
       highBit = nb - 1;
    } else {
@@ -486,7 +552,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 	// Pixel sign
 	// 0 = Unsigned
 	// 1 = Signed
-   str_signe=GetPubElValByNumber(0x0028,0x0103);
+   str_signe=Header->GetPubElValByNumber(0x0028,0x0103);
    if (str_signe == GDCM_UNFOUND ) {
       signe = 0;  // default is unsigned
    } else {
@@ -495,7 +561,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 
    // re arange bytes inside the integer
    if (nb != 8)
-     SwapZone(destination, GetSwapCode(), lgrTotale, nb);
+     SwapZone(destination, Header->GetSwapCode(), lgrTotale, nb);
      
    // to avoid pb with some xmedcon breakers images 
    if (nb==16 && nbu<nb && signe==0) {
@@ -544,7 +610,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    // -------------------
    
        std::string str_PhotometricInterpretation = 
-                 gdcmHeader::GetPubElValByNumber(0x0028,0x0004);
+                 Header->GetPubElValByNumber(0x0028,0x0004);
 		   
       if ( (str_PhotometricInterpretation == "MONOCHROME1 ") 
         || (str_PhotometricInterpretation == "MONOCHROME2 ") ) {
@@ -560,7 +626,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    //                            PhotometricInterpretation=PALETTE COLOR
    // and heuristic has to be found :-( 
 
-      int planConf=GetPlanarConfiguration();  // 0028,0006
+      int planConf=Header->GetPlanarConfiguration();  // 0028,0006
 
       // Whatever Planar Configuration is, 
       // "PALETTE COLOR " implies that we deal with the palette. 
@@ -587,8 +653,8 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 	 //   ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
 	 // and be *very* affraid
 	 //
-            int l = GetXSize()*GetYSize();
-            int nbFrames = GetZSize();
+            int l = Header->GetXSize()*Header->GetYSize();
+            int nbFrames = Header->GetZSize();
 
             unsigned char * newDest = (unsigned char*) malloc(lgrTotale);
             unsigned char *x  = newDest;
@@ -627,7 +693,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
          //       need to make RGB Pixels from R,G,B Planes
 	 //       (all the Frames at a time)
 
-            int l = GetXSize()*GetYSize()*GetZSize();
+            int l = Header->GetXSize()*Header->GetYSize()*Header->GetZSize();
 
             char * newDest = (char*) malloc(lgrTotale);
             char * x = newDest;
@@ -661,12 +727,12 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 
 
    std::string spp = "3";        // Samples Per Pixel
-   gdcmHeader::SetPubElValByNumber(spp,0x0028,0x0002);
+   Header->SetPubElValByNumber(spp,0x0028,0x0002);
    std::string rgb="RGB ";   // Photometric Interpretation
-   gdcmHeader::SetPubElValByNumber(rgb,0x0028,0x0004);
+   Header->SetPubElValByNumber(rgb,0x0028,0x0004);
 
    std::string planConfig = "0"; // Planar Configuration
-   gdcmHeader::SetPubElValByNumber(planConfig,0x0028,0x0006);
+   Header->SetPubElValByNumber(planConfig,0x0028,0x0006);
 	 
 	 // TODO : Drop Palette Color out of the Header? 
 	     
@@ -767,39 +833,10 @@ return;
  * @return integer acts as a boolean	
  */
 int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
-   SetImageDataSize(ExpectedSize);
+   Header->SetImageDataSize(ExpectedSize);
    PixelData = inData;
    lgrTotale = ExpectedSize;
    return(1);
-}
-
-
-/////////////////////////////////////////////////////////////////
-/**
- * \ingroup   gdcmFile
- * \brief Sets the Pixel Area size in the Header
- *        --> not-for-rats function
- * 
- * \warning WARNING doit-etre etre publique ? 
- * TODO : y aurait il un inconvenient à fusionner ces 2 fonctions
- *
- * @param ImageDataSize new Pixel Area Size
- *        warning : nothing else is checked
- */
-
-void gdcmFile::SetImageDataSize(size_t ImageDataSize) {
-   std::string content1;
-   char car[20];	
-   // Assumes ElValue (0x7fe0, 0x0010) exists ...	
-   sprintf(car,"%d",ImageDataSize);
- 
-   gdcmElValue*a = GetElValueByNumber(0x7fe0, 0x0010);
-   a->SetLength(ImageDataSize);
- 		
-   ImageDataSize+=8;
-   sprintf(car,"%d",ImageDataSize);
-   content1=car;	
-   SetPubElValByNumber(content1, 0x7fe0, 0x0000);
 }
 
 
@@ -921,15 +958,15 @@ int gdcmFile::WriteBase (std::string FileName, FileType type) {
    // just before writting ...
 
    std::string rows, columns; 
-   if ( filetype == ACR_LIBIDO){
-         rows    = GetPubElValByNumber(0x0028, 0x0010);
-         columns = GetPubElValByNumber(0x0028, 0x0011);
-         SetPubElValByNumber(columns,  0x0028, 0x0010);
-         SetPubElValByNumber(rows   ,  0x0028, 0x0011);
+   if ( Header->GetFileType() == ACR_LIBIDO){
+         rows    = Header->GetPubElValByNumber(0x0028, 0x0010);
+         columns = Header->GetPubElValByNumber(0x0028, 0x0011);
+         Header->SetPubElValByNumber(columns,  0x0028, 0x0010);
+         Header->SetPubElValByNumber(rows   ,  0x0028, 0x0011);
    }	
    // ----------------- End of Special Patch ----------------
 
-   gdcmHeader::Write(fp1, type);
+   Header->Write(fp1, type);
 
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
@@ -937,9 +974,9 @@ int gdcmFile::WriteBase (std::string FileName, FileType type) {
    // ...and we restore the Header to be Dicom Compliant again 
    // just after writting
 
-   if (filetype == ACR_LIBIDO){
-         SetPubElValByNumber(rows   , 0x0028, 0x0010);
-         SetPubElValByNumber(columns, 0x0028, 0x0011);
+   if (Header->GetFileType() == ACR_LIBIDO){
+         Header->SetPubElValByNumber(rows   , 0x0028, 0x0010);
+         Header->SetPubElValByNumber(columns, 0x0028, 0x0011);
    }	
    // ----------------- End of Special Patch ----------------
 

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.6 2003/09/30 14:07:20 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.7 2003/12/22 12:46:19 regrain Exp $
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -30,7 +30,7 @@ int main( int argc, char *argv[] )
 
    // Lecture de l'image
    vtkGdcmReader *reader = vtkGdcmReader::New();
-   reader->DebugOn();
+//   reader->DebugOn();
    // Alloc Used High
    // 8 8 7 U : OK
    // reader->SetFileName("../gdcmData/CT-MONO2-8-abdo.dcm");

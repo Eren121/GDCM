@@ -29,26 +29,28 @@
  */
 bool gdcmFile::ParsePixelData(void) {
 
-   if ( !OpenFile())
+   FILE *fp;
+
+   if ( !(fp=Header->OpenFile()))
       return false;
       
-    if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
-      CloseFile();
+    if ( fseek(fp, Header->GetPixelOffset(), SEEK_SET) == -1 ) {
+      Header->CloseFile();
       return false;
    } 
    
-   if ( !IsDicomV3()                             ||
-        IsImplicitVRLittleEndianTransferSyntax() ||
-        IsExplicitVRLittleEndianTransferSyntax() ||
-        IsExplicitVRBigEndianTransferSyntax()    ||
-        IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
+   if ( !Header->IsDicomV3()                             ||
+        Header->IsImplicitVRLittleEndianTransferSyntax() ||
+        Header->IsExplicitVRLittleEndianTransferSyntax() ||
+        Header->IsExplicitVRBigEndianTransferSyntax()    ||
+        Header->IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
         
         printf ("gdcmFile::ParsePixelData : non JPEG/RLE File\n");
         return 0;       
    }        
 
    int nb;
-   std::string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
+   std::string str_nb=Header->GetPubElValByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
@@ -57,7 +59,7 @@ bool gdcmFile::ParsePixelData(void) {
    }
    int nBytes= nb/8;
       
-   int taille = GetXSize() *  GetYSize()  * GetSamplesPerPixel(); 
+   int taille = Header->GetXSize() * Header->GetYSize() * Header->GetSamplesPerPixel(); 
          
    printf ("Checking the Dicom-encapsulated Jpeg/RLE Pixels\n");
       
@@ -68,24 +70,22 @@ bool gdcmFile::ParsePixelData(void) {
 
   // -------------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
 
-   if( !IsRLELossLessTransferSyntax()) {
+   if( !Header->IsRLELossLessTransferSyntax()) {
 
       // JPEG Image
-
-      std::cout << "JPEG image" << std::endl;
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
+      if(Header->GetSwapCode()) {
+         ItemTagGr=Header->SwapShort(ItemTagGr); 
+         ItemTagEl=Header->SwapShort(ItemTagEl);            
       }
       printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
                 ftellRes,ItemTagGr,ItemTagEl );
       ftellRes=ftell(fp);
       fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item Lentgh
+      if(Header->GetSwapCode()) 
+         ln=Header->SwapLong(ln);    // Basic Offset Table Item Lentgh
       printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
             ftellRes,ln,ln);
       if (ln != 0) {
@@ -102,9 +102,9 @@ bool gdcmFile::ParsePixelData(void) {
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
+      if(Header->GetSwapCode()) {
+         ItemTagGr=Header->SwapShort(ItemTagGr); 
+         ItemTagEl=Header->SwapShort(ItemTagEl);            
       }  
       printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
             ftellRes,ItemTagGr,ItemTagEl );
@@ -113,8 +113,8 @@ bool gdcmFile::ParsePixelData(void) {
       
          ftellRes=ftell(fp);
          fread(&ln,4,1,fp); 
-         if(GetSwapCode()) 
-            ln=SwapLong(ln);    // length
+         if(Header->GetSwapCode()) 
+            ln=Header->SwapLong(ln);    // length
          printf("      at %x : fragment length %d x(%08x)\n",
                 ftellRes, ln,ln);
 
@@ -129,9 +129,9 @@ bool gdcmFile::ParsePixelData(void) {
          ftellRes=ftell(fp);
          fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
          fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
+         if(Header->GetSwapCode()) {
+            ItemTagGr=Header->SwapShort(ItemTagGr); 
+            ItemTagEl=Header->SwapShort(ItemTagEl);            
          }
          printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
                ftellRes,ItemTagGr,ItemTagEl );
@@ -140,8 +140,6 @@ bool gdcmFile::ParsePixelData(void) {
    } else {
 
       // RLE Image
-
-      std::cout << "RLE image" << std::endl;
       long RleSegmentLength[15],fragmentLength;
       guint32 nbRleSegments;
       guint32 RleSegmentOffsetTable[15];
@@ -150,17 +148,17 @@ bool gdcmFile::ParsePixelData(void) {
          // Item Tag
       fread(&ItemTagGr,2,1,fp);  //Reading (fffe):Basic Offset Table Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  //Reading (e000):Basic Offset Table Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
+      if(Header->GetSwapCode()) {
+         ItemTagGr=Header->SwapShort(ItemTagGr); 
+         ItemTagEl=Header->SwapShort(ItemTagEl);            
       }
       printf ("at %x : ItemTag (should be fffe,e000): %04x,%04x\n",
                 ftellRes,ItemTagGr,ItemTagEl );
          // Item Length
       ftellRes=ftell(fp);
       fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Basic Offset Table Item Lentgh
+      if(Header->GetSwapCode()) 
+         ln=Header->SwapLong(ln);    // Basic Offset Table Item Lentgh
       printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
             ftellRes,ln,ln);
       if (ln != 0) {
@@ -177,9 +175,9 @@ bool gdcmFile::ParsePixelData(void) {
       ftellRes=ftell(fp);
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-      if(GetSwapCode()) {
-         ItemTagGr=SwapShort(ItemTagGr); 
-         ItemTagEl=SwapShort(ItemTagEl);            
+      if(Header->GetSwapCode()) {
+         ItemTagGr=Header->SwapShort(ItemTagGr); 
+         ItemTagEl=Header->SwapShort(ItemTagEl);            
       }  
       printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
             ftellRes,ItemTagGr,ItemTagEl );
@@ -189,23 +187,23 @@ bool gdcmFile::ParsePixelData(void) {
       // Parse fragments of the current Fragment (Frame)    
          ftellRes=ftell(fp);
          fread(&fragmentLength,4,1,fp); 
-         if(GetSwapCode()) 
-            fragmentLength=SwapLong(fragmentLength);    // length
+         if(Header->GetSwapCode()) 
+            fragmentLength=Header->SwapLong(fragmentLength);    // length
          printf("      at %x : 'fragment' length %d x(%08x)\n",
                 ftellRes, fragmentLength,fragmentLength);
                        
           //------------------ scanning (not reading) fragment pixels
  
          fread(&nbRleSegments,4,1,fp);  // Reading : Number of RLE Segments
-         if(GetSwapCode()) 
-            nbRleSegments=SwapLong(nbRleSegments);
+         if(Header->GetSwapCode()) 
+            nbRleSegments=Header->SwapLong(nbRleSegments);
             printf("   Nb of RLE Segments : %d\n",nbRleSegments);
  
          for(int k=1; k<=15; k++) { // Reading RLE Segments Offset Table
             ftellRes=ftell(fp);
             fread(&RleSegmentOffsetTable[k],4,1,fp);
-            if(GetSwapCode())
-               RleSegmentOffsetTable[k]=SwapLong(RleSegmentOffsetTable[k]);
+            if(Header->GetSwapCode())
+               RleSegmentOffsetTable[k]=Header->SwapLong(RleSegmentOffsetTable[k]);
             printf("        at : %x Offset Segment %d : %d (%x)\n",
                     ftellRes,k,RleSegmentOffsetTable[k],
                     RleSegmentOffsetTable[k]);
@@ -235,9 +233,9 @@ bool gdcmFile::ParsePixelData(void) {
          ftellRes=ftell(fp);
          fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
          fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
-         if(GetSwapCode()) {
-            ItemTagGr=SwapShort(ItemTagGr); 
-            ItemTagEl=SwapShort(ItemTagEl);            
+         if(Header->GetSwapCode()) {
+            ItemTagGr=Header->SwapShort(ItemTagGr); 
+            ItemTagEl=Header->SwapShort(ItemTagEl);            
          }
          printf ("at %x : ItemTag (should be fffe,e000 or e0dd): %04x,%04x\n",
                ftellRes,ItemTagGr,ItemTagEl );

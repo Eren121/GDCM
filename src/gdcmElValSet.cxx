@@ -65,8 +65,6 @@ void gdcmElValSet::Print(std::ostream & os) {
    std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
    
-   std::cout << "------------- using tagHt ---------------------" << std::endl;
-   
    for (TagElValueHT::iterator tag = tagHt.begin();
 	   tag != tagHt.end();
 	   ++tag){
@@ -97,12 +95,10 @@ void gdcmElValSet::Print(std::ostream & os) {
       os << std::endl;
    }
    
-   std::cout << "------------ using listElem -------------------" << std::endl;
-      
-  guint32 lgth;
-  char greltag[10];  //group element tag
+   guint32 lgth;
+   char greltag[10];  //group element tag
    
-  for (ListTag::iterator i = listElem.begin();  
+   for (ListTag::iterator i = listElem.begin();  
 	   i != listElem.end();
 	   ++i){
       g = (*i)->GetGroup();
@@ -470,8 +466,6 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
       val = tag2->second->GetValue().c_str();
       vr =  tag2->second->GetVR();
       
-     // std::cout << "Tag "<< std::hex << gr << " " << el << std::endl;
-
       if ( type == ACR ) { 
          if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
          if (gr %2)         continue; // ignore shadow groups

@@ -163,9 +163,8 @@ my_error_exit (j_common_ptr cinfo) {
  */
 
 
-//GLOBAL(int)
-int
-gdcmFile::gdcm_read_JPEG_file12 (void * image_buffer) {
+//GLOBAL(bool)
+bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
 
 char *pimage;
 
@@ -227,7 +226,7 @@ char *pimage;
      * We need to clean up the JPEG object, close the input file, and return.
      */
     jpeg_destroy_decompress(&cinfo);
-    return 0;
+    return(false);
   }
   /* Now we can initialize the JPEG decompression object. */
   jpeg_create_decompress(&cinfo);
@@ -258,6 +257,7 @@ if (DEBUG) {
 				cinfo.output_components);
 	printf("nb of color components returned  %d \n", 
 				cinfo.data_precision);
+
 }
 
 
@@ -366,7 +366,7 @@ if (DEBUG) printf("Entree Step 8\n");
 
   /* And we're done! */
   
-  return 1;
+  return(true);
 }
 
 /*
