@@ -217,10 +217,19 @@ extern gdcmGlobal gdcmGlob;
 ////////////////////////////////////////////////////////////////////////////
 // Deals with function returning a C++ string.
 %typemap(python, in) (gdcmMethod *,void * =NULL,gdcmMethod * =NULL) {
-    Py_INCREF($input);
-    $1=vtkPythonVoidFunc;
-	$2=$input;
-	$3=vtkPythonVoidFuncArgDelete;
+	if($input!=Py_None)
+	{
+		Py_INCREF($input);
+		$1=vtkPythonVoidFunc;
+		$2=$input;
+		$3=vtkPythonVoidFuncArgDelete;
+	}
+	else
+	{
+		$1=NULL;
+		$2=NULL;
+		$3=NULL;
+	}
 }
 
 
