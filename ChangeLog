@@ -1,3 +1,12 @@
+2002-12-6 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * wrapping python correct with standalone wrapped dll (don't use separate
+         dll under windows !!!!)
+      * removed glib references
+      * typedef's inserted in gdcm.i for correct swig type management
+      * python21_d MODE DEBUG enabled (ask Frog how to use it)
+      * NO problem with having an STL member of class for example string in C++
+      * PYTHON TEST OF DCMLIB OK UNDER WINDOWS ON A LARGE SET (one) of IMAGE(s).
+
 2002-11-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/demo/*.py load.py extracted from test.py. Added explore.py
         that only displays required tags and testAll.py that parses all

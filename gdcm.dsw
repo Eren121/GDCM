@@ -27,6 +27,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "gdcmpycomplet"=".\python\gdcmpy\gdcmpycomplet.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "gdcmtest"=".\TEST\WIN32\gdcmtest\gdcmtest.dsp" - Package Owner=<4>
 
 Package=<5>

@@ -28,15 +28,19 @@
                       // 3/ Make sure we can setup some default size value,
                       //    which should be around 4500 entries which is the
                       //    average dictionary size (said JPR)
+
+#define g_malloc malloc
+#define g_free   free
+
 #ifdef __GNUC__
 #include <stdint.h>
 #define guint16 uint16_t
 #define guint32 uint32_t
-#define g_malloc malloc
-#define g_free   free
 #endif
-#ifdef _MSC_VER
-#include <glib.h>
+#ifdef _MSC_VER 
+typedef  unsigned short guint16;
+typedef  unsigned int guint32;
+
 #endif
 
 #ifdef _MSC_VER
