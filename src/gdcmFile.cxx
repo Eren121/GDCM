@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 13:15:41 $
-  Version:   $Revision: 1.210 $
+  Date:      $Date: 2005/02/05 01:31:36 $
+  Version:   $Revision: 1.211 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1102,11 +1102,8 @@ size_t File::GetPixelOffset()
    }
    else
    {
-#ifdef GDCM_DEBUG
-      std::cout << "Big trouble : Pixel Element ("
-                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
-                << std::endl;  
-#endif //GDCM_DEBUG
+      gdcmDebugMacro( "Big trouble : Pixel Element ("
+                      << std::hex << GrPixel<<","<< NumPixel<< ") NOT found" );
       return 0;
    }
 }
@@ -1127,11 +1124,8 @@ size_t File::GetPixelAreaLength()
    }
    else
    {
-#ifdef GDCM_DEBUG
-      std::cout << "Big trouble : Pixel Element ("
-                << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
-                << std::endl;
-#endif //GDCM_DEBUG
+      gdcmDebugMacro( "Big trouble : Pixel Element ("
+                      << std::hex << GrPixel<<","<< NumPixel<< ") NOT found" );
       return 0;
    }
 }
