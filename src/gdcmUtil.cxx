@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 20:02:46 $
-  Version:   $Revision: 1.116 $
+  Date:      $Date: 2005/01/21 20:49:37 $
+  Version:   $Revision: 1.117 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -367,8 +367,6 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
   return s1_even == s2_even;
 }
 
-
-
 /**
  * \brief   tells us if the processor we are working with is BigEndian or not
  */
@@ -686,7 +684,11 @@ std::string Util::GetMACAddress()
    if (stat == 0)
    {
       // fill with zero to fit on 15 bytes.
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+      return Format("%015I64u", d.n);
+#else
       return Format("%015llu", d.n);
+#endif
    }
    else
    {
