@@ -9,7 +9,8 @@ SET(EXAMPLE_SOURCES
   exBuildUpDicomDir
   exReadPapyrus
   exReadWriteFile
-  
+  exAnonymize
+    
 #the following are utilities
   PrintDicomDir
   PrintDocument
