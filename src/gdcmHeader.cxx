@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.68 2003/05/28 19:36:21 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.69 2003/06/17 17:44:48 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -14,6 +14,10 @@
 #include "gdcmHeader.h"
 using namespace std;
 
+
+// TODO : remove DEBUG
+#define DEBUG 0
+
 // Refer to gdcmHeader::CheckSwap()
 #define HEADER_LENGTH_TO_READ       256
 // Refer to gdcmHeader::SetMaxSizeLoadElementValue()
@@ -21,7 +25,8 @@ using namespace std;
 
 void gdcmHeader::Initialise(void) {
    dicom_vr = gdcmGlobal::GetVR();
-   Dicts = gdcmGlobal::GetDicts();
+   dicom_ts = gdcmGlobal::GetTS();
+   Dicts =    gdcmGlobal::GetDicts();
    RefPubDict = Dicts->GetDefaultPubDict();
    RefShaDict = (gdcmDict*)0;
 }
@@ -35,6 +40,11 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
   ParseHeader();
   LoadElements();
   CloseFile();
+}
+
+gdcmHeader::gdcmHeader(bool exception_on_error) {
+  SetMaxSizeLoadElementValue(_MaxSizeLoadElementValue_);
+  Initialise();
 }
 
 bool gdcmHeader::OpenFile(bool exception_on_error)
@@ -59,8 +69,8 @@ bool gdcmHeader::CloseFile(void) {
 }
 
 gdcmHeader::~gdcmHeader (void) {
-   dicom_vr = (gdcmVR*)0;
-   Dicts    = (gdcmDictSet*)0;
+   dicom_vr =   (gdcmVR*)0; 
+   Dicts    =   (gdcmDictSet*)0;
    RefPubDict = (gdcmDict*)0;
    RefShaDict = (gdcmDict*)0;
    return;
@@ -262,6 +272,8 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
    char VR[3];
    string vr;
    int lgrLue;
+   char msg[100]; // for sprintf. Sorry
+
    long PositionOnEntry = ftell(fp);
    // Warning: we believe this is explicit VR (Value Representation) because
    // we used a heuristic that found "UL" in the first tag. Alas this
@@ -318,8 +330,11 @@ void gdcmHeader::FindVR( gdcmElValue *ElVal) {
    }
    
    // We thought this was explicit VR, but we end up with an
-   // implicit VR tag. Let's backtrack.
-   dbg.Verbose(1, "gdcmHeader::FindVR:", "Falsely explicit vr file");
+   // implicit VR tag. Let's backtrack.   
+   
+      sprintf(msg,"Falsely explicit vr file (%04x,%04x)\n", ElVal->GetGroup(),ElVal->GetElement());
+      dbg.Verbose(1, "gdcmHeader::FindVR: ",msg);
+   
    fseek(fp, PositionOnEntry, SEEK_SET);
    // When this element is known in the dictionary we shall use, e.g. for
    // the semantics (see  the usage of IsAnInteger), the vr proposed by the
@@ -421,15 +436,19 @@ bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
    return false;
 }
 
-// faire qq chose d'intelligent a la place de ça
-
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
 bool gdcmHeader::IsJPEGLossless(void) {
    gdcmElValue* Element = PubElValSet.GetElementByNumber(0x0002, 0x0010);
+    // faire qq chose d'intelligent a la place de ça
    if ( !Element )
       return false;
    LoadElementValueSafe(Element);
    const char * Transfert = Element->GetValue().c_str();
-   printf("TransfertSyntx %s\n",Transfert);
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
    return false;
@@ -490,6 +509,7 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
       return true;
    return false;
 }
+
 /**
  * \ingroup gdcmHeader
  * \brief   Predicate for dicom version 3 file.
@@ -514,7 +534,13 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    ElVal->SetLength(FoundLength);
 }
 
-guint32 gdcmHeader::FindLengthOB(void) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
+ guint32 gdcmHeader::FindLengthOB(void) {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
    guint16 g;
    guint16 n; 
@@ -526,50 +552,78 @@ guint32 gdcmHeader::FindLengthOB(void) {
    while ( ! FoundSequenceDelimiter) {
       g = ReadInt16();
       n = ReadInt16();
+      
+ if (DEBUG) printf ("dans FindLengthOB (%04x,%04x)\n",g,n);
+ long l = ftell(fp);
+ if (DEBUG) printf("en  %d o(%o) x(%x)\n",l,l,l); 
+
       if (errno == 1)
          return 0;
       TotalLength += 4;  // We even have to decount the group and element 
-      if ( g != 0xfffe ) {
-         dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",
-                     "wrong group for an item sequence.");
+     
+      if ( g != 0xfffe           && g!=0xb00c ) /*for bogus headerJPR */ {
+         char msg[100]; // for sprintf. Sorry
+         sprintf(msg,"wrong group (%04x) for an item sequence (%04x,%04x)\n",g, g,n);
+         dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",msg); 
+         long l = ftell(fp);
+         if (DEBUG) printf("en  %d o(%o) x(%x)\n",l,l,l); 
          errno = 1;
          return 0;
       }
-      if ( n == 0xe0dd )
+ 
+      if ( n == 0xe0dd       || ( g==0xb00c && n==0x0eb6 ) ) /* for bogus header JPR */ 
          FoundSequenceDelimiter = true;
-      else if ( n != 0xe000) {
-         dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",
-                     "wrong element for an item sequence.");
+      else if ( n != 0xe000 ){
+         char msg[100];  // for sprintf. Sorry
+         sprintf(msg,"wrong element (%04x) for an item sequence (%04x,%04x)\n",n, g,n);
+	 dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",msg);
+         if (DEBUG) printf("wrong element (%04x) for an item sequence (%04x,%04x)\n",n, g,n);	 
          errno = 1;
          return 0;
       }
       ItemLength = ReadInt32();
       TotalLength += ItemLength + 4;  // We add 4 bytes since we just read
                                       // the ItemLength with ReadInt32
+                                      
+      if (DEBUG) printf("TotalLength %d\n",TotalLength);
       SkipBytes(ItemLength);
    }
    fseek(fp, PositionOnEntry, SEEK_SET);
    return TotalLength;
 }
 
-void gdcmHeader::FindLength(gdcmElValue * ElVal) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
+ void gdcmHeader::FindLength (gdcmElValue * ElVal) {
    guint16 element = ElVal->GetElement();
+   guint16 group = ElVal->GetGroup(); // JPR a virer
    string  vr      = ElVal->GetVR();
    guint16 length16;
+   if( (element == 0x0010) && (group == 0x7fe0) ) {// JPR
+ 
+      dbg.SetDebug(1);
+      dbg.Verbose(2, "gdcmHeader::FindLength: ", // JPR
+                     "on est sur 7fe0 0010");
+   }   
    
    if ( (filetype == ExplicitVR) && ! ElVal->IsImplicitVr() ) {
-
       if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) {
+      
          // The following reserved two bytes (see PS 3.5-2001, section
          // 7.1.2 Data element structure with explicit vr p27) must be
          // skipped before proceeding on reading the length on 4 bytes.
          fseek(fp, 2L, SEEK_CUR);
+
          guint32 length32 = ReadInt32();
          if ( (vr == "OB") && (length32 == 0xffffffff) ) {
             ElVal->SetLength(FindLengthOB());
             return;
          }
-         FixFoundLength(ElVal, length32);
+         FixFoundLength(ElVal, length32);        
          return;
       }
 
@@ -603,7 +657,7 @@ void gdcmHeader::FindLength(gdcmElValue * ElVal) {
       // endian encoding". When this is the case, chances are we have got our
       // hands on a big endian encoded file: we switch the swap code to
       // big endian and proceed...
-      if ( (element  == 0x000) && (length16 == 0x0400) ) {
+      if ( (element  == 0x0000) && (length16 == 0x0400) ) {
          if ( ! IsExplicitVRBigEndianTransferSyntax() ) {
             dbg.Verbose(0, "gdcmHeader::FindLength", "not explicit VR");
             errno = 1;
@@ -686,16 +740,34 @@ guint16 gdcmHeader::SwapShort(guint16 a) {
    return (a);
 }
 
-void gdcmHeader::SkipBytes(guint32 NBytes) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
+ void gdcmHeader::SkipBytes(guint32 NBytes) {
    //FIXME don't dump the returned value
    (void)fseek(fp, (long)NBytes, SEEK_CUR);
 }
 
-void gdcmHeader::SkipElementValue(gdcmElValue * ElVal) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
+ void gdcmHeader::SkipElementValue(gdcmElValue * ElVal) {
    SkipBytes(ElVal->GetLength());
 }
 
-void gdcmHeader::SetMaxSizeLoadElementValue(long NewSize) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
+ void gdcmHeader::SetMaxSizeLoadElementValue(long NewSize) {
    if (NewSize < 0)
       return;
    if ((guint32)NewSize >= (guint32)0xffffffff) {
@@ -769,37 +841,37 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
 	
 	// on devrait pouvoir faire + compact (?)
 		
-	if ( IsAnInteger(ElVal) ) {
-		guint32 NewInt;
-		ostringstream s;
-		int nbInt;
-		if (vr == "US" || vr == "SS") {
-			nbInt = length / 2;
-			NewInt = ReadInt16();
-			s << NewInt;
-			if (nbInt > 1) {
-				for (int i=1; i < nbInt; i++) {
-					s << '\\';
-					NewInt = ReadInt16();
-					s << NewInt;
-				}
-			}
+   if ( IsAnInteger(ElVal) ) {
+      guint32 NewInt;
+      ostringstream s;
+      int nbInt;
+      if (vr == "US" || vr == "SS") {
+         nbInt = length / 2;
+         NewInt = ReadInt16();
+         s << NewInt;
+         if (nbInt > 1) {
+            for (int i=1; i < nbInt; i++) {
+               s << '\\';
+               NewInt = ReadInt16();
+               s << NewInt;
+            }
+         }
 			
-		} else if (vr == "UL" || vr == "SL") {
-			nbInt = length / 4;
-			NewInt = ReadInt32();
-			s << NewInt;
-			if (nbInt > 1) {
-				for (int i=1; i < nbInt; i++) {
-					s << '\\';
-					NewInt = ReadInt32();
-					s << NewInt;
-				}
-			}
-		}					
-		ElVal->SetValue(s.str());
-		return;	
-	}
+      } else if (vr == "UL" || vr == "SL") {
+         nbInt = length / 4;
+         NewInt = ReadInt32();
+         s << NewInt;
+         if (nbInt > 1) {
+            for (int i=1; i < nbInt; i++) {
+               s << '\\';
+               NewInt = ReadInt32();
+               s << NewInt;
+            }
+         }
+      }					
+      ElVal->SetValue(s.str());
+      return;	
+   }
    
    // We need an additional byte for storing \0 that is not on disk
    char* NewValue = (char*)malloc(length+1);
@@ -834,37 +906,62 @@ void gdcmHeader::LoadElementValueSafe(gdcmElValue * ElVal) {
    fseek(fp, PositionOnEntry, SEEK_SET);
 }
 
-
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
 guint16 gdcmHeader::ReadInt16(void) {
    guint16 g;
    size_t item_read;
    item_read = fread (&g, (size_t)2,(size_t)1, fp);
-   errno = 0;
    if ( item_read != 1 ) {
-      dbg.Verbose(1, "gdcmHeader::ReadInt16", " File read error");
+      dbg.Verbose(1, "gdcmHeader::ReadInt16", " Failed to read :");
+      if(feof(fp)) 
+         dbg.Verbose(1, "gdcmHeader::ReadInt16", " End of File encountered");
+     if(ferror(fp)) 
+         dbg.Verbose(1, "gdcmHeader::ReadInt16", " File Error");
       errno = 1;
       return 0;
    }
+   errno = 0;
    g = SwapShort(g);
    return g;
 }
 
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
 guint32 gdcmHeader::ReadInt32(void) {
    guint32 g;
    size_t item_read;
    item_read = fread (&g, (size_t)4,(size_t)1, fp);
-   errno = 0;
    if ( item_read != 1 ) {
-      dbg.Verbose(1, "gdcmHeader::ReadInt32", " File read error");
+   
+      dbg.Verbose(1, "gdcmHeader::ReadInt32", " Failed to read :");
+      if(feof(fp)) 
+         dbg.Verbose(1, "gdcmHeader::ReadInt32", " End of File encountered");
+     if(ferror(fp)) 
+         dbg.Verbose(1, "gdcmHeader::ReadInt32", " File Error");   
       errno = 1;
       return 0;
    }
+   errno = 0;   
    g = SwapLong(g);
    return g;
 }
 
-
-gdcmElValue* gdcmHeader::GetElValueByNumber(guint16 Group, guint16 Elem) {
+/**
+ * \ingroup gdcmHeader
+ * \brief   
+ *
+ * @return 
+ */
+ gdcmElValue* gdcmHeader::GetElValueByNumber(guint16 Group, guint16 Elem) {
 
    gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);	 
    if (!elValue) {
@@ -911,7 +1008,6 @@ int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Ele
 	return(1);
 }   
 
-
 /**
  * \ingroup gdcmHeader
  * \brief   Build a new Element Value from all the low level arguments. 
@@ -946,6 +1042,11 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    
    g = ReadInt16();
    n = ReadInt16();
+   
+   if ( (g==0x7fe0) && (n==0x0010) ) 
+   	if (DEBUG) 
+   		printf("in gdcmHeader::ReadNextElement try to read 7fe0 0010 \n");
+   
    if (errno == 1)
       // We reached the EOF (or an error occured) and header parsing
       // has to be considered as finished.
@@ -954,10 +1055,15 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    NewElVal = NewElValueByNumber(g, n);
    FindVR(NewElVal);
    FindLength(NewElVal);
-   if (errno == 1)
+   if (errno == 1) {
       // Call it quits
+      if (DEBUG) printf("in gdcmHeader::ReadNextElement : g %04x n %04x errno %d\n",g, n, errno);
       return (gdcmElValue *)0;
-   NewElVal->SetOffset(ftell(fp));
+   }
+   NewElVal->SetOffset(ftell(fp));  
+   if ( (g==0x7fe0) && (n==0x0010) ) 
+   	if (DEBUG) 
+   		printf("sortie de gdcmHeader::ReadNextElement 7fe0 0010 \n");
    return NewElVal;
 }
 
@@ -981,14 +1087,13 @@ bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
       if (length == 4)
          return true;
       else {
-         printf("Erroneous Group Length element length (%04x , %04x) : %d\n",
+         if (DEBUG) printf("Erroneous Group Length element length (%04x , %04x) : %d\n",
             group, element,length);
                     
          dbg.Error("gdcmHeader::IsAnInteger",
             "Erroneous Group Length element length.");     
       }
    }
- 
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
       return true;
    
@@ -1020,6 +1125,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
       numPixel = 0x1010;
    else
       numPixel = 0x0010;
+         
    gdcmElValue* PixelElement = PubElValSet.GetElementByNumber(grPixel,
                                                               numPixel);
    if (PixelElement)
@@ -1381,6 +1487,20 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
    }
 }
 
+
+//
+// TODO : JPR
+// des que les element values sont chargees, stocker, 
+// en une seule fois, dans des entiers 
+// NX, NY, NZ, Bits allocated, Bits Stored, High Bit, Samples Per Pixel
+// (TODO : preciser les autres)
+// et refaire ceux des accesseurs qui renvoient les entiers correspondants
+//
+// --> peut etre dangereux ?
+// si l'utilisateur modifie 'manuellement' l'un des paramètres
+// l'entier de sera pas modifié ...
+// (pb de la mise à jour en cas de redondance :-(
+
 /**
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of columns of image.
@@ -1440,6 +1560,35 @@ int gdcmHeader::GetZSize(void) {
    return 1;
 }
 
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Retrieve the number of Bits Stored
+ *          (as opposite to number of Bits Allocated)
+ * 
+ * @return  The encountered number of Bits Stored, 0 by default.
+ */
+int gdcmHeader::GetBitsStored(void) { 
+   string StrSize = GetPubElValByNumber(0x0028,0x0101);
+   if (StrSize == "gdcm::Unfound")
+      return 1;
+   return atoi(StrSize.c_str());
+}
+
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Retrieve the number of Samples Per Pixel
+ *          (1 : gray level, 3 : RGB)
+ * 
+ * @return  The encountered number of Samples Per Pixel, 1 by default.
+ */
+int gdcmHeader::GetSamplesPerPixel(void) { 
+   string StrSize = GetPubElValByNumber(0x0028,0x0002);
+   if (StrSize == "gdcm::Unfound")
+      return 1; // Well, it's supposed to be mandatory ...
+   return atoi(StrSize.c_str());
+}
 /**
  * \ingroup gdcmHeader
  * \brief   Return the size (in bytes) of a single pixel of data.
@@ -1448,7 +1597,7 @@ int gdcmHeader::GetZSize(void) {
  */
 int gdcmHeader::GetPixelSize(void) {
    string PixelType = GetPixelType();
-   if (PixelType == "8U" || PixelType == "8S")
+   if (PixelType == "8U"  || PixelType == "8S")
       return 1;
    if (PixelType == "16U" || PixelType == "16S")
       return 2;
@@ -1495,6 +1644,7 @@ string gdcmHeader::GetPixelType(void) {
    return( BitsAlloc + Signed);
 }
 
+
 /**
  * \ingroup gdcmHeader
  * \brief  This predicate, based on hopefully reasonnable heuristics,
@@ -1509,13 +1659,13 @@ bool gdcmHeader::IsReadable(void) {
       && atoi(GetElValByName("Image Dimensions").c_str()) > 4 ) {
       return false;
    }
-   if (  GetElValByName("Bits Allocated") == "gdcm::Unfound" )
+   if ( GetElValByName("Bits Allocated") == "gdcm::Unfound" )
       return false;
-   if (  GetElValByName("Bits Stored") == "gdcm::Unfound" )
+   if ( GetElValByName("Bits Stored") == "gdcm::Unfound" )
       return false;
-   if (  GetElValByName("High Bit") == "gdcm::Unfound" )
+   if ( GetElValByName("High Bit") == "gdcm::Unfound" )
       return false;
-   if (  GetElValByName("Pixel Representation") == "gdcm::Unfound" )
+   if ( GetElValByName("Pixel Representation") == "gdcm::Unfound" )
       return false;
    return true;
 }
@@ -1547,7 +1697,6 @@ gdcmElValue* gdcmHeader::NewManualElValToPubDict(string NewTagName, string VR) {
    NewElVal = new gdcmElValue(NewEntry);
    PubElValSet.Add(NewElVal);
    return NewElVal;
-
 }
 
 /**
@@ -1560,17 +1709,229 @@ void gdcmHeader::LoadElements(void) {
    TagElValueHT ht = PubElValSet.GetTagHt();
    for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
       LoadElementValue(tag->second);
-      }
+   }
 }
 
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */ 
 void gdcmHeader::PrintPubElVal(std::ostream & os) {
    PubElValSet.Print(os);
 }
 
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */  
 void gdcmHeader::PrintPubDict(std::ostream & os) {
    RefPubDict->Print(os);
 }
 
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */
+  
 int gdcmHeader::Write(FILE * fp, FileType type) {
    return PubElValSet.Write(fp, type);
 }
+
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */
+float gdcmHeader::GetXSpacing(void) {
+    float xspacing, yspacing;
+    string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
+
+    if (StrSpacing == "gdcm::Unfound") {
+       dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing");
+       return 1.;
+     }
+   if( sscanf( StrSpacing.c_str(), "%f\\%f", &xspacing, &yspacing) != 2)
+     return 0.;
+   //else
+   return xspacing;
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */
+float gdcmHeader::GetYSpacing(void) {
+   float xspacing, yspacing;
+   string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
+  
+   if (StrSpacing == "gdcm::Unfound") {
+      dbg.Verbose(0, "gdcmHeader::GetYSpacing: unfound Pixel Spacing");
+      return 1.;
+    }
+
+  if( sscanf( StrSpacing.c_str(), "%f\\%f", &xspacing, &yspacing) != 2)
+    return 0.;
+
+  if (yspacing == 0.)
+  {
+    dbg.Verbose(0, "gdcmHeader::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
+    // seems to be a bug in the header ...
+    sscanf( StrSpacing.c_str(), "%f\\0\\%f", &xspacing, &yspacing);
+  }
+  return yspacing;
+} 
+
+
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */
+float gdcmHeader::GetZSpacing(void) {
+   // TODO : translate into English
+   // Spacing Between Slices : distance entre le milieu de chaque coupe
+   // Les coupes peuvent etre :
+   //   jointives     (Spacing between Slices = Slice Thickness)
+   //   chevauchantes (Spacing between Slices < Slice Thickness)
+   //   disjointes    (Spacing between Slices > Slice Thickness)
+   // Slice Thickness : epaisseur de tissus sur laquelle est acquis le signal
+   //   ca interesse le physicien de l'IRM, pas le visualisateur de volumes ...
+   //   Si le Spacing Between Slices est absent, 
+   //   on suppose que les coupes sont jointives
+   
+   string StrSpacingBSlices = GetPubElValByNumber(0x0018,0x0088);
+
+   if (StrSpacingBSlices == "gdcm::Unfound") {
+      dbg.Verbose(0, "gdcmHeader::GetZSpacing: unfound StrSpacingBSlices");
+      string StrSliceThickness = GetPubElValByNumber(0x0018,0x0050);       
+      if (StrSliceThickness == "gdcm::Unfound")
+         return 1.;
+      else
+         return atof(StrSliceThickness.c_str());  
+   } else {
+      return atof(StrSpacingBSlices.c_str());
+   }
+}
+
+//
+//  Image Position Patient :
+// If not found (AVR-NEMA), we consider Slice Location (20,1041)
+// or Location (20,50) as the Z coordinate, 
+// 0. for all the coordinates if Slice Location not found
+// TODO : find a way to inform the caller nothing was found
+// TODO : How to tell the caller a wrong number of values was found?
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */
+float gdcmHeader::GetXImagePosition(void) {
+    float xImPos, yImPos, zImPos;
+    // 0020,0032 : Image Position Patient
+    // 0020,1041 : Slice Location
+    string StrImPos = GetPubElValByNumber(0x0020,0x0032);
+
+    if (StrImPos == "gdcm::Unfound") {
+       dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position Patient");
+       string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041);
+       if (StrSliceLoc == "gdcm::Unfound") {
+          dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Slice Location");
+          // How to tell the caller nothing was found?
+       }   
+       return 0.;
+     }
+   if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
+     // How to tell the caller a wrong number of values was found?
+     return 0.;
+   //else
+   return xImPos;
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */
+float gdcmHeader::GetYImagePosition(void) {
+    float xImPos, yImPos, zImPos;
+    // 0020,0032 : Image Position Patient
+    // 0020,1041 : Slice Location
+    // 0020,0050 : Location
+    string StrImPos = GetPubElValByNumber(0x0020,0x0032);
+
+    if (StrImPos == "gdcm::Unfound") {
+       dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position Patient");
+       string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041);
+       if (StrSliceLoc == "gdcm::Unfound") {
+          dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location");
+          // How to tell the caller nothing was found?
+          string StrLocation = GetPubElValByNumber(0x0020,0x0050);
+          if (StrSliceLoc == "gdcm::Unfound") {
+             dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location");          
+          }                    
+       }   
+       return 0.;
+     }
+   if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3)
+     // How to tell the caller a wrong number of values was found?
+     return 0.;
+    //else
+   return yImPos;
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */
+float gdcmHeader::GetZImagePosition(void) {
+   float xImPos, yImPos, zImPos;
+    // 0020,0032 : Image Position Patient
+    // 0020,1041 : Slice Location
+    // 0020,0050 : Location
+   
+   // TODO : How to tell the caller nothing was found?
+   // TODO : How to tell the caller a wrong number of values was found?
+  
+   string StrImPos = GetPubElValByNumber(0x0020,0x0032);
+   if (StrImPos != "gdcm::Unfound") {
+      if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3) {
+         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image Position Patient");
+         return 0.;  // bug in the element 0x0020,0x0032
+      } else {
+         return zImPos;
+      }    
+   }
+   dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position Patient");
+        
+   string StrSliceLocation = GetPubElValByNumber(0x0020,0x1041);
+   if (StrSliceLocation != "gdcm::Unfound") {
+      if( sscanf( StrSliceLocation.c_str(), "%f", &zImPos) !=1) {
+         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Slice Location");
+         return 0.;  // bug in the element 0x0020,0x1041
+      } else {
+         return zImPos;
+      }
+   }   
+   dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location");
+
+   string StrLocation = GetPubElValByNumber(0x0020,0x0050);
+   if (StrLocation != "gdcm::Unfound") {
+      if( sscanf( StrLocation.c_str(), "%f", &zImPos) !=1) {
+         dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Location");
+         return 0.;  // bug in the element 0x0020,0x0050
+      } else {
+         return zImPos;
+      }
+   }
+   dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location");
+   
+   return 0.; // Hopeless
+}
+
+
+

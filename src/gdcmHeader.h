@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.26 2003/05/28 19:36:21 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.27 2003/06/17 17:44:48 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -45,6 +45,9 @@ private:
    /// Optional "shadow dictionary" (private elements) used to parse this
    /// header
    gdcmDict* RefShaDict;
+   /// Pointer to the Transfert Syntax Hash Table which contains all
+   /// the TS of the DICOM version3 public dictionary. 
+   gdcmTS *dicom_ts;     // Not a class member for thread-safety reasons
 
    /// ELement VALueS parsed with the PUBlic dictionary.
    gdcmElValSet PubElValSet;
@@ -126,6 +129,7 @@ public:
    virtual void ParseHeader(bool exception_on_error = false)
      throw(gdcmFormatError);
    gdcmHeader(const char *filename, bool exception_on_error = false);
+   gdcmHeader( bool exception_on_error = false);
    virtual ~gdcmHeader();
    
    size_t GetPixelOffset(void);
@@ -136,9 +140,9 @@ public:
    // an additional specific dictionary to access extra information.
    // TODO Swig int SetShaDict(std::string filename);
 
-   std::string GetPubElValByName(std::string TagName);
-   std::string GetPubElValByNumber(guint16 group, guint16 element);
-   std::string GetPubElValRepByName(std::string TagName);
+   std::string GetPubElValByName     (std::string TagName);
+   std::string GetPubElValRepByName  (std::string TagName);
+   std::string GetPubElValByNumber   (guint16 group, guint16 element);
    std::string GetPubElValRepByNumber(guint16 group, guint16 element);
 
    TagElValueHT & GetPubElVal(void) { return PubElValSet.GetTagHt(); };
@@ -146,30 +150,43 @@ public:
    void   PrintPubDict (std::ostream & os = std::cout);
      
    // TODO Swig std::string* GetShaTagNames(); 
-   std::string GetShaElValByName(std::string TagName);
-   std::string GetShaElValByNumber(guint16 group, guint16 element);
-   std::string GetShaElValRepByName(std::string TagName);
+   std::string GetShaElValByName     (std::string TagName);
+   std::string GetShaElValRepByName  (std::string TagName);
+   std::string GetShaElValByNumber   (guint16 group, guint16 element);
    std::string GetShaElValRepByNumber(guint16 group, guint16 element);
 
-   std::string GetElValByName(std::string TagName);
-   std::string GetElValByNumber(guint16 group, guint16 element);
-   std::string GetElValRepByName(std::string TagName);
+   std::string GetElValByName     (std::string TagName);
+   std::string GetElValRepByName  (std::string TagName);
+   std::string GetElValByNumber   (guint16 group, guint16 element);
    std::string GetElValRepByNumber(guint16 group, guint16 element);
 
-   int SetPubElValByName(std::string content, std::string TagName);
+   int SetPubElValByName  (std::string content, std::string TagName);
+   int SetShaElValByName  (std::string content, std::string ShadowTagName);
    int SetPubElValByNumber(std::string content, guint16 group, guint16 element);
-   int SetShaElValByName(std::string content, std::string TagName);
+
    int SetShaElValByNumber(std::string content, guint16 group, guint16 element);
    
    int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   
+
    int ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem);                                
+
    int GetXSize(void);  
    int GetYSize(void);
-   int GetZSize(void);       
+   int GetZSize(void);
+   int GetBitsStored(void);
+   int GetSamplesPerPixel(void);
    int GetPixelSize(void);       
    std::string GetPixelType(void);  
-   int Write(FILE *, FileType);
    
+   float GetXSpacing(void);
+   float GetYSpacing(void);  
+   float GetZSpacing(void);  
+  
+   float GetXImagePosition(void);
+   float GetYImagePosition(void);
+   float GetZImagePosition(void);
+   
+   int Write(FILE *, FileType);
 };
 
 #endif

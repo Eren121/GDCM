@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.13 2003/05/21 16:26:28 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.14 2003/06/17 17:44:48 jpr Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -10,6 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for a set of successfully parsed ElValues.
+
 typedef std::map<TagKey, gdcmElValue*> TagElValueHT;
 typedef std::map<std::string, gdcmElValue*> TagElValueNameHT;
 
@@ -19,7 +20,6 @@ class GDCM_EXPORT gdcmElValSet {
    
    typedef std::string GroupKey;
    typedef std::map<GroupKey, int> GroupHT; 
-   
 public:	
    ~gdcmElValSet();
    void Add(gdcmElValue*);

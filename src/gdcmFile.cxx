@@ -2,6 +2,12 @@
 
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
+
+
+// TODO : remove DEBUG
+#define DEBUG 0
+
+
 #include "iddcmjpeg.h"
 using namespace std;
 
@@ -38,7 +44,7 @@ gdcmFile::gdcmFile(const char * filename)
 /**
  * \ingroup   gdcmFile
  * \brief     calcule la longueur (in bytes) A ALLOUER pour recevoir les
- *        pixels de l'image
+ *        	pixels de l'image
  *  		ou DES images dans le cas d'un multiframe
  *  		ATTENTION : il ne s'agit PAS de la longueur du groupe des Pixels	
  *  		(dans le cas d'images compressees, elle n'a pas de sens).
@@ -56,9 +62,10 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
       nb = atoi(str_nb.c_str() );
       if (nb == 12) nb =16;
    }
-   lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() * (nb/8);
+   lgrTotale =  GetXSize() *  GetYSize() *  GetZSize() * (nb/8)* GetSamplesPerPixel();;
 }
 
+/////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
  * \brief     Returns the size (in bytes) of required memory to hold
@@ -69,6 +76,8 @@ size_t gdcmFile::GetImageDataSize(void) {
    return (lgrTotale);
 }
 
+
+/////////////////////////////////////////////////////////////////
 /**
  * \ingroup gdcmFile
  * \brief   Read pixel data from disk (optionaly decompressing) into the
@@ -79,6 +88,8 @@ size_t gdcmFile::GetImageDataSize(void) {
 bool gdcmFile::ReadPixelData(void* destination) {
    if ( !OpenFile())
       return false;
+      
+      printf("GetPixelOffset() %d\n",GetPixelOffset() );
       
     if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
       CloseFile();
@@ -99,39 +110,117 @@ bool gdcmFile::ReadPixelData(void* destination) {
          CloseFile();
          return true;
       }
-   }
-         
-   if (IsJPEGLossless()) {
-      int ln;
+   } 
+     
+  // ------------------------------- Position on begining of Jpeg Pixels
+  
+       int ln;
       fseek(fp,4,SEEK_CUR);
       fread(&ln,4,1,fp); 
       if(GetSwapCode()) 
          ln=SwapLong(ln);
-      //if (DEBUG) 
+      if (DEBUG) 
          printf ("ln %d\n",ln);
       fseek(fp,ln,SEEK_CUR);
       fseek(fp,4,SEEK_CUR);
       fread(&ln,4,1,fp); 
       if(GetSwapCode()) 
          ln=SwapLong(ln);
-      //if (DEBUG) 
+      if (DEBUG) 
          printf ("ln image comprimée %d\n",ln);
-
-      ClbJpeg* jpg = _IdDcmJpegRead(fp);
+         
+          
+  // ------------------------------- JPEG LossLess : call to Jpeg Libido
+   
+   if (IsJPEGLossless()) {
+ 
+       ClbJpeg* jpg = _IdDcmJpegRead(fp);
       if(jpg == NULL) {
          CloseFile();
          return false;
-      }     
-      memcpy(destination,jpg->DataImg,lgrTotale);
+      } 
+      // Gros soucis : 
+      //  jpg->DataImg est alloue en int32 systematiquement :
+      //  il faut le copier pixel par pixel dans destination ...
+      //  ... qui est un void *
+      // --> du CAST sportif a faire ... 
+      
+     // memcpy(destination,jpg->DataImg,lgrTotale);
+     
+     // Bon ...
+     // ... y'a p't etre + ruse (?)
+          
+      int nb;
+      string str_nb=gdcmHeader::GetPubElValByNumber(0x0028,0x0100);
+      if (str_nb == "gdcm::Unfound" ) {
+         nb = 16;
+      } else {
+         nb = atoi(str_nb.c_str() );
+         if (nb == 12) nb =16;
+      }
+      int nBytes= nb/8;
+      int * dataJpg = jpg->DataImg;
+      int taille = GetXSize() *  GetYSize() *  GetZSize() * GetSamplesPerPixel();
+          
+      switch (nBytes) {
+      
+         case 1:
+         {
+            unsigned short *dest = (unsigned short *)destination;
+            for (int i=0; i<taille; i++) {
+               if (DEBUG) 
+                  if (*(dataJpg +i) >255) printf("data %d\n",*(dataJpg +i) );
+               *((unsigned char *)dest+i) = *(dataJpg +i);    
+            }
+         }
+         break;        
+         
+         case 2:
+         {
+            unsigned short *dest = (unsigned short *)destination;
+            
+            // etonnant (?)
+            // la ligne commentee ci-dessous fait passer l'exec de 0.15 sec a 5.5 sec
+            // pour la meme image 512*512 ...
+            // optimiseur pas mis en oeuvre (?)
+            //for (int i=0; i<GetXSize() *  GetYSize() *  GetZSize(); i++) { 
+            
+             for (int i=0; i<taille; i++) {           
+               *((unsigned short *)dest+i) = *(dataJpg +i);    
+            }
+         }
+         break;
+            
+          case 4:
+          {
+            unsigned int *dest=(unsigned int *)destination;
+            for (int i=0;i<taille; i++) {
+               *((unsigned int *)dest+i) = *(dataJpg +i);    
+            }
+          }
+         break;          
+     }
+      
       _IdDcmJpegFree (jpg);
-      CloseFile();
       return true;
-   }
-   
-    printf ("Sorry, TransfertSyntax not yet taken into account ...\n");
-    CloseFile();
-    return false;
-
+   }  
+ 
+  // ------------------------------- JPEG Lossy : call to IJG 6b
+  
+  // TODO : faire qq chose d'intelligent pour limiter 
+  // la duplication du code JPEG <bits=8 / bits=12>
+  // TODO : eplucher icelui pour traiter *egalement* bits=16
+      int nBS;        
+      if  ((nBS = GetBitsStored()) != 12) {
+         printf("Sorry, Bits Stored = %d not yet taken into account\n",nBS);
+         return false;
+      }
+      
+      int res = gdcm_read_JPEG_file (destination);
+         if (DEBUG) 
+            printf ("res : %d\n",res);
+      return res;
+ 
 }   
 
 /**
@@ -410,6 +499,15 @@ int gdcmFile::WriteDcmImplVR (string nomFichier) {
    return WriteBase(nomFichier, ImplicitVR);
 }
 
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ *
+ * @param  nomFichier TODO JPR
+ *
+ * @return TODO JPR
+ */
+ 
 int gdcmFile::WriteDcmImplVR (const char* nomFichier) {
    return WriteDcmImplVR (string (nomFichier));
 }
@@ -448,6 +546,15 @@ int gdcmFile::WriteAcr (string nomFichier) {
    return WriteBase(nomFichier, ACR);
 }
 
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ *
+ * @param  nomFichier TODO JPR
+ * @param  type TODO JPR
+ *
+ * @return TODO JPR
+ */
 int gdcmFile::WriteBase (string nomFichier, FileType type) {
 
    FILE * fp1;

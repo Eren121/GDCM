@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.10 2003/05/21 16:26:28 regrain Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.11 2003/06/17 17:44:48 jpr Exp $
 
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "gdcmVR.h"
+#include "gdcmTS.h"
 #include "gdcmDictSet.h"
 
 class gdcmDebug {
@@ -15,20 +16,24 @@ private:
 public:
 	gdcmDebug(int  = 0);
 	void Verbose(int, const char*, const char* ="");
+//	void Verbose(int, char*, char*);
 	void Error(bool, const char*,  const char* ="");
 	void Error(const char*, const char* ="", const char* ="");
 	void Assert(int, bool, const char*, const char*);
 	void Exit(int);
+	void SetDebug (int i) {DebugLevel = i;}
 };
 
 class gdcmGlobal {
 private:
-   static gdcmVR *VR; 
+   static gdcmVR *VR;
+   static gdcmTS *TS; 
    static gdcmDictSet *Dicts; 
 public:
    gdcmGlobal(void);
    ~gdcmGlobal();
    static gdcmVR * GetVR(void);
+   static gdcmTS * GetTS(void);
    static gdcmDictSet * GetDicts(void);
 };
 
@@ -40,4 +45,8 @@ void Tokenize (const std::string& str,
 
 extern gdcmDebug dbg;
 
+char * _cleanString(char *v);
+char * _CreateCleanString(string s);
+
 #endif
+
