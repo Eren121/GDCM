@@ -240,6 +240,8 @@
  - Only the C++ standard library and the STL includes should be used.
    When including don't use the .h extension (use #include <iostream>
    instead of #include <iostream.h>).
+   Note: include the stl header AFTER the gdcm ones (otherwise pragma
+         warnings won't work).
  - Don't use the C standard library. Don't include stdio.h, ctype.h...
    Don't use printf(), sprinf(), FILE*...
  - Don't use the NULL notation (either as macro, or as const int NULL=0).
