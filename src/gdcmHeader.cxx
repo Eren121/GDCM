@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 23:17:27 $
-  Version:   $Revision: 1.217 $
+  Date:      $Date: 2004/12/21 17:43:55 $
+  Version:   $Revision: 1.218 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -332,7 +332,7 @@ float Header::GetXSpacing()
       dbg.Verbose(0, "Header::GetXSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
       // seems to be a bug in the header ...
       nbValues = sscanf( strSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
-      assert( nbValues == 3 );
+      assert( nbValues == 2 );
    }
 
    return xspacing;
