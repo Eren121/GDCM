@@ -15,6 +15,8 @@
 
 #define HEADER_LENGTH_TO_READ 256 // on ne lit plus que le debut
 
+#define DEBUG 1
+
 namespace Error {
 	struct FileReadError {
 		FileReadError(FILE* fp, const char* Mesg) {
@@ -1097,10 +1099,19 @@ void gdcmHeader::ParseHeader(void) {
  *          public tag based hash table.
  */
 void gdcmHeader::LoadElements(void) {
-	rewind(fp);    
+
+	if (DEBUG) printf("LoadElements : Entree\n");
+
+	rewind(fp);   
+ 	if (DEBUG) printf("LoadElements : rewind\n");
+
 	TagElValueHT ht = PubElVals.GetTagHt();
-	for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag)
+	
+	if (DEBUG) printf("LoadElements : GetTagHt\n");
+
+	for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
 		LoadElementValue(tag->second);
+		}
 }
 
 void gdcmHeader::PrintPubElVal(ostream & os) {

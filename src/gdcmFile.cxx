@@ -2,6 +2,8 @@
 
 #include "gdcm.h"
 
+#define DEBUG 1
+
 static void _Swap(void* im, int swap, int lgr, int nb);
 
 /////////////////////////////////////////////////////////////////
@@ -25,6 +27,7 @@ static void _Swap(void* im, int swap, int lgr, int nb);
 gdcmFile::gdcmFile(string & filename)
 	:gdcmHeader(filename.c_str())
 {
+	if (DEBUG) printf("On a echappe a gdcmHeader !\n");
 }
 
 
@@ -85,7 +88,7 @@ size_t gdcmFile::GetImageDataSize(void) {
 
 void * gdcmFile::GetImageData (void) {
 	
-	char* Pixels;
+	char* _Pixels;
 	int nbLignes, nbCol;
 
 	int nbFrames, nb, nbu, highBit, signe;
@@ -135,7 +138,7 @@ void * gdcmFile::GetImageData (void) {
 		highBit = atoi(str_highBit.c_str() );
 	}
 		
-	// Signe des Pixels 
+	// Signe des Pixels 0 : Unsigned
 	str_signe=GetPubElValByNumber(0x0028,0x0103);
 
 	if (str_signe == "UNFOUND" ) {
@@ -145,18 +148,18 @@ void * gdcmFile::GetImageData (void) {
 	}
 	
 	// Longueur en Octets des Pixels a lire
-	size_t lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
+	size_t _lgrTotale = nbFrames*nbLignes*nbCol*(nb/8);
 	
-	//Pixels = (char *) g_malloc(lgrTotale);
-	Pixels = (char *) malloc(lgrTotale);
+	//Pixels = (char *) g_malloc(_lgrTotale);
+	_Pixels = (char *) malloc(_lgrTotale);
 	
-	GetPixels(lgrTotale, Pixels);
+	GetPixels(lgrTotale, _Pixels);
 
 	// On remet les Octets dans le bon ordre si besoin est
 	if (nb != 8) {
 		int _sw = GetSwapCode();
 
-		_Swap (Pixels, _sw, lgrTotale, nb);
+		_Swap (_Pixels, _sw, _lgrTotale, nb);
 	}
 	
 	// On remet les Bits des Octets dans le bon ordre si besoin est
@@ -167,8 +170,8 @@ void * gdcmFile::GetImageData (void) {
 	// 			--> ne marchera pas dans ce cas 
 	if (nbu!=nb){
 		mask = mask >> (nb-nbu);
-		int l=(int)lgrTotale/(nb/8);
-		unsigned short *deb = (unsigned short *)Pixels;
+		int l=(int)_lgrTotale/(nb/8);
+		unsigned short *deb = (unsigned short *)_Pixels;
 		for(int i=0;i<l;i++) {
 				*deb = (*deb >> (nbu-highBit-1)) & mask;
 				deb ++;
@@ -177,9 +180,12 @@ void * gdcmFile::GetImageData (void) {
 		
 	printf ("on est sorti\n");
 	
-	// VOIR s'il ne faudrait pas l'affecter à un champ du dcmHeader
+	// On l'affecte à un champ du dcmFile
 	
-	return (Pixels);		
+	Pixels = _Pixels;
+	lgrTotale = _lgrTotale;
+	
+	return (_Pixels);		
 }
 
 
@@ -373,4 +379,32 @@ return;
 }
 
 
+
+
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief Ecrit sur disque les pixels d'UNE image
+ * \Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ * \ C'est à l'utilisateur d'appeler son Reader correctement
+ * \(Equivalent a IdImaWriteRawFile) 
+ *
+ * @param 
+ *
+ * @return	
+ */
+
+int gdcmFile::WriteRawData (string nomFichier) {
+
+	FILE * fp1;
+	fp1 = fopen(nomFichier.c_str(),"wb");
+	if (fp1 == NULL) {
+		printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
+		return (0);
+	} 
+	
+	fwrite (Pixels,lgrTotale, 1, fp1);
+	fclose (fp1);
+}
+	
 

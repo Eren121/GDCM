@@ -3,7 +3,7 @@
 // gdcmlib Intro:  
 // * gdcmlib is a library dedicated to reading and writing dicom files.
 // * LGPL for the license
-// * lightweigth as opposed to CTN or DCMTK wich come bundled which try
+// * lightweigth as opposed to CTN or DCMTK which come bundled which try
 //   to implement the full DICOM standard (networking...). gdcmlib concentrates
 //   on reading and writing
 // * Formats: this lib should be able to read ACR-NEMA v1 and v2, Dicom v3 (as
@@ -48,7 +48,7 @@ using namespace std;  // string type lives in the std namespace on VC++
                       // Quant au nombre d'entrees dans un DICOMDIR, c'est encore pire : il n'est limité
                       // que par la taille d'un CD-ROM (les DVD-ROM ne sont pas encore pris en compte)
                       // On peut s'attendre a 30 entrees par fichier dicom présent sur le CD-ROM
-                      // Remarque : il faudra se pencher sur le pb de la creation du DICOMDIR lorsqu'on voudra 
+                      // REMARQUE : il faudra se pencher sur le pb de la creation du DICOMDIR lorsqu'on voudra 
                       // exporter des images lisibles par les consoles cliniques 
                       // et pas seulement importables dans e-film. 
 
@@ -119,7 +119,6 @@ public:
 	
 	// fabrique une ligne de Dictionnaire Dicom à partir des parametres en entrée
 
-
 	gdcmDictEntry(guint16 group, guint16 element,
 	              string vr     = "Unknown",
 	              string fourth = "Unknown",
@@ -144,8 +143,7 @@ public:
 // 
 //	c'est le Dictionnaire Dicom
 //
-
-  
+ 
 ////////////////////////////////////////////////////////////////////////////
 // A single DICOM dictionary i.e. a container for a collection of dictionary
 // entries. There should be a single public dictionary (THE dictionary of
@@ -165,6 +163,9 @@ public:
 	// rempli le Dictionnaire Dicom à partir d'un fichier texte
 	gdcmDict(const char* FileName);   // Read Dict from disk
 	
+	// QUESTION :
+	// Ca doit ajouter une nouvelle entrée 'a la fin', ou 'a sa place' ?
+	//
 	// TODO Swig int AppendEntry(gdcmDictEntry* NewEntry);
 	
 	// renvoie une ligne de Dictionnaire Dicom à partir de (numGroup, numElement)
@@ -231,7 +232,7 @@ public:
 //
 // Ne faudrait-il pas trouver un autre nom, qui preterait moins à confusion?
 // ElValue n'EST PAS la 'valeur d'un Element', mais la reunion d'infos
-// trouvees dans l'Entete" du fichier ET dans le Dictionnaire
+// trouvees dans l'Entete du fichier ET dans le Dictionnaire DICOM
 //
 
 // The dicom header of a Dicom file contains a set of such ELement VALUES
@@ -275,7 +276,7 @@ public:
 // ---------------------------------------------------- ElValSet
 //
 //	... un ensemble d'Elements Dicom 
-//
+//	... le résultat de l'analyse d'une entete d'image, par exemple
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for a set of successfully parsed ElValues.
@@ -319,7 +320,7 @@ public:
 //   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
  
 
-typedef string VRKey;
+typedef string VRKey;	// Ne devrait-elle pas etre utilisee dans la definition de VRHT ?
 typedef string VRAtr;
 typedef map<TagKey, VRAtr> VRHT;    // Value Representation Hash Table
 		// Cette Table de Hachage ne devrait servir qu'a determiner
@@ -330,6 +331,13 @@ class GDCM_EXPORT gdcmHeader {
 private:
 	static VRHT *dicom_vr;
 	// Dictionaries of data elements:
+	
+	// Question :
+	// Pourquoi mettre un pointeur statique vers le container des dictionnaires
+	// (qui est une H-table de pointeurs vers des dictionnaires)
+	// en plus des pointeurs vers chacun des dictionnaires ?
+	// Ces derniers n'auraient-ils pas suffit ?
+	//
 	static gdcmDictSet* Dicts;  // global dictionary container
 	gdcmDict* RefPubDict;       // public dictionary
 	gdcmDict* RefShaDict;       // shadow dictionary (optional)
@@ -340,7 +348,12 @@ private:
 	FILE * fp;
 	// The tag Image Location ((0028,0200) containing the address of
 	// the pixels) is not allways present. Then we store this information
+	
 	// FIXME
+	
+	// Question :
+	// Qu'y a-t-il a corriger ?
+	//
 	// outside of the elements:
 	guint16 grPixel;
 	guint16 numPixel;
@@ -486,10 +499,20 @@ public:
 class GDCM_EXPORT gdcmFile: public gdcmHeader
 {
 private:
+	// QUESTION :
+	// Data pointe sur quoi?
+	// sur les Pixels lus?
+	// --> j'ajoute un champ public : Pixels
+	
 	void* Data;
 	int Parsed;          // weather allready parsed
 	string OrigFileName; // To avoid file overwrite
 public:
+	// je ne suis pas sur d'avoir compris *où* il serait légitime de ranger ca.
+	// on pourra tjs le deplacer, et mettre des accesseurs
+	void * Pixels;
+	size_t lgrTotale;
+	
 	// Constructor dedicated to writing a new DICOMV3 part10 compliant
 	// file (see SetFileName, SetDcmTag and Write)
 	// TODO Swig gdcmFile();
@@ -535,8 +558,11 @@ public:
 	// incohérente avec l'ordre des octets en mémoire  
 	// TODO Swig int Write();
 	
-	// A FAIRE
-	// int WriteRawData (string nomFichier);
+	// Ecrit sur disque les pixels d'UNE image
+	// Aucun test n'est fait sur l'"Endiannerie" du processeur.
+	// C'est à l'utilisateur d'appeler son Reader correctement
+		
+	int WriteRawData (string nomFichier);
 };
 
 //
