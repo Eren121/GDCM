@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 22:54:34 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2005/01/11 00:24:44 $
+  Version:   $Revision: 1.89 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -347,14 +347,11 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
  */
 bool Util::IsCurrentProcessorBigEndian()
 {
-   uint16_t intVal = 1;
-   uint8_t bigEndianRepr[4] = { 0x00, 0x00, 0x00, 0x01 };
-   int res = memcmp(reinterpret_cast<const void*>(&intVal),
-                    reinterpret_cast<const void*>(bigEndianRepr), 4);
-   if (res == 0)
-      return true;
-   else
-      return false;
+#ifdef GDCM_WORDS_BIGENDIAN
+   return true;
+#else
+   return false;
+#endif
 }
 
 
