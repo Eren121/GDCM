@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.98 2003/10/10 15:36:24 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.99 2003/10/10 16:54:25 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -76,8 +76,7 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
 //  char *testEntete = new char[204];
   guint16 zero;
   fread(&zero,  (size_t)2, (size_t)1, fp);
-  if ( fp )
-  {
+  if ( fp ) {
     //ACR
     if( zero == 0x0008 || zero == 0x0800 )
        return true;
@@ -87,11 +86,12 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
     fread(dicm,  (size_t)4, (size_t)1, fp);
     if( strncmp(dicm, "DICM", 4) == 0 )
        return true;
+    fclose(fp);
     dbg.Verbose(0, "gdcmHeader::gdcmHeader not DICOM/ACR", filename.c_str());
   }
-  else
+  else {
     dbg.Verbose(0, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
-
+  }
   return false;
 }
 
