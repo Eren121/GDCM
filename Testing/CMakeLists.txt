@@ -9,7 +9,7 @@ SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
 # They usally return if no argument is given
 SET(TEST_SOURCES
   PrintBug.cxx
-  dcm2acr.cxx
+  TestDcm2Acr.cxx
   TestHash.cxx
   testWrite.cxx
 )
