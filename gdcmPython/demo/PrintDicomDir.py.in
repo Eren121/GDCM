@@ -39,3 +39,22 @@ print "##############################################################"
 dicomdir.SetPrintLevel(-1)
 dicomdir.Print()
 
+print ""
+patient=dicomdir.GetFirstPatient()
+while(patient):
+   print "Patient"
+   study=patient.GetFirstStudy()
+   while(study):
+      print "   Study"
+      serie=study.GetFirstSerie()
+      while(serie):
+         print "      Serie"
+         image=serie.GetFirstImage()
+         while(image):
+            print "         Image"
+            print "         ---",image.GetValEntry(0x0004,0x1500).GetValue()
+            image=serie.GetNextImage()
+         serie=study.GetNextSerie()
+      study=patient.GetNextStudy()
+   patient=dicomdir.GetNextPatient()
+
