@@ -541,12 +541,13 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 
 /**
  * \ingroup   gdcmFile
- * \brief TODO JPR
- * \warning doit-etre etre publique ?  
- * \toto : y a-t-il un inconvenient à fusioner ces 2 fonctions
- *
- * @param inData 
- * @param ExpectedSize 
+ * \brief performs a shadow copy (not a deep copy) of the user given
+ *        pixel area.
+ *        'image' Pixels are presented as C-like 2D arrays : line per line.
+ *        'volume'Pixels are presented as C-like 3D arrays : lane per plane 
+ * \warning user is kindly requested NOT TO 'free' the Pixel area
+ * @param inData user supplied pixel area
+ * @param ExpectedSize total image size, in Bytes
  *
  * @return boolean	
  */
@@ -581,7 +582,8 @@ bool gdcmFile::WriteRawData (std::string fileName) {
 
 /**
  * \ingroup   gdcmFile
- * \brief Writes on disk A SINGLE Dicom file
+ * \brief Writes on disk A SINGLE Dicom file, 
+ *        using the Implicit Value Representation convention
  *        NO test is performed on  processor "Endiannity".
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
@@ -594,8 +596,9 @@ bool gdcmFile::WriteDcmImplVR (std::string fileName) {
 
 /**
  * \ingroup   gdcmFile
- * \brief  
- * @param fileName name of the file to be created
+ * \brief Writes on disk A SINGLE Dicom file, 
+ *        using the Implicit Value Representation convention
+ *        NO test is performed on  processor "Endiannity". * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
  * @return false if write fails	
  */
@@ -606,8 +609,9 @@ bool gdcmFile::WriteDcmImplVR (const char* fileName) {
 	
 /**
  * \ingroup   gdcmFile
- * \brief  
- * @param fileName name of the file to be created
+* \brief Writes on disk A SINGLE Dicom file, 
+ *        using the Explicit Value Representation convention
+ *        NO test is performed on  processor "Endiannity". * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
  * @return false if write fails	
  */
@@ -618,15 +622,14 @@ bool gdcmFile::WriteDcmExplVR (std::string fileName) {
 	
 /**
  * \ingroup   gdcmFile
- * \brief  Ecrit au format ACR-NEMA sur disque l'entete et les pixels
+ * \brief Writes on disk A SINGLE Dicom file, 
+ *        using the ACR-NEMA convention
+ *        NO test is performed on  processor "Endiannity".
  *        (a l'attention des logiciels cliniques 
  *        qui ne prennent en entrée QUE des images ACR ...
  * \warning if a DICOM_V3 header is supplied,
  *         groups < 0x0008 and shadow groups are ignored)
  * \warning NO TEST is performed on processor "Endiannity".
- *        Ca fonctionnera correctement (?) sur processeur Intel
- *        (Equivalent a IdDcmWrite) 
- *
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
  * @return false if write fails		
@@ -640,10 +643,11 @@ bool gdcmFile::WriteAcr (std::string fileName) {
 // Protected
 /**
  * \ingroup   gdcmFile
- *
+ * \brief NOT a end user inteded function
+ *        (used by WriteDcmExplVR, WriteDcmImplVR, WriteAcr, etc)
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
- * @param  type file type (ExplicitVR, ImplicitVR, ...)
+ * @param  type file type (ExplicitVR, ImplicitVR, DICOMDIR, ...)
  * @return false if write fails		
  */
 bool gdcmFile::WriteBase (std::string fileName, FileType type) {
