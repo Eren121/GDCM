@@ -12,16 +12,16 @@ libgdcm_la_LIBADD = \
    $(top_builddir)/src/jpeg/libijg8/libgdcmijpeg8.la    \
    $(top_builddir)/src/jpeg/ljpg/libgdcmjpg.la 
 
-libgdcm_la_SOURCES=                     \
+libgdcm_la_SOURCES=                \
    gdcmException.cxx               \
    gdcmUtil.cxx                    \
    gdcmParser.cxx                  \
    gdcmHeader.cxx                  \
-   gdcmHeaderHelper.cxx		\
-   gdcmHeaderEntry.cxx		\
+   gdcmHeaderHelper.cxx            \
+   gdcmHeaderEntry.cxx             \
    gdcmDictEntry.cxx               \
    gdcmDict.cxx                    \
-   gdcmDictSet.cxx			\
+   gdcmDictSet.cxx                 \
    gdcmFile.cxx                    \
    gdcmVR.cxx                      \
    gdcmTS.cxx                      \
@@ -30,10 +30,10 @@ libgdcm_la_SOURCES=                     \
    gdcmJpeg2000.cxx                \
    gdcmRLE.cxx                     \
    gdcmParse.cxx                   \
-   gdcmDICOMDIR.cxx                  \
-   gdcmPatient.cxx                   \
-   gdcmStudy.cxx                     \
-   gdcmSequence.cxx                     \
+   gdcmDICOMDIR.cxx                \
+   gdcmPatient.cxx                 \
+   gdcmStudy.cxx                   \
+   gdcmSequence.cxx                \
    gdcmImage.cxx
 
 
@@ -55,7 +55,7 @@ libgdcminclude_HEADERS =                \
 	gdcmObject.h                    \
 	gdcmPatient.h                   \
 	gdcmStudy.h                     \
-	gdcmSequence.h                     \
+	gdcmSequence.h                  \
 	gdcmImage.h
 
 

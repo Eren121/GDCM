@@ -2,6 +2,7 @@
 //-----------------------------------------------------------------------------
 #include "gdcmParser.h"
 #include "gdcmUtil.h"
+#include <errno.h>
 
 // For nthos:
 #ifdef _MSC_VER
