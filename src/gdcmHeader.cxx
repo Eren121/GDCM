@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/23 01:10:40 $
-  Version:   $Revision: 1.204 $
+  Date:      $Date: 2004/11/23 17:12:25 $
+  Version:   $Revision: 1.205 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1177,6 +1177,7 @@ void Header::SetImageDataSize(size_t ImageDataSize)
    DocEntry *a = GetDocEntryByNumber(GrPixel, NumPixel);
    a->SetLength(ImageDataSize);
 
+   // Change the value of the BinEntry, not the BinArea !!!
    ImageDataSize += 8;
    car = Util::Format("%d", ImageDataSize);
    car = Util::DicomString( car.c_str() );
