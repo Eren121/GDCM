@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/22 21:39:42 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2004/09/23 09:40:30 $
+  Version:   $Revision: 1.89 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -673,7 +673,7 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
  *          failed).
  */
 gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
-                                         void *voidArea,
+                                         uint8_t* voidArea,
                                          int lgth, 
                                          uint16_t group, 
                                          uint16_t elem,
@@ -983,12 +983,12 @@ bool gdcmDocument::SetEntryByNumber(std::string const & content,
  * \brief   Accesses an existing gdcmDocEntry (i.e. a Dicom Element)
  *          through it's (group, element) and modifies it's content with
  *          the given value.
- * @param   content new value (void *) to substitute with
+ * @param   content new value (void * -> uint8_t*) to substitute with
  * @param   lgth new value length
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */
-bool gdcmDocument::SetEntryByNumber(void *content,
+bool gdcmDocument::SetEntryByNumber(uint8_t*content,
                                     int lgth, 
                                     uint16_t group,
                                     uint16_t element) 
@@ -1097,7 +1097,7 @@ void* gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
    size_t o =(size_t)docElement->GetOffset();
    fseek(Fp, o, SEEK_SET);
    size_t l = docElement->GetLength();
-   char* a = new char[l];
+   uint8_t* a = new uint8_t[l];
    if(!a)
    {
       dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
@@ -1126,13 +1126,13 @@ void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *element)
    size_t o =(size_t)element->GetOffset();
    fseek(Fp, o, SEEK_SET);
    size_t l = element->GetLength();
-   char* a = new char[l];
+   uint8_t* a = new uint8_t[l];
    if( !a )
    {
       dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
       return NULL;
    }
-   element->SetVoidArea((void *)a);
+   element->SetVoidArea((uint8_t*)a);
    /// \todo check the result 
    size_t l2 = fread(a, 1, l , Fp);
    if( l != l2 )
@@ -1151,7 +1151,7 @@ void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *element)
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
+bool gdcmDocument::SetEntryVoidAreaByNumber(uint8_t* area,
                                             uint16_t group, 
                                             uint16_t element) 
 {

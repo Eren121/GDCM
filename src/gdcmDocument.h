@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/20 18:14:23 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/09/23 09:40:30 $
+  Version:   $Revision: 1.40 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -136,7 +136,7 @@ public:
                                          uint16_t group, uint16_t elem,
                                          std::string const & VR ="unkn");
    
-   gdcmBinEntry* ReplaceOrCreateByNumber(void *voidArea, int lgth,
+   gdcmBinEntry* ReplaceOrCreateByNumber(uint8_t* voidArea, int lgth,
                                          uint16_t group, uint16_t elem,
                                          std::string const & VR="unkn");
 
@@ -177,14 +177,14 @@ public:
                                  std::string const & tagName);
    virtual bool SetEntryByNumber(std::string const & content,
                                  uint16_t group, uint16_t element);
-   virtual bool SetEntryByNumber(void *content, int lgth,
+   virtual bool SetEntryByNumber(uint8_t* content, int lgth,
                                  uint16_t group, uint16_t element);
    virtual bool SetEntryLengthByNumber(uint32_t length,
                                        uint16_t group, uint16_t element);
 
    virtual size_t GetEntryOffsetByNumber (uint16_t group, uint16_t elem);
    virtual void* GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem);   
-   virtual bool  SetEntryVoidAreaByNumber(void* a, uint16_t group,
+   virtual bool  SetEntryVoidAreaByNumber(uint8_t* a, uint16_t group,
                                                    uint16_t elem);
 
    virtual void UpdateShaEntries();

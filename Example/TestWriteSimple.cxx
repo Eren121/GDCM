@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
   int dataSize    = f2->GetImageDataSize();
   // unsigned char cast is necessary to be able to delete the buffer
   // since deleting a void* is not allowed in c++
-  char *imageData = (char*)f2->GetImageData();
+  uint8_t* imageData = (uint8_t*)f2->GetImageData();
 
   f2->SetImageData( imageData, dataSize);
 

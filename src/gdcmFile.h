@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/20 18:14:23 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2004/09/23 09:40:30 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,9 +53,9 @@ public:
 ///            -the (vtk) user is supposed to know how to deal with LUTs-     
    size_t GetImageDataSizeRaw(){ return ImageDataSizeRaw; };
 
-   void * GetImageData();
+   uint8_t* GetImageData();
    size_t GetImageDataIntoVector(void* destination, size_t maxSize);
-   void * GetImageDataRaw();
+   uint8_t* GetImageDataRaw();
    size_t GetImageDataIntoVectorRaw(void* destination, size_t maxSize);
 
    // Allocates ExpectedSize bytes of memory at this->Data and copies the
@@ -65,7 +65,7 @@ public:
    // e.g. VTK) before calling the Write
       
    // see also gdcmHeader::SetImageDataSize ?!?         
-   bool SetImageData (void * data, size_t expectedSize);
+   bool SetImageData (uint8_t* data, size_t expectedSize);
 
    /// \todo When the caller is aware we simply point to the data:
    /// int SetImageDataNoCopy (void * Data, size_t ExpectedSize);
@@ -143,7 +143,7 @@ private:
    //
 
    /// \brief to hold the Pixels (when read)
-   void* Pixel_Data;  // (was PixelData)
+   uint8_t* Pixel_Data;  // (was PixelData)
    
    /// \brief Area length to receive the Gray Level pixels
    size_t ImageDataSizeRaw;

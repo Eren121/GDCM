@@ -53,7 +53,7 @@ int TestReadWriteReadCompare(int argc, char* argv[])
 
       gdcmFile*  file = new gdcmFile( header );
       int dataSize    = file->GetImageDataSize();
-      void* imageData = file->GetImageData(); //EXTREMELY IMPORTANT
+      uint8_t* imageData = file->GetImageData(); //EXTREMELY IMPORTANT
              // Sure, it is : It's up to the user to decide if he wants to
              // GetImageData or if he wants to GetImageDataRaw
              // (even if we do it by setting a flag, he will have to decide) 

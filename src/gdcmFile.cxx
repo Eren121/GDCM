@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/20 18:14:23 $
-  Version:   $Revision: 1.126 $
+  Date:      $Date: 2004/09/23 09:40:30 $
+  Version:   $Revision: 1.127 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -352,7 +352,7 @@ void gdcmFile::SetPixelDataSizeFromHeader()
  * @return  Pointer to newly allocated pixel data.
  *          NULL if alloc fails 
  */
-void *gdcmFile::GetImageData()
+uint8_t* gdcmFile::GetImageData()
 {
    // FIXME (Mathieu)
    // I need to deallocate Pixel_Data before doing any allocation:
@@ -477,7 +477,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t maxSize)
  * @return  Pointer to newly allocated pixel data.
  * \        NULL if alloc fails 
  */
-void * gdcmFile::GetImageDataRaw ()
+uint8_t* gdcmFile::GetImageDataRaw ()
 {
    size_t imgDataSize;
    if ( Header->HasLUT() )
@@ -821,7 +821,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
  *
  * @return boolean
  */
-bool gdcmFile::SetImageData(void *inData, size_t expectedSize)
+bool gdcmFile::SetImageData(uint8_t* inData, size_t expectedSize)
 {
    Header->SetImageDataSize( expectedSize );
 // FIXME : if already allocated, memory leak !

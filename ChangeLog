@@ -1,3 +1,8 @@
+2004-09-23 Jean-Pierre Roux
+  * FIX In order not to be poluted any longer by casting problems,
+    the member VoidArea of gdcmBinEntry is now uint8_t* (instead of void *)
+	 we can now delete[] it safely 
+
 2004-09-22 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmDocument.cxx: gdcmDocument::~gdcmDocument() doesn't clear (nor
     clear) TagHT, which is an inherited member of gdcmElementSet. It is

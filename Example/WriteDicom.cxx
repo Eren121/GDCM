@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   //        and that does the job
 
   int dataSize    = f2->GetImageDataSize();
-  void *imageData = f2->GetImageData();
+  uint8_t* imageData = f2->GetImageData();
 
   std::cout << "dataSize :" << dataSize << std::endl;
 

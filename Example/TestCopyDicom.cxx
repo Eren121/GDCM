@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
       TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
 
       size_t dataSize = original->GetImageDataSize();
-      void *imageData = original->GetImageData();
+      uint8_t* imageData = original->GetImageData();
   
       //First of all copy the header field by field
   
