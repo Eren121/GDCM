@@ -1,5 +1,9 @@
+2004-01-07 Benoit Regrain
+     * Modification to compile with the distutils.
+     * Bug fix in code
+
 2003-12-10 Benoit Regrain
-     * gdcmHeader is now aggregating gdcmFile, and not derived into. Thus, we 
+     * gdcmHeader is now aggregating gdcmFile, and not derived into. Thus, we
        can use a gdcmHeaderHelper to load datas
      * gdcmPython/testSuite.py : make the testSuite compliant with modifications
        made in the source code

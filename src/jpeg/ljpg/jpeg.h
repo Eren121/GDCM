@@ -4,10 +4,12 @@
  * Basic jpeg data structure definitions.
  */
 /*
- * $Id: jpeg.h,v 1.2 2003/10/29 18:24:40 malaterre Exp $
+ * $Id: jpeg.h,v 1.3 2004/01/07 10:07:28 regrain Exp $
  */
 #ifndef _JPEG
 #define _JPEG
+
+#include <stdio.h>
 
 /* a function referenced thru EXTERNs: */
 #ifdef WIN32
@@ -173,7 +175,7 @@ typedef struct DecompressInfo
  *
  *--------------------------------------------------------------
  */
-#define swap(type,a,b) {type c; c=(a); (a)=(b); (b)=c;}
+#define gdcmSWAP(type,a,b) {type c; c=(a); (a)=(b); (b)=c;}
 
 #define MEMSET(s,c,n) memset((void *)(s),(int)(c),(int)(n))
 #define MEMCPY(s1,s2,n) memcpy((void *)(s1),(void *)(s2),(int)(n))

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <vtkRenderWindowInteractor.h>
 #include <vtkImageViewer2.h>
 #include <vtkStructuredPoints.h>

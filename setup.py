@@ -86,6 +86,7 @@ vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
 vtkSources.extend(Jpeg8Sources)
 vtkSources.extend(Jpeg12Sources)
 vtkSources.extend(JpgSources)
+vtkSources.remove(os.path.join(gdcmvtkSrcDir,"vtkgdcmViewer.cxx"))
 
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",

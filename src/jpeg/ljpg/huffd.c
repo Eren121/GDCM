@@ -5,7 +5,7 @@
  * software
  */
 /*
- * $Id: huffd.c,v 1.1 2003/10/21 12:08:53 jpr Exp $
+ * $Id: huffd.c,v 1.2 2004/01/07 10:07:28 regrain Exp $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -533,7 +533,7 @@ void DecodeImage (DecompressInfo *dcPtr, unsigned short **image, int depth)
     else if (depth == 24)
                 PmPutRow24 (curRowBuf, numCOL, &image24tmp);
 
-    swap(MCU *, prevRowBuf, curRowBuf);
+    gdcmSWAP(MCU *, prevRowBuf, curRowBuf);
 
     /* optimal case : 8 bit image, one color component, no restartInRows */
     if ((depth == 8) && (compsInScan == 1) && (dcPtr->restartInRows == 0)) 
@@ -631,7 +631,7 @@ void DecodeImage (DecompressInfo *dcPtr, unsigned short **image, int depth)
               else if (depth == 24)
                         PmPutRow24 (curRowBuf, numCOL, &image24tmp);
 
-              swap(MCU *,prevRowBuf,curRowBuf);
+              gdcmSWAP(MCU *,prevRowBuf,curRowBuf);
               continue;
            }
            dcPtr->restartRowsToGo--;
@@ -684,7 +684,7 @@ void DecodeImage (DecompressInfo *dcPtr, unsigned short **image, int depth)
               else if (depth == 24)
                         PmPutRow24 (curRowBuf, numCOL, &image24tmp);
 
-              swap(MCU *, prevRowBuf, curRowBuf);
+              gdcmSWAP(MCU *, prevRowBuf, curRowBuf);
       
       }/*endfor row*/
     }/*endelse*/
