@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.122 $
+  Date:      $Date: 2005/01/25 15:35:15 $
+  Version:   $Revision: 1.123 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -769,7 +769,6 @@ std::string Util::GetIPAddress()
  *        each time a DICOM image is create it should have 
  *        a unique identifier (URI)
  * @param root is the DICOM prefix assigned by IOS group
- * @param is a string you want to append to the UID.
  */
 std::string Util::CreateUniqueUID(const std::string &root)
 {
