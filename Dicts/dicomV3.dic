@@ -66,13 +66,14 @@
 0008 0020 DA ID Study Date
 0008 0021 DA ID Series Date
 0008 0022 DA ID Acquisition Date
-0008 0023 DA ID Image Date
+0008 0023 DA ID Content Date
 0008 0024 DA ID Overlay Date
 0008 0025 DA ID Curve Date
+0008 002a DT ID Acquisition Datetime
 0008 0030 TM ID Study Time
 0008 0031 TM ID Series Time
 0008 0032 TM ID Acquisition Time
-0008 0033 TM ID Image Time
+0008 0033 TM ID Content Time
 0008 0034 TM ID Overlay Time
 0008 0035 TM ID Curve Time
 0008 0040 US ID Data Set Type (RET)
@@ -82,9 +83,9 @@
 0008 0052 CS ID Query/Retreive Level
 0008 0054 AE ID Retrieve AE Title
 0008 0056 CS ID Instance Availability
-0008 0058 UI ID Failed SOP Instances
+0008 0058 UI ID Failed SOP Instances List
 0008 0060 CS ID Modality
-0008 0061 CS ID Modality in Study
+0008 0061 CS ID Modalities in Study
 0008 0062 SQ ID Modality Subtype
 0008 0064 CS ID Conversion Type
 0008 0068 CS ID Presentation Intent Type
@@ -124,7 +125,7 @@
 0008 1050 PN ID Performing Physician's Name
 0008 1060 PN ID Name of Physician(s) Reading Study
 0008 1070 PN ID Operator's Name
-0008 1072 SQ ID Operator's Identification Sequence
+0008 1072 SQ ID Operator Identification Sequence
 0008 1080 LO ID Admitting Diagnoses Description
 0008 1084 SQ ID Admitting Diagnosis Code Sequence
 0008 1090 LO ID Manufacturer's Model Name
@@ -155,6 +156,7 @@
 0008 2120 SH ID Stage Name
 0008 2122 IS ID Stage Number
 0008 2124 IS ID Number of Stages
+0008 2127 SH ID View Name
 0008 2128 IS ID View Number
 0008 2129 IS ID Number of Event Timers
 0008 212a IS ID Number of Views in Stage
@@ -166,7 +168,7 @@
 0008 2200 CS ID Transducer Position (RET)
 0008 2204 CS ID Transducer Orientation (RET)
 0008 2208 CS ID Anatomic Structure (RET)
-0008 2218 SQ ID Anatomic Region of Interest Sequence
+0008 2218 SQ ID Anatomic Region Sequence
 0008 2220 SQ ID Anatomic Region Modifier Sequence
 0008 2228 SQ ID Primary Anatomic Structure Sequence
 0008 2229 SQ ID Anatomic Structure, Space or Region Sequence
@@ -178,13 +180,17 @@
 0008 4000 SH ID Comments (RET)
 0008 9007 CS ID Frame Type
 0008 9092 SQ ID Referenced Image Evidence Sequence
+0008 9121 SQ ID Referenced Raw Data Sequence
+0008 9123 UI ID Creator-Version UID
+0008 9124 SQ ID Derivation Image Sequence
+0008 9154 SQ ID Source Image Evidence Sequence
 0008 9205 CS ID Pixel Presentation
 0008 9206 CS ID Volumetric Properties
 0008 9207 CS ID Volume Based Calculation Technique
 0008 9208 CS ID Complex Image Component
 0008 9209 CS ID Acquisition Contrast
 0008 9215 SQ ID Derivation Code Sequence
-0008 9237 SQ ID Referenced Grayscale Presentation State Value
+0008 9237 SQ ID Referenced Grayscale Presentation State Sequence
 0010 0000 UL PAT Group Length
 0010 0010 PN PAT Patient's Name
 0010 0020 LO PAT Patient ID
@@ -202,7 +208,7 @@
 0010 1020 DS PAT Patient's Size
 0010 1030 DS PAT Patient's Weight
 0010 1040 LO PAT Patient's Address
-0010 1050 SH PAT Insurance Plan Identifier (RET)
+0010 1050 SH PAT Insurance Plan Identification (RET)
 0010 1060 PN PAT Patient's Mother's Birth Name
 0010 1080 LO PAT Military Rank
 0010 1081 LO PAT Branch of Service
@@ -291,7 +297,7 @@
 0018 1019 LO ACQ Secondary Capture Device Software Version(s)
 0018 101a LO ACQ Hardcopy Device Software Version
 0018 101b LO ACQ Hardcopy Device Manufacturer's Model Name
-0018 1020 LO ACQ Software Version
+0018 1020 LO ACQ Software Version(s)
 0018 1022 SH ACQ Video Image Format Acquired
 0018 1023 LO ACQ Digital Image Format Acquired
 0018 1030 LO ACQ Protocol Name
@@ -314,10 +320,11 @@
 0018 1065 DS ACQ Frame Time Vector
 0018 1066 DS ACQ Frame Delay
 0018 1067 DS ACQ Image Trigger Delay
-0018 1068 DS ACQ Group Time Offset
+0018 1068 DS ACQ Multiplex Group Time Offset
 0018 1069 DS ACQ Trigger Time Offset
 0018 106a CS ACQ Synchronization Trigger
 0018 106b UI ACQ Synchronization Frame of Reference
+0018 106c US ACQ Synchronization Channel
 0018 106e UL ACQ Trigger Sample Position
 0018 1070 LO ACQ Radiopharmaceutical Route
 0018 1071 DS ACQ Radiopharmaceutical Volume
@@ -340,7 +347,7 @@
 0018 1100 DS ACQ Reconstruction Diameter
 0018 1110 DS ACQ Distance Source to Detector
 0018 1111 DS ACQ Distance Source to Patient
-0018 1114 DS ACQ Estimated Radiographic Mag Factor
+0018 1114 DS ACQ Estimated Radiographic Magnification Factor
 0018 1120 DS ACQ Gantry/Detector Tilt
 0018 1121 DS ACQ Gantry/Detector Slew
 0018 1130 DS ACQ Table Height
@@ -375,7 +382,7 @@
 0018 1164 DS ACQ Image Pixel Spacing
 0018 1166 CS ACQ Grid
 0018 1170 IS ACQ Generator Power
-0018 1180 SH ACQ Collimator/Grid Name
+0018 1180 SH ACQ Collimator/grid Name
 0018 1181 CS ACQ Collimator Type
 0018 1182 IS ACQ Focal Distance
 0018 1183 DS ACQ X Focus Center
@@ -432,6 +439,8 @@
 0018 1610 IS ACQ Center of Circular Shutter
 0018 1612 IS ACQ Radius of Circular Shutter
 0018 1620 IS ACQ Vertices of the Polygonal Shutter
+0018 1622 US ACQ Shutter Presentation Value
+0018 1623 US ACQ Shutter Overlay Group
 0018 1700 CS ACQ Collimator Shape
 0018 1702 IS ACQ Collimator Left Vertical Edge
 0018 1704 IS ACQ Collimator Right Vertical Edge
@@ -601,10 +610,11 @@
 0018 9045 SQ ACQ Multi-Coil Definition Sequence
 0018 9046 LO ACQ Multi-Coil Configuration
 0018 9047 SH ACQ Multi-Coil Element Name
+0018 9048 CS ACQ Multi-Coil Element Used
 0018 9049 SQ ACQ MR Transmit Coil Sequence
 0018 9050 LO ACQ Transmit Coil Manufacturer Name
 0018 9051 CS ACQ Transmit Coil Type
-0018 9052 FD ACQ SpectralWidth
+0018 9052 FD ACQ Spectral Width
 0018 9053 FD ACQ Chemical Shift Reference
 0018 9054 CS ACQ Volume Localization Technique
 0018 9058 US ACQ MR Acquisition Frequency Encoding Steps
