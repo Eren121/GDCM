@@ -1,3 +1,9 @@
+2004-06-24 Jean-Pierre Roux
+  ADD : Examples/WriteRead, that acts like the former Test/TestWriteRead
+  FIX : Test/TestReadWrite now iterates on all the file names 
+                          (instead of infinite loop)
+  ENH : Test/TestWriteRead now iterates on all the file names 
+
 2004-06-28 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * Test/TestReadWrite.cxx: now uses all the images of gdcmData.
 
