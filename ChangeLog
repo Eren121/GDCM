@@ -1,4 +1,6 @@
 2004-09-24 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * TODO updated with Mathieu suggestions. I proposed a template for
+    describing TODO entries and used it for new entries.
   * Added Doc/Website/CodingStyle.html, Developpers.html,
     DeveloppersPython.html, GdcmDataCvs.html and
     DownloadVersion0_1.html, DownloadVersion0_3.html.
