@@ -1,3 +1,5 @@
+import sys
+import os.path
 from gdcmConfigDemo import *
 from gdcmPython.vtk import *
 from vtkpython import *
@@ -16,7 +18,9 @@ try:
    fileName = sys.argv[1]
 except IndexError:
    fileName = os.path.join(GDCM_DATA_ROOT, "test.acr")
-   
+   if( not os.path.isfile(fileName) ):
+      fileName=os.path.join(os.path.split(sys.argv[0])[0],"test.acr")
+
 if( not os.path.isfile(fileName) ):
    PrintUse()
    sys.exit(1)

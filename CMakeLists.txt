@@ -228,3 +228,11 @@ IF(GDCM_DOCUMENTATION)
   ENDIF(DOXYGEN)
 ENDIF(GDCM_DOCUMENTATION)
 
+#-----------------------------------------------------------------------------
+IF(WIN32)
+  OPTION(GDCM_INSTALLER "Build the install setup using InnoSetup." OFF)
+  IF(GDCM_INSTALLER)
+    SUBDIRS(Builder)
+  ENDIF(GDCM_INSTALLER)
+ENDIF(WIN32)
+
