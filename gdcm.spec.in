@@ -18,7 +18,7 @@ BuildRequires: doxygen, swig13, python2
 Packager: Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
 
 %description
-gdcm is a library dedicated to reading and writing dicom files.
+gdcm is a library dedicated to read and write DICOM files.
 
 %prep
 %setup -q 

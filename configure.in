@@ -85,6 +85,7 @@ gdcm.spec
 src/Makefile
 src/jpeg/Makefile
 src/jpeg/libijg8/Makefile
+src/jpeg/libijg12/Makefile
 gdcmPython/Makefile
 Test/Makefile
 Dicts/Makefile
