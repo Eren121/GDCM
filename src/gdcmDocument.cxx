@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 19:03:01 $
-  Version:   $Revision: 1.176 $
+  Date:      $Date: 2005/01/11 22:05:22 $
+  Version:   $Revision: 1.177 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2534,10 +2534,7 @@ bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
        << std::hex << testGroup << "," << testElement << ")" << std::endl
        << "   but instead we encountered tag ("
        << std::hex << itemTagGroup << "," << itemTagElement << ")"
-       << std::dec
-       << "  at address: " << (unsigned int)currentPosition 
-       << std::hex 
-       << "  0x(" << (unsigned int)currentPosition  << ")" 
+       << "  at address: " << "  0x(" << (unsigned int)currentPosition  << ")" 
        ) ;
       Fp->seekg(positionOnEntry, std::ios::beg);
 
@@ -2576,7 +2573,7 @@ uint32_t Document::ReadTagLength(uint16_t testGroup, uint16_t testElement)
    {
       gdcmVerboseMacro( "Basic Item Length is: "
         << itemLength << std::endl
-        << "  at address: " << (unsigned int)currentPosition);
+        << "  at address: " << std::hex << (unsigned int)currentPosition);
    }
    return itemLength;
 }
