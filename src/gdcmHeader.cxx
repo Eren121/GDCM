@@ -1,5 +1,16 @@
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.81 2003/09/05 11:53:39 malaterre Exp $
 
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.80 2003/07/28 12:21:09 malaterre Exp $
+//This is needed when compiling in debug mode
+#ifdef _MSC_VER
+//'identifier' : not all control paths return a value
+//#pragma warning ( disable : 4715 )
+// 'identifier' : class 'type' needs to have dll-interface to be used by
+// clients of class 'type2'
+#pragma warning ( disable : 4251 )
+// 'identifier' : identifier was truncated to 'number' characters in the
+// debug information
+#pragma warning ( disable : 4786 )
+#endif //_MSC_VER
 
 #include <stdio.h>
 #include <cerrno>

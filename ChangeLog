@@ -1,3 +1,9 @@
+2003-09-05  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+      * src/*.cxx : added pragma disable 4786/4251 to get rid of ~4300 warning
+        when building in debug mode
+      * vtk/win32/vtkgdcm.dsp : change /MT -> /MD and /MTd -> /MDd to match 
+        src/win32/gdcmdll.dsp
+      * vtk/win32/vtkgdcm.dsp : added /nodefaultlib "mscvrt" for debug mode
 2003-08-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * Corrected a leak in vtkGdcmREader.cxx, the pSource was find thanks to valgrind.
 2003-07-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
