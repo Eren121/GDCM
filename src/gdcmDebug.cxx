@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 22:15:36 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/11/09 22:30:43 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,7 +116,7 @@ void Debug::Exit(int a)
 #ifdef __GNUC__
    std::exit(a);
 #endif
-#ifdef _MSC_VER || __BORLANDC__
+#if defined(_MSC_VER) || defined(__BORLANDC__)
    exit(a);    // Found in #include <stdlib.h>
 #endif
 }
