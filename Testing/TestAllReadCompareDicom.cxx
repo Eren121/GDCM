@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 09:46:15 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/02/01 10:00:49 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,10 +21,6 @@
 
 #include <iostream>
 #include <fstream>
-
-#ifdef _MSC_VER
-   #include <windows.h>
-#endif
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -210,9 +206,6 @@ int TestAllReadCompareDicom(int argc, char* argv[])
                    << std::endl;
          return 1;
       }
-#ifndef _MSC_VER
-      testDir.close();
-#endif
 
       ////// Step 1 (see above description):
       std::string filename = GDCM_DATA_ROOT;
