@@ -110,55 +110,6 @@ SET(BLACK_LIST
   # JPR: also breaks TestReadWriteReadCompare : Pixel differ (as expanded
   #      in memory)  
   "KODAK-12-MONO1-Odd_Terminated_Sequence.dcm"
-  
-  #segfaults TestReadWriteReadCompare (same pb as below) --> Fixed
-  #segfaults ShowDicom
-  "gdcm-MR-SIEMENS-16-1.acr"
-
-  #Break ShowDicom 
-  "TestReadWriteReadCompare.dcm"
-
-  # see comments in gdcmData ref file TestAllEntryVerifyReference.txt
-  # JPR 2004/20/09: doesn't break TestReadWriteReadCompare anymore
-  #"SIEMENS_GBS_III-16-ACR_NEMA_1.acr"
-  
-  # Frog 2004/07/29: segfaults TestReadWriteReadCompare (pixels not
-  #                  parsed properly):
-  # JPR 2004/20/09: doesn't break TestReadWriteReadCompare anymore
-  #    "GE_DLX-8-MONO2-Multiframe-Jpeg_Lossless.dcm"
-
-  # JPR 2004/20/09: doesn't break TestReadWriteReadCompare anymore
-  #"PICKER-16-MONO2-Nested_icon.dcm"
-
-  # JPR 2004/20/09: doesn't break TestReadWriteReadCompare anymore
-  #"SIEMENS_Sonata-16-MONO2-Value_Multiplicity.dcm"
-  
-  # JPR 2004/20/09: doesn't break TestReadWriteReadCompare anymore
-  # Fails on TestAllReadCompareDicom at the RE-reading stage with message:
-  #    Big trouble : Pixel Element (7fe0,10) NOT found
-  # The temporary file GDCMDATAHOME/BaselineDicom/SIEMENS_Sonata-12-MONO2-SQ.dcm
-  # stops after the first binEntry (binary entry) as can be seen with
-  #   " gdcmbin/bin/PrintHeader 
-  #         GDCMDATAHOME/BaselineDicom/SIEMENS_Sonata-12-MONO2-SQ.dcm "
-  # and effectively the pixels are missing (as well as all the entries
-  # after tag 0029|1010)
-  # Note: this file was previously known as E00001S03I0015.dcm
-  #"SIEMENS_Sonata-12-MONO2-SQ.dcm"
-  
-  # JPR 2004/20/09: doesn't break TestReadWriteReadCompare anymore
-  # As of 14/09 this image creates a crash:
-  # Program received signal SIGSEGV, Segmentation fault.
-  #    0x4032bc4b in gdcmHeader::GetLUTRGBA (this=0x8149228)
-  #    at /home/malaterre/Creatis/gdcm/src/gdcmHeader.cxx:1170
-  #    1170          *a = lutR[i*mult+1];
-  "OT-PAL-8-face.dcm"
-  
-  # Files which won't break the test suite but whose png dump looks ugly.
-  # JPR: png looks ugly. so What ? ctest compliant --> un-black listed
-  #   "THERALYS-12-MONO2-Uncompressed-E_Film_Template.dcm"
-  #   "PHILIPS_Gyroscan-8-MONO2-Odd_Sequence.dcm"
-  #   "PHILIPS_Gyroscan-12-MONO2-Jpeg_Lossless.dcm"
-  "SIEMENS_GBS_III-16-ACR_NEMA_1.acr"
   )
 
 
