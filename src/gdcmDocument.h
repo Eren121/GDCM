@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 15:22:23 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2005/01/13 09:23:27 $
+  Version:   $Revision: 1.86 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -234,7 +234,7 @@ private:
                                    DocEntrySet* set );
 
    void HandleBrokenEndian(uint16_t &group, uint16_t &elem);
-   void HandleOutOfGroup0002(uint16_t group);
+   void HandleOutOfGroup0002(uint16_t &group, uint16_t &elem);
 
 // Variables
    /// Public dictionary used to parse this header

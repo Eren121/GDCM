@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 22:19:23 $
-  Version:   $Revision: 1.186 $
+  Date:      $Date: 2005/01/13 09:23:27 $
+  Version:   $Revision: 1.187 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -989,7 +989,7 @@ BinEntry *Document::GetBinEntry(uint16_t group, uint16_t element)
  * \brief         Loads the element while preserving the current
  *               underlying file position indicator as opposed to
  *                to LoadDocEntry that modifies it.
- * @param entry   Header Entry whose value shall be loaded. 
+ * @param entry   Header Entry whose value will be loaded. 
  * @return  
  */
 void Document::LoadDocEntrySafe(DocEntry *entry)
@@ -2400,7 +2400,7 @@ std::string Document::GetTransferSyntaxName()
  *          whatever Transfer Syntax is
  * @return  no return
  */
-void Document::HandleOutOfGroup0002(uint16_t group)
+void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
 {
    // Endian reversion. Some files contain groups of tags with reversed endianess.
    if ( !Group0002Parsed && group != 0x0002)
@@ -2423,6 +2423,8 @@ void Document::HandleOutOfGroup0002(uint16_t group)
          gdcmVerboseMacro("Transfer Syntax Name = [" 
                         << GetTransferSyntaxName() << "]" );
          SwitchByteSwapCode();
+         group = SwapShort(group);
+         elem = SwapShort(elem);
       }
    }
 }
@@ -2457,7 +2459,7 @@ DocEntry *Document::ReadNextDocEntry()
 
 // In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
-      HandleOutOfGroup0002(group);
+      HandleOutOfGroup0002(group, elem);
  
    std::string vr = FindDocEntryVR();
    std::string realVR = vr;
