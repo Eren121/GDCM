@@ -1,3 +1,14 @@
+2004-10-22 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * Doc/Dicom2004_Part5.pdf added (thanks to JPR).
+  * Dicts/dicomTS2004.dic, dicomV3VM2004.dic, groupNameAbbreviations2004.dic
+    new 2004 dictionaries added (thanks to JPR).
+  * FIX dashboard warning RLEFrame::NumberFragments is now of type unsigned int
+  * CLEANUP_ROUND (15) for gdcmPixelConvert
+    - RLEFrame::NumberFragments is now of type unsigned int
+    - gdcmFile::GetImageData(), GetImageDataIntoVector(), GetImageDataRaw()
+      are now all based on PixelConverter. ::GetImageDataIntoVectorRaw()
+      no longer exists.
+
 2004-10-21 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * Initial work in gathering all transfer syntax accessors. clearly 
    IsDecompressed/IsJPEG2000/IsJPEGLossless/IsRLELossless shouldn't be all 

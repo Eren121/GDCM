@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 04:13:26 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/10/22 13:56:46 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -266,7 +266,7 @@ bool PixelConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
       ++it )
    {
       // Loop on the fragments
-      for( int k = 1; k <= (*it)->NumberFragments; k++ )
+      for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
       {
          //fseek( fp, (*it)->Offset[k] ,SEEK_SET );
          fp->seekg(  (*it)->Offset[k] , std::ios_base::beg );
@@ -1030,10 +1030,23 @@ void PixelConvert::BuildLUTRGBA()
  */
 bool PixelConvert::BuildRGBImage()
 {
-   BuildLUTRGBA();
-   if ( ( ! LutRGBA ) || ( ! Decompressed ) )
+   if ( RGB )
    {
-       return false;
+      // The job is allready done.
+      return true;
+   }
+
+   if ( ! Decompressed )
+   {
+      // The job can't be done
+      return false;
+   }
+
+   BuildLUTRGBA();
+   if ( ! LutRGBA )
+   {
+      // The job can't be done
+      return false;
    }
                                                                                 
    // Build RGB Pixels
@@ -1041,7 +1054,7 @@ bool PixelConvert::BuildRGBImage()
    uint8_t* localRGB = RGB;
    for (size_t i = 0; i < DecompressedSize; ++i )
    {
-      int j  = Decompressed[i] * 4; // \todo I don't get this 4 coefficient !
+      int j  = Decompressed[i] * 4;
       *localRGB++ = LutRGBA[j];
       *localRGB++ = LutRGBA[j+1];
       *localRGB++ = LutRGBA[j+2];

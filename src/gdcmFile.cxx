@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.148 $
+  Date:      $Date: 2004/10/22 13:56:46 $
+  Version:   $Revision: 1.149 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -300,33 +300,86 @@ int File::ComputeDecompressedPixelDataSizeFromHeader()
  */
 uint8_t* File::GetImageData()
 {
-   // FIXME (Mathieu)
-   // I need to deallocate Pixel_Data before doing any allocation:
-   
-   if ( Pixel_Data )
-     if ( LastAllocatedPixelDataLength != ImageDataSize ) 
-        free(Pixel_Data);
-   if ( !Pixel_Data )
-      Pixel_Data = new uint8_t[ImageDataSize];
-    
-   if ( Pixel_Data )
+   if ( ! GetDecompressed() )
    {
-      LastAllocatedPixelDataLength = ImageDataSize;
+      // If the decompression failed nothing can be done.
+      return 0;
+   }
+                                                                                
+   uint8_t* pixelData;
+   if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
+   {
+      pixelData = PixelConverter->GetRGB();
+   }
+   else
+   {
+      // When no LUT or LUT conversion fails, return the decompressed
+      pixelData = PixelConverter->GetDecompressed();
+   }
 
-      // we load the pixels (and transform grey level + LUT into RGB)
-      GetImageDataIntoVector(Pixel_Data, ImageDataSize);
+// PIXELCONVERT CLEANME
+   // Restore the header in a disk-consistent state
+   // (if user asks twice to get the pixels from disk)
+   if ( PixelRead != -1 ) // File was "read" before
+   {
+      RestoreInitialValues();
+   }
+   if ( PixelConverter->GetRGB() )
+   {
+      // now, it's an RGB image
+      // Lets's write it in the Header
+      std::string spp = "3";        // Samples Per Pixel
+      HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
+      std::string rgb = "RGB ";     // Photometric Interpretation
+      HeaderInternal->SetEntryByNumber(rgb,0x0028,0x0004);
+      std::string planConfig = "0"; // Planar Configuration
+      HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
+      PixelRead = 0; // no PixelRaw
+   }
+   else
+   {
+      if ( HeaderInternal->HasLUT() )
+      {
+         // The LUT interpretation failed
+         std::string photometricInterpretation = "MONOCHROME1 ";
+         HeaderInternal->SetEntryByNumber( photometricInterpretation,
+                                           0x0028, 0x0004 );
+         PixelRead = 0; // no PixelRaw
+      }
+      else
+      {
+         if ( PixelConverter->IsDecompressedRGB() )
+         {
+            ///////////////////////////////////////////////////
+            // now, it's an RGB image
+            // Lets's write it in the Header
+            // Droping Palette Color out of the Header
+            // has been moved to the Write process.
+            // TODO : move 'values' modification to the write process
+            //      : save also (in order to be able to restore)
+            //      : 'high bit' -when not equal to 'bits stored' + 1
+            //      : 'bits allocated', when it's equal to 12 ?!
+            std::string spp = "3";            // Samples Per Pixel
+            std::string photInt = "RGB ";     // Photometric Interpretation
+            std::string planConfig = "0";     // Planar Configuration
+            HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
+            HeaderInternal->SetEntryByNumber(photInt,0x0028,0x0004);
+            HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
+         }
+         PixelRead = 1; // PixelRaw
+      } 
+   }
 
-      // We say the value *is* loaded.
-      GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
-         GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+   // We say the value *is* loaded.
+   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
+      GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
 
-      // Will be 7fe0, 0010 in standard case
-      GetHeader()->SetEntryBinAreaByNumber( Pixel_Data, 
-         GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel()); 
-   }      
-   PixelRead = 0; // no PixelRaw
+   // Will be 7fe0, 0010 in standard case
+   GetHeader()->SetEntryBinAreaByNumber( pixelData, 
+      GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel()); 
+// END PIXELCONVERT CLEANME
 
-   return Pixel_Data;
+   return pixelData;
 }
 
 /**
@@ -356,49 +409,37 @@ uint8_t* File::GetImageData()
  */
 size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
 {
-   GetImageDataIntoVectorRaw (destination, maxSize);
-   PixelRead = 0 ; // =0 : no ImageDataRaw 
-   if ( !HeaderInternal->HasLUT() )
+   if ( ! GetDecompressed() )
    {
-      return ImageDataSize;
+      // If the decompression failed nothing can be done.
+      return 0;
    }
-                            
-   std::ifstream* fp = HeaderInternal->OpenFile();
-   if ( PixelConverter->BuildRGBImage() )
+
+   if ( HeaderInternal->HasLUT() && PixelConverter->BuildRGBImage() )
    {
+      if ( PixelConverter->GetRGBSize() > maxSize )
+      {
+         dbg.Verbose(0, "File::GetImageDataIntoVector: pixel data bigger"
+                        "than caller's expected MaxSize");
+         return 0;
+      }
       memmove( destination,
                (void*)PixelConverter->GetRGB(),
                PixelConverter->GetRGBSize() );
-    
-      // now, it's an RGB image
-      // Lets's write it in the Header
-
-      // FIXME : Better use CreateOrReplaceIfExist ?
-
-      std::string spp = "3";        // Samples Per Pixel
-      HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
-      std::string rgb = "RGB ";     // Photometric Interpretation
-      HeaderInternal->SetEntryByNumber(rgb,0x0028,0x0004);
-      std::string planConfig = "0"; // Planar Configuration
-      HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
-
+      return PixelConverter->GetRGBSize();
    }
-   else
-   { 
-      // PixelConverter->BuildRGBImage() failed probably because
-      // PixelConverter->GetLUTRGBA() failed:
-      // (gdcm-US-ALOKA-16.dcm), contains Segmented xxx Palette Color 
-      // that are *more* than 65535 long ?!? 
-      // No idea how to manage such an image !
-      // Need to make RGB Pixels (?) from grey Pixels (?!) and Gray Lut  (!?!)
-      // It seems that *no Dicom Viewer* has any idea :-(
-        
-      std::string photomInterp = "MONOCHROME1 ";  // Photometric Interpretation
-      HeaderInternal->SetEntryByNumber(photomInterp,0x0028,0x0004);
-   } 
 
-   /// \todo Drop Palette Color out of the Header?
-   return ImageDataSize; 
+   // Either no LUT conversion necessary or LUT conversion failed
+   if ( PixelConverter->GetDecompressedSize() > maxSize )
+   {
+      dbg.Verbose(0, "File::GetImageDataIntoVector: pixel data bigger"
+                     "than caller's expected MaxSize");
+      return 0;
+   }
+   memmove( destination,
+            (void*)PixelConverter->GetDecompressed(),
+            PixelConverter->GetDecompressedSize() );
+   return PixelConverter->GetDecompressedSize();
 }
 
 /**
@@ -412,19 +453,10 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
  */
 uint8_t* File::GetImageDataRaw ()
 {
-   uint8_t* decompressed = PixelConverter->GetDecompressed();
+   uint8_t* decompressed = GetDecompressed();
    if ( ! decompressed )
    {
-      // The decompressed image migth not be loaded yet:
-     std::ifstream* fp = HeaderInternal->OpenFile();
-      PixelConverter->ReadAndDecompressPixelData( fp );
-      HeaderInternal->CloseFile();
-      if ( ! decompressed )
-      {
-        dbg.Verbose(0, "File::GetImageDataRaw: read/decompress of "
-                       "pixel data apparently went wrong.");
-         return 0;
-      }
+      return 0;
    }
 
 // PIXELCONVERT CLEANME
@@ -467,82 +499,25 @@ uint8_t* File::GetImageDataRaw ()
    return decompressed;
 }
 
-/**
- * \brief   Copies at most MaxSize bytes of pixel data to caller's
- *          memory space.
- * \warning This function was designed to avoid people that want to build
- *          a volume from an image stack to need first to get the image pixels 
- *          and then move them to the volume area.
- *          It's absolutely useless for any VTK user since vtk chooses 
- *          to invert the lines of an image, that is the last line comes first
- *          (for some axis related reasons?). Hence he will have 
- *          to load the image line by line, starting from the end.
- *          VTK users hace to call GetImageData
- * \warning DOES NOT transform the Grey Plane + Palette Color (if any) 
- *                   into a single RGB Pixels Plane
- *          the (VTK) user will manage the palettes
- *     
- * @param   destination Address (in caller's memory space) at which the
- *          pixel data should be copied
- * @param   maxSize Maximum number of bytes to be copied. When MaxSize
- *          is not sufficient to hold the pixel data the copy is not
- *          executed (i.e. no partial copy).
- * @return  On success, the number of bytes actually copied. Zero on
- *          failure e.g. MaxSize is lower than necessary.
- */
-void File::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
+uint8_t* File::GetDecompressed()
 {
-  // we save the initial values of the following
-  // in order to be able to restore the header in a disk-consistent state
-  // (if user asks twice to get the pixels from disk)
-
-   if ( PixelRead != -1 ) // File was "read" before
-   {  
-      RestoreInitialValues(); 
-   }
-   
-   PixelRead = 1 ; // PixelRaw
-    
-   if ( ImageDataSize > maxSize )
+   uint8_t* decompressed = PixelConverter->GetDecompressed();
+   if ( ! decompressed )
    {
-      dbg.Verbose(0, "File::GetImageDataIntoVector: pixel data bigger"
-                     "than caller's expected MaxSize");
-      return;
+      // The decompressed image migth not be loaded yet:
+      std::ifstream* fp = HeaderInternal->OpenFile();
+      PixelConverter->ReadAndDecompressPixelData( fp );
+      HeaderInternal->CloseFile();
+      decompressed = PixelConverter->GetDecompressed();
+      if ( ! decompressed )
+      {
+        dbg.Verbose(0, "File::GetDecompressed: read/decompress of "
+                       "pixel data apparently went wrong.");
+         return 0;
+      }
    }
 
-   std::ifstream* fp = HeaderInternal->OpenFile();
-   PixelConverter->ReadAndDecompressPixelData( fp );
-   HeaderInternal->CloseFile();
-   memmove( destination,
-            (void*)PixelConverter->GetDecompressed(),
-            PixelConverter->GetDecompressedSize() );
-
-   if ( ! PixelConverter->IsDecompressedRGB() )
-   {
-      return;
-   }
-
-///////////////////////////////////////////////////
-   // now, it's an RGB image
-   // Lets's write it in the Header
- 
-   // Droping Palette Color out of the Header
-   // has been moved to the Write process.
-
-   // TODO : move 'values' modification to the write process
-   //      : save also (in order to be able to restore)
-   //      : 'high bit' -when not equal to 'bits stored' + 1
-   //      : 'bits allocated', when it's equal to 12 ?!
-
-   std::string spp = "3";            // Samples Per Pixel
-   std::string photInt = "RGB ";     // Photometric Interpretation
-   std::string planConfig = "0";     // Planar Configuration
-     
-   HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
-   HeaderInternal->SetEntryByNumber(photInt,0x0028,0x0004);
-   HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
- 
-   return; 
+   return decompressed;
 }
 
 /**
@@ -726,7 +701,6 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       HeaderInternal->SetEntryByNumber(columns, 0x0028, 0x0011);
    }
    // ----------------- End of Special Patch ----------------
- 
    fp1->close ();
 
    return true;

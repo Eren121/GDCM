@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 04:13:25 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2004/10/22 13:56:45 $
+  Version:   $Revision: 1.110 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2838,6 +2838,11 @@ void Document::ComputeRLEInfo()
       long frameOffset = Fp->tellg();
 
       uint32_t nbRleSegments = ReadInt32();
+      if ( nbRleSegments > 16 )
+      {
+         // There should be at most 15 segments (refer to RLEFrame class)
+         dbg.Verbose(0, "Document::ComputeRLEInfo: too many segments.");
+      }
  
       uint32_t rleSegmentOffsetTable[15];
       for( int k = 1; k <= 15; k++ )

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2004/10/22 13:56:46 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,8 +43,6 @@ public:
    /// Accessor to \ref Header
    Header* GetHeader() { return HeaderInternal; }
 
-   int ComputeDecompressedPixelDataSizeFromHeader();
-
    /// Accessor to \ref ImageDataSize
    size_t GetImageDataSize(){ return ImageDataSize; };
 
@@ -57,13 +55,9 @@ public:
    uint8_t* GetImageData();
    size_t GetImageDataIntoVector(void* destination, size_t maxSize);
    uint8_t* GetImageDataRaw();
-   void GetImageDataIntoVectorRaw(void* destination, size_t maxSize);
 
    // see also Header::SetImageDataSize ?!?         
    bool SetImageData (uint8_t* data, size_t expectedSize);
-
-   /// \todo When the caller is aware we simply point to the data:
-   /// int SetImageDataNoCopy (void* Data, size_t ExpectedSize);
 
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianity"
@@ -90,6 +84,8 @@ private:
    void SaveInitialValues();    // will belong to the future PixelData class
    void RestoreInitialValues(); // will belong to the future PixelData class
    void DeleteInitialValues();  // will belong to the future PixelData class 
+   uint8_t* GetDecompressed();
+   int ComputeDecompressedPixelDataSizeFromHeader();
 
 private:
 // members variables:
