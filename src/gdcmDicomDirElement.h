@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 14:48:34 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,6 +34,30 @@ typedef std::list<Element> ListDicomDirPatientElem;
 typedef std::list<Element> ListDicomDirStudyElem;
 typedef std::list<Element> ListDicomDirSerieElem;
 typedef std::list<Element> ListDicomDirImageElem;
+
+// For future use (Full DICOMDIR)
+/*
+typedef std::list<Element> ListDicomDirVisit;
+typedef std::list<Element> ListDicomDirResult;
+typedef std::list<Element> ListDicomDirStudyComponent;
+
+typedef std::list<Element> ListDicomDirOverlay;
+typedef std::list<Element> ListDicomDirModalityLut;
+typedef std::list<Element> ListDicomDirModalityLut;
+typedef std::list<Element> ListDicomDirCurve;
+typedef std::list<Element> ListDicomDirStoredPrint;
+typedef std::list<Element> ListDicomDirRtDose;
+typedef std::list<Element> ListDicomDirRtStructureSet;
+typedef std::list<Element> ListDicomDirRtPlan;
+typedef std::list<Element> ListDicomDirRtTreatRecord;
+typedef std::list<Element> ListDicomDirPresentation;
+typedef std::list<Element> ListDicomDirSrDocument;
+typedef std::list<Element> ListDicomDirKeyObjectDoc;
+typedef std::list<Element> ListDicomDirSpectroscopy;
+typedef std::list<Element> ListDicomDirRawData;
+typedef std::list<Element> ListDicomDirRegistration;
+typedef std::list<Element> ListDicomDirFiducial;
+*/
 
 //-----------------------------------------------------------------------------
 /**

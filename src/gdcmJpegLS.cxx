@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpegLS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:09 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,8 +34,10 @@ namespace gdcm
  * @warning : not yet made
  */
 
-bool gdcm_read_JPEGLS_file (std::ifstream* , void* )
+bool gdcm_read_JPEGLS_file (std::ifstream *fp, void *image_buffer)
 {
+   (void)fp;
+   (void)image_buffer;
    gdcmWarningMacro( "Sorry JPEG-LS File not yet taken into account" );
    return false;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:09 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/02/11 15:22:19 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,8 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
+/// \brief auto generated function, to fill up the 'Value Representation'
+///        Dictionnary, if relevant file is not found on user's disk
 void FillDefaultVRDict(VRHT &vr);
 
 //-----------------------------------------------------------------------------

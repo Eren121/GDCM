@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,8 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
+/// \brief auto generate function, to fill up the Dicom Dictionnary,
+///       if relevant file is not found on user's disk
 void FillDefaultDataDict(Dict *d);
 
 //-----------------------------------------------------------------------------

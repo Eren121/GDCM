@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:09 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,12 +28,13 @@
 // TODO
 // a lot of troubles expected with TS : 1.2.840.113619.5.2
 // Implicit VR - Big Endian
-// see : http://www.gemedicalsystemseurope.com/euen/it_solutions/pdf/lsqxi_rev2.pdf
+// http://www.gemedicalsystemseurope.com/euen/it_solutions/pdf/lsqxi_rev2.pdf
 // 
 
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
+/// \brief Transfer Syntaxes gdcm deals with (internal use onky)
 static const char *SpecialStrings[] =  {
   // Implicit VR Little Endian
   "1.2.840.10008.1.2",
@@ -57,7 +58,8 @@ static const char *SpecialStrings[] =  {
   "1.2.840.10008.1.2.4.55",
   // JPEG Lossless, Non-Hierarchical (Process 14)
   "1.2.840.10008.1.2.4.57",
-  // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14, [Selection Value 1])
+  // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14,
+  //                                                       [Selection Value 1])
   "1.2.840.10008.1.2.4.70",
   // JPEG-LS Lossless Image Compression
   "1.2.840.10008.1.2.4.80",
@@ -74,6 +76,8 @@ static const char *SpecialStrings[] =  {
 };
 
 //-----------------------------------------------------------------------------
+/// \brief auto generated function, to fill up the Dicom Dictionnary,
+///       if relevant file is not found on user's disk
 void FillDefaultTSDict(TSHT &ts);
 
 //-----------------------------------------------------------------------------
@@ -114,14 +118,18 @@ TS::~TS()
 
 //-----------------------------------------------------------------------------
 // Public
+
+/// \brief returns occurence number of the given key
 int TS::Count(TSKey const &key) 
 {
    return TsMap.count(key);
 }
 
+/// \brief returns the human reabable value of a Transfer Synatx string 
 TSAtr const &TS::GetValue(TSKey const &key) 
 {
-   // First thing clean up the string sometime the transfer syntax is padded with spaces
+   // First thing clean up the string 
+   // (sometime the transfer syntax is padded with spaces)
    std::string copy = key;
    while ( copy.size() && !isdigit((unsigned char)copy[copy.size()-1]) )
    {

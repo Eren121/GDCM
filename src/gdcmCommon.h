@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 19:17:27 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,6 +79,7 @@ typedef  unsigned int        uint32_t;
 
 #include <string>
 
+/// \brief namespace for Grass root DiCoM
 namespace gdcm
 {
 
@@ -136,6 +137,7 @@ enum FileType {
    ACR_LIBIDO
 };
 
+/// \brief type of the elements composing a DICOMDIR (for internal use only)
 enum DicomDirType {
    DD_UNKNOWN = 0,
    DD_META,

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -372,7 +372,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
 }  
 
 /**
- * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ * \brief   Modifies the value of a given Doc Entry (Dicom Element)
  *          when it exists. Creates it when unexistant.
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
@@ -382,7 +382,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
 SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
 {
    SeqEntry *seqEntry = 0;
-   DocEntry *currentEntry = GetDocEntry( group, elem);
+   DocEntry *currentEntry = GetDocEntry( group, elem );
 
    // Verify the currentEntry
    if( currentEntry )
@@ -391,10 +391,9 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
 
       // Verify the VR
       if( seqEntry )
-         if( seqEntry->GetVR()!="SQ" )
-            seqEntry = NULL;
+         seqEntry = NULL;
 
-      // if currentEntry doesn't correspond to the requested valEntry
+      // if currentEntry doesn't correspond to the requested seqEntry
       if( !seqEntry )
       {
          if (!RemoveEntry(currentEntry))
@@ -418,8 +417,13 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
          return NULL;
       }
    }
+
+   // TODO : Find a trick to insert a SequenceDelimitationItem 
+   //       in the SeqEntry, at the end.
    return seqEntry;
 } 
+
+
  
 /**
  * \brief   Checks if a given Dicom Element exists within the H table

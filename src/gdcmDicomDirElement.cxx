@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 14:48:34 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,8 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
+/// \brief auto generate function, to fill up the default elements for 
+///        a DICOMDIR, if relevant file is not found on user's disk
 void FillDefaultDIRDict(DicomDirElement *dde);
 
 //-----------------------------------------------------------------------------

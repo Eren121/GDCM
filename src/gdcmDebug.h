@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 21:37:45 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,8 +47,8 @@ public:
    Debug();
    ~Debug();
 
-   /// This is a global flag that controls whether any debug, warning
-   /// messages are displayed.
+   /// \brief This is a global flag that controls whether any debug, warning
+   ///        messages are displayed.
    static void SetDebugFlag (bool flag);
    static bool GetDebugFlag ();
    /// \brief Sets the Debug Flag to true
@@ -56,8 +56,8 @@ public:
    /// \brief Sets the Debug Flag to false
    static void DebugOff () { SetDebugFlag(false); };
 
-   /// This is a global flag that controls if debug are redirected
-   /// to a file or not
+   /// \brief This is a global flag that controls if debug are redirected
+   ///        to a file or not
    static void SetDebugToFile (bool flag);
    static bool GetDebugToFile ();
    /// \brief Next debug messages will be sent in the debug file

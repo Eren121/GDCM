@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 14:49:01 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,6 +59,7 @@ public:
 
    /// Sets the Sequence Delimitation Item
    void SetDelimitationItem(DocEntry *e) { SeqTerm = e;   }
+
    /// Gets the Sequence Delimitation Item
    DocEntry *GetDelimitationItem()       { return SeqTerm;}
 

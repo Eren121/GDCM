@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:09 $
-  Version:   $Revision: 1.132 $
+  Date:      $Date: 2005/02/11 15:22:18 $
+  Version:   $Revision: 1.133 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -437,7 +437,7 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
            OUT AsnObjectIdentifier * supportedView);
 #endif //_WIN32
 
-
+/// \brief gets current M.A.C adress (for internal use only)
 int GetMacAddrSys ( unsigned char *addr )
 {
 #ifdef _WIN32
@@ -450,8 +450,8 @@ int GetMacAddrSys ( unsigned char *addr )
 
    HANDLE PollForTrapEvent;
    AsnObjectIdentifier SupportedView;
-   UINT OID_ifEntryType[] = { 1, 3, 6, 1, 2, 1, 2, 2, 1, 3 };
-   UINT OID_ifEntryNum[] = { 1, 3, 6, 1, 2, 1, 2, 1 };
+   UINT OID_ifEntryType[]  = { 1, 3, 6, 1, 2, 1, 2, 2, 1, 3 };
+   UINT OID_ifEntryNum[]   = { 1, 3, 6, 1, 2, 1, 2, 1 };
    UINT OID_ipMACEntAddr[] = { 1, 3, 6, 1, 2, 1, 2, 2, 1, 6 };
    AsnObjectIdentifier MIB_ifMACEntAddr = {
        sizeof(OID_ipMACEntAddr) / sizeof(UINT), OID_ipMACEntAddr };
@@ -699,9 +699,9 @@ int GetMacAddrSys ( unsigned char *addr )
 }
 
 /**
- * Mini function to return the last digit from a number express in base 256
- * pre condition data contain an array of 6 unsigned char
- * post condition carry contain the last digit
+ * \brief Mini function to return the last digit from a number express in base 256
+ *        pre condition data contain an array of 6 unsigned char
+ *        post condition carry contain the last digit
  */
 inline int getlastdigit(unsigned char *data)
 {
@@ -810,7 +810,7 @@ const std::string &Util::GetRootUID()
 
 //-------------------------------------------------------------------------
 /**
- * \brief
+ * \brief class for binary write
  * @param os ostream to write to
  * @param val val
  */ 
