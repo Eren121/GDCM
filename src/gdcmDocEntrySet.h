@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:19 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/16 10:25:53 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ typedef std::string BaseTagKey;
  * and \ref SQItem which are both containers for DocEntries.
  * \ref ElementSet is based on the STL map<> container
  * (see \ref ElementSet::TagHT), as opposed to \ref SQItem
- * which is based on an STL list container (see \ref SQItem::docEntries).
+ * which is based on an STL list container (see \ref ListDocEntry).
  * Since the syntax for adding a new element to a map<> or a list<>
  * differ, \ref DocEntrySet is designed as an adapter to unify the
  * interfaces of \ref DocEntrySet and \ref ElementSet.
@@ -70,14 +70,14 @@ public:
 
    virtual DocEntry* GetDocEntryByNumber(uint16_t group,
                                          uint16_t element) = 0;
-   DocEntry *GetDocEntryByName(TagName const & name);
+   DocEntry* GetDocEntryByName(TagName const & name);
    virtual std::string GetEntryByNumber(uint16_t group, uint16_t element) = 0;
    std::string GetEntryByName(TagName const & name);
-   DictEntry *NewVirtualDictEntry(uint16_t group, 
-                                  uint16_t element,
-                                  TagName const & vr     = "unkn",
-                                  TagName const & fourth = "unkn",
-                                  TagName const & name   = "unkn");
+   DictEntry* NewVirtualDictEntry( uint16_t group, 
+                                   uint16_t element,
+                                   TagName const & vr     = "unkn",
+                                   TagName const & fourth = "unkn",
+                                   TagName const & name   = "unkn" );
   
 protected:
 

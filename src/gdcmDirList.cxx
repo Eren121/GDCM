@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 21:55:55 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/11/16 10:25:53 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,10 +80,9 @@ std::string const & DirList::GetDirName() const
 // Private
 
 /**
- * \ingroup DirList
  * \brief   Explore a directory with possibility of recursion
  *          return number of files read
- * @param  dirName directory to explore
+ * @param  dirpath   directory to explore
  * @param  recursive whether we want recursion or not
  */
 int DirList::Explore(std::string const & dirpath, bool recursive)

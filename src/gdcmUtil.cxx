@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 02:54:35 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2004/11/16 10:25:53 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -139,7 +139,7 @@ std::string Util::CreateCleanString(std::string const & s)
 /**
  * \ingroup Globals
  * \brief   Add a SEPARATOR to the end of the name is necessary
- * @param name file/directory name to normalize 
+ * @param   pathname file/directory name to normalize 
  */
 std::string Util::NormalizePath(std::string const & pathname)
 {
@@ -227,10 +227,12 @@ std::string Util::GetCurrentTime()
 }
 
 /**
- * \ingroup Util
  * \brief Create a /DICOM/ string:
  * It should a of even length (no odd length ever)
- * It can contains as many \0 as you want.
+ * It can contain as many (if you are reading this from your
+ * editor the following character is is backslash followed by zero
+ * that needed to be escaped with an extra backslash for doxygen) \\0
+ * as you want.
  */
 std::string Util::DicomString(const char* s, size_t l)
 {
@@ -243,7 +245,10 @@ std::string Util::DicomString(const char* s, size_t l)
  * \ingroup Util
  * \brief Create a /DICOM/ string:
  * It should a of even lenght (no odd length ever)
- * It can contains as many \0 as you want.
+ * It can contain as many (if you are reading this from your
+ * editor the following character is is backslash followed by zero
+ * that needed to be escaped with an extra backslash for doxygen) \\0
+ * as you want.
  * This function is similar to DicomString(const char*), 
  * except it doesn't take a lenght. 
  * It only pad with a null character if length is odd

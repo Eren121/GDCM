@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:31:12 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/11/16 10:25:53 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,11 +118,12 @@ SeqEntry* DocEntrySet::NewSeqEntryByNumber(uint16_t Group,
 // Protected
 
 /**
- * \brief   Gets a Dicom Element inside a SQ Item Entry, by name
+ * \brief  Gets a Dicom Element inside a SQ Item Entry, by name
+ * @param  name of the element to be found.
  * @return
  */
- DocEntry *DocEntrySet::GetDocEntryByName(std::string const & name)
- {
+DocEntry* DocEntrySet::GetDocEntryByName( TagName const & name )
+{
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
    DictEntry *dictEntry = pubDict->GetDictEntryByName(name);
    if( !dictEntry )
@@ -162,11 +163,11 @@ std::string DocEntrySet::GetEntryByName(TagName const & name)
  * @param   fourth owner group
  * @param   name   english name
  */
-DictEntry* DocEntrySet::NewVirtualDictEntry(uint16_t group,
-                                                    uint16_t element,
-                                                    std::string const & vr,
-                                                    std::string const & fourth,
-                                                    std::string const & name)
+DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,
+                                             uint16_t element,
+                                             TagName const & vr,
+                                             TagName const & fourth,
+                                             TagName const & name )
 {
    return Global::GetDicts()->NewVirtualDictEntry(group,element,vr,fourth,name);
 }
@@ -202,8 +203,7 @@ DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group,
  * Creates a new DocEntry (without any 'value' ...)
  * @param   group     group  number of the underlying DictEntry
  * @param   elem  elem number of the underlying DictEntry 
- * @param   VR   V(alue) R(epresentation) of the Entry -if private Entry- 
-
+ * @param   vr    V(alue) R(epresentation) of the Entry -if private Entry- 
  */
 DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group, uint16_t elem,
                                            TagName const & vr)

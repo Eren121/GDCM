@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 13:10:44 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/11/16 10:25:53 $
+  Version:   $Revision: 1.39 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,6 +67,9 @@ public:
    /// Parsing
    void ParseDirectory();
    
+   // Note: the DicomDir:: namespace prefix is needed by Swig in the 
+   //       following method declarations. Refer to gdcmPython/gdcm.i
+   //       for the reasons of this unecessary notation at C++ level.
    void SetStartMethod(    DicomDir::Method*,
                            void* = NULL,
                            DicomDir::Method* = NULL );

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 22:15:36 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2004/11/16 10:25:52 $
+  Version:   $Revision: 1.80 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -229,14 +229,15 @@ void DicomDir::ParseDirectory()
 
 /**
  * \ingroup DicomDir
- * \brief   Set the start method to call when the parsing of the directory starts
+ * \brief   Set the start method to call when the parsing of the
+ *          directory starts.
  * @param   method Method to call
  * @param   arg    Argument to pass to the method
  * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
-void DicomDir::SetStartMethod(Method* method, void* arg, 
-                              Method* argDelete )
+void DicomDir::SetStartMethod( DicomDir::Method* method, void* arg, 
+                               DicomDir::Method* argDelete )
 {
    if( StartArg && StartMethodArgDelete )
    {
@@ -255,21 +256,22 @@ void DicomDir::SetStartMethod(Method* method, void* arg,
  *          class is destroyed
  * @param   method Method to call to delete the argument
  */
-void DicomDir::SetStartMethodArgDelete(Method* method) 
+void DicomDir::SetStartMethodArgDelete( DicomDir::Method* method ) 
 {
    StartMethodArgDelete = method;
 }
 
 /**
  * \ingroup DicomDir
- * \brief   Set the progress method to call when the parsing of the directory progress
+ * \brief   Set the progress method to call when the parsing of the
+ *          directory progress
  * @param   method Method to call
  * @param   arg    Argument to pass to the method
  * @param   argDelete    Argument  
  * \warning In python : the arg parameter isn't considered
  */
-void DicomDir::SetProgressMethod(Method* method, void* arg, 
-                                 Method* argDelete )
+void DicomDir::SetProgressMethod( DicomDir::Method* method, void* arg, 
+                                  DicomDir::Method* argDelete )
 {
    if( ProgressArg && ProgressMethodArgDelete )
    {
@@ -288,7 +290,7 @@ void DicomDir::SetProgressMethod(Method* method, void* arg,
  *          class is destroyed          
  * @param   method Method to call to delete the argument
  */
-void DicomDir::SetProgressMethodArgDelete(Method* method)
+void DicomDir::SetProgressMethodArgDelete( DicomDir::Method* method )
 {
    ProgressMethodArgDelete = method;
 }
@@ -301,8 +303,8 @@ void DicomDir::SetProgressMethodArgDelete(Method* method)
  * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
-void DicomDir::SetEndMethod(Method* method, void* arg, 
-                            Method* argDelete )
+void DicomDir::SetEndMethod( DicomDir::Method* method, void* arg, 
+                             DicomDir::Method* argDelete )
 {
    if( EndArg && EndMethodArgDelete )
    {
@@ -317,18 +319,18 @@ void DicomDir::SetEndMethod(Method* method, void* arg,
 /**
  * \ingroup DicomDir
  * \brief   Set the method to delete the argument
- *          The argument is destroyed when the method is changed or when the class
- *          is destroyed
+ *          The argument is destroyed when the method is changed or when
+ *          the class is destroyed
  * @param   method Method to call to delete the argument
  */
-void DicomDir::SetEndMethodArgDelete(Method* method)
+void DicomDir::SetEndMethodArgDelete( DicomDir::Method* method )
 {
    EndMethodArgDelete = method;
 }
 
 /**
  * \ingroup DicomDir
- * \brief   writes on disc a DICOMDIR
+ * \brief    writes on disc a DICOMDIR
  * \ warning does NOT add the missing elements in the header :
  *           it's up to the user doing it !
  * \todo : to be re-written using the DICOMDIR tree-like structure

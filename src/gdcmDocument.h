@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 02:54:35 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2004/11/16 10:25:53 $
+  Version:   $Revision: 1.60 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -153,11 +153,11 @@ public:
 
    ValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                      uint16_t group, uint16_t elem,
-                                     std::string const & vr = "unkn");
+                                     TagName const & vr = "unkn");
    
    BinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
                                      uint16_t group, uint16_t elem,
-                                     std::string const & vr = "unkn");
+                                     TagName const & vr = "unkn");
 
    SeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
 
@@ -193,8 +193,8 @@ public:
    virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
    virtual int     GetEntryLengthByNumber(uint16_t group, uint16_t elem);
 //protected:
-   virtual bool SetEntryByName  (std::string const & content, 
-                                 std::string const & tagName);
+   virtual bool SetEntryByName  ( std::string const & content, 
+                                  TagName const & tagName );
    virtual bool SetEntryByNumber(std::string const & content,
                                  uint16_t group, uint16_t element);
    virtual bool SetEntryByNumber(uint8_t* content, int lgth,
@@ -202,7 +202,7 @@ public:
    virtual bool SetEntryLengthByNumber(uint32_t length,
                                        uint16_t group, uint16_t element);
 
-   virtual size_t GetEntryOffsetByNumber (uint16_t group, uint16_t elem);
+   virtual size_t GetEntryOffsetByNumber(uint16_t group, uint16_t elem);
    virtual void* GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
    virtual bool  SetEntryBinAreaByNumber(uint8_t* a, uint16_t group,
                                                    uint16_t elem);
@@ -211,7 +211,7 @@ public:
 
    // Header entry
    DocEntry* GetDocEntryByNumber(uint16_t group, uint16_t element); 
-   DocEntry* GetDocEntryByName  (std::string const & tagName);
+   DocEntry* GetDocEntryByName  (TagName const & tagName);
 
    ValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
    //BinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 

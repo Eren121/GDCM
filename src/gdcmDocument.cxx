@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 02:54:35 $
-  Version:   $Revision: 1.124 $
+  Date:      $Date: 2004/11/16 10:25:53 $
+  Version:   $Revision: 1.125 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -295,14 +295,11 @@ bool Document::IsReadable()
    return true;
 }
 
-
 /**
- * \brief   Internal function that checks whether the Transfer Syntax given
- *          as argument is the one present in the current document.
- * @param   syntaxToCheck The transfert syntax we need to check against.
- * @return  True when SyntaxToCheck corresponds to the Transfer Syntax of
- *          the current document. False either when the document contains
- *          no Transfer Syntax, or when the Tranfer Syntaxes doesn't match.
+ * \brief   Accessor to the Transfer Syntax (when present) of the
+ *          current document (it internally handles reading the
+ *          value from disk when only parsing occured).
+ * @return  The encountered Transfer Syntax of the current document.
  */
 TransferSyntaxType Document::GetTransferSyntax()
 {
@@ -542,7 +539,7 @@ void Document::Write(std::ofstream* fp, FileType filetype)
  * @param   value (string) Value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * @param   VR  V(alue) R(epresentation) of the Entry -if private Entry-
+ * @param   vr  V(alue) R(epresentation) of the Entry -if private Entry-
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
@@ -872,8 +869,8 @@ int Document::GetEntryLengthByNumber(uint16_t group, uint16_t element)
  * @param   tagName name of the searched Dicom Element.
  * @return  true when found
  */
-bool Document::SetEntryByName(std::string const & content,
-                              TagName const & tagName)
+bool Document::SetEntryByName( std::string const & content,
+                               TagName const & tagName)
 {
    DictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( !dictEntry )

@@ -1,3 +1,6 @@
+2004-11-09 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * FIX: src/* fix the doxygen warnings.
+
 2004-11-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
     1. Finish merging JMR patch for writting DICOM from scratch
     2. Fix -hopefully- bug with MONOCHROME and space vs null character
