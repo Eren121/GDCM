@@ -1,3 +1,7 @@
+2003-07-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+      * src/win32/libgdcmjpeg12.dsp was not dos format
+      * src/win32/libgdcmjpeg12.dsp : libgdcmijpeg12_EXPORTS -> LIBGDCMIJPEG12_EXPORTS
+      * src/win32/gdcmdll.dsp: + /I "..\jpeg\libijg12"
 2003-07-29 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmHeader.h : add std:: prefix for stl elements... like others in
         the file
