@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 16:20:23 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2004/11/19 18:49:39 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmCommon.h"
 #include "gdcmHeader.h"
 #include "gdcmPixelConvert.h"
+#include "gdcmDocEntryArchive.h"
 
 namespace gdcm 
 {
@@ -33,6 +34,21 @@ namespace gdcm
  */
 class GDCM_EXPORT File
 {
+public:
+   typedef enum 
+   {
+      WMODE_NATIVE,
+      WMODE_DECOMPRESSED,
+      WMODE_RGB,
+   } TWriteMode;
+     
+   typedef enum 
+   {
+      WTYPE_IMPL_VR,
+      WTYPE_EXPL_VR,
+      WTYPE_ACR,
+   } TWriteType;
+     
 public:
    File( Header* header );
    File( std::string const& filename );
@@ -65,6 +81,7 @@ public:
    bool WriteDcmImplVR(std::string const& fileName);
    bool WriteDcmExplVR(std::string const& fileName);
    bool WriteAcr      (std::string const& fileName);
+   bool Write(std::string const& fileName);
 
    virtual bool SetEntryByNumber(std::string const& content,
                                  uint16_t group, uint16_t element)
@@ -73,9 +90,30 @@ public:
       return true;
    }
    uint8_t* GetLutRGBA();
-     
+
+   // Write mode
+   void SetWriteModeToNative()        { SetWriteMode(WMODE_NATIVE); };
+   void SetWriteModeToDecompressed()  { SetWriteMode(WMODE_DECOMPRESSED); };
+   void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB); };
+   void SetWriteMode(TWriteMode mode) { WriteMode = mode; };
+   TWriteMode GetWriteMode()          { return WriteMode; };
+
+   // Write format
+   void SetWriteTypeToDcmImplVR()       { SetWriteType(WTYPE_EXPL_VR); };
+   void SetWriteTypeToDcmExplVR()       { SetWriteType(WTYPE_EXPL_VR); };
+   void SetWriteTypeToAcr()             { SetWriteType(WTYPE_ACR); };
+   void SetWriteType(TWriteType format) { WriteType = format; };
+   TWriteType GetWriteType()            { return WriteType; };
+
 protected:
    bool WriteBase(std::string const& fileName, FileType type);
+
+   void SetToRAW();
+   void SetToRGB();
+   void Restore();
+
+   void SetToLibido();
+   void RestoreFromLibido();
 
 private:
    void Initialise();
@@ -104,6 +142,13 @@ private:
       
    /// Utility pixel converter
    PixelConvert* PixelConverter;
+
+   // Utility header archive
+   DocEntryArchive *Archive;
+
+   // Write variables
+   TWriteMode WriteMode;
+   TWriteType WriteType;
 
 /// FIXME
 // --------------- Will be moved to a PixelData class

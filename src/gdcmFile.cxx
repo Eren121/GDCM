@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 16:20:23 $
-  Version:   $Revision: 1.157 $
+  Date:      $Date: 2004/11/19 18:49:39 $
+  Version:   $Revision: 1.158 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,11 @@ File::File(std::string const & filename )
  */
 void File::Initialise()
 {
+   WriteMode = WMODE_NATIVE;
+   WriteType = WTYPE_IMPL_VR;
    PixelConverter = NULL; //just in case
+   Archive = NULL;
+
    if ( HeaderInternal->IsReadable() )
    {
       ImageDataSizeRaw = ComputeDecompressedPixelDataSizeFromHeader();
@@ -90,7 +94,10 @@ void File::Initialise()
 
       PixelConverter = new PixelConvert;
       PixelConverter->GrabInformationsFromHeader( HeaderInternal );
+
+      Archive = new DocEntryArchive( HeaderInternal );
    }
+
    SaveInitialValues();
 }
 
@@ -101,6 +108,15 @@ void File::Initialise()
  */
 File::~File()
 { 
+   if( PixelConverter )
+   {
+      delete PixelConverter;
+   }
+   if( Archive )
+   {
+      delete Archive;
+   }
+
    if( SelfHeader )
    {
       delete HeaderInternal;
@@ -108,10 +124,6 @@ File::~File()
    HeaderInternal = 0;
 
    DeleteInitialValues();
-   if( PixelConverter )
-   {
-      delete PixelConverter;
-   }
 }
 
 /**
@@ -120,7 +132,6 @@ File::~File()
  */
 void File::SaveInitialValues()
 { 
-
    PixelRead  = -1; // no ImageData read yet.
    LastAllocatedPixelDataLength = 0;
    Pixel_Data = 0;
@@ -489,12 +500,6 @@ uint8_t* File::GetImageDataRaw ()
    }
 
    // We say the value *is* loaded.
-/*   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
-   GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
- 
-   // will be 7fe0, 0010 in standard cases
-   GetHeader()->SetEntryBinAreaByNumber( decompressed,
-   GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());*/
    SetPixelData(decompressed);
  
    PixelRead = 1; // PixelRaw
@@ -582,7 +587,8 @@ bool File::WriteRawData(std::string const & fileName)
 
 bool File::WriteDcmImplVR (std::string const & fileName)
 {
-   return WriteBase(fileName, ImplicitVR);
+   SetWriteTypeToDcmImplVR();
+   return Write(fileName);
 }
 
 /**
@@ -595,7 +601,8 @@ bool File::WriteDcmImplVR (std::string const & fileName)
 
 bool File::WriteDcmExplVR (std::string const & fileName)
 {
-   return WriteBase(fileName, ExplicitVR);
+   SetWriteTypeToDcmExplVR();
+   return Write(fileName);
 }
 
 /**
@@ -614,7 +621,22 @@ bool File::WriteDcmExplVR (std::string const & fileName)
 
 bool File::WriteAcr (std::string const & fileName)
 {
-   return WriteBase(fileName, ACR);
+   SetWriteTypeToAcr();
+   return Write(fileName);
+}
+
+bool File::Write(std::string const& fileName)
+{
+   switch(WriteType)
+   {
+      case WTYPE_IMPL_VR:
+         return WriteBase(fileName,ImplicitVR);
+      case WTYPE_EXPL_VR:
+         return WriteBase(fileName,ExplicitVR);
+      case WTYPE_ACR:
+         return WriteBase(fileName,ACR);
+   }
+   return(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -664,11 +686,12 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    std::string rows, columns; 
    if ( HeaderInternal->GetFileType() == ACR_LIBIDO)
    {
-      rows    = HeaderInternal->GetEntryByNumber(0x0028, 0x0010);
-      columns = HeaderInternal->GetEntryByNumber(0x0028, 0x0011);
+      SetToLibido();
+      //rows    = HeaderInternal->GetEntryByNumber(0x0028, 0x0010);
+      //columns = HeaderInternal->GetEntryByNumber(0x0028, 0x0011);
 
-      HeaderInternal->SetEntryByNumber(columns,  0x0028, 0x0010);
-      HeaderInternal->SetEntryByNumber(rows   ,  0x0028, 0x0011);
+      //HeaderInternal->SetEntryByNumber(columns,  0x0028, 0x0010);
+      //HeaderInternal->SetEntryByNumber(rows   ,  0x0028, 0x0011);
    }
    // ----------------- End of Special Patch ----------------
       
@@ -699,8 +722,9 @@ bool File::WriteBase (std::string const & fileName, FileType type)
 
    if ( HeaderInternal->GetFileType() == ACR_LIBIDO )
    {
-      HeaderInternal->SetEntryByNumber(rows   , 0x0028, 0x0010);
-      HeaderInternal->SetEntryByNumber(columns, 0x0028, 0x0011);
+      RestoreFromLibido();
+      //HeaderInternal->SetEntryByNumber(rows   , 0x0028, 0x0010);
+      //HeaderInternal->SetEntryByNumber(columns, 0x0028, 0x0011);
    }
    // ----------------- End of Special Patch ----------------
    fp1->close ();
@@ -719,6 +743,9 @@ uint8_t* File::GetLutRGBA()
 
 //-----------------------------------------------------------------------------
 // Private
+/**
+ * \brief Set the pixel datas in the good entry of the Header
+ */
 void File::SetPixelData(uint8_t* data)
 {
    GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
@@ -732,6 +759,48 @@ void File::SetPixelData(uint8_t* data)
          // Flag is to false because datas are kept in the gdcmPixelConvert
          binEntry->SetBinArea( data, false );
    }
+}
+
+void File::SetToRAW()
+{
+}
+
+void File::SetToRGB()
+{
+}
+
+void File::Restore()
+{
+}
+
+void File::SetToLibido()
+{
+   ValEntry *oldRow = dynamic_cast<ValEntry *>(HeaderInternal->GetDocEntryByNumber(0x0028, 0x0010));
+   ValEntry *oldCol = dynamic_cast<ValEntry *>(HeaderInternal->GetDocEntryByNumber(0x0028, 0x0011));
+
+   
+   if( oldRow && oldCol )
+   {
+      std::string rows, columns; 
+
+      ValEntry *newRow=new ValEntry(oldRow->GetDictEntry());
+      ValEntry *newCol=new ValEntry(oldCol->GetDictEntry());
+
+      newRow->Copy(oldCol);
+      newCol->Copy(oldRow);
+
+      newRow->SetValue(oldCol->GetValue());
+      newCol->SetValue(oldRow->GetValue());
+
+      Archive->Push(newRow);
+      Archive->Push(newCol);
+   }
+}
+
+void File::RestoreFromLibido()
+{
+   Archive->Restore(0x0028, 0x0010);
+   Archive->Restore(0x0028, 0x0011);
 }
 
 //-----------------------------------------------------------------------------

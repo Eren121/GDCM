@@ -1,3 +1,18 @@
+2004-11-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocEntry.cxx : remove the copy of the DictEntry... there isn't
+     correct to copy it. The DictEntry is specified at the DocEntry creation,
+     then, it musn't change in the time.
+   * src/gdcmDocEntryArchive.[h|cxx] : new class. It's goal is to change the
+     header correctly. At this time, the change is only made for the first
+     level of the Document. In the future, it might consider sequences.
+     The change is made by replacing a DocEntry by an other that is created
+     outside the class. The old value is kept. When we restore the header
+     status, the added DocEntry is deleted and replaced by the old value.
+   * src/gdcmElementSet.h : Set the DocEntryArchive like friend.
+   * src/gdcmFile.[h|cxx] : Use the gdcmDocEntryArchive. Add methods to
+     set the write type to explicit VR, implicit VR or ACR. Add methods to set
+     the write mode to native, decompressed or RGB (but not used at this time)
+
 2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmSeqEntry.cxx : add initialisation of variable SeqTerm
    * src/gdcmDocument.cxx : add delete of DocEntry's to remove some memory leaks

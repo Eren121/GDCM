@@ -25,6 +25,7 @@ SET(libgdcm_la_SOURCES
    gdcmDictSet.cxx
    gdcmDirList.cxx
    gdcmDocEntry.cxx
+   gdcmDocEntryArchive.cxx
    gdcmDocEntrySet.cxx
    gdcmDocument.cxx
    gdcmElementSet.cxx
