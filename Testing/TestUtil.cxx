@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 19:10:07 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/21 16:07:54 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 
 int TestUtil(int , char * [])
 {
+   std::cout << "Time:" << gdcm::Util::GetCurrentDateTime() << std::endl;
    // Unique UID test
    std::cout << gdcm::Util::CreateUniqueUID("") << std::endl;
    
@@ -45,6 +46,8 @@ int TestUtil(int , char * [])
 
    // MAC Adress
    std::cout << "Mac Address:" << gdcm::Util::GetMACAddress() << std::endl;
+
+   std::cout << "Time:" << gdcm::Util::GetCurrentDateTime() << std::endl;
 
    return 0;
 }
