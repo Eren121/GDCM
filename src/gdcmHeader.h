@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.35 2003/07/23 08:43:03 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.36 2003/07/29 09:35:51 malaterre Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -205,7 +205,7 @@ public:
    float GetYImagePosition(void);
    float GetZImagePosition(void);
    
-   string GetTransferSyntaxName(void);
+   std::string GetTransferSyntaxName(void);
    int    GetLUTLength(void);
    int    GetLUTNbits(void);
    void * GetLUTRed(void);
