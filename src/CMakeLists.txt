@@ -34,10 +34,8 @@ SET(libgdcm_la_SOURCES
    gdcmVR.cxx
    gdcmFile.cxx
    gdcmHeader.cxx
-   gdcmHeaderEntry.cxx
    gdcmHeaderHelper.cxx
    gdcmParsePixels.cxx
-   gdcmParser.cxx
    gdcmRLE.cxx
    gdcmDocEntry.cxx
    gdcmDocEntrySet.cxx
