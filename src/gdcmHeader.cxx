@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.110 2003/11/05 17:59:42 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.111 2003/11/07 14:34:50 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -508,7 +508,7 @@ bool gdcmHeader::IsJPEGLossless(void) {
    const char * Transfert = Element->GetValue().c_str();
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
-   if (Element->GetValue() == "1.2.840.10008.1.2.4.57") return true;
+   if (Element->GetValue() == "1.2.840.10008.1.2.4.57")   return true;
 
    return false;
 }
@@ -635,7 +635,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    else if (FoundLength == 13) {
       // The following 'if' will be removed when there is no more
       // images on Creatis HDs with a 13 length for Manufacturer...
-      if ( (ElVal->GetGroup() != 0x0008) || (ElVal->GetElement() != 0x0070))  {
+      if ( (ElVal->GetGroup() != 0x0008) || (ElVal->GetElement() != 0x0070)) {
       // end of remove area
          FoundLength =10;
       }
@@ -644,9 +644,23 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
      // May be commented out to avoid overhead
    else if ( (ElVal->GetGroup() == 0x0009) 
        &&
-       ( (ElVal->GetElement() == 0x1113) || (ElVal->GetElement() == 0x1114) ) )
-        FoundLength =4;      	 
-
+       ( (ElVal->GetElement() == 0x1113) || (ElVal->GetElement() == 0x1114) ) ){
+        FoundLength =4; 
+   } 
+     // end of fix
+	 
+    // to try to 'go inside' SeQuences (with length), and not to ship them        
+    else if ( ElVal->GetVR() == "SQ") { 
+	  FoundLength =0; 	 
+    } 
+    
+    // a SeQuence Element is beginning
+    // Let's forget it's length
+    // (we want to 'go inside')
+    else if(ElVal->GetGroup() == 0xfffe){
+	  FoundLength =0; 	     
+    }
+	          
    ElVal->SetLength(FoundLength);
 }
 
@@ -729,7 +743,8 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
             ElVal->SetLength(FindLengthOB());
             return;
          }
-         FixFoundLength(ElVal, length32);        
+         FixFoundLength(ElVal, length32); 
+
          return;
       }
 
@@ -866,7 +881,7 @@ guint16 gdcmHeader::SwapShort(guint16 a) {
  * @return 
  */
  void gdcmHeader::SkipElementValue(gdcmElValue * ElVal) {
-   SkipBytes(ElVal->GetLength());
+    SkipBytes(ElVal->GetLength());
 }
 
 /**
@@ -907,9 +922,12 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    // car commencer par les ignorer risque de conduire a qq chose
    // qui pourrait ne pas etre generalisable
    // Well, I'm expecting your code !!!
+   
+   // to try to 'go inside' the SeQuences
+   // we don't any longer skip them !
     
-   if( vr == "SQ" )
-      SkipLoad = true;
+  // if( vr == "SQ" )  
+  //    SkipLoad = true;
 
    // A sequence "contains" a set of Elements.  
    //          (fffe e000) tells us an Element is beginning
@@ -1680,7 +1698,7 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
    
    rewind(fp);
    CheckSwap();
-   while ( (newElValue = ReadNextElement()) ) {
+   while ( (newElValue = ReadNextElement()) ) {   
       SkipElementValue(newElValue);
       PubElValSet.Add(newElValue);
    }
@@ -1750,7 +1768,7 @@ void gdcmHeader::LoadElements(void) {
    rewind(fp);   
    TagElValueHT ht = PubElValSet.GetTagHt();
    for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
-      LoadElementValue(tag->second);
+         LoadElementValue(tag->second);
    }
    rewind(fp);
 
