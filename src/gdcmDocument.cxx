@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/06/22 14:07:05 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -551,8 +551,8 @@ bool gdcmDocument::WriteF(FileType filetype) {
  * if ( filetype == ACR)
  *    UpdateGroupLength(true,ACR);
  */
- 	
-	Write(fp,filetype);  // the gdcmElementSet one !
+ 
+   Write(fp,filetype);  // the gdcmElementSet one !
 
    /// WriteEntries(fp,type); // old stuff
    return true;
@@ -637,14 +637,14 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          guint16 Elem)
 {
    gdcmDocEntry* a;
-   gdcmBinEntry* b;	
+   gdcmBinEntry* b;
    a = GetDocEntryByNumber( Group, Elem);
    if (a == NULL) {
       a =NewBinEntryByNumber(Group, Elem);
       if (a == NULL) 
          return NULL;
 
-		b = new gdcmBinEntry(a);			
+      b = new gdcmBinEntry(a);
       AddEntry(b);
    }   
    SetEntryByNumber(voidArea, lgth, Group, Elem);
@@ -846,7 +846,7 @@ bool gdcmDocument::SetEntryByNumber(void *content,
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
-		
+
 /* Hope Binray field length is never wrong    
    if(lgth%2) // Non even length are padded with a space (020H).
    {  
@@ -1261,7 +1261,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
                            long offset, long l_max, bool delim_mode)
 {
    int SQItemNumber = 0;
-		
+
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
    gdcmSQItem *itemSQ;
    bool dlm_mod;
@@ -1293,7 +1293,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
    
       lgr=ParseDES(itemSQ, NewDocEntry->GetOffset(), l, dlm_mod);
       
-      set->AddEntry(itemSQ,SQItemNumber);	 
+      set->AddEntry(itemSQ,SQItemNumber); 
       SQItemNumber ++;
       if (!delim_mode && (ftell(fp)-offset) >= l_max) {
          break;

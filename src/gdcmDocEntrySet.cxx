@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/06/22 14:02:31 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -157,7 +157,7 @@ gdcmDictEntry *gdcmDocEntrySet::NewVirtualDictEntry(guint16 group, guint16 eleme
 // an remove gdcmDocument::NewDocEntryByNumber
 gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByNumber(guint16 group,
                                                    guint16 elem) {
-					      
+      
    // Find out if the tag we encountered is in the dictionaries:
    gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
    gdcmDictEntry *DictEntry = (*PubDict).GetDictEntryByNumber(group, elem);
@@ -171,13 +171,13 @@ gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByNumber(guint16 group,
                   "failed to allocate gdcmDocEntry");
       return (gdcmDocEntry*)0;
    }
-   return NewEntry;				  
+   return NewEntry;
 }
 
 /// \brief 
 gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string Name) {
 
-  gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();					      
+  gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
   gdcmDictEntry *NewTag = (*PubDict).GetDictEntryByName(Name);
    if (!NewTag)
       NewTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "unkn", Name);
@@ -189,7 +189,7 @@ gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string Name) {
                   "failed to allocate gdcmDocEntry");
       return (gdcmDocEntry *)0;
    }
-   return NewEntry;	  				  
+   return NewEntry;
 }
 
 
@@ -203,7 +203,7 @@ gdcmDocEntry *gdcmDocEntrySet::NewDocEntryByName  (std::string Name) {
 gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByName(std::string Name) 
 {
    gdcmDictEntry *found = (gdcmDictEntry *)0;
-   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();	
+   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict()
    if (!PubDict) 
    {
       dbg.Verbose(0, "gdcmDocument::GetDictEntry",
@@ -226,7 +226,7 @@ gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByName(std::string Name)
 gdcmDictEntry *gdcmDocEntrySet::GetDictEntryByNumber(guint16 group,guint16 element) 
 {
    gdcmDictEntry *found = (gdcmDictEntry *)0;
-   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();	
+   gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
    if (!PubDict) 
    {
       dbg.Verbose(0, "gdcmDocument::GetDictEntry",
