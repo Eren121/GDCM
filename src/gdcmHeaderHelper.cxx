@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 22:15:36 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2004/11/16 18:33:33 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,9 +81,16 @@ void SerieHeader::SetDirectory(std::string const & dir)
    for( DirList::const_iterator it = filenames_list.begin(); 
         it != filenames_list.end(); ++it)
    {
-      //use string and not const char*:
+      //directly use string and not const char*:
       Header *header = new Header( *it ); 
-      CoherentGdcmFileList.push_back( header );
+      if( header->IsReadable() )
+      {
+         CoherentGdcmFileList.push_back( header );
+      }
+      else
+      {
+         delete header;
+      }
    }
 }
 
@@ -247,12 +254,12 @@ bool SerieHeader::ImagePositionPatientOrdering()
 
 bool SerieHeader::ImageNumberOrdering() 
 {
-   int min, pos;
-   int n = 0;//CoherentGdcmFileList.size() is a O(N) operation !!
+   int min, max, pos;
+   int n = 0;//CoherentGdcmFileList.size() is a O(N) operation
    unsigned char *partition;
   
    GdcmHeaderList::const_iterator it = CoherentGdcmFileList.begin();
-   min = (*it)->GetImageNumber();
+   min = max = (*it)->GetImageNumber();
 
    for (; it != CoherentGdcmFileList.end(); ++it, ++n)
    {
@@ -260,9 +267,13 @@ bool SerieHeader::ImageNumberOrdering()
 
       //else
       min = (min < pos) ? min : pos;
+      max = (max > pos) ? max : pos;
    }
 
-   //bzeros(partition, n); //Cette fonction est déconseillée, utilisez plutôt memset.
+   // Find out if sorting worked:
+   if( min == max || max == 0 || max > (n+min)) return false;
+
+   //bzeros(partition, n); //This function is deprecated, better use memset.
    partition = new unsigned char[n];
    memset(partition, 0, n);
 
