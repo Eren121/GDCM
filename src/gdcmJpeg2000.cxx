@@ -14,7 +14,7 @@
  * @warning : not yet made
  */
 
-bool gdcmFile::gdcm_read_JPEG2000_file (FILE *fp,void * image_buffer) {
+bool gdcmFile::gdcm_read_JPEG2000_file (FILE* fp,void* image_buffer) {
    (void)fp;                  //FIXME
    (void)image_buffer;        //FIXME
    printf("Sorry JPEG 2000 File not yet taken into account\n");

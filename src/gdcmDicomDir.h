@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 23:28:19 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.31 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@
 typedef std::list<gdcmDicomDirPatient*>   ListDicomDirPatient;
 typedef std::vector<gdcmDocument*>  VectDocument;
 
-typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
+typedef GDCM_EXPORT void(gdcmMethod)(void* = NULL);
 //-----------------------------------------------------------------------------
 
 /**
@@ -64,12 +64,12 @@ public:
 // Parsing
    void ParseDirectory();
    
-   void SetStartMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
-   void SetStartMethodArgDelete(gdcmMethod *);
-   void SetProgressMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
-   void SetProgressMethodArgDelete(gdcmMethod *);
-   void SetEndMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
-   void SetEndMethodArgDelete(gdcmMethod *);
+   void SetStartMethod(gdcmMethod*, void* = NULL, gdcmMethod* = NULL);
+   void SetStartMethodArgDelete(gdcmMethod*);
+   void SetProgressMethod(gdcmMethod* ,void* = NULL, gdcmMethod* = NULL);
+   void SetProgressMethodArgDelete(gdcmMethod*);
+   void SetEndMethod(gdcmMethod*, void* = NULL,gdcmMethod* = NULL);
+   void SetEndMethodArgDelete(gdcmMethod*);
 
    /// GetProgress GetProgress
    float GetProgress()  { return progress; };
@@ -108,43 +108,43 @@ private:
    void Initialize();
    void CreateDicomDir();
    void AddDicomDirMeta();
-   void AddDicomDirPatientToEnd(gdcmSQItem *s);
-   void AddDicomDirStudyToEnd  (gdcmSQItem *s);
-   void AddDicomDirSerieToEnd  (gdcmSQItem *s);
-   void AddDicomDirImageToEnd  (gdcmSQItem *s);
+   void AddDicomDirPatientToEnd(gdcmSQItem* s);
+   void AddDicomDirStudyToEnd  (gdcmSQItem* s);
+   void AddDicomDirSerieToEnd  (gdcmSQItem* s);
+   void AddDicomDirImageToEnd  (gdcmSQItem* s);
 
    void SetElements(std::string &path, VectDocument &list);
    void SetElement (std::string &path,gdcmDicomDirType type,
-                    gdcmDocument *header);
+                    gdcmDocument* header);
 
-   static bool HeaderLessThan(gdcmDocument *header1,gdcmDocument *header2);
+   static bool HeaderLessThan(gdcmDocument* header1,gdcmDocument* header2);
    
 // Variables
 
    /// Pointer on *the* gdcmDicomDirObject 'DicomDirMeta Elements'
-   gdcmDicomDirMeta *metaElems;
+   gdcmDicomDirMeta* metaElems;
 
    /// Chained list of DicomDirPatient (to be exploited recursively) 
    ListDicomDirPatient patients;
 
 /// pointer to the initialisation method for any progress bar   
-   gdcmMethod *startMethod;
+   gdcmMethod* startMethod;
 /// pointer to the incrementation method for any progress bar
-    gdcmMethod *progressMethod;
+    gdcmMethod* progressMethod;
 /// pointer to the termination method for any progress bar
-   gdcmMethod *endMethod;
+   gdcmMethod* endMethod;
 /// pointer to the ??? method for any progress bar   
-   gdcmMethod *startMethodArgDelete;
+   gdcmMethod* startMethodArgDelete;
 /// pointer to the ??? method for any progress bar
-   gdcmMethod *progressMethodArgDelete;
+   gdcmMethod* progressMethodArgDelete;
 /// pointer to the ??? method for any progress bar
-   gdcmMethod *endMethodArgDelete;
+   gdcmMethod* endMethodArgDelete;
 /// pointer to the ??? for any progress bar   
-   void *startArg;
+   void* startArg;
 /// pointer to the ??? for any progress bar
-   void *progressArg;
+   void* progressArg;
 /// pointer to the ??? for any progress bar   
-   void *endArg;
+   void* endArg;
 /// value of the ??? for any progress bar
    float progress;
 /// value of the ??? for any progress bar   

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 10:47:10 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ gdcmDicomDirPatient::gdcmDicomDirPatient(gdcmSQItem *s, TagDocEntryHT *ptagHT):
  * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmHeaderEntries)
  */
-gdcmDicomDirPatient::gdcmDicomDirPatient(TagDocEntryHT *ptagHT):
+gdcmDicomDirPatient::gdcmDicomDirPatient(TagDocEntryHT* ptagHT):
    gdcmDicomDirObject(ptagHT)
 {
 }
@@ -60,7 +60,7 @@ gdcmDicomDirPatient::~gdcmDicomDirPatient()
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmDicomDirPatient::Print(std::ostream &os)
+void gdcmDicomDirPatient::Print(std::ostream& os)
 {
    os << "PATIENT" << std::endl;
    gdcmDicomDirObject::Print(os);
@@ -77,7 +77,7 @@ void gdcmDicomDirPatient::Print(std::ostream &os)
  * \brief   Writes the Object
  * @return
  */ 
-void gdcmDicomDirPatient::Write(FILE *fp, FileType t)
+void gdcmDicomDirPatient::Write(FILE* fp, FileType t)
 {
    gdcmDicomDirObject::Write(fp, t);
 
@@ -93,12 +93,12 @@ void gdcmDicomDirPatient::Write(FILE *fp, FileType t)
  * \brief   adds a new Patient at the begining of the PatientList
  *          of a partially created DICOMDIR
  */
-gdcmDicomDirStudy * gdcmDicomDirPatient::NewStudy()
+gdcmDicomDirStudy* gdcmDicomDirPatient::NewStudy()
 {
    std::list<gdcmElement> elemList = 
       gdcmGlobal::GetDicomDirElements()->GetDicomDirStudyElements();
       
-   gdcmDicomDirStudy *st = new gdcmDicomDirStudy( PtagHT );
+   gdcmDicomDirStudy* st = new gdcmDicomDirStudy( PtagHT );
    st->FillObject(elemList);
 
    studies.push_front(st);

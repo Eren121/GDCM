@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/22 01:01:36 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,7 @@ gdcmElementSet::~gdcmElementSet()
   *          from the H Table
   * @return
   */ 
-void gdcmElementSet::Print(std::ostream & os)
+void gdcmElementSet::Print(std::ostream& os)
 {
    for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
@@ -85,7 +85,7 @@ void gdcmElementSet::Print(std::ostream & os)
   *          from the H Table
   * @return
   */ 
-void gdcmElementSet::Write(FILE *fp, FileType filetype)
+void gdcmElementSet::Write(FILE* fp, FileType filetype)
 {
    for (TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
@@ -104,7 +104,7 @@ void gdcmElementSet::Write(FILE *fp, FileType filetype)
  * \brief   add a new Dicom Element pointer to the H Table
  * @param   newEntry entry to add
  */
-bool gdcmElementSet::AddEntry( gdcmDocEntry *newEntry)
+bool gdcmElementSet::AddEntry( gdcmDocEntry* newEntry)
 {
    gdcmTagKey key = newEntry->GetKey();
 
@@ -125,7 +125,7 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *newEntry)
  * \brief   Clear the hash table from given entry BUT keep the entry.
  * @param   entryToRemove Entry to remove.
  */
-bool gdcmElementSet::RemoveEntryNoDestroy( gdcmDocEntry *entryToRemove)
+bool gdcmElementSet::RemoveEntryNoDestroy( gdcmDocEntry* entryToRemove)
 {
    gdcmTagKey key = entryToRemove->GetKey();
    if( TagHT.count(key) == 1 )
@@ -143,7 +143,7 @@ bool gdcmElementSet::RemoveEntryNoDestroy( gdcmDocEntry *entryToRemove)
  * \brief   Clear the hash table from given entry AND delete the entry.
  * @param   entryToRemove Entry to remove AND delete.
  */
-bool gdcmElementSet::RemoveEntry( gdcmDocEntry *entryToRemove)
+bool gdcmElementSet::RemoveEntry( gdcmDocEntry* entryToRemove)
 {
    gdcmTagKey key = entryToRemove->GetKey();
    if( TagHT.count(key) == 1 )

@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
+  Module:    $RCSfile: gdcmPixelStuff.cxx,v $
   Language:  C++
   Date:      $Date: 2004/09/24 11:39:21 $
-  Version:   $Revision: 1.10 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,62 +16,24 @@
                                                                                 
 =========================================================================*/
 
-#include "gdcmDicomDirMeta.h"
-#include "gdcmDocument.h"
+#include "gdcmPixelStuff.h"
+
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
-/**
- * \ingroup gdcmMeta
- * \brief  Constructor
- */ 
-gdcmDicomDirMeta::gdcmDicomDirMeta(TagDocEntryHT* ptagHT):
-   gdcmDicomDirObject(ptagHT)
+gdcmPixelStuff::gdcmPixelStuff(void) 
 {
 
 }
 
-/**
- * \ingroup gdcmDicomDirMeta
- * \brief   Canonical destructor.
- */
-gdcmDicomDirMeta::~gdcmDicomDirMeta() 
+gdcmPixelStuff::~gdcmPixelStuff() 
 {
-   
-}
 
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Prints the Meta Elements
- */ 
-void gdcmDicomDirMeta::Print(std::ostream& os)
-{
-   os << "META" << std::endl;
-   // warning : META doesn't behave exactly like a gdcmObjet 
-   for (ListDocEntry::iterator i = docEntries.begin();  
-        i != docEntries.end();
-        ++i)
-      (*i)->Print();    
 }
 
 
 //-----------------------------------------------------------------------------
 // Public
-
-
-/**
- * \brief   Writes the Meta Elements
- * @return
- */ 
-void gdcmDicomDirMeta::Write(FILE* fp, FileType t)
-{   
-   for (ListDocEntry::iterator i = docEntries.begin();  
-        i != docEntries.end();
-        ++i)
-      (*i)->Write(fp, t);   
-}
 
 //-----------------------------------------------------------------------------
 // Protected

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmParsePixels.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/17 22:47:01 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,7 @@
 bool gdcmFile::ParsePixelData(void) {
 // DO NOT remove the printf s.
 // The ONLY purpose of this method is to PRINT the content
-   FILE *fp;
+   FILE* fp;
 
    if ( !(fp=Header->OpenFile()))
       return false;

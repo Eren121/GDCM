@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 10:47:10 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.69 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -233,8 +233,8 @@ void gdcmDicomDir::ParseDirectory()
  * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
-void gdcmDicomDir::SetStartMethod(gdcmMethod *method, void *arg, 
-                                  gdcmMethod *argDelete )
+void gdcmDicomDir::SetStartMethod(gdcmMethod* method, void* arg, 
+                                  gdcmMethod* argDelete )
 {
    if( startArg && startMethodArgDelete )
    {
@@ -253,7 +253,7 @@ void gdcmDicomDir::SetStartMethod(gdcmMethod *method, void *arg,
  *          class is destroyed
  * @param   method Method to call to delete the argument
  */
-void gdcmDicomDir::SetStartMethodArgDelete(gdcmMethod *method) 
+void gdcmDicomDir::SetStartMethodArgDelete(gdcmMethod* method) 
 {
    startMethodArgDelete = method;
 }
@@ -266,8 +266,8 @@ void gdcmDicomDir::SetStartMethodArgDelete(gdcmMethod *method)
  * @param   argDelete    Argument  
  * \warning In python : the arg parameter isn't considered
  */
-void gdcmDicomDir::SetProgressMethod(gdcmMethod *method, void *arg, 
-                                     gdcmMethod *argDelete )
+void gdcmDicomDir::SetProgressMethod(gdcmMethod* method, void* arg, 
+                                     gdcmMethod* argDelete )
 {
    if( progressArg && progressMethodArgDelete )
    {
@@ -286,7 +286,7 @@ void gdcmDicomDir::SetProgressMethod(gdcmMethod *method, void *arg,
  *          class is destroyed          
  * @param   method Method to call to delete the argument
  */
-void gdcmDicomDir::SetProgressMethodArgDelete(gdcmMethod *method)
+void gdcmDicomDir::SetProgressMethodArgDelete(gdcmMethod* method)
 {
    progressMethodArgDelete = method;
 }
@@ -299,8 +299,8 @@ void gdcmDicomDir::SetProgressMethodArgDelete(gdcmMethod *method)
  * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
-void gdcmDicomDir::SetEndMethod(gdcmMethod *method, void *arg, 
-                                gdcmMethod *argDelete )
+void gdcmDicomDir::SetEndMethod(gdcmMethod* method, void* arg, 
+                                gdcmMethod* argDelete )
 {
    if( endArg && endMethodArgDelete )
    {
@@ -319,7 +319,7 @@ void gdcmDicomDir::SetEndMethod(gdcmMethod *method, void *arg,
  *          is destroyed
  * @param   method Method to call to delete the argument
  */
-void gdcmDicomDir::SetEndMethodArgDelete(gdcmMethod *method)
+void gdcmDicomDir::SetEndMethodArgDelete(gdcmMethod* method)
 {
    endMethodArgDelete = method;
 }
@@ -336,12 +336,12 @@ void gdcmDicomDir::SetEndMethodArgDelete(gdcmMethod *method)
  * @return false only when fail to open
  */
  
-bool gdcmDicomDir::WriteDicomDir(std::string const & fileName) 
+bool gdcmDicomDir::WriteDicomDir(std::string const& fileName) 
 {  
    uint16_t sq[4] = { 0x0004, 0x1220, 0xffff, 0xffff };
    uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0xffff, 0xffff };
 
-   FILE * fp = fopen(fileName.c_str(), "wb");
+   FILE* fp = fopen(fileName.c_str(), "wb");
    if( !fp ) 
    {
       printf("Failed to open(write) File [%s] \n", fileName.c_str());

@@ -98,7 +98,7 @@ extern "C" {
 //  TODO
 //
 
-bool gdcm_write_JPEG_file12 (FILE *fp, void * im_buff, 
+bool gdcm_write_JPEG_file12 (FILE* fp, void*  im_buff, 
                              int image_width, int image_heigh, int quality)
 {
   (void)fp;
@@ -189,7 +189,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @return 1 on success, 0 on error
  */
  
-bool gdcmFile::gdcm_read_JPEG_file12 (FILE *fp,void * image_buffer) {
+bool gdcmFile::gdcm_read_JPEG_file12 (FILE* fp,void* image_buffer) {
    char *pimage;
 
    /* This struct contains the JPEG decompression parameters and pointers to

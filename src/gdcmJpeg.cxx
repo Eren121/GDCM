@@ -130,7 +130,7 @@ extern "C" {
  * @return 1 on success, 0 on error
  */
  
-bool gdcm_write_JPEG_file (FILE *fp, void * im_buf, 
+bool gdcm_write_JPEG_file (FILE* fp, void*  im_buf, 
                            int image_width, int image_height, int quality)
 {
 
@@ -153,7 +153,7 @@ bool gdcm_write_JPEG_file (FILE *fp, void * im_buf,
    */
   struct jpeg_error_mgr jerr;
   /* More stuff */
-  //FILE * outfile;    /* target file */
+  //FILE*  outfile;    /* target FILE* /
   JSAMPROW row_pointer[1];   /* pointer to JSAMPLE row[s] */
   int row_stride;            /* physical row width in image buffer */
 
@@ -325,7 +325,7 @@ struct my_error_mgr {
 };
 
 //-----------------------------------------------------------------------------
-typedef struct my_error_mgr * my_error_ptr;
+typedef struct my_error_mgr* my_error_ptr;
 
 /*
  * Here's the routine that will replace the standard error_exit method:
@@ -357,8 +357,8 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
  * @return 1 on success, 0 on error
  */
  
-bool gdcmFile::gdcm_read_JPEG_file (FILE *fp,void * image_buffer) {
-   char *pimage;
+bool gdcmFile::gdcm_read_JPEG_file (FILE* fp, void* image_buffer) {
+   char* pimage;
 
    /* This struct contains the JPEG decompression parameters and pointers to
     * working space (which is allocated as needed by the JPEG library).

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLE.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
  *            at which the pixel data should be copied 
  * @return    Boolean 
  */
-bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
+bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer) {
    long fragmentBegining; // for ftell, fseek
    char * im = (char *)image_buffer;
 
@@ -151,8 +151,8 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
 
 // ----------------------------------------------------------------------------
 // RLE LossLess Fragment
-int gdcmFile::gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
-                                     long uncompressedSegmentSize, FILE *fp) {
+int gdcmFile::gdcm_read_RLE_fragment(char** areaToRead, long lengthToDecode, 
+                                     long uncompressedSegmentSize, FILE* fp) {
    (void)lengthToDecode; //FIXME
    long ftellRes;
    int count;

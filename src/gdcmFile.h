@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 09:40:30 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ class GDCM_EXPORT gdcmFile
 {
 public:
    gdcmFile( gdcmHeader *header );
-   gdcmFile( std::string const & filename );
+   gdcmFile( std::string const& filename );
  
    virtual ~gdcmFile();
 
@@ -68,21 +68,21 @@ public:
    bool SetImageData (uint8_t* data, size_t expectedSize);
 
    /// \todo When the caller is aware we simply point to the data:
-   /// int SetImageDataNoCopy (void * Data, size_t ExpectedSize);
+   /// int SetImageDataNoCopy (void* Data, size_t ExpectedSize);
 
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianity"
    // The user must call his reader correctly
-   bool WriteRawData  (std::string const & fileName);
-   bool WriteDcmImplVR(std::string const & fileName);
-   bool WriteDcmExplVR(std::string const & fileName);
-   bool WriteAcr      (std::string const & fileName);
+   bool WriteRawData  (std::string const& fileName);
+   bool WriteDcmImplVR(std::string const& fileName);
+   bool WriteDcmExplVR(std::string const& fileName);
+   bool WriteAcr      (std::string const& fileName);
 
    // Don't look any longer for the code : 
    // It's in file gdcmParsePixels.cxx
    bool ParsePixelData();
 
-   virtual bool SetEntryByNumber(std::string const & content,
+   virtual bool SetEntryByNumber(std::string const& content,
                                  uint16_t group, uint16_t element)
    { 
       Header->SetEntryByNumber(content,group,element);
@@ -90,36 +90,36 @@ public:
    }
      
 protected:
-   bool WriteBase(std::string const & fileName, FileType type);
+   bool WriteBase(std::string const& fileName, FileType type);
 
 private:
    void SwapZone(void* im, int swap, int lgr, int nb);
 
-   bool ReadPixelData(void * destination);
+   bool ReadPixelData(void* destination);
    
    // For JPEG 8 Bits, body in file gdcmJpeg.cxx
-   bool gdcm_read_JPEG_file     (FILE *fp, void * image_buffer); 
-   bool gdcm_write_JPEG_file    (FILE *fp, void * image_buffer, 
+   bool gdcm_read_JPEG_file     (FILE* fp, void* image_buffer); 
+   bool gdcm_write_JPEG_file    (FILE* fp, void* image_buffer, 
                                  int image_width, int image_heigh,
                                  int quality);
 
    // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
-   bool gdcm_read_JPEG_file12   (FILE *fp, void* image_buffer);
-   bool gdcm_write_JPEG_file12  (FILE *fp, void* image_buffer, 
+   bool gdcm_read_JPEG_file12   (FILE* fp, void* image_buffer);
+   bool gdcm_write_JPEG_file12  (FILE* fp, void* image_buffer, 
                                  int image_width, int image_height,
                                  int quality);
 
    // For JPEG 2000, body in file gdcmJpeg2000.cxx
-   bool gdcm_read_JPEG2000_file (FILE *fp, void* image_buffer);
+   bool gdcm_read_JPEG2000_file (FILE* fp, void* image_buffer);
 
    // For Run Length Encoding
-   bool gdcm_read_RLE_file      (FILE *fp, void* image_buffer);
+   bool gdcm_read_RLE_file      (FILE* fp, void* image_buffer);
 // FIXME : *sure* it's NOT static (C++)
 // (would be static in C, or embedded in ADA)
 // It's NOT a method, but a not user intended fonction.
 // How do we write that in C++ ?)
    static int gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
-                                     long uncompressedSegmentSize, FILE *fp);
+                                     long uncompressedSegmentSize, FILE* fp);
 
    void SaveInitialValues();    // will belong to the future gdcmPixelData class
    void RestoreInitialValues(); // will belong to the future gdcmPixelData class

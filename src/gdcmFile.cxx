@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 10:17:26 $
-  Version:   $Revision: 1.128 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.129 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -539,7 +539,7 @@ uint8_t* gdcmFile::GetImageDataRaw ()
  * @return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
-size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
+size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 {
    int nb, nbu, highBit, sign;
 
@@ -669,7 +669,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
 // Nobody knows what's expecting you ...
 // Just to 'see' what was actually read on disk :-(
 
-//   FILE * f2;
+//   FILE*  f2;
 //   f2 = fopen("SpuriousFile.RAW","wb");
 //   fwrite(destination,ImageDataSize,1,f2);
 //   fclose(f2);
@@ -844,7 +844,7 @@ bool gdcmFile::SetImageData(uint8_t* inData, size_t expectedSize)
 
 bool gdcmFile::WriteRawData(std::string const & fileName)
 {
-   FILE *fp1 = fopen(fileName.c_str(), "wb");
+   FILE* fp1 = fopen(fileName.c_str(), "wb");
    if (fp1 == NULL)
    {
       printf("Fail to open (write) file [%s] \n", fileName.c_str());
@@ -923,7 +923,7 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
       return false;
    }
 
-   FILE *fp1 = fopen(fileName.c_str(), "wb");
+   FILE* fp1 = fopen(fileName.c_str(), "wb");
    if (fp1 == NULL)
    {
       printf("Failed to open (write) File [%s] \n", fileName.c_str());
@@ -1011,7 +1011,7 @@ bool gdcmFile::WriteBase (std::string const & fileName, FileType type)
  * @param   lgr Area Length
  * @param   nb Pixels Bit number 
  */
-void gdcmFile::SwapZone(void *im, int swap, int lgr, int nb)
+void gdcmFile::SwapZone(void* im, int swap, int lgr, int nb)
 {
    int i;
 
@@ -1093,9 +1093,9 @@ void gdcmFile::SwapZone(void *im, int swap, int lgr, int nb)
  * @param   destination where the pixel data should be stored.
  *
  */
-bool gdcmFile::ReadPixelData(void *destination) 
+bool gdcmFile::ReadPixelData(void* destination) 
 {
-   FILE *fp = Header->OpenFile();
+   FILE* fp = Header->OpenFile();
 
    if ( !fp )
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/16 19:21:57 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,7 +110,7 @@ void gdcmSeqEntry::Print( std::ostream &os )
 /*
  * \brief   canonical Writer
  */
-void gdcmSeqEntry::Write(FILE *fp, FileType filetype)
+void gdcmSeqEntry::Write(FILE* fp, FileType filetype)
 {
    uint16_t seq_term_gr = 0xfffe;
    uint16_t seq_term_el = 0xe0dd;
@@ -150,7 +150,7 @@ void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem, int itemNumber)
  *        Returns the last item when argument is bigget than the total
  *        item number.
  */
-gdcmSQItem *gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb)
+gdcmSQItem* gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb)
 {
    if (nb<0)
       return (*(items.begin()));

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 10:17:26 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.91 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -230,7 +230,7 @@ void gdcmDocument::PrintShaDict(std::ostream & os)
 /**
  * \brief   Get the public dictionary used
  */
-gdcmDict *gdcmDocument::GetPubDict()
+gdcmDict* gdcmDocument::GetPubDict()
 {
    return RefPubDict;
 }
@@ -238,7 +238,7 @@ gdcmDict *gdcmDocument::GetPubDict()
 /**
  * \brief   Get the shadow dictionary used
  */
-gdcmDict *gdcmDocument::GetShaDict()
+gdcmDict* gdcmDocument::GetShaDict()
 {
    return RefShaDict;
 }
@@ -594,7 +594,7 @@ void gdcmDocument::Write(FILE* fp,FileType filetype)
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
-gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
+gdcmValEntry* gdcmDocument::ReplaceOrCreateByNumber(
                                          std::string const & value, 
                                          uint16_t group, 
                                          uint16_t elem,
@@ -611,7 +611,7 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
 
    // Find out if the tag we received is in the dictionaries:
       gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
-      gdcmDictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, elem);
+      gdcmDictEntry* dictEntry = pubDict->GetDictEntryByNumber(group, elem);
       if (!dictEntry)
       {
          currentEntry = NewDocEntryByNumber(group, elem,VR);
@@ -672,12 +672,12 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
+gdcmBinEntry* gdcmDocument::ReplaceOrCreateByNumber(
                                          uint8_t* binArea,
                                          int lgth, 
                                          uint16_t group, 
                                          uint16_t elem,
-                                         std::string const & VR )
+                                         std::string const& VR )
 {
    gdcmBinEntry* binEntry = 0;
    gdcmDocEntry* currentEntry = GetDocEntryByNumber( group, elem);
@@ -751,7 +751,7 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
  * \return  pointer to the modified/created SeqEntry (NULL when creation
  *          failed).
  */
-gdcmSeqEntry * gdcmDocument::ReplaceOrCreateByNumber(
+gdcmSeqEntry* gdcmDocument::ReplaceOrCreateByNumber(
                                          uint16_t group, 
                                          uint16_t elem)
 {
@@ -811,9 +811,9 @@ bool gdcmDocument::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryByName(TagName const & tagName)
+std::string gdcmDocument::GetEntryByName(TagName const& tagName)
 {
-   gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
+   gdcmDictEntry* dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( !dictEntry )
    {
       return GDCM_UNFOUND;
@@ -835,7 +835,7 @@ std::string gdcmDocument::GetEntryByName(TagName const & tagName)
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryVRByName(TagName const & tagName)
+std::string gdcmDocument::GetEntryVRByName(TagName const& tagName)
 {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
@@ -936,7 +936,7 @@ bool gdcmDocument::SetEntryByName(std::string const & content,std::string const 
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */
-bool gdcmDocument::SetEntryByNumber(std::string const & content, 
+bool gdcmDocument::SetEntryByNumber(std::string const& content, 
                                     uint16_t group,
                                     uint16_t element) 
 {
@@ -983,7 +983,7 @@ bool gdcmDocument::SetEntryByNumber(std::string const & content,
  * \brief   Accesses an existing gdcmDocEntry (i.e. a Dicom Element)
  *          through it's (group, element) and modifies it's content with
  *          the given value.
- * @param   content new value (void * -> uint8_t*) to substitute with
+ * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param   lgth new value length
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
@@ -1070,7 +1070,7 @@ size_t gdcmDocument::GetEntryOffsetByNumber(uint16_t group, uint16_t elem)
  * @param elem  element number of the Entry
  * @return Pointer to the 'non string' area
  */
-void * gdcmDocument::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem) 
+void*  gdcmDocument::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem) 
 {
    gdcmDocEntry* entry = GetDocEntryByNumber(group, elem);
    if (!entry) 
@@ -1121,7 +1121,7 @@ void* gdcmDocument::LoadEntryBinArea(uint16_t group, uint16_t elem)
  *                when a string is not suitable
  * @param element  Entry whose binArea is going to be loaded
  */
-void *gdcmDocument::LoadEntryBinArea(gdcmBinEntry *element) 
+void* gdcmDocument::LoadEntryBinArea(gdcmBinEntry* element) 
 {
    size_t o =(size_t)element->GetOffset();
    fseek(Fp, o, SEEK_SET);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 12:10:53 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -171,7 +171,7 @@ void gdcmValEntry::Print(std::ostream & os)
 /*
  * \brief   canonical Writer
  */
-void gdcmValEntry::Write(FILE *fp, FileType filetype)
+void gdcmValEntry::Write(FILE* fp, FileType filetype)
 {
    gdcmDocEntry::Write(fp, filetype);
 
@@ -195,7 +195,7 @@ void gdcmValEntry::Write(FILE *fp, FileType filetype)
       for (unsigned int i=0; i<tokens.size();i++)
       {
          uint16_t val_uint16 = atoi(tokens[i].c_str());
-         void *ptr = &val_uint16;
+         void* ptr = &val_uint16;
          fwrite ( ptr,(size_t)2 ,(size_t)1 ,fp);
       }
       tokens.clear();
@@ -213,7 +213,7 @@ void gdcmValEntry::Write(FILE *fp, FileType filetype)
       for (unsigned int i=0; i<tokens.size();i++)
       {
          uint32_t val_uint32 = atoi(tokens[i].c_str());
-         void *ptr = &val_uint32;
+         void* ptr = &val_uint32;
          fwrite ( ptr,(size_t)4 ,(size_t)1 ,fp);
       }
       tokens.clear();

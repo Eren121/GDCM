@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 10:47:10 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@
  * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmHeaderEntries)
  */
-gdcmDicomDirStudy::gdcmDicomDirStudy(gdcmSQItem *s, TagDocEntryHT *ptagHT):
+gdcmDicomDirStudy::gdcmDicomDirStudy(gdcmSQItem* s, TagDocEntryHT* ptagHT):
    gdcmDicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
@@ -40,7 +40,7 @@ gdcmDicomDirStudy::gdcmDicomDirStudy(gdcmSQItem *s, TagDocEntryHT *ptagHT):
  * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmHeaderEntries)
  */
-gdcmDicomDirStudy::gdcmDicomDirStudy(TagDocEntryHT *ptagHT):
+gdcmDicomDirStudy::gdcmDicomDirStudy(TagDocEntryHT* ptagHT):
    gdcmDicomDirObject(ptagHT)
 {
 }
@@ -63,7 +63,7 @@ gdcmDicomDirStudy::~gdcmDicomDirStudy()
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmDicomDirStudy::Print(std::ostream &os)
+void gdcmDicomDirStudy::Print(std::ostream& os)
 {
    os << "STUDY" << std::endl;
    gdcmDicomDirObject::Print(os);
@@ -84,7 +84,7 @@ void gdcmDicomDirStudy::Print(std::ostream &os)
  * \brief   Writes the Object
  * @return
  */ 
-void gdcmDicomDirStudy::Write(FILE *fp, FileType t)
+void gdcmDicomDirStudy::Write(FILE* fp, FileType t)
 {
    gdcmDicomDirObject::Write(fp, t);
 
@@ -99,12 +99,12 @@ void gdcmDicomDirStudy::Write(FILE *fp, FileType t)
  * \brief   adds a new Serie at the begining of the SerieList
  *          of a partially created DICOMDIR
  */
-gdcmDicomDirSerie * gdcmDicomDirStudy::NewSerie()
+gdcmDicomDirSerie* gdcmDicomDirStudy::NewSerie()
 {
    std::list<gdcmElement> elemList = 
       gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();   
 
-   gdcmDicomDirSerie *st = new gdcmDicomDirSerie(PtagHT);
+   gdcmDicomDirSerie* st = new gdcmDicomDirSerie(PtagHT);
    FillObject(elemList);
    series.push_front(st);
 

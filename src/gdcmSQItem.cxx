@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/16 19:21:57 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.27 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ gdcmSQItem::~gdcmSQItem()
 /*
  * \brief   canonical Printer
  */
- void gdcmSQItem::Print(std::ostream & os)
+ void gdcmSQItem::Print(std::ostream& os)
  {
    std::ostringstream s;
 
@@ -95,7 +95,7 @@ gdcmSQItem::~gdcmSQItem()
  * \ingroup gdcmSQItem
  * \brief   canonical Writer
  */
-void gdcmSQItem::Write(FILE *fp,FileType filetype)
+void gdcmSQItem::Write(FILE* fp,FileType filetype)
 {
    uint16_t item[4] = { 0xfffe, 0xe000, 0xffff, 0xffff };
    uint16_t itemt[4]= { 0xfffe, 0xe00d, 0xffff, 0xffff };
@@ -137,7 +137,7 @@ void gdcmSQItem::Write(FILE *fp,FileType filetype)
 /**
  * \brief   adds any Entry (Dicom Element) to the Sequence Item
  */
-bool gdcmSQItem::AddEntry(gdcmDocEntry *entry)
+bool gdcmSQItem::AddEntry(gdcmDocEntry* entry)
 {
    docEntries.push_back(entry);
    //TODO : check if it worked
@@ -157,7 +157,7 @@ bool gdcmSQItem::AddEntry(gdcmDocEntry *entry)
  * @return  true if element was found or created successfully
  */
 
-bool gdcmSQItem::SetEntryByNumber(std::string val,uint16_t group, 
+bool gdcmSQItem::SetEntryByNumber(std::string val, uint16_t group, 
                                   uint16_t element)
 {
    for(ListDocEntry::iterator i = docEntries.begin(); i != docEntries.end(); ++i)
@@ -235,7 +235,7 @@ bool gdcmSQItem::SetEntryByNumber(std::string val,uint16_t group,
  * \brief   Gets a Dicom Element inside a SQ Item Entry, by number
  * @return
  */
-gdcmDocEntry *gdcmSQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
+gdcmDocEntry* gdcmSQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
 {
    for(ListDocEntry::iterator i = docEntries.begin();
                               i != docEntries.end(); ++i)

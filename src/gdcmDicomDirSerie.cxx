@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/23 10:47:10 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/09/24 11:39:21 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
  * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmDocEntries)
  */
-gdcmDicomDirSerie::gdcmDicomDirSerie(gdcmSQItem *s, TagDocEntryHT *ptagHT):
+gdcmDicomDirSerie::gdcmDicomDirSerie(gdcmSQItem* s, TagDocEntryHT* ptagHT):
    gdcmDicomDirObject(ptagHT)
 {
    docEntries = s->GetDocEntries();
@@ -39,7 +39,7 @@ gdcmDicomDirSerie::gdcmDicomDirSerie(gdcmSQItem *s, TagDocEntryHT *ptagHT):
  * @param ptagHT pointer to the HTable (gdcmDicomDirObject needs it 
  *               to build the gdcmDocEntries)
  */
-gdcmDicomDirSerie::gdcmDicomDirSerie(TagDocEntryHT *ptagHT):
+gdcmDicomDirSerie::gdcmDicomDirSerie(TagDocEntryHT* ptagHT):
    gdcmDicomDirObject(ptagHT)
 {
 }
@@ -62,7 +62,7 @@ gdcmDicomDirSerie::~gdcmDicomDirSerie()
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmDicomDirSerie::Print(std::ostream &os)
+void gdcmDicomDirSerie::Print(std::ostream& os)
 {
    os << "SERIE" << std::endl;
    gdcmDicomDirObject::Print(os);
@@ -83,7 +83,7 @@ void gdcmDicomDirSerie::Print(std::ostream &os)
  * \brief   Writes the Object
  * @return
  */ 
-void gdcmDicomDirSerie::Write(FILE *fp, FileType t)
+void gdcmDicomDirSerie::Write(FILE* fp, FileType t)
 {
    gdcmDicomDirObject::Write(fp, t);
 
@@ -96,12 +96,12 @@ void gdcmDicomDirSerie::Write(FILE *fp, FileType t)
 /**
  * \brief   adds a new Image (with the basic elements) to a partially created DICOMDIR
  */
-gdcmDicomDirImage * gdcmDicomDirSerie::NewImage()
+gdcmDicomDirImage* gdcmDicomDirSerie::NewImage()
 {
    std::list<gdcmElement> elemList = 
       gdcmGlobal::GetDicomDirElements()->GetDicomDirImageElements();
 
-   gdcmDicomDirImage *st = new gdcmDicomDirImage(PtagHT);
+   gdcmDicomDirImage* st = new gdcmDicomDirImage(PtagHT);
    FillObject(elemList);
    images.push_front(st);
 
