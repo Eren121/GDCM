@@ -1,9 +1,10 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.3 2003/05/21 08:21:17 frog Exp $
-#include "vtkGdcmReader.h"
-#include "vtkByteSwap.h"
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.4 2003/05/21 16:26:29 regrain Exp $
+//CLEANME#include <vtkByteSwap.h>
 #include <stdio.h>
-#include "vtkObjectFactory.h"
-#include "vtkImageFlip.h"
+#include <vtkObjectFactory.h>
+#include <vtkImageData.h>
+#include <vtkPointData.h>
+#include "vtkGdcmReader.h"
 #include "gdcm.h"
 
 vtkGdcmReader::vtkGdcmReader()
@@ -98,7 +99,7 @@ void vtkGdcmReader::ExecuteInformation()
   // since the // reading of the file is done by gdcm
 
   // But we need to set up the data type for downstream filters:
-  string type = GdcmHeader.GetPixelType();
+  std::string type = GdcmHeader.GetPixelType();
   if      ( type == "8U" )
     {
     vtkDebugMacro("8 bits unsigned image");
@@ -134,7 +135,7 @@ void vtkGdcmReader::ExecuteInformation()
   else
     {
     vtkErrorMacro("Bad File Type " << this->InternalFileName
-                                   << "Type " << type);
+                                   << "Type " << type.c_str());
     return;
     }
 

@@ -2,6 +2,7 @@
 
 #include <typeinfo>
 #include <stdio.h>
+using namespace std;
 
 
 gdcmException::gdcmException(const string &f, const string& msg) throw()

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.24 2003/05/21 14:42:46 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.25 2003/05/21 16:26:28 regrain Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -108,8 +108,8 @@ protected:
    bool OpenFile(bool exception_on_error = false)
      throw(gdcmFileError);
    bool CloseFile(void);
-   int write(ostream&);   
-   int anonymize(ostream&);  // FIXME : anonymize should be a friend ?
+   int write(std::ostream&);   
+   int anonymize(std::ostream&);  // FIXME : anonymize should be a friend ?
 public:
    bool IsReadable(void);
    bool IsImplicitVRLittleEndianTransferSyntax(void);
@@ -142,8 +142,8 @@ public:
    std::string GetPubElValRepByNumber(guint16 group, guint16 element);
 
    TagElValueHT & GetPubElVal(void) { return PubElValSet.GetTagHt(); };
-   void   PrintPubElVal(ostream & os = cout);
-   void   PrintPubDict (ostream & os = cout);
+   void   PrintPubElVal(std::ostream & os = std::cout);
+   void   PrintPubDict (std::ostream & os = std::cout);
      
    // TODO Swig std::string* GetShaTagNames(); 
    std::string GetShaElValByName(std::string TagName);

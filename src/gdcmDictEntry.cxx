@@ -6,8 +6,8 @@
 
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
-                             string  InVr, string InFourth,
-                             string  InName) {
+									  std::string  InVr, std::string InFourth,
+									  std::string  InName) {
 	group 		= InGroup;
 	element 	= InElement;
 	vr 		= InVr;
@@ -32,7 +32,7 @@ TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
  * \brief       If-and only if-the vr is unset then overwrite it.
  * @param NewVr New vr to be set.
  */
-void gdcmDictEntry::SetVR(string NewVr) {
+void gdcmDictEntry::SetVR(std::string NewVr) {
 	if ( IsVrUnknown() )
 		vr = NewVr;
 	else {

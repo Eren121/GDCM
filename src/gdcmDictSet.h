@@ -41,7 +41,7 @@ public:
 	// TODO Swig std::string* GetAllDictNames();
 	gdcmDictSet(void);
 	~gdcmDictSet(void);
-	void Print(ostream&);
+	void Print(std::ostream&);
 	gdcmDict* GetDict(DictKey DictName);
 	gdcmDict* GetDefaultPubDict(void);
 };

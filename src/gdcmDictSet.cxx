@@ -4,6 +4,7 @@
 #include <stdlib.h>  // For getenv
 #include "gdcmUtil.h"
 #include "gdcmDictSet.h"
+using namespace std;
 
 #define PUB_DICT_NAME     "DicomV3Dict"
 #ifndef PUB_DICT_PATH

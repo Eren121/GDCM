@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.12 2003/05/21 14:42:46 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.13 2003/05/21 16:26:28 regrain Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
@@ -24,8 +24,8 @@ public:
    ~gdcmElValSet();
    void Add(gdcmElValue*);
 			
-   void Print(ostream &);
-   void PrintByName(ostream &);
+   void Print(std::ostream &);
+   void PrintByName(std::ostream &);
    int  Write(FILE *fp, FileType type);
 
    gdcmElValue* GetElementByNumber(guint16 group, guint16 element);

@@ -3,6 +3,7 @@
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
 #include "iddcmjpeg.h"
+using namespace std;
 
 /////////////////////////////////////////////////////////////////
 /**

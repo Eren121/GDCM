@@ -10,6 +10,8 @@
 #include "gdcmFile.h"
 using namespace std;
 
+using namespace std;
+
 // Utility functions on strings for removing leading and trailing spaces
 void EatLeadingAndTrailingSpaces(string & s) {
 	while ( s.length() && (s[0] == ' ') )
@@ -93,6 +95,10 @@ typedef  unsigned int guint32;
 %typemap(out) string  {
     $result = PyString_FromString(($1).c_str());
 }
+%typemap(out) std::string  {
+    $result = PyString_FromString(($1).c_str());
+}
+//////%apply int { std::int };    
 
 ////////////////////////////////////////////////////////////////////////////
 %include "gdcmCommon.h"

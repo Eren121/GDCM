@@ -3,6 +3,7 @@
 #include <sstream>
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
+using namespace std;
 
 gdcmElValSet::~gdcmElValSet() {
    for (TagElValueHT::iterator tag = tagHt.begin(); tag != tagHt.end(); ++tag) {

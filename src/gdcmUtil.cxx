@@ -1,7 +1,8 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.10 2003/05/21 14:42:46 frog Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.11 2003/05/21 16:26:28 regrain Exp $
 
 #include <ctype.h>   // For isspace
 #include "gdcmUtil.h"
+using namespace std;
 
 // Library globals.
 gdcmDebug dbg;

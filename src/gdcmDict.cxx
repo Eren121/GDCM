@@ -3,13 +3,14 @@
 #include <fstream>
 #include "gdcmDict.h"
 #include "gdcmUtil.h"
+using namespace std;
 
 /**
  * \ingroup gdcmDict
  * \brief   Construtor
  * @param   FileName from which to build the dictionary.
  */
-gdcmDict::gdcmDict(string & FileName) {
+gdcmDict::gdcmDict(std::string & FileName) {
 	std::ifstream from(FileName.c_str());
 	dbg.Error(!from, "gdcmDict::gdcmDict: can't open dictionary",
                     FileName.c_str());
@@ -21,7 +22,7 @@ gdcmDict::gdcmDict(string & FileName) {
 	TagName fourth;
 	TagName name;
 	while (!from.eof()) {
-		from >> hex >> group >> element;
+		from >> std::hex >> group >> element;
 		eatwhite(from);
 		from.getline(buff, 256, ' ');
 		vr = buff;
@@ -52,7 +53,7 @@ gdcmDict::~gdcmDict() {
    NameHt.clear();
 }
 
-void gdcmDict::Print(ostream& os) {
+void gdcmDict::Print(std::ostream& os) {
 	PrintByKey(os);
 }
 
@@ -62,7 +63,7 @@ void gdcmDict::Print(ostream& os) {
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
  */
-void gdcmDict::PrintByKey(ostream& os) {
+void gdcmDict::PrintByKey(std::ostream& os) {
 	for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag){
 		os << "Tag : ";
 		os << "(" << hex << tag->second->GetGroup() << ',';
@@ -79,14 +80,14 @@ void gdcmDict::PrintByKey(ostream& os) {
  *          Entries will be sorted by the name of the dictionary entries.
  * @param   os The output stream to be written to.
  */
-void gdcmDict::PrintByName(ostream& os) {
+void gdcmDict::PrintByName(std::ostream& os) {
 	for (TagNameHT::iterator tag = NameHt.begin(); tag != NameHt.end(); ++tag){
 		os << "Tag : ";
 		os << tag->second->GetName() << ",";
 		os << tag->second->GetVR() << ", ";
 		os << tag->second->GetFourth() << ", ";
-		os << "(" << hex << tag->second->GetGroup() << ',';
-		os << hex << tag->second->GetElement() << ") = " << dec << endl;
+		os << "(" << std::hex << tag->second->GetGroup() << ',';
+		os << std::hex << tag->second->GetElement() << ") = " << dec << std::endl;
 	}
 }
 

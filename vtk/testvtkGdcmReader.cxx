@@ -1,23 +1,24 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.3 2003/05/21 08:21:17 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.4 2003/05/21 16:26:29 regrain Exp $
 
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
-#include "vtkImageMapper.h"
-#include "vtkImageViewer.h"
-#include "vtkMatrix4x4.h"
-#include "vtkLookupTable.h"
-#include "vtkMatrixToLinearTransform.h"
-#include "vtkTexture.h"
-#include "vtkPlaneSource.h"
-#include "vtkTextureMapToPlane.h"
-#include "vtkDataSetMapper.h"
-#include "vtkActor.h"
-#include "vtkImageCast.h"
-#include "vtkPNGWriter.h"
-#include "vtkTexture.h"
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkImageMapper.h>
+#include <vtkImageData.h>
+#include <vtkImageViewer.h>
+#include <vtkMatrix4x4.h>
+#include <vtkLookupTable.h>
+#include <vtkMatrixToLinearTransform.h>
+#include <vtkTexture.h>
+#include <vtkPlaneSource.h>
+#include <vtkTextureMapToPlane.h>
+#include <vtkDataSetMapper.h>
+#include <vtkActor.h>
+#include <vtkImageCast.h>
+#include <vtkPNGWriter.h>
+#include <vtkTexture.h>
 
 #include "vtkGdcmReader.h"
 

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.66 2003/05/21 14:42:46 frog Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.67 2003/05/21 16:26:28 regrain Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -1564,11 +1564,11 @@ void gdcmHeader::LoadElements(void) {
       }
 }
 
-void gdcmHeader::PrintPubElVal(ostream & os) {
+void gdcmHeader::PrintPubElVal(std::ostream & os) {
    PubElValSet.Print(os);
 }
 
-void gdcmHeader::PrintPubDict(ostream & os) {
+void gdcmHeader::PrintPubDict(std::ostream & os) {
    RefPubDict->Print(os);
 }
 

@@ -78,7 +78,7 @@ class GDCM_EXPORT gdcmException : public exception {
  * @param e exception to print
  * @returns output stream os
  */
-ostream& operator<<(ostream &os, const gdcmException &e);
+std::ostream& operator<<(std::ostream &os, const gdcmException &e);
 
 
 /**

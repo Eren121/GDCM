@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.9 2003/05/21 14:42:46 frog Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.10 2003/05/21 16:26:28 regrain Exp $
 
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
@@ -32,7 +32,7 @@ public:
    static gdcmDictSet * GetDicts(void);
 };
 
-istream & eatwhite(istream & is);
+std::istream & eatwhite(std::istream & is);
 
 void Tokenize (const std::string& str,
                std::vector<std::string>& tokens,
