@@ -49,7 +49,7 @@ protected:
 
 private:
    /// Hash table of all dictionaries contained in this gdcmDictSet
-	DictSetHT Dicts;
+   DictSetHT Dicts;
    /// Directory path to dictionaries
    std::string DictPath;
 };

@@ -119,8 +119,8 @@ public:
    bool SetEntryByName(std::string content,std::string tagName); 
 //   bool SetEntryByNumber(std::string content,guint16 group, guint16 element);
 
-//   inline ListTag      & GetListElem(void) { return PubHeaderEntrySet.GetListElem();};
-//   inline TagHeaderEntryHT & GetElVal(void) { return PubHeaderEntrySet.GetTagHt();   };
+//   inline ListTag      & GetListEntry(void) { return PubHeaderEntrySet.GetListElem();};
+//   inline TagHeaderEntryHT & GetListEntry(void) { return PubHeaderEntrySet.GetTagHt();   };
 
 // Read (used in gdcmFile)
    FILE *OpenFile(bool exception_on_error = false) throw(gdcmFileError);

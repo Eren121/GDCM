@@ -39,6 +39,9 @@ const unsigned int gdcmHeader::MAX_SIZE_LOAD_ELEMENT_VALUE = 4096;
  * @param   enable_sequences = true to allow the header 
  *          to be parsed *inside* the SeQuences, 
  *          when they have an actual length 
+ *\TODO : may be we need one more bool, 
+ *         to allow skipping the private elements while parsing the header
+ *         in order to save space	  
  */
 gdcmHeader::gdcmHeader(const char *InFilename, 
                        bool exception_on_error,
@@ -85,7 +88,8 @@ gdcmHeader::~gdcmHeader (void) {
 
 /**
   * \ingroup gdcmHeader
-  * \brief
+  * \brief Prints the Header Entries (Dicom Elements)
+  *        both from the H Table and the chained list
   * @return
   */ 
 void gdcmHeader::PrintPubEntry(std::ostream & os) {
@@ -94,7 +98,7 @@ void gdcmHeader::PrintPubEntry(std::ostream & os) {
 
 /**
   * \ingroup gdcmHeader
-  * \brief 
+  * \brief Prints The Dict Entries of THE public Dicom Dictionnry
   * @return
   */  
 void gdcmHeader::PrintPubDict(std::ostream & os) {
@@ -108,8 +112,8 @@ void gdcmHeader::PrintPubDict(std::ostream & os) {
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current gdcmHeader was properly parsed
  *         and contains the mandatory information for being considered as
- *         a well formed and usable image.
- * @return true when gdcmHeader is the one of a reasonable Dicom file,
+ *         a well formed and usable Dicom/Acr File.
+ * @return true when gdcmHeader is the one of a reasonable Dicom/Acr file,
  *         false otherwise. 
  */
 bool gdcmHeader::IsReadable(void) {
@@ -304,9 +308,11 @@ bool gdcmHeader::IsRLELossLessTransferSyntax(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   
+ * \brief  Determines if Transfer Syntax was already encountered
+ *          and if it corresponds to a JPEG Lossless one. 
  *
- * @return 
+ * @return  True when RLE Lossless found. False in all
+ *          other cases. 
  */
 bool gdcmHeader::IsJPEGLossless(void) {
    gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
@@ -350,19 +356,17 @@ bool gdcmHeader::IsJPEG2000(void) {
  * @return  True when the file is a dicom version 3.
  */
 bool gdcmHeader::IsDicomV3(void) {
-   if (   (filetype == ExplicitVR)
-       || (filetype == ImplicitVR) )
-      return true;
-   return false;
+   // Checking if Transfert Syntax exists is enough
+   return (GetHeaderEntryByNumber(0x0002, 0x0010) != NULL);
 }
 
 /**
  * \ingroup gdcmHeader
- * \brief  
+ * \brief  returns the File Type 
+ *         (ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown)
  * @return 
  */
-FileType gdcmHeader::GetFileType(void)
-{
+FileType gdcmHeader::GetFileType(void) {
    return(filetype);
 }
 
@@ -370,6 +374,7 @@ FileType gdcmHeader::GetFileType(void)
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of columns of image.
  * @return  The encountered size when found, 0 by default.
+ *          0 means the file is NOT USABLE. The caller will have to check
  */
 int gdcmHeader::GetXSize(void) {
    // We cannot check for "Columns" because the "Columns" tag is present
@@ -384,7 +389,8 @@ int gdcmHeader::GetXSize(void) {
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of lines of image.
  * \warning The defaulted value is 1 as opposed to gdcmHeader::GetXSize()
- * @return  The encountered size when found, 1 by default.
+ * @return  The encountered size when found, 1 by default 
+ *          (The file contains a Signal, not an Image).
  */
 int gdcmHeader::GetYSize(void) {
    // We cannot check for "Rows" because the "Rows" tag is present
@@ -395,7 +401,7 @@ int gdcmHeader::GetYSize(void) {
    if ( IsDicomV3() )
       return 0;
    else
-      // The Rows (0028,0010) entry is optional for ACR/NEMA. It might
+      // The Rows (0028,0010) entry was optional for ACR/NEMA. It might
       // hence be a signal (1d image). So we default to 1:
       return 1;
 }
@@ -407,7 +413,7 @@ int gdcmHeader::GetYSize(void) {
  * \warning When present we consider the "Number of Frames" as the third
  *          dimension. When absent we consider the third dimension as
  *          being the "Planes" tag content.
- * @return  The encountered size when found, 1 by default.
+ * @return  The encountered size when found, 1 by default (single image).
  */
 int gdcmHeader::GetZSize(void) {
    // Both  DicomV3 and ACR/Nema consider the "Number of Frames"
@@ -427,15 +433,17 @@ int gdcmHeader::GetZSize(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Retrieve the number of Bits Stored
+ * \brief   Retrieve the number of Bits Stored (actually used)
  *          (as opposite to number of Bits Allocated)
  * 
  * @return  The encountered number of Bits Stored, 0 by default.
+ *          0 means the file is NOT USABLE. The caller has to check it !
  */
 int gdcmHeader::GetBitsStored(void) { 
    std::string StrSize = GetEntryByNumber(0x0028,0x0101);
    if (StrSize == GDCM_UNFOUND)
-      return 1;
+      return 0;  // It's supposed to be mandatory
+                 // the caller will have to check
    return atoi(StrSize.c_str());
 }
 
@@ -445,11 +453,13 @@ int gdcmHeader::GetBitsStored(void) {
  *          (8, 12 -compacted ACR-NEMA files, 16, ...)
  * 
  * @return  The encountered number of Bits Allocated, 0 by default.
+ *          0 means the file is NOT USABLE. The caller has to check it !
  */
 int gdcmHeader::GetBitsAllocated(void) { 
    std::string StrSize = GetEntryByNumber(0x0028,0x0100);
    if (StrSize == GDCM_UNFOUND)
-      return 1;
+      return 0; // It's supposed to be mandatory
+                // the caller will have to check
    return atoi(StrSize.c_str());
 }
 
@@ -459,11 +469,13 @@ int gdcmHeader::GetBitsAllocated(void) {
  *          (1 : gray level, 3 : RGB -1 or 3 Planes-)
  * 
  * @return  The encountered number of Samples Per Pixel, 1 by default.
+ *          (Gray level Pixels)
  */
 int gdcmHeader::GetSamplesPerPixel(void) { 
    std::string StrSize = GetEntryByNumber(0x0028,0x0002);
    if (StrSize == GDCM_UNFOUND)
       return 1; // Well, it's supposed to be mandatory ...
+                // but sometimes it's missing : we assume Gray pixels
    return atoi(StrSize.c_str());
 }
 
@@ -484,8 +496,8 @@ int gdcmHeader::GetPlanarConfiguration(void) {
 /**
  * \ingroup gdcmHeader
  * \brief   Return the size (in bytes) of a single pixel of data.
- * @return  The size in bytes of a single pixel of data.
- *
+ * @return  The size in bytes of a single pixel of data; 0 by default
+ *          0 means the file is NOT USABLE; the caller will have to check        
  */
 int gdcmHeader::GetPixelSize(void) {
    std::string PixelType = GetPixelType();
@@ -511,7 +523,7 @@ int gdcmHeader::GetPixelSize(void) {
  *          - 32S   signed 32 bit,
  * \warning 12 bit images appear as 16 bit.
  * \        24 bit images appear as 8 bit
- * @return  
+ * @return  0S if nothing found. NOT USABLE file. The caller has to check
  */
 std::string gdcmHeader::GetPixelType(void) {
    std::string BitsAlloc = GetEntryByNumber(0x0028, 0x0100); // Bits Allocated
@@ -543,7 +555,7 @@ std::string gdcmHeader::GetPixelType(void) {
  */
 size_t gdcmHeader::GetPixelOffset(void) {
    // If this file complies with the norm we should encounter the
-   // "Image Location" tag (0x0028,  0x0200). This tag contains the
+   // "Image Location" tag (0x0028, 0x0200). This tag contains the
    // the group that contains the pixel data (hence the "Pixel Data"
    // is found by indirection through the "Image Location").
    // Inside the group pointed by "Image Location" the searched element
@@ -573,7 +585,8 @@ size_t gdcmHeader::GetPixelOffset(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Recover the pixel area length (in Bytes) .
+ * \brief   Recover the pixel area length (in Bytes)
+ *  @return 0 by default. NOT USABLE file. The caller has to check.
  */
 size_t gdcmHeader::GetPixelAreaLength(void) {
    // If this file complies with the norm we should encounter the
@@ -607,10 +620,10 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
 /**
   * \ingroup gdcmHeader
   * \brief tells us if LUT are used
-  * \warning Right now, Segmented xxx Palette Color Lookup Table Data
+  * \warning Right now, 'Segmented xxx Palette Color Lookup Table Data'
   * \        are NOT considered as LUT, since nobody knows
-  *\         how to deal with them
-  * @return int acts as a Boolean 
+  * \        how to deal with them
+  * @return a Boolean 
   */
 bool gdcmHeader::HasLUT(void) {
 
@@ -638,7 +651,7 @@ bool gdcmHeader::HasLUT(void) {
   * \ingroup gdcmHeader
   * \brief gets the info from 0028,1101 : Lookup Table Desc-Red
   * \           else 0
-  * @return Lookup Table nBit 
+  * @return Lookup Table number of Bits , 0 by default
   * \       when (0028,0004),Photometric Interpretation = [PALETTE COLOR ] 
   */
 int gdcmHeader::GetLUTNbits(void) {
@@ -673,19 +686,17 @@ int gdcmHeader::GetLUTNbits(void) {
   * \ 0028 1221 Segmented Red Palette Color Lookup Table Data
   * \ 0028 1222 Segmented Green Palette Color Lookup Table Data
   * \ 0028 1223 Segmented Blue Palette Color Lookup Table Data 
-  * \ no known Dicom reader deails with them :-(
-  * @return Lookup Table RGBA
+  * \ no known Dicom reader deals with them :-(
+  * @return a RGBA Lookup Table 
   */ 
 unsigned char * gdcmHeader::GetLUTRGBA(void) {
 // Not so easy : see 
 // http://www.barre.nom.fr/medical/dicom2/limitations.html#Color%20Lookup%20Tables
-// and  OT-PAL-8-face.dcm
 
 //  if Photometric Interpretation # PALETTE COLOR, no LUT to be done
    if (gdcmHeader::GetEntryByNumber(0x0028,0x0004) != "PALETTE COLOR ") {
    	return NULL;
    }  
-
    int lengthR, debR, nbitsR;
    int lengthG, debG, nbitsG;
    int lengthB, debB, nbitsB;
@@ -790,7 +801,7 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
       
 //How to free the now useless LUTs?
 
-//free(LutR); free(LutB); free(LutG);
+//free(LutR); free(LutB); free(LutG); // Seg Fault when used
   return(LUTRGBA);   
 } 
 
@@ -816,7 +827,7 @@ std::string gdcmHeader::GetTransfertSyntaxName(void) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Searches within the public dictionary for element value of
+ * \brief   Searches within the file Header for element value of
  *          a given tag.
  * @param   tagName name of the searched element.
  * @return  Corresponding element value when it exists, and the string
@@ -832,7 +843,7 @@ std::string gdcmHeader::GetPubEntryByName(std::string tagName) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Searches within the elements parsed with the public dictionary for
+ * \brief   Searches within the elements parsed with the file Header for
  *          the element value representation of a given tag.
  *
  *          Obtaining the VR (Value Representation) might be needed by caller
@@ -889,10 +900,11 @@ std::string gdcmHeader::GetPubEntryVRByNumber(guint16 group, guint16 element) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmHeaderEntry in the PubHeaderEntrySet of this instance
+ * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
+ *          in the PubHeaderEntrySet of this instance
  *          through tag name and modifies it's content with the given value.
  * @param   content new value to substitute with
- * @param   tagName name of the tag to be modified
+ * @param   tagName name of the Header Entry (Dicom Element) to be modified
  */
 bool gdcmHeader::SetPubEntryByName(std::string content, std::string tagName) {
    //return (  PubHeaderEntrySet.SetHeaderEntryByName (content, tagName) );
@@ -926,7 +938,8 @@ bool gdcmHeader::SetPubEntryByNumber(std::string content, guint16 group,
 
 /**
  * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmHeaderEntry in the PubHeaderEntrySet of this instance
+ * \brief   Accesses an existing gdcmHeaderEntry (i.e. a Dicom Element)
+ *          in the PubHeaderEntrySet of this instance
  *          through it's (group, element) and modifies it's length with
  *          the given value.
  * \warning Use with extreme caution.
@@ -943,8 +956,8 @@ bool gdcmHeader::SetPubEntryLengthByNumber(guint32 length, guint16 group,
 
 /**
  * \ingroup gdcmHeader
- * \brief   Searches within elements parsed with the public dictionary 
- *          and then within the elements parsed with the shadow dictionary
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
+ *          the public and private dictionaries 
  *          for the element value of a given tag.
  * @param   tagName name of the searched element.
  * @return  Corresponding element value when it exists,
@@ -956,8 +969,8 @@ std::string gdcmHeader::GetEntryByName(std::string tagName) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Searches within elements parsed with the public dictionary 
- *          and then within the elements parsed with the shadow dictionary
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
+ *          the public and private dictionaries 
  *          for the element value representation of a given tag.
  *
  *          Obtaining the VR (Value Representation) might be needed by caller
@@ -974,9 +987,9 @@ std::string gdcmHeader::GetEntryVRByName(std::string tagName) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Searches within elements parsed with the public dictionary 
- *          and then within the elements parsed with the shadow dictionary
- *          for the element value of a given tag.
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
+ *          the public and private dictionaries 
+ *          for the element value representation of a given tag.
  * @param   group Group of the searched tag.
  * @param   element Element of the searched tag.
  * @return  Corresponding element value representation when it exists,
@@ -988,9 +1001,9 @@ std::string gdcmHeader::GetEntryByNumber(guint16 group, guint16 element) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   Searches within elements parsed with the public dictionary 
- *          and then within the elements parsed with the shadow dictionary
- *          for the element value representation of a given tag.
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
+ *          the public and private dictionaries 
+ *          for the element value representation of a given tag..
  *
  *          Obtaining the VR (Value Representation) might be needed by caller
  *          to convert the string typed content to caller's native type 
@@ -1007,7 +1020,7 @@ std::string gdcmHeader::GetEntryVRByNumber(guint16 group, guint16 element) {
 
 /**
  * \ingroup gdcmHeader
- * \brief  Sets the value (string) of the target Dicom Element
+ * \brief  Sets the value (string) of the Header Entry (Dicom Element)
  * @param   content string value of the Dicom Element
  * @param   tagName name of the searched Dicom Element.
  * @return  true when found
@@ -1032,17 +1045,13 @@ bool gdcmHeader::SetEntryByName(std::string content,std::string tagName) {
    gdcmHeaderEntry * a;
    IterHT p;
    TagHeaderEntryHT::iterator p2;
-   // DO NOT remove the following lines : they explain the stuff   
+   // DO NOT remove the following lines : they explain how the stuff works 
    //p= tagHt.equal_range(key); // get a pair of iterators first-last synonym
    //p2=p.first;                // iterator on the first synonym 
-   //a=p2->second;              // H Table target column (2-nd col)
-    
+   //a=p2->second;              // H Table target column (2-nd col)    
    // or, easier :
-   a = ((PubEntrySet.GetTagHT().equal_range(key)).first)->second; 
-       
-   a-> SetValue(content); 
-   
-   //std::string vr = tagHt[key]->GetVR();
+   a = ((PubEntrySet.GetTagHT().equal_range(key)).first)->second;       
+   a-> SetValue(content);   
    std::string vr = a->GetVR();
    
    guint32 lgr;
@@ -1052,14 +1061,13 @@ bool gdcmHeader::SetEntryByName(std::string content,std::string tagName) {
       lgr = 4;
    else
       lgr = l;	   
-   //tagHt[key]->SetLength(lgr);
    a->SetLength(lgr);   
    return true;
 }
 
 /**
  * \ingroup gdcmHeader
- * \brief   
+ * \brief   opens the file
  * @param   exception_on_error
  * @return  
  */
@@ -1075,7 +1083,7 @@ FILE *gdcmHeader::OpenFile(bool exception_on_error)
      guint16 zero;
      fread(&zero,  (size_t)2, (size_t)1, fp);
 
-    //ACR -- or DICOM with no Preamble
+    //ACR -- or DICOM with no Preamble --
     if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200)
        return(fp);
 
@@ -1097,7 +1105,7 @@ FILE *gdcmHeader::OpenFile(bool exception_on_error)
 
 /**
  * \ingroup gdcmHeader
- * \brief   
+ * \brief closes the file  
  * @return  TRUE if the close was successfull 
  */
 bool gdcmHeader::CloseFile(void) {
@@ -1125,8 +1133,10 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
 
 /**
  * \ingroup gdcmHeader
- * \brief
- * @return integer, acts as a Boolean
+ * \brief 
+ * @param fp file pointer on an already open file
+ * @param type file type ( ImplicitVR, ExplicitVR, ...)
+ * @return  Boolean
  */ 
 bool gdcmHeader::Write(FILE * fp, FileType type) {
 
@@ -1186,20 +1196,16 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   TODO
- * @param   Value
+ * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ *          if it exists; Creates it with the given value if it doesn't
+ * @param   Value passed as a std::string
  * @param   Group
  * @param   Elem
- * \return integer acts as a boolean
+ * \return  boolean
  */
 bool gdcmHeader::ReplaceOrCreateByNumber(std::string Value, 
                                         guint16 Group, guint16 Elem ) {
-	// TODO : FIXME JPRx
-	// curieux, non ?
-	// on (je) cree une HeaderEntry ne contenant pas de valeur
-	// on l'ajoute au HeaderEntrySet
-	// on affecte une valeur a cette HeaderEntry a l'interieur du HeaderEntrySet
-	// --> devrait pouvoir etre fait + simplement ???
+
    if (CheckIfExistByNumber(Group, Elem) == 0) {
       gdcmHeaderEntry* a =NewHeaderEntryByNumber(Group, Elem);
       if (a == NULL) 
@@ -1212,11 +1218,12 @@ bool gdcmHeader::ReplaceOrCreateByNumber(std::string Value,
 
 /**
  * \ingroup gdcmHeader
- * \brief   Modify (or Creates if not found) an element
- * @param   Value new value
+ * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ *          if it exists; Creates it with the given value if it doesn't
+ * @param   Value passed as a char*
  * @param   Group
  * @param   Elem
- * \return integer acts as a boolean 
+ * \return  boolean 
  * 
  */
 bool gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
@@ -1240,7 +1247,6 @@ bool gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Ele
  */
 bool gdcmHeader::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
-   //gdcmHeaderEntry* HeaderEntry = PubHeaderEntrySet.GetElementByNumber(Group, Elem);
    std::string v = Value;	
    PubEntrySet.SetEntryByNumber(v, Group, Elem);
    return true;
@@ -1306,7 +1312,7 @@ gdcmHeaderEntry *gdcmHeader::GetHeaderEntryByNumber(guint16 Group, guint16 Elem)
 
 /**
  * \ingroup gdcmHeader
- * \brief   Searches within the public dictionary for a Dicom Element of
+ * \brief   Searches within the Header Entries for a Dicom Element of
  *          a given tag.
  * @param   tagName name of the searched Dicom Element.
  * @return  Corresponding Dicom Element when it exists, and NULL
@@ -1326,7 +1332,7 @@ gdcmHeaderEntry *gdcmHeader::GetHeaderEntryByNumber(guint16 Group, guint16 Elem)
  * \ exists in the Public HeaderEntrySet
  * @param   Group
  * @param   Elem
- * @return  integer acts as a boolean  
+ * @return  boolean  
  */
 bool gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
    return (PubEntrySet.CheckIfExistByNumber(Group, Elem)>0);
@@ -1335,7 +1341,7 @@ bool gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
 /**
  * \ingroup gdcmHeader
  * \brief   Gets (from Header) the offset  of a 'non string' element value 
- * \        (LoadElementValue has already be executed)
+ * \        (LoadElementValues has already be executed)
  * @param   Group
  * @param   Elem
  * @return File Offset of the Element Value 
@@ -1353,7 +1359,7 @@ size_t gdcmHeader::GetPubEntryOffsetByNumber(guint16 Group, guint16 Elem) {
 /**
  * \ingroup gdcmHeader
  * \brief   Gets (from Header) a 'non string' element value 
- * \        (LoadElementValue has already be executed)  
+ * \        (LoadElementValues has already be executed)  
  * @param   Group
  * @param   Elem
  * @return Pointer to the 'non string' area
@@ -1399,26 +1405,17 @@ void * gdcmHeader::LoadEntryVoidArea(guint16 Group, guint16 Elem) {
 // Private
 /**
  * \ingroup gdcmHeader
- * \brief   Loads the element values of all the elements present in the
- *          public tag based hash table.
+ * \brief   Loads the element values of all the Header Entries pointed in the
+ *          public Chained List.
  */
 void gdcmHeader::LoadHeaderEntries(void) {
    rewind(fp);
-   
-   // We don't use any longer the HashTable, since a lot a stuff is missing
-   // when SeQuences were encountered 
-   //  
-   //TagHeaderEntryHT ht = PubHeaderEntrySet.GetTagHT();
-   //for (TagHeaderEntryHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
-   //     LoadElementValue(tag->second);
-   //}
-   
-     for (ListTag::iterator i = GetPubListEntry().begin();  
-	   i != GetPubListEntry().end();
-	   ++i){
-        LoadHeaderEntry(*i);   
-     }    
-    
+   for (ListTag::iterator i = GetPubListEntry().begin();  
+      i != GetPubListEntry().end();
+      ++i){
+         LoadHeaderEntry(*i);
+   }   
+            
    rewind(fp);
 
    // Load 'non string' values   
@@ -1441,7 +1438,7 @@ void gdcmHeader::LoadHeaderEntries(void) {
    // we switch lineNumber and columnNumber
    //
    std::string RecCode;	
-   RecCode = GetPubEntryByNumber(0x0008, 0x0010);
+   RecCode = GetPubEntryByNumber(0x0008, 0x0010); // recognition code
    if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
        RecCode == "CANRME_AILIBOD1_1." ) {
          filetype = ACR_LIBIDO; 
@@ -1458,7 +1455,7 @@ void gdcmHeader::LoadHeaderEntries(void) {
  * \brief         Loads the element content if it's length is not bigger
  *                than the value specified with
  *                gdcmHeader::SetMaxSizeLoadElementValue()
- * @param        ElVal string value of the Dicom Element
+ * @param        ElVal Header Entry (Dicom Element) to be dealt with
  */
 void gdcmHeader::LoadHeaderEntry(gdcmHeaderEntry * ElVal) {
    size_t item_read;
@@ -1472,7 +1469,7 @@ void gdcmHeader::LoadHeaderEntry(gdcmHeaderEntry * ElVal) {
    // the test was commented out to 'go inside' the SeQuences
    // we don't any longer skip them !
     
-   // if( vr == "SQ" )  
+   // if( vr == "SQ" )  //  (DO NOT remove this comment)
    //    SkipLoad = true;
 
    // A SeQuence "contains" a set of Elements.  
@@ -1507,12 +1504,13 @@ void gdcmHeader::LoadHeaderEntry(gdcmHeaderEntry * ElVal) {
       return;
    }
    
-   // When an integer is expected, read and convert the following two or
-   // four bytes properly i.e. as an integer as opposed to a string.
-	
-	// Actually, elements with Value Multiplicity > 1
-	// contain a set of integers (not a single one)  	
-	// Any compacter code suggested (?)
+   // When integer(s) are expected, read and convert the following 
+   // n *(two or four bytes)
+   // properly i.e. as integers as opposed to a strings.	
+   // Elements with Value Multiplicity > 1
+   // contain a set of integers (not a single one) 
+    	
+   // Any compacter code suggested (?)
    if ( IsHeaderEntryAnInteger(ElVal) ) {
       guint32 NewInt;
       std::ostringstream s;
@@ -1571,20 +1569,21 @@ void gdcmHeader::LoadHeaderEntry(gdcmHeaderEntry * ElVal) {
  * \ingroup       gdcmHeader
  * \brief         Loads the element while preserving the current
  *                underlying file position indicator as opposed to
- *                to LoadElementValue that modifies it.
- * @param ElVal   Element whose value shall be loaded. 
+ *                to LoadHeaderEntry that modifies it.
+ * @param entry   Header Entry whose value shall be loaded. 
  * @return  
  */
-void gdcmHeader::LoadHeaderEntrySafe(gdcmHeaderEntry * ElVal) {
+void gdcmHeader::LoadHeaderEntrySafe(gdcmHeaderEntry * entry) {
    long PositionOnEntry = ftell(fp);
-   LoadHeaderEntry(ElVal);
+   LoadHeaderEntry(entry);
    fseek(fp, PositionOnEntry, SEEK_SET);
 }
 
 /**
  * \ingroup gdcmHeader
  * \brief   
- *
+ * @param entry   Header Entry whose value shall be loaded. 
+
  * @return 
  */
  void gdcmHeader::FindHeaderEntryLength (gdcmHeaderEntry * ElVal) {
@@ -1694,7 +1693,7 @@ void gdcmHeader::LoadHeaderEntrySafe(gdcmHeaderEntry * ElVal) {
 
 /**
  * \ingroup   gdcmHeader
- * \brief     Find the value representation of the current tag.
+ * \brief     Find the Value Representation of the current Dicom Element.
  * @param ElVal
  */
 void gdcmHeader::FindHeaderEntryVR( gdcmHeaderEntry *ElVal) {
@@ -1739,19 +1738,19 @@ void gdcmHeader::FindHeaderEntryVR( gdcmHeaderEntry *ElVal) {
 
    if ( RealExplicit ) {
       if ( ElVal->IsVRUnknown() ) {
-         // When not a dictionary entry, we can safely overwrite the vr.
+         // When not a dictionary entry, we can safely overwrite the VR.
          ElVal->SetVR(vr);
          return; 
       }
       if ( ElVal->GetVR() == vr ) {
-         // The vr we just read and the dictionary agree. Nothing to do.
+         // The VR we just read and the dictionary agree. Nothing to do.
          return;
       }
-      // The vr present in the file and the dictionary disagree. We assume
-      // the file writer knew best and use the vr of the file. Since it would
-      // be unwise to overwrite the vr of a dictionary (since it would
+      // The VR present in the file and the dictionary disagree. We assume
+      // the file writer knew best and use the VR of the file. Since it would
+      // be unwise to overwrite the VR of a dictionary (since it would
       // compromise it's next user), we need to clone the actual DictEntry
-      // and change the vr for the read one.
+      // and change the VR for the read one.
       gdcmDictEntry* NewTag = new gdcmDictEntry(ElVal->GetGroup(),
                                  ElVal->GetElement(),
                                  vr,
@@ -1770,7 +1769,7 @@ void gdcmHeader::FindHeaderEntryVR( gdcmHeaderEntry *ElVal) {
    
    fseek(fp, PositionOnEntry, SEEK_SET);
    // When this element is known in the dictionary we shall use, e.g. for
-   // the semantics (see the usage of IsAnInteger), the vr proposed by the
+   // the semantics (see the usage of IsAnInteger), the VR proposed by the
    // dictionary entry. Still we have to flag the element as implicit since
    // we know now our assumption on expliciteness is not furfilled.
    // avoid  .
@@ -1785,8 +1784,8 @@ void gdcmHeader::FindHeaderEntryVR( gdcmHeaderEntry *ElVal) {
  * @param ElVal 
  * @return 
  */
-void gdcmHeader::SkipHeaderEntry(gdcmHeaderEntry * ElVal) {
-    SkipBytes(ElVal->GetLength());
+void gdcmHeader::SkipHeaderEntry(gdcmHeaderEntry * entry) {
+    SkipBytes(entry->GetLength());
 }
 
 /**
@@ -1830,14 +1829,13 @@ void gdcmHeader::FixHeaderEntryFoundLength(gdcmHeaderEntry * ElVal, guint32 Foun
          FoundLength =0; 	 
    } 
     
-
     // a SeQuence Element is beginning                                          
     // Let's forget it's length                                                 
     // (we want to 'go inside')  
     
     // Pb : *normaly*  fffe|e000 is just a marker, its length *should be* zero
     // in gdcm-MR-PHILIPS-16-Multi-Seq.dcm we find lengthes as big as 28800
-    // if we set the length to zero IsAnInteger() breaks...
+    // if we set the length to zero IsHeaderEntryAnInteger() breaks...
     // if we don't, we lost 28800 characters from the Header :-(
                                                  
    else if(ElVal->GetGroup() == 0xfffe){ 
