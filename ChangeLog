@@ -1,3 +1,14 @@
+2004-06-24 Jean-Pierre Roux
+FIX : Write - All the Sequences and Sequence Item are now written 
+            as 'no length' stuff, and a Sequence Delimitor aor an Item Delimitor
+				is added a the end, when necessary.
+            - A lot of brain-damaged images, that were read correctly are 
+		      now written correctly
+				- length compatible BinEntry are now loaded correctly 
+				(even for odd groups) 
+        Note : only Explicit Value Representation was checked.
+				(question : is implicit VR really necessary for gdcm ?)
+
 2004-06-23 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * DEVELOPPER: added a proposition of coding style.
    * src/gdcmDocEntry.h: removed every inline declaration (for test of 
@@ -7,6 +18,12 @@
    * gdcmDocEntry::PrintCommonPart() and ::WriteCommonPart() removed.
      Use the gdcmDocEntry::Print() and Write() instead.
    * src/gdcmDocument.cxx: bug fix.
+
+2004-06-22 Jean-Pierre Roux
+   FIX : gdcmDocument.cxx
+      - Now we do recognize the JpegLossLess format (there was a misstyping in
+        code 'beautyfication' :-(
+      - Now we automaticaticaly load the Luts, if any
 
 2004-06-22 Jean-Pierre Roux
    In order : to write Sequences, whatever their imbrication level, 
