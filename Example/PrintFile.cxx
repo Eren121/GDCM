@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:34:59 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/02/01 11:13:08 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
       fileName += GDCM_DATA_ROOT;
       fileName += "/test.acr";
    }
+
 
    if (argc > 3)
       gdcm::Debug::DebugOn();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:34:59 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/02/01 11:13:08 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-   // Doesn't seems to do anything:
+
+   // Doesn't seem to do anything:
    gdcm::Debug::DebugOn();
 
    // Doesn't link properly:
