@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 19:20:23 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/01/06 19:39:24 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -312,7 +312,6 @@ bool Util::IsCurrentProcessorBigEndian()
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #ifdef _WIN32
 #include <snmp.h>
@@ -365,7 +364,7 @@ long GetMacAddrSys ( u_char *addr)
    WSADATA WinsockData;
    if (WSAStartup(MAKEWORD(2, 0), &WinsockData) != 0) {
        fprintf(stderr, "This program requires Winsock 2.x!\n");
-       return;
+       return -1;
    }
 
    HINSTANCE m_hInst;
@@ -414,7 +413,7 @@ long GetMacAddrSys ( u_char *addr)
    m_hInst = LoadLibrary("inetmib1.dll");
    if (m_hInst < (HINSTANCE) HINSTANCE_ERROR) {
        m_hInst = NULL;
-       return;
+       return -1;
    }
    m_Init =
        (pSnmpExtensionInit) GetProcAddress(m_hInst, "SnmpExtensionInit");
@@ -440,8 +439,8 @@ long GetMacAddrSys ( u_char *addr)
    ret =
        m_Query(ASN_RFC1157_GETNEXTREQUEST, &varBindList, &errorStatus,
                &errorIndex);
-//   printf("# of adapters in this system : %i\n",
-//          varBind[0].value.asnValue.number); varBindList.len = 2;
+   printf("# of adapters in this system : %i\n",
+          varBind[0].value.asnValue.number); varBindList.len = 2;
 
    /* Copy in the OID of ifType, the type of interface */
    SNMP_oidcpy(&varBind[0].name, &MIB_ifEntryType);
@@ -465,7 +464,7 @@ long GetMacAddrSys ( u_char *addr)
                             MIB_ifEntryType.idLength); if (!ret) {
            j++;
            dtmp = varBind[0].value.asnValue.number;
-           //printf("Interface #%i type : %i\n", j, dtmp);
+           printf("Interface #%i type : %i\n", j, dtmp);
 
            /* Type 6 describes ethernet interfaces */
            if (dtmp == 6) {
@@ -489,7 +488,7 @@ long GetMacAddrSys ( u_char *addr)
                            0x00)) {
 
                        /* Ignore all dial-up networking adapters */
-                       //printf("Interface #%i is a DUN adapter\n", j);
+                       printf("Interface #%i is a DUN adapter\n", j);
                        continue;
                    }
                    if (
@@ -508,17 +507,17 @@ long GetMacAddrSys ( u_char *addr)
 
                        /* Ignore NULL addresses returned by other network
                           interfaces */
-                       //printf("Interface #%i is a NULL address\n", j);
+                       printf("Interface #%i is a NULL address\n", j);
                        continue;
                    }
-                   sprintf(addr, "%02x%02x%02x%02x%02x%02x",
+                   sprintf((char*)addr, "%02x%02x%02x%02x%02x%02x",
                            varBind[1].value.asnValue.address.stream[0],
                            varBind[1].value.asnValue.address.stream[1],
                            varBind[1].value.asnValue.address.stream[2],
                            varBind[1].value.asnValue.address.stream[3],
                            varBind[1].value.asnValue.address.stream[4],
                            varBind[1].value.asnValue.address.stream[5]);
-                   //printf("MAC Address of interface #%i: %s\n", j, TempEthernet);
+                   printf("MAC Address of interface #%i: %s\n", j, TempEthernet);
               }
            }
        }
