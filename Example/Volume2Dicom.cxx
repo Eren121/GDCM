@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/04 08:57:19 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/12/06 11:37:37 $
+  Version:   $Revision: 1.3 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,8 +87,8 @@ int main( int argc, char * argv[] )
        if (val < min) 
           min = val;
     }
-    float wcenter = (max+min) / 2.;
-    float wwidth  = (max-min)>0 ? (max-min) : 1.;
+    //float wcenter = (max+min) / 2.;
+    //float wwidth  = (max-min)>0 ? (max-min) : 1.;
 
     ////////////////////////////////////////////////////////////
     // Get file date and time                                 //

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.146 $
+  Date:      $Date: 2004/12/06 11:37:38 $
+  Version:   $Revision: 1.147 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -925,7 +925,6 @@ bool Document::SetEntryByNumber(std::string const& content,
    valEntry->SetValue(finalContent);
 
    // Integers have a special treatement for their length:
-
    l = finalContent.length();
    if ( l != 0) // To avoid to be cheated by 'zero length' integers
    {   

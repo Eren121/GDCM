@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 17:13:18 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/12/06 11:37:38 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,8 +45,6 @@ public:
    
    /// \brief   adds the passed DocEntry to the DocEntry chained List for
    /// this SQ Item.      
-   void AddDocEntry(DocEntry *e) { DocEntries.push_back(e); };
-
    bool AddEntry(DocEntry *Entry); // add to the List
    bool RemoveEntry(DocEntry *EntryToRemove);
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
@@ -91,7 +89,7 @@ protected:
    
    ///\brief pointer to the HTable of the Document,
    ///       (because we don't know it within any DicomDirObject nor any SQItem)
-   TagDocEntryHT *PtagHT;
+   // TagDocEntryHT *PtagHT;
 
 private:
 
@@ -106,10 +104,8 @@ private:
    ///        with this BaseTagKey.
    BaseTagKey BaseTagKeyNested;
 
- 
    /// \brief SQ Item ordinal number 
    int SQItemNumber;
-
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

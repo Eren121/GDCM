@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/12/06 11:37:38 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,6 @@ namespace gdcm
 DicomDirMeta::DicomDirMeta():
    DicomDirObject()
 {
-
 }
 
 /**
@@ -42,7 +41,6 @@ DicomDirMeta::DicomDirMeta():
  */
 DicomDirMeta::~DicomDirMeta() 
 {
-   
 }
 
 //-----------------------------------------------------------------------------
@@ -54,10 +52,13 @@ void DicomDirMeta::Print(std::ostream& os)
 {
    os << "META" << std::endl;
    // warning : META doesn't behave exactly like a Objet 
-   for (ListDocEntry::iterator i = DocEntries.begin();  
+   for (ListDocEntry::iterator i = DocEntries.begin();
         i != DocEntries.end();
         ++i)
-      (*i)->Print();    
+   {
+      (*i)->Print();
+      os << std::endl;
+   }
 }
 
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/04 08:57:20 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2004/12/06 11:37:38 $
+  Version:   $Revision: 1.87 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -482,7 +482,7 @@ DicomDirMeta * DicomDir::NewMeta()
                                     cc != lastOneButSequence;
                                    ++cc)
       {
-         m->AddDocEntry( cc->second );
+         m->AddEntry( cc->second );
       }
    }
    else  // after root directory parsing
@@ -541,7 +541,7 @@ DicomDirPatient * DicomDir::NewPatient()
       {
          entry->SetLength( entry->GetValue().length() );
       }
-      p->AddDocEntry( entry );
+      p->AddEntry( entry );
    }
 
    Patients.push_front( p );

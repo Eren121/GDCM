@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/12/06 11:37:38 $
+  Version:   $Revision: 1.41 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,9 +60,8 @@ SQItem::~SQItem()
 /*
  * \brief   canonical Printer
  */
- void SQItem::Print(std::ostream& os)
- {
-   os << "S ";
+void SQItem::Print(std::ostream& os)
+{
    std::ostringstream s;
 
    if (SQDepthLevel > 0)
@@ -180,7 +179,7 @@ bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group,
          continue;
       }
 
-      if (  ( group   < (*i)->GetGroup() )
+      if (  ( group  < (*i)->GetGroup() )
           ||( group == (*i)->GetGroup() && element < (*i)->GetElement()) )
       {
          // instead of ReplaceOrCreateByNumber 
@@ -188,36 +187,20 @@ bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group,
          ValEntry* entry = 0;
          TagKey key = DictEntry::TranslateToKey(group, element);
 
-         if ( ! PtagHT->count(key))
+         // we assume a Public Dictionnary *is* loaded
+         Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
+         // if the invoked (group,elem) doesn't exist inside the Dictionary
+         // we create a VirtualDictEntry
+         DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, element);
+         if (dictEntry == NULL)
          {
-            // we assume a Public Dictionnary *is* loaded
-            Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
-            // if the invoked (group,elem) doesn't exist inside the Dictionary
-            // we create a VirtualDictEntry
-            DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, element);
-            if (dictEntry == NULL)
-            {
-               dictEntry = 
-                  Global::GetDicts()->NewVirtualDictEntry(group, element,
-                                                          "UN", "??", "??");
-            } 
-            // we assume the constructor didn't fail
-            entry = new ValEntry(dictEntry);
-            /// \todo
-            /// ----
-            /// better we don't assume too much !
-            /// SQItem is now used to describe any DICOMDIR related object
-         }
-         else
-         {
-            DocEntry* foundEntry = PtagHT->find(key)->second;
-            entry = dynamic_cast<ValEntry*>(foundEntry);
-            if (!entry)
-            {
-               dbg.Verbose(0, "SQItem::SetEntryByNumber: docEntries"
-                              " contains non ValEntry occurences");
-            }
-         }
+            dictEntry = 
+               Global::GetDicts()->NewVirtualDictEntry(group, element,
+                                                       "UN", "??", "??");
+         } 
+         // we assume the constructor didn't fail
+         entry = new ValEntry(dictEntry);
+
          if (entry)
          {
             entry->SetValue(val); 
