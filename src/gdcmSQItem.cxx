@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:42 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/01/19 08:55:09 $
+  Version:   $Revision: 1.54 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,6 +58,8 @@ SQItem::~SQItem()
 // Print
 /*
  * \brief   canonical Printer
+ * @param os     Stream to print to. 
+ * @param indent Indentation string to be prepended during printing.
  */
 void SQItem::Print(std::ostream &os, std::string const &)
 {
@@ -81,9 +83,8 @@ void SQItem::Print(std::ostream &os, std::string const &)
       os << s.str();
       Entry->SetPrintLevel(PrintLevel);
       Entry->Print(os); 
-      if ( /* SeqEntry *seqEntry =*/ dynamic_cast<SeqEntry*>(Entry) )
+      if ( dynamic_cast<SeqEntry*>(Entry) )
       {
-         //(void)seqEntry;  //not used
          PrintEndLine = false;
       }
       if (PrintEndLine)
@@ -209,7 +210,7 @@ bool SQItem::SetEntry(std::string const &val, uint16_t group,
       }   
       if (group == (*i)->GetGroup() && elem == (*i)->GetElement() )
       {
-         if ( ValEntry* entry = dynamic_cast<ValEntry*>(*i) )
+         if ( ValEntry *entry = dynamic_cast<ValEntry*>(*i) )
          {
             entry->SetValue(val);
          }
@@ -224,6 +225,7 @@ bool SQItem::SetEntry(std::string const &val, uint16_t group,
  * @param   entryToRemove Entry to remove AND delete.
  * \warning Some problems when using under Windows... prefer the use of
  *          Initialize / GetNext methods
+ * @return true if the entry was found and removed; false otherwise
  */
 bool SQItem::RemoveEntry( DocEntry* entryToRemove)
 {
@@ -246,6 +248,7 @@ bool SQItem::RemoveEntry( DocEntry* entryToRemove)
 /**
  * \brief   Clear the hash table from given entry BUT keep the entry.
  * @param   entryToRemove Entry to remove.
+ * @return true if the entry was found and removed; false otherwise
  */
 bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
 {
@@ -266,11 +269,15 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
 }
                                                                                 
 /**
- * \brief   Initialise the visit of the chained list
+ * \brief   Get the first entry while visiting the SQItem
+ * \return  The first DocEntry if found, otherwhise 0
  */
-void SQItem::Initialize()
+DocEntry * SQItem::GetFirstEntry()
 {
    ItDocEntries = DocEntries.begin();
+   if (ItDocEntries != DocEntries.end())
+      return *ItDocEntries;
+   return 0;   
 }
                                                                                 
 /**
@@ -279,15 +286,11 @@ void SQItem::Initialize()
  */
 DocEntry *SQItem::GetNextEntry()
 {
-   if (ItDocEntries != DocEntries.end())
+   gdcmAssertMacro (ItDocEntries != DocEntries.end());
    {
-      DocEntry *tmp = *ItDocEntries;
       ++ItDocEntries;
-                                                                                
-      return tmp;
-   }
-   else
-   {
+      if (ItDocEntries != DocEntries.end())
+         return  *ItDocEntries;
       return NULL;
    }
 }
@@ -298,9 +301,9 @@ DocEntry *SQItem::GetNextEntry()
  * \brief   Gets a Dicom Element inside a SQ Item Entry
  * @param   group   Group number of the Entry
  * @param   elem  Element number of the Entry
- * @return
+ * @return Entry whose (group,elem) was passed. 0 if not found
  */
-DocEntry* SQItem::GetDocEntry(uint16_t group, uint16_t elem)
+DocEntry *SQItem::GetDocEntry(uint16_t group, uint16_t elem)
 {
    for(ListDocEntry::iterator i = DocEntries.begin();
                               i != DocEntries.end(); ++i)
@@ -314,10 +317,56 @@ DocEntry* SQItem::GetDocEntry(uint16_t group, uint16_t elem)
 }
 
 /**
+ * \brief   Gets a Dicom Element inside a SQ Item Entry
+ * @param   group   Group number of the Entry
+ * @param   elem  Element number of the Entry
+ * @return Entry whose (group,elem) was passed. 0 if not found
+ */
+ValEntry* SQItem::GetValEntry(uint16_t group, uint16_t elem)
+{
+   DocEntry *d = GetDocEntry(group, elem);
+   if ( ValEntry *e = dynamic_cast<ValEntry*>(d) )
+      return e;
+   return 0;
+}
+
+/**
+ * \brief   Gets a Dicom Element inside a SQ Item Entry
+ * @param   group   Group number of the Entry
+ * @param   elem  Element number of the Entry
+ * @return Entry whose (group,elem) was passed. 0 if not found
+ */
+BinEntry* SQItem::GetBinEntry(uint16_t group, uint16_t elem)
+{
+   DocEntry *d = GetDocEntry(group, elem);
+   if ( BinEntry *e = dynamic_cast<BinEntry*>(d) )
+      return e;
+   return 0;
+}
+
+/**
+ * \brief   Gets a Dicom Element inside a SQ Item Entry
+ * @param   group   Group number of the Entry
+ * @param   elem  Element number of the Entry
+ * @return Entry whose (group,elem) was passed. 0 if not found
+ */
+SeqEntry* SQItem::GetSeqEntry(uint16_t group, uint16_t elem)
+{
+   DocEntry *d = GetDocEntry(group, elem);
+   if ( SeqEntry *e = dynamic_cast<SeqEntry*>(d) )
+      return e;
+   return 0;
+}
+
+
+/**
  * \brief   Get the value of a Dicom Element inside a SQ Item Entry
+ * \note : meaningfull only if the required entry is NEITHER a SeqEntry 
+ *                                                   NOR a BinEntry
  * @param   group   Group number of the Entry
  * @param   elem  Element number of the Entry 
- * @return
+ * @return  'string value' of the entry whose (group,elem) was passed.
+ *           GDCM_UNFOUND if not found
  */ 
 
 std::string SQItem::GetEntry(uint16_t group, uint16_t elem)
@@ -327,7 +376,8 @@ std::string SQItem::GetEntry(uint16_t group, uint16_t elem)
    {
       if ( (*i)->GetGroup() == group && (*i)->GetElement() == elem)
       {
-         return ((ValEntry *)(*i))->GetValue();   //FIXME
+         if (ValEntry *e = dynamic_cast<ValEntry*>(*i))
+            return e->GetValue();
       }
    }
    return GDCM_UNFOUND;

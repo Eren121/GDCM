@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/16 04:50:42 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/19 08:55:10 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,6 +56,9 @@ public:
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
   
    DocEntry *GetDocEntry(uint16_t group, uint16_t element);
+   ValEntry *GetValEntry(uint16_t group, uint16_t element); 
+   BinEntry *GetBinEntry(uint16_t group, uint16_t element); 
+   SeqEntry *GetSeqEntry(uint16_t group, uint16_t element); 
    
    bool SetEntry(std::string const &val, uint16_t group, 
                                          uint16_t element);
@@ -80,7 +83,7 @@ public:
    ///  \brief Accessor on \ref BaseTagKey.
    BaseTagKey const &GetBaseTagKey() const { return BaseTagKeyNested; }
 
-   void Initialize();
+   DocEntry *GetFirstEntry();
    DocEntry *GetNextEntry();
 
 protected:
