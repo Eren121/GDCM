@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.32 2003/07/02 16:47:22 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.33 2003/07/04 17:12:42 regrain Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -133,6 +133,8 @@ public:
    gdcmHeader(const char *filename, bool exception_on_error = false);
    gdcmHeader( bool exception_on_error = false);
    virtual ~gdcmHeader();
+
+	std::string GetFileName(void) {return filename;}
    
    size_t GetPixelOffset(void);
    int    GetSwapCode(void) { return sw; }

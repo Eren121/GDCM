@@ -1,3 +1,10 @@
+2003-07-04  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * src/gdcmHeader.h : added method to get the file name
+      * vtk/vtkGdcmReader.[cxx|h] : bug fix concerning loading of bad dicom
+        files. Added method to remove all files on the input
+        Added FIXME comment concerning the bad parsing of header made by
+        ExecuteInformation method (in ExecuteData method)
+
 2003-07-03  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/Makefile.am: vtkGdcmReader.h should now be cleany installed
         when using make instal.

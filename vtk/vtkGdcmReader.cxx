@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.13 2003/07/01 10:04:37 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.14 2003/07/04 17:12:43 regrain Exp $
 #include <stdio.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
@@ -15,6 +15,13 @@ vtkGdcmReader::vtkGdcmReader()
 vtkGdcmReader::~vtkGdcmReader()
 { 
   // FIXME free memory
+  this->FileNameList.clear();
+}
+
+//----------------------------------------------------------------------------
+// Remove all files from the list of images to read.
+void vtkGdcmReader::RemoveAllFileName(void)
+{
   this->FileNameList.clear();
 }
 
@@ -96,7 +103,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
 // (i.e. an image represents one plane, but a volume represents many planes)
 int vtkGdcmReader::CheckFileCoherence()
 {
-   int ReturnedTotalNumberOfPlanes = 0;   // The returned value.
+	int ReturnedTotalNumberOfPlanes = 0;   // The returned value.
 
    this->BuildFileListFromPattern();
    if (this->FileNameList.empty())
@@ -115,6 +122,17 @@ int vtkGdcmReader::CheckFileCoherence()
                                         FileName != FileNameList.end();
                                       ++FileName)
      {
+     // The file is always added in the number of planes
+     //  - If file doesn't exist, it will be replaced by a black place in the 
+     //    ExecuteData method
+     //  - If file has more than 1 plane, other planes will be added later to
+     //    to the ReturnedTotalNumberOfPlanes variable counter
+     ReturnedTotalNumberOfPlanes += 1;
+
+     /////// Stage 0: check for file name:
+	  if(*FileName==std::string("GDCM_UNREADABLE"))
+		  continue;
+
      /////// Stage 1: check for file readability:
      // Stage 1.1: check for file existence.
      FILE *fp;
@@ -191,14 +209,12 @@ int vtkGdcmReader::CheckFileCoherence()
          {
          vtkErrorMacro("This file contains multiple planes (images)"
                        << FileName->c_str());
-         vtkErrorMacro("Removing this file from readed files " 
-                       << FileName->c_str());
          }
 
        // Eventually, this file can be added on the stack. Update the
        // full size of the stack
        vtkDebugMacro("Number of planes added to the stack: " << NZ);
-       ReturnedTotalNumberOfPlanes += NZ;
+       ReturnedTotalNumberOfPlanes += NZ - 1; // First plane already added
        continue;
 
        } else {
@@ -214,7 +230,7 @@ int vtkGdcmReader::CheckFileCoherence()
        this->NumColumns = NX;
        this->NumLines   = NY;
        ReferenceNZ      = NZ;
-       ReturnedTotalNumberOfPlanes += NZ;
+       ReturnedTotalNumberOfPlanes += NZ - 1; // First plane already added
        this->ImageType = type;
        this->PixelSize = GdcmHeader.GetPixelSize();
        }
@@ -239,14 +255,15 @@ int vtkGdcmReader::CheckFileCoherence()
 
    vtkDebugMacro("Total number of planes on the stack: "
                  << ReturnedTotalNumberOfPlanes);
-   return ReturnedTotalNumberOfPlanes;
+   
+	return ReturnedTotalNumberOfPlanes;
 }
 
 //----------------------------------------------------------------------------
 // Configure the output e.g. WholeExtent, spacing, origin, scalar type...
 void vtkGdcmReader::ExecuteInformation()
 {
-  //FIXME free any old memory
+	//FIXME free any old memory
   this->TotalNumberOfPlanes = this->CheckFileCoherence();
   if ( this->TotalNumberOfPlanes == 0)
     {
@@ -382,8 +399,8 @@ size_t vtkGdcmReader::LoadImageInMemory(
 }
 
 //----------------------------------------------------------------------------
-// Update -> UpdateData -> Execute -> ExecuteData (see vtkSource.cxx for
-// last step.
+// Update => ouput->Update => UpdateData => Execute => ExecuteData 
+// (see vtkSource.cxx for last step).
 // This function (redefinition of vtkImageReader::ExecuteData, see 
 // VTK/IO/vtkImageReader.cxx) reads a data from a file. The datas
 // extent/axes are assumed to be the
@@ -396,6 +413,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
     return;
     }
 
+  // FIXME : the bad parse of header is made when allocating OuputData
   vtkImageData *data = this->AllocateOutputData(output);
   data->SetExtent(this->DataExtent);
   data->GetPointData()->GetScalars()->SetName("DicomImage-Volume");
@@ -435,13 +453,14 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
       // this image/volume couldn't be loaded. We simply skip one image
       // size:
       Dest += this->NumColumns * this->NumLines * this->PixelSize;
-      // Update progress related:
-      UpdateProgressCount += this->NumLines;
-      if (!(UpdateProgressCount%UpdateProgressTarget))
-        {
-        this->UpdateProgress(UpdateProgressCount/(50.0*UpdateProgressTarget));
-        }
       } // Else, file not loadable
+
+    // Update progress related:
+    UpdateProgressCount += this->NumLines;
+    if (!(UpdateProgressCount%UpdateProgressTarget))
+		{
+      this->UpdateProgress(UpdateProgressCount/(50.0*UpdateProgressTarget));
+		}
     } // Loop on files
 
   // The "size" of the vtkScalars data is expressed in number of points,
