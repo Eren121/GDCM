@@ -19,8 +19,7 @@
  * We do not support run-time selection of data precision, sorry.
  */
 
-//#define BITS_IN_JSAMPLE  8	/* use 8 or 12 */
-#include "jBitsInJsample.h" 
+#define BITS_IN_JSAMPLE  8	/* use 8 or 12 */
 
 /*
  * Maximum number of components (color channels) allowed in JPEG image.
