@@ -95,6 +95,8 @@ ENDIF(NOT CMAKE_HAVE_STDINT_H)
 CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
                ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE)
 
+INSTALL_FILES(/include .h gdcmConfigure.h)
+
 #-----------------------------------------------------------------------------
 # Add the testing directories
 OPTION(GDCM_BUILD_TESTING "Test the project" ON)
