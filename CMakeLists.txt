@@ -104,13 +104,13 @@ IF(GDCM_WRAP_PYTHON)
 ENDIF(GDCM_WRAP_PYTHON)
 
 #-----------------------------------------------------------------------------
-OPTION(GDCM_DOXYGEN "Build source documentation using doxygen." OFF)
+OPTION(GDCM_DOCUMENTATION "Build source documentation using doxygen." OFF)
 # if doxygen enable
-IF(GDCM_DOXYGEN)
+IF(GDCM_DOCUMENTATION)
   # Search Doxygen:
   FIND_PACKAGE(Doxygen)
   IF(DOXYGEN)
     SUBDIRS(Doc)
   ENDIF(DOXYGEN)
-ENDIF(GDCM_DOXYGEN)
+ENDIF(GDCM_DOCUMENTATION)
 

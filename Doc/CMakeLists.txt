@@ -18,14 +18,14 @@ SET(TARGET_DIR
 #  DoxyInstallation.txt \
 #  DoxyMainPage.txt
 
-IF(GDCM_DOXYGEN)
+IF(GDCM_DOCUMENTATION)
 
   # http://www.cmake.org/pipermail/cmake/2003-April/003673.html
   # Too bad CMake doesn't support multiline ""
-  SET(GDCM_DOXYGEN_INPUT_COMMON
+  SET(GDCM_DOCUMENTATION_INPUT_COMMON
     "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyInstallation.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyIntroduction.txt"
   )
-  SET(GDCM_DOXYGEN_EXCLUDE_COMMON
+  SET(GDCM_DOCUMENTATION_EXCLUDE_COMMON
   )
 
   #Should rewrote this thing with FOREACH:
@@ -35,11 +35,11 @@ IF(GDCM_DOXYGEN)
   SET(GDCM_HTML_OUTPUT
     html.developper
   )
-  SET(GDCM_DOXYGEN_INPUT
-    "${GDCM_DOXYGEN_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyDevelInstal.txt ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt"
+  SET(GDCM_DOCUMENTATION_INPUT
+    "${GDCM_DOCUMENTATION_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyDevelInstal.txt ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt"
   )
-  SET(GDCM_DOXYGEN_EXCLUDE
-    "${GDCM_DOXYGEN_EXCLUDE_COMMON}  ${GDCM_SOURCE_DIR@/src/iddcmjpeg.h     ${GDCM_SOURCE_DIR@/src/src/gdcmJpeg.cxx"
+  SET(GDCM_DOCUMENTATION_EXCLUDE
+    "${GDCM_DOCUMENTATION_EXCLUDE_COMMON}  ${GDCM_SOURCE_DIR@/src/iddcmjpeg.h     ${GDCM_SOURCE_DIR@/src/src/gdcmJpeg.cxx"
   )
   CONFIGURE_FILE(
       ${GDCM_SOURCE_DIR}/Doc/doxygen.config.in
@@ -58,11 +58,11 @@ IF(GDCM_DOXYGEN)
   SET(GDCM_HTML_OUTPUT
     html.user
   )
-  SET(GDCM_DOXYGEN_INPUT
-    "${GDCM_DOXYGEN_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyMainPageUser.txt"
+  SET(GDCM_DOCUMENTATION_INPUT
+    "${GDCM_DOCUMENTATION_INPUT_COMMON} ${GDCM_SOURCE_DIR}/Doc/DoxyMainPageUser.txt"
   )
-  SET(GDCM_DOXYGEN_EXCLUDE
-    "${GDCM_DOXYGEN_EXCLUDE_COMMON}"
+  SET(GDCM_DOCUMENTATION_EXCLUDE
+    "${GDCM_DOCUMENTATION_EXCLUDE_COMMON}"
   )
   CONFIGURE_FILE(
       ${GDCM_SOURCE_DIR}/Doc/doxygen.config.in
@@ -72,7 +72,7 @@ IF(GDCM_DOXYGEN)
 
   ADD_CUSTOM_TARGET(doc-user
    ALL
-   ${DOXYGEN}
+   ${DOCUMENTATION}
    ${GDCM_BINARY_DIR}/Doc/DoxyfileUsers)
 
 
@@ -81,12 +81,12 @@ IF(GDCM_DOXYGEN)
   INSTALL_FILES(${HTML_DIR} "\\.html$")
   #INSTALL_FILES(${HTML_DIR} "\\.pl$")
   #INSTALL_FILES(${HTML_DIR} "\\.stop$")
-ENDIF(GDCM_DOXYGEN)
+ENDIF(GDCM_DOCUMENTATION)
 
 #-----------------------------------------------------------------------------
 # m4 that hasn't been translated
 
 #dist-hook:
-#	rm -rf $(distdir)/html.developper
+# rm -rf $(distdir)/html.developper
 
 #.PHONY : html.developper latex man
