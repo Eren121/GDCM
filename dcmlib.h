@@ -1,48 +1,65 @@
-// Open questions:
-// * End user API are prefixed with GDL (Gnu Dicom Librrary) ???
-// * should RefPubDict be a key in a hashtable (implementation and not API)
-//   or a pointer to a dictionary ?
-
-
-// DCMlib general notes:  
-// * Formats:DCMlib should be able to read ACR-NEMA v1 and v2, Dicom v3 (as
+// gdcmlib Intro:  
+// * gdcmlib is a library dedicated to reading and writing dicom files.
+// * LGPL for the license
+// * lightweigth as opposed to CTN or DCMTK wich come bundled which try
+//   to implement the full DICOM standard (networking...). gdcmlib concentrates
+//   on reading and 
+// * Formats: this lib should be able to read ACR-NEMA v1 and v2, Dicom v3 (as
 //   stated in part10). [cf dcmtk/dcmdata/docs/datadict.txt]
-// * Targeted plateforms: Un*xes and Win32/VC++6.0 (and hopefully Win32/Cygwin)
+// * Targeted plateforms: Un*xes and Win32/VC++6.0
 
 #include <string>
 #include <stddef.h>    // For size_t
+
+// The requirement for the hash table (or map) that we shall use:
+// 1/ First, next, last (iterators)
+// 2/ should be sortable (i.e. sorted by TagKey). This condition
+//    shall be droped since the Win32/VC++ implementation doesn't look
+//    a sorted one. Pffff....
+// 3/ Make sure we can setup some default size value, which should be
+//    around 4500 entries which is the average dictionary size (said JPR)
+#include <map>
+
+// Tag based hash tables.
+// We shall use as keys the strings (as the C++ type) obtained by
+// concatenating the group value and the element value (both of type
+// unsigned 16 bit integers in Dicom) expressed in hexadecimal.
+// Example: consider the tag given as (group, element) = (0x0010, 0x0010).
+// Then the corresponding TagKey shall be the string 00100010 (or maybe
+// 0x00100x0010, we need some checks here).
+typedef string TagKey;
+typedef map<TagKey, char*> TagHT;
+
 // Dummy declaration for the time being
 typedef int guint16;    // We shall need glib.h !
 
-// Notes on the implemenation of the dictionary entry in DCMTK : 
-//   They are many fields in this implementation (see below). What are the
-//   relevant ones for us ?
-//      struct DBI_SimpleEntry {
-//         Uint16 group;
-//         Uint16 element;
-//         Uint16 upperGroup;
-//         Uint16 upperElement;
-//         DcmEVR evr;
-//         const char* tagName;
-//         int vmMin;
-//         int vmMax;
-//         const char* standardVersion;
-//         DcmDictRangeRestriction groupRestriction;
-//         DcmDictRangeRestriction elementRestriction;
-//       };
-//
-//       static const DBI_SimpleEntry simpleBuiltinDict[] = {
-//           { 0x0000, 0x0000, 0x0000, 0x0000,
-//             EVR_UL, "CommandGroupLength", 1, 1, "dicom98",
-//             DcmDictRange_Unspecified, DcmDictRange_Unspecified },...}
 class DictEntry {
 private:
+////// QUESTION: it is not sure that we need to store the group and
+//////           and the element within a DictEntry. What is the point
+//////           of storing the equivalent of a TagKey within the information
+//////           accessed through that TagKey !?
 	guint16 group;		// e.g. 0x0010
 	guint16 element;	// e.g. 0x0010
 	string  name;		// e.g. "Patient_Name"
 	string  ValRep;	// Value Representation i.e. some clue about the nature
 							// of the data represented e.g. "FD" short for
 							// "Floating Point Double"
+	// DCMTK has many fields for handling a DictEntry (see below). What are the
+	// relevant ones for gdcmlib ?
+	//      struct DBI_SimpleEntry {
+	//         Uint16 group;
+	//         Uint16 element;
+	//         Uint16 upperGroup;
+	//         Uint16 upperElement;
+	//         DcmEVR evr;
+	//         const char* tagName;
+	//         int vmMin;
+	//         int vmMax;
+	//         const char* standardVersion;
+	//         DcmDictRangeRestriction groupRestriction;
+	//         DcmDictRangeRestriction elementRestriction;
+	//       };
 public:
 	DictEntry();
 	DictEntry(guint16 group, guint16 element, string  name, string  VR);
@@ -55,7 +72,7 @@ public:
 class Dict {
 	string name;
 	string filename;
-	DictEntry* entries;
+	TagHT entries;
 public:
 	Dict();
 	Dict(string filename);	// Read Dict from disk
@@ -66,13 +83,17 @@ public:
 // should avoid :
 // * reloading an allready loaded dictionary.
 // * having many in memory representations of the same dictionary.
+typedef int DictId;
 class DictSet {
 private:
-	Dict* dicts;
+	map<DictId, Dict*> dicts;
 	int AppendDict(Dict* NewDict);
 public:
 	DictSet();		// Default constructor loads THE DICOM v3 dictionary
 	int LoadDictFromFile(string filename);
+///// QUESTION: the following function might not be thread safe !? Maybe
+/////           we need some mutex here, to avoid concurent creation of
+/////           the same dictionary !?!?!
 	int LoadDictFromName(string filename);
 	int LoadAllDictFromDirectory(string directorynanme);
 	string* GetAllDictNames();
@@ -82,14 +103,19 @@ public:
 // The dicom header of a Dicom file contains a set of such ELement VALUES
 // (when successfuly parsed against a given Dicom dictionary)
 class ElValue {
-	guint16 group;		// e.g. 0x0010
-	guint16 element;	// e.g. 0x0010
+	DictEntry entry;
 	string  value;
 };
 
 // Container for a set of succefully parsed ElValues.
+typedef map<TagKey, char*> TagHT;
 class ElValSet {
-	ElValue* values;
+	// We need both accesses with a TagKey and the Dicentry.Name
+////// QUESTION: this leads to a double storage of a single ElValue
+	map<TagKey, ElValue> tagHt;
+	map<srting, ElValue> NameHt;
+public:
+	int Add(ElValue);
 };
 
 // The typical usage of objects of this class is to classify a set of
@@ -98,9 +124,9 @@ class ElValSet {
 // SerieId. Accesing the content (image[s] or volume[s]) is beyond the
 // functionality of this class (see dmcFile below).
 // Notes:
-// * the dcmHeader::Set*Tag* family members cannot be defined as protected
-//   (Swig limitations for as Has_a dependency between dcmFile and dcmHeader)
-class dcmHeader {
+// * the gdcmHeader::Set*Tag* family members cannot be defined as protected
+//   (Swig limitations for as Has_a dependency between gdcmFile and gdcmHeader)
+class gdcmHeader {
 private:
 	static DictSet* Dicts;	// Global dictionary container
 	Dict* RefPubDict;			// Public Dictionary
@@ -108,10 +134,16 @@ private:
 	int swapcode;
 	ElValSet PubElVals;		// Element Values parsed with Public Dictionary
 	ElValSet ShaElVals;		// Element Values parsed with Shadow Dictionary
+protected:
+///// QUESTION: Maybe Print is a better name than write !?
+	int write(ostream&);   
+///// QUESTION: Maybe anonymize should be a friend function !?!?
+/////           See below for an example of how anonymize might be implemented.
+	int anonymize(ostream&);
 public:
-	dcmHeader();
-	dcmHeader(string filename);
-	~dcmHeader();
+	gdcmHeader();
+	gdcmHeader(string filename);
+	~gdcmHeader();
 
 	int SetPubDict(string filename);
 	// When some proprietary shadow groups are disclosed, whe can set
@@ -157,17 +189,19 @@ public:
 // In addition to Dicom header exploration, this class is designed
 // for accessing the image/volume content. One can also use it to
 // write Dicom files.
-class dcmFile
+////// QUESTION: this looks still like an open question wether the
+//////           relationship between a gdcmFile and gdcmHeader is of
+//////           type IS_A or HAS_A !
+class gdcmFile: gdcmHeader
 {
 private:
-	dcmHeader* Header;
 	void* Data;
 	int Parsed;				// weather allready parsed
 	string OrigFileName;	// To avoid file overwrite
 public:
 	// Constructor dedicated to writing a new DICOMV3 part10 compliant
 	// file (see SetFileName, SetDcmTag and Write)
-	dcmFile();
+	gdcmFile();
 	// Opens (in read only and when possible) an existing file and checks
 	// for DICOM compliance. Returns NULL on failure.
 	// Note: the in-memory representation of all available tags found in
@@ -175,13 +209,13 @@ public:
 	//    This avoid a double parsing of public part of the header when
 	//    one sets an a posteriori shadow dictionary (efficiency can be
 	//    seen a a side effect).
-	dcmFile(string filename);
+	gdcmFile(string filename);
 	// For promotion (performs a deepcopy of pointed header object)
-	dcmFile(dcmHeader* header);
-	~dcmFile();
+	gdcmFile(gdcmHeader* header);
+	~gdcmFile();
 
 	// On writing purposes. When instance was created through
-	// dcmFile(string filename) then the filename argument MUST be different
+	// gdcmFile(string filename) then the filename argument MUST be different
 	// from the constructor's one (no overwriting aloud).
 	int SetFileName(string filename);
 
@@ -193,26 +227,33 @@ public:
 	size_t GetImageDataSize();
 	// Copies (at most MaxSize bytes) of data to caller's memory space.
 	// Returns an error code on failure (if MaxSize is not big enough)
-	int GetImageDataHere(void* destination, size_t MaxSize );
+	int PutImageDataHere(void* destination, size_t MaxSize );
 	// Allocates ExpectedSize bytes of memory at this->Data and copies the
 	// pointed data to it.
 	int SetImageData(void * Data, size_t ExpectedSize);
 	// Push to disk.
 	int Write();
-
-///// Repeat here all the dcmHeader public members !!!
 };
 
-//class dcmSerie : dcmFile;
-//class dcmMultiFrame : dcmFile;
+//class gdcmSerie : gdcmFile;
+//class gdcmMultiFrame : gdcmFile;
 
 //
 //Examples:
-// * dcmFile WriteDicom;
+// * gdcmFile WriteDicom;
 //   WriteDicom.SetFileName("MyDicomFile.dcm");
-//	string * AllTags = dcmHeader.GetDcmTagNames();
+//	string * AllTags = gdcmHeader.GetDcmTagNames();
 //   WriteDicom.SetDcmTag(AllTags[5], "253");
 //   WriteDicom.SetDcmTag("Patient Name", "bozo");
 //   WriteDicom.SetDcmTag("Patient Name", "bozo");
 //	WriteDicom.SetImageData(Image);
 //   WriteDicom.Write();
+//
+//
+//   Anonymize(ostream& output) {
+//   a = gdcmFile("toto1");
+//   a.SetPubValueByName("Patient Name", "");
+//   a.SetPubValueByName("Date", "");
+//   a.SetPubValueByName("Study Date", "");
+//   a.write(output);
+//   }
