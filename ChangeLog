@@ -1,4 +1,12 @@
-2002-12-6 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+2002-12-9 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * Test/Makefile building now depends on the one of libgdcm.so
+      * src/gdcmHeader.cxx and gdcm.h are now OB (undefined length encoded
+        pixel data) aware which enables finding the address (offset) of 
+        the pixel data of JPEG encoded DICOM files. This leaves only a single
+        file in the testSuite whose pixel data address (offset) is unknown.
+      * python/testSuite.py changed accordingly.
+
+2002-12-6 Christophe Odet + Hugues Benoit-Cattin + Eric.Boix
       * wrapping python correct with standalone wrapped dll (don't use separate
          dll under windows !!!!)
       * removed glib references

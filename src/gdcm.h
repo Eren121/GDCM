@@ -224,6 +224,7 @@ class GDCM_EXPORT gdcmHeader {
 		//BadLittleEndian,
 		//BigEndian, 
 		//BadBigEndian};
+	void SkipBytes(guint32);
 private:
   	// All instances share the same Value Representation dictionary
 	static VRHT *dicom_vr;
@@ -258,6 +259,7 @@ private:
 	void Initialise(void);
 	void CheckSwap(void);
 	void FindLength(ElValue *);
+	guint32 FindLengthOB(void);
 	void FindVR(ElValue *);
 	void LoadElementValue(ElValue *);
 	void LoadElementValueSafe(ElValue *);

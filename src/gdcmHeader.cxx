@@ -384,7 +384,41 @@ void gdcmHeader::FixFoundLength(ElValue * ElVal, guint32 FoudLength) {
 	ElVal->SetLength(FoudLength);
 }
 
-void gdcmHeader::FindLength( ElValue * ElVal) {
+guint32 gdcmHeader::FindLengthOB(void) {
+	// See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
+	guint16 g;
+	guint16 n; 
+	long PositionOnEntry = ftell(fp);
+	bool FoundSequenceDelimiter = false;
+	guint32 TotalLength = 0;
+	guint32 ItemLength;
+
+	while ( ! FoundSequenceDelimiter) {
+		g = ReadInt16();
+		n = ReadInt16();
+		TotalLength += 4;  // We even have to decount the group and element 
+		if ( g != 0xfffe ) {
+			dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",
+			            "wrong group for an item sequence.");
+			throw Error::FileReadError(fp, "gdcmHeader::FindLengthOB");
+		}
+		if ( n == 0xe0dd )
+			FoundSequenceDelimiter = true;
+		else if ( n != 0xe000) {
+			dbg.Verbose(1, "gdcmHeader::FindLengthOB: ",
+			            "wrong element for an item sequence.");
+			throw Error::FileReadError(fp, "gdcmHeader::FindLengthOB");
+		}
+		ItemLength = ReadInt32();
+		TotalLength += ItemLength + 4;  // We add 4 bytes since we just read
+		                                // the ItemLength with ReadInt32
+		SkipBytes(ItemLength);
+	}
+	fseek(fp, PositionOnEntry, SEEK_SET);
+	return TotalLength;
+}
+
+void gdcmHeader::FindLength(ElValue * ElVal) {
 	guint16 element = ElVal->GetElement();
 	string  vr      = ElVal->GetVR();
 	guint16 length16;
@@ -396,7 +430,12 @@ void gdcmHeader::FindLength( ElValue * ElVal) {
 			// 7.1.2 Data element structure with explicit vr p27) must be
 			// skipped before proceeding on reading the length on 4 bytes.
 			fseek(fp, 2L, SEEK_CUR);
-			FixFoundLength(ElVal, ReadInt32());
+			guint32 length32 = ReadInt32();
+			if ( (vr == "OB") && (length32 == 0xffffffff) ) {
+				ElVal->SetLength(FindLengthOB());
+				return;
+			}
+			FixFoundLength(ElVal, length32);
 			return;
 		}
 
@@ -405,7 +444,7 @@ void gdcmHeader::FindLength( ElValue * ElVal) {
 		
 		// We can tell the current file is encoded in big endian (like
 		// Data/US-RGB-8-epicard) when we find the "Transfer Syntax" tag
-		// and it's value is the one of the encoding of a bie endian file.
+		// and it's value is the one of the encoding of a big endian file.
 		// In order to deal with such big endian encoded files, we have
 		// (at least) two strategies:
 		// * when we load the "Transfer Syntax" tag with value of big endian
@@ -416,7 +455,7 @@ void gdcmHeader::FindLength( ElValue * ElVal) {
 		//   in little endian, and big endian coding only starts at the next
 		//   group. The corresponding code can be hard to analyse and adds
 		//   many additional unnecessary tests for regular tags.
-		// * the second strategy consist to wait for trouble, that shall appear
+		// * the second strategy consist in waiting for trouble, that shall appear
 		//   when we find the first group with big endian encoding. This is
 		//   easy to detect since the length of a "Group Length" tag (the
 		//   ones with zero as element number) has to be of 4 (0x0004). When we
@@ -510,9 +549,13 @@ guint16 gdcmHeader::SwapShort(guint16 a) {
 	return (a);
 }
 
-void gdcmHeader::SkipElementValue(ElValue * ElVal) {
+void gdcmHeader::SkipBytes(guint32 NBytes) {
 	//FIXME don't dump the returned value
-	(void)fseek(fp, (long)ElVal->GetLength(), SEEK_CUR);
+	(void)fseek(fp, (long)NBytes, SEEK_CUR);
+}
+
+void gdcmHeader::SkipElementValue(ElValue * ElVal) {
+	SkipBytes(ElVal->GetLength());
 }
 
 void gdcmHeader::SetMaxSizeLoadElementValue(long NewSize) {
