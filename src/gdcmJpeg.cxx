@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 05:08:53 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/02/05 15:15:26 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -197,16 +197,16 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
    longjmp(myerr->setjmp_buffer, 1);
 }
 
-METHODDEF(void) my_output_message (j_common_ptr cinfo)
-{
-   char buffer[JMSG_LENGTH_MAX];
- 
-   /* Create the message */
-   (*cinfo->err->format_message) (cinfo, buffer);
-
-   // Custom display message, we could be more fancy and throw an exception:
-   gdcmErrorMacro( buffer );
-}
+//METHODDEF(void) my_output_message (j_common_ptr cinfo)
+//{
+//   char buffer[JMSG_LENGTH_MAX];
+// 
+//   /* Create the message */
+//   (*cinfo->err->format_message) (cinfo, buffer);
+//
+//   // Custom display message, we could be more fancy and throw an exception:
+//   gdcmErrorMacro( buffer );
+//}
 
 }
 //-----------------------------------------------------------------------------
