@@ -21,6 +21,7 @@ public:
 	void Print(ostream &);
 	void PrintByName(ostream &);
 	int  Write(FILE *fp);
+	int  WriteAcr(FILE *fp);
 	ElValue* GetElementByNumber(guint32 group, guint32 element);
 	ElValue* GetElementByName  (string);
 	string   GetElValueByNumber(guint32 group, guint32 element);

@@ -95,6 +95,7 @@ public:
 		
 	int WriteRawData (string nomFichier);
 	int WriteDcm     (string nomFichier);
+	int WriteAcr     (string nomFichier);
 };
 
 #endif

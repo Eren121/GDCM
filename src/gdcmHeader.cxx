@@ -913,18 +913,33 @@ bool gdcmHeader::IsAnInteger(ElValue * ElVal) {
          dbg.Error("gdcmHeader::IsAnInteger",
                    "Erroneous Group Length element length.");
    }
-   
+ 
+   /*  	
+   // on le traite tt de même (VR peut donner l'info)
+		// faire qq chose + ruse (pas de test si pas de VR)  
    if ( group % 2 != 0 )
       // We only have some semantics on documented elements, which are
       // the even ones.
-      return false;
+      return false; 
+    */
    
+   /*
    if ( (length != 4) && ( length != 2) )
       // Swapping only make sense on integers which are 2 or 4 bytes long.
+      		
+		// En fait, pour les entiers de 'Value Multiplicity' supérieur a 1
+		// la longueur n'est pas forcement 2 ou 4 
+		// ET il faudra swapper.
       return false;
+    */
    
    if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") )
       return true;
+   
+   
+   // est-ce encore utile?
+   // mieux vaut modifier le source du Dicom Dictionnaty 
+   // et remplacer pour ces 2 cas  RET par US
    
    if ( (group == 0x0028) && (element == 0x0005) )
       // The "Image Dimensions" tag is retained from ACR/NEMA and contains

@@ -450,4 +450,42 @@ int gdcmFile::WriteDcm (string nomFichier) {
 	return(1);
 }
 	
+/////////////////////////////////////////////////////////////////
+/**
+ * \ingroup   gdcmFile
+ * \brief Ecrit sur disque UNE image ACR-NEMA 
+ * \ (a l'attention des logiciels cliniques 
+ * \ qui ne prennent en entrée QUE des images ACR ...
+ * \ si un header DICOM est fourni en entree,
+ * \ les groupes < 0x0008 et les groupes impairs sont ignores)
+ * \ Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ * \ Ca fonctionnera correctement (?) sur processeur Intel
+ * \ (Equivalent a IdDcmWrite) 
+ *
+ * @param 
+ *
+ * @return	
+ */
 
+int gdcmFile::WriteAcr (string nomFichier) {
+
+// ATTENTION : fonction non terminée (commitée a titre de precaution)
+
+	FILE * fp1;
+	fp1 = fopen(nomFichier.c_str(),"wb");
+	if (fp1 == NULL) {
+		printf("Echec ouverture (ecriture) Fichier [%s] \n",nomFichier.c_str());
+		return (0);
+	} 
+
+	// un accesseur de + est obligatoire ???
+	// pourtant le ElValSet contenu dans le gdcmHeader 
+	// ne devrait pas être visible par l'utilisateur final (?)
+	
+	GetPubElVals().WriteAcr(fp1);
+		
+	fwrite(Pixels, lgrTotale, 1, fp1);
+
+	fclose (fp1);
+	return(1);
+}
