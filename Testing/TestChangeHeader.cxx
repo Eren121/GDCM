@@ -61,8 +61,8 @@ int main(int argc, char* argv[]) {
 	
 	f1->GetHeader()->PrintPubEntry();
 	
-	std::string s0 =f2->GetHeader()->GetPubEntryByNumber(0x7fe0, 0x0000);
-	std::string s10=f2->GetHeader()->GetPubEntryByNumber(0x7fe0, 0x0010);
+	std::string s0 =f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0000);
+	std::string s10=f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0010);
 	printf("lgr 7fe0, 0000 %s\n",s0.c_str());
 	printf("lgr 7fe0, 0010 %s\n",s10.c_str());	
 
