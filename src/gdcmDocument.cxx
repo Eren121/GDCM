@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/14 10:45:04 $
-  Version:   $Revision: 1.230 $
+  Date:      $Date: 2005/02/25 15:49:55 $
+  Version:   $Revision: 1.231 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -771,12 +771,12 @@ void Document::Initialize()
 void Document::ParseDES(DocEntrySet *set, long offset, 
                         long l_max, bool delim_mode)
 {
-   DocEntry *newDocEntry = 0;
+   DocEntry *newDocEntry;
    ValEntry *newValEntry;
    BinEntry *newBinEntry;
    SeqEntry *newSeqEntry;
    VRKey vr;
-   bool used = false;
+   bool used;
 
    while (true)
    {

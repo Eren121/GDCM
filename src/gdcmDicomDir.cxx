@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 16:55:39 $
-  Version:   $Revision: 1.132 $
+  Date:      $Date: 2005/02/25 15:49:54 $
+  Version:   $Revision: 1.133 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -821,7 +821,6 @@ void DicomDir::SetElements(std::string const &path, VectDocument const &list)
          || first )
       {
          SetElement(path, GDCM_DICOMDIR_SERIE, *it);
-         first = true;
       }
       
       // Always Deal with 'IMAGE' Elements  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/02/25 15:49:54 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,7 +164,7 @@ Dict *DictSet::GetNextEntry()
 std::string DictSet::BuildDictPath() 
 {
    std::string resultPath;
-   const char *envPath = 0;
+   const char *envPath;
    envPath = getenv("GDCM_DICT_PATH");
 
    if (envPath && (strlen(envPath) != 0)) 
