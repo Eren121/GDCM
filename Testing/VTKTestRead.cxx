@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/02/09 15:06:48 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,19 +50,8 @@ int VTKReadTest(vtkTesting *t,vtkImageViewer *viewer,
    t->AddArgument("-T");
    t->AddArgument( "." );
    
-   // Instead of directly reading the dicom let's write it down to another file
-   // do a scope to be sure everything gets cleanup
-   {
-      gdcm::FileHelper file( filename );
-      file.GetImageData();
-      file.SetWriteModeToRaw();
-      file.WriteDcmExplVR( "TestWrite.dcm" );
-   }
- 
-   // Ok for now still use the original image, 
    vtkGdcmReader *reader = vtkGdcmReader::New();
-   //reader->SetFileName( filename.c_str() );
-   reader->SetFileName( "TestWrite.dcm" );
+   reader->SetFileName( filename.c_str() );
    reader->Update();
 
    double range[2];

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/02/09 15:06:48 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,6 @@ int CompareInternal(std::string const & filename, std::string const & output)
    std::cout << "           step 1...";
 
    //////////////// Step 2:
-
    gdcm::FileHelper *filehelper = new gdcm::FileHelper( file );
    int dataSize    = filehelper->GetImageDataSize();
    uint8_t *imageData = filehelper->GetImageData(); //EXTREMELY IMPORTANT
@@ -46,30 +45,13 @@ int CompareInternal(std::string const & filename, std::string const & output)
           // GetImageData or if he wants to GetImageDataRaw
           // (even if we do it by setting a flag, he will have to decide) 
 
-   /// \todo Following line commented out because gdcmFile::SetImageData() is
-   /// brain dead: it sets ImageDataSize to its argument and PixelRead to a.
-   /// Later on, when writing gdcmFile::WriteBase() 
-   /// and because PixelRead == 1 we call
-   ///    PixelElement->SetLength( ImageDataSizeRaw );
-   /// where we use ImageDataSizeRAW instead of ImageDataSize !
-   /// But when the original image made the transformation LUT -> RGB, 
-   /// ImageDataSizeRaw is the third of ImageDataSize, and there is no
-   /// reason (since we called gdcmFile::SetImageData) to use the Raw image
-   /// size... This "bug" in gdcmFile made that we had to black list
-   /// images 8BitsUncompressedColor.dcm, OT-PAL-8-face.dcm and 
-   /// US-PAL-8-10x-echo.dcm...
-   /// In conclusion fix gdcmFile, and then uncomment the following line.
-   
-   // --> I did. ctest doesn't break. But ... is it enought to say it's OK ?
-   
-   filehelper->SetImageData(imageData, dataSize);
+   //filehelper->SetImageData(imageData, dataSize);
    
    filehelper->SetWriteModeToRGB();
    filehelper->WriteDcmExplVR( output );
    std::cout << "2...";
  
    //////////////// Step 3:
-
    gdcm::FileHelper *reread = new gdcm::FileHelper( output );
    if( !reread->GetFile()->IsReadable() )
    {

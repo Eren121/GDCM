@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:00:06 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/02/09 15:06:48 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,15 +90,19 @@ int CopyRescaleDicom(std::string const &filename,
       copyF->InsertValEntry( "8", 0x0028, 0x0101); // Bits Stored
       copyF->InsertValEntry( "7", 0x0028, 0x0102); // High Bit
       copyF->InsertValEntry( "0", 0x0028, 0x0103); // Pixel Representation
- 
+
       // We assume the value were from 0 to uint16_t max
       rescaleSize = dataSize / 2;
       rescaleImage = new uint8_t[dataSize];
 
       uint16_t *imageData16 = (uint16_t*)original->GetImageData();
+      uint16_t *tmpImage = imageData16;
+      uint8_t *tmpRescale = rescaleImage;
       for(unsigned int i=0; i<rescaleSize; i++)
       {
-         rescaleImage[i] = imageData16[i]/256;
+         *tmpRescale = (*tmpImage)>>8;
+         tmpImage++;
+         tmpRescale++;
       }
    }
    else

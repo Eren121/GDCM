@@ -1,3 +1,7 @@
+2005-02-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/ : accelerate tests (it's not very significant accelerations).
+     Remove TestCopyDicom that is redundant with TestCopyRescaleDicom
+
 2005-02-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Testing/TestSequence.cxx : add test for sequences of images... test that
      we have the same serie or the same study UID

@@ -13,28 +13,28 @@ SET(TEST_SOURCES
   TestHash.cxx
   TestTS.cxx
   TestVR.cxx
-  TestDicomDirElement.cxx
-  TestDicomString.cxx
   TestDict.cxx
   TestWriteSimple.cxx
   TestSequence.cxx
+  TestDicomDirElement.cxx
+  TestDicomString.cxx
 )
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}
     TestFileAccessors.cxx
-    TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     TestPrintAllDocument.cxx         # includes generated gdcmDataImages.h
-    TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
     TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
-    #TestChangeHeader.cxx
-    TestCopyDicom.cxx                # includes generated gdcmDataImages.h 
+    TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
+    TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
+    #TestCopyDicom.cxx                # includes generated gdcmDataImages.h 
     TestCopyRescaleDicom.cxx         # includes generated gdcmDataImages.h 
+    #TestChangeHeader.cxx
+    TestDirList.cxx
     TestDicomDir.cxx                 # require DICOMDIR
     TestBuildUpDicomDir.cxx          # writes a file named "NewDICOMDIR"
     TestMakeDicomDir.cxx             # writes a file named "NewDICOMDIR"
-    TestDirList.cxx
     TestSerieHelper.cxx              # uses gdcmData as a default root directory    
   )
   # add test that require VTK:
