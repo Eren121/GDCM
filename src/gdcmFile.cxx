@@ -93,7 +93,6 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
   // 0028|1203 [US]   [Blue Palette Color Lookup Table Data]
 
 
-
 /////////////////////////////////////////////////////////////////
 /**
  * \ingroup   gdcmFile
@@ -160,7 +159,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
                 
   // ------------------------------- JPEG LossLess : call to Jpeg Libido
    
-   if (IsJPEGLossless() /*&& GetZSize() == 1*/) {
+   if (IsJPEGLossless() && GetZSize() == 1) {
    
       int ln; //  Position on begining of Jpeg Pixels
       fseek(fp,4,SEEK_CUR);  // skipping (fffe,e000) : Basic Offset Table Item
@@ -211,7 +210,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
             return res; 
       }
 
-  // ------------------------------- JPEG Lossy : call to IJG 6b
+  // ------------------------------- Multiframe JPEG 
     
       long fragmentBegining; // for ftell, fseek
       bool b = gdcmHeader::IsJPEG2000();
@@ -245,22 +244,22 @@ bool gdcmFile::ReadPixelData(void* destination) {
       }
               
       // parsing fragments until Sequence Delim. Tag found
-       //unsigned short *dest = (unsigned short *)destination;
+      //unsigned short *dest = (unsigned short *)destination;
          
-      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) {
+      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) {      
          fread(&ln,4,1,fp); 
          if(GetSwapCode()) 
             ln=SwapLong(ln);    // Fragment Item length
       
          // FIXME : multi fragments 
-         fragmentBegining=ftell(fp);
-                       
+         fragmentBegining=ftell(fp);   
  
          if (b)
-            res = (bool)gdcm_read_JPEG2000_file (destination);  // Reading Fragment pixels 
+            res = (bool)gdcm_read_JPEG2000_file (destination);  // Not Yet written 
             
-         else if (IsJPEGLossless()) {  
-                  // ------------- call to LibIDO Jpeg for each Frame/fragment
+         else if (IsJPEGLossless()) { // JPEG LossLess : call to LibIDO Jpeg
+	 	  
+                  // -------------  for each Fragment
                   
                   // Warning : Works only if there is one fragment per frame
                   //           (Or a single fragment for the multiframe file)
@@ -290,10 +289,12 @@ bool gdcmFile::ReadPixelData(void* destination) {
                }       
            } 
            _IdDcmJpegFree (jpg);
+	   
+	   res=1; // in order not to break the loop
      
          } // ------------------------------------- endif (IsJPEGLossless())
                   
-         else
+         else  //               JPEG Lossy : call to IJG 6b
             if  (GetBitsStored() == 8) {
             	res = (bool)gdcm_read_JPEG_file (destination);  // Reading Fragment pixels         
             } else {
@@ -301,12 +302,9 @@ bool gdcmFile::ReadPixelData(void* destination) {
             }       
             
          if (!res) break;
-         
-         // FIXME : will work only when each fragment corresponds to a Frame :-(
-         
+                  
          destination = (char *)destination + taille * nBytes; // location in user's memory 
-                                                  // for next fragment (if any) 
-         // TODO : find a suitable file (multifragment/single Frame Jpeg file) to check
+                                                              // for next fragment (if any) 
          
          fseek(fp,fragmentBegining,SEEK_SET); // To be sure we start 
          fseek(fp,ln,SEEK_CUR);               // at the begining of next fragment
@@ -318,11 +316,9 @@ bool gdcmFile::ReadPixelData(void* destination) {
             ItemTagGr=SwapShort(ItemTagGr); 
             ItemTagEl=SwapShort(ItemTagEl);            
          } 
-         
-      //(char *) destination += taille * nBytes;
-      //std::cout << "destination" << destination << std::endl;
-      }
-                
+      
+      }     // endWhile parsing fragments until Sequence Delim. Tag found    
+	        
       return res;
 }   
 
