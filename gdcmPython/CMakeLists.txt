@@ -15,9 +15,9 @@ INCLUDE_DIRECTORIES(
 IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
   # We need to pass that to swig to be sure all modules are generated in the proper dir
-  #SET(CMAKE_SWIG_FLAGS "-outdir ${GDCM_BINARY_DIR}/gdcmPython")
+  SET(CMAKE_SWIG_FLAGS "-outdir ${GDCM_BINARY_DIR}/gdcmPython")
   # Looks like a bug to me in cmake 2.0.x:
-  #SEPARATE_ARGUMENTS(CMAKE_SWIG_FLAGS)
+  SEPARATE_ARGUMENTS(CMAKE_SWIG_FLAGS)
 
   FIND_PACKAGE(SWIG REQUIRED)
   INCLUDE(${SWIG_USE_FILE})
