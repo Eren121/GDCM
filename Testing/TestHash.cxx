@@ -1,11 +1,11 @@
+#include "gdcmCommon.h" //to shut up warnings
 // Checks the basic functionalities of STL <map>.
 #include <map>
 #include <string>
 #include <iostream>
-#include <stdio.h>
 
-int TestHash( int, char * [] ) {
-
+int TestHash( int, char * [] )
+{
    std::cout << "Test::TestHash : " << std::endl;
    std::cout << "   Checks that the basic STL <map> functionalities required "
              << std::endl

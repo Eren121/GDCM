@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:05 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/10/07 16:55:16 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,9 +96,9 @@ const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
 const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
 const std::string GDCM_UNREAD    = "gdcm::UnRead";
 
-/// \brief gdcmTagKey is made to old an "universal" (as in URL, Universal
+/// \brief gdcmTagKey is made to hold an "universal" (as in URL, Universal
 ///        Ressource Locator)  key to a gdcmDocEntry i.e. a dicom tag.
-///        A dicom tag allways has a group and an element, but a set of tags
+///        A dicom tag always has a group and an element, but a set of tags
 ///        embeded in various (optionally nested) sequences and sharing
 ///        the same group and element all share the same (group, element)
 ///        "identifier". Hence the (group, element) cannot be used as an
