@@ -1,4 +1,8 @@
 2005-02-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Testing/TestSequence.cxx : add test for sequences of images... test that
+     we have the same serie or the same study UID
+
+2005-02-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * gdcmPython/gdcm.i : bug fix. Now string are correctly converted in python
      string type
    * src/gdcmDict.h : remove commented code

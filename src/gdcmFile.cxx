@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 12:28:40 $
-  Version:   $Revision: 1.215 $
+  Date:      $Date: 2005/02/07 12:54:00 $
+  Version:   $Revision: 1.216 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1449,7 +1449,7 @@ void File::InitializeDefaultFile()
    // Media Storage SOP Class UID (CT Image Storage)
    InsertValEntry("1.2.840.10008.5.1.4.1.1.2", 0x0002, 0x0002);
    // Media Storage SOP Instance UID
-   InsertValEntry(uidClass.c_str(),            0x0002, 0x0003);
+   InsertValEntry(uidMedia.c_str(),            0x0002, 0x0003);
    // Transfer Syntax UID (Explicit VR Little Endian)
    InsertValEntry("1.2.840.10008.1.2.1 ",      0x0002, 0x0010);
    // META Implementation Class UID

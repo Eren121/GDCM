@@ -17,6 +17,7 @@ SET(TEST_SOURCES
   TestDicomString.cxx
   TestDict.cxx
   TestWriteSimple.cxx
+  TestSequence.cxx
 )
 
 # add tests that require data

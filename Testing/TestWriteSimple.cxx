@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 03:12:28 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/02/07 12:53:59 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,14 @@ Image Images [] = {
    {256, 512, 1, 1, 16, 16, 0, 'a'},
    {256, 512, 1, 1, 16, 16, 0, 'e'},
    {256, 512, 1, 1, 16, 16, 0, 'i'},
-   {0,   0,   1, 1, 8,  8,  0, 'i'} // to find the end
+
+   {512, 256, 10, 1, 8,  8, 0, 'a'},
+   {512, 256, 10, 1, 8,  8, 0, 'e'},
+   {512, 256, 10, 1, 8,  8, 0, 'i'},
+   {512, 256, 10, 3, 8,  8, 0, 'a'},
+   {512, 256, 10, 3, 8,  8, 0, 'e'},
+   {512, 256, 10, 3, 8,  8, 0, 'i'},
+   {0,   0,   1,  1, 8,  8, 0, 'i'} // to find the end
 };
 
 int WriteSimple(Image &img)
@@ -100,10 +107,10 @@ int WriteSimple(Image &img)
    /******************************************/
    // Super duper kludge !!
    if( img.componentSize == 16 )
-     {
-     // I guess by design user should know that...
-     fileToBuild->InsertBinEntry(0,0, 0x7fe0, 0x0010, "OW");
-     }
+   {
+      // I guess by design user should know that...
+      fileToBuild->InsertBinEntry(0,0, 0x7fe0, 0x0010, "OW");
+   }
    /******************************************/
    /******************************************/
    
@@ -216,8 +223,7 @@ int WriteSimple(Image &img)
    if( !reread->GetFile()->IsReadable() )
    {
      std::cerr << "Failed" << std::endl
-               << "Test::TestReadWriteReadCompare: Could not reread image "
-               << "written:" << fileName << std::endl;
+               << "Could not reread image written: " << fileName << std::endl;
      delete fileToBuild;
      delete file;
      delete reread;
