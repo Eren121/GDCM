@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:26 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/08 23:14:05 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,17 +45,6 @@
 #endif //_MSC_VER
 
 //-----------------------------------------------------------------------------
-// ifdef for old gcc compiler
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif
-
-#include <string>
-#include <assert.h>
-
 #ifdef GDCM_HAVE_STDINT_H
 #include <stdint.h>   // For uint8_t uint16_t and uint32_t
 #else
@@ -74,6 +63,8 @@ typedef  unsigned int   uint32_t;
 #define GDCM_EXPORT
 #endif
 
+#include <string>
+
 namespace gdcm
 {
 
@@ -87,11 +78,11 @@ namespace gdcm
 #define DICT_TS           "dicomTS.dic"
 #define DICT_VR           "dicomVR.dic"
 
-const std::string GDCM_UNKNOWN   = "gdcm::Unknown";
-const std::string GDCM_UNFOUND   = "gdcm::Unfound";
-const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
-const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
-const std::string GDCM_UNREAD    = "gdcm::UnRead";
+static const std::string GDCM_UNKNOWN   = "gdcm::Unknown";
+static const std::string GDCM_UNFOUND   = "gdcm::Unfound";
+static const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
+static const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
+static const std::string GDCM_UNREAD    = "gdcm::UnRead";
 
 /// \brief TagKey is made to hold an "universal" (as in URL, Universal
 ///        Ressource Locator)  key to a DocEntry i.e. a dicom tag.
@@ -124,11 +115,11 @@ typedef std::string TagKey;
 typedef std::string TagName;
 
 enum FileType {
-      Unknown = 0,
-      ExplicitVR, // DicomDir is in this case
-      ImplicitVR,
-      ACR,
-      ACR_LIBIDO
+   Unknown = 0,
+   ExplicitVR, // DicomDir is in this case
+   ImplicitVR,
+   ACR,
+   ACR_LIBIDO
 };
 } //namespace gdcm
 //-----------------------------------------------------------------------------
