@@ -59,7 +59,7 @@ istream& eatwhite(istream& is) {
 
 void Tokenize (const string& str,
                vector<string>& tokens,
-               const string& delimiters = " ") {
+               const string& delimiters) {
    string::size_type lastPos = str.find_first_not_of(delimiters,0);
    string::size_type pos     = str.find_first_of(delimiters,lastPos);
    while (string::npos != pos || string::npos != lastPos) {

@@ -1,3 +1,6 @@
+2003-03-14 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * src/gdcmUtils.cxx : redifinition of defaults parameters in code
+
 2003-03-12 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/__init__.py fix of GDCM_DICT_PATH which was not
         to exported to the environement (see gdcmPython/testSuite.py
