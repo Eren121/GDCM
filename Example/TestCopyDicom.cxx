@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/17 10:20:06 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/11/19 08:37:55 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,6 +91,8 @@ int main(int argc, char* argv[])
 
       size_t dataSize = original->GetImageDataSize();
       uint8_t* imageData = original->GetImageData();
+      (void)imageData;
+      (void)dataSize;
   
       //First of all copy the header field by field
   
