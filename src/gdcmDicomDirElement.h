@@ -15,11 +15,11 @@ typedef struct
 	std::string value;
 } gdcmElement;
 
-typedef std::list<gdcmElement> ListMetaElem;
-typedef std::list<gdcmElement> ListPatientElem;
-typedef std::list<gdcmElement> ListStudyElem;
-typedef std::list<gdcmElement> ListSerieElem;
-typedef std::list<gdcmElement> ListImageElem;
+typedef std::list<gdcmElement> ListDicomDirMetaElem;
+typedef std::list<gdcmElement> ListDicomDirPatientElem;
+typedef std::list<gdcmElement> ListDicomDirStudyElem;
+typedef std::list<gdcmElement> ListDicomDirSerieElem;
+typedef std::list<gdcmElement> ListDicomDirImageElem;
 
 //-----------------------------------------------------------------------------
 /*
@@ -35,18 +35,23 @@ public:
 
    void Print(std::ostream &os);
 
-   ListMetaElem    &GetMetaElements(void)    {return(MetaList);};
-   ListPatientElem &GetPatientElements(void) {return(PatientList);};
-   ListStudyElem   &GetStudyElements(void)   {return(StudyList);};
-   ListSerieElem   &GetSerieElements(void)   {return(SerieList);};
-   ListImageElem   &GetImageElements(void)   {return(ImageList);};
+   ListDicomDirMetaElem    &GetDicomDirMetaElements(void)    
+      {return(DicomDirMetaList);};
+   ListDicomDirPatientElem &GetDicomDirPatientElements(void) 
+      {return(DicomDirPatientList);};
+   ListDicomDirStudyElem   &GetDicomDirStudyElements(void)   
+      {return(DicomDirStudyList);};
+   ListDicomDirSerieElem   &GetDicomDirSerieElements(void)   
+      {return(DicomDirSerieList);};
+   ListDicomDirImageElem   &GetDicomDirImageElements(void)   
+      {return(DicomDirImageList);};
 
 private:
-   ListMetaElem    MetaList;
-   ListPatientElem PatientList;
-   ListStudyElem   StudyList;
-   ListSerieElem   SerieList;
-   ListImageElem   ImageList;
+   ListDicomDirMetaElem    DicomDirMetaList;
+   ListDicomDirPatientElem DicomDirPatientList;
+   ListDicomDirStudyElem   DicomDirStudyList;
+   ListDicomDirSerieElem   DicomDirSerieList;
+   ListDicomDirImageElem   DicomDirImageList;
 };
 
 //-----------------------------------------------------------------------------

@@ -1,16 +1,16 @@
-// gdcmImage.h
+// gdcmDicomDirMeta.h
 //-----------------------------------------------------------------------------
-#ifndef GDCMIMAGE_H
-#define GDCMIMAGE_H
+#ifndef GDCMDICOMDIRMETA_H
+#define GDCMDICOMDIRMETA_H
 
 #include "gdcmObject.h"
 
 //-----------------------------------------------------------------------------
-class GDCM_EXPORT gdcmImage : public gdcmObject 
+class GDCM_EXPORT gdcmDicomDirMeta : public gdcmObject 
 {
 public:
-   gdcmImage(ListTag::iterator begin,ListTag::iterator end);
-   ~gdcmImage(void);
+   gdcmDicomDirMeta(ListTag::iterator begin,ListTag::iterator end);
+   ~gdcmDicomDirMeta(void);
 
    virtual void Print(std::ostream &os = std::cout);
 };

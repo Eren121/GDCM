@@ -1,16 +1,16 @@
-// gdcmImage.cxx
+// gdcmDicomDirImage.cxx
 //-----------------------------------------------------------------------------
-#include "gdcmImage.h"
+#include "gdcmDicomDirImage.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmImage
+ * \ingroup gdcmDicomDirImage
  * \brief   
  * @param   begin iterator of begin for the object
  * @param   end   iterator of end for the object
  */
-gdcmImage::gdcmImage(ListTag::iterator begin,ListTag::iterator end):
+gdcmDicomDirImage::gdcmDicomDirImage(ListTag::iterator begin,ListTag::iterator end):
    gdcmObject(begin,end)
 {
 }
@@ -19,18 +19,18 @@ gdcmImage::gdcmImage(ListTag::iterator begin,ListTag::iterator end):
  * \ingroup gdcmImage
  * \brief   Canonical destructor.
  */
-gdcmImage::~gdcmImage() 
+gdcmDicomDirImage::~gdcmDicomDirImage() 
 {
 }
 
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmImage
+ * \ingroup gdcmDicomDirImage
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmImage::Print(std::ostream &os)
+void gdcmDicomDirImage::Print(std::ostream &os)
 {
    os<<"IMAGE : ";
    for(ListTag::iterator i=beginObj;i!=endObj;++i)

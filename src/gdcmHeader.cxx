@@ -810,7 +810,7 @@ bool gdcmHeader::anonymizeHeader() {
   }
   
   // Just for fun :-(
-  // (if any) remove or replace 
+  // (if any) remove or replace all the stuff that contains a Date
   
 //0008 0012 DA ID Instance Creation Date
 //0008 0020 DA ID Study Date

@@ -5,18 +5,18 @@
 
 #include "gdcmHeader.h"
 #include "gdcmCommon.h"
-#include "gdcmPatient.h"
-#include "gdcmMeta.h"
+#include "gdcmDicomDirPatient.h"
+#include "gdcmDicomDirMeta.h"
 #include "gdcmDicomDirElement.h"
 
 #include <list>
 #include <vector>
 
 //-----------------------------------------------------------------------------
-typedef std::list<gdcmPatient *>   ListPatient;
+typedef std::list<gdcmDicomDirPatient *>   ListDicomDirPatient;
 typedef std::vector<gdcmHeader *>  ListHeader;
 
-typedef GDCM_EXPORT void( gdcmMethod)(void * =NULL);
+typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
 //-----------------------------------------------------------------------------
 /*
  * \defgroup gdcmDicomDir
@@ -26,7 +26,8 @@ typedef GDCM_EXPORT void( gdcmMethod)(void * =NULL);
 class GDCM_EXPORT gdcmDicomDir: public gdcmParser
 {
 public:
-//   gdcmDicomDir(ListTag *l,         bool exception_on_error = false);
+//   gdcmDicomDir(ListTag *l,
+//                bool exception_on_error = false);
    gdcmDicomDir(const char *FileName, 
                 bool parseDir = false,
                 bool exception_on_error = false);
@@ -38,8 +39,8 @@ public:
 
 // Informations contained in the parser
    virtual bool IsReadable(void);
-   inline gdcmMeta   *GetMeta()      {return metaElems;};
-   inline ListPatient &GetPatients() {return patients;};
+   inline gdcmDicomDirMeta   *GetDicomDirMeta()      {return metaElems;};
+   inline ListDicomDirPatient &GetDicomDirPatients() {return patients;};
 
 // Parsing
    void ParseDirectory(void);
@@ -62,12 +63,12 @@ public:
 // Types
    typedef enum
    {
-      GDCM_NONE,
-      GDCM_META,
-      GDCM_PATIENT,
-      GDCM_STUDY,
-      GDCM_SERIE,
-      GDCM_IMAGE,
+      GDCM_DICOMDIR_NONE,
+      GDCM_DICOMDIR_META,
+      GDCM_DICOMDIR_PATIENT,
+      GDCM_DICOMDIR_STUDY,
+      GDCM_DICOMDIR_SERIE,
+      GDCM_DICOMDIR_IMAGE,
    } gdcmDicomDirType;
    
 protected:
@@ -82,19 +83,21 @@ private:
    void CreateDicomDir(void);
    void AddObjectToEnd(gdcmDicomDirType type,
                         ListTag::iterator begin,ListTag::iterator end);
-   void AddMetaToEnd   (ListTag::iterator begin,ListTag::iterator end);
-   void AddPatientToEnd(ListTag::iterator begin,ListTag::iterator end);
-   void AddStudyToEnd  (ListTag::iterator begin,ListTag::iterator end);
-   void AddSerieToEnd  (ListTag::iterator begin,ListTag::iterator end);
-   void AddImageToEnd  (ListTag::iterator begin,ListTag::iterator end);
+   void AddDicomDirMetaToEnd   (ListTag::iterator begin,ListTag::iterator end);
+   void AddDicomDirPatientToEnd(ListTag::iterator begin,ListTag::iterator end);
+   void AddDicomDirStudyToEnd  (ListTag::iterator begin,ListTag::iterator end);
+   void AddDicomDirSerieToEnd  (ListTag::iterator begin,ListTag::iterator end);
+   void AddDicomDirImageToEnd  (ListTag::iterator begin,ListTag::iterator end);
 
    void SetElements(std::string &path,ListHeader &list);
    void SetElement (std::string &path,gdcmDicomDirType type,gdcmHeader *header);
+   
+   void UpdateDirectoryRecordSequenceLength(void);
 
    static bool HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2);
 
-   gdcmMeta *metaElems;
-   ListPatient patients;
+   gdcmDicomDirMeta *metaElems;
+   ListDicomDirPatient patients;
 
    gdcmMethod *startMethod;
    gdcmMethod *progressMethod;

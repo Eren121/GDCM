@@ -114,6 +114,7 @@ protected:
    virtual std::string GetEntryVRByName  (std::string tagName);
    virtual std::string GetEntryByNumber  (guint16 group, guint16 element);
    virtual std::string GetEntryVRByNumber(guint16 group, guint16 element);
+   virtual int     GetEntryLengthByNumber(guint16 group, guint16 element);
 
    virtual bool SetEntryByName  (std::string content, std::string tagName);
    virtual bool SetEntryByNumber(std::string content, guint16 group, guint16 element);
@@ -136,6 +137,9 @@ protected:
 
    void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);
    void WriteEntries(FILE *_fp,FileType type);
+   void WriteEntriesDeprecated(FILE *_fp,FileType type); // JPR
+
+   void AddHeaderEntry       (gdcmHeaderEntry *);
 
 // Variables
    FILE *fp;
@@ -165,7 +169,6 @@ private:
 
    void LoadHeaderEntries    (void);
    void LoadHeaderEntry      (gdcmHeaderEntry *);
-   void AddHeaderEntry       (gdcmHeaderEntry *);
    void FindHeaderEntryLength(gdcmHeaderEntry *);
    void FindHeaderEntryVR    (gdcmHeaderEntry *);
    bool CheckHeaderEntryVR   (gdcmHeaderEntry *, VRKey);

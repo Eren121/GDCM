@@ -1,36 +1,36 @@
-// gdcmMeta.h
+// gdcmDicomDirMeta.h
 //-----------------------------------------------------------------------------
-#include "gdcmMeta.h"
+#include "gdcmDicomDirMeta.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmMeta
+ * \ingroup gdcmDicomDirMeta
  * \brief   
  * @param   begin iterator of begin for the object
  * @param   end   iterator of end   for the object
  */
-gdcmMeta::gdcmMeta(ListTag::iterator begin,ListTag::iterator end):
+gdcmDicomDirMeta::gdcmDicomDirMeta(ListTag::iterator begin,ListTag::iterator end):
    gdcmObject(begin,end)
 {
 }
 
 /**
- * \ingroup gdcmMeta
+ * \ingroup gdcmDicomDirMeta
  * \brief   Canonical destructor.
  */
-gdcmMeta::~gdcmMeta() 
+gdcmDicomDirMeta::~gdcmDicomDirMeta() 
 {
 }
 
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmMeta
+ * \ingroup gdcmDicomDirMeta
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmMeta::Print(std::ostream &os)
+void gdcmDicomDirMeta::Print(std::ostream &os)
 {
    os<<"META"<<std::endl;
    gdcmObject::Print(os);

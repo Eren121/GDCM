@@ -62,7 +62,6 @@ gdcmDict::~gdcmDict() {
       if ( EntryToDelete )
          delete EntryToDelete;
    }
-
    // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
    // assume all the pointed gdcmDictEntries are already cleaned-up when
    // we cleaned KeyHt.
@@ -131,7 +130,7 @@ void gdcmDict::PrintByName(std::ostream& os) {
  * \ingroup gdcmDict
  * \brief  adds a new Dicom Dictionary Entry 
  * @param   NewEntry entry to add 
- * @return  false if Dicom Element already existed
+ * @return  false if Dicom Element already exists
  */
 bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry) 
 {

@@ -59,11 +59,11 @@ gdcmDicomDirElement *gdcmGlobal::ddElem = (gdcmDicomDirElement *)0;
 gdcmGlobal gdcmGlob;
 
 gdcmGlobal::gdcmGlobal(void) {
-   if (VR || TS || Dicts)
+   if (VR || TS || Dicts || ddElem)
       dbg.Verbose(0, "gdcmGlobal::gdcmGlobal : VR or TS or Dicts already allocated");
-   Dicts = new gdcmDictSet();
-   VR = new gdcmVR();
-   TS = new gdcmTS();
+   Dicts  = new gdcmDictSet();
+   VR     = new gdcmVR();
+   TS     = new gdcmTS();
    ddElem = new gdcmDicomDirElement();
 }
 

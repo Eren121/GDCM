@@ -10,11 +10,16 @@ CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\" \
 libgdcm_la_LIBADD = \
    $(top_builddir)/src/jpeg/libijg12/libgdcmijpeg12.la  \
    $(top_builddir)/src/jpeg/libijg8/libgdcmijpeg8.la    \
-   $(top_builddir)/src/jpeg/ljpg/libgdcmjpg.la 
+   $(top_builddir)/src/jpeg/ljpg/libgdcmjpg.la
 
 libgdcm_la_SOURCES=                \
    gdcmDicomDir.cxx                \
    gdcmDicomDirElement.cxx         \
+   gdcmDicomDirImage.cxx           \
+   gdcmDicomDirMeta.cxx            \
+   gdcmDicomDirPatient.cxx         \
+   gdcmDicomDirSerie.cxx           \
+   gdcmDicomDirStudy.cxx           \
    gdcmDict.cxx                    \
    gdcmDictEntry.cxx               \
    gdcmDictSet.cxx                 \
@@ -24,18 +29,13 @@ libgdcm_la_SOURCES=                \
    gdcmHeader.cxx                  \
    gdcmHeaderEntry.cxx             \
    gdcmHeaderHelper.cxx            \
-   gdcmImage.cxx                   \
-   gdcmMeta.cxx                    \
    gdcmJpeg12.cxx                  \
    gdcmJpeg2000.cxx                \
    gdcmJpeg.cxx                    \
    gdcmObject.cxx                  \
    gdcmParsePixels.cxx             \
    gdcmParser.cxx                  \
-   gdcmPatient.cxx                 \
    gdcmRLE.cxx                     \
-   gdcmSerie.cxx                   \
-   gdcmStudy.cxx                   \
    gdcmTS.cxx                      \
    gdcmUtil.cxx                    \
    gdcmVR.cxx
@@ -46,7 +46,12 @@ libgdcminclude_HEADERS =                \
 	gdcmCommon.h                    \
 	gdcmDicomDir.h                  \
         gdcmDicomDirElement.h           \
-	gdcmDictEntry.h                 \
+	gdcmDicomDirImage.h             \
+        gdcmDicomDirMeta.h              \
+	gdcmDicomDirPatient.h           \
+	gdcmDicomDirSerie.h             \
+	gdcmDicomDirStudy.h             \
+        gdcmDictEntry.h                 \
 	gdcmDict.h                      \
 	gdcmDictSet.h                   \
 	gdcmDirList.h                   \
@@ -56,17 +61,11 @@ libgdcminclude_HEADERS =                \
 	gdcmHeaderEntry.h               \
 	gdcmHeader.h                    \
 	gdcmHeaderHelper.h              \
-	gdcmImage.h                     \
-        gdcmMeta.h                      \
 	gdcmObject.h                    \
 	gdcmParser.h                    \
-	gdcmPatient.h                   \
-	gdcmSerie.h                     \
-	gdcmStudy.h                     \
 	gdcmVR.h                        \
 	gdcmTS.h
 
-
 EXTRA_DIST =   \
-	gdcmUtil.h      
+	gdcmUtil.h
 

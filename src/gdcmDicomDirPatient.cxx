@@ -1,27 +1,27 @@
-// gdcmSequence.cxx
+// gdcmDicomDirPatient.cxx
 //-----------------------------------------------------------------------------
-#include "gdcmSerie.h"
+#include "gdcmDicomDirPatient.h"
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmSerie
+ * \ingroup gdcmDicomDirPatient
  * \brief   
  * @param   begin iterator of begin for the object
  * @param   end   iterator of end for the object
  */
-gdcmSerie::gdcmSerie(ListTag::iterator begin,ListTag::iterator end):
+gdcmDicomDirPatient::gdcmDicomDirPatient(ListTag::iterator begin,ListTag::iterator end):
    gdcmObject(begin,end)
 {
 }
 
 /**
- * \ingroup gdcmSerie
+ * \ingroup gdcmDicomDirPatient
  * \brief   Canonical destructor.
  */
-gdcmSerie::~gdcmSerie() 
+gdcmDicomDirPatient::~gdcmDicomDirPatient() 
 {
-   for(ListImage::iterator cc = images.begin();cc != images.end();++cc)
+   for(ListDicomDirStudy::iterator cc = studies.begin();cc != studies.end();++cc)
    {
       delete *cc;
    }
@@ -30,16 +30,16 @@ gdcmSerie::~gdcmSerie()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmSerie
+ * \ingroup gdcmDicomDirPatient
  * \brief   Prints the Object
  * @return
  */ 
-void gdcmSerie::Print(std::ostream &os)
+void gdcmDicomDirPatient::Print(std::ostream &os)
 {
-   os<<"SERIE"<<std::endl;
+   os<<"PATIENT"<<std::endl;
    gdcmObject::Print(os);
 
-   for(ListImage::iterator cc = images.begin();cc != images.end();++cc)
+   for(ListDicomDirStudy::iterator cc = studies.begin();cc!=studies.end();++cc)
    {
       (*cc)->SetPrintLevel(printLevel);
       (*cc)->Print(os);

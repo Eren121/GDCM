@@ -1,4 +1,4 @@
-// gdcmHeader.cxx
+// gdcmParser.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmParser.h"
 #include "gdcmUtil.h"
@@ -566,6 +566,7 @@ std::string gdcmParser::GetEntryVRByName(std::string tagName) {
    return elem->GetVR();
 }
 
+
 /**
  * \ingroup gdcmParser
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
@@ -605,6 +606,21 @@ std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) {
    return elem->GetVR();
 }
 
+/**
+ * \ingroup gdcmParser
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
+ *          the public and private dictionaries 
+ *          for the value length of a given tag..
+ * @param   group Group of the searched tag.
+ * @param   element Element of the searched tag.
+ * @return  Corresponding element length; -2 if not found
+ */
+int gdcmParser::GetEntryLengthByNumber(guint16 group, guint16 element) {
+   gdcmHeaderEntry* elem =  GetHeaderEntryByNumber(group, element);
+   if ( !elem )
+      return -2;
+   return elem->GetLength();
+}
 /**
  * \ingroup gdcmParser
  * \brief   Sets the value (string) of the Header Entry (Dicom Element)
@@ -682,7 +698,7 @@ bool gdcmParser::SetEntryByNumber(std::string content,
  * @param l new length to substitute with
  * @param group   group of the Entry to modify
  * @param element element of the Entry to modify
- * @return  1 on success, 0 otherwise.
+ * @return  true on success, false otherwise.
  */
 bool gdcmParser::SetEntryLengthByNumber(guint32 l, 
                                         guint16 group, 
@@ -702,7 +718,7 @@ bool gdcmParser::SetEntryLengthByNumber(guint32 l,
  * \brief   Gets (from Header) the offset  of a 'non string' element value 
  *          (LoadElementValues has already be executed)
  * @param Group   group of the Entry 
- * @param Elem element of the Entry
+ * @param Elem  element of the Entry
  * @return File Offset of the Element Value 
  */
 size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) 
@@ -860,7 +876,7 @@ void gdcmParser::UpdateShaEntries(void) {
  */
 gdcmHeaderEntry* gdcmParser::GetHeaderEntryByNumber(guint16 group, guint16 element) 
 {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);   
    if ( ! tagHT.count(key))
       return NULL;
    return tagHT.find(key)->second;
@@ -1034,7 +1050,7 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
    //       TODO : find a trick (in STL?) to do it, at low cost !
 
    void *ptr;
-
+   int ff=0xffffffff;
    // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
    int compte =0;
    
@@ -1045,9 +1061,9 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
       // === Deal with the length
       //     --------------------
       if(((*tag2)->GetLength())%2==1)
-      {
+      { 
          (*tag2)->SetValue((*tag2)->GetValue()+"\0");
-         (*tag2)->SetLength((*tag2)->GetLength()+1);
+         (*tag2)->SetLength((*tag2)->GetReadLength()+1);
       }
 
       gr    = (*tag2)->GetGroup();
@@ -1070,38 +1086,29 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
       fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
       fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
       
-      // if ( (type == ExplicitVR) && (gr <= 0x0002) ) // ?!?  < 2  
-      if ( (type == ExplicitVR) || (type == DICOMDIR) )      
-      {
+      if ( (type == ExplicitVR) || (type == DICOMDIR) ) {
          // EXPLICIT VR
          guint16 z=0, shortLgr;
-         if (vr == "unkn") 
-         { // Unknown was 'written'	 
-            shortLgr=lgr;
+	 
+         if (gr == 0xfffe) { // NO Value Representation for 'delimiters'
+               // no length : write ffffffff		
+            fwrite (&ff,(size_t)4 ,(size_t)1 ,_fp);
+            continue;       // NO value for 'delimiters'	        	    
+	 }
+	 
+	 shortLgr=lgr;	 
+         if (vr == "unkn") {     // Unknown was 'written'
+    	    // deal with Little Endian            
             fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
             fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
-         } 
-         else 
-         {
-            if (gr != 0xfffe) 
-            { // NO value for 'delimiters'
-               if (vr == "unkn") // Unknown was 'written'
-                  fwrite(&z,(size_t)2 ,(size_t)1 ,_fp);
-               else  	 
-                  fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
-            }
-
-            if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || gr == 0xfffe)
-            {
-               if (gr != 0xfffe)
+         } else {
+            fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);                     
+            if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ){	    
                   fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
                   fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
-            } 
-            else 
-            {
-               shortLgr=lgr;
-               fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
-            }
+            } else {
+	       fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
+	    }
          }
       } 
       else // IMPLICIT VR 
@@ -1112,7 +1119,7 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
       // === Deal with the value
       //     -------------------
       if (vr == "SQ")  continue; // no "value" to write for the SEQuences
-      if (gr == 0xfffe)continue;
+      if (gr == 0xfffe)continue; // no "value" to write for the delimiters
       
       if (voidArea != NULL) 
       { // there is a 'non string' LUT, overlay, etc
@@ -1159,6 +1166,110 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
       fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
    }
 }
+
+
+/**
+ * \ingroup gdcmParser
+ * \brief   writes on disc according to the requested format
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image
+ * \warning Uses the H Table, instead of the Chained List
+ *          in order to be compliant with the old way to proceed
+ *         (added elements taken in to account)
+ *         Only THERALYS, during a transitory phase is supposed
+ *         to use this method !!!
+ * \warning DON'T try, right now, to write a DICOM image
+ *           from an ACR Header (meta elements will be missing!)
+ * @param   _fp already open file pointer
+ * @param   type type of the File to be written 
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR)
+ */
+void gdcmParser::WriteEntriesDeprecated(FILE *_fp,FileType type) {
+   guint16 gr, el;
+   guint32 lgr;
+   const char * val;
+   std::string vr;
+   guint32 val_uint32;
+   guint16 val_uint16;
+   
+   std::vector<std::string> tokens;
+
+   void *ptr;
+
+   // Tout ceci ne marche QUE parce qu'on est sur un proc Little Endian 
+   // restent a tester les echecs en ecriture (apres chaque fwrite)
+
+   for (TagHeaderEntryHT::iterator tag2=tagHT.begin();
+        tag2 != tagHT.end();
+        ++tag2){
+
+      gr =  tag2->second->GetGroup();
+      el =  tag2->second->GetElement();
+      lgr = tag2->second->GetLength();
+      val = tag2->second->GetValue().c_str();
+      vr =  tag2->second->GetVR();
+      
+     // std::cout << "Tag "<< std::hex << gr << " " << el << std::endl;
+
+      if ( type == ACR ) { 
+         if (gr < 0x0008)   continue; // ignore pure DICOM V3 groups
+         if (gr %2)         continue; // ignore shadow groups
+         if (vr == "SQ" )   continue; // ignore Sequences
+         if (gr == 0xfffe ) continue; // ignore delimiters
+      } 
+
+      fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
+      fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
+
+      if ( (type == ExplicitVR) && (gr <= 0x0002) ) {
+         // EXPLICIT VR
+         guint16 z=0, shortLgr;
+         fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
+
+         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) {
+            fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
+            fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
+
+         } else {
+            shortLgr=lgr;
+            fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
+         }
+      } else { // IMPLICIT VR
+         fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
+      }
+
+      if (vr == "US" || vr == "SS") {
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize (tag2->second->GetValue(), tokens, "\\");
+         for (unsigned int i=0; i<tokens.size();i++) {
+            val_uint16 = atoi(tokens[i].c_str());
+            ptr = &val_uint16;
+            fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
+         }
+         tokens.clear();
+         continue;
+      }
+      if (vr == "UL" || vr == "SL") {
+         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
+         Tokenize (tag2->second->GetValue(), tokens, "\\");
+         for (unsigned int i=0; i<tokens.size();i++) {
+            val_uint32 = atoi(tokens[i].c_str());
+            ptr = &val_uint32;
+            fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
+         }
+         tokens.clear();
+         continue;
+      }     
+      // Pixels are never loaded in the element !
+      if ((gr == 0x7fe0) && (el == 0x0010) ) break;
+
+      fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
+   }
+}
+
+
+
+
+
 
 /**
  * \ingroup gdcmParser
@@ -1431,6 +1542,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
    guint16 group   = Entry->GetGroup();
    std::string  vr = Entry->GetVR();
    guint16 length16;
+   
    if( (element == NumPixel) && (group == GrPixel) ) 
    {
       dbg.SetDebug(GDCM_DEBUG);
@@ -1522,18 +1634,18 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
          // Actually, length= 0xffff means that we deal with
          // Unknown Sequence Length 
       }
-
       FixHeaderEntryFoundLength(Entry, (guint32)length16);
       return;
    }
    else
    {
-      // Either implicit VR or a non DICOM conformal (see not below) explicit
+      // Either implicit VR or a non DICOM conformal (see note below) explicit
       // VR that ommited the VR of (at least) this element. Farts happen.
       // [Note: according to the part 5, PS 3.5-2001, section 7.1 p25
       // on Data elements "Implicit and Explicit VR Data Elements shall
       // not coexist in a Data Set and Data Sets nested within it".]
       // Length is on 4 bytes.
+      
       FixHeaderEntryFoundLength(Entry, ReadInt32());
       return;
    }
@@ -1834,11 +1946,13 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
                                                  
    else if(Entry->GetGroup() == 0xfffe)
    { 
+  // cout << "ReadLength " <<Entry->GetReadLength() << " UsableLength " << FoundLength << endl;  
+  //	Entry->Print();                                                           
                        // sometimes, length seems to be wrong                                      
       FoundLength =0;  // some more clever checking to be done !
                        // I give up!
 		       // only  gdcm-MR-PHILIPS-16-Multi-Seq.dcm
-		       // causes troubles :-(                                                     
+		       // causes troubles :-( 		       
    }     
     
    Entry->SetUsableLength(FoundLength);

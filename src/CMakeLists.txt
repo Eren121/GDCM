@@ -10,11 +10,12 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(libgdcm_la_SOURCES
-	gdcmDicomDir.cxx
-	gdcmDicomDirElement.cxx
-	gdcmDict.cxx
-	gdcmDictEntry.cxx
-	gdcmDictSet.cxx
+
+   gdcmDicomDir.cxx
+   gdcmDicomDirElement.cxx
+   gdcmDict.cxx
+   gdcmDictEntry.cxx
+   gdcmDictSet.cxx
    gdcmDirList.cxx
    gdcmException.cxx
    gdcmFile.cxx
