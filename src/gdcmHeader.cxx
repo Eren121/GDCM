@@ -709,9 +709,9 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
    // The group length doesn't represent data to be loaded in memory, since
    // each element of the group shall be loaded individualy.
    if( elem == 0 )
-      //SkipLoad = true;      // modif sauvage JPR
-                        // On charge la longueur du groupe
-                        // quand l'element 0x0000 est présent !
+      //SkipLoad = true;	// modif sauvage JPR
+                        	// On charge la longueur du groupe
+                        	// quand l'element 0x0000 est présent !
 
    if ( SkipLoad ) {
            // FIXME the following skip is not necessary
@@ -741,21 +741,66 @@ void gdcmHeader::LoadElementValue(ElValue * ElVal) {
    
    // When an integer is expected, read and convert the following two or
    // four bytes properly i.e. as an integer as opposed to a string.
-   if ( IsAnInteger(ElVal) ) {
-      guint32 NewInt;
-      if( length == 2 ) {
-         NewInt = ReadInt16();
-      } else if( length == 4 ) {
-         NewInt = ReadInt32();
-      } else
-         dbg.Error(true, "LoadElementValue: Inconsistency when reading Int.");
-      
-      //FIXME: make the following an util fonction
-      ostringstream s;
-      s << NewInt;
-      ElVal->SetValue(s.str());
-      return;
-   }
+	
+	// pour les elements de Value Multiplicity > 1
+	// on aura en fait une serie d'entiers
+	
+	// code original
+	
+	//if ( IsAnInteger(ElVal) ) {
+	//	guint32 NewInt;
+	//	if( length == 2 ) {
+	//		NewInt = ReadInt16();
+	//	} else if( length == 4 ) {
+	//
+	//	NewInt = ReadInt32();
+	//	} else
+	//		dbg.Error(true, "LoadElementValue: Inconsistency when reading Int.");
+	//	
+	//	//FIXME: make the following an util fonction
+	//	ostringstream s;
+	//	s << NewInt;
+	//	ElVal->SetValue(s.str());
+	//	return;
+	//}
+
+	// modif proposee. JPR
+	// on devrait pouvoir faire + compact (?)
+		
+	if ( IsAnInteger(ElVal) ) {
+		guint32 NewInt;
+		ostringstream s;
+		int nbInt;
+		if (vr == "US" || vr == "SS") {
+			nbInt = length / 2;
+			NewInt = ReadInt16();
+			s << NewInt;
+			if (nbInt > 1) {
+				for (int i=1; i < nbInt; i++) {
+					s << '\\';
+					NewInt = ReadInt16();
+					s << NewInt;
+					//printf("%s\n", s.str().c_str());
+				}
+			}
+			
+		} else if (vr == "UL" || vr == "SL") {
+			nbInt = length / 4;
+			NewInt = ReadInt32();
+			s << NewInt;
+			if (nbInt > 1) {
+				for (int i=1; i < nbInt; i++) {
+					s << '\\';
+					NewInt = ReadInt32();
+					s << NewInt;
+				}
+			}
+		}					
+		ElVal->SetValue(s.str());
+		return;	
+	}
+   
+   
    
    // FIXME The exact size should be length if we move to strings or whatever
    char* NewValue = (char*)malloc(length+1);
