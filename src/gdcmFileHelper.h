@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/17 11:00:33 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/02/21 17:45:41 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -152,7 +152,7 @@ protected:
    ValEntry *CopyValEntry(uint16_t group, uint16_t elem);
    BinEntry *CopyBinEntry(uint16_t group, uint16_t elem, 
                           const std::string &vr);
-   void CheckMetaElements();
+   void CheckMandatoryElements();
 
 private:
    void Initialize();
