@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.8 2004/01/15 10:25:11 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/Attic/testvtkGdcmReader.cxx,v 1.9 2004/03/30 09:00:40 regrain Exp $
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -51,6 +51,7 @@ int main( int argc, char *argv[] )
      reader->SetFileName("../gdcmData/CT-MONO2-16-ankle.dcm");
 
    reader->UpdateWholeExtent();
+//   reader->Update();
    vtkImageData *ima = reader->GetOutput();
    taille=ima->GetDimensions();
    x = taille[0];  y = taille[1];

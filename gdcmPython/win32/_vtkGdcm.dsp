@@ -58,6 +58,10 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\src\gdcmDebug.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmDicomDir.cxx
 # End Source File
 # Begin Source File
@@ -107,6 +111,10 @@ SOURCE=..\..\src\gdcmException.cxx
 # Begin Source File
 
 SOURCE=..\..\src\gdcmFile.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmGlobal.cxx
 # End Source File
 # Begin Source File
 
