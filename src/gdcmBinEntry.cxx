@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 18:13:57 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/02/05 02:28:49 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,7 +73,7 @@ BinEntry::~BinEntry()
 */
 void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
 { 
-#define BUFFER_SIZE 4096
+   const int BUFFER_SIZE = 4096;
    DocEntry::WriteContent(fp, filetype);
    void* binArea = GetBinArea();
    int lgr = GetLength();
@@ -85,17 +85,17 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    // to write image with Big Endian Transfert Syntax, 
    //   and we are working on Little Endian Processor
 
-/*#ifdef GDCM_WORDS_BIGENDIAN
+#ifdef GDCM_WORDS_BIGENDIAN
       // TODO FIXME Right now, we only care of Pixels element
 
       // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
       // -value forced while Reading process-
-      if (GetGroup() == 0x7fe0 && GetVR() == "OW")
+      if (GetGroup() == 0x7fe0 ) //&& GetVR() == "OW")
       {     
-         uint16_t *buffer = new uint16_t[BUFFER_SIZE];
+         uint16_t *buffer = new uint16_t[BUFFER_SIZE/2];
 
          // how many BUFFER_SIZE long pieces in binArea ?
-         int nbPieces = lgr/BUFFER_SIZE/2; //(16 bits = 2 Bytes)
+         int nbPieces = lgr/BUFFER_SIZE; //(16 bits = 2 Bytes)
          int remainingSize = lgr%BUFFER_SIZE;
 
          uint16_t *binArea16 = (uint16_t*)binArea;
@@ -114,7 +114,9 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
          {
             for (int i = 0; i < remainingSize/2; i++)
             {
-               buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
+               //buffer[i] =  (binArea16[i] >> 8) | (binArea16[i] << 8);
+               uint16_t val = binArea16[i];
+               buffer[i] = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
             }
             fp->write ( (char*)buffer, remainingSize );
          } 
@@ -125,9 +127,9 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
          // For any other VR, BinEntry is re-written as-is
          fp->write ( (char*)binArea, lgr );
       }
-#else*/
+#else
       fp->write ( (char*)binArea, lgr ); // Elem value
-//#endif //GDCM_WORDS_BIGENDIAN
+#endif //GDCM_WORDS_BIGENDIAN
 
    }
    else
