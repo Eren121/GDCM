@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:57 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/14 11:28:28 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,8 +87,6 @@ int main(int argc, char* argv[])
    
       gdcm::File *copy = new gdcm::File( output );
 
-      const gdcm::TagDocEntryHT & Ht = original->GetHeader()->GetTagHT();
-
       size_t dataSize = original->GetImageDataSize();
       uint8_t* imageData = original->GetImageData();
       (void)imageData;
@@ -101,12 +99,10 @@ int main(int argc, char* argv[])
       // (the user does NOT have to know the way we implemented the Header !)
       // Waiting for a 'clean' solution, I keep the method ...JPRx
 
-      gdcm::DocEntry* d;
-
-      for (gdcm::TagDocEntryHT::const_iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
+      original->GetHeader()->InitTraversal();
+      gdcm::DocEntry* d=original->GetHeader()->GetNextEntry();
+      while(d)
       {
-         d = tag->second;
-         d->Print(); std::cout << std::endl;
          if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
          {              
             copy->GetHeader()->ReplaceOrCreate( 
@@ -132,11 +128,9 @@ int main(int argc, char* argv[])
           //          << d->GetGroup() << " " << d->GetElement()
           //  << std::endl;    
          }
+
+         d=original->GetHeader()->GetNextEntry();
       }
-
-
-
-
 
       //copy->GetImageData();
       //copy->SetImageData(imageData, dataSize);

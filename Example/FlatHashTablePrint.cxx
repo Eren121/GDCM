@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FlatHashTablePrint.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:55 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/14 11:28:28 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 
 int main(int argc, char* argv[])
 {
-   if (argc < 2)
+/*   if (argc < 2)
    {
       std::cerr << "Usage :" << std::endl << 
       argv[0] << " input_dicom " << std::endl;
@@ -38,7 +38,8 @@ int main(int argc, char* argv[])
    {
       tag->second->Print(); 
       std::cout << std::endl;
-   }
+   }*/
+   std::cout<<"Usefull example ???\n";
 
    return 0;
 }

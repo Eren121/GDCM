@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 12:19:58 $
-  Version:   $Revision: 1.189 $
+  Date:      $Date: 2005/01/14 11:28:30 $
+  Version:   $Revision: 1.190 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2796,7 +2796,7 @@ void Document::ComputeJPEGFragmentInfo()
  *        when recursively walking the given set.
  * @param set The structure to be traversed (recursively).
  */
-void Document::BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
+/*void Document::BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
                                           DocEntrySet *set )
 { 
    if (ElementSet *elementSet = dynamic_cast< ElementSet* > ( set ) )
@@ -2846,7 +2846,7 @@ void Document::BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
       }
 
    }
-}
+}*/
 
 /**
  * \brief Build a \ref TagDocEntryHT (i.e. a std::map<>) from the current
@@ -2871,12 +2871,12 @@ void Document::BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
  *        \ref BuildFlatHashTable again...
  * @return The flat std::map<> we juste build.
  */
-TagDocEntryHT *Document::BuildFlatHashTable()
+/*TagDocEntryHT *Document::BuildFlatHashTable()
 {
    TagDocEntryHT *FlatHT = new TagDocEntryHT;
    BuildFlatHashTableRecurse( *FlatHT, this );
    return FlatHT;
-}
+}*/
 
 
 
@@ -2961,7 +2961,7 @@ int Document::ComputeGroup0002Length( FileType filetype )
    // for each zero-level Tag in the DCM Header
    DocEntry *entry;
 
-   Initialize();
+   InitTraversal();
    entry = GetNextEntry();
    while(entry)
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/14 11:28:30 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,6 +49,7 @@ typedef std::map<std::string,
 class GDCM_EXPORT Dict : public Base
 {
 public:
+   Dict(void);
    Dict(std::string const & filename);
    ~Dict();
 
@@ -56,6 +57,7 @@ public:
    void Print(std::ostream &os = std::cout);
 
 // Entries
+   void ClearEntry  ();
    bool AddNewEntry (DictEntry const &newEntry);
    bool ReplaceEntry(DictEntry const &newEntry);
    bool RemoveEntry (TagKey const &key);
@@ -69,18 +71,18 @@ public:
 
    /// \brief  Returns a ref to the Dicom Dictionary H table (map)
    /// @return the Dicom Dictionary H table
-   const TagKeyHT & GetEntriesByKey() const { return KeyHt; }
+   //const TagKeyHT & GetEntries() const { return KeyHt; }
 
-   /// \brief  Returns a ref to the Dicom Dictionary H table (map)
-   /// @return the Dicom Dictionary H table
- 
+   void InitTraversal();
+   DictEntry *GetNextEntry();
+
 private:
    /// ASCII file holding the Dictionnary
    std::string Filename;
 
    /// Access through TagKey
-   TagKeyHT  KeyHt;
-
+   TagKeyHT KeyHt;
+   TagKeyHT::iterator ItKeyHt;
 };
 } // end namespace gdcm
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 15:23:44 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/01/14 11:28:30 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,6 +29,14 @@ namespace gdcm
 void FillDefaultDataDict(Dict *d);
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+/**
+ * \brief   Constructor
+ */
+Dict::Dict(void)
+{
+   Filename="";
+}
+
 /**
  * \brief   Constructor
  * @param   filename from which to build the dictionary.
@@ -74,9 +82,7 @@ Dict::Dict(std::string const &filename)
  */
 Dict::~Dict()
 {
-   // we assume all the pointed DictEntries are already cleaned-up
-   // when we clean KeyHt.
-   KeyHt.clear();
+   ClearEntry();
 }
 
 //-----------------------------------------------------------------------------
@@ -107,6 +113,17 @@ void Dict::Print(std::ostream &os)
 
 //-----------------------------------------------------------------------------
 // Public
+/**
+ * \ingroup Dict
+ * \brief   Remove all Dicom Dictionary Entries
+ */
+void Dict::ClearEntry()
+{
+   // we assume all the pointed DictEntries are already cleaned-up
+   // when we clean KeyHt.
+   KeyHt.clear();
+}
+
 /**
  * \ingroup Dict
  * \brief  adds a new Dicom Dictionary Entry 
@@ -256,6 +273,33 @@ DictEntry *Dict::GetDictEntry(uint16_t group, uint16_t elem)
 //
 //   return result;
 //}
+
+/**
+ * \brief   Initialise the visit of the Hash table (KeyHt)
+ */
+void Dict::InitTraversal()
+{
+   ItKeyHt = KeyHt.begin();
+}
+
+/**
+ * \brief   Get the next entry whil visiting the Hash table (KeyHt)
+ * \return  The next DictEntry if found, otherwhise NULL
+ */
+DictEntry *Dict::GetNextEntry()
+{
+   if (ItKeyHt != KeyHt.end())
+   {
+      DictEntry *tmp = &(ItKeyHt->second);
+      ++ItKeyHt;
+
+      return tmp;
+   }
+   else
+   {
+      return NULL;
+   }
+}
 
 //-----------------------------------------------------------------------------
 // Protected

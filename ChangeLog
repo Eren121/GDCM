@@ -1,3 +1,13 @@
+2005-01-14 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocument.[h|cxx] : comment all methods concerning a flat hash
+     table.
+   * src/gdcmElementSet.[h|cxx] : rename Initialize into InitTraversal
+   * src/gdcmDict.[h|cxx] : add InitTraversal/getNextEntry methods to parse
+     all the dict content.
+   * src/gdcmDictEntry.cxx : add a carriage return at the end of the DictEntry
+     print
+   * Test/TestDict.cxx : add a new test for the dict classes
+
 2005-01-13 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * src/gdcmDebug.h : Adding an option to redirect debug stream to a 
                        file. Debug is yanked if compiled with NDEBUG

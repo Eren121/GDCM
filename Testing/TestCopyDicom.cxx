@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:58 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/14 11:28:29 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,9 +85,8 @@ int CopyDicom(std::string const & filename,
 
       //////////////// Step 2:
       std::cout << "2...";
-      originalH->Initialize();
+      originalH->InitTraversal();
       gdcm::DocEntry* d=originalH->GetNextEntry();
-
       while(d)
       {
          if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )

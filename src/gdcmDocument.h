@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 09:23:27 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2005/01/14 11:28:30 $
+  Version:   $Revision: 1.87 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,7 @@ public:
    virtual void LoadEntryBinArea(BinEntry *entry);
 
    void LoadDocEntrySafe(DocEntry *entry);
-   TagDocEntryHT *BuildFlatHashTable();
+   /*TagDocEntryHT *BuildFlatHashTable();*/
 
    /// Return the Transfer Syntax as a string
    std::string GetTransferSyntaxName();
@@ -230,8 +230,8 @@ private:
    DocEntry *ReadNextDocEntry();
 
    uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
-   void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
-                                   DocEntrySet* set );
+/*   void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
+                                   DocEntrySet* set );*/
 
    void HandleBrokenEndian(uint16_t &group, uint16_t &elem);
    void HandleOutOfGroup0002(uint16_t &group, uint16_t &elem);

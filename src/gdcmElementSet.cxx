@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 00:21:48 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/01/14 11:28:30 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -165,7 +165,7 @@ bool ElementSet::RemoveEntryNoDestroy(DocEntry *entryToRemove)
 /**
  * \brief   Initialise the visit of the Hash table (TagHT)
  */
-void ElementSet::Initialize()
+void ElementSet::InitTraversal()
 {
    ItTagHT = TagHT.begin();
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/13 16:35:37 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/01/14 11:28:30 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,7 @@ void DictEntry::Print(std::ostream &os)
    }
 
    s << "[" << GetName()<< "]";
-   os << s.str();
+   os << s.str() << std::endl;
 }
 
 //-----------------------------------------------------------------------------

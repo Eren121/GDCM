@@ -37,13 +37,12 @@ if(not isinstance(entry,gdcm.DictEntry)):
 print "Entry (%04x|%04x) content :" % (ENTRY_GR,ENTRY_EL)
 entry.Print()
 
-# Print the DictEntry (0010|0010)
-ENTRY_GR = 0x10
-ENTRY_EL = 0x10
-entry=pubDict.GetDictEntry(ENTRY_GR,ENTRY_EL)
-if(not isinstance(entry,gdcm.DictEntry)):
-	raise RuntimeError,"The entry (%04x|%04x) hasn't the good type (%s)" % \
-	      (ENTRY_GR,ENTRY_EL,type(entry))
-print "Entry (%04x|%04x) content :" % (ENTRY_GR,ENTRY_EL)
-entry.Print()
+print "#####################################################################"
+# Print the public Dict content
+print "dict content :"
+pubDict.InitTraversal()
+entry=pubDict.GetNextEntry()
+while(entry):
+	entry.Print()
+	entry=pubDict.GetNextEntry()
 
