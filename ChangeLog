@@ -1,3 +1,9 @@
+2005-01-07 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Change the gdcmDebug approach. Remov the global static debug 'dbg'. 
+     And now use a static function call instead, with a global variable. i
+     This is much closer to the VTK approach. Hopefully should be bulletproof 
+     and easier to use...hopefully
+
 2005-01-06 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Adding GetMACAddres very alpha for now. This is tricky to be cross plateform.
 
