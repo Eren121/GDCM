@@ -13,16 +13,6 @@
 #include <sys/types.h>
 #include <errno.h>
 
-void StartMethod(void * = NULL)
-{
-   std::cout<<"Start parsing"<<std::endl;
-}
-
-void EndMethod(void * = NULL)
-{
-   std::cout<<"End parsing"<<std::endl;
-}
-
 //-----------------------------------------------------------------------------
 //  For full DICOMDIR description, see:
 //  PS 3.3-2003, pages 731-750
@@ -38,9 +28,9 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
                            bool exception_on_error):
    gdcmParser(FileName,exception_on_error,true)
 {
-   startMethod=StartMethod;
+   startMethod=NULL;
    progressMethod=NULL;
-   endMethod=EndMethod;
+   endMethod=NULL;
    startArg=NULL;
    progressArg=NULL;
    endArg=NULL;
@@ -310,11 +300,9 @@ void gdcmDicomDir::CreateDicomDir()
       }
    }
 
+   end=GetListEntry().end();
    if(begin!=end)
-   {
-      end=GetListEntry().end();
       AddObjectToEnd(type,begin,end);
-   }
 }
 /*
  * \ingroup gdcmDicomDir
