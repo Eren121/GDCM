@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 17:18:32 $
-  Version:   $Revision: 1.228 $
+  Date:      $Date: 2005/03/09 19:31:54 $
+  Version:   $Revision: 1.229 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1171,12 +1171,7 @@ void File::AddAnonymizeElement (uint16_t group, uint16_t elem,
 void File::AnonymizeNoLoad()
 {
    std::fstream *fp = new std::fstream(Filename.c_str(), 
-                              std::ios::in | std::ios::out | std::ios::binary);
- 
-   // TODO : FIXME
-   // how to white out disk space if longer than 50 ?
-   
-   
+                              std::ios::in | std::ios::out | std::ios::binary); 
    gdcm::DocEntry *d;
    uint32_t offset;
    uint32_t lgth;
@@ -1413,114 +1408,20 @@ bool File::Write(std::string fileName, FileType writetype)
  * \brief Initialize a default DICOM File that should contain all the
  *        fields required by other readers. DICOM standard does not 
  *        explicitely defines those fields, heuristic has been choosen.
- * \todo some more tests to be performed to avoid collisions 
+ * \todo final removal of this method 
  *       with FileHelper::CheckMandatoryElements()
  */
 void File::InitializeDefaultFile()
 {
+   // fixme  
+   // Just to avoid further trouble if user asks 
+   //to write the file ACR-NEMA mode
 
-/*
-  // CurrentTime will be set just before Writting
-  // whatever the source image is
-
-   std::string date = Util::GetCurrentDate();
-   std::string time = Util::GetCurrentTime();
-   std::string uid  = Util::CreateUniqueUID();
-   std::string uidMedia = uid;
-   std::string uidInst  = uid;
-   std::string uidClass = Util::CreateUniqueUID();
-   std::string uidStudy = Util::CreateUniqueUID();
-   std::string uidSerie = Util::CreateUniqueUID();
-
- // Meta Elements are set just before writting
- 
-   // Meta Element Group Length
-   InsertValEntry("146 ",                      0x0002, 0x0000);
-   // Media Storage SOP Class UID (Secondary Capture Image Storage)
-   InsertValEntry("1.2.840.10008.5.1.4.1.1.7", 0x0002, 0x0002);
-   // Media Storage SOP Instance UID
-   InsertValEntry(uidMedia.c_str(),            0x0002, 0x0003);
-   // Transfer Syntax UID (Explicit VR Little Endian)
-   InsertValEntry("1.2.840.10008.1.2.1 ",      0x0002, 0x0010);
-   // META Implementation Class UID
-   InsertValEntry(uidClass.c_str(),            0x0002, 0x0012);
-   // Source Application Entity Title
-   InsertValEntry("GDCM",                      0x0002, 0x0016);
-*/
-
-// Just to avoid further trouble if user asks to write the dile ACR-NEMA mode
    InsertValEntry("", 0x0008, 0x0010); // Recognition Code (RET)
 
-/*
-// Dicom related entries must be set by the user
-// If they are missing, they are defaulted just bedfore writting
-
-   // Instance Creation Date
-   InsertValEntry(date.c_str(),                0x0008, 0x0012);
-
-   // Instance Creation Time
-   InsertValEntry(time.c_str(),                0x0008, 0x0013);
-   // SOP Class UID
-   InsertValEntry("1.2.840.10008.5.1.4.1.1.2", 0x0008, 0x0016);
-   // SOP Instance UID
-   InsertValEntry(uidInst.c_str(),             0x0008, 0x0018);
-   // Modality    
-   InsertValEntry("OT",                        0x0008, 0x0060);
-   // Manufacturer
-   InsertValEntry("GDCM",                      0x0008, 0x0070);
-   // Institution Name
-   InsertValEntry("GDCM",                      0x0008, 0x0080);
-   // Institution Address
-   InsertValEntry("http://www-creatis.insa-lyon.fr/Public/Gdcm", 0x0008, 0x0081);
-*/
-
-/*
-   // Patient's Name
-   InsertValEntry("GDCM^patient",              0x0010, 0x0010);
-   // Patient ID
-   InsertValEntry("GDCMID",                    0x0010, 0x0020);
-
-   // Study Instance UID
-   InsertValEntry(uidStudy.c_str(),            0x0020, 0x000d);
-   // Series Instance UID
-   InsertValEntry(uidSerie.c_str(),            0x0020, 0x000e);
-   // StudyID
-   InsertValEntry("1",                         0x0020, 0x0010);
-
-  // Is 'Series number' mandatory ?
-   // SeriesNumber
-   InsertValEntry("1",                         0x0020, 0x0011);
-
-// None of these default value is meaningfull !
-// It *must be* up to the user to initialize them.
-
-   // Samples per pixel 1 or 3
-   InsertValEntry("1",                         0x0028, 0x0002);
-   // photochromatic interpretation
-   InsertValEntry("MONOCHROME2",               0x0028, 0x0004);
-   // nbRows
-   InsertValEntry("0",                         0x0028, 0x0010);
-   // nbCols
-   InsertValEntry("0",                         0x0028, 0x0011);
-   // BitsAllocated 8 or 12 or 16
-   InsertValEntry("8",                         0x0028, 0x0100);
-   // BitsStored    <= BitsAllocated
-   InsertValEntry("8",                         0x0028, 0x0101);
-   // HighBit       <= BitsAllocated - 1
-   InsertValEntry("7",                         0x0028, 0x0102);
-   // Pixel Representation 0(unsigned) or 1(signed)
-   InsertValEntry("0",                         0x0028, 0x0103);
-
-*/
-
-   // It should be up to the user to do that!
-
-   // default value
-   // Special case this is the image (not a string)
-
-   GrPixel = 0x7fe0;
+   // fixme
+   GrPixel  = 0x7fe0;
    NumPixel = 0x0010;
-   InsertBinEntry(0, 0, GrPixel, NumPixel);
 
 }
 

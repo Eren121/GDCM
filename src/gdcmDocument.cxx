@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/25 15:49:55 $
-  Version:   $Revision: 1.231 $
+  Date:      $Date: 2005/03/09 19:31:54 $
+  Version:   $Revision: 1.232 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,8 +120,8 @@ Document::Document( std::string const &filename )
    // Specific code to allow gdcm to read ACR-LibIDO formated images
    // Note: ACR-LibIDO is an extension of the ACR standard that was
    //       used at CREATIS. For the time being (say a couple years)
-   //       we keep this kludge to allow a smooth move to gdcm for
-   //       CREATIS developpers (sorry folks).
+   //       we keep this kludge to allow CREATIS users 
+   //       reading their old images.
    //
    // if recognition code tells us we deal with a LibIDO image
    // we switch lineNumber and columnNumber
