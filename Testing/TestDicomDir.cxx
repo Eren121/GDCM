@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:58 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/13 11:22:57 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,20 +39,37 @@ int TestDicomDir(int argc, char* argv[])
    std::string file; 
    if (argc > 1) 
       file = argv[1];    
-   else {
+   else 
+   {
       file += GDCM_DATA_ROOT;
       file += "/DICOMDIR";
-    }
+   }
 
    e1 = new gdcm::DicomDir(file);
-   if (argc > 2) {
+   if (argc > 2) 
+   {
       int level = atoi(argv[2]);   
       e1->SetPrintLevel(level);
    }
 
+   // Test if the dicomDir is readable
+   if( !e1->IsReadable() )
+   {
+      std::cout<<"          DicomDir '"<<file
+               <<"' is not readable"<<std::endl
+               <<"          ...Failed"<<std::endl;
+
+      delete e1;
+      return 1;
+   }
+
    if(e1->GetDicomDirPatients().begin() == e1->GetDicomDirPatients().end() )
    {
-      std::cout<<"Empty list"<<std::endl;
+      std::cout<<"          DicomDir '"<<file
+               <<" has no patients"<<std::endl
+               <<"          ...Failed"<<std::endl;
+
+      delete e1;
       return(1);
    }
 
@@ -94,7 +111,8 @@ int TestDicomDir(int argc, char* argv[])
              << std::endl<< std::endl;
  
    itPatient = e1->GetDicomDirPatients().begin();
-   while ( itPatient != e1->GetDicomDirPatients().end() ) {  // on degouline la liste de PATIENT
+   while ( itPatient != e1->GetDicomDirPatients().end() ) // on degouline la liste de PATIENT
+   {  
        // Patient's Name, Patient ID 
       std::cout << "Pat.Name:[" << (*itPatient)->GetEntry(0x0010, 0x0010) <<"]";
       std::cout << " Pat.ID:[";
@@ -103,9 +121,10 @@ int TestDicomDir(int argc, char* argv[])
       while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) { // on degouline les STUDY de ce patient
          std::cout << "--- Stud.descr:["    << (*itStudy)->GetEntry(0x0008, 0x1030) << "]";// Study Description 
          std::cout << " Stud.ID:["<< (*itStudy)->GetEntry(0x0020, 0x0010);                 // Study ID
-   std::cout << "]" << std::endl;
+         std::cout << "]" << std::endl;
          itSerie = ((*itStudy)->GetDicomDirSeries()).begin();
-         while (itSerie != (*itStudy)->GetDicomDirSeries().end() ) { // on degouline les SERIES de cette study
+         while (itSerie != (*itStudy)->GetDicomDirSeries().end() ) // on degouline les SERIES de cette study
+         {
             std::cout << "--- --- Ser.Descr:["<< (*itSerie)->GetEntry(0x0008, 0x103e)<< "]";// Serie Description
             std::cout << " Ser.nb:[" <<   (*itSerie)->GetEntry(0x0020, 0x0011);            // Serie number
             std::cout << "] Mod.:["    <<   (*itSerie)->GetEntry(0x0008, 0x0060) << "]";   // Modality
@@ -146,8 +165,8 @@ int TestDicomDir(int argc, char* argv[])
  */  
 
    std::cout << std::endl << std::endl  
-        << " = Contenu Complet du DICOMDIR ==========================================" 
-        << std::endl<< std::endl;
+             << " = Contenu Complet du DICOMDIR ==========================================" 
+             << std::endl<< std::endl;
    e1->Print();
    
    std::cout<<std::flush;
