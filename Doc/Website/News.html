@@ -152,9 +152,27 @@ Any contribution is welcome.
         </UL>
       <LI> a <TT>gdcm::SeqEntry</TT> 
       </UL>
-   <LI> Removal of useless accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
-   <LI> Removal of accessors <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT>, 
-        renamed as <TT>GetXxx</TT>, <TT>SetXxx</TT>
+      <LI> Removal of useless accessors <TT>GetXxxByname</TT>, <TT>SetXxxByname</TT> 
+      <LI> Renaming of accessors <TT>GetXxxByNumber</TT>, <TT>SetXxxByNumber</TT> 
+as follow :
+      <UL>
+         <LI> <TT>GetEntryByNumber 
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                 --> GetEntryValue<TT>
+         <LI> <TT>GetEntryLengthByNumber  --> GetEntryLength<TT>
+         <LI> <TT>GetEntryOffsetByNumber  --> GetEntryOffset<TT>
+         <LI> <TT>GetEntryVRByNumber 
+                  &nbsp;&nbsp;&nbsp;      --> GetEntryVR<TT>
+         <LI>
+         <LI> <TT>GetDocEntryByNumber     
+                  &nbsp;&nbsp;            --> GetDocEntry<TT>
+         <LI> <TT>GetValEntryByNumber     
+                  &nbsp;&nbsp;            --> GetValEntry<TT>
+         <LI> <TT>GetBinEntryByNumber     
+                  &nbsp;&nbsp;            --> GetBinEntry<TT>
+         <LI> <TT>GetSeqEntryByNumber     
+                  &nbsp;&nbsp;            --> GetSeqEntry<TT>
+       </UL>
    </UL>
 </UL>
 
