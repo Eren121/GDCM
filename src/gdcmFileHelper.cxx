@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/23 09:54:59 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/02/28 16:34:55 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -448,7 +448,7 @@ uint8_t* FileHelper::GetLutRGBA()
  */
 bool FileHelper::WriteRawData(std::string const &fileName)
 {
-  std::ofstream fp1(fileName.c_str(), std::ios::out | std::ios::binary );
+   std::ofstream fp1(fileName.c_str(), std::ios::out | std::ios::binary );
    if (!fp1)
    {
       gdcmWarningMacro( "Fail to open (write) file:" << fileName.c_str());
