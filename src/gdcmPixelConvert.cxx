@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 09:59:45 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/10/13 04:05:04 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -258,7 +258,7 @@ bool PixelConvert::ReadAndDecompressRLEFile(
       ++it )
    {
       // Loop on the fragments
-      for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
+      for( int k = 1; k <= (*it)->NumberFragments; k++ )
       {
          fseek( fp, (*it)->Offset[k] ,SEEK_SET );
          (void)PixelConvert::ReadAndUncompressRLEFragment(
@@ -285,7 +285,7 @@ bool PixelConvert::ReadAndDecompressRLEFile(
  */
 void PixelConvert::SwapZone( uint8_t* im )
 {
-   int i;
+   unsigned int i;
                                                                                 
    if( BitsAllocated == 16 )
    {
@@ -496,6 +496,7 @@ bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
                                 "weird image !?" );
       }
    }
+   return true; //???
 }
 
 /**
