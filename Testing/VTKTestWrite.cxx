@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/19 13:50:11 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/19 14:45:40 $
+  Version:   $Revision: 1.4 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,6 +69,7 @@ int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
    reader->SetFileName( "TestWrite.dcm" );
    reader->Update();
 
+   double *range=reader->GetOutput()->GetScalarRange();
    int dim[3];
    reader->GetOutput()->GetDimensions( dim );
 
@@ -77,7 +78,6 @@ int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
    {
       viewer->SetInput ( reader->GetOutput() );
 
-      vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
       viewer->SetColorWindow (range[1] - range[0]);
       viewer->SetColorLevel (0.5 * (range[1] + range[0]));
 
@@ -131,12 +131,11 @@ int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
    // Set an unsigned char image
    // Shift/Scale the image 
    image->Update();
-   double *rng=image->GetScalarRange();
    vtkImageShiftScale *iss=vtkImageShiftScale::New();
    iss->SetInput(image);
    iss->SetOutputScalarTypeToUnsignedChar();
-   iss->SetShift(-rng[0]);
-   iss->SetScale(255.0/(rng[1]-rng[0]));
+   iss->SetShift(-range[0]);
+   iss->SetScale(255.0/(range[1]-range[0]));
    iss->ClampOverflowOn();
 
    image->UnRegister(NULL);
