@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 07:56:21 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/19 08:58:33 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,6 @@ int CopyDicom(std::string const & filename,
       std::cout << "   Testing: " << filename << std::endl;
       if( FileExists( output.c_str() ) )
       {
-        // std::cerr << "Don't try to cheat, I am removing the file anyway" << std::endl;
          if( !RemoveFile( output.c_str() ) )
          {
             std::cout << "Ouch, the file exist, but I cannot remove it" << std::endl;
@@ -79,9 +78,6 @@ int CopyDicom(std::string const & filename,
   
       // Warning :Accessor gdcmElementSet::GetEntry() should not exist 
       // It was commented out by Mathieu, that was a *good* idea
-      // (the user does NOT have to know the way we implemented the Header !)
-      // Waiting for a 'clean' solution, I keep the method ...JPRx
-
 
       //////////////// Step 2:
       std::cout << "2...";
