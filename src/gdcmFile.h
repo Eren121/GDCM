@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.99 $
+  Date:      $Date: 2005/01/26 17:17:31 $
+  Version:   $Revision: 1.100 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,8 @@
 
 namespace gdcm 
 {
+class RLEFramesInfo;
+class JPEGFragmentsInfo;
 
 //-----------------------------------------------------------------------------
 // Dicom Part 3.3 Compliant
@@ -91,7 +93,6 @@ enum ModalityType {
  */
 
 //-----------------------------------------------------------------------------
-
 class GDCM_EXPORT File : public Document
 {
 protected:
@@ -166,17 +167,29 @@ public:
    /// Accessor to \ref File::NumPixel
    uint16_t GetNumPixel() { return NumPixel; }
 
-   bool Write(std::string fileName, FileType filetype);
-
-   /// Initialize DICOM File when none
-   void InitializeDefaultFile();
- 
-protected:
    /// Replace patient's specific information by 'anonymous'
    bool AnonymizeFile();
 
-private:
+   bool Write(std::string fileName, FileType filetype);
 
+   RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
+   JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
+
+protected:
+   /// Initialize DICOM File when none
+   void InitializeDefaultFile();
+ 
+   /// Store the RLE frames info obtained during parsing of pixels.
+   RLEFramesInfo *RLEInfo;
+   /// Store the JPEG fragments info obtained during parsing of pixels.
+   JPEGFragmentsInfo *JPEGInfo;
+
+private:
+   void ComputeRLEInfo();
+   void ComputeJPEGFragmentInfo();
+   void ReadAndSkipEncapsulatedBasicOffsetTable();
+   bool     ReadTag(uint16_t, uint16_t);
+   uint32_t ReadTagLength(uint16_t, uint16_t);
 };
 } // end namespace gdcm
 

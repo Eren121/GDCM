@@ -1,4 +1,7 @@
 2005-01-26 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * move RLEInfo & JPEGInfo from Document to File
+
+2005-01-26 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * FIX : remove so many friend between classes
 
 2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>

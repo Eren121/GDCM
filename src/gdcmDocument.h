@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:24 $
-  Version:   $Revision: 1.101 $
+  Date:      $Date: 2005/01/26 17:17:31 $
+  Version:   $Revision: 1.102 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,8 +34,6 @@ class ValEntry;
 class BinEntry;
 class SeqEntry;
 class Dict;
-class RLEFramesInfo;
-class JPEGFragmentsInfo;
 
 //-----------------------------------------------------------------------------
 /**
@@ -49,10 +47,6 @@ public:
    FileType GetFileType();
 
    std::string GetTransferSyntax();
-   /// returns RLEFramesInfo 
-   RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
-   /// returns JPEGFragmentsInfo
-   JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
 
 // Dictionaries
    virtual void PrintPubDict (std::ostream &os = std::cout);
@@ -108,10 +102,9 @@ protected:
    Document( std::string const &filename );
    virtual ~Document();
    
-   void ReadAndSkipEncapsulatedBasicOffsetTable();
-   void ComputeRLEInfo();
-   void ComputeJPEGFragmentInfo();
-   // Entry
+   uint16_t ReadInt16() throw ( FormatError );
+   uint32_t ReadInt32() throw ( FormatError );
+   void     SkipBytes(uint32_t);
 
    int ComputeGroup0002Length( FileType filetype );
 
@@ -147,20 +140,12 @@ protected:
 
    /// After opening the file, we read HEADER_LENGTH_TO_READ bytes.
    static const unsigned int HEADER_LENGTH_TO_READ; 
-
    /// \brief Elements whose value is longer than MAX_SIZE_LOAD_ELEMENT_VALUE
    /// are NOT loaded.
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
-
    /// \brief Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
    /// are NOT printed.
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
-
-   /// Store the RLE frames info obtained during parsing of pixels.
-   RLEFramesInfo *RLEInfo;
-
-   /// Store the JPEG fragments info obtained during parsing of pixels.
-   JPEGFragmentsInfo *JPEGInfo;
 
 private:
 // Methods
@@ -184,12 +169,6 @@ private:
    void FixDocEntryFoundLength(DocEntry *entry,uint32_t l);
    bool IsDocEntryAnInteger   (DocEntry *entry);
 
-   uint16_t ReadInt16() throw ( FormatError );
-   uint32_t ReadInt32() throw ( FormatError );
-   void     SkipBytes(uint32_t);
-   bool     ReadTag(uint16_t, uint16_t);
-   uint32_t ReadTagLength(uint16_t, uint16_t);
-
    void Initialize();
    bool CheckSwap();
    void SwitchByteSwapCode();
@@ -199,17 +178,12 @@ private:
    // DocEntry related utilities
    DocEntry *ReadNextDocEntry();
 
-//  uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
-//  void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
-//                                   DocEntrySet *set );
-
    void HandleBrokenEndian  (uint16_t &group, uint16_t &elem);
    void HandleOutOfGroup0002(uint16_t &group, uint16_t &elem);
 
 // Variables
    /// Public dictionary used to parse this header
    Dict *RefPubDict;
-   
    /// \brief Optional "shadow dictionary" (private elements) used to parse
    /// this header
    Dict *RefShaDict;
@@ -225,8 +199,9 @@ private:
    /// is fixed to 64 bytes.
    uint32_t MaxSizePrintEntry;   
 
-private:
-
+//  uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
+//  void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
+//                                   DocEntrySet *set );
 };
 
 } // end namespace gdcm

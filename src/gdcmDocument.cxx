@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 16:28:58 $
-  Version:   $Revision: 1.213 $
+  Date:      $Date: 2005/01/26 17:17:31 $
+  Version:   $Revision: 1.214 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,8 +25,6 @@
 #include "gdcmDebug.h"
 #include "gdcmTS.h"
 #include "gdcmDictSet.h"
-#include "gdcmRLEFramesInfo.h"
-#include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmDocEntrySet.h"
 #include "gdcmSQItem.h"
 
@@ -62,9 +60,6 @@ const unsigned int Document::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
  */
 Document::Document( std::string const &filename ) : ElementSet(-1)
 {
-   RLEInfo = NULL;
-   JPEGInfo = NULL;
-
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = filename;
    Initialize();
@@ -161,9 +156,6 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
  */
 Document::Document() : ElementSet(-1)
 {
-   RLEInfo = NULL;
-   JPEGInfo = NULL;
-
    Fp = 0;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
@@ -180,11 +172,6 @@ Document::~Document ()
 {
    RefPubDict = NULL;
    RefShaDict = NULL;
-
-   if( RLEInfo )
-      delete RLEInfo;
-   if( JPEGInfo )
-      delete JPEGInfo;
 }
 
 //-----------------------------------------------------------------------------
@@ -369,6 +356,7 @@ std::ifstream *Document::OpenFile()
    if(Fp)
    {
       gdcmVerboseMacro( "File already open: " << Filename.c_str());
+      CloseFile();
    }
 
    Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
@@ -754,26 +742,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                   delete newDocEntry;
                break;
             }
-         }
-
-         if (    ( newDocEntry->GetGroup()   == 0x7fe0 )
-              && ( newDocEntry->GetElement() == 0x0010 ) )
-         {
-             std::string ts = GetTransferSyntax();
-             if ( Global::GetTS()->IsRLELossless(ts) ) 
-             {
-                long positionOnEntry = Fp->tellg();
-                Fp->seekg( newDocEntry->GetOffset(), std::ios::beg );
-                ComputeRLEInfo();
-                Fp->seekg( positionOnEntry, std::ios::beg );
-             }
-             else if ( Global::GetTS()->IsJPEG(ts) )
-             {
-                long positionOnEntry = Fp->tellg();
-                Fp->seekg( newDocEntry->GetOffset(), std::ios::beg );
-                ComputeJPEGFragmentInfo();
-                Fp->seekg( positionOnEntry, std::ios::beg );
-             }
          }
 
          // Just to make sure we are at the beginning of next entry.
@@ -1683,8 +1651,6 @@ void Document::Initialize()
 {
    RefPubDict = Global::GetDicts()->GetDefaultPubDict();
    RefShaDict = NULL;
-   RLEInfo  = new RLEFramesInfo;
-   JPEGInfo = new JPEGFragmentsInfo;
    Filetype = Unknown;
 }
 
@@ -2138,351 +2104,6 @@ DocEntry *Document::ReadNextDocEntry()
 //}
 
 /**
- * \brief   Assuming the internal file pointer \ref Document::Fp 
- *          is placed at the beginning of a tag check whether this
- *          tag is (TestGroup, TestElement).
- * \warning On success the internal file pointer \ref Document::Fp
- *          is modified to point after the tag.
- *          On failure (i.e. when the tag wasn't the expected tag
- *          (TestGroup, TestElement) the internal file pointer
- *          \ref Document::Fp is restored to it's original position.
- * @param   testGroup   The expected group of the tag.
- * @param   testElement The expected Element of the tag.
- * @return  True on success, false otherwise.
- */
-bool Document::ReadTag(uint16_t testGroup, uint16_t testElement)
-{
-   long positionOnEntry = Fp->tellg();
-   long currentPosition = Fp->tellg();          // On debugging purposes
-
-   //// Read the Item Tag group and element, and make
-   // sure they are what we expected:
-   uint16_t itemTagGroup;
-   uint16_t itemTagElement;
-   try
-   {
-      itemTagGroup   = ReadInt16();
-      itemTagElement = ReadInt16();
-   }
-   catch ( FormatError e )
-   {
-      //std::cerr << e << std::endl;
-      return false;
-   }
-   if ( itemTagGroup != testGroup || itemTagElement != testElement )
-   {
-      gdcmVerboseMacro( "Wrong Item Tag found:"
-       << "   We should have found tag ("
-       << std::hex << testGroup << "," << testElement << ")" << std::endl
-       << "   but instead we encountered tag ("
-       << std::hex << itemTagGroup << "," << itemTagElement << ")"
-       << "  at address: " << "  0x(" << (unsigned int)currentPosition  << ")" 
-       ) ;
-      Fp->seekg(positionOnEntry, std::ios::beg);
-
-      return false;
-   }
-   return true;
-}
-
-/**
- * \brief   Assuming the internal file pointer \ref Document::Fp 
- *          is placed at the beginning of a tag (TestGroup, TestElement),
- *          read the length associated to the Tag.
- * \warning On success the internal file pointer \ref Document::Fp
- *          is modified to point after the tag and it's length.
- *          On failure (i.e. when the tag wasn't the expected tag
- *          (TestGroup, TestElement) the internal file pointer
- *          \ref Document::Fp is restored to it's original position.
- * @param   testGroup   The expected group of the tag.
- * @param   testElement The expected Element of the tag.
- * @return  On success returns the length associated to the tag. On failure
- *          returns 0.
- */
-uint32_t Document::ReadTagLength(uint16_t testGroup, uint16_t testElement)
-{
-
-   if ( !ReadTag(testGroup, testElement) )
-   {
-      return 0;
-   }
-                                                                                
-   //// Then read the associated Item Length
-   long currentPosition = Fp->tellg();
-   uint32_t itemLength  = ReadInt32();
-   {
-      gdcmVerboseMacro( "Basic Item Length is: "
-        << itemLength << std::endl
-        << "  at address: " << std::hex << (unsigned int)currentPosition);
-   }
-   return itemLength;
-}
-
-/**
- * \brief When parsing the Pixel Data of an encapsulated file, read
- *        the basic offset table (when present, and BTW dump it).
- */
-void Document::ReadAndSkipEncapsulatedBasicOffsetTable()
-{
-   //// Read the Basic Offset Table Item Tag length...
-   uint32_t itemLength = ReadTagLength(0xfffe, 0xe000);
-
-   // When present, read the basic offset table itself.
-   // Notes: - since the presence of this basic offset table is optional
-   //          we can't rely on it for the implementation, and we will simply
-   //          trash it's content (when present).
-   //        - still, when present, we could add some further checks on the
-   //          lengths, but we won't bother with such fuses for the time being.
-   if ( itemLength != 0 )
-   {
-      char *basicOffsetTableItemValue = new char[itemLength + 1];
-      Fp->read(basicOffsetTableItemValue, itemLength);
-
-#ifdef GDCM_DEBUG
-      for (unsigned int i=0; i < itemLength; i += 4 )
-      {
-         uint32_t individualLength = str2num( &basicOffsetTableItemValue[i],
-                                              uint32_t);
-         gdcmVerboseMacro( "Read one length: " << 
-                          std::hex << individualLength );
-      }
-#endif //GDCM_DEBUG
-
-      delete[] basicOffsetTableItemValue;
-   }
-}
-
-/**
- * \brief Parse pixel data from disk of [multi-]fragment RLE encoding.
- *        Compute the RLE extra information and store it in \ref RLEInfo
- *        for later pixel retrieval usage.
- */
-void Document::ComputeRLEInfo()
-{
-   std::string ts = GetTransferSyntax();
-   if ( !Global::GetTS()->IsRLELossless(ts) ) 
-   {
-      return;
-   }
-
-   // Encoded pixel data: for the time being we are only concerned with
-   // Jpeg or RLE Pixel data encodings.
-   // As stated in PS 3.5-2003, section 8.2 p44:
-   // "If sent in Encapsulated Format (i.e. other than the Native Format) the
-   //  value representation OB is used".
-   // Hence we expect an OB value representation. Concerning OB VR,
-   // the section PS 3.5-2003, section A.4.c p 58-59, states:
-   // "For the Value Representations OB and OW, the encoding shall meet the
-   //   following specifications depending on the Data element tag:"
-   //   [...snip...]
-   //    - the first item in the sequence of items before the encoded pixel
-   //      data stream shall be basic offset table item. The basic offset table
-   //      item value, however, is not required to be present"
-
-   ReadAndSkipEncapsulatedBasicOffsetTable();
-
-   // Encapsulated RLE Compressed Images (see PS 3.5-2003, Annex G)
-   // Loop on the individual frame[s] and store the information
-   // on the RLE fragments in a RLEFramesInfo.
-   // Note: - when only a single frame is present, this is a
-   //         classical image.
-   //       - when more than one frame are present, then we are in 
-   //         the case of a multi-frame image.
-   long frameLength;
-   while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) )
-   { 
-      // Parse the RLE Header and store the corresponding RLE Segment
-      // Offset Table information on fragments of this current Frame.
-      // Note that the fragment pixels themselves are not loaded
-      // (but just skipped).
-      long frameOffset = Fp->tellg();
-
-      uint32_t nbRleSegments = ReadInt32();
-      if ( nbRleSegments > 16 )
-      {
-         // There should be at most 15 segments (refer to RLEFrame class)
-         gdcmVerboseMacro( "Too many segments.");
-      }
- 
-      uint32_t rleSegmentOffsetTable[16];
-      for( int k = 1; k <= 15; k++ )
-      {
-         rleSegmentOffsetTable[k] = ReadInt32();
-      }
-
-      // Deduce from both the RLE Header and the frameLength the
-      // fragment length, and again store this info in a
-      // RLEFramesInfo.
-      long rleSegmentLength[15];
-      // skipping (not reading) RLE Segments
-      if ( nbRleSegments > 1)
-      {
-         for(unsigned int k = 1; k <= nbRleSegments-1; k++)
-         {
-             rleSegmentLength[k] =  rleSegmentOffsetTable[k+1]
-                                  - rleSegmentOffsetTable[k];
-             SkipBytes(rleSegmentLength[k]);
-          }
-       }
-
-       rleSegmentLength[nbRleSegments] = frameLength 
-                                      - rleSegmentOffsetTable[nbRleSegments];
-       SkipBytes(rleSegmentLength[nbRleSegments]);
-
-       // Store the collected info
-       RLEFrame *newFrame = new RLEFrame;
-       newFrame->SetNumberOfFragments(nbRleSegments);
-       for( unsigned int uk = 1; uk <= nbRleSegments; uk++ )
-       {
-          newFrame->SetOffset(uk,frameOffset + rleSegmentOffsetTable[uk]);
-          newFrame->SetLength(uk,rleSegmentLength[uk]);
-       }
-       RLEInfo->AddFrame(newFrame);
-   }
-
-   // Make sure that at the end of the item we encounter a 'Sequence
-   // Delimiter Item':
-   if ( !ReadTag(0xfffe, 0xe0dd) )
-   {
-      gdcmVerboseMacro( "No sequence delimiter item at end of RLE item sequence");
-   }
-}
-
-/**
- * \brief Parse pixel data from disk of [multi-]fragment Jpeg encoding.
- *        Compute the jpeg extra information (fragment[s] offset[s] and
- *        length) and store it[them] in \ref JPEGInfo for later pixel
- *        retrieval usage.
- */
-void Document::ComputeJPEGFragmentInfo()
-{
-   // If you need to, look for comments of ComputeRLEInfo().
-   std::string ts = GetTransferSyntax();
-   if ( ! Global::GetTS()->IsJPEG(ts) )
-   {
-      return;
-   }
-
-   ReadAndSkipEncapsulatedBasicOffsetTable();
-
-   // Loop on the fragments[s] and store the parsed information in a
-   // JPEGInfo.
-   long fragmentLength;
-   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) )
-   { 
-      long fragmentOffset = Fp->tellg();
-
-       // Store the collected info
-       JPEGFragment *newFragment = new JPEGFragment;
-       newFragment->SetOffset(fragmentOffset);
-       newFragment->SetLength(fragmentLength);
-       JPEGInfo->AddFragment(newFragment);
-
-       SkipBytes(fragmentLength);
-   }
-
-   // Make sure that at the end of the item we encounter a 'Sequence
-   // Delimiter Item':
-   if ( !ReadTag(0xfffe, 0xe0dd) )
-   {
-      gdcmVerboseMacro( "No sequence delimiter item at end of JPEG item sequence");
-   }
-}
-
-/*
- * \brief Walk recursively the given \ref DocEntrySet, and feed
- *        the given hash table (\ref TagDocEntryHT) with all the
- *        \ref DocEntry (Dicom entries) encountered.
- *        This method does the job for \ref BuildFlatHashTable.
- * @param builtHT Where to collect all the \ref DocEntry encountered
- *        when recursively walking the given set.
- * @param set The structure to be traversed (recursively).
- */
-/*void Document::BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
-                                          DocEntrySet *set )
-{ 
-   if (ElementSet *elementSet = dynamic_cast< ElementSet* > ( set ) )
-   {
-      TagDocEntryHT const &currentHT = elementSet->GetTagHT();
-      for( TagDocEntryHT::const_iterator i  = currentHT.begin();
-                                         i != currentHT.end();
-                                       ++i)
-      {
-         DocEntry *entry = i->second;
-         if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
-         {
-            const ListSQItem& items = seqEntry->GetSQItems();
-            for( ListSQItem::const_iterator item  = items.begin();
-                                            item != items.end();
-                                          ++item)
-            {
-               BuildFlatHashTableRecurse( builtHT, *item );
-            }
-            continue;
-         }
-         builtHT[entry->GetKey()] = entry;
-      }
-      return;
-    }
-
-   if (SQItem *SQItemSet = dynamic_cast< SQItem* > ( set ) )
-   {
-      const ListDocEntry& currentList = SQItemSet->GetDocEntries();
-      for (ListDocEntry::const_iterator i  = currentList.begin();
-                                        i != currentList.end();
-                                      ++i)
-      {
-         DocEntry *entry = *i;
-         if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
-         {
-            const ListSQItem& items = seqEntry->GetSQItems();
-            for( ListSQItem::const_iterator item  = items.begin();
-                                            item != items.end();
-                                          ++item)
-            {
-               BuildFlatHashTableRecurse( builtHT, *item );
-            }
-            continue;
-         }
-         builtHT[entry->GetKey()] = entry;
-      }
-
-   }
-}*/
-
-/*
- * \brief Build a \ref TagDocEntryHT (i.e. a std::map<>) from the current
- *        Document.
- *
- *        The structure used by a Document (through \ref ElementSet),
- *        in order to hold the parsed entries of a Dicom header, is a recursive
- *        one. This is due to the fact that the sequences (when present)
- *        can be nested. Additionaly, the sequence items (represented in
- *        gdcm as \ref SQItem) add an extra complexity to the data
- *        structure. Hence, a gdcm user whishing to visit all the entries of
- *        a Dicom header will need to dig in the gdcm internals (which
- *        implies exposing all the internal data structures to the API).
- *        In order to avoid this burden to the user, \ref BuildFlatHashTable
- *        recursively builds a temporary hash table, which holds all the
- *        Dicom entries in a flat structure (a \ref TagDocEntryHT i.e. a
- *        std::map<>).
- * \warning Of course there is NO integrity constrain between the 
- *        returned \ref TagDocEntryHT and the \ref ElementSet used
- *        to build it. Hence if the underlying \ref ElementSet is
- *        altered, then it is the caller responsability to invoke 
- *        \ref BuildFlatHashTable again...
- * @return The flat std::map<> we juste build.
- */
-/*TagDocEntryHT *Document::BuildFlatHashTable()
-{
-   TagDocEntryHT *FlatHT = new TagDocEntryHT;
-   BuildFlatHashTableRecurse( *FlatHT, this );
-   return FlatHT;
-}*/
-
-
-
-/**
  * \brief   Compares two documents, according to \ref DicomDir rules
  * \warning Does NOT work with ACR-NEMA files
  * \todo    Find a trick to solve the pb (use RET fields ?)
@@ -2586,6 +2207,97 @@ int Document::ComputeGroup0002Length( FileType filetype )
    }
    return groupLength; 
 }
+
+/*
+ * \brief Walk recursively the given \ref DocEntrySet, and feed
+ *        the given hash table (\ref TagDocEntryHT) with all the
+ *        \ref DocEntry (Dicom entries) encountered.
+ *        This method does the job for \ref BuildFlatHashTable.
+ * @param builtHT Where to collect all the \ref DocEntry encountered
+ *        when recursively walking the given set.
+ * @param set The structure to be traversed (recursively).
+ */
+/*void Document::BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
+                                          DocEntrySet *set )
+{ 
+   if (ElementSet *elementSet = dynamic_cast< ElementSet* > ( set ) )
+   {
+      TagDocEntryHT const &currentHT = elementSet->GetTagHT();
+      for( TagDocEntryHT::const_iterator i  = currentHT.begin();
+                                         i != currentHT.end();
+                                       ++i)
+      {
+         DocEntry *entry = i->second;
+         if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
+         {
+            const ListSQItem& items = seqEntry->GetSQItems();
+            for( ListSQItem::const_iterator item  = items.begin();
+                                            item != items.end();
+                                          ++item)
+            {
+               BuildFlatHashTableRecurse( builtHT, *item );
+            }
+            continue;
+         }
+         builtHT[entry->GetKey()] = entry;
+      }
+      return;
+    }
+
+   if (SQItem *SQItemSet = dynamic_cast< SQItem* > ( set ) )
+   {
+      const ListDocEntry& currentList = SQItemSet->GetDocEntries();
+      for (ListDocEntry::const_iterator i  = currentList.begin();
+                                        i != currentList.end();
+                                      ++i)
+      {
+         DocEntry *entry = *i;
+         if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
+         {
+            const ListSQItem& items = seqEntry->GetSQItems();
+            for( ListSQItem::const_iterator item  = items.begin();
+                                            item != items.end();
+                                          ++item)
+            {
+               BuildFlatHashTableRecurse( builtHT, *item );
+            }
+            continue;
+         }
+         builtHT[entry->GetKey()] = entry;
+      }
+
+   }
+}*/
+
+/*
+ * \brief Build a \ref TagDocEntryHT (i.e. a std::map<>) from the current
+ *        Document.
+ *
+ *        The structure used by a Document (through \ref ElementSet),
+ *        in order to hold the parsed entries of a Dicom header, is a recursive
+ *        one. This is due to the fact that the sequences (when present)
+ *        can be nested. Additionaly, the sequence items (represented in
+ *        gdcm as \ref SQItem) add an extra complexity to the data
+ *        structure. Hence, a gdcm user whishing to visit all the entries of
+ *        a Dicom header will need to dig in the gdcm internals (which
+ *        implies exposing all the internal data structures to the API).
+ *        In order to avoid this burden to the user, \ref BuildFlatHashTable
+ *        recursively builds a temporary hash table, which holds all the
+ *        Dicom entries in a flat structure (a \ref TagDocEntryHT i.e. a
+ *        std::map<>).
+ * \warning Of course there is NO integrity constrain between the 
+ *        returned \ref TagDocEntryHT and the \ref ElementSet used
+ *        to build it. Hence if the underlying \ref ElementSet is
+ *        altered, then it is the caller responsability to invoke 
+ *        \ref BuildFlatHashTable again...
+ * @return The flat std::map<> we juste build.
+ */
+/*TagDocEntryHT *Document::BuildFlatHashTable()
+{
+   TagDocEntryHT *FlatHT = new TagDocEntryHT;
+   BuildFlatHashTableRecurse( *FlatHT, this );
+   return FlatHT;
+}*/
 
 } // end namespace gdcm
 

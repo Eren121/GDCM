@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 09:49:54 $
-  Version:   $Revision: 1.201 $
+  Date:      $Date: 2005/01/26 17:17:31 $
+  Version:   $Revision: 1.202 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,8 +23,10 @@
 #include "gdcmTS.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
-#include <stdio.h> //sscanf
+#include "gdcmRLEFramesInfo.h"
+#include "gdcmJPEGFragmentsInfo.h"
 
+#include <stdio.h> //sscanf
 #include <vector>
 
 namespace gdcm 
@@ -36,8 +38,11 @@ namespace gdcm
  * @param  filename name of the file whose header we want to analyze
  */
 File::File( std::string const &filename ):
-            Document( filename )
+   Document( filename )
 {    
+   RLEInfo  = new RLEFramesInfo;
+   JPEGInfo = new JPEGFragmentsInfo;
+
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
    // (Image Location") . This entry contains the number of
@@ -60,9 +65,9 @@ File::File( std::string const &filename ):
       GrPixel = (uint16_t) atoi( imgLocation.c_str() );
    }   
 
-   // sometimes Image Location value doesn't follow 
-   // the supposed processor endianness. 
-   // see gdcmData/cr172241.dcm      
+   // sometimes Image Location value doesn't follow
+   // the supposed processor endianness.
+   // see gdcmData/cr172241.dcm
    if ( GrPixel == 0xe07f )
    {
       GrPixel = 0x7fe0;
@@ -84,7 +89,17 @@ File::File( std::string const &filename ):
    DocEntry *entry = GetDocEntry(GrPixel, NumPixel); 
    if ( entry != 0 )
    {
+      // Compute the RLE or JPEG info
+      OpenFile();
+      std::string ts = GetTransferSyntax();
+      Fp->seekg( entry->GetOffset(), std::ios::beg );
+      if ( Global::GetTS()->IsRLELossless(ts) ) 
+         ComputeRLEInfo();
+      else if ( Global::GetTS()->IsJPEG(ts) )
+         ComputeJPEGFragmentInfo();
+      CloseFile();
 
+      // Change the created dict entry
       std::string PixelVR;
       // 8 bits allocated is a 'O Bytes' , as well as 24 (old ACR-NEMA RGB)
       // more than 8 (i.e 12, 16) is a 'O Words'
@@ -93,10 +108,9 @@ File::File( std::string const &filename ):
       else
          PixelVR = "OW";
 
-      DictEntry* newEntry = NewVirtualDictEntry(
-                             GrPixel, NumPixel,
-                             PixelVR, "PXL", "Pixel Data");
- 
+      DictEntry* newEntry = NewVirtualDictEntry(GrPixel, NumPixel,
+                                                PixelVR, "PXL", "Pixel Data");
+
       // friend class hunting : should we *create* a new entry,
       // instead of modifying its DictEntry,in order not to use 'friend' ?
       entry->SetDictEntry( newEntry );
@@ -106,9 +120,11 @@ File::File( std::string const &filename ):
 /**
  * \brief Constructor used when we want to generate dicom files from scratch
  */
-File::File()
-           :Document()
+File::File():
+   Document()
 {
+   RLEInfo  = new RLEFramesInfo;
+   JPEGInfo = new JPEGFragmentsInfo;
    InitializeDefaultFile();
 }
 
@@ -117,6 +133,10 @@ File::File()
  */
 File::~File ()
 {
+   if( RLEInfo )
+      delete RLEInfo;
+   if( JPEGInfo )
+      delete JPEGInfo;
 }
 
 /**
@@ -1192,9 +1212,38 @@ int File::GetLUTNbits()
    return lutNbits;
 }
 
+/**
+  * \brief gets the info from 0020,0037 : Image Orientation Patient
+  * (needed to organize DICOM files based on their x,y,z position)
+  * @param iop adress of the (6)float aray to receive values
+  * @return cosines of image orientation patient
+  */
+void File::GetImageOrientationPatient( float iop[6] )
+{
+   std::string strImOriPat;
+   //iop is supposed to be float[6]
+   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
 
-//-----------------------------------------------------------------------------
-// Protected
+   // 0020 0037 DS REL Image Orientation (Patient)
+   if ( (strImOriPat = GetEntryValue(0x0020,0x0037)) != GDCM_UNFOUND )
+   {
+      if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
+          &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
+      {
+         gdcmVerboseMacro( "Wrong Image Orientation Patient (0020,0037). Less than 6 values were found." );
+      }
+   }
+   //For ACR-NEMA
+   // 0020 0035 DS REL Image Orientation (RET)
+   else if ( (strImOriPat = GetEntryValue(0x0020,0x0035)) != GDCM_UNFOUND )
+   {
+      if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
+          &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
+      {
+         gdcmVerboseMacro( "wrong Image Orientation Patient (0020,0035). Less than 6 values were found." );
+      }
+   }
+}
 
 /**
  * \brief anonymize a File (removes Patient's personal info)
@@ -1277,39 +1326,8 @@ bool File::AnonymizeFile()
    return true;
 }
 
-/**
-  * \brief gets the info from 0020,0037 : Image Orientation Patient
-  * (needed to organize DICOM files based on their x,y,z position)
-  * @param iop adress of the (6)float aray to receive values
-  * @return cosines of image orientation patient
-  */
-void File::GetImageOrientationPatient( float iop[6] )
-{
-   std::string strImOriPat;
-   //iop is supposed to be float[6]
-   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
-
-   // 0020 0037 DS REL Image Orientation (Patient)
-   if ( (strImOriPat = GetEntryValue(0x0020,0x0037)) != GDCM_UNFOUND )
-   {
-      if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
-          &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
-      {
-         gdcmVerboseMacro( "Wrong Image Orientation Patient (0020,0037). Less than 6 values were found." );
-      }
-   }
-   //For ACR-NEMA
-   // 0020 0035 DS REL Image Orientation (RET)
-   else if ( (strImOriPat = GetEntryValue(0x0020,0x0035)) != GDCM_UNFOUND )
-   {
-      if( sscanf( strImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
-          &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
-      {
-         gdcmVerboseMacro( "wrong Image Orientation Patient (0020,0035). Less than 6 values were found." );
-      }
-   }
-}
-
+//-----------------------------------------------------------------------------
+// Protected
 /**
  * \brief Initialize a default DICOM File that should contain all the
  *        field require by other reader. DICOM standard does not 
@@ -1389,6 +1407,256 @@ void File::InitializeDefaultFile()
 
 //-----------------------------------------------------------------------------
 // Private
+/**
+ * \brief Parse pixel data from disk of [multi-]fragment RLE encoding.
+ *        Compute the RLE extra information and store it in \ref RLEInfo
+ *        for later pixel retrieval usage.
+ */
+void File::ComputeRLEInfo()
+{
+   std::string ts = GetTransferSyntax();
+   if ( !Global::GetTS()->IsRLELossless(ts) ) 
+   {
+      return;
+   }
+
+   // Encoded pixel data: for the time being we are only concerned with
+   // Jpeg or RLE Pixel data encodings.
+   // As stated in PS 3.5-2003, section 8.2 p44:
+   // "If sent in Encapsulated Format (i.e. other than the Native Format) the
+   //  value representation OB is used".
+   // Hence we expect an OB value representation. Concerning OB VR,
+   // the section PS 3.5-2003, section A.4.c p 58-59, states:
+   // "For the Value Representations OB and OW, the encoding shall meet the
+   //   following specifications depending on the Data element tag:"
+   //   [...snip...]
+   //    - the first item in the sequence of items before the encoded pixel
+   //      data stream shall be basic offset table item. The basic offset table
+   //      item value, however, is not required to be present"
+   ReadAndSkipEncapsulatedBasicOffsetTable();
+
+   // Encapsulated RLE Compressed Images (see PS 3.5-2003, Annex G)
+   // Loop on the individual frame[s] and store the information
+   // on the RLE fragments in a RLEFramesInfo.
+   // Note: - when only a single frame is present, this is a
+   //         classical image.
+   //       - when more than one frame are present, then we are in 
+   //         the case of a multi-frame image.
+   long frameLength;
+   while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) )
+   { 
+      // Parse the RLE Header and store the corresponding RLE Segment
+      // Offset Table information on fragments of this current Frame.
+      // Note that the fragment pixels themselves are not loaded
+      // (but just skipped).
+      long frameOffset = Fp->tellg();
+
+      uint32_t nbRleSegments = ReadInt32();
+      if ( nbRleSegments > 16 )
+      {
+         // There should be at most 15 segments (refer to RLEFrame class)
+         gdcmVerboseMacro( "Too many segments.");
+      }
+ 
+      uint32_t rleSegmentOffsetTable[16];
+      for( int k = 1; k <= 15; k++ )
+      {
+         rleSegmentOffsetTable[k] = ReadInt32();
+      }
+
+      // Deduce from both the RLE Header and the frameLength the
+      // fragment length, and again store this info in a
+      // RLEFramesInfo.
+      long rleSegmentLength[15];
+      // skipping (not reading) RLE Segments
+      if ( nbRleSegments > 1)
+      {
+         for(unsigned int k = 1; k <= nbRleSegments-1; k++)
+         {
+             rleSegmentLength[k] =  rleSegmentOffsetTable[k+1]
+                                  - rleSegmentOffsetTable[k];
+             SkipBytes(rleSegmentLength[k]);
+          }
+       }
+
+       rleSegmentLength[nbRleSegments] = frameLength 
+                                      - rleSegmentOffsetTable[nbRleSegments];
+       SkipBytes(rleSegmentLength[nbRleSegments]);
+
+       // Store the collected info
+       RLEFrame *newFrame = new RLEFrame;
+       newFrame->SetNumberOfFragments(nbRleSegments);
+       for( unsigned int uk = 1; uk <= nbRleSegments; uk++ )
+       {
+          newFrame->SetOffset(uk,frameOffset + rleSegmentOffsetTable[uk]);
+          newFrame->SetLength(uk,rleSegmentLength[uk]);
+       }
+       RLEInfo->AddFrame(newFrame);
+   }
+
+   // Make sure that at the end of the item we encounter a 'Sequence
+   // Delimiter Item':
+   if ( !ReadTag(0xfffe, 0xe0dd) )
+   {
+      gdcmVerboseMacro( "No sequence delimiter item at end of RLE item sequence");
+   }
+}
+
+/**
+ * \brief Parse pixel data from disk of [multi-]fragment Jpeg encoding.
+ *        Compute the jpeg extra information (fragment[s] offset[s] and
+ *        length) and store it[them] in \ref JPEGInfo for later pixel
+ *        retrieval usage.
+ */
+void File::ComputeJPEGFragmentInfo()
+{
+   // If you need to, look for comments of ComputeRLEInfo().
+   std::string ts = GetTransferSyntax();
+   if ( ! Global::GetTS()->IsJPEG(ts) )
+   {
+      return;
+   }
+
+   ReadAndSkipEncapsulatedBasicOffsetTable();
+
+   // Loop on the fragments[s] and store the parsed information in a
+   // JPEGInfo.
+   long fragmentLength;
+   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) )
+   { 
+      long fragmentOffset = Fp->tellg();
+
+       // Store the collected info
+       JPEGFragment *newFragment = new JPEGFragment;
+       newFragment->SetOffset(fragmentOffset);
+       newFragment->SetLength(fragmentLength);
+       JPEGInfo->AddFragment(newFragment);
+
+       SkipBytes(fragmentLength);
+   }
+
+   // Make sure that at the end of the item we encounter a 'Sequence
+   // Delimiter Item':
+   if ( !ReadTag(0xfffe, 0xe0dd) )
+   {
+      gdcmVerboseMacro( "No sequence delimiter item at end of JPEG item sequence");
+   }
+}
+
+/**
+ * \brief   Assuming the internal file pointer \ref Document::Fp 
+ *          is placed at the beginning of a tag check whether this
+ *          tag is (TestGroup, TestElement).
+ * \warning On success the internal file pointer \ref Document::Fp
+ *          is modified to point after the tag.
+ *          On failure (i.e. when the tag wasn't the expected tag
+ *          (TestGroup, TestElement) the internal file pointer
+ *          \ref Document::Fp is restored to it's original position.
+ * @param   testGroup   The expected group of the tag.
+ * @param   testElement The expected Element of the tag.
+ * @return  True on success, false otherwise.
+ */
+bool File::ReadTag(uint16_t testGroup, uint16_t testElement)
+{
+   long positionOnEntry = Fp->tellg();
+   long currentPosition = Fp->tellg();          // On debugging purposes
+
+   //// Read the Item Tag group and element, and make
+   // sure they are what we expected:
+   uint16_t itemTagGroup;
+   uint16_t itemTagElement;
+   try
+   {
+      itemTagGroup   = ReadInt16();
+      itemTagElement = ReadInt16();
+   }
+   catch ( FormatError e )
+   {
+      //std::cerr << e << std::endl;
+      return false;
+   }
+   if ( itemTagGroup != testGroup || itemTagElement != testElement )
+   {
+      gdcmVerboseMacro( "Wrong Item Tag found:"
+       << "   We should have found tag ("
+       << std::hex << testGroup << "," << testElement << ")" << std::endl
+       << "   but instead we encountered tag ("
+       << std::hex << itemTagGroup << "," << itemTagElement << ")"
+       << "  at address: " << "  0x(" << (unsigned int)currentPosition  << ")" 
+       ) ;
+      Fp->seekg(positionOnEntry, std::ios::beg);
+
+      return false;
+   }
+   return true;
+}
+
+/**
+ * \brief   Assuming the internal file pointer \ref Document::Fp 
+ *          is placed at the beginning of a tag (TestGroup, TestElement),
+ *          read the length associated to the Tag.
+ * \warning On success the internal file pointer \ref Document::Fp
+ *          is modified to point after the tag and it's length.
+ *          On failure (i.e. when the tag wasn't the expected tag
+ *          (TestGroup, TestElement) the internal file pointer
+ *          \ref Document::Fp is restored to it's original position.
+ * @param   testGroup   The expected group of the tag.
+ * @param   testElement The expected Element of the tag.
+ * @return  On success returns the length associated to the tag. On failure
+ *          returns 0.
+ */
+uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElement)
+{
+
+   if ( !ReadTag(testGroup, testElement) )
+   {
+      return 0;
+   }
+                                                                                
+   //// Then read the associated Item Length
+   long currentPosition = Fp->tellg();
+   uint32_t itemLength  = ReadInt32();
+   {
+      gdcmVerboseMacro( "Basic Item Length is: "
+        << itemLength << std::endl
+        << "  at address: " << std::hex << (unsigned int)currentPosition);
+   }
+   return itemLength;
+}
+
+/**
+ * \brief When parsing the Pixel Data of an encapsulated file, read
+ *        the basic offset table (when present, and BTW dump it).
+ */
+void File::ReadAndSkipEncapsulatedBasicOffsetTable()
+{
+   //// Read the Basic Offset Table Item Tag length...
+   uint32_t itemLength = ReadTagLength(0xfffe, 0xe000);
+
+   // When present, read the basic offset table itself.
+   // Notes: - since the presence of this basic offset table is optional
+   //          we can't rely on it for the implementation, and we will simply
+   //          trash it's content (when present).
+   //        - still, when present, we could add some further checks on the
+   //          lengths, but we won't bother with such fuses for the time being.
+   if ( itemLength != 0 )
+   {
+      char *basicOffsetTableItemValue = new char[itemLength + 1];
+      Fp->read(basicOffsetTableItemValue, itemLength);
+
+#ifdef GDCM_DEBUG
+      for (unsigned int i=0; i < itemLength; i += 4 )
+      {
+         uint32_t individualLength = str2num( &basicOffsetTableItemValue[i],
+                                              uint32_t);
+         gdcmVerboseMacro( "Read one length: " << 
+                          std::hex << individualLength );
+      }
+#endif //GDCM_DEBUG
+
+      delete[] basicOffsetTableItemValue;
+   }
+}
 
 //-----------------------------------------------------------------------------
 
