@@ -14,15 +14,25 @@ class gdcmObject;
 typedef std::list<gdcmObject *> ListContent;
 
 //-----------------------------------------------------------------------------
-class gdcmObject {
+class GDCM_EXPORT gdcmObject 
+{
 public:
+   gdcmObject(ListTag::iterator begin,ListTag::iterator end);
+   ~gdcmObject(void);
+
+   void SetPrintLevel(int level) { printLevel = level; };
+   virtual void Print(std::ostream &os = std::cout);
+
    std::string GetEntryByNumber(guint16 group, guint16 element);
    std::string GetEntryByName(TagName name);
 
+protected:
    ListTag::iterator beginObj;
    ListTag::iterator endObj;
-   
-protected:
+
+   int printLevel;
+
+private:
 };
 
 //-----------------------------------------------------------------------------

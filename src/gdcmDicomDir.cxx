@@ -1,101 +1,194 @@
 // gdcmDicomDir.cxx
 //-----------------------------------------------------------------------------
 #include "gdcmDicomDir.h"
-#include "gdcmPatient.h"
 #include "gdcmStudy.h"
 #include "gdcmSerie.h"
 #include "gdcmImage.h"
+#include "gdcmUtil.h"
 
 #include <string>
 
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
 gdcmDicomDir::gdcmDicomDir(std::string & FileName,
                            bool exception_on_error):
-   gdcmParser(FileName.c_str(),exception_on_error, true )  {
+   gdcmParser(FileName.c_str(),exception_on_error, true )  
+{
+   if ( GetListEntry().begin() == GetListEntry().end() ) 
+   {
+      dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir entry list empty");
+   }     
 
-
-   gdcmPatient *patCur;
-   gdcmStudy   *studCur;
-   gdcmSerie   *serCur;
-   gdcmImage   *imaCur; 
-     
-   ListTag::iterator i, j;
-   
-   
-     if ( GetListEntry().begin() ==   GetListEntry().end() ) {
-        cout << "ListEntry vide " << endl;
-     }     
- 
-     i = GetListEntry().begin();              
-     while ( i != GetListEntry().end() ) {
-
-       // std::cout << std::hex << (*i)->GetGroup() << 
-       //                  " " << (*i)->GetElement() << endl;
-
-	std::string v = (*i)->GetValue();	   	
-        if (v == "PATIENT ") {
-	   patCur=new gdcmPatient();
-	   //cout << "PATIENT" << endl,
-	   patCur->beginObj =i; 
-	   GetPatients().push_back(patCur);	     
-	}	
-
-        if (v == "STUDY ") {
-	    //cout << "STUDY" << endl,
-           studCur=new gdcmStudy();
-	   studCur->beginObj = patCur->endObj = i;		   
-           lPatient::iterator aa = GetPatients().end();
-           --aa;
-	   (*aa)->GetStudies().push_back(studCur);
-	}
-           studCur=new gdcmStudy();
-	 
-        if (v == "SERIES") {
-	   //cout << "SERIES" << endl,
-           serCur=new gdcmSerie();
-
-	   serCur->beginObj  = studCur->endObj= i; 		
-	   lPatient::iterator aa = GetPatients().end();
-           --aa;
-	   lStudy::iterator bb = (*aa)->GetStudies().end();
-	   --bb;
-	   (*bb)->GetSeries().push_back(serCur);
-	}
-		
-        if (v == "IMAGE ") {
-           //cout << "IMAGE" << endl;
-           imaCur=new gdcmImage();
-	   imaCur->beginObj  = serCur->endObj= i; 		
-
-	   lPatient::iterator aa = GetPatients().end();
-           --aa;
-	   lStudy::iterator bb = (*aa)->GetStudies().end();
-	   --bb;
-	   lSerie::iterator cc = (*bb)->GetSeries().end();
-	   --cc; 
-	   (*cc)->GetImages().push_back(imaCur);
-	   
-	   
-	   /* ---
-	   // ce n'est pas sur une nouvelle IMAGE, qu'il faut intervenir
-	   // mais lorsqu'on rencontre un 'non IMAGE' apres des 'IMAGE'
-	   lImage::iterator dd = (*cc)->GetImages().end();
-
-	   if ( (*cc)->GetImages().begin() != dd ) {
-	      --dd;
-	      (*dd)->endObj = i;	   
-	   }
-	 --- */  	   	   
-	}				  
-	++i; 
-      }      
+   CreateDicomDir();
 }
 
 
-gdcmDicomDir::~gdcmDicomDir() {
-   lPatient::iterator cc = GetPatients().begin();
-   while  (cc != GetPatients().end() ) {
-      //cout << "delete PATIENT" << endl;
+gdcmDicomDir::~gdcmDicomDir() 
+{
+   for(ListPatient::iterator cc = patients.begin();cc!=patients.end();++cc)
+   {
       delete *cc;
-      ++cc;
    }
 }
+
+//-----------------------------------------------------------------------------
+// Print
+void gdcmDicomDir::Print(std::ostream &os)
+{
+   for(ListPatient::iterator cc = patients.begin();cc!=patients.end();++cc)
+   {
+      (*cc)->SetPrintLevel(printLevel);
+      (*cc)->Print(os);
+   }
+}
+
+//-----------------------------------------------------------------------------
+// Public
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+void gdcmDicomDir::CreateDicomDir(void)
+{
+   // The list is parsed. When a tag is found :
+   //  1 - we save the beginning iterator
+   //  2 - we continue to parse
+   //  3 - we find an other tag
+   //       + we create the object for the precedent tag
+   //       + loop to 1 -
+
+   gdcmDicomDirType type=gdcmDicomDir::GDCM_NONE;
+   ListTag::iterator begin;
+   ListTag::iterator end;
+
+   begin=GetListEntry().begin();
+   end=begin;
+   for(ListTag::iterator i=GetListEntry().begin();i != GetListEntry().end();++i) 
+   {
+      // std::cout << std::hex << (*i)->GetGroup() << 
+      //                  " " << (*i)->GetElement() << endl;
+
+      std::string v = (*i)->GetValue();
+      if (v == "PATIENT ") 
+      {
+//         std::cout<<"PATIENT"<<std::endl;
+         end=i;
+         AddObjectToEnd(type,begin,end);
+
+         type=gdcmDicomDir::GDCM_PATIENT;
+         begin=end;
+      }	
+
+      if (v == "STUDY ")
+      {
+//         std::cout<<"STUDY"<<std::endl;
+         end=i;
+         AddObjectToEnd(type,begin,end);
+
+         type=gdcmDicomDir::GDCM_STUDY;
+         begin=end;
+      }
+
+      if (v == "SERIES") 
+      {
+//         std::cout<<"SERIES"<<std::endl;
+         end=i;
+         AddObjectToEnd(type,begin,end);
+
+         type=gdcmDicomDir::GDCM_SERIE;
+         begin=end;
+      }
+
+      if (v == "IMAGE ") 
+      {
+//         std::cout<<"IMAGE"<<std::endl;
+         end=i;
+         AddObjectToEnd(type,begin,end);
+
+         type=gdcmDicomDir::GDCM_IMAGE;
+         begin=end;
+      }
+   }
+
+   end=i;
+   AddObjectToEnd(type,begin,end);
+}
+
+void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,ListTag::iterator end)
+{
+   if(begin==end)
+      return;
+
+   switch(type)
+   {
+      case gdcmDicomDir::GDCM_PATIENT:
+         AddPatientToEnd(begin,end);
+         break;
+      case gdcmDicomDir::GDCM_STUDY:
+         AddStudyToEnd(begin,end);
+         break;
+      case gdcmDicomDir::GDCM_SERIE:
+         AddSerieToEnd(begin,end);
+         break;
+      case gdcmDicomDir::GDCM_IMAGE:
+         AddImageToEnd(begin,end);
+         break;
+   }
+}
+
+void gdcmDicomDir::AddPatientToEnd(ListTag::iterator begin,ListTag::iterator end)
+{
+   patients.push_back(new gdcmPatient(begin,end));
+}
+
+void gdcmDicomDir::AddStudyToEnd(ListTag::iterator begin,ListTag::iterator end)
+{
+   if(patients.size()>0)
+   {
+      ListPatient::iterator itp=patients.end();
+      itp--;
+      (*itp)->AddStudy(new gdcmStudy(begin,end));
+   }
+}
+
+void gdcmDicomDir::AddSerieToEnd(ListTag::iterator begin,ListTag::iterator end)
+{
+   if(patients.size()>0)
+   {
+      ListPatient::iterator itp=patients.end();
+      itp--;
+
+      if((*itp)->GetStudies().size()>0)
+      {
+         ListStudy::iterator itst=(*itp)->GetStudies().end();
+         itst--;
+         (*itst)->AddSerie(new gdcmSerie(begin,end));
+      }
+   }
+}
+
+void gdcmDicomDir::AddImageToEnd(ListTag::iterator begin,ListTag::iterator end)
+{
+   if(patients.size()>0)
+   {
+      ListPatient::iterator itp=patients.end();
+      itp--;
+
+      if((*itp)->GetStudies().size()>0)
+      {
+         ListStudy::iterator itst=(*itp)->GetStudies().end();
+         itst--;
+
+         if((*itst)->GetSeries().size()>0)
+         {
+            ListSerie::iterator its=(*itst)->GetSeries().end();
+            its--;
+            (*its)->AddImage(new gdcmImage(begin,end));
+         }
+      }
+   }
+}
+
+//-----------------------------------------------------------------------------

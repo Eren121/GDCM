@@ -118,11 +118,11 @@ char *_cleanString(char *v) {
    int i, l;
    l = strlen(v);
    for (i=0,d=v; 
-        i<l ; 
-        i++,d++) {
-      if (!isprint(*d))
+      i<l ; 
+      i++,d++) {
+         if (!isprint(*d))
          *d = '.';
-      }	
+   }	
    return v;
 }
 
@@ -130,21 +130,19 @@ char *_cleanString(char *v) {
 ///////////////////////////////////////////////////////////////////////////
 // to prevent a flashing screen when non-printable character
 std::string _CreateCleanString(std::string s) {
-  std::string str=s;
-  int n = str.size();
-  for(int i=0;i<n-1;i++)
-  {
-    if(!isprint(str[i]))
-      str[i]='.';
-  }
-  if(!isprint(str[n])) { // to avoid trouble with odd length fields
-                        // padded with zeo to become even
-  
-     if (str[n] == '\0') 
-        str[n] = ' ';
-     else
-        str[n] = '.';
-  }
-  return(str);
-}
+   std::string str=s;
 
+   for(int i=0;i<str.size();i++)
+   {
+      if(!isprint(str[i]))
+         str[i]='.';
+   }
+
+
+   if(str.size()>0)
+      if(!isprint(s[str.size()-1]))
+         if(s[str.size()-1]==0)
+            str[str.size()-1]=' ';
+
+   return(str);
+}

@@ -8,8 +8,7 @@
 #include "gdcmPatient.h"
 
 //-----------------------------------------------------------------------------
-
-typedef std::list<gdcmPatient *> lPatient;
+typedef std::list<gdcmPatient *> ListPatient;
 
 //-----------------------------------------------------------------------------
 /*
@@ -17,18 +16,35 @@ typedef std::list<gdcmPatient *> lPatient;
  * \brief    gdcmDicomDir defines an object representing a DICOMDIR in memory.
  *
  */
-class GDCM_EXPORT gdcmDicomDir: public gdcmParser {
+class GDCM_EXPORT gdcmDicomDir: public gdcmParser 
+{
 public:
-
    gdcmDicomDir(std::string &FileName,bool exception_on_error = false );
-   ~gdcmDicomDir();
+   ~gdcmDicomDir(void);
 
-   inline lPatient &GetPatients() {return patients;};
-   inline void AddPatient(gdcmPatient *patient) {patients.push_back(patient);};
+   void SetPrintLevel(int level) { printLevel = level; };
+   virtual void Print(std::ostream &os = std::cout);
+
+   inline ListPatient &GetPatients() {return patients;};
+
+   typedef enum
+   {
+      GDCM_NONE,
+      GDCM_PATIENT,
+      GDCM_STUDY,
+      GDCM_SERIE,
+      GDCM_IMAGE,
+   } gdcmDicomDirType;
    
 private:
-   lPatient patients;
+   void CreateDicomDir(void);
+   void AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,ListTag::iterator end);
+   void AddPatientToEnd(ListTag::iterator begin,ListTag::iterator end);
+   void AddStudyToEnd(ListTag::iterator begin,ListTag::iterator end);
+   void AddSerieToEnd(ListTag::iterator begin,ListTag::iterator end);
+   void AddImageToEnd(ListTag::iterator begin,ListTag::iterator end);
 
+   ListPatient patients;
 };
 
 //-----------------------------------------------------------------------------

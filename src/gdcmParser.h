@@ -136,8 +136,11 @@ protected:
 
    static const unsigned int HEADER_LENGTH_TO_READ; 
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
+
 protected:
    int enableSequences;
+   int printLevel;
+
 private:
    // Read
    void Parse(bool exception_on_error = false) throw(gdcmFormatError);
@@ -210,9 +213,6 @@ private:
    // this upper bound is fixed to 1024 bytes (which might look reasonable
    // when one considers the definition of the various VR contents).
    guint32 MaxSizeLoadEntry;
-
-   // for PrintHeader
-   int printLevel;
 };
 
 //-----------------------------------------------------------------------------

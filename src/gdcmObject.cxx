@@ -3,43 +3,60 @@
 #include "gdcmObject.h"
 #include "gdcmUtil.h"
 
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
+gdcmObject::gdcmObject(ListTag::iterator begin,ListTag::iterator end) 
+{
+   beginObj=begin;
+   endObj=end;
 
-/*
-gdcmObject::gdcmObject() {
-
+   if(beginObj==endObj)
+      dbg.Verbose(0, "gdcmObject::gdcmObject empty list");
 }
 
-
-gdcmObject::~gdcmObject() {
-
+gdcmObject::~gdcmObject(void) 
+{
 }
-*/
 
-std::string gdcmObject::GetEntryByNumber(guint16 group, guint16 element) {
-  guint16 gr, el;
-  ListTag::iterator deb , fin;  
-  deb = beginObj;	
-  fin = endObj; 
-  
-  ListTag::iterator i=deb; 
-  
-  if (deb == fin) cout << "Big Trouble : Empty List!" <<endl;
-  while ( i!= fin) {
-     gr = (*(*i)).GetGroup();   
-     el = (*(*i)).GetElement();
-     if ( gr==group && el==element) 
-        return (*(*i)).GetValue();;
-     ++i;        
-  }        
+//-----------------------------------------------------------------------------
+// Print
+void gdcmObject::Print(std::ostream &os)
+{
+   for(ListTag::iterator i=beginObj;i!=endObj;++i)
+   {
+      (*i)->SetPrintLevel(printLevel);
+      (*i)->Print(os);
+   }
+}
+
+//-----------------------------------------------------------------------------
+// Public
+std::string gdcmObject::GetEntryByNumber(guint16 group, guint16 element) 
+{
+   for(ListTag::iterator i=beginObj;i!=endObj;++i)
+   {
+      if ( (*i)->GetGroup()==group && (*i)->GetElement()==element)
+         return (*i)->GetValue();
+   }
+   
    return GDCM_UNFOUND;
 }
 
 
-std::string gdcmObject::GetEntryByName(TagName name) {
+std::string gdcmObject::GetEntryByName(TagName name) 
+{
    gdcmDict *PubDict=gdcmGlobal::GetDicts()->GetDefaultPubDict();
    gdcmDictEntry *dictEntry = (*PubDict).GetDictEntryByName(name); 
+
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
    return GetEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement()); 
 }
 
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------

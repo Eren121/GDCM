@@ -6,16 +6,13 @@
 #include "gdcmObject.h"
 
 //-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-
-class GDCM_EXPORT gdcmImage : public gdcmObject {
+class GDCM_EXPORT gdcmImage : public gdcmObject 
+{
 public:
+   gdcmImage(ListTag::iterator begin,ListTag::iterator end);
+   ~gdcmImage(void);
 
-   gdcmImage();
-   ~gdcmImage();
-
+   virtual void Print(std::ostream &os = std::cout);
 };
 
 //-----------------------------------------------------------------------------

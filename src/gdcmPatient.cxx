@@ -2,16 +2,42 @@
 //-----------------------------------------------------------------------------
 #include "gdcmPatient.h"
 
-gdcmPatient::gdcmPatient() {
-
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
+gdcmPatient::gdcmPatient(ListTag::iterator begin,ListTag::iterator end):
+   gdcmObject(begin,end)
+{
 }
 
-
-gdcmPatient::~gdcmPatient() {
-   lStudy::iterator cc = GetStudies().begin();
-   while  (cc != GetStudies().end() ) {
+gdcmPatient::~gdcmPatient() 
+{
+   for(ListStudy::iterator cc = studies.begin();cc != studies.end();++cc)
+   {
       delete *cc;
-      ++cc;
    }
 }
 
+//-----------------------------------------------------------------------------
+// Print
+void gdcmPatient::Print(std::ostream &os)
+{
+   os<<"PATIENT"<<std::endl;
+   gdcmObject::Print(os);
+
+   for(ListStudy::iterator cc = studies.begin();cc!=studies.end();++cc)
+   {
+      (*cc)->SetPrintLevel(printLevel);
+      (*cc)->Print(os);
+   }
+}
+
+//-----------------------------------------------------------------------------
+// Public
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------

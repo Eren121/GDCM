@@ -7,24 +7,22 @@
 #include "gdcmSerie.h"
 
 //-----------------------------------------------------------------------------
-
-typedef std::list<gdcmSerie *> lSerie;
+typedef std::list<gdcmSerie *> ListSerie;
 
 //-----------------------------------------------------------------------------
-
-class GDCM_EXPORT gdcmStudy : public gdcmObject {
+class GDCM_EXPORT gdcmStudy : public gdcmObject 
+{
 public:
+   gdcmStudy(ListTag::iterator begin,ListTag::iterator end);
+   ~gdcmStudy(void);
 
-   gdcmStudy();
-   ~gdcmStudy();
+   virtual void Print(std::ostream &os = std::cout);
 
-   inline lSerie &GetSeries() {return series;};
-   
-   lSerie series;
-   
+   inline ListSerie &GetSeries() {return series;};
+   inline void AddSerie(gdcmSerie *obj) {series.push_back(obj);};
+
 private:
-
-
+   ListSerie series;
 };
 
 //-----------------------------------------------------------------------------

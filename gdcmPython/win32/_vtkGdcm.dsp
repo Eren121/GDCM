@@ -58,6 +58,10 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\src\gdcmDicomDir.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmDict.cxx
 # End Source File
 # Begin Source File
@@ -90,6 +94,10 @@ SOURCE=..\..\src\gdcmHeaderHelper.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmImage.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
@@ -102,6 +110,10 @@ SOURCE=..\..\src\gdcmJpeg2000.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmObject.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmParsePixels.cxx
 # End Source File
 # Begin Source File
@@ -110,7 +122,19 @@ SOURCE=..\..\src\gdcmParser.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmPatient.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmRLE.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmSerie.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmStudy.cxx
 # End Source File
 # Begin Source File
 

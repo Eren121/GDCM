@@ -53,7 +53,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=move                   $(ProjDir)\gdcm.py                   $(ProjDir)\..\ 
+PostBuild_Cmds=move                    $(ProjDir)\gdcm.py                    $(ProjDir)\..\ 
 # End Special Build Tool
 # Begin Target
 
@@ -77,6 +77,10 @@ InputName=gdcm
 # Begin Source File
 
 SOURCE=.\gdcm_wrap.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmDicomDir.cxx
 # End Source File
 # Begin Source File
 
@@ -112,6 +116,10 @@ SOURCE=..\..\src\gdcmHeaderHelper.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmImage.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmJpeg.cxx
 # End Source File
 # Begin Source File
@@ -124,6 +132,10 @@ SOURCE=..\..\src\gdcmJpeg2000.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmObject.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmParsePixels.cxx
 # End Source File
 # Begin Source File
@@ -132,7 +144,19 @@ SOURCE=..\..\src\gdcmParser.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmPatient.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmRLE.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmSerie.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmStudy.cxx
 # End Source File
 # Begin Source File
 

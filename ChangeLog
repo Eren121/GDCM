@@ -1,3 +1,7 @@
+2004-01-22 Benoit Regrain
+     * DicomDir : clean code, add methods, set variables in protected or private
+     * gdcmUtil : bug fix for the clean string method
+
 2004-01-19 Benoit Regrain
      * Add the use of shadow dictionaries
      * bug fix and coding style

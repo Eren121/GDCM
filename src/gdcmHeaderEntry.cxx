@@ -44,9 +44,9 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    v = GetValue();
    o = GetOffset();
    sprintf(greltag,"%04x|%04x ",g,e);           
-   d2 = _CreateCleanString(v);  // replace non printable characters by '.'
    s << greltag ;
        
+   d2 = _CreateCleanString(v);  // replace non printable characters by '.'
    if (printLevel>=2) { 
       s << "lg : ";
       lgth = GetReadLength();
@@ -97,7 +97,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
       else	
          sprintf(st," x(%08x)",atoi(v.c_str()));
       s << st;
-   }                     
+   }
    s << std::endl;
    os << s.str();
 }

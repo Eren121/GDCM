@@ -7,23 +7,22 @@
 #include "gdcmStudy.h"
 
 //-----------------------------------------------------------------------------
-
-typedef std::list<gdcmStudy *> lStudy;
+typedef std::list<gdcmStudy *> ListStudy;
 
 //-----------------------------------------------------------------------------
-
-class GDCM_EXPORT gdcmPatient : public gdcmObject {    //
+class GDCM_EXPORT gdcmPatient : public gdcmObject 
+{
 public:
+   gdcmPatient(ListTag::iterator begin,ListTag::iterator end);
+   ~gdcmPatient(void);
 
-   gdcmPatient();
-   ~gdcmPatient();
+   virtual void Print(std::ostream &os = std::cout);
 
-   inline lStudy &GetStudies() {return studies;};
+   inline ListStudy &GetStudies() {return studies;};
+   inline void AddStudy(gdcmStudy *obj) {studies.push_back(obj);};
        
-   lStudy studies;
 private:
-
-
+   ListStudy studies;
 };
 
 //-----------------------------------------------------------------------------
