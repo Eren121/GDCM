@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.17 2003/07/07 17:05:17 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.18 2003/08/29 09:47:13 malaterre Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -438,6 +438,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
   int NumPlanes  = GdcmFile.GetZSize();
   int LineSize   = NumColumns * GdcmFile.GetPixelSize();
   unsigned char * Source      = (unsigned char*)GdcmFile.GetImageData();
+  unsigned char * pSource     = Source; //pointer for later deletion
   unsigned char * Destination = Dest + size - LineSize;
 
   for (int plane = 0; plane < NumPlanes; plane++)
@@ -456,6 +457,9 @@ size_t vtkGdcmReader::LoadImageInMemory(
       UpdateProgressCount++;
       }
     }
+  //GetImageData allocate a (void*)malloc, remove it:
+  free(pSource);
+
   return size;
 }
 
