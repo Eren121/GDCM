@@ -8,7 +8,7 @@ SET(EXAMPLE_SOURCES
   BuildUpDicomDir
   FindTags
   FlatHashTablePrint
-  makeDicomDir
+  MakeDicomDir
   PrintDocument
   PrintFile
   PrintHeader

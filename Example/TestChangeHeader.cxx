@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:31 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/02/02 14:26:30 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     if (argc < 3)
     {
        std::cerr << "usage :" << std::endl <<
-         argv[0] << " nomFichierPourEntete nomFichierPourDonnées" << 
+         argv[0] << " fileNameForHeader fileNameForData" << 
          std::endl;
        return 1;
     }
@@ -55,5 +55,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-

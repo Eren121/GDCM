@@ -22,7 +22,6 @@ SET(TEST_SOURCES
 # add tests that require data
 IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}
-    TestSerieHeader                  # uses gdcmData as a default root directory    
     TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     TestPrintAllDocument.cxx         # includes generated gdcmDataImages.h
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
@@ -34,6 +33,7 @@ IF (GDCM_DATA_ROOT)
     TestBuildUpDicomDir.cxx          # writes a file named "NewDICOMDIR"
     TestMakeDicomDir.cxx             # writes a file named "NewDICOMDIR"
     TestDirList.cxx
+    TestSerieHelper                  # uses gdcmData as a default root directory    
   )
   # add test that require VTK:
   IF(GDCM_VTK)

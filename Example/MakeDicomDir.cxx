@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: makeDicomDir.cxx,v $
+  Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:32 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/02 14:26:30 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or

@@ -49,7 +49,7 @@ SET(libgdcm_la_SOURCES
    gdcmRLEFrame.cxx
    gdcmRLEFramesInfo.cxx
    gdcmSeqEntry.cxx
-   gdcmSerieHeader.cxx
+   gdcmSerieHelper.cxx
    gdcmSQItem.cxx
    gdcmTS.cxx
    gdcmUtil.cxx

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:31 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/02/02 14:26:30 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ bool RemoveFile(const char *source)
 // Here we load a gdcmFile and then try to create from scratch a copy of it,
 // copying field by field the dicom image
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
    if (argc < 3)
    {
@@ -112,10 +112,10 @@ int main(int argc, char* argv[])
          else
          {
           // We skip pb of SQ recursive exploration
-          //std::cout << "Skipped Sequence " 
-          //          << "------------- " << d->GetVR() << " "<< std::hex
-          //          << d->GetGroup() << " " << d->GetElement()
-          //  << std::endl;    
+          std::cout << "Skipped Sequence " 
+                    << "------------- " << d->GetVR() << " "<< std::hex
+                    << d->GetGroup() << "," << d->GetElement()
+                    << std::endl;    
          }
 
          d=original->GetFile()->GetNextEntry();

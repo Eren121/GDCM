@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/02/02 14:26:34 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,9 +69,9 @@ public:
    /// \brief adds any type of entry to the entry set
    virtual bool AddEntry(DocEntry *Entry) = 0;
    /// \brief Removes any type of entry out of the entry set, and destroys it
-   virtual bool RemoveEntry(DocEntry *EntryToRemove)=0;
+   virtual bool RemoveEntry(DocEntry *EntryToRemove) = 0;
    /// \brief Removes any type of entry out of the entry set, DOESN'T destroy it
-   virtual bool RemoveEntryNoDestroy(DocEntry *EntryToRemove)= 0;
+   virtual bool RemoveEntryNoDestroy(DocEntry *EntryToRemove) = 0;
 
    virtual DocEntry *GetFirstEntry()=0;
    virtual DocEntry *GetNextEntry()=0;
@@ -82,13 +82,13 @@ public:
    virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
 
    /// \brief Gets any type of DocEntry, identified by its (group,elem)
-   virtual DocEntry *GetDocEntry(uint16_t group,uint16_t elem) = 0;
-   /// \brief Gets a ValEntry, identified by its (group,elem)
-   virtual ValEntry *GetValEntry(uint16_t group,uint16_t elem);
+   virtual DocEntry *GetDocEntry(uint16_t group, uint16_t elem) = 0;
+   /// \brief Gets a ValEntry, identified by its (group, elem)
+   virtual ValEntry *GetValEntry(uint16_t group, uint16_t elem);
    /// \brief Gets a BinEntry, identified by its (group,elem)
-   virtual BinEntry *GetBinEntry(uint16_t group,uint16_t elem);
+   virtual BinEntry *GetBinEntry(uint16_t group, uint16_t elem);
    /// \brief Gets a SeqEntry, identified by its (group,elem)
-   virtual SeqEntry *GetSeqEntry(uint16_t group,uint16_t elem);
+   virtual SeqEntry *GetSeqEntry(uint16_t group, uint16_t elem);
 
    virtual bool SetValEntry(std::string const &content,
                             uint16_t group, uint16_t elem);
@@ -116,9 +116,9 @@ public:
 // DocEntry  related utilities 
    ValEntry *NewValEntry(uint16_t group,uint16_t elem,
                          TagName const &vr = GDCM_UNKNOWN);
-   BinEntry *NewBinEntry(uint16_t group,uint16_t elem,
+   BinEntry *NewBinEntry(uint16_t group, uint16_t elem,
                          TagName const &vr = GDCM_UNKNOWN);
-   SeqEntry *NewSeqEntry(uint16_t group,uint16_t elem);
+   SeqEntry *NewSeqEntry(uint16_t group, uint16_t elem);
 
 protected:
 // DictEntry  related utilities
