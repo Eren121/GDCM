@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 12:10:53 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/09/16 19:21:57 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,12 +30,12 @@
  * \ingroup gdcmSeqEntry
  * \brief   Constructor from a given gdcmSeqEntry
  */
-gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e, int depth) 
+gdcmSeqEntry::gdcmSeqEntry( gdcmDictEntry* e ) 
              : gdcmDocEntry(e)
 {
    UsableLength = 0;
    ReadLength = 0xffffffff;
-   SQDepthLevel = depth;
+   SQDepthLevel = -1;
 
    delimitor_mode = false;
    seq_term  = NULL;
@@ -72,7 +72,7 @@ gdcmSeqEntry::~gdcmSeqEntry() {
 /**
  * \brief   canonical Printer
  */
-void gdcmSeqEntry::Print(std::ostream &os)
+void gdcmSeqEntry::Print( std::ostream &os )
 {
    // First, Print the Dicom Element itself.
    SetPrintLevel(2);   
@@ -90,15 +90,20 @@ void gdcmSeqEntry::Print(std::ostream &os)
 
    // at end, print the sequence terminator item, if any
    if (delimitor_mode) {
-      for (int i=0;i<SQDepthLevel+1;i++)
+      for ( int i = 0; i < SQDepthLevel; i++ )
+      {
          os << "   | " ;
-      if (seq_term != NULL) {
+      }
+      if (seq_term != NULL)
+      {
          seq_term->Print(os);
          os << std::endl;
       } 
       else 
-         // fusible
+      {
+         // fuse
          os << "      -------------- should have a sequence terminator item";
+      }
    }                    
 }
 

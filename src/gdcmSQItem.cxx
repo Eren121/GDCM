@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/27 15:48:44 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/09/16 19:21:57 $
+  Version:   $Revision: 1.26 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,9 +33,9 @@
  * \brief   Constructor from a given gdcmSQItem
  */
 gdcmSQItem::gdcmSQItem(int depthLevel ) 
-          : gdcmDocEntrySet(depthLevel)
+          : gdcmDocEntrySet( )
 {
-   SQDepthLevel = depthLevel +1;
+   SQDepthLevel = depthLevel;
 }
 
 /**

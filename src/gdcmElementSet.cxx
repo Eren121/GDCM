@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/03 14:04:02 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/09/16 19:21:57 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,8 +28,9 @@
  * \ingroup gdcmElementSet
  * \brief   Constructor from a given gdcmElementSet
  */
+//BOZ depthLevel is not usefull anymore
 gdcmElementSet::gdcmElementSet(int depthLevel) 
-              : gdcmDocEntrySet(depthLevel)
+              : gdcmDocEntrySet()
 {
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/14 16:47:08 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/09/16 19:21:57 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,33 +27,7 @@
 #include "gdcmBinEntry.h"
 
 //-----------------------------------------------------------------------------
-// Constructor / Destructor
-/**
- * \ingroup gdcmDocEntrySet
- * \brief   Constructor from a given gdcmDocEntrySet
- */
-gdcmDocEntrySet::gdcmDocEntrySet(int depthLevel)
-{
-   SQDepthLevel = depthLevel + 1;   //magic +1 !
-}
-/**
- * \brief   Canonical destructor.
- */
-gdcmDocEntrySet::~gdcmDocEntrySet()
-{
-}
-//-----------------------------------------------------------------------------
-// Print
-/*
- * \ingroup gdcmDocEntrySet
- * \brief   canonical Printer
- */
-
-
-//-----------------------------------------------------------------------------
 // Public
-
-
 
 /**
  * \brief   Build a new Val Entry from all the low level arguments. 
@@ -117,23 +91,26 @@ gdcmBinEntry *gdcmDocEntrySet::NewBinEntryByNumber(uint16_t group,
  * @param   Group group   number of the underlying DictEntry
  * @param   Elem  element number of the underlying DictEntry
  */
-gdcmSeqEntry *gdcmDocEntrySet::NewSeqEntryByNumber(uint16_t Group,
+gdcmSeqEntry* gdcmDocEntrySet::NewSeqEntryByNumber(uint16_t Group,
                                                    uint16_t Elem) 
 {
    // Find out if the tag we encountered is in the dictionaries:
-   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
-   if (!DictEntry)
+   gdcmDictEntry* DictEntry = GetDictEntryByNumber( Group, Elem );
+   if ( ! DictEntry )
+   {
       DictEntry = NewVirtualDictEntry(Group, Elem);
+   }
 
-   gdcmSeqEntry *NewEntry = new gdcmSeqEntry(DictEntry, 1); // FIXME : 1
-   if (!NewEntry) 
+   gdcmSeqEntry *NewEntry = new gdcmSeqEntry( DictEntry );
+   if ( !NewEntry ) 
    {
       dbg.Verbose(1, "gdcmDocument::NewSeqEntryByNumber",
                   "failed to allocate gdcmSeqEntry");
-      return NULL;
+      return 0;
    }
    return NewEntry;
 }
+
 //-----------------------------------------------------------------------------
 // Protected
 

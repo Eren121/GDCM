@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 12:10:53 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/09/16 19:21:57 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@ typedef std::list<gdcmSQItem *> ListSQItem;
 class GDCM_EXPORT gdcmSeqEntry : public gdcmDocEntry 
 {
 public:
-   gdcmSeqEntry(gdcmDictEntry* e, int depth);
+   gdcmSeqEntry( gdcmDictEntry* );
    gdcmSeqEntry(gdcmDocEntry* d,  int depth);
    virtual ~gdcmSeqEntry();
    
@@ -69,7 +69,10 @@ private:
    /// sequence terminator item 
    gdcmDocEntry *seq_term;
 
-   /// Gives the depth level of elements inside SeQuences
+   /// \brief Defines the depth level of this \ref gdcmSeqEntry inside
+   ///        the (optionaly) nested sequences. \ref SQDepthLevel
+   ///        and its \ref gdcmSQItem::SQDepthLevel counterpart
+   ///        are only defined on printing purposes (see \ref Print).
    int SQDepthLevel;
 };
 

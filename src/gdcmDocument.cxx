@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/16 06:48:00 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2004/09/16 19:21:57 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,8 +106,6 @@ gdcmDocument::gdcmDocument( std::string const & filename )
    CheckSwap();
    long beg = ftell(Fp);
    lgt -= beg;
-   
-   SQDepthLevel = 0;
    
    (void)ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
 
@@ -1186,7 +1184,7 @@ void* gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
       delete[] a;
       return NULL;
    }
-   /// \TODO Drop any already existing void area! JPR
+   /// \todo Drop any already existing void area! JPR
    if( !SetEntryVoidAreaByNumber( a, group, elem ) );
    {
       dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea setting failed.");
@@ -1449,7 +1447,6 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
    gdcmDocEntry *newDocEntry = 0;
    unsigned long l = 0;
    
-   int depth = set->GetDepthLevel();
    while (true)
    { 
       if ( !delim_mode && (ftell(Fp)-offset) >= l_max)
@@ -1468,11 +1465,26 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
                
          if ( gdcmGlobal::GetVR()->IsVROfGdcmStringRepresentable(vr) )
          {
-            /////// ValEntry
+         /////////////////////// ValEntry
             gdcmValEntry* newValEntry =
                new gdcmValEntry( newDocEntry->GetDictEntry() );
             newValEntry->Copy( newDocEntry );
-            newValEntry->SetKey( set->GetBaseTagKey() + newValEntry->GetKey() );
+             
+            // When "set" is a gdcmDocument, then we are at the top of the
+            // hierarchy and the Key is simply of the form ( group, elem )...
+            if (gdcmDocument* dummy = dynamic_cast< gdcmDocument* > ( set ) )
+            {
+               newValEntry->SetKey( newValEntry->GetKey() );
+            }
+            // ...but when "set" is a gdcmSQItem, we are inserting this new
+            // valEntry in a sequence item. Hence the key has the
+            // generalized form (refer to \ref gdcmBaseTagKey):
+            if (gdcmSQItem* parentSQItem = dynamic_cast< gdcmSQItem* > ( set ) )
+            {
+               newValEntry->SetKey(  parentSQItem->GetBaseTagKey()
+                                   + newValEntry->GetKey() );
+            }
+             
             set->AddEntry( newValEntry );
             LoadDocEntry( newValEntry );
             if (newValEntry->IsItemDelimitor())
@@ -1493,11 +1505,26 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
                                "nor BinEntry. Probably unknown VR.");
             }
 
-            ////// BinEntry or UNKOWN VR:
+         //////////////////// BinEntry or UNKOWN VR:
             gdcmBinEntry* newBinEntry =
                new gdcmBinEntry( newDocEntry->GetDictEntry() );
             newBinEntry->Copy( newDocEntry );
-            newBinEntry->SetKey( set->GetBaseTagKey() + newBinEntry->GetKey() );
+
+            // When "this" is a gdcmDocument the Key is simply of the
+            // form ( group, elem )...
+            if (gdcmDocument* dummy = dynamic_cast< gdcmDocument* > ( set ) )
+            {
+               newBinEntry->SetKey( newBinEntry->GetKey() );
+            }
+            // but when "this" is a SQItem, we are inserting this new
+            // valEntry in a sequence item, and the kay has the
+            // generalized form (refer to \ref gdcmBaseTagKey):
+            if (gdcmSQItem* parentSQItem = dynamic_cast< gdcmSQItem* > ( set ) )
+            {
+               newBinEntry->SetKey(  parentSQItem->GetBaseTagKey()
+                                   + newBinEntry->GetKey() );
+            }
+
             set->AddEntry( newBinEntry );
             LoadDocEntry( newBinEntry );
          }
@@ -1541,12 +1568,28 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
          }
          // no other way to create it ...
          gdcmSeqEntry* newSeqEntry =
-            new gdcmSeqEntry( newDocEntry->GetDictEntry(),
-                              set->GetDepthLevel() );
+            new gdcmSeqEntry( newDocEntry->GetDictEntry() );
          newSeqEntry->Copy( newDocEntry );
          newSeqEntry->SetDelimitorMode( delim_mode );
-         newSeqEntry->SetDepthLevel( depth );
-         newSeqEntry->SetKey( set->GetBaseTagKey() + newSeqEntry->GetKey() );
+
+         // At the top of the hierarchy, stands a gdcmDocument. When "set"
+         // is a gdcmDocument, then we are building the first depth level.
+         // Hence the gdcmSeqEntry we are building simply has a depth
+         // level of one:
+         if (gdcmDocument* dummy = dynamic_cast< gdcmDocument* > ( set ) )
+         {
+            newSeqEntry->SetDepthLevel( 1 );
+            newSeqEntry->SetKey( newSeqEntry->GetKey() );
+         }
+         // But when "set" is allready a SQItem, we are building a nested
+         // sequence, and hence the depth level of the new gdcmSeqEntry
+         // we are building, is one level deeper:
+         if (gdcmSQItem* parentSQItem = dynamic_cast< gdcmSQItem* > ( set ) )
+         {
+            newSeqEntry->SetDepthLevel( parentSQItem->GetDepthLevel() + 1 );
+            newSeqEntry->SetKey(  parentSQItem->GetBaseTagKey()
+                                + newSeqEntry->GetKey() );
+         }
 
          if ( l != 0 )
          {  // Don't try to parse zero-length sequences

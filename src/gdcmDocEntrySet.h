@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/14 16:47:08 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/09/16 19:21:57 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,12 +25,33 @@
 typedef std::string gdcmBaseTagKey;
 //-----------------------------------------------------------------------------
 
+/**
+ * \ref gdcmDocEntrySet is an abstract base class for \ref gdcmElementSet
+ * and \ref gdcmSQItem which are both containers for gdcmDocEntries.
+ * \ref gdcmElementSet is based on the STL map<> container
+ * (see \ref gdcmElementSet::TagHT), as opposed to \ref gdcmSQItem
+ * which is based on an STL list container (see \ref gdcmSQItem::docEntries).
+ * Since the syntax for adding a new element to a map<> or a list<>
+ * differ, \ref gdcmDocEntrySet is designed as an adapter to unify the
+ * interfaces of \ref gdcmDocEntrySet and \ref gdcmElementSet.
+ * As an illustration of this design, please refer to the implementation
+ * of \ref AddEntry (or any pure virtual method) in both derived classes.
+ * This adapter unification of interfaces enables the parsing of a
+ * DICOM header containing (optionaly heavily nested) sequences to be
+ * written recursively [see \ref gdcmDocument::ParseDES 
+ * which calls \ref gdcmDocument::ParseSQ, which in turns calls 
+ * \ref gdcmDocument::ParseDES ].
+ *
+ * \note Developpers should strongly resist to the temptation of adding
+ *       members to this class since this class is designed as an adapter 
+ *       in the form of an abstract base class.
+ */
 class GDCM_EXPORT gdcmDocEntrySet
 {
 public:
 
-   gdcmDocEntrySet(int depth = 0); 
-   virtual ~gdcmDocEntrySet();
+   gdcmDocEntrySet() {}
+   virtual ~gdcmDocEntrySet() {}
 
    /// \brief adds any type of entry to the entry set (pure vitual)
    virtual bool AddEntry(gdcmDocEntry *Entry) = 0; // pure virtual
@@ -40,17 +61,6 @@ public:
 
    /// \brief write any type of entry to the entry set
    virtual void Write (FILE *fp, FileType filetype) = 0;// pure virtual
-
-   /// \brief Gets the depth level of a Dicom Header Entry embedded in a
-   ///        SeQuence
-   int GetDepthLevel() { return SQDepthLevel; }
-
-   /// \brief Sets the depth level of a Dicom Header Entry embedded in a
-   /// SeQuence
-   void SetDepthLevel(int depth) { SQDepthLevel = depth; }
-
-   void           SetBaseTagKey( gdcmBaseTagKey key ) { BaseTagKey = key; }
-   gdcmBaseTagKey GetBaseTagKey( ) { return BaseTagKey; }
 
    virtual gdcmDocEntry* GetDocEntryByNumber(uint16_t group,
                                              uint16_t element) = 0;
@@ -83,13 +93,6 @@ protected:
    gdcmDictEntry *GetDictEntryByName  (std::string const & name);
    gdcmDictEntry *GetDictEntryByNumber(uint16_t, uint16_t);
 
-   /// Gives the depth level of the element set inside SeQuences   
-   int SQDepthLevel;
-
-   /// \brief A TagKey of a gdcmDocEntry nested in a sequence is prepended
-   ///        with this BaseTagKey.
-   gdcmBaseTagKey BaseTagKey;
-private:
 };
 
 

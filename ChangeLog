@@ -1,3 +1,17 @@
+2004-09-16 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * gdcmDocEntrySet::SQDepthLevel and gdcmDocEntrySet::BaseTagKey attributes
+    moved away from gdcmDocEntrySet (since this class is an abstract class
+    acting like an interface). SQDepthLevel and BaseTagKey are now
+    in class 
+    - src/gdcmDocEntrySet.[h|cxx] removal of SQDepthLevel and BaseTagKey
+      and associated accessors. Doxygenation of the class.
+    - src/gdcmSQItem.[h|cxx] SQDepthLevel and BaseTagKey and associated
+      accessors added.
+    - src/gdcmSeqEntry.[h|cxx]: constructor doesn't handle depth anymore.
+      Use SQDepthLevel accessor instead. ::Print() adapted.
+    - src/gdcmElementSet.cxx changed according to changes in gdcmSeqEntry.
+    - src/gdcmDocument.cxx changed accordingly.
+
 2004-09-13 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Preparation of writing a gdcmHeader iterator: generalisation of gdcmTagKey
     - The following is the doxygen comment of the typedef declaration
