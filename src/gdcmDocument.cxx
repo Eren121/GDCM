@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 16:36:52 $
-  Version:   $Revision: 1.227 $
+  Date:      $Date: 2005/02/11 19:19:05 $
+  Version:   $Revision: 1.228 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1721,8 +1721,6 @@ bool Document::CheckSwap()
    // 0x00000004. Finding the swap code in then straigthforward. Trouble
    // occurs when we can't find such group...
    
-   uint32_t  x = 4;  // x : for ntohs
-   bool net2host; // true when HostByteOrder is the same as NetworkByteOrder
    uint32_t  s32;
    uint16_t  s16;
        
@@ -1730,14 +1728,9 @@ bool Document::CheckSwap()
     
    // First, compare HostByteOrder and NetworkByteOrder in order to
    // determine if we shall need to swap bytes (i.e. the Endian type).
-   if ( x == ntohs(x) )
-   {
-      net2host = true;
-   }
-   else
-   {
-      net2host = false;
-   }
+
+   uint32_t  x = 4;  // x : for ntohs
+   bool net2host = (x == ntohs(x));// true when HostByteOrder is the same as NetworkByteOrder
          
    // The easiest case is the one of a 'true' DICOM header, we just have
    // to look for the string "DICM" inside the file preamble.
