@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 16:36:52 $
-  Version:   $Revision: 1.106 $
+  Date:      $Date: 2005/03/22 11:23:51 $
+  Version:   $Revision: 1.107 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,9 @@
 #include <list>
 #include <fstream>
 
+#define NO_SEQ    0x0000001
+#define NO_SHADOW 0x00000002
+
 namespace gdcm 
 {
 class ValEntry;
@@ -44,6 +47,9 @@ class GDCM_EXPORT Document : public ElementSet
 public:
 
 typedef std::list<Element> ListElements;
+
+// Loading
+void Load( std::string const &filename ); 
 
 // Dictionaries
    Dict *GetPubDict();
@@ -91,6 +97,10 @@ typedef std::list<Element> ListElements;
  
 // Ordering of Documents
    bool operator<(Document &document);
+
+   /// \brief Sets the LoadMode as a boolean string
+   /// NO_SEQ, NO_SHADOW, ... (nothing more, right now)
+   void SetLoadMode (int mode) { LoadMode = mode; }
 
 protected:
 // Methods
@@ -141,9 +151,6 @@ protected:
    /// \brief Elements whose value is longer than MAX_SIZE_LOAD_ELEMENT_VALUE
    /// are NOT loaded.
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
-   /// \brief Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
-   /// are NOT printed.
-   static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// List of element to Anonymize
    ListElements AnonymizeList;
@@ -153,8 +160,8 @@ private:
    void Initialize();
 
    // Read
-   void ParseDES(DocEntrySet *set,long offset, long l_max, bool delim_mode);
-   void ParseSQ (SeqEntry *seq,   long offset, long l_max, bool delim_mode);
+   void ParseDES(DocEntrySet *set, long offset, long l_max, bool delim_mode);
+   void ParseSQ (SeqEntry *seq,    long offset, long l_max, bool delim_mode);
 
    void LoadDocEntry         (DocEntry *e);
    void FindDocEntryLength   (DocEntry *e) throw ( FormatError );
@@ -168,13 +175,12 @@ private:
    void SkipDocEntry          (DocEntry *entry);
    void SkipToNextDocEntry    (DocEntry *entry);
 
-   void FixDocEntryFoundLength(DocEntry *entry,uint32_t l);
+   void FixDocEntryFoundLength(DocEntry *entry, uint32_t l);
    bool IsDocEntryAnInteger   (DocEntry *entry);
 
    bool CheckSwap();
    void SwitchByteSwapCode();
    void SetMaxSizeLoadEntry(long);
-   void SetMaxSizePrintEntry(long);
 
    // DocEntry related utilities
    DocEntry *ReadNextDocEntry();
@@ -195,16 +201,15 @@ private:
    /// when one considers the definition of the various VR contents).
    uint32_t MaxSizeLoadEntry;
    
-   /// \brief Size threshold above which an element value will NOT be *printed*
-   /// in order no to polute the screen output. By default, this upper bound
-   /// is fixed to 64 bytes.
-   uint32_t MaxSizePrintEntry;   
-
-
 //  uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
 //  void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
-//                                   DocEntrySet *set );
+//                                  DocEntrySet *set );
 
+   /// \brief Bit string integer (each one considered as a boolean)
+   ///        Bit 0 : Skip Sequences,    if possible
+   ///        Bit 1 : Skip Shadow Groups if possible
+   ///        Some more to add
+   int LoadMode;
 };
 
 } // end namespace gdcm
