@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 20:04:08 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/02/17 10:56:20 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,11 +64,18 @@ public:
    static void SetRootUID(const std::string &root = "");
    static const std::string &GetRootUID();
 
+   static const uint8_t *GetFileMetaInformationVersion() 
+                     { return FileMetaInformationVersion;};
+   static void SetFileMetaInformationVersion( uint16_t fmiv)
+                     { FileMetaInformationVersion = (uint8_t *)&fmiv; };
+
 private:
    static std::string GetIPAddress(); //Do not expose this method
 
    static std::string RootUID;
    static const std::string GDCM_UID;
+   static uint8_t *FileMetaInformationVersion;
+   static const uint16_t FMIV;
 };
 
 GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint16_t &val);
