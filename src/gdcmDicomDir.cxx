@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:54 $
-  Version:   $Revision: 1.123 $
+  Date:      $Date: 2005/02/01 10:34:59 $
+  Version:   $Revision: 1.124 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -960,8 +960,6 @@ bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
    return *header1 < *header2;
 }
 
-} // end namespace gdcm
-
 //-----------------------------------------------------------------------------
 // Print
 /**
@@ -986,3 +984,4 @@ void DicomDir::Print(std::ostream &os, std::string const & )
 }
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm

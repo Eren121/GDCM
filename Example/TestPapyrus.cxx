@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 15:40:18 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/02/01 10:34:59 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
    std::string output = argv[2];
 
    if (argc > 3)
-      gdcm::Debug::SetDebugOn();
+      gdcm::Debug::DebugOn();
 
    if( FileExists( output.c_str() ) )
    {
