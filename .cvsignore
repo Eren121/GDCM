@@ -9,3 +9,7 @@ configure
 libtool
 ltmain.sh
 aclocal.m4
+*.pyc
+build
+dist
+MANIFEST

@@ -1,0 +1,4 @@
+include distutilsSwigCPlusPlus.py
+recursive-include src *.h
+recursive-include Dicts *.dic
+recursive-include Data *.*

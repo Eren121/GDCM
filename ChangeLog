@@ -1,3 +1,13 @@
+2003-03-03 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * Eventually, python/gdcmPython was renamed to gdcmPython. This
+        was done in a last ditch attempt to get setup.py _really_
+        operationnal. The python/gdcmPython layaout add the advantage
+        of hidding away the python related distutils specific files
+        (MANIFEST.in, setup.py, distutils*.py...) from the main directory.
+        Alas, the src directory was out of scope (i.e. it's relative
+        position to setup.py was ../src) which made things impossible to
+        handle (see previous version of python/setup.py). Crossing fingers...
+
 2003-02-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/setup.py now works on Un*x. (harder than I thougth)
       * python/distutilsSwigCPlusPlus.py can now have include files
