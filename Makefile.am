@@ -11,7 +11,8 @@ EXTRA_DIST = \
 	NEWS \
 	README \
 	TODO \
-	gdcm.spec
+	gdcm.spec \
+	gdcm.dsw
 
 release:
 	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)

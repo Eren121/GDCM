@@ -7,6 +7,8 @@
         - PACKAGER corrected
         - DEVELOPPER added.
         - AUTHORS updated and now in alphabetical order
+      * Makefile.am now exports gdcm.dsw for Windoze users.
+
 2003-09-11  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * cygwin complains about missing std:: in subdir Test/
 2003-09-10  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
