@@ -2,14 +2,27 @@
      * DEVELOPPER: added some helpfull comments for compile/test/install
        when using cmake.
 
+2004-04-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     * ENH: 1. Remove remp solution of gdcmTests.cxx+ gdcmMain directly in 
+               src directory, now generated in the build dir.
+            2. Tests as mentionned smarter
+            3. Some clean up
+            4. Add a new method in gdcmDict that return the PubDict by name 
+	       this is interesting for 3rd party lib like ITK, 
+	       where we could set the institution name / patient name...
+
+       * ENH: 1. Now the test suite is working for real
+              2. All binaries are now output in the gdcm-bin directory 
+	         (this was not true before)		 
+
 2004-04-28  Jean-Pierre Roux
      * ENH add the provisional  gdcmHeader::SQDepthLevel to allow 
-           SeQuence indented printing of Dicom Header
+           SeQuence indented printing of Dicom Header.
      * ENH merge methods gdcmParser::Parse and gdcmParser::LoadHeaderEntries
-           into the single gdcmParser::LoadHeaderEntries for efficiency purpose
+           into the single gdcmParser::LoadHeaderEntries for efficiency purpose.
 	   Computation of SQDepthLevel is now part of gdcmHeader constructor
      * ENH add self defined param 'new' to PrintHeader to 'show' the SeQuence
-           tree-like structure of a Dicom Header 
+           tree-like structure of a Dicom Header.
      * FIX Test code cleaning     
            
 2004-04-25  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
@@ -17,16 +30,18 @@
        1. Need a DartConfig.cmake to submit to public
        2. Add a test driver gdcmTest.cxx
        3. gdcmTestMain, an helper for the main test driver gdcmTest
-       4. Files in Test don't have a main anymore, this becomes intersting when we add more and more tests, thus dsw don't have to load too many projects
+       4. Files in Test don't have a main anymore, this becomes interesting 
+          when we add more and more tests, thus dsw don't have to load 
+          too many projects
      * ENH: Adding a GDCM_DATA_ROOT for testing
      * ENH: Remove redundancie about GDCM_DICT stuff, now we only need to modify
        one file instead of seven + some small cleanup
 
 2004-04-22  Jean-Pierre Roux
-     * ENH Minor changes to the Print() methods
+     * ENH Minor changes to the Print() methods.
      * ADD gdcmParser::PrintEntryNiceSQ() to allow SQ-indented
            Header printing. Example given with :
-	   PrintHeader fileName  2 new
+	   > PrintHeader fileName  2 new
           (SQ based tree-like structure still to be done for the Header ...)
 	   
 2004-04-22  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
@@ -368,7 +383,7 @@
      * Update Windows projects and .cvsignore files
 
 2003-11-12 Jean-Pierre Roux
-     * ENH  gdcmHeader constructor has one more parameter (default value : false)
+     * ENH gdcmHeader constructor has one more parameter (default value : false)
            that allows the user to 'go inside' the SeQuences only
            if he wants to.
            gdcmElValSet:Print takes it into account
@@ -487,16 +502,16 @@
 2003-10-24  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * ENH: vtkGdcmReader.cxx can now read multiframe dicom
       * FIX: remove a call to ->Modified ... see comments
-      * FIX: vtkgdcmViewer.cxx was writting ASCII file...this is so slooooooow !
+      * FIX: vtkgdcmViewer.cxx was writting ASCII file...this is so slooooow !
       
 2003-10-23  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * FIX: Problem with path for libvtkgdcmPython
       * ENH: Try adding a search script for python site-package
       * RMV: Remove some file from medcon lib that are not necessary
       * FIX: gdcm/Makefile.am fix for generating ljpg medcon
-      * ENH: CMakeLists.txt now generate 'pygdcm.so' instead of 'libpygdcm.so' 
+      * ENH: CMakeLists.txt now generate 'pygdcm.so' instead of 'libpygdcm.so'
       * FIX: More pragma disable fro VC++, 
-             I don't think I break something as it is also disable in VTK/ITK. 
+             I don't think I break something as it is also disable in VTK/ITK.
         But it fasten debug compilation time.
             
 2003-10-23 Jean-Pierre Roux
@@ -562,7 +577,8 @@
       no longer seg faults when file is not found
 
 2003-10-14  Jean-Pierre Roux
-     * Emprovement of reading for Dicom encapsulated Jpeg LossLess MultiFrame images
+     * Emprovement of reading for Dicom encapsulated Jpeg LossLess 
+       MultiFrame images
 
 2003-10-14  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * TODO: *.in file to genereate a UseGDCM later
@@ -659,7 +675,8 @@
          - deals with MultiFrames MultiFragments Run Length Encoded files
          - deals with YcBcR (YBR_FULL) files
          - deals with YBR_YBR_FULL_422 files (they work as RBG files ?!?)
-          WARNING : nothing was checked for YBR_PARTIAL_422, YBR_ICT, YBR_RCT files.
+          WARNING : nothing was checked for YBR_PARTIAL_422, YBR_ICT, 
+	                                    YBR_RCT files.
           (no sample found :-(
 
 2003-10-02  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
@@ -733,11 +750,13 @@
       * vtk/win32/vtkgdcm.dsp : added /nodefaultlib "mscvrt" for debug mode
 
 2003-08-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-      * Corrected a leak in vtkGdcmREader.cxx, the pSource was find thanks to valgrind.
+      * Corrected a leak in vtkGdcmREader.cxx, the pSource was find thanks
+            to valgrind.
 
 2003-07-29  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
       * src/win32/libgdcmjpeg12.dsp was not dos format
-      * src/win32/libgdcmjpeg12.dsp : libgdcmijpeg12_EXPORTS -> LIBGDCMIJPEG12_EXPORTS
+      * src/win32/libgdcmjpeg12.dsp : 
+                  libgdcmijpeg12_EXPORTS -> LIBGDCMIJPEG12_EXPORTS
       * src/win32/gdcmdll.dsp: + /I "..\jpeg\libijg12"
 
 2003-07-29 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
