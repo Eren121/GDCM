@@ -1,5 +1,9 @@
 2004-12-10 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * src/gdcmFile.[h|cxx], gdcmPixelReadConvert.[h|cxx] : change the API. 
+   * src/gdcmHeader.cxx : change the initialisation of default header.
+     Now, this header is readable by gdm, e-film, DicomWorks
+
+2004-12-10 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.[h|cxx], gdcmPixelReadConvert.[h|cxx] : change the API.
      Rename Decompressed to Raw
    * Use the API changes in gdcm::File.
    * vtk/vtkGdcmWriter.[h|cxx] : add the possibility to write in other modes
