@@ -1,25 +1,25 @@
 HTML_DIR=$(datadir)/gdcm/html
 TARGET_DIR=$(HTML_DIR)/$(DOC_MODULE)
 
-EXTRA_DIST = Doxyfile requirement.txt
+EXTRA_DIST = DoxyfileDeveloppers
 
-all-local: html/index.html
+all-local: html.developper/index.html
 
 if ENABLE_DOXYGEN
-html/index.html: Doxyfile
-	doxygen Doxyfile
+html.developper/index.html: DoxyfileDeveloppers
+	doxygen DoxyfileDeveloppers
 else
-html/index.html:
+html.developper/index.html:
 endif
 
 clean-local:
 	rm -f *~ *.bak
-	rm -rf man latex html rtf
+	rm -rf man latex html.developper rtf
 
-install-data-local: html
+install-data-local: html.developper
 	$(mkinstalldirs) $(DESTDIR)$(TARGET_DIR)
-	(installfiles=`echo html/*`; \
-        if test "$$installfiles" = 'html/*'; \
+	(installfiles=`echo html.developper/*`; \
+        if test "$$installfiles" = 'html.developper/*'; \
         then echo '-- Nothing to install' ; \
         else \
           for i in $$installfiles; do \
@@ -29,6 +29,6 @@ install-data-local: html
         fi)
 
 dist-hook:
-	rm -rf $(distdir)/html
+	rm -rf $(distdir)/html.developper
 
-.PHONY : html latex man
+.PHONY : html.developper latex man
