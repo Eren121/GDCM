@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:09 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/02/15 18:12:35 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,13 +123,15 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
 
    PixelOffset     = file->GetPixelOffset();
    PixelDataLength = file->GetPixelAreaLength();
-   RLEInfo  = file->GetRLEInfo();
-   JPEGInfo = file->GetJPEGInfo();
+   RLEInfo         = file->GetRLEInfo();
+   JPEGInfo        = file->GetJPEGInfo();
+
+   IsMonochrome    = file->IsMonochrome();
+   IsMonochrome1   = file->IsMonochrome1();
+   IsPaletteColor  = file->IsPaletteColor();
+   IsYBRFull       = file->IsYBRFull();
 
    PlanarConfiguration = file->GetPlanarConfiguration();
-   IsMonochrome = file->IsMonochrome();
-   IsPaletteColor = file->IsPaletteColor();
-   IsYBRFull = file->IsYBRFull();
 
    /////////////////////////////////////////////////////////////////
    // LUT section:
@@ -262,6 +264,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    //// Third stage: twigle the bytes and bits.
    ConvertReorderEndianity();
    ConvertReArrangeBits();
+   ConvertFixGreyLevels();
    ConvertHandleColor();
 
    return true;
@@ -640,6 +643,49 @@ void PixelReadConvert::ConvertReorderEndianity()
       }
    }
 }
+
+
+
+/**
+ * \brief Deal with Grey levels i.e. re-arange them
+ *        to have low values = dark, high values = bright
+ */
+void PixelReadConvert::ConvertFixGreyLevels()
+{
+   if (!IsMonochrome1)
+      return;
+
+   int i; // to please M$VC6
+   if ( BitsAllocated == 8 )
+   {
+      uint8_t *deb = (uint8_t *)Raw;
+      for (i=0; i<RawSize; i++)      
+      {
+         *deb = 255 - *deb;
+         deb++;
+      }
+      return;
+   }
+
+   if ( BitsAllocated == 16 )
+   {
+      uint16_t mask =1;
+      int bitStored = 12;   
+      for (i=0; i<BitsStored-1; i++)
+      {
+         mask = (mask << 1) +1; // will be fff when BitStored=12
+      }
+
+      uint16_t *deb = (uint16_t *)Raw;
+      for (i=0; i<RawSize/2; i++)      
+      {
+         *deb = mask - *deb;
+         deb++;
+      }
+      return;
+   }
+}
+
 
 /**
  * \brief  Re-arrange the bits within the bytes.

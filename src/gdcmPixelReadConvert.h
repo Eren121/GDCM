@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:03:07 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/02/15 18:12:35 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,6 +70,7 @@ private:
    void ConvertSwapZone();
    void ConvertReorderEndianity();
    bool ConvertReArrangeBits() throw ( FormatError );
+   void ConvertFixGreyLevels();
    void ConvertRGBPlanesToRGBPixels();
    void ConvertYcBcRPlanesToRGBPixels();
    void ConvertHandleColor();
@@ -118,6 +119,7 @@ private:
    // For handling color stage
    int PlanarConfiguration;
    bool IsMonochrome;
+   bool IsMonochrome1;
    bool IsPaletteColor;
    bool IsYBRFull;
    bool HasLUT;

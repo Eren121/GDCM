@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/06 14:39:35 $
-  Version:   $Revision: 1.103 $
+  Date:      $Date: 2005/02/15 18:12:35 $
+  Version:   $Revision: 1.104 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,6 +129,7 @@ public:
    std::string GetPixelType();
    bool IsSignedPixelData();
    bool IsMonochrome();
+   bool IsMonochrome1();
    bool IsPaletteColor();
    bool IsYBRFull();
 

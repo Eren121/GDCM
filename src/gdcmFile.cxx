@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 20:53:23 $
-  Version:   $Revision: 1.223 $
+  Date:      $Date: 2005/02/15 18:12:34 $
+  Version:   $Revision: 1.224 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -847,8 +847,8 @@ bool File::IsSignedPixelData()
 }
 
 /**
- * \brief   Check whether this a monochrome picture or not by accessing
- *          the "Photometric Interpretation" tag ( 0x0028, 0x0004 ).
+ * \brief   Check whether this a monochrome picture (gray levels) or not,
+ *          using "Photometric Interpretation" tag (0x0028,0x0004).
  * @return  true when "MONOCHROME1" or "MONOCHROME2". False otherwise.
  */
 bool File::IsMonochrome()
@@ -856,6 +856,25 @@ bool File::IsMonochrome()
    const std::string &PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
    if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1")
       || Util::DicomStringEqual(PhotometricInterp, "MONOCHROME2") )
+   {
+      return true;
+   }
+   if ( PhotometricInterp == GDCM_UNFOUND )
+   {
+      gdcmWarningMacro( "Not found : Photometric Interpretation (0028,0004)");
+   }
+   return false;
+}
+
+/**
+ * \brief   Check whether this a MONOCHROME1 picture (high values = dark)
+ *            or not using "Photometric Interpretation" tag (0x0028,0x0004).
+ * @return  true when "MONOCHROME1" . False otherwise.
+ */
+bool File::IsMonochrome1()
+{
+   const std::string &PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1") )
    {
       return true;
    }
