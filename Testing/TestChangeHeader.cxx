@@ -2,9 +2,8 @@
 #include "gdcmFile.h"
 #include <string>
 
-
-// ecriture d'un fichier DICOM à partir d'un dcmHeader correct.
-// et des pixels d'une autre image
+// Writting of a DICOM file, using a correct gdcmHeader.
+// and pixels of an other image
 
 
 int TestChangeHeader(int argc, char* argv[])
@@ -12,7 +11,7 @@ int TestChangeHeader(int argc, char* argv[])
    if (argc < 3)
    {
       std::cerr << "usage :" << std::endl << 
-      argv[0] << " nomFichierPourEntete nomFichierPourDonnées" << std::endl;
+      argv[0] << " FileForHeader FileForPixels" << std::endl;
       return 1;
    }
 
@@ -24,7 +23,7 @@ int TestChangeHeader(int argc, char* argv[])
 
    //f1->PrintPubElVal();
 
-   // On suppose que les champs DICOM du 2ieme fichier existent *effectivement*
+   // We suppose the DICOM Entries of the second file *do* exist !
 
    std::string nbFrames = f2->GetHeader()->GetEntryByNumber(0x0028, 0x0008);
    if(nbFrames != "gdcm::Unfound")
@@ -37,19 +36,18 @@ int TestChangeHeader(int argc, char* argv[])
    f1->GetHeader()->ReplaceOrCreateByNumber( 
       f2->GetHeader()->GetEntryByNumber(0x0028, 0x0011), 0x0028, 0x0011);// nbCol
 
+// Probabely some more to update (?)
 
-// sans doute d'autres à mettre à jour...
-
-// TODO : rajouter une valeur par defaut.
-// TODO : une routine qui recoit une liste de couples (gr,el), 
-//                        et qui fasse le boulot.
-
+// TODO : add a default value
+// TODO : add a method that receives a list of pairs  (gr,el), 
+//                        and that does the work.
 
    int dataSize = f2->GetImageDataSize();
    printf ("dataSize %d\n",dataSize);
    void* imageData= f2->GetImageData();
 
-// TODO : ne devrait-on pas fusionner ces 2 fonctions ?
+// TODO : Why don't we merge theese 2 functions ?
+
    f1->SetImageData(imageData,dataSize);
    f1->GetHeader()->SetImageDataSize(dataSize);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/17 22:47:01 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2004/09/07 13:57:05 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,6 +52,29 @@ void Tokenize (const std::string& str,
       lastPos = str.find_first_not_of(delimiters, pos);
       pos     = str.find_first_of    (delimiters, lastPos);
    }
+}
+
+/**
+ * \ingroup Globals
+ * \brief Because not available in C++ (?)
+ *        Counts the number of occurences of a substring within a string
+ */
+ 
+ int CountSubstring (const std::string& str,
+                     const std::string& subStr) {
+   int count = 0;   // counts how many times it appears
+   int x = 0;       // The index position in the string
+
+   do
+    { x = str.find(subStr,x);       // Find the substring
+      if (x != std::string::npos)   // If present
+        { count++;                  // increase the count
+          x += subStr.length();     // Skip this word
+        }
+    }
+   while (x != std::string::npos);  // Carry on until not present
+
+   return count;
 }
 
 /**

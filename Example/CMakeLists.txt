@@ -49,3 +49,6 @@ TARGET_LINK_LIBRARIES(BuildUpDicomDir gdcm)
 
 ADD_EXECUTABLE(TestCopyDicom TestCopyDicom.cxx)
 TARGET_LINK_LIBRARIES(TestCopyDicom  gdcm)
+
+ADD_EXECUTABLE(TestChangeHeader TestChangeHeader.cxx)
+TARGET_LINK_LIBRARIES(TestChangeHeader  gdcm)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/03 15:11:35 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2004/09/07 13:57:04 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -588,8 +588,8 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          uint16_t elem )
 {
    gdcmValEntry* valEntry = 0;
-
    gdcmDocEntry* currentEntry = GetDocEntryByNumber( group, elem);
+   
    if (!currentEntry)
    {
       // The entry wasn't present and we simply create the required ValEntry:
@@ -887,11 +887,13 @@ bool gdcmDocument::SetEntryByNumber(std::string const & content,
    gdcmVRKey vr = valEntry->GetVR();
    if( vr == "US" || vr == "SS" )
    {
-      valEntry->SetLength(2);
+      int c = CountSubstring(content, "\\"); // for multivaluated items
+      valEntry->SetLength((c+1)*2);
    }
    else if( vr == "UL" || vr == "SL" )
    {
-      valEntry->SetLength(4);
+      int c = CountSubstring(content, "\\"); // for multivaluated items
+      valEntry->SetLength((c+1)*4);
    }
    else
    {
