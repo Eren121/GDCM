@@ -218,10 +218,11 @@ bool gdcmParser::SetShaDict(DictKey dictName){
  * @return true when gdcmParser is the one of a reasonable Dicom/Acr file,
  *         false otherwise. 
  */
-bool gdcmParser::IsReadable(void) {
+bool gdcmParser::IsReadable(void) { 
+cout << "filetype [" << filetype <<"]" << endl;
    if(filetype==Unknown)
       return(false);
-
+cout << "trouv filetype" << endl;
    if(listEntries.size()<=0)
       return(false);
 
@@ -420,11 +421,13 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
       SetEntryLengthByNumber(20, 0x0002, 0x0010);
    }
 
+/* TODO : rewrite later
 
    if ( (type == ImplicitVR) || (type == ExplicitVR) )
       UpdateGroupLength(false,type);
    if ( type == ACR)
       UpdateGroupLength(true,ACR);
+*/
 
    WriteEntries(type, fp);
    return(true);
@@ -1022,6 +1025,7 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
       lgr = (*tag2)->GetLength();
       val = (*tag2)->GetValue().c_str();
       vr =  (*tag2)->GetVR();
+//cout << hex << gr << " " << el << " "<< vr << " " << val << endl; // JPR
       
       if ( type == ACR ) 
       { 
@@ -1035,16 +1039,22 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
 
       fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
       fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
-
-      if ( (type == ExplicitVR) && (gr <= 0x0002) ) 
+      
+      // === Deal with the length
+      //     --------------------
+      
+      // if ( (type == ExplicitVR) && (gr <= 0x0002) ) // ?!?  < 2  
+      if ( (type == ExplicitVR) || (type == DICOMDIR) )      
       {
          // EXPLICIT VR
          guint16 z=0, shortLgr;
-         fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
+         if (gr != 0xfffe) // JPR	 
+            fwrite (vr.c_str(),(size_t)2 ,(size_t)1 ,_fp);
 
-         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
+         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || gr == 0xfffe) // JPR
          {
-            fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
+            if (gr != 0xfffe)
+	       fwrite ( &z,  (size_t)2 ,(size_t)1 ,_fp);
             fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
 
          } 
@@ -1054,11 +1064,16 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
             fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
          }
       } 
-      else // IMPLICIT VR
+      else // IMPLICIT VR 
       { 
          fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
       }
-
+      
+      // === Deal with the value
+      //     -------------------
+      if (vr == "SQ")  continue; // vo "value" to write for the SEQuences
+      if (gr == 0xfffe)continue;
+      
       if (vr == "US" || vr == "SS") 
       {
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
@@ -2043,19 +2058,20 @@ void gdcmParser::CheckSwap() {
          return;
       default :
          dbg.Verbose(0, "gdcmParser::CheckSwap:",
-                        "ACR/NEMA unfound swap info (time to raise bets)");
+                     "ACR/NEMA unfound swap info (time to raise bets)");
+	 
+      // We are out of luck. It is not a DicomV3 nor a 'clean' ACR/NEMA file.
+      // It is time for despaired wild guesses. 
+      // So, let's assume this file happens to be 'dirty' ACR/NEMA,
+      //  i.e. the length of the group is  not present.     
+         filetype = ACR;
+      // Then the only info we have is the net2host one.    
+	 if (! net2host )
+            sw = 0;
+         else
+         sw = 4321;
+         return;     			
    }
-
-   // We are out of luck. It is not a DicomV3 nor a 'clean' ACR/NEMA file.
-   // It is time for despaired wild guesses. So, let's assume this file
-   // happens to be 'dirty' ACR/NEMA, i.e. the length of the group is
-   // not present. Then the only info we have is the net2host one.
-   filetype = Unknown;
-   if (! net2host )
-      sw = 0;
-   else
-      sw = 4321;
-   return;
 }
 
 /**
