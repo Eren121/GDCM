@@ -1,3 +1,9 @@
+2004-01-16 Jean-Pierre Roux
+    * removal of class gdcmHeaderEntrySet
+    * removal of files gdcmHeaderEntrySet.cxx, gdcmHeaderEntrySet.h
+    * add file gdcmHeader2.cxx 
+    * add method gdcmHeader::SetPrintLevel (for PrintHeader)
+
 2004-01-15 Benoit Regrain
      * src/gdcmDicSet.[h|cxx] : add virtual entries to have a reference of
        entries created while parsing the header. Thus, they will be destroyed
