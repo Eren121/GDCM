@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/06/21 04:43:02 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@ gdcmValEntry::~gdcmValEntry (void) {
 void gdcmValEntry::Print(std::ostream & os) { 
 
    std::ostringstream s; 
-   size_t o;
+   //size_t o;  //not used
    unsigned short int g, e;
    char st[20];
    TSKey v;

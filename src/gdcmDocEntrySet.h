@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/06/21 04:43:02 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ class GDCM_EXPORT gdcmDocEntrySet
 public:
 
    gdcmDocEntrySet(int depth = 0); 
-   ~gdcmDocEntrySet(void);
+   virtual ~gdcmDocEntrySet();
 
    /// \brief adds any type of entry to the entry set (pure vitual)
    virtual bool AddEntry(gdcmDocEntry *Entry) = 0; // pure virtual
@@ -40,11 +40,11 @@ public:
 
    /// \brief Gets the depth level of a Dicom Header Entry embedded in a
    ///        SeQuence
-   inline int GetDepthLevel(void) {return(SQDepthLevel);}
+   inline int GetDepthLevel(void) { return SQDepthLevel; }
 
    /// \brief Sets the depth level of a Dicom Header Entry embedded in a
    /// SeQuence
-   inline void SetDepthLevel(int depth) {SQDepthLevel = depth;}
+   inline void SetDepthLevel(int depth) { SQDepthLevel = depth; }
          
 protected:
    /// \brief   Build a new Element Value from all the low level arguments. 

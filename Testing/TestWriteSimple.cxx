@@ -36,7 +36,8 @@ int TestWriteSimple(int argc, char* argv[])
   delete[] imageData;
   delete f1;
   delete f2;
-  delete PixelData;
+  //delete PixelData; //Does GetImageData return the same pointer ?
+  (void)PixelData;
 
   return 0;
 }

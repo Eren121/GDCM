@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/06/21 04:43:02 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ public:
 
    gdcmValEntry(gdcmDictEntry* e);
    gdcmValEntry(gdcmDocEntry* d); 
-   ~gdcmValEntry(void);
+   virtual ~gdcmValEntry();
 
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
    /// 'string', if it's stored as an integer in the header of the

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/06/21 04:43:02 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,11 +61,11 @@ void gdcmSeqEntry::Print(std::ostream &os){
 
    std::ostringstream s,s2;
    std::string vr;
-   unsigned short int g, e;
-   long lgth;
-   size_t o;    
-   char greltag[10];  //group element tag
-   char st[20]; 
+   //unsigned short int g, e; //not used
+   //long lgth; //not used
+   //size_t o;    //not used
+   //char greltag[10];  //group element tag //not used
+   //char st[20];   //not used
 
    // First, Print the Dicom Element itself.
    SetPrintLevel(2);   
