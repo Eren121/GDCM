@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 18:54:39 $
-  Version:   $Revision: 1.185 $
+  Date:      $Date: 2004/09/14 16:47:08 $
+  Version:   $Revision: 1.186 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1259,13 +1259,14 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize)
  */
 bool gdcmHeader::AnonymizeHeader()
 {
-   gdcmDocEntry* patientNameHE = GetDocEntryByNumber (0x0010, 0x0010);
+   // If exist, replace by spaces
+   SetEntryByNumber ("  ",0x0010, 0x2154); // Telephone   
+   SetEntryByNumber ("  ",0x0010, 0x1040); // Adress
+   SetEntryByNumber ("  ",0x0010, 0x0020); // Patient ID
 
-   ReplaceIfExistByNumber ("  ",0x0010, 0x2154); // Telephone   
-   ReplaceIfExistByNumber ("  ",0x0010, 0x1040); // Adress
-   ReplaceIfExistByNumber ("  ",0x0010, 0x0020); // Patient ID
+   gdcmDocEntry* patientNameHE = GetDocEntryByNumber (0x0010, 0x0010);
   
-   if ( patientNameHE )
+   if ( patientNameHE ) // we replace it by Study Instance UID (why not)
    {
       std::string studyInstanceUID =  GetEntryByNumber (0x0020, 0x000d);
       if ( studyInstanceUID != GDCM_UNFOUND )

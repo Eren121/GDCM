@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 12:10:53 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2004/09/14 16:47:08 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -653,6 +653,91 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
    return valEntry;
 }   
 
+/**
+ * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ *          when it exists. Create it with the given value when unexistant.
+ * @param   value (string) Value to be set
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * @param   VR  V(alue) R(epresentation) of the Entry -if private Entry-
+ * \return  pointer to the modified/created Header Entry (NULL when creation
+ *          failed).
+ */
+ 
+ // TODO : write something clever, using default value for VR
+ //        to avoid code duplication
+ //        (I don't know how to tell NewDocEntryByNumber
+ //         that ReplaceOrCreateByNumber  was called with a default value)
+ 
+gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
+                                         std::string const & value, 
+                                         uint16_t group, 
+                                         uint16_t elem,
+                                         std::string const & VR )
+{
+   gdcmValEntry* valEntry = 0;
+   gdcmDocEntry* currentEntry = GetDocEntryByNumber( group, elem);
+   
+   if (!currentEntry)
+   {
+      // check if (group,element) DictEntry exists
+      // if it doesn't, create an entry in gdcmDictSet::VirtualEntry
+      // and use it
+
+   // Find out if the tag we received is in the dictionaries:
+      gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+      gdcmDictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, elem);
+      if (!dictEntry)
+      {
+         currentEntry = NewDocEntryByNumber(group, elem,VR);
+      }
+      else
+      {
+         currentEntry = NewDocEntryByNumber(group, elem);
+      }
+
+      if (!currentEntry)
+      {
+         dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: call to"
+                        " NewDocEntryByNumber failed.");
+         return NULL;
+      }
+      valEntry = new gdcmValEntry(currentEntry);
+      if ( !AddEntry(valEntry))
+      {
+         dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: AddEntry"
+                        " failed allthough this is a creation.");
+      }
+   }
+   else
+   {
+      valEntry = dynamic_cast< gdcmValEntry* >(currentEntry);
+      if ( !valEntry ) // Euuuuh? It wasn't a ValEntry
+                       // then we change it to a ValEntry ?
+                       // Shouldn't it be considered as an error ?
+      {
+         // We need to promote the gdcmDocEntry to a gdcmValEntry:
+         valEntry = new gdcmValEntry(currentEntry);
+         if (!RemoveEntry(currentEntry))
+         {
+            dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: removal"
+                           " of previous DocEntry failed.");
+            return NULL;
+         }
+         if ( !AddEntry(valEntry))
+         {
+            dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: adding"
+                           " promoted ValEntry failed.");
+            return NULL;
+         }
+      }
+   }
+
+   SetEntryByNumber(value, group, elem);
+
+   return valEntry;
+}   
+
 /*
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
@@ -684,7 +769,6 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
    } 
 
    SetEntryByNumber(voidArea, lgth, group, elem);
-   //b->SetVoidArea(voidArea);  //what if b == 0 !!
 
    return b;
 }  

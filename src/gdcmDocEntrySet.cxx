@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 14:32:04 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/09/14 16:47:08 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -217,6 +217,35 @@ gdcmDocEntry* gdcmDocEntrySet::NewDocEntryByNumber(uint16_t group,
    return newEntry;
 }
 
+
+/** \brief 
+ * Creates a new DocEntry (without any 'value' ...)
+ * @param   group     group  number of the underlying DictEntry
+ * @param   elem  elem number of the underlying DictEntry 
+ * @param   VR   V(alue) R(epresentation) of the Entry -if private Entry- 
+
+ */
+gdcmDocEntry* gdcmDocEntrySet::NewDocEntryByNumber(uint16_t group,
+                                                   uint16_t elem,
+                                                   std::string const &VR)
+{
+   // Find out if the tag we encountered is in the dictionaries:
+   gdcmDict *pubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
+   gdcmDictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, elem);
+   if (!dictEntry)
+   {
+      dictEntry = NewVirtualDictEntry(group, elem, VR);
+   }
+
+   gdcmDocEntry *newEntry = new gdcmDocEntry(dictEntry);
+   if (!newEntry) 
+   {
+      dbg.Verbose(1, "gdcmSQItem::NewDocEntryByNumber",
+                  "failed to allocate gdcmDocEntry");
+      return 0;
+   }
+   return newEntry;
+}
 /* \brief
  * Probabely move, as is, to gdcmDocEntrySet, as a non virtual method
  * an remove gdcmDocument::NewDocEntryByName

@@ -85,23 +85,22 @@ int TestCopyDicom(int , char* [])
       for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
       {
          d = tag->second;
+ 
+         if ( gdcmBinEntry* b = dynamic_cast<gdcmBinEntry*>(d) )
+         { 
          // for private elements, the gdcmDictEntry is unknown
          // and it's VR is unpredictable ...
          // ( In *this* case ReplaceOrCreateByNumber 
          //  should have a knowledge of the virtual dictionary 
-         //  gdcmDictSet::VirtualEntry)
- 
-         if ( d->GetGroup()%2 == 1) // Skip private Entries 
-            continue;
- 
-         if ( gdcmBinEntry* b = dynamic_cast<gdcmBinEntry*>(d) )
-         { 
- 
-           // std::cout << "BinEntry : " 
-           //           << "------------- " << b->GetVR() << " "<< std::hex
-           //           << b->GetGroup() << " " << b->GetElement() << " "
-           //           << " lg=" << b->GetLength()
-           //           << std::endl; 
+         //  gdcmDictSet::VirtualEntry ) 
+         // ReplaceOrCreateByNumber may now receive the VR of the source Entry
+         // as a extra parameter
+         //
+            //if ( d->GetGroup()%2 == 1) // Skip private Entries 
+            //   continue;
+
+           // TODO :write ReplaceOrCreateByNumber with VR, 
+           //       for BinEntries as well!
              
             copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  b->GetVoidArea(),
@@ -109,12 +108,23 @@ int TestCopyDicom(int , char* [])
                                  b->GetGroup(), 
                                  b->GetElement() );
             }
-           else  if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
+            else  if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
             {
-            copy->GetHeader()->ReplaceOrCreateByNumber( 
+               if ( d->GetGroup()%2 != 1)
+               {
+                  copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  v->GetValue(),
                                  v->GetGroup(), 
                                  v->GetElement() );
+                }
+                else
+                {
+                  copy->GetHeader()->ReplaceOrCreateByNumber( 
+                                 v->GetValue(),
+                                 v->GetGroup(), 
+                                 v->GetElement(),
+                                 v->GetVR() ); 
+                }
          }
          else
          {
