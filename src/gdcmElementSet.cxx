@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:11:59 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/01/25 15:44:24 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,124 +86,6 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
    {
       i->second->WriteContent(fp, filetype);
    } 
-}
-
-/**
- * \brief  retrieves a Dicom Element using (group, element)
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element 
- * @return  
- */
-DocEntry *ElementSet::GetDocEntry(uint16_t group, uint16_t elem) 
-{
-   TagKey key = DictEntry::TranslateToKey(group, elem);
-   if ( !TagHT.count(key))
-   {
-      return NULL;
-   }
-   return TagHT.find(key)->second;
-}
-
-/**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         ValEntry.
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element  
- * @return When present, the corresponding ValEntry. 
- */
-ValEntry *ElementSet::GetValEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *currentEntry = GetDocEntry(group, elem);
-   if ( !currentEntry )
-   {
-      return 0;
-   }
-   if ( ValEntry *entry = dynamic_cast<ValEntry*>(currentEntry) )
-   {
-      return entry;
-   }
-   gdcmVerboseMacro( "Unfound ValEntry.");
-
-   return 0;
-}
-
-/**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         BinEntry.
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element  
- * @return When present, the corresponding BinEntry. 
- */
-BinEntry *ElementSet::GetBinEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *currentEntry = GetDocEntry(group, elem);
-   if ( !currentEntry )
-   {
-      return 0;
-   }
-   if ( BinEntry *entry = dynamic_cast<BinEntry*>(currentEntry) )
-   {
-      return entry;
-   }
-   gdcmVerboseMacro( "Unfound BinEntry.");
-
-   return 0;
-}
-
-/**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         SeqEntry.
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element  
- * @return When present, the corresponding SeqEntry. 
- */
-SeqEntry *ElementSet::GetSeqEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *currentEntry = GetDocEntry(group, elem);
-   if ( !currentEntry )
-   {
-      return 0;
-   }
-   if ( SeqEntry *entry = dynamic_cast<SeqEntry*>(currentEntry) )
-   {
-      return entry;
-   }
-   gdcmVerboseMacro( "Unfound SeqEntry.");
-
-   return 0;
-}
-
-/**
- * \brief   Checks if a given Dicom Element exists within the H table
- * @param   group   Group number of the searched Dicom Element 
- * @param   elem  Element number of the searched Dicom Element 
- * @return true is found
- */
-bool ElementSet::CheckIfEntryExist(uint16_t group, uint16_t elem )
-{
-   const std::string &key = DictEntry::TranslateToKey(group, elem );
-   return TagHT.count(key) != 0;
-}
-
-/**
- * \brief   Get the (std::string representable) value of the Dicom entry
- * @param   group  Group number of the searched tag.
- * @param   elem Element number of the searched tag.
- * @return  Corresponding element value when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string ElementSet::GetEntryValue(uint16_t group, uint16_t elem)
-{
-   TagKey key = DictEntry::TranslateToKey(group, elem);
-   if ( !TagHT.count(key))
-   {
-      return GDCM_UNFOUND;
-   }
-
-   return ((ValEntry *)TagHT.find(key)->second)->GetValue();
 }
 
 /**
@@ -306,29 +188,18 @@ DocEntry *ElementSet::GetNextEntry()
 }
 
 /**
- * \brief   Get the larst entry while visiting the DocEntrySet
- * \return  The last DocEntry if found, otherwhise NULL
+ * \brief  retrieves a Dicom Element using (group, element)
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element 
+ * @return  
  */
-DocEntry *ElementSet::GetLastEntry()
+DocEntry *ElementSet::GetDocEntry(uint16_t group, uint16_t elem) 
 {
-   ItTagHT = TagHT.end();
-   if ( ItTagHT != TagHT.begin() )
-      return  ItTagHT->second;
-   return NULL;
-}
+   TagKey key = DictEntry::TranslateToKey(group, elem);
+   TagDocEntryHT::iterator it = TagHT.find(key);
 
-/**
- * \brief   Get the previous entry while visiting the Hash table (TagHT)
- * \note : meaningfull only if GetFirstEntry already called 
- * \return  The previous DocEntry if found, otherwhise NULL
- */
-DocEntry *ElementSet::GetPreviousEntry()
-{
-   gdcmAssertMacro (ItTagHT != TagHT.begin());
-
-   --ItTagHT;
-   if (ItTagHT != TagHT.begin())
-      return  ItTagHT->second;
+   if ( it!=TagHT.end() )
+      return it->second;
    return NULL;
 }
 

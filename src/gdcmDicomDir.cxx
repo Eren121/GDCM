@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:11:58 $
-  Version:   $Revision: 1.117 $
+  Date:      $Date: 2005/01/25 15:44:23 $
+  Version:   $Revision: 1.118 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -331,11 +331,10 @@ DicomDirPatient *DicomDir::GetFirstPatient()
 DicomDirPatient *DicomDir::GetNextPatient()
 {
    gdcmAssertMacro (ItPatient != Patients.end());
-   {
-      ++ItPatient;
-      if ( ItPatient != Patients.end() )
-         return *ItPatient;
-   }
+
+   ++ItPatient;
+   if ( ItPatient != Patients.end() )
+      return *ItPatient;
    return NULL;
 }
 

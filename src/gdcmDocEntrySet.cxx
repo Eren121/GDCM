@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:11 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/25 15:44:23 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,394 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 // Public
+/**
+ * \brief   Get the (std::string representable) value of the Dicom entry
+ * @param   group  Group number of the searched tag.
+ * @param   elem Element number of the searched tag.
+ * @return  Corresponding element value when it exists,
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
+ */
+std::string DocEntrySet::GetEntryValue(uint16_t group, uint16_t elem)
+{
+   ValEntry *entry = GetValEntry(group,elem);
+   if( entry )
+      return entry->GetValue();
+   return GDCM_UNFOUND;
+}
 
+/**
+ * \brief   Gets (from Header) a 'non string' element value 
+ *          (LoadElementValues has already be executed)  
+ * @param group   group number of the Entry 
+ * @param elem  element number of the Entry
+ * @return Pointer to the 'non string' area
+ */
+void *DocEntrySet::GetEntryBinArea(uint16_t group, uint16_t elem) 
+{
+   BinEntry *entry = GetBinEntry(group,elem);
+   if( entry )
+      return entry->GetBinArea();
+   return 0;
+}
+
+/**
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
+ *          the public and private dictionaries 
+ *          for the value length of a given tag..
+ * @param   group  Group number of the searched tag.
+ * @param   elem Element number of the searched tag.
+ * @return  Corresponding element length; -2 if not found
+ */
+int DocEntrySet::GetEntryLength(uint16_t group, uint16_t elem)
+{
+   DocEntry *entry = GetDocEntry(group,elem);
+   if( entry )
+      return entry->GetLength();
+   return -1;
+}
+
+/**
+ * \brief   Searches within Header Entries (Dicom Elements) parsed with 
+ *          the public and private dictionaries 
+ *          for the element value representation of a given tag..
+ *          Obtaining the VR (Value Representation) might be needed by caller
+ *          to convert the string typed content to caller's native type 
+ *          (think of C++ vs Python). The VR is actually of a higher level
+ *          of semantics than just the native C++ type.
+ * @param   group  Group number of the searched tag.
+ * @param   elem Element number of the searched tag.
+ * @return  Corresponding element value representation when it exists,
+ *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
+ */
+std::string DocEntrySet::GetEntryVR(uint16_t group, uint16_t elem)
+{
+   DocEntry *entry = GetDocEntry(group,elem);
+   if( entry )
+      return entry->GetVR();
+   return GDCM_UNFOUND;
+}
+
+/**
+ * \brief  Same as \ref Document::GetDocEntry except it only
+ *         returns a result when the corresponding entry is of type
+ *         ValEntry.
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element  
+ * @return When present, the corresponding ValEntry. 
+ */
+ValEntry *DocEntrySet::GetValEntry(uint16_t group, uint16_t elem)
+{
+   DocEntry *currentEntry = GetDocEntry(group, elem);
+   if ( !currentEntry )
+      return NULL;
+
+   return dynamic_cast<ValEntry*>(currentEntry);
+}
+
+/**
+ * \brief  Same as \ref Document::GetDocEntry except it only
+ *         returns a result when the corresponding entry is of type
+ *         BinEntry.
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element  
+ * @return When present, the corresponding BinEntry. 
+ */
+BinEntry *DocEntrySet::GetBinEntry(uint16_t group, uint16_t elem)
+{
+   DocEntry *currentEntry = GetDocEntry(group, elem);
+   if ( !currentEntry )
+      return NULL;
+
+   return dynamic_cast<BinEntry*>(currentEntry);
+}
+
+/**
+ * \brief  Same as \ref Document::GetDocEntry except it only
+ *         returns a result when the corresponding entry is of type
+ *         SeqEntry.
+ * @param   group  Group number of the searched Dicom Element 
+ * @param   elem Element number of the searched Dicom Element  
+ * @return When present, the corresponding SeqEntry. 
+ */
+SeqEntry *DocEntrySet::GetSeqEntry(uint16_t group, uint16_t elem)
+{
+   DocEntry *currentEntry = GetDocEntry(group, elem);
+   if ( !currentEntry )
+      return NULL;
+
+   return dynamic_cast<SeqEntry*>(currentEntry);
+}
+
+/**
+ * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value (string) to substitute with
+ * @param   group  group number of the Dicom Element to modify
+ * @param   elem element number of the Dicom Element to modify
+ */
+bool DocEntrySet::SetValEntry(std::string const& content, 
+                              uint16_t group, uint16_t elem) 
+{
+   ValEntry *entry = GetValEntry(group, elem);
+   if (!entry )
+   {
+      gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
+      return false;
+   }
+   return SetValEntry(content,entry);
+}
+
+/**
+ * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value (void*  -> uint8_t*) to substitute with
+ * @param   lgth new value length
+ * @param   group  group number of the Dicom Element to modify
+ * @param   elem element number of the Dicom Element to modify
+ */
+bool DocEntrySet::SetBinEntry(uint8_t*content, int lgth, 
+                              uint16_t group, uint16_t elem) 
+{
+   BinEntry *entry = GetBinEntry(group, elem);
+   if (!entry )
+   {
+      gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
+      return false;
+   }
+
+   return SetBinEntry(content,lgth,entry);
+} 
+
+/**
+ * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
+ *          and modifies it's content with the given value.
+ * @param  content new value (string) to substitute with
+ * @param  entry Entry to be modified
+ */
+bool DocEntrySet::SetValEntry(std::string const &content, ValEntry *entry)
+{
+   if(entry)
+   {
+      entry->SetValue(content);
+      return true;
+   }
+   return false;
+}
+
+/**
+ * \brief   Accesses an existing BinEntry (i.e. a Dicom Element)
+ *          and modifies it's content with the given value.
+ * @param   content new value (void*  -> uint8_t*) to substitute with
+ * @param  entry Entry to be modified 
+ * @param  lgth new value length
+ */
+bool DocEntrySet::SetBinEntry(uint8_t *content, int lgth, BinEntry *entry)
+{
+   if(entry)
+   {
+      entry->SetBinArea(content);  
+      entry->SetLength(lgth);
+      entry->SetValue(GDCM_BINLOADED);
+      return true;
+   }
+   return false;
+}
+
+/**
+ * \brief   Modifies the value of a given Doc Entry (Dicom Element)
+ *          when it exists. Create it with the given value when unexistant.
+ * @param   value (string) Value to be set
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * @param   vr  V(alue) R(epresentation) of the Entry -if private Entry-
+ * \return  pointer to the modified/created Header Entry (NULL when creation
+ *          failed).
+ */ 
+ValEntry *DocEntrySet::InsertValEntry(std::string const &value, 
+                                      uint16_t group, uint16_t elem,
+                                      TagName const &vr )
+{
+   ValEntry *valEntry = 0;
+   DocEntry *currentEntry = GetDocEntry( group, elem);
+   
+   if (currentEntry)
+   {
+      valEntry = dynamic_cast<ValEntry *>(currentEntry);
+
+      // Verify the VR
+      if( valEntry )
+         if( valEntry->GetVR()!=vr )
+            valEntry = NULL;
+
+      // if currentEntry doesn't correspond to the requested valEntry
+      if( !valEntry)
+      {
+         if( !RemoveEntry(currentEntry) )
+         {
+            gdcmVerboseMacro( "Removal of previous DocEntry failed.");
+
+            return NULL;
+         }
+      }
+   }
+
+   // Create a new valEntry if necessary
+   if( !valEntry )
+   {
+      valEntry = NewValEntry(group, elem, vr);
+
+      if ( !AddEntry(valEntry) )
+      {
+         gdcmVerboseMacro("AddEntry failed although this is a creation.");
+
+         delete valEntry;
+         return NULL;
+      }
+   }
+
+   // Set the binEntry value
+   SetValEntry(value, valEntry); // The std::string value
+   return valEntry;
+}
+
+/*
+ * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ *          when it exists. Create it with the given value when unexistant.
+ *          A copy of the binArea is made to be kept in the Document.
+ * @param   binArea (binary) value to be set
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * @param   vr  V(alue) R(epresentation) of the Entry -if private Entry-
+ * \return  pointer to the modified/created Header Entry (NULL when creation
+ *          failed).
+ */
+BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea,int lgth, 
+                                      uint16_t group, uint16_t elem,
+                                      TagName const &vr )
+{
+   BinEntry *binEntry = 0;
+   DocEntry *currentEntry = GetDocEntry( group, elem);
+
+   // Verify the currentEntry
+   if (currentEntry)
+   {
+      binEntry = dynamic_cast<BinEntry *>(currentEntry);
+
+      // Verify the VR
+      if( binEntry )
+         if( binEntry->GetVR()!=vr )
+            binEntry = NULL;
+
+      // if currentEntry doesn't correspond to the requested valEntry
+      if( !binEntry)
+      {
+         if( !RemoveEntry(currentEntry) )
+         {
+            gdcmVerboseMacro( "Removal of previous DocEntry failed.");
+
+            return NULL;
+         }
+      }
+   }
+
+   // Create a new binEntry if necessary
+   if( !binEntry)
+   {
+      binEntry = NewBinEntry(group, elem, vr);
+
+      if ( !AddEntry(binEntry) )
+      {
+         gdcmVerboseMacro( "AddEntry failed allthough this is a creation.");
+
+         delete binEntry;
+         return NULL;
+      }
+   }
+
+   // Set the binEntry value
+   uint8_t *tmpArea;
+   if( lgth>0 && binArea )
+   {
+      tmpArea = new uint8_t[lgth];
+      memcpy(tmpArea,binArea,lgth);
+   }
+   else
+   {
+      tmpArea = 0;
+   }
+   if( !SetBinEntry(tmpArea,lgth,binEntry) )
+   {
+      if( tmpArea )
+      {
+         delete[] tmpArea;
+      }
+   }
+
+   return binEntry;
+}  
+
+/*
+ * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ *          when it exists. Creates it when unexistant.
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * \return  pointer to the modified/created SeqEntry (NULL when creation
+ *          failed).
+ */
+SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
+{
+   SeqEntry *seqEntry = 0;
+   DocEntry *currentEntry = GetDocEntry( group, elem);
+
+   // Verify the currentEntry
+   if( currentEntry )
+   {
+      seqEntry = dynamic_cast<SeqEntry *>(currentEntry);
+
+      // Verify the VR
+      if( seqEntry )
+         if( seqEntry->GetVR()!="SQ" )
+            seqEntry = NULL;
+
+      // if currentEntry doesn't correspond to the requested valEntry
+      if( !seqEntry )
+      {
+         if (!RemoveEntry(currentEntry))
+         {
+            gdcmVerboseMacro( "Removal of previous DocEntry failed.");
+
+            return NULL;
+         }
+      }
+   }
+   // Create a new seqEntry if necessary
+   if( !seqEntry )
+   {
+      seqEntry = NewSeqEntry(group, elem);
+
+      if( !AddEntry(seqEntry) )
+      {
+         gdcmVerboseMacro( "AddEntry failed allthough this is a creation.");
+
+         delete seqEntry;
+         return NULL;
+      }
+   }
+   return seqEntry;
+} 
+ 
+/**
+ * \brief   Checks if a given Dicom Element exists within the H table
+ * @param   group   Group number of the searched Dicom Element 
+ * @param   elem  Element number of the searched Dicom Element 
+ * @return true is found
+ */
+bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
+{
+   return GetDocEntry(group,elem)!=NULL;
+}
 
 /**
  * \brief   Request a new virtual dict entry to the dict set
@@ -187,11 +574,8 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
    return goodEntry;
 }
 
-
-
 //-----------------------------------------------------------------------------
 // Private
 
-} // end namespace gdcm
-
 //-----------------------------------------------------------------------------
+} // end namespace gdcm

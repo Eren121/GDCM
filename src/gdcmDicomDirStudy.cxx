@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:11:58 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/25 15:44:23 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -135,11 +135,10 @@ DicomDirSerie *DicomDirStudy::GetFirstSerie()
 DicomDirSerie *DicomDirStudy::GetNextSerie()
 {
    gdcmAssertMacro (ItSerie != Series.end());
-   {
-      ++ItSerie;
-      if (ItSerie != Series.end())
-         return *ItSerie;
-   }
+
+   ++ItSerie;
+   if (ItSerie != Series.end())
+      return *ItSerie;
    return NULL;
 }  
 

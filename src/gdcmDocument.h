@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:44:54 $
-  Version:   $Revision: 1.100 $
+  Date:      $Date: 2005/01/25 15:44:24 $
+  Version:   $Revision: 1.101 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,38 +88,10 @@ public:
 
 // Content entries
 
-// Oops ! Python is gonna cry : 
-// 4 methods with same name and different parameters ...
-// Only C++ is aware!
-
-   virtual bool SetEntryValue(std::string const &content,
-                         uint16_t group, uint16_t elem);
-   virtual bool SetEntryBinArea(uint8_t *content, int lgth,
-                         uint16_t group, uint16_t elem);
-   virtual bool SetEntryValue(std::string const &content, ValEntry *entry);
-   virtual bool SetEntryBinArea(uint8_t *content, int lgth, BinEntry *entry);
-
-   virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);   
-
-   virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
-   virtual int GetEntryLength(uint16_t group, uint16_t elem);
-
-   ValEntry *Insert(std::string const &value,
-                    uint16_t group, uint16_t elem,
-                    TagName const &vr = GDCM_UNKNOWN);
-   BinEntry *Insert(uint8_t *binArea, int lgth,
-                    uint16_t group, uint16_t elem,
-                    TagName const &vr = GDCM_UNKNOWN);
-   SeqEntry *Insert(uint16_t group, uint16_t elem);
-
-   bool ReplaceIfExist(std::string const &value,
-                       uint16_t group, uint16_t elem );
-   
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
    virtual void LoadEntryBinArea(BinEntry *entry);
 
    void LoadDocEntrySafe(DocEntry *entry);
-   /*TagDocEntryHT *BuildFlatHashTable();*/
 
    /// Return the Transfer Syntax as a string
    std::string GetTransferSyntaxName();

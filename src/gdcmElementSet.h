@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:11:59 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/25 15:44:24 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,32 +49,19 @@ public:
 
    virtual void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
 
+   void WriteContent(std::ofstream *fp, FileType filetype); 
+
    void ClearEntry();
    bool AddEntry(DocEntry *Entry);
    bool RemoveEntry(DocEntry *EntryToRemove);
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
    
-   void WriteContent(std::ofstream *fp, FileType filetype); 
-
    DocEntry *GetFirstEntry();
    DocEntry *GetNextEntry();
-   DocEntry *GetLastEntry();
-   DocEntry *GetPreviousEntry();
 
    DocEntry *GetDocEntry(uint16_t group, uint16_t elem);
-   ValEntry *GetValEntry(uint16_t group, uint16_t elem);
-   BinEntry *GetBinEntry(uint16_t group, uint16_t elem);
-   SeqEntry *GetSeqEntry(uint16_t group, uint16_t elem);
 
    bool IsEmpty() { return TagHT.empty(); };
-   bool CheckIfEntryExist(uint16_t group, uint16_t elem);
-
-   std::string GetEntryValue(uint16_t group, uint16_t elem);
-   int GetEntryLength(uint16_t group, uint16_t elem);
-   std::string GetEntryVR(uint16_t group, uint16_t elem);
-
-   bool SetEntryValue(std::string const& content, 
-                      uint16_t group, uint16_t elem);
 
 protected:
 

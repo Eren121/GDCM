@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:44:54 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/25 15:44:24 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,7 @@ namespace gdcm
 class File;
 class ValEntry;
 class BinEntry;
+class SeqEntry;
 class PixelReadConvert;
 class PixelWriteConvert;
 class DocEntryArchive;
@@ -53,6 +54,18 @@ public:
    virtual ~FileHelper();
 
    void Print(std::ostream &os = std::cout, std::string const & indent = ""); 
+
+   // File methods
+   bool SetValEntry(std::string const &content,
+                    uint16_t group, uint16_t elem);
+   bool SetBinEntry(uint8_t *content, int lgth,
+                    uint16_t group, uint16_t elem);
+
+   ValEntry *InsertValEntry(std::string const &content,
+                            uint16_t group, uint16_t elem);
+   BinEntry *InsertBinEntry(uint8_t *binArea, int lgth,
+                            uint16_t group, uint16_t elem);
+   SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
 
    /// Accessor to \ref File
    File *GetFile() { return FileInternal; }
@@ -85,15 +98,6 @@ public:
    bool WriteDcmExplVR(std::string const &fileName);
    bool WriteAcr      (std::string const &fileName);
    bool Write         (std::string const &fileName);
-
-   bool SetEntryValue(std::string const &content,
-                      uint16_t group, uint16_t elem);
-   bool SetEntryBinArea(uint8_t *content, int lgth,
-                        uint16_t group, uint16_t elem);
-   bool Insert(std::string const &content,
-               uint16_t group, uint16_t elem);
-   bool Insert(uint8_t *binArea, int lgth,
-               uint16_t group, uint16_t elem);
 
    uint8_t* GetLutRGBA();
 

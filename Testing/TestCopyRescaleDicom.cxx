@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:44:54 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/25 15:44:22 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,20 +56,15 @@ int CopyRescaleDicom(std::string const & filename,
    {
       if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
       {
-         copyH->Insert( 
-                              b->GetBinArea(),
-                              b->GetLength(),
-                              b->GetGroup(), 
-                              b->GetElement(),
-                              b->GetVR() );
+         copyH->InsertBinEntry( b->GetBinArea(),b->GetLength(),
+                                b->GetGroup(),b->GetElement(),
+                                b->GetVR() );
       }
       else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
-          copyH->Insert( 
-                              v->GetValue(),
-                              v->GetGroup(), 
-                              v->GetElement(),
-                              v->GetVR() ); 
+          copyH->InsertValEntry( v->GetValue(),
+                                 v->GetGroup(),v->GetElement(),
+                                 v->GetVR() ); 
       }
       else
       {
@@ -91,10 +86,10 @@ int CopyRescaleDicom(std::string const & filename,
    if( bitsStored == "16" )
    {
       std::cout << "Rescale...";
-      copyH->Insert( "8", 0x0028, 0x0100); // BitsAllocated
-      copyH->Insert( "8", 0x0028, 0x0101); // BitsStored
-      copyH->Insert( "7", 0x0028, 0x0102); // HighBit
-      copyH->Insert( "0", 0x0028, 0x0103); //Pixel Representation
+      copyH->InsertValEntry( "8", 0x0028, 0x0100); // BitsAllocated
+      copyH->InsertValEntry( "8", 0x0028, 0x0101); // BitsStored
+      copyH->InsertValEntry( "7", 0x0028, 0x0102); // HighBit
+      copyH->InsertValEntry( "0", 0x0028, 0x0103); //Pixel Representation
  
       // We assume the value were from 0 to uint16_t max
       rescaleSize = dataSize / 2;

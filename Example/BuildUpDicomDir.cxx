@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: BuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:49 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/25 15:44:22 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,25 +50,25 @@ int main(int argc, char* argv[])
    ((gdcm::Document *)dcmdir)->Print();
 
    gdcm::DicomDirPatient *p1=dcmdir->NewPatient();
-   p1->SetEntryValue("patientONE",0x0010, 0x0010);
+   p1->SetValEntry("patientONE",0x0010, 0x0010);
 
      
    gdcm::DicomDirPatient *p2=dcmdir->NewPatient();
-   p2->SetEntryValue("patientTWO",0x0010, 0x0010);     
+   p2->SetValEntry("patientTWO",0x0010, 0x0010);     
    gdcm::DicomDirStudy *s21=p2->NewStudy();  
-       s21->SetEntryValue("StudyDescrTwo.One",0x0008, 0x1030);        
+       s21->SetValEntry("StudyDescrTwo.One",0x0008, 0x1030);        
    gdcm::DicomDirSerie *s211=s21->NewSerie();   
    gdcm::DicomDirImage *s2111=s211->NewImage();
    (void)s2111; //not used
 
    gdcm::DicomDirStudy *s11=p1->NewStudy();  
-   s11->SetEntryValue("StudyDescrOne.One",0x0008, 0x1030);
+   s11->SetValEntry("StudyDescrOne.One",0x0008, 0x1030);
    // Name of the physician reading study
    // Header Entry to be created
-   s11->SetEntryValue("Dr Mabuse",0x0008, 0x1060);
+   s11->SetValEntry("Dr Mabuse",0x0008, 0x1060);
 
    gdcm::DicomDirPatient *p3 = dcmdir->NewPatient();
-   p3->SetEntryValue("patientTHREE",0x0010, 0x0010);
+   p3->SetValEntry("patientTHREE",0x0010, 0x0010);
 
    std::cout << "\n------- BuildUpDicomDir: Test Print of Patient ONE -----\n";
    p1->Print();

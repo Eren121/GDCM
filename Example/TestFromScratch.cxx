@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:44:53 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/25 15:44:22 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,10 +62,9 @@ int main(int argc, char *argv[])
          // Do not bother with field from private dict
          if( v->GetName() != "gdcm::Unknown" )
          {  
-            h2->Insert( v->GetValue(),
-                        v->GetGroup(), 
-                        v->GetElement(),
-                        v->GetVR() ); 
+            h2->InsertValEntry( v->GetValue(),
+                                v->GetGroup(),v->GetElement(),
+                                v->GetVR() ); 
          }
       }
       //else

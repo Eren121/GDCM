@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:44:54 $
-  Version:   $Revision: 1.199 $
+  Date:      $Date: 2005/01/25 15:44:24 $
+  Version:   $Revision: 1.200 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -140,7 +140,7 @@ bool File::Write(std::string fileName, FileType filetype)
    // Bits Allocated
    if ( GetEntryValue(0x0028,0x0100) ==  "12")
    {
-      SetEntryValue("16", 0x0028,0x0100);
+      SetValEntry("16", 0x0028,0x0100);
    }
 
   /// \todo correct 'Pixel group' Length if necessary
@@ -151,7 +151,7 @@ bool File::Write(std::string fileName, FileType filetype)
       // no (GrPixel, NumPixel) element
       std::string s_lgPix = Util::Format("%d", i_lgPix+12);
       s_lgPix = Util::DicomString( s_lgPix.c_str() );
-      Insert(s_lgPix,GrPixel, 0x0000);
+      InsertValEntry(s_lgPix,GrPixel, 0x0000);
    }
 
    // FIXME : should be nice if we could move it to File
@@ -1209,9 +1209,9 @@ int File::GetLUTNbits()
 bool File::AnonymizeFile()
 {
    // If exist, replace by spaces
-   SetEntryValue ("  ",0x0010, 0x2154); // Telephone   
-   SetEntryValue ("  ",0x0010, 0x1040); // Adress
-   SetEntryValue ("  ",0x0010, 0x0020); // Patient ID
+   SetValEntry ("  ",0x0010, 0x2154); // Telephone   
+   SetValEntry ("  ",0x0010, 0x1040); // Adress
+   SetValEntry ("  ",0x0010, 0x0020); // Patient ID
 
    DocEntry* patientNameHE = GetDocEntry (0x0010, 0x0010);
   
@@ -1220,11 +1220,11 @@ bool File::AnonymizeFile()
       std::string studyInstanceUID =  GetEntryValue (0x0020, 0x000d);
       if ( studyInstanceUID != GDCM_UNFOUND )
       {
-         Insert(studyInstanceUID, 0x0010, 0x0010);
+         InsertValEntry(studyInstanceUID, 0x0010, 0x0010);
       }
       else
       {
-         Insert("anonymised", 0x0010, 0x0010);
+         InsertValEntry("anonymised", 0x0010, 0x0010);
       }
    }
 
@@ -1380,14 +1380,14 @@ void File::InitializeDefaultFile()
    // Special case this is the image (not a string)
    GrPixel = 0x7fe0;
    NumPixel = 0x0010;
-   Insert(0, 0, GrPixel, NumPixel);
+   InsertBinEntry(0, 0, GrPixel, NumPixel);
 
    // All remaining strings:
    unsigned int i = 0;
    DICOM_DEFAULT_VALUE current = defaultvalue[i];
    while( current.value )
    {
-      Insert(current.value, current.group, current.elem);
+      InsertValEntry(current.value, current.group, current.elem);
       current = defaultvalue[++i];
    }
 }

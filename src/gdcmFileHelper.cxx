@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:21:20 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/25 15:44:24 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -532,10 +532,10 @@ bool FileHelper::Write(std::string const &fileName)
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool FileHelper::SetEntryValue(std::string const &content,
+bool FileHelper::SetValEntry(std::string const &content,
                     uint16_t group, uint16_t elem)
 { 
-   return FileInternal->SetEntryValue(content,group,elem);
+   return FileInternal->SetValEntry(content,group,elem);
 }
 
 
@@ -548,10 +548,10 @@ bool FileHelper::SetEntryValue(std::string const &content,
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
+bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
                                  uint16_t group, uint16_t elem)
 {
-   return FileInternal->SetEntryBinArea(content,lgth,group,elem);
+   return FileInternal->SetBinEntry(content,lgth,group,elem);
 }
 
 /**
@@ -563,10 +563,10 @@ bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
  * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */ 
-bool FileHelper::Insert(std::string const &content,
-                        uint16_t group, uint16_t elem)
+ValEntry *FileHelper::InsertValEntry(std::string const &content,
+                                uint16_t group, uint16_t elem)
 {
-   return FileInternal->Insert(content,group,elem) != NULL;
+   return FileInternal->InsertValEntry(content,group,elem);
 }
 
 /*
@@ -579,10 +579,24 @@ bool FileHelper::Insert(std::string const &content,
  * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */
-bool FileHelper::Insert(uint8_t *binArea, int lgth,
-                        uint16_t group, uint16_t elem)
+BinEntry *FileHelper::InsertBinEntry(uint8_t *binArea, int lgth,
+                                uint16_t group, uint16_t elem)
 {
-   return FileInternal->Insert(binArea,lgth,group,elem) != NULL;
+   return FileInternal->InsertBinEntry(binArea,lgth,group,elem);
+}
+
+/*
+ * \brief   Modifies the value of a given DocEntry (Dicom entry)
+ *          when it exists. Create it with the given value when unexistant.
+ *          A copy of the binArea is made to be kept in the Document.
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * \return  pointer to the modified/created Dicom entry (NULL when creation
+ *          failed).
+ */
+SeqEntry *FileHelper::InsertSeqEntry(uint16_t group, uint16_t elem)
+{
+   return FileInternal->InsertSeqEntry(group,elem);
 }
 
 /**

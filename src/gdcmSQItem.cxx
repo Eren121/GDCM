@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:11:59 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/01/25 15:44:24 $
+  Version:   $Revision: 1.60 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -166,72 +166,6 @@ bool SQItem::AddEntry(DocEntry *entry)
 }   
 
 /**
- * \brief   Sets Entry (Dicom Element) value of an element,
- *          specified by it's tag (Group, Number) 
- *          and the length, too ...  inside a SQ Item
- *          If the Element is not found, it's just created !
- * \warning we suppose, right now, the element belongs to a Public Group
- *          (NOT a shadow one)       
- * @param   val string value to set
- * @param   group  Group number of the searched tag.
- * @param   elem Element number of the searched tag.
- * @return  true if element was found or created successfully
- */
-
-bool SQItem::SetEntryValue(std::string const &val, uint16_t group, 
-                      uint16_t elem)
-{
-   for(ListDocEntry::iterator i = DocEntries.begin(); 
-                              i != DocEntries.end(); 
-                            ++i)
-   { 
-      if ( (*i)->GetGroup() == 0xfffe && (*i)->GetElement() == 0xe000 ) 
-      {
-         continue;
-      }
-
-      if (  ( group  < (*i)->GetGroup() )
-          ||( group == (*i)->GetGroup() && elem < (*i)->GetElement()) )
-      {
-         // instead of Insert, that is a method of Document :-( 
-         ValEntry* entry = 0;
-         TagKey key = DictEntry::TranslateToKey(group, elem);
-
-         // we assume a Public Dictionary *is* loaded
-         Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
-         // if the invoked (group,elem) doesn't exist inside the Dictionary
-         // we create a VirtualDictEntry
-         DictEntry *dictEntry = pubDict->GetEntry(group, elem);
-         if (dictEntry == NULL)
-         {
-            dictEntry = 
-               Global::GetDicts()->NewVirtualDictEntry(group, elem,
-                                                       "UN", GDCM_UNKNOWN, 
-                                                        GDCM_UNKNOWN);
-         } 
-         // we assume the constructor didn't fail
-         entry = new ValEntry(dictEntry);
-         if (entry)
-         {
-            entry->SetValue(val); 
-         }
-         DocEntries.insert(i,entry);
-
-         return true;
-      }   
-      if (group == (*i)->GetGroup() && elem == (*i)->GetElement() )
-      {
-         if ( ValEntry *entry = dynamic_cast<ValEntry*>(*i) )
-         {
-            entry->SetValue(val);
-         }
-         return true;    
-      }
-   }
-   return false;
-}
-
-/**
  * \brief   Clear the std::list from given entry AND delete the entry.
  * @param   entryToRemove Entry to remove AND delete.
  * @return true if the entry was found and removed; false otherwise
@@ -305,8 +239,6 @@ DocEntry *SQItem::GetNextEntry()
    }
 }
 
-//-----------------------------------------------------------------------------
-// Protected
 /**
  * \brief   Gets a Dicom Element inside a SQ Item Entry
  * @param   group Group number of the Entry
@@ -318,94 +250,15 @@ DocEntry *SQItem::GetDocEntry(uint16_t group, uint16_t elem)
    for(ListDocEntry::iterator i = DocEntries.begin();
                               i != DocEntries.end(); ++i)
    {
-      if ( (*i)->GetGroup() == group && (*i)->GetElement() == elem )
-      {
+      if ( (*i)->GetGroup()==group && (*i)->GetElement()==elem )
          return *i;
-      }
    }
-   return 0;
+   return NULL;
 }
 
-/**
- * \brief   Gets a Dicom Element inside a SQ Item Entry
- * @param   group Group number of the Entry
- * @param   elem  Element number of the Entry
- * @return Entry whose (group,elem) was passed. 0 if not found
- */
-ValEntry* SQItem::GetValEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *d = GetDocEntry(group, elem);
-   if ( ValEntry *e = dynamic_cast<ValEntry*>(d) )
-      return e;
-   return 0;
-}
+//-----------------------------------------------------------------------------
+// Protected
 
-/**
- * \brief   Gets a Dicom Element inside a SQ Item Entry
- * @param   group   Group number of the Entry
- * @param   elem  Element number of the Entry
- * @return Entry whose (group,elem) was passed. 0 if not found
- */
-BinEntry* SQItem::GetBinEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *d = GetDocEntry(group, elem);
-   if ( BinEntry *e = dynamic_cast<BinEntry*>(d) )
-      return e;
-   return 0;
-}
-
-/**
- * \brief   Gets a Dicom Element inside a SQ Item Entry
- * @param   group   Group number of the Entry
- * @param   elem  Element number of the Entry
- * @return Entry whose (group,elem) was passed. 0 if not found
- */
-SeqEntry* SQItem::GetSeqEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *d = GetDocEntry(group, elem);
-   if ( SeqEntry *e = dynamic_cast<SeqEntry*>(d) )
-      return e;
-   return 0;
-}
-
-
-/**
- * \brief   Get the value of a Dicom Element inside a SQ Item Entry
- * \note : meaningfull only if the required entry is NEITHER a SeqEntry 
- *                                                   NOR a BinEntry
- * @param   group   Group number of the Entry
- * @param   elem  Element number of the Entry 
- * @return  'string value' of the entry whose (group,elem) was passed.
- *           GDCM_UNFOUND if not found
- */ 
-
-std::string SQItem::GetEntryValue(uint16_t group, uint16_t elem)
-{
-
-/*
-   DocEntry *e = GetFirstEntry();
-   while (e)
-   {
-      if ( e->GetGroup() == group && e->GetElement() == elem)
-      {
-
-         if (ValEntry *ve = dynamic_cast<ValEntry*>(e))
-            return ve->GetValue();
-      }
-      e = GetNextEntry();
-   }   
-*/
-   for(ListDocEntry::iterator i = DocEntries.begin();
-                              i != DocEntries.end(); ++i)
-   {
-      if ( (*i)->GetGroup() == group && (*i)->GetElement() == elem)
-      {
-         if (ValEntry *ve = dynamic_cast<ValEntry*>(*i))
-           return ve->GetValue();
-      }
-   }
-   return GDCM_UNFOUND;
-}
 //-----------------------------------------------------------------------------
 // Private
 

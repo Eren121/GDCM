@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:11:59 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/01/25 15:44:24 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,33 +46,25 @@ public:
    virtual void Print(std::ostream &os = std::cout, std::string const & indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
 
-   /// \brief   returns the DocEntry chained List for this SQ Item.
-   ListDocEntry const &GetDocEntries() const { return DocEntries; };
-   
    void ClearEntry();
    bool AddEntry(DocEntry *Entry); // add to the List
    bool RemoveEntry(DocEntry *EntryToRemove);
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
   
+   DocEntry *GetFirstEntry();
+   DocEntry *GetNextEntry();
+
    DocEntry *GetDocEntry(uint16_t group, uint16_t elem);
-   ValEntry *GetValEntry(uint16_t group, uint16_t elem); 
-   BinEntry *GetBinEntry(uint16_t group, uint16_t elem); 
-   SeqEntry *GetSeqEntry(uint16_t group, uint16_t elem); 
-   
-   bool SetEntryValue(std::string const &val, uint16_t group, 
-                                         uint16_t elem);
-    
-   std::string GetEntryValue(uint16_t group, uint16_t elem);
+
+   bool IsEmpty() { return DocEntries.empty(); };
 
    /// \brief   returns the ordinal position of a given SQItem
    int GetSQItemNumber() { return SQItemNumber; };
-
    /// \brief   Sets the ordinal position of a given SQItem
    void SetSQItemNumber(int itemNumber) { SQItemNumber = itemNumber; };
 
    ///  \brief Accessor on \ref SQDepthLevel.
-   int GetDepthLevel() { return SQDepthLevel; }
-                                                                                
+   int GetDepthLevel() { return SQDepthLevel; }                                                                             
    ///  \brief Accessor on \ref SQDepthLevel.
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
@@ -82,23 +74,14 @@ public:
    ///  \brief Accessor on \ref BaseTagKey.
    BaseTagKey const &GetBaseTagKey() const { return BaseTagKeyNested; }
 
-   DocEntry *GetFirstEntry();
-   DocEntry *GetNextEntry();
-
 protected:
 // Variables that need to be access in subclasses
-
    /// \brief Chained list of (Elementary) Doc Entries
    ListDocEntry DocEntries;
    /// Chained list iterator, used to visit the TagHT variable
    ListDocEntry::iterator ItDocEntries;
    
-   /// \brief pointer to the HTable of the Document,
-   ///       (because we don't know it within any DicomDirObject nor any SQItem)
-   // TagDocEntryHT *PtagHT;
-
 private:
-
    /// \brief Sequences can be nested. This \ref SQDepthLevel represents
    ///        the level of the nesting of instances of this class.
    ///        \ref SQDepthLevel and its \ref SeqEntry::SQDepthLevel
