@@ -23,8 +23,7 @@
  * @return	
  */
  
-gdcmFile::gdcmFile(gdcmHeader *header)
-{
+gdcmFile::gdcmFile(gdcmHeader *header) {
    Header=header;
    SelfHeader=false;
 
@@ -48,8 +47,7 @@ gdcmFile::gdcmFile(gdcmHeader *header)
  *
  * @return	
  */
-gdcmFile::gdcmFile(std::string & filename)
-{
+gdcmFile::gdcmFile(std::string & filename) {
    Header=new gdcmHeader(filename.c_str());
    SelfHeader=true;
 
@@ -57,8 +55,7 @@ gdcmFile::gdcmFile(std::string & filename)
       SetPixelDataSizeFromHeader();
 }
 
-gdcmFile::gdcmFile(const char * filename)
-{
+gdcmFile::gdcmFile(const char * filename) {
    Header=new gdcmHeader(filename);
    SelfHeader=true;
 
@@ -70,14 +67,11 @@ gdcmFile::gdcmFile(const char * filename)
  * \ingroup   gdcmFile
  * \brief Destructor dedicated to writing a new DICOMV3 part10 compliant
  *        file (see SetFileName, SetDcmTag and Write)
- *        Opens (in read only and when possible) an existing file and checks
- *        for DICOM compliance. Returns NULL on failure.
  * \Note  If the gdcmHeader is created by the gdcmFile, it is destroyed
  *        by the gdcmFile
  * *
  */
-gdcmFile::~gdcmFile(void)
-{
+gdcmFile::~gdcmFile(void) {
    if(SelfHeader)
       delete Header;
    Header=NULL;
@@ -93,8 +87,7 @@ gdcmFile::~gdcmFile(void)
  * \brief     
  * @return	
  */
-gdcmHeader *gdcmFile::GetHeader(void)
-{
+gdcmHeader *gdcmFile::GetHeader(void) {
    return(Header);
 }
 

@@ -10,6 +10,8 @@
 #  include <sstream>
 #endif
 
+#include <iomanip> //la bibli qui va bien
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -76,14 +78,15 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
       }              
       s << std::endl;
    }
+   os<<s.str();
 
    // List element
    guint32 lgth;
    char greltag[10];  //group element tag
-   
+ 
+   std::cout << "------------ using listEntries ----------------" << std::endl; 
 
-   s << "------------ using listEntries -------------------" << std::endl; 
-
+   char st[11];
    for (ListTag::iterator i = listEntries.begin();  
 	   i != listEntries.end();
 	   ++i){
@@ -93,29 +96,36 @@ void gdcmHeaderEntrySet::Print(std::ostream & os) {
       o = (*i)->GetOffset();
       sprintf(greltag,"%04x|%04x",g,e);           
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
-      s << greltag << ": lgth : ";
-      lgth = (*i)->GetReadLength();
-      
-      s << std::hex << "x(" << lgth << ") "<< std::dec << lgth;	 
-      s << ",\t Offset : " << o;
-      s << " x(" << std::hex << o << std::dec << ") ";
-      s << "\t[" << (*i)->GetVR()    << "]";
-      s << "\t[" << (*i)->GetName()  << "]";       
-      s << "\t[" << d2 << "]";
-      
-      // Display the UID value (instead of displaying the rough code)  
+      cout << greltag << " lg : ";
+      lgth = (*i)->GetReadLength(); 
+      sprintf(st,"x(%x)",lgth);
+      std::cout.setf(ios::left);
+      std::cout << setw(10-strlen(st)) << " ";  
+      std::cout << st << " ";
+      std::cout.setf(ios::left);
+      std::cout << setw(8) << lgth; 
+      std::cout << " Off.: ";
+      sprintf(st,"x(%x)",o); 
+      std::cout << setw(10-strlen(st)) << " ";       
+      std::cout << st << " ";
+      std::cout << setw(8) << o; 
+      std::cout << "[" << (*i)->GetVR()  << "] ";
+      std::cout.setf(ios::left);
+      std::cout << setw(66-(*i)->GetName().length()) << " ";
+      std::cout << "[" << (*i)->GetName()<< "] ";       
+      std::cout << "[" << d2 << "]";
+       // Display the UID value (instead of displaying the rough code)  
       if (g == 0x0002) {  // Any more to be displayed ?
          if ( (e == 0x0010) || (e == 0x0002) ) 	   
-            s << "  ==>\t[" << ts->GetValue(v) << "]";   
+            std::cout << "  ==>\t[" << ts->GetValue(v) << "]";   
       } else {
          if (g == 0x0008) {
             if ( (e == 0x0016) || (e == 0x1150)  ) 	   
-               s << "  ==>\t[" << ts->GetValue(v) << "]"; 
+               std::cout << "  ==>\t[" << ts->GetValue(v) << "]"; 
          }
-      }              
-      s << std::endl;
-   }
-   os<<s.str();
+      }                        
+      std::cout << std::endl;
+   } 
 } 
 
 //-----------------------------------------------------------------------------

@@ -1839,9 +1839,11 @@ void gdcmHeader::FixHeaderEntryFoundLength(gdcmHeaderEntry * ElVal, guint32 Foun
     // if we don't, we lost 28800 characters from the Header :-(
                                                  
    else if(ElVal->GetGroup() == 0xfffe){ 
-      //printf("========================= %08x %d\n",FoundLength,FoundLength);
-                         // sometimes, length seems to be wrong                                      
-      //FoundLength =0;  // some more clever checking to be done !                                                     
+                       // sometimes, length seems to be wrong                                      
+      FoundLength =0;  // some more clever checking to be done !
+                       // I give up!
+		       // only  gdcm-MR-PHILIPS-16-Multi-Seq.dcm
+		       // causes troubles :-(                                                     
    }     
     
    ElVal->SetUsableLength(FoundLength);
