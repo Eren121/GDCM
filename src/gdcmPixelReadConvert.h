@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:34:55 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/02/03 10:03:07 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,14 +40,14 @@ public:
    PixelReadConvert();
    virtual ~PixelReadConvert();
 
-   void Print( std::ostream &os = std::cout, std::string const & indent = "" );
+   void Print( std::ostream &os = std::cout, std::string const &indent = "" );
 
    // Getter accessors:
-   uint8_t* GetRGB()     { return RGB; }
+   uint8_t *GetRGB()     { return RGB;     }
    size_t   GetRGBSize() { return RGBSize; }
-   uint8_t* GetRaw()     { return Raw; }
+   uint8_t *GetRaw()     { return Raw;     }
    size_t   GetRawSize() { return RawSize; }
-   uint8_t* GetLutRGBA() { return LutRGBA; }
+   uint8_t *GetLutRGBA() { return LutRGBA; }
 
    // Predicates:
    bool IsRawRGB();
@@ -60,7 +60,8 @@ public:
 
 private:
    // Use the fp:
-   void ReadAndDecompress12BitsTo16Bits( std::ifstream *fp ) throw ( FormatError );
+   void ReadAndDecompress12BitsTo16Bits( std::ifstream *fp ) 
+                                 throw ( FormatError );
    bool ReadAndDecompressJPEGFile( std::ifstream *fp );
 
    // In place (within Decompressed and with no fp access) decompression

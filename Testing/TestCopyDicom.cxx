@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/02/03 10:00:06 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@
 #endif
 
 // return true if the file exists
-bool FileExists(const char* filename)
+bool FileExists(const char *filename)
 {
 #ifdef _MSC_VER
 # define access _access

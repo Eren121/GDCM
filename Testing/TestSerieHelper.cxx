@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:26:34 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/02/03 10:00:06 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 
 typedef std::list<gdcm::File* > GdcmFileList;
 
-int TestSerieHelper(int argc, char* argv[])
+int TestSerieHelper(int argc, char *argv[])
 {  
    gdcm::SerieHelper *s;
   
@@ -35,7 +35,7 @@ int TestSerieHelper(int argc, char* argv[])
    }
 
    //if (argc > 2)
-   //   gdcm::Debug::SetDebugOn();
+   //   gdcm::Debug::DebugOn();
 
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
 

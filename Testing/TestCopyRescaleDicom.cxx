@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/02/03 10:00:06 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,12 +23,12 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-bool FileExists(const char* filename);
+bool FileExists(const char *filename);
 
-bool RemoveFile(const char* source);
+bool RemoveFile(const char *source);
 
-int CopyRescaleDicom(std::string const & filename, 
-                     std::string const & output )
+int CopyRescaleDicom(std::string const &filename, 
+                     std::string const &output )
 {
    std::cout << "   Testing: " << filename << std::endl;
    if( FileExists( output.c_str() ) )
@@ -51,16 +51,16 @@ int CopyRescaleDicom(std::string const & filename,
    //////////////// Step 2:
    std::cout << "2...";
    // Copy of the file content
-   gdcm::DocEntry* d = originalF->GetFirstEntry();
+   gdcm::DocEntry *d = originalF->GetFirstEntry();
    while(d)
    {
-      if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
+      if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
       {
          copyF->InsertBinEntry( b->GetBinArea(),b->GetLength(),
                                 b->GetGroup(),b->GetElement(),
                                 b->GetVR() );
       }
-      else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
+      else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
           copyF->InsertValEntry( v->GetValue(),
                                  v->GetGroup(),v->GetElement(),
@@ -82,20 +82,20 @@ int CopyRescaleDicom(std::string const & filename,
    size_t rescaleSize;
    uint8_t *rescaleImage;
 
-   const std::string & bitsStored    = originalF->GetEntryValue(0x0028,0x0101);
+   const std::string &bitsStored = originalF->GetEntryValue(0x0028,0x0101);
    if( bitsStored == "16" )
    {
       std::cout << "Rescale...";
-      copyF->InsertValEntry( "8", 0x0028, 0x0100); // BitsAllocated
-      copyF->InsertValEntry( "8", 0x0028, 0x0101); // BitsStored
-      copyF->InsertValEntry( "7", 0x0028, 0x0102); // HighBit
-      copyF->InsertValEntry( "0", 0x0028, 0x0103); //Pixel Representation
+      copyF->InsertValEntry( "8", 0x0028, 0x0100); // Bits Allocated
+      copyF->InsertValEntry( "8", 0x0028, 0x0101); // Bits Stored
+      copyF->InsertValEntry( "7", 0x0028, 0x0102); // High Bit
+      copyF->InsertValEntry( "0", 0x0028, 0x0103); // Pixel Representation
  
       // We assume the value were from 0 to uint16_t max
       rescaleSize = dataSize / 2;
       rescaleImage = new uint8_t[dataSize];
 
-      uint16_t* imageData16 = (uint16_t*)original->GetImageData();
+      uint16_t *imageData16 = (uint16_t*)original->GetImageData();
       for(unsigned int i=0; i<rescaleSize; i++)
       {
          rescaleImage[i] = imageData16[i]/256;
@@ -151,7 +151,7 @@ int CopyRescaleDicom(std::string const & filename,
    //////////////// Step 5:
    std::cout << "5...";
    size_t    dataSizeWritten = copy->GetImageDataSize();
-   uint8_t* imageDataWritten = copy->GetImageData();
+   uint8_t *imageDataWritten = copy->GetImageData();
 
    if (originalF->GetXSize() != copy->GetFile()->GetXSize() ||
        originalF->GetYSize() != copy->GetFile()->GetYSize() ||
@@ -213,7 +213,7 @@ int CopyRescaleDicom(std::string const & filename,
 // Here we load a gdcmFile and then try to create from scratch a copy of it,
 // copying field by field the dicom image
 
-int TestCopyRescaleDicom(int argc, char* argv[])
+int TestCopyRescaleDicom(int argc, char *argv[])
 {
    if ( argc == 3 )
    {

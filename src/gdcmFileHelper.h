@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/02/03 10:03:07 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,7 @@ public:
  
    virtual ~FileHelper();
 
-   void Print(std::ostream &os = std::cout, std::string const & indent = ""); 
+   void Print(std::ostream &os = std::cout, std::string const &indent = ""); 
 
    /// Accessor to \ref File
    File *GetFile() { return FileInternal; }
@@ -84,10 +84,10 @@ public:
    void SetUserData(uint8_t *data, size_t expectedSize);
    uint8_t* GetUserData();
    size_t GetUserDataSize();
-   // RBG data (from file
+   // RBG data (from file)
    uint8_t* GetRGBData();
    size_t GetRGBDataSize();
-   // RAW data (from file
+   // RAW data (from file)
    uint8_t* GetRawData();
    size_t GetRawDataSize();
 
@@ -95,21 +95,21 @@ public:
    uint8_t* GetLutRGBA();
 
    // Write mode
-   void SetWriteModeToRaw()          { SetWriteMode(WMODE_RAW); };
-   void SetWriteModeToRGB()          { SetWriteMode(WMODE_RGB); };
-   void SetWriteMode(FileMode mode)  { WriteMode = mode; };
-   FileMode GetWriteMode()           { return WriteMode; };
+   void SetWriteModeToRaw()           { SetWriteMode(WMODE_RAW);  };
+   void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  };
+   void SetWriteMode(FileMode mode)   { WriteMode = mode;         };
+   FileMode GetWriteMode()            { return WriteMode;         };
 
    // Write format
    void SetWriteTypeToDcmImplVR()     { SetWriteType(ImplicitVR); };
    void SetWriteTypeToDcmExplVR()     { SetWriteType(ExplicitVR); };
-   void SetWriteTypeToAcr()           { SetWriteType(ACR); };
+   void SetWriteTypeToAcr()           { SetWriteType(ACR);        };
    void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); };
-   void SetWriteType(FileType format) { WriteType = format; };
-   FileType GetWriteType()            { return WriteType; };
+   void SetWriteType(FileType format) { WriteType = format;       };
+   FileType GetWriteType()            { return WriteType;         };
 
    // Write pixels of ONE image on hard drive
-   // No test is made on processor "endianity"
+   // No test is made on processor "endianness"
    // The user must call his reader correctly
    bool WriteRawData  (std::string const &fileName);
    bool WriteDcmImplVR(std::string const &fileName);
@@ -133,8 +133,8 @@ protected:
    void SetWriteToNoLibido();
    void RestoreWriteOfLibido();
 
-   ValEntry *CopyValEntry(uint16_t group,uint16_t elem);
-   BinEntry *CopyBinEntry(uint16_t group,uint16_t elem);
+   ValEntry *CopyValEntry(uint16_t group, uint16_t elem);
+   BinEntry *CopyBinEntry(uint16_t group, uint16_t elem);
 
 private:
    void Initialize();

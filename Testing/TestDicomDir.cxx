@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:52:09 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/02/03 10:00:06 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,14 +80,14 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
    return 0;
 } 
  
-int TestDicomDir(int argc, char* argv[])
+int TestDicomDir(int argc, char *argv[])
 {  
    gdcm::DicomDir *dicomdir;
    
-   gdcm::DicomDirPatient * pa1;
-   gdcm::DicomDirStudy *st1;
-   gdcm::DicomDirSerie *se1;
-   gdcm::DicomDirImage *im1;
+   gdcm::DicomDirPatient *pa1;
+   gdcm::DicomDirStudy   *st1;
+   gdcm::DicomDirSerie   *se1;
+   gdcm::DicomDirImage   *im1;
 
    gdcm::TSKey v;
     
@@ -198,9 +198,9 @@ int TestDicomDir(int argc, char* argv[])
              << std::endl<< std::endl;
   
    gdcm::DicomDirPatient *pa2;
-   gdcm::DicomDirStudy *st2;
-   gdcm::DicomDirSerie *se2;
-   gdcm::DicomDirImage *im2;
+   gdcm::DicomDirStudy   *st2;
+   gdcm::DicomDirSerie   *se2;
+   gdcm::DicomDirImage   *im2;
 
    pa1 = dicomdir->GetFirstPatient(); 
    pa2 = d2->GetFirstPatient(); 

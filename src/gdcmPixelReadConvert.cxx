@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:34:55 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/02/03 10:03:07 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ PixelReadConvert::~PixelReadConvert()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief Predicate to know wether the image[s] (once Raw) is RGB.
+ * \brief Predicate to know whether the image[s] (once Raw) is RGB.
  * \note See comments of \ref ConvertHandleColor
  */
 bool PixelReadConvert::IsRawRGB()
@@ -68,7 +68,10 @@ bool PixelReadConvert::IsRawRGB()
    }
    return true;
 }
-
+/**
+ * \brief Gets various usefull informations from the file header
+ * @param file gdcm::File pointer
+ */
 void PixelReadConvert::GrabInformationsFromFile( File *file )
 {
    // Number of Bits Allocated for storing a Pixel is defaulted to 16
@@ -94,14 +97,14 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       HighBitPosition = BitsAllocated - 1;
    }
 
-   XSize = file->GetXSize();
-   YSize = file->GetYSize();
-   ZSize = file->GetZSize();
+   XSize           = file->GetXSize();
+   YSize           = file->GetYSize();
+   ZSize           = file->GetZSize();
    SamplesPerPixel = file->GetSamplesPerPixel();
-   PixelSize = file->GetPixelSize();
-   PixelSign = file->IsSignedPixelData();
-   SwapCode  = file->GetSwapCode();
-   std::string ts = file->GetTransferSyntax();
+   PixelSize       = file->GetPixelSize();
+   PixelSign       = file->IsSignedPixelData();
+   SwapCode        = file->GetSwapCode();
+   std::string ts  = file->GetTransferSyntax();
    IsRaw =
         ( ! file->IsDicomV3() )
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
@@ -216,7 +219,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // variable). But RawSize is the right size of the image !
       if( PixelDataLength != RawSize)
       {
-         gdcmVerboseMacro( "Mismatch between PixelReadConvert and RawSize." );
+         gdcmVerboseMacro( "Mismatch between PixelReadConvert : "
+                            << PixelDataLength << " and RawSize : " << RawSize );
       }
       if( PixelDataLength > RawSize)
       {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/02/03 10:00:06 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ public:
    ReferenceFileParser();
    ~ReferenceFileParser();
 
-   bool Open( std::string& referenceFileName );
+   bool Open( std::string &referenceFileName );
    void Print();
    void SetDataPath(std::string&);
    bool Check();
@@ -63,7 +63,7 @@ public:
 private:
    bool AddKeyValuePairToMap( std::string &key, std::string &value );
 
-   std::istream& eatwhite(std::istream &is);
+   std::istream &eatwhite(std::istream &is);
    void eatwhite(std::string &toClean);
    std::string ExtractFirstString(std::string &toSplit);
    void CleanUpLine( std::string &line );
@@ -117,13 +117,13 @@ ReferenceFileParser::~ReferenceFileParser()
 {
    for (MapFileValuesType::iterator i  = ProducedMap.begin();
                                     i != ProducedMap.end();
-                                    ++i)
+                                  ++i)
    {
       delete i->second;
    }
 }
 
-/// As gotten from:
+/// As got from:
 /// http://community.borland.com/article/0,1410,17203,0.html
 uint16_t ReferenceFileParser::axtoi(char *hexStg) 
 {
@@ -181,16 +181,16 @@ void ReferenceFileParser::Print()
 {
    for (MapFileValuesType::iterator i  = ProducedMap.begin();
                                     i != ProducedMap.end();
-                                    ++i)
+                                  ++i)
    {
       std::cout << Indent << "FileName: " << i->first << std::endl;
       MapEntryValuesPtr KeyValues = i->second;
       for (MapEntryValues::iterator j  = KeyValues->begin();
                                     j != KeyValues->end();
-                                    ++j)
+                                  ++j)
       {
          std::cout << Indent
-              << "  Key: " << j->first
+              << "  Key: "   << j->first
               << "  Value: " << j->second
               << std::endl;
       }
@@ -204,7 +204,7 @@ bool ReferenceFileParser::Check()
    bool ret = true;
    for (MapFileValuesType::iterator i  = ProducedMap.begin();
                                     i != ProducedMap.end();
-                                    ++i)
+                                  ++i)
    {
       ret &= Check(i);
    }
@@ -229,7 +229,7 @@ bool ReferenceFileParser::Check( MapFileValuesType::iterator &fileIt )
 {
    std::string fileName = DataPath + fileIt->first;
    std::cout << Indent << "FileName: " << fileName << std::endl;
-   gdcm::File* tested = new gdcm::File( fileName.c_str() );
+   gdcm::File *tested = new gdcm::File( fileName.c_str() );
    if( !tested->IsReadable() )
    {
      std::cerr << Indent << "Failed\n"
@@ -242,7 +242,7 @@ bool ReferenceFileParser::Check( MapFileValuesType::iterator &fileIt )
    MapEntryValuesPtr KeyValues = fileIt->second;
    for (MapEntryValues::iterator j  = KeyValues->begin();
                                  j != KeyValues->end();
-                                 ++j)
+                               ++j)
    {
       std::string key = j->first;
 
@@ -289,7 +289,7 @@ std::istream &ReferenceFileParser::eatwhite( std::istream &is )
    return is;
 }
 
-void ReferenceFileParser::eatwhite( std::string& toClean )
+void ReferenceFileParser::eatwhite( std::string &toClean )
 {
    while( toClean.find_first_of( " " ) == 0  )
       toClean.erase( 0, toClean.find_first_of( " " ) + 1 );

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 13:42:44 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/02/03 10:00:06 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,14 +25,14 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-int InternalTest(std::string const & filename, 
-                 std::string const & referenceFileName )
+int InternalTest(std::string const &filename, 
+                 std::string const &referenceFileName )
 {
       std::cout << "   Testing: " << filename << std::endl;
 
       ////// Step 1:
       std::cout << "      1...";
-      gdcm::FileHelper* tested = new gdcm::FileHelper( filename );
+      gdcm::FileHelper *tested = new gdcm::FileHelper( filename );
       if( !tested->GetFile()->IsReadable() )
       {
         std::cout << " Failed" << std::endl
@@ -49,7 +49,7 @@ int InternalTest(std::string const & filename,
       std::ifstream testFILE( referenceFileName.c_str() );
       if (! testFILE )
       {
-         uint8_t* testedImageData = tested->GetImageData(); // Kludge
+         uint8_t *testedImageData = tested->GetImageData(); // Kludge
          (void)testedImageData;
 
          tested->SetWriteModeToRGB();
@@ -61,7 +61,7 @@ int InternalTest(std::string const & filename,
       ////// When reference file is not gdcm readable test is failed:
       std::cout << "3a...";
 
-      gdcm::FileHelper* reference = new gdcm::FileHelper( referenceFileName );
+      gdcm::FileHelper *reference = new gdcm::FileHelper( referenceFileName );
       if( !reference->GetFile()->IsReadable() )
       {
          std::cout << " Failed" << std::endl
@@ -78,10 +78,10 @@ int InternalTest(std::string const & filename,
       ////// Step 3b:
       std::cout << "3b...";
       int testedDataSize    = tested->GetImageDataSize();
-      uint8_t* testedImageData = tested->GetImageData();
+      uint8_t *testedImageData = tested->GetImageData();
     
       int    referenceDataSize = reference->GetImageDataSize();
-      uint8_t* referenceImageData = reference->GetImageData();
+      uint8_t *referenceImageData = reference->GetImageData();
 
       // Test the image size
       if (tested->GetFile()->GetXSize() != reference->GetFile()->GetXSize() ||
@@ -139,7 +139,7 @@ int InternalTest(std::string const & filename,
       return 0;
 }
 
-int TestAllReadCompareDicom(int argc, char* argv[]) 
+int TestAllReadCompareDicom(int argc, char *argv[]) 
 {
    if ( argc == 3 )
    {

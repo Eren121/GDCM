@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 18:13:57 $
-  Version:   $Revision: 1.221 $
+  Date:      $Date: 2005/02/03 10:03:07 $
+  Version:   $Revision: 1.222 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -576,8 +576,7 @@ void Document::LoadEntryBinArea(BinEntry *elem)
  * \brief  Loads the element while preserving the current
  *         underlying file position indicator as opposed to
  *        LoadDocEntry that modifies it.
- * @param entry   Header Entry whose value will be loaded. 
- * @return  
+ * @param entry   DocEntry whose value will be loaded. 
  */
 void Document::LoadDocEntrySafe(DocEntry *entry)
 {
@@ -593,7 +592,7 @@ void Document::LoadDocEntrySafe(DocEntry *entry)
  * \brief   Compares two documents, according to \ref DicomDir rules
  * \warning Does NOT work with ACR-NEMA files
  * \todo    Find a trick to solve the pb (use RET fields ?)
- * @param   document
+ * @param   document to compare with current one
  * @return  true if 'smaller'
  */
 bool Document::operator<(Document &document)
@@ -658,7 +657,7 @@ bool Document::operator<(Document &document)
 // Protected
 /**
  * \brief Reads a supposed to be 16 Bits integer
- *       (swaps it depending on processor endianity) 
+ *       (swaps it depending on processor endianness) 
  * @return read value
  */
 uint16_t Document::ReadInt16()
@@ -680,7 +679,7 @@ uint16_t Document::ReadInt16()
 
 /**
  * \brief  Reads a supposed to be 32 Bits integer
- *         (swaps it depending on processor endianity)  
+ *        (swaps it depending on processor endianness)  
  * @return read value
  */
 uint32_t Document::ReadInt32()
