@@ -1,20 +1,19 @@
+2003-07-28  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+	* src/gdcmHeader.cxx : misplaced return 0.; for ACR/NEMA
 2003-07-24 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/jpeg/libijg12/.cvsignore, jconfig.* : ommited files while last
         commit of JPR (before his hollidays to facilitate our work).
       * setup.py : bug fix in code. Modifications made while the last commit
         of JPR. The code hasn't been tested before the commit... it's so
         useless to make that (for best programmer that is JPR) !!!
-
 2003-07-08  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * tagged the current version as Version0_3 (i.e. version 0.3)
-
 2003-07-08  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * vtk/testvtkGdcmReader.cxx : remove a symbol that is unused
       * src/jpeg/libijg8/jmorecfg.h : adding export symbol for windows
       * *.dsp : modifications to use new libgdcmijpeg8 library
       * setup.py : bug fix on VTKPATH variable
       * PACKAGER : adding all concerning windows
-
 2003-07-07  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmElValSet.cxx, gdcmFile.cxx: JPR bug fix, removal of
         garbage debug code.
@@ -28,11 +27,9 @@
       * fixing build of rpm (through rpm -ta):
         - Doc/Makefile.am exports proper doxygen files
         - src/jpeg/libijg8/Makefile.am exports the include files.
-
 2003-07-07  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader.cxx : bug fix when loading only 1 file.
       * src/gdcmHeader.h : formatting code
-
 2003-07-07  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader.[cxx|h] : bug fix when loading only one file.
         We were obtaining error message from vtk. Now, creation of file list
@@ -41,37 +38,31 @@
         Bug fix in update of progress value. Previous commit for this was a bad
         correction.
       * vtk/vtkGdcmReader.h : adding comments for InternalFileNaleList variable
-
 2003-07-04  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmHeader.h : added method to get the file name
       * vtk/vtkGdcmReader.[cxx|h] : bug fix concerning loading of bad dicom
         files. Added method to remove all files on the input
         Added FIXME comment concerning the bad parsing of header made by
         ExecuteInformation method (in ExecuteData method)
-
 2003-07-03  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/Makefile.am: vtkGdcmReader.h should now be cleany installed
         when using make instal.
       * src/gdcmFile.cxx : bug fix under Window after JPR commit
         RQ : the JPR doesn't appear in the ChangeLog... normal for him
-
 2003-07-03  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * setup.py : adding include dir of jpeg lib to compile all sources
       * */Win32/*.dsp : JPR fix for windows compilation
-
 2003-07-02  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/jpeg/libijg8/jconfig.* : JPR bug fix : now compile on both
         linux and WINDOWS !
       * src/gdcmJpeg.cxx : JPR bug fix : erroneous include
       * src/win32/gdcmdll.dsp : JPR fix for windows compilation
-
 2003-07-02  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * setup.py is again effective on un*x (takes into account the
         addon of the jpeg library)
       * Doc/DoxyDevelInstal.txt added (developper's raw documentation)
       * Doc/Doxy* updated (includes above enhancements)
       * INSTALL now points to web documentation
-
 2003-07-01  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.h doesn't make unnecessary reference to
         gdcmUtil.h anymore.
@@ -86,7 +77,6 @@
           building stage.
       * vtk/vtkGdcmReader.cxx: g++ warning message clean up (platform
         dependent convertion).
-
 2003-06-20  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Clean up of previous JPR garbage commit (not even commented in the
         Changelog):
@@ -94,13 +84,11 @@
         - moved all jpeg related files from src to src/jpeg/libijg8, with
           addition/modification of Makefile.am and configure.in.
         - the testSuite is still brain damage (not guilty).
-
 2003-06-02  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * WrapVTK.py : modifications to get correctly vtk source files to 
         compile
       * vtk/vtkGdcmReader.cxx : modification for an already existing name
         (FileName -> Filename)
-
 2003-06-11  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader.[cxx/h]:
         - UpdateProgress method should now be effective
@@ -113,23 +101,18 @@
           loadable (wrong path-filename, wrong permissions on existing file,
           or file not parsable by gdcm) are replaced with a black image
           in the stack (for the caller to notice the problem).
-
 2003-06-03  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader.cxx: hopefully corrected Z extent.
-
 2003-06-02  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader[cxx|h] : makes correct code to remove conflicts 
         between standard library (std) and vtk library (problems are found
         under Windows... thanks Windows !)
-
 2003-05-30  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader[cxx|h] should now be volume aware (read ready for
         debug stage).
       * gdcmPython/demo/vtkGdcmReader.py: commented lines for volume test
-
 2003-05-29  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader[cxx|h] preparation addons for loading volumes.
-
 2003-05-28  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * When compiling with distutils (see setup.py) the C++ compiler is
         called with different flags than the default ones (with automake).
@@ -140,7 +123,6 @@
           up from unused variables.
         - vtk/vtkGdcmReader.cxx: potential bug fix.
       * src/gdcmHeader.h: Doxygen warning cleanup
-
 2003-05-27  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/gdcm.i:
         - typemaps correction to take into account the systematic replacement
@@ -156,10 +138,8 @@
         C++ static methods).
       * gdcmPython/demo/printGroupedPublicDict.py is operational again,
         with the above changes.
-
 2003-05-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * setup.py, manifest.in : bug fix under linux
-
 2003-05-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * Modification of setup.py to compile vtk part too. Then, we have 2
         wrappers which must work with same distutils. For that, we have a
@@ -172,7 +152,6 @@
         + In WrapVTK.py  we have extension and wrapper for VTK
       * MANIFEST.in : modifications to consider vtk directory and new python
         files for compilation
-
 2003-05-21  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with Benoit Regrain
       * Added python wrappers of vtkGdcmReader vtk class (see the
         source in vtk/vtkGdcmReader.cxx) :
@@ -202,14 +181,12 @@
         file.
       * gdcmPython/gdcm.i now declares a typemap for std::string (to
          comply with above changes)
-
 2003-05-12  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * src/gdcmHeader>[h/cxx] added gdcmHeader::GetPixelSize()
       * vtk/vtkGdcmReader.cxx now properly inports the image in the
         vtk data structure (an image Flip was required).
       * vtk/testvtkGdcmReader.cxx refers to gdcmData subdir instead of Data.
       * cosmetic changes in documentation.
-
 2003-05-7  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * src/gdcmHeader.cxx: the constructor no longer exits when an
         unexisting file is given as argument.
@@ -221,14 +198,12 @@
         All the python scripts (including the package initialisation file
         gdcmPython/__init__.py) were adapated to take this change into
         account (basically GDCM_DATA_PATH is now GDCM_TEST_DATA_PATH).
-
 2003-05-5  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * vtk subdir added. Contains vtkGdcmReader.[cxx|h] a vtk class
         inherinting from vtkImageReader and testvtkGdcmReader.cxx a small
         demo of the usage of this class.
         Compilation of this vtk part is only done when using the --enable-vtk
         at configure (or autogen.sh) stage.
-
 2003-04-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * More memmory link related corrections and documentation fixes.
         Notes on valgrind:
@@ -247,7 +222,6 @@
       * src/gdcmHeader.x: dicom_vr and Dicts are not class members anymore.
         Allthough this weakens the semantics, it is a ditch attempt to
         make gdcm more thread friendly.
-
 2003-04-15  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * Memory link hunt (by using valgrind through the command
           valgrind --show-reachable=yes --leak-check=yes PrintHeader).
@@ -257,14 +231,11 @@
         - gdcmHeader::dicom_vr is now of type gdcmVR* as opposed to
           VRHT*.
         - gdcmGlobal global object contained class added (see src/gdcmUtil.x)
-
 2003-04-9  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * src/Makefile.am now exports all the necessary include files at
         make install stage.
-
 2003-04-9 JPR
       * UpdateGroupLength replaced by new one
-
 2003-04-7 JPR
       * UpdateGroupLength re-written using H-Table
         (named UpdateGroupLengthNew untill checks are over)
@@ -287,13 +258,11 @@
       * gdcmGetXSize added
       * getimageDataSize now calls gdcmGetXSize
       * Test/*.cxx changed to agree with above changes
-
 2003-03-31 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.h: LoadElements() is not a public method anymore
         (to avoid double call by end user).
       * Test/*.cxx LoadElements() doesn't need to be called explicitely
         by end user, since gdcmHeader::gdcmHeader now handles it.
-
 2003-03-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcm/Doc many doxygen changes:
         - Doxyfile now has two different versions, DoxyfileUsers that generates
@@ -312,7 +281,6 @@
       * src/gdcmFile.cxx: cosmetic changes to avoid messages of doxygen about
         ill-formed documentation sections.
       * src/gdcmHeader.cxx: ditto
-
 2003-03-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * setup.py fixed for un*x (needed macro for stdint.h)
       * Test/test.cxx renamed to PrintHeader.cxx to avoid collision on
@@ -322,11 +290,9 @@
       * gdcmPython/win32/gdcmpycomplet.dsp renamed to gdcmpyembedded.dsp.
       * gdcmPython/win32/gdcmpy.dsp trashed away (brain damaged).
       * src/gdcm*.cxx JPR's bad inclusion fixed.
-
 2003-03-26 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader[h, cxx] gdcmHeader now has an IsReadable predicate.
       * gdcmPython/demo/test.py changed accordingly.
-
 2003-03-25 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/Makefile.am fixed linking against libstdc++
       * gdcmPython/_gdcm.so symbolic link to gdcmPython/.libs/pygdcm.so added.
@@ -335,7 +301,6 @@
         compilation work.
       * src/gdcmHeader.cxx cleaned up wild JPR's dirty kludge.
       * src/gdcmElValSet.cxx cleaned up frog's forgotten debug message
-
 2003-03-24 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx gdcmHeader::gdcmHeader now calls LoadElements(),
         hence the user doesn't need this explicit call.
@@ -348,17 +313,14 @@
         - src/gdcmHeader.cxx gdcmHeader::NewManualElValToPubDict added.
         - src/gdcmHeader.cxx gdcmHeader::AddAndDefaultElements now
           cleanly adds some gdcm added tags (like gdcmXSize, gdcmYSize...)
-
 2003-03-17 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
       * Makefile.am, acinclude.m4, configure.in, python.m4, Dicts/Makefile.am,
    Doc/Makefile.am, Test/Makefile.am, gdcmPython/Makefile.am, 
    src/Makefile.am : the project should properly compile and install
    with the autotools, included the python wrappers part. 
       * gdcm.spec.in : added a spec file for RPM packaging.
-
 2003-03-14 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmUtils.cxx : redifinition of defaults parameters in code
-
 2003-03-12 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/__init__.py fix of GDCM_DICT_PATH which was not
         to exported to the environement (see gdcmPython/testSuite.py
@@ -368,20 +330,17 @@
         ElValue class renamed to gdcmElValue for obvious consistency reasons.
       * src/gdcmElValSet.cxx, src/gdcmUtil.[cxx-h] Tokenize utility function
         moved away from gdcmElValSet.cxx to gdcmUtil.cxx.
-
 2003-03-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/__init__.py doesn't crash anymore when running in
         in InstallMode or PreInstallMode but with an environement given
         value of GDCM_DICT_PATH.
       * src/gdcmDictSet.[cxx/h] coding style.
-
 2003-03-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.h and gdcmHeader.cxx Coding style + doxigenation.
       * src/gdcm.h general comments moved to TODO, and README
       * src/gdcm.h should now be seen as a user commodity (including it
         should suffice to fully use gdcm). It is nowhere including within
         any of the kernel files src/*.cxx and src/*.h.
-
 2003-03-05 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h splitted in gdcmCommon.h, gdcmDict.h, gdcmDictEntry.h,
         gdcmDictSet.h, gdcmElValSet.h, gdcmElValue.h, gdcmFile.h,
@@ -392,11 +351,9 @@
       * Test/Makefile.am corrected and added NEWS, AUTHORS in order for
         the autogen.sh generated "make snapshot" command to work.
       * autogen.sh removed history related references to crea package.
-
 2003-03-04 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * distutilsSwigCPlusPlus.py work around some swig portability
         bug.
-
 2003-03-03 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Eventually, python/gdcmPython was renamed to gdcmPython. This
         was done in a last ditch attempt to get setup.py _really_
@@ -406,7 +363,6 @@
         Alas, the src directory was out of scope (i.e. it's relative
         position to setup.py was ../src) which made things impossible to
         handle (see previous version of python/setup.py). Crossing fingers...
-
 2003-02-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/setup.py now works on Un*x. (harder than I thougth)
       * python/distutilsSwigCPlusPlus.py can now have include files
@@ -415,7 +371,6 @@
 2003-02-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx : bug fix - opening dicom file in binary !!!
       * modifications in MSVC projects
-
 2003-02-19 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * As stated by the first lines of Test/ExceptionAndPython/README, it
         looks like we can move back to original usage of exception within
@@ -451,23 +406,19 @@
         (for python dectection).
       * python/gdcmPython/gdcm.i: the out typemap map<string, list<string>>*
         now avoids publishing the empty entries.
-
 2003-02-13 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * python/setup.py : bug fix concerning install under windows
         ExtraPath reused :-P
       * gdcm.dsw : bug fix concerning path for libraries for python !!!
-
 2003-02-13 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * Dicts/dicomV3.dic : remove double spaces !!!
       * src/gdcmElValSet.cxx : bug fix concerning windows compiler
       * python/gdcmPython/win32/gdcmpycomplet.dsp : bug fix concerning paths
         and links
-
 2003-01-28 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx added a post header parsing AddAndDefaultElements
         method. Doxygenation.
       * src/gdcm.h clean up of JPR spurious comments.
-
 2003-01-17 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/distutilsSwigCPlusPlus.py now properly collects the
         shadow classes generated by "swig -c++" (gdcm.py in our case)
@@ -482,7 +433,6 @@
         subdir (see the README file). This problem probably due to
         an combination of g++ and dynamic loading.
       * added Test/ExceptionAndPython (see above)
-
 2003-01-17 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Changed the layout of the python part to avoid bloating main
         directory with setup.py, distutilsSwigCPlusPlus.py, MANIFEST.in
@@ -505,7 +455,6 @@
           instead of gdcmPython/demo/load.py.
         - gdcmPython/testSuite.py changed to import the package gdcmPython.
         
-
 2002-12-16 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h, src/gdcmHeader.cxx: added GetPubTagNames() resp.
         GetPubTagNamesByCategory() to gdcmHeader that return a list of the
@@ -517,7 +466,6 @@
         - python/gdcm.i changed accordingly,
         - python/demo/printGroupedPublicDict.py added, that gives an example
           of the above new functionalities in Python.
-
 2002-12-11 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h, gdcmHeader.cxx:
         - historic references to glib's g_malloc and g_free (#defined)
@@ -540,7 +488,6 @@
         - GetElValByNumber(guint16, guint16)
         - GetElValRepByName(string)
       * Doc/requirements.txt added.
-
 2002-12-9 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Test/Makefile building now depends on the one of libgdcm.so
       * src/gdcmHeader.cxx and gdcm.h are now OB (undefined length encoded
@@ -548,7 +495,6 @@
         the pixel data of JPEG encoded DICOM files. This leaves only a single
         file in the testSuite whose pixel data address (offset) is unknown.
       * python/testSuite.py changed accordingly.
-
 2002-12-6 Christophe Odet + Hugues Benoit-Cattin + Eric.Boix
       * VC++ has some strong limitations when working with the STL, as stated
         in http://support.microsoft.com/support/kb/articles/Q168/9/58.ASP :
@@ -576,7 +522,6 @@
         (one) of image(s).
       * removed glib references
       * typedef's inserted in gdcm.i for correct swig type management
-
 2002-11-27 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/demo/*.py load.py extracted from test.py. Added explore.py
         that only displays required tags and testAll.py that parses all
@@ -585,7 +530,6 @@
       * Data/* new test files added accordingly to the testSuite.
       * src/gdcmHeader.cxx avoid overwriting of the dictionary when
         the vr in the file differs from the one of the dictionary.
-
 2002-11-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h and gdcmHeader.cxx gdcm no longer loads all the elements
         values, but limits itself to values which are below a user specified
@@ -598,19 +542,16 @@
         - now tests for the existence and proper value of the pixel data
         - two new examples added.
       * Data/gdcm-MR-SIEMENS-16.acr[12] added.
-
 2002-11-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h and gdcmHeader.cxx are now "Big Endian transfer syntax"
         aware. See the strategy comments in gdcmHeader::FindeLength().
       * Test/test.cxx now accepts a filename as first argument.
       * Data/US-PAL-8-10x-echo.dcm and US-RGB-8-epicard.dcm added.
       * python/testSuite.py changed to integrate test on above files.
-
 2002-11-15 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Dicts/dicomV3.dic removed all the trailing (RET) when the
         the vr was also RET.
       * python/testSuite.py more tests added.
-
 2002-11-14 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/testSuite.py unittest test suite added (uses Data)
       * Data/* dcm and acr files for the test suite.
@@ -625,12 +566,10 @@
         detection by Header::FindVR of falsely explicit elements, I
         added an extra ImplicitVr member to ElValue (boolean).
         The rest of the changes we the necessary adaptations.
-
 2002-11-12 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader::FindLength bug fix when trapping falsely explicit
         VR files.
       * src/gdcmHeader::FindVR: hard way fix of falsely explicit vr files.
-
 2002-11-8 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Adaptation for porting to VC++:
         - src/gdcm.h
@@ -641,7 +580,6 @@
       * src/gdcmDictSet::SetDictPath adds a trailing / to environement
         variable GDCM_DICT_PATH.
       * src/gdcmHeader.cxx verbose comments made discrete.
-
 2002-11-7 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/gdcm.i: added a typemap that converts a C++ hashing table
         to native Python dictionary.
@@ -651,7 +589,6 @@
       * src/gdcm.h and gdcmHeader.cxx: gdcmHeader now has an accessor on
         PubElVals hashing table. 
       * Dicts/dicomV3.dic removed error prone trailing spaces.
-
 2002-11-6 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Python wrapping process moved away from src/Makefile to
         newly created python/Makefile (as well as gdcm.i)
@@ -660,25 +597,21 @@
       * src/gdcmDictSet.cxx: the dictionnaries directory path is now imported
         from the environement variable GDCM_DICT_PATH (when existing).
       * src/gdcmDict::GetTag bug fix.
-
 2002-10-31 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Straightforward temporary fixes for swig to build the python wrappers.
         src/Makefile now has a python working entry [by working we mean
         that we can import de shadow classes without errors].
-
 2002-10-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * hashtest.cxx removed (since allready in Test)
       * src/gdcmlib.h renamed to src/gdcm.h
       * src/dcm.i renamed to src/gdcm.i
       * src/Makefile prepared for python wrapping
-
 2002-10-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx :
         - Parsing of header is now separated from loading of element values
           (see gdcmHeader::LoadElements).
         - general clean up of hopefully all file access (creation of
           ReadInt16 and ReadInt32)
-
 2002-10-22 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx :
         - RecupLgr renamed to FindLength and cut off with new IsAnInteger
@@ -689,7 +622,6 @@
       * src/gdcmElValSet.cxx fixed both GetElValue methods
       * Dicts/dicomV3.dic falacious entry [7fe0 0010 OT PXL Pixel Data]
         due to IdoDude was cleaned out.
-
 2002-10-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx RecupLgr split in FindVR and RecupLgr. FindVR
         concentrates on finding the value representation (when it exists).
@@ -704,18 +636,14 @@
         inheritance.
       * Test/implicit_vr.dcm dicom v3 in implicit value representation
         added. 
-
 2002-10-17 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Truckload of changes. Parsing of header is barely functional
         (see Test/test) with the standard dictionary (see Dicts/dicomV3.dic).
-
 2002-10-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader.cxx many addons of low level methods
-
 2002-10-07 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcmHeader now contains_IdDcmCheckSwap, _IdDcmRecupLgr,
         and _IdDcmSWAP_LONG.
-
 2002-09-12 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * This corresponds to all the changes decided at the meeting of
         May 23 2002. Needless to say we are running late...
