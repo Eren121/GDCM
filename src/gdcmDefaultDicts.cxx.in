@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDefaultDicts.cxx.in,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:10 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/02/09 21:37:11 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,18 +81,21 @@ void FillDefaultDIRDict(DicomDirElement *dde)
    ELEMENT e = dataElement[i];
    Element elem;
    DicomDirType type;
+   std::string strType;
 
    while( e.type != 0 )
    {
-      if( e.type == "metaElem" )
+      // Force to use the string comparision operator ==
+      strType = e.type;
+      if( strType == "metaElem" )
          type = DD_META;
-      else if( e.type == "patientElem" )
+      else if( strType == "patientElem" )
          type = DD_PATIENT;
-      else if( e.type == "studyElem" )
+      else if( strType == "studyElem" )
          type = DD_STUDY;
-      else if( e.type == "serieElem" )
+      else if( strType == "serieElem" )
          type = DD_SERIE;
-      else if( e.type == "imageElem" )
+      else if( strType == "imageElem" )
          type = DD_IMAGE;
       else
          type = DD_UNKNOWN;
