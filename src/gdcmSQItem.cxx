@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:09 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/02/07 08:48:18 $
+  Version:   $Revision: 1.70 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,42 +219,6 @@ DocEntry *SQItem::GetNextEntry()
    if( ItDocEntries != DocEntries.end() )
       return  *ItDocEntries;
    return NULL;
-}
-
-/**
- * \brief   Get the first ValEntry while visiting theSQItem
- *              This method is designed for Python users
- * \return  The first ValEntry if found, otherwhise NULL
- */
-ValEntry *SQItem::GetFirstValEntry()
-{
-   gdcm::ValEntry *valEntry;
-   gdcm::DocEntry *d = GetFirstEntry();
-   // an other iterator is needed to allow user iterate 
-   // at the same time both on DocEntries and ValEntries 
-   ItValEntries = ItDocEntries;
-   if ( (valEntry = dynamic_cast<gdcm::ValEntry*>(d)))
-      return valEntry;
-   return  GetNextValEntry();
-}
-                                                                                
-/**
- * \brief   Get the next ValEntry while visiting the SQItem
- * \return  The next ValEntry if found, otherwhise NULL
- */
-ValEntry *SQItem::GetNextValEntry()
-{
-   gdcm::ValEntry *valEntry;
-   gdcm::DocEntry *d = *ItValEntries;
-   ++ItValEntries; 
-   while( d )
-   {
-      if ( (valEntry = dynamic_cast<gdcm::ValEntry*>(d)))
-         return valEntry;
-      else
-     return GetNextValEntry(); 
-   }
-   return 0;
 }
 
 /**

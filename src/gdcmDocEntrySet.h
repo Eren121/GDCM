@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 14:49:01 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/02/07 08:48:18 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,10 +79,7 @@ public:
    virtual DocEntry *GetFirstEntry()=0;
    /// Gets the next entry of any type of set
    virtual DocEntry *GetNextEntry()=0;
-   /// Gets the first ValEntry of set (for Python users)
-   virtual ValEntry *GetFirstValEntry()=0;
-   /// Gets the next ValEntry of set  (for Python users)
-   virtual ValEntry *GetNextValEntry()=0;
+
    virtual std::string GetEntryValue(uint16_t group, uint16_t elem);
    virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);   
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
