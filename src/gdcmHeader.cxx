@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.105 2003/10/31 10:38:34 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.106 2003/10/31 11:29:59 malaterre Exp $
 
 #include "gdcmHeader.h"
 
@@ -2246,7 +2246,8 @@ void * gdcmHeader::GetLUTRGBA(void) {
   char *LUTRGBA = (char *)calloc(1024,1); // 256 * 4 (R, G, B, Alpha) 
   if (!LUTRGBA) {
      return NULL;
-  }			
+  }
+  memset(LUTRGBA, 0, 1024);
 	// Bits Allocated
    int nb;
    std::string str_nb = GetPubElValByNumber(0x0028,0x0100);
@@ -2270,23 +2271,25 @@ void * gdcmHeader::GetLUTRGBA(void) {
 	    // and fix the code
 	    // We give up the checking to avoid some overhead    
   char *a;      
-  a= LUTRGBA+debR;
-  for(int i=0;i<lengthR;i++) {
+  int i;
+  a= LUTRGBA+0;
+  for(i=0;i<lengthR;i++) {
      *a = lutR[i*mult+1]; 
      a+=4;       
   }        
-  a= LUTRGBA+debG;
-  for(int i=0;i<lengthG;i++) {
-     *(a+1) = lutG[i*mult+1]; 
+  a= LUTRGBA+1;
+  for(i=0;i<lengthG;i++) {
+     *a = lutG[i*mult+1]; 
      a+=4;       
   }  
-  a= LUTRGBA+debB;
-  for(int i=0;i<lengthB;i++) {
-     *(a+2) = lutB[i*mult+1]; 
+  a= LUTRGBA+2;
+  for(i=0;i<lengthB;i++) {
+     *a = lutB[i*mult+1]; 
      a+=4;       
   }  
-  for(int i=0;i<255;i++) {
-     *(a+3) = 1; // Alpha component
+  a= LUTRGBA+3;
+  for(i=0;i<255;i++) {
+     *a = 1; // Alpha component
      a+=4; 
   } 
     
