@@ -12,6 +12,14 @@ Comments:
 
 
 -----------------------------------------------------------------------------
+Description:  gdcmJpeg8 is strictly a copy/paste of gdcmJpeg12.cxx.
+Date: 2004 Oct 13
+Attributed: 
+Details:
+We should write the code in a common place, then include this 'cxx' file so the the define from gdcm_mangle redefine to the proper one.
+Comments:
+This will be usefull since I may need in the future a 16bits version of this reading
+-----------------------------------------------------------------------------
 Description: Change jpeg 'exit' call to standard c++ exception using the jpeg error
 handler
 Date: 2004 Oct 8
@@ -33,6 +41,8 @@ Comments: ljpeg was rip from medcon and not the official one. medcon tried to
 optimised function using MACRO (doh!), so it make its very unreadable and very
 hard to fix warnings. Should go back to official source, copy proper copyright
 and fix warnings on dashboard
+13/10: update apparently no dicom toolkit use this lib as it is too buggy. We should use the ls-patch for ijg instead. Thus we can safely get rid of that lib.
+14/10: PHILIPS_Gyroscan-12-MONO2-Jpeg_Lossless.dcm prove that I was right the old Cornwell lib is buggy and does not read anything.
 -----------------------------------------------------------------------------
 Description: Extent reading support
 Date: 2004 Oct 8

@@ -6,8 +6,6 @@ SUBDIRS(jpeg)
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/
   ${GDCM_BINARY_DIR}/ #for gdcmConfigure.h
-#  ${GDCM_BINARY_DIR}/src/jpeg/libijg8  #created a build time
-#  ${GDCM_BINARY_DIR}/src/jpeg/libijg12 #created a build time
 )
 
 SET(libgdcm_la_SOURCES
@@ -37,6 +35,7 @@ SET(libgdcm_la_SOURCES
    gdcmJPEGFragmentsInfo.cxx
    gdcmJpeg8.cxx
    gdcmJpeg12.cxx
+   gdcmJpeg16.cxx
    gdcmJpeg2000.cxx
    gdcmParsePixels.cxx
    gdcmPixelConvert.cxx
@@ -54,13 +53,13 @@ IF(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
     gdcmijpeg8 
     gdcmijpeg12
-    gdcmljpeg     # JPEG lib from xmedcom 
+    gdcmijpeg16
   )
 ELSE(UNIX)
   TARGET_LINK_LIBRARIES(gdcm 
     gdcmijpeg8 
     gdcmijpeg12
-    gdcmljpeg
+    gdcmijpeg16
     Wsock32.lib   #doesn't exist on cygwin
   )
 ENDIF(UNIX)
@@ -68,7 +67,6 @@ ENDIF(UNIX)
 #The following is not working because when a header file is not found it tries 
 #to find one in the binary dir
 #INSTALL_FILES(/include .h ${libgdcm_la_SOURCES})
-#INSTALL_FILES(/include FILES gdcmIdo.h iddcmjpeg.h)
 INSTALL_FILES(/include "\\.h$")
 
 INSTALL_TARGETS(/lib/ gdcm)

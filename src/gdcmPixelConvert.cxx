@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/14 05:33:14 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/10/14 22:35:02 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,11 +25,6 @@
 #include "gdcmDebug.h"
 #include "gdcmPixelConvert.h"
 
-// External JPEG decompression
-
-// for JPEGLosslessDecodeImage
-#include "jpeg/ljpg/jpegless.h"
-
 namespace gdcm
 {
                                                                                 
@@ -39,11 +34,15 @@ namespace gdcm
 bool gdcm_read_JPEG2000_file (FILE* fp, void* image_buffer);
 
 // For JPEG 8 Bits, body in file gdcmJpeg8.cxx
-bool gdcm_read_JPEG_file     (FILE* fp, void* image_buffer);
+bool gdcm_read_JPEG_file8    (FILE* fp, void* image_buffer);
 
 // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
 bool gdcm_read_JPEG_file12   (FILE* fp, void* image_buffer);
 
+// For JPEG 16 Bits, body in file gdcmJpeg16.cxx
+// Beware this is misleading there is no 16bits DCT algorithm, only
+// jpeg lossless compression exist in 16bits.
+bool gdcm_read_JPEG_file16   (FILE* fp, void* image_buffer);
 
 
 //-----------------------------------------------------------------------------
@@ -249,8 +248,7 @@ bool PixelConvert::ReadAndDecompressRLEFile(
 {
    uint8_t* im = (uint8_t*)image_buffer;
    long uncompressedSegmentSize = XSize * YSize;
-                                                                                
-                                                                                
+
    // Loop on the frame[s]
    for( RLEFramesInfo::RLEFrameList::iterator
         it  = RLEInfo->Frames.begin();
@@ -367,7 +365,7 @@ void PixelConvert::ReorderEndianity( uint8_t* pixelZone )
    {
       SwapZone( pixelZone );
    }
-                                                                                
+
    // Special kludge in order to deal with xmedcon broken images:
    if (  ( BitsAllocated == 16 )
        && ( BitsStored < BitsAllocated )
@@ -404,7 +402,7 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
       ++it )
    {
       fseek( fp, (*it)->Offset, SEEK_SET );
-                                                                                
+
       if ( IsJPEG2000 )
       {
          if ( ! gdcm_read_JPEG2000_file( fp, destination ) )
@@ -412,18 +410,10 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
             return false;
          }
       }
-      else if ( IsJPEGLossless )
-      {
-         // JPEG LossLess : call to xmedcom Lossless JPEG
-         JPEGLosslessDecodeImage( fp,
-                                  (uint16_t*)destination,
-                                  PixelSize * 8 * SamplesPerPixel,
-                                  (*it)->Length );
-      }
       else if ( BitsStored == 8)
       {
          // JPEG Lossy : call to IJG 6b
-         if ( ! gdcm_read_JPEG_file ( fp, destination ) )
+         if ( ! gdcm_read_JPEG_file8( fp, destination ) )
          {
             return false;
          }
@@ -435,6 +425,15 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
          {
             return false;
          }
+      }
+      else if ( BitsStored == 16)
+      {
+         // Reading Fragment pixels
+         if ( ! gdcm_read_JPEG_file16 ( fp, destination ) )
+         {
+            return false;
+         }
+         //assert( IsJPEGLossless );
       }
       else
       {
@@ -448,9 +447,8 @@ bool PixelConvert::ReadAndDecompressJPEGFile(
       // for next fragment decompression (if any)
       int length = XSize * YSize * SamplesPerPixel;
       int numberBytes = BitsAllocated / 8;
-                                                                                
-      destination = (uint8_t*)destination + length * numberBytes;
-                                                                                
+
+      destination += length * numberBytes;
    }
    return true;
 }
@@ -495,7 +493,7 @@ bool PixelConvert::ReArrangeBits( uint8_t* pixelZone )
                                 "weird image !?" );
       }
    }
-   return true; //???
+   return true;
 }
 
 /**

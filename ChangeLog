@@ -1,3 +1,11 @@
+2004-10-14 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Finished lossless transition, not only do we now read all lossless jpeg
+  images, without the need of the Cornwell lib, but we do read them properly now
+  * To reduce code (well to avoid code duplication), I defined a common place
+  for jpeg read/write: gdcmJpeg.cxx. Now gdcmJpeg[8,12 16] include this file and
+  redefine symbols. This is not prefect but this the best solution I found for a
+  compilation time jpeg option.
+
 2004-10-13 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * Update jpeg ijg lib to support lossless jpeg implementation
     For more info look in jpeg/libijg/README.GDCM.txt for necessary steps to
