@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 00:52:36 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2005/01/15 03:49:49 $
+  Version:   $Revision: 1.91 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,11 +50,13 @@
 #include <strings.h> //for bzero on unix
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__CYGWIN__)
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#endif
+#ifdef __linux__
 #include <linux/if.h>
 #endif
 
@@ -684,8 +686,8 @@ long GetMacAddrSys ( u_char *addr)
    return 0;
 #endif //_WIN32
 
-// implementation for Linux
-#ifdef __linux__
+// implementation for GNU/Linux  and cygwin
+#if defined(__linux__) || defined(__CYGWIN__)
    struct ifreq ifr;
    struct ifreq *IFR;
    struct ifconf ifc;
@@ -866,7 +868,7 @@ long GetMacAddrSys ( u_char *addr)
 
 std::string Util::GetMACAddress()
 {
-   // This is a rip from: http://cplus.kompf.de/macaddr.html for Linux, HPUX and AIX 
+   // This is a rip from: http://cplus.kompf.de/macaddr.html for Linux/CYGWIN, HPUX and AIX 
    // and http://tangentsoft.net/wskfaq/examples/src/snmpmac.cpp for windows version
    // and http://groups-beta.google.com/group/sol.lists.freebsd.hackers/msg/0d0f862e05fce6c0 for the FreeBSD version
    // and http://developer.apple.com/samplecode/GetPrimaryMACAddress/GetPrimaryMACAddress.html for MacOSX version
