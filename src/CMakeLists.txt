@@ -11,34 +11,42 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(libgdcm_la_SOURCES
-   gdcmDebug.cxx
-   gdcmDicomDir.cxx
    gdcmDicomDirElement.cxx
-   gdcmDicomDirImage.cxx
+   gdcmDicomDir.cxx
    gdcmDicomDirMeta.cxx
    gdcmDicomDirPatient.cxx
-   gdcmDicomDirSerie.cxx
    gdcmDicomDirStudy.cxx
+   gdcmDicomDirSerie.cxx
+   gdcmDicomDirImage.cxx
+   gdcmDirList.cxx
+   gdcmObject.cxx
+   gdcmDebug.cxx
    gdcmDict.cxx
    gdcmDictEntry.cxx
    gdcmDictSet.cxx
-   gdcmDirList.cxx
    gdcmException.cxx
-   gdcmFile.cxx
    gdcmGlobal.cxx
-   gdcmHeader.cxx
-   gdcmHeaderEntry.cxx
-   gdcmHeaderHelper.cxx
    gdcmJpeg12.cxx
    gdcmJpeg2000.cxx
    gdcmJpeg.cxx
-   gdcmObject.cxx
-   gdcmParsePixels.cxx
-   gdcmParser.cxx
-   gdcmRLE.cxx
    gdcmTS.cxx
    gdcmUtil.cxx
    gdcmVR.cxx
+   gdcmFile.cxx
+   gdcmHeader.cxx
+   gdcmHeaderEntry.cxx
+   gdcmHeaderHelper.cxx
+   gdcmParsePixels.cxx
+   gdcmParser.cxx
+   gdcmRLE.cxx
+   gdcmDocEntry.cxx
+   gdcmDocEntrySet.cxx
+   gdcmBinEntry.cxx
+   gdcmDocument.cxx
+   gdcmSeqEntry.cxx
+   gdcmSQItem.cxx
+   gdcmElementSet.cxx
+   gdcmValEntry.cxx   
 )
 
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )

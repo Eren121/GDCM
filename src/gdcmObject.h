@@ -32,10 +32,6 @@ public:
     */
    void SetPrintLevel(int level) 
       { printLevel = level; };
-      
-  // std::string GetEntryByNumber(guint16 group, guint16 element);
-  // std::string GetEntryByName(TagName name);
-   bool SetEntryByNumber(std::string val,guint16 group,guint16 element);
    
    TagDocEntryHT GetEntry(void);
    void FillObject(std::list<gdcmElement> elemList);

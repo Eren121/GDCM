@@ -1,4 +1,4 @@
-#include "gdcmHeader.h"
+#include "gdcmDocument.h"
 #include "gdcmFile.h"
 
 // Writting of a DICOM file based on a correct dicom header
@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[])
 {
-
+ 
   if (argc < 3) 
     {
     std::cerr << "Usage :" << std::endl << argv[0] << 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
   f1->SetImageData( imageData, dataSize);
   f1->GetHeader()->SetImageDataSize( dataSize );
 	
-  f1->GetHeader()->PrintEntry();
+  f1->GetHeader()->Print();
 	
   std::string s0  = f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0000);
   std::string s10 = f2->GetHeader()->GetEntryByNumber(0x7fe0, 0x0010);
