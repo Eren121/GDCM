@@ -864,7 +864,36 @@ int gdcmFile::WriteBase (string FileName, FileType type) {
       fwrite("DICM",4,1,fp1);
    }
 
+   // --------------------------------------------------------------
+   // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
+   //
+   // if recognition code tells us we dealt with a LibIDO image
+   // we reproduce on disk the switch between lineNumber and columnNumber
+   // just before writting ...
+
+   std::string rows, columns; 
+   if ( filetype == ACR_LIBIDO){
+         rows    = GetPubElValByNumber(0x0028, 0x0010);
+         columns = GetPubElValByNumber(0x0028, 0x0011);
+         SetPubElValByNumber(columns,  0x0028, 0x0010);
+         SetPubElValByNumber(rows   ,  0x0028, 0x0011);
+   }	
+   // ----------------- End of Special Patch ----------------
+
    gdcmHeader::Write(fp1, type);
+
+   // --------------------------------------------------------------
+   // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
+   // 
+   // ...and we restore the Header to be Dicom Compliant again 
+   // just after writting
+
+   if (filetype == ACR_LIBIDO){
+         SetPubElValByNumber(rows   , 0x0028, 0x0010);
+         SetPubElValByNumber(columns, 0x0028, 0x0011);
+   }	
+   // ----------------- End of Special Patch ----------------
+
    fwrite(PixelData, lgrTotale, 1, fp1);
    fclose (fp1);
    return(1);

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.82 2003/09/10 16:31:24 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.83 2003/09/11 11:12:59 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -1697,8 +1697,9 @@ void gdcmHeader::LoadElements(void) {
    for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
       LoadElementValue(tag->second);
    }
-   // Load 'non string' values
-   rewind(fp);    
+   rewind(fp);
+
+   // Load 'non string' values   
    string PhotometricInterpretation = GetPubElValByNumber(0x0028,0x0004);   
    if( PhotometricInterpretation == "PALETTE COLOR " ){ 
       LoadElementVoidArea(0x0028,0x1200);  // gray LUT   
@@ -1710,6 +1711,24 @@ void gdcmHeader::LoadElements(void) {
       LoadElementVoidArea(0x0028,0x1222);  // Segmented Green Palette Color LUT Data
       LoadElementVoidArea(0x0028,0x1223);  // Segmented Blue  Palette Color LUT Data
    }
+
+   // --------------------------------------------------------------
+   // Special Patch to allow gdcm to read ACR-LibIDO formated images
+   //
+   // if recognition code tells us we deal with a LibIDO image
+   // we switch lineNumber and columnNumber
+   //
+   string RecCode;	
+   RecCode = GetPubElValByNumber(0x0008, 0x0010);
+   if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
+       RecCode == "CANRME_AILIBOD1_1." ) {
+         filetype = ACR_LIBIDO; 
+         std::string rows    = GetPubElValByNumber(0x0028, 0x0010);
+         std::string columns = GetPubElValByNumber(0x0028, 0x0011);
+         SetPubElValByNumber(columns, 0x0028, 0x0010);
+         SetPubElValByNumber(rows   , 0x0028, 0x0011);
+   }
+   // ----------------- End of Special Patch ----------------
 }
 
 /**
