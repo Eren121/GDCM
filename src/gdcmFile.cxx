@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.103 $
+  Date:      $Date: 2004/06/21 04:52:08 $
+  Version:   $Revision: 1.104 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,49 +70,11 @@ gdcmFile::gdcmFile(gdcmHeader *header) {
  *          with a FALSE value for the 'enable_sequence' param.
  *          ('public elements' may be embedded in 'shadow Sequences')
  */
-gdcmFile::gdcmFile(std::string & filename, 
+gdcmFile::gdcmFile(std::string const & filename, 
                    bool exception_on_error,
                    bool enable_sequences, 
                    bool ignore_shadow) {
    Header=new gdcmHeader(filename.c_str(),
-                         exception_on_error,
-                         enable_sequences,
-                         ignore_shadow);
-   SelfHeader=true;
-   PixelRead=-1; // no ImageData read yet.
-
-   if (Header->IsReadable())
-      SetPixelDataSizeFromHeader();
-}
-
-/**
- * \ingroup   gdcmFile
- * \brief Constructor dedicated to writing a new DICOMV3 part10 compliant
- *        file (see SetFileName, SetDcmTag and Write)
- *        Opens (in read only and when possible) an existing file and checks
- *        for DICOM compliance. Returns NULL on failure.
- * \note  the in-memory representation of all available tags found in
- *        the DICOM header is post-poned to first header information access.
- *        This avoid a double parsing of public part of the header when
- *        one sets an a posteriori shadow dictionary (efficiency can be
- *        seen as a side effect).   
- * @param filename file to be opened for parsing
- * @param   exception_on_error whether we throw an exception or not
- * @param   enable_sequences = true to allow the header 
- *          to be parsed *inside* the SeQuences, 
- *          when they have an actual length 
- * \warning enable_sequences *has to be* true for reading PAPYRUS 3.0 files
- * @param   ignore_shadow to allow skipping the shadow elements, 
- *          to save memory space.
- * \warning The TRUE value for this param has to be used 
- *          with a FALSE value for the 'enable_sequence' param.
- *          ('public elements' may be embedded in 'shadow Sequences')
- */
- gdcmFile::gdcmFile(const char *filename, 
-                   bool exception_on_error,
-                   bool enable_sequences, 
-                   bool ignore_shadow) {
-   Header=new gdcmHeader(filename,
                          exception_on_error,
                          enable_sequences,
                          ignore_shadow);

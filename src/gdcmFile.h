@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/06/21 04:52:08 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,12 +32,7 @@ class GDCM_EXPORT gdcmFile
 {
 public:
    gdcmFile(gdcmHeader *header);
-   gdcmFile(std::string & filename, 
-              bool  exception_on_error = false, 
-              bool  enable_sequences   = false,
-              bool  skip_shadow        = false);
- 
-   gdcmFile(const char * filename, 
+   gdcmFile(std::string const & filename, 
               bool  exception_on_error = false, 
               bool  enable_sequences   = false,
               bool  skip_shadow        = false);
