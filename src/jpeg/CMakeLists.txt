@@ -1,7 +1,7 @@
 SUBDIRS(
   libijg12 
   libijg8
-  ljpg
+  ljpeg
 )
 
 # memmgr back ends: compile only one of these into a working library
@@ -19,7 +19,23 @@ SET(compression_SRCS
 jcapimin.c jcapistd.c jctrans.c jcparam.c jdatadst.c jcinit.c
 jcmaster.c jcmarker.c jcmainct.c jcprepct.c jccoefct.c jccolor.c
 jcsample.c jchuff.c jcphuff.c jcdctmgr.c jfdctfst.c jfdctflt.c
+)
+
+# Lossy (DCT) codec:
+SET(comp_lossy_SRCS
 jfdctint.c
+jclossy.c
+
+# lossless
+jclossls.c
+
+jdarith.c
+jcodec.c
+jcscale.c
+jcshuff.c
+jclhuff.c
+jcpred.c
+jcdiffct.c
 )
 
 # decompression library object files
@@ -27,7 +43,16 @@ SET(decompression_SRCS
 jdapimin.c jdapistd.c jdtrans.c jdatasrc.c jdmaster.c
 jdinput.c jdmarker.c jdhuff.c jdphuff.c jdmainct.c jdcoefct.c
 jdpostct.c jddctmgr.c jidctfst.c jidctflt.c jidctint.c jidctred.c
-jdsample.c jdcolor.c jquant1.c jquant2.c jdmerge.c
+jdsample.c jdcolor.c jquant1.c jquant2.c jdmerge.c)
+
+SET(decomp_lossy_SRCS
+ jdlossls.c jdlossy.c
+jcarith.c
+jdlhuff.c
+jddiffct.c
+jdpred.c
+jdscale.c
+jdshuff.c
 )
 
 SET(JPEG_HEADER_FILES
@@ -41,6 +66,8 @@ SET(JPEG_HEADER_FILES
   jpegint.h  
   jpeglib.h  
   jversion.h
+jlossy.h
+jlossls.h
   )
 
 SET(JPEG_SOURCES
@@ -48,6 +75,9 @@ SET(JPEG_SOURCES
   ${common_SRCS}
   ${compression_SRCS}
   ${decompression_SRCS}
+
+${comp_lossy_SRCS}
+${decomp_lossy_SRCS}
   )
 
 IF (WIN32)
