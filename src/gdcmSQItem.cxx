@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/06/22 14:16:45 $
+  Version:   $Revision: 1.12 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,15 +91,15 @@ gdcmSQItem::~gdcmSQItem()
 
       if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(Entry) ) {
          BinEntry->Write(fp,filetype);
-			return;
+         return;
       }
       if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) ) {
          ValEntry->Write(fp,filetype);
-			return;
+         return;
       }
       if (gdcmSeqEntry* SeqEntry = dynamic_cast< gdcmSeqEntry* >(Entry) ) {
          SeqEntry->Write(fp,filetype);
-			return;
+         return;
       }
    } 
 }
@@ -145,7 +145,7 @@ bool gdcmSQItem::SetEntryByNumber(std::string val,guint16 group,
          // that is a method of gdcmDocument :-( 
          gdcmValEntry* Entry = (gdcmValEntry*)0;
          TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-			
+
          if ( ! ptagHT->count(key))
          {
             // we assume a Public Dictionnary *is* loaded
@@ -179,7 +179,7 @@ bool gdcmSQItem::SetEntryByNumber(std::string val,guint16 group,
          Entry->SetLength(val.length());
          docEntries.insert(i,Entry); 
          return true;
-      }	   
+      }   
       if (group == (*i)->GetGroup() && element == (*i)->GetElement() )
       {
          if ( gdcmValEntry* Entry = dynamic_cast<gdcmValEntry*>(*i) )

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.105 $
+  Date:      $Date: 2004/06/22 14:14:01 $
+  Version:   $Revision: 1.106 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
  * @param header file to be opened for reading datas
- * @return	
+ * @return
  */
 gdcmFile::gdcmFile(gdcmHeader *header) {
    Header=header;
@@ -106,7 +106,7 @@ gdcmFile::~gdcmFile(void) {
 /**
  * \ingroup   gdcmFile
  * \brief     computes the length (in bytes) to ALLOCATE to receive the
- *            image(s) pixels (multiframes taken into account) 		
+ *            image(s) pixels (multiframes taken into account) 
  * \warning : it is NOT the group 7FE0 length
  *          (no interest for compressed images).
  * @return length to allocate
@@ -151,7 +151,7 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
               * Header->GetZSize() * (nb/8)* Header->GetSamplesPerPixel();
    std::string str_PhotometricInterpretation = 
                              Header->GetEntryByNumber(0x0028,0x0004);
-			     
+    
    /*if ( str_PhotometricInterpretation == "PALETTE COLOR " )*/
    // pb when undealt Segmented Palette Color
    
@@ -197,12 +197,12 @@ void * gdcmFile::GetImageData (void) {
    PixelData = new char[lgrTotale];
    if (PixelData) {
       GetImageDataIntoVector(PixelData, lgrTotale);
-		GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
+      GetHeader()->SetEntryVoidAreaByNumber(PixelData, 
                       GetHeader()->GetGrPixel(),  
                       GetHeader()->GetNumPixel()); 
    }      
    PixelRead=0; // no PixelRaw
-	
+
    return(PixelData);
 }
 

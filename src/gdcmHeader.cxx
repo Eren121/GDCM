@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:18:25 $
-  Version:   $Revision: 1.166 $
+  Date:      $Date: 2004/06/22 14:18:49 $
+  Version:   $Revision: 1.167 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -320,10 +320,10 @@ int gdcmHeader::GetNumberOfScalarComponents() {
       if (HasLUT())   // PALETTE COLOR is NOT enough
          return 3;
       else
-         return 1;	 
+         return 1; 
    }   
-		  
-      //beware of trailing space at end of string		        		        
+
+      //beware of trailing space at end of string      
    if (PhotometricInterpretation.find(GDCM_UNFOUND) < 
                            PhotometricInterpretation.length() || 
        PhotometricInterpretation.find("MONOCHROME1") < 
