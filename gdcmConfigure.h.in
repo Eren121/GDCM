@@ -23,6 +23,7 @@
 
 /* I guess something important */
 #cmakedefine CMAKE_HAVE_STDINT_H
+#cmakedefine CMAKE_HAVE_INTTYPES_H
 
 /* This variable allows you to have helpful debug statement */
 /* That are in between #ifdef / endif in the gdcm code */

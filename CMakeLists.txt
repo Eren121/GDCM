@@ -128,6 +128,7 @@ TEST_BIG_ENDIAN(GDCM_WORDS_BIGENDIAN)
 
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 CHECK_INCLUDE_FILE("stdint.h"       CMAKE_HAVE_STDINT_H)
+CHECK_INCLUDE_FILE("inttypes.h"     CMAKE_HAVE_INTTYPES_H)
 
 # Check if header file exists and add it to the list.
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFiles.cmake)

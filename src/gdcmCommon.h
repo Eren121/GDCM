@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/22 12:39:12 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/01/22 22:21:19 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,15 +46,24 @@
 
 //-----------------------------------------------------------------------------
 #ifdef CMAKE_HAVE_STDINT_H
-#include <stdint.h>   // For uint8_t uint16_t and uint32_t
+   #include <stdint.h>
 #else
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-typedef  signed char    int8_t;
+#ifdef CMAKE_HAVE_INTTYPES_H
+   // Old system only have this
+   #include <inttypes.h>   // For uint8_t uint16_t and uint32_t
 #endif
-typedef  unsigned char    uint8_t;
-typedef  unsigned short   uint16_t;
-typedef  unsigned int     uint32_t;
-#define uint64_t unsigned __int64    //  problems with swig when using a typedef
+#endif
+
+// Broken plateform do not respect C99 and do not provide those typedef
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+typedef  signed __int8       int8_t;
+typedef  signed __int16      int16_t;
+typedef  signed __int32      int32_t;
+typedef  signed __int64      int64_t;
+typedef  unsigned __int8     uint8_t;
+typedef  unsigned __int16    uint16_t;
+typedef  unsigned __int32    uint32_t;
+typedef  unsigned __int64    uint64_t;
 #define UINT32_MAX    (4294967295U)
 #endif
 
