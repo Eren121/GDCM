@@ -28,6 +28,30 @@ SET (LIBRARY_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin CACHE PATH "Single output direct
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 #-----------------------------------------------------------------------------
+# Test if compiler defines __FUNCTION__
+IF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
+  MESSAGE(STATUS "Checking support for __FUNCTION__ in compiler")
+  TRY_COMPILE(GDCM_COMPILER_HAS_FUNCTION
+              ${GDCM_BINARY_DIR}/CMakeTmp/Function
+              ${GDCM_SOURCE_DIR}/gdcmTestFUNCTION.cxx
+              OUTPUT_VARIABLE OUTPUT)
+  IF(GDCM_COMPILER_HAS_FUNCTION)
+    MESSAGE(STATUS "Checking support for __FUNCTION__ -- yes")
+    SET(GDCM_COMPILER_HAS_FUNCTION 1 CACHE INTERNAL "Support for extention C __FUNCTION__")
+    WRITE_FILE(${CMAKE_BINARY_DIR}/CMakeOutput.log
+      "Determining if the C compiler supports __FUNCTION__ "
+      "passed with the following output:\n"
+      "${OUTPUT}\n" APPEND)
+  ELSE(GDCM_COMPILER_HAS_FUNCTION)
+    MESSAGE(STATUS "Checking support for __FUNCTION__ -- no")
+    SET(GDCM_COMPILER_HAS_FUNCTION 0 CACHE INTERNAL "Support for extension C __FUNCTION__")
+    WRITE_FILE(${CMAKE_BINARY_DIR}/CMakeError.log
+      "Determining if the C compiler supports __FUNCTION__ "
+      "failed with the following output:\n"
+      "${OUTPUT}\n" APPEND)
+  ENDIF(GDCM_COMPILER_HAS_FUNCTION)
+ENDIF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
+#-----------------------------------------------------------------------------
 # Build directory on which many applications depend
 SUBDIRS(
   Dicts

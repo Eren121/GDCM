@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 20:31:36 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/07 21:09:42 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,9 +57,17 @@ public:
 
 // __FUNCTION is not always defined by preprocessor
 // In c++ we should use __PRETTY_FUNCTION__ instead...
-#ifndef __GNUC__
-#  define __FUNCTION__ "<unknow>"
-#endif
+#ifdef GDCM_COMPILER_HAS_FUNCTION
+// Handle particular case for GNU C++ which also defines __PRETTY_FUNCTION__
+// which is a lot nice in C++
+#ifdef __GNUC__
+#  define GDCM_FUNCTION __PRETTY_FUNCTION__
+#else
+#  define GDCM_FUNCTION __FUNCTION__ 
+#endif //__GNUC__
+#else
+#  define GDCM_FUNCTION "<unknow>"
+#endif //GDCM_COMPILER_HAS_FUNCTION
 
 /**
  * \brief   Debug
@@ -71,7 +79,7 @@ public:
    {                                                       \
    std::ostringstream osmacro;                             \
    osmacro << "Debug: In " __FILE__ ", line " << __LINE__  \
-           << ", function " << __FUNCTION__ << '\n'        \
+           << ", function " << GDCM_FUNCTION << '\n'       \
            << msg << "\n\n";                               \
    std::cerr << osmacro.str() << std::endl;                \
    }                                                       \
@@ -87,7 +95,7 @@ public:
    {                                                        \
    std::ostringstream osmacro;                              \
    osmacro << "Verbose: In " __FILE__ ", line " << __LINE__ \
-           << ", function " << __FUNCTION__ << "\n"         \
+           << ", function " << GDCM_FUNCTION << "\n"        \
            << msg << "\n\n";                                \
    std::cerr << osmacro.str() << std::endl;                 \
    }                                                        \
@@ -103,7 +111,7 @@ public:
    {                                                      \
    std::ostringstream osmacro;                            \
    osmacro << "Error: In " __FILE__ ", line " << __LINE__ \
-           << ", function " << __FUNCTION__ << '\n'       \
+           << ", function " << GDCM_FUNCTION << '\n'      \
            << msg << "\n\n";                              \
    std::cerr << osmacro.str() << std::endl;               \
    exit(1);                                               \
@@ -122,7 +130,7 @@ public:
    {                                                       \
    std::ostringstream osmacro;                             \
    osmacro << "Assert: In " __FILE__ ", line " << __LINE__ \
-           << ", function " << __FUNCTION__                \
+           << ", function " << GDCM_FUNCTION               \
            << "\n\n";                                      \
    std::cerr << osmacro.str() << std::endl;                \
    assert ( arg );                                         \
