@@ -52,7 +52,7 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
     COMMENT   "Generating gdcm_wrap.cxx/gdcm.py based on gdcm.i"
   )
   # Since the file gdcm_wrap.cxx does not exist, mark it as GENERATED:
-  SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
+  SET_SOURCE_FILES_PROPERTIES(${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx GENERATED)
 
   ADD_LIBRARY(pygdcm gdcm_wrap.cxx)
   TARGET_LINK_LIBRARIES(pygdcm
@@ -63,7 +63,7 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   #SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
 
   # This swig command will also outputs gdcm.py :
-  SET_SOURCE_FILES_PROPERTIES(gdcm.py GENERATED)
+  SET_SOURCE_FILES_PROPERTIES(${GDCM_BINARY_DIR}/gdcmPython/gdcm.py GENERATED)
 
   # Instead of a simple copy operation let create our own gdcm.py file:
   # First read what swig dumped:
@@ -81,7 +81,7 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
   # Thus add the custom command to copy it to proper location:
   ADD_CUSTOM_COMMAND(
     TARGET pygdcm
-    PRE_BUILD
+    POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy 
       ${GDCM_BINARY_DIR}/bin/gdcm.py 
