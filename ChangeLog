@@ -1,3 +1,10 @@
+2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDocument.cxx : bug fix on potential memory leak
+   * src/gdcmSQItem.cxx : initialize the SQItemNumber value in the constructor
+   * src/gdcmSQItem.[h|cxx], gdcmElementSet.[h|cxx], gdcmDicomDir*.[h|cxx] : 
+     Add ClearXxx methods to remove all the content of the list or map
+   * gdcmDocEntrySet.h : add GetFirst/NextEntry in pure virtual
+
 2005-01-24 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Grealty simplify the JPEg decompression, no need to differenciate based on 
      the JPEG possible type (with/without fragment, with/without multiple frame). 

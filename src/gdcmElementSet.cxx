@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/01/25 11:11:59 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,14 +42,7 @@ ElementSet::ElementSet(int depthLevel)
  */
 ElementSet::~ElementSet() 
 {
-   for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
-   {
-      if ( cc->second )
-      {
-         delete cc->second;
-      }
-   }
-   TagHT.clear();
+   ClearEntry();
 }
 
 //-----------------------------------------------------------------------------
@@ -183,10 +176,6 @@ SeqEntry *ElementSet::GetSeqEntry(uint16_t group, uint16_t elem)
    return 0;
 }
 
-
-//-----------------------------------------------------------------------------
-// Protected
-
 /**
  * \brief   Checks if a given Dicom Element exists within the H table
  * @param   group   Group number of the searched Dicom Element 
@@ -217,9 +206,20 @@ std::string ElementSet::GetEntryValue(uint16_t group, uint16_t elem)
    return ((ValEntry *)TagHT.find(key)->second)->GetValue();
 }
 
-
-//-----------------------------------------------------------------------------
-// Private
+/**
+ * \brief   delete all entries in the ElementSet
+ */
+void ElementSet::ClearEntry()
+{
+   for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
+   {
+      if ( cc->second )
+      {
+         delete cc->second;
+      }
+   }
+   TagHT.clear();
+}
 
 /**
  * \brief   add a new Dicom Element pointer to the H Table
@@ -305,7 +305,6 @@ DocEntry *ElementSet::GetNextEntry()
    return NULL;
 }
 
-
 /**
  * \brief   Get the larst entry while visiting the DocEntrySet
  * \return  The last DocEntry if found, otherwhise NULL
@@ -333,6 +332,11 @@ DocEntry *ElementSet::GetPreviousEntry()
    return NULL;
 }
 
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

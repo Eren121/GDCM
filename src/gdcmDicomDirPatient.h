@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:42 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/25 11:11:58 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,8 +49,9 @@ public:
 
    /// adds the passed STUDY to the STUDY chained List for this PATIENT.
    void AddStudy(DicomDirStudy *obj) { Studies.push_back(obj); };
-
    DicomDirStudy *NewStudy(); 
+
+   void ClearStudy();
          
 private:
 

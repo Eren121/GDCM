@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:44:54 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/01/25 11:11:59 $
+  Version:   $Revision: 1.59 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,6 +38,7 @@ SQItem::SQItem(int depthLevel )
           : DocEntrySet( )
 {
    SQDepthLevel = depthLevel;
+   SQItemNumber = 0;
 }
 
 /**
@@ -45,13 +46,7 @@ SQItem::SQItem(int depthLevel )
  */
 SQItem::~SQItem() 
 {
-   for(ListDocEntry::iterator cc = DocEntries.begin();
-                             cc != DocEntries.end();
-                             ++cc)
-   {
-      delete *cc;
-   }
-   DocEntries.clear();
+   ClearEntry();
 }
 
 //-----------------------------------------------------------------------------
@@ -145,6 +140,20 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
 
 //-----------------------------------------------------------------------------
 // Public
+/**
+ * \brief  Remove all entry in the Sequence Item 
+ */
+void SQItem::ClearEntry()
+{
+   for(ListDocEntry::iterator cc = DocEntries.begin();
+                             cc != DocEntries.end();
+                             ++cc)
+   {
+      delete *cc;
+   }
+   DocEntries.clear();
+}
+
 /**
  * \brief   adds any Entry (Dicom Element) to the Sequence Item
  * @param entry Entry to add

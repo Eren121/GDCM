@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:53 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/25 11:11:59 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,8 +49,7 @@ public:
    /// \brief   returns the DocEntry chained List for this SQ Item.
    ListDocEntry const &GetDocEntries() const { return DocEntries; };
    
-   /// \brief   adds the passed DocEntry to the DocEntry chained List for
-   /// this SQ Item.      
+   void ClearEntry();
    bool AddEntry(DocEntry *Entry); // add to the List
    bool RemoveEntry(DocEntry *EntryToRemove);
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);

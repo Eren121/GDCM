@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/25 11:11:58 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,6 +64,9 @@ public:
 
    // ------- '... =0;' stands for 'Pure Virtual'
 
+   /// \brief Remove all Entry in the entry set
+   virtual void ClearEntry() = 0;
+
    /// \brief adds any type of entry to the entry set
    virtual bool AddEntry(DocEntry *Entry) = 0;
 
@@ -95,6 +98,9 @@ public:
    /// \brief Gets the 'string value' of a ValEntry
    ///        identified by its (group,elem) - Sorry for the name !...-
    virtual std::string GetEntryValue(uint16_t group, uint16_t elem) = 0;
+
+   virtual DocEntry *GetFirstEntry()=0;
+   virtual DocEntry *GetNextEntry()=0;
 
    DictEntry *NewVirtualDictEntry(uint16_t group, 
                                   uint16_t elem,

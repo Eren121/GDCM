@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.116 $
+  Date:      $Date: 2005/01/25 11:11:58 $
+  Version:   $Revision: 1.117 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -146,12 +146,7 @@ DicomDir::~DicomDir()
    SetProgressMethod(NULL);
    SetEndMethod(NULL);
 
-   for(ListDicomDirPatient::iterator cc = Patients.begin();
-                                     cc!= Patients.end();
-                                   ++cc)
-   {
-      delete *cc;
-   }
+   ClearPatient();
    if ( MetaElems )
    {
       delete MetaElems;
@@ -476,14 +471,24 @@ DicomDirMeta *DicomDir::NewMeta()
 
  // friend class hunting : we miss GetLastEntry and GetPreviousEntry
  //                  to be able to remove any direct reference to TagHT
-
-   DocEntry *e = GetFirstEntry();
-   if (e)
+   DocEntry *entry = GetFirstEntry();
+   if( entry )
    //if ( TagHT.begin() != TagHT.end() ) // after Document Parsing
    { 
       MetaElems = new DicomDirMeta(true);
 
-      TagDocEntryHT::iterator lastOneButSequence = TagHT.end();
+      entry = GetFirstEntry();
+      while( entry )
+      {
+         if( dynamic_cast<SeqEntry *>(entry) )
+            break;
+
+         RemoveEntryNoDestroy(entry);
+         MetaElems->AddEntry(entry);
+
+         entry = GetFirstEntry();
+      }
+      /*TagDocEntryHT::iterator lastOneButSequence = TagHT.end();
       lastOneButSequence --;
       // ALL the 'out of Sequence' Tags belong to Meta Elems
       // (we skip 0004|1220 [Directory record sequence] )
@@ -492,7 +497,7 @@ DicomDirMeta *DicomDir::NewMeta()
                                    ++cc)
       {
          MetaElems->AddEntry( cc->second );
-      }
+      }*/
    }
    else  // after root directory parsing
    {
@@ -503,13 +508,28 @@ DicomDirMeta *DicomDir::NewMeta()
 }
 
 /**
- * \brief   adds a new Patient (with the basic elements) to a partially created DICOMDIR
+ * \brief   adds a new Patient (with the basic elements) to a partially created
+ *          DICOMDIR
  */
 DicomDirPatient *DicomDir::NewPatient()
 {
    DicomDirPatient *p = new DicomDirPatient();
    AddPatientToEnd( p );
    return p;
+}
+
+/**
+ * \brief   Remove all Patients
+ */
+void DicomDir::ClearPatient()
+{
+   for(ListDicomDirPatient::iterator cc = Patients.begin();
+                                     cc!= Patients.end();
+                                   ++cc)
+   {
+      delete *cc;
+   }
+   Patients.clear();
 }
 
 /**
@@ -812,12 +832,12 @@ void DicomDir::CreateDicomDir()
          continue;
       }
 
-      if( si )
-         MoveSQItem(si,tmpSI);
+      //if( si )
+         //MoveSQItem(si,tmpSI);
       tmpSI=s->GetNextSQItem();
    }
 // friend hunting : this one will be difficult to remove !
-   TagHT.clear();
+   ClearEntry();
 }
 
 /**
@@ -863,14 +883,6 @@ bool DicomDir::AddSerieToEnd(DicomDirSerie *dd)
          study->AddSerie(dd);
          return true;
       }
-/*      if( (*itp)->GetDicomDirStudies().size() > 0 )
-      {
-         ListDicomDirStudy::const_iterator itst = 
-            (*itp)->GetDicomDirStudies().end();
-         itst--;
-         (*itst)->AddSerie(dd);
-         return true;
-      }*/
    }
    return false;
 }
@@ -896,20 +908,6 @@ bool DicomDir::AddImageToEnd(DicomDirImage *dd)
             return true;
          }
       }
-/*      if( (*itp)->GetDicomDirStudies().size() > 0 )
-      {
-         ListDicomDirStudy::const_iterator itst = 
-            (*itp)->GetDicomDirStudies().end();
-         itst--;
-
-         if( (*itst)->GetDicomDirSeries().size() > 0 )
-         {
-            ListDicomDirSerie::const_iterator its = (*itst)->GetDicomDirSeries().end();
-            its--;
-            (*its)->AddImage(dd);
-            return true;
-         }
-      }*/
    }
    return false;
 }
@@ -921,8 +919,8 @@ bool DicomDir::AddImageToEnd(DicomDirImage *dd)
  */
 void DicomDir::SetElements(std::string const & path, VectDocument const &list)
 {
-   TagHT.clear();
-   Patients.clear();
+   ClearEntry();
+   ClearPatient();
 
    std::string patPrevName         = "", patPrevID  = "";
    std::string studPrevInstanceUID = "", studPrevID = "";
@@ -985,7 +983,7 @@ void DicomDir::SetElements(std::string const & path, VectDocument const &list)
  * @param dst destination SQItem
  * @param src source SQItem
  */
-void DicomDir::MoveSQItem(SQItem *dst,SQItem *src)
+void DicomDir::MoveSQItem(DocEntrySet *dst,DocEntrySet *src)
 {
    DocEntry *entry;
 

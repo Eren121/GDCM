@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:33 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/25 11:11:58 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,12 +45,7 @@ DicomDirStudy::DicomDirStudy(bool empty):
  */
 DicomDirStudy::~DicomDirStudy() 
 {
-   for(ListDicomDirSerie::iterator cc = Series.begin();
-                                   cc != Series.end();
-                                 ++cc )
-   {
-      delete *cc;
-   }
+   ClearSerie();
 }
 
 //-----------------------------------------------------------------------------
@@ -105,6 +100,20 @@ DicomDirSerie *DicomDirStudy::NewSerie()
    Series.push_back(st);
    return st;
 } 
+
+/**
+ * \brief  Remove all series in the study 
+ */
+void DicomDirStudy::ClearSerie()
+{
+   for(ListDicomDirSerie::iterator cc = Series.begin();
+                                   cc != Series.end();
+                                 ++cc )
+   {
+      delete *cc;
+   }
+   Series.clear();
+}
 
 /**
  * \brief   Get the first entry while visiting the DicomDirSeries

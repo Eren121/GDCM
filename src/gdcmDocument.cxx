@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:43:06 $
-  Version:   $Revision: 1.207 $
+  Date:      $Date: 2005/01/25 11:11:58 $
+  Version:   $Revision: 1.208 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1030,7 +1030,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       {
          if ( newBinEntry )
          {
-            if ( Filetype == ExplicitVR && ! Global::GetVR()->IsVROfBinaryRepresentable(vr) )
+            if ( Filetype == ExplicitVR && 
+                 !Global::GetVR()->IsVROfBinaryRepresentable(vr) )
             { 
                 ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
                 gdcmVerboseMacro( std::hex << newDocEntry->GetGroup() 
@@ -1171,14 +1172,19 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      newDocEntry->GetOffset(),
                      l, delim_mode);
          }
-         set->AddEntry( newSeqEntry );
+         if( !set->AddEntry( newSeqEntry ) )
+         {
+            used = false;
+         }
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
+            if( !used )
+               delete newDocEntry;
             break;
          }
       }
 
-      if(!used)
+      if( !used )
          delete newDocEntry;
    }
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:33 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/25 11:11:58 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,12 +47,7 @@ DicomDirPatient::DicomDirPatient(bool empty):
  */
 DicomDirPatient::~DicomDirPatient() 
 {
-   for(ListDicomDirStudy::const_iterator cc = Studies.begin();
-                                         cc != Studies.end(); 
-                                       ++cc )
-   {
-      delete *cc;
-   }
+   ClearStudy();
 }
 
 //-----------------------------------------------------------------------------
@@ -105,6 +100,20 @@ DicomDirStudy* DicomDirPatient::NewStudy()
    Studies.push_back(st);
    return st; 
 }   
+
+/**
+ * \brief  Remove all studies in the patient 
+ */
+void DicomDirPatient::ClearStudy()
+{
+   for(ListDicomDirStudy::const_iterator cc = Studies.begin();
+                                         cc != Studies.end(); 
+                                       ++cc )
+   {
+      delete *cc;
+   }
+   Studies.clear();
+}
 
 /**
  * \brief   Get the first entry while visiting the DicomDirStudy
