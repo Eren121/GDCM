@@ -5,7 +5,6 @@ INCLUDE_DIRECTORIES(
   ${PYTHON_INCLUDE_PATH}
   ${GDCM_BINARY_DIR}/
 )
-SUBDIRS(demo)
 
 #-----------------------------------------------------------------------------
 # SWIG Wrapping
@@ -24,8 +23,7 @@ IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
   SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "-includeall")
-  SWIG_ADD_MODULE(gdcm python
-    gdcm.i gdcm_wrap.cxx)
+  SWIG_ADD_MODULE(gdcm python gdcm.i gdcm_wrap.cxx)
   SWIG_LINK_LIBRARIES(gdcm ${PYTHON_LIBRARIES})
   TARGET_LINK_LIBRARIES(_gdcm gdcm)
 
@@ -41,9 +39,6 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
     MESSAGE(FATAL_ERROR "Swig could not be found wrapping is impossible")
   ENDIF(NOT SWIG_EXECUTABLE)
 
-  # Bad hack to work around bug #846 in cmake, hopefully will desepear soon anyway
-  FILE(READ ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py SWIG_GDCM_PY)  
-  
   # Build our custom command :
   ADD_CUSTOM_COMMAND(
     OUTPUT    ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
@@ -70,10 +65,12 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
   # Instead of a simple copy operation let create our own gdcm.py file:
   # First read what swig dumped:
-  FILE(READ ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py SWIG_GDCM_PY)
+  IF(EXISTS ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py)
+    FILE(READ ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py SWIG_GDCM_PY)
+  ENDIF(EXISTS ${GDCM_BINARY_DIR}/gdcmPython/gdcm.py)
 
   # Then create the gdcm.py = gdcmVersion.py + gdcm.py (swig) file:
-  FILE(WRITE ${GDCM_BINARY_DIR}/bin/gdcm.py
+  FILE(WRITE ${GDCM_BINARY_DIR}/bin/gdcmVersion.py
     "import os\n"
     "gdcmVERSION=\"${GDCM_VERSION_FULL}\"\n"
     "GDCM_DATA_PATH=\"${GDCM_DATA_ROOT}\"\n\n"
@@ -82,14 +79,14 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
   # Seems like they want instead a file called gdcmPython.py
   # Thus add the custom command to copy it to proper location:
-  ADD_CUSTOM_COMMAND(
-    TARGET pygdcm
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy 
-      ${GDCM_BINARY_DIR}/bin/gdcm.py 
-      ${GDCM_BINARY_DIR}/bin/gdcmPython.py
-  )
+#  ADD_CUSTOM_COMMAND(
+#    TARGET pygdcm
+#    POST_BUILD
+#    COMMAND ${CMAKE_COMMAND}
+#    ARGS -E copy 
+#      ${GDCM_BINARY_DIR}/bin/gdcm.py 
+#      ${GDCM_BINARY_DIR}/bin/gdcmPython.py
+#  )
 
   # Here comes the hack to rename the library to a more 'swig' compliant scheme"
   SET(LIB_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}pygdcm${CMAKE_SHARED_LIBRARY_SUFFIX})
@@ -119,12 +116,12 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
     )
 
   # Remove temporary (lib)pygdcm(.so .dll) library:
-  ADD_CUSTOM_COMMAND(
-    TARGET pygdcm
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E remove ${LIB_DIR}/${CMAKE_CFG_INTDIR}/${LIB_NAME}
-  )
+#  ADD_CUSTOM_COMMAND(
+#    TARGET pygdcm
+#    POST_BUILD
+#    COMMAND ${CMAKE_COMMAND}
+#    ARGS -E remove ${LIB_DIR}/${CMAKE_CFG_INTDIR}/${LIB_NAME}
+#  )
 
   # where are library stored ?
 #  SET(GDCM_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
@@ -156,49 +153,40 @@ IF(GDCM_VTK)
   
   # Configure Python module, which is the plugin itself
   IF (GDCM_WRAP_PYTHON)
-    VTK_WRAP_PYTHON2(vtkgdcmPython gdcmfoo
+    IF(NOT VTK_WRAP_PYTHON)
+      MESSAGE(FATAL_ERROR "Can't build gdcm python wrapping if VTK_WRAP_PYTHON is OFF" )
+    ENDIF(NOT VTK_WRAP_PYTHON)
+    VTK_WRAP_PYTHON2(vtkgdcmPython gdcmWrapSOURCES
                    ${vtkgdcmPython_la_SOURCES})
     # The C++ files must be made into a C++ library
-    ADD_LIBRARY(vtkgdcmPython SHARED ${gdcmfoo})
+    ADD_LIBRARY(vtkgdcmPython SHARED ${gdcmWrapSOURCES})  #MODULE on apple ?
     # set the libraries to link against
     TARGET_LINK_LIBRARIES (vtkgdcmPython
-                           #_pygdcm
+                           pygdcm
                            vtkgdcm
                            vtkCommonPython
                            vtkIOPython)
   ENDIF (GDCM_WRAP_PYTHON)
   
-  #generate a setup.py according to VTK installation 
-  #put it in subdir in order to not override old one
-  # as it is a pain...override existing file...
+  # generate a setup.py according to VTK installation 
+  # put it in subdir in order to not override old one
   
   GET_FILENAME_COMPONENT(VTKPATH ${VTK_DIR}/../../ ABSOLUTE)
   CONFIGURE_FILE(
       ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
-      ${GDCM_BINARY_DIR}/setup.py
+      ${GDCM_BINARY_DIR}/gdcmPython/setup.py
   )
-  #MESSAGE(STATUS ${VTKPATH})
 ENDIF(GDCM_VTK)
 
 #-----------------------------------------------------------------------------
 # Install stuff:
 
-#Should install in path of PYTHON_LIBRARY and not the default CMAKE_INSTALL_PREFIX
+# Cmake cannot handle installing since python wants stuff to be installed
+# in /usr/lib/pythonx.x/site-package and not a a std /usr/lib
+# Thus generate a setup.py file using distutils
 
-GET_FILENAME_COMPONENT(PYTHON_LIB_INSTALL ${PYTHON_LIBRARY} PATH)
-GET_FILENAME_COMPONENT(SITEPACKAGE 
-  ${PYTHON_LIB_INSTALL}/../site-packages ABSOLUTE)
-#MESSAGE(STATUS ${SITEPACKAGE})
-#INSTALL_FILES(/include "\\.h$")
-#INSTALL_TARGETS(/lib/ gdcm)
 
-# gdcm.py is a file generated by swig
-# then from python you can do import gdcm, and it will load _gdcm.so
-#INSTALL_TARGETS(/lib/ gdcm.py)
-#INSTALL_PROGRAMS(/lib/ gdcm.py)
-#INSTALL_FILES(/lib/ .py gdcm.py)
+#-----------------------------------------------------------------------------
+# Add test from demo subdir:
 
-# When installing swig-generated python module one should pay attention
-# to library naming convention, see here for more detail:
-# http://www.swig.org/Doc1.3/Python.html#n6
-# even with the $swig -module mylib, there is always a trailing underscore added
+SUBDIRS(demo)

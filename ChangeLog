@@ -1,3 +1,9 @@
+2004-05-16  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+    * Some more cleanup/enhancement in gdcmPython/CMakeLists.txt getting close
+      to right behavior
+    * Initial addition of automatic python testing
+    * Initial addition of automatic image comparison
+
 2004-05-04 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
     * src/gdcmCommon.h, gdcmDicomDir.cxx, gdcmFile.cxx, gdcmHeaderHelper.h,
       gdcmParser.cxx, gdcmParser.h : bug fix for the Microsoft .Net compilation

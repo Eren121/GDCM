@@ -60,7 +60,7 @@ REMOVE (TestsToRun gdcmTests.cxx)
 FOREACH(file ${TEST_SOURCES})
   GET_FILENAME_COMPONENT(name ${file} NAME_WE)
 #  IF (GDCM_DATA_ROOT)
-#    ADD_TEST(${name} ${CXX_TEST_PATH}/gdcmTests ${name}
+#    ADD_TEST(${name} ${GDCM_TESTS} ${name}
 #        -D ${GDCM_DATA_ROOT}
 #        -T ${GDCM_BINARY_DIR}/Testing/Temporary
 #        -V Baseline/gdcm/${name}.png)
@@ -101,7 +101,7 @@ FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
   GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
   STRING(REGEX MATCH ${filename_temp} bad_dicom ${BLACK_LIST})
   IF(NOT bad_dicom)
-    SET(GDCM_DATA_IMAGES "${GDCM_DATA_IMAGES}\n\"${filename}\",")
+    SET(GDCM_DATA_IMAGES "${GDCM_DATA_IMAGES}\n\"${filename_temp}\",")
   ENDIF(NOT bad_dicom)
 ENDFOREACH(filename)
 
