@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.103 $
+  Date:      $Date: 2004/10/12 17:31:56 $
+  Version:   $Revision: 1.104 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1141,7 +1141,7 @@ void* Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
       return NULL;
    }
    /// \todo Drop any already existing void area! JPR
-   if( !SetEntryBinAreaByNumber( a, group, elem ) );
+   if( !SetEntryBinAreaByNumber( a, group, elem ) )
    {
       dbg.Verbose(0, "Document::LoadEntryBinArea setting failed.");
    }
