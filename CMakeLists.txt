@@ -1,7 +1,8 @@
 PROJECT(GDCM)
 CMAKE_MINIMUM_REQUIRED(VERSION 1.8)
 
-# The GDCM version number.
+#-----------------------------------------------------------------------------
+# GDCM version number, usefull for packaging and doxygen doc:
 SET(GDCM_VERSION_MAJOR 0)
 SET(GDCM_VERSION_MINOR 4)
 SET(GDCM_VERSION_PATCH 0)
@@ -34,8 +35,8 @@ SET(GDCM_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 # Build directory on which many applications depend
 SUBDIRS(
   src
-  Test
   Dicts
+  Test
 )
 
 #-----------------------------------------------------------------------------

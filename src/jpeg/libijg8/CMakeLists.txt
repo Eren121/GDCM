@@ -74,3 +74,10 @@ SET(libgdcmijpeg8include_HEADERS
 #   jconfig.vc
 
 ADD_LIBRARY(gdcmijpeg8 ${libgdcmijpeg8_la_SOURCES})
+
+#INSTALL_FILES(/include "\\.h$")
+INSTALL_FILES(/include FILES ${libgdcmijpeg8include_HEADERS})
+#INSTALL_FILES(/include FILES jconfig.linux jconfig.vc)
+INSTALL_FILES(/include FILES jconfig.linux)
+
+INSTALL_TARGETS(/lib/ gdcmijpeg8)

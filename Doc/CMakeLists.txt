@@ -20,25 +20,17 @@ SET(TARGET_DIR
 
 IF(GDCM_DOXYGEN)
 
-#  ADD_CUSTOM_COMMAND(
-#      SOURCE    ${GDCM_SOURCE_DIR}/Doc/DoxyfileDeveloppers
-#      COMMAND   ${DOXYGEN}
-#      ARGS      ${GDCM_SOURCE_DIR}/Doc/DoxyfileDeveloppers
-#      TARGET    mathieu
-#      OUTPUT   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
-#)
+  # http://www.cmake.org/pipermail/cmake/2003-April/003673.html
+  # Too bad CMake doesn't support multiline ""
+  SET(GDCM_DOXYGEN_INPUT_COMMON
+    "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt   ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyInstallation.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyIntroduction.txt"
+  )
+  SET(GDCM_DOXYGEN_EXCLUDE_COMMON
+  )
 
-# http://www.cmake.org/pipermail/cmake/2003-April/003673.html
-# Too bad CMake doesn't support multiline ""
-SET(GDCM_DOXYGEN_INPUT_COMMON
-  "${GDCM_SOURCE_DIR}/src   ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt   ${GDCM_SOURCE_DIR}/Doc/DoxyMainPage.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyInstallation.txt  ${GDCM_SOURCE_DIR}/Doc/DoxyIntroduction.txt"
-)
-SET(GDCM_DOXYGEN_EXCLUDE_COMMON
-)
-
-#Should rewrote this thing with FOREACH:
-#-----------------------------------------------------------------------------
-# Build the documentation for developpers
+  #Should rewrote this thing with FOREACH:
+  #-----------------------------------------------------------------------------
+  # Build the documentation for developpers
 
   SET(GDCM_HTML_OUTPUT
     html.developper
@@ -60,8 +52,8 @@ SET(GDCM_DOXYGEN_EXCLUDE_COMMON
    ${DOXYGEN}
    ${GDCM_BINARY_DIR}/Doc/DoxyfileDeveloppers)
 
-#-----------------------------------------------------------------------------
-# Build the documentation for user
+  #-----------------------------------------------------------------------------
+  # Build the documentation for user
 
   SET(GDCM_HTML_OUTPUT
     html.user
@@ -85,7 +77,7 @@ SET(GDCM_DOXYGEN_EXCLUDE_COMMON
 
 
   INSTALL_FILES(${HTML_DIR} "\\.css$")
-  INSTALL_FILES(${HTML_DIR} "\\.gif$")
+  INSTALL_FILES(${HTML_DIR} "\\.png$")
   INSTALL_FILES(${HTML_DIR} "\\.html$")
   #INSTALL_FILES(${HTML_DIR} "\\.pl$")
   #INSTALL_FILES(${HTML_DIR} "\\.stop$")

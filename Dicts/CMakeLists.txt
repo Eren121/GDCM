@@ -1,3 +1,6 @@
+#-----------------------------------------------------------------------------
+# DICOM dictionary stuff
+
 #SET(dictsdir 
 #  ${GDCM_SOURCE_DIR}/gdcm
 #)
@@ -11,6 +14,5 @@
 #  dicomV3.dic
 #)
 
-#IF(UNIX)
-  INSTALL_FILES(${GDCM_DATA_DIR} FILES dicomV3.dic README)
-#ENDIF(UNIX)
+# For now INSTALL doesn't work on Win32 
+INSTALL_FILES(${GDCM_DATA_DIR} FILES dicomV3.dic README)

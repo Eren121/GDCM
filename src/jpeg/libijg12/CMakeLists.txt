@@ -1,8 +1,5 @@
-#LTVERSION = 0:1:0
-
-#lib_LTLIBRARIES = libgdcmijpeg12.la
-
-##CXXFLAGS = @CXXFLAGS@
+#-----------------------------------------------------------------------------
+# Build jpeg lib for 12 bits:
 
 SET(libgdcmijpeg12_la_SOURCES
 	jcapimin12.c
@@ -53,7 +50,6 @@ SET(libgdcmijpeg12_la_SOURCES
 	jmemnobs12.c
 )
 
-#libgdcmijpeg12includedir = $(includedir)
 SET(libgdcmijpeg12include_HEADERS
 	jchuff12.h
 	jconfig12.h
@@ -73,3 +69,10 @@ SET(libgdcmijpeg12include_HEADERS
 #   jconfig.vc
 
 ADD_LIBRARY(gdcmijpeg12 ${libgdcmijpeg12_la_SOURCES})
+
+#INSTALL_FILES(/include "\\.h$")
+INSTALL_FILES(/include FILES ${libgdcmijpeg12include_HEADERS})
+#INSTALL_FILES(/include FILES jconfig.linux jconfig.vc)
+INSTALL_FILES(/include FILES jconfig.linux)
+
+INSTALL_TARGETS(/lib/ gdcmijpeg12)

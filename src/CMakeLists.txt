@@ -1,7 +1,6 @@
+#-----------------------------------------------------------------------------
+# Build jpeg lib first:
 SUBDIRS(jpeg)
-
-#CXXFLAGS = @CXXFLAGS@ -DPUB_DICT_PATH=\"$(datadir)/gdcm/\" \
-#           -D__STDC_LIMIT_MACROS  # Refer to stdint.h
 
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/jpeg/
@@ -28,47 +27,19 @@ SET(libgdcm_la_SOURCES
 	gdcmParse.cxx
 	gdcmJpegIdo.cxx
 )
-#Why one should not use ADD_DEFINITIONS
-#http://www.cmake.org/pipermail/cmake/2003-September/004286.html
-#ADD_DEFINITIONS(-DPUB_DICT_PATH=\\"${CMAKE_INSTALL_PREFIX}${GDCM_DATA_DIR}/\\")
-#ADD_DEFINITIONS(-D__STDC_LIMIT_MACROS)
+#-----------------------------------------------------------------------------
+# Why one should not use ADD_DEFINITIONS
+# http://www.cmake.org/pipermail/cmake/2003-September/004286.html
 
-#SET_SOURCE_FILES_PROPERTIES(${libgdcm_la_SOURCES} 
-#  PROPERTIES 
-#  COMPILE_FLAGS  -D__STDC_LIMIT_MACROS
-#  COMPILE_FLAGS  -DPUB_DICT_PATH=\\"${CMAKE_INSTALL_PREFIX}${GDCM_DATA_DIR}\\"
-#)
-
+#-----------------------------------------------------------------------------
+# __STDC_LIMIT_MACROS -> Refer to stdint.h
+# http://www.cmake.org/pipermail/cmake/2003-October/004369.html
+# http://www.cmake.org/pipermail/cmake/2003-October/004373.html
 
 SET_SOURCE_FILES_PROPERTIES(${libgdcm_la_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "-D__STDC_LIMIT_MACROS -DPUB_DICT_PATH=\\\"${CMAKE_INSTALL_PREFIX}${GDCM_DATA_DIR}\\\""
 )
-
-
-
-#libgdcminclude_HEADERS =   \
-#	gdcmException.h	   \
-#	gdcmHeader.h	   \
-#	gdcmHeaderHelper.h \
-#	gdcmCommon.h       \
-#	gdcm.h             \
-#	gdcmDictSet.h      \
-#	gdcmDict.h         \
-#	gdcmDictEntry.h    \
-#	gdcmElValue.h      \
-#	gdcmElValSet.h     \
-#	gdcmVR.h           \
-#	gdcmTS.h           \
-#	gdcmFile.h
-
-#EXTRA_DIST =            \
-#	gdcmUtil.h      \
-#	gdcmIdo.h       \
-#	iddcmjpeg.h
-
-
-
 
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )
 #TODO this is not working out of the box (on the first time)
@@ -84,3 +55,11 @@ ELSE(UNIX)
     Wsock32.lib   #doesn't exist on cygwin
   )
 ENDIF(UNIX)
+
+#The following is not wroking because when a header file is not found it tries 
+#to find one in the binary dir
+#INSTALL_FILES(/include .h ${libgdcm_la_SOURCES})
+#INSTALL_FILES(/include FILES gdcmIdo.h iddcmjpeg.h)
+INSTALL_FILES(/include "\\.h$")
+
+INSTALL_TARGETS(/lib/ gdcm)
