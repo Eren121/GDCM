@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2004/07/17 22:45:40 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -146,23 +146,9 @@ public:
    int GetNumberOfScalarComponents();
    int GetNumberOfScalarComponentsRaw();
 
-   // This is usefull for strategy of ordering study / series
-   // Marking them as deprecated since I believe this is achieve in the 
-   // gdcmDocument operator< 
-   //std::string GetStudyUID();
-   //std::string GetSeriesUID();
-   //std::string GetClassUID();
-   //std::string GetInstanceUID();
-
    int GetImageNumber();
    ModalityType GetModality();
 
-   /**
-    * change GetXImagePosition -> GetXOrigin in order not to confuse reader
-    * -# GetXOrigin can return default value (=0) if it was not ImagePosition
-    * -# Image Position is different in dicomV3 <> ACR NEMA -> better use generic
-    * name
-    */
    float GetXOrigin();
    float GetYOrigin();
    float GetZOrigin();
@@ -175,10 +161,10 @@ public:
    std::string GetTransfertSyntaxName();
 
    /// Accessor to \ref gdcmHeader::GrPixel
-   uint16_t GetGrPixel()  {return GrPixel;}
+   uint16_t GetGrPixel()  { return GrPixel; }
    
    /// Accessor to \ref gdcmHeader::NumPixel
-   uint16_t GetNumPixel() {return NumPixel;}
+   uint16_t GetNumPixel() { return NumPixel; }
 
    /// Read (used in gdcmFile)
    void SetImageDataSize(size_t expectedSize);
