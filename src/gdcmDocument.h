@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/17 13:11:16 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/09/20 18:14:23 $
+  Version:   $Revision: 1.39 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -182,7 +182,7 @@ public:
    virtual bool SetEntryLengthByNumber(uint32_t length,
                                        uint16_t group, uint16_t element);
 
-   virtual size_t GetEntryOffsetByNumber(uint16_t group, uint16_t elem);
+   virtual size_t GetEntryOffsetByNumber (uint16_t group, uint16_t elem);
    virtual void* GetEntryVoidAreaByNumber(uint16_t group, uint16_t elem);   
    virtual bool  SetEntryVoidAreaByNumber(void* a, uint16_t group,
                                                    uint16_t elem);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/17 13:11:16 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2004/09/20 18:14:23 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -538,13 +538,10 @@ bool gdcmDocument::CloseFile()
 void gdcmDocument::Write(FILE* fp,FileType filetype)
 {
    /// \todo move the following lines (and a lot of others, to be written)
-   /// to a future function CheckAndCorrectHeader
-   
-   /// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
-   /// no way (check : FileType est un champ de gdcmDocument ...)
-   /// a moins de se livrer a un tres complique ajout des champs manquants.
-   /// faire un CheckAndCorrectHeader (?) 
- 
+   /// to a future function CheckAndCorrectHeader  
+   /// (necessary if user wants to write a DICOM V3 file
+   /// starting from an  ACR-NEMA (V2)  gdcmHeader
+
    if (filetype == gdcmImplicitVR) 
    {
       std::string implicitVRTransfertSyntax = UI1_2_840_10008_1_2;
@@ -593,82 +590,10 @@ void gdcmDocument::Write(FILE* fp,FileType filetype)
  * @param   value (string) Value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Header Entry (NULL when creation
- *          failed).
- */
-
-/*  
-gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
-                                         std::string const & value, 
-                                         uint16_t group, 
-                                         uint16_t elem )
-{
-   gdcmValEntry* valEntry = 0;
-   gdcmDocEntry* currentEntry = GetDocEntryByNumber( group, elem);
-   
-   if (!currentEntry)
-   {
-      // The entry wasn't present and we simply create the required ValEntry:
-      currentEntry = NewDocEntryByNumber(group, elem);
-      if (!currentEntry)
-      {
-         dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: call to"
-                        " NewDocEntryByNumber failed.");
-         return NULL;
-      }
-      valEntry = new gdcmValEntry(currentEntry);
-      if ( !AddEntry(valEntry))
-      {
-         dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: AddEntry"
-                        " failed allthough this is a creation.");
-      }
-   }
-   else
-   {
-      valEntry = dynamic_cast< gdcmValEntry* >(currentEntry);
-      if ( !valEntry ) // Euuuuh? It wasn't a ValEntry
-                       // then we change it to a ValEntry ?
-                       // Shouldn't it be considered as an error ?
-      {
-         // We need to promote the gdcmDocEntry to a gdcmValEntry:
-         valEntry = new gdcmValEntry(currentEntry);
-         if (!RemoveEntry(currentEntry))
-         {
-            dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: removal"
-                           " of previous DocEntry failed.");
-            return NULL;
-         }
-         if ( !AddEntry(valEntry))
-         {
-            dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: adding"
-                           " promoted ValEntry failed.");
-            return NULL;
-         }
-      }
-   }
-
-   SetEntryByNumber(value, group, elem);
-
-   return valEntry;
-}   
-*/
-
-/**
- * \brief   Modifies the value of a given Header Entry (Dicom Element)
- *          when it exists. Create it with the given value when unexistant.
- * @param   value (string) Value to be set
- * @param   group   Group number of the Entry 
- * @param   elem  Element number of the Entry
  * @param   VR  V(alue) R(epresentation) of the Entry -if private Entry-
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
- */
- 
- // TODO : write something clever, using default value for VR
- //        to avoid code duplication
- //        (I don't know how to tell NewDocEntryByNumber
- //         that ReplaceOrCreateByNumber  was called with a default value)
- 
+ */ 
 gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          std::string const & value, 
                                          uint16_t group, 
@@ -922,7 +847,6 @@ std::string gdcmDocument::GetEntryVRByName(TagName const & tagName)
                                             dictEntry->GetElement());
    return elem->GetVR();
 }
-
 
 /**
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
@@ -1189,7 +1113,6 @@ void* gdcmDocument::LoadEntryVoidArea(uint16_t group, uint16_t elem)
    {
       dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea setting failed.");
    }
-
    return a;
 }
 /**

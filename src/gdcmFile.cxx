@@ -1,10 +1,10 @@
-/*=========================================================================
+  /*=========================================================================
                                                                                 
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/13 07:49:36 $
-  Version:   $Revision: 1.125 $
+  Date:      $Date: 2004/09/20 18:14:23 $
+  Version:   $Revision: 1.126 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ gdcmFile::gdcmFile(gdcmHeader *header)
 {
    Header     = header;
    SelfHeader = false;
-   SetInitialValues();
+   SaveInitialValues();
 }
 
 /**
@@ -65,15 +65,34 @@ gdcmFile::gdcmFile(std::string const & filename )
 {
    Header = new gdcmHeader( filename );
    SelfHeader = true;
-   SetInitialValues();
+   SaveInitialValues();
 }
 
 /**
  * \ingroup   gdcmFile
- * \brief Sets some initial for the Constructor
+ * \brief canonical destructor
+ * \note  If the gdcmHeader was created by the gdcmFile constructor,
+ *        it is destroyed by the gdcmFile
  */
-void gdcmFile::SetInitialValues()
-{   
+gdcmFile::~gdcmFile()
+{ 
+   if( SelfHeader )
+   {
+      delete Header;
+   }
+   Header = 0;
+
+   DeleteInitialValues();
+}
+
+/**
+ * \ingroup   gdcmFile
+ * \brief Sets some initial values for the Constructor
+ * \warning not end user intended
+ */
+void gdcmFile::SaveInitialValues()
+{ 
+
    PixelRead  = -1; // no ImageData read yet.
    LastAllocatedPixelDataLength = 0;
    Pixel_Data = 0;
@@ -82,6 +101,7 @@ void gdcmFile::SetInitialValues()
    InitialPhotInt = "";
    InitialPlanConfig = "";
    InitialBitsAllocated = "";
+   InitialHighBit = "";
   
    InitialRedLUTDescr   = 0;
    InitialGreenLUTDescr = 0;
@@ -100,14 +120,17 @@ void gdcmFile::SetInitialValues()
       InitialSpp           = Header->GetEntryByNumber(0x0028,0x0002);
       InitialPhotInt       = Header->GetEntryByNumber(0x0028,0x0004);
       InitialPlanConfig    = Header->GetEntryByNumber(0x0028,0x0006);
+      
       InitialBitsAllocated = Header->GetEntryByNumber(0x0028,0x0100);
-               
+      InitialHighBit       = Header->GetEntryByNumber(0x0028,0x0102);
+
       // the following entries *may* be removed from the H table
       // (NOT deleted ...) by gdcmFile::GetImageDataIntoVectorRaw  
       // we keep a pointer on them.
       InitialRedLUTDescr   = Header->GetDocEntryByNumber(0x0028,0x1101);
       InitialGreenLUTDescr = Header->GetDocEntryByNumber(0x0028,0x1102);
       InitialBlueLUTDescr  = Header->GetDocEntryByNumber(0x0028,0x1103);
+
       InitialRedLUTData    = Header->GetDocEntryByNumber(0x0028,0x1201);
       InitialGreenLUTData  = Header->GetDocEntryByNumber(0x0028,0x1202);
       InitialBlueLUTData   = Header->GetDocEntryByNumber(0x0028,0x1203); 
@@ -116,22 +139,134 @@ void gdcmFile::SetInitialValues()
 
 /**
  * \ingroup   gdcmFile
- * \brief canonical destructor
- * \note  If the gdcmHeader was created by the gdcmFile constructor,
- *        it is destroyed by the gdcmFile
+ * \brief restores some initial values
+ * \warning not end user intended
  */
-gdcmFile::~gdcmFile()
-{ 
-   if( SelfHeader )
-   {
-      delete Header;
+void gdcmFile::RestoreInitialValues()
+{   
+   if ( Header->IsReadable() )
+   {      
+      // the following values *may* have been modified 
+      // by gdcmFile::GetImageDataIntoVectorRaw
+      // we restore their initial value.
+      if ( InitialSpp != "")
+         Header->SetEntryByNumber(InitialSpp,0x0028,0x0002);
+      if ( InitialPhotInt != "")
+         Header->SetEntryByNumber(InitialPhotInt,0x0028,0x0004);
+      if ( InitialPlanConfig != "")
+
+         Header->SetEntryByNumber(InitialPlanConfig,0x0028,0x0006);
+      if ( InitialBitsAllocated != "")
+          Header->SetEntryByNumber(InitialBitsAllocated,0x0028,0x0100);
+      if ( InitialHighBit != "")
+          Header->SetEntryByNumber(InitialHighBit,0x0028,0x0102);
+               
+      // the following entries *may* be have been removed from the H table
+      // (NOT deleted ...) by gdcmFile::GetImageDataIntoVectorRaw  
+      // we restore them.
+
+      if (InitialRedLUTDescr)
+         Header->AddEntry(InitialRedLUTDescr);
+      if (InitialGreenLUTDescr)
+         Header->AddEntry(InitialGreenLUTDescr);
+      if (InitialBlueLUTDescr)
+         Header->AddEntry(InitialBlueLUTDescr);
+
+      if (InitialRedLUTData)
+         Header->AddEntry(InitialBlueLUTDescr);
+      if (InitialGreenLUTData)
+         Header->AddEntry(InitialGreenLUTData);
+      if (InitialBlueLUTData)
+         Header->AddEntry(InitialBlueLUTData);
    }
-   Header = 0;
+}
+
+/**
+ * \ingroup   gdcmFile
+ * \brief delete initial values (il they were saved)
+ *        of InitialLutDescriptors and InitialLutData
+ */
+void gdcmFile::DeleteInitialValues()
+{ 
 
 // InitialLutDescriptors and InitialLutData
 // will have to be deleted if the don't belong any longer
-// to the Header H table ...
+// to the Header H table when the header is deleted...
+
+   if ( InitialRedLUTDescr )           
+      delete InitialRedLUTDescr;
+  
+   if ( InitialGreenLUTDescr )
+      delete InitialGreenLUTDescr;
+      
+   if ( InitialBlueLUTDescr )      
+      delete InitialBlueLUTDescr; 
+       
+   if ( InitialRedLUTData )      
+      delete InitialRedLUTData;
+   
+   if ( InitialGreenLUTData != NULL)
+      delete InitialGreenLUTData;
+      
+   if ( InitialBlueLUTData != NULL)      
+      delete InitialBlueLUTData;      
 }
+
+/**
+ * \ingroup   gdcmFile
+ * \brief drop palette related initial values -if any-
+ *        (InitialLutDescriptors and InitialLutData)
+ *        out of header, to make it consistent with the Pixel_Data
+ *        as it's loaded in memory
+ */
+
+//FIXME : Should be nice, if we could let it here.
+//        will be moved to PixelData class
+// Now, the job is done in gdcmHeader.cxx
+  
+ /*
+void gdcmFile::DropInitialValues()
+{ 
+   gdcmHeader* h=GetHeader();
+   if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' )
+   {
+      // if SamplesPerPixel = 3, sure we don't need any LUT !   
+      // Drop 0028|1101, 0028|1102, 0028|1103
+      // Drop 0028|1201, 0028|1202, 0028|1203
+
+      gdcmDocEntry* e = h->GetDocEntryByNumber(0x0028,0x01101);
+      if (e)
+      {
+         h->RemoveEntryNoDestroy(e);
+      }
+      e = h->GetDocEntryByNumber(0x0028,0x1102);
+      if (e)
+      {
+         h->RemoveEntryNoDestroy(e);
+      }
+      e = h->GetDocEntryByNumber(0x0028,0x1103);
+      if (e)
+      {
+         h->RemoveEntryNoDestroy(e);
+      }
+      e = h->GetDocEntryByNumber(0x0028,0x01201);
+      if (e)
+      {
+         h->RemoveEntryNoDestroy(e);
+      }
+      e = h->GetDocEntryByNumber(0x0028,0x1202);
+      if (e)
+      {
+         h->RemoveEntryNoDestroy(e);
+      }
+      e = h->GetDocEntryByNumber(0x0028,0x1203);
+      if (e)
+      {
+         h->RemoveEntryNoDestroy(e);
+      }
+   }
+}
+*/
 
 //-----------------------------------------------------------------------------
 // Print
@@ -412,21 +547,9 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
   // in order to be able to restore the header in a disk-consistent state
   // (if user asks twice to get the pixels from disk)
 
-   if ( PixelRead == -1 ) // File was never "read" before
+   if ( PixelRead != -1 ) // File was "read" before
    {  
-      InitialSpp           = Header->GetEntryByNumber(0x0028,0x0002);
-      InitialPhotInt       = Header->GetEntryByNumber(0x0028,0x0004);
-      InitialPlanConfig    = Header->GetEntryByNumber(0x0028,0x0006);
-      InitialBitsAllocated = Header->GetEntryByNumber(0x0028,0x0100);
-   }
-   else // File was already "read", the following *may* have been modified
-        // we restore them to be in a disk-consistent state
-   {
-       // FIXME : What happened with the LUTs ?
-       Header->SetEntryByNumber(InitialSpp,0x0028,0x0002);
-       Header->SetEntryByNumber(InitialPhotInt,0x0028,0x0004);
-       Header->SetEntryByNumber(InitialPlanConfig,0x0028,0x0006);
-       Header->SetEntryByNumber(InitialBitsAllocated,0x0028,0x0100);   
+      RestoreInitialValues(); 
    }
    
    PixelRead = 1 ; // PixelRaw
@@ -666,20 +789,23 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
    }
    // now, it's an RGB image
    // Lets's write it in the Header
+ 
+   // Droping Palette Color out of the Header
+   // has been moved to the Write process.
 
-   // CreateOrReplaceIfExist ?
+   // TODO : move 'values' modification to the write process
+   //      : save also (in order to be able to restore)
+   //      : 'high bit' -when not equal to 'bits stored' + 1
+   //      : 'bits allocated', when it's equal to 12 ?!
 
    std::string spp = "3";            // Samples Per Pixel
    std::string photInt = "RGB ";     // Photometric Interpretation
    std::string planConfig = "0";     // Planar Configuration
-
-
      
    Header->SetEntryByNumber(spp,0x0028,0x0002);
    Header->SetEntryByNumber(photInt,0x0028,0x0004);
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
  
-   /// \todo Drop Palette Color out of the Header? 
    return ImageDataSize; 
 }
 

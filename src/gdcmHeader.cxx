@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/14 16:47:08 $
-  Version:   $Revision: 1.186 $
+  Date:      $Date: 2004/09/20 18:14:23 $
+  Version:   $Revision: 1.187 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,10 @@ void gdcmHeader::Write(FILE* fp,FileType filetype)
       delete[] dumm;
       ReplaceOrCreateByNumber(s_lgPix,GrPixel, 0x0000);
    }
-  
+
+   // FIXME : should be nice if we could move it to gdcmFile
+   //         (or in future gdcmPixelData class)
+
    // Drop Palette Color, if necessary
    
    if ( GetEntryByNumber(0x0028,0x0002).c_str()[0] == '3' )
@@ -132,32 +135,32 @@ void gdcmHeader::Write(FILE* fp,FileType filetype)
       gdcmDocEntry* e = GetDocEntryByNumber(0x0028,0x01101);
       if (e)
       {
-         RemoveEntry(e);
+         RemoveEntryNoDestroy(e);
       }
       e = GetDocEntryByNumber(0x0028,0x1102);
       if (e)
       {
-         RemoveEntry(e);
+         RemoveEntryNoDestroy(e);
       }
       e = GetDocEntryByNumber(0x0028,0x1103);
       if (e)
       {
-         RemoveEntry(e);
+         RemoveEntryNoDestroy(e);
       }
       e = GetDocEntryByNumber(0x0028,0x01201);
       if (e)
       {
-         RemoveEntry(e);
+         RemoveEntryNoDestroy(e);
       }
       e = GetDocEntryByNumber(0x0028,0x1202);
       if (e)
       {
-         RemoveEntry(e);
+         RemoveEntryNoDestroy(e);
       }
       e = GetDocEntryByNumber(0x0028,0x1203);
       if (e)
       {
-          RemoveEntry(e);
+          RemoveEntryNoDestroy(e);
       }
    }
    gdcmDocument::Write(fp,filetype);

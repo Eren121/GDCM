@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/17 08:54:26 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2004/09/20 18:14:23 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ protected:
 
 private:
    void SwapZone(void* im, int swap, int lgr, int nb);
-   void SetInitialValues();  
+
    bool ReadPixelData(void * destination);
    
    // For JPEG 8 Bits, body in file gdcmJpeg.cxx
@@ -120,6 +120,11 @@ private:
 // How do we write that in C++ ?)
    static int gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
                                      long uncompressedSegmentSize, FILE *fp);
+
+   void SaveInitialValues();    // will belong to the future gdcmPixelData class
+   void RestoreInitialValues(); // will belong to the future gdcmPixelData class
+   void DeleteInitialValues();  // will belong to the future gdcmPixelData class 
+
 // members variables:
 
    /// \brief Header to use to load the file
@@ -129,30 +134,38 @@ private:
    ///  the constructor or passed to the constructor. When false
    ///  the destructor is in charge of deletion.
    bool SelfHeader;
+   
+   /// wether already parsed 
+   bool Parsed;
+      
+   //
+   // --------------- Will be moved to a gdcmPixelData class
+   //
 
    /// \brief to hold the Pixels (when read)
-   void* Pixel_Data;  // (was PixelData; should be removed)
+   void* Pixel_Data;  // (was PixelData)
    
-   /// \brief Area length to receive the pixels
+   /// \brief Area length to receive the Gray Level pixels
    size_t ImageDataSizeRaw;
    
-   /// \brief Area length to receive the RGB pixels
-   /// from Grey Plane + Palette Color  
+   /// \brief Area length to receive the pixels making RGB
+   ///        from Plane R, Plane G, Plane B 
+   ///     or from Grey Plane + Palette Color
+   ///     or from YBR Pixels (or from RGB Pixels, as well) 
    size_t ImageDataSize;
        
   /// \brief ==1  if GetImageDataRaw was used
   ///        ==0  if GetImageData    was used
   ///        ==-1 if ImageData never read                       
    int PixelRead;
-   
-  /// wether already parsed 
-   bool Parsed;
-      
+
   /// \brief length of the last allocated area devoided to receive Pixels
   ///        ( to allow us not to (free + new) if un necessary )     
    size_t LastAllocatedPixelDataLength; 
 
   // Initial values of some fields that can be modified during reading process
+  // (in a future stage, they will be modified just before the writting process
+  //  and restored just after)
   // if user asked to transform gray level + LUT image into RGB image
      
   /// \brief Samples Per Pixel           (0x0028,0x0002), as found on disk
@@ -160,11 +173,21 @@ private:
   /// \brief Photometric Interpretation  (0x0028,0x0004), as found on disk
    std::string InitialPhotInt;
   /// \brief Planar Configuration        (0x0028,0x0006), as found on disk   
-   std::string InitialPlanConfig;    
+   std::string InitialPlanConfig;
+    
+  // Initial values of some fields that can be modified during reading process
+  // (in a future stage, they will be modified just before the writting process
+  //  and restored just after)
+  // if the image was a 'strange' ACR-NEMA 
+  // (Bits Allocated=12, High Bit not equal to Bits stored +1) 
   /// \brief Bits Allocated              (0x0028,0x0100), as found on disk
    std::string InitialBitsAllocated;
-   
+  /// \brief High Bit                    (0x0028,0x0102), as found on disk
+   std::string InitialHighBit;
+  
   // some DocEntry that can be moved out of the H table during reading process
+  // (in a future stage, they will be modified just before the writting process
+  //  and restored just after)
   // if user asked to transform gray level + LUT image into RGB image
   // We keep a pointer on them for a future use.
      
@@ -181,6 +204,10 @@ private:
   gdcmDocEntry* InitialGreenLUTData;
   /// \brief Blue Palette Color Lookup Table Data        0028 1203 as read
   gdcmDocEntry* InitialBlueLUTData;
+  
+   //
+   // --------------- end of future gdcmPixelData class
+   //  
 
 };
 
