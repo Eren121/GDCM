@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:12:09 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/02/02 16:16:07 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,8 +27,6 @@
 
 namespace gdcm 
 {
-typedef std::list<File* > GdcmFileList;
-typedef std::vector<File* > GdcmFileVector;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -155,9 +153,7 @@ void SerieHelper::OrderGdcmFileList(GdcmFileList *CoherentGdcmFileList)
  * \brief   Get the first List while visiting the CoherentFileListHT
  * @return  The first GdcmFileList if found, otherwhise NULL
  */
- std::list<File* > *SerieHelper::GetFirstCoherentFileList()
-// Why doesn't it compile ?!?
-//GdcmFileList *SerieHelper::GetFirstCoherentFileList()
+GdcmFileList *SerieHelper::GetFirstCoherentFileList()
 {
    ItListHt = CoherentGdcmFileListHT.begin();
    if( ItListHt != CoherentGdcmFileListHT.end() )
@@ -170,7 +166,7 @@ void SerieHelper::OrderGdcmFileList(GdcmFileList *CoherentGdcmFileList)
  * \note : meaningfull only if GetFirstCoherentFileList already called
  * @return  The next GdcmFileList if found, otherwhise NULL
  */
-std::list<File* > *SerieHelper::GetNextCoherentFileList()
+GdcmFileList *SerieHelper::GetNextCoherentFileList()
 {
    gdcmAssertMacro (ItListHt != CoherentGdcmFileListHT.end());
   

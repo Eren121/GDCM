@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:12:09 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/02/02 16:16:07 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,11 +20,14 @@
 #define GDCMSERIEHELPER_H
 
 #include "gdcmCommon.h" 
+
 #include <list>
 #include <map>
+
 namespace gdcm 
 {
 class File;
+typedef std::list<File* > GdcmFileList;
 
 //-----------------------------------------------------------------------------
 /**
@@ -37,12 +40,12 @@ class File;
 class GDCM_EXPORT SerieHelper 
 {
 public:
-   typedef std::list<File* > GdcmFileList;
    typedef std::map<std::string, GdcmFileList *> CoherentFileListmap;
+   typedef std::vector<File* > GdcmFileVector;
 
-    SerieHelper();
-    ~SerieHelper();
- void Print();
+   SerieHelper();
+   ~SerieHelper();
+   void Print();
 
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
