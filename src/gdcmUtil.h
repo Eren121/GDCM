@@ -74,9 +74,9 @@ extern gdcmDebug dbg;
 char *_cleanString(char *v);
 std::string _CreateCleanString(std::string s);
 
-void NormalizePath(std::string &name);
-std::string GetPath(std::string fullName);
-std::string GetName(std::string fullName);
+void NormalizePath (std::string &name);
+std::string GetPath(std::string &fullName);
+std::string GetName(std::string &fullName);
 //-----------------------------------------------------------------------------
 #endif
 

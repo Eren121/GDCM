@@ -7,7 +7,7 @@
 
 /**
  * \ingroup gdcmDicomDirImage
- * \brief   
+ * \brief  Constructor 
  * @param  begin  iterator (inside the gdcmParser chained list)
  *                on the first Header Entry (i.e Dicom Element)
  *                related to this "IMAGE" part

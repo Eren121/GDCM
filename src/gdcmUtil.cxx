@@ -175,7 +175,7 @@ const std::string SEPARATOR = "/";
 /*
  * \brief   Get the (directory) path from a full path file name
  */
-std::string GetPath(std::string fullName)
+std::string GetPath(std::string &fullName)
 {
    int pos1=fullName.rfind("/");
    int pos2=fullName.rfind("\\");
@@ -190,7 +190,7 @@ std::string GetPath(std::string fullName)
 /*
  * \brief   Get the (last) name of a full path file name
  */
-std::string GetName(std::string fullName)
+std::string GetName(std::string &fullName)
 {   
   int fin=fullName.length()-1;
   char a =fullName.c_str()[fin];

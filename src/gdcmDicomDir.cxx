@@ -37,11 +37,7 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
 {
  // que l'on ai passe un root directory ou un DICOMDIR
  // et quelle que soit la valeur de parseDir,
- // on a lance gdcmParser
- 
- cout << "---------------------------------------------- " << Name <<endl;
- 
-
+ // on a lance gdcmParser 
       
    startMethod=            NULL;
    progressMethod=         NULL;
@@ -59,16 +55,16 @@ gdcmDicomDir::gdcmDicomDir(const char *Name, bool parseDir,
    metaElems=NULL;
 
 // gdcmParser already  executed
-// Si on a passe un root directory, on est assuré de n'avoir rien ramené
+// if user passed a root directory, sure we didn't get anything
 
    if( GetListEntry().begin()==GetListEntry().end() ) 
    {
-     // Si, en plus, parseDir == false, ca devrait etre une erreur
+     // if parseDir == false, it should be tagged as an error
       dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry list empty");
 
       if(strlen(Name)==1 && Name[0]=='.') { // user passed '.' as Name
                                             // we get current directory name
-         char*dummy=(char*) malloc(1000); // TODO : check with Windoze
+         char*dummy=(char*) malloc(1000);   // TODO : check with Windoze
          getcwd(dummy,(size_t)1000);
          SetFileName(dummy); // will be converted into a string
          free(dummy);        // no longer needed   
