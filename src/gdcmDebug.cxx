@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/07/19 11:51:26 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,17 +19,16 @@
 #include <iostream>
 #include "gdcmDebug.h"
 
-/**
- * \ingroup Globals
- * \brief   Instance of debugging utility.
- */
-gdcmDebug dbg;
+//-----------------------------------------------------------------------------
+gdcmDebug gdcmDebug::debug;
 
+//-----------------------------------------------------------------------------
 /**
  * \brief   constructor
  * @param level debug level
  */ 
-gdcmDebug::gdcmDebug(int level) {
+gdcmDebug::gdcmDebug(int level) 
+{
    DebugLevel = level;
 }
 
@@ -37,7 +36,8 @@ gdcmDebug::gdcmDebug(int level) {
  * \brief   Accessor
  * @param   level Set the debug level
  */ 
-void gdcmDebug::SetDebug(int level) {
+void gdcmDebug::SetDebug(int level) 
+{
    DebugLevel = level;
 }
 
@@ -47,7 +47,8 @@ void gdcmDebug::SetDebug(int level) {
  * @param Msg1 first message part
  * @param Msg2 second message part 
  */
-void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) {
+void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) 
+{
    if (Level > DebugLevel)
       return ;
    std::cerr << Msg1 << ' ' << Msg2 << std::endl;
@@ -59,7 +60,8 @@ void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) {
  * @param Msg1 first message part
  * @param Msg2 second message part 
  */
-void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {
+void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) 
+{
    if (!Test)
       return;
    std::cerr << Msg1 << ' ' << Msg2 << std::endl;
@@ -73,7 +75,8 @@ void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {
  * @param Msg3 Third message part  
  */
 void gdcmDebug::Error(const char* Msg1, const char* Msg2,
-                      const char* Msg3) {
+                      const char* Msg3) 
+{
    std::cerr << Msg1 << ' ' << Msg2 << ' ' << Msg3 << std::endl;
    Exit(1);
 }
@@ -85,8 +88,9 @@ void gdcmDebug::Error(const char* Msg1, const char* Msg2,
  * @param Msg1 first message part
  * @param Msg2 second message part
  */
- void gdcmDebug::Assert(int Level, bool Test,
-                 const char * Msg1, const char * Msg2) {
+void gdcmDebug::Assert(int Level, bool Test,
+                 const char * Msg1, const char * Msg2) 
+{
    if (Level > DebugLevel)
       return ;
    if (!Test)
@@ -97,7 +101,8 @@ void gdcmDebug::Error(const char* Msg1, const char* Msg2,
  * \brief   Exit 
  * @param a return code 
  */
-void gdcmDebug::Exit(int a) {
+void gdcmDebug::Exit(int a) 
+{
 #ifdef __GNUC__
    std::exit(a);
 #endif
@@ -105,3 +110,13 @@ void gdcmDebug::Exit(int a) {
    exit(a);    // Found in #include <stdlib.h>
 #endif
 }
+
+/**
+ * \brief  Get the debug instance 
+ * \return Reference to the debug instance
+ */
+gdcmDebug &gdcmDebug::GetReference()
+{
+   return gdcmDebug::debug;
+}
+

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/07/19 11:51:26 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,8 +47,9 @@
 //-----------------------------------------------------------------------------
 #ifdef __GNUC__
 #ifndef HAVE_NO_STDINT_H
-#include <stdint.h>   // For uint16_t and uint32_t
+#include <stdint.h>   // For uint8_t uint16_t and uint32_t
 #else
+typedef  unsigned char  uint8_t;
 typedef  unsigned short uint16_t;
 typedef  unsigned int   uint32_t;
 #define UINT32_MAX    (4294967295U)
@@ -56,6 +57,7 @@ typedef  unsigned int   uint32_t;
 #endif
 
 #ifdef _MSC_VER 
+typedef  unsigned char  uint8_t;
 typedef  unsigned short uint16_t;
 typedef  unsigned int   uint32_t;
 #define UINT32_MAX    (4294967295U)

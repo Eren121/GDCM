@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:28 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/07/19 11:51:26 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,8 @@ public:
    virtual bool AddEntry(gdcmDocEntry *Entry); // add to the List
   
    gdcmDocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element);
-   gdcmDocEntry *GetDocEntryByName  (std::string Name);
+   // FIXME method to write
+   //gdcmDocEntry *GetDocEntryByName  (std::string Name);
    
    bool SetEntryByNumber(std::string val, uint16_t group, uint16_t element);                   
     

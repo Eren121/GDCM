@@ -1,3 +1,11 @@
+2004-07-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmCommon.h, gdcmDict.cxx, gdcmTS.cxx : bug fix for msvc6 compilation
+   * src/gdcmDebug.[h|cxx] : bug fix for msvc6 compilation. Replace the dbg
+     variable (instance of gdcmDebug) by a definition macro, and the instance
+     is now in static in the gdcmDebug class
+   * src/gdcmSQItem.h : (FIXME) remove an undefined method
+   * Test/PrintAllDocument.cxx : bug fix in the result of the test
+
 2004-07-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * WARNING: ctest now depends more tightly on gdcmData. You should
      check out gdcmData properly for things to run smoothly...
@@ -472,7 +480,7 @@ WARNING : save your own sources *before* cvs up !
     * .... alas, the python testSuite is still broken.
 
 2004-05-18 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-    * gdcmPython/gdcm.i : remove useless lines concerning the gdcmGlobal 
+    * gdcmPython/gdcm.i : remove useless lines concerning the gdcmGlobal
       gdcmGlob
     * gdcmPython/setup.py : replace the use of cvar.gdcmGlob to gdcmGlobal
     * src/gdcmUtil.h : export methods
