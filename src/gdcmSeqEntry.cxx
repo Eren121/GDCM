@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:13 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/11/15 02:18:37 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,12 +54,12 @@ SeqEntry::SeqEntry( DictEntry* e )
 SeqEntry::SeqEntry( DocEntry* e, int depth )
              : DocEntry( e->GetDictEntry() )
 {
-   this->UsableLength = 0;
-   this->ReadLength   = 0xffffffff;
+   UsableLength = 0;
+   ReadLength   = 0xffffffff;
    SQDepthLevel = depth;
 
-   this->ImplicitVR   = e->IsImplicitVR();
-   this->Offset       = e->GetOffset();
+   ImplicitVR   = e->IsImplicitVR();
+   Offset       = e->GetOffset();
 }
 
 /**
