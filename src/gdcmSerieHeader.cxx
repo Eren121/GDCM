@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/30 17:22:55 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/01/31 03:22:26 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -407,7 +407,7 @@ bool SerieHeader::ImageNumberOrdering(GdcmFileList *CoherentGdcmFileList)
  * @param CoherentGdcmFileList Coherent File list (same Serie UID) to sort
  * @return false only if the header is bugged !
  */
-bool SerieHeader::FileNameOrdering(GdcmFileList *CoherentGdcmFileList)
+bool SerieHeader::FileNameOrdering(GdcmFileList *)
 {
    //using the sort
    //sort(CoherentGdcmFileList.begin(), CoherentGdcmFileList.end());

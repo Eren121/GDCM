@@ -24,7 +24,7 @@ typedef struct {
   std::ifstream *infile;  /* source stream */ 
   JOCTET * buffer;        /* start of buffer */
   boolean start_of_file;  /* have we gotten any data yet? */
-  //PixelReadConvert *pixels;
+
   gdcm::JPEGFragment *frag;
   size_t bytes_read;
 } my_source_mgr;
@@ -90,25 +90,20 @@ fill_input_buffer (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
 
-  //std::cerr << "Before comp:" << src->bytes_read << " / " << src->frag->Length << std::endl;
   if( src->bytes_read == src->frag->GetLength() )
     {
-    //std::cerr << "Sweet finished this fragment" << std::endl;
+    // Start the I/O suspension simply by returning false here:
     return FALSE;
     }
 
   size_t input_buf_size = INPUT_BUF_SIZE;
   if( (src->bytes_read + INPUT_BUF_SIZE) > src->frag->GetLength() )
     {
-    //std::cerr << "Woula error:" << src->bytes_read << " / " << src->frag->Length << std::endl;
     input_buf_size = src->frag->GetLength() - src->bytes_read;
-    //std::cerr << "Ok only reading: " << input_buf_size << " / " << INPUT_BUF_SIZE << std::endl;
-     }
+    }
 
-  //std::cerr << "infile read:" << src->pub.bytes_in_buffer << std::endl;
   src->infile->read( (char*)src->buffer, input_buf_size);
   size_t nbytes = src->infile->gcount();
-  //std::cerr << "input_buf_size=" << input_buf_size << " and nbytes=" << nbytes << std::endl;
 
   if (nbytes <= 0) {
     if (src->start_of_file)  /* Treat empty input file as fatal error */
@@ -125,11 +120,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
   src->start_of_file = FALSE;
   src->bytes_read += nbytes;
 
-
   return TRUE;
-  // otherwise cause a suspension return
-  //std::cerr << "fill_input_buffer" << std::endl;
-  //return FALSE;
 }
 
 
@@ -148,7 +139,6 @@ fill_input_buffer (j_decompress_ptr cinfo)
 METHODDEF(void)
 skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
-  //std::cerr << "skip_input_data:" << num_bytes << std::endl;
   my_src_ptr src = (my_src_ptr) cinfo->src;
 
   /* Just a dumb implementation for now.  Could use fseek() except
@@ -231,17 +221,13 @@ jpeg_stdio_src (j_decompress_ptr cinfo, std::ifstream * infile, gdcm::JPEGFragme
   src->pub.term_source = term_source;
   src->infile = infile;
   
+  // Need to setup a new buffer, clean bytes_in_buffer and next_input_byte
   if( flag )
     {
-  src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
-  src->pub.next_input_byte = NULL; /* until buffer loaded */
+    src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
+    src->pub.next_input_byte = NULL; /* until buffer loaded */
+    }
+  //only upate the new fragment, valid for both 'flag' value
   src->frag = frag;
   src->bytes_read = 0;
-    }
-  else
-    {
-    //only upate the new fragment
-    src->frag = frag;
-  src->bytes_read = 0;
-    }
 }

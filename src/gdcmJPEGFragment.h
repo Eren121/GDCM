@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/31 03:22:25 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,8 +46,6 @@ public:
    JPEGFragment();
    void Print( std::ostream &os = std::cout, std::string indent = "" );
    void DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int & statesuspension);
-   void DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer, size_t totalLength, uint8_t* raw, int nBits);
-   void DecompressJPEGFragmentedFramesFromFile(JOCTET *buffer, uint8_t* raw, int nBits, size_t &howManyRead, size_t &howManyWritten, size_t totalLength);
 
    bool gdcm_read_JPEG_file8 (std::ifstream* fp, void* image_buffer, int & statesuspension );
    bool gdcm_read_JPEG_file12 (std::ifstream* fp, void* image_buffer, int & statesuspension );

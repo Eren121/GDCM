@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 17:01:30 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/31 03:22:25 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -107,9 +107,6 @@ void JPEGFragmentsInfo::ReadAllFragments(std::ifstream *fp, JOCTET *buffer )
    }
 
 }
-
-// Keep a track of the old code (maybe Jpeg2000 lib will be less clever than IJG
-//void JPEGFragmentsInfo::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int numBytes, int length)
 
 // to avoid warnings
 void JPEGFragmentsInfo::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int , int )

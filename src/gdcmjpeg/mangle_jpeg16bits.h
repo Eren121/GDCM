@@ -103,7 +103,6 @@ nm libgdcmjpeg16.a | grep " [R|T] " | colrm 1 11 | sort
 #define jpeg_mem_available gdcm_jpeg16_jpeg_mem_available
 #define jpeg_mem_init gdcm_jpeg16_jpeg_mem_init
 #define jpeg_mem_term gdcm_jpeg16_jpeg_mem_term
-#define jpeg_memory_src gdcm_jpeg16_jpeg_memory_src
 #define jpeg_natural_order gdcm_jpeg16_jpeg_natural_order
 #define jpeg_new_colormap gdcm_jpeg16_jpeg_new_colormap
 #define jpeg_open_backing_store gdcm_jpeg16_jpeg_open_backing_store

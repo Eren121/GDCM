@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/31 03:22:25 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,26 +29,6 @@ bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
 // For JPEG-LS, body in file gdcmJpegLS.cxx
 // Not yet made
 bool gdcm_read_JPEGLS_file (std::ifstream* fp, void* image_buffer);
-
-// For JPEG 8 Bits, body in file gdcmJpeg8.cxx
-//bool gdcm_read_JPEG_file8 (JPEGFragment *frag, std::ifstream *fp, void *image_buffer);
-bool gdcm_read_JPEG_memory8    (const JOCTET *buffer, const size_t buflen, 
-                                void *image_buffer,
-                                size_t *howManyRead, size_t *howManyWritten);
-//
-// For JPEG 12 Bits, body in file gdcmJpeg12.cxx
-//bool gdcm_read_JPEG_file12 (JPEGFragment *frag, std::ifstream *fp, void *image_buffer);
-bool gdcm_read_JPEG_memory12   (const JOCTET *buffer, const size_t buflen, 
-                                void *image_buffer,
-                                size_t *howManyRead, size_t *howManyWritten);
-
-// For JPEG 16 Bits, body in file gdcmJpeg16.cxx
-// Beware this is misleading there is no 16bits DCT algorithm, only
-// jpeg lossless compression exist in 16bits.
-//bool gdcm_read_JPEG_file16 (JPEGFragment *frag, std::ifstream *fp, void *image_buffer);
-bool gdcm_read_JPEG_memory16   (const JOCTET *buffer, const size_t buflen, 
-                                void* image_buffer,
-                                size_t *howManyRead, size_t *howManyWritten);
 
 /**
  * \brief Default constructor.
@@ -126,107 +106,6 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
       //return false;
    }
 
-}
-
-void JPEGFragment::DecompressJPEGSingleFrameFragmentsFromFile(JOCTET *buffer,
-                                 size_t totalLength, uint8_t *raw, int nBits)
-{
-   size_t howManyRead = 0;
-   size_t howManyWritten = 0;
-   
-   if ( nBits == 8)
-   {
-      if ( ! gdcm_read_JPEG_memory8( buffer, totalLength, raw,
-                                     &howManyRead, &howManyWritten ) ) 
-      {
-         gdcmErrorMacro( "Failed to read jpeg8 ");
-         delete [] buffer;
-         //return false;
-      }
-   }
-   else if ( nBits <= 12)
-   {
-      if ( ! gdcm_read_JPEG_memory12( buffer, totalLength, raw,
-                                      &howManyRead, &howManyWritten ) ) 
-      {
-         gdcmErrorMacro( "Failed to read jpeg12 ");
-            delete [] buffer;
-            //return false;
-      }
-   }
-   else if ( nBits <= 16)
-   {
-      
-      if ( ! gdcm_read_JPEG_memory16( buffer, totalLength, raw,
-                                      &howManyRead, &howManyWritten ) ) 
-      {
-         gdcmErrorMacro( "Failed to read jpeg16 ");
-         delete [] buffer;
-         //return false;
-      }
-   }
-   else
-   {
-      // FIXME : only the bits number is checked,
-      //         NOT the compression method
-
-      // other JPEG lossy not supported
-      gdcmErrorMacro( "Unsupported jpeg lossy compression ");
-      delete [] buffer;
-      //return false;
-   }      
-
-}
-
-void JPEGFragment::DecompressJPEGFragmentedFramesFromFile(JOCTET *buffer, 
-                    uint8_t* raw, int nBits, size_t &howManyRead, 
-                    size_t &howManyWritten, size_t totalLength)
-{
-   if ( nBits == 8 )
-   {
-     if ( ! gdcm_read_JPEG_memory8( buffer+howManyRead, totalLength-howManyRead,
-                                  raw+howManyWritten,
-                                  &howManyRead, &howManyWritten ) ) 
-       {
-         gdcmErrorMacro( "Failed to read jpeg8");
-         //delete [] buffer;
-         //return false;
-       }
-   }
-   else if ( nBits <= 12 )
-   {
-   
-     if ( ! gdcm_read_JPEG_memory12( buffer+howManyRead, totalLength-howManyRead,
-                                   raw+howManyWritten,
-                                   &howManyRead, &howManyWritten ) ) 
-       {
-         gdcmErrorMacro( "Failed to read jpeg12");
-         //delete [] buffer;
-         //return false;
-      }
-   }
-   else if ( nBits <= 16 )
-   {
-   
-     if ( ! gdcm_read_JPEG_memory16( buffer+howManyRead, totalLength-howManyRead,
-                                   raw+howManyWritten,
-                                   &howManyRead, &howManyWritten ) ) 
-       {
-         gdcmErrorMacro( "Failed to read jpeg16 ");
-         //delete [] buffer;
-         //return false;
-       }
-   }
-   else
-   {
-      // FIXME : only the bits number is checked,
-      //         NOT the compression method
-
-      // other JPEG lossy not supported
-      gdcmErrorMacro( "Unsupported jpeg lossy compression ");
-      //delete [] buffer;
-      //return false;
-   }
 }
 
 } // end namespace gdcm

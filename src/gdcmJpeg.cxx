@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/31 03:22:25 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,73 +17,8 @@
 =========================================================================*/
 #include "gdcmFileHelper.h"
 #include "gdcmJPEGFragment.h"
+#include "gdcmDebug.h"
 
-/*
-DICOM provides a mechanism for supporting the use of JPEG Image Compression 
-through the Encapsulated Format (see PS 3.3 of the DICOM Standard). 
-Annex A defines a number of Transfer Syntaxes which reference 
-the JPEG Standard and provide a number of lossless (bit preserving) 
-and lossy compression schemes.
-In order to facilitate interoperability of implementations conforming 
-to the DICOM Standard which elect to use one or more 
-of the Transfer Syntaxes for JPEG Image Compression, the following policy is specified:
-
-  Any implementation which conforms to the DICOM Standard and has elected 
-  to support any one of the Transfer Syntaxes for lossless JPEG Image Compression, 
-  shall support the following lossless compression: 
-  The subset (first-order horizontal prediction [Selection Value 1) of JPEG Process 14 
-  (DPCM, non-hierarchical with Huffman coding) (see Annex F of the DICOM Standard).
-
-   Any implementation which conforms to the DICOM Standard and has elected 
-   to support any one of the Transfer Syntaxes for 8-bit lossy JPEG Image Compression, 
-   shall support the JPEG Baseline Compression (coding Process 1).
-
-   Any implementation which conforms to the DICOM Standard and has elected 
-   to support any one of the Transfer Syntaxes for 12-bit lossy JPEG Image Compression, 
-   shall support the JPEG Compression Process 4.
-
-Note: The DICOM conformance statement shall differentiate between implementations 
-that can simply receive JPEG encoded images and those that can receive and process 
-JPEG encoded images (see PS 3.2 of the DICOM Standard).
-
-The use of the DICOM Encapsulated Format to support JPEG Compressed Pixel Data 
-implies that the Data Elements which are related to the Native Format Pixel Data encoding
-(e.g. Bits Allocated, Bits Stored, High Bit, Pixel Representation, Rows, Columns, etc.) 
-shall contain values which are consistent with the characteristics 
-of the uncompressed pixel data from which the compressed Data Stream was derived. 
-The Pixel Data characteristics included in the JPEG Interchange Format 
-shall be used to decode the compressed data stream.
-
-Run Length Encoding Compression
-
-DICOM provides a mechanism for supporting the use of Run Length Encoding (RLE) 
-Compression which is a byte oriented lossless compression scheme through 
-the encapsulated Format (see PS 3.3 of this Standard). 
-Annex G of the DICOM Standard defines RLE Compression and its Transfer Syntax.
-
-Note: The RLE Compression algorithm described in Annex G 
-of the DICOM Standard is the compression used in 
-the TIFF 6.0 specification known as the "PackBits" scheme.
-
-The use of the DICOM Encapsulated Format to support RLE Compressed Pixel Data 
-implies that the Data Elements which are related to the Native Format Pixel Data encoding (
-e.g. Bits Allocated, Bits Stored, High Bit, Pixel Representation, Rows, Columns, etc.) 
-shall contain values which are consistent with the characteristics 
-of the uncompressed pixel data from which the compressed data is derived
-*/
-
-/*
- * <setjmp.h> is used for the optional error recovery mechanism shown in
- * the second part of the example.
- */
-
-/*
- * Include file for users of JPEG library.
- * You will need to have included system headers that define at least
- * the typedefs FILE and size_t before you can include jpeglib.h.
- * (stdio.h is sufficient on ANSI-conforming systems.)
- * You may also wish to include "jerror.h".
- */
 #if defined(__sgi) && !defined(__GNUC__)
 // Try to get rid of the warning:
 //cc-3505 CC: WARNING File = /usr/include/internal/setjmp_core.h, Line = 74
@@ -109,40 +44,6 @@ of the uncompressed pixel data from which the compressed data is derived
 
 namespace gdcm 
 {
-/******************** JPEG COMPRESSION SAMPLE INTERFACE *******************/
-
-/* This half of the example shows how to feed data into the JPEG compressor.
- * We present a minimal version that does not worry about refinements such
- * as error recovery (the JPEG code will just exit() if it gets an error).
- */
-
-/*
- * IMAGE DATA FORMATS:
- *
- * The standard input image format is a rectangular array of pixels, with
- * each pixel having the same number of "component" values (color channels).
- * Each pixel row is an array of JSAMPLEs (which typically are unsigned chars).
- * If you are working with color data, then the color values for each pixel
- * must be adjacent in the row; for example, R,G,B,R,G,B,R,G,B,... for 24-bit
- * RGB color.
- *
- * For this example, we'll assume that this data structure matches the way
- * our application has stored the image in memory, so we can just pass a
- * pointer to our image buffer.  In particular, let's say that the image is
- * RGB color and is described by:
- */
-
-
-//extern JSAMPLE * image_buffer; /* Points to large array of R,G,B-order data */
-//extern int image_height;       /* Number of rows in image */
-//extern int image_width;        /* Number of columns in image */
-
-
-
-/*
- * Sample routine for JPEG compression.  We assume that the target file name
- * and a compression quality factor are passed in.
- */
 
  /**
  * \brief   routine for JPEG decompression 
@@ -273,76 +174,6 @@ bool gdcm_write_JPEG_file (std::ofstream* fp, void*  im_buf,
 }
 
 
-
-/*
- * SOME FINE POINTS:
- *
- * In the above loop, we ignored the return value of jpeg_write_scanlines,
- * which is the number of scanlines actually written.  We could get away
- * with this because we were only relying on the value of cinfo.next_scanline,
- * which will be incremented correctly.  If you maintain additional loop
- * variables then you should be careful to increment them properly.
- * Actually, for output to a stdio stream you needn't worry, because
- * then jpeg_write_scanlines will write all the lines passed (or else exit
- * with a fatal error).  Partial writes can only occur if you use a data
- * destination module that can demand suspension of the compressor.
- * (If you don't know what that's for, you don't need it.)
- *
- * If the compressor requires full-image buffers (for entropy-coding
- * optimization or a multi-scan JPEG file), it will create temporary
- * files for anything that doesn't fit within the maximum-memory setting.
- * (Note that temp files are NOT needed if you use the default parameters.)
- * On some systems you may need to set up a signal handler to ensure that
- * temporary files are deleted if the program is interrupted.  See libjpeg.doc.
- *
- * Scanlines MUST be supplied in top-to-bottom order if you want your JPEG
- * files to be compatible with everyone else's.  If you cannot readily read
- * your data in that order, you'll need an intermediate array to hold the
- * image.  See rdtarga.c or rdbmp.c for examples of handling bottom-to-top
- * source data using the JPEG code's internal virtual-array mechanisms.
- */
-
-
-
-/******************** JPEG DECOMPRESSION SAMPLE INTERFACE *******************/
-
-/* This half of the example shows how to read data from the JPEG decompressor.
- * It's a bit more refined than the above, in that we show:
- *   (a) how to modify the JPEG library's standard error-reporting behavior;
- *   (b) how to allocate workspace using the library's memory manager.
- *
- * Just to make this example a little different from the first one, we'll
- * assume that we do not intend to put the whole image into an in-memory
- * buffer, but to send it line-by-line someplace else.  We need a one-
- * scanline-high JSAMPLE array as a work buffer, and we will let the JPEG
- * memory manager allocate it for us.  This approach is actually quite useful
- * because we don't need to remember to deallocate the buffer separately: it
- * will go away automatically when the JPEG object is cleaned up.
- */
-
-/*
- * ERROR HANDLING:
- *
- * The JPEG library's standard error handler (jerror.c) is divided into
- * several "methods" which you can override individually.  This lets you
- * adjust the behavior without duplicating a lot of code, which you might
- * have to update with each future release.
- *
- * Our example here shows how to override the "error_exit" method so that
- * control is returned to the library's caller when a fatal error occurs,
- * rather than calling exit() as the standard error_exit method does.
- *
- * We use C's setjmp/longjmp facility to return control.  This means that the
- * routine which calls the JPEG library must first execute a setjmp() call to
- * establish the return point.  We want the replacement error_exit to do a
- * longjmp().  But we need to make the setjmp buffer accessible to the
- * error_exit routine.  To do this, we make a private extension of the
- * standard JPEG error handler object.  (If we were using C++, we'd say we
- * were making a subclass of the regular error handler.)
- *
- * Here's the extended error handler struct:
- */
-
 //-----------------------------------------------------------------------------
 struct my_error_mgr {
    struct jpeg_error_mgr pub; /* "public" fields */
@@ -367,10 +198,6 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
 }
 
 //-----------------------------------------------------------------------------
-/*
- * Sample routine for JPEG decompression.  We assume that the source file name
- * is passed in.  We want to return 1 on success, 0 on error.
- */
  
  /**
  * \brief   routine for JPEG decompression 
@@ -382,30 +209,26 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
 void *SampBuffer; 
 bool JPEGFragment::gdcm_read_JPEG_file (std::ifstream* fp, void* image_buffer , int& statesuspension)
 {
-   //static int fragimage = 0;
-   //std::cerr << "Image Fragment:" << fragimage++ << std::endl;
    pImage = (uint8_t*)image_buffer;
-   /* This struct contains the JPEG decompression parameters and pointers to
-    * working space (which is allocated as needed by the JPEG library).
-    */
+   // This struct contains the JPEG decompression parameters and pointers to
+   // working space (which is allocated as needed by the JPEG library).
+
    static struct jpeg_decompress_struct cinfo;
 
-   /* -------------- inside, we found :
-    * JDIMENSION image_width;       // input image width 
-    * JDIMENSION image_height;      // input image height 
-    * int input_components;         // nb of color components in input image 
-    * J_COLOR_SPACE in_color_space; // colorspace of input image 
-    * double input_gamma;           // image gamma of input image 
-    * -------------- */
+   // -------------- inside, we found :
+   // JDIMENSION image_width;       // input image width 
+   // JDIMENSION image_height;      // input image height 
+   // int input_components;         // nb of color components in input image 
+   // J_COLOR_SPACE in_color_space; // colorspace of input image 
+   // double input_gamma;           // image gamma of input image 
 
-   /* We use our private extension JPEG error handler.
-    * Note that this struct must live as long as the main JPEG parameter
-    * struct, to avoid dangling-pointer problems.
-    */
+   // We use our private extension JPEG error handler.
+   // Note that this struct must live as long as the main JPEG parameter
+   // struct, to avoid dangling-pointer problems.
+
    struct my_error_mgr jerr;
-   /* More stuff */
 
-   JSAMPARRAY buffer;/* Output row buffer */
+   JSAMPARRAY buffer;// Output row buffer
   
    // rappel :
    // ------
@@ -414,178 +237,86 @@ bool JPEGFragment::gdcm_read_JPEG_file (std::ifstream* fp, void* image_buffer , 
    // typedef JSAMPROW *JSAMPARRAY;/* ptr to some rows (a 2-D sample array) */
    // typedef JSAMPARRAY *JSAMPIMAGE;/* a 3-D sample array: top index is color */
 
-   int row_stride;/* physical row width in output buffer */
+   int row_stride;// physical row width in output buffer
   
-   //std::cerr << "StateSuspension: " << statesuspension << std::endl;
-//#define GDCM_JPG_DEBUG
-#ifdef GDCM_JPG_DEBUG
-   printf("entree dans File::gdcm_read_JPEG_file (i.e. 8), depuis gdcmJpeg\n");
-#endif //GDCM_JPG_DEBUG
-
-   /* In this example we want to open the input file before doing anything else,
-    * so that the setjmp() error recovery below can assume the file is open.
-    * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
-    * requires it in order to read binary files.
-    */
-    
-  /* Step 1: allocate and initialize JPEG decompression object */  
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 1\n");
-#endif //GDCM_JPG_DEBUG
-  
-  /* We set up the normal JPEG error routines, then override error_exit. */
+  // We set up the normal JPEG error routines, then override error_exit.
   
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = my_error_exit;
   
-  /* Establish the setjmp return context for my_error_exit to use. */  
+  // Establish the setjmp return context for my_error_exit to use.
   if (setjmp(jerr.setjmp_buffer))
   {
-    /* If we get here, the JPEG code has signaled an error.
-     * We need to clean up the JPEG object, close the input file, and return.
-     */
-    std::cerr << "Qu'est c'est ce bordel !!!!!" << std::endl;
+    // If we get here, the JPEG code has signaled an error.
+    // We need to clean up the JPEG object, close the input file, and return.
+
+    gdcmErrorMacro( "Serious Problem !" );
     jpeg_destroy_decompress(&cinfo);
     return 0;
   }
-  /* Now we can initialize the JPEG decompression object. */
+  // Now we can initialize the JPEG decompression object.
   if( statesuspension == 0 )
     {
-  jpeg_create_decompress(&cinfo);
-   /* Step 2: specify data source (eg, a file) */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 2\n");
-#endif //GDCM_JPG_DEBUG
-
-   jpeg_stdio_src(&cinfo, fp, this, 1);
-
+    jpeg_create_decompress(&cinfo);
+    jpeg_stdio_src(&cinfo, fp, this, 1);
     }
   else
     {
-   jpeg_stdio_src(&cinfo, fp, this, 0);
+    jpeg_stdio_src(&cinfo, fp, this, 0);
     }
-   /* Step 3: read file parameters with jpeg_read_header() */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 3\n");
-#endif //GDCM_JPG_DEBUG
+   // Step 3: read file parameters with jpeg_read_header()
 
-  if( statesuspension < 2 )
-    {
-   if( jpeg_read_header(&cinfo, TRUE) == JPEG_SUSPENDED )
-     {
-     std::cerr << "Suspension: jpeg_read_header" << std::endl;
-     }
-   
-   /* We can ignore the return value from jpeg_read_header since
-    *   (a) suspension is not possible with the stdio data source, and
-    *   (b) we passed TRUE to reject a tables-only JPEG file as an error.
-    * See libjpeg.doc for more info.
-    */
-
-    // prevent the library from performing any color space conversion
-   if( cinfo.process == JPROC_LOSSLESS )
+   if( statesuspension < 2 )
    {
-      cinfo.jpeg_color_space = JCS_UNKNOWN;
-      cinfo.out_color_space = JCS_UNKNOWN;
+      if( jpeg_read_header(&cinfo, TRUE) == JPEG_SUSPENDED )
+      {
+      // Suspension in jpeg_read_header
+      statesuspension = 2; 
+      }
+   
+      // Step 4: set parameters for decompression
+      // prevent the library from performing any color space conversion
+      if( cinfo.process == JPROC_LOSSLESS )
+      {
+         cinfo.jpeg_color_space = JCS_UNKNOWN;
+         cinfo.out_color_space = JCS_UNKNOWN;
+      }
    }
 
-    } //statesuspension < 2
-
-#ifdef GDCM_JPG_DEBUG
-      printf("--------------Header contents :----------------\n");
-      printf("image_width %d image_height %d\n", 
-              cinfo.image_width , cinfo.image_height);
-      printf("bits of precision in image data  %d \n", 
-              cinfo.output_components);
-      printf("nb of color components returned  %d \n", 
-              cinfo.data_precision);
-#endif //GDCM_JPG_DEBUG
-
-
-   /*
-    * JDIMENSION image_width;       // input image width 
-    * JDIMENSION image_height;      // input image height 
-    * int output_components;        // # of color components returned 
-    * J_COLOR_SPACE in_color_space; // colorspace of input image 
-    * double input_gamma;           // image gamma of input image
-    * int data_precision;           // bits of precision in image data 
-    */
-
-   /* Step 4: set parameters for decompression */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 4\n");
-#endif //GDCM_JPG_DEBUG
-   /* In this example, we don't need to change any of the defaults set by
-    * jpeg_read_header(), so we do nothing here.
-    */
-
-   /* Step 5: Start decompressor */
-#ifdef GDCM_JPG_DEBUG
-   printf("Entree Step 5\n");
-#endif //GDCM_JPG_DEBUG
-
+   // Step 5: Start decompressor
    if(statesuspension < 3 )
-     {
-   if( jpeg_start_decompress(&cinfo) == FALSE )
-     {
-     std::cerr << "Suspension: jpeg_start_decompress" << std::endl;
-     }
-   /* We can ignore the return value since suspension is not possible
-    * with the stdio data source.
-    */
+   {
+      if( jpeg_start_decompress(&cinfo) == FALSE )
+      {
+         // Suspension: jpeg_start_decompress
+         statesuspension = 3;
+      }
 
-   /* We may need to do some setup of our own at this point before reading
-    * the data.  After jpeg_start_decompress() we have the correct scaled
-    * output image dimensions available, as well as the output colormap
-    * if we asked for color quantization.
-    * In this example, we need to make an output work buffer of the right size.
-    */ 
-
-   /* JSAMPLEs per row in output buffer */
-   row_stride = cinfo.output_width * cinfo.output_components*2;
+      // JSAMPLEs per row in output buffer
+      row_stride = cinfo.output_width * cinfo.output_components*2;
   
-#ifdef GDCM_JPG_DEBUG
-  printf ("cinfo.output_width %d cinfo.output_components %d  row_stride %d\n",
-                      cinfo.output_width, cinfo.output_components,row_stride);
-#endif //GDCM_JPG_DEBUG
-
-   /* Make a one-row-high sample array that will go away when done with image */
-   buffer = (*cinfo.mem->alloc_sarray)
+      // Make a one-row-high sample array that will go away when done with image
+      buffer = (*cinfo.mem->alloc_sarray)
             ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
-   /* Step 6: while (scan lines remain to be read) */
-#ifdef GDCM_JPG_DEBUG
-    printf("Entree Step 6\n"); 
-#endif //GDCM_JPG_DEBUG
-   /*           jpeg_read_scanlines(...); */
+      // Step 6: while (scan lines remain to be read)
 
-   /* Here we use the library's state variable cinfo.output_scanline as the
-    * loop counter, so that we don't have to keep track ourselves.
-    */
-#ifdef GDCM_JPG_DEBUG
-      printf ("cinfo.output_height %d  cinfo.output_width %d\n",
-               cinfo.output_height,cinfo.output_width);
-#endif //GDCM_JPG_DEBUG
-  
+      // Save the buffer in case of suspension to be able to reuse it later:
       SampBuffer = buffer;
-     } // statesuspension < 3
+   }
    else
-     {
-     buffer = (JSAMPARRAY)SampBuffer;
-     }
+   {
+      // Suspension: re-use the buffer:
+      buffer = (JSAMPARRAY)SampBuffer;
+   }
    int bufsize = cinfo.output_width * cinfo.output_components;
    size_t rowsize = bufsize * sizeof(JSAMPLE);
 
-   while (cinfo.output_scanline < cinfo.output_height) {
-      /* jpeg_read_scanlines expects an array of pointers to scanlines.
-       * Here the array is only one element long, but you could ask for
-       * more than one scanline at a time if that's more convenient.
-       */
-
-     //printf( "scanlines: %d\n",cinfo.output_scanline);
+   while (cinfo.output_scanline < cinfo.output_height)
+   {
       if( jpeg_read_scanlines(&cinfo, buffer, 1) == 0 )
         {
-        std::cerr << "Suspension: jpeg_read_scanlines" << std::endl;
+        // Suspension in jpeg_read_scanlines
         statesuspension = 3;
         return true;
         }
@@ -601,332 +332,25 @@ bool JPEGFragment::gdcm_read_JPEG_file (std::ifstream* fp, void* image_buffer , 
       pImage+=rowsize;
    }
 
-  /* Step 7: Finish decompression */
-#ifdef GDCM_JPG_DEBUG
-   printf("Entree Step 7\n");
-#endif //GDCM_JPG_DEBUG
-
+   // Step 7: Finish decompression
    if( jpeg_finish_decompress(&cinfo) == FALSE )
      {
-     std::cerr << "Suspension: jpeg_finish_decompress" << std::endl;
+     // Suspension: jpeg_finish_decompress
+     statesuspension = 4;
      }
    
-   /* We can ignore the return value since suspension is not possible
-    * with the stdio data source.
-    */
-
-   /* Step 8: Release JPEG decompression object */
-
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 8\n");
-#endif //GDCM_JPG_DEBUG
-
-   /* This is an important step since it will release a good deal of memory. */
-
+   // Step 8: Release JPEG decompression object
    jpeg_destroy_decompress(&cinfo);
-   //std::cerr << "jpeg_destroy_decompress" << std::endl;
 
-   /* After finish_decompress, we can close the input file.
-    * Here we postpone it until after no more JPEG errors are possible,
-    * so as to simplify the setjmp error logic above.  (Actually, I don't
-    * think that jpeg_destroy can do an error exit, but why assume anything...)
-    */
-
-   /* At this point you may want to check to see whether any corrupt-data
-    * warnings occurred (test whether jerr.pub.num_warnings is nonzero).
-    */
-
-   /* And we're done! */
+   // At this point you may want to check to see whether any corrupt-data
+   // warnings occurred (test whether jerr.pub.num_warnings is nonzero).
 
    return true;
 }
 
-
-/*
- * SOME FINE POINTS:
- *
- * In the above code, we ignored the return value of jpeg_read_scanlines,
- * which is the number of scanlines actually read.  We could get away with
- * this because we asked for only one line at a time and we weren't using
- * a suspending data source.  See libjpeg.doc for more info.
- *
- * We cheated a bit by calling alloc_sarray() after jpeg_start_decompress();
- * we should have done it beforehand to ensure that the space would be
- * counted against the JPEG max_memory setting.  In some systems the above
- * code would risk an out-of-memory error.  However, in general we don't
- * know the output image dimensions before jpeg_start_decompress(), unless we
- * call jpeg_calc_output_dimensions().  See libjpeg.doc for more about this.
- *
- * Scanlines are returned in the same order as they appear in the JPEG file,
- * which is standardly top-to-bottom.  If you must emit data bottom-to-top,
- * you can use one of the virtual arrays provided by the JPEG memory manager
- * to invert the data.  See wrbmp.c for an example.
- *
- * As with compression, some operating modes may require temporary files.
- * On some systems you may need to set up a signal handler to ensure that
- * temporary files are deleted if the program is interrupted.  See libjpeg.doc.
- */
 #ifdef _MSC_VER
 // Put the warning back
 #pragma warning( default : 4611 )
 #endif
- 
-//----------------------------------------------------------------------------
-
-
-/**
- * \brief   routine for JPEG decompression from a memory buffer.
- * routine for JPEG decompression from a memory buffer. This routine
- * only reads one JPEG image at a time, but returns information about
- * how many bytes have been consumed from the \c input_buffer, and 
- * how many bytes have been written into the output \c image_buffer.
- *
- * @param input_buffer pointer to a memory buffer containing the jpeg
- *                     compressed data.
- * @param buflen length of the memory buffer.
- * @param image_buffer pointer to the location where the decompressed
- *                     image will be filled.
- * @param howManyRead returns how many bytes have been consumed from the
- *                    input_buffer.
- * @param howManyWritten returns how many bytes have been written into
- *                       the output image_buffer.
- * @return 1 on success, 0 on error
- */
- 
-bool gdcm_read_JPEG_memory ( const JOCTET* input_buffer, const size_t buflen, 
-                             void* image_buffer,
-                             size_t *howManyRead, size_t *howManyWritten)
-{
-   volatile char * pimage=(volatile char *)image_buffer;
-   JOCTET* input = (JOCTET*) input_buffer;
-
-   /* This struct contains the JPEG decompression parameters and pointers to
-    * working space (which is allocated as needed by the JPEG library).
-    */
-   struct jpeg_decompress_struct cinfo;
-
-   /* -------------- inside, we found :
-    * JDIMENSION image_width;       // input image width 
-    * JDIMENSION image_height;      // input image height 
-    * int input_components;         // nb of color components in input image 
-    * J_COLOR_SPACE in_color_space; // colorspace of input image 
-    * double input_gamma;           // image gamma of input image 
-    * -------------- */
-
-   /* We use our private extension JPEG error handler.
-    * Note that this struct must live as long as the main JPEG parameter
-    * struct, to avoid dangling-pointer problems.
-    */
-   struct my_error_mgr jerr;
-   /* More stuff */
-
-   JSAMPARRAY buffer;/* Output row buffer */
-  
-   // rappel :
-   // ------
-   // typedef unsigned char JSAMPLE;
-   // typedef JSAMPLE FAR *JSAMPROW;/* ptr to one image row of pixel samples. */
-   // typedef JSAMPROW *JSAMPARRAY;/* ptr to some rows (a 2-D sample array) */
-   // typedef JSAMPARRAY *JSAMPIMAGE;/* a 3-D sample array: top index is color */
-
-   int row_stride;/* physical row width in output buffer */
-  
-#ifdef GDCM_JPG_DEBUG
-   printf("entree dans File::gdcm_read_JPEG_file (i.e. 8), depuis gdcmJpeg\n");
-#endif //GDCM_JPG_DEBUG
-
-   /* In this example we want to open the input file before doing anything else,
-    * so that the setjmp() error recovery below can assume the file is open.
-    * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
-    * requires it in order to read binary files.
-    */
-    
-  /* Step 1: allocate and initialize JPEG decompression object */  
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 1\n");
-#endif //GDCM_JPG_DEBUG
-  
-  /* We set up the normal JPEG error routines, then override error_exit. */
-  
-  cinfo.err = jpeg_std_error(&jerr.pub);
-  jerr.pub.error_exit = my_error_exit;
-  
-  /* Establish the setjmp return context for my_error_exit to use. */  
-  if (setjmp(jerr.setjmp_buffer))
-  {
-    /* If we get here, the JPEG code has signaled an error.
-     * We need to clean up the JPEG object, close the input file, and return.
-     */
-    jpeg_destroy_decompress(&cinfo);
-    
-    *howManyRead    += input - input_buffer;
-    *howManyWritten += pimage - (char *)image_buffer;
-    return 0;
-  }
-
-  /* Now we can initialize the JPEG decompression object. */
-  jpeg_create_decompress(&cinfo);
-
-  /* Step 2: specify data source (eg, a file) */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 2\n");
-#endif //GDCM_JPG_DEBUG
-  
-  jpeg_memory_src(&cinfo, input, buflen);
-  
-  /* Step 3: read file parameters with jpeg_read_header() */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 3\n");
-#endif //GDCM_JPG_DEBUG
-  
-  (void) jpeg_read_header(&cinfo, TRUE);
-  
-  /* We can ignore the return value from jpeg_read_header since
-   *   (a) suspension is not possible with the stdio data source, and
-   *   (b) we passed TRUE to reject a tables-only JPEG file as an error.
-   * See libjpeg.doc for more info.
-   */
-  
-  // prevent the library from performing any color space conversion
-  if( cinfo.process == JPROC_LOSSLESS )
-  {
-     cinfo.jpeg_color_space = JCS_UNKNOWN;
-     cinfo.out_color_space = JCS_UNKNOWN;
-  }
-
-#ifdef GDCM_JPG_DEBUG
-  printf("--------------Header contents :----------------\n");
-  printf("image_width %d image_height %d\n", 
-         cinfo.image_width , cinfo.image_height);
-  printf("bits of precision in image data  %d \n", 
-         cinfo.output_components);
-  printf("nb of color components returned  %d \n", 
-         cinfo.data_precision);
-#endif //GDCM_JPG_DEBUG
-
-
-  /*
-   * JDIMENSION image_width;       // input image width 
-   * JDIMENSION image_height;      // input image height 
-   * int output_components;        // # of color components returned 
-   * J_COLOR_SPACE in_color_space; // colorspace of input image 
-   * double input_gamma;           // image gamma of input image
-   * int data_precision;           // bits of precision in image data 
-   */
-
-  /* Step 4: set parameters for decompression */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 4\n");
-#endif //GDCM_JPG_DEBUG
-  /* In this example, we don't need to change any of the defaults set by
-   * jpeg_read_header(), so we do nothing here.
-   */
-
-  /* Step 5: Start decompressor */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 5\n");
-#endif //GDCM_JPG_DEBUG
-
-  (void) jpeg_start_decompress(&cinfo);
-  /* We can ignore the return value since suspension is not possible
-   * with the stdio data source.
-   */
-
-  /* We may need to do some setup of our own at this point before reading
-   * the data.  After jpeg_start_decompress() we have the correct scaled
-   * output image dimensions available, as well as the output colormap
-   * if we asked for color quantization.
-   * In this example, we need to make an output work buffer of the right size.
-   */ 
-
-  /* JSAMPLEs per row in output buffer */
-  row_stride = cinfo.output_width * cinfo.output_components*2;
-  
-#ifdef GDCM_JPG_DEBUG
-  printf ("cinfo.output_width %d cinfo.output_components %d  row_stride %d\n",
-          cinfo.output_width, cinfo.output_components,row_stride);
-#endif //GDCM_JPG_DEBUG
-
-  /* Make a one-row-high sample array that will go away when done with image */
-  buffer = (*cinfo.mem->alloc_sarray)
-     ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
-    
-
-  /* Step 6: while (scan lines remain to be read) */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 6\n"); 
-#endif //GDCM_JPG_DEBUG
-  /*           jpeg_read_scanlines(...); */
-
-  /* Here we use the library's state variable cinfo.output_scanline as the
-   * loop counter, so that we don't have to keep track ourselves.
-   */
-#ifdef GDCM_JPG_DEBUG
-  printf ("cinfo.output_height %d  cinfo.output_width %d\n",
-          cinfo.output_height,cinfo.output_width);
-#endif //GDCM_JPG_DEBUG
-  
-  int bufsize = cinfo.output_width * cinfo.output_components;
-  size_t rowsize = bufsize * sizeof(JSAMPLE);
-
-  while (cinfo.output_scanline < cinfo.output_height) {
-     /* jpeg_read_scanlines expects an array of pointers to scanlines.
-      * Here the array is only one element long, but you could ask for
-      * more than one scanline at a time if that's more convenient.
-      */
-
-     //printf( "scanlines: %d\n",cinfo.output_scanline);
-     (void) jpeg_read_scanlines(&cinfo, buffer, 1);
-#if defined(GDCM_WORDS_BIGENDIAN) && (CMAKE_BITS_IN_JSAMPLE != 8)
-      uint16_t *buffer16 = (uint16_t*)*buffer;
-      uint16_t *pimage16 = (uint16_t*)pimage;
-      for(unsigned int i=0;i<rowsize/2;i++)
-        pimage16[i] = (buffer16[i] >> 8) | (buffer16[i] << 8 );
-#else
-      memcpy( (void*)pimage, *buffer,rowsize);
-#endif //GDCM_WORDS_BIGENDIAN
-     pimage+=rowsize;
-  }
-
-  /* Step 7: Finish decompression */
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 7\n");
-#endif //GDCM_JPG_DEBUG
-
-  input = (JOCTET *)cinfo.src->next_input_byte;
-
-  (void) jpeg_finish_decompress(&cinfo);
-
-  /* We can ignore the return value since suspension is not possible
-   * with the stdio data source.
-   */
-   
-  /* Step 8: Release JPEG decompression object */
-
-#ifdef GDCM_JPG_DEBUG
-  printf("Entree Step 8\n");
-#endif //GDCM_JPG_DEBUG
-  
-  /* This is an important step since it will release a good deal of memory. */
-  
-  jpeg_destroy_decompress(&cinfo);
-  
-   
-  /* After finish_decompress, we can close the input file.
-   * Here we postpone it until after no more JPEG errors are possible,
-   * so as to simplify the setjmp error logic above.  (Actually, I don't
-   * think that jpeg_destroy can do an error exit, but why assume anything...)
-   */
-  
-  /* At this point you may want to check to see whether any corrupt-data
-   * warnings occurred (test whether jerr.pub.num_warnings is nonzero).
-   */
-
-  /* And we're done! */
-  *howManyRead    += input - input_buffer;
-  *howManyWritten += pimage - (char *)image_buffer;
-
-  return true;
-}
 
 } // end namespace gdcm
