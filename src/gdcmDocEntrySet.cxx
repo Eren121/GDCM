@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 17:20:53 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/07 08:50:13 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,42 +34,7 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 // Public
-/**
- * \brief  Gets a Dicom Element inside a SQ Item Entry, by name
- * @param  name of the element to be found.
- * @return
- */
-DocEntry* DocEntrySet::GetDocEntryByName( TagName const & name )
-{
-   Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
-   DictEntry *dictEntry = pubDict->GetDictEntryByName(name);
-   if( !dictEntry )
-   {
-      return 0;
-   }
 
-   return GetDocEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement());      
-}
-
-
-/**
- * \brief   Get the value of a Dicom Element inside a SQ Item Entry, by name
- * @param   name : name of the searched element.
- * @return
- */ 
-
-std::string DocEntrySet::GetEntryByName(TagName const & name)
-{
-   Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
-   DictEntry *dictEntry = pubDict->GetDictEntryByName(name); 
-
-   if( !dictEntry )
-   {
-      return GDCM_UNFOUND;
-   }
-
-   return GetEntryByNumber(dictEntry->GetGroup(), dictEntry->GetElement()); 
-}
 
 /**
  * \brief   Request a new virtual dict entry to the dict set
@@ -158,29 +123,6 @@ SeqEntry* DocEntrySet::NewSeqEntryByNumber(uint16_t group,uint16_t elem)
       return 0;
    }
    return newEntry;
-}
-
-/**
- * \brief   Searches both the public and the shadow dictionary (when they
- *          exist) for the presence of the DictEntry with given name.
- *          The public dictionary has precedence on the shadow one.
- * @param   name Name of the searched DictEntry
- * @return  Corresponding DictEntry when it exists, NULL otherwise.
- */
-DictEntry *DocEntrySet::GetDictEntryByName(TagName const & name) 
-{
-   DictEntry *found = 0;
-   Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
-   if (!pubDict) 
-   {
-      dbg.Verbose(0, "Document::GetDictEntry",
-                     "we SHOULD have a default dictionary");
-   }
-   else
-   {
-      found = pubDict->GetDictEntryByName(name);  
-   }
-   return found;
 }
 
 /**

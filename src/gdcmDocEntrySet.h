@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/07 08:50:13 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,9 +72,7 @@ public:
 
    virtual DocEntry *GetDocEntryByNumber(uint16_t group,
                                          uint16_t elem) = 0;
-   DocEntry *GetDocEntryByName(TagName const &name);
    virtual std::string GetEntryByNumber(uint16_t group, uint16_t elem) = 0;
-   std::string GetEntryByName(TagName const &name);
 
    DictEntry *NewVirtualDictEntry(uint16_t group, 
                                   uint16_t element,
@@ -92,7 +90,6 @@ protected:
    SeqEntry *NewSeqEntryByNumber(uint16_t group,uint16_t elem);
 
 // DictEntry  related utilities
-   DictEntry *GetDictEntryByName  (TagName const &name);
    DictEntry *GetDictEntryByNumber(uint16_t group, uint16_t elem);
    DictEntry *GetDictEntryByNumber(uint16_t group, uint16_t elem,
                                    TagName const &vr);
