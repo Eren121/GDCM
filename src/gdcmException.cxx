@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/08 04:52:55 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,6 @@
 #include "gdcmException.h"
 
 #include <typeinfo>
-#include <stdio.h>
 
 //-----------------------------------------------------------------------------
 // gdcmException

@@ -1,6 +1,21 @@
-// gdcmJpeg2000.cxx
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmJpeg2000.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/10/08 04:52:55 $
+  Version:   $Revision: 1.10 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
 //-----------------------------------------------------------------------------
-#include <stdio.h>
 #include "gdcmFile.h"
 
 //-----------------------------------------------------------------------------
@@ -17,7 +32,7 @@
 bool gdcmFile::gdcm_read_JPEG2000_file (FILE* fp,void* image_buffer) {
    (void)fp;                  //FIXME
    (void)image_buffer;        //FIXME
-   printf("Sorry JPEG 2000 File not yet taken into account\n");
+   std::cout << "Sorry JPEG 2000 File not yet taken into account" << std::endl;
    return false;
 }
 

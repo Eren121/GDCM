@@ -1,13 +1,21 @@
-// gdcmJpeg.cxx
-//-----------------------------------------------------------------------------
-#include <stdio.h>
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmJpeg8.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/10/08 04:52:55 $
+  Version:   $Revision: 1.2 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
 #include "gdcmFile.h"
-
-#define BITS_IN_JSAMPLE 8
-
-#ifdef GDCM_DEBUG
-#define GDCM_jpr_DEBUG 0
-#endif   //GDCM_DEBUG
 
 /*
 DICOM provides a mechanism for supporting the use of JPEG Image Compression 
@@ -77,7 +85,7 @@ of the uncompressed pixel data from which the compressed data is derived
  */
 
 extern "C" {
-//#include "jpeglib.h"
+//#include "stdio.h"
 #include "src/jpeg/libijg8/jconfig.h"
 #include "src/jpeg/libijg8/jpeglib.h"
 

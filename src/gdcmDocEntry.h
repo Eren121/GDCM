@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/07 21:05:39 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/10/08 04:52:55 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,6 @@
 
 #include "gdcmDictEntry.h"
 #include <iostream>
-#include <stdio.h>
 
 class gdcmHeader;
 class gdcmValEntry;

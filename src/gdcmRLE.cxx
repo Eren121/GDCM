@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLE.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 22:31:31 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/10/08 04:52:55 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,9 +16,7 @@
                                                                                 
 =========================================================================*/
 
-#include <stdio.h>
 #include "gdcmFile.h"
-#include <ctype.h>     // For isprint()
 
 #define str2num(str, typeNum) *((typeNum *)(str))
 
@@ -31,7 +29,8 @@
  *            at which the pixel data should be copied 
  * @return    Boolean 
  */
-bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer) {
+bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer)
+{
    char * im = (char *)image_buffer;
    long uncompressedSegmentSize = Header->GetXSize() * Header->GetYSize();
    
@@ -52,7 +51,9 @@ bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer) {
       }
    }
 
-   if (Header->GetBitsAllocated()==16) { // try to deal with RLE 16 Bits
+   if (Header->GetBitsAllocated()==16)
+   {
+      // try to deal with RLE 16 Bits
    
       im = (char *)image_buffer;
          //  need to make 16 Bits Pixels from Low Byte and Hight Byte 'Planes'
@@ -65,8 +66,10 @@ bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer) {
       char * a = (char *)image_buffer;
       char * b = a + l;
 
-      for (int i=0;i<nbFrames;i++) {
-         for (int j=0;j<l; j++) {
+      for (int i=0;i<nbFrames;i++)
+      {
+         for (int j=0;j<l; j++)
+         {
             *(x++) = *(a++);
             *(x++) = *(b++);
          }
@@ -82,7 +85,8 @@ bool gdcmFile::gdcm_read_RLE_file (FILE* fp,void* image_buffer) {
 // ----------------------------------------------------------------------------
 // RLE LossLess Fragment
 int gdcmFile::gdcm_read_RLE_fragment(char** areaToRead, long lengthToDecode, 
-                                     long uncompressedSegmentSize, FILE* fp) {
+                                     long uncompressedSegmentSize, FILE* fp)
+{
    (void)lengthToDecode; //FIXME
    int count;
    long numberOfOutputBytes=0;
@@ -92,14 +96,19 @@ int gdcmFile::gdcm_read_RLE_fragment(char** areaToRead, long lengthToDecode,
    {
       fread(&n,sizeof(char),1,fp);
       count=n;
-      if (count >= 0 && count <= 127) {
+      if (count >= 0 && count <= 127)
+      {
          fread(*areaToRead,(count+1)*sizeof(char),1,fp);
          *areaToRead+=count+1;
          numberOfOutputBytes+=count+1;
-      } else {
-         if (count <= -1 && count >= -127) {
+      }
+      else
+      {
+         if (count <= -1 && count >= -127)
+         {
             fread(&car,sizeof(char),1,fp);
-            for(int i=0; i<-count+1; i++) {
+            for(int i=0; i<-count+1; i++)
+            {
                (*areaToRead)[i]=car;  
             }
             *areaToRead+=(-count+1);

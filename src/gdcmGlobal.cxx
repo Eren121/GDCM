@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:07 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/08 04:52:55 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,9 +18,6 @@
 
 #include "gdcmGlobal.h"
 #include "gdcmDebug.h"
-#include <stdio.h>
-#include <ctype.h>   // For isspace
-#include <string.h>  // CLEANME: could this be only string ? Related to Win32 ?
 
 /**
  * \ingroup Globals
@@ -58,9 +55,12 @@ gdcmGlobal gdcmGlob;
  * \ingroup gdcmGlobal
  * \brief   constructor : populates the various H Tables
  */
-gdcmGlobal::gdcmGlobal(void) {
+gdcmGlobal::gdcmGlobal()
+{
    if (VR || TS || Dicts || ddElem)
+   {
       dbg.Verbose(0, "gdcmGlobal::gdcmGlobal : VR or TS or Dicts already allocated");
+   }
    Dicts  = new gdcmDictSet();
    VR     = new gdcmVR();
    TS     = new gdcmTS();
@@ -71,7 +71,8 @@ gdcmGlobal::gdcmGlobal(void) {
  * \ingroup gdcmGlobal
  * \brief   canonical destructor 
  */
-gdcmGlobal::~gdcmGlobal() {
+gdcmGlobal::~gdcmGlobal()
+{
    delete Dicts;
    delete VR;
    delete TS;
@@ -81,27 +82,31 @@ gdcmGlobal::~gdcmGlobal() {
  * \ingroup gdcmGlobal
  * \brief   returns a pointer to the 'Value Representation Table' 
  */
-gdcmVR *gdcmGlobal::GetVR(void) {
+gdcmVR *gdcmGlobal::GetVR()
+{
    return VR;
 }
 /**
  * \ingroup gdcmGlobal
  * \brief   returns a pointer to the 'Transfert Syntax Table' 
  */
-gdcmTS *gdcmGlobal::GetTS(void) {
+gdcmTS *gdcmGlobal::GetTS()
+{
    return TS;
 }
 /**
  * \ingroup gdcmGlobal
  * \brief   returns a pointer to Dictionaries Table 
  */
-gdcmDictSet *gdcmGlobal::GetDicts(void) {
+gdcmDictSet *gdcmGlobal::GetDicts()
+{
    return Dicts;
 }
 /**
  * \ingroup gdcmGlobal
  * \brief   returns a pointer to the DicomDir related elements Table 
  */
-gdcmDicomDirElement *gdcmGlobal::GetDicomDirElements(void) {
+gdcmDicomDirElement *gdcmGlobal::GetDicomDirElements()
+{
    return ddElem;
 }

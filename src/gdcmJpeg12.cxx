@@ -1,13 +1,22 @@
-// gdcmJpeg12.cxx
-//-----------------------------------------------------------------------------
-#include <stdio.h>
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmJpeg12.cxx,v $
+  Language:  C++
+  Date:      $Date: 2004/10/08 04:52:55 $
+  Version:   $Revision: 1.17 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+
 #include "gdcmFile.h"
-
-#define BITS_IN_JSAMPLE 12
-
-#ifdef GDCM_DEBUG
-#define GDCM_jpr_DEBUG 0
-#endif   //GDCM_DEBUG
 
 /*
  * <setjmp.h> is used for the optional error recovery mechanism shown in
@@ -23,6 +32,7 @@
  */
 
 extern "C" {
+#include <stdio.h>
 #include "src/jpeg/libijg12/jconfig.h"
 #include "src/jpeg/libijg12/jpeglib.h"
 //#include "jconfig12.h"
