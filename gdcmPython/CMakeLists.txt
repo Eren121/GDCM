@@ -184,7 +184,8 @@ IF(GDCM_VTK)
                            vtkCommonPython
                            vtkIOPython)
   ENDIF (GDCM_WRAP_PYTHON)
-  
+ENDIF(GDCM_VTK)
+
   # generate a setup.py according to VTK installation 
   # put it in subdir in order to not override old one
   
@@ -193,7 +194,6 @@ IF(GDCM_VTK)
       ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
       ${GDCM_BINARY_DIR}/setup.py
   )
-ENDIF(GDCM_VTK)
 
 #-----------------------------------------------------------------------------
 # Install stuff:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/06/21 04:18:25 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,23 +95,23 @@ const unsigned int gdcmDocument::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
  *          with a FALSE value for the 'enable_sequence' param.
  *          ('public elements' may be embedded in 'shadow Sequences')
  */
-gdcmDocument::gdcmDocument(const char *inFilename, 
-                       bool exception_on_error,
-                       bool enable_sequences,
-                       bool ignore_shadow) 
+gdcmDocument::gdcmDocument(std::string const & inFilename, 
+                           bool exception_on_error,
+                           bool enable_sequences,
+                           bool ignore_shadow) 
               : gdcmElementSet(-1)   {
    enableSequences=enable_sequences;
-   ignoreShadow   =ignore_shadow;
+   IgnoreShadow   =ignore_shadow;
    
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
-   filename = inFilename;
+   Filename = inFilename;
    Initialise();
 
    if ( !OpenFile(exception_on_error))
       return;
    
    dbg.Verbose(0, "gdcmDocument::gdcmDocument: starting parsing of file: ",
-                  filename.c_str());
+                  Filename.c_str());
    rewind(fp);
    
    fseek(fp,0L,SEEK_END);
@@ -125,6 +125,7 @@ gdcmDocument::gdcmDocument(const char *inFilename,
    SQDepthLevel=0;
    
    long l=ParseDES( this, beg, lgt, false); // le Load sera fait a la volee
+   (void)l; //is l used anywhere ?
    CloseFile(); 
   
    // --------------------------------------------------------------
@@ -139,7 +140,7 @@ gdcmDocument::gdcmDocument(const char *inFilename,
        RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
                                           // with "little-endian strings"
    {
-         filetype = gdcmACR_LIBIDO; 
+         Filetype = gdcmACR_LIBIDO; 
          std::string rows    = GetEntryByNumber(0x0028, 0x0010);
          std::string columns = GetEntryByNumber(0x0028, 0x0011);
          SetEntryByNumber(columns, 0x0028, 0x0010);
@@ -242,7 +243,7 @@ bool gdcmDocument::SetShaDict(DictKey dictName){
  *         false otherwise. 
  */
 bool gdcmDocument::IsReadable(void) { 
-   if(filetype==gdcmUnknown) {
+   if(Filetype==gdcmUnknown) {
       dbg.Verbose(0, "gdcmDocument::IsReadable: wrong filetype");
       return(false);
    }
@@ -425,7 +426,7 @@ bool gdcmDocument::IsDicomV3(void) {
  * @return the FileType code
  */
 FileType gdcmDocument::GetFileType(void) {
-   return(filetype);
+   return Filetype;
 }
 
 /**
@@ -436,7 +437,7 @@ FileType gdcmDocument::GetFileType(void) {
 FILE *gdcmDocument::OpenFile(bool exception_on_error)
   throw(gdcmFileError) 
 {
-  fp=fopen(filename.c_str(),"rb");
+  fp=fopen(Filename.c_str(),"rb");
 
   if(!fp)
   {
@@ -444,11 +445,9 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
         throw gdcmFileError("gdcmDocument::gdcmDocument(const char *, bool)");
      else
      {
-        std::cout <<"gdcmDocument::OpenFile cannot open file: " 
-                  << filename.c_str() << std::endl;
         dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file: ",
-                    filename.c_str());
-        return (NULL);
+                    Filename.c_str());
+        return NULL;
      }
   }
 
@@ -459,22 +458,22 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
 
     //ACR -- or DICOM with no Preamble --
     if( zero == 0x0008 || zero == 0x0800 || zero == 0x0002 || zero == 0x0200)
-       return(fp);
+       return fp;
 
     //DICOM
     fseek(fp, 126L, SEEK_CUR);
     char dicm[4];
     fread(dicm,  (size_t)4, (size_t)1, fp);
     if( memcmp(dicm, "DICM", 4) == 0 )
-       return(fp);
+       return fp;
 
     fclose(fp);
-    dbg.Verbose(0, "gdcmDocument::OpenFile not DICOM/ACR", filename.c_str());
+    dbg.Verbose(0, "gdcmDocument::OpenFile not DICOM/ACR", Filename.c_str());
   }
   else {
-    dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file", filename.c_str());
+    dbg.Verbose(0, "gdcmDocument::OpenFile cannot open file", Filename.c_str());
   }
-  return(NULL);
+  return NULL;
 }
 
 /**
@@ -558,7 +557,7 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
  */
 
    WriteEntries(fp,type);
-   return(true);
+   return true;
 }
 
 /**
@@ -574,7 +573,8 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
 gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          std::string Value, 
                                          guint16 Group, 
-                                         guint16 Elem ){
+                                         guint16 Elem )
+{
    gdcmDocEntry* CurrentEntry;
    gdcmValEntry* ValEntry;
 
@@ -587,7 +587,7 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
       {
          dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: call to"
                         " NewDocEntryByNumber failed.");
-         return (gdcmValEntry *)0;
+         return NULL;
       }
       ValEntry = new gdcmValEntry(CurrentEntry);
       if ( !AddEntry(ValEntry))
@@ -607,13 +607,13 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
          {
             dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: removal"
                            " of previous DocEntry failed.");
-            return (gdcmValEntry *)0;
+            return NULL;
          }
          if ( !AddEntry(ValEntry))
          {
             dbg.Verbose(0, "gdcmDocument::ReplaceOrCreateByNumber: adding"
                            " promoted ValEntry failed.");
-            return (gdcmValEntry *)0;
+            return NULL;
          }
       }
    }
@@ -645,12 +645,14 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
       a =NewBinEntryByNumber(Group, Elem);
       if (a == NULL) 
          return NULL;
+
 		b = new gdcmBinEntry(a);			
       AddEntry(b);
    }   
    SetEntryByNumber(voidArea, lgth, Group, Elem);
    b->SetVoidArea(voidArea);
-   return (gdcmBinEntry*)b;
+
+   return b;
 }  
 
 
@@ -681,7 +683,7 @@ bool gdcmDocument::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 El
  */
 int gdcmDocument::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
    std::string key = gdcmDictEntry::TranslateToKey(group, element );
-   return (tagHT.count(key));
+   return tagHT.count(key);
 }
 
 /**
@@ -698,7 +700,7 @@ std::string gdcmDocument::GetEntryByName(std::string tagName) {
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
 
-   return(GetEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement()));  
+   return GetEntryByNumber(dictEntry->GetGroup(),dictEntry->GetElement());
 }
 
 /**
@@ -787,8 +789,8 @@ bool gdcmDocument::SetEntryByName(std::string content,std::string tagName) {
    if( dictEntry == NULL)
       return false;    
 
-   return(SetEntryByNumber(content,dictEntry->GetGroup(),
-                                   dictEntry->GetElement()));
+   return SetEntryByNumber(content,dictEntry->GetGroup(),
+                                   dictEntry->GetElement());
 }
 
 /**
@@ -842,6 +844,7 @@ bool gdcmDocument::SetEntryByNumber(void *content,
                                   guint16 group,
                                   guint16 element) 
 {
+   (void)lgth;  //not used
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
@@ -935,11 +938,12 @@ void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem)
       return NULL;
    size_t o =(size_t)Element->GetOffset();
    fseek(fp, o, SEEK_SET);
-   size_t l=Element->GetLength();
+   size_t l = Element->GetLength();
    char* a = new char[l];
-   if(!a) 
+   if(!a) {
+      dbg.Verbose(0, "gdcmDocument::LoadEntryVoidArea cannot allocate a");
       return NULL;
-
+   }
    SetEntryVoidAreaByNumber(a, Group, Elem);
    /// \todo check the result 
    size_t l2 = fread(a, 1, l ,fp);
@@ -977,7 +981,7 @@ bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
  *          Only non even entries are analyzed       
  */
 void gdcmDocument::UpdateShaEntries(void) {
-   gdcmDictEntry *entry;
+   //gdcmDictEntry *entry;
    std::string vr;
    
    /// \todo TODO : still any use to explore recursively the whole structure?
@@ -1254,6 +1258,7 @@ bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
 
    if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(tag) )
    {
+    (void)BinEntry; //not used
       /// \todo FIXME : when voidArea belong to gdcmBinEntry only, fix
       /// voidArea length
       //
@@ -1269,6 +1274,8 @@ bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
       WriteEntryValue(tag, _fp, type);
       return true;
    }
+   
+  return false; //default behavior ?
 }
 
 /**
@@ -1385,7 +1392,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
    gdcmBinEntry *bn;   
    gdcmSeqEntry *sq;
    VRKey vr;
-   long l;
+   unsigned long l;
    int depth; 
    
    depth = set->GetDepthLevel();     
@@ -1469,6 +1476,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
             long lgt = ParseSQ( sq, 
                                 NewDocEntry->GetOffset(),
                                 l, delim_mode);
+            (void)lgt;  //not used...
          }
          // FIXME : on en fait quoi, de lgt ?
          set->AddEntry(sq);
@@ -1494,8 +1502,10 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
    gdcmSQItem *itemSQ;
    bool dlm_mod;
-   int lgr, l, lgth;
+   int lgr, lgth;
+   unsigned int l;
    int depth = set->GetDepthLevel();
+   (void)depth; //not used
 
    while (true) {
       NewDocEntry = ReadNextDocEntry();   
@@ -1656,7 +1666,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    guint16 length16;
        
    
-   if ( (filetype == gdcmExplicitVR) && (! Entry->IsImplicitVR()) ) 
+   if ( (Filetype == gdcmExplicitVR) && (! Entry->IsImplicitVR()) ) 
    {
       if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) 
       {
@@ -1763,7 +1773,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
  */
 void gdcmDocument::FindDocEntryVR( gdcmDocEntry *Entry) 
 {
-   if (filetype != gdcmExplicitVR)
+   if (Filetype != gdcmExplicitVR)
       return;
 
    char VR[3];
@@ -2195,7 +2205,7 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
  *       (swaps it depending on processor endianity) 
  * @return read value
  */
-guint16 gdcmDocument::ReadInt16(void) {
+guint16 gdcmDocument::ReadInt16() {
    guint16 g;
    size_t item_read;
    item_read = fread (&g, (size_t)2,(size_t)1, fp);
@@ -2215,7 +2225,7 @@ guint16 gdcmDocument::ReadInt16(void) {
  *         (swaps it depending on processor endianity)  
  * @return read value
  */
-guint32 gdcmDocument::ReadInt32(void) {
+guint32 gdcmDocument::ReadInt32() {
    guint32 g;
    size_t item_read;
    item_read = fread (&g, (size_t)4,(size_t)1, fp);
@@ -2247,7 +2257,7 @@ void gdcmDocument::SkipBytes(guint32 NBytes) {
 void gdcmDocument::Initialise(void) 
 {
    RefPubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
-   RefShaDict = (gdcmDict*)0;
+   RefShaDict = NULL;
 }
 
 /**
@@ -2320,13 +2330,13 @@ bool gdcmDocument::CheckSwap() {
       // Use gdcmDocument::dicom_vr to test all the possibilities
       // instead of just checking for UL, OB and UI !? group 0000 
       {
-         filetype = gdcmExplicitVR;
+         Filetype = gdcmExplicitVR;
          dbg.Verbose(1, "gdcmDocument::CheckSwap:",
                      "explicit Value Representation");
       } 
       else 
       {
-         filetype = gdcmImplicitVR;
+         Filetype = gdcmImplicitVR;
          dbg.Verbose(1, "gdcmDocument::CheckSwap:",
                      "not an explicit Value Representation");
       }
@@ -2371,19 +2381,19 @@ bool gdcmDocument::CheckSwap() {
    switch (s32) {
       case 0x00040000 :
          sw = 3412;
-         filetype = gdcmACR;
+         Filetype = gdcmACR;
          return true;
       case 0x04000000 :
          sw = 4321;
-         filetype = gdcmACR;
+         Filetype = gdcmACR;
          return true;
       case 0x00000400 :
          sw = 2143;
-         filetype = gdcmACR;
+         Filetype = gdcmACR;
          return true;
       case 0x00000004 :
          sw = 0;
-         filetype = gdcmACR;
+         Filetype = gdcmACR;
          return true;
       default :
 
@@ -2409,18 +2419,18 @@ bool gdcmDocument::CheckSwap() {
       case 0x0004 :
       case 0x0008 :      
          sw = 0;
-         filetype = gdcmACR;
+         Filetype = gdcmACR;
          return true;
       case 0x0200 :
       case 0x0400 :
       case 0x0800 : 
          sw = 4321;
-         filetype = gdcmACR;
+         Filetype = gdcmACR;
          return true;
       default :
          dbg.Verbose(0, "gdcmDocument::CheckSwap:",
                      "ACR/NEMA unfound swap info (Really hopeless !)"); 
-         filetype = gdcmUnknown;     
+         Filetype = gdcmUnknown;     
          return false;
       }
       
@@ -2827,7 +2837,7 @@ void gdcmDocument::Parse7FE0 (void)
       // BTW, what is the purpous of those length anyhow !? 
       char * BasicOffsetTableItemValue = new char[ItemLength + 1];
       fread(BasicOffsetTableItemValue, ItemLength, 1, fp); 
-      for (int i=0; i < ItemLength; i += 4){
+      for (unsigned int i=0; i < ItemLength; i += 4){
          guint32 IndividualLength;
          IndividualLength = str2num(&BasicOffsetTableItemValue[i],guint32);
          std::ostringstream s;
@@ -2842,7 +2852,7 @@ void gdcmDocument::Parse7FE0 (void)
       // JPEG Image
       
       //// We then skip (not reading them) all the fragments of images:
-      while ( ItemLength = ReadItemTagLength() )
+      while ( (ItemLength = ReadItemTagLength()) )
       {
          SkipBytes(ItemLength);
       } 
@@ -2855,7 +2865,7 @@ void gdcmDocument::Parse7FE0 (void)
       long RleSegmentLength[15], fragmentLength;
 
       // while 'Sequence Delimiter Item' (fffe,e0dd) not found
-      while ( fragmentLength = ReadSequenceDelimiterTagLength() )
+      while ( (fragmentLength = ReadSequenceDelimiterTagLength()) )
       { 
          // Parse fragments of the current Fragment (Frame)    
          //------------------ scanning (not reading) fragment pixels
@@ -2894,7 +2904,6 @@ void gdcmDocument::Parse7FE0 (void)
           SkipBytes(RleSegmentLength[nbRleSegments]); 
       } 
    }
-   return;            
 }
 
 /**
@@ -2904,47 +2913,49 @@ void gdcmDocument::Parse7FE0 (void)
  * @param   document
  * @return  true if 'smaller'
  */
- bool gdcmDocument::operator<(gdcmDocument &document){
+bool gdcmDocument::operator<(gdcmDocument &document)
+{
    std::string s1,s2;
                                                                                 
    // Patient Name
    s1=this->GetEntryByNumber(0x0010,0x0010);
    s2=document.GetEntryByNumber(0x0010,0x0010);
    if(s1 < s2)
-      return(true);
+      return true;
    else if(s1 > s2)
-      return(false);
+      return false;
    else
    {
       // Patient ID
       s1=this->GetEntryByNumber(0x0010,0x0020);
       s2=document.GetEntryByNumber(0x0010,0x0020);
       if (s1 < s2)
-         return(true);
+         return true;
       else if (s1 > s2)
-         return(1);
+         return true;
       else
       {
          // Study Instance UID
          s1=this->GetEntryByNumber(0x0020,0x000d);
          s2=document.GetEntryByNumber(0x0020,0x000d);
          if (s1 < s2)
-            return(true);
+            return true;
          else if(s1 > s2)
-            return(false);
+            return false;
          else
          {
             // Serie Instance UID
             s1=this->GetEntryByNumber(0x0020,0x000e);
             s2=document.GetEntryByNumber(0x0020,0x000e);
             if (s1 < s2)
-               return(true);
+               return true;
             else if(s1 > s2)
-               return(false);
+               return false;
          }
       }
    }
-   return(false);
+
+   return false;
 }
 
 

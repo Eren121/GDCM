@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/18 12:26:54 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/06/21 04:18:25 $
+  Version:   $Revision: 1.12 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ private:
    
    /// \brief Equals =1 if user wants to skip shadow groups while parsing
    /// (to save space)
-   int ignoreShadow;
+   int IgnoreShadow;
 
    /// \brief Size threshold above which an element value will NOT be loaded
    /// in memory (to avoid loading the image/volume itself). By default,
@@ -73,7 +73,7 @@ private:
 
 protected:
    /// Refering underlying filename.
-   std::string filename;
+   std::string Filename;
 
    /// \brief SWap code (e.g. Big Endian, Little Endian, Bad Big Endian,
    /// Bad Little Endian) according to the processor Endianity and
@@ -84,7 +84,7 @@ protected:
    FILE *fp;
 
    /// ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
-   FileType filetype;  
+   FileType Filetype;  
 
    /// After opening the file, we read HEADER_LENGTH_TO_READ bytes.
    static const unsigned int HEADER_LENGTH_TO_READ; 
@@ -158,7 +158,7 @@ public:
    virtual void  *LoadEntryVoidArea       (guint16 Group, guint16 Element);
    void           LoadVLEntry             (gdcmDocEntry *entry);
       
-// System access
+   // System access
    guint16 SwapShort(guint16);   // needed by gdcmFile
    guint32 SwapLong(guint32);    // needed by gdcmFile
    guint16 UnswapShort(guint16); // needed by gdcmFile
@@ -169,14 +169,14 @@ protected:
    // to instanciate from this class gdcmDocument (only gdcmHeader and
    // gdcmDicomDir are meaningfull).
    gdcmDocument(bool exception_on_error  = false);
-   gdcmDocument(const char *inFilename, 
+   gdcmDocument(std::string const & inFilename, 
                 bool  exception_on_error = false, 
                 bool  enable_sequences   = false,
                 bool  ignore_shadow      = false);
    virtual ~gdcmDocument(void);
    
    void gdcmDocument::Parse7FE0 (void);   
-// Entry
+   // Entry
    int CheckIfEntryExistByNumber(guint16 Group, guint16 Elem ); // int !
 public:
    virtual std::string GetEntryByName    (std::string tagName);
@@ -197,9 +197,9 @@ protected:
    virtual void  *GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem);   
    virtual bool   SetEntryVoidAreaByNumber(void *a, guint16 Group, guint16 Elem);
 
-   virtual void UpdateShaEntries(void);
+   virtual void UpdateShaEntries();
 
-// Header entry
+   // Header entry
    gdcmDocEntry *GetDocEntryByNumber  (guint16 group, guint16 element); 
    gdcmDocEntry *GetDocEntryByName    (std::string Name);
 	
@@ -209,7 +209,7 @@ protected:
    void LoadDocEntrySafe(gdcmDocEntry *);
 
 private:
-// Read
+   // Read
    long ParseDES(gdcmDocEntrySet *set, long offset, long l_max,bool delim_mode);
    long ParseSQ(gdcmSeqEntry *seq, long offset, long l_max, bool delim_mode); 
    
@@ -227,18 +227,18 @@ private:
    void FixDocEntryFoundLength(gdcmDocEntry *, guint32);
    bool IsDocEntryAnInteger   (gdcmDocEntry *);
 
-   guint32 FindDocEntryLengthOB(void);
+   guint32 FindDocEntryLengthOB();
 
-   guint16 ReadInt16(void);
-   guint32 ReadInt32(void);
+   guint16 ReadInt16();
+   guint32 ReadInt32();
    void    SkipBytes(guint32);
    guint32 ReadTagLength(guint16, guint16);
-   guint32 ReadItemTagLength(void);
-   guint32 ReadSequenceDelimiterTagLength(void);
+   guint32 ReadItemTagLength();
+   guint32 ReadSequenceDelimiterTagLength();
 
-   void Initialise(void);
-   bool CheckSwap(void);
-   void SwitchSwapToBigEndian(void);
+   void Initialise();
+   bool CheckSwap();
+   void SwitchSwapToBigEndian();
    void SetMaxSizeLoadEntry(long);
    void SetMaxSizePrintEntry(long);
 
@@ -252,7 +252,7 @@ private:
                                       std::string fourth = "unkn",
                                       std::string name   = "unkn");
    // DocEntry related utilities
-   gdcmDocEntry *ReadNextDocEntry   (void);
+   gdcmDocEntry *ReadNextDocEntry   ();
    gdcmDocEntry *NewDocEntryByNumber(guint16 group, 
                                      guint16 element);
    gdcmDocEntry *NewDocEntryByName  (std::string Name);
@@ -266,22 +266,22 @@ private:
 public:
 // Accessors:
    /// Accessor to \ref printLevel
-   void SetPrintLevel(int level) { printLevel = level; };
+   inline void SetPrintLevel(int level) { printLevel = level; }
 
    /// Accessor to \ref filename
-   inline std::string GetFileName(void) {return filename;}
+   inline std::string &GetFileName() { return Filename; }
 
    /// Accessor to \ref filename
-   inline void SetFileName(char* fileName) {filename = fileName;}
+   inline void SetFileName(const char* fileName) { Filename = fileName; }
 
    /// Accessor to \ref gdcmElementSet::tagHT
-   inline TagDocEntryHT &GetEntry(void) { return tagHT; };
+   inline TagDocEntryHT &GetEntry() { return tagHT; };
 
    /// 'Swap code' accessor (see \ref sw )
-   inline int GetSwapCode(void) { return sw; }
+   inline int GetSwapCode() { return sw; }
    
    /// File pointer
-   inline FILE * GetFP(void) { return fp; }
+   inline FILE * GetFP() { return fp; }
 
    bool operator<(gdcmDocument &document);
 

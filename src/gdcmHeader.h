@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2004/06/21 04:18:26 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,6 +41,55 @@
  *        protected due to Swig limitations for as Has_a dependency between
  *        gdcmFile and gdcmHeader.
  */
+
+//-----------------------------------------------------------------------------
+// Dicom Part 3.3 Compliant
+enum ModalityType {
+   Unknow,
+   AU,       // Voice Audio
+   AS,       // Angioscopy
+   BI,       // Biomagnetic Imaging
+   CF,       // Cinefluorography
+   CP,       // Culposcopy
+   CR,       // Computed Radiography
+   CS,       // Cystoscopy
+   CT,       // Computed Tomography
+   DD,       // Duplex Dopler
+   DF,       // Digital Fluoroscopy
+   DG,       // Diaphanography
+   DM,       // Digital Microscopy
+   DS,       // Digital Substraction Angiography
+   DX,       // Digital Radiography
+   ECG,      // Echocardiography
+   EPS,      // Basic Cardiac EP
+   ES,       // Endoscopy
+   FA,       // Fluorescein Angiography
+   FS,       // Fundoscopy
+   HC,       // Hard Copy
+   HD,       // Hemodynamic
+   LP,       // Laparoscopy
+   LS,       // Laser Surface Scan
+   MA,       // Magnetic Resonance Angiography
+   MR,       // Magnetic Resonance
+   NM,       // Nuclear Medicine
+   OT,       // Other
+   PT,       // Positron Emission Tomography
+   RF,       // Radio Fluoroscopy
+   RG,       // Radiographic Imaging
+   RTDOSE,   // Radiotherapy Dose
+   RTIMAGE,  // Radiotherapy Image
+   RTPLAN,   // Radiotherapy Plan
+   RTSTRUCT, // Radiotherapy Structure Set
+   SM,       // Microscopic Imaging
+   ST,       // Single-photon Emission Computed Tomography
+   TG,       // Thermography
+   US,       // Ultrasound
+   VF,       // Videofluorography
+   XA,       // X-Ray Angiography
+   XC        // Photographic Imaging
+};
+//-----------------------------------------------------------------------------
+
 class GDCM_EXPORT gdcmHeader : public gdcmDocument
 {
 protected:
@@ -59,7 +108,7 @@ protected:
 
 public:
    gdcmHeader(bool exception_on_error = false);
-   gdcmHeader(const char *filename, 
+   gdcmHeader(std::string const & filename, 
               bool  exception_on_error = false, 
               bool  enable_sequences   = false,
               bool  skip_shadow        = false);
@@ -67,42 +116,80 @@ public:
    virtual ~gdcmHeader();
 
    // Standard values and informations contained in the header
-   virtual bool IsReadable(void);
+   virtual bool IsReadable();
 
    // Some heuristic based accessors, end user intended 
-   // (to be moved to gdcmHeaderHelper?) 
-   int GetXSize(void);
-   int GetYSize(void);
-   int GetZSize(void);
-   int GetBitsStored(void);
-   int GetBitsAllocated(void);
-   int GetSamplesPerPixel(void);   
-   int GetPlanarConfiguration(void);
+   int GetBitsStored();
+   int GetBitsAllocated();
+   int GetSamplesPerPixel();
+   int GetPlanarConfiguration();
+   int GetPixelSize();
 
-   int GetPixelSize(void);   
-   std::string GetPixelType(void);  
-   size_t GetPixelOffset(void);
-   size_t GetPixelAreaLength(void);
+   int GetPixelSizeGetPixelType();
+   std::string GetPixelType();
+   size_t GetPixelOffset();
+   size_t GetPixelAreaLength();
 
-   bool   HasLUT(void);
-   int    GetLUTNbits(void);
-   unsigned char * GetLUTRGBA(void);
+   //Some image informations needed for third package imaging library
+   int GetXSize();
+   int GetYSize();
+   int GetZSize();
 
-   std::string GetTransfertSyntaxName(void);
+   float GetXSpacing();
+   float GetYSpacing();
+   float GetZSpacing();
+   //void GetSpacing(float &x, float &y, float &z);
+
+   // Useful for rescaling graylevel:
+   float GetRescaleIntercept();
+   float GetRescaleSlope();
+
+   int GetNumberOfScalarComponents();
+   int GetNumberOfScalarComponentsRaw();
+
+   // This is usefull for strategy of ordering study / series
+   // Marking them as deprecated since I believe this is achieve in the 
+   // gdcmDocument operator< 
+   //std::string GetStudyUID();
+   //std::string GetSeriesUID();
+   //std::string GetClassUID();
+   //std::string GetInstanceUID();
+
+   int GetImageNumber();
+   ModalityType GetModality();
+
+   /**
+    * change GetXImagePosition -> GetXOrigin in order not to confuse reader
+    * -# GetXOrigin can return default value (=0) if it was not ImagePosition
+    * -# Image Position is different in dicomV3 <> ACR NEMA -> better use generic
+    * name
+    */
+   float GetXOrigin();
+   float GetYOrigin();
+   float GetZOrigin();
+   //void GetOrigin(float &x, float &y, float &z);
+
+   bool   HasLUT();
+   int    GetLUTNbits();
+   unsigned char * GetLUTRGBA();
+
+   std::string GetTransfertSyntaxName();
 
    /// Accessor to \ref gdcmHeader::GrPixel
-   guint16 GetGrPixel(void)  {return GrPixel;}
+   guint16 GetGrPixel()  {return GrPixel;}
    
    /// Accessor to \ref gdcmHeader::NumPixel
-   guint16 GetNumPixel(void) {return NumPixel;}
+   guint16 GetNumPixel() {return NumPixel;}
 
    /// Read (used in gdcmFile)
-   void SetImageDataSize(size_t ExpectedSize);
+   void SetImageDataSize(size_t expectedSize);
 
 protected:
-   bool anonymizeHeader(void);
-private:
+   bool AnonymizeHeader();
+   void GetImageOrientationPatient( float* iop );
 
+private:
+  friend class gdcmSerieHeader;
 };
 
 //-----------------------------------------------------------------------------

@@ -261,9 +261,9 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
    {
       // The memory size for a full stack of images of course depends
       // on the number of planes and the size of each image:
-      size_t StackNumPixels = this->NumColumns * this->NumLines
-                            * this->TotalNumberOfPlanes * this->NumComponents;
-      size_t stack_size = StackNumPixels * this->PixelSize;
+      //size_t StackNumPixels = this->NumColumns * this->NumLines
+      //                      * this->TotalNumberOfPlanes * this->NumComponents;
+      //size_t stack_size = StackNumPixels * this->PixelSize; //not used
       // Allocate pixel data space itself.
 
       // Variables for the UpdateProgress. We shall use 50 steps to signify
@@ -441,7 +441,7 @@ int vtkGdcmReader::CheckFileCoherence()
       fclose(fp);
 
       // Stage 1.2: check for Gdcm parsability
-      gdcmHeaderHelper GdcmHeader(FileName->c_str(), false, true);
+      gdcmHeader GdcmHeader(FileName->c_str(), false, true);
       //                             true : for enableSequences
       if (!GdcmHeader.IsReadable())
       {

@@ -27,7 +27,7 @@ class vtkgdcmObserver : public vtkCommand
     {
       this->ImageViewer = NULL;
     }
-  virtual void Execute(vtkObject *wdg, unsigned long event, void* calldata)
+  virtual void Execute(vtkObject *, unsigned long event, void* )
     {
       if ( this->ImageViewer )
         {
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
   }
   viewer->SetupInteractor (iren);
   
-  vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
+  //vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
   //viewer->SetColorWindow (range[1] - range[0]);
   //viewer->SetColorLevel (0.5 * (range[1] + range[0]));
 
