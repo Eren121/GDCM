@@ -76,7 +76,7 @@ gdcmException::operator const char *() const throw() {
 
 ostream& operator<<(ostream &os, const gdcmException &e) {
   try {  
-    os << "Exception " << e.getName() << " thrown: " << e.error << endl;
+    os << "Exception " << e.getName() << " thrown: " << e.getError() << endl;
   }
   catch(...) {
     gdcmException::fatal("operator<<(ostream &, const gdcmException&)");

@@ -36,12 +36,6 @@ class GDCM_EXPORT gdcmException : public exception {
   /// error message
   string error;
 
-  /// exception caught within exception class: print error message and die
-  static void fatal(const char *from) throw();
-
-  /// try to discover this (dynamic) class name
-  virtual string getName() const throw();
-
  public:
   /**
    * Builds an exception with minimal information: name of the thrower
@@ -73,6 +67,12 @@ class GDCM_EXPORT gdcmException : public exception {
     return (const char *) *this;
   }
 
+
+  /// exception caught within exception class: print error message and die
+  static void fatal(const char *from) throw();
+
+  /// try to discover this (dynamic) class name
+  virtual string getName() const throw();
 
   friend ostream& operator<<(ostream &os, const gdcmException &e);
   
