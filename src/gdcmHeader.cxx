@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.109 2003/11/05 17:57:20 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.110 2003/11/05 17:59:42 malaterre Exp $
 
 #include "gdcmHeader.h"
 
@@ -2259,7 +2259,7 @@ void * gdcmHeader::GetLUTRGBA(void) {
    } 
  // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT 
    
-  unsigned char *LUTRGBA = (char *)calloc(1024,1); // 256 * 4 (R, G, B, Alpha) 
+  unsigned char *LUTRGBA = (unsigned char *)calloc(1024,1); // 256 * 4 (R, G, B, Alpha) 
   if (!LUTRGBA) {
      return NULL;
   }
