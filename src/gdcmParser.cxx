@@ -1891,25 +1891,14 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
    } 
     
    // a SeQuence Element is beginning                                          
-   // Let's forget it's length                                                 
-   // (we want to 'go inside')  
-
-   // Pb : *normaly*  fffe|e000 is just a marker, its length *should be* zero
-   // in gdcm-MR-PHILIPS-16-Multi-Seq.dcm we find lengthes as big as 28800
-   // if we set the length to zero IsHeaderEntryAnInteger() breaks...
-   // if we don't, we lost 28800 characters from the Header :-(
-                                                 
+   // fffe|e000 is just a marker, its length *should be* zero                                               
    else if(Entry->GetGroup() == 0xfffe)
    { 
-  // cout << "ReadLength " <<Entry->GetReadLength() << " UsableLength " << FoundLength << endl;  
-  //	Entry->Print();                                                           
-                       // sometimes, length seems to be wrong                                      
-      FoundLength =0;  // some more clever checking to be done !
-                       // I give up!
-		       // only  gdcm-MR-PHILIPS-16-Multi-Seq.dcm
-		       // causes troubles :-( 		       
-   }     
-    
+                                         // *normally, fffe|0000 doesn't exist ! 
+     if( Entry->GetElement() != 0x0000 ) // gdcm-MR-PHILIPS-16-Multi-Seq.dcm
+		                         // causes extra troubles :-(                                                        
+         FoundLength =0;
+   }         
    Entry->SetUsableLength(FoundLength);
 }
 
