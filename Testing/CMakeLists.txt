@@ -29,7 +29,7 @@ IF (GDCM_DATA_ROOT)
     BuildUpDicomDir.cxx              # writes a file named "NewDICOMDIR"
     makeDicomDir.cxx                 # writes a file named "NewDICOMDIR"
     TestCopyDicom.cxx
-    #    TestRescaleDicom.cxx
+    TestCopyRescaleDicom.cxx
   )
   # add test that require VTK:
   IF(GDCM_VTK)
