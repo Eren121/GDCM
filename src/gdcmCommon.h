@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 20:52:39 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/01/15 20:24:02 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@
 #endif //_MSC_VER
 
 //-----------------------------------------------------------------------------
-#ifdef GDCM_HAVE_STDINT_H
+#ifdef CMAKE_HAVE_STDINT_H
 #include <stdint.h>   // For uint8_t uint16_t and uint32_t
 #else
 #if defined(_MSC_VER) || defined(__BORLANDC__)

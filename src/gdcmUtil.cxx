@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 03:49:49 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2005/01/15 20:24:02 $
+  Version:   $Revision: 1.92 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,51 +39,44 @@
 #endif
 
 // For GetMACAddress
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-
 #ifdef _WIN32
 #include <snmp.h>
 #include <conio.h>
 #else
-#include <strings.h> //for bzero on unix
-#endif
-
-#if defined(__linux__) || defined(__CYGWIN__)
-#include <sys/ioctl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+//#include <errno.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <sys/file.h>
+#ifdef CMAKE_HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>  // For SIOCGIFCONF on Linux
 #endif
-#ifdef __linux__
-#include <linux/if.h>
-#endif
-
-#ifdef __FreeBSD__
-#include <sys/types.h>
+#ifdef CMAKE_HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
-#include <ifaddrs.h>
+#endif
+#ifdef CMAKE_HAVE_SYS_SOCKIO_H
+#include <sys/sockio.h>  // For SIOCGIFCONF on SunOS
+#endif
+#ifdef CMAKE_HAVE_NET_IF_H
+#include <net/if.h>
+#endif
+#ifdef CMAKE_HAVE_NETINET_IN_H
+#include <netinet/in.h>   //For IPPROTO_IP
+#endif
+#ifdef CMAKE_HAVE_NET_IF_DL_H
 #include <net/if_dl.h>
 #endif
 
-#ifdef __HP_aCC
-#include <netio.h>
-#endif
-
-#ifdef _AIX
-#include <sys/ndd_var.h>
-#include <sys/kinfo.h>
-#endif
-
+// How do I do that in CMake ?
 #ifdef __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#include <IOKit/IOKitLib.h>
-#include <IOKit/network/IOEthernetInterface.h>
-#include <IOKit/network/IONetworkInterface.h>
-#include <IOKit/network/IOEthernetController.h>
-#endif //__APPLE__
-// End For GetMACAddress
+#define HAVE_SA_LEN
+#endif //APPLE
+
+#endif //_WIN32
 
 namespace gdcm 
 {
@@ -382,178 +375,7 @@ typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
 #endif //_WIN32
 
 
-#ifdef __APPLE__
-// Returns an iterator containing the primary (built-in) Ethernet interface. 
-// The caller is responsible for releasing the iterator after the caller is 
-// done with it.
-static kern_return_t FindEthernetInterfaces(io_iterator_t *matchingServices)
-{
-   kern_return_t   kernResult; 
-   mach_port_t     masterPort;
-   CFMutableDictionaryRef  matchingDict;
-   CFMutableDictionaryRef  propertyMatchDict;
-   
-   // Retrieve the Mach port used to initiate communication with I/O Kit
-   kernResult = IOMasterPort(MACH_PORT_NULL, &masterPort);
-   if (KERN_SUCCESS != kernResult)
-   {
-       printf("IOMasterPort returned %d\n", kernResult);
-       return kernResult;
-   }
-   
-   // Ethernet interfaces are instances of class kIOEthernetInterfaceClass. 
-   // IOServiceMatching is a convenience function to create a dictionary 
-   // with the key kIOProviderClassKey and 
-   // the specified value.
-   matchingDict = IOServiceMatching(kIOEthernetInterfaceClass);
-
-   // Note that another option here would be:
-   // matchingDict = IOBSDMatching("en0");
-       
-   if (NULL == matchingDict)
-   {
-       printf("IOServiceMatching returned a NULL dictionary.\n");
-   }
-   else 
-   {
-      // Each IONetworkInterface object has a Boolean property with the 
-      // key kIOPrimaryInterface. Only the
-      // primary (built-in) interface has this property set to TRUE.
-      
-      // IOServiceGetMatchingServices uses the default matching criteria 
-      // defined by IOService. This considers
-      // only the following properties plus any family-specific matching 
-      // in this order of precedence 
-      // (see IOService::passiveMatch):
-      //
-      // kIOProviderClassKey (IOServiceMatching)
-      // kIONameMatchKey (IOServiceNameMatching)
-      // kIOPropertyMatchKey
-      // kIOPathMatchKey
-      // kIOMatchedServiceCountKey
-      // family-specific matching
-      // kIOBSDNameKey (IOBSDNameMatching)
-      // kIOLocationMatchKey
-      
-      // The IONetworkingFamily does not define any family-specific 
-      // matching. This means that in order to have 
-      // IOServiceGetMatchingServices consider the kIOPrimaryInterface 
-      // property, we must add that property to a separate dictionary and 
-      // then add that to our matching dictionary specifying 
-      // kIOPropertyMatchKey.
-          
-      propertyMatchDict = 
-         CFDictionaryCreateMutable( kCFAllocatorDefault, 0,
-                                    &kCFTypeDictionaryKeyCallBacks,
-                                    &kCFTypeDictionaryValueCallBacks);
-   
-      if (NULL == propertyMatchDict)
-      {
-          printf("CFDictionaryCreateMutable returned a NULL dictionary.\n");
-      }
-      else 
-      {
-         // Set the value in the dictionary of the property with the given 
-         // key, or add the key to the dictionary if it doesn't exist. 
-         // This call retains the value object passed in.
-         CFDictionarySetValue(propertyMatchDict, CFSTR(kIOPrimaryInterface), 
-                              kCFBooleanTrue); 
-         
-         // Now add the dictionary containing the matching value for 
-         // kIOPrimaryInterface to our main matching dictionary. This call 
-         // will retain propertyMatchDict, so we can release our reference 
-         // on propertyMatchDict after adding it to matchingDict.
-         CFDictionarySetValue(matchingDict, CFSTR(kIOPropertyMatchKey), 
-                              propertyMatchDict);
-         CFRelease(propertyMatchDict);
-      }
-   }
-
-   // IOServiceGetMatchingServices retains the returned iterator, so release
-   // the iterator when we're done with it.
-   // IOServiceGetMatchingServices also consumes a reference on the matching
-   // dictionary so we don't need to release the dictionary explicitly.
-   kernResult = 
-     IOServiceGetMatchingServices(masterPort, matchingDict, matchingServices);
-   if (KERN_SUCCESS != kernResult)
-   {
-       printf("IOServiceGetMatchingServices returned %d\n", kernResult);
-   }
-
-   return kernResult;
-}
-    
-// Given an iterator across a set of Ethernet interfaces, return the MAC 
-// address of the last one.
-// If no interfaces are found the MAC address is set to an empty string.
-// In this sample the iterator should contain just the primary interface.
-static kern_return_t GetMACAddress_MAC(io_iterator_t intfIterator, 
-                                       UInt8 *MACAddress)
-{
-   io_object_t   intfService;
-   io_object_t   controllerService;
-   kern_return_t kernResult = KERN_FAILURE;
-   
-   // Initialize the returned address
-   bzero(MACAddress, kIOEthernetAddressSize);
-   
-   // IOIteratorNext retains the returned object, so release it when we're 
-   // done with it.
-   while ( (intfService = IOIteratorNext(intfIterator)))
-   {
-      CFTypeRef MACAddressAsCFData;        
-
-      // IONetworkControllers can't be found directly by the 
-      // IOServiceGetMatchingServices call, since they are hardware nubs 
-      // and do not participate in driver matching. In other words,
-      // registerService() is never called on them. So we've found the 
-      // IONetworkInterface and will 
-      // get its parent controller by asking for it specifically.
-      
-      // IORegistryEntryGetParentEntry retains the returned object, so 
-      // release it when we're done with it.
-      kernResult = IORegistryEntryGetParentEntry( intfService,
-                                                  kIOServicePlane,
-                                                  &controllerService );
-
-      if (KERN_SUCCESS != kernResult)
-      {
-         printf("IORegistryEntryGetParentEntry returned 0x%08x\n", kernResult);
-      }
-      else
-      {
-         // Retrieve the MAC address property from the I/O Registry in the 
-         // form of a CFData
-         MACAddressAsCFData = 
-            IORegistryEntryCreateCFProperty( controllerService,
-                                             CFSTR(kIOMACAddress),
-                                             kCFAllocatorDefault,
-                                             0);
-         if (MACAddressAsCFData)
-         {
-            // for display purposes only; output goes to stderr
-            //CFShow(MACAddressAsCFData);
-            
-            // Get the raw bytes of the MAC address from the CFData
-            CFDataGetBytes(MACAddressAsCFData, 
-                           CFRangeMake(0, kIOEthernetAddressSize), 
-                           MACAddress);
-            CFRelease(MACAddressAsCFData);
-         }
-
-         // Done with the parent Ethernet controller object so we release it.
-         (void) IOObjectRelease(controllerService);
-      }
-
-      // Done with the Ethernet interface object so we release it.
-      (void) IOObjectRelease(intfService);
-   }
-
-   return kernResult;
-}
-#endif
-
-long GetMacAddrSys ( u_char *addr)
+long GetMacAddrSys ( unsigned char *addr)
 {
 #ifdef _WIN32
    WSADATA WinsockData;
@@ -684,186 +506,92 @@ long GetMacAddrSys ( u_char *addr)
    SNMP_FreeVarBind(&varBind[0]);
    SNMP_FreeVarBind(&varBind[1]);
    return 0;
-#endif //_WIN32
-
-// implementation for GNU/Linux  and cygwin
-#if defined(__linux__) || defined(__CYGWIN__)
-   struct ifreq ifr;
-   struct ifreq *IFR;
-   struct ifconf ifc;
+#else
+// implementation for POSIX system
+#ifdef CMAKE_HAVE_NET_IF_H
+   int       sd;
+   struct ifreq    ifr, *ifrp;
+   struct ifconf    ifc;
    char buf[1024];
-   int s, i;
-   int ok = 0;
-
-   s = socket(AF_INET, SOCK_DGRAM, 0);
-   if (s == -1)
-   {
-       return -1;
-   }
-
-   ifc.ifc_len = sizeof(buf);
-   ifc.ifc_buf = buf;
-   ioctl(s, SIOCGIFCONF, &ifc);
- 
-   IFR = ifc.ifc_req;
-   for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++)
-   {
-      strcpy(ifr.ifr_name, IFR->ifr_name);
-      if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0)
-      {
-         if (! (ifr.ifr_flags & IFF_LOOPBACK))
-         {
-            if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0)
-            {
-               ok = 1;
-               break;
-            }
-         }
-      }
-   }
-
-   close(s);
-   if (ok)
-   {
-      bcopy( ifr.ifr_hwaddr.sa_data, addr, 6);
-   }
-   else
-   {
-      return -1;
-   }
-   return 0;
+   int      n, i;
+   unsigned char    *a;
+#ifdef AF_LINK
+   struct sockaddr_dl *sdlp;
 #endif
 
-// implementation for FreeBSD
-#ifdef __FreeBSD__
-   struct ifaddrs *ifap, *ifaphead;
-   int rtnerr;
-   const struct sockaddr_dl *sdl;
-   caddr_t ap;
-   int alen;
- 
-   rtnerr = getifaddrs(&ifaphead);
-   if (rtnerr)
+//
+// BSD 4.4 defines the size of an ifreq to be
+// max(sizeof(ifreq), sizeof(ifreq.ifr_name)+ifreq.ifr_addr.sa_len
+// However, under earlier systems, sa_len isn't present, so the size is 
+// just sizeof(struct ifreq)
+// We should investiage the use of SIZEOF_ADDR_IFREQ
+//
+#ifdef HAVE_SA_LEN
+#ifndef max
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
+#define ifreq_size(i) max(sizeof(struct ifreq),\
+     sizeof((i).ifr_name)+(i).ifr_addr.sa_len)
+#else
+#define ifreq_size(i) sizeof(struct ifreq)
+#endif // HAVE_SA_LEN
+
+   if( (sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP)) < 0 )
    {
-     //perror(NULL);
-     return -1;
+      return -1;
    }
- 
-   for (ifap = ifaphead; ifap; ifap = ifap->ifa_next)
+   memset(buf, 0, sizeof(buf));
+   ifc.ifc_len = sizeof(buf);
+   ifc.ifc_buf = buf;
+   if (ioctl (sd, SIOCGIFCONF, (char *)&ifc) < 0)
    {
-      if (ifap->ifa_addr->sa_family == AF_LINK)
+      close(sd);
+      return -1;
+   }
+   n = ifc.ifc_len;
+   for (i = 0; i < n; i+= ifreq_size(*ifrp) )
+   {
+      ifrp = (struct ifreq *)((char *) ifc.ifc_buf+i);
+      strncpy(ifr.ifr_name, ifrp->ifr_name, IFNAMSIZ);
+#ifdef SIOCGIFHWADDR
+      if (ioctl(sd, SIOCGIFHWADDR, &ifr) < 0)
+         continue;
+      a = (unsigned char *) &ifr.ifr_hwaddr.sa_data;
+#else
+#ifdef SIOCGENADDR
+      if (ioctl(sd, SIOCGENADDR, &ifr) < 0)
+         continue;
+      a = (unsigned char *) ifr.ifr_enaddr;
+#else
+#ifdef AF_LINK
+      sdlp = (struct sockaddr_dl *) &ifrp->ifr_addr;
+      if ((sdlp->sdl_family != AF_LINK) || (sdlp->sdl_alen != 6))
+         continue;
+      a = (unsigned char *) &sdlp->sdl_data[sdlp->sdl_nlen];
+#else
+      /*
+       * XXX we don't have a way of getting the hardware
+       * address
+       */
+      close(sd);
+      return -1;
+#endif // AF_LINK
+#endif // SIOCGENADDR
+#endif // SIOCGIFHWADDR
+      if (!a[0] && !a[1] && !a[2] && !a[3] && !a[4] && !a[5]) continue;
+
+      if (addr) 
       {
-         sdl = (const struct sockaddr_dl *) ifap->ifa_addr;
-         ap = ((caddr_t)((sdl)->sdl_data + (sdl)->sdl_nlen));
-         alen = sdl->sdl_alen;
-         if (ap && alen > 0) 
-         {
-            //int i;
- 
-            //printf ("%s:", ifap->ifa_name);
-            //for (i = 0; i < alen; i++, ap++)
-              {
-              //printf("%c%02x", i > 0 ? ':' : ' ', 0xff&*ap);
-              }
-            bcopy( ap, addr, 6);
-            //putchar('\n');
-         }
+         memcpy(addr, a, 6);
+         close(sd);
+         return 0;
       }
    }
-   //putchar('\n');
- 
-   freeifaddrs(ifaphead);
-   return 0;
-#endif //FreeBSD
+   close(sd);
+#endif
+   return -1;
+#endif //_WIN32
 
-// implementation for HP-UX
-#ifdef __HP_aCC
-   const char LAN_DEV0[] = "/dev/lan0";
-
-   int fd;
-   struct fis iocnt_block;
-   char net_buf[sizeof(LAN_DEV0)+1];
-
-   (void)sprintf(net_buf, "%s", LAN_DEV0);
-   char *p = net_buf + strlen(net_buf) - 1;
-
-   // 
-   // Get 802.3 address from card by opening the driver and interrogating it.
-   //
-   for (int i = 0; i < 10; i++, (*p)++)
-   {
-      if ((fd = open (net_buf, O_RDONLY)) != -1) 
-      {
-         iocnt_block.reqtype = LOCAL_ADDRESS;
-         ioctl (fd, NETSTAT, &iocnt_block);
-         close (fd);
-
-         if (iocnt_block.vtype == 6) break;
-      }
-   }
-
-   if (fd == -1 || iocnt_block.vtype != 6)
-   {
-      return -1;
-   }
-
-   bcopy( &iocnt_block.value.s[0], addr, 6);
-   return 0;
-#endif // HP-UX
-
-/* implementation for AIX */
-#ifdef _AIX
-   int size = getkerninfo(KINFO_NDD, 0, 0, 0);
-   if (size <= 0)
-   {
-      return -1;
-   }
-   struct kinfo_ndd *nddp = (struct kinfo_ndd *)malloc(size);
-         
-   if (!nddp)
-   {
-      return -1;
-   }
-   if (getkerninfo(KINFO_NDD, nddp, &size, 0) < 0)
-   {
-      free(nddp);
-      return -1;
-   }
-   bcopy(nddp->ndd_addr, addr, 6);
-   free(nddp);
-
-   return 0;
-#endif //_AIX
-
-#ifdef __APPLE__
-   io_iterator_t intfIterator;
-   UInt8 MACAddress[ kIOEthernetAddressSize ];
- 
-   kern_return_t kernResult = FindEthernetInterfaces(&intfIterator);
-   
-   if (KERN_SUCCESS != kernResult)
-   {
-       printf("FindEthernetInterfaces returned 0x%08x\n", kernResult);
-   }
-   else
-   {
-      kernResult = GetMACAddress_MAC(intfIterator, MACAddress);
-
-      if (KERN_SUCCESS != kernResult)
-      {
-          printf("GetMACAddress returned 0x%08x\n", kernResult);
-      }
-   }
-
-   (void) IOObjectRelease(intfIterator); // Release the iterator.
-       
-   memcpy(addr, MACAddress, kIOEthernetAddressSize);
-   return kernResult;
-#endif //APPLE
-
-/* Not implemented platforms */
-  memset(addr,0,6);
-  return -1;
 }
 
 std::string Util::GetMACAddress()
@@ -884,7 +612,7 @@ std::string Util::GetMACAddress()
          //printf("%2.2x", addr[i]);
          macaddr += Format("%2.2x", addr[i]);
       }
-      // printf( "\n");
+       //printf( "\n");
       return macaddr;
    }
    else
