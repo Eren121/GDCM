@@ -79,6 +79,8 @@ imageElem   0028 0008 "1"                    // Number of Frames
 imageElem   0028 0010 "0"                    // Rows
 imageElem   0028 0011 "0"                    // Columns
 imageElem   0028 0030 "1.0\1.0 "             // Pixel Spacing
+imageElem   0028 1052 "0 "                   // Rescale Intercept
+imageElem   0028 1053 "1 "                   // Rescale Slope
 imageElem   0050 0004 "0"                    // Calibration Image
 imageElem   fffe e00d ""                     // Item delimitation : length to be set to ZERO later
 
