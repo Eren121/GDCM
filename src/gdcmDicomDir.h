@@ -21,8 +21,9 @@ typedef std::list<gdcmHeader *>  ListHeader;
 class GDCM_EXPORT gdcmDicomDir: public gdcmParser
 {
 public:
-   gdcmDicomDir(ListTag *l,           bool exception_on_error = false);
-   gdcmDicomDir(const char *FileName,bool exception_on_error = false);
+//   gdcmDicomDir(ListTag *l,          bool exception_on_error = false);
+   gdcmDicomDir(const char *FileName, bool parseDir = false,
+                bool exception_on_error = false);
    
    ~gdcmDicomDir(void);
 
@@ -30,8 +31,12 @@ public:
    virtual void Print(std::ostream &os = std::cout);
 
    inline ListPatient &GetPatients() {return patients;};
-   bool   Write(std::string fileName);
 
+// Write
+   bool Write(std::string fileName);
+   void ParseDirectory(void);
+
+// Types
    typedef enum
    {
       GDCM_NONE,
@@ -43,6 +48,7 @@ public:
    
 protected:
    void NewDicomDir(std::string path);
+   std::string GetPath(void);
 
 private:
    void CreateDicomDir(void);

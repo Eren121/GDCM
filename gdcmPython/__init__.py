@@ -53,6 +53,7 @@ except KeyError:
       print "Path to dictionaries is mandatory. Exiting"
       sys.exit(1)
    os.environ["GDCM_DICT_PATH"] = Path
+GDCM_DICT_PATH = os.environ["GDCM_DICT_PATH"]
 
 ### Set up the path to the data images for the demos.
 GDCM_DATA_PATH = BuildInstallOrPreinstallPath("Test", "test.acr")

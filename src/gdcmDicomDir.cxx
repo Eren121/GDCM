@@ -20,28 +20,22 @@
  * @param   Filename
  * @param   exception_on_error
  */
-gdcmDicomDir::gdcmDicomDir(const char *FileName,
+gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
                            bool exception_on_error):
    gdcmParser(FileName,exception_on_error,true)
 {
    if( GetListEntry().begin()==GetListEntry().end() ) 
    {
       dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry list empty");
-      dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : Parse directory and create the DicomDir");
 
-      std::string path=FileName;
-      std::string file;
-
-      int pos1=path.rfind("/");
-      int pos2=path.rfind("\\");
-      if(pos1>pos2)
-         path.resize(pos1);
-      else
-         path.resize(pos2);
-      NewDicomDir(path);
+      if(parseDir)
+      {
+         dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : Parse directory and create the DicomDir");
+         ParseDirectory();
+      }
    }
-
-   CreateDicomDir();
+   else
+      CreateDicomDir();
 }
 
 /*
@@ -49,13 +43,13 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName,
  * \brief   
  * @param   exception_on_error
  */
-gdcmDicomDir::gdcmDicomDir(ListTag *l,
+/*gdcmDicomDir::gdcmDicomDir(ListTag *l,
                            bool exception_on_error):                           
    gdcmParser(exception_on_error )  
 {    
    listEntries=*l;
    CreateDicomDir();
-}
+}*/
 
 /*
  * \ingroup gdcmDicomDir
@@ -114,6 +108,12 @@ bool gdcmDicomDir::Write(std::string fileName)
    return true;
 }
 
+void gdcmDicomDir::ParseDirectory(void)
+{
+   NewDicomDir(GetPath());
+   CreateDicomDir();
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 /*
@@ -128,6 +128,7 @@ void gdcmDicomDir::NewDicomDir(std::string path)
    gdcmHeader *header;
 
    listEntries.clear();
+   patients.clear();
 
    for(gdcmDirList::iterator it=fileList.begin(); 
        it!=fileList.end(); ++it) 
@@ -141,6 +142,25 @@ void gdcmDicomDir::NewDicomDir(std::string path)
    }
 
    SetElements(path,list);
+}
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   Get the dicom dir path
+ * @param   
+ */
+std::string gdcmDicomDir::GetPath(void)
+{
+   std::string path=GetFileName();
+
+   int pos1=path.rfind("/");
+   int pos2=path.rfind("\\");
+   if(pos1>pos2)
+      path.resize(pos1);
+   else
+      path.resize(pos2);
+
+   return(path);
 }
 
 //-----------------------------------------------------------------------------
