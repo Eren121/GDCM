@@ -10,7 +10,7 @@ int TestWriteSimple(int argc, char* argv[])
     {
     std::cerr << "Usage :" << std::endl << argv[0] << 
       " InputHeader OutputDicom" << std::endl;
-    return 0;	
+    return 0;
     }
 
   std::string header = argv[1];
@@ -18,7 +18,7 @@ int TestWriteSimple(int argc, char* argv[])
 
   gdcmHeader *f1 = new gdcmHeader( header );
   gdcmFile   *f2 = new gdcmFile( f1 );
-	
+
   // If the following call is important, then the API sucks. Why is it
   // required to allocate PixelData when we are not using it !?
   void* PixelData = f2->GetImageData(); //EXTREMELY IMPORTANT
