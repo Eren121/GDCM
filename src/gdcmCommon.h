@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 21:55:55 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/11/30 16:24:31 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,19 +45,25 @@
 #endif //_MSC_VER
 
 //-----------------------------------------------------------------------------
-#ifdef __GNUC__
-#ifndef HAVE_NO_STDINT_H
-#include <stdint.h>   // For uint8_t uint16_t and uint32_t
-#else
-typedef    signed char   int8_t;
-typedef  unsigned char  uint8_t;
-typedef  unsigned short uint16_t;
-typedef  unsigned int   uint32_t;
-#define UINT32_MAX    (4294967295U)
-#endif //HAVE_NO_STDINT_H
+// ifdef for old gcc compiler
+#ifdef GDCM_NO_ANSI_STRING_STREAM
+#  include <strstream>
+#  define  ostringstream ostrstream
+# else
+#  include <sstream>
 #endif
 
-#if defined( _MSC_VER) || defined(__BORLANDC__)
+#include <string>
+#include <assert.h>
+
+#ifdef GDCM_HAVE_STDINT_H
+#include <stdint.h>   // For uint8_t uint16_t and uint32_t
+#endif
+
+namespace gdcm
+{
+
+#ifndef GDCM_HAVE_STDINT_H
 typedef    signed char   int8_t;
 typedef  unsigned char  uint8_t;
 typedef  unsigned short uint16_t;
@@ -75,19 +81,6 @@ typedef  unsigned int   uint32_t;
 #define getcwd _getcwd
 #endif
 
-// ifdef for old gcc / broken compiler
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif
-
-#include <string>
-#include <cassert>
-
-namespace gdcm
-{
 
 // Centralize information about the gdcm dictionary in only one file:
 #ifndef PUB_DICT_PATH

@@ -1,4 +1,7 @@
 #-----------------------------------------------------------------------------
+# Rebuild gdcm whenever a file starting with gdcm* is modified
+INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
+
 # Build jpeg lib first:
 SUBDIRS(gdcmjpeg)
 

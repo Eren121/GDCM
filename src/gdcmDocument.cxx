@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/26 10:55:04 $
-  Version:   $Revision: 1.142 $
+  Date:      $Date: 2004/11/30 16:24:31 $
+  Version:   $Revision: 1.143 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,7 @@ static const char *TransferSyntaxStrings[] =  {
                                                                                 
 //-----------------------------------------------------------------------------
 // Refer to Document::CheckSwap()
-const unsigned int Document::HEADER_LENGTH_TO_READ = 256;
+//const unsigned int Document::HEADER_LENGTH_TO_READ = 256;
 
 // Refer to Document::SetMaxSizeLoadEntry()
 const unsigned int Document::MAX_SIZE_LOAD_ELEMENT_VALUE = 0xfff; // 4096
@@ -2419,7 +2419,7 @@ bool Document::CheckSwap()
    uint32_t  s32;
    uint16_t  s16;
        
-   char deb[256]; //HEADER_LENGTH_TO_READ];
+   char deb[256];
     
    // First, compare HostByteOrder and NetworkByteOrder in order to
    // determine if we shall need to swap bytes (i.e. the Endian type).
@@ -2434,7 +2434,7 @@ bool Document::CheckSwap()
          
    // The easiest case is the one of a DICOM header, since it possesses a
    // file preamble where it suffice to look for the string "DICM".
-   Fp->read(deb, HEADER_LENGTH_TO_READ);
+   Fp->read(deb, 256);
    
    char *entCur = deb + 128;
    if( memcmp(entCur, "DICM", (size_t)4) == 0 )

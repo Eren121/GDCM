@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:10 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/11/30 16:24:31 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmBinEntry.h"
 #include "gdcmDebug.h"
 #include <fstream>
+#include <iostream> // for std::ios_base, since <ios> does not exist on gcc/Solaris
 
 namespace gdcm 
 {
