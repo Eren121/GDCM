@@ -74,6 +74,12 @@ IF(APPLE)
   TARGET_LINK_LIBRARIES(gdcm "-framework IOKit" "-framework CoreFoundation")
 ENDIF(APPLE)
 
+# Need nsl to resolve gethostbyname on SunOS-5.8 CC
+IF(CMAKE_SYSTEM MATCHES "SunOS.*")
+  IF(NOT CMAKE_COMPILER_IS_GNUCXX)
+    TARGET_LINK_LIBRARIES(gdcm nsl)
+  ENDIF(NOT CMAKE_COMPILER_IS_GNUCXX)
+ENDIF(CMAKE_SYSTEM MATCHES "SunOS.*")
 
 #The following is not working because when a header file is not found it tries 
 #to find one in the binary dir
