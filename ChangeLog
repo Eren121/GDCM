@@ -1,3 +1,9 @@
+2005-01-07 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Now gdcm::Debug is clearly a copy/paste of VTK approach. You can manipulate
+     you debug/warning message just as c++ streams which make them very convinient
+     to use. Once this is stabilize I will change the ostringstrem to be
+     redirected to a file (ofstream).
+
 2005-01-07 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * Removal of useless and dangerous methods :
          GetEntryByName, GetEntryVRByName, GetDocEntryByName, SetEntryByName
