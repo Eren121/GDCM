@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.12 2003/10/06 15:32:48 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.13 2003/10/24 14:34:22 malaterre Exp $
 
 #include "gdcmHeaderHelper.h"
 
@@ -158,15 +158,19 @@ std::string gdcmHeaderHelper::GetPixelType() {
 float gdcmHeaderHelper::GetXSpacing() {
     float xspacing, yspacing;
     std::string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
-
-    if (StrSpacing == GDCM_UNFOUND) {
-       dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing (0028,0030)");
-       return 1.;
-     }
-   if( sscanf( StrSpacing.c_str(), "%f\\%f", &yspacing, &xspacing) != 2)
-     return 0.;
-   //else
-   return xspacing;
+    
+   if (StrSpacing == GDCM_UNFOUND) {
+      dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing (0028,0030)");
+      return 1.;
+    }
+  if( sscanf( StrSpacing.c_str(), "%f\\%f", &yspacing, &xspacing) != 2)
+    return 0.;
+  if (xspacing == 0.) {
+    dbg.Verbose(0, "gdcmHeader::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
+    // seems to be a bug in the header ...
+    sscanf( StrSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
+  }
+  return xspacing;
 }
 //----------------------------------------------------------------------------
 /**
@@ -185,7 +189,7 @@ float gdcmHeaderHelper::GetYSpacing() {
     }
   if( sscanf( StrSpacing.c_str(), "%f\\%f", &yspacing, &xspacing) != 2)
     return 0.;
-  if (yspacing == 0.) {
+  if (xspacing == 0.) {
     dbg.Verbose(0, "gdcmHeader::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
     // seems to be a bug in the header ...
     sscanf( StrSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);

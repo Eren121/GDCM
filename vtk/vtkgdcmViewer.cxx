@@ -22,9 +22,9 @@ int main(int argc, char *argv[])
   viewer->SetInput ( reader->GetOutput() );
   viewer->SetupInteractor (iren);
   
-  float *range = reader->GetOutput()->GetScalarRange();
-  viewer->SetColorWindow (range[1] - range[0]);
-  viewer->SetColorLevel (0.5 * (range[1] + range[0]));
+//  float *range = reader->GetOutput()->GetScalarRange();
+//  viewer->SetColorWindow (range[1] - range[0]);
+//  viewer->SetColorLevel (0.5 * (range[1] + range[0]));
 
   iren->Initialize();
   iren->Start();
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
   vtkStructuredPointsWriter *writer = vtkStructuredPointsWriter::New();
   writer->SetInput( reader->GetOutput());
   writer->SetFileName( "foo.vtk" );
-  writer->SetFileTypeToBinary();
+  //writer->SetFileTypeToBinary();
   writer->Write();
 
   reader->Delete();
