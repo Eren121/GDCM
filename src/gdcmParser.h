@@ -117,7 +117,7 @@ protected:
 
    virtual bool SetEntryByName  (std::string content, std::string tagName);
    virtual bool SetEntryByNumber(std::string content, guint16 group, guint16 element);
-   virtual bool SetEntryLengthByNumber(guint32 l, guint16 group, guint16 element);
+   virtual bool SetEntryLengthByNumber(guint32 length, guint16 group, guint16 element);
 
    virtual size_t GetEntryOffsetByNumber  (guint16 Group, guint16 Elem);
    virtual void  *GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem);   

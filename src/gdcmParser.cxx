@@ -97,6 +97,7 @@ gdcmParser::gdcmParser(const char *InFilename,
 		       bool ignore_shadow) {
    enableSequences=enable_sequences;
    ignoreShadow   =ignore_shadow;
+   cout << "chou" << endl;
    
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    filename = InFilename;
@@ -120,6 +121,7 @@ gdcmParser::gdcmParser(const char *InFilename,
  */
 gdcmParser::gdcmParser(bool exception_on_error) {
    enableSequences=0;
+   cout << "chou" << endl;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
@@ -674,7 +676,6 @@ bool gdcmParser::SetEntryByNumber(std::string content,
  * @param   element element of the Entry to modify
  * @return  1 on success, 0 otherwise.
  */
-
 bool gdcmParser::SetEntryLengthByNumber(guint32 length, 
                                         guint16 group, 
 					guint16 element) 
@@ -1562,7 +1563,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
  *            and the taken VR. If they are different, the header entry is 
  *            updated with the new VR.
  * @param     Entry
- * @param     VR
+ * @param     vr
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true
 */
@@ -2307,7 +2308,6 @@ gdcmDictEntry *gdcmParser::GetDictEntryByNumber(guint16 group,guint16 element)
 gdcmHeaderEntry *gdcmParser::ReadNextHeaderEntry(void) {
    guint16 g,n;
    gdcmHeaderEntry *NewEntry;
-   
    g = ReadInt16();
    n = ReadInt16();
       
