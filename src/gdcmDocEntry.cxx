@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 13:12:42 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/10/09 03:31:26 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ void gdcmDocEntry::Print(std::ostream& os)
    
    size_t o;
    unsigned short int g, e;
-   char st[20];
+   std::string st;
    TSKey v;
    std::string d2, vr;
    std::ostringstream s;
@@ -73,25 +73,25 @@ void gdcmDocEntry::Print(std::ostream& os)
       lgth = GetReadLength(); // ReadLength, as opposed to UsableLength
       if (lgth == 0xffffffff)
       {
-         sprintf(st,"x(ffff)");  // I said : "x(ffff)" !
+         st = Format("x(ffff)");  // I said : "x(ffff)" !
          s.setf(std::ios::left);
-         s << std::setw(10-strlen(st)) << " ";  
+         s << std::setw(10-st.size()) << " ";  
          s << st << " ";
          s.setf(std::ios::left);
          s << std::setw(8) << "-1"; 
       }
       else
       {
-         sprintf(st,"x(%x)",lgth);
+         st = Format("x(%x)",lgth);
          s.setf(std::ios::left);
-         s << std::setw(10-strlen(st)) << " ";
+         s << std::setw(10-st.size()) << " ";
          s << st << " ";
          s.setf(std::ios::left);
          s << std::setw(8) << lgth; 
       }
       s << " Off.: ";
-      sprintf(st,"x(%x)",o); 
-      s << std::setw(10-strlen(st)) << " ";
+      st = Format("x(%x)",o); 
+      s << std::setw(10-st.size()) << " ";
       s << st << " ";
       s << std::setw(8) << o; 
    }
@@ -116,7 +116,7 @@ void gdcmDocEntry::Print(std::ostream& os)
  */
 void gdcmDocEntry::Write(FILE* fp, FileType filetype)
 {
-   uint32_t FFFF  = 0xffffffff;
+   uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
    gdcmVRKey vr   = GetVR();
    uint16_t el    = GetElement();
@@ -130,9 +130,9 @@ void gdcmDocEntry::Write(FILE* fp, FileType filetype)
       return;
    }
 
-//
-// ----------- Writes the common part
-//
+   //
+   // ----------- Writes the common part
+   //
    fwrite ( &group,(size_t)2 ,(size_t)1 ,fp);  //group
    fwrite ( &el,   (size_t)2 ,(size_t)1 ,fp);  //element
       
@@ -149,7 +149,7 @@ void gdcmDocEntry::Write(FILE* fp, FileType filetype)
          //  - a new Item Delimitor Item is encountered (the Seq goes on)
          //  - a Sequence Delimitor Item is encountered (the Seq just ended)
 
-       // TODO : verify if the Sequence Delimitor Item was forced during Parsing 
+         // TODO : verify if the Sequence Delimitor Item was forced during Parsing 
 
          int ff = 0xffffffff;
          fwrite (&ff,(size_t)4 ,(size_t)1 ,fp);
@@ -178,7 +178,7 @@ void gdcmDocEntry::Write(FILE* fp, FileType filetype)
                // we set SQ length to ffffffff
                // and  we shall write a Sequence Delimitor Item 
                // at the end of the Sequence! 
-               fwrite ( &FFFF,(size_t)4 ,(size_t)1 ,fp);
+               fwrite ( &ffff,(size_t)4 ,(size_t)1 ,fp);
             }
             else
             {
@@ -195,7 +195,7 @@ void gdcmDocEntry::Write(FILE* fp, FileType filetype)
    { 
       if (vr == "SQ")
       {
-         fwrite ( &FFFF,(size_t)4 ,(size_t)1 ,fp);
+         fwrite ( &ffff,(size_t)4 ,(size_t)1 ,fp);
       }
       else
       {
