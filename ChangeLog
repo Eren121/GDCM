@@ -1,3 +1,14 @@
+2004-06-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+    * Test/TestWriteSimple.cxx: fix to gdcmHeader-gdcmHeaderHelper revamping.
+      The default constructor invoked by the line
+         gdcmHeader *f1 = new gdcmHeader( header );
+      was gdcmHeader::gdcmHeader(bool) instead of the expected
+      gdcmHeader::gdcmHeader(std::string const &, bool = false, bool, bool).
+      Hence the parsing wasn't executed... See also below.
+    * src/gdcmHeader.h: the declaration of gdcmHeader::gdcmHeader(bool)
+      as explicit constructor didn't do the trick to fix the above problem.
+      Could anyone explain why ?
+
 2004-06-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * In order to fix memory leaks:
      - Test/TestWriteSimple.cxx: added cleaning of free store through

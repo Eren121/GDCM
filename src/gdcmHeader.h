@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:18:26 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2004/06/21 08:47:14 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -107,7 +107,7 @@ protected:
    guint16 GrPixel;
 
 public:
-   gdcmHeader(bool exception_on_error = false);
+   explicit gdcmHeader(bool exception_on_error = false);
    gdcmHeader(std::string const & filename, 
               bool  exception_on_error = false, 
               bool  enable_sequences   = false,

@@ -13,7 +13,7 @@ int TestWriteSimple(int argc, char* argv[])
     return 0;	
     }
 
-  const char *header = argv[1];
+  std::string header = argv[1];
   const char *output = argv[2];
 
   gdcmHeader *f1 = new gdcmHeader( header );
