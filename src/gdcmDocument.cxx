@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 16:59:32 $
-  Version:   $Revision: 1.144 $
+  Date:      $Date: 2004/12/02 15:14:17 $
+  Version:   $Revision: 1.145 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -411,7 +411,11 @@ FileType Document::GetFileType()
  */
 std::ifstream* Document::OpenFile()
 {
-   if (Filename.length() == 0) return 0;
+   if (Filename.length() == 0) 
+   {
+      return 0;
+   }
+
    if(Fp)
    {
       dbg.Verbose( 0,
@@ -420,12 +424,13 @@ std::ifstream* Document::OpenFile()
    }
 
    Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
-
-   if(!Fp)
+   if( ! *Fp )
    {
       dbg.Verbose( 0,
                    "Document::OpenFile cannot open file: ",
                    Filename.c_str());
+      delete Fp;
+      Fp = 0;
       return 0;
    }
  
@@ -649,6 +654,7 @@ BinEntry* Document::ReplaceOrCreateByNumber(
          dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
                         " failed allthough this is a creation.");
       }
+      delete currentEntry;
    }
    else
    {
@@ -1887,7 +1893,8 @@ void Document::FindDocEntryVR( DocEntry *entry )
    // within an explicit VR file. Hence we make sure the present tag
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
-   
+   vr[0] = 0x00;
+   vr[1] = 0x00;
    Fp->read (vr, (size_t)2);
    vr[2] = 0;
 
@@ -2397,6 +2404,7 @@ void Document::Initialise()
    RefShaDict = NULL;
    RLEInfo  = new RLEFramesInfo;
    JPEGInfo = new JPEGFragmentsInfo;
+   Filetype = Unknown;
 }
 
 /**

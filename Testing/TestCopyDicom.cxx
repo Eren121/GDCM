@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/26 10:55:03 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/12/02 15:14:16 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,7 @@ int CopyDicom(std::string const & filename,
       //////////////// Step 1:
       std::cout << "      1...";
       gdcm::Header *originalH = new gdcm::Header( filename );
-      gdcm::Header *copyH     = new gdcm::Header( output );
+      gdcm::Header *copyH     = new gdcm::Header( );
 
       //First of all copy the header field by field
   

@@ -1,4 +1,17 @@
 2004-12-02 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/TestCopyDicom.cxx : the new dicom created is created empty, without
+     file name in input
+   * src/gdcmSeqEntry.cxx : bug fix in destruction of an element
+   * src/gdcmHeader.cxx : bug fix. Keep the string, otherwise it is destroyed.
+     The string leaves only in the fonction. So when we make a .c_str(), we
+     get the pointeur on the first element, element that will be destroyed 
+     immediately after thee instruction.
+   * src/gdcmDocument.cxx : remove memory leaks. Bug fix when testing if the
+     file has been opened : the test must be made on the content of the 
+     pointer and not directly on the pointer !
+     Code formatting
+
+2004-12-02 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * gdcmPython/gdcm.i : change gdcmHeaderHelper to gdcmSerieHeader. Now,
      the python part recompiles
 

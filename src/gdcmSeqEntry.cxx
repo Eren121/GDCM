@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/12/02 15:14:18 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,7 +72,7 @@ SeqEntry::~SeqEntry()
    {
       delete *cc;
    }
-   if (!SeqTerm)
+   if (SeqTerm)
    {
       delete SeqTerm;
    }
