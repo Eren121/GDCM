@@ -25,6 +25,7 @@ The following comments are intended for core gdcm developpers.
        gdcmHeader = gdcm.gdcmHeader
        gdcmDictSet = gdcm.gdcmDictSet
        gdcmFile = gdcm.gdcmFile
+       [etc.]
     Hence this whole Swig wrapping process is quite odd since we shall
     wrap more classes (%include in swig.i) that eventually get exported to
     the final user by gdcmPython/__init__.py.

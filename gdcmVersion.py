@@ -1,2 +1,2 @@
-gdcmVERSION="0.3.1"
+gdcmVERSION="0.4"
 

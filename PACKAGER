@@ -90,7 +90,7 @@ Here is the checklist when freezing a version of gdcm:
        - Binary distribution:
          cd $(GDCMHOME)
          python setup.py bdist --formats=wininst
-         install $(GDCMHOME)\dist\gdcmPython-0.3.win32-py2.2.exe
+         install $(GDCMHOME)\dist\gdcmPython-xxx.win32-py2.2.exe
          cd $(PYTHONHOME)\Lib\site-packages\
          Check out gdcmData
          cd gdcmPython
@@ -101,7 +101,7 @@ Here is the checklist when freezing a version of gdcm:
          source distro):
          cd $(GDCMHOME)
          python setup.py sdist --formats=zip
-         unzip $(GDCMHOME)\dist\gdcmPython-0.3.zip in TMPHOME directory
+         unzip $(GDCMHOME)\dist\gdcmPython-xxx.zip in TMPHOME directory
          cd $(TMPHOME)
          cd gdcmPython-*/
          python setup.py bdist --formats=wininst

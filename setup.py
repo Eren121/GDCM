@@ -88,7 +88,10 @@ vtkSources.extend(glob.glob(os.path.join(gdcmSrcDir,"*.cxx")))
 vtkSources.extend(Jpeg8Sources)
 vtkSources.extend(Jpeg12Sources)
 vtkSources.extend(JpgSources)
-vtkSources.remove(os.path.join(gdcmvtkSrcDir,"vtkgdcmViewer.cxx"))
+try:
+	vtkSources.remove(os.path.join(gdcmvtkSrcDir,"vtkgdcmViewer.cxx"))
+except:
+	pass
 
 vtkLibraries=["vtkCommon","vtkCommonPython",
               "vtkIO","vtkIOPython",
@@ -126,9 +129,13 @@ setup(name=ThisModule,
 						],
       data_files=[(os.path.join(targetDir,gdcmTestDir),
                    glob.glob(os.path.join(gdcmTestDir,"*.acr"))),
+                  (targetDir,
+                   glob.glob(os.path.join(gdcmSrcDir,"*.py"))),
                   (os.path.join(targetDir,"Dicts"),
                    glob.glob(os.path.join(gdcmDictsDir,"*.*"))),
                   (targetDir,
+                   glob.glob(os.path.join(gdcmSrcDir,"..","gdcmVersion.py"))),
+                  (os.path.join(targetDir,".."),
                    glob.glob(os.path.join(gdcmSrcDir,"..","gdcmVersion.py"))),
                 ]
      )
