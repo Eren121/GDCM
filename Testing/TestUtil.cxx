@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 16:07:54 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/27 10:43:19 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,9 +23,24 @@
 
 int TestUtil(int , char * [])
 {
+   // Time 
    std::cout << "Time:" << gdcm::Util::GetCurrentDateTime() << std::endl;
+
+   // Processor ID
+   unsigned int processorID;;
+   processorID = gdcm::Util::GetCurrentProcessID();
+   std::cout << "Current Processor ID " <<  processorID << std::endl;
+
+   // MAC Adress
+   std::cout << "Mac Address:" << gdcm::Util::GetMACAddress() << std::endl;
+
    // Unique UID test
-   std::cout << gdcm::Util::CreateUniqueUID("") << std::endl;
+   std::string gdcmUid;
+   for (int i=0; i<10; i++)
+   {
+      gdcmUid = gdcm::Util::CreateUniqueUID();
+      std::cout << "Current UID for gdcm " <<  gdcmUid << std::endl;
+   }
    
    // DicomString test
    const char ref[] = "MONOCHROME1";
@@ -43,11 +58,6 @@ int TestUtil(int , char * [])
       return 1;
    if(  gdcm::Util::DicomStringEqual(d,ref) ) 
       return 1;
-
-   // MAC Adress
-   std::cout << "Mac Address:" << gdcm::Util::GetMACAddress() << std::endl;
-
-   std::cout << "Time:" << gdcm::Util::GetCurrentDateTime() << std::endl;
 
    return 0;
 }

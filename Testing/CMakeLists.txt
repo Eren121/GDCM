@@ -8,12 +8,12 @@ SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
 # add test that does not require data:
 # They usally return if no argument is given
 SET(TEST_SOURCES
+  TestUtil.cxx
   TestBug.cxx
   TestHash.cxx
   TestTS.cxx
   TestVR.cxx
   TestDicomDirElement.cxx
-  TestUtil.cxx
   TestDicomString.cxx
   TestDict.cxx
   TestWriteSimple.cxx
