@@ -1,3 +1,7 @@
+2004-04-30  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+     * Add an example subdir, with a real example on how to read + write a 
+       dicom image
+
 2004-04-30  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
      * Doc/gdcmUML.xmi added raw UML class view (umbrello format)
      * Doc/CMakeLists.txt: the main page is now properly differentiated
