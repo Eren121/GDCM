@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 10:29:17 $
-  Version:   $Revision: 1.120 $
+  Date:      $Date: 2005/01/28 15:58:40 $
+  Version:   $Revision: 1.121 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -818,7 +818,6 @@ void DicomDir::CreateDicomDir()
       }
       tmpSI=s->GetNextSQItem();
    }
-// friend hunting : this one will be difficult to remove !
    ClearEntry();
 }
 
