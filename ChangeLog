@@ -1,3 +1,13 @@
+2004-10-07 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * CLEANUP_ROUND (5) for gdcmPixelConvert (Upshit creek without a paddle)
+    - src/gdcmDocument.[cxx|h] Parse7Fe0 renamed to ComputeRLEInfo.
+      This is because Parse7Fe0 used to parse the pixels to compute the
+      length. This task was passed over to FindDocEntryLengthOB() a long
+      time ago, EXCEPT I had forgotten the OW case...
+      Hence Parse7Fe0 was no longer necessary. When renaming to ComputeRLEInfo
+      we just recylce the code for parsing RLE fragments and computing
+      offsets.
+
 2004-10-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND (3) for gdcmPixelConvert (nightmare stage)
     - src/gdcmRLEFramesInfo.[cxx|h], gdcmRLEFrame.h added

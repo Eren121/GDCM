@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 13:12:42 $
-  Version:   $Revision: 1.94 $
+  Date:      $Date: 2004/10/06 21:30:02 $
+  Version:   $Revision: 1.95 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1452,7 +1452,6 @@ void gdcmDocument::ParseDES(gdcmDocEntrySet *set,
             // form ( group, elem )...
             if (gdcmDocument* dummy = dynamic_cast< gdcmDocument* > ( set ) )
             {
-               (void)dummy;
                newBinEntry->SetKey( newBinEntry->GetKey() );
             }
             // but when "this" is a SQItem, we are inserting this new
@@ -1471,11 +1470,12 @@ void gdcmDocument::ParseDES(gdcmDocEntrySet *set,
          if (newDocEntry->GetGroup()   == 0x7fe0 && 
              newDocEntry->GetElement() == 0x0010 )
          {
-             if ( newDocEntry->GetReadLength()==0xffffffff ) 
+             if ( IsRLELossLessTransferSyntax() ) 
              {
-                // Broken US.3405.1.dcm
-                Parse7FE0(); // to skip the pixels 
-                             // (multipart JPEG/RLE are trouble makers)
+                long PositionOnEntry = ftell(Fp);
+                fseek(Fp, newDocEntry->GetOffset(), SEEK_SET);
+                ComputeRLEInfo();
+                fseek(Fp, PositionOnEntry, SEEK_SET);
              }
              else
              {
@@ -1790,11 +1790,13 @@ void gdcmDocument::FindDocEntryLength( gdcmDocEntry *entry )
          fseek(Fp, 2L, SEEK_CUR);
          uint32_t length32 = ReadInt32();
 
-         if ( vr == "OB" && length32 == 0xffffffff ) 
+         if ( (vr == "OB" || vr == "OW") && length32 == 0xffffffff ) 
          {
             uint32_t lengthOB;
             try 
             {
+               /// \todo rename that to FindDocEntryLengthOBOrOW since
+               ///       the above test is on both OB and OW...
                lengthOB = FindDocEntryLengthOB();
             }
             catch ( gdcmFormatUnexpected )
@@ -2825,22 +2827,20 @@ uint32_t gdcmDocument::ReadTagLength(uint16_t testGroup, uint16_t testElement)
 }
 
 /**
- * \brief   Parse pixel data from disk for multi-fragment Jpeg/Rle files
- *          No other way so 'skip' the Data
+ * \brief Parse pixel data from disk of [multi-]fragment RLE encoding.
+ *        Compute the RLE extra information and store it in \ref RLEInfo
+ *        for later pixel retrieval usage.
  */
-void gdcmDocument::Parse7FE0 ()
+void gdcmDocument::ComputeRLEInfo()
 {
-   gdcmDocEntry* element = GetDocEntryByNumber(0x0002, 0x0010);
-   if ( !element )
+   if ( ! IsRLELossLessTransferSyntax() )
    {
-      // Should warn user FIXME
       return;
    }
-      
    // Encoded pixel data: for the time being we are only concerned with
    // Jpeg or RLE Pixel data encodings.
    // As stated in ps-3.3, 8.2:
-   // "If sent in Encapsulated Format (i.e. other than the Narive Format) the
+   // "If sent in Encapsulated Format (i.e. other than the Native Format) the
    //  value representation OB is used".
    // Hence we expect an OB value representation. Concerning OB VR,
    // the section PS3.3, A.4.c (p58 and p59), states:
@@ -2859,7 +2859,7 @@ void gdcmDocument::Parse7FE0 ()
    //          we can't rely on it for the implementation, and we will simply
    //          trash it's content (when present).
    //        - still, when present, we could add some further checks on the
-   //          lengths, but not bother with such fuses for the time being.
+   //          lengths, but we won't bother with such fuses for the time being.
    if ( itemLength != 0 )
    {
       char* basicOffsetTableItemValue = new char[itemLength + 1];
@@ -2872,89 +2872,76 @@ void gdcmDocument::Parse7FE0 ()
          std::ostringstream s;
          s << "   Read one length: ";
          s << std::hex << individualLength << std::endl;
-         dbg.Verbose(0, "gdcmDocument::Parse7FE0: ", s.str().c_str());
+         dbg.Verbose(0, "gdcmDocument::ComputeRLEInfo: ", s.str().c_str());
       }
       delete[] basicOffsetTableItemValue;
    }
 
-   if ( ! IsRLELossLessTransferSyntax() )
-   {
-      // JPEG Image
-      
-      //// We then skip (not reading them) all the fragments of images:
-      while ( (itemLength = ReadTagLength(0xfffe, 0xe000)) )
-      {
-         SkipBytes(itemLength);
-      }
-   }
-   else
-   {
-      // Encapsulated RLE Compressed Images (see PS-3.3, Annex G).
-      // Loop on the frame[s] and store the parsed information in a
-      // gdcmRLEFramesInfo.
-      long frameLength;
+   // Encapsulated RLE Compressed Images (see PS-3.3, Annex G).
+   // Loop on the frame[s] and store the parsed information in a
+   // gdcmRLEFramesInfo.
+   long frameLength;
 
-      // Loop on the individual frame[s] and store the information
-      // on the RLE fragments in a gdcmRLEFramesInfo.
-      // Note: - when only a single frame is present, this is a
-      //         classical image.
-      //       - when more than one frame are present, then we are in 
-      //         the case of a multi-frame image.
-      while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) )
-      { 
-         // Parse the RLE Header and store the corresponding RLE Segment
-         // Offset Table information on fragments of this current Frame.
-         // Note that the fragment pixels themselves are not loaded
-         // (but just skipped).
-         uint32_t nbRleSegments = ReadInt32();
+   // Loop on the individual frame[s] and store the information
+   // on the RLE fragments in a gdcmRLEFramesInfo.
+   // Note: - when only a single frame is present, this is a
+   //         classical image.
+   //       - when more than one frame are present, then we are in 
+   //         the case of a multi-frame image.
+   while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) )
+   { 
+      // Parse the RLE Header and store the corresponding RLE Segment
+      // Offset Table information on fragments of this current Frame.
+      // Note that the fragment pixels themselves are not loaded
+      // (but just skipped).
+      uint32_t nbRleSegments = ReadInt32();
  
-         uint32_t rleSegmentOffsetTable[15];
-         long ftellRes;
-         for( int k = 1; k <= 15; k++ )
-         {
-            ftellRes = ftell(Fp);
-            rleSegmentOffsetTable[k] = ReadInt32();
-         }
-
-         // Deduce from both the RLE Header and the frameLength the
-         // fragment length, and again store this infor in a
-         // gdcmRLEFramesInfo.
-         long rleSegmentLength[15];
-         // skipping (not reading) RLE Segments
-         if ( nbRleSegments > 1)
-         {
-            for(unsigned int k = 1; k <= nbRleSegments-1; k++)
-            {
-                rleSegmentLength[k] =  rleSegmentOffsetTable[k+1]
-                                     - rleSegmentOffsetTable[k];
-                ftellRes = ftell(Fp);
-                SkipBytes(rleSegmentLength[k]);
-             }
-          }
-
-          rleSegmentLength[nbRleSegments] = frameLength 
-                                         - rleSegmentOffsetTable[nbRleSegments];
-          ftellRes = ftell(Fp);
-          SkipBytes(rleSegmentLength[nbRleSegments]);
-
-          // Store the collected info
-          gdcmRLEFrame* newFrameInfo = new gdcmRLEFrame;
-          newFrameInfo->NumberFragments = nbRleSegments;
-          for( unsigned int k = 1; k <= nbRleSegments; k++ )
-          {
-             newFrameInfo->Offset[k] = rleSegmentOffsetTable[k];
-             newFrameInfo->Length[k] = rleSegmentLength[k];
-          }
-          RLEInfo.Frames.push_back( newFrameInfo );
-      }
-
-      // Make sure that at the end of the item we encounter a 'Sequence
-      // Delimiter Item':
-      if ( !ReadTag(0xfffe, 0xe0dd) )
+      uint32_t rleSegmentOffsetTable[15];
+      long ftellRes;
+      for( int k = 1; k <= 15; k++ )
       {
-         dbg.Verbose(0, "gdcmDocument::Parse7FE0: no sequence delimiter item");
-         dbg.Verbose(0, "    at end of RLE item sequence");
+         ftellRes = ftell(Fp);
+         rleSegmentOffsetTable[k] = ReadInt32();
       }
+
+      // Deduce from both the RLE Header and the frameLength the
+      // fragment length, and again store this infor in a
+      // gdcmRLEFramesInfo.
+      long rleSegmentLength[15];
+      // skipping (not reading) RLE Segments
+      if ( nbRleSegments > 1)
+      {
+         for(unsigned int k = 1; k <= nbRleSegments-1; k++)
+         {
+             rleSegmentLength[k] =  rleSegmentOffsetTable[k+1]
+                                  - rleSegmentOffsetTable[k];
+             ftellRes = ftell(Fp);
+             SkipBytes(rleSegmentLength[k]);
+          }
+       }
+
+       rleSegmentLength[nbRleSegments] = frameLength 
+                                      - rleSegmentOffsetTable[nbRleSegments];
+       ftellRes = ftell(Fp);
+       SkipBytes(rleSegmentLength[nbRleSegments]);
+
+       // Store the collected info
+       gdcmRLEFrame* newFrameInfo = new gdcmRLEFrame;
+       newFrameInfo->NumberFragments = nbRleSegments;
+       for( unsigned int k = 1; k <= nbRleSegments; k++ )
+       {
+          newFrameInfo->Offset[k] = rleSegmentOffsetTable[k];
+          newFrameInfo->Length[k] = rleSegmentLength[k];
+       }
+       RLEInfo.Frames.push_back( newFrameInfo );
+   }
+
+   // Make sure that at the end of the item we encounter a 'Sequence
+   // Delimiter Item':
+   if ( !ReadTag(0xfffe, 0xe0dd) )
+   {
+      dbg.Verbose(0, "gdcmDocument::ComputeRLEInfo: no sequence delimiter ");
+      dbg.Verbose(0, "    item at end of RLE item sequence");
    }
 }
 
