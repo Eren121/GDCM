@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 22:40:31 $
-  Version:   $Revision: 1.178 $
+  Date:      $Date: 2005/01/11 22:46:22 $
+  Version:   $Revision: 1.179 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2339,7 +2339,7 @@ void Document::SetMaxSizePrintEntry(long newSize)
  *          apparent reason
  * @return  no return
  */
-void Document::HandleBrokenEndian(uint16_t group, uint16_t elem)
+void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
 {
    // Endian reversion. Some files contain groups of tags with reversed endianess.
    static int reversedEndian = 0;
