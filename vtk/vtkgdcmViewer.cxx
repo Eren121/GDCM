@@ -2,15 +2,45 @@
 #include <vtkImageViewer2.h>
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsWriter.h>
+#include <vtkCommand.h>
 
 #include "vtkGdcmReader.h"
+
+//----------------------------------------------------------------------------
+// Callback for the interaction
+class vtkgdcmObserver : public vtkCommand
+{
+  public:
+  virtual char const *GetClassName() const { return "vtkgdcmObserver";}
+  static vtkgdcmObserver *New() 
+    { return new vtkgdcmObserver; }
+  vtkgdcmObserver()
+    {
+      this->ImageViewer = NULL;
+    }
+  virtual void Execute(vtkObject *wdg, unsigned long event, void* calldata)
+    {
+      if ( this->ImageViewer )
+        {
+          if ( event == vtkCommand::CharEvent )
+          {
+            int max = ImageViewer->GetWholeZMax();
+            int slice = (ImageViewer->GetZSlice() + 1 ) % ++max;
+            ImageViewer->SetZSlice( slice );
+            ImageViewer->Render();
+          }
+        }
+    }
+    vtkImageViewer2 *ImageViewer;
+};
+
 
 int main(int argc, char *argv[])
 {
 
   vtkGdcmReader *reader = vtkGdcmReader::New();
   reader->SetFileName( argv[1] );
-  //reader->DebugOn();
+  reader->DebugOn();
   reader->Update();
   
   //print debug info:
@@ -25,6 +55,12 @@ int main(int argc, char *argv[])
 //  float *range = reader->GetOutput()->GetScalarRange();
 //  viewer->SetColorWindow (range[1] - range[0]);
 //  viewer->SetColorLevel (0.5 * (range[1] + range[0]));
+
+  // Here is where we setup the observer, 
+  vtkgdcmObserver *obs = vtkgdcmObserver::New();
+  obs->ImageViewer = viewer;
+  iren->AddObserver(vtkCommand::CharEvent,obs);
+  obs->Delete();
 
   iren->Initialize();
   iren->Start();
