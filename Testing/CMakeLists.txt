@@ -21,7 +21,7 @@ IF (GDCM_DATA_ROOT)
     PrintDicomDir.cxx
     pourFindTaggs.cxx
     testChangeEntete.cxx
-    testDicomDir.cxx      #require DICOMDIR
+    TestDicomDir.cxx      #require DICOMDIR
     BuildUpDicomDir.cxx
     TestReadWrite.cxx
     makeDicomDir.cxx

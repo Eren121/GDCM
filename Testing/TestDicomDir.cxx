@@ -4,20 +4,8 @@
 #include "gdcmDicomDir.h"
 
 #include <fstream>
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif
-#include <string>
-#include <iostream>
 
-#define  ostringstream ostrstream
-//extern "C"
-
-
-int testDicomDir(int argc, char* argv[])
+int TestDicomDir(int argc, char* argv[])
 {  
    gdcmDicomDir *e1;
    ListTag::iterator deb , fin;
