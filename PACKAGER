@@ -31,25 +31,26 @@ Here is the checklist when freezing a version of gdcm:
          cd gdcmPython/
          python testSuite.py
          cd $GDCMHOME
-         \rm -fr build
+         \rm -fr build /tmp/lib
        - Binary distribution:
-         cd $(GDCMHOME)
+         cd $GDCMHOME
          python setup.py bdist --formats=rpm
          su
-         rpm -Uvh dist/gdcmPython-0.[n].i386.rpm
+         rpm -Uvh dist/gdcmPython-0.*.i386.rpm
          cd /usr/lib/python2.2/site-packages/
-         Check out gdcmData
+         ln -s $GDCMHOME/gdcmData .
          cd gdcmPython
          python testSuite.py
          rpm --erase gdcmPython
        - Source distribution and then binary distribution (out of build 
          source distro):
-         cd $(GDCMHOME)
+         cd $GDCMHOME
          python setup.py sdist
          cd /tmp
-         tar zxvf $(GDCMHOME)/dist/gdcmPython-*.tar.gz
+         tar zxvf $GDCMHOME/dist/gdcmPython-*.tar.gz
          cd gdcmPython-*/
          python setup.py bdist --formats=rpm
+         cd dist
          As root, repeat above installation with rpm and test.
          
   2/ Windoze:
