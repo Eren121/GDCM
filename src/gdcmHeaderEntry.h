@@ -37,6 +37,14 @@ public:
    inline void         SetValue(std::string val) { value = val;      };
    inline void         SetVoidArea(void * area)  { voidArea = area;  };
    
+   void                Print (std::ostream & os = std::cout); 
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets the print level for the Dicom Header Elements
+    * \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
+    */
+   void  SetPrintLevel(int level) { printLevel = level; };
+   
    /**
     * \ingroup gdcmHeaderEntry
     * \brief   Sets the offset of the Dicom Element
@@ -118,6 +126,7 @@ private:
    void *voidArea;  // unsecure memory area to hold 'non string' values 
                      // (ie : Lookup Tables, overlays)
    size_t Offset;    // Offset from the begining of file for direct user access
+   int printLevel;
 };
 
 //-----------------------------------------------------------------------------

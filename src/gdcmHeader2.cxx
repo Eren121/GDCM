@@ -27,111 +27,19 @@ void gdcmHeader::Print(std::ostream & os) {
    TSKey v;
    std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
-   std::ostringstream s;
-/*
-// DO NOT remove this code right now.
-   
-   // Tag HT
-   s << "------------- using tagHT ---------------------" << std::endl; 
-   for (TagHeaderEntryHT::iterator tag = tagHT.begin();
-	   tag != tagHT.end();
-	   ++tag){
-      g = tag->second->GetGroup();
-      e = tag->second->GetElement();
-      v = tag->second->GetValue();
-      o = tag->second->GetOffset();
-      d2 = _CreateCleanString(v);  // replace non printable characters by '.'
-
-      s << tag->first << ": ";
-      s << " lgr : " <<tag->second->GetLength();
-      s << ",\t Offset : " << o;
-      s << " x(" << std::hex << o << std::dec << ") ";
-      s << "\t[" << tag->second->GetVR()    << "]";
-      s << "\t[" << tag->second->GetName()  << "]";       
-      s << "\t[" << d2 << "]";
-
-      // Display the UID value (instead of displaying the rough code)  
-      if (g == 0x0002) {  // Some more to be displayed ?
-         if ( (e == 0x0010) || (e == 0x0002) ) 	   
-            s << "  ==>\t[" << ts->GetValue(v) << "]";   
-      } else {
-         if (g == 0x0008) {
-            if ( (e == 0x0016) || (e == 0x1150)  ) 	   
-               s << "  ==>\t[" << ts->GetValue(v) << "]"; 
-         }
-      }              
-      s << std::endl;
-   }
-*/	   
+   std::ostringstream s;   
 	   
-   // List element
    guint32 lgth;
    char greltag[10];  //group element tag
  
    s << "------------ using listEntries ----------------" << std::endl; 
 
-   char st[11];
+   char st[20];
    for (ListTag::iterator i = listEntries.begin();  
 	   i != listEntries.end();
 	   ++i){
-      g = (*i)->GetGroup();
-      e = (*i)->GetElement();
-      v = (*i)->GetValue();
-      o = (*i)->GetOffset();
-      sprintf(greltag,"%04x|%04x ",g,e);           
-      d2 = _CreateCleanString(v);  // replace non printable characters by '.'
-      s << greltag ;
-          
-      if (printLevel>=2) { 
-         s << "lg : ";
-         lgth = (*i)->GetReadLength();
-         if (lgth == 0xffffffff) {
-            sprintf(st,"x(%ff)");
-            s.setf(std::ios::left);
-            s << std::setw(10-strlen(st)) << " ";  
-            s << st << " ";
-            s.setf(std::ios::left);
-            s << std::setw(8) << "-1";      
-         } else {
-            sprintf(st,"x(%x)",lgth);
-            s.setf(std::ios::left);
-            s << std::setw(10-strlen(st)) << " ";  
-            s << st << " ";
-            s.setf(std::ios::left);
-            s << std::setw(8) << lgth; 
-         }
-         s << " Off.: ";
-         sprintf(st,"x(%x)",o); 
-         s << std::setw(10-strlen(st)) << " ";       
-         s << st << " ";
-         s << std::setw(8) << o; 
-      }
-      if (printLevel>=1) {      
-         s << "[" << (*i)->GetVR()  << "] ";
-         s.setf(std::ios::left);
-         s << std::setw(66-(*i)->GetName().length()) << " ";	     	 
-      } 
-        
-      s << "[" << (*i)->GetName()<< "]";       
-      s << " [" << d2 << "]";
-       // Display the UID value (instead of displaying the rough code)  
-      if (g == 0x0002) {  // Any more to be displayed ?
-         if ( (e == 0x0010) || (e == 0x0002) ) 	   
-            s << "  ==>\t[" << ts->GetValue(v) << "]";   
-      } else {
-         if (g == 0x0008) {
-            if ( (e == 0x0016) || (e == 0x1150)  ) 	   
-               s << "  ==>\t[" << ts->GetValue(v) << "]"; 
-         }
-      } 
-      if (e == 0x0000) {        // elem 0x0000 --> group length 
-	 if (v == "4294967295") // to avoid troubles in convertion 
-	    sprintf (st," x(ffffffff)");
-	 else	
-            sprintf(st," x(%08x)",atoi(v.c_str()));
-         s << st;
-      }                     
-      s << std::endl;
+	(*i)->SetPrintLevel(printLevel);
+	(*i)->Print(os);   
    } 
    os<<s.str();
 } 

@@ -136,7 +136,7 @@ public:
    /**
     * \ingroup gdcmHeader
     * \brief   Sets the print level for the Dicom Header 
-    * \note 0 for Light Print; 1 for 'heavy' Print
+    * \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
    void  SetPrintLevel(int level) { printLevel = level; };
    
@@ -174,7 +174,7 @@ public:
  
  
 // ================= Was in EntrySet =================
-   void Print(std::ostream &);
+   void Print(std::ostream & os = std::cout);
    void Add(gdcmHeaderEntry*);				
    bool SetEntryByNumber(std::string content, guint16 group, guint16 element);
    bool SetEntryLengthByNumber(guint32 l, guint16 group, guint16 element);
