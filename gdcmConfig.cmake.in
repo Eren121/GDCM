@@ -1,0 +1,34 @@
+# Tell the user project where to find our headers and libraries
+
+SET(GDCM_INCLUDE_DIRS
+  #"@CMAKE_INSTALL_PREFIX@/include"
+  "@GDCM_SOURCE_DIR@/src"
+  "@GDCM_SOURCE_DIR@/vtk"
+  )
+
+SET(GDCM_LIBRARY_DIRS 
+  #"@CMAKE_INSTALL_PREFIX@/lib"
+  "@GDCM_LIBRARY_PATH@"
+  )
+
+# Tell the user project where to find your build
+# settings and library dependencies
+SET(GDCM_BUILD_SETTING_FILE
+#  "@CMAKE_INSTALL_PREFIX@/lib/gdcm/gdcmBuildSettings.cmake
+#  "@CMAKE_INSTALL_PREFIX@/lib/gdcmBuildSettings.cmake"
+  "@GDCM_BINARY_DIR@/gdcmBuildSettings.cmake"
+  )
+  
+INCLUDE(
+#  "@CMAKE_INSTALL_PREFIX@/lib/gdcm/gdcmLibraryDepends.cmake"
+#  "@CMAKE_INSTALL_PREFIX@/lib/gdcmLibraryDepends.cmake"
+  "@GDCM_BINARY_DIR@/gdcmLibraryDepends.cmake"
+  )
+
+# Tell the user project where to find the "USE" file.
+# This file uses the above settings to configure the user project.
+
+SET(GDCM_USE_FILE
+#  "@CMAKE_INSTALL_PREFIX@/lib/gdcm/gdcmUse.cmake"
+  "@GDCM_SOURCE_DIR@/gdcmUse.cmake"
+  )

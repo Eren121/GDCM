@@ -95,11 +95,34 @@ ENDIF(GDCM_DOXYGEN)
 
 #-----------------------------------------------------------------------------
 # Configure files with settings for use by the build.
-
+# for third party to access gdcm through cmake
 # to be rewritten to include only the necessary
-#CONFIGURE_FILE(${GDCM_SOURCE_DIR}/UseGdcm.cmake.in 
-#               ${GDCM_BINARY_DIR}/UseGdcm.cmake COPYONLY IMMEDIATE)
 
+CONFIGURE_FILE(
+  ${GDCM_SOURCE_DIR}/gdcmConfig.cmake.in 
+  ${GDCM_BINARY_DIR}/gdcmConfig.cmake @ONLY IMMEDIATE
+  )
+
+# Export uor build settings and library
+# dependencies for the use by the user projects.
+INCLUDE(
+  ${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
+
+CMAKE_EXPORT_BUILD_SETTINGS(
+  ${GDCM_BINARY_DIR}/gdcmBuildSettings.cmake
+  )
+
+EXPORT_LIBRARY_DEPENDENCIES(
+  ${GDCM_BINARY_DIR}/gdcmLibraryDepends.cmake
+  )
+
+# Intall the âckaging files for use by FIND_PACKAGE(GDCM) in user projects.
+INSTALL_FILES(/lin/gdcm FILES
+  ${GDCM_SOURCE_DIR}/gdcmUse.cmake
+  ${GDCM_BINARY_DIR}/gdcmConfig.cmake
+  ${GDCM_BINARY_DIR}/gdcmBuildSettings.cmake
+  ${GDCM_BINARY_DIR}/gdcmLibraryDepends.cmake
+  )
 
 #-----------------------------------------------------------------------------
 # Copy / paste from old m4 script:

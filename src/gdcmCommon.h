@@ -24,11 +24,19 @@
 #endif //_MSC_VER
 
 #ifdef __GNUC__
+#ifndef HAVE_NO_STDINT_H
 #include <stdint.h>
 #define guint16 uint16_t
 #define guint32 uint32_t
 #define gint16  int16_t
 #define gint32  int32_t
+#else
+typedef  unsigned short guint16;
+typedef  unsigned int   guint32;
+typedef  short 		gint16;
+typedef  int   		gint32;
+#define UINT32_MAX    (4294967295U)
+#endif //HAVE_NO_STDINT_H
 #endif
 
 #ifdef _MSC_VER 
