@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 19:23:31 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/10 20:52:39 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,10 +57,14 @@ typedef  unsigned int   uint32_t;
 #define UINT32_MAX    (4294967295U)
 #endif
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-#define GDCM_EXPORT __declspec( dllexport )
+#if defined(_WIN32) && defined(BUILD_SHARED_LIBS)
+  #ifdef gdcm_EXPORTS
+    #define GDCM_EXPORT __declspec( dllexport )
+  #else
+    #define GDCM_EXPORT __declspec( dllimport )
+  #endif
 #else
-#define GDCM_EXPORT
+  #define GDCM_EXPORT
 #endif
 
 #include <string>
@@ -78,27 +82,11 @@ namespace gdcm
 #define DICT_TS           "dicomTS.dic"
 #define DICT_VR           "dicomVR.dic"
 
-struct Dummy {};
-template<typename T>
-struct Strings_
-{
-    static std::string const UNKNOWN;
-    static std::string const UNFOUND;
-    static std::string const BINLOADED;
-    static std::string const NOTLOADED;
-    static std::string const UNREAD;
-};
-template<typename T> std::string const Strings_<T>::UNKNOWN   = "gdcm::Unknown";
-template<typename T> std::string const Strings_<T>::UNFOUND   = "gdcm::Unfound";
-template<typename T> std::string const Strings_<T>::BINLOADED = "gdcm::Binary data loaded";
-template<typename T> std::string const Strings_<T>::NOTLOADED = "gdcm::NotLoaded";
-template<typename T> std::string const Strings_<T>::UNREAD    = "gdcm::UnRead";
-typedef Strings_<Dummy> Strings;
-#define GDCM_UNKNOWN   Strings::UNKNOWN
-#define GDCM_UNFOUND   Strings::UNFOUND
-#define GDCM_BINLOADED Strings::BINLOADED
-#define GDCM_NOTLOADED Strings::NOTLOADED
-#define GDCM_UNREAD    Strings::UNREAD
+GDCM_EXPORT extern const std::string GDCM_UNKNOWN;
+GDCM_EXPORT extern const std::string GDCM_UNFOUND;
+GDCM_EXPORT extern const std::string GDCM_BINLOADED;
+GDCM_EXPORT extern const std::string GDCM_NOTLOADED;
+GDCM_EXPORT extern const std::string GDCM_UNREAD;
 
 /// \brief TagKey is made to hold an "universal" (as in URL, Universal
 ///        Ressource Locator)  key to a DocEntry i.e. a dicom tag.
