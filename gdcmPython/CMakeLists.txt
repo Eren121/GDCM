@@ -15,7 +15,7 @@ INCLUDE_DIRECTORIES(
 IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
   # We need to pass that to swig to be sure all modules are generated in the proper dir
-  SET(CMAKE_SWIG_FLAGS "-outdir ${GDCM_BINARY_DIR}/bin")
+  SET(CMAKE_SWIG_FLAGS "-outdir ${GDCM_BINARY_DIR}/gdcmPython")
   # Looks like a bug to me in cmake 2.0.x:
   SEPARATE_ARGUMENTS(CMAKE_SWIG_FLAGS)
 
@@ -193,14 +193,14 @@ IF(GDCM_VTK)
   ENDIF (GDCM_WRAP_PYTHON)
 ENDIF(GDCM_VTK)
 
-  # generate a setup.py according to VTK installation 
-  # put it in subdir in order to not override old one
-  
-  GET_FILENAME_COMPONENT(VTKPATH ${VTK_DIR}/../../ ABSOLUTE)
-  CONFIGURE_FILE(
-      ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
-      ${GDCM_BINARY_DIR}/setup.py
-  )
+# generate a setup.py according to VTK installation
+# put it in subdir in order to not override old one
+
+GET_FILENAME_COMPONENT(VTKPATH ${VTK_DIR}/../../ ABSOLUTE)
+CONFIGURE_FILE(
+    ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
+    ${GDCM_BINARY_DIR}/setup.py
+)
 
 #-----------------------------------------------------------------------------
 # Install stuff:
@@ -211,23 +211,45 @@ ENDIF(GDCM_VTK)
 
 # Create a gdcm.pth file:
 
+FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcmVersion.py
+    "gdcmVERSION=\"${GDCM_VERSION}\"\n"
+    )
+
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcm.pth
     "gdcmPython\n"
     )
 
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
+    "__all__ = [\"core\",\n"
+    "           \"vtk\",\n"
+    "          ]\n"
+    )
+
+FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/core.py
     "import gdcm\n"
+    "GDCM_DATA_PATH     =\"${GDCM_DATA_ROOT}\"\n"
+    "GDCM_TEST_DATA_PATH=\"${GDCM_DATA_ROOT}\"\n"
     )
 
 IF(GDCM_VTK)
-  FILE(APPEND ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
+  FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/vtk.py
     "import os\n"
     "if os.name == 'posix':\n"
     "  from libvtkgdcmPython import *\n"
     "else:\n"
     "  from vtkgdcmPython import *\n"
+    "GDCM_DATA_PATH     =\"${GDCM_DATA_ROOT}\"\n"
+    "GDCM_TEST_DATA_PATH=\"${GDCM_DATA_ROOT}\"\n"
     )
 ENDIF(GDCM_VTK)
+
+#-----------------------------------------------------------------------------
+# Copy the testSuite.py file
+CONFIGURE_FILE(
+    ${GDCM_SOURCE_DIR}/gdcmPython/testSuite.py
+    ${GDCM_BINARY_DIR}/gdcmPython/testSuite.py
+    COPYONLY
+)
 
 #-----------------------------------------------------------------------------
 # Add test from demo subdir:

@@ -271,6 +271,7 @@ using namespace gdcm;
 %ignore gdcm::Header::Header();
 %ignore gdcm::DicomDir::DicomDir();
 
+// Ignore all placed in gdcmCommon.h
 %ignore GDCM_UNKNOWN;
 %ignore GDCM_UNFOUND;
 %ignore GDCM_BINLOADED;

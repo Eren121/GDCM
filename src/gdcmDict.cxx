@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/01/12 15:23:44 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,8 +65,8 @@ Dict::Dict(std::string const &filename)
       }
 
       Filename = filename;
+      from.close();
    }
-   from.close();
 }
 
 /**

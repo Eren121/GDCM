@@ -1,4 +1,7 @@
 2005-01-11 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Bug fix for the python part use
+   
+2005-01-11 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * gdcmPython/gdcm.i : bug fix when compiling with MSCV
 
 2005-01-11 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
