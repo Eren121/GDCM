@@ -33,8 +33,8 @@ public:
 
    void Print(std::ostream& os);
 
-   std::list<std::string> * GetPubDictTagNames(void);
-   std::map<std::string, std::list<std::string> >*
+   std::list<std::string> *GetPubDictTagNames(void);
+   std::map<std::string, std::list<std::string> > *
        GetPubDictTagNamesByCategory(void);
 
    void LoadDictFromFile(std::string FileName, DictKey Name);
@@ -43,7 +43,7 @@ public:
    gdcmDict *GetDefaultPubDict(void);
 
    gdcmDictEntry *NewVirtualDictEntry(guint16 group, guint16 element,
-                                      std::string vr = "Unknown",
+                                      std::string vr     = "Unknown",
                                       std::string fourth = "Unknown",
                                       std::string name   = "Unknown");
 

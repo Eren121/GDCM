@@ -48,13 +48,20 @@ public:
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
    void SetPrintLevel(int level) { printLevel = level; };
-   virtual void PrintPubEntry(std::ostream & os = std::cout);
-   virtual void PrintPubDict (std::ostream & os = std::cout);
-   virtual void PrintShaDict (std::ostream & os = std::cout);
+   virtual void PrintPubEntry(std::ostream &os = std::cout);
+   virtual void PrintPubDict (std::ostream &os = std::cout);
+   virtual void PrintShaDict (std::ostream &os = std::cout);
 
-// Standard values and informations contained in the header
+// Standard values
    inline std::string GetFileName(void) {return filename;}
 
+// Dictionnaries
+   gdcmDict *GetPubDict(void);
+   gdcmDict *GetShaDict(void);
+   bool SetShaDict(gdcmDict *dict);
+   bool SetShaDict(DictKey dictName);
+
+// Informations contained in the parser
    bool IsReadable(void);
    bool IsImplicitVRLittleEndianTransferSyntax(void);
    bool IsExplicitVRLittleEndianTransferSyntax(void);
@@ -158,6 +165,10 @@ private:
    gdcmHeaderEntry *ReadNextHeaderEntry   (void);
    gdcmHeaderEntry *NewHeaderEntryByNumber(guint16 group, guint16 element);
    gdcmHeaderEntry *NewHeaderEntryByName  (std::string Name);
+   gdcmDictEntry *NewVirtualDictEntry(guint16 group, guint16 element,
+                                      std::string vr = "Unknown",
+                                      std::string fourth = "Unknown",
+                                      std::string name   = "Unknown");
 
    // Deprecated (Not used)
    gdcmHeaderEntry *NewManualHeaderEntryToPubDict(std::string NewTagName,
@@ -167,33 +178,17 @@ private:
    // Refering underlying filename.
    std::string filename; 
 
-   // Pointer to the Value Representation Hash Table which contains all
-   // the VR of the DICOM version3 public dictionary. 
-   gdcmVR *dicom_vr;     // Not a class member for thread-safety reasons
-   
-   // Pointer to the Transfert Syntax Hash Table which contains all
-   // the TS of the DICOM version3 public dictionary. 
-   gdcmTS *dicom_ts;     // Not a class member for thread-safety reasons 
-     
-   // Pointer to global dictionary container
-   gdcmDictSet *Dicts;   // Not a class member for thread-safety reasons
-   
    // Public dictionary used to parse this header
    gdcmDict *RefPubDict;
-   
-   // Optional "shadow dictionary" (private elements) used to parse this
-   // header
+   // Optional "shadow dictionary" (private elements) used to parse this header
    gdcmDict *RefShaDict;
 
    TagHeaderEntryHT tagHT; // H Table (multimap), to provide fast access
    ListTag listEntries;    // chained list, to keep the 'spacial' ordering 
+   int enableSequences;
 
    // true if a gdcmHeaderEntry was added post parsing 
    int wasUpdated;
-   // for PrintHeader
-   int printLevel;
-
-   int enableSequences;
 
    // Swap code e.g. little, big, bad-big, bad-little endian). Warning:
    // this code is not fixed during header parsing.
@@ -204,6 +199,9 @@ private:
    // this upper bound is fixed to 1024 bytes (which might look reasonable
    // when one considers the definition of the various VR contents).
    guint32 MaxSizeLoadEntry;
+
+   // for PrintHeader
+   int printLevel;
 };
 
 //-----------------------------------------------------------------------------

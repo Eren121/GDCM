@@ -5,6 +5,9 @@
 
 #include "gdcmCommon.h"
 #include "gdcmDictEntry.h"
+
+#include <iostream>
+#include <list>
 #include <map>
 
 //-----------------------------------------------------------------------------
@@ -27,35 +30,40 @@ public:
    gdcmDict(std::string & FileName);
 	~gdcmDict();
 
-	void Print(std::ostream&);
-	void PrintByKey(std::ostream&);
-	void PrintByName(std::ostream&);	
+// Print
+	void Print(std::ostream &os = std::cout);
+	void PrintByKey(std::ostream &os = std::cout);
+	void PrintByName(std::ostream &os = std::cout);	
 
-   bool AddNewEntry (gdcmDictEntry* NewEntry);
-	bool ReplaceEntry(gdcmDictEntry* NewEntry);
+// Entries
+   bool AddNewEntry (gdcmDictEntry *NewEntry);
+	bool ReplaceEntry(gdcmDictEntry *NewEntry);
 	bool RemoveEntry (TagKey key);
 	bool RemoveEntry (guint16 group, guint16 element);
 
-	gdcmDictEntry * GetTagByNumber(guint16 group, guint16 element);
+// Tag
 	gdcmDictEntry * GetTagByName(TagName name);
+	gdcmDictEntry * GetTagByNumber(guint16 group, guint16 element);
+
+   std::list<std::string> *GetTagNames(void);
+   std::map<std::string, std::list<std::string> > *
+        GetTagNamesByCategory(void);
 
    /**
     * \ingroup gdcmDict
     * \brief   returns a ref to the Dicom Dictionary H table (map)
     * return the Dicom Dictionary H table
     */
-   inline TagKeyHT & gdcmDict::GetEntries(void)  {
-    return KeyHt; 
-   }
+   inline TagKeyHT & gdcmDict::GetEntries(void)  { return KeyHt; }
  
 private:
    std::string name;
    std::string filename;
+
    /// Access through TagKey (see alternate access with NameHt)
 	TagKeyHT  KeyHt;
    /// Access through TagName (see alternate access with KeyHt)
 	TagNameHT NameHt;
-
 };
 
 //-----------------------------------------------------------------------------

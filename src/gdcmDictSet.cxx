@@ -80,14 +80,7 @@ void gdcmDictSet::Print(std::ostream& os)
  */
 std::list<std::string> *gdcmDictSet::GetPubDictTagNames(void) 
 {
-   std::list<std::string> *Result = new std::list<std::string>;
-   TagKeyHT entries = GetDefaultPubDict()->GetEntries();
-   
-   for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag)
-   {
-      Result->push_back( tag->second->GetName() );
-   }
-   return Result;
+   return(GetDefaultPubDict()->GetTagNames());
 }
 
 /** 
@@ -116,14 +109,7 @@ std::list<std::string> *gdcmDictSet::GetPubDictTagNames(void)
  */
 std::map<std::string, std::list<std::string> > *gdcmDictSet::GetPubDictTagNamesByCategory(void) 
 {
-   std::map<std::string, std::list<std::string> > *Result = new std::map<std::string, std::list<std::string> >;
-   TagKeyHT entries = GetDefaultPubDict()->GetEntries();
-
-   for (TagKeyHT::iterator tag = entries.begin(); tag != entries.end(); ++tag)
-   {
-      (*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
-   }
-   return Result;
+   return(GetDefaultPubDict()->GetTagNamesByCategory());
 }
 
 /**

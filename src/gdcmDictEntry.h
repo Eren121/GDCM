@@ -16,7 +16,8 @@
  *  - the owner group
  *  - etc.
  */
-class GDCM_EXPORT gdcmDictEntry {
+class GDCM_EXPORT gdcmDictEntry 
+{
 public:
    gdcmDictEntry(guint16 group, 
                  guint16 element,
@@ -25,6 +26,7 @@ public:
                  std::string name   = "Unknown");
 	
    static TagKey TranslateToKey(guint16 group, guint16 element);
+
    void SetVR(std::string);
 
    /**
@@ -33,47 +35,35 @@ public:
     *              
     * @return 
     */
-   inline bool gdcmDictEntry::IsVRUnknown() {
-	   if ( vr == "Unknown" )
-		   return true;
-	   return false;
-   }
+   inline bool IsVRUnknown() {return vr == "Unknown"; }
 
    /**
     * \ingroup gdcmDictEntry
     * \brief   returns the Dicom Group Number of the current gdcmDictEntry
     * return the Dicom Group Number
     */
-   inline guint16 gdcmDictEntry::GetGroup(void)  {
-    return group; 
-   }
+   inline guint16 GetGroup(void) { return group; }
   
    /**
     * \ingroup gdcmDictEntry
     * \brief   returns the Dicom Element Number of the current gdcmDictEntry
     * return the Dicom Element Number
     */
-   inline guint16 gdcmDictEntry::GetElement(void)  {
-    return element; 
-   }
+   inline guint16 GetElement(void) { return element; }
  
    /**
     * \ingroup gdcmDictEntry
     * \brief   returns the Dicom Value Representation of the current gdcmDictEntry
     * return the Dicom Value Representation
     */
-   inline std::string gdcmDictEntry::GetVR(void)  {
-    return vr; 
-   }
+   inline std::string GetVR(void) { return vr; }
  
    /**
     * \ingroup gdcmDictEntry
     * \brief   sets the key of the current gdcmDictEntry
     * @param k New key to be set.
     */
-   inline void gdcmDictEntry::SetKey(std::string k)  {
-    key = k; 
-   }
+   inline void SetKey(std::string k)  { key = k; }
  
    /**
     * \ingroup gdcmDictEntry
@@ -83,9 +73,7 @@ public:
     * \        NEVER use it
     * return the Fourth field
     */
-   inline std::string gdcmDictEntry::GetFourth(void)  {
-    return fourth; 
-   } 
+   inline std::string GetFourth(void) { return fourth; } 
 
    /**
     * \ingroup gdcmDictEntry
@@ -93,34 +81,30 @@ public:
     * \        e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
     * return the Dicom Name
     */
-   inline std::string gdcmDictEntry::GetName(void)  {
-    return name; 
-   } 
+   inline std::string GetName(void) { return name; } 
  
    /**
     * \ingroup gdcmDictEntry
     * \brief   Gets the key of the current gdcmDictEntry
     * @return the key .
     */
-   inline std::string gdcmDictEntry::GetKey(void)  {
-    return key; 
-   }
+   inline std::string GetKey(void) { return key; }
 
 private:
    // FIXME : were are the group and element used except from building up
    //         a TagKey. If the answer is nowhere then there is no need
    //         to store the group and element independently.
-   guint16 group;       // e.g. 0x0010
-   guint16 element;     // e.g. 0x0103
-   std::string  vr;     // Value Representation i.e. some clue about the nature
+   guint16 group;   // e.g. 0x0010
+   guint16 element; // e.g. 0x0103
+   std::string vr; // Value Representation i.e. some clue about the nature
 	                // of the data represented e.g. "FD" short for
 	                // "Floating Point Double"
 	// CLEANME: find the official dicom name for this field !
-   std::string  fourth; // Fourth field containing some semantics.
-                        //(Group Name abbr.)
-   std::string  name;   // e.g. "Patient_Name"
-   TagKey  key;         // Redundant with (group, element) but we add it
-                        // on efficiency purposes.
+   std::string fourth; // Fourth field containing some semantics.
+                       //(Group Name abbr.)
+   std::string name; // e.g. "Patient_Name"
+   TagKey  key;      // Redundant with (group, element) but we add it
+                     // on efficiency purposes.
 
 	// DCMTK has many fields for handling a DictEntry (see below). What are the
 	// relevant ones for gdcmlib ?

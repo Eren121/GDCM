@@ -58,10 +58,11 @@ gdcmDict::~gdcmDict() {
       if ( EntryToDelete )
          delete EntryToDelete;
    }
-   KeyHt.clear();
+
    // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
    // assume all the pointed gdcmDictEntries are already cleaned-up when
    // we cleaned KeyHt.
+   KeyHt.clear();
    NameHt.clear();
 }
 
@@ -72,7 +73,7 @@ gdcmDict::~gdcmDict() {
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
  */
-void gdcmDict::Print(std::ostream& os) {
+void gdcmDict::Print(std::ostream &os) {
    PrintByKey(os);
 }
 
@@ -82,7 +83,7 @@ void gdcmDict::Print(std::ostream& os) {
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
  */
-void gdcmDict::PrintByKey(std::ostream& os) {
+void gdcmDict::PrintByKey(std::ostream &os) {
    std::ostringstream s;
 
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag){
@@ -126,15 +127,20 @@ void gdcmDict::PrintByName(std::ostream& os) {
  * @param   NewEntry 
  * @return  false if Dicom Element already existed
  */
- bool gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
+bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry) 
+{
    TagKey key;
    key = NewEntry->GetKey();
 	
-   if(KeyHt.count(key) == 1) {
+   if(KeyHt.count(key) == 1)
+   {
       dbg.Verbose(1, "gdcmDict::AddNewEntry already present", key.c_str());
       return(false);
-   } else {
+   } 
+   else 
+   {
       KeyHt[NewEntry->GetKey()] = NewEntry;
+      NameHt[NewEntry->GetName()] = NewEntry;
       return(true);
    }
 }
@@ -145,9 +151,10 @@ void gdcmDict::PrintByName(std::ostream& os) {
  * @param   NewEntry
  * @return  false if Dicom Element doesn't exist
  */
-bool gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
+bool gdcmDict::ReplaceEntry(gdcmDictEntry *NewEntry) {
    if ( RemoveEntry(NewEntry->gdcmDictEntry::GetKey()) ) {
-       KeyHt[ NewEntry->GetKey()] = NewEntry;
+       KeyHt[NewEntry->GetKey()] = NewEntry;
+       NameHt[NewEntry->GetName()] = NewEntry;
        return (true);
    } 
    return (false);
@@ -160,14 +167,23 @@ bool gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
  * @param   key (group|element)
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool gdcmDict::RemoveEntry(TagKey key) {
-   if(KeyHt.count(key) == 1) {
+bool gdcmDict::RemoveEntry(TagKey key) 
+{
+   if(KeyHt.count(key) == 1) 
+   {
       gdcmDictEntry* EntryToDelete = KeyHt.find(key)->second;
+
       if ( EntryToDelete )
+      {
+         NameHt.erase(EntryToDelete->GetName());
          delete EntryToDelete;
+      }
+
       KeyHt.erase(key);
       return (true);
-   } else {
+   } 
+   else 
+   {
       dbg.Verbose(1, "gdcmDict::RemoveEntry unfound entry", key.c_str());
       return (false);
   }
@@ -188,20 +204,6 @@ bool gdcmDict::RemoveEntry (guint16 group, guint16 element) {
 
 /**
  * \ingroup gdcmDict
- * \brief   Get the dictionnary entry identified by a given tag (group,element)
- * @param   group   group of the entry to be found
- * @param   element element of the entry to be found
- * @return  the corresponding dictionnary entry when existing, NULL otherwise
- */
-gdcmDictEntry * gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! KeyHt.count(key))
-      return (gdcmDictEntry*)0; 
-   return KeyHt.find(key)->second;
-}
-
-/**
- * \ingroup gdcmDict
  * \brief   Get the dictionnary entry identified by it's name.
  * @param   name element of the ElVal to modify
  * \warning : NEVER use it !
@@ -209,10 +211,76 @@ gdcmDictEntry * gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
  *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry * gdcmDict::GetTagByName(TagName name) {
+gdcmDictEntry *gdcmDict::GetTagByName(TagName name) {
    if ( ! NameHt.count(name))
-      return (gdcmDictEntry*)0; 
+      return NULL; 
    return NameHt.find(name)->second;
+}
+
+/**
+ * \ingroup gdcmDict
+ * \brief   Get the dictionnary entry identified by a given tag (group,element)
+ * @param   group   group of the entry to be found
+ * @param   element element of the entry to be found
+ * @return  the corresponding dictionnary entry when existing, NULL otherwise
+ */
+gdcmDictEntry *gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! KeyHt.count(key))
+      return NULL; 
+   return KeyHt.find(key)->second;
+}
+
+/** 
+ * \ingroup gdcmDict
+ * \brief   Consider all the entries of the public dicom dictionnary. 
+ *          Build all list of all the tag names of all those entries.
+ * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
+ * @return  A list of all entries of the public dicom dictionnary.
+ */
+std::list<std::string> *gdcmDict::GetTagNames(void) 
+{
+   std::list<std::string> *Result = new std::list<std::string>;
+   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
+   {
+      Result->push_back( tag->second->GetName() );
+   }
+   return Result;
+}
+
+/** 
+ * \ingroup gdcmDict
+ * \brief   Consider all the entries of the public dicom dictionnary.
+ *          Build an hashtable whose keys are the names of the groups
+ *          (fourth field in each line of dictionary) and whose corresponding
+ *          values are lists of all the dictionnary entries among that
+ *          group. Note that apparently the Dicom standard doesn't explicitely
+ *          define a name (as a string) for each group.
+ *          A typical usage of this method would be to enable a dynamic
+ *          configuration of a Dicom file browser: the admin/user can
+ *          select in the interface which Dicom tags should be displayed.
+ * \warning Dicom *doesn't* define any name for any 'categorie'
+ *          (the dictionnary fourth field was formerly NIH defined
+ *           - and no longer he is-
+ *           and will be removed when Dicom provides us a text file
+ *           with the 'official' Dictionnary, that would be more friendly
+ *           than asking us to perform a line by line check of the dictionnary
+ *           at the beginning of each year to -try to- guess the changes)
+ *           Therefore : please NEVER use that fourth field :-(
+ * *
+ * @return  An hashtable: whose keys are the names of the groups and whose
+ *          corresponding values are lists of all the dictionnary entries
+ *          among that group.
+ */
+std::map<std::string, std::list<std::string> > *gdcmDict::GetTagNamesByCategory(void) 
+{
+   std::map<std::string, std::list<std::string> > *Result = new std::map<std::string, std::list<std::string> >;
+
+   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
+   {
+      (*Result)[tag->second->GetFourth()].push_back(tag->second->GetName());
+   }
+   return Result;
 }
 
 //-----------------------------------------------------------------------------

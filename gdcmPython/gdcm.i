@@ -98,13 +98,14 @@ extern gdcmGlobal gdcmGlob;
 
 ////////////////////////////////////////////////////////////////////////////
 // Deals with function returning a C++ string.
-%typemap(out) string  {
-    $result = PyString_FromString(($1).c_str());
-}
-%typemap(out) std::string  {
+%typemap(out) string, std::string  {
     $result = PyString_FromString(($1).c_str());
 }
 
+%typemap(python, in) const std::string, std::string
+{
+  $1 = PyString_AsString($input);
+}
 ////////////////////////////////////////////////////////////////////////////
 %include "gdcmCommon.h"
 %include "gdcmDictEntry.h"

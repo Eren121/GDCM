@@ -81,10 +81,8 @@ gdcmParser::gdcmParser(bool exception_on_error)
  */
 gdcmParser::~gdcmParser (void) 
 {
-   dicom_vr =   (gdcmVR*)0; 
-   Dicts    =   (gdcmDictSet*)0;
-   RefPubDict = (gdcmDict*)0;
-   RefShaDict = (gdcmDict*)0;
+   RefPubDict = NULL;
+   RefShaDict = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -99,12 +97,7 @@ void gdcmParser::PrintPubEntry(std::ostream & os)
 {
    std::ostringstream s;   
 	   
-//   guint32 lgth;
-//   char greltag[10];  //group element tag
- 
    s << "------------ using listEntries ----------------" << std::endl; 
-
-//   char st[20];
    for (ListTag::iterator i = listEntries.begin();  
 	   i != listEntries.end();
 	   ++i)
@@ -137,6 +130,46 @@ void gdcmParser::PrintShaDict(std::ostream & os)
 
 //-----------------------------------------------------------------------------
 // Public
+/**
+ * \ingroup gdcmParser
+ * \brief   Get the public dictionary used
+ */
+gdcmDict *gdcmParser::GetPubDict(void)
+{
+   return(RefPubDict);
+}
+
+/**
+ * \ingroup gdcmParser
+ * \brief   Get the shadow dictionary used
+ */
+gdcmDict *gdcmParser::GetShaDict(void)
+{
+   return(RefShaDict);
+}
+
+/**
+ * \ingroup gdcmParser
+ * \brief   Set the shadow dictionary used
+ * \param   dict dictionary to use in shadow
+ */
+bool gdcmParser::SetShaDict(gdcmDict *dict)
+{
+   RefShaDict=dict;
+   return(!RefShaDict);
+}
+
+/**
+ * \ingroup gdcmParser
+ * \brief   Set the shadow dictionary used
+ * \param   dictName name of the dictionary to use in shadow
+ */
+bool gdcmParser::SetShaDict(DictKey dictName)
+{
+   RefShaDict=gdcmGlobal::GetDicts()->GetDict(dictName);
+   return(!RefShaDict);
+}
+
 /**
  * \ingroup gdcmParser
  * \brief  This predicate, based on hopefully reasonable heuristics,
@@ -569,40 +602,6 @@ bool gdcmParser::SetEntryByName(std::string content,std::string tagName)
 
    return(SetEntryByNumber(content,dictEntry->GetGroup(),
                                    dictEntry->GetElement()));
-/*   TagKey key = gdcmDictEntry::TranslateToKey(dictEntry->GetGroup(), 
-                                              dictEntry->GetElement());
-   if ( GetPubEntry().count(key) == 0 )
-      return false;
-
-   int l = content.length();
-   if(l%2) // Odd length are padded with a space (020H).
-   {  
-      l++;
-      content = content + '\0';
-   }
-      
-   //tagHt[key]->SetValue(content);   
-   gdcmHeaderEntry * a;
-   IterHT p;
-   TagHeaderEntryHT::iterator p2;
-   // DO NOT remove the following lines : they explain how the stuff works 
-   //p= tagHt.equal_range(key); // get a pair of iterators first-last synonym
-   //p2=p.first;                // iterator on the first synonym 
-   //a=p2->second;              // H Table target column (2-nd col)    
-   // or, easier :
-   a = ((GetPubEntry().equal_range(key)).first)->second;       
-   a-> SetValue(content);   
-   std::string vr = a->GetVR();
-   
-   guint32 lgr;
-   if( (vr == "US") || (vr == "SS") ) 
-      lgr = 2;
-   else if( (vr == "UL") || (vr == "SL") )
-      lgr = 4;
-   else
-      lgr = l;	   
-   a->SetLength(lgr);   
-   return true;*/
 }
 
 /**
@@ -1370,7 +1369,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry * newHeaderEntry)
          if (!NewTag) 
          {
             // This correct tag is not in the dictionary. Create a new one.
-            NewTag = Dicts->NewVirtualDictEntry(CorrectGroup, CorrectElem);
+            NewTag = NewVirtualDictEntry(CorrectGroup, CorrectElem);
          }
          // FIXME this can create a memory leaks on the old entry that be
          // left unreferenced.
@@ -1444,7 +1443,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *ElVal)
    // CLEANME searching the dicom_vr at each occurence is expensive.
    // PostPone this test in an optional integrity check at the end
    // of parsing or only in debug mode.
-   if ( RealExplicit && !dicom_vr->Count(vr) )
+   if ( RealExplicit && !gdcmGlobal::GetVR()->Count(vr) )
       RealExplicit= false;
 
    if ( RealExplicit ) 
@@ -1465,7 +1464,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *ElVal)
       // be unwise to overwrite the VR of a dictionary (since it would
       // compromise it's next user), we need to clone the actual DictEntry
       // and change the VR for the read one.
-      gdcmDictEntry* NewTag = Dicts->NewVirtualDictEntry(ElVal->GetGroup(),
+      gdcmDictEntry* NewTag = NewVirtualDictEntry(ElVal->GetGroup(),
                                  ElVal->GetElement(),
                                  vr,
                                  "FIXME",
@@ -1725,10 +1724,7 @@ void gdcmParser::SkipBytes(guint32 NBytes)
  */
 void gdcmParser::Initialise(void) 
 {
-   dicom_vr = gdcmGlobal::GetVR();
-   dicom_ts = gdcmGlobal::GetTS();
-   Dicts    = gdcmGlobal::GetDicts();
-   RefPubDict = Dicts->GetDefaultPubDict();
+   RefPubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
    RefShaDict = (gdcmDict*)0;
 }
 
@@ -2065,7 +2061,7 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
 {
    gdcmDictEntry *NewTag = GetDictEntryByName(Name);
    if (!NewTag)
-      NewTag = Dicts->NewVirtualDictEntry(0xffff, 0xffff, "LO", "Unknown", Name);
+      NewTag = NewVirtualDictEntry(0xffff, 0xffff, "LO", "Unknown", Name);
 
    gdcmHeaderEntry* NewElVal = new gdcmHeaderEntry(NewTag);
    if (!NewElVal) 
@@ -2076,6 +2072,23 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
    }
    return NewElVal;
 }  
+
+/**
+ * \ingroup gdcmParser
+ * \brief   Request a new virtual dict entry to the dict set
+ * @param   Group  group   of the underlying DictEntry
+ * @param   Elem   element of the underlying DictEntry
+ * @param   VR     VR of the underlying DictEntry
+ * @param   Fourth owner group
+ * @param   Name   english name
+ */
+gdcmDictEntry *gdcmParser::NewVirtualDictEntry(guint16 group, guint16 element,
+                                               std::string vr,
+                                               std::string fourth,
+                                               std::string name)
+{
+   return gdcmGlobal::GetDicts()->NewVirtualDictEntry(group,element,vr,fourth,name);
+}
 
 /**
  * \ingroup gdcmParser
@@ -2090,7 +2103,7 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByNumber(guint16 Group, guint16 Elem)
    // Find out if the tag we encountered is in the dictionaries:
    gdcmDictEntry *NewTag = GetDictEntryByNumber(Group, Elem);
    if (!NewTag)
-      NewTag = Dicts->NewVirtualDictEntry(Group, Elem);
+      NewTag = NewVirtualDictEntry(Group, Elem);
 
    gdcmHeaderEntry* NewElVal = new gdcmHeaderEntry(NewTag);
    if (!NewElVal) 
@@ -2128,7 +2141,7 @@ gdcmHeaderEntry *gdcmParser::NewManualHeaderEntryToPubDict(std::string NewTagNam
       return NULL;
    }
 
-   NewEntry = Dicts->NewVirtualDictEntry(StuffGroup, FreeElem,
+   NewEntry = NewVirtualDictEntry(StuffGroup, FreeElem,
                                 VR, "GDCM", NewTagName);
    NewElVal = new gdcmHeaderEntry(NewEntry);
    AddHeaderEntry(NewElVal);

@@ -53,7 +53,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 ProjDir=.
 SOURCE="$(InputPath)"
-PostBuild_Cmds=move                  $(ProjDir)\gdcm.py                  $(ProjDir)\..\ 
+PostBuild_Cmds=move                   $(ProjDir)\gdcm.py                   $(ProjDir)\..\ 
 # End Special Build Tool
 # Begin Target
 
@@ -108,10 +108,6 @@ SOURCE=..\..\src\gdcmHeaderEntry.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdcmHeaderEntrySet.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\gdcmHeaderHelper.cxx
 # End Source File
 # Begin Source File
@@ -128,7 +124,11 @@ SOURCE=..\..\src\gdcmJpeg2000.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdcmParse.cxx
+SOURCE=..\..\src\gdcmParsePixels.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\gdcmParser.cxx
 # End Source File
 # Begin Source File
 

@@ -70,6 +70,7 @@ except ImportError,e:
    raise ImportError, "gdcm extension not imported."
 
 ### Expose only the necessary stuff
+gdcmGlobal       = gdcm.gdcmGlobal
 gdcmDictSet      = gdcm.gdcmDictSet
 gdcmHeader       = gdcm.gdcmHeader
 gdcmHeaderHelper = gdcm.gdcmHeaderHelper

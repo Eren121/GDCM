@@ -60,10 +60,12 @@ TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
  *              is unset then overwrite it.
  * @param NewVr New V(alue) R(epresentation) to be set.
  */
-void gdcmDictEntry::SetVR(std::string NewVr) {
+void gdcmDictEntry::SetVR(std::string NewVr) 
+{
 	if ( IsVRUnknown() )
 		vr = NewVr;
-	else {
+	else 
+   {
 		dbg.Error(true, "gdcmDictEntry::SetVR",
 		          "Overwriting vr might compromise a dictionary");
 	}
