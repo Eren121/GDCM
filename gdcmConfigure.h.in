@@ -1,1 +1,11 @@
+#define __STDC_LIMIT_MACROS
+
+#define PUB_DICT_PATH "@GDCM_PUB_DICT_PATH@"
+
 #define GDCM_DATA_ROOT "@GDCM_DATA_ROOT@"
+
+#cmakedefine GDCM_NO_ANSI_STRING_STREAM
+
+#cmakedefine HAVE_NO_STDINT_H 
+
+

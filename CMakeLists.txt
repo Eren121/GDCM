@@ -63,6 +63,32 @@ FIND_PATH(GDCM_DATA_ROOT gdcm-ACR-LibIDO.acr
 # Deals with problem on SunOS:
 # ostrstream vs. ostringstream
 
+#-----------------------------------------------------------------------------
+# Why one should not use ADD_DEFINITIONS
+# http://www.cmake.org/pipermail/cmake/2003-September/004286.html
+
+#-----------------------------------------------------------------------------
+# __STDC_LIMIT_MACROS -> Refer to stdint.h
+# http://www.cmake.org/pipermail/cmake/2003-October/004369.html
+# http://www.cmake.org/pipermail/cmake/2003-October/004373.html
+
+#SET(GDCM_COMPILE_FLAGS  "-D__STDC_LIMIT_MACROS  -DPUB_DICT_PATH=\\\"${CMAKE_INSTALL_PREFIX}${GDCM_DATA_DIR}\\\""  )
+
+SET( GDCM_PUB_DICT_PATH "${CMAKE_INSTALL_PREFIX}${GDCM_DATA_DIR}")
+
+# SunOS + old gcc fixes:
+INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityCXX.cmake)
+IF(CMAKE_NO_ANSI_STRING_STREAM)
+  SET(GDCM_NO_ANSI_STRING_STREAM 1)
+ENDIF(CMAKE_NO_ANSI_STRING_STREAM)
+
+INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
+CHECK_INCLUDE_FILE("stdint.h"    CMAKE_HAVE_STDINT_H)
+
+IF(NOT CMAKE_HAVE_STDINT_H)
+  SET(GDCM_HAVE_NO_STDINT_H 1)
+ENDIF(NOT CMAKE_HAVE_STDINT_H)
+
 #SET(GDCM_NO_ANSI_STRING_STREAM
 #  ${CMAKE_NO_ANSI_STRING_STREAM}
 #)

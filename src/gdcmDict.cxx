@@ -8,13 +8,6 @@
 #include <iostream>
 #include <iomanip>
 
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**

@@ -4,6 +4,7 @@
 #define GDCMPARSER_H
 
 #include "gdcmCommon.h"
+
 #include "gdcmVR.h"
 #include "gdcmTS.h"
 #include "gdcmException.h"
@@ -12,6 +13,8 @@
 
 #include <map>
 #include <list>
+
+
 
 //-----------------------------------------------------------------------------
 typedef std::string VRKey;

@@ -5,12 +5,6 @@
 #include <fstream>
 #include <stdlib.h>  // For getenv
 
-#define PUB_DICT_NAME     "DicomV3Dict"
-#ifndef PUB_DICT_PATH
-#  define PUB_DICT_PATH     "../Dicts/"
-#endif
-#define PUB_DICT_FILENAME "dicomV3.dic"
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /** 

@@ -3,6 +3,8 @@
 #ifndef GDCMCOMMON_H
 #define GDCMCOMMON_H
 
+#include "gdcmConfigure.h"
+
 //-----------------------------------------------------------------------------
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -29,7 +31,12 @@
 //-----------------------------------------------------------------------------
 #ifdef __GNUC__
 #ifndef HAVE_NO_STDINT_H
+//#if defined __STDC_LIMIT_MACROS
+//#endif
 #include <stdint.h>
+//#ifdef UINT32_MAX
+//#error hehrehhehehehe2
+//#endif
 #define guint16 uint16_t
 #define guint32 uint32_t
 #define gint16  int16_t
@@ -58,6 +65,25 @@ typedef  int   		gint32;
 #define GDCM_EXPORT
 #endif
 
+// ifdef for old gcc / broken compiler
+#ifdef GDCM_NO_ANSI_STRING_STREAM
+#  include <strstream>
+#  define  ostringstream ostrstream
+# else
+#  include <sstream>
+#endif
+
+
+// Centralize information about the gdcm dictionary in only one file:
+#ifndef PUB_DICT_PATH
+#  define PUB_DICT_PATH     "../Dicts/"
+#endif
+#define PUB_DICT_NAME     "DicomV3Dict"
+#define PUB_DICT_FILENAME "dicomV3.dic"
+#define DICT_ELEM "DicomDir.dic"
+#define DICT_TS "dicomTS.dic"
+#define DICT_VR "dicomVR.dic"
+
 #include <string>
 
 const std::string GDCM_UNFOUND = "gdcm::Unfound";
@@ -72,9 +98,6 @@ enum FileType {
       ACR,
       ACR_LIBIDO
 };
-
-//For now gdcm is not willing cmake, try to be more quiet
-//#cmakedefine GDCM_NO_ANSI_STRING_STREAM
 
 //-----------------------------------------------------------------------------
 #endif

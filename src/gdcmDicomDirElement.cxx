@@ -3,22 +3,12 @@
 #include <fstream>
 #include <stdio.h>    // For sprintf
 #include <iostream>
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif
 
 #include "gdcmDicomDirElement.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include "gdcmDictSet.h"
 
-#ifndef PUB_DICT_PATH
-#  define PUB_DICT_PATH     "../Dicts/"
-#endif
-#define DICT_ELEM "DicomDir.dic"
 
 /**
  * \ingroup gdcmDicomDirElement

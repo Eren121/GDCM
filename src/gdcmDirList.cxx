@@ -6,13 +6,6 @@
 #include <iostream>
 #include <algorithm>
 
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-   #include <strstream>
-   #define  ostringstream ostrstream
-#else
-   #include <sstream>
-#endif
-
 #ifdef _MSC_VER 
    #include <windows.h> 
    #include <direct.h>

@@ -1,6 +1,5 @@
 // The following crashes on Win32
 #include "gdcm.h"
-#include "gdcmConfigure.h"
 
 int bug1(int argc, char* argv[])
 {  

@@ -3,22 +3,12 @@
 #include <fstream>
 #include <string>
 #include <iostream>
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif
 
 #include "gdcmTS.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 #include "gdcmDictSet.h"
 
-#ifndef PUB_DICT_PATH
-#  define PUB_DICT_PATH     "../Dicts/"
-#endif
-#define DICT_TS "dicomTS.dic"
 
 
 //-----------------------------------------------------------------------------
