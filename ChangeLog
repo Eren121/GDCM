@@ -1,3 +1,7 @@
+2004-02-11 Benoit Regrain
+     * FIX : memory leaks and the set of ArgDelete methods in gdcmDicomDir
+       when using from python
+
 2004-02-10 Benoit Regrain
      * FIX : bug fix in the gdcmDirList for the recursivity in directories
      * FIX : in gdcmDicomDir when the directory is empty

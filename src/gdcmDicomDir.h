@@ -44,14 +44,17 @@ public:
 // Parsing
    void ParseDirectory(void);
 
-   inline void SetStartMethod(gdcmMethod *method,void *arg=NULL)    {startMethod=method;startArg=arg;};
-   inline void SetProgressMethod(gdcmMethod *method,void *arg=NULL) {progressMethod=method;progressArg=arg;};
-   inline void SetEndMethod(gdcmMethod *method,void *arg=NULL)      {endMethod=method;endArg=arg;};
+   void SetStartMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
+   void SetStartMethodArgDelete(gdcmMethod *);
+   void SetProgressMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
+   void SetProgressMethodArgDelete(gdcmMethod *);
+   void SetEndMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
+   void SetEndMethodArgDelete(gdcmMethod *);
 
-   inline float GetProgress(void)                   {return(progress);};
+   inline float GetProgress(void)  {return(progress);};
 
-   inline void AbortProgress(void)                  {abort=true;};
-   inline bool IsAborted(void)                      {return(abort);};
+   inline void AbortProgress(void) {abort=true;};
+   inline bool IsAborted(void)     {return(abort);};
 
 // Write
    bool Write(std::string fileName);
@@ -96,6 +99,9 @@ private:
    gdcmMethod *startMethod;
    gdcmMethod *progressMethod;
    gdcmMethod *endMethod;
+   gdcmMethod *startMethodArgDelete;
+   gdcmMethod *progressMethodArgDelete;
+   gdcmMethod *endMethodArgDelete;
    void *startArg;
    void *progressArg;
    void *endArg;

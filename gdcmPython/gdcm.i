@@ -21,6 +21,7 @@
 
 using namespace std;
 
+////////////////////////////////////////////////////////////////////////////
 // Utility functions on strings for removing leading and trailing spaces
 void EatLeadingAndTrailingSpaces(string & s) {
 	while ( s.length() && (s[0] == ' ') )
@@ -215,10 +216,11 @@ extern gdcmGlobal gdcmGlob;
 
 ////////////////////////////////////////////////////////////////////////////
 // Deals with function returning a C++ string.
-%typemap(python, in) (gdcmMethod *method,void *arg) {
+%typemap(python, in) (gdcmMethod *,void * =NULL,gdcmMethod * =NULL) {
     Py_INCREF($input);
     $1=vtkPythonVoidFunc;
 	$2=$input;
+	$3=vtkPythonVoidFuncArgDelete;
 }
 
 

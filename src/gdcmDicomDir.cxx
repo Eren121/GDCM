@@ -31,6 +31,9 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
    startMethod=NULL;
    progressMethod=NULL;
    endMethod=NULL;
+   startMethodArgDelete=NULL;
+   progressMethodArgDelete=NULL;
+   endMethodArgDelete=NULL;
    startArg=NULL;
    progressArg=NULL;
    endArg=NULL;
@@ -60,6 +63,10 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
  */
 gdcmDicomDir::~gdcmDicomDir() 
 {
+   SetStartMethod(NULL);
+   SetProgressMethod(NULL);
+   SetEndMethod(NULL);
+
    if(metaElems)
       delete metaElems;
    
@@ -121,6 +128,93 @@ void gdcmDicomDir::ParseDirectory(void)
 {
    NewDicomDir(GetPath());
    CreateDicomDir();
+}
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   Set the start method to call when the parsing of the directory starts
+ * @param   method Method to call
+ * @param   arg    Argument to pass to the method
+ * \warning In python : the arg parameter isn't considered
+ */
+void gdcmDicomDir::SetStartMethod(gdcmMethod *method,void *arg,gdcmMethod *argDelete)
+{
+   if((startArg)&&(startMethodArgDelete))
+      startMethodArgDelete(startArg);
+
+   startMethod=method;
+   startArg=arg;
+   startMethodArgDelete=argDelete;
+}
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   Set the method to delete the argument
+ *          The argument is destroyed when the method is changed or when the class
+ *          is destroyed
+ * @param   method Method to call to delete the argument
+ */
+void gdcmDicomDir::SetStartMethodArgDelete(gdcmMethod *method) 
+{
+   startMethodArgDelete=method;
+}
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   Set the progress method to call when the parsing of the directory progress
+ * @param   method Method to call
+ * @param   arg    Argument to pass to the method
+ * \warning In python : the arg parameter isn't considered
+ */
+void gdcmDicomDir::SetProgressMethod(gdcmMethod *method,void *arg,gdcmMethod *argDelete)
+{
+   if((progressArg)&&(progressMethodArgDelete))
+      progressMethodArgDelete(progressArg);
+
+   progressMethod=method;
+   progressArg=arg;
+   progressMethodArgDelete=argDelete;
+}
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   Set the method to delete the argument
+ *          The argument is destroyed when the method is changed or when the class
+ *          is destroyed
+ * @param   method Method to call to delete the argument
+ */
+void gdcmDicomDir::SetProgressMethodArgDelete(gdcmMethod *method)
+{
+   progressMethodArgDelete=method;
+}
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   Set the end method to call when the parsing of the directory ends
+ * @param   method Method to call
+ * @param   arg    Argument to pass to the method
+ * \warning In python : the arg parameter isn't considered
+ */
+void gdcmDicomDir::SetEndMethod(gdcmMethod *method,void *arg,gdcmMethod *argDelete)
+{
+   if((endArg)&&(endMethodArgDelete))
+      endMethodArgDelete(endArg);
+
+   endMethod=method;
+   endArg=arg;
+   endMethodArgDelete=argDelete;
+}
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   Set the method to delete the argument
+ *          The argument is destroyed when the method is changed or when the class
+ *          is destroyed
+ * @param   method Method to call to delete the argument
+ */
+void gdcmDicomDir::SetEndMethodArgDelete(gdcmMethod *method)
+{
+   endMethodArgDelete=method;
 }
 
 /**
