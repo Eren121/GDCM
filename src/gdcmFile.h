@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/29 17:33:17 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2004/09/30 12:51:55 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,6 +40,20 @@ public:
    gdcmHeader* GetHeader() { return Header; }
 
    int ComputeDecompressedPixelDataSizeFromHeader();
+
+   void ConvertRGBPlanesToRGBPixels( uint8_t* source, uint8_t* destination );
+   void ConvertYcBcRPlanesToRGBPixels( uint8_t* source, uint8_t* destination );
+   void ConvertReArrangeBits( uint8_t* pixelZone,
+                              size_t imageDataSize,
+                              int numberBitsStored,
+                              int numberBitsAllocated,
+                              int highBitPosition ) throw ( gdcmFormatError );
+   void ConvertReorderEndianity( uint8_t* pixelZone,
+                                 size_t imageDataSize,
+                                 int numberBitsStored,
+                                 int numberBitsAllocated,
+                                 bool signedPixel );
+
    
    /// Accessor to \ref ImageDataSize
    size_t GetImageDataSize(){ return ImageDataSize; };

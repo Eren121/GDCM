@@ -1,4 +1,8 @@
 2004-09-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * CLEANUP_ROUND (2) for gdcmPixelConvert
+   - src/gdcmFile.cxx, gdcmFile.h splitting GetImageDataIntoVectorRaw
+
+2004-09-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND for gdcmPixelConvert:
     - src/gdcmFile.cxx, gdcmFile.h, gdcmHeader.cxx, gdcmHeader.h clean up
     - src/gdcmPixelStuff[h|cxx] removed

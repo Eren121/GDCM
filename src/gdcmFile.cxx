@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/29 17:33:17 $
-  Version:   $Revision: 1.132 $
+  Date:      $Date: 2004/09/30 12:51:55 $
+  Version:   $Revision: 1.133 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -519,66 +519,17 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
 
    bool signedPixel = Header->IsSignedPixelData();
 
-// SPLIT ME
-////////////////////////////////////////////////////////
-// ENDIANITY SECTION: re-arange bytes inside the integer
-   if ( numberBitsAllocated != 8 )
-   {
-      SwapZone( destination, Header->GetSwapCode(), ImageDataSize,
-                numberBitsAllocated );
-   }
-     
-   // to avoid pb with some xmedcon breakers images 
-   if (  ( numberBitsAllocated == 16 )
-      && ( numberBitsStored < numberBitsAllocated )
-      && ( ! signedPixel ) )
-   {
-      int l = (int)(ImageDataSize / (numberBitsAllocated/8));
-      uint16_t *deb = (uint16_t *)destination;
-      for(int i = 0; i<l; i++)
-      {
-         if( *deb == 0xffff )
-         {
-           *deb = 0;
-         }
-         deb++;   
-      }
-   }
+   ConvertReorderEndianity( (uint8_t*) destination,
+                            ImageDataSize,
+                            numberBitsStored,
+                            numberBitsAllocated,
+                            signedPixel );
 
-// SPLIT ME
-//////////////////////////////////
-// re arange bits inside the bytes
-   if ( numberBitsStored != numberBitsAllocated )
-   {
-      int l = (int)(ImageDataSize / (numberBitsAllocated/8));
-      if ( numberBitsAllocated == 16 )
-      {
-         uint16_t mask = 0xffff;
-         mask = mask >> ( numberBitsAllocated - numberBitsStored );
-         uint16_t *deb = (uint16_t *)destination;
-         for(int i = 0; i<l; i++)
-         {
-            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
-            deb++;
-         }
-      }
-      else if ( numberBitsAllocated == 32 )
-      {
-         uint32_t mask = 0xffffffff;
-         mask         = mask >> ( numberBitsAllocated - numberBitsStored );
-         uint32_t *deb = (uint32_t *)destination;
-         for(int i = 0; i<l; i++)
-         {
-            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
-            deb++;
-         }
-      }
-      else
-      {
-         dbg.Verbose(0, "gdcmFile::GetImageDataIntoVector: weird image");
-         return 0;
-      }
-   }
+   ConvertReArrangeBits( (uint8_t*) destination,
+                         ImageDataSize,
+                         numberBitsStored,
+                         numberBitsAllocated,
+                         highBitPosition );
 
 #ifdef GDCM_DEBUG
    FILE*  DebugFile;
@@ -608,98 +559,36 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    //                            PhotometricInterpretation=PALETTE COLOR
    // and heuristic has to be found :-( 
 
-   int planConf = Header->GetPlanarConfiguration();  // 0028,0006
+   int planConf = Header->GetPlanarConfiguration();
 
-   // Whatever Planar Configuration is, 
-   // "PALETTE COLOR " implies that we deal with the palette. 
-   if ( Header->IsPaletteColor() )
+   // Planar configuration = 2 ==> 1 gray Plane + 3 LUT
+   //   ...and...
+   // whatever the Planar Configuration might be, "PALETTE COLOR "
+   // implies that we deal with the palette. 
+   if ( ( planConf == 2 ) || Header->IsPaletteColor() )
    {
-      planConf = 2;
+      return ImageDataSize;
    }
 
-   switch ( planConf )
+   // When planConf is 0, pixels are allready in RGB
+
+   if ( planConf == 1 )
    {
-      case 0:
-         // Pixels are already RGB
-         break;
-      case 1:
-         if ( Header->IsYBRFull() )
-         {
-            // Warning : YBR_FULL_422 acts as RGB
-            //         : we need to make RGB Pixels from Planes Y,cB,cR
-
-            // to see the tricks about YBR_FULL, YBR_FULL_422, 
-            // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
-            // ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
-            // and be *very* affraid
-            //
-            int l        = Header->GetXSize() * Header->GetYSize();
-            int nbFrames = Header->GetZSize();
-
-            uint8_t* newDest = new uint8_t[ImageDataSize];
-            uint8_t* x       = newDest;
-            uint8_t* a       = (uint8_t*)destination;
-            uint8_t* b       = a + l;
-            uint8_t* c       = b + l;
-            double R,G,B;
-
-            /// \todo : Replace by the 'well known' integer computation
-            /// counterpart
-            /// see http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
-            /// for code optimisation
-    
-            for (int i = 0; i < nbFrames; i++)
-            {
-               for (int j = 0; j < l; j++)
-               {
-                  R = 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
-                  G = 1.164 *(*a-16) - 0.813 *(*c -128) - 0.392 *(*b -128) + 0.5;
-                  B = 1.164 *(*a-16) + 2.017 *(*b -128) + 0.5;
-
-                  if (R < 0.0)   R = 0.0;
-                  if (G < 0.0)   G = 0.0;
-                  if (B < 0.0)   B = 0.0;
-                  if (R > 255.0) R = 255.0;
-                  if (G > 255.0) G = 255.0;
-                  if (B > 255.0) B = 255.0;
-
-                  *(x++) = (uint8_t)R;
-                  *(x++) = (uint8_t)G;
-                  *(x++) = (uint8_t)B;
-                  a++; b++; c++;  
-               }
-            }
-            memmove(destination, newDest, ImageDataSize);
-            delete[] newDest;
-         }
-         else
-         {
-            // need to make RGB Pixels from R,G,B Planes
-            // (all the Frames at a time)
-
-            int l = Header->GetXSize() * Header->GetYSize() * Header->GetZSize();
-
-            uint8_t *newDest = new uint8_t[ImageDataSize];
-            uint8_t *x       = newDest;
-            uint8_t *a       = (uint8_t *)destination;
-            uint8_t *b       = a + l;
-            uint8_t *c       = b + l;
-
-            for (int j = 0; j < l; j++)
-            {
-               *(x++) = *(a++);
-               *(x++) = *(b++);
-               *(x++) = *(c++);
-            }
-            memmove(destination, newDest, ImageDataSize);
-            delete[] newDest;
-         }
-         break;
-      case 2:                      
-         // Palettes were found
-         // Let the user deal with them !
-         return ImageDataSize;
+      uint8_t* newDest = new uint8_t[ImageDataSize];
+      // Warning : YBR_FULL_422 acts as RGB
+      if ( Header->IsYBRFull() )
+      {
+         ConvertYcBcRPlanesToRGBPixels((uint8_t*)destination, newDest);
+      }
+      else
+      {
+         ConvertRGBPlanesToRGBPixels((uint8_t*)destination, newDest);
+      }
+      memmove(destination, newDest, ImageDataSize);
+      delete[] newDest;
    }
+
+///////////////////////////////////////////////////
    // now, it's an RGB image
    // Lets's write it in the Header
  
@@ -720,6 +609,154 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t maxSize)
    Header->SetEntryByNumber(planConfig,0x0028,0x0006);
  
    return ImageDataSize; 
+}
+
+/**
+ * \brief   Re-arrange the bits within the bytes.
+ */
+void gdcmFile::ConvertReArrangeBits( uint8_t* pixelZone,
+                                     size_t imageDataSize,
+                                     int numberBitsStored,
+                                     int numberBitsAllocated,
+                                     int highBitPosition)
+     throw ( gdcmFormatError )
+{
+   if ( numberBitsStored != numberBitsAllocated )
+   {
+      int l = (int)(imageDataSize / (numberBitsAllocated/8));
+      if ( numberBitsAllocated == 16 )
+      {
+         uint16_t mask = 0xffff;
+         mask = mask >> ( numberBitsAllocated - numberBitsStored );
+         uint16_t* deb = (uint16_t*)pixelZone;
+         for(int i = 0; i<l; i++)
+         {
+            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
+            deb++;
+         }
+      }
+      else if ( numberBitsAllocated == 32 )
+      {
+         uint32_t mask = 0xffffffff;
+         mask = mask >> ( numberBitsAllocated - numberBitsStored );
+         uint32_t* deb = (uint32_t*)pixelZone;
+         for(int i = 0; i<l; i++)
+         {
+            *deb = (*deb >> (numberBitsStored - highBitPosition - 1)) & mask;
+            deb++;
+         }
+      }
+      else
+      {
+         dbg.Verbose(0, "gdcmFile::ConvertReArrangeBits: weird image");
+         throw gdcmFormatError( "gdcmFile::ConvertReArrangeBits()",
+                                "weird image !?" );
+      }
+   }
+}
+
+/**
+ * \brief Deal with endianity i.e. re-arange bytes inside the integer
+ */
+void gdcmFile::ConvertReorderEndianity( uint8_t* pixelZone,
+                                        size_t imageDataSize,
+                                        int numberBitsStored,
+                                        int numberBitsAllocated,
+                                        bool signedPixel)
+{
+   if ( numberBitsAllocated != 8 )
+   {
+      SwapZone( pixelZone, Header->GetSwapCode(), ImageDataSize,
+                numberBitsAllocated );
+   }
+     
+   // Special kludge in order to deal with xmedcon broken images:
+   if (  ( numberBitsAllocated == 16 )
+      && ( numberBitsStored < numberBitsAllocated )
+      && ( ! signedPixel ) )
+   {
+      int l = (int)(ImageDataSize / (numberBitsAllocated/8));
+      uint16_t *deb = (uint16_t *)pixelZone;
+      for(int i = 0; i<l; i++)
+      {
+         if( *deb == 0xffff )
+         {
+           *deb = 0;
+         }
+         deb++;   
+      }
+   }
+}
+
+/**
+ * \brief   Convert (Y plane, cB plane, cR plane) to RGB pixels
+ * \warning Works on all the frames at a time
+ */
+void gdcmFile::ConvertYcBcRPlanesToRGBPixels(uint8_t* source,
+                                             uint8_t* destination)
+{
+   // to see the tricks about YBR_FULL, YBR_FULL_422, 
+   // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
+   // ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
+   // and be *very* affraid
+   //
+   int l        = Header->GetXSize() * Header->GetYSize();
+   int nbFrames = Header->GetZSize();
+
+   uint8_t* a = source;
+   uint8_t* b = source + l;
+   uint8_t* c = source + l + l;
+   double R, G, B;
+
+   /// \todo : Replace by the 'well known' integer computation
+   ///         counterpart. Refer to
+   ///            http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
+   ///         for code optimisation.
+ 
+   for (int i = 0; i < nbFrames; i++)
+   {
+      for (int j = 0; j < l; j++)
+      {
+         R = 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
+         G = 1.164 *(*a-16) - 0.813 *(*c -128) - 0.392 *(*b -128) + 0.5;
+         B = 1.164 *(*a-16) + 2.017 *(*b -128) + 0.5;
+
+         if (R < 0.0)   R = 0.0;
+         if (G < 0.0)   G = 0.0;
+         if (B < 0.0)   B = 0.0;
+         if (R > 255.0) R = 255.0;
+         if (G > 255.0) G = 255.0;
+         if (B > 255.0) B = 255.0;
+
+         *(destination++) = (uint8_t)R;
+         *(destination++) = (uint8_t)G;
+         *(destination++) = (uint8_t)B;
+         a++;
+         b++;
+         c++;  
+      }
+   }
+}
+
+/**
+ * \brief   Convert (Red plane, Green plane, Blue plane) to RGB pixels
+ * \warning Works on all the frames at a time
+ */
+void gdcmFile::ConvertRGBPlanesToRGBPixels(uint8_t* source,
+                                           uint8_t* destination)
+{
+   int l = Header->GetXSize() * Header->GetYSize() * Header->GetZSize();
+
+   uint8_t* a = source;
+   uint8_t* b = source + l;
+   uint8_t* c = source + l + l;
+
+   for (int j = 0; j < l; j++)
+   {
+      *(destination++) = *(a++);
+      *(destination++) = *(b++);
+      *(destination++) = *(c++);
+   }
 }
 
 /**
