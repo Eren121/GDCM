@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 16:42:14 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/08/26 15:29:53 $
+  Version:   $Revision: 1.31 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,6 +141,7 @@ public:
 
    gdcmBinEntry* ReplaceOrCreateByNumber(void *voidArea, int lgth,
                                          uint16_t group, uint16_t elem);
+   gdcmSeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
    bool ReplaceIfExistByNumber ( std::string const & value,
                                  uint16_t group,
                                  uint16_t elem );
@@ -199,8 +200,8 @@ protected:
 
 private:
    // Read
-   long ParseDES(gdcmDocEntrySet *set, long offset, long l_max,bool delim_mode);
-   long ParseSQ (gdcmSeqEntry *seq, long offset, long l_max, bool delim_mode); 
+   long ParseDES(gdcmDocEntrySet *set,long offset, long l_max, bool delim_mode);
+   long ParseSQ (gdcmSeqEntry *seq,   long offset, long l_max, bool delim_mode); 
    
    void LoadDocEntry      (gdcmDocEntry *);
    void FindDocEntryLength(gdcmDocEntry *) throw ( gdcmFormatError );

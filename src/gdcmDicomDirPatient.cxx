@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 02:39:09 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/08/26 15:29:52 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,6 @@
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \ingroup gdcmDicomDirPatient
  * \brief   Constructor
  * @param  s SQ Item holding the elements related to this "PATIENT" part
  * @param ptagHT pointer to the HTable (gdcmObject needs it 
@@ -35,7 +34,6 @@ gdcmDicomDirPatient::gdcmDicomDirPatient(gdcmSQItem *s, TagDocEntryHT *ptagHT):
    docEntries = s->GetDocEntries();
 }
 /**
- * \ingroup gdcmDicomDirPatient
  * \brief   Constructor
  * @param ptagHT pointer to the HTable (gdcmObject needs it 
  *               to build the gdcmHeaderEntries)
@@ -45,7 +43,6 @@ gdcmDicomDirPatient::gdcmDicomDirPatient(TagDocEntryHT *ptagHT):
 {
 }
 /**
- * \ingroup gdcmDicomDirPatient
  * \brief   Canonical destructor.
  */
 gdcmDicomDirPatient::~gdcmDicomDirPatient() 
@@ -60,7 +57,6 @@ gdcmDicomDirPatient::~gdcmDicomDirPatient()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmDicomDirPatient
  * \brief   Prints the Object
  * @return
  */ 
@@ -77,11 +73,23 @@ void gdcmDicomDirPatient::Print(std::ostream &os)
    }
 }
 
+/**
+ * \brief   Writes the Object
+ * @return
+ */ 
+void gdcmDicomDirPatient::Write(FILE *fp, FileType t)
+{
+   gdcmObject::Write(fp, t);
+
+   for(ListDicomDirStudy::iterator cc = studies.begin();cc!=studies.end();++cc)
+   {
+      (*cc)->Write( fp, t );
+   }
+}
 //-----------------------------------------------------------------------------
 // Public
 
 /**
- * \ingroup gdcmDicomDir
  * \brief   adds a new Patient at the begining of the PatientList
  *          of a partially created DICOMDIR
  */

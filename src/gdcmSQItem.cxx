@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 03:20:23 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/08/26 15:29:53 $
+  Version:   $Revision: 1.24 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@ gdcmSQItem::~gdcmSQItem()
 
       os << s.str();
       Entry->SetPrintLevel(2);
-      Entry->Print(os);   
+      Entry->Print(os); 
       if ( gdcmSeqEntry* SeqEntry = dynamic_cast<gdcmSeqEntry*>(Entry) )
       {
          (void)SeqEntry;  //not used

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 02:39:09 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/08/26 15:29:52 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,9 +44,7 @@ gdcmDicomDirMeta::~gdcmDicomDirMeta()
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \ingroup gdcmDicomDirMeta
  * \brief   Prints the Object
- * @return
  */ 
 void gdcmDicomDirMeta::Print(std::ostream &os)
 {
@@ -54,8 +52,19 @@ void gdcmDicomDirMeta::Print(std::ostream &os)
    gdcmObject::Print(os);
 }
 
+
 //-----------------------------------------------------------------------------
 // Public
+
+
+/**
+ * \brief   Writes the Object
+ * @return
+ */ 
+void gdcmDicomDirMeta::Write(FILE *fp, FileType t)
+{
+   gdcmObject::Write(fp, t);
+}
 
 //-----------------------------------------------------------------------------
 // Protected

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/16 04:34:56 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2004/08/26 15:29:53 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ gdcmDocument::gdcmDocument( std::string const & filename )
    {
       return;
    }
-   
+
    dbg.Verbose(0, "gdcmDocument::gdcmDocument: starting parsing of file: ",
                   Filename.c_str());
    rewind(Fp);
@@ -260,8 +260,6 @@ bool gdcmDocument::IsReadable()
 {
    if( Filetype == gdcmUnknown)
    {
-      std::cout << " gdcmDocument::IsReadable: Filetype " << Filetype
-               << " " << "gdcmUnknown " << gdcmUnknown << std::endl; //JPR
       dbg.Verbose(0, "gdcmDocument::IsReadable: wrong filetype");
       return false;
    }
@@ -671,6 +669,35 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
    return b;
 }  
 
+
+/*
+ * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ *          when it exists. Create it when unexistant.
+ * @param   Group   Group number of the Entry 
+ * @param   Elem  Element number of the Entry
+ * \return  pointer to the modified/created SeqEntry (NULL when creation
+ *          failed).
+ */
+gdcmSeqEntry * gdcmDocument::ReplaceOrCreateByNumber(
+                                         uint16_t group, 
+                                         uint16_t elem)
+{
+   gdcmSeqEntry* b = 0;
+   gdcmDocEntry* a = GetDocEntryByNumber( group, elem);
+   if (!a)
+   {
+      a = NewSeqEntryByNumber(group, elem);
+      if (!a)
+      {
+         return 0;
+      }
+
+      b = new gdcmSeqEntry(a, 1); // FIXME : 1 (Depth)
+      AddEntry(b);
+   }   
+   return b;
+} 
+ 
 /**
  * \brief Set a new value if the invoked element exists
  *        Seems to be useless !!!
@@ -1207,7 +1234,7 @@ uint32_t gdcmDocument::SwapLong(uint32_t a)
          a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
          break;
       default :
-         std::cout << "swapCode= " << SwapCode << std::endl;
+         //std::cout << "swapCode= " << SwapCode << std::endl;
          dbg.Error(" gdcmDocument::SwapLong : unset swap code");
          a = 0;
    }
@@ -1372,7 +1399,6 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
       }
       delete newDocEntry;
    }
-
    return l; // Probably useless 
 }
 
@@ -1613,8 +1639,7 @@ void gdcmDocument::FindDocEntryLength( gdcmDocEntry *entry )
 {
    uint16_t element = entry->GetElement();
    std::string  vr  = entry->GetVR();
-   uint16_t length16;
-       
+   uint16_t length16;       
    
    if ( Filetype == gdcmExplicitVR && !entry->IsImplicitVR() ) 
    {

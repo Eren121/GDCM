@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 16:42:14 $
-  Version:   $Revision: 1.120 $
+  Date:      $Date: 2004/08/26 15:29:53 $
+  Version:   $Revision: 1.121 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 
 typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
 
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 // Constructor / Destructor
 /**
  * \ingroup   gdcmFile

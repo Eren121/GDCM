@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/02 16:42:14 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/08/26 15:29:52 $
+  Version:   $Revision: 1.27 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,8 +84,7 @@ public:
    gdcmDicomDirMeta*    NewMeta();
    gdcmDicomDirPatient* NewPatient();
 
-// Write
-   void WriteEntries(FILE *_fp);   
+// Write  
    bool Write(std::string const & fileName);
 
    /// Types of the gdcmObject within the gdcmDicomDir
