@@ -19,6 +19,11 @@
 #endif
 #  include <iomanip>
 
+#define UI1_2_840_10008_1_2      "1.2.840.10008.1.2"
+#define UI1_2_840_10008_1_2_1    "1.2.840.10008.1.2.1"
+#define UI1_2_840_10008_1_2_2    "1.2.840.10008.1.2.2"
+#define UI1_2_840_10008_1_2_1_99 "1.2.840.10008.1.2.1.99"
+
 //-----------------------------------------------------------------------------
 // Refer to gdcmParser::CheckSwap()
 const unsigned int gdcmParser::HEADER_LENGTH_TO_READ = 256;
@@ -42,7 +47,8 @@ const unsigned int gdcmParser::MAX_SIZE_LOAD_ELEMENT_VALUE = 4096;
  */
 gdcmParser::gdcmParser(const char *InFilename, 
                        bool exception_on_error,
-                       bool enable_sequences ) {
+                       bool enable_sequences ) 
+{
    enableSequences=enable_sequences;
    
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
@@ -51,14 +57,12 @@ gdcmParser::gdcmParser(const char *InFilename,
 
    if ( !OpenFile(exception_on_error))
       return;
-
    Parse();
    LoadHeaderEntries();
-
    CloseFile();
 
    wasUpdated = 0;  // will be set to 1 if user adds an entry
-   printLevel = 1;  // 'Medium' header print by default
+   printLevel = 1;  // 'Heavy' header print by default
 }
 
 /**
@@ -66,8 +70,9 @@ gdcmParser::gdcmParser(const char *InFilename,
  * \brief   
  * @param   exception_on_error
  */
-gdcmParser::gdcmParser(bool exception_on_error) {
-   //enableSequences=0;
+gdcmParser::gdcmParser(bool exception_on_error) 
+{
+   enableSequences=0;
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
@@ -80,7 +85,8 @@ gdcmParser::gdcmParser(bool exception_on_error) {
  * \ingroup gdcmParser
  * \brief   Canonical destructor.
  */
-gdcmParser::~gdcmParser (void) {
+gdcmParser::~gdcmParser (void) 
+{
    RefPubDict = NULL;
    RefShaDict = NULL;
 }
@@ -93,10 +99,11 @@ gdcmParser::~gdcmParser (void) {
   *          both from the H Table and the chained list
   * @return
   */ 
-void gdcmParser::PrintEntry(std::ostream & os) {
+void gdcmParser::PrintEntry(std::ostream & os) 
+{
    std::ostringstream s;   
 	   
-   s << "------------ gdcmParser::Print, using listEntries ----------------" << std::endl; 
+   s << "------------ using listEntries ----------------" << std::endl; 
    for (ListTag::iterator i = listEntries.begin();  
 	   i != listEntries.end();
 	   ++i)
@@ -112,16 +119,18 @@ void gdcmParser::PrintEntry(std::ostream & os) {
   * \brief   Prints The Dict Entries of THE public Dicom Dictionnry
   * @return
   */  
-void gdcmParser::PrintPubDict(std::ostream & os) {
+void gdcmParser::PrintPubDict(std::ostream & os) 
+{
    RefPubDict->Print(os);
 }
 
 /**
   * \ingroup gdcmParser
-  * \brief   Prints The Dict Entries of the current shadow Dicom Dictionnry
+  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionnry
   * @return
   */
-void gdcmParser::PrintShaDict(std::ostream & os) {
+void gdcmParser::PrintShaDict(std::ostream & os) 
+{
    RefShaDict->Print(os);
 }
 
@@ -129,7 +138,7 @@ void gdcmParser::PrintShaDict(std::ostream & os) {
 // Public
 /**
  * \ingroup gdcmParser
- * \brief   Get THE public dictionary used
+ * \brief   Get the public dictionary used
  */
 gdcmDict *gdcmParser::GetPubDict(void)
 {
@@ -138,7 +147,7 @@ gdcmDict *gdcmParser::GetPubDict(void)
 
 /**
  * \ingroup gdcmParser
- * \brief   Get the current shadow dictionary 
+ * \brief   Get the shadow dictionary used
  */
 gdcmDict *gdcmParser::GetShaDict(void)
 {
@@ -161,7 +170,8 @@ bool gdcmParser::SetShaDict(gdcmDict *dict)
  * \brief   Set the shadow dictionary used
  * \param   dictName name of the dictionary to use in shadow
  */
-bool gdcmParser::SetShaDict(DictKey dictName) {
+bool gdcmParser::SetShaDict(DictKey dictName)
+{
    RefShaDict=gdcmGlobal::GetDicts()->GetDict(dictName);
    return(!RefShaDict);
 }
@@ -178,27 +188,17 @@ bool gdcmParser::SetShaDict(DictKey dictName) {
 bool gdcmParser::IsReadable(void) 
 {
    std::string res = GetEntryByNumber(0x0028, 0x0005);
-   if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) {
-      //std::cout << "error on : 28 5" << std::endl;
+   if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) 
       return false; // Image Dimensions
-   }
 
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0100) ) {
-      //std::cout << "error on : 28 100" << std::endl;
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0100) )
       return false; // "Bits Allocated"
-   }
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0101) ){ 
-        // std::cout << "error on : 28 101" << std::endl;
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0101) )
       return false; // "Bits Stored"
-   }
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0102) ) {
-         //std::cout << "error on : 28 102" << std::endl;
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0102) )
       return false; // "High Bit"
-   }
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0103) ) {
-         //std::cout << "error on : 28 103" << std::endl;
+   if ( !GetHeaderEntryByNumber(0x0028, 0x0103) )
       return false; // "Pixel Representation"
-   }
    return true;
 }
 
@@ -209,14 +209,15 @@ bool gdcmParser::IsReadable(void)
  *
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) {
+bool gdcmParser::IsImplicitVRLittleEndianTransferSyntax(void) 
+{
    gdcmHeaderEntry *Element = GetHeaderEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
    LoadHeaderEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2" )
+   if ( Transfer == UI1_2_840_10008_1_2 )
       return true;
    return false;
 }
@@ -236,7 +237,7 @@ bool gdcmParser::IsExplicitVRLittleEndianTransferSyntax(void)
    LoadHeaderEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.1" )
+   if ( Transfer == UI1_2_840_10008_1_2_1 )
       return true;
    return false;
 }
@@ -256,7 +257,7 @@ bool gdcmParser::IsDeflatedExplicitVRLittleEndianTransferSyntax(void)
    LoadHeaderEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.1.99" )
+   if ( Transfer == UI1_2_840_10008_1_2_1_99 )
       return true;
    return false;
 }
@@ -276,7 +277,7 @@ bool gdcmParser::IsExplicitVRBigEndianTransferSyntax(void)
    LoadHeaderEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.2" )  //1.2.2 ??? A verifier !
+   if ( Transfer == UI1_2_840_10008_1_2_2 )  //1.2.2 ??? A verifier !
       return true;
    return false;
 }
@@ -354,7 +355,8 @@ bool gdcmParser::CloseFile(void)
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @return  always "True" ?!
  */
-bool gdcmParser::Write(FILE *fp, FileType type) {
+bool gdcmParser::Write(FILE *fp, FileType type) 
+{
 // ==============
 // TODO The stuff has been rewritten using the chained list instead 
 //      of the H table
@@ -376,7 +378,7 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
 
    if (type == ImplicitVR) 
    {
-      std::string implicitVRTransfertSyntax = "1.2.840.10008.1.2";
+      std::string implicitVRTransfertSyntax = UI1_2_840_10008_1_2;
       ReplaceOrCreateByNumber(implicitVRTransfertSyntax,0x0002, 0x0010);
       
       //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
@@ -388,7 +390,7 @@ bool gdcmParser::Write(FILE *fp, FileType type) {
 
    if (type == ExplicitVR) 
    {
-      std::string explicitVRTransfertSyntax = "1.2.840.10008.1.2.1";
+      std::string explicitVRTransfertSyntax = UI1_2_840_10008_1_2_1;
       ReplaceOrCreateByNumber(explicitVRTransfertSyntax,0x0002, 0x0010);
       
       //FIXME Refer to standards on page 21, chapter 6.2 "Value representation":
@@ -440,7 +442,8 @@ bool gdcmParser::ReplaceOrCreateByNumber(std::string Value,
  * \return  boolean 
  * 
  */
-bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
+bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) 
+{
    gdcmHeaderEntry* nvHeaderEntry=NewHeaderEntryByNumber(Group, Elem);
 
    if(!nvHeaderEntry)
@@ -462,7 +465,8 @@ bool gdcmParser::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Ele
  * @param   Elem
  * \return  boolean 
  */
-bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
+bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) 
+{
    std::string v = Value;	
    SetEntryByNumber(v, Group, Elem);
    return true;
@@ -478,7 +482,8 @@ bool gdcmParser::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem
  * @param   element  Element number of the searched Dicom Element 
  * @return  number of occurences
  */
-int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
+int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element ) 
+{
 	std::string key = gdcmDictEntry::TranslateToKey(group, element );
 	return (tagHT.count(key));
 }
@@ -488,11 +493,13 @@ int gdcmParser::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
  *          the public and private dictionaries 
  *          for the element value of a given tag.
+ * \warning Don't use any longer : use GetPubEntryByName
  * @param   tagName name of the searched element.
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryByName(std::string tagName) {
+std::string gdcmParser::GetEntryByName(std::string tagName) 
+{
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -514,7 +521,8 @@ std::string gdcmParser::GetEntryByName(std::string tagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryVRByName(std::string tagName) {
+std::string gdcmParser::GetEntryVRByName(std::string tagName) 
+{
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -534,7 +542,8 @@ std::string gdcmParser::GetEntryVRByName(std::string tagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element) {
+std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element) 
+{
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return GDCM_UNFOUND;
@@ -556,7 +565,8 @@ std::string gdcmParser::GetEntryByNumber(guint16 group, guint16 element) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) {
+std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) 
+{
    gdcmHeaderEntry* elem =  GetHeaderEntryByNumber(group, element);
    if ( !elem )
       return GDCM_UNFOUND;
@@ -570,7 +580,8 @@ std::string gdcmParser::GetEntryVRByNumber(guint16 group, guint16 element) {
  * @param   tagName name of the searched Dicom Element.
  * @return  true when found
  */
-bool gdcmParser::SetEntryByName(std::string content,std::string tagName) {
+bool gdcmParser::SetEntryByName(std::string content,std::string tagName) 
+{
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return false;				    
@@ -591,7 +602,8 @@ bool gdcmParser::SetEntryByName(std::string content,std::string tagName) {
  */
 bool gdcmParser::SetEntryByNumber(std::string content, 
                                   guint16 group,
-                                  guint16 element) {
+                                  guint16 element) 
+{
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
@@ -602,6 +614,7 @@ bool gdcmParser::SetEntryByNumber(std::string content,
       content = content + '\0';
    }
       
+   //tagHT[key]->SetValue(content);   
    gdcmHeaderEntry * a;
    IterHT p;
    TagHeaderEntryHT::iterator p2;
@@ -615,6 +628,7 @@ bool gdcmParser::SetEntryByNumber(std::string content,
        
    a-> SetValue(content); 
    
+   //std::string vr = tagHT[key]->GetVR();
    std::string vr = a->GetVR();
    
    guint32 lgr;
@@ -625,6 +639,7 @@ bool gdcmParser::SetEntryByNumber(std::string content,
    else
       lgr = l;	   
 
+   //tagHT[key]->SetLength(lgr);
    a->SetLength(lgr);   
    return true;
 }					  
@@ -643,12 +658,13 @@ bool gdcmParser::SetEntryByNumber(std::string content,
  */
 
 bool gdcmParser::SetEntryLengthByNumber(guint32 length, 
-                                        guint16 group, 
-					guint16 element) {
+                                        guint16 group, guint16 element) 
+{
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
    if (length%2) length++; // length must be even
+   //tagHT[key]->SetLength(length);
    ( ((tagHT.equal_range(key)).first)->second )->SetLength(length);	 
 	 
    return true ;		
@@ -662,7 +678,8 @@ bool gdcmParser::SetEntryLengthByNumber(guint32 length,
  * @param   Elem
  * @return File Offset of the Element Value 
  */
-size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) {
+size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) 
+{
    gdcmHeaderEntry* Entry = GetHeaderEntryByNumber(Group, Elem);	 
    if (!Entry) 
    {
@@ -681,7 +698,8 @@ size_t gdcmParser::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) {
  * @param   Elem
  * @return Pointer to the 'non string' area
  */
-void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) {
+void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) 
+{
    gdcmHeaderEntry* Entry = GetHeaderEntryByNumber(Group, Elem);	 
    if (!Entry) 
    {
@@ -697,7 +715,8 @@ void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) {
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
  */
-void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem) {
+void *gdcmParser::LoadEntryVoidArea(guint16 Group, guint16 Elem) 
+{
    gdcmHeaderEntry * Element= GetHeaderEntryByNumber(Group, Elem);
    if ( !Element )
       return NULL;
@@ -732,6 +751,7 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,guint16 group, guint16 ele
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
+   //tagHT[key]->SetVoidArea(area);
    ( ((tagHT.equal_range(key)).first)->second )->SetVoidArea(area);	 
    return true;
 }
@@ -756,8 +776,7 @@ void gdcmParser::UpdateShaEntries(void)
 
       // Peer group => search the corresponding dict entry
       if(RefShaDict)
-         entry=RefShaDict->GetDictEntryByNumber((*it)->GetGroup(),
-	                                        (*it)->GetElement());
+         entry=RefShaDict->GetDictEntryByNumber((*it)->GetGroup(),(*it)->GetElement());
       else
          entry=NULL;
 
@@ -1217,8 +1236,9 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
    if( group == 0xfffe )
       SkipLoad = true;
 
-   if ( SkipLoad ) {
-      Entry->SetUsableLength(0);
+   if ( SkipLoad ) 
+   {
+      Entry->SetLength(0);
       Entry->SetValue("gdcm::Skipped");
       return;
    }
@@ -1303,7 +1323,11 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
       Entry->SetValue("gdcm::UnRead");
       return;
    }
-   Entry->SetValue(NewValue);
+
+   if( (vr == "UI") ) // Because of correspondance with the VR dic
+      Entry->SetValue(NewValue.c_str());
+   else
+      Entry->SetValue(NewValue);
 }
 
 /**
@@ -1586,7 +1610,8 @@ std::string gdcmParser::GetHeaderEntryValue(gdcmHeaderEntry *Entry)
          {
             if(i!=0)
                s << '\\';
-            NewInt32=(val[4*i+0]&0xFF)+((val[4*i+1]&0xFF)<<8)+((val[4*i+2]&0xFF)<<16)+((val[4*i+3]&0xFF)<<24);
+            NewInt32= (val[4*i+0]&0xFF)+((val[4*i+1]&0xFF)<<8)+
+                     ((val[4*i+2]&0xFF)<<16)+((val[4*i+3]&0xFF)<<24);
             NewInt32=SwapLong(NewInt32);
             s << NewInt32;
          }
@@ -1617,7 +1642,6 @@ std::string gdcmParser::GetHeaderEntryUnvalue(gdcmHeaderEntry *Entry)
       std::string vr=Entry->GetVR();
       std::ostringstream s;
       std::vector<std::string> tokens;
-      unsigned char *ptr;
 
       if (vr == "US" || vr == "SS") 
       {
@@ -1677,7 +1701,8 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
 {
    Entry->SetReadLength(FoundLength); // will be updated only if a bug is found
 		     
-   if ( FoundLength == 0xffffffff) {
+   if ( FoundLength == 0xffffffff) 
+   {
       FoundLength = 0;
    }
       
@@ -2239,11 +2264,11 @@ gdcmHeaderEntry *gdcmParser::NewHeaderEntryByName(std::string Name)
 /**
  * \ingroup gdcmParser
  * \brief   Request a new virtual dict entry to the dict set
- * @param   group   group   of the underlying DictEntry
- * @param   element element of the underlying DictEntry
- * @param   vr      VR of the underlying DictEntry
- * @param   fourth  owner group
- * @param   name    english name
+ * @param   group  group   of the underlying DictEntry
+ * @param   elem   element of the underlying DictEntry
+ * @param   vr     VR of the underlying DictEntry
+ * @param   fourth owner group
+ * @param   name   english name
  */
 gdcmDictEntry *gdcmParser::NewVirtualDictEntry(guint16 group, guint16 element,
                                                std::string vr,

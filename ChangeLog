@@ -1,3 +1,7 @@
+2004-01-23 Benoit Regrain
+     * Bug fix on field having a VR = 'UI'. Assume that is a string field
+     * Bug fix on test suite after remove the strip made on not string fields
+
 2004-01-22 Benoit Regrain
      * DicomDir : clean code, add methods, set variables in protected or private
      * gdcmUtil : bug fix for the clean string method

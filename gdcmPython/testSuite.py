@@ -568,8 +568,8 @@ class gdcmTestCase(unittest.TestCase):
       Source.GetImageData()
       TargetFileName = "junk"
       Target = Source.WriteDcmImplVR(TargetFileName)
-      # Sign = 'c3d27238647b7eaa773bff6ea0692b54' # old signature in the file
-      Sign = 'a1e2abdc2f6abedd86b93c8b88db5203' # new signature (found on Win)
+#       Sign = 'a1e2abdc2f6abedd86b93c8b88db5203' # new signature (found on Win)
+      Sign = '849e722e004d3bb37b87ab6006509b8f' # new signature without field strip
       ComputeSign = md5.new(open(TargetFileName).read()).hexdigest()
       self.assertEqual(ComputeSign, Sign,
           ("Wrong signature for file %s (got %s, shoud be %s)"
