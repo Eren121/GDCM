@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 03:09:07 $
-  Version:   $Revision: 1.169 $
+  Date:      $Date: 2005/01/10 17:09:49 $
+  Version:   $Revision: 1.170 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ namespace gdcm
 static const char *TransferSyntaxStrings[] =  {
   // Implicit VR Little Endian
   "1.2.840.10008.1.2",
-  // Implicit VR Big Endian DLX G.E?
+  // Implicit VR Big Endian DLX (G.E Private)
   "1.2.840.113619.5.2",
   // Explicit VR Little Endian
   "1.2.840.10008.1.2.1",
@@ -1997,7 +1997,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
  */
 bool Document::IsDocEntryAnInteger(DocEntry *entry)
 {
-   uint16_t element = entry->GetElement();
+   uint16_t elem    = entry->GetElement();
    uint16_t group   = entry->GetGroup();
    const std::string &vr  = entry->GetVR();
    uint32_t length  = entry->GetLength();
@@ -2005,7 +2005,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
    // able to swap it's element value properly.
-   if ( element == 0 )  // This is the group length of the group
+   if ( elem == 0 )  // This is the group length of the group
    {  
       if ( length == 4 )
       {
@@ -2022,7 +2022,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
          // message and proceed on parsing (while crossing fingers).
          long filePosition = Fp->tellg();
          gdcmVerboseMacro( "Erroneous Group Length element length  on : (" 
-           << std::hex << group << " , " << element 
+           << std::hex << group << " , " << elem
            << ") -before- position x(" << filePosition << ")"
            << "lgt : " << length );
       }
@@ -2060,8 +2060,8 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
       }
       catch ( FormatError )
       {
-         throw FormatError("Document::FindDocEntryLengthOBOrOW()",
-                           " group or element not present.");
+         throw FormatError("Unexpected end of file encountered during ",
+                           "Document::FindDocEntryLengthOBOrOW()");
       }
 
       // We have to decount the group and element we just read
@@ -2069,7 +2069,11 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
      
       if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
       {
-         gdcmVerboseMacro( "Neither an Item tag nor a Sequence delimiter tag."); 
+         long filePosition = Fp->tellg();
+         gdcmVerboseMacro( "Neither an Item tag nor a Sequence delimiter tag on :" 
+           << std::hex << group << " , " << elem 
+           << ") -before- position x(" << filePosition << ")" );
+  
          Fp->seekg(positionOnEntry, std::ios::beg);
          throw FormatUnexpected( "Neither an Item tag nor a Sequence delimiter tag.");
       }

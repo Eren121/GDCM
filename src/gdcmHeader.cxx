@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.227 $
+  Date:      $Date: 2005/01/10 17:09:49 $
+  Version:   $Revision: 1.228 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@ Header::Header( std::string const &filename ):
    // is found by indirection through the "Image Location").
    // Inside the group pointed by "Image Location" the searched element
    // is conventionally the element 0x0010 (when the norm is respected).
-   // When the "Image Location" is absent we default to group 0x7fe0.
+   // When the "Image Location" is Missing we default to group 0x7fe0.
    // Note: this IS the right place for the code
  
    // Image Location
@@ -292,7 +292,7 @@ int Header::GetYSize()
  * \brief   Retrieve the number of planes of volume or the number
  *          of frames of a multiframe.
  * \warning When present we consider the "Number of Frames" as the third
- *          dimension. When absent we consider the third dimension as
+ *          dimension. When Missing we consider the third dimension as
  *          being the ACR-NEMA "Planes" tag content.
  * @return  The encountered size when found, 1 by default (single image).
  */
@@ -404,17 +404,18 @@ float Header::GetZSpacing()
    //   disjointes    (Spacing between Slices > Slice Thickness)
    // Slice Thickness : epaisseur de tissus sur laquelle est acquis le signal
    //   ca interesse le physicien de l'IRM, pas le visualisateur de volumes ...
-   //   Si le Spacing Between Slices est absent, 
+   //   Si le Spacing Between Slices est Missing, 
    //   on suppose que les coupes sont jointives
    
    const std::string &strSpacingBSlices = GetEntry(0x0018,0x0088);
 
    if ( strSpacingBSlices == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("Unfound StrSpacingBSlices");
+      gdcmVerboseMacro("Unfound Spacing Between Slices (0018,0088)");
       const std::string &strSliceThickness = GetEntry(0x0018,0x0050);       
       if ( strSliceThickness == GDCM_UNFOUND )
       {
+         gdcmVerboseMacro("Unfound Slice Thickness (0018,0050)");
          return 1.;
       }
       else
@@ -444,7 +445,7 @@ float Header::GetRescaleIntercept()
       if( sscanf( strRescInter.c_str(), "%f", &resInter) != 1 )
       {
          // bug in the element 0x0028,0x1052
-         gdcmVerboseMacro( "Rescale Intercept is empty." );
+         gdcmVerboseMacro( "Rescale Intercept (0028,1052) is empty." );
       }
    }
 
@@ -465,7 +466,7 @@ float Header::GetRescaleSlope()
       if( sscanf( strRescSlope.c_str(), "%f", &resSlope) != 1)
       {
          // bug in the element 0x0028,0x1053
-         gdcmVerboseMacro( "Rescale Slope is empty.");
+         gdcmVerboseMacro( "Rescale Slope (0028,1053) is empty.");
       }
    }
 
@@ -788,7 +789,7 @@ int Header::GetBitsStored()
    std::string strSize = GetEntry( 0x0028, 0x0101 );
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro("This is supposed to be mandatory");
+      gdcmVerboseMacro("(0028,0101) is supposed to be mandatory");
       return 0;  // It's supposed to be mandatory
                  // the caller will have to check
    }
@@ -797,16 +798,16 @@ int Header::GetBitsStored()
 
 /**
  * \brief   Retrieve the high bit position.
- * \warning The method defaults to 0 when information is absent.
+ * \warning The method defaults to 0 when information is Missing.
  *          The responsability of checking this value is left to the caller.
- * @return  The high bit positin when present. 0 when absent.
+ * @return  The high bit positin when present. 0 when Missing.
  */
 int Header::GetHighBitPosition()
 {
    std::string strSize = GetEntry( 0x0028, 0x0102 );
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "This is supposed to be mandatory");
+      gdcmVerboseMacro( "(0028,0102) is supposed to be mandatory");
       return 0;
    }
    return atoi( strSize.c_str() );
@@ -814,7 +815,7 @@ int Header::GetHighBitPosition()
 
 /**
  * \brief   Check wether the pixels are signed or UNsigned data.
- * \warning The method defaults to false (UNsigned) when information is absent.
+ * \warning The method defaults to false (UNsigned) when information is Missing.
  *          The responsability of checking this value is left to the caller.
  * @return  True when signed, false when UNsigned
  */
@@ -823,7 +824,7 @@ bool Header::IsSignedPixelData()
    std::string strSize = GetEntry( 0x0028, 0x0103 );
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "This is supposed to be mandatory");
+      gdcmVerboseMacro( "(0028,0103) is supposed to be mandatory");
       return false;
    }
    int sign = atoi( strSize.c_str() );
@@ -845,7 +846,7 @@ int Header::GetBitsAllocated()
    std::string strSize = GetEntry(0x0028,0x0100);
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "This is supposed to be mandatory");
+      gdcmVerboseMacro( "(0028,0100) is supposed to be mandatory");
       return 0; // It's supposed to be mandatory
                 // the caller will have to check
    }
@@ -863,7 +864,7 @@ int Header::GetSamplesPerPixel()
    const std::string& strSize = GetEntry(0x0028,0x0002);
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "This is supposed to be mandatory");
+      gdcmVerboseMacro( "(0028,0002) is supposed to be mandatory");
       return 1; // Well, it's supposed to be mandatory ...
                 // but sometimes it's missing : *we* assume Gray pixels
    }
@@ -885,7 +886,7 @@ bool Header::IsMonochrome()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Absent Photometric Interpretation");
+      gdcmVerboseMacro( "Not found : Photometric Interpretation (0028,0004)");
    }
    return false;
 }
@@ -904,7 +905,7 @@ bool Header::IsPaletteColor()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Absent Palette color");
+      gdcmVerboseMacro( "Not found : Palette color (0028,0004)");
    }
    return false;
 }
@@ -923,7 +924,7 @@ bool Header::IsYBRFull()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Absent YBR Full");
+      gdcmVerboseMacro( "Not found : YBR Full (0028,0004)");
    }
    return false;
 }
@@ -938,7 +939,7 @@ int Header::GetPlanarConfiguration()
    std::string strSize = GetEntry(0x0028,0x0006);
    if ( strSize == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Absent Planar Configuration");
+      gdcmVerboseMacro( "Not found : Planar Configuration (0028,0006)");
       return 0;
    }
    return atoi( strSize.c_str() );
@@ -996,7 +997,7 @@ std::string Header::GetPixelType()
    std::string bitsAlloc = GetEntry(0x0028, 0x0100); // Bits Allocated
    if ( bitsAlloc == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Unfound Bits Allocated");
+      gdcmVerboseMacro( "Missing  Bits Allocated (0028,0100)");
       bitsAlloc = "16";
    }
 
@@ -1019,7 +1020,7 @@ std::string Header::GetPixelType()
 
    if (sign == GDCM_UNFOUND )
    {
-      gdcmVerboseMacro( "Unfound Pixel Representation");
+      gdcmVerboseMacro( "Missing Pixel Representation (0028,0103)");
       bitsAlloc = "0";
    }
    else if ( sign == "0" )

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/09 00:13:26 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2005/01/10 17:09:49 $
+  Version:   $Revision: 1.87 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,14 +44,17 @@ namespace gdcm
  * \ingroup Globals
  * \brief Provide a better 'c++' approach for sprintf
  * For example c code is:
- * sprintf(trash, "%04x|%04x", group , element);
+ * sprintf(trash, "%04x|%04x", group , elem);
  *
- * c++ is 
+ * c++ code is 
  * std::ostringstream buf;
  * buf << std::right << std::setw(4) << std::setfill('0') << std::hex
  *     << group << "|" << std::right << std::setw(4) << std::setfill('0') 
- *     << std::hex <<  element;
+ *     << std::hex <<  elem;
  * buf.str();
+ *
+ * gdcm style code is
+ * Format("%04x|%04x", group , elem);
  */
 
 std::string Util::Format(const char *format, ...)
