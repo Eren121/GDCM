@@ -19,7 +19,7 @@ SET(GDCM_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
 
 #-----------------------------------------------------------------------------
 # datadir in CMake:
-SET(GDCM_DATA_DIR "/share/gdcm" CACHE INTERNAL 
+SET(GDCM_DATA_DIR "/share/gdcm/" CACHE INTERNAL 
   "Install location for data (relative to prefix).")
 MARK_AS_ADVANCED(GDCM_DATA_DIR)
 
