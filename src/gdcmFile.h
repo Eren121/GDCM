@@ -16,7 +16,7 @@ class GDCM_EXPORT gdcmFile: public gdcmHeader
 private:
    void* PixelData;
    size_t lgrTotale;
-   int Parsed;               // weather allready parsed
+   int Parsed;               // weather already parsed
    std::string OrigFileName; // To avoid file overwrite
    void SwapZone(void* im, int swap, int lgr, int nb);
    bool ReadPixelData(void * destination);

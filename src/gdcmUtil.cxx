@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.14 2003/07/01 10:04:36 frog Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.15 2003/07/01 15:48:27 jpr Exp $
 
 #include <stdio.h>
 #include <ctype.h>   // For isspace
@@ -57,7 +57,7 @@ gdcmGlobal gdcmGlob;
 
 gdcmGlobal::gdcmGlobal(void) {
    if (VR || TS || Dicts)
-      dbg.Verbose(0, "gdcmGlobal::gdcmGlobal : VR or TS or Dicts allready allocated");
+      dbg.Verbose(0, "gdcmGlobal::gdcmGlobal : VR or TS or Dicts already allocated");
    VR = new gdcmVR();
    TS = new gdcmTS();
    Dicts = new gdcmDictSet();

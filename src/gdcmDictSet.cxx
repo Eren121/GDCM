@@ -99,7 +99,7 @@ gdcmDictSet::~gdcmDictSet() {
 /**
  * \ingroup gdcmDictSet
  * \brief   Loads a dictionary from a specified file, and add it
- *          to allready the existing ones contained in this gdcmDictSet.
+ *          to already the existing ones contained in this gdcmDictSet.
  * @param   FileName Absolute or relative filename containing the
  *          dictionary to load.
  * @param   Name Symbolic name that be used as identifier of the newly 

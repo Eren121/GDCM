@@ -14,7 +14,7 @@ typedef std::map<DictKey, gdcmDict*> DictSetHT;
  * \defgroup gdcmDictSet
  * \brief  Container for managing a set of loaded dictionaries.
  * \note   Hopefully, sharing dictionaries should avoid
- * \par    reloading an allready loaded dictionary (saving time)
+ * \par    reloading an already loaded dictionary (saving time)
  * \par    having many in memory representations of the same dictionary
  *        (saving memory).
  */

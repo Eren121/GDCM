@@ -1,4 +1,5 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.73 2003/07/01 10:04:36 frog Exp $
+
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.74 2003/07/01 15:48:27 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -1043,10 +1044,10 @@ int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Ele
 	// on affecte une valeur a cette ElValue a l'interieur du ElValSet
 	// --> devrait pouvoir etre fait + simplement ???
 	
-	gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
-	PubElValSet.Add(nvElValue);	
-	PubElValSet.SetElValueByNumber(Value, Group, Elem);
-	return(1);
+   gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
+   PubElValSet.Add(nvElValue);	
+   PubElValSet.SetElValueByNumber(Value, Group, Elem);
+   return(1);
 }   
 
 
@@ -1057,11 +1058,11 @@ int gdcmHeader::ReplaceOrCreateByNumber(string Value, guint16 Group, guint16 Ele
  */
 int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
-	gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
-	PubElValSet.Add(nvElValue);
-	string v = Value;	
-	PubElValSet.SetElValueByNumber(v, Group, Elem);
-	return(1);
+   gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
+   PubElValSet.Add(nvElValue);
+   string v = Value;	
+   PubElValSet.SetElValueByNumber(v, Group, Elem);
+   return(1);
 }  
 
 /**
@@ -1070,8 +1071,8 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
  * @param   
  */
  
- int gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
- 	return (PubElValSet.CheckIfExistByNumber(Group, Elem));
+int gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
+   return (PubElValSet.CheckIfExistByNumber(Group, Elem));
  }
  
  
@@ -1112,7 +1113,7 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    
    if ( (g==0x7fe0) && (n==0x0010) ) 
    	if (DEBUG) 
-   		printf("in gdcmHeader::ReadNextElement try to read 7fe0 0010 \n");
+   	   printf("in gdcmHeader::ReadNextElement try to read 7fe0 0010 \n");
    
    if (errno == 1)
       // We reached the EOF (or an error occured) and header parsing
@@ -1129,8 +1130,8 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    }
    NewElVal->SetOffset(ftell(fp));  
    if ( (g==0x7fe0) && (n==0x0010) ) 
-   	if (DEBUG) 
-   		printf("sortie de gdcmHeader::ReadNextElement 7fe0 0010 \n");
+      if (DEBUG) 
+         printf("sortie de gdcmHeader::ReadNextElement 7fe0 0010 \n");
    return NewElVal;
 }
 
@@ -1627,7 +1628,6 @@ int gdcmHeader::GetZSize(void) {
    return 1;
 }
 
-
 /**
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of Bits Stored
@@ -1642,7 +1642,6 @@ int gdcmHeader::GetBitsStored(void) {
    return atoi(StrSize.c_str());
 }
 
-
 /**
  * \ingroup gdcmHeader
  * \brief   Retrieve the number of Samples Per Pixel
@@ -1656,6 +1655,7 @@ int gdcmHeader::GetSamplesPerPixel(void) {
       return 1; // Well, it's supposed to be mandatory ...
    return atoi(StrSize.c_str());
 }
+
 /**
  * \ingroup gdcmHeader
  * \brief   Return the size (in bytes) of a single pixel of data.
@@ -1878,6 +1878,10 @@ float gdcmHeader::GetZSpacing(void) {
       if (StrSliceThickness == "gdcm::Unfound")
          return 1.;
       else
+         // if no 'Spacing Between Slices' is found, 
+         // we assume slices join together
+         // (no overlapping, no interslice gap)
+         // if they don't, we're fucked up
          return atof(StrSliceThickness.c_str());  
    } else {
       return atof(StrSpacingBSlices.c_str());
@@ -1885,10 +1889,12 @@ float gdcmHeader::GetZSpacing(void) {
 }
 
 //
-//  Image Position Patient :
-// If not found (AVR-NEMA), we consider Slice Location (20,1041)
-// or Location (20,50) as the Z coordinate, 
-// 0. for all the coordinates if Slice Location not found
+// Image Position Patient (0020,0032):
+// If not found (ACR_NEMA) we try Image Position (0020,0030)
+// If not found (ACR-NEMA), we consider Slice Location (20,1041)
+//                                   or Location       (0020,0050) 
+// as the Z coordinate, 
+// 0. for all the coordinates if nothing is found
 // TODO : find a way to inform the caller nothing was found
 // TODO : How to tell the caller a wrong number of values was found?
 /**
@@ -1899,7 +1905,9 @@ float gdcmHeader::GetZSpacing(void) {
 float gdcmHeader::GetXImagePosition(void) {
     float xImPos, yImPos, zImPos;
     // 0020,0032 : Image Position Patient
+    // 0020,0030 : Image Position (RET)
     // 0020,1041 : Slice Location
+   
     string StrImPos = GetPubElValByNumber(0x0020,0x0032);
 
     if (StrImPos == "gdcm::Unfound") {
@@ -1942,7 +1950,7 @@ float gdcmHeader::GetYImagePosition(void) {
           string StrSliceLoc = GetPubElValByNumber(0x0020,0x1041); // for *very* old ACR-NEMA images
           if (StrSliceLoc == "gdcm::Unfound") {
             dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Slice Location (0020,1041)");
-             // How to tell the caller nothing was found?
+            // How to tell the caller nothing was found?
           } 
        }  
        return 0.;

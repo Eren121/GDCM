@@ -52,7 +52,7 @@ gdcmDict::~gdcmDict() {
    }
    KeyHt.clear();
    // Since AddNewEntry adds symetrical in both KeyHt and NameHT we can
-   // assume all the pointed gdcmDictEntries are allready cleaned-up when
+   // assume all the pointed gdcmDictEntries are already cleaned-up when
    // we cleaned KeyHt.
    NameHt.clear();
 }
@@ -151,7 +151,7 @@ int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
    key = NewEntry->GetKey();
 	
    if(KeyHt.count(key) == 1) {
-      dbg.Verbose(1, "gdcmDict::AddNewEntry allready present", key.c_str());
+      dbg.Verbose(1, "gdcmDict::AddNewEntry already present", key.c_str());
       return(0);
    } else {
       KeyHt[NewEntry->GetKey()] = NewEntry;
