@@ -68,16 +68,36 @@ diff -u -3 -p -r1.4 jmorecfg.h
 
 
 4.
-To further allow us to have to different copy of the 8bits and 12bits jpeg
+To further allow us to have to different copy of the 8, 12 and 16 bits jpeg
 library we had to mangle the name. Fur this purpose two new file were added to
-the library: gdcm_mangle_8bits.h and gdcm_mangle_12bits.h. Those file were
-generated using:
+the library: gdcm_mangle_8bits.h, gdcm_mangle_12bits.h and gdcm_mangle_16bits.h. 
+Those file were generated using:
 
-        nm libgdcmijpeg8.a | grep " T " | colrm 1 11 | sort
+        nm libgdcmijpeg8.a | grep " [R|T] " | colrm 1 11 | sort
 
 
 5.
-In order to read lossless images, we had to apply the ls-patch to jpeg-6b ... to be continued
+In order to read lossless images, we had to apply the ls-patch to jpeg-6b. So I started from scratch:
+
+tar xvfz /tmp/jpegsrc.v6b.tar.gz                        (1)
+patch < /tmp/ljpeg-6b.patch                             (2)
+patch -p0 < arithmetic-without-arith-option-full.patch  (3)
+patch -p0 < warnings10-14.patch                         (4)
+patch -p0 < previous-gdcm.patch                         (5)
+-----------------------------------------------------------
+= The subdir src/jpeg/libijg
+
+(now I also need to apply the redhat patch for cplusplus lib) 
+
+(1) http://www.ijg.org/files/jpegsrc.v6b.tar.gz
+(2) http://www.oceana.com/ftp/ljpeg/ljpeg-patch.v6b.tar.gz
+(3), (4) and (5) http://www.creatis.insa-lyon.fr/~malaterre/jpeg/
+
+(3) Was made with a carefull inspection of dcmtk code (see convert.sh at the same spot as the patch)
+(4) Is basically just compilation of the lib with -W -Wall -Werror
+(5) This contains some configuration copy/paste from VTK, and the 'well known' 12 bits Philips MRI DICOM patch
 
 
-(shoud we disalbe getenv just as dcmtk ?
+
+NOTE for later:
+(shoud we disable getenv just as dcmtk ? there is a ijg flag for that NO_ENV or something similar
