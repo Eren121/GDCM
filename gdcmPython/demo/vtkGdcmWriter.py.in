@@ -15,7 +15,7 @@ from vtkpython import *
 try:
    fileName = sys.argv[1]
 except IndexError:
-   fileName = os.path.join(GDCM_DATA_PATH, "test.acr")
+   fileName = os.path.join(GDCM_DATA_ROOT, "test.acr")
 
 # read the image
 reader = vtkGdcmReader()

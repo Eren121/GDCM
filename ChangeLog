@@ -1,4 +1,8 @@
 2005-01-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * gdcmPython/ : change GDCM_DATA_PATH to GDCM_DATA_ROOT to be complient with
+     all in gdcm
+
+2005-01-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Test/ : rename VTK tests to have a best name for the tests
    * gdcmPython/demo/*.py.in : Change the InitTraversal/GetNextEntry use to
      GetFirstEntry/GetNextEntry use

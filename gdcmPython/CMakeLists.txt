@@ -176,12 +176,12 @@ ENDIF(GDCM_VTK)
 
 # generate a setup.py according to VTK installation
 # put it in subdir in order to not override old one
-
-GET_FILENAME_COMPONENT(VTKPATH ${VTK_DIR}/../../ ABSOLUTE)
-CONFIGURE_FILE(
-    ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
-    ${GDCM_BINARY_DIR}/setup.py
-)
+#
+#GET_FILENAME_COMPONENT(VTKPATH ${VTK_DIR}/../../ ABSOLUTE)
+#CONFIGURE_FILE(
+#    ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
+#    ${GDCM_BINARY_DIR}/setup.py
+#)
 
 #-----------------------------------------------------------------------------
 # Install stuff:
@@ -208,8 +208,7 @@ FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
 
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/core.py
     "import gdcm\n"
-    "GDCM_DATA_PATH     =\"${GDCM_DATA_ROOT}\"\n"
-    "GDCM_TEST_DATA_PATH=\"${GDCM_DATA_ROOT}\"\n"
+    "GDCM_DATA_ROOT     =\"${GDCM_DATA_ROOT}\"\n"
     )
 
 IF(GDCM_VTK)
@@ -219,8 +218,7 @@ IF(GDCM_VTK)
     "  from libvtkgdcmPython import *\n"
     "else:\n"
     "  from vtkgdcmPython import *\n"
-    "GDCM_DATA_PATH     =\"${GDCM_DATA_ROOT}\"\n"
-    "GDCM_TEST_DATA_PATH=\"${GDCM_DATA_ROOT}\"\n"
+    "GDCM_DATA_ROOT     =\"${GDCM_DATA_ROOT}\"\n"
     )
 ENDIF(GDCM_VTK)
 

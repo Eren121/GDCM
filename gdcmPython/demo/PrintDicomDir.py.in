@@ -14,7 +14,7 @@ from gdcmPython.core import *
 try:
    fileName = sys.argv[1]
 except IndexError:
-   fileName = os.path.join(GDCM_DATA_PATH, "DICOMDIR")
+   fileName = os.path.join(GDCM_DATA_ROOT, "DICOMDIR")
 
 try:
    printLevel = int(sys.argv[2])
