@@ -10,6 +10,8 @@
 #include "gdcmDictSet.h"
 #include "gdcmDocEntry.h"
 
+class gdcmValEntry;
+class gdcmBinEntry;
 class gdcmSeqEntry;
 
 #include "gdcmDocEntrySet.h"
@@ -129,8 +131,11 @@ public:
    virtual bool WriteEntry(gdcmDocEntry *tag,FILE *_fp,FileType type);
    virtual bool WriteEntries(FILE *_fp,FileType type);
 
-   gdcmDocEntry * ReplaceOrCreateByNumber(std::string Value,
+   gdcmValEntry * ReplaceOrCreateByNumber(std::string Value,
                                              guint16 Group, guint16 Elem);
+															
+   gdcmBinEntry * ReplaceOrCreateByNumber(void *voidArea, int lgth,
+                                             guint16 Group, guint16 Elem);															
    bool ReplaceIfExistByNumber (char *Value, guint16 Group, guint16 Elem);
    
    virtual void  *LoadEntryVoidArea       (guint16 Group, guint16 Element);
@@ -166,6 +171,8 @@ protected:
    virtual bool SetEntryByName  (std::string content, std::string tagName);
    virtual bool SetEntryByNumber(std::string content,
                                  guint16 group, guint16 element);
+   virtual bool SetEntryByNumber(void *content, int lgth,
+                                 guint16 group, guint16 element);											
    virtual bool SetEntryLengthByNumber(guint32 length,
                                  guint16 group, guint16 element);
 
@@ -178,6 +185,9 @@ protected:
 // Header entry
    gdcmDocEntry *GetDocEntryByNumber  (guint16 group, guint16 element); 
    gdcmDocEntry *GetDocEntryByName    (std::string Name);
+	
+   gdcmValEntry *GetValEntryByNumber  (guint16 group, guint16 element); 
+   gdcmBinEntry *GetBinEntryByNumber  (guint16 group, guint16 element); 
 
    void LoadDocEntrySafe(gdcmDocEntry *);
 
@@ -224,9 +234,13 @@ private:
    // DocEntry related utilities
    gdcmDocEntry *ReadNextDocEntry   (void);
    gdcmDocEntry *NewDocEntryByNumber(guint16 group, 
-                                           guint16 element);
+                                     guint16 element);
    gdcmDocEntry *NewDocEntryByName  (std::string Name);
-   
+
+   gdcmValEntry *NewValEntryByNumber(guint16 group, 
+                                     guint16 element); 
+   gdcmBinEntry *NewBinEntryByNumber(guint16 group, 
+                                     guint16 element); 												   
    guint32 GenerateFreeTagKeyInGroup(guint16 group);
 
 public:

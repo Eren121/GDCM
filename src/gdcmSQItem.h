@@ -38,7 +38,12 @@ public:
     
    std::string GetEntryByNumber(guint16 group, guint16 element);
    std::string GetEntryByName(TagName name);
-      
+	
+   inline int GetSQItemNumber()
+	   { return SQItemNumber;};
+
+   inline void SetSQItemNumber(int itemNumber)
+	   {  SQItemNumber=itemNumber;};		     
 protected:
 
    // DocEntry related utilities 

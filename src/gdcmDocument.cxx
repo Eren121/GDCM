@@ -564,30 +564,65 @@ bool gdcmDocument::Write(FILE *fp, FileType type) {
 /**
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
- * @param   Value Value to be set
+ * @param   Value (string) Value to be set
+ * @param   Group   Group number of the Entry 
+ * @param   Elem  Element number of the Entry
+ * \return  pointer to the modified/created Header Entry (NULL when creation
+ *          failed).
+ */
+  
+gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
+                                         std::string Value, 
+                                         guint16 Group, 
+                                         guint16 Elem ){
+   gdcmDocEntry* a;
+   gdcmValEntry* b;	
+   a = GetDocEntryByNumber( Group, Elem);
+   if (a == NULL) {
+      a =NewDocEntryByNumber(Group, Elem);
+      if (a == NULL) 
+         return NULL;
+		b = new gdcmValEntry(a);
+      AddEntry(b);
+   }   
+   SetEntryByNumber(Value, Group, Elem);
+   b->SetValue(Value);
+   return (gdcmValEntry*)b;
+}   
+
+
+/*
+ * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ *          when it exists. Create it with the given value when unexistant.
+ * @param   voidArea (binary) value to be set
  * @param   Group   Group number of the Entry 
  * @param   Elem  Element number of the Entry
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
  
- 
-gdcmDocEntry * gdcmDocument::ReplaceOrCreateByNumber(
-                                         std::string Value, 
+
+gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
+                                         void *voidArea,
+                                         int lgth, 
                                          guint16 Group, 
                                          guint16 Elem ){
    gdcmDocEntry* a;
+   gdcmBinEntry* b;	
    a = GetDocEntryByNumber( Group, Elem);
    if (a == NULL) {
-      a =NewDocEntryByNumber(Group, Elem);
+      a =NewBinEntryByNumber(Group, Elem);
       if (a == NULL) 
          return NULL;
-      AddEntry(a);
+		b = new gdcmBinEntry(a);			
+      AddEntry(b);
    }   
-   SetEntryByNumber(Value, Group, Elem);
-   //a->SetValue(Value);
-   return(a);
-}   
+   SetEntryByNumber(voidArea, lgth, Group, Elem);
+   b->SetVoidArea(voidArea);
+   return (gdcmBinEntry*)b;
+}  
+
+
 
 /**
  * \brief Set a new value if the invoked element exists
@@ -729,7 +764,7 @@ bool gdcmDocument::SetEntryByName(std::string content,std::string tagName) {
  * \brief   Accesses an existing gdcmDocEntry (i.e. a Dicom Element)
  *          through it's (group, element) and modifies it's content with
  *          the given value.
- * @param   content new value to substitute with
+ * @param   content new value (string) to substitute with
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */
@@ -747,10 +782,10 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
       content = content + '\0';
    }
       
-   gdcmDocEntry * a;
-   a = tagHT[key];
+   gdcmValEntry * a;
+   a = (gdcmValEntry *)tagHT[key];
            
-   ((gdcmValEntry*)a)->SetValue(content);
+   a->SetValue(content);
    
    VRKey vr = a->GetVR();
    
@@ -764,7 +799,38 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
 
    a->SetLength(lgr);   
    return true;
-}  
+} 
+
+/**
+ * \brief   Accesses an existing gdcmDocEntry (i.e. a Dicom Element)
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value (void *) to substitute with
+ * @param   group     group number of the Dicom Element to modify
+ * @param   element element number of the Dicom Element to modify
+ */
+bool gdcmDocument::SetEntryByNumber(void *content,
+                                  int lgth, 
+                                  guint16 group,
+                                  guint16 element) 
+{
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! tagHT.count(key))
+      return false;
+		
+/* Hope Binray field length is never wrong    
+   if(lgth%2) // Non even length are padded with a space (020H).
+   {  
+      lgth++;
+      //content = content + '\0'; // fing a trick to enlarge a binary field?
+   }
+*/      
+   gdcmBinEntry * a;
+   a = (gdcmBinEntry *)tagHT[key];           
+   a->SetVoidArea(content);  
+   //a->SetLength(lgth);  // ???  
+   return true;
+} 
 
 /**
  * \brief   Accesses an existing gdcmDocEntry (i.e. a Dicom Element)
@@ -1132,11 +1198,8 @@ bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
          ValEntry->SetValue(ValEntry->GetValue()+"\0");
          ValEntry->SetLength(ValEntry->GetReadLength()+1);
       }
-
    WriteEntryTagVRLength(ValEntry, _fp, type);
-	std::cout << "after WriteEntryTagVRLength " << std::endl;
    WriteEntryValue(ValEntry, _fp, type);
-	std::cout << "after WriteEntryValue " << std::endl;
    return true;	
 	}
 	
@@ -1148,15 +1211,12 @@ bool gdcmDocument::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
    // bytes. When this is not the case, pad with an additional byte:	
 	/*
       if(length%2==1) { 
-         Vtag->SetValue(Vtag->GetValue()+"\0");
-         Vtag->SetLength(Vtag->GetReadLength()+1);
+         tag->SetValue(tag->GetValue()+"\0");
+         tag->SetLength(tag->GetReadLength()+1);
       }
 */
-
    WriteEntryTagVRLength(tag, _fp, type);
-	std::cout << "after WriteEntryTagVRLength " << std::endl;
    WriteEntryValue(tag, _fp, type);
-	std::cout << "after WriteEntryValue " << std::endl;
    return true;	
 	}
 }
@@ -1411,8 +1471,8 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set, long offset, long l_max, bool deli
       
       lgr=ParseDES(itemSQ, NewDocEntry->GetOffset(), l, dlm_mod);
       
-      set->AddEntry(itemSQ);	 
-      SQItemNumber ++; // a voir
+      set->AddEntry(itemSQ,SQItemNumber);	 
+      SQItemNumber ++;
       if (!delim_mode && (ftell(fp)-offset) >= l_max) {
          break;
       }       
@@ -2470,6 +2530,56 @@ gdcmDocEntry *gdcmDocument::NewDocEntryByNumber(guint16 Group, guint16 Elem)
    return NewEntry;
 }
 
+
+/**
+ * \brief   Build a new Element Value from all the low level arguments. 
+ *          Check for existence of dictionary entry, and build
+ *          a default one when absent.
+ * @param   Group group   number of the underlying DictEntry
+ * @param   Elem  element number of the underlying DictEntry
+ */
+gdcmValEntry *gdcmDocument::NewValEntryByNumber(guint16 Group, guint16 Elem) 
+{
+   // Find out if the tag we encountered is in the dictionaries:
+   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
+   if (!DictEntry)
+      DictEntry = NewVirtualDictEntry(Group, Elem);
+
+   gdcmValEntry *NewEntry = new gdcmValEntry(DictEntry);
+   if (!NewEntry) 
+   {
+      dbg.Verbose(1, "gdcmDocument::NewValEntryByNumber",
+                  "failed to allocate gdcmValEntry");
+      return NULL;
+   }
+   return NewEntry;
+}
+
+
+/**
+ * \brief   Build a new Element Value from all the low level arguments. 
+ *          Check for existence of dictionary entry, and build
+ *          a default one when absent.
+ * @param   Group group   number of the underlying DictEntry
+ * @param   Elem  element number of the underlying DictEntry
+ */
+gdcmBinEntry *gdcmDocument::NewBinEntryByNumber(guint16 Group, guint16 Elem) 
+{
+   // Find out if the tag we encountered is in the dictionaries:
+   gdcmDictEntry *DictEntry = GetDictEntryByNumber(Group, Elem);
+   if (!DictEntry)
+      DictEntry = NewVirtualDictEntry(Group, Elem);
+
+   gdcmBinEntry *NewEntry = new gdcmBinEntry(DictEntry);
+   if (!NewEntry) 
+   {
+      dbg.Verbose(1, "gdcmDocument::NewBinEntryByNumber",
+                  "failed to allocate gdcmBinEntry");
+      return NULL;
+   }
+   return NewEntry;
+}
+
 /**
  * \brief   Generate a free TagKey i.e. a TagKey that is not present
  *          in the TagHt dictionary.
@@ -2523,8 +2633,8 @@ gdcmDictEntry *gdcmDocument::GetDictEntryByName(std::string Name)
  *          exist) for the presence of the DictEntry with given
  *          group and element. The public dictionary has precedence on the
  *          shadow one.
- * @param   group   group of the searched DictEntry
- * @param   element element of the searched DictEntry
+ * @param   group   group number of the searched DictEntry
+ * @param   element element number of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
 gdcmDictEntry *gdcmDocument::GetDictEntryByNumber(guint16 group,guint16 element) 

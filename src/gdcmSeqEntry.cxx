@@ -20,7 +20,7 @@ gdcmSeqEntry::gdcmSeqEntry(gdcmDictEntry* e, int depth)
 {
    delimitor_mode = false;
    seq_term  = NULL;
-   SQDepthLevel = depth; // +1; // ??
+   SQDepthLevel = depth;
 }
 
 /**
@@ -60,14 +60,16 @@ void gdcmSeqEntry::Print(std::ostream &os){
  
     // Then, Print each SQ Item   
      for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
-   { 
-      //(*cc)->SetPrintLevel(GetPrintLevel()); aurait-ce un sens ?
+   {	
+	
+	std::cout << "SQItemNumber " << (*cc)->GetSQItemNumber() << std::endl;
+			
       (*cc)->Print(os);   
    }
    // at end, print the sequence terminator item, if any
 
    if (delimitor_mode) {
-      s2 << "   | " ;   
+      s2 << "   | " ;  // FIXME : cout the right number of | ! 
       os << s2.str();
       if (seq_term != NULL) {
          seq_term->Print(os);
@@ -83,7 +85,8 @@ void gdcmSeqEntry::Print(std::ostream &os){
 // Public
 
  /// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.      
-void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem) {
+void gdcmSeqEntry::AddEntry(gdcmSQItem *sqItem, int itemNumber) {
+   sqItem->SetSQItemNumber(itemNumber);
    items.push_back(sqItem);
 }
 

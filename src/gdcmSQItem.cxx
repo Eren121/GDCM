@@ -45,6 +45,7 @@ gdcmSQItem::~gdcmSQItem()
       for (int i=0;i<SQDepthLevel;i++)
          s << "   | " ;
    }
+	std::cout << s.str() << "SQItemNumber " << SQItemNumber  << std::endl;
    for (ListDocEntry::iterator i = docEntries.begin();  
         i != docEntries.end();
         ++i)

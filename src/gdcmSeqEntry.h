@@ -29,7 +29,7 @@ public:
    /// \brief Sets the Sequence Delimitation Item
    inline void SetSequenceDelimitationItem(gdcmDocEntry * e) { seq_term = e;}
        
-   void AddEntry(gdcmSQItem *it); 
+    void AddEntry(gdcmSQItem *it, int itemNumber); 
 
    /// \brief creates a new SQITEM for this SeQuence.
    gdcmSQItem * NewItem(void);

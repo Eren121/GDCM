@@ -21,6 +21,23 @@ gdcmValEntry::gdcmValEntry(gdcmDictEntry* e) : gdcmDocEntry(e) {
 }
 
 /**
+ * \ingroup gdcmValEntry
+ * \brief   Constructor from a given gdcmDocEntry
+ * @param   e Pointer to existing Doc entry
+ */
+gdcmValEntry::gdcmValEntry(gdcmDocEntry* e) : gdcmDocEntry(e->GetDictEntry()){
+   this->UsableLength = e->GetLength();
+	this->ReadLength   = e->GetReadLength();	
+	this->ImplicitVR   = e->IsImplicitVR();
+	this->Offset       = e->GetOffset();	
+	this->printLevel   = e->GetPrintLevel();	
+	this->SQDepthLevel = e->GetDepthLevel();	
+	
+   this->voidArea = NULL; // will be in BinEntry ?
+}
+
+
+/**
  * \brief   Canonical destructor.
  */
 gdcmValEntry::~gdcmValEntry (void) {

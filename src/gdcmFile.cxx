@@ -779,7 +779,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    }	
    // ----------------- End of Special Patch ----------------
    
-   fwrite(PixelData, lgrTotale, 1, fp1);
+  // fwrite(PixelData, lgrTotale, 1, fp1);  // should be useless, now
    fclose (fp1);
    return(true);
 }

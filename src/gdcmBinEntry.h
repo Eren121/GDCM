@@ -19,7 +19,8 @@ class GDCM_EXPORT gdcmBinEntry  : public gdcmValEntry {
 
 public:
 
-   gdcmBinEntry(gdcmDictEntry* e); 
+   gdcmBinEntry(gdcmDictEntry* e);
+   gdcmBinEntry(gdcmDocEntry* d);	 
    ~gdcmBinEntry(void);
    
    void Print(std::ostream &os = std::cout);

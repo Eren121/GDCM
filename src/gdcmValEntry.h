@@ -18,7 +18,8 @@ class GDCM_EXPORT gdcmValEntry  : public gdcmDocEntry {
 
 public:
 
-   gdcmValEntry(gdcmDictEntry* e); 
+   gdcmValEntry(gdcmDictEntry* e);
+	gdcmValEntry(gdcmDocEntry* d); 
    ~gdcmValEntry(void);
 
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
