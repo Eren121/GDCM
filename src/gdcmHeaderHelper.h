@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 21:51:01 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/06/25 20:48:25 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,30 +29,40 @@
  * - This class should be used for a stack of 2D dicom images.
  * - For a multiframe dicom image better use directly gdcmHeaderHelper
 */
-class GDCM_EXPORT gdcmSerieHeader {
+class GDCM_EXPORT gdcmSerieHeader 
+{
 public:
-    gdcmSerieHeader() {};
+    gdcmSerieHeader();
     ~gdcmSerieHeader();
 
-   void AddFileName(std::string filename); //should return bool or throw error ?
+   void AddFileName(std::string const & filename); //should return bool or throw error ?
    void AddGdcmFile(gdcmHeader *file);
-   void SetDirectory(std::string dir);
+   void SetDirectory(std::string const & dir);
    void OrderGdcmFileList();
    
    inline gdcmHeader *GetGdcmHeader()
    {
-      //Assume all element in the list have the same global infos
+      // Assume all element in the list have the same global infos
+      // Assume the list is not empty
       return CoherentGdcmFileList.front();
    }
-   
-   std::list<gdcmHeader*>& GetGdcmFileList();
+
+   typedef std::list<gdcmHeader* > GdcmHeaderList;
+   /**
+    * \brief Gets the *coherent* File List
+    * @return the *coherent* File List
+    */
+   const GdcmHeaderList& GetGdcmFileList()
+   {
+     return CoherentGdcmFileList;
+   }
 
 private:
    bool ImagePositionPatientOrdering();
    bool ImageNumberOrdering();
    bool FileNameOrdering();
    
-   std::list<gdcmHeader*> CoherentGdcmFileList;
+   GdcmHeaderList CoherentGdcmFileList;
 };
 
 //-----------------------------------------------------------------------------
