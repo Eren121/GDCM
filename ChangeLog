@@ -1,3 +1,7 @@
+2004-10-16 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Remove GDCM_EXPORT keyword from gdcm::DirList due to :
+    http://support.microsoft.com/support/kb/articles/Q168/9/58.ASP
+
 2004-10-15 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmDebug.cxx last ditch attempt to get warning/error messages
     displayed on Win32 when a brutal abort() occurs (because of uncatched

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/10/16 14:34:12 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,9 @@ namespace gdcm
  * \ingroup DirList
  * \brief   List containing the file headers from root directory. 
  */
-class GDCM_EXPORT DirList: public std::list<std::string>
+// NOTE: Due to a VC6 'feature' we can not export a std::list in a dll, 
+// so GDCM_EXPORT keyword was removed for this class only
+class DirList: public std::list<std::string>
 {
 public :
    DirList(std::string dirName,bool recursive=false);
