@@ -354,8 +354,7 @@ bool gdcmParser::CloseFile(void)
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @return  always "True" ?!
  */
-bool gdcmParser::Write(FILE *fp, FileType type) 
-{
+bool gdcmParser::Write(FILE *fp, FileType type) {
 // ==============
 // TODO The stuff has been rewritten using the chained list instead 
 //      of the H table
@@ -603,7 +602,6 @@ bool gdcmParser::SetEntryByNumber(std::string content,
       content = content + '\0';
    }
       
-   //tagHT[key]->SetValue(content);   
    gdcmHeaderEntry * a;
    IterHT p;
    TagHeaderEntryHT::iterator p2;
@@ -617,7 +615,6 @@ bool gdcmParser::SetEntryByNumber(std::string content,
        
    a-> SetValue(content); 
    
-   //std::string vr = tagHT[key]->GetVR();
    std::string vr = a->GetVR();
    
    guint32 lgr;
@@ -628,7 +625,6 @@ bool gdcmParser::SetEntryByNumber(std::string content,
    else
       lgr = l;	   
 
-   //tagHT[key]->SetLength(lgr);
    a->SetLength(lgr);   
    return true;
 }					  
@@ -647,12 +643,12 @@ bool gdcmParser::SetEntryByNumber(std::string content,
  */
 
 bool gdcmParser::SetEntryLengthByNumber(guint32 length, 
-                                        guint16 group, guint16 element) {
+                                        guint16 group, 
+					guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
    if (length%2) length++; // length must be even
-   //tagHT[key]->SetLength(length);
    ( ((tagHT.equal_range(key)).first)->second )->SetLength(length);	 
 	 
    return true ;		
@@ -736,7 +732,6 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,guint16 group, guint16 ele
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
-   //tagHT[key]->SetVoidArea(area);
    ( ((tagHT.equal_range(key)).first)->second )->SetVoidArea(area);	 
    return true;
 }
@@ -761,7 +756,8 @@ void gdcmParser::UpdateShaEntries(void)
 
       // Peer group => search the corresponding dict entry
       if(RefShaDict)
-         entry=RefShaDict->GetDictEntryByNumber((*it)->GetGroup(),(*it)->GetElement());
+         entry=RefShaDict->GetDictEntryByNumber((*it)->GetGroup(),
+	                                        (*it)->GetElement());
       else
          entry=NULL;
 
@@ -1221,9 +1217,8 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)
    if( group == 0xfffe )
       SkipLoad = true;
 
-   if ( SkipLoad ) 
-   {
-      Entry->SetLength(0);
+   if ( SkipLoad ) {
+      Entry->SetUsableLength(0);
       Entry->SetValue("gdcm::Skipped");
       return;
    }
@@ -1682,8 +1677,7 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
 {
    Entry->SetReadLength(FoundLength); // will be updated only if a bug is found
 		     
-   if ( FoundLength == 0xffffffff) 
-   {
+   if ( FoundLength == 0xffffffff) {
       FoundLength = 0;
    }
       

@@ -51,7 +51,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
       s << "lg : ";
       lgth = GetReadLength();
       if (lgth == 0xffffffff) {
-         sprintf(st,"x(ff)");  // I said : "x(ff)" !
+         sprintf(st,"x(ffff)");  // I said : "x(ffff)" !
          s.setf(std::ios::left);
          s << std::setw(10-strlen(st)) << " ";  
          s << st << " ";
@@ -67,7 +67,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
       }
       s << " Off.: ";
       sprintf(st,"x(%x)",o); 
-      s << std::setw(10-strlen(st)) << " ";       
+      s << std::setw(10-strlen(st)) << " ";
       s << st << " ";
       s << std::setw(8) << o; 
    }
