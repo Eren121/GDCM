@@ -430,12 +430,6 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
 // Just to 'see' was was actually read on disk :-(
 // Some troubles expected
 
-FILE *  fpSpurious;
-fpSpurious=fopen("SpuriousFile.raw","w"); 
-fwrite(destination,lgrTotale, 1,fpSpurious);
-fclose(fpSpurious);
-
-
    // *Try* to deal with the color
    // ----------------------------
 
