@@ -10,6 +10,13 @@
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   
+ * @param   Filename
+ * @param   exception_on_error
+ */
 gdcmDicomDir::gdcmDicomDir(std::string & FileName,
                            bool exception_on_error):
    gdcmParser(FileName.c_str(),exception_on_error, true )  
@@ -21,6 +28,19 @@ gdcmDicomDir::gdcmDicomDir(std::string & FileName,
 
    CreateDicomDir();
 }
+
+
+/*
+ * \ingroup gdcmDicomDir
+ * \brief   
+ * @param   exception_on_error
+ */
+gdcmDicomDir::gdcmDicomDir(bool exception_on_error):                           
+   gdcmParser(exception_on_error )  
+{    
+
+}
+
 
 
 gdcmDicomDir::~gdcmDicomDir() 

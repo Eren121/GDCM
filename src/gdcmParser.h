@@ -29,8 +29,8 @@ typedef std::map<GroupKey, int> GroupHT;
 
 //-----------------------------------------------------------------------------
 /*
- * \defgroup gdcmHeader
- * \brief
+ * \defgroup gdcmParser
+ * \brief used by both gdcmHeader and gdcmDicomDir
  */
 class GDCM_EXPORT gdcmParser
 {
@@ -128,7 +128,6 @@ protected:
    IterHT           GetHeaderEntrySameNumber(guint16 group, guint16 element); 
 // IterHT           GetHeaderEntrySameName  (std::string Name); 
 
-
    void LoadHeaderEntrySafe(gdcmHeaderEntry *);
 
    void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);
@@ -177,21 +176,22 @@ private:
    void SwitchSwapToBigEndian(void);
    void SetMaxSizeLoadEntry(long);
 
-   // Dict
+   // DictEntry  related utilities
    gdcmDictEntry *GetDictEntryByName  (std::string Name);
    gdcmDictEntry *GetDictEntryByNumber(guint16, guint16);
-
-   // HeaderEntry related utilities
-   gdcmHeaderEntry *ReadNextHeaderEntry   (void);
-   gdcmHeaderEntry *NewHeaderEntryByNumber(guint16 group, 
-                                           guint16 element);
-   gdcmHeaderEntry *NewHeaderEntryByName  (std::string Name);
    gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
                                       guint16 element,
                                       std::string vr     = "Unknown",
                                       std::string fourth = "Unknown",
                                       std::string name   = "Unknown");
    gdcmDictEntry *NewVirtualDictEntry(gdcmHeaderEntry *);
+   
+   // HeaderEntry related utilities
+   gdcmHeaderEntry *ReadNextHeaderEntry   (void);
+   gdcmHeaderEntry *NewHeaderEntryByNumber(guint16 group, 
+                                           guint16 element);
+   gdcmHeaderEntry *NewHeaderEntryByName  (std::string Name);
+
 
    // Deprecated (Not used)
    gdcmHeaderEntry *NewManualHeaderEntryToPubDict(std::string NewTagName,

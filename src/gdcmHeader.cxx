@@ -78,7 +78,6 @@ bool gdcmHeader::IsReadable(void) {
    std::string res = GetEntryByNumber(0x0028, 0x0005);
    if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) 
       return false; // Image Dimensions
-
    if ( !GetHeaderEntryByNumber(0x0028, 0x0100) )
       return false; // "Bits Allocated"
    if ( !GetHeaderEntryByNumber(0x0028, 0x0101) )
@@ -121,11 +120,7 @@ bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
    if ( !Element )
       return false;
    LoadHeaderEntrySafe(Element);
-
-   std::string Transfer = Element->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.4.51" )
-      return true;
-   return false;
+   return ( Element->GetValue() == "1.2.840.10008.1.2.4.51" );
 }
 
 /**
@@ -421,16 +416,17 @@ std::string gdcmHeader::GetPixelType(void) {
 /**
  * \ingroup gdcmHeader
  * \brief   Recover the offset (from the beginning of the file) 
- * \        of *image* pixels (not *icone* pixels, if any !)
+ * \        of *image* pixels (not *icone image* pixels, if any !)
  */
 size_t gdcmHeader::GetPixelOffset(void) {
-   // If this file complies with the norm we should encounter the
-   // "Image Location" tag (0x0028, 0x0200). This tag contains the
+   // We may encounter the 'RETired' (0x0028, 0x0200) tag
+   // (Image Location") . This Element contains the number of
    // the group that contains the pixel data (hence the "Pixel Data"
    // is found by indirection through the "Image Location").
    // Inside the group pointed by "Image Location" the searched element
    // is conventionally the element 0x0010 (when the norm is respected).
    // When the "Image Location" is absent we default to group 0x7fe0.
+   //
    // If the element (0x0088,0x0200) 'icone image sequence' is found
    // (grPixel,numPixel) is stored twice : the first one for the icon
    // the second one for the image ...
@@ -545,7 +541,7 @@ bool gdcmHeader::HasLUT(void) {
    if ( !GetHeaderEntryByNumber(0x0028,0x1103) )
       return false;
       
-   //  It is not enough
+   //  It is not enough :
    //  we check also 
    
    // Red Palette Color Lookup Table Data
@@ -687,7 +683,8 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
    // if it works, we shall have to check the 3 Palettes
    // to see which byte is ==0 (first one, or second one)
    // and fix the code
-   // We give up the checking to avoid some overhead 
+   // We give up the checking to avoid some (useless ?)overhead 
+   // (optimistic asumption)
    unsigned char *a;      
    int i;
 
@@ -713,7 +710,6 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
    } 
    
    //How to free the now useless LUTs?
-
    //free(LutR); free(LutB); free(LutG); // Seg Fault when used
    return(LUTRGBA);   
 } 
@@ -752,7 +748,9 @@ std::string gdcmHeader::GetTransfertSyntaxName(void) {
 void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    std::string content1;
    char car[20];	
-   // Assumes HeaderEntry (0x7fe0, 0x0010) exists ...	
+   // Assumes HeaderEntry (0x7fe0, 0x0010) exists ...
+   // TODO define private members PixelGroupNumber, PicxelElementNumber
+   //      update them, use them (only necessary for ACR-NEMA, not DICOM)	
    sprintf(car,"%d",ImageDataSize);
  
    gdcmHeaderEntry *a = GetHeaderEntryByNumber(0x7fe0, 0x0010);

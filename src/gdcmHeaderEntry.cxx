@@ -92,6 +92,11 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
       if (g == 0x0008) {
          if ( (e == 0x0016) || (e == 0x1150)  )
             s << "  ==>\t[" << ts->GetValue(v) << "]";
+      } else {
+         if (g == 0x0004) {
+	    if ( (e == 0x1510) || (e == 0x1512)  )
+	       s << "  ==>\t[" << ts->GetValue(v) << "]";
+	 }     
       }
    }
    //if (e == 0x0000) {        // elem 0x0000 --> group length 

@@ -19,7 +19,9 @@ typedef std::list<gdcmPatient *> ListPatient;
 class GDCM_EXPORT gdcmDicomDir: public gdcmParser 
 {
 public:
+   gdcmDicomDir(bool exception_on_error = false);
    gdcmDicomDir(std::string &FileName,bool exception_on_error = false );
+   
    ~gdcmDicomDir(void);
 
    void SetPrintLevel(int level) { printLevel = level; };

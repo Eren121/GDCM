@@ -51,7 +51,7 @@ public:
 
    // Some heuristic based accessors, end user intended 
    // (to be move to gdcmHeaderHelper?) 
-   int GetXSize(void);  
+   int GetXSize(void);
    int GetYSize(void);
    int GetZSize(void);
    int GetBitsStored(void);
@@ -81,19 +81,22 @@ public:
    // TODO Swig int SetPubDict(std::string filename);
 
 // Entry
-   inline virtual std::string GetEntryByName    (std::string tagName) 
-      { return(gdcmParser::GetEntryByName(tagName)); }
-   inline virtual std::string GetEntryVRByName  (std::string tagName)
-      { return(gdcmParser::GetEntryVRByName(tagName)); }
+
    inline virtual std::string GetEntryByNumber  (guint16 group, guint16 element)
       { return(gdcmParser::GetEntryByNumber(group,element)); }
    inline virtual std::string GetEntryVRByNumber(guint16 group, guint16 element)
       { return(gdcmParser::GetEntryVRByNumber(group,element)); }
-
-   inline virtual bool SetEntryByName(std::string content,std::string tagName)
-      { return(gdcmParser::SetEntryByName(content,tagName)); }
+      
+   inline virtual std::string GetEntryByName    (std::string tagName) 
+      { return(gdcmParser::GetEntryByName(tagName)); }
+   inline virtual std::string GetEntryVRByName  (std::string tagName)
+      { return(gdcmParser::GetEntryVRByName(tagName)); }
+      
    inline virtual bool SetEntryByNumber(std::string content,guint16 group, guint16 element)
       { return(gdcmParser::SetEntryByNumber(content,group,element)); }
+   inline virtual bool SetEntryByName(std::string content,std::string tagName)
+      { return(gdcmParser::SetEntryByName(content,tagName)); }
+
 
    inline virtual void UpdateShaEntries(void)
       { gdcmParser::UpdateShaEntries(); }
