@@ -1,3 +1,6 @@
+2005-01-11 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * gdcmPython/gdcm.i : bug fix when compiling with MSCV
+
 2005-01-11 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Untangle TransferSynatx from gdcm::Document. Now Document only manipulate
      a string and should ask the global TS dict what are the propreties of 
@@ -13,11 +16,11 @@
 	 * Replace the french 'Transfert Syntax' by the english 'Transfer Syntax'
 
 2005-01-10 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-   * Hopefully fix the bug on MacOSX and static global initialization. 
-   This is the only -minor- patch I found that both please MacOSX and VS6. 
-   Other patch would be to declare a const std::string & GDCM_UNFOUND() instead, 
-   but this would require a lot of change. Another approach would be that Global 
-   create those string and GDCM_UNFOUND becomes a pointer to a string (which 
+   * Hopefully fix the bug on MacOSX and static global initialization.
+   This is the only -minor- patch I found that both please MacOSX and VS6.
+   Other patch would be to declare a const std::string & GDCM_UNFOUND() instead,
+   but this would require a lot of change. Another approach would be that Global
+   create those string and GDCM_UNFOUND becomes a pointer to a string (which
    gdcm::Global would destroy at exit).
 
 2005-01-08 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>

@@ -271,6 +271,12 @@ using namespace gdcm;
 %ignore gdcm::Header::Header();
 %ignore gdcm::DicomDir::DicomDir();
 
+%ignore GDCM_UNKNOWN;
+%ignore GDCM_UNFOUND;
+%ignore GDCM_BINLOADED;
+%ignore GDCM_NOTLOADED;
+%ignore GDCM_UNREAD;
+
 ////////////////////////////////////////////////////////////////////////////
 // Warning: Order matters !
 %include "gdcmCommon.h"
