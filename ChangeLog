@@ -1,3 +1,11 @@
+2004-03-19  Jean-Pierre Roux
+     * ENH Now the tree-like structure describing a DICOMDIR comming from 
+           an already existing DICOMDIR file is consistent with 
+           the home-made tree-like structure build ex-nihilo 
+           or build from the files held (recursively) in a Directory 
+           functions gdcmDicomDir::CheckBoundaries() 
+	            gdcmObject::SetBoundaries() added
+
 2004-03-17  Jean-Pierre Roux 
      * REM (Eric Boix bug) : removal of meaningless  
                              gdcmDicomDirImage::NewImage function.       
