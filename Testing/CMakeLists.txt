@@ -25,6 +25,17 @@ INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src/
 )
 
+<<<<<<< CMakeLists.txt
+SET(dcm2acr_SOURCES
+  dcm2acr.cxx
+)
+ADD_EXECUTABLE(dcm2acr ${dcm2acr_SOURCES})
+
+SET(explDICOMDIR_SOURCES
+  explDICOMDIR.cxx
+)
+ADD_EXECUTABLE(explDICOMDIR ${explDICOMDIR_SOURCES})
+=======
 # Loop over files and create executables
 FOREACH(file ${TEST_SOURCES})
   #Doh ! I need to specify each time the compile flags !
@@ -38,3 +49,4 @@ FOREACH(file ${TEST_SOURCES})
   ADD_EXECUTABLE(${name} ${file})
   TARGET_LINK_LIBRARIES(${name} gdcm)
 ENDFOREACH(file ${TEST_SOURCES})
+>>>>>>> 1.4

@@ -33,14 +33,14 @@ int main(int argc, char* argv[]) {
 	
 	// On suppose que les champs DICOM du 2ieme fichier existent *effectivement*
 	
-	std::string nbFrames = f2->GetPubElValByNumber(0x0028, 0x0008);
+	std::string nbFrames = f2->GetHeader()->GetPubElValByNumber(0x0028, 0x0008);
 	if(nbFrames != "gdcm::Unfound") {
-           f1->ReplaceOrCreateByNumber( nbFrames, 0x0028, 0x0008);
+           f1->GetHeader()->ReplaceOrCreateByNumber( nbFrames, 0x0028, 0x0008);
         }
          
-	f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x0028, 0x0010),
+	f1->GetHeader()->ReplaceOrCreateByNumber(f2->GetHeader()->GetPubElValByNumber(0x0028, 0x0010),
 	  0x0028, 0x0010);// nbLig
-	f1->ReplaceOrCreateByNumber( f2->GetPubElValByNumber(0x0028, 0x0011),
+	f1->GetHeader()->ReplaceOrCreateByNumber( f2->GetHeader()->GetPubElValByNumber(0x0028, 0x0011),
           0x0028, 0x0011);// nbCol
 	
 	
@@ -56,15 +56,12 @@ int main(int argc, char* argv[]) {
 			
 	// TODO : ne devrait-on pas fusionner ces 2 fonctions ?
 	f1->SetImageData(imageData,dataSize);
-	f1->SetImageDataSize(dataSize);
+	f1->GetHeader()->SetImageDataSize(dataSize);
 	
-	f1->PrintPubElVal();
+	f1->GetHeader()->PrintPubElVal();
 	
-	// ou, plus joli:
-	//f1->SetImageData(f2->GetImageData(),f2->GetImageDataSize());
-	
-	std::string s0 =f2->GetPubElValByNumber(0x7fe0, 0x0000);
-	std::string s10=f2->GetPubElValByNumber(0x7fe0, 0x0010);
+	std::string s0 =f2->GetHeader()->GetPubElValByNumber(0x7fe0, 0x0000);
+	std::string s10=f2->GetHeader()->GetPubElValByNumber(0x7fe0, 0x0010);
 	printf("lgr 7fe0, 0000 %s\n",s0.c_str());
 	printf("lgr 7fe0, 0010 %s\n",s10.c_str());	
 
