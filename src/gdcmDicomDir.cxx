@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 16:36:52 $
-  Version:   $Revision: 1.131 $
+  Date:      $Date: 2005/02/11 16:55:39 $
+  Version:   $Revision: 1.132 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -424,9 +424,6 @@ void DicomDir::SetEndMethodArgDelete( DicomDir::Method *method )
  * \brief    writes on disc a DICOMDIR
  * \ warning does NOT add the missing elements in the header :
  *           it's up to the user doing it !
- * \todo : to be re-written using the DICOMDIR tree-like structure
- *         *not* the chained list
- *         (does NOT exist if the DICOMDIR is user-forged !)
  * @param  fileName file to be written to 
  * @return false only when fail to open
  */
@@ -447,7 +444,7 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
 
    char filePreamble[128];
    memset(filePreamble, 0, 128);
-   fp->write(filePreamble, 128); //FIXME
+   fp->write(filePreamble, 128);
    binary_write( *fp, "DICM");
  
    DicomDirMeta *ptrMeta = GetMeta();
@@ -851,7 +848,7 @@ void DicomDir::SetElements(std::string const &path, VectDocument const &list)
 void DicomDir::SetElement(std::string const &path, DicomDirType type,
                           Document *header)
 {
-   ListDicomDirElem elemList; //FIXME this is going to be a by copy operation
+   ListDicomDirElem elemList;
    ListDicomDirElem::const_iterator it;
    uint16_t tmpGr, tmpEl;
    DictEntry *dictEntry;
