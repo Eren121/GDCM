@@ -1,10 +1,10 @@
 /*=========================================================================
-                                                                                
+
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 13:49:07 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/12/12 17:21:07 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,16 +39,26 @@ namespace gdcm
 // For JPEG 2000, body in file gdcmJpeg2000.cxx
 bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
 
+#define JOCTET uint8_t
 // For JPEG 8 Bits, body in file gdcmJpeg8.cxx
-bool gdcm_read_JPEG_file8    (std::ifstream* fp, void* image_buffer);
-
+bool gdcm_read_JPEG_file8 (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEG_memory8    (const JOCTET* buffer, const size_t buflen, 
+                                void* image_buffer,
+                                size_t *howManyRead, size_t *howManyWritten);
+//
 // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
-bool gdcm_read_JPEG_file12   (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEG_file12 (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEG_memory12   (const JOCTET *buffer, const size_t buflen, 
+                                void* image_buffer,
+                                size_t *howManyRead, size_t *howManyWritten);
 
 // For JPEG 16 Bits, body in file gdcmJpeg16.cxx
 // Beware this is misleading there is no 16bits DCT algorithm, only
 // jpeg lossless compression exist in 16bits.
-bool gdcm_read_JPEG_file16   (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEG_file16 (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEG_memory16   (const JOCTET *buffer, const size_t buflen, 
+                                void* image_buffer,
+                                size_t *howManyRead, size_t *howManyWritten);
 
 
 //-----------------------------------------------------------------------------
@@ -403,13 +413,15 @@ void PixelReadConvert::ConvertReorderEndianity()
    }
 }
 
+
 /**
  * \brief     Reads from disk the Pixel Data of JPEG Dicom encapsulated
- &            file and decompress it.
+ *            file and decompress it. This funciton assumes that each
+ *            jpeg fragment contains a whole frame (jpeg file).
  * @param     fp File Pointer
  * @return    Boolean
  */
-bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
+bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream* fp )
 {
    uint8_t* localRaw = Raw;
    // Loop on the fragment[s]
@@ -420,14 +432,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
    {
       fp->seekg( (*it)->Offset, std::ios::beg);
 
-      if ( IsJPEG2000 )
-      {
-         if ( ! gdcm_read_JPEG2000_file( fp,localRaw ) )
-         {
-            return false;
-         }
-      }
-      else if ( BitsStored == 8)
+      if ( BitsStored == 8)
       {
          // JPEG Lossy : call to IJG 6b
          if ( ! gdcm_read_JPEG_file8( fp, localRaw ) )
@@ -468,6 +473,242 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
       localRaw += length * numberBytes;
    }
    return true;
+}
+
+/**
+ * \brief     Reads from disk the Pixel Data of JPEG Dicom encapsulated
+ *            file and decompress it. This function assumes that the dicom
+ *            image is a single frame split into several JPEG fragments.
+ *            Those fragments will be glued together into a memory buffer
+ *            before being read.
+ * @param     fp File Pointer
+ * @return    Boolean
+ */
+bool PixelReadConvert::
+ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream* fp )
+{
+   // Loop on the fragment[s] to get total length
+   size_t totalLength = 0;
+   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
+        it  = JPEGInfo->Fragments.begin();
+        it != JPEGInfo->Fragments.end();
+        ++it )
+   {
+      totalLength += (*it)->Length;
+   }
+
+   // Concatenate the jpeg fragments into a local buffer
+   JOCTET *buffer = new JOCTET [totalLength];
+   JOCTET *p = buffer;
+
+   uint8_t* localRaw = Raw;
+   // Loop on the fragment[s]
+   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
+        it  = JPEGInfo->Fragments.begin();
+        it != JPEGInfo->Fragments.end();
+        ++it )
+   {
+      fp->seekg( (*it)->Offset, std::ios_base::beg);
+      size_t len = (*it)->Length;
+      fp->read((char *)p,len);
+      p+=len;
+   }
+
+   size_t howManyRead = 0;
+   size_t howManyWritten = 0;
+   size_t fragmentLength = 0;
+   
+   if ( BitsStored == 8)
+   {
+      if ( ! gdcm_read_JPEG_memory8( buffer, totalLength, Raw,
+                                     &howManyRead, &howManyWritten ) ) 
+      {
+         dbg.Error(
+            "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg8 "
+            );
+         delete [] buffer;
+         return false;
+      }
+   }
+   else if ( BitsStored <= 12)
+   {
+      if ( ! gdcm_read_JPEG_memory12( buffer, totalLength, Raw,
+                                      &howManyRead, &howManyWritten ) ) 
+      {
+         dbg.Error(
+            "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg12 "
+            );
+            delete [] buffer;
+            return false;
+      }
+   }
+   else if ( BitsStored <= 16)
+   {
+      
+      if ( ! gdcm_read_JPEG_memory16( buffer, totalLength, Raw,
+                                      &howManyRead, &howManyWritten ) ) 
+      {
+         dbg.Error(
+            "PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg16 "
+            );
+         delete [] buffer;
+         return false;
+      }
+   }
+   else
+   {
+      // other JPEG lossy not supported
+      dbg.Error("PixelConvert::ReadAndDecompressJPEGFile: unknown "
+                "jpeg lossy compression ");
+      delete [] buffer;
+      return false;
+   }      
+
+   // free local buffer
+   delete [] buffer;
+   
+   return true;      
+}
+
+/**
+ * \brief     Reads from disk the Pixel Data of JPEG Dicom encapsulated
+ *            file and decompress it. This function handles the generic 
+ *            and complex case where the DICOM contains several frames,
+ *            and some of the frames are possibly split into several JPEG
+ *            fragments. 
+ * @param     fp File Pointer
+ * @return    Boolean
+ */
+bool PixelReadConvert::
+ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp )
+{
+   // Loop on the fragment[s] to get total length
+   size_t totalLength = 0;
+   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
+        it  = JPEGInfo->Fragments.begin();
+        it != JPEGInfo->Fragments.end();
+        ++it )
+   {
+      totalLength += (*it)->Length;
+   }
+
+   // Concatenate the jpeg fragments into a local buffer
+   JOCTET *buffer = new JOCTET [totalLength];
+   JOCTET *p = buffer;
+
+   uint8_t* localRaw = Raw;
+   // Loop on the fragment[s]
+   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
+        it  = JPEGInfo->Fragments.begin();
+        it != JPEGInfo->Fragments.end();
+        ++it )
+   {
+      fp->seekg( (*it)->Offset, std::ios_base::beg);
+      size_t len = (*it)->Length;
+      fp->read((char *)p,len);
+      p+=len;
+   }
+
+   size_t howManyRead = 0;
+   size_t howManyWritten = 0;
+   size_t fragmentLength = 0;
+   
+   for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
+        it  = JPEGInfo->Fragments.begin() ;
+        (it != JPEGInfo->Fragments.end()) && (howManyRead < totalLength);
+        ++it )
+   {
+      fragmentLength += (*it)->Length;
+      
+      if (howManyRead > fragmentLength) continue;
+
+      if ( BitsStored == 8)
+      {
+        if ( ! gdcm_read_JPEG_memory8( buffer+howManyRead, totalLength-howManyRead,
+                                     Raw+howManyWritten,
+                                     &howManyRead, &howManyWritten ) ) 
+          {
+            dbg.Error("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg8 ");
+            delete [] buffer;
+            return false;
+          }
+      }
+      else if ( BitsStored <= 12)
+      {
+      
+        if ( ! gdcm_read_JPEG_memory12( buffer+howManyRead, totalLength-howManyRead,
+                                      Raw+howManyWritten,
+                                      &howManyRead, &howManyWritten ) ) 
+          {
+            dbg.Error("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg12 ");
+            delete [] buffer;
+            return false;
+         }
+      }
+      else if ( BitsStored <= 16)
+      {
+      
+        if ( ! gdcm_read_JPEG_memory16( buffer+howManyRead, totalLength-howManyRead,
+                                      Raw+howManyWritten,
+                                      &howManyRead, &howManyWritten ) ) 
+          {
+            dbg.Error("PixelConvert::ReadAndDecompressJPEGFile: failed to read jpeg16 ");
+            delete [] buffer;
+            return false;
+          }
+      }
+      else
+      {
+         // other JPEG lossy not supported
+         dbg.Error("PixelConvert::ReadAndDecompressJPEGFile: unknown "
+                   "jpeg lossy compression ");
+         delete [] buffer;
+         return false;
+      }
+      
+      if (howManyRead < fragmentLength)
+         howManyRead = fragmentLength;
+   }
+
+   // free local buffer
+   delete [] buffer;
+   
+   return true;
+}
+
+/**
+ * \brief     Reads from disk the Pixel Data of JPEG Dicom encapsulated
+ *            file and decompress it.
+ * @param     fp File Pointer
+ * @return    Boolean
+ */
+bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
+{
+   if ( IsJPEG2000 )
+   {
+      fp->seekg( (*JPEGInfo->Fragments.begin())->Offset, std::ios_base::beg);
+      if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
+         return false;
+   }
+
+   if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )
+   {
+      // we have one frame split into several fragments
+      // we will pack those fragments into a single buffer and 
+      // read from it
+      return ReadAndDecompressJPEGSingleFrameFragmentsFromFile( fp );
+   }
+   else if (JPEGInfo->Fragments.size() == ZSize)
+   {
+      // suppose each fragment is a frame
+      return ReadAndDecompressJPEGFramesFromFile( fp );
+   }
+   else 
+   {
+      // The dicom image contains frames containing fragments of images
+      // a more complex algorithm :-)
+      return ReadAndDecompressJPEGFragmentedFramesFromFile( fp );
+   }   
 }
 
 /**
@@ -1123,3 +1364,4 @@ void PixelReadConvert::Print( std::string indent, std::ostream &os )
 // User
 // ---> GetImageDataRaw
 //     ---> GetImageDataIntoVectorRaw
+

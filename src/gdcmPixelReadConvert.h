@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 13:49:07 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/12/12 17:21:07 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,6 +66,11 @@ private:
    void ReadAndDecompress12BitsTo16Bits( std::ifstream* fp ) throw ( FormatError );
    bool ReadAndDecompressRLEFile( std::ifstream* fp );
    bool ReadAndDecompressJPEGFile( std::ifstream* fp );
+   bool ReadAndDecompressJPEGFramesFromFile( std::ifstream* fp );
+   bool ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream* fp );
+   bool ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp );
+
+
    void BuildLUTRGBA( std::ifstream* fp );
 
    // In place (within Decompressed and with no fp access) decompression

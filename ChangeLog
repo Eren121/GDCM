@@ -1,3 +1,9 @@
+2004-12-12 Jean-Michel Rouet <jm.rouet@noos.fr>
+   * src/gdcmPixelReadConvert.[h|cxx], src/gdcmJpeg*.cxx : new handling of
+     JPEG decompression, especially when dicom frames are split into several
+     JPEG Fragments. This makes use of jpeg decompression from memory buffer.
+     This solves reading for example gdcm-JPEG-Lossless_Thoravision.dcm.
+
 2004-12-10 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmHeader.cxx : change the initialisation of default header.
      Now, this header is readable by gdm, e-film, DicomWorks

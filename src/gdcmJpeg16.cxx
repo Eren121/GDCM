@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg16.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 21:55:56 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/12/12 17:21:07 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,8 +25,9 @@ extern "C" {
 #include "gdcmjpeg/16/jerror.h"
 }
 
-#define gdcm_write_JPEG_file gdcm_write_JPEG_file16
-#define gdcm_read_JPEG_file  gdcm_read_JPEG_file16
+#define gdcm_write_JPEG_file  gdcm_write_JPEG_file16
+#define gdcm_read_JPEG_file   gdcm_read_JPEG_file16
+#define gdcm_read_JPEG_memory gdcm_read_JPEG_memory16
 
 #include "gdcmJpeg.cxx"
 
