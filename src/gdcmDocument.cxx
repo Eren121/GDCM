@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 13:35:38 $
-  Version:   $Revision: 1.155 $
+  Date:      $Date: 2005/01/06 14:49:16 $
+  Version:   $Revision: 1.156 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -535,7 +535,7 @@ void Document::WriteContent(std::ofstream* fp, FileType filetype)
 }
 
 /**
- * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ * \brief   Modifies the value of a given Doc Entry (Dicom Element)
  *          when it exists. Create it with the given value when unexistant.
  * @param   value (string) Value to be set
  * @param   group   Group number of the Entry 
@@ -627,6 +627,7 @@ ValEntry* Document::ReplaceOrCreateByNumber(
  * @param   binArea (binary) value to be set
  * @param   Group   Group number of the Entry 
  * @param   Elem  Element number of the Entry
+ * @param   vr  V(alue) R(epresentation) of the Entry -if private Entry-
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 08:46:21 $
-  Version:   $Revision: 1.180 $
+  Date:      $Date: 2005/01/06 14:49:16 $
+  Version:   $Revision: 1.181 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -407,7 +407,8 @@ bool File::WriteDcmImplVR (std::string const & fileName)
 /**
 * \brief Writes on disk A SINGLE Dicom file, 
  *        using the Explicit Value Representation convention
- *        NO test is performed on  processor "Endiannity". * @param fileName name of the file to be created
+ *        NO test is performed on  processor "Endiannity". 
+ * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
  * @return false if write fails
  */
@@ -510,24 +511,61 @@ bool File::Write(std::string const& fileName)
    return check;
 }
 
+/**
+ * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value (string) to substitute with
+ * @param   group     group number of the Dicom Element to modify
+ * @param   element element number of the Dicom Element to modify
+ */
 bool File::SetEntryByNumber(std::string const& content,
                             uint16_t group, uint16_t element)
 { 
    return HeaderInternal->SetEntryByNumber(content,group,element);
 }
 
+
+/**
+ * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
+ *          through it's (group, element) and modifies it's content with
+ *          the given value.
+ * @param   content new value (void*  -> uint8_t*) to substitute with
+ * @param   lgth new value length
+ * @param   group     group number of the Dicom Element to modify
+ * @param   element element number of the Dicom Element to modify
+ */
 bool File::SetEntryByNumber(uint8_t* content, int lgth,
                             uint16_t group, uint16_t element)
 {
    return HeaderInternal->SetEntryByNumber(content,lgth,group,element);
 }
 
+/**
+ * \brief   Modifies the value of a given Doc Entry (Dicom Element)
+ *          when it exists. Create it with the given value when unexistant.
+ * @param   value (string) Value to be set
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * \return  pointer to the modified/created Header Entry (NULL when creation
+ *          failed).
+ */ 
 bool File::ReplaceOrCreateByNumber(std::string const& content,
                                    uint16_t group, uint16_t element)
 {
    return HeaderInternal->ReplaceOrCreateByNumber(content,group,element) != NULL;
 }
 
+/*
+ * \brief   Modifies the value of a given Header Entry (Dicom Element)
+ *          when it exists. Create it with the given value when unexistant.
+ *          A copy of the binArea is made to be kept in the Document.
+ * @param   binArea (binary) value to be set
+ * @param   Group   Group number of the Entry 
+ * @param   Elem  Element number of the Entry
+ * \return  pointer to the modified/created Header Entry (NULL when creation
+ *          failed).
+ */
 bool File::ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
                                    uint16_t group, uint16_t element)
 {

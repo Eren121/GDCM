@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 18:16:39 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/01/06 14:49:15 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -131,7 +131,7 @@ int CopyDicom(std::string const & filename,
       if( !copy->WriteDcmExplVR(output) )
       {
          std::cout << " Failed" << std::endl
-                   << "        " << output << " not written" << std::endl;
+                   << "       " << output << " not written" << std::endl;
 
          delete original;
          delete copy;
