@@ -33,21 +33,22 @@ int main(int argc, char* argv[]) {
 	
 	// On suppose que les champs DICOM du 2ieme fichier existent *effectivement*
 	
-	std::string nbFrames = f2->GetHeader()->GetPubElValByNumber(0x0028, 0x0008);
+	std::string nbFrames = f2->GetHeader()->GetEntryByNumber(0x0028, 0x0008);
 	if(nbFrames != "gdcm::Unfound") {
            f1->GetHeader()->ReplaceOrCreateByNumber( nbFrames, 0x0028, 0x0008);
         }
          
-	f1->GetHeader()->ReplaceOrCreateByNumber(f2->GetHeader()->GetPubElValByNumber(0x0028, 0x0010),
+	f1->GetHeader()->ReplaceOrCreateByNumber(f2->GetHeader()->GetEntryByNumber(0x0028, 0x0010),
 	  0x0028, 0x0010);// nbLig
-	f1->GetHeader()->ReplaceOrCreateByNumber( f2->GetHeader()->GetPubElValByNumber(0x0028, 0x0011),
+	f1->GetHeader()->ReplaceOrCreateByNumber( f2->GetHeader()->GetEntryByNumber(0x0028, 0x0011),
           0x0028, 0x0011);// nbCol
 	
 	
 	// sans doute d'autres à mettre à jour...
 	
 	// TODO : rajouter une valeur par defaut.	
-	// TODO : une routine qui recoit une liste de couples (gr,el), et qui fasse le boulot.
+	// TODO : une routine qui recoit une liste de couples (gr,el), 
+	//                        et qui fasse le boulot.
 
 				
 	dataSize = f2->GetImageDataSize();
@@ -58,10 +59,10 @@ int main(int argc, char* argv[]) {
 	f1->SetImageData(imageData,dataSize);
 	f1->GetHeader()->SetImageDataSize(dataSize);
 	
-	f1->GetHeader()->PrintPubElVal();
+	f1->GetHeader()->PrintPubEntry();
 	
-	std::string s0 =f2->GetHeader()->GetPubElValByNumber(0x7fe0, 0x0000);
-	std::string s10=f2->GetHeader()->GetPubElValByNumber(0x7fe0, 0x0010);
+	std::string s0 =f2->GetHeader()->GetPubEntryByNumber(0x7fe0, 0x0000);
+	std::string s10=f2->GetHeader()->GetPubEntryByNumber(0x7fe0, 0x0010);
 	printf("lgr 7fe0, 0000 %s\n",s0.c_str());
 	printf("lgr 7fe0, 0010 %s\n",s10.c_str());	
 
