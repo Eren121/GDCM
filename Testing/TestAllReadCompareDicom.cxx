@@ -35,7 +35,7 @@ int InternalTest(std::string const & filename, std::string const & referenceFile
                    << std::endl;
          delete tested;
          delete (char*)testedImageData;
-         //continue; 
+         return 0;
       }
       else
       {
