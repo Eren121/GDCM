@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 16:32:45 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/01/26 09:49:54 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   Get the (std::string representable) value of the Dicom entry
+ * \brief   Get the "std::string representable" value of the Dicom entry
  * @param   group  Group number of the searched tag.
  * @param   elem Element number of the searched tag.
  * @return  Corresponding element value when it exists,
@@ -48,7 +48,6 @@ std::string DocEntrySet::GetEntryValue(uint16_t group, uint16_t elem)
 
 /**
  * \brief   Gets (from Header) a 'non string' element value 
- *          (LoadElementValues has already be executed)  
  * @param group   group number of the Entry 
  * @param elem  element number of the Entry
  * @return Pointer to the 'non string' area
@@ -79,7 +78,7 @@ int DocEntrySet::GetEntryLength(uint16_t group, uint16_t elem)
 
 /**
  * \brief   Searches within Header Entries (Dicom Elements) parsed with 
- *          the public and private dictionaries 
+ *          the public [and private dictionaries] 
  *          for the element value representation of a given tag..
  *          Obtaining the VR (Value Representation) might be needed by caller
  *          to convert the string typed content to caller's native type 
@@ -119,15 +118,19 @@ ValEntry *DocEntrySet::GetValEntry(uint16_t group, uint16_t elem)
  * \brief  Same as \ref Document::GetDocEntry except it only
  *         returns a result when the corresponding entry is of type
  *         BinEntry.
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element  
+ * @param   group  Group number of the searched Dicom Element
+ * @param   elem Element number of the searched Dicom Element
  * @return When present, the corresponding BinEntry. 
  */
 BinEntry *DocEntrySet::GetBinEntry(uint16_t group, uint16_t elem)
 {
    DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
+   {
+      gdcmVerboseMacro( "No corresponding BinEntry " << std::hex << group <<
+                         "," << elem);
       return NULL;
+   }
 
    return dynamic_cast<BinEntry*>(currentEntry);
 }
@@ -144,7 +147,11 @@ SeqEntry *DocEntrySet::GetSeqEntry(uint16_t group, uint16_t elem)
 {
    DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
+   {
+      gdcmVerboseMacro( "No corresponding SeqEntry " << std::hex << group <<
+                        "," << elem);
       return NULL;
+   }
 
    return dynamic_cast<SeqEntry*>(currentEntry);
 }
@@ -163,7 +170,8 @@ bool DocEntrySet::SetValEntry(std::string const& content,
    ValEntry *entry = GetValEntry(group, elem);
    if (!entry )
    {
-      gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
+      gdcmVerboseMacro( "No corresponding ValEntry " << std::hex << group <<
+                         "," << elem << " element (try promotion first).");
       return false;
    }
    return SetValEntry(content,entry);
@@ -178,13 +186,14 @@ bool DocEntrySet::SetValEntry(std::string const& content,
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool DocEntrySet::SetBinEntry(uint8_t*content, int lgth, 
+bool DocEntrySet::SetBinEntry(uint8_t *content, int lgth, 
                               uint16_t group, uint16_t elem) 
 {
    BinEntry *entry = GetBinEntry(group, elem);
    if (!entry )
    {
-      gdcmVerboseMacro( "No corresponding ValEntry (try promotion first).");
+      gdcmVerboseMacro( "No corresponding ValEntry " << std::hex << group <<
+                        "," << elem << " element (try promotion first).");
       return false;
    }
 
@@ -532,8 +541,8 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
 
 
 /**
- * \brief   Searches both the public and the shadow dictionary (when they
- *          exist) for the presence of the DictEntry with given
+ * \brief   Searches [both] the public [and the shadow dictionary (when they
+ *          exist)] for the presence of the DictEntry with given
  *          group and element, and create a new virtual DictEntry if necessary
  * @param   group  group number of the searched DictEntry
  * @param   elem element number of the searched DictEntry

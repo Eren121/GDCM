@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:22 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/26 09:49:53 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -147,7 +147,6 @@ int main(int argc, char* argv[])
    // inside the loop
 
    // Get caracteristics of the first image
-
    SamplesPerPixel     = sqi->GetEntryValue(0x0028,0x0002);
    Rows                = sqi->GetEntryValue(0x0028,0x0010);
    Columns             = sqi->GetEntryValue(0x0028,0x0011);
@@ -165,20 +164,10 @@ int main(int argc, char* argv[])
    int lgrImage = iRows*iColumns * iSamplesPerPixel * (iBitsAllocated/8);
 
    // compute number of images
-
    int nbImages = seqPapyrus->GetNumberOfSQItems();
-/*
-   int nbImages = 0;
-   while (sqi)
-   {
-      nbImages++;
-      sqi =  seqPapyrus->GetNextSQItem();
-   }
-*/
    std::cout <<"Number of frames :" << nbImages << std::endl;  
 
    //  allocate enough room to get the pixels of all images.
-
    uint8_t *PixelArea = new uint8_t[lgrImage*nbImages];
    uint8_t *currentPosition = PixelArea;
   gdcm::BinEntry *pixels;
@@ -234,7 +223,7 @@ int main(int argc, char* argv[])
    n->InsertValEntry(MediaStSOPinstUID,  0x0002,0x0002);
   // Whe keep default gdcm Transfer Syntax (Explicit VR Little Endian)
   // since using Papyrus one (Implicit VR Little Endian) is a mess
-   //n->Insert(TransferSyntax,     0x0002,0x0010);
+   //n->InsertValEntry(TransferSyntax,     0x0002,0x0010);
    n->InsertValEntry(StudyDate,          0x0008,0x0020);
    n->InsertValEntry(StudyTime,          0x0008,0x0030);
    n->InsertValEntry(Modality,           0x0008,0x0060);

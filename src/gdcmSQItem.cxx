@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:24 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/01/26 09:49:54 $
+  Version:   $Revision: 1.61 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -161,7 +161,6 @@ void SQItem::ClearEntry()
 bool SQItem::AddEntry(DocEntry *entry)
 {
    DocEntries.push_back(entry);
-   //TODO : check if it worked
    return true;
 }   
 
@@ -230,13 +229,10 @@ DocEntry * SQItem::GetFirstEntry()
  */
 DocEntry *SQItem::GetNextEntry()
 {
-  // gdcmAssertMacro (ItDocEntries != DocEntries.end());
-   {
-      ++ItDocEntries;
-      if (ItDocEntries != DocEntries.end())
-         return  *ItDocEntries;
-      return NULL;
-   }
+   ++ItDocEntries;
+   if (ItDocEntries != DocEntries.end())
+      return  *ItDocEntries;
+   return NULL;
 }
 
 /**
@@ -250,7 +246,7 @@ DocEntry *SQItem::GetDocEntry(uint16_t group, uint16_t elem)
    for(ListDocEntry::iterator i = DocEntries.begin();
                               i != DocEntries.end(); ++i)
    {
-      if ( (*i)->GetGroup()==group && (*i)->GetElement()==elem )
+      if ( (*i)->GetGroup() == group && (*i)->GetElement() == elem )
          return *i;
    }
    return NULL;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:23 $
-  Version:   $Revision: 1.210 $
+  Date:      $Date: 2005/01/26 09:49:54 $
+  Version:   $Revision: 1.211 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -192,6 +192,7 @@ Document::~Document ()
 
 /**
   * \brief   Prints The Dict Entries of THE public Dicom Dictionary
+  * @param os ostream to print to
   * @return
   */  
 void Document::PrintPubDict(std::ostream &os)
@@ -202,6 +203,7 @@ void Document::PrintPubDict(std::ostream &os)
 
 /**
   * \brief   Prints The Dict Entries of THE shadow Dicom Dictionary
+  * @param os ostream to print to
   * @return
   */
 void Document::PrintShaDict(std::ostream &os)
@@ -432,7 +434,6 @@ bool Document::CloseFile()
       delete Fp;
       Fp = 0;
    }
-
    return true; //FIXME how do we detect a non-closed ifstream ?
 }
 
@@ -441,14 +442,15 @@ bool Document::CloseFile()
  * @param fp file pointer on an already open file (actually: Output File Stream)
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
- * \return Always true.
+ * @return Always true.
  */
 void Document::WriteContent(std::ofstream *fp, FileType filetype)
 {
-   /// \todo move the following lines (and a lot of others, to be written)
-   /// to a future function CheckAndCorrectHeader  
-   /// (necessary if user wants to write a DICOM V3 file
-   /// starting from an  ACR-NEMA (V2)  Header
+   // \TODO move the following lines (and a lot of others, to be written)
+   // to a future function CheckAndCorrectHeader  
+
+   // (necessary if user wants to write a DICOM V3 file
+   // starting from an ACR-NEMA (V2) Header
 
    if ( filetype == ImplicitVR || filetype == ExplicitVR )
    {
@@ -459,7 +461,7 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
       fp->write("DICM", 4);
    }
 
-/**
+/*
  * \todo rewrite later, if really usefull
  *       - 'Group Length' element is optional in DICOM
  *       - but un-updated odd groups lengthes can causes pb

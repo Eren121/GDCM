@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:23 $
-  Version:   $Revision: 1.118 $
+  Date:      $Date: 2005/01/26 09:49:53 $
+  Version:   $Revision: 1.119 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -472,7 +472,6 @@ DicomDirMeta *DicomDir::NewMeta()
  //                  to be able to remove any direct reference to TagHT
    DocEntry *entry = GetFirstEntry();
    if( entry )
-   //if ( TagHT.begin() != TagHT.end() ) // after Document Parsing
    { 
       MetaElems = new DicomDirMeta(true);
 
@@ -487,16 +486,6 @@ DicomDirMeta *DicomDir::NewMeta()
 
          entry = GetFirstEntry();
       }
-      /*TagDocEntryHT::iterator lastOneButSequence = TagHT.end();
-      lastOneButSequence --;
-      // ALL the 'out of Sequence' Tags belong to Meta Elems
-      // (we skip 0004|1220 [Directory record sequence] )
-      for ( TagDocEntryHT::iterator cc  = TagHT.begin(); 
-                                    cc != lastOneButSequence;
-                                   ++cc)
-      {
-         MetaElems->AddEntry( cc->second );
-      }*/
    }
    else  // after root directory parsing
    {
@@ -830,9 +819,6 @@ void DicomDir::CreateDicomDir()
          // neither an 'IMAGE' SQItem. Skip to next item.
          continue;
       }
-
-      //if( si )
-         //MoveSQItem(si,tmpSI);
       tmpSI=s->GetNextSQItem();
    }
 // friend hunting : this one will be difficult to remove !

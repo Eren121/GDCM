@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:24 $
-  Version:   $Revision: 1.200 $
+  Date:      $Date: 2005/01/26 09:49:54 $
+  Version:   $Revision: 1.201 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -587,9 +587,6 @@ int File::GetNumberOfScalarComponentsRaw()
 //                                   or Location       (0020,0050) 
 // as the Z coordinate, 
 // 0. for all the coordinates if nothing is found
-
-// \todo find a way to inform the caller nothing was found
-// \todo How to tell the caller a wrong number of values was found?
 //
 // ---------------------------------------------------------------
 //
@@ -612,7 +609,6 @@ float File::GetXOrigin()
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmVerboseMacro( "Unfound Image Position (RET) (0020,0030)");
-         /// \todo How to tell the caller nothing was found ?
          return 0.;
       }
    }
@@ -643,7 +639,6 @@ float File::GetYOrigin()
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmVerboseMacro( "Unfound Image Position (RET) (0020,0030)");
-         /// \todo How to tell the caller nothing was found ?
          return 0.;
       }  
    }
@@ -1093,7 +1088,6 @@ size_t File::GetPixelOffset()
    }
 }
 
-/// \todo TODO : unify those two (previous one and next one)
 /**
  * \brief   Recover the pixel area length (in Bytes)
  * @return Pixel Element Length, as stored in the header

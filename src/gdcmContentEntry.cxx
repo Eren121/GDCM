@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmContentEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 16:32:45 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/26 09:49:53 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,13 +28,10 @@
 namespace gdcm 
 {
 
-// CLEAN ME
-#define MAX_SIZE_PRINT_ELEMENT_VALUE 128
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \brief   Constructor from a given DictEntry
+ * \brief   Constructor for a given DictEntry
  * @param   e Pointer to existing dictionary entry
  */
 ContentEntry::ContentEntry(DictEntry *e) : DocEntry(e)
@@ -43,7 +40,7 @@ ContentEntry::ContentEntry(DictEntry *e) : DocEntry(e)
 }
 
 /**
- * \brief   Constructor from a given DocEntry
+ * \brief   Constructor for a given DocEntry
  * @param   e Pointer to existing Doc entry
  */
 ContentEntry::ContentEntry(DocEntry *e)
@@ -64,7 +61,7 @@ ContentEntry::~ContentEntry ()
 // Public
 
 /**
- * \brief   Writes the std::string representable' value of a ContentEntry
+ * \brief   Writes the 'std::string representable' value of a ContentEntry
  * @param fp already open ofstream pointer
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */

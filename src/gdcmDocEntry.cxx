@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/01/26 09:49:53 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -150,11 +150,8 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          // Hence we skip writing the VR.
          // In order to avoid further troubles, we choose to write them
          // as 'no-length' Item Delimitors (we pad by writing 0xffffffff)
-         // The end of a given Item will be found when  :
-         //  - a new Item Delimitor Item is encountered (the Seq goes on)
-         //  - a Sequence Delimitor Item is encountered (the Seq just ended)
-
-         // TODO : verify if the Sequence Delimitor Item was forced during Parsing 
+         // We shall force the end of a given Item by writting 
+         //  a Item Delimitation Item (fffe, e00d)
 
          uint32_t ff = 0xffffffff;
          binary_write(*fp, ff);

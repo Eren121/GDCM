@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:11 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/26 09:49:53 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,10 @@ namespace gdcm
 {
 
 //-----------------------------------------------------------------------------
+/**
+ * \brief internal structure, not end user intended
+ *        shouln't appear here
+ */  
 GDCM_EXPORT typedef struct
 {
    /// DicomGroup number
@@ -46,7 +50,6 @@ typedef std::list<Element> ListDicomDirImageElem;
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DicomDirElement
  * \brief   Represents elements contained in a DicomDir
  *           class for the chained lists from the file 'Dicts/DicomDir.dic'
  */
@@ -70,7 +73,6 @@ public:
       { return DicomDirMetaList; };
 
    /**
-    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the PATIENT Elements of a DICOMDIR.
     */      
@@ -78,7 +80,6 @@ public:
       { return DicomDirPatientList; };
 
    /**
-    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the STUDY Elements of a DICOMDIR.
     */      
@@ -86,7 +87,6 @@ public:
       { return DicomDirStudyList; };
 
    /**
-    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the SERIE Elements of a DICOMDIR.
     */
@@ -94,7 +94,6 @@ public:
       { return DicomDirSerieList; };
 
    /**
-    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the IMAGE Elements of a DICOMDIR.
     */
