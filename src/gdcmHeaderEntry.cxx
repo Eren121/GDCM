@@ -41,6 +41,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    std::ostringstream s;
    guint32 lgth;
    char greltag[10];  //group element tag
+
    g  = GetGroup();
    e  = GetElement();
    v  = GetValue();

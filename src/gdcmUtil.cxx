@@ -52,23 +52,26 @@ void gdcmDebug::Exit(int a) {
 }
 
 //-----------------------------------------------------------------------------
-gdcmVR      *gdcmGlobal::VR    = (gdcmVR *)0;
-gdcmTS      *gdcmGlobal::TS    = (gdcmTS *)0;
-gdcmDictSet *gdcmGlobal::Dicts = (gdcmDictSet *)0;
+gdcmDictSet         *gdcmGlobal::Dicts  = (gdcmDictSet *)0;
+gdcmVR              *gdcmGlobal::VR     = (gdcmVR *)0;
+gdcmTS              *gdcmGlobal::TS     = (gdcmTS *)0;
+gdcmDicomDirElement *gdcmGlobal::ddElem = (gdcmDicomDirElement *)0;
 gdcmGlobal gdcmGlob;
 
 gdcmGlobal::gdcmGlobal(void) {
    if (VR || TS || Dicts)
       dbg.Verbose(0, "gdcmGlobal::gdcmGlobal : VR or TS or Dicts already allocated");
+   Dicts = new gdcmDictSet();
    VR = new gdcmVR();
    TS = new gdcmTS();
-   Dicts = new gdcmDictSet();
+   ddElem = new gdcmDicomDirElement();
 }
 
 gdcmGlobal::~gdcmGlobal() {
+   delete Dicts;
    delete VR;
    delete TS;
-   delete Dicts;
+   delete ddElem;
 }
 
 gdcmVR *gdcmGlobal::GetVR(void) {
@@ -81,6 +84,10 @@ gdcmTS *gdcmGlobal::GetTS(void) {
 
 gdcmDictSet *gdcmGlobal::GetDicts(void) {
    return Dicts;
+}
+
+gdcmDicomDirElement *gdcmGlobal::GetDicomDirElements(void) {
+   return ddElem;
 }
 
 //-----------------------------------------------------------------------------

@@ -100,6 +100,10 @@ PostBuild_Cmds=copy ..\..\lib\vtkgdcm.dll ..\	copy Debug\vtkgdcm.lib ..\..\lib\v
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\src\gdcmDicomDirElement.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmDict.cxx
 # End Source File
 # Begin Source File

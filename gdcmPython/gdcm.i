@@ -12,11 +12,12 @@
 #include "gdcmUtil.h"
 #include "gdcmObject.h"
 #include "gdcmDicomDir.h"
+#include "gdcmDicomDirElement.h"
 #include "gdcmPatient.h"
 #include "gdcmStudy.h"
 #include "gdcmSerie.h"
 #include "gdcmImage.h"
-
+#include "gdcmDirList.h"
 
 using namespace std;
 
@@ -127,7 +128,9 @@ extern gdcmGlobal gdcmGlob;
 %include "gdcmUtil.h"
 %include "gdcmObject.h"
 %include "gdcmDicomDir.h"
-%#include "gdcmPatient.h"
+%include "gdcmDicomDirElement.h"
+%include "gdcmPatient.h"
 %include "gdcmStudy.h"
 %include "gdcmSerie.h"
 %include "gdcmImage.h"
+%include "gdcmDirList.h"

@@ -14,6 +14,7 @@ libgdcm_la_LIBADD = \
 
 libgdcm_la_SOURCES=                \
    gdcmDicomDir.cxx                \
+   gdcmDicomDirElement.cxx         \
    gdcmDict.cxx                    \
    gdcmDictEntry.cxx               \
    gdcmDictSet.cxx                 \
@@ -40,9 +41,10 @@ libgdcm_la_SOURCES=                \
 
 
 libgdcmincludedir = $(includedir)
-libgdcminclude_HEADERS =                \
+libgdcminclude_HEADERS =           \
 	gdcmCommon.h                    \
 	gdcmDicomDir.h                  \
+   gdcmDicomDirElement.h           \
 	gdcmDictEntry.h                 \
 	gdcmDict.h                      \
 	gdcmDictSet.h                   \

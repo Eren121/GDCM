@@ -13,188 +13,6 @@
 #include <errno.h>
 
 //-----------------------------------------------------------------------------
-class ELEMENTS 
-{
-public :
-   ELEMENTS(unsigned short int _group,unsigned short int _elem,std::string _value)
-      {group=_group;elem=_elem;value=_value;}
-
-	unsigned short int group;
-	unsigned short int elem;
-	std::string value;
-};
-
-ELEMENTS metaElem[]={
-       //Meta Group Length : to be computed later
-   ELEMENTS(0x0002,0x0000,"12345"),
-      //File Meta Information Version
-   ELEMENTS(0x0002,0x0001,"\2\0\0\0"),
-      //Media Stored SOP Class UID i.e. : 'Media Storage Directory Storage'
-   ELEMENTS(0x0002,0x0002,"1.2.840.10008.1.3.10"),
-      //Media Stored SOP Instance UID  : may be forged later 
-   ELEMENTS(0x0002,0x0003,""), 
-      //Transfer Syntax UID i.e. : Explicit VR - Little Endian
-   ELEMENTS(0x0002,0x0010,"1.2.840.10008.1.2.1"), 
-      //Implementation Class UID : may be forged later 
-   ELEMENTS(0x0002,0x0012,""), 
-      //Implementation Version Name  
-   ELEMENTS(0x0002,0x0013,"gdcmLib"),
-      //File-set ID  :        
-   ELEMENTS(0x0004,0x1130,""),
-      //Offset of the first dir of root dir entity : to be computed later   
-   ELEMENTS(0x0004,0x1200,"0"),
-      //Offset of the last dir of root dir entity : to be computed later   
-   ELEMENTS(0x0004,0x1202,"0"),
-      //File-set consistency flag   
-   ELEMENTS(0x0004,0x1212,"0"),
-       //Directory record sequence : *length* to be set later 
-   ELEMENTS(0x0004,0x1220,"0"),           
-   ELEMENTS(0xffff,0xffff,"") 
-} ;
-
-ELEMENTS patientElem[]={
-   ELEMENTS(0xfffe,0xe000,"0"),
-      // Offset of next directory record : to be computed later
-   ELEMENTS(0x0004,0x1400,"0"),
-      // Record in use flag : 65535(?)
-   ELEMENTS(0x0004,0x1410,"65535"), 
-      // Offset of referenced lower-level dir entity : to be computed later   
-   ELEMENTS(0x0004,0x1420,"0"),
-      // Directory Record Type      
-   ELEMENTS(0x0004,0x1430,"PATIENT "), // don't remove trailing space !
-
-      // Specific Character Set
-   ELEMENTS(0x0008,0x0005,"ISO_IR 100"),
-      // Patient's Name 
-   ELEMENTS(0x0010,0x0010,""),
-      // Patient ID 
-   ELEMENTS(0x0010,0x0020,""),
-      // Patient's Birthdate
-   ELEMENTS(0x0010,0x0030,""), 
-      // Patient's Sex
-   ELEMENTS(0x0010,0x0040,""),    
-   ELEMENTS(0xffff,0xffff,"") 
- }; 
-
-ELEMENTS studyElem[]={  
-   ELEMENTS(0xfffe,0xe000,"0"),
-      // Offset of next directory record : to be computed later
-   ELEMENTS(0x0004,0x1400,"0"),
-      // Record in use flag : 65535(?)
-   ELEMENTS(0x0004,0x1410,"65535"), 
-      // Offset of referenced lower-level dir entity : to be computed later   
-   ELEMENTS(0x0004,0x1420,"0"),   
-      // Directory Record Type      
-   ELEMENTS(0x0004,0x1430,"STUDY "), // don't remove trailing space !   
-
-      // Specific Character Set
-   ELEMENTS(0x0008,0x0005,"ISO_IR 100"), 
-      // Study Date 
-   ELEMENTS(0x0008,0x0020,""),
-      // Study Time
-   ELEMENTS(0x0008,0x0030,""),
-      // Accession Number
-   ELEMENTS(0x0008,0x0050,""), 
-      // Study Description
-   ELEMENTS(0x0008,0x1030,""), 
-      // Study Instance UID : may be forged later
-   ELEMENTS(0x0020,0x000d,""), 
-      // Study ID : may be forged later
-   ELEMENTS(0x0020,0x0010,""),                   
-   ELEMENTS(0xffff,0xffff,"") 
-}; 
-
-
-ELEMENTS serieElem[]={  
-   ELEMENTS(0xfffe,0xe000,"0"),
-      // Offset of next directory record : to be computed later
-   ELEMENTS(0x0004,0x1400,"0"),
-      // Record in use flag : 65535(?)
-   ELEMENTS(0x0004,0x1410,"65535"), 
-      // Offset of referenced lower-level dir entity : to be computed later   
-   ELEMENTS(0x0004,0x1420,"0"),   
-      // Directory Record Type      
-   ELEMENTS(0x0004,0x1430,"SERIES"), // don't add trailing space !   
-
-      // Specific Character Set
-   ELEMENTS(0x0008,0x0005,"ISO_IR 100"), 
-      // Series Date
-   ELEMENTS(0x0008,0x0021,""),
-      // Series Time
-   ELEMENTS(0x0008,0x0031,""),
-      // Modality
-   ELEMENTS(0x0008,0x0060,""), 
-      // Institution Name  : may be forged later
-   ELEMENTS(0x0008,0x0080,""), 
-      // Institution Address : may be forged later
-   ELEMENTS(0x0008,0x0081,""), 
-      // Series Description :  may be forged later
-   ELEMENTS(0x0008,0x103e,""),
-      // Series Instance UID : may be forged later
-   ELEMENTS(0x0020,0x000e,""),   
-      // Series Number : may be forged later
-   ELEMENTS(0x0020,0x0011,"0"),                         
-   ELEMENTS(0xffff,0xffff,"") 
-}; 
-
-ELEMENTS imageElem[]={  
-   ELEMENTS(0xfffe,0xe000,"0"),
-      // Offset of next directory record : to be computed later
-   ELEMENTS(0x0004,0x1400,"0"),
-      // Record in use flag : 65535(?)
-   ELEMENTS(0x0004,0x1410,"65535"), 
-      // Offset of referenced lower-level dir entity : to be computed later   
-   ELEMENTS(0x0004,0x1420,"0"),   
-      // Directory Record Type      
-   ELEMENTS(0x0004,0x1430,"IMAGE "), // don't remove trailing space ! 
-
-      // Referenced File ID : to be set later(relative File Name)
-   ELEMENTS(0x0004,0x1500,""),
-      // Referenced SOP Class UID in File : may be forged later
-   ELEMENTS(0x0004,0x1510,""),
-      // Referenced SOP Class UID in File :  may be forged later
-   ELEMENTS(0x0004,0x1511,""),
-      // Referenced Transfer Syntax in File
-   ELEMENTS(0x0004,0x1512,""),      
-      // Specific Character Set
-   ELEMENTS(0x0008,0x0005,"ISO_IR 100"), 
-      // Image Type
-   ELEMENTS(0x0008,0x0008,""), 
-      // SOP Class UID : to be set/forged later
-   ELEMENTS(0x0008,0x0016,""),
-      // SOP Instance UID : to be set/forged later
-   ELEMENTS(0x0008,0x0018,""),    
-      // Content Date
-   ELEMENTS(0x0008,0x0023,""),
-      // Content Time
-   ELEMENTS(0x0008,0x0033,""),      
-      // Referenced Image Sequence : to be set/forged later
-   ELEMENTS(0x0008,0x1040,""), 
-   ELEMENTS(0xfffe,0xe000,"0"),
-      // Referenced SOP Class UID : to be set/forged later
-   ELEMENTS(0x0008,0x1150,""), 
-      // Referenced SOP Instance UID : to be set/forged later
-   ELEMENTS(0x0008,0x1155,""),      
-      // Image Number 
-   ELEMENTS(0x0020,0x0013,"0"),
-      // Image Position Patient 
-   ELEMENTS(0x0020,0x0032,"0"),   
-      // Image Orientation(Patient)
-   ELEMENTS(0x0020,0x0037,"0"),   
-      // Frame of Reference UID
-   ELEMENTS(0x0020,0x0052,"0"), 
-      // Rows
-   ELEMENTS(0x0028,0x0010,"0"),   
-      // Columns
-   ELEMENTS(0x0028,0x0011,"0"),
-      // Pixel Spacing
-   ELEMENTS(0x0028,0x0030,"0"),   
-      // Calibration Image
-   ELEMENTS(0x0050,0x0004,"0"),                                    
-   ELEMENTS(0xffff,0xffff,"") 
-}; 
-
-//-----------------------------------------------------------------------------
 // Constructor / Destructor
 /*
  * \ingroup gdcmDicomDir
@@ -556,7 +374,8 @@ void gdcmDicomDir::SetElements(std::string &path,ListHeader &list)
  */
 void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader *header)
 {
-   ELEMENTS *elemList;
+   std::list<gdcmElement> elemList;
+   std::list<gdcmElement>::iterator it;
    guint16 tmpGr, tmpEl;
    gdcmDictEntry *dictEntry;
    gdcmHeaderEntry *entry;
@@ -565,33 +384,30 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader
    switch(type)
    {
       case GDCM_PATIENT:
-         elemList=patientElem;
+         elemList=gdcmGlobal::GetDicomDirElements()->GetPatientElements();
          break;
       case GDCM_STUDY:
-         elemList=studyElem;
+         elemList=gdcmGlobal::GetDicomDirElements()->GetStudyElements();
          break;
       case GDCM_SERIE:
-         elemList=serieElem;
+         elemList=gdcmGlobal::GetDicomDirElements()->GetSerieElements();
          break;
       case GDCM_IMAGE:
-         elemList=imageElem;
+         elemList=gdcmGlobal::GetDicomDirElements()->GetImageElements();
          break;
       case GDCM_NONE:
-         elemList=metaElem;
+         elemList=gdcmGlobal::GetDicomDirElements()->GetMetaElements();
          break;
       default:
          return;
    }
 
-   for(int i=0;;i++)
+   for(it=elemList.begin();it!=elemList.end();++it)
    {
-      tmpGr=elemList[i].group;
-      tmpEl=elemList[i].elem;
-      if(tmpGr==0xffff) 
-         break;
+      tmpGr=it->group;
+      tmpEl=it->elem;
 
       dictEntry=GetPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
-
       entry=new gdcmHeaderEntry(dictEntry);
       entry->SetOffset(0); // just to avoid missprinting
 
@@ -619,7 +435,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader
          }
          else
          {
-            val=elemList[i].value;
+            val=it->value;
          }
       }
       entry->SetValue(val);

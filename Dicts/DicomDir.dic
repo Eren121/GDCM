@@ -1,0 +1,80 @@
+metaElem    0x0002 0x0000 "12345"                // Meta Group Length : to be computed later
+metaElem    0x0002 0x0001 "\2\0\0\0"             // File Meta Information Version
+metaElem    0x0002 0x0002 "1.2.840.10008.1.3.10" // Media Stored SOP Class UID i.e. : 'Media Storage Directory Storage'
+metaElem    0x0002 0x0003 ""                     // Media Stored SOP Instance UID  : may be forged later
+metaElem    0x0002 0x0010 "1.2.840.10008.1.2.1"  // Transfer Syntax UID i.e. : Explicit VR - Little Endian
+metaElem    0x0002 0x0012 ""                     // Implementation Class UID : may be forged later
+metaElem    0x0002 0x0013 "gdcmLib"              // Implementation Version Name
+metaElem    0x0004 0x1130 ""                     // File-set ID
+metaElem    0x0004 0x1200 "0"                    // Offset of the first dir of root dir entity : to be computed later
+metaElem    0x0004 0x1202 "0"                    // Offset of the last dir of root dir entity : to be computed later
+metaElem    0x0004 0x1212 "0"                    // File-set consistency flag
+metaElem    0x0004 0x1220 "0"                    // Directory record sequence : *length* to be set later
+
+patientElem 0xfffe 0xe000 "0"
+patientElem 0x0004 0x1400 "0"                    // Offset of next directory record : to be computed later
+patientElem 0x0004 0x1410 "65535"                // Record in use flag : 65535    ?
+patientElem 0x0004 0x1420 "0"                    // Offset of referenced lower-level dir entity : to be computed later
+patientElem 0x0004 0x1430 "PATIENT "             // Directory Record Type    don't remove trailing space !
+patientElem 0x0008 0x0005 "ISO_IR 100"           // Specific Character Set
+patientElem 0x0010 0x0010 ""                     // Patient's Name
+patientElem 0x0010 0x0020 ""                     // Patient ID
+patientElem 0x0010 0x0030 ""                     // Patient's Birthdate
+patientElem 0x0010 0x0040 ""                     // Patient's Sex
+
+studyElem   0xfffe 0xe000 "0"
+studyElem   0x0004 0x1400 "0"                    // Offset of next directory record : to be computed later
+studyElem   0x0004 0x1410 "65535"                // Record in use flag : 65535    ?
+studyElem   0x0004 0x1420 "0"                    // Offset of referenced lower-level dir entity : to be computed later
+studyElem   0x0004 0x1430 "STUDY "               // Directory Record Type    don't remove trailing space !
+studyElem   0x0008 0x0005 "ISO_IR 100"           // Specific Character Set
+studyElem   0x0008 0x0020 ""                     // Study Date
+studyElem   0x0008 0x0030 ""                     // Study Time
+studyElem   0x0008 0x0050 ""                     // Accession Number
+studyElem   0x0008 0x1030 ""                     // Study Description
+studyElem   0x0020 0x000d ""                     // Study Instance UID : may be forged later
+studyElem   0x0020 0x0010 ""                     // Study ID : may be forged later
+
+serieElem   0xfffe 0xe000 "0"
+serieElem   0x0004 0x1400 "0"                    // Offset of next directory record : to be computed later
+serieElem   0x0004 0x1410 "65535"                // Record in use flag : 65535    ?
+serieElem   0x0004 0x1420 "0"                    // Offset of referenced lower-level dir entity : to be computed later
+serieElem   0x0004 0x1430 "SERIES"               // Directory Record Type    don't add trailing space !
+serieElem   0x0008 0x0005 "ISO_IR 100"           // Specific Character Set
+serieElem   0x0008 0x0021 ""                     // Series Date
+serieElem   0x0008 0x0031 ""                     // Series Time
+serieElem   0x0008 0x0060 ""                     // Modality
+serieElem   0x0008 0x0080 ""                     // Institution Name  : may be forged later
+serieElem   0x0008 0x0081 ""                     // Institution Address : may be forged later
+serieElem   0x0008 0x103e ""                     // Series Description :  may be forged later
+serieElem   0x0020 0x000e ""                     // Series Instance UID : may be forged later
+serieElem   0x0020 0x0011 "0"                    // Series Number : may be forged later
+
+imageElem   0xfffe 0xe000 "0"
+imageElem   0x0004 0x1400 "0"                    // Offset of next directory record : to be computed later
+imageElem   0x0004 0x1410 "65535"                // Record in use flag : 65535    ?
+imageElem   0x0004 0x1420 "0"                    // Offset of referenced lower-level dir entity : to be computed later
+imageElem   0x0004 0x1430 "IMAGE "               // Directory Record Type    don't remove trailing space !
+imageElem   0x0004 0x1500 ""                     // Referenced File ID : to be set later    relative File Name
+imageElem   0x0004 0x1510 ""                     // Referenced SOP Class UID in File : may be forged later
+imageElem   0x0004 0x1511 ""                     // Referenced SOP Class UID in File :  may be forged later
+imageElem   0x0004 0x1512 ""                     // Referenced Transfer Syntax in File
+imageElem   0x0008 0x0005 "ISO_IR 100"           // Specific Character Set
+imageElem   0x0008 0x0008 ""                     // Image Type
+imageElem   0x0008 0x0016 ""                     // SOP Class UID : to be set/forged later
+imageElem   0x0008 0x0018 ""                     // SOP Instance UID : to be set/forged later
+imageElem   0x0008 0x0023 ""                     // Content Date
+imageElem   0x0008 0x0033 ""                     // Content Time
+imageElem   0x0008 0x1040 ""                     // Referenced Image Sequence : to be set/forged later
+imageElem   0xfffe 0xe000 "0"
+imageElem   0x0008 0x1150 ""                     // Referenced SOP Class UID : to be set/forged later
+imageElem   0x0008 0x1155 ""                     // Referenced SOP Instance UID : to be set/forged later
+imageElem   0x0020 0x0013 "0"                    // Image Number
+imageElem   0x0020 0x0032 "0"                    // Image Position Patient
+imageElem   0x0020 0x0037 "0"                    // Image Orientation    Patient
+imageElem   0x0020 0x0052 "0"                    // Frame of Reference UID
+imageElem   0x0028 0x0010 "0"                    // Rows
+imageElem   0x0028 0x0011 "0"                    // Columns
+imageElem   0x0028 0x0030 "0"                    // Pixel Spacing
+imageElem   0x0050 0x0004 "0"                    // Calibration Image
+

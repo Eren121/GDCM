@@ -62,6 +62,10 @@ SOURCE=..\..\src\gdcmDicomDir.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\gdcmDicomDirElement.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\gdcmDict.cxx
 # End Source File
 # Begin Source File

@@ -6,6 +6,7 @@
 #include "gdcmVR.h"
 #include "gdcmTS.h"
 #include "gdcmDictSet.h"
+#include "gdcmDicomDirElement.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -47,14 +48,16 @@ public:
    gdcmGlobal(void);
    ~gdcmGlobal();
 
+   static gdcmDictSet *GetDicts(void);
    static gdcmVR *GetVR(void);
    static gdcmTS *GetTS(void);
-   static gdcmDictSet *GetDicts(void);
+   static gdcmDicomDirElement *GetDicomDirElements(void);
 
 private:
+   static gdcmDictSet *Dicts; 
    static gdcmVR *VR;
    static gdcmTS *TS; 
-   static gdcmDictSet *Dicts; 
+   static gdcmDicomDirElement *ddElem;
 };
 
 //-----------------------------------------------------------------------------

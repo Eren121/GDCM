@@ -6,6 +6,7 @@
 #include "gdcmHeader.h"
 #include "gdcmCommon.h"
 #include "gdcmPatient.h"
+#include "gdcmDicomDirElement.h"
 
 //-----------------------------------------------------------------------------
 typedef std::list<gdcmPatient *> ListPatient;
