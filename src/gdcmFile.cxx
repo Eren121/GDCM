@@ -799,9 +799,9 @@ bool gdcmFile::ReadPixelData(void* destination) {
          fread(&b2,1,1,fp);      
          //Two steps is necessary to please VC++
          *pdestination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
-                             /* A */          /* B */            /* D */
+                              /* A */            /* B */             /* D */
          *pdestination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
-                             /* F */          /* C */            /* E */
+                             /* F */               /* C */           /* E */
 		  
 	// Troubles expected on Big-Endian processors ?	      
       }
@@ -818,7 +818,6 @@ bool gdcmFile::ReadPixelData(void* destination) {
         Header->IsDeflatedExplicitVRLittleEndianTransferSyntax() ) {
 
       size_t ItemRead = fread(destination, Header->GetPixelAreaLength(), 1, fp);
-      
       if ( ItemRead != 1 ) {
          Header->CloseFile();
          return false;

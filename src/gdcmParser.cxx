@@ -62,7 +62,7 @@ gdcmParser::gdcmParser(const char *InFilename,
    CloseFile();
 
    wasUpdated = 0;  // will be set to 1 if user adds an entry
-   printLevel = 1;  // 'Heavy' header print by default
+   printLevel = 1;  // 'Medium' print level by default
 }
 
 /**
@@ -78,7 +78,7 @@ gdcmParser::gdcmParser(bool exception_on_error)
    Initialise();
 
    wasUpdated = 0;  // will be set to 1 if user adds an entry
-   printLevel = 1;  // 'Heavy' header print by default
+   printLevel = 1;  // 'Medium' print level by default
 }
 
 /**
@@ -103,7 +103,6 @@ void gdcmParser::PrintEntry(std::ostream & os)
 {
    std::ostringstream s;   
 	   
-   s << "------------ using listEntries ----------------" << std::endl; 
    for (ListTag::iterator i = listEntries.begin();  
 	   i != listEntries.end();
 	   ++i)
@@ -119,8 +118,7 @@ void gdcmParser::PrintEntry(std::ostream & os)
   * \brief   Prints The Dict Entries of THE public Dicom Dictionnry
   * @return
   */  
-void gdcmParser::PrintPubDict(std::ostream & os) 
-{
+void gdcmParser::PrintPubDict(std::ostream & os) {
    RefPubDict->Print(os);
 }
 
@@ -129,8 +127,7 @@ void gdcmParser::PrintPubDict(std::ostream & os)
   * \brief   Prints The Dict Entries of THE shadow Dicom Dictionnry
   * @return
   */
-void gdcmParser::PrintShaDict(std::ostream & os) 
-{
+void gdcmParser::PrintShaDict(std::ostream & os) {
    RefShaDict->Print(os);
 }
 
@@ -1778,7 +1775,7 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry)
          std::ostringstream s;
          s << "Erroneous Group Length element length  on :" \
            << std::hex << group << " , " << element;
-         dbg.Error("gdcmParser::IsAnInteger",
+         dbg.Error("gdcmParser::IsHeaderEntryAnInteger",
             s.str().c_str());     
       }
    }

@@ -112,7 +112,7 @@ void gdcmDicomDir::CreateDicomDir(void)
       }
    }
 
-   end=i;
+   end=GetListEntry().end();
    AddObjectToEnd(type,begin,end);
 }
 

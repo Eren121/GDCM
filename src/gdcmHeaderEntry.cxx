@@ -32,16 +32,16 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    unsigned short int g, e;
    char st[20];
    TSKey v;
-   std::string d2;
+   std::string d2, vr;
    gdcmTS * ts = gdcmGlobal::GetTS();
    std::ostringstream s;
    guint32 lgth;
    char greltag[10];  //group element tag
-      
-   g = GetGroup();
-   e = GetElement();
-   v = GetValue();
-   o = GetOffset();
+   g  = GetGroup();
+   e  = GetElement();
+   v  = GetValue();
+   o  = GetOffset();
+   vr = GetVR();
    sprintf(greltag,"%04x|%04x ",g,e);           
    s << greltag ;
        
@@ -71,7 +71,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
       s << std::setw(8) << o; 
    }
 
-   s << "[" << GetVR()  << "] ";
+   s << "[" << vr  << "] ";
 
    if (printLevel>=1) {      
       s.setf(std::ios::left);
@@ -91,11 +91,12 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
             s << "  ==>\t[" << ts->GetValue(v) << "]";
       }
    }
-   if (e == 0x0000) {        // elem 0x0000 --> group length 
+   //if (e == 0x0000) {        // elem 0x0000 --> group length 
+   if ( (vr == "UL") || (vr == "US") || (vr == "SL") || (vr == "SS") ) {
       if (v == "4294967295") // to avoid troubles in convertion 
          sprintf (st," x(ffffffff)");
       else	
-         sprintf(st," x(%08x)",atoi(v.c_str()));
+         sprintf(st," x(%x)",atoi(v.c_str()));
       s << st;
    }
    s << std::endl;

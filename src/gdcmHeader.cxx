@@ -180,8 +180,9 @@ bool gdcmHeader::IsRLELossLessTransferSyntax(void) {
    LoadHeaderEntrySafe(Element);
 
    std::string Transfer = Element->GetValue();
-   if ( Transfer == "1.2.840.10008.1.2.5" )
+   if ( Transfer == "1.2.840.10008.1.2.5" ) {
       return true;
+    }
    return false;
 }
 
@@ -482,8 +483,12 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
    gdcmHeaderEntry* PixelElement = GetHeaderEntryByNumber(grPixel,numPixel);
    if (PixelElement)
       return PixelElement->GetLength();
-   else
+   else {
+      std::cout << "Big trouble : Pixel Element ("
+                << std::hex << grPixel<<","<< numPixel<< ") NOT found" 
+                << std::endl;
       return 0;
+   }
 }
 
 /**

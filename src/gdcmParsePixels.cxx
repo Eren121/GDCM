@@ -86,8 +86,8 @@ bool gdcmFile::ParsePixelData(void) {
       ftellRes=ftell(fp);
       fread(&ln,4,1,fp); 
       if(Header->GetSwapCode()) 
-         ln=Header->SwapLong(ln);    // Basic Offset Table Item Lentgh
-      printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
+         ln=Header->SwapLong(ln);    // Basic Offset Table Item Length
+      printf("at %x : Basic Offset Table Item Length (??) %d x(%08x)\n",
             ftellRes,ln,ln);
       if (ln != 0) {
          // What is it used for ??
@@ -159,8 +159,8 @@ bool gdcmFile::ParsePixelData(void) {
       ftellRes=ftell(fp);
       fread(&ln,4,1,fp); 
       if(Header->GetSwapCode()) 
-         ln=Header->SwapLong(ln);    // Basic Offset Table Item Lentgh
-      printf("at %x : Basic Offset Table Item Lentgh (??) %d x(%08x)\n",
+         ln=Header->SwapLong(ln);    // Basic Offset Table Item Length
+      printf("at %x : Basic Offset Table Item Length (??) %d x(%08x)\n",
             ftellRes,ln,ln);
       if (ln != 0) {
          // What is it used for ??
