@@ -1,9 +1,6 @@
-#include "gdcmHeader.h"
-#include "gdcmFile.h"
-#include "gdcmDebug.h"
+#include "gdcm.h"
 
-
-int TestWriteSimple(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 
   if (argc < 3) 

@@ -1,3 +1,14 @@
+2004-07-01 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * Test/*.cxx and Example/*.cxx: moved some examples away from the
+     test suite to the Example directory. Are concerned:
+     - PrintHeader.cxx
+     - TestDcm2Acr.cxx
+     - TestFindTags.cxx
+     - TestWrite.cxx was
+     - TestWriteSimple.cxx
+   * Test/CMakeLists.txt: added some comments on reasons for black listing
+     image gdcmData/oldACR00001.ima
+
 2004-06-30 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * Test/CmakeList.txt: removed the following from black list (to be coherent
      with removal from gdcmData):

@@ -9,20 +9,15 @@ SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
 # They usally return if no argument is given
 SET(TEST_SOURCES
   TestBug.cxx
-  TestDcm2Acr.cxx
   TestHash.cxx
-  TestWrite.cxx
-  TestReadWriteReadCompare.cxx
-  TestWriteSimple.cxx
 )
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}     
-    #PrintHeader.cxx       #require test.acr
-    PrintAllDocument.cxx     #require test.acr
+    TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
+    PrintAllDocument.cxx             # includes generated gdcmDataImages.h
     PrintDicomDir.cxx
-    TestFindTags.cxx
     TestChangeHeader.cxx
     TestDicomDir.cxx      #require DICOMDIR
     BuildUpDicomDir.cxx
@@ -112,7 +107,20 @@ SET(BLACK_LIST
   "irmPhlipsNew1.dcm"      #png looks ugly
   "mriThruVPRO.dcm"        #png looks ugly
   "gdcm-MR-SIEMENS-16-1.acr"   #segfaults TestReadWriteReadCompare
-  "oldACR00001.ima"        #segfaults TestReadWriteReadCompare
+  #segfaults TestReadWriteReadCompare: this image looks corrupted:
+  # - it's pixel data is 132096 bytes long
+  # - it has a size of 256x256 with 16 bytes per pixel, i.e. a size
+  #   of 256*256*2 = 131072 bytes.
+  # Since there is a missmatch, when we have the following call stack:
+  #  gdcmFile::GetImageData()
+  #     PixelData = new uint8_t[ImageDataSize];
+  #     \--->::GetImageDataIntoVector(destination, ImageDataSize)
+  #       \---> ::ReadPixelData(destination)
+  #         \---> fread(destination, Header->GetPixelAreaLength(), 1, fp);
+  # we get a segfault because :
+  #   - destination is ImageDataSize i.e. 131072 bytes long
+  #   - Header->GetPixelAreaLength() = 132096 bytes long
+  "oldACR00001.ima"
   )
 
 #   gdcm-ACR-LibIDO seems to be cut
