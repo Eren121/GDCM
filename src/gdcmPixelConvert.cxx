@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 16:27:20 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/08 17:02:53 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,46 +70,53 @@ void gdcmPixelConvert::AllocateUncompressed()
  * \brief Read from file a 12 bits per pixel image and uncompress it
  *        into a 16 bits per pixel image.
  */
-bool gdcmPixelConvert::ReadAndUncompress12Bits( FILE* filePointer,
-                                                size_t uncompressedSize,
-                                                size_t PixelNumber )
+void gdcmPixelConvert::ConvertDecompress12BitsTo16Bits(
+                  uint8_t* pixelZone,
+                  int sizeX,
+                  int sizeY,
+                  FILE* filePtr)
+               throw ( gdcmFormatError )
 {
-   SetUncompressedSize( uncompressedSize );
-   AllocateUncompressed();
-
-   uint16_t* pdestination = (uint16_t*)Uncompressed;
+   int nbPixels = sizeX * sizeY;
+   uint16_t* destination = (uint16_t*)pixelZone;
                                                                                 
-   for(int p = 0; p < PixelNumber; p += 2 )
+   for( int p = 0; p < nbPixels; p += 2 )
    {
-      // 2 pixels 12bit =     [0xABCDEF]
-      // 2 pixels 16bit = [0x0ABD] + [0x0FCE]
       uint8_t b0, b1, b2;
       size_t ItemRead;
-      ItemRead = fread( &b0, 1, 1, filePointer);
+                                                                                
+      ItemRead = fread( &b0, 1, 1, filePtr);
       if ( ItemRead != 1 )
       {
-         return false;
-      }
-      ItemRead = fread( &b1, 1, 1, filePointer);
-      if ( ItemRead != 1 )
-      {
-         return false;
-      }
-      ItemRead = fread( &b2, 1, 1, filePointer);
-      if ( ItemRead != 1 )
-      {
-         return false;
+         throw gdcmFormatError( "gdcmFile::ConvertDecompress12BitsTo16Bits()",
+                                "Unfound first block" );
       }
                                                                                 
-      //Two steps are necessary to please VC++
-      *pdestination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
+      ItemRead = fread( &b1, 1, 1, filePtr);
+      if ( ItemRead != 1 )
+      {
+         throw gdcmFormatError( "gdcmFile::ConvertDecompress12BitsTo16Bits()",
+                                "Unfound second block" );
+      }
+                                                                                
+      ItemRead = fread( &b2, 1, 1, filePtr);
+      if ( ItemRead != 1 )
+      {
+         throw gdcmFormatError( "gdcmFile::ConvertDecompress12BitsTo16Bits()",
+                                "Unfound second block" );
+      }
+                                                                                
+      // Two steps are necessary to please VC++
+      //
+      // 2 pixels 12bit =     [0xABCDEF]
+      // 2 pixels 16bit = [0x0ABD] + [0x0FCE]
       //                     A                     B                 D
-      *pdestination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
+      *destination++ =  ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
       //                     F                     C                 E
+      *destination++ =  ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
                                                                                 
       /// \todo JPR Troubles expected on Big-Endian processors ?
    }
-   return true;
 }
 
 /**
@@ -303,5 +310,123 @@ bool gdcmPixelConvert::gdcm_read_RLE_file( void* image_buffer,
    }
                                                                                 
    return true;
+}
+
+/**
+ * \brief   Swap the bytes, according to swap code.
+ * \warning not end user intended
+ * @param   im area to deal with
+ * @param   swap swap code
+ * @param   lgr Area Length
+ * @param   nb Pixels Bit number
+ */
+void gdcmPixelConvert::SwapZone(void* im, int swap, int lgr, int nb)
+{
+   int i;
+                                                                                
+   if( nb == 16 )
+   {
+      uint16_t* im16 = (uint16_t*)im;
+      switch( swap )
+      {
+         case 0:
+         case 12:
+         case 1234:
+            break;
+         case 21:
+         case 3412:
+         case 2143:
+         case 4321:
+            for(i=0; i < lgr/2; i++)
+            {
+               im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
+            }
+            break;
+         default:
+            std::cout << "SWAP value (16 bits) not allowed :i" << swap <<
+            std::endl;
+      }
+   }
+   else if( nb == 32 )
+   {
+      uint32_t s32;
+      uint16_t fort, faible;
+      uint32_t* im32 = (uint32_t*)im;
+      switch ( swap )
+      {
+         case 0:
+         case 1234:
+            break;
+         case 4321:
+            for(i = 0; i < lgr/4; i++)
+            {
+               faible  = im32[i] & 0x0000ffff;  // 4321
+               fort    = im32[i] >> 16;
+               fort    = ( fort >> 8   ) | ( fort << 8 );
+               faible  = ( faible >> 8 ) | ( faible << 8);
+               s32     = faible;
+               im32[i] = ( s32 << 16 ) | fort;
+            }
+            break;
+         case 2143:
+            for(i = 0; i < lgr/4; i++)
+            {
+               faible  = im32[i] & 0x0000ffff;   // 2143
+               fort    = im32[i] >> 16;
+               fort    = ( fort >> 8 ) | ( fort << 8 );
+               faible  = ( faible >> 8) | ( faible << 8);
+               s32     = fort;
+               im32[i] = ( s32 << 16 ) | faible;
+            }
+            break;
+         case 3412:
+            for(i = 0; i < lgr/4; i++)
+            {
+               faible  = im32[i] & 0x0000ffff; // 3412
+               fort    = im32[i] >> 16;
+               s32     = faible;
+               im32[i] = ( s32 << 16 ) | fort;
+            }
+            break;
+         default:
+            std::cout << "SWAP value (32 bits) not allowed : " << swap <<
+            std::endl;
+      }
+   }
+}
+
+
+
+/**
+ * \brief Deal with endianity i.e. re-arange bytes inside the integer
+ */
+void gdcmPixelConvert::ConvertReorderEndianity( uint8_t* pixelZone,
+                                        size_t imageDataSize,
+                                        int numberBitsStored,
+                                        int numberBitsAllocated,
+                                        int swapCode,
+                                        bool signedPixel)
+{
+   if ( numberBitsAllocated != 8 )
+   {
+      SwapZone( pixelZone, swapCode, imageDataSize, numberBitsAllocated );
+   }
+                                                                                
+   // Special kludge in order to deal with xmedcon broken images:
+   if (  ( numberBitsAllocated == 16 )
+      && ( numberBitsStored < numberBitsAllocated )
+      && ( ! signedPixel ) )
+   {
+      int l = (int)(imageDataSize / (numberBitsAllocated/8));
+      uint16_t *deb = (uint16_t *)pixelZone;
+      for(int i = 0; i<l; i++)
+      {
+         if( *deb == 0xffff )
+         {
+           *deb = 0;
+         }
+         deb++;
+      }
+   }
 }
 

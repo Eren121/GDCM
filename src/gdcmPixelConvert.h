@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 16:27:20 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/10/08 17:02:53 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 
 #include "gdcmCommon.h"
 #include "gdcmRLEFramesInfo.h"
+#include "gdcmException.h"
 
 /*
  * \brief Utility container for gathering the various forms the pixel data
@@ -60,27 +61,38 @@ bool ReadUncompressed( FILE* filePointer,
                        size_t expectedSize );
 bool ConvertGrayAndLutToRGB( uint8_t *lutRGBA );
 bool ReadAndUncompressRLE8Bits(FILE* fp, size_t uncompressedSize );
-static bool UncompressRLE16BitsFromRLE8Bits(
-                       int XSize,
-                       int YSize,
-                       int NumberOfFrames,
-                       uint8_t* fixMemUncompressed );
-static bool ReadAndUncompressRLEFragment(
-                                    uint8_t* decodedZone,
-                                    long fragmentSize,
-                                    long uncompressedSegmentSize,
-                                    FILE* fp );
-static bool gdcm_read_RLE_file   ( void* image_buffer,
-                                   int XSize,
-                                   int YSize,
-                                   int ZSize,
-                                   int BitsAllocated,
-                                   gdcmRLEFramesInfo* RLEInfo,
-                                   FILE* fp );
 
-
- 
-
+   static bool UncompressRLE16BitsFromRLE8Bits(
+                  int XSize,
+                  int YSize,
+                  int NumberOfFrames,
+                  uint8_t* fixMemUncompressed );
+   static bool ReadAndUncompressRLEFragment(
+                  uint8_t* decodedZone,
+                  long fragmentSize,
+                  long uncompressedSegmentSize,
+                  FILE* fp );
+   static bool gdcm_read_RLE_file(
+                  void* image_buffer,
+                  int XSize,
+                  int YSize,
+                  int ZSize,
+                  int BitsAllocated,
+                  gdcmRLEFramesInfo* RLEInfo,
+                  FILE* fp );
+   static void ConvertDecompress12BitsTo16Bits(
+                  uint8_t* pixelZone,
+                  int sizeX,
+                  int sizeY,
+                  FILE* filePtr) throw ( gdcmFormatError );
+   static void SwapZone(void* im, int swap, int lgr, int nb);
+   static void ConvertReorderEndianity(
+                  uint8_t* pixelZone,
+                  size_t imageDataSize,
+                  int numberBitsStored,
+                  int numberBitsAllocated,
+                  int swapCode,
+                  bool signedPixel );
 };
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 16:27:20 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2004/10/08 17:02:53 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,17 +49,6 @@ public:
            int numberBitsStored,
            int numberBitsAllocated,
            int highBitPosition ) throw ( gdcmFormatError );
-   void ConvertReorderEndianity(
-           uint8_t* pixelZone,
-           size_t imageDataSize,
-           int numberBitsStored,
-           int numberBitsAllocated,
-           bool signedPixel );
-   void ConvertDecompress12BitsTo16Bits(
-           uint8_t* pixelZone,
-           int sizeX,
-           int sizeY,
-           FILE* filePtr) throw ( gdcmFormatError);
    
    /// Accessor to \ref ImageDataSize
    size_t GetImageDataSize(){ return ImageDataSize; };
@@ -102,7 +91,6 @@ protected:
 
 private:
    void Initialise();
-   void SwapZone(void* im, int swap, int lgr, int nb);
 
    bool ReadPixelData(void* destination);
    
