@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 22:44:39 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/01/14 22:53:58 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -105,7 +105,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
          numberOfFiles++;
       }
    }
-   if (hFile != INVALID_FILE_HANDLE) FindClose(hFile);
+   if (hFile != INVALID_HANDLE_VALUE) FindClose(hFile);
 
 #else
   // Real POSIX implementation: scandir is a BSD extension only, and doesn't 
