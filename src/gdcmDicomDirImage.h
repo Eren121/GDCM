@@ -8,8 +8,8 @@
 //-----------------------------------------------------------------------------
 class GDCM_EXPORT gdcmDicomDirImage : public gdcmObject {
 public:
-   gdcmDicomDirImage(ListTag::iterator begin,ListTag::iterator end,
-              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
+   gdcmDicomDirImage(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
+   gdcmDicomDirImage(TagDocEntryHT *ptagHT); 
 
    ~gdcmDicomDirImage(void);
 

@@ -4,7 +4,7 @@
 #include "gdcmDebug.h"
 #include "jpeg/ljpg/jpegless.h"
 
-typedef std::pair<TagHeaderEntryHT::iterator,TagHeaderEntryHT::iterator> IterHT;
+typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -735,8 +735,8 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    // the *last* of the (GrPixel, NumPixel), if many.
           
    TagKey key = gdcmDictEntry::TranslateToKey(grPixel, numPixel); 
-   TagHeaderEntryHT::iterator p2;
-   gdcmHeaderEntry *PixelElement;
+   TagDocEntryHT::iterator p2;
+   gdcmDocEntry *PixelElement;
    
    IterHT it= Header->GetEntry().equal_range(key); // get a pair of iterators first-last synonym   
 

@@ -8,25 +8,19 @@
 // Constructor / Destructor
 /**
  * \brief  Constructor 
- * @param  begin  iterator (inside the gdcmParser chained list)
- *                on the first Header Entry (i.e Dicom Element)
- *                related to this "SERIE" part
- * @param  end  iterator  (inside the gdcmParser chained list)
- *              on the last Header Entry (i.e Dicom Element) 
- *              related to this 'SERIE' part
+ * @param  s  SQ Item holding the elements related to this "SERIE" part
  * @param ptagHT pointer to the HTable (gdcmObject needs it 
- *               to build the gdcmHeaderEntries)
- * @param plistEntries pointer to the chained List (gdcmObject needs it 
- *               to build the gdcmHeaderEntries)
+ *               to build the gdcmDocEntries)
  */
-gdcmDicomDirSerie::gdcmDicomDirSerie(ListTag::iterator begin,
-                                     ListTag::iterator end,              
-                                     TagHeaderEntryHT *ptagHT, 
-                                     ListTag *plistEntries ):
-   gdcmObject(begin,end,ptagHT,plistEntries)
+gdcmDicomDirSerie::gdcmDicomDirSerie(gdcmSQItem *s, TagDocEntryHT *ptagHT):
+   gdcmObject(ptagHT)
+{
+   docEntries = s->GetDocEntries();
+}
+gdcmDicomDirSerie::gdcmDicomDirSerie(TagDocEntryHT *ptagHT):
+   gdcmObject(ptagHT)
 {
 }
-
 /**
  * \brief   Canonical destructor.
  */
@@ -65,8 +59,8 @@ gdcmDicomDirImage * gdcmDicomDirSerie::NewImage(void) {
    std::list<gdcmElement> elemList;   
    elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirImageElements();
       
+   gdcmDicomDirImage *st = new gdcmDicomDirImage(ptagHT);
    FillObject(elemList);
-   gdcmDicomDirImage *st = new gdcmDicomDirImage(i, j, ptagHT, plistEntries);
    images.push_front(st);
    return st;   
 } 

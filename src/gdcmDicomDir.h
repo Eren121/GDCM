@@ -24,7 +24,7 @@ typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
  * \brief    gdcmDicomDir defines an object representing a DICOMDIR in memory.
  *
  */
-class GDCM_EXPORT gdcmDicomDir: public gdcmParser
+class GDCM_EXPORT gdcmDicomDir: public gdcmDocument
 {
 public:
 //   gdcmDicomDir(ListTag *l,
@@ -37,14 +37,14 @@ public:
    ~gdcmDicomDir(void);
 
    /**
-    * \ingroup gdcmParser
+    * \ingroup gdcmDicomDir
     * \brief   Sets the print level for the Dicom Header 
     * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
     */
    void SetPrintLevel(int level) 
       { printLevel = level; };
   /**
-    * \ingroup gdcmParser
+    * \ingroup gdcmDicomDir
     * \brief   canonical Printer 
     * \sa    SetPrintLevel
   */     
@@ -52,22 +52,17 @@ public:
 
 // Informations contained in the parser
    virtual bool IsReadable(void);
-/**
- * \ingroup gdcmDicomDir
- * \brief   returns a pointer to the gdcmDicomDirMeta for this DICOMDIR.
- */   
+
+/// \brief   returns a pointer to the gdcmDicomDirMeta for this DICOMDIR. 
    inline gdcmDicomDirMeta   *GetDicomDirMeta()      
       {return metaElems;};
-/**
- * \ingroup gdcmDicomDir
- * \brief   returns the PATIENT chained List for this DICOMDIR.
- */      
+
+ /// \brief   returns the PATIENT chained List for this DICOMDIR.    
    inline ListDicomDirPatient &GetDicomDirPatients() 
       {return patients;};
 
 // Parsing
    void ParseDirectory(void);
-   void CheckBoundaries(void);
    
    void SetStartMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
    void SetStartMethodArgDelete(gdcmMethod *);
@@ -75,24 +70,21 @@ public:
    void SetProgressMethodArgDelete(gdcmMethod *);
    void SetEndMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
    void SetEndMethodArgDelete(gdcmMethod *);
-/**
- * \ingroup gdcmDicomDir
- * \brief   GetProgress.
- */ 
+
+/// \brief GetProgress GetProgress
    inline float GetProgress(void)  
       {return(progress);};
-/**
- * \ingroup gdcmDicomDir
- * \brief   AbortProgress.
- */   inline void  AbortProgress(void)
+
+/// \brief AbortProgress AbortProgress
+   inline void  AbortProgress(void)
       {abort=true;      };
-/**
- * \ingroup gdcmDicomDir
- * \brief   IsAborted.
- */   inline bool  IsAborted(void)
+
+/// \brief IsAborted IsAborted
+      inline bool  IsAborted(void)
       {return(abort);   };
    
 // Adding
+  gdcmDicomDirMeta *    NewMeta(void);
   gdcmDicomDirPatient * NewPatient(void);
 
 // Write
@@ -119,13 +111,12 @@ protected:
 
 private:
    void CreateDicomDir(void);
-   void AddObjectToEnd(gdcmDicomDirType type,
-                                ListTag::iterator begin,ListTag::iterator end);
-   void AddDicomDirMetaToEnd   (ListTag::iterator begin,ListTag::iterator end);
-   void AddDicomDirPatientToEnd(ListTag::iterator begin,ListTag::iterator end);
-   void AddDicomDirStudyToEnd  (ListTag::iterator begin,ListTag::iterator end);
-   void AddDicomDirSerieToEnd  (ListTag::iterator begin,ListTag::iterator end);
-   void AddDicomDirImageToEnd  (ListTag::iterator begin,ListTag::iterator end);
+//   void AddObjectToEnd(gdcmDicomDirType type, gdcmSQItem *s);
+   void AddDicomDirMeta   ();
+   void AddDicomDirPatientToEnd(gdcmSQItem *s);
+   void AddDicomDirStudyToEnd  (gdcmSQItem *s);
+   void AddDicomDirSerieToEnd  (gdcmSQItem *s);
+   void AddDicomDirImageToEnd  (gdcmSQItem *s);
 
    void SetElements(std::string &path,ListHeader &list);
    void SetElement (std::string &path,gdcmDicomDirType type,gdcmHeader *header);
@@ -135,13 +126,11 @@ private:
    static bool HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2);
    
 // Variables
-/**
-* \brief pointer on *the* gdcmObject 'DicomDirMeta Elements'
-*/
+
+/// \brief pointer on *the* gdcmObject 'DicomDirMeta Elements'
    gdcmDicomDirMeta *metaElems;
-/**
-* \brief chained list of DicomDirPatient (to be exploited recursively)
-*/   
+
+/// \brief chained list of DicomDirPatient (to be exploited recursively) 
    ListDicomDirPatient patients;
 
 /// pointer to the initialisation method for any progress bar   

@@ -5,7 +5,7 @@
 
 #include "gdcmObject.h"
 #include "gdcmDicomDirStudy.h"
-
+#include "gdcmSQItem.h"
 //-----------------------------------------------------------------------------
 typedef std::list<gdcmDicomDirStudy *> ListDicomDirStudy;
 
@@ -13,8 +13,9 @@ typedef std::list<gdcmDicomDirStudy *> ListDicomDirStudy;
 class GDCM_EXPORT gdcmDicomDirPatient : public gdcmObject 
 {
 public:
-   gdcmDicomDirPatient(ListTag::iterator begin,ListTag::iterator end,
-              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
+   gdcmDicomDirPatient(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
+   gdcmDicomDirPatient(TagDocEntryHT *ptagHT); 
+
    ~gdcmDicomDirPatient(void);
 
    virtual void Print(std::ostream &os = std::cout);

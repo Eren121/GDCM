@@ -9,25 +9,20 @@
 /**
  * \ingroup gdcmDicomDirStudy
  * \brief constructor  
- * @param  begin  iterator (inside the gdcmParser chained list)
- *                on the first Header Entry (i.e Dicom Element)
- *                related to this "STUDY" part
- * @param  end  iterator  (inside the gdcmParser chained list)
- *              on the last Header Entry (i.e Dicom Element) 
- *              related to this 'STUDY' part
+ * @param  s SQ Item holding the elements related to this "STUDY" part
  * @param ptagHT pointer to the HTable (gdcmObject needs it 
  *               to build the gdcmHeaderEntries)
- * @param plistEntries pointer to the chained List (gdcmObject needs it 
- *               to build the gdcmHeaderEntries)
  */
-gdcmDicomDirStudy::gdcmDicomDirStudy(ListTag::iterator begin,
-                                     ListTag::iterator end,
-                                     TagHeaderEntryHT *ptagHT, 
-                                     ListTag *plistEntries):
-   gdcmObject(begin,end,ptagHT,plistEntries)
+gdcmDicomDirStudy::gdcmDicomDirStudy(gdcmSQItem *s, TagDocEntryHT *ptagHT):
+   gdcmObject(ptagHT)
 {
+   docEntries = s->GetDocEntries();
 }
 
+gdcmDicomDirStudy::gdcmDicomDirStudy(TagDocEntryHT *ptagHT):
+   gdcmObject(ptagHT)
+{
+}
 /**
  * \ingroup gdcmDicomDirStudy
  * \brief   Canonical destructor.
@@ -72,8 +67,8 @@ gdcmDicomDirSerie * gdcmDicomDirStudy::NewSerie(void) {
    std::list<gdcmElement> elemList;
    elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();   
 
+   gdcmDicomDirSerie *st = new gdcmDicomDirSerie(ptagHT);
    FillObject(elemList);
-   gdcmDicomDirSerie *st = new gdcmDicomDirSerie(i, j, ptagHT, plistEntries);
    series.push_front(st);
    return st;  
 }   

@@ -4,8 +4,8 @@
 #define GDCMHEADER_H
 
 #include "gdcmCommon.h"
-#include "gdcmParser.h"
-
+//#include "gdcmParser.h"
+#include "gdcmDocument.h"
 //-----------------------------------------------------------------------------
 /**
  * \brief
@@ -26,7 +26,7 @@
  *        protected due to Swig limitations for as Has_a dependency between
  *        gdcmFile and gdcmHeader.
  */
-class GDCM_EXPORT gdcmHeader : public gdcmParser
+class GDCM_EXPORT gdcmHeader : public gdcmDocument
 {
 protected:
    /// In some cases (e.g. for some ACR-NEMA images) the Header Entry Element
@@ -110,40 +110,40 @@ public:
 //       there are protected in the parent class
 
    inline virtual std::string GetEntryByNumber  (guint16 group, guint16 element)
-      { return(gdcmParser::GetEntryByNumber(group,element)); }
+      { return(gdcmDocument::GetEntryByNumber(group,element)); }
       
    inline virtual std::string GetEntryVRByNumber(guint16 group, guint16 element)
-      { return(gdcmParser::GetEntryVRByNumber(group,element)); }
+      { return(gdcmDocument::GetEntryVRByNumber(group,element)); }
       
    inline virtual int GetEntryLengthByNumber(guint16 group, guint16 element)
-      { return(gdcmParser::GetEntryLengthByNumber(group,element)); }
+      { return(gdcmDocument::GetEntryLengthByNumber(group,element)); }
       
    inline virtual std::string GetEntryByName    (std::string tagName) 
-      { return(gdcmParser::GetEntryByName(tagName)); }
+      { return(gdcmDocument::GetEntryByName(tagName)); }
       
    inline virtual std::string GetEntryVRByName  (std::string tagName)
-      { return(gdcmParser::GetEntryVRByName(tagName)); }
+      { return(gdcmDocument::GetEntryVRByName(tagName)); }
       
    inline virtual bool SetEntryByNumber(std::string content,
                                         guint16 group, guint16 element)
-      { return(gdcmParser::SetEntryByNumber(content,group,element)); }
+      { return(gdcmDocument::SetEntryByNumber(content,group,element)); }
       
    inline virtual bool SetEntryByName(std::string content,std::string tagName)
-      { return(gdcmParser::SetEntryByName(content,tagName)); }
+      { return(gdcmDocument::SetEntryByName(content,tagName)); }
 
   inline virtual bool SetEntryLengthByNumber(guint32 l,
                                              guint16 group, guint16 element)
-      { return(gdcmParser::SetEntryLengthByNumber(l,group,element)); }
+      { return(gdcmDocument::SetEntryLengthByNumber(l,group,element)); }
 
    inline virtual void UpdateShaEntries(void)
-      { gdcmParser::UpdateShaEntries(); }
+      { gdcmDocument::UpdateShaEntries(); }
 
    /// Read (used in gdcmFile)
    void SetImageDataSize(size_t ExpectedSize);
 
    bool operator<(gdcmHeader &header);
 
-   bool WriteEntry(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
+   bool WriteEntry(gdcmDocEntry *tag,FILE *_fp,FileType type);
    
    
    virtual void PrintEntryNoSQ  (std::ostream &os = std::cout); 

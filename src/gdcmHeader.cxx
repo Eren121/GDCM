@@ -5,6 +5,7 @@
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include "gdcmTS.h"
+#include "gdcmValEntry.h"
 
 #include <vector>
 
@@ -23,14 +24,14 @@ gdcmHeader::gdcmHeader(const char *InFilename,
                        bool exception_on_error,
                        bool enable_sequences, 
                        bool ignore_shadow):
-   gdcmParser(InFilename,exception_on_error,enable_sequences,ignore_shadow)
+   gdcmDocument(InFilename,exception_on_error,enable_sequences,ignore_shadow)
 { 
-
+/*
    typedef struct {
       guint32 totalSQlength;
       guint32 alreadyParsedlength;
    } pileElem;
-
+*/
    
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
@@ -57,120 +58,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
       NumPixel = 0x1010;
    else
       NumPixel = 0x0010;
-
-   TagKey key = gdcmDictEntry::TranslateToKey(GrPixel, NumPixel);
-   countGrPixel = GetEntry().count(key);
-      
-   // we set the SQ Depth of each Header Entry
    
-   int top =-1;
-   int countSQ = 0;      
-   pileElem pile[100]; // Hope embedded sequence depth is no that long !
-
-   int currentParsedlength = 0;
-   int totalElementlength;
-   std::ostringstream tab; 
-   tab << "   ";
-   
-   // GDCM_DEBUG
-   // Sorry; Dealing with e-film breaker images
-   // will (certainly) cause a lot of troubles ...
-   // I prefer keeping my 'trace' on .		   
-   
-   for (ListTag::iterator i = listEntries.begin();  
-      i != listEntries.end();
-      ++i) {
-         (*i)->SetSQDepthLevel(countSQ);
-         if ( (*i)->GetVR() == "SQ" && (*i)->GetReadLength() != 0) {   // SQ found         
-            countSQ++;
-            top ++;	 
-            if ( top >= 20) {
-#ifdef GDCM_DEBUG
-               std::cout << "Kaie ! Kaie! SQ Stack Overflow" << std::endl;
-#endif //GDCM_DEBUG
-               return;
-            }
-#ifdef GDCM_DEBUG
-            std::cout << "\n >>>>> empile niveau " << top 
-               << "; Lgr SeQ: " << (*i)->GetReadLength() 
-               << "\n" <<std::endl;
-#endif //GDCM_DEBUG
-
-            pile[top].totalSQlength = (*i)->GetReadLength();
-            pile[top].alreadyParsedlength = 0; 
-            currentParsedlength = 0;	   	       
-
-         } else {  // non SQ found
-         if (countSQ != 0) { // we are 'inside a SeQuence'
-            if ( (*i)->GetGroup()==0xfffe  && (*i)->GetElement()==0xe0dd) {
-               // we just found 'end of SeQuence'
-
-#ifdef GDCM_DEBUG
-               std::cout << "fffe,e0dd : depile" << std::endl;
-#endif //GDCM_DEBUG
-
-               currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2			     	       
-               countSQ --;
-               top --; 
-               pile[top].alreadyParsedlength +=  currentParsedlength;
-            } else {
-               // we are on a 'standard' elem
-               // or a Zero-length SeQuence
-
-               totalElementlength =  (*i)->GetFullLength();	       
-               currentParsedlength += totalElementlength;				 
-               pile[top].alreadyParsedlength += totalElementlength;
-
-               if (pile[top].totalSQlength == 0xffffffff) {
-#ifdef GDCM_DEBUG
-                  std::cout << "totalSeQlength == 0xffffffff" << std::endl; 
-#endif //GDCM_DEBUG
-               } else {
-#ifdef GDCM_DEBUG
-                  std::cout << "alrdyPseLgt:"
-                   << pile[top].alreadyParsedlength << " totSeQlgt: " 
-                   << pile[top].totalSQlength << " curPseLgt: " 
-                   << currentParsedlength
-                   << std::endl;
-#endif //GDCM_DEBUG
-                  while (pile[top].alreadyParsedlength==pile[top].totalSQlength) {
-#ifdef GDCM_DEBUG
-                  std::cout << " \n<<<<<< On depile niveau " << top 
-                     << " \n" <<  std::endl;
-#endif //GDCM_DEBUG
-                  (*i)->SetSQDepthLevel(countSQ);		     
-                  currentParsedlength = pile[top].alreadyParsedlength;
-                  countSQ --;
-                  top --;
-                  if (top >=0) {
-                     pile[top].alreadyParsedlength +=  currentParsedlength +12;
-                     // 12 : length of 'SQ embedded' SQ element
-                     currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2
-
-#ifdef GDCM_DEBUG
-                     std::cout << pile[top].alreadyParsedlength << " " 
-                       << pile[top].totalSQlength << " " 
-                       << currentParsedlength
-                       << std::endl;
-#endif //GDCM_DEBUG
-                  }
-                  if (top == -1) {
-                     currentParsedlength = 0;
-                     break;
-                  }
-               }
-            }				
-         }              
-      }   // end : 'inside a SeQuence'   
-   } 
-#ifdef GDCM_DEBUG
-   for (int k=0; k<(*i)->GetSQDepthLevel();k++) {
-      std::cout << tab;
-   }
-   (*i)->SetPrintLevel(2);
-   (*i)->Print();
-#endif //GDCM_DEBUG
-   } // end for        
 }
 
 /**
@@ -178,7 +66,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
  * @param exception_on_error whether we want to throw an exception or not
  */
 gdcmHeader::gdcmHeader(bool exception_on_error) :
-   gdcmParser(exception_on_error)
+   gdcmDocument(exception_on_error)
 {
 }
 
@@ -203,18 +91,22 @@ gdcmHeader::~gdcmHeader (void) {
   */ 
 void gdcmHeader::PrintEntryNoSQ(std::ostream & os) {
 
+// FIXME : Is it of any use, now?
+
+/*
    int depth;
    for (ListTag::iterator i = listEntries.begin();  
         i != listEntries.end();
         ++i)
    {
       depth= (*i)->GetSQDepthLevel();
-      if ( depth != 0 /*|| (*i)->GetVR() =="SQ" */){
+      if ( depth != 0 ){
          continue;
       }
       (*i)->SetPrintLevel(printLevel);
       (*i)->Print(os); 
    } 
+ */
 }
 
 /**
@@ -225,7 +117,9 @@ void gdcmHeader::PrintEntryNoSQ(std::ostream & os) {
   * \warning : will be removed
   * @return
   */ 
-void gdcmHeader::PrintEntryNiceSQ(std::ostream & os) {	   
+void gdcmHeader::PrintEntryNiceSQ(std::ostream & os) {
+
+/*	   
    std::ostringstream tab; 
    tab << "   ";
 
@@ -241,7 +135,9 @@ void gdcmHeader::PrintEntryNiceSQ(std::ostream & os) {
       (*i)->SetPrintLevel(printLevel);
       (*i)->Print(os);
              
-   } // end for     
+   } // end for 
+   
+   */    
 }
 
 //-----------------------------------------------------------------------------
@@ -257,19 +153,19 @@ void gdcmHeader::PrintEntryNiceSQ(std::ostream & os) {
  *         false otherwise. 
  */
 bool gdcmHeader::IsReadable(void) {
-   if(!gdcmParser::IsReadable()) {
+   if(!gdcmDocument::IsReadable()) {
       return(false);
    }
    std::string res = GetEntryByNumber(0x0028, 0x0005);
    if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 ) 
       return false; // Image Dimensions
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0100) )
+   if ( !GetDocEntryByNumber(0x0028, 0x0100) )
       return false; // "Bits Allocated"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0101) )
+   if ( !GetDocEntryByNumber(0x0028, 0x0101) )
       return false; // "Bits Stored"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0102) )
+   if ( !GetDocEntryByNumber(0x0028, 0x0102) )
       return false; // "High Bit"
-   if ( !GetHeaderEntryByNumber(0x0028, 0x0103) )
+   if ( !GetDocEntryByNumber(0x0028, 0x0103) )
       return false; // "Pixel Representation" i.e. 'Sign'
    return true;
 }
@@ -281,12 +177,12 @@ bool gdcmHeader::IsReadable(void) {
  * @return  True when JPEGBaseLineProcess1found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
-   std::string Transfer = Element->GetValue();
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.4.50" )
       return true;
    return false;
@@ -299,11 +195,11 @@ bool gdcmHeader::IsJPEGBaseLineProcess1TransferSyntax(void) {
  * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
-   return ( Element->GetValue() == "1.2.840.10008.1.2.4.51" );
+   LoadDocEntrySafe(Element);
+   return ( ((gdcmValEntry *)Element)->GetValue() == "1.2.840.10008.1.2.4.51" );
 }
 
 /**
@@ -313,12 +209,12 @@ bool gdcmHeader::IsJPEGExtendedProcess2_4TransferSyntax(void) {
  * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
  */
 bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
-   std::string Transfer = Element->GetValue();
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.4.52" )
       return true;
    return false;
@@ -332,12 +228,12 @@ bool gdcmHeader::IsJPEGExtendedProcess3_5TransferSyntax(void) {
  *          other cases.
  */
 bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
-   std::string Transfer = Element->GetValue();
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.4.53" )
       return true;
    return false;
@@ -351,12 +247,12 @@ bool gdcmHeader::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void) {
  *          other cases.
  */
 bool gdcmHeader::IsRLELossLessTransferSyntax(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
-   std::string Transfer = Element->GetValue();
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
    if ( Transfer == "1.2.840.10008.1.2.5" ) {
       return true;
     }
@@ -371,16 +267,18 @@ bool gdcmHeader::IsRLELossLessTransferSyntax(void) {
  *          other cases. 
  */
 bool gdcmHeader::IsJPEGLossless(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
     // faire qq chose d'intelligent a la place de ça
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
-   const char * Transfert = Element->GetValue().c_str();
+   const char * Transfert = ((gdcmValEntry *)Element)->GetValue().c_str();
+   
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"70",2)==0) return true;
    if ( memcmp(Transfert+strlen(Transfert)-2 ,"55",2)==0) return true;
-   if (Element->GetValue() == "1.2.840.10008.1.2.4.57")   return true;
+   
+   if (((gdcmValEntry *)Element)->GetValue() == "1.2.840.10008.1.2.4.57")   return true;
 
    return false;
 }
@@ -393,12 +291,12 @@ bool gdcmHeader::IsJPEGLossless(void) {
  *          other cases.
  */
 bool gdcmHeader::IsJPEG2000(void) {
-   gdcmHeaderEntry* Element = GetHeaderEntryByNumber(0x0002, 0x0010);
+   gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
       return false;
-   LoadHeaderEntrySafe(Element);
+   LoadDocEntrySafe(Element);
 
-   std::string Transfer = Element->GetValue();
+   std::string Transfer = ((gdcmValEntry *)Element)->GetValue();
    if (    (Transfer == "1.2.840.10008.1.2.4.90") 
         || (Transfer == "1.2.840.10008.1.2.4.91") )
       return true;
@@ -415,7 +313,7 @@ bool gdcmHeader::IsDicomV3(void) {
    // Anyway, it's to late check if the 'Preamble' was found ...
    // And ... would it be a rich idea to check ?
    // (some 'no Preamble' DICOM images exist !)
-   return (GetHeaderEntryByNumber(0x0002, 0x0010) != NULL);
+   return (GetDocEntryByNumber(0x0002, 0x0010) != NULL);
 }
 
 /**
@@ -601,26 +499,9 @@ std::string gdcmHeader::GetPixelType(void) {
  * @return Pixel Offset
  */
 size_t gdcmHeader::GetPixelOffset(void) { 
-   //
-   // If the element (0x0088,0x0200) 'icone image sequence' is found
-   // (grPixel,numPixel) is stored twice : the first one for the icon
-   // the second one for the image ...
-   // pb : sometimes , (0x0088,0x0200) exists, but doesn't contain *anything*
-   // see gdcmData/MxTwinLossLess.dcm ...
-
-   /**
-    * \todo Clean me
-    *std::string icone = GetEntryByNumber(0x0088,0x0200); //icone image sequence
-    */
       
-   IterHT it = GetHeaderEntrySameNumber(GrPixel,NumPixel);          
-   TagKey key = gdcmDictEntry::TranslateToKey(GrPixel,NumPixel);
-   gdcmHeaderEntry* PixelElement;
-   if (countGrPixel == 1)   
-      PixelElement = (it.first)->second;
-   else {
-      PixelElement = (++it.first)->second; // hope there are no more than 2 !
-   } 
+   gdcmDocEntry* PixelElement = GetDocEntryByNumber(GrPixel,NumPixel);
+ 
    if (PixelElement) {
       return PixelElement->GetOffset();
    } else {
@@ -643,14 +524,7 @@ size_t gdcmHeader::GetPixelOffset(void) {
  */
 size_t gdcmHeader::GetPixelAreaLength(void) { 
           
-   IterHT it = GetHeaderEntrySameNumber(GrPixel,NumPixel);          
-   TagKey key = gdcmDictEntry::TranslateToKey(GrPixel,NumPixel);
-   gdcmHeaderEntry* PixelElement;
-  
-  if (countGrPixel==1)  
-      PixelElement = (it.first)->second;
-   else
-      PixelElement = (++it.first)->second;
+   gdcmDocEntry* PixelElement = GetDocEntryByNumber(GrPixel,NumPixel);
 
    if (PixelElement) {
       return PixelElement->GetLength();
@@ -677,22 +551,22 @@ bool gdcmHeader::HasLUT(void) {
 
    // Check the presence of the LUT Descriptors, and LUT Tables    
    // LutDescriptorRed    
-   if ( !GetHeaderEntryByNumber(0x0028,0x1101) )
+   if ( !GetDocEntryByNumber(0x0028,0x1101) )
       return false;
    // LutDescriptorGreen 
-   if ( !GetHeaderEntryByNumber(0x0028,0x1102) )
+   if ( !GetDocEntryByNumber(0x0028,0x1102) )
       return false;
    // LutDescriptorBlue 
-   if ( !GetHeaderEntryByNumber(0x0028,0x1103) )
+   if ( !GetDocEntryByNumber(0x0028,0x1103) )
       return false;   
    // Red Palette Color Lookup Table Data
-   if ( !GetHeaderEntryByNumber(0x0028,0x1201) )
+   if ( !GetDocEntryByNumber(0x0028,0x1201) )
       return false; 
    // Green Palette Color Lookup Table Data       
-   if ( !GetHeaderEntryByNumber(0x0028,0x1202) )
+   if ( !GetDocEntryByNumber(0x0028,0x1202) )
       return false;
    // Blue Palette Color Lookup Table Data      
-   if ( !GetHeaderEntryByNumber(0x0028,0x1203) )
+   if ( !GetDocEntryByNumber(0x0028,0x1203) )
       return false;
    // FIXME : (0x0028,0x3006) : LUT Data (CTX dependent)
    //         NOT taken into account, but we don't know how to use it ...   
@@ -889,11 +763,11 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    std::string content1;
    char car[20];
 
-   // Assumes HeaderEntry (GrPixel, NumPixel) is unique ...   
+   // Assumes DocEntry (GrPixel, NumPixel) is unique ...   
    //\todo deal with multiplicity (see gdcmData/icone.dcm)
    sprintf(car,"%d",ImageDataSize);
  
-   gdcmHeaderEntry *a = GetHeaderEntryByNumber(GrPixel, NumPixel);
+   gdcmDocEntry *a = GetDocEntryByNumber(GrPixel, NumPixel);
    a->SetLength(ImageDataSize);
 
    ImageDataSize+=8;
@@ -955,7 +829,7 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
    return(false);
 }
 
-bool gdcmHeader::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
+bool gdcmHeader::WriteEntry(gdcmDocEntry *tag, FILE *_fp,FileType type)
 {
    guint32 length = tag->GetLength();
                                                                                 
@@ -963,7 +837,7 @@ bool gdcmHeader::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    // bytes. When this is not the case, pad with an additional byte:
    if(length%2==1)
    {
-      tag->SetValue(tag->GetValue()+"\0");
+  //    tag->SetValue(tag->GetValue()+"\0"); // to go on compiling
       tag->SetLength(tag->GetReadLength()+1);
    }
                                                                                 
@@ -995,8 +869,8 @@ bool gdcmHeader::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
  */
 bool gdcmHeader::anonymizeHeader() {
 
-  gdcmHeaderEntry *patientNameHE = GetHeaderEntryByNumber (0x0010, 0x0010);
- // gdcmHeaderEntry *patientIDHE   = GetHeaderEntryByNumber (0x0010, 0x0020); 
+  gdcmDocEntry *patientNameHE = GetDocEntryByNumber (0x0010, 0x0010);
+ // gdcmDocEntry *patientIDHE   = GetDocEntryByNumber (0x0010, 0x0020); 
     
   ReplaceIfExistByNumber ("  ",0x0010, 0x2154); // Telephone   
   ReplaceIfExistByNumber ("  ",0x0010, 0x1040); // Adress

@@ -20,6 +20,10 @@
 #include "gdcmDebug.h"
 #include "gdcmGlobal.h"
 
+#include "gdcmSeqEntry.h"
+#include "gdcmSQItem.h"
+#include "gdcmValEntry.h"
+
 //-----------------------------------------------------------------------------
 //  For full DICOMDIR description, see:
 //  PS 3.3-2003, pages 731-750
@@ -43,11 +47,11 @@
  */
 gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
                            bool exception_on_error):
-   gdcmParser(FileName,exception_on_error,true) // true : enable SeQuences
+   gdcmDocument(FileName,exception_on_error,true) // true : enable SeQuences
 {
  // que l'on ai passe un root directory ou un DICOMDIR
  // et quelle que soit la valeur de parseDir,
- // on a lance gdcmParser 
+ // on a lance gdcmDocument 
       
    startMethod=            NULL;
    progressMethod=         NULL;
@@ -62,22 +66,22 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
    progress=0.0;
    abort=false;
 
-   metaElems=NULL;
+   metaElems=NULL;   
 
-// gdcmParser already executed
+// gdcmDocument already executed
 // if user passed a root directory, sure we didn't get anything
 
-   if( GetListEntry().begin()==GetListEntry().end() ) 
+   if( GetEntry().begin()==GetEntry().end() ) 
    {
      // if parseDir == false, it should be tagged as an error
-      dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry list empty");
+      dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : entry HT empty");
 
       if(strlen(FileName)==1 && FileName[0]=='.') { // user passed '.' as Name
                                             // we get current directory name
          char* dummy= new char[1000];
          getcwd(dummy, (size_t)1000);
          SetFileName(dummy); // will be converted into a string
-         delete[] dummy;        // no longer needed   
+         delete[] dummy;     // no longer needed   
       }
 
       if(parseDir)
@@ -88,10 +92,13 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
       }
    }
    else {
+      gdcmDocEntry *e = GetDocEntryByNumber(0x0004, 0x1220); // Directory record sequence
+      if (e==NULL) {
+         dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : NO Directory record sequence (0x0004,0x1220)"
+                     );
+         // FIXME : what to do when the parsed file IS NOT a DICOMDIR file ?         
+      }      
       CreateDicomDir();
-      CheckBoundaries(); // to maintain consistency between 
-                         // home-made gdcmDicomDir 
-                         // and the ones comming from a DICOMDIR file
    } 
 }
 
@@ -101,7 +108,7 @@ gdcmDicomDir::gdcmDicomDir(const char *FileName, bool parseDir,
  * @param   exception_on_error whether we want to throw an exception or not
  */
 gdcmDicomDir::gdcmDicomDir(bool exception_on_error):                           
-   gdcmParser(exception_on_error)
+   gdcmDocument(exception_on_error)
 { 
    startMethod=            NULL;
    progressMethod=         NULL;
@@ -118,7 +125,7 @@ gdcmDicomDir::gdcmDicomDir(bool exception_on_error):
    std::string pathBidon = ""; // Sorry, NULL not allowed ...
    SetElement(pathBidon, GDCM_DICOMDIR_META, NULL); // Set the META elements
    
-   AddDicomDirMetaToEnd(listEntries.begin(),--listEntries.end());
+   AddDicomDirMeta();
 }
 
 
@@ -169,12 +176,12 @@ void gdcmDicomDir::Print(std::ostream &os)
  *         decides whether or not the current header was properly parsed
  *         and contains the mandatory information for being considered as
  *         a well formed and usable DicomDir.
- * @return true when gdcmParser is the one of a reasonable DicomDir,
+ * @return true when gdcmDocument is the one of a reasonable DicomDir,
  *         false otherwise. 
  */
 bool gdcmDicomDir::IsReadable(void)
 {
-   if(!gdcmParser::IsReadable())
+   if(!gdcmDocument::IsReadable())
       return(false);
    if(!metaElems)
       return(false);
@@ -328,6 +335,9 @@ void gdcmDicomDir::WriteEntries(FILE *_fp)
    /// \todo (?) tester les echecs en ecriture 
    ///          (apres chaque fwrite, dans le WriteEntry)
 
+
+/* TODO : to go on compiling
+
    gdcmDicomDirMeta *ptrMeta;
    ListDicomDirPatient::iterator  itPatient;
    ListDicomDirStudy::iterator    itStudy;
@@ -368,6 +378,7 @@ void gdcmDicomDir::WriteEntries(FILE *_fp)
       } 
       ++itPatient;     
    }
+   */
 }   
    
 //-----------------------------------------------------------------------------
@@ -375,7 +386,7 @@ void gdcmDicomDir::WriteEntries(FILE *_fp)
 
 /**
  * \ingroup gdcmDicomDir
- * \brief create a gdcmHeader-like chained list from a root Directory 
+ * \brief create a gdcmDocument-like chained list from a root Directory 
  * @param path entry point of the tree-like structure
  */
 void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
@@ -387,7 +398,7 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
    ListHeader list;
    gdcmHeader *header;
 
-   listEntries.clear();
+   tagHT.clear();
    patients.clear();
 
    for(gdcmDirList::iterator it=fileList.begin(); 
@@ -420,74 +431,55 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
 
 /**
  * \ingroup gdcmDicomDir
- * \brief modifies the limits of a gdcmObject, created from a DICOMDIR file  
+ * \brief   adds *the* Meta to a partially created DICOMDIR
  */
-
-void gdcmDicomDir::CheckBoundaries()
-{   
-   ListDicomDirPatient::iterator  itPatient;
-   ListDicomDirStudy::iterator    itStudy;
-   ListDicomDirSerie::iterator    itSerie;
-   ListDicomDirImage::iterator    itImage; 
-   ListTag::iterator i,j; 
-   
-   GetDicomDirMeta()->ResetBoundaries(0);   
-
-   itPatient = GetDicomDirPatients().begin(); 
-   while ( itPatient != GetDicomDirPatients().end() ) {
-      (*itPatient)->ResetBoundaries(1);            
-      itStudy = ((*itPatient)->GetDicomDirStudies()).begin();	      
-      while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) {	
-         (*itStudy)->ResetBoundaries(1); 
-         itSerie = ((*itStudy)->GetDicomDirSeries()).begin();
-         while (itSerie != (*itStudy)->GetDicomDirSeries().end() ) {
-            (*itSerie)->ResetBoundaries(1);
-            itImage = ((*itSerie)->GetDicomDirImages()).begin();
-            while (itImage != (*itSerie)->GetDicomDirImages().end() ) {
-               (*itImage)->ResetBoundaries(1);
-              ++itImage;
-            }
-            ++itSerie;
-        }
-        ++itStudy;
-     } 
-     ++itPatient;     
+ 
+ // FIXME : Heuuuuu ! Il prend les Entries du Document deja parse,
+ //                   il ne fabrique rien !
+  
+gdcmDicomDirMeta * gdcmDicomDir::NewMeta(void) {
+   gdcmDicomDirMeta *m = new gdcmDicomDirMeta(&tagHT);   
+   for (TagDocEntryHT::iterator cc = tagHT.begin();cc != tagHT.end();++cc) {
+      m->AddDocEntry(cc->second);
    }
-} 
+   return m;  
+}
 
 
 /**
  * \ingroup gdcmDicomDir
- * \brief   adds a new Patient to a partially created DICOMDIR
+ * \brief   adds a new Patient (with the basic elements) to a partially created DICOMDIR
  */
 gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
    std::list<gdcmElement> elemList;
    std::list<gdcmElement>::iterator it;
    guint16 tmpGr,tmpEl;
    gdcmDictEntry *dictEntry;
-   gdcmHeaderEntry *entry;
+   gdcmValEntry *entry;
+   
+   gdcmSQItem *s = new gdcmSQItem(0);
    
    elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();  
-   std::list<gdcmHeaderEntry *>::iterator debInsertion, finInsertion, i,j; 
-         
-   debInsertion = metaElems->fin(); 
-   ++debInsertion;
-   finInsertion=debInsertion;
+   
+   // TODO : use FillObject !!!
 
-   // for all the DicomDirPatient Elements   
+   // for all the DicomDirPatient Elements 
+     
    for(it=elemList.begin();it!=elemList.end();++it) 
    {
       tmpGr=it->group;
       tmpEl=it->elem;
       dictEntry=GetPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);      
-      entry=new gdcmHeaderEntry(dictEntry);
-      entry->SetOffset(0); // just to avoid missprinting
-      entry->SetValue(it->value);
+      entry=new gdcmValEntry(dictEntry);
+      entry->SetOffset(0); // just to avoid further missprinting
+      entry->SetValue(it->value); 
 
+      // dealing with value length ...
+      
       if(dictEntry->GetGroup()==0xfffe) 
-      {
+         { 
             entry->SetLength(entry->GetValue().length());
-      }
+         }
       else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
          {
             entry->SetLength(4);
@@ -504,21 +496,124 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
          {
             entry->SetLength(entry->GetValue().length());	 
          } 
-	                                      
-      tagHT.insert( PairHT(entry->GetKey(),entry) ); // add in the (multimap) H Table
-      listEntries.insert(debInsertion ,entry);       // en tete de liste des Patients				                 
-      ++finInsertion;
+      s->AddDocEntry(entry);
    }
 
-   i=metaElems->fin();
-   i++;
-
-   gdcmDicomDirPatient *p = new gdcmDicomDirPatient(i, --debInsertion,
-                                                    &tagHT, &listEntries);
+   gdcmDicomDirPatient *p = new gdcmDicomDirPatient(s, &tagHT);
    patients.push_front(p);
    return p;   
 }
 
+
+/**
+ * \ingroup gdcmDicomDir
+ * \brief   adds to the HTable 
+ *          the gdcmEntries (Dicom Elements) corresponding to the given type
+ * @param   path full path file name (only used when type = GDCM_DICOMDIR_IMAGE
+ * @param   type gdcmObject type to create (GDCM_DICOMDIR_PATIENT, GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
+ * @param   header gdcmHeader of the current file
+ */
+void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader *header)
+{
+   std::list<gdcmElement> elemList;
+   std::list<gdcmElement>::iterator it;
+   guint16 tmpGr, tmpEl;
+   gdcmDictEntry *dictEntry;
+   gdcmDocEntry *entry;
+   std::string val;
+
+   switch(type)
+   {
+      case GDCM_DICOMDIR_PATIENT:
+         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();
+         break;
+      case GDCM_DICOMDIR_STUDY:
+         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirStudyElements();
+         break;
+      case GDCM_DICOMDIR_SERIE:
+         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();
+         break;
+      case GDCM_DICOMDIR_IMAGE:
+         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirImageElements();
+         break;
+      case GDCM_DICOMDIR_META:
+         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirMetaElements();
+         break;
+      default:
+         return;
+   }
+
+   for(it=elemList.begin();it!=elemList.end();++it)
+   {
+      tmpGr=it->group;
+      tmpEl=it->elem;
+      dictEntry=GetPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
+      entry=new gdcmDocEntry(dictEntry);
+      entry->SetOffset(0); // just to avoid further missprinting
+
+      if(header)
+         val=header->GetEntryByNumber(tmpGr,tmpEl);
+      else
+         val=GDCM_UNFOUND;
+
+      if(val==GDCM_UNFOUND) 
+      {
+         if((tmpGr==0x0004) &&(tmpEl==0x1130) ) // File-set ID
+         {	 
+	   // force to the *end* File Name
+           val=GetName(path);	   	    
+         }
+         else if( (tmpGr==0x0004) && (tmpEl==0x1500) ) // Only used for image
+         {
+            if(header->GetFileName().substr(0,path.length())!=path)
+            {
+               dbg.Verbose(0, "gdcmDicomDir::SetElement : the base path of file name is incorrect");
+               val=header->GetFileName();
+            }
+            else {
+               val=&(header->GetFileName().c_str()[path.length()]);
+	    }   
+         }
+         else
+         {
+            val=it->value;
+         }
+      } 
+      else
+      {
+         if (header->GetEntryLengthByNumber(tmpGr,tmpEl)== 0)
+	    val=it->value;
+      }
+            
+      ((gdcmValEntry *)entry)->SetValue(val);
+
+      if(dictEntry)
+      {
+         if(dictEntry->GetGroup()==0xfffe) 
+	 {
+            entry->SetLength(((gdcmValEntry *)entry)->GetValue().length()); 	 
+	 }
+	 else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
+         {
+            entry->SetLength(4);
+         } 
+         else if( (dictEntry->GetVR()=="US") || (dictEntry->GetVR()=="SS") ) 
+         {
+            entry->SetLength(2); 
+         } 
+         else if(dictEntry->GetVR()=="SQ") 
+         {
+            entry->SetLength(0xffffffff);
+         }
+         else
+         {
+            entry->SetLength(((gdcmValEntry *)entry)->GetValue().length());	 
+         }
+      }
+      //AddDocEntry(entry); // both in H Table and in chained list
+      tagHT[entry->GetKey()] = entry;          // FIXME : use a SEQUENCE !
+   }     
+}
 /**
  * \ingroup gdcmDicomDir
  * \brief   CallStartMethod
@@ -567,132 +662,139 @@ void gdcmDicomDir::CreateDicomDir()
    //       + loop to 1 -
 
    gdcmDicomDirType type=gdcmDicomDir::GDCM_DICOMDIR_META;
-   ListTag::iterator begin;
-   ListTag::iterator end, end2;
-
-   begin=listEntries.begin();
-   end=begin;
-   for(ListTag::iterator i=end;i !=listEntries.end();++i) 
-   {
-      std::string v=(*i)->GetValue();
+   
+   gdcmDocEntry *e = GetDocEntryByNumber(0x0004, 0x1220); // Directory record sequence
+   if (e==NULL) {
+      dbg.Verbose(0, "gdcmDicomDir::gdcmDicomDir : NO Directory record sequence (0x0004,0x1220)"
+                  );
+         // FIXME : what to do when the parsed file IS NOT a DICOMDIR file ? 
+      return;         
+   }
+   
+   gdcmDicomDirMeta *m = new gdcmDicomDirMeta(&tagHT);
+   
+   gdcmSeqEntry *s = (gdcmSeqEntry *)e;  // FIXME : It is allowed ???  
+   ListSQItem listItems = s->GetSQItems();
+   
+   gdcmDocEntry * d;   
+   for(ListSQItem::iterator i=listItems.begin(); i !=listItems.end();++i) 
+   {  
+      d=(*i)->GetDocEntryByNumber(0x0004, 0x1430); // Directory Record Type   
+      std::string v=((gdcmValEntry *)d)->GetValue();
+      
       if(v=="PATIENT ") 
-      {
-         end=end2=i;
-         AddObjectToEnd(type,begin,--end2);
+      {  
+         AddDicomDirPatientToEnd(*i);
+         //AddObjectToEnd(type,*i);
          type=gdcmDicomDir::GDCM_DICOMDIR_PATIENT;
-         begin=end;
       }	
 
-      if(v=="STUDY ")
+      else if(v=="STUDY ")
       {
-         end=end2=i;
-         AddObjectToEnd(type,begin,--end2);
+         AddDicomDirStudyToEnd(*i);
+        // AddObjectToEnd(type,*i);
          type=gdcmDicomDir::GDCM_DICOMDIR_STUDY;
-         begin=end;
       }
 
-      if(v=="SERIES") 
+      else if(v=="SERIES") 
       {
-         end=end2=i;
-         AddObjectToEnd(type,begin,--end2);
+         AddDicomDirSerieToEnd(*i);
+       //  AddObjectToEnd(type,*i);
          type=gdcmDicomDir::GDCM_DICOMDIR_SERIE;
-         begin=end;
       }
 
-      if(v=="IMAGE ") 
+      else if(v=="IMAGE ") 
       {
-         end=end2=i;
-         AddObjectToEnd(type,begin,--end2);
+         AddDicomDirImageToEnd(*i);
+      //   AddObjectToEnd(type,*i);
          type=gdcmDicomDir::GDCM_DICOMDIR_IMAGE;
-         begin=end;
       }
+      
+      else
+         continue ;  // It was 'non PATIENT', 'non STUDY', 'non SERIE', 'non IMAGE' SQItem	 
    }
-
-   end=end2=listEntries.end();
-   if(begin!=end)
-      AddObjectToEnd(type,begin,--end2);
 }
 /**
  * \ingroup gdcmDicomDir
  * \brief   AddObjectToEnd
  * @param   type
- * @param   begin iterator on the first HeaderEntry within the chained List
- * @param   end iterator on the last HeaderEntry within the chained List
+ * @param   begin iterator on the first DocEntry within the chained List
+ * @param   end iterator on the last DocEntry within the chained List
  */
-void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,ListTag::iterator begin,ListTag::iterator end)
+ 
+// now  useless ?
+
+/*void gdcmDicomDir::AddObjectToEnd(gdcmDicomDirType type,gdcmSQItem *s)
 {
-   if(begin==end)
+   if(s==NULL) // ??
       return;
 
    switch(type)
    {
       case gdcmDicomDir::GDCM_DICOMDIR_META:
-         AddDicomDirMetaToEnd(begin,end);
+         AddDicomDirMeta();
          break;      
       case gdcmDicomDir::GDCM_DICOMDIR_PATIENT:
-         AddDicomDirPatientToEnd(begin,end);
+         AddDicomDirPatientToEnd(s);
          break;
       case gdcmDicomDir::GDCM_DICOMDIR_STUDY:
-         AddDicomDirStudyToEnd(begin,end);
+         AddDicomDirStudyToEnd(s);
          break;
       case gdcmDicomDir::GDCM_DICOMDIR_SERIE:
-         AddDicomDirSerieToEnd(begin,end);
+         AddDicomDirSerieToEnd(s);
          break;
       case gdcmDicomDir::GDCM_DICOMDIR_IMAGE:
-         AddDicomDirImageToEnd(begin,end);
+         AddDicomDirImageToEnd(s);
          break;
-			case gdcmDicomDir::GDCM_DICOMDIR_NONE:
-				 AddDicomDirImageToEnd(begin,end);	//FIXME
-				 break;
+      case gdcmDicomDir::GDCM_DICOMDIR_NONE:
+         AddDicomDirImageToEnd(s);	//FIXME
+         break;
    }
 }
 
+*/
+
 /**
  * \ingroup gdcmDicomDir
- * \brief Well ... Not realy to end, there is only one occurence  
- * @param   begin iterator on the first HeaderEntry within the chained List
- * @param   end iterator on the last HeaderEntry within the chained List
+ * \brief Well ... there is only one occurence  
 */
-void gdcmDicomDir::AddDicomDirMetaToEnd(ListTag::iterator begin,ListTag::iterator end)
+void gdcmDicomDir::AddDicomDirMeta()
 {
    if(metaElems)
       delete metaElems;
-   metaElems = new gdcmDicomDirMeta(begin,end,&tagHT,&listEntries);
+   metaElems = new gdcmDicomDirMeta(&tagHT);
 }
 
 /**
  * \ingroup gdcmDicomDir
  * \brief  AddDicomDirPatientToEnd 
- * @param   begin iterator on the first HeaderEntry within the chained List
- * @param   end iterator on the last HeaderEntry within the chained List
+ * @param   s SQ Item to enqueue to the DicomPatient chained List
 */
-void gdcmDicomDir::AddDicomDirPatientToEnd(ListTag::iterator begin,ListTag::iterator end)
+void gdcmDicomDir::AddDicomDirPatientToEnd(gdcmSQItem *s)
 {
-   patients.push_back(new gdcmDicomDirPatient(begin,end,&tagHT, &listEntries));
+   patients.push_back(new gdcmDicomDirPatient(s, &tagHT));
 }
 
 /**
  * \ingroup gdcmDicomDir
  * \brief  AddDicomDirStudyToEnd 
- * @param   begin iterator on the first HeaderEntry within the chained List
- * @param   end iterator on the last HeaderEntry within the chained List
+ * @param   s SQ Item to enqueue to the DicomDirStudy chained List
  */
- void gdcmDicomDir::AddDicomDirStudyToEnd(ListTag::iterator begin,ListTag::iterator end)
+ void gdcmDicomDir::AddDicomDirStudyToEnd(gdcmSQItem *s)
 {
    if(patients.size()>0)
    {
       ListDicomDirPatient::iterator itp=patients.end();
       itp--;
-     (*itp)->AddDicomDirStudy(new gdcmDicomDirStudy(begin,end,&tagHT, &listEntries));
+     (*itp)->AddDicomDirStudy(new gdcmDicomDirStudy(s, &tagHT));
    }
 }
 /**
  * \ingroup gdcmDicomDir
  * \brief  AddDicomDirSerieToEnd 
- * @param   begin iterator on the first HeaderEntry within the chained List
- * @param   end iterator on the last HeaderEntry within the chained List
+ * @param   s SQ Item to enqueue to the DicomDirSerie chained List
  */
-void gdcmDicomDir::AddDicomDirSerieToEnd(ListTag::iterator begin,ListTag::iterator end)
+void gdcmDicomDir::AddDicomDirSerieToEnd(gdcmSQItem *s)
 {
    if(patients.size()>0)
    {
@@ -703,7 +805,7 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(ListTag::iterator begin,ListTag::iterat
       {
          ListDicomDirStudy::iterator itst=(*itp)->GetDicomDirStudies().end();
          itst--;
-        (*itst)->AddDicomDirSerie(new gdcmDicomDirSerie(begin,end,&tagHT, &listEntries));
+        (*itst)->AddDicomDirSerie(new gdcmDicomDirSerie(s, &tagHT));
       }
    }
 }
@@ -711,10 +813,9 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(ListTag::iterator begin,ListTag::iterat
 /**
  * \ingroup gdcmDicomDir
  * \brief   AddDicomDirImageToEnd
- * @param   begin iterator on the first HeaderEntry within the chained List
- * @param   end iterator on the last HeaderEntry within the chained List
+ * @param   s SQ Item to enqueue to the DicomDirImage chained List
  */
- void gdcmDicomDir::AddDicomDirImageToEnd(ListTag::iterator begin,ListTag::iterator end)
+ void gdcmDicomDir::AddDicomDirImageToEnd(gdcmSQItem *s)
 {
    if(patients.size()>0)
    {
@@ -730,7 +831,7 @@ void gdcmDicomDir::AddDicomDirSerieToEnd(ListTag::iterator begin,ListTag::iterat
          {
             ListDicomDirSerie::iterator its=(*itst)->GetDicomDirSeries().end();
             its--;
-           (*its)->AddDicomDirImage(new gdcmDicomDirImage(begin,end,&tagHT, &listEntries));
+           (*its)->AddDicomDirImage(new gdcmDicomDirImage(s, &tagHT));
          }
       }
    }
@@ -754,7 +855,6 @@ void gdcmDicomDir::SetElements(std::string &path, ListHeader &list)
 
    SetElement(path,GDCM_DICOMDIR_META,NULL);
 
-   ListTag::iterator debPat=listEntries.begin();
    for(ListHeader::iterator it=list.begin();it!=list.end();++it) 
    {
       // get the current file characteristics
@@ -790,117 +890,6 @@ void gdcmDicomDir::SetElements(std::string &path, ListHeader &list)
 
 /**
  * \ingroup gdcmDicomDir
- * \brief   adds to the HTable and at the end of the Chained List
- *          the gdcmEntries (Dicom Elements) corresponding to the given type
- * @param   path full path file name(only used when type = GDCM_DICOMDIR_IMAGE
- * @param   type gdcmObject type to create (GDCM_DICOMDIR_PATIENT, GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
- * @param   header gdcmHeader of the current file
- */
-void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,gdcmHeader *header)
-{
-   std::list<gdcmElement> elemList;
-   std::list<gdcmElement>::iterator it;
-   guint16 tmpGr, tmpEl;
-   gdcmDictEntry *dictEntry;
-   gdcmHeaderEntry *entry;
-   std::string val;
-
-   switch(type)
-   {
-      case GDCM_DICOMDIR_PATIENT:
-         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();
-         break;
-      case GDCM_DICOMDIR_STUDY:
-         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirStudyElements();
-         break;
-      case GDCM_DICOMDIR_SERIE:
-         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirSerieElements();
-         break;
-      case GDCM_DICOMDIR_IMAGE:
-         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirImageElements();
-         break;
-      case GDCM_DICOMDIR_META:
-         elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirMetaElements();
-         break;
-      default:
-         return;
-   }
-
-   for(it=elemList.begin();it!=elemList.end();++it)
-   {
-      tmpGr=it->group;
-      tmpEl=it->elem;
-      dictEntry=GetPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
-      entry=new gdcmHeaderEntry(dictEntry);
-      entry->SetOffset(0); // just to avoid missprinting
-
-      if(header)
-         val=header->GetEntryByNumber(tmpGr,tmpEl);
-      else
-         val=GDCM_UNFOUND;
-
-      if(val==GDCM_UNFOUND) 
-      {
-         if((tmpGr==0x0004) &&(tmpEl==0x1130) ) // File-set ID
-         {	 
-	   // force to the *end* File Name
-           val=GetName(path);	   	    
-         }
-         else if( (tmpGr==0x0004) && (tmpEl==0x1500) ) // Only used for image
-         {
-            if(header->GetFileName().substr(0,path.length())!=path)
-            {
-               dbg.Verbose(0, "gdcmDicomDir::SetElement : the base path of file name is incorrect");
-               val=header->GetFileName();
-            }
-            else {
-               val=&(header->GetFileName().c_str()[path.length()]);
-	    }   
-         }
-         else
-         {
-            val=it->value;
-         }
-      } 
-      else
-      {
-         if (header->GetEntryLengthByNumber(tmpGr,tmpEl)== 0)
-	    val=it->value;
-      }
-            
-      entry->SetValue(val);
-
-      if(dictEntry)
-      {
-         if(dictEntry->GetGroup()==0xfffe) 
-	 {
-            entry->SetLength(entry->GetValue().length()); 	 
-	 }
-	 else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
-         {
-            entry->SetLength(4);
-         } 
-         else if( (dictEntry->GetVR()=="US") || (dictEntry->GetVR()=="SS") ) 
-         {
-            entry->SetLength(2); 
-         } 
-         else if(dictEntry->GetVR()=="SQ") 
-         {
-            entry->SetLength(0xffffffff);
-         }
-         else
-         {
-            entry->SetLength(entry->GetValue().length());	 
-         }
-      }
-      //AddHeaderEntry(entry); // both in H Table and in chained list
-      tagHT.insert( PairHT( entry->GetKey(),entry) );
-      listEntries.push_back(entry);  
-      //wasUpdated = 1;	// is private
-   }     
-}
-/**
- * \ingroup gdcmDicomDir
  * \brief   compares two dgcmHeaders
  */
 bool gdcmDicomDir::HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2)
@@ -914,6 +903,11 @@ bool gdcmDicomDir::HeaderLessThan(gdcmHeader *header1,gdcmHeader *header2)
  */
 
 void gdcmDicomDir::UpdateDirectoryRecordSequenceLength() {
+
+// FIXME : to go on compiling
+
+// to be re written !
+/*
    int offset = 0;
    ListTag::iterator it;
    guint16 gr, el;
@@ -934,6 +928,7 @@ void gdcmDicomDir::UpdateDirectoryRecordSequenceLength() {
    //bool res=SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
 	 SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
    return;
+   */
 }
 
 //-----------------------------------------------------------------------------

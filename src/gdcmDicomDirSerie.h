@@ -13,8 +13,8 @@ typedef std::list<gdcmDicomDirImage *> ListDicomDirImage;
 class GDCM_EXPORT gdcmDicomDirSerie : public gdcmObject 
 {
 public:
-   gdcmDicomDirSerie(ListTag::iterator begin,ListTag::iterator end,
-              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
+   gdcmDicomDirSerie(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
+   gdcmDicomDirSerie(TagDocEntryHT *ptagHT); 
    ~gdcmDicomDirSerie(void);
 
    virtual void Print(std::ostream &os = std::cout);

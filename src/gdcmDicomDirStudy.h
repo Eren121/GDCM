@@ -12,8 +12,8 @@ typedef std::list<gdcmDicomDirSerie *> ListDicomDirSerie;
 //-----------------------------------------------------------------------------
 class GDCM_EXPORT gdcmDicomDirStudy : public gdcmObject {
 public:
-   gdcmDicomDirStudy(ListTag::iterator begin,ListTag::iterator end,
-              TagHeaderEntryHT *ptagHT, ListTag *plistEntries); 
+   gdcmDicomDirStudy(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
+   gdcmDicomDirStudy(TagDocEntryHT *ptagHT); 
 
    ~gdcmDicomDirStudy(void);
 
