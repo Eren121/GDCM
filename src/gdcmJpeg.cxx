@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/15 15:44:42 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/10/18 02:17:07 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -538,6 +538,7 @@ bool gdcm_read_JPEG_file ( FILE* fp, void* image_buffer )
        * more than one scanline at a time if that's more convenient.
        */
 
+     //printf( "scanlines: %d\n",cinfo.output_scanline);
       (void) jpeg_read_scanlines(&cinfo, buffer, 1);
       memcpy( pimage, *buffer,rowsize); 
       pimage+=rowsize;

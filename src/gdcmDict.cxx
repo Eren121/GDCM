@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2004/10/18 02:17:06 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+
 namespace gdcm 
 {
 
@@ -47,15 +48,14 @@ Dict::Dict(std::string const & filename)
    while (!from.eof())
    {
       from >> std::hex;
-      from >> group;          /// MEMORY LEAK in std::istream::operator>>
+      from >> group;
       from >> element;
       from >> vr;
       from >> fourth;
-      from >> std::ws; // used to be eatwhite(from);
-      std::getline(from, name);    /// MEMORY LEAK in std::getline<>
+      from >> std::ws;  //remove white space
+      std::getline(from, name);
 
-      DictEntry * newEntry = new DictEntry(group, element,
-                                                   vr, fourth, name);
+      DictEntry * newEntry = new DictEntry(group, element, vr, fourth, name);
       AddNewEntry(newEntry);
    }
    from.close();
@@ -233,7 +233,7 @@ bool Dict::RemoveEntry (uint16_t group, uint16_t element)
  *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-DictEntry* Dict::GetDictEntryByName(TagName name)
+DictEntry* Dict::GetDictEntryByName(TagName const & name)
 {
    if ( !NameHt.count(name))
    {
@@ -264,9 +264,9 @@ DictEntry* Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
  * \sa      DictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string>* Dict::GetDictEntryNames() 
+EntryNamesList* Dict::GetDictEntryNames() 
 {
-   std::list<std::string> *result = new std::list<std::string>;
+   EntryNamesList *result = new EntryNamesList;
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
       result->push_back( tag->second->GetName() );
@@ -298,9 +298,9 @@ std::list<std::string>* Dict::GetDictEntryNames()
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-std::map<std::string, std::list<std::string> > *Dict::GetDictEntryNamesByCategory(void) 
+EntryNamesByCatMap *Dict::GetDictEntryNamesByCategory() 
 {
-   std::map<std::string, std::list<std::string> > *result = new std::map<std::string, std::list<std::string> >;
+   EntryNamesByCatMap *result = new EntryNamesByCatMap;
 
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {

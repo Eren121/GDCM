@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/18 02:17:06 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,14 +39,14 @@ class GDCM_EXPORT DictEntry
 {
 public:
    DictEntry(uint16_t group, 
-                 uint16_t element,
-                 std::string vr     = "Unknown",
-                 std::string fourth = "Unknown",
-                 std::string name   = "Unknown");
+             uint16_t element,
+             TagName vr     = "Unknown",
+             TagName fourth = "Unknown",
+             TagName name   = "Unknown");
 
    static TagKey TranslateToKey(uint16_t group, uint16_t element);
 
-   void SetVR(std::string const & vr);
+   void SetVR(TagName const & vr);
 
    /// \brief tells if the V(alue) R(epresentation) is known (?!)
    /// @return 
@@ -63,26 +63,26 @@ public:
    /// \brief  Returns the Dicom Value Representation of the current
    ///         DictEntry
    /// @return the Dicom Value Representation
-   std::string GetVR() { return VR; }
+   const TagName & GetVR() const { return VR; }
  
    /// \brief   sets the key of the current DictEntry
    /// @param k New key to be set.
-   void SetKey(std::string const & k)  { Key = k; }
+   void SetKey(TagName const & k)  { Key = k; }
  
    /// \brief   returns the Fourth field of the current DictEntry
    /// \warning NOT part of the Dicom Standard.
    ///          May be REMOVED an any time. NEVER use it.
    /// @return  The Fourth field
-   std::string GetFourth() { return Fourth; } 
+   const TagName & GetFourth() const { return Fourth; } 
 
    /// \brief  Returns the Dicom Name of the current DictEntry
    ///         e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
    /// @return the Dicom Name
-   std::string GetName() { return Name; } 
+   const TagName & GetName() const { return Name; } 
  
    /// \brief  Gets the key of the current DictEntry
    /// @return the key.
-   std::string GetKey() { return Key; }
+   const TagName & GetKey() const { return Key; }
 
 private:
    /// \todo FIXME 
@@ -102,7 +102,7 @@ private:
    /// \brief Value Representation i.e. some clue about the nature
    ///        of the data represented e.g. "FD" short for
    ///        "Floating Point Double" (see \ref VR)
-   std::string VR;
+   TagName VR;
 
    /**
     * \brief AVOID using the following fourth field at all costs.
@@ -161,10 +161,10 @@ private:
     *  - LLO = Left  Lateral Oblique  
     *  .
     */
-   std::string Fourth; 
+   TagName Fourth; 
 
    /// e.g. "Patient's Name"                    
-   std::string Name;      
+   TagName Name;      
 
    /// Redundant with (group, element) but we add it for efficiency purpose.
    TagKey  Key;

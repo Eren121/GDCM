@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/10/18 02:17:07 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #include "gdcmDebug.h"
 #include <fstream>
 #include <stdlib.h>  // For getenv
+
 namespace gdcm 
 {
 
@@ -95,7 +96,7 @@ void DictSet::Print(std::ostream& os)
  * \sa DictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string> *DictSet::GetPubDictEntryNames() 
+EntryNamesList * DictSet::GetPubDictEntryNames() 
 {
    return GetDefaultPubDict()->GetDictEntryNames();
 }
@@ -126,8 +127,7 @@ std::list<std::string> *DictSet::GetPubDictEntryNames()
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-std::map<std::string, std::list<std::string> > *
-   DictSet::GetPubDictEntryNamesByCategory() 
+EntryNamesByCatMap * DictSet::GetPubDictEntryNamesByCategory() 
 {
    return GetDefaultPubDict()->GetDictEntryNamesByCategory();
 }
@@ -142,7 +142,7 @@ std::map<std::string, std::list<std::string> > *
  *          created dictionary.
  */
 Dict *DictSet::LoadDictFromFile(std::string const & fileName, 
-                                        DictKey const & name) 
+                                DictKey const & name) 
 {
    Dict *newDict = new Dict(fileName);
    AppendDict(newDict, name);
@@ -172,11 +172,11 @@ Dict *DictSet::GetDict(DictKey const & dictName)
  *          in no dictionnary
  * @return  virtual entry
  */
-DictEntry *DictSet::NewVirtualDictEntry(uint16_t group,
-                                                uint16_t element,
-                                                std::string vr,
-                                                std::string fourth,
-                                                std::string name)
+DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
+                                         uint16_t element,
+                                         TagName vr,
+                                         TagName fourth,
+                                         TagName name)
 {
    DictEntry* entry;
    const std::string tag = DictEntry::TranslateToKey(group,element)

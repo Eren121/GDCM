@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2004/10/18 02:17:06 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,8 @@ namespace gdcm
 */
 
 DictEntry::DictEntry(uint16_t group, uint16_t element,
-                             std::string vr, std::string fourth,
-                             std::string name)
+                     TagName vr, TagName fourth,
+                     TagName name)
 {
    Group   = group;
    Element = element;
@@ -72,7 +72,7 @@ TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t element)
  * \            is unset then overwrite it.
  * @param vr    New V(alue) R(epresentation) to be set.
  */
-void DictEntry::SetVR(std::string const & vr) 
+void DictEntry::SetVR(TagName const & vr) 
 {
    if ( IsVRUnknown() )
    {

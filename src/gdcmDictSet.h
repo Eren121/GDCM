@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:45 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/10/18 02:17:07 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,9 +22,9 @@
 #include "gdcmDict.h"
 #include <map>
 #include <list>
+
 namespace gdcm 
 {
-
 typedef std::string DictKey;
 typedef std::map<DictKey, Dict*> DictSetHT;
 
@@ -45,12 +45,11 @@ public:
 
    void Print(std::ostream& os);
 
-   std::list<std::string>* GetPubDictEntryNames();
-   std::map<std::string, std::list<std::string> > *
-       GetPubDictEntryNamesByCategory();
+   EntryNamesList * GetPubDictEntryNames();
+   EntryNamesByCatMap * GetPubDictEntryNamesByCategory();
 
    Dict* LoadDictFromFile( std::string const & fileName,
-                               DictKey const & name );
+                           DictKey const & name );
 
    Dict* GetDict( DictKey const & DictName );
 
@@ -62,9 +61,9 @@ public:
    // Dict* GetVirtualDict() { return &VirtualEntry; };
 
    DictEntry* NewVirtualDictEntry(uint16_t group, uint16_t element,
-                                      std::string vr     = "Unknown",
-                                      std::string fourth = "Unknown",
-                                      std::string name   = "Unknown");
+                                  TagName vr     = "Unknown",
+                                  TagName fourth = "Unknown",
+                                  TagName name   = "Unknown");
 
    static std::string BuildDictPath();
 
@@ -74,8 +73,10 @@ protected:
 private:
    /// Hash table of all dictionaries contained in this DictSet
    DictSetHT Dicts;
+
    /// Directory path to dictionaries
    std::string DictPath;
+
    /// H table for the on the fly created DictEntries  
    TagKeyHT VirtualEntry; 
 };
