@@ -1,3 +1,6 @@
+2004-08-04 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * Test/TestAllEntryVerify.cxx minor fix and added comments.
+
 2004-08-03 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * gdcmPython/testSuite.py: all the test suite in python is now moved
     to it's C++ version (see gdcmData/TestAllEntryVerifyReference.txt)

@@ -196,8 +196,9 @@ bool ReferenceFileParser::Check()
          if ( testedValue != j->second )
          {
             cout << Indent << "Uncorrect value for key " << key << endl
-                 << Indent << "   read value " << testedValue << endl
-                 << Indent << "   reference value " << j->second << endl;
+                 << Indent << "   read value [" << testedValue << "]" << endl
+                 << Indent << "   reference value [" << j->second << "]"
+                           << endl;
             return false;
          }
       }
@@ -248,7 +249,7 @@ string ReferenceFileParser::ExtractValue( string& toSplit )
    string::size_type beginPos = toSplit.find_first_of( '"' );
    string::size_type   endPos = toSplit.find_last_of( '"' );
 
-   // Make sure we have at most to " in toSplit:
+   // Make sure we have at most two " in toSplit:
    string noQuotes = toSplit.substr( beginPos + 1, endPos - beginPos - 1);
    if ( noQuotes.find_first_of( '"' ) != string::npos )
       throw ParserException( "more than two quote character" );
@@ -445,7 +446,7 @@ void ReferenceFileParser::CleanUpLine( string& line )
    if ( line.find_last_of( "]" ) != string::npos )
       line.erase( line.find_last_of( "]" ) + 1 );
 
-   // Cleanup leanding whites and skip empty lines:
+   // Cleanup leading whites and skip empty lines:
    eatwhite( line );
 }
 
@@ -491,9 +492,8 @@ bool ReferenceFileParser::HandleValue( string& line )
    string newCurrentValue = ExtractValue(line);
    if ( newCurrentValue.length() == 0 )
    {
-      ostringstream error;
-      error  << "missing value for key:" << CurrentKey;
-      throw ParserException( error.str() );
+      cout << Indent << "Warning: empty value for key:"
+                     << CurrentKey << endl;
    }
 
    CurrentValue += newCurrentValue;
@@ -592,24 +592,32 @@ int TestAllEntryVerify(int argc, char* argv[])
                 << " (no arguments needed)." << endl;
       return 1;
    }
-   
-   cout << "   Description (Test::TestAllEntryVerify): "
-             << endl;
-   cout << "   For all images in gdcmData (and not blacklisted in "
-                "Test/CMakeLists.txt)"
-             << endl;
-   cout << "   apply the following to each filename.xxx: "
-             << endl;
-   cout << "   step 1: parse the image (as gdcmHeader) and call"
-             << " IsReadable(). "
-             << endl;
 
    string referenceDir = GDCM_DATA_ROOT;
    referenceDir       += "/";
    string referenceFilename = referenceDir + "TestAllEntryVerifyReference.txt";
+   
+   cout << "   Description (Test::TestAllEntryVerify): "
+        << endl;
+   cout << "   For all images (not blacklisted in gdcm/Test/CMakeLists.txt)"
+        << endl;
+   cout << "   encountered in directory: " << GDCM_DATA_ROOT << endl;
+   cout << "   apply the following tests : "<< endl;
+   cout << "   step 1: parse the image and call IsReadable(). "  << endl;
+   cout << "   step 2: look for the entry corresponding to the image" << endl;
+   cout << "           in the reference file: " << referenceFilename << endl;
+   cout << "   step 3: check that each reference tag value listed for this"
+        << endl;
+   cout << "           entry matches the tag encountered at parsing step 1."
+        << endl << endl;
 
    ReferenceFileParser Parser;
-   Parser.Open(referenceFilename);
+   if ( !Parser.Open(referenceFilename) )
+   {
+      cout << "   Corrupted reference file name: "
+           << referenceFilename << endl;
+      return 1;
+   }
    Parser.SetDataPath(referenceDir);
    // Parser.Print();
    if ( Parser.Check() )
