@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/12 19:49:34 $
-  Version:   $Revision: 1.185 $
+  Date:      $Date: 2005/01/12 22:19:23 $
+  Version:   $Revision: 1.186 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -346,7 +346,7 @@ std::ifstream *Document::OpenFile()
    Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
    if( ! *Fp )
    {
-      gdcmVerboseMacro( "Cannot open file: " << Filename.c_str());
+      gdcmDebugMacro( "Cannot open file: " << Filename.c_str());
       delete Fp;
       Fp = 0;
       return 0;
