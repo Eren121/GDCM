@@ -715,7 +715,6 @@ void * gdcmParser::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem)
 }
 
 /**
- * \ingroup       gdcmParser
  * \brief         Loads (from disk) the element content 
  *                when a string is not suitable
  * @param Group   group of the Entry 
@@ -871,7 +870,6 @@ void gdcmParser::LoadHeaderEntrySafe(gdcmHeaderEntry * entry) {
 }
 
 /**
- * \ingroup gdcmParser
  * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
  * \warning : to be re-written using the chained list instead of the H table.
  * \warning : DO NOT use (doesn't work any longer because of the multimap)
@@ -978,30 +976,22 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
 }
 
 /**
- * \ingroup gdcmParser
- * \brief   writes on disc according to the requested format
- *          (ACR-NEMA, ExplicitVR, ImplicitVR) ONE
- *          gdcmHeaderEntry 
- * @param   tag pointer on the gdcmHeaderEntry to be written
- * @param   type type of the File to be written 
+ * \brief Writes in a file (according to the requested format)
+ *        the group, the element, the value representation and the length
+          of a single gdcmHeaderEntry passed as argument.
+ * @param tag  pointer on the gdcmHeaderEntry to be written
+ * @param _fp  already open file pointer
+ * @param type type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
- * @param   _fp already open file pointer
  */
-void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
+void gdcmParser::WriteEntryTagVRLength(gdcmHeaderEntry *tag,
+                                       FILE *_fp,
+                                       FileType type)
 {
    guint16 group  = tag->GetGroup();
    std::string vr = tag->GetVR();
-   guint32 length = tag->GetLength();
    guint16 el     = tag->GetElement();
    guint32 lgr    = tag->GetReadLength();
-
-   // === Deal with the length
-   //     --------------------
-   if(length%2==1)
-   { 
-      tag->SetValue(tag->GetValue()+"\0");
-      tag->SetLength(tag->GetReadLength()+1);
-   }
 
    fwrite ( &group,(size_t)2 ,(size_t)1 ,_fp);  //group
    fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
@@ -1046,25 +1036,21 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    { 
       fwrite ( &lgr,(size_t)4 ,(size_t)1 ,_fp);
    }
+}
       
-   // === Deal with the value
-   //     -------------------
-   if (vr == "SQ")  return; // no "value" to write for the SEQuences
-   if (group == 0xfffe)return; // no "value" to write for the delimiters
+void gdcmParser::WriteEntryValue(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
+{
+   guint16 group  = tag->GetGroup();
+   std::string vr = tag->GetVR();
+   guint32 lgr    = tag->GetReadLength();
 
-   // Pixels are never loaded in the element !
-   // we stop writting when Pixel are processed
-   // FIX : we loose trailing elements (RAB, right now)           
-            
-   int compte =0;
-   itsTimeToWritePixels = false;
-   if ((group == GrPixel) && (el == NumPixel) ) {
-      compte++;
-      if (compte == countGrPixel) {// we passed *all* the GrPixel,NumPixel   
-         itsTimeToWritePixels = true;
-         return;
-      }
-   }       
+   if (vr == "SQ")
+      // SeQuences have no value:
+      return;
+   if (group == 0xfffe)
+      // Delimiters have no associated value:
+      return;
+
       
    void *voidArea;
    voidArea = tag->GetVoidArea();
@@ -1107,8 +1093,38 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    fwrite (tag->GetValue().c_str(), (size_t)lgr ,(size_t)1, _fp); // Elem value
 }
 
+void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
+{
+   guint32 length = tag->GetLength();
+
+   // The value of a tag MUST (see the DICOM norm) be an odd number of
+   // bytes. When this is not the case, pad with an additional byte:
+   if(length%2==1)
+   { 
+      tag->SetValue(tag->GetValue()+"\0");
+      tag->SetLength(tag->GetReadLength()+1);
+   }
+
+   WriteEntryTagVRLength(tag, _fp, type);
+
+   // Pixels are never loaded in the element !
+   // we stop writting when Pixel are processed
+   // FIX : we loose trailing elements (RAB, right now)           
+   guint16 el     = tag->GetElement();
+   guint16 group  = tag->GetGroup();
+   int compte =0;
+   itsTimeToWritePixels = false;
+   if ((group == GrPixel) && (el == NumPixel) ) {
+      compte++;
+      if (compte == countGrPixel) {// we passed *all* the GrPixel,NumPixel   
+         itsTimeToWritePixels = true;
+         return;
+      }
+   }       
+   WriteEntryValue(tag, _fp, type);
+}
+
 /**
- * \ingroup gdcmParser
  * \brief   writes on disc according to the requested format
  *          (ACR-NEMA, ExplicitVR, ImplicitVR) the image
  *          using the Chained List
@@ -1591,7 +1607,7 @@ void gdcmParser::FindHeaderEntryVR( gdcmHeaderEntry *Entry)
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
    
-   int lgrLue=fread (&VR, (size_t)2,(size_t)1, fp); // lgrLue not used
+   (void)fread (&VR, (size_t)2,(size_t)1, fp);
    VR[2]=0;
    if(!CheckHeaderEntryVR(Entry,VR))
    {

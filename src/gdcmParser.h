@@ -11,7 +11,7 @@
 #include "gdcmHeaderEntry.h"
 
 #include <map>
-#include <list>       // for linking together *all* the Dicom Elements
+#include <list>
 
 //-----------------------------------------------------------------------------
 typedef std::string VRKey;
@@ -156,6 +156,8 @@ protected:
    void LoadHeaderEntrySafe(gdcmHeaderEntry *);
 
    void UpdateGroupLength(bool SkipSequence = false, FileType type = ImplicitVR);
+   void WriteEntryTagVRLength(gdcmHeaderEntry *tag, FILE *_fp, FileType type);
+   void WriteEntryValue(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
    void WriteEntry(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
    void WriteEntries(FILE *_fp,FileType type);
    void WriteEntriesDeprecated(FILE *_fp,FileType type); // JPR
