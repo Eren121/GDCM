@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 03:34:11 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2004/07/19 04:10:59 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1594,10 +1594,11 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry* entry)
    //std::string newValue(length,0);
    //item_read = fread(&(newValue[0]), (size_t)length, (size_t)1, Fp);  
    //rah !! I can't believe it could work, normally this is a const char* !!!
-   char str[length];
+   char *str = new char[length];
    item_read = fread(str, (size_t)length, (size_t)1, Fp);
    std::string newValue = str;
    newValue += '\0';
+   delete[] str;
    if ( gdcmValEntry* valEntry = dynamic_cast<gdcmValEntry* >(entry) )
    {  
       if ( item_read != 1 )
