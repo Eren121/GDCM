@@ -21,7 +21,7 @@ if(os.name=='posix'):
 	libraries=["stdc++"]
 	macros   =[('__STDC_LIMIT_MACROS', '1')]
 
-	VTKPATH="${VTK_DIR}"
+	VTKPATH="${VTKPATH}"
 	vtkWrapper="vtkWrapPython"
 else:
 	targetDir=os.path.join('lib','site-packages')
@@ -34,7 +34,7 @@ else:
 		err=str(e)
 		print "Environment variable",err[err.rfind(':')+1:],'not defined, '\
 		       'please fix it!'
-		VTKPATH="${VTK_DIR}"
+		VTKPATH="${VTKPATH}"
 	vtkWrapper=os.path.join(VTKPATH,"bin","vtkWrapPython")
 
 targetDir=os.path.join(targetDir, ThisModule)

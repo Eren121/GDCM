@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.117 2003/11/13 18:08:34 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.118 2003/11/13 18:49:08 malaterre Exp $
 
 #include "gdcmHeader.h"
 
@@ -11,7 +11,14 @@
 #include <netinet/in.h>
 #endif
 #include <cctype>    // for isalpha
-#include <sstream>
+
+#ifdef GDCM_NO_ANSI_STRING_STREAM
+#  include <strstream>
+#  define  ostringstream ostrstream
+# else
+#  include <sstream>
+#endif
+
 #include "gdcmUtil.h"
 #include "gdcmTS.h"
 
@@ -1011,8 +1018,8 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
                s << NewInt;
             }
          }
-      }	
-      s << '\0'; // to avoid oddities on Solaris
+      }					
+      s << std::ends; // to avoid oddities on Solaris
       ElVal->SetValue(s.str());
       return;	
    }

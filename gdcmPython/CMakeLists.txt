@@ -47,6 +47,7 @@ ADD_CUSTOM_COMMAND(
             ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
   TARGET    pygdcm
   OUTPUTS   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
+  COMMENT   "Generating gdcm_wrap.cxx based on gdcm.i"
 )
 
 IF(GDCM_VTK)
@@ -75,9 +76,12 @@ IF(GDCM_VTK)
   
   #generate a setup.py according to VTK installation 
   #put it in subdir in order to not override old one
+  # as it is a pain...override existing file...
+  
+  GET_FILENAME_COMPONENT(VTKPATH ${VTK_DIR}/../../ ABSOLUTE)
   CONFIGURE_FILE(
       ${GDCM_SOURCE_DIR}/gdcmPython/setup.py.in
-      ${GDCM_BINARY_DIR}/gdcmPython/setup.py
+      ${GDCM_SOURCE_DIR}/setup.py
   )
 
 ENDIF(GDCM_VTK)

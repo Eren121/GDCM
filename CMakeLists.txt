@@ -26,6 +26,15 @@ SET(CMAKE_CONFIGURATION_TYPES
 )
 SET(CMAKE_BUILD_TYPE_INIT Debug)
 
+# Deals with problem on SunOS:
+# ostrstream vs. ostringstream
+
+#SET(GDCM_NO_ANSI_STRING_STREAM
+#  ${CMAKE_NO_ANSI_STRING_STREAM}
+#)
+#CONFIGURE_FILE(${GDCM_SOURCE_DIR}/src/gdcmCommon.h.in
+#               ${GDCM_BINARY_DIR}/src/gdcmCommon.h @ONLY IMMEDIATE)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #Put all stuff in one single dir for Win32, otherwise dll are a pain:
