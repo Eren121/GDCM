@@ -92,19 +92,23 @@ std::string gdcmObject::GetEntryByName(TagName name)  {
  * @param  flag = 0 when META to be dealt with
  */ 
 void gdcmObject::ResetBoundaries(int flag) {
-
+   
    if (flag) { // it's NOT a META
      // upwards to fffe,e000   
-       for( i=j=debut();
-            ((*i)->GetGroup() != 0xfffe)  && ((*i)->GetElement() != 0x0000);
-	    --i,j--) {	    
-       }
+      for( i=j=debut();
+          ((*i)->GetGroup() != 0xfffe)  && ((*i)->GetElement() != 0xe000);
+	  --i,j--) {   
+      }
       beginObj=j;
    }
          
-  // downwards to fffe,e000       
+  // upwards again to fffe,e000   
+   if (fin()== (--(plistEntries->end())) )  // Don't try anything more when end 
+       return;                              // of Chained List is reached   
+       
+                                    
    for( i=j=fin();
-        ((*i)->GetGroup() != 0xfffe)  && ((*i)->GetElement() != 0x0000);
+        ((*i)->GetGroup() != 0xfffe)  && ((*i)->GetElement() != 0xe000);
 	--i,j--) {	    
    }
    j--;
