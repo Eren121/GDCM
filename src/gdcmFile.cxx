@@ -703,16 +703,16 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
       p2=it.second;// iterator on the last synonym
    
    PixelElement=p2->second;        // H Table target column (2-nd col)
-   PixelElement->SetPrintLevel(2);
-   PixelElement->Print();      
+  // PixelElement->SetPrintLevel(2);
+  // PixelElement->Print();      
  
    if (PixelRead==1)
       PixelElement->SetLength(lgrTotaleRaw);
    else if (PixelRead==0)
       PixelElement->SetLength(lgrTotale);
    
-   PixelElement->SetPrintLevel(2);
-   PixelElement->Print();    
+   //PixelElement->SetPrintLevel(2);
+   //PixelElement->Print();    
  
    Header->Write(fp1, type);
 

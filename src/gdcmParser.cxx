@@ -1835,7 +1835,9 @@ bool gdcmParser::IsHeaderEntryAnInteger(gdcmHeaderEntry *Entry) {
 	// For *regular* headers, the test is useless..
 	// lets's print a warning message and go on, 
 	// instead of giving up with an error message
-	std::cout << s.str().c_str() << std::endl;
+	
+	//std::cout << s.str().c_str() << std::endl;
+	
         // dbg.Error("gdcmParser::IsHeaderEntryAnInteger",
         //    s.str().c_str());     
       }
