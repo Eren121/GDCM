@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/02/17 11:03:32 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -342,7 +342,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
 
       if ( !AddEntry(binEntry) )
       {
-         gdcmWarningMacro( "AddEntry failed allthough this is a creation.");
+         gdcmWarningMacro( "AddEntry failed although this is a creation.");
 
          delete binEntry;
          return NULL;
@@ -411,7 +411,7 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
 
       if( !AddEntry(seqEntry) )
       {
-         gdcmWarningMacro( "AddEntry failed allthough this is a creation.");
+         gdcmWarningMacro( "AddEntry failed although this is a creation.");
 
          delete seqEntry;
          return NULL;

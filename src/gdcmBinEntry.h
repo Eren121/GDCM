@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/02/17 11:03:32 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ namespace gdcm
  * \brief   Any Dicom Document (File or DicomDir) contains 
  *           a set of DocEntry - Dicom entries - 
  *          BinEntry is an elementary DocEntry (i.e. a ContentEntry, 
- *           as opposite to SeqEntry) whose content is non std::string
+ *           as opposed to SeqEntry) whose content is non std::string
  *          representable
  *          BinEntry is a specialisation of ContentEntry
  */
@@ -43,7 +43,7 @@ public:
 
    ~BinEntry();
    
-   void Print( std::ostream &os = std::cout, std::string const & indent = "" );
+   void Print( std::ostream &os = std::cout, std::string const &indent = "" );
 
    void WriteContent( std::ofstream *fp, FileType ft);
 
