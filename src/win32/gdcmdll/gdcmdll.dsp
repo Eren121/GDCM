@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /w /W0 /GX /O2 /I "C:\creatis\glib-1.3\src\glib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /c
+# ADD CPP /nologo /MD /w /W0 /GX /O2 /I "$(CREATIS)\glib-1.3\src\glib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
@@ -54,6 +54,12 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib Wsock32.lib /nologo /dll /machine:I386 /out:"../../../python/gdcmdll.dll"
+# SUBTRACT LINK32 /debug
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Desc=Copy for test
+PostBuild_Cmds=copy  ..\..\..\python\gdcmdll.dll  ..\..\..\test\ 
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "gdcmdll - Win32 Debug"
 
@@ -69,7 +75,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /ML /w /W0 /Gm /GX /ZI /Od /I "C:\creatis\glib-1.3\src\glib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /w /W0 /Gm /GX /ZI /Od /I "$(CREATIS)\glib-1.3\src\glib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GDCMDLL_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -80,6 +86,12 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 Wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"../../../python/gdcmdll.dll" /pdbtype:sept
+# SUBTRACT LINK32 /incremental:no
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Desc=Copy for test
+PostBuild_Cmds=copy  ..\..\..\python\gdcmdll.dll  ..\..\..\test\ 
+# End Special Build Tool
 
 !ENDIF 
 
@@ -109,6 +121,10 @@ SOURCE=..\..\gdcmElValSet.cxx
 # Begin Source File
 
 SOURCE=..\..\gdcmElValue.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\gdcmException.cxx
 # End Source File
 # Begin Source File
 
