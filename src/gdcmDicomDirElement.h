@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:29 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,7 @@ typedef struct
    std::string Value;
 } Element;
 
+typedef std::list<Element> ListDicomDirElem;
 typedef std::list<Element> ListDicomDirMetaElem;
 typedef std::list<Element> ListDicomDirPatientElem;
 typedef std::list<Element> ListDicomDirStudyElem;
@@ -66,7 +67,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the META Elements of a DICOMDIR.
     */
-   ListDicomDirMetaElem& GetDicomDirMetaElements()
+   ListDicomDirMetaElem const & GetDicomDirMetaElements() const
       { return DicomDirMetaList; };
 
    /**
@@ -74,7 +75,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the PATIENT Elements of a DICOMDIR.
     */      
-   ListDicomDirPatientElem &GetDicomDirPatientElements()
+   ListDicomDirPatientElem const & GetDicomDirPatientElements() const
       { return DicomDirPatientList; };
 
    /**
@@ -82,7 +83,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the STUDY Elements of a DICOMDIR.
     */      
-   ListDicomDirStudyElem   &GetDicomDirStudyElements()
+   ListDicomDirStudyElem const & GetDicomDirStudyElements() const
       { return DicomDirStudyList; };
 
    /**
@@ -90,7 +91,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the SERIE Elements of a DICOMDIR.
     */
-   ListDicomDirSerieElem   &GetDicomDirSerieElements()
+   ListDicomDirSerieElem const & GetDicomDirSerieElements() const
       { return DicomDirSerieList; };
 
    /**
@@ -98,7 +99,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the IMAGE Elements of a DICOMDIR.
     */
-   ListDicomDirImageElem   &GetDicomDirImageElements()
+   ListDicomDirImageElem const & GetDicomDirImageElements() const
       { return DicomDirImageList; };
 
 private:

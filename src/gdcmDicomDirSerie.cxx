@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:19 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,8 +51,8 @@ DicomDirSerie::DicomDirSerie(TagDocEntryHT* ptagHT):
  */
 DicomDirSerie::~DicomDirSerie() 
 {
-   for(ListDicomDirImage::iterator cc = images.begin();
-                                   cc != images.end();
+   for(ListDicomDirImage::iterator cc = Images.begin();
+                                   cc != Images.end();
                                    ++cc)
    {
       delete *cc;
@@ -70,8 +70,8 @@ void DicomDirSerie::Print(std::ostream& os)
    os << "SERIE" << std::endl;
    DicomDirObject::Print(os);
 
-   for(ListDicomDirImage::iterator cc = images.begin();
-                                   cc != images.end();
+   for(ListDicomDirImage::iterator cc = Images.begin();
+                                   cc != Images.end();
                                    ++cc)
    {
       (*cc)->SetPrintLevel(PrintLevel);
@@ -90,7 +90,9 @@ void DicomDirSerie::Write(std::ofstream* fp, FileType t)
 {
    DicomDirObject::Write(fp, t);
 
-   for(ListDicomDirImage::iterator cc = images.begin();cc!=images.end();++cc)
+   for(ListDicomDirImage::iterator cc = Images.begin();
+                                   cc!= Images.end();
+                                 ++cc )
    {
       (*cc)->Write( fp, t );
    }
@@ -101,12 +103,12 @@ void DicomDirSerie::Write(std::ofstream* fp, FileType t)
  */
 DicomDirImage* DicomDirSerie::NewImage()
 {
-   std::list<Element> elemList = 
+   ListDicomDirImageElem const & elemList = 
       Global::GetDicomDirElements()->GetDicomDirImageElements();
 
    DicomDirImage* st = new DicomDirImage(PtagHT);
    FillObject(elemList);
-   images.push_front(st);
+   Images.push_front(st);
 
    return st;   
 } 

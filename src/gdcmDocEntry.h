@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,8 +29,6 @@ class SeqEntry;
 
 namespace gdcm 
 {
-
-
 //-----------------------------------------------------------------------------
 /**
  * \brief   The dicom header of a Dicom file contains a set of such entries
@@ -49,24 +47,24 @@ public:
    uint16_t      GetElement()   { return DicomDict->GetElement();};
 
    /// Returns the 'key' of the current Dicom Header Entry
-   void  SetKey( TagKey key ) { Key = key; }
+   void  SetKey( TagKey const & key ) { Key = key; }
 
    /// Returns the 'key' of the current Dicom Header Entry
-   std::string GetKey() { return Key; }
+   std::string const & GetKey() const { return Key; }
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
    /// Dictionnary of the current Dicom Header Entry
-   std::string  GetName()      { return DicomDict->GetName();   };
+   std::string const & GetName() const { return DicomDict->GetName(); };
 
    /// \brief Returns the 'Value Representation' (e.g. "PN" : Person Name,
    /// "SL" : Signed Long), found in the Dicom Header or in the Dicom
    /// Dictionnary, of the current Dicom Header Entry
-   std::string  GetVR()        { return DicomDict->GetVR();     };
+   std::string const & GetVR() const { return DicomDict->GetVR(); };
 
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Preamble, if any) of the value of the current Dicom HeaderEntry
    /// \warning offset of the *value*, not of the Dicom Header Entry
-   size_t       GetOffset()    { return Offset;             };
+   size_t GetOffset() { return Offset; };
 
    /// \brief Returns the actual value length of the current Dicom Header Entry
    /// \warning this value is not *always* the one stored in the Dicom Header
@@ -80,11 +78,11 @@ public:
    uint32_t GetReadLength() { return ReadLength; };
 
    /// Sets the 'Value Representation' of the current Dicom Header Entry
-   void SetVR(std::string const & v) { DicomDict->SetVR(v); };    
+   void SetVR( TagName const & v) { DicomDict->SetVR(v); };    
 
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
    /// Dicom Header Entry
-   void SetLength(uint32_t l) { ReadLength = UsableLength = l;};
+   void SetLength(uint32_t l) { ReadLength = UsableLength = l; };
       
    // The following 3 members, for internal use only ! 
    

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:19 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,9 @@ DicomDirStudy::DicomDirStudy(TagDocEntryHT* ptagHT):
  */
 DicomDirStudy::~DicomDirStudy() 
 {
-   for(ListDicomDirSerie::iterator cc = series.begin();cc != series.end();++cc)
+   for(ListDicomDirSerie::iterator cc = Series.begin();
+                                   cc != Series.end();
+                                 ++cc )
    {
       delete *cc;
    }
@@ -71,8 +73,8 @@ void DicomDirStudy::Print(std::ostream& os)
    os << "STUDY" << std::endl;
    DicomDirObject::Print(os);
 
-   for(ListDicomDirSerie::iterator cc = series.begin();
-                                   cc != series.end();
+   for(ListDicomDirSerie::iterator cc = Series.begin();
+                                   cc != Series.end();
                                    ++cc)
    {
       (*cc)->SetPrintLevel(PrintLevel);
@@ -91,7 +93,9 @@ void DicomDirStudy::Write(std::ofstream* fp, FileType t)
 {
    DicomDirObject::Write(fp, t);
 
-   for(ListDicomDirSerie::iterator cc = series.begin();cc!=series.end();++cc)
+   for(ListDicomDirSerie::iterator cc = Series.begin();
+                                   cc!= Series.end();
+                                 ++cc )
    {
       (*cc)->Write( fp, t );
    }
@@ -104,12 +108,12 @@ void DicomDirStudy::Write(std::ofstream* fp, FileType t)
  */
 DicomDirSerie* DicomDirStudy::NewSerie()
 {
-   std::list<Element> elemList = 
+   ListDicomDirSerieElem const & elemList = 
       Global::GetDicomDirElements()->GetDicomDirSerieElements();   
 
    DicomDirSerie* st = new DicomDirSerie(PtagHT);
    FillObject(elemList);
-   series.push_front(st);
+   Series.push_front(st);
 
    return st;  
 }   

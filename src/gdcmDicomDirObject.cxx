@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:19 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,7 +83,7 @@ void DicomDirObject::FillObject(ListDicomDirMetaElem const & elemList)
 {
   // FillObject rempli le SQItem qui sera accroche au bon endroit
 
-   std::list<Element>::const_iterator it;
+   ListDicomDirMetaElem::const_iterator it;
    uint16_t tmpGr,tmpEl;
    DictEntry *dictEntry;
    ValEntry *entry;

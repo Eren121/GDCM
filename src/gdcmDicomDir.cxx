@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:40 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2004/10/25 04:08:19 $
+  Version:   $Revision: 1.75 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -463,10 +463,10 @@ DicomDirMeta * DicomDir::NewMeta()
    }
    else  // after root directory parsing
    {
-     std::list<Element> elemList;
-     elemList=Global::GetDicomDirElements()->GetDicomDirMetaElements();
-     m->FillObject(elemList);
-    }
+      ListDicomDirMetaElem const & elemList = 
+         Global::GetDicomDirElements()->GetDicomDirMetaElements();
+      m->FillObject(elemList);
+   }
    m->SetSQItemNumber(0); // To avoid further missprinting
    return m;  
 }
@@ -476,13 +476,13 @@ DicomDirMeta * DicomDir::NewMeta()
  */
 DicomDirPatient * DicomDir::NewPatient()
 {
-   std::list<Element>::iterator it;
+   ListDicomDirPatientElem::const_iterator it;
    uint16_t tmpGr,tmpEl;
    DictEntry *dictEntry;
    ValEntry *entry;
 
-   std::list<Element> elemList;   
-   elemList=Global::GetDicomDirElements()->GetDicomDirPatientElements(); 
+   ListDicomDirPatientElem const & elemList =
+      Global::GetDicomDirElements()->GetDicomDirPatientElements(); 
    SQItem *s = new SQItem(0);
 
    // for all the DicomDirPatient Elements      
@@ -534,11 +534,11 @@ DicomDirPatient * DicomDir::NewPatient()
  *          GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
  * @param   header Header of the current file
  */
-void DicomDir::SetElement(std::string &path,DicomDirType type,
-                              Document *header)
+void DicomDir::SetElement(std::string &path, DicomDirType type,
+                          Document *header)
 {
-   std::list<Element> elemList;
-   std::list<Element>::iterator it;
+   ListDicomDirElem elemList; //FIXME this is going to be a by copy operation
+   ListDicomDirElem::const_iterator it;
    uint16_t tmpGr, tmpEl;
    DictEntry *dictEntry;
    ValEntry *entry;
@@ -693,6 +693,7 @@ void DicomDir::SetElement(std::string &path,DicomDirType type,
 
 }
 
+//-----------------------------------------------------------------------------
 /**
  * \brief   CallStartMethod
  */
@@ -706,6 +707,7 @@ void DicomDir::CallStartMethod()
    }
 }
 
+//-----------------------------------------------------------------------------
 /**
  * \ingroup DicomDir
  * \brief   CallProgressMethod
@@ -718,6 +720,7 @@ void DicomDir::CallProgressMethod()
    }
 }
 
+//-----------------------------------------------------------------------------
 /**
  * \ingroup DicomDir
  * \brief   CallEndMethod
@@ -867,7 +870,8 @@ void DicomDir::AddDicomDirSerieToEnd(SQItem *s)
 
       if( (*itp)->GetDicomDirStudies().size() > 0 )
       {
-         ListDicomDirStudy::iterator itst=(*itp)->GetDicomDirStudies().end();
+         ListDicomDirStudy::const_iterator itst = 
+            (*itp)->GetDicomDirStudies().end();
          itst--;
          (*itst)->AddDicomDirSerie(new DicomDirSerie(s, &TagHT));
       }
@@ -888,12 +892,13 @@ void DicomDir::AddDicomDirSerieToEnd(SQItem *s)
 
       if( (*itp)->GetDicomDirStudies().size() > 0 )
       {
-         ListDicomDirStudy::iterator itst = (*itp)->GetDicomDirStudies().end();
+         ListDicomDirStudy::const_iterator itst = 
+            (*itp)->GetDicomDirStudies().end();
          itst--;
 
          if( (*itst)->GetDicomDirSeries().size() > 0 )
          {
-            ListDicomDirSerie::iterator its = (*itst)->GetDicomDirSeries().end();
+            ListDicomDirSerie::const_iterator its = (*itst)->GetDicomDirSeries().end();
             its--;
             (*its)->AddDicomDirImage(new DicomDirImage(s, &TagHT));
          }

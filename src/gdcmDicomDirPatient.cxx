@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 03:35:19 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,8 +49,9 @@ DicomDirPatient::DicomDirPatient(TagDocEntryHT* ptagHT):
  */
 DicomDirPatient::~DicomDirPatient() 
 {
-   for(ListDicomDirStudy::iterator cc = studies.begin();
-                                   cc != studies.end(); ++cc)
+   for(ListDicomDirStudy::const_iterator cc = Studies.begin();
+                                         cc != Studies.end(); 
+                                       ++cc )
    {
       delete *cc;
    }
@@ -67,8 +68,9 @@ void DicomDirPatient::Print(std::ostream& os)
    os << "PATIENT" << std::endl;
    DicomDirObject::Print(os);
 
-   for(ListDicomDirStudy::iterator cc = studies.begin();
-                                   cc != studies.end(); ++cc)
+   for(ListDicomDirStudy::const_iterator cc = Studies.begin();
+                                         cc != Studies.end(); 
+                                       ++cc )
    {
       (*cc)->SetPrintLevel(PrintLevel);
       (*cc)->Print(os);
@@ -83,7 +85,9 @@ void DicomDirPatient::Write(std::ofstream* fp, FileType t)
 {
    DicomDirObject::Write(fp, t);
 
-   for(ListDicomDirStudy::iterator cc = studies.begin();cc!=studies.end();++cc)
+   for(ListDicomDirStudy::iterator cc = Studies.begin();
+                                   cc!= Studies.end();
+                                 ++cc )
    {
       (*cc)->Write( fp, t );
    }
@@ -97,13 +101,13 @@ void DicomDirPatient::Write(std::ofstream* fp, FileType t)
  */
 DicomDirStudy* DicomDirPatient::NewStudy()
 {
-   std::list<Element> elemList = 
+   ListDicomDirStudyElem const & elemList = 
       Global::GetDicomDirElements()->GetDicomDirStudyElements();
       
    DicomDirStudy* st = new DicomDirStudy( PtagHT );
    st->FillObject(elemList);
 
-   studies.push_front(st);
+   Studies.push_front(st);
    return st; 
 }   
 

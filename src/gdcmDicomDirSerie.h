@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,9 +21,9 @@
 
 #include "gdcmDicomDirObject.h"
 #include "gdcmDicomDirImage.h"
+
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 typedef std::list<DicomDirImage *> ListDicomDirImage;
 
@@ -36,18 +36,20 @@ public:
 
    ~DicomDirSerie();
 
-   virtual void Print( std::ostream& os = std::cout );
-   virtual void Write( std::ofstream* fp, FileType t );
-/**
- * \ingroup DicomDirSerie
- * \brief   returns the IMAGE chained List for this SERIE.
- */
-   ListDicomDirImage& GetDicomDirImages() { return images; };
-/**
- * \ingroup DicomDirSerie
- * \brief   adds the passed IMAGE to the IMAGE chained List for this SERIE.
- */       
-   void AddDicomDirImage(DicomDirImage *obj) { images.push_back(obj); };
+   void Print( std::ostream& os = std::cout );
+   void Write( std::ofstream* fp, FileType t );
+
+   /**
+    * \ingroup DicomDirSerie
+    * \brief   returns the IMAGE chained List for this SERIE.
+    */
+   ListDicomDirImage const & GetDicomDirImages() const { return Images; };
+
+   /**
+    * \ingroup DicomDirSerie
+    * \brief   adds the passed IMAGE to the IMAGE chained List for this SERIE.
+    */       
+   void AddDicomDirImage(DicomDirImage *obj) { Images.push_back(obj); };
 
 /**
  * \ingroup DicomDirSerie
@@ -59,7 +61,7 @@ private:
 /**
 * \brief chained list of DicomDirImages
 */ 
-   ListDicomDirImage images;
+   ListDicomDirImage Images;
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:42 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,7 @@
 
 
 #ifndef GDCMPIXELCONVERT_H
-#define GDCMPIXELCONVERTL_H
+#define GDCMPIXELCONVERT_H
 
 #include "gdcmCommon.h"
 #include "gdcmRLEFramesInfo.h"
@@ -28,12 +28,12 @@
 
 namespace gdcm
 {
-                                                                                
 /*
  * \brief Utility container for gathering the various forms the pixel data
  *        migth take during the user demanded processes.
  */
-class GDCM_EXPORT PixelConvert {
+class GDCM_EXPORT PixelConvert
+{
 public:
    PixelConvert();
    ~PixelConvert();

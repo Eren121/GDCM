@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/10/25 04:08:20 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,13 +38,14 @@ public:
 
    ~DicomDirPatient();
 
-   virtual void Print(std::ostream &os = std::cout);
-   virtual void Write(std::ofstream *fp, FileType t);
+   void Print(std::ostream &os = std::cout);
+   void Write(std::ofstream *fp, FileType t);
+
    /// Returns the STUDY chained List for this PATIENT.
-   ListDicomDirStudy &GetDicomDirStudies() { return studies; };
+   ListDicomDirStudy const & GetDicomDirStudies() const { return Studies; };
 
    /// adds the passed STUDY to the STUDY chained List for this PATIENT.
-   void AddDicomDirStudy(DicomDirStudy *obj) { studies.push_back(obj); };
+   void AddDicomDirStudy (DicomDirStudy *obj) { Studies.push_back(obj); };
 
    ///  TODO
    DicomDirStudy* NewStudy(); 
@@ -52,7 +53,7 @@ public:
 private:
 
    /// chained list of DicomDirStudy
-   ListDicomDirStudy studies;
+   ListDicomDirStudy Studies;
 };
 } // end namespace gdcm
 
