@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 16:57:49 $
-  Version:   $Revision: 1.211 $
+  Date:      $Date: 2004/12/07 02:36:21 $
+  Version:   $Revision: 1.212 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -369,12 +369,12 @@ float Header::GetZSpacing()
    //   Si le Spacing Between Slices est absent, 
    //   on suppose que les coupes sont jointives
    
-   std::string strSpacingBSlices = GetEntryByNumber(0x0018,0x0088);
+   const std::string &strSpacingBSlices = GetEntryByNumber(0x0018,0x0088);
 
    if ( strSpacingBSlices == GDCM_UNFOUND )
    {
       dbg.Verbose(0, "Header::GetZSpacing: unfound StrSpacingBSlices");
-      std::string strSliceThickness = GetEntryByNumber(0x0018,0x0050);       
+      const std::string &strSliceThickness = GetEntryByNumber(0x0018,0x0050);       
       if ( strSliceThickness == GDCM_UNFOUND )
       {
          return 1.;
@@ -388,11 +388,8 @@ float Header::GetZSpacing()
          return (float)atof( strSliceThickness.c_str() );
       }
    }
-   else
-   {
-      return (float)atof( strSpacingBSlices.c_str() );
-   }
-   return 1.;
+   //else
+   return (float)atof( strSpacingBSlices.c_str() );
 }
 
 /**
@@ -403,7 +400,7 @@ float Header::GetRescaleIntercept()
 {
    float resInter = 0.;
    /// 0028 1052 DS IMG Rescale Intercept
-   std::string strRescInter = GetEntryByNumber(0x0028,0x1052);
+   const std::string &strRescInter = GetEntryByNumber(0x0028,0x1052);
    if ( strRescInter != GDCM_UNFOUND )
    {
       if( sscanf( strRescInter.c_str(), "%f", &resInter) != 1 )
