@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:56:25 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/04/06 08:59:46 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 
 namespace gdcm 
 {
@@ -107,8 +108,8 @@ void DictGroupName::Print(std::ostream &os)
 
    for (DictGroupNameHT::iterator it = groupName.begin(); it != groupName.end(); ++it)
    {
-      s << "DictGroupName : " << std::hex << it->first << std::dec 
-        << " = " << it->second << std::endl;
+      s << "DictGroupName : 0x" << std::hex << std::setw(4) << it->first 
+        << std::dec << " = " << it->second << std::endl;
    }
    os << s.str();
 }

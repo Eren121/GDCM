@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:56:24 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/04/06 08:59:46 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,16 +19,30 @@
 #include "gdcmGlobal.h"
 #include "gdcmCommon.h"
 
+#include <iomanip>
+
+int CompareDictGroupName(gdcm::DictGroupName &groupName,
+                         uint16_t group,std::string ref)
+{
+   std::string val = groupName.GetName(group);
+   std::cout << "Group : 0x" << std::hex << std::setw(4) << group 
+             << std::dec << " : " << val << " - " 
+             << (bool)(val==ref) << std::endl;
+
+   return val!=ref;
+}
+
 int TestDictGroupName(int , char *[])
 {
    gdcm::DictGroupName groupName;
    groupName.Print( std::cout );
 
-   std::cout << std::endl;
-   std::cout << "Group : 0x0002 : " << groupName.GetName(0x0002) << " - " 
-             << (bool)(groupName.GetName(0x0002)=="Meta Elements") << std::endl;
-   std::cout << "Group : 0x0007 : " << groupName.GetName(0x0007) << " - " 
-             << (bool)(groupName.GetName(0x0007)==gdcm::GDCM_UNFOUND) << std::endl;
+   int ret = 0;
 
-   return groupName.GetName( 0x7fe0 ) != "";
+   std::cout << std::endl;
+   ret += CompareDictGroupName(groupName,0x0002,"Meta Elements");
+   ret += CompareDictGroupName(groupName,0x7fe0,"Pixels");
+   ret += CompareDictGroupName(groupName,0x0007,gdcm::GDCM_UNFOUND);
+
+   return ret;
 }
