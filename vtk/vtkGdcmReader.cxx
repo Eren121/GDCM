@@ -49,7 +49,7 @@
 // //////////////////////////////////////////////////////////////
 
 #include "gdcmFile.h"
-#include "gdcmHeaderHelper.h"
+#include "gdcmHeader.h"
 #include "vtkGdcmReader.h"
 
 //#include <stdio.h>
@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.55 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.56 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
