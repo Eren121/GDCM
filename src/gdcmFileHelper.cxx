@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 16:28:41 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/02/09 18:35:30 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -684,6 +684,8 @@ void FileHelper::SetWriteToRaw()
       std::string vr = "OB";
       if( FileInternal->GetBitsAllocated()>8 )
          vr = "OW";
+      if( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
+         vr = "OB";
       BinEntry *pixel = 
          CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
       pixel->SetValue(GDCM_BINLOADED);
@@ -727,6 +729,8 @@ void FileHelper::SetWriteToRGB()
       std::string vr = "OB";
       if( FileInternal->GetBitsAllocated()>8 )
          vr = "OW";
+      if( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
+         vr = "OB";
       BinEntry *pixel = 
          CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
       pixel->SetValue(GDCM_BINLOADED);
