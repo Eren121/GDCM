@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/14 00:53:10 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2004/11/16 02:04:00 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -199,27 +199,6 @@ std::string Util::GetName(std::string const & fullName)
 
 /**
  * \ingroup Util
- * \brief Create a /DICOM/ string:
- * It should a of even lenght (no odd length ever)
- * It can contains as many \0 as you want.
- * This function is similar to DicomString(const char*), 
- * except it doesn't take a lenght. 
- * It only pad with a null character if length is odd
- */
-std::string Util::DicomString(const char* s)
-{
-   size_t l = strlen(s);
-   if( l%2 )
-   {
-      l++;
-   }
-   std::string r(s, s+l);
-   assert( !(r.size() % 2) );
-   return r;
-}
-
-/**
- * \ingroup Util
  * \brief   Get the current date of the system in a dicom string
  */
 std::string Util::GetCurrentDate()
@@ -253,8 +232,48 @@ std::string Util::GetCurrentTime()
 std::string Util::DicomString(const char* s, size_t l)
 {
    std::string r(s, s+l);
+   assert( !(r.size() % 2) ); // == basically 'l' is even
+   return r;
+}
+
+/**
+ * \ingroup Util
+ * \brief Create a /DICOM/ string:
+ * It should a of even lenght (no odd length ever)
+ * It can contains as many \0 as you want.
+ * This function is similar to DicomString(const char*), 
+ * except it doesn't take a lenght. 
+ * It only pad with a null character if length is odd
+ */
+std::string Util::DicomString(const char* s)
+{
+   size_t l = strlen(s);
+   if( l%2 )
+   {
+      l++;
+   }
+   std::string r(s, s+l);
    assert( !(r.size() % 2) );
    return r;
+}
+
+/**
+ * \ingroup Util
+ * \brief Safely compare two Dicom String:
+ *        - Both string should be of even lenght
+ *        - We allow padding of even lenght string by either a null 
+ *          character of a space
+ */
+bool Util::DicomStringEqual(const std::string& s1, const char *s2)
+{
+  // s2 is the string from the DICOM reference: 'MONOCHROME1'
+  std::string s1_even = s1; //Never directly change input parameter
+  std::string s2_even = DicomString( s2 );
+  if( s1_even[s1_even.size()-1] == ' ')
+  {
+    s1_even[s1_even.size()-1] = '\0'; //replace space character by null
+  }
+  return s1_even == s2_even;
 }
 
 template <class T>
