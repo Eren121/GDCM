@@ -4,7 +4,7 @@
 [Setup]
 AdminPrivilegesRequired=yes
 AppName=libidoVTK Environment
-AppVerName=libidoVTK Installer 1.0
+AppVerName=libidoVTK 1.0
 AppPublisher=Creatis
 AppPublisherURL=http://www.creatis.insa-lyon.fr
 AppSupportURL=http://www.creatis.insa-lyon.fr
