@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:36 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/06 20:03:26 $
+  Version:   $Revision: 1.43 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,8 +35,8 @@ class DicomDirSerie;
 class DicomDirImage;
 class SQItem;
 
-typedef std::list<DicomDirPatient*>   ListDicomDirPatient;
-typedef std::vector<Document*>  VectDocument;
+typedef std::list<DicomDirPatient *>   ListDicomDirPatient;
+typedef std::vector<Document *>  VectDocument;
 
 //-----------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ class GDCM_EXPORT DicomDir: public Document
 public:
    typedef void(Method)(void*);
 
-   DicomDir( std::string const & filename, bool parseDir = false );
+   DicomDir( std::string const &filename, bool parseDir = false );
    DicomDir(); 
                    
    ~DicomDir();
@@ -73,18 +73,18 @@ public:
    // Note: the DicomDir:: namespace prefix is needed by Swig in the 
    //       following method declarations. Refer to gdcmPython/gdcm.i
    //       for the reasons of this unecessary notation at C++ level.
-   void SetStartMethod(    DicomDir::Method*,
+   void SetStartMethod(    DicomDir::Method *m,
                            void* = NULL,
-                           DicomDir::Method* = NULL );
-   void SetProgressMethod( DicomDir::Method*, 
+                           DicomDir::Method *m = NULL );
+   void SetProgressMethod( DicomDir::Method *m, 
                            void* = NULL,
-                           DicomDir::Method* = NULL );
-   void SetEndMethod(      DicomDir::Method*,
+                           DicomDir::Method *m = NULL );
+   void SetEndMethod(      DicomDir::Method *m,
                            void* = NULL, 
-                           DicomDir::Method* = NULL );
-   void SetStartMethodArgDelete( DicomDir::Method* );
-   void SetProgressMethodArgDelete( DicomDir::Method* );
-   void SetEndMethodArgDelete( DicomDir::Method* );
+                           DicomDir::Method *m = NULL );
+   void SetStartMethodArgDelete( DicomDir::Method *m );
+   void SetProgressMethodArgDelete( DicomDir::Method *m );
+   void SetEndMethodArgDelete( DicomDir::Method *m );
 
    /// GetProgress GetProgress
    float GetProgress()  { return Progress; };
@@ -96,11 +96,11 @@ public:
    bool  IsAborted() { return Abort; };
    
    /// Adding
-   DicomDirMeta*    NewMeta();
-   DicomDirPatient* NewPatient();
+   DicomDirMeta    *NewMeta();
+   DicomDirPatient *NewPatient();
 
    /// Write  
-   bool WriteDicomDir(std::string const & fileName);
+   bool WriteDicomDir(std::string const &fileName);
 
    /// Types of the DicomDirObject within the DicomDir
    typedef enum
@@ -114,7 +114,7 @@ public:
    } DicomDirType;
    
 protected:
-   void CreateDicomDirChainedList(std::string const & path);
+   void CreateDicomDirChainedList(std::string const &path);
    void CallStartMethod();
    void CallProgressMethod();
    void CallEndMethod();
@@ -124,17 +124,17 @@ private:
    void CreateDicomDir();
 
    bool AddDicomDirMeta();
-   bool AddDicomDirPatientToEnd(DicomDirPatient* dd);
-   bool AddDicomDirStudyToEnd  (DicomDirStudy* dd);
-   bool AddDicomDirSerieToEnd  (DicomDirSerie* dd);
-   bool AddDicomDirImageToEnd  (DicomDirImage* dd);
+   bool AddDicomDirPatientToEnd(DicomDirPatient *dd);
+   bool AddDicomDirStudyToEnd  (DicomDirStudy *dd);
+   bool AddDicomDirSerieToEnd  (DicomDirSerie *dd);
+   bool AddDicomDirImageToEnd  (DicomDirImage *dd);
 
-   void SetElements(std::string const & path, VectDocument const &list);
-   void SetElement (std::string const & path, DicomDirType type,
-                    Document* header);
-   void MoveSQItem(SQItem* dst,SQItem *src);
+   void SetElements(std::string const &path, VectDocument const &list);
+   void SetElement (std::string const &path, DicomDirType type,
+                    Document *header);
+   void MoveSQItem(SQItem *dst,SQItem *src);
 
-   static bool HeaderLessThan(Document* header1, Document* header2);
+   static bool HeaderLessThan(Document *header1, Document *header2);
    
 // Variables
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 17:16:15 $
-  Version:   $Revision: 1.160 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.161 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ const unsigned int Document::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
  * \brief   constructor  
  * @param   filename file to be opened for parsing
  */
-Document::Document( std::string const & filename ) : ElementSet(-1)
+Document::Document( std::string const &filename ) : ElementSet(-1)
 {
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE); 
    Filename = filename;
@@ -217,7 +217,7 @@ Document::~Document ()
   * \brief   Prints The Dict Entries of THE public Dicom Dictionary
   * @return
   */  
-void Document::PrintPubDict(std::ostream & os)
+void Document::PrintPubDict(std::ostream &os)
 {
    RefPubDict->SetPrintLevel(PrintLevel);
    RefPubDict->Print(os);
@@ -227,7 +227,7 @@ void Document::PrintPubDict(std::ostream & os)
   * \brief   Prints The Dict Entries of THE shadow Dicom Dictionary
   * @return
   */
-void Document::PrintShaDict(std::ostream & os)
+void Document::PrintShaDict(std::ostream &os)
 {
    RefShaDict->SetPrintLevel(PrintLevel);
    RefShaDict->Print(os);
@@ -238,7 +238,7 @@ void Document::PrintShaDict(std::ostream & os)
 /**
  * \brief   Get the public dictionary used
  */
-Dict* Document::GetPubDict()
+Dict *Document::GetPubDict()
 {
    return RefPubDict;
 }
@@ -246,14 +246,14 @@ Dict* Document::GetPubDict()
 /**
  * \brief   Get the shadow dictionary used
  */
-Dict* Document::GetShaDict()
+Dict *Document::GetShaDict()
 {
    return RefShaDict;
 }
 
 /**
  * \brief   Set the shadow dictionary used
- * \param   dict dictionary to use in shadow
+ * @param   dict dictionary to use in shadow
  */
 bool Document::SetShaDict(Dict *dict)
 {
@@ -263,9 +263,9 @@ bool Document::SetShaDict(Dict *dict)
 
 /**
  * \brief   Set the shadow dictionary used
- * \param   dictName name of the dictionary to use in shadow
+ * @param   dictName name of the dictionary to use in shadow
  */
-bool Document::SetShaDict(DictKey const & dictName)
+bool Document::SetShaDict(DictKey const &dictName)
 {
    RefShaDict = Global::GetDicts()->GetDict(dictName);
    return !RefShaDict;
@@ -314,7 +314,7 @@ TransferSyntaxType Document::GetTransferSyntax()
    // The entry might be present but not loaded (parsing and loading
    // happen at different stages): try loading and proceed with check...
    LoadDocEntrySafe(entry);
-   if (ValEntry* valEntry = dynamic_cast< ValEntry* >(entry) )
+   if (ValEntry *valEntry = dynamic_cast< ValEntry* >(entry) )
    {
       std::string transfer = valEntry->GetValue();
       // The actual transfer (as read from disk) might be padded. We
@@ -415,7 +415,7 @@ FileType Document::GetFileType()
  *         checks the preamble when existing.
  * @return The FILE pointer on success. 
  */
-std::ifstream* Document::OpenFile()
+std::ifstream *Document::OpenFile()
 {
    if (Filename.length() == 0) 
    {
@@ -503,7 +503,7 @@ bool Document::CloseFile()
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * \return Always true.
  */
-void Document::WriteContent(std::ofstream* fp, FileType filetype)
+void Document::WriteContent(std::ofstream *fp, FileType filetype)
 {
    /// \todo move the following lines (and a lot of others, to be written)
    /// to a future function CheckAndCorrectHeader  
@@ -544,13 +544,13 @@ void Document::WriteContent(std::ofstream* fp, FileType filetype)
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
-ValEntry* Document::ReplaceOrCreateByNumber(std::string const & value, 
+ValEntry *Document::ReplaceOrCreateByNumber(std::string const &value, 
                                             uint16_t group, 
                                             uint16_t elem,
-                                            TagName const & vr )
+                                            TagName const &vr )
 {
-   ValEntry* valEntry = 0;
-   DocEntry* currentEntry = GetDocEntryByNumber( group, elem);
+   ValEntry *valEntry = 0;
+   DocEntry *currentEntry = GetDocEntryByNumber( group, elem);
    
    if (currentEntry)
    {
@@ -605,14 +605,14 @@ ValEntry* Document::ReplaceOrCreateByNumber(std::string const & value,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-BinEntry* Document::ReplaceOrCreateByNumber(uint8_t* binArea,
+BinEntry *Document::ReplaceOrCreateByNumber(uint8_t *binArea,
                                             int lgth, 
                                             uint16_t group, 
                                             uint16_t elem,
-                                            TagName const & vr )
+                                            TagName const &vr )
 {
-   BinEntry* binEntry = 0;
-   DocEntry* currentEntry = GetDocEntryByNumber( group, elem);
+   BinEntry *binEntry = 0;
+   DocEntry *currentEntry = GetDocEntryByNumber( group, elem);
 
    // Verify the currentEntry
    if (currentEntry)
@@ -682,10 +682,10 @@ BinEntry* Document::ReplaceOrCreateByNumber(uint8_t* binArea,
  * \return  pointer to the modified/created SeqEntry (NULL when creation
  *          failed).
  */
-SeqEntry* Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
+SeqEntry *Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
 {
-   SeqEntry* seqEntry = 0;
-   DocEntry* currentEntry = GetDocEntryByNumber( group, elem);
+   SeqEntry *seqEntry = 0;
+   DocEntry *currentEntry = GetDocEntryByNumber( group, elem);
 
    // Verify the currentEntry
    if (currentEntry)
@@ -736,7 +736,7 @@ SeqEntry* Document::ReplaceOrCreateByNumber( uint16_t group, uint16_t elem)
  * @param elem element number of the Entry
  * \return  boolean 
  */
-bool Document::ReplaceIfExistByNumber(std::string const & value, 
+bool Document::ReplaceIfExistByNumber(std::string const &value, 
                                       uint16_t group, uint16_t elem ) 
 {
    SetEntryByNumber(value, group, elem);
@@ -773,9 +773,9 @@ bool Document::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string Document::GetEntryByName(TagName const & tagName)
+std::string Document::GetEntryByName(TagName const &tagName)
 {
-   DictEntry* dictEntry = RefPubDict->GetDictEntryByName(tagName); 
+   DictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( !dictEntry )
    {
       return GDCM_UNFOUND;
@@ -805,7 +805,7 @@ std::string Document::GetEntryVRByName(TagName const& tagName)
       return GDCM_UNFOUND;
    }
 
-   DocEntry* elem = GetDocEntryByNumber(dictEntry->GetGroup(),
+   DocEntry *elem = GetDocEntryByNumber(dictEntry->GetGroup(),
                                         dictEntry->GetElement());
    return elem->GetVR();
 }
@@ -846,7 +846,7 @@ std::string Document::GetEntryByNumber(uint16_t group, uint16_t element)
  */
 std::string Document::GetEntryVRByNumber(uint16_t group, uint16_t element)
 {
-   DocEntry* elem = GetDocEntryByNumber(group, element);
+   DocEntry *elem = GetDocEntryByNumber(group, element);
    if ( !elem )
    {
       return GDCM_UNFOUND;
@@ -864,7 +864,7 @@ std::string Document::GetEntryVRByNumber(uint16_t group, uint16_t element)
  */
 int Document::GetEntryLengthByNumber(uint16_t group, uint16_t element)
 {
-   DocEntry* elem =  GetDocEntryByNumber(group, element);
+   DocEntry *elem =  GetDocEntryByNumber(group, element);
    if ( !elem )
    {
       return -2;  //magic number
@@ -877,8 +877,8 @@ int Document::GetEntryLengthByNumber(uint16_t group, uint16_t element)
  * @param   tagName name of the searched Dicom Element.
  * @return  true when found
  */
-bool Document::SetEntryByName( std::string const & content,
-                               TagName const & tagName)
+bool Document::SetEntryByName( std::string const &content,
+                               TagName const &tagName)
 {
    DictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( !dictEntry )
@@ -901,7 +901,7 @@ bool Document::SetEntryByName( std::string const & content,
 bool Document::SetEntryByNumber(std::string const& content, 
                                 uint16_t group, uint16_t element) 
 {
-   ValEntry* entry = GetValEntryByNumber(group, element);
+   ValEntry *entry = GetValEntryByNumber(group, element);
    if (!entry )
    {
       dbg.Verbose(0, "Document::SetEntryByNumber: no corresponding",
@@ -923,7 +923,7 @@ bool Document::SetEntryByNumber(std::string const& content,
 bool Document::SetEntryByNumber(uint8_t*content, int lgth, 
                                 uint16_t group, uint16_t element) 
 {
-   BinEntry* entry = GetBinEntryByNumber(group, element);
+   BinEntry *entry = GetBinEntryByNumber(group, element);
    if (!entry )
    {
       dbg.Verbose(0, "Document::SetEntryByNumber: no corresponding",
@@ -940,7 +940,7 @@ bool Document::SetEntryByNumber(uint8_t*content, int lgth,
  * @param  content new value (string) to substitute with
  * @param  entry Entry to be modified
  */
-bool Document::SetEntry(std::string const & content,ValEntry* entry)
+bool Document::SetEntry(std::string const &content,ValEntry *entry)
 {
    if(entry)
    {
@@ -957,7 +957,7 @@ bool Document::SetEntry(std::string const & content,ValEntry* entry)
  * @param  entry Entry to be modified 
  * @param   lgth new value length
  */
-bool Document::SetEntry(uint8_t* content, int lgth, BinEntry* entry)
+bool Document::SetEntry(uint8_t *content, int lgth, BinEntry *entry)
 {
    if(entry)
    {
@@ -983,15 +983,15 @@ bool Document::SetEntry(uint8_t* content, int lgth, BinEntry* entry)
  * @param elem  element number of the Entry
  * @return Pointer to the 'non string' area
  */
-void*  Document::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem) 
+void *Document::GetEntryBinAreaByNumber(uint16_t group, uint16_t elem) 
 {
-   DocEntry* entry = GetDocEntryByNumber(group, elem);
+   DocEntry *entry = GetDocEntryByNumber(group, elem);
    if (!entry) 
    {
       dbg.Verbose(1, "Document::GetDocEntryByNumber: no entry");
       return 0;
    }
-   if ( BinEntry* binEntry = dynamic_cast<BinEntry*>(entry) )
+   if ( BinEntry *binEntry = dynamic_cast<BinEntry*>(entry) )
    {
       return binEntry->GetBinArea();
    }
@@ -1024,7 +1024,7 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
  *                when a string is not suitable
  * @param element  Entry whose binArea is going to be loaded
  */
-void Document::LoadEntryBinArea(BinEntry* element) 
+void Document::LoadEntryBinArea(BinEntry *element) 
 {
    if(element->GetBinArea())
       return;
@@ -1037,7 +1037,7 @@ void Document::LoadEntryBinArea(BinEntry* element)
    Fp->seekg(o, std::ios::beg);
 
    size_t l = element->GetLength();
-   uint8_t* a = new uint8_t[l];
+   uint8_t *a = new uint8_t[l];
    if( !a )
    {
       dbg.Verbose(0, "Document::LoadEntryBinArea cannot allocate a");
@@ -1065,16 +1065,16 @@ void Document::LoadEntryBinArea(BinEntry* element)
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-/*bool Document::SetEntryBinAreaByNumber(uint8_t* area,
+/*bool Document::SetEntryBinAreaByNumber(uint8_t *area,
                                        uint16_t group, uint16_t element) 
 {
-   DocEntry* currentEntry = GetDocEntryByNumber(group, element);
+   DocEntry *currentEntry = GetDocEntryByNumber(group, element);
    if ( !currentEntry )
    {
       return false;
    }
 
-   if ( BinEntry* binEntry = dynamic_cast<BinEntry*>(currentEntry) )
+   if ( BinEntry *binEntry = dynamic_cast<BinEntry*>(currentEntry) )
    {
       binEntry->SetBinArea( area );
       return true;
@@ -1090,7 +1090,7 @@ void Document::LoadEntryBinArea(BinEntry* element)
  * @return  Corresponding Dicom Element when it exists, and NULL
  *          otherwise.
  */
-DocEntry* Document::GetDocEntryByName(TagName const & tagName)
+DocEntry *Document::GetDocEntryByName(TagName const &tagName)
 {
    DictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( !dictEntry )
@@ -1111,7 +1111,7 @@ DocEntry* Document::GetDocEntryByName(TagName const & tagName)
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-DocEntry* Document::GetDocEntryByNumber(uint16_t group, uint16_t element) 
+DocEntry *Document::GetDocEntryByNumber(uint16_t group, uint16_t element) 
 {
    TagKey key = DictEntry::TranslateToKey(group, element);
    if ( !TagHT.count(key))
@@ -1127,14 +1127,14 @@ DocEntry* Document::GetDocEntryByNumber(uint16_t group, uint16_t element)
  *         ValEntry.
  * @return When present, the corresponding ValEntry. 
  */
-ValEntry* Document::GetValEntryByNumber(uint16_t group, uint16_t element)
+ValEntry *Document::GetValEntryByNumber(uint16_t group, uint16_t element)
 {
-   DocEntry* currentEntry = GetDocEntryByNumber(group, element);
+   DocEntry *currentEntry = GetDocEntryByNumber(group, element);
    if ( !currentEntry )
    {
       return 0;
    }
-   if ( ValEntry* entry = dynamic_cast<ValEntry*>(currentEntry) )
+   if ( ValEntry *entry = dynamic_cast<ValEntry*>(currentEntry) )
    {
       return entry;
    }
@@ -1149,14 +1149,14 @@ ValEntry* Document::GetValEntryByNumber(uint16_t group, uint16_t element)
  *         BinEntry.
  * @return When present, the corresponding BinEntry. 
  */
-BinEntry* Document::GetBinEntryByNumber(uint16_t group, uint16_t element)
+BinEntry *Document::GetBinEntryByNumber(uint16_t group, uint16_t element)
 {
-   DocEntry* currentEntry = GetDocEntryByNumber(group, element);
+   DocEntry *currentEntry = GetDocEntryByNumber(group, element);
    if ( !currentEntry )
    {
       return 0;
    }
-   if ( BinEntry* entry = dynamic_cast<BinEntry*>(currentEntry) )
+   if ( BinEntry *entry = dynamic_cast<BinEntry*>(currentEntry) )
    {
       return entry;
    }
@@ -1167,12 +1167,12 @@ BinEntry* Document::GetBinEntryByNumber(uint16_t group, uint16_t element)
 
 /**
  * \brief         Loads the element while preserving the current
- *                underlying file position indicator as opposed to
+ *               underlying file position indicator as opposed to
  *                to LoadDocEntry that modifies it.
  * @param entry   Header Entry whose value shall be loaded. 
  * @return  
  */
-void Document::LoadDocEntrySafe(DocEntry * entry)
+void Document::LoadDocEntrySafe(DocEntry *entry)
 {
    if(Fp)
    {
@@ -1256,9 +1256,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                         long l_max, bool delim_mode)
 {
    DocEntry *newDocEntry = 0;
-   ValEntry* newValEntry;
-   BinEntry* newBinEntry;
-   SeqEntry* newSeqEntry;
+   ValEntry *newValEntry;
+   BinEntry *newBinEntry;
+   SeqEntry *newSeqEntry;
    VRKey vr;
    bool used=false;
    long offsetEntry,readEntry;
@@ -1299,7 +1299,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          //////////////////// BinEntry or UNKOWN VR:
             // When "this" is a Document the Key is simply of the
             // form ( group, elem )...
-            if (Document* dummy = dynamic_cast< Document* > ( set ) )
+            if (Document *dummy = dynamic_cast< Document* > ( set ) )
             {
                (void)dummy;
                newBinEntry->SetKey( newBinEntry->GetKey() );
@@ -1307,7 +1307,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             // but when "this" is a SQItem, we are inserting this new
             // valEntry in a sequence item, and the kay has the
             // generalized form (refer to \ref BaseTagKey):
-            if (SQItem* parentSQItem = dynamic_cast< SQItem* > ( set ) )
+            if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
             {
                newBinEntry->SetKey(  parentSQItem->GetBaseTagKey()
                                    + newBinEntry->GetKey() );
@@ -1326,7 +1326,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          /////////////////////// ValEntry
             // When "set" is a Document, then we are at the top of the
             // hierarchy and the Key is simply of the form ( group, elem )...
-            if (Document* dummy = dynamic_cast< Document* > ( set ) )
+            if (Document *dummy = dynamic_cast< Document* > ( set ) )
             {
                (void)dummy;
                newValEntry->SetKey( newValEntry->GetKey() );
@@ -1334,7 +1334,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             // ...but when "set" is a SQItem, we are inserting this new
             // valEntry in a sequence item. Hence the key has the
             // generalized form (refer to \ref BaseTagKey):
-            if (SQItem* parentSQItem = dynamic_cast< SQItem* > ( set ) )
+            if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
             {
                newValEntry->SetKey(  parentSQItem->GetBaseTagKey()
                                    + newValEntry->GetKey() );
@@ -1408,7 +1408,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // is a Document, then we are building the first depth level.
          // Hence the SeqEntry we are building simply has a depth
          // level of one:
-         if (Document* dummy = dynamic_cast< Document* > ( set ) )
+         if (Document *dummy = dynamic_cast< Document* > ( set ) )
          {
             (void)dummy;
             newSeqEntry->SetDepthLevel( 1 );
@@ -1417,7 +1417,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // But when "set" is allready a SQItem, we are building a nested
          // sequence, and hence the depth level of the new SeqEntry
          // we are building, is one level deeper:
-         if (SQItem* parentSQItem = dynamic_cast< SQItem* > ( set ) )
+         if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
          {
             newSeqEntry->SetDepthLevel( parentSQItem->GetDepthLevel() + 1 );
             newSeqEntry->SetKey(  parentSQItem->GetBaseTagKey()
@@ -1446,7 +1446,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
  * \brief   Parses a Sequence ( SeqEntry after SeqEntry)
  * @return  parsed length for this level
  */ 
-void Document::ParseSQ( SeqEntry* seqEntry,
+void Document::ParseSQ( SeqEntry *seqEntry,
                         long offset, long l_max, bool delim_mode)
 {
    int SQItemNumber = 0;
@@ -1454,7 +1454,7 @@ void Document::ParseSQ( SeqEntry* seqEntry,
 
    while (true)
    {
-      DocEntry* newDocEntry = ReadNextDocEntry();   
+      DocEntry *newDocEntry = ReadNextDocEntry();   
       if ( !newDocEntry )
       {
          // FIXME Should warn user
@@ -1509,7 +1509,7 @@ void Document::ParseSQ( SeqEntry* seqEntry,
  *                the value specified with Document::SetMaxSizeLoadEntry()
  * @param         entry Header Entry (Dicom Element) to be dealt with
  */
-void Document::LoadDocEntry(DocEntry* entry)
+void Document::LoadDocEntry(DocEntry *entry)
 {
    uint16_t group  = entry->GetGroup();
    std::string  vr = entry->GetVR();
@@ -1541,7 +1541,7 @@ void Document::LoadDocEntry(DocEntry* entry)
    std::ostringstream s;
    if (length > MaxSizeLoadEntry)
    {
-      if (BinEntry* binEntryPtr = dynamic_cast< BinEntry* >(entry) )
+      if (BinEntry *binEntryPtr = dynamic_cast< BinEntry* >(entry) )
       {  
          //s << "gdcm::NotLoaded (BinEntry)";
          s << GDCM_NOTLOADED;
@@ -1551,7 +1551,7 @@ void Document::LoadDocEntry(DocEntry* entry)
          binEntryPtr->SetValue(s.str());
       }
       // Be carefull : a BinEntry IS_A ValEntry ... 
-      else if (ValEntry* valEntryPtr = dynamic_cast< ValEntry* >(entry) )
+      else if (ValEntry *valEntryPtr = dynamic_cast< ValEntry* >(entry) )
       {
         // s << "gdcm::NotLoaded. (ValEntry)";
          s << GDCM_NOTLOADED;  
@@ -1574,7 +1574,7 @@ void Document::LoadDocEntry(DocEntry* entry)
    }
 
    // When we find a BinEntry not very much can be done :
-   if (BinEntry* binEntryPtr = dynamic_cast< BinEntry* >(entry) )
+   if (BinEntry *binEntryPtr = dynamic_cast< BinEntry* >(entry) )
    {
       s << GDCM_BINLOADED;
       binEntryPtr->SetValue(s.str());
@@ -1651,7 +1651,7 @@ void Document::LoadDocEntry(DocEntry* entry)
    }
    delete[] str;
 
-   if ( ValEntry* valEntry = dynamic_cast<ValEntry* >(entry) )
+   if ( ValEntry *valEntry = dynamic_cast<ValEntry* >(entry) )
    {
       if ( Fp->fail() || Fp->eof())//Fp->gcount() == 1
       {
@@ -1775,7 +1775,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // and the dictionary entry depending on them.
          uint16_t correctGroup = SwapShort( entry->GetGroup() );
          uint16_t correctElem  = SwapShort( entry->GetElement() );
-         DictEntry* newTag = GetDictEntryByNumber( correctGroup,
+         DictEntry *newTag = GetDictEntryByNumber( correctGroup,
                                                        correctElem );
          if ( !newTag )
          {
@@ -1942,7 +1942,7 @@ std::string Document::GetDocEntryValue(DocEntry *entry)
  * @param   entry Entry to reverse transform
  * @return  Reverse transformed entry value
  */
-std::string Document::GetDocEntryUnvalue(DocEntry* entry)
+std::string Document::GetDocEntryUnvalue(DocEntry *entry)
 {
    if ( IsDocEntryAnInteger(entry) && entry->IsImplicitVR() )
    {
@@ -2003,7 +2003,9 @@ void Document::SkipDocEntry(DocEntry *entry)
 /**
  * \brief   Skips to the begining of the next Header Entry 
  * \warning NOT end user intended method !
- * @param   entry entry to skip
+ * @param   offset start of skipping
+ * @param   readLgth length to skip
+
  */
 void Document::SkipToNextDocEntry(long offset,long readLgth) 
 {
@@ -2101,7 +2103,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
 {
    uint16_t element = entry->GetElement();
    uint16_t group   = entry->GetGroup();
-   const std::string & vr  = entry->GetVR();
+   const std::string &vr  = entry->GetVR();
    uint32_t length  = entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we
@@ -2568,7 +2570,7 @@ void Document::HandleBrokenEndian(uint16_t group, uint16_t elem)
  *          gets the VR, gets the length, gets the offset value)
  * @return  On succes the newly created DocEntry, NULL on failure.      
  */
-DocEntry* Document::ReadNextDocEntry()
+DocEntry *Document::ReadNextDocEntry()
 {
    uint16_t group;
    uint16_t elem;
@@ -2760,7 +2762,7 @@ void Document::ReadAndSkipEncapsulatedBasicOffsetTable()
    //          lengths, but we won't bother with such fuses for the time being.
    if ( itemLength != 0 )
    {
-      char* basicOffsetTableItemValue = new char[itemLength + 1];
+      char *basicOffsetTableItemValue = new char[itemLength + 1];
       Fp->read(basicOffsetTableItemValue, itemLength);
 
 #ifdef GDCM_DEBUG
@@ -2859,7 +2861,7 @@ void Document::ComputeRLEInfo()
        SkipBytes(rleSegmentLength[nbRleSegments]);
 
        // Store the collected info
-       RLEFrame* newFrameInfo = new RLEFrame;
+       RLEFrame *newFrameInfo = new RLEFrame;
        newFrameInfo->NumberFragments = nbRleSegments;
        for( unsigned int uk = 1; uk <= nbRleSegments; uk++ )
        {
@@ -2902,7 +2904,7 @@ void Document::ComputeJPEGFragmentInfo()
       long fragmentOffset = Fp->tellg();
 
        // Store the collected info
-       JPEGFragment* newFragment = new JPEGFragment;
+       JPEGFragment *newFragment = new JPEGFragment;
        newFragment->Offset = fragmentOffset;
        newFragment->Length = fragmentLength;
        JPEGInfo->Fragments.push_back( newFragment );
@@ -2928,18 +2930,18 @@ void Document::ComputeJPEGFragmentInfo()
  *        when recursively walking the given set.
  * @param set The structure to be traversed (recursively).
  */
-void Document::BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
-                                          DocEntrySet* set )
+void Document::BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
+                                          DocEntrySet *set )
 { 
-   if (ElementSet* elementSet = dynamic_cast< ElementSet* > ( set ) )
+   if (ElementSet *elementSet = dynamic_cast< ElementSet* > ( set ) )
    {
-      TagDocEntryHT const & currentHT = elementSet->GetTagHT();
+      TagDocEntryHT const &currentHT = elementSet->GetTagHT();
       for( TagDocEntryHT::const_iterator i  = currentHT.begin();
                                          i != currentHT.end();
                                        ++i)
       {
-         DocEntry* entry = i->second;
-         if ( SeqEntry* seqEntry = dynamic_cast<SeqEntry*>(entry) )
+         DocEntry *entry = i->second;
+         if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
          {
             const ListSQItem& items = seqEntry->GetSQItems();
             for( ListSQItem::const_iterator item  = items.begin();
@@ -2955,15 +2957,15 @@ void Document::BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
       return;
     }
 
-   if (SQItem* SQItemSet = dynamic_cast< SQItem* > ( set ) )
+   if (SQItem *SQItemSet = dynamic_cast< SQItem* > ( set ) )
    {
       const ListDocEntry& currentList = SQItemSet->GetDocEntries();
       for (ListDocEntry::const_iterator i  = currentList.begin();
                                         i != currentList.end();
                                       ++i)
       {
-         DocEntry* entry = *i;
-         if ( SeqEntry* seqEntry = dynamic_cast<SeqEntry*>(entry) )
+         DocEntry *entry = *i;
+         if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
          {
             const ListSQItem& items = seqEntry->GetSQItems();
             for( ListSQItem::const_iterator item  = items.begin();
@@ -3003,9 +3005,9 @@ void Document::BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
  *        \ref BuildFlatHashTable again...
  * @return The flat std::map<> we juste build.
  */
-TagDocEntryHT* Document::BuildFlatHashTable()
+TagDocEntryHT *Document::BuildFlatHashTable()
 {
-   TagDocEntryHT* FlatHT = new TagDocEntryHT;
+   TagDocEntryHT *FlatHT = new TagDocEntryHT;
    BuildFlatHashTableRecurse( *FlatHT, this );
    return FlatHT;
 }

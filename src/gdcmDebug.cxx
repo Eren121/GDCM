@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 22:30:43 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/06 20:03:26 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ void Debug::SetDebug(int level)
  * @param msg1 first message part
  * @param msg2 second message part 
  */
-void Debug::Verbose(int level, const char * msg1, const char * msg2) 
+void Debug::Verbose(int level, const char *msg1, const char *msg2) 
 {
    if (level > DebugLevel)
    {
@@ -62,7 +62,7 @@ void Debug::Verbose(int level, const char * msg1, const char * msg2)
  * @param msg1 first message part
  * @param msg2 second message part 
  */
-void Debug::Error(bool test, const char * msg1, const char * msg2) 
+void Debug::Error(bool test, const char *msg1, const char *msg2) 
 {
    if (!test)
    {
@@ -78,8 +78,8 @@ void Debug::Error(bool test, const char * msg1, const char * msg2)
  * @param msg2 second message part
  * @param msg3 Third message part  
  */
-void Debug::Error(const char* msg1, const char* msg2,
-                      const char* msg3) 
+void Debug::Error(const char *msg1, const char *msg2,
+                  const char *msg3) 
 {
    std::cerr << "gdcm::" << msg1 << ' ' << msg2 << ' ' << msg3
              << std::endl << std::flush;
@@ -93,8 +93,8 @@ void Debug::Error(const char* msg1, const char* msg2,
  * @param msg1 first message part
  * @param msg2 second message part
  */
-void Debug::Assert(int level, bool test, const char * msg1, 
-                       const char * msg2) 
+void Debug::Assert(int level, bool test, const char *msg1, 
+                   const char *msg2) 
 {
    if (level > DebugLevel)
    {

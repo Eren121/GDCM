@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,13 +59,13 @@ public:
    void PrintByName(std::ostream &os = std::cout);
 
 // Entries
-   bool AddNewEntry (DictEntry const & newEntry);
-   bool ReplaceEntry(DictEntry const & newEntry);
-   bool RemoveEntry (TagKey const & key);
+   bool AddNewEntry (DictEntry const &newEntry);
+   bool ReplaceEntry(DictEntry const &newEntry);
+   bool RemoveEntry (TagKey const &key);
    bool RemoveEntry (uint16_t group, uint16_t element);
    
 // Tag
-   DictEntry *GetDictEntryByName(TagName const & name);
+   DictEntry *GetDictEntryByName(TagName const &name);
    DictEntry *GetDictEntryByNumber(uint16_t group, uint16_t element);
 
    EntryNamesList *GetDictEntryNames();

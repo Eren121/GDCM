@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ public:
    /// returns exception name string
    operator const char *() const throw();
 
-   friend std::ostream& operator<<(std::ostream &os, const Exception &e);
+   friend std::ostream &operator<<(std::ostream &os, const Exception &e);
 
 protected:
    /// error message part 1

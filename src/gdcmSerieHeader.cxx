@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ SerieHeader::~SerieHeader()
  * \brief add a File to the list based on file name
  * @param   filename Name of the file to deal with
  */
-void SerieHeader::AddFileName(std::string const & filename)
+void SerieHeader::AddFileName(std::string const &filename)
 {
    Header *header = new Header( filename );
    CoherentGdcmFileList.push_back( header );
@@ -74,7 +74,7 @@ void SerieHeader::AddGdcmFile(Header *file)
  * \brief Sets the Directory
  * @param   dir Name of the directory to deal with
  */
-void SerieHeader::SetDirectory(std::string const & dir)
+void SerieHeader::SetDirectory(std::string const &dir)
 {
    DirList filenames_list(dir);  //OS specific
   

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 17:16:16 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 
 namespace gdcm 
 {
-void FillDefaultVRDict(VRHT & vr);
+void FillDefaultVRDict(VRHT &vr);
 //-----------------------------------------------------------------------------
 /**
  * \brief Constructor
@@ -99,7 +99,7 @@ void VR::Print(std::ostream &os)
  * \brief   Get the count for an element
  * @param   key key to count
  */
-int VR::Count(VRKey const & key) 
+int VR::Count(VRKey const &key) 
 {
    return vr.count(key);
 }
@@ -108,11 +108,9 @@ int VR::Count(VRKey const & key)
 /**
  * \brief   Simple predicate that checks wether the given argument
  *          corresponds to the Value Representation of a \ref BinEntry .
- *          This predicate is the negation of
- *          \ref VR::IsVROfGdcmStringRepresentable .
  * @param   tested value representation to check for.
  */
-bool VR::IsVROfBinaryRepresentable(VRKey const & tested)
+bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
 {
    //std::cout << "VR::IsVROfGdcmBinaryRepresentable===================="
    //   << tested << std::endl;
@@ -135,7 +133,7 @@ bool VR::IsVROfBinaryRepresentable(VRKey const & tested)
  *          but NOT a \ref BinEntry.
  * @param   tested value representation to check for.
  */
-bool VR::IsVROfStringRepresentable(VRKey const & tested)
+bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
    return tested == "AE" ||
           tested == "AS" ||
@@ -162,12 +160,12 @@ bool VR::IsVROfStringRepresentable(VRKey const & tested)
  *          corresponds to the Value Representation of a \ref SeqEntry
  * @param   tested value representation to check for.
  */
-bool VR::IsVROfSequence(VRKey const & tested)
+bool VR::IsVROfSequence(VRKey const &tested)
 {
    return tested == "SQ";
 }
 
-bool VR::IsValidVR(VRKey const & key)
+bool VR::IsValidVR(VRKey const &key)
 {
    return(vr.find(key)!=vr.end());
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 17:16:16 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.75 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,8 +74,8 @@ public:
    bool IsEncapsulate();
    bool IsDicomV3();
 
-   RLEFramesInfo* GetRLEInfo() { return RLEInfo; }
-   JPEGFragmentsInfo* GetJPEGInfo() { return JPEGInfo; }
+   RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
+   JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
 
 // Dictionnaries
    virtual void PrintPubDict (std::ostream &os = std::cout);
@@ -84,7 +84,7 @@ public:
    Dict* GetPubDict();
    Dict* GetShaDict();
    bool SetShaDict(Dict* dict);
-   bool SetShaDict(DictKey const & dictName);
+   bool SetShaDict(DictKey const &dictName);
 
 // Swap code
    /// 'Swap code' accessor (see \ref SwapCode )
@@ -103,51 +103,51 @@ public:
    /// Accessor to \ref Filename
    const std::string &GetFileName() const { return Filename; }
    /// Accessor to \ref Filename
-   void SetFileName(std::string const & fileName) { Filename = fileName; }
+   void SetFileName(std::string const &fileName) { Filename = fileName; }
 
-   std::ifstream* OpenFile();
+   std::ifstream *OpenFile();
    bool CloseFile();
-   void WriteContent( std::ofstream* fp, FileType type );
+   void WriteContent( std::ofstream *fp, FileType type );
 
 // Content entries
-   virtual bool SetEntryByName  (std::string const & content, 
-                                 TagName const & tagName );
-   virtual bool SetEntryByNumber(std::string const & content,
+   virtual bool SetEntryByName  (std::string const &content, 
+                                 TagName const &tagName );
+   virtual bool SetEntryByNumber(std::string const &content,
                                  uint16_t group, uint16_t element);
-   virtual bool SetEntryByNumber(uint8_t* content, int lgth,
+   virtual bool SetEntryByNumber(uint8_t *content, int lgth,
                                  uint16_t group, uint16_t element);
-   virtual bool SetEntry(std::string const & content,ValEntry* entry);
-   virtual bool SetEntry(uint8_t* content, int lgth,BinEntry* entry);
+   virtual bool SetEntry(std::string const &content,ValEntry *entry);
+   virtual bool SetEntry(uint8_t *content, int lgth,BinEntry *entry);
 
-   virtual void* GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
+   virtual void *GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
 
-   virtual std::string GetEntryByName    (TagName const & tagName);
-   virtual std::string GetEntryVRByName  (TagName const & tagName);
+   virtual std::string GetEntryByName    (TagName const &tagName);
+   virtual std::string GetEntryVRByName  (TagName const &tagName);
    virtual std::string GetEntryByNumber  (uint16_t group, uint16_t elem);
    virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
    virtual int GetEntryLengthByNumber(uint16_t group, uint16_t elem);
 
-   DocEntry* GetDocEntryByNumber(uint16_t group, uint16_t element); 
-   DocEntry* GetDocEntryByName  (TagName const & tagName);
-   ValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
-   BinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
+   DocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element); 
+   DocEntry *GetDocEntryByName  (TagName const &tagName);
+   ValEntry *GetValEntryByNumber(uint16_t group, uint16_t element); 
+   BinEntry *GetBinEntryByNumber(uint16_t group, uint16_t element); 
 
-   ValEntry* ReplaceOrCreateByNumber(std::string const & value,
+   ValEntry *ReplaceOrCreateByNumber(std::string const &value,
                                      uint16_t group, uint16_t elem,
-                                     TagName const & vr = GDCM_UNKNOWN);
-   BinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
+                                     TagName const &vr = GDCM_UNKNOWN);
+   BinEntry *ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
                                      uint16_t group, uint16_t elem,
-                                     TagName const & vr = GDCM_UNKNOWN);
-   SeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
+                                     TagName const &vr = GDCM_UNKNOWN);
+   SeqEntry *ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
 
-   bool ReplaceIfExistByNumber ( std::string const & value,
+   bool ReplaceIfExistByNumber ( std::string const &value,
                                  uint16_t group, uint16_t elem );
    
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
-   virtual void LoadEntryBinArea(BinEntry* entry);
+   virtual void LoadEntryBinArea(BinEntry *entry);
 
-   void LoadDocEntrySafe(DocEntry* entry);
-   TagDocEntryHT* BuildFlatHashTable();
+   void LoadDocEntrySafe(DocEntry *entry);
+   TagDocEntryHT *BuildFlatHashTable();
       
 // Divers
    static std::string GetTransferSyntaxValue(TransferSyntaxType type);
@@ -158,7 +158,7 @@ protected:
    // to instanciate from this class Document (only Header and
    // DicomDir are meaningfull).
    Document();
-   Document( std::string const & filename );
+   Document( std::string const &filename );
    virtual ~Document();
    
    void ReadAndSkipEncapsulatedBasicOffsetTable();
@@ -179,7 +179,7 @@ protected:
    int SwapCode;
 
    /// File Pointer, opened during Header parsing.
-   std::ifstream* Fp;
+   std::ifstream *Fp;
 
    /// ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
    FileType Filetype;  
@@ -199,10 +199,10 @@ protected:
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// Store the RLE frames info obtained during parsing of pixels.
-   RLEFramesInfo* RLEInfo;
+   RLEFramesInfo *RLEInfo;
 
    /// Store the JPEG fragments info obtained during parsing of pixels.
-   JPEGFragmentsInfo* JPEGInfo;
+   JPEGFragmentsInfo *JPEGInfo;
 
 private:
 // Methods
@@ -210,19 +210,20 @@ private:
    void ParseDES(DocEntrySet *set,long offset, long l_max, bool delim_mode);
    void ParseSQ (SeqEntry *seq,   long offset, long l_max, bool delim_mode);
 
-   void LoadDocEntry         (DocEntry *);
-   void FindDocEntryLength   (DocEntry *) throw ( FormatError );
+   void LoadDocEntry         (DocEntry *e);
+   void FindDocEntryLength   (DocEntry *e) throw ( FormatError );
    std::string FindDocEntryVR();
-   bool CheckDocEntryVR      (VRKey);
+   bool CheckDocEntryVR      (VRKey k);
 
-   std::string GetDocEntryValue  (DocEntry *);
-   std::string GetDocEntryUnvalue(DocEntry *);
+   std::string GetDocEntryValue  (DocEntry *e);
+   std::string GetDocEntryUnvalue(DocEntry *e);
 
-   void SkipDocEntry          (DocEntry *);
+
+   void SkipDocEntry          (DocEntry *e);
    void SkipToNextDocEntry    (long offset,long readLgth);
 
-   void FixDocEntryFoundLength(DocEntry *, uint32_t);
-   bool IsDocEntryAnInteger   (DocEntry *);
+   void FixDocEntryFoundLength(DocEntry *e, uint32_t l);
+   bool IsDocEntryAnInteger   (DocEntry *e);
 
    uint32_t FindDocEntryLengthOB() throw( FormatUnexpected );
 
@@ -239,21 +240,21 @@ private:
    void SetMaxSizePrintEntry(long);
 
    // DocEntry related utilities
-   DocEntry* ReadNextDocEntry();
+   DocEntry *ReadNextDocEntry();
 
    uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
-   void BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
+   void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
                                    DocEntrySet* set );
 
    void HandleBrokenEndian(uint16_t  group, uint16_t  elem);
 
 // Variables
    /// Public dictionary used to parse this header
-   Dict* RefPubDict;
+   Dict *RefPubDict;
    
    /// \brief Optional "shadow dictionary" (private elements) used to parse
    /// this header
-   Dict* RefShaDict;
+   Dict *RefShaDict;
 
    /// \brief Size threshold above which an element value will NOT be loaded
    /// in memory (to avoid loading the image/volume itself). By default,

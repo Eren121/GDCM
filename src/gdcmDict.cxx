@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 17:08:06 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -211,12 +211,12 @@ bool Dict::RemoveEntry (TagKey const &key)
  * \brief  removes an already existing Dicom Dictionary Entry, 
  *          identified by its group,element number
  * @param   group   Dicom group number of the Dicom Element
- * @param   element Dicom element number of the Dicom Element
+ * @param   elem Dicom element number of the Dicom Element
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool Dict::RemoveEntry (uint16_t group, uint16_t element)
+bool Dict::RemoveEntry (uint16_t group, uint16_t elem)
 {
-   return RemoveEntry(DictEntry::TranslateToKey(group, element));
+   return RemoveEntry(DictEntry::TranslateToKey(group, elem));
 }
 
 /**

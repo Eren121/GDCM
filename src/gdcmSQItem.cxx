@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 15:38:28 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.45 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ SQItem::~SQItem()
 /*
  * \brief   canonical Printer
  */
-void SQItem::Print(std::ostream& os)
+void SQItem::Print(std::ostream &os)
 {
    std::ostringstream s;
 
@@ -76,13 +76,13 @@ void SQItem::Print(std::ostream& os)
                                i != DocEntries.end();
                              ++i)
    {
-      DocEntry* Entry = *i;
+      DocEntry *Entry = *i;
       bool PrintEndLine = true;
 
       os << s.str();
       Entry->SetPrintLevel(PrintLevel);
       Entry->Print(os); 
-      if ( SeqEntry* seqEntry = dynamic_cast<SeqEntry*>(Entry) )
+      if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(Entry) )
       {
          (void)seqEntry;  //not used
          PrintEndLine = false;
@@ -98,7 +98,7 @@ void SQItem::Print(std::ostream& os)
  * \ingroup SQItem
  * \brief   canonical Writer
  */
-void SQItem::WriteContent(std::ofstream* fp, FileType filetype)
+void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
 {
    int j;
    uint16_t item[4] = { 0xfffe, 0xe000, 0xffff, 0xffff };
@@ -147,7 +147,7 @@ void SQItem::WriteContent(std::ofstream* fp, FileType filetype)
 /**
  * \brief   adds any Entry (Dicom Element) to the Sequence Item
  */
-bool SQItem::AddEntry(DocEntry* entry)
+bool SQItem::AddEntry(DocEntry *entry)
 {
    DocEntries.push_back(entry);
    //TODO : check if it worked
@@ -167,7 +167,7 @@ bool SQItem::AddEntry(DocEntry* entry)
  * @return  true if element was found or created successfully
  */
 
-bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group, 
+bool SQItem::SetEntryByNumber(std::string const &val, uint16_t group, 
                               uint16_t element)
 {
    for(ListDocEntry::iterator i = DocEntries.begin(); 

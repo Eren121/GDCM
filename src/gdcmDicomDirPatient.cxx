@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:05:06 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,7 @@ DicomDirPatient::~DicomDirPatient()
  * \brief   Prints the Object
  * @param os ostream to write to 
  */ 
-void DicomDirPatient::Print(std::ostream& os)
+void DicomDirPatient::Print(std::ostream &os)
 {
    os << "PATIENT" << std::endl;
    DicomDirObject::Print(os);
@@ -72,7 +72,7 @@ void DicomDirPatient::Print(std::ostream& os)
  * @param fp ofstream to write to
  * @param t Type of the File (explicit VR, implicitVR, ...) 
  */ 
-void DicomDirPatient::WriteContent(std::ofstream* fp, FileType t)
+void DicomDirPatient::WriteContent(std::ofstream *fp, FileType t)
 {
    DicomDirObject::WriteContent(fp, t);
 
@@ -92,10 +92,10 @@ void DicomDirPatient::WriteContent(std::ofstream* fp, FileType t)
  */
 DicomDirStudy* DicomDirPatient::NewStudy()
 {
-   ListDicomDirStudyElem const & elemList = 
+   ListDicomDirStudyElem const &elemList = 
       Global::GetDicomDirElements()->GetDicomDirStudyElements();
       
-   DicomDirStudy* st = new DicomDirStudy();
+   DicomDirStudy *st = new DicomDirStudy();
    st->FillObject(elemList);
 
    Studies.push_front(st);

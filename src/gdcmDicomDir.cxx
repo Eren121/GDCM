@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 15:41:28 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2005/01/06 20:03:26 $
+  Version:   $Revision: 1.92 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,7 +79,7 @@ DicomDir::DicomDir()
  *                      - false if user passed an already built DICOMDIR file
  *                        and wants to use it 
  */
-DicomDir::DicomDir(std::string const & fileName, bool parseDir ):
+DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    Document( fileName )
 {
    // Whatever user passed (a root directory or a DICOMDIR)
@@ -244,8 +244,8 @@ void DicomDir::ParseDirectory()
  * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
-void DicomDir::SetStartMethod( DicomDir::Method* method, void* arg, 
-                               DicomDir::Method* argDelete )
+void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg, 
+                               DicomDir::Method *argDelete )
 {
    if( StartArg && StartMethodArgDelete )
    {
@@ -264,7 +264,7 @@ void DicomDir::SetStartMethod( DicomDir::Method* method, void* arg,
  *          class is destroyed
  * @param   method Method to call to delete the argument
  */
-void DicomDir::SetStartMethodArgDelete( DicomDir::Method* method ) 
+void DicomDir::SetStartMethodArgDelete( DicomDir::Method *method ) 
 {
    StartMethodArgDelete = method;
 }
@@ -278,8 +278,8 @@ void DicomDir::SetStartMethodArgDelete( DicomDir::Method* method )
  * @param   argDelete    Argument  
  * \warning In python : the arg parameter isn't considered
  */
-void DicomDir::SetProgressMethod( DicomDir::Method* method, void* arg, 
-                                  DicomDir::Method* argDelete )
+void DicomDir::SetProgressMethod( DicomDir::Method *method, void *arg, 
+                                  DicomDir::Method *argDelete )
 {
    if( ProgressArg && ProgressMethodArgDelete )
    {
@@ -298,7 +298,7 @@ void DicomDir::SetProgressMethod( DicomDir::Method* method, void* arg,
  *          class is destroyed          
  * @param   method Method to call to delete the argument
  */
-void DicomDir::SetProgressMethodArgDelete( DicomDir::Method* method )
+void DicomDir::SetProgressMethodArgDelete( DicomDir::Method *method )
 {
    ProgressMethodArgDelete = method;
 }
@@ -311,8 +311,8 @@ void DicomDir::SetProgressMethodArgDelete( DicomDir::Method* method )
  * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
-void DicomDir::SetEndMethod( DicomDir::Method* method, void* arg, 
-                             DicomDir::Method* argDelete )
+void DicomDir::SetEndMethod( DicomDir::Method *method, void *arg, 
+                             DicomDir::Method *argDelete )
 {
    if( EndArg && EndMethodArgDelete )
    {
@@ -331,7 +331,7 @@ void DicomDir::SetEndMethod( DicomDir::Method* method, void* arg,
  *          the class is destroyed
  * @param   method Method to call to delete the argument
  */
-void DicomDir::SetEndMethodArgDelete( DicomDir::Method* method )
+void DicomDir::SetEndMethodArgDelete( DicomDir::Method *method )
 {
    EndMethodArgDelete = method;
 }
@@ -348,13 +348,13 @@ void DicomDir::SetEndMethodArgDelete( DicomDir::Method* method )
  * @return false only when fail to open
  */
  
-bool DicomDir::WriteDicomDir(std::string const& fileName) 
+bool DicomDir::WriteDicomDir(std::string const &fileName) 
 {  
    int i;
    uint16_t sq[4] = { 0x0004, 0x1220, 0xffff, 0xffff };
    uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0xffff, 0xffff };
 
-   std::ofstream* fp = new std::ofstream(fileName.c_str(),  
+   std::ofstream *fp = new std::ofstream(fileName.c_str(),  
                                          std::ios::out | std::ios::binary);
    if( !fp ) 
    {
@@ -486,7 +486,7 @@ DicomDirMeta * DicomDir::NewMeta()
    }
    else  // after root directory parsing
    {
-      ListDicomDirMetaElem const & elemList = 
+      ListDicomDirMetaElem const &elemList = 
          Global::GetDicomDirElements()->GetDicomDirMetaElements();
       m->FillObject(elemList);
    }
@@ -497,7 +497,7 @@ DicomDirMeta * DicomDir::NewMeta()
 /**
  * \brief   adds a new Patient (with the basic elements) to a partially created DICOMDIR
  */
-DicomDirPatient * DicomDir::NewPatient()
+DicomDirPatient *DicomDir::NewPatient()
 {
    ListDicomDirPatientElem::const_iterator it;
    uint16_t tmpGr,tmpEl;
@@ -534,7 +534,7 @@ DicomDirPatient * DicomDir::NewPatient()
  *          GDCM_DICOMDIR_STUDY, GDCM_DICOMDIR_SERIE ...)
  * @param   header Header of the current file
  */
-void DicomDir::SetElement(std::string const & path, DicomDirType type,
+void DicomDir::SetElement(std::string const &path, DicomDirType type,
                           Document *header)
 {
    ListDicomDirElem elemList; //FIXME this is going to be a by copy operation
@@ -737,7 +737,7 @@ void DicomDir::CreateDicomDir()
       return;         
    }
    
-   SeqEntry* s = dynamic_cast<SeqEntry*>(e);
+   SeqEntry *s = dynamic_cast<SeqEntry *>(e);
    if ( !s )
    {
       dbg.Verbose(0, "DicomDir::CreateDicomDir: no SeqEntry present");
@@ -750,14 +750,14 @@ void DicomDir::CreateDicomDir()
 
    ListSQItem listItems = s->GetSQItems();
    
-   DocEntry * d;
+   DocEntry *d;
    std::string v;
-   SQItem * si;
+   SQItem *si;
    for( ListSQItem::iterator i = listItems.begin(); 
                              i !=listItems.end(); ++i ) 
    {
       d = (*i)->GetDocEntryByNumber(0x0004, 0x1430); // Directory Record Type
-      if ( ValEntry* valEntry = dynamic_cast< ValEntry* >(d) )
+      if ( ValEntry* valEntry = dynamic_cast<ValEntry *>(d) )
       {
          v = valEntry->GetValue();
       }
@@ -970,7 +970,7 @@ void DicomDir::SetElements(std::string const & path, VectDocument const &list)
  *          Only DocEntry's are moved
  * 
  */
-void DicomDir::MoveSQItem(SQItem* dst,SQItem *src)
+void DicomDir::MoveSQItem(SQItem *dst,SQItem *src)
 {
    DocEntry *entry;
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 19:53:29 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ DictSet::~DictSet()
  *          contained is this DictSet, along with their respective content.
  * @param   os Output stream used for printing.
  */
-void DictSet::Print(std::ostream& os) 
+void DictSet::Print(std::ostream &os) 
 {
    for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict)
    {
@@ -87,7 +87,7 @@ void DictSet::Print(std::ostream& os)
  * \sa DictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-EntryNamesList * DictSet::GetPubDictEntryNames() 
+EntryNamesList *DictSet::GetPubDictEntryNames() 
 {
    return GetDefaultPubDict()->GetDictEntryNames();
 }
@@ -118,7 +118,7 @@ EntryNamesList * DictSet::GetPubDictEntryNames()
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-EntryNamesByCatMap * DictSet::GetPubDictEntryNamesByCategory() 
+EntryNamesByCatMap *DictSet::GetPubDictEntryNamesByCategory() 
 {
    return GetDefaultPubDict()->GetDictEntryNamesByCategory();
 }
@@ -148,7 +148,7 @@ Dict *DictSet::LoadDictFromFile(std::string const & filename,
  * @param   dictName The symbolic name of the searched dictionary.
  * \result  The retrieved dictionary.
  */
-Dict *DictSet::GetDict(DictKey const & dictName) 
+Dict *DictSet::GetDict(DictKey const &dictName) 
 {
    DictSetHT::iterator dict = Dicts.find(dictName);
    if(dict != Dicts.end())
@@ -224,7 +224,7 @@ std::string DictSet::BuildDictPath()
 
 //-----------------------------------------------------------------------------
 // Protected
-bool DictSet::AppendDict(Dict *newDict, DictKey const & name)
+bool DictSet::AppendDict(Dict *newDict, DictKey const &name)
 {
    Dicts[name] = newDict;
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,7 +61,7 @@ ElementSet::~ElementSet()
   *          from the H Table
   * @return
   */ 
-void ElementSet::Print(std::ostream& os)
+void ElementSet::Print(std::ostream &os)
 {
    for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
@@ -70,7 +70,7 @@ void ElementSet::Print(std::ostream& os)
       entry->SetPrintLevel(PrintLevel);
       entry->Print(os);   
 
-      if ( SeqEntry* seqEntry = dynamic_cast<SeqEntry*>(entry) )
+      if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
       {
          (void)seqEntry;
          // Avoid the newline for a sequence:
@@ -87,7 +87,7 @@ void ElementSet::Print(std::ostream& os)
   *          from the H Table
   * @return
   */ 
-void ElementSet::WriteContent(std::ofstream* fp, FileType filetype)
+void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
 {
    for (TagDocEntryHT::const_iterator i = TagHT.begin(); 
                                      i != TagHT.end(); 
@@ -107,9 +107,9 @@ void ElementSet::WriteContent(std::ofstream* fp, FileType filetype)
  * \brief   add a new Dicom Element pointer to the H Table
  * @param   newEntry entry to add
  */
-bool ElementSet::AddEntry(DocEntry* newEntry)
+bool ElementSet::AddEntry(DocEntry *newEntry)
 {
-   const TagKey& key = newEntry->GetKey();
+   const TagKey &key = newEntry->GetKey();
 
    if( TagHT.count(key) == 1 )
    {
@@ -130,9 +130,9 @@ bool ElementSet::AddEntry(DocEntry* newEntry)
  * \warning Some problems when using under Windows... prefer the use of
  *          Initialize / GetNext methods
  */
-bool ElementSet::RemoveEntry( DocEntry* entryToRemove)
+bool ElementSet::RemoveEntry( DocEntry *entryToRemove)
 {
-   const TagKey& key = entryToRemove->GetKey();
+   const TagKey &key = entryToRemove->GetKey();
    if( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
@@ -149,9 +149,9 @@ bool ElementSet::RemoveEntry( DocEntry* entryToRemove)
  * \brief   Clear the hash table from given entry BUT keep the entry.
  * @param   entryToRemove Entry to remove.
  */
-bool ElementSet::RemoveEntryNoDestroy(DocEntry* entryToRemove)
+bool ElementSet::RemoveEntryNoDestroy(DocEntry *entryToRemove)
 {
-   const TagKey& key = entryToRemove->GetKey();
+   const TagKey &key = entryToRemove->GetKey();
    if( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 13:35:38 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ namespace gdcm
  * \brief   Constructor from a given DictEntry
  * @param   in Pointer to existing dictionary entry
  */
-DocEntry::DocEntry(DictEntry* in)
+DocEntry::DocEntry(DictEntry *in)
 {
    ImplicitVR = false;
    DicomDict  = in;
@@ -57,7 +57,7 @@ DocEntry::DocEntry(DictEntry* in)
  * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
  * @param   os ostream we want to print in
  */
-void DocEntry::Print(std::ostream& os)
+void DocEntry::Print(std::ostream &os)
 {
    size_t o;
    std::string st;
@@ -120,7 +120,7 @@ void DocEntry::Print(std::ostream& os)
  * @param fp already open file pointer
  * @param filetype type of the file to be written
  */
-void DocEntry::WriteContent(std::ofstream* fp, FileType filetype)
+void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
@@ -244,7 +244,7 @@ uint32_t DocEntry::GetFullLength()
  * \ingroup DocEntry
  * \brief   Copies all the attributes from an other DocEntry 
  */
-void DocEntry::Copy (DocEntry* e)
+void DocEntry::Copy (DocEntry *e)
 {
 //   DicomDict    = e->DicomDict;
    UsableLength = e->UsableLength;

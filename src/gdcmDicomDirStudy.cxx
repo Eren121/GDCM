@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:05:06 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,7 @@ DicomDirStudy::~DicomDirStudy()
  * @param os ostream to write to 
  * @return
  */ 
-void DicomDirStudy::Print(std::ostream& os)
+void DicomDirStudy::Print(std::ostream &os)
 {
    os << "STUDY" << std::endl;
    DicomDirObject::Print(os);
@@ -76,7 +76,7 @@ void DicomDirStudy::Print(std::ostream& os)
  * @param t Type of the File (explicit VR, implicitVR, ...) 
  * @return
  */ 
-void DicomDirStudy::WriteContent(std::ofstream* fp, FileType t)
+void DicomDirStudy::WriteContent(std::ofstream *fp, FileType t)
 {
    DicomDirObject::WriteContent(fp, t);
 
@@ -92,9 +92,9 @@ void DicomDirStudy::WriteContent(std::ofstream* fp, FileType t)
  * \brief   adds a new Serie at the begining of the SerieList
  *          of a partially created DICOMDIR
  */
-DicomDirSerie* DicomDirStudy::NewSerie()
+DicomDirSerie *DicomDirStudy::NewSerie()
 {
-   ListDicomDirSerieElem const & elemList = 
+   ListDicomDirSerieElem const &elemList = 
       Global::GetDicomDirElements()->GetDicomDirSerieElements();   
 
    DicomDirSerie* st = new DicomDirSerie();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:36 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/06 20:03:26 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ namespace gdcm
 /**
  * \brief   Constructor from a given BinEntry
  */
-BinEntry::BinEntry(DictEntry* e) : ValEntry(e)
+BinEntry::BinEntry(DictEntry *e) : ValEntry(e)
 {
    BinArea = 0;
    SelfArea = true;
@@ -40,7 +40,7 @@ BinEntry::BinEntry(DictEntry* e) : ValEntry(e)
  * \brief   Constructor from a given BinEntry
  * @param   e Pointer to existing Doc entry
  */
-BinEntry::BinEntry(DocEntry* e) : ValEntry(e->GetDictEntry())
+BinEntry::BinEntry(DocEntry *e) : ValEntry(e->GetDictEntry())
 {
    UsableLength = e->GetLength();
    ReadLength   = e->GetReadLength();
@@ -105,7 +105,7 @@ void BinEntry::Print(std::ostream &os)
  * @param fp already open file pointer
  * @param filetype type of the file to be written
 */
-void BinEntry::WriteContent(std::ofstream* fp, FileType filetype)
+void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
    DocEntry::WriteContent(fp, filetype);
    void* binArea = GetBinArea();
@@ -128,7 +128,7 @@ void BinEntry::WriteContent(std::ofstream* fp, FileType filetype)
 
 
 /// \brief Sets the value (non string) of the current Dicom Header Entry
-void BinEntry::SetBinArea( uint8_t* area, bool self )  
+void BinEntry::SetBinArea( uint8_t *area, bool self )  
 { 
    if (BinArea && SelfArea)
       delete[] BinArea;

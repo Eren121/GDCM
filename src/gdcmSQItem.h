@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 11:37:03 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ public:
    void WriteContent(std::ofstream *fp, FileType filetype);
 
    /// \brief   returns the DocEntry chained List for this SQ Item.
-   ListDocEntry const & GetDocEntries() const { return DocEntries; };
+   ListDocEntry const &GetDocEntries() const { return DocEntries; };
    
    /// \brief   adds the passed DocEntry to the DocEntry chained List for
    /// this SQ Item.      
@@ -51,10 +51,10 @@ public:
   
    DocEntry *GetDocEntryByNumber(uint16_t group, uint16_t element);
    // FIXME method to write
-   //DocEntry *GetDocEntryByName  (std::string Name);
+   //DocEntry *GetDocEntryByName(std::string Name);
    
-   bool SetEntryByNumber(std::string const & val, uint16_t group, 
-                                                  uint16_t element);
+   bool SetEntryByNumber(std::string const &val, uint16_t group, 
+                                                 uint16_t element);
     
    std::string GetEntryByNumber(uint16_t group, uint16_t element);
 
@@ -71,10 +71,10 @@ public:
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
    /// Accessor on \ref BaseTagKey.
-   void SetBaseTagKey( BaseTagKey const & key ) { BaseTagKeyNested = key; }
+   void SetBaseTagKey( BaseTagKey const &key ) { BaseTagKeyNested = key; }
 
    /// Accessor on \ref BaseTagKey.
-   BaseTagKey const & GetBaseTagKey() const { return BaseTagKeyNested; }
+   BaseTagKey const &GetBaseTagKey() const { return BaseTagKeyNested; }
 
    void Initialize();
    DocEntry *GetNextEntry();

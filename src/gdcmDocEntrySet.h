@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 17:20:53 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,31 +70,32 @@ public:
    /// \brief write any type of entry to the entry set
    virtual void WriteContent (std::ofstream *fp, FileType filetype) = 0;// pure virtual
 
-   virtual DocEntry* GetDocEntryByNumber(uint16_t group,
+   virtual DocEntry *GetDocEntryByNumber(uint16_t group,
                                          uint16_t elem) = 0;
-   DocEntry* GetDocEntryByName(TagName const & name);
+   DocEntry *GetDocEntryByName(TagName const &name);
    virtual std::string GetEntryByNumber(uint16_t group, uint16_t elem) = 0;
-   std::string GetEntryByName(TagName const & name);
+   std::string GetEntryByName(TagName const &name);
 
-   DictEntry* NewVirtualDictEntry(uint16_t group, 
+   DictEntry *NewVirtualDictEntry(uint16_t group, 
                                   uint16_t element,
-                                  TagName const & vr     = GDCM_UNKNOWN,
-                                  TagName const & fourth = GDCM_UNKNOWN,
-                                  TagName const & name   = GDCM_UNKNOWN );
+                                  TagName const &vr     = GDCM_UNKNOWN,
+                                  TagName const &fourth = GDCM_UNKNOWN,
+                                  TagName const &name   = GDCM_UNKNOWN );
   
 protected:
 // DocEntry  related utilities 
-   ValEntry* NewValEntryByNumber(uint16_t group,uint16_t elem,
-                                 TagName const & vr = GDCM_UNKNOWN);
-   BinEntry* NewBinEntryByNumber(uint16_t group,uint16_t elem,
-                                 TagName const & vr = GDCM_UNKNOWN);
-   SeqEntry* NewSeqEntryByNumber(uint16_t group,uint16_t elem);
+
+   ValEntry *NewValEntryByNumber(uint16_t group,uint16_t elem,
+                                 TagName const &vr = GDCM_UNKNOWN);
+   BinEntry *NewBinEntryByNumber(uint16_t group,uint16_t elem,
+                                 TagName const &vr = GDCM_UNKNOWN);
+   SeqEntry *NewSeqEntryByNumber(uint16_t group,uint16_t elem);
 
 // DictEntry  related utilities
-   DictEntry *GetDictEntryByName  (TagName const & name);
+   DictEntry *GetDictEntryByName  (TagName const &name);
    DictEntry *GetDictEntryByNumber(uint16_t group, uint16_t elem);
    DictEntry *GetDictEntryByNumber(uint16_t group, uint16_t elem,
-                                   TagName const & vr);
+                                   TagName const &vr);
 };
 
 } // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,19 +50,19 @@ public:
    uint16_t      GetElement()   { return DicomDict->GetElement();};
 
    /// Returns the 'key' of the current Dicom Header Entry
-   void  SetKey( TagKey const & key ) { Key = key; }
+   void  SetKey( TagKey const &key ) { Key = key; }
 
    /// Returns the 'key' of the current Dicom Header Entry
-   std::string const & GetKey() const { return Key; }
+   std::string const &GetKey() const { return Key; }
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
    /// Dictionnary of the current Dicom Header Entry
-   std::string const & GetName() const { return DicomDict->GetName(); };
+   std::string const &GetName() const { return DicomDict->GetName(); };
 
    /// \brief Returns the 'Value Representation' (e.g. "PN" : Person Name,
    /// "SL" : Signed Long), found in the Dicom Header or in the Dicom
    /// Dictionnary, of the current Dicom Header Entry
-   std::string const & GetVR() const { return DicomDict->GetVR(); };
+   std::string const &GetVR() const { return DicomDict->GetVR(); };
 
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Preamble, if any) of the value of the current Dicom HeaderEntry
@@ -81,7 +81,7 @@ public:
    uint32_t GetReadLength() { return ReadLength; };
 
    /// Sets the 'Value Representation' of the current Dicom Header Entry
-   void SetVR( TagName const & v) { DicomDict->SetVR(v); };    
+   void SetVR( TagName const &v) { DicomDict->SetVR(v); };    
 
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
    /// Dicom Header Entry
@@ -130,7 +130,7 @@ public:
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   
 
-   virtual void Print (std::ostream & os = std::cout); 
+   virtual void Print (std::ostream &os = std::cout); 
 
 private:
    // FIXME: In fact we should be more specific and use :

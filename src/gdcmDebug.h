@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/01/06 20:03:26 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,11 +42,11 @@ public:
    Debug(int level = -1);
 
    void SetDebug (int level);
-   void Verbose(int level, const char* msg1, const char* msg2 = "") ;
-   void Error  (bool test, const char* msg1, const char* msg2 = "");
-   void Error  (const char* msg1, const char* msg2 = "", const char* msg3 = "");
+   void Verbose(int level, const char *msg1, const char *msg2 = "") ;
+   void Error  (bool test, const char *msg1, const char *msg2 = "");
+   void Error  (const char *msg1, const char *msg2 = "", const char *msg3 = "");
 
-   void Assert(int level, bool test, const char * msg1, const char * msg2);
+   void Assert(int level, bool test, const char *msg1, const char *msg2);
    void Exit(int a);
 
    static Debug &GetReference();

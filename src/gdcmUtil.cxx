@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 19:39:24 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,7 @@ namespace gdcm
  * buf.str();
  */
 
-std::string Util::Format(const char* format, ...)
+std::string Util::Format(const char *format, ...)
 {
    char buffer[2048];
    va_list args;
@@ -70,8 +70,8 @@ std::string Util::Format(const char* format, ...)
  * \ingroup Globals
  * \brief Because not available in C++ (?)
  */
-void Util::Tokenize (const std::string& str,
-                     std::vector<std::string>& tokens,
+void Util::Tokenize (const std::string &str,
+                     std::vector<std::string> &tokens,
                      const std::string& delimiters)
 {
    std::string::size_type lastPos = str.find_first_not_of(delimiters,0);
@@ -90,8 +90,8 @@ void Util::Tokenize (const std::string& str,
  *        Counts the number of occurences of a substring within a string
  */
  
-int Util::CountSubstring (const std::string& str,
-                          const std::string& subStr)
+int Util::CountSubstring (const std::string &str,
+                          const std::string &subStr)
 {
    int count = 0;   // counts how many times it appears
    std::string::size_type x = 0;       // The index position in the string
@@ -116,7 +116,7 @@ int Util::CountSubstring (const std::string& str,
  *         to avoid corrupting the terminal of invocation when printing)
  * @param s string to remove non printable characters from
  */
-std::string Util::CreateCleanString(std::string const & s)
+std::string Util::CreateCleanString(std::string const &s)
 {
    std::string str = s;
 
@@ -147,7 +147,7 @@ std::string Util::CreateCleanString(std::string const & s)
  * \brief   Add a SEPARATOR to the end of the name is necessary
  * @param   pathname file/directory name to normalize 
  */
-std::string Util::NormalizePath(std::string const & pathname)
+std::string Util::NormalizePath(std::string const &pathname)
 {
    const char SEPARATOR_X      = '/';
    const char SEPARATOR_WIN    = '\\';
@@ -167,7 +167,7 @@ std::string Util::NormalizePath(std::string const & pathname)
  * \brief   Get the (directory) path from a full path file name
  * @param   fullName file/directory name to extract Path from
  */
-std::string Util::GetPath(std::string const & fullName)
+std::string Util::GetPath(std::string const &fullName)
 {
    std::string res = fullName;
    int pos1 = res.rfind("/");
@@ -189,7 +189,7 @@ std::string Util::GetPath(std::string const & fullName)
  * \brief   Get the (last) name of a full path file name
  * @param   fullName file/directory name to extract end name from
  */
-std::string Util::GetName(std::string const & fullName)
+std::string Util::GetName(std::string const &fullName)
 {   
   std::string filename = fullName;
 
@@ -240,7 +240,7 @@ std::string Util::GetCurrentTime()
  * that needed to be escaped with an extra backslash for doxygen) \\0
  * as you want.
  */
-std::string Util::DicomString(const char* s, size_t l)
+std::string Util::DicomString(const char *s, size_t l)
 {
    std::string r(s, s+l);
    assert( !(r.size() % 2) ); // == basically 'l' is even
@@ -259,7 +259,7 @@ std::string Util::DicomString(const char* s, size_t l)
  * except it doesn't take a lenght. 
  * It only pad with a null character if length is odd
  */
-std::string Util::DicomString(const char* s)
+std::string Util::DicomString(const char *s)
 {
    size_t l = strlen(s);
    if( l%2 )
@@ -278,7 +278,7 @@ std::string Util::DicomString(const char* s)
  *        - We allow padding of even lenght string by either a null 
  *          character of a space
  */
-bool Util::DicomStringEqual(const std::string& s1, const char *s2)
+bool Util::DicomStringEqual(const std::string &s1, const char *s2)
 {
   // s2 is the string from the DICOM reference: 'MONOCHROME1'
   std::string s1_even = s1; //Never change input parameter
@@ -702,7 +702,7 @@ std::string Util::GetIPAddress()
   if( r == 0 )
   {
     // Get host adresses
-    struct hostent * pHost = gethostbyname(szHostName);
+    struct hostent *pHost = gethostbyname(szHostName);
 
     for( int i = 0; pHost!= NULL && pHost->h_addr_list[i]!= NULL; i++ )
     {
@@ -732,7 +732,7 @@ std::string Util::GetIPAddress()
  *        each time a DICOM image is create it should have 
  *        a unique identifier (URI)
  */
-std::string Util::CreateUniqueUID(const std::string& root)
+std::string Util::CreateUniqueUID(const std::string &root)
 {
   // The code works as follow:
   // echo "gdcm" | od -b
@@ -758,12 +758,12 @@ std::string Util::CreateUniqueUID(const std::string& root)
 }
 
 template <class T>
-std::ostream& binary_write(std::ostream& os, const T& val)
+std::ostream &binary_write(std::ostream &os, const T &val)
 {
     return os.write(reinterpret_cast<const char*>(&val), sizeof val);
 }
 
-std::ostream& binary_write(std::ostream& os, const uint16_t& val)
+std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
     uint16_t swap;
@@ -774,7 +774,7 @@ std::ostream& binary_write(std::ostream& os, const uint16_t& val)
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
-std::ostream& binary_write(std::ostream& os, const uint32_t& val)
+std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 {
 #ifdef GDCM_WORDS_BIGENDIAN
     uint32_t swap;
@@ -786,12 +786,12 @@ std::ostream& binary_write(std::ostream& os, const uint32_t& val)
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
-std::ostream& binary_write(std::ostream& os, const char* val)
+std::ostream &binary_write(std::ostream &os, const char *val)
 {
     return os.write(val, strlen(val));
 }
 
-std::ostream& binary_write(std::ostream& os, std::string const & val)
+std::ostream &binary_write(std::ostream &os, std::string const &val)
 {
     return os.write(val.c_str(), val.size());
 }

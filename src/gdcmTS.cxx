@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 15:41:28 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 
 namespace gdcm 
 {
-void FillDefaultTSDict(TSHT & ts);
+void FillDefaultTSDict(TSHT &ts);
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 TS::TS() 
@@ -91,12 +91,12 @@ void TS::Print(std::ostream &os)
 
 //-----------------------------------------------------------------------------
 // Public
-int TS::Count(TSKey const & key) 
+int TS::Count(TSKey const &key) 
 {
    return TsMap.count(key);
 }
 
-TSAtr const & TS::GetValue(TSKey const & key) 
+TSAtr const & TS::GetValue(TSKey const &key) 
 {
    TSHT::const_iterator it = TsMap.find(key);
    if (it == TsMap.end())

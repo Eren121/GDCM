@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/04 15:59:37 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/06 20:03:26 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -146,8 +146,8 @@ void DicomDirElement::Print(std::ostream &os)
 //-----------------------------------------------------------------------------
 // Public
 
-bool DicomDirElement::AddNewEntry(std::string const & type, 
-                                  Element const & elem)
+bool DicomDirElement::AddNewEntry(std::string const &type, 
+                                  Element const &elem)
 {
    if( type == "metaElem" )
    {

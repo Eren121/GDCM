@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 15:38:28 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,24 +44,24 @@ public:
    DictSet();
    ~DictSet();
 
-   void Print(std::ostream& os);
+   void Print(std::ostream &os);
 
-   EntryNamesList * GetPubDictEntryNames();
-   EntryNamesByCatMap * GetPubDictEntryNamesByCategory();
+   EntryNamesList *GetPubDictEntryNames();
+   EntryNamesByCatMap* GetPubDictEntryNamesByCategory();
 
-   Dict* LoadDictFromFile( std::string const & fileName,
-                           DictKey const & name );
+   Dict *LoadDictFromFile( std::string const &fileName,
+                           DictKey const &name );
 
-   Dict* GetDict( DictKey const & DictName );
+   Dict *GetDict( DictKey const &DictName );
 
    /// \brief   Retrieve the default reference DICOM V3 public dictionary.
    Dict* GetDefaultPubDict() { return GetDict(PUB_DICT_NAME); };
 
    // \brief   Retrieve the virtual reference DICOM dictionary.
    // \warning : not end user intended
-   // Dict* GetVirtualDict() { return &VirtualEntry; };
+   // Dict *GetVirtualDict() { return &VirtualEntry; };
 
-   DictEntry* NewVirtualDictEntry(uint16_t group, uint16_t element,
+   DictEntry *NewVirtualDictEntry(uint16_t group, uint16_t element,
                                   TagName vr     = GDCM_UNKNOWN,
                                   TagName fourth = GDCM_UNKNOWN,
                                   TagName name   = GDCM_UNKNOWN);
@@ -69,7 +69,7 @@ public:
    static std::string BuildDictPath();
 
 protected:
-   bool AppendDict(Dict *NewDict, DictKey const & name);
+   bool AppendDict(Dict *NewDict, DictKey const &name);
 
 private:
    /// Hash table of all dictionaries contained in this DictSet

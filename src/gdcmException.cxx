@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/04 18:14:34 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@ namespace gdcm
  * @param f
  * @param msg  
  */
-Exception::Exception(const std::string &f, const std::string& msg) throw()
+Exception::Exception(const std::string &f, const std::string &msg) throw()
 #ifdef __GNUC__
   try
 #endif

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 17:16:15 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/06 20:03:26 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@ int TestVR(int , char *[])
    gdcm::VR vr;
    // There should be 16 entries
    vr.Print( std::cout );
+
    vr.IsVROfStringRepresentable( "" );
    vr.IsVROfBinaryRepresentable( "" );
    vr.IsVROfSequence( "" );

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 09:32:24 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,19 +45,19 @@ PixelWriteConvert::~PixelWriteConvert()
 
 //-----------------------------------------------------------------------------
 // Public
-void PixelWriteConvert::SetReadData(uint8_t* data,size_t size)
+void PixelWriteConvert::SetReadData(uint8_t *data,size_t size)
 {
    ReadData = data;
    ReadDataSize = size;
 }
 
-void PixelWriteConvert::SetUserData(uint8_t* data,size_t size)
+void PixelWriteConvert::SetUserData(uint8_t *data,size_t size)
 {
    UserData = data;
    UserDataSize = size;
 }
 
-uint8_t* PixelWriteConvert::GetData()
+uint8_t *PixelWriteConvert::GetData()
 {
    if(UserData)
    {

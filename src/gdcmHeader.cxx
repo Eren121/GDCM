@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:05:06 $
-  Version:   $Revision: 1.221 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.222 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,7 @@ namespace gdcm
  * \brief  Constructor 
  * @param  filename name of the file whose header we want to analyze
  */
-Header::Header( std::string const & filename ):
+Header::Header( std::string const &filename ):
             Document( filename )
 {    
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
@@ -81,7 +81,7 @@ Header::Header( std::string const & filename ):
    // Let's create a VirtualDictEntry to allow a further VR modification
    // and force VR to match with BitsAllocated.
 
-   DocEntry* entry = GetDocEntryByNumber(GrPixel, NumPixel); 
+   DocEntry *entry = GetDocEntryByNumber(GrPixel, NumPixel); 
    if ( entry != 0 )
    {
 
@@ -127,7 +127,7 @@ Header::~Header ()
  */
 bool Header::Write(std::string fileName, FileType filetype)
 {
-   std::ofstream* fp = new std::ofstream(fileName.c_str(), 
+   std::ofstream *fp = new std::ofstream(fileName.c_str(), 
                                          std::ios::out | std::ios::binary);
    if (*fp == NULL)
    {
@@ -163,7 +163,7 @@ bool Header::Write(std::string fileName, FileType filetype)
       // Drop 0028|1101, 0028|1102, 0028|1103
       // Drop 0028|1201, 0028|1202, 0028|1203
 
-      DocEntry* e = GetDocEntryByNumber(0x0028,0x01101);
+      DocEntry *e = GetDocEntryByNumber(0x0028,0x01101);
       if (e)
       {
          RemoveEntryNoDestroy(e);

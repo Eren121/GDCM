@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:37 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ namespace gdcm
  * \ingroup SeqEntry
  * \brief   Constructor from a given SeqEntry
  */
-SeqEntry::SeqEntry( DictEntry* e ) 
+SeqEntry::SeqEntry( DictEntry *e ) 
              : DocEntry(e)
 {
    UsableLength = 0;
@@ -51,7 +51,7 @@ SeqEntry::SeqEntry( DictEntry* e )
  * @param   e Pointer to existing Doc entry
  * @param   depth depth level of the current Seq entry
   */
-SeqEntry::SeqEntry( DocEntry* e, int depth )
+SeqEntry::SeqEntry( DocEntry *e, int depth )
              : DocEntry( e->GetDictEntry() )
 {
    UsableLength = 0;
@@ -122,7 +122,7 @@ void SeqEntry::Print( std::ostream &os )
 /*
  * \brief   canonical Writer
  */
-void SeqEntry::WriteContent(std::ofstream* fp, FileType filetype)
+void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
    uint16_t seq_term_gr = 0xfffe;
    uint16_t seq_term_el = 0xe0dd;
@@ -162,7 +162,7 @@ void SeqEntry::AddEntry(SQItem *sqItem, int itemNumber)
  *        Returns the last item when argument is bigget than the total
  *        item number.
  */
-SQItem* SeqEntry::GetSQItemByOrdinalNumber(int nb)
+SQItem *SeqEntry::GetSQItemByOrdinalNumber(int nb)
 {
    if (nb<0)
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 13:35:38 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,21 +41,21 @@ bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
 
 #define JOCTET uint8_t
 // For JPEG 8 Bits, body in file gdcmJpeg8.cxx
-bool gdcm_read_JPEG_file8 (std::ifstream* fp, void* image_buffer);
-bool gdcm_read_JPEG_memory8    (const JOCTET* buffer, const size_t buflen, 
-                                void* image_buffer,
+bool gdcm_read_JPEG_file8 (std::ifstream *fp, void *image_buffer);
+bool gdcm_read_JPEG_memory8    (const JOCTET *buffer, const size_t buflen, 
+                                void *image_buffer,
                                 size_t *howManyRead, size_t *howManyWritten);
 //
 // For JPEG 12 Bits, body in file gdcmJpeg12.cxx
-bool gdcm_read_JPEG_file12 (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEG_file12 (std::ifstream *fp, void *image_buffer);
 bool gdcm_read_JPEG_memory12   (const JOCTET *buffer, const size_t buflen, 
-                                void* image_buffer,
+                                void *image_buffer,
                                 size_t *howManyRead, size_t *howManyWritten);
 
 // For JPEG 16 Bits, body in file gdcmJpeg16.cxx
 // Beware this is misleading there is no 16bits DCT algorithm, only
 // jpeg lossless compression exist in 16bits.
-bool gdcm_read_JPEG_file16 (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEG_file16 (std::ifstream *fp, void *image_buffer);
 bool gdcm_read_JPEG_memory16   (const JOCTET *buffer, const size_t buflen, 
                                 void* image_buffer,
                                 size_t *howManyRead, size_t *howManyWritten);
@@ -121,7 +121,7 @@ void PixelReadConvert::AllocateRaw()
  * \brief Read from file a 12 bits per pixel image and decompress it
  *        into a 16 bits per pixel image.
  */
-void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
+void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream *fp )
                throw ( FormatError )
 {
    int nbPixels = XSize * YSize;
@@ -216,10 +216,10 @@ bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
  * @param fp File Pointer: on entry the position should be the one of
  *        the fragment to be decoded.
  */
-bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t* subRaw,
+bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t *subRaw,
                                                  long fragmentSize,
                                                  long RawSegmentSize,
-                                                 std::ifstream* fp )
+                                                 std::ifstream *fp )
 {
    int8_t count;
    long numberOfOutputBytes = 0;
@@ -274,9 +274,9 @@ bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t* subRaw,
  *            at which the pixel data should be copied
  * @return    Boolean
  */
-bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
+bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream *fp )
 {
-   uint8_t* subRaw = Raw;
+   uint8_t *subRaw = Raw;
    long RawSegmentSize = XSize * YSize;
 
    // Loop on the frame[s]
@@ -315,7 +315,7 @@ void PixelReadConvert::ConvertSwapZone()
 
    if( BitsAllocated == 16 )
    {
-      uint16_t* im16 = (uint16_t*)Raw;
+      uint16_t *im16 = (uint16_t*)Raw;
       switch( SwapCode )
       {
          case 0:
@@ -421,9 +421,9 @@ void PixelReadConvert::ConvertReorderEndianity()
  * @param     fp File Pointer
  * @return    Boolean
  */
-bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream* fp )
+bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream *fp )
 {
-   uint8_t* localRaw = Raw;
+   uint8_t *localRaw = Raw;
    // Loop on the fragment[s]
    for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
         it  = JPEGInfo->Fragments.begin();
@@ -485,7 +485,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFramesFromFile( std::ifstream* fp )
  * @return    Boolean
  */
 bool PixelReadConvert::
-ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream* fp )
+ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
 {
    // Loop on the fragment[s] to get total length
    size_t totalLength = 0;
@@ -577,7 +577,7 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream* fp )
  * @return    Boolean
  */
 bool PixelReadConvert::
-ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp )
+ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
 {
    // Loop on the fragment[s] to get total length
    size_t totalLength = 0;
@@ -676,7 +676,7 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp )
  * @param     fp File Pointer
  * @return    Boolean
  */
-bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
+bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 {
    if ( IsJPEG2000 )
    {
@@ -752,8 +752,8 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
  */
 void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
 {
-   uint8_t* localRaw = Raw;
-   uint8_t* copyRaw = new uint8_t[ RawSize ];
+   uint8_t *localRaw = Raw;
+   uint8_t *copyRaw = new uint8_t[ RawSize ];
    memmove( copyRaw, localRaw, RawSize );
 
    // to see the tricks about YBR_FULL, YBR_FULL_422,
@@ -764,9 +764,9 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    int l        = XSize * YSize;
    int nbFrames = ZSize;
 
-   uint8_t* a = copyRaw;
-   uint8_t* b = copyRaw + l;
-   uint8_t* c = copyRaw + l + l;
+   uint8_t *a = copyRaw;
+   uint8_t *b = copyRaw + l;
+   uint8_t *c = copyRaw + l + l;
    double R, G, B;
 
    /// \todo : Replace by the 'well known' integer computation
@@ -806,8 +806,8 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
  */
 void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
 {
-   uint8_t* localRaw = Raw;
-   uint8_t* copyRaw = new uint8_t[ RawSize ];
+   uint8_t *localRaw = Raw;
+   uint8_t *copyRaw = new uint8_t[ RawSize ];
    memmove( copyRaw, localRaw, RawSize );
 
    int l = XSize * YSize * ZSize;
@@ -825,7 +825,7 @@ void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
    delete[] copyRaw;
 }
 
-bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream* fp )
+bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
 {
    // ComputeRawAndRGBSizes is already made by 
    // ::GrabInformationsFromHeader. So, the structure sizes are
@@ -1022,7 +1022,7 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
    }
 }
 
-void PixelReadConvert::GrabInformationsFromHeader( Header* header )
+void PixelReadConvert::GrabInformationsFromHeader( Header *header )
 {
    // Number of Bits Allocated for storing a Pixel is defaulted to 16
    // when absent from the header.

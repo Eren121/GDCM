@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:05:06 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ DicomDirSerie::~DicomDirSerie()
  * \brief   Prints the Object
  * @param os ostream to write to
  */ 
-void DicomDirSerie::Print(std::ostream& os)
+void DicomDirSerie::Print(std::ostream &os)
 {
    os << "SERIE" << std::endl;
    DicomDirObject::Print(os);
@@ -74,7 +74,7 @@ void DicomDirSerie::Print(std::ostream& os)
  * @param fp ofstream to write to
  * @param t Type of the File (explicit VR, implicitVR, ...)
  */ 
-void DicomDirSerie::WriteContent(std::ofstream* fp, FileType t)
+void DicomDirSerie::WriteContent(std::ofstream *fp, FileType t)
 {
    DicomDirObject::WriteContent(fp, t);
 
@@ -89,12 +89,12 @@ void DicomDirSerie::WriteContent(std::ofstream* fp, FileType t)
 /**
  * \brief   adds a new Image (with the basic elements) to a partially created DICOMDIR
  */
-DicomDirImage* DicomDirSerie::NewImage()
+DicomDirImage *DicomDirSerie::NewImage()
 {
-   ListDicomDirImageElem const & elemList = 
+   ListDicomDirImageElem const &elemList = 
       Global::GetDicomDirElements()->GetDicomDirImageElements();
 
-   DicomDirImage* st = new DicomDirImage();
+   DicomDirImage *st = new DicomDirImage();
    FillObject(elemList);
    Images.push_front(st);
 

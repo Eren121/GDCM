@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:07:34 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,27 +53,27 @@ public:
    void Print( std::string indent = "", std::ostream &os = std::cout );
 
 // In progress
-   void GrabInformationsFromHeader( Header* header );
-   bool ReadAndDecompressPixelData( std::ifstream* fp );
+   void GrabInformationsFromHeader( Header *header );
+   bool ReadAndDecompressPixelData( std::ifstream *fp );
    void Squeeze();
    bool BuildRGBImage();
 
 private:
    // Use the fp:
    bool ReadAndDecompressRLEFragment(
-                  uint8_t* subDecompressed,
+                  uint8_t *subDecompressed,
                   long fragmentSize,
                   long decompressedSegmentSize,
-                  std::ifstream* fp );
-   void ReadAndDecompress12BitsTo16Bits( std::ifstream* fp ) throw ( FormatError );
-   bool ReadAndDecompressRLEFile( std::ifstream* fp );
-   bool ReadAndDecompressJPEGFile( std::ifstream* fp );
-   bool ReadAndDecompressJPEGFramesFromFile( std::ifstream* fp );
-   bool ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream* fp );
-   bool ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream* fp );
+                  std::ifstream *fp );
+   void ReadAndDecompress12BitsTo16Bits( std::ifstream *fp ) throw ( FormatError );
+   bool ReadAndDecompressRLEFile( std::ifstream *fp );
+   bool ReadAndDecompressJPEGFile( std::ifstream *fp );
+   bool ReadAndDecompressJPEGFramesFromFile( std::ifstream *fp );
+   bool ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp );
+   bool ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp );
 
 
-   void BuildLUTRGBA( std::ifstream* fp );
+   void BuildLUTRGBA( std::ifstream *fp );
 
    // In place (within Decompressed and with no fp access) decompression
    // or convertion:
@@ -92,16 +92,16 @@ private:
 
 // Variables
    /// Pixel data represented as RGB after LUT color interpretation.
-   uint8_t* RGB;
+   uint8_t *RGB;
    /// Size of RGB image.
    size_t   RGBSize;
    /// Pixel data after decompression and bit/byte rearrangement.
-   uint8_t* Raw;
+   uint8_t *Raw;
    /// Size of Decompressed image.
    size_t   RawSize;
    /// \brief Red/Green/Blue/Alpha LookUpTable build out of the
    ///        Red/Green/Blue LUT descriptors (see \ref BuildLUTRGBA ).
-   uint8_t* LutRGBA;
+   uint8_t *LutRGBA;
 
    size_t PixelOffset;
    size_t PixelDataLength;
@@ -121,8 +121,8 @@ private:
    bool IsJPEGLossless;
    bool IsRLELossless;
 
-   RLEFramesInfo* RLEInfo;
-   JPEGFragmentsInfo* JPEGInfo;
+   RLEFramesInfo *RLEInfo;
+   JPEGFragmentsInfo *JPEGInfo;
 
    // For handling color stage
    int PlanarConfiguration;
@@ -134,9 +134,9 @@ private:
    std::string LutRedDescriptor;
    std::string LutGreenDescriptor;
    std::string LutBlueDescriptor;
-   uint8_t* LutRedData;
-   uint8_t* LutGreenData;
-   uint8_t* LutBlueData;
+   uint8_t *LutRedData;
+   uint8_t *LutGreenData;
+   uint8_t *LutBlueData;
 
 };
 } // end namespace gdcm

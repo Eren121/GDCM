@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 19:10:07 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,24 +37,24 @@ namespace gdcm
 class GDCM_EXPORT Util
 {
 public:
-   static std::string Format(const char* format, ...);
-   static void        Tokenize (const std::string& str,
-                                std::vector<std::string>& tokens,
-                                const std::string& delimiters = " ");
-   static int         CountSubstring (const std::string& str,
-                                      const std::string& subStr);       
+   static std::string Format(const char *format, ...);
+   static void        Tokenize (const std::string &str,
+                                std::vector<std::string> &tokens,
+                                const std::string &delimiters = " ");
+   static int         CountSubstring (const std::string &str,
+                                      const std::string &subStr);       
 
-   static std::string CreateCleanString(std::string const & s);
-   static std::string NormalizePath(std::string const & name);
+   static std::string CreateCleanString(std::string const &s);
+   static std::string NormalizePath(std::string const &name);
    static std::string GetPath(std::string const &fullName);
    static std::string GetName(std::string const &fullName);
    static std::string GetCurrentDate();
    static std::string GetCurrentTime();
 
-   static std::string DicomString(const char* s, size_t l);
-   static std::string DicomString(const char* s);
-   static bool        DicomStringEqual(const std::string& s1, const char *s2);
-   static std::string CreateUniqueUID(const std::string& root = "");
+   static std::string DicomString(const char *s, size_t l);
+   static std::string DicomString(const char *s);
+   static bool        DicomStringEqual(const std::string &s1, const char *s2);
+   static std::string CreateUniqueUID(const std::string &root = "");
    static bool        IsCurrentProcessorBigEndian();
 
    static std::string GetMACAddress();
@@ -64,11 +64,11 @@ private:
 };
 
    template <class T> 
-   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, const T& val);
-   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, const uint16_t& val);
-   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, const uint32_t& val);
-   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, const char* val);
-   GDCM_EXPORT std::ostream& binary_write(std::ostream& os, std::string const & val);
+   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const T &val);
+   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint16_t &val);
+   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint32_t &val);
+   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const char *val);
+   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, std::string const & val);
 } // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

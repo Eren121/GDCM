@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 13:35:38 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,13 +40,13 @@ class GDCM_EXPORT DictEntry : public Base
 public:
    DictEntry(uint16_t group, 
              uint16_t element,
-             TagName const & vr     = GDCM_UNKNOWN,
-             TagName const & fourth = GDCM_UNKNOWN,
-             TagName const & name   = GDCM_UNKNOWN);
+             TagName const &vr     = GDCM_UNKNOWN,
+             TagName const &fourth = GDCM_UNKNOWN,
+             TagName const &name   = GDCM_UNKNOWN);
 
    static TagKey TranslateToKey(uint16_t group, uint16_t element);
 
-   void SetVR(TagName const & vr);
+   void SetVR(TagName const &vr);
 
    /// \brief tells if the V(alue) R(epresentation) is known (?!)
    /// @return 
@@ -63,26 +63,26 @@ public:
    /// \brief  Returns the Dicom Value Representation of the current
    ///         DictEntry
    /// @return the Dicom Value Representation
-   const TagName & GetVR() const { return VR; }
+   const TagName &GetVR() const { return VR; }
  
    /// \brief   sets the key of the current DictEntry
    /// @param k New key to be set.
-   void SetKey(TagName const & k)  { Key = k; }
+   void SetKey(TagName const &k)  { Key = k; }
  
    /// \brief   returns the Fourth field of the current DictEntry
    /// \warning NOT part of the Dicom Standard.
    ///          May be REMOVED an any time. NEVER use it.
    /// @return  The Fourth field
-   const TagName & GetFourth() const { return Fourth; } 
+   const TagName &GetFourth() const { return Fourth; } 
 
    /// \brief  Returns the Dicom Name of the current DictEntry
    ///         e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
    /// @return the Dicom Name
-   const TagName & GetName() const { return Name; } 
+   const TagName &GetName() const { return Name; } 
  
    /// \brief  Gets the key of the current DictEntry
    /// @return the key.
-   const TagName & GetKey() const { return Key; }
+   const TagName &GetKey() const { return Key; }
 
 private:
    /// \todo FIXME 

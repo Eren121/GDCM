@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/12 13:32:23 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ namespace gdcm
  * @param  dirName root directory name
  * @param  recursive whether we want to explore recursively or not 
  */
-DirList::DirList(std::string const & dirName, bool recursive)
+DirList::DirList(std::string const &dirName, bool recursive)
 {
    name = dirName;
    Util::NormalizePath(name);
@@ -68,7 +68,7 @@ DirList::~DirList()
  * \brief   Get the directory name
  * @return the directory name 
  */
-std::string const & DirList::GetDirName() const
+std::string const &DirList::GetDirName() const
 {
    return name;
 }
@@ -85,7 +85,7 @@ std::string const & DirList::GetDirName() const
  * @param  dirpath   directory to explore
  * @param  recursive whether we want recursion or not
  */
-int DirList::Explore(std::string const & dirpath, bool recursive)
+int DirList::Explore(std::string const &dirpath, bool recursive)
 {
    int numberOfFiles = 0;
    std::string fileName;
@@ -112,7 +112,7 @@ int DirList::Explore(std::string const & dirpath, bool recursive)
          numberOfFiles++;
       }
 
-      found = FindNextFile(hFile,&fileData);
+      found = FindNextFile(hFile, &fileData);
    }
 
 #else
@@ -131,7 +131,7 @@ int DirList::Explore(std::string const & dirpath, bool recursive)
    // bility  of  your  programs.
 
    struct stat buf;
-   dirent* d = 0;
+   dirent *d = 0;
    for (d = readdir(dir); d; d = readdir(dir))
    {
       fileName = dirName + d->d_name;

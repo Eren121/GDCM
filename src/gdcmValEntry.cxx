@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 13:46:38 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ namespace gdcm
  * \brief   Constructor from a given DictEntry
  * @param   e Pointer to existing dictionary entry
  */
-ValEntry::ValEntry(DictEntry* e) : DocEntry(e)
+ValEntry::ValEntry(DictEntry *e) : DocEntry(e)
 {
 }
 
@@ -44,7 +44,7 @@ ValEntry::ValEntry(DictEntry* e) : DocEntry(e)
  * \brief   Constructor from a given DocEntry
  * @param   e Pointer to existing Doc entry
  */
-ValEntry::ValEntry(DocEntry* e)
+ValEntry::ValEntry(DocEntry *e)
              : DocEntry(e->GetDictEntry())
 {
    UsableLength = e->GetLength();
@@ -66,7 +66,7 @@ ValEntry::~ValEntry ()
 /**
  * \brief   canonical Printer
  */
-void ValEntry::Print(std::ostream & os)
+void ValEntry::Print(std::ostream &os)
 {
    uint16_t g = GetGroup();
    uint16_t e = GetElement();
@@ -176,7 +176,7 @@ void ValEntry::Print(std::ostream & os)
 
 //-----------------------------------------------------------------------------
 // Public
-void ValEntry::SetValue(std::string const & val)
+void ValEntry::SetValue(std::string const &val)
 {
    // Integers have a special treatement for their length:
    int l = val.length();
@@ -219,7 +219,7 @@ void ValEntry::SetValue(std::string const & val)
 /*
  * \brief   canonical Writer
  */
-void ValEntry::WriteContent(std::ofstream* fp, FileType filetype)
+void ValEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
    DocEntry::WriteContent(fp, filetype);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 15:38:28 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/06 20:03:26 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@
 #include <stdint.h>   // For uint8_t uint16_t and uint32_t
 #else
 #if defined(_MSC_VER) || defined(__BORLANDC__)
-typedef    signed char   int8_t;
+typedef  signed char    int8_t;
 #endif
 typedef  unsigned char  uint8_t;
 typedef  unsigned short uint16_t;

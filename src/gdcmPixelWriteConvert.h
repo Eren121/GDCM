@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:07:34 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,27 +36,27 @@ public:
    virtual ~PixelWriteConvert();
 
    // Set/Get of images and their size
-   void SetReadData(uint8_t* data,size_t size);
-   uint8_t* GetReadData() { return ReadData; }
+   void SetReadData(uint8_t *data,size_t size);
+   uint8_t *GetReadData() { return ReadData; }
    size_t   GetReadDataSize() { return ReadDataSize; }
 
-   void SetUserData(uint8_t* data,size_t size);
-   uint8_t* GetUserData() { return UserData; }
+   void SetUserData(uint8_t *data,size_t size);
+   uint8_t *GetUserData() { return UserData; }
    size_t   GetUserDataSize() { return UserDataSize; }
 
    // Get the used image and its size
-   uint8_t* GetData();
+   uint8_t *GetData();
    size_t   GetDataSize();
 
 private:
 // Variables
    /// Pixel data represented as RGB after LUT color interpretation.
-   uint8_t* ReadData;
+   uint8_t *ReadData;
    /// Size of RGB image.
    size_t   ReadDataSize;
 
    /// User pixel data
-   uint8_t* UserData;
+   uint8_t *UserData;
    /// Size of User image.
    size_t   UserDataSize;
 };

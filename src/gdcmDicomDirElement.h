@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 15:38:28 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,7 +66,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the META Elements of a DICOMDIR.
     */
-   ListDicomDirMetaElem const & GetDicomDirMetaElements() const
+   ListDicomDirMetaElem const &GetDicomDirMetaElements() const
       { return DicomDirMetaList; };
 
    /**
@@ -74,7 +74,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the PATIENT Elements of a DICOMDIR.
     */      
-   ListDicomDirPatientElem const & GetDicomDirPatientElements() const
+   ListDicomDirPatientElem const &GetDicomDirPatientElements() const
       { return DicomDirPatientList; };
 
    /**
@@ -82,7 +82,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the STUDY Elements of a DICOMDIR.
     */      
-   ListDicomDirStudyElem const & GetDicomDirStudyElements() const
+   ListDicomDirStudyElem const &GetDicomDirStudyElements() const
       { return DicomDirStudyList; };
 
    /**
@@ -90,7 +90,7 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the SERIE Elements of a DICOMDIR.
     */
-   ListDicomDirSerieElem const & GetDicomDirSerieElements() const
+   ListDicomDirSerieElem const &GetDicomDirSerieElements() const
       { return DicomDirSerieList; };
 
    /**
@@ -98,13 +98,13 @@ public:
     * \brief   returns a reference to the chained List 
     *          related to the IMAGE Elements of a DICOMDIR.
     */
-   ListDicomDirImageElem const & GetDicomDirImageElements() const
+   ListDicomDirImageElem const &GetDicomDirImageElements() const
       { return DicomDirImageList; };
 
    /**
     * Public method to add an element
     */
-   bool AddNewEntry(std::string const & type, Element const & elem);
+   bool AddNewEntry(std::string const &type, Element const &elem);
 
 private:
    /// Elements chained list, related to the MetaElements of DICOMDIR

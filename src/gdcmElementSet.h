@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 11:37:03 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/01/06 20:03:27 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ public:
    /// Accessor to \ref TagHT
    // Do not expose this to user (public API) ! 
    // A test is using it thus put it in public (matt)
-   TagDocEntryHT const & GetTagHT() const { return TagHT; };
+   TagDocEntryHT const &GetTagHT() const { return TagHT; };
 
    void Initialize();
    DocEntry *GetNextEntry();

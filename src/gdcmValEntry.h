@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:33 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/06 20:03:28 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,18 +34,18 @@ namespace gdcm
 class GDCM_EXPORT ValEntry  : public DocEntry
 {
 public:
-   ValEntry(DictEntry* e);
-   ValEntry(DocEntry* d); 
+   ValEntry(DictEntry *e);
+   ValEntry(DocEntry *d); 
    ~ValEntry();
 
    /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted into a
    /// 'string', event if it's stored as an integer in the header of the
    /// current Dicom Document Entry
-   std::string const & GetValue() const { return Value; };
+   std::string const &GetValue() const { return Value; };
     
    /// Sets the value (string) of the current Dicom Document Entry.
    /// The size is updated
-   virtual void SetValue(std::string const & val);
+   virtual void SetValue(std::string const &val);
 
    virtual void Print(std::ostream &os = std::cout); 
 
@@ -53,7 +53,7 @@ public:
 
 protected:
    /// Sets the value (string) of the current Dicom Document Entry
-   void SetValueOnly(std::string const & val) { Value = val; }; 
+   void SetValueOnly(std::string const &val) { Value = val; }; 
    
 private:
 // Members :
