@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.46 2004/01/12 13:12:28 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.47 2004/01/13 11:32:30 jpr Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -39,21 +39,24 @@ private:
    /// Pointer to the Value Representation Hash Table which contains all
    /// the VR of the DICOM version3 public dictionary. 
    gdcmVR *dicom_vr;     // Not a class member for thread-safety reasons
+   
+   /// Pointer to the Transfert Syntax Hash Table which contains all
+   /// the TS of the DICOM version3 public dictionary. 
+   gdcmTS *dicom_ts;     // Not a class member for thread-safety reasons 
+     
    /// Pointer to global dictionary container
    gdcmDictSet *Dicts;   // Not a class member for thread-safety reasons
+   
    /// Public dictionary used to parse this header
    gdcmDict *RefPubDict;
+   
    /// Optional "shadow dictionary" (private elements) used to parse this
    /// header
    gdcmDict *RefShaDict;
-   /// Pointer to the Transfert Syntax Hash Table which contains all
-   /// the TS of the DICOM version3 public dictionary. 
-   gdcmTS *dicom_ts;     // Not a class member for thread-safety reasons
 
    /// ELement VALueS parsed with the PUBlic dictionary.
    gdcmElValSet PubElValSet;
-   /// ELement VALueS parsed with the SHAdow dictionary.
-   gdcmElValSet ShaElValSet;
+   
    /// Refering underlying filename.
    std::string filename; 
   
@@ -93,6 +96,9 @@ private:
    gdcmElValue *ReadNextElement(void);
    gdcmElValue *NewElValueByNumber(guint16 group, guint16 element);
    gdcmElValue *NewElValueByName  (std::string Name);
+   
+   gdcmElValue* GetElementByName  (std::string Name);
+   // moved from gdcmElValSet
 
    void FindLength          (gdcmElValue *);
    void FindVR              (gdcmElValue *);
@@ -105,11 +111,11 @@ private:
    void SkipBytes(guint32);
 
 protected:
-   FileType filetype;
    FILE * fp;
-
+   FileType filetype; // ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown
+   
    gdcmElValue * GetElValueByNumber(guint16 group, guint16 element);
-   int CheckIfExistByNumber(guint16 Group, guint16 Elem );
+   bool CheckIfExistByNumber(guint16 Group, guint16 Elem );
 
    int write(std::ostream&);   
    int anonymize(std::ostream&);  // FIXME : anonymize should be a friend ?
@@ -144,77 +150,76 @@ public:
 	      
    virtual ~gdcmHeader();
 
-   std::string GetFileName(void) {return filename;}
+   inline std::string GetFileName(void) {return filename;}
    
    size_t GetPixelOffset(void);
    size_t GetPixelAreaLength(void);
 
-   int    GetSwapCode(void) { return sw; }
-
-   // TODO Swig int SetPubDict(std::string filename);
+   inline int    GetSwapCode(void) { return sw; }
+  
    // When some proprietary shadow groups are disclosed, we can set up
    // an additional specific dictionary to access extra information.
+   
+   // OK : we still have *ONE* ElValSet, 
+   // with both Public and Shadow Elements
+   // parsed against THE Public Dictionary and A (single) Shadow Dictionary
+   
    // TODO Swig int SetShaDict(std::string filename);
+   // TODO Swig int SetPubDict(std::string filename);
 
-   std::string GetPubElValByName     (std::string TagName);
-   std::string GetPubElValRepByName  (std::string TagName);
+   std::string GetPubElValByName     (std::string tagName);
+   std::string GetPubElValRepByName  (std::string tagName);
    std::string GetPubElValByNumber   (guint16 group, guint16 element);
    std::string GetPubElValRepByNumber(guint16 group, guint16 element);
    
-   size_t GetPubElValOffsetByNumber(guint16 Group, guint16 Elem);
+   size_t GetPubElValOffsetByNumber  (guint16 Group, guint16 Elem);
    void * GetPubElValVoidAreaByNumber(guint16 Group, guint16 Elem);   
-   void * LoadElementVoidArea(guint16 Group, guint16 Element);
+   void * LoadElementVoidArea        (guint16 Group, guint16 Element);
    
-   ListTag & GetListElem(void) { return PubElValSet.GetListElem(); };
-
-   TagElValueHT & GetPubElVal(void) { return PubElValSet.GetTagHt(); };
+   inline ListTag      & GetListElem(void) { return PubElValSet.GetListElem();};
+   inline TagElValueHT & GetPubElVal(void) { return PubElValSet.GetTagHt();   };
+   
    void   PrintPubElVal(std::ostream & os = std::cout);
    void   PrintPubDict (std::ostream & os = std::cout);
-     
-   // TODO Swig std::string* GetShaTagNames(); 
-   std::string GetShaElValByName     (std::string TagName);
-   std::string GetShaElValRepByName  (std::string TagName);
-   std::string GetShaElValByNumber   (guint16 group, guint16 element);
-   std::string GetShaElValRepByNumber(guint16 group, guint16 element);
 
-   std::string GetElValByName     (std::string TagName);
-   std::string GetElValRepByName  (std::string TagName);
+   bool SetPubElValByName  (std::string content, std::string tagName); 
+   bool SetPubElValByNumber(std::string content, guint16 group, guint16 element);  
+   bool SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element); 
+      
+   std::string GetElValByName     (std::string tagName);
+   std::string GetElValRepByName  (std::string tagName);
    std::string GetElValByNumber   (guint16 group, guint16 element);
-   std::string GetElValRepByNumber(guint16 group, guint16 element);
+   std::string GetElValRepByNumber(guint16 group, guint16 element);                                  
 
-   int SetPubElValByName  (std::string content, std::string TagName);
-   int SetShaElValByName  (std::string content, std::string ShadowTagName);
-   
-   int SetPubElValByNumber(std::string content, guint16 group, guint16 element);
-   int SetShaElValByNumber(std::string content, guint16 group, guint16 element);
-   
-   int SetPubElValLengthByNumber(guint32 lgr, guint16 group, guint16 element);                                   
-
-   int ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem); 
-   int ReplaceOrCreateByNumber(     char * Value, guint16 Group, guint16 Elem);                                
-   int ReplaceIfExistByNumber (     char * Value, guint16 Group, guint16 Elem);
+   bool SetElValueByName(std::string content,std::string tagName); 
+   // moved from ElValSet
+                                    
+   bool ReplaceOrCreateByNumber(std::string Value, guint16 Group, guint16 Elem); 
+   bool ReplaceOrCreateByNumber(     char * Value, guint16 Group, guint16 Elem);                                
+   bool ReplaceIfExistByNumber (     char * Value, guint16 Group, guint16 Elem);
                                   
-   int Write(FILE *, FileType);
+   bool Write(FILE *, FileType);
    
  // Some heuristic based accessors, end user intended 
+ // (to be move to gdcmHeaderHelper?) 
   
    int GetXSize(void);  
    int GetYSize(void);
    int GetZSize(void);
    int GetBitsStored(void);
    int GetBitsAllocated(void);
-   int GetSamplesPerPixel(void);
-   
+   int GetSamplesPerPixel(void);   
    int GetPlanarConfiguration(void);
-
-   int GetPixelSize(void);       
+   int GetPixelSize(void);   
+       
    std::string GetPixelType(void);  
    
    std::string GetTransferSyntaxName(void);
-   int    HasLUT(void);
+   bool   HasLUT(void);
    int    GetLUTNbits(void);
    unsigned char * GetLUTRGBA(void);
-           
+  
+  // voir gdcmFile::SetImageData ?!?         
    void SetImageDataSize (size_t ExpectedSize);
 
 // System access

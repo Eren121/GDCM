@@ -10,8 +10,8 @@
 // unsigned 16 bit integers in Dicom) expressed in hexadecimal.
 // Example: consider the tag given as (group, element) = (0x0010, 0x0010).
 // Then the corresponding TagKey shall be the string 0010|0010 (where
-// the | (pipe symbol) acts as a separator). Refer to 
-// gdcmDictEntry::TranslateToKey for this conversion function.
+// the | (pipe symbol) acts as a separator).  
+// Refer to gdcmDictEntry::TranslateToKey for this conversion function.
 
 #include "gdcmException.h"
 #include "gdcmCommon.h"

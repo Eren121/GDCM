@@ -75,10 +75,7 @@ gdcmFile::gdcmFile(const char * filename)
  *        for DICOM compliance. Returns NULL on failure.
  * \Note  If the gdcmHeader is created by the gdcmFile, it is destroyed
  *        by the gdcmFile
- *
- * @param filename file to be opened for parsing
- *
- * @return	
+ * *
  */
 gdcmFile::~gdcmFile(void)
 {
@@ -832,11 +829,11 @@ return;
  *
  * @return integer acts as a boolean	
  */
-int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
+bool gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
    Header->SetImageDataSize(ExpectedSize);
    PixelData = inData;
    lgrTotale = ExpectedSize;
-   return(1);
+   return(true);
 }
 
 
@@ -852,16 +849,16 @@ int gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
  * @return	
  */
 
-int gdcmFile::WriteRawData (std::string fileName) {
+bool gdcmFile::WriteRawData (std::string fileName) {
    FILE * fp1;
    fp1 = fopen(fileName.c_str(),"wb");
    if (fp1 == NULL) {
       printf("Echec ouverture (ecriture) Fichier [%s] \n",fileName.c_str());
-      return (0);
+      return (false);
    } 	
    fwrite (PixelData,lgrTotale, 1, fp1);
    fclose (fp1);
-   return(1);
+   return(true);
 }
 
 /////////////////////////////////////////////////////////////////
@@ -876,7 +873,7 @@ int gdcmFile::WriteRawData (std::string fileName) {
  * @return int acts as a boolean
  */
 
-int gdcmFile::WriteDcmImplVR (std::string fileName) {
+bool gdcmFile::WriteDcmImplVR (std::string fileName) {
    return WriteBase(fileName, ImplicitVR);
 }
 
@@ -888,7 +885,7 @@ int gdcmFile::WriteDcmImplVR (std::string fileName) {
  * @return int acts as a boolean
  */
  
-int gdcmFile::WriteDcmImplVR (const char* fileName) {
+bool gdcmFile::WriteDcmImplVR (const char* fileName) {
    return WriteDcmImplVR (std::string (fileName));
 }
 	
@@ -900,7 +897,7 @@ int gdcmFile::WriteDcmImplVR (const char* fileName) {
  * @return int acts as a boolean
  */
 
-int gdcmFile::WriteDcmExplVR (std::string fileName) {
+bool gdcmFile::WriteDcmExplVR (std::string fileName) {
    return WriteBase(fileName, ExplicitVR);
 }
 	
@@ -920,7 +917,7 @@ int gdcmFile::WriteDcmExplVR (std::string fileName) {
  * @return int acts as a boolean	
  */
 
-int gdcmFile::WriteAcr (std::string fileName) {
+bool gdcmFile::WriteAcr (std::string fileName) {
    return WriteBase(fileName, ACR);
 }
 
@@ -933,13 +930,13 @@ int gdcmFile::WriteAcr (std::string fileName) {
  *
  * @return int acts as a boolean
  */
-int gdcmFile::WriteBase (std::string FileName, FileType type) {
+bool gdcmFile::WriteBase (std::string FileName, FileType type) {
 
    FILE * fp1;
    fp1 = fopen(FileName.c_str(),"wb");
    if (fp1 == NULL) {
       printf("Echec ouverture (ecriture) Fichier [%s] \n",FileName.c_str());
-      return (0);
+      return (false);
    }
 
    if ( (type == ImplicitVR) || (type == ExplicitVR) ) {
@@ -982,5 +979,5 @@ int gdcmFile::WriteBase (std::string FileName, FileType type) {
 
    fwrite(PixelData, lgrTotale, 1, fp1);
    fclose (fp1);
-   return(1);
+   return(true);
 }

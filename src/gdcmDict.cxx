@@ -48,7 +48,7 @@ gdcmDict::gdcmDict(std::string & FileName) {
 
 /**
  * \ingroup gdcmDict
- * \brief   
+ * \brief  Destructor 
  */
 gdcmDict::~gdcmDict() {
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag) {
@@ -64,9 +64,9 @@ gdcmDict::~gdcmDict() {
 }
 
 /**
- * \ingroup gdcmDict
- * \brief   
- * @param   os
+ * \brief   Print all the dictionary entries contained in this dictionary.
+ *          Entries will be sorted by tag i.e. the couple (group, element).
+ * @param   os The output stream to be written to.
  */
 void gdcmDict::Print(std::ostream& os) {
    PrintByKey(os);
@@ -96,6 +96,8 @@ void gdcmDict::PrintByKey(std::ostream& os) {
  * \ingroup gdcmDict
  * \brief   Print all the dictionary entries contained in this dictionary.
  *          Entries will be sorted by the name of the dictionary entries.
+ * \warning AVOID USING IT : the name IS NOT an identifier
+ *                           unpredictable result
  * @param   os The output stream to be written to.
  */
 void gdcmDict::PrintByName(std::ostream& os) {
@@ -130,6 +132,9 @@ gdcmDictEntry * gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
  * \ingroup gdcmDict
  * \brief   Get the dictionnary entry identified by it's name.
  * @param   name element of the ElVal to modify
+ * \warning : NEVER use it !
+ *            the 'name' IS NOT an identifier within the Dicom Dicom Dictionary
+ *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
 gdcmDictEntry * gdcmDict::GetTagByName(TagName name) {
@@ -140,64 +145,67 @@ gdcmDictEntry * gdcmDict::GetTagByName(TagName name) {
 
 /**
  * \ingroup gdcmDict
- * \brief   
+ * \brief  replaces an already existing Dicom Element by a new one
  * @param   NewEntry
- * @return  
+ * @return  false if Dicom Element doesn't exist
  */
-int gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
+bool gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
    if ( RemoveEntry(NewEntry->gdcmDictEntry::GetKey()) ) {
        KeyHt[ NewEntry->GetKey()] = NewEntry;
-       return (1);
+       return (true);
    } 
-   return (0);
+   return (false);
 }
 
 /**
  * \ingroup gdcmDict
- * \brief   
- * @param   NewEntry
- * @return  
+ * \brief  adds a new Dicom Dictionary Entry 
+ * @param   NewEntry 
+ * @return  false if Dicom Element already existed
  */
- int gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
+ bool gdcmDict::AddNewEntry(gdcmDictEntry* NewEntry) {
    TagKey key;
    key = NewEntry->GetKey();
 	
    if(KeyHt.count(key) == 1) {
       dbg.Verbose(1, "gdcmDict::AddNewEntry already present", key.c_str());
-      return(0);
+      return(false);
    } else {
       KeyHt[NewEntry->GetKey()] = NewEntry;
-      return(1);
+      return(true);
    }
 }
 
 /**
  * \ingroup gdcmDict
- * \brief   
- * @param   key
- * @return  
+ * \brief  removes an already existing Dicom Dictionary Entry,
+ *         identified by its Tag
+ * @param   key (group|element)
+ * @return  false if Dicom Dictionary Entry doesn't exist
  */
-int gdcmDict::RemoveEntry(TagKey key) {
+bool gdcmDict::RemoveEntry(TagKey key) {
    if(KeyHt.count(key) == 1) {
       gdcmDictEntry* EntryToDelete = KeyHt.find(key)->second;
       if ( EntryToDelete )
          delete EntryToDelete;
       KeyHt.erase(key);
-      return (1);
+      return (true);
    } else {
       dbg.Verbose(1, "gdcmDict::RemoveEntry unfound entry", key.c_str());
-      return (0);
+      return (false);
   }
 }
 
 /**
  * \ingroup gdcmDict
- * \brief   
- * @param   group 
- * @param   element
- * @return  
+ * \brief  removes an already existing Dicom Dictionary Entry, 
+ *          identified by its group,element
+ number
+ * @param   group   Dicom group number of the Dicom Element
+ * @param   element Dicom element number of the Dicom Element
+ * @return  false if Dicom Dictionary Entry doesn't exist
  */
-int gdcmDict::RemoveEntry (guint16 group, guint16 element) {
+bool gdcmDict::RemoveEntry (guint16 group, guint16 element) {
 	return( RemoveEntry(gdcmDictEntry::TranslateToKey(group, element)) );
 }
 

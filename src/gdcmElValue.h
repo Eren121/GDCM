@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.10 2004/01/12 13:12:28 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValue.h,v 1.11 2004/01/13 11:32:30 jpr Exp $
 
 #ifndef GDCMELVALUE_H
 #define GDCMELVALUE_H
@@ -27,13 +27,11 @@ private:
                           // going on.
                           // *for internal* use only
 	
-   bool ImplicitVr;  // Even when reading explicit vr files, some
+   bool ImplicitVr;       // Even when reading explicit vr files, some
 	                  // elements happen to be implicit. Flag them here
 	                  // since we can't use the entry->vr without breaking
 	                  // the underlying dictionary.
 			  
-   void SetOffset(size_t of){ Offset = of; };
-
    // FIXME: In fact we should be more specific and use :
    // friend gdcmElValue * gdcmHeader::ReadNextElement(void);
    friend class gdcmHeader;
@@ -45,33 +43,94 @@ public:
    size_t Offset;    // Offset from the begining of file for direct user access
 	
    gdcmElValue(gdcmDictEntry*);
-   void SetDictEntry(gdcmDictEntry *NewEntry) { entry = NewEntry; };
-   bool   IsVrUnknown(void) { return entry->IsVrUnknown(); };
-   void SetImplicitVr(void) { ImplicitVr = true; };
-   bool  IsImplicitVr(void) { return ImplicitVr; };
-	
-   gdcmDictEntry * GetDictEntry(void) { return entry;    };
    
-   guint16      GetGroup(void)     { return entry->GetGroup();  };
-   guint16      GetElement(void)   { return entry->GetElement();};
-   std::string  GetKey(void)       { return entry->GetKey();    };
-   std::string  GetName(void)      { return entry->GetName();   };
-   std::string  GetVR(void)        { return entry->GetVR();     };
-   std::string  GetValue(void)     { return value;              };
-   void *       GetVoidArea(void)  { return voidArea;           };
-   size_t       GetOffset(void)    { return Offset;             };   
-   guint32      GetLength(void)    { return UsableLength;       };
-   // for internal use only!
-   guint32      GetReadLength(void){ return ReadLength;         };
+   // inline void SetDictEntry(gdcmDictEntry *NewEntry);
+   // inline bool   IsVrUnknown(void);
+   // inline void SetImplicitVr(void);
+   // inline bool  IsImplicitVr(void);
+   // inline void SetOffset(size_t of);	
+   // inline gdcmDictEntry * GetDictEntry(void);
    
-   void         SetVR(std::string v)      { entry->SetVR(v);          };    
-   void         SetLength(guint32 l)      { ReadLength=UsableLength=l;};   
-   // The following 2 members, for internal use only ! 
-   void         SetReadLength(guint32 l)  { ReadLength = l;           };  	
-   void         SetUsableLength(guint32 l){ UsableLength = l;         };  	
+   inline guint16      GetGroup(void)     { return entry->GetGroup();  };
+   inline guint16      GetElement(void)   { return entry->GetElement();};
+   inline std::string  GetKey(void)       { return entry->GetKey();    };
+   inline std::string  GetName(void)      { return entry->GetName();   };
+   inline std::string  GetVR(void)        { return entry->GetVR();     };
+   inline std::string  GetValue(void)     { return value;              };
+   inline void *       GetVoidArea(void)  { return voidArea;           };
+   inline size_t       GetOffset(void)    { return Offset;             };   
+   inline guint32      GetLength(void)    { return UsableLength;       };   
+   inline void         SetVR(std::string v)      { entry->SetVR(v);          };    
+   inline void         SetLength(guint32 l)      { ReadLength=UsableLength=l;};
+      
+   // The following 3 members, for internal use only ! 
+   inline void         SetReadLength(guint32 l)  { ReadLength   = l; };  	
+   inline void         SetUsableLength(guint32 l){ UsableLength = l; };  	
+   inline guint32      GetReadLength(void)       { return ReadLength;};
  	
-   void         SetValue(std::string val) { value = val;       };
-   void         SetVoidArea(void * area)  { voidArea = area;   };	
+   inline void         SetValue(std::string val) { value = val;      };
+   inline void         SetVoidArea(void * area)  { voidArea = area;  };
+   
+   
+  
+/**
+ * \ingroup gdcmElValue
+ * \brief   Sets the offset of the Dicom Element
+ * \warning : use with caution !
+ * @param   of offset to be set
+ */
+ 
+inline void gdcmElValue::SetOffset(size_t of){ 
+   Offset = of; 
+};
+
+/**
+ * \ingroup gdcmElValue
+ * \brief   Sets the DicEntry of the current Dicom Element
+ * @param   NewEntry pointer to the DictEntry
+ */ 
+
+inline void gdcmElValue::SetDictEntry(gdcmDictEntry *NewEntry) { 
+   entry = NewEntry; 
+};
+
+/**
+ * \ingroup gdcmElValue
+ * \brief   tells us if the VR of the current Dicom Element is Unkonwn
+ * @return true if the VR is unkonwn
+ */ 
+
+inline bool   gdcmElValue::IsVrUnknown(void) { 
+   return entry->IsVrUnknown(); 
+};
+
+/**
+ * \ingroup gdcmElValue
+ * \brief   Sets to TRUE the ImplicitVr flag of the current Dicom Element
+ */
+ 
+inline void gdcmElValue::SetImplicitVr(void) { 
+   ImplicitVr = true; 
+};
+ 
+/**
+ * \ingroup gdcmElValue
+ * \brief   tells us if the current Dicom Element was checked as ImplicitVr
+ * @return true if the current Dicom Element was checked as ImplicitVr
+ */ 
+inline bool  gdcmElValue::IsImplicitVr(void) { 
+    return ImplicitVr; 
+ };
+
+/**
+ * \ingroup gdcmElValue
+ * \brief   Gets the DicEntry of the current Dicom Element
+ * @return  the DicEntry of the current Dicom Element
+ */
+gdcmDictEntry * gdcmElValue::GetDictEntry(void) { 
+   return entry;    
+}; 
+   	
  
 };
 

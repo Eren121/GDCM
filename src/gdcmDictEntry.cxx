@@ -5,6 +5,16 @@
 #include <stdio.h>    // FIXME For sprintf
 #include "gdcmUtil.h"
 
+/**
+ * \ingroup gdcmDictEntry
+ * \brief   Construtor
+ * @param   InGroup
+ * @param   InElement
+ * @param   InVr
+ * @param   InFourth  // DO NOT use any longer
+ *                       NOT part of the Dicom Standard
+ * @param   InName 
+*/
 
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
                              std::string  InVr, std::string InFourth,
@@ -16,6 +26,15 @@ gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
 	name 		= InName;
 	key 		= TranslateToKey(group, element);
 }
+
+/**
+ * \ingroup gdcmDictEntry
+ * \brief   concatenates 2 guint16 (supposed to be a Dicom group number 
+ *                                             and a Dicom element number)
+ * @param  group the Dicom group   number used to build the tag
+ * @param  group the Dicom element number used to build the tag
+ * return the built tag
+ */
 
 TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
 	char trash[10];
@@ -30,8 +49,9 @@ TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
 
 /**
  * \ingroup     gdcmDictEntry
- * \brief       If-and only if-the vr is unset then overwrite it.
- * @param NewVr New vr to be set.
+ * \brief       If-and only if-the V(alue) R(epresentation)
+ *              is unset then overwrite it.
+ * @param NewVr New V(alue) R(epresentation) to be set.
  */
 void gdcmDictEntry::SetVR(std::string NewVr) {
 	if ( IsVrUnknown() )
@@ -40,10 +60,4 @@ void gdcmDictEntry::SetVR(std::string NewVr) {
 		dbg.Error(true, "gdcmDictEntry::SetVR",
 		          "Overwriting vr might compromise a dictionary");
 	}
-}
-
-bool gdcmDictEntry::IsVrUnknown() {
-	if ( vr == "Unknown" )
-		return true;
-	return false;
 }

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.9 2004/01/12 13:12:28 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.10 2004/01/13 11:32:30 jpr Exp $
 
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
@@ -64,7 +64,8 @@ class GDCM_EXPORT gdcmHeaderHelper : public gdcmHeader {
 
 public:
    gdcmHeaderHelper::gdcmHeaderHelper();
-   gdcmHeaderHelper::gdcmHeaderHelper(const char *filename, bool exception_on_error = false);
+   gdcmHeaderHelper::gdcmHeaderHelper(const char *filename, 
+                                      bool exception_on_error = false);
 
    int GetPixelSize();
    std::string GetPixelType();

@@ -39,15 +39,16 @@ std::list<std::string> * gdcmDictSet::GetPubDictTagNames(void) {
  *          A typical usage of this method would be to enable a dynamic
  *          configuration of a Dicom file browser: the admin/user can
  *          select in the interface which Dicom tags should be displayed.
+ 
  * \warning Dicom *doesn't* define any name for any 'categorie'
  *          (the dictionnary fourth field was formerly NIH defined
  *           - and no longer he is-
  *           and will be removed when Dicom provides us a text file
  *           with the 'official' Dictionnary, that would be more friendly
- *           than asking us to perform a line by line check od thhe dictionnary
+ *           than asking us to perform a line by line check of the dictionnary
  *           at the beginning of each year to -try to- guess the changes)
  *           Therefore : please NEVER use that fourth field :-(
- *
+ * *
  * @return  An hashtable: whose keys are the names of the groups and whose
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
@@ -68,6 +69,7 @@ std::map<std::string, std::list<std::string> > * gdcmDictSet::GetPubDictTagNames
  *          path to directory containing the dictionnaries. When
  *          the environnement variable is absent the path is defaulted
  *          to "../Dicts/".
+ * @return path to directory containing the dictionnaries
  */
 std::string gdcmDictSet::BuildDictPath(void) {
    std::string ResultPath;
@@ -95,6 +97,11 @@ gdcmDictSet::gdcmDictSet(void) {
    Dicts[PUB_DICT_NAME] = new gdcmDict(PubDictFile);
 }
 
+
+/**
+ * \ingroup gdcmDictSet
+ * \brief  Destructor 
+ */
 gdcmDictSet::~gdcmDictSet() {
    for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) {
       gdcmDict* EntryToDelete = tag->second;
@@ -135,7 +142,7 @@ void gdcmDictSet::Print(std::ostream& os) {
  * \ingroup gdcmDictSet
  * \brief   Retrieve the specified dictionary (when existing) from this
  *          gdcmDictSet.
- * @param   DictName The synbolic name of the searched dictionary.
+ * @param   DictName The symbolic name of the searched dictionary.
  * \result  The retrieved dictionary.
  */
 gdcmDict * gdcmDictSet::GetDict(DictKey DictName) {

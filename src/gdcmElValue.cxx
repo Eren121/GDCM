@@ -1,7 +1,11 @@
 // gdcmElValue.cxx
 
-#include "gdcmElValue.h"
 
+// TODO
+// A 'gdcmElValue' is actually a 'Dicom Element'.
+// WHY such a confusing name???
+//
+#include "gdcmElValue.h"
 
 /**
  * \ingroup gdcmElValue
@@ -13,3 +17,4 @@ gdcmElValue::gdcmElValue(gdcmDictEntry* in) {
 	ImplicitVr = false;
 	entry = in;
 }
+

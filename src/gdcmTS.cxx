@@ -27,8 +27,7 @@ gdcmTS::gdcmTS(void) {
       from.getline(buff, 1024, '\n');
       name = buff;
 
-      if(key!="")
-      {
+      if(key!="") {
          ts[key]=name;
       }
    }

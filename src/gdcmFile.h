@@ -36,7 +36,7 @@ private:
    bool gdcm_read_RLE_file      (FILE *fp,void * image_buffer); 
 
 protected:
-   int WriteBase(std::string FileName, FileType type);
+   bool WriteBase(std::string FileName, FileType type);
 
 public:
    gdcmFile(gdcmHeader *header);
@@ -52,7 +52,7 @@ public:
 
 	// On writing purposes. When instance was created through
 	// gdcmFile(std::string filename) then the filename argument MUST be
-   // different from the constructor's one (no overwriting allowed).
+        // different from the constructor's one (no overwriting allowed).
 	// TODO Swig int SetFileName(std::string filename);
 
    void   SetPixelDataSizeFromHeader(void);
@@ -68,7 +68,9 @@ public:
       // the caller might destroy it's image (without knowing it: think
       // of a complicated interface where display is done with a library
       // e.g. VTK) before calling the Write
-   int SetImageData     (void * Data, size_t ExpectedSize);
+      
+   // voir gdcmHeader::SetImageDataSize ?!?         
+   bool SetImageData     (void * Data, size_t ExpectedSize);
       // When the caller is aware we simply point to the data:
       // TODO int SetImageDataNoCopy (void * Data, size_t ExpectedSize);
 	
@@ -80,11 +82,12 @@ public:
 	// Ecrit sur disque les pixels d'UNE image
 	// Aucun test n'est fait sur l'"Endiannerie" du processeur.
 	// Ca sera à l'utilisateur d'appeler son Reader correctement
-   int WriteRawData  (std::string fileName);
-   int WriteDcmImplVR(std::string fileName);
-   int WriteDcmImplVR(const char * fileName);
-   int WriteDcmExplVR(std::string fileName);
-   int WriteAcr      (std::string fileName);
+		
+   bool WriteRawData  (std::string fileName);
+   bool WriteDcmImplVR(std::string fileName);
+   bool WriteDcmImplVR(const char * fileName);
+   bool WriteDcmExplVR(std::string fileName);
+   bool WriteAcr      (std::string fileName);
    
    bool ParsePixelData(void);
 };

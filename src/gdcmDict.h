@@ -30,16 +30,25 @@ class GDCM_EXPORT gdcmDict {
 public:
 	gdcmDict(std::string & FileName);
 	~gdcmDict();
-	int AddNewEntry (gdcmDictEntry* NewEntry);
-	int ReplaceEntry(gdcmDictEntry* NewEntry);
-	int RemoveEntry (TagKey key);
-	int RemoveEntry (guint16 group, guint16 element);
+	bool AddNewEntry (gdcmDictEntry* NewEntry);
+	bool ReplaceEntry(gdcmDictEntry* NewEntry);
+	bool RemoveEntry (TagKey key);
+	bool RemoveEntry (guint16 group, guint16 element);
 	gdcmDictEntry * GetTagByNumber(guint16 group, guint16 element);
 	gdcmDictEntry * GetTagByName(TagName name);
 	void Print(std::ostream&);
 	void PrintByKey(std::ostream&);
-	void PrintByName(std::ostream&);
-	TagKeyHT & GetEntries(void) { return KeyHt; }
+	void PrintByName(std::ostream&);	
+
+ /**
+ * \ingroup gdcmDict
+ * \brief   returns a ref to the Dicom Dictionary H table (map)
+ * return the Dicom Dictionary H table
+ */
+ inline TagKeyHT &      gdcmDict::GetEntries(void)  {
+    return KeyHt; 
+ }
+ 
 };
 
 #endif

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.17 2003/11/12 14:06:35 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.18 2004/01/13 11:32:30 jpr Exp $
 
 #include "gdcmHeaderHelper.h"
 
@@ -175,8 +175,8 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
  */
 std::string gdcmHeaderHelper::GetPixelType() {
    std::string BitsAlloc;
-   BitsAlloc = GetElValByName("Bits Allocated");
-   if (BitsAlloc == GDCM_UNFOUND) {
+   BitsAlloc = GetPubElValByNumber(0x0028, 0x0100);
+   if (BitsAlloc == GDCM_UNFOUND) { // Bits Allocated
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
       BitsAlloc = std::string("16");
    }
@@ -186,8 +186,8 @@ std::string gdcmHeaderHelper::GetPixelType() {
       BitsAlloc = std::string("8"); // by old RGB images)
       
    std::string Signed;
-   Signed = GetElValByName("Pixel Representation");
-   if (Signed == GDCM_UNFOUND) {
+   Signed = GetPubElValByNumber(0x0028, 0x0103);
+   if (Signed == GDCM_UNFOUND) { // "Pixel Representation"
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
       BitsAlloc = std::string("0");
    }
@@ -256,7 +256,6 @@ float gdcmHeaderHelper::GetYSpacing() {
   * @return Z dimension of a voxel-to be
   */
 float gdcmHeaderHelper::GetZSpacing() {
-   // TODO : translate into English
    // Spacing Between Slices : distance entre le milieu de chaque coupe
    // Les coupes peuvent etre :
    //   jointives     (Spacing between Slices = Slice Thickness)

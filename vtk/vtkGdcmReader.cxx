@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.29 2003/12/22 12:46:19 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.30 2004/01/13 11:32:31 jpr Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -471,6 +471,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
   // But vtk chooses to invert the lines of an image, that is the last
   // line comes first (for some axis related reasons?). Hence we need
   // to load the image line by line, starting from the end.
+
   int NumColumns = GdcmFile.GetHeader()->GetXSize();
   int NumLines   = GdcmFile.GetHeader()->GetYSize();
   int NumPlanes  = GdcmFile.GetHeader()->GetZSize();

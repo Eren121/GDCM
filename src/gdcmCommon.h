@@ -23,6 +23,9 @@
 #pragma warning ( disable : 4284 )
 #endif //_MSC_VER
 
+// Mmmmmm !
+// It reminds me the formerly well known LibIDO's idproto.h
+
 #ifdef __GNUC__
 #ifndef HAVE_NO_STDINT_H
 #include <stdint.h>

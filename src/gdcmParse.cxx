@@ -29,6 +29,9 @@
  */
 bool gdcmFile::ParsePixelData(void) {
 
+// DO NOT remove the printf s.
+// The ONLY purpose of this methos is to PRINT the content
+
    FILE *fp;
 
    if ( !(fp=Header->OpenFile()))
@@ -46,7 +49,7 @@ bool gdcmFile::ParsePixelData(void) {
         Header->IsDeflatedExplicitVRLittleEndianTransferSyntax() ) { 
         
         printf ("gdcmFile::ParsePixelData : non JPEG/RLE File\n");
-        return 0;       
+        return false;       
    }        
 
    int nb;
@@ -241,5 +244,5 @@ bool gdcmFile::ParsePixelData(void) {
                ftellRes,ItemTagGr,ItemTagEl );
       } 
    }
-   return 1;            
+   return true;            
 }

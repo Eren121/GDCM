@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.122 2004/01/13 11:13:08 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.123 2004/01/13 11:32:30 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -43,6 +43,10 @@ void gdcmHeader::Initialise(void) {
  * \brief   
  * @param   InFilename
  * @param   exception_on_error
+ * @param   enable_sequences = true to allow the header 
+ *          to be parsed *inside* the SeQuences, 
+ *          when they have an actual length
+ the 
  */
 gdcmHeader::gdcmHeader(const char *InFilename, 
                        bool exception_on_error,
@@ -202,8 +206,9 @@ void gdcmHeader::CheckSwap()
    if (x==ntohs(x))
       net2host = true;
    else
-      net2host = false;
-   
+      net2host = false; 
+    //cout << net2host << endl;
+         
    // The easiest case is the one of a DICOM header, since it possesses a
    // file preamble where it suffice to look for the string "DICM".
    lgrLue = fread(deb, 1, HEADER_LENGTH_TO_READ, fp);
@@ -1160,7 +1165,7 @@ gdcmElValue* gdcmHeader::NewElValueByNumber(guint16 Group, guint16 Elem) {
  * @param   Elem
  * \return integer acts as a boolean
  */
-int gdcmHeader::ReplaceOrCreateByNumber(std::string Value, 
+bool gdcmHeader::ReplaceOrCreateByNumber(std::string Value, 
                                         guint16 Group, guint16 Elem ) {
 	// TODO : FIXME JPRx
 	// curieux, non ?
@@ -1171,11 +1176,11 @@ int gdcmHeader::ReplaceOrCreateByNumber(std::string Value,
    if (CheckIfExistByNumber(Group, Elem) == 0) {
       gdcmElValue* a =NewElValueByNumber(Group, Elem);
       if (a == NULL) 
-         return 0;
+         return false;
       PubElValSet.Add(a);
    }   
    PubElValSet.SetElValueByNumber(Value, Group, Elem);
-   return(1);
+   return(true);
 }   
 
 
@@ -1188,13 +1193,14 @@ int gdcmHeader::ReplaceOrCreateByNumber(std::string Value,
  * \return integer acts as a boolean 
  * 
  */
-int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
+bool gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
    gdcmElValue* nvElValue=NewElValueByNumber(Group, Elem);
+   // TODO : check if fails
    PubElValSet.Add(nvElValue);
    std::string v = Value;	
    PubElValSet.SetElValueByNumber(v, Group, Elem);
-   return(1);
+   return(true);
 }  
 
 
@@ -1207,12 +1213,12 @@ int gdcmHeader::ReplaceOrCreateByNumber(char* Value, guint16 Group, guint16 Elem
  * @param   Elem
  * \return integer acts as a boolean 
  */
-int gdcmHeader::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
+bool gdcmHeader::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) {
 
    //gdcmElValue* elValue = PubElValSet.GetElementByNumber(Group, Elem);
    std::string v = Value;	
    PubElValSet.SetElValueByNumber(v, Group, Elem);
-   return 1;
+   return true;
 } 
 
 
@@ -1225,7 +1231,7 @@ int gdcmHeader::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem 
  * @return  integer acts as a boolean  
  */
  
-int gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
+bool gdcmHeader::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
    return (PubElValSet.CheckIfExistByNumber(Group, Elem));
  }
   
@@ -1291,9 +1297,13 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
  */
 bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
    guint16 element = ElVal->GetElement();
+   guint16 group   = ElVal->GetGroup();
    std::string  vr = ElVal->GetVR();
    guint32 length  = ElVal->GetLength();
 
+         cout << "Found :" << std::hex 
+	      << group << " , " << element << std::endl;
+	      
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
    // able to swap it's element value properly.
@@ -1301,6 +1311,8 @@ bool gdcmHeader::IsAnInteger(gdcmElValue * ElVal) {
       if (length == 4)
          return true;
       else {
+         cout << "Error on :" << std::hex 
+	      << group << " , " << element << std::endl;
          dbg.Error("gdcmHeader::IsAnInteger",
             "Erroneous Group Length element length.");     
       }
@@ -1325,8 +1337,8 @@ size_t gdcmHeader::GetPixelOffset(void) {
    // When the "Image Location" is absent we default to group 0x7fe0.
    guint16 grPixel;
    guint16 numPixel;
-   std::string ImageLocation = GetPubElValByName("Image Location");
-   if ( ImageLocation == GDCM_UNFOUND ) {
+   std::string ImageLocation = GetPubElValByNumber(0x0028, 0x0200);
+   if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
       grPixel = 0x7fe0;
    } else {
       grPixel = (guint16) atoi( ImageLocation.c_str() );
@@ -1359,7 +1371,7 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
    // When the "Image Location" is absent we default to group 0x7fe0.
    guint16 grPixel;
    guint16 numPixel;
-   std::string ImageLocation = GetPubElValByName("Image Location");
+   std::string ImageLocation = GetPubElValByNumber(0x0028, 0x0200);
    if ( ImageLocation == GDCM_UNFOUND ) {
       grPixel = 0x7fe0;
    } else {
@@ -1474,12 +1486,16 @@ std::string gdcmHeader::GetPubElValRepByNumber(guint16 group, guint16 element) {
  * \ingroup gdcmHeader
  * \brief   Searches within the public dictionary for element value of
  *          a given tag.
- * @param   TagName name of the searched element.
+ * @param   tagName name of the searched element.
  * @return  Corresponding element value when it exists, and the string
  *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmHeader::GetPubElValByName(std::string TagName) {
-   return PubElValSet.GetElValueByName(TagName);
+std::string gdcmHeader::GetPubElValByName(std::string tagName) {
+   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   if( dictEntry == NULL)
+      return GDCM_UNFOUND;
+  return(PubElValSet.GetElValueByNumber(dictEntry->GetGroup(),
+                                        dictEntry->GetElement()));  
 }
 
 /**
@@ -1491,80 +1507,17 @@ std::string gdcmHeader::GetPubElValByName(std::string TagName) {
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   TagName name of the searched element.
+ * @param   tagName name of the searched element.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmHeader::GetPubElValRepByName(std::string TagName) {
-   gdcmElValue* elem =  PubElValSet.GetElementByName(TagName);
-   if ( !elem )
-      return GDCM_UNFOUND;
-   return elem->GetVR();
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Searches within elements parsed with the SHADOW dictionary 
- *          for the element value of a given tag.
- * @param   group Group of the searched tag.
- * @param   element Element of the searched tag.
- * @return  Corresponding element value representation when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string gdcmHeader::GetShaElValByNumber(guint16 group, guint16 element) {
-   return ShaElValSet.GetElValueByNumber(group, element);
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Searches within the elements parsed with the SHADOW dictionary
- *          for the element value representation of a given tag.
- *
- *          Obtaining the VR (Value Representation) might be needed by caller
- *          to convert the string typed content to caller's native type 
- *          (think of C++ vs Python). The VR is actually of a higher level
- *          of semantics than just the native C++ type.
- * @param   group Group of the searched tag.
- * @param   element Element of the searched tag.
- * @return  Corresponding element value representation when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string gdcmHeader::GetShaElValRepByNumber(guint16 group, guint16 element) {
-   gdcmElValue* elem =  ShaElValSet.GetElementByNumber(group, element);
-   if ( !elem )
-      return GDCM_UNFOUND;
-   return elem->GetVR();
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Searches within the elements parsed with the shadow dictionary
- *          for an element value of given tag.
- * @param   TagName name of the searched element.
- * @return  Corresponding element value when it exists, and the string
- *          GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string gdcmHeader::GetShaElValByName(std::string TagName) {
-   return ShaElValSet.GetElValueByName(TagName);
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Searches within the elements parsed with the shadow dictionary for
- *          the element value representation of a given tag.
- *
- *          Obtaining the VR (Value Representation) might be needed by caller
- *          to convert the string typed content to caller's native type 
- *          (think of C++ vs Python). The VR is actually of a higher level
- *          of semantics than just the native C++ type.
- * @param   TagName name of the searched element.
- * @return  Corresponding element value representation when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string gdcmHeader::GetShaElValRepByName(std::string TagName) {
-   gdcmElValue* elem =  ShaElValSet.GetElementByName(TagName);
-   if ( !elem )
-      return GDCM_UNFOUND;
+std::string gdcmHeader::GetPubElValRepByName(std::string tagName) {
+   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   if( dictEntry == NULL)
+      return GDCM_UNFOUND;   
+   gdcmElValue* elem =  PubElValSet.GetElementByNumber(
+                                         dictEntry->GetGroup(),
+                                         dictEntry->GetElement());					
    return elem->GetVR();
 }
 
@@ -1580,9 +1533,7 @@ std::string gdcmHeader::GetShaElValRepByName(std::string TagName) {
  */
 std::string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
    std::string pub = GetPubElValByNumber(group, element);
-   if (pub.length())
       return pub;
-   return GetShaElValByNumber(group, element);
 }
 
 /**
@@ -1602,9 +1553,7 @@ std::string gdcmHeader::GetElValByNumber(guint16 group, guint16 element) {
  */
 std::string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
    std::string pub = GetPubElValRepByNumber(group, element);
-   if (pub.length())
       return pub;
-   return GetShaElValRepByNumber(group, element);
 }
 
 /**
@@ -1612,15 +1561,13 @@ std::string gdcmHeader::GetElValRepByNumber(guint16 group, guint16 element) {
  * \brief   Searches within elements parsed with the public dictionary 
  *          and then within the elements parsed with the shadow dictionary
  *          for the element value of a given tag.
- * @param   TagName name of the searched element.
+ * @param   tagName name of the searched element.
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmHeader::GetElValByName(std::string TagName) {
-   std::string pub = GetPubElValByName(TagName);
-   if (pub.length())
+std::string gdcmHeader::GetElValByName(std::string tagName) {
+   std::string pub = GetPubElValByName(tagName);
       return pub;
-   return GetShaElValByName(TagName);
 }
 
 /**
@@ -1633,34 +1580,32 @@ std::string gdcmHeader::GetElValByName(std::string TagName) {
  *          to convert the string typed content to caller's native type 
  *          (think of C++ vs Python). The VR is actually of a higher level
  *          of semantics than just the native C++ type.
- * @param   TagName name of the searched element.
+ * @param   tagName name of the searched element.
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmHeader::GetElValRepByName(std::string TagName) {
-   std::string pub = GetPubElValRepByName(TagName);
-   if (pub.length())
+std::string gdcmHeader::GetElValRepByName(std::string tagName) {
+   std::string pub = GetPubElValRepByName(tagName);
       return pub;
-   return GetShaElValRepByName(TagName);
 }
 
 /**
  * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmElValue in the PubElValSet of this instance
+ * \brief   Accesses an existing gdcmElValue (i.e. a Dicom Element)
+ *          in the PubElValSet of this instance
  *          through it's (group, element) and modifies it's content with
  *          the given value.
  * @param   content new value to substitute with
- * @param   group   group of the ElVal to modify
- * @param   element element of the ElVal to modify
+ * @param   group   group of the Dicom Element to modify
+ * @param   element element of the Dicom Element to modify
  */
-int gdcmHeader::SetPubElValByNumber(std::string content, guint16 group,
+bool gdcmHeader::SetPubElValByNumber(std::string content, guint16 group,
                                     guint16 element)
                                     
 //TODO  : homogeneiser les noms : SetPubElValByNumber   
 //                    qui appelle PubElValSet.SetElValueByNumber 
 //        pourquoi pas            SetPubElValueByNumber ??
 {
-
    return (  PubElValSet.SetElValueByNumber (content, group, element) );
 }
 
@@ -1669,10 +1614,16 @@ int gdcmHeader::SetPubElValByNumber(std::string content, guint16 group,
  * \brief   Accesses an existing gdcmElValue in the PubElValSet of this instance
  *          through tag name and modifies it's content with the given value.
  * @param   content new value to substitute with
- * @param   TagName name of the tag to be modified
+ * @param   tagName name of the tag to be modified
  */
-int gdcmHeader::SetPubElValByName(std::string content, std::string TagName) {
-   return (  PubElValSet.SetElValueByName (content, TagName) );
+bool gdcmHeader::SetPubElValByName(std::string content, std::string tagName) {
+   //return (  PubElValSet.SetElValueByName (content, tagName) );
+   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   if( dictEntry == NULL)
+      return false;       
+   return(PubElValSet.SetElValueByNumber(content,
+                                         dictEntry->GetGroup(),
+                                         dictEntry->GetElement()));   
 }
 
 /**
@@ -1687,35 +1638,9 @@ int gdcmHeader::SetPubElValByName(std::string content, std::string TagName) {
  * @return  1 on success, 0 otherwise.
  */
 
-int gdcmHeader::SetPubElValLengthByNumber(guint32 length, guint16 group,
+bool gdcmHeader::SetPubElValLengthByNumber(guint32 length, guint16 group,
                                     guint16 element) {
 	return (  PubElValSet.SetElValueLengthByNumber (length, group, element) );
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmElValue in the ShaElValSet of this instance
- *          through it's (group, element) and modifies it's content with
- *          the given value.
- * @param   content new value to substitute with
- * @param   group   group of the ElVal to modify
- * @param   element element of the ElVal to modify
- * @return  1 on success, 0 otherwise.
- */
-int gdcmHeader::SetShaElValByNumber(std::string content,
-                                    guint16 group, guint16 element) {
-   return (  ShaElValSet.SetElValueByNumber (content, group, element) );
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Accesses an existing gdcmElValue in the ShaElValSet of this instance
- *          through tag name and modifies it's content with the given value.
- * @param   content new value to substitute with
- * @param   ShadowTagName name of the tag to be modified
- */
-int gdcmHeader::SetShaElValByName(std::string content, std::string ShadowTagName) {
-   return (  ShaElValSet.SetElValueByName (content, ShadowTagName) );
 }
 
 /**
@@ -1753,18 +1678,19 @@ FileType gdcmHeader::GetFileType(void)
  *         false otherwise. 
  */
 bool gdcmHeader::IsReadable(void) {
-   if (   GetElValByName("Image Dimensions") != GDCM_UNFOUND
-      && atoi(GetElValByName("Image Dimensions").c_str()) > 4 ) {
-      return false;
+   std::string res = GetPubElValByNumber(0x0028, 0x0005);
+   if (       res != GDCM_UNFOUND
+      && atoi(res.c_str()) > 4 ) {
+      return false; // Image Dimensions
    }
-   if ( GetElValByName("Bits Allocated")       == GDCM_UNFOUND )
-      return false;
-   if ( GetElValByName("Bits Stored")          == GDCM_UNFOUND )
-      return false;
-   if ( GetElValByName("High Bit")             == GDCM_UNFOUND )
-      return false;
-   if ( GetElValByName("Pixel Representation") == GDCM_UNFOUND )
-      return false;
+   if ( GetPubElValByNumber(0x0028, 0x0100) == GDCM_UNFOUND )
+      return false; // "Bits Allocated"
+   if ( GetPubElValByNumber(0x0028, 0x0101) == GDCM_UNFOUND )
+      return false; // "Bits Stored"
+   if ( GetPubElValByNumber(0x0028, 0x0102) == GDCM_UNFOUND )
+      return false; // "High Bit"
+   if ( GetPubElValByNumber(0x0028, 0x0103) == GDCM_UNFOUND )
+      return false; // "Pixel Representation"
    return true;
 }
 
@@ -1877,7 +1803,7 @@ void gdcmHeader::PrintPubDict(std::ostream & os) {
   * \brief
   * @return integer, acts as a Boolean
   */ 
-int gdcmHeader::Write(FILE * fp, FileType type) {
+bool gdcmHeader::Write(FILE * fp, FileType type) {
 
    // TODO : move the following lines (and a lot of others, to be written)
    // to a future function CheckAndCorrectHeader
@@ -2028,7 +1954,7 @@ int gdcmHeader::GetYSize(void) {
  * @return  The encountered size when found, 1 by default.
  */
 int gdcmHeader::GetZSize(void) {
-   // Both in DicomV3 and ACR/Nema the consider the "Number of Frames"
+   // Both  DicomV3 and ACR/Nema consider the "Number of Frames"
    // as the third dimension.
    std::string StrSize = GetPubElValByNumber(0x0028,0x0008);
    if (StrSize != GDCM_UNFOUND)
@@ -2133,7 +2059,7 @@ int gdcmHeader::GetPixelSize(void) {
  */
 std::string gdcmHeader::GetPixelType(void) {
    std::string BitsAlloc;
-   BitsAlloc = GetElValByName("Bits Allocated");
+   BitsAlloc = GetPubElValByNumber(0x0028, 0x0100); // Bits Allocated
    if (BitsAlloc == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
       BitsAlloc = std::string("16");
@@ -2144,7 +2070,7 @@ std::string gdcmHeader::GetPixelType(void) {
       BitsAlloc = std::string("8");  // by old RGB images)
      
    std::string Signed;
-   Signed = GetElValByName("Pixel Representation");
+   Signed = GetPubElValByNumber(0x0028, 0x0103); // "Pixel Representation"
    if (Signed == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
       BitsAlloc = std::string("0");
@@ -2187,26 +2113,26 @@ std::string gdcmHeader::GetTransferSyntaxName(void) {
   * @return int acts as a Boolean 
   */
   
-int gdcmHeader::HasLUT(void) {
+bool gdcmHeader::HasLUT(void) {
 
    // Check the presence of the LUT Descriptors 
    if (GetPubElValByNumber(0x0028,0x1101) == GDCM_UNFOUND)
-      return 0;
+      return false;
    // LutDescriptorGreen 
    if (GetPubElValByNumber(0x0028,0x1102) == GDCM_UNFOUND)
-      return 0;
+      return false;
    // LutDescriptorBlue 
    if (GetPubElValByNumber(0x0028,0x1103) == GDCM_UNFOUND)
-      return 0;
+      return false;
    //  It is not enough
    // we check also 
    if (GetPubElValByNumber(0x0028,0x1201) == GDCM_UNFOUND)
-      return 0;  
+      return false;  
    if (GetPubElValByNumber(0x0028,0x1202) == GDCM_UNFOUND)
-      return 0;
+      return false;
    if (GetPubElValByNumber(0x0028,0x1203) == GDCM_UNFOUND)
-      return 0;   
-   return 1;
+      return false;   
+   return true;
 }
 
 /**
@@ -2338,7 +2264,6 @@ unsigned char * gdcmHeader::GetLUTRGBA(void) {
   else                     // See PS 3.3-2003 C.11.1.1.2 p 619
      mult=1; 
  
- 
             // if we get a black image, let's just remove the '+1'
             // from 'i*mult+1' and check again 
             // if it works, we shall have to check the 3 Palettes
@@ -2405,3 +2330,80 @@ void gdcmHeader::SetImageDataSize(size_t ImageDataSize) {
 }
 
 
+
+
+
+
+
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Searches within the public dictionary for a Dicom Element of
+ *          a given tag.
+ * @param   tagName name of the searched Dicom Element.
+ * @return  Corresponding Dicom Element when it exists, and NULL
+ *          otherwise.
+ */
+ gdcmElValue* gdcmHeader::GetElementByName(std::string tagName) {
+   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   if( dictEntry == NULL)
+      return (gdcmElValue*)NULL;
+  return(PubElValSet.GetElementByNumber(dictEntry->GetGroup(),
+                                        dictEntry->GetElement()));  
+}
+
+
+
+/**
+ * \ingroup gdcmElValSet
+ * \brief  Sets the value (string) of the target Dicom Element
+ * @param   content string value of the Dicom Element
+ * @param   tagName name of the searched Dicom Element.
+ * @return  true when found
+ */
+bool gdcmHeader::SetElValueByName(std::string content,
+                                  std::string tagName) {
+				    
+   gdcmDictEntry *dictEntry = RefPubDict->GetTagByName(tagName); 
+   if( dictEntry == NULL)
+      return false;				    
+				   				   				    
+				    
+   TagKey key = gdcmDictEntry::TranslateToKey(dictEntry->GetGroup(), 
+                                              dictEntry->GetElement());
+   if ( ! PubElValSet.GetTagHt().count(key))
+      return false;
+   int l = content.length();
+   if(l%2) {  // Odd length are padded with a space (020H).
+      l++;
+      content = content + '\0';
+   }
+      
+   //tagHt[key]->SetValue(content);   
+   gdcmElValue * a;
+   IterHT p;
+   TagElValueHT::iterator p2;
+   // DO NOT remove the following lines : they explain the stuff   
+   //p= tagHt.equal_range(key); // get a pair of iterators first-last synonym
+   //p2=p.first;                // iterator on the first synonym 
+   //a=p2->second;              // H Table target column (2-nd col)
+    
+   // or, easier :
+   a = ((PubElValSet.GetTagHt().equal_range(key)).first)->second; 
+       
+   a-> SetValue(content); 
+   
+   //std::string vr = tagHt[key]->GetVR();
+   std::string vr = a->GetVR();
+   
+   guint32 lgr;
+   if( (vr == "US") || (vr == "SS") ) 
+      lgr = 2;
+   else if( (vr == "UL") || (vr == "SL") )
+      lgr = 4;
+   else
+      lgr = l;	   
+   //tagHt[key]->SetLength(lgr);
+   a->SetLength(lgr);   
+   return true;
+}
