@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 18:03:16 $
-  Version:   $Revision: 1.198 $
+  Date:      $Date: 2005/01/19 10:30:51 $
+  Version:   $Revision: 1.199 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -409,7 +409,7 @@ bool Document::CloseFile()
       Fp = 0;
    }
 
-   return true; //FIXME how do we detect a non-close ifstream ?
+   return true; //FIXME how do we detect a non-closed ifstream ?
 }
 
 /**
@@ -620,7 +620,6 @@ SeqEntry *Document::ReplaceOrCreate( uint16_t group, uint16_t elem)
          }
       }
    }
-
    // Create a new seqEntry if necessary
    if (!seqEntry)
    {
@@ -634,7 +633,6 @@ SeqEntry *Document::ReplaceOrCreate( uint16_t group, uint16_t elem)
          return NULL;
       }
    }
-
    return seqEntry;
 } 
  
@@ -839,8 +837,8 @@ void *Document::GetEntryBinArea(uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief         Loads (from disk) the element content 
- *                when a string is not suitable
+ * \brief Loads (from disk) the element content 
+ *        when a string is not suitable
  * @param group   group number of the Entry 
  * @param elem  element number of the Entry
  */
@@ -859,8 +857,8 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief         Loads (from disk) the element content 
- *                when a string is not suitable
+ * \brief Loads (from disk) the element content 
+ *        when a string is not suitable
  * @param elem  Entry whose binArea is going to be loaded
  */
 void Document::LoadEntryBinArea(BinEntry *elem) 

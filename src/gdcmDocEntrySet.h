@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 15:15:38 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/19 10:30:51 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,16 +63,38 @@ public:
    DocEntrySet() {};
    virtual ~DocEntrySet() {};
 
-   /// \brief adds any type of entry to the entry set (pure vitual)
-   virtual bool AddEntry(DocEntry *Entry) = 0; // pure virtual
-   virtual bool RemoveEntry(DocEntry *EntryToRemove)=0; // pure virtual
-   virtual bool RemoveEntryNoDestroy(DocEntry *EntryToRemove)=0; // pure virtual
+   // ------- '... =0;' stands for 'Pure Virtual'
+
+   /// \brief adds any type of entry to the entry set
+   virtual bool AddEntry(DocEntry *Entry) = 0;
+
+   /// \brief Removes any type of entry out of the entry set, and destroys it
+   virtual bool RemoveEntry(DocEntry *EntryToRemove)=0;
+
+   /// \brief Removes any type of entry out of the entry set, DOESN'T destroy it
+   virtual bool RemoveEntryNoDestroy(DocEntry *EntryToRemove)=0;
 
    /// \brief write any type of entry to the entry set
-   virtual void WriteContent (std::ofstream *fp, FileType filetype) = 0;// pure virtual
+   virtual void WriteContent (std::ofstream *fp, 
+                              FileType filetype) = 0;
 
+   /// \brief Gets any type of DocEntry, identified by its (group,element)
    virtual DocEntry *GetDocEntry(uint16_t group,
                                  uint16_t elem) = 0;
+
+   /// \brief Gets a ValEntry, identified by its (group,element)
+   virtual ValEntry *GetValEntry(uint16_t group,
+                                 uint16_t elem) = 0;
+   /// \brief Gets a BinEntry, identified by its (group,element)
+   virtual BinEntry *GetBinEntry(uint16_t group,
+                                 uint16_t elem) = 0;
+
+   /// \brief Gets a SeqEntry, identified by its (group,element)
+   virtual SeqEntry *GetSeqEntry(uint16_t group,
+                                 uint16_t elem) = 0;
+
+   /// \brief Gets the 'string value' of a ValEntry
+   ///        identified by its (group,element) - Sorry for the name !...-
    virtual std::string GetEntry(uint16_t group, uint16_t elem) = 0;
 
    DictEntry *NewVirtualDictEntry(uint16_t group, 
