@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/16 16:30:32 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/09/03 20:27:44 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMValEntry_H
-#define GDCMValEntry_H
+#ifndef GDCMVALENTRY_H
+#define GDCMVALENTRY_H
 
 #include <iostream>
 #include <stdio.h>
