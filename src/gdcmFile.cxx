@@ -3,6 +3,7 @@
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
 #include "iddcmjpeg.h" // for the 'LibIDO' Jpeg LossLess
+#include "jpeg/ljpg/jpegless.h"
 
 /////////////////////////////////////////////////////////////////
 /**
@@ -124,7 +125,34 @@ bool gdcmFile::ReadPixelData(void* destination) {
     if ( fseek(fp, GetPixelOffset(), SEEK_SET) == -1 ) {
       CloseFile();
       return false;
-   }     
+   }
+        
+// -------------------------  Compacted File (12 Bits Per Pixel)
+
+   /* unpack 12 Bits pixels into 16 Bits pixels */
+   /* 2 pixels 12bit =     [0xABCDEF]           */
+   /* 2 pixels 16bit = [0x0ABD] + [0x0FCE]      */
+
+   if (GetBitsAllocated()==12) {
+      int nbPixels = GetXSize()*GetYSize();
+      unsigned char b0, b1, b2;
+      
+      for(int p=0;p<nbPixels;p+=2) {
+         fread(&b0,1,1,fp);
+         fread(&b1,1,1,fp);
+         fread(&b2,1,1,fp);      
+         *((unsigned short int*)destination)++ = 
+	            ((b0 >> 4) << 8) + ((b0 & 0x0f) << 4) + (b1 & 0x0f);
+                       /* A */          /* B */            /* D */
+         *((unsigned short int*)destination)++ = 
+	            ((b2 & 0x0f) << 8) + ((b1 >> 4) << 4) + (b2 >> 4);
+                       /* F */          /* C */            /* E */
+		  
+	// Troubles expected on Big-Endian processors ?	      
+      }
+      return(true);
+   }
+
 
 // -------------------------  Uncompressed File
     
@@ -152,74 +180,32 @@ bool gdcmFile::ReadPixelData(void* destination) {
          nb = 16;
       } else {
          nb = atoi(str_nb.c_str() );
-         if (nb == 12) nb =16;
+         if (nb == 12) nb =16;  // ?? 12 should be ACR-NEMA only ?
       }
       int nBytes= nb/8;
       
       int taille = GetXSize() *  GetYSize()  * GetSamplesPerPixel(); 
           
-                
-  // ------------------------------- JPEG LossLess : call to Jpeg Libido
-   
-   if (IsJPEGLossless() && GetZSize() == 1) {
-   
-      int ln; //  Position on begining of Jpeg Pixels
-      fseek(fp,4,SEEK_CUR);  // skipping (fffe,e000) : Basic Offset Table Item
-      fread(&ln,4,1,fp); 
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);    // Item length
-      fseek(fp,ln,SEEK_CUR); // skipping Basic Offset Table ('ln' bytes) 
-      fseek(fp,4,SEEK_CUR);  // skipping (fffe,e000) : First fragment Item Tag
-      fread(&ln,4,1,fp);     // First fragment length (just to know)
-      if(GetSwapCode()) 
-         ln=SwapLong(ln);      
+
  
-      ClbJpeg* jpg = _IdDcmJpegRead(fp); // TODO : find a 'full' one.
-                                         // (We use the LibIDO one :-(
-      if(jpg == NULL) {
-         CloseFile();
-         return false;
-      }      
-      int * dataJpg = jpg->DataImg;
- 
-      switch (nBytes) {   
-         case 1:
-         {
-            unsigned short *dest = (unsigned short *)destination;
-            for (int i=0; i<taille; i++) {
-               *((unsigned char *)dest+i) = *(dataJpg +i);   
-            }
-         }
-         break;        
-         
-         case 2:
-         {
-            unsigned short *dest = (unsigned short *)destination;
-            for (int i=0; i<taille; i++) {           
-               *((unsigned short *)dest+i) = *(dataJpg +i);    
-            }
-         }
-         break;       
-     }
-      _IdDcmJpegFree (jpg);
-      return true;
-   } 
- 
-  // ------------------------------- RLE
+  // ---------------- RLE
 
       if (gdcmHeader::IsRLELossLessTransferSyntax()) {
             int res = (bool)gdcm_read_RLE_file (destination);
             return res; 
       }
 
-  // ------------------------------- Multiframe JPEG 
+  // ----------------- SingleFrame/Multiframe JPEG 
     
       long fragmentBegining; // for ftell, fseek
+      
       bool b = gdcmHeader::IsJPEG2000();
        
-      bool res;
+      bool res = true;
       guint16 ItemTagGr,ItemTagEl;
-      int ln;  //  Position on begining of Jpeg Pixels
+      int ln;  
+      
+         //  Position on begining of Jpeg Pixels
       
       fread(&ItemTagGr,2,1,fp);  // Reading (fffe) : Item Tag Gr
       fread(&ItemTagEl,2,1,fp);  // Reading (e000) : Item Tag El
@@ -246,62 +232,50 @@ bool gdcmFile::ReadPixelData(void* destination) {
       }
               
       // parsing fragments until Sequence Delim. Tag found
-      //unsigned short *dest = (unsigned short *)destination;
-         
-      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) {      
+      		               
+      while (  ( ItemTagGr == 0xfffe) && (ItemTagEl != 0xe0dd) ) { 
+      
+                        // --- for each Fragment
+     
          fread(&ln,4,1,fp); 
          if(GetSwapCode()) 
             ln=SwapLong(ln);    // Fragment Item length
       
-         // FIXME : multi fragments 
          fragmentBegining=ftell(fp);   
  
          if (b)
             res = (bool)gdcm_read_JPEG2000_file (destination);  // Not Yet written 
             
-         else if (IsJPEGLossless()) { // JPEG LossLess : call to LibIDO Jpeg
-	 	  
-                  // -------------  for each Fragment
-                  
-                  // Warning : Works only if there is one fragment per frame
-                  //           (Or a single fragment for the multiframe file)
-            ClbJpeg* jpg = _IdDcmJpegRead(fp); // TODO : find a 'full' one.
-                                               // (We use the LibIDO one :-(
-            if(jpg == NULL) {
-               CloseFile();
-               return false;
-            }      
-            int * dataJpg = jpg->DataImg;
-            unsigned short *dest = (unsigned short *)destination;
-            switch (nBytes) {   
-               case 1:
-               {
-                  for (int i=0; i<taille; i++) {
-                     *((unsigned char *)dest+i) = *(dataJpg +i);   
-                  }
-               break;
-               }        
-         
-               case 2:
-               {
-                  for (int i=0; i<taille; i++) {        
-                     *((unsigned short *)dest+i) = *(dataJpg +i);    
-                  }
-               break;
-               }       
-           } 
-           _IdDcmJpegFree (jpg);
-	   
-	   res=1; // in order not to break the loop
+         else if (IsJPEGLossless()) { // JPEG LossLess : call to xmedcom JPEG
+		      
+	    JPEGLosslessDecodeImage (fp, 
+				     (unsigned short *)destination,
+				     GetPixelSize()*8* GetSamplesPerPixel(),
+                                     ln);
+								 	   
+	    res=1; // in order not to break the loop
      
          } // ------------------------------------- endif (IsJPEGLossless())
                   
-         else  //               JPEG Lossy : call to IJG 6b
+         else { //              JPEG Lossy : call to xmedcon JPEG
+	        //               (just to see if it works) --> it does NOT !
+	 /*
+	    JPEGLosslessDecodeImage (fp, 
+				     (unsigned short *)destination,
+				     GetPixelSize()*8* GetSamplesPerPixel(),
+                                     ln);	 
+	 
+	 */
+	    //               JPEG Lossy : call to IJG 6b
+	 
             if  (GetBitsStored() == 8) {
             	res = (bool)gdcm_read_JPEG_file (destination);  // Reading Fragment pixels         
             } else {
             	res = (bool)gdcm_read_JPEG_file12 (destination);// Reading Fragment pixels  
-            }       
+            } 
+	 
+	 
+	 }      
             
          if (!res) break;
                   
@@ -320,7 +294,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
          } 
       
       }     // endWhile parsing fragments until Sequence Delim. Tag found    
-	        
+    
       return res;
 }   
 
@@ -559,8 +533,6 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
             int l = lgrTotale/3;
             memmove(newDest, destination, l);// move Gray pixels to temp area
 
-            unsigned char * x = newDest;
-
             int j;
                // See PS 3.3-2003 C.11.1.1.2 p 619
                // 
@@ -571,7 +543,9 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
             // if we get a black image, let's just remove the '+1'
             // and check again 
             // if it works, we shall have to check the 3 Palettes
-            // to see which byte is ==0 (first one, on second one)        
+            // to see which byte is ==0 (first one, or second one)
+	            
+            //unsigned char * x = newDest;
        
             for (int i=0;i<l; i++) {
                j=newDest[i]*mult +1;
