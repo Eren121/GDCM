@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 03:36:24 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2004/06/25 19:37:05 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,7 +123,7 @@ std::string GetName(std::string &fullName)
   if (a == '/' || a == '\\') {
      fin--;
   }
-  int deb;
+  int deb = 0;
   for (int i=fin;i!=0;i--) {
      if (fullName.c_str()[i] == '/' || fullName.c_str()[i] == '\\')  
         break;

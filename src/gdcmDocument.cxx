@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 17:48:45 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2004/06/25 19:37:05 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -656,7 +656,7 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          guint16 Elem)
 {
    gdcmDocEntry* a;
-   gdcmBinEntry* b;
+   gdcmBinEntry* b = 0;
    a = GetDocEntryByNumber( Group, Elem);
    if (a == NULL) {
       a =NewBinEntryByNumber(Group, Elem);
@@ -1198,7 +1198,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
    gdcmBinEntry *bn;   
    gdcmSeqEntry *sq;
    VRKey vr;
-   unsigned long l;
+   unsigned long l = 0;
    int depth; 
    
    depth = set->GetDepthLevel();     

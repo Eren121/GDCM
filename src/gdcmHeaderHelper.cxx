@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/21 04:18:26 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/06/25 19:37:05 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,7 @@ bool gdcmSerieHeader::ImagePositionPatientOrdering()
   float normal[3];
   float ipp[3];
   float dist;
-  float min, max;
+  float min = 0, max = 0;
   bool first = true;
   int n=0;
   std::vector<float> distlist;
