@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.22 2003/09/24 13:25:21 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.23 2003/09/24 13:27:02 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -110,7 +110,7 @@ void Tokenize (const std::string& str,
                const std::string& delimiters) {
    std::string::size_type lastPos = str.find_first_not_of(delimiters,0);
    std::string::size_type pos     = str.find_first_of    (delimiters,lastPos);
-   while (std::tring::npos != pos || std::string::npos != lastPos) {
+   while (std::string::npos != pos || std::string::npos != lastPos) {
       tokens.push_back(str.substr(lastPos, pos - lastPos));
       lastPos = str.find_first_not_of(delimiters, pos);
       pos     = str.find_first_of    (delimiters, lastPos);
