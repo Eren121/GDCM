@@ -1,9 +1,12 @@
-
+// gdcmException.cxx
+//-----------------------------------------------------------------------------
 #include "gdcmException.h"
 
 #include <typeinfo>
 #include <stdio.h>
 
+//-----------------------------------------------------------------------------
+// gdcmException
 gdcmException::gdcmException(const std::string &f, const std::string& msg) throw()
 #ifdef __GNUC__
   try
@@ -15,7 +18,6 @@ catch(...) {
   fatal("gdcmException::gdcmException(const std::string&, const std::string&, const std::string&)");
 }
 #endif
-
 
 
 void gdcmException::fatal(const char *from) throw() {
@@ -35,7 +37,6 @@ void gdcmException::fatal(const char *from) throw() {
     }
   }  
 }
-
 
 std::string gdcmException::getName() const throw() {
   try {
@@ -68,12 +69,11 @@ std::string gdcmException::getName() const throw() {
   }
 }
 
-
 gdcmException::operator const char *() const throw() {
   return getName().c_str();
 }
 
-
+//-----------------------------------------------------------------------------
 std::ostream& operator<<(std::ostream &os, const gdcmException &e) {
   try {  
     os << "Exception " << e.getName() << " thrown: " << e.getError() << std::endl;
@@ -84,4 +84,4 @@ std::ostream& operator<<(std::ostream &os, const gdcmException &e) {
   return os;
 }
 
-  
+//-----------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 // gdcmTS.cxx
-
+//-----------------------------------------------------------------------------
 #include <fstream>
 
 #include "gdcmTS.h"
@@ -10,6 +10,8 @@
 #endif
 #define DICT_TS "dicomTS.dic"
 
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
 gdcmTS::gdcmTS(void) {
    std::string filename=gdcmDictSet::BuildDictPath() + std::string(DICT_TS);
    std::ifstream from(filename.c_str());
@@ -38,6 +40,11 @@ gdcmTS::~gdcmTS() {
    ts.clear();
 }
 
+//-----------------------------------------------------------------------------
+// Print
+
+//-----------------------------------------------------------------------------
+// Public
 int gdcmTS::Count(TSKey key) {
    return ts.count(key);
 }
@@ -47,3 +54,11 @@ std::string gdcmTS::GetValue(TSKey key) {
       return (GDCM_UNFOUND);
    return ts[key];
 }
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------

@@ -1,14 +1,16 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.25 2003/10/02 11:26:16 malaterre Exp $
-
+// gdcmUtil.cxx
+//-----------------------------------------------------------------------------
 #include "gdcmUtil.h"
 
 #include <stdio.h>
 #include <ctype.h>   // For isspace
 #include <string.h>
 
+//-----------------------------------------------------------------------------
 // Library globals.
 gdcmDebug dbg;
 
+//-----------------------------------------------------------------------------
 gdcmDebug::gdcmDebug(int level) {
    DebugLevel = level;
 }
@@ -17,14 +19,6 @@ void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) {
    if (Level > DebugLevel)
       return ;
    std::cerr << Msg1 << ' ' << Msg2 << std::endl;
-}
-
-void gdcmDebug::Assert(int Level, bool Test,
-                 const char * Msg1, const char * Msg2) {
-   if (Level > DebugLevel)
-      return ;
-   if (!Test)
-      std::cerr << Msg1 << ' ' << Msg2 << std::endl;
 }
 
 void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {
@@ -40,6 +34,14 @@ void gdcmDebug::Error(const char* Msg1, const char* Msg2,
    Exit(1);
 }
 
+void gdcmDebug::Assert(int Level, bool Test,
+                 const char * Msg1, const char * Msg2) {
+   if (Level > DebugLevel)
+      return ;
+   if (!Test)
+      std::cerr << Msg1 << ' ' << Msg2 << std::endl;
+}
+
 void gdcmDebug::Exit(int a) {
 #ifdef __GNUC__
    std::exit(a);
@@ -49,7 +51,7 @@ void gdcmDebug::Exit(int a) {
 #endif
 }
 
-///////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------------
 gdcmVR      * gdcmGlobal::VR    = (gdcmVR*)0;
 gdcmTS      * gdcmGlobal::TS    = (gdcmTS*)0;
 gdcmDictSet * gdcmGlobal::Dicts = (gdcmDictSet*)0;
@@ -76,11 +78,12 @@ gdcmVR * gdcmGlobal::GetVR(void) {
 gdcmTS * gdcmGlobal::GetTS(void) {
    return TS;
 }
+
 gdcmDictSet * gdcmGlobal::GetDicts(void) {
    return Dicts;
 }
 
-///////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------------
 // Because is not yet available in g++2.96
 std::istream& eatwhite(std::istream& is) {
    char c;
@@ -95,7 +98,6 @@ std::istream& eatwhite(std::istream& is) {
 
 ///////////////////////////////////////////////////////////////////////////
 // Because is not  available in C++ (?)
-
 void Tokenize (const std::string& str,
                std::vector<std::string>& tokens,
                const std::string& delimiters) {
@@ -111,7 +113,6 @@ void Tokenize (const std::string& str,
 
 ///////////////////////////////////////////////////////////////////////////
 // to prevent a flashing screen when non-printable character
-
 char * _cleanString(char *v) {
    char *d;
    int i, l;
@@ -128,20 +129,7 @@ char * _cleanString(char *v) {
 
 ///////////////////////////////////////////////////////////////////////////
 // to prevent a flashing screen when non-printable character
-
 std::string _CreateCleanString(std::string s) {
-/*   char *d, *di, *v;
-   int i, l;
-   v=(char*)s.c_str();
-   l = strlen(v);
-   d = di = strdup(v);
-   for (i=0; 
-        i<l ; 
-        i++,di++,v++) {
-      if (!isprint(*v))
-         *di = '.';
-      }	
-   return d;*/
   std::string str=s;
   for(int i=0;i<str.size();i++)
   {
@@ -151,21 +139,4 @@ std::string _CreateCleanString(std::string s) {
 
   return(str);
 }
-
-///////////////////////////////////////////////////////////////////////////
-//
-// because it may not be associated to a dictionary ...
-
-std::string TranslateToKey(guint16 group, guint16 element) {
-	char trash[10];
-	std::string key;
-	// CLEAN ME: better call the iostream<< with the hex manipulator on.
-	// This requires some reading of the stdlibC++ sources to make the
-	// proper call (or copy).
-	sprintf(trash, "%04x|%04x", group , element);
-	key = trash;  // Convertion through assignement
-	return key;
-}
-
-
 

@@ -1,10 +1,12 @@
 // gdcmDictEntry.cxx
-
+//-----------------------------------------------------------------------------
 #include "gdcmDictEntry.h"
 
 #include <stdio.h>    // FIXME For sprintf
 #include "gdcmUtil.h"
 
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
 /**
  * \ingroup gdcmDictEntry
  * \brief   Construtor
@@ -19,14 +21,19 @@
 gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
                              std::string  InVr, std::string InFourth,
                              std::string  InName) {
-	group 		= InGroup;
+	group 	= InGroup;
 	element 	= InElement;
 	vr 		= InVr;
-	fourth 		= InFourth;
+	fourth 	= InFourth;
 	name 		= InName;
 	key 		= TranslateToKey(group, element);
 }
 
+//-----------------------------------------------------------------------------
+// Print
+
+//-----------------------------------------------------------------------------
+// Public
 /**
  * \ingroup gdcmDictEntry
  * \brief   concatenates 2 guint16 (supposed to be a Dicom group number 
@@ -54,10 +61,19 @@ TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element) {
  * @param NewVr New V(alue) R(epresentation) to be set.
  */
 void gdcmDictEntry::SetVR(std::string NewVr) {
-	if ( IsVrUnknown() )
+	if ( IsVRUnknown() )
 		vr = NewVr;
 	else {
 		dbg.Error(true, "gdcmDictEntry::SetVR",
 		          "Overwriting vr might compromise a dictionary");
 	}
 }
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+

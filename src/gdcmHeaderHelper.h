@@ -1,56 +1,58 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.h,v 1.10 2004/01/13 11:32:30 jpr Exp $
-
+// gdcmHeaderHelper.h
+//-----------------------------------------------------------------------------
 #ifndef GDCMHEADERHELPER_H
 #define GDCMHEADERHELPER_H
 
 #include "gdcmHeader.h"
 
-   // Dicom Part 3.3 Compliant
-   enum ModalityType {
-      Unknow,
-      AU,       // Voice Audio
-      AS,       // Angioscopy
-      BI,       // Biomagnetic Imaging
-      CF,       // Cinefluorography
-      CP,       // Culposcopy
-      CR,       // Computed Radiography
-      CS,       // Cystoscopy
-      CT,       // Computed Tomography
-      DD,       // Duplex Dopler
-      DF,       // Digital Fluoroscopy
-      DG,       // Diaphanography
-      DM,       // Digital Microscopy
-      DS,       // Digital Substraction Angiography
-      DX,       // Digital Radiography
-      ECG,      // Echocardiography
-      EPS,      // Basic Cardiac EP
-      ES,       // Endoscopy
-      FA,       // Fluorescein Angiography
-      FS,       // Fundoscopy
-      HC,       // Hard Copy
-      HD,       // Hemodynamic
-      LP,       // Laparoscopy
-      LS,       // Laser Surface Scan
-      MA,       // Magnetic Resonance Angiography
-      MR,       // Magnetic Resonance
-      NM,       // Nuclear Medicine
-      OT,       // Other
-      PT,       // Positron Emission Tomography
-      RF,       // Radio Fluoroscopy
-      RG,       // Radiographic Imaging
-      RTDOSE,   // Radiotherapy Dose
-      RTIMAGE,  // Radiotherapy Image
-      RTPLAN,   // Radiotherapy Plan
-      RTSTRUCT, // Radiotherapy Structure Set
-      SM,       // Microscopic Imaging
-      ST,       // Single-photon Emission Computed Tomography
-      TG,       // Thermography
-      US,       // Ultrasound
-      VF,       // Videofluorography
-      XA,       // X-Ray Angiography
-      XC        // Photographic Imaging
-    };
+//-----------------------------------------------------------------------------
+// Dicom Part 3.3 Compliant
+enum ModalityType {
+   Unknow,
+   AU,       // Voice Audio
+   AS,       // Angioscopy
+   BI,       // Biomagnetic Imaging
+   CF,       // Cinefluorography
+   CP,       // Culposcopy
+   CR,       // Computed Radiography
+   CS,       // Cystoscopy
+   CT,       // Computed Tomography
+   DD,       // Duplex Dopler
+   DF,       // Digital Fluoroscopy
+   DG,       // Diaphanography
+   DM,       // Digital Microscopy
+   DS,       // Digital Substraction Angiography
+   DX,       // Digital Radiography
+   ECG,      // Echocardiography
+   EPS,      // Basic Cardiac EP
+   ES,       // Endoscopy
+   FA,       // Fluorescein Angiography
+   FS,       // Fundoscopy
+   HC,       // Hard Copy
+   HD,       // Hemodynamic
+   LP,       // Laparoscopy
+   LS,       // Laser Surface Scan
+   MA,       // Magnetic Resonance Angiography
+   MR,       // Magnetic Resonance
+   NM,       // Nuclear Medicine
+   OT,       // Other
+   PT,       // Positron Emission Tomography
+   RF,       // Radio Fluoroscopy
+   RG,       // Radiographic Imaging
+   RTDOSE,   // Radiotherapy Dose
+   RTIMAGE,  // Radiotherapy Image
+   RTPLAN,   // Radiotherapy Plan
+   RTSTRUCT, // Radiotherapy Structure Set
+   SM,       // Microscopic Imaging
+   ST,       // Single-photon Emission Computed Tomography
+   TG,       // Thermography
+   US,       // Ultrasound
+   VF,       // Videofluorography
+   XA,       // X-Ray Angiography
+   XC        // Photographic Imaging
+};
       
+//-----------------------------------------------------------------------------
 /*
  * This class is meant to *interpret* data given from gdcmHeader
  * That is to say :
@@ -61,7 +63,6 @@
  *  - ...
  */
 class GDCM_EXPORT gdcmHeaderHelper : public gdcmHeader {
-
 public:
    gdcmHeaderHelper::gdcmHeaderHelper();
    gdcmHeaderHelper::gdcmHeaderHelper(const char *filename, 
@@ -74,7 +75,7 @@ public:
    float GetYSpacing();
    float GetZSpacing();
    
-   //Usefull for rescaling graylevel:
+   // Usefull for rescaling graylevel:
    float GetRescaleIntercept();
    float GetRescaleSlope();
 
@@ -86,12 +87,12 @@ public:
    std::string GetClassUID();
    std::string GetInstanceUID();
    
-    /**
-    change GetXImagePosition -> GetXOrigin in order not to confused reader
-      -# GetXOrigin can return default value (=0) if it was not ImagePosition
-      -# Image Position is different in dicomV3 <> ACR NEMA -> better use generic
-      name
-    */
+   /**
+    * change GetXImagePosition -> GetXOrigin in order not to confused reader
+    * -# GetXOrigin can return default value (=0) if it was not ImagePosition
+    * -# Image Position is different in dicomV3 <> ACR NEMA -> better use generic
+    * name
+   */
    float GetXOrigin();
    float GetYOrigin();
    float GetZOrigin();
@@ -100,16 +101,14 @@ public:
    ModalityType GetModality();
    
    void GetImageOrientationPatient( float* iop );
-  
-
 };
 
+//-----------------------------------------------------------------------------
 /**
 This class should be used for a stack of 2D dicom images.
 For a multiframe dicom image better use directly gdcmHeaderHelper
 */
 class GDCM_EXPORT gdcmSerieHeaderHelper {
-
 public:
     gdcmSerieHeaderHelper::gdcmSerieHeaderHelper() {};
     gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper();
@@ -119,7 +118,7 @@ public:
    void SetDirectory(std::string dir);
    void OrderGdcmFileList();
    
-   gdcmHeaderHelper *GetGdcmHeader()
+   inline gdcmHeaderHelper *GetGdcmHeader()
    {
       //Assume all element in the list have the same global infos
       return CoherentGdcmFileList.front();
@@ -133,7 +132,7 @@ private:
    bool FileNameOrdering();
    
    std::list<gdcmHeaderHelper*> CoherentGdcmFileList;
-
 };
 
+//-----------------------------------------------------------------------------
 #endif

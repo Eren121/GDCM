@@ -1,17 +1,12 @@
-
+// gdcmRLE.cxx
+//-----------------------------------------------------------------------------
 #include <stdio.h>
 #include "gdcmFile.h"
 #include <ctype.h>		/* to declare isprint() */
 
 #define str2num(str, typeNum) *((typeNum *)(str))
 
-static int _gdcm_read_RLE_fragment (char ** image_buffer, 
-                                    long lengthToDecode,
-                                    long uncompressedSegmentSize, 
-                                    FILE* fp);
-// static because nothing but gdcm_read_RLE_file may call it
-
-// ----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 /**
  * \ingroup   gdcmFile
  * \brief     Reads a 'Run Length Encoded' Dicom encapsulated file
@@ -21,14 +16,6 @@ static int _gdcm_read_RLE_fragment (char ** image_buffer,
  *   
  * @return    Boolean 
  */
-
-// This is a debug version.
-// Forget the printf as they will be removed
-// as soon as the last Heuristics are checked
-
-// pb with RLE 16 Bits : 
-
-
 bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
    long fragmentBegining; // for ftell, fseek
    char * im = (char *)image_buffer;
@@ -97,7 +84,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
             RleSegmentLength[k]=RleSegmentOffsetTable[k+1]-RleSegmentOffsetTable[k];
             ftellRes=ftell(fp);
             fragmentBegining=ftell(fp);   
-            _gdcm_read_RLE_fragment (&im, RleSegmentLength[k],uncompressedSegmentSize,fp);
+            gdcm_read_RLE_fragment (&im, RleSegmentLength[k],uncompressedSegmentSize,fp);
             fseek(fp,fragmentBegining,SEEK_SET);  
             fseek(fp,RleSegmentLength[k],SEEK_CUR);        
          }
@@ -105,7 +92,7 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
       RleSegmentLength[nbRleSegments] = fragmentLength - RleSegmentOffsetTable[nbRleSegments];
       ftellRes=ftell(fp);
       fragmentBegining=ftell(fp);
-      _gdcm_read_RLE_fragment (&im, RleSegmentLength[nbRleSegments],uncompressedSegmentSize, fp);
+      gdcm_read_RLE_fragment (&im, RleSegmentLength[nbRleSegments],uncompressedSegmentSize, fp);
       fseek(fp,fragmentBegining,SEEK_SET);  
       fseek(fp,RleSegmentLength[nbRleSegments],SEEK_CUR);    
       
@@ -147,20 +134,10 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
 }
 
 
- /* -------------------------------------------------------------------- */
- //
- // RLE LossLess Fragment
- //
- /* -------------------------------------------------------------------- */
-
-   // static because nothing but gdcm_read_RLE_file can call it
-   // DO NOT doxygen !
-
-static int
-_gdcm_read_RLE_fragment (char ** areaToRead, 
-                         long lengthToDecode, 
-                         long uncompressedSegmentSize, 
-                         FILE* fp) {
+// ----------------------------------------------------------------------------
+// RLE LossLess Fragment
+int gdcmFile::gdcm_read_RLE_fragment(char **areaToRead, long lengthToDecode, 
+                                     long uncompressedSegmentSize, FILE *fp) {
    long ftellRes;
    int count;
    long numberOfOutputBytes=0;
@@ -168,7 +145,6 @@ _gdcm_read_RLE_fragment (char ** areaToRead,
    ftellRes =ftell(fp);
 
    while(numberOfOutputBytes<uncompressedSegmentSize) {
-
       ftellRes =ftell(fp);
       fread(&n,sizeof(char),1,fp);
       count=n;
@@ -190,3 +166,5 @@ _gdcm_read_RLE_fragment (char ** areaToRead,
    } 
    return 1;
 }
+
+// ----------------------------------------------------------------------------

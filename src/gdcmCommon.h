@@ -1,5 +1,5 @@
 //gdcmCommon.h
-
+//-----------------------------------------------------------------------------
 #ifndef GDCMCOMMON_H
 #define GDCMCOMMON_H
 
@@ -26,6 +26,7 @@
 // Mmmmmm !
 // It reminds me the formerly well known LibIDO's idproto.h
 
+//-----------------------------------------------------------------------------
 #ifdef __GNUC__
 #ifndef HAVE_NO_STDINT_H
 #include <stdint.h>
@@ -74,4 +75,5 @@ enum FileType {
 //For now gdcm is not willing cmake, try to be more quiet
 //#cmakedefine GDCM_NO_ANSI_STRING_STREAM
 
+//-----------------------------------------------------------------------------
 #endif

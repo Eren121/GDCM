@@ -1,5 +1,5 @@
 // gdcmDictSet.h
-
+//-----------------------------------------------------------------------------
 #ifndef GDCMDICTSET_H
 #define GDCMDICTSET_H
 
@@ -10,6 +10,7 @@
 typedef std::string DictKey;
 typedef std::map<DictKey, gdcmDict*> DictSetHT;
 
+//-----------------------------------------------------------------------------
 /*
  * \defgroup gdcmDictSet
  * \brief  Container for managing a set of loaded dictionaries.
@@ -19,20 +20,7 @@ typedef std::map<DictKey, gdcmDict*> DictSetHT;
  *        (saving memory).
  */
 class GDCM_EXPORT gdcmDictSet {
-private:
-   /// Hash table of all dictionaries contained in this gdcmDictSet
-	DictSetHT Dicts;
-   /// Directory path to dictionaries
-   std::string DictPath;
-
-	int AppendDict(gdcmDict* NewDict);
-	void LoadDictFromFile(std::string FileName, DictKey Name);
-
 public:
-   std::list<std::string> * GetPubDictTagNames(void);
-   std::map<std::string, std::list<std::string> >*
-       GetPubDictTagNamesByCategory(void);
-
 	// TODO Swig int LoadDictFromFile(std::string filename);
    // QUESTION: the following function might not be thread safe !? Maybe
    //           we need some mutex here, to avoid concurent creation of
@@ -42,12 +30,29 @@ public:
 	// TODO Swig std::string* GetAllDictNames();
 	gdcmDictSet(void);
 	~gdcmDictSet(void);
+
 	void Print(std::ostream& os);
 
-	gdcmDict* GetDict(DictKey DictName);
+   std::list<std::string> * GetPubDictTagNames(void);
+   std::map<std::string, std::list<std::string> >*
+       GetPubDictTagNamesByCategory(void);
+
+	void LoadDictFromFile(std::string FileName, DictKey Name);
+
+   gdcmDict* GetDict(DictKey DictName);
 	gdcmDict* GetDefaultPubDict(void);
 
    static std::string BuildDictPath(void);
+
+protected:
+	bool AppendDict(gdcmDict* NewDict,DictKey Name);
+
+private:
+   /// Hash table of all dictionaries contained in this gdcmDictSet
+	DictSetHT Dicts;
+   /// Directory path to dictionaries
+   std::string DictPath;
 };
 
+//-----------------------------------------------------------------------------
 #endif

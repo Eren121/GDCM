@@ -1,60 +1,61 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.18 2004/01/13 11:32:30 jpr Exp $
-
+// gdcmHeaderHelper.cxx
+//-----------------------------------------------------------------------------
 #include "gdcmHeaderHelper.h"
 
 #include "gdcmUtil.h" //for debug
 #include <math.h>
 #include <algorithm>
-//#include <string.h> //for bzero
 
-//directory manipulation (os indep).
-//cygwin ???? -> _WIN32 ??
 #ifdef _MSC_VER 
-#include <windows.h> 
-int GetDir(std::string dPath, std::list<std::string> &filenames)
-{
-  //For now dPath should have an ending "\"
-  WIN32_FIND_DATA FileData; 
-  HANDLE hFile; 
-  hFile = FindFirstFile((dPath+"*").c_str(), &FileData); 
-  if ( hFile == INVALID_HANDLE_VALUE ) 
-  { 
-    //No files !
-    return false; 
-  } 
+   #include <windows.h> 
+
+   int GetDir(std::string dPath, std::list<std::string> &filenames)
+   {
+     //For now dPath should have an ending "\"
+     WIN32_FIND_DATA FileData; 
+     HANDLE hFile; 
+     hFile = FindFirstFile((dPath+"*").c_str(), &FileData); 
+     if ( hFile == INVALID_HANDLE_VALUE ) 
+     { 
+       //No files !
+       return false; 
+     } 
   
-  if( strncmp(FileData.cFileName, ".", 1) != 0 )
-    filenames.push_back( dPath+FileData.cFileName );
-  while( FindNextFile(hFile, &FileData ) != 0)
-  { 
-    if( strncmp(FileData.cFileName, ".", 1) != 0 )
-      filenames.push_back( dPath+FileData.cFileName );
-  }
-  return true;
-}
+     if( strncmp(FileData.cFileName, ".", 1) != 0 )
+       filenames.push_back( dPath+FileData.cFileName );
+     while( FindNextFile(hFile, &FileData ) != 0)
+     { 
+       if( strncmp(FileData.cFileName, ".", 1) != 0 )
+         filenames.push_back( dPath+FileData.cFileName );
+     }
+     return true;
+   }
 
 #else
-#include <dirent.h>
+   #include <dirent.h>
 
-int GetDir(std::string dPath, std::list<std::string> &filenames)
-{
- DIR *dir = opendir( dPath.c_str() );
- struct dirent *entry;
- while((entry = readdir(dir)) != NULL)
- {
-//   if( strncmp(entry->d_name, ".", 1) != 0 && strncmp(entry->d_name, "..", 2) != 0)
-   if( strncmp(entry->d_name, ".", 1) != 0 )
+   int GetDir(std::string dPath, std::list<std::string> &filenames)
    {
-      filenames.push_back( dPath + "/" + entry->d_name );
+    DIR *dir = opendir( dPath.c_str() );
+    struct dirent *entry;
+    while((entry = readdir(dir)) != NULL)
+    {
+   //   if( strncmp(entry->d_name, ".", 1) != 0 && strncmp(entry->d_name, "..", 2) != 0)
+      if( strncmp(entry->d_name, ".", 1) != 0 )
+      {
+         filenames.push_back( dPath + "/" + entry->d_name );
+      }
+    }
+    closedir(dir);
+    return true;
    }
- }
- closedir(dir);
- return true;
-}
 
 #endif
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// gdcmHeaderHelper
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
 /**
  * \ingroup gdcmHeaderHelper
  * \brief   cstor
@@ -62,7 +63,7 @@ int GetDir(std::string dPath, std::list<std::string> &filenames)
 gdcmHeaderHelper::gdcmHeaderHelper() : gdcmHeader( )
 {
 }
-//----------------------------------------------------------------------------
+
 /**
  * \ingroup gdcmHeaderHelper
  * \brief   cstor
@@ -71,7 +72,12 @@ gdcmHeaderHelper::gdcmHeaderHelper(const char *InFilename,
     bool exception_on_error) : gdcmHeader( InFilename , exception_on_error)
 {
 }
-//----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Print
+
+//-----------------------------------------------------------------------------
+// Public
 /**
  * \ingroup gdcmHeaderHelper
  * \brief   Return the size (in bytes) of a single pixel of data.
@@ -96,7 +102,156 @@ int gdcmHeaderHelper::GetPixelSize() {
    return 0;
 }
 
-//----------------------------------------------------------------------------
+/**
+ * \ingroup gdcmHeaderHelper
+ * \brief   Build the Pixel Type of the image.
+ *          Possible values are:
+ *          - 8U  unsigned  8 bit,
+ *          - 8S    signed  8 bit,
+ *          - 16U unsigned 16 bit,
+ *          - 16S   signed 16 bit,
+ *          - 32U unsigned 32 bit,
+ *          - 32S   signed 32 bit,
+ * \warning 12 bit images appear as 16 bit.
+ * \        24 bit images appear as 8 bit
+ * @return  
+ */
+std::string gdcmHeaderHelper::GetPixelType() {
+   std::string BitsAlloc;
+   BitsAlloc = GetPubElValByNumber(0x0028, 0x0100);
+   if (BitsAlloc == GDCM_UNFOUND) { // Bits Allocated
+      dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
+      BitsAlloc = std::string("16");
+   }
+   if (BitsAlloc == "12")           // It will be unpacked
+      BitsAlloc = std::string("16");
+   else if (BitsAlloc == "24")      // (in order no to be messed up
+      BitsAlloc = std::string("8"); // by old RGB images)
+      
+   std::string Signed;
+   Signed = GetPubElValByNumber(0x0028, 0x0103);
+   if (Signed == GDCM_UNFOUND) { // "Pixel Representation"
+      dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
+      BitsAlloc = std::string("0");
+   }
+   if (Signed == "0")
+      Signed = std::string("U");
+   else
+      Signed = std::string("S");
+
+   return( BitsAlloc + Signed);
+}
+
+/**
+  * \ingroup gdcmHeaderHelper
+  * \brief gets the info from 0028,0030 : Pixel Spacing
+  * \           else 1.
+  * @return X dimension of a pixel
+  */
+float gdcmHeaderHelper::GetXSpacing() {
+    float xspacing, yspacing;
+    std::string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
+    
+   if (StrSpacing == GDCM_UNFOUND) {
+      dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing (0028,0030)");
+      return 1.;
+    }
+  if( sscanf( StrSpacing.c_str(), "%f\\%f", &yspacing, &xspacing) != 2)
+    return 0.;
+  if (xspacing == 0.) {
+    dbg.Verbose(0, "gdcmHeader::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
+    // seems to be a bug in the header ...
+    sscanf( StrSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
+  }
+  return xspacing;
+}
+
+/**
+  * \ingroup gdcmHeaderHelper
+  * \brief gets the info from 0028,0030 : Pixel Spacing
+  * \           else 1.
+  * @return Y dimension of a pixel
+  */
+float gdcmHeaderHelper::GetYSpacing() {
+   float xspacing, yspacing;
+   std::string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
+  
+   if (StrSpacing == GDCM_UNFOUND) {
+      dbg.Verbose(0, "gdcmHeader::GetYSpacing: unfound Pixel Spacing (0028,0030)");
+      return 1.;
+    }
+  if( sscanf( StrSpacing.c_str(), "%f\\%f", &yspacing, &xspacing) != 2)
+    return 0.;
+  if (xspacing == 0.) {
+    dbg.Verbose(0, "gdcmHeader::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
+    // seems to be a bug in the header ...
+    sscanf( StrSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
+  }
+  return yspacing;
+} 
+
+/**
+  *\ingroup gdcmHeaderHelper
+  *\brief gets the info from 0018,0088 : Space Between Slices
+  *\               else from 0018,0050 : Slice Thickness
+  *\               else 1.
+  * @return Z dimension of a voxel-to be
+  */
+float gdcmHeaderHelper::GetZSpacing() {
+   // Spacing Between Slices : distance entre le milieu de chaque coupe
+   // Les coupes peuvent etre :
+   //   jointives     (Spacing between Slices = Slice Thickness)
+   //   chevauchantes (Spacing between Slices < Slice Thickness)
+   //   disjointes    (Spacing between Slices > Slice Thickness)
+   // Slice Thickness : epaisseur de tissus sur laquelle est acquis le signal
+   //   ca interesse le physicien de l'IRM, pas le visualisateur de volumes ...
+   //   Si le Spacing Between Slices est absent, 
+   //   on suppose que les coupes sont jointives
+   
+   std::string StrSpacingBSlices = GetPubElValByNumber(0x0018,0x0088);
+
+   if (StrSpacingBSlices == GDCM_UNFOUND) {
+      dbg.Verbose(0, "gdcmHeader::GetZSpacing: unfound StrSpacingBSlices");
+      std::string StrSliceThickness = GetPubElValByNumber(0x0018,0x0050);       
+      if (StrSliceThickness == GDCM_UNFOUND)
+         return 1.;
+      else
+         // if no 'Spacing Between Slices' is found, 
+         // we assume slices join together
+         // (no overlapping, no interslice gap)
+         // if they don't, we're fucked up
+         return atof(StrSliceThickness.c_str());  
+   } else {
+      return atof(StrSpacingBSlices.c_str());
+   }
+}
+
+float gdcmHeaderHelper::GetRescaleIntercept()
+{
+  float resInter = 0.;
+  std::string StrRescInter = GetPubElValByNumber(0x0028,0x1052); //0028 1052 DS IMG Rescale Intercept
+  if (StrRescInter != GDCM_UNFOUND) {
+      if( sscanf( StrRescInter.c_str(), "%f", &resInter) != 1) {
+         dbg.Verbose(0, "gdcmHeader::GetRescaleIntercept: Rescale Slope is empty");
+           // bug in the element 0x0028,0x1052
+      }    
+   }
+  return resInter;
+}
+
+float gdcmHeaderHelper::GetRescaleSlope()
+{
+  float resSlope = 1.;
+  std::string StrRescSlope = GetPubElValByNumber(0x0028,0x1053); //0028 1053 DS IMG Rescale Slope
+  if (StrRescSlope != GDCM_UNFOUND) {
+      if( sscanf( StrRescSlope.c_str(), "%f", &resSlope) != 1) {
+         dbg.Verbose(0, "gdcmHeader::GetRescaleSlope: Rescale Slope is empty");
+           // bug in the element 0x0028,0x1053
+      }    
+   }  
+	return resSlope;
+}
+
 /**
   * \ingroup gdcmHeaderHelper
   * \brief This function is intended to user who doesn't whan 
@@ -138,7 +293,6 @@ int gdcmHeaderHelper::GetNumberOfScalarComponents() {
       return 3;
 }
 
-//----------------------------------------------------------------------------
 /**
   * \ingroup gdcmHeaderHelper
   * \brief This function is intended to user that DOESN'T want 
@@ -158,134 +312,26 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
       return GetSamplesPerPixel();
 }
 
-//----------------------------------------------------------------------------
-/**
- * \ingroup gdcmHeaderHelper
- * \brief   Build the Pixel Type of the image.
- *          Possible values are:
- *          - 8U  unsigned  8 bit,
- *          - 8S    signed  8 bit,
- *          - 16U unsigned 16 bit,
- *          - 16S   signed 16 bit,
- *          - 32U unsigned 32 bit,
- *          - 32S   signed 32 bit,
- * \warning 12 bit images appear as 16 bit.
- * \        24 bit images appear as 8 bit
- * @return  
- */
-std::string gdcmHeaderHelper::GetPixelType() {
-   std::string BitsAlloc;
-   BitsAlloc = GetPubElValByNumber(0x0028, 0x0100);
-   if (BitsAlloc == GDCM_UNFOUND) { // Bits Allocated
-      dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
-      BitsAlloc = std::string("16");
-   }
-   if (BitsAlloc == "12")           // It will be unpacked
-      BitsAlloc = std::string("16");
-   else if (BitsAlloc == "24")      // (in order no to be messed up
-      BitsAlloc = std::string("8"); // by old RGB images)
-      
-   std::string Signed;
-   Signed = GetPubElValByNumber(0x0028, 0x0103);
-   if (Signed == GDCM_UNFOUND) { // "Pixel Representation"
-      dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
-      BitsAlloc = std::string("0");
-   }
-   if (Signed == "0")
-      Signed = std::string("U");
-   else
-      Signed = std::string("S");
-
-   return( BitsAlloc + Signed);
-}
-//----------------------------------------------------------------------------
-/**
-  * \ingroup gdcmHeaderHelper
-  * \brief gets the info from 0028,0030 : Pixel Spacing
-  * \           else 1.
-  * @return X dimension of a pixel
-  */
-float gdcmHeaderHelper::GetXSpacing() {
-    float xspacing, yspacing;
-    std::string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
-    
-   if (StrSpacing == GDCM_UNFOUND) {
-      dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing (0028,0030)");
-      return 1.;
-    }
-  if( sscanf( StrSpacing.c_str(), "%f\\%f", &yspacing, &xspacing) != 2)
-    return 0.;
-  if (xspacing == 0.) {
-    dbg.Verbose(0, "gdcmHeader::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
-    // seems to be a bug in the header ...
-    sscanf( StrSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
-  }
-  return xspacing;
-}
-//----------------------------------------------------------------------------
-/**
-  * \ingroup gdcmHeaderHelper
-  * \brief gets the info from 0028,0030 : Pixel Spacing
-  * \           else 1.
-  * @return Y dimension of a pixel
-  */
-float gdcmHeaderHelper::GetYSpacing() {
-   float xspacing, yspacing;
-   std::string StrSpacing = GetPubElValByNumber(0x0028,0x0030);
-  
-   if (StrSpacing == GDCM_UNFOUND) {
-      dbg.Verbose(0, "gdcmHeader::GetYSpacing: unfound Pixel Spacing (0028,0030)");
-      return 1.;
-    }
-  if( sscanf( StrSpacing.c_str(), "%f\\%f", &yspacing, &xspacing) != 2)
-    return 0.;
-  if (xspacing == 0.) {
-    dbg.Verbose(0, "gdcmHeader::GetYSpacing: gdcmData/CT-MONO2-8-abdo.dcm problem");
-    // seems to be a bug in the header ...
-    sscanf( StrSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
-  }
-  return yspacing;
-} 
-
-//----------------------------------------------------------------------------
-/**
-  *\ingroup gdcmHeaderHelper
-  *\brief gets the info from 0018,0088 : Space Between Slices
-  *\               else from 0018,0050 : Slice Thickness
-  *\               else 1.
-  * @return Z dimension of a voxel-to be
-  */
-float gdcmHeaderHelper::GetZSpacing() {
-   // Spacing Between Slices : distance entre le milieu de chaque coupe
-   // Les coupes peuvent etre :
-   //   jointives     (Spacing between Slices = Slice Thickness)
-   //   chevauchantes (Spacing between Slices < Slice Thickness)
-   //   disjointes    (Spacing between Slices > Slice Thickness)
-   // Slice Thickness : epaisseur de tissus sur laquelle est acquis le signal
-   //   ca interesse le physicien de l'IRM, pas le visualisateur de volumes ...
-   //   Si le Spacing Between Slices est absent, 
-   //   on suppose que les coupes sont jointives
-   
-   std::string StrSpacingBSlices = GetPubElValByNumber(0x0018,0x0088);
-
-   if (StrSpacingBSlices == GDCM_UNFOUND) {
-      dbg.Verbose(0, "gdcmHeader::GetZSpacing: unfound StrSpacingBSlices");
-      std::string StrSliceThickness = GetPubElValByNumber(0x0018,0x0050);       
-      if (StrSliceThickness == GDCM_UNFOUND)
-         return 1.;
-      else
-         // if no 'Spacing Between Slices' is found, 
-         // we assume slices join together
-         // (no overlapping, no interslice gap)
-         // if they don't, we're fucked up
-         return atof(StrSliceThickness.c_str());  
-   } else {
-      return atof(StrSpacingBSlices.c_str());
-   }
+std::string gdcmHeaderHelper::GetStudyUID()
+{
+  return GetPubElValByNumber(0x0020,0x000d); //0020 000d UI REL Study Instance UID
 }
 
-//----------------------------------------------------------------------------
-//
+std::string gdcmHeaderHelper::GetSeriesUID()
+{
+  return GetPubElValByNumber(0x0020,0x000e); //0020 000e UI REL Series Instance UID
+}
+
+std::string gdcmHeaderHelper::GetClassUID()
+{
+  return GetPubElValByNumber(0x0008,0x0016); //0008 0016 UI ID SOP Class UID
+}
+
+std::string gdcmHeaderHelper::GetInstanceUID()
+{
+  return GetPubElValByNumber(0x0008,0x0018); //0008 0018 UI ID SOP Instance UID
+}
+
 // Image Position Patient                              (0020,0032):
 // If not found (ACR_NEMA) we try Image Position       (0020,0030)
 // If not found (ACR-NEMA), we consider Slice Location (0020,1041)
@@ -295,7 +341,6 @@ float gdcmHeaderHelper::GetZSpacing() {
 
 // TODO : find a way to inform the caller nothing was found
 // TODO : How to tell the caller a wrong number of values was found?
-
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
@@ -320,7 +365,7 @@ float gdcmHeaderHelper::GetXOrigin() {
      return 0.;
    return xImPos;
 }
-//----------------------------------------------------------------------------
+
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
@@ -345,7 +390,7 @@ float gdcmHeaderHelper::GetYOrigin() {
      return 0.;
    return yImPos;
 }
-//----------------------------------------------------------------------------
+
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0032 : Image Position Patient
@@ -397,7 +442,7 @@ float gdcmHeaderHelper::GetZOrigin() {
    dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Location (0020,0050)");  
    return 0.; // Hopeless
 }
-//----------------------------------------------------------------------------
+
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0013 : Image Number
@@ -416,7 +461,7 @@ int gdcmHeaderHelper::GetImageNumber() {
   }
   return 0;   //Hopeless
 }
-//----------------------------------------------------------------------------
+
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0008,0060 : Modality
@@ -476,72 +521,6 @@ ModalityType gdcmHeaderHelper::GetModality(void) {
   return Unknow;
 }
 
-//----------------------------------------------------------------------------
-std::string gdcmHeaderHelper::GetStudyUID()
-{
-  return GetPubElValByNumber(0x0020,0x000d); //0020 000d UI REL Study Instance UID
-}
-//----------------------------------------------------------------------------
-std::string gdcmHeaderHelper::GetSeriesUID()
-{
-  return GetPubElValByNumber(0x0020,0x000e); //0020 000e UI REL Series Instance UID
-}
-//----------------------------------------------------------------------------
-std::string gdcmHeaderHelper::GetClassUID()
-{
-  return GetPubElValByNumber(0x0008,0x0016); //0008 0016 UI ID SOP Class UID
-}
-//----------------------------------------------------------------------------
-std::string gdcmHeaderHelper::GetInstanceUID()
-{
-  return GetPubElValByNumber(0x0008,0x0018); //0008 0018 UI ID SOP Instance UID
-}
-//----------------------------------------------------------------------------
-float gdcmHeaderHelper::GetRescaleIntercept()
-{
-  float resInter = 0.;
-  std::string StrRescInter = GetPubElValByNumber(0x0028,0x1052); //0028 1052 DS IMG Rescale Intercept
-  if (StrRescInter != GDCM_UNFOUND) {
-      if( sscanf( StrRescInter.c_str(), "%f", &resInter) != 1) {
-         dbg.Verbose(0, "gdcmHeader::GetRescaleIntercept: Rescale Slope is empty");
-           // bug in the element 0x0028,0x1052
-      }    
-   }
-  return resInter;
-}
-//----------------------------------------------------------------------------
-float gdcmHeaderHelper::GetRescaleSlope()
-{
-  float resSlope = 1.;
-  std::string StrRescSlope = GetPubElValByNumber(0x0028,0x1053); //0028 1053 DS IMG Rescale Slope
-  if (StrRescSlope != GDCM_UNFOUND) {
-      if( sscanf( StrRescSlope.c_str(), "%f", &resSlope) != 1) {
-         dbg.Verbose(0, "gdcmHeader::GetRescaleSlope: Rescale Slope is empty");
-           // bug in the element 0x0028,0x1053
-      }    
-   }  
-	return resSlope;
-}
-
-
-
-
-
-
-
-
-
-gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper()
-{
-  //! \todo
-  for (std::list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
-        it != CoherentGdcmFileList.end(); it++)
-  {
-    delete *it;
-  }
-  CoherentGdcmFileList.clear();
-}
-//----------------------------------------------------------------------------
 /**
   * \ingroup gdcmHeaderHelper
   * \brief gets the info from 0020,0037 : Image Orientation Patient
@@ -576,30 +555,59 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
   }
 }
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------
+// gdcmSerieHeaderHelper
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
+gdcmSerieHeaderHelper::~gdcmSerieHeaderHelper()
+{
+  //! \todo
+  for (std::list<gdcmHeaderHelper*>::iterator it  = CoherentGdcmFileList.begin();
+        it != CoherentGdcmFileList.end(); it++)
+  {
+    delete *it;
+  }
+  CoherentGdcmFileList.clear();
+}
+
+//-----------------------------------------------------------------------------
+// Print
+
+//-----------------------------------------------------------------------------
+// Public
 /**
-  * \ingroup gdcmHeaderHelper
-  * \brief add a gdcmFile to the list based on file name
-  */
+ * \ingroup gdcmHeaderHelper
+ * \brief add a gdcmFile to the list based on file name
+ */
 void gdcmSerieHeaderHelper::AddFileName(std::string filename)
 {
   gdcmHeaderHelper *GdcmFile = new gdcmHeaderHelper( filename.c_str() );
   this->CoherentGdcmFileList.push_back( GdcmFile );
 }
-//----------------------------------------------------------------------------
+
 /**
-  * \ingroup gdcmHeaderHelper
-  * \brief add a gdcmFile to the list
-  */
+ * \ingroup gdcmHeaderHelper
+ * \brief add a gdcmFile to the list
+ */
 void gdcmSerieHeaderHelper::AddGdcmFile(gdcmHeaderHelper *file)
 {
   this->CoherentGdcmFileList.push_back( file );
 }
-//----------------------------------------------------------------------------
+
 /**
-  * \ingroup gdcmHeaderHelper
-  * \brief \todo
-  */
+ * \ingroup gdcmHeaderHelper
+ * \brief \todo
+ */
 void gdcmSerieHeaderHelper::SetDirectory(std::string dir)
 {
   std::list<std::string> filenames_list;
@@ -612,7 +620,7 @@ void gdcmSerieHeaderHelper::SetDirectory(std::string dir)
     this->CoherentGdcmFileList.push_back( file );
   }
 }
-//----------------------------------------------------------------------------
+
 //This could be implemented in a 'Strategy Pattern' approach
 //But as I don't know how to do it, I leave it this way
 //BTW, this is also a Strategy, I don't know this is the best approach :)
@@ -631,17 +639,27 @@ void gdcmSerieHeaderHelper::OrderGdcmFileList()
     FileNameOrdering();
   }
 }
-//----------------------------------------------------------------------------
+
+std::list<gdcmHeaderHelper*> &gdcmSerieHeaderHelper::GetGdcmFileList()
+{
+  return CoherentGdcmFileList;
+}
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
 /**
-  * \ingroup gdcmHeaderHelper
-  * \brief 
-    We may order, considering :
-      -# Image Number
-      -# Image Position Patient
-      -# More to come :)
-*/
-//based on Jolinda's algorithm
+ * \ingroup gdcmHeaderHelper
+ * \brief 
+ *  We may order, considering :
+ *   -# Image Number
+ *   -# Image Position Patient
+ *   -# More to come :)
+ */
 bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
+//based on Jolinda's algorithm
 {
   //iop is calculated based on the file file
   float *cosines = new float[6];
@@ -748,7 +766,7 @@ bool gdcmSerieHeaderHelper::ImagePositionPatientOrdering()
   
   return true;
 }
-//----------------------------------------------------------------------------
+
 //Based on Image Number
 bool gdcmSerieHeaderHelper::ImageNumberOrdering()
 {
@@ -800,16 +818,12 @@ bool gdcmSerieHeaderHelper::ImageNumberOrdering()
   delete[] partition;
   return mult;
 }
-//----------------------------------------------------------------------------
+
 bool gdcmSerieHeaderHelper::FileNameOrdering()
 {
   //using the sort
   //sort(CoherentGdcmFileList.begin(), CoherentGdcmFileList.end());
   return true;
 }
-//----------------------------------------------------------------------------
-std::list<gdcmHeaderHelper*> &gdcmSerieHeaderHelper::GetGdcmFileList()
-{
-  return CoherentGdcmFileList;
-}
-//----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------

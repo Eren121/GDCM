@@ -1,10 +1,11 @@
 // gdcmDictEntry.h
-
+//-----------------------------------------------------------------------------
 #ifndef GDCMDICTENTRY_H
 #define GDCMDICTENTRY_H
 
 #include "gdcmCommon.h"
 
+//-----------------------------------------------------------------------------
 /*
  * the gdcmDictEntry in an element contained by the gdcmDict.
  * It contains :
@@ -14,6 +15,95 @@
  *  - etc.
  */
 class GDCM_EXPORT gdcmDictEntry {
+public:
+   gdcmDictEntry(guint16 group, 
+                 guint16 element,
+                 std::string vr     = "Unknown",
+                 std::string fourth = "Unknown",
+                 std::string name   = "Unknown");
+	
+   static TagKey TranslateToKey(guint16 group, guint16 element);
+   void SetVR(std::string);
+
+   /**
+    * \ingroup     gdcmDictEntry
+    * \brief       tells if the V(alue) R(epresentation) is known (?!)
+    *              
+    * @return 
+    */
+   inline bool gdcmDictEntry::IsVRUnknown() {
+	   if ( vr == "Unknown" )
+		   return true;
+	   return false;
+   }
+
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   returns the Dicom Group Number of the current gdcmDictEntry
+    * return the Dicom Group Number
+    */
+   inline guint16 gdcmDictEntry::GetGroup(void)  {
+    return group; 
+   }
+  
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   returns the Dicom Element Number of the current gdcmDictEntry
+    * return the Dicom Element Number
+    */
+   inline guint16 gdcmDictEntry::GetElement(void)  {
+    return element; 
+   }
+ 
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   returns the Dicom Value Representation of the current gdcmDictEntry
+    * return the Dicom Value Representation
+    */
+   inline std::string gdcmDictEntry::GetVR(void)  {
+    return vr; 
+   }
+ 
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   sets the key of the current gdcmDictEntry
+    * @param k New key to be set.
+    */
+   inline void gdcmDictEntry::SetKey(std::string k)  {
+    key = k; 
+   }
+ 
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   returns the Fourth field of the current gdcmDictEntry
+    * \warning NOT part of the Dicom Standard
+    * \        May be REMOVED an any time
+    * \        NEVER use it
+    * return the Fourth field
+    */
+   inline std::string gdcmDictEntry::GetFourth(void)  {
+    return fourth; 
+   } 
+
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   returns the Dicom Name of the current gdcmDictEntry
+    * \        e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
+    * return the Dicom Name
+    */
+   inline std::string gdcmDictEntry::GetName(void)  {
+    return name; 
+   } 
+ 
+   /**
+    * \ingroup gdcmDictEntry
+    * \brief   Gets the key of the current gdcmDictEntry
+    * @return the key .
+    */
+   inline std::string gdcmDictEntry::GetKey(void)  {
+    return key; 
+   }
+
 private:
    // FIXME : were are the group and element used except from building up
    //         a TagKey. If the answer is nowhere then there is no need
@@ -43,109 +133,7 @@ private:
 	//         DcmDictRangeRestriction groupRestriction;
 	//         DcmDictRangeRestriction elementRestriction;
 	//       };
-public:
-   gdcmDictEntry(guint16 group, 
-                 guint16 element,
-                 std::string vr     = "Unknown",
-                 std::string fourth = "Unknown",
-                 std::string name   = "Unknown");
-	
-   static TagKey TranslateToKey(guint16 group, guint16 element);
-
-//   bool         IsVrUnknown(void);
-	
-//   inline guint16      GetGroup(void);
-//   inline guint16      GetElement(void);
-//   inline std::string  GetVR(void);
-            void         SetVR(std::string);
-//   inline void         SetKey(std::string k);
-//   inline std::string  GetFourth(void);
-//   inline std::string  GetName(void);
-//   inline std::string  GetKey(void);
-
-
-
-/**
- * \ingroup     gdcmDictEntry
- * \brief       tells if the V(alue) R(epresentation) is known (?!)
- *              
- * @return 
- */
-inline bool gdcmDictEntry::IsVrUnknown() {
-	if ( vr == "Unknown" )
-		return true;
-	return false;
-}
-
-
-/**
- * \ingroup gdcmDictEntry
- * \brief   returns the Dicom Group Number of the current gdcmDictEntry
- * return the Dicom Group Number
- */
- inline guint16      gdcmDictEntry::GetGroup(void)  {
-    return group; 
- }
-  
-/**
- * \ingroup gdcmDictEntry
- * \brief   returns the Dicom Element Number of the current gdcmDictEntry
- * return the Dicom Element Number
- */
- inline guint16      gdcmDictEntry::GetElement(void)  {
-    return element; 
- }
- 
- /**
- * \ingroup gdcmDictEntry
- * \brief   returns the Dicom Value Representation of the current gdcmDictEntry
- * return the Dicom Value Representation
- */
- inline std::string      gdcmDictEntry::GetVR(void)  {
-    return vr; 
- }
- 
-/**
- * \ingroup gdcmDictEntry
- * \brief   sets the key of the current gdcmDictEntry
- * @param k New key to be set.
- */
- inline void      gdcmDictEntry::SetKey(std::string k)  {
-    key = k; 
- }
- 
- /**
- * \ingroup gdcmDictEntry
- * \brief   returns the Fourth field of the current gdcmDictEntry
- * \warning NOT part of the Dicom Standard
- * \        May be REMOVED an any time
- * \        NEVER use it
- * return the Fourth field
- */
- inline std::string      gdcmDictEntry::GetFourth(void)  {
-    return fourth; 
- } 
-
- /**
- * \ingroup gdcmDictEntry
- * \brief   returns the Dicom Name of the current gdcmDictEntry
- * \        e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
- * return the Dicom Name
- */
- inline std::string      gdcmDictEntry::GetName(void)  {
-    return name; 
- } 
- 
- /**
- * \ingroup gdcmDictEntry
- * \brief   Gets the key of the current gdcmDictEntry
- * @return the key .
- */
- inline std::string      gdcmDictEntry::GetKey(void)  {
-    return key; 
- }
-
-
 };
 
+//-----------------------------------------------------------------------------
 #endif

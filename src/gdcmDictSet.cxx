@@ -1,5 +1,5 @@
 // gdcmDictEntry
-
+//-----------------------------------------------------------------------------
 #include "gdcmDictSet.h"
 #include "gdcmUtil.h"
 #include <fstream>
@@ -11,6 +11,49 @@
 #endif
 #define PUB_DICT_FILENAME "dicomV3.dic"
 
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
+/** 
+ * \ingroup gdcmDictSet
+ * \brief   The Dictionnary Set obtained with this constructor simply
+ *          contains the Default Public dictionnary.
+ */
+gdcmDictSet::gdcmDictSet(void) {
+   DictPath = BuildDictPath();
+   std::string PubDictFile = DictPath + PUB_DICT_FILENAME;
+   Dicts[PUB_DICT_NAME] = new gdcmDict(PubDictFile);
+}
+
+/**
+ * \ingroup gdcmDictSet
+ * \brief  Destructor 
+ */
+gdcmDictSet::~gdcmDictSet() {
+   for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) {
+      gdcmDict* EntryToDelete = tag->second;
+      if ( EntryToDelete )
+         delete EntryToDelete;
+   }
+   Dicts.clear();
+}
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Print, in an informal fashion, the list of all the dictionaries
+ *          contained is this gdcmDictSet, along with their respective content.
+ * @param   os Output stream used for printing.
+ */
+void gdcmDictSet::Print(std::ostream& os) {
+   for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict){
+      os << "Printing dictionary " << dict->first << std::endl;
+      dict->second->Print(os);
+   }
+}
+
+//-----------------------------------------------------------------------------
+// Public
 /** 
  * \ingroup gdcmDictSet
  * \brief   Consider all the entries of the public dicom dictionnary. 
@@ -39,7 +82,6 @@ std::list<std::string> * gdcmDictSet::GetPubDictTagNames(void) {
  *          A typical usage of this method would be to enable a dynamic
  *          configuration of a Dicom file browser: the admin/user can
  *          select in the interface which Dicom tags should be displayed.
- 
  * \warning Dicom *doesn't* define any name for any 'categorie'
  *          (the dictionnary fourth field was formerly NIH defined
  *           - and no longer he is-
@@ -65,54 +107,6 @@ std::map<std::string, std::list<std::string> > * gdcmDictSet::GetPubDictTagNames
 
 /**
  * \ingroup gdcmDictSet
- * \brief   Obtain from the GDCM_DICT_PATH environnement variable the
- *          path to directory containing the dictionnaries. When
- *          the environnement variable is absent the path is defaulted
- *          to "../Dicts/".
- * @return path to directory containing the dictionnaries
- */
-std::string gdcmDictSet::BuildDictPath(void) {
-   std::string ResultPath;
-   const char* EnvPath = (char*)0;
-   EnvPath = getenv("GDCM_DICT_PATH");
-   if (EnvPath && (strlen(EnvPath) != 0)) {
-      ResultPath = EnvPath;
-      if (ResultPath[ResultPath.length() -1] != '/' )
-         ResultPath += '/';
-      dbg.Verbose(1, "gdcmDictSet::BuildDictPath:",
-                     "Dictionary path set from environnement");
-   } else
-      ResultPath = PUB_DICT_PATH;
-   return ResultPath;
-}
-
-/** 
- * \ingroup gdcmDictSet
- * \brief   The Dictionnary Set obtained with this constructor simply
- *          contains the Default Public dictionnary.
- */
-gdcmDictSet::gdcmDictSet(void) {
-   DictPath = BuildDictPath();
-   std::string PubDictFile = DictPath + PUB_DICT_FILENAME;
-   Dicts[PUB_DICT_NAME] = new gdcmDict(PubDictFile);
-}
-
-
-/**
- * \ingroup gdcmDictSet
- * \brief  Destructor 
- */
-gdcmDictSet::~gdcmDictSet() {
-   for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) {
-      gdcmDict* EntryToDelete = tag->second;
-      if ( EntryToDelete )
-         delete EntryToDelete;
-   }
-   Dicts.clear();
-}
-
-/**
- * \ingroup gdcmDictSet
  * \brief   Loads a dictionary from a specified file, and add it
  *          to already the existing ones contained in this gdcmDictSet.
  * @param   FileName Absolute or relative filename containing the
@@ -122,20 +116,7 @@ gdcmDictSet::~gdcmDictSet() {
  */
 void gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) {
    gdcmDict *NewDict = new gdcmDict(FileName);
-   Dicts[Name] = NewDict;
-}
-
-/**
- * \ingroup gdcmDictSet
- * \brief   Print, in an informal fashion, the list of all the dictionaries
- *          contained is this gdcmDictSet, along with their respective content.
- * @param   os Output stream used for printing.
- */
-void gdcmDictSet::Print(std::ostream& os) {
-   for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict){
-      os << "Printing dictionary " << dict->first << std::endl;
-      dict->second->Print(os);
-   }
+   AppendDict(NewDict,Name);
 }
 
 /**
@@ -158,3 +139,41 @@ gdcmDict * gdcmDictSet::GetDict(DictKey DictName) {
 gdcmDict * gdcmDictSet::GetDefaultPubDict() {
    return GetDict(PUB_DICT_NAME);
 }
+
+/**
+ * \ingroup gdcmDictSet
+ * \brief   Obtain from the GDCM_DICT_PATH environnement variable the
+ *          path to directory containing the dictionnaries. When
+ *          the environnement variable is absent the path is defaulted
+ *          to "../Dicts/".
+ * @return path to directory containing the dictionnaries
+ */
+std::string gdcmDictSet::BuildDictPath(void) {
+   std::string ResultPath;
+   const char* EnvPath = (char*)0;
+   EnvPath = getenv("GDCM_DICT_PATH");
+   if (EnvPath && (strlen(EnvPath) != 0)) {
+      ResultPath = EnvPath;
+      if (ResultPath[ResultPath.length() -1] != '/' )
+         ResultPath += '/';
+      dbg.Verbose(1, "gdcmDictSet::BuildDictPath:",
+                     "Dictionary path set from environnement");
+   } else
+      ResultPath = PUB_DICT_PATH;
+   return ResultPath;
+}
+
+//-----------------------------------------------------------------------------
+// Protected
+bool gdcmDictSet::AppendDict(gdcmDict* NewDict,DictKey Name)
+{
+   Dicts[Name] = NewDict;
+   return(true);
+}
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+
+

@@ -1,5 +1,5 @@
 // gdcm.h
-
+//-----------------------------------------------------------------------------
 #ifndef GDCM_H
 #define GDCM_H
 
@@ -27,8 +27,5 @@
 #include "gdcmHeaderHelper.h"
 #include "gdcmFile.h"
 
-//#include "gdcmTS.h"
-//#include "gdcmVR.h"
-//#include "gdcmUtil.h"
-
+//-----------------------------------------------------------------------------
 #endif // #ifndef GDCM_H

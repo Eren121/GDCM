@@ -1,5 +1,5 @@
 // gdcmElValSet.cxx
-
+//-----------------------------------------------------------------------------
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
 #include "gdcmTS.h"
@@ -10,6 +10,8 @@
 #  include <sstream>
 #endif
 
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
 /**
  * \ingroup gdcmElValSet
  * \brief  Destructor 
@@ -25,42 +27,13 @@ gdcmElValSet::~gdcmElValSet() {
    tagHt.clear();
 }
 
-/**
- * \ingroup gdcmElValSet
- * \brief  add a new Dicom Element pointer to 
- *         the H Table and to the chained List
- * @param   newElValue
- */
-void gdcmElValSet::Add(gdcmElValue * newElValue) {
-
-//	tagHt [newElValue->GetKey()]  = newElValue;
-
-   tagHt.insert( PairHT( newElValue->GetKey(),newElValue) );
-	
-// WARNING : push_bash in listElem ONLY during ParseHeader
-// TODO : something to allow further Elements addition 
-// position to be taken care of !	
-   listElem.push_back(newElValue); 
-}
-
-/**
- * \ingroup gdcmElValSet
- * \brief   Checks if a given Dicom Element exists
- * \        within the H table
- * @param   Group Group   number of the searched Dicom Element 
- * @param   Elem  Element number of the searched Dicom Element 
- * @return  number of occurences
- */
-int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
-	std::string key = TranslateToKey(Group, Elem );
-	return (tagHt.count(key));
-}
-
+//-----------------------------------------------------------------------------
+// Print
 /**
  * \ingroup gdcmElValSet
  * \brief prints the Dicom Elements of the gdcmHeader
  *        using both H table and Chained List
-  * @param   os The output stream to be written to.  
+ * @param   os The output stream to be written to.  
  */
 void gdcmElValSet::Print(std::ostream & os) {
 
@@ -69,11 +42,10 @@ void gdcmElValSet::Print(std::ostream & os) {
    TSKey v;
    std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
- 
-   std::cout << "------------- using tagHt ---------------------" << std::endl; 
-      // Do not remove cout
    std::ostringstream s;
    
+   // Tag HT
+   s << "------------- using tagHt ---------------------" << std::endl; 
    for (TagElValueHT::iterator tag = tagHt.begin();
 	   tag != tagHt.end();
 	   ++tag){
@@ -104,13 +76,11 @@ void gdcmElValSet::Print(std::ostream & os) {
       s << std::endl;
    }
 
-   
+   // List element
    guint32 lgth;
    char greltag[10];  //group element tag
    
- std::cout << "------------ using listElem -------------------" << std::endl; 
-       // Do not remove cout
-   
+   s << "------------ using listElem -------------------" << std::endl; 
    for (ListTag::iterator i = listElem.begin();  
 	   i != listElem.end();
 	   ++i){
@@ -147,6 +117,26 @@ void gdcmElValSet::Print(std::ostream & os) {
    os<<s.str();
 } 
 
+//-----------------------------------------------------------------------------
+// Public
+/**
+ * \ingroup gdcmElValSet
+ * \brief  add a new Dicom Element pointer to 
+ *         the H Table and to the chained List
+ * @param   newElValue
+ */
+void gdcmElValSet::Add(gdcmElValue * newElValue) {
+
+//	tagHt [newElValue->GetKey()]  = newElValue;
+
+   tagHt.insert( PairHT( newElValue->GetKey(),newElValue) );
+	
+// WARNING : push_bash in listElem ONLY during ParseHeader
+// TODO : something to allow further Elements addition 
+// position to be taken care of !	
+   listElem.push_back(newElValue); 
+}
+
 /**
  * \ingroup gdcmElValSet
  * \brief  retrieves a Dicom Element (the first one) using (group, element)
@@ -178,7 +168,6 @@ std::string gdcmElValSet::GetElValueByNumber(guint16 group, guint16 element) {
       return GDCM_UNFOUND;
    return tagHt.find(key)->second->GetValue();
 }
-
 
 /**
  * \ingroup gdcmElValSet
@@ -228,21 +217,25 @@ bool gdcmElValSet::SetElValueByNumber(std::string content,
    return true;
 }
 
-
 /**
  * \ingroup gdcmElValSet
- * \brief   Generate a free TagKey i.e. a TagKey that is not present
- *          in the TagHt dictionary.
- * @param   group The generated tag must belong to this group.  
- * @return  The element of tag with given group which is fee.
+ * \brief   Sets the value length of the Dicom Element
+ * \warning : use with caution !
+ * @param   length
+ * @param   group Group   number of the searched Dicom Element 
+ * @param   elem  Element number of the searched Dicom Element 
+ * @return  boolean
  */
-guint32 gdcmElValSet::GenerateFreeTagKeyInGroup(guint16 group) {
-   for (guint32 elem = 0; elem < UINT32_MAX; elem++) {
-      TagKey key = gdcmDictEntry::TranslateToKey(group, elem);
-      if (tagHt.count(key) == 0)
-         return elem;
-   }
-   return UINT32_MAX;
+bool gdcmElValSet::SetElValueLengthByNumber(guint32 length,
+                                           guint16 group, guint16 element) {
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! tagHt.count(key))
+      return false;
+   if (length%2) length++; // length must be even
+   //tagHt[key]->SetLength(length);
+   ( ((tagHt.equal_range(key)).first)->second )->SetLength(length);	 
+	 
+   return true ;		
 }
 
 /**
@@ -265,31 +258,69 @@ bool gdcmElValSet::SetVoidAreaByNumber(void * area,
 
 /**
  * \ingroup gdcmElValSet
- * \brief   Sets the value length of the Dicom Element
- * \warning : use with caution !
- * @param   length
- * @param   group Group   number of the searched Dicom Element 
- * @param   elem  Element number of the searched Dicom Element 
- * @return  boolean
+ * \brief   Generate a free TagKey i.e. a TagKey that is not present
+ *          in the TagHt dictionary.
+ * @param   group The generated tag must belong to this group.  
+ * @return  The element of tag with given group which is fee.
  */
-bool gdcmElValSet::SetElValueLengthByNumber(guint32 length,
-                                           guint16 group, guint16 element) {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! tagHt.count(key))
-      return false;
-   if (length%2) length++; // length must be even
-   //tagHt[key]->SetLength(length);
-   ( ((tagHt.equal_range(key)).first)->second )->SetLength(length);	 
-	 
-   return true ;		
+guint32 gdcmElValSet::GenerateFreeTagKeyInGroup(guint16 group) {
+   for (guint32 elem = 0; elem < UINT32_MAX; elem++) {
+      TagKey key = gdcmDictEntry::TranslateToKey(group, elem);
+      if (tagHt.count(key) == 0)
+         return elem;
+   }
+   return UINT32_MAX;
 }
 
+/**
+ * \ingroup gdcmElValSet
+ * \brief   Checks if a given Dicom Element exists
+ * \        within the H table
+ * @param   Group Group   number of the searched Dicom Element 
+ * @param   Elem  Element number of the searched Dicom Element 
+ * @return  number of occurences
+ */
+int gdcmElValSet::CheckIfExistByNumber(guint16 Group, guint16 Elem ) {
+	std::string key = gdcmDictEntry::TranslateToKey(Group, Elem );
+	return (tagHt.count(key));
+}
 
 // ==============
 // TODO to be re-written using the chained list instead of the H table
 //      so we can remove the GroupHT from the gdcmHeader
 // =============
+/**
+ * \ingroup gdcmElValSet
+ * \brief   
+ * @param   _fp already open file pointer
+ * @param   type type of the File to be written 
+ *          (ACR-NEMA, ExplicitVR, ImplicitVR)
+ * @return  always "True" ?!
+ */
+bool gdcmElValSet::Write(FILE * _fp, FileType type) {
 
+   	// Question :
+	// Comment pourrait-on savoir si le DcmHeader vient d'un fichier DicomV3 ou non
+	// (FileType est un champ de gdcmHeader ...)
+	// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
+	// no way 
+        // a moins de se livrer a un tres complique ajout des champs manquants.
+        // faire un CheckAndCorrectHeader (?)
+
+   if ( (type == ImplicitVR) || (type == ExplicitVR) )
+      UpdateGroupLength(false,type);
+   if ( type == ACR)
+      UpdateGroupLength(true,ACR);
+
+   WriteElements(type, _fp);
+   return(true);
+}
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
 /**
  * \ingroup gdcmElValSet
  * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
@@ -482,30 +513,4 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    }
 }
 
-/**
- * \ingroup gdcmElValSet
- * \brief   
- * @param   _fp already open file pointer
- * @param   type type of the File to be written 
- *          (ACR-NEMA, ExplicitVR, ImplicitVR)
- * @return  always "True" ?!
- */
-bool gdcmElValSet::Write(FILE * _fp, FileType type) {
-
-   	// Question :
-	// Comment pourrait-on savoir si le DcmHeader vient d'un fichier DicomV3 ou non
-	// (FileType est un champ de gdcmHeader ...)
-	// WARNING : Si on veut ecrire du DICOM V3 a partir d'un DcmHeader ACR-NEMA
-	// no way 
-        // a moins de se livrer a un tres complique ajout des champs manquants.
-        // faire un CheckAndCorrectHeader (?)
-
-   if ( (type == ImplicitVR) || (type == ExplicitVR) )
-      UpdateGroupLength(false,type);
-   if ( type == ACR)
-      UpdateGroupLength(true,ACR);
-
-   WriteElements(type, _fp);
-   return(true);
-}
-
+//-----------------------------------------------------------------------------

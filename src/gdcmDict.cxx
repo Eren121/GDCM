@@ -1,5 +1,5 @@
 // gdcmDict.cxx
-
+//-----------------------------------------------------------------------------
 #include "gdcmDict.h"
 #include "gdcmUtil.h"
 #include <fstream>
@@ -10,6 +10,8 @@
 #  include <sstream>
 #endif
 
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
 /**
  * \ingroup gdcmDict
  * \brief   Construtor
@@ -63,6 +65,8 @@ gdcmDict::~gdcmDict() {
    NameHt.clear();
 }
 
+//-----------------------------------------------------------------------------
+// Print
 /**
  * \brief   Print all the dictionary entries contained in this dictionary.
  *          Entries will be sorted by tag i.e. the couple (group, element).
@@ -114,49 +118,8 @@ void gdcmDict::PrintByName(std::ostream& os) {
    os << s.str();
 }
 
-/**
- * \ingroup gdcmDict
- * \brief   Get the dictionnary entry identified by a given tag (group,element)
- * @param   group   group of the entry to be found
- * @param   element element of the entry to be found
- * @return  the corresponding dictionnary entry when existing, NULL otherwise
- */
-gdcmDictEntry * gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
-   if ( ! KeyHt.count(key))
-      return (gdcmDictEntry*)0; 
-   return KeyHt.find(key)->second;
-}
-
-/**
- * \ingroup gdcmDict
- * \brief   Get the dictionnary entry identified by it's name.
- * @param   name element of the ElVal to modify
- * \warning : NEVER use it !
- *            the 'name' IS NOT an identifier within the Dicom Dicom Dictionary
- *            the name MAY CHANGE between two versions !
- * @return  the corresponding dictionnary entry when existing, NULL otherwise
- */
-gdcmDictEntry * gdcmDict::GetTagByName(TagName name) {
-   if ( ! NameHt.count(name))
-      return (gdcmDictEntry*)0; 
-   return NameHt.find(name)->second;
-}
-
-/**
- * \ingroup gdcmDict
- * \brief  replaces an already existing Dicom Element by a new one
- * @param   NewEntry
- * @return  false if Dicom Element doesn't exist
- */
-bool gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
-   if ( RemoveEntry(NewEntry->gdcmDictEntry::GetKey()) ) {
-       KeyHt[ NewEntry->GetKey()] = NewEntry;
-       return (true);
-   } 
-   return (false);
-}
-
+//-----------------------------------------------------------------------------
+// Public
 /**
  * \ingroup gdcmDict
  * \brief  adds a new Dicom Dictionary Entry 
@@ -174,6 +137,20 @@ bool gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
       KeyHt[NewEntry->GetKey()] = NewEntry;
       return(true);
    }
+}
+
+/**
+ * \ingroup gdcmDict
+ * \brief  replaces an already existing Dicom Element by a new one
+ * @param   NewEntry
+ * @return  false if Dicom Element doesn't exist
+ */
+bool gdcmDict::ReplaceEntry(gdcmDictEntry* NewEntry) {
+   if ( RemoveEntry(NewEntry->gdcmDictEntry::GetKey()) ) {
+       KeyHt[ NewEntry->GetKey()] = NewEntry;
+       return (true);
+   } 
+   return (false);
 }
 
 /**
@@ -209,3 +186,39 @@ bool gdcmDict::RemoveEntry (guint16 group, guint16 element) {
 	return( RemoveEntry(gdcmDictEntry::TranslateToKey(group, element)) );
 }
 
+/**
+ * \ingroup gdcmDict
+ * \brief   Get the dictionnary entry identified by a given tag (group,element)
+ * @param   group   group of the entry to be found
+ * @param   element element of the entry to be found
+ * @return  the corresponding dictionnary entry when existing, NULL otherwise
+ */
+gdcmDictEntry * gdcmDict::GetTagByNumber(guint16 group, guint16 element) {
+   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   if ( ! KeyHt.count(key))
+      return (gdcmDictEntry*)0; 
+   return KeyHt.find(key)->second;
+}
+
+/**
+ * \ingroup gdcmDict
+ * \brief   Get the dictionnary entry identified by it's name.
+ * @param   name element of the ElVal to modify
+ * \warning : NEVER use it !
+ *            the 'name' IS NOT an identifier within the Dicom Dicom Dictionary
+ *            the name MAY CHANGE between two versions !
+ * @return  the corresponding dictionnary entry when existing, NULL otherwise
+ */
+gdcmDictEntry * gdcmDict::GetTagByName(TagName name) {
+   if ( ! NameHt.count(name))
+      return (gdcmDictEntry*)0; 
+   return NameHt.find(name)->second;
+}
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------

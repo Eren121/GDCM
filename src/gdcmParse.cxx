@@ -1,5 +1,5 @@
 // gdcmParse.cxx
-
+//-----------------------------------------------------------------------------
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
 // 'type' : forcing value to bool 'true' or 'false' (performance warning)
@@ -17,7 +17,7 @@
 
 #define str2num(str, typeNum) *((typeNum *)(str))
 
-/////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------------
 /**
  * \ingroup gdcmFile
  * \brief   Parse pixel data from disk and *prints* the result
@@ -28,10 +28,8 @@
  *
  */
 bool gdcmFile::ParsePixelData(void) {
-
 // DO NOT remove the printf s.
 // The ONLY purpose of this methos is to PRINT the content
-
    FILE *fp;
 
    if ( !(fp=Header->OpenFile()))
@@ -246,3 +244,5 @@ bool gdcmFile::ParsePixelData(void) {
    }
    return true;            
 }
+
+//-----------------------------------------------------------------------------
