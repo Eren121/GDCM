@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:57:10 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2004/06/22 15:31:17 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1323,9 +1323,6 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    //          (fffe e0dd) tells us the current SeQuence just ended
    if( group == 0xfffe ) {
       // NO more value field for SQ !
-      //Entry->SetValue("gdcm::Skipped");
-      // appel recursif de Load Value
-      // (meme pb que pour le parsing)
       return;
    }
 
@@ -1338,21 +1335,41 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    // The elements whose length is bigger than the specified upper bound
    // are not loaded. Instead we leave a short notice of the offset of
    // the element content and it's length.
+	
    if (length > MaxSizeLoadEntry) {
+      if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) )
+      {
+         std::ostringstream s;
+         s << "gdcm::NotLoaded (BinEntry)";
+         s << " Address:" << (long)Entry->GetOffset();
+         s << " Length:"  << Entry->GetLength();
+         s << " x(" << std::hex << Entry->GetLength() << ")";
+         BinEntryPtr->SetValue(s.str());
+      }
+      // to be sure we are at the end of the value ...
+      fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);      
+      return;		
+       // Be carefull : a BinEntry IS_A valEntry ...  	
       if (gdcmValEntry* ValEntryPtr = dynamic_cast< gdcmValEntry* >(Entry) )
       {
          std::ostringstream s;
-         s << "gdcm::NotLoaded.";
+         s << "gdcm::NotLoaded. (ValEntry)";
          s << " Address:" << (long)Entry->GetOffset();
          s << " Length:"  << Entry->GetLength();
          s << " x(" << std::hex << Entry->GetLength() << ")";
          ValEntryPtr->SetValue(s.str());
-      }
+      }		
       // to be sure we are at the end of the value ...
-      fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);
-      
+      fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);      
       return;
    }
+
+   // When we find a BinEntry not very much can be done :
+   if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) ) {
+      LoadEntryVoidArea (BinEntryPtr->GetGroup(),BinEntryPtr->GetElement());
+		return;	
+	}
+ 
     
    // Any compacter code suggested (?)
    if ( IsDocEntryAnInteger(Entry) ) {   
