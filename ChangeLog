@@ -1,5 +1,21 @@
 2003-04-16  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * More memmory link related corrections and documentation fixes.
+        Notes on valgrind:
+          - maximum info is obtained with a command of the form:
+            valgrind --leak-check=yes --leak-resolution=high --num-callers=40
+                   --show-reachable=yes PrintHeader
+          - the remaining reachable blocks seem to come from the STL
+            allocation scheme through the usage of map and list. It looks 
+            like this memory cannot be freed but it is not a memory leak
+            (in fact further invocation to the STL would recollect the
+             unused memory allthough it cannot explicitely be freed).
+      * gdcmPython/demo/vtkGdcmDemo.py added: this is a small demo
+        of displaying an image parsed with gdcm and displayed with VTK.
+        Note: some images don't seem to work e.g.
+            python vtkGdcmDemo.py  ../../Data/US-RGB-8-esopecho.dcm
+      * src/gdcmHeader.x: dicom_vr and Dicts are not class members anymore.
+        Allthough this weakens the semantics, it is a ditch attempt to
+        make gdcm more thread friendly.
 
 2003-04-15  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
       * Memory link hunt (by using valgrind through the command

@@ -20,6 +20,7 @@ void EatLeadingAndTrailingSpaces(string & s) {
 typedef  unsigned short guint16;
 typedef  unsigned int guint32;
 
+////////////////////////////////////////////////////////////////////////////
 %typemap(out) list<string> * {
 	PyObject* NewItem = (PyObject*)0;
 	PyObject* NewList = PyList_New(0); // The result of this typemap
@@ -31,6 +32,7 @@ typedef  unsigned int guint32;
 	$result = NewList;
 }
 
+////////////////////////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
 %typemap(out) map<string, list<string> > * {
 	PyObject* NewDict = PyDict_New(); // The result of this typemap
@@ -55,6 +57,7 @@ typedef  unsigned int guint32;
 	$result = NewDict;
 }
 
+////////////////////////////////////////////////////////////////////////////
 // Convert a c++ hash table in a python native dictionary
 %typemap(out) TagElValueHT & {
 	PyObject* NewDict = PyDict_New(); // The result of this typemap
@@ -84,6 +87,13 @@ typedef  unsigned int guint32;
 	$result = NewDict;
 }
 
+////////////////////////////////////////////////////////////////////////////
+// Deals with function returning a C++ string.
+%typemap(out) string  {
+    $result = PyString_FromString(($1).c_str());
+}
+
+////////////////////////////////////////////////////////////////////////////
 %include "gdcmCommon.h"
 %include "gdcmDictEntry.h"
 %include "gdcmDict.h"

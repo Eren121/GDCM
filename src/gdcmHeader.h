@@ -37,10 +37,9 @@ class GDCM_EXPORT gdcmHeader {
 private:
    /// Pointer to the Value Representation Hash Table which contains all
    /// the VR of the DICOM version3 public dictionary. 
-   static gdcmVR *dicom_vr;
- 
-   /// Global dictionary container
-   static gdcmDictSet* Dicts;
+   gdcmVR *dicom_vr;     // Not a class member for thread-safety reasons
+   /// Pointer to global dictionary container
+   gdcmDictSet* Dicts;   // Not a class member for thread-safety reasons
    /// Public dictionary used to parse this header
    gdcmDict* RefPubDict;
    /// Optional "shadow dictionary" (private elements) used to parse this

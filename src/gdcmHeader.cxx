@@ -18,14 +18,9 @@
 // Refer to gdcmHeader::SetMaxSizeLoadElementValue()
 #define _MaxSizeLoadElementValue_   1024
 
-gdcmVR * gdcmHeader::dicom_vr = (gdcmVR*)0;
-gdcmDictSet * gdcmHeader::Dicts    = (gdcmDictSet*)0;
-
 void gdcmHeader::Initialise(void) {
-   if (!gdcmHeader::dicom_vr)
-      gdcmHeader::dicom_vr = gdcmGlobal::GetVR();
-   if (!gdcmHeader::Dicts)
-      gdcmHeader::Dicts = gdcmGlobal::GetDicts();
+   dicom_vr = gdcmGlobal::GetVR();
+   Dicts = gdcmGlobal::GetDicts();
    RefPubDict = Dicts->GetDefaultPubDict();
    RefShaDict = (gdcmDict*)0;
 }

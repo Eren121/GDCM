@@ -280,7 +280,7 @@ return;
  * \brief TODO JPR
  * \warning doit-etre etre publique ?  FIXME JPR
  *
- * @param Data TODO JPR
+ * @param inData TODO JPR
  * @param ExpectedSize TODO JPR
  *
  * @return TODO JPR	
