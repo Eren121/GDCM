@@ -43,7 +43,6 @@
  *    - You can then use gdcmPython for manual test/demos
  *       -# <TT>cd GDCM_HOME/gdcmPython/demo</TT>
  *       -# <TT>python PrintHeader.py</TT>
- *        .
  *    - You can also run the gdcm test suite, which is written in Python:
  *       -# first you need to install the Dicom data files used by the
  *          test suite. The cvs access point is
@@ -52,6 +51,4 @@
  *          Checkout this module in <TT>GDCM_HOME</TT> directory
  *       -# <TT>cd GDCM_HOME/gdcmPython/</TT>
  *       -# <TT>python testSuite.py</TT>
- *        .
- *     .
  */
