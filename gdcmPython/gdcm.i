@@ -104,6 +104,34 @@ extern gdcmGlobal gdcmGlob;
 	$result = NewDict;
 }
 
+%typemap(out) TagHeaderEntryHT {
+	PyObject* NewDict = PyDict_New(); // The result of this typemap
+	string RawName;                   // Element name as gotten from gdcm
+	PyObject* NewKey = (PyObject*)0;  // Associated name as python object
+	string RawValue;                  // Element value as gotten from gdcm
+	PyObject* NewVal = (PyObject*)0;  // Associated value as python object
+
+	for (TagHeaderEntryHT::iterator tag = $1.begin(); tag != $1.end(); ++tag) {
+
+		// The element name shall be the key:
+		RawName = tag->second->GetName();
+		// gdcm unrecognized (including not loaded because their size exceeds
+		// the user specified treshold) elements are exported with their
+		// TagKey as key.
+		if (RawName == "Unknown")
+			RawName = tag->second->GetKey();
+		NewKey = PyString_FromString(RawName.c_str());
+
+		// Element values are striped from leading/trailing spaces
+		RawValue = tag->second->GetValue();
+		EatLeadingAndTrailingSpaces(RawValue);
+		NewVal = PyString_FromString(RawValue.c_str());
+
+		PyDict_SetItem( NewDict, NewKey, NewVal);
+    }
+	$result = NewDict;
+}
+
 ////////////////////////////////////////////////////////////////////////////
 %typemap(out) ListPatient & {
 	PyObject* NewItem = (PyObject*)0;
