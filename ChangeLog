@@ -1,3 +1,9 @@
+2003-07-02  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * src/jpeg/libijg8/jconfig.* : JPR bug fix : now compile on both
+        linux and WINDOWS !
+      * src/gdcmJpeg.cxx : JPR bug fix : erroneous include
+      * src/win32/gdcmdll.dsp : JPR fix for windows compilation
+
 2003-07-02  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * setup.py is again effective on un*x (takes into account the
         addon of the jpeg library)

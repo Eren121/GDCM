@@ -1,5 +1,5 @@
-#include <gdcmFile.h>
 #include <stdio.h>
+#include "gdcmFile.h"
 
 #define DEBUG 0
 
