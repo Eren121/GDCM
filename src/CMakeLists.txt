@@ -81,9 +81,5 @@ IF(CMAKE_SYSTEM MATCHES "SunOS.*")
   ENDIF(NOT CMAKE_COMPILER_IS_GNUCXX)
 ENDIF(CMAKE_SYSTEM MATCHES "SunOS.*")
 
-#The following is not working because when a header file is not found it tries 
-#to find one in the binary dir
-#INSTALL_FILES(/include .h ${libgdcm_la_SOURCES})
 INSTALL_FILES(/include "\\.h$")
-
 INSTALL_TARGETS(/lib/ gdcm)
