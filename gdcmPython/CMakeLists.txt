@@ -18,37 +18,54 @@ FILE(WRITE ${GDCM_BINARY_DIR}/gdcmVersion.py
 # SWIG Wrapping
 #
 
-# Since the file gdcm_wrap.cxx does not exist, mark it as GENERATED:
-SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
-ADD_LIBRARY(pygdcm gdcm_wrap.cxx)
+# CMake 2.0 will fully support Swig wrapping so split based on cmake version:
 
-TARGET_LINK_LIBRARIES(pygdcm 
-  ${PYTHON_LIBRARY}
-  gdcm
-)
-# http://www.cmake.org/pipermail/cmake/2003-August/004190.html
-# SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
+IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
-#-----------------------------------------------------------------------------
-# SWIG Wrapping
-#
+  FIND_PACKAGE(SWIG REQUIRED)
+  INCLUDE(${SWIG_USE_FILE})
 
-# As of 09/10/2003 there was no FindSWIG.cmake
-# later we should use SWIG instead of swig
-# Build our custom command :
-ADD_CUSTOM_COMMAND(
-  TARGET    pygdcm
-  COMMAND   swig
-  ARGS      -python -c++ -I${GDCM_SOURCE_DIR}/src -o 
-            ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx 
-            ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
-  SOURCE    ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i
-  OUTPUTS   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
-  COMMENT   "Generating gdcm_wrap.cxx/gdcm.py based on gdcm.i"
-)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-# This swig command will also outputs gdcm.py :
-SET_SOURCE_FILES_PROPERTIES(gdcm.py GENERATED)
+  SET(CMAKE_SWIG_FLAGS "")
+
+  SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
+  SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "-includeall")
+  SWIG_ADD_MODULE(gdcm python
+    gdcm.i gdcm_wrap.cxx)
+  SWIG_LINK_LIBRARIES(gdcm ${PYTHON_LIBRARIES})
+
+ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
+
+  # Since the file gdcm_wrap.cxx does not exist, mark it as GENERATED:
+  ADD_LIBRARY(pygdcm gdcm_wrap.cxx)
+
+  # As of 09/10/2003 there was no FindSWIG.cmake
+  # later we should use SWIG instead of swig
+  # Build our custom command :
+  ADD_CUSTOM_COMMAND(
+    TARGET    pygdcm
+    COMMAND   swig
+    ARGS      -python -c++ -I${GDCM_SOURCE_DIR}/src -o 
+              ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx 
+              ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
+    SOURCE    ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i
+    OUTPUTS   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
+    COMMENT   "Generating gdcm_wrap.cxx/gdcm.py based on gdcm.i"
+  )
+  # This swig command will also outputs gdcm.py :
+  SET_SOURCE_FILES_PROPERTIES(gdcm.py GENERATED)
+  SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
+
+  TARGET_LINK_LIBRARIES(pygdcm
+    ${PYTHON_LIBRARY}
+    gdcm
+  )
+  # http://www.cmake.org/pipermail/cmake/2003-August/004190.html
+  # SET_TARGET_PROPERTIES(pygdcm PROPERTIES PREFIX "_")
+
+ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
+
 
 #-----------------------------------------------------------------------------
 # VTK Wrapping
