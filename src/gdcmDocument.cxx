@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/10 16:13:18 $
-  Version:   $Revision: 1.120 $
+  Date:      $Date: 2004/11/10 18:27:23 $
+  Version:   $Revision: 1.121 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -186,6 +186,8 @@ Document::Document() : ElementSet(-1)
 
    SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
    Initialise();
+   SwapCode = 0;
+   Filetype = ExplicitVR;
    PrintLevel = 1;  // 'Medium' print level by default
 }
 
@@ -416,6 +418,7 @@ FileType Document::GetFileType()
  */
 std::ifstream* Document::OpenFile()
 {
+   if (Filename.length() == 0) return 0;
    if(Fp)
    {
       dbg.Verbose( 0,

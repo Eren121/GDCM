@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/10 16:22:02 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2004/11/10 18:27:23 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -902,7 +902,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
       }
    }
                                                                                 
-   header->CloseFile();
+   if(fp) header->CloseFile();
 }
 
 /**

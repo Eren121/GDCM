@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/05 21:23:46 $
-  Version:   $Revision: 1.152 $
+  Date:      $Date: 2004/11/10 18:27:23 $
+  Version:   $Revision: 1.153 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -513,7 +513,7 @@ uint8_t* File::GetDecompressed()
       // The decompressed image migth not be loaded yet:
       std::ifstream* fp = HeaderInternal->OpenFile();
       PixelConverter->ReadAndDecompressPixelData( fp );
-      HeaderInternal->CloseFile();
+      if(fp) HeaderInternal->CloseFile();
       decompressed = PixelConverter->GetDecompressed();
       if ( ! decompressed )
       {

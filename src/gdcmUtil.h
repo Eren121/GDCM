@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 11:21:32 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2004/11/10 18:27:24 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,6 +48,8 @@ public:
    static std::string NormalizePath(std::string const & name);
    static std::string GetPath(std::string const &fullName);
    static std::string GetName(std::string const &fullName);
+   static std::string GetCurrentDate();
+   static std::string GetCurrentTime();
 
    static std::string DicomString(const char* s, size_t l);
    static std::string DicomString(const char* s);

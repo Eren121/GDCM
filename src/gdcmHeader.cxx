@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/09 21:55:55 $
-  Version:   $Revision: 1.199 $
+  Date:      $Date: 2004/11/10 18:27:23 $
+  Version:   $Revision: 1.200 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -373,12 +373,12 @@ float Header::GetZSpacing()
          // we assume slices join together
          // (no overlapping, no interslice gap)
          // if they don't, we're fucked up
-         return atof( strSliceThickness.c_str() );
+         return (float)atof( strSliceThickness.c_str() );
       }
    }
    else
    {
-      return atof( strSpacingBSlices.c_str() );
+      return (float)atof( strSpacingBSlices.c_str() );
    }
 }
 

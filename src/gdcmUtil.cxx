@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/05 20:23:14 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2004/11/10 18:27:24 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,11 @@
 
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
+
+// For GetCurrentDate, GetCurrentTime
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include <stdarg.h>  //only included in implementation file
 #include <stdio.h>   //only included in implementation file
@@ -209,6 +214,34 @@ std::string Util::DicomString(const char* s)
    assert( !(r.size() % 2) );
    return r;
 }
+
+/**
+ * \ingroup Util
+ * \brief   Get the current date of the system in a dicom string
+ */
+std::string Util::GetCurrentDate()
+{
+    char tmp[512];
+    time_t tloc;
+    time (&tloc);    
+    strftime(tmp,512,"%Y%m%d", localtime(&tloc) );
+    return tmp;
+}
+
+/**
+ * \ingroup Util
+ * \brief   Get the current time of the system in a dicom string
+ */
+std::string Util::GetCurrentTime()
+{
+    char tmp[512];
+    time_t tloc;
+    time (&tloc);
+    strftime(tmp,512,"%H%M%S", localtime(&tloc) );
+    return tmp;  
+}
+
+
 
 /**
  * \ingroup Util

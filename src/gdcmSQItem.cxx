@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/04 15:08:50 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/11/10 18:27:23 $
+  Version:   $Revision: 1.36 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -109,13 +109,13 @@ void SQItem::Write(std::ofstream* fp, FileType filetype)
       binary_write( *fp, item[j]);  // fffe e000 ffff ffff 
    }
      
-   for (ListDocEntry::iterator i = DocEntries.begin();  
-                              i != DocEntries.end();
-                             ++i)
+   for (ListDocEntry::iterator it = DocEntries.begin();  
+                              it != DocEntries.end();
+                             ++it)
    {   
       // we skip delimitors (start and end one) because 
       // we force them as 'no length'
-      if ( (*i)->GetGroup() == 0xfffe )
+      if ( (*it)->GetGroup() == 0xfffe )
       {
          continue;
       }
@@ -123,12 +123,12 @@ void SQItem::Write(std::ofstream* fp, FileType filetype)
       // Fix in order to make some MR PHILIPS images e-film readable
       // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
       // we just *always* ignore spurious fffe|0000 tag ! 
-      if ( (*i)->GetGroup() == 0xfffe && (*i)->GetElement() == 0x0000 )
+      if ( (*it)->GetGroup() == 0xfffe && (*it)->GetElement() == 0x0000 )
       {
          break; // FIXME : continue; ?!?
       }
 
-      (*i)->Write(fp, filetype);
+      (*it)->Write(fp, filetype);
    }
       
     //we force the writting of an 'Item Delimitation' item
