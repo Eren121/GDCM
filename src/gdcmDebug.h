@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 02:39:09 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/09/24 03:34:27 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,9 +20,6 @@
 #define GDCMDEBUG_H
 
 #include "gdcmCommon.h"
-
-//-----------------------------------------------------------------------------
-#define dbg gdcmDebug::GetReference()
 
 //-----------------------------------------------------------------------------
 
@@ -56,8 +53,9 @@ private:
 /// warning message level to be displayed
    int DebugLevel;
 
-/// Instance of debugging utility.
-   static gdcmDebug debug;
 };
+
+/// Instance of debugging utility.
+static gdcmDebug dbg;
 
 #endif

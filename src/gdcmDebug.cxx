@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/08/31 14:24:47 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/09/24 03:34:27 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,9 +18,6 @@
 
 #include <iostream>
 #include "gdcmDebug.h"
-
-//-----------------------------------------------------------------------------
-gdcmDebug gdcmDebug::debug;
 
 //-----------------------------------------------------------------------------
 /**
@@ -118,13 +115,3 @@ void gdcmDebug::Exit(int a)
    exit(a);    // Found in #include <stdlib.h>
 #endif
 }
-
-/**
- * \brief  Get the debug instance 
- * \return Reference to the debug instance
- */
-gdcmDebug &gdcmDebug::GetReference()
-{
-   return gdcmDebug::debug;
-}
-
