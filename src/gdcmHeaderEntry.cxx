@@ -13,6 +13,9 @@
 #endif
 #include <iomanip> // for std::ios::left, ...
 
+
+#define MAX_SIZE_PRINT_ELEMENT_VALUE 64
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -76,12 +79,17 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
    if (printLevel>=1) {      
       s.setf(std::ios::left);
       s << std::setw(66-GetName().length()) << " ";	     	 
-   } 
+   }
+    
+   s << "[" << GetName()<< "]";
+
      
-   s << "[" << GetName()<< "]";       
-   if( (GetLength()<64) || (printLevel>=3) )
+           
+   if( (GetLength()<MAX_SIZE_PRINT_ELEMENT_VALUE) || 
+       (printLevel>=3)  || 
+       (d2.find("gdcm::NotLoaded.") < d2.length()) )
       s << " [" << d2 << "]";
-   else
+   else 
       s << " [ gdcm::too long for print (" << GetLength() << ") ]";
 
    // Display the UID value (instead of displaying the rough code)  

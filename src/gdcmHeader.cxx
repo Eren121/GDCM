@@ -9,12 +9,6 @@
 #include "gdcmUtil.h"
 #include "gdcmTS.h"
 
-//-----------------------------------------------------------------------------
-// Refer to gdcmHeader::CheckSwap()
-//const unsigned int gdcmHeader::HEADER_LENGTH_TO_READ = 256;
-
-// Refer to gdcmHeader::SetMaxSizeLoadEntry()
-//const unsigned int gdcmHeader::MAX_SIZE_LOAD_ELEMENT_VALUE = 4096;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -60,6 +54,7 @@ gdcmHeader::~gdcmHeader (void) {
 //-----------------------------------------------------------------------------
 // Print
 
+// see gdcmParser.cxx
 //-----------------------------------------------------------------------------
 // Public
 /**

@@ -139,6 +139,7 @@ protected:
 
    static const unsigned int HEADER_LENGTH_TO_READ; 
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
+   static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
 protected:
    int enableSequences;
@@ -175,6 +176,7 @@ private:
    void CheckSwap(void);
    void SwitchSwapToBigEndian(void);
    void SetMaxSizeLoadEntry(long);
+   void SetMaxSizePrintEntry(long);
 
    // DictEntry  related utilities
    gdcmDictEntry *GetDictEntryByName  (std::string Name);
@@ -221,6 +223,11 @@ private:
    // this upper bound is fixed to 1024 bytes (which might look reasonable
    // when one considers the definition of the various VR contents).
    guint32 MaxSizeLoadEntry;
+   // Size treshold above which an element value will NOT be *printed* in 
+   // order no to polute the screen output. By default,
+   // this upper bound is fixed to 64 bytes.   
+   guint32 MaxSizePrintEntry;
+
 };
 
 //-----------------------------------------------------------------------------

@@ -541,8 +541,8 @@ bool gdcmFile::SetImageData(void * inData, size_t ExpectedSize) {
 
 /**
  * \ingroup   gdcmFile
- * \brief Ecrit sur disque les pixels d'UNE image
- *        Aucun test n'est fait sur l'"Endiannerie" du processeur.
+ * \brief Writes on disk A SINGLE Dicom file
+ *        NO test is performed on  processor "Endiannity".
  *        Ca sera à l'utilisateur d'appeler son Reader correctement
  *        (Equivalent a IdImaWriteRawFile) 
  *
@@ -565,10 +565,8 @@ bool gdcmFile::WriteRawData (std::string fileName) {
 
 /**
  * \ingroup   gdcmFile
- * \brief Ecrit sur disque UNE image Dicom
- *        Aucun test n'est fait sur l'"Endiannerie" du processeur.
- *         Ca fonctionnera correctement (?) sur processeur Intel
- *         (Equivalent a IdDcmWrite) 
+ * \brief Writes on disk A SINGLE Dicom file
+ *        NO test is performed on  processor "Endiannity".
  *
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
@@ -638,7 +636,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    FILE * fp1;
    fp1 = fopen(fileName.c_str(),"wb");
    if (fp1 == NULL) {
-      printf("Echec ouverture (ecriture) Fichier [%s] \n",fileName.c_str());
+      printf("Failed to open (write) File [%s] \n",fileName.c_str());
       return (false);
    }
 
@@ -648,6 +646,7 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
       filePreamble=(char*)calloc(128,1);
       fwrite(filePreamble,128,1,fp1);
       fwrite("DICM",4,1,fp1);
+      free (filePreamble);
    }
 
    // --------------------------------------------------------------

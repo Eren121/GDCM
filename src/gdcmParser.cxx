@@ -68,8 +68,12 @@
 // Refer to gdcmParser::CheckSwap()
 const unsigned int gdcmParser::HEADER_LENGTH_TO_READ = 256;
 
-// Refer to gdcmParser::SetMaxSizeLoadElementValue()
+// Refer to gdcmParser::SetMaxSizeLoadEntry()
 const unsigned int gdcmParser::MAX_SIZE_LOAD_ELEMENT_VALUE = 4096;
+
+// Refer to gdcmParser::SetMaxSizePrintEntry()
+// TODO : Right now, better see "define, in gdcmHederEntry.cxx
+const unsigned int gdcmParser::MAX_SIZE_PRINT_ELEMENT_VALUE = 64;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -1071,7 +1075,7 @@ void gdcmParser::WriteEntries(FileType type, FILE * _fp)
       
       // === Deal with the value
       //     -------------------
-      if (vr == "SQ")  continue; // vo "value" to write for the SEQuences
+      if (vr == "SQ")  continue; // no "value" to write for the SEQuences
       if (gr == 0xfffe)continue;
       
       if (vr == "US" || vr == "SS") 
@@ -2105,7 +2109,6 @@ void gdcmParser::SwitchSwapToBigEndian(void)
  * \ingroup gdcmParser
  * \brief   
  * @param NewSize
- * @return 
  */
 void gdcmParser::SetMaxSizeLoadEntry(long NewSize) 
 {
@@ -2117,6 +2120,28 @@ void gdcmParser::SetMaxSizeLoadEntry(long NewSize)
       return;
    }
    MaxSizeLoadEntry = NewSize;
+}
+
+
+/**
+ * \ingroup gdcmParser
+ * \brief
+ * \warning TODO : not yet usable 
+ *          (see MAX_SIZE_PRINT_ELEMENT_VALUE 
+ *           in gdcmHeaderEntry gdcmLoadEntry)
+ *             
+ * @param NewSize
+ */
+void gdcmParser::SetMaxSizePrintEntry(long NewSize) 
+{
+   if (NewSize < 0)
+      return;
+   if ((guint32)NewSize >= (guint32)0xffffffff) 
+   {
+      MaxSizePrintEntry = 0xffffffff;
+      return;
+   }
+   MaxSizePrintEntry = NewSize;
 }
 
 /**

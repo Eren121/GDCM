@@ -69,7 +69,8 @@ enum FileType {
       ExplicitVR,
       ImplicitVR,
       ACR,
-      ACR_LIBIDO
+      ACR_LIBIDO,
+      DICOMDIR
 };
 
 //For now gdcm is not willing cmake, try to be more quiet
