@@ -21,6 +21,10 @@ int main(int argc, char *argv[])
   vtkImageViewer2 *viewer = vtkImageViewer2::New();
   viewer->SetInput ( reader->GetOutput() );
   viewer->SetupInteractor (iren);
+  
+  float *range = reader->GetOutput()->GetScalarRange();
+  viewer->SetColorWindow (range[1] - range[0]);
+  viewer->SetColorLevel (0.5 * (range[1] + range[0]));
 
   iren->Initialize();
   iren->Start();
@@ -30,7 +34,7 @@ int main(int argc, char *argv[])
   writer->SetInput( reader->GetOutput());
   writer->SetFileName( "foo.vtk" );
   writer->SetFileTypeToBinary();
-  //writer->Write();
+  writer->Write();
 
   reader->Delete();
   iren->Delete();
