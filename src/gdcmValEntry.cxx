@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:12 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/12/07 13:39:33 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,7 @@
 =========================================================================*/
 
 #include "gdcmValEntry.h"
+#include "gdcmVR.h"
 #include "gdcmTS.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
@@ -174,6 +175,39 @@ void ValEntry::Print(std::ostream & os)
    os << s.str();
 }
 
+//-----------------------------------------------------------------------------
+// Public
+void ValEntry::SetValue(std::string const & val)
+{
+   // Integers have a special treatement for their length:
+   int l = val.length();
+   if ( l != 0) // To avoid to be cheated by 'zero length' integers
+   {   
+      VRKey vr = GetVR();
+      if( vr == "US" || vr == "SS" )
+      {
+         // for multivaluated items
+         l = (Util::CountSubstring(val, "\\") + 1) * 2;
+      }
+      else if( vr == "UL" || vr == "SL" )
+      {
+         // for multivaluated items
+         l = (Util::CountSubstring(val, "\\") + 1) * 4;;
+      }
+      SetValueOnly(val);
+   }
+   else
+   {
+      std::string finalVal = Util::DicomString( val.c_str() );
+      assert( !(finalVal.size() % 2) );
+
+      l = finalVal.length();
+      SetValueOnly(finalVal);
+   }
+
+   SetLength(l);
+}
+
 /*
  * \brief   canonical Writer
  */
@@ -181,8 +215,6 @@ void ValEntry::WriteContent(std::ofstream* fp, FileType filetype)
 {
    DocEntry::WriteContent(fp, filetype);
 
-   //std::cout << "=====================================" << GetVR() << std::endl;
-      
    if ( GetGroup() == 0xfffe ) 
    {
       return; //delimitors have NO value
@@ -224,12 +256,9 @@ void ValEntry::WriteContent(std::ofstream* fp, FileType filetype)
       return;
    } 
 
-   assert( lgr == GetValue().size() ); 
+   assert( lgr == GetValue().length() );
    binary_write(*fp, GetValue());
 } 
-
-//-----------------------------------------------------------------------------
-// Public
 
 //-----------------------------------------------------------------------------
 // Protected

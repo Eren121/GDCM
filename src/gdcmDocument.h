@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2004/12/07 13:39:33 $
+  Version:   $Revision: 1.68 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -197,16 +197,6 @@ public:
                                  uint16_t group, uint16_t element);
    virtual bool SetEntryByNumber(uint8_t* content, int lgth,
                                  uint16_t group, uint16_t element);
-   // FIXME
-   // Verify the usefull of this method... otherwise remove it
-   // It's body is commented in the .xx
-   //virtual bool SetEntryLengthByNumber(uint32_t length,
-   //                                    uint16_t group, uint16_t element);
-
-   // FIXME
-   // Verify the usefull of this method... otherwise remove it
-   // It's body is commented in the .xx
-   // virtual size_t GetEntryOffsetByNumber(uint16_t group, uint16_t elem);
    virtual void* GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
    // FIXME
    // Verify the usefull of this method... otherwise remove it

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:56 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/12/07 13:39:32 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,8 +23,10 @@
 
 int TestUtil(int , char * [])
 {
+   // Unique UID test
    std::cout << gdcm::Util::CreateUniqueUID("") << std::endl;
    
+   // DicomString test
    const char ref[] = "MONOCHROME1";
    std::string a = "MONOCHROME1";
    a += '\0';
@@ -32,10 +34,14 @@ int TestUtil(int , char * [])
    std::string c = gdcm::Util::DicomString("MONOCHROME1");
    std::string d = "MONOCHROME1";
 
-   if( !gdcm::Util::DicomStringEqual(a,ref) ) return 1;
-   if( !gdcm::Util::DicomStringEqual(b,ref) ) return 1;
-   if( !gdcm::Util::DicomStringEqual(c,ref) ) return 1;
-   if(  gdcm::Util::DicomStringEqual(d,ref) ) return 1;
+   if( !gdcm::Util::DicomStringEqual(a,ref) ) 
+      return 1;
+   if( !gdcm::Util::DicomStringEqual(b,ref) ) 
+      return 1;
+   if( !gdcm::Util::DicomStringEqual(c,ref) ) 
+      return 1;
+   if(  gdcm::Util::DicomStringEqual(d,ref) ) 
+      return 1;
 
    return 0;
 }

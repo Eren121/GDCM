@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.60 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.61 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -460,10 +460,10 @@ int vtkGdcmReader::CheckFileCoherence()
           && (type != "16U") && (type != "16S")
           && (type != "32U") && (type != "32S") )
       {
-         vtkErrorMacro(<< "Bad File Type for file" << filename->c_str());
-         vtkErrorMacro(<< "                      " << type.c_str());
-         vtkErrorMacro(<< "Removing this file from readed files "
-                        << filename->c_str());
+         vtkErrorMacro(<< "Bad File Type for file " << filename->c_str() << "\n"
+                       << "   File type found : " << type.c_str() 
+                       << " (might be 8U, 8S, 16U, 16S, 32U, 32S) \n"
+                       << "   Removing this file from readed files");
          *filename = "GDCM_UNREADABLE";
          continue;
       }
@@ -666,7 +666,6 @@ size_t vtkGdcmReader::LoadImageInMemory(
    {
       for (int line = 0; line < numLines; line++)
       {
-         cerr << line << endl;
          // Copy one line at proper destination:
          memcpy((void*)destination, (void*)source, lineSize);
          source      += lineSize;

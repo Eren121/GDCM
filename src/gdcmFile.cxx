@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 09:32:24 $
-  Version:   $Revision: 1.172 $
+  Date:      $Date: 2004/12/07 13:39:33 $
+  Version:   $Revision: 1.173 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -532,12 +532,10 @@ void File::SetWriteToDecompressed()
       if(HeaderInternal->HasLUT())
       {
          photInt->SetValue("PALETTE COLOR ");
-         photInt->SetLength(14);
       }
       else
       {
          photInt->SetValue("MONOCHROME1 ");
-         photInt->SetLength(12);
       }
 
       PixelWriteConverter->SetReadData(PixelReadConverter->GetDecompressed(),
@@ -561,15 +559,12 @@ void File::SetWriteToRGB()
       
       ValEntry* spp = CopyValEntry(0x0028,0x0002);
       spp->SetValue("3 ");
-      spp->SetLength(2);
 
       ValEntry* planConfig = CopyValEntry(0x0028,0x0006);
       planConfig->SetValue("0 ");
-      planConfig->SetLength(2);
 
       ValEntry* photInt = CopyValEntry(0x0028,0x0004);
       photInt->SetValue("RGB ");
-      photInt->SetLength(4);
 
       if(PixelReadConverter->GetRGB())
       {
@@ -607,15 +602,12 @@ void File::SetWriteToRGB()
       {
          ValEntry* bitsAlloc = CopyValEntry(0x0028,0x0100);
          bitsAlloc->SetValue("8 ");
-         bitsAlloc->SetLength(2);
 
          ValEntry* bitsStored = CopyValEntry(0x0028,0x0101);
          bitsStored->SetValue("8 ");
-         bitsStored->SetLength(2);
 
          ValEntry* highBit = CopyValEntry(0x0028,0x0102);
          highBit->SetValue("7 ");
-         highBit->SetLength(2);
 
          Archive->Push(bitsAlloc);
          Archive->Push(bitsStored);
@@ -661,7 +653,6 @@ void File::SetWriteFileTypeToExplicitVR()
 
    ValEntry* tss = CopyValEntry(0x0002,0x0010);
    tss->SetValue(ts);
-   tss->SetLength(ts.length());
 
    Archive->Push(tss);
 }
@@ -673,7 +664,6 @@ void File::SetWriteFileTypeToImplicitVR()
 
    ValEntry* tss = CopyValEntry(0x0002,0x0010);
    tss->SetValue(ts);
-   tss->SetLength(ts.length());
 }
 
 void File::RestoreWriteFileType()
@@ -705,7 +695,6 @@ void File::SetWriteToLibido()
 
    ValEntry *libidoCode = CopyValEntry(0x0008,0x0010);
    libidoCode->SetValue("ACRNEMA_LIBIDO_1.1");
-   libidoCode->SetLength(10);
    Archive->Push(libidoCode);
 }
 
@@ -718,7 +707,6 @@ void File::SetWriteToNoLibido()
       {
          ValEntry *libidoCode = CopyValEntry(0x0008,0x0010);
          libidoCode->SetValue("");
-         libidoCode->SetLength(0);
          Archive->Push(libidoCode);
       }
    }

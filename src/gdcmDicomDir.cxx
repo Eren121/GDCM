@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/06 11:37:38 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2004/12/07 13:39:33 $
+  Version:   $Revision: 1.88 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -519,28 +519,6 @@ DicomDirPatient * DicomDir::NewPatient()
       entry->SetOffset(0); // just to avoid further missprinting
       entry->SetValue( it->Value );
 
-      // dealing with value length ...
-      
-      if( dictEntry->GetGroup() == 0xfffe)
-      {
-         entry->SetLength(entry->GetValue().length());
-      }
-      else if( dictEntry->GetVR() == "UL" || dictEntry->GetVR() == "SL" )
-      {
-         entry->SetLength( 4 );
-      } 
-      else if( dictEntry->GetVR() == "US" || dictEntry->GetVR() == "SS" )
-      {
-         entry->SetLength(2); 
-      } 
-      else if( dictEntry->GetVR() == "SQ" )
-      {
-         entry->SetLength( 0xffffffff );
-      }
-      else
-      {
-         entry->SetLength( entry->GetValue().length() );
-      }
       p->AddEntry( entry );
    }
 
@@ -639,7 +617,6 @@ void DicomDir::SetElement(std::string const & path, DicomDirType type,
       entry     = new ValEntry( dictEntry ); // Be sure it's never a BinEntry !
 
       entry->SetOffset(0); // just to avoid further missprinting
-      entry->SetLength(0); // just to avoid further missprinting
 
       if( header )
       {
@@ -683,33 +660,7 @@ void DicomDir::SetElement(std::string const & path, DicomDirType type,
             val = it->Value;
       }
 
-     // GDCM_UNFOUND or not !
-
       entry->SetValue( val ); // troubles expected when vr=SQ ...
-
-      if( dictEntry )
-      {
-         if( dictEntry->GetGroup() == 0xfffe )
-         {
-            entry->SetLength( entry->GetValue().length() ); // FIXME 
-         }
-         else if( dictEntry->GetVR() == "UL" || dictEntry->GetVR() == "SL" )
-         {
-            entry->SetLength(4);
-         }
-         else if( dictEntry->GetVR() == "US" || dictEntry->GetVR() == "SS" )
-         {
-            entry->SetLength(2); 
-         }
-         else if( dictEntry->GetVR() == "SQ" )
-         {
-            entry->SetLength( 0xffffffff );
-         }
-         else
-         {
-            entry->SetLength( entry->GetValue().length() );
-         }
-      }
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
       {

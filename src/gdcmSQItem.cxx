@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/06 11:37:38 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2004/12/07 13:39:33 $
+  Version:   $Revision: 1.42 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -200,12 +200,10 @@ bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group,
          } 
          // we assume the constructor didn't fail
          entry = new ValEntry(dictEntry);
-
          if (entry)
          {
             entry->SetValue(val); 
          }
-         entry->SetLength(val.length());
          DocEntries.insert(i,entry);
 
          return true;
@@ -216,7 +214,6 @@ bool SQItem::SetEntryByNumber(std::string const & val, uint16_t group,
          {
             entry->SetValue(val);
          }
-         (*i)->SetLength(val.length()); 
          return true;    
       }
    }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/06 12:54:40 $
-  Version:   $Revision: 1.148 $
+  Date:      $Date: 2004/12/07 13:39:33 $
+  Version:   $Revision: 1.149 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -839,7 +839,6 @@ std::string Document::GetEntryVRByName(TagName const& tagName)
 std::string Document::GetEntryByNumber(uint16_t group, uint16_t element)
 {
    TagKey key = DictEntry::TranslateToKey(group, element);
-   /// \todo use map methods, instead of multimap JPR
    if ( !TagHT.count(key))
    {
       return GDCM_UNFOUND;
@@ -919,9 +918,6 @@ bool Document::SetEntryByName( std::string const & content,
 bool Document::SetEntryByNumber(std::string const& content, 
                                 uint16_t group, uint16_t element) 
 {
-   int c;
-   int l;
-
    ValEntry* valEntry = GetValEntryByNumber(group, element);
    if (!valEntry )
    {
@@ -930,29 +926,7 @@ bool Document::SetEntryByNumber(std::string const& content,
       return false;
    }
    // Non even content must be padded with a space (020H)...
-   std::string finalContent = Util::DicomString( content.c_str() );
-   assert( !(finalContent.size() % 2) );
-   valEntry->SetValue(finalContent);
-
-   // Integers have a special treatement for their length:
-   l = finalContent.length();
-   if ( l != 0) // To avoid to be cheated by 'zero length' integers
-   {   
-      VRKey vr = valEntry->GetVR();
-      if( vr == "US" || vr == "SS" )
-      {
-         // for multivaluated items
-         c = Util::CountSubstring(content, "\\") + 1;
-         l = c*2;
-      }
-      else if( vr == "UL" || vr == "SL" )
-      {
-         // for multivaluated items
-         c = Util::CountSubstring(content, "\\") + 1;
-         l = c*4;;
-      }
-   }
-   valEntry->SetLength(l);
+   valEntry->SetValue(content);
    return true;
 } 
 
@@ -989,53 +963,6 @@ bool Document::SetEntryByNumber(uint8_t*content, int lgth,
 
    return true;
 } 
-
-/**
- * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
- *          in the PubDocEntrySet of this instance
- *          through it's (group, element) and modifies it's length with
- *          the given value.
- * \warning Use with extreme caution.
- * @param l new length to substitute with
- * @param group     group number of the Entry to modify
- * @param element element number of the Entry to modify
- * @return  true on success, false otherwise.
- */
-/*bool Document::SetEntryLengthByNumber(uint32_t l, 
-                                      uint16_t group, uint16_t element) 
-{
-   /// \todo use map methods, instead of multimap JPR
-   TagKey key = DictEntry::TranslateToKey(group, element);
-   if ( !TagHT.count(key) )
-   {
-      return false;
-   }
-   if ( l % 2 )
-   {
-      l++; // length must be even
-   }
-   ( ((TagHT.equal_range(key)).first)->second )->SetLength(l); 
-
-   return true ;
-}*/
-
-/**
- * \brief   Gets (from Header) the offset  of a 'non string' element value 
- *          (LoadElementValues has already be executed)
- * @param group   group number of the Entry 
- * @param elem  element number of the Entry
- * @return File Offset of the Element Value 
- */
-/*size_t Document::GetEntryOffsetByNumber(uint16_t group, uint16_t elem) 
-{
-   DocEntry* entry = GetDocEntryByNumber(group, elem);
-   if (!entry) 
-   {
-      dbg.Verbose(1, "Document::GetDocEntryByNumber: no entry present.");
-      return 0;
-   }
-   return entry->GetOffset();
-}*/
 
 /**
  * \brief   Gets (from Header) a 'non string' element value 

@@ -1,4 +1,12 @@
 2004-12-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/TestUtil.cxx : reformat the source code
+   * vtk/vtkGdcmReader.cxx : remove and change prints
+   * src/gdcmValEntry.[cxx|h] : now set the length of the value when calling
+     SetValue
+   * src/gdcmBinEntry.[cxx|h] : SetValue method don't set the length
+   * src/*.cxx : remove all useless call to SetLength of a ValEntry object
+
+2004-12-07 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmPixelWriteConvert.[h|cxx] : ficnished this class
    * src/gdcmFile.cxx : finished the correctly use of PixelWriteConvert
 

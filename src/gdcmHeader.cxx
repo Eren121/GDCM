@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 02:36:21 $
-  Version:   $Revision: 1.212 $
+  Date:      $Date: 2004/12/07 13:39:33 $
+  Version:   $Revision: 1.213 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -979,7 +979,7 @@ std::string Header::GetPixelType()
    {
       return "FD";
    }
-   if ( bitsAlloc == "12" )
+   else if ( bitsAlloc == "12" )
    {
       // It will be unpacked
       bitsAlloc = "16";
@@ -997,7 +997,7 @@ std::string Header::GetPixelType()
       dbg.Verbose(0, "Header::GetPixelType: unfound Pixel Representation");
       bitsAlloc = "0";
    }
-   if ( sign == "0" )
+   else if ( sign == "0" )
    {
       sign = "U";
    }

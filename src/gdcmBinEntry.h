@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:57 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/12/07 13:39:32 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,6 +48,8 @@ public:
    uint8_t* GetBinArea()  { return BinArea; }
    void  SetBinArea( uint8_t* area, bool self = true );
 
+   /// Sets the value (string) of the current Dicom Document Entry
+   virtual void SetValue(std::string const & val) {SetValueOnly(val);};
 private:
    /// \brief unsecure memory area to hold 'non string' values 
    ///       (ie : Lookup Tables, overlays, icons)   
