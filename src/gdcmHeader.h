@@ -1,11 +1,12 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.30 2003/07/01 09:29:56 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.31 2003/07/01 15:14:36 frog Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
 
 #include <map>
 #include "gdcmCommon.h"
-#include "gdcmUtil.h"
+#include "gdcmVR.h"
+#include "gdcmTS.h"
 #include "gdcmException.h"
 #include "gdcmDictSet.h"
 #include "gdcmElValue.h"

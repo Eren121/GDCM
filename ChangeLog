@@ -1,4 +1,6 @@
 2003-07-01  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader.h doesn't make unnecessary reference to
+        gdcmUtil.h anymore.
       * gdcmPython/Makefile.am now avoids calling the wrappers for the
         clean target.
       * src/gdcm*.[cxx|h] :
