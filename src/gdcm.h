@@ -19,7 +19,7 @@
 #include <iostream>
 #include <stddef.h>   // For size_t
 #include <glib.h>
-#include <stdio.h>    // CLEANME
+#include <stdio.h>    // FIXME For FILE on GCC only
 #include <map>        // The requirement for the hash table (or map) that
                       // we shall use:
                       // 1/ First, next, last (iterators)

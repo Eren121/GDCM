@@ -1,3 +1,8 @@
+2002-11-12 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader::FindLength bug fix when trapping falsely explicit
+        VR files.
+      * src/gdcmHeader::FindVR: hard way fix of falsely explicit vr files.
+
 2002-11-7 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/gdcm.i: added a typemap that converts a C++ hashing table
         to native Python dictionary.

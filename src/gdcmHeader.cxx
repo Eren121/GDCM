@@ -9,6 +9,7 @@ extern "C" {
 #else
 #include <netinet/in.h>
 #endif
+#include <cctype>		// for isalpha
 #include <map>
 #include <sstream>
 #include "gdcmUtil.h"
@@ -267,15 +268,9 @@ void gdcmHeader::CheckSwap()
 
 void gdcmHeader::FindVR( ElValue *ElVal) {
 	char VR[3];
+	string vr;
 	int lgrLue;
 	long PositionOnEntry = ftell(fp);
-	
-	if (filetype != ExplicitVR)
-		return;
-
-	lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
-	VR[2]=0;
-		
 	// Warning: we believe this is explicit VR (Value Representation) because
 	// we used a heuristic that found "UL" in the first tag. Alas this
 	// doesn't guarantee that all the tags will be in explicit VR. In some
@@ -283,17 +278,41 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
 	// within an explicit VR file. Hence we make sure the present tag
 	// is in explicit VR and try to fix things if it happens not to be
 	// the case.
+	bool RealExplicit = true;
+	
+	if (filetype != ExplicitVR)
+		return;
 
-	// FIXME There should be only one occurence returned. Avoid the
-	// first extraction by calling proper method.
-	VRAtr FoundVR = dicom_vr->find(string(VR))->first;
-	if ( ! FoundVR.empty()) {
-		ElVal->SetVR(FoundVR);
+	lgrLue=fread (&VR, (size_t)2,(size_t)1, fp);
+	VR[2]=0;
+	vr = string(VR);
+		
+	// Assume we are reading a falsely explicit VR file i.e. we reached
+	// a tag where we expect reading a VR but are in fact we read the
+	// first to bytes of the length. Then we will interogate (through find)
+	// the dicom_vr dictionary with oddities like "\004\0" which crashes
+	// both GCC and VC++ implentations of the STL map. Hence when the
+	// expected VR read happens to be non-ascii characters we consider
+	// we hit falsely explicit VR tag.
+
+	if ( (!isalpha(VR[0])) && (!isalpha(VR[1])) )
+		RealExplicit = false;
+
+	// CLEANME searching the dicom_vr at each occurence is expensive.
+	// PostPone this test in an optional integrity check at the end
+	// of parsing or only in debug mode.
+	if ( RealExplicit && !dicom_vr->count(vr) )
+		RealExplicit = false;
+
+	if ( RealExplicit ) {
+		ElVal->SetVR(vr);
 		return; 
 	}
 	
 	// We thought this was explicit VR, but we end up with an
 	// implicit VR tag. Let's backtrack.
+	dbg.Verbose(1, "gdcmHeader::FindVR:",
+	               "Falsely explicit vr file");
 	ElVal->SetVR("Implicit");
 	fseek(fp, PositionOnEntry, SEEK_SET);
 }
@@ -301,11 +320,10 @@ void gdcmHeader::FindVR( ElValue *ElVal) {
 void gdcmHeader::FindLength( ElValue * ElVal) {
 	guint32 length32;
 	guint16 length16;
+	string vr = ElVal->GetVR();
 	
-	if (filetype == ExplicitVR) {
-		string vr = ElVal->GetVR();
-		if (   (vr != "Implicit")
-			 && ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) ) {
+	if ( (filetype == ExplicitVR) && (vr != "Implicit") ) {
+		if ( (vr=="OB") || (vr=="OW") || (vr=="SQ") || (vr=="UN") ) {
 			
 			// The following two bytes are reserved, so we skip them,
 			// and we proceed on reading the length on 4 bytes.
@@ -368,11 +386,12 @@ guint32 gdcmHeader::SwapLong(guint32 a) {
 
 /**
  * \ingroup gdcmHeader
- * \brief   remet les octets dans un ordre compatible avec celui du processeur
+ * \brief   Swaps the bytes so they agree with the processor order
 
  * @return  longueur retenue pour le champ 
  */
 guint16 gdcmHeader::SwapShort(guint16 a) {
+	//FIXME how could sw be equal to 2143 since we never set it this way ?
 	if ( (sw==4321)  || (sw==2143) )
 		a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
 	return (a);
@@ -383,6 +402,15 @@ void gdcmHeader::SkipElementValue(ElValue * ElVal) {
 	(void)fseek(fp, (long)ElVal->GetLength(), SEEK_CUR);
 }
 
+/**
+ * \ingroup       gdcmHeader
+ * \brief         Loads the element if it's size is not to big.
+ * @param ElVal   Element whose value shall be loaded. 
+ * @param MaxSize Size treshold above which the element value is not
+ *                loaded in memory. The element value is allways loaded
+ *                when MaxSize is equal to UINT32_MAX.
+ * @return  
+ */
 void gdcmHeader::LoadElementValue(ElValue * ElVal) {
 	size_t item_read;
 	guint16 group  = ElVal->GetGroup();
