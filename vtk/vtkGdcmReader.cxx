@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.18 2003/08/29 09:47:13 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.19 2003/09/10 09:31:55 malaterre Exp $
 // //////////////////////////////////////////////////////////////
 // WARNING TODO CLENAME 
 // Actual limitations of this code:
@@ -48,6 +48,7 @@
 #include <vtkPointData.h>
 #include "vtkGdcmReader.h"
 #include "gdcm.h"
+#include "gdcmHeaderHelper.h"
 
 vtkGdcmReader::vtkGdcmReader()
 {
@@ -210,7 +211,7 @@ int vtkGdcmReader::CheckFileCoherence()
      fclose(fp);
    
      // Stage 1.2: check for Gdcm parsability
-     gdcmHeader GdcmHeader(FileName->c_str());
+     gdcmHeaderHelper GdcmHeader(FileName->c_str());
      if (!GdcmHeader.IsReadable())
        {
        vtkErrorMacro("Gdcm cannot parse file " << FileName->c_str());
@@ -295,6 +296,17 @@ int vtkGdcmReader::CheckFileCoherence()
        ReturnedTotalNumberOfPlanes += NZ - 1; // First plane already added
        this->ImageType = type;
        this->PixelSize = GdcmHeader.GetPixelSize();
+       
+       //Set image spacing
+       this->DataSpacing[0] = GdcmHeader.GetXSpacing();
+       this->DataSpacing[1] = GdcmHeader.GetYSpacing();
+       this->DataSpacing[2] = GdcmHeader.GetZSpacing();
+
+       //Set image origin
+       this->DataOrigin[0] = GdcmHeader.GetXOrigin();
+       this->DataOrigin[1] = GdcmHeader.GetYOrigin();
+       this->DataOrigin[2] = GdcmHeader.GetZOrigin();
+       
        }
      } // End of loop on FileName
 
@@ -423,7 +435,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
              const unsigned long UpdateProgressTarget,
              unsigned long & UpdateProgressCount)
 {
-  vtkDebugMacro("Copying to memmory image" << FileName.c_str());
+  vtkDebugMacro("Copying to memory image" << FileName.c_str());
   gdcmFile GdcmFile(FileName.c_str());
   size_t size = GdcmFile.GetImageDataSize();
 
