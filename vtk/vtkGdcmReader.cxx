@@ -422,7 +422,6 @@ int vtkGdcmReader::CheckFileCoherence()
       }
       fclose(fp);
 
-      cout << " Try to gdcmHeader ... " << endl;   
       // Stage 1.2: check for Gdcm parsability
       gdcmHeaderHelper GdcmHeader(FileName->c_str(), false, true);
       //                             true : for enableSequences
@@ -635,7 +634,8 @@ size_t vtkGdcmReader::LoadImageInMemory(
    {
       size        = GdcmFile.GetImageDataSize();
       Source      = (unsigned char*)GdcmFile.GetImageData();
-   }
+   } 
+   
    unsigned char * pSource     = Source; //pointer for later deletion
    unsigned char * Destination = Dest + size - LineSize;
 
@@ -655,6 +655,16 @@ size_t vtkGdcmReader::LoadImageInMemory(
          UpdateProgressCount++;
       }
    }
+   
+// DO NOT remove this commented out code .
+// Nobody knows what's expecting you ...
+// Just to 'see' what was actually read on disk :-(
+
+//   FILE * f2;
+//   f2 = fopen("SpuriousFile.RAW","wb");
+//   fwrite(Dest,size,1,f2);
+//   fclose(f2); 
+   
    //GetImageData allocate a (void*)malloc, remove it:
    free(pSource);
    return size;

@@ -120,6 +120,7 @@ public:
     *          of the current Dicom Header Entry
     */ 
    inline void         SetReadLength(guint32 l)  { ReadLength   = l; };
+
    /**
     * \ingroup gdcmHeaderEntry
     * \brief   Sets only 'Usable Length' (*not* 'Read Length')

@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
   vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
 
   vtkImageViewer2 *viewer = vtkImageViewer2::New();
+  
   if( reader->GetLookupTable() )
   {
     //convert to color:
@@ -78,6 +79,7 @@ int main(int argc, char *argv[])
     map->Delete();
   }
   else
+  
   {
     viewer->SetInput ( reader->GetOutput() );
   }

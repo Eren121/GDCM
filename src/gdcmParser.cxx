@@ -28,6 +28,11 @@
 #define UI1_2_840_10008_1_2_2    "1.2.840.10008.1.2.2"
 #define UI1_2_840_10008_1_2_1_99 "1.2.840.10008.1.2.1.99"
 
+typedef struct {
+   guint32 totalSQlength;
+   guint32 alreadyParsedlength;
+} pileElem;
+
 //-----------------------------------------------------------------------------
 // Refer to gdcmParser::CheckSwap()
 const unsigned int gdcmParser::HEADER_LENGTH_TO_READ = 256;
@@ -126,7 +131,7 @@ void gdcmParser::PrintEntry(std::ostream & os) {
   * \ingroup gdcmParser
   * \brief   Prints the Header Entries (Dicom Elements)
   *          from the chained list
-  *          and skips the elements belonging to a SeQuence
+  *          and skips the elements belonging to a 'no length' SeQuence
   * @return
   */ 
 void gdcmParser::PrintEntryNoSQ(std::ostream & os) {
@@ -155,38 +160,115 @@ void gdcmParser::PrintEntryNoSQ(std::ostream & os) {
   * \ingroup gdcmParser
   * \brief   Prints the Header Entries (Dicom Elements)
   *          from the chained list
-  *          and indents the elements belonging to a SeQuence
+  *          and indents the elements belonging to any SeQuence
+  * \warning : will be removed
   * @return
   */ 
 void gdcmParser::PrintEntryNiceSQ(std::ostream & os) {
+   pileElem pile[50]; // Hope embedded sequence depth is no more than 50
+   int top =-1;
    int countSQ = 0;
+   int currentParsedlength = 0;
+   int totalElementlength;
    std::ostringstream tab; 
    tab << "   ";
+   
+   int DEBUG = 0;  // Sorry; Dealing with e-film breaker images
+                   // will (certainly) cause a lot of troubles ...
+                   // I prefer keeping my 'trace' on .		   
+   
    for (ListTag::iterator i = listEntries.begin();  
-        i != listEntries.end();
-        ++i)
-   {
-       // we ignore '0 length' SeQuences
-       if ( (*i)->GetVR() == "SQ" && (*i)->GetReadLength()!=0){
-          countSQ ++;
-       }
-       // a SeQuence is over when a Sequence Delimiter Item is found
-       // pb : 'actual length' Sequence have NO Sequence Delimiter
-       // --> They 'never' finish : check the global length !
-       if ( (*i)->GetGroup() == 0xfffe  && (*i)->GetElement() == 0xe0dd){
-          countSQ --;
-          continue;
-       } 
+      i != listEntries.end();
+       ++i) {
+      if ( (*i)->GetVR() == "SQ" && (*i)->GetReadLength() != 0) {   // SQ found
+         countSQ++;
+	 top ++;	 
+	    if ( top >= 50) {
+               std::cout << "Kaie ! Kaie! SQ stack overflow" << std::endl;
+	       return;
+            }
+	 if (DEBUG) cout << "\n >>>>> empile niveau " << top 
+	                 << "; Lgr SeQ: " << (*i)->GetReadLength() 
+                         << "\n" <<endl;
+	      	 
+	 pile[top].totalSQlength = (*i)->GetReadLength();
+	 pile[top].alreadyParsedlength = 0; 
+	 currentParsedlength = 0;	   	       
 
-                    
-       if (countSQ != 0) { 
-          for (int i=0;i<countSQ;i++)
-	     os << tab.str();
-       } 
-       (*i)->SetPrintLevel(printLevel);
-       (*i)->Print(os);         
-   } 
+      } else {                              // non SQ found
+      
+         if (countSQ != 0) {                // we are 'inside a SeQuence'
+            if ( (*i)->GetGroup()==0xfffe  && (*i)->GetElement()==0xe0dd){
+	       // we just found 'end of SeQuence'
+               
+	       if (DEBUG)
+                   std::cout << "fffe,e0dd : depile" << std::endl;
+               currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2			     	       
+	       countSQ --;
+               top --; 
+               pile[top].alreadyParsedlength +=  currentParsedlength;
+            } else {
+	       // we are on a 'standard' elem
+	       // or a Zero-length SeQuence
+	       
+	       totalElementlength =  (*i)->GetFullLength();	       
+	       currentParsedlength += totalElementlength;				 
+               pile[top].alreadyParsedlength += totalElementlength;
+	       
+               if (pile[top].totalSQlength == 0xffffffff) {
+                  if (DEBUG)
+		     std::cout << "totalSeQlength == 0xffffffff" 
+                               << std::endl; 
+               } else {
+	          if (DEBUG) 
+                       cout << "alrdyPseLgt:"
+		       << pile[top].alreadyParsedlength << " totSeQlgt: " 
+		       << pile[top].totalSQlength << " curPseLgt: " 
+		       << currentParsedlength
+		       << endl;
+                  while (pile[top].alreadyParsedlength==pile[top].totalSQlength) {
+		  
+		     if (DEBUG) 
+                         std::cout << " \n<<<<<< On depile niveau " << top 
+                                   << "\n" <<  std::endl;
+		     
+                     currentParsedlength = pile[top].alreadyParsedlength;
+                     countSQ --;
+                     top --;
+	             if (top >=0) {
+			
+                        pile[top].alreadyParsedlength +=  currentParsedlength +12;
+			                        // 12 : length of 'SQ embedded' SQ element
+                        currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2
+									     		     
+		        if (DEBUG)
+                             std::cout << pile[top].alreadyParsedlength << " " 
+                                       << pile[top].totalSQlength << " " 
+                                       << currentParsedlength
+                                       << std::endl;
+                     }		     		     
+		     if (top == -1) {
+                        currentParsedlength = 0;
+                        break;
+                     }		     			   		     
+                  }
+               }				
+            }              
+         }   // end : 'inside a SeQuence'   
+      }
+      
+      if (countSQ != 0) { 
+         for (int i=0;i<countSQ;i++)
+	    os << tab.str();
+      } 
+      (*i)->SetPrintLevel(printLevel);
+      (*i)->Print(os);
+             
+   } // end for     
 }
+
+
+
 /**
   * \brief   Prints The Dict Entries of THE public Dicom Dictionary
   * @return
@@ -1380,25 +1462,14 @@ void gdcmParser::LoadHeaderEntry(gdcmHeaderEntry *Entry)  {
    guint16 group  = Entry->GetGroup();
    std::string  vr= Entry->GetVR();
    guint32 length = Entry->GetLength();
-   bool SkipLoad  = false;
 
    fseek(fp, (long)Entry->GetOffset(), SEEK_SET);
-   
-   // the test was commented out to 'go inside' the SeQuences
-   // we don't any longer skip them !
-    
-   // if( vr == "SQ" )  //  (DO NOT remove this comment)
-   //    SkipLoad = true;
 
    // A SeQuence "contains" a set of Elements.  
    //          (fffe e000) tells us an Element is beginning
    //          (fffe e00d) tells us an Element just ended
    //          (fffe e0dd) tells us the current SeQuence just ended
-   if( group == 0xfffe )
-      SkipLoad = true;
-
-   if ( SkipLoad ) {
-      Entry->SetLength(0);
+   if( group == 0xfffe ) {
       Entry->SetValue("gdcm::Skipped");
       return;
    }
@@ -1508,6 +1579,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
    //guint16 group   = Entry->GetGroup(); //FIXME
    std::string  vr = Entry->GetVR();
    guint16 length16;
+       
    
    if ( (filetype == ExplicitVR) && (! Entry->IsImplicitVR()) ) 
    {
@@ -1862,8 +1934,7 @@ void gdcmParser::SkipHeaderEntry(gdcmHeaderEntry *entry)
  */
 void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 FoundLength) 
 {
-   Entry->SetReadLength(FoundLength); // will be updated only if a bug is found
-     
+   Entry->SetReadLength(FoundLength); // will be updated only if a bug is found        
    if ( FoundLength == 0xffffffff) {
       FoundLength = 0;
    }
@@ -1879,7 +1950,7 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
    }
       
    // Sorry for the patch!  
-   // XMedCom did the trick to read some nasty GE images ...
+   // XMedCom did the trick to read some naughty GE images ...
    if (FoundLength == 13) {
       // The following 'if' will be removed when there is no more
       // images on Creatis HDs with a 13 length for Manufacturer...
@@ -1907,15 +1978,16 @@ void gdcmParser::FixHeaderEntryFoundLength(gdcmHeaderEntry *Entry, guint32 Found
          FoundLength =0;      // ReadLength is unchanged 
    } 
     
-   // a SeQuence Element is beginning                                          
-   // fffe|e000 is just a marker, its length *should be* zero                                               
+   // we found a 'delimiter' element                                         
+   // fffe|xxxx is just a marker, we don't take its length into account                                                   
    else if(Entry->GetGroup() == 0xfffe)
-   { 
+   {    
                                          // *normally, fffe|0000 doesn't exist ! 
      if( Entry->GetElement() != 0x0000 ) // gdcm-MR-PHILIPS-16-Multi-Seq.dcm
-                                         // causes extra troubles :-(                                                        
-         FoundLength =0;
-   }         
+                                         // causes extra troubles :-(                                                              	
+        FoundLength =0;
+   } 
+           
    Entry->SetUsableLength(FoundLength);
 }
 

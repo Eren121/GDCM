@@ -1,12 +1,32 @@
+2004-04-22  Jean-Pierre Roux
+     * ENH Minor changes to the Print() methods
+     * ADD gdcmParser::PrintEntryNiceSQ() to allow SQ-indented
+           Header printing. Example given with :
+	   PrintHeader fileName  2 new
+          (SQ based tree-like structure still to be done for the Header ...)
+	   
 2004-04-22  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * ENH: Some cosmetic clean up for compilation with -W -Wall -Werror
-		 * ENH: Change malloc/calloc/free with c++ equivalent
+         1. I have added some unsigned where needed
+         2. Some function parameter not used -> (void)
+         3. In gdcmDicomDir.cxx, add GDCM_DICOMDIR_NONE case
+         4. g++ don't like character '\' in comment
+         5. #define jpeg_create_decompress  jCreaDecompress
+                    this really need to be fixed
+         6. virtualize destructor of gdcmObject ... leakage
+         7. sscanf(g->first.c_str(),"%x",&gr_bid); 
+                    this also really need to be fixed
+         8. gdcm/src/jpeg/libijg8/CMakeLists.txt, 
+                    remove compression file 
+                    (as we only do decompression, right ?)     
+     * ENH: Change malloc/calloc/free with c++ equivalent
 
-2004-21-02  Jean-Pierre Roux
+2004-04-21  Jean-Pierre Roux
      * FIX gdcmHeaderHelper::GetXSpacing
-           when a single value is found, xpacing is now defaulted to yspacing
+           when a single value is found (bug ?), xpacing is now 
+           defaulted to yspacing
 	   
-2004-19-02  Jean-Pierre Roux
+2004-04-19  Jean-Pierre Roux
      * ADD gdcmData/Wrist.pap (PAPYRUS 3.0 -single frame-) for checking purpose
      * ENH add parameters :
                bool  exception_on_error = false, 
@@ -16,7 +36,7 @@
      * FIX vtk/vtkGdcmReader.cxx now uses  enable_sequences = true in gdcmFile
            to allow reading of PAPYRUS 3.0 files 
 	      
-2004-06-02  Jean-Pierre Roux
+2004-04-06  Jean-Pierre Roux
      * ADD gdcmData/E00001S03I0015.dcm for SQ checking purpose
      
 2004-04-02  Jean-Pierre Roux

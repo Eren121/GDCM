@@ -107,8 +107,8 @@ public:
       {PrintEntry(os);};
    virtual void PrintEntry      (std::ostream &os = std::cout);
    virtual void PrintEntryNoSQ  (std::ostream &os = std::cout);
+   // the 2 following will be merged
    virtual void PrintEntryNiceSQ(std::ostream &os = std::cout);
-
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
 

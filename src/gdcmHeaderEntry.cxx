@@ -104,7 +104,7 @@ void gdcmHeaderEntry::Print(std::ostream & os) {
          s << " [gdcm::too long for print (" << GetLength() << ") ]";
    }
    
-   // Display the UID value (instead of displaying the rough code)  
+   // Display the UID value (instead of displaying only the rough code)  
    if (g == 0x0002) {  // Any more to be displayed ?
       if ( (e == 0x0010) || (e == 0x0002) )
          s << "  ==>\t[" << ts->GetValue(v) << "]";
