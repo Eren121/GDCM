@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:31 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/03/02 17:23:32 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,6 +106,7 @@ int main(int argc, char *argv[])
       std::cout <<std::endl<<fileName<<" is NOT Readable"<<std::endl;
    std::cout<<std::flush;
    delete e1;
+   delete f1;
 
    return 0;
    
