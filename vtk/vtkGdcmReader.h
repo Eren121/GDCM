@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.7 2003/07/04 17:12:43 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.8 2003/07/07 09:10:33 regrain Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
@@ -27,6 +27,9 @@ protected:
   int CheckFileCoherence();
 
 private:
+  void RemoveAllInternalFileName(void);
+  void AddInternalFileName(const char* name);
+
   //BTX
   // Number of columns of the image/volume to be loaded
   int NumColumns;
@@ -41,6 +44,7 @@ private:
   // List of filenames to be read in order to build a stack of images
   // or volume. The order in the list shall be the order of the images.
   std::list<std::string> FileNameList;
+  std::list<std::string> InternalFileNameList;
 
   size_t LoadImageInMemory(std::string FileName, unsigned char * Dest,
                            const unsigned long UpdateProgressTarget,

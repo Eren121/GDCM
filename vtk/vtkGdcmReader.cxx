@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.14 2003/07/04 17:12:43 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.15 2003/07/07 09:10:33 regrain Exp $
 #include <stdio.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
@@ -15,7 +15,8 @@ vtkGdcmReader::vtkGdcmReader()
 vtkGdcmReader::~vtkGdcmReader()
 { 
   // FIXME free memory
-  this->FileNameList.clear();
+  this->RemoveAllFileName();
+  this->InternalFileNameList.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -44,9 +45,26 @@ void vtkGdcmReader::SetFileName(const char *name) {
   vtkImageReader2::SetFileName(name);
   // Since we maintain a list of filenames, when building a volume,
   // (see vtkGdcmReader::AddFileName), we additionaly need to purge
-  // this list when we manually positionate the filename:
+  // this list when we manually positionate the filename.
   this->FileNameList.clear();
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+// Adds a file name to the internal list of images to read.
+void vtkGdcmReader::RemoveAllInternalFileName(void)
+{
+  this->InternalFileNameList.clear();
+}
+
+//----------------------------------------------------------------------------
+// Adds a file name to the internal list of images to read.
+void vtkGdcmReader::AddInternalFileName(const char* name)
+{
+  char * LocalName = new char[strlen(name) + 1];
+  strcpy(LocalName, name);
+  this->InternalFileNameList.push_back(LocalName);
+  delete[] LocalName;
 }
 
 //----------------------------------------------------------------------------
@@ -68,6 +86,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
    if (! this->FileNameList.empty()  )
      {
      vtkDebugMacro("Using the AddFileName specified files");
+	  this->InternalFileNameList=this->FileNameList;
      return;
      }
 
@@ -78,11 +97,12 @@ void vtkGdcmReader::BuildFileListFromPattern()
      return;
      }
 
+	this->RemoveAllInternalFileName();
    for (int idx = this->DataExtent[4]; idx <= this->DataExtent[5]; ++idx)
      {
      this->ComputeInternalFileName(idx);
      vtkDebugMacro("Adding file " << this->InternalFileName);
-     this->AddFileName(this->InternalFileName);
+     this->AddInternalFileName(this->InternalFileName);
      }
 }
 
@@ -106,7 +126,7 @@ int vtkGdcmReader::CheckFileCoherence()
 	int ReturnedTotalNumberOfPlanes = 0;   // The returned value.
 
    this->BuildFileListFromPattern();
-   if (this->FileNameList.empty())
+   if (this->InternalFileNameList.empty())
      {
      vtkErrorMacro("FileNames are not set.");
      return 0;
@@ -118,8 +138,8 @@ int vtkGdcmReader::CheckFileCoherence()
    // Loop on the filenames:
    // - check for their existence and gdcm "parasability"
    // - get the coherence check done:
-   for (std::list<std::string>::iterator FileName  = FileNameList.begin();
-                                        FileName != FileNameList.end();
+   for (std::list<std::string>::iterator FileName  = InternalFileNameList.begin();
+                                        FileName != InternalFileNameList.end();
                                       ++FileName)
      {
      // The file is always added in the number of planes
@@ -239,8 +259,8 @@ int vtkGdcmReader::CheckFileCoherence()
    ///////// The files we CANNOT load are flaged. On debugging purposes
    // count the loadable number of files and display thir number:
    int NumberCoherentFiles = 0;
-   for (std::list<std::string>::iterator Filename  = FileNameList.begin();
-                                        Filename != FileNameList.end();
+   for (std::list<std::string>::iterator Filename  = InternalFileNameList.begin();
+                                        Filename != InternalFileNameList.end();
                                       ++Filename)
      {
      if (*Filename != "GDCM_UNREADABLE")
@@ -307,7 +327,7 @@ void vtkGdcmReader::ExecuteInformation()
   this->DataExtent[1] = this->NumColumns - 1;
   this->DataExtent[2] = 0;
   this->DataExtent[3] = this->NumLines - 1;
-  if(this->FileNameList.size() > 1)
+  if(this->InternalFileNameList.size() > 1)
     {
     this->DataExtent[4] = 0;
     this->DataExtent[5] = this->TotalNumberOfPlanes - 1;
@@ -407,7 +427,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
 // same as the file extent/order.
 void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 {
-  if (this->FileNameList.empty())
+  if (this->InternalFileNameList.empty())
     {
     vtkErrorMacro("A least a valid FileName must be specified.");
     return;
@@ -418,55 +438,67 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
   data->SetExtent(this->DataExtent);
   data->GetPointData()->GetScalars()->SetName("DicomImage-Volume");
 
-  // The memory size for a full stack of images of course depends
-  // on the number of planes and the size of each image:
-  size_t StackNumPixels = this->NumColumns * this->NumLines
-                        * this->TotalNumberOfPlanes;
-  size_t stack_size = StackNumPixels * this->PixelSize;
-  // Allocate pixel data space itself.
-  unsigned char *mem = new unsigned char [stack_size];
+  // Test if output has valid extent
+  // Prevent memory errors
+  if((this->DataExtent[1]-this->DataExtent[0]>0) &&
+     (this->DataExtent[3]-this->DataExtent[2]>0) &&
+     (this->DataExtent[5]-this->DataExtent[4]>0))
+    {
+    // The memory size for a full stack of images of course depends
+    // on the number of planes and the size of each image:
+    size_t StackNumPixels = this->NumColumns * this->NumLines
+                          * this->TotalNumberOfPlanes;
+    size_t stack_size = StackNumPixels * this->PixelSize;
+    // Allocate pixel data space itself.
+    unsigned char *mem = new unsigned char [stack_size];
 
-  // Variables for the UpdateProgress. We shall use 50 steps to signify
-  // the advance of the process:
-  unsigned long UpdateProgressTarget = (unsigned long) ceil (this->NumLines
-                                     * this->TotalNumberOfPlanes
-                                     / 50.0);
-  // The actual advance measure:
-  unsigned long UpdateProgressCount = 0;
+    // Variables for the UpdateProgress. We shall use 50 steps to signify
+    // the advance of the process:
+    unsigned long UpdateProgressTarget = (unsigned long) ceil (this->NumLines
+                                       * this->TotalNumberOfPlanes
+                                       / 50.0);
+    // The actual advance measure:
+    unsigned long UpdateProgressCount = 0;
 
-  // Feeling the allocated memory space with each image/volume:
-  unsigned char * Dest = mem;
-  for (std::list<std::string>::iterator FileName  = FileNameList.begin();
-                                        FileName != FileNameList.end();
-                                      ++FileName)
-    { 
-    // Images that were tagged as unreadable in CheckFileCoherence()
-    // are substituted with a black image to let the caller visually
-    // notice something wrong is going on:
-    if (*FileName != "GDCM_UNREADABLE")
-      {
-      Dest += this->LoadImageInMemory(*FileName, Dest,
-                                      UpdateProgressTarget,
-                                      UpdateProgressCount);
-      } else {
-      // We insert a black image in the stack for the user to be aware that
-      // this image/volume couldn't be loaded. We simply skip one image
-      // size:
-      Dest += this->NumColumns * this->NumLines * this->PixelSize;
-      } // Else, file not loadable
+    // Feeling the allocated memory space with each image/volume:
+    unsigned char * Dest = mem;
+    for (std::list<std::string>::iterator FileName  = InternalFileNameList.begin();
+                                          FileName != InternalFileNameList.end();
+                                        ++FileName)
+      { 
+      // Images that were tagged as unreadable in CheckFileCoherence()
+      // are substituted with a black image to let the caller visually
+      // notice something wrong is going on:
+      if (*FileName != "GDCM_UNREADABLE")
+        {
+        // Update progress related for good files is made in LoadImageInMemory
+        Dest += this->LoadImageInMemory(*FileName, Dest,
+                                        UpdateProgressTarget,
+                                        UpdateProgressCount);
+        } else {
+        // We insert a black image in the stack for the user to be aware that
+        // this image/volume couldn't be loaded. We simply skip one image
+        // size:
+        Dest += this->NumColumns * this->NumLines * this->PixelSize;
 
-    // Update progress related:
-    UpdateProgressCount += this->NumLines;
-    if (!(UpdateProgressCount%UpdateProgressTarget))
-		{
-      this->UpdateProgress(UpdateProgressCount/(50.0*UpdateProgressTarget));
-		}
-    } // Loop on files
+        // Update progress related for bad files:
+        UpdateProgressCount += this->NumLines;
+        if (UpdateProgressTarget > 0)
+		      {
+          if (!(UpdateProgressCount%UpdateProgressTarget))
+            {
+		        this->UpdateProgress(UpdateProgressCount/(50.0*UpdateProgressTarget));
+            }
+		      }
+        } // Else, file not loadable
 
-  // The "size" of the vtkScalars data is expressed in number of points,
-  // and is not the memory size representing those points:
-  data->GetPointData()->GetScalars()->SetVoidArray(mem, StackNumPixels, 0);
-  this->Modified();
+      } // Loop on files
+
+    // The "size" of the vtkScalars data is expressed in number of points,
+    // and is not the memory size representing those points:
+    data->GetPointData()->GetScalars()->SetVoidArray(mem, StackNumPixels, 0);
+    this->Modified();
+    }
 }
 
 //----------------------------------------------------------------------------
