@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:47:20 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2004/10/28 19:53:28 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -154,10 +154,10 @@ bool Dict::AddNewEntry(DictEntry const & newEntry)
    else 
    {
       KeyHt.insert( 
-         TagKeyHT::value_type<TagKey, DictEntry>
+         std::map<TagKey, DictEntry>::value_type
             (newEntry.GetKey(), newEntry));
       NameHt.insert(
-         TagNameHT::value_type<TagName, DictEntry>
+         std::map<TagName, DictEntry>::value_type
             (newEntry.GetName(), newEntry ));
       return true;
    }
@@ -174,10 +174,10 @@ bool Dict::ReplaceEntry(DictEntry const & newEntry)
    if ( RemoveEntry(newEntry.GetKey()) )
    {
       KeyHt.insert( 
-         TagKeyHT::value_type<TagKey, DictEntry>
+         std::map<TagKey, DictEntry>::value_type
             (newEntry.GetKey(), newEntry));
       NameHt.insert(
-         TagNameHT::value_type<TagName, DictEntry>
+         std::map<TagName, DictEntry>::value_type
             (newEntry.GetName(), newEntry ));
        return true;
    } 

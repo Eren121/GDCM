@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:47:20 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2004/10/28 19:53:29 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -183,7 +183,7 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
    {
       DictEntry ent(group, element, vr, fourth, name);
       VirtualEntry.insert(
-         TagKeyHT::value_type<TagKey, DictEntry>
+         std::map<TagKey, DictEntry>::value_type
             (tag, ent));
       entry = &(VirtualEntry.find(tag)->second);
    }
