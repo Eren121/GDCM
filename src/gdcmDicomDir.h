@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/10/09 03:21:55 $
+  Version:   $Revision: 1.33 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,16 +52,16 @@ public:
    /// \sa    SetPrintLevel
    virtual void Print(std::ostream &os = std::cout);
 
-// Informations contained in the parser
+   /// Informations contained in the parser
    virtual bool IsReadable();
 
    /// Returns a pointer to the gdcmDicomDirMeta for this DICOMDIR. 
-   gdcmDicomDirMeta* GetDicomDirMeta() { return metaElems; };
+   gdcmDicomDirMeta* GetDicomDirMeta() { return MetaElems; };
 
    /// Returns the PATIENT chained List for this DICOMDIR.    
-   ListDicomDirPatient &GetDicomDirPatients() { return patients; };
+   ListDicomDirPatient &GetDicomDirPatients() { return Patients; };
 
-// Parsing
+   /// Parsing
    void ParseDirectory();
    
    void SetStartMethod(gdcmMethod*, void* = NULL, gdcmMethod* = NULL);
@@ -72,19 +72,19 @@ public:
    void SetEndMethodArgDelete(gdcmMethod*);
 
    /// GetProgress GetProgress
-   float GetProgress()  { return progress; };
+   float GetProgress()  { return Progress; };
 
    /// AbortProgress AbortProgress
-   void  AbortProgress() { abort = true; };
+   void  AbortProgress() { Abort = true; };
 
    /// IsAborted IsAborted
-   bool  IsAborted() { return abort; };
+   bool  IsAborted() { return Abort; };
    
-// Adding
+   /// Adding
    gdcmDicomDirMeta*    NewMeta();
    gdcmDicomDirPatient* NewPatient();
 
-// Write  
+   /// Write  
    bool WriteDicomDir(std::string const & fileName);
 
    /// Types of the gdcmDicomDirObject within the gdcmDicomDir
@@ -122,33 +122,33 @@ private:
 // Variables
 
    /// Pointer on *the* gdcmDicomDirObject 'DicomDirMeta Elements'
-   gdcmDicomDirMeta* metaElems;
+   gdcmDicomDirMeta* MetaElems;
 
    /// Chained list of DicomDirPatient (to be exploited recursively) 
-   ListDicomDirPatient patients;
+   ListDicomDirPatient Patients;
 
-/// pointer to the initialisation method for any progress bar   
-   gdcmMethod* startMethod;
-/// pointer to the incrementation method for any progress bar
-    gdcmMethod* progressMethod;
-/// pointer to the termination method for any progress bar
-   gdcmMethod* endMethod;
-/// pointer to the ??? method for any progress bar   
-   gdcmMethod* startMethodArgDelete;
-/// pointer to the ??? method for any progress bar
-   gdcmMethod* progressMethodArgDelete;
-/// pointer to the ??? method for any progress bar
-   gdcmMethod* endMethodArgDelete;
-/// pointer to the ??? for any progress bar   
-   void* startArg;
-/// pointer to the ??? for any progress bar
-   void* progressArg;
-/// pointer to the ??? for any progress bar   
-   void* endArg;
-/// value of the ??? for any progress bar
-   float progress;
-/// value of the ??? for any progress bar   
-   bool abort;
+   /// pointer to the initialisation method for any progress bar   
+   gdcmMethod* StartMethod;
+   /// pointer to the incrementation method for any progress bar
+   gdcmMethod* ProgressMethod;
+   /// pointer to the termination method for any progress bar
+   gdcmMethod* EndMethod;
+   /// pointer to the ??? method for any progress bar   
+   gdcmMethod* StartMethodArgDelete;
+   /// pointer to the ??? method for any progress bar
+   gdcmMethod* ProgressMethodArgDelete;
+   /// pointer to the ??? method for any progress bar
+   gdcmMethod* EndMethodArgDelete;
+   /// pointer to the ??? for any progress bar   
+   void* StartArg;
+   /// pointer to the ??? for any progress bar
+   void* ProgressArg;
+   /// pointer to the ??? for any progress bar   
+   void* EndArg;
+   /// value of the ??? for any progress bar
+   float Progress;
+   /// value of the ??? for any progress bar   
+   bool Abort;
 };
 
 //-----------------------------------------------------------------------------

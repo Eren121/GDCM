@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/10/09 03:21:55 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,12 +89,12 @@ void gdcmDicomDirObject::FillObject(std::list<gdcmElement> elemList)
    // for all the Elements found in they own part of the DicomDir dict.     
    for(it = elemList.begin(); it != elemList.end(); ++it)
    {
-      tmpGr = it->group;
-      tmpEl = it->elem;
+      tmpGr = it->Group;
+      tmpEl = it->Elem;
       dictEntry = gdcmGlobal::GetDicts()->GetDefaultPubDict()->GetDictEntryByNumber(tmpGr,tmpEl);
       entry = new gdcmValEntry(dictEntry);
       entry->SetOffset(0); // just to avoid further missprinting
-      entry->SetValue(it->value);
+      entry->SetValue(it->Value);
 
       // dealing with value length ...
   

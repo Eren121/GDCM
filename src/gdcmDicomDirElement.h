@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/10/09 03:21:55 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,11 +27,11 @@
 typedef struct
 {
    /// DicomGroup number
-   unsigned short int group;
+   unsigned short int Group;
    /// DicomElement number
-   unsigned short int elem;
+   unsigned short int Elem;
    /// value (coded as a std::string) of the Element
-   std::string value;
+   std::string Value;
 } gdcmElement;
 
 typedef std::list<gdcmElement> ListDicomDirMetaElem;
@@ -55,41 +55,46 @@ public:
   /**
     * \brief   canonical Printer 
     * \sa    SetPrintLevel
-  */ 
+    */ 
    void Print(std::ostream &os);
-/**
- * \ingroup gdcmDicomDirElement
- * \brief   returns a reference to the chained List 
- *          related to the META Elements of a DICOMDIR.
- */
+
+   /**
+    * \ingroup gdcmDicomDirElement
+    * \brief   returns a reference to the chained List 
+    *          related to the META Elements of a DICOMDIR.
+    */
    ListDicomDirMetaElem    &GetDicomDirMetaElements()
       { return DicomDirMetaList; };
-/**
- * \ingroup gdcmDicomDirElement
- * \brief   returns a reference to the chained List 
- *          related to the PATIENT Elements of a DICOMDIR.
- */      
+
+   /**
+    * \ingroup gdcmDicomDirElement
+    * \brief   returns a reference to the chained List 
+    *          related to the PATIENT Elements of a DICOMDIR.
+    */      
    ListDicomDirPatientElem &GetDicomDirPatientElements()
       { return DicomDirPatientList; };
-/**
- * \ingroup gdcmDicomDirElement
- * \brief   returns a reference to the chained List 
- *          related to the STUDY Elements of a DICOMDIR.
- */      
+
+   /**
+    * \ingroup gdcmDicomDirElement
+    * \brief   returns a reference to the chained List 
+    *          related to the STUDY Elements of a DICOMDIR.
+    */      
    ListDicomDirStudyElem   &GetDicomDirStudyElements()
       { return DicomDirStudyList; };
-/**
- * \ingroup gdcmDicomDirElement
- * \brief   returns a reference to the chained List 
- *          related to the SERIE Elements of a DICOMDIR.
- */
+
+   /**
+    * \ingroup gdcmDicomDirElement
+    * \brief   returns a reference to the chained List 
+    *          related to the SERIE Elements of a DICOMDIR.
+    */
    ListDicomDirSerieElem   &GetDicomDirSerieElements()
       { return DicomDirSerieList; };
-/**
- * \ingroup gdcmDicomDirElement
- * \brief   returns a reference to the chained List 
- *          related to the IMAGE Elements of a DICOMDIR.
- */
+
+   /**
+    * \ingroup gdcmDicomDirElement
+    * \brief   returns a reference to the chained List 
+    *          related to the IMAGE Elements of a DICOMDIR.
+    */
    ListDicomDirImageElem   &GetDicomDirImageElements()
       { return DicomDirImageList; };
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:43:37 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/10/09 03:21:55 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,6 @@
 #include "gdcmDictSet.h"
 
 #include <fstream>
-#include <stdio.h>    // For sprintf
 #include <iostream>
 
 //-----------------------------------------------------------------------------
@@ -45,7 +44,7 @@ gdcmDicomDirElement::gdcmDicomDirElement()
 
    while (!from.eof())
    {
-      from >> std::ws;  // used to be eatwhite(from);
+      from >> std::ws;
       from.getline(buff, 1024, ' ');
       type = buff;
 
@@ -53,13 +52,13 @@ gdcmDicomDirElement::gdcmDicomDirElement()
           (type=="studyElem") || (type=="serieElem")   || 
           (type=="imageElem") )
       {
-         from >> std::hex >> elem.group >> elem.elem;
+         from >> std::hex >> elem.Group >> elem.Elem;
 
-         from >> std::ws; // used to be eatwhite(from);
+         from >> std::ws;
          from.getline(buff, 1024, '"');
-         from >> std::ws; // Used to be eatwhite(from);
+         from >> std::ws;
          from.getline(buff, 1024, '"');
-         elem.value = buff;
+         elem.Value = buff;
 
          if( type == "metaElem" )
          {
@@ -112,41 +111,42 @@ void gdcmDicomDirElement::Print(std::ostream &os)
 {
    std::ostringstream s;
    std::list<gdcmElement>::iterator it;
-   char greltag[10];  //group element tag
+   //char greltag[10];  //group element tag
+   std::string greltag;
 
    s << "Meta Elements :"<<std::endl;
    for (it = DicomDirMetaList.begin(); it != DicomDirMetaList.end(); ++it)
    {
-      sprintf(greltag,"%04x|%04x ",it->group,it->elem);
-      s << "   ("<<greltag<<") = "<< it->value<<std::endl;
+      greltag = Format("%04x|%04x ",it->Group,it->Elem);
+      s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Patient Elements :"<<std::endl;
    for (it = DicomDirPatientList.begin(); it != DicomDirPatientList.end(); ++it)
    {
-      sprintf(greltag,"%04x|%04x ",it->group,it->elem);
-      s << "   ("<<greltag<<") = "<< it->value<<std::endl;
+      greltag = Format("%04x|%04x ",it->Group,it->Elem);
+      s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Study Elements :"<<std::endl;
    for (it = DicomDirStudyList.begin(); it != DicomDirStudyList.end(); ++it)
    {
-      sprintf(greltag,"%04x|%04x ",it->group,it->elem);
-      s << "   ("<<greltag<<") = "<< it->value<<std::endl;
+      greltag = Format("%04x|%04x ", it->Group, it->Elem);
+      s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Serie Elements :"<<std::endl;
    for (it = DicomDirSerieList.begin(); it != DicomDirSerieList.end(); ++it)
    {
-      sprintf(greltag,"%04x|%04x ",it->group,it->elem);
-      s << "   ("<<greltag<<") = "<< it->value<<std::endl;
+      greltag = Format("%04x|%04x ", it->Group, it->Elem);
+      s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Image Elements :"<<std::endl;
    for (it = DicomDirImageList.begin(); it != DicomDirImageList.end(); ++it)
    {
-      sprintf(greltag,"%04x|%04x ",it->group,it->elem);
-      s << "   ("<<greltag<<") = "<< it->value<<std::endl;
+      greltag = Format("%04x|%04x ", it->Group, it->Elem);
+      s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    os << s.str();
