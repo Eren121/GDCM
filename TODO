@@ -1,3 +1,8 @@
+* The declarations commented out and starting with "TODO Swig" (try
+  grep "TODO Swig" *.h) needed to be temporarily removed for swig to
+  proceed correctly (in fact problems appears at loading of _gdcm.[so/dll]).
+  So, simply uncomment the declaration once you provided the definition of
+  the method...
 * As stated by the first lines of Test/ExceptionAndPython/README, it looks
   like we can move back to the exceptions and remove the errno stuff from
   src/gdcm* !
@@ -15,21 +20,13 @@
   in the element values dictionary without doing something smarter
   (say, instead of storing the length store the group and the length
    so we can related a length to a group).
-
-GetPubElValByNumber doit faire la difference entre chaine vide 
-et chaine pas touve''. Eventuellement raiser une exception ?
-
-gdcmHeader::ReadNextElement: retarder le stockage en mem des gros elements
- * etablir une taille limite sur les elements a ramener en memoire
-   (parametrisable en public dans la classe)
- * ne pas ramener les elements au dela de ce seuil, mais les flaguer
-   comme a charger plus tard
- * a l'acces (pour le groupe des pixels par exemple) retourner au fichier
-   pour trouver la bonne valeur (GetPixelData).
- * fournir une method qui ne fait que lire les elements passes en arguments
-   sous forme d'une liste.
-
-grep str2num *.cxx: c'est une macro sans doute proprifiable
-
-gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de suite 
-si on a deduit que c'en est pas...
+* GetPubElValByNumber doit faire la difference entre chaine vide 
+  et chaine pas touve''. Eventuellement raiser une exception ?
+* gdcmHeader::LoadElements only loads the element whose length is
+  below the specified size. When accessing the value of such a element
+  the content is unfound ! Find a decent way of loading the value on
+  explicit demand.
+* fournir une method qui ne fait que lire les elements passes en arguments
+  sous forme d'une liste.
+* gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de suite 
+  si on a deduit que c'en est pas...

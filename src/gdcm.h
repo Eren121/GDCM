@@ -1,44 +1,10 @@
 // gdcm.h
 
-// gdcmlib Intro:  
-// * gdcmlib is a library dedicated to reading and writing dicom files.
-// * LGPL for the license
-// * lightweigth as opposed to CTN or DCMTK which come bundled which try
-//   to implement the full DICOM standard (networking...). gdcmlib concentrates
-//   on reading and writing
-// * Formats: this lib should be able to read ACR-NEMA v1 and v2, Dicom v3 (as
-//   stated in part10). [cf dcmtk/dcmdata/docs/datadict.txt]
-// * Targeted plateforms: Un*xes and Win32/VC++6.0
-//
-//
-// TODO
-// The declarations commented out and starting with "TODO Swig" needed
-// to be temporarily removed for swig to proceed correctly (in fact
-// problems appears at loading of _gdcm.[so/dll]). So, simply uncomment
-// the declaration once you provided the definition of the method...
-
 #ifndef GDCM_H
 #define GDCM_H
 
 using namespace std;
 
-#include <iostream>
-#include <stddef.h>   // For size_t
-#include <stdio.h>    // FIXME For FILE on GCC only
-#include <list>
-#include <map>
-#include "gdcmException.h"
-
-
-// The requirement for the hash table (or map) that we shall use:
-// 1/ First, next, last (iterators)
-// 2/ should be sortable (i.e. sorted by TagKey). This
-//    condition shall be droped since the Win32/VC++
-//    implementation doesn't look a sorted one. Pffff....
-// 3/ Make sure we can setup some default size value,
-//    which should be around 4500 entries which is the
-//    average dictionary size (said JPR)
-//
 // JPR CLEAN
 // En fait, je disais que dans LE Directory Dicom (dans son etat 2001)
 // il y a +/- 1600 entrees.
@@ -64,6 +30,7 @@ using namespace std;
 // the | (pipe symbol) acts as a separator). Refer to 
 // gdcmDictEntry::TranslateToKey for this conversion function.
 
+#include "gdcmException.h"
 #include "gdcmCommon.h"
 #include "gdcmDictEntry.h"
 #include "gdcmDict.h"

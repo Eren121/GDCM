@@ -1,3 +1,10 @@
+2003-03-06 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader.h and gdcmHeader.cxx Coding style + doxigenation.
+      * src/gdcm.h general comments moved to TODO, and README
+      * src/gdcm.h should now be seen as a user commodity (including it
+        should suffice to fully use gdcm). It is nowhere including within
+        any of the kernel files src/*.cxx and src/*.h.
+
 2003-03-05 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h splitted in gdcmCommon.h, gdcmDict.h, gdcmDictEntry.h,
         gdcmDictSet.h, gdcmElValSet.h, gdcmElValue.h, gdcmFile.h,
