@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:30:58 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/07/26 19:36:56 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,8 @@
 #else
    #include <dirent.h>   
    #include <unistd.h>
+   #include <sys/stat.h>
+   #include <sys/types.h>
 #endif
 
 // Constructor / Destructor
@@ -39,18 +41,18 @@
  * @param  dirName root directory name
  * @param  recursive whether we want to explore recursively or not 
  */
-gdcmDirList::gdcmDirList(std::string dirName,bool recursive)
+gdcmDirList::gdcmDirList(std::string dirName, bool recursive)
 {
-   name=dirName;
+   name = dirName;
    NormalizePath(name);
-   Explore(name,recursive);
+   Explore(name, recursive);
 }
 
 /**
  * \ingroup gdcmDirList
  * \brief  Destructor
  */
-gdcmDirList::~gdcmDirList(void)
+gdcmDirList::~gdcmDirList()
 {
 }
 
@@ -64,9 +66,9 @@ gdcmDirList::~gdcmDirList(void)
  * \brief   Get the directory name
  * @return the directory name 
  */
-std::string gdcmDirList::GetDirName(void)
+std::string gdcmDirList::GetDirName()
 {
-   return(name);
+   return name;
 }
 
 //-----------------------------------------------------------------------------
@@ -78,52 +80,83 @@ std::string gdcmDirList::GetDirName(void)
 /**
  * \ingroup gdcmDirList
  * \brief   Explore a directory with possibility of recursion
+ *          return number of files read
  * @param  dirName directory to explore
  * @param  recursive whether we want recursion or not
  */
-void gdcmDirList::Explore(std::string dirName,bool recursive)
+int gdcmDirList::Explore(std::string dirName, bool recursive)
 {
+   int numberOfFiles = 0;
    std::string fileName;
    NormalizePath(dirName);
 #if defined(_MSC_VER) || (__CYGWIN__)
    WIN32_FIND_DATA fileData; 
    HANDLE hFile=FindFirstFile((dirName+"*").c_str(),&fileData);
-   int found=true;
+   int found = true;
 
-   while( (hFile!=INVALID_HANDLE_VALUE) && (found) )
+   while( hFile != INVALID_HANDLE_VALUE && found )
    {
-      fileName=fileData.cFileName;
-      if(fileData.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
+      fileName = fileData.cFileName;
+      if( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
       {
-         if( (fileName!=".") && (fileName!="..") && (recursive) )
-            Explore(dirName+fileName,recursive);
+         // Is the '.' and '..' usefull ?
+         if( fileName != "." && fileName != ".." && recursive )
+         {
+            numberOfFiles += Explore(dirName+fileName,recursive);
+         }
       }
       else
       {
          this->push_back(dirName+fileName);
+         numberOfFiles++;
       }
 
-      found=FindNextFile(hFile,&fileData);
+      found = FindNextFile(hFile,&fileData);
    }
 
 #else
-   struct dirent **namelist;
-   int n=scandir(dirName.c_str(), &namelist, 0, alphasort);
+  // Real POSIX implementation: scandir is a BSD extension only, and doesn't 
+  // work on debian for example
 
-   for (int i= 0;i < n; i++) 
+   DIR* dir = opendir(dirName.c_str());
+   if (!dir)
    {
-      fileName=namelist[i]->d_name;     
-      if(namelist[i]->d_type==DT_DIR)
+      return 0;
+   }
+
+   // According to POSIX, the dirent structure contains a field char d_name[]
+   // of  unspecified  size,  with  at most NAME_MAX characters preceding the
+   // terminating null character.  Use of other fields will harm  the  porta-
+   // bility  of  your  programs.
+
+   struct stat buf;
+   dirent* d = 0;
+   for (d = readdir(dir); d; d = readdir(dir))
+   {
+      fileName = dirName + d->d_name;
+      stat(fileName.c_str(), &buf); //really discard output ?
+      if( S_ISREG(buf.st_mode) ) //is it a regular file?
       {
-         if( (fileName!=".") && (fileName!="..") && (recursive) )
-            Explore(dirName+fileName,recursive);
+         this->push_back( fileName );
+         numberOfFiles++;
+      }
+      else if( S_ISDIR(buf.st_mode) ) //directory?
+      {
+         if( d->d_name[0] != '.' && recursive ) //we are also skipping hidden files
+         {
+            numberOfFiles += Explore( fileName, recursive);
+         }
       }
       else
       {
-         this->push_back(dirName+fileName);
+         // we might need to do a different treament
+         //abort();
       }
    }
+  closedir(dir);
 #endif
+
+  return numberOfFiles;
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/07/26 19:36:56 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ public :
    static const std::string SEPARATOR;
 
 private :
-   void Explore(std::string dirName,bool recursive=false);
+   int Explore(std::string dirName,bool recursive=false);
    /// name of the root directory to explore
    std::string name;
 };
