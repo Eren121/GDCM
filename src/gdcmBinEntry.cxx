@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 15:10:56 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,6 @@ BinEntry::~BinEntry()
    }
 }
 
-
 //-----------------------------------------------------------------------------
 // Print
 /**
@@ -101,7 +100,7 @@ void BinEntry::Print(std::ostream &os, std::string const & )
 
 //-----------------------------------------------------------------------------
 // Public
-/*
+/**
  * \brief   canonical Writer
  * @param fp already open file pointer
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)

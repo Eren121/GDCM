@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmContentEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 15:10:56 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,6 +40,7 @@ public:
    virtual void WriteContent(std::ofstream *fp, FileType filetype) = 0;
 
    // Accessors are protected, not to be invoked by end user
+
    /// Sets the value (string) of the current Dicom entry
    virtual void SetValue(std::string const &val) { Value = val; };
  

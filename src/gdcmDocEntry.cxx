@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 15:10:56 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -134,12 +134,11 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
      // we just *always* ignore spurious fffe|0000 tag !   
       return;
    }
-
    //
    // ----------- Writes the common part
    //
-   binary_write( *fp, group);  //group
-   binary_write( *fp, el);  //element
+   binary_write( *fp, group); //group
+   binary_write( *fp, el);    //element
 
    if ( filetype == ExplicitVR )
    {
@@ -234,14 +233,14 @@ uint32_t DocEntry::GetFullLength()
 
 /**
  * \brief   Copies all the attributes from an other DocEntry 
- * @param e entry to copy from
+ * @param doc entry to copy from
  */
-void DocEntry::Copy(DocEntry *e)
+void DocEntry::Copy(DocEntry *doc)
 {
-   Length     = e->Length;
-   ReadLength = e->ReadLength;
-   ImplicitVR = e->ImplicitVR;
-   Offset     = e->Offset;
+   Length     = doc->Length;
+   ReadLength = doc->ReadLength;
+   ImplicitVR = doc->ImplicitVR;
+   Offset     = doc->Offset;
 }
 
 /**
@@ -252,6 +251,7 @@ bool DocEntry::IsItemDelimitor()
 {
    return (GetGroup() == 0xfffe && GetElement() == 0xe00d);
 }
+
 /**
  * \brief   tells us if entry is the last one of a 'no length' Sequence 
  *          (fffe,e0dd) 

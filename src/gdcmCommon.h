@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 00:02:15 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,7 +97,7 @@ GDCM_EXPORT extern const std::string GDCM_NOTLOADED;
 GDCM_EXPORT extern const std::string GDCM_UNREAD;
 
 /// \brief TagKey is made to hold an "universal" (as in URL, Universal
-///        Ressource Locator)  key to a DocEntry i.e. a dicom tag.
+///        Ressource Locator) key to a DocEntry i.e. a dicom tag.
 ///        A dicom tag always has a group and an elem, but a set of tags
 ///        embeded in various (optionally nested) sequences and sharing
 ///        the same group and elem all share the same (group, elem)
@@ -123,12 +123,13 @@ GDCM_EXPORT extern const std::string GDCM_UNREAD;
 ///        a sequence, itself nested in the third item of a sequence is the
 ///        string e.g.
 ///            0004|1220/2#0008|0082/0#0008|0090
+///        Probabely useless stuff.
 typedef std::string TagKey;
 typedef std::string TagName;
 
 enum FileType {
    Unknown = 0,
-   ExplicitVR, // DicomDir is in this case
+   ExplicitVR, // DicomDir is in this case. Except when it's ImplicitVR !...
    ImplicitVR,
    ACR,
    ACR_LIBIDO
@@ -142,6 +143,7 @@ enum DicomDirType {
    DD_SERIE,
    DD_IMAGE
 };
+
 } //namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

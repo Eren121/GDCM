@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 15:42:22 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,9 +33,9 @@ namespace gdcm
  *        Note: a classical image can be considered as the degenerated case
  *              of a multiframe image. In this case the collection is limited
  *              to a single individual frame.
- *        The informations on each frame are obtained during the parsing
- *        of a Document (refer to
- *          \ref Document::ComputeRLEInfo() ).
+ *        The informations on each frame are obtained during the pixel parsing
+ *        of a gdcm::File (refer to
+ *          \ref File::ComputeRLEInfo() ).
  *        They shall be used when (if necessary) decoding the frames.
  *
  *        This class is simply a stl list<> of \ref RLEFrame.

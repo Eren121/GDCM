@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 15:10:56 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,6 +44,7 @@ public:
    ~BinEntry();
    
    void Print( std::ostream &os = std::cout, std::string const & indent = "" );
+
    void WriteContent( std::ofstream *fp, FileType ft);
 
    /// \brief Returns the area value of the current Dicom Entry
@@ -51,13 +52,16 @@ public:
    uint8_t *GetBinArea()  { return BinArea; }
 
    void  SetBinArea( uint8_t *area, bool self = true );
+   /// \brief Sets SelfArea
    void SetSelfArea(bool area) { SelfArea = area; };
+   /// \brief Returns SelfArea
    bool IsSelfArea() { return SelfArea; };
 
 private:
    /// \brief memory area to hold 'non std::string' representable values 
    ///       (ie : Lookup Tables, overlays, icons)   
    uint8_t *BinArea;
+   /// \brief Whether BinEntry has its own BinArea or not
    bool SelfArea;
 };
 

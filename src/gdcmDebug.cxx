@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/27 11:55:57 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,9 @@ static bool DebugToFile = false;
 static std::ofstream DebugFile;
 
 
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
+
 Debug::Debug()
 {
 
@@ -38,7 +41,14 @@ Debug::~Debug()
   if ( DebugFile.is_open() )
       DebugFile.close();     
 }
+
 //-----------------------------------------------------------------------------
+// Print
+
+
+//-----------------------------------------------------------------------------
+// Public
+
 /**
  * \brief   Accessor
  * @param   flag Set the debug flag
@@ -76,7 +86,7 @@ bool Debug::GetDebugToFile ()
 }
 
 /**
- * \brief   Accessor
+ * \brief   Set Accessor
  * @param   flag Set the debug flag to redirect to file
  *          Absolutely nothing is check. You have to pass in
  *          a correct filename
@@ -90,11 +100,22 @@ void Debug::SetDebugFilename (std::string const &filename)
    DebugFile.open( filename.c_str() );
 }
 
+/**
+ * \brief   Get Accessor
+ * @return Debug file
+ */
 std::ofstream &Debug::GetDebugFile ()
 {
   return DebugFile;
 }
 
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+   
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
 
 

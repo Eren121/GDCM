@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 09:49:54 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.62 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -169,7 +169,7 @@ bool SQItem::AddEntry(DocEntry *entry)
  * @param   entryToRemove Entry to remove AND delete.
  * @return true if the entry was found and removed; false otherwise
  */
-bool SQItem::RemoveEntry( DocEntry* entryToRemove)
+bool SQItem::RemoveEntry( DocEntry *entryToRemove)
 {
    for(ListDocEntry::iterator it = DocEntries.begin();
        it != DocEntries.end();
@@ -192,7 +192,7 @@ bool SQItem::RemoveEntry( DocEntry* entryToRemove)
  * @param   entryToRemove Entry to remove.
  * @return true if the entry was found and removed; false otherwise
  */
-bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
+bool SQItem::RemoveEntryNoDestroy(DocEntry *entryToRemove)
 {
    for(ListDocEntry::iterator it = DocEntries.begin();
        it != DocEntries.end();
@@ -215,7 +215,7 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry* entryToRemove)
  * \brief   Get the first Dicom entry while visiting the SQItem
  * \return  The first DocEntry if found, otherwhise 0
  */
-DocEntry * SQItem::GetFirstEntry()
+DocEntry *SQItem::GetFirstEntry()
 {
    ItDocEntries = DocEntries.begin();
    if (ItDocEntries != DocEntries.end())

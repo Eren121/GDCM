@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 16:32:45 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,6 @@ ValEntry::ValEntry(DocEntry *e)
 {
    Copy(e);
 }
-
 
 /**
  * \brief   Canonical destructor.
@@ -180,7 +179,6 @@ void ValEntry::Print(std::ostream &os, std::string const &)
  * \brief   Sets the std::string representable' value of a ValEntry
  * @param  val value to set 
  */
-
 void ValEntry::SetValue(std::string const &val)
 {
    // Integers have a special treatement for their length:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 15:10:56 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,7 +128,7 @@ public:
    
    uint32_t GetFullLength();
    
-   virtual void Copy(DocEntry *doc);
+   virtual void Copy(DocEntry *e);
 
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   

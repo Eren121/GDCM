@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBase.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/30 17:30:57 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,6 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 /**
  * \brief Base class of all gdcm classes
- *
  * Contains the Print related methods :
  *  - Print 
  *  - SetPrintLevel / GetPrintLevel 
@@ -38,7 +37,8 @@ public:
    Base( );
    virtual ~Base();
 
-   virtual void Print(std::ostream &os = std::cout, std::string const & indent = "" ); 
+   virtual void Print(std::ostream &os = std::cout, 
+                      std::string const & indent = "" ); 
 
    /// \brief Sets the print level for the Dicom Header Elements
    /// \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy
