@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 14:29:52 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.55 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -452,8 +452,8 @@ void gdcmDicomDir::CreateDicomDirChainedList(std::string path)
  * \brief   adds *the* Meta to a partially created DICOMDIR
  */
  
- // FIXME : Heuuuuu ! Il prend les Entries du Document deja parse,
- //                   il ne fabrique rien !
+ /// \todo FIXME : Heuuuuu ! Il prend les Entries du Document deja parse,
+ ///                  il ne fabrique rien !
   
 gdcmDicomDirMeta * gdcmDicomDir::NewMeta(void) {
    gdcmDicomDirMeta *m = new gdcmDicomDirMeta(&tagHT);   
@@ -465,13 +465,12 @@ gdcmDicomDirMeta * gdcmDicomDir::NewMeta(void) {
 
 
 /**
- * \ingroup gdcmDicomDir
  * \brief   adds a new Patient (with the basic elements) to a partially created DICOMDIR
  */
 gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
    std::list<gdcmElement> elemList;
    std::list<gdcmElement>::iterator it;
-   guint16 tmpGr,tmpEl;
+   uint16_t tmpGr,tmpEl;
    gdcmDictEntry *dictEntry;
    gdcmValEntry *entry;
    
@@ -479,7 +478,7 @@ gdcmDicomDirPatient * gdcmDicomDir::NewPatient(void) {
    
    elemList=gdcmGlobal::GetDicomDirElements()->GetDicomDirPatientElements();  
    
-   // TODO : use FillObject !!!
+   /// \todo TODO : use FillObject !!!
 
    // for all the DicomDirPatient Elements 
      
@@ -535,7 +534,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
 {
    std::list<gdcmElement> elemList;
    std::list<gdcmElement>::iterator it;
-   guint16 tmpGr, tmpEl;
+   uint16_t tmpGr, tmpEl;
    gdcmDictEntry *dictEntry;
    gdcmValEntry *entry;
    std::string val;
@@ -935,37 +934,35 @@ bool gdcmDicomDir::HeaderLessThan(gdcmDocument *header1,gdcmDocument *header2)
 }
 
 /**
- * \ingroup gdcmDicomDir
  * \brief   Sets the accurate value for the (0x0004,0x1220) element of a DICOMDIR
  */
 
 void gdcmDicomDir::UpdateDirectoryRecordSequenceLength() {
 
-// FIXME : to go on compiling
-
-// to be re written !
-/*
-   int offset = 0;
-   ListTag::iterator it;
-   guint16 gr, el;
-   std::string vr;
-   for(it=listEntries.begin();it!=listEntries.end();++it) {
-      gr = (*it)->GetGroup();
-      el = (*it)->GetElement();
-      vr = (*it)->GetVR();      
-      if (gr !=0xfffe) {
-         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) {    
-            offset +=  4; // explicit VR AND OB, OW, SQ : 4 more bytes
-         }         
-         offset += 2 + 2 + 4 + (*it)->GetLength(); 
-      } else {
-         offset +=  4; // delimiters don't have a value.     
-      }            
-   }   
-   //bool res=SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
-    SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
-   return;
-   */
+/// \todo FIXME : to go on compiling
+///
+/// to be re written !
+///   int offset = 0;
+///   ListTag::iterator it;
+///   uint16_t gr, el;
+///   std::string vr;
+///   for(it=listEntries.begin();it!=listEntries.end();++it) {
+///      gr = (*it)->GetGroup();
+///      el = (*it)->GetElement();
+///      vr = (*it)->GetVR();      
+///      if (gr !=0xfffe) {
+///         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) {    
+///            offset +=  4; // explicit VR AND OB, OW, SQ : 4 more bytes
+///         }         
+///         offset += 2 + 2 + 4 + (*it)->GetLength(); 
+///      } else {
+///         offset +=  4; // delimiters don't have a value.     
+///      }            
+///   }   
+///   //bool res=SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
+///    SetEntryLengthByNumber(offset, 0x0004, 0x1220); // Hope there is no dupps.
+///   return;
+///
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 03:06:38 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,7 +104,7 @@ void gdcmElementSet::Write(FILE *fp, FileType filetype)
  * @param   NewEntry entry to add
  */
 bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
-   TagKey key;
+   gdcmTagKey key;
    key = NewEntry->GetKey();
 
    if(tagHT.count(key) == 1)
@@ -126,7 +126,7 @@ bool gdcmElementSet::AddEntry( gdcmDocEntry *NewEntry) {
  */
 bool gdcmElementSet::RemoveEntry( gdcmDocEntry *EntryToRemove)
 {
-   TagKey key = EntryToRemove->GetKey();
+   gdcmTagKey key = EntryToRemove->GetKey();
    if(tagHT.count(key) == 1)
    {
       tagHT.erase(key);

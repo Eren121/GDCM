@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/19 23:51:03 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.23 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,8 +29,8 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-typedef std::list<gdcmDicomDirPatient *>   ListDicomDirPatient;
-typedef std::vector<gdcmDocument *>  VectDocument;
+typedef std::list<gdcmDicomDirPatient*>   ListDicomDirPatient;
+typedef std::vector<gdcmDocument*>  VectDocument;
 
 typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
 //-----------------------------------------------------------------------------
@@ -43,8 +43,6 @@ typedef GDCM_EXPORT void(gdcmMethod)(void * = NULL);
 class GDCM_EXPORT gdcmDicomDir: public gdcmDocument
 {
 public:
-//   gdcmDicomDir(ListTag *l,
-//                bool exception_on_error = false);
    gdcmDicomDir(const char *FileName, 
                 bool parseDir = false,
                 bool exception_on_error = false);
@@ -52,30 +50,23 @@ public:
                    
    ~gdcmDicomDir(void);
 
-   /**
-    * \ingroup gdcmDicomDir
-    * \brief   Sets the print level for the Dicom Header 
-    * \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
-    */
+   /// \brief Sets the print level for the Dicom Header 
+   /// \note    0 for Light Print; 1 for 'medium' Print, 2 for Heavy
    void SetPrintLevel(int level) 
       { printLevel = level; };
-  /**
-    * \ingroup gdcmDicomDir
-    * \brief   canonical Printer 
-    * \sa    SetPrintLevel
-  */     
+
+   /// \brief   canonical Printer 
+   /// \sa    SetPrintLevel
    virtual void Print(std::ostream &os = std::cout);
 
 // Informations contained in the parser
    virtual bool IsReadable(void);
 
-/// \brief   returns a pointer to the gdcmDicomDirMeta for this DICOMDIR. 
-   inline gdcmDicomDirMeta   *GetDicomDirMeta()      
-      {return metaElems;};
+   /// Returns a pointer to the gdcmDicomDirMeta for this DICOMDIR. 
+   gdcmDicomDirMeta* GetDicomDirMeta() { return metaElems; };
 
- /// \brief   returns the PATIENT chained List for this DICOMDIR.    
-   inline ListDicomDirPatient &GetDicomDirPatients() 
-      {return patients;};
+   /// Returns the PATIENT chained List for this DICOMDIR.    
+   ListDicomDirPatient &GetDicomDirPatients() { return patients; };
 
 // Parsing
    void ParseDirectory(void);
@@ -87,27 +78,24 @@ public:
    void SetEndMethod(gdcmMethod *,void * =NULL,gdcmMethod * =NULL);
    void SetEndMethodArgDelete(gdcmMethod *);
 
-/// \brief GetProgress GetProgress
-   inline float GetProgress(void)  
-      {return(progress);};
+   /// GetProgress GetProgress
+   float GetProgress(void)  { return(progress); };
 
-/// \brief AbortProgress AbortProgress
-   inline void  AbortProgress(void)
-      {abort=true;      };
+   /// AbortProgress AbortProgress
+   void  AbortProgress(void) {abort=true; };
 
-/// \brief IsAborted IsAborted
-      inline bool  IsAborted(void)
-      {return(abort);   };
+   /// IsAborted IsAborted
+   bool  IsAborted(void) {return(abort); };
    
 // Adding
-  gdcmDicomDirMeta *    NewMeta(void);
-  gdcmDicomDirPatient * NewPatient(void);
+   gdcmDicomDirMeta*    NewMeta(void);
+   gdcmDicomDirPatient* NewPatient(void);
 
 // Write
    void WriteEntries(FILE *_fp);   
    bool Write(std::string fileName);
 
-/// Types of the gdcmObject within the gdcmDicomDir
+   /// Types of the gdcmObject within the gdcmDicomDir
    typedef enum
    {
       GDCM_DICOMDIR_NONE,
@@ -120,7 +108,6 @@ public:
    
 protected:
    void CreateDicomDirChainedList(std::string path);
-
    void CallStartMethod(void);
    void CallProgressMethod(void);
    void CallEndMethod(void);
@@ -128,7 +115,6 @@ protected:
 private:
    void Initialize(void);
    void CreateDicomDir(void);
-//   void AddObjectToEnd(gdcmDicomDirType type, gdcmSQItem *s);
    void AddDicomDirMeta   ();
    void AddDicomDirPatientToEnd(gdcmSQItem *s);
    void AddDicomDirStudyToEnd  (gdcmSQItem *s);
@@ -145,10 +131,10 @@ private:
    
 // Variables
 
-/// \brief pointer on *the* gdcmObject 'DicomDirMeta Elements'
+   /// Pointer on *the* gdcmObject 'DicomDirMeta Elements'
    gdcmDicomDirMeta *metaElems;
 
-/// \brief chained list of DicomDirPatient (to be exploited recursively) 
+   /// Chained list of DicomDirPatient (to be exploited recursively) 
    ListDicomDirPatient patients;
 
 /// pointer to the initialisation method for any progress bar   

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/24 11:44:35 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,11 +40,11 @@ public:
    gdcmDocEntry(gdcmDictEntry*);
      
    /// Returns the Dicom Group number of the current Dicom Header Entry
-   guint16      GetGroup(void)     { return entry->GetGroup();  };
+   uint16_t      GetGroup(void)     { return entry->GetGroup();  };
 
    /// Returns the Dicom Element number of the current Dicom Header Entry
-   guint16      GetElement(void)   { return entry->GetElement();};
-	
+   uint16_t      GetElement(void)   { return entry->GetElement();};
+
    /// Returns the 'key' of the current Dicom Header Entry
    std::string  GetKey(void)       { return entry->GetKey();    };
 
@@ -65,30 +65,30 @@ public:
    /// \brief Returns the actual value length of the current Dicom Header Entry
    /// \warning this value is not *always* the one stored in the Dicom Header
    ///          in case of well knowned bugs
-   guint32 GetLength(void) { return UsableLength; };
+   uint32_t GetLength(void) { return UsableLength; };
     
    /// \brief Returns the 'read length' of the current Dicom Header Entry
    /// \warning this value is the one stored in the Dicom Header but not
    ///          mandatoryly the one thats's used (in case on SQ, or delimiters,
    ///          the usable length is set to zero)
-   guint32 GetReadLength(void) { return ReadLength; };
+   uint32_t GetReadLength(void) { return ReadLength; };
 
    /// Sets the 'Value Representation' of the current Dicom Header Entry
    void SetVR(std::string v) { entry->SetVR(v); };    
 
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
    /// Dicom Header Entry
-   void SetLength(guint32 l) { ReadLength=UsableLength=l;};
+   void SetLength(uint32_t l) { ReadLength=UsableLength=l;};
       
    // The following 3 members, for internal use only ! 
    
    /// \brief Sets only 'Read Length' (*not* 'Usable Length') of the current
    /// Dicom Header Entry
-   void SetReadLength(guint32 l) { ReadLength   = l; };
+   void SetReadLength(uint32_t l) { ReadLength   = l; };
 
    /// \brief Sets only 'Usable Length' (*not* 'Read Length') of the current
    /// Dicom Header Entry
-   void SetUsableLength(guint32 l) { UsableLength = l; }; 
+   void SetUsableLength(uint32_t l) { UsableLength = l; }; 
    
    /// \brief   Sets the offset of the Dicom Element
    /// \warning use with caution !
@@ -125,7 +125,7 @@ public:
    virtual void Print (std::ostream & os = std::cout); 
    virtual void Write(FILE *fp, FileType filetype);
    
-   guint32 GetFullLength(void);
+   uint32_t GetFullLength(void);
    
    void Copy(gdcmDocEntry *doc);
 
@@ -135,7 +135,7 @@ public:
    /// \brief Gets the depth level of a Dicom header entry embedded in
    ///        a SeQuence
    int GetDepthLevel(void) {return(SQDepthLevel);}
-		
+
    /// \brief Sets the depth level of a Dicom header entry embedded in
    ///        a SeQuence
    void SetDepthLevel(int depth) {SQDepthLevel = depth;}
@@ -153,12 +153,12 @@ protected:
    
    /// \brief Updated from ReadLength, by FixFoungLentgh() for fixing a bug
    /// in the header or helping the parser going on    
-   guint32 UsableLength; 
+   uint32_t UsableLength; 
   
    /// \brief Length actually read on disk (before FixFoundLength). ReadLength
    /// will be updated only when FixFoundLength actually fixes a bug in the
    /// header, not when it performs a trick to help the Parser going on.
-   guint32 ReadLength;
+   uint32_t ReadLength;
 
    /// \brief Even when reading explicit vr files, some elements happen to
    /// be implicit. Flag them here since we can't use the entry->vr without

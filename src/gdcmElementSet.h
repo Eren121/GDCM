@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@ class gdcmBinEntry;
 class gdcmSeqEntry;
 
 
-typedef std::map<TagKey, gdcmDocEntry *> TagDocEntryHT;
+typedef std::map<gdcmTagKey, gdcmDocEntry *> TagDocEntryHT;
 
 //-----------------------------------------------------------------------------
 

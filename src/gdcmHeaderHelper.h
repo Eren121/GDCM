@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeaderHelper.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 20:48:25 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,27 +35,21 @@ public:
     gdcmSerieHeader();
     ~gdcmSerieHeader();
 
-   void AddFileName(std::string const & filename); //should return bool or throw error ?
+   /// \todo should return bool or throw error ?
+   void AddFileName(std::string const & filename);
    void AddGdcmFile(gdcmHeader *file);
    void SetDirectory(std::string const & dir);
    void OrderGdcmFileList();
    
-   inline gdcmHeader *GetGdcmHeader()
-   {
-      // Assume all element in the list have the same global infos
-      // Assume the list is not empty
-      return CoherentGdcmFileList.front();
-   }
+   /// \warning Assumes all elements in the list have the same global infos.
+   ///          Assumes the list is not empty.
+   gdcmHeader* GetGdcmHeader() { return CoherentGdcmFileList.front(); }
 
    typedef std::list<gdcmHeader* > GdcmHeaderList;
-   /**
-    * \brief Gets the *coherent* File List
-    * @return the *coherent* File List
-    */
-   const GdcmHeaderList& GetGdcmFileList()
-   {
-     return CoherentGdcmFileList;
-   }
+
+   /// \brief Gets the *coherent* File List
+   /// @return the *coherent* File List
+   const GdcmHeaderList& GetGdcmFileList() { return CoherentGdcmFileList; }
 
 private:
    bool ImagePositionPatientOrdering();

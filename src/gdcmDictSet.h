@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,13 +37,13 @@ typedef std::map<DictKey, gdcmDict*> DictSetHT;
  */
 class GDCM_EXPORT gdcmDictSet {
 public:
-	// TODO Swig int LoadDictFromFile(std::string filename);
+   // TODO Swig int LoadDictFromFile(std::string filename);
    // QUESTION: the following function might not be thread safe !? Maybe
    //           we need some mutex here, to avoid concurent creation of
    //           the same dictionary !?!?!
-	// TODO Swig int LoadDictFromName(std::string filename);
-	// TODO Swig int LoadAllDictFromDirectory(std::string DirectoryName);
-	// TODO Swig std::string* GetAllDictNames();
+   // TODO Swig int LoadDictFromName(std::string filename);
+   // TODO Swig int LoadAllDictFromDirectory(std::string DirectoryName);
+   // TODO Swig std::string* GetAllDictNames();
    gdcmDictSet(void);
    ~gdcmDictSet(void);
 
@@ -58,7 +58,7 @@ public:
    gdcmDict *GetDict(DictKey DictName);
    gdcmDict *GetDefaultPubDict(void);
 
-   gdcmDictEntry *NewVirtualDictEntry(guint16 group, guint16 element,
+   gdcmDictEntry *NewVirtualDictEntry(uint16_t group, uint16_t element,
                                       std::string vr     = "Unknown",
                                       std::string fourth = "Unknown",
                                       std::string name   = "Unknown");

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,13 +38,13 @@ public:
  * \ingroup gdcmDicomDirStudy
  * \brief   returns the SERIE chained List for this STUDY.
  */
-   inline ListDicomDirSerie &GetDicomDirSeries() 
+   ListDicomDirSerie &GetDicomDirSeries() 
       {return series;};
 /**
  * \ingroup gdcmDicomDirStudy
  * \brief   adds the passed SERIE to the SERIE chained List for this STUDY.
  */ 
-    inline void AddDicomDirSerie(gdcmDicomDirSerie *obj) 
+    void AddDicomDirSerie(gdcmDicomDirSerie *obj) 
        {series.push_back(obj);};
 
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,9 +25,10 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-typedef std::string VRKey;
-typedef std::string VRAtr;
-typedef std::map<VRKey, VRAtr> VRHT;    // Value Representation Hash Table
+typedef std::string gdcmVRKey;
+typedef std::string gdcmVRAtr;
+/// Value Representation Hash Table
+typedef std::map<gdcmVRKey, gdcmVRAtr> gdcmVRHT;
 
 //-----------------------------------------------------------------------------
 /*
@@ -41,12 +42,12 @@ public:
    ~gdcmVR();
 
    void Print(std::ostream &os = std::cout);
-   int Count(VRKey key);
-   bool IsVROfGdcmBinaryRepresentable(VRKey);
-   bool IsVROfGdcmStringRepresentable(VRKey);
+   int Count(gdcmVRKey key);
+   bool IsVROfGdcmBinaryRepresentable(gdcmVRKey);
+   bool IsVROfGdcmStringRepresentable(gdcmVRKey);
 
 private:
-   VRHT vr;
+   gdcmVRHT vr;
 };
 
 //-----------------------------------------------------------------------------

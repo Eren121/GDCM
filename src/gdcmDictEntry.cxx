@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
  * @param   InName    description of the element
 */
 
-gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
+gdcmDictEntry::gdcmDictEntry(uint16_t InGroup, uint16_t InElement,
                              std::string  InVr, std::string InFourth,
                              std::string  InName)
 {
@@ -51,22 +51,22 @@ gdcmDictEntry::gdcmDictEntry(guint16 InGroup, guint16 InElement,
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   concatenates 2 guint16 (supposed to be a Dicom group number 
+ * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
  *                                             and a Dicom element number)
  * @param  group the Dicom group   number used to build the tag
  * @param  element the Dicom element number used to build the tag
  * @return the built tag
  */
-TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element)
+gdcmTagKey gdcmDictEntry::TranslateToKey(uint16_t group, uint16_t element)
 {
-	char trash[10];
-	TagKey key;
-	// CLEANME: better call the iostream<< with the hex manipulator on.
-	// This requires some reading of the stdlibC++ sources to make the
-	// proper call (or copy).
-	sprintf(trash, "%04x|%04x", group , element);
-	key = trash;  // Convertion through assignement
-	return key;
+   char trash[10];
+   gdcmTagKey key;
+   // CLEANME: better call the iostream<< with the hex manipulator on.
+   // This requires some reading of the stdlibC++ sources to make the
+   // proper call (or copy).
+   sprintf(trash, "%04x|%04x", group , element);
+   key = trash;  // Convertion through assignement
+   return key;
 }
 
 /**
@@ -76,13 +76,13 @@ TagKey gdcmDictEntry::TranslateToKey(guint16 group, guint16 element)
  */
 void gdcmDictEntry::SetVR(std::string NewVr) 
 {
-	if ( IsVRUnknown() )
-		vr = NewVr;
-	else 
+   if ( IsVRUnknown() )
+      vr = NewVr;
+   else 
    {
-		dbg.Error(true, "gdcmDictEntry::SetVR",
-		          "Overwriting vr might compromise a dictionary");
-	}
+      dbg.Error(true, "gdcmDictEntry::SetVR",
+                       "Overwriting vr might compromise a dictionary");
+   }
 }
 
 //-----------------------------------------------------------------------------

@@ -1,4 +1,11 @@
 2004-07-02 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+   * src/*.[h|cxx] : typedef clean up
+     - guint16 and guint32 removed. Use ISO C uint16_t, uint32_t instead.
+     - TagKey renamed to gdcmTagKey (for external usage)
+     - VRKey renamed to gdcmVRKey (for external usage)
+     - removal of typedef duplication.
+     - Removed all unecessary inline keyword from class inline definitions.
+     - Some method|function(void) declarations replaced with method|function().
    * src/jpeg/libijg12/jdhuff12.c:
       - printf polluting ctest removed.
       - TAB removal for comminting

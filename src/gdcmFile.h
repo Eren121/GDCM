@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/26 04:09:33 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,17 +39,8 @@ public:
  
    virtual ~gdcmFile();
 
-   /// \brief returns the gdcmHeader *Header
-   inline gdcmHeader *GetHeader() { return Header; }
-
-   // For promotion (performs a deepcopy of pointed header object)
-   // TODO Swig gdcmFile(gdcmHeader* header);
-   // TODO Swig ~gdcmFile();
-
-   // On writing purposes. When instance was created through
-   // gdcmFile(std::string filename) then the filename argument MUST be
-        // different from the constructor's one (no overwriting allowed).
-   // TODO Swig int SetFileName(std::string filename);
+   /// Accessor to \ref Header
+   gdcmHeader* GetHeader() { return Header; }
 
    void   SetPixelDataSizeFromHeader();
    size_t GetImageDataSize();
@@ -68,11 +59,9 @@ public:
       
    // voir gdcmHeader::SetImageDataSize ?!?         
    bool SetImageData     (void * Data, size_t ExpectedSize);
-      // When the caller is aware we simply point to the data:
-      // TODO int SetImageDataNoCopy (void * Data, size_t ExpectedSize);
 
-  // Push to disk.
-  // TODO Swig int Write();
+   /// \todo When the caller is aware we simply point to the data:
+   /// int SetImageDataNoCopy (void * Data, size_t ExpectedSize);
 
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianity"
@@ -86,11 +75,11 @@ public:
    // It's in file gdcmParsePixels.cxx
    bool ParsePixelData();
 
-   inline virtual bool SetEntryByNumber(std::string const & content,
-                                        guint16 group, guint16 element)
+   virtual bool SetEntryByNumber(std::string const & content,
+                                 uint16_t group, uint16_t element)
    { 
       GetHeader()->SetEntryByNumber(content,group,element);
-      return true;  //default behavior ?
+      return true;  /// \todo default behavior ?
    }
      
 protected:

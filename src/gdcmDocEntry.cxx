@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 11:23:20 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ void gdcmDocEntry::Print(std::ostream & os) {
    TSKey v;
    std::string d2, vr;
    std::ostringstream s;
-   guint32 lgth;
+   uint32_t lgth;
    char greltag[10];  //group element tag
 
    g  = GetGroup();
@@ -107,11 +107,11 @@ void gdcmDocEntry::Print(std::ostream & os) {
  */
 void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
 
-   guint32 FFFF = 0xffffffff;
-   guint16 group  = GetGroup();
-   VRKey   vr     = GetVR();
-   guint16 el     = GetElement();
-   guint32 lgr    = GetReadLength();
+   uint32_t FFFF  = 0xffffffff;
+   uint16_t group = GetGroup();
+   gdcmVRKey vr   = GetVR();
+   uint16_t el    = GetElement();
+   uint32_t lgr   = GetReadLength();
 
    if ( (group == 0xfffe) && (el == 0x0000) ) 
      // Fix in order to make some MR PHILIPS images e-film readable
@@ -144,8 +144,8 @@ void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
          return;
       }
 
-      guint16 z=0;
-      guint16 shortLgr = lgr;
+      uint16_t z=0;
+      uint16_t shortLgr = lgr;
 
       if (vr == "unkn") {     // Unknown was 'written'
          // deal with Little Endian            
@@ -187,8 +187,8 @@ void gdcmDocEntry::Write(FILE *fp, FileType filetype) {
  * \ingroup gdcmDocEntry
  * \brief   Gets the full length of the elementary DocEntry (not only value length)
  */
-guint32 gdcmDocEntry::GetFullLength(void) {
-   guint32 l;
+uint32_t gdcmDocEntry::GetFullLength(void) {
+   uint32_t l;
    l = GetReadLength();
    if ( IsImplicitVR() ) 
       l = l + 8;  // 2 (gr) + 2 (el) + 4 (lgth) 

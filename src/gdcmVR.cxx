@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:30:58 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,7 +76,7 @@ void gdcmVR::Print(std::ostream &os)
 {
    std::ostringstream s;
 
-   for (VRHT::iterator it = vr.begin(); it != vr.end(); ++it)
+   for (gdcmVRHT::iterator it = vr.begin(); it != vr.end(); ++it)
    {
       s << "VR : "<<it->first<<" = "<<it->second<<std::endl;
    }
@@ -89,7 +89,7 @@ void gdcmVR::Print(std::ostream &os)
  * \brief   Get the count for an element
  * @param   key key to count
  */
-int gdcmVR::Count(VRKey key) 
+int gdcmVR::Count(gdcmVRKey key) 
 {
    return vr.count(key);
 }
@@ -101,7 +101,7 @@ int gdcmVR::Count(VRKey key)
  *          \ref gdcmVR::IsVROfGdcmStringRepresentable .
  * @param   tested value represenation to check for.
  */
-bool gdcmVR::IsVROfGdcmBinaryRepresentable(VRKey tested)
+bool gdcmVR::IsVROfGdcmBinaryRepresentable(gdcmVRKey tested)
 {
    if ( ! Count(tested) )
    {
@@ -124,7 +124,7 @@ bool gdcmVR::IsVROfGdcmBinaryRepresentable(VRKey tested)
  *          but NOT a \ref gdcmBinEntry.
  * @param   tested value represenation to check for.
  */
-bool gdcmVR::IsVROfGdcmStringRepresentable(VRKey tested)
+bool gdcmVR::IsVROfGdcmStringRepresentable(gdcmVRKey tested)
 {
    if ( ! Count(tested) )
    {

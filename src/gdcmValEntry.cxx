@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 11:01:18 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,8 +69,8 @@ gdcmValEntry::~gdcmValEntry (void)
  */
 void gdcmValEntry::Print(std::ostream & os)
 {
-   guint16 g = GetGroup();
-   guint16 e = GetElement();
+   uint16_t g = GetGroup();
+   uint16_t e = GetElement();
    std::string vr = GetVR();
    std::ostringstream s; 
    char st[20];
@@ -147,7 +147,7 @@ void gdcmValEntry::Write(FILE *fp, FileType filetype)
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
       Tokenize (GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++) {
-         guint16 val_uint16 = atoi(tokens[i].c_str());
+         uint16_t val_uint16 = atoi(tokens[i].c_str());
          void *ptr = &val_uint16;
          fwrite ( ptr,(size_t)2 ,(size_t)1 ,fp);
       }
@@ -164,7 +164,7 @@ void gdcmValEntry::Write(FILE *fp, FileType filetype)
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
       Tokenize (GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++){
-         guint32 val_uint32 = atoi(tokens[i].c_str());
+         uint32_t val_uint32 = atoi(tokens[i].c_str());
          void *ptr = &val_uint32;
          fwrite ( ptr,(size_t)4 ,(size_t)1 ,fp);
       }

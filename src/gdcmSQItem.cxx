@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/25 12:54:35 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.20 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -139,8 +139,8 @@ bool gdcmSQItem::AddEntry(gdcmDocEntry *entry)
  * @return  true if element was found or created successfully
  */
 
-bool gdcmSQItem::SetEntryByNumber(std::string val,guint16 group, 
-                                  guint16 element)
+bool gdcmSQItem::SetEntryByNumber(std::string val, uint16_t group, 
+                                                   uint16_t element)
 {
    for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i)
    { 
@@ -153,7 +153,7 @@ bool gdcmSQItem::SetEntryByNumber(std::string val,guint16 group,
          // instead of ReplaceOrCreateByNumber 
          // that is a method of gdcmDocument :-( 
          gdcmValEntry* Entry = (gdcmValEntry*)0;
-         TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+         gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
 
          if ( ! ptagHT->count(key))
          {
@@ -207,7 +207,8 @@ bool gdcmSQItem::SetEntryByNumber(std::string val,guint16 group,
  * \brief   Gets a Dicom Element inside a SQ Item Entry, by number
  * @return
  */
-gdcmDocEntry *gdcmSQItem::GetDocEntryByNumber(guint16 group, guint16 element) {
+gdcmDocEntry *gdcmSQItem::GetDocEntryByNumber(uint16_t group, uint16_t element)
+{
    for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i) {
       if ( (*i)->GetGroup()==group && (*i)->GetElement()==element)
          return (*i);
@@ -220,7 +221,8 @@ gdcmDocEntry *gdcmSQItem::GetDocEntryByNumber(guint16 group, guint16 element) {
  * @return
  */ 
 
-std::string gdcmSQItem::GetEntryByNumber(guint16 group, guint16 element) { 
+std::string gdcmSQItem::GetEntryByNumber(uint16_t group, uint16_t element)
+{ 
    for(ListDocEntry::iterator i=docEntries.begin();i!=docEntries.end();++i) {
       if ( (*i)->GetGroup()==group && (*i)->GetElement()==element) {
          return ((gdcmValEntry *)(*i))->GetValue();

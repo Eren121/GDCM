@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:48 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,25 +66,9 @@ TagDocEntryHT gdcmObject::GetEntry(void) {
    return(HT);
 }
 
-/**
- * \ingroup gdcmObject
- * \brief   Builds a Chained List containing 
- *          pointers to all Header Entries (i.e Dicom Element)
- *          related to this 'object'
- * @return
- */
- 
- // FIXME : what was it used for ?!?
- /* 
-ListTag gdcmObject::GetListEntry(void) {
-   return(GetDocEntries());
-}
-*/
-
 //-----------------------------------------------------------------------------
 // Protected
 /**
- * \ingroup gdcmObject
  * \brief   add the 'Object' related Dicom Elements to the listEntries
  *          of a partially created DICOMDIR
  */
@@ -93,7 +77,8 @@ void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
   // FillObject rempli le SQItem qui sera accroche au bon endroit
 
    std::list<gdcmElement>::iterator it;
-   guint16 tmpGr,tmpEl;
+   uint16_t tmpGr;
+   uint16_t tmpEl;
    gdcmDictEntry *dictEntry;
    gdcmValEntry *entry;
    
@@ -112,30 +97,25 @@ void gdcmObject::FillObject(std::list<gdcmElement> elemList) {
       // dealing with value length ...
   
       if(dictEntry->GetGroup()==0xfffe) 
-	 {
-            entry->SetLength(entry->GetValue().length());	 
-	 }
+      {
+         entry->SetLength(entry->GetValue().length());
+      }
       else if( (dictEntry->GetVR()=="UL") || (dictEntry->GetVR()=="SL") ) 
-         {
-            entry->SetLength(4);
-         } 
+      {
+         entry->SetLength(4);
+      } 
       else if( (dictEntry->GetVR()=="US") || (dictEntry->GetVR()=="SS") ) 
-         {
-            entry->SetLength(2); 
-         } 
+      {
+         entry->SetLength(2); 
+      } 
       else if(dictEntry->GetVR()=="SQ") 
-         {
-            entry->SetLength(0xffffffff);
-         }
+      {
+         entry->SetLength(0xffffffff);
+      }
       else
-         {
-            entry->SetLength(entry->GetValue().length()); 
-         }                                
-      //docEntries->insert(debInsertion ,entry); // ??? // add at the begining of the Patient list
-      AddDocEntry(entry);      			           
+      {
+         entry->SetLength(entry->GetValue().length()); 
+      }                                
+      AddDocEntry(entry);
    }   
 }   
-//-----------------------------------------------------------------------------
-// Private
-
-//-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmParsePixels.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,8 @@ bool gdcmFile::ParsePixelData(void) {
          
    printf ("Checking the Dicom-encapsulated Jpeg/RLE Pixels\n");
       
-   guint16 ItemTagGr,ItemTagEl; 
+   uint16_t ItemTagGr;
+   uint16_t ItemTagEl; 
    int ln;
    long ftellRes;
    //char * destination = NULL;
@@ -97,9 +98,9 @@ bool gdcmFile::ParsePixelData(void) {
          // What is it used for ??
          char * BasicOffsetTableItemValue= new char[ln+1];
          fread(BasicOffsetTableItemValue,ln,1,fp); 
-         guint32 a;
+         uint32_t a;
          for (int i=0;i<ln;i+=4){
-            a=str2num(&BasicOffsetTableItemValue[i],guint32);
+            a=str2num(&BasicOffsetTableItemValue[i],uint32_t);
             printf("      x(%08x)  %d\n",a,a);
          }              
       }
@@ -146,8 +147,8 @@ bool gdcmFile::ParsePixelData(void) {
 
       // RLE Image
       long RleSegmentLength[15],fragmentLength;
-      guint32 nbRleSegments;
-      guint32 RleSegmentOffsetTable[15];
+      uint32_t nbRleSegments;
+      uint32_t RleSegmentOffsetTable[15];
       ftellRes=ftell(fp);
       // Basic Offset Table with Item Value
          // Item Tag
@@ -170,9 +171,9 @@ bool gdcmFile::ParsePixelData(void) {
          // What is it used for ??
          char * BasicOffsetTableItemValue= new char[ln+1];
          fread(BasicOffsetTableItemValue,ln,1,fp); 
-         guint32 a;
+         uint32_t a;
          for (int i=0;i<ln;i+=4){
-            a=str2num(&BasicOffsetTableItemValue[i],guint32);
+            a=str2num(&BasicOffsetTableItemValue[i],uint32_t);
             printf("      x(%08x)  %d\n",a,a);
          }              
       }

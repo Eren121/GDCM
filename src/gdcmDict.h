@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 #include <map>
 
 //-----------------------------------------------------------------------------
-typedef std::map<TagKey,  gdcmDictEntry*> TagKeyHT;
+typedef std::map<gdcmTagKey, gdcmDictEntry*> TagKeyHT;
 typedef std::map<TagName, gdcmDictEntry*> TagNameHT;
 
 //-----------------------------------------------------------------------------
@@ -54,35 +54,29 @@ public:
 // Entries
    bool AddNewEntry (gdcmDictEntry *NewEntry);
    bool ReplaceEntry(gdcmDictEntry *NewEntry);
-   bool RemoveEntry (TagKey key);
-   bool RemoveEntry (guint16 group, guint16 element);
+   bool RemoveEntry (gdcmTagKey key);
+   bool RemoveEntry (uint16_t group, uint16_t element);
    
 // Tag
    gdcmDictEntry *GetDictEntryByName(TagName name);
-   gdcmDictEntry *GetDictEntryByNumber(guint16 group, guint16 element);
+   gdcmDictEntry *GetDictEntryByNumber(uint16_t group, uint16_t element);
 
    std::list<std::string> *GetDictEntryNames(void);
    std::map<std::string, std::list<std::string> > *
         GetDictEntryNamesByCategory(void);
 
-   /**
-    * \ingroup gdcmDict
-    * \brief   returns a ref to the Dicom Dictionary H table (map)
-    * return the Dicom Dictionary H table
-    */
-   inline TagKeyHT & GetEntriesByKey(void)  { return KeyHt; }
+   /// \brief  Returns a ref to the Dicom Dictionary H table (map)
+   /// @return the Dicom Dictionary H table
+   TagKeyHT & GetEntriesByKey(void)  { return KeyHt; }
 
-   /**
-    * \ingroup gdcmDict
-    * \brief   returns a ref to the Dicom Dictionary H table (map)
-    * return the Dicom Dictionary H table
-    */
-   inline TagNameHT & GetEntriesByName(void)  { return NameHt; }
+   /// \brief  Returns a ref to the Dicom Dictionary H table (map)
+   /// @return the Dicom Dictionary H table
+   TagNameHT & GetEntriesByName(void)  { return NameHt; }
  
 private:
    /// ASCII file holding the Dictionnary
    std::string filename;
-   /// Access through TagKey (see alternate access with NameHt)
+   /// Access through gdcmTagKey (see alternate access with NameHt)
    TagKeyHT  KeyHt;
    /// Access through TagName (see alternate access with KeyHt)
    TagNameHT NameHt;

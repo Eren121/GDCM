@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 16:00:18 $
-  Version:   $Revision: 1.114 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.115 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -473,9 +473,9 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
       }
       else if ( nb == 32 )
       {
-         guint32 mask = 0xffffffff;
+         uint32_t mask = 0xffffffff;
          mask         = mask >> (nb - nbu);
-         guint32 *deb = (guint32 *)destination;
+         uint32_t *deb = (uint32_t *)destination;
          for(int i = 0; i<l; i++)
          {
             *deb = (*deb >> (nbu - highBit - 1)) & mask;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,8 @@
  * @param   FileName from which to build the dictionary.
  */
 gdcmDict::gdcmDict(std::string & FileName) {
-   guint16 group, element;
+   uint16_t group;
+   uint16_t element;
    //char buff[1024];
    TagName vr;
    TagName fourth;
@@ -47,7 +48,7 @@ gdcmDict::gdcmDict(std::string & FileName) {
       from >> element;
       from >> vr;
       from >> fourth;
-		eatwhite(from);
+      eatwhite(from);
       getline(from, name);    /// MEMORY LEAK in std::getline<>
 
       gdcmDictEntry * newEntry = new gdcmDictEntry(group, element,
@@ -63,7 +64,8 @@ gdcmDict::gdcmDict(std::string & FileName) {
  * \brief  Destructor 
  */
 gdcmDict::~gdcmDict() {
-   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag) {
+   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
+   {
       gdcmDictEntry* EntryToDelete = tag->second;
       if ( EntryToDelete )
          delete EntryToDelete;
@@ -92,13 +94,16 @@ void gdcmDict::Print(std::ostream &os) {
  *          Entries will be sorted by tag i.e. the couple (group, element).
  * @param   os The output stream to be written to.
  */
-void gdcmDict::PrintByKey(std::ostream &os) {
+void gdcmDict::PrintByKey(std::ostream &os)
+{
    std::ostringstream s;
 
-   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag){
+   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
+   {
       s << "Entry : ";
       s << "(" << std::hex << std::setw(4) << tag->second->GetGroup() << ',';
-      s << std::hex << std::setw(4) << tag->second->GetElement() << ") = " << std::dec;
+      s << std::hex << std::setw(4) << tag->second->GetElement() << ") = "
+        << std::dec;
       s << tag->second->GetVR() << ", ";
       s << tag->second->GetFourth() << ", ";
       s << tag->second->GetName() << "."  << std::endl;
@@ -138,7 +143,7 @@ void gdcmDict::PrintByName(std::ostream& os) {
  */
 bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry) 
 {
-   TagKey key;
+   gdcmTagKey key;
    key = NewEntry->GetKey();
 
    if(KeyHt.count(key) == 1)
@@ -177,7 +182,7 @@ bool gdcmDict::ReplaceEntry(gdcmDictEntry *NewEntry) {
  * @param   key (group|element)
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool gdcmDict::RemoveEntry(TagKey key) 
+bool gdcmDict::RemoveEntry(gdcmTagKey key) 
 {
    if(KeyHt.count(key) == 1) 
    {
@@ -200,19 +205,18 @@ bool gdcmDict::RemoveEntry(TagKey key)
 }
 
 /**
- * \ingroup gdcmDict
  * \brief  removes an already existing Dicom Dictionary Entry, 
  *          identified by its group,element number
  * @param   group   Dicom group number of the Dicom Element
  * @param   element Dicom element number of the Dicom Element
  * @return  false if Dicom Dictionary Entry doesn't exist
  */
-bool gdcmDict::RemoveEntry (guint16 group, guint16 element) {
-	return( RemoveEntry(gdcmDictEntry::TranslateToKey(group, element)) );
+bool gdcmDict::RemoveEntry (uint16_t group, uint16_t element)
+{
+   return( RemoveEntry(gdcmDictEntry::TranslateToKey(group, element)) );
 }
 
 /**
- * \ingroup gdcmDict
  * \brief   Get the dictionnary entry identified by it's name.
  * @param   name element of the ElVal to modify
  * \warning : NEVER use it !
@@ -220,34 +224,33 @@ bool gdcmDict::RemoveEntry (guint16 group, guint16 element) {
  *            the name MAY CHANGE between two versions !
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry *gdcmDict::GetDictEntryByName(TagName name) {
+gdcmDictEntry* gdcmDict::GetDictEntryByName(TagName name) {
    if ( ! NameHt.count(name))
       return NULL; 
    return NameHt.find(name)->second;
 }
 
 /**
- * \ingroup gdcmDict
  * \brief   Get the dictionnary entry identified by a given tag (group,element)
  * @param   group   group of the entry to be found
  * @param   element element of the entry to be found
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-gdcmDictEntry *gdcmDict::GetDictEntryByNumber(guint16 group, guint16 element) {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+gdcmDictEntry* gdcmDict::GetDictEntryByNumber(uint16_t group, uint16_t element)
+{
+   gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! KeyHt.count(key))
       return NULL; 
    return KeyHt.find(key)->second;
 }
 
 /** 
- * \ingroup gdcmDict
  * \brief   Consider all the entries of the public dicom dictionnary. 
  *          Build all list of all the tag names of all those entries.
  * \sa      gdcmDictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-std::list<std::string> *gdcmDict::GetDictEntryNames(void) 
+std::list<std::string>* gdcmDict::GetDictEntryNames(void) 
 {
    std::list<std::string> *Result = new std::list<std::string>;
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:51:02 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,13 +98,13 @@ protected:
    /// make things easier the parser shall store the proper value in
    /// NumPixel to provide a unique access facility. See also the constructor
    /// \ref gdcmHeader::gdcmHeader
-   guint16 NumPixel;
+   uint16_t NumPixel;
    /// \brief In some cases (e.g. for some ACR-NEMA images) the header entry for
    /// the group of pixels is *not* found at 0x7fe0. In order to
    /// make things easier the parser shall store the proper value in
    /// GrPixel to provide a unique access facility. See also the constructor
    /// \ref gdcmHeader::gdcmHeader
-   guint16 GrPixel;
+   uint16_t GrPixel;
 
 public:
    gdcmHeader(bool exception_on_error = false);
@@ -175,10 +175,10 @@ public:
    std::string GetTransfertSyntaxName();
 
    /// Accessor to \ref gdcmHeader::GrPixel
-   guint16 GetGrPixel()  {return GrPixel;}
+   uint16_t GetGrPixel()  {return GrPixel;}
    
    /// Accessor to \ref gdcmHeader::NumPixel
-   guint16 GetNumPixel() {return NumPixel;}
+   uint16_t GetNumPixel() {return NumPixel;}
 
    /// Read (used in gdcmFile)
    void SetImageDataSize(size_t expectedSize);

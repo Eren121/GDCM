@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLE.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/26 04:09:33 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,9 +37,9 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
 
    long RleSegmentLength[15],fragmentLength,uncompressedSegmentSize;;
    long ftellRes, ln;
-   guint32 nbRleSegments;
-   guint32 RleSegmentOffsetTable[15];
-   guint16 ItemTagGr,ItemTagEl;
+   uint32_t nbRleSegments;
+   uint32_t RleSegmentOffsetTable[15];
+   uint16_t ItemTagGr,ItemTagEl;
    uncompressedSegmentSize=Header->GetXSize()*Header->GetYSize();
    ftellRes=ftell(fp);
    // Basic Offset Table with Item Value
@@ -59,9 +59,9 @@ bool gdcmFile::gdcm_read_RLE_file (FILE *fp,void * image_buffer) {
       // What is it used for ??
       char * BasicOffsetTableItemValue= new char[ln+1];
       fread(BasicOffsetTableItemValue,ln,1,fp); 
-      guint32 a;
+      uint32_t a;
       for (int i=0;i<ln;i+=4){
-         a=str2num(&BasicOffsetTableItemValue[i],guint32);
+         a=str2num(&BasicOffsetTableItemValue[i],uint32_t);
       }        
    }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/29 14:38:29 $
-  Version:   $Revision: 1.175 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.176 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ gdcmHeader::gdcmHeader(std::string const & filename,
    if ( ImageLocation == GDCM_UNFOUND ) { // Image Location
       GrPixel = 0x7fe0;                   // default value
    } else {
-      GrPixel = (guint16) atoi( ImageLocation.c_str() );
+      GrPixel = (uint16_t) atoi( ImageLocation.c_str() );
    }   
    if (GrPixel == 0xe07f) // sometimes Image Location value doesn't follow 
       GrPixel = 0x7fe0;   // the supposed processor endianity. 

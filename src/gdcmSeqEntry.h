@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/23 13:02:36 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,14 +37,14 @@ public:
    virtual void Print(std::ostream &os = std::cout); 
    virtual void Write(FILE *fp, FileType);
 
-   /// \brief   returns the SQITEM chained List for this SeQuence.
-   inline ListSQItem &GetSQItems() { return items; }
+   /// returns the SQITEM chained List for this SeQuence.
+   ListSQItem &GetSQItems() { return items; }
       
-   /// \brief Sets the delimitor mode
-   inline void SetDelimitorMode(bool dm) { delimitor_mode = dm;}
+   /// Sets the delimitor mode
+   void SetDelimitorMode(bool dm) { delimitor_mode = dm;}
 
-   /// \brief Sets the Sequence Delimitation Item
-   inline void SetSequenceDelimitationItem(gdcmDocEntry * e) { seq_term = e;}
+   /// Sets the Sequence Delimitation Item
+   void SetSequenceDelimitationItem(gdcmDocEntry * e) { seq_term = e;}
 
    void AddEntry(gdcmSQItem *it, int itemNumber);
    gdcmSQItem *GetSQItemByOrdinalNumber(int itemNumber);
@@ -56,13 +56,13 @@ protected:
 private:
 // Variables
 
-   /// \brief If this Sequence is in delimitor mode (length =0xffffffff) or not
+   /// If this Sequence is in delimitor mode (length =0xffffffff) or not
    bool delimitor_mode;
    
-   /// \brief Chained list of SQ Items
+   /// Chained list of SQ Items
    ListSQItem items;
    
-   /// \brief sequence terminator item 
+   /// sequence terminator item 
    gdcmDocEntry *seq_term;
 };
 

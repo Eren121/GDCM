@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -157,7 +157,6 @@ gdcmDict *gdcmDictSet::GetDict(DictKey DictName)
 }
 
 /**
- * \ingroup gdcmDictSet
  * \brief   Retrieve the default reference DICOM V3 public dictionary.
  * \result  The retrieved default dictionary.
  */
@@ -167,17 +166,19 @@ gdcmDict *gdcmDictSet::GetDefaultPubDict()
 }
 
 /**
- * \ingroup gdcmDictSet
  * \brief   Create a gdcmDictEntry which will be reference 
  *          in no dictionnary
  * @return  virtual entry
  */
-gdcmDictEntry *gdcmDictSet::NewVirtualDictEntry(guint16 group, guint16 element,
-                                                std::string vr,std::string fourth,
+gdcmDictEntry *gdcmDictSet::NewVirtualDictEntry(uint16_t group,
+                                                uint16_t element,
+                                                std::string vr,
+                                                std::string fourth,
                                                 std::string name)
 {
-   gdcmDictEntry *entry;
-   std::string tag=gdcmDictEntry::TranslateToKey(group,element)+"#"+vr+"#"+fourth+"#"+name;
+   gdcmDictEntry* entry;
+   std::string tag = gdcmDictEntry::TranslateToKey(group,element)
+                     + "#" + vr + "#" + fourth + "#" + name;
    std::map<std::string,gdcmDictEntry *>::iterator it;
    
    it=virtualEntry.find(tag);
@@ -194,7 +195,6 @@ gdcmDictEntry *gdcmDictSet::NewVirtualDictEntry(guint16 group, guint16 element,
 }
 
 /**
- * \ingroup gdcmDictSet
  * \brief   Obtain from the GDCM_DICT_PATH environnement variable the
  *          path to directory containing the dictionnaries. When
  *          the environnement variable is absent the path is defaulted

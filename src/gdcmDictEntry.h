@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,97 +35,72 @@
 class GDCM_EXPORT gdcmDictEntry 
 {
 public:
-   gdcmDictEntry(guint16 group, 
-                 guint16 element,
+   gdcmDictEntry(uint16_t group, 
+                 uint16_t element,
                  std::string vr     = "Unknown",
                  std::string fourth = "Unknown",
                  std::string name   = "Unknown");
-	
-   static TagKey TranslateToKey(guint16 group, guint16 element);
+
+   static gdcmTagKey TranslateToKey(uint16_t group, uint16_t element);
 
    void SetVR(std::string);
 
-   /**
-    * \ingroup     gdcmDictEntry
-    * \brief       tells if the V(alue) R(epresentation) is known (?!)
-    *              
-    * @return 
-    */
-   inline bool IsVRUnknown() {return vr == "??"; }
+   /// \brief tells if the V(alue) R(epresentation) is known (?!)
+   /// @return 
+   bool IsVRUnknown() {return vr == "??"; }
 
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   returns the Dicom Group Number of the current gdcmDictEntry
-    * return the Dicom Group Number
-    */
-   inline guint16 GetGroup(void) { return group; }
+   /// \brief  Returns the Dicom Group Number of the current gdcmDictEntry
+   /// @return the Dicom Group Number
+   uint16_t GetGroup() { return group; }
   
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   returns the Dicom Element Number of the current gdcmDictEntry
-    * return the Dicom Element Number
-    */
-   inline guint16 GetElement(void) { return element; }
+   /// \brief  Returns the Dicom Element Number of the current gdcmDictEntry
+   /// @return the Dicom Element Number
+   uint16_t GetElement() { return element; }
  
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   returns the Dicom Value Representation of the current gdcmDictEntry
-    * return the Dicom Value Representation
-    */
-   inline std::string GetVR(void) { return vr; }
+   /// \brief  Returns the Dicom Value Representation of the current
+   ///         gdcmDictEntry
+   /// @return the Dicom Value Representation
+   std::string GetVR() { return vr; }
  
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   sets the key of the current gdcmDictEntry
-    * @param k New key to be set.
-    */
-   inline void SetKey(std::string k)  { key = k; }
+   /// \brief   sets the key of the current gdcmDictEntry
+   /// @param k New key to be set.
+   void SetKey(std::string k)  { key = k; }
  
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   returns the Fourth field of the current gdcmDictEntry
-    * \warning NOT part of the Dicom Standard
-    * \        May be REMOVED an any time
-    * \        NEVER use it
-    * return the Fourth field
-    */
-   inline std::string GetFourth(void) { return fourth; } 
+   /// \brief   returns the Fourth field of the current gdcmDictEntry
+   /// \warning NOT part of the Dicom Standard.
+   ///          May be REMOVED an any time. NEVER use it.
+   /// @return  The Fourth field
+   std::string GetFourth(void) { return fourth; } 
 
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   returns the Dicom Name of the current gdcmDictEntry
-    * \        e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
-    * return the Dicom Name
-    */
-   inline std::string GetName(void) { return name; } 
+   /// \brief  Returns the Dicom Name of the current gdcmDictEntry
+   ///         e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
+   /// @return the Dicom Name
+   std::string GetName(void) { return name; } 
  
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   Gets the key of the current gdcmDictEntry
-    * @return the key .
-    */
-   inline std::string GetKey(void) { return key; }
+   /// \brief  Gets the key of the current gdcmDictEntry
+   /// @return the key.
+   std::string GetKey(void) { return key; }
 
 private:
-   // FIXME : where are the group and element used except from building up
-   //         a TagKey. If the answer is nowhere then there is no need
-   //         to store the group and element independently.
-   //
-   //         --> EVERYWHERE ! The alternate question would be :
-   //                          What's TagKey used for ?
+   /// \todo FIXME 
+   ///        where are the group and element used except from building up
+   ///        a gdcmTagKey. If the answer is nowhere then there is no need
+   ///        to store the group and element independently.
+   ///
+   ///        --> EVERYWHERE ! The alternate question would be :
+   ///                         What's gdcmTagKey used for ?
    
    /// DicomGroup number
-   guint16 group;   // e.g. 0x0010
+   uint16_t group;   // e.g. 0x0010
+
    /// DicomElement number
-   guint16 element; // e.g. 0x0103
-   /**
-    * \ingroup gdcmDictEntry
-    * \brief   Value Representation i.e. some clue about the nature
-    *          of the data represented 
-    *          e.g. "FD" short for "Floating Point Double"
-    */ 
+   uint16_t element; // e.g. 0x0103
+
+   /// \brief Value Representation i.e. some clue about the nature
+   ///        of the data represented e.g. "FD" short for
+   ///        "Floating Point Double" (see \ref gdcmVR)
    std::string vr;
-	                	                
+
    /**
     * \brief AVOID using the following fourth field at all costs.
     * 
@@ -189,21 +164,7 @@ private:
    std::string name;      
 
    /// Redundant with (group, element) but we add it on efficiency purposes. 
-   TagKey  key;
-                     
-	// DCMTK has many fields for handling a DictEntry (see below). What are the
-	// relevant ones for gdcmlib ?
-	//      struct DBI_SimpleEntry {
-	//         Uint16 upperGroup;
-	//         Uint16 upperElement;
-	//         DcmEVR evr;
-	//         const char* tagName;
-	//         int vmMin;
-	//         int vmMax;
-	//         const char* standardVersion;
-	//         DcmDictRangeRestriction groupRestriction;
-	//         DcmDictRangeRestriction elementRestriction;
-	//       };
+   gdcmTagKey  key;
 };
 
 //-----------------------------------------------------------------------------

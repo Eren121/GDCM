@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/20 18:08:47 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,25 +47,17 @@
 //-----------------------------------------------------------------------------
 #ifdef __GNUC__
 #ifndef HAVE_NO_STDINT_H
-#include <stdint.h>
-#define guint16 uint16_t
-#define guint32 uint32_t
-#define gint16  int16_t
-#define gint32  int32_t
+#include <stdint.h>   // For uint16_t and uint32_t
 #else
-typedef  unsigned short guint16;
-typedef  unsigned int   guint32;
-typedef  short          gint16;
-typedef  int            gint32;
+typedef  unsigned short uint16_t;
+typedef  unsigned int   uint32_t;
 #define UINT32_MAX    (4294967295U)
 #endif //HAVE_NO_STDINT_H
 #endif
 
 #ifdef _MSC_VER 
-typedef  unsigned short guint16;
-typedef  unsigned int   guint32;
-typedef  short          gint16;
-typedef  int            gint32;
+typedef  unsigned short uint16_t;
+typedef  unsigned int   uint32_t;
 #define UINT32_MAX    (4294967295U)
 #endif
 
@@ -99,7 +91,7 @@ typedef  int            gint32;
 
 const std::string GDCM_UNFOUND = "gdcm::Unfound";   /// MEMORY LEAK
 
-typedef std::string TagKey;
+typedef std::string gdcmTagKey;
 typedef std::string TagName;
 
 enum FileType {

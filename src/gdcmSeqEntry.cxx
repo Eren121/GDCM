@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/24 18:03:14 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/07/02 13:55:28 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,12 +88,12 @@ void gdcmSeqEntry::Print(std::ostream &os){
  */
 void gdcmSeqEntry::Write(FILE *fp, FileType filetype)
 {
-   guint16 seq_term_gr = 0xfffe;
-   guint16 seq_term_el = 0xe0dd;
-   guint32 seq_term_lg = 0x00000000;
+   uint16_t seq_term_gr = 0xfffe;
+   uint16_t seq_term_el = 0xe0dd;
+   uint32_t seq_term_lg = 0x00000000;
 
-   guint16 item_term_gr = 0xfffe;
-   guint16 item_term_el = 0xe00d;
+   uint16_t item_term_gr = 0xfffe;
+   uint16_t item_term_el = 0xe00d;
 
    gdcmDocEntry::Write(fp, filetype);
    for(ListSQItem::iterator cc  = GetSQItems().begin();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/30 00:10:59 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2004/07/02 13:55:27 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -175,7 +175,8 @@ gdcmDocument::gdcmDocument(std::string const & inFilename,
  * @param   exception_on_error
  */
 gdcmDocument::gdcmDocument(bool exception_on_error) 
-             :gdcmElementSet(-1)    {
+             :gdcmElementSet(-1)
+{
    (void)exception_on_error;
    //enableSequences=0; // ?!? JPR
 
@@ -188,7 +189,8 @@ gdcmDocument::gdcmDocument(bool exception_on_error)
 /**
  * \brief   Canonical destructor.
  */
-gdcmDocument::~gdcmDocument (void) {
+gdcmDocument::~gdcmDocument ()
+{
    RefPubDict = NULL;
    RefShaDict = NULL;
 
@@ -207,7 +209,8 @@ gdcmDocument::~gdcmDocument (void) {
   * \brief   Prints The Dict Entries of THE public Dicom Dictionary
   * @return
   */  
-void gdcmDocument::PrintPubDict(std::ostream & os) {
+void gdcmDocument::PrintPubDict(std::ostream & os)
+{
    RefPubDict->Print(os);
 }
 
@@ -215,7 +218,8 @@ void gdcmDocument::PrintPubDict(std::ostream & os) {
   * \brief   Prints The Dict Entries of THE shadow Dicom Dictionary
   * @return
   */
-void gdcmDocument::PrintShaDict(std::ostream & os) {
+void gdcmDocument::PrintShaDict(std::ostream & os)
+{
    RefShaDict->Print(os);
 }
 
@@ -224,14 +228,16 @@ void gdcmDocument::PrintShaDict(std::ostream & os) {
 /**
  * \brief   Get the public dictionary used
  */
-gdcmDict *gdcmDocument::GetPubDict(void) {
+gdcmDict *gdcmDocument::GetPubDict()
+{
    return RefPubDict;
 }
 
 /**
  * \brief   Get the shadow dictionary used
  */
-gdcmDict *gdcmDocument::GetShaDict(void) {
+gdcmDict *gdcmDocument::GetShaDict()
+{
    return RefShaDict;
 }
 
@@ -239,7 +245,8 @@ gdcmDict *gdcmDocument::GetShaDict(void) {
  * \brief   Set the shadow dictionary used
  * \param   dict dictionary to use in shadow
  */
-bool gdcmDocument::SetShaDict(gdcmDict *dict){
+bool gdcmDocument::SetShaDict(gdcmDict *dict)
+{
    RefShaDict=dict;
    return !RefShaDict;
 }
@@ -248,7 +255,8 @@ bool gdcmDocument::SetShaDict(gdcmDict *dict){
  * \brief   Set the shadow dictionary used
  * \param   dictName name of the dictionary to use in shadow
  */
-bool gdcmDocument::SetShaDict(DictKey dictName){
+bool gdcmDocument::SetShaDict(DictKey dictName)
+{
    RefShaDict=gdcmGlobal::GetDicts()->GetDict(dictName);
    return !RefShaDict;
 }
@@ -261,7 +269,7 @@ bool gdcmDocument::SetShaDict(DictKey dictName){
  * @return true when gdcmDocument is the one of a reasonable Dicom/Acr file,
  *         false otherwise. 
  */
-bool gdcmDocument::IsReadable(void) { 
+bool gdcmDocument::IsReadable() { 
 
    if(Filetype==gdcmUnknown) {
       std::cout << " gdcmDocument::IsReadable: Filetype " << Filetype
@@ -320,7 +328,7 @@ bool gdcmDocument::IsGivenTransferSyntax(const std::string & SyntaxToCheck)
  * \sa      \ref gdcmDocument::IsGivenTransferSyntax.
  * @return  True when ImplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmDocument::IsImplicitVRLittleEndianTransferSyntax(void)
+bool gdcmDocument::IsImplicitVRLittleEndianTransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2);
 }
@@ -330,7 +338,7 @@ bool gdcmDocument::IsImplicitVRLittleEndianTransferSyntax(void)
  *          and if it corresponds to a ExplicitVRLittleEndian one.
  * @return  True when ExplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmDocument::IsExplicitVRLittleEndianTransferSyntax(void)
+bool gdcmDocument::IsExplicitVRLittleEndianTransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2_1);
 }
@@ -340,7 +348,7 @@ bool gdcmDocument::IsExplicitVRLittleEndianTransferSyntax(void)
  *          and if it corresponds to a DeflatedExplicitVRLittleEndian one.
  * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
  */
-bool gdcmDocument::IsDeflatedExplicitVRLittleEndianTransferSyntax(void)
+bool gdcmDocument::IsDeflatedExplicitVRLittleEndianTransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2_1_99);
 }
@@ -350,7 +358,7 @@ bool gdcmDocument::IsDeflatedExplicitVRLittleEndianTransferSyntax(void)
  *          and if it corresponds to a Explicit VR Big Endian one.
  * @return  True when big endian found. False in all other cases.
  */
-bool gdcmDocument::IsExplicitVRBigEndianTransferSyntax(void)
+bool gdcmDocument::IsExplicitVRBigEndianTransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2_2);
 }
@@ -360,7 +368,7 @@ bool gdcmDocument::IsExplicitVRBigEndianTransferSyntax(void)
  *          and if it corresponds to a JPEGBaseLineProcess1 one.
  * @return  True when JPEGBaseLineProcess1found. False in all other cases.
  */
-bool gdcmDocument::IsJPEGBaseLineProcess1TransferSyntax(void)
+bool gdcmDocument::IsJPEGBaseLineProcess1TransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_50);
 }
@@ -370,7 +378,7 @@ bool gdcmDocument::IsJPEGBaseLineProcess1TransferSyntax(void)
  *          and if it corresponds to a JPEGExtendedProcess2-4 one.
  * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
  */
-bool gdcmDocument::IsJPEGExtendedProcess2_4TransferSyntax(void)
+bool gdcmDocument::IsJPEGExtendedProcess2_4TransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_51);
 }
@@ -380,7 +388,7 @@ bool gdcmDocument::IsJPEGExtendedProcess2_4TransferSyntax(void)
  *          and if it corresponds to a JPEGExtendeProcess3-5 one.
  * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
  */
-bool gdcmDocument::IsJPEGExtendedProcess3_5TransferSyntax(void)
+bool gdcmDocument::IsJPEGExtendedProcess3_5TransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_52);
 }
@@ -391,7 +399,7 @@ bool gdcmDocument::IsJPEGExtendedProcess3_5TransferSyntax(void)
  * @return  True when JPEGSpectralSelectionProcess6-8 found. False in all
  *          other cases.
  */
-bool gdcmDocument::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void)
+bool gdcmDocument::IsJPEGSpectralSelectionProcess6_8TransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_53);
 }
@@ -402,7 +410,7 @@ bool gdcmDocument::IsJPEGSpectralSelectionProcess6_8TransferSyntax(void)
  * @return  True when RLE Lossless found. False in all
  *          other cases.
  */
-bool gdcmDocument::IsRLELossLessTransferSyntax(void)
+bool gdcmDocument::IsRLELossLessTransferSyntax()
 {
    return IsGivenTransferSyntax(UI1_2_840_10008_1_2_5);
 }
@@ -414,7 +422,7 @@ bool gdcmDocument::IsRLELossLessTransferSyntax(void)
  *          other cases.
  */
  
-bool gdcmDocument::IsJPEGLossless(void)
+bool gdcmDocument::IsJPEGLossless()
 {
    return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_55)
            || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_57)
@@ -427,7 +435,7 @@ bool gdcmDocument::IsJPEGLossless(void)
  * @return  True when JPEG2000 (Lossly or LossLess) found. False in all
  *          other cases.
  */
-bool gdcmDocument::IsJPEG2000(void)
+bool gdcmDocument::IsJPEG2000()
 {
    return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_90)
            || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_91) );
@@ -437,7 +445,8 @@ bool gdcmDocument::IsJPEG2000(void)
  * \brief   Predicate for dicom version 3 file.
  * @return  True when the file is a dicom version 3.
  */
-bool gdcmDocument::IsDicomV3(void) {
+bool gdcmDocument::IsDicomV3()
+{
    // Checking if Transfert Syntax exists is enough
    // Anyway, it's to late check if the 'Preamble' was found ...
    // And ... would it be a rich idea to check ?
@@ -450,7 +459,8 @@ bool gdcmDocument::IsDicomV3(void) {
  *         (ACR, ACR_LIBIDO, ExplicitVR, ImplicitVR, Unknown)
  * @return the FileType code
  */
-FileType gdcmDocument::GetFileType(void) {
+FileType gdcmDocument::GetFileType()
+{
    return Filetype;
 }
 
@@ -478,7 +488,7 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
 
   if ( fp ) 
   {
-     guint16 zero;
+     uint16_t zero;
      fread(&zero,  (size_t)2, (size_t)1, fp);
 
     //ACR -- or DICOM with no Preamble --
@@ -505,7 +515,8 @@ FILE *gdcmDocument::OpenFile(bool exception_on_error)
  * \brief closes the file  
  * @return  TRUE if the close was successfull 
  */
-bool gdcmDocument::CloseFile(void) {
+bool gdcmDocument::CloseFile()
+{
   int closed = fclose(fp);
   fp = (FILE *)0;
   if (! closed)
@@ -520,7 +531,8 @@ bool gdcmDocument::CloseFile(void) {
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * \return Always true.
  */
-void gdcmDocument::Write(FILE* fp,FileType filetype) {
+void gdcmDocument::Write(FILE* fp,FileType filetype)
+{
 
    /// \todo move the following lines (and a lot of others, to be written)
    /// to a future function CheckAndCorrectHeader
@@ -584,8 +596,8 @@ void gdcmDocument::Write(FILE* fp,FileType filetype) {
   
 gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          std::string Value, 
-                                         guint16 Group, 
-                                         guint16 Elem )
+                                         uint16_t Group, 
+                                         uint16_t Elem )
 {
    gdcmDocEntry* CurrentEntry;
    gdcmValEntry* ValEntry;
@@ -647,8 +659,8 @@ gdcmValEntry * gdcmDocument::ReplaceOrCreateByNumber(
 gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
                                          void *voidArea,
                                          int lgth, 
-                                         guint16 Group, 
-                                         guint16 Elem)
+                                         uint16_t Group, 
+                                         uint16_t Elem)
 {
    gdcmDocEntry* a;
    gdcmBinEntry* b = 0;
@@ -667,8 +679,6 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
    return b;
 }  
 
-
-
 /**
  * \brief Set a new value if the invoked element exists
  *        Seems to be useless !!!
@@ -677,7 +687,8 @@ gdcmBinEntry * gdcmDocument::ReplaceOrCreateByNumber(
  * @param Elem element number of the Entry
  * \return  boolean 
  */
-bool gdcmDocument::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 Elem ) 
+bool gdcmDocument::ReplaceIfExistByNumber(char* Value, uint16_t Group,
+                                                       uint16_t Elem ) 
 {
    std::string v = Value;
    SetEntryByNumber(v, Group, Elem);
@@ -693,7 +704,8 @@ bool gdcmDocument::ReplaceIfExistByNumber(char* Value, guint16 Group, guint16 El
  * @param   element  Element number of the searched Dicom Element 
  * @return  number of occurences
  */
-int gdcmDocument::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
+int gdcmDocument::CheckIfEntryExistByNumber(uint16_t group, uint16_t element )
+{
    std::string key = gdcmDictEntry::TranslateToKey(group, element );
    return tagHT.count(key);
 }
@@ -707,7 +719,8 @@ int gdcmDocument::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryByName(TagName tagName) {
+std::string gdcmDocument::GetEntryByName(TagName tagName)
+{
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -728,7 +741,8 @@ std::string gdcmDocument::GetEntryByName(TagName tagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryVRByName(TagName tagName) {
+std::string gdcmDocument::GetEntryVRByName(TagName tagName)
+{
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -748,8 +762,9 @@ std::string gdcmDocument::GetEntryVRByName(TagName tagName) {
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryByNumber(guint16 group, guint16 element){
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+std::string gdcmDocument::GetEntryByNumber(uint16_t group, uint16_t element)
+{
+   gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
    /// \todo use map methods, instead of multimap JPR
    if ( ! tagHT.count(key))
       return GDCM_UNFOUND;
@@ -770,7 +785,8 @@ std::string gdcmDocument::GetEntryByNumber(guint16 group, guint16 element){
  * @return  Corresponding element value representation when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryVRByNumber(guint16 group, guint16 element) {
+std::string gdcmDocument::GetEntryVRByNumber(uint16_t group, uint16_t element)
+{
    gdcmDocEntry* elem =  GetDocEntryByNumber(group, element);
    if ( !elem )
       return GDCM_UNFOUND;
@@ -785,7 +801,8 @@ std::string gdcmDocument::GetEntryVRByNumber(guint16 group, guint16 element) {
  * @param   element Element number of the searched tag.
  * @return  Corresponding element length; -2 if not found
  */
-int gdcmDocument::GetEntryLengthByNumber(guint16 group, guint16 element) {
+int gdcmDocument::GetEntryLengthByNumber(uint16_t group, uint16_t element)
+{
    gdcmDocEntry* elem =  GetDocEntryByNumber(group, element);
    if ( !elem )
       return -2;
@@ -797,7 +814,8 @@ int gdcmDocument::GetEntryLengthByNumber(guint16 group, guint16 element) {
  * @param   tagName name of the searched Dicom Element.
  * @return  true when found
  */
-bool gdcmDocument::SetEntryByName(std::string content,std::string tagName) {
+bool gdcmDocument::SetEntryByName(std::string content,std::string tagName)
+{
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return false;    
@@ -815,8 +833,8 @@ bool gdcmDocument::SetEntryByName(std::string content,std::string tagName) {
  * @param   element element number of the Dicom Element to modify
  */
 bool gdcmDocument::SetEntryByNumber(std::string content, 
-                                  guint16 group,
-                                  guint16 element) 
+                                    uint16_t group,
+                                    uint16_t element) 
 {
    gdcmValEntry* ValEntry = GetValEntryByNumber(group, element);
    if (!ValEntry)
@@ -832,7 +850,7 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
    ValEntry->SetValue(content);
    
    // Integers have a special treatement for their length:
-   VRKey vr = ValEntry->GetVR();
+   gdcmVRKey vr = ValEntry->GetVR();
    if( (vr == "US") || (vr == "SS") ) 
       ValEntry->SetLength(2);
    else if( (vr == "UL") || (vr == "SL") )
@@ -853,12 +871,12 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
  * @param   element element number of the Dicom Element to modify
  */
 bool gdcmDocument::SetEntryByNumber(void *content,
-                                  int lgth, 
-                                  guint16 group,
-                                  guint16 element) 
+                                    int lgth, 
+                                    uint16_t group,
+                                    uint16_t element) 
 {
    (void)lgth;  //not used
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
 
@@ -887,12 +905,12 @@ bool gdcmDocument::SetEntryByNumber(void *content,
  * @param element element number of the Entry to modify
  * @return  true on success, false otherwise.
  */
-bool gdcmDocument::SetEntryLengthByNumber(guint32 l, 
-                                        guint16 group, 
-                                        guint16 element) 
+bool gdcmDocument::SetEntryLengthByNumber(uint32_t l, 
+                                          uint16_t group, 
+                                          uint16_t element) 
 {
    /// \todo use map methods, instead of multimap JPR
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
    if (l%2) l++; // length must be even
@@ -908,7 +926,7 @@ bool gdcmDocument::SetEntryLengthByNumber(guint32 l,
  * @param Elem  element number of the Entry
  * @return File Offset of the Element Value 
  */
-size_t gdcmDocument::GetEntryOffsetByNumber(guint16 Group, guint16 Elem) 
+size_t gdcmDocument::GetEntryOffsetByNumber(uint16_t Group, uint16_t Elem) 
 {
    gdcmDocEntry* Entry = GetDocEntryByNumber(Group, Elem);
    if (!Entry) 
@@ -926,7 +944,7 @@ size_t gdcmDocument::GetEntryOffsetByNumber(guint16 Group, guint16 Elem)
  * @param Elem  element number of the Entry
  * @return Pointer to the 'non string' area
  */
-void * gdcmDocument::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem) 
+void * gdcmDocument::GetEntryVoidAreaByNumber(uint16_t Group, uint16_t Elem) 
 {
    gdcmDocEntry* Entry = GetDocEntryByNumber(Group, Elem);
    if (!Entry) 
@@ -943,7 +961,7 @@ void * gdcmDocument::GetEntryVoidAreaByNumber(guint16 Group, guint16 Elem)
  * @param Group   group number of the Entry 
  * @param Elem  element number of the Entry
  */
-void *gdcmDocument::LoadEntryVoidArea(guint16 Group, guint16 Elem) 
+void *gdcmDocument::LoadEntryVoidArea(uint16_t Group, uint16_t Elem) 
 {
    gdcmDocEntry * Element= GetDocEntryByNumber(Group, Elem);
    if ( !Element )
@@ -1000,10 +1018,10 @@ void *gdcmDocument::LoadEntryVoidArea(gdcmBinEntry *Element)
  * @return  
  */
 bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
-                                          guint16 group, 
-                                          guint16 element) 
+                                            uint16_t group, 
+                                            uint16_t element) 
 {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return false;
       // This was for multimap ?
@@ -1016,7 +1034,7 @@ bool gdcmDocument::SetEntryVoidAreaByNumber(void * area,
  * \brief   Update the entries with the shadow dictionary. 
  *          Only non even entries are analyzed       
  */
-void gdcmDocument::UpdateShaEntries(void) {
+void gdcmDocument::UpdateShaEntries() {
    //gdcmDictEntry *entry;
    std::string vr;
    
@@ -1066,7 +1084,8 @@ void gdcmDocument::UpdateShaEntries(void) {
  * @return  Corresponding Dicom Element when it exists, and NULL
  *          otherwise.
  */
- gdcmDocEntry *gdcmDocument::GetDocEntryByName(std::string tagName) {
+gdcmDocEntry* gdcmDocument::GetDocEntryByName(std::string tagName)
+{
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return NULL;
@@ -1084,9 +1103,10 @@ void gdcmDocument::UpdateShaEntries(void) {
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-gdcmDocEntry* gdcmDocument::GetDocEntryByNumber(guint16 group, guint16 element) 
+gdcmDocEntry* gdcmDocument::GetDocEntryByNumber(uint16_t group,
+                                                uint16_t element) 
 {
-   TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+   gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
       return NULL;
    return tagHT.find(key)->second;
@@ -1098,7 +1118,8 @@ gdcmDocEntry* gdcmDocument::GetDocEntryByNumber(guint16 group, guint16 element)
  *         ValEntry.
  * @return When present, the corresponding ValEntry. 
  */
-gdcmValEntry* gdcmDocument::GetValEntryByNumber(guint16 group, guint16 element)
+gdcmValEntry* gdcmDocument::GetValEntryByNumber(uint16_t group,
+                                                uint16_t element)
 {
   gdcmDocEntry* CurrentEntry = GetDocEntryByNumber(group, element);
   if (! CurrentEntry)
@@ -1118,7 +1139,8 @@ gdcmValEntry* gdcmDocument::GetValEntryByNumber(guint16 group, guint16 element)
  * @param entry   Header Entry whose value shall be loaded. 
  * @return  
  */
-void gdcmDocument::LoadDocEntrySafe(gdcmDocEntry * entry) {
+void gdcmDocument::LoadDocEntrySafe(gdcmDocEntry * entry)
+{
    long PositionOnEntry = ftell(fp);
    LoadDocEntry(entry);
    fseek(fp, PositionOnEntry, SEEK_SET);
@@ -1129,7 +1151,8 @@ void gdcmDocument::LoadDocEntrySafe(gdcmDocEntry * entry) {
  *          processor order.
  * @return  The properly swaped 32 bits integer.
  */
-guint32 gdcmDocument::SwapLong(guint32 a) {
+uint32_t gdcmDocument::SwapLong(uint32_t a)
+{
    switch (sw) {
       case    0 :
          break;
@@ -1158,7 +1181,8 @@ guint32 gdcmDocument::SwapLong(guint32 a) {
  *          processor order.
  * @return  The properly unswaped 32 bits integer.
  */
-guint32 gdcmDocument::UnswapLong(guint32 a) {
+uint32_t gdcmDocument::UnswapLong(uint32_t a)
+{
    return SwapLong(a);
 }
 
@@ -1166,7 +1190,8 @@ guint32 gdcmDocument::UnswapLong(guint32 a) {
  * \brief   Swaps the bytes so they agree with the processor order
  * @return  The properly swaped 16 bits integer.
  */
-guint16 gdcmDocument::SwapShort(guint16 a) {
+uint16_t gdcmDocument::SwapShort(uint16_t a)
+{
    if ( (sw==4321)  || (sw==2143) )
       a =(((a<<8) & 0x0ff00) | ((a>>8)&0x00ff));
    return a;
@@ -1176,7 +1201,8 @@ guint16 gdcmDocument::SwapShort(guint16 a) {
  * \brief   Unswaps the bytes so they agree with the processor order
  * @return  The properly unswaped 16 bits integer.
  */
-guint16 gdcmDocument::UnswapShort(guint16 a) {
+uint16_t gdcmDocument::UnswapShort(uint16_t a)
+{
    return SwapShort(a);
 }
 
@@ -1188,13 +1214,16 @@ guint16 gdcmDocument::UnswapShort(guint16 a) {
  * @return  length of the parsed set. 
  */ 
 
-long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool delim_mode) {
-
+long gdcmDocument::ParseDES(gdcmDocEntrySet *set,
+                            long offset,
+                            long l_max,
+                            bool delim_mode)
+{
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
    gdcmValEntry *NewValEntry = (gdcmValEntry *)0;
    gdcmBinEntry *bn;   
    gdcmSeqEntry *sq;
-   VRKey vr;
+   gdcmVRKey vr;
    unsigned long l = 0;
    int depth; 
    
@@ -1357,12 +1386,12 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set,
  *                the value specified with gdcmDocument::SetMaxSizeLoadEntry()
  * @param         Entry Header Entry (Dicom Element) to be dealt with
  */
-void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
+void gdcmDocument::LoadDocEntry(gdcmDocEntry* Entry)
 {
    size_t item_read;
-   guint16 group  = Entry->GetGroup();
-   std::string  vr= Entry->GetVR();
-   guint32 length = Entry->GetLength();
+   uint16_t group  = Entry->GetGroup();
+   std::string  vr = Entry->GetVR();
+   uint32_t length = Entry->GetLength();
 
    fseek(fp, (long)Entry->GetOffset(), SEEK_SET);
 
@@ -1370,13 +1399,15 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    //          (fffe e000) tells us an Element is beginning
    //          (fffe e00d) tells us an Element just ended
    //          (fffe e0dd) tells us the current SeQuence just ended
-   if( group == 0xfffe ) {
+   if( group == 0xfffe )
+   {
       // NO more value field for SQ !
       return;
    }
 
    // When the length is zero things are easy:
-   if ( length == 0 ) {
+   if ( length == 0 )
+   {
       ((gdcmValEntry *)Entry)->SetValue("");
       return;
    }
@@ -1386,7 +1417,8 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    // the element content and it's length.
 
    std::ostringstream s;
-   if (length > MaxSizeLoadEntry) {
+   if (length > MaxSizeLoadEntry)
+   {
       if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) )
       {         
          s << "gdcm::NotLoaded (BinEntry)";
@@ -1396,7 +1428,7 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
          BinEntryPtr->SetValue(s.str());
       }
       // to be sure we are at the end of the value ...
-      fseek(fp,(long)Entry->GetOffset()+(long)Entry->GetLength(),SEEK_SET);      
+      fseek(fp, (long)Entry->GetOffset()+(long)Entry->GetLength(), SEEK_SET);      
       return;
        // Be carefull : a BinEntry IS_A ValEntry ... 
       if (gdcmValEntry* ValEntryPtr = dynamic_cast< gdcmValEntry* >(Entry) )
@@ -1413,46 +1445,51 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    }
 
    // When we find a BinEntry not very much can be done :
-   if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) ) {
+   if (gdcmBinEntry* BinEntryPtr = dynamic_cast< gdcmBinEntry* >(Entry) )
+   {
 
       LoadEntryVoidArea(BinEntryPtr);
       s << "gdcm::Loaded (BinEntry)";
       BinEntryPtr->SetValue(s.str());
       return;
    }
- 
     
-   // Any compacter code suggested (?)
-   if ( IsDocEntryAnInteger(Entry) ) {   
-      guint32 NewInt;
+   /// \todo Any compacter code suggested (?)
+   if ( IsDocEntryAnInteger(Entry) )
+   {   
+      uint32_t NewInt;
       std::ostringstream s;
       int nbInt;
-   // When short integer(s) are expected, read and convert the following 
-   // n *two characters properly i.e. as short integers as opposed to strings.
-   // Elements with Value Multiplicity > 1
-   // contain a set of integers (not a single one)       
-      if (vr == "US" || vr == "SS") {
+      // When short integer(s) are expected, read and convert the following 
+      // n *two characters properly i.e. consider them as short integers as
+      // opposed to strings.
+      // Elements with Value Multiplicity > 1
+      // contain a set of integers (not a single one)       
+      if (vr == "US" || vr == "SS")
+      {
          nbInt = length / 2;
          NewInt = ReadInt16();
          s << NewInt;
-         if (nbInt > 1){
-            for (int i=1; i < nbInt; i++) {
+         if (nbInt > 1)
+         {
+            for (int i=1; i < nbInt; i++)
+            {
                s << '\\';
                NewInt = ReadInt16();
                s << NewInt;
             }
          }
       }
-   // When integer(s) are expected, read and convert the following 
-   // n * four characters properly i.e. as integers as opposed to strings.
-   // Elements with Value Multiplicity > 1
-   // contain a set of integers (not a single one)           
-      else if (vr == "UL" || vr == "SL") {
+      // See above comment on multiple integers (mutatis mutandis).
+      else if (vr == "UL" || vr == "SL")
+      {
          nbInt = length / 4;
          NewInt = ReadInt32();
          s << NewInt;
-         if (nbInt > 1) {
-            for (int i=1; i < nbInt; i++) {
+         if (nbInt > 1)
+         {
+            for (int i=1; i < nbInt; i++)
+            {
                s << '\\';
                NewInt = ReadInt32();
                s << NewInt;
@@ -1470,9 +1507,12 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
    // We need an additional byte for storing \0 that is not on disk
    std::string NewValue(length,0);
    item_read = fread(&(NewValue[0]), (size_t)length, (size_t)1, fp);
-   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) ) {  
-      if ( item_read != 1 ) {
-         dbg.Verbose(1, "gdcmDocument::LoadElementValue","unread element value");
+   if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) )
+   {  
+      if ( item_read != 1 )
+      {
+         dbg.Verbose(1, "gdcmDocument::LoadDocEntry",
+                        "unread element value");
          ValEntry->SetValue("gdcm::UnRead");
          return;
       }
@@ -1481,11 +1521,12 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
          ValEntry->SetValue(NewValue.c_str());
       else
          ValEntry->SetValue(NewValue);
-   } else {
-   // fusible
-      std::cout << "Should have a ValEntry, here !" << std::endl;
    }
-
+   else
+   {
+      dbg.Error(true, "gdcmDocument::LoadDocEntry"
+                      "Should have a ValEntry, here !");
+   }
 }
 
 
@@ -1493,7 +1534,8 @@ void gdcmDocument::LoadDocEntry(gdcmDocEntry *Entry)
  * \brief  Find the value Length of the passed Header Entry
  * @param  Entry Header Entry whose length of the value shall be loaded. 
  */
- void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry) {
+void gdcmDocument::FindDocEntryLength (gdcmDocEntry *Entry)
+{
    uint16_t element = Entry->GetElement();
    std::string  vr = Entry->GetVR();
    uint16_t length16;
@@ -1659,7 +1701,7 @@ void gdcmDocument::FindDocEntryVR( gdcmDocEntry *Entry)
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true
 */
-bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *Entry, VRKey vr)
+bool gdcmDocument::CheckDocEntryVR(gdcmDocEntry *Entry, gdcmVRKey vr)
 {
    char msg[100]; // for sprintf
    bool RealExplicit = true;
@@ -1734,7 +1776,7 @@ std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *Entry)
    {
       std::string val=((gdcmValEntry *)Entry)->GetValue();
       std::string vr=Entry->GetVR();
-      guint32 length = Entry->GetLength();
+      uint32_t length = Entry->GetLength();
       std::ostringstream s;
       int nbInt;
 
@@ -1747,7 +1789,7 @@ std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *Entry)
    
       if (vr == "US" || vr == "SS")
       {
-         guint16 NewInt16;
+         uint16_t NewInt16;
 
          nbInt = length / 2;
          for (int i=0; i < nbInt; i++) 
@@ -1768,7 +1810,7 @@ std::string gdcmDocument::GetDocEntryValue(gdcmDocEntry *Entry)
    // contain a set of integers (not a single one) 
       else if (vr == "UL" || vr == "SL")
       {
-         guint32 NewInt32;
+         uint32_t NewInt32;
 
          nbInt = length / 4;
          for (int i=0; i < nbInt; i++) 
@@ -1808,7 +1850,7 @@ std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry *Entry)
 
       if (vr == "US" || vr == "SS") 
       {
-         guint16 NewInt16;
+         uint16_t NewInt16;
 
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
          Tokenize (((gdcmValEntry *)Entry)->GetValue(), tokens, "\\");
@@ -1821,7 +1863,7 @@ std::string gdcmDocument::GetDocEntryUnvalue(gdcmDocEntry *Entry)
       }
       if (vr == "UL" || vr == "SL") 
       {
-         guint32 NewInt32;
+         uint32_t NewInt32;
 
          tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
          Tokenize (((gdcmValEntry *)Entry)->GetValue(), tokens, "\\");
@@ -1870,15 +1912,15 @@ void gdcmDocument::SkipToNextDocEntry(gdcmDocEntry *entry)
  *          applying some heuristics.
  */
 void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry,
-                                          guint32 FoundLength)
+                                          uint32_t FoundLength)
 {
    Entry->SetReadLength(FoundLength); // will be updated only if a bug is found        
    if ( FoundLength == 0xffffffff) {
       FoundLength = 0;
    }
    
-   guint16 gr =Entry->GetGroup();
-   guint16 el =Entry->GetElement(); 
+   uint16_t gr =Entry->GetGroup();
+   uint16_t el =Entry->GetElement(); 
      
    if (FoundLength%2) {
       std::ostringstream s;
@@ -1949,10 +1991,10 @@ void gdcmDocument::FixDocEntryFoundLength(gdcmDocEntry *Entry,
  * @return  The result of the heuristical predicate.
  */
 bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
-   guint16 element = Entry->GetElement();
-   guint16 group   = Entry->GetGroup();
-   std::string  vr = Entry->GetVR();
-   guint32 length  = Entry->GetLength();
+   uint16_t element = Entry->GetElement();
+   uint16_t group   = Entry->GetGroup();
+   std::string  vr  = Entry->GetVR();
+   uint32_t length  = Entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
@@ -1992,7 +2034,7 @@ bool gdcmDocument::IsDocEntryAnInteger(gdcmDocEntry *Entry) {
  * @return 
  */
 
-uint32_t gdcmDocument::FindDocEntryLengthOB(void)  {
+uint32_t gdcmDocument::FindDocEntryLengthOB()  {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
    uint16_t g;
    uint16_t n; 
@@ -2041,8 +2083,8 @@ uint32_t gdcmDocument::FindDocEntryLengthOB(void)  {
  *       (swaps it depending on processor endianity) 
  * @return read value
  */
-guint16 gdcmDocument::ReadInt16() {
-   guint16 g;
+uint16_t gdcmDocument::ReadInt16() {
+   uint16_t g;
    size_t item_read;
    item_read = fread (&g, (size_t)2,(size_t)1, fp);
    if ( item_read != 1 ) {
@@ -2061,8 +2103,8 @@ guint16 gdcmDocument::ReadInt16() {
  *         (swaps it depending on processor endianity)  
  * @return read value
  */
-guint32 gdcmDocument::ReadInt32() {
-   guint32 g;
+uint32_t gdcmDocument::ReadInt32() {
+   uint32_t g;
    size_t item_read;
    item_read = fread (&g, (size_t)4,(size_t)1, fp);
    if ( item_read != 1 ) { 
@@ -2081,7 +2123,7 @@ guint32 gdcmDocument::ReadInt32() {
  * \warning NOT end user intended method !
  * @return 
  */
-void gdcmDocument::SkipBytes(guint32 NBytes) {
+void gdcmDocument::SkipBytes(uint32_t NBytes) {
    //FIXME don't dump the returned value
    (void)fseek(fp, (long)NBytes, SEEK_CUR);
 }
@@ -2090,7 +2132,7 @@ void gdcmDocument::SkipBytes(guint32 NBytes) {
  * \brief Loads all the needed Dictionaries
  * \warning NOT end user intended method !   
  */
-void gdcmDocument::Initialise(void) 
+void gdcmDocument::Initialise() 
 {
    RefPubDict = gdcmGlobal::GetDicts()->GetDefaultPubDict();
    RefShaDict = NULL;
@@ -2111,10 +2153,10 @@ bool gdcmDocument::CheckSwap() {
    // 0x00000004. Finding the swap code in then straigthforward. Trouble
    // occurs when we can't find such group...
    
-   guint32  x=4;  // x : for ntohs
+   uint32_t  x=4;  // x : for ntohs
    bool net2host; // true when HostByteOrder is the same as NetworkByteOrder
-   guint32  s32;
-   guint16  s16;
+   uint32_t  s32;
+   uint16_t  s16;
        
    int lgrLue;
    char *entCur;
@@ -2212,7 +2254,7 @@ bool gdcmDocument::CheckSwap() {
    // We assume the array of char we are considering contains the binary
    // representation of a 32 bits integer. Hence the following dirty
    // trick :
-   s32 = *((guint32 *)(entCur));
+   s32 = *((uint32_t *)(entCur));
       
    switch (s32) {
       case 0x00040000 :
@@ -2248,7 +2290,7 @@ bool gdcmDocument::CheckSwap() {
       //  the file IS NOT ACR-NEMA nor DICOM V3
       //  Find a trick to tell it the caller...
       
-      s16 = *((guint16 *)(deb));
+      s16 = *((uint16_t *)(deb));
       
       switch (s16) {
       case 0x0002 :
@@ -2283,7 +2325,7 @@ bool gdcmDocument::CheckSwap() {
  * \brief Restore the unproperly loaded values i.e. the group, the element
  *        and the dictionary entry depending on them. 
  */
-void gdcmDocument::SwitchSwapToBigEndian(void) 
+void gdcmDocument::SwitchSwapToBigEndian() 
 {
    dbg.Verbose(1, "gdcmDocument::SwitchSwapToBigEndian",
                   "Switching to BigEndian mode.");
@@ -2314,7 +2356,7 @@ void gdcmDocument::SetMaxSizeLoadEntry(long NewSize)
 {
    if (NewSize < 0)
       return;
-   if ((guint32)NewSize >= (guint32)0xffffffff) 
+   if ((uint32_t)NewSize >= (uint32_t)0xffffffff) 
    {
       MaxSizeLoadEntry = 0xffffffff;
       return;
@@ -2332,7 +2374,7 @@ void gdcmDocument::SetMaxSizePrintEntry(long NewSize)
 {
    if (NewSize < 0)
       return;
-   if ((guint32)NewSize >= (guint32)0xffffffff) 
+   if ((uint32_t)NewSize >= (uint32_t)0xffffffff) 
    {
       MaxSizePrintEntry = 0xffffffff;
       return;
@@ -2349,11 +2391,10 @@ void gdcmDocument::SetMaxSizePrintEntry(long NewSize)
  *          gets the VR, gets the length, gets the offset value)
  * @return  On succes the newly created DocEntry, NULL on failure.      
  */
-gdcmDocEntry *gdcmDocument::ReadNextDocEntry(void) {
-   guint16 g,n;
+gdcmDocEntry *gdcmDocument::ReadNextDocEntry() {
+   uint16_t g = ReadInt16();
+   uint16_t n = ReadInt16();
    gdcmDocEntry *NewEntry;
-   g = ReadInt16();
-   n = ReadInt16();
       
    if (errno == 1)
       // We reached the EOF (or an error occured) therefore 
@@ -2376,16 +2417,16 @@ gdcmDocEntry *gdcmDocument::ReadNextDocEntry(void) {
 
 
 /**
- * \brief   Generate a free TagKey i.e. a TagKey that is not present
+ * \brief   Generate a free gdcmTagKey i.e. a gdcmTagKey that is not present
  *          in the TagHt dictionary.
  * @param   group The generated tag must belong to this group.  
  * @return  The element of tag with given group which is fee.
  */
-guint32 gdcmDocument::GenerateFreeTagKeyInGroup(guint16 group) 
+uint32_t gdcmDocument::GenerateFreeTagKeyInGroup(uint16_t group) 
 {
-   for (guint32 elem = 0; elem < UINT32_MAX; elem++) 
+   for (uint32_t elem = 0; elem < UINT32_MAX; elem++) 
    {
-      TagKey key = gdcmDictEntry::TranslateToKey(group, elem);
+      gdcmTagKey key = gdcmDictEntry::TranslateToKey(group, elem);
       if (tagHT.count(key) == 0)
          return elem;
    }
@@ -2458,7 +2499,7 @@ uint32_t gdcmDocument::ReadTagLength(uint16_t TestGroup, uint16_t TestElement)
                                                                                 
    //// Then read the associated Item Length
    long CurrentPosition = ftell(fp);
-   guint32 ItemLength;
+   uint32_t ItemLength;
    ItemLength = ReadInt32();
    {
       std::ostringstream s;
@@ -2475,7 +2516,7 @@ uint32_t gdcmDocument::ReadTagLength(uint16_t TestGroup, uint16_t TestElement)
  *          No other way so 'skip' the Data
  *
  */
-void gdcmDocument::Parse7FE0 (void)
+void gdcmDocument::Parse7FE0 ()
 {
    gdcmDocEntry* Element = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !Element )
@@ -2490,7 +2531,7 @@ void gdcmDocument::Parse7FE0 (void)
    // ---------------- for Parsing : Position on begining of Jpeg/RLE Pixels 
 
    //// Read the Basic Offset Table Item Tag length...
-   guint32 ItemLength = ReadTagLength(0xfffe, 0xe000);
+   uint32_t ItemLength = ReadTagLength(0xfffe, 0xe000);
 
    //// ... and then read length[s] itself[themselves]. We don't use
    // the values read (BTW  what is the purpous of those lengths ?)
@@ -2499,8 +2540,8 @@ void gdcmDocument::Parse7FE0 (void)
       char * BasicOffsetTableItemValue = new char[ItemLength + 1];
       fread(BasicOffsetTableItemValue, ItemLength, 1, fp); 
       for (unsigned int i=0; i < ItemLength; i += 4){
-         guint32 IndividualLength;
-         IndividualLength = str2num(&BasicOffsetTableItemValue[i],guint32);
+         uint32_t IndividualLength;
+         IndividualLength = str2num(&BasicOffsetTableItemValue[i],uint32_t);
          std::ostringstream s;
          s << "   Read one length: ";
          s << std::hex << IndividualLength << std::endl;
@@ -2529,10 +2570,10 @@ void gdcmDocument::Parse7FE0 (void)
       { 
          // Parse fragments of the current Fragment (Frame)    
          //------------------ scanning (not reading) fragment pixels
-         guint32 nbRleSegments = ReadInt32();
+         uint32_t nbRleSegments = ReadInt32();
  
          //// Reading RLE Segments Offset Table
-         guint32 RleSegmentOffsetTable[15];
+         uint32_t RleSegmentOffsetTable[15];
          for(int k=1; k<=15; k++) {
             ftellRes=ftell(fp);
             RleSegmentOffsetTable[k] = ReadInt32();
