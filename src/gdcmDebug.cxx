@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 17:17:52 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/13 22:30:11 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,20 +16,22 @@
                                                                                 
 =========================================================================*/
 
-#include <iostream>
 #include "gdcmDebug.h"
+#include <iostream>
 
 namespace gdcm 
 {
 
 /// warning message level to be displayed
-static int DebugFlag = 0;
+static bool DebugFlag = false;
+static bool DebugToFile = false;
+static std::ofstream DebugFile;
 //-----------------------------------------------------------------------------
 /**
  * \brief   Accessor
  * @param   flag Set the debug flag
  */ 
-void Debug::SetDebugFlag (int flag) 
+void Debug::SetDebugFlag (bool flag) 
 {
    DebugFlag = flag;
 }
@@ -38,9 +40,45 @@ void Debug::SetDebugFlag (int flag)
  * \brief   Accessor
  * @param   level Get the debug flag
  */ 
-int Debug::GetDebugFlag ()
+bool Debug::GetDebugFlag ()
 {
    return DebugFlag;
+}
+
+/**
+ * \brief   Accessor
+ * @param   flag Set the debug flag to redirect to file
+ */ 
+void Debug::SetDebugToFile (bool flag) 
+{
+   DebugToFile = flag;
+}
+
+/**
+ * \brief   Accessor
+ * @param   level Get the debug flag to redirect to file
+ */ 
+bool Debug::GetDebugToFile ()
+{
+   return DebugToFile;
+}
+
+/**
+ * \brief   Accessor
+ * @param   flag Set the debug flag to redirect to file
+ *          Absolutely nothing is check. You have to pass in
+ *          a correct filename
+ */ 
+void Debug::SetDebugFilename (std::string const& filename)
+{
+   DebugToFile = true;  // Just in case ... 
+   DebugFlag = true;    // Just in case ... 
+   DebugFile.open( filename.c_str() );
+}
+
+std::ofstream & Debug::GetDebugFile ()
+{
+  return DebugFile;
 }
 
 } // end namespace gdcm
