@@ -1,4 +1,8 @@
 2003-09-19  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+      * This commit should fix the Debug building under VC++, the problem
+      was mainly a mixture of debug and release lib being loaded at startup.
+      * I also remove a depency to a specific C function: strdup. Because I had
+      to force the link to msvcrtd (whereas strdup is in libc).
 2003-09-16  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * "gdcm::Unfound" string changed to a constant variable (GDCM_UNFOUND)
         located in the gdcmCommon.h file. All use of reference of tha has been
