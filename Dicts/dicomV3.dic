@@ -61,19 +61,19 @@
 0008 0005 CS 1-n Specific Character Set
 0008 0008 CS 1-n Image Type
 0008 0010 SH 1 Recognition Code (RET)
-0008 0012 DA 1 1 Instance Creation Date
+0008 0012 DA 1 Instance Creation Date
 0008 0013 TM 1 Instance Creation Time
 0008 0014 UI 1 Instance Creator UID
 0008 0016 UI 1 SOP Class UID
 0008 0018 UI 1 SOP Instance UID
 0008 001a UI 1-n Related General SOP Class UID
 0008 001a UI 1-n Original Specialized SOP Class UID 
-0008 0020 DA 1 1 Study Date
-0008 0021 DA 1 1 Series Date
-0008 0022 DA 1 1 Acquisition Date
-0008 0023 DA 1 1 Content Date
-0008 0024 DA 1 1 Overlay Date
-0008 0025 DA 1 1 Curve Date
+0008 0020 DA 1 Study Date
+0008 0021 DA 1 Series Date
+0008 0022 DA 1 Acquisition Date
+0008 0023 DA 1 Content Date
+0008 0024 DA 1 Overlay Date
+0008 0025 DA 1 Curve Date
 0008 002a DT 1 Acquisition Datetime
 0008 0030 TM 1 Study Time
 0008 0031 TM 1 Series Time
@@ -205,7 +205,7 @@
 0010 0010 PN 1 Patient's Name
 0010 0020 LO 1 Patient ID
 0010 0021 LO 1 Issuer of Patient ID
-0010 0030 DA 1 1 Patient's Birthdate
+0010 0030 DA 1 Patient's Birthdate
 0010 0032 TM 1 Patient's Birth Time
 0010 0040 CS 1 Patient's Sex
 0010 0050 SQ 1 Patient's Insurance Plan Code Sequence
@@ -303,7 +303,7 @@
 0018 1004 LO 1 Plate ID
 0018 1010 LO 1 Secondary Capture Device ID
 0018 1011 LO 1 Hardcopy Creation Device ID
-0018 1012 DA 1 1 Date of Secondary Capture
+0018 1012 DA 1 Date of Secondary Capture
 0018 1014 TM 1 Time of Secondary Capture
 0018 1016 LO 1 Secondary Capture Device Manufacturer
 0018 1018 LO 1 Secondary Capture Device Model Name
@@ -555,7 +555,7 @@
 0018 7006 LT 1 Detector Description
 0018 7008 LT 1 Detector Mode
 0018 700a SH 1 Detector ID
-0018 700c DA 1 1 Date of Last Detector Calibration
+0018 700c DA 1 Date of Last Detector Calibration
 0018 700e TM 1 Time of Last Detector Calibration
 0018 7010 IS 1 Exposures on Detector Since Last Calibration
 0018 7011 IS 1 Exposures on Detector Since Manufactured
@@ -1203,7 +1203,7 @@
 0040 4035 SQ 1 Actual Human Performers Sequence
 0040 4036 LO 1 Human Performer's Organization
 0040 4037 PN 1 Human Performer's Name
-0040 8302 DS 1 1 Entrance Dose in mGy
+0040 8302 DS 1 Entrance Dose in mGy
 0040 9096 SQ 1 Real World Value Mapping Sequence
 0040 9210 SH 1 LUT Label
 0040 9211 US 1 Real World Value Last Value Mapped
