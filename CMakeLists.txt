@@ -43,7 +43,7 @@ IF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
   MESSAGE(STATUS "Checking support for __FUNCTION__ in compiler")
   TRY_COMPILE(GDCM_COMPILER_HAS_FUNCTION
               ${GDCM_BINARY_DIR}/CMakeTmp/Function
-              ${GDCM_SOURCE_DIR}/gdcmTestFUNCTION.cxx
+              ${GDCM_SOURCE_DIR}/CMake/gdcmTestFUNCTION.cxx
               OUTPUT_VARIABLE OUTPUT)
   IF(GDCM_COMPILER_HAS_FUNCTION)
     MESSAGE(STATUS "Checking support for __FUNCTION__ -- yes")
