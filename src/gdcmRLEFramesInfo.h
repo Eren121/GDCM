@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 09:58:08 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/10/08 08:42:11 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 /**
  * \brief Utility class for gathering the informations of the collection
  *        of RLE frame[s] (see \ref gdcmRLEFrame)  when handling
- *        "Encapsulated RLE Compressed Images" (see PS-3.3 annex G). 
+ *        "Encapsulated RLE Compressed Images" (see PS 3.5-2003 annex G). 
  *        Note: a classical image can be considered as the degenerated case
  *              of a multiframe image. In this case the collection is limited
  *              to a single individual frame.

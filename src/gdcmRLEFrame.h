@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/06 22:31:31 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/10/08 08:42:11 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,9 +24,10 @@
 
 /**
  * \brief Utility class for summerizing the informations of a SINGLE RLE
- *        frame of an "Encapsulated RLE Compressed Image" (see PS-3.3 annex G).
+ *        frame of an "Encapsulated RLE Compressed Image" (refer to
+ *        PS 3.5-2003 annex G).
  *        This information is a mix of:
- *        - the RLE Header (see PS-3.3 section G5) and
+ *        - the RLE Header (see PS 3.5-2003 section G5) and
  *        - the lengths of each RLE segment [ which can be decuded from
  *          both the above RLE Header and the itemlength of the frame).
  *
