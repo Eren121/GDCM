@@ -2,6 +2,7 @@
      * src/gdcmHeaderEntry.[h|cxx] : gdcmElValue -> gdcmHeaderEntry
      * src/gdcmHeaderEntrySet.[h|cxx] : gdcmElValSet -> gdcmHeaderEntrySet
      * src/*.[h|cxx] : make changes due to class name changes
+     * gdcmPython/demo/*.py : bug fix due to method names
 
 2004-01-13 Benoit Regrain
      * src/*.[h|cxx] : coding style

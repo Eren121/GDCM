@@ -30,7 +30,7 @@ SourceFiles=glob.glob(os.path.join(SourceDirectory, "*.dcm"))
 
 for file in SourceFiles:
    header = gdcmHeader(file)
-   info = header.GetPubElVal()
+   info = header.GetPubEntry()
    try:
       ImNum = info["Image Number"]
       if len(ImNum) == 0 or ImNum == "gdcm::Unfound":

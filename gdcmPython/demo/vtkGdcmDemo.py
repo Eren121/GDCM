@@ -179,7 +179,7 @@ if not check.IsReadable():
    print "The ", FileName, " file is not "
    print "   readable with gdcm. Sorry."
    sys.exit()
-check = check.GetPubElVal()
+check = check.GetPubEntry()
 try:
    HighBit = check["High Bit"]
    if len(HighBit) == 0 or HighBit == "gdcm::Unfound":
