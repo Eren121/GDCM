@@ -15,6 +15,7 @@ INCLUDE_DIRECTORIES(
 SET(libgdcm_la_SOURCES
    gdcmBase.cxx
    gdcmBinEntry.cxx
+   gdcmContentEntry.cxx
    gdcmDebug.cxx
    gdcmDicomDir.cxx
    gdcmDicomDirElement.cxx

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:44:54 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/25 15:21:20 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,8 @@
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 #include "gdcmBinEntry.h"
+#include "gdcmValEntry.h"
+#include "gdcmContentEntry.h"
 #include "gdcmFile.h"
 #include "gdcmPixelReadConvert.h"
 #include "gdcmPixelWriteConvert.h"
@@ -626,16 +628,18 @@ bool FileHelper::CheckWriteIntegrity()
          case WMODE_RAW :
             if( decSize!=PixelWriteConverter->GetUserDataSize() )
             {
-               gdcmVerboseMacro( "Data size is incorrect (Raw)" << decSize 
-                    << " / " << PixelWriteConverter->GetUserDataSize() );
+               gdcmVerboseMacro( "Data size (Raw) is incorrect. Should be " 
+                           << decSize << " / Found :" 
+                           << PixelWriteConverter->GetUserDataSize() );
                return false;
             }
             break;
          case WMODE_RGB :
             if( rgbSize!=PixelWriteConverter->GetUserDataSize() )
             {
-               gdcmVerboseMacro( "Data size is incorrect (RGB)" << decSize
-                   << " / " << PixelWriteConverter->GetUserDataSize() );
+               gdcmVerboseMacro( "Data size (RGB) is incorrect. Should be " 
+                          << decSize << " / Found " 
+                          << PixelWriteConverter->GetUserDataSize() );
                return false;
             }
             break;

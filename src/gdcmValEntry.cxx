@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:53 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/01/25 15:21:20 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ namespace gdcm
  * \brief   Constructor from a given DictEntry
  * @param   e Pointer to existing dictionary entry
  */
-ValEntry::ValEntry(DictEntry *e) : DocEntry(e)
+ValEntry::ValEntry(DictEntry *e) : ContentEntry(e)
 {
 }
 
@@ -46,7 +46,7 @@ ValEntry::ValEntry(DictEntry *e) : DocEntry(e)
  * @param   e Pointer to existing Doc entry
  */
 ValEntry::ValEntry(DocEntry *e)
-             : DocEntry(e->GetDictEntry())
+             : ContentEntry(e->GetDictEntry())
 {
    Copy(e);
 }

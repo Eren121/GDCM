@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/25 15:21:20 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMBINENTRY_H
 #define GDCMBINENTRY_H
 
-#include "gdcmValEntry.h"
+#include "gdcmContentEntry.h"
 #include <iostream>
 
 namespace gdcm 
@@ -28,13 +28,14 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 /**
  * \brief   Any Dicom Document (File or DicomDir) contains 
- *           a set of DocEntry entries 
- *          (when successfuly parsed against a given Dicom dictionary)
- *          BinEntry is a specialisation of ValEntry (for non std::string
- *          representable values)
+ *           a set of DocEntry - Dicom entries - 
+ *          BinEntry is an elementary DocEntry (i.e. a ContentEntry, 
+ *           as opposite to SeqEntry) whose content is non std::string
+ *          representable
+ *          BinEntry is a specialisation of ContentEntry
  */
  
-class GDCM_EXPORT BinEntry  : public ValEntry
+class GDCM_EXPORT BinEntry  : public ContentEntry
 {
 public:
    BinEntry( DictEntry *e );
@@ -46,18 +47,18 @@ public:
    void WriteContent( std::ofstream *fp, FileType ft);
 
    /// \brief Returns the area value of the current Dicom Entry
-   ///  when it's not string-translatable (e.g : a LUT table)         
+   ///  when it's not string-translatable (e.g : LUT table, overlay, icon)         
    uint8_t *GetBinArea()  { return BinArea; }
+
    void  SetBinArea( uint8_t *area, bool self = true );
 
-   /// Sets the value (string) of the current Dicom Entry
-   virtual void SetValue(std::string const &val) { SetValueOnly(val); };
 private:
-   /// \brief unsecure memory area to hold 'non string' values 
+   /// \brief memory area to hold 'non std::string' representable values 
    ///       (ie : Lookup Tables, overlays, icons)   
    uint8_t *BinArea;
    bool SelfArea;
 };
+
 } // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

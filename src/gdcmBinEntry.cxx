@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/01/25 15:21:20 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,8 @@
 =========================================================================*/
 
 #include "gdcmBinEntry.h"
+#include "gdcmContentEntry.h"
+
 #include "gdcmDebug.h"
 
 #include <fstream>
@@ -32,7 +34,7 @@ namespace gdcm
 /**
  * \brief   Constructor from a given BinEntry
  */
-BinEntry::BinEntry(DictEntry *e) : ValEntry(e)
+BinEntry::BinEntry(DictEntry *e) : ContentEntry(e)
 {
    BinArea = 0;
    SelfArea = true;
@@ -42,7 +44,7 @@ BinEntry::BinEntry(DictEntry *e) : ValEntry(e)
  * \brief   Constructor from a given BinEntry
  * @param   e Pointer to existing Doc entry
  */
-BinEntry::BinEntry(DocEntry *e) : ValEntry(e->GetDictEntry())
+BinEntry::BinEntry(DocEntry *e) : ContentEntry(e->GetDictEntry())
 {
    Copy(e);
 
