@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/03/02 17:18:32 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/03/03 11:05:00 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,72 @@
 #include "gdcmDictSet.h"
 
 #include <fstream>
+
+/*
+// ----------------------------- WARNING -------------------------
+
+These lines will be moved to the document-to-be 'User's Guide'
+
+// To read an image, user needs a gdcm::File
+gdcm::File *f1 = new gdcm::File(fileName);
+// user can now check some values
+std::string v = f1->GetEntryValue(groupNb,ElementNb);
+// to get the pixels, user needs a gdcm::FileHelper
+gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1);
+// user may ask not to convert Palette to RGB
+uint8_t *pixels = fh1->GetImageDataRaw();
+int imageLength = fh1->GetImageDataRawSize();
+// He can now use the pixels, create a new image, ...
+uint8_t *userPixels = ...
+
+To re-write the image, user re-uses the gdcm::FileHelper
+
+fh1->SetImageData( userPixels, userPixelsLength);
+fh1->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
+                     // (WriteMode is set)
+ 
+fh1->SetWriteTypeToDcmExpl(); // he wants Explicit Value Representation
+                              // Little Endian is the default
+                              // no other value is allowed
+                                (-->SetWriteType(ExplicitVR);)
+                                   -->WriteType = ExplicitVR;
+fh1->Write(newFileName);      // overwrites the file, if any
+
+// or :
+fh1->WriteDcmExplVR(newFileName);
+
+
+// ----------------------------- WARNING -------------------------
+
+These lines will be moved to the document-to-be 'Developer's Guide'
+
+WriteMode : WMODE_RAW / WMODE_RGB
+WriteType : ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO
+
+fh1->Write(newFileName);
+   SetWriteFileTypeToImplicitVR() / SetWriteFileTypeToExplicitVR();
+   (modifies TransferSyntax)
+   SetWriteToRaw(); / SetWriteToRGB();
+      (modifies, when necessary : photochromatic interpretation, 
+         samples per pixel, Planar configuration, 
+         bits allocated, bits stored, high bit -ACR 24 bits-
+         Pixels element VR, pushes out the LUT )
+   CheckWriteIntegrity();
+      (checks user given pixels length)
+   FileInternal->Write(fileName,WriteType)
+   fp = opens file(fileName);
+   ComputeGroup0002Length(writetype);
+   BitsAllocated 12->16
+      RemoveEntryNoDestroy(palettes, etc)
+      Document::WriteContent(fp, writetype);
+   RestoreWrite();
+      (moves back to the File all the archived elements)
+   RestoreWriteFileType();
+      (pushes back group 0002, with TransferSyntax)
+*/
+
+
+
 
 namespace gdcm 
 {
