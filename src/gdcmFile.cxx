@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 13:56:46 $
-  Version:   $Revision: 1.149 $
+  Date:      $Date: 2004/10/28 03:10:58 $
+  Version:   $Revision: 1.150 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -274,7 +274,7 @@ int File::ComputeDecompressedPixelDataSizeFromHeader()
    //  - it is not defined (i.e. it's value is 0)
    //  - it's 12, since we will expand the image to 16 bits (see
    //    PixelConvert::ConvertDecompress12BitsTo16Bits() )
-   if ( ( numberBitsAllocated == 0 ) || ( numberBitsAllocated == 12 ) )
+   if ( numberBitsAllocated == 0 || numberBitsAllocated == 12 )
    {
       numberBitsAllocated = 16;
    } 
@@ -641,12 +641,10 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    if ( type == ImplicitVR || type == ExplicitVR )
    {
       // writing Dicom File Preamble
-      uint8_t* filePreamble = new uint8_t[128];
+      uint8_t filePreamble[128];
       memset(filePreamble, 0, 128);
       fp1->write((char*)filePreamble, 128);
       fp1->write("DICM", 4);
-
-      delete[] filePreamble;
    }
 
    // --------------------------------------------------------------

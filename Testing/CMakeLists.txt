@@ -10,6 +10,8 @@ SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
 SET(TEST_SOURCES
   TestBug.cxx
   TestHash.cxx
+  TestTS.cxx
+  TestVR.cxx
 )
 
 # add tests that require data

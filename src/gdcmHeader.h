@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:42 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2004/10/28 03:10:58 $
+  Version:   $Revision: 1.92 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,10 +21,9 @@
 
 #include "gdcmCommon.h"
 #include "gdcmDocument.h"
+
 namespace gdcm 
 {
-
-
 //-----------------------------------------------------------------------------
 /**
  * \brief
@@ -114,10 +113,10 @@ public:
    Header();
    Header( std::string const & filename );
  
-   virtual ~Header();
+   ~Header();
 
    // Standard values and informations contained in the header
-   virtual bool IsReadable();
+   bool IsReadable();
 
    // Some heuristic based accessors, end user intended 
    int GetBitsStored();
@@ -143,7 +142,6 @@ public:
    float GetXSpacing();
    float GetYSpacing();
    float GetZSpacing();
-   //void GetSpacing(float &x, float &y, float &z);
 
    // Useful for rescaling graylevel:
    float GetRescaleIntercept();
@@ -158,7 +156,6 @@ public:
    float GetXOrigin();
    float GetYOrigin();
    float GetZOrigin();
-   //void GetOrigin(float &x, float &y, float &z);
 
    bool   HasLUT();
    int    GetLUTNbits();

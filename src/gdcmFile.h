@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:08:20 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2004/10/28 03:10:58 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 /*
  * In addition to Dicom header exploration, this class is designed

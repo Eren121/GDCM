@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/27 22:31:12 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/10/28 03:10:58 $
+  Version:   $Revision: 1.33 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -49,7 +48,7 @@ SQItem::~SQItem()
                              cc != DocEntries.end();
                              ++cc)
    {
-      delete (*cc);
+      delete *cc;
    }
    DocEntries.clear();
 }
@@ -70,7 +69,7 @@ SQItem::~SQItem()
          s << "   | " ;
       }
    }
-   std::cout << s.str() << " --- SQItem number " << SQItemNumber  << std::endl;
+   //std::cout << s.str() << " --- SQItem number " << SQItemNumber  << std::endl;
    for (ListDocEntry::iterator i  = DocEntries.begin();
                                i != DocEntries.end();
                              ++i)
