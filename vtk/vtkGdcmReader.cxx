@@ -63,6 +63,7 @@
 vtkGdcmReader::vtkGdcmReader()
 {
    this->LookupTable = NULL;
+   this->AllowLookupTable = 0;
 }
 
 vtkGdcmReader::~vtkGdcmReader()
@@ -529,8 +530,9 @@ int vtkGdcmReader::CheckFileCoherence()
          this->ImageType = type;
          this->PixelSize = GdcmHeader.GetPixelSize();
 
-         if( GdcmHeader.HasLUT() && false )
+         if( GdcmHeader.HasLUT() && this->AllowLookupTable )
          {
+            // I could raise an error is AllowLookupTable is on and HasLUT() off
             this->NumComponents = GdcmHeader.GetNumberOfScalarComponentsRaw();
          }
          else
@@ -624,7 +626,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
 
    unsigned char * Source;
    
-   if( GdcmFile.GetHeader()->HasLUT() && false )
+   if( GdcmFile.GetHeader()->HasLUT() && this->AllowLookupTable )
    {
       size               = GdcmFile.GetImageDataSizeRaw();
       Source             = (unsigned char*) GdcmFile.GetImageDataRaw();

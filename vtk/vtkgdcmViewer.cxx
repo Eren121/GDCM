@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     return 0;
   
   vtkGdcmReader *reader = vtkGdcmReader::New();
+  reader->AllowLookupTableOff();
 
   if( argc == 2 )
     reader->SetFileName( argv[1] );
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
 
   vtkImageViewer2 *viewer = vtkImageViewer2::New();
   
-/*  if( reader->GetLookupTable() )
+  if( reader->GetLookupTable() )
   {
     //convert to color:
     vtkImageMapToColors *map = vtkImageMapToColors::New ();
@@ -78,8 +79,7 @@ int main(int argc, char *argv[])
     viewer->SetInput ( map->GetOutput() );
     map->Delete();
   }
-  else*/
-  
+  else
   {
     viewer->SetInput ( reader->GetOutput() );
   }

@@ -21,6 +21,15 @@ public:
    virtual void RemoveAllFileName(void);
    virtual void AddFileName(const char* name);
    virtual void SetFileName(const char *name);
+   
+   // Description:
+   // If this flag is set and the DICOM reader encounters a dicom file with 
+   // lookup table the data will be kept as unsigned chars and a lookuptable 
+   // will be exported and accessible through GetLookupTable() 
+   vtkSetMacro(AllowLookupTable,int);
+   vtkGetMacro(AllowLookupTable,int);
+   vtkBooleanMacro(AllowLookupTable,int);
+
    vtkGetObjectMacro(LookupTable,vtkLookupTable);
 
 protected:
@@ -45,6 +54,7 @@ private:
 // Variables
    vtkLookupTable *LookupTable;
    vtkTimeStamp fileTime;
+   int AllowLookupTable;
 
    //BTX
    // Number of columns of the image/volume to be loaded
