@@ -131,6 +131,11 @@ SET(BLACK_LIST
   # after tag 0029|1010)
   # Note: this file was previously known as E00001S03I0015.dcm
   "SIEMENS_Sonata-12-MONO2-SQ.dcm"
+  # As of 14/09 this image creates a crash:
+  #Program received signal SIGSEGV, Segmentation fault.
+  #0x4032bc4b in gdcmHeader::GetLUTRGBA (this=0x8149228) at /home/malaterre/Creatis/gdcm/src/gdcmHeader.cxx:1170
+  #1170          *a = lutR[i*mult+1];
+  "OT-PAL-8-face.dcm"
   )
 
 #   gdcm-ACR-LibIDO seems to be cut
