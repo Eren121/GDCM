@@ -48,4 +48,3 @@ Source: "..\*.dsw"; DestDir: "{app}"; CopyMode: alwaysoverwrite; Components: sou
 Source: "..\src\win32\*.dsp"; DestDir: "{app}\src\win32"; CopyMode: alwaysoverwrite; Components: sources
 Source: "..\vtk\win32\vtkgdcm.dsp"; DestDir: "{app}\vtk\win32"; CopyMode: alwaysoverwrite; Components: sources
 
-
