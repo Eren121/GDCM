@@ -25,6 +25,7 @@ SET(SWIG_INC
   ${GDCM_INC}
 )
 
+ADD_CUSTOM_TARGET(mathieu ALL)
 
 SET(GDCM_PYTHON_SOURCES
   gdcm_wrap.cxx
@@ -32,15 +33,17 @@ SET(GDCM_PYTHON_SOURCES
 
 SET_SOURCE_FILES_PROPERTIES(gdcm_wrap.cxx GENERATED)
 
+ADD_LIBRARY(pygdcm ${GDCM_PYTHON_SOURCES})
+
+
 ADD_CUSTOM_COMMAND(
 SOURCE    ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i
 COMMAND   swig
-ARGS      -python -c++ -I${GDCM_SOURCE_DIR}/src -o gdcm_wrap.cxx ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
-OUTPUTS   gdcm_wrap.cxx
-TARGET    pygdcm
+ARGS      -python -c++ -I${GDCM_SOURCE_DIR}/src -o ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx ${GDCM_SOURCE_DIR}/gdcmPython/gdcm.i 
+TARGET    mathieu
+OUTPUTS   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
 )
 
-ADD_LIBRARY(pygdcm ${GDCM_PYTHON_SOURCES})
 
 
 
