@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:42 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/18 11:56:52 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -236,8 +236,15 @@ bool SerieHeader::ImagePositionPatientOrdering()
       //2*n sort algo !!
       //Assumption: all files are present (no one missing)
       pos = (int)( fabs( (distlist[n]-min)/step) + .5 );
-            
-      CoherentGdcmFileVector[pos] = *it2;
+
+      // a Dicom 'Serie' may contain scout views
+      // and images may have differents directions
+      // -> More than one may have the same 'pos'
+      // Sorting has then NO meaning !
+      if (CoherentGdcmFileVector[pos]==NULL)
+         CoherentGdcmFileVector[pos] = *it2;
+      else
+         return false;
    }
 
    CoherentGdcmFileList.clear();  //this doesn't delete list's element, node only
