@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/11 00:37:41 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/11 14:39:03 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 int TestTS(int , char *[])
 {
    gdcm::TS ts;
-   // There should be 150 entries
+   // There should be ~150 entries
    ts.Print( std::cout );
 
    // Implicit VR Little Endian
