@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 16:51:36 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/02/06 14:31:09 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,7 +42,7 @@ public:
    void WriteContent(std::ofstream *fp, FileType t);
 
    // Serie methods
-   DicomDirSerie* NewSerie();
+   DicomDirSerie *NewSerie();
    /// Adds a gdcm::DicomDirSerie to a Study
    void AddSerie(DicomDirSerie *obj) { Series.push_back(obj); };
    void ClearSerie();

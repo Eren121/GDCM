@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:08 $
-  Version:   $Revision: 1.128 $
+  Date:      $Date: 2005/02/06 14:31:09 $
+  Version:   $Revision: 1.129 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,58 @@
 #else
 #   include <unistd.h>
 #endif
-
+// ----------------------------------------------------------------------------
+//         Note for future developpers
+// ----------------------------------------------------------------------------
+//
+//  Dicom PS 3.3 describes the relationship between Directory Records, as follow
+//
+//  Directory Record Type      Directory Record Types which may be included
+//                                in the next lower-èlevel directory Entity
+//
+// (Root directory Entity)     PATIENT
+//
+// PATIENT                     STUDY
+//
+// STUDY                       SERIES, VISIT, RESULTS, STUDY COMPONENT
+//
+// SERIES                      IMAGE, OVERLAYS, MODALITY LUT, VOI LUT,
+//                             CURVE, STORED PRINT, RT DOSE, RT STRUCTURE SET
+//                             RT PLAN, RT TREAT RECORD, PRESENTATION, WAVEFORM,
+//                             SR DOCUMENT, KEY OBJECT DOC, SPECTROSCOPY,
+//                             RAW DATA, REGISTRATION, FIDUCIAL
+// IMAGE
+// OVERLAY
+// MODALITY LUT
+// VOI LUT
+// CURVE
+// STORED PRINT
+// RT DOSE
+// RT STRUCTURE SET
+// RT PLAN
+// RT TREAT RECORD
+// PRESENTATION
+// WAVEFORM
+// SR DOCUMENT
+// KEY OBJECT DOC
+// SPECTROSCOPY
+// RAW DATA
+// REGISTRATION
+// FIDUCIAL
+// 
+// ----------------------
+// The current gdcm version only deals with :
+//
+// (Root directory Entity)     PATIENT
+// PATIENT                     STUDY
+// STUDY                       SERIES 
+// SERIES                      IMAGE
+// IMAGE
+//
+// DicomDir::CreateDicomDir will have to be completed
+// Treelike structure management will have to be upgraded
+// ----------------------------------------------------------------------------
+    
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
@@ -732,7 +783,7 @@ bool DicomDir::AddImageToEnd(DicomDirImage *dd)
  * @param   path path of the root directory
  * @param   list chained list of Headers
  */
-void DicomDir::SetElements(std::string const & path, VectDocument const &list)
+void DicomDir::SetElements(std::string const &path, VectDocument const &list)
 {
    ClearEntry();
    ClearPatient();
@@ -747,7 +798,8 @@ void DicomDir::SetElements(std::string const & path, VectDocument const &list)
 
    bool first = true;
    for( VectDocument::const_iterator it = list.begin();
-                                     it != list.end(); ++it )
+                                     it != list.end(); 
+                                   ++it )
    {
       // get the current file characteristics
       patCurName         = (*it)->GetEntryValue(0x0010,0x0010);
@@ -869,10 +921,10 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    // imageElem 0008 1150 "" // Referenced SOP Class UID    : to be set/forged later
    // imageElem 0008 1155 "" // Referenced SOP Instance UID : to be set/forged later
    // imageElem fffe e00d "" // Item delimitation : length to be set to ZERO later
-   // for all the relevant elements found in their own spot of the DicomDir.dic
-
+ 
    // FIXME : troubles found when it's a SeqEntry
 
+   // for all the relevant elements found in their own spot of the DicomDir.dic
    for( it = elemList.begin(); it != elemList.end(); ++it)
    {
       tmpGr     = it->Group;

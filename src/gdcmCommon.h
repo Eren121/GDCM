@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/30 17:30:57 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/02/06 14:31:09 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,7 +123,6 @@ GDCM_EXPORT extern const std::string GDCM_UNREAD;
 ///        a sequence, itself nested in the third item of a sequence is the
 ///        string e.g.
 ///            0004|1220/2#0008|0082/0#0008|0090
-///        Probabely useless stuff.
 typedef std::string TagKey;
 typedef std::string TagName;
 
@@ -143,6 +142,19 @@ enum DicomDirType {
    DD_SERIE,
    DD_IMAGE
 };
+
+/**
+ * \brief structure, for internal use only
+ */  
+GDCM_EXPORT typedef struct
+{
+   /// DicomGroup number
+   unsigned short int Group;
+   /// DicomElement number
+   unsigned short int Elem;
+   /// value (coded as a std::string) of the Element
+   std::string Value;
+} Element;
 
 } //namespace gdcm
 //-----------------------------------------------------------------------------

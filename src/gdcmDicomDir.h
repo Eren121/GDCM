@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:52:25 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/02/06 14:31:09 $
+  Version:   $Revision: 1.54 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ public:
                    
    ~DicomDir();
 
-   void Print(std::ostream &os = std::cout, std::string const & indent = "" );
+   void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
    // Informations contained in the parser
    virtual bool IsReadable();
@@ -145,23 +145,23 @@ private:
    ListDicomDirPatient::iterator ItPatient;
 
    /// pointer to the initialisation method for any progress bar   
-   Method* StartMethod;
+   Method *StartMethod;
    /// pointer to the incrementation method for any progress bar
-   Method* ProgressMethod;
+   Method *ProgressMethod;
    /// pointer to the termination method for any progress bar
-   Method* EndMethod;
+   Method *EndMethod;
    /// pointer to the ??? method for any progress bar   
-   Method* StartMethodArgDelete;
+   Method *StartMethodArgDelete;
    /// pointer to the ??? method for any progress bar
    Method* ProgressMethodArgDelete;
    /// pointer to the ??? method for any progress bar
-   Method* EndMethodArgDelete;
+   Method *EndMethodArgDelete;
    /// pointer to the ??? for any progress bar   
-   void* StartArg;
+   void *StartArg;
    /// pointer to the ??? for any progress bar
-   void* ProgressArg;
+   void *ProgressArg;
    /// pointer to the ??? for any progress bar   
-   void* EndArg;
+   void *EndArg;
    /// value of the ??? for any progress bar
    float Progress;
    /// value of the ??? for any progress bar   

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 00:22:14 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/02/06 14:31:09 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,19 +27,6 @@ namespace gdcm
 {
 
 //-----------------------------------------------------------------------------
-/**
- * \brief internal structure, not end user intended
- *        shouln't appear here
- */  
-typedef struct
-{
-   /// DicomGroup number
-   unsigned short int Group;
-   /// DicomElement number
-   unsigned short int Elem;
-   /// value (coded as a std::string) of the Element
-   std::string Value;
-} Element;
 
 typedef std::list<Element> ListDicomDirElem;
 typedef std::list<Element> ListDicomDirMetaElem;
@@ -50,8 +37,8 @@ typedef std::list<Element> ListDicomDirImageElem;
 
 //-----------------------------------------------------------------------------
 /**
- * \brief   Represents elements contained in a DicomDir
- *           class for the chained lists from the file 'Dicts/DicomDir.dic'
+ * \brief   Represents elements contained in a DicomDir class
+ *          for the chained lists from the file 'Dicts/DicomDir.dic'
  */
 class GDCM_EXPORT DicomDirElement
 {
