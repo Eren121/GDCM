@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 14:49:01 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/02/04 23:49:23 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -176,7 +176,7 @@ ValEntry *ElementSet::GetFirstValEntry()
    // an other iterator is needed to allow user iterate 
    // at the same time both on DocEntries and ValEntries 
    ItValEntryTagHT = ItTagHT;
-   if ( valEntry = dynamic_cast<gdcm::ValEntry*>(d)) 
+   if ( (valEntry = dynamic_cast<gdcm::ValEntry*>(d)))
       return valEntry;
    return  GetNextValEntry();  
 }
@@ -194,7 +194,7 @@ ValEntry *ElementSet::GetNextValEntry()
    ++ItValEntryTagHT; 
    while( d )
    {
-      if ( valEntry = dynamic_cast<gdcm::ValEntry*>(d))
+      if ( (valEntry = dynamic_cast<gdcm::ValEntry*>(d)))
          return valEntry;
       else
          return GetNextValEntry(); 

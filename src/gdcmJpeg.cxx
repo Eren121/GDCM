@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 23:45:22 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/02/04 23:49:23 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -170,7 +170,7 @@ bool gdcm_write_JPEG_file (std::ofstream *fp, void *im_buf,
 
   /* And we're done! */
 
-  return true; //???
+  return true;
 }
 
 //-----------------------------------------------------------------------------

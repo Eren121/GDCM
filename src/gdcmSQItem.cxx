@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 14:49:01 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/02/04 23:49:23 $
+  Version:   $Revision: 1.68 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -233,7 +233,7 @@ ValEntry *SQItem::GetFirstValEntry()
    // an other iterator is needed to allow user iterate 
    // at the same time both on DocEntries and ValEntries 
    ItValEntries = ItDocEntries;
-   if ( valEntry = dynamic_cast<gdcm::ValEntry*>(d))
+   if ( (valEntry = dynamic_cast<gdcm::ValEntry*>(d)))
       return valEntry;
    return  GetNextValEntry();
 }
@@ -249,7 +249,7 @@ ValEntry *SQItem::GetNextValEntry()
    ++ItValEntries; 
    while( d )
    {
-      if ( valEntry = dynamic_cast<gdcm::ValEntry*>(d))
+      if ( (valEntry = dynamic_cast<gdcm::ValEntry*>(d)))
          return valEntry;
       else
      return GetNextValEntry(); 
