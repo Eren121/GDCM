@@ -1,5 +1,7 @@
 #include <iostream>
-#include "gdcm.h"
+//#include "gdcm.h"
+#include "gdcmHeader.h"
+#include "gdcmFile.h"
 
 
 	// ecriture d'un fichier DICOM à partir d'un dcmHeader correct.
