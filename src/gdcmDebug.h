@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/02/11 20:14:55 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -119,7 +119,7 @@ public:
 #endif //NDEBUG
 
 /**
- * \brief   Verbose 
+ * \brief   Warning
  * @param msg message part
  */
 #ifdef NDEBUG
@@ -130,7 +130,7 @@ public:
    if( Debug::GetDebugFlag() )                              \
    {                                                        \
    std::ostringstream osmacro;                              \
-   osmacro << "Verbose: In " __FILE__ ", line " << __LINE__ \
+   osmacro << "Warning: In " __FILE__ ", line " << __LINE__ \
            << ", function " << GDCM_FUNCTION << "\n"        \
            << msg << "\n\n";                                \
    if( Debug::GetDebugToFile() )                            \
