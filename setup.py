@@ -3,7 +3,7 @@ import glob, os, sys, shutil
 from distutilsWrapping import *
 from WrapSwig import *
 from WrapVTK import *
-from gdcmPython.gdcmVersion import *
+from gdcmVersion import *
 
 ThisModule='gdcmPython'
 gdcmPythonSrcDir=ThisModule
@@ -127,5 +127,7 @@ setup(name=ThisModule,
                    glob.glob(os.path.join(gdcmTestDir,"*.acr"))),
                   (os.path.join(targetDir,"Dicts"),
                    glob.glob(os.path.join(gdcmDictsDir,"*.*"))),
+                  (targetDir,
+                   glob.glob(os.path.join(gdcmSrcDir,"..","gdcmVersion.py"))),
                 ]
      )
