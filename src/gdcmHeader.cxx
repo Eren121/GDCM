@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.86 2003/09/24 13:00:59 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.87 2003/09/24 13:36:15 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -905,7 +905,7 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
    // are not loaded. Instead we leave a short notice of the offset of
    // the element content and it's length.
    if (length > MaxSizeLoadElementValue) {
-      ostringstream s;
+      std::ostringstream s;
       s << "gdcm::NotLoaded.";
       s << " Address:" << (long)ElVal->GetOffset();
       s << " Length:"  << ElVal->GetLength();
@@ -922,7 +922,7 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
 		
    if ( IsAnInteger(ElVal) ) {
       guint32 NewInt;
-      ostringstream s;
+      std::ostringstream s;
       int nbInt;
       if (vr == "US" || vr == "SS") {
          nbInt = length / 2;
@@ -2012,7 +2012,7 @@ std::string gdcmHeader::GetTransferSyntaxName(void) {
   */
   
 int gdcmHeader::GetLUTLength(void) {
-   vector<std::string> tokens;
+   std::vector<std::string> tokens;
    int LutLength;
    //int LutDepth;
    //int LutNbits;
@@ -2049,7 +2049,7 @@ int gdcmHeader::GetLUTLength(void) {
   */
   
 int gdcmHeader::GetLUTNbits(void) {
-   vector<std::string> tokens;
+   std::vector<std::string> tokens;
    //int LutLength;
    //int LutDepth;
    int LutNbits;
