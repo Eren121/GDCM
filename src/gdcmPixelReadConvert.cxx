@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/23 09:54:59 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/03/31 09:46:51 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -796,10 +796,10 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    int l        = XSize * YSize;
    int nbFrames = ZSize;
 
-   uint8_t *a = copyRaw;
+   uint8_t *a = copyRaw + 0;
    uint8_t *b = copyRaw + l;
-   uint8_t *c = copyRaw + l + l;
-   double R, G, B;
+   uint8_t *c = copyRaw + l+ l;
+   int32_t R, G, B;
 
    /// \todo : Replace by the 'well known' integer computation
    ///         counterpart. Refer to
@@ -810,16 +810,20 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    {
       for ( int j = 0; j < l; j++ )
       {
-         R = 1.164 *(*a-16) + 1.596 *(*c -128) + 0.5;
-         G = 1.164 *(*a-16) - 0.813 *(*c -128) - 0.392 *(*b -128) + 0.5;
-         B = 1.164 *(*a-16) + 2.017 *(*b -128) + 0.5;
+         R = 38142 *(*a-16) + 52298 *(*c -128);
+         G = 38142 *(*a-16) - 26640 *(*c -128) - 12845 *(*b -128);
+         B = 38142 *(*a-16) + 66093 *(*b -128);
 
-         if (R < 0.0)   R = 0.0;
-         if (G < 0.0)   G = 0.0;
-         if (B < 0.0)   B = 0.0;
-         if (R > 255.0) R = 255.0;
-         if (G > 255.0) G = 255.0;
-         if (B > 255.0) B = 255.0;
+         R = (R+16384)>>15;
+         G = (G+16384)>>15;
+         B = (B+16384)>>15;
+
+         if (R < 0)   R = 0;
+         if (G < 0)   G = 0;
+         if (B < 0)   B = 0;
+         if (R > 255) R = 255;
+         if (G > 255) G = 255;
+         if (B > 255) B = 255;
 
          *(localRaw++) = (uint8_t)R;
          *(localRaw++) = (uint8_t)G;
