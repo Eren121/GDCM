@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/10 18:27:23 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/11/16 11:19:51 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,14 +66,19 @@ void PixelConvert::Squeeze()
    {
       delete [] RGB;
    } 
+   RGB = 0;
+
    if ( Decompressed )
    {
       delete [] Decompressed;
    }
+   Decompressed = 0;
+
    if ( LutRGBA )
    {
       delete [] LutRGBA;
    }
+   LutRGBA = 0;
 }
 
 PixelConvert::~PixelConvert() 

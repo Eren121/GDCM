@@ -1,4 +1,9 @@
 2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * FIX : src/gdcmDocument.cxx Remove obvious code in the destructor 
+   * FIX : src/gdcmPixelConvert : Set to NULL the deleted structures in the
+     squeeze method
+
+2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * FIX: src/gdcmUtil.cxx : to compile with MSVC6
    * src/gdcmDocument.cxx : fix memory leaks. Fix possible bugs : use an object
      after it have been deleted
@@ -360,7 +365,7 @@
 2004-09-23 Jean-Pierre Roux
   * FIX In order not to be poluted any longer by casting problems,
     the member VoidArea of gdcmBinEntry is now uint8_t* (instead of void *)
-	 we can now delete[] it safely 	
+    we can now delete[] it safely 
   * VoidArea is now called BinArea (less confusing name),
     and all the methods called ...VoidArea... are now ... BinArea...
   * class gdcmObject is now called gdcmDicomDirObject (less confusing name)
@@ -510,7 +515,7 @@
 2004-07-21 Jean-Pierre Roux
   * FIX Now, Parsing and Printing a DICOMDIR do work!
        ( troubles remain in makeDicomDir and BuildUpDicomDir :-(
-		 
+ 
 2004-07-20 Jean-Pierre Roux
   * FIX Some brain damaged headers have Zero-Lenght fields 
         for 'Transfert Syntax UID', or 'Media Stored SOP Class UID'.
@@ -614,10 +619,10 @@
 2004-06-29 Jean-Pierre Roux
    FIX : - remove Frog's beautified, but never checked 'Parse7FE0' code,
          - replace by uggly but working old code :-(
-		A lot of things should be OK again.
-	It's really urgent to have a test suite that *tests*, 
-	to prevent Frog's beautifying sessions to break all the stuff
-	(twice, withing a fortnigh ...) 	
+   A lot of things should be OK again.
+   It's really urgent to have a test suite that *tests*, 
+   to prevent Frog's beautifying sessions to break all the stuff
+   (twice, withing a fortnigh ...) 	
 
 2004-06-28 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * Test/TestWriteRead.cxx and TestReadWrite.cxx merged (because of
@@ -652,14 +657,14 @@
 
 2004-06-24 Jean-Pierre Roux
    FIX : - now Write drops LUT Descriptors and LUTs (if any)
-	            when SamplesPerPixel =3
+           when SamplesPerPixel =3
          - now Write is no longer confused by 
-			      'BitsAllocated = 12" and 'BitsStored=12"
+          'BitsAllocated = 12" and 'BitsStored=12"
          - "UN" value representation Elements are now written correctly 
-               (their legth is stored on 4 bytes -just like OB, OW, and SQ-)									
+               (their legth is stored on 4 bytes -just like OB, OW, and SQ-)
    ENH : - now gdcmHeader has its own Write methods 
-	            (in order to split the job that has not to be done 
-					for gdcmDicomDir)
+           (in order to split the job that has not to be done 
+           for gdcmDicomDir)
 
 2004-06-23 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * Test/PrintAllDocument.cxx: looping on files is now effective. It used to
@@ -671,13 +676,13 @@
 2004-06-24 Jean-Pierre Roux
    FIX : Write - All the Sequences and Sequence Item are now written 
             as 'no length' stuff, and a Sequence Delimitor aor an Item Delimitor
-				is added a the end, when necessary.
+            is added a the end, when necessary.
             - A lot of brain-damaged images, that were read correctly are 
-		      now written correctly
-				- length compatible BinEntry are now loaded correctly 
-				(even for odd groups) 
+              now written correctly
+            - length compatible BinEntry are now loaded correctly 
+              (even for odd groups) 
         Note : only Explicit Value Representation was checked.
-				(question : is implicit VR really necessary for gdcm ?)
+               (question : is implicit VR really necessary for gdcm ?)
 
 2004-06-23 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
    * DEVELOPPER: added a proposition of coding style.
@@ -697,40 +702,40 @@
 
 2004-06-22 Jean-Pierre Roux
    In order : to write Sequences, whatever their imbrication level, 
-	         : to allow user to create his own Sequences
-	a lot of modif where necessary (adding, moving, or virtualising methods)
+            : to allow user to create his own Sequences
+   a lot of modif where necessary (adding, moving, or virtualising methods)
 
-WARNING : save your own sources *before* cvs up !
-	
-	- gdcmBinEntry
-	  ADD virtual void Write(FILE *fp, FileType filetype);
-	  
+   WARNING : save your own sources *before* cvs up !
+
+   - gdcmBinEntry
+     ADD virtual void Write(FILE *fp, FileType filetype);
+  
    - gdcmDocEntry
-	  ADD virtual void Write(FILE *fp, FileType filetype);
-	  ADD void gdcmDocEntry::WriteCommonPart(FILE *fp, FileType filetype);
-	  
-	- gdcmDocEntrySet
-	  ADD virtual void Write (FILE *fp, FileType filetype)=0;
-	  ADD	virtual gdcmDocEntry *GetDocEntryByNumber(guint16 group,guint16 element) = 0;
+     ADD virtual void Write(FILE *fp, FileType filetype);
+     ADD void gdcmDocEntry::WriteCommonPart(FILE *fp, FileType filetype);
+  
+   - gdcmDocEntrySet
+     ADD virtual void Write (FILE *fp, FileType filetype)=0;
+     ADD virtual gdcmDocEntry *GetDocEntryByNumber(guint16 group,guint16 element) = 0;
      ADD gdcmDocEntry *GetDocEntryByName(std::string name);
      ADD virtual std::string GetEntryByNumber(guint16 group,guint16 element) = 0;
-     ADD std::string GetEntryByName(TagName name);		         
+     ADD std::string GetEntryByName(TagName name);	         
      ADD gdcmDictEntry *NewVirtualDictEntry(guint16 group, 
                                             guint16 element,
                                             std::string vr     = "unkn",
                                             std::string fourth = "unkn",
                                             std::string name   = "unkn"); 
-	  ADD gdcmValEntry *NewValEntryByNumber(guint16 group, guint16 element); 												 
-     ADD gdcmBinEntry *NewBinEntryByNumber(guint16 group, guint16 element); 	
+     ADD gdcmValEntry *NewValEntryByNumber(guint16 group, guint16 element);  
+     ADD gdcmBinEntry *NewBinEntryByNumber(guint16 group, guint16 element); 
      ADD gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element); 
      ADD gdcmDocEntry *NewDocEntryByName  (std::string Name);   
      ADD gdcmDictEntry *GetDictEntryByName   (std::string Name);
      ADD gdcmDictEntry *GetDictEntryByNumber(guint16, guint16);
-	  REM virtual gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element)=0;
+     REM virtual gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element)=0;
      REM virtual gdcmDocEntry *NewDocEntryByName  (std::string Name)=0;
-	  
-	- gdcmDocument
-     ADD virtual bool WriteF(FileType type); // New stuff, with recursive exploration		
+  
+   - gdcmDocument
+     ADD virtual bool WriteF(FileType type); // New stuff, with recursive exploration
      ADD virtual std::string GetEntryByName    (TagName tagName);
      ADD virtual std::string GetEntryVRByName  (TagName tagName);
      REM virtual bool Write(FILE *, FileType);
