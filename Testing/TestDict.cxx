@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 11:28:29 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/01/14 17:31:57 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include <iostream>
 #include <iomanip>
 
-int TestDict(int argc, char* argv[])
+int TestDict(int , char* [])
 {  
    // Print the DictSet
    std::cout<<"#######################################################\n";

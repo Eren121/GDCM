@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FlatHashTablePrint.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/14 11:28:28 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/14 17:31:34 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 // as line argument) and print them. This is an illustration of the
 // usage of \ref gdcmDocument::BuildFlatHashTable().
 
-int main(int argc, char* argv[])
+int main(int , char* [])
 {
 /*   if (argc < 2)
    {
