@@ -1,4 +1,17 @@
-2003-05-21  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with JPR
+2003-05-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * Modification of setup.py to compile vtk part too. Then, we have 2
+        wrappers which must work with same distutils. For that, we have a
+        generic distutils in distusiltsWrapping.py ; with :
+         - build_extWrap class to wrap generically all extensions,
+         - ExtensionWrap base class for all wrapping extension that contains
+           a wrapper
+         - Wrapper interface which wrap sources
+        + In WrapSwig.py  we have extension and wrapper for Swig
+        + In WrapVTK.py  we have extension and wrapper for VTK
+      * MANIFEST.in : modifications to consider vtk directory and new python
+        files for compilation
+
+2003-05-21  Eric Boix <Eric.Boix@creatis.insa-lyon.fr> with Benoit Regrain
       * Added python wrappers of vtkGdcmReader vtk class (see the
         source in vtk/vtkGdcmReader.cxx) :
         - vtk/Makefile.am now builds a library
