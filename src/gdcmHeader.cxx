@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.112 2003/11/10 09:21:40 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.113 2003/11/10 14:17:12 jpr Exp $
 
 #include "gdcmHeader.h"
 
@@ -627,6 +627,9 @@ bool gdcmHeader::IsDicomV3(void) {
  *          applying this heuristic.
  */
 void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
+
+   ElVal->SetReadLength(FoundLength); // will be updated only if a bug is found
+   
    if ( FoundLength == 0xffffffff)
       FoundLength = 0;
       
@@ -635,9 +638,11 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    else if (FoundLength == 13) {
       // The following 'if' will be removed when there is no more
       // images on Creatis HDs with a 13 length for Manufacturer...
-      if ( (ElVal->GetGroup() != 0x0008) || (ElVal->GetElement() != 0x0070)) {
+      if ( (ElVal->GetGroup() != 0x0008) &&  
+           ( (ElVal->GetElement() != 0x0070) || (ElVal->GetElement() != 0x0080) ) ) {
       // end of remove area
          FoundLength =10;
+	 ElVal->SetReadLength(10); // a bug is to be fixed
       }
    } 
      // to fix some garbage 'Leonardo' Siemens images
@@ -645,7 +650,8 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    else if ( (ElVal->GetGroup() == 0x0009) 
        &&
        ( (ElVal->GetElement() == 0x1113) || (ElVal->GetElement() == 0x1114) ) ){
-        FoundLength =4; 
+        FoundLength =4;
+	ElVal->SetReadLength(4); // a bug is to be fixed 
    } 
      // end of fix
 	 
@@ -661,7 +667,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
 	  FoundLength =0; 	     
     }
 	          
-   ElVal->SetLength(FoundLength);
+   ElVal->SetUsableLength(FoundLength);
 }
 
 /**
@@ -744,7 +750,6 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
             return;
          }
          FixFoundLength(ElVal, length32); 
-
          return;
       }
 
@@ -768,7 +773,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
       //   appear when we find the first group with big endian encoding. This
       //   is easy to detect since the length of a "Group Length" tag (the
       //   ones with zero as element number) has to be of 4 (0x0004). When we
-      //   encouter 1024 (0x0400) chances are the encoding changed and we
+      //   encounter 1024 (0x0400) chances are the encoding changed and we
       //   found a group with big endian encoding.
       // We shall use this second strategy. In order to make sure that we
       // can interpret the presence of an apparently big endian encoded
@@ -821,6 +826,7 @@ void gdcmHeader::FixFoundLength(gdcmElValue * ElVal, guint32 FoundLength) {
    // not coexist in a Data Set and Data Sets nested within it".]
    // Length is on 4 bytes.
    FixFoundLength(ElVal, ReadInt32());
+   return;
 }
 
 /**
@@ -1244,6 +1250,7 @@ gdcmElValue * gdcmHeader::ReadNextElement(void) {
    NewElVal = NewElValueByNumber(g, n);
    FindVR(NewElVal);
    FindLength(NewElVal);
+	
    if (errno == 1) {
       // Call it quits
       return (gdcmElValue *)0;
@@ -1768,7 +1775,7 @@ void gdcmHeader::LoadElements(void) {
    rewind(fp);
    
    // We don't use any longer the HashTable, since a lot a stuff is missing
-   // we SeQuences were encountered 
+   // when SeQuences were encountered 
    //  
    //TagElValueHT ht = PubElValSet.GetTagHt();
    //for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {

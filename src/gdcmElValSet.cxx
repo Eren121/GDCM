@@ -68,6 +68,8 @@ void gdcmElValSet::Print(std::ostream & os) {
    std::string d2;
    gdcmTS * ts = gdcmGlobal::GetTS();
    
+   std::cout << "------------- using tagHt ----------------------------" << std::endl;
+   
    for (TagElValueHT::iterator tag = tagHt.begin();
 	   tag != tagHt.end();
 	   ++tag){
@@ -98,7 +100,7 @@ void gdcmElValSet::Print(std::ostream & os) {
       os << std::endl;
    }
    
-   std::cout << "----------------------------------------------" << std::endl;
+   std::cout << "------------ using listElem -----------------" << std::endl;
    
    //for (ListTag::iterator i = listElem.begin();
    
@@ -115,7 +117,7 @@ void gdcmElValSet::Print(std::ostream & os) {
       d2 = _CreateCleanString(v);  // replace non printable characters by '.'
       //os << std::hex <<g << "|" << e << std::dec << ": ";
       os << tag << " : ";
-      os << " lgr : " << (*i)->GetLength();
+      os << " lgr : " << (*i)->GetReadLength();
       os << ", Offset : " << o;
       os << " x(" << std::hex << o << std::dec << ") ";
       os << "\t[" << (*i)->GetVR()    << "]";
@@ -133,9 +135,7 @@ void gdcmElValSet::Print(std::ostream & os) {
          }
       }              
       os << std::endl;
-
-   }
-	   
+   }	   
 } 
 
 /**
@@ -233,9 +233,6 @@ int gdcmElValSet::SetElValueByNumber(std::string content,
    else
       lgr = l;	   
    tagHt[key]->SetLength(lgr); 
-
-	
-
    return 1;
 }
 
@@ -435,9 +432,14 @@ void gdcmElValSet::UpdateGroupLength(bool SkipSequence, FileType type) {
 
 /**
  * \ingroup gdcmElValSet
- * \brief   
- * @param   type
- * @param   _fp 
+ * \brief   writes on disc according to the requested format
+ * \        (ACR-NEMA, DICOM, RAW) the image
+ * \ warning does NOT add the missing elements in the header :
+ * \         it's up to the user doing it !
+ * \         (function CheckHeaderCoherence to be written)
+ * @param   type type of the File to be written 
+ *          (ACR-NEMA, DICOM, RAW)
+ * @param   _fp already open file pointer
  * @return  
  */
 void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
@@ -449,6 +451,10 @@ void gdcmElValSet::WriteElements(FileType type, FILE * _fp) {
    guint16 val_uint16;
    
    std::vector<std::string> tokens;
+   
+   // TODO : use listElem to iterate, not TagHt!
+   //        pb : gdcmElValSet.Add does NOT update listElem
+   //        find a trick in STL to do it, at low cost !
 
    void *ptr;
 
