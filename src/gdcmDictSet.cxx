@@ -137,7 +137,7 @@ void gdcmDictSet::LoadDictFromFile(std::string FileName, DictKey Name) {
  */
 void gdcmDictSet::Print(std::ostream& os) {
    for (DictSetHT::iterator dict = Dicts.begin(); dict != Dicts.end(); ++dict){
-      std::os << "Printing dictionary " << dict->first << std::endl;
+      os << "Printing dictionary " << dict->first << std::endl;
       dict->second->Print(os);
    }
 }
