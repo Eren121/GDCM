@@ -487,7 +487,8 @@ size_t gdcmHeader::GetPixelAreaLength(void) {
    } else {
 /*      std::cout << "Big trouble : Pixel Element ("
                 << std::hex << GrPixel<<","<< NumPixel<< ") NOT found"
-                << std::endl;*/
+                << std::endl;
+*/
       return 0;
    }
 }
@@ -521,7 +522,9 @@ bool gdcmHeader::HasLUT(void) {
       return false;
    // Blue Palette Color Lookup Table Data      
    if ( !GetHeaderEntryByNumber(0x0028,0x1203) )
-      return false;   
+      return false;
+   // FIXME : (0x0028,0x3006) : LUT Data (CTX dependent)
+   //         NOT taken into account, but we don't know how to use it ...   
    return true;
 }
 
