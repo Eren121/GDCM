@@ -1,3 +1,7 @@
+2004-21-02  Jean-Pierre Roux
+     * FIX gdcmHeaderHelper::GetXSpacing
+           when a single value is found, xpacing is now defaulted to yspacing
+	   
 2004-19-02  Jean-Pierre Roux
      * ADD gdcmData/Wrist.pap (PAPYRUS 3.0 -single frame-) for checking purpose
      * ENH add parameters :
