@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.206 $
+  Date:      $Date: 2005/01/24 16:43:06 $
+  Version:   $Revision: 1.207 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -485,7 +485,7 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
-ValEntry *Document::ReplaceOrCreate(std::string const &value, 
+ValEntry *Document::Insert(std::string const &value, 
                                     uint16_t group, 
                                     uint16_t elem,
                                     TagName const &vr )
@@ -544,7 +544,7 @@ ValEntry *Document::ReplaceOrCreate(std::string const &value,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-BinEntry *Document::ReplaceOrCreate(uint8_t *binArea,
+BinEntry *Document::Insert(uint8_t *binArea,
                                     int lgth, 
                                     uint16_t group, 
                                     uint16_t elem,
@@ -613,13 +613,13 @@ BinEntry *Document::ReplaceOrCreate(uint8_t *binArea,
 
 /*
  * \brief   Modifies the value of a given Header Entry (Dicom Element)
- *          when it exists. Create it when unexistant.
+ *          when it exists. Creates it when unexistant.
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * \return  pointer to the modified/created SeqEntry (NULL when creation
  *          failed).
  */
-SeqEntry *Document::ReplaceOrCreate( uint16_t group, uint16_t elem)
+SeqEntry *Document::Insert( uint16_t group, uint16_t elem)
 {
    SeqEntry *seqEntry = 0;
    DocEntry *currentEntry = GetDocEntry( group, elem);
@@ -2897,7 +2897,7 @@ bool Document::operator<(Document &document)
  */
 int Document::ComputeGroup0002Length( FileType filetype ) 
 {
-   uint16_t gr, el;
+   uint16_t gr;
    std::string vr;
    
    int groupLength = 0;
@@ -2912,8 +2912,6 @@ int Document::ComputeGroup0002Length( FileType filetype )
       if (gr == 0x0002)
       {
          found0002 = true;
-
-         el = entry->GetElement();
          vr = entry->GetVR();            
  
          if (filetype == ExplicitVR) 
