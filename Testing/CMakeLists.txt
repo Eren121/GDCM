@@ -17,7 +17,8 @@ SET(TEST_SOURCES
 # add tests that require data
 IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}     
-    PrintHeader.cxx       #require test.acr
+    #PrintHeader.cxx       #require test.acr
+    PrintDocument.cxx     #require test.acr
     PrintDicomDir.cxx
     TestFindTags.cxx
     TestChangeHeader.cxx
