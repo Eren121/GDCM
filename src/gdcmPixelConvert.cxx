@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/13 14:15:30 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/10/14 05:33:14 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -634,6 +634,7 @@ bool PixelConvert::ReadAndDecompressPixelData( void* destination, FILE* fp )
    ReorderEndianity( (uint8_t*) destination );
    ReArrangeBits( (uint8_t*) destination );
 
+   return true;
 }
 
 bool PixelConvert::HandleColor( uint8_t* destination )
