@@ -161,7 +161,7 @@ gdcmHeader::gdcmHeader(const char *InFilename,
       } 
       if (DEBUG) {
          for (int k=0; k<(*i)->GetSQDepthLevel();k++) {
-	    cout << tab;
+	    std::cout << tab;
          }
 	 (*i)->SetPrintLevel(2);
 	 (*i)->Print();
