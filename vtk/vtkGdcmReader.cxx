@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.53 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.54 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -660,7 +660,6 @@ size_t vtkGdcmReader::LoadImageInMemory(
       source      = (unsigned char*)file.GetImageData();
    } 
    
-   unsigned char * pSource     = source; //pointer for later deletion
    unsigned char * destination = dest + size - lineSize;
 
    for (int plane = 0; plane < numPlanes; plane++)
@@ -694,7 +693,9 @@ size_t vtkGdcmReader::LoadImageInMemory(
    // CLEANME
    // Now, the delete on values keep from GetImageData is useless (made in
    // the PixelConvert class)
-   //delete[] pSource;
+
+//   unsigned char * pSource     = source; //pointer for later deletion
+//   delete[] pSource;
    return size;
 }
 

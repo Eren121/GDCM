@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 16:49:01 $
-  Version:   $Revision: 1.202 $
+  Date:      $Date: 2004/11/17 10:23:30 $
+  Version:   $Revision: 1.203 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -380,6 +380,7 @@ float Header::GetZSpacing()
    {
       return (float)atof( strSpacingBSlices.c_str() );
    }
+   return 1.;
 }
 
 /**
