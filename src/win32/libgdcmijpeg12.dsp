@@ -100,187 +100,187 @@ PostBuild_Cmds=copy  Debug__libgdcmijpeg12\libgdcmijpeg12.lib  ..\..\lib\ 	copy 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcapimin.c
+SOURCE=..\jpeg\libijg12\jcapimin12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcapistd.c
+SOURCE=..\jpeg\libijg12\jcapistd12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jccoefct.c
+SOURCE=..\jpeg\libijg12\jccoefct12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jccolor.c
+SOURCE=..\jpeg\libijg12\jccolor12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcdctmgr.c
+SOURCE=..\jpeg\libijg12\jcdctmgr12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jchuff.c
+SOURCE=..\jpeg\libijg12\jchuff12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcinit.c
+SOURCE=..\jpeg\libijg12\jcinit12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcmainct.c
+SOURCE=..\jpeg\libijg12\jcmainct12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcmarker.c
+SOURCE=..\jpeg\libijg12\jcmarker12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcmaster.c
+SOURCE=..\jpeg\libijg12\jcmaster12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcomapi.c
+SOURCE=..\jpeg\libijg12\jcomapi12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcparam.c
+SOURCE=..\jpeg\libijg12\jcparam12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcphuff.c
+SOURCE=..\jpeg\libijg12\jcphuff12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcprepct.c
+SOURCE=..\jpeg\libijg12\jcprepct12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jcsample.c
+SOURCE=..\jpeg\libijg12\jcsample12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jctrans.c
+SOURCE=..\jpeg\libijg12\jctrans12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdapimin.c
+SOURCE=..\jpeg\libijg12\jdapimin12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdapistd.c
+SOURCE=..\jpeg\libijg12\jdapistd12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdatadst.c
+SOURCE=..\jpeg\libijg12\jdatadst12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdatasrc.c
+SOURCE=..\jpeg\libijg12\jdatasrc12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdcoefct.c
+SOURCE=..\jpeg\libijg12\jdcoefct12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdcolor.c
+SOURCE=..\jpeg\libijg12\jdcolor12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jddctmgr.c
+SOURCE=..\jpeg\libijg12\jddctmgr12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdhuff.c
+SOURCE=..\jpeg\libijg12\jdhuff12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdinput.c
+SOURCE=..\jpeg\libijg12\jdinput12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdmainct.c
+SOURCE=..\jpeg\libijg12\jdmainct12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdmarker.c
+SOURCE=..\jpeg\libijg12\jdmarker12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdmaster.c
+SOURCE=..\jpeg\libijg12\jdmaster12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdmerge.c
+SOURCE=..\jpeg\libijg12\jdmerge12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdphuff.c
+SOURCE=..\jpeg\libijg12\jdphuff12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdpostct.c
+SOURCE=..\jpeg\libijg12\jdpostct12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdsample.c
+SOURCE=..\jpeg\libijg12\jdsample12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jdtrans.c
+SOURCE=..\jpeg\libijg12\jdtrans12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jerror.c
+SOURCE=..\jpeg\libijg12\jerror12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jfdctflt.c
+SOURCE=..\jpeg\libijg12\jfdctflt12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jfdctfst.c
+SOURCE=..\jpeg\libijg12\jfdctfst12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jfdctint.c
+SOURCE=..\jpeg\libijg12\jfdctint12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jidctflt.c
+SOURCE=..\jpeg\libijg12\jidctflt12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jidctfst.c
+SOURCE=..\jpeg\libijg12\jidctfst12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jidctint.c
+SOURCE=..\jpeg\libijg12\jidctint12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jidctred.c
+SOURCE=..\jpeg\libijg12\jidctred12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jmemmgr.c
+SOURCE=..\jpeg\libijg12\jmemmgr12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jmemnobs.c
+SOURCE=..\jpeg\libijg12\jmemnobs12.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jquant1.c
+SOURCE=..\jpeg\libijg12\jquant112.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jquant2.c
+SOURCE=..\jpeg\libijg12\jquant212.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\libijg12\jutils.c
+SOURCE=..\jpeg\libijg12\jutils12.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
