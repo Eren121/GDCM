@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:39:49 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/02/01 10:41:33 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,8 +110,9 @@ private:
    uint16_t Element; // e.g. 0x0103
 
    /// \brief Value Representation i.e. some clue about the nature
-   ///        of the data represented e.g. "FD" short for
-   ///        "Floating Point Double" (see \ref VR)
+   ///        of the data represented e.g. 
+   ///        "FD" short for "Floating Point Double"(see \ref VR)
+   ///        "PN" short for "Person Name"       
    TagName VR;
 
    /*
@@ -162,7 +163,7 @@ private:
     *  - LLO = Left  Lateral Oblique  
     *  .
     */
-  /// \brief Value Multiplicity (e.g. "1", "1-n", "6")
+   /// \brief Value Multiplicity (e.g. "1", "1-n", "6")
    TagName VM; 
 
    /// e.g. "Patient's Name"                    
