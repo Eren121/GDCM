@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 09:03:52 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/01/07 12:29:17 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ Dict::Dict(std::string const &filename)
    uint16_t group;
    uint16_t element;
    TagName vr;
-   TagName fourth;
+   TagName vm;
    TagName name;
 
    std::ifstream from( filename.c_str() );
@@ -56,11 +56,11 @@ Dict::Dict(std::string const &filename)
          from >> group;
          from >> element;
          from >> vr;
-         from >> fourth;
+         from >> vm;
          from >> std::ws;  //remove white space
          std::getline(from, name);
    
-         const DictEntry newEntry(group, element, vr, fourth, name);
+         const DictEntry newEntry(group, element, vr, vm, name);
          AddNewEntry(newEntry);
       }
 
@@ -108,7 +108,7 @@ void Dict::PrintByKey(std::ostream &os)
       s << std::hex << std::setw(4) << tag->second.GetElement() << ") = "
         << std::dec;
       s << tag->second.GetVR() << ", ";
-      s << tag->second.GetFourth() << ", ";
+      s << tag->second.GetVM() << ", ";
       s << tag->second.GetName() << "."  << std::endl;
    }
    os << s.str();
@@ -193,12 +193,12 @@ bool Dict::RemoveEntry (uint16_t group, uint16_t elem)
 /**
  * \brief   Get the dictionnary entry identified by a given tag (group,element)
  * @param   group   group of the entry to be found
- * @param   element element of the entry to be found
+ * @param   elem element of the entry to be found
  * @return  the corresponding dictionnary entry when existing, NULL otherwise
  */
-DictEntry *Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
+DictEntry *Dict::GetDictEntryByNumber(uint16_t group, uint16_t elem)
 {
-   TagKey key = DictEntry::TranslateToKey(group, element);
+   TagKey key = DictEntry::TranslateToKey(group, elem);
    TagKeyHT::iterator it = KeyHt.find(key);
    if ( it == KeyHt.end() )
    {
@@ -213,15 +213,20 @@ DictEntry *Dict::GetDictEntryByNumber(uint16_t group, uint16_t element)
  * \sa      DictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-EntryNamesList *Dict::GetDictEntryNames() 
-{
-   EntryNamesList *result = new EntryNamesList;
-   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
-   {
-      result->push_back( tag->second.GetName() );
-   }
-   return result;
-}
+
+ 
+ // Probabely useless
+  
+ 
+//EntryNamesList *Dict::GetDictEntryNames() 
+//{
+//   EntryNamesList *result = new EntryNamesList;
+//   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
+//   {
+//      result->push_back( tag->second.GetName() );
+//   }
+//   return result;
+//}
 
 /** 
  * \ingroup Dict
@@ -247,17 +252,20 @@ EntryNamesList *Dict::GetDictEntryNames()
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-EntryNamesByCatMap *Dict::GetDictEntryNamesByCategory() 
-{
-   EntryNamesByCatMap *result = new EntryNamesByCatMap;
-
-   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
-   {
-      (*result)[tag->second.GetFourth()].push_back(tag->second.GetName());
-   }
-
-   return result;
-}
+ 
+ // Probabely useless
+ 
+//EntryNamesByCatMap *Dict::GetDictEntryNamesByCategory() 
+//{
+//   EntryNamesByCatMap *result = new EntryNamesByCatMap;
+//
+//   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
+//   {
+//      (*result)[tag->second.GetFourth()].push_back(tag->second.GetName());
+//   }
+//
+//   return result;
+//}
 
 //-----------------------------------------------------------------------------
 // Protected

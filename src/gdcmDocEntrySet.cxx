@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 08:50:13 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/07 12:29:17 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,18 +38,18 @@ namespace gdcm
 
 /**
  * \brief   Request a new virtual dict entry to the dict set
- * @param   group     group  number of the underlying DictEntry
+ * @param   group group  number of the underlying DictEntry
  * @param   elem  element number of the underlying DictEntry
- * @param   vr     VR of the underlying DictEntry
- * @param   fourth owner group
+ * @param   vr    VR (Value Representation) of the underlying DictEntry
+ * @param   vm    VM (Value Multiplicity) of the underlying DictEntry
  * @param   name   english name
  */
 DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group,uint16_t elem,
                                              TagName const & vr,
-                                             TagName const & fourth,
+                                             TagName const & vm,
                                              TagName const & name )
 {
-   return Global::GetDicts()->NewVirtualDictEntry(group,elem,vr,fourth,name);
+   return Global::GetDicts()->NewVirtualDictEntry(group,elem,vr,vm,name);
 }
 
 //-----------------------------------------------------------------------------

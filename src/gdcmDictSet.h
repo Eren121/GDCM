@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/07 12:29:17 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,8 +46,9 @@ public:
 
    void Print(std::ostream &os);
 
-   EntryNamesList *GetPubDictEntryNames();
-   EntryNamesByCatMap* GetPubDictEntryNamesByCategory();
+   // Probabely useless !
+   //EntryNamesList *GetPubDictEntryNames();
+   //EntryNamesByCatMap* GetPubDictEntryNamesByCategory();
 
    Dict *LoadDictFromFile( std::string const &fileName,
                            DictKey const &name );
@@ -63,7 +64,7 @@ public:
 
    DictEntry *NewVirtualDictEntry(uint16_t group, uint16_t element,
                                   TagName vr     = GDCM_UNKNOWN,
-                                  TagName fourth = GDCM_UNKNOWN,
+                                  TagName vm     = GDCM_UNKNOWN,
                                   TagName name   = GDCM_UNKNOWN);
 
    static std::string BuildDictPath();

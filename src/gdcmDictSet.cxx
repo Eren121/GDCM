@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/01/07 12:29:17 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,10 +87,13 @@ void DictSet::Print(std::ostream &os)
  * \sa DictSet::GetPubDictTagNamesByCategory
  * @return  A list of all entries of the public dicom dictionnary.
  */
-EntryNamesList *DictSet::GetPubDictEntryNames() 
-{
-   return GetDefaultPubDict()->GetDictEntryNames();
-}
+
+// Probabely useless!
+ 
+//EntryNamesList *DictSet::GetPubDictEntryNames() 
+//{
+//   return GetDefaultPubDict()->GetDictEntryNames();
+//}
 
 /** 
  * \ingroup DictSet
@@ -101,6 +104,8 @@ EntryNamesList *DictSet::GetPubDictEntryNames()
  *           values are lists of all the dictionnary entries among that
  *           group. Note that apparently the Dicom standard doesn't explicitely
  *           define a name (as a string) for each group.
+ *           NO ! Dicom Standard explicitely doesn't define 
+ *                any name, for any group !
  *          - A typical usage of this method would be to enable a dynamic
  *           configuration of a Dicom file browser: the admin/user can
  *           select in the interface which Dicom tags should be displayed.
@@ -118,10 +123,14 @@ EntryNamesList *DictSet::GetPubDictEntryNames()
  *          corresponding values are lists of all the dictionnary entries
  *          among that group.
  */
-EntryNamesByCatMap *DictSet::GetPubDictEntryNamesByCategory() 
-{
-   return GetDefaultPubDict()->GetDictEntryNamesByCategory();
-}
+
+
+// Probabely useless!
+ 
+//EntryNamesByCatMap *DictSet::GetPubDictEntryNamesByCategory() 
+//{
+//   return GetDefaultPubDict()->GetDictEntryNamesByCategory();
+//}
 
 /**
  * \ingroup DictSet
@@ -166,12 +175,12 @@ Dict *DictSet::GetDict(DictKey const &dictName)
 DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
                                          uint16_t element,
                                          TagName vr,
-                                         TagName fourth,
+                                         TagName vm,
                                          TagName name)
 {
    DictEntry *entry;
    const std::string tag = DictEntry::TranslateToKey(group,element)
-                           + "#" + vr + "#" + fourth + "#" + name;
+                           + "#" + vr + "#" + vm + "#" + name;
    TagKeyHT::iterator it;
    
    it = VirtualEntry.find(tag);
@@ -181,7 +190,7 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
    }
    else
    {
-      DictEntry ent(group, element, vr, fourth, name);
+      DictEntry ent(group, element, vr, vm, name);
       VirtualEntry.insert(
          std::map<TagKey, DictEntry>::value_type
             (tag, ent));

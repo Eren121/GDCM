@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/07 12:29:17 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ public:
    DictEntry(uint16_t group, 
              uint16_t element,
              TagName const &vr     = GDCM_UNKNOWN,
-             TagName const &fourth = GDCM_UNKNOWN,
+             TagName const &vm     = GDCM_UNKNOWN,
              TagName const &name   = GDCM_UNKNOWN);
 
    static TagKey TranslateToKey(uint16_t group, uint16_t element);
@@ -69,11 +69,9 @@ public:
    /// @param k New key to be set.
    void SetKey(TagName const &k)  { Key = k; }
  
-   /// \brief   returns the Fourth field of the current DictEntry
-   /// \warning NOT part of the Dicom Standard.
-   ///          May be REMOVED an any time. NEVER use it.
-   /// @return  The Fourth field
-   const TagName &GetFourth() const { return Fourth; } 
+   /// \brief   returns the VM field of the current DictEntry
+   /// @return  The 'Value Multiplicity' field
+   const TagName &GetVM() const { return VM; } 
 
    /// \brief  Returns the Dicom Name of the current DictEntry
    ///         e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
@@ -104,18 +102,9 @@ private:
    ///        "Floating Point Double" (see \ref VR)
    TagName VR;
 
-   /**
-    * \brief AVOID using the following fourth field at all costs.
-    * 
-    *  They are at least two good reasons for NOT using fourth:
-    *  - the main reason is that it is NOT part of the 'official'
-    *    Dicom Dictionnary.
-    *  - a second reason is that it is not defined for all the groups.
+   /*
     *  .
-    *  Still it provides some semantics as group name abbreviation that
-    *  can prove of some help when organizing things in an interface.
-    *  For the time being we keep it in gdcm but it migth be removed in
-    *  future releases it proves to be source of confusion.
+    *  Formerly 'Group name abbreviations'
     *  Here is a small dictionary we encountered in "nature":
     *  - CMD      Command        
     *  - META     Meta Information 
@@ -161,7 +150,8 @@ private:
     *  - LLO = Left  Lateral Oblique  
     *  .
     */
-   TagName Fourth; 
+  /// \brief Value Multiplicity (e.g. "1", "1-n", "6")
+   TagName VM; 
 
    /// e.g. "Patient's Name"                    
    TagName Name;      

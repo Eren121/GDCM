@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 20:03:27 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/07 12:29:17 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,20 +29,20 @@ namespace gdcm
  * \brief   Constructor
  * @param   group      DICOM-Group Number
  * @param   element    DICOM-Element Number
- * @param   vr         Value Representatiion
- * @param   fourth    // DO NOT use any longer; 
- *                       NOT part of the Dicom Standard
+ * @param   vr         Value Representation
+ * @param   vm         Value Mutlplicity 
  * @param   name      description of the element
 */
 
 DictEntry::DictEntry(uint16_t group, uint16_t element,
-                     TagName const &vr, TagName const &fourth,
+                     TagName const &vr, 
+                     TagName const &vm,
                      TagName const &name)
 {
    Group   = group;
    Element = element;
    VR      = vr;
-   Fourth  = fourth;
+   VM      = vm;
    Name    = name;
    Key     = TranslateToKey(group, element);
 }

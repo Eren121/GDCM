@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDefaultDicts.cxx.in,v $
   Language:  C++
-  Date:      $Date: 2004/11/04 15:20:35 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/07 12:29:17 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ typedef struct
   uint16_t group;
   uint16_t element;
   const char *vr;
-  const char *fourth;
+  const char *vm;
   const char *name;
 } DICT_ENTRY;
 
@@ -47,7 +47,7 @@ void FillDefaultDataDict(Dict *d)
   DICT_ENTRY n = datadir[i];
   while( n.name != 0 )
     {
-    const DictEntry e( n.group, n.element, n.vr, n.fourth, n.name);
+    const DictEntry e( n.group, n.element, n.vr, n.vm, n.name);
     d->AddNewEntry( e );
     n = datadir[++i];
     }

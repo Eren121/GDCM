@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 08:50:13 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/07 12:29:17 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,7 +77,7 @@ public:
    DictEntry *NewVirtualDictEntry(uint16_t group, 
                                   uint16_t element,
                                   TagName const &vr     = GDCM_UNKNOWN,
-                                  TagName const &fourth = GDCM_UNKNOWN,
+                                  TagName const &vm     = GDCM_UNKNOWN,
                                   TagName const &name   = GDCM_UNKNOWN );
   
 protected:
