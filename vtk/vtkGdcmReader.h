@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.13 2003/11/13 13:07:50 malaterre Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.14 2003/11/18 10:19:41 malaterre Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
@@ -9,7 +9,7 @@
 
 class vtkLookupTable;
 
-class VTK_IO_EXPORT vtkGdcmReader : public vtkImageReader
+class VTK_EXPORT vtkGdcmReader : public vtkImageReader
 {
 public:
   static vtkGdcmReader *New() {return new vtkGdcmReader;};
