@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:00:49 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/02/01 13:42:44 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -195,7 +195,7 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       ////// Check for existence of reference baseline directory
 
       std::string baseLineDir = GDCM_DATA_ROOT;
-      baseLineDir += "/BaselineDicom";
+      baseLineDir += "/BaselineDicom/";
 
       if( !gdcm::DirList::IsDirectory(baseLineDir) )
       {
