@@ -1,5 +1,5 @@
 
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.77 2003/07/03 11:29:34 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.78 2003/07/03 14:38:16 jpr Exp $
 
 #include <stdio.h>
 #include <cerrno>
@@ -1551,19 +1551,108 @@ void gdcmHeader::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
    }
 }
 
+/**
+ * \ingroup gdcmHeader
+ * \brief  This predicate, based on hopefully reasonnable heuristics,
+ *         decides whether or not the current gdcmHeader was properly parsed
+ *         and contains the mandatory information for being considered as
+ *         a well formed and usable image.
+ * @return true when gdcmHeader is the one of a reasonable Dicom file,
+ *         false otherwise. 
+ */
+bool gdcmHeader::IsReadable(void) {
+   if (   GetElValByName("Image Dimensions") != "gdcm::Unfound"
+      && atoi(GetElValByName("Image Dimensions").c_str()) > 4 ) {
+      return false;
+   }
+   if ( GetElValByName("Bits Allocated")       == "gdcm::Unfound" )
+      return false;
+   if ( GetElValByName("Bits Stored")          == "gdcm::Unfound" )
+      return false;
+   if ( GetElValByName("High Bit")             == "gdcm::Unfound" )
+      return false;
+   if ( GetElValByName("Pixel Representation") == "gdcm::Unfound" )
+      return false;
+   return true;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Small utility function that creates a new manually crafted
+ *          (as opposed as read from the file) gdcmElValue with user
+ *          specified name and adds it to the public tag hash table.
+ * \note    A fake TagKey is generated so the PubDict can keep it's coherence.
+ * @param   NewTagName The name to be given to this new tag.
+ * @param   VR The Value Representation to be given to this new tag.
+ * @ return The newly hand crafted Element Value.
+ */
+gdcmElValue* gdcmHeader::NewManualElValToPubDict(string NewTagName, string VR) {
+   gdcmElValue* NewElVal = (gdcmElValue*)0;
+   guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
+   guint32 FreeElem = 0;
+   gdcmDictEntry* NewEntry = (gdcmDictEntry*)0;
+
+   FreeElem = PubElValSet.GenerateFreeTagKeyInGroup(StuffGroup);
+   if (FreeElem == UINT32_MAX) {
+      dbg.Verbose(1, "gdcmHeader::NewManualElValToPubDict",
+                     "Group 0xffff in Public Dict is full");
+      return (gdcmElValue*)0;
+   }
+   NewEntry = new gdcmDictEntry(StuffGroup, FreeElem,
+                                VR, "GDCM", NewTagName);
+   NewElVal = new gdcmElValue(NewEntry);
+   PubElValSet.Add(NewElVal);
+   return NewElVal;
+}
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Loads the element values of all the elements present in the
+ *          public tag based hash table.
+ */
+void gdcmHeader::LoadElements(void) {
+   rewind(fp);   
+   TagElValueHT ht = PubElValSet.GetTagHt();
+   for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
+      LoadElementValue(tag->second);
+   }
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */ 
+void gdcmHeader::PrintPubElVal(std::ostream & os) {
+   PubElValSet.Print(os);
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */  
+void gdcmHeader::PrintPubDict(std::ostream & os) {
+   RefPubDict->Print(os);
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief
+  * @return
+  */ 
+int gdcmHeader::Write(FILE * fp, FileType type) {
+   return PubElValSet.Write(fp, type);
+}
 
 //
-// TODO : JPR
-// des que les element values sont chargees, stocker, 
-// en une seule fois, dans des entiers 
-// NX, NY, NZ, Bits allocated, Bits Stored, High Bit, Samples Per Pixel
-// (TODO : preciser les autres)
-// et refaire ceux des accesseurs qui renvoient les entiers correspondants
+// =============================================================================
+//   Accesors with euristics
+//==============================================================================
 //
-// --> peut etre dangereux ?
-// si l'utilisateur modifie 'manuellement' l'un des paramètres
-// l'entier de sera pas modifié ...
-// (pb de la mise à jour en cas de redondance :-(
+
+// TODO : move to an other file.
+
 
 /**
  * \ingroup gdcmHeader
@@ -1726,101 +1815,6 @@ string gdcmHeader::GetPixelType(void) {
    return( BitsAlloc + Signed);
 }
 
-
-/**
- * \ingroup gdcmHeader
- * \brief  This predicate, based on hopefully reasonnable heuristics,
- *         decides whether or not the current gdcmHeader was properly parsed
- *         and contains the mandatory information for being considered as
- *         a well formed and usable image.
- * @return true when gdcmHeader is the one of a reasonable Dicom file,
- *         false otherwise. 
- */
-bool gdcmHeader::IsReadable(void) {
-   if (   GetElValByName("Image Dimensions") != "gdcm::Unfound"
-      && atoi(GetElValByName("Image Dimensions").c_str()) > 4 ) {
-      return false;
-   }
-   if ( GetElValByName("Bits Allocated")       == "gdcm::Unfound" )
-      return false;
-   if ( GetElValByName("Bits Stored")          == "gdcm::Unfound" )
-      return false;
-   if ( GetElValByName("High Bit")             == "gdcm::Unfound" )
-      return false;
-   if ( GetElValByName("Pixel Representation") == "gdcm::Unfound" )
-      return false;
-   return true;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Small utility function that creates a new manually crafted
- *          (as opposed as read from the file) gdcmElValue with user
- *          specified name and adds it to the public tag hash table.
- * \note    A fake TagKey is generated so the PubDict can keep it's coherence.
- * @param   NewTagName The name to be given to this new tag.
- * @param   VR The Value Representation to be given to this new tag.
- * @ return The newly hand crafted Element Value.
- */
-gdcmElValue* gdcmHeader::NewManualElValToPubDict(string NewTagName, string VR) {
-   gdcmElValue* NewElVal = (gdcmElValue*)0;
-   guint32 StuffGroup = 0xffff;   // Group to be stuffed with additional info
-   guint32 FreeElem = 0;
-   gdcmDictEntry* NewEntry = (gdcmDictEntry*)0;
-
-   FreeElem = PubElValSet.GenerateFreeTagKeyInGroup(StuffGroup);
-   if (FreeElem == UINT32_MAX) {
-      dbg.Verbose(1, "gdcmHeader::NewManualElValToPubDict",
-                     "Group 0xffff in Public Dict is full");
-      return (gdcmElValue*)0;
-   }
-   NewEntry = new gdcmDictEntry(StuffGroup, FreeElem,
-                                VR, "GDCM", NewTagName);
-   NewElVal = new gdcmElValue(NewEntry);
-   PubElValSet.Add(NewElVal);
-   return NewElVal;
-}
-
-/**
- * \ingroup gdcmHeader
- * \brief   Loads the element values of all the elements present in the
- *          public tag based hash table.
- */
-void gdcmHeader::LoadElements(void) {
-   rewind(fp);   
-   TagElValueHT ht = PubElValSet.GetTagHt();
-   for (TagElValueHT::iterator tag = ht.begin(); tag != ht.end(); ++tag) {
-      LoadElementValue(tag->second);
-   }
-}
-
-/**
-  * \ingroup gdcmHeader
-  * \brief
-  * @return
-  */ 
-void gdcmHeader::PrintPubElVal(std::ostream & os) {
-   PubElValSet.Print(os);
-}
-
-/**
-  * \ingroup gdcmHeader
-  * \brief
-  * @return
-  */  
-void gdcmHeader::PrintPubDict(std::ostream & os) {
-   RefPubDict->Print(os);
-}
-
-/**
-  * \ingroup gdcmHeader
-  * \brief
-  * @return
-  */ 
-int gdcmHeader::Write(FILE * fp, FileType type) {
-   return PubElValSet.Write(fp, type);
-}
-
 /**
   * \ingroup gdcmHeader
   * \brief gets the info from 0028,0030 : Pixel Spacing
@@ -1910,9 +1904,9 @@ float gdcmHeader::GetZSpacing(void) {
 //                                   or Location       (0020,0050) 
 // as the Z coordinate, 
 // 0. for all the coordinates if nothing is found
+
 // TODO : find a way to inform the caller nothing was found
 // TODO : How to tell the caller a wrong number of values was found?
-
 
 /**
   * \ingroup gdcmHeader
