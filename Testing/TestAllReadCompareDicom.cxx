@@ -53,25 +53,27 @@ int TestAllReadCompareDicom(int argc, char* argv[])
       FILE* testFILE = fopen( baseLineDir.c_str(), "r" );
       if (! testFILE )
       {
-        std::cerr << "   The reference baseline directory " << std::endl
-                  << "      "
-                  << baseLineDir << std::endl
-                  << "   couldn't be opened."
-                  << std::endl;
-        return 1;
+         std::cerr << "   The reference baseline directory " << std::endl
+                   << "      "
+                   << baseLineDir << std::endl
+                   << "   couldn't be opened."
+                   << std::endl;
+         return 1;
       }
       else
-        fclose( testFILE );
+      {
+         fclose( testFILE );
+      }
 
       ////// Step 1 (see above description):
 
       std::string filename = GDCM_DATA_ROOT;
-      filename += "/";  //doh!
+      filename += "/";
       filename += gdcmDataImages[i];
    
       std::cout << "   Testing: " << filename << std::endl;
 
-      gdcmFile* tested = new gdcmFile( filename.c_str(), false, true );
+      gdcmFile* tested = new gdcmFile( filename, false, true );
       if( !tested->GetHeader()->IsReadable() )
       {
         std::cout << "      Image not gdcm compatible:"
@@ -108,7 +110,9 @@ int TestAllReadCompareDicom(int argc, char* argv[])
          continue; 
       }
       else
+      {
          fclose( testFILE );
+      }
 
       ////// When reference file is not gdcm readable test is failed:
   
