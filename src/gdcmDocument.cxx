@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/20 18:14:23 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2004/09/21 10:46:10 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2991,7 +2991,7 @@ void gdcmDocument::BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
  *        a Dicom header will need to dig in the gdcm internals (which
  *        implies exposing all the internal data structures to the API).
  *        In order to avoid this burden to the user, \ref BuildFlatHashTable
- *        recursively builds a temporary hash table, which olds all the
+ *        recursively builds a temporary hash table, which holds all the
  *        Dicom entries in a flat structure (a \ref TagDocEntryHT i.e. a
  *        std::map<>).
  * \warning Of course there is NO integrity constrain between the 
