@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:53 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/01/31 12:19:34 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -184,7 +184,7 @@ SQItem *SeqEntry::GetNextSQItem()
 /**
  * \brief return a pointer to the SQItem referenced by its ordinal number.
  *        Returns the first item when argument is negative.
- *        Returns the last item when argument is bigger than the total
+ *        Returns the  last item when argument is bigger than the total
  *        item number.
  */
 SQItem *SeqEntry::GetSQItem(int nb)
@@ -206,15 +206,23 @@ SQItem *SeqEntry::GetSQItem(int nb)
    return *(Items.end());
 }
 
-/// \brief retuens the number of SQItems within the current Sequence
+/// \brief returns the number of SQItems within the current Sequence
 unsigned int SeqEntry::GetNumberOfSQItems()
 {
    return Items.size();
 }
 
 /// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
+/// @param sqItem SQItem to be pushed back in the SeqEntry
+/// @param itemNumber ordinal number of the SQItem
+/// \note NOT end-user intendend method !
 void SeqEntry::AddSQItem(SQItem *sqItem, int itemNumber)
 {
+// FIXME : SQItemNumber is supposed to be the ordinal number of the SQItem
+//         within the Sequence.
+//         Either only 'push_back' is allowed, 
+//                and we just have to do something like SeqEntry::lastNb++
+//         Or we can add (or remove) anywhere, and SQItemNumber will be broken
    sqItem->SetSQItemNumber(itemNumber);
    Items.push_back(sqItem);
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/30 17:30:57 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/01/31 12:19:34 $
+  Version:   $Revision: 1.63 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -155,7 +155,7 @@ void SQItem::ClearEntry()
 }
 
 /**
- * \brief   adds any Entry (Dicom Element) to the Sequence Item
+ * \brief   Adds any Entry (Dicom Element) to the Sequence Item
  * @param entry Entry to add
  */
 bool SQItem::AddEntry(DocEntry *entry)
@@ -237,7 +237,7 @@ DocEntry *SQItem::GetNextEntry()
 
 /**
  * \brief   Gets a Dicom Element inside a SQ Item Entry
- * @param   group Group number of the Entry
+ * @param   group   Group number of the Entry
  * @param   elem  Element number of the Entry
  * @return Entry whose (group,elem) was passed. 0 if not found
  */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 10:34:28 $
-  Version:   $Revision: 1.216 $
+  Date:      $Date: 2005/01/31 12:19:34 $
+  Version:   $Revision: 1.217 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -125,7 +125,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
 
    CloseFile(); 
   
-   // --------------------------------------------------------------
+   // ----------------------------
    // Specific code to allow gdcm to read ACR-LibIDO formated images
    // Note: ACR-LibIDO is an extension of the ACR standard that was
    //       used at CREATIS. For the time being (say a couple years)
@@ -147,7 +147,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
          SetValEntry(columns, 0x0028, 0x0010);
          SetValEntry(rows   , 0x0028, 0x0011);
    }
-   // ----------------- End of ACR-LibIDO kludge ------------------ 
+   // --- End of ACR-LibIDO kludge --- 
 }
 
 /**
@@ -263,43 +263,6 @@ bool Document::IsReadable()
 }
 
 /**
- * \brief   Accessor to the Transfer Syntax (when present) of the
- *          current document (it internally handles reading the
- *          value from disk when only parsing occured).
- * @return  The encountered Transfer Syntax of the current document.
- */
-std::string Document::GetTransferSyntax()
-{
-   DocEntry *entry = GetDocEntry(0x0002, 0x0010);
-   if ( !entry )
-   {
-      return GDCM_UNKNOWN;
-   }
-
-   // The entry might be present but not loaded (parsing and loading
-   // happen at different stages): try loading and proceed with check...
-   LoadDocEntrySafe(entry);
-   if (ValEntry *valEntry = dynamic_cast< ValEntry* >(entry) )
-   {
-      std::string transfer = valEntry->GetValue();
-      // The actual transfer (as read from disk) might be padded. We
-      // first need to remove the potential padding. We can make the
-      // weak assumption that padding was not executed with digits...
-      if  ( transfer.length() == 0 )
-      {
-         // for brain damaged headers
-         return GDCM_UNKNOWN;
-      }
-      while ( !isdigit((unsigned char)transfer[transfer.length()-1]) )
-      {
-         transfer.erase(transfer.length()-1, 1);
-      }
-      return transfer;
-   }
-   return GDCM_UNKNOWN;
-}
-
-/**
  * \brief   Predicate for dicom version 3 file.
  * @return  True when the file is a dicom version 3.
  */
@@ -339,6 +302,115 @@ FileType Document::GetFileType()
    return Filetype;
 }
 
+/**
+ * \brief   Accessor to the Transfer Syntax (when present) of the
+ *          current document (it internally handles reading the
+ *          value from disk when only parsing occured).
+ * @return  The encountered Transfer Syntax of the current document.
+ */
+std::string Document::GetTransferSyntax()
+{
+   DocEntry *entry = GetDocEntry(0x0002, 0x0010);
+   if ( !entry )
+   {
+      return GDCM_UNKNOWN;
+   }
+
+   // The entry might be present but not loaded (parsing and loading
+   // happen at different stages): try loading and proceed with check...
+   LoadDocEntrySafe(entry);
+   if (ValEntry *valEntry = dynamic_cast< ValEntry* >(entry) )
+   {
+      std::string transfer = valEntry->GetValue();
+      // The actual transfer (as read from disk) might be padded. We
+      // first need to remove the potential padding. We can make the
+      // weak assumption that padding was not executed with digits...
+      if  ( transfer.length() == 0 )
+      {
+         // for brain damaged headers
+         return GDCM_UNKNOWN;
+      }
+      while ( !isdigit((unsigned char)transfer[transfer.length()-1]) )
+      {
+         transfer.erase(transfer.length()-1, 1);
+      }
+      return transfer;
+   }
+   return GDCM_UNKNOWN;
+}
+
+/**
+ * \brief Accesses the info from 0002,0010 : Transfer Syntax and TS
+ * @return The full Transfer Syntax Name (as opposed to Transfer Syntax UID)
+ */
+std::string Document::GetTransferSyntaxName()
+{
+   // use the TS (TS : Transfer Syntax)
+   std::string transferSyntax = GetEntryValue(0x0002,0x0010);
+
+   if ( (transferSyntax.find(GDCM_NOTLOADED) < transferSyntax.length()) )
+   {
+      gdcmErrorMacro( "Transfer Syntax not loaded. " << std::endl
+               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE" );
+      return "Uncompressed ACR-NEMA";
+   }
+   if ( transferSyntax == GDCM_UNFOUND )
+   {
+      gdcmVerboseMacro( "Unfound Transfer Syntax (0002,0010)");
+      return "Uncompressed ACR-NEMA";
+   }
+
+   // we do it only when we need it
+   const TSKey &tsName = Global::GetTS()->GetValue( transferSyntax );
+
+   // Global::GetTS() is a global static you shall never try to delete it!
+   return tsName;
+}
+//
+// --------------- Swap Code ------------------
+/**
+ * \brief   Swaps the bytes so they agree with the processor order
+ * @return  The properly swaped 16 bits integer.
+ */
+uint16_t Document::SwapShort(uint16_t a)
+{
+   if ( SwapCode == 4321 || SwapCode == 2143 )
+   {
+      a = ((( a << 8 ) & 0x0ff00 ) | (( a >> 8 ) & 0x00ff ) );
+   }
+   return a;
+}
+
+/**
+ * \brief   Swaps back the bytes of 4-byte long integer accordingly to
+ *          processor order.
+ * @return  The properly swaped 32 bits integer.
+ */
+uint32_t Document::SwapLong(uint32_t a)
+{
+   switch (SwapCode)
+   {
+      case 1234 :
+         break;
+      case 4321 :
+         a=( ((a<<24) & 0xff000000) | ((a<<8)  & 0x00ff0000) | 
+             ((a>>8)  & 0x0000ff00) | ((a>>24) & 0x000000ff) );
+         break;   
+      case 3412 :
+         a=( ((a<<16) & 0xffff0000) | ((a>>16) & 0x0000ffff) );
+         break;  
+      case 2143 :
+         a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
+      break;
+      default :
+         gdcmErrorMacro( "Unset swap code:" << SwapCode );
+         a = 0;
+   }
+   return a;
+} 
+
+//
+// -----------------File I/O ---------------
 /**
  * \brief  Tries to open the file \ref Document::Filename and
  *         checks the preamble when existing.
@@ -463,8 +535,9 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
    ElementSet::WriteContent(fp, filetype); // This one is recursive
 }
 
-//-----------------------------------------------------------------------------
-// Protected
+// -----------------------------------------
+// Content entries 
+
 /**
  * \brief Loads (from disk) the element content 
  *        when a string is not suitable
@@ -525,32 +598,6 @@ void Document::LoadEntryBinArea(BinEntry *elem)
 }
 
 /**
- * \brief   Sets a 'non string' value to a given Dicom Element
- * @param   area area containing the 'non string' value
- * @param   group  Group number of the searched Dicom Element 
- * @param   elem Element number of the searched Dicom Element 
- * @return  
- */
-/*bool Document::SetEntryBinArea(uint8_t *area,
-                                 uint16_t group, uint16_t elem) 
-{
-   DocEntry *currentEntry = GetDocEntry(group, elem);
-   if ( !currentEntry )
-   {
-      return false;
-   }
-
-   if ( BinEntry *binEntry = dynamic_cast<BinEntry*>(currentEntry) )
-   {
-      binEntry->SetBinArea( area );
-      return true;
-   }
-
-   return false;
-}*/
-
-
-/**
  * \brief  Loads the element while preserving the current
  *         underlying file position indicator as opposed to
  *        LoadDocEntry that modifies it.
@@ -567,64 +614,109 @@ void Document::LoadDocEntrySafe(DocEntry *entry)
    }
 }
 
+//-----------------------------------------------------------------------------
+// Protected
+
+// Constructors and destructors are protected to avoid user to invoke directly
+
 /**
- * \brief   Swaps back the bytes of 4-byte long integer accordingly to
- *          processor order.
- * @return  The properly swaped 32 bits integer.
+ * \brief Reads a supposed to be 16 Bits integer
+ *       (swaps it depending on processor endianity) 
+ * @return read value
  */
-uint32_t Document::SwapLong(uint32_t a)
+uint16_t Document::ReadInt16()
+   throw( FormatError )
 {
-   switch (SwapCode)
+   uint16_t g;
+   Fp->read ((char*)&g, (size_t)2);
+   if ( Fp->fail() )
    {
-      case 1234 :
+      throw FormatError( "Document::ReadInt16()", " file error." );
+   }
+   if( Fp->eof() )
+   {
+      throw FormatError( "Document::ReadInt16()", "EOF." );
+   }
+   g = SwapShort(g); 
+   return g;
+}
+
+/**
+ * \brief  Reads a supposed to be 32 Bits integer
+ *         (swaps it depending on processor endianity)  
+ * @return read value
+ */
+uint32_t Document::ReadInt32()
+   throw( FormatError )
+{
+   uint32_t g;
+   Fp->read ((char*)&g, (size_t)4);
+   if ( Fp->fail() )
+   {
+      throw FormatError( "Document::ReadInt32()", " file error." );
+   }
+   if( Fp->eof() )
+   {
+      throw FormatError( "Document::ReadInt32()", "EOF." );
+   }
+   g = SwapLong(g);
+   return g;
+}
+
+/**
+ * \brief skips bytes inside the source file 
+ * \warning NOT end user intended method !
+ * @return 
+ */
+void Document::SkipBytes(uint32_t nBytes)
+{
+   //FIXME don't dump the returned value
+   Fp->seekg((long)nBytes, std::ios::cur);
+}
+
+/**
+ * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
+ * @param filetype Type of the File to be written 
+ */
+int Document::ComputeGroup0002Length( FileType filetype ) 
+{
+   uint16_t gr;
+   std::string vr;
+   
+   int groupLength = 0;
+   bool found0002 = false;   
+  
+   // for each zero-level Tag in the DCM Header
+   DocEntry *entry = GetFirstEntry();
+   while( entry )
+   {
+      gr = entry->GetGroup();
+
+      if( gr == 0x0002 )
+      {
+         found0002 = true;
+
+         if( entry->GetElement() != 0x0000 )
+         {
+            vr = entry->GetVR();
+ 
+            if( filetype == ExplicitVR )
+            {
+               if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
+               {
+                  // explicit VR AND OB, OW, SQ : 4 more bytes
+                  groupLength +=  4;
+               }
+            }
+            groupLength += 2 + 2 + 4 + entry->GetLength();   
+         }
+      }
+      else if (found0002 )
          break;
-      case 4321 :
-         a=( ((a<<24) & 0xff000000) | ((a<<8)  & 0x00ff0000) | 
-             ((a>>8)  & 0x0000ff00) | ((a>>24) & 0x000000ff) );
-         break;   
-      case 3412 :
-         a=( ((a<<16) & 0xffff0000) | ((a>>16) & 0x0000ffff) );
-         break;  
-      case 2143 :
-         a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
-      break;
-      default :
-         gdcmErrorMacro( "Unset swap code:" << SwapCode );
-         a = 0;
+
+      entry = GetNextEntry();
    }
-   return a;
-} 
-
-/**
- * \brief   Unswaps back the bytes of 4-byte long integer accordingly to
- *          processor order.
- * @return  The properly unswaped 32 bits integer.
- */
-uint32_t Document::UnswapLong(uint32_t a)
-{
-   return SwapLong(a);
-}
-
-/**
- * \brief   Swaps the bytes so they agree with the processor order
- * @return  The properly swaped 16 bits integer.
- */
-uint16_t Document::SwapShort(uint16_t a)
-{
-   if ( SwapCode == 4321 || SwapCode == 2143 )
-   {
-      a = ((( a << 8 ) & 0x0ff00 ) | (( a >> 8 ) & 0x00ff ) );
-   }
-   return a;
-}
-
-/**
- * \brief   Unswaps the bytes so they agree with the processor order
- * @return  The properly unswaped 16 bits integer.
- */
-uint16_t Document::UnswapShort(uint16_t a)
-{
-   return SwapShort(a);
+   return groupLength; 
 }
 
 //-----------------------------------------------------------------------------
@@ -885,9 +977,9 @@ void Document::ParseSQ( SeqEntry *seqEntry,
 }
 
 /**
- * \brief         Loads the element content if its length doesn't exceed
- *                the value specified with Document::SetMaxSizeLoadEntry()
- * @param         entry Header Entry (Dicom Element) to be dealt with
+ * \brief   Loads the element content if its length doesn't exceed
+ *          the value specified with Document::SetMaxSizeLoadEntry()
+ * @param   entry Header Entry (Dicom Element) to be dealt with
  */
 void Document::LoadDocEntry(DocEntry *entry)
 {
@@ -1056,7 +1148,6 @@ void Document::LoadDocEntry(DocEntry *entry)
    }
 }
 
-
 /**
  * \brief  Find the value Length of the passed Header Entry
  * @param  entry Header Entry whose length of the value shall be loaded. 
@@ -1205,6 +1296,63 @@ void Document::FindDocEntryLength( DocEntry *entry )
 }
 
 /**
+ * \brief  Find the Length till the next sequence delimiter
+ * \warning NOT end user intended method !
+ * @return 
+ */
+uint32_t Document::FindDocEntryLengthOBOrOW()
+   throw( FormatUnexpected )
+{
+   // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
+   long positionOnEntry = Fp->tellg();
+   bool foundSequenceDelimiter = false;
+   uint32_t totalLength = 0;
+
+   while ( !foundSequenceDelimiter )
+   {
+      uint16_t group;
+      uint16_t elem;
+      try
+      {
+         group = ReadInt16();
+         elem  = ReadInt16();   
+      }
+      catch ( FormatError )
+      {
+         throw FormatError("Unexpected end of file encountered during ",
+                           "Document::FindDocEntryLengthOBOrOW()");
+      }
+      // We have to decount the group and element we just read
+      totalLength += 4;     
+      if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
+      {
+         long filePosition = Fp->tellg();
+         gdcmVerboseMacro( "Neither an Item tag nor a Sequence delimiter tag on :" 
+           << std::hex << group << " , " << elem 
+           << ") -before- position x(" << filePosition << ")" );
+  
+         Fp->seekg(positionOnEntry, std::ios::beg);
+         throw FormatUnexpected( "Neither an Item tag nor a Sequence delimiter tag.");
+      }
+      if ( elem == 0xe0dd )
+      {
+         foundSequenceDelimiter = true;
+      }
+      uint32_t itemLength = ReadInt32();
+      // We add 4 bytes since we just read the ItemLength with ReadInt32
+      totalLength += itemLength + 4;
+      SkipBytes(itemLength);
+      
+      if ( foundSequenceDelimiter )
+      {
+         break;
+      }
+   }
+   Fp->seekg( positionOnEntry, std::ios::beg);
+   return totalLength;
+}
+
+/**
  * \brief     Find the Value Representation of the current Dicom Element.
  * @return    Value Representation of the current Entry
  */
@@ -1324,7 +1472,6 @@ std::string Document::GetDocEntryValue(DocEntry *entry)
 #endif //GDCM_NO_ANSI_STRING_STREAM
       return s.str();
    }
-
    return ((ValEntry *)entry)->GetValue();
 }
 
@@ -1395,7 +1542,7 @@ void Document::SkipDocEntry(DocEntry *entry)
 }
 
 /**
- * \brief   Skips to the begining of the next Header Entry 
+ * \brief   Skips to the beginning of the next Header Entry 
  * \warning NOT end user intended method !
  * @param   currentDocEntry entry to skip
  */
@@ -1474,8 +1621,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
      {
         foundLength = 0;
      }
-   } 
-           
+   }            
    entry->SetLength(foundLength);
 }
 
@@ -1523,123 +1669,6 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
       return true;
    }   
    return false;
-}
-
-/**
- * \brief  Find the Length till the next sequence delimiter
- * \warning NOT end user intended method !
- * @return 
- */
-
-uint32_t Document::FindDocEntryLengthOBOrOW()
-   throw( FormatUnexpected )
-{
-   // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
-   long positionOnEntry = Fp->tellg();
-   bool foundSequenceDelimiter = false;
-   uint32_t totalLength = 0;
-
-   while ( !foundSequenceDelimiter )
-   {
-      uint16_t group;
-      uint16_t elem;
-      try
-      {
-         group = ReadInt16();
-         elem  = ReadInt16();   
-      }
-      catch ( FormatError )
-      {
-         throw FormatError("Unexpected end of file encountered during ",
-                           "Document::FindDocEntryLengthOBOrOW()");
-      }
-
-      // We have to decount the group and element we just read
-      totalLength += 4;
-     
-      if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
-      {
-         long filePosition = Fp->tellg();
-         gdcmVerboseMacro( "Neither an Item tag nor a Sequence delimiter tag on :" 
-           << std::hex << group << " , " << elem 
-           << ") -before- position x(" << filePosition << ")" );
-  
-         Fp->seekg(positionOnEntry, std::ios::beg);
-         throw FormatUnexpected( "Neither an Item tag nor a Sequence delimiter tag.");
-      }
-
-      if ( elem == 0xe0dd )
-      {
-         foundSequenceDelimiter = true;
-      }
-
-      uint32_t itemLength = ReadInt32();
-      // We add 4 bytes since we just read the ItemLength with ReadInt32
-      totalLength += itemLength + 4;
-      SkipBytes(itemLength);
-      
-      if ( foundSequenceDelimiter )
-      {
-         break;
-      }
-   }
-   Fp->seekg( positionOnEntry, std::ios::beg);
-   return totalLength;
-}
-
-/**
- * \brief Reads a supposed to be 16 Bits integer
- *       (swaps it depending on processor endianity) 
- * @return read value
- */
-uint16_t Document::ReadInt16()
-   throw( FormatError )
-{
-   uint16_t g;
-   Fp->read ((char*)&g, (size_t)2);
-   if ( Fp->fail() )
-   {
-      throw FormatError( "Document::ReadInt16()", " file error." );
-   }
-   if( Fp->eof() )
-   {
-      throw FormatError( "Document::ReadInt16()", "EOF." );
-   }
-   g = SwapShort(g); 
-   return g;
-}
-
-/**
- * \brief  Reads a supposed to be 32 Bits integer
- *         (swaps it depending on processor endianity)  
- * @return read value
- */
-uint32_t Document::ReadInt32()
-   throw( FormatError )
-{
-   uint32_t g;
-   Fp->read ((char*)&g, (size_t)4);
-   if ( Fp->fail() )
-   {
-      throw FormatError( "Document::ReadInt32()", " file error." );
-   }
-   if( Fp->eof() )
-   {
-      throw FormatError( "Document::ReadInt32()", "EOF." );
-   }
-   g = SwapLong(g);
-   return g;
-}
-
-/**
- * \brief skips bytes inside the source file 
- * \warning NOT end user intended method !
- * @return 
- */
-void Document::SkipBytes(uint32_t nBytes)
-{
-   //FIXME don't dump the returned value
-   Fp->seekg((long)nBytes, std::ios::cur);
 }
 
 /**
@@ -1879,7 +1908,6 @@ void Document::SetMaxSizeLoadEntry(long newSize)
    MaxSizeLoadEntry = newSize;
 }
 
-
 /**
  * \brief Header Elements too long will not be printed
  * \todo  See comments of \ref Document::MAX_SIZE_PRINT_ELEMENT_VALUE 
@@ -1899,104 +1927,6 @@ void Document::SetMaxSizePrintEntry(long newSize)
    MaxSizePrintEntry = newSize;
 }
 
-
-
-/**
- * \brief   Handle broken private tag from Philips NTSCAN
- *          where the endianess is being switch to BigEndian for no
- *          apparent reason
- * @return  no return
- */
-void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
-{
-   // Endian reversion. Some files contain groups of tags with reversed endianess.
-   static int reversedEndian = 0;
-   // try to fix endian switching in the middle of headers
-   if ((group == 0xfeff) && (elem == 0x00e0))
-   {
-     // start endian swap mark for group found
-     reversedEndian++;
-     SwitchByteSwapCode();
-     // fix the tag
-     group = 0xfffe;
-     elem = 0xe000;
-   } 
-   else if (group == 0xfffe && elem == 0xe00d && reversedEndian) 
-   {
-     // end of reversed endian group
-     reversedEndian--;
-     SwitchByteSwapCode();
-   }
-}
-
-/**
- * \brief Accesses the info from 0002,0010 : Transfer Syntax and TS
- * @return The full Transfer Syntax Name (as opposed to Transfer Syntax UID)
- */
-std::string Document::GetTransferSyntaxName()
-{
-   // use the TS (TS : Transfer Syntax)
-   std::string transferSyntax = GetEntryValue(0x0002,0x0010);
-
-   if ( (transferSyntax.find(GDCM_NOTLOADED) < transferSyntax.length()) )
-   {
-      gdcmErrorMacro( "Transfer Syntax not loaded. " << std::endl
-               << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE" );
-      return "Uncompressed ACR-NEMA";
-   }
-   if ( transferSyntax == GDCM_UNFOUND )
-   {
-      gdcmVerboseMacro( "Unfound Transfer Syntax (0002,0010)");
-      return "Uncompressed ACR-NEMA";
-   }
-
-   // we do it only when we need it
-   const TSKey &tsName = Global::GetTS()->GetValue( transferSyntax );
-
-   // Global::GetTS() is a global static you shall never try to delete it!
-   return tsName;
-}
-
-/**
- * \brief   Group 0002 is always coded Little Endian
- *          whatever Transfer Syntax is
- * @return  no return
- */
-void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
-{
-   // Endian reversion. Some files contain groups of tags with reversed endianess.
-   if ( !Group0002Parsed && group != 0x0002)
-   {
-      Group0002Parsed = true;
-      // we just came out of group 0002
-      // if Transfer syntax is Big Endian we have to change CheckSwap
-
-      std::string ts = GetTransferSyntax();
-      if ( !Global::GetTS()->IsTransferSyntax(ts) )
-      {
-         gdcmVerboseMacro("True DICOM File, with NO Tansfer Syntax: " << ts );
-         return;
-      }
-
-      // Group 0002 is always 'Explicit ...' enven when Transfer Syntax says 'Implicit ..." 
-
-      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian )
-         {
-            Filetype = ImplicitVR;
-         }
-       
-      // FIXME Strangely, this works with 
-      //'Implicit VR Transfer Syntax (GE Private)
-      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian )
-      {
-         gdcmVerboseMacro("Transfer Syntax Name = [" 
-                        << GetTransferSyntaxName() << "]" );
-         SwitchByteSwapCode();
-         group = SwapShort(group);
-         elem  = SwapShort(elem);
-      }
-   }
-}
 
 /**
  * \brief   Read the next tag but WITHOUT loading it's value
@@ -2026,7 +1956,7 @@ DocEntry *Document::ReadNextDocEntry()
    // Sometimes file contains groups of tags with reversed endianess.
    HandleBrokenEndian(group, elem);
 
-// In 'true DICOM' files Group 0002 is always little endian
+   // In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
       HandleOutOfGroup0002(group, elem);
  
@@ -2082,7 +2012,77 @@ DocEntry *Document::ReadNextDocEntry()
    return newEntry;
 }
 
-//GenerateFreeTagKeyInGroup? What was it designed for ?!? 
+/**
+ * \brief   Handle broken private tag from Philips NTSCAN
+ *          where the endianess is being switch to BigEndian for no
+ *          apparent reason
+ * @return  no return
+ */
+void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
+{
+   // Endian reversion. Some files contain groups of tags with reversed endianess.
+   static int reversedEndian = 0;
+   // try to fix endian switching in the middle of headers
+   if ((group == 0xfeff) && (elem == 0x00e0))
+   {
+     // start endian swap mark for group found
+     reversedEndian++;
+     SwitchByteSwapCode();
+     // fix the tag
+     group = 0xfffe;
+     elem  = 0xe000;
+   } 
+   else if (group == 0xfffe && elem == 0xe00d && reversedEndian) 
+   {
+     // end of reversed endian group
+     reversedEndian--;
+     SwitchByteSwapCode();
+   }
+}
+
+/**
+ * \brief   Group 0002 is always coded Little Endian
+ *          whatever Transfer Syntax is
+ * @return  no return
+ */
+void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
+{
+   // Endian reversion. Some files contain groups of tags with reversed endianess.
+   if ( !Group0002Parsed && group != 0x0002)
+   {
+      Group0002Parsed = true;
+      // we just came out of group 0002
+      // if Transfer syntax is Big Endian we have to change CheckSwap
+
+      std::string ts = GetTransferSyntax();
+      if ( !Global::GetTS()->IsTransferSyntax(ts) )
+      {
+         gdcmVerboseMacro("True DICOM File, with NO Tansfer Syntax: " << ts );
+         return;
+      }
+
+      // Group 0002 is always 'Explicit ...' enven when Transfer Syntax says 'Implicit ..." 
+
+      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian )
+         {
+            Filetype = ImplicitVR;
+         }
+       
+      // FIXME Strangely, this works with 
+      //'Implicit VR Transfer Syntax (GE Private)
+      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian )
+      {
+         gdcmVerboseMacro("Transfer Syntax Name = [" 
+                        << GetTransferSyntaxName() << "]" );
+         SwitchByteSwapCode();
+         group = SwapShort(group);
+         elem  = SwapShort(elem);
+      }
+   }
+}
+
+// GenerateFreeTagKeyInGroup? 
+// --> What was it designed for ?!? 
 /**
  * \brief   Generate a free TagKey i.e. a TagKey that is not present
  *          in the TagHt dictionary.
@@ -2165,51 +2165,6 @@ bool Document::operator<(Document &document)
       }
    }
    return false;
-}
-
-/**
- * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
- * @param filetype Type of the File to be written 
- */
-int Document::ComputeGroup0002Length( FileType filetype ) 
-{
-   uint16_t gr;
-   std::string vr;
-   
-   int groupLength = 0;
-   bool found0002 = false;   
-  
-   // for each zero-level Tag in the DCM Header
-   DocEntry *entry = GetFirstEntry();
-   while( entry )
-   {
-      gr = entry->GetGroup();
-
-      if( gr == 0x0002 )
-      {
-         found0002 = true;
-
-         if( entry->GetElement() != 0x0000 )
-         {
-            vr = entry->GetVR();
- 
-            if( filetype == ExplicitVR )
-            {
-               if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
-               {
-                  // explicit VR AND OB, OW, SQ : 4 more bytes
-                  groupLength +=  4;
-               }
-            }
-            groupLength += 2 + 2 + 4 + entry->GetLength();   
-         }
-      }
-      else if (found0002 )
-         break;
-
-      entry = GetNextEntry();
-   }
-   return groupLength; 
 }
 
 /*

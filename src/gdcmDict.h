@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:11 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/31 12:19:33 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,6 @@ typedef std::map<TagKey, DictEntry>  TagKeyHT;
 //            std::list<std::string> > EntryNamesByCatMap;
 //-----------------------------------------------------------------------------
 /**
- * \ingroup Dict
  * \brief    Dict acts a memory representation of a dicom dictionary i.e.
  *           it is a container for a collection of dictionary entries.
  *           The dictionary is loaded from in an ascii file.
@@ -49,12 +48,12 @@ typedef std::map<TagKey, DictEntry>  TagKeyHT;
 class GDCM_EXPORT Dict : public Base
 {
 public:
-   Dict(void);
-   Dict(std::string const & filename);
+   Dict();
+   Dict(std::string const &filename);
    ~Dict();
 
 // Print
-   void Print(std::ostream &os = std::cout, std::string const & indent = "");
+   void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
 // Entries
    void ClearEntry  ();

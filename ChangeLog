@@ -991,7 +991,7 @@
 2004-10-13 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * Doc/Website/MailingList.html added (Sidebar.html changed accordingly).
   * gdcmPython/gdcm.i: fix for compilation of wrappers (Note: %include order
-    matters, as stated in warning note at begining of %include section).
+    matters, as stated in warning note at beginning of %include section).
   * src/gdcmDicomDir*.[cxx|h]: coding style
   * src/gdcmDocument.h: doxygen \ref seems uncompatible with \todo.
   * src/gdcmJpeg8.cxx: doxygen fix.
@@ -3133,7 +3133,7 @@
         entries within the associated public Dicom dictionary resp. the same
         information but sorted by the fourth field (PAT, IMG, DIR) of the
         dictionary.
-        - Dicts/dicomV3.dic Entries which had and unspecified fourth field
+        - Dicts/dicomV3.dic Entries which had an unspecified fourth field
           are now in the "???" group.
         - python/gdcm.i changed accordingly,
         - python/demo/printGroupedPublicDict.py added, that gives an example
@@ -3222,7 +3222,7 @@
 
 2002-11-18 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * src/gdcm.h and gdcmHeader.cxx are now "Big Endian transfer syntax"
-        aware. See the strategy comments in gdcmHeader::FindeLength().
+        aware. See the strategy comments in gdcmHeader::FindLength().
       * Test/test.cxx now accepts a filename as first argument.
       * Data/US-PAL-8-10x-echo.dcm and US-RGB-8-epicard.dcm added.
       * python/testSuite.py changed to integrate test on above files.
@@ -3285,7 +3285,7 @@
 2002-10-31 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * Straightforward temporary fixes for swig to build the python wrappers.
         src/Makefile now has a python working entry [by working we mean
-        that we can import de shadow classes without errors].
+        that we can import the shadow classes without errors].
 
 2002-10-29 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * hashtest.cxx removed (since already in Test)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:24 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/01/31 12:19:34 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,6 +65,7 @@ public:
 
    ///  \brief Accessor on \ref SQDepthLevel.
    int GetDepthLevel() { return SQDepthLevel; }                                                                             
+
    ///  \brief Accessor on \ref SQDepthLevel.
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 

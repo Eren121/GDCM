@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 17:01:29 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/01/31 12:19:33 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@ void DicomDirStudy::WriteContent(std::ofstream *fp, FileType t)
 }
 
 /**
- * \brief   adds a new Serie at the begining of the SerieList
+ * \brief   adds a new Serie at the beginning of the SerieList
  *          of a partially created DICOMDIR
  */
 DicomDirSerie *DicomDirStudy::NewSerie()

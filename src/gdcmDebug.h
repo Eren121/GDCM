@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/27 11:55:57 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/01/31 12:19:33 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ namespace gdcm
  *  - warning : for warning about DICOM quality (kosher)
  * 
  * A debugging message is only show if the flag is on (DebugFlag)
- * This is static var and can be set at begining of code:
+ * This is static var and can be set at beginning of code:
  *         gdcm::Debug::SetDebugOn();
  */
 class GDCM_EXPORT Debug

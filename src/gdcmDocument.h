@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 17:17:31 $
-  Version:   $Revision: 1.102 $
+  Date:      $Date: 2005/01/31 12:19:34 $
+  Version:   $Revision: 1.103 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,11 +42,6 @@ class Dict;
 class GDCM_EXPORT Document : public ElementSet
 {
 public:
-// Informations contained in the gdcm::Document
-   virtual bool IsReadable();
-   FileType GetFileType();
-
-   std::string GetTransferSyntax();
 
 // Dictionaries
    virtual void PrintPubDict (std::ostream &os = std::cout);
@@ -57,19 +52,31 @@ public:
    bool SetShaDict(Dict* dict);
    bool SetShaDict(DictKey const &dictName);
 
+// Informations contained in the gdcm::Document
+   virtual bool IsReadable();
+   bool IsDicomV3();
+   bool IsPapyrus();
+   FileType GetFileType();
+   std::string GetTransferSyntax();
+   /// Return the Transfer Syntax as a string
+   std::string GetTransferSyntaxName();
+
 // Swap code
    /// 'Swap code' accessor (see \ref SwapCode )
    int GetSwapCode() { return SwapCode; }
    // System access (meaning endian related !?)
-   uint16_t SwapShort(uint16_t);   // needed by Document
-   uint32_t SwapLong(uint32_t);    // needed by Document
-   uint16_t UnswapShort(uint16_t); // needed by Document
-   uint32_t UnswapLong(uint32_t);  // needed by Document
+   uint16_t SwapShort(uint16_t);
+   uint32_t SwapLong(uint32_t);
+   /// \brief  Unswaps back the bytes of 2-bytes long integer 
+   ///         so they agree with the processor order.
+   uint16_t UnswapShort(uint16_t a) { return SwapShort(a);}
+   /// \brief   Unswaps back the bytes of 4-byte long integer 
+   ///         so they agree with the processor order.
+   uint32_t UnswapLong(uint32_t a) { return SwapLong(a);}
    
 // Ordering of Documents
    bool operator<(Document &document);
 
-public:
 // File I/O
    /// Accessor to \ref Filename
    const std::string &GetFileName() const { return Filename; }
@@ -87,12 +94,6 @@ public:
 
    void LoadDocEntrySafe(DocEntry *entry);
 
-   /// Return the Transfer Syntax as a string
-   std::string GetTransferSyntaxName();
-
-   bool IsDicomV3();
-   bool IsPapyrus();
-
 protected:
 // Methods
    // Constructor and destructor are protected to forbid end user 
@@ -105,7 +106,6 @@ protected:
    uint16_t ReadInt16() throw ( FormatError );
    uint32_t ReadInt32() throw ( FormatError );
    void     SkipBytes(uint32_t);
-
    int ComputeGroup0002Length( FileType filetype );
 
 // Variables
@@ -161,7 +161,6 @@ private:
 
    std::string GetDocEntryValue  (DocEntry *entry);
    std::string GetDocEntryUnvalue(DocEntry *entry);
-
 
    void SkipDocEntry          (DocEntry *entry);
    void SkipToNextDocEntry    (DocEntry *entry);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/30 17:30:57 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/01/31 12:19:33 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,6 +43,8 @@ public:
    DocEntry(DictEntry*);
    virtual ~DocEntry() {};
 
+   virtual void Print (std::ostream &os = std::cout, std::string const &indent = ""); 
+
    /// Returns the Dicom Group number of the current Dicom entry
    uint16_t      GetGroup()     { return DicomDict->GetGroup();  };
 
@@ -76,7 +78,6 @@ public:
    /// the File Preamble, if any) of the value of the current Dicom entry
    /// \warning offset of the *value*, not of the Dicom entry
    size_t GetOffset() { return Offset; };
-
 
    /// \brief Sets only 'Read Length' (*not* 'Usable Length') of the current
    /// Dicom entry
@@ -133,8 +134,6 @@ public:
    bool IsItemDelimitor();
    bool IsSequenceDelimitor();   
 
-   virtual void Print (std::ostream &os = std::cout, std::string const & indent = ""); 
-
 protected:
    /// \brief pointer to the underlying Dicom dictionary element
    DictEntry *DicomDict;
@@ -151,7 +150,7 @@ protected:
    /// breaking the underlying dictionary.
    bool ImplicitVR;
 
-   /// Offset from the begining of file for direct user access
+   /// Offset from the beginning of file for direct user access
    size_t Offset; 
 
    /// \brief Generalized key of this DocEntry (for details on

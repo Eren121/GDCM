@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 03:22:26 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/31 12:19:34 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,9 +85,9 @@ void SerieHeader::Print()
       for (GdcmFileList::iterator it =  (itl->second)->begin();
                                   it != (itl->second)->end(); 
                                 ++it)
-   {
-   std::cout << " --- " << (*it)->GetFileName() << std::endl;
-   }
+      {
+         std::cout << " --- " << (*it)->GetFileName() << std::endl;
+      }
       ++itl;
    }
 }

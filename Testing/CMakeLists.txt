@@ -150,15 +150,12 @@ SET(BLACK_LIST
   # Just to remember this format exist, and is gdcm::Header compliant
   # (NOT gdcm::File ...)
   # any contribution is welcome
-  "PET-cardio-Multiframe-Papyrus.dcm" 
-
-  # JPR love to add code in gdcm without even runing the tests
-  "D_CLUNIE_CT1_J2KI.dcm"
-  "D_CLUNIE_CT1_J2KR.dcm"
-  "D_CLUNIE_CT1_JLSL.dcm"
+  "PET-cardio-Multiframe-Papyrus.dcm"   
   "D_CLUNIE_CT1_JLSN.dcm"
+  "D_CLUNIE_CT1_JLSL.dcm"
+  "D_CLUNIE_CT1_J2KR.dcm"
+  "D_CLUNIE_CT1_J2KI.dcm"
   )
-
 
 # Add a special test that requires dciodvfy from dicom3tools
 INCLUDE(${GDCM_SOURCE_DIR}/FindDicom3Tools.cmake)
