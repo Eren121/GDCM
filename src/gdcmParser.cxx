@@ -224,10 +224,12 @@ bool gdcmParser::SetShaDict(DictKey dictName){
  *         false otherwise. 
  */
 bool gdcmParser::IsReadable(void) { 
-   if(filetype==Unknown)
+   if(filetype==Unknown) {
       return(false);
-   if(listEntries.size()<=0)
+   }
+   if(listEntries.size()<=0) {    
       return(false);
+   }
 
    return(true);
 }
@@ -2034,7 +2036,10 @@ bool gdcmParser::CheckSwap() {
       
       if( (memcmp(entCur, "UL", (size_t)2) == 0) ||
       	  (memcmp(entCur, "OB", (size_t)2) == 0) ||
-      	  (memcmp(entCur, "UI", (size_t)2) == 0) )   
+      	  (memcmp(entCur, "UI", (size_t)2) == 0) ||	  
+      	  (memcmp(entCur, "CS", (size_t)2) == 0) )  // CS, to remove later
+	                                            // when Write DCM *adds*
+						    // group 0000  
       {
          filetype = ExplicitVR;
          dbg.Verbose(1, "gdcmParser::CheckSwap:",
@@ -2046,6 +2051,7 @@ bool gdcmParser::CheckSwap() {
          dbg.Verbose(1, "gdcmParser::CheckSwap:",
                      "not an explicit Value Representation");
       }
+      
       if (net2host) 
       {
          sw = 4321;
