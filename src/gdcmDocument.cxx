@@ -1442,6 +1442,7 @@ long gdcmDocument::ParseDES(gdcmDocEntrySet *set, long offset, long l_max, bool 
  */ 
 long gdcmDocument::ParseSQ(gdcmSeqEntry *set, long offset, long l_max, bool delim_mode) {
    int SQItemNumber = 0;
+		
    gdcmDocEntry *NewDocEntry = (gdcmDocEntry *)0;
    gdcmSQItem *itemSQ;
    bool dlm_mod;
@@ -1468,7 +1469,7 @@ long gdcmDocument::ParseSQ(gdcmSeqEntry *set, long offset, long l_max, bool deli
          dlm_mod = true;
       else
          dlm_mod=false;
-      
+   
       lgr=ParseDES(itemSQ, NewDocEntry->GetOffset(), l, dlm_mod);
       
       set->AddEntry(itemSQ,SQItemNumber);	 

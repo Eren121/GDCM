@@ -60,16 +60,16 @@ void gdcmSeqEntry::Print(std::ostream &os){
  
     // Then, Print each SQ Item   
      for(ListSQItem::iterator cc = items.begin();cc != items.end();++cc)
-   {	
-	
-	std::cout << "SQItemNumber " << (*cc)->GetSQItemNumber() << std::endl;
-			
+   {				
       (*cc)->Print(os);   
    }
    // at end, print the sequence terminator item, if any
 
    if (delimitor_mode) {
-      s2 << "   | " ;  // FIXME : cout the right number of | ! 
+      if (SQDepthLevel>0) {
+         for (int i=0;i<SQDepthLevel;i++)
+            s2 << "   | " ;
+      }		
       os << s2.str();
       if (seq_term != NULL) {
          seq_term->Print(os);
@@ -95,6 +95,22 @@ void gdcmSeqEntry::SetDepthLevel(int depth) {
    SQDepthLevel = depth;
 }
 
+/// \brief return a pointer to th SQItem referenced by its ordinal number
+/// (returns the first one if ordinal number is <0
+///  returns the last  one if ordinal number is > item number
+
+gdcmSQItem *gdcmSeqEntry::GetSQItemByOrdinalNumber(int nb) {
+   if (nb<0)
+		return (*(items.begin()));
+	int count = 0 ;
+   for(ListSQItem::iterator cc = items.begin();
+	    cc != items.end();
+		 count ++, ++cc){	
+      if (count==nb)
+		   return (*cc);      
+   }
+	return (*(items.end()));		 
+}
 //-----------------------------------------------------------------------------
 // Protected
 
@@ -102,31 +118,4 @@ void gdcmSeqEntry::SetDepthLevel(int depth) {
 //-----------------------------------------------------------------------------
 // Private
 
-// end-user intended : the guy *wants* to create his own SeQuence ?!?
-
-/// \brief to be written, if really usefull
-gdcmDocEntry *gdcmSeqEntry::NewDocEntryByNumber(guint16 group,
-                                                guint16 element) {
-// TODO
-   std::cout << "TODO : gdcmSeqEntry::NewDocEntryByNumber " << std::endl;
-   gdcmDocEntry *a;   
-   return a;
-}
-
-/// \brief to be written, if really usefull
-gdcmDocEntry *gdcmSeqEntry::NewDocEntryByName  (std::string Name) {
-// TODO
-   std::cout << "TODO : gdcmSeqEntry::NewDocEntryByName " << std::endl;
-   gdcmDocEntry *a;   
-   return a;   
-}
-
-/// \brief to be written, if really usefull
-gdcmDocEntry *gdcmSeqEntry::GetDocEntryByNumber(guint16 group,
-                                                guint16 element) {
-// TODO
-   std::cout << "TODO : gdcmSeqEntry::GetDocEntryByNumber " << std::endl;
-   gdcmDocEntry *a;   
-   return a;
-}
 //-----------------------------------------------------------------------------

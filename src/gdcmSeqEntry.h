@@ -29,14 +29,8 @@ public:
    /// \brief Sets the Sequence Delimitation Item
    inline void SetSequenceDelimitationItem(gdcmDocEntry * e) { seq_term = e;}
        
-    void AddEntry(gdcmSQItem *it, int itemNumber); 
-
-   /// \brief creates a new SQITEM for this SeQuence.
-   gdcmSQItem * NewItem(void);
-    
-   gdcmDocEntry *NewDocEntryByNumber(guint16 group, guint16 element);    
-   gdcmDocEntry *NewDocEntryByName  (std::string Name); 
-   gdcmDocEntry *GetDocEntryByNumber(guint16 group, guint16 element);
+   void AddEntry(gdcmSQItem *it, int itemNumber); 	
+   gdcmSQItem *GetSQItemByOrdinalNumber(int itemNumber);	
 
    void SetDepthLevel(int depth);
          
