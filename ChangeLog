@@ -1,3 +1,6 @@
+2004-12-09 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/ShowDicomSeq.cxx : bug fix
+ 
 2004-12-08 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * vtk/vtkGdcmReader.[h|cxx] : bug fix. Plane order isn't inverted
    * vtk/vtkGdcmWriter.[h|cxx] : correctly write images (the Y axis is inverted)
