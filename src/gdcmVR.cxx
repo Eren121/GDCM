@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/01/11 00:21:49 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -167,7 +167,7 @@ bool VR::IsVROfSequence(VRKey const &tested)
 
 bool VR::IsValidVR(VRKey const &key)
 {
-   return(vr.find(key)!=vr.end());
+   return vr.find(key) != vr.end();
 }
 
 //-----------------------------------------------------------------------------

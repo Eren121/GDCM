@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:03:30 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/01/11 00:21:48 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -181,11 +181,11 @@ DocEntry *ElementSet::GetNextEntry()
       DocEntry *tmp = ItTagHT->second;
       ++ItTagHT;
 
-      return(tmp);
+      return tmp;
    }
    else
    {
-      return(NULL);
+      return NULL;
    }
 }
 

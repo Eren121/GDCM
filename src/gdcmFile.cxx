@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:59 $
-  Version:   $Revision: 1.187 $
+  Date:      $Date: 2005/01/11 00:21:48 $
+  Version:   $Revision: 1.188 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -647,7 +647,8 @@ bool File::CheckWriteIntegrity()
 
 void File::SetWriteToRaw()
 {
-   if(HeaderInternal->GetNumberOfScalarComponents()==3 && !HeaderInternal->HasLUT())
+   if( HeaderInternal->GetNumberOfScalarComponents() == 3 
+    && !HeaderInternal->HasLUT())
    {
       SetWriteToRGB();
    } 
@@ -666,7 +667,8 @@ void File::SetWriteToRaw()
       PixelWriteConverter->SetReadData(PixelReadConverter->GetRaw(),
                                        PixelReadConverter->GetRawSize());
 
-      BinEntry *pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+      BinEntry *pixel = 
+         CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
@@ -702,7 +704,8 @@ void File::SetWriteToRGB()
                                           PixelReadConverter->GetRawSize());
       }
 
-      BinEntry *pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
+      BinEntry *pixel = 
+         CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
@@ -864,7 +867,7 @@ ValEntry *File::CopyValEntry(uint16_t group,uint16_t element)
       newE = GetHeader()->NewValEntry(group,element);
    }
 
-   return(newE);
+   return newE;
 }
 
 BinEntry *File::CopyBinEntry(uint16_t group,uint16_t element)
@@ -882,7 +885,7 @@ BinEntry *File::CopyBinEntry(uint16_t group,uint16_t element)
       newE = GetHeader()->NewBinEntry(group,element);
    }
 
-   return(newE);
+   return newE;
 }
 
 //-----------------------------------------------------------------------------

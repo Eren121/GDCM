@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 16:05:06 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/11 00:21:48 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,7 +72,7 @@ void DocEntryArchive::Print(std::ostream &os)
 bool DocEntryArchive::Push(DocEntry *newEntry)
 {
    if(!newEntry)
-      return(false);
+      return false;
 
    uint16_t gr = newEntry->GetDictEntry()->GetGroup();
    uint16_t elt = newEntry->GetDictEntry()->GetElement();
@@ -94,9 +94,9 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
       // Set the new DocEntry
       HeaderHT[key] = newEntry;
 
-      return(true);
+      return true;
    }
-   return(false);
+   return false;
 }
 
 /**
@@ -121,9 +121,9 @@ bool DocEntryArchive::Push(uint16_t group,uint16_t element)
          HeaderHT.erase(it);
       }
 
-      return(true);
+      return true;
    }
-   return(false);
+   return false;
 }
 
 /**
@@ -158,9 +158,9 @@ bool DocEntryArchive::Restore(uint16_t group,uint16_t element)
 
       Archive.erase(restoreIt);
 
-      return(true);
+      return true;
    }
-   return(false);
+   return false;
 }
 
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 22:19:48 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/01/11 00:21:48 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -305,7 +305,7 @@ bool SerieHeader::ImageNumberOrdering()
   
    delete[] partition;
 
-   return (mult != 0);
+   return mult != 0;
 }
 
 

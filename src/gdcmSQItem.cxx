@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:04:00 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/01/11 00:21:48 $
+  Version:   $Revision: 1.50 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -286,11 +286,11 @@ DocEntry *SQItem::GetNextEntry()
       DocEntry *tmp = *ItDocEntries;
       ++ItDocEntries;
                                                                                 
-      return(tmp);
+      return tmp;
    }
    else
    {
-      return(NULL);
+      return NULL;
    }
 }
 

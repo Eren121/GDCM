@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/10 17:17:52 $
-  Version:   $Revision: 1.171 $
+  Date:      $Date: 2005/01/11 00:21:48 $
+  Version:   $Revision: 1.172 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -970,7 +970,7 @@ void Document::LoadEntryBinArea(BinEntry *element)
 
    /// \todo check the result 
    Fp->read((char*)a, l);
-   if( Fp->fail() || Fp->eof()) //Fp->gcount() == 1
+   if( Fp->fail() || Fp->eof())
    {
       delete[] a;
       return;
@@ -1112,8 +1112,7 @@ uint32_t Document::SwapLong(uint32_t a)
          a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
          break;
       default :
-         //std::cout << "swapCode= " << SwapCode << std::endl;
-         gdcmErrorMacro( "Unset swap code");
+         gdcmErrorMacro( "Unset swap code:" << SwapCode );
          a = 0;
    }
    return a;
@@ -1465,8 +1464,8 @@ void Document::LoadDocEntry(DocEntry *entry)
       else
       {
          // fusible
-         std::cout<< "MaxSizeLoadEntry exceeded, neither a BinEntry "
-                  << "nor a ValEntry ?! Should never print that !" << std::endl;
+         gdcmErrorMacro( "MaxSizeLoadEntry exceeded, neither a BinEntry "
+                      << "nor a ValEntry ?! Should never print that !" );
       }
 
       // to be sure we are at the end of the value ...
@@ -1542,8 +1541,8 @@ void Document::LoadDocEntry(DocEntry *entry)
    if( length % 2 )
    {
       newValue = Util::DicomString(str, length+1);
-      gdcmVerboseMacro("Warning: bad length: " << length );
-      gdcmVerboseMacro("For string :" <<  newValue.c_str()); 
+      gdcmVerboseMacro("Warning: bad length: " << length <<
+                       ",For string :" <<  newValue.c_str()); 
       // Since we change the length of string update it length
       //entry->SetReadLength(length+1);
    }
@@ -1555,9 +1554,9 @@ void Document::LoadDocEntry(DocEntry *entry)
 
    if ( ValEntry *valEntry = dynamic_cast<ValEntry* >(entry) )
    {
-      if ( Fp->fail() || Fp->eof())//Fp->gcount() == 1
+      if ( Fp->fail() || Fp->eof())
       {
-         gdcmVerboseMacro( "Unread element value");
+         gdcmVerboseMacro("Unread element value");
          valEntry->SetValue(GDCM_UNREAD);
          return;
       }
@@ -1678,8 +1677,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // and the dictionary entry depending on them.
          uint16_t correctGroup = SwapShort( entry->GetGroup() );
          uint16_t correctElem  = SwapShort( entry->GetElement() );
-         DictEntry *newTag = GetDictEntry( correctGroup,
-                                                       correctElem );
+         DictEntry *newTag = GetDictEntry( correctGroup, correctElem );
          if ( !newTag )
          {
             // This correct tag is not in the dictionary. Create a new one.
@@ -1720,7 +1718,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
 std::string Document::FindDocEntryVR()
 {
    if ( Filetype != ExplicitVR )
-      return(GDCM_UNKNOWN);
+      return GDCM_UNKNOWN;
 
    long positionOnEntry = Fp->tellg();
    // Warning: we believe this is explicit VR (Value Representation) because
@@ -1738,9 +1736,9 @@ std::string Document::FindDocEntryVR()
    if( !CheckDocEntryVR(vr) )
    {
       Fp->seekg(positionOnEntry, std::ios::beg);
-      return(GDCM_UNKNOWN);
+      return GDCM_UNKNOWN;
    }
-   return(vr);
+   return vr;
 }
 
 /**
