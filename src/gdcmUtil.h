@@ -3,6 +3,7 @@
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
 
+#include "gdcmCommon.h"
 #include "gdcmVR.h"
 #include "gdcmTS.h"
 #include "gdcmDictSet.h"
@@ -24,7 +25,8 @@
  */
 class gdcmDebug {
 public:
-	gdcmDebug(int  = 0);
+	gdcmDebug(int level = GDCM_DEBUG);
+
 	void SetDebug (int i) {DebugLevel = i;}
 
    void Verbose(int, const char*, const char* ="");

@@ -1420,7 +1420,7 @@ void gdcmParser::AddHeaderEntry(gdcmHeaderEntry *newHeaderEntry) {
    guint16 length16;
    if( (element == NumPixel) && (group == GrPixel) ) 
    {
-      dbg.SetDebug(-1);
+      dbg.SetDebug(GDCM_DEBUG);
       dbg.Verbose(2, "gdcmParser::FindLength: ",
                      "we reached (GrPixel,NumPixel)");
    }   

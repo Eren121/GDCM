@@ -3,6 +3,10 @@
 #ifndef GDCMCOMMON_H
 #define GDCMCOMMON_H
 
+//-----------------------------------------------------------------------------
+#define GDCM_DEBUG -1
+
+//-----------------------------------------------------------------------------
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
 // 'identifier' : class 'type' needs to have dll-interface to be used by
