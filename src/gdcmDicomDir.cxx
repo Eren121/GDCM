@@ -340,28 +340,28 @@ void gdcmDicomDir::WriteDicomDirEntries(FILE *_fp)
    
    ptrMeta= GetDicomDirMeta();
    for(i=ptrMeta->debut();i!=ptrMeta->fin();++i) {
-      WriteEntry(*i,_fp,DICOMDIR);
+      WriteEntry(*i,_fp, ExplicitVR);
    }   
     
    itPatient = GetDicomDirPatients().begin(); 
    while ( itPatient != GetDicomDirPatients().end() ) {
       for(i=(*itPatient)->debut();i!=(*itPatient)->fin();++i) {
-         WriteEntry(*i,_fp,DICOMDIR);
+         WriteEntry(*i,_fp, ExplicitVR);
       }
       itStudy = ((*itPatient)->GetDicomDirStudies()).begin();	      
       while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) {	
          for(i=(*itStudy)->debut();i!=(*itStudy)->fin();++i) {
-            WriteEntry(*i,_fp,DICOMDIR);
+            WriteEntry(*i,_fp, ExplicitVR);
          } 
          itSerie = ((*itStudy)->GetDicomDirSeries()).begin();
          while (itSerie != (*itStudy)->GetDicomDirSeries().end() ) {
             for(i=(*itSerie)->debut();i!=(*itSerie)->fin();++i) {
-               WriteEntry(*i,_fp,DICOMDIR);
+               WriteEntry(*i,_fp, ExplicitVR);
             }
             itImage = ((*itSerie)->GetDicomDirImages()).begin();
             while (itImage != (*itSerie)->GetDicomDirImages().end() ) {
                for(i=(*itImage)->debut();i!=(*itImage)->fin();++i) {
-                  WriteEntry(*i,_fp,DICOMDIR);
+                  WriteEntry(*i,_fp, ExplicitVR);
                }
                ++itImage;   	       	    
 	    }

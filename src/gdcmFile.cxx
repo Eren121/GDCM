@@ -646,16 +646,14 @@ bool gdcmFile::WriteAcr (std::string fileName) {
  *        (used by WriteDcmExplVR, WriteDcmImplVR, WriteAcr, etc)
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
- * @param  type file type (ExplicitVR, ImplicitVR, DICOMDIR, ...)
+ * @param  type file type (ExplicitVR, ImplicitVR, ...)
  * @return false if write fails		
  */
 bool gdcmFile::WriteBase (std::string fileName, FileType type) {
 
    FILE * fp1;
    
-   if (PixelRead==-1 && type != DICOMDIR) {
-/*      std::cout << "U never Read the pixels; U cannot write the file" 
-                << std::endl;*/
+   if (PixelRead==-1 && type != ExplicitVR) {
       return false;		   
    }
 

@@ -989,59 +989,44 @@ void gdcmParser::UpdateGroupLength(bool SkipSequence, FileType type) {
  */
 void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 {
-   guint16 gr, el;
-   guint32 lgr;
-   std::string value;
-   const char * val;
-   std::string vr;
-   guint32 val_uint32;
-   guint16 val_uint16;
-   guint16 valZero =0;
-   void *voidArea;
-   std::vector<std::string> tokens;
+   guint16 group  = tag->GetGroup();
+   std::string vr = tag->GetVR();
+   guint32 length = tag->GetLength();
+   guint16 el     = tag->GetElement();
+   guint32 lgr    = tag->GetReadLength();
 
-   void *ptr;
-   int ff=0xffffffff;
-   // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
-   int compte =0;
-   itsTimeToWritePixels = false;
-
-   gr    = tag->GetGroup();
-   el    = tag->GetElement();
-   lgr   = tag->GetReadLength();
-   val   = tag->GetValue().c_str();
-   vr    = tag->GetVR();
-   voidArea = tag->GetVoidArea();
-           
    // === Deal with the length
    //     --------------------
-   if((tag->GetLength())%2==1)
+   if(length%2==1)
    { 
       tag->SetValue(tag->GetValue()+"\0");
       tag->SetLength(tag->GetReadLength()+1);
    }
 
-   fwrite ( &gr,(size_t)2 ,(size_t)1 ,_fp);  //group
+   fwrite ( &group,(size_t)2 ,(size_t)1 ,_fp);  //group
    fwrite ( &el,(size_t)2 ,(size_t)1 ,_fp);  //element
       
-   if ( (type == ExplicitVR) || (type == DICOMDIR) ) {
-      // EXPLICIT VR
-      guint16 z=0, shortLgr;
+   if ( type == ExplicitVR ) {
 
-      if (gr == 0xfffe) { // NO Value Representation for 'delimiters'
-                          // no length : write ffffffff
+      // Special case of delimiters:
+      if (group == 0xfffe) {
+         // Delimiters have NO Value Representation and have NO length.
+         // Hence we skip writing the VR and length and we pad by writing
+         // 0xffffffff
 
-          // special patch to make some MR PHILIPS images e-film readable
-          // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm
-          // from Hospital Guy de Chauliac, Montpellier
-          // we just ignore spurious fffe|0000 tag !
-          if (el == 0x0000) return;
+         if (el == 0x0000)
+            // Fix in order to make some MR PHILIPS images e-film readable
+            // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
+            // we just ignore spurious fffe|0000 tag !
+            return;
 
+         int ff=0xffffffff;
          fwrite (&ff,(size_t)4 ,(size_t)1 ,_fp);
-         return;       // NO value for 'delimiters'
+         return;
       }
 
-      shortLgr=lgr;
+      guint16 z=0;
+      guint16 shortLgr = lgr;
       if (vr == "unkn") {     // Unknown was 'written'
          // deal with Little Endian            
          fwrite ( &shortLgr,(size_t)2 ,(size_t)1 ,_fp);
@@ -1065,8 +1050,24 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
    // === Deal with the value
    //     -------------------
    if (vr == "SQ")  return; // no "value" to write for the SEQuences
-   if (gr == 0xfffe)return; // no "value" to write for the delimiters
+   if (group == 0xfffe)return; // no "value" to write for the delimiters
+
+   // Pixels are never loaded in the element !
+   // we stop writting when Pixel are processed
+   // FIX : we loose trailing elements (RAB, right now)           
+            
+   int compte =0;
+   itsTimeToWritePixels = false;
+   if ((group == GrPixel) && (el == NumPixel) ) {
+      compte++;
+      if (compte == countGrPixel) {// we passed *all* the GrPixel,NumPixel   
+         itsTimeToWritePixels = true;
+         return;
+      }
+   }       
       
+   void *voidArea;
+   voidArea = tag->GetVoidArea();
    if (voidArea != NULL) 
    { // there is a 'non string' LUT, overlay, etc
       fwrite ( voidArea,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
@@ -1075,12 +1076,13 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
       
    if (vr == "US" || vr == "SS") 
    {
+      std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
       Tokenize (tag->GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++) 
       {
-         val_uint16 = atoi(tokens[i].c_str());
-         ptr = &val_uint16;
+         guint16 val_uint16 = atoi(tokens[i].c_str());
+         void *ptr = &val_uint16;
          fwrite ( ptr,(size_t)2 ,(size_t)1 ,_fp);
       }
       tokens.clear();
@@ -1089,30 +1091,20 @@ void gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 
    if (vr == "UL" || vr == "SL") 
    {
+      std::vector<std::string> tokens;
       tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
       Tokenize (tag->GetValue(), tokens, "\\");
       for (unsigned int i=0; i<tokens.size();i++) 
       {
-         val_uint32 = atoi(tokens[i].c_str());
-         ptr = &val_uint32;
+         guint32 val_uint32 = atoi(tokens[i].c_str());
+         void *ptr = &val_uint32;
          fwrite ( ptr,(size_t)4 ,(size_t)1 ,_fp);
       }
       tokens.clear();
       return;
    } 
           
-   // Pixels are never loaded in the element !
-   // we stop writting when Pixel are processed
-   // FIX : we loose trailing elements (RAB, right now)           
-            
-   if ((gr == GrPixel) && (el == NumPixel) ) {
-      compte++;
-      if (compte == countGrPixel) {// we passed *all* the GrPixel,NumPixel   
-         itsTimeToWritePixels = true;
-         return;
-      }
-   }       
-   fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
+   fwrite (tag->GetValue().c_str(), (size_t)lgr ,(size_t)1, _fp); // Elem value
 }
 
 /**
@@ -1140,17 +1132,23 @@ void gdcmParser::WriteEntries(FILE *_fp,FileType type)
                           ++tag2)
    {
       if ( type == ACR ){ 
-         if ((*tag2)->GetGroup() < 0x0008)   continue; // ignore pure DICOM V3 groups
-         if ((*tag2)->GetElement() %2)       continue; // ignore shadow groups
-         if ((*tag2)->GetVR() == "SQ" )      continue; // ignore Sequences
-         // TODO : find a trick to *skip* the SeQuences !
-         // Not only ignore the SQ element
-	 // --> will be done with the next organization
-         if ((*tag2)->GetGroup() == 0xfffe ) continue; // ignore delimiters
-   } 
-   WriteEntry(*tag2,_fp,type);
-   if (itsTimeToWritePixels) 
-      break;
+         if ((*tag2)->GetGroup() < 0x0008)
+            // Ignore pure DICOM V3 groups
+            continue;
+         if ((*tag2)->GetElement() %2)
+            // Ignore the "shadow" groups
+            continue;
+         if ((*tag2)->GetVR() == "SQ" )
+            // For the time being sequences are simply ignored
+            // TODO : find a trick not to *skip* the SeQuences !
+            continue;
+         if ((*tag2)->GetGroup() == 0xfffe )
+            // Ignore the documented delimiter
+            continue;
+      } 
+      WriteEntry(*tag2,_fp,type);
+      if (itsTimeToWritePixels) 
+         break;
    }
 }   
 

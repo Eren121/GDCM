@@ -67,11 +67,10 @@ typedef std::string TagName;
 
 enum FileType {
       Unknown = 0,
-      ExplicitVR,
+      ExplicitVR, // gdcmDicomDir are in this case
       ImplicitVR,
       ACR,
-      ACR_LIBIDO,
-      DICOMDIR
+      ACR_LIBIDO
 };
 
 //For now gdcm is not willing cmake, try to be more quiet
