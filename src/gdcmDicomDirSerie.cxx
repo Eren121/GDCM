@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/25 04:08:20 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,15 +86,15 @@ void DicomDirSerie::Print(std::ostream& os)
  * \brief   Writes the Object
  * @return
  */ 
-void DicomDirSerie::Write(std::ofstream* fp, FileType t)
+void DicomDirSerie::WriteContent(std::ofstream* fp, FileType t)
 {
-   DicomDirObject::Write(fp, t);
+   DicomDirObject::WriteContent(fp, t);
 
    for(ListDicomDirImage::iterator cc = Images.begin();
                                    cc!= Images.end();
                                  ++cc )
    {
-      (*cc)->Write( fp, t );
+      (*cc)->WriteContent( fp, t );
    }
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ public:
    ~DicomDirMeta();
 
    virtual void Print(std::ostream &os = std::cout);
-   virtual void Write(std::ofstream * fp, FileType t);
+   virtual void WriteContent(std::ofstream * fp, FileType t);
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

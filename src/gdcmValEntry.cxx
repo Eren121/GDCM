@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:19 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/11/25 15:46:12 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -177,9 +177,9 @@ void ValEntry::Print(std::ostream & os)
 /*
  * \brief   canonical Writer
  */
-void ValEntry::Write(std::ofstream* fp, FileType filetype)
+void ValEntry::WriteContent(std::ofstream* fp, FileType filetype)
 {
-   DocEntry::Write(fp, filetype);
+   DocEntry::WriteContent(fp, filetype);
 
    //std::cout << "=====================================" << GetVR() << std::endl;
       

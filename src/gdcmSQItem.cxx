@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:19 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.38 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,7 +97,7 @@ SQItem::~SQItem()
  * \ingroup SQItem
  * \brief   canonical Writer
  */
-void SQItem::Write(std::ofstream* fp, FileType filetype)
+void SQItem::WriteContent(std::ofstream* fp, FileType filetype)
 {
    int j;
    uint16_t item[4] = { 0xfffe, 0xe000, 0xffff, 0xffff };
@@ -129,7 +129,7 @@ void SQItem::Write(std::ofstream* fp, FileType filetype)
          break; // FIXME : continue; ?!?
       }
 
-      (*it)->Write(fp, filetype);
+      (*it)->WriteContent(fp, filetype);
    }
       
     //we force the writting of an 'Item Delimitation' item

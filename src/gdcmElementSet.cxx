@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 10:23:47 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,13 +87,13 @@ void ElementSet::Print(std::ostream& os)
   *          from the H Table
   * @return
   */ 
-void ElementSet::Write(std::ofstream* fp, FileType filetype)
+void ElementSet::WriteContent(std::ofstream* fp, FileType filetype)
 {
    for (TagDocEntryHT::const_iterator i = TagHT.begin(); 
                                      i != TagHT.end(); 
                                     ++i)
    {
-      i->second->Write(fp, filetype);
+      i->second->WriteContent(fp, filetype);
    } 
 }
 //-----------------------------------------------------------------------------

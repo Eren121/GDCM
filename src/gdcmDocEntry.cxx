@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/19 18:49:39 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,7 @@ void DocEntry::Print(std::ostream& os)
  * @param fp already open file pointer
  * @param filetype type of the file to be written
  */
-void DocEntry::Write(std::ofstream* fp, FileType filetype)
+void DocEntry::WriteContent(std::ofstream* fp, FileType filetype)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();

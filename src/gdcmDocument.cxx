@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 13:12:02 $
-  Version:   $Revision: 1.139 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.140 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -446,7 +446,7 @@ bool Document::CloseFile()
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * \return Always true.
  */
-void Document::Write(std::ofstream* fp, FileType filetype)
+void Document::WriteContent(std::ofstream* fp, FileType filetype)
 {
    /// \todo move the following lines (and a lot of others, to be written)
    /// to a future function CheckAndCorrectHeader  
@@ -474,7 +474,7 @@ void Document::Write(std::ofstream* fp, FileType filetype)
  *    UpdateGroupLength(true,ACR);
  */
  
-   ElementSet::Write(fp, filetype); // This one is recursive
+   ElementSet::WriteContent(fp, filetype); // This one is recursive
 }
 
 /**

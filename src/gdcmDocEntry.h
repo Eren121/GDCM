@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 14:48:19 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,7 +126,7 @@ public:
    int GetPrintLevel() { return PrintLevel; };
    
    virtual void Print (std::ostream & os = std::cout); 
-   virtual void Write(std::ofstream *fp, FileType filetype);
+   virtual void WriteContent(std::ofstream *fp, FileType filetype);
    
    uint32_t GetFullLength();
    

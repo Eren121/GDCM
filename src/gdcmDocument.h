@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 13:12:02 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.64 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -185,7 +185,7 @@ public:
    std::ifstream * OpenFile();
    bool CloseFile();
 
-   void Write( std::ofstream* fp, FileType type );
+   void WriteContent( std::ofstream* fp, FileType type );
 
    ValEntry* ReplaceOrCreateByNumber(std::string const & value,
                                      uint16_t group, uint16_t elem,

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 03:10:58 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ public:
    ~SQItem();
 
    void Print(std::ostream &os = std::cout); 
-   void Write(std::ofstream *fp, FileType filetype);
+   void WriteContent(std::ofstream *fp, FileType filetype);
 
    /// \brief   returns the DocEntry chained List for this SQ Item.
    ListDocEntry const & GetDocEntries() const { return DocEntries; };

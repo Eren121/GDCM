@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:18 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2004/11/25 15:46:10 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -105,9 +105,9 @@ void BinEntry::Print(std::ostream &os)
  * @param fp already open file pointer
  * @param filetype type of the file to be written
 */
-void BinEntry::Write(std::ofstream* fp, FileType filetype)
+void BinEntry::WriteContent(std::ofstream* fp, FileType filetype)
 {
-   DocEntry::Write(fp, filetype);
+   DocEntry::WriteContent(fp, filetype);
    void* binArea = GetBinArea();
    int lgr = GetLength();
    if (binArea)

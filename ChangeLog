@@ -1,4 +1,8 @@
 2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/ : fix compilation warnings for the Write method (2 different 
+     proto). So Rename 'Write(ifstream* fp' into 'WriteContent(ifstream* fp'
+
+2004-11-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocument.[h|cxx] : set the Transfert Syntax values to the header
      file, to be accessed by other files (like gdcmFile). Remove commented
      code. Move the change of the header to the gdcmFile, using the 

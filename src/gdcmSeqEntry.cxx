@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/24 16:39:19 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2004/11/25 15:46:11 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,7 +122,7 @@ void SeqEntry::Print( std::ostream &os )
 /*
  * \brief   canonical Writer
  */
-void SeqEntry::Write(std::ofstream* fp, FileType filetype)
+void SeqEntry::WriteContent(std::ofstream* fp, FileType filetype)
 {
    uint16_t seq_term_gr = 0xfffe;
    uint16_t seq_term_el = 0xe0dd;
@@ -131,12 +131,12 @@ void SeqEntry::Write(std::ofstream* fp, FileType filetype)
    //uint16_t item_term_gr = 0xfffe;
    //uint16_t item_term_el = 0xe00d;
    
-   DocEntry::Write(fp, filetype);
+   DocEntry::WriteContent(fp, filetype);
    for(ListSQItem::iterator cc  = Items.begin();
                             cc != Items.end();
                           ++cc)
    {        
-      (*cc)->Write(fp, filetype);
+      (*cc)->WriteContent(fp, filetype);
    }
    
    // we force the writting of a Sequence Delimitation item
