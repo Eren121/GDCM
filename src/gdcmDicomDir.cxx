@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/21 14:02:10 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2004/07/27 15:04:10 $
+  Version:   $Revision: 1.59 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -577,7 +577,7 @@ void gdcmDicomDir::SetElement(std::string &path,gdcmDicomDirType type,
    gdcmDictEntry *dictEntry;
    gdcmValEntry *entry;
    std::string val;
-   gdcmObject *o;
+   //gdcmObject *o;
    switch( type )
    {
       case GDCM_DICOMDIR_IMAGE:
