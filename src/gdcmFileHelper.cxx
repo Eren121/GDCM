@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/03/22 11:40:13 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/04/04 15:15:24 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -611,6 +611,7 @@ bool FileHelper::Write(std::string const &fileName)
          SetWriteFileTypeToImplicitVR();
          CheckMandatoryElements();
          break;
+      case Unknown:  // should never happen; ExplicitVR is the default value
       case ExplicitVR:
          SetWriteFileTypeToExplicitVR();
          CheckMandatoryElements();
@@ -626,7 +627,6 @@ bool FileHelper::Write(std::string const &fileName)
             FileInternal->InsertValEntry("", 0x0008, 0x0010);
          SetWriteFileTypeToACR();
          break;
-      default:
          SetWriteFileTypeToExplicitVR();
          CheckMandatoryElements();
    }
@@ -639,13 +639,7 @@ bool FileHelper::Write(std::string const &fileName)
    // just before writting ...
    /// \todo the best trick would be *change* the recognition code
    ///       but pb expected if user deals with, e.g. COMPLEX images
-   if( WriteType == ACR_LIBIDO )
-   //
-   // if recognition code tells us we dealt with a LibIDO image
-   // we reproduce on disk the switch between lineNumber and columnNumber
-   // just before writting ...
-   /// \todo the best trick would be *change* the recognition code
-   ///       but pb expected if user deals with, e.g. COMPLEX images
+   
    if( WriteType == ACR_LIBIDO )
    {
       SetWriteToLibido();
