@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/07 16:26:12 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/01/07 16:33:07 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,7 +97,7 @@ void DictEntry::SetVM(TagName const &vm)
    }
    else 
    {
-      dbg.Error(true, "DictEntry::SetVM",
+      Debug::Error(true, "DictEntry::SetVM",
                        "Overwriting VM might compromise a dictionary");
    }
 }
