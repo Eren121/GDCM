@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:47:33 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2004/06/23 02:13:14 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,9 @@ public:
 
    inline virtual bool SetEntryByNumber(std::string content,
                                         guint16 group, guint16 element)
-      { GetHeader()->SetEntryByNumber(content,group,element); }
+      { GetHeader()->SetEntryByNumber(content,group,element); 
+        return true;  //default behavior ?
+      }
 
      
 protected:

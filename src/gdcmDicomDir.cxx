@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:03:30 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2004/06/23 02:13:14 $
+  Version:   $Revision: 1.51 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -343,7 +343,7 @@ bool gdcmDicomDir::Write(std::string fileName)
  * @param   _fp already open file pointer
  */
 
-void gdcmDicomDir::WriteEntries(FILE *_fp)
+void gdcmDicomDir::WriteEntries(FILE *) //_fp
 {   
    /// \todo (?) tester les echecs en ecriture 
    ///          (apres chaque fwrite, dans le WriteEntry)
@@ -696,6 +696,7 @@ void gdcmDicomDir::CreateDicomDir()
 
    ListSQItem listItems = s->GetSQItems();
    gdcmDicomDirMeta *m = new gdcmDicomDirMeta(&tagHT);
+   (void)m; //??
    
    gdcmDocEntry * d;   
    std::string v;

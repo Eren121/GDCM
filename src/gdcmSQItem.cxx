@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:42:02 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/06/23 02:13:14 $
+  Version:   $Revision: 1.15 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -188,6 +188,7 @@ bool gdcmSQItem::SetEntryByNumber(std::string val,guint16 group,
          return true;    
       }
    }
+   return false;
 }
 //-----------------------------------------------------------------------------
 // Protected
