@@ -112,13 +112,16 @@ std::string gdcmObject::GetEntryByName(TagName name)  {
          gdcmHeaderEntry *Entry;
          TagKey key = gdcmDictEntry::TranslateToKey(group, element);
          if ( ! ptagHT->count(key)) {
-	   // we assume the element is a belongs to a Public Group (not a shadow one)
+	   // we assume the element belongs to a Public Group (not a shadow one)
 	   // we assume a Public Dictionnary *is* loaded
            gdcmDict *PubDict         = gdcmGlobal::GetDicts()->GetDefaultPubDict();
-           // we assume the invoqued (group,elem) exists
-	   // inside the Public Dictionary
-           gdcmDictEntry *DictEntry  = PubDict->GetDictEntryByNumber(group, element); 
-           // we assume the constuctor didn't fail
+           // if the invoqued (group,elem) doesn't exist inside the Dictionary
+	   // we create a VirtualDictEntry
+           gdcmDictEntry *DictEntry  = PubDict->GetDictEntryByNumber(group, element);
+	   if (DictEntry == NULL) {
+	      DictEntry=gdcmGlobal::GetDicts()->NewVirtualDictEntry(group,element,"UN","??","??");
+	   } 
+           // we assume the constructor didn't fail
            Entry = new gdcmHeaderEntry(DictEntry);
 	   // ----
 	   // TODO

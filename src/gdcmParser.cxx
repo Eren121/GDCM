@@ -818,7 +818,7 @@ bool gdcmParser::SetEntryVoidAreaByNumber(void * area,
 /**
  * \ingroup gdcmParser
  * \brief   Update the entries with the shadow dictionary. 
- *          Only non even entries are  analyzed       
+ *          Only non even entries are analyzed       
  */
 void gdcmParser::UpdateShaEntries(void) {
    gdcmDictEntry *entry;
