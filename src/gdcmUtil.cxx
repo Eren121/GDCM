@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/17 10:56:20 $
-  Version:   $Revision: 1.146 $
+  Date:      $Date: 2005/02/28 18:56:29 $
+  Version:   $Revision: 1.147 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -577,7 +577,7 @@ int GetMacAddrSys ( unsigned char *addr )
 
 
 // implementation for POSIX system
-#ifdef __sun
+#if defined(CMAKE_HAVE_NET_IF_ARP_H) && defined(__sun)
    //The POSIX version is broken anyway on Solaris, plus would require full
    //root power
    struct  arpreq          parpreq;
