@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.58 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.59 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -214,7 +214,7 @@ void vtkGdcmReader::ExecuteInformation()
       else if ( ImageType == "32U" )
       {
          vtkDebugMacro(<< "32 bits unsigned image");
-         vtkDebugMacro("WARNING: forced to signed int !");
+         vtkDebugMacro(<< "WARNING: forced to signed int !");
          this->SetDataScalarTypeToInt();
       }
       else if ( ImageType == "32S" )
