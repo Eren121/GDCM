@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestReadSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:25:32 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/25 15:45:49 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,8 @@ int VTKReadSeqTest(vtkTesting *t,vtkImageViewer *viewer,
    delete[] newFileDcm;
    reader->Update();
 
-   double *range = reader->GetOutput()->GetScalarRange();
+   double range[2];
+   reader->GetOutput()->GetScalarRange(range);
 
    // Show
    if( viewer )

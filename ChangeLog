@@ -1,4 +1,7 @@
 2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Test/VTKTest*.cxx : bug fix under linux
+
+2005-01-25 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/ : rename some methods on Entry (SetXxx, InsertXxx) to have a better
      use with python. Some methods ard moved from Document to ElementSet or
      DocEntrySet. The equivalent methods to ElementSet have been added to 

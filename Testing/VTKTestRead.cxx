@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:25:32 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/01/25 15:45:49 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,8 @@
 #include "vtkImageTranslateExtent.h"
 #include "vtkImageAppendComponents.h"
 #include "vtkImageShiftScale.h"
+
+#include "vtkPNGWriter.h"
 
 #include <iostream>
 
@@ -63,7 +65,8 @@ int VTKReadTest(vtkTesting *t,vtkImageViewer *viewer,
    reader->SetFileName( "TestWrite.dcm" );
    reader->Update();
 
-   double *range=reader->GetOutput()->GetScalarRange();
+   double range[2];
+   reader->GetOutput()->GetScalarRange(range);
    int dim[3];
    reader->GetOutput()->GetDimensions( dim );
 
@@ -124,7 +127,6 @@ int VTKReadTest(vtkTesting *t,vtkImageViewer *viewer,
 
    // Set an unsigned char image
    // Shift/Scale the image 
-   image->Update();
    vtkImageShiftScale *iss=vtkImageShiftScale::New();
    iss->SetInput(image);
    iss->SetOutputScalarTypeToUnsignedChar();

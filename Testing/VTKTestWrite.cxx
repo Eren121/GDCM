@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 11:25:32 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/01/25 15:45:49 $
+  Version:   $Revision: 1.7 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,8 @@ int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
    reader->SetFileName( "TestWrite.dcm" );
    reader->Update();
 
-   double *range=reader->GetOutput()->GetScalarRange();
+   double range[2];
+   reader->GetOutput()->GetScalarRange(range);
    int dim[3];
    reader->GetOutput()->GetDimensions( dim );
 
