@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:09 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/26 16:43:10 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,19 @@
 #include <iomanip>
 
 int TestDict(int , char* [])
-{  
+{ 
+
+   std::cout << "-------- Test Default Dicom Dictionary : ----------" << std::endl;
+   // Just to improve test coverage:
+   gdcm::Dict *tempDict = new gdcm::Dict("dummyFileNameThatDoesntExist");
+   // Default dict is supposed to be used.
+   tempDict->Print();
+   std::cout << "-------- end Test Default Dicom Dictionary : --------" << std::endl;
+
+   // Lets delete it.
+   delete tempDict;
+
+ 
    // Print the DictSet
    std::cout<<"#######################################################\n";
    gdcm::DictSet *dicts=gdcm::Global::GetDicts();
@@ -42,6 +54,11 @@ int TestDict(int , char* [])
       std::cout << "Dictset is empty" << std::endl;
       return 1;
    }
+
+   std::cout << "----------- Print DictSet contents: ----------" << std::endl;
+   dicts->Print();
+   std::cout << "----------- End Print DictSet contents: ------" << std::endl;
+
    while (d)
    {
       std::cout << "------------- a Dict is found : ----------" << std::endl;
@@ -84,6 +101,13 @@ int TestDict(int , char* [])
                 << " : " << entry->GetName() << " ( " << entry->GetKey() << ")\n";
       entry=pubDict->GetNextEntry();
    }
+
+   // Let's play with DicEntry stuff !
+
+   // First, we try to break an Entry.
+   entry=pubDict->GetFirstEntry();
+   entry->SetVR("PN");
+   // Should warn us !
 
    return(0);
 }

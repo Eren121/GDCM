@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:22 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/26 16:43:10 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,26 +43,26 @@ int CopyRescaleDicom(std::string const & filename,
 
    //////////////// Step 1:
    std::cout << "      1...";
-   gdcm::File *originalH = new gdcm::File( filename );
-   gdcm::File *copyH     = new gdcm::File( );
+   gdcm::File *originalF = new gdcm::File( filename );
+   gdcm::File *copyF     = new gdcm::File( );
 
-   //First of all copy the header field by field
+   //First of all copy the file, field by field
 
    //////////////// Step 2:
    std::cout << "2...";
    // Copy of the header content
-   gdcm::DocEntry* d = originalH->GetFirstEntry();
+   gdcm::DocEntry* d = originalF->GetFirstEntry();
    while(d)
    {
       if ( gdcm::BinEntry* b = dynamic_cast<gdcm::BinEntry*>(d) )
       {
-         copyH->InsertBinEntry( b->GetBinArea(),b->GetLength(),
+         copyF->InsertBinEntry( b->GetBinArea(),b->GetLength(),
                                 b->GetGroup(),b->GetElement(),
                                 b->GetVR() );
       }
       else if ( gdcm::ValEntry* v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
-          copyH->InsertValEntry( v->GetValue(),
+          copyF->InsertValEntry( v->GetValue(),
                                  v->GetGroup(),v->GetElement(),
                                  v->GetVR() ); 
       }
@@ -71,25 +71,25 @@ int CopyRescaleDicom(std::string const & filename,
        // We skip pb of SQ recursive exploration
       }
 
-      d=originalH->GetNextEntry();
+      d=originalF->GetNextEntry();
    }
 
-   gdcm::FileHelper *original = new gdcm::FileHelper( originalH );
-   gdcm::FileHelper *copy     = new gdcm::FileHelper( copyH );
+   gdcm::FileHelper *original = new gdcm::FileHelper( originalF );
+   gdcm::FileHelper *copy     = new gdcm::FileHelper( copyF );
 
    size_t dataSize = original->GetImageDataSize();
 
    size_t rescaleSize;
    uint8_t *rescaleImage;
 
-   const std::string & bitsStored    = originalH->GetEntryValue(0x0028,0x0101);
+   const std::string & bitsStored    = originalF->GetEntryValue(0x0028,0x0101);
    if( bitsStored == "16" )
    {
       std::cout << "Rescale...";
-      copyH->InsertValEntry( "8", 0x0028, 0x0100); // BitsAllocated
-      copyH->InsertValEntry( "8", 0x0028, 0x0101); // BitsStored
-      copyH->InsertValEntry( "7", 0x0028, 0x0102); // HighBit
-      copyH->InsertValEntry( "0", 0x0028, 0x0103); //Pixel Representation
+      copyF->InsertValEntry( "8", 0x0028, 0x0100); // BitsAllocated
+      copyF->InsertValEntry( "8", 0x0028, 0x0101); // BitsStored
+      copyF->InsertValEntry( "7", 0x0028, 0x0102); // HighBit
+      copyF->InsertValEntry( "0", 0x0028, 0x0103); //Pixel Representation
  
       // We assume the value were from 0 to uint16_t max
       rescaleSize = dataSize / 2;
@@ -121,15 +121,15 @@ int CopyRescaleDicom(std::string const & filename,
 
       delete original;
       delete copy;
-      delete originalH;
-      delete copyH;
+      delete originalF;
+      delete copyF;
       delete[] rescaleImage;
 
       return 1;
    }
 
    delete copy;
-   delete copyH;
+   delete copyF;
 
    //////////////// Step 4:
    std::cout << "4...";
@@ -142,7 +142,7 @@ int CopyRescaleDicom(std::string const & filename,
                 << "        " << output << " not readable" << std::endl;
 
       delete original;
-      delete originalH;
+      delete originalF;
       delete[] rescaleImage;
 
       return 1;
@@ -153,21 +153,21 @@ int CopyRescaleDicom(std::string const & filename,
    size_t    dataSizeWritten = copy->GetImageDataSize();
    uint8_t* imageDataWritten = copy->GetImageData();
 
-   if (originalH->GetXSize() != copy->GetFile()->GetXSize() ||
-       originalH->GetYSize() != copy->GetFile()->GetYSize() ||
-       originalH->GetZSize() != copy->GetFile()->GetZSize())
+   if (originalF->GetXSize() != copy->GetFile()->GetXSize() ||
+       originalF->GetYSize() != copy->GetFile()->GetYSize() ||
+       originalF->GetZSize() != copy->GetFile()->GetZSize())
    {
       std::cout << "Failed" << std::endl
          << "        X Size differs: "
-         << "X: " << originalH->GetXSize() << " # " 
+         << "X: " << originalF->GetXSize() << " # " 
                   << copy->GetFile()->GetXSize() << " | "
-         << "Y: " << originalH->GetYSize() << " # " 
+         << "Y: " << originalF->GetYSize() << " # " 
                   << copy->GetFile()->GetYSize() << " | "
-         << "Z: " << originalH->GetZSize() << " # " 
+         << "Z: " << originalF->GetZSize() << " # " 
                   << copy->GetFile()->GetZSize() << std::endl;
       delete original;
       delete copy;
-      delete originalH;
+      delete originalF;
       delete[] rescaleImage;
 
       return 1;
@@ -181,7 +181,7 @@ int CopyRescaleDicom(std::string const & filename,
 
       delete original;
       delete copy;
-      delete originalH;
+      delete originalF;
       delete[] rescaleImage;
 
       return 1;
@@ -195,7 +195,7 @@ int CopyRescaleDicom(std::string const & filename,
 
       delete original;
       delete copy;
-      delete originalH;
+      delete originalF;
       delete[] rescaleImage;
 
       return 1;
@@ -204,7 +204,7 @@ int CopyRescaleDicom(std::string const & filename,
 
    delete original;
    delete copy;
-   delete originalH;
+   delete originalF;
    delete[] rescaleImage;
 
    return 0;
@@ -245,7 +245,7 @@ int TestCopyRescaleDicom(int argc, char* argv[])
              << "GetImageDataSize() "
              << std::endl;
    std::cout << "   step 2: create a copy of the readed file and the new"
-             << " pixel datas are set to the copy"
+             << " pixel data are set to the copy"
              << std::endl;
    std::cout << "   step 3: write the copy of the image"
              << std::endl;

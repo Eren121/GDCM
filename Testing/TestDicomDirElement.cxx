@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:09 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/01/26 16:43:10 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,8 +21,14 @@
 
 int TestDicomDirElement(int , char *[])
 {
-   gdcm::DicomDirElement ddElt;
-   ddElt.Print( std::cout );
+   gdcm::DicomDirElement *ddElt = new gdcm::DicomDirElement();
+   if (ddElt == 0)
+   {
+   std::cout << "new DicomDirElement failed" << std::endl;
+   return 1;
+   }  
+   ddElt->Print( std::cout );
 
+   delete ddElt;
    return 0;
 }

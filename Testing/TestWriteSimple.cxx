@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:23 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/26 16:43:10 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,54 +72,54 @@ int WriteSimple(Image &img)
 
 // Step 1 : Create the header of the image
    std::cout << "        1...";
-   gdcm::File *header = new gdcm::File();
+   gdcm::File *fileToBuild = new gdcm::File();
    std::ostringstream str;
 
    // Set the image size
    str.str("");
    str << img.sizeX;
-   header->InsertValEntry(str.str(),0x0028,0x0011); // Columns
+   fileToBuild->InsertValEntry(str.str(),0x0028,0x0011); // Columns
 
    str.str("");
    str << img.sizeY;
-   header->InsertValEntry(str.str(),0x0028,0x0010); // Rows
+   fileToBuild->InsertValEntry(str.str(),0x0028,0x0010); // Rows
 
    if(img.sizeZ>1)
    {
       str.str("");
       str << img.sizeZ;
-      header->InsertValEntry(str.str(),0x0028,0x0008); // Number of Frames
+      fileToBuild->InsertValEntry(str.str(),0x0028,0x0008); // Number of Frames
    }
 
    // Set the pixel type
    str.str("");
    str << img.componentSize;
-   header->InsertValEntry(str.str(),0x0028,0x0100); // Bits Allocated
+   fileToBuild->InsertValEntry(str.str(),0x0028,0x0100); // Bits Allocated
 
    str.str("");
    str << img.componentUse;
-   header->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
+   fileToBuild->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << img.componentSize - 1;
-   header->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
+   fileToBuild->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << img.sign;
-   header->InsertValEntry(str.str(),0x0028,0x0103); // Pixel Representation
+   fileToBuild->InsertValEntry(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Set the samples per pixel
    str.str("");
    str << img.components;
-   header->InsertValEntry(str.str(),0x0028,0x0002); // Samples per Pixel
+   fileToBuild->InsertValEntry(str.str(),0x0028,0x0002); // Samples per Pixel
 
-   if( !header->IsReadable() )
+   if( !fileToBuild->IsReadable() )
    {
       std::cout << "Failed\n"
                 << "        Prepared image isn't readable\n";
 
-      delete header;
+      delete fileToBuild;
       return 1;
    }
 
@@ -156,7 +156,7 @@ int WriteSimple(Image &img)
 
 // Step 3 : Create the file of the image
    std::cout << "3...";
-   gdcm::FileHelper *file = new gdcm::FileHelper(header);
+   gdcm::FileHelper *file = new gdcm::FileHelper(fileToBuild);
    file->SetImageData(imageData,size);
 
 // Step 4 : Set the writting mode and write the image
@@ -182,7 +182,7 @@ int WriteSimple(Image &img)
                    << "        Write mode '"<<img.writeMode<<"' is undefined\n";
 
          delete file;
-         delete header;
+         delete fileToBuild;
          delete[] imageData;
          return 1;
    }
@@ -193,7 +193,7 @@ int WriteSimple(Image &img)
                 << "File in unwrittable\n";
 
       delete file;
-      delete header;
+      delete fileToBuild;
       delete[] imageData;
       return 1;
    }
@@ -206,7 +206,7 @@ int WriteSimple(Image &img)
      std::cerr << "Failed" << std::endl
                << "Test::TestReadWriteReadCompare: Could not reread image "
                << "written:" << fileName << std::endl;
-     delete header;
+     delete fileToBuild;
      delete file;
      delete reread;
      return 1;
@@ -218,19 +218,19 @@ int WriteSimple(Image &img)
    uint8_t* imageDataWritten = reread->GetImageData();
 
    // Test the image size
-   if (header->GetXSize() != reread->GetFile()->GetXSize() ||
-       header->GetYSize() != reread->GetFile()->GetYSize() ||
-       header->GetZSize() != reread->GetFile()->GetZSize())
+   if (fileToBuild->GetXSize() != reread->GetFile()->GetXSize() ||
+       fileToBuild->GetYSize() != reread->GetFile()->GetYSize() ||
+       fileToBuild->GetZSize() != reread->GetFile()->GetZSize())
    {
       std::cout << "Failed" << std::endl
          << "        X Size differs: "
-         << "X: " << header->GetXSize() << " # " 
+         << "X: " << fileToBuild->GetXSize() << " # " 
                   << reread->GetFile()->GetXSize() << " | "
-         << "Y: " << header->GetYSize() << " # " 
+         << "Y: " << fileToBuild->GetYSize() << " # " 
                   << reread->GetFile()->GetYSize() << " | "
-         << "Z: " << header->GetZSize() << " # " 
+         << "Z: " << fileToBuild->GetZSize() << " # " 
                   << reread->GetFile()->GetZSize() << std::endl;
-      delete header;
+      delete fileToBuild;
       delete file;
       delete reread;
       delete[] imageData;
@@ -244,7 +244,7 @@ int WriteSimple(Image &img)
       std::cout << "Failed" << std::endl
          << "        Pixel areas lengths differ: "
          << size << " # " << dataSizeWritten << std::endl;
-      delete header;
+      delete fileToBuild;
       delete file;
       delete reread;
       delete[] imageData;
@@ -258,7 +258,7 @@ int WriteSimple(Image &img)
       (void)res;
       std::cout << "Failed" << std::endl
                 << "        Pixel differ (as expanded in memory)." << std::endl;
-      delete header;
+      delete fileToBuild;
       delete file;
       delete reread;
       delete[] imageData;
@@ -268,7 +268,7 @@ int WriteSimple(Image &img)
 
    std::cout << "OK" << std::endl;
 
-   delete header;
+   delete fileToBuild;
    delete file;
    delete reread;
    delete[] imageData;

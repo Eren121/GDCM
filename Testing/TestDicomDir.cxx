@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:50 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/26 16:43:10 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 
 int TestDicomDir(int argc, char* argv[])
 {  
-   gdcm::DicomDir *e1;
+   gdcm::DicomDir *dicomdir;
    
    gdcm::DicomDirPatient *pa;
    gdcm::DicomDirStudy *st;
@@ -46,21 +46,21 @@ int TestDicomDir(int argc, char* argv[])
       file += "/DICOMDIR";
    }
 
-   e1 = new gdcm::DicomDir(file);
+   dicomdir = new gdcm::DicomDir(file);
    if (argc > 2) 
    {
       int level = atoi(argv[2]);   
-      e1->SetPrintLevel(level);
+      dicomdir->SetPrintLevel(level);
    }
 
    // Test if the DicomDir is readable
-   if( !e1->IsReadable() )
+   if( !dicomdir->IsReadable() )
    {
       std::cout<<"          DicomDir '"<<file
                <<"' is not readable"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete e1;
+      delete dicomdir;
       return 1;
    }
    else
@@ -70,13 +70,13 @@ int TestDicomDir(int argc, char* argv[])
    }
 
    // Test if the DicomDir contains any Patient
-   if( !e1->GetFirstPatient() )
+   if( !dicomdir->GetFirstPatient() )
    {
       std::cout<<"          DicomDir '"<<file
                <<" has no patient"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete e1;
+      delete dicomdir;
       return 1;
    }
 
@@ -85,7 +85,7 @@ int TestDicomDir(int argc, char* argv[])
              << " = PATIENT/STUDY/SERIE/IMAGE List ============================" 
              << std::endl<< std::endl;
   
-   pa = e1->GetFirstPatient(); 
+   pa = dicomdir->GetFirstPatient(); 
    while ( pa ) 
    {  // we process all the PATIENT of this DICOMDIR 
       std::cout << pa->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name
@@ -112,16 +112,16 @@ int TestDicomDir(int argc, char* argv[])
          }
          st = pa->GetNextStudy();
       }  
-      pa = e1->GetNextPatient();
+      pa = dicomdir->GetNextPatient();
    }  
 
    std::cout << std::endl << std::endl  
              << " = DICOMDIR full content ====================================" 
              << std::endl<< std::endl;
-   e1->Print();
+   dicomdir->Print();
    
    std::cout<<std::flush;
-   delete e1;
+   delete dicomdir;
 
    return 0;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:22 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/01/26 16:43:10 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,7 @@ int CopyDicom(std::string const & filename,
       gdcm::File *originalH = new gdcm::File( filename );
       gdcm::File *copyH     = new gdcm::File( );
 
-      //First of all copy the header field by field
+      //First of all copy the file, field by field
 
       //////////////// Step 2:
       std::cout << "2...";
@@ -107,8 +107,8 @@ int CopyDicom(std::string const & filename,
       size_t dataSize = original->GetImageDataSize();
       uint8_t* imageData = original->GetImageData();
 
-      // Useless to set the image datas, because it's already made when
-      // copying the corresponding BinEntry that contains the pixel datas
+      // Useless to set the image data, because it's already made when
+      // copying the corresponding BinEntry that contains the pixel data
       copy->SetImageData(imageData, dataSize);
 
       //////////////// Step 3:
@@ -220,7 +220,7 @@ int TestCopyDicom(int argc, char* argv[])
              << "GetImageDataSize() "
              << std::endl;
    std::cout << "   step 2: create a copy of the readed file and the new"
-             << " pixel datas are set to the copy"
+             << " pixel data are set to the copy"
              << std::endl;
    std::cout << "   step 3: write the copy of the image"
              << std::endl;
