@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.7 2003/05/30 18:48:36 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.8 2003/06/02 07:42:17 regrain Exp $
 //CLEANME#include <vtkByteSwap.h>
 #include <stdio.h>
 #include <vtkObjectFactory.h>
@@ -108,8 +108,8 @@ bool vtkGdcmReader::CheckFileCoherence()
      fp = fopen(FileName->c_str(),"rb");
      if (!fp)
        {
-       vtkErrorMacro("Unable to open file " << *FileName);
-       vtkErrorMacro("Removing this file from readed files " << *FileName);
+       vtkErrorMacro("Unable to open file " << *FileName->c_str());
+       vtkErrorMacro("Removing this file from readed files " << *FileName->c_str());
        FileNameList.remove(*FileName);
        continue;
        }
@@ -119,8 +119,8 @@ bool vtkGdcmReader::CheckFileCoherence()
      gdcmHeader GdcmHeader(FileName->c_str());
      if (!GdcmHeader.IsReadable())
        {
-       vtkErrorMacro("Gdcm cannot parse file " << *FileName);
-       vtkErrorMacro("Removing this file from readed files " << *FileName);
+       vtkErrorMacro("Gdcm cannot parse file " << *FileName->c_str());
+       vtkErrorMacro("Removing this file from readed files " << *FileName->c_str());
        FileNameList.remove(*FileName);
        continue;
        }
@@ -138,12 +138,12 @@ bool vtkGdcmReader::CheckFileCoherence()
            || ( type != ReferenceType ) ) 
          {
             vtkErrorMacro("This file is not coherent with previous ones"
-                          << *FileName);
-            vtkErrorMacro("Removing this file from readed files " << *FileName);
+                          << *FileName->c_str());
+            vtkErrorMacro("Removing this file from readed files " << *FileName->c_str());
             FileNameList.remove(*FileName);
             continue;
          } else {
-            vtkDebugMacro("File is coherent with previous ones" << *FileName);
+            vtkDebugMacro("File is coherent with previous ones" << *FileName->c_str());
          }
        } else {
          // This file shall be the reference:
@@ -152,7 +152,7 @@ bool vtkGdcmReader::CheckFileCoherence()
          ReferenceNY = NY;
          ReferenceNZ = NZ;
          ReferenceType = type;
-         vtkDebugMacro("This file taken as coherence reference:" << *FileName);
+         vtkDebugMacro("This file taken as coherence reference:" << *FileName->c_str());
        }
      } // End of loop on FileName
 
@@ -188,7 +188,7 @@ void vtkGdcmReader::ExecuteInformation()
        vtkErrorMacro("File set is not coherent. Exiting...");
        return;
     }
-  string ReferenceFile = this->FileNameList.front();
+  std::string ReferenceFile = this->FileNameList.front();
   gdcmHeader GdcmHeader(ReferenceFile.c_str());
 
   int NX = GdcmHeader.GetXSize();
@@ -212,7 +212,7 @@ void vtkGdcmReader::ExecuteInformation()
         (this->DataVOI[5] >= NZ))
       {
       vtkWarningMacro("The requested VOI is larger than the file's ("
-                      << ReferenceFile << ") extent ");
+                      << ReferenceFile.c_str() << ") extent ");
       this->DataVOI[0] = 0;
       this->DataVOI[1] = NX - 1;
       this->DataVOI[2] = 0;
@@ -272,7 +272,7 @@ void vtkGdcmReader::ExecuteInformation()
     }
   else
     {
-    vtkErrorMacro("Bad File Type " << ReferenceFile
+    vtkErrorMacro("Bad File Type " << ReferenceFile.c_str()
                                    << "Type " << type.c_str());
     return;
     }
@@ -281,7 +281,7 @@ void vtkGdcmReader::ExecuteInformation()
 }
 
 //----------------------------------------------------------------------------
-void vtkGdcmReader::LoadImageInMemory(string FileName, 
+void vtkGdcmReader::LoadImageInMemory(std::string FileName, 
                                       unsigned char * Dest,
                                       size_t size)
 {
@@ -341,7 +341,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
   // First check the coherence between the DataExtent and the
   // size of the pixel data as annouced by gdcm (looks a bit paranoid)
   // for the reference file (i.e. the first one in the list):
-  string ReferenceFile = this->FileNameList.front();
+  std::string ReferenceFile = this->FileNameList.front();
   gdcmFile GdcmFile(ReferenceFile.c_str());
   int NumColumns = this->DataExtent[1] - this->DataExtent[0] + 1;
   int NumLines   = this->DataExtent[3] - this->DataExtent[2] + 1;
@@ -388,6 +388,6 @@ void vtkGdcmReader::PrintSelf(ostream& os, vtkIndent indent)
                                         FileName != FileNameList.end();
                                       ++FileName)
     {
-    os << nextIndent << *FileName << endl ;
+    os << nextIndent << *FileName->c_str() << endl ;
     }
 }

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.3 2003/05/30 18:48:36 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.h,v 1.4 2003/06/02 07:42:17 regrain Exp $
 
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
@@ -27,7 +27,7 @@ private:
   // or volume. The order in the list shall be the order of the images.
   //BTX
   std::list<std::string> FileNameList;
-  void LoadImageInMemory(string FileName, unsigned char * Dest, size_t size);
+  void LoadImageInMemory(std::string FileName, unsigned char * Dest, size_t size);
   //ETX
 };
 #endif
