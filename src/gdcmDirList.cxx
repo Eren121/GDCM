@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:00:34 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,6 +32,7 @@
 
 namespace gdcm 
 {
+//-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
  * \brief Constructor  
@@ -53,7 +54,6 @@ DirList::~DirList()
 
 //-----------------------------------------------------------------------------
 // Public
-
 /**
  * \brief   Print method
  * @param os ostream to write to 
@@ -69,7 +69,6 @@ void DirList::Print(std::ostream &os)
 
 //-----------------------------------------------------------------------------
 // Private
-
 /**
  * \brief   Explore a directory with possibility of recursion
  *          return number of files read
@@ -161,6 +160,8 @@ bool DirList::IsDirectory(std::string const &dirName)
 #endif
 }
 
-} // end namespace gdcm
+//-----------------------------------------------------------------------------
+// Print
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 15:10:56 $
-  Version:   $Revision: 1.205 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.206 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -155,6 +155,8 @@ File::~File ()
       delete JPEGInfo;
 }
 
+//-----------------------------------------------------------------------------
+// Public
 /**
  * \brief Performs some consistency checking on various 'File related' 
  *       (as opposed to 'DicomDir related') entries 
@@ -278,13 +280,6 @@ bool File::Write(std::string fileName, FileType filetype)
 
    return true;
 }
-
-//-----------------------------------------------------------------------------
-// Print
-
-
-//-----------------------------------------------------------------------------
-// Public
 
 /**
  * \brief  This predicate, based on hopefully reasonable heuristics,
@@ -1680,5 +1675,7 @@ void File::ReadAndSkipEncapsulatedBasicOffsetTable()
 }
 
 //-----------------------------------------------------------------------------
+// Print
 
+//-----------------------------------------------------------------------------
 } // end namespace gdcm

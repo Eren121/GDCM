@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:33 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -49,27 +48,6 @@ DicomDirPatient::DicomDirPatient(bool empty):
 DicomDirPatient::~DicomDirPatient() 
 {
    ClearStudy();
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Prints the Object
- * @param os ostream to write to 
- * @param indent Indentation string to be prepended during printing
- */ 
-void DicomDirPatient::Print(std::ostream &os, std::string const & )
-{
-   os << "PATIENT" << std::endl;
-   DicomDirObject::Print(os);
-
-   for(ListDicomDirStudy::const_iterator cc = Studies.begin();
-                                         cc != Studies.end(); 
-                                       ++cc )
-   {
-      (*cc)->SetPrintLevel(PrintLevel);
-      (*cc)->Print(os);
-   }
 }
 
 //-----------------------------------------------------------------------------
@@ -163,6 +141,27 @@ DicomDirStudy *DicomDirPatient::GetLastStudy()
 
 //-----------------------------------------------------------------------------
 // Private
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Prints the Object
+ * @param os ostream to write to 
+ * @param indent Indentation string to be prepended during printing
+ */ 
+void DicomDirPatient::Print(std::ostream &os, std::string const & )
+{
+   os << "PATIENT" << std::endl;
+   DicomDirObject::Print(os);
+
+   for(ListDicomDirStudy::const_iterator cc = Studies.begin();
+                                         cc != Studies.end(); 
+                                       ++cc )
+   {
+      (*cc)->SetPrintLevel(PrintLevel);
+      (*cc)->Print(os);
+   }
+}
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

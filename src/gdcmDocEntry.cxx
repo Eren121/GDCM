@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/30 17:30:57 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,7 @@
 
 namespace gdcm 
 {
+//-----------------------------------------------------------------------------
 #define MAX_SIZE_PRINT_ELEMENT_VALUE 64
 
 //-----------------------------------------------------------------------------
@@ -46,70 +47,6 @@ DocEntry::DocEntry(DictEntry *in)
    // init some variables
    ReadLength = 0;
    Length = 0;
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
- * @param   os ostream we want to print in
- * @param indent Indentation string to be prepended during printing
- */
-void DocEntry::Print(std::ostream &os, std::string const & )
-{
-   size_t o;
-   std::string st;
-   TSKey v;
-   std::string d2, vr;
-   std::ostringstream s;
-   uint32_t lgth;
-
-   o  = GetOffset();
-   vr = GetVR();
-   if(vr==GDCM_UNKNOWN)
-      vr="  ";
-
-   s << DictEntry::TranslateToKey(GetGroup(),GetElement()); 
-
-   if (PrintLevel >= 2)
-   {
-      s << " lg : ";
-      lgth = GetReadLength(); // ReadLength, as opposed to Length
-      if (lgth == 0xffffffff)
-      {
-         st = Util::Format("x(ffff)");  // I said : "x(ffff)" !
-         s.setf(std::ios::left);
-         s << std::setw(10-st.size()) << " ";  
-         s << st << " ";
-         s.setf(std::ios::left);
-         s << std::setw(8) << "-1"; 
-      }
-      else
-      {
-         st = Util::Format("x(%x)",lgth);
-         s.setf(std::ios::left);
-         s << std::setw(10-st.size()) << " ";
-         s << st << " ";
-         s.setf(std::ios::left);
-         s << std::setw(8) << lgth; 
-      }
-      s << " Off.: ";
-      st = Util::Format("x(%x)",o); 
-      s << std::setw(10-st.size()) << " ";
-      s << st << " ";
-      s << std::setw(8) << o; 
-   }
-
-   s << "[" << vr  << "] ";
-
-   if (PrintLevel >= 1)
-   {
-      s.setf(std::ios::left);
-      s << std::setw(66-GetName().length()) << " ";
-   }
-    
-   s << "[" << GetName()<< "]";
-   os << s.str();      
 }
 
 //-----------------------------------------------------------------------------
@@ -266,6 +203,70 @@ bool DocEntry::IsSequenceDelimitor()
 
 //-----------------------------------------------------------------------------
 // Private
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
+ * @param   os ostream we want to print in
+ * @param indent Indentation string to be prepended during printing
+ */
+void DocEntry::Print(std::ostream &os, std::string const & )
+{
+   size_t o;
+   std::string st;
+   TSKey v;
+   std::string d2, vr;
+   std::ostringstream s;
+   uint32_t lgth;
+
+   o  = GetOffset();
+   vr = GetVR();
+   if(vr==GDCM_UNKNOWN)
+      vr="  ";
+
+   s << DictEntry::TranslateToKey(GetGroup(),GetElement()); 
+
+   if (PrintLevel >= 2)
+   {
+      s << " lg : ";
+      lgth = GetReadLength(); // ReadLength, as opposed to Length
+      if (lgth == 0xffffffff)
+      {
+         st = Util::Format("x(ffff)");  // I said : "x(ffff)" !
+         s.setf(std::ios::left);
+         s << std::setw(10-st.size()) << " ";  
+         s << st << " ";
+         s.setf(std::ios::left);
+         s << std::setw(8) << "-1"; 
+      }
+      else
+      {
+         st = Util::Format("x(%x)",lgth);
+         s.setf(std::ios::left);
+         s << std::setw(10-st.size()) << " ";
+         s << st << " ";
+         s.setf(std::ios::left);
+         s << std::setw(8) << lgth; 
+      }
+      s << " Off.: ";
+      st = Util::Format("x(%x)",o); 
+      s << std::setw(10-st.size()) << " ";
+      s << st << " ";
+      s << std::setw(8) << o; 
+   }
+
+   s << "[" << vr  << "] ";
+
+   if (PrintLevel >= 1)
+   {
+      s.setf(std::ios::left);
+      s << std::setw(66-GetName().length()) << " ";
+   }
+    
+   s << "[" << GetName()<< "]";
+   os << s.str();      
+}
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

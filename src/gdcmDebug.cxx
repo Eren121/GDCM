@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/30 17:30:57 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/02/01 10:29:54 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,16 +21,14 @@
 
 namespace gdcm 
 {
-
-/// warning message level to be displayed
+//-----------------------------------------------------------------------------
+// Warning message level to be displayed
 static bool DebugFlag   = false;
 static bool DebugToFile = false;
 static std::ofstream DebugFile;
 
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
 Debug::Debug()
 {
 
@@ -48,7 +46,6 @@ Debug::~Debug()
 
 //-----------------------------------------------------------------------------
 // Public
-
 /**
  * \brief   Accessor
  * @param   flag Set the debug flag

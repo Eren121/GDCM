@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/29 11:43:05 $
-  Version:   $Revision: 1.122 $
+  Date:      $Date: 2005/02/01 10:29:54 $
+  Version:   $Revision: 1.123 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,6 +16,10 @@
   
 =========================================================================*/
 
+//-----------------------------------------------------------------------------
+//  For full DICOMDIR description, see:
+//  PS 3.3-2003, pages 731-750
+//-----------------------------------------------------------------------------
 #include "gdcmDicomDir.h"
 #include "gdcmDicomDirStudy.h"
 #include "gdcmDicomDirSerie.h"
@@ -49,13 +53,8 @@
 
 namespace gdcm 
 {
-
-//-----------------------------------------------------------------------------
-//  For full DICOMDIR description, see:
-//  PS 3.3-2003, pages 731-750
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
 /**
  * \brief   Constructor : creates an empty DicomDir
  */
@@ -150,29 +149,6 @@ DicomDir::~DicomDir()
    if ( MetaElems )
    {
       delete MetaElems;
-   }
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief  Canonical Printer 
- * @param   os ostream we want to print in
- * @param indent Indentation string to be prepended during printing
- */
-void DicomDir::Print(std::ostream &os, std::string const & )
-{
-   if( MetaElems )
-   {
-      MetaElems->SetPrintLevel(PrintLevel);
-      MetaElems->Print(os);   
-   }   
-   for(ListDicomDirPatient::iterator cc  = Patients.begin();
-                                     cc != Patients.end();
-                                   ++cc)
-   {
-     (*cc)->SetPrintLevel(PrintLevel);
-     (*cc)->Print(os);
    }
 }
 
@@ -398,7 +374,6 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
 
 //-----------------------------------------------------------------------------
 // Protected
-
 /**
  * \brief create a Document-like chained list from a root Directory 
  * @param path entry point of the tree-like structure
@@ -658,7 +633,6 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    }
 }
 
-//-----------------------------------------------------------------------------
 /**
  * \brief   CallStartMethod
  */
@@ -672,7 +646,6 @@ void DicomDir::CallStartMethod()
    }
 }
 
-//-----------------------------------------------------------------------------
 /**
  * \brief   CallProgressMethod
  */
@@ -684,7 +657,6 @@ void DicomDir::CallProgressMethod()
    }
 }
 
-//-----------------------------------------------------------------------------
 /**
  * \brief   CallEndMethod
  */
@@ -989,5 +961,28 @@ bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
 }
 
 } // end namespace gdcm
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief  Canonical Printer 
+ * @param   os ostream we want to print in
+ * @param indent Indentation string to be prepended during printing
+ */
+void DicomDir::Print(std::ostream &os, std::string const & )
+{
+   if( MetaElems )
+   {
+      MetaElems->SetPrintLevel(PrintLevel);
+      MetaElems->Print(os);   
+   }   
+   for(ListDicomDirPatient::iterator cc  = Patients.begin();
+                                     cc != Patients.end();
+                                   ++cc)
+   {
+     (*cc)->SetPrintLevel(PrintLevel);
+     (*cc)->Print(os);
+   }
+}
 
 //-----------------------------------------------------------------------------

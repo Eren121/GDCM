@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 14:14:11 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,9 @@
 
 namespace gdcm 
 {
+//-----------------------------------------------------------------------------
 void FillDefaultDataDict(Dict *d);
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -84,33 +86,6 @@ Dict::~Dict()
 {
    ClearEntry();
 }
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Print all the dictionary entries contained in this dictionary.
- *          Entries will be sorted by tag i.e. the couple (group, element).
- * @param   os The output stream to be written to.
- * @param indent Indentation string to be prepended during printing
- */
-void Dict::Print(std::ostream &os, std::string const & )
-{
-   os << "Dict file name : " << Filename << std::endl;
-   std::ostringstream s;
-
-   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
-   {
-      s << "Entry : ";
-      s << "(" << std::hex << std::setw(4) << tag->second.GetGroup() << ',';
-      s << std::hex << std::setw(4) << tag->second.GetElement() << ") = "
-        << std::dec;
-      s << tag->second.GetVR() << ", ";
-      s << tag->second.GetVM() << ", ";
-      s << tag->second.GetName() << "."  << std::endl;
-   }
-   os << s.str();
-}
-
 
 //-----------------------------------------------------------------------------
 // Public
@@ -247,5 +222,30 @@ DictEntry *Dict::GetNextEntry()
 // Private
 
 //-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Print all the dictionary entries contained in this dictionary.
+ *          Entries will be sorted by tag i.e. the couple (group, element).
+ * @param   os The output stream to be written to.
+ * @param indent Indentation string to be prepended during printing
+ */
+void Dict::Print(std::ostream &os, std::string const & )
+{
+   os << "Dict file name : " << Filename << std::endl;
+   std::ostringstream s;
 
+   for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
+   {
+      s << "Entry : ";
+      s << "(" << std::hex << std::setw(4) << tag->second.GetGroup() << ',';
+      s << std::hex << std::setw(4) << tag->second.GetElement() << ") = "
+        << std::dec;
+      s << tag->second.GetVR() << ", ";
+      s << tag->second.GetVM() << ", ";
+      s << tag->second.GetName() << "."  << std::endl;
+   }
+   os << s.str();
+}
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm

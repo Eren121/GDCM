@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/24 16:10:52 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,10 +23,8 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
 /**
  * \brief  Constructor
  */ 
@@ -49,31 +47,7 @@ DicomDirMeta::~DicomDirMeta()
 }
 
 //-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Prints the Meta Elements
- * @param os ostream to write to 
- * @param indent Indentation string to be prepended during printing
- */ 
-void DicomDirMeta::Print(std::ostream &os, std::string const & )
-{
-   os << "META" << std::endl;
-   // warning : META doesn't behave exactly like a Objet 
-   for (ListDocEntry::iterator i = DocEntries.begin();
-        i != DocEntries.end();
-        ++i)
-   {
-      (*i)->SetPrintLevel(PrintLevel);
-      (*i)->Print();
-      os << std::endl;
-   }
-}
-
-
-//-----------------------------------------------------------------------------
 // Public
-
-
 /**
  * \brief   Writes the Meta Elements
  * @param fp ofstream to write to
@@ -95,6 +69,27 @@ void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype)
 
 //-----------------------------------------------------------------------------
 // Private
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Prints the Meta Elements
+ * @param os ostream to write to 
+ * @param indent Indentation string to be prepended during printing
+ */ 
+void DicomDirMeta::Print(std::ostream &os, std::string const & )
+{
+   os << "META" << std::endl;
+   // warning : META doesn't behave exactly like a Objet 
+   for (ListDocEntry::iterator i = DocEntries.begin();
+        i != DocEntries.end();
+        ++i)
+   {
+      (*i)->SetPrintLevel(PrintLevel);
+      (*i)->Print();
+      os << std::endl;
+   }
+}
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

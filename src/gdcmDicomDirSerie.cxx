@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 17:01:29 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -48,27 +47,6 @@ DicomDirSerie::DicomDirSerie(bool empty):
 DicomDirSerie::~DicomDirSerie() 
 {
    ClearImage();
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Prints the Object
- * @param os ostream to write to
- * @param indent Indentation string to be prepended during printing
- */ 
-void DicomDirSerie::Print(std::ostream &os, std::string const &)
-{
-   os << "SERIE" << std::endl;
-   DicomDirObject::Print(os);
-
-   for(ListDicomDirImage::iterator cc = Images.begin();
-                                   cc != Images.end();
-                                   ++cc)
-   {
-      (*cc)->SetPrintLevel(PrintLevel);
-      (*cc)->Print(os);
-   }
 }
 
 //-----------------------------------------------------------------------------
@@ -149,6 +127,25 @@ DicomDirImage *DicomDirSerie::GetNextImage()
 // Private
 
 //-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Prints the Object
+ * @param os ostream to write to
+ * @param indent Indentation string to be prepended during printing
+ */ 
+void DicomDirSerie::Print(std::ostream &os, std::string const &)
+{
+   os << "SERIE" << std::endl;
+   DicomDirObject::Print(os);
+
+   for(ListDicomDirImage::iterator cc = Images.begin();
+                                   cc != Images.end();
+                                   ++cc)
+   {
+      (*cc)->SetPrintLevel(PrintLevel);
+      (*cc)->Print(os);
+   }
+}
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
-
-

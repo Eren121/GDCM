@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 05:24:21 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,8 @@
 
 namespace gdcm 
 {
-
+//-------------------------------------------------------------------------
+// Constructor / Destructor
 JPEGFragmentsInfo::JPEGFragmentsInfo()
 {
    StateSuspension = 0;
@@ -43,32 +44,8 @@ JPEGFragmentsInfo::~JPEGFragmentsInfo()
    Fragments.clear();
 }
 
-/**
- * \brief        Print self.
- * @param os     Stream to print to.
- * @param indent Indentation string to be prepended during printing.
- */
-void JPEGFragmentsInfo::Print( std::ostream &os, std::string const &indent )
-{
-   os << std::endl;
-   os << indent
-      << "----------------- JPEG fragments --------------------------------"
-      << std::endl << std::endl;
-   os << indent
-      << "Total number of fragments : " << Fragments.size()
-      << std::endl;
-   int fragmentNumber = 0;
-   for(JPEGFragmentsList::iterator it  = Fragments.begin();
-                                   it != Fragments.end();
-                                 ++it)
-   {
-      os << indent
-         << "   fragment number :" << fragmentNumber++;
-      (*it)->Print( os, indent + "   ");
-   }
-   os << std::endl;
-}
-
+//-----------------------------------------------------------------------------
+// Public
 void JPEGFragmentsInfo::DecompressFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int , int )
 {
    // Pointer to the Raw image
@@ -114,5 +91,39 @@ unsigned int JPEGFragmentsInfo::GetFragmentCount()
    return Fragments.size();
 }
 
-} // end namespace gdcm
+//-----------------------------------------------------------------------------
+// Protected
 
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief        Print self.
+ * @param os     Stream to print to.
+ * @param indent Indentation string to be prepended during printing.
+ */
+void JPEGFragmentsInfo::Print( std::ostream &os, std::string const &indent )
+{
+   os << std::endl;
+   os << indent
+      << "----------------- JPEG fragments --------------------------------"
+      << std::endl << std::endl;
+   os << indent
+      << "Total number of fragments : " << Fragments.size()
+      << std::endl;
+   int fragmentNumber = 0;
+   for(JPEGFragmentsList::iterator it  = Fragments.begin();
+                                   it != Fragments.end();
+                                 ++it)
+   {
+      os << indent
+         << "   fragment number :" << fragmentNumber++;
+      (*it)->Print( os, indent + "   ");
+   }
+   os << std::endl;
+}
+
+//-----------------------------------------------------------------------------
+} // end namespace gdcm

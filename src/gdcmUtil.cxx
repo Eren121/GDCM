@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 17:29:59 $
-  Version:   $Revision: 1.127 $
+  Date:      $Date: 2005/02/01 10:29:56 $
+  Version:   $Revision: 1.128 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,18 +80,20 @@
 
 // For GetCurrentThreadID()
 #ifdef __linux__
-#include <sys/types.h>
-#include <linux/unistd.h>
+   #include <sys/types.h>
+   #include <linux/unistd.h>
 #endif
 #ifdef __sun
-#include <thread.h>
+   #include <thread.h>
 #endif
 
 namespace gdcm 
 {
+//-------------------------------------------------------------------------
 const std::string Util::GDCM_UID = "1.2.826.0.1.3680043.2.1143";
 std::string Util::RootUID        = GDCM_UID;
 
+//-------------------------------------------------------------------------
 /**
  * \brief Provide a better 'c++' approach for sprintf
  * For example c code is:
@@ -107,7 +109,6 @@ std::string Util::RootUID        = GDCM_UID;
  * gdcm style code is
  * Format("%04x|%04x", group , elem);
  */
-
 std::string Util::Format(const char *format, ...)
 {
    char buffer[2048];
@@ -382,29 +383,27 @@ bool Util::IsCurrentProcessorBigEndian()
 #endif
 }
 
-
-
 #ifdef _WIN32
-typedef BOOL(WINAPI * pSnmpExtensionInit) (
-        IN DWORD dwTimeZeroReference,
-        OUT HANDLE * hPollForTrapEvent,
-        OUT AsnObjectIdentifier * supportedView);
+   typedef BOOL(WINAPI * pSnmpExtensionInit) (
+           IN DWORD dwTimeZeroReference,
+           OUT HANDLE * hPollForTrapEvent,
+           OUT AsnObjectIdentifier * supportedView);
 
-typedef BOOL(WINAPI * pSnmpExtensionTrap) (
-        OUT AsnObjectIdentifier * enterprise,
-        OUT AsnInteger * genericTrap,
-        OUT AsnInteger * specificTrap,
-        OUT AsnTimeticks * timeStamp,
-        OUT RFC1157VarBindList * variableBindings);
+   typedef BOOL(WINAPI * pSnmpExtensionTrap) (
+           OUT AsnObjectIdentifier * enterprise,
+           OUT AsnInteger * genericTrap,
+           OUT AsnInteger * specificTrap,
+           OUT AsnTimeticks * timeStamp,
+           OUT RFC1157VarBindList * variableBindings);
 
-typedef BOOL(WINAPI * pSnmpExtensionQuery) (
-        IN BYTE requestType,
-        IN OUT RFC1157VarBindList * variableBindings,
-        OUT AsnInteger * errorStatus,
-        OUT AsnInteger * errorIndex);
+   typedef BOOL(WINAPI * pSnmpExtensionQuery) (
+           IN BYTE requestType,
+           IN OUT RFC1157VarBindList * variableBindings,
+           OUT AsnInteger * errorStatus,
+           OUT AsnInteger * errorIndex);
 
-typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
-        OUT AsnObjectIdentifier * supportedView);
+   typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
+           OUT AsnObjectIdentifier * supportedView);
 #endif //_WIN32
 
 
@@ -597,13 +596,13 @@ int GetMacAddrSys ( unsigned char *addr )
 // We should investiage the use of SIZEOF_ADDR_IFREQ
 //
 #ifdef HAVE_SA_LEN
-#ifndef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#endif
-#define ifreq_size(i) max(sizeof(struct ifreq),\
-     sizeof((i).ifr_name)+(i).ifr_addr.sa_len)
+   #ifndef max
+      #define max(a,b) ((a) > (b) ? (a) : (b))
+   #endif
+   #define ifreq_size(i) max(sizeof(struct ifreq),\
+        sizeof((i).ifr_name)+(i).ifr_addr.sa_len)
 #else
-#define ifreq_size(i) sizeof(struct ifreq)
+   #define ifreq_size(i) sizeof(struct ifreq)
 #endif // HAVE_SA_LEN
 
    if( (sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP)) < 0 )
@@ -734,7 +733,7 @@ std::string Util::GetIPAddress()
    // SUSv2 guarantees that `Host names are limited to 255 bytes'.
    // POSIX 1003.1-2001 guarantees that `Host names (not including the
    // terminating NUL) are limited to HOST_NAME_MAX bytes'.
-#  define HOST_NAME_MAX 255
+#define HOST_NAME_MAX 255
    // In this case we should maybe check the string was not truncated.
    // But I don't known how to check that...
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
@@ -812,7 +811,6 @@ unsigned int Util::GetCurrentProcessID()
   // get process identification, POSIX
   return (unsigned int)getpid();
 #endif
-
 }
 
 /**
@@ -870,6 +868,7 @@ const std::string &Util::GetRootUID()
    return RootUID;
 }
 
+//-------------------------------------------------------------------------
 /**
  * \brief
  * @param os ostream to write to
@@ -934,5 +933,6 @@ std::ostream &binary_write(std::ostream &os, std::string const &val)
    return os.write(val.c_str(), val.size());
 }
 
+//-------------------------------------------------------------------------
 } // end namespace gdcm
 

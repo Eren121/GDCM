@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:34 $
-  Version:   $Revision: 1.217 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.218 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,7 +42,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Refer to Document::CheckSwap()
 //const unsigned int Document::HEADER_LENGTH_TO_READ = 256;
@@ -53,7 +52,7 @@ const unsigned int Document::MAX_SIZE_PRINT_ELEMENT_VALUE = 0x7fffffff;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
+// Constructors and destructors are protected to avoid user to invoke directly
 /**
  * \brief   constructor  
  * @param   filename 'Document' (File or DicomDir) to be opened for parsing
@@ -172,31 +171,6 @@ Document::~Document ()
 {
    RefPubDict = NULL;
    RefShaDict = NULL;
-}
-
-//-----------------------------------------------------------------------------
-// Print
-
-/**
-  * \brief   Prints The Dict Entries of THE public Dicom Dictionary
-  * @param os ostream to print to
-  * @return
-  */  
-void Document::PrintPubDict(std::ostream &os)
-{
-   RefPubDict->SetPrintLevel(PrintLevel);
-   RefPubDict->Print(os);
-}
-
-/**
-  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionary
-  * @param os ostream to print to
-  * @return
-  */
-void Document::PrintShaDict(std::ostream &os)
-{
-   RefShaDict->SetPrintLevel(PrintLevel);
-   RefShaDict->Print(os);
 }
 
 //-----------------------------------------------------------------------------
@@ -537,7 +511,6 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
 
 // -----------------------------------------
 // Content entries 
-
 /**
  * \brief Loads (from disk) the element content 
  *        when a string is not suitable
@@ -616,9 +589,6 @@ void Document::LoadDocEntrySafe(DocEntry *entry)
 
 //-----------------------------------------------------------------------------
 // Protected
-
-// Constructors and destructors are protected to avoid user to invoke directly
-
 /**
  * \brief Reads a supposed to be 16 Bits integer
  *       (swaps it depending on processor endianity) 
@@ -721,7 +691,6 @@ int Document::ComputeGroup0002Length( FileType filetype )
 
 //-----------------------------------------------------------------------------
 // Private
-
 /**
  * \brief   Parses a DocEntrySet (Zero-level DocEntries or SQ Item DocEntries)
  * @return  length of the parsed set. 
@@ -2081,27 +2050,6 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
    }
 }
 
-// GenerateFreeTagKeyInGroup? 
-// --> What was it designed for ?!? 
-/**
- * \brief   Generate a free TagKey i.e. a TagKey that is not present
- *          in the TagHt dictionary.
- * @param   group The generated tag must belong to this group.  
- * @return  The element of tag with given group which is fee.
- */
-//uint32_t Document::GenerateFreeTagKeyInGroup(uint16_t group) 
-//{
-//   for (uint32_t elem = 0; elem < UINT32_MAX; elem++) 
-//   {
-//      TagKey key = DictEntry::TranslateToKey(group, elem);
-//      if (TagHT.count(key) == 0)
-//      {
-//         return elem;
-//      }
-//   }
-//   return UINT32_MAX;
-//}
-
 /**
  * \brief   Compares two documents, according to \ref DicomDir rules
  * \warning Does NOT work with ACR-NEMA files
@@ -2167,97 +2115,29 @@ bool Document::operator<(Document &document)
    return false;
 }
 
-/*
- * \brief Walk recursively the given \ref DocEntrySet, and feed
- *        the given hash table (\ref TagDocEntryHT) with all the
- *        \ref DocEntry (Dicom entries) encountered.
- *        This method does the job for \ref BuildFlatHashTable.
- * @param builtHT Where to collect all the \ref DocEntry encountered
- *        when recursively walking the given set.
- * @param set The structure to be traversed (recursively).
- */
-/*void Document::BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
-                                          DocEntrySet *set )
-{ 
-   if (ElementSet *elementSet = dynamic_cast< ElementSet* > ( set ) )
-   {
-      TagDocEntryHT const &currentHT = elementSet->GetTagHT();
-      for( TagDocEntryHT::const_iterator i  = currentHT.begin();
-                                         i != currentHT.end();
-                                       ++i)
-      {
-         DocEntry *entry = i->second;
-         if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
-         {
-            const ListSQItem& items = seqEntry->GetSQItems();
-            for( ListSQItem::const_iterator item  = items.begin();
-                                            item != items.end();
-                                          ++item)
-            {
-               BuildFlatHashTableRecurse( builtHT, *item );
-            }
-            continue;
-         }
-         builtHT[entry->GetKey()] = entry;
-      }
-      return;
-    }
-
-   if (SQItem *SQItemSet = dynamic_cast< SQItem* > ( set ) )
-   {
-      const ListDocEntry& currentList = SQItemSet->GetDocEntries();
-      for (ListDocEntry::const_iterator i  = currentList.begin();
-                                        i != currentList.end();
-                                      ++i)
-      {
-         DocEntry *entry = *i;
-         if ( SeqEntry *seqEntry = dynamic_cast<SeqEntry*>(entry) )
-         {
-            const ListSQItem& items = seqEntry->GetSQItems();
-            for( ListSQItem::const_iterator item  = items.begin();
-                                            item != items.end();
-                                          ++item)
-            {
-               BuildFlatHashTableRecurse( builtHT, *item );
-            }
-            continue;
-         }
-         builtHT[entry->GetKey()] = entry;
-      }
-
-   }
-}*/
-
-/*
- * \brief Build a \ref TagDocEntryHT (i.e. a std::map<>) from the current
- *        Document.
- *
- *        The structure used by a Document (through \ref ElementSet),
- *        in order to hold the parsed entries of a Dicom header, is a recursive
- *        one. This is due to the fact that the sequences (when present)
- *        can be nested. Additionaly, the sequence items (represented in
- *        gdcm as \ref SQItem) add an extra complexity to the data
- *        structure. Hence, a gdcm user whishing to visit all the entries of
- *        a Dicom header will need to dig in the gdcm internals (which
- *        implies exposing all the internal data structures to the API).
- *        In order to avoid this burden to the user, \ref BuildFlatHashTable
- *        recursively builds a temporary hash table, which holds all the
- *        Dicom entries in a flat structure (a \ref TagDocEntryHT i.e. a
- *        std::map<>).
- * \warning Of course there is NO integrity constrain between the 
- *        returned \ref TagDocEntryHT and the \ref ElementSet used
- *        to build it. Hence if the underlying \ref ElementSet is
- *        altered, then it is the caller responsability to invoke 
- *        \ref BuildFlatHashTable again...
- * @return The flat std::map<> we juste build.
- */
-/*TagDocEntryHT *Document::BuildFlatHashTable()
+//-----------------------------------------------------------------------------
+// Print
+/**
+  * \brief   Prints The Dict Entries of THE public Dicom Dictionary
+  * @param os ostream to print to
+  * @return
+  */  
+void Document::PrintPubDict(std::ostream &os)
 {
-   TagDocEntryHT *FlatHT = new TagDocEntryHT;
-   BuildFlatHashTableRecurse( *FlatHT, this );
-   return FlatHT;
-}*/
+   RefPubDict->SetPrintLevel(PrintLevel);
+   RefPubDict->Print(os);
+}
 
-} // end namespace gdcm
+/**
+  * \brief   Prints The Dict Entries of THE shadow Dicom Dictionary
+  * @param os ostream to print to
+  * @return
+  */
+void Document::PrintShaDict(std::ostream &os)
+{
+   RefShaDict->SetPrintLevel(PrintLevel);
+   RefShaDict->Print(os);
+}
 
 //-----------------------------------------------------------------------------
+} // end namespace gdcm

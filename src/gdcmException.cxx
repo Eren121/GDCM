@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 14:28:32 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,10 +21,8 @@
 #include <typeinfo>
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Exception
-
 /**
  * \brief constructor
  * @param f f
@@ -32,22 +30,24 @@ namespace gdcm
  */
 Exception::Exception(const std::string &f, const std::string &msg) throw()
 #ifdef __GNUC__
-  try
+   try
 #endif
-  : From(f), Error(msg) {
-  }
+   : From(f), Error(msg) 
+   {
+   }
 #ifdef __GNUC__
-catch(...) {
-  fatal("Exception::Exception(const std::string&, const std::string&, const std::string&)");
-}
+   catch(...) 
+   {
+      fatal("Exception::Exception(const std::string&, const std::string&, const std::string&)");
+   }
 #endif
-
 
 /**
  * \brief fatal
  * @param from from
  */
-void Exception::fatal(const char *from) throw() {
+void Exception::fatal(const char *from) throw() 
+{
    try
    {
       std::cerr << "Fatal: exception received in " << from 
@@ -102,18 +102,20 @@ std::string Exception::getName() const throw()
       std::string name = typeid(*this).name();
       return name;
 #endif
-  }
-  catch(...) {
-    fatal("Exception::getName(std::string &)");
-    return "";
-  }
+   }
+   catch(...) 
+   {
+      fatal("Exception::getName(std::string &)");
+      return "";
+   }
 }
 
 /**
  * \brief Exception
  */
- Exception::operator const char *() const throw() {
-  return getName().c_str();
+Exception::operator const char *() const throw() 
+{
+   return getName().c_str();
 }
 
 //-----------------------------------------------------------------------------
@@ -122,14 +124,18 @@ std::string Exception::getName() const throw()
  * @param os ostream to write to
  * @param e exception to raise
  */
- std::ostream& operator<<(std::ostream &os, const Exception &e) {
-  try {  
-    os << "Exception " << e.getName() << " thrown: " << e.getError() << std::endl;
-  }
-  catch(...) {
-    Exception::fatal("operator<<(std::ostream &, const Exception&)");
-  }
-  return os;
+std::ostream& operator<<(std::ostream &os, const Exception &e) 
+{
+   try 
+   {
+      os << "Exception " << e.getName() << " thrown: " << e.getError() << std::endl;
+   }
+   catch(...) 
+   {
+      Exception::fatal("operator<<(std::ostream &, const Exception&)");
+   }
+   return os;
 }
+
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

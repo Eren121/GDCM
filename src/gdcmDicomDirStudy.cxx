@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:33 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,28 +47,6 @@ DicomDirStudy::DicomDirStudy(bool empty):
 DicomDirStudy::~DicomDirStudy() 
 {
    ClearSerie();
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Prints the Object
- * @param os ostream to write to 
- * @param indent Indentation string to be prepended during printing
- * @return
- */ 
-void DicomDirStudy::Print(std::ostream &os, std::string const & )
-{
-   os << "STUDY" << std::endl;
-   DicomDirObject::Print(os);
-
-   for(ListDicomDirSerie::iterator cc = Series.begin();
-                                   cc != Series.end();
-                                   ++cc)
-   {
-      (*cc)->SetPrintLevel(PrintLevel);
-      (*cc)->Print(os);
-   }
 }
 
 //-----------------------------------------------------------------------------
@@ -165,5 +143,26 @@ DicomDirSerie *DicomDirStudy::GetLastSerie()
 // Private
 
 //-----------------------------------------------------------------------------
-} // end namespace gdcm
+// Print
+/**
+ * \brief   Prints the Object
+ * @param os ostream to write to 
+ * @param indent Indentation string to be prepended during printing
+ * @return
+ */ 
+void DicomDirStudy::Print(std::ostream &os, std::string const & )
+{
+   os << "STUDY" << std::endl;
+   DicomDirObject::Print(os);
 
+   for(ListDicomDirSerie::iterator cc = Series.begin();
+                                   cc != Series.end();
+                                   ++cc)
+   {
+      (*cc)->SetPrintLevel(PrintLevel);
+      (*cc)->Print(os);
+   }
+}
+
+//-----------------------------------------------------------------------------
+} // end namespace gdcm

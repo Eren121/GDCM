@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:34 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/02/01 10:29:56 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,36 +59,6 @@ SerieHeader::~SerieHeader()
       }
       l->clear();
       l = GetNextCoherentFileList();
-   }
-}
-
-//-----------------------------------------------------------------------------
-// Print
-
-/**
- * \brief   Canonical printer.
- */
-void SerieHeader::Print()
-{
-   // For all the Coherent File lists of the gdcm::Serie
-   CoherentFileListmap::iterator itl = CoherentGdcmFileListHT.begin();
-   if ( itl == CoherentGdcmFileListHT.end() )
-   {
-      gdcmVerboseMacro( "No Coherent File list found" );
-      return;
-   }
-   while (itl != CoherentGdcmFileListHT.end())
-   { 
-      std::cout << "Serie UID :[" << itl->first << "]" << std::endl;
-
-      // For all the files of a Coherent File list
-      for (GdcmFileList::iterator it =  (itl->second)->begin();
-                                  it != (itl->second)->end(); 
-                                ++it)
-      {
-         std::cout << " --- " << (*it)->GetFileName() << std::endl;
-      }
-      ++itl;
    }
 }
 
@@ -414,5 +384,34 @@ bool SerieHeader::FileNameOrdering(GdcmFileList *)
    return true;
 }
 
-} // end namespace gdcm
 //-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Canonical printer.
+ */
+void SerieHeader::Print()
+{
+   // For all the Coherent File lists of the gdcm::Serie
+   CoherentFileListmap::iterator itl = CoherentGdcmFileListHT.begin();
+   if ( itl == CoherentGdcmFileListHT.end() )
+   {
+      gdcmVerboseMacro( "No Coherent File list found" );
+      return;
+   }
+   while (itl != CoherentGdcmFileListHT.end())
+   { 
+      std::cout << "Serie UID :[" << itl->first << "]" << std::endl;
+
+      // For all the files of a Coherent File list
+      for (GdcmFileList::iterator it =  (itl->second)->begin();
+                                  it != (itl->second)->end(); 
+                                ++it)
+      {
+         std::cout << " --- " << (*it)->GetFileName() << std::endl;
+      }
+      ++itl;
+   }
+}
+
+//-----------------------------------------------------------------------------
+} // end namespace gdcm

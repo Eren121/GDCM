@@ -1,4 +1,7 @@
 2005-01-31 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+  * src/*.cxx : first parss to normalize file organisation
+
+2005-01-31 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
   * src/gdcmDirList.[h|cxx] : add method to find a directory
   * Test/TestAllReadCompareDicom.cxx : bug fix under Windows
 

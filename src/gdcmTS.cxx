@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/02/01 10:29:56 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,7 +73,9 @@ static const char *SpecialStrings[] =  {
   "Unknown Transfer Syntax"
 };
 
+//-----------------------------------------------------------------------------
 void FillDefaultTSDict(TSHT &ts);
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 TS::TS() 
@@ -105,27 +107,9 @@ TS::TS()
    }
 }
 
-//-----------------------------------------------------------------------------
 TS::~TS() 
 {
    TsMap.clear();
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Print all 
- * @param   os The output stream to be written to.
- */
-void TS::Print(std::ostream &os) 
-{
-   std::ostringstream s;
-
-   for (TSHT::const_iterator it = TsMap.begin(); it != TsMap.end(); ++it)
-   {
-      s << "TS : " << it->first << " = " << it->second << std::endl;
-   }
-   os << s.str();
 }
 
 //-----------------------------------------------------------------------------
@@ -314,5 +298,21 @@ const char* TS::GetSpecialTransferSyntax(SpecialType t)
 // Private
 
 //-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Print all 
+ * @param   os The output stream to be written to.
+ */
+void TS::Print(std::ostream &os) 
+{
+   std::ostringstream s;
 
+   for (TSHT::const_iterator it = TsMap.begin(); it != TsMap.end(); ++it)
+   {
+      s << "TS : " << it->first << " = " << it->second << std::endl;
+   }
+   os << s.str();
+}
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 06:17:22 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/02/01 10:29:56 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,8 @@
 
 namespace gdcm 
 {
-
+//-------------------------------------------------------------------------
+// Constructor / Destructor
 RLEFramesInfo::~RLEFramesInfo()
 {
    for(RLEFrameList::iterator it = Frames.begin(); it != Frames.end(); ++it)
@@ -31,30 +32,8 @@ RLEFramesInfo::~RLEFramesInfo()
    Frames.clear();
 }
 
-/**
- * \brief        Print self.
- * @param indent Indentation string to be prepended during printing.
- * @param os     Stream to print to.
- */
-void RLEFramesInfo::Print( std::ostream &os, std::string indent )
-{
-   os << std::endl;
-   os << indent
-      << "----------------- RLE frames --------------------------------"
-      << std::endl;
-   os << indent
-      << "Total number of Frames : " << Frames.size()
-      << std::endl;
-   int frameNumber = 0;
-   for(RLEFrameList::iterator it = Frames.begin(); it != Frames.end(); ++it)
-   {
-      os << indent
-         << "   frame number :" << frameNumber++
-         << std::endl;
-      (*it)->Print( os, indent + "   " );
-   }
-}
-
+//-----------------------------------------------------------------------------
+// Public
 void RLEFramesInfo::AddFrame(RLEFrame *frame)
 {
    Frames.push_back(frame);
@@ -146,5 +125,37 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits( uint8_t* raw, int xSize,
    return true;
 }
 
+//-----------------------------------------------------------------------------
+// Protected
 
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief        Print self.
+ * @param indent Indentation string to be prepended during printing.
+ * @param os     Stream to print to.
+ */
+void RLEFramesInfo::Print( std::ostream &os, std::string indent )
+{
+   os << std::endl;
+   os << indent
+      << "----------------- RLE frames --------------------------------"
+      << std::endl;
+   os << indent
+      << "Total number of Frames : " << Frames.size()
+      << std::endl;
+   int frameNumber = 0;
+   for(RLEFrameList::iterator it = Frames.begin(); it != Frames.end(); ++it)
+   {
+      os << indent
+         << "   frame number :" << frameNumber++
+         << std::endl;
+      (*it)->Print( os, indent + "   " );
+   }
+}
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm

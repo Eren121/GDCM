@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/30 17:30:57 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/02/01 10:29:54 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,10 +27,8 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
 /**
  * \brief   Constructor from a given BinEntry
  */
@@ -62,40 +60,6 @@ BinEntry::~BinEntry()
       delete[] BinArea;
       BinArea = 0; // let's be carefull !
    }
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Prints a BinEntry (Dicom entry)
- * @param   os ostream we want to print in
- * @param indent Indentation string to be prepended during printing
- */
-void BinEntry::Print(std::ostream &os, std::string const & )
-{
-   os << "B ";
-   DocEntry::Print(os);
-   std::ostringstream s;
-   void* binArea = GetBinArea();
-   if (binArea)
-   {
-      //s << " [" << GDCM_BINLOADED 
-      s << " [" << GetValue()
-        << "; length = " << GetLength() << "]";
-   }
-   else
-   {
-      if ( GetLength() == 0 )
-      {
-         s << " []";
-      }
-      else 
-      {
-         //s << " [gdcm::Binary data NOT loaded]";
-         s << " [" <<GetValue() << "]";
-      }         
-   }
-   os << s.str();
 }
 
 //-----------------------------------------------------------------------------
@@ -189,5 +153,39 @@ void BinEntry::SetBinArea( uint8_t *area, bool self )
 //-----------------------------------------------------------------------------
 // Private
    
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Prints a BinEntry (Dicom entry)
+ * @param   os ostream we want to print in
+ * @param indent Indentation string to be prepended during printing
+ */
+void BinEntry::Print(std::ostream &os, std::string const & )
+{
+   os << "B ";
+   DocEntry::Print(os);
+   std::ostringstream s;
+   void* binArea = GetBinArea();
+   if (binArea)
+   {
+      //s << " [" << GDCM_BINLOADED 
+      s << " [" << GetValue()
+        << "; length = " << GetLength() << "]";
+   }
+   else
+   {
+      if ( GetLength() == 0 )
+      {
+         s << " []";
+      }
+      else 
+      {
+         //s << " [gdcm::Binary data NOT loaded]";
+         s << " [" <<GetValue() << "]";
+      }         
+   }
+   os << s.str();
+}
+
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

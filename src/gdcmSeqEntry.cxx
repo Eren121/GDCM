@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:34 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/02/01 10:29:56 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -76,49 +75,6 @@ SeqEntry::~SeqEntry()
    {
       delete SeqTerm;
    }
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   canonical Printer
- */
-void SeqEntry::Print( std::ostream &os, std::string const & )
-{
-   // First, Print the Dicom Element itself.
-   os << "S ";
-   DocEntry::Print(os);
-   os << std::endl;
-
-   if (GetReadLength() == 0)
-      return;
-
-   // Then, Print each SQ Item   
-   for(ListSQItem::iterator cc = Items.begin(); cc != Items.end(); ++cc)
-   {
-      (*cc)->SetPrintLevel(PrintLevel);
-      (*cc)->Print(os);   
-   }
-
-   // at end, print the sequence terminator item, if any
-   if (DelimitorMode)
-   {
-      for ( int i = 0; i < SQDepthLevel; i++ )
-      {
-         os << "   | " ;
-      }
-      if (SeqTerm != NULL)
-      {
-         SeqTerm->SetPrintLevel(PrintLevel);
-         SeqTerm->Print(os);
-         os << std::endl;
-      } 
-      else 
-      {
-         // fuse
-         gdcmVerboseMacro("  -------- should have a sequence terminator item");
-      }
-   }                    
 }
 
 //-----------------------------------------------------------------------------
@@ -206,16 +162,20 @@ SQItem *SeqEntry::GetSQItem(int nb)
    return *(Items.end());
 }
 
-/// \brief returns the number of SQItems within the current Sequence
+/**
+ * \brief returns the number of SQItems within the current Sequence
+ */
 unsigned int SeqEntry::GetNumberOfSQItems()
 {
    return Items.size();
 }
 
-/// \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
-/// @param sqItem SQItem to be pushed back in the SeqEntry
-/// @param itemNumber ordinal number of the SQItem
-/// \note NOT end-user intendend method !
+/**
+ * \brief   adds the passed ITEM to the ITEM chained List for this SeQuence.
+ * @param sqItem SQItem to be pushed back in the SeqEntry
+ * @param itemNumber ordinal number of the SQItem
+ *  \note NOT end-user intendend method !
+ */
 void SeqEntry::AddSQItem(SQItem *sqItem, int itemNumber)
 {
 // FIXME : SQItemNumber is supposed to be the ordinal number of the SQItem
@@ -235,5 +195,47 @@ void SeqEntry::AddSQItem(SQItem *sqItem, int itemNumber)
 // Private
 
 //-----------------------------------------------------------------------------
-} // end namespace gdcm
+// Print
+/**
+ * \brief   canonical Printer
+ */
+void SeqEntry::Print( std::ostream &os, std::string const & )
+{
+   // First, Print the Dicom Element itself.
+   os << "S ";
+   DocEntry::Print(os);
+   os << std::endl;
 
+   if (GetReadLength() == 0)
+      return;
+
+   // Then, Print each SQ Item   
+   for(ListSQItem::iterator cc = Items.begin(); cc != Items.end(); ++cc)
+   {
+      (*cc)->SetPrintLevel(PrintLevel);
+      (*cc)->Print(os);   
+   }
+
+   // at end, print the sequence terminator item, if any
+   if (DelimitorMode)
+   {
+      for ( int i = 0; i < SQDepthLevel; i++ )
+      {
+         os << "   | " ;
+      }
+      if (SeqTerm != NULL)
+      {
+         SeqTerm->SetPrintLevel(PrintLevel);
+         SeqTerm->Print(os);
+         os << std::endl;
+      } 
+      else 
+      {
+         // fuse
+         gdcmVerboseMacro("  -------- should have a sequence terminator item");
+      }
+   }
+}
+
+//-----------------------------------------------------------------------------
+} // end namespace gdcm

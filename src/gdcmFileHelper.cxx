@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 16:28:58 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,8 +34,6 @@
 
 namespace gdcm 
 {
-typedef std::pair<TagDocEntryHT::iterator,TagDocEntryHT::iterator> IterHT;
-
 //-------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -122,17 +120,6 @@ FileHelper::~FileHelper()
       delete FileInternal;
    }
    FileInternal = 0;
-}
-
-//-----------------------------------------------------------------------------
-// Print
-void FileHelper::Print(std::ostream &os, std::string const &)
-{
-   FileInternal->SetPrintLevel(PrintLevel);
-   FileInternal->Print(os);
-
-   PixelReadConverter->SetPrintLevel(PrintLevel);
-   PixelReadConverter->Print(os);
 }
 
 //-----------------------------------------------------------------------------
@@ -609,7 +596,6 @@ uint8_t* FileHelper::GetLutRGBA()
 
 //-----------------------------------------------------------------------------
 // Protected
-
 /**
  * \brief Check the write integrity
  *
@@ -943,7 +929,7 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem)
 }
 
 //-----------------------------------------------------------------------------
-// Protected
+// Private
 /**
  * \brief Factorization for various forms of constructors.
  */
@@ -988,8 +974,15 @@ uint8_t *FileHelper::GetRaw()
 }
 
 //-----------------------------------------------------------------------------
-// Private
+// Print
+void FileHelper::Print(std::ostream &os, std::string const &)
+{
+   FileInternal->SetPrintLevel(PrintLevel);
+   FileInternal->Print(os);
+
+   PixelReadConverter->SetPrintLevel(PrintLevel);
+   PixelReadConverter->Print(os);
+}
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm
-

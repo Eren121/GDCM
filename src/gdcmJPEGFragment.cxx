@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 04:15:33 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 namespace gdcm
 {
-
+//-------------------------------------------------------------------------
 // For JPEG 2000, body in file gdcmJpeg2000.cxx
 // Not yet made
 bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
@@ -30,6 +30,8 @@ bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
 // Not yet made
 bool gdcm_read_JPEGLS_file (std::ifstream* fp, void* image_buffer);
 
+//-------------------------------------------------------------------------
+// Constructor / Destructor
 /**
  * \brief Default constructor.
  */
@@ -42,19 +44,8 @@ JPEGFragment::JPEGFragment()
 
 }
 
-/**
- * \brief        Print self.
- * @param os     Stream to print to.
- * @param indent Indentation string to be prepended during printing.
- */
-void JPEGFragment::Print( std::ostream &os, std::string indent )
-{
-   os << indent
-      << "JPEG fragment: offset : " <<  Offset
-      << "   length : " <<  Length
-      << std::endl;
-}
-
+//-----------------------------------------------------------------------------
+// Public
 /**
  * \brief Decompress 8bits JPEG Fragment
  * @param fp ifstream to write to
@@ -95,5 +86,27 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
    }
 }
 
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief        Print self.
+ * @param os     Stream to print to.
+ * @param indent Indentation string to be prepended during printing.
+ */
+void JPEGFragment::Print( std::ostream &os, std::string indent )
+{
+   os << indent
+      << "JPEG fragment: offset : " <<  Offset
+      << "   length : " <<  Length
+      << std::endl;
+}
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
 

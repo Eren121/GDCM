@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 17:01:29 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/02/01 10:29:54 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,10 +26,11 @@
 
 namespace gdcm 
 {
+//-----------------------------------------------------------------------------
 void FillDefaultDIRDict(DicomDirElement *dde);
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
 /**
  * \brief   constructor : populates the chained lists 
  *          from the file 'Dicts/DicomDir.dic'
@@ -105,6 +106,44 @@ DicomDirElement::~DicomDirElement()
 }
 
 //-----------------------------------------------------------------------------
+// Public
+/**
+ * \brief Add an entry 
+ * @param type type
+ * @param elem elem
+ */
+bool DicomDirElement::AddEntry(DicomDirType type, Element const &elem)
+{
+   switch( type )
+   {
+      case DD_META :
+         DicomDirMetaList.push_back(elem);
+         break;
+      case DD_PATIENT :
+         DicomDirPatientList.push_back(elem);
+         break;
+      case DD_STUDY :
+         DicomDirStudyList.push_back(elem);
+         break;
+      case DD_SERIE :
+         DicomDirSerieList.push_back(elem);
+         break;
+      case DD_IMAGE :
+         DicomDirImageList.push_back(elem);
+         break;
+      default :
+         return false;
+   }
+   return true;
+}
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
 // Print
 /**
  * \brief   Print all
@@ -156,42 +195,4 @@ void DicomDirElement::Print(std::ostream &os)
 }
 
 //-----------------------------------------------------------------------------
-// Public
-/**
- * \brief Add an entry 
- * @param type type
- * @param elem elem
- */
-bool DicomDirElement::AddEntry(DicomDirType type, Element const &elem)
-{
-   switch( type )
-   {
-      case DD_META :
-         DicomDirMetaList.push_back(elem);
-         break;
-      case DD_PATIENT :
-         DicomDirPatientList.push_back(elem);
-         break;
-      case DD_STUDY :
-         DicomDirStudyList.push_back(elem);
-         break;
-      case DD_SERIE :
-         DicomDirSerieList.push_back(elem);
-         break;
-      case DD_IMAGE :
-         DicomDirImageList.push_back(elem);
-         break;
-      default :
-         return false;
-   }
-   return true;
-}
-//-----------------------------------------------------------------------------
-// Protected
-
-//-----------------------------------------------------------------------------
-// Private
-
-//-----------------------------------------------------------------------------
-
 } // end namespace gdcm

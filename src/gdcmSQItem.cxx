@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 12:19:34 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/02/01 10:29:56 $
+  Version:   $Revision: 1.64 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,45 +50,7 @@ SQItem::~SQItem()
 }
 
 //-----------------------------------------------------------------------------
-// Print
-/*
- * \brief   canonical Printer
- * @param os     Stream to print to. 
- * @param indent Indentation string to be prepended during printing.
- */
-void SQItem::Print(std::ostream &os, std::string const &)
-{
-   std::ostringstream s;
-
-   if (SQDepthLevel > 0)
-   {
-      for (int i = 0; i < SQDepthLevel; ++i)
-      {
-         s << "   | " ;
-      }
-   }
-   os << s.str() << " --- SQItem number " << SQItemNumber  << std::endl;
-   for (ListDocEntry::iterator i  = DocEntries.begin();
-                               i != DocEntries.end();
-                             ++i)
-   {
-      DocEntry *Entry = *i;
-      bool PrintEndLine = true;
-
-      os << s.str();
-      Entry->SetPrintLevel(PrintLevel);
-      Entry->Print(os); 
-      if ( dynamic_cast<SeqEntry*>(Entry) )
-      {
-         PrintEndLine = false;
-      }
-      if (PrintEndLine)
-      {
-         os << std::endl;
-      }
-   } 
-}
-
+// Public
 /*
  * \brief   canonical Writer
  * @param fp     file pointer to an already open file. 
@@ -138,8 +100,6 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
  
 }
 
-//-----------------------------------------------------------------------------
-// Public
 /**
  * \brief  Remove all entry in the Sequence Item 
  */
@@ -258,7 +218,45 @@ DocEntry *SQItem::GetDocEntry(uint16_t group, uint16_t elem)
 //-----------------------------------------------------------------------------
 // Private
 
+//-----------------------------------------------------------------------------
+// Print
+/*
+ * \brief   canonical Printer
+ * @param os     Stream to print to. 
+ * @param indent Indentation string to be prepended during printing.
+ */
+void SQItem::Print(std::ostream &os, std::string const &)
+{
+   std::ostringstream s;
+
+   if (SQDepthLevel > 0)
+   {
+      for (int i = 0; i < SQDepthLevel; ++i)
+      {
+         s << "   | " ;
+      }
+   }
+   os << s.str() << " --- SQItem number " << SQItemNumber  << std::endl;
+   for (ListDocEntry::iterator i  = DocEntries.begin();
+                               i != DocEntries.end();
+                             ++i)
+   {
+      DocEntry *Entry = *i;
+      bool PrintEndLine = true;
+
+      os << s.str();
+      Entry->SetPrintLevel(PrintLevel);
+      Entry->Print(os); 
+      if ( dynamic_cast<SeqEntry*>(Entry) )
+      {
+         PrintEndLine = false;
+      }
+      if (PrintEndLine)
+      {
+         os << std::endl;
+      }
+   } 
+}
 
 //-----------------------------------------------------------------------------
-
 } // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 06:17:22 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,8 +30,8 @@
 
 namespace gdcm
 {
+//-----------------------------------------------------------------------------
 #define str2num(str, typeNum) *((typeNum *)(str))
-
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -47,6 +47,13 @@ PixelReadConvert::PixelReadConvert()
    LutBlueData =0;
 }
 
+PixelReadConvert::~PixelReadConvert() 
+{
+   Squeeze();
+}
+
+//-----------------------------------------------------------------------------
+// Public
 void PixelReadConvert::Squeeze() 
 {
    if ( RGB )
@@ -60,11 +67,6 @@ void PixelReadConvert::Squeeze()
    if ( LutRGBA )
       delete [] LutRGBA;
    LutRGBA = 0;
-}
-
-PixelReadConvert::~PixelReadConvert() 
-{
-   Squeeze();
 }
 
 void PixelReadConvert::AllocateRGB()
@@ -854,6 +856,14 @@ bool PixelReadConvert::BuildRGBImage()
    return true;
 }
 
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+// Print
 /**
  * \brief        Print self.
  * @param indent Indentation string to be prepended during printing.
@@ -896,6 +906,7 @@ void PixelReadConvert::Print( std::ostream &os, std::string const & indent )
    }
 }
 
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
 
 // NOTES on File internal calls

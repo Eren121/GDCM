@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,6 +25,7 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
+// Constructor / Destructor
 /**
  * \brief Constructor
  */
@@ -33,31 +34,12 @@ DocEntryArchive::DocEntryArchive(File *file)
    ArchFile = file;
 }
 
-//-----------------------------------------------------------------------------
 /**
  * \brief Destructor
  */
 DocEntryArchive::~DocEntryArchive()
 {
    ClearArchive();
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Print all 
- * @param   os The output stream to be written to.
- */
-void DocEntryArchive::Print(std::ostream &os) 
-{
-   os << "Elements in archives :" << std::endl;
-   for(TagDocEntryHT::iterator it = Archive.begin();
-       it!=Archive.end();
-       ++it)
-   {
-      if(it->second)
-         it->second->Print(os);
-   }
 }
 
 //-----------------------------------------------------------------------------
@@ -89,20 +71,6 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
       // Set the new DocEntry
       ArchFile->AddEntry(newEntry);
 
-/*      // Save the old DocEntry if any
-      TagDocEntryHT::iterator it = HeaderHT.find(key);
-      if( it!=HeaderHT.end() )
-      {
-         Archive[key] = it->second;
-      }
-      else
-      {
-         Archive[key] = NULL;
-      }
-
-      // Set the new DocEntry
-      HeaderHT[key] = newEntry;*/
-
       return true;
    }
    return false;
@@ -127,14 +95,6 @@ bool DocEntryArchive::Push(uint16_t group,uint16_t elem)
       Archive[key] = old;
       if( old )
          ArchFile->RemoveEntryNoDestroy(old);
-
-/*      // Save the old DocEntry if any
-      TagDocEntryHT::iterator it = HeaderHT.find(key);
-      if( it!=HeaderHT.end() )
-      {
-         Archive[key] = it->second;
-         HeaderHT.erase(it);
-      }*/
 
       return true;
    }
@@ -165,23 +125,6 @@ bool DocEntryArchive::Restore(uint16_t group,uint16_t elem)
       if( Archive[key] )
          ArchFile->AddEntry(Archive[key]);
 
-/*      // Delete the new value
-      TagDocEntryHT::iterator restorePos = HeaderHT.find(key);
-      if( restorePos!=HeaderHT.end() )
-      {
-         delete restorePos->second;
-      }
-
-      // Restore the old value
-      if( Archive[key] )
-      {
-         HeaderHT[key] = Archive[key];
-      }
-      else
-      {
-         HeaderHT.erase(restorePos);
-      }*/
-
       Archive.erase(restoreIt);
 
       return true;
@@ -211,5 +154,22 @@ void DocEntryArchive::ClearArchive( )
 // Private
 
 //-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Print all 
+ * @param   os The output stream to be written to.
+ */
+void DocEntryArchive::Print(std::ostream &os) 
+{
+   os << "Elements in archives :" << std::endl;
+   for(TagDocEntryHT::iterator it = Archive.begin();
+       it!=Archive.end();
+       ++it)
+   {
+      if(it->second)
+         it->second->Print(os);
+   }
+}
 
+//-----------------------------------------------------------------------------
 } // end namespace gdcm

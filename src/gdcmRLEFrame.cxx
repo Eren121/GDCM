@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 06:17:22 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/02/01 10:29:56 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,26 +21,11 @@
                                                                                 
 namespace gdcm
 {
+//-------------------------------------------------------------------------
+// Constructor / Destructor
 
-/**
- * \brief        Print self.
- * @param indent Indentation string to be prepended during printing.
- * @param os     Stream to print to.
- */
-void RLEFrame::Print( std::ostream &os, std::string indent )
-{
-   os << indent
-      << "--- fragments"
-      << std::endl;
-   for ( unsigned int i = 0; i < NumberOfFragments; i++ )
-   {
-      os << indent
-         << "   offset : " <<  Offset[i]
-         << "   length : " <<  Length[i]
-         << std::endl;
-   }
-}
-
+//-----------------------------------------------------------------------------
+// Public
 void RLEFrame::SetOffset(unsigned int id,long offset)
 {
    gdcmAssertMacro(id<15);
@@ -144,6 +129,33 @@ bool RLEFrame::ReadAndDecompressRLEFragment( uint8_t *subRaw,
    return true;
 }
 
+//-----------------------------------------------------------------------------
+// Protected
 
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief        Print self.
+ * @param indent Indentation string to be prepended during printing.
+ * @param os     Stream to print to.
+ */
+void RLEFrame::Print( std::ostream &os, std::string indent )
+{
+   os << indent
+      << "--- fragments"
+      << std::endl;
+   for ( unsigned int i = 0; i < NumberOfFragments; i++ )
+   {
+      os << indent
+         << "   offset : " <<  Offset[i]
+         << "   length : " <<  Length[i]
+         << std::endl;
+   }
+}
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
 

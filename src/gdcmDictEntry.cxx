@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:33 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -49,6 +48,59 @@ DictEntry::DictEntry(uint16_t group, uint16_t elem,
    Name    = name;
    Key     = TranslateToKey(group, elem);
 }
+
+//-----------------------------------------------------------------------------
+// Public
+/**
+ * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
+ *                                              and a Dicom element number)
+ * @param  group the Dicom group number used to build the tag
+ * @param  elem the Dicom element number used to build the tag
+ * @return the built tag
+ */
+TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t elem)
+{
+   return Util::Format("%04x|%04x", group, elem);
+}
+
+/**
+ * \brief       If-and only if-the V(alue) R(epresentation)
+ * \            is unset then overwrite it.
+ * @param vr    New V(alue) R(epresentation) to be set.
+ */
+void DictEntry::SetVR(TagName const &vr) 
+{
+   if ( IsVRUnknown() )
+   {
+      VR = vr;
+   }
+   else 
+   {
+      gdcmErrorMacro( "Overwriting VR might compromise a dictionary");
+   }
+}
+
+/**
+ * \brief       If-and only if-the V(alue) M(ultiplicity)
+ * \            is unset then overwrite it.
+ * @param vm    New V(alue) M(ultiplicity) to be set.
+ */
+void DictEntry::SetVM(TagName const &vm) 
+{
+   if ( IsVMUnknown() )
+   {
+      VM = vm;
+   }
+   else 
+   {
+      gdcmErrorMacro( "Overwriting VM might compromise a dictionary");
+   }
+}
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
 
 //-----------------------------------------------------------------------------
 // Print
@@ -78,61 +130,6 @@ void DictEntry::Print(std::ostream &os, std::string const & )
    s << "[" << GetName()<< "]";
    os << s.str() << std::endl;
 }
-
-//-----------------------------------------------------------------------------
-// Public
-/**
- * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
- *                                              and a Dicom element number)
- * @param  group the Dicom group number used to build the tag
- * @param  elem the Dicom element number used to build the tag
- * @return the built tag
- */
-TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t elem)
-{
-   return Util::Format("%04x|%04x", group, elem);
-}
-
-//-----------------------------------------------------------------------------
-/**
- * \brief       If-and only if-the V(alue) R(epresentation)
- * \            is unset then overwrite it.
- * @param vr    New V(alue) R(epresentation) to be set.
- */
-void DictEntry::SetVR(TagName const &vr) 
-{
-   if ( IsVRUnknown() )
-   {
-      VR = vr;
-   }
-   else 
-   {
-      gdcmErrorMacro( "Overwriting VR might compromise a dictionary");
-   }
-}
-
-//-----------------------------------------------------------------------------
-/**
- * \brief       If-and only if-the V(alue) M(ultiplicity)
- * \            is unset then overwrite it.
- * @param vm    New V(alue) M(ultiplicity) to be set.
- */
-void DictEntry::SetVM(TagName const &vm) 
-{
-   if ( IsVMUnknown() )
-   {
-      VM = vm;
-   }
-   else 
-   {
-      gdcmErrorMacro( "Overwriting VM might compromise a dictionary");
-   }
-}
-//-----------------------------------------------------------------------------
-// Protected
-
-//-----------------------------------------------------------------------------
-// Private
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:24 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,6 @@
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -43,31 +42,6 @@ ElementSet::ElementSet(int depthLevel)
 ElementSet::~ElementSet() 
 {
    ClearEntry();
-}
-
-//-----------------------------------------------------------------------------
-// Print
-/**
-  * \brief   Prints the Header Entries (Dicom Elements) from the H Table
-  * @param os ostream to write to  
-  * @param indent Indentation string to be prepended during printing
-  */ 
-void ElementSet::Print(std::ostream &os, std::string const & )
-{
-   for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
-   {
-      DocEntry* entry = i->second;
-
-      entry->SetPrintLevel(PrintLevel);
-      entry->Print(os);   
-
-      if ( dynamic_cast<SeqEntry*>(entry) )
-      {
-         // Avoid the newline for a sequence:
-         continue;
-      }
-      os << std::endl;
-   }
 }
 
 //-----------------------------------------------------------------------------
@@ -208,6 +182,31 @@ DocEntry *ElementSet::GetDocEntry(uint16_t group, uint16_t elem)
 
 //-----------------------------------------------------------------------------
 // Private
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+  * \brief   Prints the Header Entries (Dicom Elements) from the H Table
+  * @param os ostream to write to  
+  * @param indent Indentation string to be prepended during printing
+  */ 
+void ElementSet::Print(std::ostream &os, std::string const & )
+{
+   for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
+   {
+      DocEntry* entry = i->second;
+
+      entry->SetPrintLevel(PrintLevel);
+      entry->Print(os);   
+
+      if ( dynamic_cast<SeqEntry*>(entry) )
+      {
+         // Avoid the newline for a sequence:
+         continue;
+      }
+      os << std::endl;
+   }
+}
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

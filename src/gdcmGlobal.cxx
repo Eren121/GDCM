@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/02/01 10:29:55 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 
 namespace gdcm 
 {
+//-----------------------------------------------------------------------------
 // Those global string that are return by reference everywhere in gdcm code
 // used to be in gdcmCommon.h but due to a 'bug' in gcc/MacOSX
 // you cannot have static initialization in a multithreaded environment
@@ -38,33 +39,20 @@ const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
 const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
 const std::string GDCM_UNREAD    = "gdcm::UnRead";
 
-/**
- * \brief Pointer to a container, holding _all_ the Dicom Dictionaries.
- */
+//-----------------------------------------------------------------------------
 DictSet         *Global::Dicts  = (DictSet *)0;
-
-/**
- * \brief   Pointer to a hash table containing the 'Value Representations'.
- */
 VR              *Global::ValRes     = (VR *)0;
-
-/**
- * \brief   Pointer to a hash table containing the Transfer Syntax codes
- *          and their english description 
- */
 TS              *Global::TranSyn     = (TS *)0;
-
-/**
- * \brief   Pointer to the hash table containing the Dicom Elements
- *          necessary to describe each part of a DICOMDIR 
- */
 DicomDirElement *Global::ddElem = (DicomDirElement *)0;
 
+//-----------------------------------------------------------------------------
 /**
  * \brief   Global container
  */
 Global Glob;
 
+//-------------------------------------------------------------------------
+// Constructor / Destructor
 /**
  * \brief   constructor : populates the various H Tables
  */
@@ -91,6 +79,9 @@ Global::~Global()
    delete TranSyn;
    delete ddElem;
 }
+
+//-----------------------------------------------------------------------------
+// Public
 /**
  * \brief   returns a pointer to the 'Value Representation Table' 
  */
@@ -119,4 +110,15 @@ DicomDirElement *Global::GetDicomDirElements()
 {
    return ddElem;
 }
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+// Print
+
+//-----------------------------------------------------------------------------
 } // end namespace gdcm
