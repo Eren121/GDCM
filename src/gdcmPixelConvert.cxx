@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 13:56:46 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2004/10/25 17:07:16 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -707,9 +707,16 @@ void PixelConvert::ConvertHandleColor()
          // [Planar 1] AND [Photo C]
          ConvertRGBPlanesToRGBPixels();
       }
+      return;
    }
                                                                                 
-   // When planarConf is 0, pixels are allready in RGB
+   // When planarConf is 0, and RLELossless (forbidden by Dicom norm)
+   // pixels need to be RGB-fied anyway
+   if (IsRLELossless)
+   {
+     ConvertRGBPlanesToRGBPixels();
+   }
+   // In *normal *case, when planarConf is 0, pixels are already in RGB
 }
 
 /**
