@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 16:53:23 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/01/06 13:35:38 $
+  Version:   $Revision: 1.72 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,27 +61,112 @@ enum TransferSyntaxType {
  */
 class GDCM_EXPORT Document : public ElementSet
 {
-friend class File;
-private:
-   /// Public dictionary used to parse this header
-   Dict* RefPubDict;
-   
-   /// \brief Optional "shadow dictionary" (private elements) used to parse
-   /// this header
-   Dict* RefShaDict;
+public:
+// Informations contained in the parser
+   virtual bool IsReadable();
+   FileType GetFileType();
 
-   /// \brief Size threshold above which an element value will NOT be loaded
-   /// in memory (to avoid loading the image/volume itself). By default,
-   /// this upper bound is fixed to 1024 bytes (which might look reasonable
-   /// when one considers the definition of the various VR contents).
-   uint32_t MaxSizeLoadEntry;
+   TransferSyntaxType GetTransferSyntax();
+
+   bool IsJPEGLossless();
+   bool IsJPEG2000();
+   bool IsJPEG();
+   bool IsEncapsulate();
+   bool IsDicomV3();
+
+   RLEFramesInfo* GetRLEInfo() { return RLEInfo; }
+   JPEGFragmentsInfo* GetJPEGInfo() { return JPEGInfo; }
+
+// Dictionnaries
+   virtual void PrintPubDict (std::ostream &os = std::cout);
+   virtual void PrintShaDict (std::ostream &os = std::cout);
+
+   Dict* GetPubDict();
+   Dict* GetShaDict();
+   bool SetShaDict(Dict* dict);
+   bool SetShaDict(DictKey const & dictName);
+
+// Swap code
+   /// 'Swap code' accessor (see \ref SwapCode )
+   int GetSwapCode() { return SwapCode; }
+   // System access (meaning endian related !?)
+   uint16_t SwapShort(uint16_t);   // needed by File
+   uint32_t SwapLong(uint32_t);    // needed by File
+   uint16_t UnswapShort(uint16_t); // needed by File
+   uint32_t UnswapLong(uint32_t);  // needed by File
    
-   /// \brief Size threshold above which an element value will NOT be *printed*
-   /// in order no to polute the screen output. By default, this upper bound
-   /// is fixed to 64 bytes.
-   uint32_t MaxSizePrintEntry;   
+// Ordering of Documents
+   bool operator<(Document &document);
+
+public:
+// File I/O
+   /// Accessor to \ref Filename
+   const std::string &GetFileName() const { return Filename; }
+   /// Accessor to \ref Filename
+   void SetFileName(std::string const & fileName) { Filename = fileName; }
+
+   std::ifstream* OpenFile();
+   bool CloseFile();
+   void WriteContent( std::ofstream* fp, FileType type );
+
+// Content entries
+   virtual bool SetEntryByName  (std::string const & content, 
+                                 TagName const & tagName );
+   virtual bool SetEntryByNumber(std::string const & content,
+                                 uint16_t group, uint16_t element);
+   virtual bool SetEntryByNumber(uint8_t* content, int lgth,
+                                 uint16_t group, uint16_t element);
+   virtual void* GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
+
+   virtual std::string GetEntryByName    (TagName const & tagName);
+   virtual std::string GetEntryVRByName  (TagName const & tagName);
+   virtual std::string GetEntryByNumber  (uint16_t group, uint16_t elem);
+   virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
+   virtual int GetEntryLengthByNumber(uint16_t group, uint16_t elem);
+
+   DocEntry* GetDocEntryByNumber(uint16_t group, uint16_t element); 
+   DocEntry* GetDocEntryByName  (TagName const & tagName);
+   ValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
+   //BinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
+
+   ValEntry* ReplaceOrCreateByNumber(std::string const & value,
+                                     uint16_t group, uint16_t elem,
+                                     TagName const & vr = GDCM_UNKNOWN);
+   BinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
+                                     uint16_t group, uint16_t elem,
+                                     TagName const & vr = GDCM_UNKNOWN);
+   SeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
+
+   bool ReplaceIfExistByNumber ( std::string const & value,
+                                 uint16_t group, uint16_t elem );
+   
+   virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
+   virtual void LoadEntryBinArea(BinEntry* entry);
+
+   void LoadDocEntrySafe(DocEntry* entry);
+   TagDocEntryHT* BuildFlatHashTable();
+      
+// Divers
+   static std::string GetTransferSyntaxValue(TransferSyntaxType type);
 
 protected:
+// Methods
+   // Constructor and destructor are protected to forbid end user 
+   // to instanciate from this class Document (only Header and
+   // DicomDir are meaningfull).
+   Document();
+   Document( std::string const & filename );
+   virtual ~Document();
+   
+   void ReadAndSkipEncapsulatedBasicOffsetTable();
+   void ComputeRLEInfo();
+   void ComputeJPEGFragmentInfo();
+   // Entry
+   bool CheckIfEntryExistByNumber(uint16_t group, uint16_t elem );
+
+   int ComputeGroup0002Length( FileType filetype );
+
+// Variables
    /// Refering underlying filename.
    std::string Filename;
 
@@ -116,113 +201,16 @@ protected:
    /// Store the JPEG fragments info obtained during parsing of pixels.
    JPEGFragmentsInfo* JPEGInfo;
 
-public:
-// the 2 following will be merged
-   virtual void PrintPubDict (std::ostream &os = std::cout);
-   virtual void PrintShaDict (std::ostream &os = std::cout);
-
-// Dictionnaries
-   Dict* GetPubDict();
-   Dict* GetShaDict();
-   bool SetShaDict(Dict* dict);
-   bool SetShaDict(DictKey const & dictName);
-
-// Informations contained in the parser
-   virtual bool IsReadable();
-   TransferSyntaxType GetTransferSyntax();
-   bool IsJPEGLossless();
-   bool IsJPEG2000();
-   bool IsJPEG();
-   bool IsEncapsulate();
-   bool IsDicomV3();
-
-   FileType GetFileType();
-
-   std::ifstream * OpenFile();
-   bool CloseFile();
-
-   void WriteContent( std::ofstream* fp, FileType type );
-
-   ValEntry* ReplaceOrCreateByNumber(std::string const & value,
-                                     uint16_t group, uint16_t elem,
-                                     TagName const & vr = GDCM_UNKNOWN);
-   
-   BinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
-                                     uint16_t group, uint16_t elem,
-                                     TagName const & vr = GDCM_UNKNOWN);
-
-   SeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
-
-   bool ReplaceIfExistByNumber ( std::string const & value,
-                                 uint16_t group, uint16_t elem );
-   
-   virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
-   virtual void LoadEntryBinArea(BinEntry* entry);
-      
-   // System access (meaning endian related !?)
-   uint16_t SwapShort(uint16_t);   // needed by File
-   uint32_t SwapLong(uint32_t);    // needed by File
-   uint16_t UnswapShort(uint16_t); // needed by File
-   uint32_t UnswapLong(uint32_t);  // needed by File
-
-   static std::string GetTransferSyntaxValue(TransferSyntaxType type);
-
-protected:
-   // Constructor and destructor are protected to forbid end user 
-   // to instanciate from this class Document (only Header and
-   // DicomDir are meaningfull).
-   Document();
-   Document( std::string const & filename );
-   virtual ~Document();
-   
-   void ReadAndSkipEncapsulatedBasicOffsetTable();
-   void ComputeRLEInfo();
-   void ComputeJPEGFragmentInfo();
-   // Entry
-   bool CheckIfEntryExistByNumber(uint16_t group, uint16_t elem );
-public:
-   virtual std::string GetEntryByName    (TagName const & tagName);
-   virtual std::string GetEntryVRByName  (TagName const & tagName);
-   virtual std::string GetEntryByNumber  (uint16_t group, uint16_t elem);
-   virtual std::string GetEntryVRByNumber(uint16_t group, uint16_t elem);
-   virtual int     GetEntryLengthByNumber(uint16_t group, uint16_t elem);
-//protected:
-   virtual bool SetEntryByName  (std::string const & content, 
-                                 TagName const & tagName );
-   virtual bool SetEntryByNumber(std::string const & content,
-                                 uint16_t group, uint16_t element);
-   virtual bool SetEntryByNumber(uint8_t* content, int lgth,
-                                 uint16_t group, uint16_t element);
-   virtual void* GetEntryBinAreaByNumber(uint16_t group, uint16_t elem);   
-   // FIXME
-   // Verify the usefull of this method... otherwise remove it
-   // It's body is commented in the .xx
-   //virtual bool  SetEntryBinAreaByNumber(uint8_t* a, uint16_t group,
-   //                                                uint16_t elem);
-
-   virtual void UpdateShaEntries();
-
-   // Header entry
-   DocEntry* GetDocEntryByNumber(uint16_t group, uint16_t element); 
-   DocEntry* GetDocEntryByName  (TagName const & tagName);
-
-   ValEntry* GetValEntryByNumber(uint16_t group, uint16_t element); 
-   //BinEntry* GetBinEntryByNumber(uint16_t group, uint16_t element); 
-   RLEFramesInfo* GetRLEInfo() { return RLEInfo; }
-   JPEGFragmentsInfo* GetJPEGInfo() { return JPEGInfo; }
-
-   void LoadDocEntrySafe(DocEntry* entry);
-   TagDocEntryHT* BuildFlatHashTable();
-
 private:
+// Methods
    // Read
    void ParseDES(DocEntrySet *set,long offset, long l_max, bool delim_mode);
    void ParseSQ (SeqEntry *seq,   long offset, long l_max, bool delim_mode);
 
-   void LoadDocEntry      (DocEntry *);
-   void FindDocEntryLength(DocEntry *) throw ( FormatError );
-   void FindDocEntryVR    (DocEntry *);
-   bool CheckDocEntryVR   (DocEntry *, VRKey);
+   void LoadDocEntry         (DocEntry *);
+   void FindDocEntryLength   (DocEntry *) throw ( FormatError );
+   std::string FindDocEntryVR();
+   bool CheckDocEntryVR      (VRKey);
 
    std::string GetDocEntryValue  (DocEntry *);
    std::string GetDocEntryUnvalue(DocEntry *);
@@ -255,21 +243,28 @@ private:
                                    DocEntrySet* set );
 
    void HandleBrokenEndian(uint16_t  group, uint16_t  elem);
-public:
-// Accessors:
-   /// Accessor to \ref Filename
-   const std::string &GetFileName() const { return Filename; }
 
-   /// Accessor to \ref Filename
-   void SetFileName(std::string const & fileName) { Filename = fileName; }
-
-   /// 'Swap code' accessor (see \ref SwapCode )
-   int GetSwapCode() { return SwapCode; }
+// Variables
+   /// Public dictionary used to parse this header
+   Dict* RefPubDict;
    
-   bool operator<(Document &document);
+   /// \brief Optional "shadow dictionary" (private elements) used to parse
+   /// this header
+   Dict* RefShaDict;
 
-   int ComputeGroup0002Length( FileType filetype );
+   /// \brief Size threshold above which an element value will NOT be loaded
+   /// in memory (to avoid loading the image/volume itself). By default,
+   /// this upper bound is fixed to 1024 bytes (which might look reasonable
+   /// when one considers the definition of the various VR contents).
+   uint32_t MaxSizeLoadEntry;
+   
+   /// \brief Size threshold above which an element value will NOT be *printed*
+   /// in order no to polute the screen output. By default, this upper bound
+   /// is fixed to 64 bytes.
+   uint32_t MaxSizePrintEntry;   
 
+private:
+   friend class File;
 };
 } // end namespace gdcm
 

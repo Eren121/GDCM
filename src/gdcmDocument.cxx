@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/06 09:51:52 $
-  Version:   $Revision: 1.154 $
+  Date:      $Date: 2005/01/06 13:35:38 $
+  Version:   $Revision: 1.155 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1071,54 +1071,6 @@ void Document::LoadEntryBinArea(BinEntry* element)
 }*/
 
 /**
- * \brief   Update the entries with the shadow dictionary. 
- *          Only non even entries are analyzed       
- */
-void Document::UpdateShaEntries()
-{
-   //DictEntry *entry;
-   std::string vr;
-   
-   /// \todo TODO : still any use to explore recursively the whole structure?
-/*
-   for(ListTag::iterator it=listEntries.begin();
-       it!=listEntries.end();
-       ++it)
-   {
-      // Odd group => from public dictionary
-      if((*it)->GetGroup()%2==0)
-         continue;
-
-      // Peer group => search the corresponding dict entry
-      if(RefShaDict)
-         entry=RefShaDict->GetDictEntryByNumber((*it)->GetGroup(),(*it)->GetElement());
-      else
-         entry=NULL;
-
-      if((*it)->IsImplicitVR())
-         vr="Implicit";
-      else
-         vr=(*it)->GetVR();
-
-      (*it)->SetValue(GetDocEntryUnvalue(*it));  // to go on compiling
-      if(entry){
-         // Set the new entry and the new value
-         (*it)->SetDictEntry(entry);
-         CheckDocEntryVR(*it,vr);
-
-         (*it)->SetValue(GetDocEntryValue(*it));    // to go on compiling
- 
-      }
-      else
-      {
-         // Remove precedent value transformation
-         (*it)->SetDictEntry(NewVirtualDictEntry((*it)->GetGroup(),(*it)->GetElement(),vr));
-      }
-   }
-*/   
-}
-
-/**
  * \brief   Searches within the Header Entries for a Dicom Element of
  *          a given tag.
  * @param   tagName name of the searched Dicom Element.
@@ -1818,14 +1770,10 @@ void Document::FindDocEntryLength( DocEntry *entry )
  * \brief     Find the Value Representation of the current Dicom Element.
  * @param     entry
  */
-void Document::FindDocEntryVR( DocEntry *entry )
+std::string Document::FindDocEntryVR()
 {
    if ( Filetype != ExplicitVR )
-   {
-      return;
-   }
-
-   char vr[3];
+      return(GDCM_UNKNOWN);
 
    long positionOnEntry = Fp->tellg();
    // Warning: we believe this is explicit VR (Value Representation) because
@@ -1835,23 +1783,17 @@ void Document::FindDocEntryVR( DocEntry *entry )
    // within an explicit VR file. Hence we make sure the present tag
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
+
+   char vr[3];
    Fp->read (vr, (size_t)2);
    vr[2] = 0;
 
-   if( !CheckDocEntryVR(entry, vr) )
+   if( !CheckDocEntryVR(vr) )
    {
       Fp->seekg(positionOnEntry, std::ios::beg);
-      // When this element is known in the dictionary we shall use, e.g. for
-      // the semantics (see the usage of IsAnInteger), the VR proposed by the
-      // dictionary entry. Still we have to flag the element as implicit since
-      // we know now our assumption on expliciteness is not furfilled.
-      // avoid  .
-      if ( entry->IsVRUnknown() )
-      {
-         entry->SetVR("Implicit");
-      }
-      entry->SetImplicitVR();
+      return(GDCM_UNKNOWN);
    }
+   return(vr);
 }
 
 /**
@@ -1863,76 +1805,13 @@ void Document::FindDocEntryVR( DocEntry *entry )
  * @return    false if the VR is incorrect of if the VR isn't referenced
  *            otherwise, it returns true
 */
-bool Document::CheckDocEntryVR(DocEntry *entry, VRKey vr)
+bool Document::CheckDocEntryVR(VRKey vr)
 {
-   std::string msg;
-   bool realExplicit = true;
-
-   // Assume we are reading a falsely explicit VR file i.e. we reached
-   // a tag where we expect reading a VR but are in fact we read the
-   // first to bytes of the length. Then we will interogate (through find)
-   // the dicom_vr dictionary with oddities like "\004\0" which crashes
-   // both GCC and VC++ implementations of the STL map. Hence when the
-   // expected VR read happens to be non-ascii characters we consider
-   // we hit falsely explicit VR tag.
-
-   if ( !isalpha((unsigned char)vr[0]) && !isalpha((unsigned char)vr[1]) )
-   {
-      realExplicit = false;
-   }
-
    // CLEANME searching the dicom_vr at each occurence is expensive.
    // PostPone this test in an optional integrity check at the end
    // of parsing or only in debug mode.
-   if ( realExplicit && !Global::GetVR()->Count(vr) )
-   {
-      realExplicit = false;
-   }
-
-   if ( !realExplicit ) 
-   {
-      // We thought this was explicit VR, but we end up with an
-      // implicit VR tag. Let's backtrack.   
-      msg = Util::Format("Falsely explicit vr file (%04x,%04x)\n", 
-                    entry->GetGroup(), entry->GetElement());
-      dbg.Verbose(1, "Document::FindVR: ", msg.c_str());
-
-      if( entry->GetGroup() % 2 && entry->GetElement() == 0x0000)
-      {
-         // Group length is UL !
-         DictEntry* newEntry = NewVirtualDictEntry(
-                                   entry->GetGroup(), entry->GetElement(),
-                                   "UL", "FIXME", "Group Length");
-         entry->SetDictEntry( newEntry );
-      }
+   if ( !Global::GetVR()->IsValidVR(vr) )
       return false;
-   }
-
-   if ( entry->IsVRUnknown() )
-   {
-      // When not a dictionary entry, we can safely overwrite the VR.
-      if( entry->GetElement() == 0x0000 )
-      {
-         // Group length is UL !
-         entry->SetVR("UL");
-      }
-      else
-      {
-         entry->SetVR(vr);
-      }
-   }
-   else if ( entry->GetVR() != vr )
-   {
-      // The VR present in the file and the dictionary disagree. We assume
-      // the file writer knew best and use the VR of the file. Since it would
-      // be unwise to overwrite the VR of a dictionary (since it would
-      // compromise it's next user), we need to clone the actual DictEntry
-      // and change the VR for the read one.
-      DictEntry* newEntry = NewVirtualDictEntry(
-                                entry->GetGroup(), entry->GetElement(),
-                                vr, "FIXME", entry->GetName());
-      entry->SetDictEntry(newEntry);
-   }
 
    return true; 
 }
@@ -2665,8 +2544,22 @@ DocEntry* Document::ReadNextDocEntry()
    }
 
    HandleBrokenEndian(group, elem);
-   DocEntry *newEntry = NewDocEntryByNumber(group, elem);
-   FindDocEntryVR(newEntry);
+   std::string vr=FindDocEntryVR();
+
+   DocEntry *newEntry = NewDocEntryByNumber(group, elem, vr);
+   if( vr == GDCM_UNKNOWN )
+   {
+      if( Filetype == ExplicitVR )
+      {
+         // We thought this was explicit VR, but we end up with an
+         // implicit VR tag. Let's backtrack.   
+         std::string msg;
+         msg = Util::Format("Falsely explicit vr file (%04x,%04x)\n", 
+                       newEntry->GetGroup(), newEntry->GetElement());
+         dbg.Verbose(1, "Document::FindVR: ", msg.c_str());
+      }
+      newEntry->SetImplicitVR();
+   }
 
    try
    {

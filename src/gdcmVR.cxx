@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 15:38:28 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/01/06 13:35:38 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,7 @@ bool VR::IsVROfGdcmBinaryRepresentable(VRKey const & tested)
    if ( tested == GDCM_UNKNOWN)
       return true;
 
-   if ( ! Count(tested) )
+   if ( ! IsValidVR(tested) )
    {
       dbg.Verbose(0, "VR::IsVROfGdcmBinaryRepresentable: tested not a VR!");
       return false;
@@ -145,7 +145,7 @@ bool VR::IsVROfGdcmBinaryRepresentable(VRKey const & tested)
 bool VR::IsVROfGdcmStringRepresentable(VRKey const & tested)
 {
 
-   if ( ! Count(tested) )
+   if ( ! IsValidVR(tested) )
    {
       dbg.Verbose(0, "VR::IsVROfGdcmStringRepresentable: tested not a VR!");
       return false;
@@ -173,6 +173,11 @@ bool VR::IsVROfGdcmStringRepresentable(VRKey const & tested)
       return true;
    }
    return false;
+}
+
+bool VR::IsValidVR(VRKey const & key)
+{
+   return(vr.find(key)!=vr.end());
 }
 
 //-----------------------------------------------------------------------------

@@ -1,3 +1,12 @@
+2005-01-06 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmDictEntry.h : now, the IsVRUnknown is correct
+   * src/gdcmDocument.[h|cxx] : simplify the search of VR value when parsing
+     a file
+   * src/gdcmDocEntrySet.cxx : now the created DocEntry without values is good
+     when specifying the VR
+   * src/gdcmVR.[h|cxx] : add usefull method to test the validity of a VR
+   * src/gdcmDocEntry.cxx : amelioration of print
+
 2005-01-05 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr
    * ADD : Add the method Util::IsCurrentProcessorBigEndian
           (we'll need it for 'Explicit VR Big Endian' Transfert Syntax)
@@ -5,7 +14,7 @@
 	* ENH : now  parsing creates a Vitual DictEntry for Pixels Element,
            in order to allow further VR modification by user
    * REM : removal of once-called method File::WriteBase	
-	        integration of its code in formerly one-line method File::Write		  
+	        integration of its code in formerly one-line method File::Write
 
 2005-01-05 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmCommon.h : add the GDCM_UNKNOWN constant. This constant is to

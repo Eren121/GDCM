@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/16 11:37:03 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/06 13:35:38 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1081,7 +1081,6 @@ void PixelReadConvert::GrabInformationsFromHeader( Header* header )
    if ( HasLUT )
    {
       // Just in case some access to a Header element requires disk access.
-      // Note: gdcmDocument::Fp is leaved open after OpenFile.
       LutRedDescriptor   = header->GetEntryByNumber( 0x0028, 0x1101 );
       LutGreenDescriptor = header->GetEntryByNumber( 0x0028, 0x1102 );
       LutBlueDescriptor  = header->GetEntryByNumber( 0x0028, 0x1103 );

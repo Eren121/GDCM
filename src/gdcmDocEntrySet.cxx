@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/05 15:38:28 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/01/06 13:35:38 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -212,12 +212,29 @@ DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group, uint16_t elem,
    // Find out if the tag we encountered is in the dictionaries:
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
    DictEntry *dictEntry = pubDict->GetDictEntryByNumber(group, elem);
-   if (!dictEntry)
+   std::string goodVR = vr;
+   DictEntry *goodDict = dictEntry;
+
+   // Check if the would VR is good
+   if (elem==0x0000)
+      goodVR="UL";
+
+   // Check if the DictEntry VR corresponds with the would VR
+   if (goodDict)
+      if (goodDict->GetVR() != goodVR && goodVR!=GDCM_UNKNOWN)
+         goodDict=NULL;
+
+   // Create a new virtual DictEntry if necessary
+   if (!goodDict)
    {
-      dictEntry = NewVirtualDictEntry(group, elem, vr);
+      if (dictEntry)
+         goodDict = NewVirtualDictEntry(group, elem, goodVR,"FIXME",dictEntry->GetName());
+      else
+         goodDict = NewVirtualDictEntry(group, elem, goodVR);
    }
 
-   DocEntry *newEntry = new DocEntry(dictEntry);
+   // Create the DocEntry
+   DocEntry *newEntry = new DocEntry(goodDict);
    if (!newEntry) 
    {
       dbg.Verbose(1, "SQItem::NewDocEntryByNumber",
@@ -226,6 +243,7 @@ DocEntry* DocEntrySet::NewDocEntryByNumber(uint16_t group, uint16_t elem,
    }
    return newEntry;
 }
+
 /* \brief
  * Probabely move, as is, to DocEntrySet, as a non virtual method
  * and remove Document::NewDocEntryByName

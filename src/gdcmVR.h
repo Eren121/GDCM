@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/28 03:10:58 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/01/06 13:35:38 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,6 +48,8 @@ public:
    int Count(VRKey const & key);
    bool IsVROfGdcmBinaryRepresentable(VRKey const & tested);
    bool IsVROfGdcmStringRepresentable(VRKey const & tested);
+
+   bool IsValidVR(VRKey const & key);
 
 private:
    VRHT vr;
