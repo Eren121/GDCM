@@ -34,15 +34,12 @@ extern void free JPP((void *ptr));
 GLOBAL(void *)
 jpeg_get_small (j_common_ptr cinfo, size_t sizeofobject)
 {
-  cinfo = 0;
   return (void *) malloc(sizeofobject);
 }
 
 GLOBAL(void)
 jpeg_free_small (j_common_ptr cinfo, void * object, size_t sizeofobject)
 {
-  cinfo = 0;
-  sizeofobject = 0;
   free(object);
 }
 
@@ -57,15 +54,12 @@ jpeg_free_small (j_common_ptr cinfo, void * object, size_t sizeofobject)
 GLOBAL(void FAR *)
 jpeg_get_large (j_common_ptr cinfo, size_t sizeofobject)
 {
-  cinfo = 0;
   return (void FAR *) malloc(sizeofobject);
 }
 
 GLOBAL(void)
 jpeg_free_large (j_common_ptr cinfo, void FAR * object, size_t sizeofobject)
 {
-  cinfo = 0;
-  sizeofobject = 0;
   free(object);
 }
 
@@ -79,9 +73,6 @@ GLOBAL(long)
 jpeg_mem_available (j_common_ptr cinfo, long min_bytes_needed,
         long max_bytes_needed, long already_allocated)
 {
-  cinfo = 0;
-  min_bytes_needed = 0;
-  already_allocated = 0;
   return max_bytes_needed;
 }
 
@@ -96,8 +87,6 @@ GLOBAL(void)
 jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
        long total_bytes_needed)
 {
-  info = 0;
-  total_bytes_needed = 0;
   ERREXIT(cinfo, JERR_NO_BACKING_STORE);
 }
 
@@ -110,13 +99,11 @@ jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
 GLOBAL(long)
 jpeg_mem_init (j_common_ptr cinfo)
 {
-  cinfo = 0;
   return 0;      /* just set max_memory_to_use to 0 */
 }
 
 GLOBAL(void)
 jpeg_mem_term (j_common_ptr cinfo)
 {
-  cinfo = 0;
   /* no work */
 }

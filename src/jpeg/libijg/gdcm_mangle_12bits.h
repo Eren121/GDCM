@@ -15,27 +15,42 @@ nm libgdcmijpeg12.a | grep " T " | colrm 1 11 | sort
 (actually copy/paste from gdcm_jpeg8bits)
 */
 
+
+
 #define jcopy_block_row gdcm_jpeg12_jcopy_block_row
 #define jcopy_sample_rows gdcm_jpeg12_jcopy_sample_rows
 #define jdiv_round_up gdcm_jpeg12_jdiv_round_up
 #define jinit_1pass_quantizer gdcm_jpeg12_jinit_1pass_quantizer
 #define jinit_2pass_quantizer gdcm_jpeg12_jinit_2pass_quantizer
+#define jinit_arith_decoder gdcm_jpeg12_jinit_arith_decoder
+#define jinit_arith_encoder gdcm_jpeg12_jinit_arith_encoder
+#define jinit_c_codec gdcm_jpeg12_jinit_c_codec
 #define jinit_c_coef_controller gdcm_jpeg12_jinit_c_coef_controller
+#define jinit_c_diff_controller gdcm_jpeg12_jinit_c_diff_controller
 #define jinit_c_main_controller gdcm_jpeg12_jinit_c_main_controller
 #define jinit_c_master_control gdcm_jpeg12_jinit_c_master_control
 #define jinit_c_prep_controller gdcm_jpeg12_jinit_c_prep_controller
+#define jinit_c_scaler gdcm_jpeg12_jinit_c_scaler
 #define jinit_color_converter gdcm_jpeg12_jinit_color_converter
 #define jinit_color_deconverter gdcm_jpeg12_jinit_color_deconverter
 #define jinit_compress_master gdcm_jpeg12_jinit_compress_master
+#define jinit_d_codec gdcm_jpeg12_jinit_d_codec
 #define jinit_d_coef_controller gdcm_jpeg12_jinit_d_coef_controller
+#define jinit_d_diff_controller gdcm_jpeg12_jinit_d_diff_controller
 #define jinit_d_main_controller gdcm_jpeg12_jinit_d_main_controller
 #define jinit_d_post_controller gdcm_jpeg12_jinit_d_post_controller
+#define jinit_d_scaler gdcm_jpeg12_jinit_d_scaler
+#define jinit_differencer gdcm_jpeg12_jinit_differencer
 #define jinit_downsampler gdcm_jpeg12_jinit_downsampler
 #define jinit_forward_dct gdcm_jpeg12_jinit_forward_dct
-#define jinit_huff_decoder gdcm_jpeg12_jinit_huff_decoder
-#define jinit_huff_encoder gdcm_jpeg12_jinit_huff_encoder
 #define jinit_input_controller gdcm_jpeg12_jinit_input_controller
 #define jinit_inverse_dct gdcm_jpeg12_jinit_inverse_dct
+#define jinit_lhuff_decoder gdcm_jpeg12_jinit_lhuff_decoder
+#define jinit_lhuff_encoder gdcm_jpeg12_jinit_lhuff_encoder
+#define jinit_lossless_c_codec gdcm_jpeg12_jinit_lossless_c_codec
+#define jinit_lossless_d_codec gdcm_jpeg12_jinit_lossless_d_codec
+#define jinit_lossy_c_codec gdcm_jpeg12_jinit_lossy_c_codec
+#define jinit_lossy_d_codec gdcm_jpeg12_jinit_lossy_d_codec
 #define jinit_marker_reader gdcm_jpeg12_jinit_marker_reader
 #define jinit_marker_writer gdcm_jpeg12_jinit_marker_writer
 #define jinit_master_decompress gdcm_jpeg12_jinit_master_decompress
@@ -43,6 +58,9 @@ nm libgdcmijpeg12.a | grep " T " | colrm 1 11 | sort
 #define jinit_merged_upsampler gdcm_jpeg12_jinit_merged_upsampler
 #define jinit_phuff_decoder gdcm_jpeg12_jinit_phuff_decoder
 #define jinit_phuff_encoder gdcm_jpeg12_jinit_phuff_encoder
+#define jinit_shuff_decoder gdcm_jpeg12_jinit_shuff_decoder
+#define jinit_shuff_encoder gdcm_jpeg12_jinit_shuff_encoder
+#define jinit_undifferencer gdcm_jpeg12_jinit_undifferencer
 #define jinit_upsampler gdcm_jpeg12_jinit_upsampler
 #define jpeg_CreateCompress gdcm_jpeg12_jpeg_CreateCompress
 #define jpeg_CreateDecompress gdcm_jpeg12_jpeg_CreateDecompress
@@ -100,6 +118,7 @@ nm libgdcmijpeg12.a | grep " T " | colrm 1 11 | sort
 #define jpeg_set_linear_quality gdcm_jpeg12_jpeg_set_linear_quality
 #define jpeg_set_marker_processor gdcm_jpeg12_jpeg_set_marker_processor
 #define jpeg_set_quality gdcm_jpeg12_jpeg_set_quality
+#define jpeg_simple_lossless gdcm_jpeg12_jpeg_simple_lossless
 #define jpeg_simple_progression gdcm_jpeg12_jpeg_simple_progression
 #define jpeg_start_compress gdcm_jpeg12_jpeg_start_compress
 #define jpeg_start_decompress gdcm_jpeg12_jpeg_start_decompress

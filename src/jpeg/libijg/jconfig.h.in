@@ -63,5 +63,4 @@ typedef unsigned char boolean;
 /* GDCM stuff */
 
 #include "@BITS_TYPE_JPEG_MANGLE_NAME@"
-//#include "jinclude.h"
-//#include "jpeglib.h"
+

@@ -1,7 +1,7 @@
 /*
  * jmorecfg.h
  *
- * Copyright (C) 1991-1997, Thomas G. Lane.
+ * Copyright (C) 1991-1998, Thomas G. Lane.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -9,6 +9,7 @@
  * JPEG software for special applications or support machine-dependent
  * optimizations.  Most users will not need to touch this file.
  */
+
 
 /*
  * Define BITS_IN_JSAMPLE as either
@@ -19,7 +20,7 @@
  * We do not support run-time selection of data precision, sorry.
  */
 
-//#define BITS_IN_JSAMPLE  8  /* use 8 or 12 */
+//#define BITS_IN_JSAMPLE  8  /* use 8 or 12 (or 16 only for lossless) */
 #define BITS_IN_JSAMPLE @GDCM_BITS_IN_JSAMPLE@
 
 /*
@@ -89,6 +90,33 @@ typedef short JSAMPLE;
 #endif /* BITS_IN_JSAMPLE == 12 */
 
 
+#if BITS_IN_JSAMPLE == 16
+/* JSAMPLE should be the smallest type that will hold the values 0..65535.
+ * You can use a signed short by having GETJSAMPLE mask it with 0xFFFF.
+ */
+
+#ifdef HAVE_UNSIGNED_SHORT
+
+typedef unsigned short JSAMPLE;
+#define GETJSAMPLE(value)  ((int) (value))
+
+#else /* not HAVE_UNSIGNED_SHORT */
+
+typedef short JSAMPLE;
+#ifdef SHORT_IS_UNSIGNED
+#define GETJSAMPLE(value)  ((int) (value))
+#else
+#define GETJSAMPLE(value)  ((int) (value) & 0xFFFF)
+#endif /* SHORT_IS_UNSIGNED */
+
+#endif /* HAVE_UNSIGNED_SHORT */
+
+#define MAXJSAMPLE  65535
+#define CENTERJSAMPLE  32768
+
+#endif /* BITS_IN_JSAMPLE == 16 */
+
+
 /* Representation of a DCT frequency coefficient.
  * This should be a signed value of at least 16 bits; "short" is usually OK.
  * Again, we allocate large arrays of these, but you can change to int
@@ -96,6 +124,13 @@ typedef short JSAMPLE;
  */
 
 typedef short JCOEF;
+
+
+/* Representation of a spatial difference value.
+ * This should be a signed value of at least 16 bits; int is usually OK.
+ */
+
+typedef int JDIFF;
 
 
 /* Compressed datastreams are represented as arrays of JOCTET.
@@ -183,7 +218,6 @@ typedef unsigned int JDIMENSION;
 #define METHODDEF(type)    static type
 /* a function used only in its module: */
 #define LOCAL(type)    static type
-
 /* a function referenced thru EXTERNs: */
 #if defined( _WIN32 ) && defined (JPEGDLL)
 #define GLOBAL(type)            __declspec(dllexport) type
@@ -285,14 +319,16 @@ typedef int boolean;
 #undef  C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 #define C_PROGRESSIVE_SUPPORTED      /* Progressive JPEG? (Requires MULTISCAN)*/
+#define C_LOSSLESS_SUPPORTED      /* Lossless JPEG? */
 #define ENTROPY_OPT_SUPPORTED      /* Optimization of entropy coding parms? */
 /* Note: if you selected 12-bit data precision, it is dangerous to turn off
  * ENTROPY_OPT_SUPPORTED.  The standard Huffman tables are only good for 8-bit
- * precision, so jchuff.c normally uses entropy optimization to compute
+ * precision, so jcshuff.c normally uses entropy optimization to compute
  * usable tables for higher precision.  If you don't want to do optimization,
  * you'll have to supply different default Huffman tables.
- * The exact same statements apply for progressive JPEG: the default tables
- * don't work for progressive mode.  (This may get fixed, however.)
+ * The exact same statements apply for progressive and lossless JPEG:
+ * the default tables don't work for progressive mode or lossless mode.
+ * (This may get fixed, however.)
  */
 #define INPUT_SMOOTHING_SUPPORTED   /* Input image smoothing option? */
 
@@ -301,6 +337,7 @@ typedef int boolean;
 #undef  D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 #define D_PROGRESSIVE_SUPPORTED      /* Progressive JPEG? (Requires MULTISCAN)*/
+#define D_LOSSLESS_SUPPORTED      /* Lossless JPEG? */
 #define SAVE_MARKERS_SUPPORTED      /* jpeg_save_markers() needed? */
 #define BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing? (Progressive only) */
 #define IDCT_SCALING_SUPPORTED      /* Output rescaling via IDCT? */
@@ -391,5 +428,6 @@ typedef int boolean;
 #pragma warning ( disable : 4189 )
 #pragma warning ( disable : 4505 )
 #endif
+
 
 #endif /* JPEG_INTERNAL_OPTIONS */

@@ -1,14 +1,14 @@
 /*
  * jdsample.c
  *
- * Copyright (C) 1991-1996, Thomas G. Lane.
+ * Copyright (C) 1991-1998, Thomas G. Lane.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
  * This file contains upsampling routines.
  *
  * Upsampling input data is counted in "row groups".  A row group
- * is defined to be (v_samp_factor * DCT_scaled_size / min_DCT_scaled_size)
+ * is defined to be (v_samp_factor * codec_data_unit / min_codec_data_unit)
  * sample rows of each component.  Upsampling will normally produce
  * max_v_samp_factor pixel rows from each row group (but this could vary
  * if the upsampler is applying a scale factor of its own).
@@ -97,7 +97,6 @@ sep_upsample (j_decompress_ptr cinfo,
   jpeg_component_info * compptr;
   JDIMENSION num_rows;
 
-  in_row_groups_avail = 0;
   /* Fill the conversion buffer, if it's empty */
   if (upsample->next_row_out >= cinfo->max_v_samp_factor) {
     for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
@@ -158,8 +157,6 @@ METHODDEF(void)
 fullsize_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
        JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
-  cinfo = 0;
-  compptr = 0;
   *output_data_ptr = input_data;
 }
 
@@ -173,9 +170,6 @@ METHODDEF(void)
 noop_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
          JSAMPARRAY input_data, JSAMPARRAY * output_data_ptr)
 {
-  cinfo = 0;
-  compptr = 0;
-  input_data = 0;
   *output_data_ptr = NULL;  /* safety check */
 }
 
@@ -245,7 +239,6 @@ h2v1_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   JSAMPROW outend;
   int inrow;
 
-  compptr = 0;
   for (inrow = 0; inrow < cinfo->max_v_samp_factor; inrow++) {
     inptr = input_data[inrow];
     outptr = output_data[inrow];
@@ -274,7 +267,6 @@ h2v2_upsample (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   JSAMPROW outend;
   int inrow, outrow;
 
-  compptr = 0;
   inrow = outrow = 0;
   while (outrow < cinfo->max_v_samp_factor) {
     inptr = input_data[inrow];
@@ -423,10 +415,10 @@ jinit_upsampler (j_decompress_ptr cinfo)
   if (cinfo->CCIR601_sampling)  /* this isn't supported */
     ERREXIT(cinfo, JERR_CCIR601_NOTIMPL);
 
-  /* jdmainct.c doesn't support context rows when min_DCT_scaled_size = 1,
+  /* jdmainct.c doesn't support context rows when min_codec_data_unit = 1,
    * so don't ask for it.
    */
-  do_fancy = cinfo->do_fancy_upsampling && cinfo->min_DCT_scaled_size > 1;
+  do_fancy = cinfo->do_fancy_upsampling && cinfo->min_codec_data_unit > 1;
 
   /* Verify we can handle the sampling factors, select per-component methods,
    * and create storage as needed.
@@ -436,10 +428,10 @@ jinit_upsampler (j_decompress_ptr cinfo)
     /* Compute size of an "input group" after IDCT scaling.  This many samples
      * are to be converted to max_h_samp_factor * max_v_samp_factor pixels.
      */
-    h_in_group = (compptr->h_samp_factor * compptr->DCT_scaled_size) /
-     cinfo->min_DCT_scaled_size;
-    v_in_group = (compptr->v_samp_factor * compptr->DCT_scaled_size) /
-     cinfo->min_DCT_scaled_size;
+    h_in_group = (compptr->h_samp_factor * compptr->codec_data_unit) /
+     cinfo->min_codec_data_unit;
+    v_in_group = (compptr->v_samp_factor * compptr->codec_data_unit) /
+     cinfo->min_codec_data_unit;
     h_out_group = cinfo->max_h_samp_factor;
     v_out_group = cinfo->max_v_samp_factor;
     upsample->rowgroup_height[ci] = v_in_group; /* save for use later */

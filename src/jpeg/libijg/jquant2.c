@@ -232,7 +232,6 @@ prescan_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
   JDIMENSION col;
   JDIMENSION width = cinfo->output_width;
 
-  output_buf = 0;
   for (row = 0; row < num_rows; row++) {
     ptr = input_buf[row];
     for (col = width; col > 0; col--) {
@@ -1156,7 +1155,6 @@ finish_pass1 (j_decompress_ptr cinfo)
 METHODDEF(void)
 finish_pass2 (j_decompress_ptr cinfo)
 {
-  cinfo = 0;
   /* no work */
 }
 

@@ -21,8 +21,8 @@
 
 GLOBAL(void)
 jpeg_add_quant_table (j_compress_ptr cinfo, int which_tbl,
-		      const unsigned int *basic_table,
-		      int scale_factor, boolean force_baseline)
+          const unsigned int *basic_table,
+          int scale_factor, boolean force_baseline)
 /* Define a quantization table equal to the basic_table times
  * a scale factor (given as a percentage).
  * If force_baseline is TRUE, the computed quantization table entries
@@ -51,7 +51,7 @@ jpeg_add_quant_table (j_compress_ptr cinfo, int which_tbl,
     if (temp <= 0L) temp = 1L;
     if (temp > 32767L) temp = 32767L; /* max quantizer needed for 12 bits */
     if (force_baseline && temp > 255L)
-      temp = 255L;		/* limit to baseline range if requested */
+      temp = 255L;    /* limit to baseline range if requested */
     (*qtblptr)->quantval[i] = (UINT16) temp;
   }
 
@@ -62,7 +62,7 @@ jpeg_add_quant_table (j_compress_ptr cinfo, int which_tbl,
 
 GLOBAL(void)
 jpeg_set_linear_quality (j_compress_ptr cinfo, int scale_factor,
-			 boolean force_baseline)
+       boolean force_baseline)
 /* Set or change the 'quality' (quantization) setting, using default tables
  * and a straight percentage-scaling quality scale.  In most cases it's better
  * to use jpeg_set_quality (below); this entry point is provided for
@@ -96,9 +96,9 @@ jpeg_set_linear_quality (j_compress_ptr cinfo, int scale_factor,
 
   /* Set up two quantization tables using the specified scaling */
   jpeg_add_quant_table(cinfo, 0, std_luminance_quant_tbl,
-		       scale_factor, force_baseline);
+           scale_factor, force_baseline);
   jpeg_add_quant_table(cinfo, 1, std_chrominance_quant_tbl,
-		       scale_factor, force_baseline);
+           scale_factor, force_baseline);
 }
 
 
@@ -150,7 +150,7 @@ jpeg_set_quality (j_compress_ptr cinfo, int quality, boolean force_baseline)
 
 LOCAL(void)
 add_huff_table (j_compress_ptr cinfo,
-		JHUFF_TBL **htblptr, const UINT8 *bits, const UINT8 *val)
+    JHUFF_TBL **htblptr, const UINT8 *bits, const UINT8 *val)
 /* Define a Huffman table */
 {
   int nsymbols, len;
@@ -244,13 +244,13 @@ std_huff_tables (j_compress_ptr cinfo)
       0xf9, 0xfa };
   
   add_huff_table(cinfo, &cinfo->dc_huff_tbl_ptrs[0],
-		 bits_dc_luminance, val_dc_luminance);
+     bits_dc_luminance, val_dc_luminance);
   add_huff_table(cinfo, &cinfo->ac_huff_tbl_ptrs[0],
-		 bits_ac_luminance, val_ac_luminance);
+     bits_ac_luminance, val_ac_luminance);
   add_huff_table(cinfo, &cinfo->dc_huff_tbl_ptrs[1],
-		 bits_dc_chrominance, val_dc_chrominance);
+     bits_dc_chrominance, val_dc_chrominance);
   add_huff_table(cinfo, &cinfo->ac_huff_tbl_ptrs[1],
-		 bits_ac_chrominance, val_ac_chrominance);
+     bits_ac_chrominance, val_ac_chrominance);
 }
 
 
@@ -280,10 +280,11 @@ jpeg_set_defaults (j_compress_ptr cinfo)
   if (cinfo->comp_info == NULL)
     cinfo->comp_info = (jpeg_component_info *)
       (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				  MAX_COMPONENTS * SIZEOF(jpeg_component_info));
+          MAX_COMPONENTS * SIZEOF(jpeg_component_info));
 
   /* Initialize everything not dependent on the color space */
 
+  cinfo->lossless = FALSE;
   cinfo->data_precision = BITS_IN_JSAMPLE;
   /* Set up two quantization tables using default quality of 75 */
   jpeg_set_quality(cinfo, 75, TRUE);
@@ -341,8 +342,8 @@ jpeg_set_defaults (j_compress_ptr cinfo)
    */
   cinfo->JFIF_major_version = 1; /* Default JFIF version = 1.01 */
   cinfo->JFIF_minor_version = 1;
-  cinfo->density_unit = 0;	/* Pixel size is unknown by default */
-  cinfo->X_density = 1;		/* Pixel aspect ratio is square by default */
+  cinfo->density_unit = 0;  /* Pixel size is unknown by default */
+  cinfo->X_density = 1;    /* Pixel aspect ratio is square by default */
   cinfo->Y_density = 1;
 
   /* Choose JPEG colorspace based on input space, set defaults accordingly */
@@ -358,27 +359,31 @@ jpeg_set_defaults (j_compress_ptr cinfo)
 GLOBAL(void)
 jpeg_default_colorspace (j_compress_ptr cinfo)
 {
-  switch (cinfo->in_color_space) {
-  case JCS_GRAYSCALE:
-    jpeg_set_colorspace(cinfo, JCS_GRAYSCALE);
-    break;
-  case JCS_RGB:
-    jpeg_set_colorspace(cinfo, JCS_YCbCr);
-    break;
-  case JCS_YCbCr:
-    jpeg_set_colorspace(cinfo, JCS_YCbCr);
-    break;
-  case JCS_CMYK:
-    jpeg_set_colorspace(cinfo, JCS_CMYK); /* By default, no translation */
-    break;
-  case JCS_YCCK:
-    jpeg_set_colorspace(cinfo, JCS_YCCK);
-    break;
-  case JCS_UNKNOWN:
-    jpeg_set_colorspace(cinfo, JCS_UNKNOWN);
-    break;
-  default:
-    ERREXIT(cinfo, JERR_BAD_IN_COLORSPACE);
+  if (cinfo->lossless)
+    jpeg_set_colorspace(cinfo, cinfo->in_color_space);
+  else { /* lossy */
+    switch (cinfo->in_color_space) {
+    case JCS_GRAYSCALE:
+      jpeg_set_colorspace(cinfo, JCS_GRAYSCALE);
+      break;
+    case JCS_RGB:
+      jpeg_set_colorspace(cinfo, JCS_YCbCr);
+      break;
+    case JCS_YCbCr:
+      jpeg_set_colorspace(cinfo, JCS_YCbCr);
+      break;
+    case JCS_CMYK:
+      jpeg_set_colorspace(cinfo, JCS_CMYK); /* By default, no translation */
+      break;
+    case JCS_YCCK:
+      jpeg_set_colorspace(cinfo, JCS_YCCK);
+      break;
+    case JCS_UNKNOWN:
+      jpeg_set_colorspace(cinfo, JCS_UNKNOWN);
+      break;
+    default:
+      ERREXIT(cinfo, JERR_BAD_IN_COLORSPACE);
+    }
   }
 }
 
@@ -433,10 +438,16 @@ jpeg_set_colorspace (j_compress_ptr cinfo, J_COLOR_SPACE colorspace)
     cinfo->write_JFIF_header = TRUE; /* Write a JFIF marker */
     cinfo->num_components = 3;
     /* JFIF specifies component IDs 1,2,3 */
-    /* We default to 2x2 subsamples of chrominance */
-    SET_COMP(0, 1, 2,2, 0, 0,0);
-    SET_COMP(1, 2, 1,1, 1, 1,1);
-    SET_COMP(2, 3, 1,1, 1, 1,1);
+    if (cinfo->lossless) {
+      SET_COMP(0, 1, 1,1, 0, 0,0);
+      SET_COMP(1, 2, 1,1, 1, 1,1);
+      SET_COMP(2, 3, 1,1, 1, 1,1);
+    } else { /* lossy */
+      /* We default to 2x2 subsamples of chrominance */
+      SET_COMP(0, 1, 2,2, 0, 0,0);
+      SET_COMP(1, 2, 1,1, 1, 1,1);
+      SET_COMP(2, 3, 1,1, 1, 1,1);
+    }
     break;
   case JCS_CMYK:
     cinfo->write_Adobe_marker = TRUE; /* write Adobe marker to flag CMYK */
@@ -449,16 +460,23 @@ jpeg_set_colorspace (j_compress_ptr cinfo, J_COLOR_SPACE colorspace)
   case JCS_YCCK:
     cinfo->write_Adobe_marker = TRUE; /* write Adobe marker to flag YCCK */
     cinfo->num_components = 4;
-    SET_COMP(0, 1, 2,2, 0, 0,0);
-    SET_COMP(1, 2, 1,1, 1, 1,1);
-    SET_COMP(2, 3, 1,1, 1, 1,1);
-    SET_COMP(3, 4, 2,2, 0, 0,0);
+    if (cinfo->lossless) {
+      SET_COMP(0, 1, 1,1, 0, 0,0);
+      SET_COMP(1, 2, 1,1, 1, 1,1);
+      SET_COMP(2, 3, 1,1, 1, 1,1);
+      SET_COMP(3, 4, 1,1, 0, 0,0);
+    } else { /* lossy */
+      SET_COMP(0, 1, 2,2, 0, 0,0);
+      SET_COMP(1, 2, 1,1, 1, 1,1);
+      SET_COMP(2, 3, 1,1, 1, 1,1);
+      SET_COMP(3, 4, 2,2, 0, 0,0);
+    }
     break;
   case JCS_UNKNOWN:
     cinfo->num_components = cinfo->input_components;
     if (cinfo->num_components < 1 || cinfo->num_components > MAX_COMPONENTS)
       ERREXIT2(cinfo, JERR_COMPONENT_COUNT, cinfo->num_components,
-	       MAX_COMPONENTS);
+         MAX_COMPONENTS);
     for (ci = 0; ci < cinfo->num_components; ci++) {
       SET_COMP(ci, ci, 1,1, 0, 0,0);
     }
@@ -472,23 +490,8 @@ jpeg_set_colorspace (j_compress_ptr cinfo, J_COLOR_SPACE colorspace)
 #ifdef C_PROGRESSIVE_SUPPORTED
 
 LOCAL(jpeg_scan_info *)
-fill_a_scan (jpeg_scan_info * scanptr, int ci,
-	     int Ss, int Se, int Ah, int Al)
-/* Support routine: generate one scan for specified component */
-{
-  scanptr->comps_in_scan = 1;
-  scanptr->component_index[0] = ci;
-  scanptr->Ss = Ss;
-  scanptr->Se = Se;
-  scanptr->Ah = Ah;
-  scanptr->Al = Al;
-  scanptr++;
-  return scanptr;
-}
-
-LOCAL(jpeg_scan_info *)
 fill_scans (jpeg_scan_info * scanptr, int ncomps,
-	    int Ss, int Se, int Ah, int Al)
+      int Ss, int Se, int Ah, int Al)
 /* Support routine: generate one scan for each component */
 {
   int ci;
@@ -502,6 +505,22 @@ fill_scans (jpeg_scan_info * scanptr, int ncomps,
     scanptr->Al = Al;
     scanptr++;
   }
+  return scanptr;
+}
+
+
+LOCAL(jpeg_scan_info *)
+fill_a_scan (jpeg_scan_info * scanptr, int ci,
+       int Ss, int Se, int Ah, int Al)
+/* Support routine: generate one scan for specified component */
+{
+  scanptr->comps_in_scan = 1;
+  scanptr->component_index[0] = ci;
+  scanptr->Ss = Ss;
+  scanptr->Se = Se;
+  scanptr->Ah = Ah;
+  scanptr->Al = Al;
+  scanptr++;
   return scanptr;
 }
 
@@ -551,9 +570,9 @@ jpeg_simple_progression (j_compress_ptr cinfo)
   } else {
     /* All-purpose script for other color spaces. */
     if (ncomps > MAX_COMPS_IN_SCAN)
-      nscans = 6 * ncomps;	/* 2 DC + 4 AC scans per component */
+      nscans = 6 * ncomps;  /* 2 DC + 4 AC scans per component */
     else
-      nscans = 2 + 4 * ncomps;	/* 2 DC scans; 4 AC scans per component */
+      nscans = 2 + 4 * ncomps;  /* 2 DC scans; 4 AC scans per component */
   }
 
   /* Allocate space for script.
@@ -567,7 +586,7 @@ jpeg_simple_progression (j_compress_ptr cinfo)
     cinfo->script_space_size = MAX(nscans, 10);
     cinfo->script_space = (jpeg_scan_info *)
       (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-			cinfo->script_space_size * SIZEOF(jpeg_scan_info));
+      cinfo->script_space_size * SIZEOF(jpeg_scan_info));
   }
   scanptr = cinfo->script_space;
   cinfo->scan_info = scanptr;
@@ -608,3 +627,61 @@ jpeg_simple_progression (j_compress_ptr cinfo)
 }
 
 #endif /* C_PROGRESSIVE_SUPPORTED */
+
+
+#ifdef C_LOSSLESS_SUPPORTED
+
+/*
+ * Create a single-entry lossless-JPEG script containing all components.
+ * cinfo->num_components must be correct.
+ */
+
+GLOBAL(void)
+jpeg_simple_lossless (j_compress_ptr cinfo, int predictor, int point_transform)
+{
+  int ncomps = cinfo->num_components;
+  int nscans = 1;
+  int ci;
+  jpeg_scan_info * scanptr;
+
+  /* Safety check to ensure start_compress not called yet. */
+  if (cinfo->global_state != CSTATE_START)
+    ERREXIT1(cinfo, JERR_BAD_STATE, cinfo->global_state);
+
+  cinfo->lossless = TRUE;
+
+  /* Set jpeg_color_space. */
+  jpeg_default_colorspace(cinfo);
+
+  /* Check to ensure that all components will fit in one scan. */
+  if (cinfo->num_components > MAX_COMPS_IN_SCAN)
+    ERREXIT2(cinfo, JERR_COMPONENT_COUNT, cinfo->num_components,
+       MAX_COMPS_IN_SCAN);
+
+  /* Allocate space for script.
+   * We need to put it in the permanent pool in case the application performs
+   * multiple compressions without changing the settings.  To avoid a memory
+   * leak if jpeg_simple_lossless is called repeatedly for the same JPEG
+   * object, we try to re-use previously allocated space.
+   */
+  if (cinfo->script_space == NULL || cinfo->script_space_size < nscans) {
+    cinfo->script_space_size = nscans;
+    cinfo->script_space = (jpeg_scan_info *)
+      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+      cinfo->script_space_size * SIZEOF(jpeg_scan_info));
+  }
+  scanptr = cinfo->script_space;
+  cinfo->scan_info = scanptr;
+  cinfo->num_scans = nscans;
+
+  /* Fill the script. */
+  scanptr->comps_in_scan = ncomps;
+  for (ci = 0; ci < ncomps; ci++)
+    scanptr->component_index[ci] = ci;
+  scanptr->Ss = predictor;
+  scanptr->Se = 0;
+  scanptr->Ah = 0;
+  scanptr->Al = point_transform;
+}
+
+#endif /* C_LOSSLESS_SUPPORTED */

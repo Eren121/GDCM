@@ -75,3 +75,9 @@ generated using:
 
         nm libgdcmijpeg8.a | grep " T " | colrm 1 11 | sort
 
+
+5.
+In order to read lossless images, we had to apply the ls-patch to jpeg-6b ... to be continued
+
+
+(shoud we disalbe getenv just as dcmtk ?
