@@ -10,6 +10,14 @@
 #include "gdcmHeaderHelper.h"
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
+#include "gdcmObject.h"
+#include "gdcmDICOMDIR.h"
+#include "gdcmPatient.h"
+#include "gdcmStudy.h"
+#include "gdcmSerie.h"
+#include "gdcmImage.h"
+
+
 using namespace std;
 
 // Utility functions on strings for removing leading and trailing spaces
