@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 11:22:59 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/02/17 11:00:33 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,6 +31,7 @@
 #include "gdcmDocEntryArchive.h"
 
 #include <fstream>
+
 
 namespace gdcm 
 {
@@ -131,11 +132,12 @@ FileHelper::~FileHelper()
  * @param   content new value (string) to substitute with
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
+ * \return  false if DocEntry not found
  */
 bool FileHelper::SetValEntry(std::string const &content,
                              uint16_t group, uint16_t elem)
 { 
-   return FileInternal->SetValEntry(content,group,elem);
+   return FileInternal->SetValEntry(content, group, elem);
 }
 
 
@@ -147,17 +149,18 @@ bool FileHelper::SetValEntry(std::string const &content,
  * @param   lgth new value length
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
+ * \return  false if DocEntry not found
  */
 bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
                              uint16_t group, uint16_t elem)
 {
-   return FileInternal->SetBinEntry(content,lgth,group,elem);
+   return FileInternal->SetBinEntry(content, lgth, group, elem);
 }
 
 /**
  * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Create it with the given value when unexistant.
- * @param   content (string) Value to be set
+ *          when it exists. Creates it with the given value when unexistant.
+ * @param   content (string)value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * \return  pointer to the modified/created Dicom entry (NULL when creation
@@ -171,9 +174,9 @@ ValEntry *FileHelper::InsertValEntry(std::string const &content,
 
 /**
  * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Create it with the given value when unexistant.
+ *          when it exists. Creates it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
- * @param   binArea (binary) value to be set
+ * @param   binArea (binary)value to be set
  * @param   lgth new value length
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
@@ -183,13 +186,12 @@ ValEntry *FileHelper::InsertValEntry(std::string const &content,
 BinEntry *FileHelper::InsertBinEntry(uint8_t *binArea, int lgth,
                                      uint16_t group, uint16_t elem)
 {
-   return FileInternal->InsertBinEntry(binArea,lgth,group,elem);
+   return FileInternal->InsertBinEntry(binArea, lgth, group, elem);
 }
 
 /**
  * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Create it with the given value when unexistant.
- *          A copy of the binArea is made to be kept in the Document.
+ *          when it exists. Creates it, empty (?!) when unexistant.
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * \return  pointer to the modified/created Dicom entry (NULL when creation
@@ -197,7 +199,7 @@ BinEntry *FileHelper::InsertBinEntry(uint8_t *binArea, int lgth,
  */
 SeqEntry *FileHelper::InsertSeqEntry(uint16_t group, uint16_t elem)
 {
-   return FileInternal->InsertSeqEntry(group,elem);
+   return FileInternal->InsertSeqEntry(group, elem);
 }
 
 /**
@@ -276,7 +278,7 @@ uint8_t *FileHelper::GetImageData()
  *          Copies the pixel data (image[s]/volume[s]) to newly allocated zone. 
  *          DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
- * \        NULL if alloc fails 
+ *          NULL if alloc fails 
  */
 uint8_t *FileHelper::GetImageDataRaw ()
 {
@@ -353,26 +355,23 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
  *               user is allowed to pass any kind of pixelsn since the size is
  *               given in bytes) 
  * @param expectedSize total image size, *in Bytes*
- *
- * @return boolean
  */
 void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
 {
-   SetUserData(inData,expectedSize);
+   SetUserData(inData, expectedSize);
 }
 
 /**
  * \brief   Set the image data defined by the user
  * \warning When writting the file, this data are get as default data to write
  * @param inData user supplied pixel area (uint8_t* is just for the compiler.
- *               user is allowed to pass any kind of pixelsn since the size is
+ *               user is allowed to pass any kind of pixels since the size is
  *               given in bytes) 
- * @param expectedSize total image size, *in Bytes*
- 
+ * @param expectedSize total image size, *in Bytes* 
  */
 void FileHelper::SetUserData(uint8_t *inData, size_t expectedSize)
 {
-   PixelWriteConverter->SetUserData(inData,expectedSize);
+   PixelWriteConverter->SetUserData(inData, expectedSize);
 }
 
 /**
@@ -413,7 +412,7 @@ size_t FileHelper::GetRGBDataSize()
 
 /**
  * \brief   Get the image data from the file.
- *          If a LUT is found, the data are not expanded !
+ *          Even when a LUT is found, the data are not expanded to RGB!
  */
 uint8_t *FileHelper::GetRawData()
 {
@@ -422,7 +421,7 @@ uint8_t *FileHelper::GetRawData()
 
 /**
  * \brief   Get the image data size from the file.
- *          If a LUT is found, the data are not expanded !
+ *          Even when a LUT is found, the data are not expanded to RGB!
  */
 size_t FileHelper::GetRawDataSize()
 {
@@ -541,9 +540,11 @@ bool FileHelper::Write(std::string const &fileName)
    {
       case ImplicitVR:
          SetWriteFileTypeToImplicitVR();
+         CheckMetaElements();
          break;
       case ExplicitVR:
          SetWriteFileTypeToExplicitVR();
+         CheckMetaElements();
          break;
       case ACR:
       case ACR_LIBIDO:
@@ -551,6 +552,7 @@ bool FileHelper::Write(std::string const &fileName)
          break;
       default:
          SetWriteFileTypeToExplicitVR();
+         CheckMetaElements();
    }
 
    // --------------------------------------------------------------
@@ -574,14 +576,14 @@ bool FileHelper::Write(std::string const &fileName)
    switch(WriteMode)
    {
       case WMODE_RAW :
-         SetWriteToRaw();
+         SetWriteToRaw(); // modifies and pushes to the archive, when necessary
          break;
       case WMODE_RGB :
-         SetWriteToRGB();
+         SetWriteToRGB(); // modifies and pushes to the archive, when necessary
          break;
    }
 
-   bool check = CheckWriteIntegrity();
+   bool check = CheckWriteIntegrity(); // verifies length
    if(check)
    {
       check = FileInternal->Write(fileName,WriteType);
@@ -604,7 +606,7 @@ bool FileHelper::Write(std::string const &fileName)
 //-----------------------------------------------------------------------------
 // Protected
 /**
- * \brief Check the write integrity
+ * \brief Checks the write integrity
  *
  * The tests made are :
  *  - verify the size of the image to write with the possible write
@@ -657,7 +659,9 @@ bool FileHelper::CheckWriteIntegrity()
 }
 
 /**
- * \brief Update the File to write RAW datas  
+ * \brief Updates the File to write RAW data (as opposed to RGB data)
+ *       (modifies, when necessary, photochromatic interpretation, 
+ *       bits allocated, Pixels element VR)
  */ 
 void FileHelper::SetWriteToRaw()
 {
@@ -698,7 +702,11 @@ void FileHelper::SetWriteToRaw()
 }
 
 /**
- * \brief Update the File to write RGB datas  
+ * \brief Updates the File to write RGB data (as opposed to RAW data)
+ *       (modifies, when necessary, photochromatic interpretation, 
+ *       samples per pixel, Planar configuration, 
+ *       bits allocated, bits stored, high bit -ACR 24 bits-
+ *       Pixels element VR, pushes out the LUT, )
  */ 
 void FileHelper::SetWriteToRGB()
 {
@@ -750,7 +758,7 @@ void FileHelper::SetWriteToRGB()
       Archive->Push(0x0028,0x1202);
       Archive->Push(0x0028,0x1203);
 
-      // For old ACR-NEMA
+      // For old '24 Bits' ACR-NEMA
       // Thus, we have a RGB image and the bits allocated = 24 and 
       // samples per pixels = 1 (in the read file)
       if(FileInternal->GetBitsAllocated()==24) 
@@ -797,18 +805,43 @@ void FileHelper::RestoreWrite()
    Archive->Restore(0x0028,0x1201);
    Archive->Restore(0x0028,0x1202);
    Archive->Restore(0x0028,0x1203);
+
+   // group 0002 may be pushed out for ACR-NEMA writting purposes 
+   Archive->Restore(0x0002,0x0000);
+   Archive->Restore(0x0002,0x0001);
+   Archive->Restore(0x0002,0x0002);
+   Archive->Restore(0x0002,0x0003);
+   Archive->Restore(0x0002,0x0010);
+   Archive->Restore(0x0002,0x0012);
+   Archive->Restore(0x0002,0x0013);
+   Archive->Restore(0x0002,0x0016);
+   Archive->Restore(0x0002,0x0100);
+   Archive->Restore(0x0002,0x0102);
 }
 
 /**
- * \brief Set in the File the write type to ACR
+ * \brief Pushes out the whole group 0002
+ *        FIXME : better, set a flag to tell the writer not to write it ...
+ *        FIXME : method should probably have an other name !
+ *                SetWriteFileTypeToACR is NOT opposed to 
+ *                SetWriteFileTypeToExplicitVR and SetWriteFileTypeToImplicitVR
  */ 
 void FileHelper::SetWriteFileTypeToACR()
 {
-   Archive->Push(0x0002,0x0010);
+   Archive->Push(0x0002,0x0000);
+   Archive->Push(0x0002,0x0001);
+   Archive->Push(0x0002,0x0002);
+   Archive->Push(0x0002,0x0003);
+   Archive->Push(0x0002,0x0010);// Only TransferSyntax was pushed out !
+   Archive->Push(0x0002,0x0012);
+   Archive->Push(0x0002,0x0013);
+   Archive->Push(0x0002,0x0016);
+   Archive->Push(0x0002,0x0100);
+   Archive->Push(0x0002,0x0102);
 }
 
 /**
- * \brief Set in the File the write type to Explicit VR   
+ * \brief Sets in the File the TransferSyntax to 'Explicit VR Little Endian"   
  */ 
 void FileHelper::SetWriteFileTypeToExplicitVR()
 {
@@ -822,7 +855,7 @@ void FileHelper::SetWriteFileTypeToExplicitVR()
 }
 
 /**
- * \brief Set in the File the write type to Implicit VR   
+ * \brief Sets in the File the TransferSyntax to 'Implicit VR Little Endian"   
  */ 
 void FileHelper::SetWriteFileTypeToImplicitVR()
 {
@@ -837,11 +870,21 @@ void FileHelper::SetWriteFileTypeToImplicitVR()
 
 
 /**
- * \brief Restore in the File the write type
+ * \brief Restore in the File the initial group 0002
  */ 
 void FileHelper::RestoreWriteFileType()
 {
-   Archive->Restore(0x0002,0x0010);
+   // group 0002 may be pushed out for ACR-NEMA writting purposes 
+   Archive->Restore(0x0002,0x0000);
+   Archive->Restore(0x0002,0x0001);
+   Archive->Restore(0x0002,0x0002);
+   Archive->Restore(0x0002,0x0003);
+   Archive->Restore(0x0002,0x0010);//only TransferSyntax was pushed out/restored
+   Archive->Restore(0x0002,0x0012);
+   Archive->Restore(0x0002,0x0013);
+   Archive->Restore(0x0002,0x0016);
+   Archive->Restore(0x0002,0x0100);
+   Archive->Restore(0x0002,0x0102);
 }
 
 /**
@@ -905,13 +948,13 @@ void FileHelper::RestoreWriteOfLibido()
 }
 
 /**
- * \brief Copy a ValEntry content
+ * \brief Duplicates a ValEntry or creates it.
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Val Entry (NULL when creation
+ * \return  pointer to the new Val Entry (NULL when creation
  *          failed).
  */ 
-ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
+ValEntry *FileHelper::CopyValEntry(uint16_t group, uint16_t elem)
 {
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    ValEntry *newE;
@@ -923,22 +966,22 @@ ValEntry *FileHelper::CopyValEntry(uint16_t group,uint16_t elem)
    }
    else
    {
-      newE = GetFile()->NewValEntry(group,elem);
+      newE = GetFile()->NewValEntry(group, elem);
    }
 
    return newE;
 }
 
 /**
- * \brief   Modifies the value of a given Bin Entry (Dicom Element)
- *          when it exists. Create it with the given value when unexistant.
+ * \brief   Duplicates a BinEntry or creates it.
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * @param   vr  Value Representation of the Entry
- * \return  pointer to the modified/created Bin Entry (NULL when creation
+ *          FIXME : what is it used for?
+ * \return  pointer to the new Bin Entry (NULL when creation
  *          failed).
  */ 
-BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem,
+BinEntry *FileHelper::CopyBinEntry(uint16_t group, uint16_t elem,
                                    const std::string &vr)
 {
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
@@ -955,12 +998,72 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group,uint16_t elem,
    }
    else
    {
-      newE = GetFile()->NewBinEntry(group,elem,vr);
+      newE = GetFile()->NewBinEntry(group, elem, vr);
    }
 
    return newE;
 }
 
+/**
+ * \brief   Checks the MetaElements Group (0002).
+ *          adds the mandatory Entries if not found
+ *          (when user asks to write as a DICOM file, an ACR-NEMA file
+ *           he read before)
+ */ 
+void FileHelper::CheckMetaElements()
+{
+   // just to remember : 'official' 0002 group
+
+   //0002 0000 UL 1 Meta Group Length
+   //0002 0001 OB 1 File Meta Information Version
+   //0002 0002 UI 1 Media Stored SOP Class UID
+   //0002 0003 UI 1 Media Stored SOP Instance UID
+   //0002 0010 UI 1 Transfer Syntax UID
+   //0002 0012 UI 1 Implementation Class UID
+   //0002 0013 SH 1 Implementation Version Name
+   //0002 0016 AE 1 Source Application Entity Title
+   //0002 0100 UI 1 Private Information Creator
+   //0002 0102 OB 1 Private Information
+
+   std::string uid  = Util::CreateUniqueUID();
+   std::string uidMedia = uid;
+
+   // Create them if not found
+   ValEntry *e0000 = CopyValEntry(0x0002,0x0000);
+       e0000->SetValue("0"); // for the moment
+       Archive->Push(e0000);
+  
+   BinEntry *e0001 = CopyBinEntry(0x0002,0x0001, "OB");
+      e0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(), false);
+      e0001->SetLength(2);
+
+   ValEntry *e0002 = CopyValEntry(0x0002,0x0002);
+      // [Secondary Capture Image Storage]
+      e0002->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
+      Archive->Push(e0002); 
+   
+   ValEntry *e0003 = CopyValEntry(0x0002,0x0003);
+      e0003->SetValue(uidMedia.c_str());
+      Archive->Push(e0003); 
+
+   ValEntry *e0010 = CopyValEntry(0x0002,0x0010);
+      //Explicit VR - Little Endian 
+      e0010->SetValue("1.2.840.10008.1.2.1"); 
+      Archive->Push(e0010); 
+
+   ValEntry *e0012 = CopyValEntry(0x0002,0x0012);
+      e0012->SetValue("Implementation.Class.UID");
+      Archive->Push(e0012); 
+
+   ValEntry *e0013 = CopyValEntry(0x0002,0x0013);
+      e0013->SetValue("GDCM 1.0");
+      Archive->Push(e0013);
+
+   ValEntry *e0016 = CopyValEntry(0x0002,0x0016);
+      e0016->SetValue("1.2.840.10008.5.1.4.1.1.7");
+      Archive->Push(e0016);
+} 
+ 
 //-----------------------------------------------------------------------------
 // Private
 /**

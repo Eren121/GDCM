@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/16 16:41:00 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/02/17 11:00:33 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,7 +98,7 @@ public:
 
    /// \brief Tells the writer we want to keep 'Grey pixels + Palettes color'
    ///        when possible (as opposed to convert 'Palettes color' to RGB)
-  void SetWriteModeToRaw()           { SetWriteMode(WMODE_RAW);  };
+  void SetWriteModeToRaw()            { SetWriteMode(WMODE_RAW);  };
    /// \brief Tells the writer we want to write RGB image when possible
    ///        (as opposed to 'Grey pixels + Palettes color')
    void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  };
@@ -117,10 +117,10 @@ public:
    void SetWriteTypeToAcr()           { SetWriteType(ACR);        };
    /// \brief Tells the writer we want to write as LibIDO
    void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); };
-   /// \brief Tells the writer which format want to write
+   /// \brief Tells the writer which format we want to write
    /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    void SetWriteType(FileType format) { WriteType = format;       };
-   /// \brief Gets the format we want to write
+   /// \brief Gets the format we talled the write we wanted to write
    ///   (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType GetWriteType()            { return WriteType;         };
 
@@ -152,6 +152,7 @@ protected:
    ValEntry *CopyValEntry(uint16_t group, uint16_t elem);
    BinEntry *CopyBinEntry(uint16_t group, uint16_t elem, 
                           const std::string &vr);
+   void CheckMetaElements();
 
 private:
    void Initialize();
@@ -163,8 +164,8 @@ private:
    File *FileInternal;
 
    /// \brief Whether the underlying \ref gdcm::File was loaded by
-   ///  the constructor or passed to the constructor. When false
-   ///  the destructor is in charge of deletion.
+   ///  the constructor or passed to the constructor. 
+   ///  When false the destructor is in charge of deletion.
    bool SelfHeader;
    
    /// Wether already parsed or not

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/15 18:12:34 $
-  Version:   $Revision: 1.224 $
+  Date:      $Date: 2005/02/17 11:02:47 $
+  Version:   $Revision: 1.225 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,7 +115,6 @@ File::File( std::string const &filename )
       // Create a new BinEntry to change the the DictEntry
       // The changed DictEntry will have 
       // - a correct PixelVR OB or OW)
-      // - a VM to "PXL"
       // - the name to "Pixel Data"
       BinEntry *oldEntry = dynamic_cast<BinEntry *>(entry);
       if(oldEntry)
@@ -216,13 +215,7 @@ bool File::IsReadable()
  */
 int File::GetImageNumber()
 {
-   // The function i atoi() takes the address of an area of memory as
-   // parameter and converts the string stored at that location to an integer
-   // using the external decimal to internal binary conversion rules. This may
-   // be preferable to sscanf() since atoi() is a much smaller, simpler and
-   // faster function. sscanf() can do all possible conversions whereas
-   // atoi() can only do single decimal integer conversions.
-   //0020 0013 IS REL Image Number
+   //0020 0013 : Image Number
    std::string strImNumber = GetEntryValue(0x0020,0x0013);
    if ( strImNumber != GDCM_UNFOUND )
    {
@@ -237,7 +230,7 @@ int File::GetImageNumber()
  */
 ModalityType File::GetModality()
 {
-   // 0008 0060 CS ID Modality
+   // 0008 0060 : Modality
    std::string strModality = GetEntryValue(0x0008,0x0060);
    if ( strModality != GDCM_UNFOUND )
    {
@@ -401,7 +394,7 @@ float File::GetXSpacing()
 
    if ( xspacing == 0.)
    {
-      gdcmWarningMacro("gdcmData/CT-MONO2-8-abdo.dcm problem");
+      gdcmWarningMacro("gdcmData/CT-MONO2-8-abdo.dcm-like problem");
       // seems to be a bug in the header ...
       nbValues = sscanf( strSpacing.c_str(), "%f\\0\\%f", &yspacing, &xspacing);
       gdcmAssertMacro( nbValues == 2 );
@@ -447,15 +440,15 @@ float File::GetYSpacing()
  */
 float File::GetZSpacing()
 {
-   // Spacing Between Slices : distance entre le milieu de chaque coupe
-   // Les coupes peuvent etre :
+   // Spacing Between Slices : distance between the middle of 2 slices
+   // Slices may be :
    //   jointives     (Spacing between Slices = Slice Thickness)
-   //   chevauchantes (Spacing between Slices < Slice Thickness)
+   //   overlapping   (Spacing between Slices < Slice Thickness)
    //   disjointes    (Spacing between Slices > Slice Thickness)
    // Slice Thickness : epaisseur de tissus sur laquelle est acquis le signal
-   //   ca interesse le physicien de l'IRM, pas le visualisateur de volumes ...
-   //   Si le Spacing Between Slices est Missing, 
-   //   on suppose que les coupes sont jointives
+   //   It only concerns the MRI guys, not people wanting to visualize volmues
+   //   If Spacing Between Slices is Missing, 
+   //   we suppose slices joint together
    
    const std::string &strSpacingBSlices = GetEntryValue(0x0018,0x0088);
 
@@ -779,7 +772,7 @@ int File::GetPixelSize()
  *          - 32S   signed 32 bit,
  *          - FD floating double 64 bits (Not kosher DICOM, but so usefull!)
  * \warning 12 bit images appear as 16 bit.
- *          24 bit images appear as 8 bit
+ *          24 bit images appear as 8 bit + photochromatic interp ="RGB "
  * @return  0S if nothing found. NOT USABLE file. The caller has to check
  */
 std::string File::GetPixelType()
@@ -1327,10 +1320,10 @@ bool File::AnonymizeFile()
  *       (as opposed to 'DicomDir related') entries 
  *       then writes in a file all the (Dicom Elements) included the Pixels 
  * @param fileName file name to write to
- * @param filetype Type of the File to be written 
+ * @param writetype Type of the File to be written 
  *          (ACR, ExplicitVR, ImplicitVR)
  */
-bool File::Write(std::string fileName, FileType filetype)
+bool File::Write(std::string fileName, FileType writetype)
 {
    std::ofstream *fp = new std::ofstream(fileName.c_str(), 
                                          std::ios::out | std::ios::binary);
@@ -1341,12 +1334,12 @@ bool File::Write(std::string fileName, FileType filetype)
    }
 
    // Entry : 0002|0000 = group length -> recalculated
-   ValEntry *e0002 = GetValEntry(0x0002,0x0000);
-   if( e0002 )
+   ValEntry*e0000 = GetValEntry(0x0002,0x0000);
+   if( e0000 )
    {
       std::ostringstream sLen;
-      sLen << ComputeGroup0002Length(filetype);
-      e0002->SetValue(sLen.str());
+      sLen << ComputeGroup0002Length(writetype);
+      e0000->SetValue(sLen.str());
    }
 
    // Bits Allocated
@@ -1406,7 +1399,7 @@ bool File::Write(std::string fileName, FileType filetype)
       }
    }
 
-   Document::WriteContent(fp, filetype);
+   Document::WriteContent(fp, writetype);
 
    fp->close();
    delete fp;
@@ -1420,7 +1413,7 @@ bool File::Write(std::string fileName, FileType filetype)
  * \brief Initialize a default DICOM File that should contain all the
  *        field require by other reader. DICOM standard does not 
  *        explicitely defines those fields, heuristic has been choosen.
- *        This is not perfect as we are writting a CT image...
+ *        This is not perfect as we are writting a Secondary Capture image...
  */
 void File::InitializeDefaultFile()
 {
@@ -1435,8 +1428,8 @@ void File::InitializeDefaultFile()
 
    // Meta Element Group Length
    InsertValEntry("146 ",                      0x0002, 0x0000);
-   // Media Storage SOP Class UID (CT Image Storage)
-   InsertValEntry("1.2.840.10008.5.1.4.1.1.2", 0x0002, 0x0002);
+   // Media Storage SOP Class UID (Secondary Capture Image Storage)
+   InsertValEntry("1.2.840.10008.5.1.4.1.1.7", 0x0002, 0x0002);
    // Media Storage SOP Instance UID
    InsertValEntry(uidMedia.c_str(),            0x0002, 0x0003);
    // Transfer Syntax UID (Explicit VR Little Endian)
