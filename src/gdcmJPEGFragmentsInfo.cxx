@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 16:28:58 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/01/28 15:42:22 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,8 @@
 =========================================================================*/
 
 #include "gdcmJPEGFragmentsInfo.h"
+#include "gdcmDebug.h"
+
 #include <fstream>
 
 namespace gdcm 
@@ -132,6 +134,29 @@ void JPEGFragmentsInfo::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t 
 void JPEGFragmentsInfo::AddFragment(JPEGFragment *fragment)
 {
    Fragments.push_back(fragment);
+}
+
+JPEGFragment *JPEGFragmentsInfo::GetFirstFragment()
+{
+   ItFragments = Fragments.begin();
+   if (ItFragments != Fragments.end())
+      return  *ItFragments;
+   return NULL;
+}
+
+JPEGFragment *JPEGFragmentsInfo::GetNextFragment()
+{
+   gdcmAssertMacro (ItFragments != Fragments.end());
+
+   ++ItFragments;
+   if (ItFragments != Fragments.end())
+      return  *ItFragments;
+   return NULL;
+}
+
+unsigned int JPEGFragmentsInfo::GetFragmentCount()
+{
+   return Fragments.size();
 }
 
 } // end namespace gdcm

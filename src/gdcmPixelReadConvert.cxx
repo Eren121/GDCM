@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 16:28:58 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/01/28 15:42:22 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -243,21 +243,20 @@ bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream *fp )
    long RawSegmentSize = XSize * YSize;
 
    // Loop on the frame[s]
-   for( RLEFramesInfo::RLEFrameList::iterator
-        it  = RLEInfo->Frames.begin();
-        it != RLEInfo->Frames.end();
-      ++it )
+   RLEFrame *frame = RLEInfo->GetFirstFrame();
+   while( frame )
    {
       // Loop on the fragments
-      for( unsigned int k = 1; k <= (*it)->GetNumberOfFragments(); k++ )
+      for( unsigned int k = 1; k <= frame->GetNumberOfFragments(); k++ )
       {
-         fp->seekg(  (*it)->GetOffset(k) , std::ios::beg );
-         (void)ReadAndDecompressRLEFragment( subRaw,
-                                             (*it)->GetLength(k),
-                                             RawSegmentSize, 
-                                             fp );
+         fp->seekg(frame->GetOffset(k),std::ios::beg);
+         ReadAndDecompressRLEFragment(subRaw,
+                                      frame->GetLength(k),
+                                      RawSegmentSize, 
+                                      fp);
          subRaw += RawSegmentSize;
       }
+      frame = RLEInfo->GetNexttFrame();
    }
 
    if ( BitsAllocated == 16 )
@@ -425,8 +424,8 @@ ReadAndDecompressJPEGSingleFrameFragmentsFromFile( std::ifstream *fp )
    JPEGInfo->ReadAllFragments(fp, buffer);
 
    // kludge: // FIXME
-   JPEGFragmentsInfo::JPEGFragmentsList::const_iterator it = JPEGInfo->Fragments.begin();
-   (*it)->DecompressJPEGSingleFrameFragmentsFromFile(buffer, totalLength, Raw, BitsStored);
+   JPEGFragment *fragment = JPEGInfo->GetFirstFragment();
+   fragment->DecompressJPEGSingleFrameFragmentsFromFile(buffer, totalLength, Raw, BitsStored);
 
    // free local buffer
    delete [] buffer;
@@ -458,19 +457,21 @@ ReadAndDecompressJPEGFragmentedFramesFromFile( std::ifstream *fp )
    size_t howManyWritten = 0;
    size_t fragmentLength = 0;
    
-   JPEGFragmentsInfo::JPEGFragmentsList::const_iterator it;
-   for( it  = JPEGInfo->Fragments.begin() ;
-        (it != JPEGInfo->Fragments.end()) && (howManyRead < totalLength);
-        ++it )
+   JPEGFragment *fragment = JPEGInfo->GetFirstFragment();
+   while( fragment )
    {
-      fragmentLength += (*it)->GetLength();
+      fragmentLength += fragment->GetLength();
       
       if (howManyRead > fragmentLength) continue;
       
-      (*it)->DecompressJPEGFragmentedFramesFromFile(buffer, Raw, BitsStored, howManyRead, howManyWritten, totalLength);
+      fragment->DecompressJPEGFragmentedFramesFromFile(buffer, Raw, BitsStored, 
+                                                       howManyRead, howManyWritten, 
+                                                       totalLength);
       
       if (howManyRead < fragmentLength)
          howManyRead = fragmentLength;
+
+      fragment = JPEGInfo->GetNextFragment();
    }
 
    // free local buffer
@@ -490,28 +491,27 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
    if ( IsJPEG2000 )
    {
       gdcmVerboseMacro( "Sorry, JPEG2000 not yet taken into account" );
-      fp->seekg( (*JPEGInfo->Fragments.begin())->GetOffset(), std::ios::beg);
+      fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
 //    if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
-          gdcmVerboseMacro( "Wrong Blue LUT descriptor" );
           return false;
    }
 
    if ( IsJPEGLS )
    {
       gdcmVerboseMacro( "Sorry, JPEG-LS not yet taken into account" );
-      fp->seekg( (*JPEGInfo->Fragments.begin())->GetOffset(), std::ios::beg);
+      fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
 //    if ( ! gdcm_read_JPEGLS_file( fp,Raw ) )
          return false;
    }
 
-   if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )
+   if ( ( ZSize == 1 ) && ( JPEGInfo->GetFragmentCount() > 1 ) )
    {
       // we have one frame split into several fragments
       // we will pack those fragments into a single buffer and 
       // read from it
       return ReadAndDecompressJPEGSingleFrameFragmentsFromFile( fp );
    }
-   else if (JPEGInfo->Fragments.size() == (size_t)ZSize)
+   else if (JPEGInfo->GetFragmentCount() == (size_t)ZSize)
    {
    }
 //   if ( ( ZSize == 1 ) && ( JPEGInfo->Fragments.size() > 1 ) )

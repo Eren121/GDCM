@@ -1,5 +1,7 @@
 2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * Remove friend classes between DocEntry and File
+   * Remove friend between DocEntry and File classes
+   * Remove friend between PixelReadConverter and RLEFramesInfo, 
+     JPEGFragmentsInfo
 
 2005-01-28 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmFile.cxx, gdcmDocument.cxx : fix the bug on the group|element
