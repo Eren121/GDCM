@@ -1522,16 +1522,16 @@
 3008 0022 IS ??? Current Fraction Number
 3008 0024 DA ??? Treatment Control Point Date
 3008 0025 TM ??? Treatment Control Point Time
-3008 002A CS ??? Treatment Termination Status
-3008 002B SH ??? Treatment Termination Code
-3008 002C CS ??? Treatment Verification Status
+3008 002a CS ??? Treatment Termination Status
+3008 002b SH ??? Treatment Termination Code
+3008 002c CS ??? Treatment Verification Status
 3008 0030 SQ ??? Referenced Treatment Record Sequence
 3008 0032 DS ??? Specified Primary Meterset
 3008 0033 DS ??? Specified Secondary Meterset
 3008 0036 DS ??? Delivered Primary Meterset
 3008 0037 DS ??? Delivered Secondary Meterset
-3008 003A DS ??? Specified Treatment Time
-3008 003B DS ??? Delivered Treatment Time
+3008 003a DS ??? Specified Treatment Time
+3008 003b DS ??? Delivered Treatment Time
 3008 0040 SQ ??? Control Point Delivery Sequence
 3008 0042 DS ??? Specified Meterset
 3008 0044 DS ??? Delivered Meterset
@@ -1540,7 +1540,7 @@
 3008 0052 DS ??? Cumulative Dose to Dose Reference
 3008 0054 DA ??? First Treatment Date
 3008 0056 DA ??? Most Recent Treatment Date
-3008 005A IS ??? Number of Fractions Delivered
+3008 005a IS ??? Number of Fractions Delivered
 3008 0060 SQ ??? Override Sequence
 3008 0062 AT ??? Override Parameter Pointer
 3008 0064 IS ??? Measured Dose Reference Number
@@ -1550,16 +1550,16 @@
 3008 0074 ST ??? Calculated Dose Reference Description
 3008 0076 DS ??? Calculated Dose Reference Dose Value
 3008 0078 DS ??? Start Meterset
-3008 007A DS ??? End Meterset
+3008 007a DS ??? End Meterset
 3008 0080 SQ ??? Referenced Measured Dose Reference Sequence
 3008 0082 IS ??? Referenced Measured Dose Reference Number
 3008 0090 SQ ??? Referenced Calculated Dose Reference Sequence
 3008 0092 IS ??? Referenced Calculated Dose Reference Number
-3008 00A0 SQ ??? Beam Limiting Device Leaf Pairs Sequence
-3008 00B0 SQ ??? Recorded Wedge Sequence
-3008 00C0 SQ ??? Recorded Compensator Sequence
-3008 00D0 SQ ??? Recorded Block Sequence
-3008 00E0 SQ ??? Treatment Summary Measured Dose Reference Sequence
+3008 00a0 SQ ??? Beam Limiting Device Leaf Pairs Sequence
+3008 00b0 SQ ??? Recorded Wedge Sequence
+3008 00c0 SQ ??? Recorded Compensator Sequence
+3008 00d0 SQ ??? Recorded Block Sequence
+3008 00e0 SQ ??? Treatment Summary Measured Dose Reference Sequence
 3008 0100 SQ ??? Recorded Source Sequence
 3008 0105 LO ??? Source Serial Number
 3008 0110 SQ ??? Treatment Session Application Setup Sequence
@@ -1571,8 +1571,8 @@
 3008 0134 DS ??? Delivered Channel Total Time
 3008 0136 IS ??? Specified Number of Pulses
 3008 0138 IS ??? Delivered Number of Pulses
-3008 013A DS ??? Specified Pulse Repetition Interval
-3008 013C DS ??? Delivered Pulse Repetition Interval
+3008 013a DS ??? Specified Pulse Repetition Interval
+3008 013c DS ??? Delivered Pulse Repetition Interval
 3008 0140 SQ ??? Recorded Source Applicator Sequence
 3008 0142 IS ??? Referenced Source Applicator Number
 3008 0150 SQ ??? Recorded Channel Shield Sequence
