@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 04:15:33 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/01/31 05:24:21 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ void JPEGFragmentsInfo::Print( std::ostream &os, std::string const &indent )
    os << std::endl;
 }
 
-void JPEGFragmentsInfo::DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int , int )
+void JPEGFragmentsInfo::DecompressFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int , int )
 {
    // Pointer to the Raw image
    uint8_t *localRaw = buffer;

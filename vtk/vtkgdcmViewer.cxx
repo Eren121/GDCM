@@ -15,7 +15,7 @@
 #include <iostream>
 
 #include <vtkRenderWindowInteractor.h>
-#include <vtkImageViewer2.h>
+#include <vtkImageViewer.h>
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsWriter.h>
 #include <vtkCommand.h>
@@ -60,7 +60,7 @@ public:
          }
       }
    }
-   vtkImageViewer2 *ImageViewer;
+   vtkImageViewer *ImageViewer;
 };
 
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
    vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
 
-   vtkImageViewer2 *viewer = vtkImageViewer2::New();
+   vtkImageViewer *viewer = vtkImageViewer::New();
 
    if( reader->GetLookupTable() )
    {
@@ -117,6 +117,7 @@ int main(int argc, char *argv[])
    iren->AddObserver(vtkCommand::CharEvent,obs);
    obs->Delete();
 
+   //viewer->Render();
    iren->Initialize();
    iren->Start();
 

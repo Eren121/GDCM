@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 04:15:33 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/01/31 05:24:21 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,144 +129,6 @@ void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream *fp )
    }
 }
 
-/**
- * \brief     Try to deal with RLE 16 Bits. 
- *            We assume the RLE has already been parsed and loaded in
- *            Raw (through \ref ReadAndDecompressJPEGFile ).
- *            We here need to make 16 Bits Pixels from Low Byte and
- *            High Byte 'Planes'...(for what it may mean)
- * @return    Boolean
- */
-bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
-{
-   size_t pixelNumber = XSize * YSize;
-   size_t rawSize = XSize * YSize * NumberOfFrames;
-
-   // We assumed Raw contains the decoded RLE pixels but as
-   // 8 bits per pixel. In order to convert those pixels to 16 bits
-   // per pixel we cannot work in place within Raw and hence
-   // we copy it in a safe place, say copyRaw.
-
-   uint8_t* copyRaw = new uint8_t[rawSize * 2];
-   memmove( copyRaw, Raw, rawSize * 2 );
-
-   uint8_t* x = Raw;
-   uint8_t* a = copyRaw;
-   uint8_t* b = a + pixelNumber;
-
-   for ( int i = 0; i < NumberOfFrames; i++ )
-   {
-      for ( unsigned int j = 0; j < pixelNumber; j++ )
-      {
-         *(x++) = *(b++);
-         *(x++) = *(a++);
-      }
-   }
-
-   delete[] copyRaw;
-      
-   /// \todo check that operator new []didn't fail, and sometimes return false
-   return true;
-}
-
-/**
- * \brief Implementation of the RLE decoding algorithm for decompressing
- *        a RLE fragment. [refer to PS 3.5-2003, section G.3.2 p 86]
- * @param subRaw Sub region of \ref Raw where the decoded fragment
- *        should be placed.
- * @param fragmentSize The length of the binary fragment as found on the disk.
- * @param RawSegmentSize The expected length of the fragment ONCE
- *        Raw.
- * @param fp File Pointer: on entry the position should be the one of
- *        the fragment to be decoded.
- */
-bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t *subRaw,
-                                                 long fragmentSize,
-                                                 long RawSegmentSize,
-                                                 std::ifstream *fp )
-{
-   int8_t count;
-   long numberOfOutputBytes = 0;
-   long numberOfReadBytes = 0;
-
-   while( numberOfOutputBytes < RawSegmentSize )
-   {
-      fp->read( (char*)&count, 1 );
-      numberOfReadBytes += 1;
-      if ( count >= 0 )
-      // Note: count <= 127 comparison is always true due to limited range
-      //       of data type int8_t [since the maximum of an exact width
-      //       signed integer of width N is 2^(N-1) - 1, which for int8_t
-      //       is 127].
-      {
-         fp->read( (char*)subRaw, count + 1);
-         numberOfReadBytes   += count + 1;
-         subRaw     += count + 1;
-         numberOfOutputBytes += count + 1;
-      }
-      else
-      {
-         if ( ( count <= -1 ) && ( count >= -127 ) )
-         {
-            int8_t newByte;
-            fp->read( (char*)&newByte, 1);
-            numberOfReadBytes += 1;
-            for( int i = 0; i < -count + 1; i++ )
-            {
-               subRaw[i] = newByte;
-            }
-            subRaw     += -count + 1;
-            numberOfOutputBytes += -count + 1;
-         }
-      }
-      // if count = 128 output nothing
-                                                                                
-      if ( numberOfReadBytes > fragmentSize )
-      {
-         gdcmVerboseMacro( "Read more bytes than the segment size.");
-         return false;
-      }
-   }
-   return true;
-}
-
-/**
- * \brief     Reads from disk the Pixel Data of 'Run Length Encoded'
- *            Dicom encapsulated file and decompress it.
- * @param     fp already open File Pointer
- *            at which the pixel data should be copied
- * @return    Boolean
- */
-bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream *fp )
-{
-   uint8_t *subRaw = Raw;
-   long RawSegmentSize = XSize * YSize;
-
-   // Loop on the frame[s]
-   RLEFrame *frame = RLEInfo->GetFirstFrame();
-   while( frame )
-   {
-      // Loop on the fragments
-      for( unsigned int k = 1; k <= frame->GetNumberOfFragments(); k++ )
-      {
-         fp->seekg(frame->GetOffset(k),std::ios::beg);
-         ReadAndDecompressRLEFragment(subRaw,
-                                      frame->GetLength(k),
-                                      RawSegmentSize, 
-                                      fp);
-         subRaw += RawSegmentSize;
-      }
-      frame = RLEInfo->GetNextFrame();
-   }
-
-   if ( BitsAllocated == 16 )
-   {
-      // Try to deal with RLE 16 Bits
-      (void)DecompressRLE16BitsFromRLE8Bits( ZSize );
-   }
-
-   return true;
-}
 
 /**
  * \brief Swap the bytes, according to \ref SwapCode.
@@ -398,7 +260,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
    int length = XSize * YSize * SamplesPerPixel;
    int numberBytes = BitsAllocated / 8;
 
-   JPEGInfo->DecompressJPEGFramesFromFile(fp, Raw, BitsStored, numberBytes, length );
+   JPEGInfo->DecompressFromFile(fp, Raw, BitsStored, numberBytes, length );
    return true;
 }
 
@@ -578,7 +440,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    } 
    else if ( IsRLELossless )
    {
-      if ( ! ReadAndDecompressRLEFile( fp ) )
+      if ( ! RLEInfo->ReadAndDecompressRLEFile( fp, Raw, XSize, YSize, ZSize, BitsAllocated ) )
       {
          gdcmVerboseMacro( "RLE decompressor failed." );
          return false;

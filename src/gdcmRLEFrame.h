@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/01/31 05:24:21 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,9 +50,9 @@ public:
 
    void SetNumberOfFragments(unsigned int number) { NumberFragments = number; };   
    unsigned int GetNumberOfFragments() { return NumberFragments; };
-   void SetOffset(unsigned int id,long offset);
+   void SetOffset(unsigned int id, long offset);
    long GetOffset(unsigned int id);
-   void SetLength(unsigned int id,long length);
+   void SetLength(unsigned int id, long length);
    long GetLength(unsigned int id);
 
 private:
