@@ -714,13 +714,14 @@ void gdcmHeader::LoadElementValue(gdcmElValue * ElVal) {
 
    fseek(fp, (long)ElVal->GetOffset(), SEEK_SET);
    
-   // Sequences not treated yet !
+   // FIXME Sequences not treated yet !
    //
    // Ne faudrait-il pas au contraire trouver immediatement
    // une maniere 'propre' de traiter les sequences (vr = SQ)
    // car commencer par les ignorer risque de conduire a qq chose
    // qui pourrait ne pas etre generalisable
-   //
+   // Well, I'm expecting your code !!!
+    
    if( vr == "SQ" )
       SkipLoad = true;
 
@@ -1414,6 +1415,32 @@ void gdcmHeader::AddAndDefaultElements(void) {
    else
       NewElVal->SetValue("0");
 }
+
+/**
+ * \ingroup gdcmHeader
+ * \brief  This predicate, based on hopefully reasonnable heuristics,
+ *         decides whether or not the current gdcmHeader was properly parsed
+ *         and contains the mandatory information for being considered as
+ *         a well formed and usable image.
+ * @return true when gdcmHeader is the one of a reasonable Dicom file,
+ *         false otherwise. 
+ */
+bool gdcmHeader::IsReadable(void) {
+   if (   GetElValByName("Image Dimensions") != "gdcm::Unfound"
+      && atoi(GetElValByName("Image Dimensions").c_str()) > 4 ) {
+      return false;
+   }
+   if (  GetElValByName("Bits Allocated") == "gdcm::Unfound" )
+      return false;
+   if (  GetElValByName("Bits Stored") == "gdcm::Unfound" )
+      return false;
+   if (  GetElValByName("High Bit") == "gdcm::Unfound" )
+      return false;
+   if (  GetElValByName("Pixel Representation") == "gdcm::Unfound" )
+      return false;
+   return true;
+}
+
 
 /**
  * \ingroup gdcmHeader

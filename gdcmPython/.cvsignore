@@ -9,3 +9,4 @@ Makefile.in
 *.la
 .libs
 .deps
+_gdcm.so

@@ -1,4 +1,5 @@
 from gdcmPython import *
+import sys
 
 ### Get filename from command line or default it
 try:
@@ -15,6 +16,10 @@ if not os.path.isfile(FileName):
 
 ### Build the header element list
 toRead = gdcmHeader(FileName)
+if not toRead.IsReadable():
+   print "The ", FileName, " file is not "
+   print "   readable with gdcm. Sorry."
+   sys.exit()
 
 print "##############################################################"
 print "### Display all the elements and their respective values"

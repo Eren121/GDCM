@@ -123,6 +123,7 @@ protected:
    int anonymize(ostream&);  // FIXME : anonymize should be a friend ?
 public:
    void LoadElements(void);
+   bool IsReadable(void);
    virtual void ParseHeader(bool exception_on_error = false)
      throw(gdcmFormatError);
    gdcmHeader(const char *filename, bool exception_on_error = false)

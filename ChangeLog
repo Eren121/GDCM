@@ -1,3 +1,7 @@
+2003-03-26 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * src/gdcmHeader[h, cxx] gdcmHeader now has an IsReadable predicate.
+      * gdcmPython/demo/test.py changed accordingly.
+
 2003-03-25 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * gdcmPython/Makefile.am fixed linking against libstdc++
       * gdcmPython/_gdcm.so symbolic link to gdcmPython/.libs/pygdcm.so added.
