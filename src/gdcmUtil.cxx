@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:43:38 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2004/10/09 02:57:12 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,33 @@
 
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
+
+
+/**
+ * \ingroup Globals
+ * \brief Provide a better 'c++' approach for sprintf
+ * For example c code is:
+ * sprintf(trash, "%04x|%04x", group , element);
+ *
+ * c++ is 
+ * std::ostringstream buf;
+ * buf << std::right << std::setw(4) << std::setfill('0') << std::hex
+ *     << group << "|" << std::right << std::setw(4) << std::setfill('0') 
+ *     << std::hex <<  element;
+ * buf.str();
+ */
+#include <stdarg.h>  //only included in implementation file
+#include <stdio.h>   //only included in implementation file
+
+std::string Format(const char* format, ...)
+{
+   char buffer[2048];
+   va_list args;
+   va_start(args, format);
+   vsprintf(buffer, format, args);  //might be a security flaw
+   return buffer;
+}
+
 
 /**
  * \ingroup Globals

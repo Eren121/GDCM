@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/10/09 02:57:11 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,43 +43,43 @@ public:
 
    static gdcmTagKey TranslateToKey(uint16_t group, uint16_t element);
 
-   void SetVR(std::string);
+   void SetVR(std::string const & vr);
 
    /// \brief tells if the V(alue) R(epresentation) is known (?!)
    /// @return 
-   bool IsVRUnknown() {return vr == "??"; }
+   bool IsVRUnknown() { return VR == "??"; }
 
    /// \brief  Returns the Dicom Group Number of the current gdcmDictEntry
    /// @return the Dicom Group Number
-   uint16_t GetGroup() { return group; }
+   uint16_t GetGroup() { return Group; }
   
    /// \brief  Returns the Dicom Element Number of the current gdcmDictEntry
    /// @return the Dicom Element Number
-   uint16_t GetElement() { return element; }
+   uint16_t GetElement() { return Element; }
  
    /// \brief  Returns the Dicom Value Representation of the current
    ///         gdcmDictEntry
    /// @return the Dicom Value Representation
-   std::string GetVR() { return vr; }
+   std::string GetVR() { return VR; }
  
    /// \brief   sets the key of the current gdcmDictEntry
    /// @param k New key to be set.
-   void SetKey(std::string k)  { key = k; }
+   void SetKey(std::string const & k)  { Key = k; }
  
    /// \brief   returns the Fourth field of the current gdcmDictEntry
    /// \warning NOT part of the Dicom Standard.
    ///          May be REMOVED an any time. NEVER use it.
    /// @return  The Fourth field
-   std::string GetFourth(void) { return fourth; } 
+   std::string GetFourth() { return Fourth; } 
 
    /// \brief  Returns the Dicom Name of the current gdcmDictEntry
    ///         e.g. "Patient Name" for Dicom Tag (0x0010, 0x0010) 
    /// @return the Dicom Name
-   std::string GetName(void) { return name; } 
+   std::string GetName() { return Name; } 
  
    /// \brief  Gets the key of the current gdcmDictEntry
    /// @return the key.
-   std::string GetKey(void) { return key; }
+   std::string GetKey() { return Key; }
 
 private:
    /// \todo FIXME 
@@ -91,20 +91,20 @@ private:
    ///                         What's gdcmTagKey used for ?
    
    /// DicomGroup number
-   uint16_t group;   // e.g. 0x0010
+   uint16_t Group;   // e.g. 0x0010
 
    /// DicomElement number
-   uint16_t element; // e.g. 0x0103
+   uint16_t Element; // e.g. 0x0103
 
    /// \brief Value Representation i.e. some clue about the nature
    ///        of the data represented e.g. "FD" short for
    ///        "Floating Point Double" (see \ref gdcmVR)
-   std::string vr;
+   std::string VR;
 
    /**
     * \brief AVOID using the following fourth field at all costs.
     * 
-    *  They are at leat two good reasons for NOT using fourth:
+    *  They are at least two good reasons for NOT using fourth:
     *  - the main reason is that it is NOT part of the 'official'
     *    Dicom Dictionnary.
     *  - a second reason is that it is not defined for all the groups.
@@ -158,13 +158,13 @@ private:
     *  - LLO = Left  Lateral Oblique  
     *  .
     */
-   std::string fourth; 
+   std::string Fourth; 
 
    /// e.g. "Patient's Name"                    
-   std::string name;      
+   std::string Name;      
 
-   /// Redundant with (group, element) but we add it on efficiency purposes. 
-   gdcmTagKey  key;
+   /// Redundant with (group, element) but we add it for efficiency purpose.
+   gdcmTagKey  Key;
 };
 
 //-----------------------------------------------------------------------------

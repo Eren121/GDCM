@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/08 04:43:38 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/10/09 02:57:12 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,11 +32,12 @@
  */
 
 //-----------------------------------------------------------------------------
-GDCM_EXPORT void Tokenize (const std::string& str,
-                          std::vector<std::string>& tokens,
-                          const std::string& delimiters = " ");
-GDCM_EXPORT int  CountSubstring (const std::string& str,
-                                 const std::string& subStr);       
+GDCM_EXPORT std::string Format(const char* format, ...);
+GDCM_EXPORT void        Tokenize (const std::string& str,
+                                  std::vector<std::string>& tokens,
+                                  const std::string& delimiters = " ");
+GDCM_EXPORT int         CountSubstring (const std::string& str,
+                                        const std::string& subStr);       
 
 GDCM_EXPORT std::string CreateCleanString(std::string s);
 GDCM_EXPORT void        NormalizePath(std::string &name);

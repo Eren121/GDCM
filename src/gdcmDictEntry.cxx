@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/09/27 08:39:06 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/10/09 02:57:11 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,31 +18,31 @@
 
 #include "gdcmDictEntry.h"
 #include "gdcmDebug.h"
+#include "gdcmUtil.h"
 
-#include <stdio.h>    // FIXME For sprintf
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
  * \brief   Constructor
- * @param   InGroup    DICOM-Group Number
- * @param   InElement  DICOM-Element Number
- * @param   InVr       Value Representatiion
- * @param   InFourth  // DO NOT use any longer; 
+ * @param   group      DICOM-Group Number
+ * @param   element    DICOM-Element Number
+ * @param   vr         Value Representatiion
+ * @param   fourth    // DO NOT use any longer; 
  *                       NOT part of the Dicom Standard
- * @param   InName    description of the element
+ * @param   name      description of the element
 */
 
-gdcmDictEntry::gdcmDictEntry(uint16_t InGroup, uint16_t InElement,
-                             std::string  InVr, std::string InFourth,
-                             std::string  InName)
+gdcmDictEntry::gdcmDictEntry(uint16_t group, uint16_t element,
+                             std::string vr, std::string fourth,
+                             std::string name)
 {
-   group   = InGroup;
-   element = InElement;
-   vr      = InVr;
-   fourth  = InFourth;
-   name    = InName;
-   key     = TranslateToKey(group, element); /// \todo Frog MEMORY LEAK.
+   Group   = group;
+   Element = element;
+   VR      = vr;
+   Fourth  = fourth;
+   Name    = name;
+   Key     = TranslateToKey(group, element);
 }
 
 //-----------------------------------------------------------------------------
@@ -52,36 +52,34 @@ gdcmDictEntry::gdcmDictEntry(uint16_t InGroup, uint16_t InElement,
 // Public
 /**
  * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
- *                                             and a Dicom element number)
- * @param  group the Dicom group   number used to build the tag
+ *                                              and a Dicom element number)
+ * @param  group the Dicom group number used to build the tag
  * @param  element the Dicom element number used to build the tag
  * @return the built tag
  */
 gdcmTagKey gdcmDictEntry::TranslateToKey(uint16_t group, uint16_t element)
 {
-   char trash[10];
-   gdcmTagKey key;
-   // CLEANME: better call the iostream<< with the hex manipulator on.
-   // This requires some reading of the stdlibC++ sources to make the
-   // proper call (or copy).
-   sprintf(trash, "%04x|%04x", group , element);
-   key = trash;  // Convertion through assignement
+   gdcmTagKey key = Format("%04x|%04x", group , element);
+
    return key;
 }
 
+//-----------------------------------------------------------------------------
 /**
  * \brief       If-and only if-the V(alue) R(epresentation)
  * \            is unset then overwrite it.
- * @param NewVr New V(alue) R(epresentation) to be set.
+ * @param vr    New V(alue) R(epresentation) to be set.
  */
-void gdcmDictEntry::SetVR(std::string NewVr) 
+void gdcmDictEntry::SetVR(std::string const & vr) 
 {
    if ( IsVRUnknown() )
-      vr = NewVr;
+   {
+      VR = vr;
+   }
    else 
    {
       dbg.Error(true, "gdcmDictEntry::SetVR",
-                       "Overwriting vr might compromise a dictionary");
+                       "Overwriting VR might compromise a dictionary");
    }
 }
 
@@ -92,4 +90,3 @@ void gdcmDictEntry::SetVR(std::string NewVr)
 // Private
 
 //-----------------------------------------------------------------------------
-
