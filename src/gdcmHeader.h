@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.36 2003/07/29 09:35:51 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.37 2003/09/10 16:31:24 malaterre Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
@@ -196,14 +196,6 @@ public:
 
    int GetPixelSize(void);       
    std::string GetPixelType(void);  
-   
-   float GetXSpacing(void);
-   float GetYSpacing(void);  
-   float GetZSpacing(void);  
-  
-   float GetXImagePosition(void);
-   float GetYImagePosition(void);
-   float GetZImagePosition(void);
    
    std::string GetTransferSyntaxName(void);
    int    GetLUTLength(void);
