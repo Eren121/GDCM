@@ -10,7 +10,11 @@ SET(EXAMPLE_SOURCES
   exReadPapyrus
   exReadWriteFile
   exAnonymize
-    
+  exAnonymizeNoLoad
+  exColorToRGB
+  exGC
+  exImageLighten
+            
 #the following are utilities
   PrintDicomDir
   PrintDocument
