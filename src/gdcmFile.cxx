@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 14:30:40 $
-  Version:   $Revision: 1.146 $
+  Date:      $Date: 2004/10/20 22:31:52 $
+  Version:   $Revision: 1.147 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -362,8 +362,7 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
       return ImageDataSize;
    }
                             
-   FILE* fp = HeaderInternal->OpenFile();
-   if ( PixelConverter->BuildRGBImage( fp ) )
+   if ( PixelConverter->BuildRGBImage() )
    {
       memmove( destination,
                (void*)PixelConverter->GetRGB(),
@@ -395,7 +394,6 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
       std::string photomInterp = "MONOCHROME1 ";  // Photometric Interpretation
       HeaderInternal->SetEntryByNumber(photomInterp,0x0028,0x0004);
    } 
-   HeaderInternal->CloseFile();
 
    /// \todo Drop Palette Color out of the Header?
    return ImageDataSize; 
@@ -412,40 +410,59 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
  */
 uint8_t* File::GetImageDataRaw ()
 {
-   size_t imgDataSize;
-   if ( HeaderInternal->HasLUT() )
-      /// \todo Let Header user a chance to get the right value
-      imgDataSize = ImageDataSizeRaw;
-   else 
-      imgDataSize = ImageDataSize;
-    
-   // FIXME (Mathieu)
-   // I need to deallocate Pixel_Data before doing any allocation:
-   
-   if ( Pixel_Data )
-      if ( LastAllocatedPixelDataLength != imgDataSize )
-         free(Pixel_Data);
-   if ( !Pixel_Data ) 
-      Pixel_Data = new uint8_t[imgDataSize];
-
-   if ( Pixel_Data )
+   uint8_t* decompressed = PixelConverter->GetDecompressed();
+   if ( ! decompressed )
    {
-      LastAllocatedPixelDataLength = imgDataSize;
-      
-      // we load the pixels ( grey level or RGB, but NO transformation)
-       GetImageDataIntoVectorRaw(Pixel_Data, imgDataSize);
+      // The decompressed image migth not be loaded yet:
+      FILE* fp = HeaderInternal->OpenFile();
+      PixelConverter->ReadAndDecompressPixelData( fp );
+      HeaderInternal->CloseFile();
+      if ( ! decompressed )
+      {
+        dbg.Verbose(0, "File::GetImageDataRaw: read/decompress of "
+                       "pixel data apparently went wrong.");
+         return 0;
+      }
+   }
 
-      // We say the value *is* loaded.
-      GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
-         GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+// PIXELCONVERT CLEANME
+   // Restore the header in a disk-consistent state
+   // (if user asks twice to get the pixels from disk)
+   if ( PixelRead != -1 ) // File was "read" before
+   {
+      RestoreInitialValues();
+   }
+   if ( PixelConverter->IsDecompressedRGB() )
+   {
+      ///////////////////////////////////////////////////
+      // now, it's an RGB image
+      // Lets's write it in the Header
+      // Droping Palette Color out of the Header
+      // has been moved to the Write process.
+      // TODO : move 'values' modification to the write process
+      //      : save also (in order to be able to restore)
+      //      : 'high bit' -when not equal to 'bits stored' + 1
+      //      : 'bits allocated', when it's equal to 12 ?!
+      std::string spp = "3";            // Samples Per Pixel
+      std::string photInt = "RGB ";     // Photometric Interpretation
+      std::string planConfig = "0";     // Planar Configuration
+      HeaderInternal->SetEntryByNumber(spp,0x0028,0x0002);
+      HeaderInternal->SetEntryByNumber(photInt,0x0028,0x0004);
+      HeaderInternal->SetEntryByNumber(planConfig,0x0028,0x0006);
+   }
+
+   // We say the value *is* loaded.
+   GetHeader()->SetEntryByNumber( GDCM_BINLOADED,
+   GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
  
-      // will be 7fe0, 0010 in standard cases
-      GetHeader()->SetEntryBinAreaByNumber(Pixel_Data, 
-         GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
-   } 
+   // will be 7fe0, 0010 in standard cases
+   GetHeader()->SetEntryBinAreaByNumber( decompressed,
+   GetHeader()->GetGrPixel(), GetHeader()->GetNumPixel());
+ 
    PixelRead = 1; // PixelRaw
+// END PIXELCONVERT CLEANME
 
-   return Pixel_Data;
+   return decompressed;
 }
 
 /**

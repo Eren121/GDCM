@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 14:30:40 $
-  Version:   $Revision: 1.106 $
+  Date:      $Date: 2004/10/20 22:31:52 $
+  Version:   $Revision: 1.107 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -554,7 +554,14 @@ bool Document::CloseFile()
   int closed = fclose(Fp);
   Fp = 0;
 
-  return closed;
+  if ( ! closed )
+  {
+     return false;
+  }
+  else
+  {
+     return true;
+  }
 }
 
 /**

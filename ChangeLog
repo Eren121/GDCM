@@ -1,3 +1,14 @@
+2004-10-21 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+  * src/gdcmDocument.cxx: wrong type on return fixed (thanks dashboard)
+  * CLEANUP_ROUND (14) for gdcmPixelConvert
+    - PixelConvert::GetLutRGBA(FILE*) is now GetLutRGBA() (no fp needed)
+    - PixelConvert::BuildRGBImage()(FILE*) is now BuildRGBImage() (no fp needed)
+    - File::GetImageDataIntoVector() doesn't need unnecessary OpenFile() and
+      CloseFile() anymore.
+    - File::GetImageDataRaw() doesn't call GetImageDataIntoVectorRaw()
+      anymore and hence avoids storing a copy of PixelConvert::Decompressed
+      into File::Pixel_Data.
+
 2004-10-20 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * src/gdcmDocument.cxx ftell() return properly stored in a long (i.e.
     no longer depends on's programmers PMS = Preposterous Mood Swings ;).

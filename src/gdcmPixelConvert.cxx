@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/20 14:30:40 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/10/20 22:31:52 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -900,7 +900,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
  *   no known Dicom reader deals with them :-(
  * @return a RGBA Lookup Table
  */
-void PixelConvert::BuildLUTRGBA( FILE* fp )
+void PixelConvert::BuildLUTRGBA()
 {
    if ( LutRGBA )
    {
@@ -1023,10 +1023,10 @@ void PixelConvert::BuildLUTRGBA( FILE* fp )
 /**
  * \brief Build the RGB image from the Decompressed imagage and the LUTs.
  */
-bool PixelConvert::BuildRGBImage( FILE* fp )
+bool PixelConvert::BuildRGBImage()
 {
-   BuildLUTRGBA( fp );
-   if ( ! LutRGBA )
+   BuildLUTRGBA();
+   if ( ( ! LutRGBA ) || ( ! Decompressed ) )
    {
        return false;
    }
