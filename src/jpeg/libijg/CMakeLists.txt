@@ -1,73 +1,32 @@
 # JPEG 8 bits project
 
-SET(libgdcmijpeg8_la_SOURCES
-jcapimin.c 
-jcapistd.c 
-jctrans.c 
-jcparam.c
-jdatadst.c 
-jcinit.c 
-jcmaster.c 
-jcmarker.c 
-jcmainct.c 
-jcprepct.c 
-jccoefct.c 
-jccolor.c 
-jcsample.c 
-jchuff.c 
-jcphuff.c 
-jcdctmgr.c # were commented out till here
-jfdctfst.c 
-jfdctflt.c 
-jfdctint.c 
-jdapimin.c 
-jdapistd.c 
-jdtrans.c 
-jdatasrc.c 
-jdmaster.c 
-jdinput.c 
-jdmarker.c 
-jdhuff.c 
-jdphuff.c 
-jdmainct.c 
-jdcoefct.c 
-jdpostct.c 
-jddctmgr.c 
-jidctfst.c 
-jidctflt.c 
-jidctint.c 
-jidctred.c 
-jdsample.c 
-jdcolor.c 
-jquant1.c 
-jquant2.c 
-jdmerge.c 
-jcomapi.c 
-jutils.c 
-jerror.c 
-jmemmgr.c 
-jmemnobs.c 
+# memmgr back ends: compile only one of these into a working library
+# (For now, let's use the mode that requires the image fit into memory.
+# This is the recommended mode for Win32 anyway.)
+SET(systemdependent_SRCS jmemnobs.c)
+
+# library object files common to compression and decompression
+SET(common_SRCS
+jcomapi.c jutils.c jerror.c jmemmgr.c
 )
 
-SET(libgdcmijpeg8include_HEADERS
-jchuff.h  
-jconfig.h  
-jdct.h  
-jdhuff.h  
-jerror.h  
-jinclude.h  
-jmemsys.h  
-jmorecfg.h  
-jpegint.h  
-jpeglib.h  
-jversion.h 
+# compression library object files
+SET(compression_SRCS
+jcapimin.c jcapistd.c jctrans.c jcparam.c jdatadst.c jcinit.c
+jcmaster.c jcmarker.c jcmainct.c jcprepct.c jccoefct.c jccolor.c
+jcsample.c jchuff.c jcphuff.c jcdctmgr.c jfdctfst.c jfdctflt.c
+jfdctint.c
 )
 
-ADD_LIBRARY(gdcmijpeg8 ${libgdcmijpeg8_la_SOURCES})
+# decompression library object files
+SET(decompression_SRCS
+jdapimin.c jdapistd.c jdtrans.c jdatasrc.c jdmaster.c
+jdinput.c jdmarker.c jdhuff.c jdphuff.c jdmainct.c jdcoefct.c
+jdpostct.c jddctmgr.c jidctfst.c jidctflt.c jidctint.c jidctred.c
+jdsample.c jdcolor.c jquant1.c jquant2.c jdmerge.c
+)
 
-#INSTALL_FILES(/include "\\.h$")
-INSTALL_FILES(/include FILES ${libgdcmijpeg8include_HEADERS})
-#INSTALL_FILES(/include FILES jconfig.linux jconfig.vc)
-INSTALL_FILES(/include FILES jconfig.linux)
+ADD_LIBRARY(gdcmijpeg8 ${systemdependent_SRCS} ${common_SRCS} ${compression_SRCS} ${decompression_SRCS})
 
 INSTALL_TARGETS(/lib/ gdcmijpeg8)
+INSTALL_FILES(/include .h jconfig.linux jconfig.vc)
