@@ -78,14 +78,12 @@ ENDFOREACH(file ${TEST_SOURCES})
 FILE(GLOB GDCM_DATA_IMAGES_GLOB_ACR
   "${GDCM_DATA_ROOT}/*.acr"
   )
-
 FILE(GLOB GDCM_DATA_IMAGES_GLOB_DCM
   "${GDCM_DATA_ROOT}/*.dcm"
   )
-
 SET(GDCM_DATA_IMAGES_GLOB ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR})
   
-# Black list of images know to break lots of readers (efilm, xmedcon ...):
+# Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
   "gdcm-JPEG-LossLessThoravision.dcm"
   )
@@ -101,12 +99,6 @@ FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
 ENDFOREACH(filename)
 
 # Populate GDCM_DATA_IMAGES:
-FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataImages.h.in"
-  "const char * const gdcmDataImages[] = { @GDCM_DATA_IMAGES@ \n 0 };" 
-  )
-
-# Generate the header file:
-CONFIGURE_FILE(
-  ${GDCM_BINARY_DIR}/gdcmDataImages.h.in
-  ${GDCM_BINARY_DIR}/gdcmDataImages.h
+FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataImages.h"
+  "const char * const gdcmDataImages[] = { ${GDCM_DATA_IMAGES}\n0 };\n" 
   )
