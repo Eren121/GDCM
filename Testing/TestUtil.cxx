@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/27 10:43:19 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/27 12:02:26 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 // way to test this class.
 
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 #include <iostream>
 
 int TestUtil(int , char * [])
@@ -58,6 +59,21 @@ int TestUtil(int , char * [])
       return 1;
    if(  gdcm::Util::DicomStringEqual(d,ref) ) 
       return 1;
+
+// ----------------------------------------------------------
+// Let's test gdcm::Debug, now.
+    std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag() <<std::endl;
+    gdcm::Debug::SetDebugFilename ("DummyFileNameToWriteTo.txt");
+    std::cout << "We set a Debug file"   <<std::endl;
+    if ( !gdcm::Debug::GetDebugFlag() )
+    {
+       std::cout << "Debug Flag should be TRUE... " << std::endl;
+       return 1;
+    }
+    std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag()<<std::endl;
+    gdcm::Debug::SetDebugFlag ( false );
+    std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag()<<std::endl;
+    gdcm::Debug::SetDebugFilename ("DummyFileNameToWriteTo2.txt");    
 
    return 0;
 }
