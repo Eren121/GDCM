@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/08/01 02:39:09 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ public:
    gdcmDicomDirPatient(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
    gdcmDicomDirPatient(TagDocEntryHT *ptagHT); 
 
-   ~gdcmDicomDirPatient(void);
+   ~gdcmDicomDirPatient();
 
    virtual void Print(std::ostream &os = std::cout);
 
@@ -43,7 +43,7 @@ public:
    void AddDicomDirStudy(gdcmDicomDirStudy *obj) { studies.push_back(obj); };
 
    ///  TODO
-   gdcmDicomDirStudy* NewStudy(void); 
+   gdcmDicomDirStudy* NewStudy(); 
          
 private:
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/30 16:09:27 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2004/08/01 02:39:09 $
+  Version:   $Revision: 1.62 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -218,7 +218,7 @@ void gdcmDicomDir::Initialize()
    progress = 0.0;
    abort = false;
 
-   metaElems = (gdcmDicomDirMeta *)0;   
+   metaElems = 0;   
 }
 
 
@@ -345,9 +345,7 @@ void gdcmDicomDir::SetEndMethodArgDelete(gdcmMethod *method)
  
 bool gdcmDicomDir::Write(std::string const & fileName) 
 {
-   FILE * fp1;
-
-   fp1 = fopen(fileName.c_str(), "wb");
+   FILE * fp1 = fopen(fileName.c_str(), "wb");
    if( !fp1 ) 
    {
       printf("Failed to open(write) File [%s] \n", fileName.c_str());

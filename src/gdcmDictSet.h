@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2004/08/01 00:59:21 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2004/08/01 02:39:09 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,9 +54,9 @@ public:
    std::map<std::string, std::list<std::string> > *
        GetPubDictEntryNamesByCategory();
 
-   gdcmDict *LoadDictFromFile(std::string FileName, DictKey Name);
+   gdcmDict *LoadDictFromFile(std::string const & fileName, DictKey const & name);
 
-   gdcmDict *GetDict(DictKey DictName);
+   gdcmDict *GetDict(DictKey const & DictName);
    gdcmDict *GetDefaultPubDict();
 
    gdcmDictEntry *NewVirtualDictEntry(uint16_t group, uint16_t element,
@@ -67,7 +67,7 @@ public:
    static std::string BuildDictPath();
 
 protected:
-   bool AppendDict(gdcmDict *NewDict,DictKey Name);
+   bool AppendDict(gdcmDict *NewDict, DictKey const & name);
 
 private:
    /// Hash table of all dictionaries contained in this gdcmDictSet
@@ -75,7 +75,7 @@ private:
    /// Directory path to dictionaries
    std::string DictPath;
    /// H table for the on the fly created gdcmDictEntries  
-   std::map<std::string,gdcmDictEntry *> virtualEntry;
+   std::map<std::string,gdcmDictEntry *> VirtualEntry;
 };
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/19 11:51:26 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/08/01 02:39:09 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,11 +47,13 @@ void gdcmDebug::SetDebug(int level)
  * @param Msg1 first message part
  * @param Msg2 second message part 
  */
-void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) 
+void gdcmDebug::Verbose(int level, const char * msg1, const char * msg2) 
 {
-   if (Level > DebugLevel)
+   if (level > DebugLevel)
+   {
       return ;
-   std::cerr << Msg1 << ' ' << Msg2 << std::endl;
+   }
+   std::cerr << msg1 << ' ' << msg2 << std::endl;
 }
 
 /**
@@ -60,11 +62,13 @@ void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2)
  * @param Msg1 first message part
  * @param Msg2 second message part 
  */
-void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) 
+void gdcmDebug::Error(bool test, const char * msg1, const char * msg2) 
 {
-   if (!Test)
+   if (!test)
+   {
       return;
-   std::cerr << Msg1 << ' ' << Msg2 << std::endl;
+   }
+   std::cerr << msg1 << ' ' << msg2 << std::endl;
    Exit(1);
 }
 
@@ -74,10 +78,10 @@ void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2)
  * @param Msg2 second message part
  * @param Msg3 Third message part  
  */
-void gdcmDebug::Error(const char* Msg1, const char* Msg2,
-                      const char* Msg3) 
+void gdcmDebug::Error(const char* msg1, const char* msg2,
+                      const char* msg3) 
 {
-   std::cerr << Msg1 << ' ' << Msg2 << ' ' << Msg3 << std::endl;
+   std::cerr << msg1 << ' ' << msg2 << ' ' << msg3 << std::endl;
    Exit(1);
 }
 
@@ -88,13 +92,17 @@ void gdcmDebug::Error(const char* Msg1, const char* Msg2,
  * @param Msg1 first message part
  * @param Msg2 second message part
  */
-void gdcmDebug::Assert(int Level, bool Test,
-                 const char * Msg1, const char * Msg2) 
+void gdcmDebug::Assert(int level, bool test, const char * msg1, 
+                       const char * msg2) 
 {
-   if (Level > DebugLevel)
+   if (level > DebugLevel)
+   {
       return ;
-   if (!Test)
-      std::cerr << Msg1 << ' ' << Msg2 << std::endl;
+   }
+   if (!test)
+   {
+      std::cerr << msg1 << ' ' << msg2 << std::endl;
+   }
 }
 
 /**

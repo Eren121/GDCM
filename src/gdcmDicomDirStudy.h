@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2004/07/02 13:55:27 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/08/01 02:39:09 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,32 +26,31 @@
 typedef std::list<gdcmDicomDirSerie *> ListDicomDirSerie;
 
 //-----------------------------------------------------------------------------
-class GDCM_EXPORT gdcmDicomDirStudy : public gdcmObject {
+class GDCM_EXPORT gdcmDicomDirStudy : public gdcmObject
+{
 public:
    gdcmDicomDirStudy(gdcmSQItem *s, TagDocEntryHT *ptagHT); 
    gdcmDicomDirStudy(TagDocEntryHT *ptagHT); 
 
-   ~gdcmDicomDirStudy(void);
+   ~gdcmDicomDirStudy();
 
    virtual void Print(std::ostream &os = std::cout);
 /**
  * \ingroup gdcmDicomDirStudy
  * \brief   returns the SERIE chained List for this STUDY.
  */
-   ListDicomDirSerie &GetDicomDirSeries() 
-      {return series;};
+   ListDicomDirSerie &GetDicomDirSeries() { return series; };
 /**
  * \ingroup gdcmDicomDirStudy
  * \brief   adds the passed SERIE to the SERIE chained List for this STUDY.
  */ 
-    void AddDicomDirSerie(gdcmDicomDirSerie *obj) 
-       {series.push_back(obj);};
+   void AddDicomDirSerie(gdcmDicomDirSerie *obj) { series.push_back(obj); };
 
 /**
  * \ingroup gdcmDicomDirStudy
  * \brief   TODO
  */ 
-   gdcmDicomDirSerie* NewSerie(void);
+   gdcmDicomDirSerie* NewSerie();
     
 private:
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/07/28 21:23:20 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/08/01 02:39:09 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -148,9 +148,9 @@ void gdcmDict::PrintByName(std::ostream& os)
  * @param   NewEntry entry to add 
  * @return  false if Dicom Element already exists
  */
-bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry) 
+bool gdcmDict::AddNewEntry(gdcmDictEntry *newEntry) 
 {
-   gdcmTagKey key = NewEntry->GetKey();
+   gdcmTagKey key = newEntry->GetKey();
 
    if(KeyHt.count(key) == 1)
    {
@@ -159,8 +159,8 @@ bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry)
    } 
    else 
    {
-      KeyHt[NewEntry->GetKey()] = NewEntry;
-      NameHt[NewEntry->GetName()] = NewEntry;
+      KeyHt[newEntry->GetKey()] = newEntry;
+      NameHt[newEntry->GetName()] = newEntry;
       return true;
    }
 }
@@ -171,12 +171,12 @@ bool gdcmDict::AddNewEntry(gdcmDictEntry *NewEntry)
  * @param   NewEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
-bool gdcmDict::ReplaceEntry(gdcmDictEntry *NewEntry)
+bool gdcmDict::ReplaceEntry(gdcmDictEntry *newEntry)
 {
-   if ( RemoveEntry(NewEntry->gdcmDictEntry::GetKey()) )
+   if ( RemoveEntry(newEntry->gdcmDictEntry::GetKey()) )
    {
-       KeyHt[NewEntry->GetKey()] = NewEntry;
-       NameHt[NewEntry->GetName()] = NewEntry;
+       KeyHt[newEntry->GetKey()] = newEntry;
+       NameHt[newEntry->GetName()] = newEntry;
        return true;
    } 
    return false;
@@ -193,12 +193,12 @@ bool gdcmDict::RemoveEntry(gdcmTagKey key)
 {
    if(KeyHt.count(key) == 1) 
    {
-      gdcmDictEntry* EntryToDelete = KeyHt.find(key)->second;
+      gdcmDictEntry* entryToDelete = KeyHt.find(key)->second;
 
-      if ( EntryToDelete )
+      if ( entryToDelete )
       {
-         NameHt.erase(EntryToDelete->GetName());
-         delete EntryToDelete;
+         NameHt.erase(entryToDelete->GetName());
+         delete entryToDelete;
       }
 
       KeyHt.erase(key);
@@ -220,7 +220,7 @@ bool gdcmDict::RemoveEntry(gdcmTagKey key)
  */
 bool gdcmDict::RemoveEntry (uint16_t group, uint16_t element)
 {
-   return( RemoveEntry(gdcmDictEntry::TranslateToKey(group, element)) );
+   return RemoveEntry(gdcmDictEntry::TranslateToKey(group, element));
 }
 
 /**
