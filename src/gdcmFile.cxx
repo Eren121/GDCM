@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 13:49:07 $
-  Version:   $Revision: 1.175 $
+  Date:      $Date: 2004/12/16 10:41:59 $
+  Version:   $Revision: 1.176 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -734,6 +734,8 @@ void File::SetWriteFileTypeToImplicitVR()
 
    ValEntry* tss = CopyValEntry(0x0002,0x0010);
    tss->SetValue(ts);
+
+   Archive->Push(tss);
 }
 
 void File::RestoreWriteFileType()
@@ -743,8 +745,10 @@ void File::RestoreWriteFileType()
 
 void File::SetWriteToLibido()
 {
-   ValEntry *oldRow = dynamic_cast<ValEntry *>(HeaderInternal->GetDocEntryByNumber(0x0028, 0x0010));
-   ValEntry *oldCol = dynamic_cast<ValEntry *>(HeaderInternal->GetDocEntryByNumber(0x0028, 0x0011));
+   ValEntry *oldRow = dynamic_cast<ValEntry *>
+                (HeaderInternal->GetDocEntryByNumber(0x0028, 0x0010));
+   ValEntry *oldCol = dynamic_cast<ValEntry *>
+                (HeaderInternal->GetDocEntryByNumber(0x0028, 0x0011));
    
    if( oldRow && oldCol )
    {
@@ -770,7 +774,8 @@ void File::SetWriteToLibido()
 
 void File::SetWriteToNoLibido()
 {
-   ValEntry *recCode = dynamic_cast<ValEntry *>(HeaderInternal->GetDocEntryByNumber(0x0008,0x0010));
+   ValEntry *recCode = dynamic_cast<ValEntry *>
+                (HeaderInternal->GetDocEntryByNumber(0x0008,0x0010));
    if( recCode )
    {
       if( recCode->GetValue() == "ACRNEMA_LIBIDO_1.1" )

@@ -1,3 +1,7 @@
+2004-12-16 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.cxx : bug fix. Omitted a Push in the DocEntryArchive when
+     writting in ImplicitVR
+
 2004-12-12 Jean-Michel Rouet <jm.rouet@noos.fr>
    * src/gdcmPixelReadConvert.[h|cxx], src/gdcmJpeg*.cxx : new handling of
      JPEG decompression, especially when dicom frames are split into several
