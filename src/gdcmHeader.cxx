@@ -28,6 +28,12 @@ gdcmHeader::gdcmHeader(const char *InFilename,
                        bool ignore_shadow):
    gdcmParser(InFilename,exception_on_error,enable_sequences,ignore_shadow)
 { 
+
+   typedef struct {
+      guint32 totalSQlength;
+      guint32 alreadyParsedlength;
+   } pileElem;
+
    
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
@@ -57,6 +63,110 @@ gdcmHeader::gdcmHeader(const char *InFilename,
 
       TagKey key = gdcmDictEntry::TranslateToKey(GrPixel, NumPixel);
       countGrPixel = GetEntry().count(key);
+      
+      // we set the SQ Depth of each Header Entry
+      
+   int top =-1;
+   int countSQ = 0;      
+   pileElem pile[100]; // Hope embedded sequence depth is no that long !
+
+   int currentParsedlength = 0;
+   int totalElementlength;
+   std::ostringstream tab; 
+   tab << "   ";
+   
+   int DEBUG = 0;  // Sorry; Dealing with e-film breaker images
+                   // will (certainly) cause a lot of troubles ...
+                   // I prefer keeping my 'trace' on .		   
+   
+   for (ListTag::iterator i = listEntries.begin();  
+       i != listEntries.end();
+       ++i) {
+      (*i)->SetSQDepthLevel(countSQ);
+      if ( (*i)->GetVR() == "SQ" && (*i)->GetReadLength() != 0) {   // SQ found         
+         countSQ++;
+	 top ++;	 
+	    if ( top >= 20) {
+               std::cout << "Kaie ! Kaie! SQ Stack Overflow" << std::endl;
+	       return;
+            }
+	 if (DEBUG) std::cout << "\n >>>>> empile niveau " << top 
+	                 << "; Lgr SeQ: " << (*i)->GetReadLength() 
+                         << "\n" <<std::endl;
+	      	 
+	 pile[top].totalSQlength = (*i)->GetReadLength();
+	 pile[top].alreadyParsedlength = 0; 
+	 currentParsedlength = 0;	   	       
+
+      } else {                              // non SQ found
+      
+         if (countSQ != 0) {                // we are 'inside a SeQuence'
+            if ( (*i)->GetGroup()==0xfffe  && (*i)->GetElement()==0xe0dd){
+	       // we just found 'end of SeQuence'
+               
+	       if (DEBUG)
+                   std::cout << "fffe,e0dd : depile" << std::endl;
+               currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2			     	       
+	       countSQ --;
+               top --; 
+               pile[top].alreadyParsedlength +=  currentParsedlength;
+            } else {
+	       // we are on a 'standard' elem
+	       // or a Zero-length SeQuence
+	       
+	       totalElementlength =  (*i)->GetFullLength();	       
+	       currentParsedlength += totalElementlength;				 
+               pile[top].alreadyParsedlength += totalElementlength;
+	       
+               if (pile[top].totalSQlength == 0xffffffff) {
+                  if (DEBUG)
+		     std::cout << "totalSeQlength == 0xffffffff" 
+                               << std::endl; 
+               } else {
+	          if (DEBUG) 
+                       std::cout << "alrdyPseLgt:"
+		       << pile[top].alreadyParsedlength << " totSeQlgt: " 
+		       << pile[top].totalSQlength << " curPseLgt: " 
+		       << currentParsedlength
+		       << std::endl;
+                  while (pile[top].alreadyParsedlength==pile[top].totalSQlength) {
+		  
+		     if (DEBUG) 
+                         std::cout << " \n<<<<<< On depile niveau " << top 
+                                   << " \n" <<  std::endl;
+                     (*i)->SetSQDepthLevel(countSQ);		     
+                     currentParsedlength = pile[top].alreadyParsedlength;
+                     countSQ --;
+                     top --;
+	             if (top >=0) {
+			
+                        pile[top].alreadyParsedlength +=  currentParsedlength +12;
+			                        // 12 : length of 'SQ embedded' SQ element
+                        currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2
+									     		     
+		        if (DEBUG)
+                             std::cout << pile[top].alreadyParsedlength << " " 
+                                       << pile[top].totalSQlength << " " 
+                                       << currentParsedlength
+                                       << std::endl;
+                     }		     		     
+		     if (top == -1) {
+                        currentParsedlength = 0;
+                        break;
+                     }		     			   		     
+                  }
+               }				
+            }              
+         }   // end : 'inside a SeQuence'   
+      } 
+      if (DEBUG) {
+         for (int k=0; k<(*i)->GetSQDepthLevel();k++) {
+	    cout << tab;
+         }
+	 (*i)->SetPrintLevel(2);
+	 (*i)->Print();
+      }      
+   } // end for           
 }
 
 /**
@@ -79,6 +189,57 @@ gdcmHeader::~gdcmHeader (void) {
 // Print
 
 // see gdcmParser.cxx
+
+/**
+  * \ingroup gdcmHeader
+  * \brief   Prints the Header Entries (Dicom Elements)
+  *          from the chained list
+  *          and skips the elements belonging to a SeQuence
+  * @return
+  */ 
+void gdcmHeader::PrintEntryNoSQ(std::ostream & os) {
+
+   int depth;
+   for (ListTag::iterator i = listEntries.begin();  
+        i != listEntries.end();
+        ++i)
+   {
+      depth= (*i)->GetSQDepthLevel();
+      if ( depth != 0 /*|| (*i)->GetVR() =="SQ" */){
+         continue;
+      }
+      (*i)->SetPrintLevel(printLevel);
+      (*i)->Print(os); 
+   } 
+}
+
+/**
+  * \ingroup gdcmHeader
+  * \brief   Prints the Header Entries (Dicom Elements)
+  *          from the chained list
+  *          and indents the elements belonging to any SeQuence
+  * \warning : will be removed
+  * @return
+  */ 
+void gdcmHeader::PrintEntryNiceSQ(std::ostream & os) {	   
+   std::ostringstream tab; 
+   tab << "   ";
+
+   int depth;   
+   for (ListTag::iterator i = listEntries.begin();  
+      i != listEntries.end();
+       ++i) {
+      depth= (*i)->GetSQDepthLevel();
+      if (depth != 0) { 
+         for (int k=0;k<depth;k++)
+	    os << tab.str();
+      } 
+      (*i)->SetPrintLevel(printLevel);
+      (*i)->Print(os);
+             
+   } // end for     
+}
+
 //-----------------------------------------------------------------------------
 // Public
 

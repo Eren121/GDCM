@@ -45,6 +45,7 @@ protected:
    /// the image itself. Hence the tag (GrPixel,NumPixel) might appear
    /// several times. countGrPixel is the number of occurences of the 
    /// tag of pixels (i.e. (GrPixel,NumPixel)) contained in the header.
+   /// TODO : will be dealt with SQ tree-like stucture
    int countGrPixel;
 public:
    gdcmHeader(bool exception_on_error = false);
@@ -140,8 +141,11 @@ public:
    bool operator<(gdcmHeader &header);
 
    bool WriteEntry(gdcmHeaderEntry *tag,FILE *_fp,FileType type);
-
-
+   
+   
+   virtual void PrintEntryNoSQ  (std::ostream &os = std::cout); 
+   virtual void PrintEntryNiceSQ(std::ostream &os = std::cout); 
+   
 protected:
    //CLEANME int write(std::ostream&);   
    //CLEANME int anonymize(std::ostream&);//FIXME: anonymize should be a friend

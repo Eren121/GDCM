@@ -72,7 +72,7 @@ public:
    bool WriteDcmImplVR(const char * fileName);
    bool WriteDcmExplVR(std::string fileName);
    bool WriteAcr      (std::string fileName);
- 
+
    // Body in file gdcmParse.cxx
    bool ParsePixelData(void);
      

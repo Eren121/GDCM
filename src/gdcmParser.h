@@ -109,9 +109,8 @@ public:
    virtual void Print        (std::ostream &os = std::cout) 
       {PrintEntry(os);};
    virtual void PrintEntry      (std::ostream &os = std::cout);
-   virtual void PrintEntryNoSQ  (std::ostream &os = std::cout);
+
    // the 2 following will be merged
-   virtual void PrintEntryNiceSQ(std::ostream &os = std::cout);
    virtual void PrintPubDict (std::ostream &os = std::cout);
    virtual void PrintShaDict (std::ostream &os = std::cout);
 
@@ -199,9 +198,8 @@ protected:
       
 private:
    // Read
-   bool ParseHeader(bool exception_on_error = false) throw(gdcmFormatError);
+   bool LoadHeaderEntries(bool exception_on_error = false) throw(gdcmFormatError);
 
-   void LoadHeaderEntries    (void);
    void LoadHeaderEntry      (gdcmHeaderEntry *);
    void FindHeaderEntryLength(gdcmHeaderEntry *);
    void FindHeaderEntryVR    (gdcmHeaderEntry *);

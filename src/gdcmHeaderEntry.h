@@ -193,7 +193,15 @@ public:
     */
    void SetPrintLevel(int level) { printLevel = level; };
    void Print (std::ostream & os = std::cout); 
-   
+    	
+   /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Gets the depth level of a Dicom Header Entry
+    *          embedded in a SeQuence
+    */  	
+   inline int         GetSQDepthLevel(void) 
+      {  return (SQDepthLevel); };
+         
    guint32 GetFullLength(void);
    
 private:
@@ -202,6 +210,14 @@ private:
    
    friend class gdcmHeader;
 
+ /**
+    * \ingroup gdcmHeaderEntry
+    * \brief   Sets the depth level of a Dicom Header Entry
+    *          embedded in a SeQuence 
+    */  	
+   inline void         SetSQDepthLevel(int depthLevel) 
+      {  SQDepthLevel = depthLevel; };
+      
 // Variables
    gdcmDictEntry *entry;
    /// Updated from ReadLength, by FixFoungLentgh()
@@ -234,6 +250,9 @@ private:
    size_t Offset; 
    /// How many details are to be printed (value : 0,1,2)      
    int printLevel;
+   
+   /// Gives the depth level of elements inside SeQuences   
+   int SQDepthLevel;
 };
 
 //-----------------------------------------------------------------------------

@@ -1,5 +1,8 @@
 // gdcmParser.cxx
 //-----------------------------------------------------------------------------
+//#define UINT32_MAX    (4294967295U)
+
+
 #include "gdcmParser.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
@@ -68,9 +71,8 @@ gdcmParser::gdcmParser(const char *inFilename,
 
    if ( !OpenFile(exception_on_error))
       return;
-   if (ParseHeader()) {
-     LoadHeaderEntries();
-   }   
+
+   LoadHeaderEntries();   
    CloseFile();
 
    wasUpdated = 0;  // will be set to 1 if user adds an entry
@@ -120,147 +122,6 @@ void gdcmParser::PrintEntry(std::ostream & os) {
       (*i)->Print(os);   
    } 
 }
-
-/**
-  * \ingroup gdcmParser
-  * \brief   Prints the Header Entries (Dicom Elements)
-  *          from the chained list
-  *          and skips the elements belonging to a 'no length' SeQuence
-  * @return
-  */ 
-void gdcmParser::PrintEntryNoSQ(std::ostream & os) {
-   int countSQ = 0;
-   for (ListTag::iterator i = listEntries.begin();  
-        i != listEntries.end();
-        ++i)
-   {
-       if ( (*i)->GetVR() == "SQ"){
-          countSQ ++;
-       }
-
-       if ( (*i)->GetGroup() == 0xfffe  && (*i)->GetElement() == 0xe0dd){
-          countSQ --;
-          continue;
-       }
-              
-       if (countSQ == 0) { 
-         (*i)->SetPrintLevel(printLevel);
-         (*i)->Print(os);
-       }   
-   } 
-}
-
-/**
-  * \ingroup gdcmParser
-  * \brief   Prints the Header Entries (Dicom Elements)
-  *          from the chained list
-  *          and indents the elements belonging to any SeQuence
-  * \warning : will be removed
-  * @return
-  */ 
-void gdcmParser::PrintEntryNiceSQ(std::ostream & os) {
-   pileElem pile[50]; // Hope embedded sequence depth is no more than 50
-   int top =-1;
-   int countSQ = 0;
-   int currentParsedlength = 0;
-   int totalElementlength;
-   std::ostringstream tab; 
-   tab << "   ";
-   
-   int DEBUG = 0;  // Sorry; Dealing with e-film breaker images
-                   // will (certainly) cause a lot of troubles ...
-                   // I prefer keeping my 'trace' on .		   
-   
-   for (ListTag::iterator i = listEntries.begin();  
-      i != listEntries.end();
-       ++i) {
-      if ( (*i)->GetVR() == "SQ" && (*i)->GetReadLength() != 0) {   // SQ found
-         countSQ++;
-	 top ++;	 
-	    if ( top >= 50) {
-               std::cout << "Kaie ! Kaie! SQ stack overflow" << std::endl;
-	       return;
-            }
-	 if (DEBUG) std::cout << "\n >>>>> empile niveau " << top 
-	                 << "; Lgr SeQ: " << (*i)->GetReadLength() 
-                         << "\n" <<std::endl;
-	      	 
-	 pile[top].totalSQlength = (*i)->GetReadLength();
-	 pile[top].alreadyParsedlength = 0; 
-	 currentParsedlength = 0;	   	       
-
-      } else {                              // non SQ found
-      
-         if (countSQ != 0) {                // we are 'inside a SeQuence'
-            if ( (*i)->GetGroup()==0xfffe  && (*i)->GetElement()==0xe0dd){
-	       // we just found 'end of SeQuence'
-               
-	       if (DEBUG)
-                   std::cout << "fffe,e0dd : depile" << std::endl;
-               currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2			     	       
-	       countSQ --;
-               top --; 
-               pile[top].alreadyParsedlength +=  currentParsedlength;
-            } else {
-	       // we are on a 'standard' elem
-	       // or a Zero-length SeQuence
-	       
-	       totalElementlength =  (*i)->GetFullLength();	       
-	       currentParsedlength += totalElementlength;				 
-               pile[top].alreadyParsedlength += totalElementlength;
-	       
-               if (pile[top].totalSQlength == 0xffffffff) {
-                  if (DEBUG)
-		     std::cout << "totalSeQlength == 0xffffffff" 
-                               << std::endl; 
-               } else {
-	          if (DEBUG) 
-                       std::cout << "alrdyPseLgt:"
-		       << pile[top].alreadyParsedlength << " totSeQlgt: " 
-		       << pile[top].totalSQlength << " curPseLgt: " 
-		       << currentParsedlength
-		       << std::endl;
-                  while (pile[top].alreadyParsedlength==pile[top].totalSQlength) {
-		  
-		     if (DEBUG) 
-                         std::cout << " \n<<<<<< On depile niveau " << top 
-                                   << "\n" <<  std::endl;
-		     
-                     currentParsedlength = pile[top].alreadyParsedlength;
-                     countSQ --;
-                     top --;
-	             if (top >=0) {
-			
-                        pile[top].alreadyParsedlength +=  currentParsedlength +12;
-			                        // 12 : length of 'SQ embedded' SQ element
-                        currentParsedlength += 8; // gr:2 elem:2 vr:2 lgt:2
-									     		     
-		        if (DEBUG)
-                             std::cout << pile[top].alreadyParsedlength << " " 
-                                       << pile[top].totalSQlength << " " 
-                                       << currentParsedlength
-                                       << std::endl;
-                     }		     		     
-		     if (top == -1) {
-                        currentParsedlength = 0;
-                        break;
-                     }		     			   		     
-                  }
-               }				
-            }              
-         }   // end : 'inside a SeQuence'   
-      }
-      
-      if (countSQ != 0) { 
-         for (int i=0;i<countSQ;i++)
-	    os << tab.str();
-      } 
-      (*i)->SetPrintLevel(printLevel);
-      (*i)->Print(os);
-             
-   } // end for     
-}
-
 
 
 /**
@@ -1247,7 +1108,7 @@ bool gdcmParser::WriteEntry(gdcmHeaderEntry *tag, FILE *_fp,FileType type)
 
 bool gdcmParser::WriteEntries(FILE *_fp,FileType type)
 {   
-   // TODO (?) tester les echecs en ecriture (apres chaque fwrite)
+   // TODO (?) check write failures (after *each* fwrite)
      
    for (ListTag::iterator tag2=listEntries.begin();
                           tag2 != listEntries.end();
@@ -1260,13 +1121,10 @@ bool gdcmParser::WriteEntries(FILE *_fp,FileType type)
          if ((*tag2)->GetElement() %2)
             // Ignore the "shadow" groups
             continue;
-         if ((*tag2)->GetVR() == "SQ" )
-            // For the time being sequences are simply ignored
-            // TODO : find a trick not to *skip* the SeQuences !
+         if ((*tag2)->GetVR() == "SQ" ) // ignore Sequences
             continue;
-         if ((*tag2)->GetGroup() == 0xfffe )
-            // Ignore the documented delimiter
-            continue;
+         if ((*tag2)->GetSQDepthLevel() != 0) // Not only ignore the SQ element
+            continue;	    
       } 
       if (! WriteEntry(*tag2,_fp,type) )
          return false;
@@ -1299,13 +1157,10 @@ void gdcmParser::WriteEntriesDeprecated(FILE *_fp,FileType type) {
         tag2 != tagHT.end();
         ++tag2){
       if ( type == ACR ){ 
-         if ((*tag2->second).GetGroup() < 0x0008)   continue; // ignore pure DICOM V3 groups
-         if ((*tag2->second).GetElement() %2)       continue; // ignore shadow groups
-         if ((*tag2->second).GetVR() == "SQ" )      continue; // ignore Sequences
-         // TODO : find a trick to *skip* the SeQuences !
-         // Not only ignore the SQ element
-	 // --> will be done with the next organization
-         if ((*tag2->second).GetGroup() == 0xfffe ) continue; // ignore delimiters	
+         if ((*tag2->second).GetGroup() < 0x0008)    continue; // ignore pure DICOM V3 groups
+         if ((*tag2->second).GetElement() %2)        continue; // ignore shadow groups
+         if ((*tag2->second).GetVR() == "SQ" )       continue; // ignore Sequences
+         if ((*tag2->second).GetSQDepthLevel() != 0) continue; // Not only ignore the SQ element          
       }
       if ( ! WriteEntry(tag2->second,_fp,type))
          break;
@@ -1375,10 +1230,10 @@ guint16 gdcmParser::UnswapShort(guint16 a) {
 // Private
 /**
  * \ingroup gdcmParser
- * \brief   Parses the header of the file but WITHOUT loading element values.
+ * \brief   Parses the header of the file and load element values.
  * @return  false if file is not ACR-NEMA / DICOM
  */
-bool gdcmParser::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
+bool gdcmParser::LoadHeaderEntries(bool exception_on_error) throw(gdcmFormatError) {
    (void)exception_on_error;
    rewind(fp);
    if (!CheckSwap())
@@ -1389,28 +1244,13 @@ bool gdcmParser::ParseHeader(bool exception_on_error) throw(gdcmFormatError) {
      SkipHeaderEntry(newHeaderEntry);
      if ( (ignoreShadow==0) || (newHeaderEntry->GetGroup()%2) == 0) { 
         AddHeaderEntry(newHeaderEntry); 
+	LoadHeaderEntry(newHeaderEntry); 
      }     
    }
-   return true;
-}
-
-/**
- * \ingroup gdcmParser
- * \brief   Loads the element values of all the Header Entries pointed in the
- *          public Chained List.
- */
-void gdcmParser::LoadHeaderEntries(void) {
-   rewind(fp);
-   for (ListTag::iterator i = GetListEntry().begin();
-      i != GetListEntry().end();
-      ++i)
-   {
-      LoadHeaderEntry(*i);
-   }
-            
    rewind(fp);
 
-   // Load 'non string' values   
+   // Load 'non string' values
+      
    std::string PhotometricInterpretation = GetEntryByNumber(0x0028,0x0004);   
    if( PhotometricInterpretation == "PALETTE COLOR " ) {
       LoadEntryVoidArea(0x0028,0x1200);  // gray LUT   
@@ -1422,7 +1262,7 @@ void gdcmParser::LoadHeaderEntries(void) {
       LoadEntryVoidArea(0x0028,0x1222);  // Segmented Green Palette Color LUT Data
       LoadEntryVoidArea(0x0028,0x1223);  // Segmented Blue  Palette Color LUT Data
    } 
-   //FIXME : how to use it?
+   //FIXME later : how to use it?
    LoadEntryVoidArea(0x0028,0x3006);  //LUT Data (CTX dependent)     
    
    // --------------------------------------------------------------
@@ -1442,7 +1282,8 @@ void gdcmParser::LoadHeaderEntries(void) {
          SetEntryByNumber(columns, 0x0028, 0x0010);
          SetEntryByNumber(rows   , 0x0028, 0x0011);
    }
-   // ----------------- End of Special Patch ----------------
+   // ----------------- End of Special Patch ----------------   
+   return true;
 }
 
 /**

@@ -44,8 +44,8 @@
 #else
 typedef  unsigned short guint16;
 typedef  unsigned int   guint32;
-typedef  short 		gint16;
-typedef  int   		gint32;
+typedef  short          gint16;
+typedef  int   	        gint32;
 #define UINT32_MAX    (4294967295U)
 #endif //HAVE_NO_STDINT_H
 #endif
@@ -53,8 +53,8 @@ typedef  int   		gint32;
 #ifdef _MSC_VER 
 typedef  unsigned short guint16;
 typedef  unsigned int   guint32;
-typedef  short 		gint16;
-typedef  int   		gint32;
+typedef  short 	        gint16;
+typedef  int            gint32;
 #define UINT32_MAX    (4294967295U)
 #endif
 
@@ -76,13 +76,13 @@ typedef  int   		gint32;
 
 // Centralize information about the gdcm dictionary in only one file:
 #ifndef PUB_DICT_PATH
-#  define PUB_DICT_PATH     "../Dicts/"
+#  define PUB_DICT_PATH   "../Dicts/"
 #endif
 #define PUB_DICT_NAME     "DicomV3Dict"
 #define PUB_DICT_FILENAME "dicomV3.dic"
-#define DICT_ELEM "DicomDir.dic"
-#define DICT_TS "dicomTS.dic"
-#define DICT_VR "dicomVR.dic"
+#define DICT_ELEM         "DicomDir.dic"
+#define DICT_TS           "dicomTS.dic"
+#define DICT_VR           "dicomVR.dic"
 
 #include <string>
 
@@ -93,7 +93,7 @@ typedef std::string TagName;
 
 enum FileType {
       Unknown = 0,
-      ExplicitVR, // gdcmDicomDir are in this case
+      ExplicitVR, // gdcmDicomDir is in this case
       ImplicitVR,
       ACR,
       ACR_LIBIDO
