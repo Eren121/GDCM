@@ -1,3 +1,13 @@
+2004-04-28  Jean-Pierre Roux
+     * ENH add the provisional  gdcmHeader::SQDepthLevel to allow 
+           SeQuence indented printing of Dicom Header
+     * ENH merge methods gdcmParser::Parse and gdcmParser::LoadHeaderEntries
+           into the single gdcmParser::LoadHeaderEntries for efficiency purpose
+	   Computation of SQDepthLevel is now part of gdcmHeader constructor
+     * ENH add self defined param 'new' to PrintHeader to 'show' the SeQuence
+           tree-like structure of a Dicom Header 
+     * FIX Test code cleaning     
+           
 2004-04-25  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      * ENH: Adding automatic testing
        1. Need a DartConfig.cmake to submit to public
