@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 11:19:51 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2004/11/17 19:49:13 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -813,6 +813,7 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
    IsDecompressed =
         ( ! header->IsDicomV3() )
      || ts == ImplicitVRLittleEndian
+     || ts == ImplicitVRLittleEndianDLXGE
      || ts == ExplicitVRLittleEndian
      || ts == ExplicitVRBigEndian
      || ts == DeflatedExplicitVRLittleEndian;

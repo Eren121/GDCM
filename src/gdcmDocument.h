@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 10:25:53 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2004/11/17 19:49:13 $
+  Version:   $Revision: 1.61 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,6 +43,7 @@ namespace gdcm
 
 enum TransferSyntaxType {
   ImplicitVRLittleEndian = 0,
+  ImplicitVRLittleEndianDLXGE,
   ExplicitVRLittleEndian,
   DeflatedExplicitVRLittleEndian,
   ExplicitVRBigEndian,

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/17 10:20:07 $
-  Version:   $Revision: 1.133 $
+  Date:      $Date: 2004/11/17 19:49:13 $
+  Version:   $Revision: 1.134 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,6 +39,8 @@ namespace gdcm
 static const char *TransferSyntaxStrings[] =  {
   // Implicit VR Little Endian
   "1.2.840.10008.1.2",
+  // Implicit VR Little Endian DLX G.E?
+  "1.2.840.113619.5.2",
   // Explicit VR Little Endian
   "1.2.840.10008.1.2.1",
   // Deflated Explicit VR Little Endian
@@ -2609,6 +2611,7 @@ bool Document::CheckSwap()
 }
 
 
+
 /**
  * \brief Restore the unproperly loaded values i.e. the group, the element
  *        and the dictionary entry depending on them. 
@@ -3100,7 +3103,7 @@ void Document::BuildFlatHashTableRecurse( TagDocEntryHT& builtHT,
  *        Document.
  *
  *        The structure used by a Document (through \ref ElementSet),
- *        in order to old the parsed entries of a Dicom header, is a recursive
+ *        in order to hold the parsed entries of a Dicom header, is a recursive
  *        one. This is due to the fact that the sequences (when present)
  *        can be nested. Additionaly, the sequence items (represented in
  *        gdcm as \ref SQItem) add an extra complexity to the data
