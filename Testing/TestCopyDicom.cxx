@@ -67,7 +67,7 @@ int TestCopyDicom(int , char* [])
       gdcmFile *original = new gdcmFile( filename );
       gdcmFile *copy = new gdcmFile( output );
 
-      TagDocEntryHT & Ht = original->GetHeader()->GetEntry(); 
+      TagDocEntryHT & Ht = original->GetHeader()->GetEntry();
 
       //First of all copy the header field by field
   
@@ -89,23 +89,23 @@ int TestCopyDicom(int , char* [])
                                  b->GetGroup(), 
                                  b->GetElement(),
                                  b->GetVR() );
-            }
-            else  if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
-            {   
-               copy->GetHeader()->ReplaceOrCreateByNumber( 
+         }
+         else if ( gdcmValEntry* v = dynamic_cast<gdcmValEntry*>(d) )
+         {   
+             copy->GetHeader()->ReplaceOrCreateByNumber( 
                                  v->GetValue(),
                                  v->GetGroup(), 
                                  v->GetElement(),
                                  v->GetVR() ); 
-           }
-           else
-           {
+         }
+         else
+         {
           // We skip pb of SQ recursive exploration
           //std::cout << "Skipped Sequence " 
           //          << "------------- " << d->GetVR() << " "<< std::hex
           //          << d->GetGroup() << " " << d->GetElement()
           //  << std::endl;    
-           }
+         }
       }
 
       size_t dataSize = original->GetImageDataSize();
