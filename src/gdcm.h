@@ -20,6 +20,8 @@
 #include "gdcmDict.h"
 #include "gdcmDictSet.h"
 
+#include "gdcmParser.h"
+
 #include "gdcmHeaderEntry.h"
 
 #include "gdcmHeader.h"

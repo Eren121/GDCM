@@ -20,7 +20,7 @@
  *        using both H table and Chained List
  * @param   os The output stream to be written to.  
  */
-void gdcmHeader::Print(std::ostream & os) {
+/*void gdcmHeader::Print(std::ostream & os) {
 
    size_t o;
    unsigned short int g, e;
@@ -55,7 +55,7 @@ void gdcmHeader::Print(std::ostream & os) {
  * \      when position to be taken care of     
  * @param   newHeaderEntry
  */
-void gdcmHeader::Add(gdcmHeaderEntry * newHeaderEntry) {
+/*void gdcmHeader::Add(gdcmHeaderEntry * newHeaderEntry) {
 
 // tagHT [newHeaderEntry->GetKey()]  = newHeaderEntry;
    tagHT.insert( PairHT( newHeaderEntry->GetKey(),newHeaderEntry) );
@@ -72,7 +72,7 @@ void gdcmHeader::Add(gdcmHeaderEntry * newHeaderEntry) {
  * @param   element Element number of the searched Dicom Element 
  * @return  
  */
-bool gdcmHeader::SetVoidAreaByNumber(void * area,
+/*bool gdcmHeader::SetVoidAreaByNumber(void * area,
                                       guint16 group, guint16 element) {
    TagKey key = gdcmDictEntry::TranslateToKey(group, element);
    if ( ! tagHT.count(key))
@@ -89,7 +89,7 @@ bool gdcmHeader::SetVoidAreaByNumber(void * area,
  * @param   group The generated tag must belong to this group.  
  * @return  The element of tag with given group which is fee.
  */
-guint32 gdcmHeader::GenerateFreeTagKeyInGroup(guint16 group) {
+/*guint32 gdcmHeader::GenerateFreeTagKeyInGroup(guint16 group) {
    for (guint32 elem = 0; elem < UINT32_MAX; elem++) {
       TagKey key = gdcmDictEntry::TranslateToKey(group, elem);
       if (tagHT.count(key) == 0)
@@ -112,7 +112,7 @@ guint32 gdcmHeader::GenerateFreeTagKeyInGroup(guint16 group) {
  * @param   SkipSequence TRUE if we don't want to write Sequences (ACR-NEMA Files)
  * @param   type Type of the File (ExplicitVR,ImplicitVR, ACR, ...) 
  */
-void gdcmHeader::UpdateGroupLength(bool SkipSequence, FileType type) {
+/*void gdcmHeader::UpdateGroupLength(bool SkipSequence, FileType type) {
    guint16 gr, el;
    std::string vr;
    
@@ -208,7 +208,7 @@ void gdcmHeader::UpdateGroupLength(bool SkipSequence, FileType type) {
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  * @param   _fp already open file pointer
  */
-void gdcmHeader::WriteEntries(FileType type, FILE * _fp) {
+/*void gdcmHeader::WriteEntries(FileType type, FILE * _fp) {
    guint16 gr, el;
    guint32 lgr;
    const char * val;
@@ -294,5 +294,5 @@ void gdcmHeader::WriteEntries(FileType type, FILE * _fp) {
       fwrite ( val,(size_t)lgr ,(size_t)1 ,_fp); // Elem value
    }
 }
-
+*/
 //-----------------------------------------------------------------------------

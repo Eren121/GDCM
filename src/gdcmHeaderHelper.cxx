@@ -88,7 +88,7 @@ int gdcmHeaderHelper::GetPixelSize() {
 
      // 0028 0100 US IMG Bits Allocated
      // (in order no to be messed up by old RGB images)
-   if (gdcmHeader::GetPubEntryByNumber(0x0028,0x0100) == "24")
+   if (gdcmHeader::GetEntryByNumber(0x0028,0x0100) == "24")
       return 3;
 	 
    std::string PixelType = GetPixelType();
@@ -118,7 +118,7 @@ int gdcmHeaderHelper::GetPixelSize() {
  */
 std::string gdcmHeaderHelper::GetPixelType() {
    std::string BitsAlloc;
-   BitsAlloc = GetPubEntryByNumber(0x0028, 0x0100);
+   BitsAlloc = GetEntryByNumber(0x0028, 0x0100);
    if (BitsAlloc == GDCM_UNFOUND) { // Bits Allocated
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Bits Allocated");
       BitsAlloc = std::string("16");
@@ -129,7 +129,7 @@ std::string gdcmHeaderHelper::GetPixelType() {
       BitsAlloc = std::string("8"); // by old RGB images)
       
    std::string Signed;
-   Signed = GetPubEntryByNumber(0x0028, 0x0103);
+   Signed = GetEntryByNumber(0x0028, 0x0103);
    if (Signed == GDCM_UNFOUND) { // "Pixel Representation"
       dbg.Verbose(0, "gdcmHeader::GetPixelType: unfound Pixel Representation");
       BitsAlloc = std::string("0");
@@ -150,7 +150,7 @@ std::string gdcmHeaderHelper::GetPixelType() {
   */
 float gdcmHeaderHelper::GetXSpacing() {
     float xspacing, yspacing;
-    std::string StrSpacing = GetPubEntryByNumber(0x0028,0x0030);
+    std::string StrSpacing = GetEntryByNumber(0x0028,0x0030);
     
    if (StrSpacing == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetXSpacing: unfound Pixel Spacing (0028,0030)");
@@ -174,7 +174,7 @@ float gdcmHeaderHelper::GetXSpacing() {
   */
 float gdcmHeaderHelper::GetYSpacing() {
    float xspacing, yspacing;
-   std::string StrSpacing = GetPubEntryByNumber(0x0028,0x0030);
+   std::string StrSpacing = GetEntryByNumber(0x0028,0x0030);
   
    if (StrSpacing == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetYSpacing: unfound Pixel Spacing (0028,0030)");
@@ -208,11 +208,11 @@ float gdcmHeaderHelper::GetZSpacing() {
    //   Si le Spacing Between Slices est absent, 
    //   on suppose que les coupes sont jointives
    
-   std::string StrSpacingBSlices = GetPubEntryByNumber(0x0018,0x0088);
+   std::string StrSpacingBSlices = GetEntryByNumber(0x0018,0x0088);
 
    if (StrSpacingBSlices == GDCM_UNFOUND) {
       dbg.Verbose(0, "gdcmHeader::GetZSpacing: unfound StrSpacingBSlices");
-      std::string StrSliceThickness = GetPubEntryByNumber(0x0018,0x0050);       
+      std::string StrSliceThickness = GetEntryByNumber(0x0018,0x0050);       
       if (StrSliceThickness == GDCM_UNFOUND)
          return 1.;
       else
@@ -229,7 +229,7 @@ float gdcmHeaderHelper::GetZSpacing() {
 float gdcmHeaderHelper::GetRescaleIntercept()
 {
   float resInter = 0.;
-  std::string StrRescInter = GetPubEntryByNumber(0x0028,0x1052); //0028 1052 DS IMG Rescale Intercept
+  std::string StrRescInter = GetEntryByNumber(0x0028,0x1052); //0028 1052 DS IMG Rescale Intercept
   if (StrRescInter != GDCM_UNFOUND) {
       if( sscanf( StrRescInter.c_str(), "%f", &resInter) != 1) {
          dbg.Verbose(0, "gdcmHeader::GetRescaleIntercept: Rescale Slope is empty");
@@ -242,7 +242,7 @@ float gdcmHeaderHelper::GetRescaleIntercept()
 float gdcmHeaderHelper::GetRescaleSlope()
 {
   float resSlope = 1.;
-  std::string StrRescSlope = GetPubEntryByNumber(0x0028,0x1053); //0028 1053 DS IMG Rescale Slope
+  std::string StrRescSlope = GetEntryByNumber(0x0028,0x1053); //0028 1053 DS IMG Rescale Slope
   if (StrRescSlope != GDCM_UNFOUND) {
       if( sscanf( StrRescSlope.c_str(), "%f", &resSlope) != 1) {
          dbg.Verbose(0, "gdcmHeader::GetRescaleSlope: Rescale Slope is empty");
@@ -267,11 +267,11 @@ int gdcmHeaderHelper::GetNumberOfScalarComponents() {
       
      // 0028 0100 US IMG Bits Allocated
      // (in order no to be messed up by old RGB images)
-   if (gdcmHeader::GetPubEntryByNumber(0x0028,0x0100) == "24")
+   if (gdcmHeader::GetEntryByNumber(0x0028,0x0100) == "24")
       return 3;
        
    std::string PhotometricInterpretation = 
-                  gdcmHeader::GetPubEntryByNumber(0x0028,0x0004);
+                  gdcmHeader::GetEntryByNumber(0x0028,0x0004);
 
    if ( ( PhotometricInterpretation == "PALETTE COLOR ") ) {
       if (HasLUT())   // PALETTE COLOR is NOT enough
@@ -305,7 +305,7 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
       
      // 0028 0100 US IMG Bits Allocated
      // (in order no to be messed up by old RGB images)
-   if (gdcmHeader::GetPubEntryByNumber(0x0028,0x0100) == "24")
+   if (gdcmHeader::GetEntryByNumber(0x0028,0x0100) == "24")
       return 3;
 
     // we assume that *all* kinds of YBR are dealt with
@@ -314,22 +314,22 @@ int gdcmHeaderHelper::GetNumberOfScalarComponentsRaw() {
 
 std::string gdcmHeaderHelper::GetStudyUID()
 {
-  return GetPubEntryByNumber(0x0020,0x000d); //0020 000d UI REL Study Instance UID
+  return GetEntryByNumber(0x0020,0x000d); //0020 000d UI REL Study Instance UID
 }
 
 std::string gdcmHeaderHelper::GetSeriesUID()
 {
-  return GetPubEntryByNumber(0x0020,0x000e); //0020 000e UI REL Series Instance UID
+  return GetEntryByNumber(0x0020,0x000e); //0020 000e UI REL Series Instance UID
 }
 
 std::string gdcmHeaderHelper::GetClassUID()
 {
-  return GetPubEntryByNumber(0x0008,0x0016); //0008 0016 UI ID SOP Class UID
+  return GetEntryByNumber(0x0008,0x0016); //0008 0016 UI ID SOP Class UID
 }
 
 std::string gdcmHeaderHelper::GetInstanceUID()
 {
-  return GetPubEntryByNumber(0x0008,0x0018); //0008 0018 UI ID SOP Instance UID
+  return GetEntryByNumber(0x0008,0x0018); //0008 0018 UI ID SOP Instance UID
 }
 
 // Image Position Patient                              (0020,0032):
@@ -350,11 +350,11 @@ std::string gdcmHeaderHelper::GetInstanceUID()
   */
 float gdcmHeaderHelper::GetXOrigin() {
     float xImPos, yImPos, zImPos;  
-    std::string StrImPos = GetPubEntryByNumber(0x0020,0x0032);
+    std::string StrImPos = GetEntryByNumber(0x0020,0x0032);
 
     if (StrImPos == GDCM_UNFOUND) {
        dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position Patient (0020,0032)");
-       StrImPos = GetPubEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
+       StrImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
        if (StrImPos == GDCM_UNFOUND) {
           dbg.Verbose(0, "gdcmHeader::GetXImagePosition: unfound Image Position (RET) (0020,0030)");
           // How to tell the caller nothing was found ?
@@ -375,11 +375,11 @@ float gdcmHeaderHelper::GetXOrigin() {
   */
 float gdcmHeaderHelper::GetYOrigin() {
     float xImPos, yImPos, zImPos;
-    std::string StrImPos = GetPubEntryByNumber(0x0020,0x0032);
+    std::string StrImPos = GetEntryByNumber(0x0020,0x0032);
 
     if (StrImPos == GDCM_UNFOUND) {
        dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position Patient (0020,0032)");
-       StrImPos = GetPubEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
+       StrImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
        if (StrImPos == GDCM_UNFOUND) {
           dbg.Verbose(0, "gdcmHeader::GetYImagePosition: unfound Image Position (RET) (0020,0030)");
           // How to tell the caller nothing was found ?
@@ -402,7 +402,7 @@ float gdcmHeaderHelper::GetYOrigin() {
   */
 float gdcmHeaderHelper::GetZOrigin() {
    float xImPos, yImPos, zImPos; 
-   std::string StrImPos = GetPubEntryByNumber(0x0020,0x0032);
+   std::string StrImPos = GetEntryByNumber(0x0020,0x0032);
    if (StrImPos != GDCM_UNFOUND) {
       if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3) {
          dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image Position Patient (0020,0032)");
@@ -411,7 +411,7 @@ float gdcmHeaderHelper::GetZOrigin() {
          return zImPos;
       }    
    }  
-   StrImPos = GetPubEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
+   StrImPos = GetEntryByNumber(0x0020,0x0030); // For ACR-NEMA images
    if (StrImPos != GDCM_UNFOUND) {
       if( sscanf( StrImPos.c_str(), "%f\\%f\\%f", &xImPos, &yImPos, &zImPos) != 3) {
          dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Image Position (RET) (0020,0030)");
@@ -420,7 +420,7 @@ float gdcmHeaderHelper::GetZOrigin() {
          return zImPos;
       }    
    }                
-   std::string StrSliceLocation = GetPubEntryByNumber(0x0020,0x1041);// for *very* old ACR-NEMA images
+   std::string StrSliceLocation = GetEntryByNumber(0x0020,0x1041);// for *very* old ACR-NEMA images
    if (StrSliceLocation != GDCM_UNFOUND) {
       if( sscanf( StrSliceLocation.c_str(), "%f", &zImPos) !=1) {
          dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Slice Location (0020,1041)");
@@ -430,7 +430,7 @@ float gdcmHeaderHelper::GetZOrigin() {
       }
    }   
    dbg.Verbose(0, "gdcmHeader::GetZImagePosition: unfound Slice Location (0020,1041)");
-   std::string StrLocation = GetPubEntryByNumber(0x0020,0x0050);
+   std::string StrLocation = GetEntryByNumber(0x0020,0x0050);
    if (StrLocation != GDCM_UNFOUND) {
       if( sscanf( StrLocation.c_str(), "%f", &zImPos) !=1) {
          dbg.Verbose(0, "gdcmHeader::GetZImagePosition: wrong Location (0020,0050)");
@@ -455,7 +455,7 @@ int gdcmHeaderHelper::GetImageNumber() {
   //binary conversion rules. This may be preferable to sscanf() since atoi() is a much smaller,
   // simpler and faster function. sscanf() can do all possible conversions whereas atoi() can 
   //only do single decimal integer conversions.
-  std::string StrImNumber = GetPubEntryByNumber(0x0020,0x0013); //0020 0013 IS REL Image Number
+  std::string StrImNumber = GetEntryByNumber(0x0020,0x0013); //0020 0013 IS REL Image Number
   if (StrImNumber != GDCM_UNFOUND) {
     return atoi( StrImNumber.c_str() );
   }
@@ -468,7 +468,7 @@ int gdcmHeaderHelper::GetImageNumber() {
   * @return ModalityType
   */
 ModalityType gdcmHeaderHelper::GetModality(void) {
-  std::string StrModality = GetPubEntryByNumber(0x0008,0x0060); //0008 0060 CS ID Modality
+  std::string StrModality = GetEntryByNumber(0x0008,0x0060); //0008 0060 CS ID Modality
   if (StrModality != GDCM_UNFOUND) {
          if ( StrModality.find("AU") < StrModality.length()) return AU;
     else if ( StrModality.find("AS") < StrModality.length()) return AS;
@@ -531,7 +531,7 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
   //iop is supposed to be float[6]
   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0;
   
-  std::string StrImOriPat = GetPubEntryByNumber(0x0020,0x0037); // 0020 0037 DS REL Image Orientation (Patient)
+  std::string StrImOriPat = GetEntryByNumber(0x0020,0x0037); // 0020 0037 DS REL Image Orientation (Patient)
   if (StrImOriPat != GDCM_UNFOUND) {
     if( sscanf( StrImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
             &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6) {
@@ -543,7 +543,7 @@ void gdcmHeaderHelper::GetImageOrientationPatient( float* iop ) {
   }
   
   //For ACR-NEMA
-  StrImOriPat = GetPubEntryByNumber(0x0020,0x0035); //0020 0035 DS REL Image Orientation (RET)
+  StrImOriPat = GetEntryByNumber(0x0020,0x0035); //0020 0035 DS REL Image Orientation (RET)
   if (StrImOriPat != GDCM_UNFOUND) {
     if( sscanf( StrImOriPat.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", 
             &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6) {

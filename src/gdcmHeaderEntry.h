@@ -3,10 +3,11 @@
 #ifndef GDCMHeaderEntry_H
 #define GDCMHeaderEntry_H
 
+#include <iostream>
+#include <stdio.h>
+
 #include "gdcmDictEntry.h"
 class gdcmHeader;
-
-#include <stdio.h>
 
 //-----------------------------------------------------------------------------
 /*

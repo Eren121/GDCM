@@ -70,9 +70,10 @@ except ImportError,e:
    raise ImportError, "gdcm extension not imported."
 
 ### Expose only the necessary stuff
-gdcmHeader = gdcm.gdcmHeader
-gdcmDictSet = gdcm.gdcmDictSet
-gdcmFile = gdcm.gdcmFile
+gdcmDictSet      = gdcm.gdcmDictSet
+gdcmHeader       = gdcm.gdcmHeader
+gdcmHeaderHelper = gdcm.gdcmHeaderHelper
+gdcmFile         = gdcm.gdcmFile
 
 def GetPubDictTagNames():
    return gdcm.cvar.gdcmGlob.GetDicts().GetPubDictTagNames()

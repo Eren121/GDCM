@@ -124,7 +124,7 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
 
    int nb;
    std::string str_nb;
-   str_nb=Header->GetPubEntryByNumber(0x0028,0x0100);
+   str_nb=Header->GetEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
@@ -134,7 +134,7 @@ void gdcmFile::SetPixelDataSizeFromHeader(void) {
    lgrTotale =  lgrTotaleRaw = Header->GetXSize() * Header->GetYSize() 
               * Header->GetZSize() * (nb/8)* Header->GetSamplesPerPixel();
    std::string str_PhotometricInterpretation = 
-                             Header->GetPubEntryByNumber(0x0028,0x0004);
+                             Header->GetEntryByNumber(0x0028,0x0004);
 			     
    /*if ( str_PhotometricInterpretation == "PALETTE COLOR " )*/
    // pb when undealt Segmented Palette Color
@@ -233,11 +233,11 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          // CreateOrReplaceIfExist ?
 	 
    std::string spp = "3";        // Samples Per Pixel
-   Header->SetPubEntryByNumber(spp,0x0028,0x0002);
+   Header->SetEntryByNumber(spp,0x0028,0x0002);
    std::string rgb= "RGB ";      // Photometric Interpretation
-   Header->SetPubEntryByNumber(rgb,0x0028,0x0004);
+   Header->SetEntryByNumber(rgb,0x0028,0x0004);
    std::string planConfig = "0"; // Planar Configuration
-   Header->SetPubEntryByNumber(planConfig,0x0028,0x0006);
+   Header->SetEntryByNumber(planConfig,0x0028,0x0006);
 
    } else { 
 	     // need to make RGB Pixels (?)
@@ -251,7 +251,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
          // Segmented xxx Palette Color are *more* than 65535 long ?!?
 		   
       std::string rgb= "MONOCHROME1 ";      // Photometric Interpretation
-      Header->SetPubEntryByNumber(rgb,0x0028,0x0004);		   		   
+      Header->SetEntryByNumber(rgb,0x0028,0x0004);		   		   
    }      	 
    // TODO : Drop Palette Color out of the Header? 	     
    return lgrTotale; 
@@ -316,21 +316,21 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    (void)ReadPixelData(destination);
 			
 	// Number of Bits Allocated for storing a Pixel
-   str_nb = Header->GetPubEntryByNumber(0x0028,0x0100);
+   str_nb = Header->GetEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
       nb = atoi(str_nb.c_str() );
    }	
 	// Number of Bits actually used
-   str_nbu=Header->GetPubEntryByNumber(0x0028,0x0101);
+   str_nbu=Header->GetEntryByNumber(0x0028,0x0101);
    if (str_nbu == GDCM_UNFOUND ) {
       nbu = nb;
    } else {
       nbu = atoi(str_nbu.c_str() );
    }		
 	// High Bit Position
-   str_highBit=Header->GetPubEntryByNumber(0x0028,0x0102);
+   str_highBit=Header->GetEntryByNumber(0x0028,0x0102);
    if (str_highBit == GDCM_UNFOUND ) {
       highBit = nb - 1;
    } else {
@@ -339,7 +339,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
 	// Pixel sign
 	// 0 = Unsigned
 	// 1 = Signed
-   str_signe=Header->GetPubEntryByNumber(0x0028,0x0103);
+   str_signe=Header->GetEntryByNumber(0x0028,0x0103);
    if (str_signe == GDCM_UNFOUND ) {
       signe = 0;  // default is unsigned
    } else {
@@ -397,7 +397,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    // -------------------
    
        std::string str_PhotometricInterpretation = 
-                 Header->GetPubEntryByNumber(0x0028,0x0004);
+                 Header->GetEntryByNumber(0x0028,0x0004);
 		   
       if ( (str_PhotometricInterpretation == "MONOCHROME1 ") 
         || (str_PhotometricInterpretation == "MONOCHROME2 ") ) {
@@ -509,12 +509,12 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void* destination, size_t MaxSize) {
    // CreateOrReplaceIfExist ?
 
    std::string spp = "3";        // Samples Per Pixel
-   Header->SetPubEntryByNumber(spp,0x0028,0x0002);
+   Header->SetEntryByNumber(spp,0x0028,0x0002);
    std::string rgb="RGB ";   // Photometric Interpretation
-   Header->SetPubEntryByNumber(rgb,0x0028,0x0004);
+   Header->SetEntryByNumber(rgb,0x0028,0x0004);
 
    std::string planConfig = "0"; // Planar Configuration
-   Header->SetPubEntryByNumber(planConfig,0x0028,0x0006);
+   Header->SetEntryByNumber(planConfig,0x0028,0x0006);
 	 
 	 // TODO : Drop Palette Color out of the Header? 
    return lgrTotale; 
@@ -658,10 +658,10 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
 
    std::string rows, columns; 
    if ( Header->GetFileType() == ACR_LIBIDO){
-         rows    = Header->GetPubEntryByNumber(0x0028, 0x0010);
-         columns = Header->GetPubEntryByNumber(0x0028, 0x0011);
-         Header->SetPubEntryByNumber(columns,  0x0028, 0x0010);
-         Header->SetPubEntryByNumber(rows   ,  0x0028, 0x0011);
+         rows    = Header->GetEntryByNumber(0x0028, 0x0010);
+         columns = Header->GetEntryByNumber(0x0028, 0x0011);
+         Header->SetEntryByNumber(columns,  0x0028, 0x0010);
+         Header->SetEntryByNumber(rows   ,  0x0028, 0x0011);
    }	
    // ----------------- End of Special Patch ----------------
 
@@ -674,8 +674,8 @@ bool gdcmFile::WriteBase (std::string fileName, FileType type) {
    // just after writting
 
    if (Header->GetFileType() == ACR_LIBIDO){
-         Header->SetPubEntryByNumber(rows   , 0x0028, 0x0010);
-         Header->SetPubEntryByNumber(columns, 0x0028, 0x0011);
+         Header->SetEntryByNumber(rows   , 0x0028, 0x0010);
+         Header->SetEntryByNumber(columns, 0x0028, 0x0011);
    }	
    // ----------------- End of Special Patch ----------------
 
@@ -834,7 +834,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
     
    // --------------- SingleFrame/Multiframe JPEG Lossless/Lossy/2000 
    int nb;
-   std::string str_nb=Header->GetPubEntryByNumber(0x0028,0x0100);
+   std::string str_nb=Header->GetEntryByNumber(0x0028,0x0100);
    if (str_nb == GDCM_UNFOUND ) {
       nb = 16;
    } else {
@@ -847,7 +847,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
    int taille = Header->GetXSize() * Header->GetYSize()  
                * Header->GetSamplesPerPixel();    
    long fragmentBegining; // for ftell, fseek
-   
+
    bool jpg2000 =     Header->IsJPEG2000();
    bool jpgLossless = Header->IsJPEGLossless();
     
