@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/09 10:11:38 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/12/10 13:49:07 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,8 +57,8 @@ PixelReadConvert::PixelReadConvert()
 {
    RGB = 0;
    RGBSize = 0;
-   Decompressed = 0;
-   DecompressedSize = 0;
+   Raw = 0;
+   RawSize = 0;
    LutRGBA = 0;
    LutRedData = 0;
    LutGreenData = 0;
@@ -73,11 +73,11 @@ void PixelReadConvert::Squeeze()
    } 
    RGB = 0;
 
-   if ( Decompressed )
+   if ( Raw )
    {
-      delete [] Decompressed;
+      delete [] Raw;
    }
-   Decompressed = 0;
+   Raw = 0;
 
    if ( LutRGBA )
    {
@@ -99,12 +99,12 @@ void PixelReadConvert::AllocateRGB()
   RGB = new uint8_t[ RGBSize ];
 }
 
-void PixelReadConvert::AllocateDecompressed()
+void PixelReadConvert::AllocateRaw()
 {
-  if ( Decompressed ) {
-     delete [] Decompressed;
+  if ( Raw ) {
+     delete [] Raw;
   }
-  Decompressed = new uint8_t[ DecompressedSize ];
+  Raw = new uint8_t[ RawSize ];
 }
 
 /**
@@ -115,7 +115,7 @@ void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
                throw ( FormatError )
 {
    int nbPixels = XSize * YSize;
-   uint16_t* localDecompres = (uint16_t*)Decompressed;
+   uint16_t* localDecompres = (uint16_t*)Raw;
 
    for( int p = 0; p < nbPixels; p += 2 )
    {
@@ -158,7 +158,7 @@ void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
 /**
  * \brief     Try to deal with RLE 16 Bits. 
  *            We assume the RLE has allready been parsed and loaded in
- *            Decompressed (through \ref ReadAndDecompressJPEGFile ).
+ *            Raw (through \ref ReadAndDecompressJPEGFile ).
  *            We here need to make 16 Bits Pixels from Low Byte and
  *            High Byte 'Planes'...(for what it may mean)
  * @return    Boolean
@@ -166,18 +166,18 @@ void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream* fp )
 bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
 {
    size_t PixelNumber = XSize * YSize;
-   size_t decompressedSize = XSize * YSize * NumberOfFrames;
+   size_t RawSize = XSize * YSize * NumberOfFrames;
 
-   // We assumed Decompressed contains the decoded RLE pixels but as
+   // We assumed Raw contains the decoded RLE pixels but as
    // 8 bits per pixel. In order to convert those pixels to 16 bits
-   // per pixel we cannot work in place within Decompressed and hence
-   // we copy it in a safe place, say copyDecompressed.
+   // per pixel we cannot work in place within Raw and hence
+   // we copy it in a safe place, say copyRaw.
 
-   uint8_t* copyDecompressed = new uint8_t[ decompressedSize * 2 ];
-   memmove( copyDecompressed, Decompressed, decompressedSize * 2 );
+   uint8_t* copyRaw = new uint8_t[ RawSize * 2 ];
+   memmove( copyRaw, Raw, RawSize * 2 );
 
-   uint8_t* x = Decompressed;
-   uint8_t* a = copyDecompressed;
+   uint8_t* x = Raw;
+   uint8_t* a = copyRaw;
    uint8_t* b = a + PixelNumber;
 
    for ( int i = 0; i < NumberOfFrames; i++ )
@@ -189,7 +189,7 @@ bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
       }
    }
 
-   delete[] copyDecompressed;
+   delete[] copyRaw;
       
    /// \todo check that operator new []didn't fail, and sometimes return false
    return true;
@@ -198,24 +198,24 @@ bool PixelReadConvert::DecompressRLE16BitsFromRLE8Bits( int NumberOfFrames )
 /**
  * \brief Implementation of the RLE decoding algorithm for decompressing
  *        a RLE fragment. [refer to PS 3.5-2003, section G.3.2 p 86]
- * @param subDecompressed Sub region of \ref Decompressed where the de
+ * @param subRaw Sub region of \ref Raw where the de
  *        decoded fragment should be placed.
  * @param fragmentSize The length of the binary fragment as found on the disk.
- * @param decompressedSegmentSize The expected length of the fragment ONCE
- *        decompressed.
+ * @param RawSegmentSize The expected length of the fragment ONCE
+ *        Raw.
  * @param fp File Pointer: on entry the position should be the one of
  *        the fragment to be decoded.
  */
-bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
+bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t* subRaw,
                                                  long fragmentSize,
-                                                 long decompressedSegmentSize,
+                                                 long RawSegmentSize,
                                                  std::ifstream* fp )
 {
    int8_t count;
    long numberOfOutputBytes = 0;
    long numberOfReadBytes = 0;
 
-   while( numberOfOutputBytes < decompressedSegmentSize )
+   while( numberOfOutputBytes < RawSegmentSize )
    {
       fp->read( (char*)&count, 1 );
       numberOfReadBytes += 1;
@@ -225,9 +225,9 @@ bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
       //       signed integer of width N is 2^(N-1) - 1, which for int8_t
       //       is 127].
       {
-         fp->read( (char*)subDecompressed, count + 1);
+         fp->read( (char*)subRaw, count + 1);
          numberOfReadBytes   += count + 1;
-         subDecompressed     += count + 1;
+         subRaw     += count + 1;
          numberOfOutputBytes += count + 1;
       }
       else
@@ -239,9 +239,9 @@ bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
             numberOfReadBytes += 1;
             for( int i = 0; i < -count + 1; i++ )
             {
-               subDecompressed[i] = newByte;
+               subRaw[i] = newByte;
             }
-            subDecompressed     += -count + 1;
+            subRaw     += -count + 1;
             numberOfOutputBytes += -count + 1;
          }
       }
@@ -266,8 +266,8 @@ bool PixelReadConvert::ReadAndDecompressRLEFragment( uint8_t* subDecompressed,
  */
 bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
 {
-   uint8_t* subDecompressed = Decompressed;
-   long decompressedSegmentSize = XSize * YSize;
+   uint8_t* subRaw = Raw;
+   long RawSegmentSize = XSize * YSize;
 
    // Loop on the frame[s]
    for( RLEFramesInfo::RLEFrameList::iterator
@@ -279,11 +279,11 @@ bool PixelReadConvert::ReadAndDecompressRLEFile( std::ifstream* fp )
       for( unsigned int k = 1; k <= (*it)->NumberFragments; k++ )
       {
          fp->seekg(  (*it)->Offset[k] , std::ios::beg );
-         (void)ReadAndDecompressRLEFragment( subDecompressed,
+         (void)ReadAndDecompressRLEFragment( subRaw,
                                              (*it)->Length[k],
-                                             decompressedSegmentSize, 
+                                             RawSegmentSize, 
                                              fp );
-         subDecompressed += decompressedSegmentSize;
+         subRaw += RawSegmentSize;
       }
    }
 
@@ -305,7 +305,7 @@ void PixelReadConvert::ConvertSwapZone()
 
    if( BitsAllocated == 16 )
    {
-      uint16_t* im16 = (uint16_t*)Decompressed;
+      uint16_t* im16 = (uint16_t*)Raw;
       switch( SwapCode )
       {
          case 0:
@@ -316,7 +316,7 @@ void PixelReadConvert::ConvertSwapZone()
          case 3412:
          case 2143:
          case 4321:
-            for( i = 0; i < DecompressedSize / 2; i++ )
+            for( i = 0; i < RawSize / 2; i++ )
             {
                im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
             }
@@ -331,14 +331,14 @@ void PixelReadConvert::ConvertSwapZone()
       uint32_t s32;
       uint16_t high;
       uint16_t low;
-      uint32_t* im32 = (uint32_t*)Decompressed;
+      uint32_t* im32 = (uint32_t*)Raw;
       switch ( SwapCode )
       {
          case 0:
          case 1234:
             break;
          case 4321:
-            for( i = 0; i < DecompressedSize / 4; i++ )
+            for( i = 0; i < RawSize / 4; i++ )
             {
                low     = im32[i] & 0x0000ffff;  // 4321
                high    = im32[i] >> 16;
@@ -349,7 +349,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          case 2143:
-            for( i = 0; i < DecompressedSize / 4; i++ )
+            for( i = 0; i < RawSize / 4; i++ )
             {
                low     = im32[i] & 0x0000ffff;   // 2143
                high    = im32[i] >> 16;
@@ -360,7 +360,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          case 3412:
-            for( i = 0; i < DecompressedSize / 4; i++ )
+            for( i = 0; i < RawSize / 4; i++ )
             {
                low     = im32[i] & 0x0000ffff; // 3412
                high    = im32[i] >> 16;
@@ -390,8 +390,8 @@ void PixelReadConvert::ConvertReorderEndianity()
        && ( BitsStored < BitsAllocated )
        && ( ! PixelSign ) )
    {
-      int l = (int)( DecompressedSize / ( BitsAllocated / 8 ) );
-      uint16_t *deb = (uint16_t *)Decompressed;
+      int l = (int)( RawSize / ( BitsAllocated / 8 ) );
+      uint16_t *deb = (uint16_t *)Raw;
       for(int i = 0; i<l; i++)
       {
          if( *deb == 0xffff )
@@ -411,7 +411,7 @@ void PixelReadConvert::ConvertReorderEndianity()
  */
 bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
 {
-   uint8_t* localDecompressed = Decompressed;
+   uint8_t* localRaw = Raw;
    // Loop on the fragment[s]
    for( JPEGFragmentsInfo::JPEGFragmentsList::iterator
         it  = JPEGInfo->Fragments.begin();
@@ -422,7 +422,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
 
       if ( IsJPEG2000 )
       {
-         if ( ! gdcm_read_JPEG2000_file( fp,localDecompressed ) )
+         if ( ! gdcm_read_JPEG2000_file( fp,localRaw ) )
          {
             return false;
          }
@@ -430,7 +430,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
       else if ( BitsStored == 8)
       {
          // JPEG Lossy : call to IJG 6b
-         if ( ! gdcm_read_JPEG_file8( fp, localDecompressed ) )
+         if ( ! gdcm_read_JPEG_file8( fp, localRaw ) )
          {
             return false;
          }
@@ -438,7 +438,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
       else if ( BitsStored <= 12)
       {
          // Reading Fragment pixels
-         if ( ! gdcm_read_JPEG_file12 ( fp, localDecompressed ) )
+         if ( ! gdcm_read_JPEG_file12 ( fp, localRaw ) )
          {
             return false;
          }
@@ -446,7 +446,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
       else if ( BitsStored <= 16)
       {
          // Reading Fragment pixels
-         if ( ! gdcm_read_JPEG_file16 ( fp, localDecompressed ) )
+         if ( ! gdcm_read_JPEG_file16 ( fp, localRaw ) )
          {
             return false;
          }
@@ -460,12 +460,12 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream* fp )
          return false;
       }
 
-      // Advance to next free location in Decompressed 
+      // Advance to next free location in Raw 
       // for next fragment decompression (if any)
       int length = XSize * YSize * SamplesPerPixel;
       int numberBytes = BitsAllocated / 8;
 
-      localDecompressed += length * numberBytes;
+      localRaw += length * numberBytes;
    }
    return true;
 }
@@ -478,12 +478,12 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
 {
    if ( BitsStored != BitsAllocated )
    {
-      int l = (int)( DecompressedSize / ( BitsAllocated / 8 ) );
+      int l = (int)( RawSize / ( BitsAllocated / 8 ) );
       if ( BitsAllocated == 16 )
       {
          uint16_t mask = 0xffff;
          mask = mask >> ( BitsAllocated - BitsStored );
-         uint16_t* deb = (uint16_t*)Decompressed;
+         uint16_t* deb = (uint16_t*)Raw;
          for(int i = 0; i<l; i++)
          {
             *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
@@ -494,7 +494,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       {
          uint32_t mask = 0xffffffff;
          mask = mask >> ( BitsAllocated - BitsStored );
-         uint32_t* deb = (uint32_t*)Decompressed;
+         uint32_t* deb = (uint32_t*)Raw;
          for(int i = 0; i<l; i++)
          {
             *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
@@ -517,9 +517,9 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
  */
 void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
 {
-   uint8_t* localDecompressed = Decompressed;
-   uint8_t* copyDecompressed = new uint8_t[ DecompressedSize ];
-   memmove( copyDecompressed, localDecompressed, DecompressedSize );
+   uint8_t* localRaw = Raw;
+   uint8_t* copyRaw = new uint8_t[ RawSize ];
+   memmove( copyRaw, localRaw, RawSize );
 
    // to see the tricks about YBR_FULL, YBR_FULL_422,
    // YBR_PARTIAL_422, YBR_ICT, YBR_RCT have a look at :
@@ -529,9 +529,9 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    int l        = XSize * YSize;
    int nbFrames = ZSize;
 
-   uint8_t* a = copyDecompressed;
-   uint8_t* b = copyDecompressed + l;
-   uint8_t* c = copyDecompressed + l + l;
+   uint8_t* a = copyRaw;
+   uint8_t* b = copyRaw + l;
+   uint8_t* c = copyRaw + l + l;
    double R, G, B;
 
    /// \todo : Replace by the 'well known' integer computation
@@ -554,15 +554,15 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
          if (G > 255.0) G = 255.0;
          if (B > 255.0) B = 255.0;
 
-         *(localDecompressed++) = (uint8_t)R;
-         *(localDecompressed++) = (uint8_t)G;
-         *(localDecompressed++) = (uint8_t)B;
+         *(localRaw++) = (uint8_t)R;
+         *(localRaw++) = (uint8_t)G;
+         *(localRaw++) = (uint8_t)B;
          a++;
          b++;
          c++;
       }
    }
-   delete[] copyDecompressed;
+   delete[] copyRaw;
 }
 
 /**
@@ -571,28 +571,28 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
  */
 void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
 {
-   uint8_t* localDecompressed = Decompressed;
-   uint8_t* copyDecompressed = new uint8_t[ DecompressedSize ];
-   memmove( copyDecompressed, localDecompressed, DecompressedSize );
+   uint8_t* localRaw = Raw;
+   uint8_t* copyRaw = new uint8_t[ RawSize ];
+   memmove( copyRaw, localRaw, RawSize );
 
    int l = XSize * YSize * ZSize;
 
-   uint8_t* a = copyDecompressed;
-   uint8_t* b = copyDecompressed + l;
-   uint8_t* c = copyDecompressed + l + l;
+   uint8_t* a = copyRaw;
+   uint8_t* b = copyRaw + l;
+   uint8_t* c = copyRaw + l + l;
 
    for (int j = 0; j < l; j++)
    {
-      *(localDecompressed++) = *(a++);
-      *(localDecompressed++) = *(b++);
-      *(localDecompressed++) = *(c++);
+      *(localRaw++) = *(a++);
+      *(localRaw++) = *(b++);
+      *(localRaw++) = *(c++);
    }
-   delete[] copyDecompressed;
+   delete[] copyRaw;
 }
 
 bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream* fp )
 {
-   // ComputeDecompressedAndRGBSizes is already made by 
+   // ComputeRawAndRGBSizes is already made by 
    // ::GrabInformationsFromHeader. So, the structure sizes are
    // correct
    Squeeze();
@@ -614,7 +614,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream* fp )
       return false;
    }
 
-   AllocateDecompressed();
+   AllocateRaw();
 
    //////////////////////////////////////////////////
    //// Second stage: read from disk dans decompress.
@@ -622,30 +622,30 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    {
       ReadAndDecompress12BitsTo16Bits( fp);
    }
-   else if ( IsDecompressed )
+   else if ( IsRaw )
    {
       // This problem can be found when some obvious informations are found
       // after the field containing the image datas. In this case, these
       // bad datas are added to the size of the image (in the PixelDataLength
-      // variable). But DecompressedSize is the right size of the image !
-      if( PixelDataLength != DecompressedSize)
+      // variable). But RawSize is the right size of the image !
+      if( PixelDataLength != RawSize)
       {
          dbg.Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
-                      "Mismatch between PixelReadConvert and DecompressedSize." );
+                      "Mismatch between PixelReadConvert and RawSize." );
       }
-      if( PixelDataLength > DecompressedSize)
+      if( PixelDataLength > RawSize)
       {
-         fp->read( (char*)Decompressed, DecompressedSize);
+         fp->read( (char*)Raw, RawSize);
       }
       else
       {
-         fp->read( (char*)Decompressed, PixelDataLength);
+         fp->read( (char*)Raw, PixelDataLength);
       }
 
       if ( fp->fail() || fp->eof())//Fp->gcount() == 1
       {
          dbg.Verbose( 0, "PixelReadConvert::ReadAndDecompressPixelData: "
-                         "reading of decompressed pixel data failed." );
+                         "reading of Raw pixel data failed." );
          return false;
       }
    } 
@@ -718,7 +718,7 @@ void PixelReadConvert::ConvertHandleColor()
    // - [Planar 1] AND [Photo C] handled with ConvertYcBcRPlanesToRGBPixels()
    // - [Planar 2] OR  [Photo D] requires LUT intervention.
 
-   if ( ! IsDecompressedRGB() )
+   if ( ! IsRawRGB() )
    {
       // [Planar 2] OR  [Photo D]: LUT intervention done outside
       return;
@@ -749,10 +749,10 @@ void PixelReadConvert::ConvertHandleColor()
 }
 
 /**
- * \brief Predicate to know wether the image[s] (once decompressed) is RGB.
+ * \brief Predicate to know wether the image[s] (once Raw) is RGB.
  * \note See comments of \ref ConvertHandleColor
  */
-bool PixelReadConvert::IsDecompressedRGB()
+bool PixelReadConvert::IsRawRGB()
 {
    if (   IsMonochrome
        || PlanarConfiguration == 2
@@ -763,7 +763,7 @@ bool PixelReadConvert::IsDecompressedRGB()
    return true;
 }
 
-void PixelReadConvert::ComputeDecompressedAndRGBSizes()
+void PixelReadConvert::ComputeRawAndRGBSizes()
 {
    int bitsAllocated = BitsAllocated;
    // Number of "Bits Allocated" is fixed to 16 when it's 12, since
@@ -774,16 +774,16 @@ void PixelReadConvert::ComputeDecompressedAndRGBSizes()
       bitsAllocated = 16;
    }
                                                                                 
-   DecompressedSize =  XSize * YSize * ZSize
+   RawSize =  XSize * YSize * ZSize
                      * ( bitsAllocated / 8 )
                      * SamplesPerPixel;
    if ( HasLUT )
    {
-      RGBSize = 3 * DecompressedSize;
+      RGBSize = 3 * RawSize;
    }
    else
    {
-      RGBSize = DecompressedSize;
+      RGBSize = RawSize;
    }
 }
 
@@ -820,7 +820,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header* header )
    PixelSign = header->IsSignedPixelData();
    SwapCode  = header->GetSwapCode();
    TransferSyntaxType ts = header->GetTransferSyntax();
-   IsDecompressed =
+   IsRaw =
         ( ! header->IsDicomV3() )
      || ts == ImplicitVRLittleEndian
      || ts == ImplicitVRLittleEndianDLXGE
@@ -893,7 +893,7 @@ void PixelReadConvert::GrabInformationsFromHeader( Header* header )
       }
    }
 
-   ComputeDecompressedAndRGBSizes();
+   ComputeRawAndRGBSizes();
 }
 
 /**
@@ -1032,7 +1032,7 @@ void PixelReadConvert::BuildLUTRGBA()
 }
 
 /**
- * \brief Build the RGB image from the Decompressed imagage and the LUTs.
+ * \brief Build the RGB image from the Raw imagage and the LUTs.
  */
 bool PixelReadConvert::BuildRGBImage()
 {
@@ -1042,7 +1042,7 @@ bool PixelReadConvert::BuildRGBImage()
       return true;
    }
 
-   if ( ! Decompressed )
+   if ( ! Raw )
    {
       // The job can't be done
       return false;
@@ -1058,9 +1058,9 @@ bool PixelReadConvert::BuildRGBImage()
    // Build RGB Pixels
    AllocateRGB();
    uint8_t* localRGB = RGB;
-   for (size_t i = 0; i < DecompressedSize; ++i )
+   for (size_t i = 0; i < RawSize; ++i )
    {
-      int j  = Decompressed[i] * 4;
+      int j  = Raw[i] * 4;
       *localRGB++ = LutRGBA[j];
       *localRGB++ = LutRGBA[j+1];
       *localRGB++ = LutRGBA[j+2];

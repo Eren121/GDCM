@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/09 10:59:59 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/12/10 13:49:08 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,12 @@
 #include <string>
 
 //-----------------------------------------------------------------------------
+#define VTK_GDCM_WRITE_TYPE_EXPLICIT_VR 1
+#define VTK_GDCM_WRITE_TYPE_IMPLICIT_VR 2
+#define VTK_GDCM_WRITE_TYPE_ACR         3
+#define VTK_GDCM_WRITE_TYPE_ACR_LIBIDO  4
+
+//-----------------------------------------------------------------------------
 class VTK_EXPORT vtkGdcmWriter : public vtkImageWriter
 {
 public:
@@ -37,6 +43,14 @@ public:
 
    vtkSetObjectMacro(LookupTable,vtkLookupTable);
    vtkGetObjectMacro(LookupTable,vtkLookupTable);
+
+   void SetWriteTypeToDcmImplVR()     { SetWriteType(VTK_GDCM_WRITE_TYPE_EXPLICIT_VR); };
+   void SetWriteTypeToDcmExplVR()     { SetWriteType(VTK_GDCM_WRITE_TYPE_IMPLICIT_VR); };
+   void SetWriteTypeToAcr()           { SetWriteType(VTK_GDCM_WRITE_TYPE_ACR); };
+   void SetWriteTypeToAcrLibido()     { SetWriteType(VTK_GDCM_WRITE_TYPE_ACR_LIBIDO); };
+   vtkSetMacro(WriteType,int);
+   vtkGetMacro(WriteType,int);
+   const char *GetWriteTypeAsString();
 
 protected:
    vtkGdcmWriter();
@@ -50,6 +64,7 @@ protected:
 private:
 // Variables
    vtkLookupTable *LookupTable;
+   int WriteType;
 };
 
 //-----------------------------------------------------------------------------

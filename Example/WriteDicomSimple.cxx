@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 08:34:07 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/12/10 13:49:06 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
    std::string fileName = argv[1]; 
    std::string mode = argv[2];
 
-   file->SetWriteModeToDecompressed();
+   file->SetWriteModeToRaw();
    switch (mode[0])
    {
       case 'a' : // Write an ACR file

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/04 08:57:20 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2004/12/10 13:49:06 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -669,7 +669,7 @@ int TestAllEntryVerify(int argc, char* argv[])
    }
    Parser.SetDataPath(referenceDir);
    // Parser.Print();
-   std::cout << "Reference fil loaded -->\n"
+   std::cout << "Reference file loaded -->\n"
              << "Check files : \n";
 
    int ret;

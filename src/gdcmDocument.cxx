@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 13:39:33 $
-  Version:   $Revision: 1.149 $
+  Date:      $Date: 2004/12/10 13:49:07 $
+  Version:   $Revision: 1.150 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2639,7 +2639,6 @@ void Document::HandleBrokenEndian(uint16_t group, uint16_t elem)
      reversedEndian--;
      SwitchSwapToBigEndian();
    }
-
 }
 
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 17:28:50 $
-  Version:   $Revision: 1.174 $
+  Date:      $Date: 2004/12/10 13:49:07 $
+  Version:   $Revision: 1.175 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,24 +97,6 @@ File::File(std::string const & filename )
 }
 
 /**
- * \brief Factorization for various forms of constructors.
- */
-void File::Initialise()
-{
-   WriteMode = WMODE_DECOMPRESSED;
-   WriteType = ExplicitVR;
-
-   PixelReadConverter = new PixelReadConvert;
-   PixelWriteConverter = new PixelWriteConvert;
-   Archive = new DocEntryArchive( HeaderInternal );
-
-   if ( HeaderInternal->IsReadable() )
-   {
-      PixelReadConverter->GrabInformationsFromHeader( HeaderInternal );
-   }
-}
-
-/**
  * \brief canonical destructor
  * \note  If the Header was created by the File constructor,
  *        it is destroyed by the File
@@ -155,6 +137,11 @@ File::~File()
  */
 size_t File::GetImageDataSize()
 {
+   if ( PixelWriteConverter->GetUserData() )
+   {
+      return PixelWriteConverter->GetUserDataSize();
+   }
+
    return PixelReadConverter->GetRGBSize();
 }
 
@@ -167,7 +154,12 @@ size_t File::GetImageDataSize()
  */
 size_t File::GetImageDataRawSize()
 {
-   return PixelReadConverter->GetDecompressedSize();
+   if ( PixelWriteConverter->GetUserData() )
+   {
+      return PixelWriteConverter->GetUserDataSize();
+   }
+
+   return PixelReadConverter->GetRawSize();
 }
 
 /**
@@ -182,7 +174,12 @@ size_t File::GetImageDataRawSize()
  */
 uint8_t* File::GetImageData()
 {
-   if ( ! GetDecompressed() )
+   if ( PixelWriteConverter->GetUserData() )
+   {
+      return PixelWriteConverter->GetUserData();
+   }
+
+   if ( ! GetRaw() )
    {
       // If the decompression failed nothing can be done.
       return 0;
@@ -194,9 +191,23 @@ uint8_t* File::GetImageData()
    }
    else
    {
-      // When no LUT or LUT conversion fails, return the decompressed
-      return PixelReadConverter->GetDecompressed();
+      // When no LUT or LUT conversion fails, return the Raw
+      return PixelReadConverter->GetRaw();
    }
+}
+
+/**
+ * \brief   Allocates necessary memory, 
+ *          Transforms YBR pixels (if any) into RGB pixels
+ *          Transforms 3 planes R, G, B  (if any) into a single RGB Plane
+ *          Copies the pixel data (image[s]/volume[s]) to newly allocated zone. 
+ *          DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
+ * @return  Pointer to newly allocated pixel data.
+ * \        NULL if alloc fails 
+ */
+uint8_t* File::GetImageDataRaw ()
+{
+   return GetRaw();
 }
 
 /**
@@ -226,7 +237,7 @@ uint8_t* File::GetImageData()
  */
 size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
 {
-   if ( ! GetDecompressed() )
+   if ( ! GetRaw() )
    {
       // If the decompression failed nothing can be done.
       return 0;
@@ -247,53 +258,16 @@ size_t File::GetImageDataIntoVector (void* destination, size_t maxSize)
    }
 
    // Either no LUT conversion necessary or LUT conversion failed
-   if ( PixelReadConverter->GetDecompressedSize() > maxSize )
+   if ( PixelReadConverter->GetRawSize() > maxSize )
    {
       dbg.Verbose(0, "File::GetImageDataIntoVector: pixel data bigger"
                      "than caller's expected MaxSize");
       return 0;
    }
    memcpy( destination,
-           (void*)PixelReadConverter->GetDecompressed(),
-           PixelReadConverter->GetDecompressedSize() );
-   return PixelReadConverter->GetDecompressedSize();
-}
-
-/**
- * \brief   Allocates necessary memory, 
- *          Transforms YBR pixels (if any) into RGB pixels
- *          Transforms 3 planes R, G, B  (if any) into a single RGB Plane
- *          Copies the pixel data (image[s]/volume[s]) to newly allocated zone. 
- *          DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
- * @return  Pointer to newly allocated pixel data.
- * \        NULL if alloc fails 
- */
-uint8_t* File::GetImageDataRaw ()
-{
-   return GetDecompressed();
-}
-
-uint8_t* File::GetDecompressed()
-{
-   uint8_t* decompressed = PixelReadConverter->GetDecompressed();
-   if ( ! decompressed )
-   {
-      // The decompressed image migth not be loaded yet:
-      std::ifstream* fp = HeaderInternal->OpenFile();
-      PixelReadConverter->ReadAndDecompressPixelData( fp );
-      if(fp) 
-         HeaderInternal->CloseFile();
-
-      decompressed = PixelReadConverter->GetDecompressed();
-      if ( ! decompressed )
-      {
-         dbg.Verbose(0, "File::GetDecompressed: read/decompress of "
-                        "pixel data apparently went wrong.");
-         return 0;
-      }
-   }
-
-   return decompressed;
+           (void*)PixelReadConverter->GetRaw(),
+           PixelReadConverter->GetRawSize() );
+   return PixelReadConverter->GetRawSize();
 }
 
 /**
@@ -309,11 +283,72 @@ uint8_t* File::GetDecompressed()
  *
  * @return boolean
  */
-bool File::SetImageData(uint8_t* inData, size_t expectedSize)
+void File::SetImageData(uint8_t* inData, size_t expectedSize)
 {
-   PixelWriteConverter->SetUserData(inData,expectedSize);
+   SetUserData(inData,expectedSize);
+}
 
-   return true;
+/**
+ * \brief   Set the image datas defined by the user
+ * \warning When writting the file, this datas are get as default datas to write
+ */
+void File::SetUserData(uint8_t* data, size_t expectedSize)
+{
+   PixelWriteConverter->SetUserData(data,expectedSize);
+}
+
+/**
+ * \brief   Get the image datas defined by the user
+ * \warning When writting the file, this datas are get as default datas to write
+ */
+uint8_t* File::GetUserData()
+{
+   return PixelWriteConverter->GetUserData();
+}
+
+/**
+ * \brief   Get the image data size defined by the user
+ * \warning When writting the file, this datas are get as default datas to write
+ */
+size_t File::GetUserDataSize()
+{
+   return PixelWriteConverter->GetUserDataSize();
+}
+
+/**
+ * \brief   Get the image datas from the file.
+ *          If a LUT is found, the datas are expanded to be RGB
+ */
+uint8_t* File::GetRGBData()
+{
+   return PixelReadConverter->GetRGB();
+}
+
+/**
+ * \brief   Get the image data size from the file.
+ *          If a LUT is found, the datas are expanded to be RGB
+ */
+size_t File::GetRGBDataSize()
+{
+   return PixelReadConverter->GetRGBSize();
+}
+
+/**
+ * \brief   Get the image datas from the file.
+ *          If a LUT is found, the datas are not expanded !
+ */
+uint8_t* File::GetRawData()
+{
+   return PixelReadConverter->GetRaw();
+}
+
+/**
+ * \brief   Get the image data size from the file.
+ *          If a LUT is found, the datas are not expanded !
+ */
+size_t File::GetRawDataSize()
+{
+   return PixelReadConverter->GetRawSize();
 }
 
 /**
@@ -338,8 +373,8 @@ bool File::WriteRawData(std::string const & fileName)
       fp1.write((char*)PixelWriteConverter->GetUserData(), PixelWriteConverter->GetUserDataSize());
    else if(PixelReadConverter->GetRGB())
       fp1.write((char*)PixelReadConverter->GetRGB(), PixelReadConverter->GetRGBSize());
-   else if(PixelReadConverter->GetDecompressed())
-      fp1.write((char*)PixelReadConverter->GetDecompressed(), PixelReadConverter->GetDecompressedSize());
+   else if(PixelReadConverter->GetRaw())
+      fp1.write((char*)PixelReadConverter->GetRaw(), PixelReadConverter->GetRawSize());
 
    fp1.close();
 
@@ -474,8 +509,8 @@ bool File::WriteBase (std::string const & fileName)
   
    switch(WriteMode)
    {
-      case WMODE_DECOMPRESSED :
-         SetWriteToDecompressed();
+      case WMODE_RAW :
+         SetWriteToRaw();
          break;
       case WMODE_RGB :
          SetWriteToRGB();
@@ -531,17 +566,21 @@ bool File::CheckWriteIntegrity()
 
       switch(WriteMode)
       {
-         case WMODE_DECOMPRESSED :
+         case WMODE_RAW :
             if( decSize!=PixelWriteConverter->GetUserDataSize() )
             {
-               dbg.Verbose(0, "File::CheckWriteIntegrity: Data size is incorrect");
+               dbg.Verbose(0, "File::CheckWriteIntegrity: Data size is incorrect (Raw)");
+               //std::cerr << "File::CheckWriteIntegrity: Data size is incorrect (Raw)\n"
+               //          << decSize << " / " << PixelWriteConverter->GetUserDataSize() << "\n";
                return false;
             }
             break;
          case WMODE_RGB :
             if( rgbSize!=PixelWriteConverter->GetUserDataSize() )
             {
-               dbg.Verbose(0, "File::CheckWriteIntegrity: Data size is incorrect");
+               dbg.Verbose(0, "File::CheckWriteIntegrity: Data size is incorrect (RGB)");
+               //std::cerr << "File::CheckWriteIntegrity: Data size is incorrect (RGB)\n"
+               //          << decSize << " / " << PixelWriteConverter->GetUserDataSize() << "\n";
                return false;
             }
             break;
@@ -551,7 +590,7 @@ bool File::CheckWriteIntegrity()
    return true;
 }
 
-void File::SetWriteToDecompressed()
+void File::SetWriteToRaw()
 {
    if(HeaderInternal->GetNumberOfScalarComponents()==3 && !HeaderInternal->HasLUT())
    {
@@ -569,8 +608,8 @@ void File::SetWriteToDecompressed()
          photInt->SetValue("MONOCHROME1 ");
       }
 
-      PixelWriteConverter->SetReadData(PixelReadConverter->GetDecompressed(),
-                                       PixelReadConverter->GetDecompressedSize());
+      PixelWriteConverter->SetReadData(PixelReadConverter->GetRaw(),
+                                       PixelReadConverter->GetRawSize());
 
       BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
       pixel->SetValue(GDCM_BINLOADED);
@@ -602,10 +641,10 @@ void File::SetWriteToRGB()
          PixelWriteConverter->SetReadData(PixelReadConverter->GetRGB(),
                                           PixelReadConverter->GetRGBSize());
       }
-      else // Decompressed data
+      else // Raw data
       {
-         PixelWriteConverter->SetReadData(PixelReadConverter->GetDecompressed(),
-                                          PixelReadConverter->GetDecompressedSize());
+         PixelWriteConverter->SetReadData(PixelReadConverter->GetRaw(),
+                                          PixelReadConverter->GetRawSize());
       }
 
       BinEntry* pixel = CopyBinEntry(GetHeader()->GetGrPixel(),GetHeader()->GetNumPixel());
@@ -647,7 +686,7 @@ void File::SetWriteToRGB()
    }
    else
    {
-      SetWriteToDecompressed();
+      SetWriteToRaw();
    }
 }
 
@@ -784,6 +823,49 @@ BinEntry* File::CopyBinEntry(uint16_t group,uint16_t element)
    }
 
    return(newE);
+}
+
+//-----------------------------------------------------------------------------
+// Protected
+/**
+ * \brief Factorization for various forms of constructors.
+ */
+void File::Initialise()
+{
+   WriteMode = WMODE_RAW;
+   WriteType = ExplicitVR;
+
+   PixelReadConverter = new PixelReadConvert;
+   PixelWriteConverter = new PixelWriteConvert;
+   Archive = new DocEntryArchive( HeaderInternal );
+
+   if ( HeaderInternal->IsReadable() )
+   {
+      PixelReadConverter->GrabInformationsFromHeader( HeaderInternal );
+   }
+}
+
+uint8_t* File::GetRaw()
+{
+   uint8_t* raw = PixelReadConverter->GetRaw();
+   if ( ! raw )
+   {
+      // The Raw image migth not be loaded yet:
+      std::ifstream* fp = HeaderInternal->OpenFile();
+      PixelReadConverter->ReadAndDecompressPixelData( fp );
+      if(fp) 
+         HeaderInternal->CloseFile();
+
+      raw = PixelReadConverter->GetRaw();
+      if ( ! raw )
+      {
+         dbg.Verbose(0, "File::GetRaw: read/decompress of "
+                        "pixel data apparently went wrong.");
+         return 0;
+      }
+   }
+
+   return raw;
 }
 
 //-----------------------------------------------------------------------------

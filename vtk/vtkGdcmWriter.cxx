@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/10 08:34:08 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2004/12/10 13:49:08 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.7 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.8 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -35,6 +35,7 @@ vtkGdcmWriter::vtkGdcmWriter()
 {
    this->LookupTable = NULL;
    this->FileDimensionality = 3;
+   this->WriteType = VTK_GDCM_WRITE_TYPE_EXPLICIT_VR;
 }
 
 vtkGdcmWriter::~vtkGdcmWriter()
@@ -46,10 +47,28 @@ vtkGdcmWriter::~vtkGdcmWriter()
 void vtkGdcmWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
    this->Superclass::PrintSelf(os,indent);
+
+   os << indent << "Write type : " << this->GetWriteTypeAsString();
 }
 
 //-----------------------------------------------------------------------------
 // Public
+const char *vtkGdcmWriter::GetWriteTypeAsString()
+{
+   switch(WriteType)
+   {
+      case VTK_GDCM_WRITE_TYPE_EXPLICIT_VR :
+         return "Explicit VR";
+      case VTK_GDCM_WRITE_TYPE_IMPLICIT_VR :
+         return "Implicit VR";
+      case VTK_GDCM_WRITE_TYPE_ACR :
+         return "ACR";
+      case VTK_GDCM_WRITE_TYPE_ACR_LIBIDO :
+         return "ACR Libido";
+      default :
+         return "Unknow type";
+   }
+}
 
 //-----------------------------------------------------------------------------
 // Protected
@@ -70,22 +89,29 @@ size_t ReverseData(vtkImageData *image,unsigned char **data)
    size_t planeSize = dim[1] * lineSize;
    size_t size = dim[2] * planeSize;
 
-   *data = new unsigned char[size];
-
-   image->GetIncrements(inc);
-   unsigned char *src = (unsigned char *)image->GetScalarPointerForExtent(extent);
-   unsigned char *dst = *data + planeSize - lineSize;
-   for (int plane = extent[4]; plane <= extent[5]; plane++)
+   if( size>0 )
    {
-      for (int line = extent[2]; line <= extent[3]; line++)
-      {
-         // Copy one line at proper destination:
-         memcpy((void*)dst, (void*)src, lineSize);
+      *data = new unsigned char[size];
 
-         src += inc[1]*image->GetScalarSize();
-         dst -= lineSize;
+      image->GetIncrements(inc);
+      unsigned char *src = (unsigned char *)image->GetScalarPointerForExtent(extent);
+      unsigned char *dst = *data + planeSize - lineSize;
+      for (int plane = extent[4]; plane <= extent[5]; plane++)
+      {
+         for (int line = extent[2]; line <= extent[3]; line++)
+         {
+            // Copy one line at proper destination:
+            memcpy((void*)dst, (void*)src, lineSize);
+
+            src += inc[1] * image->GetScalarSize();
+            dst -= lineSize;
+         }
+         dst += 2 * planeSize;
       }
-      dst += 2 * planeSize;
+   }
+   else
+   {
+      *data = NULL;
    }
 
    return size;
@@ -182,7 +208,7 @@ void SetImageInformation(gdcm::File *file,vtkImageData *image)
    // Pixels
    unsigned char *data;
    size_t size = ReverseData(image,&data);
-   file->SetImageData(data,size);
+   file->SetUserData(data,size);
 }
 
 /**
@@ -292,6 +318,24 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)
    SetImageInformation(dcmFile,image);
 
    // Write the image
+   switch(this->WriteType)
+   {
+      case VTK_GDCM_WRITE_TYPE_EXPLICIT_VR :
+         dcmFile->SetWriteTypeToDcmExplVR();
+         break;
+      case VTK_GDCM_WRITE_TYPE_IMPLICIT_VR :
+         dcmFile->SetWriteTypeToDcmImplVR();
+         break;
+      case VTK_GDCM_WRITE_TYPE_ACR :
+         dcmFile->SetWriteTypeToAcr();
+         break;
+      case VTK_GDCM_WRITE_TYPE_ACR_LIBIDO :
+         dcmFile->SetWriteTypeToAcrLibido();
+         break;
+      default :
+         dcmFile->SetWriteTypeToDcmExplVR();
+   }
+
    if(!dcmFile->Write(fileName))
    {
       vtkErrorMacro( << "File "  <<  this->FileName  <<  "couldn't be written by "
@@ -299,6 +343,11 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName,vtkImageData *image)
       std::cerr << "not written \n";
    }
 
+   // Clean up
+   if( dcmFile->GetUserData() && dcmFile->GetUserDataSize()>0 )
+   {
+      delete[] dcmFile->GetUserData();
+   }
    delete dcmFile;
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 17:28:50 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2004/12/10 13:49:07 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ class GDCM_EXPORT File
 public:
    enum FileMode
    {
-      WMODE_DECOMPRESSED,
+      WMODE_RAW,
       WMODE_RGB
    };
      
@@ -61,7 +61,18 @@ public:
    uint8_t* GetImageDataRaw();
    size_t GetImageDataIntoVector(void* destination, size_t maxSize);
 
-   bool SetImageData (uint8_t* data, size_t expectedSize);
+   void SetImageData(uint8_t* data, size_t expectedSize);
+
+   // User datas
+   void SetUserData(uint8_t* data, size_t expectedSize);
+   uint8_t* GetUserData();
+   size_t GetUserDataSize();
+   // RBG datas (from file
+   uint8_t* GetRGBData();
+   size_t GetRGBDataSize();
+   // RAW datas (from file
+   uint8_t* GetRawData();
+   size_t GetRawDataSize();
 
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianity"
@@ -84,7 +95,7 @@ public:
    uint8_t* GetLutRGBA();
 
    // Write mode
-   void SetWriteModeToDecompressed() { SetWriteMode(WMODE_DECOMPRESSED); };
+   void SetWriteModeToRaw() { SetWriteMode(WMODE_RAW); };
    void SetWriteModeToRGB()          { SetWriteMode(WMODE_RGB); };
    void SetWriteMode(FileMode mode)  { WriteMode = mode; };
    FileMode GetWriteMode()           { return WriteMode; };
@@ -101,7 +112,7 @@ protected:
    bool WriteBase(std::string const& fileName);
    bool CheckWriteIntegrity();
 
-   void SetWriteToDecompressed();
+   void SetWriteToRaw();
    void SetWriteToRGB();
    void RestoreWrite();
 
@@ -120,8 +131,7 @@ protected:
 private:
    void Initialise();
 
-   uint8_t* GetDecompressed();
-   int ComputeDecompressedPixelDataSizeFromHeader();
+   uint8_t* GetRaw();
 
 private:
 // members variables:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/07 17:28:50 $
-  Version:   $Revision: 1.214 $
+  Date:      $Date: 2004/12/10 13:49:07 $
+  Version:   $Revision: 1.215 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,7 +106,7 @@ bool Header::Write(std::string fileName,FileType filetype)
 {
    std::ofstream* fp = new std::ofstream(fileName.c_str(), 
                                          std::ios::out | std::ios::binary);
-   if (fp == NULL)
+   if (*fp == NULL)
    {
       dbg.Verbose(2, "Failed to open (write) File: " , fileName.c_str());
       return false;

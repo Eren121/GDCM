@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 20:16:58 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/12/10 13:49:07 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,12 +41,12 @@ public:
    //// Getter accessors:
    uint8_t* GetRGB() { return RGB; }
    size_t   GetRGBSize() { return RGBSize; }
-   uint8_t* GetDecompressed() { return Decompressed; }
-   size_t   GetDecompressedSize() { return DecompressedSize; }
+   uint8_t* GetRaw() { return Raw; }
+   size_t   GetRawSize() { return RawSize; }
    uint8_t* GetLutRGBA() { return LutRGBA; }
 
    //// Predicates:
-   bool IsDecompressedRGB();
+   bool IsRawRGB();
 
    void Print( std::string indent = "", std::ostream &os = std::cout );
 
@@ -79,9 +79,9 @@ private:
    void ConvertYcBcRPlanesToRGBPixels();
    void ConvertHandleColor();
 
-   void ComputeDecompressedAndRGBSizes();
+   void ComputeRawAndRGBSizes();
    void AllocateRGB();
-   void AllocateDecompressed();
+   void AllocateRaw();
 
 // Variables
    /// Pixel data represented as RGB after LUT color interpretation.
@@ -89,9 +89,9 @@ private:
    /// Size of \ref RGB image.
    size_t   RGBSize;
    /// Pixel data after decompression and bit/byte rearrangement.
-   uint8_t* Decompressed;
+   uint8_t* Raw;
    /// Size of \ref Decompressed image.
-   size_t   DecompressedSize;
+   size_t   RawSize;
    /// \brief Red/Green/Blue/Alpha LookUpTable build out of the
    ///        Red/Green/Blue LUT descriptors (see \ref BuildLUTRGBA ).
    uint8_t* LutRGBA;
@@ -109,7 +109,7 @@ private:
    bool PixelSign;
    int SwapCode;
 
-   bool IsDecompressed;
+   bool IsRaw;
    bool IsJPEG2000;
    bool IsJPEGLossless;
    bool IsRLELossless;

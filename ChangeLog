@@ -1,4 +1,11 @@
 2004-12-10 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmFile.[h|cxx], gdcmPixelReadConvert.[h|cxx] : change the API. 
+     Rename Decompressed to Raw
+   * Use the API changes in gdcm::File.
+   * vtk/vtkGdcmWriter.[h|cxx] : add the possibility to write in other modes
+     Memory leaks fixed
+
+2004-12-10 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * vtk/vtkGdcmWriter.cxx, Example/WriteDicomSimple.cxx : add comments for
      each added entry in the header. Replace the 'Planes' field by the 'Number
      of Frames' field
