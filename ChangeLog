@@ -1,4 +1,10 @@
 2004-10-21 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+  * Initial work in gathering all transfer syntax accessors. clearly 
+   IsDecompressed/IsJPEG2000/IsJPEGLossless/IsRLELossless shouldn't be all 
+   ivars, but only one transfersyntax (class) ivar with equivalent method on 
+   the class.
+  
+2004-10-21 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
   * Removed all FILE* ref and replace by ifstream/ofstream. For now I use a temp 
     solution with the two files jdatadst.cxx and jdatasrc.cxx, this need to be 
     discussed (plus I didn't like having a 2000 lines patch not commited)

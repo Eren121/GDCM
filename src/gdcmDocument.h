@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2004/10/22 04:13:25 $
+  Version:   $Revision: 1.54 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,6 +40,24 @@ class SeqEntry;
 
 namespace gdcm 
 {
+
+enum TransferSyntaxType {
+  ImplicitVRLittleEndian = 0,
+  ExplicitVRLittleEndian,
+  DeflatedExplicitVRLittleEndian,
+  ExplicitVRBigEndian,
+  JPEGBaselineProcess1,
+  JPEGExtendedProcess2_4,
+  JPEGExtendedProcess3_5,
+  JPEGSpectralSelectionProcess6_8,
+  JPEGFullProgressionProcess10_12,
+  JPEGLosslessProcess14,
+  JPEGLosslessProcess14_1,
+  JPEG2000Lossless,
+  JPEG2000,
+  RLELossless,
+  UnknownTS
+};
 
 //-----------------------------------------------------------------------------
 /**
@@ -119,20 +137,11 @@ public:
 
 // Informations contained in the parser
    virtual bool IsReadable();
-   bool IsGivenTransferSyntax(std::string const & syntaxToCheck);
-   bool IsImplicitVRLittleEndianTransferSyntax();
-   bool IsExplicitVRLittleEndianTransferSyntax();
-   bool IsDeflatedExplicitVRLittleEndianTransferSyntax();
-   bool IsExplicitVRBigEndianTransferSyntax();
-   bool IsRLELossLessTransferSyntax();
-   bool IsJPEGBaseLineProcess1TransferSyntax();
-   bool IsJPEGExtendedProcess2_4TransferSyntax();
-   bool IsJPEGExtendedProcess3_5TransferSyntax();
-   bool IsJPEGSpectralSelectionProcess6_8TransferSyntax();
+   TransferSyntaxType GetTransferSyntax();
    bool IsJPEGLossless();
    bool IsJPEG2000();
-   bool IsJPEGTransferSyntax();
-   bool IsEncapsulateTransferSyntax();
+   bool IsJPEG();
+   bool IsEncapsulate();
    bool IsDicomV3();
 
    FileType GetFileType();
@@ -143,12 +152,12 @@ public:
    void Write( std::ofstream* fp, FileType type );
 
    ValEntry* ReplaceOrCreateByNumber(std::string const & value,
-                                         uint16_t group, uint16_t elem,
-                                         std::string const & VR ="unkn");
+                                     uint16_t group, uint16_t elem,
+                                     std::string const & VR ="unkn");
    
    BinEntry* ReplaceOrCreateByNumber(uint8_t* binArea, int lgth,
-                                         uint16_t group, uint16_t elem,
-                                         std::string const & VR="unkn");
+                                     uint16_t group, uint16_t elem,
+                                     std::string const & VR="unkn");
 
    SeqEntry* ReplaceOrCreateByNumber(uint16_t group, uint16_t elem);
 

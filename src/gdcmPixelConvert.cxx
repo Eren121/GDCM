@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:42 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2004/10/22 04:13:26 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -613,7 +613,7 @@ bool PixelConvert::ReadAndDecompressPixelData( std::ifstream* fp )
    else if ( IsDecompressed )
    {
       fp->read( (char*)Decompressed, PixelDataLength);
-      if ( fp->fail() | |fp->eof())//Fp->gcount() == 1
+      if ( fp->fail() || fp->eof())//Fp->gcount() == 1
       {
          dbg.Verbose( 0, "PixelConvert::ReadAndDecompressPixelData: "
                          "reading of decompressed pixel data failed." );
@@ -783,15 +783,16 @@ void PixelConvert::GrabInformationsFromHeader( Header* header )
    PixelSize = header->GetPixelSize();
    PixelSign = header->IsSignedPixelData();
    SwapCode  = header->GetSwapCode();
+   TransferSyntaxType ts = header->GetTransferSyntax();
    IsDecompressed =
         ( ! header->IsDicomV3() )
-     || header->IsImplicitVRLittleEndianTransferSyntax()
-     || header->IsExplicitVRLittleEndianTransferSyntax()
-     || header->IsExplicitVRBigEndianTransferSyntax()
-     || header->IsDeflatedExplicitVRLittleEndianTransferSyntax();
+     || ts == ImplicitVRLittleEndian
+     || ts == ExplicitVRLittleEndian
+     || ts == ExplicitVRBigEndian
+     || ts == DeflatedExplicitVRLittleEndian;
    IsJPEG2000     = header->IsJPEG2000();
    IsJPEGLossless = header->IsJPEGLossless();
-   IsRLELossless  = header->IsRLELossLessTransferSyntax();
+   IsRLELossless  =  ( ts == RLELossless );
    PixelOffset     = header->GetPixelOffset();
    PixelDataLength = header->GetPixelAreaLength();
    RLEInfo  = header->GetRLEInfo();

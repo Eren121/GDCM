@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.108 $
+  Date:      $Date: 2004/10/22 04:13:25 $
+  Version:   $Revision: 1.109 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,38 +36,38 @@
 
 namespace gdcm 
 {
-
-// Implicit VR Little Endian
-#define UI1_2_840_10008_1_2      "1.2.840.10008.1.2"
-// Explicit VR Little Endian
-#define UI1_2_840_10008_1_2_1    "1.2.840.10008.1.2.1"
-// Deflated Explicit VR Little Endian
-#define UI1_2_840_10008_1_2_1_99 "1.2.840.10008.1.2.1.99"
-// Explicit VR Big Endian
-#define UI1_2_840_10008_1_2_2    "1.2.840.10008.1.2.2"
-// JPEG Baseline (Process 1)
-#define UI1_2_840_10008_1_2_4_50 "1.2.840.10008.1.2.4.50"
-// JPEG Extended (Process 2 & 4)
-#define UI1_2_840_10008_1_2_4_51 "1.2.840.10008.1.2.4.51"
-// JPEG Extended (Process 3 & 5)
-#define UI1_2_840_10008_1_2_4_52 "1.2.840.10008.1.2.4.52"
-// JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8)
-#define UI1_2_840_10008_1_2_4_53 "1.2.840.10008.1.2.4.53"
-// JPEG Full Progression, Non-Hierarchical (Process 10 & 12)
-#define UI1_2_840_10008_1_2_4_55 "1.2.840.10008.1.2.4.55"
-// JPEG Lossless, Non-Hierarchical (Process 14)
-#define UI1_2_840_10008_1_2_4_57 "1.2.840.10008.1.2.4.57"
-// JPEG Lossless, Hierarchical, First-Order Prediction (Process 14,
-// [Selection Value 1])
-#define UI1_2_840_10008_1_2_4_70 "1.2.840.10008.1.2.4.70"
-// JPEG 2000 Lossless
-#define UI1_2_840_10008_1_2_4_90 "1.2.840.10008.1.2.4.90"
-// JPEG 2000
-#define UI1_2_840_10008_1_2_4_91 "1.2.840.10008.1.2.4.91"
-// RLE Lossless
-#define UI1_2_840_10008_1_2_5    "1.2.840.10008.1.2.5"
-// UI1_1_2_840_10008_1_2_5
-#define str2num(str, typeNum) *((typeNum *)(str))
+static const char *TransferSyntaxStrings[] =  {
+  // Implicit VR Little Endian
+  "1.2.840.10008.1.2",
+  // Explicit VR Little Endian
+  "1.2.840.10008.1.2.1",
+  // Deflated Explicit VR Little Endian
+  "1.2.840.10008.1.2.1.99",
+  // Explicit VR Big Endian
+  "1.2.840.10008.1.2.2",
+  // JPEG Baseline (Process 1)
+  "1.2.840.10008.1.2.4.50",
+  // JPEG Extended (Process 2 & 4)
+  "1.2.840.10008.1.2.4.51",
+  // JPEG Extended (Process 3 & 5)
+  "1.2.840.10008.1.2.4.52",
+  // JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8)
+  "1.2.840.10008.1.2.4.53",
+  // JPEG Full Progression, Non-Hierarchical (Process 10 & 12)
+  "1.2.840.10008.1.2.4.55",
+  // JPEG Lossless, Non-Hierarchical (Process 14)
+  "1.2.840.10008.1.2.4.57",
+  // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14, [Selection Value 1])
+  "1.2.840.10008.1.2.4.70",
+  // JPEG 2000 Lossless
+  "1.2.840.10008.1.2.4.90",
+  // JPEG 2000
+  "1.2.840.10008.1.2.4.91",
+  // RLE Lossless
+  "1.2.840.10008.1.2.5",
+  // Unknown
+  "Unknown Transfer Syntax"
+};
 
 //-----------------------------------------------------------------------------
 // Refer to Document::CheckSwap()
@@ -299,12 +299,12 @@ bool Document::IsReadable()
  *          the current document. False either when the document contains
  *          no Transfer Syntax, or when the Tranfer Syntaxes doesn't match.
  */
-bool Document::IsGivenTransferSyntax(std::string const & syntaxToCheck)
+TransferSyntaxType Document::GetTransferSyntax()
 {
    DocEntry *entry = GetDocEntryByNumber(0x0002, 0x0010);
    if ( !entry )
    {
-      return false;
+      return UnknownTS;
    }
 
    // The entry might be present but not loaded (parsing and loading
@@ -316,127 +316,32 @@ bool Document::IsGivenTransferSyntax(std::string const & syntaxToCheck)
       // The actual transfer (as read from disk) might be padded. We
       // first need to remove the potential padding. We can make the
       // weak assumption that padding was not executed with digits...
-      if  ( transfer.length() == 0 ) { // for brain damaged headers
-         return false;
+      if  ( transfer.length() == 0 )
+      {
+         // for brain damaged headers
+         return UnknownTS;
       }
-      while ( ! isdigit(transfer[transfer.length()-1]) )
+      while ( !isdigit(transfer[transfer.length()-1]) )
       {
          transfer.erase(transfer.length()-1, 1);
       }
-      if ( transfer == syntaxToCheck )
+      for (int i = 0; TransferSyntaxStrings[i] != NULL; i++)
       {
-         return true;
+         if ( TransferSyntaxStrings[i] == transfer )
+         {
+            return TransferSyntaxType(i);
+         }
       }
    }
-   return false;
+   return UnknownTS;
 }
 
-/**
- * \brief   Determines if the Transfer Syntax of the present document
- *          corresponds to a Implicit Value Representation of 
- *          Little Endian.
- * \sa      \ref Document::IsGivenTransferSyntax.
- * @return  True when ImplicitVRLittleEndian found. False in all other cases.
- */
-bool Document::IsImplicitVRLittleEndianTransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2);
-}
-
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a ExplicitVRLittleEndian one.
- * @return  True when ExplicitVRLittleEndian found. False in all other cases.
- */
-bool Document::IsExplicitVRLittleEndianTransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_1);
-}
-
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a DeflatedExplicitVRLittleEndian one.
- * @return  True when DeflatedExplicitVRLittleEndian found. False in all other cases.
- */
-bool Document::IsDeflatedExplicitVRLittleEndianTransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_1_99);
-}
-
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a Explicit VR Big Endian one.
- * @return  True when big endian found. False in all other cases.
- */
-bool Document::IsExplicitVRBigEndianTransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_2);
-}
-
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEGBaseLineProcess1 one.
- * @return  True when JPEGBaseLineProcess1found. False in all other cases.
- */
-bool Document::IsJPEGBaseLineProcess1TransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_50);
-}
-                                                                                
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEGExtendedProcess2-4 one.
- * @return  True when JPEGExtendedProcess2-4 found. False in all other cases.
- */
-bool Document::IsJPEGExtendedProcess2_4TransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_51);
-}
-                                                                                
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEGExtendeProcess3-5 one.
- * @return  True when JPEGExtendedProcess3-5 found. False in all other cases.
- */
-bool Document::IsJPEGExtendedProcess3_5TransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_52);
-}
-
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a JPEGSpectralSelectionProcess6-8 one.
- * @return  True when JPEGSpectralSelectionProcess6-8 found. False in all
- *          other cases.
- */
-bool Document::IsJPEGSpectralSelectionProcess6_8TransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_53);
-}
-
-/**
- * \brief   Determines if the Transfer Syntax was already encountered
- *          and if it corresponds to a RLE Lossless one.
- * @return  True when RLE Lossless found. False in all
- *          other cases.
- */
-bool Document::IsRLELossLessTransferSyntax()
-{
-   return IsGivenTransferSyntax(UI1_2_840_10008_1_2_5);
-}
-
-/**
- * \brief  Determines if Transfer Syntax was already encountered
- *          and if it corresponds to a JPEG Lossless one.
- * @return  True when RLE Lossless found. False in all
- *          other cases.
- */
- 
 bool Document::IsJPEGLossless()
 {
-   return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_55)
-           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_57)
-           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_70) );
+   TransferSyntaxType r = GetTransferSyntax();
+   return    r ==  JPEGFullProgressionProcess10_12
+          || r == JPEGLosslessProcess14
+          || r == JPEGLosslessProcess14_1;
 }
                                                                                 
 /**
@@ -447,8 +352,8 @@ bool Document::IsJPEGLossless()
  */
 bool Document::IsJPEG2000()
 {
-   return (   IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_90)
-           || IsGivenTransferSyntax(UI1_2_840_10008_1_2_4_91) );
+   TransferSyntaxType r = GetTransferSyntax();
+   return r == JPEG2000Lossless || r == JPEG2000;
 }
 
 /**
@@ -456,26 +361,26 @@ bool Document::IsJPEG2000()
  *          of Jpeg encoded Pixel data.
  * @return  True when any form of JPEG found. False otherwise.
  */
-bool Document::IsJPEGTransferSyntax()
+bool Document::IsJPEG()
 {
-   return (   IsJPEGBaseLineProcess1TransferSyntax()
-           || IsJPEGExtendedProcess2_4TransferSyntax()
-           || IsJPEGExtendedProcess3_5TransferSyntax()
-           || IsJPEGSpectralSelectionProcess6_8TransferSyntax()
-           || IsJPEGLossless()
-           || IsJPEG2000() );
+   TransferSyntaxType r = GetTransferSyntax();
+   return r == JPEGBaselineProcess1 
+     || r == JPEGExtendedProcess2_4
+     || r == JPEGExtendedProcess3_5
+     || r == JPEGSpectralSelectionProcess6_8
+     ||      IsJPEGLossless()
+     ||      IsJPEG2000();
 }
-
 
 /**
  * \brief   Determines if the Transfer Syntax corresponds to encapsulated
  *          of encoded Pixel Data (as opposed to native).
  * @return  True when encapsulated. False when native.
  */
-bool Document::IsEncapsulateTransferSyntax()
+bool Document::IsEncapsulate()
 {
-   return (   IsJPEGTransferSyntax()
-           || IsRLELossLessTransferSyntax() );
+   TransferSyntaxType r = GetTransferSyntax();
+   return IsJPEG() || r == RLELossless;
 }
 
 /**
@@ -573,8 +478,8 @@ void Document::Write(std::ofstream* fp, FileType filetype)
 
    if (filetype == ImplicitVR) 
    {
-      std::string implicitVRTransfertSyntax = UI1_2_840_10008_1_2;
-      ReplaceOrCreateByNumber(implicitVRTransfertSyntax,0x0002, 0x0010);
+      std::string ts = TransferSyntaxStrings[ImplicitVRLittleEndian];
+      ReplaceOrCreateByNumber(ts, 0x0002, 0x0010);
       
       /// \todo Refer to standards on page 21, chapter 6.2
       ///       "Value representation": values with a VR of UI shall be
@@ -586,8 +491,8 @@ void Document::Write(std::ofstream* fp, FileType filetype)
 
    if (filetype == ExplicitVR)
    {
-      std::string explicitVRTransfertSyntax = UI1_2_840_10008_1_2_1;
-      ReplaceOrCreateByNumber(explicitVRTransfertSyntax,0x0002, 0x0010);
+      std::string ts = TransferSyntaxStrings[ExplicitVRLittleEndian];
+      ReplaceOrCreateByNumber(ts, 0x0002, 0x0010);
       
       /// \todo Refer to standards on page 21, chapter 6.2
       ///       "Value representation": values with a VR of UI shall be
@@ -1492,15 +1397,15 @@ void Document::ParseDES(DocEntrySet *set,
          if (    ( newDocEntry->GetGroup()   == 0x7fe0 )
               && ( newDocEntry->GetElement() == 0x0010 ) )
          {
-             if ( IsRLELossLessTransferSyntax() ) 
+             TransferSyntaxType ts = GetTransferSyntax();
+             if ( ts == RLELossless ) 
              {
                 long PositionOnEntry = Fp->tellg();
                 Fp->seekg( newDocEntry->GetOffset(), std::ios_base::beg );
                 ComputeRLEInfo();
                 Fp->seekg( PositionOnEntry, std::ios_base::beg );
              }
-             else 
-             if ( IsJPEGTransferSyntax() )
+             else if ( IsJPEG() )
              {
                 long PositionOnEntry = Fp->tellg();
                 Fp->seekg( newDocEntry->GetOffset(), std::ios_base::beg );
@@ -1873,7 +1778,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
       // big endian and proceed...
       if ( element  == 0x0000 && length16 == 0x0400 ) 
       {
-         if ( !IsExplicitVRBigEndianTransferSyntax() ) 
+         TransferSyntaxType ts = GetTransferSyntax();
+         if ( ts != ExplicitVRBigEndian ) 
          {
             throw FormatError( "Document::FindDocEntryLength()",
                                " not explicit VR." );
@@ -2893,7 +2799,8 @@ void Document::ReadAndSkipEncapsulatedBasicOffsetTable()
  */
 void Document::ComputeRLEInfo()
 {
-   if ( ! IsRLELossLessTransferSyntax() )
+   TransferSyntaxType ts = GetTransferSyntax();
+   if ( ts != RLELossless )
    {
       return;
    }
@@ -2986,7 +2893,7 @@ void Document::ComputeRLEInfo()
 void Document::ComputeJPEGFragmentInfo()
 {
    // If you need to, look for comments of ComputeRLEInfo().
-   if ( ! IsJPEGTransferSyntax() )
+   if ( ! IsJPEG() )
    {
       return;
    }
