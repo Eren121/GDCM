@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.85 2003/09/24 11:37:10 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.86 2003/09/24 13:00:59 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -1764,7 +1764,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    void * a = malloc(l);
    if(!a) {
    	cout << "Big Broblem (LoadElementVoidArea, malloc) " 
-   	     << hex << Group << " " << Elem << "\n";
+   	     << hex << Group << " " << Elem << std::endl;
    	return NULL;
    }  
    int res = PubElValSet.SetVoidAreaByNumber(a, Group, Elem);
@@ -1772,7 +1772,7 @@ void * gdcmHeader::LoadElementVoidArea(guint16 Group, guint16 Elem) {
    size_t l2 = fread(a, 1, l ,fp);
    if(l != l2) {
    	cout << "Big Broblem (LoadElementVoidArea, fread) " 
-   	     << hex << Group << " " << Elem << "\n";
+   	     << hex << Group << " " << Elem << std::endl;
    	free(a);
    	return NULL;
    }  
@@ -2030,7 +2030,7 @@ int gdcmHeader::GetLUTLength(void) {
       dbg.Verbose(0, "gdcmHeader::GetLUTLength: The CLUT R,G,B are not equal");
       return 0;   
    } 
-   cout << "Lut Description " << LutDescriptionR <<"\n";
+   cout << "Lut Description " << LutDescriptionR <<std::endl;
    tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
    Tokenize (LutDescriptionR, tokens, "\\");
    LutLength=atoi(tokens[0].c_str());
@@ -2167,7 +2167,7 @@ void * gdcmHeader::GetLUTRGB(void) {
       unsigned char * g = (unsigned char *)LutG;
       unsigned char * b = (unsigned char *)LutB;
       for(int i=0;i<l;i++) {
-      //cout << "lut16 " << i << " : " << *r << " " << *g << " " << *b << "\n";
+      //cout << "lut16 " << i << " : " << *r << " " << *g << " " << *b << std::endl;
       printf("lut 8 %d : %d %d %d \n",i,*r,*g,*b);
          *rgb++ = *r++;
          *rgb++ = *g++;

@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.19 2003/09/24 11:37:10 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.20 2003/09/24 13:00:59 jpr Exp $
 
 //This is needed when compiling in debug mode
 #ifdef _MSC_VER
@@ -25,7 +25,7 @@ gdcmDebug::gdcmDebug(int level) {
 void gdcmDebug::Verbose(int Level, const char * Msg1, const char * Msg2) {
    if (Level > DebugLevel)
       return ;
-   std::cerr << Msg1 << ' ' << Msg2 << '\n';
+   std::cerr << Msg1 << ' ' << Msg2 << std::endl;
 }
 
 void gdcmDebug::Assert(int Level, bool Test,
@@ -33,19 +33,19 @@ void gdcmDebug::Assert(int Level, bool Test,
    if (Level > DebugLevel)
       return ;
    if (!Test)
-      std::cerr << Msg1 << ' ' << Msg2 << '\n';
+      std::cerr << Msg1 << ' ' << Msg2 << std::endl;
 }
 
 void gdcmDebug::Error( bool Test, const char * Msg1, const char * Msg2) {
    if (!Test)
       return;
-   std::cerr << Msg1 << ' ' << Msg2 << '\n';
+   std::cerr << Msg1 << ' ' << Msg2 << std::endl;
    Exit(1);
 }
 
 void gdcmDebug::Error(const char* Msg1, const char* Msg2,
                       const char* Msg3) {
-   std::cerr << Msg1 << ' ' << Msg2 << ' ' << Msg3 << '\n';
+   std::cerr << Msg1 << ' ' << Msg2 << ' ' << Msg3 << std::endl;
    Exit(1);
 }
 

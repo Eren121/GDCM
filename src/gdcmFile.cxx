@@ -538,7 +538,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
          } 
          
       //(char *) destination += taille * nBytes;
-      //cout << "destination" << destination << "\n";
+      //cout << "destination" << destination << std::endl;
       }
                 
       return res;
