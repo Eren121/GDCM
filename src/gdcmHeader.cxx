@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:13:21 $
-  Version:   $Revision: 1.233 $
+  Date:      $Date: 2005/01/18 16:23:52 $
+  Version:   $Revision: 1.234 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,7 +61,7 @@ Header::Header( std::string const &filename ):
    }   
 
    // sometimes Image Location value doesn't follow 
-   // the supposed processor endianity. 
+   // the supposed processor endianness. 
    // see gdcmData/cr172241.dcm      
    if ( GrPixel == 0xe07f )
    {
@@ -804,7 +804,7 @@ ModalityType Header::GetModality()
       else
       {
          /// \todo throw error return value ???
-         /// specified <> unknow in our database
+         /// specified <> unknown in our database
          return Unknow;
       }
    }
@@ -1032,7 +1032,7 @@ std::string Header::GetPixelType()
    if ( bitsAlloc == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "Missing  Bits Allocated (0028,0100)");
-      bitsAlloc = "16";
+      bitsAlloc = "16"; // default and arbitrary value, not to polute the output
    }
 
    if ( bitsAlloc == "64" )
@@ -1055,7 +1055,7 @@ std::string Header::GetPixelType()
    if (sign == GDCM_UNFOUND )
    {
       gdcmVerboseMacro( "Missing Pixel Representation (0028,0103)");
-      bitsAlloc = "0";
+      sign = "U"; // default and arbitrary value, not to polute the output
    }
    else if ( sign == "0" )
    {

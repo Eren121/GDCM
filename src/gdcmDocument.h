@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 08:01:41 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2005/01/18 16:23:52 $
+  Version:   $Revision: 1.90 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -158,7 +158,7 @@ protected:
    /// will have a SwapCode= 4321 (the order is wrong; int32 an int16 must be
    /// swapped)
    /// note : values 2143, 4321, 3412 remain for the ACR-NEMA time, and
-   /// the well knowed 'Bad Big Endian' and 'Bad Little Endian' codes
+   /// the well known 'Bad Big Endian' and 'Bad Little Endian' codes
    int SwapCode;
 
    ///\brief whether we already parsed group 0002
@@ -182,9 +182,6 @@ protected:
 
    /// \brief Elements whose value is longer than  MAX_SIZE_PRINT_ELEMENT_VALUE
    /// are NOT printed.
-   /// \todo Currently not used since collides with #define in
-   ///       class DocEntry . See also
-   ///       method ref Document::SetMaxSizePrintEntry()
    static const unsigned int MAX_SIZE_PRINT_ELEMENT_VALUE;
 
    /// Store the RLE frames info obtained during parsing of pixels.

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/18 15:52:22 $
-  Version:   $Revision: 1.196 $
+  Date:      $Date: 2005/01/18 16:23:52 $
+  Version:   $Revision: 1.197 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -139,7 +139,7 @@ Document::Document( std::string const &filename ) : ElementSet(-1)
    // we switch lineNumber and columnNumber
    //
    std::string RecCode;
-   RecCode = GetEntry(0x0008, 0x0010); // recognition code
+   RecCode = GetEntry(0x0008, 0x0010); // recognition code (RET)
    if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
        RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
                                           // with "little-endian strings"
@@ -259,7 +259,7 @@ bool Document::IsReadable()
 
    if( TagHT.empty() )
    { 
-      gdcmVerboseMacro( "No tags in internal hash table.");
+      gdcmVerboseMacro( "No tag in internal hash table.");
       return false;
    }
 
@@ -513,8 +513,8 @@ ValEntry *Document::ReplaceOrCreate(std::string const &value,
  *          when it exists. Create it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
  * @param   binArea (binary) value to be set
- * @param   Group   Group number of the Entry 
- * @param   Elem  Element number of the Entry
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
  * @param   vr  V(alue) R(epresentation) of the Entry -if private Entry-
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
@@ -779,7 +779,7 @@ bool Document::SetEntry(uint8_t*content, int lgth,
  * @param  content new value (string) to substitute with
  * @param  entry Entry to be modified
  */
-bool Document::SetEntry(std::string const &content,ValEntry *entry)
+bool Document::SetEntry(std::string const &content, ValEntry *entry)
 {
    if(entry)
    {
@@ -879,7 +879,7 @@ void Document::LoadEntryBinArea(BinEntry *elem)
    uint8_t *a = new uint8_t[l];
    if( !a )
    {
-      gdcmVerboseMacro( "Cannot allocate a");
+      gdcmVerboseMacro( "Cannot allocate BinEntry content");
       return;
    }
 
@@ -1108,7 +1108,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       {
          if ( newBinEntry )
          {
-            if ( ! Global::GetVR()->IsVROfBinaryRepresentable(vr) )
+            if ( Filetype == ExplicitVR && ! Global::GetVR()->IsVROfBinaryRepresentable(vr) )
             { 
                 ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
                 gdcmVerboseMacro( std::hex << newDocEntry->GetGroup() 
@@ -1120,9 +1120,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          //////////////////// BinEntry or UNKOWN VR:
             // When "this" is a Document the Key is simply of the
             // form ( group, elem )...
-            if (/*Document *dummy =*/ dynamic_cast< Document* > ( set ) )
+            if ( dynamic_cast< Document* > ( set ) )
             {
-               //(void)dummy;
                newBinEntry->SetKey( newBinEntry->GetKey() );
             }
             // but when "this" is a SQItem, we are inserting this new
@@ -1147,9 +1146,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          /////////////////////// ValEntry
             // When "set" is a Document, then we are at the top of the
             // hierarchy and the Key is simply of the form ( group, elem )...
-            if (/*Document *dummy =*/ dynamic_cast< Document* > ( set ) )
+            if ( dynamic_cast< Document* > ( set ) )
             {
-               //(void)dummy;
                newValEntry->SetKey( newValEntry->GetKey() );
             }
             // ...but when "set" is a SQItem, we are inserting this new
@@ -1652,6 +1650,9 @@ void Document::FindDocEntryLength( DocEntry *entry )
       // on Data elements "Implicit and Explicit VR Data Elements shall
       // not coexist in a Data Set and Data Sets nested within it".]
       // Length is on 4 bytes.
+
+     // Well ... group 0002 is always coded in 'Explicit VR Litle Endian'
+     // even if Transfer Syntax is 'Implicit VR ...' 
       
       FixDocEntryFoundLength( entry, ReadInt32() );
       return;
@@ -2293,8 +2294,6 @@ bool Document::CheckSwap()
    }
 }
 
-
-
 /**
  * \brief Change the Byte Swap code. 
  */
@@ -2345,7 +2344,6 @@ void Document::SetMaxSizeLoadEntry(long newSize)
  */
 void Document::SetMaxSizePrintEntry(long newSize) 
 {
-   //DOH !! This is exactly SetMaxSizeLoadEntry FIXME FIXME
    if ( newSize < 0 )
    {
       return;
@@ -2390,7 +2388,6 @@ void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
 
 /**
  * \brief Accesses the info from 0002,0010 : Transfer Syntax and TS
- *        else 1.
  * @return The full Transfer Syntax Name (as opposed to Transfer Syntax UID)
  */
 std::string Document::GetTransferSyntaxName()
@@ -2438,6 +2435,13 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
          return;
       }
 
+      // Group 0002 is always 'Explicit ...' enven when Transfer Syntax says 'Implicit ..." 
+
+      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian )
+         {
+            Filetype = ImplicitVR;
+         }
+       
       // FIXME Strangely, this works with 
       //'Implicit VR Transfer Syntax (GE Private)
       if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian )
@@ -2446,7 +2450,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
                         << GetTransferSyntaxName() << "]" );
          SwitchByteSwapCode();
          group = SwapShort(group);
-         elem = SwapShort(elem);
+         elem  = SwapShort(elem);
       }
    }
 }
