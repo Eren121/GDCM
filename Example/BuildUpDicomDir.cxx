@@ -43,7 +43,7 @@
 int main(int argc, char* argv[])
 {
    if (argc) {
-      std::cerr << "Usage: " << argv[0] << " dummy ";
+     // std::cerr << "Usage: " << argv[0] << " dummy ";
    }
 
    gdcmDicomDir *dcmdir;

@@ -60,18 +60,10 @@ int main(int argc, char* argv[]) {
    else
       dirName = GDCM_DATA_ROOT;
 
-   dcmdir=new gdcmDicomDir(dirName);
-   std::cout << "---after constructor; Print as a gdcmDocument ------" << std::endl;
-   ((gdcmDocument *)dcmdir)->Print();
-   std::cout << "---after constructor; Print as a DICOMDIR     ------" << std::endl;
-   dcmdir->Print();
+   dcmdir=new gdcmDicomDir(dirName, true); // we ask for Directory parsing
 
    dcmdir->SetStartMethod(StartMethod, (void *) NULL);
    dcmdir->SetEndMethod(EndMethod);
-
-    std::cout << "---before ParseDirectory------------------" << std::endl;   
-   dcmdir->ParseDirectory();   
-   std::cout << "---after   ParseDirectory------------------" << std::endl;
    
    ListDicomDirPatient lp = dcmdir->GetDicomDirPatients();
    if (! lp.size() ) 
@@ -80,14 +72,13 @@ int main(int argc, char* argv[]) {
                 << std::endl;
       return 1;
    }
-   gdcmDicomDirPatient *p = *(lp.begin());
-   dcmdir->SetPrintLevel(2);
-   p->Print();
-   std::cout << "---------------------" << std::endl;   
+
+   std::cout << "--------- dcmdir->Print() ------------" << std::endl;   
 
    dcmdir->SetPrintLevel(-1);
-   dcmdir->Print();
-
+   //dcmdir->Print(); // just to see
+   std::cout << "---------end  dcmdir->Print() ------------" << std::endl;
+    
    dcmdir->Write("NewDICOMDIR");
    std::cout<<std::flush;
 
