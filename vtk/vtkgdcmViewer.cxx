@@ -32,7 +32,7 @@ class vtkgdcmObserver : public vtkCommand
             int max = ImageViewer->GetWholeZMax();
             int slice = (ImageViewer->GetZSlice() + 1 ) % ++max;
             ImageViewer->SetZSlice( slice );
-	    ImageViewer->GetRenderer()->ResetCameraClippingRange();
+            ImageViewer->GetRenderer()->ResetCameraClippingRange();
             ImageViewer->Render();
           }
         }
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     for(int i=1; i< argc; i++)
       reader->AddFileName( argv[i] );
 
-  reader->DebugOn();
+  //reader->DebugOn();
   reader->Update();
   
   //print debug info:
@@ -79,9 +79,9 @@ int main(int argc, char *argv[])
   }
   viewer->SetupInteractor (iren);
   
-//  float *range = reader->GetOutput()->GetScalarRange();
-//  viewer->SetColorWindow (range[1] - range[0]);
-//  viewer->SetColorLevel (0.5 * (range[1] + range[0]));
+  vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
+  viewer->SetColorWindow (range[1] - range[0]);
+  viewer->SetColorLevel (0.5 * (range[1] + range[0]));
 
   // Here is where we setup the observer, 
   vtkgdcmObserver *obs = vtkgdcmObserver::New();
