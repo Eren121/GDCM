@@ -1086,6 +1086,33 @@ string gdcmHeader::GetElValRepByName(string TagName) {
 
 /**
  * \ingroup gdcmHeader
+ * \brief   Modifie la valeur d'un ElValue déja existant
+ * \	dans le PubElVals du gdcmHeader,
+ * \	accédé par ses numero de groupe et d'element.
+ */
+int gdcmHeader::SetPubElValByNumber(string content, guint16 group, guint16 element) {
+	//TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+	//PubElVals.tagHt[key]->SetValue(content);
+	
+	return (  PubElVals.SetElValueByNumber (content, group, element) );
+}
+
+
+/**
+ * \ingroup gdcmHeader
+ * \brief   Modifie la valeur d'un ElValue déja existant
+ * \	dans le PubElVals du gdcmHeader,
+ * \	accédé par son nom
+ */
+int gdcmHeader::SetPubElValByName(string content, string TagName) {
+	//TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+	//PubElVals.tagHt[key]->SetValue(content);
+	
+	return (  PubElVals.SetElValueByName (content, TagName) );
+}
+
+/**
+ * \ingroup gdcmHeader
  * \brief   Parses the header of the file but does NOT load element values.
  */
 void gdcmHeader::ParseHeader(void) {

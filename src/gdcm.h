@@ -151,7 +151,7 @@ public:
 // combined with all software versions...
 
 typedef map<TagKey, gdcmDictEntry*> TagHT;
-	// Table de Hachage  (group,Elem) --> ligne du Dictionnaire Dicom
+	// Table de Hachage  (group,Elem) --> pointeur vers une ligne du Dictionnaire Dicom
 
 typedef map<TagKey, gdcmDictEntry*> TagHT;
 
@@ -262,13 +262,13 @@ public:
 	bool  IsImplicitVr(void) { return ImplicitVr; };
 	void    SetVR(string);
 	string  GetVR(void);
-	string  GetValue(void)   { return value; };
-	guint32 GetLength(void)  { return LgrElem; };
-	size_t  GetOffset(void)  { return Offset; };
-	guint16 GetGroup(void)   { return entry->GetGroup(); };
+	string  GetValue(void)   { return value;               };
+	guint32 GetLength(void)  { return LgrElem;             };
+	size_t  GetOffset(void)  { return Offset;              };
+	guint16 GetGroup(void)   { return entry->GetGroup();   };
 	guint16 GetElement(void) { return entry->GetElement(); };
-	string  GetKey(void)     { return entry->GetKey(); };
-	string  GetName(void)    { return entry->GetName();};
+	string  GetKey(void)     { return entry->GetKey();     };
+	string  GetName(void)    { return entry->GetName();    };
 };
 
 
@@ -285,10 +285,11 @@ typedef map<string, ElValue*> TagElValueNameHT;
 
 class GDCM_EXPORT ElValSet {
 		// We need both accesses with a TagKey and the Dictentry.Name
+
 	TagElValueHT tagHt;
 	TagElValueNameHT NameHt;
-public:
-	void Add(ElValue*);
+public:	
+	void Add(ElValue*);		
 	void Print(ostream &);
 	void PrintByName(ostream &);
 	ElValue* GetElementByNumber(guint32 group, guint32 element);
@@ -296,6 +297,9 @@ public:
 	string   GetElValueByNumber(guint32 group, guint32 element);
 	string   GetElValueByName  (string);
 	TagElValueHT & GetTagHt(void);
+	
+	int SetElValueByNumber(string content, guint32 group, guint32 element);
+	int SetElValueByName(string content, string TagName);
 };
 
 
@@ -355,6 +359,7 @@ private:
 	// Qu'y a-t-il a corriger ?
 	//
 	// outside of the elements:
+	
 	guint16 grPixel;
 	guint16 numPixel;
 	// Ne faudrait-il pas une indication sur la presence ou non
@@ -472,12 +477,11 @@ public:
 	string GetElValRepByName(string TagName);
 	string GetElValRepByNumber(guint16 group, guint16 element);
 
-	// TODO Swig int SetPubElValByName(string content, string TagName);
-	// TODO Swig int SetPubElValByNumber(string content, guint16 group, guint16 element);
+	int SetPubElValByName(string content, string TagName);
+	int SetPubElValByNumber(string content, guint16 group, guint16 element);
 	// TODO Swig int SetShaElValByName(string content, string ShadowTagName);
 	// TODO Swig int SetShaElValByNumber(string content, guint16 group, guint16 element);
 
-	// TODO Swig int GetSwapCode();
 };
 
 //
@@ -503,6 +507,7 @@ private:
 	// Data pointe sur quoi?
 	// sur les Pixels lus?
 	// --> j'ajoute un champ public : Pixels
+	// (il faudra que l'utilisateur puisse modifier les pixels ?)
 	
 	void* Data;
 	int Parsed;          // weather allready parsed

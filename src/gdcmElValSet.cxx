@@ -63,6 +63,20 @@ string ElValSet::GetElValueByNumber(guint32 group, guint32 element) {
 	return tagHt.find(key)->second->GetValue();
 }
 
+int ElValSet::SetElValueByNumber(string content, guint32 group, guint32 element) {
+	TagKey key = gdcmDictEntry::TranslateToKey(group, element);
+	if ( ! tagHt.count(key))
+		return 0;
+	if (tagHt.count(key) > 1) {
+		dbg.Verbose(0, "ElValSet::SetElValueByNumber",
+		            "multiple entries for this key (FIXME) !");
+		return (0); 
+	}
+		                       
+	tagHt[key]->SetValue(content);
+	return(1);		
+}
+
 string ElValSet::GetElValueByName(string TagName) {
 	if ( ! NameHt.count(TagName))
 		return "gdcm::Unfound";
@@ -71,4 +85,16 @@ string ElValSet::GetElValueByName(string TagName) {
 		            "multipe entries for this key (FIXME) !");
 	return NameHt.find(TagName)->second->GetValue();
 }
+
+int ElValSet::SetElValueByName(string content, string TagName) {
+	if ( ! NameHt.count(TagName))
+		return 0;
+	if (NameHt.count(TagName) > 1) {
+		dbg.Verbose(0, "ElValSet::SetElValue",
+		            "multipe entries for this key (FIXME) !");
+		return 0;
+	}
+	NameHt.find(TagName)->second->SetValue(content);
+}
+
 
