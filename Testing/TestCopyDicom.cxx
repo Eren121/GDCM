@@ -9,6 +9,8 @@
 
 #ifndef _WIN32
 #include <unistd.h> //for access, unlink
+#else
+#include <io.h> //for _access on Win32
 #endif
 
 // return true if the file exists
