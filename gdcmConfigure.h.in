@@ -47,6 +47,7 @@
 #cmakedefine CMAKE_HAVE_NET_IF_H
 #cmakedefine CMAKE_HAVE_NETINET_IN_H
 #cmakedefine CMAKE_HAVE_NET_IF_DL_H
+#cmakedefine CMAKE_HAVE_NET_IF_ARP_H
 
 
 /*--------------------------------------------------------------------------*/

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/15 22:19:10 $
-  Version:   $Revision: 1.95 $
+  Date:      $Date: 2005/01/15 22:40:23 $
+  Version:   $Revision: 1.96 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,19 +49,6 @@
 #include <sys/types.h>
 #endif
 
-#ifdef __sun
-//#include <time.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <net/if_arp.h>
-#else
-//#include <fcntl.h>
-//#include <errno.h>
-//#include <sys/time.h>
-#include <sys/stat.h>
-#include <sys/file.h>
-#endif //__sun
-
 // How do I do that in CMake ?
 #ifdef __APPLE__
 #define HAVE_SA_LEN
@@ -88,7 +75,10 @@
 #ifdef CMAKE_HAVE_NET_IF_DL_H
 #include <net/if_dl.h>
 #endif
-
+#if defined(CMAKE_HAVE_NET_IF_ARP_H) && defined(__sun)
+// This is absolutely necesseray on SunOS
+#include <net/if_arp.h>
+#endif
 
 namespace gdcm 
 {
@@ -626,6 +616,11 @@ long GetMacAddrSys ( unsigned char *addr)
       a = (unsigned char *) &ifr.ifr_hwaddr.sa_data;
 #else
 #ifdef SIOCGENADDR
+      // In theory this call should also work on Sun Solaris, but apparently
+      // SIOCGENADDR is not implemented properly thus the call 
+      // ioctl(sd, SIOCGENADDR, &ifr) always returns errno=2 
+      // (No such file or directory)
+      // Furthermore the DLAPI seems to require full root access
       if (ioctl(sd, SIOCGENADDR, &ifr) < 0)
          continue;
       a = (unsigned char *) ifr.ifr_enaddr;
@@ -663,10 +658,11 @@ long GetMacAddrSys ( unsigned char *addr)
 
 std::string Util::GetMACAddress()
 {
-   // This is a rip from: http://cplus.kompf.de/macaddr.html for Linux/CYGWIN, HPUX and AIX 
-   // and http://tangentsoft.net/wskfaq/examples/src/snmpmac.cpp for windows version
-   // and http://groups-beta.google.com/group/sol.lists.freebsd.hackers/msg/0d0f862e05fce6c0 for the FreeBSD version
-   // and http://developer.apple.com/samplecode/GetPrimaryMACAddress/GetPrimaryMACAddress.html for MacOSX version
+   // This code is the result of a long internet search to find something
+   // as compact as possible (not OS independant). We only have to separate
+   // 3 OS: Win32, SunOS and 'real' POSIX
+   // http://groups-beta.google.com/group/comp.unix.solaris/msg/ad36929d783d63be
+   // http://bdn.borland.com/article/0,1410,26040,00.html
    u_char addr[6];
    std::string macaddr;
  
