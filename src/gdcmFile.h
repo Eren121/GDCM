@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 14:22:40 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,13 +20,15 @@
 #define GDCMFILE_H
 
 #include "gdcmCommon.h"
-#include "gdcmHeader.h"
-#include "gdcmPixelReadConvert.h"
-#include "gdcmPixelWriteConvert.h"
-#include "gdcmDocEntryArchive.h"
 
 namespace gdcm 
 {
+class Header;
+class ValEntry;
+class BinEntry;
+class PixelReadConvert;
+class PixelWriteConvert;
+class DocEntryArchive;
 //-----------------------------------------------------------------------------
 /*
  * In addition to Dicom header exploration, this class is designed
@@ -69,12 +71,8 @@ public:
    bool WriteAcr      (std::string const& fileName);
    bool Write(std::string const& fileName);
 
-   virtual bool SetEntryByNumber(std::string const& content,
-                                 uint16_t group, uint16_t element)
-   { 
-      HeaderInternal->SetEntryByNumber(content,group,element);
-      return true;
-   }
+   bool SetEntryByNumber(std::string const& content,
+                                uint16_t group, uint16_t element);
    uint8_t* GetLutRGBA();
 
    // Write mode

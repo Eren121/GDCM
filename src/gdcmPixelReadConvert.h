@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 11:55:38 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,13 +21,13 @@
 #define GDCMPIXELREADCONVERT_H
 
 #include "gdcmCommon.h"
-#include "gdcmRLEFramesInfo.h"
-#include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmException.h"
-#include "gdcmHeader.h"
 
 namespace gdcm
 {
+class Header;
+class RLEFramesInfo;
+class JPEGFragmentsInfo;
 /*
  * \brief Utility container for gathering the various forms the pixel data
  *        migth take during the user demanded processes.

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FlatHashTablePrint.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:17 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/12/03 20:16:55 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,6 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmHeader.h"
+#include "gdcmDocEntry.h"
 
 // Iterate on all the Dicom entries encountered in the gdcmFile (given
 // as line argument) and print them. This is an illustration of the

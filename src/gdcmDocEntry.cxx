@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2004/12/03 20:16:57 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmDocEntry.h"
 #include "gdcmTS.h"
+#include "gdcmVR.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 17:13:18 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2004/12/03 20:16:57 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #define GDCMDICOMDIRMETA_H
 
 #include "gdcmDicomDirObject.h"
+
 namespace gdcm 
 {
 

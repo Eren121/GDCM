@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:42 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,8 @@
 =========================================================================*/
 //-----------------------------------------------------------------------------
 #include "gdcmFile.h"
+
+#include <iostream>
 
 namespace gdcm 
 {

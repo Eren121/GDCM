@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 10:21:55 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,9 +23,13 @@
 // grep PixelReadConvert everywhere and clean up !
 
 #include "gdcmDebug.h"
+#include "gdcmHeader.h"
 #include "gdcmPixelReadConvert.h"
+#include "gdcmDocEntry.h"
+#include "gdcmRLEFramesInfo.h"
+#include "gdcmJPEGFragmentsInfo.h"
+
 #include <fstream>
-#include <stdio.h>
 
 namespace gdcm
 {

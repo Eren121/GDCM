@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:18 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2004/12/03 20:16:56 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,14 +15,14 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
+#include "gdcmHeader.h"
+#include "gdcmFile.h"
+
 #include <iostream>
-#include <stdio.h>
-#include "gdcm.h"
 
 int main(int argc, char* argv[])
 {  
-   std::string toto;
-   char zozo[200];
+   std::string zozo;
 
    gdcm::Header* e1, *e2;
    gdcm::File  * f1, *f2;
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     return 1;
     }
 
-   toto = argv[1];
+   std::string toto = argv[1];
 
 // --------------------- we read the input image
 
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
 // --------------------- we write it as an Explicit VR DICOM file
 
-      sprintf(zozo, "temp.XDCM" );
+      zozo = "temp.XDCM";
       std::cout << "WriteDCM Explicit VR" << std::endl;
       f1->WriteDcmExplVR(zozo);
 

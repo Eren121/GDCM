@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 02:54:35 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2004/12/03 20:16:57 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,6 @@
 #ifndef GDCMDICT_H
 #define GDCMDICT_H
 
-#include "gdcmCommon.h"
 #include "gdcmDictEntry.h"
 
 #include <iostream>
@@ -30,6 +29,7 @@ namespace gdcm
 {
 
 //-----------------------------------------------------------------------------
+typedef std::string DictKey;
 typedef std::map<TagKey, DictEntry>  TagKeyHT;
 typedef std::map<TagName, DictEntry> TagNameHT;
 typedef std::list<std::string>       EntryNamesList;

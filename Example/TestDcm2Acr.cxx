@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDcm2Acr.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:18 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/12/03 20:16:55 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,29 +15,33 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
+#include "gdcmFile.h"
+#include "gdcmHeader.h"
+
 #include <iostream>
-#include "gdcm.h"
-#include <stdio.h>
 
 int main(int argc, char* argv[])
 {  
    std::string toto;
-   char zozo[100];
+   std::string zozo;
 
    gdcm::File  * f1;
 
-   printf (" Before gdcmFile() \n");
-   printf ("\n\n---------------------------------------\n\n");
+   std::cout << " Before gdcmFile()" << std::endl;
+   std::cout << "\n\n---------------------------------------" << std::endl;
 
-   if (argc > 1) {
+   if (argc > 1)
+   {
       toto = argv[1];
       f1 = new gdcm::File(toto);
-   } else {
+   }
+   else
+   {
       std::string filename = GDCM_DATA_ROOT;
       filename += "/test.acr";
-      f1 = new gdcm::File(filename.c_str());
+      f1 = new gdcm::File(filename);
    }
-   printf (" Sortie gdcmFile() \n");
+   std::cout << " Sortie gdcmFile()" << std::endl;
 
    //e1.PrintPubDict(std::cout);
    f1->GetHeader()->Print();
@@ -45,7 +49,7 @@ int main(int argc, char* argv[])
    //cle = gdcmDictEntry::TranslateToKey(0x0028,0x0008);
 
    int dataSize = f1->GetImageDataSize();
-   printf ("dataSize %d\n",dataSize);
+   std::cout << "dataSize:" << dataSize << std::endl;
 
    // void* imageData= f1->GetHeader()->GetImageData();
 
@@ -58,9 +62,9 @@ int main(int argc, char* argv[])
 
    // ecriture d'un fichier ACR à partir d'un dcmHeader correct.
 
-   sprintf(zozo, "%s.nema", toto.c_str());
+   zozo = toto + ".nema";
    f1->WriteAcr(zozo);
-   printf ("\n\n---------------------------------------\n\n");
+   std::cout << "\n\n---------------------------------------\n\n" << std::endl;
 
    f1->GetHeader()->Print();
    

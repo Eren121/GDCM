@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 16:24:31 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,16 +20,17 @@
 #define GDCMDOCENTRY_H
 
 #include "gdcmDictEntry.h"
+
 #include <iostream>
 #include <fstream>
 
+namespace gdcm 
+{
 class Header;
 class ValEntry;
 class BinEntry;
 class SeqEntry;
 
-namespace gdcm 
-{
 //-----------------------------------------------------------------------------
 /**
  * \brief   The dicom header of a Dicom file contains a set of such entries

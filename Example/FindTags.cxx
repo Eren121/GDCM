@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FindTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:17 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/12/03 20:16:55 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,13 +15,14 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
+#include "gdcmFile.h"
+#include "gdcmHeader.h"
+#include "gdcmUtil.h"
+
 #include <iostream>
-#include "gdcm.h"
-#include "math.h"
-#include <stdio.h>
 
-int main(int argc, char* argv[]) {  
-
+int main(int argc, char* argv[])
+{
    std::string toto, titi;
 
    gdcm::File  * f1;
@@ -37,13 +38,13 @@ int main(int argc, char* argv[]) {
    std::string ManufacturerName="SIEMENS ";
    std::string RecCode="ACR-NEMA 2.0";
    std::string ImagePositionPatient, Location, ImageLocation;
-   char zozo[100], zizi[50];
+   std::string zozo;
    char c;
 
    float x, y, z, l;
 
    int dataSize = f1->GetImageDataSize();
-   printf ("---> pourFindTaggs : dataSize %d\n",dataSize);
+   std::cout << "---> pourFindTaggs : dataSize " << dataSize << std::endl;
 
    f1->SetEntryByNumber(RecCode ,0x0008,0x0010);
    f1->SetEntryByNumber(ManufacturerName ,0x0008,0x0070);
@@ -66,8 +67,8 @@ int main(int argc, char* argv[]) {
 // existerait-il qq chose qui marche à tout coup?
 
 // Location
-   sprintf(zizi,"%f\n",l);
-   Location = zizi;
+   std::string zizi = gdcm::Util::Format("%f",l);
+   Location = gdcm::Util::DicomString(zizi.c_str());
    f1->SetEntryByNumber(Location, 0x0020,0x0050);
 
 // sinon, la longueur du champ est erronée (?!?) 
@@ -81,8 +82,8 @@ int main(int argc, char* argv[]) {
 
 // Image Location 
 
-   sprintf(zizi,"%d\n",0x7FE0);
-   ImageLocation = zizi;
+   zizi = gdcm::Util::Format("%d",0x7FE0);
+   ImageLocation = gdcm::Util::DicomString(zizi.c_str());
 //f1->SetEntryByNumber(Location, 0x0028,0x0200);
 //f1->GetHeader()->SetEntryLengthByNumber(strlen(ImageLocation.c_str())-1, 0x0020,0x0050); // prudence !
 
@@ -90,20 +91,20 @@ int main(int argc, char* argv[]) {
 
 // ecriture d'un fichier ACR à partir d'un dcmHeader correct.
 
-   printf ("----------------avant PrintEntry---------------------\n");
+   std::cout << "----------------avant PrintEntry---------------------" << std::endl;
    f1->GetHeader()->Print();
-   printf ("----------------avant WriteDcm---------------------\n");
+   std::cout << "----------------avant WriteDcm---------------------" << std::endl;
 
 
 // ecriture d'un fichier ACR à partir d'un dcmHeader correct.
 
-   sprintf(zozo, "%s.acr", toto.c_str());
-   printf ("WriteACR\n");
+   zozo = toto + ".acr";
+   std::cout << "WriteACR" << std::endl;
    f1->WriteAcr(zozo);
 
-   printf ("----------------apres Write---------------------\n");
+   std::cout << "----------------apres Write---------------------" << std::endl;
 
-  return 0;
+   return 0;
 }
 
 

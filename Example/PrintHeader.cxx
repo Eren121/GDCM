@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 10:21:53 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/12/03 20:16:55 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,8 +15,8 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
+#include "gdcmHeader.h"
 #include <iostream>
-#include "gdcm.h"
 
 int main(int argc, char* argv[])
 { 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBug.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2004/12/03 20:16:56 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 // We have to be carefull when the code both use cout + printf VC++ gets
 // confused, thus make sure we use only one kind of iostream
 
-#include "gdcm.h"
+#include "gdcmHeader.h"
 
 int TestBug(int argc, char* argv[])
 {  

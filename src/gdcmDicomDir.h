@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 17:13:18 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2004/12/03 20:16:57 $
+  Version:   $Revision: 1.41 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,11 +19,7 @@
 #ifndef GDCMDICOMDIR_H
 #define GDCMDICOMDIR_H
 
-#include "gdcmCommon.h"
 #include "gdcmDocument.h"
-#include "gdcmDicomDirPatient.h"
-#include "gdcmDicomDirMeta.h"
-#include "gdcmDicomDirElement.h"
 
 #include <list>
 #include <vector>
@@ -31,6 +27,14 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
+class DicomDirPatient;
+class DicomDirMeta;
+class DicomDirElement;
+class DicomDirStudy;
+class DicomDirSerie;
+class DicomDirImage;
+class SQItem;
+
 typedef std::list<DicomDirPatient*>   ListDicomDirPatient;
 typedef std::vector<Document*>  VectDocument;
 

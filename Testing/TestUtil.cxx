@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2004/12/03 20:16:56 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,8 @@
 // This test should test everything in Util, since I didn't know any other 
 // way to test this class.
 
-#include "gdcm.h"
+#include "gdcmUtil.h"
+#include <iostream>
 
 int TestUtil(int , char * [])
 {

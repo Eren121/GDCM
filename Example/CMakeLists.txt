@@ -58,3 +58,6 @@ TARGET_LINK_LIBRARIES(TestReadWriteReadCompare  gdcm)
 
 ADD_EXECUTABLE(FlatHashTablePrint FlatHashTablePrint.cxx)
 TARGET_LINK_LIBRARIES(FlatHashTablePrint gdcm)
+
+ADD_EXECUTABLE(Volume2Dicom Volume2Dicom.cxx)
+TARGET_LINK_LIBRARIES(Volume2Dicom gdcm)

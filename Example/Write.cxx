@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Write.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 11:55:37 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/12/03 20:16:55 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,14 +15,14 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
+#include "gdcmHeader.h"
+#include "gdcmFile.h"
+
 #include <iostream>
-#include <stdio.h>
-#include "gdcm.h"
 
 int main(int argc, char* argv[])
 {  
-   std::string toto;
-   char zozo[200];
+   std::string zozo;
 
    gdcm::Header* e1;
    gdcm::File  * f1;
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
              << "--------------------- file :" << argv[1] 
              << std::endl;
      
-   toto = argv[1]; 
+   std::string toto = argv[1]; 
 
    e1 = new gdcm::Header( toto.c_str() );
    if (!e1->IsReadable()) {
@@ -111,13 +111,14 @@ int main(int argc, char* argv[])
    imageData= f1->GetImageData();
    (void)imageData;  // to avoid warnings
 
-   switch (argv[2][0]) {
+   switch (argv[2][0])
+   {
    case 'a' :
             // ecriture d'un fichier ACR 
             // à partir d'un dcmHeader correct.
 
-      sprintf(zozo, "%s.ACR", toto.c_str());
-      printf ("WriteACR\n");
+      zozo = toto + ".ACR";
+      std::cout << "WriteACR" << std::endl;
       f1->WriteAcr(zozo);
       break;
 
@@ -125,8 +126,8 @@ int main(int argc, char* argv[])
            // ecriture d'un fichier DICOM Implicit VR 
            // à partir d'un dcmHeader correct.
 
-      sprintf(zozo, "%s.DCM", toto.c_str());
-      printf ("WriteDCM Implicit VR\n");
+      zozo = toto + ".DCM";
+      std::cout << "WriteDCM Implicit VR" << std::endl;
       f1->WriteDcmImplVR(zozo);
       break;
 
@@ -134,8 +135,8 @@ int main(int argc, char* argv[])
               // ecriture d'un fichier DICOM Explicit VR 
               // à partir d'un dcmHeader correct.
 
-      sprintf(zozo, "%s.XDCM", toto.c_str());
-      std::cout << "WriteDCM Explicit VR" << std::endl;
+      zozo = toto + ".DCM";
+      std::cout << "WriteDCM Implicit VR" << std::endl;
       f1->WriteDcmExplVR(zozo);
       break;
 
@@ -143,7 +144,7 @@ int main(int argc, char* argv[])
              //  Ecriture d'un Raw File, a afficher avec 
              // affim filein= dimx= dimy= nbit= signe=
 
-      sprintf(zozo, "%s.RAW", toto.c_str());
+      zozo = toto + ".RAW";
       std::cout << "WriteRaw" << std::endl;
       f1->WriteRawData(zozo);
       break;

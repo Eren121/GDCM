@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 10:21:54 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #define GDCMJPEGFRAGMENT_H
 
 #include "gdcmCommon.h"
+
 #include <iostream>
 
 namespace gdcm 
@@ -39,14 +40,17 @@ namespace gdcm
  */
 class GDCM_EXPORT JPEGFragment
 {
-friend class Document;
-friend class File;
-friend class PixelReadConvert;
-   long    Offset;
-   long    Length;
 public:
    JPEGFragment();
    void Print( std::string indent = "", std::ostream &os = std::cout );
+
+private:
+   long    Offset;
+   long    Length;
+
+friend class Document;
+friend class File;
+friend class PixelReadConvert;
 };
 } // end namespace gdcm
 

@@ -58,7 +58,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.59 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.60 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -666,6 +666,7 @@ size_t vtkGdcmReader::LoadImageInMemory(
    {
       for (int line = 0; line < numLines; line++)
       {
+         cerr << line << endl;
          // Copy one line at proper destination:
          memcpy((void*)destination, (void*)source, lineSize);
          source      += lineSize;

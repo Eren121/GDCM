@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: BuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/30 18:10:23 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2004/12/03 20:16:55 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,40 +15,14 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcm.h"
 #include "gdcmDocEntry.h"
 #include "gdcmDicomDir.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDirList.h"
 #include "gdcmDebug.h"
-
-#include <fstream>
-#include <iostream>
-#include <stdio.h>
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-#  include <strstream>
-#  define  ostringstream ostrstream
-# else
-#  include <sstream>
-#endif
-
-#define  ostringstream ostrstream
-
-#include <sys/types.h>
-#include <errno.h>
-
-// for Directory pb
-#if defined(_MSC_VER) || defined(__BORLANDC__) 
-   #include <windows.h> 
-   #include <direct.h>
-   #include <stdio.h>
-#else
-   #include <dirent.h>   
-   #include <unistd.h>
-#endif
-
-#include <vector>
-#include <algorithm>
+#include "gdcmDicomDirStudy.h"
+#include "gdcmDicomDirSerie.h"
+#include "gdcmDicomDirImage.h"
 
 // ===============================================================
 /**
@@ -72,7 +46,7 @@ int main(int argc, char* argv[])
    gdcm::DicomDir *dcmdir;
    dcmdir = new gdcm::DicomDir();
 
-   printf( "\n------- BuildUpDicomDir: Test Print Meta only -----\n");
+   std::cout << "\n------- BuildUpDicomDir: Test Print Meta only -----" << std::endl;
    ((gdcm::Document *)dcmdir)->Print();
 
    gdcm::DicomDirPatient *p1=dcmdir->NewPatient();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/26 10:55:04 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.67 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,20 +19,9 @@
 #ifndef GDCMDOCUMENT_H
 #define GDCMDOCUMENT_H
 
-#include "gdcmCommon.h"
 #include "gdcmVR.h"
-#include "gdcmTS.h"
-#include "gdcmException.h"
-#include "gdcmDictSet.h"
-#include "gdcmDocEntry.h"
-#include "gdcmRLEFramesInfo.h"
-#include "gdcmJPEGFragmentsInfo.h"
-#include "gdcmDocEntrySet.h"
+#include "gdcmDict.h"
 #include "gdcmElementSet.h"
-
-class ValEntry;
-class BinEntry;
-class SeqEntry;
 
 #include <map>
 #include <list>
@@ -40,6 +29,12 @@ class SeqEntry;
 
 namespace gdcm 
 {
+class ValEntry;
+class BinEntry;
+class SeqEntry;
+class Dict;
+class RLEFramesInfo;
+class JPEGFragmentsInfo;
 
 enum TransferSyntaxType {
   ImplicitVRLittleEndian = 0,

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:17 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2004/12/03 20:16:55 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,15 +15,17 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include <iostream>
-#include "gdcm.h"
 #include "gdcmDocument.h"
 #include "gdcmDicomDir.h"
 #include "gdcmValEntry.h"
+#include "gdcmDicomDirPatient.h"
+#include "gdcmDicomDirStudy.h"
+#include "gdcmDicomDirSerie.h"
+#include "gdcmDicomDirImage.h"
+#include "gdcmTS.h"
 
 #include <fstream>
-
-using namespace std;
+#include <iostream>
 
 int main(int argc, char* argv[])
 {  
@@ -90,7 +92,7 @@ int main(int argc, char* argv[])
 */
 
  
-   cout << std::endl << std::endl  
+   std::cout << std::endl << std::endl  
         << " =  PATIENT/STUDY/SERIE List ==================================" 
         << std::endl<< std::endl;
  

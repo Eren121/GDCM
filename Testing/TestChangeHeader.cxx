@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/26 10:55:03 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2004/12/03 20:16:56 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,7 +17,6 @@
 =========================================================================*/
 #include "gdcmHeader.h"
 #include "gdcmFile.h"
-#include <string>
 
 // Writting of a DICOM file, using a correct gdcmHeader.
 // and pixels of an other image

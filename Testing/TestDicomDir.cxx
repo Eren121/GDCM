@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:28:20 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2004/12/03 20:16:56 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,9 +15,13 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcm.h"
 #include "gdcmDocEntry.h"
 #include "gdcmDicomDir.h"
+#include "gdcmDicomDirPatient.h"
+#include "gdcmDicomDirStudy.h"
+#include "gdcmDicomDirSerie.h"
+#include "gdcmDicomDirImage.h"
+#include "gdcmTS.h"
 
 #include <iostream>
 #include <fstream>

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/12/03 14:22:40 $
-  Version:   $Revision: 1.170 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.171 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,11 @@
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 #include "gdcmBinEntry.h"
+#include "gdcmHeader.h"
+#include "gdcmPixelReadConvert.h"
+#include "gdcmPixelWriteConvert.h"
+#include "gdcmDocEntryArchive.h"
+
 #include <fstream>
 
 namespace gdcm 
@@ -373,6 +378,13 @@ bool File::WriteAcr (std::string const & fileName)
 bool File::Write(std::string const& fileName)
 {
    return WriteBase(fileName);
+}
+
+bool File::SetEntryByNumber(std::string const& content,
+                            uint16_t group, uint16_t element)
+{ 
+   HeaderInternal->SetEntryByNumber(content,group,element);
+   return true;
 }
 
 /**

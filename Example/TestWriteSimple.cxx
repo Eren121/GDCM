@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/16 04:26:18 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2004/12/03 20:16:55 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,8 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcm.h"
+#include "gdcmHeader.h"
+#include "gdcmFile.h"
 
 int main(int argc, char* argv[])
 {

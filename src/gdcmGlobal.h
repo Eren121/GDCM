@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.h,v $
   Language:  C++
-  Date:      $Date: 2004/10/12 04:35:46 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2004/12/03 20:16:58 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,14 +19,14 @@
 #ifndef GDCMGLOBAL_H
 #define GDCMGLOBAL_H
 
-#include "gdcmVR.h"
-#include "gdcmTS.h"
-#include "gdcmDictSet.h"
-#include "gdcmDicomDirElement.h"
+#include "gdcmCommon.h"
 
 namespace gdcm 
 {
-
+class DictSet;
+class VR;
+class TS;
+class DicomDirElement;
 //-----------------------------------------------------------------------------
 /**
  * \brief   This class contains all globals elements that might be
