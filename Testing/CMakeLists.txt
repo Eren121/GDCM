@@ -115,6 +115,12 @@ SET(BLACK_LIST
   "KODAK-12-MONO1-Odd_Terminated_Sequence.dcm"
   )
 
+IF(APPLE)
+  SET(BLACK_LIST ${BLACK_LIST}
+    "SIEMENS_GBS_III-16-ACR_NEMA_1.acr"  # This image contains a wrong length
+    # Which led us to read pass the end of the file. This seg fault on MacOSX
+    )
+ENDIF(APPLE)
 
 # This is a GLOB expression, change it into a list separated with a comma and \n
 SET(GDCM_DATA_IMAGES)
