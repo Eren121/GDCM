@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 14:29:52 $
-  Version:   $Revision: 1.173 $
+  Date:      $Date: 2004/06/28 16:00:18 $
+  Version:   $Revision: 1.174 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@
 // Constructor / Destructor
 /**
  * \brief  Constructor 
- * @param  InFilename name of the file whose header we want to analyze
+ * @param  filename name of the file whose header we want to analyze
  * @param  exception_on_error whether we want to throw an exception or not
  * @param  enable_sequences = true to allow the header 
  *         to be parsed *inside* the SeQuences, when they have an actual length 

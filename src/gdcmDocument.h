@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 09:30:58 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/06/28 16:00:18 $
+  Version:   $Revision: 1.18 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -249,10 +249,10 @@ public:
    /// Accessor to \ref printLevel
    inline void SetPrintLevel(int level) { printLevel = level; }
 
-   /// Accessor to \ref filename
+   /// Accessor to \ref Filename
    inline std::string &GetFileName() { return Filename; }
 
-   /// Accessor to \ref filename
+   /// Accessor to \ref Filename
    inline void SetFileName(const char* fileName) { Filename = fileName; }
 
    /// Accessor to \ref gdcmElementSet::tagHT

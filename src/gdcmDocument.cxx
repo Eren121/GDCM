@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 14:29:52 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2004/06/28 16:00:18 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -706,7 +706,7 @@ int gdcmDocument::CheckIfEntryExistByNumber(guint16 group, guint16 element ) {
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
  */
-std::string gdcmDocument::GetEntryByName(std::string tagName) {
+std::string gdcmDocument::GetEntryByName(TagName tagName) {
    gdcmDictEntry *dictEntry = RefPubDict->GetDictEntryByName(tagName); 
    if( dictEntry == NULL)
       return GDCM_UNFOUND;
@@ -846,6 +846,7 @@ bool gdcmDocument::SetEntryByNumber(std::string content,
  *          through it's (group, element) and modifies it's content with
  *          the given value.
  * @param   content new value (void *) to substitute with
+ * @param   lgth new value length
  * @param   group     group number of the Dicom Element to modify
  * @param   element element number of the Dicom Element to modify
  */

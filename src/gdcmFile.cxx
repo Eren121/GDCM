@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/28 14:29:52 $
-  Version:   $Revision: 1.113 $
+  Date:      $Date: 2004/06/28 16:00:18 $
+  Version:   $Revision: 1.114 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -244,7 +244,7 @@ void *gdcmFile::GetImageData()
  *     
  * @param   destination Address (in caller's memory space) at which the
  *          pixel data should be copied
- * @param   MaxSize Maximum number of bytes to be copied. When MaxSize
+ * @param   maxSize Maximum number of bytes to be copied. When MaxSize
  *          is not sufficient to hold the pixel data the copy is not
  *          executed (i.e. no partial copy).
  * @return  On success, the number of bytes actually copied. Zero on
@@ -366,7 +366,7 @@ void * gdcmFile::GetImageDataRaw ()
  *     
  * @param   destination Address (in caller's memory space) at which the
  *          pixel data should be copied
- * @param   MaxSize Maximum number of bytes to be copied. When MaxSize
+ * @param   maxSize Maximum number of bytes to be copied. When MaxSize
  *          is not sufficient to hold the pixel data the copy is not
  *          executed (i.e. no partial copy).
  * @return  On success, the number of bytes actually copied. Zero on
@@ -635,7 +635,7 @@ size_t gdcmFile::GetImageDataIntoVectorRaw (void *destination, size_t maxSize)
  *        'volume'Pixels are presented as C-like 3D arrays : lane per plane 
  * \warning user is kindly requested NOT TO 'free' the Pixel area
  * @param inData user supplied pixel area
- * @param ExpectedSize total image size, in Bytes
+ * @param expectedSize total image size, in Bytes
  *
  * @return boolean
  */
