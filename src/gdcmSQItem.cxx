@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:37:04 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2004/06/22 14:42:02 $
+  Version:   $Revision: 1.14 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,7 @@ gdcmSQItem::~gdcmSQItem()
       (Entry)->WriteCommonPart(fp, filetype);
 
       if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(Entry) ) {
-         BinEntry->Write(fp,filetype);
+         BinEntry->Write(fp);
          return;
       }
       if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(Entry) ) {

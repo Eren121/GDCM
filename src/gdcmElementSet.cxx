@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 14:37:04 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2004/06/22 14:42:02 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,7 @@ void gdcmElementSet::Write(FILE *fp, FileType filetype) {
 // e->Write(fp,filetype); // This will be the right way to proceed !
 
       if (gdcmBinEntry* BinEntry = dynamic_cast< gdcmBinEntry* >(e) ) {
-         BinEntry->Write(fp,filetype);
+         BinEntry->Write(fp);
          continue;
       }
      if (gdcmValEntry* ValEntry = dynamic_cast< gdcmValEntry* >(e) ) {

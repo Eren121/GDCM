@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/06/22 13:56:08 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2004/06/22 14:42:01 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ void gdcmBinEntry::Print(std::ostream &os)
 /*
  * \brief   canonical Writer
  */
-void gdcmBinEntry::Write(FILE *fp, FileType filetype) {
+void gdcmBinEntry::Write(FILE *fp) {
    void *voidArea = GetVoidArea();
    int lgr=GetLength();
    if (voidArea != NULL) 
