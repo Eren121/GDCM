@@ -3,6 +3,8 @@
 	            when SamplesPerPixel =3
          - now Write is no longer confused by 
 			      'BitsAllocated = 12" and 'BitsStored=12"
+         - "UN" value representation Elements are now written correctly 
+               (their legth is stored on 4 bytes -just like OB, OW, and SQ-)									
    ENH : - now gdcmHeader has its own Write methods 
 	            (in order to split the job that has not to be done 
 					for gdcmDicomDir)
