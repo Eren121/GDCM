@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.97 2003/10/09 14:58:28 malaterre Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.98 2003/10/10 15:36:24 malaterre Exp $
 
 #include "gdcmHeader.h"
 
@@ -44,6 +44,7 @@ gdcmHeader::gdcmHeader(const char *InFilename, bool exception_on_error) {
    Initialise();
    if ( !OpenFile(exception_on_error))
       return;
+
    ParseHeader();
    LoadElements();
    CloseFile();
@@ -72,9 +73,25 @@ gdcmHeader::gdcmHeader(bool exception_on_error) {
     if(!fp)
       throw gdcmFileError("gdcmHeader::gdcmHeader(const char *, bool)");
   }
+//  char *testEntete = new char[204];
+  guint16 zero;
+  fread(&zero,  (size_t)2, (size_t)1, fp);
   if ( fp )
-     return true;
-  dbg.Verbose(0, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
+  {
+    //ACR
+    if( zero == 0x0008 || zero == 0x0800 )
+       return true;
+    //DICOM
+    fseek(fp, 126L, SEEK_CUR);
+    char dicm[4];
+    fread(dicm,  (size_t)4, (size_t)1, fp);
+    if( strncmp(dicm, "DICM", 4) == 0 )
+       return true;
+    dbg.Verbose(0, "gdcmHeader::gdcmHeader not DICOM/ACR", filename.c_str());
+  }
+  else
+    dbg.Verbose(0, "gdcmHeader::gdcmHeader cannot open file", filename.c_str());
+
   return false;
 }
 
