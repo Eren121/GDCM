@@ -184,6 +184,7 @@ int main(int argc, char* argv[])
       itPatient ++;    
    }*/
 
+   std::cout<<std::flush;
    delete e1;
 
    return(0);

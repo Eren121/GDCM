@@ -72,6 +72,7 @@ except ImportError,e:
 ### Expose only the necessary stuff
 gdcmGlobal       = gdcm.gdcmGlobal
 gdcmDictSet      = gdcm.gdcmDictSet
+gdcmDicomDir     = gdcm.gdcmDicomDir
 gdcmHeader       = gdcm.gdcmHeader
 gdcmHeaderHelper = gdcm.gdcmHeaderHelper
 gdcmFile         = gdcm.gdcmFile

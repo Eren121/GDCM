@@ -7,6 +7,11 @@ try:
 except IndexError:
    FileName = os.path.join(GDCM_DATA_PATH, "test.acr")
 
+try:
+   printLevel = int(sys.argv[2])
+except IndexError:
+   printLevel = 1
+
 #if not os.path.isfile(FileName):
 #   print "Cannot open file ", FileName
 #   sys.exit()
@@ -24,6 +29,10 @@ print "##############################################################"
 print "### Display all the elements and their respective values"
 print "## found in the ", FileName, " file."
 print "##############################################################"
-ValDict = toRead.GetEntry()
-for key in ValDict.keys():
-	print "[%s] = [%s]" %(key, ValDict[key])
+toRead.SetPrintLevel(printLevel)
+toRead.Print()
+
+# ValDict = toRead.GetEntry()
+# for key in ValDict.keys():
+# 	print "[%s] = [%s]" %(key, ValDict[key])
+

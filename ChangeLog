@@ -9,6 +9,7 @@
 	     
 2004-02-04 Benoit Regrain
      * FIX : WriteEntries : coding style & logic in parameters
+     * FIX : Set the elements to create the DicomDir in a dictionary file
 
 2004-02-03 Benoit Regrain
      * gdcmDirList : to parse a hard drive directory in recursive (or not)
