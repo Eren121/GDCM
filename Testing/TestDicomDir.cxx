@@ -22,10 +22,11 @@ int main(int argc, char* argv[])
 {  
    gdcmDicomDir *e1;
    ListTag::iterator deb , fin;
-   ListPatient::iterator  itPatient;
-   ListStudy::iterator itStudy;
-   ListSerie::iterator itSerie;
-   ListImage::iterator itImage;
+   
+   ListDicomDirPatient::iterator  itPatient;
+   ListDicomDirStudy::iterator    itStudy;
+   ListDicomDirSerie::iterator    itSerie;
+   ListDicomDirImage::iterator    itImage;
    TSKey v;
     
    std::string file; 
@@ -40,7 +41,7 @@ int main(int argc, char* argv[])
 	   e1->SetPrintLevel(level);
 	}
 
-   if(e1->GetPatients().begin() == e1->GetPatients().end() )
+   if(e1->GetDicomDirPatients().begin() == e1->GetDicomDirPatients().end() )
    {
       std::cout<<"Empty list"<<std::endl;
       return(1);
@@ -55,8 +56,8 @@ int main(int argc, char* argv[])
 	     << std::endl<< std::endl;	
 
 
-   itPatient = e1->GetPatients().begin();	
-   while ( itPatient != e1->GetPatients().end() ) {  // on degouline la liste de PATIENT
+   itPatient = e1->GetDicomDirPatients().begin();	
+   while ( itPatient != e1->GetDicomDirPatients().end() ) {  // on degouline la liste de PATIENT
       std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0010) << std::endl; // Patient's Name   
       itPatient ++;    
    }
@@ -67,12 +68,12 @@ int main(int argc, char* argv[])
         << " = Liste des PATIENT/STUDY ==========================================" 
         << std::endl<< std::endl;	
 
-   itPatient = e1->GetPatients().begin();	
-   while ( itPatient != e1->GetPatients().end() ) {  // on degouline la liste de PATIENT
+   itPatient = e1->GetDicomDirPatients().begin();	
+   while ( itPatient != e1->GetDicomDirPatients().end() ) {  // on degouline la liste de PATIENT
       std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0010) << std::endl; // Patient's Name 
-      itStudy = ((*itPatient)->GetStudies()).begin();	
-      while (itStudy != (*itPatient)->GetStudies().end() ) { // on degouline les STUDY de ce patient	
-         std::cout << "--- "<< (*itStudy)->GetEntryByNumber(0x0008, 0x1030) << std::endl; // Stdy Description
+      itStudy = ((*itPatient)->GetDicomDirStudies()).begin();	
+      while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) { // on degouline les STUDY de ce patient	
+         std::cout << "--- "<< (*itStudy)->GetEntryByNumber(0x0008, 0x1030) << std::endl; // Study Description
          ++itStudy;		
       }
       itPatient ++;    
@@ -83,23 +84,23 @@ int main(int argc, char* argv[])
 	     << " = Liste des PATIENT/STUDY/SERIE ==========================================" 
 	     << std::endl<< std::endl;	
  
-   itPatient = e1->GetPatients().begin();	
-   while ( itPatient != e1->GetPatients().end() ) {  // on degouline la liste de PATIENT
+   itPatient = e1->GetDicomDirPatients().begin();	
+   while ( itPatient != e1->GetDicomDirPatients().end() ) {  // on degouline la liste de PATIENT
        // Patient's Name, Patient ID 
-      std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0010) ;
-      std::cout << " ID : ";
-      std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0020) << std::endl;
-      itStudy = ((*itPatient)->GetStudies()).begin();	
-      while (itStudy != (*itPatient)->GetStudies().end() ) { // on degouline les STUDY de ce patient	
-         std::cout << "--- "    << (*itStudy)->GetEntryByNumber(0x0008, 0x1030);              // Study Description 
-         std::cout << " Stud ID: ["<< (*itStudy)->GetEntryByNumber(0x0020, 0x0010);  // Study ID
+      std::cout << "Pat.Name:[" << (*itPatient)->GetEntryByNumber(0x0010, 0x0010) <<"]";
+      std::cout << " Pat.ID:[";
+      std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0020) << "]" << std::endl;
+      itStudy = ((*itPatient)->GetDicomDirStudies()).begin();	
+      while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) { // on degouline les STUDY de ce patient	
+         std::cout << "--- Stud.descr:["    << (*itStudy)->GetEntryByNumber(0x0008, 0x1030) << "]";// Study Description 
+         std::cout << " Stud.ID:["<< (*itStudy)->GetEntryByNumber(0x0020, 0x0010);                 // Study ID
 	 std::cout << "]" << std::endl;
-         itSerie = ((*itStudy)->GetSeries()).begin();
-         while (itSerie != (*itStudy)->GetSeries().end() ) { // on degouline les SERIES de cette study	   
-            std::cout << "--- ---  "<< (*itSerie)->GetEntryByNumber(0x0008, 0x103e);                  // Serie Description
-            std::cout << " Ser nb: [" <<   (*itSerie)->GetEntryByNumber(0x0020, 0x0011)             ; // Serie number
-            std::cout << "] Mod : "    <<   (*itSerie)->GetEntryByNumber(0x0008, 0x0060) << std::endl; // Modality
-	    
+         itSerie = ((*itStudy)->GetDicomDirSeries()).begin();
+         while (itSerie != (*itStudy)->GetDicomDirSeries().end() ) { // on degouline les SERIES de cette study	   
+            std::cout << "--- --- Ser.Descr:["<< (*itSerie)->GetEntryByNumber(0x0008, 0x103e)<< "]";// Serie Description
+            std::cout << " Ser.nb:[" <<   (*itSerie)->GetEntryByNumber(0x0020, 0x0011);            // Serie number
+            std::cout << "] Mod.:["    <<   (*itSerie)->GetEntryByNumber(0x0008, 0x0060) << "]";   // Modality
+	    std::cout << std::endl;	    
             ++itSerie;   
          }
          ++itStudy;		
@@ -113,17 +114,17 @@ int main(int argc, char* argv[])
 	     << " = Liste des PATIENT/STUDY/SERIE/IMAGE ===================================" 
 	     << std::endl<< std::endl;
  
-   itPatient = e1->GetPatients().begin();	
-   while ( itPatient != e1->GetPatients().end() ) {  // on degouline la liste de PATIENT
+   itPatient = e1->GetDicomDirPatients().begin();	
+   while ( itPatient != e1->GetDicomDirPatients().end() ) {  // on degouline la liste de PATIENT
       std::cout << (*itPatient)->GetEntryByNumber(0x0010, 0x0010) << std::endl; // Patient's Name
-      itStudy = ((*itPatient)->GetStudies()).begin();	
-      while (itStudy != (*itPatient)->GetStudies().end() ) { // on degouline les STUDY de ce patient	
+      itStudy = ((*itPatient)->GetDicomDirStudies()).begin();	
+      while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) { // on degouline les STUDY de ce patient	
          std::cout << "--- "<< (*itStudy)->GetEntryByNumber(0x0008, 0x1030) << std::endl; // Study Description
-         itSerie = ((*itStudy)->GetSeries()).begin();
-         while (itSerie != (*itStudy)->GetSeries().end() ) { // on degouline les SERIES de cette study	   
+         itSerie = ((*itStudy)->GetDicomDirSeries()).begin();
+         while (itSerie != (*itStudy)->GetDicomDirSeries().end() ) { // on degouline les SERIES de cette study	   
             std::cout << "--- --- "<< (*itSerie)->GetEntryByNumber(0x0008, 0x103e) << std::endl; // Serie Description
-            itImage = ((*itSerie)->GetImages()).begin();
-            while (itImage != (*itSerie)->GetImages().end() ) { // on degouline les SERIES de cette study	   
+            itImage = ((*itSerie)->GetDicomDirImages()).begin();
+            while (itImage != (*itSerie)->GetDicomDirImages().end() ) { // on degouline les SERIES de cette study	   
                std::cout << "--- --- --- "<< (*itImage)->GetEntryByNumber(0x0004, 0x1500) << std::endl; // File name
                ++itImage;   
             }
