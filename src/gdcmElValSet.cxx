@@ -1,4 +1,4 @@
-// $Id: gdcmElValSet.cxx,v 1.20 2003/03/13 17:00:10 jpr Exp $
+// $Id: gdcmElValSet.cxx,v 1.21 2003/03/14 14:26:01 jpr Exp $
 
 #include "gdcmUtil.h"
 #include "gdcmElValSet.h"
@@ -196,7 +196,7 @@ int gdcmElValSet::Write(FILE * _fp) {
 			 	gdcmDictEntry * tagZ = new gdcmDictEntry(grCourant, 0x0000, "UL");
 				elemZ = new gdcmElValue(tagZ); // on le cree
 				elemZ->SetLength(4);
-				Add(elemZ);	 				 // On l'accroche à sa place	
+				Add(elemZ);	 		// On l'accroche à sa place	
 			}	
 			
 			if (deja) {
@@ -343,7 +343,7 @@ int gdcmElValSet::WriteAcr(FILE * _fp) {
 	//
 	// cf : code IdDcmWriteFile dans libido/src/dcmwrite.c
 		
-	if (1)  // Risque de pb dans le calcul des lgr de chaque groupe. On le saute pour le moment!
+	if (0)  // Risque de pb dans le calcul des lgr de chaque groupe. On le saute pour le moment!
 	
 	for (TagElValueHT::iterator tag = tagHt.begin();
 		  tag != tagHt.end();
