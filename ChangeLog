@@ -1,3 +1,9 @@
+2003-10-02  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+      * src/*.cxx removed pragma thingies to src/gdcmCommon.h
+        Two reasons: - clear things
+                     - third parties acces gdcm through header files, so won't
+                     suffer anymore VC++ complains
+
 2003-09-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * src/gdcmUtil.[cxx|h] : change the _CreateCleanString return value from
         char* to std::string. Thus, the use of strdup becoomes useless. (see

@@ -1,18 +1,8 @@
 // gdcmDict.cxx
 
-//This is needed when compiling in debug mode
-#ifdef _MSC_VER
-// 'identifier' : class 'type' needs to have dll-interface to be used by
-// clients of class 'type2'
-#pragma warning ( disable : 4251 )
-// 'identifier' : identifier was truncated to 'number' characters in the
-// debug information
-#pragma warning ( disable : 4786 )
-#endif //_MSC_VER
-
-#include <fstream>
 #include "gdcmDict.h"
 #include "gdcmUtil.h"
+#include <fstream>
 
 /**
  * \ingroup gdcmDict

@@ -3,9 +3,9 @@
 #ifndef GDCMDICT_H
 #define GDCMDICT_H
 
-#include <map>
 #include "gdcmCommon.h"
 #include "gdcmDictEntry.h"
+#include <map>
 
 typedef std::map<TagKey,  gdcmDictEntry*> TagKeyHT;
 typedef std::map<TagName, gdcmDictEntry*> TagNameHT;

@@ -3,9 +3,9 @@
 #ifndef GDCMTS_H
 #define GDCMTS_H
 
+#include "gdcmCommon.h"
 #include <map>
 #include <string>
-#include "gdcmCommon.h"
 
 typedef std::string TSKey;
 typedef std::string TSAtr;

@@ -1,14 +1,14 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.15 2003/09/22 08:28:43 regrain Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.h,v 1.16 2003/10/02 11:26:16 malaterre Exp $
 
 #ifndef GDCMUTIL_H
 #define GDCMUTIL_H
 
-#include <iostream>
-#include <vector>
-#include <string>
 #include "gdcmVR.h"
 #include "gdcmTS.h"
 #include "gdcmDictSet.h"
+#include <iostream>
+#include <vector>
+#include <string>
 
 class gdcmDebug {
 private:

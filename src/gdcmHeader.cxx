@@ -1,16 +1,6 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.91 2003/09/24 16:46:38 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.cxx,v 1.92 2003/10/02 11:26:15 malaterre Exp $
 
-//This is needed when compiling in debug mode
-#ifdef _MSC_VER
-//'identifier' : not all control paths return a value
-//#pragma warning ( disable : 4715 )
-// 'identifier' : class 'type' needs to have dll-interface to be used by
-// clients of class 'type2'
-#pragma warning ( disable : 4251 )
-// 'identifier' : identifier was truncated to 'number' characters in the
-// debug information
-#pragma warning ( disable : 4786 )
-#endif //_MSC_VER
+#include "gdcmHeader.h"
 
 #include <stdio.h>
 #include <cerrno>
@@ -23,7 +13,6 @@
 #include <cctype>    // for isalpha
 #include <sstream>
 #include "gdcmUtil.h"
-#include "gdcmHeader.h"
 #include "gdcmTS.h"
 
 // Refer to gdcmHeader::CheckSwap()

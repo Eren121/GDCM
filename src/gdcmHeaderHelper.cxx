@@ -1,17 +1,7 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.8 2003/09/24 16:46:38 jpr Exp $
-
-//This is needed when compiling in debug mode
-#ifdef _MSC_VER
-#pragma warning ( disable : 4800 )
-// 'identifier' : class 'type' needs to have dll-interface to be used by
-// clients of class 'type2'
-#pragma warning ( disable : 4251 )
-// 'identifier' : identifier was truncated to 'number' characters in the
-// debug information
-#pragma warning ( disable : 4786 )
-#endif //_MSC_VER
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeaderHelper.cxx,v 1.9 2003/10/02 11:26:16 malaterre Exp $
 
 #include "gdcmHeaderHelper.h"
+
 #include "gdcmUtil.h" //for debug
 #include <math.h>
 #include <algorithm>

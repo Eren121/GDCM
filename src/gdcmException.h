@@ -1,10 +1,10 @@
 #ifndef GDCM_EXCEPTION_H
 #define GDCM_EXCEPTION_H
 
+#include "gdcmCommon.h"
 #include <string>
 #include <iostream>
 #include <exception>
-#include "gdcmCommon.h"
 
 /**
  * Any exception thrown in the gdcm library

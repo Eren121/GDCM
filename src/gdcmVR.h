@@ -3,9 +3,9 @@
 #ifndef GDCMVR_H
 #define GDCMVR_H
 
+#include "gdcmCommon.h"
 #include <map>
 #include <string>
-#include "gdcmCommon.h"
 
 typedef std::string VRKey;
 typedef std::string VRAtr;

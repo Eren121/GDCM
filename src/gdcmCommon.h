@@ -3,6 +3,18 @@
 #ifndef GDCMCOMMON_H
 #define GDCMCOMMON_H
 
+//This is needed when compiling in debug mode
+#ifdef _MSC_VER
+// 'identifier' : class 'type' needs to have dll-interface to be used by
+// clients of class 'type2'
+#pragma warning ( disable : 4251 )
+// 'identifier' : identifier was truncated to 'number' characters in the
+// debug information
+#pragma warning ( disable : 4786 )
+//'identifier' : decorated name length exceeded, name was truncated
+#pragma warning ( disable : 4503 )
+#endif //_MSC_VER
+
 #ifdef __GNUC__
 #include <stdint.h>
 #define guint16 uint16_t

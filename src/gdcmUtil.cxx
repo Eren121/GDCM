@@ -1,19 +1,10 @@
-// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.24 2003/09/24 13:29:49 jpr Exp $
+// $Header: /cvs/public/gdcm/src/gdcmUtil.cxx,v 1.25 2003/10/02 11:26:16 malaterre Exp $
 
-//This is needed when compiling in debug mode
-#ifdef _MSC_VER
-// 'identifier' : class 'type' needs to have dll-interface to be used by
-// clients of class 'type2'
-#pragma warning ( disable : 4251 )
-// 'identifier' : identifier was truncated to 'number' characters in the
-// debug information
-#pragma warning ( disable : 4786 )
-#endif //_MSC_VER
+#include "gdcmUtil.h"
 
 #include <stdio.h>
 #include <ctype.h>   // For isspace
 #include <string.h>
-#include "gdcmUtil.h"
 
 // Library globals.
 gdcmDebug dbg;

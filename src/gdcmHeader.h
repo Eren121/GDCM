@@ -1,9 +1,8 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.38 2003/09/18 09:32:15 regrain Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmHeader.h,v 1.39 2003/10/02 11:26:16 malaterre Exp $
 
 #ifndef GDCMHEADER_H
 #define GDCMHEADER_H
 
-#include <map>
 #include "gdcmCommon.h"
 #include "gdcmVR.h"
 #include "gdcmTS.h"
@@ -11,6 +10,7 @@
 #include "gdcmDictSet.h"
 #include "gdcmElValue.h"
 #include "gdcmElValSet.h"
+#include <map>
 
 typedef std::string VRKey;
 typedef std::string VRAtr;

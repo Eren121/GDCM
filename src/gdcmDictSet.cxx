@@ -1,20 +1,9 @@
 // gdcmDictEntry
 
-#ifdef _MSC_VER
-//'identifier' : decorated name length exceeded, name was truncated
-//#pragma warning ( disable : 4503 )
-// 'identifier' : class 'type' needs to have dll-interface to be used by
-// clients of class 'type2'
-#pragma warning ( disable : 4251 )
-// 'identifier' : identifier was truncated to 'number' characters in the
-// debug information
-#pragma warning ( disable : 4786 )
-#endif //_MSC_VER
-
+#include "gdcmDictSet.h"
+#include "gdcmUtil.h"
 #include <fstream>
 #include <stdlib.h>  // For getenv
-#include "gdcmUtil.h"
-#include "gdcmDictSet.h"
 
 #define PUB_DICT_NAME     "DicomV3Dict"
 #ifndef PUB_DICT_PATH

@@ -3,9 +3,9 @@
 #ifndef GDCMDICTSET_H
 #define GDCMDICTSET_H
 
+#include "gdcmDict.h"
 #include <map>
 #include <list>
-#include "gdcmDict.h"
 
 typedef std::string DictKey;
 typedef std::map<DictKey, gdcmDict*> DictSetHT;

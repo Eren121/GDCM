@@ -1,6 +1,6 @@
 // gdcmIdo.h
 
-#include "gdcm.h"
+#include "gdcmHeader.h"
 
 class gdcmHeaderIdo: protected gdcmHeader {
 private:

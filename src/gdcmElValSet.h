@@ -1,12 +1,13 @@
-// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.16 2003/07/23 08:43:03 jpr Exp $
+// $Header: /cvs/public/gdcm/src/Attic/gdcmElValSet.h,v 1.17 2003/10/02 11:26:15 malaterre Exp $
 
 #ifndef GDCMELVALSET_H
 #define GDCMELVALSET_H
 
-#include <stdio.h>    // FIXME For FILE on GCC only
-#include <map>
 #include "gdcmCommon.h"
 #include "gdcmElValue.h"
+
+#include <stdio.h>    // FIXME For FILE on GCC only
+#include <map>
 
 ////////////////////////////////////////////////////////////////////////////
 // Container for a set of successfully parsed ElValues.
