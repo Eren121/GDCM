@@ -196,9 +196,7 @@ bool gdcmFile::ReadPixelData(void* destination) {
          return false;
       }
       
-      int res = gdcm_read_JPEG_file (destination);
-         if (DEBUG) 
-            printf ("res : %d\n",res);
+      bool res = (bool)gdcm_read_JPEG_file (destination);
       return res;
 }   
 
@@ -325,7 +323,7 @@ size_t gdcmFile::GetImageDataIntoVector (void* destination, size_t MaxSize) {
       // TODO :
       // any trick not to have to allocate temporary buffer is welcome ...
       char *x = newDest;
-      for (int i=0;i<l; i++) {
+      for (int j=0;j<l; j++) {
          *(x++) = *(a++);
          *(x++) = *(b++);
          *(x++) = *(c++);  

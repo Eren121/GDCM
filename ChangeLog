@@ -1,6 +1,8 @@
 2003-07-03  Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * vtk/Makefile.am: vtkGdcmReader.h should now be cleany installed
         when using make instal.
+      * src/gdcmFile.cxx : bug fix under Window after JPR commit
+        RQ : the JPR doesn't appear in the ChangeLog... normal for him
 
 2003-07-03  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * setup.py : adding include dir of jpeg lib to compile all sources
