@@ -1,3 +1,7 @@
+2005-01-14 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Update SerieHeader to take into account a Serie Instance UID to properly
+     sort DICOM files
+
 2005-01-13 Jean-Pierre Roux <jpr@creatis.univ-lyon1.fr>
    * ENH - Comment out Mathieu's (dangerous) Super Hack 
 	      for dealing with BIGENDIAN processors
