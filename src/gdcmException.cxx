@@ -17,6 +17,7 @@ catch(...) {
 #endif
 
 
+
 void gdcmException::fatal(const char *from) throw() {
   try {
     cerr << "Fatal: exception received in " << from 

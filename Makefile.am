@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = src Test
+SUBDIRS = src Test Dicts
 
 release:
 	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)

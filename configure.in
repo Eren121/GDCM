@@ -41,4 +41,5 @@ dnl produce Makefile.in files
 AC_OUTPUT([
 Makefile 
 src/Makefile
-Test/Makefile])
+Test/Makefile
+Dicts/Makefile])

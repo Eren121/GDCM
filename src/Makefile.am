@@ -14,6 +14,8 @@ LTVERSION = 0:1:0
 
 lib_LTLIBRARIES = libgdcm.la
 
+CXXFLAGS = -DPUB_DICT_PATH=\"$(prefix)/dicts/\"
+
 libgdcm_la_SOURCES=		\
 	gdcmException.cxx	\
 	gdcmUtil.cxx 		\

@@ -6,7 +6,9 @@
 #include "gdcmUtil.h"
 
 #define PUB_DICT_NAME     "DicomV3Dict"
-#define PUB_DICT_PATH     "../Dicts/"
+#ifndef PUB_DICT_PATH
+#  define PUB_DICT_PATH     "../Dicts/"
+#endif
 #define PUB_DICT_FILENAME "dicomV3.dic"
 
 gdcmDictSet::gdcmDictSet(void) {
