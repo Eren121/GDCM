@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:52:22 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ Debug::~Debug()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   Accessor
+ * \brief   Sets the debug flag
  * @param   flag Set the debug flag
  */ 
 void Debug::SetDebugFlag (bool flag) 
@@ -78,7 +78,8 @@ bool Debug::GetDebugToFile ()
 }
 
 /**
- * \brief   Set Accessor
+ * \brief Set the filename the debug stream should be redirect to
+ *        Settting a filename also set DebugToFile to true
  * @param   filename  File to redirect debug info
  *          Absolutely nothing is check. You have to pass in
  *          a correct filename
@@ -93,7 +94,8 @@ void Debug::SetDebugFilename (std::string const &filename)
 }
 
 /**
- * \brief   Get Accessor
+ * \brief Internal use only. Allow us to retrieve the static from anywhere
+ *        in gdcm code
  * @return Debug file
  */
 std::ofstream &Debug::GetDebugFile ()

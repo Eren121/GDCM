@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:56 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,14 +24,14 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \brief Construcror
+ * \brief Constructor
  */
 PixelWriteConvert::PixelWriteConvert() 
 {
-   ReadData = 0;
+   ReadData     = 0;
    ReadDataSize = 0;
 
-   UserData = 0;
+   UserData     = 0;
    UserDataSize = 0;
 }
 
@@ -49,26 +49,26 @@ PixelWriteConvert::~PixelWriteConvert()
  * @param   data data
  * @param   size size
  */
-void PixelWriteConvert::SetReadData(uint8_t *data,size_t size)
+void PixelWriteConvert::SetReadData(uint8_t *data, size_t size)
 {
    ReadData = data;
    ReadDataSize = size;
 }
 
 /**
- * \brief   SetUserData
+ * \brief   Sets User Data
  * @param   data data
  * @param   size size
  */
-void PixelWriteConvert::SetUserData(uint8_t *data,size_t size)
+void PixelWriteConvert::SetUserData(uint8_t *data, size_t size)
 {
    UserData = data;
    UserDataSize = size;
 }
 
 /**
- * \brief   GetData
- * @return  data 
+ * \brief   Get Data (UserData or ReadData)
+ * @return  data data
  */
 uint8_t *PixelWriteConvert::GetData()
 {
@@ -83,8 +83,8 @@ uint8_t *PixelWriteConvert::GetData()
 }
 
 /**
- * \brief   GetDataSize
- * @return  size 
+ * \brief   Get Data Size (UserData or ReadData)
+ * @return  size size
  */
 size_t PixelWriteConvert::GetDataSize()
 {

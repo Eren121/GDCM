@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,11 +48,11 @@ private:
    static DictSet *Dicts;
    /// Pointer to a hash table containing the 'Value Representations'.
    static VR *ValRes;
-   /// Pointer to a hash table containing the Transfer Syntax codes and their 
-   /// english description 
+   /// \brief Pointer to a hash table containing the Transfer Syntax codes 
+   ///        and their english description 
    static TS *TranSyn; 
-   /// Pointer to the hash table containing the Dicom Elements necessary 
-   /// to describe each part of a DICOMDIR 
+   /// \brief Pointer to the hash table containing the Dicom Elements necessary 
+   ///        to describe each part of a DICOMDIR 
    static DicomDirElement *ddElem;
 };
 } // end namespace gdcm

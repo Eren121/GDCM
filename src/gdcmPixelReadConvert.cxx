@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 17:12:46 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,7 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+/// Constructor
 PixelReadConvert::PixelReadConvert() 
 {
    RGB          = 0;
@@ -47,6 +48,7 @@ PixelReadConvert::PixelReadConvert()
    LutBlueData  = 0;
 }
 
+/// Canonical Destructor
 PixelReadConvert::~PixelReadConvert() 
 {
    Squeeze();
@@ -181,6 +183,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    ComputeRawAndRGBSizes();
 }
 
+/// \brief Reads from disk and decompresses Pixels
 bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
 {
    // ComputeRawAndRGBSizes is already made by 
@@ -264,6 +267,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    return true;
 }
 
+/// Deletes Pixels Area
 void PixelReadConvert::Squeeze() 
 {
    if ( RGB )
@@ -756,6 +760,11 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    delete[] copyRaw;
 }
 
+/// \brief Deals with the color decoding i.e. handle:
+///   - R, G, B planes (as opposed to RGB pixels)
+///   - YBR (various) encodings.
+///   - LUT[s] (or "PALETTE COLOR").
+
 void PixelReadConvert::ConvertHandleColor()
 {
    //////////////////////////////////
@@ -826,6 +835,7 @@ void PixelReadConvert::ConvertHandleColor()
    // In *normal *case, when planarConf is 0, pixels are already in RGB
 }
 
+/// Computes the Pixels Size
 void PixelReadConvert::ComputeRawAndRGBSizes()
 {
    int bitsAllocated = BitsAllocated;
@@ -850,6 +860,7 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
    }
 }
 
+/// Allocates room for RGB Pixels
 void PixelReadConvert::AllocateRGB()
 {
   if ( RGB )
@@ -857,6 +868,7 @@ void PixelReadConvert::AllocateRGB()
   RGB = new uint8_t[RGBSize];
 }
 
+/// Allocates room for RAW Pixels
 void PixelReadConvert::AllocateRaw()
 {
   if ( Raw )

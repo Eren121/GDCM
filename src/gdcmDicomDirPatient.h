@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:52:25 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,10 +39,11 @@ public:
    DicomDirPatient(bool empty=false); 
    ~DicomDirPatient();
 
-   void Print(std::ostream &os = std::cout, std::string const & indent = "" );
+   void Print(std::ostream &os = std::cout, std::string const &indent = "" );
    void WriteContent(std::ofstream *fp, FileType t);
   
    // Patient methods
+   /// \brief Adds a new gdcmDicomDirStudy to the Patient
    void AddStudy(DicomDirStudy *obj) { Studies.push_back(obj); };
    DicomDirStudy *NewStudy(); 
    void ClearStudy();

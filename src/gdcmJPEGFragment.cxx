@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,11 +24,11 @@ namespace gdcm
 //-------------------------------------------------------------------------
 // For JPEG 2000, body in file gdcmJpeg2000.cxx
 // Not yet made
-bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEG2000_file (std::ifstream *fp, void *image_buffer);
 
 // For JPEG-LS, body in file gdcmJpegLS.cxx
 // Not yet made
-bool gdcm_read_JPEGLS_file (std::ifstream* fp, void* image_buffer);
+bool gdcm_read_JPEGLS_file (std::ifstream *fp, void *image_buffer);
 
 //-------------------------------------------------------------------------
 // Constructor / Destructor
@@ -55,7 +55,7 @@ JPEGFragment::JPEGFragment()
  */
 void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
                                                 uint8_t *buffer, int nBits, 
-                                                int & statesuspension)
+                                                int &statesuspension)
 {
    // First thing need to reset file to proper position:
    fp->seekg( Offset, std::ios::beg);

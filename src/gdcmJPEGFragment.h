@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/31 04:00:04 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,8 @@
 namespace gdcm 
 {
 /**
- * \brief Utility class for summerizing the informations of a JPEG
+ * \brief *very* internal class . Shouldn't appear here !
+ *         Utility class for summerizing the informations of a JPEG
  *        fragment of an "Encapsulated JPEG Compressed Image".
  *        This information is a mix of:
  *        - the fragment offset
@@ -43,17 +44,19 @@ class GDCM_EXPORT JPEGFragment
 public:
    JPEGFragment();
    void Print( std::ostream &os = std::cout, std::string indent = "" );
-   void DecompressJPEGFramesFromFile(std::ifstream *fp, uint8_t *buffer, int nBits, int & statesuspension);
+   void DecompressJPEGFramesFromFile(std::ifstream *fp, 
+                                     uint8_t *buffer, int nBits, 
+                                     int &statesuspension);
 
-   bool ReadJPEGFile8 (std::ifstream* fp, void* image_buffer, int & statesuspension );
-   bool ReadJPEGFile12 (std::ifstream* fp, void* image_buffer, int & statesuspension );
-   bool ReadJPEGFile16 (std::ifstream* fp, void* image_buffer, int & statesuspension );
+   bool ReadJPEGFile8  (std::ifstream* fp, void *image_buffer, int &statesuspension );
+   bool ReadJPEGFile12 (std::ifstream* fp, void *image_buffer, int &statesuspension );
+   bool ReadJPEGFile16 (std::ifstream* fp, void *image_buffer, int &statesuspension );
 
    void SetLength(uint32_t length) { Length = length; };
-   uint32_t GetLength() { return Length;};
+   uint32_t GetLength()            { return Length;   };
    void SetOffset(uint32_t offset) { Offset = offset; };
-   uint32_t GetOffset() { return Offset;};
-   uint8_t *GetImage()  { return pImage;};
+   uint32_t GetOffset()            { return Offset;   };
+   uint8_t *GetImage()             { return pImage;   };
 
 private:
    uint32_t Offset;

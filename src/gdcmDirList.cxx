@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:07:41 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,6 +54,11 @@ DirList::~DirList()
 
 //-----------------------------------------------------------------------------
 // Public
+/**
+ * \brief Tells us if file name corresponds to a Directory   
+ * @param  dirName file name to check
+ * @return true if the file IS a Directory
+ */
 bool DirList::IsDirectory(std::string const &dirName)
 {
 #ifndef _MSC_VER

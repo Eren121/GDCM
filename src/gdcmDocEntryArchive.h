@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 11:42:02 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/02/04 16:51:36 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,8 +49,9 @@ public:
    void ClearArchive(void);
 
 private:
-//   TagDocEntryHT &HeaderHT;  // we keep the name HeaderHT
+   /// pointer to the gdcm::File pointer we want to save values from
    File *ArchFile;
+   /// H table to save values.
    TagDocEntryHT Archive;
 };
 } // end namespace gdcm
