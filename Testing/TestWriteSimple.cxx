@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 16:39:28 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/03/03 11:03:41 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,7 +101,9 @@ Image Images [] = {
 
 int WriteSimple(Image &img)
 {
-   std::string fileName = "TestWriteSimple.dcm";
+   std::ostringstream fileName;
+   fileName.str("");
+   fileName << "TestWriteSimple";
 
 // Step 1 : Create the header of the image
    std::cout << "        1...";
@@ -112,7 +114,6 @@ int WriteSimple(Image &img)
    str.str("");
    str << img.sizeX;
    fileToBuild->InsertValEntry(str.str(),0x0028,0x0011); // Columns
-
    str.str("");
    str << img.sizeY;
    fileToBuild->InsertValEntry(str.str(),0x0028,0x0010); // Rows
@@ -123,6 +124,8 @@ int WriteSimple(Image &img)
       str << img.sizeZ;
       fileToBuild->InsertValEntry(str.str(),0x0028,0x0008); // Number of Frames
    }
+
+   fileName << "-" << img.sizeX << "-" << img.sizeY << "-" << img.sizeZ;
 
    // Set the pixel type
    str.str("");
@@ -141,6 +144,22 @@ int WriteSimple(Image &img)
    str.str("");
    str << img.sign;
    fileToBuild->InsertValEntry(str.str(),0x0028,0x0103); // Pixel Representation
+
+   fileName << "-" << img.componentSize;
+   if(img.sign == 0)
+      fileName << "U";
+   else
+      fileName << "S";
+   
+   switch (img.writeMode)
+   {
+      case 'a' :
+         fileName << ".ACR"; break; 
+      case 'e' :
+         fileName << ".EXPL"; break; 
+      case 'i' :
+         fileName << ".IMPL"; break;
+} 
 
    // Set the samples per pixel
    str.str("");
@@ -220,7 +239,7 @@ int WriteSimple(Image &img)
          return 1;
    }
 
-   if( !file->Write(fileName) )
+   if( !file->Write(fileName.str()) )
    {
       std::cout << "Failed\n"
                 << "File in unwrittable\n";
@@ -233,7 +252,7 @@ int WriteSimple(Image &img)
 
 // Step 5 : Read the written image
    std::cout << "5...";
-   gdcm::FileHelper *reread = new gdcm::FileHelper( fileName );
+   gdcm::FileHelper *reread = new gdcm::FileHelper( fileName.str() );
    if( !reread->GetFile()->IsReadable() )
    {
       std::cerr << "Failed" << std::endl
@@ -318,14 +337,14 @@ int TestWriteSimple(int argc, char *argv[])
       return 1;
    }
 
-  // gdcm::Debug::DebugOn();    
- 
+  // gdcm::Debug::DebugOn();
+       
    int ret=0;
    int i=0;
    while( Images[i].sizeX>0 && Images[i].sizeY>0 )
    {
       std::cout << std::endl << "Test n :" << i << std::endl;
-      ret += WriteSimple(Images[i]);
+      ret += WriteSimple(Images[i] );
       i++;
    }
 
