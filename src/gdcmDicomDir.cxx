@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 09:49:53 $
-  Version:   $Revision: 1.119 $
+  Date:      $Date: 2005/01/26 10:29:17 $
+  Version:   $Revision: 1.120 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -461,15 +461,12 @@ void DicomDir::CreateDicomDirChainedList(std::string const & path)
 
 /**
  * \brief   adds *the* Meta to a partially created DICOMDIR
- */
-  
+ */  
 DicomDirMeta *DicomDir::NewMeta()
 {
    if( MetaElems )
       delete MetaElems;
 
- // friend class hunting : we miss GetLastEntry and GetPreviousEntry
- //                  to be able to remove any direct reference to TagHT
    DocEntry *entry = GetFirstEntry();
    if( entry )
    { 

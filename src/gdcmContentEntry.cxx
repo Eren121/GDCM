@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmContentEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 09:49:53 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/01/26 10:29:16 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,6 @@ ContentEntry::ContentEntry(DocEntry *e)
 {
    Copy(e);
 }
-
 
 /**
  * \brief   Canonical destructor.

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 09:49:54 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/01/26 10:29:17 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -538,7 +538,6 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
    }
    return found;
 }
-
 
 /**
  * \brief   Searches [both] the public [and the shadow dictionary (when they

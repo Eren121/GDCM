@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/21 11:40:55 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/01/26 10:29:17 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,7 +101,7 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
 
 /**
  * \brief   Replace in the Header a DocEntry by the new DocEntry. The last
- *          DocEntry is kept in archieve
+ *          DocEntry is kept in archive
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * @return  FALSE when an other DocEntry is already archived with the same

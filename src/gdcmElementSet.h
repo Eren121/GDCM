@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:24 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/01/26 10:29:17 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,7 +72,6 @@ private:
    /// Hash Table (map) iterator, used to visit the TagHT variable
    TagDocEntryHT::iterator ItTagHT; 
      
-   friend class DicomDir;        //For accessing private TagHT
    friend class DocEntryArchive; //For accessing private TagHT
 };
 } // end namespace gdcm
