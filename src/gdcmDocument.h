@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 15:46:11 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2004/11/25 16:35:17 $
+  Version:   $Revision: 1.65 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,41 +58,6 @@ enum TransferSyntaxType {
   JPEG2000,
   RLELossless,
   UnknownTS
-};
-
-static const char *TransferSyntaxStrings[] =  {
-  // Implicit VR Little Endian
-  "1.2.840.10008.1.2",
-  // Implicit VR Little Endian DLX G.E?
-  "1.2.840.113619.5.2",
-  // Explicit VR Little Endian
-  "1.2.840.10008.1.2.1",
-  // Deflated Explicit VR Little Endian
-  "1.2.840.10008.1.2.1.99",
-  // Explicit VR Big Endian
-  "1.2.840.10008.1.2.2",
-  // JPEG Baseline (Process 1)
-  "1.2.840.10008.1.2.4.50",
-  // JPEG Extended (Process 2 & 4)
-  "1.2.840.10008.1.2.4.51",
-  // JPEG Extended (Process 3 & 5)
-  "1.2.840.10008.1.2.4.52",
-  // JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8)
-  "1.2.840.10008.1.2.4.53",
-  // JPEG Full Progression, Non-Hierarchical (Process 10 & 12)
-  "1.2.840.10008.1.2.4.55",
-  // JPEG Lossless, Non-Hierarchical (Process 14)
-  "1.2.840.10008.1.2.4.57",
-  // JPEG Lossless, Hierarchical, First-Order Prediction (Process 14, [Selection Value 1])
-  "1.2.840.10008.1.2.4.70",
-  // JPEG 2000 Lossless
-  "1.2.840.10008.1.2.4.90",
-  // JPEG 2000
-  "1.2.840.10008.1.2.4.91",
-  // RLE Lossless
-  "1.2.840.10008.1.2.5",
-  // Unknown
-  "Unknown Transfer Syntax"
 };
 
 //-----------------------------------------------------------------------------
@@ -208,6 +173,8 @@ public:
    uint32_t SwapLong(uint32_t);    // needed by File
    uint16_t UnswapShort(uint16_t); // needed by File
    uint32_t UnswapLong(uint32_t);  // needed by File
+
+   static std::string GetTransferSyntaxValue(TransferSyntaxType type);
 
 protected:
    // Constructor and destructor are protected to forbid end user 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/25 13:12:02 $
-  Version:   $Revision: 1.164 $
+  Date:      $Date: 2004/11/25 16:35:17 $
+  Version:   $Revision: 1.165 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -411,6 +411,8 @@ bool File::WriteBase (std::string const & fileName, FileType type)
       case ACR_LIBIDO:
          SetWriteFileTypeToACRLibido();
          break;
+      default:
+         SetWriteFileTypeToExplicitVR();
    }
   
    switch(WriteMode)
@@ -481,12 +483,12 @@ bool File::CheckWriteIntegrity()
          numberBitsAllocated = 16;
       }
 
-      int decSize = HeaderInternal->GetXSize()
+      size_t decSize = HeaderInternal->GetXSize()
                     * HeaderInternal->GetYSize() 
                     * HeaderInternal->GetZSize()
                     * ( numberBitsAllocated / 8 )
                     * HeaderInternal->GetSamplesPerPixel();
-      int rgbSize = decSize;
+      size_t rgbSize = decSize;
       if( HeaderInternal->HasLUT() )
          rgbSize = decSize * 3;
 
@@ -677,8 +679,8 @@ void File::SetWriteFileTypeToACRLibido()
 
 void File::SetWriteFileTypeToExplicitVR()
 {
-   std::string ts = 
-      Util::DicomString( TransferSyntaxStrings[ExplicitVRLittleEndian] );
+   std::string ts = Util::DicomString( 
+      Document::GetTransferSyntaxValue(ExplicitVRLittleEndian).c_str() );
 
    ValEntry* tss = CopyValEntry(0x0002,0x0010);
    tss->SetValue(ts);
@@ -689,8 +691,8 @@ void File::SetWriteFileTypeToExplicitVR()
 
 void File::SetWriteFileTypeToImplicitVR()
 {
-   std::string ts = 
-      Util::DicomString( TransferSyntaxStrings[ImplicitVRLittleEndian] );
+   std::string ts = Util::DicomString(
+      Document::GetTransferSyntaxValue(ImplicitVRLittleEndian).c_str() );
 
    ValEntry* tss = CopyValEntry(0x0002,0x0010);
    tss->SetValue(ts);
