@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.10 2003/06/11 13:36:54 frog Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.11 2003/06/12 16:58:31 malaterre Exp $
 //CLEANME#include <vtkByteSwap.h>
 #include <stdio.h>
 #include <vtkObjectFactory.h>
@@ -16,6 +16,7 @@ vtkGdcmReader::vtkGdcmReader()
 vtkGdcmReader::~vtkGdcmReader()
 { 
   // FIXME free memory
+  this->FileNameList.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -28,6 +29,7 @@ void vtkGdcmReader::AddFileName(const char* name)
   strcpy(LocalName, name);
   this->FileNameList.push_back(LocalName);
   this->Modified();
+  delete[] LocalName;
 }
 
 //----------------------------------------------------------------------------
@@ -37,7 +39,7 @@ void vtkGdcmReader::SetFileName(const char *name) {
   // Since we maintain a list of filenames, when building a volume,
   // (see vtkGdcmReader::AddFileName), we additionaly need to purge
   // this list when we manually positionate the filename:
-  this->FileNameList.empty();
+  this->FileNameList.clear();
   this->Modified();
 }
 
