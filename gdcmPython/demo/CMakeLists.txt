@@ -17,7 +17,7 @@ MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
 
 IF(PYTHON_EXECUTABLE)
   ADD_TEST(Python-PrintHeader ${PYTHON_EXECUTABLE}
-    ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintHeader.py
+    ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintHeader.py
     )
 ELSE(PYTHON_EXECUTABLE)
   MESSAGE(FATAL_ERROR "You requested testing for python, but python was not
@@ -28,8 +28,7 @@ ENDIF(PYTHON_EXECUTABLE)
 # Copy all the demo directory content to the cmake bin 
 # Without it, tests can't be launched
 CONFIGURE_FILE(
-    ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintHeader.py
+    ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintHeader.py.in
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintHeader.py
-    COPYONLY
 )
 

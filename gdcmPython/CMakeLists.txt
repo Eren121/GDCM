@@ -244,14 +244,6 @@ IF(GDCM_VTK)
 ENDIF(GDCM_VTK)
 
 #-----------------------------------------------------------------------------
-# Copy the testSuite.py file
-CONFIGURE_FILE(
-    ${GDCM_SOURCE_DIR}/gdcmPython/testSuite.py
-    ${GDCM_BINARY_DIR}/gdcmPython/testSuite.py
-    COPYONLY
-)
-
-#-----------------------------------------------------------------------------
 # Add test from demo subdir:
 
 SUBDIRS(demo)
