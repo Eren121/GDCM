@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:58 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/01/08 23:18:30 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #include <list>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 //Generated file:
 #include "gdcmDataImages.h"

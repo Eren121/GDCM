@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:58 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/01/08 23:18:31 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 #include "gdcmFile.h"
 
 #include <iostream>
+#include <sstream>
 
 typedef struct
 {

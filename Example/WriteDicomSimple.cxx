@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/08 15:03:57 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/01/08 23:18:30 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 #include "gdcmFile.h"
 
 #include <iostream>
+#include <sstream>
 
 // Image size
 #define SIZE_X          256
