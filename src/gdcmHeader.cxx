@@ -187,7 +187,7 @@ void gdcmHeader::CheckSwap()
 	// four (bytes), then determining the proper swap code is straightforward.
 
 	entCur = deb + 4;
-	s = str2num(entCur, int);
+	s = str2num(entCur, guint32);
 	
 	switch (s) {
 	case 0x00040000 :

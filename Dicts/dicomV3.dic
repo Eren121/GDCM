@@ -54,7 +54,7 @@
 0008 0001 UL ID Length to End (RET)
 0008 0005 CS ID Specific Character Set
 0008 0008 CS ID Image Type
-0008 0010 RET ID Recognition Code (RET)
+0008 0010 RET ID Recognition Code
 0008 0012 DA ID Instance Creation Date
 0008 0013 TM ID Instance Creation Time
 0008 0014 UI ID Instance Creator UID
@@ -72,8 +72,8 @@
 0008 0033 TM ID Image Time
 0008 0034 TM ID Overlay Time
 0008 0035 TM ID Curve Time
-0008 0040 RET ID Data Set Type (RET)
-0008 0041 RET ID Data Set Subtype (RET)
+0008 0040 RET ID Data Set Type
+0008 0041 RET ID Data Set Subtype
 0008 0042 CS ID Nuc Med Series Type (RET)
 0008 0050 SH ID Accession Number
 0008 0052 CS ID Query Level
@@ -157,7 +157,7 @@
 0008 2242 SQ ID Transducer Position Modifer Sequence
 0008 2244 SQ ID Transducer Orientation Sequence
 0008 2246 SQ ID Transducer Orientation Modifer Sequence
-0008 4000 RET ID Comments (RET)
+0008 4000 RET ID Comments
 0010 0000 UL PAT Group Length
 0010 0010 PN PAT Patient Name
 0010 0020 LO PAT Patient ID
@@ -339,7 +339,7 @@
 0018 1200 DA ACQ Date of Last Calibration
 0018 1201 TM ACQ Time of Last Calibration
 0018 1210 SH ACQ Convolution Kernel
-0018 1240 RET ACQ Upper/Lower Pixel Values (RET)
+0018 1240 RET ACQ Upper/Lower Pixel Values
 0018 1242 IS ACQ Actual Frame Duration
 0018 1243 IS ACQ Count Rate
 0018 1244 US ACQ Preferred Playback Sequencing
@@ -465,15 +465,15 @@
 0020 0022 IS REL Overlay Number
 0020 0024 IS REL Curve Number
 0020 0026 IS REL Lookup Table Number
-0020 0030 RET REL Image Position (RET)
+0020 0030 RET REL Image Position
 0020 0032 DS REL Image Position Patient
 0020 0035 RET REL Image Orientation
 0020 0037 DS REL Image Orientation (Patient)
-0020 0050 RET REL Location (RET)
+0020 0050 RET REL Location
 0020 0052 UI REL Frame of Reference UID
 0020 0060 CS REL Laterality
-0020 0070 RET REL Image Geometry Type (RET)
-0020 0080 RET REL Masking Image (RET)
+0020 0070 RET REL Image Geometry Type
+0020 0080 RET REL Masking Image
 0020 0100 IS REL Temporal Position Identifier
 0020 0105 IS REL Number of Temporal Positions
 0020 0110 DS REL Temporal Resolution
@@ -481,7 +481,7 @@
 0020 1001 RET REL Acquisitions in Series
 0020 1002 IS REL Images in Acquisition
 0020 1004 IS REL Acquisitions in Study
-0020 1020 RET REL Reference (RET)
+0020 1020 RET REL Reference
 0020 1040 LO REL Position Reference Indicator
 0020 1041 DS REL Slice Location
 0020 1070 IS REL Other Study Numbers
@@ -490,20 +490,20 @@
 0020 1204 IS REL Number of Patient Related Images
 0020 1206 IS REL Number of Study Related Series
 0020 1208 IS REL Number of Study Related Images
-0020 3100 RET REL Source Image IDs (RET)
-0020 3401 RET REL Modifying Device ID (RET)
-0020 3402 RET REL Modified Image ID (RET)
-0020 3403 RET REL Modified Image Date (RET)
-0020 3404 RET REL Modifying Device Mfr (RET)
+0020 3100 RET REL Source Image IDs
+0020 3401 RET REL Modifying Device ID
+0020 3402 RET REL Modified Image ID
+0020 3403 RET REL Modified Image Date
+0020 3404 RET REL Modifying Device Mfr
 0020 3405 RET REL Modified Image Time
-0020 3406 RET REL Modified Image Description (RET)
+0020 3406 RET REL Modified Image Description
 0020 4000 LT REL Image Comments
-0020 5000 RET REL Original Image ID (RET)
-0020 5002 RET REL Orig Image ID Nomenclature (RET)
+0020 5000 RET REL Original Image ID
+0020 5002 RET REL Orig Image ID Nomenclature
 0028 0000 UL IMG Group Length
 0028 0002 US IMG Samples Per Pixel
 0028 0004 CS IMG Photometric Interpretation
-0028 0005 RET IMG Image Dimensions (RET)
+0028 0005 RET IMG Image Dimensions
 0028 0006 US IMG Planar Configuration
 0028 0008 IS IMG Number of Frames
 0028 0009 AT IMG Frame Increment Pointer
@@ -520,16 +520,16 @@
 0028 0031 DS IMG Zoom Factor
 0028 0032 DS IMG Zoom Center
 0028 0034 IS IMG Pixel Aspect Ratio
-0028 0040 RET IMG Image Format (RET)
-0028 0050 RET IMG Manipulated Image (RET)
+0028 0040 RET IMG Image Format
+0028 0050 RET IMG Manipulated Image
 0028 0051 CS IMG Corrected Image
 0028 0060 RET IMG Compression Code
 0028 0100 US IMG Bits Allocated
 0028 0101 US IMG Bits Stored
 0028 0102 US IMG High Bit
 0028 0103 US IMG Pixel Representation
-0028 0104 RET IMG Smallest Pixel Value (RET)
-0028 0105 RET IMG Largest Pixel Value (RET)
+0028 0104 RET IMG Smallest Pixel Value
+0028 0105 RET IMG Largest Pixel Value
 0028 0106 CTX IMG Smallest Image Pixel Value
 0028 0107 CTX IMG Largest Image Pixel Value
 0028 0108 CTX IMG Smallest Pixel Value in Series
@@ -547,9 +547,9 @@
 0028 1053 DS IMG Rescale Slope
 0028 1054 LO IMG Rescale Type
 0028 1055 LO IMG Window Center & Width Explanation
-0028 1080 RET IMG Gray Scale (RET)
+0028 1080 RET IMG Gray Scale
 0028 1090 CS IMG Recommended Viewing Mode
-0028 1100 RET IMG Lookup Table Desc-Gray (RET)
+0028 1100 RET IMG Lookup Table Desc-Gray
 0028 1101 US IMG Lookup Table Desc-Red
 0028 1102 US IMG Lookup Table Desc-Green
 0028 1103 US IMG Lookup Table Desc-Blue
@@ -568,7 +568,7 @@
 0028 3004 LO IMG Modality LUT Type
 0028 3006 CTX IMG LUT Data
 0028 3010 SQ IMG VOI LUT Sequence
-0028 4000 RET IMG Comments (RET)
+0028 4000 RET IMG Comments
 0028 5000 SQ IMG Bi-Plane Acquisition Sequence
 0028 6010 US IMG Representative Frame Number
 0028 6020 US IMG Frame Numbers of Interest

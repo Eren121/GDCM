@@ -1,3 +1,8 @@
+2002-11-15 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
+      * Dicts/dicomV3.dic removed all the trailing (RET) when the
+        the vr was also RET.
+      * python/testSuite.py more tests added.
+
 2002-11-14 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
       * python/testSuite.py unittest test suite added (uses Data)
       * Data/* dcm and acr files for the test suite.
