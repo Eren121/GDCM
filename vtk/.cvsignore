@@ -5,4 +5,5 @@ Makefile
 vtkgdcmdemo
 *.la
 *.lo
+*.dll
 vtkGdcmReaderPython.cxx

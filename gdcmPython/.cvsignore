@@ -10,6 +10,7 @@ Makefile
 Makefile.in
 *.lo
 *.la
+*.dll
 .libs
 .deps
 _gdcm.so

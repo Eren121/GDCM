@@ -152,7 +152,7 @@ SOURCE=..\..\src\gdcmJpeg2000.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdcmJpegIdo.cxx
+SOURCE=..\..\src\gdcmParse.cxx
 # End Source File
 # Begin Source File
 

@@ -1,22 +1,25 @@
+2003-12-10 Benoit Regrain
+     * Update Windows projects and .cvsignore files
+
 2003-11-12 Jean-Pierre Roux
      *ENH  gdcmHeader constructor has one more parameter (default value : false)
            that allows the user to 'go inside' the SeQuences only
 	   if he wants to.
 	   gdcmElValSet:Print takes it into account
-	   
+
 2003-11-12  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
      *ENH: Update gdcmPython/CMakeLists
      *FIX: (gdcmHeaderHelper) GetRescale and GetSlope
      *FIX: (gdcmElValSet) char 'tag' was overiding private members (VC++)
-     
+
 2003-11-10 Jean-Pierre Roux
-      *FIX : gdcmHeader::LoadElements is now based 
-             on the ListTag listElem member, 
+      *FIX : gdcmHeader::LoadElements is now based
+             on the ListTag listElem member,
              not longer on the TagElValueHT tagHt member
       *ENH : PrintPubElVal shows (temporarily) both results,
              with the tagHt member and the listElem member.
 	     (it's easier to 'see' the problems when using Printheader)
-	     
+
       *FIX : old private member LgrElem is now splitted into
              ReadLength   : Length actually found on disk (updated only
 	                    if bug fixing is necessary), for internal
@@ -25,7 +28,7 @@
 	                    or to allow Parser going on.
 	     Will allow to re-write a kosher header when a SeQuence
 	     with a length (not 0000) is found
-      Warning : gdcmFile::Write still uses the TagHt (not ListElem)     
+      Warning : gdcmFile::Write still uses the TagHt (not ListElem)
 	        because gdcmElValSet::Add does not update ListElem
 		(to be written)
 
@@ -39,15 +42,15 @@
      *ENH: vtkgdcmViewer now works with LUT dicom (OT-PAL-face ...)
 
 2003-11-05  Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
-     *ENH: vtkGdcmReader now supports LUT ! 
+     *ENH: vtkGdcmReader now supports LUT !
           (vtkgdcmViewer for now is not able to use them though)
-           
+
 2003-11-05 Jean-Pierre Roux
      * in testSuite.py : new files names for checking the package
      * Fix : Forgot to commit gdcmFile::GetImageDataSizeRaw();
              that returns the pixel area size to the *aware* (vtk) user
              that DOESN'T want to turn the PALETTE COLOR image into an RGB image
-     
+
 2003-11-05 Benoit Regrain
      * in testSuite.py : Modify the rules for checking the paths
                        : Explicit error messages
