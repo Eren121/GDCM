@@ -29,7 +29,7 @@ libgdcm_la_SOURCES=                \
    gdcmJpeg12.cxx                  \
    gdcmJpeg2000.cxx                \
    gdcmRLE.cxx                     \
-   gdcmParse.cxx                   \
+   gdcmParsePixels.cxx                   \
    gdcmDICOMDIR.cxx                \
    gdcmPatient.cxx                 \
    gdcmStudy.cxx                   \
