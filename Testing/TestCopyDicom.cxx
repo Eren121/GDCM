@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/17 10:20:06 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2004/11/18 17:06:54 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,6 +90,8 @@ int TestCopyDicom(int , char* [])
 
       size_t dataSize = original->GetImageDataSize();
       uint8_t* imageData = original->GetImageData();
+      (void)dataSize;  // To use the variable and not have warnings at compil.
+      (void)imageData; // To use the variable and not have warnings at compil.
 
       //First of all copy the header field by field
   
