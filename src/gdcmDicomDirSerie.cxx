@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:23 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/01/28 17:01:29 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,8 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \brief  Constructor 
+ * \brief  Constructor
+ * \note End user must use : DicomDirStudy::NewSerie() 
  */
 DicomDirSerie::DicomDirSerie(bool empty):
    DicomDirObject()
@@ -116,7 +117,7 @@ void DicomDirSerie::ClearImage()
 
 /**
  * \brief   Get the first entry while visiting the DicomDirImage
- * \return  The first DicomDirImage if found, otherwhise NULL
+ * \return  The first DicomDirImage if DicomDirserie not empty, otherwhise NULL
  */
 DicomDirImage *DicomDirSerie::GetFirstImage()
 {
@@ -138,21 +139,6 @@ DicomDirImage *DicomDirSerie::GetNextImage()
    ++ItImage;
    if (ItImage != Images.end())      
       return *ItImage;
-   return NULL;
-}
- 
-/**
- * \brief   Get the first entry while visiting the DicomDirImage
- * \return  The first DicomDirImage if found, otherwhise NULL
- */
-DicomDirImage *DicomDirSerie::GetLastImage()
-{
-   ItImage = Images.end();
-   if (ItImage != Images.begin())
-   {
-      --ItImage;
-      return *ItImage;
-   }
    return NULL;
 }
 

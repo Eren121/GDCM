@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 17:17:31 $
-  Version:   $Revision: 1.100 $
+  Date:      $Date: 2005/01/28 17:01:30 $
+  Version:   $Revision: 1.101 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -172,7 +172,9 @@ public:
 
    bool Write(std::string fileName, FileType filetype);
 
+   /// returns the RLE info
    RLEFramesInfo *GetRLEInfo() { return RLEInfo; }
+   /// Returns the JPEG Fragments info
    JPEGFragmentsInfo *GetJPEGInfo() { return JPEGInfo; }
 
 protected:

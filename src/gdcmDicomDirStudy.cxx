@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/25 15:44:23 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/28 17:01:29 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,7 @@ namespace gdcm
 // Constructor / Destructor
 /**
  * \brief  Constructor 
+ * \note End user must use : DicomDirPatient::NewStudy()
  */
 DicomDirStudy::DicomDirStudy(bool empty):
    DicomDirObject()

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/17 11:13:21 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/01/28 17:01:30 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,6 +31,7 @@ void FillDefaultVRDict(VRHT &vr);
 /**
  * \brief Constructor
  */
+ 
 VR::VR() 
 {
    std::string filename = DictSet::BuildDictPath() + DICT_VR;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:33 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/01/28 17:01:29 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@ namespace gdcm
 // Constructor / Destructor
 /**
  * \brief  Constructor 
+ * \note End user must use : DicomDirSerie::NewImage()
  */
 DicomDirImage::DicomDirImage(bool empty):
    DicomDirObject()
