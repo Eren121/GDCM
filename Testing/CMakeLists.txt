@@ -74,15 +74,22 @@ ENDFOREACH(file ${TEST_SOURCES})
 # We need to test the reading of all dicom images in the gdcmData directory
 # First parse this directory and extract all images
 
-# Since there is a bug in cmake 1.8.3, I'll have to do two separate globs
-FILE(GLOB GDCM_DATA_IMAGES_GLOB_ACR
-  "${GDCM_DATA_ROOT}/*.acr"
-  )
-FILE(GLOB GDCM_DATA_IMAGES_GLOB_DCM
-  "${GDCM_DATA_ROOT}/*.dcm"
-  )
-SET(GDCM_DATA_IMAGES_GLOB ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR})
-  
+IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
+  FILE(GLOB GDCM_DATA_IMAGES_GLOB
+    "${GDCM_DATA_ROOT}/*.acr"
+    "${GDCM_DATA_ROOT}/*.dcm"
+    )
+ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
+  # Since there is a bug in cmake 1.8.3, I'll have to do two separate globs
+  FILE(GLOB GDCM_DATA_IMAGES_GLOB_ACR
+    "${GDCM_DATA_ROOT}/*.acr"
+    )
+  FILE(GLOB GDCM_DATA_IMAGES_GLOB_DCM
+    "${GDCM_DATA_ROOT}/*.dcm"
+    )
+  SET(GDCM_DATA_IMAGES_GLOB ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR})
+ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
+
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
   "gdcm-JPEG-LossLessThoravision.dcm"

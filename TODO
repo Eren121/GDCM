@@ -5,7 +5,7 @@
   done by gdcmHeader to provide the user with heuristics above various
   values found in the header (the simplest form being to default a value).
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
-  be made a the cost of memory consumption (refer to header of 
+  be made at the cost of memory consumption (refer to header of 
   vtk/vtkGdcmHeader.cxx)
 * Add a GetVersion() global function.
 * gdcmElValSet::SetElValueLengthByNumber IMNSHO should be trashed.
@@ -70,3 +70,5 @@
       a.write(output);
    }
 
+* use namespace for gdcm, to avoid problem when using enum with name like
+  'Unknow' on .Net, and LP on cygwin that cause problems
