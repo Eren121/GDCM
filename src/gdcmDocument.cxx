@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/05 20:23:14 $
-  Version:   $Revision: 1.117 $
+  Date:      $Date: 2004/11/05 21:23:46 $
+  Version:   $Revision: 1.118 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -201,6 +201,8 @@ Document::~Document ()
       //delete it->second; //temp remove
    }
    TagHT.clear();
+   delete RLEInfo;
+   delete JPEGInfo;
 }
 
 //-----------------------------------------------------------------------------
@@ -492,7 +494,7 @@ void Document::Write(std::ofstream* fp, FileType filetype)
    {
       std::string ts = 
          Util::DicomString( TransferSyntaxStrings[ExplicitVRLittleEndian] );
-      ReplaceOrCreateByNumber(ts, 0x0002, 0x0010);
+      ReplaceOrCreateByNumber(ts, 0x0002, 0x0010); //LEAK
       
       /// \todo Refer to standards on page 21, chapter 6.2
       ///       "Value representation": values with a VR of UI shall be
@@ -564,9 +566,13 @@ ValEntry* Document::ReplaceOrCreateByNumber(
       valEntry = new ValEntry(currentEntry);
       if ( !AddEntry(valEntry))
       {
+         delete valEntry;
          dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: AddEntry"
                         " failed allthough this is a creation.");
       }
+      // This is the reason why NewDocEntryByNumber are a real
+      // bad habit !!! FIXME
+      delete currentEntry;
    }
    else
    {
@@ -579,12 +585,14 @@ ValEntry* Document::ReplaceOrCreateByNumber(
          valEntry = new ValEntry(currentEntry);
          if (!RemoveEntry(currentEntry))
          {
+            delete valEntry;
             dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: removal"
                            " of previous DocEntry failed.");
             return NULL;
          }
          if ( !AddEntry(valEntry))
          {
+            delete valEntry;
             dbg.Verbose(0, "Document::ReplaceOrCreateByNumber: adding"
                            " promoted ValEntry failed.");
             return NULL;
@@ -1358,7 +1366,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
          //////////////////// BinEntry or UNKOWN VR:
             BinEntry* newBinEntry =
-               new BinEntry( newDocEntry->GetDictEntry() );
+               new BinEntry( newDocEntry->GetDictEntry() );  //LEAK
             newBinEntry->Copy( newDocEntry );
 
             // When "this" is a Document the Key is simply of the

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/10/22 03:05:41 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2004/11/05 21:23:46 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,7 +115,7 @@ bool ElementSet::AddEntry( DocEntry* newEntry)
    {
       dbg.Verbose(1, "ElementSet::AddEntry key already present: ",
                   key.c_str());
-      return(false);
+      return false;
    } 
    else 
    {

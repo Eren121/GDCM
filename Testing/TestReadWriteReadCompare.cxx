@@ -74,8 +74,8 @@ int CompareInternal(std::string const & filename, std::string const & output)
       std::cout << std::endl
          << "        Pixel areas lengths differ: "
          << dataSize << " # " << dataSizeWritten << std::endl;
-      delete (char*)imageData;
-      delete (char*)imageDataWritten;
+      delete[] (char*)imageData;
+      delete[] (char*)imageDataWritten;
       delete header;
       delete file;
       delete reread;
@@ -87,8 +87,8 @@ int CompareInternal(std::string const & filename, std::string const & output)
       (void)res;
       std::cout << std::endl
          << "        Pixel differ (as expanded in memory)." << std::endl;
-      delete (char*)imageData;
-      delete (char*)imageDataWritten;
+      delete[] (char*)imageData;
+      delete[] (char*)imageDataWritten;
       delete header;
       delete file;
       delete reread;
@@ -97,8 +97,8 @@ int CompareInternal(std::string const & filename, std::string const & output)
    std::cout << "4...OK." << std::endl ;
 
    //////////////// Clean up:
-   delete (char*)imageData;
-   delete (char*)imageDataWritten;
+   delete[] (char*)imageData;
+   delete[] (char*)imageDataWritten;
    delete header;
    delete file;
    delete reread;

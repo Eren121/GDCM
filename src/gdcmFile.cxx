@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/03 20:52:13 $
-  Version:   $Revision: 1.151 $
+  Date:      $Date: 2004/11/05 21:23:46 $
+  Version:   $Revision: 1.152 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,6 +73,7 @@ File::File(std::string const & filename )
  */
 void File::Initialise()
 {
+   PixelConverter = NULL; //just in case
    if ( HeaderInternal->IsReadable() )
    {
       ImageDataSizeRaw = ComputeDecompressedPixelDataSizeFromHeader();
@@ -85,7 +86,7 @@ void File::Initialise()
          ImageDataSize = ImageDataSizeRaw;
       }
 
-      PixelConverter = new PixelConvert;
+      PixelConverter = new PixelConvert;  //LEAK !
       PixelConverter->GrabInformationsFromHeader( HeaderInternal );
    }
    SaveInitialValues();
@@ -105,6 +106,11 @@ File::~File()
    HeaderInternal = 0;
 
    DeleteInitialValues();
+   if( PixelConverter )
+   {
+      //delete PixelConverter;
+   }
+
 }
 
 /**
@@ -700,6 +706,7 @@ bool File::WriteBase (std::string const & fileName, FileType type)
    }
    // ----------------- End of Special Patch ----------------
    fp1->close ();
+   delete fp1;
 
    return true;
 }
