@@ -1,3 +1,10 @@
+2004-06-14 Jean-Pierre Roux		
+   *  gdcmSeqEntry.cxx
+	   - fix the display of Sequence Delimitor (SQDepthLevel pb)
+		- fix the display of SQItem ordinal number
+      - add the GetSQItemByOrdinalNumber method
+		- remove some useless never written private methods	
+		
 2004-06-14 Jean-Pierre Roux
    * gdcmBinEntry.cxx 
       - adding a constructor taking a gdcmDocEntry as an input param
@@ -19,7 +26,7 @@
       - AddEntry now takes the Item Number as a param 	
    * gdcmValEntry.cxx 
       - adding a constructor taking a gdcmDocEntry as an input param	
-	
+
 	
 2004-06-14 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * Memory leak hunt with the following command:
@@ -56,7 +63,7 @@
 
 2004-06-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
     * src/gdcmHeader.[cxx|h]:
-      - Predicates on the Transfer syntax (of the form Is[JPEF|RLE]*)
+      - Predicates on the Transfer syntax (of the form Is[JPEG|RLE]*)
         and related, moved away to gdcmDocument.
       - Accessors (on the form [Get|Set]Entry*) set up to expose publicly
         the corresponding protected accessors of inherited class
@@ -69,7 +76,7 @@
     * src/gdcmDocument.h:
       - gdcmFile is now a friend class (in order to take into account the
         changes to gdcmHeader.h).
-      - Predicates on the Transfer syntax (of the form Is[JPEF|RLE]*) added
+      - Predicates on the Transfer syntax (of the form Is[JPEG|RLE]*) added
         (see changes to gdcmHeader.h).
       - Accessors (reading on the form GetEntry*) are now public.
       - Clean up of undefined or unused methods.
