@@ -1,4 +1,8 @@
 2003-07-07  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+      * vtk/vtkGdcmReader.cxx : bug fix when loading only 1 file.
+      * src/gdcmHeader.h : formatting code
+
+2003-07-07  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
       * vtk/vtkGdcmReader.[cxx|h] : bug fix when loading only one file.
         We were obtaining error message from vtk. Now, creation of file list
         is made in an internal list to prevent this problem.

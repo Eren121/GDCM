@@ -1,4 +1,4 @@
-// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.15 2003/07/07 09:10:33 regrain Exp $
+// $Header: /cvs/public/gdcm/vtk/vtkGdcmReader.cxx,v 1.16 2003/07/07 10:26:14 regrain Exp $
 #include <stdio.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
@@ -97,7 +97,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
      return;
      }
 
-	this->RemoveAllInternalFileName();
+   this->RemoveAllInternalFileName();
    for (int idx = this->DataExtent[4]; idx <= this->DataExtent[5]; ++idx)
      {
      this->ComputeInternalFileName(idx);
@@ -440,9 +440,9 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 
   // Test if output has valid extent
   // Prevent memory errors
-  if((this->DataExtent[1]-this->DataExtent[0]>0) &&
-     (this->DataExtent[3]-this->DataExtent[2]>0) &&
-     (this->DataExtent[5]-this->DataExtent[4]>0))
+  if((this->DataExtent[1]-this->DataExtent[0]>=0) &&
+     (this->DataExtent[3]-this->DataExtent[2]>=0) &&
+     (this->DataExtent[5]-this->DataExtent[4]>=0))
     {
     // The memory size for a full stack of images of course depends
     // on the number of planes and the size of each image:
@@ -491,7 +491,6 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
             }
 		      }
         } // Else, file not loadable
-
       } // Loop on files
 
     // The "size" of the vtkScalars data is expressed in number of points,
