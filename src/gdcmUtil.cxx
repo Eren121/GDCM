@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/01/22 22:50:12 $
-  Version:   $Revision: 1.119 $
+  Date:      $Date: 2005/01/22 22:56:22 $
+  Version:   $Revision: 1.120 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -818,6 +818,9 @@ unsigned int Util::GetCurrentThreadID()
 #endif
 #ifdef __sun
    return (unsigned int)thr_self();
+#else
+   //default implementation
+   return 0;
 #endif
 }
 
