@@ -31,7 +31,7 @@
 #cmakedefine GDCM_DEBUG
 
 /* Whether we are building shared libraries.  */
-/* This is important as long as GDCM is LGPL */
+/* This was important as long as GDCM is LGPL */
 #cmakedefine BUILD_SHARED_LIBS
 
 
