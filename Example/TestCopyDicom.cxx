@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
    gdcmFile *original = new gdcmFile( argv[1] );
    
    std::cout << "--- Original ----------------------" << std::endl;
-   original->GetHeader()->Print();
+   //original->GetHeader()->Print();
    
    gdcmFile *copy = new gdcmFile( argv[2] );
 
@@ -72,14 +72,29 @@ int main(int argc, char* argv[])
    
    for (TagDocEntryHT::iterator tag = Ht.begin(); tag != Ht.end(); ++tag)
    {
-      //std::cerr << "Reading: " << tag->second->GetVR() << std::endl;
-      tag->second->Print(); std::cout << std::endl;
-    
       if (tag->second->GetVR() == "SQ") //to skip pb of SQ recursive exploration
          continue;
+
+      //According to JPR I should also skip those:
+      if (tag->second->GetVR() == "unkn") //to skip pb of SQ recursive exploration
+         continue;
+
+      std::string value = ((gdcmValEntry*)(tag->second))->GetValue();
+      if( value.find( "gdcm::NotLoaded" ) != 0 )
+         continue;
+
+// the following produce a seg fault at write time:
+//      if( value.find( "gdcm::Loaded" ) != 0 )
+//         continue;
+
+      //std::cerr << "Reading: " << tag->second->GetVR() << std::endl;
+      //tag->second->Print(); std::cout << std::endl;
+    
+      //std::cerr << "Reading: " << value  << std::endl;
+
       // Well ... Should have dynamic cast here 
       copy->GetHeader()->ReplaceOrCreateByNumber( 
-                                 ((gdcmValEntry*)(tag->second))->GetValue(),
+                                 value,
                                  tag->second->GetGroup(), 
                                  tag->second->GetElement() );
    
@@ -89,11 +104,12 @@ int main(int argc, char* argv[])
    size_t dataSize = original->GetImageDataSize();
    void *imageData = original->GetImageData();
 
+   copy->GetImageData();
    copy->SetImageData(imageData, dataSize);
 
    std::cout << "--- Copy ----------------------" << std::endl;
    std::cout <<std::endl << "DO NOT care about Offset"  <<std::endl<<std::endl;; 
-   copy->GetHeader()->Print();
+   //copy->GetHeader()->Print();
    std::cout << "--- ---- ----------------------" << std::endl;
    
    copy->WriteDcmExplVR( argv[2] );
