@@ -6,6 +6,10 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
+#ifndef _WIN32
+#include <unistd.h> //for access, unlink
+#endif
+
 // return true if the file exists
 bool FileExists(const char* filename)
 {

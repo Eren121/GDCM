@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2004/09/10 18:54:39 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2004/09/12 01:40:09 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ protected:
 
 private:
    void SwapZone(void* im, int swap, int lgr, int nb);
-   void gdcmFile::SetInitialValues();  
+   void SetInitialValues();  
    bool ReadPixelData(void * destination);
    
    // For JPEG 8 Bits, body in file gdcmJpeg.cxx
