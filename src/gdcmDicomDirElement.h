@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/26 09:49:53 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/02/01 13:11:49 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,6 @@ public:
    void Print(std::ostream &os);
 
    /**
-    * \ingroup DicomDirElement
     * \brief   returns a reference to the chained List 
     *          related to the META Elements of a DICOMDIR.
     */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:54 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/02/01 13:11:49 $
+  Version:   $Revision: 1.52 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,11 +40,11 @@ typedef std::vector<Document *>  VectDocument;
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DicomDir
  * \brief   DicomDir defines an object representing a DICOMDIR in memory
- *  as a tree-like structure DicomDirPatient -> DicomDirStudy -> DicomDirSerie
- * -> DicomDirImage
- *
+ *  as a tree-like structure DicomDirPatient 
+ *                            -> DicomDirStudy 
+ *                                -> DicomDirSerie
+ *                                    -> DicomDirImage
  */
 class GDCM_EXPORT DicomDir: public Document
 {

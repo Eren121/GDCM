@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 16:16:42 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/02/01 13:11:49 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,6 @@ class DicomDirObject;
 typedef std::list<DicomDirObject *> ListContent;
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DicomDirObject
  * \brief   Parent object for DicomDirPatient, DicomDirStudy, 
  *                          DicomDirSerie, DicomDirImage, of a DicomDir
  */
@@ -45,7 +44,6 @@ public:
 protected:
    // Constructor and destructor are protected to avoid end user to
    // instanciate from this class. 
-   // NO ! DicomDir needs to instanciate it!
    DicomDirObject(int depth = 1);
    ~DicomDirObject();
 

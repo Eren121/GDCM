@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/20 11:39:49 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/02/01 13:11:49 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,6 @@ typedef std::map<DictKey, Dict*> DictSetHT;
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DictSet
  * \brief  Container for managing a set of loaded dictionaries (Dict).
  * \note   Hopefully, sharing dictionaries should avoid
  * \par    reloading an already loaded dictionary (saving time)
@@ -44,7 +43,7 @@ public:
    DictSet();
    ~DictSet();
 
-   void Print(std::ostream &os = std::cout, std::string const & indent = "" );
+   void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
    // Probabely useless !
    //EntryNamesList *GetPubDictEntryNames();

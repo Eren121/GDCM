@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/28 09:37:29 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/02/01 13:11:49 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,6 @@
 namespace gdcm 
 {
 /**
- * \ingroup Globals Utility functions
  * \brief    Here are some utility functions, belonging to the Util class,
  *           dealing with strings, file names... that can be called
  *           from anywhere by whomsoever they can help.
@@ -77,7 +76,7 @@ private:
    GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint16_t &val);
    GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const uint32_t &val);
    GDCM_EXPORT std::ostream &binary_write(std::ostream &os, const char *val);
-   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, std::string const & val);
+   GDCM_EXPORT std::ostream &binary_write(std::ostream &os, std::string const &val);
 } // end namespace gdcm
 //-----------------------------------------------------------------------------
 #endif

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:41:33 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/02/01 13:11:49 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,6 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup DictEntry
  * \brief
  * the DictEntry in an element contained by the Dict.
  * It contains :
