@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/15 02:18:37 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2004/11/19 12:44:00 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,6 +60,7 @@ SeqEntry::SeqEntry( DocEntry* e, int depth )
 
    ImplicitVR   = e->IsImplicitVR();
    Offset       = e->GetOffset();
+   SeqTerm = NULL;
 }
 
 /**

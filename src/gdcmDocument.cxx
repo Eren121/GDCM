@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2004/11/17 19:49:13 $
-  Version:   $Revision: 1.134 $
+  Date:      $Date: 2004/11/19 12:44:00 $
+  Version:   $Revision: 1.135 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1389,10 +1389,12 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             if (delimitor)
             {
+               delete newDocEntry;
                break;
             }
             if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
             {
+               delete newDocEntry;
                break;
             }
          }
@@ -1457,6 +1459,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
     
          // Just to make sure we are at the beginning of next entry.
          SkipToNextDocEntry(newDocEntry);
+         //delete newDocEntry;
       }
       else
       {
@@ -1508,6 +1511,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          set->AddEntry( newSeqEntry );
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
+            delete newDocEntry;
             break;
          }
       }
@@ -1537,13 +1541,14 @@ void Document::ParseSQ( SeqEntry* seqEntry,
       {
          if ( newDocEntry->IsSequenceDelimitor() )
          {
-            seqEntry->SetSequenceDelimitationItem( newDocEntry );
+            seqEntry->SetSequenceDelimitationItem( newDocEntry ); 
             break;
          }
       }
       if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
       {
-          break;
+         delete newDocEntry;
+         break;
       }
 
       SQItem *itemSQ = new SQItem( seqEntry->GetDepthLevel() );
@@ -1565,6 +1570,7 @@ void Document::ParseSQ( SeqEntry* seqEntry,
       }
    
       ParseDES(itemSQ, newDocEntry->GetOffset(), l, dlm_mod);
+      delete newDocEntry;
       
       seqEntry->AddEntry( itemSQ, SQItemNumber ); 
       SQItemNumber++;

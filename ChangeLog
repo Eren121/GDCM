@@ -1,4 +1,8 @@
 2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * src/gdcmSeqEntry.cxx : add initialisation of variable SeqTerm
+   * src/gdcmDocument.cxx : add delete of DocEntry's to remove some memory leaks
+
+2004-11-15 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDocument.cxx : now, when using the ReplaceOrCreateByNumber to
      set a BinEntry, the binArea is copied (like to set a ValEntry, the string
      is copied).
