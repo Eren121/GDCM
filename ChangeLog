@@ -1,3 +1,7 @@
+2005-04-11 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * vtk/vtkGdcmWriter fix bug when writing spacing. The Y spacing comes first
+	   then the X spacing.
+
 2005-04-05 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmDictGroupName.[h|cxx] : add a correlation between a group (number)
      and it's representation name (for the NIH)

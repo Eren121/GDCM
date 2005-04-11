@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/03 18:26:48 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/04/11 17:01:16 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.20 $");
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.21 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -189,7 +189,7 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    // We are about to enter floating point value. By default ostringstream are smart and don't do fixed point
    // thus forcing to fixed point value
    str.setf( std::ios::fixed );
-   str << sp[0] << "\\" << sp[1];
+   str << sp[1] << "\\" << sp[0];
    file->InsertValEntry(str.str(),0x0028,0x0030); // Pixel Spacing
    str.str("");
    str << sp[2];
