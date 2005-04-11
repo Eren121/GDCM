@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/31 08:06:21 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/04/11 17:30:27 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,9 +75,24 @@ private:
    bool WriteFileHeader(std::ofstream *fp);
    bool WriteFileData(std::ofstream *fp);
 
-   uint8_t  ReadInt8 (std::ifstream *fp) throw( std::ios::failure );
-   uint16_t ReadInt16(std::ifstream *fp) throw( std::ios::failure );
-   uint32_t ReadInt32(std::ifstream *fp) throw( std::ios::failure );
+   uint8_t  ReadInt8 (std::ifstream *fp)
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+ throw( std::ofstream::failure );
+#else
+ ;
+#endif
+   uint16_t ReadInt16(std::ifstream *fp)
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+  throw( std::ios::failure );
+#else
+ ;
+#endif
+   uint32_t ReadInt32(std::ifstream *fp)
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+  throw( std::ios::failure );
+#else
+ ;
+#endif
    void WriteInt8 (std::ofstream *fp,uint8_t  value);
    void WriteInt16(std::ofstream *fp,uint16_t value);
    void WriteInt32(std::ofstream *fp,uint32_t value);
@@ -292,26 +307,34 @@ bool TestFile::WriteFileData(std::ofstream *fp)
 }
 
 uint8_t  TestFile::ReadInt8 (std::ifstream *fp)
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
    throw( std::ios::failure )
+#endif
 {
    uint8_t g;
    fp->read ((char*)&g, (size_t)1);
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
    if ( fp->fail() )
       throw std::ios::failure( "TestFile::ReadInt8() - file error." );
    if( fp->eof() )
       throw std::ios::failure( "TestFile::ReadInt8() - EOF." );
+#endif
    return g;
 }
 
 uint16_t TestFile::ReadInt16(std::ifstream *fp)
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
    throw( std::ios::failure )
+#endif
 {
    uint16_t g;
    fp->read ((char*)&g, (size_t)2);
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
    if ( fp->fail() )
       throw std::ios::failure( "TestFile::ReadInt16() - file error." );
    if( fp->eof() )
       throw std::ios::failure( "TestFile::ReadInt16() - EOF." );
+#endif
 
 #if defined(GDCM_WORDS_BIGENDIAN)
    g = ( g << 8 |  g >> 8  );
@@ -320,14 +343,18 @@ uint16_t TestFile::ReadInt16(std::ifstream *fp)
 }
 
 uint32_t TestFile::ReadInt32(std::ifstream *fp)
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
    throw( std::ios::failure )
+#endif
 {
    uint32_t g;
    fp->read ((char*)&g, (size_t)4);
+#if !(__GNUC__==2  && __GNUC_MINOR__==96)
    if ( fp->fail() )
       throw std::ios::failure( "TestFile::ReadInt32() - file error." );
    if( fp->eof() )
       throw std::ios::failure( "TestFile::ReadInt32() - EOF." );
+#endif
 
 #if defined(GDCM_WORDS_BIGENDIAN)
    g = (  (g<<24)               | ((g<<8)  & 0x00ff0000) | 
