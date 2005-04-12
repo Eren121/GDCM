@@ -39,6 +39,7 @@ Source: "${INNO_BINARY_DIR}\bin\Release\Print*.exe"; DestDir: "{app}\bin";      
 Source: "${INNO_BINARY_DIR}\bin\Release\*.dll";      DestDir: "{app}\bin";                     CopyMode: alwaysoverwrite; Components: core
 Source: "${INNO_BINARY_DIR}\bin\Release\*.lib";      DestDir: "{app}\lib\gdcm";                CopyMode: alwaysoverwrite; Components: core
 Source: "${INNO_SOURCE_DIR}\Dicts\*.dic";            DestDir: "{app}\Dicts";                   CopyMode: alwaysoverwrite; Components: core
+Source: "${INNO_BINARY_DIR}\*.h";                    DestDir: "{app}\include\gdcm";            CopyMode: alwaysoverwrite; Components: core
 Source: "${INNO_SOURCE_DIR}\src\*.h";                DestDir: "{app}\include\gdcm";            CopyMode: alwaysoverwrite; Components: core
 Source: "${INNO_SOURCE_DIR}\vtk\*.h";                DestDir: "{app}\include\gdcm";            CopyMode: alwaysoverwrite; Components: core
 Source: "${INNO_DATA_DIR}\test.acr";                 DestDir: "{app}\data";                    CopyMode: alwaysoverwrite; Components: core
