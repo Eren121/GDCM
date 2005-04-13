@@ -3,6 +3,13 @@
 INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
 
 # Build jpeg lib first:
+IF (WIN32)
+  IF (BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DJPEGDLL)
+  ELSE (BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DJPEGSTATIC)
+  ENDIF (BUILD_SHARED_LIBS)
+ENDIF (WIN32)
 SUBDIRS(gdcmjpeg)
 
 # "jpeglib.h" is defined here:
