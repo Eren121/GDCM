@@ -214,6 +214,12 @@ typedef unsigned long long uint64_t;
 %ignore GDCM_NOTLOADED;
 %ignore GDCM_UNREAD;
 
+%constant const char *UNKNOWN   = "gdcm::Unknown";
+%constant const char *UNFOUND   = "gdcm::Unfound";
+%constant const char *BINLOADED = "gdcm::Binary data loaded";
+%constant const char *NOTLOADED = "gdcm::NotLoaded";
+%constant const char *UNREAD    = "gdcm::UnRead";
+
 ////////////////////////////////////////////////////////////////////////////
 // Warning: Order matters !
 %include "gdcmCommon.h"
