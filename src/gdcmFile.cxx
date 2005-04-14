@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/22 11:37:15 $
-  Version:   $Revision: 1.231 $
+  Date:      $Date: 2005/04/14 14:26:19 $
+  Version:   $Revision: 1.232 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -827,20 +827,21 @@ std::string File::GetPixelType()
 }
 
 /**
- * \brief   Check whether the pixels are signed or UNsigned data.
- * \warning The method defaults to false (UNsigned) when information is Missing.
+ * \brief   Check whether the pixels are signed (1) or UNsigned (0) data.
+ * \warning The method defaults to false (UNsigned) when tag 0028|0103
+ *          is missing.
  *          The responsability of checking this value is left to the caller.
  * @return  True when signed, false when UNsigned
  */
 bool File::IsSignedPixelData()
 {
-   std::string strSize = GetEntryValue( 0x0028, 0x0103 );
-   if ( strSize == GDCM_UNFOUND )
+   std::string strSign = GetEntryValue( 0x0028, 0x0103 );
+   if ( strSign == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "(0028,0103) is supposed to be mandatory");
       return false;
    }
-   int sign = atoi( strSize.c_str() );
+   int sign = atoi( strSign.c_str() );
    if ( sign == 0 ) 
    {
       return false;

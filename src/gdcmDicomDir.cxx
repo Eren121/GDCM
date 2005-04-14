@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/09 19:29:38 $
-  Version:   $Revision: 1.136 $
+  Date:      $Date: 2005/04/14 14:26:19 $
+  Version:   $Revision: 1.137 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -130,61 +130,16 @@ DicomDir::DicomDir()
  *                        and wants to use it 
  */
 DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
-   Document( fileName )
+   Document( )
 {
    // At this step, Document constructor is already executed,
    // whatever user passed (a root directory or a DICOMDIR)
    // and whatever the value of parseDir was.
    // (nothing is cheked in Document constructor, to avoid overhead)
 
-   Initialize();  // sets all private fields to NULL
-
-   // if user passed a root directory, sure we didn't get anything
-
-   if ( GetFirstEntry() == 0 ) // when user passed a Directory to parse
-   {
-      if (!parseDir)
-         gdcmWarningMacro( "Entry HT empty for file: "<<fileName);
-
-   // Only if user passed a root directory
-   // ------------------------------------
-      if ( fileName == "." )
-      {
-         // user passed '.' as Name
-         // we get current directory name
-         char dummy[1000];
-         getcwd(dummy, (size_t)1000);
-         SetFileName( dummy ); // will be converted into a string
-      }
-
-      if ( parseDir ) // user asked for a recursive parsing of a root directory
-      {
-         NewMeta();
-
-         gdcmWarningMacro( "Parse directory and create the DicomDir");
-         ParseDirectory();
-      }
-      /*
-      else
-      {
-         //  user may just call ParseDirectory() *after* constructor
-      }
-      */
-   }
-   // Only if user passed a DICOMDIR
-   // ------------------------------
-   else 
-   {
-      // Directory record sequence
-      DocEntry *e = GetDocEntry(0x0004, 0x1220);
-      if ( !e )
-      {
-         gdcmWarningMacro( "NO 'Directory record sequence' (0x0004,0x1220)"
-                          << " in file " << fileName);
-      }
-      else
-         CreateDicomDir();
-   }
+   ParseDir = parseDir;
+   SetLoadMode (0x00000000); // concerns only dicom files
+   Load( fileName );
 }
 
 /**
@@ -205,6 +160,57 @@ DicomDir::~DicomDir()
 
 //-----------------------------------------------------------------------------
 // Public
+
+void DicomDir::Load(std::string const &fileName ) 
+{
+   Filename = fileName;
+   // We should clean out anything that already exists.
+
+   Initialize();  // sets all private fields to NULL
+
+   if (!ParseDir)
+   {
+   // Only if user passed a DICOMDIR
+   // ------------------------------
+      Fp = 0;
+      if ( !OpenFile() )
+      {
+         return;
+      }
+      Document::Load(fileName);
+      if ( GetFirstEntry() == 0 ) // when user passed a Directory to parse
+      {
+         gdcmWarningMacro( "Entry HT empty for file: "<< fileName);
+         return;
+      }
+      // Directory record sequence
+      DocEntry *e = GetDocEntry(0x0004, 0x1220);
+      if ( !e )
+      {
+         gdcmWarningMacro( "NO 'Directory record sequence' (0x0004,0x1220)"
+                          << " in file " << fileName);
+      }
+      else
+         CreateDicomDir();
+   }
+   else
+   {
+   // Only if user passed a root directory
+   // ------------------------------------
+      if ( fileName == "." )
+      {
+         // user passed '.' as Name
+         // we get current directory name
+         char dummy[1000];
+         getcwd(dummy, (size_t)1000);
+         SetFileName( dummy ); // will be converted into a string
+      }
+      NewMeta();
+      gdcmWarningMacro( "Parse directory and create the DicomDir : " << Filename );
+      ParseDirectory();
+   }
+}
+
 /**
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current document was properly parsed
@@ -348,6 +354,7 @@ void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg,
    StartArg             = arg;
    StartMethodArgDelete = argDelete;
 }
+
 
 /**
  * \brief   Set the progress method to call when the parsing of the
@@ -516,6 +523,15 @@ bool DicomDir::AnonymizeDicomDir()
    }
    return true;
 }
+
+
+
+
+
+
+
+
+
 //-----------------------------------------------------------------------------
 // Protected
 /**
@@ -528,7 +544,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
    DirList dirList(path,1); // gets recursively the file list
    unsigned int count = 0;
    VectDocument list;
-   File *header;
+   File *f;
 
    DirListType fileList = dirList.GetFilenames();
 
@@ -543,22 +559,25 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
          break;
       }
 
-      header = new File( it->c_str() );
-      if( !header )
-      {
-         gdcmWarningMacro( "Failure in new gdcm::File " << it->c_str() );
-         continue;
-      }
+   f = new File( );
+   f->SetLoadMode(LoadMode); // we allow user not to load Sequences...
+   f->Load( it->c_str() );
+
+//     if( !f )
+//     {
+//         gdcmWarningMacro( "Failure in new gdcm::File " << it->c_str() );
+//         continue;
+//      }
       
-      if( header->IsReadable() )
+      if( f->IsReadable() )
       {
          // Add the file to the chained list:
-         list.push_back(header);
+         list.push_back(f);
          gdcmWarningMacro( "Readable " << it->c_str() );
        }
        else
        {
-          delete header;
+          delete f;
        }
        count++;
    }
@@ -638,7 +657,7 @@ void DicomDir::Initialize()
 }
 
 /**
- * \brief create a 'DicomDir' from a DICOMDIR Header 
+ * \brief create a 'gdcm::DicomDir' from a DICOMDIR Header 
  */
 void DicomDir::CreateDicomDir()
 {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/03/22 11:23:51 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2005/04/14 14:26:19 $
+  Version:   $Revision: 1.108 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ public:
 typedef std::list<Element> ListElements;
 
 // Loading
-void Load( std::string const &filename ); 
+   virtual void Load( std::string const &filename ); 
 
 // Dictionaries
    Dict *GetPubDict();
@@ -155,6 +155,12 @@ protected:
    /// List of element to Anonymize
    ListElements AnonymizeList;
 
+   /// \brief Bit string integer (each one considered as a boolean)
+   ///        Bit 0 : Skip Sequences,    if possible
+   ///        Bit 1 : Skip Shadow Groups if possible
+   ///        Some more to add
+   int LoadMode;
+
 private:
 // Methods
    void Initialize();
@@ -205,11 +211,6 @@ private:
 //  void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
 //                                  DocEntrySet *set );
 
-   /// \brief Bit string integer (each one considered as a boolean)
-   ///        Bit 0 : Skip Sequences,    if possible
-   ///        Bit 1 : Skip Shadow Groups if possible
-   ///        Some more to add
-   int LoadMode;
 };
 
 } // end namespace gdcm
