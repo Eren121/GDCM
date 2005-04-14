@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:41:10 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/04/14 14:27:57 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ void EndMethod(void *endMethod)
 
 int TestMakeDicomDir(int argc, char *argv[])
 {
-//   gdcm::Debug::DebugOn();
+   //gdcm::Debug::DebugOn();
    std::string dirName;   
 
    if (argc > 1)
@@ -59,8 +59,17 @@ int TestMakeDicomDir(int argc, char *argv[])
       dirName = GDCM_DATA_ROOT;
    }
 
+   gdcm::DicomDir *dcmdir;
     // we ask for Directory parsing
-    gdcm::DicomDir *dcmdir = new gdcm::DicomDir(dirName, true);
+ 
+    // Old style (still available) :
+    // dcmdir = new gdcm::DicomDir(dirName, true);
+
+   // new style (user is allowed no to load Sequences an/or Shadow Groups)
+   dcmdir = new gdcm::DicomDir( );
+   dcmdir->SetParseDir(true);
+   dcmdir->SetLoadMode(NO_SEQ | NO_SHADOW);
+   dcmdir->Load(dirName);
 
    dcmdir->SetStartMethod(StartMethod, (void *) NULL);
    dcmdir->SetEndMethod(EndMethod);
