@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:26:30 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/04/14 15:15:15 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmDicomDir.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDirList.h"
+#include "gdcmDebug.h"
 
 #include <iostream>
 
@@ -45,29 +46,70 @@ void EndMethod(void *toto) {
 
 int main(int argc, char *argv[]) 
 {
-   gdcm::DicomDir *dcmdir;
+   //gdcm::Debug::DebugOn();
    std::string dirName;   
 
    if (argc > 1)
+   {
       dirName = argv[1];
+   }
    else
+   {
       dirName = GDCM_DATA_ROOT;
+   }
 
-   dcmdir = new gdcm::DicomDir(dirName, true); // we ask for Directory parsing
+   gdcm::DicomDir *dcmdir;
+    // we ask for Directory parsing
+ 
+    // Old style (still available) :
+    // dcmdir = new gdcm::DicomDir(dirName, true);
+
+   // new style (user is allowed no to load Sequences an/or Shadow Groups)
+   dcmdir = new gdcm::DicomDir( );
+   dcmdir->SetParseDir(true);
+   dcmdir->SetLoadMode(NO_SEQ | NO_SHADOW);
+   dcmdir->Load(dirName);
 
    dcmdir->SetStartMethod(StartMethod, (void *) NULL);
    dcmdir->SetEndMethod(EndMethod);
    
-   if ( !dcmdir->GetFirstEntry() ) 
+   if ( !dcmdir->GetFirstPatient() ) 
    {
-      std::cout << "makeDicomDir: no patient list present. Exiting."
+      std::cout << "makeDicomDir: no patient found. Exiting."
                 << std::endl;
+
+      delete dcmdir;
       return 1;
    }
     
+   // Create the corresponding DicomDir
    dcmdir->WriteDicomDir("NewDICOMDIR");
+   delete dcmdir;
+
+   // Read from disc the just written DicomDir
+   gdcm::DicomDir *newDicomDir = new gdcm::DicomDir("NewDICOMDIR");
+   if( !newDicomDir->IsReadable() )
+   {
+      std::cout<<"          Written DicomDir 'NewDICOMDIR'"
+               <<" is not readable"<<std::endl
+               <<"          ...Failed"<<std::endl;
+
+      delete newDicomDir;
+      return 1;
+   }
+
+   if( !newDicomDir->GetFirstPatient() )
+   {
+      std::cout<<"          Written DicomDir 'NewDICOMDIR'"
+               <<" has no patient"<<std::endl
+               <<"          ...Failed"<<std::endl;
+
+      delete newDicomDir;
+      return(1);
+   }
+
    std::cout<<std::flush;
 
-   delete dcmdir;
+   delete newDicomDir;
    return 0;
 }
