@@ -207,6 +207,7 @@ FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
     )
 
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/core.py
+    "from gdcmVersion import *\n"
     "import gdcm\n"
     "GDCM_DATA_ROOT = \"${GDCM_DATA_ROOT}\"\n"
     )
@@ -214,6 +215,7 @@ FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/core.py
 IF(GDCM_VTK)
   FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/vtk.py
     "import os\n"
+    "from gdcmVersion import *\n"
     "if os.name == 'posix':\n"
     "  from libvtkgdcmPython import *\n"
     "else:\n"
