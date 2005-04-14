@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 20:41:19 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/04/14 15:16:57 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    std::string output   = argv[2];
 
    // First, let's create a gdcm::File
-   // that will contain all the Dicom Field but the Pixels Element
+   // that will contain all the Dicom fields but the Pixels Element
 
    gdcm::File *f1= new gdcm::File( filename );
 
@@ -210,6 +210,9 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
              << "]" << std::endl;
    std::cout << "Frame ref UID :["   << f1->GetEntryValue(0x0020,0x0052)
              << "]" << std::endl;
+ 
+   // User wants to get info about the 'real world' vs image
+
 
    // ------ User wants to load the pixels---------------------------------
    

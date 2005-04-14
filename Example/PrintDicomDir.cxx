@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:34:59 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/04/14 15:13:39 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,12 +52,12 @@ int main(int argc, char* argv[])
 
    e1 = new gdcm::DicomDir( fileName );
 
-   e1->SetPrintLevel(2);
-   int detailLevel;
-   if (argc > 2)
-      detailLevel = atoi(argv[2]);   
-   else
-      detailLevel = 3;
+   // new style id useless, since it has no effect fore *reading* a DICOMDIR
+   // (only meaningfull when *creating* a DICOMDIR)
+
+   //e1 = new gdcm::DicomDir();
+   //e1->SetParseDir(false);
+   //e1->Load(  fileName );
 
    // Test if the DicomDir is readable
    if( !e1->IsReadable() )
@@ -69,6 +69,13 @@ int main(int argc, char* argv[])
       delete e1;
       return 1;
    }
+
+   e1->SetPrintLevel(2);
+   int detailLevel;
+   if (argc > 2)
+      detailLevel = atoi(argv[2]);   
+   else
+      detailLevel = 3;
 
    // Test if the DicomDir contains any Patient
    pa = e1->GetFirstPatient();
