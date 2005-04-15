@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/25 15:49:55 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/04/15 21:21:42 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,13 +61,19 @@ DirList::~DirList()
  */
 bool DirList::IsDirectory(std::string const &dirName)
 {
-#ifndef _MSC_VER
-   struct stat buf;
-   stat(dirName.c_str(), &buf);
-   return S_ISDIR(buf.st_mode);
+  struct stat fs;
+  if(stat(dirName.c_str(), &fs) == 0)
+    {
+#if _WIN32
+    return ((fs.st_mode & _S_IFDIR) != 0);
 #else
-   return (GetFileAttributes(dirName.c_str()) & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    return S_ISDIR(fs.st_mode);
 #endif
+    }
+  else
+    {
+    return false;
+    }
 }
 
 //-----------------------------------------------------------------------------
