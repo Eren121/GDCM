@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/15 21:21:42 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/04/15 21:30:26 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #include "gdcmUtil.h"
 
 #include <iterator>
+#include <assert.h>
 
 #ifdef _MSC_VER
    #include <windows.h> 
@@ -62,6 +63,7 @@ DirList::~DirList()
 bool DirList::IsDirectory(std::string const &dirName)
 {
   struct stat fs;
+  assert( dirName[dirName.size()-1] != '/' );
   if(stat(dirName.c_str(), &fs) == 0)
     {
 #if _WIN32
