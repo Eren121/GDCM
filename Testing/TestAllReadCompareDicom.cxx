@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/15 21:41:43 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/04/15 21:46:06 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,19 +76,19 @@ private:
    bool WriteFileData(std::ofstream *fp);
 
    uint8_t  ReadInt8 (std::ifstream *fp)
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
  throw( std::ofstream::failure );
 #else
  ;
 #endif
    uint16_t ReadInt16(std::ifstream *fp)
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
   throw( std::ios::failure );
 #else
  ;
 #endif
    uint32_t ReadInt32(std::ifstream *fp)
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
   throw( std::ios::failure );
 #else
  ;
@@ -307,13 +307,13 @@ bool TestFile::WriteFileData(std::ofstream *fp)
 }
 
 uint8_t  TestFile::ReadInt8 (std::ifstream *fp)
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
    throw( std::ios::failure )
 #endif
 {
    uint8_t g;
    fp->read ((char*)&g, (size_t)1);
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
    if ( fp->fail() )
       throw std::ios::failure( "TestFile::ReadInt8() - file error." );
    if( fp->eof() )
@@ -323,13 +323,13 @@ uint8_t  TestFile::ReadInt8 (std::ifstream *fp)
 }
 
 uint16_t TestFile::ReadInt16(std::ifstream *fp)
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
    throw( std::ios::failure )
 #endif
 {
    uint16_t g;
    fp->read ((char*)&g, (size_t)2);
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
    if ( fp->fail() )
       throw std::ios::failure( "TestFile::ReadInt16() - file error." );
    if( fp->eof() )
@@ -343,13 +343,13 @@ uint16_t TestFile::ReadInt16(std::ifstream *fp)
 }
 
 uint32_t TestFile::ReadInt32(std::ifstream *fp)
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
    throw( std::ios::failure )
 #endif
 {
    uint32_t g;
    fp->read ((char*)&g, (size_t)4);
-#if !(__GNUC__==2  && __GNUC_MINOR__==96)
+#ifndef __GNUC__
    if ( fp->fail() )
       throw std::ios::failure( "TestFile::ReadInt32() - file error." );
    if( fp->eof() )
