@@ -65,9 +65,9 @@ Source: "${INNO_SOURCE_DIR}\Doc\*.*";                DestDir: "{app}\Sources\Doc
 Source: "${INNO_SOURCE_DIR}\Dicts\*.*";              DestDir: "{app}\Sources\Dicts";           CopyMode: alwaysoverwrite; Components: sources
 Source: "${INNO_SOURCE_DIR}\CMake*.*";               DestDir: "{app}\Sources";                 CopyMode: alwaysoverwrite; Components: sources
 
-; CMake
-Source: "${INNO_SOURCE_DIR}\*.CMake";                DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
-Source: "${INNO_BINARY_DIR}\*.CMake";                DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
+; CMake - FIXME : Dependant of the compilation directory
+;Source: "${INNO_SOURCE_DIR}\*.CMake";                DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
+;Source: "${INNO_BINARY_DIR}\*.CMake";                DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
 
 ; Others
 Source: "${INNO_SOURCE_DIR}\Doc\License.txt";        DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
