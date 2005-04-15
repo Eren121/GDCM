@@ -1,3 +1,8 @@
+2005-04-15 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Fix gdcmDirList::IsDirectory. Apparently borland did not like the ending
+	 '/'
+   * Also fix compilation on gcc 3.3.5 does not have ios::failure either ...
+
 2005-04-11 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * vtk/vtkGdcmWriter fix bug when writing spacing. The Y spacing comes first
 	   then the X spacing.
