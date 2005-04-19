@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:00:06 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/04/19 10:01:02 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 #include <sstream>
 
 //Generated file:
-#include "gdcmDataImages.h"
+//#include "gdcmDataImages.h"
 
 typedef std::string EntryValueType;   // same type as ValEntry::value
 typedef std::map< gdcm::TagKey, EntryValueType > MapEntryValues;
@@ -157,7 +157,7 @@ uint16_t ReferenceFileParser::axtoi(char *hexStg)
       m--;   // adjust the position to set
       n++;   // next digit to process
    }
-   return intValue;
+   return (uint16_t)intValue;
 }
 
 void ReferenceFileParser::SetDataPath( std::string &inDataPath )
