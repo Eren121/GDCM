@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/04/19 09:58:19 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/04/19 12:31:56 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1130,6 +1130,7 @@ void FileHelper::CheckMandatoryElements()
       e_0002_0001->SetLength(2);
       Archive->Push(e_0002_0001);
 
+   // 'Media Stored SOP Class UID' 
    ValEntry *e_0002_0002 = CopyValEntry(0x0002,0x0002);
       // [Secondary Capture Image Storage]
       e_0002_0002->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
@@ -1388,7 +1389,10 @@ void FileHelper::Initialize()
 }
 
 /**
- * \brief   
+ * \brief Reads/[decompresses] the pixels, 
+ *        *without* making RGB from Palette Colors 
+ * @return the pixels area, whatever its type 
+ *         (uint8_t is just for prototyping : feel free to Cast it) 
  */ 
 uint8_t *FileHelper::GetRaw()
 {
@@ -1413,7 +1417,11 @@ uint8_t *FileHelper::GetRaw()
 }
 
 //-----------------------------------------------------------------------------
-// Print
+/**
+ * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
+ * @param   os ostream we want to print in
+ * @param indent (unused)
+ */
 void FileHelper::Print(std::ostream &os, std::string const &)
 {
    FileInternal->SetPrintLevel(PrintLevel);
