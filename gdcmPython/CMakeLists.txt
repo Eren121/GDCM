@@ -136,6 +136,7 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
 ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
+INSTALL_TARGETS(/lib/ _gdcm)
 
 #-----------------------------------------------------------------------------
 # VTK Wrapping
@@ -171,6 +172,8 @@ IF(GDCM_VTK)
                            vtkgdcm
                            vtkCommonPython
                            vtkIOPython)
+    INSTALL_TARGETS(/lib/ vtkgdcmPython)
+
   ENDIF (GDCM_WRAP_PYTHON)
 ENDIF(GDCM_VTK)
 
