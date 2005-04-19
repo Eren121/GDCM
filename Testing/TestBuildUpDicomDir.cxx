@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:41:10 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/04/19 10:03:22 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -259,7 +259,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
       std::cout << "Pysician : [" 
                 << valueStuff
                 << "]" << std::endl;
-      if ( !(s12 = p1->GetNextStudy()) )
+      if ( (s12 = p1->GetNextStudy()) == 0 )
       {
          errorFound = true;
          break;
@@ -290,7 +290,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
                 << s12->GetEntryValue(0x0008,0x1060)
                 << "]" << std::endl;
 
-      if ( !(s13 = p1->GetNextStudy()) )
+      if ( (s13 = p1->GetNextStudy()) == 0 )
       {
          std::cout << "Study StudyDescrOne.Tree missing" << std::endl;
          break;
@@ -317,7 +317,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
                 << valueStuff
                 << "]" << std::endl;
 
-      if (!(s111 = s11->GetFirstSerie()) )
+      if ((s111 = s11->GetFirstSerie()) == 0 )
       {
          std::cout << "Serie 01-01-111 missing" << std::endl;
          errorFound = true;
@@ -337,7 +337,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
                 << valueStuff
                 << "]" << std::endl;
 
-      if ( !(s1111 = s111->GetFirstImage()) )
+      if ( (s1111 = s111->GetFirstImage()) == 0 )
       {
          std::cout << "missing image S1111" << std::endl;
          errorFound = true;
@@ -350,7 +350,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
          break;
       }
 */
-      if ( !(s1112 = s111->GetNextImage()) )
+      if ( (s1112 = s111->GetNextImage()) == 0 )
       {
          std::cout << "missing image S1112" << std::endl;
          errorFound = true;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 22:50:47 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/04/19 10:02:40 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,14 +85,14 @@ int CopyRescaleDicom(std::string const &filename,
       if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
       {
          copyF.InsertBinEntry( b->GetBinArea(),b->GetLength(),
-                                b->GetGroup(),b->GetElement(),
-                                b->GetVR() );
+                               b->GetGroup(),b->GetElement(),
+                               b->GetVR() );
       }
       else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
       {   
           copyF.InsertValEntry( v->GetValue(),
-                                 v->GetGroup(),v->GetElement(),
-                                 v->GetVR() ); 
+                                v->GetGroup(),v->GetElement(),
+                                v->GetVR() ); 
       }
       else
       {
@@ -128,7 +128,7 @@ int CopyRescaleDicom(std::string const &filename,
       uint8_t *tmpRescale = rescaleImage;
       for(unsigned int i=0; i<rescaleSize; i++)
       {
-         *tmpRescale = (*tmpImage)>>8;
+         *tmpRescale = (uint8_t)( (*tmpImage)>>8 );
          tmpImage++;
          tmpRescale++;
       }

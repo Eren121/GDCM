@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/11 11:08:31 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/04/19 09:58:19 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,7 +93,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       }
 
       uint16_t z = 0;
-      uint16_t shortLgr = lgth;
+      uint16_t shortLgr = (uint16_t)lgth;
 
       if (vr == GDCM_UNKNOWN)
       {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/14 14:26:19 $
-  Version:   $Revision: 1.232 $
+  Date:      $Date: 2005/04/19 09:58:19 $
+  Version:   $Revision: 1.233 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1454,7 +1454,7 @@ void File::ComputeRLEInfo()
    //       - when more than one frame are present, then we are in 
    //         the case of a multi-frame image.
    long frameLength;
-   while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) )
+   while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) != 0 )
    { 
       // Parse the RLE Header and store the corresponding RLE Segment
       // Offset Table information on fragments of this current Frame.
@@ -1533,7 +1533,7 @@ void File::ComputeJPEGFragmentInfo()
    // Loop on the fragments[s] and store the parsed information in a
    // JPEGInfo.
    long fragmentLength;
-   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) )
+   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) != 0 )
    { 
       long fragmentOffset = Fp->tellg();
 

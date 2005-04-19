@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/09 09:45:33 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/04/19 10:05:37 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -137,7 +137,7 @@ int WriteSimple(Image &img)
    fileToBuild->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
-   str << img.componentSize - 1;
+   str << ( img.componentSize - 1 );
    fileToBuild->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
@@ -195,10 +195,10 @@ int WriteSimple(Image &img)
          {
             for(int c=0;c<img.components;c++)
             {
-               *tmp = j%256;
+               *tmp = (unsigned char)(j%256);
                if( img.componentSize>8 )
                {
-                  *(tmp+1) = j/256;
+                  *(tmp+1) = (unsigned char)(j/256);
                }
                tmp += img.componentSize/8;
             }
@@ -352,7 +352,7 @@ int TestWriteSimple(int argc, char *argv[])
       return 1;
    }
 
-   //gdcm::Debug::DebugOn();
+   gdcm::Debug::DebugOn();
        
    int ret=0;
    int i=0;

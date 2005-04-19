@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/18 01:50:54 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/04/19 10:05:36 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,8 +102,8 @@ private:
    int sizeX;
    int sizeY;
    int sizeZ;
-   int scalarSize;
-   int components;
+   uint16_t scalarSize;
+   uint16_t components;
    uint8_t *data;
    int swapCode;
 
@@ -247,7 +247,7 @@ bool TestFile::ReadFileHeader(std::ifstream *fp)
    sizeY = ReadInt32(fp); // Size Y
    sizeZ = ReadInt32(fp); // Size Z
    scalarSize = ReadInt16(fp)/8; // bits per scalar
-   components = ReadInt16(fp); // Number of components
+   components = ReadInt16(fp);   // Number of components
 
    return(true);
 }
@@ -293,7 +293,7 @@ bool TestFile::WriteFileHeader(std::ofstream *fp)
    WriteInt32(fp,sizeY); // Size Y
    WriteInt32(fp,sizeZ); // Size Z
    WriteInt16(fp,scalarSize*8); // bits per scalar
-   WriteInt16(fp,components); // number of components
+   WriteInt16(fp,components);   // number of components
 
    return(true);
 }

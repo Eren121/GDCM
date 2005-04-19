@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/04/04 15:15:24 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/04/19 09:58:19 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -626,9 +626,10 @@ bool FileHelper::Write(std::string const &fileName)
         if ( ! FileInternal->GetValEntry(0x0008, 0x0010) )
             FileInternal->InsertValEntry("", 0x0008, 0x0010);
          SetWriteFileTypeToACR();
-         break;
-         SetWriteFileTypeToExplicitVR();
+         SetWriteFileTypeToImplicitVR();
          CheckMandatoryElements();
+         break;
+
    }
 
    // --------------------------------------------------------------

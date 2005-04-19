@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/28 18:56:29 $
-  Version:   $Revision: 1.147 $
+  Date:      $Date: 2005/04/19 09:58:19 $
+  Version:   $Revision: 1.148 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -452,7 +452,7 @@ int GetMacAddrSys ( unsigned char *addr )
 {
 #ifdef _WIN32
    WSADATA WinsockData;
-   if (WSAStartup(MAKEWORD(2, 0), &WinsockData) != 0) 
+   if ( (WSAStartup(MAKEWORD(2, 0), &WinsockData)) != 0) 
    {
       std::cerr << "This program requires Winsock 2.x!" << std::endl;
       return -1;
