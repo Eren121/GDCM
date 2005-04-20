@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:32 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/04/20 11:25:35 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
    header->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
-   str << COMPONENT_SIZE * 8 - 1;
+   str << ( COMPONENT_SIZE * 8 ) - 1;
    header->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
       {
          for(int c=0;c<COMPONENT;c++)
          {
-            *tmp = j;
+            *tmp = (unsigned char)j;
             tmp += COMPONENT_SIZE; 
          }
       }

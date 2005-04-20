@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGC.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 15:31:15 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/04/20 11:25:35 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -158,9 +158,9 @@ int main(int argc, char *argv[])
            ((rgb8_t *)imageData)[i].r == ((rgb8_t *)imageData)[i].b )
       {
          n++;
-         ((rgb8_t *)imageData)[i].r = background;
-         ((rgb8_t *)imageData)[i].g = background;
-         ((rgb8_t *)imageData)[i].b = background;
+         ((rgb8_t *)imageData)[i].r = (unsigned char)background;
+         ((rgb8_t *)imageData)[i].g = (unsigned char)background;
+         ((rgb8_t *)imageData)[i].b = (unsigned char)background;
       }
    }
    
@@ -177,9 +177,9 @@ int main(int argc, char *argv[])
         ((rgb8_t *)imageData)[i].b < threshold )
       {
          n++;
-        ((rgb8_t *)imageData)[i].r = background;
-        ((rgb8_t *)imageData)[i].g = background;
-        ((rgb8_t *)imageData)[i].b = background;  
+        ((rgb8_t *)imageData)[i].r = (unsigned char)background;
+        ((rgb8_t *)imageData)[i].g = (unsigned char)background;
+        ((rgb8_t *)imageData)[i].b = (unsigned char)background;  
       }
    }
    
