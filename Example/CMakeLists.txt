@@ -14,6 +14,7 @@ SET(EXAMPLE_SOURCES
   exColorToRGB
   exGC
   exImageLighten
+  exOverlaysACR
             
 #the following are utilities
   PrintDicomDir
