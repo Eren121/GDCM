@@ -1,3 +1,7 @@
+2005-04-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * FIX : on X, the python part is correctly installed. All files are 
+     installed in gdcm sub-directory
+
 2005-04-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Builder/ : add something to facilitate the RPM creation of gdcm
 

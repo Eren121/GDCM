@@ -67,8 +67,10 @@ TARGET_LINK_LIBRARIES(vtkWriteDicom
 
 #-----------------------------------------------------------------------------
 # Install vtk header
-INSTALL_FILES(/include FILES vtkGdcmReader.h)
-INSTALL_FILES(/include FILES vtkGdcmWriter.h)
+INSTALL_FILES(/include/gdcm FILES vtkGdcmReader.h)
+INSTALL_FILES(/include/gdcm FILES vtkGdcmWriter.h)
 
-INSTALL_TARGETS(/lib/ vtkgdcm)
+INSTALL_TARGETS(/lib/gdcm/ vtkgdcm)
+INSTALL_TARGETS(/bin/ vtkgdcmViewer)
+INSTALL_TARGETS(/bin/ vtkgdcmViewer2)
 

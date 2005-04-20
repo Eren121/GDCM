@@ -47,11 +47,6 @@ IF(UNIX)
       ${GDCM_BINARY_DIR}/Builder/gdcm.spec
   )
 
-#  ADD_CUSTOM_TARGET(TarGZ
-#    ALL
-#    ${GDCM_SOURCE_DIR}/../tar -zcvf ${GDCM_BINARY_DIR}/BUILDER/gdcm.tar.gz ${GDCM_SOURCE_DIR}
-#  )
-
   STRING(REGEX REPLACE ".*/" "" SPEC_SOURCE_DIR ${GDCM_SOURCE_DIR})
   EXEC_PROGRAM("date +%Y%m%d" OUTPUT_VARIABLE GDCM_DATE)
 

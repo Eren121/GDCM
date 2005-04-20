@@ -136,7 +136,7 @@ ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
 
 ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
 
-INSTALL_TARGETS(/lib/ _gdcm)
+INSTALL_TARGETS(/lib/gdcm/ _gdcm)
 
 #-----------------------------------------------------------------------------
 # VTK Wrapping
@@ -172,7 +172,7 @@ IF(GDCM_VTK)
                            vtkgdcm
                            vtkCommonPython
                            vtkIOPython)
-    INSTALL_TARGETS(/lib/ vtkgdcmPython)
+    INSTALL_TARGETS(/lib/gdcm/ vtkgdcmPython)
 
   ENDIF (GDCM_WRAP_PYTHON)
 ENDIF(GDCM_VTK)
@@ -187,20 +187,9 @@ ENDIF(GDCM_VTK)
 #)
 
 #-----------------------------------------------------------------------------
-# Install stuff:
-
-# Cmake cannot handle installing since python wants stuff to be installed
-# in /usr/lib/pythonx.x/site-package and not a a std /usr/lib
-# Thus generate a setup.py file using distutils
-
-# Create a gdcm.pth file:
-
+# Python package configuration
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcmVersion.py
     "gdcmVERSION=\"${GDCM_VERSION}\"\n"
-    )
-
-FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcm.pth
-    "gdcmPython\n"
     )
 
 FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/__init__.py
@@ -226,6 +215,40 @@ IF(GDCM_VTK)
     "GDCM_DATA_ROOT = \"${GDCM_DATA_ROOT}\"\n"
     )
 ENDIF(GDCM_VTK)
+
+#-----------------------------------------------------------------------------
+# Python installation
+IF(WIN32)
+  FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcmPython.pth
+       "${GDCM_BINARY_DIR}\n"
+       "${GDCM_BINARY_DIR}/bin/release\n"
+  )
+ELSE(WIN32)
+  FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcmPython.pth
+       "${CMAKE_INSTALL_PREFIX}/lib/gdcm\n"
+  )
+ENDIF(WIN32)
+FIND_PATH(PYTHON_INSTALL "site-packages"
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath]
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.3\\InstallPath]
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.2\\InstallPath]
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.1\\InstallPath]
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.0\\InstallPath]
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\1.6\\InstallPath]
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\1.5\\InstallPath]
+    /usr/lib/python2.4
+    /usr/lib/python2.3
+    /usr/lib/python2.2
+    /usr/lib/python2.1
+    /usr/lib/python2.0
+    /usr/lib/python1.6
+    /usr/lib/python1.5
+)
+STRING(REGEX REPLACE "/usr(.*)/config.*" "\\1" PYTHON_INSTALL ${PYTHON_LIBRARY})
+
+INSTALL_FILES(${PYTHON_INSTALL}/site-packages "\\.pth$")
+INSTALL_FILES(/lib/gdcm/gdcmPython "\\.py$")
+INSTALL_FILES(/lib/gdcm/gdcmPython FILES "gdcm.py")
 
 #-----------------------------------------------------------------------------
 # Add test from demo subdir:

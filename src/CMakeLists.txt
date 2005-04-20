@@ -84,5 +84,5 @@ IF(CMAKE_SYSTEM MATCHES "SunOS.*")
   TARGET_LINK_LIBRARIES(gdcm socket nsl)
 ENDIF(CMAKE_SYSTEM MATCHES "SunOS.*")
 
-INSTALL_FILES(/include "\\.h$")
-INSTALL_TARGETS(/lib/ gdcm)
+INSTALL_FILES(/include/gdcm "\\.h$")
+INSTALL_TARGETS(/lib/gdcm/ gdcm)
