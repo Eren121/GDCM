@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:09 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/04/20 22:04:34 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -284,6 +284,13 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
    // CoherentGdcmFileVector.reserve( n );
    CoherentGdcmFileVector.resize( n );
    // gdcmAssertMacro( CoherentGdcmFileVector.capacity() >= n );
+
+   // Find out if min/max are coherent
+   if( min == max )
+     {
+     gdcmWarningMacro( "Looks like all images have the exact same image position...");
+     return false;
+     }
 
    float step = (max - min)/(n - 1);
    int pos;
