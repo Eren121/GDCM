@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/01/23 10:12:34 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/04/21 07:40:00 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,6 +59,7 @@ enum SpecialType {
   JPEG2000Lossless,  
   JPEG2000,
   RLELossless,
+  MPEG2MainProfile,  
   UnknownTS
 };
 

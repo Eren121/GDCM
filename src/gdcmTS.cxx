@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/04/21 07:40:00 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,7 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-/// \brief Transfer Syntaxes gdcm deals with (internal use onky)
+/// \brief Transfer Syntaxes gdcm deals with (internal use only)
 static const char *SpecialStrings[] =  {
   // Implicit VR Little Endian
   "1.2.840.10008.1.2",
@@ -71,6 +71,8 @@ static const char *SpecialStrings[] =  {
   "1.2.840.10008.1.2.4.91",
   // RLE Lossless
   "1.2.840.10008.1.2.5",
+  // MPEG2 Main Profile @ Main Level
+  "1.2.840.10008.1.2.4.100",
   // Unknown
   "Unknown Transfer Syntax"
 };
@@ -282,6 +284,11 @@ bool TS::IsJPEGLS(TSKey const &key)
    return r;
 }
 
+/**
+ * \brief   GetSpecialTransferSyntax ??
+ * @param  key TSKey const &key ??
+ * @return  TS::SpecialType ??.
+ */
 TS::SpecialType TS::GetSpecialTransferSyntax(TSKey const &key)
 {
    for (int i = 0; SpecialStrings[i] != NULL; i++)
@@ -291,10 +298,14 @@ TS::SpecialType TS::GetSpecialTransferSyntax(TSKey const &key)
          return SpecialType(i);
       }
    }
-
    return UnknownTS;
 }
 
+/**
+ * \brief   GetSpecialTransferSyntax ??
+ * @param  t SpecialType t ??
+ * @return  char* TS : SpecialStrings[t] ??.
+ */
 const char* TS::GetSpecialTransferSyntax(SpecialType t)
 {
    return SpecialStrings[t];
