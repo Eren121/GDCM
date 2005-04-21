@@ -21,31 +21,69 @@
 We know the following are missing; don't loose time looking for them ...<br>
 We know they could be helpfull. We shall add them some day.<br>
 Any contribution is welcome.
-
 <UL>
-   <LI> gdcm doesn't read yet JPEG-LS and JPEG2000 encoded files.
-   <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he just wants 
-           to load a given list of <TT>DocEntries</TT> (to save CPU time and RAM
-           space)
-   <LI> Allow user to tell the Writer he doesn't want to write down
+<LI> Decoders   
+   <UL>
+      <LI> gdcm doesn't read yet JPEG-LS and JPEG2000 encoded files.
+      <LI> gdcm doesn't read yet MPEG encoded files.
+   </UL>
+<LI>Reader
+   <UL>
+      <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he just wants 
+           to load a given list of <TT>DocEntries</TT> 
+           (to save CPU time and RAM space)
+      <LI> Allow 'frame by frame' reading (should be helpfull for huge multiframe
+images)
+      <LI> Expose Read/Decompression mechanisms to allow user getting
+         information from <tt>DICOMDIR</TT> <br> -or from his own Data Base- 
+         and reading his images without parsing
+         the header, one more time.
+   </UL> 
+   <LI>Writer 
+   <UL> 
+      <LI> Allow user to tell the Writer he doesn't want to write down
            <TT>SeqEntry</TT> (if any) 
-   <LI> Allow user to tell the Writer he doesn't want to write down
+      <LI> Allow user to tell the Writer he doesn't want to write down
            <TT>Shadow groups</TT> (if any)
-   <LI> <TT>Icon Image</TT> management (Read and Write) 
-   <LI> <TT>DICOMDIR</TT> full management (not limited to
+      <LI> Allow user to tell the Writer which compression mode he wants<br>
+           (Right now, no one is available)
+   </UL>
+<LI>Reader / Writer 
+   <UL>  
+      <LI> Full <TT>Icon Image</TT> management (Read and Write) 
+      <LI> Full <TT>Overlays</TT> management (Read and Write) <br>
+           both for '<TT>ACR-NEMA</TT> style' (using groups <TT>0x6000</TT> 
+            and nexts) and '<TT>DICOM V3</TT> style' (using Sequences)
+   </UL>
+<LI> <TT>DICOMDIR</TT> 
+    <UL>
+      <LI> <TT>DICOMDIR</TT> full management (not limited to
            <TT> PATIENT</TT>/<TT>STUDY</TT>/<TT>SERIE</TT>/<TT>IMAGE</TT>)
-   <LI> Allow user to add an Entry to the default entry list, before
+      <LI> Allow user to add an entry (belonging to the file header Dicom
+           entries)to the default entry list, before
            making a <TT>DICOMDIR</TT> from a root directory
-   <LI> 16-bits-LUT full Management
-   <LI> User friendly management of <TT>Rescale Slope</TT> and
-           <TT>Rescale Intercept</TT>
-   <LI> Allow parsing the <TT>Shadow groups</TT> against a user supplied 
-           private <TT>Dicom Dictionary</TT> (pfff!...)
-   <LI> An accurate <TT>SerieHelper</TT>
-   <LI> A <TT>SerieHelper</TT> that would use the <TT>DICOMDIR</TT> (if any)
-        instead of parsing all the files within the Root Directory
-</UL>
+      <LI> Allow user to add an entry of his owns (for instance an <TT>Icon</TT>
+           to each image, or to each Serie.  
+      </UL>
+<LI> SerieHelper
+   <UL>
 
+      <LI> An accurate <TT>SerieHelper</TT> <br>
+           Right now <TT>SerieHelper</TT> only works on 'bona fide Series', and
+           breaks on wrongly forged Series.<br>
+           We are still looking for any heuristics...  
+      <LI> A <TT>SerieHelper</TT> that would use the <TT>DICOMDIR</TT> (if any)
+        instead of parsing all the files within the Root Directory
+   </UL>
+<LI> Other
+   <UL>
+      <LI> 16-bits-LUT full Management
+      <LI> User friendly management of <TT>Rescale Slope</TT> and
+           <TT>Rescale Intercept</TT>
+      <LI> Allow parsing the <TT>Shadow groups</TT> against a user supplied 
+           private <TT>Dicom Dictionary</TT> (pfff!...)
+   </UL>
+</UL>
 <!#######################################################################>
 <HR size="1"><ADDRESS style="align: right;"></ADDRESS>
 <H2>
@@ -67,7 +105,8 @@ Any contribution is welcome.
       <LI>Both <TT>vtkgdcmViewer</TT> and <TT>vtkgdcmViewer2</TT> 
           are available to allow easy displaying of single/multiframe 
           GreyLevel/RGB/PaletteColor images
-      <LI> <TT>DICOMDIR</TT> anonymiser (<TT>Load</TT> and <TT>Noload</TT> mode)       <LI> User is now allowed to tell <TT>gdcm::Document</TT> constructor 
+      <LI> <TT>DICOMDIR</TT> anonymiser (<TT>Load</TT> and <TT>Noload</TT> mode)
+      <LI> User is now allowed to tell <TT>gdcm::Document</TT> constructor 
             he doesn't want to deal with <TT>SeqEntry</TT> 
             (every time it's possible) <br> and/or he doesn't 
             want to deal with <TT>Shadow groups</TT> (every time it's
@@ -79,9 +118,24 @@ Any contribution is welcome.
             </TT>
             instead of : <br>
             <TT>
-            gdcm::File *f = new gdcm::File(fileName);</TT>
-           <br>
-  
+            gdcm::File *f = new gdcm::File(fileName);</TT> <br>
+            (old style still available)    
+
+        <LI> User is now allowed to tell <TT>gdcm::DicomDir</TT> constructor 
+            he doesn't want to deal with <TT>SeqEntry</TT> 
+            (every time it's possible) <br> and/or he doesn't 
+            want to deal with <TT>Shadow groups</TT> (every time it's
+            possible)<br>
+            use : <br><TT>
+            gdcm::DicomDir *dcmdir = new gdcm::DicomDir( );<br>
+            dcmdir->SetParseDir(true);<br>
+            dcmdir->SetLoadMode(NO_SEQ | NO_SHADOW);<br>
+            dcmdir->Load(dirName);<br>
+            </TT>
+            instead of : <br>
+            <TT>
+            gdcm::DicomDir *dcmdir = new gdcm::DicomDir(dirName, true);</TT><br>
+            (old style still available)    
        <LI>
    </UL>
 
@@ -91,12 +145,13 @@ Any contribution is welcome.
             high values = dark) and <TT>MONOCHROME2</TT> (low values = dark,
             high values = bright) is now taken into account.<br> 
             It's no longer up to the user to change the pixels value
-      <LI> Writing a 'True Dicom' image after reading an ACR-NEMA image 
+      <LI> Writing a 'True Dicom' image after reading an <TT>ACR-NEMA</TT> image 
            does not request any longer from the user to build up 
-            'manually' the Meta Elements group (0002)
-      <LI> Old '24 Bits' ACR-NEMA are now correctly re-written in DICOM mode.
-      <LI> Element 0x0000 of <TT>Shadow groups</TT> is always forced to be a
-           <TT>ValEntry</TT> and its VR is forced to <TT>UL</TT> 
+            'manually' the Meta Elements group (<TT>Ox0002</TT>)
+      <LI> Old '24 Bits' <TT>ACR-NEMA</TT> are now correctly re-written
+           in <TT>DICOM V3</TT> mode.
+      <LI> Element <TT>0x0000</TT> of <TT>Shadow groups</TT> is always forced to be a
+           <TT>ValEntry</TT> and its <TT>VR</TT> is forced to <TT>UL</TT> 
       <LI>
    </UL>
 
