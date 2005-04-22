@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/21 07:40:00 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/04/22 13:37:57 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -277,6 +277,25 @@ bool TS::IsJPEGLS(TSKey const &key)
    {
       if ( key == SpecialStrings[JPEGLSLossless]
         || key == SpecialStrings[JPEGLSNearLossless] ) 
+      {
+         r = true;
+      }
+   }
+   return r;
+}
+
+/**
+ * \brief   Determines if the Transfer Syntax corresponds to any form
+ *          of MPEG encoded Pixel data.
+ * @return  True when any form of MPEG found. False otherwise.
+ */
+bool TS::IsMPEG(TSKey const &key)
+{
+   bool r = false;
+   // First check this is an actual transfer syntax
+   if( IsTransferSyntax(key) )
+   {
+      if ( key == SpecialStrings[MPEG2MainProfile] ) 
       {
          r = true;
       }

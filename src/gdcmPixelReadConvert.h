@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/15 18:12:35 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/04/22 13:37:57 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -112,6 +112,7 @@ private:
    bool IsJPEGLossy;
    bool IsJPEG;
    bool IsRLELossless;
+   bool IsMPEG;
 
    RLEFramesInfo *RLEInfo;
    JPEGFragmentsInfo *JPEGInfo;

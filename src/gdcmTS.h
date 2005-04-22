@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/04/21 07:40:00 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/04/22 13:37:57 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,6 +78,7 @@ public:
    bool IsJPEG2000(TSKey const &key);
    bool IsJPEG(TSKey const &key);
    bool IsJPEGLS(TSKey const &key);
+   bool IsMPEG(TSKey const &key);
 
    // This should be deprecated very soon
    SpecialType GetSpecialTransferSyntax(TSKey const &key);
