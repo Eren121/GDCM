@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/03 11:39:24 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/04/22 12:07:39 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.67 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.68 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -293,7 +293,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
       // The actual advance measure:
       unsigned long UpdateProgressCount = 0;
 
-      // Feeling the allocated memory space with each image/volume:
+      // Filling the allocated memory space with each image/volume:
       unsigned char *Dest = (unsigned char *)data->GetScalarPointer();
       for (std::list<std::string>::iterator filename  = InternalFileNameList.begin();
            filename != InternalFileNameList.end();
