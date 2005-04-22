@@ -1,38 +1,20 @@
-Summary: gdcm
+Summary: Dicom library
 Name: gdcm
 Version: @GDCM_VERSION@
-Release: 1.@GDCM_DATE@
+Release: @GDCM_VERSION@.@GDCM_DATE@
 License: BSD
 Group: Development/Libraries
+URL: http://www.creatis.insa-lyon.fr/Public/Gdcm
 #Source: ftp://ftp.creatis.insa-lyon.fr/gdcm/gdcm/gdcm.tar.gz
 Source: ../SOURCES/gdcm.tar.gz
 BuildRoot: /var/tmp/gdcm-%{version}-root
+Requires: python2
+BuildRequires: doxygen, swig13, python2
 Prereq: /sbin/install-info
+Packager: Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
 
 %description
-write something here
-
-%changelog
-* Fri Apr 15 2005 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 1.0.0-1.20050415
-- rebuild a post 1.0.0 CVS version with cmake
-
-* Wed Mar 23 2005 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 0.4.1-4
-- rebuild for VTK cvs20040114.
-
-* Thu Nov 11 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 0.4.1-3
-- fix vtk/Makefile.am for FC3 automake
-- rebuild for Fedora Core 3
-
-* Thu May 27 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 0.4.1-2
-- rebuild for Fedora Core 2
-- debuginfo rebuild
-
-* Mon May  3 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
-- fixed some python paths.
-- update to version of 2004-04-20, for use with DaVaW.
-
-* Tue Feb 24 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
-- initial packaging.
+gdcm is a library dedicated to read and write DICOM files.
 
 %prep
 %setup -q -n gdcm
@@ -51,7 +33,7 @@ cmake . \
 -DBUILD_EXAMPLES:BOOL=ON \
 -DGDCM_VTK:BOOL=ON \
 -DGDCM_WRAP_PYTHON:BOOL=ON \
--DGDCM_DOCUMENTATION:BOOL=OFF
+-DGDCM_DOCUMENTATION:BOOL=ON
 
 %build
 make
@@ -75,4 +57,27 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/lib/*
 %{_prefix}/include/*
 %{_prefix}/share/gdcm/*
+
+%changelog
+* Fri Apr 15 2005 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 1.0.0-1.20050415
+- rebuild a post 1.0.0 CVS version with cmake
+
+* Wed Mar 23 2005 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 0.4.1-4
+- rebuild for VTK cvs20040114.
+
+* Thu Nov 11 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 0.4.1-3
+- fix vtk/Makefile.am for FC3 automake
+- rebuild for Fedora Core 3
+
+* Thu May 27 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 0.4.1-2
+- rebuild for Fedora Core 2
+- debuginfo rebuild
+
+* Mon May  3 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
+- fixed some python paths.
+- update to version of 2004-04-20, for use with DaVaW.
+
+* Tue Feb 24 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
+- initial packaging.
+
 
