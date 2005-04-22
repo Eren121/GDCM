@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:20:53 $
-  Version:   $Revision: 1.234 $
+  Date:      $Date: 2005/04/22 12:59:58 $
+  Version:   $Revision: 1.235 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1108,8 +1108,10 @@ void Document::LoadDocEntry(DocEntry *entry)
       {  
          //s << "gdcm::NotLoaded (BinEntry)";
          s << GDCM_NOTLOADED;
-         s << " Address:" << (long)entry->GetOffset();
-         s << " Length:"  << entry->GetLength();
+         s << " Ad.:" << (long)entry->GetOffset();
+         s << " x(" << std::hex << entry->GetOffset() << ")";
+         s << std::dec;
+         s << " Lgt:"  << entry->GetLength();
          s << " x(" << std::hex << entry->GetLength() << ")";
          binEntryPtr->SetValue(s.str());
       }
