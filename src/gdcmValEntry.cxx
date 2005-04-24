@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/22 11:39:04 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/04/24 16:21:44 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-#define MAX_SIZE_PRINT_ELEMENT_VALUE 0x7fffffff;
+#define MAX_SIZE_PRINT_ELEMENT_VALUE 0x7fffffff
 uint32_t ValEntry::MaxSizePrintEntry = MAX_SIZE_PRINT_ELEMENT_VALUE;
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
