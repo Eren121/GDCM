@@ -20,13 +20,14 @@ SET(EXAMPLE_SOURCES
   PrintDicomDir
   PrintDocument
   PrintFile
-  PrintHeader
   FindTags
   MakeDicomDir
   AnonymizeDicomDir # without loading it as a gdcm::DicomDir
 
 #the following will be transformed into 'examples', or 'utilities'
 #              or will be removed
+#
+# Better you don't use them (not fully checked ...)
  
   #test
   FlatHashTablePrint

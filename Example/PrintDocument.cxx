@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:28:59 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/04/25 14:07:05 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,15 @@ int main(int argc, char *argv[])
 
    e1->Print();
       
-   std::cout << "\n\n" << std::endl;        
+   std::cout << "\n\n" << std::endl; 
+
+   if ( e1->GetEntryValue(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) 
+   {
+      std::cout << "Transfer Syntax not loaded. " << std::endl
+                << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
+                << std::endl;
+      return 0;
+   }       
    
    if(e1->IsReadable())
       std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
