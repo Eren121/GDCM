@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 16:39:28 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/04/25 14:35:21 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,8 +30,11 @@
 int TestMakeIcon (int argc, char *argv[])
 {
    // hard coded small image name
-   std::string input = "LIBIDO-8-ACR_NEMA-Lena_128_128.acr";
-   std::string output = "test.dcm";
+   std::string input = GDCM_DATA_ROOT;
+   input += "/"; 
+   input += "LIBIDO-8-ACR_NEMA-Lena_128_128.acr";
+
+   std::string output = "testIcon.dcm";
 
    gdcm::Debug::DebugOn();
 
