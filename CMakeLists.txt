@@ -117,12 +117,16 @@ INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityCXX.cmake)
 IF(CMAKE_NO_ANSI_STRING_STREAM)
   SET(GDCM_NO_ANSI_STRING_STREAM 1)
 ENDIF(CMAKE_NO_ANSI_STRING_STREAM)
+
+# Big endian thing:
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(GDCM_WORDS_BIGENDIAN)
 
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
-CHECK_INCLUDE_FILE("stdint.h"       CMAKE_HAVE_STDINT_H)
-CHECK_INCLUDE_FILE("inttypes.h"     CMAKE_HAVE_INTTYPES_H)
+IF(UNIX) #Avoid polluting Win32 cmakecache
+  CHECK_INCLUDE_FILE("stdint.h"       CMAKE_HAVE_STDINT_H)
+  CHECK_INCLUDE_FILE("inttypes.h"     CMAKE_HAVE_INTTYPES_H)
+ENDIF(UNIX)
 
 # Check if header file exists and add it to the list.
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFiles.cmake)
@@ -138,7 +142,7 @@ ENDMACRO(CHECK_INCLUDE_FILE_CONCAT)
 # test the inclusion of files
 CHECK_INCLUDE_FILE_CONCAT("unistd.h"       CMAKE_HAVE_UNISTD_H)
 CHECK_INCLUDE_FILE_CONCAT("stdlib.h"       CMAKE_HAVE_STDLIB_H)
-IF(UNIX) #Avoid pollutting Win32 cmakecache
+IF(UNIX) #Avoid polluting Win32 cmakecache
   CHECK_INCLUDE_FILE_CONCAT("sys/ioctl.h"    CMAKE_HAVE_SYS_IOCTL_H)
   CHECK_INCLUDE_FILE_CONCAT("sys/socket.h"   CMAKE_HAVE_SYS_SOCKET_H)
   CHECK_INCLUDE_FILE_CONCAT("sys/sockio.h"   CMAKE_HAVE_SYS_SOCKIO_H)
