@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/25 14:35:21 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/04/26 16:23:58 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,16 +49,18 @@ int TestMakeIcon (int argc, char *argv[])
                 << " input filename.dcm output Filename.dcm" << std::endl;
    }
 
-   gdcm::File *f1 = new gdcm::File(input);
+   gdcm::File *f1 = new gdcm::File( );
+   f1->Load(input);
 
-   if (f1 == 0)
+   if ( ! f1->IsReadable() )
    {
-      std::cout << " failed to open file" << std::endl;
+      std::cout << " Failed to Open/Parse file" << input << std::endl;
+      delete f1;
       return 1;
    }  
    gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1); 
    uint8_t *pixels = fh1->GetImageData();
-   uint32_t lgth = fh1->GetImageDataSize();
+   uint32_t lgth   = fh1->GetImageDataSize();
 
    gdcm::SeqEntry *icon = f1->InsertSeqEntry(0x0088, 0x0200);
    gdcm::SQItem *sqi = new gdcm::SQItem(1);
