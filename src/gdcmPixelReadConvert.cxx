@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/31 09:46:51 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/04/26 16:25:49 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,6 +115,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian;
 
+   IsMPEG          = Global::GetTS()->IsMPEG(ts);
    IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts);
    IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts);
    IsJPEGLossy     = Global::GetTS()->IsJPEGLossy(ts);
@@ -249,6 +250,11 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
          gdcmWarningMacro( "RLE decompressor failed." );
          return false;
       }
+   }
+   else if ( IsMPEG )
+   {
+      gdcmWarningMacro( "Sorry, MPEG not yet taken into account" );
+      return false;
    }
    else
    {
