@@ -240,7 +240,7 @@ typedef unsigned long long uint64_t;
 %include "gdcmDocument.h"
 %include "gdcmFile.h"
 %include "gdcmSerieHelper.h"
-%include "gdcmFile.h"
+%include "gdcmFileHelper.h"
 %include "gdcmUtil.h"
 %include "gdcmGlobal.h"
 %include "gdcmDicomDir.h"
