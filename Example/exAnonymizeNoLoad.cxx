@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exAnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/09 19:16:33 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/04/26 16:21:55 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
    std::cout << "even if pixels are not gdcm readable (JPEG2000)"  << std::endl;
    std::cout << "Warning : the image is overwritten"               << std::endl;
    std::cout << "        : to preserve image integrity "
-          << " use exAnonymize "                                << std::endl;
+             << " use exAnonymize "                                << std::endl;
  
    if( argc < 3 )
     {

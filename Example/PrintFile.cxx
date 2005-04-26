@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:28:59 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/04/26 16:21:55 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,9 +46,14 @@ int main(int argc, char *argv[])
       gdcm::Debug::DebugOn();
 
    if (argc > 4)
-      e1->SetLoadMode(NO_SEQ | NO_SHADOW);
-   
+      e1->SetLoadMode(NO_SEQ | NO_SHADOW);   
    e1->Load( fileName.c_str() );
+
+   if ( !e1->IsReadable() )
+   {
+      delete e1;
+      return 0;
+   }
 
    f1 = new gdcm::FileHelper(e1);
 

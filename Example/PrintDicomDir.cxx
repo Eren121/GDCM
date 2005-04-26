@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/14 15:13:39 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/04/26 16:21:54 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,10 +50,10 @@ int main(int argc, char* argv[])
    if (argc > 3)
       gdcm::Debug::DebugOn();
 
-   e1 = new gdcm::DicomDir( fileName );
-
-   // new style id useless, since it has no effect fore *reading* a DICOMDIR
+   // new style is useless, since it has no effect fore *reading* a DICOMDIR
    // (only meaningfull when *creating* a DICOMDIR)
+
+   e1 = new gdcm::DicomDir( fileName );
 
    //e1 = new gdcm::DicomDir();
    //e1->SetParseDir(false);
