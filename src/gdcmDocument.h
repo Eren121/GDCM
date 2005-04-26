@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/04/14 14:26:19 $
-  Version:   $Revision: 1.108 $
+  Date:      $Date: 2005/04/26 16:18:23 $
+  Version:   $Revision: 1.109 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -152,7 +152,7 @@ protected:
    /// are NOT loaded.
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
 
-   /// List of element to Anonymize
+   /// List of elements to Anonymize
    ListElements AnonymizeList;
 
    /// \brief Bit string integer (each one considered as a boolean)
@@ -160,6 +160,11 @@ protected:
    ///        Bit 1 : Skip Shadow Groups if possible
    ///        Some more to add
    int LoadMode;
+   
+   /// Whether the gdcm::Document is already parsed/loaded
+   /// - False from the creation of the gdcm::Document untill 
+   ///   gdcm::Document:Load()
+   bool IsDocumentAlreadyLoaded;
 
 private:
 // Methods

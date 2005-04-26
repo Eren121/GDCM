@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/24 20:54:45 $
-  Version:   $Revision: 1.236 $
+  Date:      $Date: 2005/04/26 16:18:23 $
+  Version:   $Revision: 1.237 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,9 @@ Document::Document()
    Initialize();
    SwapCode = 1234;
    Filetype = ExplicitVR;
+   // Load will set it to true if sucessfull
    Group0002Parsed = false;
+   IsDocumentAlreadyLoaded = false;
    LoadMode = 0x00000000; // default : load everything, later
 }
 
@@ -78,6 +80,9 @@ Document::Document( std::string const &filename )
    Filetype = ExplicitVR;
    Group0002Parsed = false;
    LoadMode = 0x00000000; // Load everything
+
+   // Load will set it to true if sucessfull
+   IsDocumentAlreadyLoaded = false;
 
    Load(filename); 
 }
@@ -99,13 +104,27 @@ Document::~Document ()
  */
 void Document::Load( std::string const &filename ) 
 {
-   Filename = filename;
-
    // We should clean out anything that already exists.
+   // Check IsDocumentAlreadyLoaded to be sure.
+   if( IsDocumentAlreadyLoaded )
+   {
+      gdcmWarningMacro( "A file was already parsed inside this " <<
+                   "gdcm::Document (previous name was: "
+                    << Filename.c_str() << ". New name is :"
+                    << filename );
+     // todo : clean out the 'Document'
+     // We should call ClearEntry() on the parent object ?!?
+   }
+
+   Filename = filename;
 
    Fp = 0;
    if ( !OpenFile() )
    {
+      // warning already performed in OpenFile()
+      //gdcmWarningMacro( "Unable to open as an ACR/DICOM file: "
+      //                 << Filename.c_str() );
+      Filetype = Unknown;
       return;
    }
 
@@ -118,12 +137,30 @@ void Document::Load( std::string const &filename )
 
    Fp->seekg(0, std::ios::beg);
 
-   CheckSwap();
+   // CheckSwap returns a boolean 
+   // (false if no swap info of any kind was found)
+   if (! CheckSwap() )
+   {
+      gdcmWarningMacro( "Neither a DICOM V3 nor an ACR-NEMA file: " 
+                   << Filename.c_str());
+      CloseFile(); 
+      return ;      
+    }
+
    long beg = Fp->tellg();      // just after DICOM preamble (if any)
 
    lgt -= beg;                  // remaining length to parse    
 
    ParseDES( this, beg, lgt, false); // Loading is done during parsing
+
+   if ( IsEmpty() )
+   { 
+      gdcmWarningMacro( "No tag in internal hash table for: "
+                        << Filename.c_str());
+      CloseFile(); 
+      return ;
+   }
+   IsDocumentAlreadyLoaded = true;
 
    Fp->seekg( 0, std::ios::beg);
    
@@ -226,12 +263,11 @@ bool Document::SetShaDict(DictKey const &dictName)
 }
 
 /**
- * \brief  This predicate, based on hopefully reasonable heuristics,
- *         decides whether or not the current Document was properly parsed
- *         and contains the mandatory information for being considered as
- *         a well formed and usable Dicom/Acr File.
- * @return true when Document is the one of a reasonable Dicom/Acr file,
- *         false otherwise. 
+ * \brief  This predicate tells us whether or not the current Document 
+ *         was properly parsed and contains at least *one* Dicom Element
+ *         (and nothing more, sorry).
+ * @return false when we're 150 % sure it's NOT a Dicom/Acr file,
+ *         true otherwise. 
  */
 bool Document::IsReadable()
 {
@@ -257,7 +293,7 @@ bool Document::IsReadable()
 bool Document::IsDicomV3()
 {
    // Checking if Transfer Syntax exists is enough
-   // Anyway, it's to late check if the 'Preamble' was found ...
+   // Anyway, it's too late check if the 'Preamble' was found ...
    // And ... would it be a rich idea to check ?
    // (some 'no Preamble' DICOM images exist !)
    return GetDocEntry(0x0002, 0x0010) != NULL;
@@ -429,7 +465,10 @@ std::ifstream *Document::OpenFile()
    {
       gdcmErrorMacro( "Cannot open file: " << Filename.c_str());
       delete Fp;
-      exit(1);
+      Fp = 0;
+      return 0;
+      //exit(1); // No function is allowed to leave the application instead
+                 // of warning the caller
    }
  
    uint16_t zero = 0;
@@ -440,20 +479,20 @@ std::ifstream *Document::OpenFile()
       return 0;
    }
  
-   //ACR -- or DICOM with no Preamble; may start with a Shadow Group --
+   //-- ACR or DICOM with no Preamble; may start with a Shadow Group --
    if( 
        zero == 0x0001 || zero == 0x0100 || zero == 0x0002 || zero == 0x0200 ||
        zero == 0x0003 || zero == 0x0300 || zero == 0x0004 || zero == 0x0400 ||
        zero == 0x0005 || zero == 0x0500 || zero == 0x0006 || zero == 0x0600 ||
        zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 )
    {
-      std::string msg 
-         = Util::Format("ACR/DICOM with no preamble: (%04x)\n", zero);
+      std::string msg = Util::Format(
+        "ACR/DICOM starting at the begining of the file:(%04x)\n", zero);
       gdcmWarningMacro( msg.c_str() );
       return Fp;
    }
  
-   //DICOM
+   //-- DICOM --
    Fp->seekg(126L, std::ios::cur);
    char dicm[4] = {' ',' ',' ',' '};
    Fp->read(dicm,  (size_t)4);
@@ -467,10 +506,11 @@ std::ifstream *Document::OpenFile()
       HasDCMPreamble = true;
       return Fp;
    }
- 
+
+   // -- Neither ACR/No Preamble Dicom nor DICOMV3 file
    CloseFile();
-   gdcmWarningMacro( "Not DICOM/ACR (missing preamble)" << Filename.c_str());
- 
+   gdcmWarningMacro( "Neither ACR/No Preamble Dicom nor DICOMV3 file: "
+                      << Filename.c_str()); 
    return 0;
 }
 
@@ -1783,16 +1823,18 @@ bool Document::CheckSwap()
       Fp->seekg(0, std::ios::beg);
       Fp->seekg ( 132L, std::ios::beg);
       return true;
-   } // End of DicomV3
+   } // ------------------------------- End of DicomV3 ----------------
 
    // Alas, this is not a DicomV3 file and whatever happens there is no file
    // preamble. We can reset the file position indicator to where the data
    // is (i.e. the beginning of the file).
+
    gdcmWarningMacro( "Not a DICOM Version3 file");
+
    Fp->seekg(0, std::ios::beg);
 
    // Our next best chance would be to be considering a 'clean' ACR/NEMA file.
-   // By clean we mean that the length of the first tag is written down.
+   // By clean we mean that the length of the first group is written down.
    // If this is the case and since the length of the first group HAS to be
    // four (bytes), then determining the proper swap code is straightforward.
 
@@ -1801,7 +1843,6 @@ bool Document::CheckSwap()
    // representation of a 32 bits integer. Hence the following dirty
    // trick :
    s32 = *((uint32_t *)(entCur));
-
    switch( s32 )
    {
       case 0x00040000 :
