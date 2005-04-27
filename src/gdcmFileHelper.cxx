@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/04/19 12:31:56 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/04/27 09:52:28 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1161,6 +1161,15 @@ void FileHelper::CheckMandatoryElements()
    Archive->Push(0x0028,0x0016);
    Archive->Push(0x0028,0x0017);
    Archive->Push(0x0028,0x00199);
+
+   // Deal with the pb of (Bits Stored = 12)
+   // - we're gonna write the image as Bits Stored = 16
+   if ( FileInternal->GetEntryValue(0x0028,0x0100) ==  "12")
+   {
+      ValEntry *e_0028_0100 = CopyValEntry(0x0028,0x0100);
+      e_0028_0100->SetValue("16");
+      Archive->Push(e_0028_0100);
+   }
 
    // --- Check UID-related Entries ---
 

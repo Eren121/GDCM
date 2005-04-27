@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/19 09:58:19 $
-  Version:   $Revision: 1.233 $
+  Date:      $Date: 2005/04/27 09:52:27 $
+  Version:   $Revision: 1.234 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1345,12 +1345,6 @@ bool File::Write(std::string fileName, FileType writetype)
       std::ostringstream sLen;
       sLen << ComputeGroup0002Length(writetype);
       e0000->SetValue(sLen.str());
-   }
-
-   // Bits Allocated
-   if ( GetEntryValue(0x0028,0x0100) ==  "12")
-   {
-      SetValEntry("16", 0x0028,0x0100);
    }
 
    int i_lgPix = GetEntryLength(GrPixel, NumPixel);
