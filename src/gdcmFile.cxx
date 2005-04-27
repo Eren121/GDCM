@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/27 09:52:27 $
-  Version:   $Revision: 1.234 $
+  Date:      $Date: 2005/04/27 10:00:35 $
+  Version:   $Revision: 1.235 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1354,48 +1354,6 @@ bool File::Write(std::string fileName, FileType writetype)
       std::string s_lgPix = Util::Format("%d", i_lgPix+12);
       s_lgPix = Util::DicomString( s_lgPix.c_str() );
       InsertValEntry(s_lgPix,GrPixel, 0x0000);
-   }
-
-   // FIXME : should be nice if we could move it to File
-   //         (or in future gdcmPixelData class)
-
-   // Drop Palette Color, if necessary
-   if ( GetEntryValue(0x0028,0x0002).c_str()[0] == '3' )
-   {
-      // if SamplesPerPixel = 3, sure we don't need any LUT !   
-      // Drop 0028|1101, 0028|1102, 0028|1103
-      // Drop 0028|1201, 0028|1202, 0028|1203
-
-      DocEntry *e = GetDocEntry(0x0028,0x01101);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x1102);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x1103);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x01201);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x1202);
-      if (e)
-      {
-         RemoveEntryNoDestroy(e);
-      }
-      e = GetDocEntry(0x0028,0x1203);
-      if (e)
-      {
-          RemoveEntryNoDestroy(e);
-      }
    }
 
    Document::WriteContent(fp, writetype);
