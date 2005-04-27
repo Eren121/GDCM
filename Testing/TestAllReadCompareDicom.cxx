@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/19 10:05:36 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/04/27 09:14:06 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,8 @@
 #include "gdcmDirList.h"
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
+#include "gdcmGlobal.h"
+#include "gdcmTS.h"
 
 #include <iostream>
 
@@ -502,11 +504,28 @@ int InternalTest(std::string const &filename,
                            testedDataSize) != 0 )
       {
          (void)res;
+         std::string ts  = tested->GetFile()->GetTransferSyntax();
+
          std::cout << " Failed" << std::endl
                    << "        pixel (" 
                    << PixelType
                    << ") differ (as expanded in memory)."
+                   << std::endl
+                   << "        compression : " 
+                   << gdcm::Global::GetTS()->GetValue(ts) << std::endl;
+
+         std::cout << "        list of pixels differing (pos : test - ref) :" 
                    << std::endl;
+         for(int i=0;i<testedDataSize;i++)
+         {
+            if(testedImageData[i]!=referenceImageData[i])
+               std::cout << std::hex << "(" << i << " : " 
+                         << std::hex << (int)(testedImageData[i]) << " - "
+                         << std::hex << (int)(referenceImageData[i]) << ") "
+                         << std::dec;
+         }
+         std::cout << std::endl;
+
          delete tested;
          delete reference;
          return 1;
@@ -551,23 +570,18 @@ int TestAllReadCompareDicom(int argc, char *argv[])
    std::cout << "   step 1: parse the image (as gdcmFile) and call"
              << " IsReadable(). "
              << std::endl;
-   std::cout << "   step 2: find in GDCM_DATA_ROOT/BaselineDicom/filename.dcm"
+   std::cout << "   step 2: find in GDCM_DATA_ROOT/BaselineDicom/filename.tst"
              << std::endl
-             << "           (with format DICOM V3, explicit Value"
-             << "Representation)"
+             << "           special internal file format containing the"
+             << std::endl
+             << "           caracteristic of the image and the pixel datas "
+             << "(uncompressed). This file is written if it's not found."
              << std::endl;
-   std::cout << "   step 3a: when image NOT found on step 2, write "
+   std::cout << "   step 3: compare the DICOM image with the reference image"
              << std::endl
-             << "            GDCM_DATA_ROOT/BaselineDicom/filename.dcm"
+             << "           (.tst file). The test is made on the caracteristics"
              << std::endl
-             << "           (with format DICOM V3, explicit Value"
-             << "Representation)"
-             << std::endl;
-   std::cout << "   step 3b: when image found on step 2, and when IsReadable()"
-             << std::endl
-             << "            compare it (in memory with memcmp) with the"
-             << std::endl
-             << "            image we are testing (the one of step 1). "
+             << "           of the image and the pixel datas"
              << std::endl << std::endl;
 
    int i = 0;

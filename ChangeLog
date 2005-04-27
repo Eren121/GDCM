@@ -1,10 +1,14 @@
+2005-04-26 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
+   * Testing/TestAllReadCompareDicom.cxx : update the test printed results and
+     description.
+
 2005-04-20 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * FIX : Numerical exception on borland (cannot divide by 0, doh !)
 	         But this is a case where we should really signify the user there is
 					 few chance the serie is really a serie...
 
 2005-04-20 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
-   * FIX : on X, the python part is correctly installed. All files are 
+   * FIX : on X, the python part is correctly installed. All files are
      installed in gdcm sub-directory
 
 2005-04-19 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
