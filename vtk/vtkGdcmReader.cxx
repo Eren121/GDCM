@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/28 09:29:05 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/04/28 14:32:54 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,7 +83,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.69 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.70 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -745,7 +745,10 @@ int vtkGdcmReader::CheckFileCoherenceLight()
    }
    int NX           = GdcmFile.GetXSize();
    int NY           = GdcmFile.GetYSize();
-   int NZ           = GdcmFile.GetZSize();
+   // CheckFileCoherenceLight should be called *only* when user knows
+   // he deals with single frames files.
+   // Z size is then the number of files.
+   int NZ           = InternalFileNameList.size();
    std::string type = GdcmFile.GetPixelType();
    vtkDebugMacro(<< "The first file is taken as reference: "
                  << filename->c_str());
