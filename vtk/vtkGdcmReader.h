@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2004/12/09 10:59:59 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/04/28 09:29:05 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,18 +37,20 @@ public:
    void PrintSelf(ostream& os, vtkIndent indent);
 
    virtual void RemoveAllFileName(void);
-   virtual void AddFileName(const char* name);
+   virtual void AddFileName(const char *name);
    virtual void SetFileName(const char *name);
+
+   void SetCheckFileCoherenceLight();
    
    // Description:
    // If this flag is set and the DICOM reader encounters a dicom file with 
    // lookup table the data will be kept as unsigned chars and a lookuptable 
    // will be exported and accessible through GetLookupTable() 
-   vtkSetMacro(AllowLookupTable,int);
-   vtkGetMacro(AllowLookupTable,int);
-   vtkBooleanMacro(AllowLookupTable,int);
+   vtkSetMacro(AllowLookupTable, int);
+   vtkGetMacro(AllowLookupTable, int);
+   vtkBooleanMacro(AllowLookupTable, int);
 
-   vtkGetObjectMacro(LookupTable,vtkLookupTable);
+   vtkGetObjectMacro(LookupTable, vtkLookupTable);
 
 protected:
    vtkGdcmReader();
@@ -58,13 +60,14 @@ protected:
    virtual void ExecuteData(vtkDataObject *output);
    virtual void BuildFileListFromPattern();
    virtual int CheckFileCoherence();
+   virtual int CheckFileCoherenceLight();
 
 private:
    void RemoveAllInternalFileName(void);
    void AddInternalFileName(const char* name);
 
    //BTX
-   size_t LoadImageInMemory(std::string FileName, unsigned char * Dest,
+   size_t LoadImageInMemory(std::string FileName, unsigned char *Dest,
                            const unsigned long UpdateProgressTarget,
                            unsigned long & UpdateProgressCount);
    //ETX
@@ -73,6 +76,7 @@ private:
    vtkLookupTable *LookupTable;
    vtkTimeStamp fileTime;
    int AllowLookupTable;
+   bool LightChecking;
 
    //BTX
    // Number of columns of the image/volume to be loaded
