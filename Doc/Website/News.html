@@ -47,6 +47,12 @@ images)
            <TT>Shadow groups</TT> (if any)
       <LI> Allow user to tell the Writer which compression mode he wants<br>
            (Right now, no one is available)
+      <LI> Allow user to tell the Writer he wants to split a
+           <TT>Multiframe</TT> image into a serie of 
+           <TT>Single frame</TT> images.
+      <LI> Allow user to tell the Writer he wants to agregate a
+           Serie of <TT>Single frame</TT> images into a
+           <TT>Multiframe</TT> image.
    </UL>
 <LI>Reader / Writer 
    <UL>  
@@ -163,7 +169,10 @@ images)
 
    <LI> Known bugs
    <UL>
-      <LI>
+      <LI> Use of <TT>Implicit Value Representation</TT> writting mode may
+           causes troubles, when there are some <TT>SQ</TT> belonging to a 
+           <TT>Shadow Group</TT>. <br>
+           Better you use <TT>Explicit Value Representation</TT> writting mode ...
    </UL>
 
    <LI> Sample Data
