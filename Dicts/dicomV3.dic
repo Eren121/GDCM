@@ -1168,8 +1168,8 @@
 0040 2008 PN 1 Order Entered By
 0040 2009 SH 1 Order Enterer's Location
 0040 2010 SH 1 Order Callback Phone Number
-0040 2016 LO 1 Placer Order Number/Imaging Service Number
-0040 2017 LO 1 Filler Order Number/Imaging Service Number
+0040 2016 LO 1 Placer Order Number/Imaging Service Request
+0040 2017 LO 1 Filler Order Number/Imaging Service Request
 0040 2400 LT 1 Imaging Service Request Comments
 0040 3001 LO 1 Confidentiality Constraint Patient Data Description
 0040 4001 CS 1 General Purpose Scheduled Procedure Step Status
