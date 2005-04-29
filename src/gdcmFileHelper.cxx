@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/04/27 09:52:28 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/04/29 15:11:56 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -285,7 +285,6 @@ size_t FileHelper::GetImageDataSize()
    {
       return PixelWriteConverter->GetUserDataSize();
    }
-
    return PixelReadConverter->GetRGBSize();
 }
 
@@ -302,7 +301,6 @@ size_t FileHelper::GetImageDataRawSize()
    {
       return PixelWriteConverter->GetUserDataSize();
    }
-
    return PixelReadConverter->GetRawSize();
 }
 
@@ -407,7 +405,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
       return 0;
    }
    memcpy( destination,
-           (void*)PixelReadConverter->GetRaw(),
+           (void *)PixelReadConverter->GetRaw(),
            PixelReadConverter->GetRawSize() );
    return PixelReadConverter->GetRawSize();
 }
@@ -524,17 +522,17 @@ bool FileHelper::WriteRawData(std::string const &fileName)
 
    if( PixelWriteConverter->GetUserData() )
    {
-      fp1.write( (char*)PixelWriteConverter->GetUserData(), 
+      fp1.write( (char *)PixelWriteConverter->GetUserData(), 
                  PixelWriteConverter->GetUserDataSize() );
    }
    else if ( PixelReadConverter->GetRGB() )
    {
-      fp1.write( (char*)PixelReadConverter->GetRGB(), 
+      fp1.write( (char *)PixelReadConverter->GetRGB(), 
                  PixelReadConverter->GetRGBSize());
    }
    else if ( PixelReadConverter->GetRaw() )
    {
-      fp1.write( (char*)PixelReadConverter->GetRaw(), 
+      fp1.write( (char *)PixelReadConverter->GetRaw(), 
                  PixelReadConverter->GetRawSize());
    }
    else
@@ -550,7 +548,7 @@ bool FileHelper::WriteRawData(std::string const &fileName)
 /**
  * \brief Writes on disk A SINGLE Dicom file, 
  *        using the Implicit Value Representation convention
- *        NO test is performed on  processor "Endiannity".
+ *        NO test is performed on  processor "Endianity".
  * @param fileName name of the file to be created
  *                 (any already existing file is overwritten)
  * @return false if write fails
@@ -609,28 +607,26 @@ bool FileHelper::Write(std::string const &fileName)
    {
       case ImplicitVR:
          SetWriteFileTypeToImplicitVR();
-         CheckMandatoryElements();
          break;
       case Unknown:  // should never happen; ExplicitVR is the default value
       case ExplicitVR:
          SetWriteFileTypeToExplicitVR();
-         CheckMandatoryElements();
          break;
       case ACR:
       case ACR_LIBIDO:
-      // Just to avoid further trouble if user create a file ex-nihilo,
+      // NOTHING is done here just for LibIDO.
+      // Just to avoid further trouble if user creates a file ex-nihilo,
       // wants to write it as an ACR-NEMA file,
-      // and forget to create any Entry belonging to group 0008
+      // and forgets to create any Entry belonging to group 0008
       // (shame on him !)
       // We add Recognition Code (RET)
         if ( ! FileInternal->GetValEntry(0x0008, 0x0010) )
             FileInternal->InsertValEntry("", 0x0008, 0x0010);
          SetWriteFileTypeToACR();
          SetWriteFileTypeToImplicitVR();
-         CheckMandatoryElements();
          break;
-
    }
+   CheckMandatoryElements();
 
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
@@ -703,10 +699,10 @@ bool FileHelper::CheckWriteIntegrity()
       }
 
       size_t decSize = FileInternal->GetXSize()
-                    * FileInternal->GetYSize() 
-                    * FileInternal->GetZSize()
-                    * ( numberBitsAllocated / 8 )
-                    * FileInternal->GetSamplesPerPixel();
+                     * FileInternal->GetYSize() 
+                     * FileInternal->GetZSize()
+                     * FileInternal->GetSamplesPerPixel()
+                     * ( numberBitsAllocated / 8 );
       size_t rgbSize = decSize;
       if( FileInternal->HasLUT() )
          rgbSize = decSize * 3;
@@ -732,8 +728,7 @@ bool FileHelper::CheckWriteIntegrity()
             }
             break;
       }
-   }
-   
+   }   
    return true;
 }
 
@@ -1421,7 +1416,6 @@ uint8_t *FileHelper::GetRaw()
          return 0;
       }
    }
-
    return raw;
 }
 
