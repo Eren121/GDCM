@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/26 16:18:23 $
-  Version:   $Revision: 1.237 $
+  Date:      $Date: 2005/04/29 15:10:55 $
+  Version:   $Revision: 1.238 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ Document::Document()
  * \brief   Constructor (not to break the API) 
  * @param   filename 'Document' (File or DicomDir) to be opened for parsing
  */
-Document::Document( std::string const &filename )
+Document::Document( std::string const &fileName )
          :ElementSet(-1) 
 {
    Fp = 0;
@@ -84,7 +84,7 @@ Document::Document( std::string const &filename )
    // Load will set it to true if sucessfull
    IsDocumentAlreadyLoaded = false;
 
-   Load(filename); 
+   Load(fileName); 
 }
 /**
  * \brief   Canonical destructor.
@@ -102,7 +102,7 @@ Document::~Document ()
  * \brief   Loader  
  * @param   filename 'Document' (File or DicomDir) to be opened for parsing
  */
-void Document::Load( std::string const &filename ) 
+void Document::Load( std::string const &fileName ) 
 {
    // We should clean out anything that already exists.
    // Check IsDocumentAlreadyLoaded to be sure.
@@ -111,12 +111,12 @@ void Document::Load( std::string const &filename )
       gdcmWarningMacro( "A file was already parsed inside this " <<
                    "gdcm::Document (previous name was: "
                     << Filename.c_str() << ". New name is :"
-                    << filename );
+                    << fileName );
      // todo : clean out the 'Document'
      // We should call ClearEntry() on the parent object ?!?
    }
 
-   Filename = filename;
+   Filename = fileName;
 
    Fp = 0;
    if ( !OpenFile() )
@@ -463,7 +463,11 @@ std::ifstream *Document::OpenFile()
    Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
    if( ! *Fp )
    {
-      gdcmErrorMacro( "Cannot open file: " << Filename.c_str());
+   // Don't user gdcmErrorMacro :
+   // a spurious message will appear when you use, for instance 
+   // gdcm::FileHelper *fh = new gdcm::FileHelper( outputFileName );
+   // to create outputFileName.
+      gdcmWarningMacro( "Cannot open file: " << Filename.c_str());
       delete Fp;
       Fp = 0;
       return 0;
