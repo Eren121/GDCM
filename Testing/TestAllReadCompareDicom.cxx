@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/02 17:51:57 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/05/02 17:56:44 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -515,9 +515,11 @@ int InternalTest(std::string const &filename,
                    << "        compression : " 
                    << gdcm::Global::GetTS()->GetValue(ts) << std::endl;
 
-         std::cout << "        list of pixels differing (pos : test - ref) :" 
+         std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
+                   << " pixels differing (pos : test - ref) :" 
                    << std::endl;
-         int i,j;
+         int i;
+         unsigned int j;
          for(i=0, j=0;i<testedDataSize && j<MAX_NUMBER_OF_DIFFERENCE;i++)
          {
             if(testedImageData[i]!=referenceImageData[i])
