@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/27 09:14:06 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/05/02 17:51:57 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -112,9 +112,10 @@ private:
    static const unsigned int HEADER_SIZE;
 };
 
+const unsigned int MAX_NUMBER_OF_DIFFERENCE = 10;
 const unsigned int TestFile::HEADER_SIZE = 20;
 
-TestFile::TestFile(void)
+TestFile::TestFile()
 {
    fileName = "";
    readable=false;
@@ -516,13 +517,17 @@ int InternalTest(std::string const &filename,
 
          std::cout << "        list of pixels differing (pos : test - ref) :" 
                    << std::endl;
-         for(int i=0;i<testedDataSize;i++)
+         int i,j;
+         for(i=0, j=0;i<testedDataSize && j<MAX_NUMBER_OF_DIFFERENCE;i++)
          {
             if(testedImageData[i]!=referenceImageData[i])
+              {
                std::cout << std::hex << "(" << i << " : " 
                          << std::hex << (int)(testedImageData[i]) << " - "
                          << std::hex << (int)(referenceImageData[i]) << ") "
                          << std::dec;
+               ++j;
+              }
          }
          std::cout << std::endl;
 
