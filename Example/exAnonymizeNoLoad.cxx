@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exAnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/27 12:40:28 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/05/02 17:28:15 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
    f1->SetLoadMode(NO_SEQ - NO_SHADOW);
    f1->Load(fileName);
    // We want to process any kind of gdcm::Readable document
-   if (!f1->gdcm::Document::IsReadable()) {
+   if (!f1->IsReadable()) {
        std::cout <<std::endl
            << "Sorry, " << fileName <<"  not a gdcm-readable "
            << "DICOM / ACR Document"
