@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/02 17:28:15 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/05/03 10:57:27 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,12 +44,16 @@ int main(int argc, char *argv[])
 
    if (argc > 3)
       gdcm::Debug::DebugOn();
-
+ 
+   bool res; 
    if (argc > 4)
-      e1->SetLoadMode(NO_SEQ | NO_SHADOW);   
-   e1->Load( fileName.c_str() );
+      e1->SetLoadMode(NO_SEQ | NO_SHADOW); 
 
-   if ( !e1->IsReadable() )
+   // gdcm::File::IsReadable() is no usable here, because we deal with
+   // any kind of gdcm::Readable *document* 
+   // not only gdcm::File (as opposed to gdcm::DicomDir)
+   res = e1->Load( fileName.c_str() );
+   if ( res )
    {
       delete e1;
       return 0;

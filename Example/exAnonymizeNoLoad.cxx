@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exAnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/03 10:40:28 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/05/03 10:57:27 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,8 +52,10 @@ int main(int argc, char *argv[])
    f1 = new gdcm::File( );
    f1->SetLoadMode(NO_SEQ - NO_SHADOW);
    res = f1->Load(fileName);
-   // IsReadable() is no usable here, because we deal with
-   // any kind of gdcm::Readable *document* (no only gdcm::File)
+
+   // gdcm::File::IsReadable() is no usable here, because we deal with
+   // any kind of gdcm::Readable *document*
+   // not only gdcm::File (as opposed to gdcm::DicomDir)
    if (res) {
        std::cout <<std::endl
            << "Sorry, " << fileName <<"  not a gdcm-readable "
