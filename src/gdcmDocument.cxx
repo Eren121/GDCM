@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/29 15:10:55 $
-  Version:   $Revision: 1.238 $
+  Date:      $Date: 2005/05/03 09:43:04 $
+  Version:   $Revision: 1.239 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,15 +101,17 @@ Document::~Document ()
 /**
  * \brief   Loader  
  * @param   filename 'Document' (File or DicomDir) to be opened for parsing
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
  */
-void Document::Load( std::string const &fileName ) 
+bool Document::Load( std::string const &fileName ) 
 {
    // We should clean out anything that already exists.
    // Check IsDocumentAlreadyLoaded to be sure.
    if( IsDocumentAlreadyLoaded )
    {
-      gdcmWarningMacro( "A file was already parsed inside this " <<
-                   "gdcm::Document (previous name was: "
+      gdcmWarningMacro( "A file was already parsed inside this "
+                     << "gdcm::Document (previous name was: "
                     << Filename.c_str() << ". New name is :"
                     << fileName );
      // todo : clean out the 'Document'
@@ -125,7 +127,7 @@ void Document::Load( std::string const &fileName )
       //gdcmWarningMacro( "Unable to open as an ACR/DICOM file: "
       //                 << Filename.c_str() );
       Filetype = Unknown;
-      return;
+      return false;
    }
 
    Group0002Parsed = false;
@@ -144,7 +146,7 @@ void Document::Load( std::string const &fileName )
       gdcmWarningMacro( "Neither a DICOM V3 nor an ACR-NEMA file: " 
                    << Filename.c_str());
       CloseFile(); 
-      return ;      
+      return false;      
     }
 
    long beg = Fp->tellg();      // just after DICOM preamble (if any)
@@ -158,7 +160,7 @@ void Document::Load( std::string const &fileName )
       gdcmWarningMacro( "No tag in internal hash table for: "
                         << Filename.c_str());
       CloseFile(); 
-      return ;
+      return false;
    }
    IsDocumentAlreadyLoaded = true;
 
@@ -224,6 +226,8 @@ void Document::Load( std::string const &fileName )
          SetValEntry(rows   , 0x0028, 0x0011);
    }
    // --- End of ACR-LibIDO kludge --- 
+
+   return true;
 }
 
 /**

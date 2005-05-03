@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/14 14:26:19 $
-  Version:   $Revision: 1.137 $
+  Date:      $Date: 2005/05/03 09:43:04 $
+  Version:   $Revision: 1.138 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -161,7 +161,7 @@ DicomDir::~DicomDir()
 //-----------------------------------------------------------------------------
 // Public
 
-void DicomDir::Load(std::string const &fileName ) 
+bool DicomDir::Load(std::string const &fileName ) 
 {
    Filename = fileName;
    // We should clean out anything that already exists.
@@ -175,13 +175,13 @@ void DicomDir::Load(std::string const &fileName )
       Fp = 0;
       if ( !OpenFile() )
       {
-         return;
+         return false;
       }
       Document::Load(fileName);
       if ( GetFirstEntry() == 0 ) // when user passed a Directory to parse
       {
          gdcmWarningMacro( "Entry HT empty for file: "<< fileName);
-         return;
+         return false;
       }
       // Directory record sequence
       DocEntry *e = GetDocEntry(0x0004, 0x1220);
@@ -189,6 +189,7 @@ void DicomDir::Load(std::string const &fileName )
       {
          gdcmWarningMacro( "NO 'Directory record sequence' (0x0004,0x1220)"
                           << " in file " << fileName);
+         return false;
       }
       else
          CreateDicomDir();
@@ -209,6 +210,7 @@ void DicomDir::Load(std::string const &fileName )
       gdcmWarningMacro( "Parse directory and create the DicomDir : " << Filename );
       ParseDirectory();
    }
+   return true;
 }
 
 /**

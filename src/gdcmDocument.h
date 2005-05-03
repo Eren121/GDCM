@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/04/26 16:18:23 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2005/05/03 09:43:04 $
+  Version:   $Revision: 1.110 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ public:
 typedef std::list<Element> ListElements;
 
 // Loading
-   virtual void Load( std::string const &filename ); 
+   virtual bool Load( std::string const &filename ); 
 
 // Dictionaries
    Dict *GetPubDict();
