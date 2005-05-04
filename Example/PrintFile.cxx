@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/03 10:57:27 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/05/04 07:29:17 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,10 +50,10 @@ int main(int argc, char *argv[])
       e1->SetLoadMode(NO_SEQ | NO_SHADOW); 
 
    // gdcm::File::IsReadable() is no usable here, because we deal with
-   // any kind of gdcm::Readable *document* 
+   // any kind of gdcm-Parsable *document* 
    // not only gdcm::File (as opposed to gdcm::DicomDir)
    res = e1->Load( fileName.c_str() );
-   if ( res )
+   if ( !res )
    {
       delete e1;
       return 0;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
    std::cout << "\n\n" << std::endl; 
 
    std::cout <<std::endl;
-   std::cout <<" dataSize " << f1->GetImageDataSize() << std::endl;
+   std::cout <<" dataSize    " << f1->GetImageDataSize()    << std::endl;
    std::cout <<" dataSizeRaw " << f1->GetImageDataRawSize() << std::endl;
 
    int nX,nY,nZ,sPP,planarConfig;
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
    sPP          = e1->GetSamplesPerPixel();
    planarConfig = e1->GetPlanarConfiguration();
    
-   std::cout << " pixelType= ["           << pixelType 
+   std::cout << " pixelType= ["            << pixelType 
              << "] SamplesPerPixel= ["     << sPP
              << "] PlanarConfiguration= [" << planarConfig 
              << "] "<< std::endl 
