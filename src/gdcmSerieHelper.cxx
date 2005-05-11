@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/20 22:04:34 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/05/11 17:15:18 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -242,11 +242,6 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
             dist += normal[i]*ipp[i];
          }
     
-         if( dist == 0 )
-         {
-            return false;
-         }
-
          distlist.push_back( dist );
 
          max = min = dist;
@@ -264,11 +259,6 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
             dist += normal[i]*ipp[i];
          }
 
-         if( dist == 0 )
-         {
-            return false;
-         }
-      
          distlist.push_back( dist );
 
          min = (min < dist) ? min : dist;
