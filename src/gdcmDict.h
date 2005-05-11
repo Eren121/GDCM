@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 09:51:03 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/05/11 15:01:47 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,6 +61,7 @@ public:
    
 // Tag
    DictEntry *GetEntry(uint16_t group, uint16_t elem);
+   DictEntry *GetEntry(TagKey const &key);
 
    DictEntry *GetFirstEntry();
    DictEntry *GetNextEntry();
