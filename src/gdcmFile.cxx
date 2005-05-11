@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/27 10:00:35 $
-  Version:   $Revision: 1.235 $
+  Date:      $Date: 2005/05/11 14:40:57 $
+  Version:   $Revision: 1.236 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -431,7 +431,7 @@ float File::GetYSpacing()
    // if sscanf cannot read any float value, it won't affect yspacing
    int nbValues = sscanf( strSpacing.c_str(), "%f", &yspacing);
 
-   // if no values, xspacing is set to 1.0
+   // if no values, yspacing is set to 1.0
    if( nbValues == 0 )
       yspacing = 1.0;
 

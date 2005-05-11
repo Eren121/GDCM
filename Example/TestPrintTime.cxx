@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintTime.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/10 12:12:02 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/05/11 14:40:56 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@
 #include <iomanip> // for std::ios::left, ...
 
 // Where is it?
-#define CLK_TCK 1
+//#define CLK_TCK 1  ///usr/include/bits/time.h:41: warning: this is the location of the previous definition
 
 
 //Generated file:

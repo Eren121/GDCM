@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/11 17:01:16 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/05/11 14:40:58 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,11 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.21 $");
+#ifndef vtkFloatingPointType
+#define vtkFloatingPointType float
+#endif
+
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.22 $");
 vtkStandardNewMacro(vtkGdcmWriter);
 
 //-----------------------------------------------------------------------------
@@ -183,7 +187,7 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    ///       We should perform some checkings before forcing the Entry creation
 
    // Spacing
-   double *sp = image->GetSpacing();
+   vtkFloatingPointType *sp = image->GetSpacing();
 
    str.str("");
    // We are about to enter floating point value. By default ostringstream are smart and don't do fixed point
@@ -196,7 +200,7 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    file->InsertValEntry(str.str(),0x0018,0x0088); // Spacing Between Slices
 
    // Origin
-   double *org = image->GetOrigin();
+   vtkFloatingPointType *org = image->GetOrigin();
 
    /// \todo : Image Position Patient is meaningfull ONLY for CT an MR modality
    ///       We should perform some checkings before forcing the Entry creation
@@ -207,7 +211,7 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    str.unsetf( std::ios::fixed ); //done with floating point values
 
    // Window / Level
-   double *rng=image->GetScalarRange();
+   vtkFloatingPointType *rng = image->GetScalarRange();
 
    str.str("");
    str << rng[1]-rng[0];
@@ -279,6 +283,8 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
          {
             sprintf(this->InternalFileName, this->FilePattern,this->FileNumber);
          }
+// Remove this code in case user is using VTK 4.2...
+#if !(VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION == 2)
          if (this->FileNumber < this->MinimumFileNumber)
          {
             this->MinimumFileNumber = this->FileNumber;
@@ -287,6 +293,7 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
          {
             this->MaximumFileNumber = this->FileNumber;
          }
+#endif
       }
 
       // Write the file

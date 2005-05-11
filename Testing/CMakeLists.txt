@@ -42,18 +42,26 @@ IF (GDCM_DATA_ROOT)
   )
   # add test that require VTK:
   IF(GDCM_VTK)
-    # Include the VTK library
-    INCLUDE(${VTK_USE_FILE})
+    IF(${VTK_MAJOR_VERSION} LESS 4)
+      MESSAGE(FATAL_ERROR "This VTK version is not supported, you are on your own !")
+    ELSE(${VTK_MAJOR_VERSION} LESS 4)
+      IF(${VTK_MAJOR_VERSION} EQUAL 4 AND ${VTK_MINOR_VERSION} EQUAL 4 AND ${VTK_BUILD_VERSION} LESS 3)
+        MESSAGE(FATAL_ERROR "This VTK version is not supported, you are on your own !"
+                             "Although gdcm should compile fine. You just need to turn BUILD_TESTING:=OFF")
+      ENDIF(${VTK_MAJOR_VERSION} EQUAL 4 AND ${VTK_MINOR_VERSION} EQUAL 4 AND ${VTK_BUILD_VERSION} LESS 3)
+      # Include the VTK library since we know this is going to work
+      INCLUDE(${VTK_USE_FILE})
 
-    INCLUDE_DIRECTORIES(
-      ${GDCM_SOURCE_DIR}/vtk/
-    )
-    SET(TEST_SOURCES ${TEST_SOURCES}
-      VTKTestRead.cxx
-      VTKTestReadSeq.cxx
-      VTKTestWrite.cxx
-      VTKTestWriteSeq.cxx
-    )
+      INCLUDE_DIRECTORIES(
+        ${GDCM_SOURCE_DIR}/vtk/
+      )
+      SET(TEST_SOURCES ${TEST_SOURCES}
+        VTKTestRead.cxx
+        VTKTestReadSeq.cxx
+        VTKTestWrite.cxx
+        VTKTestWriteSeq.cxx
+      )
+    ENDIF(${VTK_MAJOR_VERSION} LESS 4)
   ENDIF(GDCM_VTK)
 ENDIF (GDCM_DATA_ROOT)
 

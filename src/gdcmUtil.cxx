@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/19 09:58:19 $
-  Version:   $Revision: 1.148 $
+  Date:      $Date: 2005/05/11 14:40:57 $
+  Version:   $Revision: 1.149 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -331,18 +331,20 @@ unsigned int Util::GetCurrentThreadID()
 // FIXME the implementation is far from complete
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
   return (unsigned int)GetCurrentThreadId();
-#endif
+#else
 #ifdef __linux__
    return 0;
    // Doesn't work on fedora, but is in the man page...
    //return (unsigned int)gettid();
-#endif
+#else
 #ifdef __sun
    return (unsigned int)thr_self();
 #else
    //default implementation
    return 0;
-#endif
+#endif // __sun
+#endif // __linux__
+#endif // Win32
 }
 
 unsigned int Util::GetCurrentProcessID()
@@ -448,6 +450,7 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
 #endif //_WIN32
 
 /// \brief gets current M.A.C adress (for internal use only)
+int GetMacAddrSys ( unsigned char *addr );
 int GetMacAddrSys ( unsigned char *addr )
 {
 #ifdef _WIN32

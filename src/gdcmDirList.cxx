@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/18 02:29:07 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/05/11 14:40:57 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
    #include <sys/types.h>
 #endif
 
-namespace gdcm 
+namespace gdcm
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

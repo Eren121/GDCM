@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 20:10:50 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/05/11 14:40:58 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
    }
    else
    {
-      double *range = reader->GetOutput()->GetScalarRange();
+      vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
       viewer->SetColorLevel (0.5 * (range[1] + range[0]));
       viewer->SetColorWindow (range[1] - range[0]);
 
