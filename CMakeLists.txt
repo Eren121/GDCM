@@ -1,5 +1,6 @@
 PROJECT(GDCM)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
+# okay in fact you need at least cmake 2.0.4 to get swig working properly
 
 #-----------------------------------------------------------------------------
 # GDCM version number, usefull for packaging and doxygen doc:
