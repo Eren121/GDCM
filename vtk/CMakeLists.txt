@@ -43,12 +43,27 @@ TARGET_LINK_LIBRARIES(vtkgdcmdemo
 SET(vtkgdcmViewer_SOURCES
   vtkgdcmViewer.cxx
 )
-ADD_EXECUTABLE(vtkgdcmViewer ${vtkgdcmViewer_SOURCES})
+
+# let's do some APPLE/WIN32 magic here
+IF(WIN32)
+  SET(GUI_EXECUTABLE WIN32)
+ENDIF(WIN32)
+IF(APPLE)
+  IF(VTK_USE_CARBON)
+    SET(GUI_EXECUTABLE MACOSX_BUNDLE)
+  ENDIF(VTK_USE_CARBON)
+  IF(VTK_USE_COCOA)
+    SET(GUI_EXECUTABLE MACOSX_BUNDLE)
+  ENDIF(VTK_USE_COCOA)
+  # when using X11 on Apple you don't need this...
+ENDIF(APPLE)
+
+ADD_EXECUTABLE(vtkgdcmViewer ${GUI_EXECUTABLE} ${vtkgdcmViewer_SOURCES})
 TARGET_LINK_LIBRARIES(vtkgdcmViewer
   vtkgdcm
   vtkRendering
 )
-ADD_EXECUTABLE(vtkgdcmViewer2 vtkgdcmViewer2.cxx)
+ADD_EXECUTABLE(vtkgdcmViewer2 ${GUI_EXECUTABLE} vtkgdcmViewer2.cxx)
 TARGET_LINK_LIBRARIES(vtkgdcmViewer2
   vtkgdcm
   vtkRendering
