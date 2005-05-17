@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/11 18:32:17 $
-  Version:   $Revision: 1.237 $
+  Date:      $Date: 2005/05/17 12:44:09 $
+  Version:   $Revision: 1.238 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -364,6 +364,7 @@ int File::GetZSize()
 
 /**
   * \brief gets the info from 0028,0030 : Pixel Spacing
+  *                         (first in  0018,1164 : ImagerPixelSpacing) 
   *             else 1.0
   * @return X dimension of a pixel
   */
@@ -371,6 +372,32 @@ float File::GetXSpacing()
 {
    float xspacing = 1.0;
    float yspacing = 1.0;
+   int nbValues;
+
+   // To follow David Clunie's advice, we first check ImagerPixelSpacing
+   // (never saw any image with that field :-(
+
+   const std::string &strImagerPixelSpacing = GetEntryValue(0x0018,0x1164);
+   if( strImagerPixelSpacing != GDCM_UNFOUND )
+   {
+      if( ( nbValues = sscanf( strImagerPixelSpacing.c_str(), 
+            "%f\\%f", &yspacing, &xspacing)) != 2 )
+      {
+         // if no values, xspacing is set to 1.0
+         if( nbValues == 0 )
+            xspacing = 1.0;
+         // if single value is found, xspacing is defaulted to yspacing
+         if( nbValues == 1 )
+            xspacing = yspacing;
+
+         if ( xspacing == 0.0 )
+            xspacing = 1.0;
+
+         return xspacing;
+      }  
+   }
+
+
    const std::string &strSpacing = GetEntryValue(0x0028,0x0030);
 
    if( strSpacing == GDCM_UNFOUND )
@@ -379,7 +406,6 @@ float File::GetXSpacing()
       return 1.;
    }
 
-   int nbValues;
    if( ( nbValues = sscanf( strSpacing.c_str(), 
          "%f \\%f ", &yspacing, &xspacing)) != 2 )
    {
@@ -414,14 +440,33 @@ float File::GetXSpacing()
 
 /**
   * \brief gets the info from 0028,0030 : Pixel Spacing
+  *                         (first in  0018,1164 : ImagerPixelSpacing)   
   *             else 1.0
   * @return Y dimension of a pixel
   */
 float File::GetYSpacing()
 {
    float yspacing = 1.;
-   std::string strSpacing = GetEntryValue(0x0028,0x0030);
-  
+   int nbValues;
+   // To follow David Clunie's advice, we first check ImagerPixelSpacing
+   // (never saw any image with that field :-(
+
+   const std::string &strImagerPixelSpacing = GetEntryValue(0x0018,0x1164);
+   if( strImagerPixelSpacing != GDCM_UNFOUND )
+   {
+      nbValues = sscanf( strImagerPixelSpacing.c_str(), "%f", &yspacing);
+   
+   // if sscanf cannot read any float value, it won't affect yspacing
+      if( nbValues == 0 )
+            yspacing = 1.0;
+
+      if ( yspacing == 0.0 )
+            yspacing = 1.0;
+
+      return yspacing;  
+   }
+
+   std::string strSpacing = GetEntryValue(0x0028,0x0030);  
    if ( strSpacing == GDCM_UNFOUND )
    {
       gdcmWarningMacro("Unfound Pixel Spacing (0028,0030)");
@@ -429,7 +474,7 @@ float File::GetYSpacing()
     }
 
    // if sscanf cannot read any float value, it won't affect yspacing
-   int nbValues = sscanf( strSpacing.c_str(), "%f ", &yspacing);
+   nbValues = sscanf( strSpacing.c_str(), "%f", &yspacing);
 
    // if no values, yspacing is set to 1.0
    if( nbValues == 0 )
