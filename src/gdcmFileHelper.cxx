@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/05/03 09:51:06 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/05/17 17:10:49 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -695,6 +695,9 @@ bool FileHelper::CheckWriteIntegrity()
       int numberBitsAllocated = FileInternal->GetBitsAllocated();
       if ( numberBitsAllocated == 0 || numberBitsAllocated == 12 )
       {
+         gdcmWarningMacro( "numberBitsAllocated changed from " 
+                          << numberBitsAllocated << " to 16 " 
+                          << " for consistency purpose" );
          numberBitsAllocated = 16;
       }
 
@@ -1099,6 +1102,7 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group, uint16_t elem,
  
 void FileHelper::CheckMandatoryElements()
 {
+
    // just to remember : 'official' 0002 group
 
    //0002 0000 UL 1 Meta Group Length
@@ -1166,7 +1170,47 @@ void FileHelper::CheckMandatoryElements()
       Archive->Push(e_0028_0100);
    }
 
-   // --- Check UID-related Entries ---
+   // Check if user wasn't drunk ;-)
+
+   ValEntry *e_0028_0100;
+   int nbBitsAllocated = FileInternal->GetBitsAllocated();
+   if ( nbBitsAllocated == 0 || nbBitsAllocated > 32)
+   {
+      e_0028_0100 = CopyValEntry(0x0028,0x0100);
+      e_0028_0100->SetValue("16");
+      Archive->Push(e_0028_0100); 
+      gdcmWarningMacro("(0028,0100) changed from "
+         << nbBitsAllocated << " to 16 for consistency purpose");
+      nbBitsAllocated = 16; 
+   }
+    
+   int nbBitsStored = FileInternal->GetBitsStored();
+   if ( nbBitsStored == 0 || nbBitsStored > nbBitsAllocated )
+   {
+      ValEntry *e_0028_0101 = CopyValEntry(0x0028,0x0101);
+      e_0028_0101->SetValue( e_0028_0100->GetValue( ) );
+      Archive->Push(e_0028_0101);
+      gdcmWarningMacro("(0028,0101) changed from "
+                       << nbBitsStored << " to " << nbBitsAllocated
+                       << " for consistency purpose" );
+      nbBitsStored = nbBitsAllocated; 
+    }
+
+   int highBitPosition = FileInternal->GetHighBitPosition();
+   if ( highBitPosition == 0 || 
+        highBitPosition > nbBitsAllocated-1 ||
+        highBitPosition < nbBitsStored-1  )
+   {
+      ValEntry *e_0028_0102 = CopyValEntry(0x0028,0x0102);
+      std::ostringstream s;
+      s << nbBitsStored - 1; 
+      e_0028_0102->SetValue( s.str() );
+      Archive->Push(e_0028_0102);
+      gdcmWarningMacro("(0028,0102) changed from "
+                       << highBitPosition << " to " << nbBitsAllocated-1
+                       << " for consistency purpose");
+   }
+  // --- Check UID-related Entries ---
 
    // If 'SOP Class UID' exists ('true DICOM' image)
    // we create the 'Source Image Sequence' SeqEntry
