@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/03 09:43:04 $
-  Version:   $Revision: 1.239 $
+  Date:      $Date: 2005/05/18 10:12:07 $
+  Version:   $Revision: 1.240 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1828,7 +1828,9 @@ bool Document::CheckSwap()
       
       // Position the file position indicator at first tag 
       // (i.e. after the file preamble and the "DICM" string).
-      Fp->seekg(0, std::ios::beg);
+
+      Fp->seekg(0, std::ios::beg); // FIXME : Is it usefull?
+
       Fp->seekg ( 132L, std::ios::beg);
       return true;
    } // ------------------------------- End of DicomV3 ----------------
@@ -1837,9 +1839,42 @@ bool Document::CheckSwap()
    // preamble. We can reset the file position indicator to where the data
    // is (i.e. the beginning of the file).
 
-   gdcmWarningMacro( "Not a DICOM Version3 file");
+   gdcmWarningMacro( "Not a Kosher DICOM Version3 file (no preamble)");
 
    Fp->seekg(0, std::ios::beg);
+
+   // Let's check 'No Preamble Dicom File' :
+   // Should start with group 0x0002
+   // and be Explicit Value Representation
+
+   s16 = *((uint16_t *)(deb));
+   SwapCode = 0;     
+   switch ( s16 )
+   {
+      case 0x0002 :
+         SwapCode = 1234;
+         entCur = deb + 4;
+         break;
+      case 0x0200 :
+         SwapCode = 4321;
+         entCur = deb + 6;
+    } 
+
+   if ( SwapCode != 0 )
+   {
+      if( memcmp(entCur, "UL", (size_t)2) == 0 ||
+          memcmp(entCur, "OB", (size_t)2) == 0 ||
+          memcmp(entCur, "UI", (size_t)2) == 0 ||
+          memcmp(entCur, "SH", (size_t)2) == 0 ||
+          memcmp(entCur, "AE", (size_t)2) == 0 ||
+          memcmp(entCur, "OB", (size_t)2) == 0 )
+         {
+            Filetype = ExplicitVR;
+            gdcmWarningMacro( "Group 0002 : Explicit Value Representation");
+            return true;
+          }
+    }
+// ------------------------------- End of 'No Preamble' DicomV3 -------------
 
    // Our next best chance would be to be considering a 'clean' ACR/NEMA file.
    // By clean we mean that the length of the first group is written down.
