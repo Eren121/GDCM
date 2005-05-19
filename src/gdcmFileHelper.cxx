@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/05/17 17:10:49 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/05/19 15:31:21 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1172,37 +1172,39 @@ void FileHelper::CheckMandatoryElements()
 
    // Check if user wasn't drunk ;-)
 
-   ValEntry *e_0028_0100;
+   std::ostringstream s;
+   // check 'Bits Allocated' vs decent values
    int nbBitsAllocated = FileInternal->GetBitsAllocated();
    if ( nbBitsAllocated == 0 || nbBitsAllocated > 32)
    {
-      e_0028_0100 = CopyValEntry(0x0028,0x0100);
+      ValEntry *e_0028_0100 = CopyValEntry(0x0028,0x0100);
       e_0028_0100->SetValue("16");
       Archive->Push(e_0028_0100); 
       gdcmWarningMacro("(0028,0100) changed from "
          << nbBitsAllocated << " to 16 for consistency purpose");
       nbBitsAllocated = 16; 
    }
-    
+   // check 'Bits Stored' vs 'Bits Allocated'   
    int nbBitsStored = FileInternal->GetBitsStored();
    if ( nbBitsStored == 0 || nbBitsStored > nbBitsAllocated )
    {
+      s << nbBitsAllocated;
       ValEntry *e_0028_0101 = CopyValEntry(0x0028,0x0101);
-      e_0028_0101->SetValue( e_0028_0100->GetValue( ) );
+      e_0028_0101->SetValue( s.str() );
       Archive->Push(e_0028_0101);
       gdcmWarningMacro("(0028,0101) changed from "
                        << nbBitsStored << " to " << nbBitsAllocated
                        << " for consistency purpose" );
       nbBitsStored = nbBitsAllocated; 
     }
-
+   // check 'Hight Bit Position' vs 'Bits Allocated' and 'Bits Stored'
    int highBitPosition = FileInternal->GetHighBitPosition();
    if ( highBitPosition == 0 || 
         highBitPosition > nbBitsAllocated-1 ||
         highBitPosition < nbBitsStored-1  )
    {
       ValEntry *e_0028_0102 = CopyValEntry(0x0028,0x0102);
-      std::ostringstream s;
+
       s << nbBitsStored - 1; 
       e_0028_0102->SetValue( s.str() );
       Archive->Push(e_0028_0102);
