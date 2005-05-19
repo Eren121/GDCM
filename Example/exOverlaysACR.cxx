@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/19 15:37:40 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/05/19 15:47:20 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -274,7 +274,8 @@ while ( (strOvlBitPosition = f1->GetEntryValue(currentOvlGroup, 0x0102))
          std::cout << "Failed\n"
                    << "File in unwrittable\n";
          delete fh;
-         if (fileToBuid) delete fileToBuild;
+         if (fileToBuild)
+            delete fileToBuild;
          delete pixels;
          delete tabPixels;
          return 0;
@@ -288,8 +289,10 @@ while ( (strOvlBitPosition = f1->GetEntryValue(currentOvlGroup, 0x0102))
    }
     
    delete f1;
-   if (f1)         delete fh;
-   if (fileToBuid) delete fileToBuild;
+   if (f1)
+      delete fh;
+   if (fileToBuild)
+      delete fileToBuild;
    delete pixels;
    delete tabPixels;
    return 0;
