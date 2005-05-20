@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/19 10:02:40 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/05/20 15:50:27 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,10 @@
 #include "gdcmFileHelper.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
+
+#include <time.h>
+#include <sys/times.h>
+#include <iomanip> // for std::ios::left, ...
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -267,6 +271,11 @@ int TestCopyRescaleDicom(int argc, char *argv[])
              << "           match (as expanded by gdcm)." << std::endl;
    std::cout << std::endl;
 
+
+   clock_t r1,r2, r3,r4;
+   struct tms tms1,tms2, tms3,tms4;
+
+   r3 = times(&tms3);
    int i =0;
    int retVal = 0;  //by default this is an error
    while( gdcmDataImages[i] != 0 )
@@ -277,13 +286,34 @@ int TestCopyRescaleDicom(int argc, char *argv[])
 
       std::string output = "output.dcm";
 
+      r1 = times(&tms1);
       if( CopyRescaleDicom( filename, output ) != 0 )
       {
          retVal++;
       }
+      r2 = times(&tms2);
+
+      std::cout 
+        << std::setw(150-strlen(gdcmDataImages[i]))
+        << gdcmDataImages[i] << " user time: " 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << " system time: "
+        << (long) ((tms2.tms_stime)  - (tms1.tms_stime)) 
+        << "\t elapsed time: " << r2 - r1
+        << std::endl;
 
       i++;
    }
+   r4 = times(&tms4);
+
+   std::cout 
+        << std::setw(150-strlen("Gross Total")) << " --> "
+        << "Gross Total" << " user time: " 
+        << (long) ((tms4.tms_utime)  - (tms3.tms_utime))
+        << " system time: "
+        << (long) ((tms4.tms_stime)  - (tms3.tms_stime)) 
+        << "\t elapsed time: " << (long) (r4 - r3)
+        << std::endl;
    return retVal;
 }
 
