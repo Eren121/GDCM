@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWriteSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/23 20:26:13 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/05/20 08:34:15 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,8 @@ int VTKWriteSeqTest(vtkTesting *t, vtkImageViewer *viewer,
    // Write the image
    vtkGdcmWriter *writer = vtkGdcmWriter::New();
    writer->SetFilePattern("%s%02d.dcm");
-   writer->SetFilePrefix("TestWrite");
+   char filePrefix[] = "TestWrite";
+   writer->SetFilePrefix(filePrefix);
    writer->SetFileDimensionality(2);
    writer->SetInput(reader->GetOutput());
    writer->Write();
