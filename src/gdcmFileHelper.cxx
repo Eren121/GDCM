@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/05/19 15:31:21 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/05/20 08:27:55 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1222,7 +1222,7 @@ void FileHelper::CheckMandatoryElements()
    if ( e_0008_0016 != 0 )
    {
       // Create 'Source Image Sequence' SeqEntry
-      SeqEntry *s = new SeqEntry (
+      SeqEntry *sis = new SeqEntry (
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x2112) );
       SQItem *sqi = new SQItem(1);
       // (we assume 'SOP Instance UID' exists too) 
@@ -1239,9 +1239,9 @@ void FileHelper::CheckMandatoryElements()
       e_0008_1155->SetValue( e_0008_0018->GetValue());
       sqi->AddEntry(e_0008_1155);
 
-      s->AddSQItem(sqi,1); 
+      sis->AddSQItem(sqi,1); 
       // temporarily replaces any previous 'Source Image Sequence' 
-      Archive->Push(s);
+      Archive->Push(sis);
  
       // 'Image Type' (The written image is no longer an 'ORIGINAL' one)
       ValEntry *e_0008_0008 = CopyValEntry(0x0008,0x0008);
