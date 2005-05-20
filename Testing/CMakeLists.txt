@@ -27,7 +27,7 @@ IF (GDCM_DATA_ROOT)
     TestFileAccessors.cxx
     TestMakeIcon.cxx
     TestPrintAllDocument.cxx         # includes generated gdcmDataImages.h
-    TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
+    #TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
     TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     #TestCopyDicom.cxx                # includes generated gdcmDataImages.h 
