@@ -112,13 +112,13 @@ char *argv[];
       break;
     }
 
-    lseek(base.Infile, 0l, 0);
+    lseek(base.Infile, 0l, SEEK_SET);
     Initialize_Buffer(); 
   }
 
   if(base.Infile!=0)
   {
-    lseek(base.Infile, 0l, 0);
+    lseek(base.Infile, 0l, SEEK_SET);
   }
 
   Initialize_Buffer(); 

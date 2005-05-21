@@ -320,7 +320,7 @@ int framenum;
   /* seek to location in big file where desired frame begins */
   /* note: this offset cannot exceed a few billion bytes due to the */
   /*       obvious limitations of 32-bit integers */
-  fseek(fd, offset, 0);
+  fseek(fd, offset, SEEK_SET);
 
   /* Y  */
   for (line=0; line<Coded_Picture_Height; line++)
