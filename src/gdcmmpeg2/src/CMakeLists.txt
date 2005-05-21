@@ -1,1 +1,1 @@
-SUBDIRS(mpeg2dec)
+SUBDIRS(mpeg2dec mpeg2enc)

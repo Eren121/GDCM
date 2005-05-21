@@ -1,4 +1,4 @@
-SET(GDCM_MPEG2_SOURCES
+SET(GDCM_MPEG2DEC_SOURCES
   getpic.c
   motion.c
   getvlc.c
@@ -10,15 +10,15 @@ SET(GDCM_MPEG2_SOURCES
   spatscal.c
   idct.c
   idctref.c
-  display.c
+  #  display.c
   systems.c
   subspic.c
-  verify.c
+  #  verify.c
   )
-ADD_LIBRARY(gdcmmpeg2 ${GDCM_MPEG2_SOURCES} )
+ADD_LIBRARY(gdcmmpeg2 ${GDCM_MPEG2DEC_SOURCES} )
 IF(UNIX)
   TARGET_LINK_LIBRARIES(gdcmmpeg2 -lm)
 ENDIF(UNIX)
 
-ADD_EXECUTABLE(mpeg2dec mpeg2dec.c)
-TARGET_LINK_LIBRARIES(mpeg2dec gdcmmpeg2)
+ADD_EXECUTABLE(mpeg2decode mpeg2dec.c)
+TARGET_LINK_LIBRARIES(mpeg2decode gdcmmpeg2)
