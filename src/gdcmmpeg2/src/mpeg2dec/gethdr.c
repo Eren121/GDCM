@@ -138,9 +138,11 @@ void next_start_code()
 static void sequence_header()
 {
   int i;
+#ifdef VERBOSE
   int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
   horizontal_size             = Get_Bits(12);
   vertical_size               = Get_Bits(12);
   aspect_ratio_information    = Get_Bits(4);
@@ -214,14 +216,15 @@ static void sequence_header()
 /* ISO/IEC 13818-2 section 6.2.2.6 */
 static void group_of_pictures_header()
 {
+#ifdef VERBOSE
   int pos;
-
+  pos = ld->Bitcnt;
+#endif /* VERBOSE */
   if (ld == &base)
   {
     Temporal_Reference_Base = True_Framenum_max + 1;  /* *CH* */
     Temporal_Reference_GOP_Reset = 1;
   }
-  pos = ld->Bitcnt;
   drop_flag   = Get_Bits(1);
   hour        = Get_Bits(5);
   minute      = Get_Bits(6);
@@ -259,13 +262,15 @@ static void group_of_pictures_header()
 /* ISO/IEC 13818-2 section 6.2.3 */
 static void picture_header()
 {
-  int pos;
   int Extra_Information_Byte_Count;
+#ifdef VERBOSE
+  int pos;
+  pos = ld->Bitcnt;
+#endif /* VERBOSE */
 
   /* unless later overwritten by picture_spatial_scalable_extension() */
   ld->pict_scal = 0; 
   
-  pos = ld->Bitcnt;
   temporal_reference  = Get_Bits(10);
   picture_coding_type = Get_Bits(3);
   vbv_delay           = Get_Bits(16);
@@ -310,6 +315,7 @@ static void picture_header()
 
   Extra_Information_Byte_Count = 
     extra_bit_information();
+  (void)Extra_Information_Byte_Count;
   
   extension_and_user_data();
 
@@ -324,12 +330,14 @@ int slice_header()
 {
   int slice_vertical_position_extension;
   int quantizer_scale_code;
-  int pos;
   int slice_picture_id_enable = 0;
   int slice_picture_id = 0;
   int extra_information_slice = 0;
+#ifdef VERBOSE
+  int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
 
   slice_vertical_position_extension =
     (ld->MPEG2_Flag && vertical_size>2800) ? Get_Bits(3) : 0;
@@ -458,10 +466,10 @@ static void sequence_extension()
   int vertical_size_extension;
   int bit_rate_extension;
   int vbv_buffer_size_extension;
-  int pos;(void)pos;
+#ifdef VERBOSE
+  int pos;
 
   /* derive bit position for trace */
-#ifdef VERBOSE
   pos = ld->Bitcnt;
 #endif
 
@@ -556,9 +564,11 @@ static void sequence_extension()
 
 static void sequence_display_extension()
 {
+#ifdef VERBOSE
   int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
   video_format      = Get_Bits(3);
   color_description = Get_Bits(1);
 
@@ -607,9 +617,11 @@ static void sequence_display_extension()
 static void quant_matrix_extension()
 {
   int i;
+#ifdef VERBOSE
   int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
 
   if((ld->load_intra_quantizer_matrix = Get_Bits(1)))
   {
@@ -669,9 +681,11 @@ static void quant_matrix_extension()
 /* ISO/IEC 13818-2   section 6.2.2.5 */
 static void sequence_scalable_extension()
 {
+#ifdef VERBOSE
   int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
 
   /* values (without the +1 offset) of scalable_mode are defined in 
      Table 6-10 of ISO/IEC 13818-2 */
@@ -733,9 +747,11 @@ static void picture_display_extension()
 {
   int i;
   int number_of_frame_center_offsets;
+#ifdef VERBOSE
   int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
   /* based on ISO/IEC 13818-2 section 6.3.12 
     (November 1994) Picture display extensions */
 
@@ -808,9 +824,11 @@ static void picture_display_extension()
 /* decode picture coding extension */
 static void picture_coding_extension()
 {
+#ifdef VERBOSE
   int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
 
   f_code[0][0] = Get_Bits(4);
   f_code[0][1] = Get_Bits(4);
@@ -884,9 +902,11 @@ static void picture_coding_extension()
 /* ISO/IEC 13818-2 section 6.2.3.5. */
 static void picture_spatial_scalable_extension()
 {
+#ifdef VERBOSE
   int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
 
   ld->pict_scal = 1; /* use spatial scalability in this picture */
 
@@ -993,10 +1013,12 @@ static void user_data()
 
 static void copyright_extension()
 {
-  int pos;
   int reserved_data;
+#ifdef VERBOSE
+  int pos;
 
   pos = ld->Bitcnt;
+#endif /* VERBOSE */
   
 
   copyright_flag =       Get_Bits(1); 
@@ -1013,6 +1035,7 @@ static void copyright_extension()
   marker_bit("copyright_extension(), third marker bit");
   copyright_number_3 =   Get_Bits(22);
 
+#ifdef VERBOSE
   if(Verbose_Flag>NO_LAYER)
   {
     printf("copyright_extension (byte %d)\n",(pos>>3)-4);
@@ -1030,6 +1053,7 @@ static void copyright_extension()
       printf("  copyright_number_3=%d\n",copyright_number_3);
     }
   }
+#endif /* VERBOSE */
 
 #ifdef VERIFY
   verify_copyright_extension++;
