@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/26 16:25:49 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/05/21 18:43:53 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,8 @@
 
 namespace gdcm
 {
+
+extern bool ReadMPEGFile (std::ifstream *fp, void *image_buffer);
 //-----------------------------------------------------------------------------
 #define str2num(str, typeNum) *((typeNum *)(str))
 
@@ -253,8 +255,10 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    }
    else if ( IsMPEG )
    {
-      gdcmWarningMacro( "Sorry, MPEG not yet taken into account" );
-      return false;
+      //gdcmWarningMacro( "Sorry, MPEG not yet taken into account" );
+      //return false;
+      ReadMPEGFile(fp, Raw); // fp has already been seek to start of mpeg
+      return true;
    }
    else
    {

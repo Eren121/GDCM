@@ -18,6 +18,7 @@ SUBDIRS(
 # "jpeglib.h" is defined here:
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src
+  ${GDCM_SOURCE_DIR}/src/gdcmmpeg2/src/mpeg2dec
   ${GDCM_BINARY_DIR}/ #for gdcmConfigure.h
   ${GDCM_BINARY_DIR}/src #for gdcmjpeg 8, 12 and 16 
 )
@@ -55,6 +56,7 @@ SET(libgdcm_la_SOURCES
    gdcmJpeg12.cxx
    gdcmJpeg16.cxx
    gdcmJpeg2000.cxx
+   gdcmMpeg.cxx
    gdcmPixelReadConvert.cxx
    gdcmPixelWriteConvert.cxx
    gdcmRLEFrame.cxx
@@ -74,6 +76,7 @@ TARGET_LINK_LIBRARIES(gdcm
   gdcmjpeg8 
   gdcmjpeg12
   gdcmjpeg16
+  gdcmmpeg2
 )
 IF(WIN32)
   IF(NOT BORLAND)
