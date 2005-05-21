@@ -12,7 +12,7 @@ IF (WIN32)
 ENDIF (WIN32)
 SUBDIRS(
   gdcmjpeg
-  #  gdcmmpeg2
+  gdcmmpeg2
   )
 
 # "jpeglib.h" is defined here:

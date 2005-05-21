@@ -31,9 +31,9 @@ IF (GDCM_DATA_ROOT)
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
     TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     #TestCopyDicom.cxx                # includes generated gdcmDataImages.h 
-    TestCopyRescaleDicom.cxx         # includes generated gdcmDataImages.h 
+    #    TestCopyRescaleDicom.cxx         # includes generated gdcmDataImages.h 
     #TestChangeHeader.cxx
-    TestAnonymize.cxx
+    #    TestAnonymize.cxx
     TestDirList.cxx
     TestDicomDir.cxx                 # require DICOMDIR
     TestBuildUpDicomDir.cxx          # writes a file named "NewDICOMDIR"
