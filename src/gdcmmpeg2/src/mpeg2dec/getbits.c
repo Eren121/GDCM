@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h> // for read
 
 #include "config.h"
 #include "global.h"

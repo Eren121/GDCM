@@ -30,6 +30,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <unistd.h> // for write
+#include <string.h> // for strcat
 
 #include "config.h"
 #include "global.h"

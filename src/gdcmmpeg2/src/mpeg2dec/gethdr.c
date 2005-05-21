@@ -458,7 +458,7 @@ static void sequence_extension()
   int vertical_size_extension;
   int bit_rate_extension;
   int vbv_buffer_size_extension;
-  int pos;
+  int pos;(void)pos;
 
   /* derive bit position for trace */
 #ifdef VERBOSE
@@ -966,6 +966,7 @@ void marker_bit(text)
 char *text;
 {
   int marker;
+  (void)text;
 
   marker = Get_Bits(1);
 

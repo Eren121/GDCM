@@ -150,6 +150,7 @@ int framenum, MBAmax;
   int stwtype, stwclass;
   int SNRMBA, SNRMBAinc;
   int ret;
+  (void)framenum;
 
   MBA = 0; /* macroblock address */
   MBAinc = 0;
@@ -911,6 +912,7 @@ int PMV[2][2][2];
 {
   unsigned int code;
   int slice_vert_pos_ext;
+  (void)MBAmax;
 
   ld = &base;
 

@@ -108,6 +108,7 @@ static int Get_I_macroblock_type()
   return 17;
 }
 
+#ifdef TRACE
 static char *MBdescr[]={
   "",                  "Intra",        "No MC, Coded",         "",
   "Bwd, Not Coded",    "",             "Bwd, Coded",           "",
@@ -118,6 +119,7 @@ static char *MBdescr[]={
   "",                  "",             "Fwd, Coded, Quant",    "",
   "",                  "",             "Interp, Coded, Quant", ""
 };
+#endif /* TRACE */
 
 static int Get_P_macroblock_type()
 {
@@ -347,7 +349,7 @@ static int Get_SNR_macroblock_type()
 #ifdef TRACE    /* *CH* */
   if (Trace_Flag)
     printf("macroblock_type(SNR) (");
-#endif TRACE
+#endif /* TRACE */
 
   code = Show_Bits(3);
 
@@ -367,7 +369,7 @@ static int Get_SNR_macroblock_type()
     Print_Bits(code,3,SNRMBtab[code].len);
     printf("): %s (%d)\n",MBdescr[(int)SNRMBtab[code].val],SNRMBtab[code].val);
   }
-#endif TRACE
+#endif /* TRACE */
 
 
   return SNRMBtab[code].val;

@@ -264,10 +264,12 @@ int dc_dct_pred[];
   bp = ld1->block[comp];
 
   if (base.scalable_mode==SC_DP)
+    {
     if (base.priority_breakpoint<64)
       ld = &enhan;
     else
       ld = &base;
+    }
 
   cc = (comp<4) ? 0 : (comp&1)+1;
 
@@ -435,10 +437,12 @@ int comp;
   bp = ld1->block[comp];
 
   if (base.scalable_mode==SC_DP)
+    {
     if (base.priority_breakpoint<64)
       ld = &enhan;
     else
       ld = &base;
+    }
 
   qmat = (comp<4 || chroma_format==CHROMA420)
          ? ld1->non_intra_quantizer_matrix
