@@ -12,3 +12,4 @@ Modifications
 
 - modification were made so that compilation with gcc -Wall flags passes without warnings
 - remove all explicit tabs and replace by proper amount of spaces
+- rename toplevel Makefile to LICENSE in order to keep copyright and to avoid conflict when doing insource built
