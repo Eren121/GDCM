@@ -44,8 +44,8 @@
 #endif
 
 /* For close / read / lseek ... */
-#ifndef _MSC_VER
-#include <unistd.h>
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
+#  include <io.h>
 #else
-#include <io.h>
+#  include <unistd.h>
 #endif
