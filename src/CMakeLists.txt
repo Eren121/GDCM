@@ -10,7 +10,10 @@ IF (WIN32)
     ADD_DEFINITIONS(-DJPEGSTATIC)
   ENDIF (BUILD_SHARED_LIBS)
 ENDIF (WIN32)
-SUBDIRS(gdcmjpeg)
+SUBDIRS(
+  gdcmjpeg
+  #  gdcmmpeg2
+  )
 
 # "jpeglib.h" is defined here:
 INCLUDE_DIRECTORIES(
