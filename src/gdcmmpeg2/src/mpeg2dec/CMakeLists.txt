@@ -20,5 +20,5 @@ IF(UNIX)
   TARGET_LINK_LIBRARIES(gdcmmpeg2 -lm)
 ENDIF(UNIX)
 
-ADD_EXECUTABLE(mpeg2decode mpeg2dec.c)
-TARGET_LINK_LIBRARIES(mpeg2decode gdcmmpeg2)
+#ADD_EXECUTABLE(mpeg2decode mpeg2dec.c)
+#TARGET_LINK_LIBRARIES(mpeg2decode gdcmmpeg2)
