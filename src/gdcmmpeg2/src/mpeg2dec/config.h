@@ -42,3 +42,10 @@
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
+
+/* For close / read / lseek ... */
+#ifndef _MSC_VER
+#include <unistd.h>
+#else
+#include <io.h>
+#endif
