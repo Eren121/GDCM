@@ -119,17 +119,16 @@ static void picture_data(framenum)
 int framenum;
 {
   int MBAmax;
-  int ret;
 
   /* number of macroblocks per picture */
   MBAmax = mb_width*mb_height;
 
   if (picture_structure!=FRAME_PICTURE)
-    MBAmax>>=1; /* field picture has half as mnay macroblocks as frame */
+    MBAmax>>=1; /* field picture has half as many macroblocks as frame */
 
   for(;;)
   {
-    if((ret=slice(framenum, MBAmax))<0)
+    if(slice(framenum, MBAmax)<0)
       return;
   }
 
