@@ -330,9 +330,9 @@ int slice_header()
 {
   int slice_vertical_position_extension;
   int quantizer_scale_code;
-  int slice_picture_id_enable = 0;
-  int slice_picture_id = 0;
-  int extra_information_slice = 0;
+  int slice_picture_id_enable;
+  int slice_picture_id;
+  int extra_information_slice;
 #ifdef VERBOSE
   int pos;
 
@@ -989,6 +989,7 @@ char *text;
   (void)text;
 
   marker = Get_Bits(1);
+  (void)marker;
 
 #ifdef VERIFY  
   if(!marker)
@@ -1027,6 +1028,7 @@ static void copyright_extension()
   
   /* reserved */
   reserved_data = Get_Bits(7);
+  (void)reserved_data;
 
   marker_bit("copyright_extension(), first marker bit");
   copyright_number_1 =   Get_Bits(20);
