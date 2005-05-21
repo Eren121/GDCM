@@ -148,7 +148,7 @@ char *argv[];
   if (Two_Streams)
     close(enhan.Infile);
 
-  return 0;
+  return ret;
 }
 
 /* IMPLEMENTAION specific rouintes */
