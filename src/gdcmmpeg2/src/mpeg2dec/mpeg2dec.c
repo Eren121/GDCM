@@ -39,7 +39,7 @@
 
 /* private prototypes */
 static int  video_sequence _ANSI_ARGS_((int *framenum));
-static int Decode_Bitstream _ANSI_ARGS_((void));
+static int  Decode_Bitstream _ANSI_ARGS_((void));
 static int  Headers _ANSI_ARGS_((void));
 static void Initialize_Sequence _ANSI_ARGS_((void));
 static void Initialize_Decoder _ANSI_ARGS_((void));
@@ -58,11 +58,34 @@ static void Clear_Options();
 static void Print_Options();
 #endif
 
+int my_open(char *filename)
+{
+  return open(filename,O_RDONLY|O_BINARY);
+}
+off_t my_seek(int infile, off_t offset,int whence)
+{
+  return lseek(infile, offset, whence);
+}
+ssize_t my_read(int infile,void *buf,size_t count)
+{
+  return read(infile,buf,count);
+}
+int my_close(int infile)
+{
+  return close(infile);
+}
+
+
+
 int main(argc,argv)
 int argc;
 char *argv[];
 {
   int ret, code;
+  base.open_stream = my_open;
+  base.seek_stream = my_seek;
+  base.read_stream = my_read;
+  base.close_stream = my_close;
 
   Clear_Options();
 
@@ -77,7 +100,9 @@ char *argv[];
 
   /* open MPEG base layer bitstream file(s) */
   /* NOTE: this is either a base layer stream or a spatial enhancement stream */
-  if ((base.Infile=open(Main_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+//  if ((base.Infile=open(Main_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+  base.Infile = ld->open_stream(Main_Bitstream_Filename);
+  if( base.Infile < 0 )
   {
     fprintf(stderr,"Base layer input file %s not found\n", Main_Bitstream_Filename);
     exit(1);
@@ -112,13 +137,15 @@ char *argv[];
       break;
     }
 
-    lseek(base.Infile, 0l, SEEK_SET);
+    //lseek(base.Infile, 0l, SEEK_SET);
+    ld->seek_stream(base.Infile,0l,SEEK_SET);
     Initialize_Buffer(); 
   }
 
   if(base.Infile!=0)
   {
-    lseek(base.Infile, 0l, SEEK_SET);
+    //lseek(base.Infile, 0l, SEEK_SET);
+    ld->seek_stream(base.Infile,0l,SEEK_SET);
   }
 
   Initialize_Buffer(); 
@@ -127,7 +154,9 @@ char *argv[];
   {
     ld = &enhan; /* select enhancement layer context */
 
-    if ((enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+    //if ((enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+    enhan.Infile = ld->open_stream(Enhancement_Layer_Bitstream_Filename);
+    if (enhan.Infile<0)
     {
       sprintf(Error_Text,"enhancment layer bitstream file %s not found\n",
         Enhancement_Layer_Bitstream_Filename);
@@ -143,10 +172,12 @@ char *argv[];
 
   ret = Decode_Bitstream();
 
-  close(base.Infile);
+  //close(base.Infile);
+  ld->close_stream(base.Infile);
 
   if (Two_Streams)
-    close(enhan.Infile);
+    //close(enhan.Infile);
+    ld->close_stream(enhan.Infile);
 
   return ret;
 }
@@ -763,3 +794,4 @@ static void Print_Options()
 
 }
 #endif
+

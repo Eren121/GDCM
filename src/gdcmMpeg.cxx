@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/21 18:43:52 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/05/21 20:03:48 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -306,6 +306,7 @@ namespace gdcm
  * @param statesuspension Suspension State basically it should be 3 otherwise more complex to handle
  * @return 1 on success, 0 on error
  */
+
 bool ReadMPEGFile (std::ifstream *fp, void *image_buffer)
 {
   int ret, code;

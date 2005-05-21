@@ -417,10 +417,18 @@ EXTERN int broken_link;
 
 
 
+//FIXME
+#include <sys/types.h>
+#include <unistd.h>
+
 /* layer specific variables (needed for SNR and DP scalability) */
 EXTERN struct layer_data {
   /* bit input */
   int Infile;
+  int  (*open_stream) (char *filename);
+  off_t   (*seek_stream) (int infile, off_t offset,int whence);
+  ssize_t (*read_stream) (int infile, void *buf, size_t count);
+  int  (*close_stream) (int infile);
   unsigned char Rdbfr[2048];
   unsigned char *Rdptr;
   unsigned char Inbfr[16];

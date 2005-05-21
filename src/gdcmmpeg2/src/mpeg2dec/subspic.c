@@ -260,6 +260,7 @@ int Height;
     return(-1);
   }
 
+  abort();
   Bytes_Read = read(Infile, Frame, Size);
   
   if(Bytes_Read!=Size)
@@ -288,6 +289,7 @@ int framenum;
   FILE *fd;
   int line;
   int size, offset;
+  abort();
 
 
   if (!(fd = fopen(filename,"rb")))
