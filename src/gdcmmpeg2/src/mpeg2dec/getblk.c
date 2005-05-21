@@ -407,6 +407,8 @@ int dc_dct_pred[];
 #ifdef TRACE
     if (Trace_Flag)
       printf("): %d/%d",run,sign ? -val : val);
+#else
+    (void)run;
 #endif /* TRACE */
 
     j = scan[ld1->alternate_scan][i];
@@ -561,6 +563,8 @@ int comp;
 #ifdef TRACE
     if (Trace_Flag)
       printf("): %d/%d",run,sign?-val:val);
+#else
+    (void)run;
 #endif /* TRACE */
 
     j = scan[ld1->alternate_scan][i];

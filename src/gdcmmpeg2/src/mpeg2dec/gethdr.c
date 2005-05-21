@@ -357,8 +357,11 @@ int slice_header()
 
     slice_picture_id_enable = Get_Bits(1);
     slice_picture_id = Get_Bits(6);
+    (void)slice_picture_id_enable;
+    (void)slice_picture_id;
 
     extra_information_slice = extra_bit_information();
+    (void)extra_information_slice;
   }
   else
     ld->intra_slice = 0;
