@@ -22,6 +22,8 @@ INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src/gdcmmpeg2/src/mpeg2dec
   ${GDCM_BINARY_DIR}/ #for gdcmConfigure.h
   ${GDCM_BINARY_DIR}/src #for gdcmjpeg 8, 12 and 16 
+  ${GDCM_BINARY_DIR}/src/gdcmjasper/src/libjasper/include
+  ${GDCM_SOURCE_DIR}/src/gdcmjasper/src/libjasper/include
 )
 
 SET(libgdcm_la_SOURCES
