@@ -1,3 +1,9 @@
+2005-05-22 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Adding potential support for mpeg and jpeg2000 through two new lin
+	 - JasPer for JPEG2000
+	 - libmpeg2 from the MPEG consortium
+	 Also adding intial work to use this lib.
+
 2005-04-26 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Testing/TestAllReadCompareDicom.cxx : update the test printed results and
      description.
