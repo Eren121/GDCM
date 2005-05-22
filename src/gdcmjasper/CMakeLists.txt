@@ -1,0 +1,3 @@
+PROJECT(JASPER)
+
+SUBDIRS(src)
