@@ -419,7 +419,6 @@ EXTERN int broken_link;
 
 //FIXME
 #include <sys/types.h>
-#include <unistd.h>
 
 /* layer specific variables (needed for SNR and DP scalability) */
 EXTERN struct layer_data {
