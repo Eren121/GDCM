@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:37:09 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/05/22 18:38:52 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <jasper/jasper.h>
 
 namespace gdcm 
 {
@@ -33,10 +34,80 @@ namespace gdcm
  * @warning : not yet made
  */
 
-bool gdcm_read_JPEG2000_file (std::ifstream* , void* )
+bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* raw, size_t inputlength)
 {
-   gdcmWarningMacro( "Sorry JPEG 2000 File not yet taken into account" );
-   return false;
+  jas_init(); //important...
+  // FIXME this is really ugly but it seems I have to load the complete
+  // jpeg2000 stream to use jasper:
+  uint8_t *inputdata = new uint8_t[inputlength];
+  //fp is already 'seek' to proper pos
+  fp->read((char*)inputdata, inputlength);
+  jas_stream_t *jasStream = jas_stream_memopen((char *)inputdata, inputlength);
+    
+  int fmtid;
+  if ((fmtid = jas_image_getfmt(jasStream)) < 0) 
+    {
+    gdcmErrorMacro("unknown image format");
+    return false;
+    }
+
+  // Decode the image. 
+  jas_image_t *jasImage = NULL;
+  if (!(jasImage = jas_image_decode(jasStream, fmtid, 0))) 
+    {
+    gdcmErrorMacro("cannot decode image");
+    return false;
+    }
+
+  // close the stream. 
+  jas_stream_close(jasStream);
+  int numcmpts = jas_image_numcmpts(jasImage);
+  int width = jas_image_cmptwidth(jasImage, 0);
+  int height = jas_image_cmptheight(jasImage, 0);
+  int prec = jas_image_cmptprec(jasImage, 0);
+  int i, j, k;
+  char *fmtname = jas_image_fmttostr(fmtid);
+  printf("%s %d %d %d %d %ld\n", fmtname, numcmpts, width, height, prec, (long) jas_image_rawsize(jasImage));
+
+  // The following should serioulsy be rewritten I cannot belive we need to
+  // do a per pixel decompression, there should be a way to read a full
+  // scanline...
+  if (prec == 8)
+    {
+    uint8_t *data8 = (uint8_t*)raw;
+    for ( i = 0; i < height; i++)
+      for ( j = 0; j < width; j++)
+        for ( k= 0; k < numcmpts; k++)
+          *data8++ =
+            (uint8_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
+    }
+  else if (prec <= 16)
+    {
+    uint16_t *data16 = (uint16_t*)raw;
+    for ( i = 0; i < height; i++) 
+      for ( j = 0; j < width; j++) 
+        for ( k= 0; k < numcmpts; k++)
+          *data16++ = 
+            (uint16_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
+    }
+  else if (prec <= 32)
+    {
+    uint32_t *data32 = (uint32_t*)raw;
+    for ( i = 0; i < height; i++) 
+      for ( j = 0; j < width; j++) 
+        for ( k= 0; k < numcmpts; k++)
+          *data32++ = 
+            (uint32_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
+    }
+
+  jas_image_destroy(jasImage);
+  jas_image_clearfmts();
+
+  //FIXME
+  //delete the jpeg temp buffer
+  delete[] inputdata;
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/21 18:43:53 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/05/22 18:38:52 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,8 @@
 namespace gdcm
 {
 
-extern bool ReadMPEGFile (std::ifstream *fp, void *image_buffer);
+bool ReadMPEGFile (std::ifstream *fp, void *image_buffer);
+bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* raw, size_t inputlength);
 //-----------------------------------------------------------------------------
 #define str2num(str, typeNum) *((typeNum *)(str))
 
@@ -396,9 +397,9 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 {
    if ( IsJPEG2000 )
    {
-      gdcmWarningMacro( "Sorry, JPEG2000 not yet taken into account" );
+//      gdcmWarningMacro( "Sorry, JPEG2000 not yet taken into account" );
       fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
-//    if ( ! gdcm_read_JPEG2000_file( fp,Raw ) )
+    if ( ! gdcm_read_JPEG2000_file( fp,Raw, JPEGInfo->GetFirstFragment()->GetLength() ) )
           return false;
    }
 

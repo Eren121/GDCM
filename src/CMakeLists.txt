@@ -13,6 +13,7 @@ ENDIF (WIN32)
 SUBDIRS(
   gdcmjpeg
   gdcmmpeg2
+  gdcmjasper
   )
 
 # "jpeglib.h" is defined here:
@@ -77,6 +78,7 @@ TARGET_LINK_LIBRARIES(gdcm
   gdcmjpeg12
   gdcmjpeg16
   gdcmmpeg2
+  gdcmjasper
 )
 IF(WIN32)
   IF(NOT BORLAND)
