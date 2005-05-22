@@ -1,6 +1,7 @@
 
 SUBDIRS(base
   bmp
+  include/jasper
   jp2  
   jpc  
   jpg  
