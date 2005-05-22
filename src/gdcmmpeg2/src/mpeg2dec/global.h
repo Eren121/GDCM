@@ -419,6 +419,9 @@ EXTERN int broken_link;
 
 //FIXME
 #include <sys/types.h>
+#ifdef _WIN32
+typedef int ssize_t;
+#endif
 
 /* layer specific variables (needed for SNR and DP scalability) */
 EXTERN struct layer_data {
