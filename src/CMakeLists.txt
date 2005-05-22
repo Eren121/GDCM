@@ -12,8 +12,8 @@ IF (WIN32)
 ENDIF (WIN32)
 SUBDIRS(
   gdcmjpeg
-  gdcmmpeg2
-  gdcmjasper
+  #  gdcmmpeg2
+  #  gdcmjasper
   )
 
 # "jpeglib.h" is defined here:
@@ -58,8 +58,8 @@ SET(libgdcm_la_SOURCES
    gdcmJpeg8.cxx
    gdcmJpeg12.cxx
    gdcmJpeg16.cxx
-   gdcmJpeg2000.cxx
-   gdcmMpeg.cxx
+   #   gdcmJpeg2000.cxx
+   #   gdcmMpeg.cxx
    gdcmPixelReadConvert.cxx
    gdcmPixelWriteConvert.cxx
    gdcmRLEFrame.cxx
@@ -79,8 +79,8 @@ TARGET_LINK_LIBRARIES(gdcm
   gdcmjpeg8 
   gdcmjpeg12
   gdcmjpeg16
-  gdcmmpeg2
-  gdcmjasper
+  #  gdcmmpeg2
+  #  gdcmjasper
 )
 IF(WIN32)
   IF(NOT BORLAND)

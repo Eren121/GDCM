@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/22 18:38:52 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/05/22 20:33:09 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,8 +31,8 @@
 namespace gdcm
 {
 
-bool ReadMPEGFile (std::ifstream *fp, void *image_buffer);
-bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* raw, size_t inputlength);
+//bool ReadMPEGFile (std::ifstream *fp, void *image_buffer);
+//bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* raw, size_t inputlength);
 //-----------------------------------------------------------------------------
 #define str2num(str, typeNum) *((typeNum *)(str))
 
@@ -258,7 +258,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    {
       //gdcmWarningMacro( "Sorry, MPEG not yet taken into account" );
       //return false;
-      ReadMPEGFile(fp, Raw); // fp has already been seek to start of mpeg
+//      ReadMPEGFile(fp, Raw); // fp has already been seek to start of mpeg
       return true;
    }
    else
@@ -399,7 +399,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
    {
 //      gdcmWarningMacro( "Sorry, JPEG2000 not yet taken into account" );
       fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
-    if ( ! gdcm_read_JPEG2000_file( fp,Raw, JPEGInfo->GetFirstFragment()->GetLength() ) )
+//    if ( ! gdcm_read_JPEG2000_file( fp,Raw, JPEGInfo->GetFirstFragment()->GetLength() ) )
           return false;
    }
 
