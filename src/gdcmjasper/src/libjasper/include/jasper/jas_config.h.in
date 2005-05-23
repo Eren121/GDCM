@@ -173,7 +173,7 @@
 /* #undef ushort */
 #endif
 
-/*
+
 #ifndef HAVE_SYS_TYPES_H
 #else
 typedef unsigned char      uchar;
@@ -182,13 +182,14 @@ typedef unsigned int       uint;
 typedef unsigned long      ulong;
 typedef long long          longlong;
 typedef unsigned long long ulonglong;
-//#define  ssize_t    int
+/*#define  ssize_t    int */
 #endif
-*/
+
 
 /* Copied from gdcmCommon.h */
 /* hope it works  ... */
 /* Broken plateform do not respect C99 and do not provide those typedef */
+/*
 #if defined(_MSC_VER) || defined(__BORLANDC__)
 typedef  signed char         int8_t;
 typedef  signed short        int16_t;
@@ -198,7 +199,7 @@ typedef  unsigned short      uint16_t;
 typedef  unsigned int        uint32_t;
 #define UINT32_MAX    (4294967295U)
 #endif
-
+*/
 
 #endif
 
