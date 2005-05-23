@@ -31,8 +31,8 @@
 /* Define to 1 if you have the <io.h> header file. */
 #cmakedefine HAVE_IO_H
 
-///* Define to 1 if you have the `m' library (-lm). */
-//#define HAVE_LIBM 1
+/* Define to 1 if you have the `m' library (-lm). */
+/* #define HAVE_LIBM 1 */
 
 /* Define to 1 if you have the <limits.h> header file. */
 #cmakedefine HAVE_LIMITS_H
@@ -67,11 +67,11 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H
 
-///* Have variable length arrays */
-//#define HAVE_VLA 1
+/* Have variable length arrays */
+/* #define HAVE_VLA 1 */
 
-///* Define to 1 if you have the `vprintf' function. */
-//#define HAVE_VPRINTF 1
+/* Define to 1 if you have the `vprintf' function. */
+/* #define HAVE_VPRINTF 1 */
 
 /* Define to 1 if you have the <windows.h> header file. */
 #cmakedefine HAVE_WINDOWS_H
@@ -137,7 +137,7 @@
 #cmakedefine WORDS_BIGENDIAN
 
 /* Define to 1 if the X Window System is missing or not being used. */
-//#define X_DISPLAY_MISSING 1
+/*#define X_DISPLAY_MISSING 1 */
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
@@ -146,7 +146,7 @@
    if it is not supported. */
 /* #undef inline */
 
-// I have #define for types...
+/* I have #define for types... */
 #if 0
 /* Define to `long long' if <sys/types.h> does not define. */
 #define longlong long long
@@ -173,6 +173,7 @@
 /* #undef ushort */
 #endif
 
+/*
 #ifndef HAVE_SYS_TYPES_H
 #else
 typedef unsigned char      uchar;
@@ -183,6 +184,21 @@ typedef long long          longlong;
 typedef unsigned long long ulonglong;
 /*#define  ssize_t    int*/
 #endif
+*/
+
+/* Copied from gdcmCommon.h */
+/* hope it works  ... */
+/* Broken plateform do not respect C99 and do not provide those typedef */
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+typedef  signed char         int8_t;
+typedef  signed short        int16_t;
+typedef  signed int          int32_t;
+typedef  unsigned char       uint8_t;
+typedef  unsigned short      uint16_t;
+typedef  unsigned int        uint32_t;
+#define UINT32_MAX    (4294967295U)
+#endif
+
 
 #endif
 
