@@ -417,7 +417,7 @@ EXTERN int broken_link;
 
 
 
-//FIXME
+/* FIXME */
 #include <sys/types.h>
 #ifdef _WIN32
 typedef int ssize_t;
