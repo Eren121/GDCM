@@ -182,7 +182,7 @@ typedef unsigned int       uint;
 typedef unsigned long      ulong;
 typedef long long          longlong;
 typedef unsigned long long ulonglong;
-/*#define  ssize_t    int*/
+//#define  ssize_t    int
 #endif
 */
 
