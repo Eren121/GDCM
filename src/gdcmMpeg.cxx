@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/21 20:03:48 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/05/23 13:28:19 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -307,9 +307,17 @@ namespace gdcm
  * @return 1 on success, 0 on error
  */
 
-bool ReadMPEGFile (std::ifstream *fp, void *image_buffer)
+bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t length)
 {
   int ret, code;
+
+#if 0
+  fp->read((char*)image_buffer, length);
+
+  ofstream out("/tmp/etiam.mpeg");
+  out.write((char*)image_buffer, length);
+  out.close();
+#endif
 
 //  Clear_Options();
 
