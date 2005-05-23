@@ -1,7 +1,7 @@
 
 #include <stdio.h>
-#include <string.h> // for strcat
-#include <stdlib.h> // for exit
+#include <string.h> /* for strcat */
+#include <stdlib.h> /* for exit */
 #include "config.h"
 #include "global.h"
 

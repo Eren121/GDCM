@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <string.h> // for strcat
+#include <string.h> /* for strcat */
 
 #include "config.h"
 #include "global.h"

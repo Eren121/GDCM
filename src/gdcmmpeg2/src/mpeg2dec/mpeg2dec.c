@@ -100,7 +100,7 @@ char *argv[];
 
   /* open MPEG base layer bitstream file(s) */
   /* NOTE: this is either a base layer stream or a spatial enhancement stream */
-//  if ((base.Infile=open(Main_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+/*  if ((base.Infile=open(Main_Bitstream_Filename,O_RDONLY|O_BINARY))<0) */
   base.Infile = ld->open_stream(Main_Bitstream_Filename);
   if( base.Infile < 0 )
   {
@@ -137,14 +137,14 @@ char *argv[];
       break;
     }
 
-    //lseek(base.Infile, 0l, SEEK_SET);
+    /*lseek(base.Infile, 0l, SEEK_SET);*/
     ld->seek_stream(base.Infile,0l,SEEK_SET);
     Initialize_Buffer(); 
   }
 
   if(base.Infile!=0)
   {
-    //lseek(base.Infile, 0l, SEEK_SET);
+    /*lseek(base.Infile, 0l, SEEK_SET);*/
     ld->seek_stream(base.Infile,0l,SEEK_SET);
   }
 
@@ -154,7 +154,7 @@ char *argv[];
   {
     ld = &enhan; /* select enhancement layer context */
 
-    //if ((enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+    /*if ((enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)*/
     enhan.Infile = ld->open_stream(Enhancement_Layer_Bitstream_Filename);
     if (enhan.Infile<0)
     {
@@ -172,17 +172,17 @@ char *argv[];
 
   ret = Decode_Bitstream();
 
-  //close(base.Infile);
+  /*close(base.Infile);*/
   ld->close_stream(base.Infile);
 
   if (Two_Streams)
-    //close(enhan.Infile);
+    /*close(enhan.Infile);*/
     ld->close_stream(enhan.Infile);
 
   return ret;
 }
 
-/* IMPLEMENTAION specific rouintes */
+/* IMPLEMENTATION specific routines */
 static void Initialize_Decoder()
 {
   int i;
