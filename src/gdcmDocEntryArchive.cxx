@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/21 17:47:19 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/05/24 09:14:09 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
 
 /**
  * \brief   Removes out of the Header a DocEntry.
- *          It's kept in archive.
+ *          (it's kept in archive).
  * @param   group   Group number of the Entry to remove
  * @param   elem  Element number of the Entry to remove
  * @return  FALSE when an other DocEntry is already archived with the same key

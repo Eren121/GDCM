@@ -12,8 +12,8 @@ IF (WIN32)
 ENDIF (WIN32)
 SUBDIRS(
   gdcmjpeg
-  #  gdcmmpeg2
-  #  gdcmjasper
+  #gdcmmpeg2
+  #gdcmjasper
   )
 
 # "jpeglib.h" is defined here:
