@@ -41,7 +41,7 @@ static void border_extend _ANSI_ARGS_((unsigned char *frame, int w1, int h1,
 static void conv444to422 _ANSI_ARGS_((unsigned char *src, unsigned char *dst));
 static void conv422to420 _ANSI_ARGS_((unsigned char *src, unsigned char *dst));
 
-int pbm_getint(FILE *file); //forward declaration
+int pbm_getint(FILE *file); /*forward declaration */
 
 void readframe(fname,frame)
 char *fname;
