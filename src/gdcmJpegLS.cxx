@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpegLS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/05/24 09:11:44 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,11 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
  /**
- * \brief   routine for JPEG decompression 
+ * \brief   routine for JPEG decompression. WARNING LPEG-LS is NOT
+ *   the 'classical' jpeg lossless. See :
+ *   http://www.jpeg.org/jpeg/jpegls.html
+ *   gdcm DOES deal with 'classical' jpeg lossless
+ *
  * @param fp pointer to an already open file descriptor 
  *                      JPEG-LS encoded image
  * @param image_buffer to receive uncompressed pixels
