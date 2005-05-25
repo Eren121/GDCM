@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/05/20 08:27:55 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/05/25 12:54:17 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -238,7 +238,7 @@ bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
 ValEntry *FileHelper::InsertValEntry(std::string const &content,
                                      uint16_t group, uint16_t elem)
 {
-   return FileInternal->InsertValEntry(content,group,elem);
+   return FileInternal->InsertValEntry(content, group, elem);
 }
 
 /**
@@ -1411,6 +1411,7 @@ void FileHelper::RestoreWriteMandatory()
    Archive->Restore(0x0002,0x0001);
    Archive->Restore(0x0002,0x0002);
    Archive->Restore(0x0002,0x0003);
+   Archive->Restore(0x0002,0x0010);
    Archive->Restore(0x0002,0x0012);
    Archive->Restore(0x0002,0x0013);
    Archive->Restore(0x0002,0x0016);

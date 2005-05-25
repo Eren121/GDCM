@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/23 13:28:19 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/05/25 12:54:18 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -405,6 +405,15 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 
    if ( IsJPEGLS )
    {
+   // WARNING : JPEG-LS is NOT the 'classical' Jpeg Lossless : 
+   // [JPEG-LS is the basis for new lossless/near-lossless compression
+   // standard for continuous-tone images intended for JPEG2000. The standard
+   // is based on the LOCO-I algorithm (LOw COmplexity LOssless COmpression
+   // for Images) developed at Hewlett-Packard Laboratories]
+   //
+   // see http://datacompression.info/JPEGLS.shtml
+   //
+
       gdcmWarningMacro( "Sorry, JPEG-LS not yet taken into account" );
       fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
 //    if ( ! gdcm_read_JPEGLS_file( fp,Raw ) )

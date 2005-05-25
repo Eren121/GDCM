@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/18 10:12:07 $
-  Version:   $Revision: 1.240 $
+  Date:      $Date: 2005/05/25 12:54:17 $
+  Version:   $Revision: 1.241 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,12 @@ Document::Document( std::string const &fileName )
    // Load will set it to true if sucessfull
    IsDocumentAlreadyLoaded = false;
 
-   Load(fileName); 
+   Load(fileName);
+
+   // Normaly (?) Fp should be already deleted by CloseFile()
+   if ( Fp != 0 ) 
+      delete Fp;
+   Fp = 0;    
 }
 /**
  * \brief   Canonical destructor.
