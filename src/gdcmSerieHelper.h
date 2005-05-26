@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 17:01:46 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/05/26 18:49:46 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 namespace gdcm 
 {
 class File;
-typedef std::vector<File* > GdcmFileList;
+typedef std::vector<File* > FileList;
 
 //-----------------------------------------------------------------------------
 /**
@@ -41,8 +41,8 @@ typedef std::vector<File* > GdcmFileList;
 class GDCM_EXPORT SerieHelper 
 {
 public:
-   typedef std::map<std::string, GdcmFileList *> CoherentFileListmap;
-   typedef std::vector<File* > GdcmFileVector;
+   typedef std::map<std::string, FileList *> CoherentFileListmap;
+   typedef std::vector<File* > FileVector;
 
    SerieHelper();
    ~SerieHelper();
@@ -51,27 +51,26 @@ public:
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
    void SetDirectory(std::string const &dir, bool recursive=false);
-   void OrderGdcmFileList(GdcmFileList *coherentGdcmFileList);
+   void OrderFileList(FileList *coherentFileList);
    
    /// \brief Gets the FIRST *coherent* File List.
    ///        Deprecated; kept not to break the API
-   /// \note Caller must call OrderGdcmFileList first
+   /// \note Caller must call OrderFileList first
    /// @return the (first) *coherent* File List
-   const GdcmFileList &GetGdcmFileList() { return
-                       *CoherentGdcmFileListHT.begin()->second; }
+   const FileList &GetFileList() { return *CoherentFileListHT.begin()->second; }
   
-   GdcmFileList *GetFirstCoherentFileList();
-   GdcmFileList *GetNextCoherentFileList();
-   GdcmFileList *GetCoherentFileList(std::string serieUID);
+   FileList *GetFirstCoherentFileList();
+   FileList *GetNextCoherentFileList();
+   FileList *GetCoherentFileList(std::string serieUID);
 
 private:
-   bool ImagePositionPatientOrdering(GdcmFileList *coherentGdcmFileList);
-   bool ImageNumberOrdering(GdcmFileList *coherentGdcmFileList);
-   bool FileNameOrdering(GdcmFileList *coherentGdcmFileList);
+   bool ImagePositionPatientOrdering(FileList *coherentFileList);
+   bool ImageNumberOrdering(FileList *coherentFileList);
+   bool FileNameOrdering(FileList *coherentFileList);
    
    static bool ImageNumberLessThan(File *file1, File *file2);
    static bool FileNameLessThan(File *file1, File *file2);
-   CoherentFileListmap CoherentGdcmFileListHT;
+   CoherentFileListmap CoherentFileListHT;
    CoherentFileListmap::iterator ItListHt;
 };
 

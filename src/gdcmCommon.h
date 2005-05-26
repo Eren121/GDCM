@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:56:25 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/05/26 18:49:46 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@
 #endif
 
 // Broken plateform do not respect C99 and do not provide those typedef
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
 typedef  signed char         int8_t;
 typedef  signed short        int16_t;
 typedef  signed int          int32_t;
@@ -151,7 +151,7 @@ enum DicomDirType {
 /**
  * \brief structure, for internal use only
  */  
-GDCM_EXPORT typedef struct
+GDCM_EXPORT struct Element
 {
    /// DicomGroup number
    unsigned short int Group;
@@ -159,7 +159,7 @@ GDCM_EXPORT typedef struct
    unsigned short int Elem;
    /// value (coded as a std::string) of the Element
    std::string Value;
-} Element;
+};
 
 } //namespace gdcm
 //-----------------------------------------------------------------------------

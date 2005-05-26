@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/11 17:15:18 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/05/26 18:49:46 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,13 +36,13 @@ namespace gdcm
 SerieHelper::SerieHelper()
 {
    // For all the File lists of the gdcm::Serie
-   GdcmFileList *l = GetFirstCoherentFileList();
+   FileList *l = GetFirstCoherentFileList();
    while (l)
    { 
       // For all the files of a File list
-      for (GdcmFileList::iterator it  = l->begin();
-                                  it != l->end(); 
-                                ++it)
+      for (FileList::iterator it  = l->begin();
+                              it != l->end(); 
+                            ++it)
       {
          delete *it;
       }
@@ -58,13 +58,13 @@ SerieHelper::SerieHelper()
 SerieHelper::~SerieHelper()
 {
    // For all the Coherent File lists of the gdcm::Serie
-   GdcmFileList *l = GetFirstCoherentFileList();
+   FileList *l = GetFirstCoherentFileList();
    while (l)
    { 
       // For all the files of a Coherent File list
-      for (GdcmFileList::iterator it  = l->begin();
-                                  it != l->end(); 
-                                ++it)
+      for (FileList::iterator it  = l->begin();
+                              it != l->end(); 
+                            ++it)
       {
          delete *it;
       }
@@ -94,14 +94,14 @@ void SerieHelper::AddFileName(std::string const &filename)
       // if uid == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
       // no need here to do anything special
 
-      if ( CoherentGdcmFileListHT.count(uid) == 0 )
+      if ( CoherentFileListHT.count(uid) == 0 )
       {
          gdcmWarningMacro(" New Serie UID :[" << uid << "]");
          // create a std::list in 'uid' position
-         CoherentGdcmFileListHT[uid] = new GdcmFileList;
+         CoherentFileListHT[uid] = new FileList;
       }
       // Current Serie UID and DICOM header seems to match add the file:
-      CoherentGdcmFileListHT[uid]->push_back( header );
+      CoherentFileListHT[uid]->push_back( header );
    }
    else
    {
@@ -133,30 +133,30 @@ void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
  *          But as I don't know how to do it, I leave it this way
  *          BTW, this is also a Strategy, I don't know this is the best approach :)
  */
-void SerieHelper::OrderGdcmFileList(GdcmFileList *CoherentGdcmFileList)
+void SerieHelper::OrderFileList(FileList *CoherentFileList)
 {
-   if( ImagePositionPatientOrdering( CoherentGdcmFileList ) )
+   if( ImagePositionPatientOrdering( CoherentFileList ) )
    {
       return ;
    }
-   else if( ImageNumberOrdering(CoherentGdcmFileList ) )
+   else if( ImageNumberOrdering(CoherentFileList ) )
    {
       return ;
    }
    else  
    {
-      FileNameOrdering(CoherentGdcmFileList );
+      FileNameOrdering(CoherentFileList );
    }
 }
 
 /**
  * \brief   Get the first List while visiting the CoherentFileListHT
- * @return  The first GdcmFileList if found, otherwhise NULL
+ * @return  The first FileList if found, otherwhise NULL
  */
-GdcmFileList *SerieHelper::GetFirstCoherentFileList()
+FileList *SerieHelper::GetFirstCoherentFileList()
 {
-   ItListHt = CoherentGdcmFileListHT.begin();
-   if( ItListHt != CoherentGdcmFileListHT.end() )
+   ItListHt = CoherentFileListHT.begin();
+   if( ItListHt != CoherentFileListHT.end() )
       return ItListHt->second;
    return NULL;
 }
@@ -164,14 +164,14 @@ GdcmFileList *SerieHelper::GetFirstCoherentFileList()
 /**
  * \brief   Get the next List while visiting the CoherentFileListHT
  * \note : meaningfull only if GetFirstCoherentFileList already called
- * @return  The next GdcmFileList if found, otherwhise NULL
+ * @return  The next FileList if found, otherwhise NULL
  */
-GdcmFileList *SerieHelper::GetNextCoherentFileList()
+FileList *SerieHelper::GetNextCoherentFileList()
 {
-   gdcmAssertMacro (ItListHt != CoherentGdcmFileListHT.end());
+   gdcmAssertMacro (ItListHt != CoherentFileListHT.end());
   
    ++ItListHt;
-   if ( ItListHt != CoherentGdcmFileListHT.end() )
+   if ( ItListHt != CoherentFileListHT.end() )
       return ItListHt->second;
    return NULL;
 }
@@ -181,11 +181,11 @@ GdcmFileList *SerieHelper::GetNextCoherentFileList()
  * @param SerieUID SerieUID
  * \return  pointer to the Coherent Filseslist if found, otherwhise NULL
  */
-GdcmFileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
+FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
 {
-   if ( CoherentGdcmFileListHT.count(SerieUID) == 0 )
+   if ( CoherentFileListHT.count(SerieUID) == 0 )
       return 0;     
-   return CoherentGdcmFileListHT[SerieUID];
+   return CoherentFileListHT[SerieUID];
 }
 
 //-----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ GdcmFileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
  * @param fileList Coherent File list (same Serie UID) to sort
  * @return false only if the header is bugged !
  */
-bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
+bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 //based on Jolinda's algorithm
 {
    //iop is calculated based on the file file
@@ -216,7 +216,7 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
    std::vector<float> distlist;
 
    //!\todo rewrite this for loop.
-   for ( GdcmFileList::const_iterator 
+   for ( FileList::const_iterator 
          it = fileList->begin();
          it != fileList->end(); ++it )
    {
@@ -270,10 +270,10 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
    // Then I order the slices according to the value "dist". Finally, once
    // I've read in all the slices, I calculate the z-spacing as the difference
    // between the "dist" values for the first two slices.
-   GdcmFileVector CoherentGdcmFileVector(n);
-   // CoherentGdcmFileVector.reserve( n );
-   CoherentGdcmFileVector.resize( n );
-   // gdcmAssertMacro( CoherentGdcmFileVector.capacity() >= n );
+   FileVector CoherentFileVector(n);
+   // CoherentFileVector.reserve( n );
+   CoherentFileVector.resize( n );
+   // gdcmAssertMacro( CoherentFileVector.capacity() >= n );
 
    // Find out if min/max are coherent
    if( min == max )
@@ -287,7 +287,7 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
    n = 0;
     
    //VC++ don't understand what scope is !! it -> it2
-   for (GdcmFileList::const_iterator it2  = fileList->begin();
+   for (FileList::const_iterator it2  = fileList->begin();
         it2 != fileList->end(); ++it2, ++n)
    {
       //2*n sort algo !!
@@ -298,8 +298,8 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
       // and images may have differents directions
       // -> More than one may have the same 'pos'
       // Sorting has then NO meaning !
-      if (CoherentGdcmFileVector[pos]==NULL)
-         CoherentGdcmFileVector[pos] = *it2;
+      if (CoherentFileVector[pos]==NULL)
+         CoherentFileVector[pos] = *it2;
       else
       {
          gdcmWarningMacro( "2 files same position");
@@ -310,14 +310,14 @@ bool SerieHelper::ImagePositionPatientOrdering( GdcmFileList *fileList )
    fileList->clear();  // doesn't delete list elements, only node
   
    //VC++ don't understand what scope is !! it -> it3
-   for (GdcmFileVector::const_iterator it3  = CoherentGdcmFileVector.begin();
-        it3 != CoherentGdcmFileVector.end(); ++it3)
+   for (FileVector::const_iterator it3  = CoherentFileVector.begin();
+        it3 != CoherentFileVector.end(); ++it3)
    {
       fileList->push_back( *it3 );
    }
 
    distlist.clear();
-   CoherentGdcmFileVector.clear();
+   CoherentFileVector.clear();
 
    return true;
 }
@@ -335,12 +335,12 @@ bool SerieHelper::ImageNumberLessThan(File *file1, File *file2)
  * @param fileList Coherent File list (same Serie UID) to sort 
  * @return false if non nona fide stuff encountered
  */
-bool SerieHelper::ImageNumberOrdering(GdcmFileList *fileList) 
+bool SerieHelper::ImageNumberOrdering(FileList *fileList) 
 {
    int min, max, pos;
    int n = fileList->size();
 
-   GdcmFileList::const_iterator it = fileList->begin();
+   FileList::const_iterator it = fileList->begin();
    min = max = (*it)->GetImageNumber();
 
    for (; it != fileList->end(); ++it, ++n)
@@ -369,7 +369,7 @@ bool SerieHelper::FileNameLessThan(File *file1, File *file2)
  * @param fileList Coherent File list (same Serie UID) to sort
  * @return false only if the header is bugged !
  */
-bool SerieHelper::FileNameOrdering(GdcmFileList *fileList)
+bool SerieHelper::FileNameOrdering(FileList *fileList)
 {
    std::sort(fileList->begin(), fileList->end(), SerieHelper::FileNameLessThan);
    return true;
@@ -383,18 +383,18 @@ bool SerieHelper::FileNameOrdering(GdcmFileList *fileList)
 void SerieHelper::Print(std::ostream &os, std::string const & indent)
 {
    // For all the Coherent File lists of the gdcm::Serie
-   CoherentFileListmap::iterator itl = CoherentGdcmFileListHT.begin();
-   if ( itl == CoherentGdcmFileListHT.end() )
+   CoherentFileListmap::iterator itl = CoherentFileListHT.begin();
+   if ( itl == CoherentFileListHT.end() )
    {
       gdcmWarningMacro( "No Coherent File list found" );
       return;
    }
-   while (itl != CoherentGdcmFileListHT.end())
+   while (itl != CoherentFileListHT.end())
    { 
       os << "Serie UID :[" << itl->first << "]" << std::endl;
 
       // For all the files of a Coherent File list
-      for (GdcmFileList::iterator it =  (itl->second)->begin();
+      for (FileList::iterator it =  (itl->second)->begin();
                                   it != (itl->second)->end(); 
                                 ++it)
       {
