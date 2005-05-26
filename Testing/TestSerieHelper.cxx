@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/05 01:25:45 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/05/26 18:50:45 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,14 +48,14 @@ int TestSerieHelper(int argc, char *argv[])
 
    int nbFiles;
    // For all the Coherent Files lists of the gdcm::Serie
-   gdcm::GdcmFileList *l = s->GetFirstCoherentFileList();
+   gdcm::FileList *l = s->GetFirstCoherentFileList();
    while (l)
    { 
       nbFiles = l->size() ;
       if ( l->size() > 3 ) // Why not ? Just an example, for testing
       {
          std::cout << "Sort list : " << nbFiles << " long" << std::endl;
-         s->OrderGdcmFileList(l);  // sort the list
+         s->OrderFileList(l);  // sort the list
       }
       l = s->GetNextCoherentFileList();
    } 
