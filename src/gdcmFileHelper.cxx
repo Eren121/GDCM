@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/05/25 12:54:17 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/05/27 10:51:00 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -623,7 +623,7 @@ bool FileHelper::Write(std::string const &fileName)
         if ( ! FileInternal->GetValEntry(0x0008, 0x0010) )
             FileInternal->InsertValEntry("", 0x0008, 0x0010);
          SetWriteFileTypeToACR();
-         SetWriteFileTypeToImplicitVR();
+        // SetWriteFileTypeToImplicitVR(); // ACR IS implicit VR !
          break;
    }
    CheckMandatoryElements();
@@ -1102,9 +1102,11 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group, uint16_t elem,
  
 void FileHelper::CheckMandatoryElements()
 {
-
    // just to remember : 'official' 0002 group
-
+   if ( WriteType != ACR && WriteType != ACR_LIBIDO )
+   {
+     // Group 000002 (Meta Elements) already pushed out
+  
    //0002 0000 UL 1 Meta Group Length
    //0002 0001 OB 1 File Meta Information Version
    //0002 0002 UI 1 Media Stored SOP Class UID
@@ -1119,34 +1121,34 @@ void FileHelper::CheckMandatoryElements()
    // Create them if not found
    // Always modify the value
    // Push the entries to the archive.
-   ValEntry *e_0002_0000 = CopyValEntry(0x0002,0x0000);
+      ValEntry *e_0002_0000 = CopyValEntry(0x0002,0x0000);
       e_0002_0000->SetValue("0"); // for the moment
       Archive->Push(e_0002_0000);
   
-   BinEntry *e_0002_0001 = CopyBinEntry(0x0002,0x0001, "OB");
+      BinEntry *e_0002_0001 = CopyBinEntry(0x0002,0x0001, "OB");
       e_0002_0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(),
                                false);
       e_0002_0001->SetLength(2);
       Archive->Push(e_0002_0001);
 
    // 'Media Stored SOP Class UID' 
-   ValEntry *e_0002_0002 = CopyValEntry(0x0002,0x0002);
+      ValEntry *e_0002_0002 = CopyValEntry(0x0002,0x0002);
       // [Secondary Capture Image Storage]
       e_0002_0002->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
       Archive->Push(e_0002_0002);
  
    // 'Media Stored SOP Instance UID'   
-   ValEntry *e_0002_0003 = CopyValEntry(0x0002,0x0003);
+      ValEntry *e_0002_0003 = CopyValEntry(0x0002,0x0003);
       e_0002_0003->SetValue(Util::CreateUniqueUID());
       Archive->Push(e_0002_0003); 
 
    // 'Implementation Class UID'
-   ValEntry *e_0002_0012 = CopyValEntry(0x0002,0x0012);
+      ValEntry *e_0002_0012 = CopyValEntry(0x0002,0x0012);
       e_0002_0012->SetValue(Util::CreateUniqueUID());
       Archive->Push(e_0002_0012); 
 
    // 'Implementation Version Name'
-   ValEntry *e_0002_0013 = CopyValEntry(0x0002,0x0013);
+      ValEntry *e_0002_0013 = CopyValEntry(0x0002,0x0013);
       e_0002_0013->SetValue("GDCM 1.0");
       Archive->Push(e_0002_0013);
 
@@ -1154,6 +1156,7 @@ void FileHelper::CheckMandatoryElements()
    //ValEntry *e_0002_0016 = CopyValEntry(0x0002,0x0016);
    //   e_0002_0016->SetValue("1.2.840.10008.5.1.4.1.1.7");
    //   Archive->Push(e_0002_0016);
+   }
 
    // Push out 'LibIDO-special' entries, if any
    Archive->Push(0x0028,0x0015);
