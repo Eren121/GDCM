@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/05/26 18:49:46 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/05/27 18:37:28 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -151,7 +151,7 @@ enum DicomDirType {
 /**
  * \brief structure, for internal use only
  */  
-GDCM_EXPORT struct Element
+struct Element
 {
    /// DicomGroup number
    unsigned short int Group;
