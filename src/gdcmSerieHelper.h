@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/05/26 18:49:46 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/05/27 21:19:04 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,6 +63,11 @@ public:
    FileList *GetNextCoherentFileList();
    FileList *GetCoherentFileList(std::string serieUID);
 
+   /// All the following allow user to restrict DICOM file to be part
+   /// of a particular serie
+   void AddRestriction(TagKey const &key, std::string const &value);
+  
+
 private:
    bool ImagePositionPatientOrdering(FileList *coherentFileList);
    bool ImageNumberOrdering(FileList *coherentFileList);
@@ -72,6 +77,10 @@ private:
    static bool FileNameLessThan(File *file1, File *file2);
    CoherentFileListmap CoherentFileListHT;
    CoherentFileListmap::iterator ItListHt;
+
+   typedef std::pair<std::string, std::string> Rule;
+   typedef std::vector<Rule> SerieRestrictions;
+   SerieRestrictions Restrictions;
 };
 
 } // end namespace gdcm

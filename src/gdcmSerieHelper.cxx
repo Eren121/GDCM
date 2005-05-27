@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/26 18:49:46 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/05/27 21:19:03 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #include "gdcmDirList.h"
 #include "gdcmFile.h"
 #include "gdcmDebug.h"
+#include "gdcmUtil.h"
 
 #include <math.h>
 #include <vector>
@@ -85,29 +86,70 @@ SerieHelper::~SerieHelper()
  */
 void SerieHelper::AddFileName(std::string const &filename)
 {
-   //directly use string and not const char*:
+   // Create a DICOM file
    File *header = new File( filename ); 
    if( header->IsReadable() )
    {
-      // 0020 000e UI REL Series Instance UID
-      std::string uid =  header->GetEntryValue (0x0020, 0x000e);
-      // if uid == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
-      // no need here to do anything special
-
-      if ( CoherentFileListHT.count(uid) == 0 )
+      int allrules = 1;
+      // First step the user has defined s set of rules for the DICOM he is looking for
+      // make sure the file correspond to his set of rules:
+      for(SerieRestrictions::iterator it = Restrictions.begin();
+          it != Restrictions.end();
+          ++it)
       {
-         gdcmWarningMacro(" New Serie UID :[" << uid << "]");
-         // create a std::list in 'uid' position
-         CoherentFileListHT[uid] = new FileList;
+         const Rule &r = *it;
+         const std::string s;// = header->GetEntryValue( r.first );
+         if( !Util::DicomStringEqual(s, r.second.c_str()))
+         {
+           // Argh ! This rule is unmatch let's just quit
+           allrules = 0;
+           break;
+         }
       }
-      // Current Serie UID and DICOM header seems to match add the file:
-      CoherentFileListHT[uid]->push_back( header );
+      if( allrules ) // all rules are respected:
+      {
+         // Alright ! we have a found a DICOM that match the user expectation. 
+         // Let's add it !
+
+         // 0020 000e UI REL Series Instance UID
+         const std::string &uid = header->GetEntryValue (0x0020, 0x000e);
+         // if uid == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
+         // no need here to do anything special
+
+         if ( CoherentFileListHT.count(uid) == 0 )
+         {
+            gdcmDebugMacro(" New Serie UID :[" << uid << "]");
+            // create a std::list in 'uid' position
+            CoherentFileListHT[uid] = new FileList;
+         }
+         // Current Serie UID and DICOM header seems to match add the file:
+         CoherentFileListHT[uid]->push_back( header );
+      }
+      else
+      {
+         // at least one rule was unmatch we need to deallocate the file:
+         delete header;
+      }
    }
    else
    {
       gdcmWarningMacro("Could not read file: " << filename );
       delete header;
    }
+}
+/**
+ * \brief add a rules for restricting a DICOM file to be in the serie we are
+ * trying to find. For example you can select only the DICOM file from a
+ * directory which would have a particular EchoTime==4.0.
+ * This method is a user level, value is not required to be formatted as a DICOM
+ * string
+ */
+void SerieHelper::AddRestriction(TagKey const &key, std::string const &value)
+{
+   Rule r;
+   r.first = key;
+   r.second = value;
+   Restrictions.push_back( r ); 
 }
 
 /**
