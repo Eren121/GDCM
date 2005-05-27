@@ -186,7 +186,7 @@ typedef unsigned long long ulonglong;
 #endif
 
 /* Something I don't uderstand (neither Benoit does ...)
-   The previous 'ifndef' caises warning with gcc, like :
+   The previous 'ifndef' causes warning with gcc, like :
    /usr/include/sys/types.h:152: warning: `ushort' previously declared here
    Commenting it out and uncommenting the following causes syntax error ?!?
 */  
