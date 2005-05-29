@@ -142,6 +142,7 @@
 
 
 
+#if 0
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 #endif
@@ -186,7 +187,7 @@ typedef unsigned __int64   ulonglong;
 typedef __int64            longlong;
 #else
 #error this is not supposed to happen please report your compiler
-#endif
+#endif //GDCM_TYPE_USE___INT64
 #else
 #ifdef GDCM_TYPE_USE_LONG_LONG
 typedef unsigned char      uchar;
@@ -194,9 +195,9 @@ typedef unsigned long long ulonglong;
 typedef long long          longlong;
 #else
 #error this is not supposed to happen please report your compiler
-#endif
+#endif // GDCM_TYPE_USE_LONG_LONG
 /* #define  ssize_t    int */
-#endif
+#endif // HAVE_SYS_TYPES_H
 
 
 #endif

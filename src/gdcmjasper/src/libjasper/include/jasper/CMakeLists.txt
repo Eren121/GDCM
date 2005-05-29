@@ -72,7 +72,7 @@ IF(GDCM_SIZEOF___INT64)
     MESSAGE(STATUS "Checking whether long and __int64 are the same type")
     TRY_COMPILE(GDCM_TYPE_SAME_LONG_AND___INT64
       ${GDCM_BINARY_DIR}/CMakeTmp
-      ${GDCM_SOURCE_DIR}/CMake/vtkTestCompareTypes.cxx
+      ${GDCM_SOURCE_DIR}/CMake/gdcmTestCompareTypes.cxx
       COMPILE_DEFINITIONS
       -DGDCM_TEST_COMPARE_TYPE_1=long
       -DGDCM_TEST_COMPARE_TYPE_2=__int64
@@ -98,7 +98,7 @@ IF(GDCM_SIZEOF___INT64)
       MESSAGE(STATUS "Checking whether long long and __int64 are the same type")
       TRY_COMPILE(GDCM_TYPE_SAME_LONG_LONG_AND___INT64
         ${GDCM_BINARY_DIR}/CMakeTmp
-        ${GDCM_SOURCE_DIR}/CMake/vtkTestCompareTypes.cxx
+        ${GDCM_SOURCE_DIR}/CMake/gdcmTestCompareTypes.cxx
         COMPILE_DEFINITIONS
         -DGDCM_TEST_COMPARE_TYPE_1=TYPE_LONG_LONG
         -DGDCM_TEST_COMPARE_TYPE_2=__int64
@@ -128,7 +128,7 @@ IF(GDCM_SIZEOF___INT64)
         MESSAGE(STATUS "Checking whether unsigned __int64 can convert to double")
         TRY_COMPILE(GDCM_TYPE_CONVERT_UI64_TO_DOUBLE
           ${GDCM_BINARY_DIR}/CMakeTmp
-          ${GDCM_SOURCE_DIR}/CMake/vtkTestConvertTypes.cxx
+          ${GDCM_SOURCE_DIR}/CMake/gdcmTestConvertTypes.cxx
           COMPILE_DEFINITIONS
           -DGDCM_TEST_CONVERT_TYPE_FROM=TYPE_UNSIGNED___INT64
           -DGDCM_TEST_CONVERT_TYPE_TO=double
